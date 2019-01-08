@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2018 MBSim Development Team
+/* Copyright (C) 2004-2009 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,21 +17,16 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FCL_UTILS_H_
-#define _FCL_UTILS_H_
-
-#include "fmatvec/fmatvec.h"
-#include "fcl/common/types.h"
+#ifndef _MBSIMFCL_CONTACT_UTILS_H_
+#define _MBSIMFCL_CONTACT_UTILS_H_
 
 namespace MBSim {
+  class ContactKinematics;
+}
 
-  fcl::Vector3d Vec3ToVector3d(const fmatvec::Vec3 &x);
+namespace MBSimFcl {
 
-  fcl::Matrix3d SqrMat3ToMatrix3d(const fmatvec::SqrMat3 &A);
-
-  fmatvec::Vec3 Vector3dToVec3(const fcl::Vector3d &x);
-
-  fmatvec::SqrMat3 Matrix3dToSqrMat3(const fcl::Matrix3d &A);
+  MBSim::ContactKinematics* findContactPairingFcl(const std::type_info &contour0, const std::type_info &contour1);
 
 }
 

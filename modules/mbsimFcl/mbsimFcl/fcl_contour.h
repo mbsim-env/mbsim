@@ -17,31 +17,34 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FCL_CONTOUR_H_
-#define _FCL_CONTOUR_H_
+#ifndef _MBSIMFCL_FCL_CONTOUR_H_
+#define _MBSIMFCL_FCL_CONTOUR_H_
 
 #include "mbsim/contours/rigid_contour.h"
+#include "mbsimFcl/contact_utils.h"
 #include "fcl/geometry/collision_geometry.h"
 
-namespace MBSim {
+namespace MBSimFcl {
 
   /**
-   * \brief FclContour
+   * \brief Contour
    */
-  class FclContour : public RigidContour {
+  class FclContour : public MBSim::RigidContour {
     public:
       /**
        * \brief constructor
        * \param name of contour
        */
-      FclContour(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
+      FclContour(const std::string &name="", MBSim::Frame *R=nullptr) : MBSim::RigidContour(name,R) { }
 
-      void init(InitStage stage, const InitConfigSet &config) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       std::shared_ptr<fcl::CollisionGeometry<double> > getCollisionGeometry() const { return cg; }
 
       void setComputeLocalAABB(bool computeLocalAABB_) { computeLocalAABB = computeLocalAABB_; }
+
+      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFcl(type0, type1); }
 
     protected:
       std::shared_ptr<fcl::CollisionGeometry<double> > cg;

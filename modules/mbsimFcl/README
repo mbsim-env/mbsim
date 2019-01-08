@@ -1,0 +1,26 @@
+Installation
+====================
+
+This project provides a simulation environment for mechanical systems. It needs kernel. After the installation proceed with the following steps.
+
+
+1. Checkout from git
+--------------------
+
+If not already done, checkout the git tree
+# git clone https://github.com/mbsim-env/mbsim.git
+
+2. Run AutoTools
+----------------
+
+# aclocal
+# autoheader
+# libtoolize -c --force
+# autoconf
+# automake -a -c --force
+
+
+3. Proceed with configure
+-------------------------
+
+See file INSTALL.

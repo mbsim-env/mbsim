@@ -18,21 +18,22 @@
  */
 
 #include <config.h>
-#ifdef HAVE_FCL
-#include "mbsim/contours/fcl_mesh.h"
+#include "fcl_mesh.h"
+#include "mbsimFcl/namespace.h"
 #include "fcl/geometry/bvh/BVH_model.h"
-#include <openmbvcppinterface/indexedfaceset.h>
 #include "fcl/math/bv/utility.h"
+#include <openmbvcppinterface/indexedfaceset.h>
 
 using namespace std;
 using namespace fmatvec;
+using namespace MBSim;
 using namespace MBXMLUtils;
 using namespace xercesc;
 using namespace fcl;
 
-namespace MBSim {
+namespace MBSimFcl {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, FclMesh)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFCL, FclMesh)
 
   void FclMesh::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
@@ -113,15 +114,15 @@ namespace MBSim {
 
   void FclMesh::initializeUsingXML(DOMElement *element) {
     FclContour::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"vertices");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFCL%"vertices");
     vertex = E(e)->getText<MatVx3>();
-    e=E(element)->getFirstElementChildNamed(MBSIM%"triangles");
+    e=E(element)->getFirstElementChildNamed(MBSIMFCL%"triangles");
     Matrix<General,Var,Fixed<3>,Index> triangle1based=E(e)->getText<Matrix<General,Var,Fixed<3>,Index>>();
     triangle.resize(triangle1based.rows(),NONINIT);
     for(int i=0; i<triangle.rows(); i++)
       for(int j=0; j<triangle.cols(); j++)
         triangle(i,j) = triangle1based(i,j) - 1;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"collisionStructure");
+    e=E(element)->getFirstElementChildNamed(MBSIMFCL%"collisionStructure");
     if (e) {
       std::string str=X()%E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
@@ -135,7 +136,7 @@ namespace MBSim {
       else if(str=="RSS") collisionStructure=RSS;
       else collisionStructure=unknown;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
+    e=E(element)->getFirstElementChildNamed(MBSIMFCL%"enableOpenMBV");
     if(e) {
       OpenMBVIndexedFaceSet ombv;
       ombv.initializeUsingXML(e);
@@ -144,4 +145,3 @@ namespace MBSim {
   }
 
 }
-#endif

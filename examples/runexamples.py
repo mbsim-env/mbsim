@@ -125,7 +125,7 @@ cfgOpts.add_argument("--prefixSimulationKeyword", default=None, type=str,
 cfgOpts.add_argument("--exeExt", default="", type=str, help="File extension of cross compiled executables (wine is used if set)")
 cfgOpts.add_argument("--maxExecutionTime", default=30, type=float, help="The time in minutes after started program timed out [default: %(default)s]")
 cfgOpts.add_argument("--maxCompareFailure", default=200, type=float, help="Maximal number of compare failures to report. Use 0 for unlimited [default: %(default)s]")
-cfgOpts.add_argument("--coverage", default=None, type=str, help='Enable coverage analyzis using gcov/lcov; The arg must be: <sourceDir>:<binSuffix>:<prefix>')
+cfgOpts.add_argument("--coverage", default=None, type=str, help='Enable coverage analyzis using gcov/lcov; The arg must be: <sourceDir>:<binSuffix>:<prefix>:<baseExamplesDir>')
 
 outOpts=argparser.add_argument_group('Output Options')
 outOpts.add_argument("--reportOutDir", default="runexamples_report", type=str, help="the output directory of the report [default: %(default)s]")
@@ -534,7 +534,13 @@ def main():
   print("See the log file "+pj(os.path.dirname(args.reportOutDir), "result_current", "index.html")+" for detailed results.\n")
 
   if args.coverage!=None:
+    # backup the coverage files in the build directories
     coverageBackupRestore('backup')
+    # remove all "*.gcno", "*.gcda" files in ALL the examples
+    for d,_,files in os.walk(args.coverage.split(":")[3]):
+      for f in files:
+        if os.path.splitext(f)[1]==".gcno": os.remove(pj(d, f))
+        if os.path.splitext(f)[1]==".gcda": os.remove(pj(d, f))
 
   if args.checkGUIs:
     # start vnc server on a free display
@@ -591,6 +597,7 @@ def main():
     coverageAll=1
     print("Create coverage analyzis"); sys.stdout.flush()
     coverageFailed=coverage(mainFD)
+    # restore the coverage files in the build directories
     coverageBackupRestore('restore')
 
   print('</tbody></table><hr/>', file=mainFD)
@@ -1172,15 +1179,6 @@ def getOutFilesAndAdaptRet(example, ret):
   return []
 
 
-def removeCoverageFiles():
-  if args.coverage==None:
-    return
-  # remove all "*.gcno", "*.gcda" files
-  for d,_,files in os.walk('.'):
-    for f in files:
-      if os.path.splitext(f)[1]==".gcno": os.remove(pj(d, f))
-      if os.path.splitext(f)[1]==".gcda": os.remove(pj(d, f))
-
 # execute the source code example in the current directory (write everything to fd executeFD)
 def executeSrcExample(executeFD, example):
   print("Running commands:", file=executeFD)
@@ -1189,7 +1187,6 @@ def executeSrcExample(executeFD, example):
   executeFD.flush()
   if not args.disableMakeClean:
     if subprocessCall(["make", "clean"], executeFD)!=0: return 1, 0, []
-    removeCoverageFiles()
   if subprocessCall(["make"], executeFD)!=0: return 1, 0, []
   # append $prefix/lib to LD_LIBRARY_PATH/PATH to find lib by main of the example
   if os.name=="posix":
@@ -1381,7 +1378,6 @@ def executeFMISrcExample(executeFD, example):
   executeFD.flush()
   if not args.disableMakeClean:
     if subprocessCall(["make", "-f", basename, "clean"], executeFD)!=0: return 1, 0, []
-    removeCoverageFiles()
   if subprocessCall(["make", "-f", basename], executeFD)!=0: return 1, 0, []
   # create and run FMU
   if args.exeExt==".exe":
@@ -1971,6 +1967,7 @@ def writeAtomFeed(currentID, nrFailed, nrTotal):
 
 
 
+# restore or backup the coverage files in the build directories
 def coverageBackupRestore(variant):
   for t in ["fmatvec", "hdf5serie", "openmbv", "mbsim"]:
     d=pj(args.coverage.split(":")[0], t+args.coverage.split(":")[1])

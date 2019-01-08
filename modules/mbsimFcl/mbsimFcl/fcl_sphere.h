@@ -17,14 +17,14 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FCL_SPHERE_H_
-#define _FCL_SPHERE_H_
+#ifndef _MBSIMFCL_FCL_SPHERE_H_
+#define _MBSIMFCL_FCL_SPHERE_H_
 
-#include "mbsim/contours/fcl_contour.h"
+#include "mbsimFcl/fcl_contour.h"
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
 
-namespace MBSim {
+namespace MBSimFcl {
 
   /**
    * \brief FclSphere
@@ -35,13 +35,13 @@ namespace MBSim {
        * \brief constructor
        * \param name of contour
        */
-      FclSphere(const std::string &name="", double r_=1, Frame *R=nullptr) : FclContour(name,R), r(r_) { }
+      FclSphere(const std::string &name="", double r_=1, MBSim::Frame *R=nullptr) : FclContour(name,R), r(r_) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      void init(InitStage stage, const InitConfigSet &config) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
@@ -50,8 +50,8 @@ namespace MBSim {
       double getRadius() const { return r; }
       /***************************************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        OpenMBVSphere ombv(1,diffuseColor,transparency,pointSize,lineWidth);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        MBSim::OpenMBVSphere ombv(1,diffuseColor,transparency,pointSize,lineWidth);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 

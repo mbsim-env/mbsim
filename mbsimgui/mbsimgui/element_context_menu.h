@@ -133,17 +133,35 @@ namespace MBSimGUI {
       void addSpatialNurbsContour();
       void addDisk();
       void addGearWheel();
+      void paste();
+      void load();
+      void embed();
+  };
+
+  class FlexibleContoursContextMenu : public BasicElementMenu {
+    Q_OBJECT
+
+    public:
+      FlexibleContoursContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
+
+    protected slots:
       void addFlexiblePlanarNurbsContour();
       void addFlexiblePlanarNurbsContourFFR();
       void addFlexibleSpatialNurbsContour();
       void addFlexibleSpatialNurbsContourFFR();
+  };
+
+  class FclContoursContextMenu : public BasicElementMenu {
+    Q_OBJECT
+
+    public:
+      FclContoursContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
+
+    protected slots:
       void addFclBox();
       void addFclSphere();
       void addFclPlane();
       void addFclMesh();
-      void paste();
-      void load();
-      void embed();
   };
 
   class GroupsContextMenu : public BasicElementMenu {
@@ -199,7 +217,6 @@ namespace MBSimGUI {
       void addElasticJoint();
       void addContact();
       void addDiskContact();
-      void addSignal();
       void addGeneralizedFriction();
       void addGeneralizedGear();
       void addGeneralizedElasticConnection();
@@ -255,7 +272,6 @@ namespace MBSimGUI {
       SignalsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
 
     protected slots:
-      void addSensor();
       void addMultiplexer();
       void addDemultiplexer();
       void addLinearTransferSystem();

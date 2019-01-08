@@ -17,53 +17,51 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FCL_PLANE_H_
-#define _FCL_PLANE_H_
+#ifndef _MBSIMFCL_FCL_BOX_H_
+#define _MBSIMFCL_FCL_BOX_H_
 
-#include "mbsim/contours/fcl_contour.h"
-#include "mbsim/utils/boost_parameters.h"
+#include "mbsimFcl/fcl_contour.h"
+#include <mbsim/utils/boost_parameters.h>
 #include <mbsim/utils/openmbv_utils.h>
 
-namespace MBSim {
+namespace MBSimFcl {
 
   /**
-   * \brief FclPlane
+   * \brief FclBox
    */
-  class FclPlane : public FclContour {
+  class FclBox : public FclContour {
     public:
       /**
        * \brief constructor
-       * \param name of plane
+       * \param name of box
+       * \param length of box
        * \param R frame of reference
        */
-      FclPlane(const std::string &name="", Frame *R=nullptr) : FclContour(name,R) { normal(0) = 1; }
+      FclBox(const std::string &name="", const fmatvec::Vec3 &length=fmatvec::Vec3(fmatvec::INIT,1), MBSim::Frame *R=nullptr) : FclContour(name,R), lx(length(0)), ly(length(1)), lz(length(2)) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
-      void init(InitStage stage, const InitConfigSet &config) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setNormal(const fmatvec::Vec3 &normal_) { normal = normal_; }
-      void setOffset(double offset_) { offset = offset_; }
+      void setLength(const fmatvec::Vec3 &length) { lx = length(0); ly = length(1); lz = length(2); }
+      void setLength(double lx_, double ly_, double lz_) { lx = lx_; ly = ly_; lz = lz_; }
       /***************************************************/
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (length,(fmatvec::Vec2),fmatvec::Vec2(fmatvec::INIT,1))(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        OpenMBVPlane ombv(length,diffuseColor,transparency,pointSize,lineWidth);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        MBSim::OpenMBVCuboid ombv(fmatvec::Vec3(),diffuseColor,transparency,pointSize,lineWidth);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
 
     private:
       /**
-       * \brief normal
+       * \brief x-, y- and z-length of cuboid
        */
-      fmatvec::Vec3 normal;
-
-      /**
-       * \brief offset
-       */
-      double offset;
+      double lx{1};
+      double ly{1};
+      double lz{1};
   };
 }
 

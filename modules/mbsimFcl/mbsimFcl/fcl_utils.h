@@ -17,45 +17,21 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#include <config.h> 
-#ifdef HAVE_FCL
-#include "fcl_utils.h" 
+#ifndef _MBSIMFCL_FCL_UTILS_H_
+#define _MBSIMFCL_FCL_UTILS_H_
 
-using namespace fmatvec;
-using namespace std;
-using namespace fcl;
+#include "fmatvec/fmatvec.h"
+#include "fcl/common/types.h"
 
-namespace MBSim {
+namespace MBSimFcl {
 
-  Vector3d Vec3ToVector3d(const Vec3 &x) {
-    Vector3d y;
-    for(int i=0; i<3; i++)
-      y(i) = x(i);
-    return y;
-  }
+  fcl::Vector3d Vec3ToVector3d(const fmatvec::Vec3 &x);
 
-  Matrix3d SqrMat3ToMatrix3d(const SqrMat3 &A) {
-    Matrix3d B;
-    for(int i=0; i<3; i++)
-      for(int j=0; j<3; j++)
-        B(i,j) = A(i,j);
-    return B;
-  }
+  fcl::Matrix3d SqrMat3ToMatrix3d(const fmatvec::SqrMat3 &A);
 
-  Vec3 Vector3dToVec3(const Vector3d &x) {
-    Vec3 y;
-    for(int i=0; i<3; i++)
-      y(i) = x(i);
-    return y;
-  }
+  fmatvec::Vec3 Vector3dToVec3(const fcl::Vector3d &x);
 
-  SqrMat3 Matrix3dToSqrMat3(const Matrix3d &A) {
-    SqrMat3 B;
-    for(int i=0; i<3; i++)
-      for(int j=0; j<3; j++)
-        B(i,j) = A(i,j);
-    return B;
-  }
+  fmatvec::SqrMat3 Matrix3dToSqrMat3(const fcl::Matrix3d &A);
 
 }
 

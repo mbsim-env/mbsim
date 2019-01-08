@@ -9,7 +9,7 @@
     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
     <frames/>
     <contours>
-      <FclBox name="FclBox">
+      <FclBox name="FclBox" xmlns="http://www.mbsim-env.de/MBSimFcl">
         <length unit="m">
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>4</ele>
@@ -18,7 +18,7 @@
           </xmlVector>
         </length>
         <enableOpenMBV>
-          <transparency unit="-">0.3</transparency>
+          <transparency xmlns="http://www.mbsim-env.de/MBSim" unit="-">0.3</transparency>
         </enableOpenMBV>
       </FclBox>
     </contours>
@@ -73,7 +73,7 @@
         </stateDependentRotation>
         <frames/>
         <contours>
-          <FclBox name="FclBox">
+          <FclBox name="FclBox" xmlns="http://www.mbsim-env.de/MBSimFcl">
             <length unit="m">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0.3</ele>
@@ -82,14 +82,14 @@
               </xmlVector>
             </length>
             <enableOpenMBV>
-              <diffuseColor>
+              <diffuseColor xmlns="http://www.mbsim-env.de/MBSim">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>0.166667</ele>
                   <ele>1</ele>
                   <ele>1</ele>
                 </xmlVector>
               </diffuseColor>
-              <transparency unit="-">0.3</transparency>
+              <transparency xmlns="http://www.mbsim-env.de/MBSim" unit="-">0.3</transparency>
             </enableOpenMBV>
           </FclBox>
         </contours>
