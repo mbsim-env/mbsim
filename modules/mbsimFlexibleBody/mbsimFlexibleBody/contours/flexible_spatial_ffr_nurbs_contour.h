@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLEXIBLE_SPATIAL_NURBS_CONTOUR_FFR_H_
-#define _FLEXIBLE_SPATIAL_NURBS_CONTOUR_FFR_H_
+#ifndef _FLEXIBLE_SPATIAL_FFR_NURBS_CONTOUR_H_
+#define _FLEXIBLE_SPATIAL_FFR_NURBS_CONTOUR_H_
 
 #include "mbsimFlexibleBody/contours/flexible_contour.h"
 
@@ -40,18 +40,18 @@ namespace MBSimFlexibleBody {
    * \brief flexible spatial nurbs contour
    * \author Martin Foerg
    */
-  class FlexibleSpatialNurbsContourFFR : public FlexibleContour {
+  class FlexibleSpatialFfrNurbsContour : public FlexibleContour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexibleSpatialNurbsContourFFR(const std::string &name="") : FlexibleContour(name) { }
+      FlexibleSpatialFfrNurbsContour(const std::string &name="") : FlexibleContour(name) { }
 
       /**
        * \brief destructor
        */
-      ~FlexibleSpatialNurbsContourFFR() override = default;  
+      ~FlexibleSpatialFfrNurbsContour() override = default;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -122,8 +122,6 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       void plot() override;
-
-      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFlexible(type0, type1); }
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         OpenMBVDynamicNurbsSurface ombv(diffuseColor,transparency,pointSize,lineWidth);

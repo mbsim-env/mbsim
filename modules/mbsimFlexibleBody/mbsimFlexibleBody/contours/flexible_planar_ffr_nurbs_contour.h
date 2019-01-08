@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FLEXIBLE_PLANAR_NURBS_CONTOUR_FFR_H_
-#define _FLEXIBLE_PLANAR_NURBS_CONTOUR_FFR_H_
+#ifndef _FLEXIBLE_PLANAR_FFR_NURBS_CONTOUR_H_
+#define _FLEXIBLE_PLANAR_FFR_NURBS_CONTOUR_H_
 
 #include "mbsimFlexibleBody/contours/flexible_contour.h"
 
@@ -40,18 +40,18 @@ namespace MBSimFlexibleBody {
    * \brief flexible planar nurbs contour with local interpolation 
    * \author Martin Foerg
    */
-  class FlexiblePlanarNurbsContourFFR : public FlexibleContour {
+  class FlexiblePlanarFfrNurbsContour : public FlexibleContour {
     public:
       /**
        * \brief constructor 
        * \param name of contour
        */
-      FlexiblePlanarNurbsContourFFR(const std::string &name="") : FlexibleContour(name) { }
+      FlexiblePlanarFfrNurbsContour(const std::string &name="") : FlexibleContour(name) { }
 
       /**
        * \brief destructor
        */
-      ~FlexiblePlanarNurbsContourFFR() override = default;  
+      ~FlexiblePlanarFfrNurbsContour() override = default;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/

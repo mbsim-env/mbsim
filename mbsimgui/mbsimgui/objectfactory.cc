@@ -128,12 +128,12 @@ namespace MBSimGUI {
       return new GearWheel;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarNurbsContour")
       return new FlexiblePlanarNurbsContour;
-    else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarNurbsContourFFR")
-      return new FlexiblePlanarNurbsContourFFR;
+    else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarFfrNurbsContour")
+      return new FlexiblePlanarFfrNurbsContour;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexibleSpatialNurbsContour")
       return new FlexibleSpatialNurbsContour;
-    else if(E(element)->getTagName()==MBSIMFLEX%"FlexibleSpatialNurbsContourFFR")
-      return new FlexibleSpatialNurbsContourFFR;
+    else if(E(element)->getTagName()==MBSIMFLEX%"FlexibleSpatialFfrNurbsContour")
+      return new FlexibleSpatialFfrNurbsContour;
     else if(E(element)->getTagName()==MBSIMFCL%"FclBox")
       return new FclBox;
     else if(E(element)->getTagName()==MBSIMFCL%"FclSphere")

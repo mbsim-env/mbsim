@@ -127,9 +127,9 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new FlexiblePlanarNurbsContourPropertyDialog(this);}
   };
 
-  class FlexiblePlanarNurbsContourFFR : public RigidContour {
+  class FlexiblePlanarFfrNurbsContour : public RigidContour {
     public:
-      QString getType() const override { return "FlexiblePlanarNurbsContourFFR"; }
+      QString getType() const override { return "FlexiblePlanarFfrNurbsContour"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       ElementPropertyDialog* createPropertyDialog() override {return new FlexiblePlanarNurbsContourPropertyDialog(this);}
   };
@@ -141,9 +141,9 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new FlexibleSpatialNurbsContourPropertyDialog(this);}
   };
 
-  class FlexibleSpatialNurbsContourFFR : public RigidContour {
+  class FlexibleSpatialFfrNurbsContour : public RigidContour {
     public:
-      QString getType() const override { return "FlexibleSpatialNurbsContourFFR"; }
+      QString getType() const override { return "FlexibleSpatialFfrNurbsContour"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       ElementPropertyDialog* createPropertyDialog() override {return new FlexibleSpatialNurbsContourPropertyDialog(this);}
   };

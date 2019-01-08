@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsimFlexibleBody/contours/flexible_planar_nurbs_contour_ffr.h"
+#include "mbsimFlexibleBody/contours/flexible_planar_ffr_nurbs_contour.h"
 #include "mbsimFlexibleBody/flexible_body/flexible_body_ffr.h"
 #include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/utils/utils.h"
@@ -32,9 +32,9 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexiblePlanarNurbsContourFFR)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexiblePlanarFfrNurbsContour)
 
-  double FlexiblePlanarNurbsContourFFR::continueEta(double eta_) {
+  double FlexiblePlanarFfrNurbsContour::continueEta(double eta_) {
     double eta;
     if(open)
       eta = eta_;
@@ -43,7 +43,7 @@ namespace MBSimFlexibleBody {
     return eta;
   }
 
-  void FlexiblePlanarNurbsContourFFR::updateHessianMatrix(double eta_) {
+  void FlexiblePlanarFfrNurbsContour::updateHessianMatrix(double eta_) {
     double eta = continueEta(eta_);
     crvPos.deriveAtH(eta,2,hessPos);
     for(size_t i=0; i<crvPhi.size(); i++)
@@ -51,7 +51,7 @@ namespace MBSimFlexibleBody {
     etaOld = eta_;
   }
 
-  void FlexiblePlanarNurbsContourFFR::updateGlobalRelativePosition(double eta) {
+  void FlexiblePlanarFfrNurbsContour::updateGlobalRelativePosition(double eta) {
     Vec3 KrPS = evalHessianMatrixPos(eta).row(0).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
       KrPS += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
@@ -59,7 +59,7 @@ namespace MBSimFlexibleBody {
     updPos = false;
   }
 
-  void FlexiblePlanarNurbsContourFFR::updateGlobalRelativeVelocity(double eta) {
+  void FlexiblePlanarFfrNurbsContour::updateGlobalRelativeVelocity(double eta) {
     if(fabs(eta-etaOld)>1e-13) updateHessianMatrix(eta);
     Vec3 Kvrel;
     for(size_t i=0; i<crvPhi.size(); i++)
@@ -68,7 +68,7 @@ namespace MBSimFlexibleBody {
     updVel = false;
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalKs_t(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalKs_t(const Vec2 &zeta) {
     if(fabs(zeta(0)-etaOld)>1e-13) updateHessianMatrix(zeta(0));
     Vec3 s_t;
     for(size_t i=0; i<crvPhi.size(); i++)
@@ -76,93 +76,93 @@ namespace MBSimFlexibleBody {
     return s_t;
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalKu_t(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalKu_t(const Vec2 &zeta) {
     Vec3 Ks = evalKs(zeta);
     Vec3 Ks_t = evalKs_t(zeta);
     return Ks_t/nrm2(Ks) - Ks*((Ks.T()*Ks_t)/pow(nrm2(Ks),3));
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalKrPS(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalKrPS(const Vec2 &zeta) {
     Vec3 KrPS = evalHessianMatrixPos(zeta(0)).row(0).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
       KrPS += hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return KrPS;
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalKs(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalKs(const Vec2 &zeta) {
     Vec3 s = evalHessianMatrixPos(zeta(0)).row(1).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
       s += hessPhi[i].row(1).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return s;
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalKt(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalKt(const Vec2 &zeta) {
     static Vec3 Kt("[0;0;1]");
     return Kt;
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalParDer1Ks(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalParDer1Ks(const Vec2 &zeta) {
     Vec3 ds = evalHessianMatrixPos(zeta(0)).row(2).T()(Range<Fixed<0>,Fixed<2> >());
     for(size_t i=0; i<crvPhi.size(); i++)
       ds += hessPhi[i].row(2).T()(Range<Fixed<0>,Fixed<2> >())*static_cast<FlexibleBodyFFR*>(parent)->evalqERel()(i);
     return ds;
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalParDer1Ku(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalParDer1Ku(const Vec2 &zeta) {
     Vec3 Ks = evalKs(zeta);
     Vec3 parDer1Ks = evalParDer1Ks(zeta);
     return parDer1Ks/nrm2(Ks) - Ks*((Ks.T()*parDer1Ks)/pow(nrm2(Ks),3));
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalWs_t(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalWs_t(const Vec2 &zeta) {
     return R->getOrientation()*evalKs_t(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalWu_t(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalWu_t(const Vec2 &zeta) {
     return R->getOrientation()*evalKu_t(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalPosition(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalPosition(const Vec2 &zeta) {
     return R->evalPosition() + R->evalOrientation()*evalKrPS(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalWs(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalWs(const Vec2 &zeta) {
     return R->getOrientation()*evalKs(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalWt(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalWt(const Vec2 &zeta) {
     return R->getOrientation()*evalKt(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalParDer1Ws(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalParDer1Ws(const Vec2 &zeta) {
     return R->getOrientation()*evalParDer1Ks(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalParDer1Wu(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalParDer1Wu(const Vec2 &zeta) {
     return R->getOrientation()*evalParDer1Ku(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalParWvCParEta(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalParWvCParEta(const Vec2 &zeta) {
     return crossProduct(R->evalAngularVelocity(),evalWs(zeta)) + evalWs_t(zeta);
   }
 
-  Vec3 FlexiblePlanarNurbsContourFFR::evalParWuPart(const Vec2 &zeta) {
+  Vec3 FlexiblePlanarFfrNurbsContour::evalParWuPart(const Vec2 &zeta) {
     return crossProduct(R->evalAngularVelocity(),evalWu(zeta)) + evalWu_t(zeta);
   }
 
-  void FlexiblePlanarNurbsContourFFR::updatePositions(ContourFrame *frame) {
-    throwError("(FlexiblePlanarNurbsContourFFR::updatePositions): not implemented");
+  void FlexiblePlanarFfrNurbsContour::updatePositions(ContourFrame *frame) {
+    throwError("(FlexiblePlanarFfrNurbsContour::updatePositions): not implemented");
   }
 
-  void FlexiblePlanarNurbsContourFFR::updateVelocities(ContourFrame *frame) {
+  void FlexiblePlanarFfrNurbsContour::updateVelocities(ContourFrame *frame) {
     frame->setVelocity(R->evalVelocity() + crossProduct(R->evalAngularVelocity(), evalGlobalRelativePosition(frame->evalEta())) + evalGlobalRelativeVelocity(frame->evalEta()));
   }
 
-  void FlexiblePlanarNurbsContourFFR::updateAccelerations(ContourFrame *frame) {
-    throwError("(FlexiblePlanarNurbsContourFFR::updateAccelerations): not implemented");
+  void FlexiblePlanarFfrNurbsContour::updateAccelerations(ContourFrame *frame) {
+    throwError("(FlexiblePlanarFfrNurbsContour::updateAccelerations): not implemented");
   }
 
-  void FlexiblePlanarNurbsContourFFR::updateJacobians(ContourFrame *frame, int j) {
+  void FlexiblePlanarFfrNurbsContour::updateJacobians(ContourFrame *frame, int j) {
     if(fabs(frame->evalEta()-etaOld)>1e-13) updateHessianMatrix(frame->evalEta());
     Mat3xV Phi(crvPhi.size(),NONINIT);
     for(size_t i=0; i<crvPhi.size(); i++)
@@ -172,11 +172,11 @@ namespace MBSimFlexibleBody {
     frame->setJacobianOfTranslation(J,j);
   }
 
-  void FlexiblePlanarNurbsContourFFR::updateGyroscopicAccelerations(ContourFrame *frame) {
+  void FlexiblePlanarFfrNurbsContour::updateGyroscopicAccelerations(ContourFrame *frame) {
     frame->setGyroscopicAccelerationOfTranslation(R->evalGyroscopicAccelerationOfTranslation() + crossProduct(R->evalGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition(frame->evalEta())) + crossProduct(R->evalAngularVelocity(),crossProduct(R->evalAngularVelocity(),evalGlobalRelativePosition(frame->evalEta()))) + 2.*crossProduct(R->evalAngularVelocity(),evalGlobalRelativeVelocity(frame->evalEta())));
   }
 
-  void FlexiblePlanarNurbsContourFFR::init(InitStage stage, const InitConfigSet &config) {
+  void FlexiblePlanarFfrNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       R = static_cast<FlexibleBodyFFR*>(parent)->getFrameK();
       crvPos.resize(index.size(),knot.size()-index.size()-1);
@@ -235,17 +235,17 @@ namespace MBSimFlexibleBody {
     FlexibleContour::init(stage, config);
   }
 
-  ContourFrame* FlexiblePlanarNurbsContourFFR::createContourFrame(const string &name) {
+  ContourFrame* FlexiblePlanarFfrNurbsContour::createContourFrame(const string &name) {
     FloatingContourFrame *frame = new FloatingContourFrame(name);
     frame->setContourOfReference(this);
     return frame;
   }
 
-  double FlexiblePlanarNurbsContourFFR::getCurvature(const Vec2 &zeta) {
-    throwError("(FlexiblePlanarNurbsContourFFR::getCurvature): not implemented");
+  double FlexiblePlanarFfrNurbsContour::getCurvature(const Vec2 &zeta) {
+    throwError("(FlexiblePlanarFfrNurbsContour::getCurvature): not implemented");
   }
 
-  void FlexiblePlanarNurbsContourFFR::plot() {
+  void FlexiblePlanarFfrNurbsContour::plot() {
     if(plotFeature[openMBV] and openMBVNurbsCurve) {
       vector<double> data;
       data.push_back(getTime()); //time
@@ -265,7 +265,7 @@ namespace MBSimFlexibleBody {
     FlexibleContour::plot();
   }
 
-  void FlexiblePlanarNurbsContourFFR::initializeUsingXML(DOMElement * element) {
+  void FlexiblePlanarFfrNurbsContour::initializeUsingXML(DOMElement * element) {
     FlexibleContour::initializeUsingXML(element);
     DOMElement * e;
 //    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaNodes");
@@ -299,7 +299,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  bool FlexiblePlanarNurbsContourFFR::isZetaOutside(const fmatvec::Vec2 &zeta) {
+  bool FlexiblePlanarFfrNurbsContour::isZetaOutside(const fmatvec::Vec2 &zeta) {
     return open and (zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]); 
   }
 

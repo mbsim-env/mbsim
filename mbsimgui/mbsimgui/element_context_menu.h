@@ -146,9 +146,9 @@ namespace MBSimGUI {
 
     protected slots:
       void addFlexiblePlanarNurbsContour();
-      void addFlexiblePlanarNurbsContourFFR();
+      void addFlexiblePlanarFfrNurbsContour();
       void addFlexibleSpatialNurbsContour();
-      void addFlexibleSpatialNurbsContourFFR();
+      void addFlexibleSpatialFfrNurbsContour();
   };
 
   class FclContoursContextMenu : public BasicElementMenu {

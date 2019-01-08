@@ -285,14 +285,14 @@
               <nodeNumber>4</nodeNumber>
             </NodeFrame>
           </frames><contours>
-            <FlexiblePlanarNurbsContourFFR name="FlexiblePlanarNurbsContour">
+            <FlexiblePlanarFfrNurbsContour name="FlexiblePlanarNurbsContour">
               <thickness xmlns="http://www.mbsim-env.de/MBSim" unit="m">1</thickness>
               <interpolation>true</interpolation>
               <indices>[4:-1:1]'</indices>
               <degree>3</degree>
               <open>true</open>
               <enableOpenMBV/>
-            </FlexiblePlanarNurbsContourFFR>
+            </FlexiblePlanarFfrNurbsContour>
           </contours></FlexibleBodyFFR>
         <RigidBody name="RigidBody">
           <generalizedInitialPosition>
