@@ -26,7 +26,7 @@
 namespace MBSimFlexibleBody {
 
   /*!
-   *  \brief Flexible body using a floating frame of reference formulation
+   *  \brief Flexible body using data from CalculiX
    *
    * */
   class CalculixBody : public GenericFlexibleFfrBody {

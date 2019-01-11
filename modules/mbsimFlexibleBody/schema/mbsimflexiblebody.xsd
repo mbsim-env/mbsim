@@ -978,7 +978,7 @@
   <xs:element name="CalculixBody" substitutionGroup="mbsim:Body" type="CalculixBodyType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Definiert einen elatsichen Körper mit einer Frame Of Reference Formulierung.<br/>
+        Definiert einen elatsichen Körper aus einer CalculiX-Ergebnisdatei.<br/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -986,7 +986,13 @@
     <xs:complexContent>
       <xs:extension base="mbsim:BodyType">
         <xs:sequence>
-          <xs:element name="resultFileName" type="pv:filenameFullEval"/>
+          <xs:element name="resultFileName" type="pv:filenameFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                CalculiX-Ergebnisdatei.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>

@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
     };
 
   /*!
-   *  \brief Flexible body using a floating frame of reference formulation
+   *  \brief Generic flexible body using a floating frame of reference formulation
    *
    * */
   class GenericFlexibleFfrBody : public NodeBasedBody {
