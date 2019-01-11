@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+    <frames/>
+    <contours/>
+    <groups/>
+    <objects>
+      <CalculixBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="CalculixBody">
+        <resultFileName>"calculix.frd"</resultFileName>
+        <frames/>
+        <contours/>
+        <enableOpenMBV>
+          <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"zzStress"</colorRepresentation>
+          <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">-1.5e9</minimalColorValue>
+          <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">5e8</maximalColorValue>
+        </enableOpenMBV>
+        <enableOpenMBVFrameK/>
+      </CalculixBody>
+    </objects>
+    <links/>
+    <constraints/>
+    <observers/>
+    <enableOpenMBVFrameI/>
+    <environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity unit="m/s^2">
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0</ele>
+            <ele>-9.81</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
+
+  <Eigenanalyzer xmlns="http://www.mbsim-env.de/MBSim">
+    <plotStepSize unit="s">1e-3</plotStepSize>
+    <amplitude>0</amplitude>
+    <modeAmplitudeTable>
+      <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+        <row>
+          <ele>1</ele>
+          <ele>1e3</ele>
+        </row>
+        <row>
+          <ele>2</ele>
+          <ele>1e3</ele>
+        </row>
+        <row>
+          <ele>3</ele>
+          <ele>1e3</ele>
+        </row>
+        <row>
+          <ele>4</ele>
+          <ele>1e3</ele>
+        </row>
+      </xmlMatrix>
+    </modeAmplitudeTable>
+  </Eigenanalyzer>
+
+
+</MBSimProject>
