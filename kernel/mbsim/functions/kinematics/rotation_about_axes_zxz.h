@@ -64,7 +64,7 @@ namespace MBSim {
         J.e(1,1) = sin(psi);
         J.e(1,2) = -cos(psi)*sin(theta);
         //J.e(2,0) = 1;
-        //J.e(2,1) = 1;
+        //J.e(2,1) = 0;
         J.e(2,2) = cos(theta);
         return J;
       }
