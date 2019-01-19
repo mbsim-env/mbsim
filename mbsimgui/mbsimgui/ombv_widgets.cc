@@ -38,8 +38,9 @@ namespace MBSimGUI {
   OMBVRigidBodyWidgetFactory::OMBVRigidBodyWidgetFactory()  {
     name.emplace_back("Cube");
     name.emplace_back("Cuboid");
-    name.emplace_back("Frustum");
     name.emplace_back("Sphere");
+    name.emplace_back("Cylinder");
+    name.emplace_back("Frustum");
     name.emplace_back("Extrusion");
     name.emplace_back("GearWheel");
     name.emplace_back("IvBody");
@@ -47,8 +48,9 @@ namespace MBSimGUI {
     name.emplace_back("InvisibleBody");
     xmlName.push_back(OPENMBV%"Cube");
     xmlName.push_back(OPENMBV%"Cuboid");
-    xmlName.push_back(OPENMBV%"Frustum");
     xmlName.push_back(OPENMBV%"Sphere");
+    xmlName.push_back(OPENMBV%"Cylinder");
+    xmlName.push_back(OPENMBV%"Frustum");
     xmlName.push_back(OPENMBV%"Extrusion");
     xmlName.push_back(OPENMBV%"GearWheel");
     xmlName.push_back(OPENMBV%"IvBody");
@@ -62,18 +64,20 @@ namespace MBSimGUI {
     if(i==1)
       return new CuboidWidget("Cuboid"+toQStr(count++),OPENMBV%"Cuboid");
     if(i==2)
-      return new FrustumWidget("Frustum"+toQStr(count++),OPENMBV%"Frustum");
-    if(i==3)
       return new SphereWidget("Sphere"+toQStr(count++),OPENMBV%"Sphere");
+    if(i==3)
+      return new CylinderWidget("Cylinder"+toQStr(count++),OPENMBV%"Cylinder");
     if(i==4)
-      return new ExtrusionWidget("Extrusion"+toQStr(count++),OPENMBV%"Extrusion");
+      return new FrustumWidget("Frustum"+toQStr(count++),OPENMBV%"Frustum");
     if(i==5)
-      return new GearWheelWidget("GearWheel"+toQStr(count++),OPENMBV%"GearWheel");
+      return new ExtrusionWidget("Extrusion"+toQStr(count++),OPENMBV%"Extrusion");
     if(i==6)
-      return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
+      return new GearWheelWidget("GearWheel"+toQStr(count++),OPENMBV%"GearWheel");
     if(i==7)
-      return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
+      return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
     if(i==8)
+      return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
+    if(i==9)
       return new InvisibleBodyWidget("InvisibleBody"+toQStr(count++),OPENMBV%"InvisibleBody");
     return nullptr;
   }
@@ -803,6 +807,29 @@ namespace MBSimGUI {
     pressureAngle->writeXMLFile(e);
     backlash->writeXMLFile(e);
     solid->writeXMLFile(e);
+    return e;
+  }
+
+  CylinderWidget::CylinderWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
+
+    radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"radius");
+    layout->addWidget(radius);
+
+    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"height");
+    layout->addWidget(height);
+  }
+
+  DOMElement* CylinderWidget::initializeUsingXML(DOMElement *element) {
+    OMBVRigidBodyWidget::initializeUsingXML(element);
+    radius->initializeUsingXML(element);
+    height->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* CylinderWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
+    radius->writeXMLFile(e);
+    height->writeXMLFile(e);
     return e;
   }
 
