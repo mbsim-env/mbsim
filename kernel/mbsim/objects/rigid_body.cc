@@ -198,7 +198,7 @@ namespace MBSim {
         // the coordinates must be defined w.r.t. C and be absolute
         // the Jacobians of translation and rotation must be constant
         // the rigibbody must not be constrained
-        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent()) and fPrPK->constParDer1() and fAPK->constParDer1() and not constraint)
+        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent()) and (fPrPK and fPrPK->constParDer1()) and (fAPK and fAPK->constParDer1()) and not constraint)
           nonConstantMassMatrix = false;
       }
       else
