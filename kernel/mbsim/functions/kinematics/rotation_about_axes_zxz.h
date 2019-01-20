@@ -20,19 +20,20 @@
 #ifndef _ROTATION_ABOUT_AXES_ZXZ_H_
 #define _ROTATION_ABOUT_AXES_ZXZ_H_
 
-#include "mbsim/functions/function.h"
+#include "mbsim/functions/kinematics/rotation_about_three_axes.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_zxz_mapping.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
 
 namespace MBSim {
 
   template<class Arg> 
-  class RotationAboutAxesZXZ : public Function<fmatvec::RotMat3(Arg)> {
+  class RotationAboutAxesZXZ : public RotationAboutThreeAxes<Arg> {
     using B = fmatvec::Function<fmatvec::RotMat3(Arg)>; 
-    private:
-      fmatvec::RotMat3 A;
-      fmatvec::Mat3xV J, Jd;
+    using RotationAboutThreeAxes<Arg>::A;
+    using RotationAboutThreeAxes<Arg>::J;
+    using RotationAboutThreeAxes<Arg>::Jd;
     public:
-      RotationAboutAxesZXZ() : J(3), Jd(3) { J.e(2,0) = 1; }
-      int getArgSize() const override { return 3; }
+      RotationAboutAxesZXZ() { J.e(2,0) = 1; }
       fmatvec::RotMat3 operator()(const Arg &q) override {
         double psi=q.e(0);
         double theta=q.e(1);
@@ -57,12 +58,17 @@ namespace MBSim {
       typename B::DRetDArg parDer(const Arg &q) override {
         double psi=q.e(0);
         double theta=q.e(1);
+        double sint = sin(theta);
+        if(fabs(sint)<=macheps)
+          Element::throwError("Singularity in rotation.");
+        double cosp = cos(psi);
+        double sinp = sin(psi);
         //J.e(0,0) = 0;
-        J.e(0,1) = cos(psi);
-        J.e(0,2) = sin(psi)*sin(theta);
+        J.e(0,1) = cosp;
+        J.e(0,2) = sinp*sint;
         //J.e(1,0) = 0;
-        J.e(1,1) = sin(psi);
-        J.e(1,2) = -cos(psi)*sin(theta);
+        J.e(1,1) = sinp;
+        J.e(1,2) = -cosp*sint;
         //J.e(2,0) = 1;
         //J.e(2,1) = 0;
         J.e(2,2) = cos(theta);
@@ -73,13 +79,19 @@ namespace MBSim {
         double theta=q.e(1);
         double psid=qd.e(0);
         double thetad=qd.e(1);
-        Jd.e(0,1) = -sin(psi)*psid;
-        Jd.e(0,2) = cos(psi)*sin(theta)*psid + sin(psi)*cos(theta)*thetad;
-        Jd.e(1,1) = cos(psi)*psid;
-        Jd.e(1,2) = sin(psi)*sin(theta)*psid - cos(psi)*cos(theta)*thetad;
-        Jd.e(2,2) = -sin(theta)*thetad;
+        double sint = sin(theta);
+        double cost = cos(theta);
+        double cosp = cos(psi);
+        double sinp = sin(psi);
+        Jd.e(0,1) = -sinp*psid;
+        Jd.e(0,2) = cosp*sint*psid + sinp*cost*thetad;
+        Jd.e(1,1) = cosp*psid;
+        Jd.e(1,2) = sinp*sint*psid - cosp*cost*thetad;
+        Jd.e(2,2) = -sint*thetad;
         return Jd;
       }
+      Function<fmatvec::MatV(Arg)>* getMappingFunction() const override { return new RotationAboutAxesZXZMapping<Arg>; }
+      Function<fmatvec::MatV(Arg)>* getTransformedMappingFunction() const override { return new RotationAboutAxesZXZTransformedMapping<Arg>; }
   };
 
 }

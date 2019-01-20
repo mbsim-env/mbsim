@@ -17,19 +17,19 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _ROTATION_ABOUT_AXES_XYZ_TRANSFORMED_MAPPING_H_
-#define _ROTATION_ABOUT_AXES_XYZ_TRANSFORMED_MAPPING_H_
+#ifndef _ROTATION_ABOUT_AXES_ZYX_TRANSFORMED_MAPPING_H_
+#define _ROTATION_ABOUT_AXES_ZYX_TRANSFORMED_MAPPING_H_
 
 #include "mbsim/functions/function.h"
 
 namespace MBSim {
 
   template<class Arg> 
-  class RotationAboutAxesXYZTransformedMapping : public Function<fmatvec::MatV(Arg)> {
+  class RotationAboutAxesZYXTransformedMapping : public Function<fmatvec::MatV(Arg)> {
     private:
       fmatvec::MatV T;
     public:
-      RotationAboutAxesXYZTransformedMapping() : T(3,3,fmatvec::Eye()) { }
+      RotationAboutAxesZYXTransformedMapping() : T(3,3) { T.e(2,0) = 1; }
       int getArgSize() const override { return 3; }
       fmatvec::MatV operator()(const Arg &q) override {
         double beta = q.e(1);
@@ -41,12 +41,12 @@ namespace MBSim {
         double cos_gamma = cos(gamma);
         double sin_gamma = sin(gamma);
         double tan_beta = sin_beta/cos_beta;
-        T.e(0,0) = cos_gamma/cos_beta;
-        T.e(0,1) = -sin_gamma/cos_beta;
-        T.e(1,0) = sin_gamma;
+        T.e(0,1) = sin_gamma/cos_beta;
+        T.e(0,2) = cos_gamma/cos_beta;
         T.e(1,1) = cos_gamma;
-        T.e(2,0) = -cos_gamma*tan_beta;
-        T.e(2,1) = sin_gamma*tan_beta;
+        T.e(1,2) = -sin_gamma;
+        T.e(2,1) = tan_beta*sin_gamma;
+        T.e(2,2) = tan_beta*cos_gamma;
         return T;
       }
   };

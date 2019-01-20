@@ -20,22 +20,23 @@
 #ifndef _ROTATION_ABOUT_AXES_XYZ_H_
 #define _ROTATION_ABOUT_AXES_XYZ_H_
 
-#include "mbsim/functions/function.h"
+#include "mbsim/functions/kinematics/rotation_about_three_axes.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_xyz_mapping.h"
+#include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
 
 namespace MBSim {
 
   /*!
-   * \brief rotation class for rotation about all three axis using the cardan description
+   * \brief rotation class for rotation about all three axes using the cardan description
    */
   template<class Arg> 
-  class RotationAboutAxesXYZ : public Function<fmatvec::RotMat3(Arg)> {
+  class RotationAboutAxesXYZ : public RotationAboutThreeAxes<Arg> {
     using B = fmatvec::Function<fmatvec::RotMat3(Arg)>; 
-    private:
-      fmatvec::RotMat3 A;
-      fmatvec::Mat3xV J, Jd;
+    using RotationAboutThreeAxes<Arg>::A;
+    using RotationAboutThreeAxes<Arg>::J;
+    using RotationAboutThreeAxes<Arg>::Jd;
     public:
-      RotationAboutAxesXYZ() : J(3), Jd(3) { J.e(0,0) = 1; }
-      int getArgSize() const override { return 3; }
+      RotationAboutAxesXYZ() { J.e(0,0) = 1; }
       fmatvec::RotMat3 operator()(const Arg &q) override {
         double a=q.e(0);
         double b=q.e(1);
@@ -63,6 +64,8 @@ namespace MBSim {
         double cosa = cos(a);
         double sina = sin(a);
         double cosb = cos(b);
+        if(fabs(cosb)<=macheps)
+          Element::throwError("Singularity in rotation.");
         //J.e(0,0) = 1;
         //J.e(0,1) = 0;
         J.e(0,2) = sin(b);
@@ -94,6 +97,8 @@ namespace MBSim {
         Jd.e(2,2) = -sina*cosb*ad - cosa*sinb*bd;
         return Jd;
       }
+      Function<fmatvec::MatV(Arg)>* getMappingFunction() const override { return new RotationAboutAxesXYZMapping<Arg>; }
+      Function<fmatvec::MatV(Arg)>* getTransformedMappingFunction() const override { return new RotationAboutAxesXYZTransformedMapping<Arg>; }
   };
 
 }

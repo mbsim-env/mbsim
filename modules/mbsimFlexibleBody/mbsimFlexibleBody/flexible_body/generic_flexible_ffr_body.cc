@@ -361,38 +361,17 @@ namespace MBSimFlexibleBody {
       K->getJacobianOfRotation(1,false) = PJR[1];
 
       auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
-      if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesXYZ<VecV>*>(Atmp->getFunction())) {
-        if(bodyFixedRepresentationOfAngularVelocity)
-          fTR = new RotationAboutAxesXYZTransformedMapping<VecV>;
-        else
-          fTR = new RotationAboutAxesXYZMapping<VecV>;
-        fTR->setParent(this);
-        constJR = true;
-        constjR = true;
-        PJRR = SqrMat3(EYE);
-        PJR[0].set(i02,iuR,PJRR);
-      }
-      else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZXZ<VecV>*>(Atmp->getFunction())) {
-        if(bodyFixedRepresentationOfAngularVelocity)
-          fTR = new RotationAboutAxesZXZTransformedMapping<VecV>;
-        else
-          fTR = new RotationAboutAxesZXZMapping<VecV>;
-        fTR->setParent(this);
-        constJR = true;
-        constjR = true;
-        PJRR = SqrMat3(EYE);
-        PJR[0].set(i02,iuR,PJRR);
-      }
-      else if(Atmp and coordinateTransformation and dynamic_cast<RotationAboutAxesZYX<VecV>*>(Atmp->getFunction())) {
-        if(bodyFixedRepresentationOfAngularVelocity)
-          throwError("(GenericFlexibleFfrBody::init): coordinate transformation not yet available for zyx-rotation");
-        else
-          fTR = new RotationAboutAxesZYXMapping<VecV>;
-        fTR->setParent(this);
-        constJR = true;
-        constjR = true;
-        PJRR = SqrMat3(EYE);
-        PJR[0].set(i02,iuR,PJRR);
+      if(Atmp and coordinateTransformation) {
+        RotationAboutThreeAxes<VecV> *A3 = dynamic_cast<RotationAboutThreeAxes<VecV>*>(Atmp->getFunction());
+        if(A3) {
+          fTR = bodyFixedRepresentationOfAngularVelocity?A3->getTransformedMappingFunction():A3->getMappingFunction();
+          if(not fTR) throwError("(RigidBody::init): coordinate transformation not yet available for current rotation");
+          fTR->setParent(this);
+          constJR = true;
+          constjR = true;
+          PJRR = SqrMat3(EYE);
+          PJR[0].set(i02,iuR,PJRR);
+        }
       }
 
       if(fPrPK) {
@@ -409,7 +388,7 @@ namespace MBSimFlexibleBody {
       if(fAPK) {
         if(fAPK->constParDer1()) {
           constJR = true;
-          PJRR = fTR?fAPK->parDer1(qRRel,0)*(*fTR)(qRRel):fAPK->parDer1(qRRel,0);
+          PJRR = fAPK->parDer1(qRRel,0);
           PJR[0].set(i02,iuR,PJRR);
         }
         if(fAPK->constParDer2()) {
@@ -418,25 +397,8 @@ namespace MBSimFlexibleBody {
         }
       }
 
-      if(bodyFixedRepresentationOfAngularVelocity) {
+      if(bodyFixedRepresentationOfAngularVelocity)
         frameForJacobianOfRotation = K;
-        // TODO: do not invert generalized mass matrix in case of special
-        // parametrisation
-//        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent())) {
-//          if(fPrPK) {
-//            fPrPK->updateJacobian(qRel(iqT),0);
-//            PJT[0].set(i02,iuT,fPrPK->getJacobian());
-//          }
-//          if(fAPK) {
-//            fAPK->updateJacobian(qRel(iqR),0);
-//            PJR[0].set(i02,iuR,fAPK->getJacobian());
-//          }
-//          updateM_ = &GenericFlexibleFfrBody::updateMConst;
-//          Mbuf = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
-//          LLM[0] = facLL(Mbuf);
-//          facLLM_ = &GenericFlexibleFfrBody::facLLMConst;
-//        }
-      }
       else
         frameForJacobianOfRotation = R;
 
@@ -645,7 +607,7 @@ namespace MBSimFlexibleBody {
     }
     if(fAPK) {
       if(!constJR) {
-        PJRR = fTR?fAPK->parDer1(evalqRRel(),getTime())*(*fTR)(evalqRRel()):fAPK->parDer1(evalqRRel(),getTime());
+        PJRR = fAPK->parDer1(evalqRRel(),getTime());
         PJR[0].set(i02,iuR,PJRR);
       }
       if(!constjR)
@@ -655,22 +617,10 @@ namespace MBSimFlexibleBody {
   }
 
   void GenericFlexibleFfrBody::updateGyroscopicAccelerations() {
-    if(fPrPK) {
-      if(not(constJT and constjT)) {
-        PjbT = (fPrPK->parDer1DirDer1(evalqdTRel(),evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*getuTRel() + fPrPK->parDer2DirDer1(evalqdTRel(),evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
-      }
-    }
-    if(fAPK) {
-      if(not(constJR and constjR)) {
-        if(fTR) {
-          Mat3xV JRd = fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime());
-          MatV TRd = fTR->dirDer(getqdRRel(),getqRRel());
-          PjbR = JRd*getqdRRel() + fAPK->parDer1(getqRRel(),getTime())*TRd*getuRRel() + fAPK->parDer2DirDer1(getqdRRel(),getqRRel(),getTime()) + fAPK->parDer2ParDer2(getqRRel(),getTime());
-        }
-        else
-          PjbR = (fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*getuRRel() + fAPK->parDer2DirDer1(evalqdRRel(),evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
-      }
-    }
+    if(fPrPK and not(constJT and constjT))
+      PjbT = (fPrPK->parDer1DirDer1(evalqdTRel(),evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*getuTRel() + fPrPK->parDer2DirDer1(evalqdTRel(),evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
+    if(fAPK and not(constJR and constjR))
+      PjbR = (fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*getuRRel() + fAPK->parDer2DirDer1(evalqdRRel(),evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
     updPjb = false;
   }
 
