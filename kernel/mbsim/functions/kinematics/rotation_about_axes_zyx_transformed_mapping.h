@@ -35,7 +35,7 @@ namespace MBSim {
         double beta = q.e(1);
         double gamma = q.e(2);
         double cos_beta = cos(beta);
-        if(fabs(cos_beta)<=macheps)
+        if(fabs(cos_beta)<=1e-13)
           Element::throwError("Singularity in rotation.");
         double sin_beta = sin(beta);
         double cos_gamma = cos(gamma);

@@ -36,7 +36,7 @@ namespace MBSim {
         double theta = q.e(1);
         double cos_theta = cos(theta);
         double sin_theta = sin(theta);
-        if(fabs(sin_theta)<=macheps)
+        if(fabs(sin_theta)<=1e-13)
           Element::throwError("Singularity in rotation.");
         double cos_psi = cos(psi);
         double sin_psi = sin(psi);

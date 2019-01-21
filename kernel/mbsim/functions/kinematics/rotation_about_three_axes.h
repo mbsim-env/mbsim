@@ -21,7 +21,6 @@
 #define _ROTATION_ABOUT_THREE_AXES_H_
 
 #include "mbsim/functions/function.h"
-#include "mbsim/utils/eps.h"
 
 namespace MBSim {
 

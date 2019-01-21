@@ -64,7 +64,7 @@ namespace MBSim {
         double cosa = cos(a);
         double sina = sin(a);
         double cosb = cos(b);
-        if(fabs(cosb)<=macheps)
+        if(fabs(cosb)<=1e-13)
           Element::throwError("Singularity in rotation.");
         //J.e(0,0) = 1;
         //J.e(0,1) = 0;
