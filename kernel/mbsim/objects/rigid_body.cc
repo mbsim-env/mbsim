@@ -150,6 +150,8 @@ namespace MBSim {
     Z.init(stage, config);
     if(stage==preInit) {
       // Note we explicity make this check here to check exceptions in init
+      if(m<0)
+        throwError("The mass must be nonnegative.");
       if(SThetaS(0,0)<0 || SThetaS(1,1)<0 || SThetaS(2,2)<0)
         throwError("The diagonal elements of the inertia tensor must be nonnegative.");
 
@@ -198,7 +200,7 @@ namespace MBSim {
         // the coordinates must be defined w.r.t. C and be absolute
         // the Jacobians of translation and rotation must be constant
         // the rigibbody must not be constrained
-        if(K == C && dynamic_cast<DynamicSystem*>(R->getParent()) and (fPrPK and fPrPK->constParDer1()) and (fAPK and fAPK->constParDer1()) and not constraint)
+        if(K == C and dynamic_cast<DynamicSystem*>(R->getParent()) and (fPrPK and fPrPK->constParDer1()) and (fAPK and fAPK->constParDer1()) and not constraint)
           nonConstantMassMatrix = false;
       }
       else
@@ -253,7 +255,7 @@ namespace MBSim {
         }
       }
 
-      if(frameForInertiaTensor && frameForInertiaTensor!=C)
+      if(frameForInertiaTensor and frameForInertiaTensor!=C)
         SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
 
       if(not nonConstantMassMatrix)
