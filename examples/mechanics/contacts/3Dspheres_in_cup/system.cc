@@ -45,6 +45,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setInertiaTensor(Theta);
   body1->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   body1->setRotation(new RotationAboutAxesXYZ<VecV>);
+  body1->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
 
   // Second Body
   RigidBody* body2 = new RigidBody("Body2");
@@ -56,6 +57,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body2->setInertiaTensor(Theta);
   body2->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   body2->setRotation(new RotationAboutAxesXYZ<VecV>);
+  body2->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
 
   // Third Body
   RigidBody* body3 = new RigidBody("Body3");
@@ -67,6 +69,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body3->setInertiaTensor(Theta);
   body3->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   body3->setRotation(new RotationAboutAxesXYZ<VecV>);
+  body3->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
 
   // Cup
   RigidBody* cup = new RigidBody("Cup");

@@ -84,6 +84,7 @@
           <stateDependentRotation>
             <RotationAboutAxesXYZ/>
           </stateDependentRotation>
+          <generalizedVelocityOfRotation>"coordinatesOfAngularVelocityWrtFrameOfReference"</generalizedVelocityOfRotation>
           <frames>
           </frames><contours>
             <SpatialContour name="SpatialContour3">

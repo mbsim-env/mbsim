@@ -71,6 +71,7 @@
         <stateDependentRotation>
           <RotationAboutAxesXYZ/>
         </stateDependentRotation>
+        <generalizedVelocityOfRotation>"coordinatesOfAngularVelocityWrtFrameOfReference"</generalizedVelocityOfRotation>
         <frames/>
         <contours>
           <FclBox name="FclBox" xmlns="http://www.mbsim-env.de/MBSimFcl">

@@ -75,6 +75,7 @@ System::System(const string &projectName) :
 
     plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
+    plateBody->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
     //give degrees of freedom
     plateBody->setGeneralizedInitialPosition(Vec("[-1.5;0.5;0;0;0;0]"));
     plateBody->setGeneralizedInitialVelocity(Vec("[0;0;0;0;0;0]"));
@@ -120,6 +121,7 @@ System::System(const string &projectName) :
 
     plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
+    plateBody->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
     //give degrees of freedom
     plateBody->setGeneralizedInitialPosition(Vec("[1.5;0.8;0;0;0;0]"));
     plateBody->setGeneralizedInitialVelocity(Vec("[0;0;0;0;0;0]"));
@@ -166,6 +168,7 @@ System::System(const string &projectName) :
 
     plateBody->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     plateBody->setRotation(new RotationAboutAxesXYZ<VecV>);
+    plateBody->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
     //give degrees of freedom
     plateBody->setGeneralizedInitialPosition(Vec("[0.;-0.3;1.5;0;0;0]"));
     plateBody->setGeneralizedInitialVelocity(Vec("[0;0;0;0;0;0]"));

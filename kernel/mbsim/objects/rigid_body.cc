@@ -155,6 +155,9 @@ namespace MBSim {
       if(SThetaS(0,0)<0 || SThetaS(1,1)<0 || SThetaS(2,2)<0)
         throwError("The diagonal elements of the inertia tensor must be nonnegative.");
 
+      if(generalizedVelocityOfRotation==unknown)
+        throwError("Generalized velocity of rotation unknown");
+
       for(unsigned int k=1; k<frame.size(); k++) {
         if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
           static_cast<FixedRelativeFrame*>(frame[k])->setFrameOfReference(C);
@@ -194,17 +197,7 @@ namespace MBSim {
 	PJR[1](i-3,i) = 1;
       jRel.resize(nu);
 
-      if(bodyFixedRepresentationOfAngularVelocity) {
-        frameForJacobianOfRotation = K;
-        // do not invert generalized mass matrix in case of special parametrisation
-        // the coordinates must be defined w.r.t. C and be absolute
-        // the Jacobians of translation and rotation must be constant
-        // the rigibbody must not be constrained
-        if(K == C and dynamic_cast<DynamicSystem*>(R->getParent()) and (fPrPK and fPrPK->constParDer1()) and (fAPK and fAPK->constParDer1()) and not constraint)
-          nonConstantMassMatrix = false;
-      }
-      else
-        frameForJacobianOfRotation = R;
+      frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
     }
     else if(stage==unknownStage) {
       JRel[0].resize(nu,hSize[0]);
@@ -219,10 +212,10 @@ namespace MBSim {
       Z.getJacobianOfRotation(1,false) = PJR[1];
 
       auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
-      if(Atmp and coordinateTransformation) {
+      if(Atmp and generalizedVelocityOfRotation!=derivativeOfGeneralizedPositionOfRotation) {
         RotationAboutThreeAxes<VecV> *A3 = dynamic_cast<RotationAboutThreeAxes<VecV>*>(Atmp->getFunction());
         if(A3) {
-          fTR = bodyFixedRepresentationOfAngularVelocity?A3->getTransformedMappingFunction():A3->getMappingFunction();
+          fTR = (generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameOfReference)?A3->getMappingFunction():A3->getTransformedMappingFunction();
           if(not fTR) throwError("(RigidBody::init): coordinate transformation not yet available for current rotation");
           fTR->setParent(this);
           constJR = true;
@@ -258,8 +251,15 @@ namespace MBSim {
       if(frameForInertiaTensor and frameForInertiaTensor!=C)
         SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
 
-      if(not nonConstantMassMatrix)
-        LLM = facLL(SymMat(m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0])));
+      // do not invert generalized mass matrix in case of special parametrisation
+      // the coordinates must be defined w.r.t. C and be absolute
+      // the Jacobians of translation and rotation must be constant
+      // the rigidbody must not be constrained
+      if(K == C and dynamic_cast<DynamicSystem*>(R->getParent()) and (not fPrPK or constJT) and (not fAPK or (constJR and generalizedVelocityOfRotation!=coordinatesOfAngularVelocityWrtFrameOfReference)) and not constraint) {
+        nonConstantMassMatrix = false;
+        M = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
+        LLM = facLL(M);
+      }
     }
     Body::init(stage, config);
     if(fTR) fTR->init(stage, config);
@@ -560,10 +560,14 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"translationDependentRotation");
     if(e) translationDependentRotation = E(e)->getText<bool>();
-    e=E(element)->getFirstElementChildNamed(MBSIM%"coordinateTransformationForRotation");
-    if(e) coordinateTransformation = E(e)->getText<bool>();
-    e=E(element)->getFirstElementChildNamed(MBSIM%"bodyFixedRepresentationOfAngularVelocity");
-    if(e) bodyFixedRepresentationOfAngularVelocity = E(e)->getText<bool>();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedVelocityOfRotation");
+    if(e) {
+      string generalizedVelocityOfRotationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(generalizedVelocityOfRotationStr=="derivativeOfGeneralizedPositionOfRotation") generalizedVelocityOfRotation=derivativeOfGeneralizedPositionOfRotation;
+      else if(generalizedVelocityOfRotationStr=="coordinatesOfAngularVelocityWrtFrameOfReference") generalizedVelocityOfRotation=coordinatesOfAngularVelocityWrtFrameOfReference;
+      else if(generalizedVelocityOfRotationStr=="coordinatesOfAngularVelocityWrtFrameForKinematics") generalizedVelocityOfRotation=coordinatesOfAngularVelocityWrtFrameForKinematics;
+      else generalizedVelocityOfRotation=unknown;
+    }
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
     if(e) {

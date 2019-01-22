@@ -233,6 +233,8 @@ namespace MBSim {
       virtual void sethInd(int hInd_, int i=0); 
       int gethInd(int i=0) { return hInd[i]; }
 
+      const fmatvec::SymMat& getM(bool check=true) const;
+      fmatvec::SymMat& getM(bool check=true);
       const fmatvec::Vec& geth(int i=0, bool check=true) const;
       fmatvec::Vec& geth(int i=0, bool check=true);
 

@@ -49,6 +49,13 @@ namespace MBSim {
    */
   class RigidBody : public Body {
     public:
+      enum GeneralizedVelocityOfRotation {
+        derivativeOfGeneralizedPositionOfRotation=0,
+        coordinatesOfAngularVelocityWrtFrameOfReference,
+        coordinatesOfAngularVelocityWrtFrameForKinematics,
+        unknown
+      };
+
       /**
        * \brief constructor
        * \param name name of rigid body
@@ -155,8 +162,7 @@ namespace MBSim {
       void setRotation(Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setStateDependentRotation(fAPK_); }
 
       void setTranslationDependentRotation(bool dep) { translationDependentRotation = dep; }
-      void setCoordinateTransformationForRotation(bool ct) { coordinateTransformation = ct; }
-      void setBodyFixedRepresentationOfAngularVelocity(bool bf) { bodyFixedRepresentationOfAngularVelocity = bf; }
+      void setGeneralizedVelocityOfRotation(GeneralizedVelocityOfRotation generalizedVelocityOfRotation_) { generalizedVelocityOfRotation = generalizedVelocityOfRotation_; }
 
       /*!
        * \brief get Kinematic for translational motion
@@ -263,11 +269,6 @@ namespace MBSim {
 
       FixedRelativeFrame *K;
 
-      /**
-       * \brief boolean to use body fixed Frame for rotation
-       */
-      bool coordinateTransformation{true};
-
       fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
       /**
@@ -331,7 +332,7 @@ namespace MBSim {
 
       Frame Z;
 
-      bool bodyFixedRepresentationOfAngularVelocity{false};
+      GeneralizedVelocityOfRotation generalizedVelocityOfRotation{derivativeOfGeneralizedPositionOfRotation};
       
       InverseKineticsJoint *joint;
 

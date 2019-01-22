@@ -57,7 +57,6 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   ground->setFrameOfReference(getFrame("Q"));
   addContour(ground);
 
-
   double m = 0.1;
   double l,b,h;
   l = 0.1;
@@ -110,6 +109,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
     body[i] = new RigidBody(nameBody.str());
     body[i]->setTranslation(new TranslationAlongAxesXYZ<VecV>);
     body[i]->setRotation(new RotationAboutAxesXYZ<VecV>);
+    body[i]->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
     addObject(body[i]);
     body[i]->setMass(m);
     SymMat Theta(3);

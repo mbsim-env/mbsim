@@ -40,6 +40,7 @@ System::System(const string &projectName)  : DynamicSystemSolver(projectName) {
   ball->setRotation(new RotationAboutAxesXYZ<VecV>);
   ball->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   ball->setFrameForKinematics(ball->getFrame("C"));
+  ball->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
 
   // initial settings
   Vec u0(6,INIT,0.);

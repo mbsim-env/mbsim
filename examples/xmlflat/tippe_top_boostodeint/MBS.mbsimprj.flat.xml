@@ -40,6 +40,7 @@
         <stateDependentRotation>
           <RotationAboutAxesXYZ/>
         </stateDependentRotation>
+        <generalizedVelocityOfRotation>"coordinatesOfAngularVelocityWrtFrameOfReference"</generalizedVelocityOfRotation>
         <frames>
           <FixedRelativeFrame name="S1">
             <relativePosition>[0;0.3e-2;0]</relativePosition>

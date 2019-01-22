@@ -41,6 +41,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   dice->setInertiaTensor(Theta);
   dice->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   dice->setRotation(new RotationAboutAxesXYZ<VecV>);
+  dice->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
 
   this->addObject(dice);
 

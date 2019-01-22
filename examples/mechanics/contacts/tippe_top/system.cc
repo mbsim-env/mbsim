@@ -43,6 +43,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Mat J("[1,0,0;0,1,0;0,0,1]");
   body->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   body->setRotation(new RotationAboutAxesXYZ<VecV>);
+  body->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
   double m = 6e-3;
   double r1 = 1.5e-2;
   double r2 = 0.5e-2;

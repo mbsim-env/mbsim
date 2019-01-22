@@ -89,8 +89,10 @@ namespace MBSim {
     for (auto & i : dynamicsystem)
       i->updateM();
 
-    for (auto & i : object)
+    for (auto & i : objectWithNonConstantMassMatrix) {
+      i->getM(false).init(0);
       i->updateM();
+    }
   }
 
   void DynamicSystem::updateLLM() {

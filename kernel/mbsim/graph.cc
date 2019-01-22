@@ -43,6 +43,7 @@ namespace MBSim {
   }
 
   void Graph::updateM() {
+    M.init(0);
     for (auto & i : object)
       i->updateM();
   }

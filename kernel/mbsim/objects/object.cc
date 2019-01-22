@@ -356,12 +356,22 @@ namespace MBSim {
     qd = evalT() * u;
   }
 
-  const fmatvec::Vec& Object::geth(int i, bool check) const {
+  const SymMat& Object::getM(bool check) const {
+    assert((not check) or (not ds->getUpdateM()));
+    return M;
+  }
+
+  SymMat& Object::getM(bool check) {
+    assert((not check) or (not ds->getUpdateM()));
+    return M;
+  }
+
+  const Vec& Object::geth(int i, bool check) const {
     assert((not check) or (not ds->getUpdateh(i)));
     return h[i];
   }
 
-  fmatvec::Vec& Object::geth(int i, bool check) {
+  Vec& Object::geth(int i, bool check) {
     assert((not check) or (not ds->getUpdateh(i)));
     return h[i];
   }

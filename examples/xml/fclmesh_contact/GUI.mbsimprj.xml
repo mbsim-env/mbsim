@@ -105,7 +105,8 @@
         <stateDependentRotation>
           <RotationAboutAxesXYZ/>
         </stateDependentRotation>
-        <frames/>
+        <generalizedVelocityOfRotation>"coordinatesOfAngularVelocityWrtFrameOfReference"</generalizedVelocityOfRotation>
+       <frames/>
         <contours>
           <FclMesh name="FclMesh" xmlns="http://www.mbsim-env.de/MBSimFcl">
             <vertices unit="dm">[ 1 0 0,

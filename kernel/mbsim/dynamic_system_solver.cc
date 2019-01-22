@@ -228,7 +228,6 @@ namespace MBSim {
         sethInd(0, i);
       }
 
-      setUpObjectsWithNonConstantMassMatrix();
       setUpLinks(); // is needed by calcgSize()
 
       calcxSize();
@@ -373,6 +372,8 @@ namespace MBSim {
       msg(Info) << "End of special group stage==unknownStage" << endl;
 
       Group::init(stage, config);
+
+      setUpObjectsWithNonConstantMassMatrix();
     }
     else if (stage == preInit) {
       msg(Info) << "  initialising preInit ..." << endl;
@@ -746,7 +747,6 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateM() {
-    M.init(0);
     Group::updateM();
     updM = false;
   }

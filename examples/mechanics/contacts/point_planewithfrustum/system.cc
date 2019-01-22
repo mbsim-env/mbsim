@@ -90,6 +90,7 @@ System::System(const string &projectName, bool setValued) : DynamicSystemSolver(
   b->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   if (considerRotation) {
     b->setRotation(new RotationAboutAxesXYZ<VecV>);
+    b->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
   }
   for (int i=0; i<5; i++)
     b->addContour(new Point("Point"+toString(i), b->getFrame("Top"+toString(i))));

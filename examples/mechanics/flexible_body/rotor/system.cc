@@ -117,6 +117,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ScheibeS->setFrameOfReference(this->getFrame("ScheibeS")); 
   ScheibeS->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   ScheibeS->setRotation(new RotationAboutAxesXYZ<VecV>);
+  ScheibeS->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
   ScheibeS->setMass(mScheibeS);
   ScheibeS->setInertiaTensor(ThetaScheibeS);
   this->addObject(ScheibeS);
@@ -139,6 +140,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   ScheibeGLS->setFrameOfReference(this->getFrame("I")); 
   ScheibeGLS->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   ScheibeGLS->setRotation(new RotationAboutAxesXYZ<VecV>);
+  ScheibeGLS->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
   ScheibeGLS->setMass(mScheibeGLS);
   ScheibeGLS->setInertiaTensor(ThetaScheibeGLS);
 
@@ -160,6 +162,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Gleitlager->setFrameOfReference(this->getFrame("I")); 
   Gleitlager->setTranslation(new TranslationAlongAxesXYZ<VecV>);
   Gleitlager->setRotation(new RotationAboutAxesXYZ<VecV>);
+  Gleitlager->setGeneralizedVelocityOfRotation(RigidBody::coordinatesOfAngularVelocityWrtFrameOfReference);
   Gleitlager->setMass(m_GL);
   Gleitlager->setInertiaTensor(ThetaGL);
 
