@@ -227,6 +227,8 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::SqrMat3 A;
 
+      double M_RR{0};
+
       /**
        * \brief matrix for the computation of the mass-matrix (assembled part of the element matrix)
        */

@@ -68,6 +68,8 @@ namespace MBSimFlexibleBody {
         phi.col(col) = phiFull.col(col);
       }
 
+      I_ThetaF_bar.resize(3, nf, INIT, 0.);
+
       K.resize(6 + nf, INIT, 0);
 
       SymMat Kff(phi.T() * KFull * phi);
@@ -270,33 +272,13 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBodyLinearExternalFFR::initM() {
-    // allocate memeory for M and Qv
-    M.resize(6 + nf, INIT, 0.0);
     
-    double M_RR = 0;  // constant during the simulation; for each DOF M_RR is same.  !!!!Every vaule has to be initialized before using it.
-    for (int j = 0; j < nNodes; j++) {
+    for (int j = 0; j < nNodes; j++)
       M_RR += static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij();
-    }
 
     // M_FF: nf*nf constant during the simulation;
     M_FF.resize(nf, INIT, 0.0);
     M_FF = S_kl_bar[0][0] + S_kl_bar[1][1] + S_kl_bar[2][2];
-
-    // assemble M by the submatrix M_RR, M_RTheta, M_ThetaTheta, M_RF, M_ThetaF, M_FF
-    updateM();
-
-    M(0, 0) = M_RR;
-    M(1, 1) = M_RR;
-    M(2, 2) = M_RR;
-
-    // copy M_FF to M in this way as the limitation of the submatrix opertor for symmetric matrix.
-    for (int i = 6; i < nf + 6; i++)
-      for (int j = i; j < nf + 6; j++)
-        M(i, j) = M_FF(i - 6, j - 6);
-    
-    if (msgAct(Debug)) {
-      msg(Debug) << "M init " << M << endl;
-    }
   }
   
   void FlexibleBodyLinearExternalFFR::updateM() {
@@ -330,9 +312,6 @@ namespace MBSimFlexibleBody {
     fmatvec::Mat M_RF = Mat(3, nf, INIT, 0.);
     M_RF = A * S_bar;
     
-    // M_ThetaF: 3*nf
-    I_ThetaF_bar.resize(3, nf, INIT, 0.);
-    
     I_ThetaF_bar(RangeV(0, 0), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[1][2] - S_kl_bar[2][1]) + (I_kl_bar[1][2] - I_kl_bar[2][1]);
     I_ThetaF_bar(RangeV(1, 1), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[2][0] - S_kl_bar[0][2]) + (I_kl_bar[2][0] - I_kl_bar[0][2]);
     I_ThetaF_bar(RangeV(2, 2), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[0][1] - S_kl_bar[1][0]) + (I_kl_bar[0][1] - I_kl_bar[1][0]);
@@ -342,6 +321,15 @@ namespace MBSimFlexibleBody {
     // update M by the submatrix M_RTheta, M_ThetaTheta, M_RF, M_ThetaF
     M(RangeV(0, 2), RangeV(3, 5)) = M_RTheta;
     M(RangeV(0, 2), RangeV(6, nf + 5)) = M_RF;
+
+    M(0, 0) = M_RR;
+    M(1, 1) = M_RR;
+    M(2, 2) = M_RR;
+
+    // copy M_FF to M in this way as the limitation of the submatrix opertor for symmetric matrix.
+    for (int i = 6; i < nf + 6; i++)
+      for (int j = i; j < nf + 6; j++)
+        M(i, j) = M_FF(i - 6, j - 6);
 
     // copy M_ThetaTheta to M in this way as the limitation of the submatrix opertor for symmetric matrix.
     for (int i = 3; i < 6; i++)
