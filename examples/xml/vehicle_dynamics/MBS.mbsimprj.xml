@@ -1058,6 +1058,7 @@
           <stateDependentRotation>
             <RotationAboutAxesXYZ/>
           </stateDependentRotation>
+          <generalizedVelocityOfRotation>"coordinatesOfAngularVelocityWrtFrameOfReference"</generalizedVelocityOfRotation>
           <frames>
             <FixedRelativeFrame name="FL">
               <enableOpenMBV>
