@@ -62,6 +62,13 @@ namespace MBSimFlexibleBody {
   class GenericFlexibleFfrBody : public NodeBasedBody {
 
     public:
+      enum GeneralizedVelocityOfRotation {
+        derivativeOfGeneralizedPositionOfRotation=0,
+        coordinatesOfAngularVelocityWrtFrameOfReference,
+        coordinatesOfAngularVelocityWrtFrameForKinematics,
+        unknown
+      };
+
       GenericFlexibleFfrBody(const std::string &name="");
       /**
        * \brief destructor
@@ -164,8 +171,7 @@ namespace MBSimFlexibleBody {
       void setRotation(MBSim::Function<fmatvec::RotMat3(fmatvec::VecV)>* fAPK_) { setStateDependentRotation(fAPK_); }
 
       void setTranslationDependentRotation(bool dep) { translationDependentRotation = dep; }
-      void setCoordinateTransformationForRotation(bool ct) { coordinateTransformation = ct; }
-      void setBodyFixedRepresentationOfAngularVelocity(bool bf) { bodyFixedRepresentationOfAngularVelocity = bf; }
+      void setGeneralizedVelocityOfRotation(GeneralizedVelocityOfRotation generalizedVelocityOfRotation_) { generalizedVelocityOfRotation = generalizedVelocityOfRotation_; }
 
       /*!
        * \brief get Kinematic for translational motion
@@ -344,11 +350,6 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::SymMat Mbuf;
 
-      /**
-       * \brief boolean to use body fixed Frame for rotation
-       */
-      bool coordinateTransformation{true};
-
       fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
       /**
@@ -431,7 +432,7 @@ namespace MBSimFlexibleBody {
       void determineSID();
       void prefillMassMatrix();
 
-      bool bodyFixedRepresentationOfAngularVelocity{false};
+      GeneralizedVelocityOfRotation generalizedVelocityOfRotation{derivativeOfGeneralizedPositionOfRotation};
 
       std::vector<MBSim::Index> ombvNodes;
       OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation{OpenMBVFlexibleBody::none};

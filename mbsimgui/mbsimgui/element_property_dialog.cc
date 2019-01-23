@@ -1156,11 +1156,12 @@ namespace MBSimGUI {
     translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
 
-    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"coordinateTransformationForRotation");
-    addToTab("Kinematics", coordinateTransformationForRotation);
-
-    bodyFixedRepresentationOfAngularVelocity = new ExtWidget("Body-fixed representation of angular velocity",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"bodyFixedRepresentationOfAngularVelocity");
-    addToTab("Kinematics", bodyFixedRepresentationOfAngularVelocity);
+    vector<QString> list;
+    list.emplace_back("\"derivativeOfGeneralizedPositionOfRotation\"");
+    list.emplace_back("\"coordinatesOfAngularVelocityWrtFrameOfReference\"");
+    list.emplace_back("\"coordinatesOfAngularVelocityWrtFrameForKinematics\"");
+    generalizedVelocityOfRotation = new ExtWidget("Generalized velocity of rotation",new TextChoiceWidget(list,1,true),true,false,MBSIM%"generalizedVelocityOfRotation");
+    addToTab("Kinematics", generalizedVelocityOfRotation);
 
     ombv = new ExtWidget("OpenMBV Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
     addToTab("Visualisation", ombv);
@@ -1178,8 +1179,7 @@ namespace MBSimGUI {
     translation->initializeUsingXML(item->getXMLElement());
     rotation->initializeUsingXML(item->getXMLElement());
     translationDependentRotation->initializeUsingXML(item->getXMLElement());
-    coordinateTransformationForRotation->initializeUsingXML(item->getXMLElement());
-    bodyFixedRepresentationOfAngularVelocity->initializeUsingXML(item->getXMLElement());
+    generalizedVelocityOfRotation->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
     ombvFrameRef->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1194,8 +1194,7 @@ namespace MBSimGUI {
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    coordinateTransformationForRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    bodyFixedRepresentationOfAngularVelocity->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
     ombvFrameRef->writeXMLFile(item->getXMLElement(),ele);
@@ -1248,8 +1247,12 @@ namespace MBSimGUI {
     translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
 
-    coordinateTransformationForRotation = new ExtWidget("Coordinate transformation for rotation",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"coordinateTransformationForRotation");
-    addToTab("Kinematics", coordinateTransformationForRotation);
+    vector<QString> list;
+    list.emplace_back("\"derivativeOfGeneralizedPositionOfRotation\"");
+    list.emplace_back("\"coordinatesOfAngularVelocityWrtFrameOfReference\"");
+    list.emplace_back("\"coordinatesOfAngularVelocityWrtFrameForKinematics\"");
+    generalizedVelocityOfRotation = new ExtWidget("Generalized velocity of rotation",new TextChoiceWidget(list,1,true),true,false,MBSIM%"generalizedVelocityOfRotation");
+    addToTab("Kinematics", generalizedVelocityOfRotation);
   }
 
   int GenericFlexibleFfrBodyPropertyDialog::getqRelSize() const {
@@ -1288,7 +1291,7 @@ namespace MBSimGUI {
     translation->initializeUsingXML(item->getXMLElement());
     rotation->initializeUsingXML(item->getXMLElement());
     translationDependentRotation->initializeUsingXML(item->getXMLElement());
-    coordinateTransformationForRotation->initializeUsingXML(item->getXMLElement());
+    generalizedVelocityOfRotation->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1536,10 +1539,6 @@ namespace MBSimGUI {
     sigma0->initializeUsingXML(item->getXMLElement());
     K0F->initializeUsingXML(item->getXMLElement());
     K0M->initializeUsingXML(item->getXMLElement());
-    translation->initializeUsingXML(item->getXMLElement());
-    rotation->initializeUsingXML(item->getXMLElement());
-    translationDependentRotation->initializeUsingXML(item->getXMLElement());
-    coordinateTransformationForRotation->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
     ombvNodes->initializeUsingXML(item->getXMLElement());
     ombvColorRepresentation->initializeUsingXML(item->getXMLElement());
@@ -1576,7 +1575,7 @@ namespace MBSimGUI {
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    coordinateTransformationForRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
     ombvNodes->writeXMLFile(item->getXMLElement(),ele);
@@ -1600,10 +1599,6 @@ namespace MBSimGUI {
 
   DOMElement* CalculixBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
-    translation->initializeUsingXML(item->getXMLElement());
-    rotation->initializeUsingXML(item->getXMLElement());
-    translationDependentRotation->initializeUsingXML(item->getXMLElement());
-    coordinateTransformationForRotation->initializeUsingXML(item->getXMLElement());
     resultFileName->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1615,7 +1610,7 @@ namespace MBSimGUI {
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    coordinateTransformationForRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;

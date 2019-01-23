@@ -362,7 +362,7 @@ namespace MBSimGUI {
       int getqRelSize() const; 
       int getuRelSize() const { return getqRelSize(); }
     protected:
-      ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation, *bodyFixedRepresentationOfAngularVelocity, *ombv, *ombvFrameRef, *weightArrow, *jointForceArrow, *jointMomentArrow;
+      ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation, *ombv, *ombvFrameRef, *weightArrow, *jointForceArrow, *jointMomentArrow;
   };
 
   class GenericFlexibleFfrBodyPropertyDialog : public BodyPropertyDialog {
@@ -377,7 +377,7 @@ namespace MBSimGUI {
       int getuRelSize() const { return getqRelSize(); }
       virtual int getqERelSize() const { return 0; }
     protected:
-      ExtWidget *translation, *rotation, *translationDependentRotation, *coordinateTransformationForRotation;
+      ExtWidget *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
   };
 
   class FlexibleFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {

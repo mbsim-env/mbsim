@@ -268,6 +268,9 @@ namespace MBSimFlexibleBody {
 
   void GenericFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if(generalizedVelocityOfRotation==unknown)
+        throwError("Generalized velocity of rotation unknown");
+
       for(auto & k : contour) {
         auto *contour_ = dynamic_cast<RigidContour*>(k);
         if(contour_ and not(contour_->getFrameOfReference()))
@@ -337,6 +340,8 @@ namespace MBSimFlexibleBody {
 
       updateM_ = &GenericFlexibleFfrBody::updateMNotConst;
       updateLLM_ = &GenericFlexibleFfrBody::updateLLMNotConst;
+
+      frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
     }
     else if(stage==unknownStage) {
       WJP[0].resize(KrKP.size(),Mat3xV(gethSize(0),NONINIT));
@@ -361,10 +366,10 @@ namespace MBSimFlexibleBody {
       K->getJacobianOfRotation(1,false) = PJR[1];
 
       auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
-      if(Atmp and coordinateTransformation) {
+      if(Atmp and generalizedVelocityOfRotation!=derivativeOfGeneralizedPositionOfRotation) {
         RotationAboutThreeAxes<VecV> *A3 = dynamic_cast<RotationAboutThreeAxes<VecV>*>(Atmp->getFunction());
         if(A3) {
-          fTR = bodyFixedRepresentationOfAngularVelocity?A3->getTransformedMappingFunction():A3->getMappingFunction();
+          fTR = (generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameOfReference)?A3->getMappingFunction():A3->getTransformedMappingFunction();
           if(not fTR) throwError("(RigidBody::init): coordinate transformation not yet available for current rotation");
           fTR->setParent(this);
           constJR = true;
@@ -396,11 +401,6 @@ namespace MBSimFlexibleBody {
           PjhR = fAPK->parDer2(qRRel,0);
         }
       }
-
-      if(bodyFixedRepresentationOfAngularVelocity)
-        frameForJacobianOfRotation = K;
-      else
-        frameForJacobianOfRotation = R;
 
       T.init(Eye());
     }
@@ -743,10 +743,14 @@ namespace MBSimFlexibleBody {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"translationDependentRotation");
     if(e) translationDependentRotation = E(e)->getText<bool>();
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"coordinateTransformationForRotation");
-    if(e) coordinateTransformation = E(e)->getText<bool>();
-    e=E(element)->getFirstElementChildNamed(MBSIM%"bodyFixedRepresentationOfAngularVelocity");
-    if(e) bodyFixedRepresentationOfAngularVelocity = E(e)->getText<bool>();
+    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedVelocityOfRotation");
+    if(e) {
+      string generalizedVelocityOfRotationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(generalizedVelocityOfRotationStr=="derivativeOfGeneralizedPositionOfRotation") generalizedVelocityOfRotation=derivativeOfGeneralizedPositionOfRotation;
+      else if(generalizedVelocityOfRotationStr=="coordinatesOfAngularVelocityWrtFrameOfReference") generalizedVelocityOfRotation=coordinatesOfAngularVelocityWrtFrameOfReference;
+      else if(generalizedVelocityOfRotationStr=="coordinatesOfAngularVelocityWrtFrameForKinematics") generalizedVelocityOfRotation=coordinatesOfAngularVelocityWrtFrameForKinematics;
+      else generalizedVelocityOfRotation=unknown;
+    }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBVFrameK");
     if(e) {
