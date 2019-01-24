@@ -338,9 +338,6 @@ namespace MBSimFlexibleBody {
         sigma0.resize(KrKP.size());
       sigma.resize(KrKP.size());
 
-      updateM_ = &GenericFlexibleFfrBody::updateMNotConst;
-      updateLLM_ = &GenericFlexibleFfrBody::updateLLMNotConst;
-
       frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
     }
     else if(stage==unknownStage) {
@@ -403,6 +400,14 @@ namespace MBSimFlexibleBody {
       }
 
       T.init(Eye());
+
+      // do not invert generalized mass matrix in case of special parametrisation
+      if(dynamic_cast<DynamicSystem*>(R->getParent()) and (not fPrPK or constJT) and not fAPK) {
+        nonConstantMassMatrix = false;
+        M = m*JTJ(PJT[0]) + PJT[0].T()*Ct0.T() + Ct0*PJT[0];
+        M(RangeV(M.size()-ne,M.size()-1)) = Me;
+        LLM = facLL(M);
+      }
     }
     else if(stage==plotting) {
       if(plotFeature[ref(openMBV)] and openMBVBody) {
@@ -675,11 +680,8 @@ namespace MBSimFlexibleBody {
     updKJ[1] = true;
   }
 
-  void GenericFlexibleFfrBody::updateMConst() {
-    M += Mbuf;
-  }
-
-  void GenericFlexibleFfrBody::updateMNotConst() {
+  void GenericFlexibleFfrBody::updateM() {
+    cout << path << " updateM" << endl;
     M += JTMJ(evalMb(),evalKJ());
   }
 

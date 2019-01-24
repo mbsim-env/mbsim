@@ -78,7 +78,7 @@ namespace MBSimFlexibleBody {
       void updateqd() override;
       void updateT() override;
       void updateh(int j=0) override;
-      void updateM() override { (this->*updateM_)(); }
+      void updateM() override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
       void updateDerivativeOfGeneralizedPositions() override;
@@ -107,7 +107,6 @@ namespace MBSimFlexibleBody {
 
       /* INHERITED INTERFACE OF OBJECT */
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
-      void updateLLM() override { (this->*updateLLM_)(); }
       void setUpInverseKinetics() override;
       /*****************************************************/
 
@@ -378,36 +377,6 @@ namespace MBSimFlexibleBody {
        * \brief rotation from kinematic Frame to parent Frame
        */
       MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK{0};
-
-      /**
-       * \brief function pointer to update mass matrix
-       */
-      void (GenericFlexibleFfrBody::*updateM_)();
-
-      /**
-       * \brief update constant mass matrix
-       */
-      void updateMConst();
-
-      /**
-       * \brief update time dependend mass matrix
-       */
-      void updateMNotConst();
-
-      /**
-       * \brief function pointer for Cholesky decomposition of mass matrix
-       */
-      void (GenericFlexibleFfrBody::*updateLLM_)();
-
-      /**
-       * \brief Cholesky decomposition of constant mass matrix
-       */
-      void updateLLMConst() { }
-
-      /**
-       * \brief Cholesky decomposition of time dependent mass matrix
-       */
-      void updateLLMNotConst() { Object::updateLLM(); }
 
       void (GenericFlexibleFfrBody::*updateJacobians_[2])(MBSim::Frame *frame);
 
