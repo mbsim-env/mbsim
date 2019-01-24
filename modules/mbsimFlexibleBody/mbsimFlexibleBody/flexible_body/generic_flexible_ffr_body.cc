@@ -681,7 +681,6 @@ namespace MBSimFlexibleBody {
   }
 
   void GenericFlexibleFfrBody::updateM() {
-    cout << path << " updateM" << endl;
     M += JTMJ(evalMb(),evalKJ());
   }
 
