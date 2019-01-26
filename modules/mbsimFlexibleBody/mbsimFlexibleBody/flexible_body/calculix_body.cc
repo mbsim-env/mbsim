@@ -94,7 +94,7 @@ namespace MBSimFlexibleBody {
       if(type==4)
         nn = 20;
       else
-        throw runtime_error("Unknown element type.");
+        throwError("Unknown element type.");
       getline(isRes,str);
       for(size_t j=0; j<nn;) {
         isRes >> d;
@@ -116,7 +116,7 @@ namespace MBSimFlexibleBody {
 //        cout << str[57] << endl;
         stringstream s(str);
         s >> str >> str >> str >> nn_;
-        if(nn != nn_) throw runtime_error("Number of nodes does not match.");
+        if(nn != nn_) throwError("Number of nodes does not match.");
         isRes >> i >> str;
         if(str=="DISP")
           readDisplacements();
@@ -168,10 +168,10 @@ namespace MBSimFlexibleBody {
     isStiff.open(jobname+".sti");
     isMass.open(jobname+".mas");
     isDOF.open(jobname+".dof");
-    if(not isRes.is_open()) throw runtime_error("Result file does not exist.");
-    if(not isStiff.is_open()) throw runtime_error("Stiffness matrix file does not exist.");
-    if(not isMass.is_open()) throw runtime_error("Mass matrix file does not exist.");
-    if(not isDOF.is_open()) throw runtime_error("DOF file does not exist.");
+    if(not isRes.is_open()) throwError("Result file does not exist.");
+    if(not isStiff.is_open()) throwError("Stiffness matrix file does not exist.");
+    if(not isMass.is_open()) throwError("Mass matrix file does not exist.");
+    if(not isDOF.is_open()) throwError("DOF file does not exist.");
 
     readNodes();
     readElements();
@@ -194,48 +194,56 @@ namespace MBSimFlexibleBody {
     Phi = getCellArray1D<Mat3xV>(3,Phi_);
     sigmahel = getCellArray1D<Matrix<General, Fixed<6>, Var, double> >(6,Sr);
 
-    // compute mass and lumped mass matrix
-    VecV mij(M.size(),NONINIT);
-    VecV m_(3);
-    for(size_t r=0; r<3; r++) {
-      double ds = 0;
-      for(size_t i=0; i<dof.size(); i++) {
-        if(dof[i].second==r) {
-          ds += M.e(i,i);
-          m_.e(r) += M.e(i,i);
-          for(size_t j=i+1; j<dof.size(); j++) {
-            if(dof[j].second==r)
-              m_.e(r) += 2*M.e(i,j);
-          }
-        }
-      }
-      for(size_t i=0; i<dof.size(); i++) {
-        if(dof[i].second==r)
-          mij(i) = M.e(i,i)/ds*m_.e(r);
-      }
-    }
-    m = m_.e(0);
-
-    // compute integrals
     Pdm.resize(nm);
-    RangeV J = RangeV(0,nm-1);
-    for(size_t i=0; i<nn; i++) {
-      RangeV I = RangeV(3*i,3*i+2);
-      Vec3 u0i = u0(I);
-      double mi = mij.e(3*i);
-      rdm += mi*u0i;
-      rrdm += mi*JTJ(u0i.T());
-      Pdm += mi*Phi_(I,J);
-    }
     rPdm.resize(3,Mat3xV(nm));
     PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(nm)));
-    for(size_t k=0; k<3; k++) {
-      for(size_t i=0; i<nn; i++)
-        rPdm[k] += mij.e(3*i)*u0.e(3*i+k)*Phi_(RangeV(3*i,3*i+2),J);
-      for(size_t l=0; l<3; l++) {
-        for(size_t i=0; i<nn; i++)
-          PPdm[k][l] += mij.e(3*i)*Phi_.row(3*i+k).T()*Phi_.row(3*i+l);
+    if(approach==lumpedMass) {
+      // compute mass and lumped mass matrix
+      VecV mij(M.size(),NONINIT);
+      VecV m_(3);
+      for(size_t r=0; r<3; r++) {
+        double ds = 0;
+        for(size_t i=0; i<dof.size(); i++) {
+          if(dof[i].second==r) {
+            ds += M.e(i,i);
+            m_.e(r) += M.e(i,i);
+            for(size_t j=i+1; j<dof.size(); j++) {
+              if(dof[j].second==r)
+                m_.e(r) += 2*M.e(i,j);
+            }
+          }
+        }
+        for(size_t i=0; i<dof.size(); i++) {
+          if(dof[i].second==r)
+            mij(i) = M.e(i,i)/ds*m_.e(r);
+        }
       }
+      m = m_.e(0);
+
+      // compute integrals
+      RangeV J = RangeV(0,nm-1);
+      for(size_t i=0; i<nn; i++) {
+        RangeV I = RangeV(3*i,3*i+2);
+        Vec3 u0i = u0(I);
+        double mi = mij.e(3*i);
+        rdm += mi*u0i;
+        rrdm += mi*JTJ(u0i.T());
+        Pdm += mi*Phi_(I,J);
+      }
+      for(size_t k=0; k<3; k++) {
+        for(size_t i=0; i<nn; i++)
+          rPdm[k] += mij.e(3*i)*u0.e(3*i+k)*Phi_(RangeV(3*i,3*i+2),J);
+        for(size_t l=0; l<3; l++) {
+          for(size_t i=0; i<nn; i++)
+            PPdm[k][l] += mij.e(3*i)*Phi_.row(3*i+k).T()*Phi_.row(3*i+l);
+        }
+      }
+    }
+    else {
+      if((fPrPK and fPrPK->getArg1Size()) or (fAPK and fAPK->getArg1Size()))
+        throwError("Translation and rotation is not allowed for full approach. Use lumped mass approach instead.");
+      // compute reduced mass matrix
+      PPdm[0][0] = JTMJ(M,Phi_);
     }
 
     // compute reduced stiffness matrix
@@ -306,6 +314,13 @@ namespace MBSimFlexibleBody {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"resultFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
     setResultFileName(E(e)->convertPath(str.substr(1,str.length()-2)).string());
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"approach");
+    if(e) {
+      string approachStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(approachStr=="full") approach=full;
+      else if(approachStr=="lumpedMass") approach=lumpedMass;
+      else approach=unknown;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       ombvBody = shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody);

@@ -993,6 +993,15 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="approach" type="pv:stringFullEval" minOccurs="0">
+             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Auswahl des Reduktionsverfahrens.
+               <ul>
+                 <li>full: Die Massenmatrix wird vollständig berücksichtigt.</li>
+                 <li>lumpedMass: Die Massenmatrix wird als Diagonalmatrix berücksichtigt. Die Masse des Körpers wird dabei auf die Knoten verteilt.</li>
+               </ul>
+             </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
