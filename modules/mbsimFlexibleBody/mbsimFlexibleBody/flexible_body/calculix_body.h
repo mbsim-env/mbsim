@@ -32,8 +32,8 @@ namespace MBSimFlexibleBody {
   class CalculixBody : public GenericFlexibleFfrBody {
 
     public:
-      enum Approach {
-        full=0,
+      enum Formalism {
+        consistentMass=0,
         lumpedMass,
         unknown
       };
@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void setResultFileName(const std::string &resultFileName_) { resultFileName = resultFileName_; }
-      void setApproach(Approach approach_) { approach = approach_; }
+      void setFormalism(Formalism formalism_) { formalism = formalism_; }
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (colorRepresentation,(OpenMBVFlexibleBody::ColorRepresentation),OpenMBVFlexibleBody::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombvBody = std::shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody(colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
       void importData();
       std::ifstream isRes, isStiff, isMass, isDOF;
       size_t nn{0}, ne{0}, nm{1000};
-      Approach approach{lumpedMass};
+      Formalism formalism{lumpedMass};
       fmatvec::VecV u0;
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,int> eles;
       fmatvec::SymMatV M, K;

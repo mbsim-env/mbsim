@@ -1588,10 +1588,10 @@ namespace MBSimGUI {
     addToTab("General",resultFileName);
 
     vector<QString> list;
-    list.emplace_back("\"full\"");
+    list.emplace_back("\"consistentMass\"");
     list.emplace_back("\"lumpedMass\"");
-    approach = new ExtWidget("Approach",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"approach");
-    addToTab("General", approach);
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"formalism");
+    addToTab("General", formalism);
 
     ombv = new ExtWidget("Enable openMBV",new FlexibleBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation",ombv);
@@ -1606,7 +1606,7 @@ namespace MBSimGUI {
   DOMElement* CalculixBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     resultFileName->initializeUsingXML(item->getXMLElement());
-    approach->initializeUsingXML(item->getXMLElement());
+    formalism->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -1614,7 +1614,7 @@ namespace MBSimGUI {
   DOMElement* CalculixBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     resultFileName->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    approach->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    formalism->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());

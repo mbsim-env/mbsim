@@ -197,7 +197,7 @@ namespace MBSimFlexibleBody {
     Pdm.resize(nm);
     rPdm.resize(3,Mat3xV(nm));
     PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(nm)));
-    if(approach==lumpedMass) {
+    if(formalism==lumpedMass) {
       // compute mass and lumped mass matrix
       VecV mij(M.size(),NONINIT);
       VecV m_(3);
@@ -239,12 +239,14 @@ namespace MBSimFlexibleBody {
         }
       }
     }
-    else {
+    else if(formalism==consistentMass) {
       if((fPrPK and fPrPK->getArg1Size()) or (fAPK and fAPK->getArg1Size()))
-        throwError("Translation and rotation is not allowed for full approach. Use lumped mass approach instead.");
+        throwError("Translation and rotation is not allowed for consistent mass formalism. Use lumped mass formalism instead.");
       // compute reduced mass matrix
       PPdm[0][0] = JTMJ(M,Phi_);
     }
+    else
+      throwError("Formalism unknown.");
 
     // compute reduced stiffness matrix
     Ke0 = JTMJ(K,Phi_);
@@ -314,12 +316,12 @@ namespace MBSimFlexibleBody {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"resultFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
     setResultFileName(E(e)->convertPath(str.substr(1,str.length()-2)).string());
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"approach");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"formalism");
     if(e) {
-      string approachStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
-      if(approachStr=="full") approach=full;
-      else if(approachStr=="lumpedMass") approach=lumpedMass;
-      else approach=unknown;
+      string formalismStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(formalismStr=="consistentMass") formalism=consistentMass;
+      else if(formalismStr=="lumpedMass") formalism=lumpedMass;
+      else formalism=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
