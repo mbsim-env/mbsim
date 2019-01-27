@@ -367,13 +367,15 @@ namespace MBSimFlexibleBody {
         RotationAboutThreeAxes<VecV> *A3 = dynamic_cast<RotationAboutThreeAxes<VecV>*>(Atmp->getFunction());
         if(A3) {
           fTR = (generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameOfReference)?A3->getMappingFunction():A3->getTransformedMappingFunction();
-          if(not fTR) throwError("(RigidBody::init): coordinate transformation not yet available for current rotation");
+          if(not fTR) throwError("(GenericFlexibleFfrBody::init): coordinate transformation not yet available for current rotation");
           fTR->setParent(this);
           constJR = true;
           constjR = true;
           PJRR = SqrMat3(EYE);
           PJR[0].set(i02,iuR,PJRR);
         }
+        else
+          throwError("(GenericFlexibleFfrBody::init): coordinate transformation only valid for spatial rotations");
       }
 
       if(fPrPK) {

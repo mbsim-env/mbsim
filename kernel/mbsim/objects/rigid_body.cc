@@ -223,6 +223,8 @@ namespace MBSim {
           PJRR = SqrMat3(EYE);
           PJR[0].set(i02,iuR,PJRR);
         }
+        else
+          throwError("(RigidBody::init): coordinate transformation only valid for spatial rotations");
       }
 
       if(fPrPK) {
