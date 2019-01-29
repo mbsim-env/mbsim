@@ -339,6 +339,11 @@ namespace MBSimFlexibleBody {
       sigma.resize(KrKP.size());
 
       frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
+
+      if(nodeMap.empty()) {
+        for(size_t i=0; i<KrKP.size(); i++)
+          nodeMap[i] = i;
+      }
     }
     else if(stage==unknownStage) {
       WJP[0].resize(KrKP.size(),Mat3xV(gethSize(0),NONINIT));
@@ -413,10 +418,11 @@ namespace MBSimFlexibleBody {
     }
     else if(stage==plotting) {
       if(plotFeature[ref(openMBV)] and openMBVBody) {
-        if(not ombvNodes.size()) {
-          ombvNodes.resize(KrKP.size());
-          for(size_t i=0; i<ombvNodes.size(); i++)
-            ombvNodes[i] = i;
+        if(ombvNodes.empty()) {
+          for(const auto & i : nodeMap) {
+            cout << i.first << " " << i.second << endl;
+            ombvNodes.push_back(i.first);
+          }
         }
         if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
           dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(ombvNodes.size());
@@ -441,11 +447,12 @@ namespace MBSimFlexibleBody {
     if(plotFeature[ref(openMBV)] and openMBVBody) {
       vector<double> data;
       data.push_back(getTime());
-      for(int ombvNode : ombvNodes) {
-        const Vec3 &WrOP = evalNodalPosition(ombvNode);
+      for(size_t i=0; i<KrKP.size(); i++) {
+//        int i = nodeMap[ombvNode];
+        const Vec3 &WrOP = evalNodalPosition(i);
         for(int j=0; j<3; j++)
           data.push_back(WrOP(j));
-        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(ombvNode));
+        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(i));
       }
       dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->append(data);
     }

@@ -403,6 +403,8 @@ namespace MBSimFlexibleBody {
 
       GeneralizedVelocityOfRotation generalizedVelocityOfRotation{derivativeOfGeneralizedPositionOfRotation};
 
+      std::unordered_map<int,int> nodeMap;
+
       std::vector<MBSim::Index> ombvNodes;
       OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation{OpenMBVFlexibleBody::none};
 

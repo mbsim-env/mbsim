@@ -32,10 +32,10 @@ namespace MBSimFlexibleBody {
   class NodeFrame : public MBSim::Frame {
 
     public:
-      NodeFrame(const std::string &name = "dummy", MBSim::Index node_ = 0) : Frame(name), node(node_) { }
+      NodeFrame(const std::string &name = "dummy", int node_ = 0) : Frame(name), node(node_) { }
 
-      void setNodeNumber(MBSim::Index node_) { node = node_; }
-      MBSim::Index getNodeNumber() const { return node; }
+      void setNodeNumber(int node_) { node = node_; }
+      int getNodeNumber() const { return node; }
 
       void updatePositions() override;
       void updateVelocities() override;
@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief node number of the frame
        */
-      MBSim::Index node;
+      int node;
   };
 
 }

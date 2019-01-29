@@ -80,7 +80,7 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setInterpolation(bool interpolation_) { interpolation = interpolation_; }
-      void setIndices(const fmatvec::VecVI &index_) { index = index_; }
+      void setNodes(const fmatvec::VecVI &node_) { node = node_; }
       void setKnotVector(const fmatvec::VecV &knot_) { knot = knot_; }
       void setDegree(int degree_) { degree = degree_; }
       /***************************************************/
@@ -113,7 +113,7 @@ namespace MBSimFlexibleBody {
       const fmatvec::MatVx4& evalHessianMatrix_t(double eta){ updateHessianMatrix_t(eta); return hess_t; }
 
       bool interpolation{false};
-      fmatvec::VecVI index;
+      fmatvec::VecVI node;
       fmatvec::VecV knot;
       int degree{3};
       bool open{false};

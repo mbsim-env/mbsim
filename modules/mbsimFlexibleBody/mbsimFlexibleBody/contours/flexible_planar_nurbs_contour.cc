@@ -35,9 +35,9 @@ namespace MBSimFlexibleBody {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexiblePlanarNurbsContour)
 
   void FlexiblePlanarNurbsContour::updateCurvePositions() {
-    MatVx4 cp(index.size());
-    for(int i=0; i<index.size(); i++) {
-      const Vec3 &x = static_cast<NodeBasedBody*>(parent)->evalNodalPosition(index(i));
+    MatVx4 cp(node.size());
+    for(int i=0; i<node.size(); i++) {
+      const Vec3 &x = static_cast<NodeBasedBody*>(parent)->evalNodalPosition(node(i));
       for(int j=0; j<3; j++)
         cp(i,j) = x(j);
       cp(i,3) = 1;
@@ -54,9 +54,9 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexiblePlanarNurbsContour::updateCurveVelocities() {
-    MatVx4 cp(index.size());
-    for(int i=0; i<index.size(); i++) {
-      const Vec3 &x = static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(index(i));
+    MatVx4 cp(node.size());
+    for(int i=0; i<node.size(); i++) {
+      const Vec3 &x = static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(node(i));
       for(int j=0; j<3; j++)
         cp(i,j) = x(j);
       cp(i,3) = 1;
@@ -73,10 +73,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexiblePlanarNurbsContour::updateCurveJacobians() {
-    MatVx4 cp(index.size());
+    MatVx4 cp(node.size());
     for(size_t k=0; k<crvJac.size(); k++) {
-      for(int i=0; i<index.rows(); i++) {
-        const Vec3 &x = static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(index(i)).col(k);
+      for(int i=0; i<node.rows(); i++) {
+        const Vec3 &x = static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(node(i)).col(k);
         for(int j=0; j<3; j++)
           cp(i,j) = x(j);
         cp(i,3) = 1;
@@ -94,9 +94,9 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexiblePlanarNurbsContour::updateCurveGyroscopicAccelerations() {
-    MatVx4 cp(index.size());
-    for(int i=0; i<index.size(); i++) {
-      const Vec3 &x = static_cast<NodeBasedBody*>(parent)->evalNodalGyroscopicAccelerationOfTranslation(index(i));
+    MatVx4 cp(node.size());
+    for(int i=0; i<node.size(); i++) {
+      const Vec3 &x = static_cast<NodeBasedBody*>(parent)->evalNodalGyroscopicAccelerationOfTranslation(node(i));
       for(int j=0; j<3; j++)
         cp(i,j) = x(j);
       cp(i,3) = 1;
@@ -216,19 +216,19 @@ namespace MBSimFlexibleBody {
   void FlexiblePlanarNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       if(not interpolation) {
-        crvPos.resize(index.size(),knot.size()-index.size()-1);
-        crvPos.setDegree(knot.size()-index.size()-1);
+        crvPos.resize(node.size(),knot.size()-node.size()-1);
+        crvPos.setDegree(knot.size()-node.size()-1);
         crvPos.setKnot(knot);
       }
       else {
-        VecV uk(index.size(),NONINIT), U;
+        VecV uk(node.size(),NONINIT), U;
         if(open) {
-          crvPos.resize(index.size(),degree);
+          crvPos.resize(node.size(),degree);
           U.resize(crvPos.knot().size(),NONINIT);
           updateUVecs(0, 1, uk, degree, U);
         }
         else {
-          crvPos.resize(index.size()+degree,degree);
+          crvPos.resize(node.size()+degree,degree);
           U.resize(crvPos.knot().size(),NONINIT);
           updateUVecsClosed(0, 1, uk, degree, U);
         }
@@ -250,17 +250,17 @@ namespace MBSimFlexibleBody {
       }
     }
     else if(stage==unknownStage) {
-      crvVel.resize(index.size(),knot.size()-index.size()-1);
-      crvVel.setDegree(knot.size()-index.size()-1);
+      crvVel.resize(node.size(),knot.size()-node.size()-1);
+      crvVel.setDegree(knot.size()-node.size()-1);
       crvVel.setKnot(knot);
       crvJac.resize(gethSize());
       for(size_t i=0; i<crvJac.size(); i++) {
-        crvJac[i].resize(index.size(),knot.size()-index.size()-1);
-        crvJac[i].setDegree(knot.size()-index.size()-1);
+        crvJac[i].resize(node.size(),knot.size()-node.size()-1);
+        crvJac[i].setDegree(knot.size()-node.size()-1);
         crvJac[i].setKnot(knot);
       }
-      crvGA.resize(index.size(),knot.size()-index.size()-1);
-      crvGA.setDegree(knot.size()-index.size()-1);
+      crvGA.resize(node.size(),knot.size()-node.size()-1);
+      crvGA.setDegree(knot.size()-node.size()-1);
       crvGA.setKnot(knot);
     }
     FlexibleContour::init(stage, config);
@@ -308,10 +308,8 @@ namespace MBSimFlexibleBody {
 //      else if(interpolationStr=="none") interpolation=none;
 //      else interpolation=unknown;
 //    }
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"indices");
-    index = E(e)->getText<VecVI>();
-    for(int i=0; i<index.size(); i++)
-      index(i)--;
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
+    node = E(e)->getText<VecVI>();
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"knotVector");
     if(e) setKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"degree");

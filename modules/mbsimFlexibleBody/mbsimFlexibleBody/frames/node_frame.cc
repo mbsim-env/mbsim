@@ -59,7 +59,7 @@ namespace MBSimFlexibleBody {
 
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumber");
-    setNodeNumber(E(e)->getText<int>()-1);
+    setNodeNumber(E(e)->getText<int>());
   }
 
 }

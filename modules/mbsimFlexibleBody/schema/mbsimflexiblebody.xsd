@@ -1058,10 +1058,10 @@
               Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="indices" type="pv:indexVector">
+          <xs:element name="nodes" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Indizes der Kontrollpunkte.
+                Kontennummern.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
