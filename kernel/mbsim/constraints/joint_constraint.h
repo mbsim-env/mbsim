@@ -36,13 +36,20 @@ namespace MBSim {
    */
   class JointConstraint : public MechanicalConstraint {
     public:
+      enum FrameOfReference {
+        firstFrame=0,
+        secondFrame,
+        unknown
+      };
+
+
       JointConstraint(const std::string &name="");
 
       void init(InitStage stage, const InitConfigSet &config) override;
 
       void resetUpToDate() override;
 
-      void connect(Frame* frame1_, Frame* frame2_) { frame1 = frame1_; frame2 = frame2_; }
+      void connect(Frame* frame0, Frame* frame1) { frame[0] = frame0; frame[1] = frame1; }
       void addDependentRigidBodyOnFirstSide(RigidBody* bd) { bd1.push_back(bd); }
       void addDependentRigidBodyOnSecondSide(RigidBody* bd) { bd2.push_back(bd); }
       void setIndependentRigidBody(RigidBody* bi_) { bi.resize(1); bi[0] = bi_; }
@@ -52,10 +59,10 @@ namespace MBSim {
       void setForceDirection(const fmatvec::Mat3xV& fd);
       void setMomentDirection(const fmatvec::Mat3xV& md);
 
-      /** \brief The frame of reference ID for the force/moment direction vectors.
-       * If ID=0 (default) the first frame, if ID=1 the second frame is used.
+      /** \brief The frame of reference for the force/moment direction vectors.
+       * If firstFrame (default) the first frame, if secondFrame the second frame is used.
        */
-      void setFrameOfReferenceID(int ID) { refFrameID=ID; }
+      void setFrameOfReference(FrameOfReference refFrame_) { refFrame = refFrame_; }
 
       void updatePositions(Frame *frame) override;
       void updateGeneralizedCoordinates() override;
@@ -80,24 +87,23 @@ namespace MBSim {
         private:
           std::vector<RigidBody*> body1, body2;
           fmatvec::Mat3xV forceDir, momentDir;
-          Frame *frame1, *frame2, *refFrame;
+          std::vector<Frame*> frame;
+          FrameOfReference refFrame;
           std::vector<Frame*> i1,i2;
         public:
-          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, Frame *frame1_, Frame *frame2_, Frame *refFrame_, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
+          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, const std::vector<Frame*> frame_, FrameOfReference refFrame_, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
 
           fmatvec::Vec operator()(const fmatvec::Vec &x) override;
       };
       std::vector<RigidBody*> bd1, bd2, bi;
       std::vector<Frame*> if1, if2;
 
-      Frame *frame1{0};
-      Frame *frame2{0};
+      std::vector<Frame*> frame;
 
       /**
        * \brief frame of reference the force is defined in
        */
-      Frame *refFrame;
-      Index refFrameID{0};
+      FrameOfReference refFrame{firstFrame};
 
       FloatingRelativeFrame C;
 

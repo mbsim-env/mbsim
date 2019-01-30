@@ -1804,8 +1804,11 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame>(2,constraint,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
-    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true,false,MBSIM%"frameOfReferenceID");
-    addToTab("Kinetics", refFrameID);
+    vector<QString> list;
+    list.emplace_back("\"firstFrame\"");
+    list.emplace_back("\"secondFrame\"");
+    refFrame = new ExtWidget("Frame of reference",new TextChoiceWidget(list,1,true),true,false,MBSIM%"frameOfReference");
+    addToTab("Kinetics", refFrame);
 
     force = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics", force);
@@ -1841,7 +1844,7 @@ namespace MBSimGUI {
     dependentBodiesSecondSide->initializeUsingXML(item->getXMLElement());
     independentBody->initializeUsingXML(item->getXMLElement());
     connections->initializeUsingXML(item->getXMLElement());
-    refFrameID->initializeUsingXML(item->getXMLElement());
+    refFrame->initializeUsingXML(item->getXMLElement());
     force->initializeUsingXML(item->getXMLElement());
     moment->initializeUsingXML(item->getXMLElement());
     q0->initializeUsingXML(item->getXMLElement());
@@ -1854,7 +1857,7 @@ namespace MBSimGUI {
     dependentBodiesSecondSide->writeXMLFile(item->getXMLElement(),ref);
     independentBody->writeXMLFile(item->getXMLElement(),ref);
     connections->writeXMLFile(item->getXMLElement(),ref);
-    refFrameID->writeXMLFile(item->getXMLElement(),ref);
+    refFrame->writeXMLFile(item->getXMLElement(),ref);
     force->writeXMLFile(item->getXMLElement(),ref);
     moment->writeXMLFile(item->getXMLElement(),ref);
     q0->writeXMLFile(item->getXMLElement(),ref);
@@ -1895,19 +1898,22 @@ namespace MBSimGUI {
   }
 
   FloatingFrameLinkPropertyDialog::FloatingFrameLinkPropertyDialog(Element *link) : FrameLinkPropertyDialog(link) {
-    refFrameID = new ExtWidget("Frame of reference ID",new SpinBoxWidget(1,1,2),true,false,MBSIM%"frameOfReferenceID");
-    addToTab("Kinetics", refFrameID);
+    vector<QString> list;
+    list.emplace_back("\"firstFrame\"");
+    list.emplace_back("\"secondFrame\"");
+    refFrame = new ExtWidget("Frame of reference",new TextChoiceWidget(list,1,true),true,false,MBSIM%"frameOfReference");
+    addToTab("Kinetics", refFrame);
   }
 
   DOMElement* FloatingFrameLinkPropertyDialog::initializeUsingXML(DOMElement *parent) {
     FrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
-    refFrameID->initializeUsingXML(item->getXMLElement());
+    refFrame->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FloatingFrameLinkPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     FrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
-    refFrameID->writeXMLFile(item->getXMLElement(),ref);
+    refFrame->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

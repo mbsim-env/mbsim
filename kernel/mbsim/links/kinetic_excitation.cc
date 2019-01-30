@@ -32,7 +32,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, KineticExcitation)
 
   KineticExcitation::KineticExcitation(const string &name) : FloatingFrameLink(name), F(nullptr), M(nullptr) {
-    refFrameID = 1;
+    refFrame = secondFrame;
     evalOMBVForceColorRepresentation[0] = &KineticExcitation::evalNone;
     evalOMBVForceColorRepresentation[1] = &KineticExcitation::evalAboluteForce;
     evalOMBVMomentColorRepresentation[0] = &KineticExcitation::evalNone;

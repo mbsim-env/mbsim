@@ -1426,22 +1426,26 @@
               <xs:attribute name="ref2" type="FrameReferenceType" use="required"/>
             </xs:complexType> 
           </xs:element>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:indexFullEval">
+          <xs:element name="frameOfReference" type="pv:stringFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-               tbd
+              Auswahl des Koordinatensystems, in dem der Kraft- und Momentvektor dargestellt ist.
+              <ul>
+                <li>firstFrame: Erstes Koordinatensystem, das bei <code>connect</code> angegeben wurde</li>
+                <li>secondFrame: Zweites Koordinatensystem, das bei <code>connect</code> angegeben wurde</li>
+              </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Angabe der Richtungen, für die eine Übereinstimmung im Gelenk für translatorische Freiheitsgrade erzeugt werden soll.
+                Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem <code>frameOfReference</code> (standarmäßig das erste KOS).
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="momentDirection" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Angabe der Richtungen, für die eine Übereinstimmung im Gelenk für rotatorische Freiheitsgrade erzeugt werden soll.
+                Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem <code>frameOfReference</code> (standarmäßig das erste KOS).
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1556,10 +1560,13 @@
     <xs:complexContent>
       <xs:extension base="FrameLinkType">
         <xs:sequence>
-          <xs:element name="frameOfReferenceID" minOccurs="0" type="pv:indexFullEval">
+          <xs:element name="frameOfReference" type="pv:stringFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Gibt an, in welchem Koordinatensystem der Kraft- und Momentvektor dargestellt ist. 0 definiert den unter ref1 und 1 den unter
-              ref2 angegebenen Frame.
+              Auswahl des Koordinatensystems, in dem der Kraft- und Momentvektor dargestellt ist.
+              <ul>
+                <li>firstFrame: Erstes Koordinatensystem, das bei <code>connect</code> angegeben wurde</li>
+                <li>secondFrame: Zweites Koordinatensystem, das bei <code>connect</code> angegeben wurde</li>
+              </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -1652,7 +1659,7 @@
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Definiert die Wirkrichtung der Kraftanregung(en).
                   Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Kraftfunktion angegeben
-                  im KOS <code>frameOfReferenceID</code>. Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
+                  im KOS <code>frameOfReference</code> (standardmäßig das zweite KOS). Um eine Skalierung der skalaren Kraft (i-ter Eintrag der Kraftfunktion)
                   zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
               </xs:documentation></xs:annotation>
             </xs:element>
@@ -1672,7 +1679,7 @@
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                   Definiert die Wirkrichtung der Momentenanregung(en).
                   Die Spalte i dieser Matrix definiert den Wirkrichtungsvektor des i-ten Eintrags der Momentfunktion angegeben
-                  im KOS <code>frameOfReferenceID</code>. Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
+                  im KOS <code>frameOfReference</code> (standardmäßig das zweite KOS). Um eine Skalierung des skalaren Moments (i-ter Eintrag der Momentfunktion)
                   zu umgehen, sollte jede Spalte dieser Matrix normiert sein.
               </xs:documentation></xs:annotation>
             </xs:element>
@@ -2057,7 +2064,7 @@
           <xs:sequence minOccurs="0">
             <xs:element name="forceDirection" type="pv:nounitMatrix">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+                  Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem <code>frameOfReference</code> (standarmäßig das erste KOS).
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="forceLaw">
@@ -2074,7 +2081,7 @@
           <xs:sequence minOccurs="0">
             <xs:element name="momentDirection" type="pv:nounitMatrix">
               <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+                  Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem <code>frameOfReference</code> (standarmäßig das erste KOS).
               </xs:documentation></xs:annotation>
             </xs:element>
             <xs:element name="momentLaw">
@@ -2109,12 +2116,12 @@
         <xs:sequence>
           <xs:element name="forceDirection" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+                Richtungen <object class="inlineeqn">\mathbf{D}_T=\left(\mathbf{d}_{T,1},\ldots\right)</object> der Zwangskräfte des Gelenks in normierten Vektoren dargestellt im Koordinatensystem <code>frameOfReference</code> (standarmäßig das erste KOS).
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="momentDirection" type="pv:nounitMatrix" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem des ersten Körpers.
+                Richtungen <object class="inlineeqn">\mathbf{D}_R=\left(\mathbf{d}_{R,1},\ldots\right)</object> der Zwangsmomente des Gelenks in normierten Vektoren dargestellt im Koordinatensystem <code>frameOfReference</code> (standarmäßig das erste KOS).
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="generalizedForceFunction" minOccurs="0">

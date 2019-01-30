@@ -39,7 +39,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_,Frame *frame1_, Frame *frame2_, Frame *refFrame_, vector<Frame*> i1_, vector<Frame*> i2_) : body1 (std::move(body1_)),body2(std::move(body2_)),forceDir(forceDir_),momentDir(momentDir_),frame1(frame1_), frame2(frame2_), refFrame(refFrame_), i1(std::move(i1_)), i2(std::move(i2_)) {
+  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_, vector<Frame*> frame_, FrameOfReference refFrame_, vector<Frame*> i1_, vector<Frame*> i2_) : body1 (std::move(body1_)),body2(std::move(body2_)),forceDir(forceDir_),momentDir(momentDir_), frame(frame_), refFrame(refFrame_), i1(std::move(i1_)), i2(std::move(i2_)) {
   }
 
   Vec JointConstraint::Residuum::operator()(const Vec &x) {
@@ -58,21 +58,21 @@ namespace MBSim {
       nq += dq;
     }
 
-    Mat3xV dT = refFrame->evalOrientation()*forceDir;
-    Mat3xV dR = refFrame->getOrientation()*momentDir;
+    Mat3xV dT = frame[refFrame]->evalOrientation()*forceDir;
+    Mat3xV dR = frame[refFrame]->getOrientation()*momentDir;
 
     if(dT.cols())
-      res(Range<Var,Var>(0,dT.cols()-1)) = dT.T()*(frame1->evalPosition()-frame2->evalPosition());
+      res(Range<Var,Var>(0,dT.cols()-1)) = dT.T()*(frame[0]->evalPosition()-frame[1]->evalPosition());
 
     if(dR.cols())
-      res(Range<Var,Var>(dT.cols(),dT.cols()+dR.cols()-1)) = dR.T()*AIK2Cardan(frame1->getOrientation().T()*frame2->getOrientation());
+      res(Range<Var,Var>(dT.cols(),dT.cols()+dR.cols()-1)) = dR.T()*AIK2Cardan(frame[0]->getOrientation().T()*frame[1]->getOrientation());
 
     return res;
   } 
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, JointConstraint)
 
-  JointConstraint::JointConstraint(const string &name) : MechanicalConstraint(name),  refFrame(nullptr),  C("F"),  saved_ref1(""), saved_ref2("") {
+  JointConstraint::JointConstraint(const string &name) : MechanicalConstraint(name), frame(2), C("F") {
     C.setParent(this);
   }
 
@@ -90,20 +90,22 @@ namespace MBSim {
         throwError("No dependent rigid bodies given!");
       if(!saved_ref1.empty() && !saved_ref2.empty())
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
-      if(not frame1 or not frame2)
+      if(not frame[0] or not frame[1])
         throwError("Not all connections are given!");
       if(!bd1.empty()) {
         for(unsigned int i=0; i<bd1.size()-1; i++) 
           if1.push_back(bd1[i+1]->getFrameOfReference());
-        if1.push_back(frame1);
+        if1.push_back(frame[0]);
       }
       if(!bd2.empty()) {
         for(unsigned int i=0; i<bd2.size()-1; i++) 
           if2.push_back(bd2[i+1]->getFrameOfReference());
-        if2.push_back(frame2);
+        if2.push_back(frame[1]);
       }
     }
     else if(stage==preInit) {
+      if(refFrame==unknown)
+        throwError("(JointConstraint::init): frame of reference unknown");
       iF = RangeV(0, forceDir.cols() - 1);
       iM = RangeV(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
       for(auto & i : bd1) 
@@ -112,8 +114,7 @@ namespace MBSim {
         i->addDependency(this);
       for(auto & i : bi)
         addDependency(i);
-      refFrame=refFrameID?frame2:frame1;
-      C.setFrameOfReference(frame1);
+      C.setFrameOfReference(frame[0]);
     }
     else if(stage==unknownStage) {
       nq = 0;
@@ -171,14 +172,14 @@ namespace MBSim {
     updA = true;
   }
 
-  void JointConstraint::updatePositions(Frame *frame) {
-    frame->setPosition(frame2->getPosition());
-    frame->setOrientation(frame1->evalOrientation());
+  void JointConstraint::updatePositions(Frame *frame_) {
+    frame_->setPosition(frame[1]->getPosition());
+    frame_->setOrientation(frame[0]->evalOrientation());
   }
 
   void JointConstraint::updateForceDirections() {
-    DF = refFrame->evalOrientation() * forceDir;
-    DM = refFrame->getOrientation() * momentDir;
+    DF = frame[refFrame]->evalOrientation() * forceDir;
+    DM = frame[refFrame]->getOrientation() * momentDir;
     updDF = false;
   }
 
@@ -189,7 +190,7 @@ namespace MBSim {
   }
 
   void JointConstraint::updateGeneralizedCoordinates() {
-    Residuum f(bd1,bd2,forceDir,momentDir,frame1,frame2,refFrame,if1,if2);
+    Residuum f(bd1,bd2,forceDir,momentDir,frame,refFrame,if1,if2);
     MultiDimNewtonMethod newton(&f);
     q = newton.solve(q);
     if(newton.getInfo()!=0)
@@ -210,8 +211,8 @@ namespace MBSim {
     }
     for(size_t i=0; i<bd2.size(); i++) {
       bd2[i]->setUpdateByReference(false);
-      JT(RangeV(0,2),Iu2[i]) = -frame2->evalJacobianOfTranslation(2);
-      JR(RangeV(0,2),Iu2[i]) = -frame2->getJacobianOfRotation(2);
+      JT(RangeV(0,2),Iu2[i]) = -frame[1]->evalJacobianOfTranslation(2);
+      JR(RangeV(0,2),Iu2[i]) = -frame[1]->getJacobianOfRotation(2);
       for(size_t j=i+1; j<bd2.size(); j++)
         bd2[j]->resetJacobiansUpToDate();
       bd2[i]->setUpdateByReference(true);
@@ -225,8 +226,8 @@ namespace MBSim {
       i->setuRel(Vec(i->getGeneralizedVelocitySize()));
     }
     Vec b(nu);
-    b(iF) = -(evalGlobalForceDirection().T()*(C.evalVelocity()-frame2->evalVelocity()));
-    b(iM) = -(getGlobalMomentDirection().T()*(C.getAngularVelocity()-frame2->getAngularVelocity()));
+    b(iF) = -(evalGlobalForceDirection().T()*(C.evalVelocity()-frame[1]->evalVelocity()));
+    b(iM) = -(getGlobalMomentDirection().T()*(C.getAngularVelocity()-frame[1]->getAngularVelocity()));
     Vec u = slvLU(evalA(),b);
     for(unsigned int i=0; i<bd1.size(); i++) {
       bd1[i]->resetVelocitiesUpToDate();
@@ -250,25 +251,25 @@ namespace MBSim {
         i->setJRel(Mat(i->getGeneralizedVelocitySize(),i->gethSize()));
         i->setjRel(Vec(i->getGeneralizedVelocitySize()));
       }
-      Vec3 WvP0P1 = frame2->evalVelocity() - C.evalVelocity();
-      Vec3 WomK0K1 = frame2->getAngularVelocity() - C.getAngularVelocity();
+      Vec3 WvP0P1 = frame[1]->evalVelocity() - C.evalVelocity();
+      Vec3 WomK0K1 = frame[1]->getAngularVelocity() - C.getAngularVelocity();
 
       Mat B(nu,nh);
       Mat JT0(3,nh);
       Mat JR0(3,nh);
-      if(frame1->getJacobianOfTranslation(0,false).cols()) {
-        JT0(RangeV(0,2),RangeV(0,frame1->getJacobianOfTranslation(0,false).cols()-1))+=C.evalJacobianOfTranslation();
-        JR0(RangeV(0,2),RangeV(0,frame1->getJacobianOfRotation(0,false).cols()-1))+=C.getJacobianOfRotation();
+      if(frame[0]->getJacobianOfTranslation(0,false).cols()) {
+        JT0(RangeV(0,2),RangeV(0,frame[0]->getJacobianOfTranslation(0,false).cols()-1))+=C.evalJacobianOfTranslation();
+        JR0(RangeV(0,2),RangeV(0,frame[0]->getJacobianOfRotation(0,false).cols()-1))+=C.getJacobianOfRotation();
       }
-      if(frame2->getJacobianOfTranslation(0,false).cols()) {
-        JT0(RangeV(0,2),RangeV(0,frame2->getJacobianOfTranslation(0,false).cols()-1))-=frame2->evalJacobianOfTranslation();
-        JR0(RangeV(0,2),RangeV(0,frame2->getJacobianOfRotation(0,false).cols()-1))-=frame2->getJacobianOfRotation();
+      if(frame[1]->getJacobianOfTranslation(0,false).cols()) {
+        JT0(RangeV(0,2),RangeV(0,frame[1]->getJacobianOfTranslation(0,false).cols()-1))-=frame[1]->evalJacobianOfTranslation();
+        JR0(RangeV(0,2),RangeV(0,frame[1]->getJacobianOfRotation(0,false).cols()-1))-=frame[1]->getJacobianOfRotation();
       }
       B(iF,RangeV(0,nh-1)) = -(evalGlobalForceDirection().T()*JT0);
       B(iM,RangeV(0,nh-1)) = -(getGlobalMomentDirection().T()*JR0);
       Vec b(nu);
-      b(iF) = evalGlobalForceDirection().T()*(frame2->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), 2.0*WvP0P1));
-      b(iM) = getGlobalMomentDirection().T()*(frame2->getGyroscopicAccelerationOfRotation()-C.getGyroscopicAccelerationOfRotation()-crossProduct(C.getAngularVelocity(), WomK0K1));
+      b(iF) = evalGlobalForceDirection().T()*(frame[1]->evalGyroscopicAccelerationOfTranslation()-C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), 2.0*WvP0P1));
+      b(iM) = getGlobalMomentDirection().T()*(frame[1]->getGyroscopicAccelerationOfRotation()-C.getGyroscopicAccelerationOfRotation()-crossProduct(C.getAngularVelocity(), WomK0K1));
 
       Mat J = slvLU(evalA(),B);
       Vec j = slvLU(getA(),b);
@@ -299,7 +300,7 @@ namespace MBSim {
       joint->setMomentDirection(momentDir);
       joint->setMomentLaw(new BilateralConstraint);
     }
-    joint->connect(frame1,frame2);
+    joint->connect(frame[0],frame[1]);
     joint->plotFeature[generalizedRelativePosition] = false;
     joint->plotFeature[generalizedRelativeVelocity] = false;
     link = joint;
@@ -326,8 +327,13 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"connect");
     saved_ref1=E(e)->getAttribute("ref1");
     saved_ref2=E(e)->getAttribute("ref2");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if(e) refFrameID=E(e)->getText<int>()-1;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) {
+      string refFrameStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(refFrameStr=="firstFrame") refFrame=firstFrame;
+      else if(refFrameStr=="secondFrame") refFrame=secondFrame;
+      else refFrame=unknown;
+    }
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(E(e)->getText<Mat3xV>(3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");

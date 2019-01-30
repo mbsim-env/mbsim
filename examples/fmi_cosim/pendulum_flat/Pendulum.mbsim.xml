@@ -199,7 +199,7 @@
     </Demultiplexer>
     <KineticExcitation name="force">
       <connect ref1="/Frame[I]" ref2="../Object[ChainLink_{N}]/Frame[bottom]"/>
-      <frameOfReferenceID>1</frameOfReferenceID>
+      <frameOfReference>"firstFrame"</frameOfReference>
       <forceDirection unit="-">[1,0;0,1;0,0]</forceDirection>
       <forceFunction>
         <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">

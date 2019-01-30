@@ -31,6 +31,12 @@ namespace MBSim {
    */
   class FloatingFrameLink : public FrameLink {
     public:
+      enum FrameOfReference {
+        firstFrame=0,
+        secondFrame,
+        unknown
+      };
+
       /**
        * \brief constructor
        * \param name of link machanics
@@ -53,10 +59,10 @@ namespace MBSim {
       void updateg() override;
       void updategd() override;
 
-      /** \brief The frame of reference ID for the force/moment direction vectors.
-       * If ID=0 (default) the first frame, if ID=1 the second frame is used.
+      /** \brief The frame of reference for the force/moment direction vectors.
+       * If firstFrame (default) the first frame, if secondFrame the second frame is used.
        */
-      void setFrameOfReferenceID(Index ID) { refFrameID = ID; }
+      void setFrameOfReference(FrameOfReference refFrame_) { refFrame = refFrame_; }
 
       void resetUpToDate() override;
       void updatePositions(Frame *frame) override;
@@ -76,8 +82,7 @@ namespace MBSim {
       /**
        * \brief frame of reference the force is defined in
        */
-      Frame *refFrame;
-      Index refFrameID;
+      FrameOfReference refFrame{firstFrame};
 
       /**
        * \brief own frame located in second partner with same orientation as first partner 

@@ -27,7 +27,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), refFrame(nullptr), refFrameID(0), C("F") {
+  FloatingFrameLink::FloatingFrameLink(const std::string &name) : FrameLink(name), C("F") {
     C.setParent(this);
   }
 
@@ -97,8 +97,8 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateForceDirections() {
-    DF = refFrame->evalOrientation() * forceDir;
-    DM = refFrame->getOrientation() * momentDir;
+    DF = frame[refFrame]->evalOrientation() * forceDir;
+    DM = frame[refFrame]->getOrientation() * momentDir;
     updDF = false;
   }
 
@@ -114,13 +114,14 @@ namespace MBSim {
 
   void FloatingFrameLink::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if(refFrame==unknown)
+        throwError("(FloatingFrameLink::init): frame of reference unknown");
       iF = RangeV(0, forceDir.cols() - 1);
       iM = RangeV(forceDir.cols(), getGeneralizedRelativePositionSize() - 1);
       lambdaF.resize(forceDir.cols());
       lambdaM.resize(momentDir.cols());
     }
     else if(stage==unknownStage) {
-      refFrame = refFrameID ? frame[1] : frame[0];
       C.setFrameOfReference(frame[0]);
       P[0] = &C;
       P[1] = frame[1];
@@ -130,8 +131,13 @@ namespace MBSim {
 
   void FloatingFrameLink::initializeUsingXML(DOMElement *element) {
     FrameLink::initializeUsingXML(element);
-    DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frameOfReferenceID");
-    if (e) refFrameID = E(e)->getText<int>()-1;
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
+    if(e) {
+      string refFrameStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(refFrameStr=="firstFrame") refFrame=firstFrame;
+      else if(refFrameStr=="secondFrame") refFrame=secondFrame;
+      else refFrame=unknown;
+    }
   }
 
 }
