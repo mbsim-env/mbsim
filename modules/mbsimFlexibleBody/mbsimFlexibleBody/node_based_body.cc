@@ -91,10 +91,11 @@ namespace MBSimFlexibleBody {
     Body::addFrame(frame);
   }
 
-  void NodeBasedBody::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==preInit) {
-    }
-    Body::init(stage, config);
-  }
+//  vector<int> NodeBasedBody::getNodeIndices(vector<int> nodeNumbers) const {
+//    vector<int> nodeIndices(nodeNumbers.size());
+//    for(size_t i=0; i<nodeNumbers.size(); i++)
+//      nodeIndices[i] = getNodeIndex(nodeNumbers[i]);
+//    return nodeIndices;
+//  }
 
 }

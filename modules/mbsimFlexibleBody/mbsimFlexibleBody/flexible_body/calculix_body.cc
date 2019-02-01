@@ -20,6 +20,7 @@
 #include <config.h>
 #include "calculix_body.h"
 #include "openmbvcppinterface/dynamicindexedfaceset.h"
+#include "openmbvcppinterface/dynamicpointset.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -69,9 +70,10 @@ namespace MBSimFlexibleBody {
     stringstream s(str);
     s >> str >> nn;
     u0.resize(3*nn,NONINIT);
-    double d;
+    int d;
     for(size_t i=0; i<nn; i++) {
       isRes >> d >> d;
+      nodeMap[d] = i;
       for(size_t k=0; k<3; k++)
         isRes >> u0.e(3*i+k);
     }
@@ -87,7 +89,7 @@ namespace MBSimFlexibleBody {
     stringstream s(str);
     s >> str >> ne;
     eles.resize(ne,20,NONINIT);
-    double d;
+    int d;
     size_t type, nn;
     for(size_t i=0; i<ne; i++) {
       isRes >> str >> str >> type;
@@ -99,7 +101,7 @@ namespace MBSimFlexibleBody {
       for(size_t j=0; j<nn;) {
         isRes >> d;
         if(d>0) {
-          eles.e(i,j) = d-1;
+          eles.e(i,j) = d;
           j++;
         }
       }
@@ -163,7 +165,6 @@ namespace MBSimFlexibleBody {
 
   void CalculixBody::importData() {
     string jobname = resultFileName.substr(0,resultFileName.length()-4);
-    cout << jobname << endl;
     isRes.open(jobname+".frd");
     isStiff.open(jobname+".sti");
     isMass.open(jobname+".mas");
@@ -259,35 +260,35 @@ namespace MBSimFlexibleBody {
 //    setOpenMBVNodes(nodes);
     int j = 0;
     for(int i=0; i<eles.rows(); i++) {
-      ombvIndices[j++] = eles(i,3);
-      ombvIndices[j++] = eles(i,2);
-      ombvIndices[j++] = eles(i,1);
-      ombvIndices[j++] = eles(i,0);
+      ombvIndices[j++] = nodeMap[eles(i,3)];
+      ombvIndices[j++] = nodeMap[eles(i,2)];
+      ombvIndices[j++] = nodeMap[eles(i,1)];
+      ombvIndices[j++] = nodeMap[eles(i,0)];
       ombvIndices[j++] = -1;
-      ombvIndices[j++] = eles(i,4);
-      ombvIndices[j++] = eles(i,5);
-      ombvIndices[j++] = eles(i,6);
-      ombvIndices[j++] = eles(i,7);
+      ombvIndices[j++] = nodeMap[eles(i,4)];
+      ombvIndices[j++] = nodeMap[eles(i,5)];
+      ombvIndices[j++] = nodeMap[eles(i,6)];
+      ombvIndices[j++] = nodeMap[eles(i,7)];
       ombvIndices[j++] = -1;
-      ombvIndices[j++] = eles(i,1);
-      ombvIndices[j++] = eles(i,2);
-      ombvIndices[j++] = eles(i,6);
-      ombvIndices[j++] = eles(i,5);
+      ombvIndices[j++] = nodeMap[eles(i,1)];
+      ombvIndices[j++] = nodeMap[eles(i,2)];
+      ombvIndices[j++] = nodeMap[eles(i,6)];
+      ombvIndices[j++] = nodeMap[eles(i,5)];
       ombvIndices[j++] = -1;
-      ombvIndices[j++] = eles(i,2);
-      ombvIndices[j++] = eles(i,3);
-      ombvIndices[j++] = eles(i,7);
-      ombvIndices[j++] = eles(i,6);
+      ombvIndices[j++] = nodeMap[eles(i,2)];
+      ombvIndices[j++] = nodeMap[eles(i,3)];
+      ombvIndices[j++] = nodeMap[eles(i,7)];
+      ombvIndices[j++] = nodeMap[eles(i,6)];
       ombvIndices[j++] = -1;
-      ombvIndices[j++] = eles(i,4);
-      ombvIndices[j++] = eles(i,7);
-      ombvIndices[j++] = eles(i,3);
-      ombvIndices[j++] = eles(i,0);
+      ombvIndices[j++] = nodeMap[eles(i,4)];
+      ombvIndices[j++] = nodeMap[eles(i,7)];
+      ombvIndices[j++] = nodeMap[eles(i,3)];
+      ombvIndices[j++] = nodeMap[eles(i,0)];
       ombvIndices[j++] = -1;
-      ombvIndices[j++] = eles(i,0);
-      ombvIndices[j++] = eles(i,1);
-      ombvIndices[j++] = eles(i,5);
-      ombvIndices[j++] = eles(i,4);
+      ombvIndices[j++] = nodeMap[eles(i,0)];
+      ombvIndices[j++] = nodeMap[eles(i,1)];
+      ombvIndices[j++] = nodeMap[eles(i,5)];
+      ombvIndices[j++] = nodeMap[eles(i,4)];
       ombvIndices[j++] = -1;
     }
 
@@ -305,6 +306,7 @@ namespace MBSimFlexibleBody {
         std::shared_ptr<OpenMBV::DynamicIndexedFaceSet> faceset = ombvBody->createOpenMBV();
         faceset->setIndices(ombvIndices);
         openMBVBody = faceset;
+//        openMBVBody = OpenMBV::ObjectFactory::create<OpenMBV::DynamicPointSet>(); // faceset;
         ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
       }
     }

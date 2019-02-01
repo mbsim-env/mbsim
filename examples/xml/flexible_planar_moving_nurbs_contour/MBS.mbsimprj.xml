@@ -288,7 +288,7 @@
             <FlexiblePlanarNurbsContour name="FlexiblePlanarNurbsContour">
               <thickness xmlns="http://www.mbsim-env.de/MBSim" unit="m">1</thickness>
               <interpolation>true</interpolation>
-              <indices>[4:-1:1]'</indices>
+              <nodes>[4:-1:1]'</nodes>
               <degree>3</degree>
               <open>true</open>
               <enableOpenMBV/>

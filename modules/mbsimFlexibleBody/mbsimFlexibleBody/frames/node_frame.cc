@@ -54,12 +54,18 @@ namespace MBSimFlexibleBody {
     updGA = false;
   }
 
+  void NodeFrame::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage)
+      nodeIndex = static_cast<NodeBasedBody*>(parent)->getNodeIndex(node);
+    Frame::init(stage,config);
+  }
+
   void NodeFrame::initializeUsingXML(DOMElement *element) {
     Frame::initializeUsingXML(element);
 
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumber");
-    setNodeNumber(E(e)->getText<int>()-1);
+    setNodeNumber(E(e)->getText<int>());
   }
 
 }

@@ -30,6 +30,21 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleFfrBody)
 
+  void FlexibleFfrBody::setNodeNumbers(const vector<int> &n) {
+    for(size_t i=0; i<n.size(); i++)
+      nodeMap[n[i]] = i;
+  }
+
+  void FlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==preInit) {
+      if(nodeMap.empty()) {
+        for(size_t i=0; i<KrKP.size(); i++)
+          nodeMap[i+1] = i;
+      }
+    }
+    GenericFlexibleFfrBody::init(stage, config);
+  }
+
   void FlexibleFfrBody::initializeUsingXML(DOMElement *element) {
     GenericFlexibleFfrBody::initializeUsingXML(element);
 
@@ -109,6 +124,9 @@ namespace MBSimFlexibleBody {
       if(e) setGeometricStiffnessMatrixDueToAngularVelocity(E(e)->getText<Mat>());
     }
 
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumbers");
+    if(e) setNodeNumbers(E(e)->getText<vector<int>>());
+
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalRelativePositionArray");
     if(e) setNodalRelativePosition(getCellArray1D<Vec3>(e));
     else {
@@ -176,13 +194,6 @@ namespace MBSimFlexibleBody {
     if(e) {
       openMBVBody=OpenMBV::ObjectFactory::create<OpenMBV::FlexibleBody>(e->getFirstElementChild());
       openMBVBody->initializeUsingXML(e->getFirstElementChild());
-    }
-
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodes");
-    if(e) {
-      vector<int> nodes1based=E(e)->getText<vector<int>>();
-      ombvNodes.resize(nodes1based.size());
-      transform(nodes1based.begin(), nodes1based.end(), ombvNodes.begin(), [](int a){ return a-1; });
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVColorRepresentation");

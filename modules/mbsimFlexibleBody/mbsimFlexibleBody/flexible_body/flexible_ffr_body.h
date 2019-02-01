@@ -93,6 +93,8 @@ namespace MBSimFlexibleBody {
       void setGeometricStiffnessMatrixDueToAngularVelocity(const fmatvec::MatV &K0om_) { K0om = getCellArray1D<fmatvec::SqrMatV>(K0om_.cols(),K0om_); }
       // End of interface
 
+      void setNodeNumbers(const std::vector<int> &n);
+
       void setNodalRelativePosition(const std::vector<fmatvec::Vec3> &r) { setNodalRelativePositionArray(r); }
       void setNodalRelativePositionArray(const std::vector<fmatvec::Vec3> &r) { KrKP = r; }
       void setNodalRelativePosition(const fmatvec::VecV &r) { KrKP = getCellArray1D<fmatvec::Vec3>(3,r); }
@@ -129,10 +131,10 @@ namespace MBSimFlexibleBody {
       void setNodalGeometricStiffnessMatrixDueToMomentArray(const std::vector<std::vector<fmatvec::SqrMatV> > &K0M_) { K0M = K0M_; }
       void setNodalGeometricStiffnessMatrixDueToMoment(const fmatvec::MatV &K0M_) { K0M = getCellArray2D<fmatvec::SqrMatV>(K0M_.cols(),K0M_.cols(),K0M_); }
 
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body);
-      void setOpenMBVNodes(const std::vector<MBSim::Index> &ombvNodes_) { ombvNodes = ombvNodes_; }
       void setOpenMBVColorRepresentation(OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation_) { ombvColorRepresentation = ombvColorRepresentation_; }
   };
 
