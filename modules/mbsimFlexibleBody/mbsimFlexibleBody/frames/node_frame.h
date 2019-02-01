@@ -36,6 +36,7 @@ namespace MBSimFlexibleBody {
 
       void setNodeNumber(int node_) { node = node_; }
       int getNodeNumber() const { return node; }
+      int getNodeIndex() const { return nodeIndex; }
 
       void updatePositions() override;
       void updateVelocities() override;
@@ -43,13 +44,19 @@ namespace MBSimFlexibleBody {
       void updateJacobians(int j=0) override;
       void updateGyroscopicAccelerations() override;
 
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       /*!
-       * \brief node number of the frame
+       * \brief node number
        */
       int node;
+
+      /*!
+       * \brief node index
+       */
+      int nodeIndex;
   };
 
 }

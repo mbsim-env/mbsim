@@ -291,9 +291,6 @@ namespace MBSimFlexibleBody {
       ombvIndices[j++] = nodeMap[eles(i,4)];
       ombvIndices[j++] = -1;
     }
-    for(size_t i=0; i<ombvIndices.size(); i++) {
-      cout << ombvIndices[i] << " " << endl;
-    }
 
     isRes.close();
     isStiff.close();

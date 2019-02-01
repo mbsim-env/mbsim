@@ -71,7 +71,7 @@ CrankMechanism::CrankMechanism(const string &name, int stiffening) : DynamicSyst
   T(0,0) = 1;
   T(1,1) = 1;
   P(2,1) = 0.067808;
-  body->addFrame(new NodeFrame("Q",0));
+  body->addFrame(new NodeFrame("Q",1));
   body->getFrame("K")->enableOpenMBV(0.3);
   body->getFrame("Q")->enableOpenMBV(0.3);
 

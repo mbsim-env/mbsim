@@ -280,6 +280,9 @@ namespace MBSimFlexibleBody {
 
   void FlexibleSpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
+      for(int i=0; i<index.rows(); i++)
+        for(int j=0; j<index.cols(); j++)
+          index(i,j) = static_cast<NodeBasedBody*>(parent)->getNodeIndex(index(i,j));
       if(not interpolation) {
         srfPos.resize(index.rows(),index.cols(),uKnot.size()-index.rows()-1,vKnot.size()-index.cols()-1);
         srfPos.setDegreeU(uKnot.size()-index.rows()-1);
@@ -383,24 +386,10 @@ namespace MBSimFlexibleBody {
   void FlexibleSpatialNurbsContour::initializeUsingXML(DOMElement * element) {
     FlexibleContour::initializeUsingXML(element);
     DOMElement * e;
-//    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaNodes");
-//    etaNodes=E(e)->getText<Vec>();
-//    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"xiNodes");
-//    xiNodes=E(e)->getText<Vec>();
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"interpolation");
     if(e) setInterpolation(E(e)->getText<bool>());
-//    if(e) {
-//      string interpolationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
-//      if(interpolationStr=="equallySpaced") interpolation=equallySpaced;
-//      else if(interpolationStr=="chordLength") interpolation=chordLength;
-//      else if(interpolationStr=="none") interpolation=none;
-//      else interpolation=unknown;
-//    }
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"indices");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
     index = E(e)->getText<MatVI>();
-    for(int i=0; i<index.rows(); i++)
-      for(int j=0; j<index.cols(); j++)
-        index(i,j)--;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"etaKnotVector");
     if(e) setEtaKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"xiKnotVector");

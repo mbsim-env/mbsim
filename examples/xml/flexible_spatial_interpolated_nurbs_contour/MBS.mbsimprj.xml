@@ -141,7 +141,7 @@ ret = 0;</scalarParameter>
               <FlexibleSpatialNurbsContour name="FlexibleSpatialNurbsContour" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
                 <thickness xmlns="http://www.mbsim-env.de/MBSim" unit="m">1</thickness>
                 <interpolation>true</interpolation>
-                <indices>
+                <nodes>
 [   
    112    58   234    72   139
    113    57   233    73   140
@@ -149,7 +149,7 @@ ret = 0;</scalarParameter>
    115    55   231    75   142
    116    54   230    76   143
    ]
-                </indices>
+                </nodes>
                 <etaDegree>3</etaDegree>
                 <xiDegree>3</xiDegree>
                 <openEta>true</openEta>

@@ -721,6 +721,7 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
+          <xs:element name="nodeNumbers" type="pv:nounitVector" minOccurs="0"/>
           <xs:choice minOccurs="0">
             <xs:element name="nodalRelativePositionArray">
               <xs:annotation>
@@ -942,7 +943,6 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
-            <xs:element name="openMBVNodes" type="pv:indexVector" minOccurs="0"/>
             <xs:element name="openMBVColorRepresentation" type="pv:stringFullEval" minOccurs="0">
             </xs:element>
           </xs:sequence>
@@ -1113,10 +1113,10 @@
               Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="indices" type="pv:indexVector">
+          <xs:element name="nodes" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Indizes der Kontrollpunkte.
+                Knotennummern.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1168,10 +1168,10 @@
               Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="indices" type="pv:indexMatrix">
+          <xs:element name="nodes" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Indizes der Kontrollpunkte.
+                Knotennummern.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1240,10 +1240,10 @@
               Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="indices" type="pv:indexMatrix">
+          <xs:element name="nodes" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Indizes der Kontrollpunkte.
+                Knotennummern.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

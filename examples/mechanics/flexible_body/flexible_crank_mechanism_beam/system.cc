@@ -79,7 +79,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   T(0,3) = 1;
   P(2,0) = -M_PI/l2;
   P(2,1) = 2.*M_PI/l2;
-  body2->addFrame(new NodeFrame("Q",0));
+  body2->addFrame(new NodeFrame("Q",1));
   body2->getFrame("Q")->enableOpenMBV(0.3);
   body2->setFrameOfReference(body1->getFrame("Q"));
 

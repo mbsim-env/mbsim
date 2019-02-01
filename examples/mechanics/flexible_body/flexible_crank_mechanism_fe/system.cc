@@ -76,7 +76,7 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   addObject(body2);
   Kr(0) = l2/2;
   Mat3xV T(2*n), P(2*n);
-  body2->addFrame(new NodeFrame("Q",0));
+  body2->addFrame(new NodeFrame("Q",1));
   body2->getFrame("Q")->enableOpenMBV(0.3);
   body2->setFrameOfReference(body1->getFrame("Q"));
 
