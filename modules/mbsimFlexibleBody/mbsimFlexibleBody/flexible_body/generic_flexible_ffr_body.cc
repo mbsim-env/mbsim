@@ -46,6 +46,14 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
+  const PlotFeatureEnum nodalDisplacement;
+  const PlotFeatureEnum nodalStress;
+  const PlotFeatureEnum nodalEquivalentStress;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIMFLEX, nodalDisplacement)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIMFLEX, nodalStress)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIMFLEX, nodalEquivalentStress)
+
   Range<Var,Var> i02(0,2);
 
   GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name),  Id(Eye()),  APK(EYE) {
@@ -412,6 +420,26 @@ namespace MBSimFlexibleBody {
       }
     }
     else if(stage==plotting) {
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[MBSimFlexibleBody::nodalDisplacement]) {
+          for(const auto & i : nodeMap) {
+            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (x)");
+            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (y)");
+            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (z)");
+          }
+        }
+        if(plotFeature[MBSimFlexibleBody::nodalStress]) {
+          for(const auto & i : nodeMap) {
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (x)");
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (y)");
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (z)");
+          }
+        }
+        if(plotFeature[MBSimFlexibleBody::nodalEquivalentStress]) {
+          for(const auto & i : nodeMap)
+            plotColumns.push_back("nodal equivalent stress " + to_string(i.first));
+        }
+      }
       if(plotFeature[ref(openMBV)] and openMBVBody) {
         if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
           dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(KrKP.size());
@@ -433,6 +461,26 @@ namespace MBSimFlexibleBody {
   }
 
   void GenericFlexibleFfrBody::plot() {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[nodalDisplacement]) {
+        for(const auto & i : nodeMap) {
+          const Vec3 &disp = evalNodalDisplacement(i.second);
+          for(size_t j=0; j<3; j++)
+            plotVector.push_back(disp(j));
+        }
+      }
+      if(plotFeature[nodalStress]) {
+        for(const auto & i : nodeMap) {
+          const Vec3 &stress = evalNodalStress(i.second);
+          for(size_t j=0; j<3; j++)
+            plotVector.push_back(stress(j));
+        }
+      }
+      if(plotFeature[nodalEquivalentStress]) {
+        for(const auto & i : nodeMap)
+          plotVector.push_back(evalEquivalentStress(i.second));
+      }
+    }
     if(plotFeature[ref(openMBV)] and openMBVBody) {
       vector<double> data;
       data.push_back(getTime());

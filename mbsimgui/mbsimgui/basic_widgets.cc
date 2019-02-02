@@ -505,6 +505,9 @@ namespace MBSimGUI {
     feature.push_back(MBSIM%"energy");
     feature.push_back(MBSIM%"deflection");
     feature.push_back(MBSIMCONTROL%"signal");
+    feature.push_back(MBSIMFLEX%"nodalDisplacement");
+    feature.push_back(MBSIMFLEX%"nodalStress");
+    feature.push_back(MBSIMFLEX%"nodalEquivalentStress");
 
     QStringList type_;
     if(types.isEmpty()) {
@@ -552,6 +555,7 @@ namespace MBSimGUI {
     nspace->blockSignals(true);
     nspace->addItem(QString::fromStdString(MBSIM.getNamespaceURI()));
     nspace->addItem(QString::fromStdString(MBSIMCONTROL.getNamespaceURI()));
+    nspace->addItem(QString::fromStdString(MBSIMFLEX.getNamespaceURI()));
     nspace->blockSignals(false);
 
     QPushButton *add = new QPushButton("Add");
