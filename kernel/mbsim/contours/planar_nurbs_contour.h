@@ -67,6 +67,10 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setInterpolation(Interpolation interpolation_) { interpolation = interpolation_; }
       void setControlPoints(const fmatvec::MatVx4 &cp_) { cp = cp_; }
+      void setControlPoints(const fmatvec::MatVx3 &cp_);
+      void setControlPoints(const std::vector<fmatvec::Vec4> &cp_);
+      void setControlPoints(const std::vector<fmatvec::Vec3> &cp_);
+      void setNumberOfControlPoints(int n_) { n = n_; }
       void setKnotVector(const fmatvec::VecV &knot_) { knot = knot_; }
       void setDegree(int degree_) { degree = degree_; }
       /***************************************************/
@@ -88,6 +92,7 @@ namespace MBSim {
 
       Interpolation interpolation{none};
       fmatvec::MatVx4 cp;
+      int n{0};
       fmatvec::VecV knot;
       int degree{3};
       bool open{false};

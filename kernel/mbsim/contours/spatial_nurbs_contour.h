@@ -69,7 +69,12 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setInterpolation(Interpolation interpolation_) { interpolation = interpolation_; }
-      void setControlPoints(const fmatvec::GeneralMatrix<fmatvec::Vec4> &cp_) { cp = cp_; }
+      void setControlPoints(const fmatvec::MatVx4 &cp_) { cp = cp_; }
+      void setControlPoints(const fmatvec::MatVx3 &cp_);
+      void setControlPoints(const std::vector<std::vector<fmatvec::Vec4>> &cp_);
+      void setControlPoints(const std::vector<std::vector<fmatvec::Vec3>> &cp_);
+      void setNumberOfEtaControlPoints(int nu_) { nu = nu_; }
+      void setNumberOfXiControlPoints(int nv_) { nv = nv_; }
       void setEtaKnotVector(const fmatvec::VecV &uKnot_) { uKnot = uKnot_; }
       void setXiKnotVector(const fmatvec::VecV &vKnot_) { vKnot = vKnot_; }
       void setEtaDegree(int etaDegree_) { etaDegree = etaDegree_; }
@@ -93,7 +98,9 @@ namespace MBSim {
       const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrix(const fmatvec::Vec2 &zeta){ if(fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta); return hess; }
 
       Interpolation interpolation{none};
-      fmatvec::GeneralMatrix<fmatvec::Vec4> cp;
+      fmatvec::MatVx4 cp;
+      int nu{0};
+      int nv{0};
       fmatvec::VecV uKnot, vKnot;
       int etaDegree{3};
       int xiDegree{3};

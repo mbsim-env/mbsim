@@ -55,11 +55,13 @@ namespace MBSim {
 
   void PlanarNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
+      if(cp.rows() != n)
+        throwError("(PlanarNurbsContour::init): wrong number of control points");
       if(interpolation==unknown)
         throwError("(PlanarNurbsContour::init): interpolation unknown");
       if(interpolation==none) {
-        degree = knot.size()-cp.rows()-1;
-        crv.resize(cp.rows(),degree);
+        degree = knot.size()-n-1;
+        crv.resize(n,degree);
         crv.setCtrlPnts(cp);
         crv.setKnot(knot);
       }
@@ -90,9 +92,35 @@ namespace MBSim {
   }
 
   double PlanarNurbsContour::getCurvature(const Vec2 &zeta) {
-    throw;
+    throwError("(PlanarNurbsContour::getCurvature): not implemented");
 //    const Vec3 rs = funcCrPC->parDer(zeta(0));
 //    return nrm2(crossProduct(rs,funcCrPC->parDerParDer(zeta(0))))/pow(nrm2(rs),3);
+  }
+
+  void PlanarNurbsContour::setControlPoints(const MatVx3 &cp_) {
+    cp.resize(cp_.rows(),NONINIT);
+    for(int i=0; i<cp.rows(); i++) {
+      for(int j=0; j<3; j++)
+        cp(i,j) = cp_(i,j);
+      cp(i,3) = 1;
+    }
+  }
+
+  void PlanarNurbsContour::setControlPoints(const vector<Vec4> &cp_) {
+    cp.resize(cp_.size(),NONINIT);
+    for(int i=0; i<cp.rows(); i++) {
+      for(int j=0; j<4; j++)
+        cp(i,j) = cp_[i](j);
+    }
+  }
+
+  void PlanarNurbsContour::setControlPoints(const vector<Vec3> &cp_) {
+    cp.resize(cp_.size(),NONINIT);
+    for(int i=0; i<cp.rows(); i++) {
+      for(int j=0; j<3; j++)
+        cp(i,j) = cp_[i](j);
+      cp(i,3) = 1;
+    }
   }
 
   void PlanarNurbsContour::initializeUsingXML(DOMElement * element) {
@@ -108,15 +136,9 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"controlPoints");
     MatV pts=E(e)->getText<MatV>();
+    pts.cols()==3?setControlPoints(MatVx3(pts)):setControlPoints(MatVx4(pts));
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfControlPoints");
-    int n = E(e)->getText<int>();
-    cp.resize(n);
-    for(int i=0; i<n; i++) {
-      for(int j=0; j<std::min(pts.cols(),4); j++)
-        cp(i,j) = pts(i,j);
-      if(pts.cols()<4)
-        cp(i,3) = 1;
-    }
+    n = E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"knotVector");
     if(e) setKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"degree");

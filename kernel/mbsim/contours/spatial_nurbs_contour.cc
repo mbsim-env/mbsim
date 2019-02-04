@@ -82,12 +82,21 @@ namespace MBSim {
 
   void SpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
+      if(cp.rows() != nu*nv)
+        throwError("(SpatialNurbsContour::init): wrong number of control points");
       if(interpolation==unknown)
         throwError("(SpatialNurbsContour::init): interpolation unknown");
+      GeneralMatrix<Vec4> cp(nu,nv);
+      for(int i=0; i<nu; i++) {
+        for(int j=0; j<nv; j++) {
+          for(int k=0; k<4; k++)
+            cp(i,j)(k) = this->cp(j*nu+i,k);
+        }
+    }
       if(interpolation==none) {
-        srf.resize(cp.rows(),cp.cols(),uKnot.size()-cp.rows()-1,vKnot.size()-cp.cols()-1);
-        srf.setDegreeU(uKnot.size()-cp.rows()-1);
-        srf.setDegreeV(vKnot.size()-cp.cols()-1);
+        srf.resize(nu,nv,uKnot.size()-nu-1,vKnot.size()-nv-1);
+        srf.setDegreeU(uKnot.size()-nu-1);
+        srf.setDegreeV(vKnot.size()-nv-1);
         srf.setKnotU(uKnot);
         srf.setKnotV(vKnot);
         srf.setCtrlPnts(cp);
@@ -132,6 +141,36 @@ namespace MBSim {
     throwError("(SpatialNurbsContour::getCurvature): not implemented");
   }
 
+  void SpatialNurbsContour::setControlPoints(const MatVx3 &cp_) {
+    cp.resize(cp_.rows(),NONINIT);
+    for(int i=0; i<cp.rows(); i++) {
+      for(int j=0; j<3; j++)
+        cp(i,j) = cp_(i,j);
+      cp(i,3) = 1;
+    }
+  }
+
+  void SpatialNurbsContour::setControlPoints(const vector<vector<Vec4>> &cp_) {
+    cp.resize(cp_.size()*cp_[0].size(),NONINIT);
+    for(size_t i=0; i<cp_.size(); i++) {
+      for(size_t j=0; j<cp_[0].size(); j++) {
+        for(int k=0; k<4; k++)
+          cp(j*nu+i,k) = cp_[i][j](k);
+      }
+    }
+  }
+
+  void SpatialNurbsContour::setControlPoints(const vector<vector<Vec3>> &cp_) {
+    cp.resize(cp_.size()*cp_[0].size(),NONINIT);
+    for(size_t i=0; i<cp_.size(); i++) {
+      for(size_t j=0; j<cp_[0].size(); j++) {
+        for(int k=0; k<3; k++)
+          cp(j*nu+i,k) = cp_[i][j](k);
+        cp(j*nu+i,3) = 1;
+      }
+    }
+  }
+
   void SpatialNurbsContour::initializeUsingXML(DOMElement * element) {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;
@@ -145,10 +184,11 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"controlPoints");
     MatV pts=E(e)->getText<MatV>();
+    pts.cols()==3?setControlPoints(MatVx3(pts)):setControlPoints(MatVx4(pts));
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfEtaControlPoints");
-    int nu = E(e)->getText<int>();
+    nu = E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfXiControlPoints");
-    int nv = E(e)->getText<int>();
+    nv = E(e)->getText<int>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"etaKnotVector");
     if(e) setEtaKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiKnotVector");
@@ -157,15 +197,6 @@ namespace MBSim {
     if(e) setEtaDegree(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiDegree");
     if(e) setXiDegree(E(e)->getText<int>());
-    cp.resize(nu,nv);
-    for(int i=0; i<nu; i++) {
-      for(int j=0; j<nv; j++) {
-        for(int k=0; k<std::min(pts.cols(),4); k++)
-          cp(i,j)(k) = pts(j*nu+i,k);
-        if(pts.cols()<4)
-          cp(i,j)(3) = 1;
-      }
-    }
     e=E(element)->getFirstElementChildNamed(MBSIM%"openEta");
     if(e) setOpenEta(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"openXi");
