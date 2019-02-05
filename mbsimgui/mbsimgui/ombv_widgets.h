@@ -182,6 +182,16 @@ namespace MBSimGUI {
       static std::vector<QString> getColorRepresentation();
   };
 
+  class CalculixBodyMBSOMBVWidget : public FlexibleBodyMBSOMBVWidget {
+
+    public:
+      CalculixBodyMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation());
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *visu;
+  };
+
   class OMBVObjectWidget : public Widget {
 
     public:

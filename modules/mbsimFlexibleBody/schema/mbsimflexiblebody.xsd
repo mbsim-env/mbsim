@@ -45,6 +45,7 @@
     </xs:documentation></xs:annotation>
     <xs:sequence>
       <xs:group ref="mbsim:OpenMBVDynamicColoredBodyParameters"/>
+      <xs:element name="visualization" type="pv:stringFullEval" minOccurs="0"/>
     </xs:sequence>
   </xs:group>
 

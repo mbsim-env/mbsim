@@ -1233,8 +1233,6 @@ namespace MBSimGUI {
   }
 
   GenericFlexibleFfrBodyPropertyDialog::GenericFlexibleFfrBodyPropertyDialog(Element *body) : BodyPropertyDialog(body) {
-    addTab("Visualisation",3);
-    addTab("Nodal data");
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory4(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
@@ -1301,6 +1299,8 @@ namespace MBSimGUI {
   }
 
   FlexibleFfrBodyPropertyDialog::FlexibleFfrBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
+    addTab("Visualisation",3);
+    addTab("Nodal data");
 
     mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
     addToTab("General",mass);
@@ -1584,6 +1584,8 @@ namespace MBSimGUI {
   }
 
   CalculixBodyPropertyDialog::CalculixBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
+    addTab("Visualisation",3);
+
     resultFileName = new ExtWidget("Result file name",new FileWidget("", "Calculix result files", "frd files (*.frd)", 0, true),false,false,MBSIMFLEX%"resultFileName");
     addToTab("General",resultFileName);
 
@@ -1593,7 +1595,7 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"formalism");
     addToTab("General", formalism);
 
-    ombv = new ExtWidget("Enable openMBV",new FlexibleBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
+    ombv = new ExtWidget("Enable openMBV",new CalculixBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation",ombv);
   }
 

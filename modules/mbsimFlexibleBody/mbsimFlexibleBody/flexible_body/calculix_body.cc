@@ -19,8 +19,8 @@
 
 #include <config.h>
 #include "calculix_body.h"
-#include "openmbvcppinterface/dynamicindexedfaceset.h"
 #include "openmbvcppinterface/dynamicpointset.h"
+#include "openmbvcppinterface/dynamicindexedfaceset.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -252,7 +252,7 @@ namespace MBSimFlexibleBody {
     // compute reduced stiffness matrix
     Ke0 = JTMJ(K,Phi_);
 
-    // visualisation
+    // visualization
 //    vector<Index> nodes(nn);
     ombvIndices.resize(5*6*ne);
 //    for(size_t i=0; i<nn; i++)
@@ -303,10 +303,10 @@ namespace MBSimFlexibleBody {
       importData();
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvBody) {
-        std::shared_ptr<OpenMBV::DynamicIndexedFaceSet> faceset = ombvBody->createOpenMBV();
-        faceset->setIndices(ombvIndices);
-        openMBVBody = faceset;
-//        openMBVBody = OpenMBV::ObjectFactory::create<OpenMBV::DynamicPointSet>(); // faceset;
+        std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
+        openMBVBody = flexbody;
+        if(ombvBody->getVisualization()==OpenMBVCalculixBody::faces)
+          static_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(flexbody)->setIndices(ombvIndices);
         ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
       }
     }

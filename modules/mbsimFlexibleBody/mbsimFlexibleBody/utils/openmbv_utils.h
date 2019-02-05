@@ -21,6 +21,7 @@
 #define _MBSIMFLEX_OPENMBV_UTILS_H_
 
 #include <mbsim/utils/openmbv_utils.h>
+#include <openmbvcppinterface/dynamicpointset.h>
 #include <openmbvcppinterface/dynamicindexedfaceset.h>
 #include <openmbvcppinterface/dynamicnurbscurve.h>
 #include <openmbvcppinterface/dynamicnurbssurface.h>
@@ -45,18 +46,20 @@ namespace MBSimFlexibleBody {
       };
     public:
       OpenMBVFlexibleBody(unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0);
-      void initializeUsingXML(xercesc::DOMElement *element) { OpenMBVDynamicColoredBody::initializeUsingXML(element); }
-    protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::DynamicIndexedFaceSet> &object) { OpenMBVDynamicColoredBody::initializeObject(object); }
   };
 
   class OpenMBVCalculixBody : public OpenMBVFlexibleBody {
     public:
-      OpenMBVCalculixBody(unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVFlexibleBody(cR,minCol,maxCol,dc,tp,ps,lw) { }
-      void initializeUsingXML(xercesc::DOMElement *element) { OpenMBVFlexibleBody::initializeUsingXML(element); }
-      std::shared_ptr<OpenMBV::DynamicIndexedFaceSet> createOpenMBV();
-    protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::DynamicIndexedFaceSet> &object) { OpenMBVFlexibleBody::initializeObject(object); }
+      enum Visualization {
+        points=0,
+        faces
+      };
+      OpenMBVCalculixBody(Visualization visu_=faces, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVFlexibleBody(cR,minCol,maxCol,dc,tp,ps,lw), visu(visu_) { }
+      void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::FlexibleBody> createOpenMBV();
+      Visualization getVisualization() const { return visu; }
+    private:
+      Visualization visu;
   };
 
   class OpenMBVDynamicNurbsCurve : public MBSim::OpenMBVColoredBody {

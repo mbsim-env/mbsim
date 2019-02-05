@@ -414,6 +414,27 @@ namespace MBSimGUI {
     return cRL;
   }
 
+  CalculixBodyMBSOMBVWidget::CalculixBodyMBSOMBVWidget(const vector<QString> &cRL) : FlexibleBodyMBSOMBVWidget(cRL) {
+
+    vector<QString> list;
+    list.emplace_back("\"points\"");
+    list.emplace_back("\"faces\"");
+    visu = new ExtWidget("Visualization",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"visualization");
+    layout()->addWidget(visu);
+  }
+
+  DOMElement* CalculixBodyMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    FlexibleBodyMBSOMBVWidget::initializeUsingXML(element);
+    visu->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* CalculixBodyMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=FlexibleBodyMBSOMBVWidget::writeXMLFile(parent);
+    visu->writeXMLFile(e);
+    return e;
+  }
+
   DOMElement* OMBVObjectWidget::initializeUsingXML(DOMElement *element) {
     return element;
   }
