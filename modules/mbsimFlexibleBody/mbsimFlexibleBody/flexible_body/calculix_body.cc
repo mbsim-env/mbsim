@@ -325,6 +325,8 @@ namespace MBSimFlexibleBody {
       else if(formalismStr=="lumpedMass") formalism=lumpedMass;
       else formalism=unknown;
     }
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
+    if(e) setProportionalDamping(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       ombvBody = shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody);

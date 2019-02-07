@@ -1595,12 +1595,15 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"formalism");
     addToTab("General", formalism);
 
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget2(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
+    addToTab("General", beta);
+
     ombv = new ExtWidget("Enable openMBV",new CalculixBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation",ombv);
   }
 
   int CalculixBodyPropertyDialog::getqERelSize() const {
-    int nqE=0;
+    int nqE=1;
     // TODO: read calculix result file and determine size of qE
     return nqE;
   }
@@ -1609,6 +1612,7 @@ namespace MBSimGUI {
     GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     resultFileName->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
+    beta->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -1617,6 +1621,7 @@ namespace MBSimGUI {
     GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     resultFileName->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     formalism->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
