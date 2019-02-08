@@ -430,9 +430,12 @@ namespace MBSimFlexibleBody {
         }
         if(plotFeature[MBSimFlexibleBody::nodalStress]) {
           for(const auto & i : nodeMap) {
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (x)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (y)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (z)");
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (XX)");
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (YY)");
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (ZZ)");
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (XY)");
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (YZ)");
+            plotColumns.push_back("nodal stress " + to_string(i.first) + " (XZ)");
           }
         }
         if(plotFeature[MBSimFlexibleBody::nodalEquivalentStress]) {
@@ -471,8 +474,8 @@ namespace MBSimFlexibleBody {
       }
       if(plotFeature[nodalStress]) {
         for(const auto & i : nodeMap) {
-          const Vec3 &stress = evalNodalStress(i.second);
-          for(size_t j=0; j<3; j++)
+          const Vector<Fixed<6>,double> &stress = evalNodalStress(i.second);
+          for(size_t j=0; j<6; j++)
             plotVector.push_back(stress(j));
         }
       }
