@@ -823,7 +823,7 @@ namespace MBSimFlexibleBody {
       Matrix<General, Fixed<6>, Var, double> sigmahe = sigmahel[j];
       for(unsigned int i=0; i<sigmahen.size(); i++)
         sigmahe += sigmahen[j][i]*evalqERel()(i);
-      sigma[j] += sigmahe*getqERel();
+      sigma[j] += sigmahe*evalqERel();
     }
     updNodalStress[j] = false;
   }
