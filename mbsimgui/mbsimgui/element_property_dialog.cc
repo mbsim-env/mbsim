@@ -1399,6 +1399,9 @@ namespace MBSimGUI {
     ombvColorRepresentation = new ExtWidget("OpenMBV color representation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"openMBVColorRepresentation");
     addToTab("Visualisation", ombvColorRepresentation);
 
+    plotNodes = new ExtWidget("Plot nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodes");
+    addToTab("Visualisation", plotNodes);
+
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 //    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
@@ -1542,6 +1545,7 @@ namespace MBSimGUI {
     ombv->initializeUsingXML(item->getXMLElement());
     ombvNodes->initializeUsingXML(item->getXMLElement());
     ombvColorRepresentation->initializeUsingXML(item->getXMLElement());
+    plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1580,6 +1584,7 @@ namespace MBSimGUI {
     ombv->writeXMLFile(item->getXMLElement(),ele);
     ombvNodes->writeXMLFile(item->getXMLElement(),ele);
     ombvColorRepresentation->writeXMLFile(item->getXMLElement(),ele);
+    plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
 
@@ -1600,6 +1605,9 @@ namespace MBSimGUI {
 
     ombv = new ExtWidget("Enable openMBV",new CalculixBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualisation",ombv);
+
+    plotNodes = new ExtWidget("Plot nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodes");
+    addToTab("Visualisation", plotNodes);
   }
 
   int CalculixBodyPropertyDialog::getqERelSize() const {
@@ -1614,6 +1622,7 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     beta->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
+    plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1628,6 +1637,7 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
+    plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
 

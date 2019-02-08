@@ -212,6 +212,9 @@ namespace MBSimFlexibleBody {
       else if(colorRepresentationStr=="zxStress") ombvColorRepresentation=OpenMBVFlexibleBody::zxStress;
       else if(colorRepresentationStr=="equivalentStress") ombvColorRepresentation=OpenMBVFlexibleBody::equivalentStress;
     }
+
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodes");
+    if(e) setPlotNodes(E(e)->getText<VecVI>());
   }
 
   void FlexibleFfrBody::setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body) {

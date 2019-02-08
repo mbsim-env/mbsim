@@ -947,6 +947,13 @@
             <xs:element name="openMBVColorRepresentation" type="pv:stringFullEval" minOccurs="0">
             </xs:element>
           </xs:sequence>
+          <xs:element name="plotNodes" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten, die geplottet werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="enableOpenMBVFrameK" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -1020,6 +1027,13 @@
             <xs:complexType>
               <xs:group ref="OpenMBVFlexibleBodyParameters"/>
             </xs:complexType>
+          </xs:element>
+          <xs:element name="plotNodes" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten, die geplottet werden sollen.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="enableOpenMBVFrameK" minOccurs="0">
             <xs:annotation>

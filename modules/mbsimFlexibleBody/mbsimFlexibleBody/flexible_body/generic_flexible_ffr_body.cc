@@ -421,32 +421,40 @@ namespace MBSimFlexibleBody {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
+        if(plotNodes.size()==0) {
+          plotNodes.resize(nodeMap.size(),NONINIT);
+          int j=0;
+          for(const auto & i : nodeMap)
+            plotNodes(j++) = i.first;
+        }
         if(plotFeature[MBSimFlexibleBody::nodalDisplacement]) {
-          for(const auto & i : nodeMap) {
-            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (x)");
-            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (y)");
-            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (z)");
+          for(int i=0; i<plotNodes.size(); i++) {
+            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (x)");
+            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (y)");
+            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (z)");
           }
         }
         if(plotFeature[MBSimFlexibleBody::nodalStress]) {
-          for(const auto & i : nodeMap) {
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (XX)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (YY)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (ZZ)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (XY)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (YZ)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (XZ)");
+          for(int i=0; i<plotNodes.size(); i++) {
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XX)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (YY)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (ZZ)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XY)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (YZ)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XZ)");
           }
         }
         if(plotFeature[MBSimFlexibleBody::nodalEquivalentStress]) {
-          for(const auto & i : nodeMap)
-            plotColumns.push_back("nodal equivalent stress " + to_string(i.first));
+          for(int i=0; i<plotNodes.size(); i++)
+            plotColumns.push_back("nodal equivalent stress " + to_string(plotNodes(i)));
         }
       }
       if(plotFeature[ref(openMBV)] and openMBVBody) {
         if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
           dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(KrKP.size());
       }
+      for(int i=0; i<plotNodes.size(); i++)
+        plotNodes(i) = getNodeIndex(plotNodes(i));
     }
     NodeBasedBody::init(stage, config);
     if(fTR) fTR->init(stage, config);
@@ -466,22 +474,22 @@ namespace MBSimFlexibleBody {
   void GenericFlexibleFfrBody::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[nodalDisplacement]) {
-        for(const auto & i : nodeMap) {
-          const Vec3 &disp = evalNodalDisplacement(i.second);
+        for(int i=0; i<plotNodes.size(); i++) {
+          const Vec3 &disp = evalNodalDisplacement(plotNodes(i));
           for(size_t j=0; j<3; j++)
             plotVector.push_back(disp(j));
         }
       }
       if(plotFeature[nodalStress]) {
-        for(const auto & i : nodeMap) {
-          const Vector<Fixed<6>,double> &stress = evalNodalStress(i.second);
+        for(int i=0; i<plotNodes.size(); i++) {
+          const Vector<Fixed<6>,double> &stress = evalNodalStress(plotNodes(i));
           for(size_t j=0; j<6; j++)
             plotVector.push_back(stress(j));
         }
       }
       if(plotFeature[nodalEquivalentStress]) {
-        for(const auto & i : nodeMap)
-          plotVector.push_back(evalEquivalentStress(i.second));
+        for(int i=0; i<plotNodes.size(); i++)
+          plotVector.push_back(evalEquivalentStress(plotNodes(i)));
       }
     }
     if(plotFeature[ref(openMBV)] and openMBVBody) {
