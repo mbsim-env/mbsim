@@ -232,6 +232,24 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  InterfaceNodeFramePropertyDialog::InterfaceNodeFramePropertyDialog(Element *frame) : FramePropertyDialog(frame) {
+
+    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
+    addToTab("General", nodeNumbers);
+  }
+
+  DOMElement* InterfaceNodeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FramePropertyDialog::initializeUsingXML(item->getXMLElement());
+    nodeNumbers->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* InterfaceNodeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FramePropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    nodeNumbers->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   ContourPropertyDialog::ContourPropertyDialog(Element *contour) : ElementPropertyDialog(contour) {
     thickness = new ExtWidget("Thickness",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"thickness");
     addToTab("General", thickness);
@@ -1399,7 +1417,7 @@ namespace MBSimGUI {
     ombvColorRepresentation = new ExtWidget("OpenMBV color representation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"openMBVColorRepresentation");
     addToTab("Visualization", ombvColorRepresentation);
 
-    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -1608,7 +1626,7 @@ namespace MBSimGUI {
     ombv = new ExtWidget("Enable openMBV",new CalculixBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization",ombv);
 
-    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
   }
 

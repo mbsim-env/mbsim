@@ -111,6 +111,7 @@ namespace MBSimGUI {
 
     protected slots:
       void addNodeFrame();
+      void addInterfaceNodeFrame();
   };
 
   class ContoursContextMenu : public BasicElementMenu {

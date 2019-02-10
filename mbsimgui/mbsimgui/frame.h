@@ -69,6 +69,13 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override { return new NodeFramePropertyDialog(this); }
   };
 
+  class InterfaceNodeFrame : public Frame {
+    public:
+      QString getType() const override { return "InterfaceNodeFrame"; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
+      ElementPropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this); }
+  };
+
 }
 
 #endif
