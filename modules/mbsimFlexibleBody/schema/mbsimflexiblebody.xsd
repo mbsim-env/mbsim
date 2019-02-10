@@ -986,7 +986,7 @@
             <xs:element name="openMBVColorRepresentation" type="pv:stringFullEval" minOccurs="0">
             </xs:element>
           </xs:sequence>
-          <xs:element name="plotNodes" type="pv:nounitVector" minOccurs="0">
+          <xs:element name="plotNodeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knoten, die geplottet werden sollen.
@@ -1067,7 +1067,7 @@
               <xs:group ref="OpenMBVFlexibleBodyParameters"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="plotNodes" type="pv:nounitVector" minOccurs="0">
+          <xs:element name="plotNodeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knoten, die geplottet werden sollen.
@@ -1119,7 +1119,7 @@
               Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="nodes" type="pv:nounitVector">
+          <xs:element name="nodeNumbers" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Kontennummern.
@@ -1174,7 +1174,7 @@
               Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="nodes" type="pv:nounitVector">
+          <xs:element name="nodeNumbers" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knotennummern.
@@ -1229,7 +1229,7 @@
               Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="nodes" type="pv:nounitMatrix">
+          <xs:element name="nodeNumbers" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knotennummern.
@@ -1301,7 +1301,7 @@
               Interpolation der Kontrollpunkte.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="nodes" type="pv:nounitMatrix">
+          <xs:element name="nodeNumbers" type="pv:nounitMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knotennummern.

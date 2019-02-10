@@ -328,8 +328,8 @@ namespace MBSimFlexibleBody {
       ombvBody = shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody);
       ombvBody->initializeUsingXML(e);
     }
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodes");
-    if(e) setPlotNodes(E(e)->getText<VecVI>());
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
+    if(e) setPlotNodeNumbers(E(e)->getText<VecVI>());
   }
 
 }

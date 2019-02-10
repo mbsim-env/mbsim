@@ -714,7 +714,7 @@ namespace MBSimGUI {
     interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
     addToTab("General", interpolation);
 
-    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
+    indices = new ExtWidget("Node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", indices);
 
     knotVector = new ExtWidget("Knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"knotVector");
@@ -758,7 +758,7 @@ namespace MBSimGUI {
     interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
     addToTab("General", interpolation);
 
-    indices = new ExtWidget("Indices",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
+    indices = new ExtWidget("Node numbers",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", indices);
 
     etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaKnotVector");
@@ -1350,6 +1350,9 @@ namespace MBSimGUI {
     K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",K0om);
 
+    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget2(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodeNumbers");
+    addToTab("Nodal data", nodeNumbers);
+
     r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalRelativePosition",1,3,true),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", r);
 
@@ -1380,9 +1383,6 @@ namespace MBSimGUI {
     ombv = new ExtWidget("OpenMBV body",new ChoiceWidget2(new OMBVFlexibleBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMFLEX%"openMBVFlexibleBody");
     addToTab("Visualization", ombv);
 
-    ombvNodes = new ExtWidget("OpenMBV nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openMBVNodes");
-    addToTab("Visualization", ombvNodes);
-
     vector<QString> list;
     list.emplace_back("\"none\"");
     list.emplace_back("\"xDisplacement\"");
@@ -1399,7 +1399,7 @@ namespace MBSimGUI {
     ombvColorRepresentation = new ExtWidget("OpenMBV color representation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"openMBVColorRepresentation");
     addToTab("Visualization", ombvColorRepresentation);
 
-    plotNodes = new ExtWidget("Plot nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodes");
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -1505,6 +1505,8 @@ namespace MBSimGUI {
         else
           K0M->resize_(size*rsize*size,size);
       }
+      if(nodeNumbers->isActive())
+        nodeNumbers->resize_(rsize,1);
     }
   }
 
@@ -1533,6 +1535,7 @@ namespace MBSimGUI {
     K0t->initializeUsingXML(item->getXMLElement());
     K0r->initializeUsingXML(item->getXMLElement());
     K0om->initializeUsingXML(item->getXMLElement());
+    nodeNumbers->initializeUsingXML(item->getXMLElement());
     r->initializeUsingXML(item->getXMLElement());
     A->initializeUsingXML(item->getXMLElement());
     Phi->initializeUsingXML(item->getXMLElement());
@@ -1543,7 +1546,6 @@ namespace MBSimGUI {
     K0F->initializeUsingXML(item->getXMLElement());
     K0M->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
-    ombvNodes->initializeUsingXML(item->getXMLElement());
     ombvColorRepresentation->initializeUsingXML(item->getXMLElement());
     plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1567,6 +1569,7 @@ namespace MBSimGUI {
     K0t->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     K0r->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     K0om->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nodeNumbers->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     r->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     A->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     Phi->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
@@ -1582,7 +1585,6 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
-    ombvNodes->writeXMLFile(item->getXMLElement(),ele);
     ombvColorRepresentation->writeXMLFile(item->getXMLElement(),ele);
     plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
@@ -1606,7 +1608,7 @@ namespace MBSimGUI {
     ombv = new ExtWidget("Enable openMBV",new CalculixBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization",ombv);
 
-    plotNodes = new ExtWidget("Plot nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodes");
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
   }
 

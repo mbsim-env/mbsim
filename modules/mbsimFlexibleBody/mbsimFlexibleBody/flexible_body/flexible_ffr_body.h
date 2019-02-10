@@ -135,7 +135,7 @@ namespace MBSimFlexibleBody {
 
       void setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body);
       void setOpenMBVColorRepresentation(OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation_) { ombvColorRepresentation = ombvColorRepresentation_; }
-      void setPlotNodes(const fmatvec::VecVI &plotNodes_) { plotNodes = plotNodes_; }
+      void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes = plotNodes_; }
   };
 
 }

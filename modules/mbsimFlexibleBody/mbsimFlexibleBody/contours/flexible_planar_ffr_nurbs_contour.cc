@@ -272,8 +272,8 @@ namespace MBSimFlexibleBody {
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"interpolation");
     if(e) setInterpolation(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
-    index = E(e)->getText<VecVI>();
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumbers");
+    setNodeNumbers(E(e)->getText<VecVI>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"knotVector");
     if(e) setKnotVector(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"degree");
