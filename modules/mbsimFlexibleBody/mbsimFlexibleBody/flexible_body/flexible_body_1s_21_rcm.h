@@ -25,6 +25,7 @@
 namespace MBSimFlexibleBody {
 
   class Frame1s;
+  class NodeFrame;
 
   /*!
    * \brief model for planar beams with large deflection using Redundant Coordinate Method (RCM)

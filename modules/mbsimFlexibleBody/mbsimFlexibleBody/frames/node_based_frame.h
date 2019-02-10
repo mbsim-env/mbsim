@@ -17,39 +17,21 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _NODE_FRAME_H__
-#define _NODE_FRAME_H__
+#ifndef _NODE_BASED_FRAME_H__
+#define _NODE_BASED_FRAME_H__
 
-#include "mbsimFlexibleBody/frames/node_based_frame.h"
+#include "mbsim/frames/frame.h"
 
 namespace MBSimFlexibleBody {
 
   /**
-   * \brief cartesian frame on nodes of flexible bodies
-   * \author Kilian Grundl
+   * \brief node based frame
+   * \author Martin Förg
    */
-  class NodeFrame : public NodeBasedFrame {
+  class NodeBasedFrame : public MBSim::Frame {
 
     public:
-      NodeFrame(const std::string &name = "dummy", int node_ = 0) : NodeBasedFrame(name), node(node_) { }
-
-      void setNodeNumber(int node_) { node = node_; }
-      int getNodeNumber() const { return node; }
-
-      void updatePositions() override;
-      void updateVelocities() override;
-      void updateAccelerations() override;
-      void updateJacobians(int j=0) override;
-      void updateGyroscopicAccelerations() override;
-
-      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
-      void initializeUsingXML(xercesc::DOMElement *element) override;
-
-    protected:
-      /*!
-       * \brief node number
-       */
-      int node;
+      NodeBasedFrame(const std::string &name = "dummy") : Frame(name) { }
   };
 
 }

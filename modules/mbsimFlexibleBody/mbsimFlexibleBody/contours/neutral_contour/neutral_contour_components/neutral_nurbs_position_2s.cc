@@ -81,9 +81,7 @@ namespace MBSimFlexibleBody {
   void NeutralNurbsPosition2s::buildNodelist(){
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
-        NodeFrame P("P",nodes(i,j));
-        P.setParent(parent);
-        Nodelist(i,j) = P.evalPosition();
+        Nodelist(i,j) = static_cast<NodeBasedBody*>(parent)->evalNodalPosition(static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i,j)));
 //        msg(Debug) << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
 //        msg(Debug) << "nP2(" << i <<","<< j<< ")" << trans(Nodelist(i,j)) << endl << endl;
       }

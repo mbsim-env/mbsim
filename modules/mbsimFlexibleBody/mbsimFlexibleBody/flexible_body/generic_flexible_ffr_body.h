@@ -250,12 +250,6 @@ namespace MBSimFlexibleBody {
       void updateJacobians(int i, int j=0) override;
       void updateGyroscopicAccelerations(int i) override;
 
-      void updatePositions(NodeFrame* frame) override;
-      void updateVelocities(NodeFrame* frame) override;
-      void updateAccelerations(NodeFrame* frame) override;
-      void updateJacobians(NodeFrame* frame, int j=0) override;
-      void updateGyroscopicAccelerations(NodeFrame* frame) override;
-
       template <class T>
       static std::vector<T> getCellArray1D(xercesc::DOMElement *element) {
         std::vector<T> array;

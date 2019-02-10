@@ -24,6 +24,8 @@
 
 namespace MBSimFlexibleBody {
 
+  class NodeFrame;
+
   /**
    * \brief Absolute Nodal Coordinate Formulation for flexible planar beams
    * \author Roland Zander

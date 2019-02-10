@@ -351,9 +351,8 @@ namespace MBSimFlexibleBody {
     // gets Points from body for interpolation
     for(int i=0; i<nr+1; i++) {
       for(int j=0; j<nj; j++) {
-        NodeFrame P("P",i*nj+j);
-        P.setParent(parent);
-        Nodelist(j,i) = HPoint3Dd(P.evalPosition()(0),P.evalPosition()(1),P.evalPosition()(2),1);
+        Vec3 r = static_cast<NodeBasedBody*>(parent)->evalNodalPosition(i*nj+j);
+        Nodelist(j,i) = HPoint3Dd(r(0),r(1),r(2),1);
       }
       for(int j=0;j<degU;j++) { //expands the surface addicted to the degree in azimuthal direction
         Nodelist(nj+j,i) = Nodelist(j,i);
@@ -435,9 +434,8 @@ namespace MBSimFlexibleBody {
     // gets velocities from body for the interpolation
     for(int i=0; i<nr+1; i++) {
       for(int j=0; j<nj; j++) {
-        NodeFrame P("P",i*nj+j);
-        P.setParent(parent);
-        Nodelist(j,i) = HPoint3Dd(P.evalVelocity()(0),P.evalVelocity()(1),P.evalVelocity()(2), 1);
+        Vec3 v = static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(i*nj+j);
+        Nodelist(j,i) = HPoint3Dd(v(0),v(1),v(2),1);
       }
       for(int j=0;j<degU;j++) { // expands the surface addicted to the degree in azimuthal direction
         Nodelist(nj+j,i) = Nodelist(j,i);
@@ -452,28 +450,18 @@ namespace MBSimFlexibleBody {
     PLib::Matrix<HPoint3Dd> NodelistRot(nj+degU,nr+1);// list of node-data for the nurbs interpolation
 
     // gets Jacobians on the nodes from body for interpolation
-    vector<NodeFrame> P((nr+1)*nj);
+    vector<Mat3xV> JT((nr+1)*nj);
+    vector<Mat3xV> JR((nr+1)*nj);
     for(int i=0; i<nr+1; i++)
       for(int j=0; j<nj; j++) {
-        P[i*nj+j] = NodeFrame("P",i*nj+j);
-        P[i*nj+j].setParent(parent);
-        P[i*nj+j].getJacobianOfTranslation(0,false).resize();
-        P[i*nj+j].getJacobianOfRotation(0,false).resize();
-        P[i*nj+j].getJacobianOfTranslation(1,false).resize();
-        P[i*nj+j].getJacobianOfRotation(1,false).resize();
+        JT[i*nj+j] = static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(i*nj+j);
+        JR[i*nj+j] = static_cast<NodeBasedBody*>(parent)->getNodalJacobianOfRotation(i*nj+j);
       }
     for(int k=0; k<nr*nj*3+RefDofs; k++) {
       for(int i=0; i<nr+1; i++) {
         for(int j=0; j<nj; j++) {
-          NodelistTrans(j,i) = HPoint3Dd(P[i*nj+j].evalJacobianOfTranslation()(0,k),
-              P[i*nj+j].evalJacobianOfTranslation()(1,k),
-              P[i*nj+j].evalJacobianOfTranslation()(2,k),
-              1);
-
-          NodelistRot(j,i) = HPoint3Dd(P[i*nj+j].evalJacobianOfRotation()(0,k),
-              P[i*nj+j].evalJacobianOfRotation()(1,k),
-              P[i*nj+j].evalJacobianOfRotation()(2,k),
-              1);
+          NodelistTrans(j,i) = HPoint3Dd(JT[i*nj+j](0,k),JT[i*nj+j](1,k),JT[i*nj+j](2,k),1);
+          NodelistRot(j,i) = HPoint3Dd(JR[i*nj+j](0,k),JR[i*nj+j](1,k),JR[i*nj+j](2,k),1);
         }
         for(int j=0;j<degU;j++) { // expands the surface addicted to the degree in azimuthal direction
           NodelistTrans(nj+j,i) = NodelistTrans(j,i);

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2019 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "node_frame.h"
-#include "mbsimFlexibleBody/flexible_body.h"
+#include "mbsimFlexibleBody/node_based_body.h"
 
 using namespace MBSim;
 using namespace MBXMLUtils;
@@ -30,38 +30,43 @@ namespace MBSimFlexibleBody {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, NodeFrame)
 
   void NodeFrame::updatePositions() {
-    static_cast<NodeBasedBody*>(parent)->updatePositions(this);
+    setPosition(static_cast<NodeBasedBody*>(parent)->evalNodalPosition(node));
+    setOrientation(static_cast<NodeBasedBody*>(parent)->getNodalOrientation(node));
     updPos = false;
   }
 
   void NodeFrame::updateVelocities() {
-    static_cast<NodeBasedBody*>(parent)->updateVelocities(this);
+    setVelocity(static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(node));
+    setAngularVelocity(static_cast<NodeBasedBody*>(parent)->getNodalAngularVelocity(node));
     updVel = false;
   }
 
   void NodeFrame::updateAccelerations() {
-    static_cast<NodeBasedBody*>(parent)->updateAccelerations(this);
+    setAcceleration(static_cast<NodeBasedBody*>(parent)->evalNodalAcceleration(node));
+    setAngularAcceleration(static_cast<NodeBasedBody*>(parent)->getNodalAngularAcceleration(node));
     updAcc = true;
   }
 
   void NodeFrame::updateJacobians(int j) {
-    static_cast<NodeBasedBody*>(parent)->updateJacobians(this,j);
+    setJacobianOfTranslation(static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(node,j));
+    setJacobianOfRotation(static_cast<NodeBasedBody*>(parent)->getNodalJacobianOfRotation(node,j));
     updJac[j] = false;
   }
 
   void NodeFrame::updateGyroscopicAccelerations() {
-    static_cast<NodeBasedBody*>(parent)->updateGyroscopicAccelerations(this);
+    setGyroscopicAccelerationOfTranslation(static_cast<NodeBasedBody*>(parent)->evalNodalGyroscopicAccelerationOfTranslation(node));
+    setGyroscopicAccelerationOfRotation(static_cast<NodeBasedBody*>(parent)->getNodalGyroscopicAccelerationOfRotation(node));
     updGA = false;
   }
 
   void NodeFrame::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage)
-      nodeIndex = static_cast<NodeBasedBody*>(parent)->getNodeIndex(node);
-    Frame::init(stage,config);
+      node = static_cast<NodeBasedBody*>(parent)->getNodeIndex(node);
+    NodeBasedFrame::init(stage,config);
   }
 
   void NodeFrame::initializeUsingXML(DOMElement *element) {
-    Frame::initializeUsingXML(element);
+    NodeBasedFrame::initializeUsingXML(element);
 
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumber");

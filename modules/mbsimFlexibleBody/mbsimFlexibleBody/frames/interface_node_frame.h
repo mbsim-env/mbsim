@@ -17,24 +17,27 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _NODE_FRAME_H__
-#define _NODE_FRAME_H__
+#ifndef _INTERFACE_NODE_FRAME_H__
+#define _INTERFACE_NODE_FRAME_H__
 
 #include "mbsimFlexibleBody/frames/node_based_frame.h"
 
 namespace MBSimFlexibleBody {
 
   /**
-   * \brief cartesian frame on nodes of flexible bodies
-   * \author Kilian Grundl
+   * \brief frame on interface nodes
+   * \author Martin Förg
    */
-  class NodeFrame : public NodeBasedFrame {
+  class InterfaceNodeFrame : public NodeBasedFrame {
 
     public:
-      NodeFrame(const std::string &name = "dummy", int node_ = 0) : NodeBasedFrame(name), node(node_) { }
+      InterfaceNodeFrame(const std::string &name = "dummy") : NodeBasedFrame(name) { }
 
-      void setNodeNumber(int node_) { node = node_; }
-      int getNodeNumber() const { return node; }
+      void setNodeNumbers(const fmatvec::VecVI &nodes_) { nodes = nodes_; }
+      const fmatvec::VecVI& getNodeNumbers() const { return nodes; }
+
+      void setWeightingFactors(const fmatvec::VecV &weights_) { weights = weights_; }
+      const fmatvec::VecV& getWeightingFactors() const { return weights; }
 
       void updatePositions() override;
       void updateVelocities() override;
@@ -49,7 +52,12 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief node number
        */
-      int node;
+      fmatvec::VecVI nodes;
+
+      /*!
+       * \brief weights
+       */
+      fmatvec::VecV weights;
   };
 
 }

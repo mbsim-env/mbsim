@@ -128,6 +128,7 @@ namespace MBSimFlexibleBody {
       iuR = Range<Var,Var>(nuT,nqT+nqR-1);
       iuE = Range<Var,Var>(nuT+nuR,nu-1);
     }
+    nn = KrKP.size();
     updSize = false;
   }
 
@@ -319,41 +320,19 @@ namespace MBSimFlexibleBody {
       WJTrel.resize(nu);
       WJRrel.resize(nu);
 
-      updNodalPos.resize(KrKP.size(),true);
-      updNodalVel.resize(KrKP.size(),true);
-      updNodalAcc.resize(KrKP.size(),true);
-      updNodalJac[0].resize(KrKP.size(),true);
-      updNodalJac[1].resize(KrKP.size(),true);
-      updNodalGA.resize(KrKP.size(),true);
-      updNodalStress.resize(KrKP.size(),true);
-      WrOP.resize(KrKP.size());
-      WrRP.resize(KrKP.size());
-      disp.resize(KrKP.size());
-      Womrel.resize(KrKP.size());
-      Wvrel.resize(KrKP.size());
-      Wom.resize(KrKP.size());
-      WvP.resize(KrKP.size());
-      WaP.resize(KrKP.size());
-      Wpsi.resize(KrKP.size());
-      WjP.resize(KrKP.size());
-      WjR.resize(KrKP.size());
+      WrRP.resize(nn);
+      Womrel.resize(nn);
+      Wvrel.resize(nn);
       if(not ARP.size())
-        ARP.resize(KrKP.size(),SqrMat3(Eye()));
-      AWK.resize(ARP.size());
+        ARP.resize(nn,SqrMat3(Eye()));
       if(not Psi.size())
-        Psi.resize(Phi.size(),Mat3xV(ne));
+        Psi.resize(nn,Mat3xV(ne));
       if(not sigma0.size())
-        sigma0.resize(KrKP.size());
-      sigma.resize(KrKP.size());
+        sigma0.resize(nn);
 
       frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
     }
     else if(stage==unknownStage) {
-      WJP[0].resize(KrKP.size(),Mat3xV(gethSize(0),NONINIT));
-      WJR[0].resize(KrKP.size(),Mat3xV(gethSize(0),NONINIT));
-      WJP[1].resize(KrKP.size(),Mat3xV(gethSize(1),NONINIT));
-      WJR[1].resize(KrKP.size(),Mat3xV(gethSize(1),NONINIT));
-
       KJ[0].resize(6+ne,hSize[0]);
       KJ[1].resize(6+ne,hSize[1]);
       for(int i=0; i<ne; i++) {
@@ -746,9 +725,8 @@ namespace MBSimFlexibleBody {
     // frames
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
     while(e) {
-      NodeFrame *f=new NodeFrame(E(e)->getAttribute("name"));
+      auto *f=ObjectFactory::createAndInit<Frame>(e);
       addFrame(f);
-      f->initializeUsingXML(e);
       e=e->getNextElementSibling();
     }
 
@@ -884,31 +862,6 @@ namespace MBSimFlexibleBody {
     WjR[i] = K->evalGyroscopicAccelerationOfRotation() + crossProduct(K->evalAngularVelocity(),evalGlobalRelativeAngularVelocity(i));
     WjP[i] = K->getGyroscopicAccelerationOfTranslation() + crossProduct(K->getGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition(i)) + crossProduct(K->getAngularVelocity(),crossProduct(K->getAngularVelocity(),evalGlobalRelativePosition(i))) + 2.*crossProduct(K->getAngularVelocity(),getNodalRelativeVelocity(i));
     updNodalGA[i] = false;
-  }
-
-  void GenericFlexibleFfrBody::updatePositions(NodeFrame* frame) {
-    frame->setPosition(evalNodalPosition(frame->getNodeIndex()));
-    frame->setOrientation(getNodalOrientation(frame->getNodeIndex()));
- }
-
-  void GenericFlexibleFfrBody::updateVelocities(NodeFrame* frame) {
-    frame->setVelocity(evalNodalVelocity(frame->getNodeIndex()));
-    frame->setAngularVelocity(getNodalAngularVelocity(frame->getNodeIndex()));
-  }
-
-  void GenericFlexibleFfrBody::updateAccelerations(NodeFrame* frame) {
-    frame->setAcceleration(evalNodalAcceleration(frame->getNodeIndex()));
-    frame->setAngularAcceleration(getNodalAngularAcceleration(frame->getNodeIndex()));
-  }
-
-  void GenericFlexibleFfrBody::updateJacobians(NodeFrame* frame, int j) {
-    frame->setJacobianOfTranslation(evalNodalJacobianOfTranslation(frame->getNodeIndex(),j));
-    frame->setJacobianOfRotation(getNodalJacobianOfRotation(frame->getNodeIndex(),j));
-  }
-
-  void GenericFlexibleFfrBody::updateGyroscopicAccelerations(NodeFrame* frame) {
-    frame->setGyroscopicAccelerationOfTranslation(evalNodalGyroscopicAccelerationOfTranslation(frame->getNodeIndex()));
-    frame->setGyroscopicAccelerationOfRotation(getNodalGyroscopicAccelerationOfRotation(frame->getNodeIndex()));
   }
 
   double GenericFlexibleFfrBody::evalEquivalentStress(int i) {

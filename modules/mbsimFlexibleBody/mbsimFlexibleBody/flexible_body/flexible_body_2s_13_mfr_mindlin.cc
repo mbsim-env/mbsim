@@ -273,9 +273,8 @@ namespace MBSimFlexibleBody {
     throwError("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13MFRMindlin::updatePositions(NodeFrame *frame) {
+  void FlexibleBody2s13MFRMindlin::updatePositions(int node) {
     Vec3 r_ref(NONINIT);
-    int node = frame->getNodeNumber();
     //first compute vector
     r_ref(0) = evalqExt()(RefDofs + node * NodeDofs + 1) * computeThickness(NodeCoordinates(node, 0)) / 2. + NodeCoordinates(node, 0); // radial component
     r_ref(1) = -qext(RefDofs + node * NodeDofs + 2) * computeThickness(NodeCoordinates(node, 0)) / 2.; // azimuthal component
@@ -285,12 +284,12 @@ namespace MBSimFlexibleBody {
     r_ref = evalA() * r_ref; //transformation from the moving frame of reference  ---->  ??? transformation from the moving frame of reference FFR to the Reference frame
     r_ref += qext(0, 2); //translation of moving frame of reference relative to frame of reference ---> add the translation displacement of the origin of FFR expressed in the Reference Frame
     // TODO:  is qext in Reference frame R or in the world frame ?
-    frame->setPosition(R->evalPosition() + R->evalOrientation() * r_ref); //at last step: transformation into world frame
+    WrOP[node] = R->evalPosition() + R->evalOrientation() * r_ref; //at last step: transformation into world frame
+    updNodalPos[node] = false;
   }
 
-  void FlexibleBody2s13MFRMindlin::updateVelocities(NodeFrame *frame) {
+  void FlexibleBody2s13MFRMindlin::updateVelocities(int node) {
     Vec3 u_ref_1(NONINIT);
-    int node = frame->getNodeNumber();
     u_ref_1(0) = computeThickness(NodeCoordinates(node, 0)) / 2. * evaluExt()(RefDofs + node * NodeDofs + 1);
     u_ref_1(1) = -computeThickness(NodeCoordinates(node, 0)) / 2. * uext(RefDofs + node * NodeDofs + 2);
     u_ref_1(2) = uext(RefDofs + node * NodeDofs);
@@ -305,7 +304,7 @@ namespace MBSimFlexibleBody {
     Vec3 u_ref_2 = evalA() * (-tilde(r_ref) * evalG() * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * u_ref_1);
     u_ref_2 += uext(0, 2);
 
-    frame->setVelocity(R->evalOrientation() * u_ref_2);
+    WvP[node] = R->evalOrientation() * u_ref_2;
 
     Vec3 w_ref_1(INIT, 0.);
     w_ref_1(0) = -uext(RefDofs + node * NodeDofs + 2);
@@ -313,15 +312,16 @@ namespace MBSimFlexibleBody {
 
     Vec w_ref_2 = A * (G * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * w_ref_1);
 
-    frame->setAngularVelocity(R->getOrientation() * w_ref_2);
+    Wom[node] = R->getOrientation() * w_ref_2;
+
+    updNodalVel[node] = false;
   }
 
-  void FlexibleBody2s13MFRMindlin::updateAccelerations(NodeFrame *frame) {
+  void FlexibleBody2s13MFRMindlin::updateAccelerations(int node) {
     throwError("(FlexibleBody2s13MFRMindlin::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13MFRMindlin::updateJacobians(NodeFrame *frame, int j) {
-    int Node = frame->getNodeNumber();
+  void FlexibleBody2s13MFRMindlin::updateJacobians(int node, int j) {
 
     // Jacobian of element
     Mat Jactmp_trans(3, RefDofs + NodeDofs, INIT, 0.), Jactmp_rot(3, RefDofs + NodeDofs, INIT, 0.); // initializing Ref + 1 Node
@@ -367,11 +367,11 @@ namespace MBSimFlexibleBody {
     dAdgamma(2, 2) = 0.;
 
     Vec r_tmp(3, NONINIT);
-    r_tmp(0) = NodeCoordinates(Node, 0) + computeThickness(NodeCoordinates(Node, 0)) / 2. * qext(RefDofs + Node * NodeDofs + 1);
-    r_tmp(1) = -computeThickness(NodeCoordinates(Node, 0)) / 2. * qext(RefDofs + Node * NodeDofs + 2);
-    r_tmp(2) = qext(RefDofs + Node * NodeDofs);
+    r_tmp(0) = NodeCoordinates(node, 0) + computeThickness(NodeCoordinates(node, 0)) / 2. * qext(RefDofs + node * NodeDofs + 1);
+    r_tmp(1) = -computeThickness(NodeCoordinates(node, 0)) / 2. * qext(RefDofs + node * NodeDofs + 2);
+    r_tmp(2) = qext(RefDofs + node * NodeDofs);
 
-    r_tmp = BasicRotAIKz(NodeCoordinates(Node, 1)) * r_tmp;
+    r_tmp = BasicRotAIKz(NodeCoordinates(node, 1)) * r_tmp;
 
     Jactmp_trans(0, 3, 2, 3) = dAdalpha * r_tmp;
     Jactmp_trans(0, 4, 2, 4) = dAdbeta * r_tmp;
@@ -382,17 +382,17 @@ namespace MBSimFlexibleBody {
     // elastic DOFs
     // translation
     SqrMat u_tmp(3, INIT, 0.);
-    u_tmp(0, 1) = computeThickness(NodeCoordinates(Node, 0)) / 2.;
-    u_tmp(1, 2) = -computeThickness(NodeCoordinates(Node, 0)) / 2.;
+    u_tmp(0, 1) = computeThickness(NodeCoordinates(node, 0)) / 2.;
+    u_tmp(1, 2) = -computeThickness(NodeCoordinates(node, 0)) / 2.;
     u_tmp(2, 0) = 1.;
 
-    Jactmp_trans(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(Node, 1)) * u_tmp;
+    Jactmp_trans(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(node, 1)) * u_tmp;
 
     // rotation
     SqrMat Z_tmp(3, INIT, 0.);
     Z_tmp(0, 2) = -1;
     Z_tmp(1, 1) = 1;
-    Jactmp_rot(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(Node, 1)) * Z_tmp;
+    Jactmp_rot(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(node, 1)) * Z_tmp;
 
     // sort in the Jacobian of the disc disk
     // reference dofs
@@ -402,19 +402,21 @@ namespace MBSimFlexibleBody {
     Jacext_rot(0, 0, 2, RefDofs - 1) = Jactmp_rot(0, 0, 2, RefDofs - 1);
 
     // elastic dofs
-    Jacext_trans(0, RefDofs + Node * NodeDofs, 2, RefDofs + Node * NodeDofs + 2) = Jactmp_trans(0, RefDofs, 2, RefDofs + 2);
-    Jacext_rot(0, RefDofs + Node * NodeDofs, 2, RefDofs + Node * NodeDofs + 2) = Jactmp_rot(0, RefDofs, 2, RefDofs + 2);
+    Jacext_trans(0, RefDofs + node * NodeDofs, 2, RefDofs + node * NodeDofs + 2) = Jactmp_trans(0, RefDofs, 2, RefDofs + 2);
+    Jacext_rot(0, RefDofs + node * NodeDofs, 2, RefDofs + node * NodeDofs + 2) = Jactmp_rot(0, RefDofs, 2, RefDofs + 2);
 
     // condensation
     Mat Jacobian_trans = condenseMatrixCols(Jacext_trans, ILocked);
     Mat Jacobian_rot = condenseMatrixCols(Jacext_rot, ILocked);
 
     // transformation
-    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian_trans,j);
-    frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot,j);
+    WJP[j][node] = R->evalOrientation() * Jacobian_trans;
+    WJR[j][node] = R->getOrientation() * Jacobian_rot;
+
+    updNodalJac[j][node] = false;
   }
 
-  void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(NodeFrame *frame) {
+  void FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations(int node) {
     throwError("(FlexibleBody2s13MFRMindlin::updateGyroscopicAccelerations): Not implemented.");
   }
 
@@ -422,6 +424,8 @@ namespace MBSimFlexibleBody {
     if (stage == preInit) {
       assert(nr > 0); // at least on radial row
       assert(nj > 1); // at least two azimuthal elements
+
+      nn = (nr+1)*nj;
 
       // condensation
       switch (LType) {

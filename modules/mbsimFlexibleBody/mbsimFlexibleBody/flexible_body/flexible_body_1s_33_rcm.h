@@ -25,6 +25,8 @@
 
 namespace MBSimFlexibleBody {
 
+  class NodeFrame;
+
   /**
    * \brief spatial beam using Redundant Coordinate Method (RCM)
    * \author Thorsten Schindler

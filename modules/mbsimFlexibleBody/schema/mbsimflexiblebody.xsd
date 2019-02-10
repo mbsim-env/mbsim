@@ -175,7 +175,7 @@
         <xs:complexType>
           <xs:sequence>
             <xs:choice minOccurs="0" maxOccurs="unbounded">
-              <xs:element ref="NodeFrame"/>
+              <xs:element ref="NodeBasedFrame"/>
               <xs:element ref="pv:Embed"/>
             </xs:choice>
           </xs:sequence>
@@ -468,19 +468,58 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <xs:element name="NodeFrame" substitutionGroup="mbsim:Frame" type="NodeFrameType">
+  <xs:element name="NodeBasedFrame" substitutionGroup="mbsim:Frame" type="NodeBasedFrameType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Koordinatensystem für knotenbasierte Körper.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="NodeBasedFrameType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:FrameType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="NodeFrame" substitutionGroup="NodeBasedFrame" type="NodeFrameType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
       Koordinatensystem für knotenbasierte Körper.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="NodeFrameType">
     <xs:complexContent>
-      <xs:extension base="mbsim:FrameType">
+      <xs:extension base="NodeBasedFrameType">
         <xs:sequence>
           <xs:element name="nodeNumber" type="pv:nounitScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knotennummer.<br/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="InterfaceNodeFrame" substitutionGroup="NodeBasedFrame" type="InterfaceNodeFrameType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Interface-Koordinatensystem für knotenbasierte Körper.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="InterfaceNodeFrameType">
+    <xs:complexContent>
+      <xs:extension base="NodeBasedFrameType">
+        <xs:sequence>
+          <xs:element name="nodeNumbers" type="pv:nounitVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotennummern.<br/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="weightingFactors" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Wichtungsfaktoren.<br/>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
