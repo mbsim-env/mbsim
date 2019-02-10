@@ -207,6 +207,9 @@ namespace MBSimGUI {
     action = new QAction("Add interface node frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addInterfaceNodeFrame()));
     addAction(action);
+    action = new QAction("Add ffr interface node frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFfrInterfaceNodeFrame()));
+    addAction(action);
   }
 
   void NodeFramesContextMenu::addNodeFrame() {
@@ -215,6 +218,10 @@ namespace MBSimGUI {
 
   void NodeFramesContextMenu::addInterfaceNodeFrame() {
     mw->addFrame(new InterfaceNodeFrame, element);
+  }
+
+  void NodeFramesContextMenu::addFfrInterfaceNodeFrame() {
+    mw->addFrame(new FfrInterfaceNodeFrame, element);
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

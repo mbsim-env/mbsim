@@ -186,7 +186,9 @@ namespace MBSimFlexibleBody {
       MBSim::Frame* getFrameK() { return K; };
 
       const fmatvec::Vec3& getNodalRelativePosition(int i) const { return KrKP[i]; }
+      const fmatvec::SqrMat3& getNodalRelativeOrientation(int i) const { return ARP[i]; }
       const fmatvec::Mat3xV& getNodalShapeMatrixOfTranslation(int i) const { return Phi[i]; }
+      const fmatvec::Mat3xV& getNodalShapeMatrixOfRotation(int i) const { return Psi[i]; }
 
       using NodeBasedBody::addFrame;
       using NodeBasedBody::addContour;

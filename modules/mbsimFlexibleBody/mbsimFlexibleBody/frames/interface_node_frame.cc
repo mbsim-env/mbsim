@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
   }
 
   void InterfaceNodeFrame::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
       for(int i=0; i<nodes.size(); i++)
         nodes(i) = static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i));
       if(weights.size()==0)
