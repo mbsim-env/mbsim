@@ -71,7 +71,7 @@ namespace MBSimFlexibleBody {
         nodes(i) = static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i));
       if(weights.size()==0)
         weights.resize(nodes.size(),INIT,1.0);
-      double sum=weights(0);
+      double sum = weights(0);
       for(int i=1; i<weights.size(); i++)
         sum += weights(i);
       R = static_cast<GenericFlexibleFfrBody*>(parent)->getFrameK();
