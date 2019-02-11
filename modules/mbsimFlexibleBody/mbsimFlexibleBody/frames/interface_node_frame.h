@@ -58,6 +58,8 @@ namespace MBSimFlexibleBody {
        * \brief weights
        */
       fmatvec::VecV weights;
+
+      double sum;
   };
 
 }

@@ -71,15 +71,18 @@ namespace MBSimFlexibleBody {
         nodes(i) = static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i));
       if(weights.size()==0)
         weights.resize(nodes.size(),INIT,1.0);
+      double sum=weights(0);
+      for(int i=1; i<weights.size(); i++)
+        sum += weights(i);
       R = static_cast<GenericFlexibleFfrBody*>(parent)->getFrameK();
-      KrKP = (weights(0)/nodes.size())*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0));
+      KrKP = (weights(0)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0));
       ARP = weights(0)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativeOrientation(nodes(0));
-      Phi = (weights(0)/nodes.size())*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(0));
-      Psi = (weights(0)/nodes.size())*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfRotation(nodes(0));
-      for(int i=1; i<nodes.size(); i++) {
-        KrKP += (weights(i)/nodes.size())*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i));
-        Phi += (weights(i)/nodes.size())*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i));
-        Psi += (weights(i)/nodes.size())*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfRotation(nodes(i));
+      Phi = (weights(0)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(0));
+      Psi = (weights(0)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfRotation(nodes(0));
+      for(int i=1; i<sum; i++) {
+        KrKP += (weights(i)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i));
+        Phi += (weights(i)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i));
+        Psi += (weights(i)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfRotation(nodes(i));
       }
     }
     NodeBasedFrame::init(stage,config);
