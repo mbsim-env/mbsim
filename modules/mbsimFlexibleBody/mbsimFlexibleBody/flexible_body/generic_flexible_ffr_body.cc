@@ -23,6 +23,7 @@
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/links/joint.h"
+#include "mbsim/constitutive_laws/bilateral_constraint.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/xmlutils.h"
 #include "mbsim/objectfactory.h"
@@ -446,8 +447,12 @@ namespace MBSimFlexibleBody {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     joint->setForceDirection(Mat3xV(3,EYE));
     joint->setMomentDirection(Mat3xV(3,EYE));
+    joint->setForceLaw(new BilateralConstraint);
+    joint->setMomentLaw(new BilateralConstraint);
     joint->connect(R,K);
     joint->setBody(this);
+    joint->setPlotFeature(ref(generalizedRelativePosition),false);
+    joint->setPlotFeature(ref(generalizedRelativeVelocity),false);
   }
 
   void GenericFlexibleFfrBody::plot() {
