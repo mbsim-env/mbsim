@@ -278,8 +278,8 @@ namespace MBSim {
     joint->setMomentLaw(new BilateralConstraint);
     joint->connect(R,&Z);
     joint->setBody(this);
-    joint->plotFeature[ref(generalizedRelativePosition)] = false;
-    joint->plotFeature[ref(generalizedRelativeVelocity)] = false;
+    joint->setPlotFeature(ref(generalizedRelativePosition),false);
+    joint->setPlotFeature(ref(generalizedRelativeVelocity),false);
   }
 
   void RigidBody::plot() {
