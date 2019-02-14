@@ -232,21 +232,28 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  InterfaceNodeFramePropertyDialog::InterfaceNodeFramePropertyDialog(Element *frame) : FramePropertyDialog(frame) {
+  InterfaceNodeFramePropertyDialog::InterfaceNodeFramePropertyDialog(Element *frame, bool approx_) : FramePropertyDialog(frame) {
 
     nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", nodeNumbers);
+
+    if(approx_) {
+      approx = new ExtWidget("Approximate shape matrix of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"approximateShapeMatrixOfRotation");
+      addToTab("General", approx);
+    }
   }
 
   DOMElement* InterfaceNodeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
     FramePropertyDialog::initializeUsingXML(item->getXMLElement());
     nodeNumbers->initializeUsingXML(item->getXMLElement());
+    if(approx) approx->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* InterfaceNodeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     FramePropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     nodeNumbers->writeXMLFile(item->getXMLElement(),nullptr);
+    if(approx) approx->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
 

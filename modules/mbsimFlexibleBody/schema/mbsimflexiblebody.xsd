@@ -551,6 +551,13 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="approximateShapeMatrixOfRotation" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Gibt an, ob die Knotenverdrehungen aus den Knotenverschiebungen approximiert werden sollen. Diese Option muss aktiviert werden, wenn auf eine FE-Struktur, bei der die Verdrehungen an den Knoten nicht bekannt ist, ein Moment eingeleitet werden soll.<br/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

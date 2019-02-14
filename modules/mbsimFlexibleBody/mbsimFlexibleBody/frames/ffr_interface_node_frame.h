@@ -39,6 +39,9 @@ namespace MBSimFlexibleBody {
       void setWeightingFactors(const fmatvec::VecV &weights_) { weights = weights_; }
       const fmatvec::VecV& getWeightingFactors() const { return weights; }
 
+      void setApproximateShapeMatrixOfRotation(bool approximateShapeMatrixOfRotation_) { approximateShapeMatrixOfRotation = approximateShapeMatrixOfRotation_; }
+      bool getApproximateShapeMatrixOfRotation() const { return approximateShapeMatrixOfRotation; }
+
       void updatePositions() override;
       void updateVelocities() override;
       void updateAccelerations() override;
@@ -69,6 +72,8 @@ namespace MBSimFlexibleBody {
       fmatvec::SqrMat3 ARP;
       fmatvec::Mat3xV Phi, Psi;
       fmatvec::SqrMat3 Id;
+
+      bool approximateShapeMatrixOfRotation{false};
   };
 
 }

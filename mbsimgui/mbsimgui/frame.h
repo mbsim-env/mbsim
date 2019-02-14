@@ -80,7 +80,7 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "FfrInterfaceNodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
-      ElementPropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this); }
+      ElementPropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this,true); }
   };
 
 }

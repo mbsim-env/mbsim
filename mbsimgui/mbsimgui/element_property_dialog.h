@@ -94,11 +94,11 @@ namespace MBSimGUI {
   class InterfaceNodeFramePropertyDialog : public FramePropertyDialog {
 
     public:
-      InterfaceNodeFramePropertyDialog(Element *frame);
+      InterfaceNodeFramePropertyDialog(Element *frame, bool approx=false);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *nodeNumbers;
+      ExtWidget *nodeNumbers, *approx;
   };
 
   class ContourPropertyDialog : public ElementPropertyDialog {
