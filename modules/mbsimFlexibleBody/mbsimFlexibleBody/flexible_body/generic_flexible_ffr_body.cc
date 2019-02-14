@@ -91,7 +91,10 @@ namespace MBSimFlexibleBody {
   }
 
   void GenericFlexibleFfrBody::updateh(int index) {
-    h[index] += evalKJ(index).T()*(evalhb() - evalMb()*evalKi());
+    if(index==0)
+      h[0] += evalKJ(0).T()*(evalhb() - evalMb()*evalKi());
+    else
+      h[1] += evalhb() - evalMb()*(evalKJ(0)*evaludall()+evalKi());
   }
 
   void GenericFlexibleFfrBody::calcSize() {
@@ -332,6 +335,8 @@ namespace MBSimFlexibleBody {
         sigma0.resize(nn);
 
       frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
+
+      NodeBasedBody::init(stage, config);
     }
     else if(stage==unknownStage) {
       KJ[0].resize(6+ne,hSize[0]);
@@ -346,9 +351,6 @@ namespace MBSimFlexibleBody {
       if(Me.size()==0)
         determineSID();
       prefillMassMatrix();
-
-      K->getJacobianOfTranslation(1,false) = PJT[1];
-      K->getJacobianOfRotation(1,false) = PJR[1];
 
       auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
       if(Atmp and generalizedVelocityOfRotation!=derivativeOfGeneralizedPositionOfRotation) {
@@ -392,12 +394,16 @@ namespace MBSimFlexibleBody {
       T.init(Eye());
 
       // do not invert generalized mass matrix in case of special parametrisation
-      if(dynamic_cast<DynamicSystem*>(R->getParent()) and (not fPrPK or constJT) and not fAPK) {
+      if(dynamic_cast<DynamicSystem*>(R->getParent()) and not fPrPK and not fAPK) {
         nonConstantMassMatrix = false;
-        M = m*JTJ(PJT[0]) + PJT[0].T()*Ct0.T() + Ct0*PJT[0];
-        M(RangeV(M.size()-ne,M.size()-1)) = Me;
+        M = Me;
         LLM = facLL(M);
       }
+
+      NodeBasedBody::init(stage, config);
+
+      K->getJacobianOfTranslation(1,false) = PJT[1];
+      K->getJacobianOfRotation(1,false) = PJR[1];
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
@@ -435,8 +441,11 @@ namespace MBSimFlexibleBody {
       }
       for(int i=0; i<plotNodes.size(); i++)
         plotNodes(i) = getNodeIndex(plotNodes(i));
+
+      NodeBasedBody::init(stage, config);
     }
-    NodeBasedBody::init(stage, config);
+    else
+      NodeBasedBody::init(stage, config);
     if(fTR) fTR->init(stage, config);
     if(fPrPK) fPrPK->init(stage, config);
     if(fAPK) fAPK->init(stage, config);
