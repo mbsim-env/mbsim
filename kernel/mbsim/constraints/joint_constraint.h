@@ -22,7 +22,6 @@
 #include "mechanical_constraint.h"
 #include "mbsim/functions/function.h"
 #include "mbsim/frames/floating_relative_frame.h"
-#include "mbsim/utils/index.h"
 
 namespace MBSim {
 
@@ -41,7 +40,6 @@ namespace MBSim {
         secondFrame,
         unknown
       };
-
 
       JointConstraint(const std::string &name="");
 
@@ -89,14 +87,12 @@ namespace MBSim {
           fmatvec::Mat3xV forceDir, momentDir;
           std::vector<Frame*> frame;
           FrameOfReference refFrame;
-          std::vector<Frame*> i1,i2;
         public:
-          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, const std::vector<Frame*> frame_, FrameOfReference refFrame_, std::vector<Frame*> i1_, std::vector<Frame*> i2_);
+          Residuum(std::vector<RigidBody*> body1_, std::vector<RigidBody*> body2_, const fmatvec::Mat3xV &forceDir_, const fmatvec::Mat3xV &momentDir_, const std::vector<Frame*> frame_, FrameOfReference refFrame_);
 
           fmatvec::Vec operator()(const fmatvec::Vec &x) override;
       };
       std::vector<RigidBody*> bd1, bd2, bi;
-      std::vector<Frame*> if1, if2;
 
       std::vector<Frame*> frame;
 
