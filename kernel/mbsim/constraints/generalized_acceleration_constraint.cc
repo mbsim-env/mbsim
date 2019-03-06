@@ -91,7 +91,7 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::setUpInverseKinetics() {
-    GeneralizedAccelerationExcitation *ke = new GeneralizedAccelerationExcitation(string("GeneralizedAccelerationExcitation")+name);
+    GeneralizedAccelerationExcitation *ke = new GeneralizedAccelerationExcitation(string("GeneralizedAccelerationExcitation_")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     if(bi) ke->connect(bi,bd);
     else ke->connect(bd);

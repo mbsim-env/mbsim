@@ -69,7 +69,7 @@ namespace MBSim {
   }
 
   void GeneralizedPositionConstraint::setUpInverseKinetics() {
-    GeneralizedPositionExcitation *ke = new GeneralizedPositionExcitation(string("GeneralizedPositionExcitation")+name);
+    GeneralizedPositionExcitation *ke = new GeneralizedPositionExcitation(string("GeneralizedPositionExcitation_")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     if(bi) ke->connect(bi,bd);
     else ke->connect(bd);
