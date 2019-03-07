@@ -91,6 +91,14 @@ namespace MBSimGUI {
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new RigidBodySystemObserverPropertyDialog(this);}
   };
+
+  class InverseKinematicsConstraintObserver : public Observer {
+    public:
+      QString getType() const override { return "InverseKinematicsConstraintObserver"; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new InverseKinematicsConstraintObserverPropertyDialog(this);}
+  };
+
 }
 
 #endif

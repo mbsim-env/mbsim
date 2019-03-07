@@ -84,6 +84,12 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedConnectionConstraintPropertyDialog(this);}
   };
 
+  class InverseKinematicsConstraint : public Constraint {
+    public:
+      QString getType() const override { return "InverseKinematicsConstraint"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new InverseKinematicsConstraintPropertyDialog(this);}
+  };
+
 }
 
 #endif

@@ -285,6 +285,8 @@ namespace MBSimGUI {
       return new JointConstraint;
     else if(E(element)->getTagName()==MBSIM%"GeneralizedConnectionConstraint")
       return new GeneralizedConnectionConstraint;
+    else if(E(element)->getTagName()==MBSIM%"InverseKinematicsConstraint")
+      return new InverseKinematicsConstraint;
     else
       return new UnknownConstraint;
     return nullptr;
@@ -314,6 +316,8 @@ namespace MBSimGUI {
       return new RigidBodyObserver;
     if(E(element)->getTagName()==MBSIM%"RigidBodySystemObserver")
       return new RigidBodySystemObserver;
+    if(E(element)->getTagName()==MBSIM%"InverseKinematicsConstraintObserver")
+      return new InverseKinematicsConstraintObserver;
     else
       return new UnknownObserver;
     return nullptr;

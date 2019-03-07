@@ -507,6 +507,16 @@ namespace MBSimGUI {
       GeneralizedConnectionConstraintPropertyDialog(Element *constraint);
   };
 
+  class InverseKinematicsConstraintPropertyDialog : public ConstraintPropertyDialog {
+
+    public:
+      InverseKinematicsConstraintPropertyDialog(Element *constraint);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *kinematics, *frame, *translation, *rotation, *q0;
+  };
+
   class LinkPropertyDialog : public ElementPropertyDialog {
 
     public:
@@ -783,6 +793,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *bodies, *frameOfReference, *position, *velocity, *acceleration, *weight, *momentum, *angularMomentum, *derivativeOfMomentum, *derivativeOfAngularMomentum;
+  };
+
+  class InverseKinematicsConstraintObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      InverseKinematicsConstraintObserverPropertyDialog(Element *observer);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *constraint, *ombv;
   };
 
   class SignalPropertyDialog: public LinkPropertyDialog {

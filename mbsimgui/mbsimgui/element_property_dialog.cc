@@ -1908,6 +1908,51 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  InverseKinematicsConstraintPropertyDialog::InverseKinematicsConstraintPropertyDialog(Element *constraint) : ConstraintPropertyDialog(constraint) {
+
+    addTab("Kinematics",1);
+    addTab("Visualization",2);
+    addTab("Initial conditions",2);
+
+    vector<QString> list;
+    list.emplace_back("\"planar\"");
+    list.emplace_back("\"spatial\"");
+    kinematics = new ExtWidget("Kinematics",new TextChoiceWidget(list,1,true),true,false,MBSIM%"kinematics");
+    addToTab("General", kinematics);
+
+    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(constraint,nullptr,this),false,false,MBSIM%"frame");
+    addToTab("General", frame);
+
+    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory3(constraint,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"translation");
+    addToTab("Kinematics", translation);
+
+    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory3(constraint,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"rotation");
+    addToTab("Kinematics", rotation);
+
+    q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    addToTab("Initial conditions", q0);
+  }
+
+  DOMElement* InverseKinematicsConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    kinematics->initializeUsingXML(item->getXMLElement());
+    frame->initializeUsingXML(item->getXMLElement());
+    translation->initializeUsingXML(item->getXMLElement());
+    rotation->initializeUsingXML(item->getXMLElement());
+    q0->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* InverseKinematicsConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    kinematics->writeXMLFile(item->getXMLElement(),ref);
+    frame->writeXMLFile(item->getXMLElement(),ref);
+    translation->writeXMLFile(item->getXMLElement(),ref);
+    rotation->writeXMLFile(item->getXMLElement(),ref);
+    q0->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
   }
 
@@ -2827,6 +2872,31 @@ namespace MBSimGUI {
     angularMomentum->writeXMLFile(item->getXMLElement(),ref);
     derivativeOfMomentum->writeXMLFile(item->getXMLElement(),ref);
     derivativeOfAngularMomentum->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  InverseKinematicsConstraintObserverPropertyDialog::InverseKinematicsConstraintObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
+
+    addTab("Visualization",1);
+
+    constraint = new ExtWidget("Inverse kinematics constraint",new ElementOfReferenceWidget<InverseKinematicsConstraint>(observer,nullptr,this),false,false,MBSIM%"inverseKinematicsConstraint");
+    addToTab("General", constraint);
+
+    ombv = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBV");
+    addToTab("Visualization",ombv);
+  }
+
+  DOMElement* InverseKinematicsConstraintObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    constraint->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* InverseKinematicsConstraintObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    constraint->writeXMLFile(item->getXMLElement(),ref);
+    ombv->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
