@@ -1195,6 +1195,11 @@ namespace MBSimGUI {
     addToTab("Visualization", ombvFrameRef);
   }
 
+  void RigidBodyPropertyDialog::updateWidget() {
+    translation->updateWidget();
+    rotation->updateWidget();
+  }
+
   DOMElement* RigidBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     BodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     K->initializeUsingXML(item->getXMLElement());
@@ -1307,6 +1312,12 @@ namespace MBSimGUI {
     int size =  getuRelSize();
     u0->resize_(size,1);
     if(not size) u0->setActive(false);
+  }
+
+  void GenericFlexibleFfrBodyPropertyDialog::updateWidget() {
+    BodyPropertyDialog::updateWidget();
+    translation->updateWidget();
+    rotation->updateWidget();
   }
 
   DOMElement* GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1432,7 +1443,7 @@ namespace MBSimGUI {
   }
 
   void FlexibleFfrBodyPropertyDialog::updateWidget() {
-    BodyPropertyDialog::updateWidget();
+    GenericFlexibleFfrBodyPropertyDialog::updateWidget();
     int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
     if(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getIndex()==0)
       rPdm->resize_(3,size);
