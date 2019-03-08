@@ -2095,7 +2095,6 @@ namespace MBSimGUI {
       event->accept();
     else
       event->ignore();
-    QMainWindow::closeEvent(event);
   }
 
   void MainWindow::showEvent(QShowEvent *event) {
