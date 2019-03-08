@@ -41,7 +41,8 @@ namespace MBSim {
         unknown
       };
 
-      InverseKinematicsConstraint(const std::string &name="");
+      InverseKinematicsConstraint(const std::string &name="") : Constraint(name) { }
+      ~InverseKinematicsConstraint() override;
 
       void init(InitStage stage, const InitConfigSet &config) override;
 

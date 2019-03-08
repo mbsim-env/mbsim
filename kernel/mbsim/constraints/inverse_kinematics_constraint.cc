@@ -59,7 +59,9 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, InverseKinematicsConstraint)
 
-  InverseKinematicsConstraint::InverseKinematicsConstraint(const string &name) : Constraint(name) {
+  InverseKinematicsConstraint::~InverseKinematicsConstraint() {
+    if(fr) delete fr;
+    if(fA) delete fA;
   }
 
   void InverseKinematicsConstraint::init(InitStage stage, const InitConfigSet &config) {
