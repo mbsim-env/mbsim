@@ -85,7 +85,7 @@ namespace MBSim {
           data.push_back(toPoint(0));
           data.push_back(toPoint(1));
           data.push_back(toPoint(2));
-          Vec3 WF = constraint->getMechanicalLink(i)->evalForce(i);
+          Vec3 WF = constraint->getMechanicalLink(i)->evalForce(0);
           data.push_back(WF(0));
           data.push_back(WF(1));
           data.push_back(WF(2));
@@ -99,7 +99,7 @@ namespace MBSim {
           data.push_back(toPoint(0));
           data.push_back(toPoint(1));
           data.push_back(toPoint(2));
-          Vec3 WM = constraint->getMechanicalLink(i)->evalMoment(i);
+          Vec3 WM = constraint->getMechanicalLink(i)->evalMoment(0);
           data.push_back(WM(0));
           data.push_back(WM(1));
           data.push_back(WM(2));
