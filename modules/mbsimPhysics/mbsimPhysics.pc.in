@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: mbsimPhysics
+Description: mbsimPhysics
+Requires: mbsim
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimPhysics
+Cflags: -I${includedir}
+
+

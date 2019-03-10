@@ -1,0 +1,291 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema targetNamespace="http://www.mbsim-env.de/MBSimPhysics"
+  elementFormDefault="qualified"
+  attributeFormDefault="unqualified"
+  xmlns="http://www.mbsim-env.de/MBSimPhysics"
+  xmlns:mbsim="http://www.mbsim-env.de/MBSim"
+  xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
+  xmlns:ombv="http://www.mbsim-env.de/OpenMBV"
+  xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:annotation>
+    <xs:documentation xml:lang="de" xmlns="">
+      In dem Modul MBSimPhysics sind physikalische Modelle, wie z.B. das Newtonsche Gravitationsgesetz, enthalten.
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:import namespace="http://www.mbsim-env.de/MBXMLUtils"/>
+
+  <xs:import namespace="http://www.mbsim-env.de/OpenMBV"/>
+
+  <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
+
+  <xs:element name="UniversalGravitation" substitutionGroup="mbsim:MechanicalLink" type="UniversalGravitationType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Gravitationskraft nach dem Newtonschen Gravitationsgesetz.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="UniversalGravitationType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:MechanicalLinkType">
+        <xs:sequence>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definition der beiden Körper, zwischen denen die Gravitationskraft wirken soll.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="mbsim:ObjectReferenceType" use="required"/>
+              <xs:attribute name="ref2" type="mbsim:ObjectReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="gravitationalConstant" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Gravitationskonstante.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die Gravitationskraft durch einen Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVInteractionArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Weight" substitutionGroup="mbsim:MechanicalLink" type="WeightType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Gewichtskraft.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="WeightType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:MechanicalLinkType">
+        <xs:sequence>
+          <xs:element name="connect">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definition des Bezugssystems und des Körpers, auf den die Gewichtskraft wirken soll. Das Bezugssystem ist standarmäßig das übergeordente I-System. 
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref1" type="mbsim:FrameReferenceType" default="../Frame[I]"/>
+              <xs:attribute name="ref2" type="mbsim:ObjectReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="gravityFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definition des Schwerefelds als Funktion der Höhe. Die Höhe ist der y-Abstand des Körpers gegenüber dem Bezugssystem gemessen im Koordinatensystem im Bezugssystem.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die Gewichtskraft durch einen Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVInteractionArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Buoyancy" substitutionGroup="mbsim:FloatingFrameLink" type="BuoyancyType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Auftrieb.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="BuoyancyType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:FloatingFrameLinkType">
+        <xs:sequence>
+          <xs:element name="displacedVolume" type="pv:volumeScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Verdrängtes Volumen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="densityFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Dichte des Mediums als Funktion der Höhe. Die Höhe ist der y-Abstand von Koordinatensystem 2 gegenüber 1 gemessen im Koordinatensystem 1.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="gravityFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definition des Schwerefelds als Funktion der Höhe. Die Höhe ist der y-Abstand von Koordinatensystem 2 gegenüber 1 gemessen im Koordinatensystem 1.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die Auftriebskraft durch einen Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVInteractionArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Drag" substitutionGroup="mbsim:FloatingFrameLink" type="DragType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Reibungswiderstand.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="DragType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:FloatingFrameLinkType">
+        <xs:sequence>
+          <xs:element name="dragFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Reibkraft als Funktion der Relativgeschwindigkeit von Koordinatensystem 2 gegenüber 1.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die Reibungskraft durch einen Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVInteractionArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="Aerodynamics" substitutionGroup="mbsim:FloatingFrameLink" type="AerodynamicsType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Aerodynamische Kraft aus Luftwiderstand, Auftrieb und Seitenkraft.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="AerodynamicsType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:FloatingFrameLinkType">
+        <xs:sequence>
+          <xs:element name="densityFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Dichte des Mediums als Funktion der Höhe. Die Höhe ist der y-Abstand von Koordinatensystem 2 gegenüber 1 gemessen im Koordinatensystem 1.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="coefficientFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Dreidimensionaler Vektor als Funktion der Cardan-Winkel beta und gamma. Die beiden Winkel beschreiben die Orientierung der Anströmgeschwindigkeit gegenüber dem Koordinatensystem 2. Die Elemente des Vektors bestehen aus dem Produkt des Strömungsbeiwerts (x,y und z) mit der zugehörigen Referenzfläche. Der Strömungsbeiwert in x-Richtung entspricht dem Widerstandsbeiwert, der Strömungsbeiwert in y-Richtung dem Auftriebsbeiwert.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType> 
+          </xs:element>
+          <xs:element name="referenceSurface" type="pv:areaScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Referenzfläche.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="windSpeed" type="pv:velocityVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Vektor der Windgeschwindigkeit, gemessen im Koordinatensystem 1.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">  
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Wenn angegeben, wird die aeordynamische Kraft durch einen Pfeil in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVInteractionArrowParameters"/>
+            </xs:complexType> 
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GravityFunction" substitutionGroup="mbsim:Function" type="GravityFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Funktion des Schwerefelds in Abhängigkeit von der Höhe.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GravityFunctionType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:FunctionType">
+        <xs:sequence>
+          <xs:element name="standardGravity" type="pv:accelerationScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Standardbeschleunigung <object class="inlineeqn">g_0</object>. Standarmäßig die mittlere Erdbeschleunigung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="meanRadius" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Mittlerer Radius des Körpers <object class="inlineeqn">r</object>. Standarmäßig der mittlere Erdradius.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+</xs:schema>
