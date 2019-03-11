@@ -460,10 +460,6 @@ namespace MBSim {
       gdTDir.resize(getFrictionDirections());
     }
     ContourLink::init(stage, config);
-    if(fcl) fcl->init(stage, config);
-    if(fdf) fdf->init(stage, config);
-    if(fnil) fnil->init(stage, config);
-    if(ftil) ftil->init(stage, config);
   }
 
   bool SingleContact::isSetValued() const {
@@ -507,30 +503,6 @@ namespace MBSim {
 
   bool SingleContact::detectImpact() {
     return gActive0 < gActive ? true : false;
-  }
-
-  void SingleContact::setNormalForceLaw(GeneralizedForceLaw *fcl_) { 
-    fcl = fcl_; 
-    if(fcl) 
-      fcl->setParent(this);
-  }
-
-  void SingleContact::setNormalImpactLaw(GeneralizedImpactLaw *fnil_) { 
-    fnil = fnil_; 
-    if(fnil) 
-      fnil->setParent(this);
-  }
-
-  void SingleContact::setTangentialForceLaw(FrictionForceLaw *fdf_) { 
-    fdf = fdf_; 
-    if(fdf) 
-      fdf->setParent(this);
-  }
-
-  void SingleContact::setTangentialImpactLaw(FrictionImpactLaw *ftil_) { 
-    ftil = ftil_; 
-    if(ftil) 
-      ftil->setParent(this);
   }
 
   void SingleContact::solveImpactsFixpointSingle() {
