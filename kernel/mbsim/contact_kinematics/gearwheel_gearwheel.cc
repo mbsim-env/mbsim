@@ -60,7 +60,7 @@ namespace MBSim {
 
   void ContactKinematicsGearWheelGearWheel::updateg(SingleContact &contact, int ii) {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
-    double eta[2];
+    double eta[2], del[2];
     Vec3 rS1S2 = gearwheel[1]->getSolid()?(gearwheel[1]->getFrame()->evalPosition() - gearwheel[0]->getFrame()->evalPosition()):(gearwheel[0]->getFrame()->evalPosition() - gearwheel[1]->getFrame()->evalPosition());
     double a = nrm2(rS1S2);
     double a0 = ((gearwheel[1]->getSolid()?d0[0]:-d0[0])+d0[1])/2;
@@ -89,8 +89,8 @@ namespace MBSim {
         rSP[j](1) = cos(k[j]*2*M_PI/z[j]);
         rSP[j] = gearwheel[j]->getFrame()->getOrientation()*rSP[j];
         cdel = signj*(rSP[j].T()*rS1S2/a);
-        double del = signi*signj*(gearwheel[j]->getFrame()->getOrientation().col(2).T()*crossProduct(rS1S2,rSP[j])>=0?acos(cdel):-acos(cdel));
-        eta[j] = ga[j] + del + al;
+        del[j] = signi*signj*(gearwheel[j]->getFrame()->getOrientation().col(2).T()*crossProduct(rS1S2,rSP[j])>=0?acos(cdel):-acos(cdel));
+        eta[j] = ga[j] + del[j] + al;
         rSP[j](0) = signi*rb[j]*(sin(eta[j])-cos(eta[j])*eta[j]);
         rSP[j](1) = rb[j]*(cos(eta[j])+sin(eta[j])*eta[j]);
         rSP[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[j]*2*M_PI/z[j])*rSP[j];
@@ -114,15 +114,16 @@ namespace MBSim {
       if(g<contact.getGeneralizedRelativePosition(false)(0)) {
         ksave[0] = k[0];
         ksave[1] = k[1];
+        etasave[0] = eta[0];
+        etasave[1] = eta[1];
         signisave = signi;
+        delsave = del[0];
 
-        contact.getContourFrame(igearwheel[0])->setEta(eta[0]);
         contact.getContourFrame(igearwheel[0])->setPosition(rOP[0]);
         contact.getContourFrame(igearwheel[0])->getOrientation(false).set(0,n1);
         contact.getContourFrame(igearwheel[0])->getOrientation(false).set(1,u1);
         contact.getContourFrame(igearwheel[0])->getOrientation(false).set(2,crossProduct(n1,contact.getContourFrame(igearwheel[0])->getOrientation(false).col(1)));
 
-        contact.getContourFrame(igearwheel[1])->setEta(eta[1]);
         contact.getContourFrame(igearwheel[1])->setPosition(rOP[1]);
         contact.getContourFrame(igearwheel[1])->getOrientation(false).set(0, -contact.getContourFrame(igearwheel[0])->getOrientation(false).col(0));
         contact.getContourFrame(igearwheel[1])->getOrientation(false).set(1, -contact.getContourFrame(igearwheel[0])->getOrientation(false).col(1));
@@ -134,9 +135,6 @@ namespace MBSim {
   }
 
   void ContactKinematicsGearWheelGearWheel::updatewb(SingleContact &contact, int ii) {
-    double eta[2];
-    eta[0] = contact.getContourFrame(igearwheel[0])->getEta();
-    eta[1] = contact.getContourFrame(igearwheel[1])->getEta();
     const Vec3 n1 = contact.getContourFrame(igearwheel[0])->evalOrientation().col(0);
     const Vec3 vC1 = contact.getContourFrame(igearwheel[0])->evalVelocity();
     const Vec3 vC2 = contact.getContourFrame(igearwheel[1])->evalVelocity();
@@ -144,16 +142,16 @@ namespace MBSim {
     const Vec3 u2 = contact.getContourFrame(igearwheel[1])->evalOrientation().col(1);
     Vec3 R[2], N1, U2;
     for(int j=0; j<2; j++) {
-      R[j](0) = signisave*rb[j]*sin(eta[j])*eta[j];
-      R[j](1) = rb[j]*cos(eta[j])*eta[j];
+      R[j](0) = signisave*rb[j]*sin(etasave[j])*etasave[j];
+      R[j](1) = rb[j]*cos(etasave[j])*etasave[j];
       R[j] = gearwheel[j]->getFrame()->getOrientation()*BasicRotAIKz(signisave*ga[j]+ksave[j]*2*M_PI/z[j])*R[j];
     }
-    N1(0) = signisave*sin(eta[0])/sqrt(1+pow(cos(al)*tan(beta[0]),2));
-    N1(1) = cos(eta[0])/sqrt(1+pow(cos(al)*tan(beta[0]),2));
+    N1(0) = signisave*sin(etasave[0])/sqrt(1+pow(cos(al)*tan(beta[0]),2));
+    N1(1) = cos(etasave[0])/sqrt(1+pow(cos(al)*tan(beta[0]),2));
     N1 = gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signisave*ga[0]+ksave[0]*2*M_PI/z[0])*N1;
     int sign2 = gearwheel[1]->getSolid()?1:-1;
-    U2(0) = signisave*sign2*cos(eta[1]);
-    U2(1) = -sign2*sin(eta[1]);
+    U2(0) = signisave*sign2*cos(etasave[1]);
+    U2(1) = -sign2*sin(etasave[1]);
     U2 = gearwheel[1]->getFrame()->getOrientation()*BasicRotAIKz(signisave*ga[1]+ksave[1]*2*M_PI/z[1])*U2;
     const Vec3 parnPart1 = crossProduct(gearwheel[0]->getFrame()->evalAngularVelocity(),n1);
     const Vec3 paruPart2 = crossProduct(gearwheel[1]->getFrame()->evalAngularVelocity(),u2);
