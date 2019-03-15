@@ -55,7 +55,6 @@ namespace MBSim {
       ga[i] = sb[i]/rb[i]/2;
       beta[i] = gearwheel[i]->getHelixAngle();
     }
-    maxNumContacts = 1;
   }
 
   void ContactKinematicsGearWheelGearWheel::updateg(SingleContact &contact, int ii) {
