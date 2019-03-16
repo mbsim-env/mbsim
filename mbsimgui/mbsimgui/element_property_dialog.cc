@@ -1196,6 +1196,7 @@ namespace MBSimGUI {
   }
 
   void RigidBodyPropertyDialog::updateWidget() {
+    BodyPropertyDialog::updateWidget();
     translation->updateWidget();
     rotation->updateWidget();
   }
