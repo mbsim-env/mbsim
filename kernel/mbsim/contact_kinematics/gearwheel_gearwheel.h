@@ -64,9 +64,10 @@ namespace MBSim {
       double sb[2];
       double beta[2];
       double ga[2];
-      int ksave[2];
-      double etasave[2];
-      int signisave{1};
+      double delmin[2], delmax[2];
+      int ksave[2][2];
+      double etasave[2][2];
+      int signisave[2]{1,1};
       double delsave;
 
       /**
