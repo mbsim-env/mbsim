@@ -350,7 +350,7 @@ def main():
   mbsimXMLSchemas=subprocess.check_output(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyListSchemas"]).\
     decode("utf-8").split()
   ombvSchemaRE=re.compile(".http___www_mbsim-env_de_OpenMBV.openmbv.xsd$")
-  ombvSchema=filter(lambda x: ombvSchemaRE.search(x)!=None, mbsimXMLSchemas)[0]
+  ombvSchema=list(filter(lambda x: ombvSchemaRE.search(x)!=None, mbsimXMLSchemas))[0]
 
   # check args.directories
   for d in args.directories:
