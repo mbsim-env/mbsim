@@ -27,6 +27,8 @@
 
 namespace MBSimFlexibleBody {
 
+  class NodeFrame;
+
 //  class NurbsCurve1s;
 
   /**
@@ -82,11 +84,11 @@ namespace MBSimFlexibleBody {
       virtual void updateJacobians(Frame1s* frame, int j=0);
       virtual void updateGyroscopicAccelerations(Frame1s* frame);
 
-      virtual void updatePositions(NodeFrame* frame);
-      virtual void updateVelocities(NodeFrame* frame);
-      virtual void updateAccelerations(NodeFrame* frame);
-      virtual void updateJacobians(NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
+      void updatePositions(int node) override;
+      void updateVelocities(int node) override;
+      void updateAccelerations(int node) override;
+      void updateJacobians(int node, int j=0) override;
+      void updateGyroscopicAccelerations(int node) override;
 
       virtual fmatvec::Vec3 getAngles(int i);
       virtual fmatvec::Vec3 getDerivativeOfAngles(int i);

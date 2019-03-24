@@ -30,9 +30,7 @@ namespace MBSimFlexibleBody {
   void NeutralNurbsVelocity2s::buildNodelist() {
     for (int i = 0; i < numOfNodesU; i++) {
       for (int j = 0; j < numOfNodesV; j++) {
-        NodeFrame P("P",nodes(i,j));
-        P.setParent(parent);
-        Nodelist(i,j) = P.evalVelocity();
+        Nodelist(i,j) = static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i,j)));
 //        msg(Debug) << "contourPoints(i,j):"  << contourPoints(i,j).getNodeNumber() << endl;
 //        msg(Debug) << "neutralVelocity2s i, j " << i << ", " << j << Nodelist(i,j) << endl << endl;
       }

@@ -276,6 +276,8 @@ namespace MBSimGUI {
     layout->addWidget(fo);
     fi = new ExtWidget("Inner function",new ChoiceWidget2(factoryi,QBoxLayout::TopToBottom,0),false,false,MBSIM%"innerFunction");
     layout->addWidget(fi);
+    connect(fo->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(fi->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
 
   int CompositeFunctionWidget::getArg1Size() const {
@@ -283,9 +285,8 @@ namespace MBSimGUI {
   }
 
   void CompositeFunctionWidget::updateWidget() {
-    cout << "CompositeFunctionWidget::updateWidget() not yet implemented" << endl;
-    // int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
-    // static_cast<ChoiceWidget*>(fi->getWidget())->resize_(size,1);
+    int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size();
+    static_cast<ChoiceWidget2*>(fi->getWidget())->resize_(size,1);
   }
 
   void CompositeFunctionWidget::resize_(int m, int n) {

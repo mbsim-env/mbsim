@@ -24,6 +24,8 @@
 
 namespace MBSimFlexibleBody {
 
+  class NodeFrame;
+
   /*! 
    * \brief bending torsional axis
    * \author Roland Zander
@@ -56,11 +58,11 @@ namespace MBSimFlexibleBody {
       void updateJacobians(Frame1s* frame, int j=0) override;
       void updateGyroscopicAccelerations(Frame1s* frame) override;
 
-      void updatePositions(NodeFrame* frame) override;
-      void updateVelocities(NodeFrame* frame) override;
-      void updateAccelerations(NodeFrame* frame) override;
-      void updateJacobians(NodeFrame* frame, int j=0) override;
-      void updateGyroscopicAccelerations(NodeFrame* frame) override;
+      virtual void updatePositions(NodeFrame* frame);
+      virtual void updateVelocities(NodeFrame* frame);
+      virtual void updateAccelerations(NodeFrame* frame);
+      virtual void updateJacobians(NodeFrame* frame, int j=0);
+      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
 
       fmatvec::Vec3 getAngles(double s) override;
       /***************************************************/

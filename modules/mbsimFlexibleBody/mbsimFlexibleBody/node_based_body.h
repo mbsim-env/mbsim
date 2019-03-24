@@ -25,17 +25,12 @@
 
 namespace MBSimFlexibleBody {
 
-  class NodeFrame;
+  class NodeBasedFrame;
 
   class NodeBasedBody : public MBSim::Body {
     public:
       NodeBasedBody(const std::string &name) : Body(name) { }
       void resetUpToDate() override;
-      virtual void updatePositions(NodeFrame* frame);
-      virtual void updateVelocities(NodeFrame* frame);
-      virtual void updateAccelerations(NodeFrame* frame);
-      virtual void updateJacobians(NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
       virtual void updatePositions(int i);
       virtual void updateVelocities(int i);
       virtual void updateAccelerations(int i);
@@ -58,8 +53,11 @@ namespace MBSimFlexibleBody {
       /**
        * \param node frame
        */
-      void addFrame(NodeFrame *frame);
+      void addFrame(NodeBasedFrame *frame);
 
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+
+      int getNumberOfNodes() { if(updSize) calcSize(); return nn; }
       int getNodeIndex(int nodeNumber) const { return nodeMap.at(nodeNumber); }
 
     protected:
@@ -69,6 +67,7 @@ namespace MBSimFlexibleBody {
       std::vector<bool> updNodalPos, updNodalVel, updNodalAcc, updNodalGA, updNodalStress;
       std::vector<bool> updNodalJac[2];
       std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma;
+      int nn{0};
       std::map<int,int> nodeMap;
   };
 

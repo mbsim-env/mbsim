@@ -1493,6 +1493,68 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="InverseKinematicsConstraint" substitutionGroup="Constraint" type="InverseKinematicsConstraintType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Kinematisce Vorgabe für einen Körper in einem System mit Baumstruktur (Roboter)
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="InverseKinematicsConstraintType">
+    <xs:complexContent>
+      <xs:extension base="ConstraintType">
+        <xs:sequence>
+          <xs:element name="kinematics" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Kinematik.
+              <ul>
+                <li>planar: ebene Kinematik</li>
+                <li>spatial: räumliche Kinematik</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="frame">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Angabe des Koordinatensystems, für das die kinematische Vorgabe gelten soll.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="translation">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die Translation in Abhängigkeit der Zeit.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="rotation" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die Rotation in Abhängigkeit der Zeit.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anfangswerte für Newton-Löser.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Link" abstract="true" substitutionGroup="Element" type="LinkType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Abstrakte Oberklasse eines Verbindungselements zwischen Objekten.
@@ -5554,6 +5616,35 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVAngularAcceleration" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="InverseKinematicsConstraintObserver" substitutionGroup="Observer" type="InverseKinematicsConstraintObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="InverseKinematicsConstraintObserverType">
+    <xs:complexContent>
+      <xs:extension base="ObserverType">
+        <xs:sequence>
+          <xs:element name="inverseKinematicsConstraint">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ConstraintReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
             </xs:complexType>

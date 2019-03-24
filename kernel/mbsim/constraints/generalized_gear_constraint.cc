@@ -89,7 +89,7 @@ namespace MBSim {
   }
 
   void GeneralizedGearConstraint::setUpInverseKinetics() {
-    GeneralizedGear *gear = new GeneralizedGear(string("GeneralizedGear")+name);
+    GeneralizedGear *gear = new GeneralizedGear(string("GeneralizedGear_")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(gear);
     gear->setGearOutput(bd);
     for(unsigned int i=0; i<bi.size(); i++)

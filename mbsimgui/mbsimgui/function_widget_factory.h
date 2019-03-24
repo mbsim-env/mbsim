@@ -29,7 +29,7 @@ namespace MBSimGUI {
 
   class FunctionWidgetFactory2 : public WidgetFactory {
     public:
-      FunctionWidgetFactory2(Element *element_, bool fixedSize_, QWidget *parent_);
+      FunctionWidgetFactory2(Element *element_, bool fixedSize_, QWidget *parent_, const QString &sym_="x");
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -40,6 +40,7 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> xmlName;
       bool fixedSize;
       QWidget *parent;
+      QString sym;
   };
 
   class TranslationWidgetFactory2 : public WidgetFactory {

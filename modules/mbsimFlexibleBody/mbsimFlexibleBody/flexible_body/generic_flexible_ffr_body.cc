@@ -23,6 +23,7 @@
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/links/joint.h"
+#include "mbsim/constitutive_laws/bilateral_constraint.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/xmlutils.h"
 #include "mbsim/objectfactory.h"
@@ -90,7 +91,10 @@ namespace MBSimFlexibleBody {
   }
 
   void GenericFlexibleFfrBody::updateh(int index) {
-    h[index] += evalKJ(index).T()*(evalhb() - evalMb()*evalKi());
+    if(index==0)
+      h[0] += evalKJ(0).T()*(evalhb() - evalMb()*evalKi());
+    else
+      h[1] += evalhb() - evalMb()*(evalKJ(0)*evaludall()+evalKi());
   }
 
   void GenericFlexibleFfrBody::calcSize() {
@@ -128,6 +132,7 @@ namespace MBSimFlexibleBody {
       iuR = Range<Var,Var>(nuT,nqT+nqR-1);
       iuE = Range<Var,Var>(nuT+nuR,nu-1);
     }
+    nn = KrKP.size();
     updSize = false;
   }
 
@@ -319,41 +324,21 @@ namespace MBSimFlexibleBody {
       WJTrel.resize(nu);
       WJRrel.resize(nu);
 
-      updNodalPos.resize(KrKP.size(),true);
-      updNodalVel.resize(KrKP.size(),true);
-      updNodalAcc.resize(KrKP.size(),true);
-      updNodalJac[0].resize(KrKP.size(),true);
-      updNodalJac[1].resize(KrKP.size(),true);
-      updNodalGA.resize(KrKP.size(),true);
-      updNodalStress.resize(KrKP.size(),true);
-      WrOP.resize(KrKP.size());
-      WrRP.resize(KrKP.size());
-      disp.resize(KrKP.size());
-      Womrel.resize(KrKP.size());
-      Wvrel.resize(KrKP.size());
-      Wom.resize(KrKP.size());
-      WvP.resize(KrKP.size());
-      WaP.resize(KrKP.size());
-      Wpsi.resize(KrKP.size());
-      WjP.resize(KrKP.size());
-      WjR.resize(KrKP.size());
+      WrRP.resize(nn);
+      Womrel.resize(nn);
+      Wvrel.resize(nn);
       if(not ARP.size())
-        ARP.resize(KrKP.size(),SqrMat3(Eye()));
-      AWK.resize(ARP.size());
+        ARP.resize(nn,SqrMat3(Eye()));
       if(not Psi.size())
-        Psi.resize(Phi.size(),Mat3xV(ne));
+        Psi.resize(nn,Mat3xV(ne));
       if(not sigma0.size())
-        sigma0.resize(KrKP.size());
-      sigma.resize(KrKP.size());
+        sigma0.resize(nn);
 
       frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
+
+      NodeBasedBody::init(stage, config);
     }
     else if(stage==unknownStage) {
-      WJP[0].resize(KrKP.size(),Mat3xV(gethSize(0),NONINIT));
-      WJR[0].resize(KrKP.size(),Mat3xV(gethSize(0),NONINIT));
-      WJP[1].resize(KrKP.size(),Mat3xV(gethSize(1),NONINIT));
-      WJR[1].resize(KrKP.size(),Mat3xV(gethSize(1),NONINIT));
-
       KJ[0].resize(6+ne,hSize[0]);
       KJ[1].resize(6+ne,hSize[1]);
       for(int i=0; i<ne; i++) {
@@ -366,9 +351,6 @@ namespace MBSimFlexibleBody {
       if(Me.size()==0)
         determineSID();
       prefillMassMatrix();
-
-      K->getJacobianOfTranslation(1,false) = PJT[1];
-      K->getJacobianOfRotation(1,false) = PJR[1];
 
       auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
       if(Atmp and generalizedVelocityOfRotation!=derivativeOfGeneralizedPositionOfRotation) {
@@ -412,40 +394,58 @@ namespace MBSimFlexibleBody {
       T.init(Eye());
 
       // do not invert generalized mass matrix in case of special parametrisation
-      if(dynamic_cast<DynamicSystem*>(R->getParent()) and (not fPrPK or constJT) and not fAPK) {
+      if(dynamic_cast<DynamicSystem*>(R->getParent()) and not fPrPK and not fAPK) {
         nonConstantMassMatrix = false;
-        M = m*JTJ(PJT[0]) + PJT[0].T()*Ct0.T() + Ct0*PJT[0];
-        M(RangeV(M.size()-ne,M.size()-1)) = Me;
+        M = Me;
         LLM = facLL(M);
       }
+
+      NodeBasedBody::init(stage, config);
+
+      K->getJacobianOfTranslation(1,false) = PJT[1];
+      K->getJacobianOfRotation(1,false) = PJR[1];
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
+        if(plotNodes.size()==0) {
+          plotNodes.resize(nodeMap.size(),NONINIT);
+          int j=0;
+          for(const auto & i : nodeMap)
+            plotNodes(j++) = i.first;
+        }
         if(plotFeature[MBSimFlexibleBody::nodalDisplacement]) {
-          for(const auto & i : nodeMap) {
-            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (x)");
-            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (y)");
-            plotColumns.push_back("nodal displacement " + to_string(i.first) + " (z)");
+          for(int i=0; i<plotNodes.size(); i++) {
+            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (x)");
+            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (y)");
+            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (z)");
           }
         }
         if(plotFeature[MBSimFlexibleBody::nodalStress]) {
-          for(const auto & i : nodeMap) {
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (x)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (y)");
-            plotColumns.push_back("nodal stress " + to_string(i.first) + " (z)");
+          for(int i=0; i<plotNodes.size(); i++) {
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XX)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (YY)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (ZZ)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XY)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (YZ)");
+            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XZ)");
           }
         }
         if(plotFeature[MBSimFlexibleBody::nodalEquivalentStress]) {
-          for(const auto & i : nodeMap)
-            plotColumns.push_back("nodal equivalent stress " + to_string(i.first));
+          for(int i=0; i<plotNodes.size(); i++)
+            plotColumns.push_back("nodal equivalent stress " + to_string(plotNodes(i)));
         }
       }
       if(plotFeature[ref(openMBV)] and openMBVBody) {
         if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
           dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(KrKP.size());
       }
+      for(int i=0; i<plotNodes.size(); i++)
+        plotNodes(i) = getNodeIndex(plotNodes(i));
+
+      NodeBasedBody::init(stage, config);
     }
-    NodeBasedBody::init(stage, config);
+    else
+      NodeBasedBody::init(stage, config);
     if(fTR) fTR->init(stage, config);
     if(fPrPK) fPrPK->init(stage, config);
     if(fAPK) fAPK->init(stage, config);
@@ -456,29 +456,33 @@ namespace MBSimFlexibleBody {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     joint->setForceDirection(Mat3xV(3,EYE));
     joint->setMomentDirection(Mat3xV(3,EYE));
+    joint->setForceLaw(new BilateralConstraint);
+    joint->setMomentLaw(new BilateralConstraint);
     joint->connect(R,K);
     joint->setBody(this);
+    joint->setPlotFeature(ref(generalizedRelativePosition),false);
+    joint->setPlotFeature(ref(generalizedRelativeVelocity),false);
   }
 
   void GenericFlexibleFfrBody::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[nodalDisplacement]) {
-        for(const auto & i : nodeMap) {
-          const Vec3 &disp = evalNodalDisplacement(i.second);
+        for(int i=0; i<plotNodes.size(); i++) {
+          const Vec3 &disp = evalNodalDisplacement(plotNodes(i));
           for(size_t j=0; j<3; j++)
             plotVector.push_back(disp(j));
         }
       }
       if(plotFeature[nodalStress]) {
-        for(const auto & i : nodeMap) {
-          const Vec3 &stress = evalNodalStress(i.second);
-          for(size_t j=0; j<3; j++)
+        for(int i=0; i<plotNodes.size(); i++) {
+          const Vector<Fixed<6>,double> &stress = evalNodalStress(plotNodes(i));
+          for(size_t j=0; j<6; j++)
             plotVector.push_back(stress(j));
         }
       }
       if(plotFeature[nodalEquivalentStress]) {
-        for(const auto & i : nodeMap)
-          plotVector.push_back(evalEquivalentStress(i.second));
+        for(int i=0; i<plotNodes.size(); i++)
+          plotVector.push_back(evalEquivalentStress(plotNodes(i)));
       }
     }
     if(plotFeature[ref(openMBV)] and openMBVBody) {
@@ -735,9 +739,8 @@ namespace MBSimFlexibleBody {
     // frames
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
     while(e) {
-      NodeFrame *f=new NodeFrame(E(e)->getAttribute("name"));
+      auto *f=ObjectFactory::createAndInit<Frame>(e);
       addFrame(f);
-      f->initializeUsingXML(e);
       e=e->getNextElementSibling();
     }
 
@@ -820,7 +823,7 @@ namespace MBSimFlexibleBody {
       Matrix<General, Fixed<6>, Var, double> sigmahe = sigmahel[j];
       for(unsigned int i=0; i<sigmahen.size(); i++)
         sigmahe += sigmahen[j][i]*evalqERel()(i);
-      sigma[j] += sigmahe*getqERel();
+      sigma[j] += sigmahe*evalqERel();
     }
     updNodalStress[j] = false;
   }
@@ -873,31 +876,6 @@ namespace MBSimFlexibleBody {
     WjR[i] = K->evalGyroscopicAccelerationOfRotation() + crossProduct(K->evalAngularVelocity(),evalGlobalRelativeAngularVelocity(i));
     WjP[i] = K->getGyroscopicAccelerationOfTranslation() + crossProduct(K->getGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition(i)) + crossProduct(K->getAngularVelocity(),crossProduct(K->getAngularVelocity(),evalGlobalRelativePosition(i))) + 2.*crossProduct(K->getAngularVelocity(),getNodalRelativeVelocity(i));
     updNodalGA[i] = false;
-  }
-
-  void GenericFlexibleFfrBody::updatePositions(NodeFrame* frame) {
-    frame->setPosition(evalNodalPosition(frame->getNodeIndex()));
-    frame->setOrientation(getNodalOrientation(frame->getNodeIndex()));
- }
-
-  void GenericFlexibleFfrBody::updateVelocities(NodeFrame* frame) {
-    frame->setVelocity(evalNodalVelocity(frame->getNodeIndex()));
-    frame->setAngularVelocity(getNodalAngularVelocity(frame->getNodeIndex()));
-  }
-
-  void GenericFlexibleFfrBody::updateAccelerations(NodeFrame* frame) {
-    frame->setAcceleration(evalNodalAcceleration(frame->getNodeIndex()));
-    frame->setAngularAcceleration(getNodalAngularAcceleration(frame->getNodeIndex()));
-  }
-
-  void GenericFlexibleFfrBody::updateJacobians(NodeFrame* frame, int j) {
-    frame->setJacobianOfTranslation(evalNodalJacobianOfTranslation(frame->getNodeIndex(),j));
-    frame->setJacobianOfRotation(getNodalJacobianOfRotation(frame->getNodeIndex(),j));
-  }
-
-  void GenericFlexibleFfrBody::updateGyroscopicAccelerations(NodeFrame* frame) {
-    frame->setGyroscopicAccelerationOfTranslation(evalNodalGyroscopicAccelerationOfTranslation(frame->getNodeIndex()));
-    frame->setGyroscopicAccelerationOfRotation(getNodalGyroscopicAccelerationOfRotation(frame->getNodeIndex()));
   }
 
   double GenericFlexibleFfrBody::evalEquivalentStress(int i) {

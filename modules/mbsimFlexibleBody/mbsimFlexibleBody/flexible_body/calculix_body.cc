@@ -253,11 +253,7 @@ namespace MBSimFlexibleBody {
     Ke0 = JTMJ(K,Phi_);
 
     // visualization
-//    vector<Index> nodes(nn);
     ombvIndices.resize(5*6*ne);
-//    for(size_t i=0; i<nn; i++)
-//      nodes[i] = i;
-//    setOpenMBVNodes(nodes);
     int j = 0;
     for(int i=0; i<eles.rows(); i++) {
       ombvIndices[j++] = nodeMap[eles(i,3)];
@@ -332,6 +328,8 @@ namespace MBSimFlexibleBody {
       ombvBody = shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody);
       ombvBody->initializeUsingXML(e);
     }
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
+    if(e) setPlotNodeNumbers(E(e)->getText<VecVI>());
   }
 
 }

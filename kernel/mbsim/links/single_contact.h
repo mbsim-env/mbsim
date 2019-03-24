@@ -142,12 +142,12 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setNormalForceLaw(GeneralizedForceLaw *fcl_);
+      void setNormalForceLaw(GeneralizedForceLaw *fcl_) { fcl = fcl_; }
       GeneralizedForceLaw * getNormalForceLaw() const { return fcl; }
-      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_);
-      void setTangentialForceLaw(FrictionForceLaw *fdf_);
+      void setNormalImpactLaw(GeneralizedImpactLaw *fnil_) { fnil = fnil_; }
+      void setTangentialForceLaw(FrictionForceLaw *fdf_) { fdf = fdf_; }
       FrictionForceLaw * getTangentialForceLaw() const { return fdf; }
-      void setTangentialImpactLaw(FrictionImpactLaw *ftil_);
+      void setTangentialImpactLaw(FrictionImpactLaw *ftil_) { ftil = ftil_; }
       /***************************************************/
 
       /**

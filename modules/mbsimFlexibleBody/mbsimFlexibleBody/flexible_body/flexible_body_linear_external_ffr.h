@@ -38,6 +38,8 @@
 //}
 
 namespace MBSimFlexibleBody {
+
+  class NodeFrame;
   
   /*! 
    * \brief flexible body model based on floating frame reference using the system information external linear FEM code
@@ -123,11 +125,11 @@ namespace MBSimFlexibleBody {
       void updateJacobians(MBSim::Frame *frame, int j=0) override;
       void updateGyroscopicAccelerations(MBSim::Frame *frame) override;
 
-      void updatePositions(NodeFrame *frame) override;
-      void updateVelocities(NodeFrame *frame) override;
-      void updateAccelerations(NodeFrame *frame) override;
-      void updateJacobians(NodeFrame *frame, int j=0) override;
-      void updateGyroscopicAccelerations(NodeFrame *frame) override;
+      void updatePositions(int nodeIndex) override;
+      void updateVelocities(int nodeIndex) override;
+      void updateAccelerations(int nodeIndex) override;
+      void updateJacobians(int nodeIndex, int j=0) override;
+      void updateGyroscopicAccelerations(int nodeIndex) override;
 
       fmatvec::Vec3 evalLocalPosition(int i);
 

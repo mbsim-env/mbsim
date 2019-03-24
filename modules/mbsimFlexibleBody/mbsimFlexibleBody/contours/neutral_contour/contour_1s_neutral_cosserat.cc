@@ -68,6 +68,7 @@ namespace MBSimFlexibleBody {
       NDA->computeCurve(false);
 
       resetUpToDate();
+      static_cast<NodeBasedBody*>(parent)->resetUpToDate();
 
       Vec u(NV->getuVec());
       for (int i = 0; i < u.size() - degU; i++)

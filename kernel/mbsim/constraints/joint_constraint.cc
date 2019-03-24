@@ -25,12 +25,6 @@
 #include "mbsim/links/joint.h"
 #include "mbsim/dynamic_system.h"
 #include "mbsim/constitutive_laws/bilateral_constraint.h"
-#include "mbsim/utils/utils.h"
-#include "mbsim/objectfactory.h"
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/frame.h>
-
-#include <utility>
 
 using namespace std;
 using namespace fmatvec;
@@ -39,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_, vector<Frame*> frame_, FrameOfReference refFrame_, vector<Frame*> i1_, vector<Frame*> i2_) : body1 (std::move(body1_)),body2(std::move(body2_)),forceDir(forceDir_),momentDir(momentDir_), frame(frame_), refFrame(refFrame_), i1(std::move(i1_)), i2(std::move(i2_)) {
+  JointConstraint::Residuum::Residuum(vector<RigidBody*> body1_, vector<RigidBody*> body2_, const Mat3xV &forceDir_, const Mat3xV &momentDir_, vector<Frame*> frame_, FrameOfReference refFrame_) : body1 (std::move(body1_)),body2(std::move(body2_)),forceDir(forceDir_),momentDir(momentDir_), frame(frame_), refFrame(refFrame_) {
   }
 
   Vec JointConstraint::Residuum::operator()(const Vec &x) {
@@ -86,22 +80,12 @@ namespace MBSim {
         bi.push_back(getByPath<RigidBody>(i));
       if(bi.empty())
         throwError("No independent rigid bodies given!");
-      if((bd1.empty()) and (bd2.empty()))
+      if(bd1.empty() and bd2.empty())
         throwError("No dependent rigid bodies given!");
-      if(!saved_ref1.empty() && !saved_ref2.empty())
+      if(not saved_ref1.empty() and not saved_ref2.empty())
         connect(getByPath<Frame>(saved_ref1), getByPath<Frame>(saved_ref2));
       if(not frame[0] or not frame[1])
         throwError("Not all connections are given!");
-      if(!bd1.empty()) {
-        for(unsigned int i=0; i<bd1.size()-1; i++) 
-          if1.push_back(bd1[i+1]->getFrameOfReference());
-        if1.push_back(frame[0]);
-      }
-      if(!bd2.empty()) {
-        for(unsigned int i=0; i<bd2.size()-1; i++) 
-          if2.push_back(bd2[i+1]->getFrameOfReference());
-        if2.push_back(frame[1]);
-      }
     }
     else if(stage==preInit) {
       if(refFrame==unknown)
@@ -190,7 +174,7 @@ namespace MBSim {
   }
 
   void JointConstraint::updateGeneralizedCoordinates() {
-    Residuum f(bd1,bd2,forceDir,momentDir,frame,refFrame,if1,if2);
+    Residuum f(bd1,bd2,forceDir,momentDir,frame,refFrame);
     MultiDimNewtonMethod newton(&f);
     q = newton.solve(q);
     if(newton.getInfo()!=0)
@@ -310,17 +294,17 @@ namespace MBSim {
     DOMElement *e;
     MechanicalConstraint::initializeUsingXML(element);
     e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodyOnFirstSide");
-    while(e && E(e)->getTagName()==MBSIM%"dependentRigidBodyOnFirstSide") {
+    while(e and E(e)->getTagName()==MBSIM%"dependentRigidBodyOnFirstSide") {
       saved_RigidBodyFirstSide.push_back(E(e)->getAttribute("ref"));
       e=e->getNextElementSibling();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"dependentRigidBodyOnSecondSide");
-    while(e && E(e)->getTagName()==MBSIM%"dependentRigidBodyOnSecondSide") {
+    while(e and E(e)->getTagName()==MBSIM%"dependentRigidBodyOnSecondSide") {
       saved_RigidBodySecondSide.push_back(E(e)->getAttribute("ref"));
       e=e->getNextElementSibling();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"independentRigidBody");
-    while(e && E(e)->getTagName()==MBSIM%"independentRigidBody") {
+    while(e and E(e)->getTagName()==MBSIM%"independentRigidBody") {
       saved_IndependentBody.push_back(E(e)->getAttribute("ref"));
       e=e->getNextElementSibling();
     }

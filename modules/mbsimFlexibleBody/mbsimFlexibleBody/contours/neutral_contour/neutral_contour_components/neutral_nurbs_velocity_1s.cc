@@ -33,9 +33,7 @@ namespace MBSimFlexibleBody {
 
   void NeutralNurbsVelocity1s::buildNodelist() {
     for (int i = 0; i < nodes.size(); i++) {
-      NodeFrame P("P",nodes(i));
-      P.setParent(parent);
-      Nodelist.set(i, trans(P.evalVelocity()));
+      Nodelist.set(i,static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i))).T());
     }
 //    msg(Debug) << "neutralVelocity"<< Nodelist << endl << endl;
   }

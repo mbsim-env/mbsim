@@ -1,0 +1,12 @@
+PROJECT_BRIEF          = "MBSim Physics Module"
+INPUT                  = @top_srcdir@/mbsimPhysics
+PROJECT_NAME           = @PACKAGE@
+PROJECT_NUMBER         = @VERSION@
+GENERATE_TAGFILE       = html/mbsimphysics.tag
+TAGFILES               = @prefix@/share/doc/mbsim/mbsim.tag=../mbsim \
+                         @prefix@/share/doc/fmatvec/fmatvec.tag=../fmatvec \
+                         @prefix@/share/doc/openmbvcppinterface/openmbvcppinterface.tag=../openmbvcppinterface \
+                         @prefix@/share/doc/hdf5serie/hdf5serie.tag=../hdf5serie \
+                         @prefix@/share/doc/mbxmlutils/mbxmlutils.tag=../mbxmlutils
+
+@INCLUDE = @prefix@/share/fmatvec/doxy_template/doxyfile_common

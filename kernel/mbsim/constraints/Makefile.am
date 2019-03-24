@@ -9,7 +9,8 @@ libconstraint_la_SOURCES = constraint.cc\
 			   generalized_acceleration_constraint.cc\
 			   joint_constraint.cc\
 			   generalized_connection_constraint.cc\
-			   generalized_gear_constraint.cc
+			   generalized_gear_constraint.cc\
+			   inverse_kinematics_constraint.cc
 
 libconstraint_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 libconstraint_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
@@ -24,4 +25,5 @@ constraintinclude_HEADERS = constraint.h\
 			    generalized_acceleration_constraint.h\
 			    joint_constraint.h\
 			    generalized_connection_constraint.h\
-			    generalized_gear_constraint.h
+			    generalized_gear_constraint.h\
+                            inverse_kinematics_constraint.h

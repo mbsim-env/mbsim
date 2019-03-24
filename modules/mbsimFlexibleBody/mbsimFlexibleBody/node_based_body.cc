@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "node_based_body.h"
-#include <mbsimFlexibleBody/frames/node_frame.h>
+#include "mbsimFlexibleBody/frames/node_based_frame.h"
 #include <mbsim/mbsim_event.h>
 
 using namespace std;
@@ -67,35 +67,41 @@ namespace MBSimFlexibleBody {
     throwError("(NodeBasedBody::updateStresses): Not implemented.");
   }
 
-  void NodeBasedBody::updatePositions(NodeFrame* frame) {
-    throwError("(NodeBasedBody::updatePositions): Not implemented.");
-  }
-
-  void NodeBasedBody::updateVelocities(NodeFrame* frame) {
-    throwError("(NodeBasedBody::updateVelocities): Not implemented.");
-  }
-
-  void NodeBasedBody::updateAccelerations(NodeFrame* frame) {
-    throwError("(NodeBasedBody::updateAccelerations): Not implemented.");
-  }
-
-  void NodeBasedBody::updateJacobians(NodeFrame* frame, int j) {
-    throwError("(NodeBasedBody::updateJacobians): Not implemented.");
-  }
-
-  void NodeBasedBody::updateGyroscopicAccelerations(NodeFrame* frame) {
-    throwError("(NodeBasedBody::updateGyroscopicAccelerations): Not implemented.");
-  }
-
-  void NodeBasedBody::addFrame(NodeFrame *frame) {
+  void NodeBasedBody::addFrame(NodeBasedFrame *frame) {
     Body::addFrame(frame);
   }
 
-//  vector<int> NodeBasedBody::getNodeIndices(vector<int> nodeNumbers) const {
-//    vector<int> nodeIndices(nodeNumbers.size());
-//    for(size_t i=0; i<nodeNumbers.size(); i++)
-//      nodeIndices[i] = getNodeIndex(nodeNumbers[i]);
-//    return nodeIndices;
-//  }
+  void NodeBasedBody::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==preInit) {
+      if(nodeMap.empty()) {
+        for(int i=0; i<getNumberOfNodes(); i++)
+          nodeMap[i+1] = i;
+      }
+      updNodalPos.resize(nn,true);
+      updNodalVel.resize(nn,true);
+      updNodalAcc.resize(nn,true);
+      updNodalJac[0].resize(nn,true);
+      updNodalJac[1].resize(nn,true);
+      updNodalGA.resize(nn,true);
+      updNodalStress.resize(nn,true);
+      WrOP.resize(nn);
+      disp.resize(nn);
+      Wom.resize(nn);
+      WvP.resize(nn);
+      WaP.resize(nn);
+      Wpsi.resize(nn);
+      WjP.resize(nn);
+      WjR.resize(nn);
+      AWK.resize(nn);
+      sigma.resize(nn);
+    }
+    else if(stage==unknownStage) {
+      WJP[0].resize(nn,Mat3xV(gethSize(0),NONINIT));
+      WJR[0].resize(nn,Mat3xV(gethSize(0),NONINIT));
+      WJP[1].resize(nn,Mat3xV(gethSize(1),NONINIT));
+      WJR[1].resize(nn,Mat3xV(gethSize(1),NONINIT));
+    }
+    Body::init(stage,config);
+  }
 
 }

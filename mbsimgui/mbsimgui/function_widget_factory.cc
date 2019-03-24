@@ -32,7 +32,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  FunctionWidgetFactory2::FunctionWidgetFactory2(Element *element_, bool fixedSize_, QWidget *parent_) : element(element_), fixedSize(fixedSize_), parent(parent_) {
+  FunctionWidgetFactory2::FunctionWidgetFactory2(Element *element_, bool fixedSize_, QWidget *parent_, const QString &sym_) : element(element_), fixedSize(fixedSize_), parent(parent_), sym(sym_) {
     name.emplace_back("Constant function");
     name.emplace_back("Linear function");
     name.emplace_back("Quadratic function");
@@ -93,10 +93,10 @@ namespace MBSimGUI {
     if(i==8) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
-      return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy,true,parent), new FunctionWidgetFactory2(dummy,true,parent));
+      return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy,true,parent,sym), new FunctionWidgetFactory2(dummy,true,parent,sym));
     }
     if(i==9)
-      return new SymbolicFunctionWidget(QStringList("x"),1,3,fixedSize);
+      return new SymbolicFunctionWidget(QStringList(sym),1,3,fixedSize);
     if(i==10)
       return new TabularFunctionWidget(1);
     if(i==11)
@@ -114,7 +114,7 @@ namespace MBSimGUI {
     if(i==17)
       return new BidirectionalFunctionWidget(parent);
     if(i==18)
-      return new ContinuedFunctionWidget(new FunctionWidgetFactory2(element,true,parent),new FunctionWidgetFactory2(element,true,parent));
+      return new ContinuedFunctionWidget(new FunctionWidgetFactory2(element,true,parent,sym),new FunctionWidgetFactory2(element,true,parent,sym));
     return nullptr;
   }
 
@@ -196,7 +196,7 @@ namespace MBSimGUI {
     if(i==0)
       return new VectorValuedFunctionWidget(element,1,true,parent);
     if(i==1)
-      return new CompositeFunctionWidget(new TranslationWidgetFactory2(element,parent), new FunctionWidgetFactory2(element,true,parent));
+      return new CompositeFunctionWidget(new TranslationWidgetFactory2(element,parent), new FunctionWidgetFactory2(element,true,parent,"t"));
     if(i==2)
       return new SymbolicFunctionWidget(QStringList("t"),3,3);
     if(i==3)
@@ -273,7 +273,7 @@ namespace MBSimGUI {
 
   QWidget* RotationWidgetFactory3::createWidget(int i) {
     if(i==0)
-      return new CompositeFunctionWidget(new RotationWidgetFactory2(element,parent), new FunctionWidgetFactory2(element,true,parent));
+      return new CompositeFunctionWidget(new RotationWidgetFactory2(element,parent), new FunctionWidgetFactory2(element,true,parent,"t"));
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("t"),1,3);
     return nullptr;

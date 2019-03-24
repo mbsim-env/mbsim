@@ -111,6 +111,8 @@ namespace MBSimGUI {
 
     protected slots:
       void addNodeFrame();
+      void addInterfaceNodeFrame();
+      void addFfrInterfaceNodeFrame();
   };
 
   class ContoursContextMenu : public BasicElementMenu {
@@ -239,6 +241,7 @@ namespace MBSimGUI {
       void addGeneralizedAccelerationConstraint();
       void addJointConstraint();
       void addGeneralizedConnectionConstraint();
+      void addInverseKinematicsConstraint();
       void paste();
       void load();
       void embed();
@@ -260,6 +263,7 @@ namespace MBSimGUI {
       void addKinematicCoordinatesObserver();
       void addRelativeKinematicsObserver();
       void addRigidBodySystemObserver();
+      void addInverseKinematicsConstraintObserver();
       void paste();
       void load();
       void embed();

@@ -25,6 +25,8 @@
 
 namespace MBSimFlexibleBody {
 
+  class NodeFrame;
+
   /*! 
    * \brief plate according to Reissner-Mindlin with axial moving frame of reference
    * \author Roland Zander
@@ -65,11 +67,11 @@ namespace MBSimFlexibleBody {
       virtual void updateJacobians(Frame2s* frame, int j=0);
       virtual void updateGyroscopicAccelerations(Frame2s* frame);
 
-      virtual void updatePositions(NodeFrame* frame);
-      virtual void updateVelocities(NodeFrame* frame);
-      virtual void updateAccelerations(NodeFrame* frame);
-      virtual void updateJacobians(NodeFrame* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(NodeFrame* frame);
+      void updatePositions(int node) override;
+      void updateVelocities(int node) override;
+      void updateAccelerations(int node) override;
+      void updateJacobians(int node, int j=0) override;
+      void updateGyroscopicAccelerations(int node) override;
 
       /* INHERITED INTERFACE OF OBJECT */
       virtual void init(InitStage stage, const MBSim::InitConfigSet &config);

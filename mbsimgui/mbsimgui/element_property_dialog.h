@@ -91,6 +91,16 @@ namespace MBSimGUI {
       ExtWidget *nodeNumber;
   };
 
+  class InterfaceNodeFramePropertyDialog : public FramePropertyDialog {
+
+    public:
+      InterfaceNodeFramePropertyDialog(Element *frame, bool approx=false);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *nodeNumbers, *approx;
+  };
+
   class ContourPropertyDialog : public ElementPropertyDialog {
 
     public:
@@ -362,6 +372,7 @@ namespace MBSimGUI {
       int getqRelSize() const; 
       int getuRelSize() const { return getqRelSize(); }
     protected:
+      void updateWidget() override;
       ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation, *ombv, *ombvFrameRef, *weightArrow, *jointForceArrow, *jointMomentArrow;
   };
 
@@ -377,6 +388,7 @@ namespace MBSimGUI {
       int getuRelSize() const { return getqRelSize(); }
       virtual int getqERelSize() const { return 0; }
     protected:
+      void updateWidget() override;
       ExtWidget *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
   };
 
@@ -389,7 +401,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *ombv, *ombvNodes, *ombvColorRepresentation;
+      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *nodeNumbers, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *ombv, *ombvColorRepresentation, *plotNodes;
       void updateWidget() override;
   };
 
@@ -402,7 +414,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *resultFileName, *formalism, *beta, *ombv;
+      ExtWidget *resultFileName, *formalism, *beta, *ombv, *plotNodes;
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {
@@ -495,6 +507,16 @@ namespace MBSimGUI {
 
     public:
       GeneralizedConnectionConstraintPropertyDialog(Element *constraint);
+  };
+
+  class InverseKinematicsConstraintPropertyDialog : public ConstraintPropertyDialog {
+
+    public:
+      InverseKinematicsConstraintPropertyDialog(Element *constraint);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *kinematics, *frame, *translation, *rotation, *q0;
   };
 
   class LinkPropertyDialog : public ElementPropertyDialog {
@@ -773,6 +795,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *bodies, *frameOfReference, *position, *velocity, *acceleration, *weight, *momentum, *angularMomentum, *derivativeOfMomentum, *derivativeOfAngularMomentum;
+  };
+
+  class InverseKinematicsConstraintObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      InverseKinematicsConstraintObserverPropertyDialog(Element *observer);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *constraint, *ombv;
   };
 
   class SignalPropertyDialog: public LinkPropertyDialog {

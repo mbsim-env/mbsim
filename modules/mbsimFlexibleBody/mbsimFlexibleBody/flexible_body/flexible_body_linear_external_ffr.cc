@@ -55,6 +55,7 @@ namespace MBSimFlexibleBody {
       qSize = 6+nf;
       uSize[0] = qSize;
       uSize[1] = qSize; // TODO
+      nn = nNodes;
       for(int i=0; i<nNodes; i++)
         nodeMap[i+1] = i;
     }
@@ -579,11 +580,7 @@ namespace MBSimFlexibleBody {
     throwError("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(): Not implemented!");
   }
 
-  void FlexibleBodyLinearExternalFFR::updatePositions(NodeFrame *frame) {
-
-    // The node numbers start at 1...
-    // The indexing starts at 0 ...
-    int nodeIndex = frame->getNodeNumber() - 1;
+  void FlexibleBodyLinearExternalFFR::updatePositions(int nodeIndex) {
 
     FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
 
@@ -591,18 +588,19 @@ namespace MBSimFlexibleBody {
     //        u_bar = A * u_bar; // A*u_bar: transform local position vector expressed in FFR into Reference Frame R
     //        u_bar += q(0, 2); // r_p = R + A*U_bar: add the translational displacement of FFR (based on the reference frame R) to the local position vector expressed in Reference Frame R
 
-    frame->setPosition(R->evalPosition() + R->evalOrientation() * (q(0, 2) + evalA() * u_bar)); // transformation from Reference Frame R into world frame
+    WrOP[nodeIndex] = R->evalPosition() + R->evalOrientation() * (q(0, 2) + evalA() * u_bar); // transformation from Reference Frame R into world frame
     // TODO:  why in cosserat is there not  plus R->getPosition() ?
 
     // TODO: interpolate the position of lumped node to get a smooth surface, and then get A from that curve.
     SqrMat3 wA(R->getOrientation() * A);
-    frame->getOrientation(false).set(0, wA.col(0));
-    frame->getOrientation(false).set(1, wA.col(1));
-    frame->getOrientation(false).set(2, wA.col(2));
-  }
+    AWK[nodeIndex].set(0, wA.col(0));
+    AWK[nodeIndex].set(1, wA.col(1));
+    AWK[nodeIndex].set(2, wA.col(2));
 
-  void FlexibleBodyLinearExternalFFR::updateVelocities(NodeFrame *frame) {
-    int nodeIndex = frame->getNodeNumber() - 1;
+    updNodalPos[nodeIndex] = false;
+ }
+
+  void FlexibleBodyLinearExternalFFR::updateVelocities(int nodeIndex) {
 
     FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
 
@@ -612,7 +610,7 @@ namespace MBSimFlexibleBody {
 
     Vec3 u_ref_1 = -A * tilde(u_bar) * G_bar * u(3, 5);
 
-    frame->setVelocity(R->evalOrientation() * (u(0, 2) + u_ref_1 + A_S_qfDot));  // Schabana 5.15
+    WvP[nodeIndex] = R->evalOrientation() * (u(0, 2) + u_ref_1 + A_S_qfDot);  // Schabana 5.15
 
     // In reality, each point on the flexible body should has a different angular rotation velocity omega as the effect of deformation. But as we assume the deformation is small and thus linearizable, in calculating
     // deformation u_f, we neglect the effect of the change of orientation, simply set the deformation to be equal a weighted summation of different modes vectors.
@@ -620,49 +618,51 @@ namespace MBSimFlexibleBody {
 
     Vec omega_ref = A * G_bar * u(3, 5);
 
-    frame->setAngularVelocity(R->getOrientation() * omega_ref);
+    Wom[nodeIndex] = R->getOrientation() * omega_ref;
+
+    updNodalVel[nodeIndex] = false;
   }
 
-  void FlexibleBodyLinearExternalFFR::updateAccelerations(NodeFrame *frame) {
+  void FlexibleBodyLinearExternalFFR::updateAccelerations(int nodeIndex) {
     throwError("(FlexibleBodyLinearExternalFFR::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBodyLinearExternalFFR::updateJacobians(NodeFrame *frame, int j) {
-    int node = frame->getNodeNumber() - 1;
+  void FlexibleBodyLinearExternalFFR::updateJacobians(int nodeIndex, int j) {
 
     // Jacobian of element
     Mat Jactmp_trans(3, 6 + nf, INIT, 0.), Jactmp_rot(3, 6 + nf, INIT, 0.); // initializing Ref + 1 Node
 
     // translational DOFs (d/dR)
     Jactmp_trans(RangeV(0, 2), RangeV(0, 2)) = SqrMat(3, EYE); // ref
-    Vec3 u_bar = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getU0() + static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape() * q(6, 5 + nf);
+    Vec3 u_bar = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getU0() + static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getModeShape() * q(6, 5 + nf);
     Jactmp_trans(RangeV(0, 2), RangeV(3, 5)) = -evalA() * tilde(u_bar) * evalG_bar();
     Jactmp_rot(RangeV(0, 2), RangeV(3, 5)) = A * G_bar;
 
     // elastic DOFs
     // translation (A*phi)
-    Jactmp_trans(RangeV(0, 2), RangeV(6, 5 + nf)) = A * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[node])->getModeShape();
+    Jactmp_trans(RangeV(0, 2), RangeV(6, 5 + nf)) = A * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getModeShape();
 
     // rotation part for elastic DOFs is zero.
 
     // transformation
-    frame->setJacobianOfTranslation(R->evalOrientation() * Jactmp_trans,j);
-    frame->setJacobianOfRotation(R->getOrientation() * Jactmp_rot,j);
-  }
+    WJP[j][nodeIndex] = R->evalOrientation() * Jactmp_trans;
+    WJR[j][nodeIndex] = R->getOrientation() * Jactmp_rot;
 
-  void FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(NodeFrame *frame) {
+    updNodalJac[j][nodeIndex] = false;
+ }
+
+  void FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations(int nodeIndex) {
     throwError("(FlexibleBodyLinearExternalFFR::updateGyroscopicAccelerations): Not implemented.");
   }
 
   Vec3 FlexibleBodyLinearExternalFFR::evalLocalPosition(int i) {
-    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[i-1]);
+    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[getNodeIndex(i)]);
 
     return node->getU0() + node->getModeShape() * q(6, 5 + nf); // don't need to transform to the system coordinates,  needed to be done in neutral contour when calculating the Jacobian matrix
   }
 
   const Vec3 FlexibleBodyLinearExternalFFR::getModeShapeVector(int node, int column) const {
-    const int nodeIndex = node - 1;
-    return static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getModeShape().col(column);
+    return static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[getNodeIndex(node)])->getModeShape().col(column);
   }
 
   void FlexibleBodyLinearExternalFFR::BuildElements() {

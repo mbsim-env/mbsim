@@ -85,6 +85,7 @@ namespace MBSimFlexibleBody {
       NV->computeCurve(false);
 
       resetUpToDate();
+      static_cast<NodeBasedBody*>(parent)->resetUpToDate();
 
       Contour1sNeutralFactory::init(stage, config);
     }

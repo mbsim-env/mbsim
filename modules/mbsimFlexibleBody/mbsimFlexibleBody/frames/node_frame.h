@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2014 MBSim Development Team
+/* Copyright (C) 2004-2019 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,8 +20,7 @@
 #ifndef _NODE_FRAME_H__
 #define _NODE_FRAME_H__
 
-#include "mbsim/frames/frame.h"
-#include "mbsim/utils/index.h"
+#include "mbsimFlexibleBody/frames/node_based_frame.h"
 
 namespace MBSimFlexibleBody {
 
@@ -29,14 +28,13 @@ namespace MBSimFlexibleBody {
    * \brief cartesian frame on nodes of flexible bodies
    * \author Kilian Grundl
    */
-  class NodeFrame : public MBSim::Frame {
+  class NodeFrame : public NodeBasedFrame {
 
     public:
-      NodeFrame(const std::string &name = "dummy", int node_ = 0) : Frame(name), node(node_) { }
+      NodeFrame(const std::string &name = "dummy", int node_ = 0) : NodeBasedFrame(name), node(node_) { }
 
       void setNodeNumber(int node_) { node = node_; }
       int getNodeNumber() const { return node; }
-      int getNodeIndex() const { return nodeIndex; }
 
       void updatePositions() override;
       void updateVelocities() override;
@@ -52,11 +50,6 @@ namespace MBSimFlexibleBody {
        * \brief node number
        */
       int node;
-
-      /*!
-       * \brief node index
-       */
-      int nodeIndex;
   };
 
 }

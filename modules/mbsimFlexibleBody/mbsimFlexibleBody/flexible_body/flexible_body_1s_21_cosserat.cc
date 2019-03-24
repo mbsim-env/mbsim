@@ -165,23 +165,23 @@ namespace MBSimFlexibleBody {
     throwError("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::updatePositions(NodeFrame *frame) {
-    int node = frame->getNodeNumber();
+  void FlexibleBody1s21Cosserat::updatePositions(int node) {
     /* 2D -> 3D mapping */
     Vec qTmpNODE(3, INIT, 0.);
     qTmpNODE(0, 1) = evalqFull()(3 * node + 0, 3 * node + 1);
     Vec qTmpANGLE(3, INIT, 0.);
     qTmpANGLE(2) = qFull(3 * node + 2);
 
-    frame->setPosition(R->evalPosition() + R->evalOrientation() * qTmpNODE);
+    WrOP[node] = R->evalPosition() + R->evalOrientation() * qTmpNODE;
 
-    frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(qTmpANGLE));
-    frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(qTmpANGLE));
-    frame->getOrientation(false).set(2, R->getOrientation() * angle->computeb(qTmpANGLE));
+    AWK[node].set(0, R->getOrientation() * angle->computet(qTmpANGLE));
+    AWK[node].set(1, R->getOrientation() * angle->computen(qTmpANGLE));
+    AWK[node].set(2, R->getOrientation() * angle->computeb(qTmpANGLE));
+
+    updNodalPos[node] = false;
   }
 
-  void FlexibleBody1s21Cosserat::updateVelocities(NodeFrame *frame) {
-    int node = frame->getNodeNumber();
+  void FlexibleBody1s21Cosserat::updateVelocities(int node) {
     Vec qTmpANGLE(3, INIT, 0.);
     qTmpANGLE(2) = qFull(3 * node + 2);
     Vec uTmp(3, INIT, 0.);
@@ -189,31 +189,34 @@ namespace MBSimFlexibleBody {
     Vec uTmpANGLE(3, INIT, 0.);
     uTmpANGLE(2) = uFull(3 * node + 2);
 
-    frame->setVelocity(R->evalOrientation() * uTmp);
-    frame->setAngularVelocity(R->evalOrientation() * angle->computeOmega(qTmpANGLE, uTmpANGLE));
+    WvP[node] = R->evalOrientation() * uTmp;
+    Wom[node] = R->evalOrientation() * angle->computeOmega(qTmpANGLE, uTmpANGLE);
+
+    updNodalVel[node] = false;
  }
 
-  void FlexibleBody1s21Cosserat::updateAccelerations(NodeFrame *frame) {
+  void FlexibleBody1s21Cosserat::updateAccelerations(int node) {
     throwError("(FlexibleBody1s21Cosserat::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody1s21Cosserat::updateJacobians(NodeFrame *frame, int j) {
-    int node = frame->getNodeNumber();
+  void FlexibleBody1s21Cosserat::updateJacobians(int node, int j) {
     /* Jacobian of translation element matrix [1,0,0;0,1,0], static */
     Mat3xV Jacobian_trans(evalqFull().size(), INIT, 0.);
     Jacobian_trans(0, 3 * node) = 1;
     Jacobian_trans(1, 3 * node + 1) = 1;
 
-    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian_trans, j);
+    WJP[j][node] = R->evalOrientation() * Jacobian_trans;
 
     /* Jacobian of rotation element matrix [1,0,0;0,1,0], static */
     Mat3xV Jacobian_rot(evalqFull().size(), INIT, 0.);
     Jacobian_rot(2, 3 * node + 2) = 1;
 
-    frame->setJacobianOfRotation(R->getOrientation() * Jacobian_rot, j);
+    WJR[j][node] = R->getOrientation() * Jacobian_rot;
+
+    updNodalJac[j][node] = false;
   }
 
-  void FlexibleBody1s21Cosserat::updateGyroscopicAccelerations(NodeFrame *frame) {
+  void FlexibleBody1s21Cosserat::updateGyroscopicAccelerations(int node) {
     throwError("(FlexibleBody1s21Cosserat::updateGyroscopicAccelerations): Not implemented.");
   }
 
@@ -323,6 +326,9 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s21Cosserat::setNumberElements(int n) {
+    nn = n;
+    for(int i=0; i<nn; i++)
+      nodeMap[i] = i;
     Elements = n;
     rotationalElements = n;
   }
@@ -480,7 +486,9 @@ namespace MBSimFlexibleBody {
 
     if (PODreduced) {
       //Mass matrix is reduced
-      MConst.resize() << U.T() * MConst * U;
+
+      SymMat Mred = JTMJ(MConst,U);
+      MConst.resize() << Mred;
       LLMConst.resize() << facLL(MConst);
     }
 

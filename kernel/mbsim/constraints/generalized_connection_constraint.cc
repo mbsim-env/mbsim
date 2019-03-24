@@ -50,7 +50,7 @@ namespace MBSim {
   }
 
   void GeneralizedConnectionConstraint::setUpInverseKinetics() {
-    GeneralizedConnection *connection = new GeneralizedConnection(string("GeneralizedConnection")+name);
+    GeneralizedConnection *connection = new GeneralizedConnection(string("GeneralizedConnection_")+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(connection);
     if(bi) connection->connect(bi,bd);
     else connection->connect(bd);

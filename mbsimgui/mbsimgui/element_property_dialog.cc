@@ -140,10 +140,10 @@ namespace MBSimGUI {
   }
 
   FramePropertyDialog::FramePropertyDialog(Element *frame) : ElementPropertyDialog(frame) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     visu->setToolTip("Set the visualisation parameters for the frame");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* FramePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -163,10 +163,10 @@ namespace MBSimGUI {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
       buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
     }
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,static_cast<InternalFrame*>(frame)->getXMLFrameName());
     visu->setToolTip("Set the visualisation parameters for the frame");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
     setReadOnly(true);
     setName(frame->getName());
   }
@@ -232,6 +232,31 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  InterfaceNodeFramePropertyDialog::InterfaceNodeFramePropertyDialog(Element *frame, bool approx_) : FramePropertyDialog(frame) {
+
+    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
+    addToTab("General", nodeNumbers);
+
+    if(approx_) {
+      approx = new ExtWidget("Approximate shape matrix of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"approximateShapeMatrixOfRotation");
+      addToTab("General", approx);
+    }
+  }
+
+  DOMElement* InterfaceNodeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FramePropertyDialog::initializeUsingXML(item->getXMLElement());
+    nodeNumbers->initializeUsingXML(item->getXMLElement());
+    if(approx) approx->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* InterfaceNodeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FramePropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    nodeNumbers->writeXMLFile(item->getXMLElement(),nullptr);
+    if(approx) approx->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   ContourPropertyDialog::ContourPropertyDialog(Element *contour) : ElementPropertyDialog(contour) {
     thickness = new ExtWidget("Thickness",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"thickness");
     addToTab("General", thickness);
@@ -267,10 +292,10 @@ namespace MBSimGUI {
   }
 
   PointPropertyDialog::PointPropertyDialog(Element *point) : RigidContourPropertyDialog(point) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* PointPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -286,10 +311,10 @@ namespace MBSimGUI {
   }
 
   LinePropertyDialog::LinePropertyDialog(Element *line) : RigidContourPropertyDialog(line) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     visu = new ExtWidget("Enable openMBV",new LineMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* LinePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -305,10 +330,10 @@ namespace MBSimGUI {
   }
 
   PlanePropertyDialog::PlanePropertyDialog(Element *plane) : RigidContourPropertyDialog(plane) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     visu = new ExtWidget("Enable openMBV",new PlaneMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* PlanePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -324,13 +349,13 @@ namespace MBSimGUI {
   }
 
   SpherePropertyDialog::SpherePropertyDialog(Element *sphere) : RigidContourPropertyDialog(sphere) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
     addToTab("General", radius);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* SpherePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -348,14 +373,14 @@ namespace MBSimGUI {
   }
 
   CirclePropertyDialog::CirclePropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
     addToTab("General", radius);
     solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"solid");
     addToTab("General", solid);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* CirclePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -375,13 +400,13 @@ namespace MBSimGUI {
   }
 
   CuboidPropertyDialog::CuboidPropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* CuboidPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -399,13 +424,13 @@ namespace MBSimGUI {
   }
 
   LineSegmentPropertyDialog::LineSegmentPropertyDialog(Element *line) : RigidContourPropertyDialog(line) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* LineSegmentPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -423,7 +448,7 @@ namespace MBSimGUI {
   }
 
   PlanarContourPropertyDialog::PlanarContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nodes");
     addToTab("General", nodes);
@@ -435,7 +460,7 @@ namespace MBSimGUI {
     addToTab("General", open);
 
     visu = new ExtWidget("Enable openMBV",new PlanarContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* PlanarContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -457,7 +482,7 @@ namespace MBSimGUI {
   }
 
   PlanarNurbsContourPropertyDialog::PlanarNurbsContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     vector<QString> list;
     list.emplace_back("\"equallySpaced\"");
@@ -482,7 +507,7 @@ namespace MBSimGUI {
     addToTab("General", open);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* PlanarNurbsContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -510,7 +535,7 @@ namespace MBSimGUI {
   }
 
   SpatialContourPropertyDialog::SpatialContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaNodes");
     addToTab("General", etaNodes);
@@ -528,7 +553,7 @@ namespace MBSimGUI {
     addToTab("General", openXi);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* SpatialContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -554,7 +579,7 @@ namespace MBSimGUI {
   }
 
   SpatialNurbsContourPropertyDialog::SpatialNurbsContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     vector<QString> list;
     list.emplace_back("\"equallySpaced\"");
@@ -591,7 +616,7 @@ namespace MBSimGUI {
     addToTab("General", openXi);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* SpatialNurbsContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -627,7 +652,7 @@ namespace MBSimGUI {
   }
 
   DiskPropertyDialog::DiskPropertyDialog(Element *disk) : RigidContourPropertyDialog(disk) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     outerRadius = new ExtWidget("Outer radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"outerRadius");
     addToTab("General", outerRadius);
@@ -636,7 +661,7 @@ namespace MBSimGUI {
     innerRadius = new ExtWidget("Inner radius",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"innerRadius");
     addToTab("General", innerRadius);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* DiskPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -658,7 +683,7 @@ namespace MBSimGUI {
   }
 
   GearWheelPropertyDialog::GearWheelPropertyDialog(Element *disk) : RigidContourPropertyDialog(disk) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
     addToTab("General", numberOfTeeth);
@@ -677,7 +702,7 @@ namespace MBSimGUI {
     solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"solid");
     addToTab("General", solid);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* GearWheelPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -709,12 +734,12 @@ namespace MBSimGUI {
   }
 
   FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
     addToTab("General", interpolation);
 
-    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
+    indices = new ExtWidget("Node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", indices);
 
     knotVector = new ExtWidget("Knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"knotVector");
@@ -727,7 +752,7 @@ namespace MBSimGUI {
     addToTab("General", open);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFLEX%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* FlexiblePlanarNurbsContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -753,12 +778,12 @@ namespace MBSimGUI {
   }
 
   FlexibleSpatialNurbsContourPropertyDialog::FlexibleSpatialNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
     addToTab("General", interpolation);
 
-    indices = new ExtWidget("Indices",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"indices");
+    indices = new ExtWidget("Node numbers",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", indices);
 
     etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaKnotVector");
@@ -780,7 +805,7 @@ namespace MBSimGUI {
     addToTab("General", openXi);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFLEX%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* FlexibleSpatialNurbsContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -829,13 +854,13 @@ namespace MBSimGUI {
   }
 
   FclBoxPropertyDialog::FclBoxPropertyDialog(Element *contour) : FclContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFCL%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* FclBoxPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -853,13 +878,13 @@ namespace MBSimGUI {
   }
 
   FclSpherePropertyDialog::FclSpherePropertyDialog(Element *contour) : FclContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"radius");
     addToTab("General", radius);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFCL%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* FclSpherePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -877,7 +902,7 @@ namespace MBSimGUI {
   }
 
   FclPlanePropertyDialog::FclPlanePropertyDialog(Element *contour) : FclContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     vector<QString> n = getVec<QString>(3,"0");
     n[0] = "1";
@@ -888,7 +913,7 @@ namespace MBSimGUI {
     addToTab("General", offset);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFCL%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* FclPlanePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -908,7 +933,7 @@ namespace MBSimGUI {
   }
 
   FclMeshPropertyDialog::FclMeshPropertyDialog(Element *contour) : FclContourPropertyDialog(contour) {
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     vertices = new ExtWidget("Vertices",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"vertices");
     addToTab("General", vertices);
@@ -929,7 +954,7 @@ namespace MBSimGUI {
     addToTab("General", collisionStructure);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFCL%"enableOpenMBV");
-    addToTab("Visualisation", visu);
+    addToTab("Visualization", visu);
   }
 
   DOMElement* FclMeshPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1131,7 +1156,7 @@ namespace MBSimGUI {
   }
 
   RigidBodyPropertyDialog::RigidBodyPropertyDialog(Element *body) : BodyPropertyDialog(body) {
-    addTab("Visualisation",3);
+    addTab("Visualization",3);
 
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,nullptr),true,false,MBSIM%"frameForKinematics");
     addToTab("Kinematics",K);
@@ -1164,10 +1189,16 @@ namespace MBSimGUI {
     addToTab("Kinematics", generalizedVelocityOfRotation);
 
     ombv = new ExtWidget("OpenMBV Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
-    addToTab("Visualisation", ombv);
+    addToTab("Visualization", ombv);
 
     ombvFrameRef=new ExtWidget("OpenMBV frame of reference",new LocalFrameOfReferenceWidget(body),true,false,MBSIM%"openMBVFrameOfReference");
-    addToTab("Visualisation", ombvFrameRef);
+    addToTab("Visualization", ombvFrameRef);
+  }
+
+  void RigidBodyPropertyDialog::updateWidget() {
+    BodyPropertyDialog::updateWidget();
+    translation->updateWidget();
+    rotation->updateWidget();
   }
 
   DOMElement* RigidBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1284,6 +1315,12 @@ namespace MBSimGUI {
     if(not size) u0->setActive(false);
   }
 
+  void GenericFlexibleFfrBodyPropertyDialog::updateWidget() {
+    BodyPropertyDialog::updateWidget();
+    translation->updateWidget();
+    rotation->updateWidget();
+  }
+
   DOMElement* GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     BodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     translation->initializeUsingXML(item->getXMLElement());
@@ -1299,7 +1336,7 @@ namespace MBSimGUI {
   }
 
   FlexibleFfrBodyPropertyDialog::FlexibleFfrBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
-    addTab("Visualisation",3);
+    addTab("Visualization",3);
     addTab("Nodal data");
 
     mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
@@ -1350,6 +1387,9 @@ namespace MBSimGUI {
     K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",K0om);
 
+    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget2(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodeNumbers");
+    addToTab("Nodal data", nodeNumbers);
+
     r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalRelativePosition",1,3,true),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", r);
 
@@ -1378,10 +1418,7 @@ namespace MBSimGUI {
     addToTab("Nodal data", K0M);
 
     ombv = new ExtWidget("OpenMBV body",new ChoiceWidget2(new OMBVFlexibleBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMFLEX%"openMBVFlexibleBody");
-    addToTab("Visualisation", ombv);
-
-    ombvNodes = new ExtWidget("OpenMBV nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openMBVNodes");
-    addToTab("Visualisation", ombvNodes);
+    addToTab("Visualization", ombv);
 
     vector<QString> list;
     list.emplace_back("\"none\"");
@@ -1397,14 +1434,17 @@ namespace MBSimGUI {
     list.emplace_back("\"zxStress\"");
     list.emplace_back("\"equivalentStress\"");
     ombvColorRepresentation = new ExtWidget("OpenMBV color representation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"openMBVColorRepresentation");
-    addToTab("Visualisation", ombvColorRepresentation);
+    addToTab("Visualization", ombvColorRepresentation);
+
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    addToTab("Visualization", plotNodes);
 
     connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 //    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
 
   void FlexibleFfrBodyPropertyDialog::updateWidget() {
-    BodyPropertyDialog::updateWidget();
+    GenericFlexibleFfrBodyPropertyDialog::updateWidget();
     int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
     if(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getIndex()==0)
       rPdm->resize_(3,size);
@@ -1502,6 +1542,8 @@ namespace MBSimGUI {
         else
           K0M->resize_(size*rsize*size,size);
       }
+      if(nodeNumbers->isActive())
+        nodeNumbers->resize_(rsize,1);
     }
   }
 
@@ -1530,6 +1572,7 @@ namespace MBSimGUI {
     K0t->initializeUsingXML(item->getXMLElement());
     K0r->initializeUsingXML(item->getXMLElement());
     K0om->initializeUsingXML(item->getXMLElement());
+    nodeNumbers->initializeUsingXML(item->getXMLElement());
     r->initializeUsingXML(item->getXMLElement());
     A->initializeUsingXML(item->getXMLElement());
     Phi->initializeUsingXML(item->getXMLElement());
@@ -1540,8 +1583,8 @@ namespace MBSimGUI {
     K0F->initializeUsingXML(item->getXMLElement());
     K0M->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
-    ombvNodes->initializeUsingXML(item->getXMLElement());
     ombvColorRepresentation->initializeUsingXML(item->getXMLElement());
+    plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1563,6 +1606,7 @@ namespace MBSimGUI {
     K0t->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     K0r->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     K0om->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nodeNumbers->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     r->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     A->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     Phi->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
@@ -1578,13 +1622,13 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
-    ombvNodes->writeXMLFile(item->getXMLElement(),ele);
     ombvColorRepresentation->writeXMLFile(item->getXMLElement(),ele);
+    plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
 
   CalculixBodyPropertyDialog::CalculixBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
-    addTab("Visualisation",3);
+    addTab("Visualization",3);
 
     resultFileName = new ExtWidget("Result file name",new FileWidget("", "Calculix result files", "frd files (*.frd)", 0, true),false,false,MBSIMFLEX%"resultFileName");
     addToTab("General",resultFileName);
@@ -1599,7 +1643,10 @@ namespace MBSimGUI {
     addToTab("General", beta);
 
     ombv = new ExtWidget("Enable openMBV",new CalculixBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
-    addToTab("Visualisation",ombv);
+    addToTab("Visualization",ombv);
+
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    addToTab("Visualization", plotNodes);
   }
 
   int CalculixBodyPropertyDialog::getqERelSize() const {
@@ -1614,6 +1661,7 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     beta->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
+    plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1628,6 +1676,7 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
+    plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
 
@@ -1639,7 +1688,7 @@ namespace MBSimGUI {
 
   GeneralizedConstraintPropertyDialog::GeneralizedConstraintPropertyDialog(Element *constraint) : MechanicalConstraintPropertyDialog(constraint) {
 
-    addTab("Visualisation",2);
+    addTab("Visualization",2);
 
     support = new ExtWidget("Support frame",new ElementOfReferenceWidget<Frame>(constraint,nullptr,this),true,false,MBSIM%"supportFrame");
     addToTab("General",support);
@@ -1794,7 +1843,7 @@ namespace MBSimGUI {
   JointConstraintPropertyDialog::JointConstraintPropertyDialog(Element *constraint) : MechanicalConstraintPropertyDialog(constraint) {
 
     addTab("Kinetics",1);
-    addTab("Visualisation",2);
+    addTab("Visualization",2);
     addTab("Initial conditions",2);
 
     dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,2),false,false,"");
@@ -1871,6 +1920,51 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  InverseKinematicsConstraintPropertyDialog::InverseKinematicsConstraintPropertyDialog(Element *constraint) : ConstraintPropertyDialog(constraint) {
+
+    addTab("Kinematics",1);
+    addTab("Visualization",2);
+    addTab("Initial conditions",2);
+
+    vector<QString> list;
+    list.emplace_back("\"planar\"");
+    list.emplace_back("\"spatial\"");
+    kinematics = new ExtWidget("Kinematics",new TextChoiceWidget(list,1,true),true,false,MBSIM%"kinematics");
+    addToTab("General", kinematics);
+
+    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(constraint,nullptr,this),false,false,MBSIM%"frame");
+    addToTab("General", frame);
+
+    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory3(constraint,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"translation");
+    addToTab("Kinematics", translation);
+
+    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory3(constraint,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"rotation");
+    addToTab("Kinematics", rotation);
+
+    q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    addToTab("Initial conditions", q0);
+  }
+
+  DOMElement* InverseKinematicsConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ConstraintPropertyDialog::initializeUsingXML(item->getXMLElement());
+    kinematics->initializeUsingXML(item->getXMLElement());
+    frame->initializeUsingXML(item->getXMLElement());
+    translation->initializeUsingXML(item->getXMLElement());
+    rotation->initializeUsingXML(item->getXMLElement());
+    q0->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* InverseKinematicsConstraintPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ConstraintPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    kinematics->writeXMLFile(item->getXMLElement(),ref);
+    frame->writeXMLFile(item->getXMLElement(),ref);
+    translation->writeXMLFile(item->getXMLElement(),ref);
+    rotation->writeXMLFile(item->getXMLElement(),ref);
+    q0->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   GeneralizedConnectionConstraintPropertyDialog::GeneralizedConnectionConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
   }
 
@@ -1882,7 +1976,7 @@ namespace MBSimGUI {
 
   FrameLinkPropertyDialog::FrameLinkPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
     addTab("Kinetics",1);
-    addTab("Visualisation",2);
+    addTab("Visualization",2);
 
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame>(2,link,this),false,false,MBSIM%"connect");
     static_cast<ConnectElementsWidget<Frame>*>(connections->getWidget())->setDefaultElement("../Frame[I]");
@@ -1925,7 +2019,7 @@ namespace MBSimGUI {
   }
 
   RigidBodyLinkPropertyDialog::RigidBodyLinkPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
-    addTab("Visualisation",2);
+    addTab("Visualization",2);
 
     support = new ExtWidget("Support frame",new ElementOfReferenceWidget<Frame>(link,nullptr,this),true,false,MBSIM%"supportFrame");
     addToTab("General",support);
@@ -1977,7 +2071,7 @@ namespace MBSimGUI {
     addToTab("Kinetics",momentFunction);
 
     arrow = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation",arrow);
+    addToTab("Visualization",arrow);
 
     connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
     connect(forceFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
@@ -2025,7 +2119,7 @@ namespace MBSimGUI {
     addToTab("General",unloadedLength);
 
     coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", coilSpring);
+    addToTab("Visualization", coilSpring);
   }
 
   DOMElement* SpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2056,7 +2150,7 @@ namespace MBSimGUI {
     addToTab("General",unloadedLength);
 
     coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
-    addToTab("Visualisation", coilSpring);
+    addToTab("Visualization", coilSpring);
   }
 
   DOMElement* DirectionalSpringDamperPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2242,7 +2336,7 @@ namespace MBSimGUI {
 
   GeneralizedGearPropertyDialog::GeneralizedGearPropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
-    addTab("Visualisation",2);
+    addTab("Visualization",2);
 
     gearOutput = new ExtWidget("Gear output",new ElementOfReferenceWidget<RigidBody>(link,nullptr,this),false,false,MBSIM%"gearOutput");
     addToTab("General",gearOutput);
@@ -2424,7 +2518,7 @@ namespace MBSimGUI {
 
   KinematicCoordinatesObserverPropertyDialog::KinematicCoordinatesObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
@@ -2433,13 +2527,13 @@ namespace MBSimGUI {
     addToTab("General", frameOfReference);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
-    addToTab("Visualisation",position);
+    addToTab("Visualization",position);
 
     velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVVelocity");
-    addToTab("Visualisation",velocity);
+    addToTab("Visualization",velocity);
 
     acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAcceleration");
-    addToTab("Visualisation",acceleration);
+    addToTab("Visualization",acceleration);
   }
 
   DOMElement* KinematicCoordinatesObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2464,7 +2558,7 @@ namespace MBSimGUI {
 
   RelativeKinematicsObserverPropertyDialog::RelativeKinematicsObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
@@ -2473,19 +2567,19 @@ namespace MBSimGUI {
     addToTab("General", refFrame);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
-    addToTab("Visualisation",position);
+    addToTab("Visualization",position);
 
     velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVVelocity");
-    addToTab("Visualisation",velocity);
+    addToTab("Visualization",velocity);
 
     angularVelocity = new ExtWidget("Enable openMBV angular velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularVelocity");
-    addToTab("Visualisation",angularVelocity);
+    addToTab("Visualization",angularVelocity);
 
     acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAcceleration");
-    addToTab("Visualisation",acceleration);
+    addToTab("Visualization",acceleration);
 
     angularAcceleration = new ExtWidget("Enable openMBV angular acceleration",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularAcceleration");
-    addToTab("Visualisation",angularAcceleration);
+    addToTab("Visualization",angularAcceleration);
   }
 
   DOMElement* RelativeKinematicsObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2514,16 +2608,16 @@ namespace MBSimGUI {
 
   MechanicalLinkObserverPropertyDialog::MechanicalLinkObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     link = new ExtWidget("Mechanical link",new ElementOfReferenceWidget<Link>(observer,nullptr,this),false,false,MBSIM%"mechanicalLink");
     addToTab("General", link);
 
     forceArrow = new ExtWidget("Enable openMBV force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVForce");
-    addToTab("Visualisation",forceArrow);
+    addToTab("Visualization",forceArrow);
 
     momentArrow = new ExtWidget("Enable openMBV moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVMoment");
-    addToTab("Visualisation",momentArrow);
+    addToTab("Visualization",momentArrow);
   }
 
   DOMElement* MechanicalLinkObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2544,16 +2638,16 @@ namespace MBSimGUI {
 
   MechanicalConstraintObserverPropertyDialog::MechanicalConstraintObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     constraint = new ExtWidget("Mechanical constraint",new ElementOfReferenceWidget<Constraint>(observer,nullptr,this),false,false,MBSIM%"mechanicalConstraint");
     addToTab("General", constraint);
 
     forceArrow = new ExtWidget("Enable openMBV force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVForce");
-    addToTab("Visualisation",forceArrow);
+    addToTab("Visualization",forceArrow);
 
     momentArrow = new ExtWidget("Enable openMBV moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVMoment");
-    addToTab("Visualisation",momentArrow);
+    addToTab("Visualization",momentArrow);
   }
 
   DOMElement* MechanicalConstraintObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2574,25 +2668,25 @@ namespace MBSimGUI {
 
   ContactObserverPropertyDialog::ContactObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     link = new ExtWidget("Mechanical link",new ElementOfReferenceWidget<Link>(observer,nullptr,this),false,false,MBSIM%"contact");
     addToTab("General", link);
 
     forceArrow = new ExtWidget("Enable openMBV force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVForce");
-    addToTab("Visualisation",forceArrow);
+    addToTab("Visualization",forceArrow);
 
     momentArrow = new ExtWidget("Enable openMBV force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVMoment");
-    addToTab("Visualisation",momentArrow);
+    addToTab("Visualization",momentArrow);
 
     contactPoints = new ExtWidget("Enable openMBV contact points",new FrameMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVContactPoints");
-    addToTab("Visualisation",contactPoints);
+    addToTab("Visualization",contactPoints);
 
     normalForceArrow = new ExtWidget("Enable openMBV normal force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVNormalForce");
-    addToTab("Visualisation",normalForceArrow);
+    addToTab("Visualization",normalForceArrow);
 
     frictionArrow = new ExtWidget("Enable openMBV tangential force",new FrictionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVTangentialForce");
-    addToTab("Visualisation",frictionArrow);
+    addToTab("Visualization",frictionArrow);
   }
 
   DOMElement* ContactObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2619,25 +2713,25 @@ namespace MBSimGUI {
 
   FrameObserverPropertyDialog::FrameObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
-    addToTab("Visualisation",position);
+    addToTab("Visualization",position);
 
     velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVVelocity");
-    addToTab("Visualisation",velocity);
+    addToTab("Visualization",velocity);
 
     angularVelocity = new ExtWidget("Enable openMBV angular velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularVelocity");
-    addToTab("Visualisation",angularVelocity);
+    addToTab("Visualization",angularVelocity);
 
     acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAcceleration");
-    addToTab("Visualisation",acceleration);
+    addToTab("Visualization",acceleration);
 
     angularAcceleration = new ExtWidget("Enable openMBV angular acceleration",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularAcceleration");
-    addToTab("Visualisation",angularAcceleration);
+    addToTab("Visualization",angularAcceleration);
   }
 
   DOMElement* FrameObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2664,7 +2758,7 @@ namespace MBSimGUI {
 
   RigidBodyObserverPropertyDialog::RigidBodyObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     body = new ExtWidget("Rigid body",new ElementOfReferenceWidget<RigidBody>(observer,nullptr,this),false,false,MBSIM%"rigidBody");
     addToTab("General", body);
@@ -2673,28 +2767,28 @@ namespace MBSimGUI {
     addToTab("General", frameOfReference);
 
     weight = new ExtWidget("Enable openMBV weight",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVWeight");
-    addToTab("Visualisation",weight);
+    addToTab("Visualization",weight);
 
     jointForce = new ExtWidget("Enable openMBV joint force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVJointForce");
-    addToTab("Visualisation",jointForce);
+    addToTab("Visualization",jointForce);
 
     jointMoment = new ExtWidget("Enable openMBV joint moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVJointMoment");
-    addToTab("Visualisation",jointMoment);
+    addToTab("Visualization",jointMoment);
 
     axisOfRotation = new ExtWidget("Enable openMBV axis of rotation",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAxisOfRotation");
-    addToTab("Visualisation",axisOfRotation);
+    addToTab("Visualization",axisOfRotation);
 
     momentum = new ExtWidget("Enable openMBV momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVMomentum");
-    addToTab("Visualisation",momentum);
+    addToTab("Visualization",momentum);
 
     angularMomentum = new ExtWidget("Enable openMBV angular momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularMomentum");
-    addToTab("Visualisation",angularMomentum);
+    addToTab("Visualization",angularMomentum);
 
     derivativeOfMomentum = new ExtWidget("Enable openMBV derivative of momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVDerivativeOfMomentum");
-    addToTab("Visualisation",derivativeOfMomentum);
+    addToTab("Visualization",derivativeOfMomentum);
 
     derivativeOfAngularMomentum = new ExtWidget("Enable openMBV derivative of angular momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
-    addToTab("Visualisation",derivativeOfAngularMomentum);
+    addToTab("Visualization",derivativeOfAngularMomentum);
   }
 
   DOMElement* RigidBodyObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2729,7 +2823,7 @@ namespace MBSimGUI {
 
   RigidBodySystemObserverPropertyDialog::RigidBodySystemObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
 
-    addTab("Visualisation",1);
+    addTab("Visualization",1);
 
     bodies = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",observer,this),"Rigid body",0,2),false,false,"");
     addToTab("General", bodies);
@@ -2738,28 +2832,28 @@ namespace MBSimGUI {
     addToTab("General", frameOfReference);
 
     position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
-    addToTab("Visualisation",position);
+    addToTab("Visualization",position);
 
     velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVVelocity");
-    addToTab("Visualisation",velocity);
+    addToTab("Visualization",velocity);
 
     acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAcceleration");
-    addToTab("Visualisation",acceleration);
+    addToTab("Visualization",acceleration);
 
     weight = new ExtWidget("Enable openMBV weight",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVWeight");
-    addToTab("Visualisation",weight);
+    addToTab("Visualization",weight);
 
     momentum = new ExtWidget("Enable openMBV momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVMomentum");
-    addToTab("Visualisation",momentum);
+    addToTab("Visualization",momentum);
 
     angularMomentum = new ExtWidget("Enable openMBV angular momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularMomentum");
-    addToTab("Visualisation",angularMomentum);
+    addToTab("Visualization",angularMomentum);
 
     derivativeOfMomentum = new ExtWidget("Enable openMBV derivative of momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVDerivativeOfMomentum");
-    addToTab("Visualisation",derivativeOfMomentum);
+    addToTab("Visualization",derivativeOfMomentum);
 
     derivativeOfAngularMomentum = new ExtWidget("Enable openMBV derivative of angular momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVDerivativeOfAngularMomentum");
-    addToTab("Visualisation",derivativeOfAngularMomentum);
+    addToTab("Visualization",derivativeOfAngularMomentum);
 
   }
 
@@ -2790,6 +2884,31 @@ namespace MBSimGUI {
     angularMomentum->writeXMLFile(item->getXMLElement(),ref);
     derivativeOfMomentum->writeXMLFile(item->getXMLElement(),ref);
     derivativeOfAngularMomentum->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  InverseKinematicsConstraintObserverPropertyDialog::InverseKinematicsConstraintObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
+
+    addTab("Visualization",1);
+
+    constraint = new ExtWidget("Inverse kinematics constraint",new ElementOfReferenceWidget<InverseKinematicsConstraint>(observer,nullptr,this),false,false,MBSIM%"inverseKinematicsConstraint");
+    addToTab("General", constraint);
+
+    ombv = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBV");
+    addToTab("Visualization",ombv);
+  }
+
+  DOMElement* InverseKinematicsConstraintObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    constraint->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* InverseKinematicsConstraintObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    constraint->writeXMLFile(item->getXMLElement(),ref);
+    ombv->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

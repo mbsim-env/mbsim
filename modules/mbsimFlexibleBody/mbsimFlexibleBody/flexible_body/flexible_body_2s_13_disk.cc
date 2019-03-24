@@ -155,9 +155,8 @@ namespace MBSimFlexibleBody {
     throwError("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13Disk::updatePositions(NodeFrame *frame) {
+  void FlexibleBody2s13Disk::updatePositions(int node) {
     Vec3 tmp(NONINIT);
-    int node = frame->getNodeNumber();
 
     tmp(0) = NodeCoordinates(node, 0) + evalqExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
     tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
@@ -170,17 +169,18 @@ namespace MBSimFlexibleBody {
     tmp(1) = sin(qext(1)) * tmp_add(0) + cos(qext(1)) * tmp_add(1);
 
     tmp(2) = qext(0) + qext(RefDofs + node * NodeDofs) + (computeThickness(NodeCoordinates(node, 0))) / 2.;
-    frame->setPosition(R->evalPosition() + R->evalOrientation() * tmp);
 
+    WrOP[node] = R->evalPosition() + R->evalOrientation() * tmp;
+
+    updNodalPos[node] = false;
 //    msg(Debug) << "(FlexibleBody2s13Disk::updateOrientation): Not implemented!" << endl;
     //frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(Phi));
     //frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(Phi));
     //frame->getOrientation(false).set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1)));
   }
 
-  void FlexibleBody2s13Disk::updateVelocities(NodeFrame *frame) {
+  void FlexibleBody2s13Disk::updateVelocities(int node) {
     Vec3 tmp(NONINIT);
-    int node = frame->getNodeNumber();
 
     tmp(0) = NodeCoordinates(node, 0) + evalqExt()(RefDofs + (node + 1) * NodeDofs - 2) * (computeThickness(NodeCoordinates(node, 0))) / 2.; // in deformation direction
     tmp(1) = -qext(RefDofs + (node + 1) * NodeDofs - 1) * (computeThickness(NodeCoordinates(node, 0))) / 2.;
@@ -211,24 +211,24 @@ namespace MBSimFlexibleBody {
 
     tmp(2) = uext(0) + uext(RefDofs + node * NodeDofs);
 
-    frame->setVelocity(R->evalOrientation() * tmp);
+    WvP[node] = R->evalOrientation() * tmp;
 
     tmp(0) = uext(RefDofs + (node + 1) * NodeDofs - 2) * (-cos(NodeCoordinates(node, 1)) * sin(qext(1)) - cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
     tmp(1) = uext(RefDofs + (node + 1) * NodeDofs - 1) * (cos(NodeCoordinates(node, 1)) * sin(qext(1)) + cos(qext(1)) * sin(NodeCoordinates(node, 1))) + uext(RefDofs + (node + 1) * NodeDofs - 2) * (cos(qext(1)) * cos(NodeCoordinates(node, 1)) - sin(qext(1)) * sin(NodeCoordinates(node, 1)));
     tmp(2) = uext(1);
 
-    frame->setAngularVelocity(R->getOrientation() * tmp);
+     Wom[node] = R->getOrientation() * tmp;
+
+     updNodalVel[node] = false;
   }
 
-  void FlexibleBody2s13Disk::updateAccelerations(NodeFrame *frame) {
+  void FlexibleBody2s13Disk::updateAccelerations(int node) {
     throwError("(FlexibleBody2s13Disk::updateAccelerations): Not implemented.");
   }
 
-  void FlexibleBody2s13Disk::updateJacobians(NodeFrame *frame, int j) {
+  void FlexibleBody2s13Disk::updateJacobians(int node, int j) {
     RangeV Wwidth(0, 3); // number of columns for Wtmp appears here also as column number
     Mat Wext(Dofs, 4);
-
-    int node = frame->getNodeNumber();
 
     /* Jacobian of element */
     Mat Wtmp(5, 4, INIT, 0.); // initialising Ref + 1 Node
@@ -255,11 +255,13 @@ namespace MBSimFlexibleBody {
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
 
     // transformation
-    frame->setJacobianOfTranslation(R->evalOrientation().col(2) * Jacobian(0, 0, qSize - 1, 0).T());
-    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T());
+    WJP[j][node] = R->evalOrientation().col(2) * Jacobian(0, 0, qSize - 1, 0).T();
+    WJR[j][node] = R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T();
+
+    updNodalJac[j][node] = false;
   }
 
-  void FlexibleBody2s13Disk::updateGyroscopicAccelerations(NodeFrame *frame) {
+  void FlexibleBody2s13Disk::updateGyroscopicAccelerations(int node) {
     throwError("(FlexibleBody2s13Disk::updateGyroscopicAccelerations): Not implemented.");
   }
 
@@ -267,6 +269,8 @@ namespace MBSimFlexibleBody {
     if (stage == preInit) {
       assert(nr > 0); // at least on radial row
       assert(nj > 1); // at least two azimuthal elements
+
+      nn = (nr+1)*nj;
 
       // condensation
       switch (LType) {

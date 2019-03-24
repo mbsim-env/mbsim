@@ -204,10 +204,24 @@ namespace MBSimGUI {
     QAction *action = new QAction("Add node frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addNodeFrame()));
     addAction(action);
+    action = new QAction("Add interface node frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addInterfaceNodeFrame()));
+    addAction(action);
+    action = new QAction("Add ffr interface node frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFfrInterfaceNodeFrame()));
+    addAction(action);
   }
 
   void NodeFramesContextMenu::addNodeFrame() {
     mw->addFrame(new NodeFrame, element);
+  }
+
+  void NodeFramesContextMenu::addInterfaceNodeFrame() {
+    mw->addFrame(new InterfaceNodeFrame, element);
+  }
+
+  void NodeFramesContextMenu::addFfrInterfaceNodeFrame() {
+    mw->addFrame(new FfrInterfaceNodeFrame, element);
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
@@ -630,6 +644,9 @@ namespace MBSimGUI {
     action = new QAction("Add generalized connection constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedConnectionConstraint()));
     addAction(action);
+    action = new QAction("Add inverse kinematics constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addInverseKinematicsConstraint()));
+    addAction(action);
   }
 
   void ConstraintsContextMenu::paste() {
@@ -668,6 +685,10 @@ namespace MBSimGUI {
     mw->addConstraint(new GeneralizedConnectionConstraint, element);
   }
 
+  void ConstraintsContextMenu::addInverseKinematicsConstraint() {
+    mw->addConstraint(new InverseKinematicsConstraint, element);
+  }
+
   ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -703,6 +724,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add rigid body system observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodySystemObserver()));
+    addAction(action);
+    action = new QAction("Add inverse kinematics constraint observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addInverseKinematicsConstraintObserver()));
     addAction(action);
   }
 
@@ -748,6 +772,10 @@ namespace MBSimGUI {
 
   void ObserversContextMenu::addRigidBodySystemObserver() {
     mw->addObserver(new RigidBodySystemObserver, element);
+  }
+
+  void ObserversContextMenu::addInverseKinematicsConstraintObserver() {
+    mw->addObserver(new InverseKinematicsConstraintObserver, element);
   }
 
   SignalsContextMenu::SignalsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

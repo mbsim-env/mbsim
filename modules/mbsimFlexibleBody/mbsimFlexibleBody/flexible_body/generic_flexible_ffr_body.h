@@ -186,7 +186,9 @@ namespace MBSimFlexibleBody {
       MBSim::Frame* getFrameK() { return K; };
 
       const fmatvec::Vec3& getNodalRelativePosition(int i) const { return KrKP[i]; }
+      const fmatvec::SqrMat3& getNodalRelativeOrientation(int i) const { return ARP[i]; }
       const fmatvec::Mat3xV& getNodalShapeMatrixOfTranslation(int i) const { return Phi[i]; }
+      const fmatvec::Mat3xV& getNodalShapeMatrixOfRotation(int i) const { return Psi[i]; }
 
       using NodeBasedBody::addFrame;
       using NodeBasedBody::addContour;
@@ -249,12 +251,6 @@ namespace MBSimFlexibleBody {
       void updateAccelerations(int i) override;
       void updateJacobians(int i, int j=0) override;
       void updateGyroscopicAccelerations(int i) override;
-
-      void updatePositions(NodeFrame* frame) override;
-      void updateVelocities(NodeFrame* frame) override;
-      void updateAccelerations(NodeFrame* frame) override;
-      void updateJacobians(NodeFrame* frame, int j=0) override;
-      void updateGyroscopicAccelerations(NodeFrame* frame) override;
 
       template <class T>
       static std::vector<T> getCellArray1D(xercesc::DOMElement *element) {
@@ -404,6 +400,8 @@ namespace MBSimFlexibleBody {
       GeneralizedVelocityOfRotation generalizedVelocityOfRotation{derivativeOfGeneralizedPositionOfRotation};
 
       OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation{OpenMBVFlexibleBody::none};
+
+      fmatvec::VecVI plotNodes;
 
     private:
       double (GenericFlexibleFfrBody::*evalOMBVColorRepresentation[12])(int i);

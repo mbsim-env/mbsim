@@ -35,16 +35,6 @@ namespace MBSimFlexibleBody {
       nodeMap[n[i]] = i;
   }
 
-  void FlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==preInit) {
-      if(nodeMap.empty()) {
-        for(size_t i=0; i<KrKP.size(); i++)
-          nodeMap[i+1] = i;
-      }
-    }
-    GenericFlexibleFfrBody::init(stage, config);
-  }
-
   void FlexibleFfrBody::initializeUsingXML(DOMElement *element) {
     GenericFlexibleFfrBody::initializeUsingXML(element);
 
@@ -212,6 +202,9 @@ namespace MBSimFlexibleBody {
       else if(colorRepresentationStr=="zxStress") ombvColorRepresentation=OpenMBVFlexibleBody::zxStress;
       else if(colorRepresentationStr=="equivalentStress") ombvColorRepresentation=OpenMBVFlexibleBody::equivalentStress;
     }
+
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
+    if(e) setPlotNodeNumbers(E(e)->getText<VecVI>());
   }
 
   void FlexibleFfrBody::setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body) {

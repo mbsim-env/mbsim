@@ -24,6 +24,8 @@
 
 namespace MBSimFlexibleBody {
 
+  class NodeFrame;
+
   /**
    * \brief Absolute Nodal Coordinate Formulation for flexible spatial beams
    *
