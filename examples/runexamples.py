@@ -654,10 +654,10 @@ def main():
   # replace end time in index.html
   endTime=datetime.datetime.now()
   endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
-  with open(pj(args.reportOutDir, "index.html"), encoding="UTF-8") as f:
+  with codecs.open(pj(args.reportOutDir, "index.html"), "r", encoding="UTF-8") as f:
     s=f.read()
   s=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', '<span class="DATETIME">'+endTime.isoformat()+"Z</span>", s)
-  with open(pj(args.reportOutDir, "index.html"), "w", encoding="UTF-8") as f:
+  with codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="UTF-8") as f:
     f.write(s)
 
 
