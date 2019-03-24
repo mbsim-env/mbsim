@@ -652,11 +652,14 @@ def main():
 
   mainFD.close()
   # replace end time in index.html
-  for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
-    endTime=datetime.datetime.now()
-    endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
-    line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', '<span class="DATETIME">'+endTime.isoformat()+"Z</span>", line)
-    print(line, end="")
+  endTime=datetime.datetime.now()
+  endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
+  with open(pj(args.reportOutDir, "index.html"), encoding="UTF-8") as f:
+    s=f.read()
+  s=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', '<span class="DATETIME">'+endTime.isoformat()+"Z</span>", s)
+  with open(pj(args.reportOutDir, "index.html"), "w", encoding="UTF-8") as f:
+    f.write(s)
+
 
   # write RSS feed
   writeAtomFeed(currentID, len(failedExamples)+coverageFailed, len(retAll)+coverageAll)
