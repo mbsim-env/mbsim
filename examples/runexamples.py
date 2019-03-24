@@ -1162,7 +1162,7 @@ def getOutFilesAndAdaptRet(example, ret):
     i=0
     for xmlFile in xmlFiles:
       # check for errors
-      content=codecs.open(xmlFile).read().decode('utf-8')
+      content=codecs.open(xmlFile, encoding="utf-8").read()
       if "</valgrindoutput>" not in content: # incomplete valgrind output -> a skipped trace children
         os.remove(xmlFile)
         continue
