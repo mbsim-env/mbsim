@@ -310,9 +310,9 @@ def main():
     sys.path.append("/context")
     import buildSystemState
     if args.coverage!=None:
-      buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
-    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrFailed.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
-    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrAll.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
+      buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", "...", "#777")
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrFailed.svg", "...", "#777")
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrAll.svg", "...", "#777")
 
   # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
