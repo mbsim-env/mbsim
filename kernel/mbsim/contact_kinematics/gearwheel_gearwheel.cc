@@ -22,7 +22,6 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/gear_wheel.h"
 #include <mbsim/utils/rotarymatrices.h>
-#include <mbsim/utils/eps.h>
 
 using namespace fmatvec;
 using namespace std;
@@ -79,7 +78,7 @@ namespace MBSim {
           Vec3 rP1S2 = rS1S2 - (gearwheel[1]->getSolid()?rSPsave:-rSPsave);
           int signj = j?(gearwheel[1]->getSolid()?-1:1):1;
           double cdel = 0;
-          double k = 0;
+          int k = 0;
           for(int k_=0; k_<z[j]; k_++) {
             double ep = k_*2*M_PI/z[j]+signi*ga[j];
             rSP[j](0) = -sin(ep);
