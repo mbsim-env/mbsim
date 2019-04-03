@@ -144,7 +144,7 @@ namespace MBSim {
             u1 = gearwheel[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[0]*2*M_PI/z[0])*u1;
 
             double g = n1.T()*(rOP[1]-rOP[0]);
-            if(g>-0.9*M_PI*d0[0]/z[0] and g<contact.getGeneralizedRelativePosition(false)(0)) {
+            if(g>-0.5*M_PI*d0[0]/z[0] and g<contact.getGeneralizedRelativePosition(false)(0)) {
               ksave[ii][0] = k[0];
               ksave[ii][1] = k[1];
               etasave[ii][0] = eta[0];
