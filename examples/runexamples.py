@@ -310,9 +310,9 @@ def main():
     sys.path.append("/context")
     import buildSystemState
     if args.coverage!=None:
-      buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
-    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrFailed.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
-    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrAll.svg", b"\xc2\xb7\xc2\xb7\xc2\xb7", "#777")
+      buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", "...", "#777")
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrFailed.svg", "...", "#777")
+    buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrAll.svg", "...", "#777")
 
   # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
@@ -350,7 +350,7 @@ def main():
   mbsimXMLSchemas=subprocess.check_output(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyListSchemas"]).\
     decode("utf-8").split()
   ombvSchemaRE=re.compile(".http___www_mbsim-env_de_OpenMBV.openmbv.xsd$")
-  ombvSchema=filter(lambda x: ombvSchemaRE.search(x)!=None, mbsimXMLSchemas)[0]
+  ombvSchema=list(filter(lambda x: ombvSchemaRE.search(x)!=None, mbsimXMLSchemas))[0]
 
   # check args.directories
   for d in args.directories:
@@ -652,11 +652,14 @@ def main():
 
   mainFD.close()
   # replace end time in index.html
-  for line in fileinput.FileInput(pj(args.reportOutDir, "index.html"),inplace=1):
-    endTime=datetime.datetime.now()
-    endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
-    line=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', '<span class="DATETIME">'+endTime.isoformat()+"Z</span>", line)
-    print(line, end="")
+  endTime=datetime.datetime.now()
+  endTime=datetime.datetime(endTime.year, endTime.month, endTime.day, endTime.hour, endTime.minute, endTime.second)
+  with codecs.open(pj(args.reportOutDir, "index.html"), "r", encoding="UTF-8") as f:
+    s=f.read()
+  s=re.sub('<!--S_ENDTIME-->.*?<!--E_ENDTIME-->', '<span class="DATETIME">'+endTime.isoformat()+"Z</span>", s)
+  with codecs.open(pj(args.reportOutDir, "index.html"), "w", encoding="UTF-8") as f:
+    f.write(s)
+
 
   # write RSS feed
   writeAtomFeed(currentID, len(failedExamples)+coverageFailed, len(retAll)+coverageAll)
@@ -1159,7 +1162,7 @@ def getOutFilesAndAdaptRet(example, ret):
     i=0
     for xmlFile in xmlFiles:
       # check for errors
-      content=codecs.open(xmlFile).read().decode('utf-8')
+      content=codecs.open(xmlFile, encoding="utf-8").read()
       if "</valgrindoutput>" not in content: # incomplete valgrind output -> a skipped trace children
         os.remove(xmlFile)
         continue
