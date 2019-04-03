@@ -251,6 +251,16 @@ namespace MBSimGUI {
       ExtWidget *numberOfTeeth, *width, *helixAngle, *pitchAngle, *module, *pressureAngle, *backlash, *solid, *visu;
   };
 
+  class GearRackPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      GearRackPropertyDialog(Element *gearRack);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *numberOfTeeth, *height, *width, *helixAngle, *module, *pressureAngle, *backlash, *visu;
+  };
+
   class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
 
     public:

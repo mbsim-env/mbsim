@@ -28,6 +28,7 @@
 #include <openmbvcppinterface/frustum.h>
 #include <openmbvcppinterface/extrusion.h>
 #include <openmbvcppinterface/gearwheel.h>
+#include <openmbvcppinterface/gearrack.h>
 #include <openmbvcppinterface/coilspring.h>
 #include <openmbvcppinterface/pointset.h>
 #include <openmbvcppinterface/indexedlineset.h>
@@ -233,6 +234,12 @@ namespace MBSim {
     public:
       OpenMBVGearWheel(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
       std::shared_ptr<OpenMBV::GearWheel> createOpenMBV();
+  };
+
+  class OpenMBVGearRack : public OpenMBVColoredBody {
+    public:
+      OpenMBVGearRack(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
+      std::shared_ptr<OpenMBV::GearRack> createOpenMBV();
   };
 
   class OpenMBVCoilSpring : public OpenMBVDynamicColoredBody {

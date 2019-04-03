@@ -43,6 +43,7 @@
 #include <mbsim/contours/planar_nurbs_contour.h>
 #include <mbsim/contours/spatial_nurbs_contour.h>
 #include <mbsim/contours/gear_wheel.h>
+#include <mbsim/contours/gear_rack.h>
 // --- List of contact implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -77,6 +78,7 @@
 #include <mbsim/contact_kinematics/point_spatialcontour.h>
 #include <mbsim/contact_kinematics/plane_spatialcontour.h>
 #include <mbsim/contact_kinematics/gearwheel_gearwheel.h>
+#include <mbsim/contact_kinematics/gearwheel_gearrack.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
@@ -222,6 +224,10 @@ namespace MBSim {
 
     else if ( contour0==typeid(GearWheel) && contour1==typeid(GearWheel) )
       return new ContactKinematicsGearWheelGearWheel;
+
+    else if ( contour0==typeid(GearWheel) && contour1==typeid(GearRack) )
+      return new ContactKinematicsGearWheelGearRack;
+
     else
       return nullptr;
   }

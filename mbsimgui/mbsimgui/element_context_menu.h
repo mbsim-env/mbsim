@@ -135,6 +135,7 @@ namespace MBSimGUI {
       void addSpatialNurbsContour();
       void addDisk();
       void addGearWheel();
+      void addGearRack();
       void paste();
       void load();
       void embed();

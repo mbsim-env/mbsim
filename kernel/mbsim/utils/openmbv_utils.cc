@@ -347,6 +347,12 @@ namespace MBSim {
     return object;
   }
 
+  shared_ptr<OpenMBV::GearRack> OpenMBVGearRack::createOpenMBV() {
+    shared_ptr<OpenMBV::GearRack> object = OpenMBV::ObjectFactory::create<OpenMBV::GearRack>();
+    initializeObject(object);
+    return object;
+  }
+
   OpenMBVCoilSpring::OpenMBVCoilSpring(double r_, double cr_, double sf_, double n_, double l_, OpenMBVCoilSpring::Type type_, unsigned int cR, double minCol, double maxCol, const fmatvec::Vec3 &dc, double tp, double ps, double lw) : OpenMBVDynamicColoredBody(cR,minCol,maxCol,dc,tp,ps,lw), r(r_), cr(cr_), sf(sf_), n(n_), l(l_), type(type_) {
     cRL.resize(5);
     cRL[0]="none";

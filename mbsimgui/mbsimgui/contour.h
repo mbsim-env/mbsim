@@ -120,6 +120,12 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new GearWheelPropertyDialog(this);}
   };
 
+  class GearRack : public RigidContour {
+    public:
+      QString getType() const override { return "GearRack"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new GearRackPropertyDialog(this);}
+  };
+
   class FlexiblePlanarNurbsContour : public RigidContour {
     public:
       QString getType() const override { return "FlexiblePlanarNurbsContour"; }

@@ -733,6 +733,53 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  GearRackPropertyDialog::GearRackPropertyDialog(Element *disk) : RigidContourPropertyDialog(disk) {
+    addTab("Visualization",1);
+
+    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
+    addToTab("General", numberOfTeeth);
+    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"height");
+    addToTab("General", height);
+    width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
+    addToTab("General", width);
+    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
+    addToTab("General", helixAngle);
+    module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
+    addToTab("General", module);
+    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
+    addToTab("General", pressureAngle);
+    backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
+    addToTab("General", backlash);
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualization", visu);
+  }
+
+  DOMElement* GearRackPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    numberOfTeeth->initializeUsingXML(item->getXMLElement());
+    height->initializeUsingXML(item->getXMLElement());
+    width->initializeUsingXML(item->getXMLElement());
+    helixAngle->initializeUsingXML(item->getXMLElement());
+    module->initializeUsingXML(item->getXMLElement());
+    pressureAngle->initializeUsingXML(item->getXMLElement());
+    backlash->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GearRackPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    numberOfTeeth->writeXMLFile(item->getXMLElement(),nullptr);
+    height->writeXMLFile(item->getXMLElement(),nullptr);
+    width->writeXMLFile(item->getXMLElement(),nullptr);
+    helixAngle->writeXMLFile(item->getXMLElement(),nullptr);
+    module->writeXMLFile(item->getXMLElement(),nullptr);
+    pressureAngle->writeXMLFile(item->getXMLElement(),nullptr);
+    backlash->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     addTab("Visualization",1);
 

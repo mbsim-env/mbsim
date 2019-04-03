@@ -130,6 +130,8 @@ namespace MBSimGUI {
       return new Disk;
     else if(E(element)->getTagName()==MBSIM%"GearWheel")
       return new GearWheel;
+    else if(E(element)->getTagName()==MBSIM%"GearRack")
+      return new GearRack;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarNurbsContour")
       return new FlexiblePlanarNurbsContour;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarFfrNurbsContour")
