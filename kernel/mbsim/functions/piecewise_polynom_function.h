@@ -341,6 +341,7 @@ namespace MBSim {
     // first row
     int i=0;
     int N = x.size();
+    if(N<4) this->throwError("(PiecewisePolynomFunction::calculateSplineNatural): number of datapoints does not match, must be greater 3");
     fmatvec::SqrMat C(N-2,fmatvec::INIT,0.0);
     fmatvec::Mat rs(N-2,y.cols(),fmatvec::INIT,0.0);
     double hi = x(i+1)-x(i);
