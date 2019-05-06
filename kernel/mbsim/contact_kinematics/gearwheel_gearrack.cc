@@ -160,7 +160,7 @@ namespace MBSim {
             u2(1) = cos(al);
             u2(2) = 0;
 
-            double g = n2.T()*(rOP[2]-rOP[1]);
+            double g = n2.T()*(rOP[0]-rOP[1]);
             if(g>-0.5*M_PI*d0[0]/z[0] and g<contact.getGeneralizedRelativePosition(false)(0)) {
               ksave[ii][0] = k[0];
               ksave[ii][1] = k[1];
