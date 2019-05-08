@@ -70,7 +70,7 @@ namespace MBSim {
           shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
           for (double ombvNode : ombvNodes) {
             const Vec3 CrPC=(*funcCrPC)(ombvNode);
-            vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), 0));
+            vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), CrPC(2)));
           }
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->setHeight(0);
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
@@ -81,7 +81,7 @@ namespace MBSim {
             const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
             vp[i].push_back(CrPC(0));
             vp[i].push_back(CrPC(1));
-            vp[i].push_back(0);
+            vp[i].push_back(CrPC(2));
           }
           vector<int> indices(ombvNodes.size()+(open?0:1)+1);
           for(unsigned int i=0; i<ombvNodes.size(); i++)
