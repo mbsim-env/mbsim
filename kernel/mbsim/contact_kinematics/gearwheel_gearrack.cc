@@ -67,9 +67,8 @@ namespace MBSim {
     double eta[2], del[2];
     al = al0;
     Vec3 r = gearwheel->getFrame()->evalPosition() - gearrack->getFrame()->evalPosition();
-    Vec3 e = gearrack->getFrame()->getOrientation().col(1);
-    double rp = r.T()*e;
-    double rs = sqrt(r.T()*r-rp*rp);
+    double rs = gearrack->getFrame()->getOrientation().col(0).T()*r;
+    double rp = gearrack->getFrame()->getOrientation().col(1).T()*r;
     double s0h = sb[1]/2-m*tan(al);
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
