@@ -42,7 +42,7 @@ namespace MBSimGUI {
     name.emplace_back("Cylinder");
     name.emplace_back("Frustum");
     name.emplace_back("Extrusion");
-    name.emplace_back("CylinderGear");
+    name.emplace_back("CylindricalGear");
     name.emplace_back("IvBody");
     name.emplace_back("CompoundRigidBody");
     name.emplace_back("InvisibleBody");
@@ -52,7 +52,7 @@ namespace MBSimGUI {
     xmlName.push_back(OPENMBV%"Cylinder");
     xmlName.push_back(OPENMBV%"Frustum");
     xmlName.push_back(OPENMBV%"Extrusion");
-    xmlName.push_back(OPENMBV%"CylinderGear");
+    xmlName.push_back(OPENMBV%"CylindricalGear");
     xmlName.push_back(OPENMBV%"IvBody");
     xmlName.push_back(OPENMBV%"CompoundRigidBody");
     xmlName.push_back(OPENMBV%"InvisibleBody");
