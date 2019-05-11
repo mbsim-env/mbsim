@@ -128,10 +128,10 @@ namespace MBSimGUI {
       return new SpatialNurbsContour;
     else if(E(element)->getTagName()==MBSIM%"Disk")
       return new Disk;
-    else if(E(element)->getTagName()==MBSIM%"GearWheel")
-      return new GearWheel;
-    else if(E(element)->getTagName()==MBSIM%"GearRack")
-      return new GearRack;
+    else if(E(element)->getTagName()==MBSIM%"CylindricalGear")
+      return new CylindricalGear;
+    else if(E(element)->getTagName()==MBSIM%"Rack")
+      return new Rack;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarNurbsContour")
       return new FlexiblePlanarNurbsContour;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarFfrNurbsContour")

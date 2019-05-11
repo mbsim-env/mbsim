@@ -17,30 +17,30 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_GEARWHEEL_GEARWHEEL_H_
-#define _CONTACT_KINEMATICS_GEARWHEEL_GEARWHEEL_H_
+#ifndef _CONTACT_KINEMATICS_CYLINDRICALGEAR_CYLINDRICALGEAR_H_
+#define _CONTACT_KINEMATICS_CYLINDRICALGEAR_CYLINDRICALGEAR_H_
 
 #include "contact_kinematics.h"
 
 namespace MBSim {
 
-  class GearWheel;
+  class CylindricalGear;
 
   /**
-   * \brief pairing gear wheel to gear wheel
+   * \brief pairing cylindrical gear to cylindrical gear
    * \author Martin Foerg
    */
-  class ContactKinematicsGearWheelGearWheel : public ContactKinematics {
+  class ContactKinematicsCylindricalGearCylindricalGear : public ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsGearWheelGearWheel() = default;
+      ContactKinematicsCylindricalGearCylindricalGear() = default;
 
       /**
        * \brief destructor
        */
-      ~ContactKinematicsGearWheelGearWheel() override = default;
+      ~ContactKinematicsCylindricalGearCylindricalGear() override = default;
       
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
@@ -54,7 +54,7 @@ namespace MBSim {
       /**
        * \brief contour index
        */
-      int igearwheel[2];
+      int igear[2];
       double m;
       double al0, al;
       int z[2];
@@ -73,7 +73,7 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      GearWheel *gearwheel[2];
+      CylindricalGear *gear[2];
   };
 
 }

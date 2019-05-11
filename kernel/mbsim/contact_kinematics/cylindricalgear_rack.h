@@ -17,31 +17,31 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_GEARWHEEL_GEARRACK_H_
-#define _CONTACT_KINEMATICS_GEARWHEEL_GEARRACK_H_
+#ifndef _CONTACT_KINEMATICS_CYLINDRICALGEAR_RACK_H_
+#define _CONTACT_KINEMATICS_CYLINDRICALGEAR_RACK_H_
 
 #include "contact_kinematics.h"
 
 namespace MBSim {
 
-  class GearWheel;
-  class GearRack;
+  class CylindricalGear;
+  class Rack;
 
   /**
-   * \brief pairing gear wheel to gear wheel
+   * \brief pairing cylindrical gear to rack
    * \author Martin Foerg
    */
-  class ContactKinematicsGearWheelGearRack : public ContactKinematics {
+  class ContactKinematicsCylindricalGearRack : public ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsGearWheelGearRack() = default;
+      ContactKinematicsCylindricalGearRack() = default;
 
       /**
        * \brief destructor
        */
-      ~ContactKinematicsGearWheelGearRack() override = default;
+      ~ContactKinematicsCylindricalGearRack() override = default;
       
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
@@ -55,8 +55,8 @@ namespace MBSim {
       /**
        * \brief contour index
        */
-      int igearwheel;
-      int igearrack;
+      int igear;
+      int irack;
       double m;
       double al0, al;
       int z[2];
@@ -75,8 +75,8 @@ namespace MBSim {
       /**
        * \brief contour classes
        */
-      GearWheel *gearwheel;
-      GearRack *gearrack;
+      CylindricalGear *gear;
+      Rack *rack;
   };
 
 }

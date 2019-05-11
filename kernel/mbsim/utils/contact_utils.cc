@@ -42,8 +42,8 @@
 #include <mbsim/contours/sphere.h>
 #include <mbsim/contours/planar_nurbs_contour.h>
 #include <mbsim/contours/spatial_nurbs_contour.h>
-#include <mbsim/contours/gear_wheel.h>
-#include <mbsim/contours/gear_rack.h>
+#include <mbsim/contours/cylindrical_gear.h>
+#include <mbsim/contours/rack.h>
 // --- List of contact implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -77,8 +77,8 @@
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_spatialcontour.h>
 #include <mbsim/contact_kinematics/plane_spatialcontour.h>
-#include <mbsim/contact_kinematics/gearwheel_gearwheel.h>
-#include <mbsim/contact_kinematics/gearwheel_gearrack.h>
+#include <mbsim/contact_kinematics/cylindricalgear_cylindricalgear.h>
+#include <mbsim/contact_kinematics/cylindricalgear_rack.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
@@ -222,11 +222,11 @@ namespace MBSim {
     else if ( contour0==typeid(Point) && contour1==typeid(SpatialNurbsContour) )
       return new ContactKinematicsPointSpatialContour;
 
-    else if ( contour0==typeid(GearWheel) && contour1==typeid(GearWheel) )
-      return new ContactKinematicsGearWheelGearWheel;
+    else if ( contour0==typeid(CylindricalGear) && contour1==typeid(CylindricalGear) )
+      return new ContactKinematicsCylindricalGearCylindricalGear;
 
-    else if ( contour0==typeid(GearWheel) && contour1==typeid(GearRack) )
-      return new ContactKinematicsGearWheelGearRack;
+    else if ( contour0==typeid(CylindricalGear) && contour1==typeid(Rack) )
+      return new ContactKinematicsCylindricalGearRack;
 
     else
       return nullptr;

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2018 MBSim Development Team
+/* Copyright (C) 2004-2019 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef GEARWHEEL_H_
-#define GEARWHEEL_H_
+#ifndef RACK_H_
+#define RACK_H_
 
 #include "mbsim/contours/rigid_contour.h"
 
@@ -28,18 +28,18 @@
 namespace MBSim {
 
   /**
-   * \brief gear wheel contour
+   * \brief rack contour
    * \author Martin Förg
    */
-  class GearWheel : public RigidContour {
+  class Rack : public RigidContour {
     public:
 
-      GearWheel(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) { }
+      Rack(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
       /*!
        * \brief destructor
        */
-      ~GearWheel() override = default;
+      ~Rack() override = default;
 
       /* INHERITED INTERFACE OF ELEMENT */
       void init(InitStage stage, const InitConfigSet &config) override;
@@ -48,24 +48,22 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setNumberOfTeeth(int N_) { N = N_; }
       int getNumberOfTeeth() { return N; }
+      double getHeight() { return h; }
+      void setHeight(double h_) { h = h_; }
       void setWidth(double w_) { w = w_; }
       double getWidth() { return w; }
       void setHelixAngle(double be_) { be = be_; }
       double getHelixAngle() { return be; }
-      void setPitchAngle(double ga_) { ga = ga_; }
-      double getPitchAngle() { return ga; }
       void setModule(double m_) { m = m_; }
       double getModule() { return m; }
       void setPressureAngle(double al_) { al = al_; }
       double getPressureAngle() { return al; }
       void setBacklash(double b_) { b = b_; }
       double getBacklash() { return b; }
-      void setSolid(bool solid_=true) { solid = solid_; }
-      bool getSolid() const { return solid; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        OpenMBVGearWheel ombv(diffuseColor,transparency,pointSize,lineWidth);
+        OpenMBVRack ombv(diffuseColor,transparency,pointSize,lineWidth);
         openMBVRigidBody=ombv.createOpenMBV(); 
       }
       
@@ -73,13 +71,12 @@ namespace MBSim {
 
     protected:
       int N{15};
+      double h{5e-2};
       double w{5e-2};
       double be{0};
-      double ga{0};
       double m{16e-3};
       double al{0.349065850398866};
       double b{0};
-      bool solid{true};
   };
 
 }

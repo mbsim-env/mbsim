@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/contours/gear_rack.h"
+#include "mbsim/contours/rack.h"
 #include "mbsim/utils/utils.h"
 
 using namespace std;
@@ -28,24 +28,24 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GearRack)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Rack)
 
-  void GearRack::init(InitStage stage, const InitConfigSet &config) {
+  void Rack::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
-        static_pointer_cast<OpenMBV::GearRack>(openMBVRigidBody)->setNumberOfTeeth(N);
-        static_pointer_cast<OpenMBV::GearRack>(openMBVRigidBody)->setHeight(h);
-        static_pointer_cast<OpenMBV::GearRack>(openMBVRigidBody)->setWidth(w);
-        static_pointer_cast<OpenMBV::GearRack>(openMBVRigidBody)->setHelixAngle(be);
-        static_pointer_cast<OpenMBV::GearRack>(openMBVRigidBody)->setModule(m);
-        static_pointer_cast<OpenMBV::GearRack>(openMBVRigidBody)->setPressureAngle(al);
-        static_pointer_cast<OpenMBV::GearRack>(openMBVRigidBody)->setBacklash(b);
+        static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setNumberOfTeeth(N);
+        static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setHeight(h);
+        static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setWidth(w);
+        static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setHelixAngle(be);
+        static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setModule(m);
+        static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setPressureAngle(al);
+        static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setBacklash(b);
       }
     }
     RigidContour::init(stage, config);
   }
 
-  void GearRack::initializeUsingXML(DOMElement *element) {
+  void Rack::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"numberOfTeeth");
@@ -64,7 +64,7 @@ namespace MBSim {
     if(e) setBacklash(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVGearRack ombv;
+      OpenMBVRack ombv;
       ombv.initializeUsingXML(e);
       openMBVRigidBody=ombv.createOpenMBV(); 
     }

@@ -272,11 +272,11 @@ namespace MBSimGUI {
     action = new QAction("Add disk", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addDisk()));
     addAction(action);
-    action = new QAction("Add gear wheel", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGearWheel()));
+    action = new QAction("Add cylindrical gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addCylindricalGear()));
     addAction(action);
-    action = new QAction("Add gear rack", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGearRack()));
+    action = new QAction("Add rack", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRack()));
     addAction(action);
 
     QMenu *menu = new FlexibleContoursContextMenu(element, "Add flexible contour");
@@ -347,12 +347,12 @@ namespace MBSimGUI {
     mw->addContour(new Disk, element);
   }
 
-  void ContoursContextMenu::addGearWheel() {
-    mw->addContour(new GearWheel, element);
+  void ContoursContextMenu::addCylindricalGear() {
+    mw->addContour(new CylindricalGear, element);
   }
 
-  void ContoursContextMenu::addGearRack() {
-    mw->addContour(new GearRack, element);
+  void ContoursContextMenu::addRack() {
+    mw->addContour(new Rack, element);
   }
 
   FlexibleContoursContextMenu::FlexibleContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

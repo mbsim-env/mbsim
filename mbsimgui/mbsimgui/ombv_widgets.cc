@@ -42,7 +42,7 @@ namespace MBSimGUI {
     name.emplace_back("Cylinder");
     name.emplace_back("Frustum");
     name.emplace_back("Extrusion");
-    name.emplace_back("GearWheel");
+    name.emplace_back("CylinderGear");
     name.emplace_back("IvBody");
     name.emplace_back("CompoundRigidBody");
     name.emplace_back("InvisibleBody");
@@ -52,7 +52,7 @@ namespace MBSimGUI {
     xmlName.push_back(OPENMBV%"Cylinder");
     xmlName.push_back(OPENMBV%"Frustum");
     xmlName.push_back(OPENMBV%"Extrusion");
-    xmlName.push_back(OPENMBV%"GearWheel");
+    xmlName.push_back(OPENMBV%"CylinderGear");
     xmlName.push_back(OPENMBV%"IvBody");
     xmlName.push_back(OPENMBV%"CompoundRigidBody");
     xmlName.push_back(OPENMBV%"InvisibleBody");
@@ -72,7 +72,7 @@ namespace MBSimGUI {
     if(i==5)
       return new ExtrusionWidget("Extrusion"+toQStr(count++),OPENMBV%"Extrusion");
     if(i==6)
-      return new GearWheelWidget("GearWheel"+toQStr(count++),OPENMBV%"GearWheel");
+      return new CylindricalGearWidget("CylindricalGear"+toQStr(count++),OPENMBV%"CylindricalGear");
     if(i==7)
       return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
     if(i==8)
@@ -778,7 +778,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  GearWheelWidget::GearWheelWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
+  CylindricalGearWidget::CylindricalGearWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
 
     numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"numberOfTeeth");
     layout->addWidget(numberOfTeeth);
@@ -789,9 +789,6 @@ namespace MBSimGUI {
     helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"helixAngle");
     layout->addWidget(helixAngle);
 
-    pitchAngle = new ExtWidget("Pitch angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"pitchAngle");
-    layout->addWidget(pitchAngle);
-
     module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16e-3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"module");
     layout->addWidget(module);
 
@@ -801,33 +798,31 @@ namespace MBSimGUI {
     backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"backlash");
     layout->addWidget(backlash);
 
-    solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true,false,OPENMBV%"solid");
-    layout->addWidget(solid);
+    externalToothed = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft),true,false,OPENMBV%"externalToothed");
+    layout->addWidget(externalToothed);
   }
 
-  DOMElement* GearWheelWidget::initializeUsingXML(DOMElement *element) {
+  DOMElement* CylindricalGearWidget::initializeUsingXML(DOMElement *element) {
     OMBVRigidBodyWidget::initializeUsingXML(element);
     numberOfTeeth->initializeUsingXML(element);
     width->initializeUsingXML(element);
     helixAngle->initializeUsingXML(element);
-    pitchAngle->initializeUsingXML(element);
     module->initializeUsingXML(element);
     pressureAngle->initializeUsingXML(element);
     backlash->initializeUsingXML(element);
-    solid->initializeUsingXML(element);
+    externalToothed->initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* GearWheelWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+  DOMElement* CylindricalGearWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
     numberOfTeeth->writeXMLFile(e);
     width->writeXMLFile(e);
     helixAngle->writeXMLFile(e);
-    pitchAngle->writeXMLFile(e);
     module->writeXMLFile(e);
     pressureAngle->writeXMLFile(e);
     backlash->writeXMLFile(e);
-    solid->writeXMLFile(e);
+    externalToothed->writeXMLFile(e);
     return e;
   }
 

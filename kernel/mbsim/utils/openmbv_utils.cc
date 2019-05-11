@@ -341,14 +341,14 @@ namespace MBSim {
     object->setHeight(h);
   }
 
-  shared_ptr<OpenMBV::GearWheel> OpenMBVGearWheel::createOpenMBV() {
-    shared_ptr<OpenMBV::GearWheel> object = OpenMBV::ObjectFactory::create<OpenMBV::GearWheel>();
+  shared_ptr<OpenMBV::CylindricalGear> OpenMBVCylindricalGear::createOpenMBV() {
+    shared_ptr<OpenMBV::CylindricalGear> object = OpenMBV::ObjectFactory::create<OpenMBV::CylindricalGear>();
     initializeObject(object);
     return object;
   }
 
-  shared_ptr<OpenMBV::GearRack> OpenMBVGearRack::createOpenMBV() {
-    shared_ptr<OpenMBV::GearRack> object = OpenMBV::ObjectFactory::create<OpenMBV::GearRack>();
+  shared_ptr<OpenMBV::Rack> OpenMBVRack::createOpenMBV() {
+    shared_ptr<OpenMBV::Rack> object = OpenMBV::ObjectFactory::create<OpenMBV::Rack>();
     initializeObject(object);
     return object;
   }

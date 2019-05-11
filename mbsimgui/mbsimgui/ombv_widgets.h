@@ -349,14 +349,14 @@ namespace MBSimGUI {
       ExtWidget *indices;
   };
 
-  class GearWheelWidget : public OMBVRigidBodyWidget {
+  class CylindricalGearWidget : public OMBVRigidBodyWidget {
 
     public:
-      GearWheelWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      CylindricalGearWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *numberOfTeeth, *width, *helixAngle, *pitchAngle, *module, *pressureAngle, *backlash, *solid;
+      ExtWidget *numberOfTeeth, *width, *helixAngle, *module, *pressureAngle, *backlash, *externalToothed;
   };
 
   class CylinderWidget : public OMBVRigidBodyWidget {
