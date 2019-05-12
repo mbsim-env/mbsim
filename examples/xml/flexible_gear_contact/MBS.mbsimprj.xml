@@ -62,7 +62,7 @@
             </stateDependentRotation>
             <frames>
             </frames><contours>
-              <GearWheel name="GearWheel">
+              <CylindricalGear name="CylindricalGear">
                 <numberOfTeeth>z1</numberOfTeeth>
                 <width unit="m">5e-2</width>
                 <helixAngle unit="degree">be</helixAngle>
@@ -72,7 +72,7 @@
                 <enableOpenMBV>
                   <transparency unit="-">0.3</transparency>
                 </enableOpenMBV>
-              </GearWheel>
+              </CylindricalGear>
             </contours>
             <enableOpenMBVFrameC>
               <size unit="dm">1</size>
@@ -109,7 +109,7 @@
             </stateDependentRotation>
             <frames>
             </frames><contours>
-              <GearWheel name="GearWheel">
+              <CylindricalGear name="CylindricalGear">
                 <numberOfTeeth>z2</numberOfTeeth>
                 <width unit="m">5e-2</width>
                 <helixAngle unit="degree">-be</helixAngle>
@@ -126,7 +126,7 @@
                   </diffuseColor>
                   <transparency unit="-">0.3</transparency>
                 </enableOpenMBV>
-              </GearWheel>
+              </CylindricalGear>
             </contours>
             <enableOpenMBVFrameC>
               <size unit="dm">1</size>
@@ -156,7 +156,7 @@
           <enableOpenMBV/>
         </KineticExcitation>
         <Contact name="Contact">
-          <connect ref1="../Object[RigidBody1]/Contour[GearWheel]" ref2="../Object[RigidBody2]/Contour[GearWheel]"/>
+          <connect ref1="../Object[RigidBody1]/Contour[CylindricalGear]" ref2="../Object[RigidBody2]/Contour[CylindricalGear]"/>
           <normalForceLaw>
             <RegularizedUnilateralConstraint>
               <forceFunction>
