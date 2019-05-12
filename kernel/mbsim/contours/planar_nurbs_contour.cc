@@ -147,9 +147,9 @@ namespace MBSim {
     if(e) setOpen(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVNurbsCurve ombv;
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV();
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::NurbsCurve>();
     }
   }
 

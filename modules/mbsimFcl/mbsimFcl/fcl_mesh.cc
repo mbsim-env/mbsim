@@ -138,9 +138,9 @@ namespace MBSimFcl {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFCL%"enableOpenMBV");
     if(e) {
-      OpenMBVIndexedFaceSet ombv;
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV();
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::IndexedFaceSet>();
     }
   }
 

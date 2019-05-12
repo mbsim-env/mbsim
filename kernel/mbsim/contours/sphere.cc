@@ -131,9 +131,9 @@ namespace MBSim {
     setRadius(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVSphere ombv;
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV(); 
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::Sphere>();
     }
   }
 

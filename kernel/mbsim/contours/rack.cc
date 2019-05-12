@@ -64,9 +64,9 @@ namespace MBSim {
     if(e) setBacklash(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVRack ombv;
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV(); 
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::Rack>();
     }
   }
 

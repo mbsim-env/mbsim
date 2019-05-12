@@ -57,6 +57,12 @@ namespace MBSim {
     public:
       OpenMBVColoredBody(const fmatvec::Vec3 &dc_="[-1;1;1]", double tp_=0, double ps_=0, double lw_=0) : dc(dc_), tp(tp_), ps(ps_), lw(lw_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
+      template<class T>
+      std::shared_ptr<T> createOpenMBV() {
+        std::shared_ptr<T> object = OpenMBV::ObjectFactory::create<T>();
+        initializeObject(object);
+        return object;
+      }
     protected:
       void initializeObject(const std::shared_ptr<OpenMBV::DynamicColoredBody> &object);
   };
@@ -145,25 +151,6 @@ namespace MBSim {
       void initializeObject(const std::shared_ptr<OpenMBV::Frame> &object);
   };
 
-  class OpenMBVPoint : public OpenMBVColoredBody {
-    public:
-      OpenMBVPoint(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
-      std::shared_ptr<OpenMBV::PointSet> createOpenMBV();
-    protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::PointSet> &object);
-  };
-
-  class OpenMBVSphere : public OpenMBVColoredBody {
-    protected:
-      double r;
-    public:
-      OpenMBVSphere(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), r(r_) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      std::shared_ptr<OpenMBV::Sphere> createOpenMBV();
-    protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::Sphere> &object);
-  };
-
   class OpenMBVLine : public OpenMBVColoredBody {
     protected:
       double l;
@@ -184,62 +171,6 @@ namespace MBSim {
       std::shared_ptr<OpenMBV::Cuboid> createOpenMBV();
     protected:
       void initializeObject(const std::shared_ptr<OpenMBV::Cuboid> &object);
-  };
-
-  class OpenMBVCuboid : public OpenMBVColoredBody {
-    protected:
-      fmatvec::Vec3 l;
-    public:
-      OpenMBVCuboid(const fmatvec::Vec3 &l_=fmatvec::Vec3(fmatvec::INIT,1.), const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), l(l_) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      std::shared_ptr<OpenMBV::Cuboid> createOpenMBV();
-    protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::Cuboid> &object);
-  };
-
-  class OpenMBVCircle : public OpenMBVColoredBody {
-    protected:
-      double r;
-    public:
-      OpenMBVCircle(double r_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), r(r_) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      std::shared_ptr<OpenMBV::Frustum> createOpenMBV();
-    protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::Frustum> &object);
-  };
-
-  class OpenMBVFrustum : public OpenMBVColoredBody {
-    protected:
-      double t, b, h;
-    public:
-      OpenMBVFrustum(double t_=1, double b_=1, double h_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), t(t_), b(b_), h(h_) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      std::shared_ptr<OpenMBV::Frustum> createOpenMBV();
-    protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::Frustum> &object);
-  };
-
-  class OpenMBVExtrusion : public OpenMBVColoredBody {
-    protected:
-      double h;
-    public:
-      OpenMBVExtrusion(double h_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), h(h_) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      std::shared_ptr<OpenMBV::Extrusion> createOpenMBV();
-    protected:
-      void initializeObject(const std::shared_ptr<OpenMBV::Extrusion> &object);
-  };
-
-  class OpenMBVCylindricalGear : public OpenMBVColoredBody {
-    public:
-      OpenMBVCylindricalGear(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
-      std::shared_ptr<OpenMBV::CylindricalGear> createOpenMBV();
-  };
-
-  class OpenMBVRack : public OpenMBVColoredBody {
-    public:
-      OpenMBVRack(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
-      std::shared_ptr<OpenMBV::Rack> createOpenMBV();
   };
 
   class OpenMBVCoilSpring : public OpenMBVDynamicColoredBody {
@@ -265,30 +196,6 @@ namespace MBSim {
       std::shared_ptr<OpenMBV::CoilSpring> createOpenMBV();
     protected:
       void initializeObject(const std::shared_ptr<OpenMBV::CoilSpring> &object);
-  };
-
-  class OpenMBVIndexedLineSet : public OpenMBVColoredBody {
-    public:
-      OpenMBVIndexedLineSet(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
-      std::shared_ptr<OpenMBV::IndexedLineSet> createOpenMBV();
-  };
-
-  class OpenMBVIndexedFaceSet : public OpenMBVColoredBody {
-    public:
-      OpenMBVIndexedFaceSet(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
-      std::shared_ptr<OpenMBV::IndexedFaceSet> createOpenMBV();
-  };
-
-  class OpenMBVNurbsCurve : public OpenMBVColoredBody {
-    public:
-      OpenMBVNurbsCurve(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
-      std::shared_ptr<OpenMBV::NurbsCurve> createOpenMBV();
-  };
-
-  class OpenMBVNurbsSurface : public OpenMBVColoredBody {
-    public:
-      OpenMBVNurbsSurface(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw) { }
-      std::shared_ptr<OpenMBV::NurbsSurface> createOpenMBV();
   };
 
   class OpenMBVPlanarContour : public OpenMBVColoredBody {

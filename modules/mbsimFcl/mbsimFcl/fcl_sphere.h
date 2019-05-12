@@ -51,8 +51,8 @@ namespace MBSimFcl {
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        MBSim::OpenMBVSphere ombv(1,diffuseColor,transparency,pointSize,lineWidth);
-        openMBVRigidBody=ombv.createOpenMBV(); 
+        MBSim::OpenMBVColoredBody ombv(diffuseColor,transparency,pointSize,lineWidth);
+        openMBVRigidBody=ombv.createOpenMBV<OpenMBV::Sphere>();
       }
 
     private:

@@ -51,9 +51,9 @@ namespace MBSimFcl {
     setRadius(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMFCL%"enableOpenMBV");
     if(e) {
-      OpenMBVSphere ombv;
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV(); 
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::Sphere>();
     }
   }
 

@@ -86,13 +86,26 @@ namespace MBSim {
     return parDer2Wn;
   }
 
+  void Point::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==plotting) {
+      if(plotFeature[openMBV] && openMBVRigidBody) {
+        vector<vector<double>> pos(1,vector<double>(3));
+        pos[0][0] = 0;
+        pos[0][1] = 0;
+        pos[0][2] = 0;
+        static_pointer_cast<OpenMBV::PointSet>(openMBVRigidBody)->setVertexPositions(pos);
+      }
+    }
+    RigidContour::init(stage, config);
+  }
+
   void Point::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVPoint ombv("[-1;1;1]",0);
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV(); 
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::PointSet>();
     }
   }
 

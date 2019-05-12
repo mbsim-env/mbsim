@@ -80,9 +80,9 @@ namespace MBSim {
       outCont=false;
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVFrustum ombv;
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV(); 
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::Frustum>();
     }
   }
 

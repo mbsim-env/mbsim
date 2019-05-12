@@ -203,9 +203,9 @@ namespace MBSim {
     if(e) setOpenXi(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVNurbsSurface ombv;
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV();
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::NurbsSurface>();
     }
   }
 

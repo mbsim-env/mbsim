@@ -332,9 +332,9 @@ namespace MBSim {
     setLength(E(e)->getText<Vec3>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
-      OpenMBVCuboid ombv;
+      OpenMBVColoredBody ombv;
       ombv.initializeUsingXML(e);
-      openMBVRigidBody=ombv.createOpenMBV();
+      openMBVRigidBody=ombv.createOpenMBV<OpenMBV::Cuboid>();
     }
   }
 
