@@ -26,6 +26,7 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/frame.h>
+#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;

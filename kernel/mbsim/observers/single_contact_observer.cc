@@ -23,6 +23,8 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/contour.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include <openmbvcppinterface/frame.h>
+#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;

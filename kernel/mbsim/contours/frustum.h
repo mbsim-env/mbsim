@@ -21,9 +21,9 @@
 #define _FRUSTUM_H_
 
 #include "mbsim/contours/rigid_contour.h"
-
 #include "mbsim/utils/boost_parameters.h"
-#include <mbsim/utils/openmbv_utils.h>
+#include "mbsim/utils/openmbv_utils.h"
+#include <openmbvcppinterface/frustum.h>
 
 namespace MBSim {
 
@@ -39,11 +39,11 @@ namespace MBSim {
        * \brief constructor with contact from inside
        * \param name of contour
        */
-      Frustum(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) {}
+      Frustum(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
-      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, Frame *R=nullptr) : RigidContour(name,R), r(r_), h(h_) {}
+      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, Frame *R=nullptr) : RigidContour(name,R), r(r_), h(h_) { }
 
-      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, bool outCont_, Frame *R=nullptr) : RigidContour(name,R), r(r_), h(h_), outCont(outCont_) {}
+      Frustum(const std::string &name, const fmatvec::Vec2 &r_, double h_, bool outCont_, Frame *R=nullptr) : RigidContour(name,R), r(r_), h(h_), outCont(outCont_) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       void init(InitStage stage, const InitConfigSet &config) override;
@@ -58,7 +58,7 @@ namespace MBSim {
        * \param name of the contour
        * \param contact from outside?
        */
-      Frustum(const std::string &name, bool outCont_) : RigidContour(name),  outCont(outCont_) {}
+      Frustum(const std::string &name, bool outCont_) : RigidContour(name),  outCont(outCont_) { }
 
       /* GETTER / SETTER */
       void setRadii(const fmatvec::Vec2 &r_);

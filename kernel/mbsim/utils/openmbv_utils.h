@@ -21,22 +21,18 @@
 #define _OPENMBV_UTILS_H_
 
 #include <fmatvec/fmatvec.h>
-#include <openmbvcppinterface/arrow.h>
-#include <openmbvcppinterface/frame.h>
-#include <openmbvcppinterface/sphere.h>
-#include <openmbvcppinterface/cuboid.h>
-#include <openmbvcppinterface/frustum.h>
-#include <openmbvcppinterface/extrusion.h>
-#include <openmbvcppinterface/cylindricalgear.h>
-#include <openmbvcppinterface/rack.h>
-#include <openmbvcppinterface/coilspring.h>
-#include <openmbvcppinterface/pointset.h>
-#include <openmbvcppinterface/indexedlineset.h>
-#include <openmbvcppinterface/indexedfaceset.h>
-#include <openmbvcppinterface/nurbscurve.h>
-#include <openmbvcppinterface/nurbssurface.h>
+#include <openmbvcppinterface/objectfactory.h>
 
-#include <utility>
+namespace OpenMBV {
+  class Body;
+  class DynamicColoredBody;
+  class RigidBody;
+  class Arrow;
+  class Frame;
+  class Cuboid;
+  class CoilSpring;
+  class IndexedLineSet;
+}
 
 namespace MBSim {
 

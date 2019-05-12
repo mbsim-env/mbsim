@@ -23,6 +23,7 @@
 #include "mbsim/links/mechanical_link.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/dynamic_system_solver.h"
+#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;

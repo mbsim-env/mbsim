@@ -20,6 +20,9 @@
 #include <config.h>
 #include "mbsim/contours/planar_contour.h"
 #include "mbsim/functions/function.h"
+#include <openmbvcppinterface/polygonpoint.h>
+#include <openmbvcppinterface/extrusion.h>
+#include <openmbvcppinterface/indexedlineset.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -31,9 +34,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarContour)
 
   PlanarContour::~PlanarContour() {
-     
-       delete funcCrPC;
-     funcCrPC=nullptr;
+    delete funcCrPC;
+    funcCrPC=nullptr;
   }
 
   Vec3 PlanarContour::evalKrPS(const Vec2 &zeta) {

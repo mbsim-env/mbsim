@@ -21,6 +21,7 @@
 #include "mbsim/observers/frame_observer.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/eps.h"
+#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;

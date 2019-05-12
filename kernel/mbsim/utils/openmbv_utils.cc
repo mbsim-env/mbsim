@@ -21,6 +21,14 @@
 #include "mbsim/namespace.h"
 #include "mbsim/utils/openmbv_utils.h"
 #include "mbsim/utils/index.h"
+#include <openmbvcppinterface/dynamiccoloredbody.h>
+#include <openmbvcppinterface/arrow.h>
+#include <openmbvcppinterface/frame.h>
+#include <openmbvcppinterface/cuboid.h>
+#include <openmbvcppinterface/coilspring.h>
+#include <openmbvcppinterface/extrusion.h>
+#include <openmbvcppinterface/indexedlineset.h>
+#include <openmbvcppinterface/indexedfaceset.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;

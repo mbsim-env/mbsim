@@ -21,10 +21,10 @@
 #define _PLANAR_NURBS_CONTOUR_H_
 
 #include "mbsim/contours/rigid_contour.h"
-
 #include "mbsim/utils/boost_parameters.h"
-#include <mbsim/utils/openmbv_utils.h>
-#include <mbsim/numerics/nurbs/nurbs_curve.h>
+#include "mbsim/utils/openmbv_utils.h"
+#include "mbsim/numerics/nurbs/nurbs_curve.h"
+#include <openmbvcppinterface/nurbscurve.h>
 
 namespace MBSim {
 

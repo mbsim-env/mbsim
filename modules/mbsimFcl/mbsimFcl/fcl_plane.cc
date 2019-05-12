@@ -22,7 +22,7 @@
 #include "mbsimFcl/namespace.h"
 #include "mbsimFcl/fcl_utils.h"
 #include "fcl/geometry/shape/plane.h"
-#include <openmbvcppinterface/grid.h>
+#include <openmbvcppinterface/cuboid.h>
 
 using namespace std;
 using namespace fmatvec;

@@ -21,6 +21,7 @@
 #include "mbsim/links/kinetic_excitation.h"
 #include "mbsim/objectfactory.h"
 #include <openmbvcppinterface/group.h>
+#include <openmbvcppinterface/arrow.h>
 
 using namespace std;
 using namespace fmatvec;

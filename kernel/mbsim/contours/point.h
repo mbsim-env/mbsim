@@ -21,9 +21,9 @@
 #define _POINT_H_
 
 #include "mbsim/contours/rigid_contour.h"
-
 #include "mbsim/utils/boost_parameters.h"
-#include <mbsim/utils/openmbv_utils.h>
+#include "mbsim/utils/openmbv_utils.h"
+#include <openmbvcppinterface/pointset.h>
 
 namespace MBSim {
 
@@ -38,7 +38,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of point
        */
-      Point(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) {}
+      Point(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/

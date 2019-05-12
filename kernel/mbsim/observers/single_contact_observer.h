@@ -21,8 +21,8 @@
 #define _SINGLE_CONTACT_OBSERVER_H__
 
 #include "mbsim/observers/mechanical_link_observer.h"
-
 #include <mbsim/utils/openmbv_utils.h>
+#include <openmbvcppinterface/frame.h>
 
 namespace MBSim {
 

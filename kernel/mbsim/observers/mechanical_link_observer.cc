@@ -21,6 +21,7 @@
 #include "mbsim/observers/mechanical_link_observer.h"
 #include "mbsim/links/mechanical_link.h"
 #include "mbsim/frames/frame.h"
+#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;

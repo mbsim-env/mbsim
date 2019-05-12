@@ -21,10 +21,10 @@
 #define _SPATIAL_NURBS_CONTOUR_H_
 
 #include "mbsim/contours/rigid_contour.h"
-
 #include "mbsim/utils/boost_parameters.h"
-#include <mbsim/utils/openmbv_utils.h>
-#include <mbsim/numerics/nurbs/nurbs_surface.h>
+#include "mbsim/utils/openmbv_utils.h"
+#include "mbsim/numerics/nurbs/nurbs_surface.h"
+#include <openmbvcppinterface/nurbssurface.h>
 
 namespace MBSim {
 

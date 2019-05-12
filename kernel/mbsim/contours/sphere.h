@@ -21,9 +21,9 @@
 #define SPHERE_H_
 
 #include "mbsim/contours/rigid_contour.h"
-
 #include "mbsim/utils/boost_parameters.h"
-#include <mbsim/utils/openmbv_utils.h>
+#include "mbsim/utils/openmbv_utils.h"
+#include <openmbvcppinterface/sphere.h>
 
 namespace MBSim {
 

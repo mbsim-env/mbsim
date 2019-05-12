@@ -21,9 +21,9 @@
 #define _EDGE_H_
 
 #include "mbsim/contours/rigid_contour.h"
-
 #include "mbsim/utils/boost_parameters.h"
-#include <mbsim/utils/openmbv_utils.h>
+#include "mbsim/utils/openmbv_utils.h"
+#include <openmbvcppinterface/indexedlineset.h>
 
 namespace MBSim {
 
@@ -40,8 +40,6 @@ namespace MBSim {
        * \param name of contour
        */
       Edge(const std::string &name="", Frame *R=nullptr) : RigidContour(name,R) { }
-
-      void init(InitStage stage, const InitConfigSet &config) override;
 
       /* GETTER / SETTER */
       void setLength(double length_) {length = length_;}

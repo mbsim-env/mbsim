@@ -24,6 +24,7 @@
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
 #include "mbsim/utils/index.h"
+#include <openmbvcppinterface/indexedfaceset.h>
 
 namespace MBSimFcl {
 

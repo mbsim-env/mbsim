@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/contours/spatial_contour.h"
 #include "mbsim/functions/function.h"
+#include <openmbvcppinterface/indexedfaceset.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -31,9 +32,8 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, SpatialContour)
 
   SpatialContour::~SpatialContour() {
-     
-       delete funcCrPC;
-     funcCrPC=nullptr;
+    delete funcCrPC;
+    funcCrPC=nullptr;
   }
 
   Vec3 SpatialContour::evalKrPS(const Vec2 &zeta) {

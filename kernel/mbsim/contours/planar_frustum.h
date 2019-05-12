@@ -21,9 +21,9 @@
 #define _PLANAR_FRUSTUM_H_
 
 #include "mbsim/contours/rigid_contour.h"
-
 #include "mbsim/utils/boost_parameters.h"
-#include <mbsim/utils/openmbv_utils.h>
+#include "mbsim/utils/openmbv_utils.h"
+#include <openmbvcppinterface/frustum.h>
 
 namespace MBSim {
 
@@ -39,7 +39,7 @@ namespace MBSim {
        * \brief constructor
        * \param name of frustum
        */
-      PlanarFrustum(const std::string &name) : RigidContour(name), h(0) {}
+      PlanarFrustum(const std::string &name) : RigidContour(name), h(0) { }
 
       /* INHERITED INTERFACE OF ELEMENT */
       void init(InitStage stage, const InitConfigSet &config) override;

@@ -21,6 +21,7 @@
 #include "mbsim/observers/relative_kinematics_observer.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/dynamic_system.h"
+#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;
