@@ -6,13 +6,11 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
-#include "openmbvcppinterface/cube.h"
-#include "openmbvcppinterface/coilspring.h"
+#include "openmbvcppinterface/sphere.h"
 
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-//using namespace CasADi;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 

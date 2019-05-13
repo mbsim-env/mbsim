@@ -208,8 +208,8 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   cylinderRef->enableOpenMBV(0.3e-1);
   crank->addFrame(cylinderRef);
 
-  MBSim::RigidContour * cylinderContour = new MBSim::RigidContour("CylinderContour");
-  crank->addContour(cylinderContour);
+  MBSim::RigidBody * cylinderContour = new MBSim::RigidBody("CylinderContour");
+  addObject(cylinderContour);
   cylinderContour->setFrameOfReference(cylinderRef);
 
   std::shared_ptr<OpenMBV::Frustum> frustum = OpenMBV::ObjectFactory::create<OpenMBV::Frustum>();
@@ -231,10 +231,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
     FixedRelativeFrame * pointRef = new FixedRelativeFrame(pointName + "Ref", pointRelPos, SqrMat3(EYE), cylinderRef);
     crank->addFrame(pointRef);
     MBSim::Point * pnt = new MBSim::Point("CrankCylinder" + pointName);
-    std::shared_ptr<OpenMBV::Sphere> sphere = OpenMBV::ObjectFactory::create<OpenMBV::Sphere>();
-    sphere->setRadius(1e-4);
-    sphere->setDiffuseColor(1, 0, 0);
-    pnt->setOpenMBVRigidBody(sphere);
+    pnt->enableOpenMBV(_pointSize=4,_diffuseColor=Vec3("[1;0;0]"));
     pnt->setFrameOfReference(pointRef);
     crank->addContour(pnt);
     Contact * contactCrankRod = new Contact("CrankRodContact_"+to_string(i));

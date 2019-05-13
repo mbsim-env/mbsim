@@ -13,6 +13,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 
+#include "openmbvcppinterface/frustum.h"
 #include "openmbvcppinterface/ivbody.h"
 
 #include <iostream>
