@@ -123,8 +123,6 @@ namespace MBSim {
 
       std::shared_ptr<OpenMBV::RigidBody>& getOpenMBVRigidBody() { return openMBVRigidBody; }
 
-      void setOpenMBVRigidBody(const std::shared_ptr<OpenMBV::RigidBody> &ombvBody) { openMBVRigidBody = ombvBody; }
-
     protected:
       /**
        * \brief coordinate system of contour
