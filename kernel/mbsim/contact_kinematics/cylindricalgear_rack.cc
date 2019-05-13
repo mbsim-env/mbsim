@@ -40,7 +40,7 @@ namespace MBSim {
       gear = static_cast<CylindricalGear*>(contour[1]);
       rack = static_cast<Rack*>(contour[0]);
     }
-    m = static_cast<CylindricalGear*>(contour[0])->getModule()/cos(static_cast<CylindricalGear*>(contour[0])->getHelixAngle());
+    m = gear->getModule()/cos(gear->getHelixAngle());
     al0 = atan(tan(static_cast<CylindricalGear*>(contour[0])->getPressureAngle())/cos(static_cast<CylindricalGear*>(contour[0])->getHelixAngle()));
     double phi0 = tan(al0)-al0;
     double s0 = m*M_PI/2;

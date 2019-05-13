@@ -41,7 +41,7 @@ namespace MBSim {
       igear[0] = 0;
       igear[1] = 1;
     }
-    m = static_cast<CylindricalGear*>(contour[0])->getModule()/cos(static_cast<CylindricalGear*>(contour[0])->getHelixAngle());
+    m = gear[0]->getModule()/cos(gear[0]->getHelixAngle());
     al0 = atan(tan(static_cast<CylindricalGear*>(contour[0])->getPressureAngle())/cos(static_cast<CylindricalGear*>(contour[0])->getHelixAngle()));
     double phi0 = tan(al0)-al0;
     double s0 = m*M_PI/2;
