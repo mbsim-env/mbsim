@@ -50,7 +50,7 @@ namespace MBSim {
     db[0] = d0[0]*cos(al0);
     dk[0] = d0[0]+2*m;
     rb[0] = db[0]/2;
-    sb[0] = db[0]*(s0/d0[0]+phi0)-gear->getBacklash();
+    sb[0] = db[0]*(s0/d0[0]+phi0)-gear->getBacklash()*cos(al0);
     ga[0] = sb[0]/rb[0]/2;
     beta[0] = gear->getHelixAngle();
     beta[1] = rack->getHelixAngle();
@@ -59,7 +59,6 @@ namespace MBSim {
     delmin[1] = -m/cos(al);
     delmax[1] = m/cos(al);
     z[1] = rack->getNumberOfTeeth();
-    sb[1] = m*(M_PI/2 + 2*tan(al0)) - rack->getBacklash();
   }
 
   void ContactKinematicsCylindricalGearRack::updateg(SingleContact &contact, int ii) {
@@ -69,7 +68,7 @@ namespace MBSim {
     Vec3 r = gear->getFrame()->evalPosition() - rack->getFrame()->evalPosition();
     double rs = rack->getFrame()->getOrientation().col(0).T()*r;
     double rp = rack->getFrame()->getOrientation().col(1).T()*r;
-    double s0h = sb[1]/2-m*tan(al);
+    double s0h = (m*M_PI/2-rack->getBacklash())/2;
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
       Vec3 rOP[2], rSP[2];

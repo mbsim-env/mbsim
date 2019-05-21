@@ -52,7 +52,7 @@ namespace MBSim {
       db[i] = d0[i]*cos(al0);
       dk[i] = d0[i]+2*m;
       rb[i] = db[i]/2;
-      sb[i] = db[i]*(s0/d0[i]+phi0)-((i==1 and not gear[1]->getExternalToothed())?-gear[i]->getBacklash():gear[i]->getBacklash());
+      sb[i] = db[i]*(s0/d0[i]+phi0)-((i==1 and not gear[1]->getExternalToothed())?-gear[i]->getBacklash()*cos(al0):gear[i]->getBacklash()*cos(al0));
       ga[i] = sb[i]/rb[i]/2;
       beta[i] = gear[i]->getHelixAngle();
       delmin[i] = -al0-ga[i];
