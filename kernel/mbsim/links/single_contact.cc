@@ -191,7 +191,7 @@ namespace MBSim {
         sv(0) = evalgddN() - gddTol;
       if (fdf and fdf->isSetValued()) {
         if (gdActive[tangential])
-          sv(fcl->isSetValued()) = nrm2(gddT) - gddTol;
+          sv(fcl->isSetValued()) = nrm2(evalgddT()) - gddTol;
         else
           sv(fcl->isSetValued()) = evalGeneralizedRelativeVelocity()(RangeV(1,fdf->getFrictionDirections())).T()*gdTDir;
       }
@@ -953,7 +953,7 @@ namespace MBSim {
         }
         if (fdf and fdf->isSetValued()) {
           if(gdActive[normal]) {
-            if (fdf->isSticking(gdnT,gdTol)) {
+            if (fdf->isSticking(evalgdnT(),gdTol)) {
               gdActive[tangential] = true;
               gddActive[tangential] = true;
             }
@@ -981,7 +981,7 @@ namespace MBSim {
         if (fdf and fdf->isSetValued()) {
           if(gddActive[normal]) {
             if (gdActive[tangential]) {
-               if (fdf->isSticking(gddT,gddTol))
+               if (fdf->isSticking(evalgddT(),gddTol))
                  gddActive[tangential] = true;
                else {
                  gddActive[tangential] = false;
@@ -1034,6 +1034,7 @@ namespace MBSim {
       if (getFrictionDirections()) {
         if (fdf and fdf->isSetValued() and jsv(fcl->isSetValued()) and rootID == 1) { // stick-slip transition
           gddActive[tangential] = false;
+          const Vec& gddT = evalgddT();
           gdTDir = gddT/nrm2(gddT);
         }
       }
