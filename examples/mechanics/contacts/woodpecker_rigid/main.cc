@@ -9,7 +9,6 @@ int main (int argc, char* argv[]) {
   Woodpecker sys("MBS");
   sys.setConstraintSolver(DynamicSystemSolver::GaussSeidel);
   sys.setImpactSolver(DynamicSystemSolver::GaussSeidel);
-//  sys.setFlushEvery(100);
   sys.initialize();
 
   Integrator* integrator;
