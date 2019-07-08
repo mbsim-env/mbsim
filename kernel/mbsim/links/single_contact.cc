@@ -1033,8 +1033,8 @@ namespace MBSim {
       }
       if (getFrictionDirections()) {
         if (fdf and fdf->isSetValued() and jsv(fcl->isSetValued()) and rootID == 1) { // stick-slip transition
-          gddActive[tangential] = false;
           const Vec& gddT = evalgddT();
+          gddActive[tangential] = false;
           gdTDir = gddT/nrm2(gddT);
         }
       }
