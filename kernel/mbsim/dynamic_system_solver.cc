@@ -1396,12 +1396,12 @@ namespace MBSim {
 
     solveDirectly = false;
 
-    bool saveUseOldLa = useOldla;
-    useOldla = false;
-
     checkRoot();
     int maxj = getRootID();
     if (maxj == 3) { // impact (velocity jump)
+      bool saveUseOldLa = useOldla;
+      useOldla = false;
+
       checkActive(6); // decide which contacts have closed
       //msg(Info) << "stoss" << endl;
 
@@ -1443,6 +1443,7 @@ namespace MBSim {
         projectGeneralizedPositions(2);
         projectGeneralizedVelocities(2);
       }
+      useOldla = saveUseOldLa;
     }
     else if (maxj == 2) { // transition from slip to stick (acceleration jump)
       //msg(Info) << "haften" << endl;
@@ -1479,7 +1480,6 @@ namespace MBSim {
     updaterFactorRef(rFactorParent(0, rFactorSize - 1));
 
     setRootID(0);
-    useOldla = saveUseOldLa;
     return zParent;
   }
 
