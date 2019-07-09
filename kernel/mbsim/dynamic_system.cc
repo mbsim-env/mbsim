@@ -534,7 +534,7 @@ namespace MBSim {
 
   void DynamicSystem::updaterFactors() {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       (*i).updaterFactors();
   }
 
