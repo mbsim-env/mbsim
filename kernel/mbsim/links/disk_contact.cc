@@ -1008,6 +1008,9 @@ namespace MBSim {
         gdActive[tangential] = true;
         gddActive[normal] = true;
         gddActive[tangential] = true;
+      } else if(gdActive[normal] and not gdActive[tangential]) {
+        gdActive[tangential] = true;
+        gddActive[tangential] = true;
       }
     }
     else if (j == 7) { // just observe slip-stick transitions
