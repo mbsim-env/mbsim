@@ -179,7 +179,7 @@ namespace MBSim {
 
   void DynamicSystem::updategd() {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       i->updategd();
   }
 
@@ -1488,7 +1488,7 @@ namespace MBSim {
 
   void DynamicSystem::updatecorr(int j) {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : linkSetValuedActive)
       i->updatecorr(j);
   }
   
