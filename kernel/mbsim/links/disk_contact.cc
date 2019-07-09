@@ -1022,8 +1022,8 @@ namespace MBSim {
         gddActive[tangential] = false;
       }
       if (fdf->isSetValued() and jsv(fcl->isSetValued()) and rootID == 1) { // stick-slip transition
-        gddActive[tangential] = false;
         const Vec& gddT = evalgddT();
+        gddActive[tangential] = false;
         gdTDir = gddT(0)>0?1:-1;
       }
     }
