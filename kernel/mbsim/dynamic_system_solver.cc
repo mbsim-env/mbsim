@@ -1079,10 +1079,6 @@ namespace MBSim {
         u += slvLLFac(getLLM(), getW() * mu);
         resetUpToDate();
       }
-      calclaSize(3);
-      updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
-      calcgdSize(1);
-      updategdRef(gdParent(0, gdSize - 1));
     }
   }
 
