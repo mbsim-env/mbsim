@@ -1295,6 +1295,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    QModelIndex parentIndex = index.parent();
     auto *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
     int i = parameter->getParent()->getIndexOfParameter(parameter);
     int j = up?i-1:i+1;
@@ -1307,16 +1308,17 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     parameter->getParent()->setParameter(parameter->getParent()->getParameter(j),i);
     parameter->getParent()->setParameter(parameter,j);
-    model->removeRows(0,parameter->getParent()->getNumberOfParameters(),index.parent());
+    model->removeRows(0,parameter->getParent()->getNumberOfParameters(),parentIndex);
     for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
-      model->createParameterItem(parameter->getParent()->getParameter(i),index.parent());
-    embeddingView->setCurrentIndex(index.sibling(j,0));
+      model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
+    embeddingView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::moveFrame(bool up) {
     setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
+    QModelIndex parentIndex = index.parent();
     auto *frame = static_cast<Frame*>(model->getItem(index)->getItemData());
     int i = frame->getParent()->getIndexOfFrame(frame);
     int j = up?i-1:i+1;
@@ -1330,16 +1332,17 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     frame->getParent()->setFrame(frame->getParent()->getFrame(j),i);
     frame->getParent()->setFrame(frame,j);
-    model->removeRows(0,frame->getParent()->getNumberOfFrames(),index.parent());
+    model->removeRows(0,frame->getParent()->getNumberOfFrames(),parentIndex);
     for(int i=0; i<frame->getParent()->getNumberOfFrames(); i++)
-      model->createFrameItem(frame->getParent()->getFrame(i),index.parent());
-    elementView->setCurrentIndex(index.sibling(j,0));
+      model->createFrameItem(frame->getParent()->getFrame(i),parentIndex);
+    elementView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::moveContour(bool up) {
     setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
+    QModelIndex parentIndex = index.parent();
     auto *contour = static_cast<Contour*>(model->getItem(index)->getItemData());
     int i = contour->getParent()->getIndexOfContour(contour);
     int j = up?i-1:i+1;
@@ -1353,16 +1356,17 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     contour->getParent()->setContour(contour->getParent()->getContour(j),i);
     contour->getParent()->setContour(contour,j);
-    model->removeRows(0,contour->getParent()->getNumberOfContours(),index.parent());
+    model->removeRows(0,contour->getParent()->getNumberOfContours(),parentIndex);
     for(int i=0; i<contour->getParent()->getNumberOfContours(); i++)
-      model->createContourItem(contour->getParent()->getContour(i),index.parent());
-    elementView->setCurrentIndex(index.sibling(j,0));
+      model->createContourItem(contour->getParent()->getContour(i),parentIndex);
+    elementView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::moveGroup(bool up) {
     setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
+    QModelIndex parentIndex = index.parent();
     auto *group = static_cast<Group*>(model->getItem(index)->getItemData());
     int i = group->getParent()->getIndexOfGroup(group);
     int j = up?i-1:i+1;
@@ -1376,16 +1380,17 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     group->getParent()->setGroup(group->getParent()->getGroup(j),i);
     group->getParent()->setGroup(group,j);
-    model->removeRows(0,group->getParent()->getNumberOfGroups(),index.parent());
+    model->removeRows(0,group->getParent()->getNumberOfGroups(),parentIndex);
     for(int i=0; i<group->getParent()->getNumberOfGroups(); i++)
-      model->createGroupItem(group->getParent()->getGroup(i),index.parent());
-    elementView->setCurrentIndex(index.sibling(j,0));
+      model->createGroupItem(group->getParent()->getGroup(i),parentIndex);
+    elementView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::moveObject(bool up) {
     setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
+    QModelIndex parentIndex = index.parent();
     auto *object = static_cast<Object*>(model->getItem(index)->getItemData());
     int i = object->getParent()->getIndexOfObject(object);
     int j = up?i-1:i+1;
@@ -1399,16 +1404,17 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     object->getParent()->setObject(object->getParent()->getObject(j),i);
     object->getParent()->setObject(object,j);
-    model->removeRows(0,object->getParent()->getNumberOfObjects(),index.parent());
+    model->removeRows(0,object->getParent()->getNumberOfObjects(),parentIndex);
     for(int i=0; i<object->getParent()->getNumberOfObjects(); i++)
-      model->createObjectItem(object->getParent()->getObject(i),index.parent());
-    elementView->setCurrentIndex(index.sibling(j,0));
+      model->createObjectItem(object->getParent()->getObject(i),parentIndex);
+    elementView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::moveLink(bool up) {
     setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
+    QModelIndex parentIndex = index.parent();
     auto *link = static_cast<Link*>(model->getItem(index)->getItemData());
     int i = link->getParent()->getIndexOfLink(link);
     int j = up?i-1:i+1;
@@ -1422,16 +1428,17 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     link->getParent()->setLink(link->getParent()->getLink(j),i);
     link->getParent()->setLink(link,j);
-    model->removeRows(0,link->getParent()->getNumberOfLinks(),index.parent());
+    model->removeRows(0,link->getParent()->getNumberOfLinks(),parentIndex);
     for(int i=0; i<link->getParent()->getNumberOfLinks(); i++)
-      model->createLinkItem(link->getParent()->getLink(i),index.parent());
-    elementView->setCurrentIndex(index.sibling(j,0));
+      model->createLinkItem(link->getParent()->getLink(i),parentIndex);
+    elementView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::moveConstraint(bool up) {
     setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
+    QModelIndex parentIndex = index.parent();
     auto *constraint = static_cast<Constraint*>(model->getItem(index)->getItemData());
     int i = constraint->getParent()->getIndexOfConstraint(constraint);
     int j = up?i-1:i+1;
@@ -1445,16 +1452,17 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     constraint->getParent()->setConstraint(constraint->getParent()->getConstraint(j),i);
     constraint->getParent()->setConstraint(constraint,j);
-    model->removeRows(0,constraint->getParent()->getNumberOfConstraints(),index.parent());
+    model->removeRows(0,constraint->getParent()->getNumberOfConstraints(),parentIndex);
     for(int i=0; i<constraint->getParent()->getNumberOfConstraints(); i++)
-      model->createConstraintItem(constraint->getParent()->getConstraint(i),index.parent());
-    elementView->setCurrentIndex(index.sibling(j,0));
+      model->createConstraintItem(constraint->getParent()->getConstraint(i),parentIndex);
+    elementView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::moveObserver(bool up) {
     setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
+    QModelIndex parentIndex = index.parent();
     auto *observer = static_cast<Observer*>(model->getItem(index)->getItemData());
     int i = observer->getParent()->getIndexOfObserver(observer);
     int j = up?i-1:i+1;
@@ -1468,10 +1476,10 @@ namespace MBSimGUI {
     parent->insertBefore(ele,tmp);
     observer->getParent()->setObserver(observer->getParent()->getObserver(j),i);
     observer->getParent()->setObserver(observer,j);
-    model->removeRows(0,observer->getParent()->getNumberOfObservers(),index.parent());
+    model->removeRows(0,observer->getParent()->getNumberOfObservers(),parentIndex);
     for(int i=0; i<observer->getParent()->getNumberOfObservers(); i++)
-      model->createObserverItem(observer->getParent()->getObserver(i),index.parent());
-    elementView->setCurrentIndex(index.sibling(j,0));
+      model->createObserverItem(observer->getParent()->getObserver(i),parentIndex);
+    elementView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::saveElementAs() {
