@@ -94,10 +94,10 @@ namespace MBSimGUI {
             if(object) {
               object->setEmbedXMLElement(ele1);
               if(embededParam) object->setEmbededParameters(embededParam);
-              if(embeded) object->setEmbeded(embeded);
               for(auto & i : param)
                 object->addParameter(i);
               object->initializeUsingXML(ele2);
+              if(embeded) object->setEmbeded(embeded);
             }
           }
           else {
