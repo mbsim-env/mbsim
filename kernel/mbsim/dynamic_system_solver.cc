@@ -1401,10 +1401,10 @@ namespace MBSim {
       checkActive(6); // decide which contacts have closed
       //msg(Info) << "stoss" << endl;
 
-      calcgdSize(1); // IG
+      calcgdSize(3); // IG
       updategdRef(gdParent(0, gdSize - 1));
-      calclaSize(1); // IG
-      calcrFactorSize(1); // IG
+      calclaSize(3); // IG
+      calcrFactorSize(3); // IG
       updateWRef(WParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
       updateVRef(VParent[0](RangeV(0, getuSize() - 1), RangeV(0, getlaSize() - 1)));
       updatelaRef(laParent(0, laSize - 1));
