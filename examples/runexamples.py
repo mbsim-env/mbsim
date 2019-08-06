@@ -633,7 +633,7 @@ def main():
   <div class="panel-heading"><span class="glyphicon glyphicon-info-sign">
     </span>&nbsp;<span class="glyphicon glyphicon-exclamation-sign"></span>&nbsp;Status message</div>
   <div class="panel-body">
-    <span id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</span>
+    <pre style="border: 0; background-color: transparent;" id="STATUSMSG">Communicating with server, please wait. (reload page if hanging)</pre>
   </div>
 </div>
 <hr/>
