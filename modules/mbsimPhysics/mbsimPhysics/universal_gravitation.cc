@@ -22,6 +22,7 @@
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include <openmbvcppinterface/group.h>
+#include <openmbvcppinterface/arrow.h>
 
 using namespace std;
 using namespace fmatvec;
