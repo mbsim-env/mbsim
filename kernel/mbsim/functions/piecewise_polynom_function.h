@@ -330,6 +330,7 @@ namespace MBSim {
 
     breaks.resize(N);
     breaks = x;
+    coefs.clear();
     coefs.push_back(d);
     coefs.push_back(c);
     coefs.push_back(b);
@@ -398,6 +399,7 @@ namespace MBSim {
 
     breaks.resize(N);
     breaks = x;
+    coefs.clear();
     coefs.push_back(d);
     coefs.push_back(ctmp(0,0,N-2,y.cols()-1));
     coefs.push_back(b);
@@ -417,6 +419,7 @@ namespace MBSim {
       m.row(i-1) = (y.row(i)-y.row(i-1))/(x(i)-x(i-1)); // slope
       a.row(i-1) = y.row(i-1);
     }
+    coefs.clear();
     coefs.push_back(m);
     coefs.push_back(a);
   }
