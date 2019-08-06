@@ -69,8 +69,10 @@ namespace MBSim {
 
   void GeneralizedGearConstraint::updateGeneralizedJacobians(int j) {
     bd->getJRel(0,false).init(0); 
+    bd->getjRel(false).init(0);
     for(unsigned int i=0; i<bi.size(); i++) {
       bd->getJRel(0,false).add(Range<Var,Var>(0,bi[i]->getGeneralizedVelocitySize()-1),Range<Var,Var>(0,bi[i]->gethSize()-1),bi[i]->evalJRel()*ratio[i]);
+      bd->getjRel(false) += bi[i]->getjRel()*ratio[i];
     }
     updGJ = false;
   }
