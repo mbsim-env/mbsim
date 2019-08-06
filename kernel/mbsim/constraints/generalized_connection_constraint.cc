@@ -35,6 +35,14 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedConnectionConstraint)
 
+  void GeneralizedConnectionConstraint::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      if(bd->getGeneralizedVelocitySize()!=1)
+        throwError("dependent rigid body must have 1 dof!");
+    }
+    GeneralizedDualConstraint::init(stage, config);
+  }
+
   void GeneralizedConnectionConstraint::updateGeneralizedCoordinates() {
     if(bi) {
       bd->getGeneralizedPosition(false) = bi->evalGeneralizedPosition();

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/links/generalized_connection.h"
+#include "mbsim/objects/rigid_body.h"
 #include <mbsim/constitutive_laws/generalized_force_law.h>
 #include <mbsim/constitutive_laws/bilateral_impact.h>
 
@@ -55,6 +56,8 @@ namespace MBSim {
 
   void GeneralizedConnection::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
+      if(body[0]->getGeneralizedVelocitySize()!=1)
+        throwError("rigid bodies must have 1 dof!");
       if(fl->isSetValued()) {
         il = new BilateralImpact;
         il->setParent(this);

@@ -26,10 +26,6 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  void GeneralizedPositionExcitation::calcxSize() {
-    if(!f) xSize = body[0]->getGeneralizedPositionSize();
-  }
-
   void GeneralizedPositionExcitation::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(f->getRetSize().first!=body[0]->getGeneralizedPositionSize())

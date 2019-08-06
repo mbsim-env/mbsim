@@ -28,6 +28,8 @@ namespace MBSim {
     public:
       GeneralizedConnectionConstraint(const std::string &name="") : GeneralizedDualConstraint(name) { }
 
+      void init(Element::InitStage stage, const InitConfigSet &config) override;
+
       void updateGeneralizedCoordinates() override;
       void updateGeneralizedJacobians(int j=0) override;
       void setUpInverseKinetics() override;
