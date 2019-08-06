@@ -68,7 +68,7 @@ namespace MBSim {
     else if(stage==unknownStage) {
       for(auto & i : body) {
         if(i->getGeneralizedVelocitySize()!=1)
-          throwError("rigid bodies must have of 1 dof!");
+          throwError("rigid bodies must have 1 dof!");
       }
       if(fl->isSetValued()) {
         il = new BilateralImpact;

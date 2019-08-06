@@ -33,6 +33,10 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedVelocityConstraint)
 
   void GeneralizedVelocityConstraint::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      if(f->getRetSize().first!=bd->getGeneralizedVelocitySize())
+        throwError("dof of dependent rigid body does not match function size!");
+    }
     GeneralizedDualConstraint::init(stage, config);
     f->init(stage, config);
   }

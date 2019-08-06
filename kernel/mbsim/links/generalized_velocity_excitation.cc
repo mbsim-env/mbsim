@@ -31,6 +31,10 @@ namespace MBSim {
   }
 
   void GeneralizedVelocityExcitation::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      if(f->getRetSize().first!=body[0]->getGeneralizedVelocitySize())
+        throwError("dof of rigid body does not match function size!");
+    }
     GeneralizedKinematicExcitation::init(stage, config);
     f->init(stage, config);
   }

@@ -40,6 +40,10 @@ namespace MBSim {
       bd->addDependency(this);
       if(bi) addDependency(bi);
     }
+    else if(stage==unknownStage) {
+      if(bi and (bd->getGeneralizedVelocitySize()!=bi->getGeneralizedVelocitySize()))
+        throwError("dependent and indenpendent rigid body must have the same dof!");
+    }
     GeneralizedConstraint::init(stage, config);
   }
 

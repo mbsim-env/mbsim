@@ -49,6 +49,14 @@ namespace MBSim {
       for(auto & i : bi)
         addDependency(i);
     }
+    else if(stage==unknownStage) {
+      if(bd->getGeneralizedVelocitySize()!=1)
+        throwError("dependent rigid body must have 1 dof!");
+      for(auto & i : bi) {
+        if(i->getGeneralizedVelocitySize()!=1)
+          throwError("independent rigid bodies must have 1 dof!");
+      }
+    }
     GeneralizedConstraint::init(stage, config);
   }
 

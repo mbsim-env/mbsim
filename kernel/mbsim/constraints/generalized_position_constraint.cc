@@ -33,6 +33,10 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedPositionConstraint)
 
   void GeneralizedPositionConstraint::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      if(f->getRetSize().first!=bd->getGeneralizedPositionSize())
+        throwError("dof of dependent rigid body does not match function size!");
+    }
     GeneralizedDualConstraint::init(stage, config);
     f->init(stage, config);
   }
