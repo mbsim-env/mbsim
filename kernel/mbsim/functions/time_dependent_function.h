@@ -38,6 +38,7 @@ namespace MBSim {
       ~TimeDependentFunction() override { delete f; }
       int getArg1Size() const override { return 0;}
       int getArg2Size() const override { return 1; }
+      std::pair<int, int> getRetSize() const override { return f->getRetSize(); }
       Ret operator()(const fmatvec::VecV &arg1, const double &arg2) override {return (*f)(arg2); }
       typename B::DRetDArg1 parDer1(const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DRetDArg1(n,getArg1Size()); }
       typename B::DRetDArg2 parDer2(const fmatvec::VecV &arg1, const double &arg2) override {return f->parDer(arg2); }
