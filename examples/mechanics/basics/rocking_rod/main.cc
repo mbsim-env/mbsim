@@ -34,6 +34,9 @@ class Integrate {
     void operator()(Int& integrator);
     template<typename Int>
     void setDefaults(Int& integrator) { }
+    void setDefaults(DASPKIntegrator& integrator) {
+      integrator.setFormalism(DASPKIntegrator::GGL);
+    }
     void setDefaults(RADAU5Integrator& integrator) {
       integrator.setAbsoluteTolerance(1e-8);
       integrator.setRelativeTolerance(1e-8);
