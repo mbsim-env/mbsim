@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/objects/rigid_body.h"
-#include "mbsim/dynamic_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/links/joint.h"
@@ -253,11 +253,11 @@ namespace MBSim {
       if(frameForInertiaTensor and frameForInertiaTensor!=C)
         SThetaS = JMJT(C->evalOrientation().T()*frameForInertiaTensor->evalOrientation(),SThetaS) - m*JTJ(tilde(C->evalOrientation().T()*(frameForInertiaTensor->evalPosition()-C->evalPosition())));
 
-      // do not invert generalized mass matrix in case of special parametrisation
-      // the coordinates must be defined w.r.t. C and be absolute
-      // the Jacobians of translation and rotation must be constant
-      // the rigidbody must not be constrained
-      if(K == C and dynamic_cast<DynamicSystem*>(R->getParent()) and (not fPrPK or constJT) and (not fAPK or (constJR and generalizedVelocityOfRotation!=coordinatesOfAngularVelocityWrtFrameOfReference)) and not constraint) {
+      // the generalized mass matrix is constant, if:
+      // - the rigidbody must not be part of a graph
+      // - the kinematics must be defined w.r.t. frame C
+      // - the Jacobians of translation and rotation must be constant
+      if(parent==ds and K==C and (not fPrPK or constJT) and (not fAPK or (constJR and generalizedVelocityOfRotation!=coordinatesOfAngularVelocityWrtFrameOfReference))) {
         nonConstantMassMatrix = false;
         M = m*JTJ(PJT[0]) + JTMJ(SThetaS,PJR[0]);
         LLM = facLL(M);
