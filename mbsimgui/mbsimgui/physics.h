@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2017 Martin Förg
+    Copyright (C) 2019 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,21 +17,20 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _NAMESPACE_H_
-#define _NAMESPACE_H_
+#ifndef _PHYSICS__H_
+#define _PHYSICN__H_
 
-#include <xercesc/util/XercesDefs.hpp>
-#include <mbxmlutilshelper/dom.h>
+#include "link.h"
 
 namespace MBSimGUI {
 
-  const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
-  const MBXMLUtils::NamespaceURI OPENMBV("http://www.mbsim-env.de/OpenMBV");
-  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl");
-  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
-  const MBXMLUtils::NamespaceURI MBSIMPHYSICS("http://www.mbsim-env.de/MBSimPhysics");
-  const MBXMLUtils::NamespaceURI MBSIMFCL("http://www.mbsim-env.de/MBSimFcl");
-  const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML");
+  class UniversalGravitation : public MechanicalLink {
+    public:
+      QString getType() const override { return "UniversalGravitation"; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new UniversalGravitationPropertyDialog(this);}
+  };
 
 }
 

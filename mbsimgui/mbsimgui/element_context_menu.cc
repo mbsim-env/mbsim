@@ -36,6 +36,7 @@
 #include "connection.h"
 #include "structure.h"
 #include "sensor.h"
+#include "physics.h"
 #include "element_view.h"
 
 namespace MBSimGUI {
@@ -555,6 +556,9 @@ namespace MBSimGUI {
     action = new QAction("Add generalized elastic structure", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticStructure()));
     addAction(action);
+    action = new QAction("Add universal gravitation", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addUniversalGravitation()));
+    addAction(action);
   }
 
   void LinksContextMenu::paste() {
@@ -619,6 +623,10 @@ namespace MBSimGUI {
 
   void LinksContextMenu::addGeneralizedElasticStructure() {
     mw->addLink(new GeneralizedElasticStructure, element);
+  }
+
+  void LinksContextMenu::addUniversalGravitation() {
+    mw->addLink(new UniversalGravitation, element);
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

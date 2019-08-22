@@ -25,6 +25,7 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   observer.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \
+		   physics.cc \
 		   integrator.cc \
 		   parameter.cc \
 		   objectfactory.cc \

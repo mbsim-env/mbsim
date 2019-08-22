@@ -3201,4 +3201,33 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  UniversalGravitationPropertyDialog::UniversalGravitationPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
+    addTab("Kinetics",1);
+    addTab("Visualization",2);
+    connections = new ExtWidget("Connections",new ConnectElementsWidget<RigidBody>(2,link,this),false,false,MBSIMPHYSICS%"connect");
+    addToTab("Kinetics",connections);
+
+    gravitationalConstant = new ExtWidget("Gravitational constant",new ChoiceWidget2(new ScalarWidgetFactory("6.67408e-11"),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"gravitationalConstant");
+    addToTab("General",gravitationalConstant);
+
+    enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
+    addToTab("Visualization",enableOpenMBV);
+  }
+
+  DOMElement* UniversalGravitationPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    MechanicalLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    connections->initializeUsingXML(item->getXMLElement());
+    gravitationalConstant->initializeUsingXML(item->getXMLElement());
+    enableOpenMBV->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* UniversalGravitationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    MechanicalLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    connections->writeXMLFile(item->getXMLElement(),ref);
+    gravitationalConstant->writeXMLFile(item->getXMLElement(),ref);
+    enableOpenMBV->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 }

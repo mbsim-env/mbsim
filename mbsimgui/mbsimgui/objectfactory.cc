@@ -36,7 +36,7 @@
 #include "structure.h"
 #include "observer.h"
 #include "sensor.h"
-//#include "linear_transfer_system.h"
+#include "physics.h"
 #include "parameter.h"
 #include "integrator.h"
 #include "analyzer.h"
@@ -262,6 +262,8 @@ namespace MBSimGUI {
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
       return new ExternSignalSink;
+    if(E(element)->getTagName()==MBSIMPHYSICS%"UniversalGravitation")
+      return new UniversalGravitation;
     else
       return new UnknownLink;
     return nullptr;
