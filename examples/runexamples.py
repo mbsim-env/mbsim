@@ -216,9 +216,9 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   # check for core dump file
   exeRE=re.compile("^.*, *execfn: '([^']*)' *,.*$")
   for coreFile in glob.glob("core*"):
-    out=subprocess.check_output(["file", coreFile])
+    out=subprocess.check_output(["file", coreFile]).decode('utf-8')
     exe=exeRE.match(out).group(1)
-    out=subprocess.check_output(["gdb", "-q", "-n", "-ex", "bt", "-batch", exe, coreFile])
+    out=subprocess.check_output(["gdb", "-q", "-n", "-ex", "bt", "-batch", exe, coreFile]).decode('utf-8')
     f.write("\n\n\n******************** START: CORE DUMP BACKTRACE OF "+exe+" ********************\n\n\n")
     f.write(out)
     f.write("\n\n\n******************** END: CORE DUMP BACKTRACE ********************\n\n\n")
