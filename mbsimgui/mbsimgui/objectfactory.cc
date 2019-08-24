@@ -266,6 +266,8 @@ namespace MBSimGUI {
       return new UniversalGravitation;
     if(E(element)->getTagName()==MBSIMPHYSICS%"Weight")
       return new Weight;
+    if(E(element)->getTagName()==MBSIMPHYSICS%"Buoyancy")
+      return new Buoyancy;
     else
       return new UnknownLink;
     return nullptr;

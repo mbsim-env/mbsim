@@ -40,6 +40,14 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new WeightPropertyDialog(this);}
   };
 
+  class Buoyancy : public FloatingFrameLink {
+    public:
+      QString getType() const override { return "Buoyancy"; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new BuoyancyPropertyDialog(this);}
+  };
+
 }
 
 #endif

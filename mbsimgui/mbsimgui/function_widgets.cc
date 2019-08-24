@@ -974,10 +974,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    standardGravity = new ExtWidget("Standard gravity",new ChoiceWidget2(new ScalarWidgetFactory("9.80665",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"standardGravity");
+    standardGravity = new ExtWidget("Standard gravity",new ChoiceWidget2(new ScalarWidgetFactory("9.80665",vector<QStringList>(2,accelerationUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"standardGravity");
     layout->addWidget(standardGravity);
 
-    meanRadius = new ExtWidget("Mean radius",new ChoiceWidget2(new ScalarWidgetFactory("6371e3",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"meanRadius");
+    meanRadius = new ExtWidget("Mean radius",new ChoiceWidget2(new ScalarWidgetFactory("6371e3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"meanRadius");
     layout->addWidget(meanRadius);
   }
 

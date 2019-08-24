@@ -426,6 +426,12 @@ namespace MBSimGUI {
     return units;
   }
 
+  inline QStringList volumeUnits() {
+    QStringList units;
+    units << "mum^3" << "mm^3" << "cm^3" << "dm^3" << "l" << "m^3" << "km^3";
+    return units;
+  }
+
   std::string removeWhiteSpace(const std::string &str);
 
   QString removeWhiteSpace(const QString &str);

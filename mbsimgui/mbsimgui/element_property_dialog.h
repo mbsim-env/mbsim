@@ -963,6 +963,17 @@ namespace MBSimGUI {
     protected:
       ExtWidget *connections, *gravityFunction, *enableOpenMBV;
   };
+
+  class BuoyancyPropertyDialog : public FloatingFrameLinkPropertyDialog {
+
+    public:
+      BuoyancyPropertyDialog(Element *link);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *displacedVolume, *densityFunction, *gravityFunction, *enableOpenMBV;
+  };
+
 }
 
 #endif

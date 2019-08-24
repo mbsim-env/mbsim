@@ -531,8 +531,10 @@ namespace MBSimGUI {
 
   GravityFunctionWidgetFactory::GravityFunctionWidgetFactory() {
     name.emplace_back("Gravity function");
+    name.emplace_back("Constant function");
     name.emplace_back("Symbolic function");
     xmlName.push_back(MBSIMPHYSICS%"GravityFunction");
+    xmlName.push_back(MBSIM%"ConstantFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
   }
 
@@ -540,6 +542,8 @@ namespace MBSimGUI {
     if(i==0)
       return new GravityFunctionWidget;
     if(i==1)
+      return new ConstantFunctionWidget(1);
+    if(i==2)
       return new SymbolicFunctionWidget(QStringList("g"),1,1);
     return nullptr;
   }

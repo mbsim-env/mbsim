@@ -226,6 +226,7 @@ namespace MBSimGUI {
       void addGeneralizedElasticStructure();
       void addUniversalGravitation();
       void addWeight();
+      void addBuoyancy();
       void paste();
       void load();
       void embed();

@@ -3260,4 +3260,37 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  BuoyancyPropertyDialog::BuoyancyPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
+
+    displacedVolume = new ExtWidget("Displaced volume",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,volumeUnits()),vector<int>(2,5)),QBoxLayout::RightToLeft,5),false,false,MBSIMPHYSICS%"displacedVolume");
+    addToTab("General",displacedVolume);
+
+    densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new FunctionWidgetFactory2(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
+    addToTab("General",densityFunction);
+
+    gravityFunction = new ExtWidget("Gravity function",new ChoiceWidget2(new GravityFunctionWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"gravityFunction");
+    addToTab("General",gravityFunction);
+
+    enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
+    addToTab("Visualization",enableOpenMBV);
+  }
+
+  DOMElement* BuoyancyPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    displacedVolume->initializeUsingXML(item->getXMLElement());
+    densityFunction->initializeUsingXML(item->getXMLElement());
+    gravityFunction->initializeUsingXML(item->getXMLElement());
+    enableOpenMBV->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* BuoyancyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FloatingFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    displacedVolume->writeXMLFile(item->getXMLElement(),ref);
+    densityFunction->writeXMLFile(item->getXMLElement(),ref);
+    gravityFunction->writeXMLFile(item->getXMLElement(),ref);
+    enableOpenMBV->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 }
