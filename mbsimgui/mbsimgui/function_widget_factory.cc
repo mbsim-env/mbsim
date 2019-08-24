@@ -510,7 +510,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *element_) : element(element_){
+  SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *element_) : element(element_) {
     name.emplace_back("Symbolic function");
     name.emplace_back("Continued function");
     name.emplace_back("Composite function");
@@ -529,4 +529,18 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  GravityFunctionWidgetFactory::GravityFunctionWidgetFactory() {
+    name.emplace_back("Gravity function");
+    name.emplace_back("Symbolic function");
+    xmlName.push_back(MBSIMPHYSICS%"GravityFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+  }
+
+  QWidget* GravityFunctionWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new GravityFunctionWidget;
+    if(i==1)
+      return new SymbolicFunctionWidget(QStringList("g"),1,1);
+    return nullptr;
+  }
 }

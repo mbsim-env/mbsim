@@ -953,6 +953,16 @@ namespace MBSimGUI {
     protected:
       ExtWidget *connections, *gravitationalConstant, *enableOpenMBV;
   };
+
+  class WeightPropertyDialog : public MechanicalLinkPropertyDialog {
+
+    public:
+      WeightPropertyDialog(Element *link);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *connections, *gravityFunction, *enableOpenMBV;
+  };
 }
 
 #endif

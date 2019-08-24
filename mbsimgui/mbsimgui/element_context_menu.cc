@@ -559,6 +559,9 @@ namespace MBSimGUI {
     action = new QAction("Add universal gravitation", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addUniversalGravitation()));
     addAction(action);
+    action = new QAction("Add weight", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addWeight()));
+    addAction(action);
   }
 
   void LinksContextMenu::paste() {
@@ -627,6 +630,10 @@ namespace MBSimGUI {
 
   void LinksContextMenu::addUniversalGravitation() {
     mw->addLink(new UniversalGravitation, element);
+  }
+
+  void LinksContextMenu::addWeight() {
+    mw->addLink(new Weight, element);
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

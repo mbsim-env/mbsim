@@ -399,14 +399,14 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
-  BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const QString &name) : widget(widget_) {
+  BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_) {
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
     for(size_t i=0; i<widget.size(); i++) {
-      QString subname = name;
+      QString subname = name[i];
       if(widget.size()>1)
         subname += QString(" ")+QString::number(i+1);
       QWidget *subwidget = new ExtWidget(subname,widget[i]);

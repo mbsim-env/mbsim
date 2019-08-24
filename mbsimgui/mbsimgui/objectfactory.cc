@@ -264,6 +264,8 @@ namespace MBSimGUI {
       return new ExternSignalSink;
     if(E(element)->getTagName()==MBSIMPHYSICS%"UniversalGravitation")
       return new UniversalGravitation;
+    if(E(element)->getTagName()==MBSIMPHYSICS%"Weight")
+      return new Weight;
     else
       return new UnknownLink;
     return nullptr;

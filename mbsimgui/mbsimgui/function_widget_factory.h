@@ -268,6 +268,18 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> xmlName;
   };
 
+  class GravityFunctionWidgetFactory : public WidgetFactory {
+    public:
+      GravityFunctionWidgetFactory();
+      QWidget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getSize() const override { return name.size(); }
+    protected:
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
+  };
+
 }
 
 #endif

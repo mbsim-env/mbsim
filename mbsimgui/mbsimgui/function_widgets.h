@@ -413,6 +413,18 @@ namespace MBSimGUI {
       ExtWidget *radiusFunction;
   };
 
+  class GravityFunctionWidget : public FunctionWidget {
+
+    public:
+      GravityFunctionWidget();
+      QString getType() const override { return "GravityFunction"; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *standardGravity, *meanRadius;
+  };
+
 }
 
 #endif

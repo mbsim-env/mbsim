@@ -969,4 +969,29 @@ namespace MBSimGUI {
     return ele0;
   }
 
+  GravityFunctionWidget::GravityFunctionWidget() {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    standardGravity = new ExtWidget("Standard gravity",new ChoiceWidget2(new ScalarWidgetFactory("9.80665",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"standardGravity");
+    layout->addWidget(standardGravity);
+
+    meanRadius = new ExtWidget("Mean radius",new ChoiceWidget2(new ScalarWidgetFactory("6371e3",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"meanRadius");
+    layout->addWidget(meanRadius);
+  }
+
+  DOMElement* GravityFunctionWidget::initializeUsingXML(DOMElement *element) {
+    standardGravity->initializeUsingXML(element);
+    meanRadius->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* GravityFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+    standardGravity->writeXMLFile(ele0);
+    meanRadius->writeXMLFile(ele0);
+    return ele0;
+  }
+
 }

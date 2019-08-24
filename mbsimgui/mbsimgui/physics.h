@@ -32,6 +32,14 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new UniversalGravitationPropertyDialog(this);}
   };
 
+  class Weight : public MechanicalLink {
+    public:
+      QString getType() const override { return "Weight"; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new WeightPropertyDialog(this);}
+  };
+
 }
 
 #endif

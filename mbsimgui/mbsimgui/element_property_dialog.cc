@@ -3230,4 +3230,34 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  WeightPropertyDialog::WeightPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
+    addTab("Kinetics",1);
+    addTab("Visualization",2);
+    connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame,RigidBody>(2,link,this),false,false,MBSIMPHYSICS%"connect");
+    static_cast<ConnectElementsWidget<Frame,RigidBody>*>(connections->getWidget())->setDefaultElement("../Frame[I]");
+    addToTab("Kinetics",connections);
+
+    gravityFunction = new ExtWidget("Gravity function",new ChoiceWidget2(new GravityFunctionWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"gravityFunction");
+    addToTab("General",gravityFunction);
+
+    enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
+    addToTab("Visualization",enableOpenMBV);
+  }
+
+  DOMElement* WeightPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    MechanicalLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    connections->initializeUsingXML(item->getXMLElement());
+    gravityFunction->initializeUsingXML(item->getXMLElement());
+    enableOpenMBV->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* WeightPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    MechanicalLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    connections->writeXMLFile(item->getXMLElement(),ref);
+    gravityFunction->writeXMLFile(item->getXMLElement(),ref);
+    enableOpenMBV->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 }

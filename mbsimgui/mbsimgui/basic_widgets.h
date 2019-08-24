@@ -249,7 +249,7 @@ namespace MBSimGUI {
   class BasicConnectElementsWidget : public Widget {
 
     public:
-      BasicConnectElementsWidget(const std::vector<BasicElementOfReferenceWidget*> widget_, const QString &name);
+      BasicConnectElementsWidget(const std::vector<BasicElementOfReferenceWidget*> widget_, const std::vector<QString> &name);
 
       void setDefaultElement(const QString &def_) { def = def_; widget[0]->setDefaultElement(def); }
       void updateWidget() override;
@@ -261,15 +261,24 @@ namespace MBSimGUI {
       QString def;
   };
 
-  template <class T>
+  template <class T1, class T2=T1>
   class ConnectElementsWidget : public BasicConnectElementsWidget {
     public:
-      ConnectElementsWidget(int n, Element *element, QWidget *parent) : BasicConnectElementsWidget(create(n,element,parent),T().getType()) { }
+      ConnectElementsWidget(int n, Element *element, QWidget *parent) : BasicConnectElementsWidget(create(n,element,parent),create(n)) { }
     protected:
       std::vector<BasicElementOfReferenceWidget*> create(int n, Element *element, QWidget *parent) {
         std::vector<BasicElementOfReferenceWidget*> widget(n);
-        for(int i=0; i<n; i++) widget[i] = new ElementOfReferenceWidget<T>(element,nullptr,parent);
+        widget[0] = new ElementOfReferenceWidget<T1>(element,nullptr,parent);
+        if(n>1)
+          widget[1] = new ElementOfReferenceWidget<T2>(element,nullptr,parent);
         return widget;
+      }
+      std::vector<QString> create(int n) {
+        std::vector<QString> name(n);
+        name[0] = T1().getType();
+        if(n>1)
+          name[1] = T2().getType();
+        return name;
       }
   };
 
