@@ -565,6 +565,9 @@ namespace MBSimGUI {
     action = new QAction("Add buoyancy", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addBuoyancy()));
     addAction(action);
+    action = new QAction("Add drag", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addDrag()));
+    addAction(action);
   }
 
   void LinksContextMenu::paste() {
@@ -641,6 +644,10 @@ namespace MBSimGUI {
 
   void LinksContextMenu::addBuoyancy() {
     mw->addLink(new Buoyancy, element);
+  }
+
+  void LinksContextMenu::addDrag() {
+    mw->addLink(new Drag, element);
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

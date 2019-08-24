@@ -227,6 +227,7 @@ namespace MBSimGUI {
       void addUniversalGravitation();
       void addWeight();
       void addBuoyancy();
+      void addDrag();
       void paste();
       void load();
       void embed();

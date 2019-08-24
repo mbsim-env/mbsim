@@ -3293,4 +3293,27 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  DragPropertyDialog::DragPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
+
+    dragFunction = new ExtWidget("Drag function",new ChoiceWidget2(new FunctionWidgetFactory2(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
+    addToTab("General",dragFunction);
+
+    enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
+    addToTab("Visualization",enableOpenMBV);
+  }
+
+  DOMElement* DragPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    dragFunction->initializeUsingXML(item->getXMLElement());
+    enableOpenMBV->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DragPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FloatingFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    dragFunction->writeXMLFile(item->getXMLElement(),ref);
+    enableOpenMBV->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 }

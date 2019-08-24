@@ -268,6 +268,8 @@ namespace MBSimGUI {
       return new Weight;
     if(E(element)->getTagName()==MBSIMPHYSICS%"Buoyancy")
       return new Buoyancy;
+    if(E(element)->getTagName()==MBSIMPHYSICS%"Drag")
+      return new Drag;
     else
       return new UnknownLink;
     return nullptr;
