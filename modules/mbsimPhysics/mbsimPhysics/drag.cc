@@ -52,8 +52,10 @@ namespace MBSimPhysics {
   void Drag::updatelaF() {
     Vec3 v = evalGlobalRelativeVelocity();
     double vnrm = nrm2(v);
-//    lambdaF = (-k*(dragEquation==linear?1:nrm2(v)))*v;
-    lambdaF = (-(*fdrag)(vnrm)/vnrm)*v;
+    if(vnrm<=1e-13)
+      lambdaF.init(0);
+    else
+      lambdaF = (-(*fdrag)(vnrm)/vnrm)*v;
     updlaF = false;
   }
 
