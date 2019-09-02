@@ -19,7 +19,6 @@
 #include <config.h>
 #include "mbsim/links/spring_damper.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
 #include <openmbvcppinterface/coilspring.h>
 #include "openmbvcppinterface/group.h"
@@ -52,7 +51,7 @@ namespace MBSim {
 
   void SpringDamper::updatelaF() {
     lambdaF(0)=-(*func)(evalGeneralizedRelativePosition()(0)-l0,evalGeneralizedRelativeVelocity()(0));
-    if(getGeneralizedRelativePosition()(0)<=epsroot && abs(lambdaF(0))>epsroot)
+    if(getGeneralizedRelativePosition()(0)<=1e-13 && abs(lambdaF(0))>1e-13)
       msg(Warn)<<"The SpringDamper force is not 0 and the force direction can not calculated!\nUsing force=0 at t="<<getTime()<<endl;
     updlaF = false;
   }
