@@ -185,7 +185,7 @@
                 </xmlVector>
               </initialRotation>
               <scaleFactor unit="-">scale</scaleFactor>
-              <ivFileName>"/home/foerg/Programme/c_c++/gui/RockingRod2/obstacle.wrl"</ivFileName>
+              <ivFileName>"obstacle.wrl"</ivFileName>
             </IvBody>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
@@ -244,7 +244,7 @@
                 </xmlVector>
               </initialRotation>
               <scaleFactor unit="-">scale</scaleFactor>
-              <ivFileName>"/home/foerg/Programme/c_c++/gui/RockingRod2/obstacle.wrl"</ivFileName>
+              <ivFileName>"obstacle.wrl"</ivFileName>
             </IvBody>
           </openMBVRigidBody>
           <enableOpenMBVFrameC>
