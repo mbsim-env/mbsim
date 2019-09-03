@@ -426,6 +426,12 @@ namespace MBSimGUI {
     return units;
   }
 
+  inline QStringList areaUnits() {
+    QStringList units;
+    units << "mum^2" << "mm^2" << "cm^2" << "dm^2" << "m^2" << "ar^2" << "ha" << "km^2";
+    return units;
+  }
+
   inline QStringList volumeUnits() {
     QStringList units;
     units << "mum^3" << "mm^3" << "cm^3" << "dm^3" << "l" << "m^3" << "km^3";

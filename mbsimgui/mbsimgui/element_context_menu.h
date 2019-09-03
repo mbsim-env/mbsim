@@ -228,6 +228,7 @@ namespace MBSimGUI {
       void addWeight();
       void addBuoyancy();
       void addDrag();
+      void addAerodynamics();
       void paste();
       void load();
       void embed();

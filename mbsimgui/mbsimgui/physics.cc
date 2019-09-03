@@ -80,4 +80,17 @@ namespace MBSimGUI {
     return element;
   }
 
+  DOMElement* Aerodynamics::processIDAndHref(DOMElement *element) {
+    element = Link::processIDAndHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+      ELE->insertBefore(id, nullptr);
+    }
+
+    return element;
+  }
+
 }

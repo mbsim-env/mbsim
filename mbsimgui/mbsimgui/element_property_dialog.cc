@@ -3316,4 +3316,42 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  AerodynamicsPropertyDialog::AerodynamicsPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
+
+    densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new FunctionWidgetFactory2(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
+    addToTab("General",densityFunction);
+
+    coefficientFunction = new ExtWidget("Coefficient function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(link),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"coefficientFunction");
+    addToTab("General",coefficientFunction);
+
+    referenceSurface = new ExtWidget("Reference surface",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,areaUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"referenceSurface");
+    addToTab("General",referenceSurface);
+
+    windSpeed = new ExtWidget("Wind speed",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,velocityUnits()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"windSpeed");
+    addToTab("General",windSpeed);
+
+    enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
+    addToTab("Visualization",enableOpenMBV);
+  }
+
+  DOMElement* AerodynamicsPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FloatingFrameLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    densityFunction->initializeUsingXML(item->getXMLElement());
+    coefficientFunction->initializeUsingXML(item->getXMLElement());
+    referenceSurface->initializeUsingXML(item->getXMLElement());
+    windSpeed->initializeUsingXML(item->getXMLElement());
+    enableOpenMBV->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* AerodynamicsPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FloatingFrameLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    densityFunction->writeXMLFile(item->getXMLElement(),ref);
+    coefficientFunction->writeXMLFile(item->getXMLElement(),ref);
+    referenceSurface->writeXMLFile(item->getXMLElement(),ref);
+    windSpeed->writeXMLFile(item->getXMLElement(),ref);
+    enableOpenMBV->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 }

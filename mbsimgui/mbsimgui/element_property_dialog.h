@@ -984,6 +984,16 @@ namespace MBSimGUI {
       ExtWidget *dragFunction, *enableOpenMBV;
   };
 
+  class AerodynamicsPropertyDialog : public FloatingFrameLinkPropertyDialog {
+
+    public:
+      AerodynamicsPropertyDialog(Element *link);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *densityFunction, *coefficientFunction, *referenceSurface, *windSpeed, *enableOpenMBV;
+  };
+
 }
 
 #endif
