@@ -716,7 +716,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject() {
     if(maybeSave()) {
-      QString file=QFileDialog::getOpenFileName(nullptr, "XML project files", getProjectFilePath(), "XML files (*.mbsimprj.xml)");
+      QString file=QFileDialog::getOpenFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsimprj.xml)");
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       if(not file.isEmpty())
@@ -725,7 +725,7 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    QString file=QFileDialog::getSaveFileName(nullptr, "XML project files", getProjectFilePath(), "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsimprj.xml)");
     if(not(file.isEmpty())) {
       file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
       doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
@@ -819,7 +819,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveDataAs() {
-    QString dir = QFileDialog::getExistingDirectory (nullptr, "Export simulation data", getProjectPath());
+    QString dir = QFileDialog::getExistingDirectory (this, "Export simulation data", getProjectPath());
     if(dir != "") {
       QDir directory(dir);
       QMessageBox::StandardButton ret = QMessageBox::Ok;
@@ -840,7 +840,7 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5DataAs() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(nullptr, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsim.h5"), "H5 files (*.mbsim.h5)");
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsim.h5"), "H5 files (*.mbsim.h5)");
     if(file!="") {
       saveMBSimH5Data(file);
     }
@@ -853,7 +853,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveOpenMBVDataAs() {
-    QString dir = QFileDialog::getExistingDirectory (nullptr, "Export OpenMBV data", getProjectPath());
+    QString dir = QFileDialog::getExistingDirectory(this, "Export OpenMBV data", getProjectPath());
     if(dir != "") {
       QDir directory(dir);
       QMessageBox::StandardButton ret = QMessageBox::Ok;
@@ -879,7 +879,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveStateVectorAs() {
-    QString file=QFileDialog::getSaveFileName(nullptr, "Export state vector file", getProjectDir().absoluteFilePath("statevector.asc"), "ASCII files (*.asc)");
+    QString file=QFileDialog::getSaveFileName(this, "Export state vector file", getProjectDir().absoluteFilePath("statevector.asc"), "ASCII files (*.asc)");
     if(file!="") {
       saveStateVector(file);
     }
@@ -894,7 +894,7 @@ namespace MBSimGUI {
   void MainWindow::saveEigenanalysisAs() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(nullptr, "Export eigenanalysis file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".eigenanalysis.mat"), "mat files (*.eigenanalysis.mat)");
+    QString file=QFileDialog::getSaveFileName(this, "Export eigenanalysis file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".eigenanalysis.mat"), "mat files (*.eigenanalysis.mat)");
     if(file!="") {
       saveEigenanalysis(file);
     }
@@ -1492,7 +1492,7 @@ namespace MBSimGUI {
       saveDialog.exec();
       includeParameter = saveDialog.includeParameter();
     }
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", getProjectDir().absoluteFilePath(element->getName()+".mbsimele.xml"), "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(element->getName()+".mbsimele.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node = edoc->importNode(includeParameter?element->getEmbedXMLElement():element->getXMLElement(),true);
@@ -1509,7 +1509,7 @@ namespace MBSimGUI {
       saveDialog.exec();
       includeParameter = saveDialog.includeParameter();
     }
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", getProjectDir().absoluteFilePath(solver->getName()+".mbsimslv.xml"), "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(solver->getName()+".mbsimslv.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node = edoc->importNode(includeParameter?solver->getEmbedXMLElement():solver->getXMLElement(),true);
@@ -1522,7 +1522,7 @@ namespace MBSimGUI {
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
     EmbedItemData *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", getProjectDir().absoluteFilePath(item->getName()+".mbsimembed.xml"), "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(item->getName()+".mbsimembed.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node;
@@ -1657,7 +1657,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "XML frame files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -1727,7 +1727,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(nullptr, "XML frame files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "XML frame files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -1775,7 +1775,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(nullptr, "XML contour files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "XML contour files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -1823,7 +1823,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(nullptr, "XML group files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "XML group files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -1871,7 +1871,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(nullptr, "XML object files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "XML object files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -1919,7 +1919,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(nullptr, "XML link files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "XML link files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -1967,7 +1967,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(nullptr, "XML constraint files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "XML constraint files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2015,7 +2015,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(nullptr, "XML observer files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "XML observer files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2050,7 +2050,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     project->getSolver()->removeXMLElement();
     DOMElement *ele = NULL;
-    QString file=QFileDialog::getOpenFileName(0, "XML frame files", ".", "XML files (*.xml)");
+    QString file=QFileDialog::getOpenFileName(this, "XML frame files", ".", "XML files (*.xml)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
