@@ -1492,7 +1492,7 @@ namespace MBSimGUI {
       saveDialog.exec();
       includeParameter = saveDialog.includeParameter();
     }
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+element->getName()+".mbsimele.xml", "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", getProjectDir().absoluteFilePath(element->getName()+".mbsimele.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node = edoc->importNode(includeParameter?element->getEmbedXMLElement():element->getXMLElement(),true);
@@ -1509,7 +1509,7 @@ namespace MBSimGUI {
       saveDialog.exec();
       includeParameter = saveDialog.includeParameter();
     }
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+solver->getName()+".mbsimslv.xml", "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", getProjectDir().absoluteFilePath(solver->getName()+".mbsimslv.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node = edoc->importNode(includeParameter?solver->getEmbedXMLElement():solver->getXMLElement(),true);
@@ -1522,7 +1522,7 @@ namespace MBSimGUI {
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
     EmbedItemData *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(0, "XML model files", QString("./")+item->getName()+".mbsimembed.xml", "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(0, "XML model files", getProjectDir().absoluteFilePath(item->getName()+".mbsimembed.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node;
