@@ -7,10 +7,6 @@
       <scalarParameter name="al">20</scalarParameter>
       <scalarParameter name="z1">15</scalarParameter>
       <scalarParameter name="z2">18</scalarParameter>
-      <scalarParameter name="be">0</scalarParameter>
-      <scalarParameter name="ga">0</scalarParameter>
-      <scalarParameter name="om">1</scalarParameter>
-      <scalarParameter name="off">0*0.01</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
@@ -24,7 +20,7 @@
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
-              <ele>-m*z1/2-off</ele>
+              <ele>-m*z1/2</ele>
               <ele>0</ele>
             </xmlVector>
           </relativePosition>
