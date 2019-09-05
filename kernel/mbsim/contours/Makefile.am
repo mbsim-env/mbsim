@@ -26,7 +26,9 @@ libcontour_la_SOURCES = contour.cc\
 			spatial_nurbs_contour.cc\
 			disk.cc\
 			cylindrical_gear.cc\
-			rack.cc
+			rack.cc\
+			bevel_gear.cc\
+                        planar_gear.cc
 
 libcontour_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
@@ -58,4 +60,6 @@ contourinclude_HEADERS = contour.h\
 			 spatial_nurbs_contour.h\
                          disk.h\
                          cylindrical_gear.h\
-                         rack.h
+                         rack.h\
+                         bevel_gear.h\
+                         planar_gear.h

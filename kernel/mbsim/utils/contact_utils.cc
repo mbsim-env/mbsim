@@ -44,6 +44,8 @@
 #include <mbsim/contours/spatial_nurbs_contour.h>
 #include <mbsim/contours/cylindrical_gear.h>
 #include <mbsim/contours/rack.h>
+#include <mbsim/contours/bevel_gear.h>
+#include <mbsim/contours/planar_gear.h>
 // --- List of contact implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -79,6 +81,7 @@
 #include <mbsim/contact_kinematics/plane_spatialcontour.h>
 #include <mbsim/contact_kinematics/cylindricalgear_cylindricalgear.h>
 #include <mbsim/contact_kinematics/cylindricalgear_rack.h>
+#include <mbsim/contact_kinematics/bevelgear_planargear.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
@@ -227,6 +230,9 @@ namespace MBSim {
 
     else if ( contour0==typeid(CylindricalGear) && contour1==typeid(Rack) )
       return new ContactKinematicsCylindricalGearRack;
+
+    else if ( contour0==typeid(BevelGear) && contour1==typeid(PlanarGear) )
+      return new ContactKinematicsBevelGearPlanarGear;
 
     else
       return nullptr;

@@ -3289,7 +3289,7 @@
   <xs:element name="CylindricalGear" substitutionGroup="RigidContour" type="CylindricalGearType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Kontur einer Scheibe.
+        Kontur eines Stirnrades.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3300,49 +3300,49 @@
           <xs:element name="numberOfTeeth" type="pv:integerFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert die Anzahl der Zähne des Zahnrades.
+                Definiert die Anzahl der Zähne des Stirnrades.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="width" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert die Breite des Zahnrades.
+                Definiert die Breite des Stirnrades.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="helixAngle" type="pv:angleScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert den Schrägungswinkel des Zahnrades.
+                Definiert den Schrägungswinkel des Stirnrades.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="module" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert den Modul des Zahnrades.
+                Definiert den Modul des Stirnrades.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="pressureAngle" type="pv:angleScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert Normeingriffswinkel des Zahnrades.
+                Definiert den Normeingriffswinkel des Stirnrades.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="backlash" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert das Zahnspiel des Zahnrades.
+                Definiert das Zahnspiel des Stirnrades.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="externalToothed" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob das Zahnrad außen oder innen verzahnt ist.
+                Definiert, ob das Stirnrad außen oder innen verzahnt ist.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -3364,7 +3364,7 @@
   <xs:element name="Rack" substitutionGroup="RigidContour" type="RackType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Kontur einer Scheibe.
+        Kontur einer Zahnstange.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -3410,7 +3410,7 @@
           <xs:element name="pressureAngle" type="pv:angleScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert Normeingriffswinkel der Zahnstange.
+                Definiert den Normeingriffswinkel der Zahnstange.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -3418,6 +3418,156 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert das Zahnspiel der Zahnstange.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="BevelGear" substitutionGroup="RigidContour" type="BevelGearType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Kontur eines Kegelrades.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="BevelGearType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="numberOfTeeth" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Anzahl der Zähne des Kegelrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="width" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Breite des Kegelrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="helixAngle" type="pv:angleScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Schrägungswinkel des Kegelrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="pitchAngle" type="pv:angleScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Kegelwinkel des Kegelrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="module" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Modul des Kegelrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="pressureAngle" type="pv:angleScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Normeingriffswinkel des Kegelrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="backlash" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert das Zahnspiel des Kegelrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="PlanarGear" substitutionGroup="RigidContour" type="PlanarGearType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Kontur eines Planrades.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="PlanarGearType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="numberOfTeeth" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Anzahl der Zähne des Planrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="height" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Höhe des Planrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="width" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Breite des Planrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="helixAngle" type="pv:angleScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Schrägungswinkel des Planrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="module" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Modul des Planrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="pressureAngle" type="pv:angleScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Normeingriffswinkel des Planrades.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="backlash" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert das Zahnspiel des Planrades.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
