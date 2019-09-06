@@ -56,8 +56,8 @@ namespace MBSim {
     ga[0] = sb[0]/rb[0]/2;
     delmin[0] = -al0-ga[0];
     delmax[0] = tan(acos(db[0]/dk[0]))-al0-ga[0];
-    delmin[1] = -m/cos(al);
-    delmax[1] = m/cos(al);
+    delmin[1] = -m/cos(al0);
+    delmax[1] = m/cos(al0);
     z[1] = planargear->getNumberOfTeeth();
     sb[1] = m*(M_PI/2 + 2*tan(al0)) - planargear->getBacklash();
     d0[1] = m*z[1]/cos(beta[1]);

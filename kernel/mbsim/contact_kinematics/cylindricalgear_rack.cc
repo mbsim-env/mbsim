@@ -56,8 +56,8 @@ namespace MBSim {
     beta[1] = rack->getHelixAngle();
     delmin[0] = -al0-ga[0];
     delmax[0] = tan(acos(db[0]/dk[0]))-al0-ga[0];
-    delmin[1] = -m/cos(al);
-    delmax[1] = m/cos(al);
+    delmin[1] = -m/cos(al0);
+    delmax[1] = m/cos(al0);
     z[1] = rack->getNumberOfTeeth();
   }
 
