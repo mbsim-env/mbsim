@@ -6,6 +6,8 @@
 // add code to the generated code
 %{
 
+#include <cfenv>
+
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #include <numpy/arrayobject.h>
 
@@ -221,7 +223,15 @@ void _typemapArgoutMat_R(PyObject *_input, typename std::remove_reference<Mat>::
 
 // init numpy
 %init %{
-  _import_array();
+#if !defined(_WIN32) && !defined(NDEBUG)
+    // numpy generates a overflow during initialization -> dislabe this FPE exception
+    int fpeExcept=fedisableexcept(FE_OVERFLOW);
+    assert(fpeExcept!=-1);
+#endif
+  import_array();
+#if !defined(_WIN32) && !defined(NDEBUG)
+    assert(feenableexcept(fpeExcept)!=-1);
+#endif
 %}
 
 // use SWIG_exception to throw a target language exception
