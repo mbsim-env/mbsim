@@ -22,6 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/point.h"
 #include "mbsim/contours/circle.h"
+#include "mbsim/utils/contact_utils.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -47,6 +48,7 @@ namespace MBSim {
     const Vec3 WrD = point->getFrame()->evalPosition() - circle->getFrame()->evalPosition();
     
     contact.getContourFrame(icircle)->getOrientation(false).set(0, WrD/nrm2(WrD));
+    contact.getContourFrame(icircle)->setEta(computeAngleOnUnitCircle(circle->getFrame()->evalOrientation().T()*contact.getContourFrame(icircle)->getOrientation(false).col(0)));
     contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->getOrientation(false).col(2));
     contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2), contact.getContourFrame(icircle)->getOrientation(false).col(0)));
 
@@ -61,17 +63,12 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointCircle::updatewb(SingleContact &contact, int i) {
-    std::runtime_error("(ContactKinematicsPointCircle::updatewb): Not implemented.");
 
-    const Vec KrPC1 = circle->getFrame()->evalOrientation().T()*(contact.getContourFrame(icircle)->evalPosition() - circle->getFrame()->evalPosition());
-    Vec2 zeta;
-    zeta(0)=(KrPC1(1)>0) ? acos(KrPC1(0)/nrm2(KrPC1)) : 2.*M_PI - acos(KrPC1(0)/nrm2(KrPC1));
-
-    const Vec3 n1 = contact.getContourFrame(icircle)->getOrientation().col(0); //crossProduct(s1, t1);
-    const Vec3 u1 = circle->evalWu(zeta);
-    const Vec3 R1 = circle->evalWs(zeta);
-    const Vec3 N1 = circle->evalParDer1Wn(zeta);
-    const Vec3 U1 = circle->evalParDer1Wu(zeta);
+    const Vec3 n1 = contact.getContourFrame(icircle)->getOrientation().col(0);
+    const Vec3 u1 = circle->evalWu(contact.getContourFrame(icircle)->getZeta());
+    const Vec3 R1 = circle->evalWs(contact.getContourFrame(icircle)->getZeta());
+    const Vec3 N1 = circle->evalParDer1Wn(contact.getContourFrame(icircle)->getZeta());
+    const Vec3 U1 = circle->evalParDer1Wu(contact.getContourFrame(icircle)->getZeta());
 
     const Vec vC1 = contact.getContourFrame(icircle)->evalVelocity();
     const Vec vC2 = contact.getContourFrame(ipoint)->evalVelocity();

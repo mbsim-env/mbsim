@@ -56,8 +56,9 @@ namespace MBSim {
 
     contact.getContourFrame(iplate)->setOrientation(plate->getFrame()->getOrientation());
     contact.getContourFrame(isphere)->getOrientation(false).set(0, -plate->getFrame()->getOrientation().col(0));
-    contact.getContourFrame(isphere)->getOrientation(false).set(1, -plate->getFrame()->getOrientation().col(1));
-    contact.getContourFrame(isphere)->getOrientation(false).set(2, plate->getFrame()->getOrientation().col(2));
+    contact.getContourFrame(isphere)->setZeta(computeAnglesOnUnitSphere(sphere->getFrame()->evalOrientation().T()*contact.getContourFrame(isphere)->getOrientation(false).col(0)));
+    contact.getContourFrame(isphere)->getOrientation(false).set(1, sphere->evalWu(contact.getContourFrame(isphere)->getZeta(false)));
+    contact.getContourFrame(isphere)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(isphere)->getOrientation(false).col(0),contact.getContourFrame(isphere)->getOrientation(false).col(1)));
 
     Vec3 Wn = contact.getContourFrame(iplate)->getOrientation(false).col(0);
 

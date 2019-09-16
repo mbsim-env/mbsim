@@ -80,9 +80,10 @@ namespace MBSim {
 
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, spatialcontour->evalWn(contact.getContourFrame(ispatialcontour)->getZeta(false)));
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(1, spatialcontour->evalWu(contact.getContourFrame(ispatialcontour)->getZeta(false)));
-    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(2, spatialcontour->evalWv(contact.getContourFrame(ispatialcontour)->getZeta(false)));
+    contact.getContourFrame(ispatialcontour)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0),contact.getContourFrame(ispatialcontour)->getOrientation(false).col(1)));
 
     contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0));
+    contact.getContourFrame(ipoint)->setZeta(computeAnglesOnUnitSphere(point->getFrame()->getOrientation().T()*contact.getContourFrame(ipoint)->getOrientation(false).col(0)));
     contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(ispatialcontour)->getOrientation(false).col(1));
     contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(ispatialcontour)->getOrientation(false).col(2));
 
@@ -102,10 +103,9 @@ namespace MBSim {
     const Vec3 n1 = contact.getContourFrame(ipoint)->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(ipoint)->getOrientation().col(1);
     const Vec3 v1 = contact.getContourFrame(ipoint)->getOrientation().col(2);
-    Vec2 zeta1 = computeAnglesOnUnitSphere(point->getFrame()->evalOrientation().T()*n1);
-    const Mat3x2 U1 = point->evalWU(zeta1);
-    const Mat3x2 V1 = point->evalWV(zeta1);
-    const Mat3x2 N1 = point->evalWN(zeta1);
+    const Mat3x2 U1 = point->evalWU(contact.getContourFrame(ipoint)->getZeta());
+    const Mat3x2 V1 = point->evalWV(contact.getContourFrame(ipoint)->getZeta());
+    const Mat3x2 N1 = point->evalWN(contact.getContourFrame(ipoint)->getZeta());
     const Vec3 paruPart1 = crossProduct(contact.getContourFrame(ipoint)->evalAngularVelocity(),u1);
     const Vec3 parvPart1 = crossProduct(contact.getContourFrame(ipoint)->getAngularVelocity(),v1);
     const Vec3 parnPart1 = crossProduct(contact.getContourFrame(ipoint)->getAngularVelocity(),n1);
