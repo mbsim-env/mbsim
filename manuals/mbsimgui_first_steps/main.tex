@@ -22,14 +22,14 @@ pagesize
 \title{MBSimGUI}
 \subtitle{First Steps}
 \author{Martin Förg}
-\date{29.11.2017}
+\date{04.09.2019}
 
 \maketitle
 
 \begin{abstract}
 This document shows first steps using the multibody simulation software
 \textsc{MBSimGUI}. After installation and start a
-simple model of a free falling body will be set up and simulated.
+simple model of a free falling body will be set up and simulated. Finally, it is shown how to load one of the existing model examples that are available on \textsc{GitHub}.
 \end{abstract}
 
 %\cleardoublepage
@@ -90,7 +90,7 @@ The main window provides the following widgets:
   the MBS. It allows for adding and removing parameters as well as setting their
   properties.
   \item the solver panel offers different numerical solvers like integrators or
-  linear system analysers.
+  linear system analyzers.
   \item the 3D view shows the model in terms of the design of its elements. The
   view on the MBS can be translated, rotated and zoomed.
   \item the echo area gives some informations to the simulation process and shows
@@ -148,5 +148,16 @@ For animation click
 the most right button in the buttons bar named "Run". We see the body falling
 along the {\color{green}y-axis} of the inertial coordinate system (figure
 \ref{openmbv}).
+
+\section{Loading an existing model example}
+
+\begin{figure}
+\centering
+\includegraphics[scale=0.4]{bicycle}
+\caption{Model of a controlled bicyle.} \label{bicycle}
+\end{figure}
+There are numerous model examples that demonstrate the features and capabilities of \textsc{MBSim}. Just visit the \textsc{GitHub} repository at \url{https://github.com/mbsim-env/mbsim} and step into \emph{examples/xml} to get an overview of the existing projects that can be loaded by \textsc{MBSimGUI}. The folder \emph{bicycle} for example contains a model of a controlled bicycle, see figure \ref{bicycle}.
+
+The project files can be downloaded separately or at once by dowloading the complete \textsc{MBSim} source archiv \url{https://github.com/mbsim-env/mbsim/archive/master.zip}. To load a specific model just click "load" in "Project" menu and select the corresponding project file with the extension \emph{*.mbsimprj.xml}.
 
 \end{document}
