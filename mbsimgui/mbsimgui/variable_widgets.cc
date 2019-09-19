@@ -1299,7 +1299,7 @@ namespace MBSimGUI {
       EvalDialog evalDialog(widget->getEvalMat(),this);
       evalDialog.exec();
     }
-    catch(MBXMLUtils::DOMEvalException e) {
+    catch(MBXMLUtils::DOMEvalException &e) {
       QMessageBox::warning(nullptr, "Expression evaluation", QString::fromStdString(e.getMessage()));
     }
     catch(...) {

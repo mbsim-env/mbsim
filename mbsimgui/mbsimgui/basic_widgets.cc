@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include <QtGui>
 #include "basic_widgets.h"
 #include "frame.h"
 #include "contour.h"
@@ -30,7 +31,6 @@
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include "project.h"
-#include <QtGui>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QFileDialog>
 #include <QtWidgets/QColorDialog>

@@ -53,7 +53,7 @@ namespace MBSimGUI {
               try{
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("parameterHref"),ele1,false));
               }
-              catch(MBXMLUtils::DOMEvalException e) {
+              catch(MBXMLUtils::DOMEvalException &e) {
                 std::cout << e.getMessage() << std::endl;
               }
               catch(...) {
@@ -79,7 +79,7 @@ namespace MBSimGUI {
               try{
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
               }
-              catch(MBXMLUtils::DOMEvalException e) {
+              catch(MBXMLUtils::DOMEvalException &e) {
                 std::cout << e.getMessage() << std::endl;
               }
               catch(...) {
