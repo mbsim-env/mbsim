@@ -430,7 +430,7 @@ def main():
         });
         // save current checked examples
         var data={checkedExamples: checkedExamples}
-        $.ajax({url: cgiPath+"/setcheck", xhrFields: {withCredentials: true}, dataType: "json",
+        $.ajax({url: serverScriptURI+"/setcheck", xhrFields: {withCredentials: true}, dataType: "json",
                 type: "POST", data: JSON.stringify(data)}).done(function(response) {
           statusMessage(response);
         });
@@ -447,7 +447,7 @@ def main():
     
           // update checked examples using server data
           statusCommunicating();
-          $.ajax({url: cgiPath+"/getcheck", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
+          $.ajax({url: serverScriptURI+"/getcheck", xhrFields: {withCredentials: true}, dataType: "json", type: "GET"}).done(function(response) {
             if(!response.success)
               statusMessage(response);
             else {
