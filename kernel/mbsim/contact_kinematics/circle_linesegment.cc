@@ -50,9 +50,9 @@ namespace MBSim {
     double g;
     if ((s>=0) && (s<=linesegment->getLength())) {
       contact.getContourFrame(iline)->setOrientation(linesegment->getFrame()->getOrientation());
-      contact.getContourFrame(icircle)->getOrientation(false).set(0, -linesegment->getFrame()->getOrientation(false).col(0));
-      contact.getContourFrame(icircle)->getOrientation(false).set(1, -linesegment->getFrame()->getOrientation(false).col(1));
-      contact.getContourFrame(icircle)->getOrientation(false).set(2, linesegment->getFrame()->getOrientation(false).col(2));
+      contact.getContourFrame(icircle)->getOrientation(false).set(0, -linesegment->getFrame()->getOrientation().col(0));
+      contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
+      contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2), contact.getContourFrame(icircle)->getOrientation(false).col(0)));
       g = contact.getContourFrame(iline)->getOrientation(false).col(0).T()*(WC - WL) - circle->getRadius();
       contact.getContourFrame(icircle)->setPosition(WC - contact.getContourFrame(iline)->getOrientation(false).col(0)*circle->getRadius());
       contact.getContourFrame(iline)->setPosition(contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(iline)->getOrientation(false).col(0)*g);
@@ -61,11 +61,11 @@ namespace MBSim {
       contact.getContourFrame(iline)->setPosition((s<0)?WL0:WL+linesegment->getLength()/2*WLdir);
       const Vec3 WrD = -WC + contact.getContourFrame(iline)->getPosition(false);
       contact.getContourFrame(icircle)->getOrientation(false).set(0, WrD/nrm2(WrD));
-      contact.getContourFrame(iline)->getOrientation(false).set(0, -contact.getContourFrame(icircle)->getOrientation(false).col(0));
-      contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->getOrientation(false).col(2));
-      contact.getContourFrame(iline)->getOrientation(false).set(2, linesegment->getFrame()->getOrientation(false).col(2));
+      contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->getOrientation().col(2));
       contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2), contact.getContourFrame(icircle)->getOrientation(false).col(0)));
-      contact.getContourFrame(iline)->getOrientation(false).set(1, -contact.getContourFrame(icircle)->getOrientation(false).col(1));
+      contact.getContourFrame(iline)->getOrientation(false).set(0, -contact.getContourFrame(icircle)->getOrientation(false).col(0));
+      contact.getContourFrame(iline)->getOrientation(false).set(2, linesegment->getFrame()->getOrientation().col(2));
+      contact.getContourFrame(iline)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(iline)->getOrientation(false).col(2), contact.getContourFrame(iline)->getOrientation(false).col(0)));
       contact.getContourFrame(icircle)->setPosition(WC + contact.getContourFrame(icircle)->getOrientation(false).col(0)*circle->getRadius());
       g = contact.getContourFrame(icircle)->getOrientation(false).col(0).T()*WrD - circle->getRadius();
     }
@@ -73,7 +73,6 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleLineSegment::updatewb(SingleContact &contact, int i) {
-    std::runtime_error("(ContactKinematicsCircleLineSegment::updatewb): Not implemented.");
 
     const Vec3 WC=circle->getFrame()->evalPosition();
     const Vec3 WL=linesegment->getFrame()->evalPosition();

@@ -45,8 +45,8 @@ namespace MBSim {
 
     contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
     contact.getContourFrame(icircle)->getOrientation(false).set(0, -line->getFrame()->getOrientation().col(0));
-    contact.getContourFrame(icircle)->getOrientation(false).set(1, -line->getFrame()->getOrientation().col(1));
-    contact.getContourFrame(icircle)->getOrientation(false).set(2, line->getFrame()->getOrientation().col(2));
+    contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
+    contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2), contact.getContourFrame(icircle)->getOrientation(false).col(0)));
 
     Vec3 Wn = contact.getContourFrame(iline)->getOrientation(false).col(0);
 
@@ -60,7 +60,6 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleLine::updatewb(SingleContact &contact, int i) {
-    std::runtime_error("(ContactKinematicsCircleLine::updatewb): Not implemented.");
 
     Vec3 v2 = contact.getContourFrame(icircle)->evalOrientation().col(2);
     Vec3 n1 = contact.getContourFrame(iline)->evalOrientation().col(0);

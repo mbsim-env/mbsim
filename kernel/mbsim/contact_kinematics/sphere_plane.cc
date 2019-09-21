@@ -45,8 +45,9 @@ namespace MBSim {
   void ContactKinematicsSpherePlane::updateg(SingleContact &contact, int i) {
     contact.getContourFrame(iplane)->setOrientation(plane->getFrame()->evalOrientation());
     contact.getContourFrame(isphere)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    contact.getContourFrame(isphere)->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    contact.getContourFrame(isphere)->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
+    contact.getContourFrame(isphere)->setZeta(computeAnglesOnUnitSphere(sphere->getFrame()->evalOrientation().T()*contact.getContourFrame(isphere)->getOrientation(false).col(0)));
+    contact.getContourFrame(isphere)->getOrientation(false).set(1, sphere->evalWu(contact.getContourFrame(isphere)->getZeta(false)));
+    contact.getContourFrame(isphere)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(isphere)->getOrientation(false).col(0),contact.getContourFrame(isphere)->getOrientation(false).col(1)));
 
     Vec3 Wn = contact.getContourFrame(iplane)->getOrientation(false).col(0);
 
@@ -60,26 +61,21 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePlane::updatewb(SingleContact &contact, int i) {
-    std::runtime_error("(ContactKinematicsSpherePlane::updatewb): Not implemented.");
 
     Vec3 n1 = contact.getContourFrame(iplane)->evalOrientation().col(0);
-    Vec3 n2 = contact.getContourFrame(isphere)->evalOrientation().col(0);
+    Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1);
+    Vec3 v1 = contact.getContourFrame(iplane)->getOrientation().col(2);
+    Vec3 u2 = contact.getContourFrame(isphere)->evalOrientation().col(1);
+    Vec3 v2 = contact.getContourFrame(isphere)->evalOrientation().col(2);
     Vec3 vC1 = contact.getContourFrame(iplane)->evalVelocity();
     Vec3 vC2 = contact.getContourFrame(isphere)->evalVelocity();
     Vec3 Om1 = contact.getContourFrame(iplane)->evalAngularVelocity();
     Vec3 Om2 = contact.getContourFrame(isphere)->evalAngularVelocity();
 
-    Vec2 zeta = computeAnglesOnUnitSphere(sphere->getFrame()->evalOrientation().T()*n2);
-
-    Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1);
-    Vec3 v1 = contact.getContourFrame(iplane)->getOrientation().col(2);
-    Vec3 u2 = sphere->evalWu(zeta);
-    Vec3 v2 = crossProduct(n2,u2);
-
-    Mat3x2 R1 = plane->evalWR(zeta);
-    Mat3x2 R2 = sphere->evalWR(zeta);
-    Mat3x2 U2 = sphere->evalWU(zeta);
-    Mat3x2 V2 = sphere->evalWV(zeta);
+    Mat3x2 R1 = plane->evalWR(contact.getContourFrame(iplane)->getZeta());
+    Mat3x2 R2 = sphere->evalWR(contact.getContourFrame(isphere)->getZeta());
+    Mat3x2 U2 = sphere->evalWU(contact.getContourFrame(isphere)->getZeta());
+    Mat3x2 V2 = sphere->evalWV(contact.getContourFrame(isphere)->getZeta());
 
     SqrMat A(4,NONINIT);
     A(RangeV(0,0),RangeV(0,1)) = -u1.T()*R1;

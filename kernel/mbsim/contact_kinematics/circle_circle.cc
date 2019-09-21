@@ -59,7 +59,6 @@ namespace MBSim {
   }
       
   void ContactKinematicsCircleCircle::updatewb(SingleContact &contact, int i) {
-    std::runtime_error("(ContactKinematicsCircleCircle::updatewb): Not implemented.");
 
     const Vec3 KrPC1 = circle0->getFrame()->evalOrientation().T()*(contact.getContourFrame(icircle0)->evalPosition() - circle0->getFrame()->evalPosition());
     Vec2 zeta1;

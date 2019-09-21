@@ -73,7 +73,7 @@ namespace MBSim {
 
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, planarcontour->evalWn(contact.getContourFrame(iplanarcontour)->getZeta(false)));
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(1, planarcontour->evalWu(contact.getContourFrame(iplanarcontour)->getZeta(false)));
-    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(2, planarcontour->evalWv(contact.getContourFrame(iplanarcontour)->getZeta(false)));
+    contact.getContourFrame(iplanarcontour)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(iplanarcontour)->getOrientation(false).col(0),contact.getContourFrame(iplanarcontour)->getOrientation(false).col(1)));
     contact.getContourFrame(ipoint)->getOrientation(false).set(0, -contact.getContourFrame(iplanarcontour)->getOrientation(false).col(0));
     contact.getContourFrame(ipoint)->getOrientation(false).set(1, -contact.getContourFrame(iplanarcontour)->getOrientation(false).col(1));
     contact.getContourFrame(ipoint)->getOrientation(false).set(2, contact.getContourFrame(iplanarcontour)->getOrientation(false).col(2));

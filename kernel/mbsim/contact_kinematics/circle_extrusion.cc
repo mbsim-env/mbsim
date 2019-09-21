@@ -67,7 +67,7 @@ namespace MBSim {
 
     contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta(false)));
     contact.getContourFrame(iextrusion)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(iextrusion)->getZeta(false)));
-    contact.getContourFrame(iextrusion)->getOrientation(false).set(2, extrusion->evalWv(contact.getContourFrame(iextrusion)->getZeta(false)));
+    contact.getContourFrame(iextrusion)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(iextrusion)->getOrientation(false).col(0),contact.getContourFrame(iextrusion)->getOrientation(false).col(1)));
     contact.getContourFrame(icircle)->getOrientation(false).set(0, -contact.getContourFrame(iextrusion)->getOrientation(false).col(0));
     contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
     contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2),contact.getContourFrame(icircle)->getOrientation(false).col(0)));
@@ -88,7 +88,6 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleExtrusion::updatewb(SingleContact &contact, int i) {
-    std::runtime_error("(ContactKinematicsCircleExtrusion::updatewb): Not implemented.");
 
     const Vec3 n1 = contact.getContourFrame(icircle)->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(icircle)->getOrientation().col(1);
