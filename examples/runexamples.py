@@ -1,11 +1,7 @@
-#! /usr/bin/python
+#! /usr/bin/python3
 
 # imports
-from __future__ import print_function # to enable the print function for backward compatiblity with python2
 import sys
-if sys.version_info[0]==2 and sys.version_info[1]<=6 or sys.version_info[0]==3 and sys.version_info[1]<=1 :
-  print("At least python version 2 >= 2.7 or python version 3 >= 3.2 is required!")
-  exit(1)
 import argparse
 import fnmatch
 import os
@@ -30,12 +26,8 @@ import json
 import fcntl
 import zipfile
 import tempfile
-if sys.version_info[0]==2: # to unify python 2 and python 3
-  import urllib as myurllib
-  import urllib as myurllibp
-else:
-  import urllib.request as myurllib
-  import urllib.parse as myurllibp
+import urllib.request
+import urllib.parse
 
 # global variables
 scriptDir=os.path.dirname(os.path.realpath(__file__))
@@ -298,7 +290,7 @@ def main():
   args.pushDIR=None # no default value (use /var/www/html/mbsim-env/MBSimDailyBuild/references for the build system)
   if args.action.startswith("updateReference="):
     if os.path.isdir(args.action[16:]):
-      args.updateURL="file://"+myurllib.pathname2url(os.path.abspath(args.action[16:]))
+      args.updateURL="file://"+urllib.request.pathname2url(os.path.abspath(args.action[16:]))
     else:
       args.updateURL=args.action[16:]
     args.action="updateReference"
@@ -558,12 +550,9 @@ def main():
       resultQueue = multiprocessing.Manager().Queue()
       poolResult=multiprocessing.Pool(args.j).map_async(functools.partial(runExample, resultQueue), directories, 1)
     else: # debugging
-      if sys.version_info[0]==2: # to enable backward compatiblity with python2
-        from Queue import Queue as MyQueue
-      else:
-        from queue import Queue as MyQueue
-      resultQueue = MyQueue()
-      poolResult=MyQueue(); poolResult.put(list(map(functools.partial(runExample, resultQueue), directories)))
+      import queue
+      resultQueue = queue.Queue()
+      poolResult=queue.Queue(); poolResult.put(list(map(functools.partial(runExample, resultQueue), directories)))
 
     # get the queue values = html table row
     missingDirectories=list(directories)
@@ -853,18 +842,18 @@ def runExample(resultQueue, example):
       if executeRet!=0:
         resultStr+='<td data-order="%d" class="'%(order)+('danger' if not willFail else 'success')+\
           '"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+\
-          myurllib.pathname2url(executeFN)+'">'
+          urllib.request.pathname2url(executeFN)+'">'
       else:
         resultStr+='<td data-order="%d" class="'%(order)+('success' if not willFail else 'danger')+\
         '"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+\
-          myurllib.pathname2url(executeFN)+'">'
+          urllib.request.pathname2url(executeFN)+'">'
       resultStr+=text+'</a>'
       # add all additional output files
       if len(outfiles)>0:
          resultStr+=' <span class="dropdown"><button class="btn btn-default btn-xs" data-toggle="dropdown">more <span class="caret"></span>'+\
                     '</button><div class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;">'
          for outfile in outfiles:
-            resultStr+='<a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+os.path.splitext(outfile)[0]+'</a><br/>'
+            resultStr+='<a href="'+urllib.request.pathname2url(pj(example[0], outfile))+'">'+os.path.splitext(outfile)[0]+'</a><br/>'
          resultStr+='</div></span>'
       resultStr+='</td>'
     if not args.disableRun:
@@ -917,13 +906,13 @@ def runExample(resultQueue, example):
       # result
       resultStr+='<td data-order="%d%d%d%d">'%(0 if abs(ombvRet)+abs(h5pRet)+abs(guiRet)==0 else (1 if willFail else 2),
                                                int(len(ombvFiles)>0), int(len(h5pFiles)>0), int(guiFile!=None))+\
-        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_openmbv.txt")),
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(urllib.request.pathname2url(pj(example[0], "gui_openmbv.txt")),
           "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/openmbv.svg" alt="ombv"/></a>'+\
-        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_h5plotserie.txt")),
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(urllib.request.pathname2url(pj(example[0], "gui_h5plotserie.txt")),
           "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></a>'+\
-        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(myurllib.pathname2url(pj(example[0], "gui_mbsimgui.txt")),
+        '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(urllib.request.pathname2url(pj(example[0], "gui_mbsimgui.txt")),
           "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></a>'
       # add all additional output files
@@ -931,7 +920,7 @@ def runExample(resultQueue, example):
          resultStr+=' <span class="dropdown"><button class="btn btn-default btn-xs" data-toggle="dropdown">more <span class="caret"></span>'+\
                     '</button><div class="dropdown-menu" style="padding-left: 0.5em; padding-right: 0.5em;">'
          for outfile in outfiles:
-            resultStr+='<a href="'+myurllib.pathname2url(pj(example[0], outfile))+'">'+os.path.splitext(outfile)[0]+'</a><br/>'
+            resultStr+='<a href="'+urllib.request.pathname2url(pj(example[0], outfile))+'">'+os.path.splitext(outfile)[0]+'</a><br/>'
          resultStr+='</div></span>'
       resultStr+='</td>'
       if ombvRet!=0 or h5pRet!=0 or guiRet!=0:
@@ -965,11 +954,11 @@ def runExample(resultQueue, example):
         nrFailed=0
       else:
         if nrFailed==0:
-          resultStr+='<td data-order="0" class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
+          resultStr+='<td data-order="0" class="success"><div class="pull-left"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+urllib.request.pathname2url(compareFN)+\
                      '">passed <span class="badge">'+str(nrAll)+'</span></a></div>'+\
                      '<div class="pull-right">[<input type="checkbox" disabled="disabled"/>]</div></td>'
         else:
-          resultStr+='<td data-order="3" class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(compareFN)+\
+          resultStr+='<td data-order="3" class="danger"><div class="pull-left"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+urllib.request.pathname2url(compareFN)+\
                      '">failed <span class="badge">'+str(nrFailed)+'</span> of <span class="badge">'+str(nrAll)+\
                      '</span></a></div><div class="pull-right">[<input class="_EXAMPLE'+\
                      '" type="checkbox" name="'+example[0]+'" disabled="disabled"/>]</div></td>'
@@ -988,7 +977,7 @@ def runExample(resultQueue, example):
       if nrDeprecated==0:
         resultStr+='<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;none</td>'
       else:
-        resultStr+='<td data-order="1" class="warning"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;<a href="'+myurllib.pathname2url(executeFN)+'">'+str(nrDeprecated)+' found</a></td>'
+        resultStr+='<td data-order="1" class="warning"><span class="glyphicon glyphicon-warning-sign alert-warning"></span>&nbsp;<a href="'+urllib.request.pathname2url(executeFN)+'">'+str(nrDeprecated)+' found</a></td>'
 
     # validate XML
     if not args.disableValidate:
@@ -1030,11 +1019,11 @@ def runExample(resultQueue, example):
         navA="/../.."
         navB="/runexamples_report/result_current"
       print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%
-        (parDirs, navA, currentID-1, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
+        (parDirs, navA, currentID-1, navB, urllib.request.pathname2url(htmlOutputFN)), file=htmlOutputFD)
       print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%
-        (parDirs, navA, currentID+1, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
+        (parDirs, navA, currentID+1, navB, urllib.request.pathname2url(htmlOutputFN)), file=htmlOutputFD)
       print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%
-        (parDirs, navA, navB, myurllib.pathname2url(htmlOutputFN)), file=htmlOutputFD)
+        (parDirs, navA, navB, urllib.request.pathname2url(htmlOutputFN)), file=htmlOutputFD)
       print('                 <a class="btn btn-info btn-xs" href="%s%s%s/index.html"><span class="glyphicon glyphicon-eject"> </span> parent</a></dd>'%
         (parDirs, navA, navB), file=htmlOutputFD)
       print('</dl>', file=htmlOutputFD)
@@ -1044,10 +1033,10 @@ def runExample(resultQueue, example):
 
       failed, total=validateXML(example, False, htmlOutputFD)
       if failed==0:
-        resultStr+='<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">valid <span class="badge">'+\
+        resultStr+='<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+urllib.request.pathname2url(htmlOutputFN)+'">valid <span class="badge">'+\
                    str(total)+'</span></a></td>'
       else:
-        resultStr+='<td data-order="1" class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(htmlOutputFN)+'">'+\
+        resultStr+='<td data-order="1" class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+urllib.request.pathname2url(htmlOutputFN)+'">'+\
                    'failed <span class="badge">'+str(failed)+'</span> of <span class="badge">'+str(total)+'</span></a></td>'
         runExampleRet=1
       # write footer
@@ -1076,7 +1065,7 @@ def runExample(resultQueue, example):
     print("", file=fatalScriptErrorFD)
     print(traceback.format_exc(), file=fatalScriptErrorFD)
     fatalScriptErrorFD.close()
-    resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+myurllib.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
+    resultStr='<tr><td>'+example[0].replace('/', u'/\u200B')+'</td><td class="danger"><a href="'+urllib.request.pathname2url(fatalScriptErrorFN)+'">fatal script error</a></td>%s</tr>' \
       %('<td>-</td>'*(7-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
       args.disableRun or (not args.buildSystemRun) or not args.webapp, args.disableRun, args.disableValidate])))
     runExampleRet=1
@@ -1120,15 +1109,15 @@ def webapp(example):
       gui['file']=[example+'/FMI_cosim.mbsimprj.xml']
   return '<td data-order="%03d%03d%03d">'%(len(ombv), len(h5p), len(gui))+\
       ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
-       myurllibp.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       urllib.parse.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(ombv)>0 else 'hidden')+';">'+\
        '<img src="/mbsim/html/openmbv.svg" alt="ombv"/></button>&nbsp;')+\
       ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
-       myurllibp.urlencode(h5p, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       urllib.parse.urlencode(h5p, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(h5p)>0 else 'hidden')+';">'+\
        '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></button>&nbsp;')+\
       ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
-       myurllibp.urlencode(gui, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       urllib.parse.urlencode(gui, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(gui)>0 else 'hidden')+';">'+\
        '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></button>&nbsp;')+\
     '</td>'
@@ -1442,7 +1431,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%
     (parDirs, navA, navB, example.replace('/', u'/\u200B')+u"/\u200B"+filename+u"/\u200B"+datasetName+u"/\u200B"+str(column)+u"/\u200Bdiffplot.html"), file=diffHTMLPlotFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/%s%s%s/compare.html"><span class="glyphicon glyphicon-eject"> </span> parent</a></dd>'%
-    (parDirs, myurllib.pathname2url(example), navA, navB), file=diffHTMLPlotFD)
+    (parDirs, urllib.request.pathname2url(example), navA, navB), file=diffHTMLPlotFD)
   print('</dl>', file=diffHTMLPlotFD)
   print('<p><span class="glyphicon glyphicon-info-sign"> </span> A result differs if <b>at least at one time point</b> the absolute tolerance <b>and</b> the relative tolerance is larger then the requested.</p>', file=diffHTMLPlotFD)
   if dataArrayRef.shape[0]!=dataArrayCur.shape[0]:
@@ -1638,7 +1627,7 @@ def compareDatasetVisitor(h5CurFile, data, example, nrAll, nrFailed, refMemberNa
                          atol=args.atol, equal_nan=True)):
           nrFailed[0]+=1
           if args.maxCompareFailure==0 or nrFailed[0]<=args.maxCompareFailure:
-            cell.append(('<a href="'+myurllib.pathname2url(diffFilename)+'">failed</a>',"d"))
+            cell.append(('<a href="'+urllib.request.pathname2url(diffFilename)+'">failed</a>',"d"))
             dataArrayRef=numpy.concatenate((getColumn(refObj, 0, False), getColumn(refObj, column, False)), axis=1)
             dataArrayCur=numpy.concatenate((getColumn(curObj, 0, False), getColumn(curObj, column, False)), axis=1)
             createDiffPlot(pj(args.reportOutDir, example, diffFilename), example, h5CurFile.filename, datasetName,
@@ -1746,11 +1735,11 @@ def compareExample(example, compareFN):
     navA="/../.."
     navB="/runexamples_report/result_current"
   print('<dt>Navigate:</dt><dd><a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-backward"> </span> previous</a>'%
-    (parDirs, navA, currentID-1, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
+    (parDirs, navA, currentID-1, navB, urllib.request.pathname2url(pj(example, "compare.html"))), file=compareFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_%010d%s/%s"><span class="glyphicon glyphicon-step-forward"> </span> next</a>'%
-    (parDirs, navA, currentID+1, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
+    (parDirs, navA, currentID+1, navB, urllib.request.pathname2url(pj(example, "compare.html"))), file=compareFD)
   print('                 <a class="btn btn-info btn-xs" href="%s/..%s/result_current%s/%s"><span class="glyphicon glyphicon-fast-forward"> </span> newest</a>'%
-    (parDirs, navA, navB, myurllib.pathname2url(pj(example, "compare.html"))), file=compareFD)
+    (parDirs, navA, navB, urllib.request.pathname2url(pj(example, "compare.html"))), file=compareFD)
   print('                 <a class="btn btn-info btn-xs" href="%s%s%s/index.html"><span class="glyphicon glyphicon-eject"> </span> parent</a></dd>'%
     (parDirs, navA, navB), file=compareFD)
   print('</dl>', file=compareFD)
@@ -1892,14 +1881,14 @@ def pushReference():
 def updateReference():
   import requests
   def downloadFileIfDifferent(s, src):
-    remoteSHA1Url=args.updateURL+"/"+myurllib.pathname2url(src+".sha1")
+    remoteSHA1Url=args.updateURL+"/"+urllib.request.pathname2url(src+".sha1")
     remoteSHA1=s.get(remoteSHA1Url).content.decode('utf-8')
     try:
       localSHA1=hashlib.sha1(codecs.open(src, "rb").read()).hexdigest()
     except IOError: 
       localSHA1=""
     if remoteSHA1!=localSHA1:
-      remoteUrl=args.updateURL+"/"+myurllib.pathname2url(src)
+      remoteUrl=args.updateURL+"/"+urllib.request.pathname2url(src)
       print("  Download "+remoteUrl)
       if not os.path.isdir(os.path.dirname(src)): os.makedirs(os.path.dirname(src))
       codecs.open(src, "wb").write(s.get(remoteUrl).content)
@@ -1911,7 +1900,7 @@ def updateReference():
     curNumber+=1
     print("%s: Example %03d/%03d; %5.1f%%; %s"%("Update reference", curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
     # loop over all file in src/index.txt
-    indexUrl=args.updateURL+"/"+myurllib.pathname2url(pj(example[0], "reference", "index.txt"))
+    indexUrl=args.updateURL+"/"+urllib.request.pathname2url(pj(example[0], "reference", "index.txt"))
     res=s.get(indexUrl)
     if res.status_code==404:
       continue
@@ -1947,9 +1936,9 @@ def validateXML(example, consoleOutput, htmlOutputFD):
         if subprocessCall(exePrefix()+[mbxmlutilsvalidate]+typesValue+[pj(root, filename)],
                           outputFD)!=0:
           nrFailed+=1
-          print('<td data-order="1" class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
+          print('<td data-order="1" class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;<a href="'+urllib.request.pathname2url(filename+".txt")+'">failed</a></td>', file=htmlOutputFD)
         else:
-          print('<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+myurllib.pathname2url(filename+".txt")+'">passed</a></td>', file=htmlOutputFD)
+          print('<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;<a href="'+urllib.request.pathname2url(filename+".txt")+'">passed</a></td>', file=htmlOutputFD)
         print('</tr>', file=htmlOutputFD)
         nrTotal+=1
         outputFD.close()
@@ -2064,8 +2053,8 @@ def coverage(mainFD):
     print('<td class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;', file=mainFD)
   else:
     print('<td class="danger"><span class="glyphicon glyphicon-exclamation-sign alert-danger"></span>&nbsp;', file=mainFD)
-  print('<a href="'+myurllib.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
-        '<a href="'+myurllib.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%s</span></a></td>'%(covRateStr), file=mainFD)
+  print('<a href="'+urllib.request.pathname2url(pj("coverage", "log.txt"))+'">%s</a> - '%("done" if ret==0 else "failed")+
+        '<a href="'+urllib.request.pathname2url(pj("coverage", "index.html"))+'"><b>Coverage</b> <span class="badge">%s</span></a></td>'%(covRateStr), file=mainFD)
   for i in range(0, 7-sum([args.disableRun, args.disableRun, args.disableRun, not args.checkGUIs, args.disableCompare,
     args.disableRun or (not args.buildSystemRun) or not args.webapp, args.disableRun, args.disableValidate])):
     print('<td>-</td>', file=mainFD)
