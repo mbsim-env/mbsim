@@ -51,7 +51,7 @@ namespace MBSim {
     if ((s>=0) && (s<=linesegment->getLength())) {
       contact.getContourFrame(iline)->setOrientation(linesegment->getFrame()->getOrientation());
       contact.getContourFrame(icircle)->getOrientation(false).set(0, -linesegment->getFrame()->getOrientation().col(0));
-      contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->evalOrientation().col(2));
+      contact.getContourFrame(icircle)->getOrientation(false).set(2, circle->getFrame()->getOrientation().col(2));
       contact.getContourFrame(icircle)->getOrientation(false).set(1, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(2), contact.getContourFrame(icircle)->getOrientation(false).col(0)));
       g = contact.getContourFrame(iline)->getOrientation(false).col(0).T()*(WC - WL) - circle->getRadius();
       contact.getContourFrame(icircle)->setPosition(WC - contact.getContourFrame(iline)->getOrientation(false).col(0)*circle->getRadius());
