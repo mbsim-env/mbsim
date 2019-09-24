@@ -41,73 +41,78 @@ namespace MBSim {
       igear[0] = 0;
       igear[1] = 1;
     }
-    m = gear[0]->getModule()/cos(gear[0]->getHelixAngle());
-    al0 = atan(tan(gear[0]->getPressureAngle())/cos(gear[0]->getHelixAngle()));
-    double phi0 = tan(al0)-al0;
-    double s0 = m*M_PI/2;
-    double dk[2];
-    for(int i=0; i<2; i++) {
-      z[i] = gear[i]->getNumberOfTeeth();
-      d0[i] = m*z[i];
-      db[i] = d0[i]*cos(al0);
-      dk[i] = d0[i]+2*m;
-      rb[i] = db[i]/2;
-      sb[i] = db[i]*(s0/d0[i]+phi0)-((i==1 and not gear[1]->getExternalToothed())?-gear[i]->getBacklash()*cos(al0):gear[i]->getBacklash()*cos(al0));
-      ga[i] = sb[i]/rb[i]/2;
-      beta[i] = gear[i]->getHelixAngle();
-      delmin[i] = -al0-ga[i];
-      delmax[i] = tan(acos(db[i]/dk[i]))-al0-ga[i];
-    }
+    beta[0] = gear[0]->getHelixAngle();
+    beta[1] = gear[1]->getHelixAngle();
+    m = gear[0]->getModule()/cos(beta[0]);
+    al0 = gear[0]->getPressureAngle();
+    z[0] = gear[0]->getNumberOfTeeth();
+    z[1] = gear[1]->getNumberOfTeeth();
+    delh1 = (M_PI/2-gear[0]->getBacklash()/m)/z[0];
+    delh2 = (M_PI/2-(gear[1]->getExternalToothed()?1:-1)*gear[1]->getBacklash()/m)/z[1];
+    a0 = m*((gear[1]->getExternalToothed()?z[0]:-z[0])+z[1])/2;
+    al = atan(tan(gear[0]->getPressureAngle())/cos(gear[0]->getHelixAngle()));
+    signe = gear[1]->getExternalToothed()?1:-1;
+    etamax1[0] = tan(al);
+    etamax1[1] = tan(acos(m*z[0]*cos(al)/(m*z[0]+2*m)))-tan(al);
+    etamax2[0] = tan(al);
+    etamax2[1] = tan(acos(m*z[1]*cos(al)/(m*z[1]+2*m)))-tan(al);
   }
 
   void ContactKinematicsCylindricalGearCylindricalGear::updateg(SingleContact &contact, int ii) {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
-    double eta[2], del[2];
-    Vec3 rS1S2 = gear[1]->getExternalToothed()?(gear[1]->getFrame()->evalPosition() - gear[0]->getFrame()->evalPosition()):(gear[0]->getFrame()->evalPosition() - gear[1]->getFrame()->evalPosition());
+    Vec3 rS1S2 = gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition();
     double a = nrm2(rS1S2);
-    double a0 = ((gear[1]->getExternalToothed()?d0[0]:-d0[0])+d0[1])/2;
-    al = acos(a0/a*cos(al0));
+    double dal = acos(a0/a*cos(al))-al;
+    Vec3 ey1 = gear[0]->getFrame()->evalOrientation().T()*(rS1S2/(-signe*a));
+    Vec3 ey2 = gear[1]->getFrame()->evalOrientation().T()*(rS1S2/a);
+    double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2)));
+    double phi2 = (ey2(0)>=0?1:-1)*acos(ey2(1)/sqrt(pow(ey2(0),2)+pow(ey2(1),2)));
 
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
-      Vec3 rOP[2], rSP[2];
+      Vec3 rOP[2];
       vector<int> v[2];
       if(maxNumContacts==1) {
-        Vec3 rSPsave;
-        for(int j=0; j<2; j++) {
-          Vec3 rP1S2 = rS1S2 - (gear[1]->getExternalToothed()?rSPsave:-rSPsave);
-          int signj = j?(gear[1]->getExternalToothed()?-1:1):1;
-          double cdel = 0;
-          int k = 0;
-          for(int k_=0; k_<z[j]; k_++) {
-            double ep = k_*2*M_PI/z[j]+signi*ga[j];
-            rSP[j](0) = -sin(ep);
-            rSP[j](1) = cos(ep);
-            rSP[j] = gear[j]->getFrame()->getOrientation()*rSP[j];
-            double cdel_ = signj*(rSP[j].T()*rP1S2/a);
-            if(cdel_>cdel) {
-              cdel = cdel_;
-              k = k_;
-              rSPsave = rb[0]*rSP[0];
-            }
+        int k = 0;
+        double eta = 1e10;
+        int signk = (phi2 - signi*delh2)>0?-1:1;
+        for(int k_=0; k_<z[1]; k_++) {
+          double eta_ = fabs(phi2 + signk*k_*2*M_PI/z[1] - signi*delh2);
+          if(eta_<eta) {
+            eta = eta_;
+            k = k_;
           }
-          v[j].push_back(k);
         }
+        v[1].push_back(signk*k);
+        double phi1corr = signe*(phi2 + signk*k*2*M_PI/z[1] - signi*delh2)*z[1]/z[0];
+
+        k = 0;
+        eta = 1e10;
+        signk = (phi1 - signi*delh1 + phi1corr)>0?-1:1;
+        for(int k_=0; k_<z[0]; k_++) {
+          double eta_ = fabs(phi1 + signk*k_*2*M_PI/z[0] - signi*delh1 + phi1corr);
+          if(eta_<eta) {
+            eta = eta_;
+            k = k_;
+          }
+        }
+        v[0].push_back(signk*k);
       }
       else {
-        for(int j=0; j<2; j++) {
-          int signj = j?(gear[1]->getExternalToothed()?-1:1):1;
-          for(int k_=0; k_<z[j]; k_++) {
-            double ep = k_*2*M_PI/z[j];
-            rSP[j](0) = -sin(ep);
-            rSP[j](1) = cos(ep);
-            rSP[j] = gear[j]->getFrame()->getOrientation()*rSP[j];
-            double cdel = signj*(rSP[j].T()*rS1S2/a);
-            double del = signi*signj*(gear[j]->getFrame()->getOrientation().col(2).T()*crossProduct(rS1S2,rSP[j])>=0?acos(cdel):-acos(cdel));
-            if(del>delmin[j] and del<delmax[j])
-              v[j].push_back(k_);
+//        for(int j=0; j<2; j++) {
+          for(int k_=0; k_<z[0]; k_++) {
+            double signk = (phi1 - signi*(delh1+dal))>0?-1:1;
+            double eta = -(phi1 + signk*k_*2*M_PI/z[0] - signi*(delh1+dal));
+            if(eta>-etamax1[i] and eta<etamax1[not i])
+              v[0].push_back(signk*k_);
           }
-        }
+          for(int k_=0; k_<z[1]; k_++) {
+            double signk = (phi2 - signi*(delh2+dal))>0?-1:1;
+            double eta = -(phi2 + signk*k_*2*M_PI/z[1] - signi*(delh2+dal));
+            if(eta>-etamax2[i] and eta<etamax2[not i])
+              v[1].push_back(signk*k_);
+          }
+//        }
       }
 
       double k[2];
@@ -116,51 +121,39 @@ namespace MBSim {
           k[0] = i0;
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
-            for(int j=0; j<2; j++) {
-              int signj = j?(gear[1]->getExternalToothed()?-1:1):1;
-              rSP[j](0) = -sin(k[j]*2*M_PI/z[j]);
-              rSP[j](1) = cos(k[j]*2*M_PI/z[j]);
-              rSP[j] = gear[j]->getFrame()->getOrientation()*rSP[j];
-              double cdel = signj*(rSP[j].T()*rS1S2/a);
-              del[j] = signi*signj*(gear[j]->getFrame()->getOrientation().col(2).T()*crossProduct(rS1S2,rSP[j])>=0?acos(cdel):-acos(cdel));
-              eta[j] = ga[j] + del[j] + al;
-              rSP[j](0) = signi*rb[j]*(sin(eta[j])-cos(eta[j])*eta[j]);
-              rSP[j](1) = rb[j]*(cos(eta[j])+sin(eta[j])*eta[j]);
-              rSP[j] = gear[j]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[j]+k[j]*2*M_PI/z[j])*rSP[j];
-              rOP[j] = gear[j]->getFrame()->getPosition() + rSP[j];
-            }
+            Vec2 zeta1(NONINIT);
+            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*(delh1+dal));
+            zeta1(1) = -m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            gear[0]->setFlank(signi);
+            gear[0]->setTooth(k[0]);
+            rOP[0] = gear[0]->evalPosition(zeta1);
 
-            Vec3 n1(NONINIT);
-            n1(0) = -signi*cos(eta[0]);
-            n1(1) = sin(eta[0]);
-            n1(2) = -signi*cos(al)*tan(beta[0]);
-            n1 /= sqrt(1+pow(cos(al)*tan(beta[0]),2));
-            n1 = gear[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[0]*2*M_PI/z[0])*n1;
+            Vec2 zeta2(NONINIT);
+            zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal));
+            zeta2(1) = -signe*m*z[1]/2*zeta2(0)*pow(sin(al0),2)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            gear[1]->setFlank(signi);
+            gear[1]->setTooth(k[1]);
+            rOP[1] = gear[1]->evalPosition(zeta2);
 
-            Vec3 u1(NONINIT);
-            u1(0) = signi*sin(eta[0]);
-            u1(1) = cos(eta[0]);
-            u1(2) = 0;
-            u1 = gear[0]->getFrame()->getOrientation()*BasicRotAIKz(signi*ga[0]+k[0]*2*M_PI/z[0])*u1;
+            Vec3 n1 = gear[0]->evalWn(zeta1);
 
             double g = n1.T()*(rOP[1]-rOP[0]);
-            if(g>-0.5*M_PI*d0[0]/z[0] and g<contact.getGeneralizedRelativePosition(false)(0)) {
+            if(g>-0.5*M_PI*m and g<contact.getGeneralizedRelativePosition(false)(0)) {
               ksave[ii][0] = k[0];
               ksave[ii][1] = k[1];
-              etasave[ii][0] = eta[0];
-              etasave[ii][1] = eta[1];
               signisave[ii] = signi;
-              delsave = del[0];
 
+              contact.getContourFrame(igear[0])->setZeta(zeta1);
               contact.getContourFrame(igear[0])->setPosition(rOP[0]);
               contact.getContourFrame(igear[0])->getOrientation(false).set(0,n1);
-              contact.getContourFrame(igear[0])->getOrientation(false).set(1,u1);
-              contact.getContourFrame(igear[0])->getOrientation(false).set(2,crossProduct(n1,contact.getContourFrame(igear[0])->getOrientation(false).col(1)));
+              contact.getContourFrame(igear[0])->getOrientation(false).set(1,gear[0]->evalWu(zeta1));
+              contact.getContourFrame(igear[0])->getOrientation(false).set(2,crossProduct(contact.getContourFrame(igear[0])->getOrientation(false).col(0),contact.getContourFrame(igear[0])->getOrientation(false).col(1)));
 
+              contact.getContourFrame(igear[1])->setZeta(zeta2);
               contact.getContourFrame(igear[1])->setPosition(rOP[1]);
-              contact.getContourFrame(igear[1])->getOrientation(false).set(0, -contact.getContourFrame(igear[0])->getOrientation(false).col(0));
-              contact.getContourFrame(igear[1])->getOrientation(false).set(1, -contact.getContourFrame(igear[0])->getOrientation(false).col(1));
-              contact.getContourFrame(igear[1])->getOrientation(false).set(2, contact.getContourFrame(igear[0])->getOrientation(false).col(2));
+              contact.getContourFrame(igear[1])->getOrientation(false).set(0,gear[1]->evalWn(zeta2));
+              contact.getContourFrame(igear[1])->getOrientation(false).set(1,gear[1]->evalWu(zeta2));
+              contact.getContourFrame(igear[1])->getOrientation(false).set(2,crossProduct(contact.getContourFrame(igear[1])->getOrientation(false).col(0),contact.getContourFrame(igear[1])->getOrientation(false).col(1)));
 
               contact.getGeneralizedRelativePosition(false)(0) = g;
             }
@@ -172,31 +165,26 @@ namespace MBSim {
 
   void ContactKinematicsCylindricalGearCylindricalGear::updatewb(SingleContact &contact, int ii) {
     const Vec3 n1 = contact.getContourFrame(igear[0])->evalOrientation().col(0);
-    const Vec3 vC1 = contact.getContourFrame(igear[0])->evalVelocity();
-    const Vec3 vC2 = contact.getContourFrame(igear[1])->evalVelocity();
     const Vec3 u1 = contact.getContourFrame(igear[0])->evalOrientation().col(1);
     const Vec3 u2 = contact.getContourFrame(igear[1])->evalOrientation().col(1);
-    Vec3 R[2], N1, U2;
-    for(int j=0; j<2; j++) {
-      R[j](0) = signisave[ii]*rb[j]*sin(etasave[ii][j])*etasave[ii][j];
-      R[j](1) = rb[j]*cos(etasave[ii][j])*etasave[ii][j];
-      R[j] = gear[j]->getFrame()->getOrientation()*BasicRotAIKz(signisave[ii]*ga[j]+ksave[ii][j]*2*M_PI/z[j])*R[j];
-    }
-    N1(0) = signisave[ii]*sin(etasave[ii][0])/sqrt(1+pow(cos(al)*tan(beta[0]),2));
-    N1(1) = cos(etasave[ii][0])/sqrt(1+pow(cos(al)*tan(beta[0]),2));
-    N1 = gear[0]->getFrame()->getOrientation()*BasicRotAIKz(signisave[ii]*ga[0]+ksave[ii][0]*2*M_PI/z[0])*N1;
-    int sign2 = gear[1]->getExternalToothed()?1:-1;
-    U2(0) = signisave[ii]*sign2*cos(etasave[ii][1]);
-    U2(1) = -sign2*sin(etasave[ii][1]);
-    U2 = gear[1]->getFrame()->getOrientation()*BasicRotAIKz(signisave[ii]*ga[1]+ksave[ii][1]*2*M_PI/z[1])*U2;
+    const Vec3 vC1 = contact.getContourFrame(igear[0])->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(igear[1])->evalVelocity();
+    gear[0]->setFlank(signisave[ii]);
+    gear[0]->setTooth(ksave[ii][0]);
+    gear[1]->setFlank(signisave[ii]);
+    gear[1]->setTooth(ksave[ii][1]);
+    Vec3 R1 = gear[0]->evalWs(contact.getContourFrame(igear[0])->getZeta());
+    Vec3 R2 = gear[1]->evalWs(contact.getContourFrame(igear[1])->getZeta());
+    Vec3 N1 = gear[0]->evalParDer1Wn(contact.getContourFrame(igear[0])->getZeta());
+    Vec3 U2 = gear[1]->evalParDer1Wu(contact.getContourFrame(igear[1])->getZeta());
     const Vec3 parnPart1 = crossProduct(gear[0]->getFrame()->evalAngularVelocity(),n1);
     const Vec3 paruPart2 = crossProduct(gear[1]->getFrame()->evalAngularVelocity(),u2);
-    const Vec3 parWvCParZeta1 = crossProduct(gear[0]->getFrame()->evalAngularVelocity(),R[0]);
-    const Vec3 parWvCParZeta2 = crossProduct(gear[1]->getFrame()->evalAngularVelocity(),R[1]);
+    const Vec3 parWvCParZeta1 = crossProduct(gear[0]->getFrame()->evalAngularVelocity(),R1);
+    const Vec3 parWvCParZeta2 = crossProduct(gear[1]->getFrame()->evalAngularVelocity(),R2);
 
     SqrMat A(2,NONINIT);
-    A(0,0)=-u1.T()*R[0].col(0);
-    A(0,1)=u1.T()*R[1].col(0);
+    A(0,0)=-u1.T()*R1.col(0);
+    A(0,1)=u1.T()*R2.col(0);
     A(1,0)=u2.T()*N1.col(0);
     A(1,1)=n1.T()*U2.col(0);
 

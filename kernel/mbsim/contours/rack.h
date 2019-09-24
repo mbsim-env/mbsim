@@ -45,6 +45,12 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
       /***************************************************/
 
+      /* INHERITED INTERFACE OF CONTOUR */
+      fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;
+      /***************************************************/
+
       /* GETTER / SETTER */
       void setNumberOfTeeth(int N_) { N = N_; }
       int getNumberOfTeeth() { return N; }
@@ -60,6 +66,8 @@ namespace MBSim {
       double getPressureAngle() { return al; }
       void setBacklash(double b_) { b = b_; }
       double getBacklash() { return b; }
+      void setFlank(int flank) { signi = flank; }
+      void setTooth(int tooth) { k = tooth; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
@@ -77,6 +85,10 @@ namespace MBSim {
       double m{16e-3};
       double al{0.349065850398866};
       double b{0};
+
+      int signi{0};
+      int k{0};
+      double s0h;
   };
 
 }

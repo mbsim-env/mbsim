@@ -48,8 +48,6 @@ namespace MBSim {
       void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
-      double getDelta() const { return delsave; }
-
     private:
       /**
        * \brief contour index
@@ -58,17 +56,14 @@ namespace MBSim {
       double m;
       double al0, al;
       int z[2];
-      double d0[2];
-      double db[2];
-      double rb[2];
-      double sb[2];
       double beta[2];
       double ga[2];
-      double delmin[2], delmax[2];
+      double etamax1[2], etamax2[2];
       int ksave[2][2];
-      double etasave[2][2];
       int signisave[2]{1,1};
-      double delsave;
+      double delh1, delh2;
+      double a0;
+      int signe;
 
       /**
        * \brief contour classes

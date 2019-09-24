@@ -78,36 +78,31 @@
               <size unit="dm">1</size>
             </enableOpenMBVFrameC></RigidBody>
         <RigidBody name="RigidBody2" xmlns="http://www.mbsim-env.de/MBSim">
-            <generalizedInitialPosition>
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>pi/z2</ele>
-              </xmlVector>
-            </generalizedInitialPosition>
-            <frameOfReference ref="../Frame[P]"/>
-            <mass unit="kg">mass</mass>
-            <inertiaTensor unit="kg*m^2">
-              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <row>
-                  <ele>0.01</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </row>
-                <row>
-                  <ele>0</ele>
-                  <ele>0.01</ele>
-                  <ele>0</ele>
-                </row>
-                <row>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0.5*mass*(m*z2/2)^2</ele>
-                </row>
-              </xmlMatrix>
-            </inertiaTensor>
-            <stateDependentRotation>
-              <RotationAboutZAxis/>
-            </stateDependentRotation>
-            <frames>
+          <frameOfReference ref="../Frame[P]"/>
+          <mass unit="kg">mass</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.5*mass*(m*z2/2)^2</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentRotation>
+            <RotationAboutZAxis/>
+          </stateDependentRotation>
+          <frames>
             </frames><contours>
               <CylindricalGear name="CylindricalGear">
                 <numberOfTeeth>z2</numberOfTeeth>
@@ -127,8 +122,7 @@
                   <transparency unit="-">0.3</transparency>
                 </enableOpenMBV>
               </CylindricalGear>
-            </contours>
-            <enableOpenMBVFrameC>
+            </contours><enableOpenMBVFrameC>
               <size unit="dm">1</size>
             </enableOpenMBVFrameC></RigidBody>
       </objects>
@@ -215,5 +209,8 @@
     <endTime unit="s">4</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
+
+
+
 
 </MBSimProject>

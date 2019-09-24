@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/rack.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/utils.h"
 
 using namespace std;
@@ -30,8 +31,37 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Rack)
 
+  Vec3 Rack::evalKrPS(const Vec2 &zeta) {
+    static Vec3 KrPS(NONINIT);
+    static Vec3 d("[1;0;0]");
+    double eta = zeta(0);
+    double xi = zeta(1);
+    KrPS(0) = -eta*sin(al)*cos(be)+xi*sin(be);
+    KrPS(1) = signi*eta*cos(al);
+    KrPS(2) = eta*sin(al)*sin(be)+xi*cos(be);
+    return d*(k*M_PI*m/cos(be)+signi*s0h)+KrPS;
+  }
+
+  Vec3 Rack::evalKs(const Vec2 &zeta) {
+    static Vec3 Ks(NONINIT);
+    Ks(0) = -sin(al)*cos(be);
+    Ks(1) = signi*cos(al);
+    Ks(2) = sin(al)*sin(be);
+    return Ks;
+  }
+
+  Vec3 Rack::evalKt(const Vec2 &zeta) {
+    static Vec3 Kt;
+    Kt(0) = sin(be);
+    Kt(2) = cos(be);
+    return Kt;
+  }
+
   void Rack::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==plotting) {
+    if(stage==preInit) {
+      s0h = (m/cos(be)*M_PI/2-b)/2;
+    }
+    else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setNumberOfTeeth(N);
         static_pointer_cast<OpenMBV::Rack>(openMBVRigidBody)->setHeight(h);

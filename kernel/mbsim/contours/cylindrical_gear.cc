@@ -19,7 +19,9 @@
 
 #include <config.h>
 #include "mbsim/contours/cylindrical_gear.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/utils.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -30,8 +32,93 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, CylindricalGear)
 
+  Vec3 CylindricalGear::evalKrPS(const Vec2 &zeta) {
+    static Vec3 KrPS(NONINIT);
+    double signe = (ext?1:-1);
+    double eta = zeta(0);
+    double xi = zeta(1);
+    double x = -r0*eta;
+    double l = (x-signe*xi*sin(be))*sin(al)/cos(be);
+    double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
+    double b = signi*l*cos(al)-r0;
+    double c = -l*sin(al)*sin(be)+signe*xi*cos(be);
+    KrPS(0) = a*cos(eta)-b*sin(eta);
+    KrPS(1) = a*sin(eta)+b*cos(eta);
+    KrPS(2) = c;
+    return BasicRotAIKz(k*2*M_PI/N-signi*delh)*KrPS;
+  }
+
+  Vec3 CylindricalGear::evalKs(const Vec2 &zeta) {
+    static Vec3 Ks(NONINIT);
+    double signe = (ext?1:-1);
+    double eta = zeta(0);
+    double xi = zeta(1);
+    double x = -r0*eta;
+    double l = (x-signe*xi*sin(be))*sin(al)/cos(be);
+    double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
+    double b = signi*l*cos(al)-r0;
+    double ls = -r0*sin(al)/cos(be);
+    double as = -r0-ls*sin(al)*cos(be);
+    double bs = signi*ls*cos(al);
+    double cs = -ls*sin(al)*sin(be);
+    Ks(0) = as*cos(eta)-a*sin(eta)-bs*sin(eta)-b*cos(eta);
+    Ks(1) = as*sin(eta)+a*cos(eta)+bs*cos(eta)-b*sin(eta);
+    Ks(2) = cs;
+    return BasicRotAIKz(k*2*M_PI/N-signi*delh)*Ks;
+  }
+
+  Vec3 CylindricalGear::evalKt(const Vec2 &zeta) {
+    static Vec3 Kt(NONINIT);
+    double signe = (ext?1:-1);
+    double eta = zeta(0);
+    double lz = -signe*sin(al)*tan(be);
+    double az = -lz*sin(al)*cos(be)-signe*sin(be);
+    double bz = signi*lz*cos(al);
+    double cz = -lz*sin(al)*sin(be)+signe*cos(be);
+    Kt(0) = az*cos(eta)-bz*sin(eta);
+    Kt(1) = az*sin(eta)+bz*cos(eta);
+    Kt(2) = cz;
+    return BasicRotAIKz(k*2*M_PI/N-signi*delh)*Kt;
+  }
+
+  Vec3 CylindricalGear::evalParDer1Ks(const Vec2 &zeta) {
+    static Vec3 parDer1Ks;
+    double signe = (ext?1:-1);
+    double eta = zeta(0);
+    double xi = zeta(1);
+    double x = -r0*eta;
+    double l = (x-signe*xi*sin(be))*sin(al)/cos(be);
+    double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
+    double b = signi*l*cos(al)-r0;
+    double ls = -r0*sin(al)/cos(be);
+    double as = -r0-ls*sin(al)*cos(be);
+    double bs = signi*ls*cos(al);
+    parDer1Ks(0) = -2*as*sin(eta)-a*cos(eta)-2*bs*cos(eta)+b*sin(eta);
+    parDer1Ks(1) = 2*as*cos(eta)-a*sin(eta)-2*bs*sin(eta)-b*cos(eta);
+    return BasicRotAIKz(k*2*M_PI/N-signi*delh)*parDer1Ks;
+  }
+
+  Vec3 CylindricalGear::evalParDer2Ks(const Vec2 &zeta) {
+    static Vec3 parDer2Ks;
+    return parDer2Ks;
+  }
+
+  Vec3 CylindricalGear::evalParDer1Kt(const Vec2 &zeta) {
+    static Vec3 parDer1Kt;
+    return parDer1Kt;
+  }
+
+  Vec3 CylindricalGear::evalParDer2Kt(const Vec2 &zeta) {
+    static Vec3 parDer2Kt;
+    return parDer2Kt;
+  }
+
   void CylindricalGear::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==plotting) {
+    if(stage==preInit) {
+      delh = (M_PI/2-(ext?1:-1)*b/m*cos(be))/N;
+      r0 = m*N/cos(be)/2;
+    }
+    else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::CylindricalGear>(openMBVRigidBody)->setNumberOfTeeth(N);
         static_pointer_cast<OpenMBV::CylindricalGear>(openMBVRigidBody)->setWidth(w);
