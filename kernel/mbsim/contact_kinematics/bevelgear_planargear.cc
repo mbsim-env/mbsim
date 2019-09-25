@@ -46,31 +46,26 @@ namespace MBSim {
     al0 = bevelgear->getPressureAngle();
     z[0] = bevelgear->getNumberOfTeeth();
     z[1] = planargear->getNumberOfTeeth();
-    d0[0] = m*z[0];
-    d0[1] = m*z[1];
+    delh2 = (M_PI/2-planargear->getBacklash()/m)/z[1];
+    delh1 = (M_PI/2-bevelgear->getBacklash()/m)/z[0];
   }
 
   void ContactKinematicsBevelGearPlanarGear::updateg(SingleContact &contact, int ii) {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
-    al = al0;
     Vec3 ey1 = bevelgear->getFrame()->evalOrientation().T()*planargear->getFrame()->evalOrientation().col(1);
     Vec3 ez2 = planargear->getFrame()->getOrientation().T()*bevelgear->getFrame()->getOrientation().col(2);
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2))); 
     double phi2 = (ez2(0)>=0?-1:1)*acos(ez2(2)/sqrt(pow(ez2(0),2)+pow(ez2(2),2))); 
-    double d = sqrt(pow(d0[1],2)-pow(d0[0],2))/2;
-    double be = asin(d0[0]/d0[1]);
-    double delh2 = (M_PI/2-planargear->getBacklash()/m)/z[1];
-    double delh1 = (M_PI/2-bevelgear->getBacklash()/m)/z[0];
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
-      Vec3 rOP[2], rSP[2];
+      Vec3 rOP[2];
       vector<int> v[2];
       if(maxNumContacts==1) {
         int k = 0;
         double rsi = 1e10;
-        int signk = (phi2 - signi*delh2)>0?-1:1;
+        int signk = (phi2 + signi*delh2)>0?-1:1;
         for(int k_=0; k_<z[1]; k_++) {
-          double rsi_ = fabs(phi2 + signk*k_*2*M_PI/z[1] - signi*delh2);
+          double rsi_ = fabs(phi2 + signk*k_*2*M_PI/z[1] + signi*delh2);
           if(rsi_<rsi) {
             rsi = rsi_;
             k = k_;
@@ -81,9 +76,9 @@ namespace MBSim {
 
         k = 0;
         rsi = 1e10;
-        signk = (phi1 + signi*delh1 - phi1corr)>0?-1:1;
+        signk = (phi1 - signi*delh1 - phi1corr)>0?-1:1;
         for(int k_=0; k_<z[0]; k_++) {
-          double rsi_ = fabs(phi1 + signk*k_*2*M_PI/z[0] + signi*delh1 - phi1corr);
+          double rsi_ = fabs(phi1 + signk*k_*2*M_PI/z[0] - signi*delh1 - phi1corr);
           if(rsi_<rsi) {
             rsi = rsi_;
             k = k_;
@@ -101,57 +96,42 @@ namespace MBSim {
           k[0] = i0;
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
-            double phi2q = phi2+k[1]*2*M_PI/z[1]-signi*delh2;
-            double l = -signi*sin(phi2q)/cos(phi2q-beta[1])*sin(al)*d0[1]/2;
-            rSP[1](0) = signi*l*sin(al)*cos(beta[1]);
-            rSP[1](1) = l*cos(al);
-            rSP[1](2) = signi*l*sin(al)*sin(beta[1])+d0[1]/2;
-            rSP[1] = planargear->getFrame()->getOrientation()*BasicRotAIKy(k[1]*2*M_PI/z[1]-signi*delh2)*rSP[1];
-            rOP[1] = planargear->getFrame()->getPosition() + rSP[1];
+            Vec2 zeta2(NONINIT);
+            double phi2q = phi2+k[1]*2*M_PI/z[1]+signi*delh2;
+            zeta2(1) = 0;
+            zeta2(0) = sin(phi2q)/cos(phi2q-beta[1])*sin(al0)*m*z[1]/2;
+            planargear->setFlank(signi);
+            planargear->setTooth(k[1]);
+            rOP[1] = planargear->evalPosition(zeta2);
 
-            double phi1q = phi1+k[0]*2*M_PI/z[0]+signi*delh1;
-            phi2q = -d0[0]/d0[1]*phi1q;
-            l = signi*sin(phi2q)/cos(phi2q-beta[0])*sin(al)*d0[1]/2;
-            double a = signi*l*sin(al)*cos(phi2q-beta[0])-d0[1]/2*sin(phi2q);
-            double b = l*cos(al)-d*sin(be);
-            double c = signi*l*sin(al)*sin(phi2q-beta[0])+d0[1]/2*cos(phi2q)-d*cos(be);
-            rSP[0](0) = a*cos(phi1q)+b*sin(phi1q)*cos(be)-c*sin(phi1q)*sin(be);
-            rSP[0](1) = -a*sin(phi1q)+b*cos(phi1q)*cos(be)-c*cos(phi1q)*sin(be);
-            rSP[0](2) = b*sin(be)+c*cos(be);
-            rSP[0] = bevelgear->getFrame()->getOrientation()*BasicRotAIKz(k[0]*2*M_PI/z[0]+signi*delh1)*rSP[0];
-            rOP[0] = bevelgear->getFrame()->getPosition() + rSP[0];
+            Vec2 zeta1(NONINIT);
+            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
+            zeta1(1) = 0;
+            bevelgear->setFlank(signi);
+            bevelgear->setTooth(k[0]);
+            rOP[0] = bevelgear->evalPosition(zeta1);
 
-            Vec3 u2(NONINIT);
-            u2(0) = signi*sin(al)*cos(beta[1]);
-            u2(1) = cos(al);
-            u2(2) = signi*sin(al)*sin(beta[1]);
-            u2 = planargear->getFrame()->getOrientation()*BasicRotAIKy(k[1]*2*M_PI/z[1]-signi*delh2)*u2;
-
-            Vec3 v2(NONINIT);
-            v2(0) = signi*sin(beta[1]);
-            v2(1) = 0;
-            v2(2) = -signi*cos(beta[1]);
-            v2 = planargear->getFrame()->getOrientation()*BasicRotAIKy(k[1]*2*M_PI/z[1]-signi*delh2)*v2;
-
+            Vec u2 = planargear->evalWs(zeta2);
+            Vec v2 = planargear->evalWt(zeta2);
             Vec3 n2 = crossProduct(u2,v2);
 
             double g = n2.T()*(rOP[0]-rOP[1]);
-            if(/**g>-0.5*M_PI*d0[0]/z[0] and **/g<contact.getGeneralizedRelativePosition(false)(0)) {
+            if(g>-0.5*M_PI*m and g<contact.getGeneralizedRelativePosition(false)(0)) {
               ksave[ii][0] = k[0];
               ksave[ii][1] = k[1];
-              etasave[ii][0] = -delh1-signi*(phi1+k[0]*2*M_PI/z[0]);
-              etasave[ii][1] = delh2-signi*(phi2+k[1]*2*M_PI/z[1]);
               signisave[ii] = signi;
 
+              contact.getContourFrame(iplanargear)->setZeta(zeta2);
               contact.getContourFrame(iplanargear)->setPosition(rOP[1]);
               contact.getContourFrame(iplanargear)->getOrientation(false).set(0,n2);
               contact.getContourFrame(iplanargear)->getOrientation(false).set(1,u2);
               contact.getContourFrame(iplanargear)->getOrientation(false).set(2,v2);
 
+              contact.getContourFrame(ibevelgear)->setZeta(zeta1);
               contact.getContourFrame(ibevelgear)->setPosition(rOP[0]);
-              contact.getContourFrame(ibevelgear)->getOrientation(false).set(0, -contact.getContourFrame(iplanargear)->getOrientation(false).col(0));
-              contact.getContourFrame(ibevelgear)->getOrientation(false).set(1, -contact.getContourFrame(iplanargear)->getOrientation(false).col(1));
-              contact.getContourFrame(ibevelgear)->getOrientation(false).set(2, contact.getContourFrame(iplanargear)->getOrientation(false).col(2));
+              contact.getContourFrame(ibevelgear)->getOrientation(false).set(0,bevelgear->evalWn(zeta1));
+              contact.getContourFrame(ibevelgear)->getOrientation(false).set(1,bevelgear->evalWu(zeta1));
+              contact.getContourFrame(ibevelgear)->getOrientation(false).set(2,crossProduct(contact.getContourFrame(ibevelgear)->getOrientation(false).col(0),contact.getContourFrame(ibevelgear)->getOrientation(false).col(1)));
 
               contact.getGeneralizedRelativePosition(false)(0) = g;
             }

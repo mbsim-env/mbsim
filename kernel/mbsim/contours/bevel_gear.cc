@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/bevel_gear.h"
-#include "mbsim/utils/utils.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -30,8 +30,83 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, BevelGear)
 
+  Vec3 BevelGear::evalKrPS(const Vec2 &zeta) {
+    static Vec3 KrPS(NONINIT);
+    double eta = zeta(0);
+    double xi = zeta(1);
+    double phi = -r0/r1*eta;
+    double l = sin(phi)/cos(phi-be)*sin(al)*r1+xi*sin(phi-be);
+    double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
+    double b = signi*l*cos(al)-d*sin(ga);
+    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
+    KrPS(0) = a*cos(eta)-b*sin(eta)*cos(ga)+c*sin(eta)*sin(ga);
+    KrPS(1) = a*sin(eta)+b*cos(eta)*cos(ga)-c*cos(eta)*sin(ga);
+    KrPS(2) = b*sin(ga)+c*cos(ga);
+    return BasicRotAIKz(k*2*M_PI/N-signi*delh)*KrPS;
+  }
+
+  Vec3 BevelGear::evalKs(const Vec2 &zeta) {
+    static Vec3 Ks(NONINIT);
+    double eta = zeta(0);
+    double xi = zeta(1);
+    double phi = -r0/r1*eta;
+    double l = sin(phi)/cos(phi-be)*sin(al)*r1+xi*sin(phi-be);
+    double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
+    double b = signi*l*cos(al)-d*sin(ga);
+    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
+    double phis = -r0/r1;
+    double ls = (cos(phi)/cos(phi-be)-sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*phis*sin(al)*r1+xi*cos(phi-be)*phis;
+    double as = -ls*sin(al)*cos(phi-be)+l*sin(al)*sin(phi-be)*phis+xi*cos(phi-be)*phis+r1*cos(phi)*phis;
+    double bs = signi*ls*cos(al);
+    double cs = ls*sin(al)*sin(phi-be)+l*sin(al)*cos(phi-be)*phis-xi*sin(phi-be)*phis-r1*sin(phi)*phis;
+    Ks(0) = as*cos(eta)-a*sin(eta)-bs*sin(eta)*cos(ga)-b*cos(eta)*cos(ga)+cs*sin(eta)*sin(ga)+c*cos(eta)*sin(ga);
+    Ks(1) = as*sin(eta)+a*cos(eta)+bs*cos(eta)*cos(ga)-b*sin(eta)*cos(ga)-cs*cos(eta)*sin(ga)+c*sin(eta)*sin(ga);
+    Ks(2) = bs*sin(ga)+cs*cos(ga);
+    return BasicRotAIKz(k*2*M_PI/N-signi*delh)*Ks;
+  }
+
+  Vec3 BevelGear::evalKt(const Vec2 &zeta) {
+    static Vec3 Kt(NONINIT);
+    double eta = zeta(0);
+    double phi = -r0/r1*eta;
+    double lz = sin(phi-be);
+    double az = -lz*sin(al)*cos(phi-be)+sin(phi-be);
+    double bz = signi*lz*cos(al);
+    double cz = lz*sin(al)*sin(phi-be)+cos(phi-be);
+    Kt(0) = az*cos(eta)-bz*sin(eta)*cos(ga)+cz*sin(eta)*sin(ga);
+    Kt(1) = az*sin(eta)+bz*cos(eta)*cos(ga)-cz*cos(eta)*sin(ga);
+    Kt(2) = bz*sin(ga)+cz*cos(ga);
+    return BasicRotAIKz(k*2*M_PI/N-signi*delh)*Kt;
+  }
+
+  Vec3 BevelGear::evalParDer1Ks(const Vec2 &zeta) {
+    static Vec3 parDer1Ks;
+    return BasicRotAIKz(k*2*M_PI/N-signi*delh)*parDer1Ks;
+  }
+
+  Vec3 BevelGear::evalParDer2Ks(const Vec2 &zeta) {
+    static Vec3 parDer2Ks;
+    return parDer2Ks;
+  }
+
+  Vec3 BevelGear::evalParDer1Kt(const Vec2 &zeta) {
+    static Vec3 parDer1Kt;
+    return parDer1Kt;
+  }
+
+  Vec3 BevelGear::evalParDer2Kt(const Vec2 &zeta) {
+    static Vec3 parDer2Kt;
+    return parDer2Kt;
+  }
+
   void BevelGear::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==plotting) {
+    if(stage==preInit) {
+      delh = (M_PI/2-b/m*cos(be))/N;
+      r0 = m*N/cos(be)/2;
+      r1 = r0/sin(ga);
+      d = sqrt(pow(r1,2)-pow(r0,2));
+    }
+    else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::BevelGear>(openMBVRigidBody)->setNumberOfTeeth(N);
         static_pointer_cast<OpenMBV::BevelGear>(openMBVRigidBody)->setWidth(w);

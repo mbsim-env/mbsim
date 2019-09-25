@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/planar_gear.h"
-#include "mbsim/utils/utils.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -30,8 +30,37 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarGear)
 
+  Vec3 PlanarGear::evalKrPS(const Vec2 &zeta) {
+    static Vec3 KrPS(NONINIT);
+    double eta = zeta(0);
+    double xi = zeta(1);
+    KrPS(0) = -eta*sin(al)*cos(be)+xi*sin(be);
+    KrPS(1) = signi*eta*cos(al);
+    KrPS(2) = eta*sin(al)*sin(be)+r0+xi*cos(be);
+    return BasicRotAIKy(k*2*M_PI/N+signi*delh)*KrPS;
+  }
+
+  Vec3 PlanarGear::evalKs(const Vec2 &zeta) {
+    static Vec3 Ks(NONINIT);
+    Ks(0) = -sin(al)*cos(be);
+    Ks(1) = signi*cos(al);
+    Ks(2) = sin(al)*sin(be);
+    return BasicRotAIKy(k*2*M_PI/N+signi*delh)*Ks;
+  }
+
+  Vec3 PlanarGear::evalKt(const Vec2 &zeta) {
+    static Vec3 Kt;
+    Kt(0) = sin(be);
+    Kt(2) = cos(be);
+    return BasicRotAIKy(k*2*M_PI/N+signi*delh)*Kt;
+  }
+
   void PlanarGear::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==plotting) {
+    if(stage==preInit) {
+      delh = (M_PI/2-b/m*cos(be))/N;
+      r0 = m*N/cos(be)/2;
+    }
+    else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         static_pointer_cast<OpenMBV::PlanarGear>(openMBVRigidBody)->setNumberOfTeeth(N);
         static_pointer_cast<OpenMBV::PlanarGear>(openMBVRigidBody)->setHeight(h);

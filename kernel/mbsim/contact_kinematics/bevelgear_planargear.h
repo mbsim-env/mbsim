@@ -56,17 +56,13 @@ namespace MBSim {
       int ibevelgear;
       int iplanargear;
       double m;
-      double al0, al;
+      double al0;
       int z[2];
-      double d0[2];
-      double db[2];
-      double rb[2];
-      double sb[2];
       double beta[2];
       double ga[2];
+      double delh1, delh2;
       double delmin[2], delmax[2];
       int ksave[2][2];
-      double etasave[2][2];
       int signisave[2]{1,1};
 
       /**
