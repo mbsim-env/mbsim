@@ -36,7 +36,7 @@ namespace MBSim {
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
-    double l = (x-signe*xi*sin(be))*sin(al)/cos(be);
+    double l = (x/cos(be)-signe*xi*tan(be))*sin(al);
     double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
     double b = signi*l*cos(al)-r0;
     double c = -l*sin(al)*sin(be)+signe*xi*cos(be);
@@ -52,10 +52,10 @@ namespace MBSim {
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
-    double l = (x-signe*xi*sin(be))*sin(al)/cos(be);
+    double l = (x/cos(be)-signe*xi*tan(be))*sin(al);
     double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
     double b = signi*l*cos(al)-r0;
-    double ls = -r0*sin(al)/cos(be);
+    double ls = -r0/cos(be)*sin(al);
     double as = -r0-ls*sin(al)*cos(be);
     double bs = signi*ls*cos(al);
     double cs = -ls*sin(al)*sin(be);
@@ -69,7 +69,7 @@ namespace MBSim {
     static Vec3 Kt(NONINIT);
     double signe = (ext?1:-1);
     double eta = zeta(0);
-    double lz = -signe*sin(al)*tan(be);
+    double lz = -signe*tan(be)*sin(al);
     double az = -lz*sin(al)*cos(be)-signe*sin(be);
     double bz = signi*lz*cos(al);
     double cz = -lz*sin(al)*sin(be)+signe*cos(be);
@@ -85,10 +85,10 @@ namespace MBSim {
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
-    double l = (x-signe*xi*sin(be))*sin(al)/cos(be);
+    double l = (x/cos(be)-signe*xi*tan(be))*sin(al);
     double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
     double b = signi*l*cos(al)-r0;
-    double ls = -r0*sin(al)/cos(be);
+    double ls = -r0/cos(be)*sin(al);
     double as = -r0-ls*sin(al)*cos(be);
     double bs = signi*ls*cos(al);
     parDer1Ks(0) = -2*as*sin(eta)-a*cos(eta)-2*bs*cos(eta)+b*sin(eta);
