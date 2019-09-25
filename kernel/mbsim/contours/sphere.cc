@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsim/contours/sphere.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/utils/utils.h"
 
 #include <openmbvcppinterface/sphere.h>
 

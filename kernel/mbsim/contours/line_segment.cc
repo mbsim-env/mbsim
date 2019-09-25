@@ -19,7 +19,6 @@
 
 #include<config.h>
 #include "mbsim/contours/line_segment.h"
-#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace MBXMLUtils;

@@ -19,8 +19,6 @@
 
 #include <config.h>
 #include "mbsim/contours/cylindrical_gear.h"
-#include "mbsim/frames/frame.h"
-#include "mbsim/utils/utils.h"
 #include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;

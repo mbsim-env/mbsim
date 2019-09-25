@@ -19,8 +19,6 @@
 
 #include <config.h>
 #include "mbsim/contours/rack.h"
-#include "mbsim/frames/frame.h"
-#include "mbsim/utils/utils.h"
 
 using namespace std;
 using namespace fmatvec;

@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsim/contours/plane.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/utils/utils.h"
 
 #include <openmbvcppinterface/grid.h>
 

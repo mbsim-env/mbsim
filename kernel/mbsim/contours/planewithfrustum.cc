@@ -19,7 +19,6 @@
 
 #include<config.h>
 #include "mbsim/contours/planewithfrustum.h"
-#include "mbsim/utils/utils.h"
 
 #include <openmbvcppinterface/frustum.h>
 
