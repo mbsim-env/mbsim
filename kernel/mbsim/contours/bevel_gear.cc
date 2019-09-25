@@ -35,7 +35,7 @@ namespace MBSim {
     double eta = zeta(0);
     double xi = zeta(1);
     double phi = -r0/r1*eta;
-    double l = sin(phi)/cos(phi-be)*sin(al)*r1+xi*sin(phi-be);
+    double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
     double b = signi*l*cos(al)-d*sin(ga);
     double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
@@ -50,12 +50,12 @@ namespace MBSim {
     double eta = zeta(0);
     double xi = zeta(1);
     double phi = -r0/r1*eta;
-    double l = sin(phi)/cos(phi-be)*sin(al)*r1+xi*sin(phi-be);
+    double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
     double b = signi*l*cos(al)-d*sin(ga);
     double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
     double phis = -r0/r1;
-    double ls = (cos(phi)/cos(phi-be)-sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*phis*sin(al)*r1+xi*cos(phi-be)*phis;
+    double ls = ((cos(phi)/cos(phi-be)+sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*r1+xi/pow(cos(phi-be),2))*phis*sin(al);
     double as = -ls*sin(al)*cos(phi-be)+l*sin(al)*sin(phi-be)*phis+xi*cos(phi-be)*phis+r1*cos(phi)*phis;
     double bs = signi*ls*cos(al);
     double cs = ls*sin(al)*sin(phi-be)+l*sin(al)*cos(phi-be)*phis-xi*sin(phi-be)*phis-r1*sin(phi)*phis;
@@ -69,7 +69,7 @@ namespace MBSim {
     static Vec3 Kt(NONINIT);
     double eta = zeta(0);
     double phi = -r0/r1*eta;
-    double lz = sin(phi-be);
+    double lz = tan(phi-be)*sin(al);
     double az = -lz*sin(al)*cos(phi-be)+sin(phi-be);
     double bz = signi*lz*cos(al);
     double cz = lz*sin(al)*sin(phi-be)+cos(phi-be);
