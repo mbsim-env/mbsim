@@ -112,9 +112,9 @@ namespace MBSim {
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta2(NONINIT);
-            //zeta2(1) = -(x2+k[1]*M_PI*m+signi*s0h2)*sin(al0)/cos(beta[1])*(cos(beta[1])*sin(al0)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2)));
-            zeta2(1) = (signi*y2*cos(al0)*cos(beta[1])-(x2+k[1]*M_PI*m+signi*s0h2)*sin(al0))*sin(al0)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
-            zeta2(0) = (x2+k[1]*M_PI*m+signi*s0h2+zeta2(1)*sin(beta[1]))*sin(al0)/cos(beta[1])-signi*y2*cos(al0);
+            double x2q = (x2+k[1]*M_PI*m+signi*s0h2);
+            zeta2(1) = (signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            zeta2(0) = (x2q/cos(beta[1])+zeta2(1)*tan(beta[1]))*sin(al0)-signi*y2*cos(al0);
             rack->setFlank(signi);
             rack->setTooth(k[1]);
             rOP[1] = rack->evalPosition(zeta2);
