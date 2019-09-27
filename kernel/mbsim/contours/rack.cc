@@ -34,24 +34,23 @@ namespace MBSim {
     static Vec3 d("[1;0;0]");
     double eta = zeta(0);
     double xi = zeta(1);
-    KrPS(0) = -eta*sin(al)*cos(be)+xi*sin(be);
-    KrPS(1) = signi*eta*cos(al);
-    KrPS(2) = eta*sin(al)*sin(be)+xi*cos(be);
+    KrPS(0) = -eta+xi*tan(be);
+    KrPS(1) = signi*eta*cos(be)/tan(al);
+    KrPS(2) = xi;
     return d*(k*M_PI*m/cos(be)+signi*s0h)+KrPS;
   }
 
   Vec3 Rack::evalKs(const Vec2 &zeta) {
-    static Vec3 Ks(NONINIT);
-    Ks(0) = -sin(al)*cos(be);
-    Ks(1) = signi*cos(al);
-    Ks(2) = sin(al)*sin(be);
+    static Vec3 Ks;
+    Ks(0) = -1;
+    Ks(1) = signi*cos(be)/tan(al);
     return Ks;
   }
 
   Vec3 Rack::evalKt(const Vec2 &zeta) {
     static Vec3 Kt;
-    Kt(0) = sin(be);
-    Kt(2) = cos(be);
+    Kt(0) = tan(be);
+    Kt(2) = 1;
     return Kt;
   }
 

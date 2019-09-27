@@ -98,8 +98,8 @@ namespace MBSim {
             v[0].push_back(signk*k_);
         }
         for(int k_=0; k_<z[1]; k_++) {
-          double xi = (signi*y2*cos(al0)*cos(beta[1])-(x2+k_*M_PI*m+signi*s0h2)*sin(al0))*sin(al0)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
-          double eta = (x2+k_*M_PI*m+signi*s0h2+xi*sin(beta[1]))*sin(al0)/cos(beta[1])-signi*y2*cos(al0);
+          double xi = 0;
+          double eta = (x2+k_*M_PI*m+signi*s0h2+xi*tan(beta[1])-signi*y2*cos(beta[1])/tan(al0))*pow(sin(al0),2)/(pow(sin(al0),2)+pow(cos(beta[1])*cos(al0),2));
           if(eta>-etamax2[i] and eta<etamax2[not i])
             v[1].push_back(k_);
         }
@@ -113,8 +113,8 @@ namespace MBSim {
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta2(NONINIT);
             double x2q = (x2+k[1]*M_PI*m+signi*s0h2);
-            zeta2(1) = (signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
-            zeta2(0) = (x2q/cos(beta[1])+zeta2(1)*tan(beta[1]))*sin(al0)-signi*y2*cos(al0);
+            zeta2(1) = 0;
+            zeta2(0) = (x2q+zeta2(1)*tan(beta[1])-signi*y2*cos(beta[1])/tan(al0))*pow(sin(al0),2)/(pow(sin(al0),2)+pow(cos(beta[1])*cos(al0),2));
             rack->setFlank(signi);
             rack->setTooth(k[1]);
             rOP[1] = rack->evalPosition(zeta2);
@@ -122,13 +122,12 @@ namespace MBSim {
             Vec2 zeta1(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
             zeta1(1) = -m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = 0;
             gear->setFlank(signi);
             gear->setTooth(k[0]);
             rOP[0] = gear->evalPosition(zeta1);
 
-            Vec u2 = rack->evalWs(zeta2);
-            Vec v2 = rack->evalWt(zeta2);
-            Vec3 n2 = crossProduct(u2,v2);
+            Vec n2 = rack->evalWn(zeta2);
 
             double g = n2.T()*(rOP[0]-rOP[1]);
             if(g>-0.5*M_PI*m and g<contact.getGeneralizedRelativePosition(false)(0)) {
@@ -139,8 +138,8 @@ namespace MBSim {
               contact.getContourFrame(irack)->setZeta(zeta2);
               contact.getContourFrame(irack)->setPosition(rOP[1]);
               contact.getContourFrame(irack)->getOrientation(false).set(0,n2);
-              contact.getContourFrame(irack)->getOrientation(false).set(1,u2);
-              contact.getContourFrame(irack)->getOrientation(false).set(2,v2);
+              contact.getContourFrame(irack)->getOrientation(false).set(1,rack->evalWu(zeta2));
+              contact.getContourFrame(irack)->getOrientation(false).set(2,crossProduct(contact.getContourFrame(irack)->getOrientation(false).col(0),contact.getContourFrame(irack)->getOrientation(false).col(1)));
 
               contact.getContourFrame(igear)->setZeta(zeta1);
               contact.getContourFrame(igear)->setPosition(rOP[0]);
@@ -165,7 +164,9 @@ namespace MBSim {
     const Vec3 parnPart1 = crossProduct(rack->getFrame()->getAngularVelocity(),n1);
     const Vec3 paruPart2 = crossProduct(gear->getFrame()->getAngularVelocity(),u2);
 
-    const Vec3 &R1 = u1;
+    rack->setFlank(signisave[ii]);
+    rack->setTooth(ksave[ii][1]);
+    Vec3 R1 = rack->evalWs(contact.getContourFrame(irack)->getZeta());
 
     gear->setFlank(signisave[ii]);
     gear->setTooth(ksave[ii][0]);
@@ -187,7 +188,7 @@ namespace MBSim {
     Vec zetad = slvLU(A,b_);
 
     if(contact.isNormalForceLawSetValued())
-      contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2.col(0)*zetad(1)-parWvCParZeta1.col(0)*zetad(0));
+      contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad(1)-parWvCParZeta1*zetad(0));
     if(contact.isTangentialForceLawSetValuedAndActive())
       throw runtime_error("Tangential force law must be single valued for gear to gear contacts");
   }

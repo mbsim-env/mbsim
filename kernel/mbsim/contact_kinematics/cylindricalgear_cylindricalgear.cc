@@ -124,6 +124,7 @@ namespace MBSim {
             Vec2 zeta1(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*(delh1+dal));
             zeta1(1) = -m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = 0;
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
             rOP[0] = gear[0]->evalPosition(zeta1);
@@ -131,6 +132,7 @@ namespace MBSim {
             Vec2 zeta2(NONINIT);
             zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal));
             zeta2(1) = -signe*m*z[1]/2*zeta2(0)*pow(sin(al0),2)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            zeta2(1) = 0;
             gear[1]->setFlank(signi);
             gear[1]->setTooth(k[1]);
             rOP[1] = gear[1]->evalPosition(zeta2);
@@ -183,10 +185,10 @@ namespace MBSim {
     const Vec3 parWvCParZeta2 = crossProduct(gear[1]->getFrame()->evalAngularVelocity(),R2);
 
     SqrMat A(2,NONINIT);
-    A(0,0)=-u1.T()*R1.col(0);
-    A(0,1)=u1.T()*R2.col(0);
-    A(1,0)=u2.T()*N1.col(0);
-    A(1,1)=n1.T()*U2.col(0);
+    A(0,0)=-u1.T()*R1;
+    A(0,1)=u1.T()*R2;
+    A(1,0)=u2.T()*N1;
+    A(1,1)=n1.T()*U2;
 
     Vec b(2,NONINIT);
     b(0)=-u1.T()*(vC2-vC1);
