@@ -106,15 +106,14 @@ namespace MBSim {
 
             Vec2 zeta1(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
+
             phi2q = -double(z[0])/z[1]*zeta1(0);
             zeta1(1) = m*z[1]/2*(sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));;
             bevelgear->setFlank(signi);
             bevelgear->setTooth(k[0]);
             rOP[0] = bevelgear->evalPosition(zeta1);
 
-            Vec u2 = planargear->evalWs(zeta2);
-            Vec v2 = planargear->evalWt(zeta2);
-            Vec3 n2 = crossProduct(u2,v2);
+            Vec n2 = planargear->evalWn(zeta2);
 
             double g = n2.T()*(rOP[0]-rOP[1]);
             if(g>-0.5*M_PI*m and g<contact.getGeneralizedRelativePosition(false)(0)) {
@@ -125,8 +124,8 @@ namespace MBSim {
               contact.getContourFrame(iplanargear)->setZeta(zeta2);
               contact.getContourFrame(iplanargear)->setPosition(rOP[1]);
               contact.getContourFrame(iplanargear)->getOrientation(false).set(0,n2);
-              contact.getContourFrame(iplanargear)->getOrientation(false).set(1,u2);
-              contact.getContourFrame(iplanargear)->getOrientation(false).set(2,v2);
+              contact.getContourFrame(iplanargear)->getOrientation(false).set(1,planargear->evalWu(zeta2));
+              contact.getContourFrame(iplanargear)->getOrientation(false).set(2,crossProduct(contact.getContourFrame(iplanargear)->getOrientation(false).col(0),contact.getContourFrame(iplanargear)->getOrientation(false).col(1)));
 
               contact.getContourFrame(ibevelgear)->setZeta(zeta1);
               contact.getContourFrame(ibevelgear)->setPosition(rOP[0]);
