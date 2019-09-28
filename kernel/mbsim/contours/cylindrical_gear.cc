@@ -36,10 +36,10 @@ namespace MBSim {
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
-    double l = (x-signe*xi*tan(be))*pow(sin(al),2)/(pow(sin(al),2)+pow(cos(be)*cos(al),2));
-    double a = x-l-signe*xi*tan(be);
-    double b = signi*l*cos(be)/tan(al)-r0;
-    double c = signe*xi;
+    double l = (x/cos(be)-signe*xi*tan(be))*sin(al);
+    double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
+    double b = signi*l*cos(al)-r0;
+    double c = -l*sin(al)*sin(be)+signe*xi*cos(be);
     KrPS(0) = a*cos(eta)-b*sin(eta);
     KrPS(1) = a*sin(eta)+b*cos(eta);
     KrPS(2) = c;
@@ -47,19 +47,21 @@ namespace MBSim {
   }
 
   Vec3 CylindricalGear::evalKs(const Vec2 &zeta) {
-    static Vec3 Ks;
+    static Vec3 Ks(NONINIT);
     double signe = (ext?1:-1);
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
-    double l = (x-signe*xi*tan(be))*pow(sin(al),2)/(pow(sin(al),2)+pow(cos(be)*cos(al),2));
-    double a = x-l-signe*xi*tan(be);
-    double b = signi*l*cos(be)/tan(al)-r0;
-    double ls = -r0*pow(sin(al),2)/(pow(sin(al),2)+pow(cos(be)*cos(al),2));
-    double as = -r0-ls;
-    double bs = signi*ls*cos(be)/tan(al);
+    double l = (x/cos(be)-signe*xi*tan(be))*sin(al);
+    double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
+    double b = signi*l*cos(al)-r0;
+    double ls = -r0/cos(be)*sin(al);
+    double as = -r0-ls*sin(al)*cos(be);
+    double bs = signi*ls*cos(al);
+    double cs = -ls*sin(al)*sin(be);
     Ks(0) = as*cos(eta)-a*sin(eta)-bs*sin(eta)-b*cos(eta);
     Ks(1) = as*sin(eta)+a*cos(eta)+bs*cos(eta)-b*sin(eta);
+    Ks(2) = cs;
     return BasicRotAIKz(k*2*M_PI/N-signi*delh)*Ks;
   }
 
@@ -67,10 +69,10 @@ namespace MBSim {
     static Vec3 Kt(NONINIT);
     double signe = (ext?1:-1);
     double eta = zeta(0);
-    double lz = -signe*tan(be)*pow(sin(al),2)/(pow(sin(al),2)+pow(cos(be)*cos(al),2));
-    double az = -lz-signe*tan(be);
-    double bz = signi*lz*cos(be)/tan(al);
-    double cz = signe;
+    double lz = -signe*tan(be)*sin(al);
+    double az = -lz*sin(al)*cos(be)-signe*sin(be);
+    double bz = signi*lz*cos(al);
+    double cz = -lz*sin(al)*sin(be)+signe*cos(be);
     Kt(0) = az*cos(eta)-bz*sin(eta);
     Kt(1) = az*sin(eta)+bz*cos(eta);
     Kt(2) = cz;
@@ -83,12 +85,12 @@ namespace MBSim {
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
-    double l = (x-signe*xi*tan(be))*pow(sin(al),2)/(pow(sin(al),2)+pow(cos(be)*cos(al),2));
-    double a = x-l-signe*xi*tan(be);
-    double b = signi*l*cos(be)/tan(al)-r0;
-    double ls = -r0*pow(sin(al),2)/(pow(sin(al),2)+pow(cos(be)*cos(al),2));
-    double as = -r0-ls;
-    double bs = signi*ls*cos(be)/tan(al);
+    double l = (x/cos(be)-signe*xi*tan(be))*sin(al);
+    double a = x-l*sin(al)*cos(be)-signe*xi*sin(be);
+    double b = signi*l*cos(al)-r0;
+    double ls = -r0/cos(be)*sin(al);
+    double as = -r0-ls*sin(al)*cos(be);
+    double bs = signi*ls*cos(al);
     parDer1Ks(0) = -2*as*sin(eta)-a*cos(eta)-2*bs*cos(eta)+b*sin(eta);
     parDer1Ks(1) = 2*as*cos(eta)-a*sin(eta)-2*bs*sin(eta)-b*cos(eta);
     return BasicRotAIKz(k*2*M_PI/N-signi*delh)*parDer1Ks;
