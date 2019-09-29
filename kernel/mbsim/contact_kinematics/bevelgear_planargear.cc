@@ -98,7 +98,10 @@ namespace MBSim {
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta2(NONINIT);
             double phi2q = phi2+k[1]*2*M_PI/z[1]+signi*delh2;
-            zeta2(1) = -m*z[1]/2*(sin(phi2q)*pow(sin(al0),2)*sin(beta[1]))/(sin(phi2q+beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2q+beta[1])*cos(beta[1]));;
+            double a = pow(cos(phi2q+beta[1]),2)+pow(sin(al0)*sin(phi2q+beta[1]),2);
+            double b = m*z[1]*(cos(beta[1])*pow(cos(phi2q+beta[1]),2)+pow(sin(al0),2)*sin(phi2q)*sin(phi2q+beta[1])+pow(sin(al0),2)*sin(beta[1])*cos(phi2q+beta[1])*sin(phi2q+beta[1]));
+            double c = pow(m*z[1]/2*sin(al0),2)*(pow(sin(phi2q),2)+2*sin(beta[1])*cos(phi2q+beta[1])*sin(phi2q));
+            zeta2(1) = (-b+sqrt(b*b-4*a*c))/2/a;
             zeta2(0) = (sin(phi2q)/cos(phi2q+beta[1])*m*z[1]/2 + zeta2(1)*tan(phi2q+beta[1]))*sin(al0);
             planargear->setFlank(signi);
             planargear->setTooth(k[1]);
@@ -106,9 +109,11 @@ namespace MBSim {
 
             Vec2 zeta1(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
-
             phi2q = -double(z[0])/z[1]*zeta1(0);
-            zeta1(1) = m*z[1]/2*(sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));;
+            a = pow(cos(phi2q-beta[0]),2)+pow(sin(al0)*sin(phi2q-beta[0]),2);
+            b = m*z[1]*(cos(beta[0])*pow(cos(phi2q-beta[0]),2)+pow(sin(al0),2)*sin(phi2q)*sin(phi2q-beta[0])-pow(sin(al0),2)*sin(beta[0])*cos(phi2q-beta[0])*sin(phi2q-beta[0]));
+            c = pow(m*z[1]/2*sin(al0),2)*(pow(sin(phi2q),2)-2*sin(beta[0])*cos(phi2q-beta[0])*sin(phi2q));
+            zeta1(1) = (-b+sqrt(b*b-4*a*c))/2/a;
             bevelgear->setFlank(signi);
             bevelgear->setTooth(k[0]);
             rOP[0] = bevelgear->evalPosition(zeta1);
