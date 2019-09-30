@@ -59,6 +59,8 @@ namespace MBSim {
     Vec3 r = rack->getFrame()->evalPosition() - gear->getFrame()->evalPosition();
     double x2 = rack->getFrame()->getOrientation().col(0).T()*r;
     double y2 = rack->getFrame()->getOrientation().col(1).T()*r + m*z[0]/2;
+    double z2 = rack->getFrame()->getOrientation().col(2).T()*r/2;
+    double z1 = gear->getFrame()->getOrientation().col(2).T()*r/2;
     Vec3 ey1 = gear->getFrame()->evalOrientation().T()*rack->getFrame()->evalOrientation().col(1);
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2)));
     for(int i=0; i<2; i++) {
@@ -114,7 +116,7 @@ namespace MBSim {
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta2(NONINIT);
             double x2q = (x2+k[1]*M_PI*m+signi*s0h2);
-            zeta2(1) = (signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            zeta2(1) = ((signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])-z2*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
             zeta2(0) = (x2q/cos(beta[1])+zeta2(1)*tan(beta[1]))*sin(al0)-signi*y2*cos(al0);
             rack->setFlank(signi);
             rack->setTooth(k[1]);
@@ -122,7 +124,7 @@ namespace MBSim {
 
             Vec2 zeta1(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
-            zeta1(1) = -m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+z1*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
             gear->setFlank(signi);
             gear->setTooth(k[0]);
             rOP[0] = gear->evalPosition(zeta1);

@@ -60,11 +60,14 @@ namespace MBSim {
 
   void ContactKinematicsCylindricalGearCylindricalGear::updateg(SingleContact &contact, int ii) {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
-    Vec3 rS1S2 = gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition();
-    double a = nrm2(rS1S2);
+    Vec3 r = gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition();
+    Vec3 rq = crossProduct(gear[0]->getFrame()->getOrientation().col(2),crossProduct(r,gear[0]->getFrame()->getOrientation().col(2)));
+    double a = nrm2(rq);
     double dal = acos(a0/a*cos(al))-al;
-    Vec3 ey1 = gear[0]->getFrame()->evalOrientation().T()*(rS1S2/(-signe*a));
-    Vec3 ey2 = gear[1]->getFrame()->evalOrientation().T()*(rS1S2/a);
+    double z1 = gear[0]->getFrame()->getOrientation().col(2).T()*r/2;
+    double z2 = gear[1]->getFrame()->getOrientation().col(2).T()*r/2;
+    Vec3 ey1 = gear[0]->getFrame()->evalOrientation().T()*(rq/(-signe*a));
+    Vec3 ey2 = gear[1]->getFrame()->evalOrientation().T()*(rq/a);
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2)));
     double phi2 = (ey2(0)>=0?1:-1)*acos(ey2(1)/sqrt(pow(ey2(0),2)+pow(ey2(1),2)));
 
@@ -123,14 +126,14 @@ namespace MBSim {
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta1(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*(delh1+dal));
-            zeta1(1) = -m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+z1*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
             rOP[0] = gear[0]->evalPosition(zeta1);
 
             Vec2 zeta2(NONINIT);
             zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal));
-            zeta2(1) = -signe*m*z[1]/2*zeta2(0)*pow(sin(al0),2)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            zeta2(1) = (-signe*m*z[1]/2*zeta2(0)*pow(sin(al0),2)*sin(beta[1])-z2*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
             gear[1]->setFlank(signi);
             gear[1]->setTooth(k[1]);
             rOP[1] = gear[1]->evalPosition(zeta2);
