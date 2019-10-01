@@ -56,6 +56,13 @@ namespace MBSim {
     Vec3 ez2 = planargear->getFrame()->getOrientation().T()*bevelgear->getFrame()->getOrientation().col(2);
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2))); 
     double phi2 = (ez2(0)>=0?-1:1)*acos(ez2(2)/sqrt(pow(ez2(0),2)+pow(ez2(2),2))); 
+    Vec3 r = planargear->getFrame()->evalPosition() - bevelgear->getFrame()->evalPosition();
+    double x2 = planargear->getFrame()->getOrientation().col(0).T()*r - m/2*(z[1]-z[0]*sin(bevelgear->getPitchAngle()))*sin(phi2);
+    double y2 = planargear->getFrame()->getOrientation().col(1).T()*r + m*z[0]/2*cos(bevelgear->getPitchAngle());
+    double z2 = planargear->getFrame()->getOrientation().col(2).T()*r + m/2*(z[1]-z[0]*sin(bevelgear->getPitchAngle()))*cos(phi2);
+    if(x2*x2+y2*y2+z2*z2>1e-13)
+       msg(Warn)<<"Large devitation detected at t="<<planargear->getTime()<<"\nContact kinematics may be wrong!" <<endl;
+
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
       Vec3 rOP[2];
