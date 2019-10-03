@@ -6,11 +6,11 @@
       <scalarParameter name="m">15e-2</scalarParameter>
       <scalarParameter name="z1">20</scalarParameter>
       <scalarParameter name="z2">15</scalarParameter>
-      <scalarParameter name="he">0</scalarParameter>
-      <scalarParameter name="de1">m*z1/cosd(he)</scalarParameter>
-      <scalarParameter name="de2">m*z2/cosd(he)</scalarParameter>
+      <scalarParameter name="be">0</scalarParameter>
+      <scalarParameter name="de1">m*z1/cosd(be)</scalarParameter>
+      <scalarParameter name="de2">m*z2/cosd(be)</scalarParameter>
       <scalarParameter name="al">30/180*pi</scalarParameter>
-      <scalarParameter name="be">asin(de2/de1)</scalarParameter>
+      <scalarParameter name="ga">asin(de2/de1)</scalarParameter>
       <scalarParameter name="d">sqrt(de1^2-de2^2)/2</scalarParameter>
       <scalarParameter name="b1">5</scalarParameter>
       <scalarParameter name="b2">5</scalarParameter>
@@ -28,12 +28,12 @@
           <relativePosition unit="m">
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
-              <ele>d*sin(be)</ele>
-              <ele>d*cos(be)</ele>
+              <ele>d*sin(ga)</ele>
+              <ele>d*cos(ga)</ele>
             </xmlVector>
           </relativePosition>
           <relativeOrientation>
-            <aboutX xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="rad">-be</aboutX>
+            <aboutX xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="rad">-ga</aboutX>
           </relativeOrientation>
         </FixedRelativeFrame>
       </frames><contours>
@@ -77,7 +77,7 @@
               <numberOfTeeth>z1</numberOfTeeth>
               <height unit="mm">10</height>
               <width unit="mm">50</width>
-              <helixAngle unit="degree">he</helixAngle>
+              <helixAngle unit="degree">be</helixAngle>
               <module unit="m">m</module>
               <pressureAngle unit="rad">al</pressureAngle>
               <backlash unit="mm">b1</backlash>
@@ -138,8 +138,8 @@
             <BevelGear name="BevelGear" xmlns="http://www.mbsim-env.de/MBSim">
               <numberOfTeeth>z2</numberOfTeeth>
               <width unit="mm">10</width>
-              <helixAngle unit="degree">-he</helixAngle>
-             <pitchAngle unit="rad">be</pitchAngle>
+              <helixAngle unit="degree">-be</helixAngle>
+              <pitchAngle unit="rad">ga</pitchAngle>
               <module unit="m">m</module>
               <pressureAngle unit="rad">al</pressureAngle>
               <backlash unit="mm">b2</backlash>
