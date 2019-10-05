@@ -279,6 +279,12 @@ namespace MBSimGUI {
     action = new QAction("Add rack", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRack()));
     addAction(action);
+    action = new QAction("Add bevel gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addBevelGear()));
+    addAction(action);
+    action = new QAction("Add planar gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPlanarGear()));
+    addAction(action);
 
     QMenu *menu = new FlexibleContoursContextMenu(element, "Add flexible contour");
     addMenu(menu);
@@ -354,6 +360,14 @@ namespace MBSimGUI {
 
   void ContoursContextMenu::addRack() {
     mw->addContour(new Rack, element);
+  }
+
+  void ContoursContextMenu::addBevelGear() {
+    mw->addContour(new BevelGear, element);
+  }
+
+  void ContoursContextMenu::addPlanarGear() {
+    mw->addContour(new PlanarGear, element);
   }
 
   FlexibleContoursContextMenu::FlexibleContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {

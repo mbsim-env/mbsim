@@ -254,7 +254,27 @@ namespace MBSimGUI {
   class RackPropertyDialog : public RigidContourPropertyDialog {
 
     public:
-      RackPropertyDialog(Element *gearRack);
+      RackPropertyDialog(Element *rack);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *numberOfTeeth, *height, *width, *helixAngle, *module, *pressureAngle, *backlash, *visu;
+  };
+
+  class BevelGearPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      BevelGearPropertyDialog(Element *gear);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *numberOfTeeth, *width, *helixAngle, *pitchAngle, *module, *pressureAngle, *backlash, *visu;
+  };
+
+  class PlanarGearPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      PlanarGearPropertyDialog(Element *gear);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
