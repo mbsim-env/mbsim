@@ -1,0 +1,618 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="m" unit="-">1</scalarParameter>
+      <scalarParameter name="r" unit="-">0.1</scalarParameter>
+      <scalarParameter name="al">18</scalarParameter>
+      <scalarParameter name="c" unit="-">1e3</scalarParameter>
+      <scalarParameter name="mu" unit="-">0.3</scalarParameter>
+      <scalarParameter name="x">1.5</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+      <frames>
+        <FixedRelativeFrame name="Z">
+          <enableOpenMBV>
+            <size unit="dm">1</size>
+          </enableOpenMBV>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>r</ele>
+              <ele>(x-r)*tand(al)</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </relativePosition>
+          <relativeOrientation>
+            <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">-al</aboutZ>
+          </relativeOrientation>
+        </FixedRelativeFrame><FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <size unit="dm">1</size>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[Z]"/>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>2*r</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame><FixedRelativeFrame name="P2">
+          <enableOpenMBV>
+            <size unit="dm">1</size>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[Z]"/>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>-2*r</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="D">
+          <enableOpenMBV>
+            <size unit="dm">1</size>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[Z]"/>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>15*r</ele>
+              <ele>r</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="S">
+          <enableOpenMBV>
+            <size unit="dm">1</size>
+          </enableOpenMBV>
+          <frameOfReference ref="../Frame[Z]"/>
+          <relativeOrientation>
+            <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutZ>
+          </relativeOrientation>
+        </FixedRelativeFrame>
+      </frames><contours>
+        <Plane name="Plane">
+          <frameOfReference ref="../Frame[S]"/>
+        </Plane>
+        <Line name="Line">
+          <frameOfReference ref="../Frame[S]"/>
+        </Line>
+      </contours><groups/>
+      <objects>
+        <RigidBody name="Ebene">
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Extrusion xmlns="http://www.mbsim-env.de/OpenMBV" name="Extrusion2">
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>-1</ele>
+                  <ele>0</ele>
+                  <ele>0.627451</ele>
+                </xmlVector>
+              </diffuseColor>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>-0.5</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <windingRule>"nonzero"</windingRule>
+              <height unit="m">1</height>
+              <contour unit="m">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>x</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>x*tand(al)</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </contour>
+            </Extrusion>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <size unit="dm">1</size>
+          </enableOpenMBVFrameC></RigidBody>
+        <RigidBody name="Vollzylinder">
+          <generalizedInitialPosition>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>r</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </generalizedInitialPosition>
+          <frameOfReference ref="../Frame[P2]"/>
+          <mass unit="kg">m</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>1/2*m*r^2</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongAxesXY/>
+          </stateDependentTranslation>
+          <stateDependentRotation>
+            <RotationAboutZAxis/>
+          </stateDependentRotation>
+          <frames/>
+          <contours>
+            <Circle name="Circle">
+              <radius unit="m">r</radius>
+            </Circle>
+          </contours><openMBVRigidBody>
+            <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Frustum2">
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>1</ele>
+                  <ele>1</ele>
+                </xmlVector>
+              </diffuseColor>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>r/2</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <baseRadius unit="m">r</baseRadius>
+              <topRadius unit="m">r</topRadius>
+              <height unit="m">r</height>
+              <innerBaseRadius unit="m">0</innerBaseRadius>
+              <innerTopRadius unit="m">0</innerTopRadius>
+            </Frustum>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <size unit="dm">1</size>
+          </enableOpenMBVFrameC></RigidBody>
+        <RigidBody name="Hohlzylinder">
+          <generalizedInitialPosition>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>r</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </generalizedInitialPosition>
+          <frameOfReference ref="../Frame[Z]"/>
+          <mass unit="kg">m</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>m*r^2</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongAxesXY/>
+          </stateDependentTranslation>
+          <stateDependentRotation>
+            <RotationAboutZAxis/>
+          </stateDependentRotation>
+          <frames/>
+          <contours>
+            <Circle name="Circle">
+              <radius unit="m">r</radius>
+            </Circle>
+          </contours><openMBVRigidBody>
+            <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Frustum2">
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0.333333</ele>
+                  <ele>1</ele>
+                  <ele>1</ele>
+                </xmlVector>
+              </diffuseColor>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>r/2</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <baseRadius unit="m">r</baseRadius>
+              <topRadius unit="m">r</topRadius>
+              <height unit="m">r</height>
+              <innerBaseRadius unit="m">0.9*r</innerBaseRadius>
+              <innerTopRadius unit="m">0.9*r</innerTopRadius>
+            </Frustum>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <size unit="dm">1</size>
+          </enableOpenMBVFrameC></RigidBody>
+        <RigidBody name="Kugel">
+          <generalizedInitialPosition>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>r</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </generalizedInitialPosition>
+          <frameOfReference ref="../Frame[P1]"/>
+          <mass unit="kg">m</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>2/5*m*r^2</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongAxesXY/>
+          </stateDependentTranslation>
+          <stateDependentRotation>
+            <RotationAboutZAxis/>
+          </stateDependentRotation>
+          <frames/>
+          <contours>
+            <Sphere name="Sphere">
+              <radius unit="m">r</radius>
+            </Sphere>
+          </contours><openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="Sphere2">
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0.666667</ele>
+                  <ele>1</ele>
+                  <ele>1</ele>
+                </xmlVector>
+              </diffuseColor>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">r</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <size unit="dm">1</size>
+          </enableOpenMBVFrameC></RigidBody>
+        <RigidBody name="Stopper">
+          <generalizedInitialPosition>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>-r</ele>
+            </xmlVector>
+          </generalizedInitialPosition>
+          <frameOfReference ref="../Frame[D]"/>
+          <mass unit="kg">m/100</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongXAxis/>
+          </stateDependentTranslation>
+          <frames>
+            <FixedRelativeFrame name="P">
+              <enableOpenMBV>
+                <size unit="dm">1</size>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>-r/2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </relativePosition>
+              <relativeOrientation>
+                <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">180</aboutZ>
+              </relativeOrientation>
+            </FixedRelativeFrame>
+          </frames>
+          <contours>
+            <Plane name="Plane">
+              <frameOfReference ref="../Frame[P]"/>
+            </Plane>
+            <Line name="Line">
+              <frameOfReference ref="../Frame[P]"/>
+            </Line>
+          </contours>
+          <openMBVRigidBody>
+            <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Body1">
+              <diffuseColor>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0.166667</ele>
+                  <ele>1</ele>
+                  <ele>1</ele>
+                </xmlVector>
+              </diffuseColor>
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialTranslation>
+              <initialRotation unit="rad">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <length unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>r</ele>
+                  <ele>r</ele>
+                  <ele>5*r</ele>
+                </xmlVector>
+              </length>
+            </Cuboid>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <size unit="dm">1</size>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+      </objects>
+      <links>
+        <SpringDamper name="SpringDamper">
+          <connect ref1="../Frame[D]" ref2="../Object[Stopper]/Frame[C]"/>
+          <forceFunction>
+            <LinearSpringDamperForce>
+              <stiffnessCoefficient unit="N/m">c</stiffnessCoefficient>
+              <dampingCoefficient unit="N*s/m">c/10</dampingCoefficient>
+            </LinearSpringDamperForce>
+          </forceFunction>
+          <unloadedLength>r</unloadedLength>
+          <enableOpenMBV>
+            <numberOfCoils>5</numberOfCoils>
+            <springRadius unit="dm">0.25</springRadius>
+          </enableOpenMBV>
+        </SpringDamper>
+        <Contact name="ContactEK">
+          <connect ref1="../Contour[Plane]" ref2="../Object[Kugel]/Contour[Sphere]"/>
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+          <tangentialForceLaw>
+            <PlanarCoulombFriction>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombFriction>
+          </tangentialForceLaw>
+          <tangentialImpactLaw>
+            <PlanarCoulombImpact>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombImpact>
+          </tangentialImpactLaw>
+        </Contact>
+        <Contact name="ContactEV">
+          <connect ref1="../Contour[Line]" ref2="../Object[Vollzylinder]/Contour[Circle]"/>
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+          <tangentialForceLaw>
+            <PlanarCoulombFriction>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombFriction>
+          </tangentialForceLaw>
+          <tangentialImpactLaw>
+            <PlanarCoulombImpact>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombImpact>
+          </tangentialImpactLaw>
+        </Contact>
+        <Contact name="ContactEH">
+          <connect ref1="../Contour[Line]" ref2="../Object[Hohlzylinder]/Contour[Circle]"/>
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+          <tangentialForceLaw>
+            <PlanarCoulombFriction>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombFriction>
+          </tangentialForceLaw>
+          <tangentialImpactLaw>
+            <PlanarCoulombImpact>
+              <frictionCoefficient unit="-">mu</frictionCoefficient>
+            </PlanarCoulombImpact>
+          </tangentialImpactLaw>
+        </Contact>
+        <Contact name="ContactSK">
+          <connect ref1="../Object[Stopper]/Contour[Plane]" ref2="../Object[Kugel]/Contour[Sphere]"/>
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+        </Contact>
+        <Contact name="ContactSV">
+          <connect ref1="../Object[Stopper]/Contour[Line]" ref2="../Object[Vollzylinder]/Contour[Circle]"/>
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+        </Contact>
+        <Contact name="ContactSH">
+          <connect ref1="../Object[Stopper]/Contour[Line]" ref2="../Object[Hohlzylinder]/Contour[Circle]"/>
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient unit="-">0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+        </Contact>
+      </links>
+      <constraints/>
+      <observers/>
+      <enableOpenMBVFrameI>
+        <size unit="dm">1</size>
+      </enableOpenMBVFrameI><environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+      <projectionTolerance>1e-15</projectionTolerance>
+      <generalizedRelativePositionTolerance>1e-6</generalizedRelativePositionTolerance>
+      <generalizedRelativeVelocityTolerance>1e-8</generalizedRelativeVelocityTolerance>
+      <generalizedRelativeAccelerationTolerance>1e-10</generalizedRelativeAccelerationTolerance>
+      <generalizedForceTolerance>1e-10</generalizedForceTolerance>
+      <generalizedImpulseTolerance>1e-8</generalizedImpulseTolerance>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <LSODAIntegrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1.5</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+    <initialStepSize unit="s">1e-8</initialStepSize>
+  </LSODAIntegrator>
+
+</MBSimProject>
