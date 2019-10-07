@@ -61,13 +61,14 @@ namespace MBSim {
   void ContactKinematicsCylindricalGearCylindricalGear::updateg(SingleContact &contact, int ii) {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
     Vec3 r = gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition();
-    Vec3 rq = crossProduct(gear[0]->getFrame()->getOrientation().col(2),crossProduct(r,gear[0]->getFrame()->getOrientation().col(2)));
-    double a = nrm2(rq);
+    double z1 = (gear[0]->getFrame()->getOrientation().col(2).T()*r)/2;
+    double z2 = (gear[1]->getFrame()->getOrientation().col(2).T()*r)/2;
+    Vec3 ea = r-(2*z1)*gear[0]->getFrame()->getOrientation().col(2);
+    double a = nrm2(ea);
+    ea/=a;
     double dal = acos(a0/a*cos(al))-al;
-    double z1 = gear[0]->getFrame()->getOrientation().col(2).T()*r/2;
-    double z2 = gear[1]->getFrame()->getOrientation().col(2).T()*r/2;
-    Vec3 ey1 = gear[0]->getFrame()->evalOrientation().T()*(rq/(-signe*a));
-    Vec3 ey2 = gear[1]->getFrame()->evalOrientation().T()*(rq/a);
+    Vec3 ey1 = gear[0]->getFrame()->evalOrientation().T()*(double(-signe)*ea);
+    Vec3 ey2 = gear[1]->getFrame()->evalOrientation().T()*(ea);
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2)));
     double phi2 = (ey2(0)>=0?1:-1)*acos(ey2(1)/sqrt(pow(ey2(0),2)+pow(ey2(1),2)));
 

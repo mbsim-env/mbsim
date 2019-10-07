@@ -56,9 +56,9 @@ namespace MBSim {
 
   void ContactKinematicsCylindricalGearRack::updateg(SingleContact &contact, int ii) {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
-    Vec3 r = rack->getFrame()->evalPosition() - gear->getFrame()->evalPosition();
+    Vec3 r = rack->getFrame()->evalPosition()-gear->getFrame()->evalPosition();
     double x2 = rack->getFrame()->getOrientation().col(0).T()*r;
-    double y2 = rack->getFrame()->getOrientation().col(1).T()*r + m*z[0]/2;
+    double y2 = rack->getFrame()->getOrientation().col(1).T()*r+m*z[0]/2;
     double z2 = rack->getFrame()->getOrientation().col(2).T()*r/2;
     double z1 = gear->getFrame()->getOrientation().col(2).T()*r/2;
     Vec3 ey1 = gear->getFrame()->evalOrientation().T()*rack->getFrame()->evalOrientation().col(1);
