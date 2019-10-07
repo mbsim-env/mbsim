@@ -49,12 +49,8 @@ namespace MBSim {
     Vec3 ez2 = gear[1]->getFrame()->getOrientation().T()*(-gear[0]->getFrame()->getOrientation().col(2));
     double phi1 = (ez1(0)>=0?1:-1)*acos(ez1(1)/sqrt(pow(ez1(0),2)+pow(ez1(1),2))); 
     double phi2 = (ez2(0)>=0?1:-1)*acos(ez2(1)/sqrt(pow(ez2(0),2)+pow(ez2(1),2))); 
-//    Vec3 r = gear[1]->getFrame()->evalPosition() - gear[0]->getFrame()->evalPosition();
-//    double x2 = gear[1]->getFrame()->getOrientation().col(0).T()*r - m/2*(z[1]-z[0]*sin(gear[0]->getPitchAngle()))*sin(phi2);
-//    double y2 = gear[1]->getFrame()->getOrientation().col(1).T()*r + m*z[0]/2*cos(gear[0]->getPitchAngle());
-//    double z2 = gear[1]->getFrame()->getOrientation().col(2).T()*r + m/2*(z[1]-z[0]*sin(gear[0]->getPitchAngle()))*cos(phi2);
-//    if(x2*x2+y2*y2+z2*z2>1e-13)
-//       msg(Warn)<<"Large devitation detected at t="<<gear[1]->getTime()<<"\nContact kinematics may be wrong!" <<endl;
+    if(nrm2(gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition()+m/2*(z[0]/tan(gear[0]->getPitchAngle())*gear[0]->getFrame()->getOrientation().col(2)-z[1]/tan(gear[1]->getPitchAngle())*gear[1]->getFrame()->getOrientation().col(2)))>1e-8)
+      msg(Warn)<<"Large devitation detected at t="<<gear[1]->getTime()<<"\nContact kinematics may be wrong!" <<endl;
 
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
