@@ -220,10 +220,10 @@
     </DynamicSystemSolver>
   </Embed>
 
-  <TimeSteppingIntegrator xmlns="http://www.mbsim-env.de/MBSim">
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
-  </TimeSteppingIntegrator>
+  </DOPRI5Integrator>
 
 </MBSimProject>

@@ -143,7 +143,40 @@ namespace MBSim {
   }
 
   void ContactKinematicsBevelGearBevelGear::updatewb(SingleContact &contact, int ii) {
-    throw runtime_error("ContactKinematicsBevelGearBevelGear::updatewb not yet implemented!");
+    const Vec3 n1 = contact.getContourFrame(igear[0])->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(igear[0])->evalOrientation().col(1);
+    const Vec3 u2 = contact.getContourFrame(igear[1])->evalOrientation().col(1);
+    const Vec3 vC1 = contact.getContourFrame(igear[0])->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(igear[1])->evalVelocity();
+    gear[0]->setFlank(signisave[ii]);
+    gear[0]->setTooth(ksave[ii][0]);
+    gear[1]->setFlank(signisave[ii]);
+    gear[1]->setTooth(ksave[ii][1]);
+    Vec3 R1 = gear[0]->evalWs(contact.getContourFrame(igear[0])->getZeta());
+    Vec3 R2 = gear[1]->evalWs(contact.getContourFrame(igear[1])->getZeta());
+    Vec3 N1 = gear[0]->evalParDer1Wn(contact.getContourFrame(igear[0])->getZeta());
+    Vec3 U2 = gear[1]->evalParDer1Wu(contact.getContourFrame(igear[1])->getZeta());
+    const Vec3 parnPart1 = crossProduct(gear[0]->getFrame()->evalAngularVelocity(),n1);
+    const Vec3 paruPart2 = crossProduct(gear[1]->getFrame()->evalAngularVelocity(),u2);
+    const Vec3 parWvCParZeta1 = crossProduct(gear[0]->getFrame()->evalAngularVelocity(),R1);
+    const Vec3 parWvCParZeta2 = crossProduct(gear[1]->getFrame()->evalAngularVelocity(),R2);
+
+    SqrMat A(2,NONINIT);
+    A(0,0)=-u1.T()*R1;
+    A(0,1)=u1.T()*R2;
+    A(1,0)=u2.T()*N1;
+    A(1,1)=n1.T()*U2;
+
+    Vec b(2,NONINIT);
+    b(0)=-u1.T()*(vC2-vC1);
+    b(1)=-u2.T()*parnPart1-n1.T()*paruPart2;
+
+    Vec zetad = slvLU(A,b);
+
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += (N1*zetad(0)+parnPart1).T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad(1)-parWvCParZeta1*zetad(0));
+    if(contact.isTangentialForceLawSetValuedAndActive())
+      throw runtime_error("Tangential force law must be single valued for gear to gear contacts");
   }
 
 }

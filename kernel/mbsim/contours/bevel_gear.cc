@@ -56,11 +56,11 @@ namespace MBSim {
     double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
     double phis = -r0/r1;
     double ls = ((cos(phi)/cos(phi-be)+sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*r1+xi/pow(cos(phi-be),2))*phis*sin(al);
-    double as = -ls*sin(al)*cos(phi-be)+l*sin(al)*sin(phi-be)*phis+xi*cos(phi-be)*phis+r1*cos(phi)*phis;
+    double as = -ls*sin(al)*cos(phi-be)+(l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi))*phis;
     double bs = signi*ls*cos(al);
-    double cs = ls*sin(al)*sin(phi-be)+l*sin(al)*cos(phi-be)*phis-xi*sin(phi-be)*phis-r1*sin(phi)*phis;
-    Ks(0) = as*cos(eta)-a*sin(eta)-bs*sin(eta)*cos(ga)-b*cos(eta)*cos(ga)+cs*sin(eta)*sin(ga)+c*cos(eta)*sin(ga);
-    Ks(1) = as*sin(eta)+a*cos(eta)+bs*cos(eta)*cos(ga)-b*sin(eta)*cos(ga)-cs*cos(eta)*sin(ga)+c*sin(eta)*sin(ga);
+    double cs = ls*sin(al)*sin(phi-be)+(l*sin(al)*cos(phi-be)-xi*sin(phi-be)-r1*sin(phi))*phis;
+    Ks(0) = as*cos(eta)-a*sin(eta)-(bs*sin(eta)+b*cos(eta))*cos(ga)+(cs*sin(eta)+c*cos(eta))*sin(ga);
+    Ks(1) = as*sin(eta)+a*cos(eta)+(bs*cos(eta)-b*sin(eta))*cos(ga)-(cs*cos(eta)-c*sin(eta))*sin(ga);
     Ks(2) = bs*sin(ga)+cs*cos(ga);
     return BasicRotAIKz(k*2*M_PI/N-signi*delh)*Ks;
   }
@@ -80,7 +80,26 @@ namespace MBSim {
   }
 
   Vec3 BevelGear::evalParDer1Ks(const Vec2 &zeta) {
-    static Vec3 parDer1Ks;
+    static Vec3 parDer1Ks(NONINIT);
+    double eta = zeta(0);
+    double xi = zeta(1);
+    double phi = -r0/r1*eta;
+    double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
+    double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
+    double b = signi*l*cos(al)-d*sin(ga);
+    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
+    double phis = -r0/r1;
+    double ls = ((cos(phi)/cos(phi-be)+sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*r1+xi/pow(cos(phi-be),2))*phis*sin(al);
+    double as = -ls*sin(al)*cos(phi-be)+(l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi))*phis;
+    double bs = signi*ls*cos(al);
+    double cs = ls*sin(al)*sin(phi-be)+(l*sin(al)*cos(phi-be)-xi*sin(phi-be)-r1*sin(phi))*phis;
+    double lss = ((-sin(phi)/cos(phi-be)+cos(phi)/pow(cos(phi-be),2)*sin(phi-be)+cos(phi)/pow(cos(phi-be),2)*sin(phi-be)+2*sin(phi)/pow(cos(phi-be),3)*pow(sin(phi-be),2)+sin(phi)/pow(cos(phi-be),2)*cos(phi-be))*r1+2*xi/pow(cos(phi-be),3)*sin(phi-be))*phis*phis*sin(al);
+    double ass = -lss*sin(al)*cos(phi-be)+(2*ls*sin(al)*sin(phi-be)+(l*sin(al)*cos(phi-be)-xi*sin(phi-be)-r1*sin(phi))*phis)*phis;
+    double bss = signi*lss*cos(al);
+    double css = lss*sin(al)*sin(phi-be)+(2*ls*sin(al)*cos(phi-be)-(l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi))*phis)*phis;
+    parDer1Ks(0) = ass*cos(eta)-2*as*sin(eta)-a*cos(eta)-(bss*sin(eta)+2*bs*cos(eta)-b*sin(eta))*cos(ga)+(css*sin(eta)+2*cs*cos(eta)-c*sin(eta))*sin(ga);
+    parDer1Ks(1) = ass*sin(eta)+2*as*cos(eta)-a*sin(eta)+(bss*cos(eta)-2*bs*sin(eta)-b*cos(eta))*cos(ga)-(css*cos(eta)-2*cs*sin(eta)-c*cos(eta))*sin(ga);
+    parDer1Ks(2) = bss*sin(ga)+css*cos(ga);
     return BasicRotAIKz(k*2*M_PI/N-signi*delh)*parDer1Ks;
   }
 

@@ -150,7 +150,41 @@ namespace MBSim {
   }
 
   void ContactKinematicsBevelGearPlanarGear::updatewb(SingleContact &contact, int ii) {
-    throw runtime_error("ContactKinematicsBevelGearPlanarGear::updatewb not yet implemented!");
+    const Vec3 n1 = contact.getContourFrame(iplanargear)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(iplanargear)->evalOrientation().col(1);
+    const Vec3 u2 = contact.getContourFrame(ibevelgear)->evalOrientation().col(1);
+    const Vec3 vC1 = contact.getContourFrame(iplanargear)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(ibevelgear)->evalVelocity();
+    const Vec3 parnPart1 = crossProduct(planargear->getFrame()->getAngularVelocity(),n1);
+    const Vec3 paruPart2 = crossProduct(bevelgear->getFrame()->getAngularVelocity(),u2);
+
+    planargear->setFlank(signisave[ii]);
+    planargear->setTooth(ksave[ii][1]);
+    Vec3 R1 = planargear->evalWs(contact.getContourFrame(iplanargear)->getZeta());
+
+    bevelgear->setFlank(signisave[ii]);
+    bevelgear->setTooth(ksave[ii][0]);
+    Vec3 R2 = bevelgear->evalWs(contact.getContourFrame(ibevelgear)->getZeta());
+    Vec3 U2 = bevelgear->evalParDer1Wu(contact.getContourFrame(ibevelgear)->getZeta());
+
+    Vec3 parWvCParZeta1 = crossProduct(planargear->getFrame()->getAngularVelocity(),R1);
+    Vec3 parWvCParZeta2 = crossProduct(bevelgear->getFrame()->getAngularVelocity(),R2);
+
+    SqrMat A(2,NONINIT);
+    A(0,0) = -u1.T()*R1;
+    A(0,1) = u1.T()*R2;
+    A(1,0) = 0;
+    A(1,1) = n1.T()*U2;
+
+    Vec b_(2,NONINIT);
+    b_(0) = -u1.T()*(vC2-vC1);
+    b_(1) = -u2.T()*parnPart1-n1.T()*paruPart2;
+    Vec zetad = slvLU(A,b_);
+
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad(1)-parWvCParZeta1*zetad(0));
+    if(contact.isTangentialForceLawSetValuedAndActive())
+      throw runtime_error("Tangential force law must be single valued for gear to gear contacts");
   }
 
 }
