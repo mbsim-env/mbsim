@@ -64,5 +64,5 @@
   </environments>
   <constraintSolver>"fixedpoint"</constraintSolver>
   <impactSolver>"fixedpoint"</impactSolver>
-  <maximumIterations>100000</maximumIterations>
+  <maximumNumberOfIterations>100000</maximumNumberOfIterations>
 </DynamicSystemSolver>

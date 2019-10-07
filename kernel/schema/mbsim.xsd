@@ -732,10 +732,17 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="maximumIterations" type="pv:integerFullEval" minOccurs="0">
+          <xs:element name="maximumNumberOfIterations" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Maximale Iterationszahl der Löser bis zum Abruch.
+                Anzahl an Iterationen, bei der der Löser abbricht.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="highNumberOfIterations" type="pv:integerFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl an Iterationen, bei der der Löser eine Warnung ausgibt.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -743,6 +750,13 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob beim Lösungsverfahren "rootFinding" die Jacobi-Matrix numerisch berechnet werden soll.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="stopIfNoConvergence" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob der Löser abbricht, wenn keine Konvergenz erreicht wird.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

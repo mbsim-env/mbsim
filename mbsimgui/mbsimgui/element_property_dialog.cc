@@ -1154,11 +1154,17 @@ namespace MBSimGUI {
     impactSolver = new ExtWidget("Impact solver",new TextChoiceWidget(list,0,true),true,false,MBSIM%"impactSolver");
     addToTab("Solver parameters", impactSolver);
 
-    maxIter = new ExtWidget("Maximum iterations",new ChoiceWidget2(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumIterations");
+    maxIter = new ExtWidget("Maximum number of iterations",new ChoiceWidget2(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumNumberOfIterations");
     addToTab("Solver parameters", maxIter);
+
+    highIter = new ExtWidget("High number of iterations",new ChoiceWidget2(new ScalarWidgetFactory("1000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"highNumberOfIterations");
+    addToTab("Solver parameters", highIter);
 
     numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget2(new BoolWidgetFactory("false"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
     addToTab("Solver parameters", numericalJacobian);
+
+    stopIfNoConvergence = new ExtWidget("Stop if no convergence",new ChoiceWidget2(new BoolWidgetFactory("false"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stopIfNoConvergence");
+    addToTab("Solver parameters", stopIfNoConvergence);
 
     projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
     addToTab("Solver parameters", projection);
@@ -1206,7 +1212,9 @@ namespace MBSimGUI {
     constraintSolver->initializeUsingXML(item->getXMLElement());
     impactSolver->initializeUsingXML(item->getXMLElement());
     maxIter->initializeUsingXML(item->getXMLElement());
+    highIter->initializeUsingXML(item->getXMLElement());
     numericalJacobian->initializeUsingXML(item->getXMLElement());
+    stopIfNoConvergence->initializeUsingXML(item->getXMLElement());
     projection->initializeUsingXML(item->getXMLElement());
     gTol->initializeUsingXML(item->getXMLElement());
     gdTol->initializeUsingXML(item->getXMLElement());
@@ -1229,7 +1237,9 @@ namespace MBSimGUI {
     constraintSolver->writeXMLFile(item->getXMLElement());
     impactSolver->writeXMLFile(item->getXMLElement());
     maxIter->writeXMLFile(item->getXMLElement());
+    highIter->writeXMLFile(item->getXMLElement());
     numericalJacobian->writeXMLFile(item->getXMLElement());
+    stopIfNoConvergence->writeXMLFile(item->getXMLElement());
     projection->writeXMLFile(item->getXMLElement());
     gTol->writeXMLFile(item->getXMLElement());
     gdTol->writeXMLFile(item->getXMLElement());

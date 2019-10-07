@@ -12,7 +12,7 @@ int main (int argc, char* argv[]) {
   System sys("MBS");
   sys.setGeneralizedImpulseTolerance(1e-1*dt);
   sys.setGeneralizedRelativeVelocityTolerance(1e-4);
-  sys.setMaximumIterations(100000);
+  sys.setMaximumNumberOfIterations(100000);
   sys.initialize();
 
 
