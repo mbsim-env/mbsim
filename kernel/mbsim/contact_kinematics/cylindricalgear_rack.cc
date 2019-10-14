@@ -44,14 +44,17 @@ namespace MBSim {
     beta[1] = rack->getHelixAngle();
     m = gear->getModule()/cos(beta[0]);
     al0 = gear->getPressureAngle();
+    double al = atan(tan(gear->getPressureAngle())/cos(gear->getHelixAngle()));
     z[0] = gear->getNumberOfTeeth();
     z[1] = rack->getNumberOfTeeth();
     s0h2 = (m*M_PI/2-rack->getBacklash())/2;
     delh1 = (M_PI/2-gear->getBacklash()/m)/z[0];
-    etamax1[0] = tan(al0);
-    etamax1[1] = tan(acos(m*z[0]*cos(al0)/(m*z[0]+2*m)))-tan(al0);
-    etamax2[0] = m/cos(al0);
-    etamax2[1] = m/cos(al0);
+    etamax1[0][0] = gear->getEtaMax(m*z[0]*cos(al)/2,0);
+    etamax1[1][0] = gear->getEtaMax(m*z[0]*cos(al)/2,(beta[0]>=0?1:-1)*gear->getWidth()/2);
+    etamax1[0][1] = gear->getEtaMax(m*z[0]/2+gear->getModule(),0);
+    etamax1[1][1] = gear->getEtaMax(m*z[0]/2+gear->getModule(),(beta[0]>=0?-1:1)*gear->getWidth()/2);
+    etamax2[0] = rack->getModule()/cos(al0);
+    etamax2[1] = etamax2[0];
   }
 
   void ContactKinematicsCylindricalGearRack::updateg(SingleContact &contact, int ii) {
@@ -96,12 +99,12 @@ namespace MBSim {
         for(int k_=0; k_<z[0]; k_++) {
           double signk = (phi1 - signi*delh1)>0?-1:1;
           double eta = -(phi1 + signk*k_*2*M_PI/z[0] - signi*delh1);
-          if(eta>-etamax1[i] and eta<etamax1[not i])
+          if(eta>-etamax1[1][i] and eta<etamax1[1][not i])
             v[0].push_back(signk*k_);
         }
         for(int k_=0; k_<z[1]; k_++) {
           double x2q = x2+k_*M_PI*m+signi*s0h2;
-          double xi = (signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+          double xi = ((signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])-z2*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
           double eta = (x2q+xi*tan(beta[1])-signi*y2*cos(beta[1])/tan(al0))*pow(sin(al0),2)/(pow(sin(al0),2)+pow(cos(beta[1])*cos(al0),2));
           if(eta>-etamax2[i] and eta<etamax2[not i])
             v[1].push_back(k_);
@@ -114,17 +117,20 @@ namespace MBSim {
           k[0] = i0;
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
-            Vec2 zeta2(NONINIT);
+            Vec2 zeta1(NONINIT), zeta2(NONINIT);
+            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
+            double s = 0;
+            if(zeta1(0)>etamax1[0][not i])
+              s = (beta[0]>=0?-1:1)*gear->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]);
+            else if(zeta1(0)<-etamax1[0][i])
+              s = (beta[0]>=0?1:-1)*gear->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]);
             double x2q = (x2+k[1]*M_PI*m+signi*s0h2);
-            zeta2(1) = ((signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])-z2*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            zeta2(1) = ((signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])+(s-z2)*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
             zeta2(0) = (x2q/cos(beta[1])+zeta2(1)*tan(beta[1]))*sin(al0)-signi*y2*cos(al0);
             rack->setFlank(signi);
             rack->setTooth(k[1]);
             rOP[1] = rack->evalPosition(zeta2);
-
-            Vec2 zeta1(NONINIT);
-            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
-            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+z1*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+(s+z1)*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
             gear->setFlank(signi);
             gear->setTooth(k[0]);
             rOP[0] = gear->evalPosition(zeta1);

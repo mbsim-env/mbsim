@@ -111,6 +111,14 @@ namespace MBSim {
     return parDer2Kt;
   }
 
+  double CylindricalGear::getEtaMax(double r, double s) {
+    double d = pow(cos(be),2)+pow(sin(be)*sin(al),2);
+    double a = pow(cos(be)*cos(al),4)+pow(sin(al)*cos(be)*cos(al),2);
+    double b = -2*s*pow(cos(be),3)*pow(cos(al),4)*sin(be)-2*s*pow(sin(al)*cos(al),2)*cos(be)*sin(be)-2*r0*sin(al)*cos(be)*cos(al)*d;
+    double c = s*s*(pow(pow(cos(al),2)*cos(be)*sin(be),2)+pow(sin(al)*sin(be)*cos(al),2))+(r0*r0-r*r)*d*d+2*s*r0*sin(al)*sin(be)*cos(al)*d;
+    return fabs(b+sqrt(fabs(b*b-4*a*c)))/2/a/r0;
+  }
+
   void CylindricalGear::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       delh = (M_PI/2-(ext?1:-1)*b/m*cos(be))/N;
