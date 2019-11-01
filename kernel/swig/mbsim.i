@@ -53,10 +53,10 @@ class MBSim::Function<Ret(Arg)> : public MBSim::FunctionBase, virtual public fma
     virtual int getArgSize() const;
     virtual Ret operator()(const Arg &arg)=0;
     virtual DRetDArg parDer(const Arg &arg);
-    virtual Ret dirDer(const Arg &argDir, const Arg &arg);
+    virtual DRetDDir dirDer(const Arg &argDir, const Arg &arg);
     virtual DDRetDDArg parDerParDer(const Arg &arg);
     virtual DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg);
-    virtual Ret dirDerDirDer(const Arg &argDir_1, const Arg &argDir_2, const Arg &arg);
+    virtual DRetDDir dirDerDirDer(const Arg &argDir_1, const Arg &argDir_2, const Arg &arg);
     virtual bool constParDer() const;
 };
 %enddef

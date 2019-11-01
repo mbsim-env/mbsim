@@ -241,8 +241,8 @@ namespace MBSim {
       return c<typename B::DRetDArg>(pd(std::vector<casadi::SX>{c(x)})[0]);
     }
 
-    Ret dirDer(const Arg &xd, const Arg &x) override {
-      return c<Ret>(dd(std::vector<casadi::SX>{c(xd), c(x)})[0]);
+    typename B::DRetDDir dirDer(const Arg &xd, const Arg &x) override {
+      return c<typename B::DRetDDir>(dd(std::vector<casadi::SX>{c(xd), c(x)})[0]);
     }
 
     typename B::DRetDArg parDerDirDer(const Arg &xd, const Arg &x) override {
@@ -257,8 +257,8 @@ namespace MBSim {
       return c<typename B::DDRetDDArg>(pdpd(std::vector<casadi::SX>{c(x)})[0]);
     }
 
-    Ret dirDerDirDer(const Arg &argDir_1, const Arg &argDir_2, const Arg &arg) override {
-      return c<Ret>(dddd(std::vector<casadi::SX>{c(argDir_1), c(argDir_2), c(arg)})[0]);
+    typename B::DRetDDir dirDerDirDer(const Arg &argDir_1, const Arg &argDir_2, const Arg &arg) override {
+      return c<typename B::DRetDDir>(dddd(std::vector<casadi::SX>{c(argDir_1), c(argDir_2), c(arg)})[0]);
     }
 
     void initializeUsingXML(xercesc::DOMElement *element) override {
