@@ -46,6 +46,7 @@ class MBSim::Function<Ret(Arg)> : public MBSim::FunctionBase, virtual public fma
     Function();
     void initializeUsingXML(xercesc::DOMElement *element);
     typedef typename Der<Ret, Arg>::type DRetDArg;
+    typedef typename DirDer<Ret, Arg>::type DRetDDir;
     typedef typename Der<DRetDArg, Arg>::type DDRetDDArg;
     enum { retSize1 = StaticSize<Ret>::size1, retSize2 = StaticSize<Ret>::size2 };
     static constexpr int argSize = StaticSize<Arg>::size1;
