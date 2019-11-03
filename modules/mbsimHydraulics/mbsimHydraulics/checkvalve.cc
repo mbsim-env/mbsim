@@ -169,7 +169,7 @@ namespace MBSimHydraulics {
         // MISSING: spring->init(...) must be called somewere!!!???
       }
       if (openMBVArrows) {
-        ((Circle*)ball->getContour("ContourBall"))->enableOpenMBV(true);
+        ((Circle*)ball->getContour("ContourBall"))->enableOpenMBV();
         ContactObserver *observer = new ContactObserver("MaxContactObserver");
         observer->enableOpenMBVContactPoints(rBall/8.);
         observer->setContact(maxContact);

@@ -28,7 +28,8 @@ using namespace fmatvec;
 namespace MBSim {
 
   Vec2 FuncPairPointContourInterpolation::operator()(const Vec2 &alpha) {
-    return (contour->evalWu(alpha)).T() * (contour->evalPosition(alpha) - point->getFrame()->evalPosition());
+    throw std::runtime_error("Check the codel here which does not compile but was not used till now!!!");
+    //return (contour->evalWu(alpha)).T() * (contour->evalPosition(alpha) - point->getFrame()->evalPosition());
   }
 
   Vec3 FuncPairPointContourInterpolation::evalWrD(const Vec2 &alpha) {
