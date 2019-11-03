@@ -39,7 +39,7 @@ namespace MBSim {
         return r; 
       }
       typename B::DRetDArg parDer(const Arg &arg) override { return A; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(2); }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(A.cols()); }
       bool constParDer() const override { return true; }
   };
 

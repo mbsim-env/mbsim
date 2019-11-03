@@ -50,7 +50,7 @@ namespace MBSim {
    * Adds just some XML functionallity to the fmatvec::Function.
    * Also derives from FunctionBase (to have a none templated base for all functions) which is itself derived from Element. */
   template<typename Sig>
-  class Function : public fmatvec::Function<Sig>, public FunctionBase {
+  class Function : public virtual fmatvec::Function<Sig>, public FunctionBase {
     public:
       //! Most Function's have no name hence use a unique dummy name for Element ctor
       //! See also FunctionBase::FunctionBase.

@@ -8,7 +8,6 @@
 #include "openmbvcppinterface/cube.h"
 
 using namespace MBSim;
-using namespace casadi;
 using namespace fmatvec;
 using namespace std;
 
@@ -36,16 +35,19 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
 
-  SX sq=SX::sym("q", 2);
+  Vector<Fixed<2>, IndependentVariable> sq(NONINIT);
 
-  SX st=SX::sym("t");
+  IndependentVariable st;
 
-  SX pos=SX::zeros(3);
-  pos(0) = cos(SX(sq(0)));
-  pos(1) = sin(SX(sq(0)));
+  Vector<Fixed<3>, SymbolicExpression> pos;
+  pos(0) = cos(sq(0));
+  pos(1) = sin(sq(0));
   pos(2) = sq(1);
   
-  SymbolicFunction<Vec3(VecV,double)> *position = new SymbolicFunction<Vec3(VecV,double)>(pos, sq, st);
+  MBSim::SymbolicFunction<Vec3(VecV,double)> *position = new MBSim::SymbolicFunction<Vec3(VecV,double)>();
+  position->setIndependentVariable1(sq);
+  position->setIndependentVariable2(st);
+  position->setDependentFunction(pos);
   body1->setTranslation(position);
   
   body1->setGeneralizedInitialVelocity("[0;1]");

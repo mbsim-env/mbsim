@@ -69,10 +69,10 @@ class Block : public MBSim::RigidBody {
         lengths(0) = height;
         lengths(1) = width;
         back->enableOpenMBV(lengths);
-        saddle->enableOpenMBV(groove / 10.);
-        ear->enableOpenMBV(groove / 10.);
-        top->enableOpenMBV(groove / 10.);
-        bottom->enableOpenMBV(groove / 10.);
+        saddle->enableOpenMBV();
+        ear->enableOpenMBV();
+        top->enableOpenMBV();
+        bottom->enableOpenMBV();
         C->enableOpenMBV(0.01);
       }
       RigidBody::init(stage, config);

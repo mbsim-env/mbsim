@@ -37,7 +37,7 @@ namespace MBSim {
       int getArgSize() const override { return 1; }
       fmatvec::Vec3 operator()(const Arg &arg) override { return a*arg; }
       typename B::DRetDArg parDer(const Arg &arg) override { return a; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(1); }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(); }
       typename B::DDRetDDArg parDerParDer(const Arg &arg) override { this->throwError("parDerParDer is not available for given template parameters."); }
       bool constParDer() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
