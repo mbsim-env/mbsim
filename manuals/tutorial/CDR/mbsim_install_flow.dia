@@ -2,10 +2,10 @@
 <dia:diagram xmlns:dia="http://www.lysator.liu.se/~alla/dia/">
   <dia:diagramdata>
     <dia:attribute name="background">
-      <dia:color val="#ffffff"/>
+      <dia:color val="#ffffffff"/>
     </dia:attribute>
     <dia:attribute name="pagebreak">
-      <dia:color val="#000099"/>
+      <dia:color val="#000099ff"/>
     </dia:attribute>
     <dia:attribute name="paper">
       <dia:composite type="paper">
@@ -37,6 +37,9 @@
     </dia:attribute>
     <dia:attribute name="grid">
       <dia:composite type="grid">
+        <dia:attribute name="dynamic">
+          <dia:boolean val="true"/>
+        </dia:attribute>
         <dia:attribute name="width_x">
           <dia:real val="1"/>
         </dia:attribute>
@@ -53,7 +56,7 @@
       </dia:composite>
     </dia:attribute>
     <dia:attribute name="color">
-      <dia:color val="#d8e5e5"/>
+      <dia:color val="#d8e5e5ff"/>
     </dia:attribute>
     <dia:attribute name="guides">
       <dia:composite type="guides">
@@ -61,8 +64,27 @@
         <dia:attribute name="vguides"/>
       </dia:composite>
     </dia:attribute>
+    <dia:attribute name="display">
+      <dia:composite type="display">
+        <dia:attribute name="antialiased">
+          <dia:boolean val="false"/>
+        </dia:attribute>
+        <dia:attribute name="snap-to-grid">
+          <dia:boolean val="false"/>
+        </dia:attribute>
+        <dia:attribute name="snap-to-object">
+          <dia:boolean val="true"/>
+        </dia:attribute>
+        <dia:attribute name="show-grid">
+          <dia:boolean val="true"/>
+        </dia:attribute>
+        <dia:attribute name="show-connection-points">
+          <dia:boolean val="true"/>
+        </dia:attribute>
+      </dia:composite>
+    </dia:attribute>
   </dia:diagramdata>
-  <dia:layer name="Hintergrund" visible="true" active="true">
+  <dia:layer name="Hintergrund" visible="true" connectable="true" active="true">
     <dia:object type="Flowchart - Box" version="0" id="O0">
       <dia:attribute name="obj_pos">
         <dia:point val="14.9,17.4"/>
@@ -101,7 +123,7 @@ Kernel#</dia:string>
             <dia:point val="16.545,18.545"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -143,10 +165,10 @@ Kernel#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="18.345,-6.685"/>
+            <dia:point val="18.3451,-6.685"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -191,7 +213,7 @@ Kernel#</dia:string>
             <dia:point val="16.12,-11.335"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -236,7 +258,7 @@ Kernel#</dia:string>
             <dia:point val="20.6238,-11.335"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -249,13 +271,13 @@ Kernel#</dia:string>
         <dia:point val="16.12,-10.58"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.07,-10.63;17.7574,-7.7182"/>
+        <dia:rectangle val="16.07,-10.63;17.7575,-7.78"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="16.12,-10.58"/>
         <dia:point val="16.12,-9.205"/>
-        <dia:point val="17.3956,-9.205"/>
-        <dia:point val="17.3956,-7.83"/>
+        <dia:point val="17.3957,-9.205"/>
+        <dia:point val="17.3957,-7.83"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
         <dia:enum val="1"/>
@@ -284,7 +306,7 @@ Kernel#</dia:string>
         <dia:point val="20.6238,-10.58"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="18.9326,-10.63;20.6738,-7.7182"/>
+        <dia:rectangle val="18.9326,-10.63;20.6738,-7.78"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="20.6238,-10.58"/>
@@ -352,7 +374,7 @@ HDF5Serie#</dia:string>
             <dia:point val="28.6187,-2.135"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -365,7 +387,7 @@ HDF5Serie#</dia:string>
         <dia:point val="16.5344,11.32"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.187,11.27;16.9107,13.0518"/>
+        <dia:rectangle val="16.1871,11.27;16.9107,12.99"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="16.5344,11.32"/>
@@ -392,7 +414,7 @@ HDF5Serie#</dia:string>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O11" connection="12"/>
-        <dia:connection handle="1" to="O29" connection="2"/>
+        <dia:connection handle="1" to="O27" connection="2"/>
       </dia:connections>
     </dia:object>
     <dia:object type="Flowchart - Box" version="0" id="O8">
@@ -433,7 +455,7 @@ HPlotSerie#</dia:string>
             <dia:point val="33.1638,4.965"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -446,7 +468,7 @@ HPlotSerie#</dia:string>
         <dia:point val="29.7406,-0.58"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="29.6906,-0.63;33.5256,3.9318"/>
+        <dia:rectangle val="29.6906,-0.63;33.5256,3.87"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="29.7406,-0.58"/>
@@ -514,7 +536,7 @@ MBXMLUtils#</dia:string>
             <dia:point val="7.135,2.415"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -560,7 +582,7 @@ OpenMBVC++Interface#</dia:string>
             <dia:point val="18.6875,9.765"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -605,7 +627,7 @@ OpenMBVC++Interface#</dia:string>
             <dia:point val="29.695,-6.235"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -615,13 +637,13 @@ OpenMBVC++Interface#</dia:string>
     </dia:object>
     <dia:object type="Standard - ZigZagLine" version="1" id="O13">
       <dia:attribute name="obj_pos">
-        <dia:point val="29.695,-5.43056"/>
+        <dia:point val="29.695,-5.43057"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="29.3788,-5.48056;30.1024,-3.1682"/>
+        <dia:rectangle val="29.3788,-5.48057;30.1024,-3.23"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="29.695,-5.43056"/>
+        <dia:point val="29.695,-5.43057"/>
         <dia:point val="29.695,-4.96483"/>
         <dia:point val="29.7406,-4.96483"/>
         <dia:point val="29.7406,-3.28"/>
@@ -685,7 +707,7 @@ OpenMBVC++Interface#</dia:string>
             <dia:point val="38.1638,7.795"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -698,7 +720,7 @@ OpenMBVC++Interface#</dia:string>
         <dia:point val="19.2944,-5.93"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="19.2444,-5.98;27.8587,-3.1682"/>
+        <dia:rectangle val="19.2444,-5.98;27.8587,-3.23"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="19.2944,-5.93"/>
@@ -765,7 +787,7 @@ OpenMBVC++Interface#</dia:string>
             <dia:point val="1.62,2.815"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -810,7 +832,7 @@ OpenMBVC++Interface#</dia:string>
             <dia:point val="4.8875,-1.585"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -855,7 +877,7 @@ OpenMBVC++Interface#</dia:string>
             <dia:point val="9.37375,-1.635"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -863,92 +885,12 @@ OpenMBVC++Interface#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O19">
-      <dia:attribute name="obj_pos">
-        <dia:point val="11.055,0.27"/>
-      </dia:attribute>
-      <dia:attribute name="obj_bb">
-        <dia:rectangle val="11.005,0.22;14.57,2.22"/>
-      </dia:attribute>
-      <dia:attribute name="elem_corner">
-        <dia:point val="11.055,0.27"/>
-      </dia:attribute>
-      <dia:attribute name="elem_width">
-        <dia:real val="3.4649999999999999"/>
-      </dia:attribute>
-      <dia:attribute name="elem_height">
-        <dia:real val="1.9000000000000001"/>
-      </dia:attribute>
-      <dia:attribute name="show_background">
-        <dia:boolean val="true"/>
-      </dia:attribute>
-      <dia:attribute name="padding">
-        <dia:real val="0.5"/>
-      </dia:attribute>
-      <dia:attribute name="text">
-        <dia:composite type="text">
-          <dia:attribute name="string">
-            <dia:string>#Casadi#</dia:string>
-          </dia:attribute>
-          <dia:attribute name="font">
-            <dia:font family="sans" style="0" name="Helvetica"/>
-          </dia:attribute>
-          <dia:attribute name="height">
-            <dia:real val="0.80000000000000004"/>
-          </dia:attribute>
-          <dia:attribute name="pos">
-            <dia:point val="12.7875,1.415"/>
-          </dia:attribute>
-          <dia:attribute name="color">
-            <dia:color val="#000000"/>
-          </dia:attribute>
-          <dia:attribute name="alignment">
-            <dia:enum val="1"/>
-          </dia:attribute>
-        </dia:composite>
-      </dia:attribute>
-    </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O20">
-      <dia:attribute name="obj_pos">
-        <dia:point val="11.055,1.22"/>
-      </dia:attribute>
-      <dia:attribute name="obj_bb">
-        <dia:rectangle val="9.4307,1.17;11.105,2.3068"/>
-      </dia:attribute>
-      <dia:attribute name="orth_points">
-        <dia:point val="11.055,1.22"/>
-        <dia:point val="10.2738,1.22"/>
-        <dia:point val="10.2738,1.945"/>
-        <dia:point val="9.5425,1.945"/>
-      </dia:attribute>
-      <dia:attribute name="orth_orient">
-        <dia:enum val="0"/>
-        <dia:enum val="1"/>
-        <dia:enum val="0"/>
-      </dia:attribute>
-      <dia:attribute name="autorouting">
-        <dia:boolean val="false"/>
-      </dia:attribute>
-      <dia:attribute name="end_arrow">
-        <dia:enum val="22"/>
-      </dia:attribute>
-      <dia:attribute name="end_arrow_length">
-        <dia:real val="0.5"/>
-      </dia:attribute>
-      <dia:attribute name="end_arrow_width">
-        <dia:real val="0.5"/>
-      </dia:attribute>
-      <dia:connections>
-        <dia:connection handle="0" to="O19" connection="7"/>
-        <dia:connection handle="1" to="O10" connection="6"/>
-      </dia:connections>
-    </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O21">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O19">
       <dia:attribute name="obj_pos">
         <dia:point val="4.8875,-0.83"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="4.8375,-0.88;6.29305,1.3818"/>
+        <dia:rectangle val="4.8375,-0.88;6.29305,1.32"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="4.8875,-0.83"/>
@@ -978,12 +920,12 @@ OpenMBVC++Interface#</dia:string>
         <dia:connection handle="1" to="O10" connection="1"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O22">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O20">
       <dia:attribute name="obj_pos">
         <dia:point val="9.37375,-0.88"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="7.97695,-0.93;9.42375,1.3818"/>
+        <dia:rectangle val="7.97695,-0.93;9.42375,1.32"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="9.37375,-0.88"/>
@@ -1013,12 +955,12 @@ OpenMBVC++Interface#</dia:string>
         <dia:connection handle="1" to="O10" connection="3"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O23">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O21">
       <dia:attribute name="obj_pos">
         <dia:point val="3.3075,2.62"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="3.2575,2.2582;4.78901,2.9818"/>
+        <dia:rectangle val="3.2575,2.2582;4.7272,2.9818"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="3.3075,2.62"/>
@@ -1048,7 +990,7 @@ OpenMBVC++Interface#</dia:string>
         <dia:connection handle="1" to="O10" connection="16"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O24">
+    <dia:object type="Flowchart - Box" version="0" id="O22">
       <dia:attribute name="obj_pos">
         <dia:point val="11.0676,3.32"/>
       </dia:attribute>
@@ -1085,7 +1027,7 @@ OpenMBVC++Interface#</dia:string>
             <dia:point val="12.6851,4.465"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1093,12 +1035,12 @@ OpenMBVC++Interface#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O25">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O23">
       <dia:attribute name="obj_pos">
         <dia:point val="11.0676,4.27"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="9.4307,2.9332;11.1176,4.32"/>
+        <dia:rectangle val="9.4925,2.9332;11.1176,4.32"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="11.0676,4.27"/>
@@ -1124,16 +1066,16 @@ OpenMBVC++Interface#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O24" connection="7"/>
+        <dia:connection handle="0" to="O22" connection="7"/>
         <dia:connection handle="1" to="O10" connection="10"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O26">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O24">
       <dia:attribute name="obj_pos">
         <dia:point val="17.3956,-5.93"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="6.7732,-5.98;17.4456,1.3818"/>
+        <dia:rectangle val="6.7732,-5.98;17.4456,1.32"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="17.3956,-5.93"/>
@@ -1163,12 +1105,12 @@ OpenMBVC++Interface#</dia:string>
         <dia:connection handle="1" to="O10" connection="2"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O27">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O25">
       <dia:attribute name="obj_pos">
         <dia:point val="7.135,4.02034"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="7.085,3.97034;16.8962,8.7318"/>
+        <dia:rectangle val="7.085,3.97034;16.8962,8.67"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="7.135,4.02034"/>
@@ -1198,12 +1140,12 @@ OpenMBVC++Interface#</dia:string>
         <dia:connection handle="1" to="O11" connection="1"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O28">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O26">
       <dia:attribute name="obj_pos">
         <dia:point val="28.6187,-0.58"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="20.4788,-0.63;28.6687,8.7318"/>
+        <dia:rectangle val="20.4788,-0.63;28.6687,8.67"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="28.6187,-0.58"/>
@@ -1233,7 +1175,7 @@ OpenMBVC++Interface#</dia:string>
         <dia:connection handle="1" to="O11" connection="3"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O29">
+    <dia:object type="Flowchart - Box" version="0" id="O27">
       <dia:attribute name="obj_pos">
         <dia:point val="14.5176,12.94"/>
       </dia:attribute>
@@ -1277,7 +1219,7 @@ Nurbs++#</dia:string>
             <dia:point val="16.5489,14.085"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1285,12 +1227,12 @@ Nurbs++#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O30">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O28">
       <dia:attribute name="obj_pos">
         <dia:point val="16.5489,15.64"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.1832,15.59;16.9068,17.5118"/>
+        <dia:rectangle val="16.1832,15.59;16.9068,17.45"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="16.5489,15.64"/>
@@ -1316,11 +1258,11 @@ Nurbs++#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O29" connection="13"/>
+        <dia:connection handle="0" to="O27" connection="13"/>
         <dia:connection handle="1" to="O0" connection="2"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O31">
+    <dia:object type="Flowchart - Box" version="0" id="O29">
       <dia:attribute name="obj_pos">
         <dia:point val="14.6414,21.69"/>
       </dia:attribute>
@@ -1355,10 +1297,10 @@ Modules#</dia:string>
             <dia:real val="0.80000000000000004"/>
           </dia:attribute>
           <dia:attribute name="pos">
-            <dia:point val="16.5226,22.835"/>
+            <dia:point val="16.5227,22.835"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1366,7 +1308,7 @@ Modules#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O32">
+    <dia:object type="Flowchart - Box" version="0" id="O30">
       <dia:attribute name="obj_pos">
         <dia:point val="14.1739,25.99"/>
       </dia:attribute>
@@ -1404,7 +1346,7 @@ MBSimXML#</dia:string>
             <dia:point val="16.4939,27.135"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1412,7 +1354,7 @@ MBSimXML#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O33">
+    <dia:object type="Flowchart - Box" version="0" id="O31">
       <dia:attribute name="obj_pos">
         <dia:point val="14.1676,30.84"/>
       </dia:attribute>
@@ -1450,7 +1392,7 @@ MBSimFMI#</dia:string>
             <dia:point val="16.4876,31.985"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1458,12 +1400,12 @@ MBSimFMI#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O34">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O32">
       <dia:attribute name="obj_pos">
         <dia:point val="16.545,20.1"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.1608,20.05;16.8844,21.8018"/>
+        <dia:rectangle val="16.1608,20.05;16.8844,21.74"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="16.545,20.1"/>
@@ -1490,15 +1432,15 @@ MBSimFMI#</dia:string>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O0" connection="13"/>
-        <dia:connection handle="1" to="O31" connection="2"/>
+        <dia:connection handle="1" to="O29" connection="2"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O35">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O33">
       <dia:attribute name="obj_pos">
         <dia:point val="16.5226,24.39"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.132,24.34;16.8557,26.1018"/>
+        <dia:rectangle val="16.1321,24.34;16.8557,26.04"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="16.5226,24.39"/>
@@ -1524,16 +1466,16 @@ MBSimFMI#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O31" connection="13"/>
-        <dia:connection handle="1" to="O32" connection="2"/>
+        <dia:connection handle="0" to="O29" connection="13"/>
+        <dia:connection handle="1" to="O30" connection="2"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O36">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O34">
       <dia:attribute name="obj_pos">
         <dia:point val="16.4939,28.7389"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="16.1258,28.6889;16.8494,30.9518"/>
+        <dia:rectangle val="16.1258,28.6889;16.8494,30.89"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="16.4939,28.7389"/>
@@ -1559,11 +1501,11 @@ MBSimFMI#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O32" connection="16"/>
-        <dia:connection handle="1" to="O33" connection="2"/>
+        <dia:connection handle="0" to="O30" connection="16"/>
+        <dia:connection handle="1" to="O31" connection="2"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O37">
+    <dia:object type="Flowchart - Box" version="0" id="O35">
       <dia:attribute name="obj_pos">
         <dia:point val="28.0076,13.183"/>
       </dia:attribute>
@@ -1601,7 +1543,7 @@ OpenMBV#</dia:string>
             <dia:point val="30.1189,14.328"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1609,16 +1551,16 @@ OpenMBV#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O38">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O36">
       <dia:attribute name="obj_pos">
-        <dia:point val="20.8406,11.32"/>
+        <dia:point val="20.8407,11.32"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="20.7906,11.27;28.1194,14.8948"/>
+        <dia:rectangle val="20.7907,11.27;28.0576,14.8948"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
-        <dia:point val="20.8406,11.32"/>
-        <dia:point val="20.8406,14.533"/>
+        <dia:point val="20.8407,11.32"/>
+        <dia:point val="20.8407,14.533"/>
         <dia:point val="28.0076,14.533"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -1639,15 +1581,15 @@ OpenMBV#</dia:string>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O11" connection="14"/>
-        <dia:connection handle="1" to="O37" connection="7"/>
+        <dia:connection handle="1" to="O35" connection="7"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O39">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O37">
       <dia:attribute name="obj_pos">
         <dia:point val="38.1638,6.65"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="35.2957,4.8082;38.2138,6.7"/>
+        <dia:rectangle val="35.3575,4.8082;38.2138,6.7"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="38.1638,6.65"/>
@@ -1675,12 +1617,12 @@ OpenMBV#</dia:string>
         <dia:connection handle="1" to="O8" connection="8"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O40">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O38">
       <dia:attribute name="obj_pos">
         <dia:point val="38.1638,8.55"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="32.1183,8.5;38.2138,14.8948"/>
+        <dia:rectangle val="32.1801,8.5;38.2138,14.8948"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="38.1638,8.55"/>
@@ -1705,10 +1647,10 @@ OpenMBV#</dia:string>
       </dia:attribute>
       <dia:connections>
         <dia:connection handle="0" to="O14" connection="13"/>
-        <dia:connection handle="1" to="O37" connection="8"/>
+        <dia:connection handle="1" to="O35" connection="8"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O41">
+    <dia:object type="Flowchart - Box" version="0" id="O39">
       <dia:attribute name="obj_pos">
         <dia:point val="26.5364,9.07714"/>
       </dia:attribute>
@@ -1745,7 +1687,7 @@ OpenMBV#</dia:string>
             <dia:point val="28.2051,10.2221"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1753,7 +1695,7 @@ OpenMBV#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O42">
+    <dia:object type="Flowchart - Box" version="0" id="O40">
       <dia:attribute name="obj_pos">
         <dia:point val="30.5901,9.07714"/>
       </dia:attribute>
@@ -1790,7 +1732,7 @@ OpenMBV#</dia:string>
             <dia:point val="31.9176,10.2221"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1798,17 +1740,17 @@ OpenMBV#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O43">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O41">
       <dia:attribute name="obj_pos">
         <dia:point val="31.9176,10.9771"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="30.8127,10.9271;31.9676,13.2948"/>
+        <dia:rectangle val="30.8127,10.9271;31.9676,13.233"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="31.9176,10.9771"/>
-        <dia:point val="31.9176,12.08"/>
-        <dia:point val="31.1745,12.08"/>
+        <dia:point val="31.9176,12.0801"/>
+        <dia:point val="31.1745,12.0801"/>
         <dia:point val="31.1745,13.183"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -1829,21 +1771,21 @@ OpenMBV#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O42" connection="13"/>
-        <dia:connection handle="1" to="O37" connection="3"/>
+        <dia:connection handle="0" to="O40" connection="13"/>
+        <dia:connection handle="1" to="O35" connection="3"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O44">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O42">
       <dia:attribute name="obj_pos">
         <dia:point val="28.2051,10.9771"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="28.1551,10.9271;29.425,13.2948"/>
+        <dia:rectangle val="28.1551,10.9271;29.425,13.233"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="28.2051,10.9771"/>
-        <dia:point val="28.2051,12.08"/>
-        <dia:point val="29.0632,12.08"/>
+        <dia:point val="28.2051,12.0801"/>
+        <dia:point val="29.0632,12.0801"/>
         <dia:point val="29.0632,13.183"/>
       </dia:attribute>
       <dia:attribute name="orth_orient">
@@ -1864,11 +1806,11 @@ OpenMBV#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O41" connection="13"/>
-        <dia:connection handle="1" to="O37" connection="1"/>
+        <dia:connection handle="0" to="O39" connection="13"/>
+        <dia:connection handle="1" to="O35" connection="1"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Flowchart - Box" version="0" id="O45">
+    <dia:object type="Flowchart - Box" version="0" id="O43">
       <dia:attribute name="obj_pos">
         <dia:point val="27.7676,30.8601"/>
       </dia:attribute>
@@ -1906,7 +1848,7 @@ MBSimGUI#</dia:string>
             <dia:point val="30.0876,32.0051"/>
           </dia:attribute>
           <dia:attribute name="color">
-            <dia:color val="#000000"/>
+            <dia:color val="#000000ff"/>
           </dia:attribute>
           <dia:attribute name="alignment">
             <dia:enum val="1"/>
@@ -1914,12 +1856,12 @@ MBSimGUI#</dia:string>
         </dia:composite>
       </dia:attribute>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O46">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O44">
       <dia:attribute name="obj_pos">
         <dia:point val="18.8076,32.19"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="18.7576,31.8483;27.8794,32.5719"/>
+        <dia:rectangle val="18.7576,31.8483;27.8176,32.5719"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="18.8076,32.19"/>
@@ -1945,16 +1887,16 @@ MBSimGUI#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O33" connection="8"/>
-        <dia:connection handle="1" to="O45" connection="7"/>
+        <dia:connection handle="0" to="O31" connection="8"/>
+        <dia:connection handle="1" to="O43" connection="7"/>
       </dia:connections>
     </dia:object>
-    <dia:object type="Standard - ZigZagLine" version="1" id="O47">
+    <dia:object type="Standard - ZigZagLine" version="1" id="O45">
       <dia:attribute name="obj_pos">
         <dia:point val="30.1189,15.883"/>
       </dia:attribute>
       <dia:attribute name="obj_bb">
-        <dia:rectangle val="29.7258,15.833;30.4494,30.9719"/>
+        <dia:rectangle val="29.7258,15.833;30.4494,30.9101"/>
       </dia:attribute>
       <dia:attribute name="orth_points">
         <dia:point val="30.1189,15.883"/>
@@ -1980,8 +1922,8 @@ MBSimGUI#</dia:string>
         <dia:real val="0.5"/>
       </dia:attribute>
       <dia:connections>
-        <dia:connection handle="0" to="O37" connection="13"/>
-        <dia:connection handle="1" to="O45" connection="2"/>
+        <dia:connection handle="0" to="O35" connection="13"/>
+        <dia:connection handle="1" to="O43" connection="2"/>
       </dia:connections>
     </dia:object>
   </dia:layer>

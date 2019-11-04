@@ -37,29 +37,36 @@ namespace MBSim {
       Function<Ret(Arg)>::init(stage, config);
       if(stage == Element::preInit) {
         fmatvec::SymbolicFunction<Ret(Arg)>::init();
+//        checkFunctionIODim();
       }
     }
 
-//    void initializeUsingXML(xercesc::DOMElement *element) override {
-//      auto io=casadi::createCasADiFunctionFromXML(element->getFirstElementChild());
-//      arg=io.first[0];
-//      ret=io.second[0];
-//      // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
-//      // to test other possible combinations (more general ones)
+    void initializeUsingXML(xercesc::DOMElement *element) override {
+      Function<Ret(Arg)>::initializeUsingXML(element);
+
+      xercesc::DOMElement *input=MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"inputs"))->getFirstElementChildNamed(MBSIM%"input");
+      this->setIndependentVariable(typename fmatvec::SymbolicFunction<Ret(Arg)>::ArgS(MBXMLUtils::E(input)->getText<std::string>().c_str()));
+      input=input->getNextElementSibling();
+      if(input)
+        throw MBXMLUtils::DOMEvalException("Exactly one input must be given.", MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"inputs"));
+
+      xercesc::DOMElement *output=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"output");
+      this->setDependentFunction(typename fmatvec::SymbolicFunction<Ret(Arg)>::RetS(MBXMLUtils::E(output)->getText<std::string>().c_str()));
+
+      // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
+      // to test other possible combinations (more general ones)
 //      checkFunctionIODim();
-//    }
-//
-//  private:
-//
+    }
+
+  private:
+
 //    void checkFunctionIODim() {
-//      // check function: only scalar and vector arguments are supported
-//      if(arg.size2()!=1) this->throwError("Matrix parameters are not allowed.");
 //      // check function <-> template argument dimension
-//      if(this->argSize!=0 && arg.size1()!=this->argSize)
+//      if(this->argSize!=0 && fmatvec::Helper<typename fmatvec::SymbolicFunction<Ret(Arg)>::ArgS>::size1(this->argS)!=this->argSize)
 //        this->throwError("The dimension of the parameter does not match.");
-//      if(this->retSize1!=0 && ret.size1()!=this->retSize1)
+//      if(this->retSize1!=0 && fmatvec::Helper<typename fmatvec::SymbolicFunction<Ret(Arg)>::RetS>::size1(this->retS)!=this->retSize1)
 //        this->throwError("The output row dimension does not match.");
-//      if(this->retSize2!=0 && ret.size2()!=this->retSize2)
+//      if(this->retSize2!=0 && fmatvec::Helper<typename fmatvec::SymbolicFunction<Ret(Arg)>::RetS>::size2(this->retS)!=this->retSize2)
 //        this->throwError("The output column dimension does not match.");
 //    }
   };
@@ -75,29 +82,40 @@ namespace MBSim {
       Function<Ret(Arg1, Arg2)>::init(stage, config);
       if(stage == Element::preInit) {
         fmatvec::SymbolicFunction<Ret(Arg1, Arg2)>::init();
+//        checkFunctionIODim();
       }
     }
 
-//    void initializeUsingXML(xercesc::DOMElement *element) override {
-//      auto io=casadi::createCasADiFunctionFromXML(element->getFirstElementChild());
-//      arg=io.first[0];
-//      ret=io.second[0];
-//      // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
-//      // to test other possible combinations (more general ones)
+    void initializeUsingXML(xercesc::DOMElement *element) override {
+      Function<Ret(Arg1, Arg2)>::initializeUsingXML(element);
+
+      xercesc::DOMElement *input=MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"inputs"))->getFirstElementChildNamed(MBSIM%"input");
+      this->setIndependentVariable1(typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg1S(MBXMLUtils::E(input)->getText<std::string>().c_str()));
+      input=input->getNextElementSibling();
+      this->setIndependentVariable2(typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg2S(MBXMLUtils::E(input)->getText<std::string>().c_str()));
+      input=input->getNextElementSibling();
+      if(input)
+        throw MBXMLUtils::DOMEvalException("Exactly two input must be given.", MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"inputs"));
+
+      xercesc::DOMElement *output=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"output");
+      this->setDependentFunction(typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::RetS(MBXMLUtils::E(output)->getText<std::string>().c_str()));
+
+      // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
+      // to test other possible combinations (more general ones)
 //      checkFunctionIODim();
-//    }
-//
-//  private:
-//
+    }
+
+  private:
+
 //    void checkFunctionIODim() {
-//      // check function: only scalar and vector arguments are supported
-//      if(arg.size2()!=1) this->throwError("Matrix parameters are not allowed.");
 //      // check function <-> template argument dimension
-//      if(this->argSize!=0 && arg.size1()!=this->argSize)
+//      if(this->arg1Size!=0 && fmatvec::Helper<typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg1S>::size1(this->arg1S)!=this->arg1Size)
 //        this->throwError("The dimension of the parameter does not match.");
-//      if(this->retSize1!=0 && ret.size1()!=this->retSize1)
+//      if(this->arg2Size!=0 && fmatvec::Helper<typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg2S>::size1(this->arg2S)!=this->arg2Size)
+//        this->throwError("The dimension of the parameter does not match.");
+//      if(this->retSize1!=0 && fmatvec::Helper<typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::RetS>::size1(this->retS)!=this->retSize1)
 //        this->throwError("The output row dimension does not match.");
-//      if(this->retSize2!=0 && ret.size2()!=this->retSize2)
+//      if(this->retSize2!=0 && fmatvec::Helper<typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::RetS>::size2(this->retS)!=this->retSize2)
 //        this->throwError("The output column dimension does not match.");
 //    }
   };

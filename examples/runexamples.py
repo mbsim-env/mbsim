@@ -1996,8 +1996,8 @@ def coverage(mainFD):
   ret=ret+abs(subprocess.call(["lcov", "-r", pj(args.reportOutDir, "coverage", "cov.trace.total"),
     "*/mbsim*/kernel/swig/*", "*/openmbv*/openmbvcppinterface/swig/java/*", # SWIG generated
     "*/openmbv*/openmbvcppinterface/swig/octave/*", "*/openmbv*/openmbvcppinterface/swig/python/*", # SWIG generated
-    "*/openmbv*/mbxmlutils/mbxmlutils/swigpyrun.h", "*/openmbv*/mbxmlutils/mbxmlutils/casadi_oct_swig_octave.cc", # SWIG generated
-    "*/mbsim*/thirdparty/nurbs++/*/*", "*/include/nurbs++/*", "*/include/casadi/*", "*/mbsim*/kernel/mbsim/numerics/csparse.*", # 3rd party
+    "*/openmbv*/mbxmlutils/mbxmlutils/swigpyrun.h", # SWIG generated
+    "*/mbsim*/thirdparty/nurbs++/*/*", "*/include/nurbs++/*", "*/mbsim*/kernel/mbsim/numerics/csparse.*", # 3rd party
     "*/mbsim*/examples/*", # mbsim examples
     "*.moc.cc", "*.qrc.cc", # mbsim generated
     "*/hdf5serie*/h5plotserie/h5plotserie/*", "*/openmbv*/openmbv/openmbv/*", "*/mbsim*/mbsimgui/mbsimgui/*", # GUI (untested)

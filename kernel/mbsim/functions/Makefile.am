@@ -30,8 +30,8 @@ functionincludedir = $(includedir)/mbsim/functions
 libfunction_la_LIBADD = kinematics/libkinematics.la
 libfunction_la_LIBADD += kinetics/libkinetics.la
 libfunction_la_LIBADD += contact/libcontact.la
-libfunction_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CASADI_LIBS)
-libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(CASADI_CFLAGS)
+libfunction_la_LIBADD += $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libfunction_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 functioninclude_HEADERS = function.h\
 			  identity_function.h\
