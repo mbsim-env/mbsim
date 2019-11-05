@@ -95,10 +95,8 @@ namespace MBSim {
             Vec2 zeta1(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
             double phi2q = -sin(gear[0]->getPitchAngle())*zeta1(0);
-            double a = pow(cos(phi2q-beta[0]),2)+pow(sin(al0)*sin(phi2q-beta[0]),2);
-            double b = m*z[0]/sin(gear[0]->getPitchAngle())*(cos(beta[0])*pow(cos(phi2q-beta[0]),2)+pow(sin(al0),2)*sin(phi2q)*sin(phi2q-beta[0])-pow(sin(al0),2)*sin(beta[0])*cos(phi2q-beta[0])*sin(phi2q-beta[0]));
-            double c = pow(m*z[0]/sin(gear[0]->getPitchAngle())/2*sin(al0),2)*(pow(sin(phi2q),2)-2*sin(beta[0])*cos(phi2q-beta[0])*sin(phi2q));
-            zeta1(1) = (-b+sqrt(b*b-4*a*c))/2/a;
+            double s = 0;
+            zeta1(1) = (s*cos(phi2q-beta[0])+m*z[0]/sin(gear[0]->getPitchAngle())/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
             rOP[0] = gear[0]->evalPosition(zeta1);
@@ -106,10 +104,7 @@ namespace MBSim {
             Vec2 zeta2(NONINIT);
             zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*delh1);
             phi2q = -sin(gear[1]->getPitchAngle())*zeta2(0);
-            a = pow(cos(phi2q-beta[1]),2)+pow(sin(al0)*sin(phi2q-beta[1]),2);
-            b = m*z[1]/sin(gear[1]->getPitchAngle())*(cos(beta[1])*pow(cos(phi2q-beta[1]),2)+pow(sin(al0),2)*sin(phi2q)*sin(phi2q-beta[1])-pow(sin(al0),2)*sin(beta[1])*cos(phi2q-beta[1])*sin(phi2q-beta[1]));
-            c = pow(m*z[1]/sin(gear[1]->getPitchAngle())/2*sin(al0),2)*(pow(sin(phi2q),2)-2*sin(beta[1])*cos(phi2q-beta[1])*sin(phi2q));
-            zeta2(1) = (-b+sqrt(b*b-4*a*c))/2/a;
+            zeta2(1) = (s*cos(phi2q-beta[1])+m*z[1]/sin(gear[1]->getPitchAngle())/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[1]))/(-sin(phi2q-beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2q-beta[1])*cos(beta[1]));
             gear[1]->setFlank(signi);
             gear[1]->setTooth(k[1]);
             rOP[1] = gear[1]->evalPosition(zeta2);
