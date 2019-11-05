@@ -116,7 +116,7 @@ class MBSim::Function<Ret(Arg1, Arg2)> : public MBSim::FunctionBase, virtual pub
     virtual DRetDDir2 dirDer2DirDer2(const Arg2 &arg2Dir_1, const Arg2 &arg2Dir_2, const Arg1 &arg1, const Arg2 &arg2);
     virtual DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &arg1, const Arg2 &arg2);
     virtual DRetDArg1 parDer1DirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2);
-    virtual DRetDDir2 dirDer2DirDer1(const Arg2 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDDir2 dirDer2DirDer1(const Arg2 &arg2Dir, const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
     virtual DRetDArg2 parDer2DirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
     virtual bool constParDer1() const;
     virtual bool constParDer2() const;
