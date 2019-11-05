@@ -21,7 +21,7 @@
                   <input>{ s e78c8882-e2b1-48b7-a137-c16854a11ef3 }</input>
                 </inputs>
                 <output>
-                  [{ o 8 1 o 0 2 o 2 2 d 3.141592653589793 s e78c8882-e2b1-48b7-a137-c16854a11ef3 d 1.570796326794897 }; { s e78c8882-e2b1-48b7-a137-c16854a11ef3 }; { i 0 }]
+                  [{ o sin 1 o + 2 o * 2 d 3.141592653589793 s e78c8882-e2b1-48b7-a137-c16854a11ef3 d 1.570796326794897 }; { s e78c8882-e2b1-48b7-a137-c16854a11ef3 }; { i 0 }]
                 </output>
               </SymbolicFunction>
             </timeDependentTranslation>
@@ -38,7 +38,7 @@
                       <input>{ s de7482aa-96fe-46df-9353-9d29d6a649b3 }</input>
                     </inputs>
                     <output>
-                      { o 2 2 i 5 o 8 1 o 2 2 d 1.047197551196598 s de7482aa-96fe-46df-9353-9d29d6a649b3 }
+                      { o * 2 i 5 o sin 1 o * 2 d 1.047197551196598 s de7482aa-96fe-46df-9353-9d29d6a649b3 }
                     </output>
                   </SymbolicFunction>
                 </innerFunction>
@@ -66,7 +66,7 @@
                   <input>{ s 197dc201-8201-4ab1-999f-b08a26842aa4 }</input>
                 </inputs>
                 <output>
-                  [{ o 8 1 o 0 2 o 2 2 d 3.141592653589793 s 197dc201-8201-4ab1-999f-b08a26842aa4 d 1.570796326794897 }; { s 197dc201-8201-4ab1-999f-b08a26842aa4 }; { i 0 }]
+                  [{ o sin 1 o + 2 o * 2 d 3.141592653589793 s 197dc201-8201-4ab1-999f-b08a26842aa4 d 1.570796326794897 }; { s 197dc201-8201-4ab1-999f-b08a26842aa4 }; { i 0 }]
                 </output>
               </SymbolicFunction>
             </timeDependentTranslation>
@@ -81,7 +81,7 @@
                       <input>{ s 0018750c-bb63-485d-b665-48cf1339b13d }</input>
                     </inputs>
                     <output>
-                      [{ s 0018750c-bb63-485d-b665-48cf1339b13d }; { o 2 2 i 2 s 0018750c-bb63-485d-b665-48cf1339b13d }]
+                      [{ s 0018750c-bb63-485d-b665-48cf1339b13d }; { o * 2 i 2 s 0018750c-bb63-485d-b665-48cf1339b13d }]
                     </output>
                   </SymbolicFunction>
                 </innerFunction>
@@ -109,7 +109,7 @@
                   <input>[{ s c10c4475-70bd-4735-a61f-9b344f2b070b }]</input>
                 </inputs>
                 <output>
-                  [{ o 0 2 i 5 o 9 1 o 2 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { o 8 1 o 2 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { i 0 }]
+                  [{ o + 2 i 5 o cos 1 o * 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { o sin 1 o * 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { i 0 }]
                 </output>
               </SymbolicFunction>
             </stateDependentTranslation>
@@ -137,7 +137,7 @@
                   <input>{ s 9e1d80a0-299f-4dc4-8486-76d5077e90cf }</input>
                 </inputs>
                 <output>
-                  [{ o 0 2 o 0 2 i 10 s 9e1d80a0-299f-4dc4-8486-76d5077e90cf o 9 1 o 2 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { o 8 1 o 2 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { s a6191e97-3081-46d5-bbf4-6ff5c2d7d3be }]
+                  [{ o + 2 o + 2 i 10 s 9e1d80a0-299f-4dc4-8486-76d5077e90cf o cos 1 o * 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { o sin 1 o * 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { s a6191e97-3081-46d5-bbf4-6ff5c2d7d3be }]
                 </output>
               </SymbolicFunction>
             </generalTranslation>
