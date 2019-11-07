@@ -36,7 +36,7 @@ libmbsimppxml_fmi_la_LDFLAGS = -avoid-version
 # build main FMU library for source models
 libmbsimsrc_fmi_la_SOURCES = fmiinstance_src.cc
 libmbsimsrc_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS) $(MBXMLUTILSHELPERDEPS_CFLAGS)
-libmbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la ../general/libfmivariables.la $(FMUDEPS_LIBS)
+libmbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la ../general/libfmivariables.la $(FMUDEPS_LIBS) $(LIBDL)
 libmbsimsrc_fmi_la_LDFLAGS = -avoid-version
 
 
