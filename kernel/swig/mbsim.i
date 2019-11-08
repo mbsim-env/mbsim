@@ -221,7 +221,7 @@ class _AllocatePython(AllocateBase):
     self.className=className
   def __call__(self):
     return self.className().__disown__()
-  def __eq__(self, other):
+  def isEqual(self, other):
     otherDirector=_dynamic_cast_Director(other)
     if otherDirector==None:
       return False
@@ -243,7 +243,7 @@ class _GetSingletonPython(AllocateBase):
     self.className=className
   def __call__(self):
     return self.classNname.getInstance().__disown__()
-  def __eq__(self, other):
+  def isEqual(self, other):
     otherDirector=_dynamic_cast_Director(other)
     if otherDirector==None:
       return False
