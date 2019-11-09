@@ -15,9 +15,10 @@
             <mass>3</mass>
             <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
             <timeDependentTranslation>
-              <SymbolicFunction arg1="t"># Test the access to the (locally) casadi object
+              <SymbolicFunction arg1="t"># Test the access to the sympy object
                 import mbxmlutils
                 import numpy
+                import sympy
                 # some dummy tests
                 x=mbxmlutils.tilde([1,2,3])
                 x=mbxmlutils.tilde([[0,2,3],[-2,0,6],[-3,-6,0]])
@@ -31,19 +32,18 @@
                 x=mbxmlutils.tilde(numpy.array([[0,2,3],[-2,0,6],[-3,-6,0]]))
                 x=mbxmlutils.euler(numpy.array([0.1,0.2,0.3]))
                 x=mbxmlutils.cardan(numpy.array([0.1,0.2,0.3]))
-                # some dummy casadi tests
-                x=mbxmlutils.tilde(casadi.SX.sym('x',3,1))
-                x=mbxmlutils.tilde(casadi.SX.sym('T',3,3))
-                x=mbxmlutils.euler(casadi.SX.sym('x',1,1),0.2,casadi.SX.sym('z',1,1))
-                x=mbxmlutils.euler(casadi.SX.sym('x',3,1))
-                x=mbxmlutils.cardan(casadi.SX.sym('x',1,1),0.2,casadi.SX.sym('z',1,1))
-                x=mbxmlutils.cardan(casadi.SX.sym('x',3,1))
-                x=mbxmlutils.rotateAboutX(casadi.SX.sym('x',1,1))
+                # some dummy sympy tests
+                x=mbxmlutils.tilde(numpy.array(sympy.symbols('x:3')))
+                x=mbxmlutils.tilde(numpy.array([sympy.symbols('Ta:3'),sympy.symbols('Tb:3'),sympy.symbols('Tc:3')]))
+                x=mbxmlutils.euler(sympy.Symbol('x'),0.2,sympy.Symbol('z'))
+                x=mbxmlutils.euler(numpy.array(sympy.symbols('x:3')))
+                x=mbxmlutils.cardan(sympy.Symbol('x'),0.2,sympy.Symbol('z'))
+                x=mbxmlutils.cardan(numpy.array(sympy.symbols('x:3')))
+                x=mbxmlutils.rotateAboutX(sympy.Symbol('x'))
 
-                half=casadi.DM.zeros(1, 1)
-                half[0]=2
-                ret=casadi.SX(3,1)
-                ret[0]=casadi.sin(freq1*t + pi/half)
+                half=2
+                ret=sympy.zeros(3,1)
+                ret[0]=sympy.sin(freq1*t + sympy.pi/half)
                 ret[1]=v0y*t
                 ret[2]=0
               </SymbolicFunction>
@@ -57,7 +57,7 @@
                 </outerFunction>
                 <innerFunction>
                   <SymbolicFunction arg1="t">
-                    5*casadi.sin(freq2*t)
+                    5*sympy.sin(freq2*t)
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
@@ -80,7 +80,7 @@
             <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
             <timeDependentTranslation>
               <SymbolicFunction arg1="t">
-                ret=casadi.SX(3,1); ret[0]=casadi.sin(freq1*t + pi/2); ret[1]=v0y*t; ret[2]=0
+                ret=sympy.zeros(3,1); ret[0]=sympy.sin(freq1*t + pi/2); ret[1]=v0y*t; ret[2]=0
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
@@ -90,7 +90,7 @@
                 </outerFunction>
                 <innerFunction>
                   <SymbolicFunction arg1="t">
-                    ret=casadi.SX(2,1);ret[0]=t;ret[1]=2*t
+                    ret=sympy.zeros(2,1);ret[0]=t;ret[1]=2*t
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
@@ -113,7 +113,7 @@
             <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
             <stateDependentTranslation>
               <SymbolicFunction arg1="q" arg1Dim="1">
-                ret=casadi.SX(3,1);ret[0]=5+casadi.cos(freq1*q); ret[1]=casadi.sin(freq1*q[0]); ret[2]=0
+                ret=sympy.zeros(3,1);ret[0]=5+sympy.cos(freq1*q[0]); ret[1]=sympy.sin(freq1*q[0]); ret[2]=0
               </SymbolicFunction>
             </stateDependentTranslation>
             <frames />
@@ -143,8 +143,8 @@
                      </xmlMatrix>
                      here -->
                 <pv:xmlVector>
-                  <pv:ele>10+t+casadi.cos(freq1*q[0])</pv:ele>
-                  <pv:ele>casadi.sin(freq1*q[0])</pv:ele>
+                  <pv:ele>10+t+sympy.cos(freq1*q[0])</pv:ele>
+                  <pv:ele>sympy.sin(freq1*q[0])</pv:ele>
                   <pv:ele>q[1]</pv:ele>
                 </pv:xmlVector>
               </SymbolicFunction>

@@ -48,7 +48,8 @@ namespace MBSim {
       char ch;
       func>>ch;
       if(ch!='{')
-        throw MBXMLUtils::DOMEvalException("Function does not start with {.", element);
+        throw MBXMLUtils::DOMEvalException("Function does not start with {; "+
+              MBXMLUtils::E(element)->getText<std::string>(), element);
       int nrIndeps;
       func>>nrIndeps;
       if(nrIndeps!=1)
