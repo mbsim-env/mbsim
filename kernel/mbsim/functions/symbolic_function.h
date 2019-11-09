@@ -44,14 +44,28 @@ namespace MBSim {
     void initializeUsingXML(xercesc::DOMElement *element) override {
       Function<Ret(Arg)>::initializeUsingXML(element);
 
-      xercesc::DOMElement *input=MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"inputs"))->getFirstElementChildNamed(MBSIM%"input");
-      this->setIndependentVariable(typename fmatvec::SymbolicFunction<Ret(Arg)>::ArgS(MBXMLUtils::E(input)->getText<std::string>().c_str()));
-      input=input->getNextElementSibling();
-      if(input)
-        throw MBXMLUtils::DOMEvalException("Exactly one input must be given.", MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"inputs"));
-
-      xercesc::DOMElement *output=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"output");
-      this->setDependentFunction(typename fmatvec::SymbolicFunction<Ret(Arg)>::RetS(MBXMLUtils::E(output)->getText<std::string>().c_str()));
+      std::stringstream func(MBXMLUtils::E(element)->getText<std::string>());
+      char ch;
+      func>>ch;
+      if(ch!='{')
+        throw MBXMLUtils::DOMEvalException("Function does not start with {.", element);
+      int nrIndeps;
+      func>>nrIndeps;
+      if(nrIndeps!=1)
+        throw MBXMLUtils::DOMEvalException("Exactly one input must be given.", element);
+      typename fmatvec::SymbolicFunction<Ret(Arg)>::ArgS argS;
+      func>>argS;
+      this->setIndependentVariable(argS);
+      typename fmatvec::SymbolicFunction<Ret(Arg)>::RetS retS;
+      func>>retS;
+      this->setDependentFunction(retS);
+      func>>ch;
+      if(ch!='}')
+        throw MBXMLUtils::DOMEvalException("Function does not end with }.", element);
+      std::string rest;
+      func>>rest;
+      if(rest!="")
+        throw MBXMLUtils::DOMEvalException("Trailing content in Function.", element);
 
       // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
       // to test other possible combinations (more general ones)
@@ -89,16 +103,31 @@ namespace MBSim {
     void initializeUsingXML(xercesc::DOMElement *element) override {
       Function<Ret(Arg1, Arg2)>::initializeUsingXML(element);
 
-      xercesc::DOMElement *input=MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"inputs"))->getFirstElementChildNamed(MBSIM%"input");
-      this->setIndependentVariable1(typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg1S(MBXMLUtils::E(input)->getText<std::string>().c_str()));
-      input=input->getNextElementSibling();
-      this->setIndependentVariable2(typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg2S(MBXMLUtils::E(input)->getText<std::string>().c_str()));
-      input=input->getNextElementSibling();
-      if(input)
-        throw MBXMLUtils::DOMEvalException("Exactly two input must be given.", MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"inputs"));
-
-      xercesc::DOMElement *output=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"output");
-      this->setDependentFunction(typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::RetS(MBXMLUtils::E(output)->getText<std::string>().c_str()));
+      std::stringstream func(MBXMLUtils::E(element)->getText<std::string>());
+      char ch;
+      func>>ch;
+      if(ch!='{')
+        throw MBXMLUtils::DOMEvalException("Function does not start with {.", element);
+      int nrIndeps;
+      func>>nrIndeps;
+      if(nrIndeps!=2)
+        throw MBXMLUtils::DOMEvalException("Exactly two input must be given.", element);
+      typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg1S arg1S;
+      func>>arg1S;
+      this->setIndependentVariable1(arg1S);
+      typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg2S arg2S;
+      func>>arg2S;
+      this->setIndependentVariable2(arg2S);
+      typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::RetS retS;
+      func>>retS;
+      this->setDependentFunction(retS);
+      func>>ch;
+      if(ch!='}')
+        throw MBXMLUtils::DOMEvalException("Function does not end with }.", element);
+      std::string rest;
+      func>>rest;
+      if(rest!="")
+        throw MBXMLUtils::DOMEvalException("Trailing content in Function.", element);
 
       // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
       // to test other possible combinations (more general ones)

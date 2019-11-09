@@ -4234,19 +4234,26 @@
   </xs:complexType>   
 
   <xs:element name="SymbolicFunction" substitutionGroup="Function" type="SymbolicFunctionType"/>
-  <xs:complexType name="SymbolicFunctionType">
+  <!-- This type is just a hack to enable the mixed="true" attribute in SymbolicFunctionType.
+       Maybe this work only due to a bug in xerces-c ???!!! but it works here   :-O   :-(   :-)   -->
+  <xs:complexType name="FunctionMixedType" mixed="true">
     <xs:complexContent>
-      <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:element name="inputs">
-            <xs:complexType>
-              <xs:sequence minOccurs="1" maxOccurs="unbounded">
-                <xs:element name="input" type="xs:token"/>
-              </xs:sequence>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="output" type="xs:token"/>
-        </xs:sequence> 
+      <xs:extension base="FunctionType"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SymbolicFunctionType" mixed="true">
+    <xs:complexContent>
+      <xs:extension base="FunctionMixedType">
+        <!-- A symbolic function has at least one parameter => arg1 is required.
+             argXDim is optional since this is interpreted as "1" (scalar) if missing.
+             arg2 (and higher) are optional to define with this XML element all symbolic functions at ones.
+             If argXNr is not from 1 to N => error. -->
+        <xs:attribute name="arg1" use="required" type="pv:symbolicFunctionArgNameType"/>
+        <xs:attribute name="arg1Dim" use="optional" default="1" type="pv:symbolicFunctionArgDimType"/>
+        <xs:attribute name="arg1Nr" type="xs:integer" fixed="1"/>
+        <xs:attribute name="arg2" use="optional" type="pv:symbolicFunctionArgNameType"/>
+        <xs:attribute name="arg2Dim" use="optional" default="1" type="pv:symbolicFunctionArgDimType"/>
+        <xs:attribute name="arg2Nr" type="xs:integer" fixed="2"/>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

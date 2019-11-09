@@ -1,175 +1,144 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="MBSPRJ" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"><?OriginalFilename MBS.mbsimprj.xml?><evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator><?OriginalFilename MBS.mbsimprj.xml?><?LineNr 3?>
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="MBSPRJ" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"><evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">xmlflat</evaluator>
   
-  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:xi="http://www.w3.org/2001/XInclude"><?EmbedCountNr 1?><?EmbedXPathCount 1?><?OriginalElementLineNr 4?><?OriginalFilename MBS.mbsim.xml?><?LineNr 2?>
-    <plotFeatureRecursive value="generalizedRelativePosition"><?LineNr 3?>1</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedRelativeVelocity"><?LineNr 4?>1</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedForce"><?LineNr 5?>1</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedPosition"><?LineNr 6?>1</plotFeatureRecursive>
-    <plotFeatureRecursive value="generalizedVelocity"><?LineNr 7?>1</plotFeatureRecursive>
-    <frames><?LineNr 8?></frames>
-    <contours><?LineNr 9?></contours>
-    <groups><?LineNr 10?></groups>
-    <objects><?LineNr 11?>
-        <RigidBody name="Box1"><?LineNr 12?>
-            <frameOfReference ref="../Frame[I]"><?LineNr 13?></frameOfReference>
-            <frameForKinematics ref="Frame[C]"><?LineNr 14?></frameForKinematics>
-            <mass><?LineNr 15?>3</mass>
-            <inertiaTensor><?LineNr 16?>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
-            <timeDependentTranslation><?LineNr 17?>
-              <SymbolicFunction>
-                <inputs>
-                  <input>{ s e78c8882-e2b1-48b7-a137-c16854a11ef3 }</input>
-                </inputs>
-                <output>
-                  [{ o sin 1 o + 2 o * 2 d 3.141592653589793 s e78c8882-e2b1-48b7-a137-c16854a11ef3 d 1.570796326794897 }; { s e78c8882-e2b1-48b7-a137-c16854a11ef3 }; { i 0 }]
-                </output>
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:xi="http://www.w3.org/2001/XInclude">
+    <plotFeatureRecursive value="generalizedRelativePosition">1</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedRelativeVelocity">1</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedForce">1</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedPosition">1</plotFeatureRecursive>
+    <plotFeatureRecursive value="generalizedVelocity">1</plotFeatureRecursive>
+    <frames></frames>
+    <contours></contours>
+    <groups></groups>
+    <objects>
+        <RigidBody name="Box1">
+            <frameOfReference ref="../Frame[I]"></frameOfReference>
+            <frameForKinematics ref="Frame[C]"></frameForKinematics>
+            <mass>3</mass>
+            <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
+            <timeDependentTranslation>
+              <SymbolicFunction arg1="t">
+                { 1 { s e78c8882-e2b1-48b7-a137-c16854a11ef3 } [{ o sin 1 o + 2 o * 2 d 3.141592653589793 s e78c8882-e2b1-48b7-a137-c16854a11ef3 d 1.570796326794897 }; { s e78c8882-e2b1-48b7-a137-c16854a11ef3 }; { i 0 }] }
               </SymbolicFunction>
             </timeDependentTranslation>
-            <timeDependentRotation><?LineNr 42?>
-              <CompositeFunction><?LineNr 43?>
-                <outerFunction><?LineNr 44?>
-                  <RotationAboutFixedAxis><?LineNr 45?>
-                    <axisOfRotation><?LineNr 46?>[0; 0; 1]</axisOfRotation>
+            <timeDependentRotation>
+              <CompositeFunction>
+                <outerFunction>
+                  <RotationAboutFixedAxis>
+                    <axisOfRotation>[0; 0; 1]</axisOfRotation>
                   </RotationAboutFixedAxis>
                 </outerFunction>
-                <innerFunction><?LineNr 49?>
-                  <SymbolicFunction>
-                    <inputs>
-                      <input>{ s de7482aa-96fe-46df-9353-9d29d6a649b3 }</input>
-                    </inputs>
-                    <output>
-                      { o * 2 i 5 o sin 1 o * 2 d 1.047197551196598 s de7482aa-96fe-46df-9353-9d29d6a649b3 }
-                    </output>
+                <innerFunction>
+                  <SymbolicFunction arg1="t">
+                    { 1 { s de7482aa-96fe-46df-9353-9d29d6a649b3 } { o * 2 i 5 o sin 1 o * 2 d 1.047197551196598 s de7482aa-96fe-46df-9353-9d29d6a649b3 } }
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </timeDependentRotation>
-            <frames><?LineNr 56?></frames>
-            <contours><?LineNr 57?></contours>
-            <openMBVRigidBody><?LineNr 58?>
-                <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box1" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 59?>
-                    <ombv:initialTranslation><?LineNr 60?>[0; 0; 0]</ombv:initialTranslation>
-                    <ombv:initialRotation><?LineNr 61?>[0; 0; 0]</ombv:initialRotation>
-                    <ombv:scaleFactor><?LineNr 62?>1</ombv:scaleFactor>
-                    <ombv:length><?LineNr 63?>2</ombv:length>
+            <frames></frames>
+            <contours></contours>
+            <openMBVRigidBody>
+                <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box1" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0">
+                    <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0; 0; 0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>2</ombv:length>
                 </ombv:Cube>
             </openMBVRigidBody>
         </RigidBody>
-        <RigidBody name="Box1a"><?LineNr 67?>
-            <frameOfReference ref="../Frame[I]"><?LineNr 68?></frameOfReference>
-            <frameForKinematics ref="Frame[C]"><?LineNr 69?></frameForKinematics>
-            <mass><?LineNr 70?>3</mass>
-            <inertiaTensor><?LineNr 71?>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
-            <timeDependentTranslation><?LineNr 72?>
-              <SymbolicFunction>
-                <inputs>
-                  <input>{ s 197dc201-8201-4ab1-999f-b08a26842aa4 }</input>
-                </inputs>
-                <output>
-                  [{ o sin 1 o + 2 o * 2 d 3.141592653589793 s 197dc201-8201-4ab1-999f-b08a26842aa4 d 1.570796326794897 }; { s 197dc201-8201-4ab1-999f-b08a26842aa4 }; { i 0 }]
-                </output>
+        <RigidBody name="Box1a">
+            <frameOfReference ref="../Frame[I]"></frameOfReference>
+            <frameForKinematics ref="Frame[C]"></frameForKinematics>
+            <mass>3</mass>
+            <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
+            <timeDependentTranslation>
+              <SymbolicFunction arg1="t">
+                { 1 { s 197dc201-8201-4ab1-999f-b08a26842aa4 } [{ o sin 1 o + 2 o * 2 d 3.141592653589793 s 197dc201-8201-4ab1-999f-b08a26842aa4 d 1.570796326794897 }; { s 197dc201-8201-4ab1-999f-b08a26842aa4 }; { i 0 }] }
               </SymbolicFunction>
             </timeDependentTranslation>
-            <timeDependentRotation><?LineNr 77?>
-              <CompositeFunction><?LineNr 78?>
-                <outerFunction><?LineNr 79?>
-                  <RotationAboutAxesXY><?LineNr 80?></RotationAboutAxesXY>
+            <timeDependentRotation>
+              <CompositeFunction>
+                <outerFunction>
+                  <RotationAboutAxesXY></RotationAboutAxesXY>
                 </outerFunction>
-                <innerFunction><?LineNr 82?>
-                  <SymbolicFunction>
-                    <inputs>
-                      <input>{ s 0018750c-bb63-485d-b665-48cf1339b13d }</input>
-                    </inputs>
-                    <output>
-                      [{ s 0018750c-bb63-485d-b665-48cf1339b13d }; { o * 2 i 2 s 0018750c-bb63-485d-b665-48cf1339b13d }]
-                    </output>
+                <innerFunction>
+                  <SymbolicFunction arg1="t">
+                    { 1 { s 0018750c-bb63-485d-b665-48cf1339b13d } [{ s 0018750c-bb63-485d-b665-48cf1339b13d }; { o * 2 i 2 s 0018750c-bb63-485d-b665-48cf1339b13d }] }
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </timeDependentRotation>
-            <frames><?LineNr 89?></frames>
-            <contours><?LineNr 90?></contours>
-            <openMBVRigidBody><?LineNr 91?>
-                <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box1a" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 92?>
-                    <ombv:initialTranslation><?LineNr 93?>[0; 0; 0]</ombv:initialTranslation>
-                    <ombv:initialRotation><?LineNr 94?>[0; 0; 0]</ombv:initialRotation>
-                    <ombv:scaleFactor><?LineNr 95?>1</ombv:scaleFactor>
-                    <ombv:length><?LineNr 96?>2</ombv:length>
+            <frames></frames>
+            <contours></contours>
+            <openMBVRigidBody>
+                <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box1a" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0">
+                    <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0; 0; 0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>2</ombv:length>
                 </ombv:Cube>
             </openMBVRigidBody>
         </RigidBody>
-        <RigidBody name="Box2"><?LineNr 100?>
-            <frameOfReference ref="../Frame[I]"><?LineNr 101?></frameOfReference>
-            <frameForKinematics ref="Frame[C]"><?LineNr 102?></frameForKinematics>
-            <mass><?LineNr 103?>3</mass>
-            <inertiaTensor><?LineNr 104?>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
-            <stateDependentTranslation><?LineNr 105?>
-              <SymbolicFunction>
-                <inputs>
-                  <input>[{ s c10c4475-70bd-4735-a61f-9b344f2b070b }]</input>
-                </inputs>
-                <output>
-                  [{ o + 2 i 5 o cos 1 o * 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { o sin 1 o * 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { i 0 }]
-                </output>
+        <RigidBody name="Box2">
+            <frameOfReference ref="../Frame[I]"></frameOfReference>
+            <frameForKinematics ref="Frame[C]"></frameForKinematics>
+            <mass>3</mass>
+            <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
+            <stateDependentTranslation>
+              <SymbolicFunction arg1="1">
+                { 1 [{ s c10c4475-70bd-4735-a61f-9b344f2b070b }] [{ o + 2 i 5 o cos 1 o * 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { o sin 1 o * 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { i 0 }] }
               </SymbolicFunction>
             </stateDependentTranslation>
-            <frames><?LineNr 114?></frames>
-            <contours><?LineNr 115?></contours>
-            <openMBVRigidBody><?LineNr 116?>
-                <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box2" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 117?>
-                    <ombv:initialTranslation><?LineNr 118?>[0; 0; 0]</ombv:initialTranslation>
-                    <ombv:initialRotation><?LineNr 119?>[0; 0; 0]</ombv:initialRotation>
-                    <ombv:scaleFactor><?LineNr 120?>1</ombv:scaleFactor>
-                    <ombv:length><?LineNr 121?>1</ombv:length>
+            <frames></frames>
+            <contours></contours>
+            <openMBVRigidBody>
+                <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box2" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0">
+                    <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0; 0; 0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>1</ombv:length>
                 </ombv:Cube>
             </openMBVRigidBody>
         </RigidBody>
-        <RigidBody name="Box3"><?LineNr 125?>
-            <generalizedInitialVelocity><?LineNr 126?>[0; 1]</generalizedInitialVelocity>
-            <frameOfReference ref="../Frame[I]"><?LineNr 127?></frameOfReference>
-            <frameForKinematics ref="Frame[C]"><?LineNr 128?></frameForKinematics>
-            <mass><?LineNr 129?>3</mass>
-            <inertiaTensor><?LineNr 130?>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
-            <generalTranslation><?LineNr 131?>
-              <SymbolicFunction>
-                <inputs>
-                  <input>[{ s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { s a6191e97-3081-46d5-bbf4-6ff5c2d7d3be }]</input>
-                  <input>{ s 9e1d80a0-299f-4dc4-8486-76d5077e90cf }</input>
-                </inputs>
-                <output>
-                  [{ o + 2 o + 2 i 10 s 9e1d80a0-299f-4dc4-8486-76d5077e90cf o cos 1 o * 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { o sin 1 o * 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { s a6191e97-3081-46d5-bbf4-6ff5c2d7d3be }]
-                </output>
+        <RigidBody name="Box3">
+            <generalizedInitialVelocity>[0; 1]</generalizedInitialVelocity>
+            <frameOfReference ref="../Frame[I]"></frameOfReference>
+            <frameForKinematics ref="Frame[C]"></frameForKinematics>
+            <mass>3</mass>
+            <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
+            <generalTranslation>
+              <SymbolicFunction arg1="t" arg2="q">
+                { 2 [{ s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { s a6191e97-3081-46d5-bbf4-6ff5c2d7d3be }] { s 9e1d80a0-299f-4dc4-8486-76d5077e90cf } [{ o + 2 o + 2 i 10 s 9e1d80a0-299f-4dc4-8486-76d5077e90cf o cos 1 o * 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { o sin 1 o * 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { s a6191e97-3081-46d5-bbf4-6ff5c2d7d3be }] }
               </SymbolicFunction>
             </generalTranslation>
-            <frames><?LineNr 147?></frames>
-            <contours><?LineNr 148?></contours>
-            <openMBVRigidBody><?LineNr 149?>
-                <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box3" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0"><?LineNr 150?>
-                    <ombv:initialTranslation><?LineNr 151?>[0; 0; 0]</ombv:initialTranslation>
-                    <ombv:initialRotation><?LineNr 152?>[0; 0; 0]</ombv:initialRotation>
-                    <ombv:scaleFactor><?LineNr 153?>1</ombv:scaleFactor>
-                    <ombv:length><?LineNr 154?>1</ombv:length>
+            <frames></frames>
+            <contours></contours>
+            <openMBVRigidBody>
+                <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box3" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0">
+                    <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0; 0; 0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>1</ombv:length>
                 </ombv:Cube>
             </openMBVRigidBody>
         </RigidBody>
     </objects>
-    <links><?LineNr 159?></links>
-    <constraints><?LineNr 160?></constraints>
-    <observers><?LineNr 161?></observers>
-    <environments><?LineNr 162?>
-        <MBSimEnvironment><?LineNr 163?>
-            <accelerationOfGravity><?LineNr 164?>[0; -9.81; 0]</accelerationOfGravity>
+    <links></links>
+    <constraints></constraints>
+    <observers></observers>
+    <environments>
+        <MBSimEnvironment>
+            <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>
         </MBSimEnvironment>
     </environments>
 </DynamicSystemSolver>
-<LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim"><?EmbedCountNr 1?><?EmbedXPathCount 2?><?OriginalElementLineNr 5?><?OriginalFilename Integrator.mbsimint.xml?><?LineNr 2?>
-  <startTime><?LineNr 3?>0</startTime>
-  <endTime><?LineNr 4?>10</endTime>
-  <plotStepSize><?LineNr 5?>0.01</plotStepSize>
-  <absoluteTolerance><?LineNr 6?>1e-06</absoluteTolerance>
-  <relativeToleranceScalar><?LineNr 7?>1e-06</relativeToleranceScalar>
-  <initialStepSize><?LineNr 8?>1e-13</initialStepSize>
-  <maximumStepSize><?LineNr 9?>0</maximumStepSize>
-  <minimumStepSize><?LineNr 10?>0</minimumStepSize>
-  <stepLimit><?LineNr 11?>0</stepLimit>
+<LSODEIntegrator xmlns="http://www.mbsim-env.de/MBSim">
+  <startTime>0</startTime>
+  <endTime>10</endTime>
+  <plotStepSize>0.01</plotStepSize>
+  <absoluteTolerance>1e-06</absoluteTolerance>
+  <relativeToleranceScalar>1e-06</relativeToleranceScalar>
+  <initialStepSize>1e-13</initialStepSize>
+  <maximumStepSize>0</maximumStepSize>
+  <minimumStepSize>0</minimumStepSize>
+  <stepLimit>0</stepLimit>
 </LSODEIntegrator></MBSimProject>
