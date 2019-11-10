@@ -18,7 +18,7 @@ int main (int argc, char* argv[]) {
   sys->setGeneralizedRelativeAccelerationTolerance(1.0e-8);
   sys->setGeneralizedForceTolerance (1.0e-8);
   sys->setGeneralizedImpulseTolerance (1.0e-6);
-  sys->setMaximumIterations(1000+0*pow(150*sys->getlaSize(),0.85));
+  sys->setMaximumNumberOfIterations(1000+0*pow(150*sys->getlaSize(),0.85));
 
   Integrator *integrator;
 

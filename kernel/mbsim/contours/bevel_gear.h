@@ -85,7 +85,7 @@ namespace MBSim {
       int N{15};
       double w{5e-2};
       double be{0};
-      double ga{0};
+      double ga{0.785398163397448};
       double m{16e-3};
       double al{0.349065850398866};
       double b{0};

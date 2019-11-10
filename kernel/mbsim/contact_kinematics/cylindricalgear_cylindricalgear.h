@@ -58,7 +58,7 @@ namespace MBSim {
       int z[2];
       double beta[2];
       double ga[2];
-      double etamax1[2], etamax2[2];
+      double etamax1[2][2], etamax2[2][2];
       int ksave[2][2];
       int signisave[2]{1,1};
       double delh1, delh2;

@@ -48,7 +48,7 @@
       <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>
     </MBSimEnvironment>
   </environments>
-  <maximumIterations>1000000</maximumIterations>
+  <maximumNumberOfIterations>1000000</maximumNumberOfIterations>
   <projectionTolerance>eps*10</projectionTolerance>
   <generalizedRelativeVelocityTolerance>eps*10</generalizedRelativeVelocityTolerance>
   <generalizedRelativeAccelerationTolerance>eps*10</generalizedRelativeAccelerationTolerance>

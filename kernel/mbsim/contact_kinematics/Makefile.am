@@ -32,6 +32,7 @@ libcontactkinematics_la_SOURCES = point_line.cc\
 				  cylindricalgear_cylindricalgear.cc\
 				  cylindricalgear_rack.cc\
                                   bevelgear_planargear.cc\
+                                  bevelgear_bevelgear.cc\
 				  compoundcontour_contour.cc\
 				  compoundcontour_compoundcontour.cc
 
@@ -74,5 +75,6 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h\
                                    cylindricalgear_cylindricalgear.h\
                                    cylindricalgear_rack.h\
                                    bevelgear_planargear.h\
+                                   bevelgear_bevelgear.h\
 				   compoundcontour_contour.h\
 				   compoundcontour_compoundcontour.h

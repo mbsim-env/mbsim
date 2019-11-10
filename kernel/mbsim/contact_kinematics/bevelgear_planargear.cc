@@ -56,6 +56,9 @@ namespace MBSim {
     Vec3 ez2 = planargear->getFrame()->getOrientation().T()*bevelgear->getFrame()->getOrientation().col(2);
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2))); 
     double phi2 = (ez2(0)>=0?-1:1)*acos(ez2(2)/sqrt(pow(ez2(0),2)+pow(ez2(2),2))); 
+    if(nrm2(planargear->getFrame()->evalPosition()-bevelgear->getFrame()->evalPosition()+m*z[0]/2/tan(bevelgear->getPitchAngle())*bevelgear->getFrame()->getOrientation().col(2))>1e-8)
+       msg(Warn)<<"Large devitation detected at t="<<planargear->getTime()<<"\nContact kinematics may be wrong!" <<endl;
+
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
       Vec3 rOP[2];
@@ -98,7 +101,8 @@ namespace MBSim {
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta2(NONINIT);
             double phi2q = phi2+k[1]*2*M_PI/z[1]+signi*delh2;
-            zeta2(1) = -m*z[1]/2*(sin(phi2q)*pow(sin(al0),2)*sin(beta[1]))/(sin(phi2q+beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2q+beta[1])*cos(beta[1]));;
+            double s = 0;
+            zeta2(1) = (s*cos(phi2q+beta[1])-m*z[1]/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[1]))/(sin(phi2q+beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2q+beta[1])*cos(beta[1]));
             zeta2(0) = (sin(phi2q)/cos(phi2q+beta[1])*m*z[1]/2 + zeta2(1)*tan(phi2q+beta[1]))*sin(al0);
             planargear->setFlank(signi);
             planargear->setTooth(k[1]);
@@ -106,9 +110,8 @@ namespace MBSim {
 
             Vec2 zeta1(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
-
             phi2q = -double(z[0])/z[1]*zeta1(0);
-            zeta1(1) = m*z[1]/2*(sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));;
+            zeta1(1) = (s*cos(phi2q-beta[0])+m*z[1]/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));
             bevelgear->setFlank(signi);
             bevelgear->setTooth(k[0]);
             rOP[0] = bevelgear->evalPosition(zeta1);
@@ -142,7 +145,41 @@ namespace MBSim {
   }
 
   void ContactKinematicsBevelGearPlanarGear::updatewb(SingleContact &contact, int ii) {
-    throw runtime_error("ContactKinematicsBevelGearPlanarGear::updatewb not yet implemented!");
+    const Vec3 n1 = contact.getContourFrame(iplanargear)->evalOrientation().col(0);
+    const Vec3 u1 = contact.getContourFrame(iplanargear)->evalOrientation().col(1);
+    const Vec3 u2 = contact.getContourFrame(ibevelgear)->evalOrientation().col(1);
+    const Vec3 vC1 = contact.getContourFrame(iplanargear)->evalVelocity();
+    const Vec3 vC2 = contact.getContourFrame(ibevelgear)->evalVelocity();
+    const Vec3 parnPart1 = crossProduct(planargear->getFrame()->getAngularVelocity(),n1);
+    const Vec3 paruPart2 = crossProduct(bevelgear->getFrame()->getAngularVelocity(),u2);
+
+    planargear->setFlank(signisave[ii]);
+    planargear->setTooth(ksave[ii][1]);
+    Vec3 R1 = planargear->evalWs(contact.getContourFrame(iplanargear)->getZeta());
+
+    bevelgear->setFlank(signisave[ii]);
+    bevelgear->setTooth(ksave[ii][0]);
+    Vec3 R2 = bevelgear->evalWs(contact.getContourFrame(ibevelgear)->getZeta());
+    Vec3 U2 = bevelgear->evalParDer1Wu(contact.getContourFrame(ibevelgear)->getZeta());
+
+    Vec3 parWvCParZeta1 = crossProduct(planargear->getFrame()->getAngularVelocity(),R1);
+    Vec3 parWvCParZeta2 = crossProduct(bevelgear->getFrame()->getAngularVelocity(),R2);
+
+    SqrMat A(2,NONINIT);
+    A(0,0) = -u1.T()*R1;
+    A(0,1) = u1.T()*R2;
+    A(1,0) = 0;
+    A(1,1) = n1.T()*U2;
+
+    Vec b_(2,NONINIT);
+    b_(0) = -u1.T()*(vC2-vC1);
+    b_(1) = -u2.T()*parnPart1-n1.T()*paruPart2;
+    Vec zetad = slvLU(A,b_);
+
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad(1)-parWvCParZeta1*zetad(0));
+    if(contact.isTangentialForceLawSetValuedAndActive())
+      throw runtime_error("Tangential force law must be single valued for gear to gear contacts");
   }
 
 }

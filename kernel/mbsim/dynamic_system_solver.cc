@@ -893,7 +893,7 @@ namespace MBSim {
       if (stopIfNoConvergence) {
         if (dropContactInfo)
           dropContactMatrices();
-        throwError("Maximal Number of Iterations reached");
+        throwError("Maximum number of iterations reached");
       }
       msg(Warn) << "Anyway, continuing integration..." << endl;
     }
@@ -1326,12 +1326,18 @@ namespace MBSim {
       else if(str=="rootfinding") impactSolver=rootfinding;
       else impactSolver=unknownSolver;
     }
-    e = E(element)->getFirstElementChildNamed(MBSIM%"maximumIterations");
+    e = E(element)->getFirstElementChildNamed(MBSIM%"maximumNumberOfIterations");
     if (e)
-      setMaximumIterations(E(e)->getText<int>());
+      setMaximumNumberOfIterations(E(e)->getText<int>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"highNumberOfIterations");
+    if (e)
+      setHighNumberOfIterations(E(e)->getText<int>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
     if (e)
       setNumericalJacobian(E(e)->getText<bool>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"stopIfNoConvergence");
+    if (e)
+      setStopIfNoConvergence(E(e)->getText<bool>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"projectionTolerance");
     if (e)
       setProjectionTolerance(E(e)->getText<double>());

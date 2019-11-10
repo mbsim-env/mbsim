@@ -7,8 +7,8 @@
       <scalarParameter name="al">20</scalarParameter>
       <scalarParameter name="z1">15</scalarParameter>
       <scalarParameter name="z2">18</scalarParameter>
-      <scalarParameter name="be">0</scalarParameter>
-      <scalarParameter name="a0">m*(z1+z2)/2</scalarParameter>
+      <scalarParameter name="be">10</scalarParameter>
+      <scalarParameter name="a0">m*(z1+z2)/2/cosd(be)</scalarParameter>
       <scalarParameter name="mass">3</scalarParameter>
       <scalarParameter name="mu">0.05</scalarParameter>
       <scalarParameter name="b">0.5</scalarParameter></Parameter>

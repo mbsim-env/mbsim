@@ -132,6 +132,10 @@ namespace MBSimGUI {
       return new CylindricalGear;
     else if(E(element)->getTagName()==MBSIM%"Rack")
       return new Rack;
+    else if(E(element)->getTagName()==MBSIM%"BevelGear")
+      return new BevelGear;
+    else if(E(element)->getTagName()==MBSIM%"PlanarGear")
+      return new PlanarGear;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarNurbsContour")
       return new FlexiblePlanarNurbsContour;
     else if(E(element)->getTagName()==MBSIMFLEX%"FlexiblePlanarFfrNurbsContour")

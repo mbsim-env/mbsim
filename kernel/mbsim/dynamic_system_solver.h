@@ -179,8 +179,8 @@ namespace MBSim {
       const Solver& getConstraintSolver() { return contactSolver; }
       const Solver& getImpactSolver() { return impactSolver; }
       void setTermination(bool term_) { term = term_; }
-      void setMaximumIterations(int iter) { maxIter = iter; }
-      void setHighIterations(int iter) { highIter = iter; }
+      void setMaximumNumberOfIterations(int iter) { maxIter = iter; }
+      void setHighNumberOfIterations(int iter) { highIter = iter; }
       void setNumericalJacobian(bool numJac_) { numJac = numJac_; }
       void setMaximumDampingSteps(int maxDSteps) { maxDampingSteps = maxDSteps; }
       void setLevenbergMarquardtParamater(double lmParm_) { lmParm = lmParm_; }

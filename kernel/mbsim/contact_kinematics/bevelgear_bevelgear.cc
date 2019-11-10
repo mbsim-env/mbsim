@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2018 MBSim Development Team
+/* Copyright (C) 2004-2019 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -18,9 +18,9 @@
  */
 
 #include <config.h>
-#include "cylindricalgear_cylindricalgear.h"
+#include "bevelgear_bevelgear.h"
 #include "mbsim/frames/contour_frame.h"
-#include "mbsim/contours/cylindrical_gear.h"
+#include "mbsim/contours/bevel_gear.h"
 #include <mbsim/utils/rotarymatrices.h>
 
 using namespace fmatvec;
@@ -28,53 +28,29 @@ using namespace std;
 
 namespace MBSim {
 
-  void ContactKinematicsCylindricalGearCylindricalGear::assignContours(const vector<Contour*> &contour) {
-    if(not(static_cast<CylindricalGear*>(contour[0])->getExternalToothed())) {
-      gear[0] = static_cast<CylindricalGear*>(contour[1]);
-      gear[1] = static_cast<CylindricalGear*>(contour[0]);
-      igear[0] = 1;
-      igear[1] = 0;
-    }
-    else {
-      gear[0] = static_cast<CylindricalGear*>(contour[0]);
-      gear[1] = static_cast<CylindricalGear*>(contour[1]);
-      igear[0] = 0;
-      igear[1] = 1;
-    }
+  void ContactKinematicsBevelGearBevelGear::assignContours(const vector<Contour*> &contour) {
+    gear[0] = static_cast<BevelGear*>(contour[0]);
+    gear[1] = static_cast<BevelGear*>(contour[1]);
+    igear[0] = 0;
+    igear[1] = 1;
     beta[0] = gear[0]->getHelixAngle();
     beta[1] = gear[1]->getHelixAngle();
     m = gear[0]->getModule()/cos(beta[0]);
     al0 = gear[0]->getPressureAngle();
-    al = atan(tan(gear[0]->getPressureAngle())/cos(gear[0]->getHelixAngle()));
     z[0] = gear[0]->getNumberOfTeeth();
     z[1] = gear[1]->getNumberOfTeeth();
+    delh2 = (M_PI/2-gear[1]->getBacklash()/m)/z[1];
     delh1 = (M_PI/2-gear[0]->getBacklash()/m)/z[0];
-    delh2 = (M_PI/2-(gear[1]->getExternalToothed()?1:-1)*gear[1]->getBacklash()/m)/z[1];
-    a0 = m*((gear[1]->getExternalToothed()?z[0]:-z[0])+z[1])/2;
-    signe = gear[1]->getExternalToothed()?1:-1;
-    etamax1[0][0] = gear[0]->getEtaMax(m*z[0]*cos(al)/2,0);
-    etamax1[1][0] = gear[0]->getEtaMax(m*z[0]*cos(al)/2,(beta[0]>=0?1:-1)*gear[0]->getWidth()/2);
-    etamax1[0][1] = gear[0]->getEtaMax(m*z[0]/2+gear[0]->getModule(),0);
-    etamax1[1][1] = gear[0]->getEtaMax(m*z[0]/2+gear[0]->getModule(),(beta[0]>=0?-1:1)*gear[0]->getWidth()/2);
-    etamax2[0][0] = gear[1]->getEtaMax(m*z[1]*cos(al)/2,0);
-    etamax2[1][0] = gear[1]->getEtaMax(m*z[1]*cos(al)/2,(beta[1]>=0?1:-1)*gear[1]->getWidth()/2);
-    etamax2[0][1] = gear[1]->getEtaMax(m*z[1]/2+gear[1]->getModule(),0);
-    etamax2[1][1] = gear[1]->getEtaMax(m*z[1]/2+gear[1]->getModule(),(beta[1]>=0?-1:1)*gear[1]->getWidth()/2);
   }
 
-  void ContactKinematicsCylindricalGearCylindricalGear::updateg(SingleContact &contact, int ii) {
+  void ContactKinematicsBevelGearBevelGear::updateg(SingleContact &contact, int ii) {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
-    Vec3 r = gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition();
-    double z1 = (gear[0]->getFrame()->getOrientation().col(2).T()*r)/2;
-    double z2 = (gear[1]->getFrame()->getOrientation().col(2).T()*r)/2;
-    Vec3 ea = r-(2*z1)*gear[0]->getFrame()->getOrientation().col(2);
-    double a = nrm2(ea);
-    ea/=a;
-    double dal = acos(a0/a*cos(al))-al;
-    Vec3 ey1 = gear[0]->getFrame()->evalOrientation().T()*(double(-signe)*ea);
-    Vec3 ey2 = gear[1]->getFrame()->evalOrientation().T()*(ea);
-    double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2)));
-    double phi2 = (ey2(0)>=0?1:-1)*acos(ey2(1)/sqrt(pow(ey2(0),2)+pow(ey2(1),2)));
+    Vec3 ez1 = gear[0]->getFrame()->evalOrientation().T()*(-gear[1]->getFrame()->evalOrientation().col(2));
+    Vec3 ez2 = gear[1]->getFrame()->getOrientation().T()*(-gear[0]->getFrame()->getOrientation().col(2));
+    double phi1 = (ez1(0)>=0?1:-1)*acos(ez1(1)/sqrt(pow(ez1(0),2)+pow(ez1(1),2))); 
+    double phi2 = (ez2(0)>=0?1:-1)*acos(ez2(1)/sqrt(pow(ez2(0),2)+pow(ez2(1),2))); 
+    if(nrm2(gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition()+m/2*(z[0]/tan(gear[0]->getPitchAngle())*gear[0]->getFrame()->getOrientation().col(2)-z[1]/tan(gear[1]->getPitchAngle())*gear[1]->getFrame()->getOrientation().col(2)))>1e-8)
+      msg(Warn)<<"Large devitation detected at t="<<gear[1]->getTime()<<"\nContact kinematics may be wrong!" <<endl;
 
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
@@ -82,45 +58,32 @@ namespace MBSim {
       vector<int> v[2];
       if(maxNumContacts==1) {
         int k = 0;
-        double eta = 1e10;
+        double rsi = 1e10;
         int signk = (phi2 - signi*delh2)>0?-1:1;
         for(int k_=0; k_<z[1]; k_++) {
-          double eta_ = fabs(phi2 + signk*k_*2*M_PI/z[1] - signi*delh2);
-          if(eta_<eta) {
-            eta = eta_;
+          double rsi_ = fabs(phi2 + signk*k_*2*M_PI/z[1] - signi*delh2);
+          if(rsi_<rsi) {
+            rsi = rsi_;
             k = k_;
           }
         }
         v[1].push_back(signk*k);
-        double phi1corr = signe*(phi2 + signk*k*2*M_PI/z[1] - signi*delh2)*z[1]/z[0];
+        double phi1corr = ((phi2 + signk*k*2*M_PI/z[1] - signi*delh2)*z[1])/z[0];
 
         k = 0;
-        eta = 1e10;
+        rsi = 1e10;
         signk = (phi1 - signi*delh1 + phi1corr)>0?-1:1;
         for(int k_=0; k_<z[0]; k_++) {
-          double eta_ = fabs(phi1 + signk*k_*2*M_PI/z[0] - signi*delh1 + phi1corr);
-          if(eta_<eta) {
-            eta = eta_;
+          double rsi_ = fabs(phi1 + signk*k_*2*M_PI/z[0] - signi*delh1 + phi1corr);
+          if(rsi_<rsi) {
+            rsi = rsi_;
             k = k_;
           }
         }
         v[0].push_back(signk*k);
       }
       else {
-//        for(int j=0; j<2; j++) {
-          for(int k_=0; k_<z[0]; k_++) {
-            double signk = (phi1 - signi*(delh1+dal))>0?-1:1;
-            double eta = -(phi1 + signk*k_*2*M_PI/z[0] - signi*(delh1+dal));
-            if(eta>-etamax1[1][i] and eta<etamax1[1][not i])
-              v[0].push_back(signk*k_);
-          }
-          for(int k_=0; k_<z[1]; k_++) {
-            double signk = (phi2 - signi*(delh2+dal))>0?-1:1;
-            double eta = -(phi2 + signk*k_*2*M_PI/z[1] - signi*(delh2+dal));
-            if(eta>-etamax2[1][i] and eta<etamax2[1][not i])
-              v[1].push_back(signk*k_);
-          }
-//        }
+        throw runtime_error("The maximum number of contacts must be 1 at present");
       }
 
       double k[2];
@@ -129,28 +92,24 @@ namespace MBSim {
           k[0] = i0;
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
-            Vec2 zeta1(NONINIT), zeta2(NONINIT);
-            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*(delh1+dal));
-            zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal));
+            Vec2 zeta1(NONINIT);
+            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
+            double phi2q = -sin(gear[0]->getPitchAngle())*zeta1(0);
             double s = 0;
-            if(zeta1(0)>etamax1[0][not i])
-              s = (beta[0]>=0?-1:1)*gear[0]->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]);
-            else if(zeta1(0)<-etamax1[0][i])
-              s = (beta[0]>=0?1:-1)*gear[0]->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]);
-            else if(zeta2(0)>etamax2[0][not i])
-              s = (beta[1]>=0?-1:1)*gear[0]->getWidth()/2/(etamax2[1][not i]-etamax2[0][not i])*(zeta2(0)-etamax2[0][not i]);
-            else if(zeta2(0)<-etamax2[0][i])
-              s = (beta[1]>=0?1:-1)*gear[0]->getWidth()/2/(-etamax2[1][i]+etamax2[0][i])*(zeta2(0)+etamax2[0][i]);
-            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+(s+z1)*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = (s*cos(phi2q-beta[0])+m*z[0]/sin(gear[0]->getPitchAngle())/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
             rOP[0] = gear[0]->evalPosition(zeta1);
-            zeta2(1) = (-signe*m*z[1]/2*zeta2(0)*pow(sin(al0),2)*sin(beta[1])+(s-z2)*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+
+            Vec2 zeta2(NONINIT);
+            zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*delh1);
+            phi2q = -sin(gear[1]->getPitchAngle())*zeta2(0);
+            zeta2(1) = (s*cos(phi2q-beta[1])+m*z[1]/sin(gear[1]->getPitchAngle())/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[1]))/(-sin(phi2q-beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2q-beta[1])*cos(beta[1]));
             gear[1]->setFlank(signi);
             gear[1]->setTooth(k[1]);
             rOP[1] = gear[1]->evalPosition(zeta2);
 
-            Vec3 n1 = gear[0]->evalWn(zeta1);
+            Vec n1 = gear[0]->evalWn(zeta1);
 
             double g = n1.T()*(rOP[1]-rOP[0]);
             if(g>-0.5*M_PI*m and g<contact.getGeneralizedRelativePosition(false)(0)) {
@@ -166,7 +125,7 @@ namespace MBSim {
 
               contact.getContourFrame(igear[1])->setZeta(zeta2);
               contact.getContourFrame(igear[1])->setPosition(rOP[1]);
-              contact.getContourFrame(igear[1])->getOrientation(false).set(0,gear[1]->evalWn(zeta2));
+              contact.getContourFrame(igear[1])->getOrientation(false).set(0,gear[1]->evalWn(zeta1));
               contact.getContourFrame(igear[1])->getOrientation(false).set(1,gear[1]->evalWu(zeta2));
               contact.getContourFrame(igear[1])->getOrientation(false).set(2,crossProduct(contact.getContourFrame(igear[1])->getOrientation(false).col(0),contact.getContourFrame(igear[1])->getOrientation(false).col(1)));
 
@@ -178,7 +137,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCylindricalGearCylindricalGear::updatewb(SingleContact &contact, int ii) {
+  void ContactKinematicsBevelGearBevelGear::updatewb(SingleContact &contact, int ii) {
     const Vec3 n1 = contact.getContourFrame(igear[0])->evalOrientation().col(0);
     const Vec3 u1 = contact.getContourFrame(igear[0])->evalOrientation().col(1);
     const Vec3 u2 = contact.getContourFrame(igear[1])->evalOrientation().col(1);

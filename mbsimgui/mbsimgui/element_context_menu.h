@@ -136,6 +136,8 @@ namespace MBSimGUI {
       void addDisk();
       void addCylindricalGear();
       void addRack();
+      void addBevelGear();
+      void addPlanarGear();
       void paste();
       void load();
       void embed();

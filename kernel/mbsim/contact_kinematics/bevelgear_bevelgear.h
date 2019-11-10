@@ -17,31 +17,30 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_CYLINDRICALGEAR_RACK_H_
-#define _CONTACT_KINEMATICS_CYLINDRICALGEAR_RACK_H_
+#ifndef _CONTACT_KINEMATICS_BEVELGEAR_BEVELGEAR_H_
+#define _CONTACT_KINEMATICS_BEVELGEAR_BEVELGEAR_H_
 
 #include "contact_kinematics.h"
 
 namespace MBSim {
 
-  class CylindricalGear;
-  class Rack;
+  class BevelGear;
 
   /**
-   * \brief pairing cylindrical gear to rack
+   * \brief pairing bevel gear to bevel gear
    * \author Martin Foerg
    */
-  class ContactKinematicsCylindricalGearRack : public ContactKinematics {
+  class ContactKinematicsBevelGearBevelGear : public ContactKinematics {
     public:
       /**
        * \brief constructor
        */
-      ContactKinematicsCylindricalGearRack() = default;
+      ContactKinematicsBevelGearBevelGear() = default;
 
       /**
        * \brief destructor
        */
-      ~ContactKinematicsCylindricalGearRack() override = default;
+      ~ContactKinematicsBevelGearBevelGear() override = default;
       
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
@@ -53,22 +52,21 @@ namespace MBSim {
       /**
        * \brief contour index
        */
-      int igear;
-      int irack;
+      int igear[2];
       double m;
       double al0;
       int z[2];
       double beta[2];
-      double etamax1[2][2], etamax2[2];
+      double ga[2];
+      double delh1, delh2;
+      double delmin[2], delmax[2];
       int ksave[2][2];
       int signisave[2]{1,1};
-      double s0h2, delh1;
 
       /**
        * \brief contour classes
        */
-      CylindricalGear *gear;
-      Rack *rack;
+      BevelGear *gear[2];
   };
 
 }

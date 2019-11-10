@@ -82,6 +82,7 @@
 #include <mbsim/contact_kinematics/cylindricalgear_cylindricalgear.h>
 #include <mbsim/contact_kinematics/cylindricalgear_rack.h>
 #include <mbsim/contact_kinematics/bevelgear_planargear.h>
+#include <mbsim/contact_kinematics/bevelgear_bevelgear.h>
 // --- List of contact kinematic implementations - END ---
 
 using namespace std;
@@ -233,6 +234,9 @@ namespace MBSim {
 
     else if ( contour0==typeid(BevelGear) && contour1==typeid(PlanarGear) )
       return new ContactKinematicsBevelGearPlanarGear;
+
+    else if ( contour0==typeid(BevelGear) && contour1==typeid(BevelGear) )
+      return new ContactKinematicsBevelGearBevelGear;
 
     else
       return nullptr;

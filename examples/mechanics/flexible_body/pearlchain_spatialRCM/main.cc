@@ -12,7 +12,7 @@ int main(int argc, char* argv[]) {
   StopWatch Timer;
 
   sys->setStopIfNoConvergence(true,true);
-  sys->setMaximumIterations(100000); // set up to 100000 because of "No Convergence" in only ONE step
+  sys->setMaximumNumberOfIterations(100000); // set up to 100000 because of "No Convergence" in only ONE step
   sys->setInitialProjection(false);
   sys->initialize();
 
