@@ -37,11 +37,15 @@ fmiexport: mbsimfmi_model$(SHEXT)
 
 # link main executable with pkg-config options from PACKAGES (runexamples.py executes always ./main)
 main$(EXEEXT): $(OBJECTS)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
+	$(CXX) -Wl,-Map=$@.linkmap -o $@ $(OBJECTS) $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
+	@sed -rne "/^LOAD /s/^LOAD (.*)$$/ \1 \\\/p" $@.linkmap > $@.d2
+	@echo "$@: \\\\" > $@.d && cat $@.d2 >> $@.d && rm -f $@.linkmap $@.d2
 
 # FMI export target
 mbsimfmi_model$(SHEXT): $(OBJECTS)
-	$(CXX) -shared $(LDFLAGSRPATH) -Wl,-rpath,\$$ORIGIN -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
+	$(CXX) -shared $(LDFLAGSRPATH) -Wl,-rpath,\$$ORIGIN,-Map=$@.linkmap -o $@ $(OBJECTS) $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
+	@sed -rne "/^LOAD /s/^LOAD (.*)$$/ \1 \\\/p" $@.linkmap > $@.d2
+	@echo "$@: \\\\" > $@.d && cat $@.d2 >> $@.d && rm -f $@.linkmap $@.d2
 
 rpath: $(OBJECTS)
 	$(CXX) -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))  $(shell pkg-config --libs-only-L $(PACKAGES) | sed 's/-L/-Wl,-rpath,/g')
@@ -57,3 +61,5 @@ clean:
 
 # include the generated make rules (without print a warning about missing include files (at first run))
 -include $(DEPFILES)
+-include main$(EXEEXT).d
+-include mbsimfmi_model$(SHEXT).d
