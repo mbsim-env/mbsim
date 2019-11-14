@@ -105,7 +105,7 @@ namespace MBSim {
         for(int k_=0; k_<z[1]; k_++) {
           double x2q = x2+k_*M_PI*m+signi*s0h2;
           double xi = ((signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])-z2*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
-          double eta = (x2q+xi*tan(beta[1])-signi*y2*cos(beta[1])/tan(al0))*pow(sin(al0),2)/(pow(sin(al0),2)+pow(cos(beta[1])*cos(al0),2));
+          double eta = (x2q/cos(beta[1])+xi*tan(beta[1]))*sin(al0)-signi*y2*cos(al0);
           if(eta>-etamax2[i] and eta<etamax2[not i])
             v[1].push_back(k_);
         }
