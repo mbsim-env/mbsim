@@ -24,19 +24,19 @@
                 x=cardan(0.1,0.2,0.3)
                 x=cardan([0.1;0.2;0.3]);
                 x=rotateAboutX(0.3);
-                % some dummy casadi tests
-                x=tilde(casadi.SX.sym('x',3,1));
-                x=tilde(casadi.SX.sym('T',3,3));
-                x=euler(casadi.SX.sym('x',1,1),0.2,casadi.SX.sym('z',1,1));
-                x=euler(casadi.SX.sym('x',3,1));
-                x=cardan(casadi.SX.sym('x',1,1),0.2,casadi.SX.sym('z',1,1));
-                x=cardan(casadi.SX.sym('x',3,1));
-                x=rotateAboutX(casadi.SX.sym('x',1,1));
+                % some dummy symbolic tests
+                sym=swigLocalLoad('fmatvec_symbolic_swig_octave');
+                x=tilde(sym.VectorIndep(3));
+                x=tilde(sym.MatrixSym(3,3));
+                x=euler(sym.IndependentVariable(),0.2,sym.SymbolicExpression());
+                x=euler(sym.VectorIndep(3));
+                x=cardan(sym.IndependentVariable(),0.2,sym.SymbolicExpression());
+                x=cardan(sym.VectorSym(3));
+                x=rotateAboutX(sym.SymbolicExpression());
 
-                % Test the access to the (locally) casadi object
-                half=casadi.DM.zeros(1, 1);
-                half(1)=2;
-                ret=[sin(freq1*t + pi/half); v0y*t; 0];
+                half=sym.SymbolicExpression();
+                half=2;
+                ret=vertcat(sym.sin(freq1*t + pi/half), v0y*t, 0);
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
@@ -48,7 +48,8 @@
                 </outerFunction>
                 <innerFunction>
                   <SymbolicFunction arg1="t">
-                    5*sin(freq2*t)
+                    sym=swigLocalLoad('fmatvec_symbolic_swig_octave');
+                    ret=5*sym.sin(freq2*t)
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
@@ -71,7 +72,8 @@
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <timeDependentTranslation>
               <SymbolicFunction arg1="t">
-                [sin(freq1*t + pi/2); v0y*t; 0]
+                sym=swigLocalLoad('fmatvec_symbolic_swig_octave');
+                ret=vertcat(sym.sin(freq1*t + pi/2), v0y*t, 0)
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
@@ -81,7 +83,7 @@
                 </outerFunction>
                 <innerFunction>
                   <SymbolicFunction arg1="t">
-                    [t;2*t]
+                    vertcat(t,2*t)
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
@@ -105,8 +107,8 @@
             <stateDependentTranslation>
               <SymbolicFunction arg1="q" arg1Dim="1">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>5+cos(freq1*q)</ele>
-                  <ele>sin(freq1*q(1))</ele>
+                  <ele>sym=swigLocalLoad('fmatvec_symbolic_swig_octave');ret=5+sym.cos(freq1*q(1))</ele>
+                  <ele>sym=swigLocalLoad('fmatvec_symbolic_swig_octave');ret=sym.sin(freq1*q(1))</ele>
                   <ele>0</ele>
                 </xmlVector> 
               </SymbolicFunction>
@@ -138,8 +140,8 @@
                      </xmlMatrix>
                      here -->
                 <pv:xmlVector>
-                  <pv:ele>10+t+cos(freq1*q(1))</pv:ele>
-                  <pv:ele>sin(freq1*q(1))</pv:ele>
+                  <pv:ele>sym=swigLocalLoad('fmatvec_symbolic_swig_octave');ret=10+t+sym.cos(freq1*q(1))</pv:ele>
+                  <pv:ele>sym=swigLocalLoad('fmatvec_symbolic_swig_octave');ret=sym.sin(freq1*q(1))</pv:ele>
                   <pv:ele>q(2)</pv:ele>
                 </pv:xmlVector>
               </SymbolicFunction>

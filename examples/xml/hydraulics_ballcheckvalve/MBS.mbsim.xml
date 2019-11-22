@@ -33,7 +33,8 @@
       <inertiaTensor>eye(3)</inertiaTensor>
       <timeDependentTranslation>
         <SymbolicFunction arg1="t">
-          [0; A*sin(2*pi*f*t + pi/2); 0]
+          sym=swigLocalLoad('fmatvec_symbolic_swig_octave');
+          ret=vertcat(0, A*sym.sin(2*pi*f*t + pi/2), 0)
         </SymbolicFunction>
       </timeDependentTranslation>
       <frames>
