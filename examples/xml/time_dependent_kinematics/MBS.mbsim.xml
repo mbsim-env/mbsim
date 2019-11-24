@@ -36,7 +36,7 @@
 
                 half=sym.SymbolicExpression();
                 half=2;
-                ret=vertcat(sym.sin(freq1*t + pi/half), v0y*t, 0);
+                ret=[sym.sin(freq1*t + pi/half); v0y*t; 0];
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
@@ -73,7 +73,7 @@
             <timeDependentTranslation>
               <SymbolicFunction arg1="t">
                 sym=swigLocalLoad('fmatvec_symbolic_swig_octave');
-                ret=vertcat(sym.sin(freq1*t + pi/2), v0y*t, 0)
+                ret=[sym.sin(freq1*t + pi/2); v0y*t; 0]
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
@@ -83,7 +83,7 @@
                 </outerFunction>
                 <innerFunction>
                   <SymbolicFunction arg1="t">
-                    vertcat(t,2*t)
+                    [t;2*t]
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
