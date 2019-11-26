@@ -25,7 +25,6 @@
                 x=cardan([0.1;0.2;0.3]);
                 x=rotateAboutX(0.3);
                 % some dummy symbolic tests
-                fmatvec_symbolic_swig_octave;
                 x=tilde(VectorIndep(3));
                 x=tilde(MatrixSym(3,3));
                 x=euler(IndependentVariable(),0.2,SymbolicExpression());
