@@ -81,46 +81,19 @@ namespace MBSim {
       Vec3 rOP[2];
       vector<int> v[2];
       if(maxNumContacts==1) {
-        int k = 0;
-        double eta = 1e10;
-        int signk = (phi2 - signi*delh2)>0?-1:1;
-        for(int k_=0; k_<z[1]; k_++) {
-          double eta_ = fabs(phi2 + signk*k_*2*M_PI/z[1] - signi*delh2);
-          if(eta_<eta) {
-            eta = eta_;
-            k = k_;
-          }
-        }
-        v[1].push_back(signk*k);
-        double phi1corr = signe*(phi2 + signk*k*2*M_PI/z[1] - signi*delh2)*z[1]/z[0];
-
-        k = 0;
-        eta = 1e10;
-        signk = (phi1 - signi*delh1 + phi1corr)>0?-1:1;
-        for(int k_=0; k_<z[0]; k_++) {
-          double eta_ = fabs(phi1 + signk*k_*2*M_PI/z[0] - signi*delh1 + phi1corr);
-          if(eta_<eta) {
-            eta = eta_;
-            k = k_;
-          }
-        }
-        v[0].push_back(signk*k);
+        v[1].push_back(round(-(phi2 - signi*(delh2))/(2*M_PI/z[1])));
+        double phi1corr = signe*(phi2 + v[1][0]*2*M_PI/z[1] - signi*(delh2))*z[1]/z[0];
+        v[0].push_back(round(-(phi1 - signi*(delh1) + phi1corr)/(2*M_PI/z[0])));
       }
       else {
-//        for(int j=0; j<2; j++) {
-          for(int k_=0; k_<z[0]; k_++) {
-            double signk = (phi1 - signi*(delh1+dal))>0?-1:1;
-            double eta = -(phi1 + signk*k_*2*M_PI/z[0] - signi*(delh1+dal));
-            if(eta>-etamax1[1][i] and eta<etamax1[1][not i])
-              v[0].push_back(signk*k_);
-          }
-          for(int k_=0; k_<z[1]; k_++) {
-            double signk = (phi2 - signi*(delh2+dal))>0?-1:1;
-            double eta = -(phi2 + signk*k_*2*M_PI/z[1] - signi*(delh2+dal));
-            if(eta>-etamax2[1][i] and eta<etamax2[1][not i])
-              v[1].push_back(signk*k_);
-          }
-//        }
+        int kmax = floor(-(-etamax1[1][i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        int kmin = ceil(-(etamax1[1][not i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        for(int k_=kmin; k_<=kmax; k_++)
+          v[0].push_back(k_);
+        kmax = floor(-(-etamax2[1][i] + (phi2 - signi*delh2))/(2*M_PI/z[1]));
+        kmin = ceil(-(etamax2[1][not i] + (phi2 - signi*delh2))/(2*M_PI/z[1]));
+        for(int k_=kmin; k_<=kmax; k_++)
+          v[1].push_back(k_);
       }
 
       double k[2];
@@ -134,13 +107,13 @@ namespace MBSim {
             zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal));
             double s = 0;
             if(zeta1(0)>etamax1[0][not i])
-              s = (beta[0]>=0?-1:1)*gear[0]->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]);
+              s = (beta[0]>=0?-1:1)*max(s,gear[0]->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]));
             else if(zeta1(0)<-etamax1[0][i])
-              s = (beta[0]>=0?1:-1)*gear[0]->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]);
-            else if(zeta2(0)>etamax2[0][not i])
-              s = (beta[1]>=0?-1:1)*gear[0]->getWidth()/2/(etamax2[1][not i]-etamax2[0][not i])*(zeta2(0)-etamax2[0][not i]);
+              s = (beta[0]>=0?1:-1)*max(s,gear[0]->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]));
+            if(zeta2(0)>etamax2[0][not i])
+              s = (beta[1]>=0?-1:1)*max(fabs(s),gear[0]->getWidth()/2/(etamax2[1][not i]-etamax2[0][not i])*(zeta2(0)-etamax2[0][not i]));
             else if(zeta2(0)<-etamax2[0][i])
-              s = (beta[1]>=0?1:-1)*gear[0]->getWidth()/2/(-etamax2[1][i]+etamax2[0][i])*(zeta2(0)+etamax2[0][i]);
+              s = (beta[1]>=0?1:-1)*max(fabs(s),gear[0]->getWidth()/2/(-etamax2[1][i]+etamax2[0][i])*(zeta2(0)+etamax2[0][i]));
             zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+(s+z1)*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
