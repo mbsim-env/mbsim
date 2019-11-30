@@ -864,7 +864,7 @@ namespace MBSimHydraulics {
 
   void PressurePump::updateGeneralizedForces() {
     lambda(0)=(*pFunction)(getTime());
-    lambda = false;
+    updla = false;
   }
 
 }

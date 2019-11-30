@@ -28,7 +28,6 @@
 using namespace std;
 using namespace MBSim;
 using namespace fmatvec;
-using namespace casadi;
 
 double createAngle(double i) {
   return M_PI / 200 * sin(i);
@@ -52,7 +51,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     upperTable->setYLength(3e-2);
     upperTable->setZLength(1e-1);
     upperTable->setFrameOfReference(refBoden);
-    upperTable->enableOpenMBV(true, 100);
+    upperTable->enableOpenMBV();
     addContour(upperTable);
 
     Vec3 rCup;
@@ -248,8 +247,8 @@ void SelfSiphoningBeats::addTrajectory(double tEnd) {
 
   leader->getFrame("C")->enableOpenMBV(0.01);
 
-  SX t=SX::sym("t");
-  SX fexp=SX::zeros(3);
+  IndependentVariable t;
+  Vector<Fixed<3>, SymbolicExpression> fexp;
   double v = M_PI / tEnd;
   double x0 = 2e-2;
   fexp(0) = x0 * sin(v * t - (M_PI_2)) + x0;
@@ -258,7 +257,9 @@ void SelfSiphoningBeats::addTrajectory(double tEnd) {
 //  fexp(1) = radius;
   fexp(2) = 0;
 
-  SymbolicFunction<Vec3(double)> *f = new SymbolicFunction<Vec3(double)>(fexp, t);
+  MBSim::SymbolicFunction<Vec3(double)> *f = new MBSim::SymbolicFunction<Vec3(double)>();
+  f->setIndependentVariable(t);
+  f->setDependentFunction(fexp);
 
   leader->setTranslation(f);
   if (elements) {

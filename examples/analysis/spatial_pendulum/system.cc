@@ -34,15 +34,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->addFrame(new FixedRelativeFrame("P",r,SqrMat(3,EYE)));
   body->setFrameOfReference(getFrame("I"));
 
-  //SX sq=vertcat(SX::sym("al"), SX::sym("be"));
-
-  //SX pos=SX::zeros(3);
-  //pos[0] = a*cos(sq[0])*sin(sq[1]);
-  //pos[1] = -a*cos(sq[1]);
-  //pos[2] = -a*sin(sq[0])*sin(sq[1]); 
-
-  //body->setTranslation(new SymbolicFunction<Vec3(VecV)>(pos, sq));
-
   body->setFrameForKinematics(body->getFrame("P"));
   body->setRotation(new RotationAboutAxesYZ<VecV>);
   Vec q0(2), u0(2);

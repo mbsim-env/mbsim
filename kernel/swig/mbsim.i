@@ -46,6 +46,7 @@ class MBSim::Function<Ret(Arg)> : public MBSim::FunctionBase, virtual public fma
     Function();
     void initializeUsingXML(xercesc::DOMElement *element);
     typedef typename Der<Ret, Arg>::type DRetDArg;
+    typedef typename DirDer<Ret, Arg>::type DRetDDir;
     typedef typename Der<DRetDArg, Arg>::type DDRetDDArg;
     enum { retSize1 = StaticSize<Ret>::size1, retSize2 = StaticSize<Ret>::size2 };
     static constexpr int argSize = StaticSize<Arg>::size1;
@@ -53,10 +54,10 @@ class MBSim::Function<Ret(Arg)> : public MBSim::FunctionBase, virtual public fma
     virtual int getArgSize() const;
     virtual Ret operator()(const Arg &arg)=0;
     virtual DRetDArg parDer(const Arg &arg);
-    virtual Ret dirDer(const Arg &argDir, const Arg &arg);
+    virtual DRetDDir dirDer(const Arg &argDir, const Arg &arg);
     virtual DDRetDDArg parDerParDer(const Arg &arg);
     virtual DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg);
-    virtual Ret dirDerDirDer(const Arg &argDir_1, const Arg &argDir_2, const Arg &arg);
+    virtual DRetDDir dirDerDirDer(const Arg &argDir_1, const Arg &argDir_2, const Arg &arg);
     virtual bool constParDer() const;
 };
 %enddef
@@ -91,6 +92,8 @@ class MBSim::Function<Ret(Arg1, Arg2)> : public MBSim::FunctionBase, virtual pub
     void initializeUsingXML(xercesc::DOMElement *element);
     typedef typename Der<Ret, Arg1>::type DRetDArg1;
     typedef typename Der<Ret, Arg2>::type DRetDArg2;
+    typedef typename DirDer<Ret, Arg1>::type DRetDDir1;
+    typedef typename DirDer<Ret, Arg2>::type DRetDDir2;
     typedef typename Der<DRetDArg1, Arg1>::type DDRetDDArg1;
     typedef typename Der<DRetDArg2, Arg2>::type DDRetDDArg2;
     typedef typename Der<DRetDArg1, Arg2>::type DDRetDArg1DArg2;
@@ -102,18 +105,18 @@ class MBSim::Function<Ret(Arg1, Arg2)> : public MBSim::FunctionBase, virtual pub
     virtual int getArg2Size() const;
     virtual Ret operator()(const Arg1 &arg1, const Arg2 &arg2)=0;
     virtual DRetDArg1 parDer1(const Arg1 &arg1, const Arg2 &arg2);
-    virtual Ret dirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDDir1 dirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
     virtual DRetDArg2 parDer2(const Arg1 &arg1, const Arg2 &arg2);
-    virtual Ret dirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDDir2 dirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2);
     virtual DDRetDDArg1 parDer1ParDer1(const Arg1 &arg1, const Arg2 &arg2);
     virtual DRetDArg1 parDer1DirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
-    virtual Ret dirDer1DirDer1(const Arg1 &arg1Dir_1, const Arg1 &arg1Dir_2, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDDir1 dirDer1DirDer1(const Arg1 &arg1Dir_1, const Arg1 &arg1Dir_2, const Arg1 &arg1, const Arg2 &arg2);
     virtual DDRetDDArg2 parDer2ParDer2(const Arg1 &arg1, const Arg2 &arg2);
     virtual DRetDArg2 parDer2DirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2);
-    virtual Ret dirDer2DirDer2(const Arg2 &arg2Dir_1, const Arg2 &arg2Dir_2, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDDir2 dirDer2DirDer2(const Arg2 &arg2Dir_1, const Arg2 &arg2Dir_2, const Arg1 &arg1, const Arg2 &arg2);
     virtual DDRetDArg1DArg2 parDer1ParDer2(const Arg1 &arg1, const Arg2 &arg2);
     virtual DRetDArg1 parDer1DirDer2(const Arg2 &arg2Dir, const Arg1 &arg1, const Arg2 &arg2);
-    virtual Ret dirDer2DirDer1(const Arg2 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
+    virtual DRetDDir2 dirDer2DirDer1(const Arg2 &arg2Dir, const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
     virtual DRetDArg2 parDer2DirDer1(const Arg1 &arg1Dir, const Arg1 &arg1, const Arg2 &arg2);
     virtual bool constParDer1() const;
     virtual bool constParDer2() const;
@@ -218,7 +221,7 @@ class _AllocatePython(AllocateBase):
     self.className=className
   def __call__(self):
     return self.className().__disown__()
-  def __eq__(self, other):
+  def isEqual(self, other):
     otherDirector=_dynamic_cast_Director(other)
     if otherDirector==None:
       return False
@@ -240,7 +243,7 @@ class _GetSingletonPython(AllocateBase):
     self.className=className
   def __call__(self):
     return self.classNname.getInstance().__disown__()
-  def __eq__(self, other):
+  def isEqual(self, other):
     otherDirector=_dynamic_cast_Director(other)
     if otherDirector==None:
       return False

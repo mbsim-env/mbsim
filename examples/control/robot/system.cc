@@ -21,7 +21,6 @@ using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBSimControl;
-using namespace casadi;
 
 Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
@@ -109,15 +108,19 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(basePositionSoll);
   basePositionSoll->setFunction(basePositionSollFunction);
 
-  SX s1 = SX::sym("s1",1);
-  SX s2 = SX::sym("s2",1);
-  SX y = s1-s2;
+  Vector<Var, IndependentVariable> s1(1, NONINIT);
+  Vector<Var, IndependentVariable> s2(1, NONINIT);
+  Vector<Var, SymbolicExpression> y = s1-s2;
 
   SignalOperation *basePositionDiff = new SignalOperation("BasePositionDiff");
   addLink(basePositionDiff);
   basePositionDiff->addInputSignal(basePositionSoll);
   basePositionDiff->addInputSignal(basePosition);
-  basePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
+  auto func1=new MBSim::SymbolicFunction<VecV(VecV,VecV)>();
+  func1->setIndependentVariable1(s1);
+  func1->setIndependentVariable2(s2);
+  func1->setDependentFunction(y);
+  basePositionDiff->setFunction(func1);
 
   SqrMatV AMat(2);
   AMat(1,1) = -1./2e-3;
@@ -162,7 +165,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(armPositionDiff);
   armPositionDiff->addInputSignal(armPositionSoll);
   armPositionDiff->addInputSignal(armPosition);
-  armPositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
+  auto func2=new MBSim::SymbolicFunction<VecV(VecV,VecV)>();
+  func2->setIndependentVariable1(s1);
+  func2->setIndependentVariable2(s2);
+  func2->setDependentFunction(y);
+  armPositionDiff->setFunction(func2);
   
   LinearTransferSystem *armControl = new LinearTransferSystem("ReglerArm");
   addLink(armControl);
@@ -196,7 +203,11 @@ Robot::Robot(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(spitzePositionDiff);
   spitzePositionDiff->addInputSignal(spitzePositionSoll);
   spitzePositionDiff->addInputSignal(spitzePosition);
-  spitzePositionDiff->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y,s1,s2));
+  auto func3=new MBSim::SymbolicFunction<VecV(VecV,VecV)>();
+  func3->setIndependentVariable1(s1);
+  func3->setIndependentVariable2(s2);
+  func3->setDependentFunction(y);
+  spitzePositionDiff->setFunction(func3);
 
   LinearTransferSystem *spitzeControl = new LinearTransferSystem("ReglerSpitze");
   addLink(spitzeControl);

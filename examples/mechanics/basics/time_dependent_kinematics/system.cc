@@ -11,7 +11,6 @@
 #include "openmbvcppinterface/coilspring.h"
 
 using namespace MBSim;
-using namespace casadi;
 using namespace fmatvec;
 using namespace std;
 
@@ -39,17 +38,22 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body1->setFrameOfReference(getFrame("I"));
   body1->setFrameForKinematics(body1->getFrame("C"));
 
-  SX t=SX::sym("t");
-  SX fexp=SX::zeros(3);
+  IndependentVariable t;
+  Vector<Fixed<3>, SymbolicExpression> fexp;
   fexp(0) = sin(freq1*t + M_PI/2);
   fexp(1) = v0y*t;
   fexp(2) = 0;
 
-  body1->setTranslation(new SymbolicFunction<Vec3(double)>(fexp, t));
+  auto trans=new MBSim::SymbolicFunction<Vec3(double)>();
+  trans->setIndependentVariable(t);
+  trans->setDependentFunction(fexp);
+  body1->setTranslation(trans);
 
-  SX fexp2 = 5*sin(freq2*t);
+  SymbolicExpression fexp2 = 5*sin(freq2*t);
 
-  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(fexp2, t);
+  MBSim::SymbolicFunction<double(double)> *f2 = new MBSim::SymbolicFunction<double(double)>();
+  f2->setIndependentVariable(t);
+  f2->setDependentFunction(fexp2);
   body1->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;0;1]"), f2));
   body1->setTranslationDependentRotation(true);
 

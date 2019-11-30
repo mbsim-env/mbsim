@@ -34,10 +34,6 @@ AC_SUBST([HOST_OS],[$host_os])
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
 fi
-CPPFLAGS="$CPPFLAGS -Wno-error=sign-compare" # casadi headers use some wrong sign-compare
-
-dnl Check for casadi 
-PKG_CHECK_MODULES(CASADI, casadi >= 3.0.0, [], [AC_MSG_ERROR([CasADi not found!])])
 
 dnl check for OpenMBV-Cpp-Interface
 PKG_CHECK_MODULES(OPENMBVCPPINTERFACE, openmbvcppinterface >= 3.0.0,[],[AC_MSG_ERROR([OpenMBVC++Interface not found!])])

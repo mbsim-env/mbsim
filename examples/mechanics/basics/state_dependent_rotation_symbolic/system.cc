@@ -12,7 +12,6 @@
 #include "openmbvcppinterface/cuboid.h"
 
 using namespace MBSim;
-using namespace casadi;
 using namespace fmatvec;
 using namespace std;
 
@@ -42,18 +41,23 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   body->setFrameForKinematics(body->getFrame("C"));
 
   double R = 10;
-  SX sq=SX::sym("q");
+  Vector<Var, IndependentVariable> sq(1, NONINIT);
 
-  SX pos=SX::zeros(3);
+  Vector<Fixed<3>, SymbolicExpression> pos;
   pos(0) = -cos(sq(0)/R)*R;
   pos(1) = -sin(sq(0)/R)*R;
   pos(2) = 0;
 
-  body->setTranslation(new SymbolicFunction<Vec3(VecV)>(pos, sq));
+  auto trans=new MBSim::SymbolicFunction<Vec3(VecV)>();
+  trans->setIndependentVariable(sq);
+  trans->setDependentFunction(pos);
+  body->setTranslation(trans);
 
-  SX al=M_PI/2+sq(0)/R;
+  SymbolicExpression al=M_PI/2+sq(0)/R;
 
-  SymbolicFunction<double(VecV)> *angle = new SymbolicFunction<double(VecV)>(al, sq);
+  MBSim::SymbolicFunction<double(VecV)> *angle = new MBSim::SymbolicFunction<double(VecV)>();
+  angle->setIndependentVariable(sq);
+  angle->setDependentFunction(al);
   body->setRotation(new CompositeFunction<RotMat3(double(VecV))>(new RotationAboutFixedAxis<double>("[0;0;1]"), angle));
   body->setTranslationDependentRotation(true);
   

@@ -35,9 +35,3 @@ utilsinclude_HEADERS = colors.h\
 		       planar_contact_search.h\
 		       spatial_contact_search.h\
 		       index.h
-
-noinst_PROGRAMS = cppCasADiToXML
-cppCasADiToXML_SOURCES = cppCasADiToXML.cc
-cppCasADiToXML_LDADD = libutils.la 
-cppCasADiToXML_LDFLAGS = -Wl,--no-as-needed $(CASADI_LIBS)
-cppCasADiToXML_CPPFLAGS = $(libutils_la_CPPFLAGS) $(CASADI_CFLAGS)

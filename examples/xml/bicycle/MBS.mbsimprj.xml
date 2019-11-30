@@ -474,7 +474,7 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</SymbolicFunction>
           <inputSignal ref="../Link[Richtungssoll]"/>
           <inputSignal ref="../Link[Fahrtrichtung]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="x" arg2="y">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>x-y</ele>
               </xmlVector>
@@ -541,7 +541,7 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</SymbolicFunction>
         <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="NeigungsbegrenzerOut">
           <inputSignal ref="../Link[Neigungsbegrenzer]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="x" arg1Dim="1">
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="x">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>-x</ele>
               </xmlVector>
@@ -589,7 +589,7 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</SymbolicFunction>
           <inputSignal ref="../Link[PT1Glied]"/>
           <inputSignal ref="../Link[Rahmenwinkel]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="x" arg2="y">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>x-y</ele>
               </xmlVector>
@@ -647,7 +647,7 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</SymbolicFunction>
           <inputSignal ref="../Link[Lenkwinkelbegrenzung]"/>
           <inputSignal ref="../Link[Lenkwinkel]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="x" arg1Dim="1" arg2="y" arg2Dim="1">
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="x" arg2="y">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>x-y</ele>
               </xmlVector>

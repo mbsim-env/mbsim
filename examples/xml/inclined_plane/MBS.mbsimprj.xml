@@ -141,9 +141,7 @@
               </outerFunction>
               <innerFunction>
                 <SymbolicFunction arg1="t">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>1.01*al*(1-exp(-5*t))</ele>
-                  </xmlVector>
+                  1.01*al*(1-exp(-5*t))
                 </SymbolicFunction>
               </innerFunction>
             </CompositeFunction>
@@ -184,9 +182,7 @@
             <PlanarStribeckFriction>
               <frictionFunction>
                 <SymbolicFunction arg1="gT">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>mu0+mu1/(1+mu2*gT^2)</ele>
-                  </xmlVector>
+                  mu0+mu1/(1+mu2*gT^2)
                 </SymbolicFunction>
               </frictionFunction>
             </PlanarStribeckFriction>
@@ -195,9 +191,7 @@
             <PlanarStribeckImpact>
               <frictionFunction>
                 <SymbolicFunction arg1="gT">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>mu0+mu1/(1+mu2*gT^2)</ele>
-                  </xmlVector>
+                  mu0+mu1/(1+mu2*gT^2)
                 </SymbolicFunction>
               </frictionFunction>
             </PlanarStribeckImpact>

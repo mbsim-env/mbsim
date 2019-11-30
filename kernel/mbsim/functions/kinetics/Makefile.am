@@ -12,8 +12,8 @@ libkinetics_la_SOURCES = linear_spring_damper_force.cc\
 
 kineticsincludedir = $(includedir)/mbsim/functions/kinetics
 
-libkinetics_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CASADI_LIBS)
-libkinetics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(CASADI_CFLAGS)
+libkinetics_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libkinetics_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 kineticsinclude_HEADERS = kinetics.h\
 			  linear_spring_damper_force.h\

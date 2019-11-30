@@ -26,7 +26,6 @@ using namespace MBSimFlexibleBody;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace casadi;
 
 class Rod : public FlexibleBody1s21RCM {
   public:
@@ -371,12 +370,14 @@ void BlockCompression::addBoundaryConditions() {
 //Set translation of dummy start body into x (and not z) direction
   RigidBody * compressionBody = new RigidBody("Compression Body");
 
-  SX t = SX::sym("t");
+  IndependentVariable t;
   double startPos = hingeDistanceLeft + l0 - endShift - (NoBlocks - 1) * dxElement;
   double velocity = 10;
-  SX fexp2 = startPos + velocity * t;
+  SymbolicExpression fexp2 = startPos + velocity * t;
 
-  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(fexp2, t);
+  MBSim::SymbolicFunction<double(double)> *f2 = new MBSim::SymbolicFunction<double(double)>();
+  f2->setIndependentVariable(t);
+  f2->setDependentFunction(fexp2);
   compressionBody->setTranslation(new CompositeFunction<Vec3(double(double))>(new TranslationAlongXAxis<double>(), f2));
 
   compressionBody->setMass(1e-6);

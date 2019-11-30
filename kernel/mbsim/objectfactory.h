@@ -174,7 +174,7 @@ struct Allocate : public AllocateBase {
   // check if this Allocator allocates the same object as other.
   // This is the case if the type of this template class matches
   // the type of other.
-  bool operator==(const AllocateBase& other) const override {
+  bool isEqual(const AllocateBase& other) const override {
     return typeid(*this)==typeid(other);
   }
 };
@@ -197,7 +197,7 @@ struct GetSingleton : public AllocateBase {
   // check if this Allocator returns the same object as other.
   // This is the case if the type of this template class matches
   // the type of other.
-  bool operator==(const AllocateBase& other) const override {
+  bool isEqual(const AllocateBase& other) const override {
     return typeid(*this)==typeid(other);
   }
 };

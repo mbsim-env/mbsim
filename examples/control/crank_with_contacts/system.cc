@@ -33,7 +33,6 @@ using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
 using namespace MBSimControl;
-using namespace casadi;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Schwerkraft
@@ -340,16 +339,20 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   addLink(VelSoll);
   VelSoll->setFunction(new ConstantFunction<VecV(double)>(10));
 
-  SX s1 = SX::sym("s1",1);
-  SX s2 = SX::sym("s2",1);
-  SX y = s2-s1;
+  Vector<Fixed<1>, IndependentVariable> s1(NONINIT);
+  Vector<Var, IndependentVariable> s2(1, NONINIT);
+  Vector<Var, SymbolicExpression> y = s2-s1;
 
   // Signal-Addition
   SignalOperation * Regelfehler = new SignalOperation("Regelfehler");
   addLink(Regelfehler);
   Regelfehler->addInputSignal(GenVelSensorAtCrank);
   Regelfehler->addInputSignal(VelSoll);
-  Regelfehler->setFunction(new SymbolicFunction<VecV(VecV,VecV)>(y, s1, s2));
+  auto func=new MBSim::SymbolicFunction<VecV(VecV,VecV)>();
+  func->setIndependentVariable1(s1);
+  func->setIndependentVariable2(s2);
+  func->setDependentFunction(y);
+  Regelfehler->setFunction(func);
 
   // Regler
   LinearTransferSystem *Regler = new LinearTransferSystem("Regler");

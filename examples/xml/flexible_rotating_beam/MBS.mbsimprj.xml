@@ -325,7 +325,7 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="t" arg1Dim="1">
+                        <SymbolicFunction arg1="t">
                           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                             <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
                           </xmlVector>
@@ -673,7 +673,7 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="t" arg1Dim="1">
+                        <SymbolicFunction arg1="t">
                           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                             <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
                           </xmlVector>
@@ -1063,7 +1063,7 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="t" arg1Dim="1">
+                        <SymbolicFunction arg1="t">
                           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                             <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
                           </xmlVector>

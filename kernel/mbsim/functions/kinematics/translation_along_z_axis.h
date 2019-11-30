@@ -38,7 +38,7 @@ namespace MBSim {
         return r; 
       }
       typename B::DRetDArg parDer(const Arg &arg) override { return a; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(1); }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(); }
       bool constParDer() const override { return true; }
   };
 

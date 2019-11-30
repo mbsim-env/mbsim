@@ -1,6 +1,8 @@
 examples/**/.err.MBS.mbsim*.xml
 examples/**/.err.FMI_cosim.mbsim*.xml
 examples/**/.err.FMI.mbsim*.xml
+examples/xml/calculix_body/MBS.eigenanalysis.mat
+examples/xml/tippe_top/TippeTop.ombv.xml
 kernel/INSTALL
 kernel/compile
 kernel/Makefile.in

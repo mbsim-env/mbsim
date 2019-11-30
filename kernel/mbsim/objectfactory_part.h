@@ -33,14 +33,15 @@ namespace MBSim {
 //! Base wrapper class to allocate an object derived from fmatvec::Atom.
 //! We can use just a function pointer, fmatvec::Atom* (*allocateFct)(), for the same purpose.
 //! But for other more complex allocator functions (e.g. Python objects using swig directors)
-//! this is not flexible enought since we need to proved a custom operator==.
+//! this is not flexible enought since we need to provide a custom compare function (isEqual).
 struct AllocateBase {
   virtual ~AllocateBase() = default;
   //! Implement this function to allocate a new object
   virtual fmatvec::Atom* operator()() const = 0;
   //! Implement this function to compare whether this class and the instance other allocate
   //! the same object type when calling operator().
-  virtual bool operator==(const AllocateBase& other) const = 0;
+  //! (we use isEqual here instead of operator== to avoid problems with some swig versions)
+  virtual bool isEqual(const AllocateBase& other) const = 0;
 };
 
 //! Base wrapper class to deallocate an object derived from fmatvec::Atom.

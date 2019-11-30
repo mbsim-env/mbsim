@@ -19,7 +19,6 @@
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
-using namespace casadi;
 
 //double omg = 10.;
 //double tend = 5.;
@@ -81,10 +80,12 @@ System::System(const string &projectName) :
   crankToSpring->enableOpenMBV(0.5e-1);
   crank->getFrameC()->enableOpenMBV(0.7e-1);
 
-  SX t=SX::sym("t");
-  SX fexp2 = log(cosh(t));
+  IndependentVariable t;
+  SymbolicExpression fexp2 = log(cosh(t));
 
-  SymbolicFunction<double(double)> *f2 = new SymbolicFunction<double(double)>(fexp2, t);
+  MBSim::SymbolicFunction<double(double)> *f2 = new MBSim::SymbolicFunction<double(double)>();
+  f2->setIndependentVariable(t);
+  f2->setDependentFunction(fexp2);
   crank->setRotation(new CompositeFunction<RotMat3(double(double))>(new RotationAboutFixedAxis<double>("[0;1;0]"), f2));
   crank->setTranslation(new TranslationAlongAxesXYZ<VecV>());
   Joint * fix = new Joint("Fix");

@@ -116,7 +116,7 @@ ObjectFactory& ObjectFactory::instance() {
 void registerClass_internal(const FQN &name, const AllocateBase *alloc, const DeallocateBase *dealloc) {
   ObjectFactory::AllocDeallocVector &allocDealloc=ObjectFactory::instance().registeredType.insert(make_pair(name, ObjectFactory::AllocDeallocVector())).first->second;
   if(find_if(allocDealloc.begin(), allocDealloc.end(), [&alloc](const ObjectFactory::AllocDeallocPair &x){
-    return *x.first == *alloc;
+    return x.first->isEqual(*alloc);
   })!=allocDealloc.end())
     throw runtime_error("Internal error: Redundant registration of a class in the XML object factory.");
   allocDealloc.emplace_back(alloc, dealloc);
@@ -127,7 +127,7 @@ void deregisterClass_internal(const FQN &name, const AllocateBase *alloc) {
   if(nameIt==ObjectFactory::instance().registeredType.end())
     return;
   auto allocDeallocIt=nameIt->second.begin();
-  while(allocDeallocIt!=nameIt->second.end() && !(*allocDeallocIt->first == *alloc))
+  while(allocDeallocIt!=nameIt->second.end() && !(allocDeallocIt->first->isEqual(*alloc)))
     ++allocDeallocIt;
   if(allocDeallocIt!=nameIt->second.end()) {
     delete allocDeallocIt->first;

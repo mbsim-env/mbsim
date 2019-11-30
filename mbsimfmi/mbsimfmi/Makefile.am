@@ -24,7 +24,7 @@ libmbsim_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS)
 # build main FMU library for XML models
 libmbsimxml_fmi_la_SOURCES = fmiinstance_xml.cc
 libmbsimxml_fmi_la_CPPFLAGS = $(FMUXMLDEPS_CFLAGS)
-libmbsimxml_fmi_la_LIBADD = libmbsim_fmi.la $(FMUXMLDEPS_LIBS) ../general/libfmivariables.la $(FMUDEPS_LIBS)
+libmbsimxml_fmi_la_LIBADD = libmbsim_fmi.la $(FMUXMLDEPS_LIBS) ../general/libfmivariables.la $(FMUDEPS_LIBS) $(LIBDL)
 libmbsimxml_fmi_la_LDFLAGS = -avoid-version
 
 # build main FMU library for XML models with parameters (preprocessing is included in the FMU)
@@ -36,7 +36,7 @@ libmbsimppxml_fmi_la_LDFLAGS = -avoid-version
 # build main FMU library for source models
 libmbsimsrc_fmi_la_SOURCES = fmiinstance_src.cc
 libmbsimsrc_fmi_la_CPPFLAGS = $(FMUDEPS_CFLAGS) $(MBXMLUTILSHELPERDEPS_CFLAGS)
-libmbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la ../general/libfmivariables.la $(FMUDEPS_LIBS)
+libmbsimsrc_fmi_la_LIBADD = libmbsim_fmi.la ../general/libfmivariables.la $(FMUDEPS_LIBS) $(LIBDL)
 libmbsimsrc_fmi_la_LDFLAGS = -avoid-version
 
 

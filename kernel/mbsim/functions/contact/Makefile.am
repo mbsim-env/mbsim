@@ -15,8 +15,8 @@ libcontact_la_SOURCES = funcpair_planarcontour_point.cc\
 
 contactincludedir = $(includedir)/mbsim/functions/contact
 
-libcontact_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(CASADI_LIBS)
-libcontact_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(CASADI_CFLAGS)
+libcontact_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libcontact_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 
 contactinclude_HEADERS = distance_function.h\
 			 funcpair_planarcontour_point.h\

@@ -144,32 +144,14 @@ alias h5dumpserie="$HOME/MBSim/Install/bin/h5dumpserie"
 to gain overall access to the commands \texttt{h5lsserie} and \texttt{h5dumpserie}.
 
 \subsubsection{\OpenMBV{}}
-The installation for the simulation framework consists of three steps: first Casadi and the XMLUtils have to be installed, then \MBSim{} needs \textsf{OpenMBV-C++Interface} to create standard data for \OpenMBV{} using C++ programs. The source code is available by
+The installation for the simulation framework consists of three steps: first the XMLUtils have to be installed, then \MBSim{} needs \textsf{OpenMBV-C++Interface} to create standard data for \OpenMBV{} using C++ programs. The source code is available by
 \begin{verbatim}
  cd $HOME/MBSim
  git clone https://github.com/mbsim-env/openmbv.git
 \end{verbatim}
 %
-\paragraph{Casadi}
-For installing Casadi, take
-\begin{verbatim}
-  git clone https://github.com/casadi/casadi.git
-\end{verbatim}
-create a build-directory
-\begin{verbatim}
-  cd casadi, mkdir build, cd build
-\end{verbatim}
-and invoke
-\begin{verbatim}
-  cmake -DCMAKE_INSTALL_PREFIX=$HOME/MBSim/Install ..
-\end{verbatim}
-Proceed with
-\begin{verbatim}
-  make install
-\end{verbatim}
-%
 \paragraph{XMLUtils}
-It is assumed that \FMatVec{}, Octave, swig, Xerces, Xalan and Casadi are installed.
+It is assumed that \FMatVec{}, Octave, swig, Xerces and Xalan installed.
 \begin{verbatim}
  cd $HOME/MBSim/OpenMBV/mbxmlutils
 \end{verbatim} 
