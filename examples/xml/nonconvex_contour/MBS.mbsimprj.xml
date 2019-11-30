@@ -101,7 +101,7 @@
                 </xmlVector>
               </nodes>
               <contourFunction>
-                <SymbolicFunction arg1="eta" arg1Dim="1">
+                <SymbolicFunction arg1="eta">
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>eta</ele>
                     <ele>-b*sin(4*eta)</ele>

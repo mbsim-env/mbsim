@@ -31,7 +31,7 @@
                 </pv:xmlMatrix>
             </inertiaTensor>
             <stateDependentTranslation>
-              <SymbolicFunction arg1="s" arg1Dim="1">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction>
+              <SymbolicFunction arg1="s">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction>
             </stateDependentTranslation>
             <stateDependentRotation>
               <CompositeFunction>
@@ -47,7 +47,7 @@
                   </RotationAboutFixedAxis>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="s" arg1Dim="1">pi/2+s/R</SymbolicFunction>
+                  <SymbolicFunction arg1="s">pi/2+s/R</SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </stateDependentRotation>

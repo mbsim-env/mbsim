@@ -31,7 +31,7 @@
                 </pv:xmlMatrix>
             </inertiaTensor>
             <stateDependentTranslation>
-              <SymbolicFunction arg1="x" arg1Dim="1">[x;-c*x^2;0]</SymbolicFunction>
+              <SymbolicFunction arg1="x">[x;-c*x^2;0]</SymbolicFunction>
             </stateDependentTranslation>
             <stateDependentRotation>
               <CompositeFunction>
@@ -47,7 +47,7 @@
                   </RotationAboutFixedAxis>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="x" arg1Dim="1">atan(-c*2*x)</SymbolicFunction>
+                  <SymbolicFunction arg1="x">atan(-c*2*x)</SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </stateDependentRotation>
@@ -90,7 +90,7 @@
                 </pv:xmlVector>
             </initialState>
             <stateDependentConstraintFunction>
-              <SymbolicFunction arg1="q" arg1Dim="1">v0/sqrt(1+4*c*c*q*q);</SymbolicFunction>
+              <SymbolicFunction arg1="q" arg1Dim="1">v0/sqrt(1+4*c*c*q(1)*q(1));</SymbolicFunction>
             </stateDependentConstraintFunction>
         </GeneralizedVelocityConstraint>
     </constraints>

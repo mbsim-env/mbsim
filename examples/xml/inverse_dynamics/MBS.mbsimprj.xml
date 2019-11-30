@@ -275,7 +275,7 @@
                 <TranslationAlongAxesXY/>
               </outerFunction>
               <innerFunction>
-                <SymbolicFunction arg1="t" arg1Dim="1">[l1+l2+l3-0.3*t-0.05;-0.4*t-0.03]</SymbolicFunction>
+                <SymbolicFunction arg1="t">[l1+l2+l3-0.3*t-0.05;-0.4*t-0.03]</SymbolicFunction>
               </innerFunction>
             </CompositeFunction>
           </translation>
