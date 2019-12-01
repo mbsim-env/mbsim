@@ -69,7 +69,7 @@ AM_DEFAULT_SOURCE_EXT = _swig_python.cc
 
 # compile flags for libtool libraries
 _fmatvec_la_CPPFLAGS = $(PYTHON_CFLAGS) $(FMATVEC_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include \
-  -Wno-error=unused-variable
+  -Wno-error=unused-variable -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 _mbsim_la_CPPFLAGS = $(AM_CPPFLAGS)
 # set default compile flags for all __mbsim_partXXX.la targets
 AM_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include \
