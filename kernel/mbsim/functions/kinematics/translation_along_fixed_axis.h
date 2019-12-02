@@ -29,15 +29,14 @@ namespace MBSim {
   class TranslationAlongFixedAxis : public Function<fmatvec::Vec3(Arg)> {
     using B = fmatvec::Function<fmatvec::Vec3(Arg)>; 
     private:
-      fmatvec::Vec3 a;
-      fmatvec::Vec3 zeros(const typename B::DRetDArg &x) { return fmatvec::Vec3(x.rows()); }
+      fmatvec::Vec3 a, zero;
     public:
-      TranslationAlongFixedAxis() = default;
-      TranslationAlongFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
+      TranslationAlongFixedAxis() : zero(3, fmatvec::INIT, 0.0) {}
+      TranslationAlongFixedAxis(const fmatvec::Vec3 &a_) : a(a_), zero(3, fmatvec::INIT, 0.0) { }
       int getArgSize() const override { return 1; }
       fmatvec::Vec3 operator()(const Arg &arg) override { return a*arg; }
       typename B::DRetDArg parDer(const Arg &arg) override { return a; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(); }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return zero; }
       typename B::DDRetDDArg parDerParDer(const Arg &arg) override { this->throwError("parDerParDer is not available for given template parameters."); }
       bool constParDer() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
