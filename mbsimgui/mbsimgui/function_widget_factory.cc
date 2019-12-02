@@ -479,7 +479,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  PlanarContourFunctionWidgetFactory::PlanarContourFunctionWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+  PlanarContourFunctionWidgetFactory::PlanarContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_) : element(element_), parent(parent_), var(var_) {
     name.emplace_back("Polar contour function");
     name.emplace_back("Symbolic function");
     name.emplace_back("Continued function");
@@ -496,21 +496,21 @@ namespace MBSimGUI {
 
   QWidget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PolarContourFunctionWidget(parent);
+      return new PolarContourFunctionWidget(parent,var);
     if(i==1)
-      return new SymbolicFunctionWidget(QStringList("eta"),3,1);
+      return new SymbolicFunctionWidget(QStringList(var),3,1);
     if(i==2)
-      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent), new SymbolicFunctionWidgetFactory3(element,QStringList("x")));
+      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,"x"), new SymbolicFunctionWidgetFactory3(element,QStringList(var)));
     if(i==3)
       return new PiecewisePolynomFunctionWidget(1);
     if(i==4)
-      return new PiecewiseDefinedFunctionWidget(element,0,parent,"eta");
+      return new PiecewiseDefinedFunctionWidget(element,0,parent,var);
     if(i==5)
-      return new CompositeFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent), new FunctionWidgetFactory2(element,true,parent));
+      return new CompositeFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,"x"), new FunctionWidgetFactory2(element,true,parent,var));
     return nullptr;
   }
 
-  SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *element_) : element(element_) {
+  SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_) : element(element_), parent(parent_), var(var_) {
     name.emplace_back("Symbolic function");
     name.emplace_back("Continued function");
     name.emplace_back("Composite function");
@@ -521,11 +521,11 @@ namespace MBSimGUI {
 
   QWidget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new SymbolicFunctionWidget(QStringList("zeta"),3,2);
+      return new SymbolicFunctionWidget(QStringList(var),3,2);
     if(i==1)
-      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(element), new SymbolicFunctionWidgetFactory3(element,QStringList("x")));
+      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,"x"), new SymbolicFunctionWidgetFactory3(element,QStringList(var)));
     if(i==2)
-      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(element), new SymbolicFunctionWidgetFactory3(element,QStringList("x")));
+      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,"x"), new SymbolicFunctionWidgetFactory3(element,QStringList(var)));
     return nullptr;
   }
 

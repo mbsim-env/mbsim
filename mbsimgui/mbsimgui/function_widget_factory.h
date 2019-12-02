@@ -243,7 +243,7 @@ namespace MBSimGUI {
 
   class PlanarContourFunctionWidgetFactory : public WidgetFactory {
     public:
-      PlanarContourFunctionWidgetFactory(Element *element_, QWidget *parent_);
+      PlanarContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_="eta");
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -253,11 +253,12 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
+      QString var;
   };
 
   class SpatialContourFunctionWidgetFactory : public WidgetFactory {
     public:
-      SpatialContourFunctionWidgetFactory(Element *element_);
+      SpatialContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var="zeta");
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -266,6 +267,8 @@ namespace MBSimGUI {
       Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
+      QString var;
   };
 
   class GravityFunctionWidgetFactory : public WidgetFactory {

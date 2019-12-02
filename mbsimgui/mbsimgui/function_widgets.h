@@ -405,7 +405,7 @@ namespace MBSimGUI {
   class PolarContourFunctionWidget : public FunctionWidget {
 
     public:
-      PolarContourFunctionWidget(QWidget *parent);
+      PolarContourFunctionWidget(QWidget *parent, const QString &var="phi");
       QString getType() const override { return "PolarContourFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

@@ -950,12 +950,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PolarContourFunctionWidget::PolarContourFunctionWidget(QWidget *parent) {
+  PolarContourFunctionWidget::PolarContourFunctionWidget(QWidget *parent, const QString &var) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
+    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent,var),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
     layout->addWidget(radiusFunction);
   }
 
