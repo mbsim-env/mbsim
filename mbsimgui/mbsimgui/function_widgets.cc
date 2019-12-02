@@ -39,7 +39,7 @@ namespace MBSimGUI {
 
   class LimitedFunctionWidgetFactory : public WidgetFactory {
     public:
-      LimitedFunctionWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) { }
+      LimitedFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_="x") : element(element_), parent(parent_), var(var_) { }
       QString getName(int i=0) const override { return "Limited function"; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIM%"LimitedFunction"; }
       QWidget* createWidget(int i=0) override;
@@ -47,11 +47,12 @@ namespace MBSimGUI {
     protected:
       Element *element;
       QWidget *parent;
+      QString var;
   };
 
   QWidget* LimitedFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new LimitedFunctionWidget(element,parent);
+      return new LimitedFunctionWidget(element,parent,var);
     return nullptr;
   }
 
@@ -307,12 +308,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(Element *element, int n, QWidget *parent) {
+  PiecewiseDefinedFunctionWidget::PiecewiseDefinedFunctionWidget(Element *element, int n, QWidget *parent, const QString &var) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(element,parent)),"Function",0,0),false,false,MBSIM%"limitedFunctions");
+    functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(element,parent,var)),"Function",0,0),false,false,MBSIM%"limitedFunctions");
     layout->addWidget(functions);
 
     shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
@@ -341,12 +342,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  LimitedFunctionWidget::LimitedFunctionWidget(Element *element, QWidget *parent) {
+  LimitedFunctionWidget::LimitedFunctionWidget(Element *element, QWidget *parent, const QString  &var) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
+    function = new ExtWidget("Function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent,var),QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
     layout->addWidget(function);
 
     limit = new ExtWidget("Limit",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"limit");
@@ -423,7 +424,7 @@ namespace MBSimGUI {
     for(size_t i=0; i<argname.size(); i++) {
       string istr = toStr(int(i+1));
       E(ele0)->setAttribute("arg"+istr, static_cast<TextWidget*>(argname[i]->getWidget())->getText().toStdString());
-//      if(ext[i]=='V')
+      if(static_cast<TextWidget*>(argname[i]->getWidget())->getText()!="t")
         E(ele0)->setAttribute("arg"+istr+"Dim",fmatvec::toString(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()));
     }
     f->writeXMLFile(ele0);
@@ -949,12 +950,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PolarContourFunctionWidget::PolarContourFunctionWidget(QWidget *parent) {
+  PolarContourFunctionWidget::PolarContourFunctionWidget(QWidget *parent, const QString &var) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
+    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new FunctionWidgetFactory2(nullptr,true,parent,var),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
     layout->addWidget(radiusFunction);
   }
 

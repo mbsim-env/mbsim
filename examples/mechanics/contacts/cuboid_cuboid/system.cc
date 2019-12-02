@@ -39,7 +39,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   double B=m/12.*(h*h+l*l);
   double C=m/12.*(l*l+b*b);
 
-  ground->enableOpenMBV(0.05);
+  ground->enableOpenMBV();
   
   const int nWuerfel = 2;
   RigidBody* body[nWuerfel];

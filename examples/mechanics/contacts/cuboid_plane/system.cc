@@ -27,7 +27,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   AWK(1,1) = cos(phi);
   AWK(1,0) = sin(phi);
   AWK(2,2) = 1;
-  wall->enableOpenMBV(1, 0.5);
   addFrame(new FixedRelativeFrame("P",Vec(3),AWK));
   wall->setFrameOfReference(getFrame("P"));
   addContour(wall);

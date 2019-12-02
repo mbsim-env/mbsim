@@ -165,7 +165,7 @@ namespace MBSimGUI {
   class LimitedFunctionWidget : public FunctionWidget {
 
     public:
-      LimitedFunctionWidget(Element *element, QWidget *parent);
+      LimitedFunctionWidget(Element *element, QWidget *parent, const QString &var="x");
       QString getType() const override { return "LimitedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -177,7 +177,7 @@ namespace MBSimGUI {
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
 
     public:
-      PiecewiseDefinedFunctionWidget(Element *element, int n, QWidget *parent);
+      PiecewiseDefinedFunctionWidget(Element *element, int n, QWidget *parent, const QString &var="x");
       QString getType() const override { return "PiecewiseDefinedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -405,7 +405,7 @@ namespace MBSimGUI {
   class PolarContourFunctionWidget : public FunctionWidget {
 
     public:
-      PolarContourFunctionWidget(QWidget *parent);
+      PolarContourFunctionWidget(QWidget *parent, const QString &var="phi");
       QString getType() const override { return "PolarContourFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

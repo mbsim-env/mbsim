@@ -543,7 +543,7 @@ namespace MBSimGUI {
     xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xiNodes");
     addToTab("General", xiNodes);
 
-    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(contour),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
     addToTab("General", contourFunction);
 
     openEta = new ExtWidget("Open eta",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
@@ -3425,7 +3425,7 @@ namespace MBSimGUI {
     densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new FunctionWidgetFactory2(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
     addToTab("General",densityFunction);
 
-    coefficientFunction = new ExtWidget("Coefficient function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(link),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"coefficientFunction");
+    coefficientFunction = new ExtWidget("Coefficient function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(link,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"coefficientFunction");
     addToTab("General",coefficientFunction);
 
     referenceSurface = new ExtWidget("Reference surface",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,areaUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"referenceSurface");
