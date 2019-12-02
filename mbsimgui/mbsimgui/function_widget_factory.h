@@ -101,7 +101,7 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidgetFactory1 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory1(Element *element_, const QStringList &var_, int m_, bool fixedSize_, QWidget *parent_);
+      SymbolicFunctionWidgetFactory1(Element *element_, const QString &var_, int m_, bool fixedSize_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -110,7 +110,7 @@ namespace MBSimGUI {
       Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
-      QStringList var;
+      QString var;
       int m;
       bool fixedSize;
       QWidget *parent;
