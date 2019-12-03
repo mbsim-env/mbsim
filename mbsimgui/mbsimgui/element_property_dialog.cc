@@ -3237,7 +3237,7 @@ namespace MBSimGUI {
     inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"");
     addToTab("General", inputSignal);
 
-    function = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory3(signal,QStringList("x"),1,false),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    function = new ExtWidget("Function",new ChoiceWidget2(new SymbolicFunctionWidgetFactory1(signal,"x",1,100,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
 
     connect(inputSignal,SIGNAL(widgetChanged()),this,SLOT(updateFunctionFactory()));
@@ -3249,9 +3249,9 @@ namespace MBSimGUI {
 
   void SignalOperationPropertyDialog::updateFunctionFactory(bool defineWidget) {
     if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory3(getElement(),QStringList("x"),1,false));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory1(getElement(),"x",1,100,false,this));
     else
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory2(getElement(),QStringList("x")<<"y",1,false));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new SymbolicFunctionWidgetFactory2(getElement(),QStringList("x")<<"y",1,100,false,this));
     if(defineWidget)
       static_cast<ChoiceWidget2*>(function->getWidget())->defineWidget(0);
   }

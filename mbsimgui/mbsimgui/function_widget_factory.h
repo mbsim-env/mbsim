@@ -101,7 +101,7 @@ namespace MBSimGUI {
 
   class SymbolicFunctionWidgetFactory1 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory1(Element *element_, const QString &var_, int m_, bool fixedSize_, QWidget *parent_);
+      SymbolicFunctionWidgetFactory1(Element *element_, const QString &var_, int m_, int maxm_, bool fixedSize_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -111,14 +111,14 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QString var;
-      int m;
+      int m, maxm;
       bool fixedSize;
       QWidget *parent;
   };
 
   class SymbolicFunctionWidgetFactory2 : public WidgetFactory {
     public:
-      SymbolicFunctionWidgetFactory2(Element *element_, const QStringList &var_, int m_=3, bool fixedSize_=true);
+      SymbolicFunctionWidgetFactory2(Element *element_, const QStringList &var_, int m_, int maxm_, bool fixedSize_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -128,23 +128,7 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QStringList var;
-      int m;
-      bool fixedSize;
-  };
-
-  class SymbolicFunctionWidgetFactory3 : public WidgetFactory {
-    public:
-      SymbolicFunctionWidgetFactory3(Element *element_, const QStringList &var_, int m_=3, bool fixedSize_=true);
-      QWidget* createWidget(int i=0) override;
-      QString getName(int i=0) const override { return name[i]; }
-      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
-      int getSize() const override { return name.size(); }
-    protected:
-      Element *element;
-      std::vector<QString> name;
-      std::vector<MBXMLUtils::FQN> xmlName;
-      QStringList var;
-      int m;
+      int m, maxm;
       bool fixedSize;
   };
 
