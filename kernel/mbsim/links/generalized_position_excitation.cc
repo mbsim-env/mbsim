@@ -53,9 +53,9 @@ namespace MBSim {
 
   void GeneralizedPositionExcitation::updatewb() {
     if(body.size()>1)
-      wb += body[1]->evaljRel()-body[0]->evaljRel()-f->parDerParDer(getTime());
+      wb += body[1]->evaljRel()-body[0]->evaljRel()-f->parDerDirDer(1,getTime());
     else
-      wb += body[0]->evaljRel()-f->parDerParDer(getTime());
+      wb += body[0]->evaljRel()-f->parDerDirDer(1,getTime());
   }
 
 }
