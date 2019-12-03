@@ -82,12 +82,12 @@ namespace MBSim {
       /**
        * \brief deflection depending force function
        */
-      Function<double(double)> * sF;
+      Function<double(double)> * sF{nullptr};
 
       /**
        * \brief relative velocity depending force function
        */
-      Function<double(double)> * sdF;
+      Function<double(double)> * sdF{nullptr};
   };
 
 }
