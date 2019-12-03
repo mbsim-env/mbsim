@@ -30,9 +30,9 @@ namespace MBSim {
     using B = fmatvec::Function<fmatvec::RotMat3(Arg)>; 
     private:
       fmatvec::RotMat3 A;
-      fmatvec::Vec3 a;
+      fmatvec::Vec3 a, zero;
     public:
-      RotationAboutZAxis() { a.e(2) = 1; A.e(2,2) = 1; zero.resize(3); }
+      RotationAboutZAxis() { a.e(2) = 1; A.e(2,2) = 1; }
       int getArgSize() const override { return 1; }
       fmatvec::RotMat3 operator()(const Arg &q) override {
         double alpha = ToDouble<Arg>::cast(q);
@@ -47,8 +47,6 @@ namespace MBSim {
       typename B::DRetDArg parDer(const Arg &q) override { return a; }
       typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) override { return zero; }
       bool constParDer() const override { return true; }
-    private:
-      typename B::DRetDArg zero;
   };
 
 }
