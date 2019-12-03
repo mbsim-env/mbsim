@@ -4596,6 +4596,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:choice>
           <xs:element name="innerFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
             tbd
@@ -4606,6 +4607,17 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="innerFunctions">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="Function" minOccurs="2" maxOccurs="2"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          </xs:choice>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
