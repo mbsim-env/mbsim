@@ -157,6 +157,28 @@ namespace MBSim {
       }
   };
 
+  template <typename T>
+  class FromStdvec {
+    public:
+      static fmatvec::Mat cast(const std::vector<T> &x) {
+        fmatvec::Mat y(x.size(),x[0].cols(),fmatvec::NONINIT);
+        for (unsigned int i=0; i<x.size(); i++)
+          y.row(i)=x[i];
+        return y;
+      }
+  };
+
+  template <>
+  class FromStdvec<double> {
+    public:
+      static fmatvec::Vec cast(const std::vector<double> &x) {
+        fmatvec::Vec y(x.size(),fmatvec::NONINIT);
+        for (unsigned int i=0; i<x.size(); i++)
+          y(i)=x[i];
+        return y;
+      }
+  };
+
   /**
    * \return perpendicular vector
    * \param input vector

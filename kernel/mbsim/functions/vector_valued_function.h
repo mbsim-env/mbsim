@@ -21,47 +21,12 @@
 #define _VECTOR_VALUED_FUNCTIONS_H_
 
 #include "mbsim/functions/function.h"
+#include "mbsim/utils/utils.h"
 
 namespace MBSim {
 
-  template <typename Ret, typename Arg>
-    typename fmatvec::Function<Ret(double)>::DRetDArg parDer_(std::vector<Function<double(double)> *> component, const double &x) {
-      typename fmatvec::Function<Ret(double)>::DRetDArg y(component.size(),fmatvec::NONINIT);
-        for (unsigned int i=0; i<component.size(); i++)
-          y(i)=component[i]->parDer(x);
-      return y;
-    }
-  template <typename Ret, typename Arg>
-    typename fmatvec::Function<Ret(Arg)>::DRetDArg parDer_(std::vector<Function<double(Arg)> *> component, const Arg &x) {
-      typename fmatvec::Function<Ret(Arg)>::DRetDArg y(component.size(),x.size(),fmatvec::NONINIT);
-        for (unsigned int i=0; i<component.size(); i++) {
-          auto row=component[i]->parDer(x);
-          for (int j=0; j<x.size(); j++)
-            y(i,j)=row(j);
-        }
-      return y;
-    }
-  template <typename Ret, typename Arg>
-    typename fmatvec::Function<Ret(double)>::DRetDArg parDerDirDer_(std::vector<Function<double(double)> *> component, const double &xDir, const double &x) {
-      typename fmatvec::Function<Ret(double)>::DRetDArg y(component.size(),fmatvec::NONINIT);
-        for (unsigned int i=0; i<component.size(); i++)
-          y(i)=component[i]->parDerDirDer(xDir,x);
-      return y;
-    }
-
-  template <typename Ret, typename Arg>
-    typename fmatvec::Function<Ret(Arg)>::DRetDArg parDerDirDer_(std::vector<Function<double(Arg)> *> component, const Arg &xDir, const Arg &x) {
-      typename fmatvec::Function<Ret(Arg)>::DRetDArg y(component.size(),x.size(),fmatvec::NONINIT);
-        for (unsigned int i=0; i<component.size(); i++) {
-          auto row=component[i]->parDerDirDer(xDir,x);
-          for (int j=0; j<x.size(); j++)
-            y(i,j)=row(j);
-        }
-      return y;
-    }
   template<typename Sig> class VectorValuedFunction;
 
-  // VectorValuedFunction with a vector as argument (no 2nd derivative defined)
   template<typename Ret, typename Arg>
   class VectorValuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
@@ -83,16 +48,19 @@ namespace MBSim {
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return std::make_pair(component.size(),1); }
       Ret operator()(const Arg &x) override {
-        Ret y(component.size(),fmatvec::NONINIT);
-        for (unsigned int i=0; i<component.size(); i++)
-          y(i)=(*component[i])(x);
+        for(unsigned int i=0; i<component.size(); i++)
+          y[i]=(*component[i])(x);
         return y;
       }
       typename B::DRetDArg parDer(const Arg &x) override {
-        return parDer_<Ret,Arg>(component,x);
+        for(unsigned int i=0; i<component.size(); i++)
+          dy[i]=component[i]->parDer(x);
+        return FromStdvec<typename fmatvec::Der<double, Arg>::type>::cast(dy);
       }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override {
-       return parDerDirDer_<Ret,Arg>(component,xDir,x);
+        for(unsigned int i=0; i<component.size(); i++)
+          ddy[i]=component[i]->parDerDirDer(xDir,x);
+        return FromStdvec<typename fmatvec::Der<double, Arg>::type>::cast(ddy);
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
@@ -105,9 +73,16 @@ namespace MBSim {
         Function<Ret(Arg)>::init(stage, config);
         for(auto it=component.begin(); it!=component.end(); ++it)
           (*it)->init(stage, config);
+        if(stage==Element::preInit) {
+          y.resize(component.size());
+          dy.resize(component.size());
+          ddy.resize(component.size());
+        }
       }
     private:
       std::vector<Function<double(Arg)> *> component;
+      std::vector<double> y;
+      std::vector<typename fmatvec::Der<double, Arg>::type> dy ,ddy;
   };
 
 }
