@@ -35,9 +35,9 @@ class Angle : public MBSim::Function<double(double)> {
       else 
         return Om;
     }
-    double parDerParDer(const double& t) { 
+    double parDerDirDer(const double& tDir, const double& t) { 
       if(t<=T0)
-        return Om/T0*(1-cos(2*M_PI*t/T0));
+        return Om/T0*(1-cos(2*M_PI*t/T0))*tDir;
       else 
         return 0;
     }
