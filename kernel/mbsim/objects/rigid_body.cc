@@ -397,9 +397,9 @@ namespace MBSim {
 
   void RigidBody::updateGyroscopicAccelerations() {
     if(fPrPK and not(constJT and constjT))
-      PjbT = (fPrPK->parDer1DirDer1(evalqdTRel(),evalqTRel(),getTime())+fPrPK->parDer1ParDer2(evalqTRel(),getTime()))*getuTRel() + fPrPK->parDer2DirDer1(evalqdTRel(),evalqTRel(),getTime()) + fPrPK->parDer2ParDer2(evalqTRel(),getTime());
+      PjbT = (fPrPK->parDer1DirDer1(evalqdTRel(),evalqTRel(),getTime())+fPrPK->parDer1DirDer2(1,evalqTRel(),getTime()))*getuTRel() + fPrPK->parDer2DirDer1(evalqdTRel(),evalqTRel(),getTime()) + fPrPK->parDer2DirDer2(1,evalqTRel(),getTime());
     if(fAPK and not(constJR and constjR))
-      PjbR = (fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1ParDer2(evalqRRel(),getTime()))*getuRRel() + fAPK->parDer2DirDer1(evalqdRRel(),evalqRRel(),getTime()) + fAPK->parDer2ParDer2(evalqRRel(),getTime());
+      PjbR = (fAPK->parDer1DirDer1(evalqdRRel(),evalqRRel(),getTime())+fAPK->parDer1DirDer2(1,evalqRRel(),getTime()))*getuRRel() + fAPK->parDer2DirDer1(evalqdRRel(),evalqRRel(),getTime()) + fAPK->parDer2DirDer2(1,evalqRRel(),getTime());
     updPjb = false;
   }
 

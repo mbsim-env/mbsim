@@ -31,22 +31,18 @@ namespace MBSim {
     private:
       fmatvec::Vec3 a, zero;
     public:
-      TranslationAlongFixedAxis() : zero(3, fmatvec::INIT, 0.0) {}
-      TranslationAlongFixedAxis(const fmatvec::Vec3 &a_) : a(a_), zero(3, fmatvec::INIT, 0.0) { }
+      TranslationAlongFixedAxis() = default;
+      TranslationAlongFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
       int getArgSize() const override { return 1; }
       fmatvec::Vec3 operator()(const Arg &arg) override { return a*arg; }
       typename B::DRetDArg parDer(const Arg &arg) override { return a; }
       typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return zero; }
-      typename B::DDRetDDArg parDerParDer(const Arg &arg) override { this->throwError("parDerParDer is not available for given template parameters."); }
       bool constParDer() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfTranslation");
         a=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
       }
   };
-
-  template<>
-  inline fmatvec::Vec3 TranslationAlongFixedAxis<double>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
 }
 

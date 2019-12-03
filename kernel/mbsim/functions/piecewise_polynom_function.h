@@ -107,7 +107,6 @@ namespace MBSim {
 
       Ret operator()(const Arg &x) { return f(x); }
       typename B::DRetDArg parDer(const Arg &x) { return fd(x); }
-      typename B::DDRetDDArg parDerParDer(const Arg &x) { return fdd(x); }
       typename B::DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg) { return fdd(arg)*ToDouble<Arg>::cast(argDir); }
 
       /*! 

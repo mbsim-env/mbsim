@@ -56,10 +56,10 @@ namespace MBSim {
   void GeneralizedPositionConstraint::updateGeneralizedJacobians(int jj) {
     if(bi) {
       bd->getJRel(0,false).set(Range<Var,Var>(0,bi->getGeneralizedVelocitySize()-1),Range<Var,Var>(0,bi->gethSize()-1),bi->evalJRel());
-      bd->setjRel(bi->getjRel() + f->parDerParDer(getTime()));
+      bd->setjRel(bi->getjRel() + f->parDerDirDer(1,getTime()));
     }
     else
-      bd->setjRel(f->parDerParDer(getTime()));
+      bd->setjRel(f->parDerDirDer(1,getTime()));
     updGJ = false;
   }
 

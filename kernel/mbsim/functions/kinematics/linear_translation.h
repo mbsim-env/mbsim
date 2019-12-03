@@ -40,13 +40,12 @@ namespace MBSim {
       fmatvec::Vec3 operator()(const Arg &arg) override { return A*arg+b; }
       typename B::DRetDArg parDer(const Arg &arg) override { return A; }
       typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(A.rows(),A.cols()); }
-      typename B::DDRetDDArg parDerParDer(const Arg &arg) override { this->throwError("parDerParDer is not available for given template parameters."); }
       bool constParDer() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"translationVectors");
         A=FromMatStr<typename B::DRetDArg>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
-        b=e?FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()):zeros(A);
+        if(e) b=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
       }
       void setSlope(const typename B::DRetDArg &A_) { A = A_; }
       void setIntercept(const fmatvec::Vec3 &b_) { b = b_; }
@@ -54,8 +53,6 @@ namespace MBSim {
 
   template<>
   inline fmatvec::Vec3 LinearTranslation<double>::parDerDirDer(const double &arg1Dir, const double &arg1) { return fmatvec::Vec3(); }
-  template<>
-  inline fmatvec::Vec3 LinearTranslation<double>::parDerParDer(const double &arg) { return fmatvec::Vec3(); }
 
 }
 

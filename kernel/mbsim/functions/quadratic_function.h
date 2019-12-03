@@ -50,9 +50,6 @@ namespace MBSim {
         double xDir = ToDouble<Arg>::cast(xDir_);
         return FromDouble<typename B::DRetDArg>::cast(2.*a2*xDir);
       }
-      typename B::DDRetDDArg parDerParDer(const Arg &x) override {
-        return FromDouble<typename B::DDRetDDArg>::cast(2.*a2);
-      }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
         if(e) a0=MBXMLUtils::E(e)->getText<double>();

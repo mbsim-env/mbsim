@@ -93,8 +93,6 @@ namespace MBSim {
 
   double PlanarNurbsContour::getCurvature(const Vec2 &zeta) {
     throwError("(PlanarNurbsContour::getCurvature): not implemented");
-//    const Vec3 rs = funcCrPC->parDer(zeta(0));
-//    return nrm2(crossProduct(rs,funcCrPC->parDerParDer(zeta(0))))/pow(nrm2(rs),3);
   }
 
   void PlanarNurbsContour::setControlPoints(const MatVx3 &cp_) {

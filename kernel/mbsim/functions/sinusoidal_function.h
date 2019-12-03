@@ -47,10 +47,6 @@ namespace MBSim {
         double om = 2.*M_PI*f;
         return FromDouble<typename B::DRetDArg>::cast(-A*om*om*sin(om*ToDouble<Arg>::cast(x)+phi0)*ToDouble<Arg>::cast(xDir));
       }
-      typename B::DDRetDDArg parDerParDer(const Arg &x) override {  
-        double om = 2.*M_PI*f;
-        return FromDouble<typename B::DDRetDDArg>::cast(-A*om*om*sin(om*ToDouble<Arg>::cast(x)+phi0));
-      }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitude");
         A=MBXMLUtils::E(e)->getText<double>();

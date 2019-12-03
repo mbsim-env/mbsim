@@ -42,10 +42,10 @@ namespace MBSim {
       Ret operator()(const fmatvec::VecV &arg1, const double &arg2) override {return (*f)(arg2); }
       typename B::DRetDArg1 parDer1(const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DRetDArg1(n,getArg1Size()); }
       typename B::DRetDArg2 parDer2(const fmatvec::VecV &arg1, const double &arg2) override {return f->parDer(arg2); }
-      typename B::DDRetDDArg2 parDer2ParDer2(const fmatvec::VecV &arg1, const double &arg2) override { return f->parDerParDer(arg2); }
       typename B::DRetDArg2 parDer2DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DRetDArg2(n); }
-      typename B::DDRetDArg1DArg2 parDer1ParDer2(const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DDRetDArg1DArg2(n,getArg1Size()); }
+      typename B::DRetDArg2 parDer2DirDer2(const double &arg2Dir, const fmatvec::VecV &arg1, const double &arg2) override { return f->parDerDirDer(arg2Dir,arg2); }
       typename B::DRetDArg1 parDer1DirDer1(const fmatvec::VecV &arg1Dir, const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DRetDArg1(n,getArg1Size()); }
+      typename B::DRetDArg1 parDer1DirDer2(const double &arg2Dir, const fmatvec::VecV &arg1, const double &arg2) override { return typename B::DRetDArg1(n,getArg1Size()); }
       bool constParDer1() const override { return true; }
       bool constParDer2() const override { return f->constParDer(); }
       void init(Element::InitStage stage, const InitConfigSet &config) override {

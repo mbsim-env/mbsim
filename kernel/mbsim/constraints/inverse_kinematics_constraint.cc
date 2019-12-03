@@ -198,10 +198,10 @@ namespace MBSim {
       }
       Vec b(nu);
       Vec3 WvP0P1 = fr->parDer(getTime()) - frame->evalVelocity();
-      b(iF) = forceDir.T()*(fr->parDerParDer(getTime())-frame->evalGyroscopicAccelerationOfTranslation() - crossProduct(frame->evalAngularVelocity(), 2.0*WvP0P1));
+      b(iF) = forceDir.T()*(fr->parDerDirDer(1,getTime())-frame->evalGyroscopicAccelerationOfTranslation() - crossProduct(frame->evalAngularVelocity(), 2.0*WvP0P1));
       if(fA) {
         Vec3 WomK0K1 = fA->parDer(getTime()) - frame->getAngularVelocity();
-        b(iM) = momentDir.T()*(fA->parDerParDer(getTime())-frame->getGyroscopicAccelerationOfRotation()-crossProduct(frame->getAngularVelocity(), WomK0K1));
+        b(iM) = momentDir.T()*(fA->parDerDirDer(1,getTime())-frame->getGyroscopicAccelerationOfRotation()-crossProduct(frame->getAngularVelocity(), WomK0K1));
       }
 
       Vec j = slvLU(evalA(),b);

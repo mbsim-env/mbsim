@@ -38,7 +38,7 @@ class FuncCrPC_PlanePolar : public MBSim::Function<fmatvec::Vec3(double)> {
 
     fmatvec::Vec3 operator()(const double& alpha);
     fmatvec::Vec3 parDer(const double& alpha); // Tangente in C
-    fmatvec::Vec3 parDerParDer(const double& alpha); // 2. Ableitung in C
+    fmatvec::Vec3 parDerDirDer(const double& alphaDir, const double& alpha); // 2. Ableitung in C
 
   private:
     const fmatvec::Vec3 Cb;

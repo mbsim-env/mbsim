@@ -54,9 +54,6 @@ namespace MBSim {
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override {
         return (ToDouble<Arg>::cast(x)>=0)?fp->parDerDirDer(xDir,x):fn->parDerDirDer(-xDir,-x);
       }
-      typename B::DDRetDDArg parDerParDer(const double &x) override {
-        return (ToDouble<Arg>::cast(x)>=0)?fp->parDerParDer(x):fn->parDerParDer(-x);
-      }
       void setNegativeDirectionalFunction(Function<Ret(Arg)> *fn_) {
         fn = fn_;
         fn->setParent(this);

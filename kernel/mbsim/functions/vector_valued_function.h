@@ -24,67 +24,48 @@
 
 namespace MBSim {
 
-  template<typename Sig> class VectorValuedFunction; 
-
-  // VectorValuedFunction with a double as argument (including 2nd derivative)
-  template<typename Ret>
-  class VectorValuedFunction<Ret(double)> : public Function<Ret(double)> {
-    using B = fmatvec::Function<Ret(double)>; 
-    public:
-      VectorValuedFunction() = default;
-      VectorValuedFunction(std::vector<Function<double(double)> *> component_) : component(std::move(component_)) {
-        for(auto it=component.begin(); it!=component.end(); ++it)
-          (*it)->setParent(this);
-      }
-      ~VectorValuedFunction() override {
-        for (unsigned int i=0; i<component.size(); i++)
-          delete component[i];
-      }
-      void addComponent(Function<double(double)> *function) {
-        component.push_back(function);
-        function->setParent(this);
-      }
-      int getArgSize() const override { return 1; }
-      std::pair<int, int> getRetSize() const override { return std::make_pair(component.size(),1); }
-      Ret operator()(const double &x) override {
-        Ret y(component.size(),fmatvec::NONINIT);
-        for (unsigned int i=0; i<component.size(); i++)
-          y(i)=(*component[i])(x);
-        return y;
-      }
-      typename B::DRetDArg parDer(const double &x) override {
-        typename B::DRetDArg y(component.size(),fmatvec::NONINIT);
+  template <typename Ret, typename Arg>
+    typename fmatvec::Function<Ret(double)>::DRetDArg parDer_(std::vector<Function<double(double)> *> component, const double &x) {
+      typename fmatvec::Function<Ret(double)>::DRetDArg y(component.size(),fmatvec::NONINIT);
         for (unsigned int i=0; i<component.size(); i++)
           y(i)=component[i]->parDer(x);
-        return y;
-      }
-      typename B::DDRetDDArg parDerParDer(const double &x) override {
-        typename B::DDRetDDArg y(component.size(),fmatvec::NONINIT);
-        for (unsigned int i=0; i<component.size(); i++)
-          y(i)=component[i]->parDerParDer(x);
-        return y;
-      }
-
-      void initializeUsingXML(xercesc::DOMElement *element) override {
-        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
-        while (e) {
-          addComponent(ObjectFactory::createAndInit<Function<double(double)> >(e));
-          e=e->getNextElementSibling();
+      return y;
+    }
+  template <typename Ret, typename Arg>
+    typename fmatvec::Function<Ret(Arg)>::DRetDArg parDer_(std::vector<Function<double(Arg)> *> component, const Arg &x) {
+      typename fmatvec::Function<Ret(Arg)>::DRetDArg y(component.size(),x.size(),fmatvec::NONINIT);
+        for (unsigned int i=0; i<component.size(); i++) {
+          auto row=component[i]->parDer(x);
+          for (int j=0; j<x.size(); j++)
+            y(i,j)=row(j);
         }
-      }
-      void init(Element::InitStage stage, const InitConfigSet &config) override {
-        Function<Ret(double)>::init(stage, config);
-        for(auto it=component.begin(); it!=component.end(); ++it)
-          (*it)->init(stage, config);
-      }
-    private:
-      std::vector<Function<double(double)> *> component;
-  };
+      return y;
+    }
+  template <typename Ret, typename Arg>
+    typename fmatvec::Function<Ret(double)>::DRetDArg parDerDirDer_(std::vector<Function<double(double)> *> component, const double &xDir, const double &x) {
+      typename fmatvec::Function<Ret(double)>::DRetDArg y(component.size(),fmatvec::NONINIT);
+        for (unsigned int i=0; i<component.size(); i++)
+          y(i)=component[i]->parDerDirDer(xDir,x);
+      return y;
+    }
+
+  template <typename Ret, typename Arg>
+    typename fmatvec::Function<Ret(Arg)>::DRetDArg parDerDirDer_(std::vector<Function<double(Arg)> *> component, const Arg &xDir, const Arg &x) {
+      typename fmatvec::Function<Ret(Arg)>::DRetDArg y(component.size(),x.size(),fmatvec::NONINIT);
+        for (unsigned int i=0; i<component.size(); i++) {
+          auto row=component[i]->parDerDirDer(xDir,x);
+          for (int j=0; j<x.size(); j++)
+            y(i,j)=row(j);
+        }
+      return y;
+    }
+  template<typename Sig> class VectorValuedFunction;
 
   // VectorValuedFunction with a vector as argument (no 2nd derivative defined)
   template<typename Ret, typename Arg>
   class VectorValuedFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
+
     public:
       VectorValuedFunction() = default;
       VectorValuedFunction(std::vector<Function<double(Arg)> *> component_) : component(std::move(component_)) {
@@ -108,15 +89,11 @@ namespace MBSim {
         return y;
       }
       typename B::DRetDArg parDer(const Arg &x) override {
-        typename B::DRetDArg y(component.size(),x.size(),fmatvec::NONINIT);
-        for (unsigned int i=0; i<component.size(); i++) {
-          auto row=component[i]->parDer(x);
-          for (int j=0; j<x.size(); j++)
-            y(i,j)=row(j);
-        }
-        return y;
+        return parDer_<Ret,Arg>(component,x);
       }
-
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override {
+       return parDerDirDer_<Ret,Arg>(component,xDir,x);
+      }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
         while (e) {

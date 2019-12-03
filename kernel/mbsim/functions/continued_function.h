@@ -37,7 +37,6 @@ namespace MBSim {
       Ret operator()(const Arg &x) override { return (*f)((*rule)(x)); }
       typename B::DRetDArg parDer(const Arg &x) override { return f->parDer((*rule)(x)); }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return f->parDerDirDer(xDir,(*rule)(x)); }
-      typename B::DDRetDDArg parDerParDer(const Arg &x) override { return f->parDerParDer((*rule)(x)); }
       void setFunction(Function<Ret(Arg)> *f_) {
         f = f_;
         f->setParent(this);

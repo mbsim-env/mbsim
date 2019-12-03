@@ -68,13 +68,6 @@ namespace MBSim {
           value=value*x+add.e(i);
         return FromDouble<typename B::DRetDArg>::cast(value*xDir);
       }
-      typename B::DDRetDDArg parDerParDer(const Arg &x_) override {
-        double x = ToDouble<Arg>::cast(x_);
-        double value=add(add.size()-1);
-        for (int i=int(add.size())-2; i>-1; i--)
-          value=value*x+add.e(i);
-        return FromDouble<typename B::DDRetDDArg>::cast(value);
-      }
 
       void initializeUsingXML(xercesc::DOMElement *element) override {
         a = MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"))->getText<fmatvec::Vec>();
