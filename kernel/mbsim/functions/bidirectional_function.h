@@ -48,7 +48,7 @@ namespace MBSim {
       Ret operator()(const Arg &x) override {
         return (ToDouble<Arg>::cast(x)>=0)?(*fp)(x):(*fn)(-x);
       }
-      typename B::DRetDArg parDer(const double &x) override {
+      typename B::DRetDArg parDer(const Arg &x) override {
         return (ToDouble<Arg>::cast(x)>=0)?fp->parDer(x):fn->parDer(-x);
       }
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override {
