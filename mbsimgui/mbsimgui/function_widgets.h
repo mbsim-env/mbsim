@@ -190,7 +190,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SymbolicFunctionWidget(const QStringList &var, int m, int max, bool fixedSize=true);
+      SymbolicFunctionWidget(const QStringList &var, int m, int max, bool fixedSize=true, bool scalar=false);
       QString getType() const override { return "SymbolicFunction"; }
       int getArg1Size() const override;
       int getArg2Size() const override;

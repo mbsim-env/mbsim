@@ -371,7 +371,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, int max, bool fixedSize) {
+  SymbolicFunctionWidget::SymbolicFunctionWidget(const QStringList &var, int m, int max, bool fixedSize, bool scalar) {
     auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -380,10 +380,12 @@ namespace MBSimGUI {
       layout->addWidget(argname[i],i,0);
 
       argdim.push_back(new ExtWidget("Dimension of argument "+QString::number(i+1),new SpinBoxWidget(1,1,max)));
-      if(var[i]!="t")
+      if(not scalar and var[i]!="t")
         layout->addWidget(argdim[i],i,1);
     }
-    if(fixedSize)
+    if(scalar)
+      f = new ExtWidget("Function",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,"");
+    else if(fixedSize)
       f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(m,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
     else
       f = new ExtWidget("Function",new ChoiceWidget2(new VecSizeVarWidgetFactory(m,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
@@ -762,10 +764,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceDeflectionFunction");
+    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent,"s",true),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceDeflectionFunction");
     layout->addWidget(s);
 
-    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceVelocityFunction");
+    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent,"s",true),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceVelocityFunction");
     layout->addWidget(sd);
   }
 

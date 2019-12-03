@@ -32,7 +32,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  FunctionWidgetFactory2::FunctionWidgetFactory2(Element *element_, bool fixedSize_, QWidget *parent_, const QString &sym_) : element(element_), fixedSize(fixedSize_), parent(parent_), sym(sym_) {
+  FunctionWidgetFactory2::FunctionWidgetFactory2(Element *element_, bool fixedSize_, QWidget *parent_, const QString &sym_, bool scalar_) : element(element_), fixedSize(fixedSize_), parent(parent_), sym(sym_), scalar(scalar_) {
     name.emplace_back("Constant function");
     name.emplace_back("Linear function");
     name.emplace_back("Quadratic function");
@@ -93,10 +93,10 @@ namespace MBSimGUI {
     if(i==8) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
-      return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy,true,parent,sym), new FunctionWidgetFactory2(dummy,true,parent,sym));
+      return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy,true,parent,sym,scalar), new FunctionWidgetFactory2(dummy,true,parent,sym,scalar));
     }
     if(i==9)
-      return new SymbolicFunctionWidget(QStringList(sym),1,3,fixedSize);
+      return new SymbolicFunctionWidget(QStringList(sym),1,3,fixedSize,scalar);
     if(i==10)
       return new TabularFunctionWidget(1);
     if(i==11)
@@ -114,7 +114,7 @@ namespace MBSimGUI {
     if(i==17)
       return new BidirectionalFunctionWidget(parent);
     if(i==18)
-      return new ContinuedFunctionWidget(new FunctionWidgetFactory2(element,true,parent,sym),new FunctionWidgetFactory2(element,true,parent,sym));
+      return new ContinuedFunctionWidget(new FunctionWidgetFactory2(element,true,parent,sym,scalar),new FunctionWidgetFactory2(element,true,parent,sym,scalar));
     return nullptr;
   }
 
