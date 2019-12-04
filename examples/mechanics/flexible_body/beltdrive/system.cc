@@ -96,8 +96,8 @@ class SinusExcitedOnConstVelocity : public MBSim::Function<double(double)> {
       double parDer(const double &t) {
          return omega0 + ( omegaExcitation>epsroot?-amplitudeExcitation/omegaExcitation:0.0 ) * sin(omegaExcitation*t) * omegaExcitation;
       }
-      double parDerParDer(const double &t) {
-         return ( omegaExcitation>epsroot?-amplitudeExcitation/omegaExcitation:0.0 ) * cos(omegaExcitation*t) * omegaExcitation * omegaExcitation;
+      double parDerDirDer(const double &tDir, const double &t) {
+         return tDir * ( omegaExcitation>epsroot?-amplitudeExcitation/omegaExcitation:0.0 ) * cos(omegaExcitation*t) * omegaExcitation * omegaExcitation;
       }
 
       const MBSim::Function<Vec(double)>& getPositionFunction    () const {return *position    ;}

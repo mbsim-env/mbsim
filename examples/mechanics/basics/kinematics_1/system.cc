@@ -26,7 +26,7 @@ class MyPos : public MBSim::Function<Vec3(double)> {
       jh(1) =  cos(om*t)*om;
       return jh;
     }
-    Vec3 parDerParDer(const double &t) {
+    Vec3 parDerDirDer(const double &tDir, const double &t) {
       Vec3 jb;
       double om = 1;
       jb(0) = -cos(om*t)*om*om;

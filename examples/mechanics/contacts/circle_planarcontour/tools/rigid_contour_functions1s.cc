@@ -165,7 +165,7 @@ Vec3 FuncCrPC_PlanePolar::parDer(const double& alpha) {
   return f;
 }
 
-Vec3 FuncCrPC_PlanePolar::parDerParDer(const double& alpha) {
+Vec3 FuncCrPC_PlanePolar::parDerDirDer(const double& alphaDir, const double& alpha) {
   updateData(alpha);
   const double s1=-rSave+d2rdalpha2Save;
   const double s2=2.*drdalphaSave;
@@ -173,7 +173,7 @@ Vec3 FuncCrPC_PlanePolar::parDerParDer(const double& alpha) {
   f(2) = 0;
   f(0) = s1*calphaSave-s2*salphaSave;
   f(1) = s1*salphaSave+s2*calphaSave;
-  return f;
+  return f*alphaDir;
 }
 
 void FuncCrPC_PlanePolar::updateData(const double& alpha) {
@@ -183,6 +183,6 @@ void FuncCrPC_PlanePolar::updateData(const double& alpha) {
     calphaSave=cos(alphaSave);
     rSave=(*pp_r)(alphaSave)(0);
     drdalphaSave=pp_r->parDer(alphaSave)(0);
-    d2rdalpha2Save=pp_r->parDerParDer(alphaSave)(0);
+    d2rdalpha2Save=pp_r->parDerDirDer(1,alphaSave)(0);
   }
 }

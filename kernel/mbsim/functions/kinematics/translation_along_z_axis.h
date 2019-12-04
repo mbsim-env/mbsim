@@ -31,7 +31,7 @@ namespace MBSim {
     private:
       fmatvec::Vec3 r, a, zero;
     public:
-      TranslationAlongZAxis() : zero(3, fmatvec::INIT, 0.0) { a.e(2) = 1; }
+      TranslationAlongZAxis() { a.e(2) = 1; }
       int getArgSize() const override { return 1; }
       fmatvec::Vec3 operator()(const Arg &q) override { 
         r.e(2) = ToDouble<Arg>::cast(q);

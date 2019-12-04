@@ -35,7 +35,7 @@ namespace MBSim {
 
       fmatvec::Vec3 operator()(const double& alpha);
       fmatvec::Vec3 parDer(const double& alpha);
-      fmatvec::Vec3 parDerParDer(const double& alpha);
+      fmatvec::Vec3 parDerDirDer(const double& alphaDir, const double& alpha);
 
     private:
       MBSim::Function<double(double)> *r;

@@ -71,12 +71,6 @@ namespace MBSim {
             return function[i]->parDerDirDer(xDir,x-x0[i]);
         this->throwError("(PiecewiseDefinedFunction::parDerDirDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
-      typename B::DDRetDDArg parDerParDer(const double &x) override {
-        for(unsigned int i=0; i<function.size(); i++)
-          if(x<=a[i+1])
-            return function[i]->parDerParDer(x-x0[i]);
-        this->throwError("(PiecewiseDefinedFunction::parDerParDer): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
-      }
 
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");

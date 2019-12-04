@@ -52,7 +52,7 @@ namespace MBSim {
   }
 
   Vec3 PlanarContour::evalParDer1Ks(const Vec2 &zeta) {
-    return funcCrPC->parDerParDer(zeta(0));
+    return funcCrPC->parDerDirDer(1,zeta(0));
   }
 
   void PlanarContour::init(InitStage stage, const InitConfigSet &config) {
@@ -108,7 +108,7 @@ namespace MBSim {
 
   double PlanarContour::getCurvature(const Vec2 &zeta) {
     const Vec3 rs = funcCrPC->parDer(zeta(0));
-    return nrm2(crossProduct(rs,funcCrPC->parDerParDer(zeta(0))))/pow(nrm2(rs),3);
+    return nrm2(crossProduct(rs,funcCrPC->parDerDirDer(1,zeta(0))))/pow(nrm2(rs),3);
   }
 
   void PlanarContour::initializeUsingXML(DOMElement * element) {

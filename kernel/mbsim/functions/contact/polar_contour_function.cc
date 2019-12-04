@@ -72,7 +72,7 @@ namespace MBSim {
     return f;
   }
 
-  Vec3 PolarContourFunction::parDerParDer(const double& alpha) {
+  Vec3 PolarContourFunction::parDerDirDer(const double& alphaDir, const double& alpha) {
     updateData(alpha);
     const double s1=-rSave+d2rdalpha2Save;
     const double s2=2.*drdalphaSave;
@@ -80,7 +80,7 @@ namespace MBSim {
     f(0) = s1*calphaSave-s2*salphaSave;
     f(1) = s1*salphaSave+s2*calphaSave;
     f(2) = 0;
-    return f;
+    return f*alphaDir;
   }
 
   void PolarContourFunction::updateData(const double& alpha) {
@@ -90,7 +90,7 @@ namespace MBSim {
       calphaSave = cos(alphaSave);
       rSave = (*r)(alphaSave);
       drdalphaSave = r->parDer(alphaSave);
-      d2rdalpha2Save = r->parDerParDer(alphaSave);
+      d2rdalpha2Save = r->parDerDirDer(1,alphaSave);
     }
 
   }

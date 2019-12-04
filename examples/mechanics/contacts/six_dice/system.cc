@@ -41,7 +41,7 @@ class Angle : public MBSim::Function<double(double)> {
 	om = 0;
       return om;
     }
-    double parDerParDer(const double& t) {
+    double parDerDirDer(const double &tDir, const double& t) {
       return 0;
     }
 };

@@ -26,119 +26,81 @@ namespace MBSim {
 
   template<typename Sig> class CompositeFunction; 
 
-  // CompositeFunction with a double as inner argument (including 2nd derivative)
-  template<typename Ret, typename Argo> 
-  class CompositeFunction<Ret(Argo(double))> : public Function<Ret(double)> {
-    using B = Function<Ret(double)>; 
-    public:
-      CompositeFunction(Function<Ret(Argo)> *fo_=nullptr, Function<Argo(double)> *fi_=nullptr) : fo(fo_), fi(fi_) {
-        if(fo)
-          fo->setParent(this);
-        if(fi)
-          fi->setParent(this);
-      }
-      ~CompositeFunction() override {
-        delete fo;
-        delete fi;
-      }
-      int getArgSize() const override {
-        return fi->getArgSize();
-      }
-      std::pair<int, int> getRetSize() const override {
-        return fo->getRetSize();
-      }
-      Ret operator()(const double &arg) override {
-        return (*fo)((*fi)(arg));
-      }
-      typename B::DRetDArg parDer(const double &arg) override {
-        return fo->parDer((*fi)(arg))*fi->parDer(arg);
-      }
-      typename B::DRetDArg parDerDirDer(const double &argDir, const double &arg) override {
-        return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg);
-      }
-      typename B::DDRetDDArg parDerParDer(const double &arg) override {
-        return fo->parDerDirDer(fi->parDer(arg),(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerParDer(arg);
-      }
-      void setOuterFunction(Function<Ret(Argo)> *fo_) {
-        fo = fo_;
-        fo->setParent(this);
-        fo->setName("Outer");
-      }
-      void setInnerFunction(Function<Argo(double)> *fi_) {
-        fi = fi_;
-        fi->setParent(this);
-        fi->setName("Inner");
-      }
-      void initializeUsingXML(xercesc::DOMElement *element) override {
-        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
-        setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild()));
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
-        setInnerFunction(ObjectFactory::createAndInit<Function<Argo(double)> >(e->getFirstElementChild()));
-      }
-      void init(Element::InitStage stage, const InitConfigSet &config) override {
-        Function<Ret(double)>::init(stage, config);
-        fo->init(stage, config);
-        fi->init(stage, config);
-      }
-    private:
-      Function<Ret(Argo)> *fo;
-      Function<Argo(double)> *fi;
-  };
-
-  // VectorValuedFunction with a vector as inner argument (no 2nd derivative defined)
   template<typename Ret, typename Argo, typename Argi> 
   class CompositeFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
     using B = Function<Ret(Argi)>; 
     public:
-      CompositeFunction(Function<Ret(Argo)> *fo_=nullptr, Function<Argo(Argi)> *fi_=nullptr) : fo(fo_), fi(fi_) {
-        if(fo)
-          fo->setParent(this);
-        if(fi)
-          fi->setParent(this);
+      CompositeFunction() = default;
+      CompositeFunction(Function<Ret(Argo)> *fo_, Function<Argo(Argi)> *fi_) {
+        setOuterFunction(fo_);
+        setInnerFunction(fi_);
       }
       ~CompositeFunction() override {
-        delete fo;
-        delete fi;
+        delete fo1;
+        delete fo2;
+        for (auto & i : fi) delete i;
       }
       int getArgSize() const override {
-        return fi->getArgSize();
+        return fi[0]->getArgSize();
       }
       std::pair<int, int> getRetSize() const override {
-        return fo->getRetSize();
+        return fo1?fo1->getRetSize():fo2->getRetSize();
       }
       Ret operator()(const Argi &arg) override {
-        return (*fo)((*fi)(arg));
+        return fo1?(*fo1)((*fi[0])(arg)):(*fo2)((*fi[0])(arg),(*fi[1])(arg));
       }
       typename B::DRetDArg parDer(const Argi &arg) override {
-        return fo->parDer((*fi)(arg))*fi->parDer(arg);
+        return fo1?fo1->parDer((*fi[0])(arg))*fi[0]->parDer(arg):fo2->parDer1((*fi[0])(arg),(*fi[1])(arg))*fi[0]->parDer(arg)+fo2->parDer2((*fi[0])(arg),(*fi[1])(arg))*fi[1]->parDer(arg);
       }
       typename B::DRetDArg parDerDirDer(const Argi &argDir, const Argi &arg) override {
-        return fo->parDerDirDer(fi->parDer(arg)*argDir,(*fi)(arg))*fi->parDer(arg) + fo->parDer((*fi)(arg))*fi->parDerDirDer(argDir,arg);
+        return fo1?fo1->parDerDirDer(fi[0]->parDer(arg)*argDir,(*fi[0])(arg))*fi[0]->parDer(arg)+fo1->parDer((*fi[0])(arg))*fi[0]->parDerDirDer(argDir,arg):fo2->parDer1DirDer1(fi[0]->parDer(arg)*argDir,(*fi[0])(arg),(*fi[0])(arg))*fi[0]->parDer(arg)+fo2->parDer1DirDer2(fi[1]->parDer(arg)*argDir,(*fi[0])(arg),(*fi[0])(arg))*fi[0]->parDer(arg)+fo2->parDer2DirDer1(fi[0]->parDer(arg)*argDir,(*fi[0])(arg),(*fi[0])(arg))*fi[1]->parDer(arg)+fo2->parDer2DirDer2(fi[1]->parDer(arg)*argDir,(*fi[0])(arg),(*fi[0])(arg))*fi[1]->parDer(arg)+fo2->parDer1((*fi[0])(arg),(*fi[1])(arg))*fi[0]->parDerDirDer(argDir,arg)+fo2->parDer2((*fi[0])(arg),(*fi[1])(arg))*fi[1]->parDerDirDer(argDir,arg);
       }
       void setOuterFunction(Function<Ret(Argo)> *fo_) {
-        fo = fo_;
-        fo->setParent(this);
-        fo->setName("Outer");
+        fo1 = fo_;
+        fo1->setParent(this);
+        fo1->setName("Outer");
+      }
+      void setOuterFunction(Function<Ret(Argo,Argo)> *fo_) {
+        fo2 = fo_;
+        fo2->setParent(this);
+        fo2->setName("Outer");
       }
       void setInnerFunction(Function<Argo(Argi)> *fi_) {
-        fi = fi_;
-        fi->setParent(this);
-        fi->setName("Inner");
+        fi_->setParent(this);
+        fi_->setName("Inner");
+        fi.resize(1,fi_);
+      }
+      void addInnerFunction(Function<Argo(Argi)> *fi_) {
+        fi_->setParent(this);
+        fi_->setName("Inner");
+        fi.push_back(fi_);
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
-        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
-        setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild()));
-        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
-        setInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild()));
+        xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
+        if(e) setInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild()));
+        else {
+          e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunctions")->getFirstElementChild();
+          for(int i=0; i<2; i++) {
+            addInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e));
+            e=e->getNextElementSibling();
+          }
+        }
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
+        if(fi.size()==1)
+          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild()));
+        else if(fi.size()==2)
+          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo,Argo)> >(e->getFirstElementChild()));
       }
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Argi)>::init(stage, config);
-        fo->init(stage, config);
-        fi->init(stage, config);
+        if(fo1) fo1->init(stage, config);
+        if(fo2) fo2->init(stage, config);
+        for (auto & i : fi) i->init(stage, config);
       }
     private:
-      Function<Ret(Argo)> *fo;
-      Function<Argo(Argi)> *fi;
+      Function<Ret(Argo)> *fo1{nullptr};
+      Function<Ret(Argo,Argo)> *fo2{nullptr};
+      std::vector<Function<Argo(Argi)>*> fi;
   };
 }
 
