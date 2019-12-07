@@ -71,6 +71,9 @@ namespace MBSimGUI {
     public slots:
       void defineWidget(int);
 
+    signals:
+      void comboChanged(int);
+
     protected:
       QBoxLayout *layout;
       QComboBox *comboBox;

@@ -32,93 +32,126 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  FunctionWidgetFactory2::FunctionWidgetFactory2(Element *element_, bool fixedSize_, QWidget *parent_, const QString &sym_, bool scalar_) : element(element_), fixedSize(fixedSize_), parent(parent_), sym(sym_), scalar(scalar_) {
-    name.emplace_back("Constant function");
-    name.emplace_back("Linear function");
-    name.emplace_back("Quadratic function");
-    name.emplace_back("Polynom function");
-    name.emplace_back("Sinusoidal function");
+  Function1ArgWidgetFactory::Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, bool fixedArgDim_, int retDim_, bool fixedRetDim_, QWidget *parent_, int index_) : element(element_), argName(argName_), argDim(argDim_), fixedArgDim(fixedArgDim_), retDim(retDim_), fixedRetDim(fixedRetDim_), parent(parent_), index(index_) {
     name.emplace_back("Absolute value function");
-    name.emplace_back("Vector valued function");
-    name.emplace_back("Piecewise defined function");
+    name.emplace_back("Bidirectional function");
     name.emplace_back("Composite function");
+    name.emplace_back("Constant function");
+    name.emplace_back("Continued function");
+    name.emplace_back("Fourier function");
+    name.emplace_back("Identity function");
+    name.emplace_back("Linear function");
+    name.emplace_back("Modulo function");
+    name.emplace_back("Piecewise defined function");
+    name.emplace_back("Piecewise polynom function");
+    name.emplace_back("Polynom function");
+    name.emplace_back("Quadratic function");
+    name.emplace_back("Signal function");
+    name.emplace_back("Signum function");
+    name.emplace_back("Sinusoidal function");
     name.emplace_back("Symbolic function");
     name.emplace_back("Tabular function");
-    name.emplace_back("Piecewise polynom function");
-    name.emplace_back("Signum function");
-    name.emplace_back("Modulo function");
-    name.emplace_back("Fourier function");
-    name.emplace_back("Signal function");
-    name.emplace_back("Identity function");
-    name.emplace_back("Bidirectional function");
-    name.emplace_back("Continued function");
-    xmlName.push_back(MBSIM%"ConstantFunction");
-    xmlName.push_back(MBSIM%"LinearFunction");
-    xmlName.push_back(MBSIM%"QuadraticFunction");
-    xmlName.push_back(MBSIM%"PolynomFunction");
-    xmlName.push_back(MBSIM%"SinusoidalFunction");
+    name.emplace_back("Vector valued function");
     xmlName.push_back(MBSIM%"AbsoluteValueFunction");
-    xmlName.push_back(MBSIM%"VectorValuedFunction");
-    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
+    xmlName.push_back(MBSIM%"BidirectionalFunction");
     xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"ConstantFunction");
+    xmlName.push_back(MBSIM%"ContinuedFunction");
+    xmlName.push_back(MBSIM%"FourierFunction");
+    xmlName.push_back(MBSIM%"IdentityFunction");
+    xmlName.push_back(MBSIM%"LinearFunction");
+    xmlName.push_back(MBSIM%"ModuloFunction");
+    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"PolynomFunction");
+    xmlName.push_back(MBSIM%"QuadraticFunction");
+    xmlName.push_back(MBSIMCONTROL%"SignalFunction");
+    xmlName.push_back(MBSIM%"SignumFunction");
+    xmlName.push_back(MBSIM%"SinusoidalFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
     xmlName.push_back(MBSIM%"TabularFunction");
-    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
-    xmlName.push_back(MBSIM%"SignumFunction");
-    xmlName.push_back(MBSIM%"ModuloFunction");
-    xmlName.push_back(MBSIM%"FourierFunction");
-    xmlName.push_back(MBSIMCONTROL%"SignalFunction");
-    xmlName.push_back(MBSIM%"IdentityFunction");
-    xmlName.push_back(MBSIM%"BidirectionalFunction");
-    xmlName.push_back(MBSIM%"ContinuedFunction");
+    xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* FunctionWidgetFactory2::createWidget(int i) {
+  QWidget* Function1ArgWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ConstantFunctionWidget(1); 
+      return new AbsoluteValueFunctionWidget;
     if(i==1)
-      return new LinearFunctionWidget(1); 
-    if(i==2)
-      return new QuadraticFunctionWidget(1); 
-    if(i==3)
-      return new PolynomFunctionWidget(1);
-    if(i==4)
-      return new SinusoidalFunctionWidget(1);
-    if(i==5)
-      return new AbsoluteValueFunctionWidget(1);
-    if(i==6)
-      return new VectorValuedFunctionWidget(element,1,true,parent);
-    if(i==7)
-      return new PiecewiseDefinedFunctionWidget(element,0,parent,sym);
-    if(i==8) {
+      return new BidirectionalFunctionWidget(element,argName,argDim,fixedArgDim,retDim,fixedRetDim,parent);
+    if(i==2) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
-      return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy,true,parent,sym,scalar), new FunctionWidgetFactory2(dummy,true,parent,sym,scalar));
+      return new CompositeFunctionWidget(new Function1ArgWidgetFactory(dummy,"x",1,false,retDim,fixedRetDim,parent,16),new Function2ArgWidgetFactory(dummy,QStringList("x")<<"y",vector<int>(2,1),false,retDim,fixedRetDim,parent),new Function1ArgWidgetFactory(dummy,argName,argDim,true,1,fixedRetDim,parent),16,0,3);
     }
-    if(i==9)
-      return new SymbolicFunctionWidget(QStringList(sym),1,3,fixedSize,scalar);
+    if(i==3)
+      return new ConstantFunctionWidget;
+    if(i==4) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new ContinuedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,fixedArgDim,retDim,fixedRetDim,parent),new Function1ArgWidgetFactory(dummy,argName,argDim,fixedArgDim,retDim,fixedRetDim,parent));
+    }
+    if(i==5)
+      return new FourierFunctionWidget;
+    if(i==6)
+      return new IdentityFunctionWidget;
+    if(i==7)
+      return new LinearFunctionWidget;
+    if(i==8)
+      return new ModuloFunctionWidget;
+    if(i==9) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,fixedArgDim,retDim,fixedRetDim,parent));
+    }
     if(i==10)
-      return new TabularFunctionWidget(1);
+      return new PiecewisePolynomFunctionWidget;
     if(i==11)
-      return new PiecewisePolynomFunctionWidget(1);
+      return new PolynomFunctionWidget;
     if(i==12)
-      return new SignumFunctionWidget(1);
+      return new QuadraticFunctionWidget;
     if(i==13)
-      return new ModuloFunctionWidget(1);
-    if(i==14)
-      return new FourierFunctionWidget(1);
-    if(i==15)
       return new SignalFunctionWidget(element,parent);
+    if(i==14)
+      return new SignumFunctionWidget;
+    if(i==15)
+      return new SinusoidalFunctionWidget;
     if(i==16)
-      return new IdentityFunctionWidget(1);
+      return new SymbolicFunctionWidget(QStringList(argName),vector<int>(1,argDim),fixedArgDim,retDim,fixedRetDim);
     if(i==17)
-      return new BidirectionalFunctionWidget(parent);
-    if(i==18)
-      return new ContinuedFunctionWidget(new FunctionWidgetFactory2(element,true,parent,sym,scalar),new FunctionWidgetFactory2(element,true,parent,sym,scalar));
+      return new TabularFunctionWidget;
+    if(i==18) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,fixedArgDim,0,true,parent),retDim,fixedRetDim);
+    }
     return nullptr;
   }
 
-  TranslationWidgetFactory2::TranslationWidgetFactory2(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+  Function2ArgWidgetFactory::Function2ArgWidgetFactory(Element *element_, const QStringList &argName_, const vector<int> argDim_, bool fixedArgDim_, int retDim_, bool fixedRetDim_, QWidget *parent_) : element(element_), argName(argName_), argDim(argDim_), fixedArgDim(fixedArgDim_), retDim(retDim_), fixedRetDim(fixedRetDim_), parent(parent_) {
+    name.emplace_back("Symbolic function");
+    name.emplace_back("Two dimensional piecewise polynom function");
+    name.emplace_back("Two dimensional tabular function");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"TwoDimensionalPiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"TwoDimensionalTabularFunction");
+  }
+
+  QWidget* Function2ArgWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new SymbolicFunctionWidget(argName,argDim,fixedArgDim,retDim,fixedRetDim);
+    if(i==1)
+      return new TwoDimensionalPiecewisePolynomFunctionWidget;
+    if(i==2)
+      return new TwoDimensionalTabularFunctionWidget;
+    return nullptr;
+  }
+
+  StateDependentTranslationWidgetFactory::StateDependentTranslationWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+    name.emplace_back("Composite function");
+    name.emplace_back("Linear translation");
+    name.emplace_back("Piecewise defined function");
+    name.emplace_back("Piecewise polynom function");
+    name.emplace_back("Symbolic function");
     name.emplace_back("Translation along x axis");
     name.emplace_back("Translation along y axis");
     name.emplace_back("Translation along z axis");
@@ -127,11 +160,11 @@ namespace MBSimGUI {
     name.emplace_back("Translation along axes x and z");
     name.emplace_back("Translation along axes x,y and z");
     name.emplace_back("Translation along fixed axis");
-    name.emplace_back("Linear translation");
-    name.emplace_back("Symbolic function");
-    name.emplace_back("Composite function");
-    name.emplace_back("Piecewise polynom function");
-    name.emplace_back("Piecewise defined function");
+    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"LinearTranslation");
+    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
     xmlName.push_back(MBSIM%"TranslationAlongXAxis");
     xmlName.push_back(MBSIM%"TranslationAlongYAxis");
     xmlName.push_back(MBSIM%"TranslationAlongZAxis");
@@ -140,75 +173,96 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"TranslationAlongAxesXZ");
     xmlName.push_back(MBSIM%"TranslationAlongAxesXYZ");
     xmlName.push_back(MBSIM%"TranslationAlongFixedAxis");
-    xmlName.push_back(MBSIM%"LinearTranslation");
-    xmlName.push_back(MBSIM%"SymbolicFunction");
-    xmlName.push_back(MBSIM%"CompositeFunction");
-    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
-    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
   }
 
-  QWidget* TranslationWidgetFactory2::createWidget(int i) {
-    if(i==0)
-      return new TranslationAlongXAxisWidget;
+  QWidget* StateDependentTranslationWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy1->setParent(element);
+      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy2->setParent(dummy1);
+      return new CompositeFunctionWidget(new StateDependentTranslationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(dummy2,"q",1,false,1,true,parent));
+    }
     if(i==1)
-      return new TranslationAlongYAxisWidget;
-    if(i==2)
-      return new TranslationAlongZAxisWidget;
-    if(i==3)
-      return new TranslationAlongAxesXYWidget;
-    if(i==4)
-      return new TranslationAlongAxesYZWidget;
-    if(i==5)
-      return new TranslationAlongAxesXZWidget;
-    if(i==6)
-      return new TranslationAlongAxesXYZWidget;
-    if(i==7)
-      return new TranslationAlongFixedAxisWidget;
-    if(i==8)
       return new LinearTranslationWidget(3,1);
+    if(i==2) {
+      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy1->setParent(element);
+      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy2->setParent(dummy1);
+      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy2,"q",1,false,3,true,parent));
+    }
+    if(i==3)
+      return new PiecewisePolynomFunctionWidget;
+    if(i==4)
+      return new SymbolicFunctionWidget(QStringList("q"),vector<int>(1,1),false,3,true);
+    if(i==5)
+      return new TranslationAlongXAxisWidget;
+    if(i==6)
+      return new TranslationAlongYAxisWidget;
+    if(i==7)
+      return new TranslationAlongZAxisWidget;
+    if(i==8)
+      return new TranslationAlongAxesXYWidget;
     if(i==9)
-      return new SymbolicFunctionWidget(QStringList("q"),3,3);
+      return new TranslationAlongAxesYZWidget;
     if(i==10)
-      return new CompositeFunctionWidget(new TranslationWidgetFactory2(element,parent), new SymbolicFunctionWidgetFactory1(element,"q",3,3,true,parent));
+      return new TranslationAlongAxesXZWidget;
     if(i==11)
-      return new PiecewisePolynomFunctionWidget(3);
+      return new TranslationAlongAxesXYZWidget;
     if(i==12)
-      return new PiecewiseDefinedFunctionWidget(element,0,parent,"q");
+      return new TranslationAlongFixedAxisWidget;
     return nullptr;
   }
 
-  TranslationWidgetFactory3::TranslationWidgetFactory3(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
-    name.emplace_back("Vector valued function");
+  TimeDependentTranslationWidgetFactory::TimeDependentTranslationWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
     name.emplace_back("Composite function");
-    name.emplace_back("Symbolic function");
-    name.emplace_back("Tabular function");
     name.emplace_back("Piecewise defined function");
     name.emplace_back("Piecewise polynom function");
-    xmlName.push_back(MBSIM%"VectorValuedFunction");
+    name.emplace_back("Symbolic function");
+    name.emplace_back("Tabular function");
+    name.emplace_back("Vector valued function");
     xmlName.push_back(MBSIM%"CompositeFunction");
-    xmlName.push_back(MBSIM%"SymbolicFunction");
-    xmlName.push_back(MBSIM%"TabularFunction");
     xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
     xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"TabularFunction");
+    xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* TranslationWidgetFactory3::createWidget(int i) {
-    if(i==0)
-      return new VectorValuedFunctionWidget(element,1,true,parent);
-    if(i==1)
-      return new CompositeFunctionWidget(new TranslationWidgetFactory2(element,parent), new FunctionWidgetFactory2(element,true,parent,"t"));
+  QWidget* TimeDependentTranslationWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy1->setParent(element);
+      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy2->setParent(dummy1);
+      return new CompositeFunctionWidget(new StateDependentTranslationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(dummy2,"t",0,true,1,true,parent));
+    }
+    if(i==1) {
+      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy1->setParent(element);
+      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy2->setParent(dummy1);
+      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy2,"t",0,true,3,true,parent));
+    }
     if(i==2)
-      return new SymbolicFunctionWidget(QStringList("t"),3,3);
+      return new PiecewisePolynomFunctionWidget;
     if(i==3)
-      return new TabularFunctionWidget(1);
+      return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,0),true,3,true);
     if(i==4)
-      return new PiecewiseDefinedFunctionWidget(element,0,parent,"t");
-    if(i==5)
-      return new PiecewisePolynomFunctionWidget(1);
+      return new TabularFunctionWidget;
+    if(i==5) {
+      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy1->setParent(element);
+      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy2->setParent(dummy1);
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy2,"t",0,true,3,true,parent),3,true);
+    }
     return nullptr;
   }
 
-  RotationWidgetFactory2::RotationWidgetFactory2(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+  StateDependentRotationWidgetFactory::StateDependentRotationWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+    name.emplace_back("Composite function");
     name.emplace_back("Rotation about x axis");
     name.emplace_back("Rotation about y axis");
     name.emplace_back("Rotation about z axis");
@@ -219,8 +273,8 @@ namespace MBSimGUI {
     name.emplace_back("Rotation about axes z,x and z");
     name.emplace_back("Rotation about axes z,y and x");
     name.emplace_back("Rotation about fixed axis");
-    name.emplace_back("Composite function");
     name.emplace_back("Symbolic function");
+    xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"RotationAboutXAxis");
     xmlName.push_back(MBSIM%"RotationAboutYAxis");
     xmlName.push_back(MBSIM%"RotationAboutZAxis");
@@ -231,145 +285,115 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"RotationAboutAxesZXZ");
     xmlName.push_back(MBSIM%"RotationAboutAxesZYX");
     xmlName.push_back(MBSIM%"RotationAboutFixedAxis");
-    xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
   }
 
-  QWidget* RotationWidgetFactory2::createWidget(int i) {
-
-    if(i==0)
-      return new RotationAboutXAxisWidget;
-    if(i==1)
-      return new RotationAboutYAxisWidget;
-    if(i==2)
-      return new RotationAboutZAxisWidget;
-    if(i==3)
-      return new RotationAboutAxesXYWidget;
-    if(i==4)
-      return new RotationAboutAxesYZWidget;
-    if(i==5)
-      return new RotationAboutAxesXZWidget;
-    if(i==6)
-      return new RotationAboutAxesXYZWidget;
-    if(i==7)
-      return new RotationAboutAxesZXZWidget;
-    if(i==8)
-      return new RotationAboutAxesZYXWidget;
-    if(i==9)
-      return new RotationAboutFixedAxisWidget;
-    if(i==10)
-      return new CompositeFunctionWidget(new RotationWidgetFactory2(element,parent), new SymbolicFunctionWidgetFactory1(element,"q",3,3,true,parent));
-    if(i==11)
-      return new SymbolicFunctionWidget(QStringList("q"),1,3);
-    return nullptr;
-  }
-
-  RotationWidgetFactory3::RotationWidgetFactory3(Element *element_, QWidget *parent_) : parent(parent_) {
-    name.emplace_back("Composite function");
-    name.emplace_back("Symbolic function");
-    xmlName.push_back(MBSIM%"CompositeFunction");
-    xmlName.push_back(MBSIM%"SymbolicFunction");
-  }
-
-  QWidget* RotationWidgetFactory3::createWidget(int i) {
-    if(i==0)
-      return new CompositeFunctionWidget(new RotationWidgetFactory2(element,parent), new FunctionWidgetFactory2(element,true,parent,"t"));
-    if(i==1)
-      return new SymbolicFunctionWidget(QStringList("t"),1,3);
-    return nullptr;
-  }
-
-  SymbolicFunctionWidgetFactory1::SymbolicFunctionWidgetFactory1(Element *element_, const QString &var_, int m_, int maxm_, bool fixedSize_, QWidget *parent_) : element(element_), var(var_), m(m_), maxm(maxm_), fixedSize(fixedSize_), parent(parent_) {
-    name.emplace_back("Symbolic function");
-    name.emplace_back("Tabular function");
-    name.emplace_back("Piecewise polynom function");
-    name.emplace_back("Piecewise defined function");
-    name.emplace_back("Modulo function");
-    name.emplace_back("Bounded function");
-    name.emplace_back("Composite function");
-    xmlName.push_back(MBSIM%"SymbolicFunction");
-    xmlName.push_back(MBSIM%"TabularFunction");
-    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
-    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
-    xmlName.push_back(MBSIM%"ModuloFunction");
-    xmlName.push_back(MBSIM%"BoundedFunction");
-    xmlName.push_back(MBSIM%"CompositeFunction");
-  }
-
-  QWidget* SymbolicFunctionWidgetFactory1::createWidget(int i) {
-    if(i==0)
-      return new SymbolicFunctionWidget(QStringList(var),m,maxm,fixedSize);
-    if(i==1)
-      return new TabularFunctionWidget(1);
-    if(i==2)
-      return new PiecewisePolynomFunctionWidget(1);
-    if(i==3)
-      return new PiecewiseDefinedFunctionWidget(element,0,parent,var);
-    if(i==4)
-      return new ModuloFunctionWidget;
-    if(i==5)
-      return new BoundedFunctionWidget;
-    if(i==6) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new CompositeFunctionWidget(new FunctionWidgetFactory2(dummy,true,parent,var), new FunctionWidgetFactory2(dummy,true,parent,var));
+  QWidget* StateDependentRotationWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy1->setParent(element);
+      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy2->setParent(dummy1);
+      return new CompositeFunctionWidget(new StateDependentRotationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(dummy2,"q",1,false,1,true,parent));
     }
-    return nullptr;
-  }
-
-  SymbolicFunctionWidgetFactory2::SymbolicFunctionWidgetFactory2(Element *element_, const QStringList &var_, int m_, int maxm_, bool fixedSize_, QWidget *parent) : element(element_), var(var_), m(m_), maxm(maxm_), fixedSize(fixedSize_) {
-    name.emplace_back("Symbolic function");
-    name.emplace_back("Two dimensional tabular function");
-    name.emplace_back("Two dimensional piecewise polynom function");
-    xmlName.push_back(MBSIM%"SymbolicFunction");
-    xmlName.push_back(MBSIM%"TwoDimensionalTabularFunction");
-    xmlName.push_back(MBSIM%"TwoDimensionalPiecewisePolynomFunction");
-  }
-
-  QWidget* SymbolicFunctionWidgetFactory2::createWidget(int i) {
-    if(i==0)
-      return new SymbolicFunctionWidget(var,m,maxm,fixedSize);
     if(i==1)
-      return new TwoDimensionalTabularFunctionWidget(1);
+      return new RotationAboutXAxisWidget;
     if(i==2)
-      return new TwoDimensionalPiecewisePolynomFunctionWidget(1);
+      return new RotationAboutYAxisWidget;
+    if(i==3)
+      return new RotationAboutZAxisWidget;
+    if(i==4)
+      return new RotationAboutAxesXYWidget;
+    if(i==5)
+      return new RotationAboutAxesYZWidget;
+    if(i==6)
+      return new RotationAboutAxesXZWidget;
+    if(i==7)
+      return new RotationAboutAxesXYZWidget;
+    if(i==8)
+      return new RotationAboutAxesZXZWidget;
+    if(i==9)
+      return new RotationAboutAxesZYXWidget;
+    if(i==10)
+      return new RotationAboutFixedAxisWidget;
+    if(i==11)
+      return new SymbolicFunctionWidget(QStringList("q"),vector<int>(1,3),false,3,true);
     return nullptr;
   }
 
-  TranslationWidgetFactory4::TranslationWidgetFactory4(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_) : element(element_), parent(parent_) {
+  TimeDependentRotationWidgetFactory::TimeDependentRotationWidgetFactory(Element *element_, QWidget *parent_) : parent(parent_) {
+    name.emplace_back("Composite function");
+    name.emplace_back("Symbolic function");
+    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+  }
+
+  QWidget* TimeDependentRotationWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy1->setParent(element);
+      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy2->setParent(dummy1);
+      return new CompositeFunctionWidget(new StateDependentRotationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(dummy2,"t",0,true,1,true,parent));
+    }
+    if(i==1)
+      return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,0),true,3,true);
+    return nullptr;
+  }
+
+  TranslationWidgetFactory::TranslationWidgetFactory(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_) : element(element_), parent(parent_) {
+    name.emplace_back("General translation");
     name.emplace_back("State dependent translation");
     name.emplace_back("Time dependent translation");
-    name.emplace_back("General translation");
+    xmlName.push_back(uri%"generalTranslation");
     xmlName.push_back(uri%"stateDependentTranslation");
     xmlName.push_back(uri%"timeDependentTranslation");
-    xmlName.push_back(uri%"generalTranslation");
   }
 
-  QWidget* TranslationWidgetFactory4::createWidget(int i) {
-    if(i==0)
-      return new ChoiceWidget2(new TranslationWidgetFactory2(element,parent),QBoxLayout::TopToBottom,0);
-    if(i==1)
-      return new ChoiceWidget2(new TranslationWidgetFactory3(element,parent),QBoxLayout::TopToBottom,0);
-    if(i==2) {
-      QStringList var;
-      var << "q" << "t";
-      return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(element,var,3,3,true,parent),QBoxLayout::TopToBottom,0);
+  QWidget* TranslationWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      vector<int> argDim(2);
+      argDim[0] = 1;
+      argDim[1] = 0;
+      return new ChoiceWidget2(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",argDim,false,3,true,parent));
     }
+    if(i==1)
+      return new ChoiceWidget2(new StateDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
+    if(i==2)
+      return new ChoiceWidget2(new TimeDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     return nullptr;
   }
 
-  RotationWidgetFactory4::RotationWidgetFactory4(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_) : element(element_), parent(parent_) {
+  RotationWidgetFactory::RotationWidgetFactory(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_) : element(element_), parent(parent_) {
     name.emplace_back("State dependent rotation");
     name.emplace_back("Time dependent rotation");
     xmlName.push_back(uri%"stateDependentRotation");
     xmlName.push_back(uri%"timeDependentRotation");
   }
 
-  QWidget* RotationWidgetFactory4::createWidget(int i) {
+  QWidget* RotationWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ChoiceWidget2(new RotationWidgetFactory2(element,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget2(new StateDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     if(i==1)
-      return new ChoiceWidget2(new RotationWidgetFactory3(element,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget2(new TimeDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
+    return nullptr;
+  }
+
+  CompositeFunctionWidgetFactory::CompositeFunctionWidgetFactory(WidgetFactory *factory_) : factory(factory_) {
+    name.emplace_back("1 inner function");
+    name.emplace_back("2 inner functions");
+    xmlName.push_back(MBSIM%"innerFunction");
+    xmlName.push_back(MBSIM%"innerFunctions");
+  }
+
+  QWidget* CompositeFunctionWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      return new ExtWidget("Inner function",new ChoiceWidget2(factory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"innerFunction");
+    }
+    if(i==1)
+      return new ExtWidget("Inner functions",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",2,0,true),false,false,MBSIM%"innerFunctions");
     return nullptr;
   }
 
@@ -432,119 +456,154 @@ namespace MBSimGUI {
   }
 
   ConstraintWidgetFactory::ConstraintWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
-    name.emplace_back("Time dependent constraint function");
-    name.emplace_back("State dependent constraint function");
     name.emplace_back("General constraint function");
-    xmlName.push_back(MBSIM%"timeDependentConstraintFunction");
-    xmlName.push_back(MBSIM%"stateDependentConstraintFunction");
+    name.emplace_back("State dependent constraint function");
+    name.emplace_back("Time dependent constraint function");
     xmlName.push_back(MBSIM%"generalConstraintFunction");
+    xmlName.push_back(MBSIM%"stateDependentConstraintFunction");
+    xmlName.push_back(MBSIM%"timeDependentConstraintFunction");
   }
 
   QWidget* ConstraintWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new ChoiceWidget2(new FunctionWidgetFactory2(element,true,parent),QBoxLayout::TopToBottom,0);
-    if(i==1)
-      return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(element,QStringList("q"),3,3,true,parent),QBoxLayout::TopToBottom,0);
+    if(i==0) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      vector<int> argDim(2);
+      argDim[0] = 1;
+      argDim[1] = 0;
+      return new ChoiceWidget2(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",argDim,false,1,true,parent));
+    }
+    if(i==1) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"q",1,false,1,true,parent),QBoxLayout::TopToBottom,0);
+    }
     if(i==2) {
-      QStringList var;
-      var << "q" << "t";
-      return new ChoiceWidget2(new SymbolicFunctionWidgetFactory2(element,var,3,3,true,parent),QBoxLayout::TopToBottom,0);
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"t",0,true,1,true,parent),QBoxLayout::TopToBottom,0);
     }
     return nullptr;
   }
 
   SpringDamperWidgetFactory::SpringDamperWidgetFactory(Element *element_, bool varSize_, QWidget *parent_) : element(element_), varSize(varSize_), parent(parent_) {
+    name.emplace_back("Linear elastic function");
     name.emplace_back("Linear spring damper force");
     name.emplace_back("Nonlinear spring damper force");
     name.emplace_back("Symbolic function");
-    name.emplace_back("Linear elastic function");
+    xmlName.push_back(MBSIM%"LinearElasticFunction");
     xmlName.push_back(MBSIM%"LinearSpringDamperForce");
     xmlName.push_back(MBSIM%"NonlinearSpringDamperForce");
     xmlName.push_back(MBSIM%"SymbolicFunction");
-    xmlName.push_back(MBSIM%"LinearElasticFunction");
   }
 
   QWidget* SpringDamperWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new LinearSpringDamperForceWidget;
-    if(i==1)
-      return new NonlinearSpringDamperForceWidget(element,parent);
-    if(i==2) {
-      QStringList var;
-      var << "g" << "gd";
-      return new SymbolicFunctionWidget(var,1,3,not varSize);
-    }
-    if(i==3)
       return new LinearElasticFunctionWidget(varSize);
+    if(i==1)
+      return new LinearSpringDamperForceWidget;
+    if(i==2)
+      return new NonlinearSpringDamperForceWidget(element,parent);
+    if(i==3)
+      return new SymbolicFunctionWidget(QStringList("g")<<"gd",vector<int>(1,0),true,0,true);
     return nullptr;
   }
 
   PlanarContourFunctionWidgetFactory::PlanarContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_) : element(element_), parent(parent_), var(var_) {
+    name.emplace_back("Composite function");
+    name.emplace_back("Continued function");
+    name.emplace_back("Piecewise defined function");
+    name.emplace_back("Piecewise polynom function");
     name.emplace_back("Polar contour function");
     name.emplace_back("Symbolic function");
-    name.emplace_back("Continued function");
-    name.emplace_back("Piecewise polynom function");
-    name.emplace_back("Piecewise defined function");
-    name.emplace_back("Composite function");
+    name.emplace_back("Vector valued function");
+    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"ContinuedFunction");
+    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
+    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
     xmlName.push_back(MBSIM%"PolarContourFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
-    xmlName.push_back(MBSIM%"ContinuedFunction");
-    xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
-    xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
-    xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
   QWidget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new PolarContourFunctionWidget(parent,var);
-    if(i==1)
-      return new SymbolicFunctionWidget(QStringList(var),3,1);
-    if(i==2)
-      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,"x"), new SymbolicFunctionWidgetFactory1(element,var,3,100,true,parent));
+    if(i==0) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new CompositeFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,"phi"),0,new Function1ArgWidgetFactory(dummy,var,0,true,0,true,parent));
+    }
+    if(i==1) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,var),new Function1ArgWidgetFactory(dummy,var,0,true,0,true,parent));
+    }
+    if(i==2) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new PiecewiseDefinedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,var));
+    }
     if(i==3)
-      return new PiecewisePolynomFunctionWidget(1);
+      return new PiecewisePolynomFunctionWidget;
     if(i==4)
-      return new PiecewiseDefinedFunctionWidget(element,0,parent,var);
+      return new PolarContourFunctionWidget(element,parent);
     if(i==5)
-      return new CompositeFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,"x"), new FunctionWidgetFactory2(element,true,parent,var));
+      return new SymbolicFunctionWidget(QStringList(var),vector<int>(1,0),true,3,true);
+    if(i==6) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,var,0,true,0,true,parent),3,true);
+    }
     return nullptr;
   }
 
   SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_) : element(element_), parent(parent_), var(var_) {
-    name.emplace_back("Symbolic function");
-    name.emplace_back("Continued function");
     name.emplace_back("Composite function");
-    xmlName.push_back(MBSIM%"SymbolicFunction");
-    xmlName.push_back(MBSIM%"ContinuedFunction");
+    name.emplace_back("Continued function");
+    name.emplace_back("Symbolic function");
+    name.emplace_back("Vector valued function");
     xmlName.push_back(MBSIM%"CompositeFunction");
+    xmlName.push_back(MBSIM%"ContinuedFunction");
+    xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
   QWidget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new SymbolicFunctionWidget(QStringList(var),3,2);
-    if(i==1)
-      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,"x"), new SymbolicFunctionWidgetFactory1(element,var,3,100,true,parent));
+    if(i==0) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,"phi"),0,new Function1ArgWidgetFactory(dummy,var,2,true,2,true,parent));
+    }
+    if(i==1) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,var),new Function1ArgWidgetFactory(dummy,var,2,true,2,true,parent));
+    }
     if(i==2)
-      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,"x"), new SymbolicFunctionWidgetFactory1(element,var,3,100,true,parent));
+      return new SymbolicFunctionWidget(QStringList(var),vector<int>(1,2),true,3,true);
+    if(i==3) {
+      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+      dummy->setParent(element);
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,var,0,true,0,true,parent),3,true);
+    }
     return nullptr;
   }
 
   GravityFunctionWidgetFactory::GravityFunctionWidgetFactory() {
-    name.emplace_back("Gravity function");
     name.emplace_back("Constant function");
+    name.emplace_back("Gravity function");
     name.emplace_back("Symbolic function");
-    xmlName.push_back(MBSIMPHYSICS%"GravityFunction");
     xmlName.push_back(MBSIM%"ConstantFunction");
+    xmlName.push_back(MBSIMPHYSICS%"GravityFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
   }
 
   QWidget* GravityFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new GravityFunctionWidget;
+      return new ConstantFunctionWidget;
     if(i==1)
-      return new ConstantFunctionWidget(1);
+      return new GravityFunctionWidget;
     if(i==2)
-      return new SymbolicFunctionWidget(QStringList("g"),1,1);
+      return new SymbolicFunctionWidget(QStringList("g"),vector<int>(1,0),true,0,true);
     return nullptr;
   }
 }

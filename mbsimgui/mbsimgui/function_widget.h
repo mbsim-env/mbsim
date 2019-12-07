@@ -27,8 +27,8 @@ namespace MBSimGUI {
 
   class FunctionWidget : public Widget {
     public:
-      virtual int getArg1Size() const { return 0; }
-      virtual int getArg2Size() const { return 0; }
+      virtual int getArg1Size() const { return 1; }
+      virtual int getArg2Size() const { return 1; }
       virtual void setArg1Size(int i) { }
       virtual QString getType() const { return "FunctionWidget"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }

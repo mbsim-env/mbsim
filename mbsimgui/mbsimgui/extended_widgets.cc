@@ -92,8 +92,10 @@ namespace MBSimGUI {
     for(int i=0; i<factory->getSize(); i++)
       comboBox->addItem(factory->getName(i));
     layout->addWidget(comboBox);
-    defineWidget(0);
+    comboBox->setCurrentIndex(factory->getDefaultIndex());
+    defineWidget(factory->getDefaultIndex());
     connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
+    connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SIGNAL(comboChanged(int)));
   }
 
   void ChoiceWidget2::setWidgetFactory(WidgetFactory *factory_) {

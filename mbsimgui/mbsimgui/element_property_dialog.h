@@ -402,7 +402,6 @@ namespace MBSimGUI {
       int getqRelSize() const; 
       int getuRelSize() const { return getqRelSize(); }
     protected:
-      void updateWidget() override;
       ExtWidget *K, *mass, *inertia, *frameForInertiaTensor, *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation, *ombv, *ombvFrameRef, *weightArrow, *jointForceArrow, *jointMomentArrow;
   };
 
@@ -418,7 +417,6 @@ namespace MBSimGUI {
       int getuRelSize() const { return getqRelSize(); }
       virtual int getqERelSize() const { return 0; }
     protected:
-      void updateWidget() override;
       ExtWidget *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
   };
 
