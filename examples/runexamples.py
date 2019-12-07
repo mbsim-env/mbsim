@@ -1996,7 +1996,7 @@ def coverage(mainFD):
   ret=ret+abs(subprocess.call(["lcov", "-r", pj(args.reportOutDir, "coverage", "cov.trace.total"),
     "*/mbsim*/kernel/swig/*", "*/openmbv*/openmbvcppinterface/swig/java/*", # SWIG generated
     "*/openmbv*/openmbvcppinterface/swig/octave/*", "*/openmbv*/openmbvcppinterface/swig/python/*", # SWIG generated
-    "*/openmbv*/mbxmlutils/mbxmlutils/swigpyrun.h", # SWIG generated
+    "*/openmbv*/mbxmlutils/mbxmlutils/*", # SWIG generated
     "*/mbsim*/thirdparty/nurbs++/*/*", "*/include/nurbs++/*", "*/mbsim*/kernel/mbsim/numerics/csparse.*", # 3rd party
     "*/mbsim*/examples/*", # mbsim examples
     "*.moc.cc", "*.qrc.cc", # mbsim generated
