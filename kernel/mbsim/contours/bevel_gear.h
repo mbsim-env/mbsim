@@ -72,6 +72,7 @@ namespace MBSim {
       double getBacklash() { return b; }
       void setFlank(int flank) { signi = flank; }
       void setTooth(int tooth) { k = tooth; }
+      double getEtaMax(double h, double s);
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {

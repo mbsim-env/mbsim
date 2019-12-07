@@ -48,6 +48,14 @@ namespace MBSim {
     z[1] = planargear->getNumberOfTeeth();
     delh2 = (M_PI/2-planargear->getBacklash()/m)/z[1];
     delh1 = (M_PI/2-bevelgear->getBacklash()/m)/z[0];
+    etamax1[0][0] = bevelgear->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax1[1][0] = bevelgear->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax1[0][1] = bevelgear->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax1[1][1] = bevelgear->getEtaMax(0,0); // TODO: determine correct etamax
+    phimax[0][0] = atan(2/cos(al0)/sin(al0)/z[0]); // TODO: determine phimax for helix angles
+    phimax[1][0] = phimax[0][0]; // TODO: determine phimax for helix angles
+    phimax[0][1] = atan(2/cos(al0)/sin(al0)/z[0]); // TODO: determine phimax for helix angles
+    phimax[1][1] = phimax[0][1]; // TODO: determine phimax for helix angles
   }
 
   void ContactKinematicsBevelGearPlanarGear::updateg(SingleContact &contact, int ii) {
@@ -64,33 +72,19 @@ namespace MBSim {
       Vec3 rOP[2];
       vector<int> v[2];
       if(maxNumContacts==1) {
-        int k = 0;
-        double rsi = 1e10;
-        int signk = (phi2 + signi*delh2)>0?-1:1;
-        for(int k_=0; k_<z[1]; k_++) {
-          double rsi_ = fabs(phi2 + signk*k_*2*M_PI/z[1] + signi*delh2);
-          if(rsi_<rsi) {
-            rsi = rsi_;
-            k = k_;
-          }
-        }
-        v[1].push_back(signk*k);
-        double phi1corr = ((phi2 + signk*k*2*M_PI/z[1] - signi*delh2)*z[1])/z[0];
-
-        k = 0;
-        rsi = 1e10;
-        signk = (phi1 - signi*delh1 - phi1corr)>0?-1:1;
-        for(int k_=0; k_<z[0]; k_++) {
-          double rsi_ = fabs(phi1 + signk*k_*2*M_PI/z[0] - signi*delh1 - phi1corr);
-          if(rsi_<rsi) {
-            rsi = rsi_;
-            k = k_;
-          }
-        }
-        v[0].push_back(signk*k);
+        v[1].push_back(round(-(phi2 + signi*delh2)/(2*M_PI/z[1])));
+        double phi1corr = (phi2 + v[1][0]*2*M_PI/z[1] + signi*delh2)*z[1]/z[0];
+        v[0].push_back(round(-(phi1 - signi*delh1 - phi1corr)/(2*M_PI/z[0])));
       }
       else {
-        throw runtime_error("The maximum number of contacts must be 1 at present");
+        int kmax = floor(-(-etamax1[1][i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        int kmin = ceil(-(etamax1[1][not i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        for(int k_=kmin; k_<=kmax; k_++)
+          v[0].push_back(k_);
+        kmax = floor((phimax[1][i] - (phi2 + signi*delh2))/(2*M_PI/z[1]));
+        kmin = ceil((-phimax[1][not i] - (phi2 + signi*delh2))/(2*M_PI/z[1]));
+        for(int k_=kmin; k_<=kmax; k_++)
+          v[1].push_back(k_);
       }
 
       double k[2];
@@ -99,17 +93,23 @@ namespace MBSim {
           k[0] = i0;
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
-            Vec2 zeta2(NONINIT);
-            double phi2q = phi2+k[1]*2*M_PI/z[1]+signi*delh2;
+            Vec2 zeta1(NONINIT), zeta2(NONINIT);
+            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
             double s = 0;
+            if(zeta1(0)>etamax1[0][not i])
+              s = (beta[0]>=0?-1:1)*max(s,bevelgear->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]));
+            else if(zeta1(0)<-etamax1[0][i])
+              s = (beta[0]>=0?1:-1)*max(s,bevelgear->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]));
+            double phi2q = phi2+k[1]*2*M_PI/z[1]+signi*delh2;
+            if(phi2q>phimax[0][i])
+              s = (beta[1]>=0?-1:1)*max(fabs(s),planargear->getWidth()/2/(phimax[1][i]-phimax[0][i])*(phi2q-phimax[0][i]));
+            else if(phi2q<-phimax[0][not i])
+              s = (beta[1]>=0?1:-1)*max(fabs(s),planargear->getWidth()/2/(-phimax[1][not i]+phimax[0][not i])*(phi2q+phimax[0][not i]));
             zeta2(1) = (s*cos(phi2q+beta[1])-m*z[1]/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[1]))/(sin(phi2q+beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2q+beta[1])*cos(beta[1]));
             zeta2(0) = (sin(phi2q)/cos(phi2q+beta[1])*m*z[1]/2 + zeta2(1)*tan(phi2q+beta[1]))*sin(al0);
             planargear->setFlank(signi);
             planargear->setTooth(k[1]);
             rOP[1] = planargear->evalPosition(zeta2);
-
-            Vec2 zeta1(NONINIT);
-            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
             phi2q = -double(z[0])/z[1]*zeta1(0);
             zeta1(1) = (s*cos(phi2q-beta[0])+m*z[1]/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));
             bevelgear->setFlank(signi);

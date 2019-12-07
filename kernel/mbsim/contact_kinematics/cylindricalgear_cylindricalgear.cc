@@ -104,12 +104,12 @@ namespace MBSim {
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta1(NONINIT), zeta2(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*(delh1+dal));
-            zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal));
             double s = 0;
             if(zeta1(0)>etamax1[0][not i])
               s = (beta[0]>=0?-1:1)*max(s,gear[0]->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]));
             else if(zeta1(0)<-etamax1[0][i])
               s = (beta[0]>=0?1:-1)*max(s,gear[0]->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]));
+            zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal));
             if(zeta2(0)>etamax2[0][not i])
               s = (beta[1]>=0?-1:1)*max(fabs(s),gear[0]->getWidth()/2/(etamax2[1][not i]-etamax2[0][not i])*(zeta2(0)-etamax2[0][not i]));
             else if(zeta2(0)<-etamax2[0][i])

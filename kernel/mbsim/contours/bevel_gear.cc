@@ -118,6 +118,10 @@ namespace MBSim {
     return parDer2Kt;
   }
 
+  double BevelGear::getEtaMax(double h, double s) {
+    return 2*m/cos(al); // TODO: implement correct etamax for bevel gears
+  }
+
   void BevelGear::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       delh = (M_PI/2-b/m*cos(be))/N;

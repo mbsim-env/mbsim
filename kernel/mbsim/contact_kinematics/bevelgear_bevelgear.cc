@@ -41,6 +41,14 @@ namespace MBSim {
     z[1] = gear[1]->getNumberOfTeeth();
     delh2 = (M_PI/2-gear[1]->getBacklash()/m)/z[1];
     delh1 = (M_PI/2-gear[0]->getBacklash()/m)/z[0];
+    etamax1[0][0] = gear[0]->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax1[1][0] = gear[0]->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax1[0][1] = gear[0]->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax1[1][1] = gear[0]->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax2[0][0] = gear[1]->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax2[1][0] = gear[1]->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax2[0][1] = gear[1]->getEtaMax(0,0); // TODO: determine correct etamax
+    etamax2[1][1] = gear[1]->getEtaMax(0,0); // TODO: determine correct etamax
   }
 
   void ContactKinematicsBevelGearBevelGear::updateg(SingleContact &contact, int ii) {
@@ -57,33 +65,19 @@ namespace MBSim {
       Vec3 rOP[2];
       vector<int> v[2];
       if(maxNumContacts==1) {
-        int k = 0;
-        double rsi = 1e10;
-        int signk = (phi2 - signi*delh2)>0?-1:1;
-        for(int k_=0; k_<z[1]; k_++) {
-          double rsi_ = fabs(phi2 + signk*k_*2*M_PI/z[1] - signi*delh2);
-          if(rsi_<rsi) {
-            rsi = rsi_;
-            k = k_;
-          }
-        }
-        v[1].push_back(signk*k);
-        double phi1corr = ((phi2 + signk*k*2*M_PI/z[1] - signi*delh2)*z[1])/z[0];
-
-        k = 0;
-        rsi = 1e10;
-        signk = (phi1 - signi*delh1 + phi1corr)>0?-1:1;
-        for(int k_=0; k_<z[0]; k_++) {
-          double rsi_ = fabs(phi1 + signk*k_*2*M_PI/z[0] - signi*delh1 + phi1corr);
-          if(rsi_<rsi) {
-            rsi = rsi_;
-            k = k_;
-          }
-        }
-        v[0].push_back(signk*k);
+        v[1].push_back((round(-(phi2 - signi*delh2)/(2*M_PI/z[1]))));
+        double phi1corr = (phi2 + v[1][0]*2*M_PI/z[1] - signi*delh2)*z[1]/z[0];
+        v[0].push_back((round(-(phi1 - signi*delh1 + phi1corr)/(2*M_PI/z[0]))));
       }
       else {
-        throw runtime_error("The maximum number of contacts must be 1 at present");
+        int kmax = floor(-(-etamax1[1][i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        int kmin = ceil(-(etamax1[1][not i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        for(int k_=kmin; k_<=kmax; k_++)
+          v[0].push_back(k_);
+        kmax = floor(-(-etamax2[1][i] + (phi2 - signi*delh2))/(2*M_PI/z[0]));
+        kmin = ceil(-(etamax2[1][not i] + (phi2 - signi*delh2))/(2*M_PI/z[0]));
+        for(int k_=kmin; k_<=kmax; k_++)
+          v[1].push_back(k_);
       }
 
       double k[2];
@@ -92,17 +86,23 @@ namespace MBSim {
           k[0] = i0;
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
-            Vec2 zeta1(NONINIT);
+            Vec2 zeta1(NONINIT), zeta2(NONINIT);
             zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
-            double phi2q = -sin(gear[0]->getPitchAngle())*zeta1(0);
             double s = 0;
+            if(zeta1(0)>etamax1[0][not i])
+              s = (beta[0]>=0?-1:1)*max(s,gear[0]->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]));
+            else if(zeta1(0)<-etamax1[0][i])
+              s = (beta[0]>=0?1:-1)*max(s,gear[0]->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]));
+            zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*delh1);
+            if(zeta2(0)>etamax2[0][not i])
+              s = (beta[1]>=0?-1:1)*max(fabs(s),gear[0]->getWidth()/2/(etamax2[1][not i]-etamax2[0][not i])*(zeta2(0)-etamax2[0][not i]));
+            else if(zeta2(0)<-etamax2[0][i])
+              s = (beta[1]>=0?1:-1)*max(fabs(s),gear[0]->getWidth()/2/(-etamax2[1][i]+etamax2[0][i])*(zeta2(0)+etamax2[0][i]));
+            double phi2q = -sin(gear[0]->getPitchAngle())*zeta1(0);
             zeta1(1) = (s*cos(phi2q-beta[0])+m*z[0]/sin(gear[0]->getPitchAngle())/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
             rOP[0] = gear[0]->evalPosition(zeta1);
-
-            Vec2 zeta2(NONINIT);
-            zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*delh1);
             phi2q = -sin(gear[1]->getPitchAngle())*zeta2(0);
             zeta2(1) = (s*cos(phi2q-beta[1])+m*z[1]/sin(gear[1]->getPitchAngle())/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[1]))/(-sin(phi2q-beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2q-beta[1])*cos(beta[1]));
             gear[1]->setFlank(signi);
