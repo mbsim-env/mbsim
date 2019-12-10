@@ -175,8 +175,8 @@ namespace MBSimFlexibleBody {
       //  | --------------> r
       // radial and azimuthal coordinates of the FE [ElementalNodes(r1,phi1,r2,phi2)]
       // r1 and phi1 are defined with node 1, r2 and phi2 with node 3
-      ElementalNodes[i](0, 1) << NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
-      ElementalNodes[i](2, 3) << NodeCoordinates.row(ElementNodeList(i, 2)).T(); // node 3
+      ElementalNodes[i](0, 1) = NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
+      ElementalNodes[i](2, 3) = NodeCoordinates.row(ElementNodeList(i, 2)).T(); // node 3
 
       if (ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
         ElementalNodes[i](3) += 2 * M_PI;
@@ -432,14 +432,14 @@ namespace MBSimFlexibleBody {
         case innerring: // 0: innerring
           ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
           Jext = Mat(Dofs, qSize, INIT, 0.);
-          Jext(0, 0, RefDofs - 1, RefDofs - 1) << DiagMat(RefDofs, INIT, 1.);
-          Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) << DiagMat(qSize - RefDofs, INIT, 1.);
+          Jext(0, 0, RefDofs - 1, RefDofs - 1) = DiagMat(RefDofs, INIT, 1.);
+          Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) = DiagMat(qSize - RefDofs, INIT, 1.);
         break;
 
         case outerring: // 1: outerring
           ILocked = RangeV(qSize, Dofs - 1);
           Jext = Mat(Dofs, qSize, INIT, 0.);
-          Jext(0, 0, qSize - 1, qSize - 1) << DiagMat(qSize, INIT, 1.);
+          Jext(0, 0, qSize - 1, qSize - 1) = DiagMat(qSize, INIT, 1.);
         break;
       }
 

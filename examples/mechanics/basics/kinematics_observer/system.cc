@@ -39,8 +39,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Theta(2,2) = 1./12.*m1*l1*l1;
   box1->setInertiaTensor(Theta);
 
-  SqrMat E(3);
-  E << DiagMat(3,INIT,1);
+  SqrMat E = SqrMat(DiagMat(3,INIT,1));
   Vec KrSP(3);
   KrSP(1) = a1;
   box1->addFrame(new FixedRelativeFrame("PunktO",KrSP,E));

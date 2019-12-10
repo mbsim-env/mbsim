@@ -79,7 +79,7 @@ namespace MBSim {
     for(unsigned i=0; i<2; i++) {
       RangeV J = RangeV(laInd,laInd+laSize-1);
       RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1); // TODO Prüfen ob hSize
-      W[j][i]>>WParent(I,J);
+      W[j][i]&=WParent(I,J);
     }
   }
 
@@ -87,14 +87,14 @@ namespace MBSim {
     for(unsigned i=0; i<2; i++) {
       RangeV J = RangeV(laInd,laInd+laSize-1);
       RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      V[j][i]>>VParent(I,J);
+      V[j][i]&=VParent(I,J);
     }
   }
 
   void FrameLink::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      h[j][i]>>hParent(I);
+      h[j][i]&=hParent(I);
     }
   }
 
@@ -109,7 +109,7 @@ namespace MBSim {
   void FrameLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      dhdt[i]>>dhdtParent(I);
+      dhdt[i]&=dhdtParent(I);
     }
   }
 
@@ -117,7 +117,7 @@ namespace MBSim {
     for(unsigned i=0; i<2; i++) {
       int hInd =  frame[i]->gethInd(j);
       RangeV I = RangeV(hInd,hInd+frame[i]->gethSize(j)-1);
-      r[j][i]>>rParent(I);
+      r[j][i]&=rParent(I);
     }
   }
 

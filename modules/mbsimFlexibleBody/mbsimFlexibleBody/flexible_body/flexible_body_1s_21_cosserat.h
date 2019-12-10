@@ -260,11 +260,11 @@ namespace MBSimFlexibleBody {
   ;
 
   inline void FlexibleBody1s21Cosserat::updateM() {
-    M << MConst;
+    M = MConst;
   }
 
   inline void FlexibleBody1s21Cosserat::updateLLM() {
-    LLM << LLMConst;
+    LLM = LLMConst;
   }
 
   inline void FlexibleBody1s21Cosserat::setMomentsInertia(double I1_) {

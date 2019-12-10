@@ -122,7 +122,7 @@ namespace MBSim {
     system->resizezParent(neq);
     system->updatezRef(system->getzParent());
     if(formalism) {
-      system->getlaParent() >> system->getzParent()(system->getzSize(),system->getzSize()+system->getlaSize()-1);
+      system->getlaParent() &= system->getzParent()(system->getzSize(),system->getzSize()+system->getlaSize()-1);
       system->updatelaRef(system->getlaParent());
     }
     // Integrator uses its own workspace for the state derivative

@@ -127,71 +127,71 @@ namespace MBSim {
   }
 
   void Object::updateqRef(const Vec &qParent) {
-    q >> qParent(qInd, qInd + qSize - 1);
+    q &= qParent(qInd, qInd + qSize - 1);
   }
 
   void Object::updateqdRef(const Vec &qdParent) {
-    qd >> qdParent(qInd, qInd + qSize - 1);
+    qd &= qdParent(qInd, qInd + qSize - 1);
   }
 
   void Object::updatedqRef(const Vec &dqParent) {
-    dq >> dqParent(qInd, qInd + qSize - 1);
+    dq &= dqParent(qInd, qInd + qSize - 1);
   }
 
   void Object::updateuRef(const Vec &uParent) {
-    u >> uParent(uInd[0], uInd[0] + uSize[0] - 1);
+    u &= uParent(uInd[0], uInd[0] + uSize[0] - 1);
   }
 
   void Object::updateuallRef(const Vec &uParent) {
-    uall >> uParent(hInd[0], hInd[0] + hSize[0] - 1);
+    uall &= uParent(hInd[0], hInd[0] + hSize[0] - 1);
   }
 
   void Object::updateudRef(const Vec &udParent) {
-    ud >> udParent(uInd[0], uInd[0] + uSize[0] - 1);
+    ud &= udParent(uInd[0], uInd[0] + uSize[0] - 1);
   }
 
   void Object::updateduRef(const Vec &duParent) {
-    du >> duParent(uInd[0], uInd[0] + uSize[0] - 1);
+    du &= duParent(uInd[0], uInd[0] + uSize[0] - 1);
   }
 
   void Object::updateudallRef(const Vec &udParent) {
-    udall >> udParent(hInd[0], hInd[0] + hSize[0] - 1);
+    udall &= udParent(hInd[0], hInd[0] + hSize[0] - 1);
   }
 
   void Object::updatehRef(const Vec& hParent, int i) {
-    h[i] >> hParent(hInd[i], hInd[i] + hSize[i] - 1);
+    h[i] &= hParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
   void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
-    dhdq >> dhdqParent(RangeV(hInd[i], hInd[i] + hSize[i] - 1), RangeV(qInd, qInd + qSize - 1));
+    dhdq &= dhdqParent(RangeV(hInd[i], hInd[i] + hSize[i] - 1), RangeV(qInd, qInd + qSize - 1));
   }
 
   void Object::updatedhduRef(const SqrMat& dhduParent, int i) {
-    dhdu >> dhduParent(RangeV(hInd[i], hInd[i] + hSize[i] - 1), RangeV(uInd[0], uInd[0] + uSize[0] - 1));
+    dhdu &= dhduParent(RangeV(hInd[i], hInd[i] + hSize[i] - 1), RangeV(uInd[0], uInd[0] + uSize[0] - 1));
   }
 
   void Object::updatedhdtRef(const Vec& dhdtParent, int i) {
-    dhdt >> dhdtParent(hInd[i], hInd[i] + hSize[i] - 1);
+    dhdt &= dhdtParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
   void Object::updaterRef(const Vec& rParent, int i) {
-    r[i] >> rParent(hInd[i], hInd[i] + hSize[i] - 1);
+    r[i] &= rParent(hInd[i], hInd[i] + hSize[i] - 1);
   }
 
   void Object::updaterdtRef(const Vec& rdtParent) {
-    rdt >> rdtParent(hInd[0], hInd[0] + hSize[0] - 1);
+    rdt &= rdtParent(hInd[0], hInd[0] + hSize[0] - 1);
   }
 
   void Object::updateTRef(const Mat &TParent) {
-    T >> TParent(RangeV(qInd, qInd + qSize - 1), RangeV(uInd[0], uInd[0] + uSize[0] - 1));
+    T &= TParent(RangeV(qInd, qInd + qSize - 1), RangeV(uInd[0], uInd[0] + uSize[0] - 1));
   }
 
   void Object::updateMRef(const SymMat &MParent) {
-    M >> MParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
+    M &= MParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
   }
 
   void Object::updateLLMRef(const SymMat &LLMParent) {
-    LLM >> LLMParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
+    LLM &= LLMParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
   }
 
   void Object::init(InitStage stage, const InitConfigSet &config) {

@@ -849,7 +849,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateG() {
-    G << SqrMat(evalW().T() * slvLLFac(evalLLM(), evalV()));
+    G &= SqrMat(evalW().T() * slvLLFac(evalLLM(), evalV()));
 
     if (checkGSize)
       ; // Gs.resize();
@@ -858,18 +858,18 @@ namespace MBSim {
         facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }
-    Gs << G;
+    Gs.resize() = G;
 
     updG = false;
   }
 
   void DynamicSystemSolver::updatebc() {
-    bc << evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
+    bc &= evalW().T() * slvLLFac(evalLLM(), evalh()) + evalwb();
     updbc = false;
   }
 
   void DynamicSystemSolver::updatebi() {
-    bi << evalgd(); // bi = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
+    bi &= evalgd(); // bi = gd + trans(W)*slvLLFac(LLM,h)*dt with dt=0
     updbi = false;
   }
 
@@ -918,7 +918,7 @@ namespace MBSim {
       La.init(0);
 
     Vec LaOld;
-    LaOld << La;
+    LaOld = La;
     iteri = (this->*solveImpacts_)(); // solver election
     if (iteri >= maxIter) {
       msg(Warn) << "\n";
@@ -1260,11 +1260,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezRef(const Vec &zParent) {
-    z >> zParent(0, getzSize()-1);
+    z &= zParent(0, getzSize()-1);
 
-    q >> (z(0, qSize - 1));
-    u >> (z(qSize, qSize + uSize[0] - 1));
-    x >> (z(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
+    q &= (z(0, qSize - 1));
+    u &= (z(qSize, qSize + uSize[0] - 1));
+    x &= (z(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqRef(q);
     updateuRef(u);
@@ -1272,11 +1272,11 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatezdRef(const Vec &zdParent) {
-    zd >> zdParent(0, getzSize()-1);
+    zd &= zdParent(0, getzSize()-1);
 
-    qd >> (zd(0, qSize - 1));
-    ud >> (zd(qSize, qSize + uSize[0] - 1));
-    xd >> (zd(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
+    qd &= (zd(0, qSize - 1));
+    ud &= (zd(qSize, qSize + uSize[0] - 1));
+    xd &= (zd(qSize + uSize[0], qSize + uSize[0] + xSize - 1));
 
     updateqdRef(qd);
     updateudRef(ud);

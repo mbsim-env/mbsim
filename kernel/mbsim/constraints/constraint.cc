@@ -37,15 +37,15 @@ namespace MBSim {
   }
 
   void Constraint::updatexRef(const Vec &xParent) {
-    x >> xParent(xInd,xInd+xSize-1);
+    x &= xParent(xInd,xInd+xSize-1);
   } 
 
   void Constraint::updatexdRef(const Vec &xdParent) {
-    xd >> xdParent(xInd,xInd+xSize-1);
+    xd &= xdParent(xInd,xInd+xSize-1);
   } 
 
   void Constraint::updatedxRef(const Vec &dxParent) {
-    dx >> dxParent(xInd,xInd+xSize-1);
+    dx &= dxParent(xInd,xInd+xSize-1);
   }
 
   void Constraint::initz() {

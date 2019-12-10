@@ -315,7 +315,7 @@ namespace MBSim {
     system_.setStepSize(dt_);
 //    q_l += system_.deltaq(z_l,t_,dt_);
 //    system_.update(z_,t_+dt_,1);
-    system_.getbi(false) = system_.evalgd() + system_.evalW().T()*slvLLFac(system_.evalLLM(),system_.evalh())*dt_;
+    system_.getbi(false) &= system_.evalgd() + system_.evalW().T()*slvLLFac(system_.evalLLM(),system_.evalh())*dt_;
     system_.setUpdatebi(false);
     system_.setTime(t_+dt_);
     u_l += system_.evaldu();
@@ -663,9 +663,9 @@ namespace MBSim {
     VecInt ipiv(M.size());
     SqrMat luMeff = SqrMat(facLU(M - theta*dt*dhdu_n - theta*theta*dt*dt*dhdq_n*T,ipiv));
     Vec heff = h+theta*dhdq_n*T*u_l*dt;
-    system_.getG(false) = SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
-    system_.getGs(false) << system_.evalG();
-    system_.getbi(false) = system_.evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
+    system_.getG(false) &= SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
+    system_.getGs(false).resize() = system_.evalG();
+    system_.getbi(false) &= system_.evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
     system_.setUpdatebi(false);
 
     Vec du = slvLUFac(luMeff,heff*dt + V*system_.getla(),ipiv);

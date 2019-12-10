@@ -126,10 +126,10 @@ namespace MBSim {
       VecInt ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - (theta*dt)*dhdu - (theta*theta*dt*dt)*dhdq*T,ipiv));
       Vec heff = h + (theta*dt)*dhdq*T*system->getu();
-      system->getG(false) << SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
-      system->getGs(false) << system->getG(false);
+      system->getG(false) &= SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
+      system->getGs(false).resize() = system->getG(false);
       system->setUpdateG(false);
-      system->getbi(false) << system->evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
+      system->getbi(false) &= system->evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
       system->setUpdatebi(false);
 
       Vec du = slvLUFac(luMeff,heff*dt+system->evalrdt(),ipiv);

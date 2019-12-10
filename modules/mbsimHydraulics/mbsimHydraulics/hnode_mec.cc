@@ -164,14 +164,14 @@ namespace MBSimHydraulics {
       const int laJ = laInd;
       const int hI = connectedTransFrames[i].frame->gethInd(j);
       const int hJ = hI + connectedTransFrames[i].frame->gethSize(j)-1;
-      W[j][nLines+i].resize()>>WParent(RangeV(hI, hJ), RangeV(laI, laJ));
+      W[j][nLines+i] &= WParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedRotFrames[i].frame->gethInd(j);
       const int hJ = hI + connectedRotFrames[i].frame->gethSize(j)-1;
-      W[j][nTrans+nLines+i].resize()>>WParent(RangeV(hI, hJ), RangeV(laI, laJ));
+      W[j][nTrans+nLines+i] &= WParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
 
@@ -182,14 +182,14 @@ namespace MBSimHydraulics {
       const int laJ = laInd;
       const int hI = connectedTransFrames[i].frame->gethInd(j);
       const int hJ = hI + connectedTransFrames[i].frame->gethSize(j)-1;
-      V[j][nLines+i].resize()>>VParent(RangeV(hI, hJ), RangeV(laI, laJ));
+      V[j][nLines+i] &= VParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int laI = laInd;
       const int laJ = laInd;
       const int hI = connectedRotFrames[i].frame->gethInd(j);
       const int hJ = hI + connectedRotFrames[i].frame->gethSize(j)-1;
-      V[j][nTrans+nLines+i].resize()>>VParent(RangeV(hI, hJ), RangeV(laI, laJ));
+      V[j][nTrans+nLines+i] &= VParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
 
@@ -199,12 +199,12 @@ namespace MBSimHydraulics {
       const int hI = connectedTransFrames[i].frame->gethInd(j);
       const int hJ = hI + connectedTransFrames[i].frame->gethSize(j)-1;
       msg(Info) << "j=" << j << ", nLines+i=" << nLines+i << ", h[j, nLines+i]=" << h[j][nLines+i] << " hI=" << hI << ", hJ=" << hJ << ", hParent=" << hParent(RangeV(hI, hJ)) << endl;
-      h[j][nLines+i].resize() >> hParent(RangeV(hI, hJ));
+      h[j][nLines+i] &= hParent(RangeV(hI, hJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int hI = connectedRotFrames[i].frame->gethInd(j);
       const int hJ = hI + connectedRotFrames[i].frame->gethSize(j)-1;
-      h[j][nTrans+nLines+i].resize() >> hParent(RangeV(hI, hJ));
+      h[j][nTrans+nLines+i] &= hParent(RangeV(hI, hJ));
     }
   }
 
@@ -237,12 +237,12 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<nTrans; i++) {
       const int rI = connectedTransFrames[i].frame->gethInd(j);
       const int rJ = rI + connectedTransFrames[i].frame->gethSize(j)-1;
-      r[j][nLines+i] >> rParent(RangeV(rI, rJ));
+      r[j][nLines+i] &= rParent(RangeV(rI, rJ));
     }
     for (unsigned int i=0; i<nRot; i++) {
       const int rI = connectedRotFrames[i].frame->gethInd(j);
       const int rJ = rI + connectedRotFrames[i].frame->gethSize(j)-1;
-      r[j][nTrans+nLines+i] >> rParent(RangeV(rI, rJ));
+      r[j][nTrans+nLines+i] &= rParent(RangeV(rI, rJ));
     }
   }
 
@@ -563,7 +563,7 @@ namespace MBSimHydraulics {
 
   void RigidNodeMec::updatewbRef(const Vec &wbParent) {
     Link::updatewbRef(wbParent);
-    gd >> wb;
+    gd &= wb;
   }
 
   void RigidNodeMec::updateGeneralizedForces() {

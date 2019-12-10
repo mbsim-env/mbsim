@@ -100,18 +100,18 @@ namespace MBSimElectronics {
 
   void ElectronicLink::updatehRef(const fmatvec::Vec &hParent, int j) {
     RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->gethSize(j)-1);
-    h[j][0]>>hParent(I);
+    h[j][0] &= hParent(I);
   } 
 
   void ElectronicLink::updaterRef(const Vec &rParent, int j) {
     RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->gethSize(j)-1);
-    r[j][0]>>rParent(I);
+    r[j][0] &= rParent(I);
   } 
 
   void ElectronicLink::updateWRef(const fmatvec::Mat& WParent, int j) {
     RangeV J = RangeV(laInd,laInd+laSize-1);
     RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->gethSize(j)-1);
-    W[j][0].resize()>>WParent(I,J);
+    W[j][0].resize() &= WParent(I,J);
   }
 
   void ElectronicLink::updateVRef(const fmatvec::Mat& ref, int j) {

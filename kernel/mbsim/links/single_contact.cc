@@ -214,9 +214,9 @@ namespace MBSim {
     ContourLink::updatelaRef(laParent);
     if (laSize) {
       if (fcl->isSetValued())
-        laN >> la(0, 0);
+        laN &= la(0, 0);
       if (fdf and fdf->isSetValued())
-        laT >> la(fcl->isSetValued(), laSize - 1);
+        laT &= la(fcl->isSetValued(), laSize - 1);
     }
   }
 
@@ -224,9 +224,9 @@ namespace MBSim {
     ContourLink::updateLaRef(LaParent);
     if (laSize) {
       if (fcl->isSetValued())
-        LaN >> La(0, 0);
+        LaN &= La(0, 0);
       if (fdf and fdf->isSetValued())
-        LaT >> La(fcl->isSetValued(), laSize - 1);
+        LaT &= La(fcl->isSetValued(), laSize - 1);
     }
   }
 
@@ -234,9 +234,9 @@ namespace MBSim {
     ContourLink::updategdRef(gdParent);
     if (gdSize) {
       if (fcl->isSetValued())
-        gdN >> gd(0, 0);
+        gdN &= gd(0, 0);
       if (fdf and fdf->isSetValued())
-        gdT >> gd(fcl->isSetValued(), gdSize - 1);
+        gdT &= gd(fcl->isSetValued(), gdSize - 1);
     }
   }
 

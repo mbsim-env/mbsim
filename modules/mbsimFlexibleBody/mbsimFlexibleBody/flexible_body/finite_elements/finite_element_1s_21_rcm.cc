@@ -84,7 +84,7 @@ namespace MBSimFlexibleBody {
 
       qElement_Old = qElement;
     //}
-    M << JTMJ(MLocal,Jeg); 
+    M = JTMJ(MLocal,Jeg);
   }
 
   void FiniteElement1s21RCM::computeh(const Vec& qElement, const Vec& qpElement) {
@@ -110,7 +110,7 @@ namespace MBSimFlexibleBody {
       BuildJacobi(qElement,qpElement,Jeg,Jegp);
 
       // Locale velocities
-      qpLocal << Jeg * qpElement;
+      qpLocal = Jeg * qpElement;
 
       // symmetric mass matrix
       MLocal(0,0) = Arho*l0;
@@ -160,8 +160,8 @@ namespace MBSimFlexibleBody {
       // damping
       hdLocal(3) = - depsilon * epsp; // eps
 
-      hIntermediate << hLocal + hdLocal - MLocal * Jegp * qpElement;
-      h << Jeg.T() * hIntermediate;
+      hIntermediate = hLocal + hdLocal - MLocal * Jegp * qpElement;
+      h = Jeg.T() * hIntermediate;
 
       qElement_Old = qElement;
       qpElement_Old = qpElement;
@@ -171,8 +171,8 @@ namespace MBSimFlexibleBody {
   void FiniteElement1s21RCM::computedhdz(const Vec& qElement, const Vec& qpElement) {
     Mat Dhz(16,8,INIT,0.);
     Dhz   = hFullJacobi(qElement,qpElement,qLocal,qpLocal,Jeg,Jegp,MLocal,hIntermediate);
-    Dhq  << static_cast<SqrMat>(Dhz(0,0, 7,7));
-    Dhqp << static_cast<SqrMat>(Dhz(8,0,15,7));
+    Dhq  = static_cast<SqrMat>(Dhz(0,0, 7,7));
+    Dhqp = static_cast<SqrMat>(Dhz(8,0,15,7));
     Dhqp += Jeg.T()*Damp*Jeg;
   }
 
@@ -196,7 +196,7 @@ namespace MBSimFlexibleBody {
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
 
     // local velocities
-    qpLocal << Jeg * qpElement;
+    qpLocal = Jeg * qpElement;
 
     return (Arho*l0*(12608*Power(aLp,2) + 12608*Power(aRp,2) - 856*aRp*bLp*l0 + 1640*aL*bL*Power(bLp,2)*l0 + 224*aR*bL*Power(bLp,2)*l0 - 408*aL*Power(bLp,2)*bR*l0 - 48*aR*Power(bLp,2)*bR*l0 - 11176*aRp*bRp*l0 - 48*aL*bL*Power(bRp,2)*l0 - 408*aR*bL*Power(bRp,2)*l0 + 224*aL*bR*Power(bRp,2)*l0 + 1640*aR*bR*Power(bRp,2)*l0 - 672*aRp*bLp*eps*l0 - 12768*aRp*bRp*eps*l0 + 12768*aL*bLp*epsp*l0 + 672*aR*bLp*epsp*l0 + 672*aL*bRp*epsp*l0 + 12768*aR*bRp*epsp*l0 + 2488*Power(bLp,2)*l0h2 + 211*Power(bL,2)*Power(bLp,2)*l0h2 - 84*bL*Power(bLp,2)*bR*l0h2 + 9*Power(bLp,2)*Power(bR,2)*l0h2 + 336*bLp*bRp*l0h2 + 2488*Power(bRp,2)*l0h2 + 9*Power(bL,2)*Power(bRp,2)*l0h2 - 84*bL*bR*Power(bRp,2)*l0h2 + 211*Power(bR,2)*Power(bRp,2)*l0h2 + 5628*Power(bLp,2)*eps*l0h2 + 504*bLp*bRp*eps*l0h2 + 5628*Power(bRp,2)*eps*l0h2 + 3360*Power(bLp,2)*Power(eps,2)*l0h2 + 3360*Power(bRp,2)*Power(eps,2)*l0h2 + 1092*bL*bLp*epsp*l0h2 - 252*bLp*bR*epsp*l0h2 - 252*bL*bRp*epsp*l0h2 + 1092*bR*bRp*epsp*l0h2 + 6720*Power(epsp,2)*l0h2 - 2*(64*(196*Power(aL,2) + 17*aL*aR + Power(aR,2))*bLp - 64*(Power(aL,2) + 17*aL*aR + 196*Power(aR,2))*bRp + 8*(756*aRp*(1 + eps) + aR*(28*bL*bLp - 6*bLp*bR + 51*bL*bRp - 205*bR*bRp - 756*epsp) + aL*(205*bL*bLp - 51*bLp*bR + 6*bL*bRp - 28*bR*bRp + 756*epsp))*l0 + (bLp*(211*Power(bL,2) - 84*bL*bR + 9*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps)) - bRp*(9*Power(bL,2) - 84*bL*bR + 211*Power(bR,2) + 672*(1 + eps)*(4 + 5*eps)) + 672*(bL - bR)*epsp)*l0h2)*phiSp + 4*(3152*Power(aL,2) + 3152*Power(aR,2) - 46*aR*bL*l0 + 398*aR*bR*l0 + (55*Power(bL,2) - 42*bL*bR + 55*Power(bR,2) + 1680*Power(1 + eps,2))*l0h2 + aL*(544*aR + 398*bL*l0 - 46*bR*l0))*Power(phiSp,2) + 8*aLp*(272*aRp + l0*(-1397*bLp - 107*bRp - 84*(19*bLp + bRp)*eps + 1512*(1 + eps)*phiSp)) + 64*((196*Power(aL,2) + 17*aL*aR + Power(aR,2))*Power(bLp,2) + (Power(aL,2) + 17*aL*aR + 196*Power(aR,2))*Power(bRp,2) + 1260*(Power(xSp,2) + Power(ySp,2))) - 336*(3*l0*(20*epsp + (5*bL - bR)*(bLp - phiSp))*xSp + 104*aL*(bLp - phiSp)*xSp + 8*aR*(bLp - phiSp)*xSp + 8*(13*aLp + aRp)*ySp - 3*l0*(bRp + 5*bLp*(3 + 4*eps) - 20*(1 + eps)*phiSp)*ySp)*cos(bL - phiS) + 336*((8*aL*(bRp + phiSp)*xSp + 104*aR*(bRp + phiSp)*xSp - 3*l0*(-20*epsp + (bL - 5*bR)*(bRp + phiSp))*xSp - 8*(aLp + 13*aRp)*ySp + 3*l0*(bLp + 5*bRp*(3 + 4*eps) + 20*(1 + eps)*phiSp)*ySp)*cos(bR + phiS) + (-((104*aLp + 8*aRp - 3*(bRp + 5*bLp*(3 + 4*eps))*l0 + 60*(1 + eps)*l0*phiSp)*xSp) + (3*l0*(20*epsp + (5*bL - bR)*(bLp - phiSp)) + 104*aL*(bLp - phiSp) + 8*aR*(bLp - phiSp))*ySp)*sin(bL - phiS) + ((8*aLp + 104*aRp - 3*l0*(bLp + 5*bRp*(3 + 4*eps) + 20*(1 + eps)*phiSp))*xSp + (8*aL*(bRp + phiSp) + 104*aR*(bRp + phiSp) - 3*l0*(-20*epsp + (bL - 5*bR)*(bRp + phiSp)))*ySp)*sin(bR + phiS))))/161280.;
   }
@@ -459,7 +459,7 @@ namespace MBSimFlexibleBody {
     BuildqLocal(qElement,qLocal);
     BuildJacobi(qElement,qpElement,Jeg,Jegp);
 
-    qpLocal << Jeg * qpElement;
+    qpLocal = Jeg * qpElement;
     Data(0) = (32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*(1 + eps) - 12*(8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*(1 + eps)*l0 + 3*(140*eps + 3*(3*Power(bL,2) - 2*bL*bR + 3*Power(bR,2))*(1 + eps))*l0h2)/(420.*l0h2);
     Data(1) = (64*(17*aL*aLp - aLp*aR - aL*aRp + 17*aR*aRp)*(1 + eps) + 32*(17*Power(aL,2) - 2*aL*aR + 17*Power(aR,2))*epsp - 12*((8*aLp*bL - 3*aRp*bL + 8*aL*bLp - 3*aR*bLp - 3*aLp*bR + 8*aRp*bR - 3*aL*bRp + 8*aR*bRp)*(1 + eps) + (8*aL*bL - 3*aR*bL - 3*aL*bR + 8*aR*bR)*epsp)*l0 + 3*(6*(3*bL*bLp - bLp*bR - bL*bRp + 3*bR*bRp)*(1 + eps) + (140 + 9*Power(bL,2) - 6*bL*bR + 9*Power(bR,2))*epsp)*l0h2)/ (420.*l0h2);
     Data(2) = xS;
@@ -999,8 +999,8 @@ namespace MBSimFlexibleBody {
     dhLqpJp(7,6) = (11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(2.*l0*one_p_cos_dphi);
     dhLqpJp(7,7) = (11*(2*(-x1p + x2p - phi1p*y1 + phi1p*y2)*cos(phi1) + (-x1p + x2p - phi2p*y1 + phi2p*y2)*cos(2*phi1 - phi2) - x1p*cos(phi2) + x2p*cos(phi2) - 2*phi1p*y1*cos(phi2) + phi2p*y1*cos(phi2) + 2*phi1p*y2*cos(phi2) - phi2p*y2*cos(phi2) + 2*(phi1p*x1 - phi1p*x2 - y1p + y2p)*sin(phi1) + (phi2p*x1 - phi2p*x2 - y1p + y2p)*cos(phi2)*sin(2*phi1) + 2*phi1p*x1*sin(phi2) - phi2p*x1*sin(phi2) - 2*phi1p*x2*sin(phi2) + phi2p*x2*sin(phi2) - y1p*sin(phi2) + y2p*sin(phi2) - (phi2p*x1 - phi2p*x2 - y1p + y2p)*cos(2*phi1)*sin(phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
 
-    Dhz(0,0, 7,7) << dhqJ + Jeg.T()*( dhLq *Jeg - dhLqM*Jeg - MLocal*dhLqJp  );
-    Dhz(8,0,15,7) <<        Jeg.T()*( dhLqp*Jeg             - MLocal*dhLqpJp );
+    Dhz(0,0, 7,7) = dhqJ + Jeg.T()*( dhLq *Jeg - dhLqM*Jeg - MLocal*dhLqJp  );
+    Dhz(8,0,15,7) =        Jeg.T()*( dhLqp*Jeg             - MLocal*dhLqpJp );
 
     return Dhz;
   }

@@ -46,8 +46,8 @@ namespace MBSimFlexibleBody {
       //  | --------------> r
       // radial and azimuthal coordinates of the FE [ElementalNodes(r1,j1,r2,j2)]
       // r1 and j1 are defined with node 1, r2 and j2 with node 4
-      ElementalNodes[i](0, 1) << NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
-      ElementalNodes[i](2, 3) << NodeCoordinates.row(ElementNodeList(i, 3)).T(); // node 4
+      ElementalNodes[i](0, 1) = NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
+      ElementalNodes[i](2, 3) = NodeCoordinates.row(ElementNodeList(i, 3)).T(); // node 4
 
       if (ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
         ElementalNodes[i](3) += 2 * M_PI;
@@ -55,19 +55,19 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof position (w, a, b) from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      qElement[i](0, RefDofs - 1) << evalqExt()(0, RefDofs - 1);
-      qElement[i](RefDofs, RefDofs + NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << qext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
+      qElement[i](0, RefDofs - 1) = evalqExt()(0, RefDofs - 1);
+      qElement[i](RefDofs, RefDofs + NodeDofs - 1) = qext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) = qext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) = qext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
+      qElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) = qext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
 
       // mapping node dof velocity from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      uElement[i](0, RefDofs - 1) << evaluExt()(0, RefDofs - 1);
-      uElement[i](RefDofs, RefDofs + NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) << uext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
+      uElement[i](0, RefDofs - 1) = evaluExt()(0, RefDofs - 1);
+      uElement[i](RefDofs, RefDofs + NodeDofs - 1) = uext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) = uext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) = uext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
+      uElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) = uext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
     }
     updEle = false;
   }
@@ -277,14 +277,14 @@ namespace MBSimFlexibleBody {
         case innerring: // 0: innerring
           ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
           Jext = Mat(Dofs, qSize, INIT, 0.);
-          Jext(0, 0, RefDofs - 1, RefDofs - 1) << DiagMat(RefDofs, INIT, 1.);
-          Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) << DiagMat(qSize - RefDofs, INIT, 1.);
+          Jext(0, 0, RefDofs - 1, RefDofs - 1) = DiagMat(RefDofs, INIT, 1.);
+          Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) = DiagMat(qSize - RefDofs, INIT, 1.);
         break;
 
         case outerring: // 1: outerring
           ILocked = RangeV(qSize, Dofs - 1);
           Jext = Mat(Dofs, qSize, INIT, 0.);
-          Jext(0, 0, qSize - 1, qSize - 1) << DiagMat(qSize, INIT, 1.);
+          Jext(0, 0, qSize - 1, qSize - 1) = DiagMat(qSize, INIT, 1.);
         break;
       }
 

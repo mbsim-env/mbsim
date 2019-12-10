@@ -256,14 +256,14 @@ namespace MBSimFlexibleBody {
       int n = 4 * i ;
 
       if(i<Elements-1 || openStructure==true) {
-        qElement[i] << q(n,n+7);
-        uElement[i] << u(n,n+7);
+        qElement[i] = q(n,n+7);
+        uElement[i] = u(n,n+7);
       }
       else { // last finite element and ring closure
-        qElement[i](0,3) << q(n,n+3);
-        uElement[i](0,3) << u(n,n+3);
-        qElement[i](4,7) << q(0,3);
-        uElement[i](4,7) << u(0,3);
+        qElement[i](0,3) = q(n,n+3);
+        uElement[i](0,3) = u(n,n+3);
+        qElement[i](4,7) = q(0,3);
+        uElement[i](4,7) = u(0,3);
       }
     }
     updEle = false;

@@ -46,7 +46,7 @@ namespace MBSim {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
       RangeV J = RangeV(laInd, laInd + laSize - 1);
-      W[j][i] >> WParent(I, J);
+      W[j][i] &= WParent(I, J);
     }
   } 
 
@@ -54,14 +54,14 @@ namespace MBSim {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
       RangeV J = RangeV(laInd, laInd + laSize - 1);
-      V[j][i] >> VParent(I, J);
+      V[j][i] &= VParent(I, J);
     }
   } 
 
   void ContourLink::updatehRef(const Vec &hParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
-      h[j][i] >> hParent(I);
+      h[j][i] &= hParent(I);
     }
   } 
 
@@ -76,7 +76,7 @@ namespace MBSim {
   void ContourLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV I = RangeV(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->gethSize(j)-1);
-      dhdt[i]>>dhdtParent(I);
+      dhdt[i]&=dhdtParent(I);
     }
   }
 
@@ -84,7 +84,7 @@ namespace MBSim {
     for(unsigned i=0; i<2; i++) {
       int hInd =  contour[i]->gethInd(j);
       RangeV I = RangeV(hInd,hInd+contour[i]->gethSize(j)-1);
-      r[j][i]>>rParent(I);
+      r[j][i]&=rParent(I);
     }
   } 
 

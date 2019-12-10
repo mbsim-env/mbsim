@@ -192,7 +192,7 @@ namespace MBSim {
   void TimeSteppingSSCIntegrator::subIntegrate(double tStop) { // system: only dummy!
     Timer.start();
 
-    lae << system->getla(false);
+    lae = system->getla(false);
 
     qUncertaintyByExtrapolation=0;
 
@@ -303,12 +303,12 @@ namespace MBSim {
               sysT1->resetUpToDate();
               sysT1->checkActive(1);
               if (sysT1->gActiveChanged()) resize(sysT1);
-              sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dt;
+              sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dt;
               sysT1->setUpdatebi(false);
               sysT1->getu() += sysT1->evaldu();
               sysT1->getx() += sysT1->evaldx();
               iterA  = sysT1->getIterI();
-              la1d << sysT1->getLa()/dt;
+              la1d &= sysT1->getLa()/dt;
               sysT1->getLinkStatus(LStmp_T1);
               sysT1->resetUpToDate();
               // wird jetzt von testTolerances() direkt aufgerufen; nach jedem erfolgreichen Schritt!
@@ -319,7 +319,7 @@ namespace MBSim {
               LSA = LStmp_T1;
               ConstraintsChangedA = changedLinkStatus(LSA,LS,indexLSException);
               singleStepsT1++;
-              z1d << sysT1->getState();
+              z1d = sysT1->getState();
 
               // two step integration (first step) (B1) 
               if (calcJobBT1) {
@@ -331,18 +331,18 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 iterB1  = sysT1->getIterI();
-                la2b << sysT1->getLa()/dtHalf;
+                la2b &= sysT1->getLa()/dtHalf;
                 sysT1->getLinkStatus(LStmp_T1);
                 sysT1->resetUpToDate();
                 LSB1 = LStmp_T1;
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT1++;
-                z2b << sysT1->getState();
+                z2b = sysT1->getState();
               }
               // three step integration (first step) (E1) 
               if (calcJobE1T1) {
@@ -355,13 +355,13 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 singleStepsT1++;
-                z3b << sysT1->getState();
+                z3b = sysT1->getState();
               }
             }  // close omp thread 1
 
@@ -377,18 +377,18 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB1  = sysT2->getIterI();
-                la2b << sysT2->getLa()/dtHalf;
+                la2b &= sysT2->getLa()/dtHalf;
                 sysT2->getLinkStatus(LStmp_T2);
                 sysT2->resetUpToDate();
                 LSB1 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT2++;
-                z2b << sysT2->getState();
+                z2b = sysT2->getState();
               }
 
               // four step integration (first two steps) (C12)
@@ -401,7 +401,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) &= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -418,7 +418,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) &= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -428,7 +428,7 @@ namespace MBSim {
                 LSC2 = LStmp_T2;
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC2,LSC1,indexLSException);
                 singleStepsT2+=2;
-                z4b << sysT2->getState();
+                z4b = sysT2->getState();
               }
               // three step integration (first two steps ) (E12)
               if (calcJobE12T2) {
@@ -440,7 +440,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -453,13 +453,13 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 singleStepsT2+=2;
-                z3b << sysT2->getState();
+                z3b = sysT2->getState();
               }
             }  // close omp thread 2
 
@@ -475,7 +475,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -491,7 +491,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -507,7 +507,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -516,7 +516,7 @@ namespace MBSim {
                 LSD3 = LStmp_T3;
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD3,LSD2,indexLSException);
                 singleStepsT3+=3;
-                z6b << sysT3->getState();
+                z6b = sysT3->getState();
               }
             }  // close omp thread 3
 
@@ -532,8 +532,8 @@ namespace MBSim {
           ConstraintsChangedD = false;
           ConstraintsChangedBlock2 = false;        
 
-          if (FlagSSC && method==extrapolation && maxOrder==3) zStern << 0.5*z2b - 4.0*z4b + 4.5*z6b;
-          if (FlagSSC && method==extrapolation && maxOrder==2) zStern << 2.0*z4b - z2b;
+          if (FlagSSC && method==extrapolation && maxOrder==3) zStern = 0.5*z2b - 4.0*z4b + 4.5*z6b;
+          if (FlagSSC && method==extrapolation && maxOrder==2) zStern = 2.0*z4b - z2b;
         }
         // Block 2
 #pragma omp parallel num_threads(numThreads)
@@ -552,7 +552,7 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
@@ -562,7 +562,7 @@ namespace MBSim {
                 LSB2 = LStmp_T1;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
                 singleStepsT1++;
-                z2d << sysT1->getState();
+                z2d = sysT1->getState();
               }
               if (calcJobB2RET1 && calcBlock2) { //B2RE
                 sysT1->setState(zStern);
@@ -573,14 +573,14 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 iterB2RE  = sysT1->getIterI();
                 sysT1->resetUpToDate();
                 singleStepsT1++;
-                z2dRE << sysT1->getState();
+                z2dRE = sysT1->getState();
               }
               // three step integration (E23) last two steps
               if (calcJobE23T1 && calcBlock2) {
@@ -592,7 +592,7 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
@@ -605,13 +605,13 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) << sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 singleStepsT1+=2;
-                z3d << sysT1->getState();
+                z3d = sysT1->getState();
               } 
             }  // close omp thread 1
 #pragma omp section                   // thread 2
@@ -627,7 +627,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) &= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -643,7 +643,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) &= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -654,7 +654,7 @@ namespace MBSim {
                 ConstraintsChangedC = changedLinkStatus(LSC2,LSC3,indexLSException);
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC3,LSC4,indexLSException);
                 singleStepsT2+=2;
-                z4d << sysT2->getState();
+                z4d = sysT2->getState();
               }
 
               // two step integration (B2)
@@ -667,19 +667,19 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB2  = sysT2->getIterI();
-                la2b << sysT2->getLa()/dtHalf;
+                la2b &= sysT2->getLa()/dtHalf;
                 sysT2->getLinkStatus(LStmp_T2);
                 sysT2->resetUpToDate();
                 LSB2 = LStmp_T2;
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
 
                 singleStepsT2++;
-                z2d << sysT2->getState();
+                z2d = sysT2->getState();
               }
               if (calcJobB2RET2 && calcBlock2) { //B2RE
                 sysT2->setState(zStern);
@@ -690,14 +690,14 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB2RE  = sysT2->getIterI();
                 sysT2->resetUpToDate();
                 singleStepsT2++;
-                z2dRE << sysT2->getState();
+                z2dRE = sysT2->getState();
               }
               // three step integration (E3) last step
               if (calcJobE3T2 && calcBlock2) {
@@ -709,13 +709,13 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) << sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 singleStepsT2++;
-                z3d << sysT2->getState();
+                z3d = sysT2->getState();
               }
             }  // close omp thread 2
 #pragma omp section	        //thread 3
@@ -731,7 +731,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -747,7 +747,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -763,7 +763,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) << sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -773,7 +773,7 @@ namespace MBSim {
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD5,LSD6,indexLSException);
 
                 singleStepsT3+=3;
-                z6d << sysT3->getState();
+                z6d = sysT3->getState();
               }
             }  // close omp thread 3
 
@@ -813,11 +813,11 @@ namespace MBSim {
       if(order>=2)integrationStepsOrder2++;
       t += dte;
       plot();
-      zi << ze;
-      LS << LSe;
+      zi = ze;
+      LS = LSe;
       if (outputInterpolation) {
-        la << lae;
-        laSizes << laeSizes;
+        la &= lae;
+        laSizes = laeSizes;
       }
 
       if(ConstraintsChanged) integrationStepswithChange++;
@@ -838,7 +838,8 @@ namespace MBSim {
       tPlot+=dtPlot;
       sysT1->setTime(t);
       sysT1->setState(ze);
-      sysT1->getla(false) << lae;
+      sysT1->calclaSize(2);
+      if(lae.size() == sysT1->getlaSize()) sysT1->getla(false) = lae;
       sysT1->resetUpToDate();
       sysT1->setUpdatela(false);
       sysT1->setUpdateLa(false);
@@ -945,24 +946,24 @@ namespace MBSim {
     if (method==extrapolation) {
       if (!FlagSSC) {
         dte =dt;
-        if (maxOrder==1) {LSe << LSA;     ze << z1d;          }
+        if (maxOrder==1) {LSe = LSA;     ze = z1d;          }
         if (maxOrder==2) {
-          LSe << LSB2;    
+          LSe = LSB2;
           if (!ConstraintsChanged) {
-            ze << 2.0*z2d - z1d; order=2;} 
-          else {ze<<z2d; order=1;}
+            ze = 2.0*z2d - z1d; order=2;}
+          else {ze=z2d; order=1;}
         }
         if (maxOrder==3) {
-          LSe << LSB2;
+          LSe = LSB2;
           if (!ConstraintsChanged) {
-            ze << 0.5*z1d - 4.0*z2d + 4.5*z3d; order=3;} 
-          else {ze<<z3d; order=1;}
+            ze = 0.5*z1d - 4.0*z2d + 4.5*z3d; order=3;}
+          else {ze=z3d; order=1;}
         }
         if (maxOrder==4) {
-          LSe << LSD6;
+          LSe = LSD6;
           if (!ConstraintsChanged) {
-            ze << -1.0/15.0*z1d + z2d + 27.0/5.0*z6d - 16.0/3.0*z4d; order=4;} 
-          else {ze<<z6d; order=1;}
+            ze = -1.0/15.0*z1d + z2d + 27.0/5.0*z6d - 16.0/3.0*z4d; order=4;}
+          else {ze=z6d; order=1;}
         }
 
       }
@@ -975,8 +976,8 @@ namespace MBSim {
           testOK = (dtNewRel>=1.0);
           dtNewRel = sqrt(dtNewRel);
           dte = dt;
-          ze  << z2d;
-          LSe << LSB2;
+          ze  = z2d;
+          LSe = LSB2;
         }
         if (maxOrder>=2) {
           IterConvergenceBlock1 = (iterB1<maxIter) && (iterC1<maxIter) && (iterC2<maxIter);
@@ -991,13 +992,13 @@ namespace MBSim {
             dtNewRel = sqrt(dtNewRel);
             dte= dt/2.0;
             if (ConstraintsChangedBlock1) {
-              if (maxOrder==2) {ze << z4b;  LSe << LSC2;}
-              if (maxOrder==3) {ze << z6b;  LSe << LSD3;}
+              if (maxOrder==2) {ze = z4b;  LSe = LSC2;}
+              if (maxOrder==3) {ze = z6b;  LSe = LSD3;}
             }
             else {
-              ze << zStern; order=maxOrder;
-              if (maxOrder==2) {LSe << LSC2;}
-              if (maxOrder==3) {LSe << LSD3;}
+              ze = zStern; order=maxOrder;
+              if (maxOrder==2) {LSe = LSC2;}
+              if (maxOrder==3) {LSe = LSD3;}
             }
           }
 
@@ -1010,8 +1011,8 @@ namespace MBSim {
                 dtNewRel = sqrt(dtNewRelTmp);
                 testOK = true;
                 dte = dt;
-                if (maxOrder==2) { ze << z4d; LSe << LSC4;}
-                if (maxOrder==3) { ze << z6d; LSe << LSD6;}
+                if (maxOrder==2) { ze = z4d; LSe = LSC4;}
+                if (maxOrder==3) { ze = z6d; LSe = LSD6;}
                 order =1;
               }
             }
@@ -1024,8 +1025,8 @@ namespace MBSim {
             dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
             testOK = (dtNewRel>=1.0);
             dtNewRel = pow(dtNewRel,1.0/(maxOrder+1));  
-            if (maxOrder==2) { ze << 2.0*z4d - z2dRE; LSe << LSC4;}
-            if (maxOrder==3) { ze << 4.5*z6d+0.5*z2dRE-4.0*z4d; LSe << LSD6;}
+            if (maxOrder==2) { ze = 2.0*z4d - z2dRE; LSe = LSC4;}
+            if (maxOrder==3) { ze = 4.5*z6d+0.5*z2dRE-4.0*z4d; LSe = LSD6;}
             dte=dt;
             // order >=2 hat mehrfach versagt! Teste auf order 1
             if (!testOK && (StepTrials>2)) {
@@ -1041,13 +1042,13 @@ namespace MBSim {
                     testOK= true;
                     if (dtNewRelTmp2>=1.0) {
                       dtNewRel= sqrt(dtNewRelTmp2);
-                      if (maxOrder==2) {ze << z4d; LSe<<LSC4;}
-                      if (maxOrder==3) {ze << z6d; LSe<<LSD6;}
+                      if (maxOrder==2) {ze = z4d; LSe=LSC4;}
+                      if (maxOrder==3) {ze = z6d; LSe=LSD6;}
                     }
                     else {
                       dtNewRel= sqrt(dtNewRelTmp1);  
-                      if (maxOrder==2) {ze << z4b; LSe<<LSC2;}
-                      if (maxOrder==3) {ze << z6b; LSe<<LSD3;}
+                      if (maxOrder==2) {ze = z4b; LSe=LSC2;}
+                      if (maxOrder==3) {ze = z6b; LSe=LSD3;}
                       dte= dt/2.0;
                     }
                   }   
@@ -1071,9 +1072,9 @@ namespace MBSim {
         testOK = (dtNewRel>=1.0);
         dte = dt;
         LSe = LSB2;
-        if (ConstraintsChanged) ze << z2d;
-        if (!ConstraintsChanged && method==embedded) ze<<z1d;
-        if (!ConstraintsChanged && method==embeddedHigherOrder) ze<<2.0*z2d - z1d;
+        if (ConstraintsChanged) ze = z2d;
+        if (!ConstraintsChanged && method==embedded) ze=z1d;
+        if (!ConstraintsChanged && method==embeddedHigherOrder) ze=2.0*z2d - z1d;
       }
 
       if (maxOrder>1) {
@@ -1088,8 +1089,8 @@ namespace MBSim {
           testOK = (dtNewRel>=1.0);
           dtNewRel = sqrt(dtNewRel);
           dte= dt/2.0;
-          if (maxOrder==2)  {ze << z4b;  LSe << LSC2;}
-          if (maxOrder>=3)  {ze << z6b;  LSe << LSD3;}
+          if (maxOrder==2)  {ze = z4b;  LSe = LSC2;}
+          if (maxOrder>=3)  {ze = z6b;  LSe = LSD3;}
         }
 
         if (ConstraintsChanged && !ConstraintsChangedBlock1) { // Pruefe Block2
@@ -1102,8 +1103,8 @@ namespace MBSim {
               testOK = true;
               dte = dt;
               order=1;
-              if (maxOrder==2) { ze << z4d; LSe << LSC4;}
-              if (maxOrder>=3) { ze << z6d; LSe << LSD6;}
+              if (maxOrder==2) { ze = z4d; LSe = LSC4;}
+              if (maxOrder>=3) { ze = z6d; LSe = LSD6;}
             }
           }
         }
@@ -1122,10 +1123,10 @@ namespace MBSim {
             zOp1= 1.0/30.0*z1d - 2.0*z2d +27.0/2.0*z3d - 64.0/3.0*z4d  + 54.0/5.0*z6d; 
           }
 
-          LSe << LSC4;
+          LSe = LSC4;
           dte=dt;
-          if (method==embedded) ze << zOp;
-          if (method==embeddedHigherOrder) ze << zOp1;
+          if (method==embedded) ze = zOp;
+          if (method==embeddedHigherOrder) ze = zOp1;
 
           EstErrorLocal = zOp -zOp1;
           dtNewRel = calculatedtNewRel(EstErrorLocal,dt);
@@ -1145,13 +1146,13 @@ namespace MBSim {
                   testOK= true;
                   if (dtNewRelTmp2>=1.0) {
                     dtNewRel= sqrt(dtNewRelTmp2);
-                    if (maxOrder==2) {ze << z4d; LSe<<LSC4;}
-                    if (maxOrder>=3) {ze << z6d; LSe<<LSD6;}
+                    if (maxOrder==2) {ze = z4d; LSe=LSC4;}
+                    if (maxOrder>=3) {ze = z6d; LSe=LSD6;}
                   }
                   else {
                     dtNewRel= sqrt(dtNewRelTmp1);  
-                    if (maxOrder==2) {ze << z4b; LSe<<LSC2;}
-                    if (maxOrder>=3) {ze << z6b; LSe<<LSD3;}
+                    if (maxOrder==2) {ze = z4b; LSe=LSC2;}
+                    if (maxOrder>=3) {ze = z6b; LSe=LSD3;}
                     dte= dt/2.0;
                   }
                 }  
@@ -1165,15 +1166,15 @@ namespace MBSim {
     } //endif method>0
 
     if (dte<dt) {		// nur halber Integrationsschritt wurde akzeptiert dte==dt/2
-      lae << la2b;
-      laeSizes << la2bSizes;
+      lae &= la2b;
+      laeSizes = la2bSizes;
       iter = iterB1;
       ConstraintsChanged = ConstraintsChangedBlock1;
       IterConvergenceBlock2 = true;
     }
     else {
-      lae << la1d;
-      laeSizes << la1dSizes;        
+      lae &= la1d;
+      laeSizes = la1dSizes;
       iter = iterA;
     }
 

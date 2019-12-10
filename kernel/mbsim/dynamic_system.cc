@@ -567,7 +567,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateqRef(const Vec &qParent) {
-    q >> qParent(qInd, qInd + qSize - 1);
+    q &= qParent(qInd, qInd + qSize - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updateqRef(qParent);
@@ -577,7 +577,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateqdRef(const Vec &qdParent) {
-    qd >> qdParent(qInd, qInd + qSize - 1);
+    qd &= qdParent(qInd, qInd + qSize - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updateqdRef(qdParent);
@@ -587,7 +587,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatedqRef(const Vec &dqParent) {
-    dq >> dqParent(qInd, qInd + qSize - 1);
+    dq &= dqParent(qInd, qInd + qSize - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updatedqRef(dqParent);
@@ -597,7 +597,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateuRef(const Vec &uParent) {
-    u >> uParent(uInd[0], uInd[0] + uSize[0] - 1);
+    u &= uParent(uInd[0], uInd[0] + uSize[0] - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updateuRef(uParent);
@@ -615,7 +615,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateudRef(const Vec &udParent) {
-    ud >> udParent(uInd[0], uInd[0] + uSize[0] - 1);
+    ud &= udParent(uInd[0], uInd[0] + uSize[0] - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updateudRef(udParent);
@@ -625,7 +625,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateduRef(const Vec &duParent) {
-    du >> duParent(uInd[0], uInd[0] + uSize[0] - 1);
+    du &= duParent(uInd[0], uInd[0] + uSize[0] - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updateduRef(duParent);
@@ -643,7 +643,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatexRef(const Vec &xParent) {
-    x >> xParent(xInd, xInd + xSize - 1);
+    x &= xParent(xInd, xInd + xSize - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updatexRef(xParent);
@@ -656,7 +656,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatexdRef(const Vec &xdParent) {
-    xd >> xdParent(xInd, xInd + xSize - 1);
+    xd &= xdParent(xInd, xInd + xSize - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updatexdRef(xdParent);
@@ -669,7 +669,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatedxRef(const Vec &dxParent) {
-    dx >> dxParent(xInd, xInd + xSize - 1);
+    dx &= dxParent(xInd, xInd + xSize - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updatedxRef(dxParent);
@@ -682,7 +682,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatehRef(const Vec &hParent, int j) {
-    h[j] >> hParent(hInd[j], hInd[j] + hSize[j] - 1);
+    h[j] &= hParent(hInd[j], hInd[j] + hSize[j] - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updatehRef(hParent, j);
@@ -695,7 +695,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updaterRef(const Vec &rParent, int j) {
-    r[j] >> rParent(hInd[j], hInd[j] + hSize[j] - 1);
+    r[j] &= rParent(hInd[j], hInd[j] + hSize[j] - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updaterRef(rParent, j);
@@ -705,7 +705,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updaterdtRef(const Vec &rdtParent) {
-    rdt >> rdtParent(hInd[0], hInd[0] + hSize[0] - 1);
+    rdt &= rdtParent(hInd[0], hInd[0] + hSize[0] - 1);
 
     for (auto & i : dynamicsystem)
       (*i).updaterdtRef(rdtParent);
@@ -715,7 +715,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateTRef(const Mat& TParent) {
-    T >> TParent(RangeV(qInd, qInd + qSize - 1), RangeV(uInd[0], uInd[0] + uSize[0] - 1));
+    T &= TParent(RangeV(qInd, qInd + qSize - 1), RangeV(uInd[0], uInd[0] + uSize[0] - 1));
 
     for (auto & i : dynamicsystem)
       i->updateTRef(TParent);
@@ -725,7 +725,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateMRef(const SymMat& MParent) {
-    M >> MParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
+    M &= MParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
 
     for (auto & i : dynamicsystem)
       i->updateMRef(MParent);
@@ -735,7 +735,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateLLMRef(const SymMat& LLMParent) {
-    LLM >> LLMParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
+    LLM &= LLMParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
 
     for (auto & i : dynamicsystem)
       i->updateLLMRef(LLMParent);
@@ -745,77 +745,77 @@ namespace MBSim {
   }
 
   void DynamicSystem::updategRef(const Vec& gParent) {
-    g >> gParent(gInd, gInd + gSize - 1);
+    g &= gParent(gInd, gInd + gSize - 1);
 
     for (auto & i : linkSetValued)
       (*i).updategRef(gParent);
   }
 
   void DynamicSystem::updategdRef(const Vec& gdParent) {
-    gd >> gdParent(gdInd, gdInd + gdSize - 1);
+    gd &= gdParent(gdInd, gdInd + gdSize - 1);
 
     for (auto & i : linkSetValued)
       (*i).updategdRef(gdParent);
   }
 
   void DynamicSystem::updatelaRef(const Vec &laParent) {
-    la >> laParent(laInd, laInd + laSize - 1);
+    la &= laParent(laInd, laInd + laSize - 1);
 
     for (auto & i : linkSetValued)
       (*i).updatelaRef(laParent);
   }
 
   void DynamicSystem::updateLaRef(const Vec &LaParent) {
-    La >> LaParent(laInd, laInd + laSize - 1);
+    La &= LaParent(laInd, laInd + laSize - 1);
 
     for (auto & i : linkSetValued)
       (*i).updateLaRef(LaParent);
   }
 
   void DynamicSystem::updatelaInverseKineticsRef(const Vec &laParent) {
-    laInverseKinetics >> laParent(0, laInverseKineticsSize - 1);
+    laInverseKinetics &= laParent(0, laInverseKineticsSize - 1);
 
     for (auto & i : inverseKineticsLink)
       (*i).updatelaRef(laParent);
   }
 
   void DynamicSystem::updatewbRef(const Vec &wbParent) {
-    wb >> wbParent(laInd, laInd + laSize - 1);
+    wb &= wbParent(laInd, laInd + laSize - 1);
 
     for (auto & i : linkSetValued)
       (*i).updatewbRef(wbParent);
   }
 
   void DynamicSystem::updateWRef(const Mat &WParent, int j) {
-    W[j] >> WParent(RangeV(hInd[j], hInd[j] + hSize[j] - 1), RangeV(laInd, laInd + laSize - 1));
+    W[j] &= WParent(RangeV(hInd[j], hInd[j] + hSize[j] - 1), RangeV(laInd, laInd + laSize - 1));
 
     for (auto & i : linkSetValued)
       (*i).updateWRef(WParent, j);
   }
 
   void DynamicSystem::updateWInverseKineticsRef(const Mat &WParent) {
-    WInverseKinetics >> WParent(RangeV(hInd[1], hInd[1] + hSize[1] - 1), RangeV(0, laInverseKineticsSize - 1));
+    WInverseKinetics &= WParent(RangeV(hInd[1], hInd[1] + hSize[1] - 1), RangeV(0, laInverseKineticsSize - 1));
 
     for (auto & i : inverseKineticsLink)
       (*i).updateWRef(WParent, 1);
   }
 
   void DynamicSystem::updatebInverseKineticsRef(const Mat &bParent) {
-    bInverseKinetics >> bParent(RangeV(0, bInverseKineticsSize - 1), RangeV(0, laInverseKineticsSize - 1));
+    bInverseKinetics &= bParent(RangeV(0, bInverseKineticsSize - 1), RangeV(0, laInverseKineticsSize - 1));
 
     for (auto & i : inverseKineticsLink)
       (*i).updatebRef(bParent);
   }
 
   void DynamicSystem::updateVRef(const Mat &VParent, int j) {
-    V[j] >> VParent(RangeV(hInd[j], hInd[j] + hSize[j] - 1), RangeV(laInd, laInd + laSize - 1));
+    V[j] &= VParent(RangeV(hInd[j], hInd[j] + hSize[j] - 1), RangeV(laInd, laInd + laSize - 1));
 
     for (auto & i : linkSetValued)
       (*i).updateVRef(VParent, j);
   }
 
   void DynamicSystem::updatesvRef(const Vec &svParent) {
-    sv >> svParent(svInd, svInd + svSize - 1);
+    sv &= svParent(svInd, svInd + svSize - 1);
 
     for (auto & i : dynamicsystem)
       i->updatesvRef(svParent);
@@ -825,7 +825,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updatejsvRef(const VecInt &jsvParent) {
-    jsv >> jsvParent(svInd, svInd + svSize - 1);
+    jsv &= jsvParent(svInd, svInd + svSize - 1);
 
     for (auto & i : dynamicsystem)
       i->updatejsvRef(jsvParent);
@@ -835,21 +835,21 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateresRef(const Vec &resParent) {
-    res >> resParent(laInd, laInd + laSize - 1);
+    res &= resParent(laInd, laInd + laSize - 1);
 
     for (auto & i : linkSetValued)
       (*i).updateresRef(resParent);
   }
 
   void DynamicSystem::updaterFactorRef(const Vec &rFactorParent) {
-    rFactor >> rFactorParent(rFactorInd, rFactorInd + rFactorSize - 1);
+    rFactor &= rFactorParent(rFactorInd, rFactorInd + rFactorSize - 1);
 
     for (auto & i : linkSetValued)
       (*i).updaterFactorRef(rFactorParent);
   }
 
   void DynamicSystem::updateLinkStatusRef(const VecInt &LinkStatusParent) {
-    LinkStatus >> LinkStatusParent(LinkStatusInd, LinkStatusInd + LinkStatusSize - 1);
+    LinkStatus &= LinkStatusParent(LinkStatusInd, LinkStatusInd + LinkStatusSize - 1);
 
     for (auto & i : dynamicsystem)
       i->updateLinkStatusRef(LinkStatusParent);
@@ -859,7 +859,7 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
-    LinkStatusReg >> LinkStatusRegParent(LinkStatusRegInd, LinkStatusRegInd + LinkStatusRegSize - 1);
+    LinkStatusReg &= LinkStatusRegParent(LinkStatusRegInd, LinkStatusRegInd + LinkStatusRegSize - 1);
 
     for (auto & i : dynamicsystem)
       i->updateLinkStatusRegRef(LinkStatusRegParent);
@@ -1493,7 +1493,7 @@ namespace MBSim {
   }
   
   void DynamicSystem::updatecorrRef(const fmatvec::Vec &ref) {
-    corr >> ref(corrInd, corrInd + corrSize - 1);
+    corr &= ref(corrInd, corrInd + corrSize - 1);
 
     for (auto & i : linkSetValued)
       (*i).updatecorrRef(ref);

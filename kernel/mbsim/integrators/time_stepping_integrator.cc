@@ -97,7 +97,7 @@ namespace MBSim {
       if(gMax>=0 and system->positionDriftCompensationNeeded(gMax))
         system->projectGeneralizedPositions(3);
 
-      system->getbi(false) << system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
+      system->getbi(false) &= system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
       system->setUpdatebi(false);
 
       system->getu() += system->evaldu();

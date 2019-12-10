@@ -48,18 +48,18 @@ namespace MBSimFlexibleBody {
       int n = 5 * i;
 
       if (i < Elements - 1 || openStructure == true) {
-        qElement[i] << q(n, n + 7);
-        uElement[i] << u(n, n + 7);
+        qElement[i] = q(n, n + 7);
+        uElement[i] = u(n, n + 7);
       }
       else { // last finite element and ring closure
-        qElement[i](0, 4) << q(n, n + 4);
-        uElement[i](0, 4) << u(n, n + 4);
-        qElement[i](5, 7) << q(0, 2);
+        qElement[i](0, 4) = q(n, n + 4);
+        uElement[i](0, 4) = u(n, n + 4);
+        qElement[i](5, 7) = q(0, 2);
         if (qElement[i](2) - q(2) > 0.0)
           qElement[i](7) += 2 * M_PI;
         else
           qElement[i](7) -= 2 * M_PI;
-        uElement[i](5, 7) << u(0, 2);
+        uElement[i](5, 7) = u(0, 2);
       }
     }
     updEle = false;
@@ -199,8 +199,8 @@ namespace MBSimFlexibleBody {
     Mat Jacobian(qSize, 3, INIT, 0.);
     int node = frame->getNodeNumber();
 
-    Jacobian(RangeV(5 * node, 5 * node + 2), All) << DiagMat(3, INIT, 1.0);
-    Jacobian(RangeV(5 * node, 5 * node + 2), All) << DiagMat(3, INIT, 1.0);
+    Jacobian(RangeV(5 * node, 5 * node + 2), All) = DiagMat(3, INIT, 1.0);
+    Jacobian(RangeV(5 * node, 5 * node + 2), All) = DiagMat(3, INIT, 1.0);
 
     frame->setJacobianOfTranslation(R->evalOrientation()(RangeV(0, 2), RangeV(0, 1)) * Jacobian(RangeV(0, qSize - 1), RangeV(0, 1)).T(),j);
     frame->setJacobianOfRotation(R->evalOrientation()(RangeV(0, 2), RangeV(2, 2)) * Jacobian(RangeV(0, qSize - 1), RangeV(2, 2)).T(),j);

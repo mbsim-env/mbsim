@@ -56,9 +56,9 @@ namespace MBSim {
     RangeV Iu(nq, nq + nu - 1);
     RangeV Ix(nq + nu, n - 1);
     z.resize(n);
-    q >> z(Iq);
-    u >> z(Iu);
-    x >> z(Ix);
+    q &= z(Iq);
+    u &= z(Iu);
+    x &= z(Ix);
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
@@ -235,13 +235,13 @@ namespace MBSim {
   fmatvec::SqrMat jacFun::operator()(const fmatvec::Vec& q) {
     // backup the original q of the dynamical system sys.
     Vec qOld;
-    qOld << sys->getq();
+    qOld = sys->getq();
 
     // set the q of system to be the input q
     sys->setq(q);
 
     SqrMat jac;
-    jac << sys->dhdq(t);
+    jac = sys->dhdq(t);
 
     // recover the old sys state
     sys->setq(qOld);

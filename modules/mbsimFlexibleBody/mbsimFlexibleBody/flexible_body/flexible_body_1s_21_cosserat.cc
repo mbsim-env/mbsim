@@ -49,12 +49,12 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21Cosserat::BuildElements() {
     if (PODreduced) {
-      qFull << U * q;
-      uFull << U * u;
+      qFull = U * q;
+      uFull = U * u;
     }
     else {
-      qFull >> q;
-      uFull >> u;
+      qFull = q;
+      uFull = u;
     }
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
@@ -236,8 +236,8 @@ namespace MBSimFlexibleBody {
         //TODO: move into readz0
         q0.resize() = U.T() * q0;
         u0.resize() = U.T() * u0;
-        q << q0;
-        u << u0;
+        q.resize() = q0;
+        u.resize() = u0;
       }
 
       FlexibleBody1sCosserat::init(stage, config);
@@ -314,10 +314,10 @@ namespace MBSimFlexibleBody {
 
     //reduce
     if (PODreduced) {
-      h[k] << U.T() * hFull;
+      h[k] = U.T() * hFull;
     }
     else
-      h[k] << hFull;
+      h[k] = hFull;
 
     // mass proportional damping
     if (d_massproportional > 0) {
@@ -337,7 +337,7 @@ namespace MBSimFlexibleBody {
     // Set POD-Reduction true
 
     Mat Snapshots;
-    Snapshots.resize() << readPositionMatrix(h5Path, "q"); //TODO: which kind of "Job"...
+    Snapshots = readPositionMatrix(h5Path, "q"); //TODO: which kind of "Job"...
 
     int fullDOFs = 3 * Elements;
     int nSnapshots = Snapshots.cols();
@@ -361,7 +361,7 @@ namespace MBSimFlexibleBody {
       POMSize = findPOMSize(POM, SVD);
     }
 
-    U.resize() << POM(RangeV(0, fullDOFs - 1), RangeV(0, POMSize - 1));
+    U = POM(RangeV(0, fullDOFs - 1), RangeV(0, POMSize - 1));
 
     PODreduced = true;
 
@@ -488,8 +488,8 @@ namespace MBSimFlexibleBody {
       //Mass matrix is reduced
 
       SymMat Mred = JTMJ(MConst,U);
-      MConst.resize() << Mred;
-      LLMConst.resize() << facLL(MConst);
+      MConst.resize() = Mred;
+      LLMConst.resize() = facLL(MConst);
     }
 
 //    updateM(0, 0);

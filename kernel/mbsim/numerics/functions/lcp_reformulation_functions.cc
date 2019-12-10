@@ -55,8 +55,8 @@ namespace MBSim {
     //reference to gap and lambda
     Vec w;
     Vec z;
-    w << currentSolution(0, NumberOfContacts - 1);
-    z << currentSolution(NumberOfContacts, 2 * NumberOfContacts - 1);
+    w = currentSolution(0, NumberOfContacts - 1);
+    z = currentSolution(NumberOfContacts, 2 * NumberOfContacts - 1);
 
     if (msg(Debug)) {
 
@@ -104,8 +104,8 @@ namespace MBSim {
     //reference to gap and lambda
     Vec w;
     Vec z;
-    w << currentSolution(0, NumberOfContacts - 1);
-    z << currentSolution(NumberOfContacts, 2 * NumberOfContacts - 1);
+    w = currentSolution(0, NumberOfContacts - 1);
+    z = currentSolution(NumberOfContacts, 2 * NumberOfContacts - 1);
 
     if (msgAct(Debug)) {
 
@@ -145,7 +145,7 @@ namespace MBSim {
       //Initialize Jacobians constant parts
       int dim = 2 * static_cast<LCPNewtonReformulationFunction*>(function_)->getq().size();
 
-      J >> SqrMat(dim, INIT, 0.);
+      J = SqrMat(dim, INIT, 0.);
 
       J(0, 0, dim / 2 - 1, dim / 2 - 1) = -SqrMat(dim / 2, EYE);
       J(0, dim / 2, dim / 2 - 1, dim - 1) = static_cast<LCPNewtonReformulationFunction*>(function_)->getM();
@@ -164,9 +164,9 @@ namespace MBSim {
     int dim = J.size();
     double r = static_cast<LCPNewtonReformulationFunction*>(function)->getr();
     Vec w(0);
-    w << x(0, dim / 2 - 1);
+    w = x(0, dim / 2 - 1);
     Vec z(0);
-    z << x(dim / 2, dim - 1);
+    z = x(dim / 2, dim - 1);
 
     //only to update lower half of Jacobian matrix
     for (int i = 0; i < dim / 2; i++) {

@@ -129,7 +129,7 @@ namespace MBSimHydraulics {
   void RigidLinePressureLoss::updatehRef(const Vec& hParent, int i) {
     const int hInd = line->gethInd(i);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
-    h[i][0].resize() >> hParent(I);
+    h[i][0] &= hParent(I);
   }
 
   void RigidLinePressureLoss::updatedhduRef(const SqrMat& dhduParent, int i) {
@@ -139,27 +139,27 @@ namespace MBSimHydraulics {
   void RigidLinePressureLoss::updatedhdtRef(const Vec& dhdtParent, int i) {
     const int hInd = line->gethInd(i);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
-    dhdt[i].resize() >> dhdtParent(I);
+    dhdt[i] &= dhdtParent(I);
   }
 
   void RigidLinePressureLoss::updaterRef(const Vec &rParent, int i) {
     const int hInd = line->gethInd(i);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
-    r[i][0].resize() >> rParent(I);
+    r[i][0] &= rParent(I);
   }
 
   void RigidLinePressureLoss::updateWRef(const Mat &WParent, int j) {
     const int hInd = line->gethInd(j);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
     const RangeV J=RangeV(laInd, laInd+laSize-1);
-    W[j][0].resize() >> WParent(I,J);
+    W[j][0] &= WParent(I,J);
   }
 
   void RigidLinePressureLoss::updateVRef(const Mat &VParent, int j) {
     const int hInd = line->gethInd(j);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
     const RangeV J=RangeV(laInd, laInd+laSize-1);
-    V[j][0].resize() >> VParent(I,J);
+    V[j][0] &= VParent(I,J);
   }
 
   void RigidLinePressureLoss::checkActive(int j) {

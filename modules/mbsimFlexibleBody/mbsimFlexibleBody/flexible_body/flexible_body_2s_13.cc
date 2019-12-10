@@ -64,9 +64,9 @@ namespace MBSimFlexibleBody {
     RangeV lowerPartB(I.start(), B.size() - 1);
 
     // assemble result matrix
-    B(upperPart) << C(upperPart); // upper left
-    B(upperPart, lowerPartB) << C(upperPart, lowerPartC); // upper right
-    B(lowerPartB) << C(lowerPartC); // lower right
+    B(upperPart) = C(upperPart); // upper left
+    B(upperPart, lowerPartB) = C(upperPart, lowerPartC); // upper right
+    B(lowerPartB) = C(lowerPartC); // lower right
     return B;
   }
 

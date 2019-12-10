@@ -36,8 +36,8 @@ namespace MBSim {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      h[j][i]>>hParent(K);
-      h[j][body.size()+i]>>hParent(I);
+      h[j][i]&=hParent(K);
+      h[j][body.size()+i]&=hParent(I);
     }
   } 
 
@@ -45,8 +45,8 @@ namespace MBSim {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      r[j][i]>>rParent(K);
-      r[j][body.size()+i]>>rParent(I);
+      r[j][i]&=rParent(K);
+      r[j][body.size()+i]&=rParent(I);
     }
   } 
 
@@ -55,8 +55,8 @@ namespace MBSim {
     RangeV J = RangeV(laInd,laInd+laSize-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      W[j][i]>>WParent(K,J);
-      W[j][body.size()+i]>>WParent(I,J);
+      W[j][i]&=WParent(K,J);
+      W[j][body.size()+i]&=WParent(I,J);
     }
   } 
 
@@ -65,8 +65,8 @@ namespace MBSim {
     RangeV J = RangeV(laInd,laInd+laSize-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      V[j][i]>>VParent(K,J);
-      V[j][body.size()+i]>>VParent(I,J);
+      V[j][i]&=VParent(K,J);
+      V[j][body.size()+i]&=VParent(I,J);
     }
   } 
 

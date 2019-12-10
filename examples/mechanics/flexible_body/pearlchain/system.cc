@@ -99,7 +99,7 @@ void Perlchain::updateG() {
         facSizeGs = double(nzEles) / double(Gsym.size() * Gsym.size()) * 1.5;
       Gs.resize(Gsym.size(), int(Gsym.size() * Gsym.size() * facSizeGs));
     }
-    Gs << Gsym;
+    Gs.resize() = Gsym;
     updG = false;
   }
   else {
@@ -266,7 +266,7 @@ void Perlchain::updateG() {
         facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }
-    Gs << G;
+    Gs.resize() = G;
     updG = false;
   }
 }

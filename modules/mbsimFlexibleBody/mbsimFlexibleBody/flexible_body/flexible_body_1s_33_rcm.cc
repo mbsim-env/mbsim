@@ -214,7 +214,7 @@ namespace MBSimFlexibleBody {
     SqrMat np = angle->computenq(p);
     SqrMat bp = angle->computebq(p);
 
-    Jacobian(RangeV(10 * node, 10 * node + 2), One) << SqrMat(3, EYE); // translation
+    Jacobian(RangeV(10 * node, 10 * node + 2), One) = SqrMat(3, EYE); // translation
     Jacobian(RangeV(10 * node + 3, 10 * node + 5), 3) = t(1) * tp(2, 0, 2, 2).T() + n(1) * np(2, 0, 2, 2).T() + b(1) * bp(2, 0, 2, 2).T(); // rotation
     Jacobian(RangeV(10 * node + 3, 10 * node + 5), 4) = t(2) * tp(0, 0, 0, 2).T() + n(2) * np(0, 0, 0, 2).T() + b(2) * bp(0, 0, 0, 2).T();
     Jacobian(RangeV(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(1, 0, 1, 2).T() + n(0) * np(1, 0, 1, 2).T() + b(0) * bp(1, 0, 1, 2).T();

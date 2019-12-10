@@ -169,7 +169,7 @@ namespace MBSimHydraulics {
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(j);
       const int hJ=hI+connectedLines[i].line->getGeneralizedVelocitySize()-1;
-      W[j][i].resize()>>WParent(RangeV(hI, hJ), RangeV(laI, laJ));
+      W[j][i] &= WParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
 
@@ -179,7 +179,7 @@ namespace MBSimHydraulics {
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(j);
       const int hJ=hI+connectedLines[i].line->getGeneralizedVelocitySize()-1;
-      V[j][i].resize()>>VParent(RangeV(hI, hJ), RangeV(laI, laJ));
+      V[j][i] &= VParent(RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
 
@@ -187,7 +187,7 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
       const RangeV I(hInd, hInd+connectedLines[i].line->getGeneralizedVelocitySize()-1);
-      h[j][i].resize() >> hParent(I);
+      h[j][i] &= hParent(I);
     }
   }
 
@@ -195,7 +195,7 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
       const RangeV I(hInd, hInd+connectedLines[i].line->getGeneralizedVelocitySize()-1);
-      r[j][i].resize() >> rParent(I);
+      r[j][i] &= rParent(I);
     }
   }
 
@@ -211,7 +211,7 @@ namespace MBSimHydraulics {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd = connectedLines[i].line->gethInd(j);
       const RangeV I=RangeV(hInd, hInd+connectedLines[i].sign.size()-1);
-      dhdt[i].resize()>>dhdtParent(I);
+      dhdt[i] &= dhdtParent(I);
     }
   }
 

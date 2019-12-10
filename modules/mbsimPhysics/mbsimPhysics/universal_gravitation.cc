@@ -145,7 +145,7 @@ namespace MBSimPhysics {
   void UniversalGravitation::updatehRef(const Vec &hParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      h[j][i]>>hParent(I);
+      h[j][i] &= hParent(I);
     }
   }
 
