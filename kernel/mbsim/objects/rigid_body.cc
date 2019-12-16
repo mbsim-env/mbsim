@@ -186,6 +186,19 @@ namespace MBSim {
       if(constraint)
         addDependency(constraint);
 
+      if(fPrPK) {
+        qTRel.resize(fPrPK->getArg1Size(),NONINIT);
+        uTRel.resize(qTRel.size(),NONINIT);
+        qdTRel.resize(qTRel.size(),NONINIT);
+        PJTT.resize(qTRel.size(),NONINIT);
+      }
+      if(fAPK) {
+        qRRel.resize(fAPK->getArg1Size(),NONINIT);
+        uRRel.resize(qRRel.size(),NONINIT);
+        qdRRel.resize(qRRel.size(),NONINIT);
+        PJRR.resize(qRRel.size(),NONINIT);
+      }
+
       PJT[0].resize(getGeneralizedVelocitySize());
       PJR[0].resize(nu);
 
@@ -434,15 +447,15 @@ namespace MBSim {
 
   void RigidBody::updateJacobians2(Frame *frame_) {
     for(auto & i : frame) {
-      i->getJacobianOfTranslation(2,false).resize();
-      i->getJacobianOfRotation(2,false).resize();
+      i->getJacobianOfTranslation(2,false);
+      i->getJacobianOfRotation(2,false);
     }
     if(updateByReference) {
-      frame_->getJacobianOfTranslation(2,false).resize() = R->evalJacobianOfTranslation(2) - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation(2);
-      frame_->getJacobianOfRotation(2,false).resize() = R->evalJacobianOfRotation(2);
+      frame_->getJacobianOfTranslation(2,false) = R->evalJacobianOfTranslation(2) - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation(2);
+      frame_->getJacobianOfRotation(2,false) = R->evalJacobianOfRotation(2);
     } else {
-      frame_->getJacobianOfTranslation(2,false).resize() = R->evalOrientation()*evalPJT();
-      frame_->getJacobianOfRotation(2,false).resize() = frameForJacobianOfRotation->evalOrientation()*getPJR();
+      frame_->getJacobianOfTranslation(2,false) = R->evalOrientation()*evalPJT();
+      frame_->getJacobianOfRotation(2,false) = frameForJacobianOfRotation->evalOrientation()*getPJR();
     }
   }
 

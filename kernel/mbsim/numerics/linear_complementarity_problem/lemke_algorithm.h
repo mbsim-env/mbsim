@@ -62,8 +62,8 @@ namespace MBSim {
       void setSystem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_) {
         assert(M_.rows() == q_.size());
         assert(M_.cols() == q_.size());
-        M.resize() = M_;
-        q.resize() = q_;
+        M = M_;
+        q = q_;
       }
 
       /**

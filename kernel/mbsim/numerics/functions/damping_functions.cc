@@ -35,7 +35,7 @@ namespace MBSim {
 
   double StandardDampingFunction::operator ()(const Vec &x, const fmatvec::Vec &dx) {
     double alpha = 1;
-    Vec xnew = x.copy();
+    Vec xnew = x;
 
     for (unsigned int k = 0; k < kmax; k++) {
       xnew = x - alpha * dx;

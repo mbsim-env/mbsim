@@ -145,7 +145,7 @@ namespace MBSim {
     }
 
     if (updateLater) {
-      inverse.resize() = inv(A);
+      inverse = inv(A);
       update(Qnew);
     }
     else {
@@ -204,7 +204,7 @@ namespace MBSim {
     }
 
     if (updateLater) {
-      inverse.resize() = inv(A);
+      inverse = inv(A);
       update(Q);
     }
     else {
@@ -237,7 +237,7 @@ namespace MBSim {
     }
 
     if (updateLater) {
-      inverse.resize() = inv(A);
+      inverse = inv(A);
       update(Q);
     }
     else {
@@ -299,7 +299,7 @@ namespace MBSim {
     A(0, 0) = 1.0;
     A(Qw.rows() - 1, Qw.rows() - 1) = 1.0;
     if (updateLater) {
-      inverse.resize() = inv(A);
+      inverse = inv(A);
       update(Qw);
     }
     else {
@@ -359,7 +359,7 @@ namespace MBSim {
     }
 
     if (updateLater) {
-      inverse.resize() = inv(A);
+      inverse = inv(A);
       update(Qw);
     }
     else {

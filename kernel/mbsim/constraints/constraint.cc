@@ -62,7 +62,7 @@ namespace MBSim {
   }
 
   void Constraint::readz0(H5::GroupBase *group) {
-    x0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
+    x0 = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
   }
 
   const Vec& Constraint::evalxd() {

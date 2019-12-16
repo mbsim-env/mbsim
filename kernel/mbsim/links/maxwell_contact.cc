@@ -942,7 +942,7 @@ namespace MBSim {
       LocalResidualCriteriaFunction critfunc(tolerances);
       LCP.setNewtonCriteriaFunction(&critfunc);
 
-      solution0.resize() = LCP.solve(solution0);
+      solution0 = LCP.solve(solution0);
 
       Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size() - 1);
 

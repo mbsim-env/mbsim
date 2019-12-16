@@ -37,22 +37,18 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, ImplicitEulerIntegrator)
 
   Vec ImplicitEulerIntegrator::ResiduumFull::operator()(const Vec &z) {
-    Vec res;
     sys->setState(z);
     sys->resetUpToDate();
-    res =  z - zk - sys->evalzd()*dt;
-    return res;
+    return z - zk - sys->evalzd()*dt;
   } 
 
   Vec ImplicitEulerIntegrator::ResiduumReduced::operator()(const Vec &ux) {
-    Vec res;
     Vec z(sys->getzSize(),NONINIT);
     z(0,sys->getqSize()-1) = zk(0,sys->getqSize()-1) + ux(0,sys->getuSize()-1)*dt;
     z(sys->getqSize(),sys->getzSize()-1) = ux;
     sys->setState(z);
     sys->resetUpToDate();
-    res =  ux - zk(sys->getqSize(),sys->getzSize()-1) - sys->evalzd()(sys->getqSize(),sys->getzSize()-1)*dt;
-    return res;
+    return ux - zk(sys->getqSize(),sys->getzSize()-1) - sys->evalzd()(sys->getqSize(),sys->getzSize()-1)*dt;
   }
 
   void ImplicitEulerIntegrator::preIntegrate() {

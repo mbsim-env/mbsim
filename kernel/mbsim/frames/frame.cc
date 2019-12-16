@@ -107,6 +107,8 @@ namespace MBSim {
       WJR[0].resize(hSize[0]);
       WJP[1].resize(hSize[1]);
       WJR[1].resize(hSize[1]);
+      WJP[2].resize(hSize[0]);
+      WJR[2].resize(hSize[0]);
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {

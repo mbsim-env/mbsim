@@ -50,6 +50,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(not saved_frame.empty())
         setFrame(getByPath<Frame>(saved_frame));
+      if(not frame)
+        throwError("Frame is not given!");
       Observer::init(stage, config);
     }
     else if(stage==plotting) {

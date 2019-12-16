@@ -136,6 +136,8 @@ namespace MBSim {
       cFrame[0]->sethSize(contour[0]->gethSize(1), 1);
       cFrame[1]->sethSize(contour[1]->gethSize(0), 0);
       cFrame[1]->sethSize(contour[1]->gethSize(1), 1);
+      cFrame[0]->init(stage, config);
+      cFrame[1]->init(stage, config);
 
       P[0] = cFrame[0];
       P[1] = cFrame[1];

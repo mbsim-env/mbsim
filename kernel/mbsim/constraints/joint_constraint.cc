@@ -92,6 +92,8 @@ namespace MBSim {
         throwError("(JointConstraint::init): frame of reference unknown");
       iF = RangeV(0, forceDir.cols() - 1);
       iM = RangeV(forceDir.cols(), forceDir.cols() + momentDir.cols() - 1);
+      DF.resize(forceDir.cols(),NONINIT);
+      DM.resize(momentDir.cols(),NONINIT);
       for(auto & i : bd1) 
         i->addDependency(this);
       for(auto & i : bd2)
@@ -101,6 +103,9 @@ namespace MBSim {
       C.setFrameOfReference(frame[0]);
     }
     else if(stage==unknownStage) {
+      C.sethSize(frame[0]->gethSize());
+      C.sethSize(frame[0]->gethSize(1),1);
+      C.init(stage, config);
       nq = 0;
       nu = 0;
       nh = 0;
@@ -328,7 +333,7 @@ namespace MBSim {
 
   void JointConstraint::setForceDirection(const Mat3xV &fd) {
 
-    forceDir = fd;
+    forceDir.resize(fd.cols(),NONINIT) = fd;
 
     for(int i=0; i<fd.cols(); i++)
       forceDir.set(i, forceDir.col(i)/nrm2(fd.col(i)));
@@ -336,7 +341,7 @@ namespace MBSim {
 
   void JointConstraint::setMomentDirection(const Mat3xV &md) {
 
-    momentDir = md;
+    momentDir.resize(md.cols(),NONINIT) = md;
 
     for(int i=0; i<md.cols(); i++)
       momentDir.set(i, momentDir.col(i)/nrm2(md.col(i)));

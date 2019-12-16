@@ -49,10 +49,10 @@ namespace MBSim {
     return 1;
   }
 
-  bool GlobalCriteriaFunction::isBetter(const Vec & x, const fmatvec::Vec & fVal) {
+  bool GlobalCriteriaFunction::isBetter(const Vec & x, const Vec & fVal) {
     Vec functionValues(fVal);
     if(fVal.size() == 0)
-      functionValues.resize() = (*function)(x);
+      functionValues.replace((*function)(x));
 
     if (criteriaResults.back() > nrmInf(functionValues))
       return true;
@@ -85,7 +85,7 @@ namespace MBSim {
     return 0;
   }
 
-  bool LocalCriteriaFunction::isBetter(const Vec & x, const fmatvec::Vec & fVal) {
+  bool LocalCriteriaFunction::isBetter(const Vec & x, const Vec & fVal) {
     vector<double> & lastResults = criteriaResults.back();
     vector<double> currentResults = computeResults(x, fVal);
 
@@ -107,10 +107,10 @@ namespace MBSim {
       GlobalCriteriaFunction(tolerance_) {
   }
 
-  double GlobalResidualCriteriaFunction::computeResults(const Vec & x, const fmatvec::Vec & fVal) {
+  double GlobalResidualCriteriaFunction::computeResults(const Vec & x, const Vec & fVal) {
     Vec functionValues(fVal);
     if(fVal.size() == 0)
-      functionValues.resize() = (*function)(x);
+      functionValues.replace((*function)(x));
     return nrmInf(functionValues);
   }
 
@@ -118,10 +118,10 @@ namespace MBSim {
       LocalCriteriaFunction(tolerances_) {
   }
 
-  vector<double> LocalResidualCriteriaFunction::computeResults(const Vec & x, const fmatvec::Vec & fVal) {
+  vector<double> LocalResidualCriteriaFunction::computeResults(const Vec & x, const Vec & fVal) {
     Vec functionValues(fVal);
     if(fVal.size() == 0)
-      functionValues.resize() = (*function)(x);
+      functionValues.replace((*function)(x));
     vector<double> results;
     for (auto & tolerance : tolerances) {
       results.push_back(nrmInf(functionValues(tolerance.first)));
@@ -134,7 +134,7 @@ namespace MBSim {
       GlobalCriteriaFunction(tolerance_), lastPoint(Vec(0, NONINIT)) {
   }
 
-  double GlobalShiftCriteriaFunction::computeResults(const Vec & x, const fmatvec::Vec & fVal) {
+  double GlobalShiftCriteriaFunction::computeResults(const Vec & x, const Vec & fVal) {
     if(lastPoint.size() == 0) {
       lastPoint = x;
       return 1e30; //TODO: Guarantee that this returned value is larger than the tolerance and larger then the first result!
@@ -142,10 +142,10 @@ namespace MBSim {
 
     Vec functionValues(fVal);
     if(fVal.size() == 0)
-      functionValues.resize() = (*function)(x);
+      functionValues.replace((*function)(x));
 
     double ret = nrmInf(functionValues - (*function)(lastPoint));
-    lastPoint = x.copy();
+    lastPoint = x;
     return ret;
   }
 
@@ -153,7 +153,7 @@ namespace MBSim {
       LocalCriteriaFunction(tolerances_), lastPoint(Vec(0, NONINIT)) {
   }
 
-  vector<double> LocalShiftCriteriaFunction::computeResults(const Vec & x, const fmatvec::Vec & fVal) {
+  vector<double> LocalShiftCriteriaFunction::computeResults(const Vec & x, const Vec & fVal) {
     vector<double> results;
     if(lastPoint.size() == 0) {
       lastPoint = x;
@@ -165,7 +165,7 @@ namespace MBSim {
       for (auto & tolerance : tolerances) {
         results.push_back(nrmInf((*function)(x)(tolerance.first) - (*function)(lastPoint)(tolerance.first)));
       }
-      lastPoint = x.copy();
+      lastPoint = x;
     }
     return results;
   }

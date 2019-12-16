@@ -86,7 +86,7 @@ namespace MBSim {
     /*End - Reset*/
 
     //current position in function
-    Vec x = initialValue.copy();
+    Vec x = initialValue;
 
     //current value of function
     Vec f = (*function)(x);

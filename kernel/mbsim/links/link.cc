@@ -174,11 +174,11 @@ namespace MBSim {
   }
 
   void Link::readz0(H5::GroupBase *group) {
-    x0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
+    x0 = group->openChildObject<H5::SimpleDataset<vector<double> > >("x0")->read();
   }
 
   void Link::savela() {
-    la0.resize() = la;
+    la0.replace(la);
   }
 
   void Link::initla() {
@@ -189,7 +189,7 @@ namespace MBSim {
   }
 
   void Link::saveLa() {
-    La0.resize() = La;
+    La0.replace(La);
   }
 
   void Link::initLa() {

@@ -106,7 +106,7 @@ namespace MBSim {
 
     vector<fmatvec::Vec> zsys;
     for(unsigned i=0; i<(*psystems).size(); i++) {
-      zsys.push_back(z_.copy());
+      zsys.push_back(z_);
     }
 
     int nq = qSize;
@@ -221,8 +221,8 @@ namespace MBSim {
       dhdutmp[0]+=dhdutmp[i];
     }
 
-    dhdq_=dhdqtmp[0].copy();
-    dhdu_=dhdutmp[0].copy();
+    dhdq_=dhdqtmp[0];
+    dhdu_=dhdutmp[0];
   }
 
   void AutoTimeSteppingSSCIntegrator::update(DynamicSystemSolver& system, const Vec& z, double t, int nrSys_) {
@@ -386,13 +386,13 @@ namespace MBSim {
       *pupgedated=false;
     }
 
-    Vec h_l = system_.geth().copy();
+    Vec h_l = system_.geth();
     Vec la_l = system_.getla();
 
     Vec heff_n;
     SqrMat luMeff_n;
     Vec z_n, q_n, u_n, x_n, h_n;
-    z_n.resize() = z_l.copy();
+    z_n.resize() = z_l;
     q_n >> z_n(Iq);
     u_n >> z_n(Iu);
     x_n >> z_n(Ix);     
@@ -476,11 +476,11 @@ namespace MBSim {
         break;
       }
 
-      h_n = system_.geth().copy();
-      Mat W_n = system_.getW().copy();
-      Mat V_n = system_.getV().copy();
-      Mat T_n = system_.getT().copy();
-      SymMat M_n = system_.getM().copy();
+      h_n = system_.geth();
+      Mat W_n = system_.getW();
+      Mat V_n = system_.getV();
+      Mat T_n = system_.getT();
+      SymMat M_n = system_.getM();
 
       VecInt ipiv(M_n.size());
       luMeff_n = SqrMat(facLU(M_n - theta*dt_*dhdu_n - theta*theta*dt_*dt_*dhdq_n*T_n,ipiv));
@@ -538,7 +538,7 @@ namespace MBSim {
 
     } while(*pit<itMax && maxdevi_u>itTol);
 
-    z_l = z_n.copy();
+    z_l = z_n;
   }
 
   void AutoTimeSteppingSSCIntegrator::doLinImpStep(DynamicSystemSolver& system_, Vec& z_, int nrSys_, double t_, double dt_) {
@@ -589,11 +589,11 @@ namespace MBSim {
     update(system_,z_l,t,nrSys_);  // hier wird z_l dem System system_ zugewiesen
     update(system_,z_l,t,nrSys_);  // hier wird z_l dem System system_ zugewiesen
 
-    Mat T = system_.getT().copy();
-    SymMat M = system_.getM().copy();
-    Vec h = system_.geth().copy();
-    Mat W = system_.getW().copy();
-    Mat V = system_.getV().copy();
+    Mat T = system_.getT();
+    SymMat M = system_.getM();
+    Vec h = system_.geth();
+    Mat W = system_.getW();
+    Mat V = system_.getV();
     
     if (inexactJac==false) {
       if (parJac && !parInt) {

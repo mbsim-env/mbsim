@@ -120,11 +120,16 @@ namespace MBSim {
       iM = RangeV(forceDir.cols(), getGeneralizedRelativePositionSize() - 1);
       lambdaF.resize(forceDir.cols());
       lambdaM.resize(momentDir.cols());
+      DF.resize(forceDir.cols(),NONINIT);
+      DM.resize(momentDir.cols(),NONINIT);
     }
     else if(stage==unknownStage) {
       C.setFrameOfReference(frame[0]);
       P[0] = &C;
       P[1] = frame[1];
+      C.sethSize(frame[0]->gethSize());
+      C.sethSize(frame[0]->gethSize(1),1);
+      C.init(stage, config);
     }
     FrameLink::init(stage, config);
   }

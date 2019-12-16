@@ -120,11 +120,11 @@ namespace MBSim {
       t += theta*dt;
       update(system,z,t);
 
-      Mat T = system->getT().copy();
-      SymMat M = system->getM().copy();
-      Vec h = system->geth().copy();
-      Mat W = system->getW().copy();
-      Mat V = system->getV().copy();
+      Mat T = system->getT();
+      SymMat M = system->getM();
+      Vec h = system->geth();
+      Mat W = system->getW();
+      Mat V = system->getV();
       Mat dhdq = system->dhdq(t);
       Mat dhdu = system->dhdu(t);
 

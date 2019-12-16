@@ -40,7 +40,7 @@ namespace MBSim {
     double dx, xj;
     Vec x2 = x;
     Vec f = (*function)(x2);
-    Vec f2;
+    Vec f2(f.size(),NONINIT);
 
     for (int j = 0; j < x2.size(); j++) {
       xj = x2(j);

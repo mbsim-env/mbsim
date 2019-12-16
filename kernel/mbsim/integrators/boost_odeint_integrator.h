@@ -53,6 +53,7 @@ namespace MBSim {
     // In this case the following function are defined as noop.
     // If boost odeint requires a special state type then the state is copied.
     inline void assign(fmatvec::Vec &d, const fmatvec::Vec &s) {
+      if(d.size()!=s.size()) d.resize(s.size(),fmatvec::NONINIT);
       d=s;
     }
     template<typename Dst, typename Src>
@@ -166,7 +167,6 @@ namespace MBSim {
 
       // internal variables required for the numerical jacobian calculation
       fmatvec::Vec zDisturbed;
-      fmatvec::Vec zd0;
 
       // internal variables used for integrator statistics
       size_t nrSteps;
@@ -202,7 +202,7 @@ namespace MBSim {
     BoostOdeintHelper::assign(system->getState(), z);
     system->resetUpToDate();
     BoostOdeintHelper::assign(zDisturbed, z);
-    zd0=system->evalzd();
+    fmatvec::Vec zd0=system->evalzd();
 
     for(size_t i=0; i<static_cast<size_t>(z.size()); ++i) {
       zDisturbed(i)+=MBSim::epsroot;
@@ -256,7 +256,7 @@ namespace MBSim {
     system->plot();
     tPlot=tStart+dtPlot;
     nrSVs++;
-    svLast=system->evalsv();
+    svLast.resize(system->getsvSize(),fmatvec::NONINIT) = system->evalsv();
 
     // initialize odeint
 #if BOOST_VERSION >= 106000

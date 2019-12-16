@@ -116,6 +116,15 @@ namespace MBSim {
     zSize = qSize + uSize + xSize;
 
     zi.resize(zSize); 	// starting value for ith step
+    ze.resize(zSize,NONINIT);
+    z1d.resize(zSize,NONINIT);
+    z2b.resize(zSize,NONINIT);
+    z2d.resize(zSize,NONINIT);
+    z2dRE.resize(zSize,NONINIT);
+    z3b.resize(zSize,NONINIT);
+    z3d.resize(zSize,NONINIT);
+    z4d.resize(zSize,NONINIT);
+    z6d.resize(zSize,NONINIT);
 
     SetValuedLinkListT1 = sysT1->getSetValuedLinks();
     SetValuedLinkListT2 = sysT2->getSetValuedLinks();
@@ -941,7 +950,7 @@ namespace MBSim {
     IterConvergence = (iterA<maxIter);
     iter =iterA;
 
-    Vec EstErrorLocal;
+    Vec EstErrorLocal(z1d.size(),NONINIT);
 
     if (method==extrapolation) {
       if (!FlagSSC) {

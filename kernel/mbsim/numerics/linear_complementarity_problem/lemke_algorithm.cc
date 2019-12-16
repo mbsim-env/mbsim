@@ -53,9 +53,9 @@ namespace MBSim {
 
     Mat A(dim, 2 * dim + 2, NONINIT);
     A(0, 0, dim - 1, dim - 1) = Mat(dim, dim, EYE);
-    A(0, dim, dim - 1, 2 * dim - 1) = (-M).copy();
+    A(0, dim, dim - 1, 2 * dim - 1) = -M;
     A(0, 2 * dim, dim - 1, 2 * dim) = Vec(dim, INIT, -1.);
-    A(0, 2 * dim + 1, dim - 1, 2 * dim + 1) = q.copy();
+    A(0, 2 * dim + 1, dim - 1, 2 * dim + 1) = q;
 
     Vec q_;
     q_ &= A(0, 2 * dim + 1, dim - 1, 2 * dim + 1);

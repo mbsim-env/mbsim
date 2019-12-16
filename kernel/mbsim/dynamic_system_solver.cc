@@ -509,7 +509,7 @@ namespace MBSim {
     Group::solveConstraintsRootFinding();
 
     double nrmf0 = nrm2(res);
-    Vec res0 = res.copy();
+    Vec res0 = res;
 
     checkConstraintsForTermination();
     if (term)
@@ -541,7 +541,7 @@ namespace MBSim {
 
       Vec dx = slvLS(Jprox, res0);
 
-      Vec La_old = la.copy();
+      Vec La_old = la;
       double alpha = 1;
       double nrmf = 1;
       for (int k = 0; k < maxDampingSteps; k++) {
@@ -576,7 +576,7 @@ namespace MBSim {
     Group::solveImpactsRootFinding();
 
     double nrmf0 = nrm2(res);
-    Vec res0 = res.copy();
+    Vec res0 = res;
 
     checkImpactsForTermination();
     if (term)
@@ -607,7 +607,7 @@ namespace MBSim {
 
       Vec dx = slvLS(Jprox, res0);
 
-      Vec La_old = La.copy();
+      Vec La_old = La;
       double alpha = 1.;
       double nrmf = 1;
       for (int k = 0; k < maxDampingSteps; k++) {
@@ -676,7 +676,7 @@ namespace MBSim {
 //    updategd();
 //    updateT();
 //    updateh();
-//    Vec hOld = h[0].copy();
+//    Vec hOld = h[0];
 //    for (int i = lb; i < ub; i++) {
 //      double qtmp = q(i);
 //      q(i) += delta;
@@ -714,7 +714,7 @@ namespace MBSim {
 //    updategd();
 //    updateT();
 //    updateh();
-//    Vec hOld = h[0].copy();
+//    Vec hOld = h[0];
 //    for (int i = lb; i < ub; i++) {
 //      //msg(Info) << "bin bei i=" << i << endl;
 //      double utmp = u(i);
@@ -851,14 +851,17 @@ namespace MBSim {
   void DynamicSystemSolver::updateG() {
     G &= SqrMat(evalW().T() * slvLLFac(evalLLM(), evalV()));
 
-    if (checkGSize)
-      ; // Gs.resize();
+    if (checkGSize) {
+      int k = G.countElements();
+      if(G.size() != Gs.cols() or k != Gs.countElements())
+        Gs.resize(G.size(),k,NONINIT);
+    }
     else if (Gs.cols() != G.size()) {
       if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot)
-        facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
+        facSizeGs = double(G.countElements()) / double(G.size() * G.size()) * 1.5;
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }
-    Gs.resize() = G;
+    Gs = G;
 
     updG = false;
   }
@@ -876,34 +879,34 @@ namespace MBSim {
   void DynamicSystemSolver::updatela() {
     if (la.size()) {
 
-    if(solveDirectly)
-      la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
-    else {
+      if(solveDirectly)
+        la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
+      else {
 
-    if (useOldla)
-      initla();
-    else
-      la.init(0);
+        if (useOldla)
+          initla();
+        else
+          la.init(0);
 
-    iterc = (this->*solveConstraints_)(); // solver election
-    if (iterc >= maxIter) {
-      msg(Warn) << "\n";
-      msg(Warn) << "Iterations: " << iterc << "\n";
-      msg(Warn) << "\nError: no convergence." << endl;
-      if (stopIfNoConvergence) {
-        if (dropContactInfo)
-          dropContactMatrices();
-        throwError("Maximum number of iterations reached");
+        iterc = (this->*solveConstraints_)(); // solver election
+        if (iterc >= maxIter) {
+          msg(Warn) << "\n";
+          msg(Warn) << "Iterations: " << iterc << "\n";
+          msg(Warn) << "\nError: no convergence." << endl;
+          if (stopIfNoConvergence) {
+            if (dropContactInfo)
+              dropContactMatrices();
+            throwError("Maximum number of iterations reached");
+          }
+          msg(Warn) << "Anyway, continuing integration..." << endl;
+        }
+
+        if (iterc > highIter)
+          msg(Warn) << endl << "high number of iterations: " << iterc << endl;
+
+        if (useOldla)
+          savela();
       }
-      msg(Warn) << "Anyway, continuing integration..." << endl;
-    }
-
-    if (iterc > highIter)
-      msg(Warn) << endl << "high number of iterations: " << iterc << endl;
-
-    if (useOldla)
-      savela();
-    }
     }
 
     updla = false;
@@ -912,32 +915,29 @@ namespace MBSim {
   void DynamicSystemSolver::updateLa() {
     if (La.size()) {
 
-    if (useOldla)
-      initLa();
-    else
-      La.init(0);
+      if (useOldla)
+        initLa();
+      else
+        La.init(0);
 
-    Vec LaOld;
-    LaOld = La;
-    iteri = (this->*solveImpacts_)(); // solver election
-    if (iteri >= maxIter) {
-      msg(Warn) << "\n";
-      msg(Warn) << "Iterations: " << iteri << "\n";
-      msg(Warn) << "\nError: no convergence." << endl;
-      if (stopIfNoConvergence) {
-        if (dropContactInfo)
-          dropContactMatrices();
-        throwError("Maximal Number of Iterations reached");
+      iteri = (this->*solveImpacts_)(); // solver election
+      if (iteri >= maxIter) {
+        msg(Warn) << "\n";
+        msg(Warn) << "Iterations: " << iteri << "\n";
+        msg(Warn) << "\nError: no convergence." << endl;
+        if (stopIfNoConvergence) {
+          if (dropContactInfo)
+            dropContactMatrices();
+          throwError("Maximal Number of Iterations reached");
+        }
+        msg(Warn) << "Anyway, continuing integration..." << endl;
       }
-      msg(Warn) << "Anyway, continuing integration..." << endl;
-    }
 
-    if (iteri > highIter)
-      msg(Warn) << "high number of iterations: " << iteri << endl;
+      if (iteri > highIter)
+        msg(Warn) << "high number of iterations: " << iteri << endl;
 
-    if (useOldla)
-      saveLa();
-
+      if (useOldla)
+        saveLa();
     }
 
     updLa = false;

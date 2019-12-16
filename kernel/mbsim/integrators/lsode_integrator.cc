@@ -122,7 +122,7 @@ namespace MBSim {
     system->resetUpToDate();
     system->computeInitialCondition();
     system->plot();
-    svLast = system->evalsv();
+    svLast.resize(system->getsvSize(),NONINIT) = system->evalsv();
 
     double s0 = clock();
     double time = 0;

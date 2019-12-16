@@ -42,7 +42,7 @@ namespace MBSim {
    */
   Vec MultiDimensionalFixpointSolver::solve(const Vec & initialGuess) {
     /*Initialise*/
-    Vec currentGuess = initialGuess.copy();
+    Vec currentGuess = initialGuess;
     info = 1;
     criteria->setFunction(function);
     criteria->clear();

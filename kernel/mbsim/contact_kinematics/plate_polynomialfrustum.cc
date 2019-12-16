@@ -86,7 +86,7 @@ namespace MBSim {
 
     Vec fValget(fVal);
     if(fVal.size() == 0)
-      fValget.resize() = (*function)(x);
+      fValget = (*function)(x);
     return nrmInf(fValget) < criteriaResults.back();
   }
 

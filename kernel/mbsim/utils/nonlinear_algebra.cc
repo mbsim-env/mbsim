@@ -74,11 +74,11 @@ namespace MBSim {
    * \return vector after iteration (solution or currentGuess-value)
    */
   Vec MultiDimFixPointIteration::solve(const Vec & initialGuess) {
-    Vec currentGuess = initialGuess.copy();
+    Vec currentGuess = initialGuess;
     Vec lastGuess;
     norms.clear();
     for (iter = 0; iter < itermax; iter++) {
-      lastGuess = currentGuess.copy();
+      lastGuess = currentGuess;
 
       currentGuess = (*function)(currentGuess);
 
@@ -187,13 +187,13 @@ namespace MBSim {
       slv = std::bind(fslvLS, _1, _2);
 
     iter=0;
-    Vec x, xold;
+    Vec x(x0.size(),NONINIT), xold(x0.size(),NONINIT);
     x = x0;
 
     Vec f = (*fct)(x);
     norms.clear();
     norms.push_back(nrmInf(f));
-    SqrMat J;
+    SqrMat J(x0.size(),NONINIT);
     for (iter = 0; iter <= itmax; iter++) {
 
       if (norms[iter] <= tol) {
@@ -206,7 +206,7 @@ namespace MBSim {
       else {
         J = SqrMat(x.size()); // initialise size
         double dx, xj;
-        Vec f2;
+        Vec f2(f.size(),NONINIT);
 
         for(int j=0; j<x.size(); j++) {
           xj = x(j);

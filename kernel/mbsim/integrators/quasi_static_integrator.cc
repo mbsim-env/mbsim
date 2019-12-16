@@ -220,7 +220,7 @@ namespace MBSim {
     sys->setTime(t);
     sys->resetUpToDate();
     hg(0, qSize - 1) = sys->evalh() + sys->evalW() * qla(qSize, qlaSize - 1);
-    hg(qSize, qlaSize - 1) = sys->evalg().copy();
+    hg(qSize, qlaSize - 1) = sys->evalg();
 
 //    msg(Info) << "t = "  << t << "\n";
 //    msg(Info) << "sys.geth() = "  <<  sys->geth().T() << "\n";

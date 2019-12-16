@@ -195,7 +195,7 @@ namespace MBSim {
     }
     system->plot();
     yd(0,system->getzSize()-1) = system->evalzd();
-    svLast = system->evalsv();
+    svLast.resize(system->getsvSize(),NONINIT) = system->evalsv();
 
     calcSize();
     iPar[0] = neq;

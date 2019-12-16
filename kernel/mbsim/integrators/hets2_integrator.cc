@@ -79,13 +79,13 @@ namespace MBSim {
       evaluateStage();
 
       // save values
-      Vec q_n = system->getq().copy();
-      Vec u_n = system->getu().copy();
-      Mat T_n = system->evalT().copy();
-      SymMat LLM_1 = system->evalLLM().copy();
-      Vec h_1 = system->evalh().copy();
-      Mat W_1 = system->evalW().copy();
-      Mat V_1 = system->evalV().copy();
+      Vec q_n = system->getq();
+      Vec u_n = system->getu();
+      Mat T_n = system->evalT();
+      SymMat LLM_1 = system->evalLLM();
+      Vec h_1 = system->evalh();
+      Mat W_1 = system->evalW();
+      Mat V_1 = system->evalV();
 
       // plot
       if(system->getTime() >= tPlot) {
@@ -115,7 +115,7 @@ namespace MBSim {
         system->getbc(false) &= system->evalW().T()*(u_n/dt + slvLLFac(LLM_1,h_1));
         system->setUpdatebc(false);
 
-        Vec la_1 = system->evalla().copy();
+        Vec la_1 = system->evalla();
         Vec r_1 = V_1*la_1;
 
         Vec u_1 = u_n + slvLLFac(LLM_1,h_1+r_1)*dt;
@@ -132,10 +132,10 @@ namespace MBSim {
 
         bool impact = evaluateStage();
 
-        SymMat LLM_2 = system->evalLLM().copy();
-        Vec h_2 = system->evalh().copy();
-        Mat W_2 = system->evalW().copy();
-        Mat V_2 = system->evalV().copy();
+        SymMat LLM_2 = system->evalLLM();
+        Vec h_2 = system->evalh();
+        Mat W_2 = system->evalW();
+        Mat V_2 = system->evalV();
 
         // update until the Jacobian matrices, especially also the active set
         if(impact) {
@@ -144,7 +144,7 @@ namespace MBSim {
           system->getbi(false) &= W_2.T()*u_1;
           system->setUpdatebi(false);
 
-          Vec La_2 = system->evalLa().copy();
+          Vec La_2 = system->evalLa();
           Vec rdt_2 = V_2*La_2;
           system->setu(u_1 + slvLLFac(LLM_2,rdt_2));
 
@@ -154,7 +154,7 @@ namespace MBSim {
           system->getbc(false) &= W_2.T()*(u_n*2./dt + (slvLLFac(LLM_1,h_1+r_1) + slvLLFac(LLM_2,h_2)));
           system->setUpdatebc(false);
 
-          Vec la_2 = system->evalla().copy();
+          Vec la_2 = system->evalla();
           Vec r_2 = V_2*la_2;
 
           system->setu(u_n + (slvLLFac(LLM_1,h_1+r_1) + slvLLFac(LLM_2,h_2+r_2))*dt*0.5);

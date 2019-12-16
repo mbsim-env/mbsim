@@ -45,10 +45,10 @@ namespace MBSim {
 
   void Object::updatedhdz() {
     throwError("Object::updatedhdz not implemented.");
-//    Vec h0 = h[0].copy();
+//    Vec h0 = h[0];
 //
 //    updateh(); // update with correct state
-//    Vec hEnd = h[0].copy();
+//    Vec hEnd = h[0];
 //
 //    /**************** velocity dependent calculations ********************/
 //    for (int i = 0; i < uSize[0]; i++) {
@@ -251,9 +251,9 @@ namespace MBSim {
   }
 
   void Object::readz0(H5::GroupBase *group) {
-    q0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("q0")->read();
+    q0 = group->openChildObject<H5::SimpleDataset<vector<double> > >("q0")->read();
 
-    u0.resize() = group->openChildObject<H5::SimpleDataset<vector<double> > >("u0")->read();
+    u0 = group->openChildObject<H5::SimpleDataset<vector<double> > >("u0")->read();
   }
 
   void Object::sethInd(int hInd_, int j) {
