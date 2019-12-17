@@ -488,7 +488,7 @@ namespace MBSim {
 
   void Joint::setForceDirection(const Mat3xV &fd) {
 
-    forceDir.resize(fd.cols(),NONINIT) = fd;
+    forceDir.assign(fd);
 
     for (int i = 0; i < fd.cols(); i++)
       forceDir.set(i, forceDir.col(i) / nrm2(fd.col(i)));
@@ -496,7 +496,7 @@ namespace MBSim {
 
   void Joint::setMomentDirection(const Mat3xV &md) {
 
-    momentDir.resize(md.cols(),NONINIT) = md;
+    momentDir.assign(md);
 
     for (int i = 0; i < md.cols(); i++)
       momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));

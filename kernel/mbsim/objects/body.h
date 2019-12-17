@@ -59,8 +59,8 @@ namespace MBSim {
        */
       ~Body() override;
 
-      void setGeneralizedInitialPosition(const fmatvec::Vec &q0_) { q0.resize(q0_.size(),fmatvec::NONINIT) = q0_; }
-      void setGeneralizedInitialVelocity(const fmatvec::Vec &u0_) { u0.resize(u0_.size(),fmatvec::NONINIT) = u0_; }
+      void setGeneralizedInitialPosition(const fmatvec::Vec &q0_) { q0.assign(q0_); }
+      void setGeneralizedInitialVelocity(const fmatvec::Vec &u0_) { u0.assign(u0_); }
       void setGeneralizedInitialPosition(double q0_) { q0.resize(1,fmatvec::INIT,q0_); }
       void setGeneralizedInitialVelocity(double u0_) { u0.resize(1,fmatvec::INIT,u0_); }
 

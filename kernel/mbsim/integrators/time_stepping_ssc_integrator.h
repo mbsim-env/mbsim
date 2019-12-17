@@ -239,10 +239,10 @@ namespace MBSim {
       /*! Threads: Number of Threads (0,1,2 or 3) 0: auto (number of threads depends on order and SSC)*/ 
       void integrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_, int Threads=0);
 
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol = aTol_; }
-      void setAbsoluteTolerance(double aTol_) { aTol = fmatvec::Vec(1,fmatvec::INIT,aTol_); }
-      void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol = rTol_; }
-      void setRelativeTolerance(double rTol_) { rTol = fmatvec::Vec(1,fmatvec::INIT,rTol_); }
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol.assign(aTol_); }
+      void setAbsoluteTolerance(double aTol_) { aTol.resize(1,fmatvec::INIT,aTol_); }
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol.assign(rTol_); }
+      void setRelativeTolerance(double rTol_) { rTol.resize(1,fmatvec::INIT,rTol_); }
       void setgapTolerance(double gTol) { gapTol = gTol; }
 
       /** subroutines for integrate function */

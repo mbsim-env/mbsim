@@ -50,7 +50,7 @@ namespace MBSim {
       void setStartTime(double tStart_) { tStart=tStart_; }
       void setEndTime(double tEnd_) { tEnd = tEnd_; }
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
-      void setInitialState(const fmatvec::Vec &z0_) { z0 = z0_; }
+      void setInitialState(const fmatvec::Vec &z0_) { z0.assign(z0_); }
       double getStartTime() const { return tStart; }
       double getEndTime() const { return tEnd; }
       double getPlotStepSize() const { return dtPlot; }

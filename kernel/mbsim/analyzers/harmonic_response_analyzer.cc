@@ -42,7 +42,7 @@ namespace MBSim {
       fE.resize(1,INIT,1);
 
     if(not(zEq.size()))
-      zEq = system->evalz0();
+      zEq.assign(system->evalz0());
     else if(zEq.size()!=system->getzSize())
       throwError(string("(HarmonicResponseAnalyzer::computeFrequencyResponse): size of z0 does not match, must be ") + to_string(system->getzSize()));
 
@@ -72,8 +72,8 @@ namespace MBSim {
     system->resetUpToDate();
     bi(n/2,n-1) = system->evalzd()(n/2,n-1);
 
-    SqrMat A(n);
-    Vec zd, zdOld;
+    SqrMat A(n,NONINIT);
+    Vec zd(n,NONINIT), zdOld(n,NONINIT);
     system->setTime(tStart);
     system->resetUpToDate();
     zdOld = system->evalzd();

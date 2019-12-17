@@ -50,7 +50,7 @@ namespace MBSim {
        * \brief Set the initial deviation of the equilibrium
        * \param deltaz_ The deviation
        */
-      void setInitialDeviation(const fmatvec::Vec &deltaz0_) { deltaz0 = deltaz0_; }
+      void setInitialDeviation(const fmatvec::Vec &deltaz0_) { deltaz0.assign(deltaz0_); }
 
       /**
        * \brief Set the amplitude of all modes for animation
@@ -62,7 +62,7 @@ namespace MBSim {
        * \brief Set the amplitude per mode for animation
        * \param A_ A table with mode number and amplitude
        */
-      void setModeAmplitudeTable(const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<2>,double> &MA_) { MA = MA_; }
+      void setModeAmplitudeTable(const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<2>,double> &MA_) { MA.assign(MA_); }
 
       /**
        * \brief Set the number of loops for animation of each mode
@@ -92,7 +92,7 @@ namespace MBSim {
        * \brief Set the initital state for the analysis
        * \param z0 The initital state
        */
-      void setInitialState(const fmatvec::Vec &z0) { zEq = z0; }
+      void setInitialState(const fmatvec::Vec &z0) { zEq.assign(z0); }
 
       void setTask(Task task_) { task = task_; }
 

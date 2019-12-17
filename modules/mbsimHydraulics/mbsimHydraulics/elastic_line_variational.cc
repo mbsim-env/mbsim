@@ -112,13 +112,13 @@ namespace MBSimHydraulics {
         CGes(i+4, 2*i+4)=4.*k1/waveTime;
       }
 
-      const Vec b1Ges=BGes.col(0).copy();
-      const Vec b2Ges=BGes.col(1).copy();
+      const Vec b1Ges=BGes.col(0);
+      const Vec b2Ges=BGes.col(1);
       BGes.col(0)=.5*(b1Ges+b2Ges);
       BGes.col(1)=.5*(-b1Ges+b2Ges);
 
-      const RowVec c1Ges=CGes.row(0).copy();
-      const RowVec c2Ges=CGes.row(1).copy();
+      const RowVec c1Ges=CGes.row(0);
+      const RowVec c2Ges=CGes.row(1);
       CGes.row(0)=(c1Ges+c2Ges)/Z0;
       CGes.row(1)=(-c1Ges+c2Ges)/Z0;
 

@@ -31,7 +31,7 @@ namespace MBSim {
     class Residuum : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
       public:
         Residuum(MBSim::DynamicSystemSolver *sys_, double dt_) : sys(sys_), dt(dt_) { }
-        void setState(const fmatvec::Vec &zk_) { zk.replace(zk_); }
+        void setState(const fmatvec::Vec &zk_) { zk.assign(zk_); }
       protected:
         MBSim::DynamicSystemSolver *sys;
         fmatvec::Vec zk;

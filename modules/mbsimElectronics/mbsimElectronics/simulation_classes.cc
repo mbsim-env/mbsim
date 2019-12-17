@@ -111,7 +111,7 @@ namespace MBSimElectronics {
   void ElectronicLink::updateWRef(const fmatvec::Mat& WParent, int j) {
     RangeV J = RangeV(laInd,laInd+laSize-1);
     RangeV I = RangeV(branch->gethInd(j),branch->gethInd(j)+branch->gethSize(j)-1);
-    W[j][0].resize() &= WParent(I,J);
+    W[j][0] &= WParent(I,J);
   }
 
   void ElectronicLink::updateVRef(const fmatvec::Mat& ref, int j) {

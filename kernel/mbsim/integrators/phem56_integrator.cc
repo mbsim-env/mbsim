@@ -315,7 +315,7 @@ namespace MBSim {
       system->updategRef(system->getgParent()(0,system->getgSize()-1));
     }
     system->plot();
-    svLast.resize(system->getsvSize(),NONINIT) = system->evalsv();
+    svLast.assign(system->evalsv());
     z = system->getState(); // needed, as computeInitialCondition may change the state
 
     nl = system->getlaSize();

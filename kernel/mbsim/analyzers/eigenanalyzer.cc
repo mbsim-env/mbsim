@@ -63,14 +63,14 @@ namespace MBSim {
 
   void Eigenanalyzer::computeEigenvalues() {
     if(not(zEq.size()))
-      zEq = system->evalz0();
+      zEq.assign(system->evalz0());
     else if(zEq.size()!=system->getzSize())
       throwError(string("(Eigenanalyzer::computeEigenvalues): size of z0 does not match, must be ") + to_string(system->getzSize()));
 
     system->setTime(tStart);
 
-    SqrMat A(system->getzSize());
-    Vec zd, zdOld;
+    SqrMat A(system->getzSize(),NONINIT);
+    Vec zd(system->getzSize(),NONINIT), zdOld(system->getzSize(),NONINIT);
     system->setState(zEq);
     system->resetUpToDate();
     system->computeInitialCondition();
@@ -100,8 +100,7 @@ namespace MBSim {
     computeEigenvalues();
     Vector<Ref, complex<double> > c(w.size());
     Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
-    Vector<Ref, complex<double> > wbuf;
-    wbuf = w;
+    Vector<Ref, complex<double> > wbuf = w;
 
     VecV Av(system->getzSize()/2,INIT,A);
     for(int i=0; i<MA.rows(); i++) {

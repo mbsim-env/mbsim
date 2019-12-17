@@ -97,7 +97,7 @@ namespace MBSim {
     system->resetUpToDate();
     system->computeInitialCondition();
     system->plot();
-    svLast.resize(system->getsvSize(),NONINIT) = system->evalsv();
+    svLast.assign(system->evalsv());
     z = system->getState(); // needed, as computeInitialCondition may change the state
 
     tPlot = t + dtPlot;

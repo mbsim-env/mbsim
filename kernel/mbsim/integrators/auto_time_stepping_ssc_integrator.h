@@ -353,10 +353,10 @@ namespace MBSim {
       void integrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_, MBSim::DynamicSystemSolver& systemTP_, std::vector<MBSim::DynamicSystemSolver*> systems, int Threads=0);
       
       /** Tolerances for Integrator */
-      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.resize() = aTol_;}
-      void setAbsoluteTolerance(double aTol_) {aTol.resize() = fmatvec::Vec(1,fmatvec::INIT,aTol_);}
-      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol.resize() = rTol_;}
-      void setRelativeTolerance(double rTol_) {rTol.resize() = fmatvec::Vec(1,fmatvec::INIT,rTol_);}
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) {aTol.assign(aTol_);}
+      void setAbsoluteTolerance(double aTol_) {aTol.resize(1,fmatvec::INIT,aTol_);}
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) {rTol.assign(rTol_);}
+      void setRelativeTolerance(double rTol_) {rTol.resize(1,fmatvec::INIT,rTol_);}
       void setgapTolerance(double gTol) {gapTol = gTol;}
 
       /** subroutines for integrate function */

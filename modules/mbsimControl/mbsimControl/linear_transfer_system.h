@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 204-2009 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -44,10 +44,10 @@ namespace MBSimControl {
       void updateSignal() override;
       void updatexd() override;
       
-      void setSystemMatrix(fmatvec::SqrMatV A_) { A = std::move(A_); }
-      void setInputMatrix(const fmatvec::MatV& B_) { B = B_; }
-      void setOutputMatrix(const fmatvec::MatV& C_) { C = C_; }
-      void setFeedthroughMatrix(fmatvec::SqrMatV D_) { D = std::move(D_); }
+      void setSystemMatrix(fmatvec::SqrMatV A_) { A.assign(A_); }
+      void setInputMatrix(const fmatvec::MatV& B_) { B.assign(B_); }
+      void setOutputMatrix(const fmatvec::MatV& C_) { C.assign(C_); }
+      void setFeedthroughMatrix(fmatvec::SqrMatV D_) { D.assign(D_); }
 
       void setInputSignal(Signal * inputSignal_) { inputSignal = inputSignal_; }
       int getSignalSize() const override { return inputSignal->getSignalSize(); }

@@ -61,11 +61,9 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
   Vec DynamicSystemSolver::Residuum::operator()(const Vec &z) {
-    Vec res;
     sys->setState(z);
     sys->resetUpToDate();
-    res = sys->evalzd();
-    return res;
+    return sys->evalzd();
   }
 
   DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {

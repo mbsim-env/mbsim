@@ -61,7 +61,7 @@ namespace MBSimControl {
       
       const fmatvec::VecV& getSignal(bool check=true) { assert((not check) or (not upds)); return s; }
       const fmatvec::VecV& evalSignal() { if(upds) updateSignal(); return s; }
-      virtual int getSignalSize() const { return s.size(); }
+      virtual int getSignalSize() const { return 0; }
 
       void resetUpToDate() override { upds = true; }
 

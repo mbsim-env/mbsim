@@ -42,6 +42,9 @@ namespace MBSimControl {
           plotColumns.push_back("signal (" + toString(i) + ")");
       }
     }
+    else if (stage==unknownStage) {
+      s.resize(getSignalSize(),NONINIT);
+    }
     Link::init(stage, config);
   }
 
