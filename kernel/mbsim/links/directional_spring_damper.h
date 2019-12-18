@@ -79,7 +79,7 @@ namespace MBSim {
       /**
        * \param local force direction represented in first frame
        */
-      void setForceDirection(const fmatvec::Vec3 &dir) { forceDir=dir/nrm2(dir); }
+      void setForceDirection(const fmatvec::Vec3 &dir) { forceDir.assign(dir); }
 
       void plot() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;

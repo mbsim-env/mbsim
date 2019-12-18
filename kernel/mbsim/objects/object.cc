@@ -251,9 +251,9 @@ namespace MBSim {
   }
 
   void Object::readz0(H5::GroupBase *group) {
-    q0 = group->openChildObject<H5::SimpleDataset<vector<double> > >("q0")->read();
+    q0.reassign(Vec(group->openChildObject<H5::SimpleDataset<vector<double> > >("q0")->read()));
 
-    u0 = group->openChildObject<H5::SimpleDataset<vector<double> > >("u0")->read();
+    u0.reassign(Vec(group->openChildObject<H5::SimpleDataset<vector<double> > >("u0")->read()));
   }
 
   void Object::sethInd(int hInd_, int j) {

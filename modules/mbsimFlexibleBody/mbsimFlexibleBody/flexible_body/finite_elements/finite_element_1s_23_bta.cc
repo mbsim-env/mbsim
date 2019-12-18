@@ -117,10 +117,10 @@ namespace MBSimFlexibleBody {
   }
 
   void FiniteElement1s23BTA::computedhdz(const Vec& q, const Vec& v) {
-    Vec h0 = h.copy();
+    Vec h0 = h;
 
-    Vec q_tmp = q.copy();
-    Vec v_tmp = v.copy();
+    Vec q_tmp = q;
+    Vec v_tmp = v;
 
     /**************** velocity dependent calculations ********************/
     for(int i=0;i<v.size();i++) {  

@@ -63,8 +63,8 @@ namespace MBSimFcl {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setVertices(const fmatvec::MatVx3 &vertex_) { vertex = vertex_; }
-      void setTriangles(const fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<3>, MBSim::Index> &triangle_) { triangle = triangle_; }
+      void setVertices(const fmatvec::MatVx3 &vertex_) { vertex.assign(vertex_); }
+      void setTriangles(const fmatvec::Matrix<fmatvec::General, fmatvec::Var, fmatvec::Fixed<3>, MBSim::Index> &triangle_) { triangle.assign(triangle_); }
       void setCollisionStructure(CollisionStructure collisionStructure_) { collisionStructure = collisionStructure_; }
       /***************************************************/
 

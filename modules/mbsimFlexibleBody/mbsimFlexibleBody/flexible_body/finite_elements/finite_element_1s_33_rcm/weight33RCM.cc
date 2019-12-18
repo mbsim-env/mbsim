@@ -187,7 +187,7 @@ namespace MBSimFlexibleBody {
     W(0) = (((wt(0)*x+wt(1))*x+wt(2))*x+wt(3))*pow(x,2);
     W(1) = (((5*wt(0)*x+4*wt(1))*x+3*wt(2))*x+2*wt(3))*x;
 
-    return W.copy();
+    return W;
   }
 
   void Weight33RCM::computewcoefPos(const Vec& qG) {
@@ -331,7 +331,7 @@ namespace MBSimFlexibleBody {
     wcoef(2) = (-l0*bLbRp-10.*dLdRm)/l0h3;  			
     wcoef(3) = (l0*bLbRm+8.*dLdRp)/(2.*l0h2);
 
-    return wcoef.copy();
+    return wcoef;
   }
 
   void Weight33RCM::computeomgt(double x) {
@@ -503,7 +503,7 @@ namespace MBSimFlexibleBody {
     Ivwwt(1) = bv/2304.*l0h9+dv/448.*l0h7;
     Ivwwt(2) = av/2304.*l0h9+cv/448.*l0h7;
     Ivwwt(3) = bv/448.*l0h7+dv/80.*l0h5;
-    return Ivwwt.copy();
+    return Ivwwt;
   }
 
   RowVec Weight33RCM::intvxwxwt(const Vec& vt) const {
@@ -517,7 +517,7 @@ namespace MBSimFlexibleBody {
     Ivxwxwt(1) = bv/28.*l0h7+dv/10.*l0h5;
     Ivxwxwt(2) = 15.*av/448.*l0h7+9.*cv/80.*l0h5;
     Ivxwxwt(3) = bv/10.*l0h5+dv/3.*l0h3;		
-    return Ivxwxwt.copy();
+    return Ivxwxwt;
   }
 
   RowVec Weight33RCM::intvxxwxxwt(const Vec& vt,double C) const {
@@ -531,7 +531,7 @@ namespace MBSimFlexibleBody {
     Ivxxwxxwt(1) = 9.*bv/5.*l0h5+(2.*dv-C)*l0h3;
     Ivxxwxxwt(2) = 3.*av/2.*l0h5+3.*cv*l0h3;
     Ivxxwxxwt(3) = 2.*bv*l0h3+(4.*dv-2.*C)*l0;		
-    return Ivxxwxxwt.copy();
+    return Ivxxwxxwt;
   }
 
   void Weight33RCM::intvvtwwt()  {

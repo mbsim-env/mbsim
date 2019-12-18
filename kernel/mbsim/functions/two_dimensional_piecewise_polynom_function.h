@@ -126,18 +126,18 @@ namespace MBSim {
         return f2.parDerDirDer(ydVal,yVal);
       }
 
-      void setx(const fmatvec::VecV &x_) { x = x_; }
+      void setx(const fmatvec::VecV &x_) { x.assign(x_); }
 
-      void sety(const fmatvec::VecV &y_) { y = y_; }
+      void sety(const fmatvec::VecV &y_) { y.assign(y_); }
 
-      void setz(const fmatvec::MatV &z_) { z = z_; }
+      void setz(const fmatvec::MatV &z_) { z.assign(z_); }
 
       void setxyz(const fmatvec::MatV &xyz) {
         if(xyz.rows() <= 1 or xyz.cols() <= 1)
           this->throwError("Dimension missmatch in size of xyz");
-        x = xyz.row(0)(fmatvec::RangeV(1,xyz.cols()-1)).T();
-        y = xyz.col(0)(fmatvec::RangeV(1,xyz.rows()-1));
-        z = xyz(fmatvec::RangeV(1,xyz.rows()-1),fmatvec::RangeV(1,xyz.cols()-1));
+        x.assign(xyz.row(0)(fmatvec::RangeV(1,xyz.cols()-1)).T());
+        y.assign(xyz.col(0)(fmatvec::RangeV(1,xyz.rows()-1)));
+        z.assign(xyz(fmatvec::RangeV(1,xyz.rows()-1),fmatvec::RangeV(1,xyz.cols()-1)));
       }
 
       void setInterpolationMethodFirstDimension(InterpolationMethod method1_) { method1 = method1_; }

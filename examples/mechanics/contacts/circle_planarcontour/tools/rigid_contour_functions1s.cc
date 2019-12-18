@@ -40,12 +40,8 @@ double calculateLocalAlpha(const double& alpha) {
 }
 
 Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u , int discretization) { 
-  Mat ContourMat;
-  Vec rCOG;
-  ContourMat = ContourMat_u;
-  rCOG = rCOG_u; 
-  ContourMat=ContourMat*scale;
-  rCOG=rCOG*scale;
+  Mat ContourMat = ContourMat_u*scale;
+  Vec rCOG = rCOG_u*scale;
   int N = ContourMat.rows();
   Mat angleRxyTMP0(N,4);
   angleRxyTMP0.col(2) = ContourMat.col(0);

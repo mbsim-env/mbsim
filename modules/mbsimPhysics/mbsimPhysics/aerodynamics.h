@@ -47,7 +47,7 @@ namespace MBSimPhysics {
       void setDensityFunction(MBSim::Function<double(double)> *func);
       void setCoefficientFunction(MBSim::Function<fmatvec::Vec3(fmatvec::Vec2)> *func);
       void setReferenceSurface(double A_) { A = A_; }
-      void setWindSpeed(const fmatvec::Vec3 &vW_) { vW = vW_; }
+      void setWindSpeed(const fmatvec::Vec3 &vW_) { vW.assign(vW_); }
 
       void updateGeneralizedPositions() override { updrrel = false; }
       void updateGeneralizedVelocities() override { updvrel = false; }

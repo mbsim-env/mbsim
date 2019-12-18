@@ -36,7 +36,7 @@ namespace MBSimPhysics {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMPHYSICS, Aerodynamics)
 
   Aerodynamics::Aerodynamics(const std::string &name) : FloatingFrameLink(name) {
-    forceDir = Mat3xV(3,EYE);
+    forceDir.resize(3,EYE);
   }
 
   Aerodynamics::~Aerodynamics() {

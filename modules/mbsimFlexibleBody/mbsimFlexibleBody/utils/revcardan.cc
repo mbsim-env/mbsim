@@ -80,7 +80,7 @@ namespace MBSimFlexibleBody {
     ntil(0) = -cq2*sq1;
     ntil(1) = -sq2*sq1;
     ntil(2) = -cq1;
-    return ntil.copy();
+    return ntil;
   }
 
   Vec RevCardan::computebtil(const Vec& q) const {
@@ -92,7 +92,7 @@ namespace MBSimFlexibleBody {
     btil(0) = -sq2*cq1;
     btil(1) = cq2*cq1;
     btil(2) = 0.;
-    return btil.copy();
+    return btil;
   }
 
   SqrMat RevCardan::computetq(const Vec& q) const {
@@ -113,7 +113,7 @@ namespace MBSimFlexibleBody {
     tq(2,0) = 0.;
     tq(2,1) = -cq1;
     tq(2,2) = 0.;
-    return tq.copy();
+    return tq;
   }
 
   SqrMat RevCardan::computenq(const Vec& q) const {
@@ -136,7 +136,7 @@ namespace MBSimFlexibleBody {
     nq(2,0) = cq1*cq0; 
     nq(2,1) = -sq1*sq0;
     nq(2,2) = 0.;
-    return nq.copy();
+    return nq;
   }
 
   SqrMat RevCardan::computebq(const Vec& q) const {
@@ -159,7 +159,7 @@ namespace MBSimFlexibleBody {
     bq(2,0) = -cq1*sq0;
     bq(2,1) = -sq1*cq0;
     bq(2,2) = 0.;
-    return bq.copy();
+    return bq;
   }
 
   SqrMat RevCardan::computentilq(const Vec& q) const {
@@ -180,7 +180,7 @@ namespace MBSimFlexibleBody {
     ntilq(2,0) = 0.;
     ntilq(2,1) = sq1;
     ntilq(2,2) = 0.;
-    return ntilq.copy();
+    return ntilq;
   }
 
   SqrMat RevCardan::computebtilq(const Vec& q) const {
@@ -201,7 +201,7 @@ namespace MBSimFlexibleBody {
     btilq(2,0) = 0.;
     btilq(2,1) = 0.; 
     btilq(2,2) = 0.;
-    return btilq.copy();
+    return btilq;
   }
 
   Mat RevCardan::computetq2(const Vec& q) const {
@@ -234,7 +234,7 @@ namespace MBSimFlexibleBody {
     tq2(0,5) = -cq2*cq1;
     tq2(1,5) = -sq2*cq1;
     tq2(2,5) = 0.;
-    return tq2.copy();
+    return tq2;
   }
 
   Mat RevCardan::computenq2(const Vec& q) const {
@@ -269,7 +269,7 @@ namespace MBSimFlexibleBody {
     nq2(0,5) = sq2*cq0-cq2*sq1*sq0;
     nq2(1,5) = -cq2*cq0-sq2*sq1*sq0;
     nq2(2,5) = 0.;
-    return nq2.copy();
+    return nq2;
   }
 
   Mat RevCardan::computebq2(const Vec& q) const {
@@ -304,7 +304,7 @@ namespace MBSimFlexibleBody {
     bq2(0,5) = -sq2*sq0-cq2*sq1*cq0;
     bq2(1,5) = cq2*sq0-sq2*sq1*cq0;
     bq2(2,5) = 0.;
-    return bq2.copy();
+    return bq2;
   }
 
   Mat RevCardan::computentilq2(const Vec& q) const {
@@ -337,7 +337,7 @@ namespace MBSimFlexibleBody {
     ntilq2(0,5) = cq2*sq1;
     ntilq2(1,5) = sq2*sq1;
     ntilq2(2,5) = 0.;
-    return ntilq2.copy();
+    return ntilq2;
   }
 
   Mat RevCardan::computebtilq2(const Vec& q) const {
@@ -370,7 +370,7 @@ namespace MBSimFlexibleBody {
     btilq2(0,5) = sq2*cq1;
     btilq2(1,5) = -cq2*cq1;
     btilq2(2,5) = 0.;
-    return btilq2.copy();
+    return btilq2;
   }
 
 }

@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
         NR_ij[i][j]=nullptr;
       }
 
-    this->NodeCoordinates = NodeCoordinates.copy();
+    this->NodeCoordinates = NodeCoordinates;
 
     const double &r1 = NodeCoordinates(0);
     const double &phi1 = NodeCoordinates(1);

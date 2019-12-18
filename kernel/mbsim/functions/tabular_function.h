@@ -69,13 +69,13 @@ namespace MBSim {
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
         if (e) setxy(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
       }
-      void setx(const fmatvec::VecV &x_) { x = x_; }
-      void sety(const fmatvec::MatV &y_) { y = y_; }
+      void setx(const fmatvec::VecV &x_) { x.assign(x_); }
+      void sety(const fmatvec::MatV &y_) { y.assign(y_); }
       void setxy(const fmatvec::MatV &xy) {
         if(xy.cols() <= 1)
           this->throwError("Dimension missmatch in size of xy");
-        x = xy.col(0);
-        y = xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1));
+        x.assign(xy.col(0));
+        y.assign(xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1)));
       }
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);

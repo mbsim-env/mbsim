@@ -84,14 +84,14 @@ namespace MBSimFlexibleBody {
     Vec deltaxt = qGt(3,4)-qGt(0,1);
 
     /* differentiation of strain energy */
-    dSETdqG(0,1) = -tangent.copy();
+    dSETdqG(0,1) = -tangent;
     dSETdqG(2) 	 = deltax.T()*dtangentdgamma;
-    dSETdqG(3,4) = tangent.copy();
+    dSETdqG(3,4) = tangent;
     dSETdqG 	*= E*A*(tangent.T()*deltax-l0)/l0;
 
-    dSENdqG(0,1) = -normal.copy();
+    dSENdqG(0,1) = -normal;
     dSENdqG(2) 	 = deltax.T()*dnormaldgamma;
-    dSENdqG(3,4) = normal.copy();
+    dSENdqG(3,4) = normal;
     dSENdqG 	*= G*sigma1*A*normal.T()*deltax/l0;
 
     dVeldqG = dSETdqG + dSENdqG;
@@ -107,14 +107,14 @@ namespace MBSimFlexibleBody {
     // equal zero
 
     /* differentiation of strain dissipation */ //DONE
-    dSDTdqGt(0,1) = -tangent.copy() ;
+    dSDTdqGt(0,1) = -tangent ;
     dSDTdqGt(2) = -tangent.T()*dtangentdgamma*l0;
-    dSDTdqGt(3,4) = tangent.copy();
+    dSDTdqGt(3,4) = tangent;
     dSDTdqGt *= 2.*cEps0D*(deltaxt.T()*tangent/l0 - tangent.T()*tangentt);
 
-    dSDNdqGt(0,1) = -normal.copy();
+    dSDNdqGt(0,1) = -normal;
     dSDNdqGt(2) = -normal.T()*dtangentdgamma*l0;
-    dSDNdqGt(3,4) = normal.copy();
+    dSDNdqGt(3,4) = normal;
     dSDNdqGt *= 2.*cEps1D*(deltaxt.T()*normal/l0 -normal.T()*tangentt);
 
     dSDdqGt = dSDTdqGt + dSDNdqGt;

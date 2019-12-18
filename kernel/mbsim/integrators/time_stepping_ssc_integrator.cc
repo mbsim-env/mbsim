@@ -201,7 +201,7 @@ namespace MBSim {
   void TimeSteppingSSCIntegrator::subIntegrate(double tStop) { // system: only dummy!
     Timer.start();
 
-    lae = system->getla(false);
+    lae.assign(system->getla(false));
 
     qUncertaintyByExtrapolation=0;
 
@@ -328,7 +328,7 @@ namespace MBSim {
               LSA.reassign(LStmp_T1);
               ConstraintsChangedA = changedLinkStatus(LSA,LS,indexLSException);
               singleStepsT1++;
-              z1d = sysT1->getState();
+              z1d.reassign(sysT1->getState());
 
               // two step integration (first step) (B1) 
               if (calcJobBT1) {
@@ -351,7 +351,7 @@ namespace MBSim {
                 LSB1.reassign(LStmp_T1);
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT1++;
-                z2b = sysT1->getState();
+                z2b.reassign(sysT1->getState());
               }
               // three step integration (first step) (E1) 
               if (calcJobE1T1) {
@@ -370,7 +370,7 @@ namespace MBSim {
                 sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 singleStepsT1++;
-                z3b = sysT1->getState();
+                z3b.reassign(sysT1->getState());
               }
             }  // close omp thread 1
 
@@ -397,7 +397,7 @@ namespace MBSim {
                 LSB1.reassign(LStmp_T2);
                 ConstraintsChangedB = changedLinkStatus(LSB1,LS,indexLSException);
                 singleStepsT2++;
-                z2b = sysT2->getState();
+                z2b.reassign(sysT2->getState());
               }
 
               // four step integration (first two steps) (C12)
@@ -437,7 +437,7 @@ namespace MBSim {
                 LSC2.reassign(LStmp_T2);
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC2,LSC1,indexLSException);
                 singleStepsT2+=2;
-                z4b = sysT2->getState();
+                z4b.reassign(sysT2->getState());
               }
               // three step integration (first two steps ) (E12)
               if (calcJobE12T2) {
@@ -468,7 +468,7 @@ namespace MBSim {
                 sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 singleStepsT2+=2;
-                z3b = sysT2->getState();
+                z3b.reassign(sysT2->getState());
               }
             }  // close omp thread 2
 
@@ -525,7 +525,7 @@ namespace MBSim {
                 LSD3.reassign(LStmp_T3);
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD3,LSD2,indexLSException);
                 singleStepsT3+=3;
-                z6b = sysT3->getState();
+                z6b.reassign(sysT3->getState());
               }
             }  // close omp thread 3
 
@@ -541,8 +541,8 @@ namespace MBSim {
           ConstraintsChangedD = false;
           ConstraintsChangedBlock2 = false;        
 
-          if (FlagSSC && method==extrapolation && maxOrder==3) zStern = 0.5*z2b - 4.0*z4b + 4.5*z6b;
-          if (FlagSSC && method==extrapolation && maxOrder==2) zStern = 2.0*z4b - z2b;
+          if (FlagSSC && method==extrapolation && maxOrder==3) zStern.reassign(0.5*z2b - 4.0*z4b + 4.5*z6b);
+          if (FlagSSC && method==extrapolation && maxOrder==2) zStern.reassign(2.0*z4b - z2b);
         }
         // Block 2
 #pragma omp parallel num_threads(numThreads)
@@ -571,7 +571,7 @@ namespace MBSim {
                 LSB2.reassign(LStmp_T1);
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
                 singleStepsT1++;
-                z2d = sysT1->getState();
+                z2d.reassign(sysT1->getState());
               }
               if (calcJobB2RET1 && calcBlock2) { //B2RE
                 sysT1->setState(zStern);
@@ -589,7 +589,7 @@ namespace MBSim {
                 iterB2RE  = sysT1->getIterI();
                 sysT1->resetUpToDate();
                 singleStepsT1++;
-                z2dRE = sysT1->getState();
+                z2dRE.reassign(sysT1->getState());
               }
               // three step integration (E23) last two steps
               if (calcJobE23T1 && calcBlock2) {
@@ -620,7 +620,7 @@ namespace MBSim {
                 sysT1->getx() += sysT1->evaldx();
                 sysT1->resetUpToDate();
                 singleStepsT1+=2;
-                z3d = sysT1->getState();
+                z3d.reassign(sysT1->getState());
               } 
             }  // close omp thread 1
 #pragma omp section                   // thread 2
@@ -663,7 +663,7 @@ namespace MBSim {
                 ConstraintsChangedC = changedLinkStatus(LSC2,LSC3,indexLSException);
                 ConstraintsChangedC = ConstraintsChangedC || changedLinkStatus(LSC3,LSC4,indexLSException);
                 singleStepsT2+=2;
-                z4d = sysT2->getState();
+                z4d.reassign(sysT2->getState());
               }
 
               // two step integration (B2)
@@ -688,7 +688,7 @@ namespace MBSim {
                 ConstraintsChangedB = changedLinkStatus(LSB2,LSB1,indexLSException);
 
                 singleStepsT2++;
-                z2d = sysT2->getState();
+                z2d.reassign(sysT2->getState());
               }
               if (calcJobB2RET2 && calcBlock2) { //B2RE
                 sysT2->setState(zStern);
@@ -706,7 +706,7 @@ namespace MBSim {
                 iterB2RE  = sysT2->getIterI();
                 sysT2->resetUpToDate();
                 singleStepsT2++;
-                z2dRE = sysT2->getState();
+                z2dRE.reassign(sysT2->getState());
               }
               // three step integration (E3) last step
               if (calcJobE3T2 && calcBlock2) {
@@ -724,7 +724,7 @@ namespace MBSim {
                 sysT2->getx() += sysT2->evaldx();
                 sysT2->resetUpToDate();
                 singleStepsT2++;
-                z3d = sysT2->getState();
+                z3d.reassign(sysT2->getState());
               }
             }  // close omp thread 2
 #pragma omp section	        //thread 3
@@ -782,7 +782,7 @@ namespace MBSim {
                 ConstraintsChangedD = ConstraintsChangedD || changedLinkStatus(LSD5,LSD6,indexLSException);
 
                 singleStepsT3+=3;
-                z6d = sysT3->getState();
+                z6d.reassign(sysT3->getState());
               }
             }  // close omp thread 3
 
@@ -1005,7 +1005,7 @@ namespace MBSim {
               if (maxOrder==3) {ze = z6b;  LSe.reassign(LSD3);}
             }
             else {
-              ze = zStern; order=maxOrder;
+              ze.reassign(zStern); order=maxOrder;
               if (maxOrder==2) {LSe.reassign(LSC2);}
               if (maxOrder==3) {LSe.reassign(LSD3);}
             }

@@ -265,11 +265,11 @@ namespace MBSimFlexibleBody {
 
     Vec q0Tmp;
     if (q0.size())
-      q0Tmp = q0.copy();
+      q0Tmp = q0;
     q0.resize(qSize, INIT, 0.);
     if (q0Tmp.size()) {
       if (q0Tmp.size() == q0.size())
-        q0 = q0Tmp.copy();
+        q0 = q0Tmp;
       else
         throwError("Dimension of q0 wrong!");
     }
@@ -278,11 +278,11 @@ namespace MBSimFlexibleBody {
     uSize[1] = qSize; // TODO
     Vec u0Tmp;
     if (u0.size())
-      u0Tmp = u0.copy();
+      u0Tmp = u0;
     u0.resize(uSize[0], INIT, 0.);
     if (u0Tmp.size()) {
       if (u0Tmp.size() == u0.size())
-        u0 = u0Tmp.copy();
+        u0 = u0Tmp;
       else
         throwError("Dimension of u0 wrong!");
     }

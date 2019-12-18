@@ -68,11 +68,10 @@ namespace MBSim {
           value=value*x+add.e(i);
         return FromDouble<typename B::DRetDArg>::cast(value*xDir);
       }
-
       void initializeUsingXML(xercesc::DOMElement *element) override {
-        a = MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"))->getText<fmatvec::Vec>();
+        setCoefficients(MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"))->getText<fmatvec::Vec>());
       }
-
+      void setCoefficients(const fmatvec::VecV &a_) { a.assign(a_); }
     private:
       fmatvec::VecV a, ad, add;
   };

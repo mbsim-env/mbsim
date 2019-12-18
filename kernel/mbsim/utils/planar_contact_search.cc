@@ -31,7 +31,7 @@ namespace MBSim {
     Vec nodesTilde(n + 1, NONINIT);
     for (int i = 0; i <= n; i++)
       nodesTilde(i) = x0 + i * dx;
-    nodes = nodesTilde;
+    nodes.assign(nodesTilde);
   }
 
   double PlanarContactSearch::slv() {

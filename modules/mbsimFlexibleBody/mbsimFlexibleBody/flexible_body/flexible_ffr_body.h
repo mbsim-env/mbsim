@@ -49,7 +49,7 @@ namespace MBSimFlexibleBody {
       void setMass(double m_) { m = m_; }
       void setPositionIntegral(const fmatvec::Vec3 &rdm_) { rdm = rdm_; }
       void setPositionPositionIntegral(const fmatvec::SymMat3& rrdm_) { rrdm = rrdm_; }
-      void setShapeFunctionIntegral(const fmatvec::Mat3xV &Pdm_) { Pdm = Pdm_; }
+      void setShapeFunctionIntegral(const fmatvec::Mat3xV &Pdm_) { Pdm.assign(Pdm_); }
 
       void setPositionShapeFunctionIntegral(const std::vector<fmatvec::Mat3xV> &rPdm) { setPositionShapeFunctionIntegralArray(rPdm); }
       void setPositionShapeFunctionIntegralArray(const std::vector<fmatvec::Mat3xV> &rPdm_) { rPdm = rPdm_; }
@@ -59,8 +59,8 @@ namespace MBSimFlexibleBody {
       void setShapeFunctionShapeFunctionIntegralArray(const std::vector<std::vector<fmatvec::SqrMatV> > &PPdm_) { PPdm = PPdm_; }
       void setShapeFunctionShapeFunctionIntegral(const fmatvec::MatV &PPdm_) { PPdm = getCellArray2D<fmatvec::SqrMatV>(PPdm_.cols(),3,PPdm_); }
 
-      void setStiffnessMatrix(const fmatvec::SymMatV &Ke0_) { Ke0 = Ke0_; }
-      void setDampingMatrix(const fmatvec::SymMatV &De0_) { De0 = De0_; }
+      void setStiffnessMatrix(const fmatvec::SymMatV &Ke0_) { Ke0.assign(Ke0_); }
+      void setDampingMatrix(const fmatvec::SymMatV &De0_) { De0.assign(De0_); }
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       // End of interface
 
@@ -75,8 +75,8 @@ namespace MBSimFlexibleBody {
       // End of interface
 
       // Interface for reference stresses 
-      void setInitialStressIntegral(const fmatvec::VecV &ksigma0_) { ksigma0 = ksigma0_; }
-      void setNonlinearInitialStressIntegral(const fmatvec::SqrMatV &ksigma1_) { ksigma1 = ksigma1_; }
+      void setInitialStressIntegral(const fmatvec::VecV &ksigma0_) { ksigma0.assign(ksigma0_); }
+      void setNonlinearInitialStressIntegral(const fmatvec::SqrMatV &ksigma1_) { ksigma1.assign(ksigma1_); }
       // End of interface
 
       // Interface for geometric stiffness matrices

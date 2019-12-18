@@ -81,8 +81,7 @@ namespace MBSim {
   void GeneralizedVelocityConstraint::initializeUsingXML(DOMElement* element) {
     GeneralizedDualConstraint::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"initialState");
-    if(e)
-      x0 = E(e)->getText<Vec>();
+    if(e) setInitialState(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalConstraintFunction");
     if(e) {
       auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,double)> >(e->getFirstElementChild());

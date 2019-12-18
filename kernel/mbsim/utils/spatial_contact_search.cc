@@ -31,12 +31,12 @@ namespace MBSim {
     Vec nodesTilde(nU + 1, NONINIT);
     for (int i = 0; i <= nU; i++)
       nodesTilde(i) = U0 + i * dU;
-    nodesU = nodesTilde;
+    nodesU.assign(nodesTilde);
 
     nodesTilde.resize(nV + 1, NONINIT);
     for (int i = 0; i <= nV; i++)
       nodesTilde(i) = V0 + i * dV;
-    nodesV = nodesTilde;
+    nodesV.assign(nodesTilde);
   }
 
   Vec2 SpatialContactSearch::slv() {

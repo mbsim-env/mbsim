@@ -250,7 +250,7 @@ namespace MBSimFlexibleBody {
       throwError("Formalism unknown.");
 
     // compute reduced stiffness matrix
-    Ke0 = JTMJ(K,Phi_);
+    Ke0.assign(JTMJ(K,Phi_));
 
     // visualization
     ombvIndices.resize(5*6*ne);

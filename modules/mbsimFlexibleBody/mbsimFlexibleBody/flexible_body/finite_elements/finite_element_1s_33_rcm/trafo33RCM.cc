@@ -59,7 +59,7 @@ namespace MBSimFlexibleBody {
     F(8) = -3.*l0*(pos(5)+pos(6))/128.+17.*(pos(4)-pos(3))/64.+cL1-cR1;
     F(9) = 3.*l0*(pos(9)-pos(10))/64.+7.*(pos(7)+pos(8))/16.-cL2-cR2;		
     F(10) = -3.*l0*(pos(9)+pos(10))/128.+17.*(pos(8)-pos(7))/64.+cL2-cR2;		
-    return F.copy();
+    return F;
   }
   /*******************************************************************/
 
@@ -118,7 +118,7 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(6,3) -=etantil;
     SMRHS_Jac(6,8) +=etabtil;
     SMRHS_Jac(6,7) -=etabtil;
-    return SMRHS_Jac.copy();
+    return SMRHS_Jac;
   }
   /*******************************************************************/
 
@@ -220,7 +220,7 @@ namespace MBSimFlexibleBody {
     s0(2) = 0.5*((qG(5)+qG(15))-(sol(6)+sol(7)));
     s0(0) = 0.5*(qG(3)+qG(13)-sin(s0(1))*(sol(6)+sol(7)));
 
-    return s0.copy();
+    return s0;
   }
 
   void Trafo33RCM::computebe(const Vec& qG) {

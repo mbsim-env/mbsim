@@ -36,7 +36,7 @@ namespace MBSimPhysics {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMPHYSICS, Buoyancy)
 
   Buoyancy::Buoyancy(const std::string &name) : FloatingFrameLink(name) {
-    forceDir = Mat3xV(1);
+    forceDir.resize(1);;
     forceDir(1,0) = 1;
   }
 

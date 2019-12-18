@@ -300,11 +300,11 @@ namespace MBSimFlexibleBody {
 
     Vec q0Tmp;
     if (q0.size())
-      q0Tmp = q0.copy();
+      q0Tmp = q0;
     q0.resize(qSize, INIT, 0.);
     if (q0Tmp.size()) {
       if (q0Tmp.size() == q0.size())
-        q0 = q0Tmp.copy();
+        q0 = q0Tmp;
       else
         throwError("Dimension of q0 wrong!");
     }
@@ -313,11 +313,11 @@ namespace MBSimFlexibleBody {
     uSize[1] = qSize; // TODO
     Vec u0Tmp;
     if (u0.size())
-      u0Tmp = u0.copy();
+      u0Tmp = u0;
     u0.resize(uSize[0], INIT, 0.);
     if (u0Tmp.size()) {
       if (u0Tmp.size() == u0.size())
-        u0 = u0Tmp.copy();
+        u0 = u0Tmp;
       else
         throwError("Dimension of u0 wrong !");
     }
@@ -361,8 +361,8 @@ namespace MBSimFlexibleBody {
 
     if (sGlobal < l0 / 2.) { // first rotation element (last half)
       sLocalRotation = sGlobal + l0 / 2.;
-      phi_L = vec(vec.size() - 3, vec.size() - 1).copy();
-      phi_R = vec(3, 5).copy();
+      phi_L = vec(vec.size() - 3, vec.size() - 1);
+      phi_R = vec(3, 5);
       if (phi_L(2) < phi_R(2))
         phi_L(2) += 2. * M_PI;
       else
@@ -370,13 +370,13 @@ namespace MBSimFlexibleBody {
     }
     else if (sGlobal < L - l0 / 2.) {
       BuildElementTranslation(sGlobal + l0 / 2., sLocalRotation, currentElementRotation); // Lagrange parameter and number of rotational element (+l0/2)
-      phi_L = vec(6 * currentElementRotation - 3, 6 * currentElementRotation - 1).copy();
-      phi_R = vec(6 * currentElementRotation + 3, 6 * currentElementRotation + 5).copy();
+      phi_L = vec(6 * currentElementRotation - 3, 6 * currentElementRotation - 1);
+      phi_R = vec(6 * currentElementRotation + 3, 6 * currentElementRotation + 5);
     }
     else { // first rotation element (first half)
       sLocalRotation = sGlobal - (L - l0 / 2.);
-      phi_L = vec(vec.size() - 3, vec.size() - 1).copy();
-      phi_R = vec(3, 5).copy();
+      phi_L = vec(vec.size() - 3, vec.size() - 1);
+      phi_R = vec(3, 5);
       if (phi_L(2) < phi_R(2))
         phi_L(2) += 2. * M_PI;
       else

@@ -62,19 +62,19 @@ namespace MBSim {
       void setSystem(const fmatvec::SqrMat & M_, const fmatvec::Vec & q_) {
         assert(M_.rows() == q_.size());
         assert(M_.cols() == q_.size());
-        M = M_;
-        q = q_;
+        M.assign(M_);
+        q.assign(q_);
       }
 
       /**
        * \brief set system with Matrix M and vector q
        */
       void setSystem(const fmatvec::SymMat & M_, const fmatvec::Vec & q_) {
-        M = fmatvec::SqrMat(M_.size(), fmatvec::NONINIT);
+        M.resize(M_.size(), fmatvec::NONINIT);
         for (int i = 0; i < M.size(); i++)
           for (int j = 0; j < M.size(); j++)
             M(i, j) = M_(i, j);
-        q = q_;
+        q.assign(q_);
       }
       /***************************************************/
 

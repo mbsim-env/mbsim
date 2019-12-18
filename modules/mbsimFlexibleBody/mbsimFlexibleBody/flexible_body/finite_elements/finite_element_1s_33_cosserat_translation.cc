@@ -91,27 +91,27 @@ namespace MBSimFlexibleBody {
 
     /* differentiation of 'strain energy' with respect to qG */
     Vec dSETdqG(9); // strain tangential
-    dSETdqG(0,2) = -tangent.copy();
+    dSETdqG(0,2) = -tangent;
     dSETdqG(3) = deltax.T()*dtangentdphi.col(0);
     dSETdqG(4) = deltax.T()*dtangentdphi.col(1);
     dSETdqG(5) = deltax.T()*dtangentdphi.col(2);
-    dSETdqG(6,8) = tangent.copy();
+    dSETdqG(6,8) = tangent;
     dSETdqG *= E*A*(tangent.T()*deltax-l0)/l0;
 
     Vec dSENdqG(9); // strain normal
-    dSENdqG(0,2) = -normal.copy();
+    dSENdqG(0,2) = -normal;
     dSENdqG(3) = deltax.T()*dnormaldphi.col(0);
     dSENdqG(4) = deltax.T()*dnormaldphi.col(1);
     dSENdqG(5) = deltax.T()*dnormaldphi.col(2);
-    dSENdqG(6,8) = normal.copy();
+    dSENdqG(6,8) = normal;
     dSENdqG *= G*sigma1*A*normal.T()*deltax/l0;
 
     Vec dSEBdqG(9); // strain binormal
-    dSEBdqG(0,2) = -binormal.copy(); 
+    dSEBdqG(0,2) = -binormal;
     dSEBdqG(3) = deltax.T()*dbinormaldphi.col(0);
     dSEBdqG(4) = deltax.T()*dbinormaldphi.col(1);
     dSEBdqG(5) = deltax.T()*dbinormaldphi.col(2);
-    dSEBdqG(6,8) = binormal.copy();
+    dSEBdqG(6,8) = binormal;
     dSEBdqG *= G*sigma2*A*binormal.T()*deltax/l0;
 
     Vec dVeldqG = dSETdqG + dSENdqG + dSEBdqG;
@@ -135,27 +135,27 @@ namespace MBSimFlexibleBody {
 
     /* differentiation of 'strain dissipation' with respect to qGt */
     Vec dSDTdqGt(9); 
-    dSDTdqGt(0,2) = -tangent.copy() ;
+    dSDTdqGt(0,2) = -tangent ;
     dSDTdqGt(3) = -tangent.T()*dtangentdphi.col(0)*l0;
     dSDTdqGt(4) = -tangent.T()*dtangentdphi.col(1)*l0;
     dSDTdqGt(5) = -tangent.T()*dtangentdphi.col(2)*l0;
-    dSDTdqGt(6,8) = tangent.copy();
+    dSDTdqGt(6,8) = tangent;
     dSDTdqGt *= 2.*cEps0D*(deltaxt.T()*tangent/l0 - tangent.T()*tangentt);
 
     Vec dSDNdqGt(9);
-    dSDNdqGt(0,2) = -normal.copy();
+    dSDNdqGt(0,2) = -normal;
     dSDNdqGt(3) = -normal.T()*dtangentdphi.col(0)*l0;
     dSDNdqGt(4) = -normal.T()*dtangentdphi.col(1)*l0;
     dSDNdqGt(5) = -normal.T()*dtangentdphi.col(2)*l0;
-    dSDNdqGt(6,8) = normal.copy();
+    dSDNdqGt(6,8) = normal;
     dSDNdqGt *= 2.*cEps1D*(deltaxt.T()*normal/l0 -normal.T()*tangentt);
 
     Vec dSDBdqGt(9);
-    dSDBdqGt(0,2) = -binormal.copy();
+    dSDBdqGt(0,2) = -binormal;
     dSDBdqGt(3) = -binormal.T()*dtangentdphi.col(0)*l0;
     dSDBdqGt(4) = -binormal.T()*dtangentdphi.col(1)*l0;
     dSDBdqGt(5) = -binormal.T()*dtangentdphi.col(2)*l0;
-    dSDBdqGt(6,8) = binormal.copy();
+    dSDBdqGt(6,8) = binormal;
     dSDBdqGt *= 2.*cEps2D*(deltax.T()*binormal/l0 - binormal.T()*tangentt);
 
     Vec dSDdqGt = dSDTdqGt + dSDNdqGt + dSDBdqGt;

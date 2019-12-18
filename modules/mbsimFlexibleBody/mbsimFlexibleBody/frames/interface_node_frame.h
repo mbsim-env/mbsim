@@ -33,10 +33,10 @@ namespace MBSimFlexibleBody {
     public:
       InterfaceNodeFrame(const std::string &name = "dummy") : NodeBasedFrame(name) { }
 
-      void setNodeNumbers(const fmatvec::VecVI &nodes_) { nodes = nodes_; }
+      void setNodeNumbers(const fmatvec::VecVI &nodes_) { nodes.assign(nodes_); }
       const fmatvec::VecVI& getNodeNumbers() const { return nodes; }
 
-      void setWeightingFactors(const fmatvec::VecV &weights_) { weights = weights_; }
+      void setWeightingFactors(const fmatvec::VecV &weights_) { weights.assign(weights_); }
       const fmatvec::VecV& getWeightingFactors() const { return weights; }
 
       void updatePositions() override;

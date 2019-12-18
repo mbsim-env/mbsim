@@ -166,12 +166,12 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<3; i++) {
       for(int j=0; j<3; j++) {
         if(i!=j)
-          Kom[i][j].resize() = PPdm[i][j];
+          Kom[i][j].assign(PPdm[i][j]);
       }
     }
-    Kom[0][0].resize() = -PPdm[1][1]-PPdm[2][2];
-    Kom[1][1].resize() = -PPdm[2][2]-PPdm[0][0];
-    Kom[2][2].resize() = -PPdm[0][0]-PPdm[1][1];
+    Kom[0][0].assign(-PPdm[1][1]-PPdm[2][2]);
+    Kom[1][1].assign(-PPdm[2][2]-PPdm[0][0]);
+    Kom[2][2].assign(-PPdm[0][0]-PPdm[1][1]);
 
     Me.resize(ne,NONINIT);
     mmi1.resize(ne);
@@ -224,14 +224,14 @@ namespace MBSimFlexibleBody {
         Gr1[j][i] = Gr1[i][j].T();
       }
     }
-    Ct0 = Pdm.T();
+    Ct0.assign(Pdm.T());
     for(const auto & i : K0t)
       Ct1.push_back(i);
 
     vector<SqrMatV> Kr(3);
-    Kr[0].resize() = -PPdm[1][2] + PPdm[1][2].T();
-    Kr[1].resize() = -PPdm[2][0] + PPdm[2][0].T();
-    Kr[2].resize() = -PPdm[0][1] + PPdm[0][1].T();
+    Kr[0].assign(-PPdm[1][2] + PPdm[1][2].T());
+    Kr[1].assign(-PPdm[2][0] + PPdm[2][0].T());
+    Kr[2].assign(-PPdm[0][1] + PPdm[0][1].T());
 
     for(const auto & i : Kr)
       Cr1.push_back(i);
@@ -240,29 +240,29 @@ namespace MBSimFlexibleBody {
 
     Ge.resize(3);
     for(int i=0; i<3; i++)
-      Ge[i].resize() = 2.*Kr[i];
+      Ge[i].assign(2.*Kr[i]);
 
     for(int i=0; i<3; i++)
-      Oe1[i].resize() = Kom[i][i];
-    Oe1[3].resize() = Kom[0][1] + Kom[0][1].T();
-    Oe1[4].resize() = Kom[1][2] + Kom[1][2].T();
-    Oe1[5].resize() = Kom[2][0] + Kom[2][0].T();
+      Oe1[i].assign(Kom[i][i]);
+    Oe1[3].assign(Kom[0][1] + Kom[0][1].T());
+    Oe1[4].assign(Kom[1][2] + Kom[1][2].T());
+    Oe1[5].assign(Kom[2][0] + Kom[2][0].T());
     for(unsigned int i=0; i<K0om.size(); i++)
       Oe1[i] += K0om[i];
 
     if(not(De0.size()))
-      De0 = beta.e(0)*Me + beta.e(1)*Ke0;
+      De0.assign(beta.e(0)*Me + beta.e(1)*Ke0);
 
     if(Knl1.size()) {
       Ke1.resize(Knl1.size());
       if(Knl2.size()) Ke2.resize(Knl2.size(),vector<SqrMatV>(Knl2.size()));
       for(unsigned int i=0; i<Knl1.size(); i++) {
-        Ke1[i].resize() = (Knl1[i].T() + 0.5*Knl1[i]);
+        Ke1[i].assign((Knl1[i].T() + 0.5*Knl1[i]));
         for(unsigned int j=0; j<Knl2.size(); j++)
-          Ke2[i][j].resize() = 0.5*Knl2[i][j];
+          Ke2[i][j].assign(0.5*Knl2[i][j]);
       }
     }
- }
+  }
 
   void GenericFlexibleFfrBody::prefillMassMatrix() {
     M_.resize(6+ne,NONINIT);
@@ -277,6 +277,7 @@ namespace MBSimFlexibleBody {
       for(int j=i; j<ne; j++)
         M_.ej(i+6,j+6) = Me.ej(i,j);
     }
+    h_.resize(6+ne,NONINIT);
   }
 
   void GenericFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
@@ -346,6 +347,10 @@ namespace MBSimFlexibleBody {
         qdRRel.resize(qRRel.size(),NONINIT);
         PJRR.resize(qRRel.size(),NONINIT);
       }
+      qERel.resize(ne,NONINIT);
+      uERel.resize(ne,NONINIT);
+      qdERel.resize(ne,NONINIT);
+      udERel.resize(ne,NONINIT);
 
       frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
 

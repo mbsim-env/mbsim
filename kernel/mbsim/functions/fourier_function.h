@@ -65,17 +65,12 @@ namespace MBSim {
         if(e) a0=MBXMLUtils::E(e)->getText<double>();
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a");
         if(e) {
-          a.assign(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
+          seta(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
           e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"b");
-          b.assign(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
+          setb(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"ab");
-        if(e) {
-          fmatvec::MatV xy = MBXMLUtils::E(e)->getText<fmatvec::Mat>();
-          assert(xy.cols() == 2);
-          a.assign(xy.col(0));
-          b.assign(xy.col(1));
-        }
+        if(e) setab(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitudePhaseAngleForm");
         if(e) amplitudePhaseAngleForm = MBXMLUtils::E(e)->getText<bool>();
       }
@@ -91,6 +86,16 @@ namespace MBSim {
           }
         }
       }
+      void setFrequency(double f_) { f = f_; }
+      void seta0(double a0_) { a0 = a0_; }
+      void seta(const fmatvec::VecV &a_) { a = a_; }
+      void setb(const fmatvec::VecV &b_) { b = b_; }
+      void setab(const fmatvec::MatV &ab) {
+        assert(ab.cols() == 2);
+        a.assign(ab.col(0));
+        b.assign(ab.col(1));
+      }
+      void setAmplitudePhaseAngleForm(bool amplitudePhaseAngleForm_) { amplitudePhaseAngleForm = amplitudePhaseAngleForm_; }
     protected:
       double f;
       double a0;

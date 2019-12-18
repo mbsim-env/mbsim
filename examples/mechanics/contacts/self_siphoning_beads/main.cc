@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
     integrator->integrate(*sys);
     Vec u = sys->getu();
     u.init(fmatvec::INIT,0.);
-    sys->getu() = u.copy();
+    sys->getu() = u;
     sys->writez("Assembly.h5");
 
     double elapsedIntegrationTime = timer.elapsed();

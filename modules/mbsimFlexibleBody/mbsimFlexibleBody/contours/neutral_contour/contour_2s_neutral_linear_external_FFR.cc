@@ -155,7 +155,7 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour2sNeutralLinearExternalFFR::setTransNodes(const MatVI & transNodes_) {
-    transNodes.resize() = transNodes_;
+    transNodes.assign(transNodes_);
   }
 
 

@@ -110,7 +110,7 @@ namespace MBSimFlexibleBody {
     // Local coordinate system
     Vec e1(3,NONINIT);
     e1(0) = x2-x1; e1(1) = y2-y1; e1(2) = z2-z1;
-    Vec e1_notNormalized = e1.copy();
+    Vec e1_notNormalized = e1;
     e1 /= nrm2(e1);
     double e1x = e1(0); double e1y = e1(1); double e1z = e1(2);
 
@@ -123,7 +123,7 @@ namespace MBSimFlexibleBody {
 
     Vec e2(3,NONINIT);
     e2(0) = y1-y2; e2(1) = x2-x1; e2(2) = 0.;
-    Vec e2_notNormalized = e2.copy();
+    Vec e2_notNormalized = e2;
     e2 /= nrm2(e2);
     double e2x = e2(0); double e2y = e2(1); double e2z = e2(2);
 
@@ -258,7 +258,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FiniteElement1s33ANCF::StateBalken(const Vec& qElement, const Vec& qpElement, double s) {
-    Mat J = (JGeneralized(qElement,s).T()).copy();
+    Mat J = (JGeneralized(qElement,s).T());
 
     Vec X(12);
     X(RangeV(0,2)) = J(RangeV(0,2),RangeV(0,11))*qElement;

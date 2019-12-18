@@ -36,7 +36,7 @@ namespace MBSimPhysics {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMPHYSICS, Drag)
 
   Drag::Drag(const std::string &name) : FloatingFrameLink(name) {
-    forceDir = Mat3xV(3,EYE);
+    forceDir.resize(3,EYE);
   }
 
   Drag::~Drag() {

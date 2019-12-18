@@ -35,6 +35,7 @@ namespace MBSim {
 
       void calcxSize() override;
 
+      void setInitialState(const fmatvec::Vec &x0_) { x0.assign(x0_); }
       // NOTE: we can not use a overloaded setConstraintFunction here due to restrictions in XML but define them for convinience in c++
       void setGeneralConstraintFunction(Function<fmatvec::VecV(fmatvec::VecV,double)>* f_) {
         f = f_;

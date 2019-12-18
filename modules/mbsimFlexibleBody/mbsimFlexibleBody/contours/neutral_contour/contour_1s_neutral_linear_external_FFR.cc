@@ -35,7 +35,7 @@ namespace MBSimFlexibleBody {
     string s;
     getline(contourfile, s);
 
-    transNodes.resize() = VecInt(s.c_str());
+    transNodes.assign(VecInt(s.c_str()));
   }
 
   NeutralNurbsVelocity1s* Contour1sNeutralLinearExternalFFR::createNeutralVelocity() {

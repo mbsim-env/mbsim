@@ -54,8 +54,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::updateM() {
-    SymMat Mext = MConst.copy(); // copy constant mass matrix parts
-    Vec qf = evalqExt()(RefDofs, Dofs - 1).copy();
+    SymMat Mext = MConst; // copy constant mass matrix parts
+    Vec qf = evalqExt()(RefDofs, Dofs - 1);
 
     /* M_RR is constant */
     /* M_RTheta */
@@ -98,7 +98,7 @@ namespace MBSimFlexibleBody {
 
     Mext(3, RefDofs, 5, Dofs - 1) += M_ThetaF;
 
-    M = condenseMatrix(Mext, ILocked).copy();
+    M = condenseMatrix(Mext, ILocked);
 
     /* Eigenvalues of M */
     if (msgAct(Debug)) {
@@ -509,7 +509,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec FlexibleBody2s13MFRMindlin::transformCW(const Vec& WrPoint) {
-    Vec CrPoint = WrPoint.copy();
+    Vec CrPoint = WrPoint;
 
     CrPoint -= q(0, 2);
     CrPoint = evalA().T() * CrPoint; // position in moving frame of reference

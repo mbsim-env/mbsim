@@ -96,7 +96,7 @@ namespace MBSimFlexibleBody {
     // Local coordinate system
     Vec e1(2,NONINIT);
     e1(0) = x2-x1; e1(1) = y2-y1;
-    Vec e1_notNormalized = e1.copy();
+    Vec e1_notNormalized = e1;
     e1 /= nrm2(e1);
     double e1x = e1(0); double e1y = e1(1);
 
