@@ -740,7 +740,8 @@ namespace MBSim {
 
       //TODO: separate normal and tangential
 
-      RowVec jp1 = ds->getJprox().row(laInd);
+      RowVec jp1;
+      jp1 &= ds->getJprox().row(laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
 
@@ -754,7 +755,8 @@ namespace MBSim {
 
       if(gdActive[tangential] and fdf->isSetValued()) {
         Mat diff = fdf->diff(laT, gddT(0, 0), fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
-        RowVec jp2 = ds->getJprox().row(laInd + fcl->isSetValued());
+        RowVec jp2;
+        jp2 &= ds->getJprox().row(laInd + fcl->isSetValued());
         RowVec e2(jp2.size());
         e2(laInd + 1) = 1;
         Mat e(2, jp2.size());
@@ -773,7 +775,8 @@ namespace MBSim {
 
       const SqrMat G = ds->evalG();
 
-      RowVec jp1 = ds->getJprox().row(laInd);
+      RowVec jp1;
+      jp1 &= ds->getJprox().row(laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
 
@@ -788,7 +791,8 @@ namespace MBSim {
 
       if(fdf->isSetValued()) {
         Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(fcl->isSetValued()));
-        RowVec jp2 = ds->getJprox().row(laInd + fcl->isSetValued());
+        RowVec jp2;
+        jp2 &= ds->getJprox().row(laInd + fcl->isSetValued());
         RowVec e2(jp2.size());
         e2(laInd + fcl->isSetValued()) = 1;
         Mat e(2, jp2.size());

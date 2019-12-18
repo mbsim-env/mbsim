@@ -100,14 +100,14 @@ namespace MBSimHydraulics {
     Mat JLocal;
     if(dependency.size()==0) {
       if(getGeneralizedVelocitySize()==1)
-        JLocal=Mat(1,1,INIT,1);
+        JLocal.resize(1,1,INIT,1);
       else {
-        JLocal=Mat(1,getGeneralizedVelocitySize(),INIT,0);
+        JLocal.resize(1,getGeneralizedVelocitySize(),INIT,0);
         JLocal(0,uInd[0])=1;
       }
     }
     else {
-      JLocal=Mat(1,getGeneralizedVelocitySize(),INIT,0);
+      JLocal.resize(1,getGeneralizedVelocitySize(),INIT,0);
       dep_check.push_back(this);
       for (auto & i : dependencyOnOutflow) {
         const Mat Jdep=((RigidHLine*)i)->calculateJacobian(dep_check);
@@ -173,7 +173,7 @@ namespace MBSimHydraulics {
     else if(stage==unknownStage) {
       vector<RigidHLine *> dep_check;
       dep_check.push_back(this);
-      Jacobian=calculateJacobian(dep_check);
+      Jacobian.assign(calculateJacobian(dep_check));
     }
     HLine::init(stage, config);
   }

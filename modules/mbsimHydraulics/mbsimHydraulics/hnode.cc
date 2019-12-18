@@ -131,12 +131,8 @@ namespace MBSimHydraulics {
       h[1].resize(nLines);
       r[0].resize(nLines);
       r[1].resize(nLines);
-      for (unsigned int i=0; i<nLines; i++) {
-        connectedLines[i].sign = 
-          ((connectedLines[i].inflow) ?
-           connectedLines[i].line->getInflowFactor() :
-           connectedLines[i].line->getOutflowFactor());
-      }
+      for (unsigned int i=0; i<nLines; i++)
+        connectedLines[i].sign.assign(((connectedLines[i].inflow) ?  connectedLines[i].line->getInflowFactor() : connectedLines[i].line->getOutflowFactor()));
     }
     else if (stage==plotting) {
       if(plotFeature[plotRecursive]) {
@@ -317,7 +313,7 @@ namespace MBSimHydraulics {
         p0=pinf;
       }
       lambda(0)=p0;
-      x0=Vec(1, INIT, p0);
+      x0.resize(1, INIT, p0);
 
       double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
       double kappa=HydraulicEnvironment::getInstance()->getKappa();
@@ -512,10 +508,10 @@ namespace MBSimHydraulics {
   }
 
   void RigidNode::jacobianImpacts() {
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
 
-    RowVec jp1=Jprox.row(laInd);
+    RowVec jp1;
+    jp1 &= ds->getJprox().row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gil->diff(La(0), gdn, gd(0), rFactor(0));
@@ -526,10 +522,10 @@ namespace MBSimHydraulics {
   }
 
   void RigidNode::jacobianConstraints() {
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
 
-    RowVec jp1=Jprox.row(laInd);
+    RowVec jp1;
+    jp1 &= ds->getJprox().row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gfl->diff(la(0), gdd, rFactor(0));
@@ -792,10 +788,10 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::jacobianImpacts() {
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
 
-    RowVec jp1=Jprox.row(laInd);
+    RowVec jp1;
+    jp1 &= ds->getJprox().row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gil->diff(la(0), gdn, gd(0), rFactor(0), pCav);
@@ -806,10 +802,10 @@ namespace MBSimHydraulics {
   }
 
   void RigidCavitationNode::jacobianConstraints() {
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
 
-    RowVec jp1=Jprox.row(laInd);
+    RowVec jp1;
+    jp1 &= ds->getJprox().row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gfl->diff(la(0), gdd, rFactor(0));

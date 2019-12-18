@@ -54,7 +54,7 @@ namespace MBSimHydraulics {
   unsigned int HNodeMec::addTransMecArea(Frame * f, Vec fN, double area, bool considerVolumeChange) {
     connectedTransFrameStruct transFrame;
     transFrame.frame = f;
-    transFrame.normal = fN/nrm2(fN);
+    transFrame.normal.assign(fN/nrm2(fN));
     transFrame.area = area;
     transFrame.considerVolumeChange = considerVolumeChange;
     connectedTransFrames.push_back(transFrame);
@@ -64,7 +64,7 @@ namespace MBSimHydraulics {
   unsigned int HNodeMec::addRotMecArea(Frame * f, Vec fN, double area, Frame * frameOfReference, bool considerVolumeChange) {
     connectedRotFrameStruct rotFrame;
     rotFrame.frame = f;
-    rotFrame.normal = fN/nrm2(fN);
+    rotFrame.normal.assign(fN/nrm2(fN));
     rotFrame.area = area;
     rotFrame.fref = frameOfReference;
     rotFrame.considerVolumeChange = considerVolumeChange;
@@ -714,10 +714,10 @@ namespace MBSimHydraulics {
   }
 
   void RigidNodeMec::jacobianImpacts() {
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
 
-    RowVec jp1=Jprox.row(laInd);
+    RowVec jp1;
+    jp1 &= ds->getJprox().row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gil->diff(La(0), gdn, gd(0), rFactor(0));
@@ -728,10 +728,10 @@ namespace MBSimHydraulics {
   }
 
   void RigidNodeMec::jacobianConstraints() {
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->evalG();
 
-    RowVec jp1=Jprox.row(laInd);
+    RowVec jp1;
+    jp1 &= ds->getJprox().row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gfl->diff(la(0), gdd, rFactor(0));

@@ -694,7 +694,8 @@ namespace MBSim {
 
       //TODO: separate normal and tangential
 
-      RowVec jp1 = ds->getJprox().row(laInd);
+      RowVec jp1;
+      jp1 &= ds->getJprox().row(laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
 
@@ -709,7 +710,8 @@ namespace MBSim {
       if(fdf and gdActive[tangential] and fdf->isSetValued()) {
         if (fdf->getFrictionDirections() == 1) {
           Mat diff = fdf->diff(laT, gddT(0, 0), fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
-          RowVec jp2 = ds->getJprox().row(laInd + fcl->isSetValued());
+          RowVec jp2;
+          jp2 &= ds->getJprox().row(laInd + fcl->isSetValued());
           RowVec e2(jp2.size());
           e2(laInd + 1) = 1;
           Mat e(2, jp2.size());
@@ -723,7 +725,8 @@ namespace MBSim {
         }
         else if (fdf->getFrictionDirections() == 2) {
           Mat diff = ftil->diff(laT, gddT, gdT, fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
-          Mat jp2 = ds->getJprox()(RangeV(laInd + fcl->isSetValued(), laInd + fcl->isSetValued() + 1), RangeV(0, ds->getJprox().cols() - 1));
+          Mat jp2;
+          jp2 &= ds->getJprox()(RangeV(laInd + fcl->isSetValued(), laInd + fcl->isSetValued() + 1), RangeV(0, ds->getJprox().cols() - 1));
           Mat e2(2, jp2.cols());
           e2(0, laInd + fcl->isSetValued()) = 1;
           e2(1, laInd + fcl->isSetValued() + 1) = 1;
@@ -742,7 +745,8 @@ namespace MBSim {
 
       const SqrMat G = ds->evalG();
 
-      RowVec jp1 = ds->getJprox().row(laInd);
+      RowVec jp1;
+      jp1 &= ds->getJprox().row(laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
 
@@ -758,7 +762,8 @@ namespace MBSim {
       if(fdf and fdf->isSetValued()) {
         if (fdf->getFrictionDirections() == 1) {
           Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(fcl->isSetValued()));
-          RowVec jp2 = ds->getJprox().row(laInd + fcl->isSetValued());
+          RowVec jp2;
+          jp2 &= ds->getJprox().row(laInd + fcl->isSetValued());
           RowVec e2(jp2.size());
           e2(laInd + fcl->isSetValued()) = 1;
           Mat e(2, jp2.size());
@@ -772,7 +777,8 @@ namespace MBSim {
         }
         else if (fdf->getFrictionDirections() == 2) {
           Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(fcl->isSetValued()));
-          Mat jp2 = ds->getJprox()(RangeV(laInd + fcl->isSetValued(), laInd + fcl->isSetValued() + 1), RangeV(0, ds->getJprox().cols() - 1));
+          Mat jp2;
+          jp2 &= ds->getJprox()(RangeV(laInd + fcl->isSetValued(), laInd + fcl->isSetValued() + 1), RangeV(0, ds->getJprox().cols() - 1));
           Mat e2(2, jp2.cols());
           e2(0, laInd + fcl->isSetValued()) = 1;
           e2(1, laInd + fcl->isSetValued() + 1) = 1;

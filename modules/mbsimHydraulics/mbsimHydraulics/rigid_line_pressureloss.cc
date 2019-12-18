@@ -349,10 +349,10 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::jacobianImpacts() {
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG();
 
-    RowVec jp1=Jprox.row(laInd);
+    RowVec jp1;
+    jp1 &= ds->getJprox().row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gil->diff(La(0), gdn, gd(0), rFactor(0));
@@ -363,10 +363,10 @@ namespace MBSimHydraulics {
   }
 
   void RigidLinePressureLoss::jacobianConstraints() {
-    const SqrMat Jprox = ds->getJprox();
     const SqrMat G = ds->getG();
 
-    RowVec jp1=Jprox.row(laInd);
+    RowVec jp1;
+    jp1 &= ds->getJprox().row(laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gfl->diff(la(0), gdd, rFactor(0));

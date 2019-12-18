@@ -343,7 +343,8 @@ namespace MBSim {
     const SqrMat G = ds->evalG();
 
     for (int i = 0; i < iFM.size(); i++) {
-      RowVec jp1 = ds->getJprox().row(laInd + i);
+      RowVec jp1;
+      jp1 &= ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = ffl->diff(la(i), gdd(i), rFactor(i));
@@ -355,7 +356,8 @@ namespace MBSim {
 
     for (int i = iFM.size(); i < laSize; i++) {
 
-      RowVec jp1 = ds->getJprox().row(laInd + i);
+      RowVec jp1;
+      jp1 &= ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fml->diff(la(i), gdd(i), rFactor(i));
@@ -371,7 +373,8 @@ namespace MBSim {
     const SqrMat G = ds->evalG();
 
     for (int i = 0; i < iFM.size(); i++) {
-      RowVec jp1 = ds->getJprox().row(laInd + i);
+      RowVec jp1;
+      jp1 &= ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fifl->diff(La(i), gdn(i), gd(i), rFactor(i));
@@ -382,7 +385,8 @@ namespace MBSim {
     }
 
     for (int i = iFM.size(); i < laSize; i++) {
-      RowVec jp1 = ds->getJprox().row(laInd + i);
+      RowVec jp1;
+      jp1 &= ds->getJprox().row(laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fiml->diff(La(i), gdn(i), gd(i), rFactor(i));
