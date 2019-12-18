@@ -446,16 +446,16 @@ namespace MBSim {
   }
 
   void RigidBody::updateJacobians2(Frame *frame_) {
-    for(auto & i : frame) {
-      i->getJacobianOfTranslation(2,false);
-      i->getJacobianOfRotation(2,false);
-    }
     if(updateByReference) {
-      frame_->getJacobianOfTranslation(2,false) = R->evalJacobianOfTranslation(2) - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation(2);
-      frame_->getJacobianOfRotation(2,false) = R->evalJacobianOfRotation(2);
+      frame_->getJacobianOfTranslation(2,false).reassign(R->evalJacobianOfTranslation(2) - tilde(evalGlobalRelativePosition())*R->evalJacobianOfRotation(2));
+      frame_->getJacobianOfRotation(2,false).reassign(R->evalJacobianOfRotation(2));
     } else {
-      frame_->getJacobianOfTranslation(2,false) = R->evalOrientation()*evalPJT();
-      frame_->getJacobianOfRotation(2,false) = frameForJacobianOfRotation->evalOrientation()*getPJR();
+      frame_->getJacobianOfTranslation(2,false).reassign(R->evalOrientation()*evalPJT());
+      frame_->getJacobianOfRotation(2,false).reassign(frameForJacobianOfRotation->evalOrientation()*getPJR());
+    }
+    for(auto & i : frame) {
+      i->getJacobianOfTranslation(2,false).resize(frame_->getJacobianOfTranslation(2,false).cols(),NONINIT);
+      i->getJacobianOfRotation(2,false).resize(frame_->getJacobianOfTranslation(2,false).cols(),NONINIT);
     }
   }
 

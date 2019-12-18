@@ -191,6 +191,8 @@ namespace MBSim {
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
+      C.getJacobianOfTranslation(2,false).resize(bd1[i]->getGeneralizedVelocitySize(),NONINIT);
+      C.getJacobianOfRotation(2,false).resize(bd1[i]->getGeneralizedVelocitySize(),NONINIT);
       JT(RangeV(0,2),Iu1[i]) = C.evalJacobianOfTranslation(2);
       JR(RangeV(0,2),Iu1[i]) = C.getJacobianOfRotation(2);
       for(size_t j=i+1; j<bd1.size(); j++)

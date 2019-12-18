@@ -213,6 +213,9 @@ namespace MBSim {
       for(unsigned int i=0; i<body.size(); i++) {
         P[i] = &C[i];
         P[i+body.size()] = body[i]->getFrameForKinematics();
+        C[i].sethSize(support->gethSize());
+        C[i].sethSize(support->gethSize(1),1);
+        C[i].init(stage, config);
       }
     }
     MechanicalLink::init(stage, config);

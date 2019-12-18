@@ -115,7 +115,7 @@ namespace MBSimFcl {
   void FclMesh::initializeUsingXML(DOMElement *element) {
     FclContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFCL%"vertices");
-    vertex = E(e)->getText<MatVx3>();
+    vertex.assign(E(e)->getText<MatVx3>());
     e=E(element)->getFirstElementChildNamed(MBSIMFCL%"triangles");
     Matrix<General,Var,Fixed<3>,Index> triangle1based=E(e)->getText<Matrix<General,Var,Fixed<3>,Index>>();
     triangle.resize(triangle1based.rows(),NONINIT);

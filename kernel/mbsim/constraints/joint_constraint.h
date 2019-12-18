@@ -76,7 +76,7 @@ namespace MBSim {
       fmatvec::Mat3xV& getGlobalMomentDirection(bool check=true) { assert((not check) or (not updDF)); return DM; }
       fmatvec::SqrMat& getA(bool check=true) { assert((not check) or (not updA)); return A; }
 
-      void setInitialGuess(const fmatvec::VecV &q0_) { q0 = q0_; }
+      void setInitialGuess(const fmatvec::VecV &q0_) { q0.assign(q0_); }
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 

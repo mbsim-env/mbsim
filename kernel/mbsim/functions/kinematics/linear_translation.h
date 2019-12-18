@@ -43,9 +43,9 @@ namespace MBSim {
       bool constParDer() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"translationVectors");
-        A=FromMatStr<typename B::DRetDArg>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
+        A.assign(FromMatStr<typename B::DRetDArg>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
-        if(e) b=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
+        if(e) b.assign(FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()));
       }
       void setSlope(const typename B::DRetDArg &A_) { A = A_; }
       void setIntercept(const fmatvec::Vec3 &b_) { b = b_; }

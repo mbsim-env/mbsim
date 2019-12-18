@@ -65,16 +65,16 @@ namespace MBSim {
         if(e) a0=MBXMLUtils::E(e)->getText<double>();
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a");
         if(e) {
-          a = MBXMLUtils::E(e)->getText<fmatvec::Vec>();
+          a.assign(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
           e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"b");
-          b = MBXMLUtils::E(e)->getText<fmatvec::Vec>();
+          b.assign(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"ab");
         if(e) {
           fmatvec::MatV xy = MBXMLUtils::E(e)->getText<fmatvec::Mat>();
           assert(xy.cols() == 2);
-          a = xy.col(0);
-          b = xy.col(1);
+          a.assign(xy.col(0));
+          b.assign(xy.col(1));
         }
         e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitudePhaseAngleForm");
         if(e) amplitudePhaseAngleForm = MBXMLUtils::E(e)->getText<bool>();

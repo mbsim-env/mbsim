@@ -48,8 +48,8 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setInitialValue(const fmatvec::Vec2 &s0_) { s0 = s0_; }
       void setNodes(const fmatvec::Vec &nodesU_, const fmatvec::Vec &nodesV_) {
-        nodesU = nodesU_;
-        nodesV = nodesV_;
+        nodesU.assign(nodesU_);
+        nodesV.assign(nodesV_);
       }
       void setSearchAll(bool searchAll_) { searchAll = searchAll_; }
       /*************************************************/

@@ -334,6 +334,19 @@ namespace MBSimFlexibleBody {
       if(not sigma0.size())
         sigma0.resize(nn);
 
+      if(fPrPK) {
+        qTRel.resize(fPrPK->getArg1Size(),NONINIT);
+        uTRel.resize(qTRel.size(),NONINIT);
+        qdTRel.resize(qTRel.size(),NONINIT);
+        PJTT.resize(qTRel.size(),NONINIT);
+      }
+      if(fAPK) {
+        qRRel.resize(fAPK->getArg1Size(),NONINIT);
+        uRRel.resize(qRRel.size(),NONINIT);
+        qdRRel.resize(qRRel.size(),NONINIT);
+        PJRR.resize(qRRel.size(),NONINIT);
+      }
+
       frameForJacobianOfRotation = generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameForKinematics?K:R;
 
       NodeBasedBody::init(stage, config);

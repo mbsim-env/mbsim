@@ -185,7 +185,7 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setSearchAllContactPoints(bool searchAllCP_) { searchAllCP = searchAllCP_; }
-      void setInitialGuess(const fmatvec::VecV &zeta0_) { zeta0 = zeta0_; }
+      void setInitialGuess(const fmatvec::MatV &zeta0_) { zeta0.assign(zeta0_); }
 
       /**
        * \brief set tolerance for root-finding
@@ -299,7 +299,7 @@ namespace MBSim {
 
       bool searchAllCP;
 
-      fmatvec::VecV zeta0;
+      fmatvec::MatV zeta0;
 
       /**
        * \brief tolerance for root-finding

@@ -40,7 +40,7 @@ namespace MBSim {
   }
 
   Vec2 SpatialContactSearch::slv() {
-    std::vector<Vec> alphaC((nodesU.size() - 1) * (nodesV.size() - 1)); // stores the largrange position of all possible candidates of the contact points searched by root finding function
+    std::vector<Vec2> alphaC((nodesU.size() - 1) * (nodesV.size() - 1)); // stores the largrange position of all possible candidates of the contact points searched by root finding function
     Vec gbuf; // stores the norm 2 distance of all contact point candidates
     int nRoots = 0; // number of found roots
 
