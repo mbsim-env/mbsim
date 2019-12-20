@@ -81,22 +81,6 @@ namespace MBSim {
     if(func) func->init(stage, config);
   }
 
-  void ElasticJoint::setForceDirection(const Mat3xV &fd) {
-
-    forceDir.assign(fd);
-
-    for (int i = 0; i < fd.cols(); i++)
-      forceDir.set(i, forceDir.col(i) / nrm2(fd.col(i)));
-  }
-
-  void ElasticJoint::setMomentDirection(const Mat3xV &md) {
-
-    momentDir.assign(md);
-
-    for (int i = 0; i < md.cols(); i++)
-      momentDir.set(i, momentDir.col(i) / nrm2(md.col(i)));
-  }
-
   VecV ElasticJoint::evalGeneralizedRelativePositionOfRotation() {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
