@@ -38,7 +38,7 @@ CLEANFILES = _fmatvec_swig_python.cc fmatvec.py fmatvec_swig_python.d _mbsim_swi
 # create a empty dummy _fmatvec_swig_python.cc file if MBSIM_SWIG is not set (to avoid a long build time)
 _fmatvec_swig_python.cc: $(srcdir)/fmatvec.i
 	rm -f _fmatvec_swig_python.cc
-	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > fmatvec.py) || $(swig) -python -MP -MD -Werror -builtin -c++ -o _fmatvec_swig_python.cc $(FMATVEC_CFLAGS) $(srcdir)/fmatvec.i
+	test -z "$(MBSIM_SWIG)" && (echo "" > $@; echo "" > fmatvec.py) || $(swig) -python -py3 -MP -MD -Werror -builtin -c++ -o _fmatvec_swig_python.cc $(FMATVEC_CFLAGS) $(srcdir)/fmatvec.i
 
 # create a empty dummy _mbsim_swig_python.cc file if MBSIM_SWIG is not set (to avoid a long build time)
 _%_swig_python.cc: %.i

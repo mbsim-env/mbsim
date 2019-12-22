@@ -100,7 +100,7 @@
 // add code to the generated code
 %{
 
-#include "mbxmlutils/py2py3cppwrapper.h"
+#include "mbxmlutils/pycppwrapper.h"
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMDocument.hpp>
 
@@ -129,7 +129,7 @@ void _directorExcept(PyObject *error) {
 // This struct exists once globally (for all python modules; done via python capsule)
 class _MapPyXercesDOMElement;
 struct _MBSimGlobals {
-  _MapPyXercesDOMElement *mapPyXercesDOMElement;
+  _MapPyXercesDOMElement *mapPyXercesDOMElement = nullptr;
 };
 static _MBSimGlobals *mbsimGlobals=nullptr;
 
@@ -203,21 +203,15 @@ void _typemapInDOMElement(xercesc::DOMElement *&_1, PyObject *_input) {
 
 %init %{
 // create a global, cross python modules, mbsim object using python capsule (in a dummy module named _mbsimGlobalsModule)
-if(CALLPY(PyDict_Contains, CALLPYB(PyImport_GetModuleDict), PythonCpp::Py_BuildValue_("s", "_mbsimGlobalsModule")))
-  // get the global mbsim object
-  mbsimGlobals=static_cast<_MBSimGlobals*>(CALLPY(PyCapsule_Import, "_mbsimGlobalsModule._mbsimGlobals", true));
-else {
+mbsimGlobals=static_cast<_MBSimGlobals*>(PyCapsule_Import("mbsim._mbsimGlobals", false));
+if(!mbsimGlobals || PyErr_Occurred()) {
+  PyErr_Clear();
   // create a global mbsim object
   static _MBSimGlobals mbsimGlobalsStore;
   mbsimGlobals=&mbsimGlobalsStore;
-  #if PY_MAJOR_VERSION < 3
-    PythonCpp::PyO mbsimGlobalsModule(CALLPYB(Py_InitModule, const_cast<char*>("_mbsimGlobalsModule"), nullptr));
-  #else
-    #error "Python 3 not supported: module initialization is quite different in python 3."
-  #endif
-  static const char *mbsimGlobalName="_mbsimGlobalsModule._mbsimGlobals"; // PyCapsule_New does not copy this string
+  static const char *mbsimGlobalName="mbsim._mbsimGlobals"; // PyCapsule_New does not copy this string
   PythonCpp::PyO mbsimGlobalsCapsule(CALLPY(PyCapsule_New, mbsimGlobals, mbsimGlobalName, nullptr));
-  CALLPY(PyModule_AddObject, mbsimGlobalsModule, "_mbsimGlobals", mbsimGlobalsCapsule.incRef());
+  CALLPY(PyModule_AddObject, CALLPY(PyImport_ImportModule, "mbsim"), "_mbsimGlobals", mbsimGlobalsCapsule.incRef());
 }
 %}
 

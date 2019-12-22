@@ -1,6 +1,6 @@
 #include "config.h"
 #if MBSIMXML_COND_PYTHON
-  #include <mbxmlutils/py2py3cppwrapper.h>
+  #include <mbxmlutils/pycppwrapper.h>
 #endif
 #include <cstdlib>
 #include <iostream>
