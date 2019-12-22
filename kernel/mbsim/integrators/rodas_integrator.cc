@@ -264,7 +264,7 @@ namespace MBSim {
     system->resetUpToDate();
     system->computeInitialCondition();
     system->plot();
-    svLast.assign(system->evalsv());
+    svLast <<= system->evalsv();
     z = system->getState(); // needed, as computeInitialCondition may change the state
 
     calcSize();

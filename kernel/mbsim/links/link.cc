@@ -178,7 +178,7 @@ namespace MBSim {
   }
 
   void Link::savela() {
-    la0.reassign(la);
+    la0 <<= la;
   }
 
   void Link::initla() {
@@ -189,7 +189,7 @@ namespace MBSim {
   }
 
   void Link::saveLa() {
-    La0.reassign(La);
+    La0 <<= La;
   }
 
   void Link::initLa() {

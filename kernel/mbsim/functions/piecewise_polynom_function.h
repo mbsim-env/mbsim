@@ -131,13 +131,13 @@ namespace MBSim {
        */
       void setInterpolationMethod(InterpolationMethod method_) { method = method_; }
 
-      void setx(const fmatvec::VecV &x_) { x.assign(x_); }
-      void sety(const fmatvec::MatV &y_) { y.assign(y_); }
+      void setx(const fmatvec::VecV &x_) { x <<= x_; }
+      void sety(const fmatvec::MatV &y_) { y <<= y_; }
       void setxy(const fmatvec::MatV &xy) {
         if(xy.cols() <= 1)
           this->throwError("Dimension missmatch in size of xy");
-        x.assign(xy.col(0));
-        y.assign(xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1)));
+        x <<= xy.col(0);
+        y <<= xy(fmatvec::RangeV(0, xy.rows() - 1), fmatvec::RangeV(1, xy.cols() - 1));
       }
 
       /*!
@@ -449,7 +449,7 @@ namespace MBSim {
       for(int i=1;i<=(parent->order);i++) // Horner scheme
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index));
       xSave=x;
-      ySave.reassign(yi);
+      ySave <<= yi;
       return FromVecV<Ret>::cast(yi);
     }
   }
@@ -478,7 +478,7 @@ namespace MBSim {
       for(int i=1;i<parent->order;i++)
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i);
       xSave=x;
-      ySave.reassign(yi);
+      ySave <<= yi;
       return FromVecV<Ret>::cast(yi);
     }
   }
@@ -507,7 +507,7 @@ namespace MBSim {
       for(int i=1;i<=((parent->order)-2);i++)
         yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i)*double((parent->order)-i-1);
       xSave=x;
-      ySave.reassign(yi);
+      ySave <<= yi;
       return FromVecV<Ret>::cast(yi);
     }
   }

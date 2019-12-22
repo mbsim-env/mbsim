@@ -61,12 +61,12 @@ namespace MBSim {
       /**
        * \param local force direction represented in first frame
        */
-      void setForceDirection(const fmatvec::Mat3xV& fd) { forceDir.assign(fd); }
+      void setForceDirection(const fmatvec::Mat3xV& fd) { forceDir <<= fd; }
 
       /**
        * \param local moment direction represented in first frame
        */
-      void setMomentDirection(const fmatvec::Mat3xV& md) { momentDir.assign(md); }
+      void setMomentDirection(const fmatvec::Mat3xV& md) { momentDir <<= md; }
 
       void setIntegrateGeneralizedRelativeVelocityOfRotation(bool integrateGeneralizedRelativeVelocityOfRotation_) { integrateGeneralizedRelativeVelocityOfRotation = integrateGeneralizedRelativeVelocityOfRotation_; }
 

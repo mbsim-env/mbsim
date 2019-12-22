@@ -54,8 +54,8 @@ namespace MBSim {
       void addIndependentRigidBody(RigidBody* bi_) { bi.push_back(bi_); }
 
       void setUpInverseKinetics() override;
-      void setForceDirection(const fmatvec::Mat3xV& fd) { forceDir.assign(fd); }
-      void setMomentDirection(const fmatvec::Mat3xV& md) { momentDir.assign(md); }
+      void setForceDirection(const fmatvec::Mat3xV& fd) { forceDir <<= fd; }
+      void setMomentDirection(const fmatvec::Mat3xV& md) { momentDir <<= md; }
 
       /** \brief The frame of reference for the force/moment direction vectors.
        * If firstFrame (default) the first frame, if secondFrame the second frame is used.
@@ -76,7 +76,7 @@ namespace MBSim {
       fmatvec::Mat3xV& getGlobalMomentDirection(bool check=true) { assert((not check) or (not updDF)); return DM; }
       fmatvec::SqrMat& getA(bool check=true) { assert((not check) or (not updA)); return A; }
 
-      void setInitialGuess(const fmatvec::VecV &q0_) { q0.assign(q0_); }
+      void setInitialGuess(const fmatvec::VecV &q0_) { q0 <<= q0_; }
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 

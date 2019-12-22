@@ -39,8 +39,8 @@ namespace MBSim {
   edgePolyFrustum::~edgePolyFrustum() = default;
 
   void edgePolyFrustum::setAdir(const Vec3 & A_, const Vec3 & dir_) {
-    A.assign(A_);
-    dir.assign(dir_);
+    A <<= A_;
+    dir <<= dir_;
   }
 
   Vec edgePolyFrustum::operator ()(const Vec &xin) {

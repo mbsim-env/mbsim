@@ -63,7 +63,7 @@ namespace MBSim {
 
   void Eigenanalyzer::computeEigenvalues() {
     if(not(zEq.size()))
-      zEq.assign(system->evalz0());
+      zEq <<= system->evalz0();
     else if(zEq.size()!=system->getzSize())
       throwError(string("(Eigenanalyzer::computeEigenvalues): size of z0 does not match, must be ") + to_string(system->getzSize()));
 

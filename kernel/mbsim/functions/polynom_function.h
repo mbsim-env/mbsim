@@ -71,7 +71,7 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override {
         setCoefficients(MBXMLUtils::E(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients"))->getText<fmatvec::Vec>());
       }
-      void setCoefficients(const fmatvec::VecV &a_) { a.assign(a_); }
+      void setCoefficients(const fmatvec::VecV &a_) { a <<= a_; }
     private:
       fmatvec::VecV a, ad, add;
   };

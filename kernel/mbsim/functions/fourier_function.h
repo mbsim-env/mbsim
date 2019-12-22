@@ -92,8 +92,8 @@ namespace MBSim {
       void setb(const fmatvec::VecV &b_) { b = b_; }
       void setab(const fmatvec::MatV &ab) {
         assert(ab.cols() == 2);
-        a.assign(ab.col(0));
-        b.assign(ab.col(1));
+        a <<= ab.col(0);
+        b <<= ab.col(1);
       }
       void setAmplitudePhaseAngleForm(bool amplitudePhaseAngleForm_) { amplitudePhaseAngleForm = amplitudePhaseAngleForm_; }
     protected:

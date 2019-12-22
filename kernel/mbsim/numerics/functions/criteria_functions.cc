@@ -52,7 +52,7 @@ namespace MBSim {
   bool GlobalCriteriaFunction::isBetter(const Vec & x, const Vec & fVal) {
     Vec functionValues(fVal);
     if(fVal.size() == 0)
-      functionValues.reassign((*function)(x));
+      functionValues <<= (*function)(x);
 
     if (criteriaResults.back() > nrmInf(functionValues))
       return true;
@@ -110,7 +110,7 @@ namespace MBSim {
   double GlobalResidualCriteriaFunction::computeResults(const Vec & x, const Vec & fVal) {
     Vec functionValues(fVal);
     if(fVal.size() == 0)
-      functionValues.reassign((*function)(x));
+      functionValues <<= (*function)(x);
     return nrmInf(functionValues);
   }
 
@@ -121,7 +121,7 @@ namespace MBSim {
   vector<double> LocalResidualCriteriaFunction::computeResults(const Vec & x, const Vec & fVal) {
     Vec functionValues(fVal);
     if(fVal.size() == 0)
-      functionValues.reassign((*function)(x));
+      functionValues <<= (*function)(x);
     vector<double> results;
     for (auto & tolerance : tolerances) {
       results.push_back(nrmInf(functionValues(tolerance.first)));
@@ -142,7 +142,7 @@ namespace MBSim {
 
     Vec functionValues(fVal);
     if(fVal.size() == 0)
-      functionValues.reassign((*function)(x));
+      functionValues <<= (*function)(x);
 
     double ret = nrmInf(functionValues - (*function)(lastPoint));
     lastPoint = x;

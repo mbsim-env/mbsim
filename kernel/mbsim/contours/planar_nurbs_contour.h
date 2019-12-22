@@ -66,12 +66,12 @@ namespace MBSim {
 
       /* GETTER / SETTER */
       void setInterpolation(Interpolation interpolation_) { interpolation = interpolation_; }
-      void setControlPoints(const fmatvec::MatVx4 &cp_) { cp.assign(cp_); }
+      void setControlPoints(const fmatvec::MatVx4 &cp_) { cp <<= cp_; }
       void setControlPoints(const fmatvec::MatVx3 &cp_);
       void setControlPoints(const std::vector<fmatvec::Vec4> &cp_);
       void setControlPoints(const std::vector<fmatvec::Vec3> &cp_);
       void setNumberOfControlPoints(int n_) { n = n_; }
-      void setKnotVector(const fmatvec::VecV &knot_) { knot.assign(knot_); }
+      void setKnotVector(const fmatvec::VecV &knot_) { knot <<= knot_; }
       void setDegree(int degree_) { degree = degree_; }
       /***************************************************/
 

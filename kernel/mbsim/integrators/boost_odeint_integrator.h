@@ -256,7 +256,7 @@ namespace MBSim {
     system->plot();
     tPlot=tStart+dtPlot;
     nrSVs++;
-    svLast.assign(system->evalsv());
+    svLast <<= system->evalsv();
 
     // initialize odeint
 #if BOOST_VERSION >= 106000

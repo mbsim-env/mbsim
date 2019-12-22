@@ -48,8 +48,8 @@ namespace MBSim {
 
       fmatvec::VecV operator()(const fmatvec::VecV& q, const fmatvec::VecV& u) override { return K*q + D*u; }
 
-      void setStiffnessMatrix(const fmatvec::SymMatV &K_) { K.assign(K_); }
-      void setDampingMatrix(const fmatvec::SymMatV &D_) { D.assign(D_); }
+      void setStiffnessMatrix(const fmatvec::SymMatV &K_) { K <<= K_; }
+      void setDampingMatrix(const fmatvec::SymMatV &D_) { D <<= D_; }
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 

@@ -42,7 +42,7 @@ namespace MBSim {
       fE.resize(1,INIT,1);
 
     if(not(zEq.size()))
-      zEq.assign(system->evalz0());
+      zEq <<= system->evalz0();
     else if(zEq.size()!=system->getzSize())
       throwError(string("(HarmonicResponseAnalyzer::computeFrequencyResponse): size of z0 does not match, must be ") + to_string(system->getzSize()));
 

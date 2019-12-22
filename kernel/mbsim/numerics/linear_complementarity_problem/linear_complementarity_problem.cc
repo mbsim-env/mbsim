@@ -96,8 +96,8 @@ namespace MBSim {
   }
 
   void LinearComplementarityProblem::setSystem(const SymMat & M_, const Vec & q_) {
-    q.assign(q_);
-    M.assign(Sym2Sqr(M_));
+    q <<= q_;
+    M <<= Sym2Sqr(M_);
 
     /*set different solvers*/
     //Lemke

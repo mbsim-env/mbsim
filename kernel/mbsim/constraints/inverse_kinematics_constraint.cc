@@ -73,19 +73,19 @@ namespace MBSim {
       if(not frame)
         throwError("Frame must be given!");
       if(kinematics==spatial) {
-        forceDir.assign(Mat3xV(3,Eye()));
+        forceDir <<= Mat3xV(3,Eye());
         if(fA) {
           bd.resize(6);
-          momentDir.assign(Mat3xV(3,Eye()));
+          momentDir <<= Mat3xV(3,Eye());
         }
         else
           bd.resize(3);
       }
       else {
-        forceDir.assign(Mat3xV("[1,0;0,1;0,0]"));
+        forceDir <<= Mat3xV("[1,0;0,1;0,0]");
         if(fA) {
           bd.resize(3);
-          momentDir.assign(Mat3xV("[0;0;1]"));
+          momentDir <<= Mat3xV("[0;0;1]");
         }
         else
           bd.resize(2);

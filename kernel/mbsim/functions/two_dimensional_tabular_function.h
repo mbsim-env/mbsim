@@ -86,15 +86,15 @@ namespace MBSim {
       }
       /***************************************************/
       /* GETTER / SETTER */
-      void setx(const fmatvec::VecV &x_) { x.assign(x_); }
-      void sety(const fmatvec::VecV &y_) { y.assign(y_); }
-      void setz(const fmatvec::MatV &z_) { z.assign(z_); }
+      void setx(const fmatvec::VecV &x_) { x <<= x_; }
+      void sety(const fmatvec::VecV &y_) { y <<= y_; }
+      void setz(const fmatvec::MatV &z_) { z <<= z_; }
       void setxyz(const fmatvec::MatV &xyz) {
         if(xyz.rows() <= 1 or xyz.cols() <= 1)
           this->throwError("Dimension missmatch in size of xyz");
-        x.assign(xyz.row(0)(fmatvec::RangeV(1,xyz.cols()-1)).T());
-        y.assign(xyz.col(0)(fmatvec::RangeV(1,xyz.rows()-1)));
-        z.assign(xyz(fmatvec::RangeV(1,xyz.rows()-1),fmatvec::RangeV(1,xyz.cols()-1)));
+        x <<= xyz.row(0)(fmatvec::RangeV(1,xyz.cols()-1)).T();
+        y <<= xyz.col(0)(fmatvec::RangeV(1,xyz.rows()-1));
+        z <<= xyz(fmatvec::RangeV(1,xyz.rows()-1),fmatvec::RangeV(1,xyz.cols()-1));
       }
 
       double getxMin() { return x(0); }

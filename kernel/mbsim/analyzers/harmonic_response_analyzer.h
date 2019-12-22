@@ -52,9 +52,9 @@ namespace MBSim {
        */
       void setStartTime(double tStart_) { tStart=tStart_; }
 
-      void setExcitationFrequencies(const fmatvec::VecV& fE_) { fE.assign(fE_); }
+      void setExcitationFrequencies(const fmatvec::VecV& fE_) { fE <<= fE_; }
 
-      void setSystemFrequencies(const fmatvec::VecV& fS_) { fS.assign(fS_); }
+      void setSystemFrequencies(const fmatvec::VecV& fS_) { fS <<= fS_; }
 
       /**
        * \brief Set the plot step size for the analysis
@@ -66,7 +66,7 @@ namespace MBSim {
        * \brief Set the initital state for the analysis
        * \param z0 The initital state
        */
-      void setInitialState(const fmatvec::Vec &z0) { zEq.assign(z0); }
+      void setInitialState(const fmatvec::Vec &z0) { zEq <<= z0; }
 
       void setTask(Task task_) { task = task_; }
 

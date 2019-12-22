@@ -47,8 +47,8 @@ namespace MBSim {
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
         if(e) setOffset(FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()));
       }
-      void setTranslationVectors(const typename B::DRetDArg &A_) { A.assign(A_); }
-      void setOffset(const fmatvec::Vec3 &b_) { b.assign(b_); }
+      void setTranslationVectors(const typename B::DRetDArg &A_) { A <<= A_; }
+      void setOffset(const fmatvec::Vec3 &b_) { b <<= b_; }
   };
 
   template<>

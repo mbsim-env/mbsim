@@ -65,7 +65,7 @@ namespace MBSim {
       void setJacobianFunction(Function<double(double)> *jac_) { jac = jac_; }
 
       void setInitialValue(const double &s0_) { s0 = s0_; }
-      void setNodes(const fmatvec::Vec &nodes_) { nodes.assign(nodes_); }
+      void setNodes(const fmatvec::Vec &nodes_) { nodes <<= nodes_; }
       void setSearchAll(bool searchAll_) { searchAll = searchAll_; }
       /*************************************************/
 

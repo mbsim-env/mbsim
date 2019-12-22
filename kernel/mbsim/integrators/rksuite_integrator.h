@@ -49,7 +49,7 @@ namespace MBSim {
       /* GETTER / SETTER */
       void setMethod(Method method_) { method = method_; }
       void setRelativeTolerance(double rTol_) { rTol = rTol_; }
-      void setThreshold(const fmatvec::Vec &thres_) { thres.assign(thres_); }
+      void setThreshold(const fmatvec::Vec &thres_) { thres <<= thres_; }
       void setThreshold(double thres_) { thres.resize(1,fmatvec::INIT,thres_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       /***************************************************/
