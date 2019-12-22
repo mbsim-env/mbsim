@@ -114,9 +114,9 @@ namespace MBSimFlexibleBody {
 
       /* GETTER / SETTER */
       void setInterpolation(bool interpolation_) { interpolation = interpolation_; }
-      void setNodeNumbers(const fmatvec::MatVI &node) { index.assign(node); }
-      void setEtaKnotVector(const fmatvec::VecV &uKnot_) { uKnot.assign(uKnot_); }
-      void setXiKnotVector(const fmatvec::VecV &vKnot_) { vKnot.assign(vKnot_); }
+      void setNodeNumbers(const fmatvec::MatVI &node) { index <<= node; }
+      void setEtaKnotVector(const fmatvec::VecV &uKnot_) { uKnot <<= uKnot_; }
+      void setXiKnotVector(const fmatvec::VecV &vKnot_) { vKnot <<= vKnot_; }
       void setEtaDegree(int etaDegree_) { etaDegree = etaDegree_; }
       void setXiDegree(int xiDegree_) { xiDegree = xiDegree_; }
       /***************************************************/

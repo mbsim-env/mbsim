@@ -234,10 +234,10 @@ namespace MBSimFlexibleBody {
 
       if (PODreduced) {
         //TODO: move into readz0
-        q0.assign(U.T() * q0);
-        u0.assign(U.T() * u0);
-        q.assign(q0);
-        u.assign(u0);
+        q0 <<= U.T() * q0;
+        u0 <<= U.T() * u0;
+        q <<= q0;
+        u <<= u0;
       }
 
       FlexibleBody1sCosserat::init(stage, config);
@@ -488,8 +488,8 @@ namespace MBSimFlexibleBody {
       //Mass matrix is reduced
 
       SymMat Mred = JTMJ(MConst,U);
-      MConst.assign(Mred);
-      LLMConst.assign(facLL(MConst));
+      MConst <<= Mred;
+      LLMConst <<= facLL(MConst);
     }
 
 //    updateM(0, 0);

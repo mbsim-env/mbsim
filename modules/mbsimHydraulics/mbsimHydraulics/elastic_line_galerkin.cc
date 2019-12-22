@@ -64,11 +64,11 @@ namespace MBSimHydraulics {
     }
 
     mdim=ansatz->dim();
-    WInt.assign(ansatz->VecIntW());
-    wA.assign(ansatz->VecW0());
-    wE.assign(ansatz->VecWL());
-    MatIntWWT.assign(ansatz->MatIntWWT());
-    MatIntWSWST.assign(ansatz->MatIntWSWST());
+    WInt <<= ansatz->VecIntW();
+    wA <<= ansatz->VecW0();
+    wE <<= ansatz->VecWL();
+    MatIntWWT <<= ansatz->MatIntWWT();
+    MatIntWSWST <<= ansatz->MatIntWSWST();
   }
 
   void ElasticLineGalerkin::init(InitStage stage, const InitConfigSet &config) {
@@ -85,8 +85,8 @@ namespace MBSimHydraulics {
       E=bulkModulus(p0);
       double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
       k=rho*g*delta_h/l;
-      MFac.assign(Area*rho*MatIntWWT);
-      K.assign(Area*E*MatIntWSWST);
+      MFac <<= Area*rho*MatIntWWT;
+      K <<= Area*E*MatIntWSWST;
       double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
       phi.resize(mdim);
       
@@ -139,7 +139,7 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==unknownStage) {
-      u0.assign(inv(MatIntWWT)*WInt*Q0);
+      u0 <<= inv(MatIntWWT)*WInt*Q0;
       //plotParameters();
     }
     HLine::init(stage, config);

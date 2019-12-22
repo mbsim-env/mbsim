@@ -52,7 +52,7 @@ namespace MBSimFlexibleBody {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (visualization,(OpenMBVCalculixBody::Visualization),OpenMBVCalculixBody::faces)(colorRepresentation,(OpenMBVFlexibleBody::ColorRepresentation),OpenMBVFlexibleBody::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombvBody = std::shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
-      void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes.assign(plotNodes_); }
+      void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes <<= plotNodes_; }
 
     protected:
       std::string resultFileName;

@@ -132,7 +132,7 @@ namespace MBSimHydraulics {
       r[0].resize(nLines);
       r[1].resize(nLines);
       for (unsigned int i=0; i<nLines; i++)
-        connectedLines[i].sign.assign(((connectedLines[i].inflow) ?  connectedLines[i].line->getInflowFactor() : connectedLines[i].line->getOutflowFactor()));
+        connectedLines[i].sign <<= ((connectedLines[i].inflow) ?  connectedLines[i].line->getInflowFactor() : connectedLines[i].line->getOutflowFactor());
     }
     else if (stage==plotting) {
       if(plotFeature[plotRecursive]) {

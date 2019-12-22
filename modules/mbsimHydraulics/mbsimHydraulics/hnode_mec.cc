@@ -54,7 +54,7 @@ namespace MBSimHydraulics {
   unsigned int HNodeMec::addTransMecArea(Frame * f, Vec fN, double area, bool considerVolumeChange) {
     connectedTransFrameStruct transFrame;
     transFrame.frame = f;
-    transFrame.normal.assign(fN/nrm2(fN));
+    transFrame.normal <<= fN/nrm2(fN);
     transFrame.area = area;
     transFrame.considerVolumeChange = considerVolumeChange;
     connectedTransFrames.push_back(transFrame);
@@ -64,7 +64,7 @@ namespace MBSimHydraulics {
   unsigned int HNodeMec::addRotMecArea(Frame * f, Vec fN, double area, Frame * frameOfReference, bool considerVolumeChange) {
     connectedRotFrameStruct rotFrame;
     rotFrame.frame = f;
-    rotFrame.normal.assign(fN/nrm2(fN));
+    rotFrame.normal <<= fN/nrm2(fN);
     rotFrame.area = area;
     rotFrame.fref = frameOfReference;
     rotFrame.considerVolumeChange = considerVolumeChange;

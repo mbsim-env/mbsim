@@ -57,7 +57,7 @@ namespace MBSimHydraulics {
       /*! set a 2dimension flow recognition*/
       void setFlow2D(bool flow2d=true){Flow2D=flow2d; }
       /*! select points in the pipe, for which a output should be created*/
-      void setRelativePlotPoints(const fmatvec::Vec &rPP) {relPlotPoints.assign(rPP); }
+      void setRelativePlotPoints(const fmatvec::Vec &rPP) {relPlotPoints <<= rPP; }
       void setDiameter(double d_) {d=d_; }
       void setLength(double l_) {l=l_; }
 

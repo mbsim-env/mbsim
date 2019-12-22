@@ -198,11 +198,11 @@ namespace MBSimFlexibleBody {
   }
 
   void Contour1sNeutralCosserat::setTransNodes(const fmatvec::VecInt & transNodes_) {
-    transNodes.assign(transNodes_);
+    transNodes <<= transNodes_;
   }
 
   void Contour1sNeutralCosserat::setRotNodes(const fmatvec::VecInt & rotNodes_) {
-    rotNodes.assign(rotNodes_);
+    rotNodes <<= rotNodes_;
   }
 
   void Contour1sNeutralCosserat::setNodeOffest(const double nodeOffset_) {

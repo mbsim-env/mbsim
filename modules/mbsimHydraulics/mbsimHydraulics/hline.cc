@@ -173,7 +173,7 @@ namespace MBSimHydraulics {
     else if(stage==unknownStage) {
       vector<RigidHLine *> dep_check;
       dep_check.push_back(this);
-      Jacobian.assign(calculateJacobian(dep_check));
+      Jacobian <<= calculateJacobian(dep_check);
     }
     HLine::init(stage, config);
   }
