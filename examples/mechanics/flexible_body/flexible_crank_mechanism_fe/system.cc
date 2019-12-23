@@ -84,8 +84,8 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   rNod[0] = 2.*Kr;
 
   vector<Mat3xV> TNod(1), PNod(1);
-  TNod[0] = T;
-  PNod[0] = P;
+  TNod[0] <<= T;
+  PNod[0] <<= P;
 
   body2->setNodalRelativePosition(rNod);
   body2->setNodalShapeMatrixOfTranslation(TNod);

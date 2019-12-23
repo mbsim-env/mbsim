@@ -87,11 +87,11 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   rNod[0] = 2.*Kr;
 
   vector<Mat3xV> TNod(1), PNod(1);
-  TNod[0] = T;
-  PNod[0] = P;
+  TNod[0] <<= T;
+  PNod[0] <<= P;
 
   vector<Matrix<General, Fixed<6>, Var, double> > sigmahel(1);
-  sigmahel[0] = Matrix<General, Fixed<6>, Var, double>("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
+  sigmahel[0] <<= Matrix<General, Fixed<6>, Var, double>("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
 
   body2->setNodalRelativePosition(rNod);
   body2->setNodalShapeMatrixOfTranslation(TNod);
