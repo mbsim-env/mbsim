@@ -34,6 +34,16 @@ namespace MBSim {
     public:
       FourierFunction() = default;
       FourierFunction(double f_, const fmatvec::VecV &a_, const fmatvec::VecV &b_, double a0_=0, bool amplitudePhaseAngleForm_=false) : f(f_), a0(a0_), a(a_), b(b_), amplitudePhaseAngleForm(amplitudePhaseAngleForm_) { }
+      void setFrequency(double f_) { f = f_; }
+      void seta0(double a0_) { a0 = a0_; }
+      void seta(const fmatvec::VecV &a_) { a = a_; }
+      void setb(const fmatvec::VecV &b_) { b = b_; }
+      void setab(const fmatvec::MatV &ab) {
+        assert(ab.cols() == 2);
+        a <<= ab.col(0);
+        b <<= ab.col(1);
+      }
+      void setAmplitudePhaseAngleForm(bool amplitudePhaseAngleForm_) { amplitudePhaseAngleForm = amplitudePhaseAngleForm_; }
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
       Ret operator()(const Arg& t_) override {
@@ -86,16 +96,6 @@ namespace MBSim {
           }
         }
       }
-      void setFrequency(double f_) { f = f_; }
-      void seta0(double a0_) { a0 = a0_; }
-      void seta(const fmatvec::VecV &a_) { a = a_; }
-      void setb(const fmatvec::VecV &b_) { b = b_; }
-      void setab(const fmatvec::MatV &ab) {
-        assert(ab.cols() == 2);
-        a <<= ab.col(0);
-        b <<= ab.col(1);
-      }
-      void setAmplitudePhaseAngleForm(bool amplitudePhaseAngleForm_) { amplitudePhaseAngleForm = amplitudePhaseAngleForm_; }
     protected:
       double f;
       double a0;

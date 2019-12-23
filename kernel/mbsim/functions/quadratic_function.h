@@ -36,6 +36,9 @@ namespace MBSim {
       QuadraticFunction(double a2_=0) :  a2(a2_) { }
       QuadraticFunction(double a1_, double a2_) : a0(0), a1(a1_), a2(a2_) { }
       QuadraticFunction(double a0_, double a1_, double a2_) : a0(a0_), a1(a1_), a2(a2_) { }
+      void seta0(double a0_) { a0 = a0_; }
+      void seta1(double a1_) { a1 = a1_; }
+      void seta2(double a2_) { a2 = a2_; }
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
       Ret operator()(const Arg &x_) override {
@@ -52,11 +55,11 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
-        if(e) a0=MBXMLUtils::E(e)->getText<double>();
+        if(e) seta0(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a1");
-        if(e) a1=MBXMLUtils::E(e)->getText<double>();
+        if(e) seta1(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a2");
-        a2=MBXMLUtils::E(e)->getText<double>();
+        seta2(MBXMLUtils::E(e)->getText<double>());
       }
   };
 

@@ -49,9 +49,9 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e;
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"lowerBound");
-        lowerBound=MBXMLUtils::E(e)->getText<double>();
+        setLowerBound(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"upperBound");
-        upperBound=MBXMLUtils::E(e)->getText<double>();
+        setUpperBound(MBXMLUtils::E(e)->getText<double>());
       }
   };
 

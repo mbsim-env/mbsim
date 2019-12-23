@@ -33,6 +33,7 @@ namespace MBSim {
     public:
       TranslationAlongFixedAxis() = default;
       TranslationAlongFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
+      void setAxisOfTranslation(const fmatvec::Vec3 &a_) { a <<= a_; }
       int getArgSize() const override { return 1; }
       fmatvec::Vec3 operator()(const Arg &arg) override { return a*arg; }
       typename B::DRetDArg parDer(const Arg &arg) override { return a; }
@@ -40,7 +41,7 @@ namespace MBSim {
       bool constParDer() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfTranslation");
-        a=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
+        setAxisOfTranslation(MBXMLUtils::E(e)->getText<fmatvec::Vec3>());
       }
   };
 

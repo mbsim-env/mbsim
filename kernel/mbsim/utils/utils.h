@@ -86,22 +86,6 @@ namespace MBSim {
     };
 
   template <class Ret>
-  class FromMatStr {
-    public:
-      static Ret cast(const char *x) {
-        return Ret(x);
-      }
-  };
-
-  template <>
-  class FromMatStr<double> {
-    public:
-      static double cast(const std::string &x) {
-        return boost::lexical_cast<double>(boost::algorithm::trim_copy(x));
-      }
-  };
-
-  template <class Ret>
   class FromDouble {
     public:
       static Ret cast(double x) {

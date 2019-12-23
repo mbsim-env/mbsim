@@ -36,6 +36,8 @@ namespace MBSim {
       LinearTranslation() = default;
       LinearTranslation(const typename B::DRetDArg &A_) : A(A_) { }
       LinearTranslation(const typename B::DRetDArg &A_, const fmatvec::Vec3 &b_) : A(A_), b(b_) { }
+      void setTranslationVectors(const typename B::DRetDArg &A_) { A <<= A_; }
+      void setOffset(const fmatvec::Vec3 &b_) { b <<= b_; }
       int getArgSize() const override { return A.cols(); }
       fmatvec::Vec3 operator()(const Arg &arg) override { return A*arg+b; }
       typename B::DRetDArg parDer(const Arg &arg) override { return A; }
@@ -43,12 +45,10 @@ namespace MBSim {
       bool constParDer() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"translationVectors");
-        setTranslationVectors(FromMatStr<typename B::DRetDArg>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()));
+        setTranslationVectors(MBXMLUtils::E(e)->getText<typename B::DRetDArg>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
-        if(e) setOffset(FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str()));
+        if(e) setOffset(MBXMLUtils::E(e)->getText<fmatvec::Vec3>());
       }
-      void setTranslationVectors(const typename B::DRetDArg &A_) { A <<= A_; }
-      void setOffset(const fmatvec::Vec3 &b_) { b <<= b_; }
   };
 
   template<>

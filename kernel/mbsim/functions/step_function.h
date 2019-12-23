@@ -34,6 +34,9 @@ namespace MBSim {
     public:
       StepFunction() = default;
       StepFunction(double stepTime_, double stepSize_, double stepInit_=0.) : stepTime(stepTime_), stepSize(stepSize_), stepInit(stepInit_) { }
+      void setTime(double stepTime_) { stepTime = stepTime_; }
+      void setSize(double stepSize_) { stepSize = stepSize_; }
+      void setInit(double stepInit_) { stepInit = stepInit_; }
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
       Ret operator()(const Arg &x) override {
@@ -41,11 +44,11 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"time");
-        stepTime=MBXMLUtils::E(e)->getText<double>();
+        setTime(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"size");
-        stepSize=MBXMLUtils::E(e)->getText<double>();
+        setSize(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"init");
-        stepSize=MBXMLUtils::E(e)->getText<double>();
+        setInit(MBXMLUtils::E(e)->getText<double>());
       }
   };
 

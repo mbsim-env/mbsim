@@ -34,6 +34,10 @@ namespace MBSim {
       double A, f, phi0, y0;
     public:
       SinusoidalFunction(double A_=0, double f_=0, double phi0_=0, double y0_=0) : A(A_), f(f_), phi0(phi0_), y0(y0_) { }
+      void setAmplitude(double A_) { A = A_; }
+      void setFrequency(double f_) { f = f_; }
+      void setPhase(double phi0_) { phi0 = phi0_; }
+      void setOffset(double y0_) { y0 = y0_; }
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
       Ret operator()(const Arg &x) override {  
@@ -49,13 +53,13 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"amplitude");
-        A=MBXMLUtils::E(e)->getText<double>();
+        setAmplitude(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"frequency");
-        f=MBXMLUtils::E(e)->getText<double>();
+        setFrequency(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"phase");
-        if(e) phi0=MBXMLUtils::E(e)->getText<double>();
+        if(e) setPhase(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"offset");
-        if(e) y0=MBXMLUtils::E(e)->getText<double>();
+        if(e) setOffset(MBXMLUtils::E(e)->getText<double>());
       }
   };
 

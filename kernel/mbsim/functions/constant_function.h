@@ -34,6 +34,7 @@ namespace MBSim {
       double a0;
     public:
       ConstantFunction(double a0_=0) : a0(a0_) {}
+      void seta0(double a0_) { a0 = a0_; }
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
       Ret operator()(const Arg &x) override { return FromDouble<Ret>::cast(a0); }
@@ -41,7 +42,7 @@ namespace MBSim {
       typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return FromDouble<typename B::DRetDArg>::cast(0); }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
-        a0=MBXMLUtils::E(e)->getText<double>();
+        seta0(MBXMLUtils::E(e)->getText<double>());
       }
   };
 

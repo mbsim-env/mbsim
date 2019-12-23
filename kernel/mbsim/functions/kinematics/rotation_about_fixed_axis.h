@@ -34,6 +34,7 @@ namespace MBSim {
     public:
       RotationAboutFixedAxis() = default;
       RotationAboutFixedAxis(const fmatvec::Vec3 &a_) : a(a_) { }
+      void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
       int getArgSize() const override { return 1; }
       fmatvec::RotMat3 operator()(const Arg &q) override {
         double alpha = ToDouble<Arg>::cast(q);
@@ -58,10 +59,9 @@ namespace MBSim {
       typename B::DRetDArg parDerDirDer(const Arg &qd, const Arg &q) override { return typename B::DRetDArg(3); }
       bool constParDer() const override { return true; }
       const fmatvec::Vec3& getAxisOfRotation() const { return a; }
-      void setAxisOfRotation(const fmatvec::Vec3 &a_) { a = a_; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"axisOfRotation");
-        a=FromMatStr<fmatvec::Vec3>::cast((MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).c_str());
+        setAxisOfRotation(MBXMLUtils::E(e)->getText<fmatvec::Vec3>());
       }
   };
 
