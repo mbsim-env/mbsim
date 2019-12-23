@@ -41,7 +41,7 @@ namespace MBSim {
       int getArgSize() const override { return A.cols(); }
       fmatvec::Vec3 operator()(const Arg &arg) override { return A*arg+b; }
       typename B::DRetDArg parDer(const Arg &arg) override { return A; }
-      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(A.rows(),A.cols()); }
+      typename B::DRetDArg parDerDirDer(const Arg &arg1Dir, const Arg &arg1) override { return typename B::DRetDArg(A.cols()); }
       bool constParDer() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"translationVectors");
@@ -50,9 +50,6 @@ namespace MBSim {
         if(e) setOffset(MBXMLUtils::E(e)->getText<fmatvec::Vec3>());
       }
   };
-
-  template<>
-  inline fmatvec::Vec3 LinearTranslation<double>::parDerDirDer(const double &arg1Dir, const double &arg1) { return fmatvec::Vec3(); }
 
 }
 
