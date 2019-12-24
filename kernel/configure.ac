@@ -136,8 +136,8 @@ if test "x$enable_python" == "xyes"; then
     SWIGVERSION=$($swig -version | sed -rne "s/^SWIG Version (.*)$/\1/p")
     AC_MSG_NOTICE([Using SWIG version $SWIGVERSION])
     SWIGVERSION_=$[[$(echo $SWIGVERSION | sed -re "s/^([0-9]+)\.([0-9]+)\.([0-9]+)$/\1*1000000+\2*1000+\3/")]]
-    if test $SWIGVERSION_ -lt $[[3*1000000+0*1000+6]] -o $SWIGVERSION_ -eq $[[3*1000000+0*1000+9]] -o $SWIGVERSION_ -eq $[[3*1000000+0*1000+10]]; then
-      AC_MSG_ERROR([SWIG >= 3.0.6 needed, but SWIG = 3.0.9 and 3.0.10 has bugs])
+    if test $SWIGVERSION_ -lt $[[3*1000000+0*1000+11]]; then
+      AC_MSG_ERROR([SWIG >= 3.0.11])
     fi
   else
     AC_MSG_ERROR([SWIG not found])
