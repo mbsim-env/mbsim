@@ -411,8 +411,8 @@ namespace MBSimFlexibleBody {
       if(plotFeature[openMBV] and openMBVNurbsSurface) {
         openMBVNurbsSurface->setName(name);
 
-        openMBVNurbsSurface->setUKnotVector(srfPos.knotU());
-        openMBVNurbsSurface->setVKnotVector(srfPos.knotV());
+        openMBVNurbsSurface->setUKnotVector((vector<double>)srfPos.knotU());
+        openMBVNurbsSurface->setVKnotVector((vector<double>)srfPos.knotV());
         openMBVNurbsSurface->setNumberOfUControlPoints(srfPos.ctrlPnts().rows());
         openMBVNurbsSurface->setNumberOfVControlPoints(srfPos.ctrlPnts().cols());
 

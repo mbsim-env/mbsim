@@ -245,7 +245,7 @@ namespace MBSimFlexibleBody {
       if(plotFeature[openMBV] and openMBVNurbsCurve) {
         openMBVNurbsCurve->setName(name);
 
-        openMBVNurbsCurve->setKnotVector(crvPos.knot());
+        openMBVNurbsCurve->setKnotVector((vector<double>)crvPos.knot());
         openMBVNurbsCurve->setNumberOfControlPoints(crvPos.ctrlPnts().rows());
 
         parent->getOpenMBVGrp()->addObject(openMBVNurbsCurve);

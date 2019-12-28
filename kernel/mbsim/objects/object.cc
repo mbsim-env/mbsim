@@ -245,9 +245,9 @@ namespace MBSim {
   }
 
   void Object::writez(H5::GroupBase *group) {
-    group->createChildObject<H5::SimpleDataset<vector<double> > >("q0")(q.size())->write(q);
+    group->createChildObject<H5::SimpleDataset<vector<double> > >("q0")(q.size())->write((vector<double>)q);
 
-    group->createChildObject<H5::SimpleDataset<vector<double> > >("u0")(u.size())->write(u);
+    group->createChildObject<H5::SimpleDataset<vector<double> > >("u0")(u.size())->write((vector<double>)u);
   }
 
   void Object::readz0(H5::GroupBase *group) {

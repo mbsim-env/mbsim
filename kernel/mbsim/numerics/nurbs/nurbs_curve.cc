@@ -313,7 +313,7 @@ namespace MBSim {
     if(method == chordLength) {
       resize(Qw.rows(), d);
       chordLengthParamClosedH(Qw,u,d);
-      knotAveragingClosed(u,d);
+      knotAveragingClosed((vector<double>)u,d);
     }
     else if(method == equallySpaced) {
       resize(Qw.rows()+d, d);

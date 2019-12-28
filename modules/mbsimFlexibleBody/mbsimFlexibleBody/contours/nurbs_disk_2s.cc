@@ -85,8 +85,8 @@ namespace MBSimFlexibleBody {
         openMBVNurbsDisk->setDrawDegree(drawDegree);
         openMBVNurbsDisk->setRadii(Ri, Ra);
 
-        openMBVNurbsDisk->setKnotVecAzimuthal(getUVector());
-        openMBVNurbsDisk->setKnotVecRadial(getVVector());
+        openMBVNurbsDisk->setKnotVecAzimuthal((vector<double>)getUVector());
+        openMBVNurbsDisk->setKnotVecRadial((vector<double>)getVVector());
 
         openMBVNurbsDisk->setElementNumberRadial(nr);
         openMBVNurbsDisk->setElementNumberAzimuthal(nj);

@@ -32,9 +32,9 @@ System::System(const string &name) : DynamicSystemSolver(name) {
   file.close();
 
   // Kontur der Nocke 
-  Vec searchpoints(72,INIT,0);
-  for (int j=0; j<searchpoints.size(); j++)
-    searchpoints(j)=j/double((searchpoints.size()-1))*2.*M_PI;
+  vector<double> searchpoints(72,0);
+  for (size_t j=0; j<searchpoints.size(); j++)
+    searchpoints[j]=j/double((searchpoints.size()-1))*2.*M_PI;
 
   //FuncCrPC *funcCamContour=new FuncCrPC();
   FuncCrPC_PlanePolar *funcCamContour=new FuncCrPC_PlanePolar();

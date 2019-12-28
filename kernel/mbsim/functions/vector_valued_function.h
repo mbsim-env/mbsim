@@ -50,7 +50,7 @@ namespace MBSim {
       Ret operator()(const Arg &x) override {
         for(unsigned int i=0; i<component.size(); i++)
           y[i]=(*component[i])(x);
-        return y;
+        return Ret(y);
       }
       typename B::DRetDArg parDer(const Arg &x) override {
         for(unsigned int i=0; i<component.size(); i++)

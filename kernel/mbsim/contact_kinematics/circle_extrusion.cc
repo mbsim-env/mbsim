@@ -54,7 +54,7 @@ namespace MBSim {
   void ContactKinematicsCircleExtrusion::updateg(SingleContact &contact, int i) {
     PlanarContactSearch search(func);
     search.setTolerance(tol);
-    search.setNodes(extrusion->getEtaNodes());
+    search.setNodes(Vec(extrusion->getEtaNodes()));
 
     if(searchAllCP==false)
       search.setInitialValue(contact.getContourFrame(iextrusion)->getEta(false));

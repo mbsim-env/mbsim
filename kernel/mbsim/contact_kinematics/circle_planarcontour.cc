@@ -63,7 +63,7 @@ namespace MBSim {
   void ContactKinematicsCirclePlanarContour::updateg(SingleContact &contact, int i) {
     PlanarContactSearch search(func);
     search.setTolerance(tol);
-    search.setNodes(planarcontour->getEtaNodes());
+    search.setNodes(Vec(planarcontour->getEtaNodes()));
 
     if(searchAllCP==false)
       search.setInitialValue(zeta0[i]);

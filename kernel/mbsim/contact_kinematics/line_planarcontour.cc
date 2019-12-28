@@ -62,7 +62,7 @@ namespace MBSim {
 
     PlanarContactSearch search(func);
     search.setTolerance(tol);
-    search.setNodes(planarcontour->getEtaNodes());
+    search.setNodes(Vec(planarcontour->getEtaNodes()));
 
     if (!searchAllCP) {
       search.setInitialValue(zeta0[i]);

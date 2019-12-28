@@ -171,7 +171,7 @@ namespace MBSimFlexibleBody {
       extrusion = static_cast<Contour*>(contour[0]);
     }
 
-    staticNodes = extrusion->getEtaNodes();
+    staticNodes = Vec(extrusion->getEtaNodes());
     maxNumContacts = 2 * possibleContactsPerNode * extrusion->getEtaNodes().size() - 1;  // dies braeuchte einen eigenen init-Call
 //    l0 = 1.0 * fabs(extrusion->getAlphaEnd() - extrusion->getAlphaStart()) / staticNodes.size(); /* bandwidth of mesh deformer: higher values leads to stronger attraction of last contact points */
 //    epsTol = 5.e-2 * l0; /* distance, when two contact points should be treated as one */

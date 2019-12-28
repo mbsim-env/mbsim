@@ -105,7 +105,7 @@ namespace MBSimFcl {
           indices[4*i+2] = triangle(i,2);
           indices[4*i+3] = -1;
         }
-        static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setVertexPositions(vertex);
+        static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setVertexPositions((vector<vector<double>>)vertex);
         static_pointer_cast<OpenMBV::IndexedFaceSet>(openMBVRigidBody)->setIndices(indices);
       }
     }

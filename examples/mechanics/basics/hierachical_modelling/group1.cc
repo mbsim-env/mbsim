@@ -93,13 +93,13 @@ Group1::Group1(const string &name) : Group(name) {
   box2->setGeneralizedInitialPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
   std::shared_ptr<OpenMBV::Cuboid> body1=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
-  body1->setLength(Vec(3,INIT,1)*h1);
+  body1->setLength(vector<double>(3,h1));
   body1->setDiffuseColor(240./360.,1,1);
   box1->setOpenMBVRigidBody(body1);
   box1->getFrame("P1")->enableOpenMBV(0.5);
 
   std::shared_ptr<OpenMBV::Cuboid> body2=OpenMBV::ObjectFactory::create<OpenMBV::Cuboid>();
-  body2->setLength(Vec(3,INIT,1)*h2);
+  body2->setLength(vector<double>(3,h2));
   body2->setDiffuseColor(360./360.,1,1);
   box2->setOpenMBVRigidBody(body2);
   box2->getFrame("P1")->enableOpenMBV(0.5);

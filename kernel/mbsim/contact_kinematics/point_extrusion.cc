@@ -54,7 +54,7 @@ namespace MBSim {
 
     PlanarContactSearch search(func);
     search.setTolerance(tol);
-    search.setNodes(extrusion->getEtaNodes()); // defining search areas for contacts
+    search.setNodes(Vec(extrusion->getEtaNodes())); // defining search areas for contacts
 
     if (!searchAllCP) { // select start value from last search
       search.setInitialValue(contact.getContourFrame(iextrusion)->getEta(false));

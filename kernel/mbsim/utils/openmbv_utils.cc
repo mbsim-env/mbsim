@@ -296,7 +296,7 @@ namespace MBSim {
   void OpenMBVPlanarContour::initializeUsingXML(DOMElement *e) {
     OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"nodes");
-    if(ee) nodes=E(ee)->getText<Vec>();
+    if(ee) nodes=E(ee)->getText<vector<double>>();
     ee=E(e)->getFirstElementChildNamed(MBSIM%"filled");
     if(ee) filled=E(ee)->getText<bool>();
   }
@@ -310,9 +310,9 @@ namespace MBSim {
   void OpenMBVSpatialContour::initializeUsingXML(DOMElement *e) {
     OpenMBVColoredBody::initializeUsingXML(e);
     DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIM%"etaNodes");
-    if(ee) etaNodes=E(ee)->getText<Vec>();
+    if(ee) etaNodes=E(ee)->getText<vector<double>>();
     ee=E(e)->getFirstElementChildNamed(MBSIM%"xiNodes");
-    if(ee) xiNodes=E(ee)->getText<Vec>();
+    if(ee) xiNodes=E(ee)->getText<vector<double>>();
   }
 
 }

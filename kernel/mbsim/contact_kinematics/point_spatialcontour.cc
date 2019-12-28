@@ -63,7 +63,7 @@ namespace MBSim {
     search.setTolerance(tol);
 
     if ((!spatialcontour->getEtaNodes().empty()) && (!spatialcontour->getXiNodes().empty()))
-      search.setNodes(spatialcontour->getEtaNodes(), spatialcontour->getXiNodes());
+      search.setNodes(Vec(spatialcontour->getEtaNodes()), Vec(spatialcontour->getXiNodes()));
     else
       search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 

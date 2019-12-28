@@ -137,9 +137,9 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"etaNodes");
-    etaNodes=E(e)->getText<Vec>();
+    etaNodes=E(e)->getText<vector<double>>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiNodes");
-    xiNodes=E(e)->getText<Vec>();
+    xiNodes=E(e)->getText<vector<double>>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
     setContourFunction(ObjectFactory::createAndInit<Function<Vec3(Vec2)> >(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"openEta");

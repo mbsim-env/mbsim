@@ -128,8 +128,8 @@ namespace MBSim {
           }
         }
         static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setControlPoints(cp_);
-        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setUKnotVector(srf.knotU());
-        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setVKnotVector(srf.knotV());
+        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setUKnotVector((vector<double>)srf.knotU());
+        static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setVKnotVector((vector<double>)srf.knotV());
         static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setNumberOfUControlPoints(srf.ctrlPnts().rows());
         static_pointer_cast<OpenMBV::NurbsSurface>(openMBVRigidBody)->setNumberOfVControlPoints(srf.ctrlPnts().cols());
       }

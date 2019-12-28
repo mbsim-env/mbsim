@@ -84,7 +84,7 @@ namespace MBSim {
             cp_[i][j] = crv.ctrlPnts()(i,j);
         }
         static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setControlPoints(cp_);
-        static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setKnotVector(crv.knot());
+        static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setKnotVector((vector<double>)crv.knot());
         static_pointer_cast<OpenMBV::NurbsCurve>(openMBVRigidBody)->setNumberOfControlPoints(crv.ctrlPnts().rows());
       }
     }
