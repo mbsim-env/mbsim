@@ -37,7 +37,7 @@ namespace MBSim {
       /**
        * \brief container of ContactFrames to draw
        */
-      std::vector<std::shared_ptr<OpenMBV::Frame> > openMBVContactFrame;
+      std::vector<std::shared_ptr<OpenMBV::Frame>> openMBVContactFrame;
 
       std::shared_ptr<OpenMBVInteractionArrow> ombvContact;
       std::shared_ptr<OpenMBVFrictionArrow> ombvFriction;

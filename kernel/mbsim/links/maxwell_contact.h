@@ -157,7 +157,7 @@ namespace MBSim {
         return nullptr;
       }
 
-      const std::vector<std::vector<SingleContact> > & getSubcontacts() const {
+      const std::vector<std::vector<SingleContact>> & getSubcontacts() const {
         return contacts;
       }
 
@@ -254,14 +254,14 @@ namespace MBSim {
       /**
        * \brief list of the single sub-contact(-points)
        */
-      std::vector<std::vector<SingleContact> > contacts;
+      std::vector<std::vector<SingleContact>> contacts;
 
       /**
        * \brief list of the single contact kinematics
        */
       std::vector<ContactKinematics*> contactKinematics;
 
-      std::vector<std::vector<Contour*> > contour;
+      std::vector<std::vector<Contour*>> contour;
 
       /*!
        * \brief names for the contact kinematics
@@ -312,7 +312,7 @@ namespace MBSim {
        * pair.first: number of contact kinematics
        * pair.second: number of subcontact point of contact kinematics
        */
-      std::vector<std::pair<int, int> > possibleContactPoints;
+      std::vector<std::pair<int, int>> possibleContactPoints;
 
       /*!
        * \brief variable for the LCP

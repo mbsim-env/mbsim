@@ -51,7 +51,7 @@ namespace MBSim {
 
   void PolarContourFunction::initializeUsingXML(xercesc::DOMElement *element) {
     xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"radiusFunction");
-    setRadiusFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+    setRadiusFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
   }
 
   Vec3 PolarContourFunction::operator()(const double& alpha) {

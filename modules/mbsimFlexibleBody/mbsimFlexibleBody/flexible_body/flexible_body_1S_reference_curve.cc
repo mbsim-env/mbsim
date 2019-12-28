@@ -864,7 +864,7 @@ namespace MBSimFlexibleBody {
 
   fmatvec::Vec3 FlexibleBody1SReferenceCurve::computeSElement(int globalDOF, double xi, int derXi) {
     Vec3 ret;
-    vector<pair<int, int> > eleLocDof = getElementAndLocalDoFNo(globalDOF);
+    vector<pair<int, int>> eleLocDof = getElementAndLocalDoFNo(globalDOF);
     for (size_t i = 0; i < eleLocDof.size(); i++) {
       int elementNo = eleLocDof[i].first;
       int localDof = eleLocDof[i].second;
@@ -925,9 +925,9 @@ namespace MBSimFlexibleBody {
     return -1;
   }
 
-  std::vector<std::pair<int, int> > FlexibleBody1SReferenceCurve::getElementAndLocalDoFNo(int globalDoFNo) {
+  std::vector<std::pair<int, int>> FlexibleBody1SReferenceCurve::getElementAndLocalDoFNo(int globalDoFNo) {
     throw MBSimError("Still figuring out if this is used ..." + string(__func__));
-    std::vector<std::pair<int, int> > ret;
+    std::vector<std::pair<int, int>> ret;
     for (int i = 0; i < elements; i++) {
       FlexibleBody1SReferenceCurveFE * ele = static_cast<FlexibleBody1SReferenceCurveFE*>(discretization[i]);
       VecInt dofDirEle = ele->getDofDirs();

@@ -37,11 +37,11 @@ namespace MBSim {
   }
 
   Vec3 PlanarNurbsContour::evalKrPS(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta(0)).row(0).T()(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta(0)).row(0).T()(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 PlanarNurbsContour::evalKs(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta(0)).row(1).T()(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta(0)).row(1).T()(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 PlanarNurbsContour::evalKt(const Vec2 &zeta) {
@@ -50,7 +50,7 @@ namespace MBSim {
   }
 
   Vec3 PlanarNurbsContour::evalParDer1Ks(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta(0)).row(2).T()(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta(0)).row(2).T()(Range<Fixed<0>,Fixed<2>>());
   }
 
   void PlanarNurbsContour::init(InitStage stage, const InitConfigSet &config) {
@@ -78,7 +78,7 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
-        vector<vector<double> > cp_(crv.ctrlPnts().rows(),vector<double>(4));
+        vector<vector<double>> cp_(crv.ctrlPnts().rows(),vector<double>(4));
         for(int i=0; i<crv.ctrlPnts().rows(); i++) {
           for(int j=0; j<4; j++)
             cp_[i][j] = crv.ctrlPnts()(i,j);

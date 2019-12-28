@@ -104,8 +104,8 @@ namespace MBSim {
           createPlotGroup();
           if(plotColumns.size()>1) {
             // copy plotColumns to a std::vector
-            vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string> >(dummy, dummy.begin()));
-            plotVectorSerie=plotGroup->createChildObject<H5::VectorSerie<double> >("data")(dummy.size());
+            vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string>>(dummy, dummy.begin()));
+            plotVectorSerie=plotGroup->createChildObject<H5::VectorSerie<double>>("data")(dummy.size());
             plotVectorSerie->setColumnLabel(dummy);
             plotVectorSerie->setDescription("Default dataset for class: "+boost::core::demangle(typeid(*this).name()));
           }
@@ -118,7 +118,7 @@ namespace MBSim {
 
   void Element::createPlotGroup() {
     plotGroup=parent->getPlotGroup()->createChildObject<H5::Group>(name)();
-    plotGroup->createChildAttribute<H5::SimpleAttribute<string> >("Description")()->write("Object of class: "+boost::core::demangle(typeid(*this).name()));
+    plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write("Object of class: "+boost::core::demangle(typeid(*this).name()));
 
     plotColumns.insert(plotColumns.begin(), "time");
   }

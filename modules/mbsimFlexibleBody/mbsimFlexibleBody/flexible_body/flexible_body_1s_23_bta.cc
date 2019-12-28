@@ -66,14 +66,14 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s23BTA::updatePositions(Frame1s *frame) {
     fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
     X(0) = frame->getParameter();
-    frame->setPosition(R->evalPosition() + R->evalOrientation() * X(Range<Fixed<0>,Fixed<2> >()));
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * X(Range<Fixed<0>,Fixed<2>>()));
     frame->setOrientation(R->getOrientation() * getOrientation(frame->getParameter()));
   }
 
   void FlexibleBody1s23BTA::updateVelocities(Frame1s *frame) {
     fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(frame->getParameter());
-    frame->setVelocity(R->evalOrientation() * Xt(Range<Fixed<0>,Fixed<2> >()));
-    frame->setAngularVelocity(R->getOrientation() * Xt(Range<Fixed<3>,Fixed<5> >()));
+    frame->setVelocity(R->evalOrientation() * Xt(Range<Fixed<0>,Fixed<2>>()));
+    frame->setAngularVelocity(R->getOrientation() * Xt(Range<Fixed<3>,Fixed<5>>()));
   }
 
   void FlexibleBody1s23BTA::updateAccelerations(Frame1s *frame) {
@@ -188,7 +188,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleBody1s23BTA::getAngles(double s) {
-    return getPositions(s)(Range<Fixed<3>,Fixed<5> >());
+    return getPositions(s)(Range<Fixed<3>,Fixed<5>>());
   }
 
   void FlexibleBody1s23BTA::initializeUsingXML(DOMElement *element) {

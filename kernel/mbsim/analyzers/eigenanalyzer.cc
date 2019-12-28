@@ -31,13 +31,13 @@ using namespace xercesc;
 
 // TODO: remove the following two functions and provide an uniform concept to
 // cast between complex and double
-Vector<Ref, complex<double> > toComplex(const Vector<Ref, double> &x) {
-  Vector<Ref, complex<double> > y(x.size(),NONINIT);
+Vector<Ref, complex<double>> toComplex(const Vector<Ref, double> &x) {
+  Vector<Ref, complex<double>> y(x.size(),NONINIT);
   for(int i=0; i<x.size(); i++)
     y(i) = complex<double>(x(i),0);
   return y;
 }
-const Vector<Ref, double> fromComplex(const Vector<Ref, complex<double> > &x) {
+const Vector<Ref, double> fromComplex(const Vector<Ref, complex<double>> &x) {
   Vector<Ref, double> y(x.size(),NONINIT);
   for(int i=0; i<x.size(); i++)
     y(i) = x(i).real();
@@ -98,9 +98,9 @@ namespace MBSim {
 
   void Eigenanalyzer::computeEigenmodes() {
     computeEigenvalues();
-    Vector<Ref, complex<double> > c(w.size());
-    Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
-    Vector<Ref, complex<double> > wbuf = w;
+    Vector<Ref, complex<double>> c(w.size());
+    Vector<Ref, complex<double>> deltaz(w.size(),NONINIT);
+    Vector<Ref, complex<double>> wbuf = w;
 
     VecV Av(system->getzSize()/2,INIT,A);
     for(int i=0; i<MA.rows(); i++) {
@@ -140,11 +140,11 @@ namespace MBSim {
 
   void Eigenanalyzer::computeEigenmotion() {
     computeEigenvalues();
-    Vector<Ref, complex<double> > deltaz(w.size(),NONINIT);
+    Vector<Ref, complex<double>> deltaz(w.size(),NONINIT);
 
     if(deltaz0.size()==0)
       deltaz0.resize(w.size());
-    Vector<Ref, complex<double> > c = slvLU(V,toComplex(deltaz0));
+    Vector<Ref, complex<double>> c = slvLU(V,toComplex(deltaz0));
 
     for(double t=tStart; t<tEnd+dtPlot; t+=dtPlot) {
       deltaz.init(0);
@@ -214,7 +214,7 @@ namespace MBSim {
     if(e) setAmplitude(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"modeAmplitudeTable");
     if(e) {
-      setModeAmplitudeTable(E(e)->getText<Matrix<General,Var,Fixed<2>,double> >());
+      setModeAmplitudeTable(E(e)->getText<Matrix<General,Var,Fixed<2>,double>>());
       for(int i=0; i<MA.rows(); i++)
         MA(i,0)--;
     }

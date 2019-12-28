@@ -246,7 +246,7 @@ namespace MBSimHydraulics {
       setBallInitialPosition(E(ee)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"Spring");
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"forceFunction");
-    auto *f=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double,double)> >(ee->getFirstElementChild());
+    auto *f=MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double,double)>>(ee->getFirstElementChild());
     setSpringForceFunction(f);
     ee = E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"unloadedLength");
     if(ee) setSpringUnloadedLength(E(ee)->getText<double>());

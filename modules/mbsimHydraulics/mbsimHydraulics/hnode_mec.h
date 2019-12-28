@@ -102,7 +102,7 @@ namespace MBSimHydraulics {
       double V0;
       unsigned int nTrans, nRot;
       bool updQMec;
-      std::vector<std::shared_ptr<OpenMBV::Arrow> > openMBVArrows;
+      std::vector<std::shared_ptr<OpenMBV::Arrow>> openMBVArrows;
       double openMBVArrowSize;
 
     private:

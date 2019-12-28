@@ -70,7 +70,7 @@ namespace MBSim {
     };
 
   template <class Col>
-    class ToDouble<fmatvec::Vector<Col,double> > {
+    class ToDouble<fmatvec::Vector<Col,double>> {
       public:
         static double cast(const fmatvec::Vector<Col,double> &x) {
           return x.e(0); 
@@ -78,7 +78,7 @@ namespace MBSim {
     };
 
   template <class Row>
-    class ToDouble<fmatvec::RowVector<Row,double> > {
+    class ToDouble<fmatvec::RowVector<Row,double>> {
       public:
         static double cast(const fmatvec::RowVector<Row,double> &x) {
           return x.e(0); 
@@ -94,7 +94,7 @@ namespace MBSim {
   };
 
   template <class Col>
-  class FromDouble<fmatvec::Vector<Col,double> > {
+  class FromDouble<fmatvec::Vector<Col,double>> {
     public:
       static fmatvec::Vector<Col,double> cast(double x) {
         return fmatvec::Vector<Col,double>(1,fmatvec::INIT,x);
@@ -102,7 +102,7 @@ namespace MBSim {
   };
 
   template <class Col>
-  class FromDouble<fmatvec::RowVector<Col,double> > {
+  class FromDouble<fmatvec::RowVector<Col,double>> {
     public:
       static fmatvec::RowVector<Col,double> cast(double x) {
         return fmatvec::RowVector<Col,double>(1,fmatvec::INIT,x);
@@ -110,7 +110,7 @@ namespace MBSim {
   };
 
   template <class Row, class Col>
-  class FromDouble<fmatvec::Matrix<fmatvec::General,Row,Col,double> > {
+  class FromDouble<fmatvec::Matrix<fmatvec::General,Row,Col,double>> {
     public:
       static fmatvec::Matrix<fmatvec::General,Row,Col,double> cast(double x) {
         return fmatvec::Matrix<fmatvec::General,Row,Col,double>(1,1,fmatvec::INIT,x);

@@ -37,7 +37,7 @@ namespace MBSimFcl {
 
   void FclPlane::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
-      cg = shared_ptr<CollisionGeometry<double> >(new Plane<double>(Vec3ToVector3d(normal),offset));
+      cg = shared_ptr<CollisionGeometry<double>>(new Plane<double>(Vec3ToVector3d(normal),offset));
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         double al=0, be=0, ga=0;

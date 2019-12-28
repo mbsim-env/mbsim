@@ -145,7 +145,7 @@ namespace MBSimFlexibleBody {
       void updateGlobalRelativePosition(const fmatvec::Vec2 &zeta);
       void updateGlobalRelativeVelocity(const fmatvec::Vec2 &zeta);
       const fmatvec::GeneralMatrix<fmatvec::Vec4>& evalHessianMatrixPos(const fmatvec::Vec2 &zeta) { if(fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta); return hessPos; }
-      const std::vector<fmatvec::GeneralMatrix<fmatvec::Vec4> >& evalHessianMatrixPhi(const fmatvec::Vec2 &zeta) { if(fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta); return hessPhi; }
+      const std::vector<fmatvec::GeneralMatrix<fmatvec::Vec4>>& evalHessianMatrixPhi(const fmatvec::Vec2 &zeta) { if(fabs(zeta(0)-zetaOld(0))>1e-13 or fabs(zeta(1)-zetaOld(1))>1e-13) updateHessianMatrix(zeta); return hessPhi; }
       const fmatvec::Vec3& evalGlobalRelativePosition(const fmatvec::Vec2 &zeta) { if(updPos) updateGlobalRelativePosition(zeta); return WrPS; }
       const fmatvec::Vec3& evalGlobalRelativeVelocity(const fmatvec::Vec2 &zeta) { if(updVel) updateGlobalRelativeVelocity(zeta); return Wvrel; }
 
@@ -161,7 +161,7 @@ namespace MBSimFlexibleBody {
       std::vector<MBSim::NurbsSurface> srfPhi;
       fmatvec::Vec2 zetaOld;
       fmatvec::GeneralMatrix<fmatvec::Vec4> hessPos;
-      std::vector<fmatvec::GeneralMatrix<fmatvec::Vec4> > hessPhi;
+      std::vector<fmatvec::GeneralMatrix<fmatvec::Vec4>> hessPhi;
       fmatvec::Vec3 WrPS, Wvrel;
       bool updPos{true};
       bool updVel{true};

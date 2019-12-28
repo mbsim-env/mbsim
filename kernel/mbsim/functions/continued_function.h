@@ -49,9 +49,9 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"function");
-        setFunction(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
+        setFunction(ObjectFactory::createAndInit<Function<Ret(Arg)>>(e->getFirstElementChild()));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"continuationRule");
-        setContinuationRule(ObjectFactory::createAndInit<Function<Arg(Arg)> >(e->getFirstElementChild()));
+        setContinuationRule(ObjectFactory::createAndInit<Function<Arg(Arg)>>(e->getFirstElementChild()));
       }
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);

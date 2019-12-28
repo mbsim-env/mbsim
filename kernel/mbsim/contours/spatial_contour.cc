@@ -89,7 +89,7 @@ namespace MBSim {
           for(unsigned int i=0; i<ombvXiNodes.size(); i++)
             ombvXiNodes[i] = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*i/50.;
         }
-        vector<vector<double> > vp(ombvEtaNodes.size()*ombvXiNodes.size());
+        vector<vector<double>> vp(ombvEtaNodes.size()*ombvXiNodes.size());
         Vec2 zeta(NONINIT);
         int n = ombvXiNodes.size();
         for (unsigned int i=0; i<ombvEtaNodes.size(); i++) {
@@ -141,7 +141,7 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiNodes");
     xiNodes=E(e)->getText<vector<double>>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
-    setContourFunction(ObjectFactory::createAndInit<Function<Vec3(Vec2)> >(e->getFirstElementChild()));
+    setContourFunction(ObjectFactory::createAndInit<Function<Vec3(Vec2)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"openEta");
     if(e) setOpenEta(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"openXi");

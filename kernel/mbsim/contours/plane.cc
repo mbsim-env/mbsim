@@ -53,7 +53,7 @@ namespace MBSim {
   }
 
   Vec2 Plane::evalZeta(const Vec3 &WrPoint) {
-    return (R->evalOrientation().T() *(WrPoint - R->evalPosition()) )(Range<Fixed<1>,Fixed<2> >());
+    return (R->evalOrientation().T() *(WrPoint - R->evalPosition()) )(Range<Fixed<1>,Fixed<2>>());
   }
 
  void Plane::initializeUsingXML(DOMElement *element) {

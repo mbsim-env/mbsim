@@ -75,7 +75,7 @@ namespace MBSim {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"limitedFunctions");
         xercesc::DOMElement *ee=e->getFirstElementChild();
         while(ee && MBXMLUtils::E(ee)->getTagName()==MBSIM%"LimitedFunction") {
-          addLimitedFunction(LimitedFunction<Ret(Arg)>(ObjectFactory::createAndInit<Function<Ret(Arg)> >(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),MBXMLUtils::E(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))->getText<double>()));
+          addLimitedFunction(LimitedFunction<Ret(Arg)>(ObjectFactory::createAndInit<Function<Ret(Arg)>>(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"function")->getFirstElementChild()),MBXMLUtils::E(MBXMLUtils::E(ee)->getFirstElementChildNamed(MBSIM%"limit"))->getText<double>()));
           ee=ee->getNextElementSibling();
         }
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"shiftAbscissa");

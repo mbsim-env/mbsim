@@ -50,7 +50,7 @@ namespace MBSimFcl {
        */
       FclContour *contour0, *contour1;
 
-      std::shared_ptr<fcl::CollisionObject<double> > obj0, obj1;
+      std::shared_ptr<fcl::CollisionObject<double>> obj0, obj1;
   };
 
 }

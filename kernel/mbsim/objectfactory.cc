@@ -32,7 +32,7 @@ void DOMEvalExceptionStack::add(const string &type, const std::shared_ptr<DOMEva
 }
 
 namespace {
-  size_t calculateMaxDepth(const vector<pair<string, std::shared_ptr<DOMEvalException> > > &exVec, size_t depth=0) {
+  size_t calculateMaxDepth(const vector<pair<string, std::shared_ptr<DOMEvalException>>> &exVec, size_t depth=0) {
     size_t maxDepth=depth;
     for(const auto & it : exVec) {
       std::shared_ptr<DOMEvalExceptionStack> stack=std::dynamic_pointer_cast<DOMEvalExceptionStack>(it.second);
@@ -56,7 +56,7 @@ namespace {
   }
 }
 
-vector<pair<string, std::shared_ptr<DOMEvalException> > > &DOMEvalExceptionStack::getExceptionVector() {
+vector<pair<string, std::shared_ptr<DOMEvalException>>> &DOMEvalExceptionStack::getExceptionVector() {
   return exVec;
 }
 

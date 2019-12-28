@@ -320,7 +320,7 @@ namespace MBSimFlexibleBody {
        * Second index is the derivative
        * third index is the actual coefficient
        */
-      std::vector<std::vector<std::vector<double> > > coeffs;
+      std::vector<std::vector<std::vector<double>> > coeffs;
 
       /*!
        * \brief function that holds the coefficient for the lagrange polynoms

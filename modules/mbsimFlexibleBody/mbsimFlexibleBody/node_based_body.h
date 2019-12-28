@@ -66,7 +66,7 @@ namespace MBSimFlexibleBody {
       std::vector<fmatvec:: Mat3xV> WJP[2], WJR[2];
       std::vector<bool> updNodalPos, updNodalVel, updNodalAcc, updNodalGA, updNodalStress;
       std::vector<bool> updNodalJac[2];
-      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma;
+      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double>> sigma;
       int nn{0};
       std::map<int,int> nodeMap;
   };

@@ -83,13 +83,13 @@ namespace MBSim {
       void addObject(int level, Object* object); 
 
       void printGraph();
-      const std::vector< std::vector<Object*> >& getObjects() const { return obj; }
+      const std::vector< std::vector<Object*>>& getObjects() const { return obj; }
 
     protected:
       /**
        * \brief none
        */
-      std::vector< std::vector<Object*> > obj;
+      std::vector< std::vector<Object*>> obj;
   };
 
 }

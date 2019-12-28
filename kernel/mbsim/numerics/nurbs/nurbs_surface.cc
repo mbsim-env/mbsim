@@ -707,7 +707,7 @@ namespace MBSim {
     dersBasisFuns(du, u, uspan, degU, U, Nu);
     dersBasisFuns(dv, v, vspan, degV, V, Nv);
 
-//  Vector< HPoint_nD<T,nD> > temp(degV+1) ;
+//  Vector< HPoint_nD<T,nD>> temp(degV+1) ;
     Mat temp(4, degV + 1, NONINIT);
     int dd, r, s;
     for (k = 0; k <= du; ++k) {

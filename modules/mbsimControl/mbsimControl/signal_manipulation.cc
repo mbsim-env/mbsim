@@ -136,9 +136,9 @@ namespace MBSimControl {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
     if(signalString.size()==1)
-      setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV)> >(e->getFirstElementChild()));
+      setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV)>>(e->getFirstElementChild()));
     else if(signalString.size()==2)
-      setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)> >(e->getFirstElementChild()));
+      setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)>>(e->getFirstElementChild()));
   }
 
   void SignalOperation::init(InitStage stage, const InitConfigSet &config) {

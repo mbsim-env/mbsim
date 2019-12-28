@@ -282,7 +282,7 @@ namespace MBSim {
       /*!
        * \brief saves the points for the contact point computation
        */
-      std::vector<std::vector<fmatvec::Vec3> > gridPoints;
+      std::vector<std::vector<fmatvec::Vec3>> gridPoints;
 
       /*!
        * \brief function for intersection point

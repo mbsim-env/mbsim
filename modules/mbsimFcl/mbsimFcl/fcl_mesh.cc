@@ -46,52 +46,52 @@ namespace MBSimFcl {
       for(int i=0; i<triangle.rows(); i++)
           triangles[i].set(triangle(i,0),triangle(i,1),triangle(i,2));
       if(collisionStructure==AABB) {
-        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::AABB<double> >);
-        static_cast<BVHModel<fcl::AABB<double> >*>(cg.get())->beginModel();
-        static_cast<BVHModel<fcl::AABB<double> >*>(cg.get())->addSubModel(vertices, triangles);
-        static_cast<BVHModel<fcl::AABB<double> >*>(cg.get())->endModel();
+        cg = shared_ptr<CollisionGeometry<double>>(new BVHModel<fcl::AABB<double>>);
+        static_cast<BVHModel<fcl::AABB<double>>*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::AABB<double>>*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::AABB<double>>*>(cg.get())->endModel();
       }
       else if(collisionStructure==KDOP16) {
-        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,16> >);
-        static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->beginModel();
-        static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->addSubModel(vertices, triangles);
-        static_cast<BVHModel<fcl::KDOP<double,16> >*>(cg.get())->endModel();
+        cg = shared_ptr<CollisionGeometry<double>>(new BVHModel<fcl::KDOP<double,16>>);
+        static_cast<BVHModel<fcl::KDOP<double,16>>*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::KDOP<double,16>>*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::KDOP<double,16>>*>(cg.get())->endModel();
       }
       else if(collisionStructure==KDOP18) {
-        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,18> >);
-        static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->beginModel();
-        static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->addSubModel(vertices, triangles);
-        static_cast<BVHModel<fcl::KDOP<double,18> >*>(cg.get())->endModel();
+        cg = shared_ptr<CollisionGeometry<double>>(new BVHModel<fcl::KDOP<double,18>>);
+        static_cast<BVHModel<fcl::KDOP<double,18>>*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::KDOP<double,18>>*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::KDOP<double,18>>*>(cg.get())->endModel();
       }
       else if(collisionStructure==KDOP24) {
-        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::KDOP<double,24> >);
-        static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->beginModel();
-        static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->addSubModel(vertices, triangles);
-        static_cast<BVHModel<fcl::KDOP<double,24> >*>(cg.get())->endModel();
+        cg = shared_ptr<CollisionGeometry<double>>(new BVHModel<fcl::KDOP<double,24>>);
+        static_cast<BVHModel<fcl::KDOP<double,24>>*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::KDOP<double,24>>*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::KDOP<double,24>>*>(cg.get())->endModel();
       }
       else if(collisionStructure==kIOS) {
-        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::kIOS<double> >);
-        static_cast<BVHModel<fcl::kIOS<double> >*>(cg.get())->beginModel();
-        static_cast<BVHModel<fcl::kIOS<double> >*>(cg.get())->addSubModel(vertices, triangles);
-        static_cast<BVHModel<fcl::kIOS<double> >*>(cg.get())->endModel();
+        cg = shared_ptr<CollisionGeometry<double>>(new BVHModel<fcl::kIOS<double>>);
+        static_cast<BVHModel<fcl::kIOS<double>>*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::kIOS<double>>*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::kIOS<double>>*>(cg.get())->endModel();
       }
       else if(collisionStructure==OBB) {
-        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::OBB<double> >);
-        static_cast<BVHModel<fcl::OBB<double> >*>(cg.get())->beginModel();
-        static_cast<BVHModel<fcl::OBB<double> >*>(cg.get())->addSubModel(vertices, triangles);
-        static_cast<BVHModel<fcl::OBB<double> >*>(cg.get())->endModel();
+        cg = shared_ptr<CollisionGeometry<double>>(new BVHModel<fcl::OBB<double>>);
+        static_cast<BVHModel<fcl::OBB<double>>*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::OBB<double>>*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::OBB<double>>*>(cg.get())->endModel();
       }
       else if(collisionStructure==OBBRSS) {
-        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::OBBRSS<double> >);
-        static_cast<BVHModel<fcl::OBBRSS<double> >*>(cg.get())->beginModel();
-        static_cast<BVHModel<fcl::OBBRSS<double> >*>(cg.get())->addSubModel(vertices, triangles);
-        static_cast<BVHModel<fcl::OBBRSS<double> >*>(cg.get())->endModel();
+        cg = shared_ptr<CollisionGeometry<double>>(new BVHModel<fcl::OBBRSS<double>>);
+        static_cast<BVHModel<fcl::OBBRSS<double>>*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::OBBRSS<double>>*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::OBBRSS<double>>*>(cg.get())->endModel();
       }
       else if(collisionStructure==RSS) {
-        cg = shared_ptr<CollisionGeometry<double> >(new BVHModel<fcl::RSS<double> >);
-        static_cast<BVHModel<fcl::RSS<double> >*>(cg.get())->beginModel();
-        static_cast<BVHModel<fcl::RSS<double> >*>(cg.get())->addSubModel(vertices, triangles);
-        static_cast<BVHModel<fcl::RSS<double> >*>(cg.get())->endModel();
+        cg = shared_ptr<CollisionGeometry<double>>(new BVHModel<fcl::RSS<double>>);
+        static_cast<BVHModel<fcl::RSS<double>>*>(cg.get())->beginModel();
+        static_cast<BVHModel<fcl::RSS<double>>*>(cg.get())->addSubModel(vertices, triangles);
+        static_cast<BVHModel<fcl::RSS<double>>*>(cg.get())->endModel();
       }
       else if(collisionStructure==unknown)
         throwError("(FclMesh::init): unknown collision structure");

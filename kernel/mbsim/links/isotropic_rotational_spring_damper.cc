@@ -87,10 +87,10 @@ namespace MBSim {
   void IsotropicRotationalSpringDamper::initializeUsingXML(DOMElement *element) {
     FixedFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"elasticMomentFunction");
-    Function<double(double)> *f=ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
+    Function<double(double)> *f=ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild());
     setElasticMomentFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIM%"dissipativeMomentFunction");
-    f=ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
+    f=ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild());
     setDissipativeMomentFunction(f);
   }
 

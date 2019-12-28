@@ -499,7 +499,7 @@ namespace MBSimFlexibleBody {
        * \brief find the elemental DOF Number out of the global DOF Number
        * \remark the first two local DOFs are locked
        */
-      std::vector<std::pair<int, int> > getElementAndLocalDoFNo(int globalColumn);
+      std::vector<std::pair<int, int>> getElementAndLocalDoFNo(int globalColumn);
 
       /*!
        * \brief get the number of DOFs for one element

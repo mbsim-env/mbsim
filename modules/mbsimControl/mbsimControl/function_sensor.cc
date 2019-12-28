@@ -48,7 +48,7 @@ namespace MBSimControl {
   void FunctionSensor::initializeUsingXML(DOMElement *element) {
     Sensor::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<VecV(double)> >(e->getFirstElementChild())); 
+    setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<VecV(double)>>(e->getFirstElementChild()));
   }
 
   void FunctionSensor::init(MBSim::Element::InitStage stage, const InitConfigSet &config) {

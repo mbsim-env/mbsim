@@ -161,7 +161,7 @@ namespace MBSim {
       /**
        * \brief saves the results of the criteria for each index set and each operator step
        */
-      std::vector<std::vector<double> > criteriaResults;
+      std::vector<std::vector<double>> criteriaResults;
   };
 
   /*!

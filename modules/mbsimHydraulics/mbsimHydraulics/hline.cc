@@ -221,7 +221,7 @@ namespace MBSimHydraulics {
   void ConstrainedLine::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
-    setQFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setQFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
   }
 
   void ConstrainedLine::init(InitStage stage, const InitConfigSet &config) {
@@ -248,7 +248,7 @@ namespace MBSimHydraulics {
   void FluidPump::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"volumeflowFunction");
-    setQFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setQFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
   }
 
   void FluidPump::init(InitStage stage, const InitConfigSet &config) {
@@ -269,11 +269,11 @@ namespace MBSimHydraulics {
   void StatelessOrifice::initializeUsingXML(DOMElement * element) {
     HLine::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowPressureFunction");
-    setInflowFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setInflowFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowPressureFunction");
-    setOutflowFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setOutflowFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"openingFunction");
-    setOpeningFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setOpeningFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");

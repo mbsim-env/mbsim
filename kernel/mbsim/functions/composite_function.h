@@ -77,19 +77,19 @@ namespace MBSim {
       }
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunction");
-        if(e) setInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e->getFirstElementChild()));
+        if(e) setInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)>>(e->getFirstElementChild()));
         else {
           e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"innerFunctions")->getFirstElementChild();
           for(int i=0; i<2; i++) {
-            addInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)> >(e));
+            addInnerFunction(ObjectFactory::createAndInit<Function<Argo(Argi)>>(e));
             e=e->getNextElementSibling();
           }
         }
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"outerFunction");
         if(fi.size()==1)
-          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)> >(e->getFirstElementChild()));
+          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo)>>(e->getFirstElementChild()));
         else if(fi.size()==2)
-          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo,Argo)> >(e->getFirstElementChild()));
+          setOuterFunction(ObjectFactory::createAndInit<Function<Ret(Argo,Argo)>>(e->getFirstElementChild()));
       }
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Argi)>::init(stage, config);

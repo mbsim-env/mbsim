@@ -37,7 +37,7 @@ namespace MBSim {
   void RegularizedFriction::initializeUsingXML(DOMElement *element) {
     FrictionForceLaw::initializeUsingXML(element);
     DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"frictionForceFunction");
-    auto *f = ObjectFactory::createAndInit<Function<Vec(Vec,double)> >(e->getFirstElementChild());
+    auto *f = ObjectFactory::createAndInit<Function<Vec(Vec,double)>>(e->getFirstElementChild());
     setFrictionForceFunction(f);
   }
 

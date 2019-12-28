@@ -142,11 +142,11 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     if(e) setForceDirection(E(e)->getText<Mat>(3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
-    if(e) setForceFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
+    if(e) setForceFunction(ObjectFactory::createAndInit<Function<VecV(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentDirection");
     if(e) setMomentDirection(E(e)->getText<Mat>(3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"momentFunction");
-    if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)> >(e->getFirstElementChild()));
+    if(e) setMomentFunction(ObjectFactory::createAndInit<Function<VecV(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       ombvArrow = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,F?OpenMBVArrow::toHead:OpenMBVArrow::toDoubleHead,OpenMBVArrow::toPoint));

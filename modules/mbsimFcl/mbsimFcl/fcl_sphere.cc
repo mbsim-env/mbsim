@@ -36,7 +36,7 @@ namespace MBSimFcl {
 
   void FclSphere::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
-      cg = shared_ptr<CollisionGeometry<double> >(new Sphere<double>(r));
+      cg = shared_ptr<CollisionGeometry<double>>(new Sphere<double>(r));
     else if (stage == plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Sphere>(openMBVRigidBody)->setRadius(r);

@@ -70,11 +70,11 @@ namespace MBSimHydraulics {
   void LeakageLine::initializeUsingXML(DOMElement * element) {
     RigidHLine::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"firstSurfaceVelocity");
-    if (e) setSurface1VelocityFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    if (e) setSurface1VelocityFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"secondSurfaceVelocity");
-    if (e) setSurface2VelocityFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    if (e) setSurface2VelocityFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"gapLength");
-    if (e) setGapLengthFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    if (e) setGapLengthFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, PlaneLeakageLine)

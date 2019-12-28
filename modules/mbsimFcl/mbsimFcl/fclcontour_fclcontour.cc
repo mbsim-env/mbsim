@@ -36,8 +36,8 @@ namespace MBSimFcl {
     icontour0 = 0; icontour1 = 1;
     contour0 = static_cast<FclContour*>(contour[0]);
     contour1 = static_cast<FclContour*>(contour[1]);
-    obj0 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(contour0->getCollisionGeometry()));
-    obj1 = shared_ptr<CollisionObject<double> >(new CollisionObject<double>(contour1->getCollisionGeometry()));
+    obj0 = shared_ptr<CollisionObject<double>>(new CollisionObject<double>(contour0->getCollisionGeometry()));
+    obj1 = shared_ptr<CollisionObject<double>>(new CollisionObject<double>(contour1->getCollisionGeometry()));
   }
 
   void ContactKinematicsContourContour::updateg(vector<SingleContact> &contact) {

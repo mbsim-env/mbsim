@@ -129,7 +129,7 @@ namespace MBSim {
       e=e->getNextElementSibling();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
-    auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
+    auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)>>(e->getFirstElementChild());
     setGeneralizedForceFunction(f);
   }
 

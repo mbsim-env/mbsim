@@ -276,7 +276,7 @@ namespace MBSimHydraulics {
     LinePressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
-    setZetaTabular(MBSim::ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+    setZetaTabular(MBSim::ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
   }
 
   void TabularLinePressureLoss::init(MBSim::Element::InitStage stage, const InitConfigSet &config) {

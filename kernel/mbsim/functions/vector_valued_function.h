@@ -65,7 +65,7 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"components")->getFirstElementChild();
         while (e) {
-          addComponent(ObjectFactory::createAndInit<Function<double(Arg)> >(e));
+          addComponent(ObjectFactory::createAndInit<Function<double(Arg)>>(e));
           e=e->getNextElementSibling();
         }
       }

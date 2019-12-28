@@ -69,7 +69,7 @@ namespace MBSim {
             ombvNodes[i] = etaNodes[0] + (etaNodes[etaNodes.size()-1]-etaNodes[0])*i/100.;
         }
         if(ombv->getFilled()) {
-          shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >();
+          shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint>>> vpp = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint>>>();
           for (double ombvNode : ombvNodes) {
             const Vec3 CrPC=(*funcCrPC)(ombvNode);
             vpp->push_back(OpenMBV::PolygonPoint::create(CrPC(0), CrPC(1), CrPC(2)));
@@ -78,7 +78,7 @@ namespace MBSim {
           static_pointer_cast<OpenMBV::Extrusion>(openMBVRigidBody)->addContour(vpp);
         }
         else {
-          vector<vector<double> > vp(ombvNodes.size());
+          vector<vector<double>> vp(ombvNodes.size());
           for (unsigned int i=0; i<ombvNodes.size(); i++) {
             const Vec3 CrPC=(*funcCrPC)(ombvNodes[i]);
             vp[i].push_back(CrPC(0));
@@ -117,7 +117,7 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
     etaNodes=E(e)->getText<vector<double>>();
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourFunction");
-    setContourFunction(ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild()));
+    setContourFunction(ObjectFactory::createAndInit<Function<Vec3(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"open");
     if(e) setOpen(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");

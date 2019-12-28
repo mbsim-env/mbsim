@@ -99,7 +99,7 @@ namespace MBSimPhysics {
     FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"dragFunction");
-    setDragFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setDragFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(e) {
       ombvArrow = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));

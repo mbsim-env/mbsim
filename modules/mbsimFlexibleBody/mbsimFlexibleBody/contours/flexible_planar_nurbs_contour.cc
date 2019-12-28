@@ -141,7 +141,7 @@ namespace MBSimFlexibleBody {
 //  }
 
   Vec3 FlexiblePlanarNurbsContour::evalWs_t(const Vec2 &zeta) {
-    return evalHessianMatrix_t(zeta(0)).row(1).T()(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix_t(zeta(0)).row(1).T()(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexiblePlanarNurbsContour::evalWu_t(const Vec2 &zeta) {
@@ -151,11 +151,11 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexiblePlanarNurbsContour::evalPosition(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta(0)).row(0).T()(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta(0)).row(0).T()(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexiblePlanarNurbsContour::evalWs(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta(0)).row(1).T()(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta(0)).row(1).T()(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexiblePlanarNurbsContour::evalWt(const Vec2 &zeta) {
@@ -164,7 +164,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexiblePlanarNurbsContour::evalParDer1Ws(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta(0)).row(2).T()(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta(0)).row(2).T()(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexiblePlanarNurbsContour::evalParDer1Wu(const Vec2 &zeta) {
@@ -189,7 +189,7 @@ namespace MBSimFlexibleBody {
     if(updCrvVel) updateCurveVelocities();
     double eta = continueEta(frame->evalZeta()(0));
     crvVel.deriveAtH(eta,0,hessTmp);
-    frame->setVelocity(hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2> >()));
+    frame->setVelocity(hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2>>()));
   }
 
   void FlexiblePlanarNurbsContour::updateAccelerations(ContourFrame *frame) {
@@ -202,7 +202,7 @@ namespace MBSimFlexibleBody {
     frame->getJacobianOfTranslation(j,false).resize(frame->gethSize(j),NONINIT);
     for(int i=0; i<frame->gethSize(j); i++) {
       crvJac[i].deriveAtH(eta,0,hessTmp);
-      frame->getJacobianOfTranslation(j,false).set(i,hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2> >()));
+      frame->getJacobianOfTranslation(j,false).set(i,hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2>>()));
     }
   }
 
@@ -210,7 +210,7 @@ namespace MBSimFlexibleBody {
     if(updCrvGA) updateCurveGyroscopicAccelerations();
     double eta = continueEta(frame->evalZeta()(0));
     crvGA.deriveAtH(eta,0,hessTmp);
-    frame->setGyroscopicAccelerationOfTranslation(hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2> >()));
+    frame->setGyroscopicAccelerationOfTranslation(hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2>>()));
   }
 
   void FlexiblePlanarNurbsContour::init(InitStage stage, const InitConfigSet &config) {

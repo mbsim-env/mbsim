@@ -155,14 +155,14 @@ namespace MBSim {
   void SingleContact::updateh(int j) {
     Vec3 F = evalGlobalForceDirection().col(0)*evalGeneralizedNormalForce();
     if(fdf and not(fdf->isSetValued() and gdActive[tangential]))
-      F += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(1,fdf->getFrictionDirections()))*evalGeneralizedTangentialForce();
+      F += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2>>(),Range<Var,Var>(1,fdf->getFrictionDirections()))*evalGeneralizedTangentialForce();
 
     h[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * F;
     h[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * F;
   }
 
   void SingleContact::updateW(int j) {
-    Mat3xV RF = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),Range<Var,Var>(not(fcl->isSetValued()),not(fcl->isSetValued())+laSize-1));
+    Mat3xV RF = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2>>(),Range<Var,Var>(not(fcl->isSetValued()),not(fcl->isSetValued())+laSize-1));
 
     W[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * RF;
     W[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * RF;
@@ -171,7 +171,7 @@ namespace MBSim {
   void SingleContact::updateV(int j) {
     if (fcl->isSetValued() and gdActive[normal] and fdf and (not gdActive[tangential] or not fdf->isSetValued())) { // with this if-statement for the timestepping integrator it is V=W as it just evaluates checkActive(1)
       Vec gdT = evalGeneralizedRelativeVelocity()(RangeV(1,fdf->getFrictionDirections()));
-      Vec3 F = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(1, fdf->getFrictionDirections())) * fdf->dlaTdlaN(gdT);
+      Vec3 F = evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2>>(),RangeV(1, fdf->getFrictionDirections())) * fdf->dlaTdlaN(gdT);
       if(gdT.T()*gdTDir<0) F*=-1.0;
       V[j][0] -= cFrame[0]->evalJacobianOfTranslation(j).T() * F;
       V[j][1] += cFrame[1]->evalJacobianOfTranslation(j).T() * F;
@@ -179,8 +179,8 @@ namespace MBSim {
   }
 
   void SingleContact::updatewb() {
-    wb -= evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
-    wb += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2> >(),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
+    wb -= evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2>>(),RangeV(0,laSize-1)).T() * cFrame[0]->evalGyroscopicAccelerationOfTranslation();
+    wb += evalGlobalForceDirection()(Range<Fixed<0>,Fixed<2>>(),RangeV(0,laSize-1)).T() * cFrame[1]->evalGyroscopicAccelerationOfTranslation();
   }
 
   void SingleContact::updateStopVector() {

@@ -67,9 +67,9 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override {
         xercesc::DOMElement *e;
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"negativeDirectionalFunction");
-        setNegativeDirectionalFunction(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
+        setNegativeDirectionalFunction(ObjectFactory::createAndInit<Function<Ret(Arg)>>(e->getFirstElementChild()));
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"positiveDirectionalFunction");
-        setPositiveDirectionalFunction(ObjectFactory::createAndInit<Function<Ret(Arg)> >(e->getFirstElementChild()));
+        setPositiveDirectionalFunction(ObjectFactory::createAndInit<Function<Ret(Arg)>>(e->getFirstElementChild()));
       }
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<Ret(Arg)>::init(stage, config);

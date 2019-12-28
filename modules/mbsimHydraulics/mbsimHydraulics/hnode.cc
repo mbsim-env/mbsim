@@ -280,7 +280,7 @@ namespace MBSimHydraulics {
   void ConstrainedNode::initializeUsingXML(DOMElement *element) {
     HNode::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"function");
-    setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild())); 
+    setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, EnvironmentNode)
@@ -850,7 +850,7 @@ namespace MBSimHydraulics {
   void PressurePump::initializeUsingXML(DOMElement * element) {
     HNode::initializeUsingXML(element);
     DOMElement * e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"pressureFunction");
-    setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setpFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
   }
 
   void PressurePump::init(InitStage stage, const InitConfigSet &config) {

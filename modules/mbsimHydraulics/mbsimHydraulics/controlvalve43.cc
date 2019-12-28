@@ -39,7 +39,7 @@ namespace MBSimHydraulics {
 
   class ControlvalveAreaFunction : public MBSim::Function<double(double)> {
     public:
-      ControlvalveAreaFunction(const string& name, double factor_, double offset_, std::shared_ptr<MBSim::Function<double(double)> > position_, std::shared_ptr<MBSim::Function<double(double)> > relAlphaPA_) : factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_) {
+      ControlvalveAreaFunction(const string& name, double factor_, double offset_, std::shared_ptr<MBSim::Function<double(double)>> position_, std::shared_ptr<MBSim::Function<double(double)>> relAlphaPA_) : factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_) {
         setName(name);
       }
 
@@ -51,8 +51,8 @@ namespace MBSimHydraulics {
       }
     private:
       double factor, offset;
-      std::shared_ptr<MBSim::Function<double(double)> > position;
-      std::shared_ptr<MBSim::Function<double(double)> > relAlphaPA;
+      std::shared_ptr<MBSim::Function<double(double)>> position;
+      std::shared_ptr<MBSim::Function<double(double)>> relAlphaPA;
   };
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, Controlvalve43)
@@ -215,7 +215,7 @@ namespace MBSimHydraulics {
       aT=E(e)->getText<double>();
     setAlpha(a, aT);
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativeAlphaPA");
-    setPARelativeAlphaFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setPARelativeAlphaFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalRelativeAlpha");
     setMinimalRelativeAlpha(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"bilateralConstrained");
@@ -224,7 +224,7 @@ namespace MBSimHydraulics {
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"offset");
     setOffset(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"relativePosition");
-    setRelativePositionFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setRelativePositionFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"inflowP");
     nPInflowString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"outflowA");

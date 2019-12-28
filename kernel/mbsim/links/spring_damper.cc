@@ -96,7 +96,7 @@ namespace MBSim {
   void SpringDamper::initializeUsingXML(DOMElement *element) {
     FixedFrameLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
-    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    Function<double(double,double)> *f=ObjectFactory::createAndInit<Function<double(double,double)>>(e->getFirstElementChild());
     setForceFunction(f);
     e = E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
     l0 = E(e)->getText<double>();

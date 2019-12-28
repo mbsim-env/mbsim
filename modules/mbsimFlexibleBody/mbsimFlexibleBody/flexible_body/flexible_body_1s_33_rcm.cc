@@ -135,17 +135,17 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s33RCM::updatePositions(Frame1s *frame) {
     fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
-    frame->setPosition(R->evalPosition() + R->evalOrientation() * X(Range<Fixed<0>,Fixed<2> >()));
-    frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(X(Range<Fixed<3>,Fixed<5> >())));
-    frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(X(Range<Fixed<3>,Fixed<5> >())));
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * X(Range<Fixed<0>,Fixed<2>>()));
+    frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(X(Range<Fixed<3>,Fixed<5>>())));
+    frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(X(Range<Fixed<3>,Fixed<5>>())));
     frame->getOrientation(false).set(2, crossProduct(frame->getOrientation(false).col(0), frame->getOrientation(false).col(1)));
   }
 
   void FlexibleBody1s33RCM::updateVelocities(Frame1s *frame) {
     fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
     fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(frame->getParameter());
-    frame->setVelocity(R->evalOrientation() * Xt(Range<Fixed<0>,Fixed<2> >()));
-    frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(X(Range<Fixed<3>,Fixed<5> >()), Xt(Range<Fixed<3>,Fixed<5> >())));
+    frame->setVelocity(R->evalOrientation() * Xt(Range<Fixed<0>,Fixed<2>>()));
+    frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(X(Range<Fixed<3>,Fixed<5>>()), Xt(Range<Fixed<3>,Fixed<5>>())));
   }
 
   void FlexibleBody1s33RCM::updateAccelerations(Frame1s *frame) {
@@ -228,7 +228,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleBody1s33RCM::getAngles(double s) {
-    return getPositions(s)(Range<Fixed<3>,Fixed<5> >());
+    return getPositions(s)(Range<Fixed<3>,Fixed<5>>());
   }
 
   void FlexibleBody1s33RCM::init(InitStage stage, const InitConfigSet &config) {

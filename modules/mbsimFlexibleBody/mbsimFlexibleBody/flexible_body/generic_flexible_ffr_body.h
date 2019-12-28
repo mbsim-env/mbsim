@@ -276,8 +276,8 @@ namespace MBSimFlexibleBody {
       }
 
       template <class T>
-      static std::vector<std::vector<T> > getCellArray2D(xercesc::DOMElement *element) {
-        std::vector<std::vector<T> > array;
+      static std::vector<std::vector<T>> getCellArray2D(xercesc::DOMElement *element) {
+        std::vector<std::vector<T>> array;
         xercesc::DOMElement *e=element->getFirstElementChild();
         if(MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"row") {
           while(e) {
@@ -294,10 +294,10 @@ namespace MBSimFlexibleBody {
       }
 
       template <class T>
-      static std::vector<std::vector<T> > getCellArray2D(int m, int N, const typename BaseType<T>::type &A) {
+      static std::vector<std::vector<T>> getCellArray2D(int m, int N, const typename BaseType<T>::type &A) {
         int M = A.rows()/(m*N);
         int n = A.cols();
-        std::vector<std::vector<T> > array(M);
+        std::vector<std::vector<T>> array(M);
         for(int i=0, k=0; i<M; i++) {
           for(int j=0; j<N; j++) {
             array[i].push_back(T(A(fmatvec::RangeV(k*m,k*m+m-1),fmatvec::RangeV(0,n-1))));
@@ -312,10 +312,10 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 rdm;
       fmatvec::SymMat3 rrdm, mmi0;
       fmatvec::Mat3xV Pdm;
-      std::vector<std::vector<fmatvec::SqrMatV> > PPdm, Knl2;
-      std::vector<std::vector<fmatvec::SqrMatV> > Ke2;
+      std::vector<std::vector<fmatvec::SqrMatV>> PPdm, Knl2;
+      std::vector<std::vector<fmatvec::SqrMatV>> Ke2;
       std::vector<fmatvec::Mat3xV> rPdm;
-      std::vector<std::vector<fmatvec::SqrMat3> > mmi2, Gr1;
+      std::vector<std::vector<fmatvec::SqrMat3>> mmi2, Gr1;
       std::vector<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om, Ct1, Cr1, Ge, Oe1, Ke1, De1;
       fmatvec::Vec2 beta;
       fmatvec::VecV ksigma0;
@@ -330,10 +330,10 @@ namespace MBSimFlexibleBody {
       std::vector<fmatvec::Vec3> KrKP, WrRP, Wvrel, Womrel;
       std::vector<fmatvec::SqrMat3> ARP;
       std::vector<fmatvec::Mat3xV> Phi, Psi;
-      std::vector<std::vector<fmatvec::SqrMatV> > K0F, K0M;
-      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double> > sigma0;
-      std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > sigmahel;
-      std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> > > sigmahen;
+      std::vector<std::vector<fmatvec::SqrMatV>> K0F, K0M;
+      std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double>> sigma0;
+      std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
+      std::vector<std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> > sigmahen;
 
       // Number of mode shapes 
       int ne{0};

@@ -16,17 +16,17 @@ namespace MBSim {
 //
 //  template <class T, int N> class NurbsSurfaceArray ;
 //
-//  template <class T, int N> void gordonSurface(NurbsCurveArray<T,N>& , NurbsCurveArray<T,N>& , const Matrix< Point_nD<T,N> >& , NurbsSurface<T,N>& );
+//  template <class T, int N> void gordonSurface(NurbsCurveArray<T,N>& , NurbsCurveArray<T,N>& , const Matrix< Point_nD<T,N>>& , NurbsSurface<T,N>& );
   int surfMeshParams(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::VecV& uk, fmatvec::VecV& vl);
   int surfMeshParamsH(const fmatvec::GeneralMatrix<fmatvec::Vec4>& Qw, fmatvec::VecV& uk, fmatvec::VecV& vl);
-//  template <class T, int N> int surfMeshParamsClosedU(const Matrix< Point_nD<T,N> >& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
+//  template <class T, int N> int surfMeshParamsClosedU(const Matrix< Point_nD<T,N>>& Qw, Vector<T>& uk, Vector<T>& vl, int degU );
   int surfMeshParamsClosedU(const fmatvec::GeneralMatrix<fmatvec::Vec3>& Q, fmatvec::VecV& uk, fmatvec::VecV& vl, int degU);
   int surfMeshParamsClosedUH(const fmatvec::GeneralMatrix<fmatvec::Vec4>& Qw, fmatvec::VecV& uk, fmatvec::VecV& vl, int degU);
 //
-//  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& );
-//  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& , const Vector<T>& , const Vector<T>& );
-//  template <class T, int N> void globalSurfApprox(const Matrix< Point_nD<T,N> >& , int , int , NurbsSurface<T,N>& , double=0);
-//  template <class T, int N> void wrapPointMatrix(const Matrix< Point_nD<T,N> >& Q, int , int, Matrix< Point_nD<T,N> >& Qw);
+//  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N>>& , int , int , NurbsSurface<T,N>& );
+//  template <class T, int N> void globalSurfInterpXY(const Matrix< Point_nD<T,N>>& , int , int , NurbsSurface<T,N>& , const Vector<T>& , const Vector<T>& );
+//  template <class T, int N> void globalSurfApprox(const Matrix< Point_nD<T,N>>& , int , int , NurbsSurface<T,N>& , double=0);
+//  template <class T, int N> void wrapPointMatrix(const Matrix< Point_nD<T,N>>& Q, int , int, Matrix< Point_nD<T,N>>& Qw);
 
   /*!
    \class NurbsSurface nurbsS.h
@@ -55,7 +55,7 @@ namespace MBSim {
        * \brief constructor
        */
       NurbsSurface(int DegU, int DegV, const fmatvec::VecV& Uk, const fmatvec::VecV& Vk, fmatvec::GeneralMatrix<fmatvec::Vec4>& Q) : U(Uk), V(Vk), P(Q), degU(DegU), degV(DegV) { }
-//  NurbsSurface(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N> >& Cp, Matrix<T>& W) ;
+//  NurbsSurface(int DegU, int DegV, Vector<T>& Uk, Vector<T>& Vk, Matrix< Point_nD<T,N>>& Cp, Matrix<T>& W) ;
       //! Empty desctructor
       virtual ~NurbsSurface() = default;
 
@@ -111,20 +111,20 @@ namespace MBSim {
 
       void globalInterpH(const fmatvec::GeneralMatrix<fmatvec::Vec4>& Q, int DegU, int DegV, Method method=chordLength);
       void globalInterpClosedUH(const fmatvec::GeneralMatrix<fmatvec::Vec4>& Q, int DegU, int DegV, Method method=chordLength);
-//  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N> >& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
-//  void leastSquares(const Matrix< Point_nD<T,N> >& Q, int pU, int pV, int nU, int nV) ;
-//  void leastSquaresClosedU(const Matrix< Point_nD<T,N> >& Q, int pU, int pV, int nU, int nV) ;
+//  void globalInterpClosedUH(const Matrix< HPoint_nD<T,N>>& Q,const Vector<T> &Uk, const Vector<T> &Vk, const Vector<T> &uk, const Vector<T> &vk, int pU, int pV);//testing
+//  void leastSquares(const Matrix< Point_nD<T,N>>& Q, int pU, int pV, int nU, int nV) ;
+//  void leastSquaresClosedU(const Matrix< Point_nD<T,N>>& Q, int pU, int pV, int nU, int nV) ;
 //
 //#ifndef HAVE_ISO_FRIEND_DECL
-//  friend void gordonSurface (NurbsCurveArray<T,N>& lU, NurbsCurveArray<T,N>& lV, const Matrix< Point_nD<T,N> >& intersections, NurbsSurface<T,N>& gS);
-//  friend void globalSurfInterpXY (const Matrix< Point_nD<T,N> >& Q, int pU, int pV, NurbsSurface<T,N>& S);
-//  friend void globalSurfInterpXY (const Matrix< Point_nD<T,N> >& Q, int pU, int pV, NurbsSurface<T,N>& S, const Vector<T>& uk, const Vector<T>& vk);
-//  friend void globalSurfApprox (const Matrix< Point_nD<T,N> >& Q, int pU, int pV, NurbsSurface<T,N>& S, double error);
+//  friend void gordonSurface (NurbsCurveArray<T,N>& lU, NurbsCurveArray<T,N>& lV, const Matrix< Point_nD<T,N>>& intersections, NurbsSurface<T,N>& gS);
+//  friend void globalSurfInterpXY (const Matrix< Point_nD<T,N>>& Q, int pU, int pV, NurbsSurface<T,N>& S);
+//  friend void globalSurfInterpXY (const Matrix< Point_nD<T,N>>& Q, int pU, int pV, NurbsSurface<T,N>& S, const Vector<T>& uk, const Vector<T>& vk);
+//  friend void globalSurfApprox (const Matrix< Point_nD<T,N>>& Q, int pU, int pV, NurbsSurface<T,N>& S, double error);
 //#else
-//  friend void gordonSurface <> (NurbsCurveArray<T,N>& lU, NurbsCurveArray<T,N>& lV, const Matrix< Point_nD<T,N> >& intersections, NurbsSurface<T,N>& gS);
-//  friend void globalSurfInterpXY <> (const Matrix< Point_nD<T,N> >& Q, int pU, int pV, NurbsSurface<T,N>& S);
-//  friend void globalSurfInterpXY <> (const Matrix< Point_nD<T,N> >& Q, int pU, int pV, NurbsSurface<T,N>& S, const Vector<T>& uk, const Vector<T>& vk);
-//  friend void globalSurfApprox <> (const Matrix< Point_nD<T,N> >& Q, int pU, int pV, NurbsSurface<T,N>& S, double error);
+//  friend void gordonSurface <> (NurbsCurveArray<T,N>& lU, NurbsCurveArray<T,N>& lV, const Matrix< Point_nD<T,N>>& intersections, NurbsSurface<T,N>& gS);
+//  friend void globalSurfInterpXY <> (const Matrix< Point_nD<T,N>>& Q, int pU, int pV, NurbsSurface<T,N>& S);
+//  friend void globalSurfInterpXY <> (const Matrix< Point_nD<T,N>>& Q, int pU, int pV, NurbsSurface<T,N>& S, const Vector<T>& uk, const Vector<T>& vk);
+//  friend void globalSurfApprox <> (const Matrix< Point_nD<T,N>>& Q, int pU, int pV, NurbsSurface<T,N>& S, double error);
 //#endif
 //
 //  // Surface generation function
@@ -200,10 +200,10 @@ namespace MBSim {
 //  int writeRIB(char* filename, const Color& color, const Point_nD<T,N>& view) const ;
 //
 //  // tesselate is deprecated...
-//  void tesselate(T tolerance, BasicList<Point_nD<T,N> > &points, BasicList<int> &connect, BasicList<Point_nD<T,N> > *normal=0) const ;
+//  void tesselate(T tolerance, BasicList<Point_nD<T,N>> &points, BasicList<int> &connect, BasicList<Point_nD<T,N>> *normal=0) const ;
 //
 //  int writePS(const char*, int nu, int nv, const Point_nD<T,N>& camera, const Point_nD<T,N>& lookAt, int cp=0,T magFact=T(-1),T dash=T(5)) const ;
-//  int writePSp(const char*, int nu, int nv, const Point_nD<T,N>& camera, const Point_nD<T,N>& lookAt, const Vector< Point_nD<T,N> >&,const Vector< Point_nD<T,N> >&, int cp=0,T magFact=0.0,T dash=5.0) const ;
+//  int writePSp(const char*, int nu, int nv, const Point_nD<T,N>& camera, const Point_nD<T,N>& lookAt, const Vector< Point_nD<T,N>>&,const Vector< Point_nD<T,N>>&, int cp=0,T magFact=0.0,T dash=5.0) const ;
 //  int writeOOGL(const char* filename, T fDu, T fDv,T fBu=0.0, T fBv=0.0, T fEu=1.0, T fEv=1.0, bool bDRawCP=false) const ;
 //  int writeOOGL(const char* filename) const ;
 //
@@ -233,9 +233,9 @@ namespace MBSim {
 //  void modKnotV(const Vector<T>& vKnot) { if(P.cols()+degV+1==vKnot.n()) V=vKnot ; }
 //
 //  int movePoint(T u, T v, const Point_nD<T,N>& delta);
-//  int movePoint(const Vector<T>& ur, const Vector<T>& vr, const Vector< Point_nD<T,N> >& D, const Vector_INT& Du, const Vector_INT& Dv) ;
-//  int movePoint(const Vector<T>& ur, const Vector<T>& vr, const Vector< Point_nD<T,N> >& D, const Vector_INT& Du, const Vector_INT& Dv, const Vector_INT& Dk, const Vector_INT& Dl) ;
-//  int movePoint(const Vector<T>& ur, const Vector<T>& vr, const Vector< Point_nD<T,N> >& D, const Vector_INT& Du, const Vector_INT& Dv, const Vector_INT& Dk, const Vector_INT& Dl, const BasicArray<Coordinate>& fixCP) ;
+//  int movePoint(const Vector<T>& ur, const Vector<T>& vr, const Vector< Point_nD<T,N>>& D, const Vector_INT& Du, const Vector_INT& Dv) ;
+//  int movePoint(const Vector<T>& ur, const Vector<T>& vr, const Vector< Point_nD<T,N>>& D, const Vector_INT& Du, const Vector_INT& Dv, const Vector_INT& Dk, const Vector_INT& Dl) ;
+//  int movePoint(const Vector<T>& ur, const Vector<T>& vr, const Vector< Point_nD<T,N>>& D, const Vector_INT& Du, const Vector_INT& Dv, const Vector_INT& Dk, const Vector_INT& Dl, const BasicArray<Coordinate>& fixCP) ;
 //
 //  NurbsSurface<T,N>& transpose(void) ;
 

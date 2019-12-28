@@ -102,13 +102,13 @@ namespace MBSim {
        * \brief Get the eigenvalues
        * \return A vector containing the eigenvalues of the system
        */
-      const fmatvec::Vector<fmatvec::Ref, std::complex<double> >& getEigenvalues() const { return w; }
+      const fmatvec::Vector<fmatvec::Ref, std::complex<double>>& getEigenvalues() const { return w; }
 
       /**
        * \brief Get the eigenvectors
        * \return A matrix containing the eigenvectors of the system
        */
-      const fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> >& getEigenvectors() const { return V; }
+      const fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double>>& getEigenvectors() const { return V; }
 
       /**
        * \brief Get the eigenfrequencies
@@ -131,9 +131,9 @@ namespace MBSim {
       int loops, plotsPerLoop;
       Task task;
 
-      fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double> > V;
-      fmatvec::Vector<fmatvec::Ref, std::complex<double> > w;
-      std::vector<std::pair<double,int> > f;
+      fmatvec::SquareMatrix<fmatvec::Ref, std::complex<double>> V;
+      fmatvec::Vector<fmatvec::Ref, std::complex<double>> w;
+      std::vector<std::pair<double,int>> f;
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<2>,double> MA;
 
       std::string fileName;

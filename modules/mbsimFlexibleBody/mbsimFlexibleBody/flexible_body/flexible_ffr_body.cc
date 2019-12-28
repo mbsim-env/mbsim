@@ -146,21 +146,21 @@ namespace MBSimFlexibleBody {
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalStressMatrixArray");
-    if(e) setNodalStressMatrix(getCellArray1D<Matrix<General, Fixed<6>, Var, double> >(e));
+    if(e) setNodalStressMatrix(getCellArray1D<Matrix<General, Fixed<6>, Var, double>>(e));
     else {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalStressMatrix");
       if(e) setNodalStressMatrix(E(e)->getText<Mat>());
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalNonlinearStressMatrixArray");
-    if(e) setNodalNonlinearStressMatrix(getCellArray2D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double> >(e));
+    if(e) setNodalNonlinearStressMatrix(getCellArray2D<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>>(e));
     else {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalNonlinearStressMatrix");
       if(e) setNodalNonlinearStressMatrix(E(e)->getText<Mat>());
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalInitialStressArray");
-    if(e) setNodalInitialStress(getCellArray1D<fmatvec::Vector<fmatvec::Fixed<6>, double> >(e));
+    if(e) setNodalInitialStress(getCellArray1D<fmatvec::Vector<fmatvec::Fixed<6>, double>>(e));
     else {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodalInitialStress");
       if(e) setNodalInitialStress(E(e)->getText<Vec>());

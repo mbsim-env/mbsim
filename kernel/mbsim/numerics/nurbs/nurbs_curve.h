@@ -166,8 +166,8 @@ namespace MBSim {
       /*!
        * \brief do global interpolation for given interpolation-points list and knots with the given degree
        */
-      void globalInterp(const std::vector<fmatvec::Point<3> >& Q, const std::vector<double>& uk, int d, bool updateLater = false);
-      void globalInterp(const std::vector<fmatvec::Point<3> >& Q, double uMin, double uMax, int d, bool updateLater = false);
+      void globalInterp(const std::vector<fmatvec::Point<3>>& Q, const std::vector<double>& uk, int d, bool updateLater = false);
+      void globalInterp(const std::vector<fmatvec::Point<3>>& Q, double uMin, double uMax, int d, bool updateLater = false);
       void globalInterp(const fmatvec::MatVx3& Q, double uMin, double uMax, int d, bool updateLater = false);
 
       void globalInterpH(const fmatvec::MatVx4& Qw, int d, Method method=chordLength);

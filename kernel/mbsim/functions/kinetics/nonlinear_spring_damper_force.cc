@@ -33,9 +33,9 @@ namespace MBSim {
     Function<double(double,double)>::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceDeflectionFunction");
-    setForceDeflectionFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+    setForceDeflectionFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIM%"forceVelocityFunction");
-    setForceVelocityFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+    setForceVelocityFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
   }
 
 }

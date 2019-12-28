@@ -53,31 +53,31 @@ namespace MBSim {
   }
 
   Vec3 SpatialNurbsContour::evalKrPS(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,0)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(0,0)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 SpatialNurbsContour::evalKs(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,0)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(1,0)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 SpatialNurbsContour::evalKt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,1)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(0,1)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 SpatialNurbsContour::evalParDer1Ks(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(2,0)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(2,0)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 SpatialNurbsContour::evalParDer2Ks(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 SpatialNurbsContour::evalParDer1Kt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 SpatialNurbsContour::evalParDer2Kt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,2)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(0,2)(Range<Fixed<0>,Fixed<2>>());
   }
 
   void SpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {
@@ -120,7 +120,7 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
-        vector<vector<double> > cp_(srf.ctrlPnts().rows()*srf.ctrlPnts().cols(),vector<double>(4));
+        vector<vector<double>> cp_(srf.ctrlPnts().rows()*srf.ctrlPnts().cols(),vector<double>(4));
         for(int i=0; i<srf.ctrlPnts().rows(); i++) {
           for(int j=0; j<srf.ctrlPnts().cols(); j++) {
             for(int k=0; k<4; k++)

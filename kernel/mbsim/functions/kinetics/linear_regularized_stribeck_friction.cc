@@ -51,7 +51,7 @@ namespace MBSim {
     if (e)
       gdLim = E(e)->getText<double>();
     e = E(element)->getFirstElementChildNamed(MBSIM%"frictionFunction");
-    auto *f = ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild());
+    auto *f = ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild());
     setFrictionFunction(f);
   }
 

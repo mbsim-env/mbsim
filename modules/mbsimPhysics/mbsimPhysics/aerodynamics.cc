@@ -121,9 +121,9 @@ namespace MBSimPhysics {
     FloatingFrameLink::initializeUsingXML(element);
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"densityFunction");
-    setDensityFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setDensityFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"coefficientFunction");
-    setCoefficientFunction(ObjectFactory::createAndInit<MBSim::Function<Vec3(Vec2)> >(e->getFirstElementChild()));
+    setCoefficientFunction(ObjectFactory::createAndInit<MBSim::Function<Vec3(Vec2)>>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"referenceSurface");
     if(e) setReferenceSurface(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"windSpeed");

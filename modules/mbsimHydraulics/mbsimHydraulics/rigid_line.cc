@@ -126,7 +126,7 @@ namespace MBSimHydraulics {
     auto *p=MBSim::ObjectFactory::createAndInit<ClosablePressureLoss>(ee);
     setClosablePressureLoss(p);
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"checksizeFunction");
-    setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)> >(ee->getFirstElementChild())); 
+    setFunction(MBSim::ObjectFactory::createAndInit<MBSim::Function<double(double)>>(ee->getFirstElementChild()));
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"minimalChecksizeValue");
     setMinimalValue(E(ee)->getText<double>());
     ee=E(e)->getFirstElementChildNamed(MBSIMHYDRAULICS%"setValued");

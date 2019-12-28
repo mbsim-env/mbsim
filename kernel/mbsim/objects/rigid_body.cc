@@ -537,38 +537,38 @@ namespace MBSim {
     if(e) setFrameForInertiaTensor(getByPath<Frame>(E(e)->getAttribute("ref"))); // must be on of "Frame[X]" which allready exists
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalTranslation");
     if(e) {
-      auto *trans=ObjectFactory::createAndInit<Function<Vec3(VecV,double)> >(e->getFirstElementChild());
+      auto *trans=ObjectFactory::createAndInit<Function<Vec3(VecV,double)>>(e->getFirstElementChild());
       setGeneralTranslation(trans);
     }
     else {
       e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentTranslation");
       if(e) {
-        auto *trans=ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild());
+        auto *trans=ObjectFactory::createAndInit<Function<Vec3(double)>>(e->getFirstElementChild());
         setTimeDependentTranslation(trans);
       }
       else {
         e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentTranslation");
         if(e) {
-          auto *trans=ObjectFactory::createAndInit<Function<Vec3(VecV)> >(e->getFirstElementChild());
+          auto *trans=ObjectFactory::createAndInit<Function<Vec3(VecV)>>(e->getFirstElementChild());
           setStateDependentTranslation(trans);
         }
       }
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalRotation");
     if(e) {
-      auto *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
+      auto *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV,double)>>(e->getFirstElementChild());
       setGeneralRotation(rot);
     }
     else {
       e=E(element)->getFirstElementChildNamed(MBSIM%"timeDependentRotation");
       if(e) {
-        auto *rot=ObjectFactory::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild());
+        auto *rot=ObjectFactory::createAndInit<Function<RotMat3(double)>>(e->getFirstElementChild());
         setTimeDependentRotation(rot);
       }
       else {
         e=E(element)->getFirstElementChildNamed(MBSIM%"stateDependentRotation");
         if(e) {
-          auto *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV)> >(e->getFirstElementChild());
+          auto *rot=ObjectFactory::createAndInit<Function<RotMat3(VecV)>>(e->getFirstElementChild());
           setStateDependentRotation(rot);
         }
       }

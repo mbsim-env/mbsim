@@ -372,7 +372,7 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionImpactLaw");
     if(e) setGeneralizedFrictionImpactLaw(ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedNormalForceFunction");
-    setGeneralizedNormalForceFunction(ObjectFactory::createAndInit<Function<double(double)> >(e->getFirstElementChild()));
+    setGeneralizedNormalForceFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
   }
 
 }

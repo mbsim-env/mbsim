@@ -102,7 +102,7 @@ namespace MBSim {
     if(e) setMomentDirection(E(e)->getText<Mat>(3,0));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceFunction");
     if(e) {
-      auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)> >(e->getFirstElementChild());
+      auto *f=ObjectFactory::createAndInit<Function<VecV(VecV,VecV)>>(e->getFirstElementChild());
       setGeneralizedForceFunction(f);
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");

@@ -110,9 +110,9 @@ namespace MBSimPhysics {
     e = E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"displacedVolume");
     setDisplacedVolume(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"densityFunction");
-    setDensityFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setDensityFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"gravityFunction");
-    setGravityFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)> >(e->getFirstElementChild()));
+    setGravityFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(e) {
       ombvArrow = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));

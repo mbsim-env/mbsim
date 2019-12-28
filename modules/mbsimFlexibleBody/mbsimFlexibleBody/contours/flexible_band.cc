@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
         openMBVSpineExtrusion->setName(name);
         openMBVSpineExtrusion->setShilouetteEdge(true);
         openMBVSpineExtrusion->setInitialRotation((vector<double>)AIK2Cardan(static_cast<Body*>(parent)->getFrameOfReference()->evalOrientation()));
-        shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint> > > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint> > >(); // clockwise ordering, no doubling for closure
+        shared_ptr<vector<shared_ptr<OpenMBV::PolygonPoint>> > rectangle = make_shared<vector<shared_ptr<OpenMBV::PolygonPoint>> >(); // clockwise ordering, no doubling for closure
         shared_ptr<OpenMBV::PolygonPoint>  corner1 = OpenMBV::PolygonPoint::create(0, 0.5*width, 1);
         rectangle->push_back(corner1);
         shared_ptr<OpenMBV::PolygonPoint>  corner2 = OpenMBV::PolygonPoint::create(0, -0.5*width, 1);

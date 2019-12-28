@@ -239,9 +239,9 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"frame");
     saved_ref=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIM%"translation");
-    setTranslation(ObjectFactory::createAndInit<Function<Vec3(double)> >(e->getFirstElementChild()));
+    setTranslation(ObjectFactory::createAndInit<Function<Vec3(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"rotation");
-    if(e) setRotation(ObjectFactory::createAndInit<Function<RotMat3(double)> >(e->getFirstElementChild()));
+    if(e) setRotation(ObjectFactory::createAndInit<Function<RotMat3(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
     if(e) setInitialGuess(E(e)->getText<Vec>());
   }

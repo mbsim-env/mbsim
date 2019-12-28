@@ -153,11 +153,11 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalWs_t(const Vec2 &zeta) {
-    return evalHessianMatrix_t(zeta)(1,0)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix_t(zeta)(1,0)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalWt_t(const Vec2 &zeta) {
-    return evalHessianMatrix_t(zeta)(0,1)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix_t(zeta)(0,1)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalWu_t(const Vec2 &zeta) {
@@ -171,31 +171,31 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalPosition(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,0)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(0,0)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalWs(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,0)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(1,0)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalWt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,1)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(0,1)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalParDer1Ws(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(2,0)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(2,0)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalParDer2Ws(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalParDer1Wt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(1,1)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalParDer2Wt(const Vec2 &zeta) {
-    return evalHessianMatrix(zeta)(0,2)(Range<Fixed<0>,Fixed<2> >());
+    return evalHessianMatrix(zeta)(0,2)(Range<Fixed<0>,Fixed<2>>());
   }
 
   Vec3 FlexibleSpatialNurbsContour::evalParDer1Wu(const Vec2 &zeta) {
@@ -254,7 +254,7 @@ namespace MBSimFlexibleBody {
     if(updSrfVel) updateSurfaceVelocities();
     Vec2 zeta = continueZeta(frame->evalZeta());
     srfVel.deriveAtH(zeta(0),zeta(1),0,hessTmp);
-    frame->setVelocity(hessTmp(0,0)(Range<Fixed<0>,Fixed<2> >()));
+    frame->setVelocity(hessTmp(0,0)(Range<Fixed<0>,Fixed<2>>()));
   }
 
   void FlexibleSpatialNurbsContour::updateAccelerations(ContourFrame *frame) {
@@ -267,7 +267,7 @@ namespace MBSimFlexibleBody {
     frame->getJacobianOfTranslation(j,false).resize(frame->gethSize(j),NONINIT);
     for(int i=0; i<frame->gethSize(j); i++) {
       srfJac[i].deriveAtH(zeta(0),zeta(1),0,hessTmp);
-      frame->getJacobianOfTranslation(j,false).set(i,hessTmp(0,0)(Range<Fixed<0>,Fixed<2> >()));
+      frame->getJacobianOfTranslation(j,false).set(i,hessTmp(0,0)(Range<Fixed<0>,Fixed<2>>()));
     }
   }
 
@@ -275,7 +275,7 @@ namespace MBSimFlexibleBody {
     if(updSrfGA) updateSurfaceGyroscopicAccelerations();
     Vec2 zeta = continueZeta(frame->evalZeta());
     srfGA.deriveAtH(zeta(0),zeta(1),0,hessTmp);
-    frame->setGyroscopicAccelerationOfTranslation(hessTmp(0,0)(Range<Fixed<0>,Fixed<2> >()));
+    frame->setGyroscopicAccelerationOfTranslation(hessTmp(0,0)(Range<Fixed<0>,Fixed<2>>()));
   }
 
   void FlexibleSpatialNurbsContour::init(InitStage stage, const InitConfigSet &config) {

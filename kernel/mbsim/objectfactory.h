@@ -63,9 +63,9 @@ class DOMEvalExceptionStack : public MBXMLUtils::DOMEvalException {
     ~DOMEvalExceptionStack() noexcept override = default;
     void add(const std::string &type, const std::shared_ptr<MBXMLUtils::DOMEvalException> &ex);
     const char* what() const noexcept override;
-    std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException> > > &getExceptionVector();
+    std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException>>> &getExceptionVector();
   protected:
-    std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException> > > exVec;
+    std::vector<std::pair<std::string, std::shared_ptr<MBXMLUtils::DOMEvalException>>> exVec;
     mutable std::string whatStr;
     void generateWhat(std::stringstream &str, const std::string &indent) const;
 };

@@ -156,7 +156,7 @@ namespace MBSimFlexibleBody {
     Ge.resize(ne);
     Oe0.resize(ne,NONINIT);
     Oe1.resize(6);
-    vector<vector<SqrMatV> > Kom(3,vector<SqrMatV>(3));
+    vector<vector<SqrMatV>> Kom(3,vector<SqrMatV>(3));
     mmi0(0,0) = rrdm(1,1) + rrdm(2,2);
     mmi0(0,1) = -rrdm(1,0);
     mmi0(0,2) = -rrdm(2,0);
@@ -772,38 +772,38 @@ namespace MBSimFlexibleBody {
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");
     if(e) {
-      auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV,double)> >(e->getFirstElementChild());
+      auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV,double)>>(e->getFirstElementChild());
       setGeneralTranslation(trans);
     }
     else {
       e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"timeDependentTranslation");
       if(e) {
-        auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(double)> >(e->getFirstElementChild());
+        auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(double)>>(e->getFirstElementChild());
         setTimeDependentTranslation(trans);
       }
       else {
         e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"stateDependentTranslation");
         if(e) {
-          auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV)> >(e->getFirstElementChild());
+          auto *trans=ObjectFactory::createAndInit<MBSim::Function<Vec3(VecV)>>(e->getFirstElementChild());
           setStateDependentTranslation(trans);
         }
       }
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalRotation");
     if(e) {
-      auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV,double)> >(e->getFirstElementChild());
+      auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV,double)>>(e->getFirstElementChild());
       setGeneralRotation(rot);
     }
     else {
       e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"timeDependentRotation");
       if(e) {
-        auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(double)> >(e->getFirstElementChild());
+        auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(double)>>(e->getFirstElementChild());
         setTimeDependentRotation(rot);
       }
       else {
         e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"stateDependentRotation");
         if(e) {
-          auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV)> >(e->getFirstElementChild());
+          auto *rot=ObjectFactory::createAndInit<MBSim::Function<RotMat3(VecV)>>(e->getFirstElementChild());
           setStateDependentRotation(rot);
         }
       }

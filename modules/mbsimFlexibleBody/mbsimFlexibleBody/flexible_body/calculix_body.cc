@@ -193,7 +193,7 @@ namespace MBSimFlexibleBody {
         Sr.e(i,j) = stress[j].e(i);
     }
     Phi = getCellArray1D<Mat3xV>(3,Phi_);
-    sigmahel = getCellArray1D<Matrix<General, Fixed<6>, Var, double> >(6,Sr);
+    sigmahel = getCellArray1D<Matrix<General, Fixed<6>, Var, double>>(6,Sr);
 
     Pdm.resize(nm);
     rPdm.resize(3,Mat3xV(nm));

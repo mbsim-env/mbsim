@@ -40,14 +40,14 @@ namespace MBSimFcl {
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      std::shared_ptr<fcl::CollisionGeometry<double> > getCollisionGeometry() const { return cg; }
+      std::shared_ptr<fcl::CollisionGeometry<double>> getCollisionGeometry() const { return cg; }
 
       void setComputeLocalAABB(bool computeLocalAABB_) { computeLocalAABB = computeLocalAABB_; }
 
       MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFcl(type0, type1); }
 
     protected:
-      std::shared_ptr<fcl::CollisionGeometry<double> > cg;
+      std::shared_ptr<fcl::CollisionGeometry<double>> cg;
 
       /**
        * \brief compute local AABB

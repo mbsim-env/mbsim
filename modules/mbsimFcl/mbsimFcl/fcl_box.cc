@@ -36,7 +36,7 @@ namespace MBSimFcl {
 
   void FclBox::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit)
-      cg = shared_ptr<CollisionGeometry<double> >(new Box<double>(lx,ly,lz));
+      cg = shared_ptr<CollisionGeometry<double>>(new Box<double>(lx,ly,lz));
     else if (stage == plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)
         static_pointer_cast<OpenMBV::Cuboid>(openMBVRigidBody)->setLength(lx,ly,lz);

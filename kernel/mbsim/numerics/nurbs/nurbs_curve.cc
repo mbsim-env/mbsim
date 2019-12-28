@@ -102,7 +102,7 @@ namespace MBSim {
 
   // use the user offered knot point vector uk  to calculate the knotvector U by funtion knotAveraging
   //  knotAveraging is the same as updateUVecs if offering uniform u vector.
-  void NurbsCurve::globalInterp(const std::vector<fmatvec::Point<3> >& Q, const std::vector<double>& uk, int d, bool updateLater) {
+  void NurbsCurve::globalInterp(const std::vector<fmatvec::Point<3>>& Q, const std::vector<double>& uk, int d, bool updateLater) {
     MatVx3 Qnew(Q.size(), NONINIT);
 
     // Transformation from the user given standard vector form to fmetvec::MatVx3 form
@@ -153,7 +153,7 @@ namespace MBSim {
     }
   }
 
-  void NurbsCurve::globalInterp(const std::vector<fmatvec::Point<3> >& Q, double uMin, double uMax, int d, bool updateLater) {
+  void NurbsCurve::globalInterp(const std::vector<fmatvec::Point<3>>& Q, double uMin, double uMax, int d, bool updateLater) {
     MatVx3 Qnew(Q.size(), NONINIT);
 
     // Transformation from the user given standard vector form to fmetvec::MatVx3 form

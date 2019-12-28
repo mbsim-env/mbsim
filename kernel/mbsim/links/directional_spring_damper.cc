@@ -106,7 +106,7 @@ namespace MBSim {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"forceDirection");
     setForceDirection(E(e)->getText<Vec>(3));
     e=E(element)->getFirstElementChildNamed(MBSIM%"forceFunction");
-    auto *f=ObjectFactory::createAndInit<Function<double(double,double)> >(e->getFirstElementChild());
+    auto *f=ObjectFactory::createAndInit<Function<double(double,double)>>(e->getFirstElementChild());
     setForceFunction(f);
     e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedLength");
     l0 = E(e)->getText<double>();
