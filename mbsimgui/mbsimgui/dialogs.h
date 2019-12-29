@@ -29,7 +29,6 @@
 class QTableWidget;
 class QSpinBox;
 class QComboBox;
-class QWebView;
 
 namespace MBSimGUI {
 
@@ -95,15 +94,6 @@ namespace MBSimGUI {
       bool includeParameter() const { return parameter->checkState()==Qt::Checked; }
     private:
       QCheckBox *parameter;
-  };
-
-  class WebDialog : public QDialog {
-    public:
-      WebDialog(QWidget *parent);
-      void load(const QUrl &url_);
-    private:
-      QWebView *webView;
-      QUrl url;
   };
 
   class EigenanalysisDialog : public QDialog {

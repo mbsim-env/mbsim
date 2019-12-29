@@ -60,6 +60,7 @@
 #include <QSettings>
 #include <QHeaderView>
 #include <QtWidgets/QDesktopWidget>
+#include <QDesktopServices>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <mbxmlutilshelper/getinstallpath.h>
@@ -82,8 +83,6 @@ namespace MBSimGUI {
   MainWindow *mw;
 
   vector<boost::filesystem::path> dependencies;
-
-  WebDialog* MainWindow::xmlHelpDialog = nullptr;
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
     QSettings settings;
@@ -1055,15 +1054,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::xmlHelp(const QString &url) {
-    if(not xmlHelpDialog) {
-      xmlHelpDialog = new WebDialog(this);
-      xmlHelpDialog->setWindowTitle("MBSimGUI - MBSim XML Documentation");
-    }
-    if(url.isEmpty())
-      xmlHelpDialog->load(QUrl::fromLocalFile(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
-    else
-      xmlHelpDialog->load(QUrl(url));
-    xmlHelpDialog->show();
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
   }
 
   void MainWindow::about() {

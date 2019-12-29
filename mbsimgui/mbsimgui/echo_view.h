@@ -21,10 +21,10 @@
 #define __ECHO_VIEW_H_
 
 #include <QTabWidget>
-#include <QWebView>
 #include <QAction>
 #include <QMainWindow>
 #include <QMutex>
+#include <QTextBrowser>
 
 namespace MBSimGUI {
 
@@ -39,7 +39,7 @@ namespace MBSimGUI {
     public slots:
       void updateOutput(bool moveToErrorOrEnd=false);
     private:
-      QWebView *out;
+      QTextBrowser *out;
       QString outText;
       QMutex outTextMutex;
       QAction *showSSE;
