@@ -20,6 +20,7 @@
 #include <config.h>
 #include <QtWidgets/QGridLayout>
 #include <QDesktopWidget>
+#include <QScrollBar>
 #include <QToolBar>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "utils.h"
@@ -133,7 +134,7 @@ namespace MBSimGUI {
   }
 
   void EchoView::updateOutput(bool moveToErrorOrEnd) {
-    auto currentCursor=out->textCursor();
+    int currentSBValue=out->verticalScrollBar()->value();
     // some colors
     static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
     static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
@@ -143,6 +144,7 @@ namespace MBSimGUI {
     static const QColor green("green");
     // set the text as html, prefix with a style element and sourounded by a pre element
     QString html;
+    int firstErrorPos;
     {
       outTextMutex.lock();
       BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
@@ -153,6 +155,11 @@ namespace MBSimGUI {
       if(!showInfo->isChecked()) removeSpan("<span class=\"MBSIMGUI_INFO\">", outText2);
       if(!showDebug->isChecked()) removeSpan("<span class=\"MBSIMGUI_DEBUG\">", outText2);
       if(!showDepr->isChecked()) removeSpan("<span class=\"MBSIMGUI_DEPRECATED\">", outText2);
+      // add anchor at first error, if an error is present
+      firstErrorPos=outText.indexOf("<span class=\"MBSIMGUI_ERROR\">");
+      if(firstErrorPos!=-1)
+        outText2.replace(firstErrorPos, 0, "<a name=\"MBSIMGUI_FIRSTERROR\"/>");
+
       html=QString(R"+(
 <!DOCTYPE html>
 <html>
@@ -209,13 +216,13 @@ R"+(
 
     if(moveToErrorOrEnd) {
       // scroll to the first error if their is one, else scroll to the end
-      out->moveCursor(QTextCursor::End);
-      out->scrollToAnchor("MBSIMGUI_ERROR");
+      if(firstErrorPos==-1)
+        out->verticalScrollBar()->setValue(out->verticalScrollBar()->maximum());
+      else
+        out->scrollToAnchor("MBSIMGUI_FIRSTERROR");
     }
     else
-      out->setTextCursor(currentCursor);
-    // strange workaround: the geometry must be set before usine ensureCursorVisible, see https://www.qtcentre.org/threads/3983-Qt4-QTextEdit-amp-cursor-visibility
-    QTimer::singleShot(0, this, [this](){ out->ensureCursorVisible(); });
+      out->verticalScrollBar()->setValue(currentSBValue);
   }
 
   QSize EchoView::sizeHint() const {
