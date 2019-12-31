@@ -78,8 +78,8 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
   balken->addContour(neutral);
 
-  Vec nodes(Elements+1);
-  for(int i=0;i<=Elements;i++) nodes(i) = i*L/Elements;
+  vector<double> nodes(Elements+1);
+  for(int i=0;i<=Elements;i++) nodes[i] = i*L/Elements;
   FlexibleBand *top = new FlexibleBand("Top");
   top->setNodes(nodes);
   top->setWidth(r);

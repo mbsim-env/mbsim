@@ -89,7 +89,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
     std::shared_ptr<OpenMBV::IvBody> v_table = OpenMBV::ObjectFactory::create<OpenMBV::IvBody>();
     v_table->setIvFileName("objects/tisch.wrl");
     v_table->setScaleFactor(0.004);
-    v_table->setDiffuseColor(Vec3(INIT,1.));
+    v_table->setDiffuseColor(vector<double>(3,1.));
     v_table->setName("Table");
     v_table->setInitialRotation(0.,M_PI_2,M_PI_2);
     v_table->setInitialTranslation(0.,-0.1,0);

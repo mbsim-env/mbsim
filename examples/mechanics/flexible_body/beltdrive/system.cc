@@ -344,10 +344,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     name << "Band" << iBand;
     FlexibleBand* bd = new FlexibleBand(name.str());
     int nNodes = (int)((nodesPerElement*elements)*sqrt(nominalContactRadius/radiiDisks(iBand)) + 0.5);
-    Vec nodes(nNodes);
+    vector<double> nodes(nNodes);
     for(int i=0;i<nNodes;i++)
-      nodes(i) = i*beltLength/(nNodes-1);
-    cout << nodes << endl;
+      nodes[i] = i*beltLength/(nNodes-1);
     bd->setNodes(nodes);
     bd->setWidth(1.0);
     Vec2 r;

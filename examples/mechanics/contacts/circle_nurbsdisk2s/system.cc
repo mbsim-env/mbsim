@@ -166,9 +166,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   NurbsDisk2s *contour = new NurbsDisk2s("SurfaceContour");
   contour->enableOpenMBV();
   nurbsdisk->addContour(contour);
-  Vec nodes(2);
-  nodes(0) = rI;
-  nodes(1) = rO;
+  vector<double> nodes(2);
+  nodes[0] = rI;
+  nodes[1] = rO;
   contour->setEtaNodes(nodes);
 
   nurbsdisk->addFrame(new Frame2s("COG",Vec2()));

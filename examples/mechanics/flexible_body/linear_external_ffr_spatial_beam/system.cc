@@ -71,9 +71,9 @@ System::System(const string &projectName) :
   beam->addContour(ncc);
   ncc->readTransNodes("spatial_beam_model/Example_Contour.txt");
 
-  Vec nodes(11, NONINIT);
+  vector<double> nodes(11);
   for (int i = 0; i <= 10; i++)
-    nodes(i) = double(i)/10.;
+    nodes[i] = double(i)/10.;
   ncc->setEtaNodes(nodes);
   ncc->setXiNodes(nodes);
 

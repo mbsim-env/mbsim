@@ -99,7 +99,7 @@ void Perlchain::updateG() {
         facSizeGs = double(nzEles) / double(Gsym.size() * Gsym.size()) * 1.5;
       Gs.resize(Gsym.size(), int(Gsym.size() * Gsym.size() * facSizeGs));
     }
-    Gs.resize() = Gsym;
+    Gs <<= Gsym;
     updG = false;
   }
   else {
@@ -263,10 +263,10 @@ void Perlchain::updateG() {
     else if (Gs.cols() != G.size()) {
       static double facSizeGs = 1;
       if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot)
-        facSizeGs = double(countElements(G)) / double(G.size() * G.size()) * 1.5;
+        facSizeGs = double(G.countElements()) / double(G.size() * G.size()) * 1.5;
       Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
     }
-    Gs.resize() = G;
+    Gs <<= G;
     updG = false;
   }
 }
@@ -377,9 +377,9 @@ cs * Perlchain::compressLLM_LToCsparse(int j) {
     static int nz0, nz1;
     if (getTime() < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
       if (j == 0)
-        nz0 = countElementsLT(LLM) + 50;
+        nz0 = LLM.countElements() + 50;
       else if (j == 1)
-        nz1 = countElementsLT(LLM) + 50;
+        nz1 = LLM.countElements() + 50;
     }
     nz = (j == 0) ? nz0 : nz1;
     //  cout << "j = " << j << endl; // j is always 0 ??
@@ -537,9 +537,9 @@ cs * Perlchain::compressLLM_LToCsparse_direct(int j) {
     static int nz0, nz1;
     if (getTime() < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
       if (j == 0)
-        nz0 = countElementsLT(LLM) + 50;
+        nz0 = LLM.countElements() + 50;
       else if (j == 1)
-        nz1 = countElementsLT(LLM) + 50;
+        nz1 = LLM.countElements() + 50;
     }
     nzMax = (j == 0) ? nz0 : nz1;
   }
@@ -658,8 +658,8 @@ Perlchain::Perlchain(const string &projectName) :
   rod->addContour(neutral);
 
   FlexibleBand *contour1sFlexible = new FlexibleBand("Contour1sFlexible");
-  Vec nodes(elements+1);
-  for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
+  vector<double> nodes(elements+1);
+  for(int i=0;i<=elements;i++) nodes[i] = i*l0/elements;
   contour1sFlexible->setNodes(nodes);
   contour1sFlexible->setWidth(0.1);
   contour1sFlexible->setContourOfReference(neutral);

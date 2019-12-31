@@ -97,9 +97,9 @@ SlidingMass::SlidingMass(const string &projectName) :
     ncc->readTransNodes("FFRBeam/NeutralPhase.txt");
     ncc->setFrameOfReference(beam->getFrameOfReference());
 
-    Vec nodes(11, NONINIT);
+    vector<double> nodes(11);
     for (int i = 0; i <= 10; i++)
-      nodes(i) = double(i)/10.;
+      nodes[i] = double(i)/10.;
     ncc->setEtaNodes(nodes);
 
     {

@@ -140,9 +140,9 @@ BlockCompression::BlockCompression(const string &projectName) :
     Contour1sFlexible *neutral = new Contour1sFlexible("Neutral");
     rod->addContour(neutral);
 
-    Vec nodes(2);
-    nodes(0) = 0.;
-    nodes(1) = l0;
+    vector<double> nodes(2);
+    nodes[0] = 0.;
+    nodes[1] = l0;
 
     Vec2 RrRP;
     RrRP(0) = 0.5*b0;
@@ -158,9 +158,9 @@ BlockCompression::BlockCompression(const string &projectName) :
     top->setNodes(nodes);
     bottom->setNodes(nodes);
 
-    Vec contourNodes(elements + 1);
+    vector<double> contourNodes(elements + 1);
     for (int i = 0; i <= elements; i++)
-      contourNodes(i) = l0 / elements * i;
+      contourNodes[i] = l0 / elements * i;
     top->setNodes(contourNodes);
     bottom->setNodes(contourNodes);
 

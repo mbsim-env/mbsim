@@ -74,8 +74,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   rod->addContour(neutral);
 
   FlexibleBand *contour1sFlexible = new FlexibleBand("Contour1sFlexible");
-  Vec nodes(elements+1);
-  for(int i=0;i<=elements;i++) nodes(i) = i*l0/elements;
+  vector<double> nodes(elements+1);
+  for(int i=0;i<=elements;i++) nodes[i] = i*l0/elements;
   contour1sFlexible->setNodes(nodes);
   contour1sFlexible->setWidth(0.1);
   contour1sFlexible->setContourOfReference(neutral);

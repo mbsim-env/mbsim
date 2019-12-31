@@ -75,9 +75,9 @@ PlanarBeamWithLargeDeflectionSystem::PlanarBeamWithLargeDeflectionSystem(const s
   rod->addContour(neutral);
 
   FlexibleBand *top = new FlexibleBand("Top");
-  Vec nodes(elements + 1);
+  vector<double> nodes(elements + 1);
   for (int i = 0; i <= elements; i++)
-    nodes(i) = i * l0 / elements;
+    nodes[i] = i * l0 / elements;
   top->setNodes(nodes);
   top->setWidth(b0);
   Vec2 RrRP;
