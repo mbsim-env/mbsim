@@ -134,7 +134,7 @@ namespace MBSimFlexibleBody {
       Mat Q = tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI();
       Mat QH = Q.T();
 
-      MI = A*static_cast<SymMat>(drSH*(drS*l0+tf->getnS()*wt->getvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIwh1()
+      MI <<= A*static_cast<SymMat>(drSH*(drS*l0+tf->getnS()*wt->getvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIwh1()
             + tf->getbS()*wt->getvvt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIwh2())
           + QH*(Q*l0h3/12.+tf->getnS()*wt->getxvvt()*wt->getwh1coefqI()+wt->getnSqI()*wt->getIxwh1()+tf->getbS()*wt->getxvvt()*wt->getwh2coefqI()+wt->getbSqI()*wt->getIxwh2())
           + wt->getwh1coefqIH()*(wt->getvvtH()*tf->getnSH()*drS+wt->getxvvtH()*tf->getnSH()*Q+wt->getvvtwwt()*wt->getwh1coefqI()
@@ -411,7 +411,7 @@ namespace MBSimFlexibleBody {
     drS(0,0) = 1.; 
     drS(1,1) = 1.; 
     drS(2,2) = 1.;	
-    drSH = drS.T();
+    drSH <<= drS.T();
   }
 
   void FiniteElement1s33RCM::computedepstil() {	

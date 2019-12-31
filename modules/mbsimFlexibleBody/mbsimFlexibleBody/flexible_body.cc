@@ -80,7 +80,7 @@ namespace MBSimFlexibleBody {
       NodeBasedBody::init(stage, config);
       qRel.resize(qSize);
       uRel.resize(uSize[0]);
-      T = SqrMat(qSize, EYE);
+      T.resize(qSize,qSize,EYE);
     }
     else
       NodeBasedBody::init(stage, config);

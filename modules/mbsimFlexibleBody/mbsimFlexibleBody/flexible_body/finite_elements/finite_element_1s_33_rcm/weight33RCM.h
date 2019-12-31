@@ -355,10 +355,10 @@ namespace MBSimFlexibleBody {
   };
 
   inline void Weight33RCM::setCurvature(double k10_,double k20_) { k10 = k10_; k20 = k20_; }
-  inline void Weight33RCM::intvvtH() { IvvtH = Ivvt.T(); }
-  inline void Weight33RCM::intvxvtH() { IvxvtH = Ivxvt.T(); }	
-  inline void Weight33RCM::intxvvtH() { IxvvtH = Ixvvt.T(); }
-  inline void Weight33RCM::intxvxvtH() { IxvxvtH = Ixvxvt.T(); }
+  inline void Weight33RCM::intvvtH() { IvvtH <<= Ivvt.T(); }
+  inline void Weight33RCM::intvxvtH() { IvxvtH <<= Ivxvt.T(); }
+  inline void Weight33RCM::intxvvtH() { IxvvtH <<= Ixvvt.T(); }
+  inline void Weight33RCM::intxvxvtH() { IxvxvtH <<= Ixvxvt.T(); }
 
   inline const fmatvec::RowVec& Weight33RCM::getvxvt() const { return Ivxvt; }
   inline const fmatvec::Vec& Weight33RCM::getvxvtH() const { return IvxvtH; }

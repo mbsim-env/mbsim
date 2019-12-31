@@ -20,8 +20,8 @@ namespace MBSimFlexibleBody {
     public:
       NeutralNurbs2s(MBSim::Element* parent_,  const fmatvec::MatVI & nodes, double nodeOffset_, int degU_, int degV_, bool openStructure_);
       virtual ~NeutralNurbs2s();
-      void setuk(const fmatvec::Vec &uk_) { uk = uk_; }
-      void setvl(const fmatvec::Vec &vl_) { vl = vl_; }
+      void setuk(const fmatvec::Vec &uk_) { uk <<= uk_; }
+      void setvl(const fmatvec::Vec &vl_) { vl <<= vl_; }
       virtual void computeCurve(bool update = false);
       virtual void update(MBSim::ContourFrame *frame) = 0;
 //      virtual const fmatvec::Vec getuVec() {

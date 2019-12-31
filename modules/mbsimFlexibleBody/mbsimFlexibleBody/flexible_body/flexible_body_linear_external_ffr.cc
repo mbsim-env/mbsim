@@ -322,8 +322,8 @@ namespace MBSimFlexibleBody {
     fmatvec::Mat M_ThetaF(G_bar.T() * I_ThetaF_bar);
     
     // update M by the submatrix M_RTheta, M_ThetaTheta, M_RF, M_ThetaF
-    M(RangeV(0, 2), RangeV(3, 5)) = M_RTheta;
-    M(RangeV(0, 2), RangeV(6, nf + 5)) = M_RF;
+    M.set(RangeV(0, 2), RangeV(3, 5), M_RTheta);
+    M.set(RangeV(0, 2), RangeV(6, nf + 5), M_RF);
 
     M(0, 0) = M_RR;
     M(1, 1) = M_RR;
@@ -339,7 +339,7 @@ namespace MBSimFlexibleBody {
       for (int j = i; j < 6; j++)
         M(i, j) = M_ThetaTheta(i - 3, j - 3);
 
-    M(RangeV(3, 5), RangeV(6, nf + 5)) = M_ThetaF;
+    M.set(RangeV(3, 5), RangeV(6, nf + 5), M_ThetaF);
     
     if (msgAct(Debug)) {
 
@@ -440,7 +440,7 @@ namespace MBSimFlexibleBody {
     }
 
     // S_bar:  3*nf
-    S_bar = Mat(3, nf, INIT, 0.);
+    S_bar.resize(3, nf, INIT, 0.);
     for (int j = 0; j < nNodes; j++) {
       S_bar += static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getMij() * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j])->getModeShape();
     }

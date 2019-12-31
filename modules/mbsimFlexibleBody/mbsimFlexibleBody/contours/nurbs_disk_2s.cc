@@ -454,8 +454,8 @@ namespace MBSimFlexibleBody {
     vector<Mat3xV> JR((nr+1)*nj);
     for(int i=0; i<nr+1; i++)
       for(int j=0; j<nj; j++) {
-        JT[i*nj+j] = static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(i*nj+j);
-        JR[i*nj+j] = static_cast<NodeBasedBody*>(parent)->getNodalJacobianOfRotation(i*nj+j);
+        JT[i*nj+j] <<= static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(i*nj+j);
+        JR[i*nj+j] <<= static_cast<NodeBasedBody*>(parent)->getNodalJacobianOfRotation(i*nj+j);
       }
     for(int k=0; k<nr*nj*3+RefDofs; k++) {
       for(int i=0; i<nr+1; i++) {

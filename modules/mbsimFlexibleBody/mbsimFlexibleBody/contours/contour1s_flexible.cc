@@ -74,8 +74,14 @@ namespace MBSimFlexibleBody {
   void Contour1sFlexible::updateJacobians(ContourFrame *frame, int j) {
     Frame1s P("P",frame->getEta());
     P.setParent(parent);
+    P.getJacobianOfTranslation(0,false).resize(gethSize());
+    P.getJacobianOfRotation(0,false).resize(gethSize());
+    P.getJacobianOfTranslation(1,false).resize(gethSize(1));
+    P.getJacobianOfRotation(1,false).resize(gethSize(1));
     frame->setJacobianOfRotation(P.evalJacobianOfRotation(j),j);
     frame->setJacobianOfTranslation(P.getJacobianOfTranslation(j),j);
+    //frame->getJacobianOfRotation(j,false) <<= P.evalJacobianOfRotation(j);
+    //frame->getJacobianOfTranslation(j,false) <<= P.getJacobianOfTranslation(j);
   }
 
   void Contour1sFlexible::updateGyroscopicAccelerations(ContourFrame *frame) {

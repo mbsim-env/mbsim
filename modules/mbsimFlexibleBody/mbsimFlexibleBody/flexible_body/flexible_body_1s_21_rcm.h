@@ -101,7 +101,7 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double r);
       void setMaterialDamping(double d);
       void setLehrDamping(double d);
-      void setElementPlotList(fmatvec::VecInt plotElements_) {plotElements = plotElements_;}
+      void setElementPlotList(fmatvec::VecInt plotElements_) {plotElements <<= plotElements_;}
       /***************************************************/
 
       /**

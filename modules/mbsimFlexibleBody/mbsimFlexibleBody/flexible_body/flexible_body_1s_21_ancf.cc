@@ -71,7 +71,7 @@ namespace MBSimFlexibleBody {
     }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
       gloMat(RangeV(j,j+3))            += locMat(RangeV(0,3));
-      gloMat(RangeV(j,j+3),RangeV(0,3)) += locMat(RangeV(0,3),RangeV(4,7));
+      gloMat(RangeV(j,j+3),RangeV(0,3)) += locMat.get(RangeV(0,3),RangeV(4,7));
       gloMat(RangeV(0,3))              += locMat(RangeV(4,7));
     }
   }

@@ -38,6 +38,8 @@ namespace MBSimFlexibleBody {
     public:
       FloatingRelativeFlexibleContourFrame(const std::string &name = "dummy", MBSim::Contour *contour = nullptr);
 
+      void init(InitStage stage_, const MBSim::InitConfigSet &config) override;
+
       void updatePositions() override;
       void updateVelocities() override;
       void updateAccelerations() override;

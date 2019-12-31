@@ -276,14 +276,14 @@ namespace MBSimFlexibleBody {
       switch (LType) {
         case innerring: // 0: innerring
           ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
-          Jext = Mat(Dofs, qSize, INIT, 0.);
+          Jext.resize(Dofs, qSize, INIT, 0.);
           Jext(0, 0, RefDofs - 1, RefDofs - 1) = DiagMat(RefDofs, INIT, 1.);
           Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) = DiagMat(qSize - RefDofs, INIT, 1.);
         break;
 
         case outerring: // 1: outerring
           ILocked = RangeV(qSize, Dofs - 1);
-          Jext = Mat(Dofs, qSize, INIT, 0.);
+          Jext.resize(Dofs, qSize, INIT, 0.);
           Jext(0, 0, qSize - 1, qSize - 1) = DiagMat(qSize, INIT, 1.);
         break;
       }
@@ -291,7 +291,7 @@ namespace MBSimFlexibleBody {
       dr = (Ra - Ri) / nr;
       dj = 2 * M_PI / nj;
 
-      NodeCoordinates = Mat(Nodes, 2);
+      NodeCoordinates.resize(Nodes, 2);
       ElementNodeList.resize(Elements, 4);
 
       // mapping nodes - node coordinates - elements 
@@ -388,15 +388,15 @@ namespace MBSimFlexibleBody {
         Mext(Ikges) += Mplatte(Ikelement); // diagonal
         Kext(Ikges) += Kplatte(Ikelement); // diagonal
         for (int n = k + 1; n < 4; n++) {
-          Mext(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1)) += Mplatte(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1));
-          Kext(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1)) += Kplatte(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1));
+          Mext.add(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1), Mplatte.get(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1)));
+          Kext.add(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1), Kplatte.get(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1)));
         }
       }
     }
 
     // condensation
-    MConst = condenseMatrix(Mext, ILocked);
-    K = condenseMatrix(Kext, ILocked);
+    MConst <<= condenseMatrix(Mext, ILocked);
+    K <<= condenseMatrix(Kext, ILocked);
 
     /* STATIC TEST */
     //RangeV Iall(RefDofs,K.size()-1);

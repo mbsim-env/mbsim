@@ -74,8 +74,8 @@ namespace MBSimFlexibleBody {
   Weight33RCM::~Weight33RCM() = default;
 
   void Weight33RCM::setGauss(int nGauss) {
-    gp = Vec(nGauss); // Gauss weights
-    xip = Vec(nGauss); // Gauss points
+    gp.resize(nGauss); // Gauss weights
+    xip.resize(nGauss); // Gauss points
 
     switch(nGauss) {
       case 1:
@@ -404,7 +404,7 @@ namespace MBSimFlexibleBody {
     dpS(0,3) = 1.;
     dpS(1,4) = 1.;
     dpS(2,5) = 1.;
-    dpSH = dpS.T();
+    dpSH <<= dpS.T();
   }
 
   double Weight33RCM::intv(const Vec& vt) const {

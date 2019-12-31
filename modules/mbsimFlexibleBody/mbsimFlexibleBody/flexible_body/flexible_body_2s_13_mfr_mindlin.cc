@@ -89,14 +89,14 @@ namespace MBSimFlexibleBody {
     /* M_FF is constant */
 
     /* sort into Mext */
-    Mext(0, 3, 2, 5) += M_RTheta;
-    Mext(0, RefDofs, 2, Dofs - 1) += M_RF;
+    Mext.add(RangeV(0, 2), RangeV(3, 5), M_RTheta);
+    Mext.add(RangeV(0, 2), RangeV(RefDofs, Dofs - 1), M_RF);
 
     for (int i = 3; i < RefDofs; i++)
       for (int j = i; j < RefDofs; j++)
         Mext(i, j) += M_ThetaTheta(i - 3, j - 3);
 
-    Mext(3, RefDofs, 5, Dofs - 1) += M_ThetaF;
+    Mext.add(RangeV(3, 5), RangeV(RefDofs, Dofs - 1), M_ThetaF);
 
     M = condenseMatrix(Mext, ILocked);
 
@@ -431,14 +431,14 @@ namespace MBSimFlexibleBody {
       switch (LType) {
         case innerring: // 0: innerring
           ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
-          Jext = Mat(Dofs, qSize, INIT, 0.);
+          Jext.resize(Dofs, qSize, INIT, 0.);
           Jext(0, 0, RefDofs - 1, RefDofs - 1) = DiagMat(RefDofs, INIT, 1.);
           Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) = DiagMat(qSize - RefDofs, INIT, 1.);
         break;
 
         case outerring: // 1: outerring
           ILocked = RangeV(qSize, Dofs - 1);
-          Jext = Mat(Dofs, qSize, INIT, 0.);
+          Jext.resize(Dofs, qSize, INIT, 0.);
           Jext(0, 0, qSize - 1, qSize - 1) = DiagMat(qSize, INIT, 1.);
         break;
       }
@@ -446,7 +446,7 @@ namespace MBSimFlexibleBody {
       dr = (Ra - Ri) / nr;
       dj = 2 * M_PI / nj;
 
-      NodeCoordinates = Mat(Nodes, 2);
+      NodeCoordinates.resize(Nodes, 2);
       ElementNodeList.resize(Elements, 4);
 
       // mapping nodes - node coordinates - elements
@@ -579,13 +579,13 @@ namespace MBSimFlexibleBody {
 
         Kext(Ikges) += ElK(Ikelement); // diagonal
         for (int n = node + 1; n < ElementNodes; n++) // secondary diagonals
-          Kext(Ikges, RangeV(RefDofs + ElementNodeList(element, n) * NodeDofs, RefDofs + (ElementNodeList(element, n) + 1) * NodeDofs - 1)) += ElK(Ikelement, RangeV(n * NodeDofs, (n + 1) * NodeDofs - 1));
+          Kext.add(Ikges, RangeV(RefDofs + ElementNodeList(element, n) * NodeDofs, RefDofs + (ElementNodeList(element, n) + 1) * NodeDofs - 1), ElK.get(Ikelement, RangeV(n * NodeDofs, (n + 1) * NodeDofs - 1)));
       }
       static_cast<FiniteElement2s13MFRMindlin*>(discretization[element])->freeK();
     }
 
     // condensation
-    K = condenseMatrix(Kext, ILocked);
+    K <<= condenseMatrix(Kext, ILocked);
 
     /* STATIC TEST */
     //RangeV Iall(RefDofs,K.size()-1);
@@ -629,7 +629,7 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody2s13MFRMindlin::computeConstantMassMatrixParts() {
-    MConst = SymMat(Dofs, INIT, 0.);
+    MConst.resize(Dofs, INIT, 0.);
     double ElementNodes = 4;
 
     /* M_RR */

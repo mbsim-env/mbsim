@@ -65,7 +65,7 @@ namespace MBSimFlexibleBody {
 
     // assemble result matrix
     B(upperPart) = C(upperPart); // upper left
-    B(upperPart, lowerPartB) = C(upperPart, lowerPartC); // upper right
+    B(lowerPartB, upperPart) = C(lowerPartC, upperPart); // upper right
     B(lowerPartB) = C(lowerPartC); // lower right
     return B;
   }
@@ -215,8 +215,8 @@ namespace MBSimFlexibleBody {
     uSize[0] = qSize;
     uSize[1] = qSize; // TODO
 
-    qext = Vec(Dofs);
-    uext = Vec(Dofs);
+    qext.resize(Dofs);
+    uext.resize(Dofs);
 
     q0.resize(qSize);
     u0.resize(uSize[0]);

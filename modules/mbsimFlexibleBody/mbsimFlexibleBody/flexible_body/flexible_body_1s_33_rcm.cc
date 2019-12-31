@@ -128,7 +128,7 @@ namespace MBSimFlexibleBody {
     }
     else { // last FE for closed structure
       gloMat(RangeV(j, j + 9)) += locMat(RangeV(0, 9));
-      gloMat(RangeV(j, j + 9), RangeV(0, 5)) += locMat(RangeV(0, 9), RangeV(10, 15));
+      gloMat(RangeV(j, j + 9), RangeV(0, 5)) += locMat.get(RangeV(0, 9), RangeV(10, 15));
       gloMat(RangeV(0, 5)) += locMat(RangeV(10, 15));
     }
   }
@@ -265,7 +265,7 @@ namespace MBSimFlexibleBody {
 
     Vec q0Tmp;
     if (q0.size())
-      q0Tmp = q0;
+      q0Tmp <<= q0;
     q0.resize(qSize, INIT, 0.);
     if (q0Tmp.size()) {
       if (q0Tmp.size() == q0.size())
@@ -278,7 +278,7 @@ namespace MBSimFlexibleBody {
     uSize[1] = qSize; // TODO
     Vec u0Tmp;
     if (u0.size())
-      u0Tmp = u0;
+      u0Tmp <<= u0;
     u0.resize(uSize[0], INIT, 0.);
     if (u0Tmp.size()) {
       if (u0Tmp.size() == u0.size())

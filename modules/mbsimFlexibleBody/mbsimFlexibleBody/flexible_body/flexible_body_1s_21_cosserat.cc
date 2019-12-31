@@ -49,12 +49,12 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21Cosserat::BuildElements() {
     if (PODreduced) {
-      qFull = U * q;
-      uFull = U * u;
+      qFull <<= U * q;
+      uFull <<= U * u;
     }
     else {
-      qFull = q;
-      uFull = u;
+      qFull <<= q;
+      uFull <<= u;
     }
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
@@ -336,8 +336,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::enablePOD(const string & h5Path, int reduceMode, int POMSize) {
     // Set POD-Reduction true
 
-    Mat Snapshots;
-    Snapshots = readPositionMatrix(h5Path, "q"); //TODO: which kind of "Job"...
+    Mat Snapshots = readPositionMatrix(h5Path, "q"); //TODO: which kind of "Job"...
 
     int fullDOFs = 3 * Elements;
     int nSnapshots = Snapshots.cols();
@@ -361,7 +360,7 @@ namespace MBSimFlexibleBody {
       POMSize = findPOMSize(POM, SVD);
     }
 
-    U = POM(RangeV(0, fullDOFs - 1), RangeV(0, POMSize - 1));
+    U <<= POM(RangeV(0, fullDOFs - 1), RangeV(0, POMSize - 1));
 
     PODreduced = true;
 

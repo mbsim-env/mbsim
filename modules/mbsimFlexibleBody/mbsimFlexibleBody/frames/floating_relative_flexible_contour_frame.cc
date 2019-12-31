@@ -33,6 +33,15 @@ namespace MBSimFlexibleBody {
     setFrameOfReference(&P);
   }
 
+  void FloatingRelativeFlexibleContourFrame::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      P.sethSize(gethSize());
+      P.sethSize(gethSize(1),1);
+      P.init(stage, config);
+    }
+    FloatingRelativeContourFrame::init(stage, config);
+  }
+
   void FloatingRelativeFlexibleContourFrame::resetUpToDate() {
     FloatingRelativeContourFrame::resetUpToDate();
     P.resetUpToDate();
