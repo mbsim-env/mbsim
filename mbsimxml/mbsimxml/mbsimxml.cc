@@ -26,10 +26,7 @@ void initPython() {
   if(isInitialized)
     return;
 
-  boost::filesystem::path home;
-  if(boost::filesystem::exists(getInstallPath()/PYTHON_SUBDIR/"site-packages"))
-    home=getInstallPath();
-  initializePython((getInstallPath()/"bin"/"mbsimxml").string(), home.string());
+  initializePython((getInstallPath()/"bin"/"mbsimxml").string());
   PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
   // add bin to python search path
   PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
