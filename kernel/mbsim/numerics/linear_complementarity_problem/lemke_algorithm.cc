@@ -52,13 +52,13 @@ namespace MBSim {
     Vec solutionVector(2 * dim, INIT, 0.);
 
     Mat A(dim, 2 * dim + 2, NONINIT);
-    A(0, 0, dim - 1, dim - 1) = Mat(dim, dim, EYE);
-    A(0, dim, dim - 1, 2 * dim - 1) = -M;
-    A(0, 2 * dim, dim - 1, 2 * dim) = Vec(dim, INIT, -1.);
-    A(0, 2 * dim + 1, dim - 1, 2 * dim + 1) = q;
+    A(RangeV(0, dim - 1), RangeV(0, dim - 1)) = Mat(dim, dim, EYE);
+    A(RangeV(0, dim - 1), RangeV(dim, 2 * dim - 1)) = -M;
+    A(RangeV(0, dim - 1), RangeV(2 * dim, 2 * dim)) = Vec(dim, INIT, -1.);
+    A(RangeV(0, dim - 1), RangeV(2 * dim + 1, 2 * dim + 1)) = q;
 
     Vec q_;
-    q_ &= A(0, 2 * dim + 1, dim - 1, 2 * dim + 1);
+    q_ &= A(RangeV(0, dim - 1), RangeV(2 * dim + 1, 2 * dim + 1));
 
     vector<size_t> basis;
     //At first, all w-values are in the basis

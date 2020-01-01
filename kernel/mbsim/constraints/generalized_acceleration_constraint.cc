@@ -46,18 +46,18 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updatexd() {
-    xd(0,bd->getGeneralizedPositionSize()-1) = x(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1);
-    xd(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1) = (*f)(x,getTime());
+    xd(RangeV(0,bd->getGeneralizedPositionSize()-1)) = x(RangeV(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1));
+    xd(RangeV(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1)) = (*f)(x,getTime());
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates() {
     if(bi) {
-      bd->setqRel(bi->evalGeneralizedPosition()+x(0,bd->getGeneralizedPositionSize()-1));
-      bd->setuRel(bi->evalGeneralizedVelocity()+x(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1));
+      bd->setqRel(bi->evalGeneralizedPosition()+x(RangeV(0,bd->getGeneralizedPositionSize()-1)));
+      bd->setuRel(bi->evalGeneralizedVelocity()+x(RangeV(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1)));
     }
     else {
-      bd->setqRel(x(0,bd->getGeneralizedPositionSize()-1));
-      bd->setuRel(x(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1));
+      bd->setqRel(x(RangeV(0,bd->getGeneralizedPositionSize()-1)));
+      bd->setuRel(x(RangeV(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1)));
     }
     updGC = false;
   }

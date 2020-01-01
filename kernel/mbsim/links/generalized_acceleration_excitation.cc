@@ -40,23 +40,23 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationExcitation::updatexd() {
-    xd(0,body[0]->getGeneralizedPositionSize()-1) = x(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1);
-    xd(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1) = (*f)(x,getTime());
+    xd(RangeV(0,body[0]->getGeneralizedPositionSize()-1)) = x(RangeV(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1));
+    xd(RangeV(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1)) = (*f)(x,getTime());
   }
 
   void GeneralizedAccelerationExcitation::updateGeneralizedPositions() {
     if(body.size()>1)
-      rrel=body[1]->evalGeneralizedPosition()-body[0]->evalGeneralizedPosition()-x(0,body[0]->getGeneralizedPositionSize()-1);
+      rrel=body[1]->evalGeneralizedPosition()-body[0]->evalGeneralizedPosition()-x(RangeV(0,body[0]->getGeneralizedPositionSize()-1));
     else
-      rrel=body[0]->evalGeneralizedPosition()-x(0,body[0]->getGeneralizedPositionSize()-1);
+      rrel=body[0]->evalGeneralizedPosition()-x(RangeV(0,body[0]->getGeneralizedPositionSize()-1));
     updrrel = false;
   }
 
   void GeneralizedAccelerationExcitation::updateGeneralizedVelocities() {
     if(body.size()>1)
-      vrel=body[1]->evalGeneralizedVelocity()-body[0]->evalGeneralizedVelocity()-x(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1);
+      vrel=body[1]->evalGeneralizedVelocity()-body[0]->evalGeneralizedVelocity()-x(RangeV(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1));
     else
-      vrel=body[0]->evalGeneralizedVelocity()-x(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1);
+      vrel=body[0]->evalGeneralizedVelocity()-x(RangeV(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1));
     updvrel = false;
   }
 

@@ -248,9 +248,9 @@ namespace MBSim {
     ContourLink::updatelaRef(laParent);
     if (laSize) {
       if (fcl->isSetValued())
-        laN &= la(0, 0);
+        laN &= la(RangeV(0, 0));
       if (fdf->isSetValued())
-        laT &= la(fcl->isSetValued(), laSize - 1);
+        laT &= la(RangeV(fcl->isSetValued(), laSize - 1));
     }
   }
 
@@ -258,9 +258,9 @@ namespace MBSim {
     ContourLink::updateLaRef(LaParent);
     if (laSize) {
       if (fcl->isSetValued())
-        LaN &= La(0, 0);
+        LaN &= La(RangeV(0, 0));
       if (fdf->isSetValued())
-        LaT &= La(fcl->isSetValued(), laSize - 1);
+        LaT &= La(RangeV(fcl->isSetValued(), laSize - 1));
     }
   }
 
@@ -268,9 +268,9 @@ namespace MBSim {
     ContourLink::updategdRef(gdParent);
     if (gdSize) {
       if (fcl->isSetValued())
-        gdN &= gd(0, 0);
+        gdN &= gd(RangeV(0, 0));
       if (fdf->isSetValued())
-        gdT &= gd(fcl->isSetValued(), gdSize - 1);
+        gdT &= gd(RangeV(fcl->isSetValued(), gdSize - 1));
     }
   }
 
@@ -700,7 +700,7 @@ namespace MBSim {
         gdnT(0) = b(laInd + fcl->isSetValued());
         for (int j = ia[laInd + fcl->isSetValued()]; j < ia[laInd + 1 + fcl->isSetValued()]; j++)
           gdnT(0) += a[j] * LaMBS(ja[j]);
-        res(fcl->isSetValued(), fcl->isSetValued()) = LaT - ftil->project(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(fcl->isSetValued()));
+        res(RangeV(fcl->isSetValued(), fcl->isSetValued())) = LaT - ftil->project(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(fcl->isSetValued()));
       }
     }
   }
@@ -728,7 +728,7 @@ namespace MBSim {
         gddT(0) = b(laInd + fcl->isSetValued());
         for (int j = ia[laInd + fcl->isSetValued()]; j < ia[laInd + 1 + fcl->isSetValued()]; j++)
           gddT(0) += a[j] * laMBS(ja[j]);
-        res(fcl->isSetValued(), fcl->isSetValued()) = laT - fdf->project(laT, gddT, fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
+        res(RangeV(fcl->isSetValued(), fcl->isSetValued())) = laT - fdf->project(laT, gddT, fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
       }
     }
   }
@@ -754,7 +754,7 @@ namespace MBSim {
       }
 
       if(gdActive[tangential] and fdf->isSetValued()) {
-        Mat diff = fdf->diff(laT, gddT(0, 0), fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
+        Mat diff = fdf->diff(laT, gddT(RangeV(0, 0)), fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
         RowVec jp2;
         jp2 &= ds->getJprox().row(laInd + fcl->isSetValued());
         RowVec e2(jp2.size());

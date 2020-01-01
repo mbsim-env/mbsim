@@ -138,8 +138,8 @@ namespace MBSim {
     b(2) = -u2.T()*parnPart1-n1.T()*paruPart2;
     b(3) = -v2.T()*parnPart1-n1.T()*parvPart2;
     Vec zetad =  slvLU(A,b);
-    Vec zetad1 = zetad(0,1);
-    Vec zetad2 = zetad(2,3);
+    Vec zetad1 = zetad(RangeV(0,1));
+    Vec zetad2 = zetad(RangeV(2,3));
 
     if(contact.isNormalForceLawSetValued())
       contact.getwb(false)(0) += parnPart1.T()*(vC2-vC1)+n1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);

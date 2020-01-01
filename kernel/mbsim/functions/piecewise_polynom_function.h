@@ -313,7 +313,7 @@ namespace MBSim {
     fmatvec::Mat c = slvLU(C,rs);
     fmatvec::Mat ctmp(N,y.cols());
     ctmp.row(N-1) = c.row(0); // CN = c1
-    ctmp(0,0,N-2,y.cols()-1)= c;
+    ctmp(fmatvec::RangeV(0,N-2),fmatvec::RangeV(0,y.cols()-1))= c;
 
     // vector ordering of the further coefficients
     fmatvec::Mat d(N-1,y.cols(),fmatvec::INIT,0.0);
@@ -369,11 +369,11 @@ namespace MBSim {
 
     // solve C*c = rs with C tridiagonal
     fmatvec::Mat C_rs(N-2,N-1+y.cols(),fmatvec::INIT,0.0);
-    C_rs(0,0,N-3,N-3) = C; // C_rs=[C rs] for Gauss in matrix
-    C_rs(0,N-2,N-3,N-2+y.cols()-1) = rs;
+    C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(0,N-3)) = C; // C_rs=[C rs] for Gauss in matrix
+    C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(N-2,N-2+y.cols()-1)) = rs;
     for(i=1; i<N-2; i++) C_rs.row(i) = C_rs.row(i) - C_rs.row(i-1)*C_rs(i,i-1)/C_rs(i-1,i-1); // C_rs -> upper triangular matrix C1 -> C1 rs1
-    fmatvec::Mat rs1 = C_rs(0,N-2,N-3,N-2+y.cols()-1);
-    fmatvec::Mat C1 = C_rs(0,0,N-3,N-3);
+    fmatvec::Mat rs1 = C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(N-2,N-2+y.cols()-1));
+    fmatvec::Mat C1 = C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(0,N-3));
     fmatvec::Mat c(N-2,y.cols(),fmatvec::INIT,0.0);
     for(i=N-3;i>=0 ;i--) { // backward substitution
       fmatvec::RowVecV sum_ciCi(y.cols(),fmatvec::NONINIT);
@@ -382,7 +382,7 @@ namespace MBSim {
       c.row(i)= (rs1.row(i) - sum_ciCi)/C1(i,i);
     }
     fmatvec::Mat ctmp(N,y.cols(),fmatvec::INIT,0.0);
-    ctmp(1,0,N-2,y.cols()-1) = c; // c1=cN=0 natural splines c=[ 0; c; 0]
+    ctmp(fmatvec::RangeV(1,N-2),fmatvec::RangeV(0,y.cols()-1)) = c; // c1=cN=0 natural splines c=[ 0; c; 0]
 
     // vector ordering of the further coefficients
     fmatvec::Mat d(N-1,y.cols(),fmatvec::INIT,0.0);
@@ -400,7 +400,7 @@ namespace MBSim {
     breaks = x;
     coefs.clear();
     coefs.push_back(d);
-    coefs.push_back(ctmp(0,0,N-2,y.cols()-1));
+    coefs.push_back(ctmp(fmatvec::RangeV(0,N-2),fmatvec::RangeV(0,y.cols()-1)));
     coefs.push_back(b);
     coefs.push_back(a);
   }

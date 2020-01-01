@@ -61,14 +61,14 @@ namespace MBSimFlexibleBody {
       int j = 3 * i; // start index in entire beam coordinates
 
       if (i < Elements - 1) {
-        qElement[i] = qFull(j, j + 4);
-        uElement[i] = uFull(j, j + 4);
+        qElement[i] = qFull(RangeV(j, j + 4));
+        uElement[i] = uFull(RangeV(j, j + 4));
       }
       else { // last FE-Beam for closed structure	
-        qElement[i](0, 2) = qFull(j, j + 2);
-        uElement[i](0, 2) = uFull(j, j + 2);
-        qElement[i](3, 4) = qFull(0, 1);
-        uElement[i](3, 4) = uFull(0, 1);
+        qElement[i](RangeV(0, 2)) = qFull(RangeV(j, j + 2));
+        uElement[i](RangeV(0, 2)) = uFull(RangeV(j, j + 2));
+        qElement[i](RangeV(3, 4)) = qFull(RangeV(0, 1));
+        uElement[i](RangeV(3, 4)) = uFull(RangeV(0, 1));
       }
     }
 
@@ -77,22 +77,22 @@ namespace MBSimFlexibleBody {
       int j = 3 * i; // start index in entire beam coordinates
 
       if (i > 0 && i < rotationalElements - 1) { // no problem case
-        qRotationElement[i] = qFull(j - 1, j + 2); // staggered grid -> rotation offset
-        uRotationElement[i] = uFull(j - 1, j + 2);
+        qRotationElement[i] = qFull(RangeV(j - 1, j + 2)); // staggered grid -> rotation offset
+        uRotationElement[i] = uFull(RangeV(j - 1, j + 2));
       }
       else if (i == 0) { // first element
         qRotationElement[i](0) = qFull(qFull.size() - 1);
         uRotationElement[i](0) = uFull(uFull.size() - 1);
-        qRotationElement[i](1, 3) = qFull(j, j + 2);
-        uRotationElement[i](1, 3) = uFull(j, j + 2);
+        qRotationElement[i](RangeV(1, 3)) = qFull(RangeV(j, j + 2));
+        uRotationElement[i](RangeV(1, 3)) = uFull(RangeV(j, j + 2));
         if (qFull(j + 2) < qFull(qFull.size() - 1))
           qRotationElement[i](0) -= 2. * M_PI;
         else
           qRotationElement[i](0) += 2. * M_PI;
       }
       else if (i == rotationalElements - 1) { // last element
-        qRotationElement[i] = qFull(j - 1, j + 2);
-        uRotationElement[i] = uFull(j - 1, j + 2);
+        qRotationElement[i] = qFull(RangeV(j - 1, j + 2));
+        uRotationElement[i] = uFull(RangeV(j - 1, j + 2));
       }
     }
     updEle = false;
@@ -102,22 +102,22 @@ namespace MBSimFlexibleBody {
     int j = 3 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1) {
-      gloVec(j, j + 4) += locVec;
+      gloVec(RangeV(j, j + 4)) += locVec;
     }
     else { // last FE for closed structure
-      gloVec(j, j + 2) += locVec(0, 2);
-      gloVec(0, 1) += locVec(3, 4);
+      gloVec(RangeV(j, j + 2)) += locVec(RangeV(0, 2));
+      gloVec(RangeV(0, 1)) += locVec(RangeV(3, 4));
     }
   }
 
   void FlexibleBody1s21Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec, Vec& gloVec) {
     int j = 3 * n;
     if (n == 0) {
-      gloVec(0, 2) += locVec(1, 3);
+      gloVec(RangeV(0, 2)) += locVec(RangeV(1, 3));
       gloVec(qFull.size() - 1) += locVec(0);
     }
     else if (n > 0 && n < rotationalElements) {
-      gloVec(j - 1, j + 2) += locVec;
+      gloVec(RangeV(j - 1, j + 2)) += locVec;
     }
   }
 
@@ -168,7 +168,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::updatePositions(int node) {
     /* 2D -> 3D mapping */
     Vec qTmpNODE(3, INIT, 0.);
-    qTmpNODE(0, 1) = evalqFull()(3 * node + 0, 3 * node + 1);
+    qTmpNODE(RangeV(0, 1)) = evalqFull()(RangeV(3 * node + 0, 3 * node + 1));
     Vec qTmpANGLE(3, INIT, 0.);
     qTmpANGLE(2) = qFull(3 * node + 2);
 
@@ -185,7 +185,7 @@ namespace MBSimFlexibleBody {
     Vec qTmpANGLE(3, INIT, 0.);
     qTmpANGLE(2) = qFull(3 * node + 2);
     Vec uTmp(3, INIT, 0.);
-    uTmp(0, 1) = uFull(3 * node + 0, 3 * node + 1);
+    uTmp(RangeV(0, 1)) = uFull(RangeV(3 * node + 0, 3 * node + 1));
     Vec uTmpANGLE(3, INIT, 0.);
     uTmpANGLE(2) = uFull(3 * node + 2);
 

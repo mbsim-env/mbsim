@@ -57,12 +57,12 @@ namespace MBSim {
     Vec y(*neq, y_);
     Vec yd(*neq, yd_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
+    self->getSystem()->setState(y(RangeV(0,self->system->getzSize()-1)));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),*neq-1));
+    self->getSystem()->setla(y(RangeV(self->system->getzSize(),*neq-1)));
     self->getSystem()->setUpdatela(false);
-    yd(0,self->system->getzSize()-1) = self->system->evalzd();
-    yd(self->system->getzSize(),*neq-1) = self->system->evalW().T()*yd(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1) + self->system->evalwb();
+    yd(RangeV(0,self->system->getzSize()-1)) = self->system->evalzd();
+    yd(RangeV(self->system->getzSize(),*neq-1)) = self->system->evalW().T()*yd(RangeV(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1)) + self->system->evalwb();
   }
 
   void RODASIntegrator::massFull(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
@@ -207,7 +207,7 @@ namespace MBSim {
     double t = tStart;
 
     Vec y(neq);
-    Vec z = y(0,system->getzSize()-1);
+    Vec z = y(RangeV(0,system->getzSize()-1));
     if(z0.size()) {
       if(z0.size() != system->getzSize())
         throwError("(RODASIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
@@ -291,7 +291,7 @@ namespace MBSim {
       t = system->getTime();
       z = system->getState();
       if(formalism)
-        y(system->getzSize(),neq-1).init(0);
+        y(RangeV(system->getzSize(),neq-1)).init(0);
     }
   }
 
@@ -303,7 +303,7 @@ namespace MBSim {
   }
 
   void RODASIntegrator::reinit() {
-    work(20,work.size()-1).init(0);
+    work(RangeV(20,work.size()-1)).init(0);
     if(reduced) {
       iWork(8) = system->getqSize();
       iWork(9) = system->getqSize();

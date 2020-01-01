@@ -207,10 +207,10 @@ namespace MBSim {
 
       system->updateWRef(system->getWParent(0)(RangeV(0, system->getuSize() - 1), RangeV(0, system->getlaSize() - 1)));
       system->updateVRef(system->getVParent(0)(RangeV(0, system->getuSize() - 1), RangeV(0, system->getlaSize() - 1)));
-      system->updatelaRef(system->getlaParent()(0, system->getlaSize() - 1));
-      system->updateLaRef(system->getLaParent()(0, system->getlaSize() - 1));
-      system->updategdRef(system->getgdParent()(0, system->getgdSize() - 1));
-      system->updaterFactorRef(system->getrFactorParent()(0, system->getrFactorSize() - 1));
+      system->updatelaRef(system->getlaParent()(RangeV(0, system->getlaSize() - 1)));
+      system->updateLaRef(system->getLaParent()(RangeV(0, system->getlaSize() - 1)));
+      system->updategdRef(system->getgdParent()(RangeV(0, system->getgdSize() - 1)));
+      system->updaterFactorRef(system->getrFactorParent()(RangeV(0, system->getrFactorSize() - 1)));
     }
 
     return impact; 

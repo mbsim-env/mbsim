@@ -291,7 +291,7 @@ namespace MBSimFlexibleBody {
     Vec wh1 = wt->computew(wt->getwh1coef(),x);
     Vec wh2 = wt->computew(wt->getwh2coef(),x);
 
-    JXqG(0,0,15,2) = (drS+(tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI())*x
+    JXqG(RangeV(0,15),RangeV(0,2)) = (drS+(tf->gettS()*depstil+(1.+tf->getepstil())*wt->gettSqI())*x
         +tf->getnS()*wh1qI+wh1(0)*wt->getnSqI()+tf->getbS()*wh2qI+wh2(0)*wt->getbSqI()).T(); /* JT */
 
     Vec w1 = wt->computew(wt->getw1coef(),x);
@@ -317,19 +317,19 @@ namespace MBSimFlexibleBody {
     dwxdwt(0) = wwt(1)*5.;
 
     Mat Z(3,16);
-    Z(0,0,0,15) = sin((tf->getpS())(1))*dwxdwt*wt->getw2coefqI()+x*dk0;
+    Z(RangeV(0,0),RangeV(0,15)) = sin((tf->getpS())(1))*dwxdwt*wt->getw2coefqI()+x*dk0;
     Z(0,4) += cos((tf->getpS())(1))*w2(1);
-    Z(1,0,1,15) = dwxdwt*wt->getw1coefqI();
-    Z(2,0,2,15) = dwxdwt*wt->getw2coefqI();
+    Z(RangeV(1,1),RangeV(0,15)) = dwxdwt*wt->getw1coefqI();
+    Z(RangeV(2,2),RangeV(0,15)) = dwxdwt*wt->getw2coefqI();
 
     Mat ptqIt = wt->getdpS()+Z;
     Mat ttqIt = tp*ptqIt;
     Mat ntqIt = np*ptqIt;
     Mat btqIt = bp*ptqIt;
 
-    JXqG(0,3,15,3) = (t(1)*ttqIt(2,0,2,15)+n(1)*ntqIt(2,0,2,15)+b(1)*btqIt(2,0,2,15)).T();
-    JXqG(0,4,15,4) = (t(2)*ttqIt(0,0,0,15)+n(2)*ntqIt(0,0,0,15)+b(2)*btqIt(0,0,0,15)).T();
-    JXqG(0,5,15,5) = (t(0)*ttqIt(1,0,1,15)+n(0)*ntqIt(1,0,1,15)+b(0)*btqIt(1,0,1,15)).T(); /* JR */
+    JXqG(RangeV(0,15),RangeV(3,3)) = (t(1)*ttqIt(RangeV(2,2),RangeV(0,15))+n(1)*ntqIt(RangeV(2,2),RangeV(0,15))+b(1)*btqIt(RangeV(2,2),RangeV(0,15))).T();
+    JXqG(RangeV(0,15),RangeV(4,4)) = (t(2)*ttqIt(RangeV(0,0),RangeV(0,15))+n(2)*ntqIt(RangeV(0,0),RangeV(0,15))+b(2)*btqIt(RangeV(0,0),RangeV(0,15))).T();
+    JXqG(RangeV(0,15),RangeV(5,5)) = (t(0)*ttqIt(RangeV(1,1),RangeV(0,15))+n(0)*ntqIt(RangeV(1,1),RangeV(0,15))+b(0)*btqIt(RangeV(1,1),RangeV(0,15))).T(); /* JR */
 
     JXqG = tf->getJIG().T()*JXqG; /* transformation global coordinates */
 
@@ -388,12 +388,12 @@ namespace MBSimFlexibleBody {
     tf->computezI(qG,qGt);
 
     Vec Data(16);
-    Data(0,2) = tf->getrS(); /* rS */
-    Data(3,5) = qG(13,15)-qG(3,5); /* dp */
+    Data(RangeV(0,2)) = tf->getrS(); /* rS */
+    Data(RangeV(3,5)) = qG(RangeV(13,15))-qG(RangeV(3,5)); /* dp */
     Data(6) = tf->getk0(); /* k0 */
     Data(7) = tf->getepstil(); /* epstil */
-    Data(8,10) = tf->getrSt(); /* rSt */
-    Data(11,13) = qGt(13,15)-qGt(3,5); /* dpt */
+    Data(RangeV(8,10)) = tf->getrSt(); /* rSt */
+    Data(RangeV(11,13)) = qGt(RangeV(13,15))-qGt(RangeV(3,5)); /* dpt */
     Data(14) = tf->getk0t(); /* k0t */
     Data(15) = tf->getepstilt(); /* epstilt */
 

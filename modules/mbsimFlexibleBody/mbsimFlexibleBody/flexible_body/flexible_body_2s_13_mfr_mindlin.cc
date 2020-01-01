@@ -55,7 +55,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody2s13MFRMindlin::updateM() {
     SymMat Mext = MConst; // copy constant mass matrix parts
-    Vec qf = evalqExt()(RefDofs, Dofs - 1);
+    Vec qf = evalqExt()(RangeV(RefDofs, Dofs - 1));
 
     /* M_RR is constant */
     /* M_RTheta */
@@ -175,8 +175,8 @@ namespace MBSimFlexibleBody {
       //  | --------------> r
       // radial and azimuthal coordinates of the FE [ElementalNodes(r1,phi1,r2,phi2)]
       // r1 and phi1 are defined with node 1, r2 and phi2 with node 3
-      ElementalNodes[i](0, 1) = NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
-      ElementalNodes[i](2, 3) = NodeCoordinates.row(ElementNodeList(i, 2)).T(); // node 3
+      ElementalNodes[i](RangeV(0, 1)) = NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
+      ElementalNodes[i](RangeV(2, 3)) = NodeCoordinates.row(ElementNodeList(i, 2)).T(); // node 3
 
       if (ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
         ElementalNodes[i](3) += 2 * M_PI;
@@ -213,7 +213,7 @@ namespace MBSimFlexibleBody {
         frame->setPosition(R->evalPosition() + R->evalOrientation() * Vec3("[0;0;1]") * getq()(0));
         break;
       case 6:
-        frame->setPosition(R->evalPosition() + R->evalOrientation() * getq()(0,2));
+        frame->setPosition(R->evalPosition() + R->evalOrientation() * getq()(RangeV(0,2)));
         break;
       default:
         throwError("(FlexibleBody2s13MFRMindlin::updateKinematicsForFrame): Unknown number of reference dofs!");
@@ -231,9 +231,9 @@ namespace MBSimFlexibleBody {
         frame->setAngularVelocity(R->getOrientation() * Vec3("[0;0;1]") * getu()(1));
         break;
         case 6:
-        frame->setPosition(R->evalOrientation() * getq()(0,2));
-        frame->setVelocity(R->getOrientation() * getu()(0,2));
-        frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(3,5));
+        frame->setPosition(R->evalOrientation() * getq()(RangeV(0,2)));
+        frame->setVelocity(R->getOrientation() * getu()(RangeV(0,2)));
+        frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(RangeV(3,5)));
         break;
         default:
         throwError("(FlexibleBody2s13MFRMindlin::updateVelocities): Unknown number of reference dofs!");
@@ -253,8 +253,8 @@ namespace MBSimFlexibleBody {
     if (nrm2(alpha) < epsroot) { // center of gravity
       Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
 
-      Jacext_trans(0, 0, 2, 2) = SqrMat(3, EYE);
-      Jacext_rot(0, 3, 2, 5) = evalA() * evalG();
+      Jacext_trans(RangeV(0, 2), RangeV(0, 2)) = SqrMat(3, EYE);
+      Jacext_rot(RangeV(0, 2), RangeV(3, 5)) = evalA() * evalG();
 
       // condensation
       Mat Jacobian_trans = condenseMatrixCols(Jacext_trans, ILocked);
@@ -282,7 +282,7 @@ namespace MBSimFlexibleBody {
 
     r_ref = BasicRotAIKz(NodeCoordinates(node, 1)) * r_ref; //transformation into local frame  ---->?  transformation from intermediate frame(which are initially parallel to the local frame) to the FFR
     r_ref = evalA() * r_ref; //transformation from the moving frame of reference  ---->  ??? transformation from the moving frame of reference FFR to the Reference frame
-    r_ref += qext(0, 2); //translation of moving frame of reference relative to frame of reference ---> add the translation displacement of the origin of FFR expressed in the Reference Frame
+    r_ref += qext(RangeV(0, 2)); //translation of moving frame of reference relative to frame of reference ---> add the translation displacement of the origin of FFR expressed in the Reference Frame
     // TODO:  is qext in Reference frame R or in the world frame ?
     WrOP[node] = R->evalPosition() + R->evalOrientation() * r_ref; //at last step: transformation into world frame
     updNodalPos[node] = false;
@@ -301,8 +301,8 @@ namespace MBSimFlexibleBody {
 
     r_ref = BasicRotAIKz(NodeCoordinates(node, 1)) * r_ref;
 
-    Vec3 u_ref_2 = evalA() * (-tilde(r_ref) * evalG() * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * u_ref_1);
-    u_ref_2 += uext(0, 2);
+    Vec3 u_ref_2 = evalA() * (-tilde(r_ref) * evalG() * uext(RangeV(3, 5)) + BasicRotAIKz(NodeCoordinates(node, 1)) * u_ref_1);
+    u_ref_2 += uext(RangeV(0, 2));
 
     WvP[node] = R->evalOrientation() * u_ref_2;
 
@@ -310,7 +310,7 @@ namespace MBSimFlexibleBody {
     w_ref_1(0) = -uext(RefDofs + node * NodeDofs + 2);
     w_ref_1(1) = uext(RefDofs + node * NodeDofs + 1);
 
-    Vec w_ref_2 = A * (G * uext(3, 5) + BasicRotAIKz(NodeCoordinates(node, 1)) * w_ref_1);
+    Vec w_ref_2 = A * (G * uext(RangeV(3, 5)) + BasicRotAIKz(NodeCoordinates(node, 1)) * w_ref_1);
 
     Wom[node] = R->getOrientation() * w_ref_2;
 
@@ -327,7 +327,7 @@ namespace MBSimFlexibleBody {
     Mat Jactmp_trans(3, RefDofs + NodeDofs, INIT, 0.), Jactmp_rot(3, RefDofs + NodeDofs, INIT, 0.); // initializing Ref + 1 Node
 
     // translational DOFs (d/dR)
-    Jactmp_trans(0, 0, 2, 2) = SqrMat(3, EYE); // ref
+    Jactmp_trans(RangeV(0, 2), RangeV(0, 2)) = SqrMat(3, EYE); // ref
 
     // rotational DOFs (d/dTheta)
     SqrMat dAdalpha(3, NONINIT), dAdbeta(3, NONINIT), dAdgamma(3, NONINIT);
@@ -373,11 +373,11 @@ namespace MBSimFlexibleBody {
 
     r_tmp = BasicRotAIKz(NodeCoordinates(node, 1)) * r_tmp;
 
-    Jactmp_trans(0, 3, 2, 3) = dAdalpha * r_tmp;
-    Jactmp_trans(0, 4, 2, 4) = dAdbeta * r_tmp;
-    Jactmp_trans(0, 5, 2, 5) = dAdgamma * r_tmp;
+    Jactmp_trans(RangeV(0, 2), RangeV(3, 3)) = dAdalpha * r_tmp;
+    Jactmp_trans(RangeV(0, 2), RangeV(4, 4)) = dAdbeta * r_tmp;
+    Jactmp_trans(RangeV(0, 2), RangeV(5, 5)) = dAdgamma * r_tmp;
 
-    Jactmp_rot(0, 3, 2, 5) = evalA() * evalG();
+    Jactmp_rot(RangeV(0, 2), RangeV(3, 5)) = evalA() * evalG();
 
     // elastic DOFs
     // translation
@@ -386,24 +386,24 @@ namespace MBSimFlexibleBody {
     u_tmp(1, 2) = -computeThickness(NodeCoordinates(node, 0)) / 2.;
     u_tmp(2, 0) = 1.;
 
-    Jactmp_trans(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(node, 1)) * u_tmp;
+    Jactmp_trans(RangeV(0, 2), RangeV(RefDofs, RefDofs + 2)) = A * BasicRotAIKz(NodeCoordinates(node, 1)) * u_tmp;
 
     // rotation
     SqrMat Z_tmp(3, INIT, 0.);
     Z_tmp(0, 2) = -1;
     Z_tmp(1, 1) = 1;
-    Jactmp_rot(0, RefDofs, 2, RefDofs + 2) = A * BasicRotAIKz(NodeCoordinates(node, 1)) * Z_tmp;
+    Jactmp_rot(RangeV(0, 2), RangeV(RefDofs, RefDofs + 2)) = A * BasicRotAIKz(NodeCoordinates(node, 1)) * Z_tmp;
 
     // sort in the Jacobian of the disc disk
     // reference dofs
     Mat Jacext_trans(3, Dofs, INIT, 0.), Jacext_rot(3, Dofs, INIT, 0.);
 
-    Jacext_trans(0, 0, 2, RefDofs - 1) = Jactmp_trans(0, 0, 2, RefDofs - 1);
-    Jacext_rot(0, 0, 2, RefDofs - 1) = Jactmp_rot(0, 0, 2, RefDofs - 1);
+    Jacext_trans(RangeV(0, 2), RangeV(0, RefDofs - 1)) = Jactmp_trans(RangeV(0, 2), RangeV(0, RefDofs - 1));
+    Jacext_rot(RangeV(0, 2), RangeV(0, RefDofs - 1)) = Jactmp_rot(RangeV(0, 2), RangeV(0, RefDofs - 1));
 
     // elastic dofs
-    Jacext_trans(0, RefDofs + node * NodeDofs, 2, RefDofs + node * NodeDofs + 2) = Jactmp_trans(0, RefDofs, 2, RefDofs + 2);
-    Jacext_rot(0, RefDofs + node * NodeDofs, 2, RefDofs + node * NodeDofs + 2) = Jactmp_rot(0, RefDofs, 2, RefDofs + 2);
+    Jacext_trans(RangeV(0, 2), RangeV(RefDofs + node * NodeDofs, RefDofs + node * NodeDofs + 2)) = Jactmp_trans(RangeV(0, 2), RangeV(RefDofs, RefDofs + 2));
+    Jacext_rot(RangeV(0, 2), RangeV(RefDofs + node * NodeDofs, RefDofs + node * NodeDofs + 2)) = Jactmp_rot(RangeV(0, 2), RangeV(RefDofs, RefDofs + 2));
 
     // condensation
     Mat Jacobian_trans = condenseMatrixCols(Jacext_trans, ILocked);
@@ -432,14 +432,14 @@ namespace MBSimFlexibleBody {
         case innerring: // 0: innerring
           ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
           Jext.resize(Dofs, qSize, INIT, 0.);
-          Jext(0, 0, RefDofs - 1, RefDofs - 1) = DiagMat(RefDofs, INIT, 1.);
-          Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) = DiagMat(qSize - RefDofs, INIT, 1.);
+          Jext(RangeV(0, RefDofs - 1), RangeV(0, RefDofs - 1)) = DiagMat(RefDofs, INIT, 1.);
+          Jext(RangeV(RefDofs + NodeDofs * nj, Dofs - 1), RangeV(RefDofs, qSize - 1)) = DiagMat(qSize - RefDofs, INIT, 1.);
         break;
 
         case outerring: // 1: outerring
           ILocked = RangeV(qSize, Dofs - 1);
           Jext.resize(Dofs, qSize, INIT, 0.);
-          Jext(0, 0, qSize - 1, qSize - 1) = DiagMat(qSize, INIT, 1.);
+          Jext(RangeV(0, qSize - 1), RangeV(0, qSize - 1)) = DiagMat(qSize, INIT, 1.);
         break;
       }
 
@@ -511,7 +511,7 @@ namespace MBSimFlexibleBody {
   Vec FlexibleBody2s13MFRMindlin::transformCW(const Vec& WrPoint) {
     Vec CrPoint = WrPoint;
 
-    CrPoint -= q(0, 2);
+    CrPoint -= q(RangeV(0, 2));
     CrPoint = evalA().T() * CrPoint; // position in moving frame of reference
 
     const double xt = CrPoint(0);

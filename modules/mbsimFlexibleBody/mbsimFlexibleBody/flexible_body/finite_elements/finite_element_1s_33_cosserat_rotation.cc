@@ -40,8 +40,8 @@ namespace MBSimFlexibleBody {
 
   void FiniteElement1s33CosseratRotation::computeh(const Vec& qG, const Vec& qGt) {
     /* angles */
-    Vec phi = (qG(0,2)+qG(6,8))/2.;
-    Vec dphids = (qG(6,8)-qG(0,2))/l0;
+    Vec phi = (qG(RangeV(0,2))+qG(RangeV(6,8)))/2.;
+    Vec dphids = (qG(RangeV(6,8))-qG(RangeV(0,2)))/l0;
 
     Vec tangent = ag->computet(phi);
     Vec normal = ag->computen(phi);
@@ -57,8 +57,8 @@ namespace MBSimFlexibleBody {
     Vec ktilde0_1 = dnormaldphi.T()*binormal/l0;
     Vec ktilde0_2 = 0.5*(ag->computenqt(phi,dphids)).T()*binormal;
     Vec dBTtorsiondqG(9,INIT,0.);
-    dBTtorsiondqG(0,2) = ktilde0_0 - ktilde0_1 + ktilde0_2;
-    dBTtorsiondqG(6,8) = ktilde0_0 + ktilde0_1 + ktilde0_2;
+    dBTtorsiondqG(RangeV(0,2)) = ktilde0_0 - ktilde0_1 + ktilde0_2;
+    dBTtorsiondqG(RangeV(6,8)) = ktilde0_0 + ktilde0_1 + ktilde0_2;
     dBTtorsiondqG *= GI0ktilde0;
 
     double EI1ktilde1 = E*I1*(tangent.T()*dbinormaldphi*dphids-k10);
@@ -66,8 +66,8 @@ namespace MBSimFlexibleBody {
     Vec ktilde1_1 = dbinormaldphi.T()*tangent/l0;
     Vec ktilde1_2 = 0.5*(ag->computebqt(phi,dphids)).T()*tangent;
     Vec dBTbending1dqG(9,INIT,0.);
-    dBTbending1dqG(0,2) = ktilde1_0 - ktilde1_1 + ktilde1_2;
-    dBTbending1dqG(6,8) = ktilde1_0 + ktilde1_1 + ktilde1_2;
+    dBTbending1dqG(RangeV(0,2)) = ktilde1_0 - ktilde1_1 + ktilde1_2;
+    dBTbending1dqG(RangeV(6,8)) = ktilde1_0 + ktilde1_1 + ktilde1_2;
     dBTbending1dqG *= EI1ktilde1;
 
     double EI2ktilde2 = E*I2*(normal.T()*dtangentdphi*dphids-k20);
@@ -75,8 +75,8 @@ namespace MBSimFlexibleBody {
     Vec ktilde2_1 = dtangentdphi.T()*normal/l0;
     Vec ktilde2_2 = 0.5*(ag->computetqt(phi,dphids)).T()*normal;
     Vec dBTbending2dqG(9,INIT,0.);
-    dBTbending2dqG(0,2) = ktilde2_0 - ktilde2_1 + ktilde2_2;
-    dBTbending2dqG(6,8) = ktilde2_0 + ktilde2_1 + ktilde2_2;
+    dBTbending2dqG(RangeV(0,2)) = ktilde2_0 - ktilde2_1 + ktilde2_2;
+    dBTbending2dqG(RangeV(6,8)) = ktilde2_0 + ktilde2_1 + ktilde2_2;
     dBTbending2dqG *= EI2ktilde2;
 
     /* generalized forces */
@@ -86,8 +86,8 @@ namespace MBSimFlexibleBody {
   }
 
   double FiniteElement1s33CosseratRotation::computeElasticEnergy(const fmatvec::Vec& qG) {
-    Vec phi = (qG(0,2)+qG(6,8))/2.;
-    Vec dphids = (qG(6,8)-qG(0,2))/l0;
+    Vec phi = (qG(RangeV(0,2))+qG(RangeV(6,8)))/2.;
+    Vec dphids = (qG(RangeV(6,8))-qG(RangeV(0,2)))/l0;
 
     Vec tangent = ag->computet(phi);
     Vec normal = ag->computen(phi);

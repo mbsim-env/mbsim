@@ -210,8 +210,8 @@ namespace MBSim {
     int qlaSize = qSize + laSize;
 
     // set the q of system to be the input q
-    sys->setq(qla(0, qSize - 1));
-    sys->setla(qla(qSize, qlaSize - 1));
+    sys->setq(qla(RangeV(0, qSize - 1)));
+    sys->setla(qla(RangeV(qSize, qlaSize - 1)));
 
     // get the new h vector
     Vec hg(qla.size());
@@ -219,8 +219,8 @@ namespace MBSim {
     // need new h, W, g, input la (not from the system, but from the input value),
     sys->setTime(t);
     sys->resetUpToDate();
-    hg(0, qSize - 1) = sys->evalh() + sys->evalW() * qla(qSize, qlaSize - 1);
-    hg(qSize, qlaSize - 1) = sys->evalg();
+    hg(RangeV(0, qSize - 1)) = sys->evalh() + sys->evalW() * qla(RangeV(qSize, qlaSize - 1));
+    hg(RangeV(qSize, qlaSize - 1)) = sys->evalg();
 
 //    msg(Info) << "t = "  << t << "\n";
 //    msg(Info) << "sys.geth() = "  <<  sys->geth().T() << "\n";

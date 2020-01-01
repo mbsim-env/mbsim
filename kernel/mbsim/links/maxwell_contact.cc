@@ -944,7 +944,7 @@ namespace MBSim {
 
       solution0 <<= LCP.solve(solution0);
 
-      Vec lambda = solution0(rigidBodyGap.size(), 2 * rigidBodyGap.size() - 1);
+      Vec lambda = solution0(RangeV(rigidBodyGap.size(), 2 * rigidBodyGap.size() - 1));
 
       if (msg(Debug)) {
         msg(Debug) << "lambda = " << lambda << endl;

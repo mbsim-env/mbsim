@@ -44,11 +44,11 @@ namespace MBSim {
 
   Vec ImplicitEulerIntegrator::ResiduumReduced::operator()(const Vec &ux) {
     Vec z(sys->getzSize(),NONINIT);
-    z(0,sys->getqSize()-1) = zk(0,sys->getqSize()-1) + ux(0,sys->getuSize()-1)*dt;
-    z(sys->getqSize(),sys->getzSize()-1) = ux;
+    z(RangeV(0,sys->getqSize()-1)) = zk(RangeV(0,sys->getqSize()-1)) + ux(RangeV(0,sys->getuSize()-1))*dt;
+    z(RangeV(sys->getqSize(),sys->getzSize()-1)) = ux;
     sys->setState(z);
     sys->resetUpToDate();
-    return ux - zk(sys->getqSize(),sys->getzSize()-1) - sys->evalzd()(sys->getqSize(),sys->getzSize()-1)*dt;
+    return ux - zk(RangeV(sys->getqSize(),sys->getzSize()-1)) - sys->evalzd()(RangeV(sys->getqSize(),sys->getzSize()-1))*dt;
   }
 
   void ImplicitEulerIntegrator::preIntegrate() {
@@ -109,7 +109,7 @@ namespace MBSim {
       if(reduced) {
         Vec qOld;
         qOld = system->getq();
-        system->getState()(system->getqSize(),system->getzSize()-1) = newton.solve(system->getState()(system->getqSize(),system->getzSize()-1));
+        system->getState()(RangeV(system->getqSize(),system->getzSize()-1)) = newton.solve(system->getState()(RangeV(system->getqSize(),system->getzSize()-1)));
         system->getq() = qOld + system->getu()*dt;
       }
       else

@@ -233,7 +233,7 @@ namespace MBSim {
         self->getSystem()->resetUpToDate();
         self->getSystem()->shift();
         self->system->calcgdSize(3); // IH
-        self->system->updategdRef(self->system->getgdParent()(0,self->system->getgdSize()-1));
+        self->system->updategdRef(self->system->getgdParent()(RangeV(0,self->system->getgdSize()-1)));
         if(self->plotOnRoot) {
           self->getSystem()->resetUpToDate();
           self->getSystem()->plot();
@@ -291,9 +291,9 @@ namespace MBSim {
     Vec ud(nv);
     Vec la(nl);
     Vec z(system->getzSize());
-    Vec q = z(0,nq[0]-1);
-    Vec u = z(nq[0],nq[0]+nv-1);
-    Vec x = z(nq[0]+nv,nq[0]+nv+nu-1);
+    Vec q = z(RangeV(0,nq[0]-1));
+    Vec u = z(RangeV(nq[0],nq[0]+nv-1));
+    Vec x = z(RangeV(nq[0]+nv,nq[0]+nv+nu-1));
     if(z0.size()) {
       if(z0.size() != system->getzSize())
         throwError("(PHEM56Integrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
@@ -309,10 +309,10 @@ namespace MBSim {
     system->resetUpToDate();
     system->computeInitialCondition();
     system->calcgdSize(3); // IH
-    system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+    system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
     if(initialProjection or numberOfStepsBetweenProjections) {
       system->calcgSize(2); // IB
-      system->updategRef(system->getgParent()(0,system->getgSize()-1));
+      system->updategRef(system->getgParent()(RangeV(0,system->getgSize()-1)));
     }
     system->plot();
     svLast <<= system->evalsv();

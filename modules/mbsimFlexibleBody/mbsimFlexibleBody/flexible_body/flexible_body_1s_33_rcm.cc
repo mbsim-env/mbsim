@@ -53,18 +53,18 @@ namespace MBSimFlexibleBody {
       int j = 10 * i; // start index in entire beam coordinates
 
       if (i < Elements - 1 || openStructure) {
-        qElement[i] = q(j, j + 15);
-        uElement[i] = u(j, j + 15);
+        qElement[i] = q(RangeV(j, j + 15));
+        uElement[i] = u(RangeV(j, j + 15));
       }
       else { // last FE-Beam for closed structure
-        qElement[i](0, 9) = q(j, j + 9);
-        uElement[i](0, 9) = u(j, j + 9);
-        qElement[i](10, 15) = q(0, 5);
+        qElement[i](RangeV(0, 9)) = q(RangeV(j, j + 9));
+        uElement[i](RangeV(0, 9)) = u(RangeV(j, j + 9));
+        qElement[i](RangeV(10, 15)) = q(RangeV(0, 5));
         if (q(j + 5) < q(5))
           qElement[i](15) -= 2. * M_PI;
         else
           qElement[i](15) += 2. * M_PI;
-        uElement[i](10, 15) = u(0, 5);
+        uElement[i](RangeV(10, 15)) = u(RangeV(0, 5));
       }
     }
     updEle = false;
@@ -98,11 +98,11 @@ namespace MBSimFlexibleBody {
     int j = 10 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloVec(j, j + 15) += locVec;
+      gloVec(RangeV(j, j + 15)) += locVec;
     }
     else { // last FE for closed structure
-      gloVec(j, j + 9) += locVec(0, 9);
-      gloVec(0, 5) += locVec(10, 15);
+      gloVec(RangeV(j, j + 9)) += locVec(RangeV(0, 9));
+      gloVec(RangeV(0, 5)) += locVec(RangeV(10, 15));
     }
   }
 
@@ -180,8 +180,8 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33RCM::updatePositions(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
-    const Vec &Phi = q(10 * node + 3, 10 * node + 5);
-    frame->setPosition(R->evalPosition() + R->evalOrientation() * q(10 * node + 0, 10 * node + 2));
+    const Vec &Phi = q(RangeV(10 * node + 3, 10 * node + 5));
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * q(RangeV(10 * node + 0, 10 * node + 2)));
     frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(Phi));
     frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(Phi));
     frame->getOrientation(false).set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1)));
@@ -190,9 +190,9 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33RCM::updateVelocities(NodeFrame *frame) {
     Vec3 tmp(NONINIT);
     int node = frame->getNodeNumber();
-    const Vec &Phi = q(10 * node + 3, 10 * node + 5);
-    const Vec &Phit = u(10 * node + 3, 10 * node + 5);
-    frame->setVelocity(R->evalOrientation() * u(10 * node + 0, 10 * node + 2));
+    const Vec &Phi = q(RangeV(10 * node + 3, 10 * node + 5));
+    const Vec &Phit = u(RangeV(10 * node + 3, 10 * node + 5));
+    frame->setVelocity(R->evalOrientation() * u(RangeV(10 * node + 0, 10 * node + 2)));
     frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(Phi, Phit));
   }
 
@@ -206,7 +206,7 @@ namespace MBSimFlexibleBody {
     Mat Jacobian(qSize, 6, INIT, 0.);
     int node = frame->getNodeNumber();
 
-    Vec p = q(10 * node + 3, 10 * node + 5);
+    Vec p = q(RangeV(10 * node + 3, 10 * node + 5));
     Vec t = angle->computet(p);
     Vec n = angle->computen(p);
     Vec b = angle->computeb(p);
@@ -215,9 +215,9 @@ namespace MBSimFlexibleBody {
     SqrMat bp = angle->computebq(p);
 
     Jacobian(RangeV(10 * node, 10 * node + 2), One) = SqrMat(3, EYE); // translation
-    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 3) = t(1) * tp(2, 0, 2, 2).T() + n(1) * np(2, 0, 2, 2).T() + b(1) * bp(2, 0, 2, 2).T(); // rotation
-    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 4) = t(2) * tp(0, 0, 0, 2).T() + n(2) * np(0, 0, 0, 2).T() + b(2) * bp(0, 0, 0, 2).T();
-    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(1, 0, 1, 2).T() + n(0) * np(1, 0, 1, 2).T() + b(0) * bp(1, 0, 1, 2).T();
+    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 3) = t(1) * tp(RangeV(2, 2), RangeV(0, 2)).T() + n(1) * np(RangeV(2, 2), RangeV(0, 2)).T() + b(1) * bp(RangeV(2, 2), RangeV(0, 2)).T(); // rotation
+    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 4) = t(2) * tp(RangeV(0, 0), RangeV(0, 2)).T() + n(2) * np(RangeV(0, 0), RangeV(0, 2)).T() + b(2) * bp(RangeV(0, 0), RangeV(0, 2)).T();
+    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(RangeV(1, 1), RangeV(0, 2)).T() + n(0) * np(RangeV(1, 1), RangeV(0, 2)).T() + b(0) * bp(RangeV(1, 1), RangeV(0, 2)).T();
 
     frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(0, 2)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(3, 5)).T(),j);

@@ -185,7 +185,7 @@ namespace MBSimFlexibleBody {
       contactKinematics.push_back(ck);
     }
     for (int i = 0; i < maxNumContacts - staticNodes.size(); i++) {
-      ContactKinematicsCircleNodeInterpolation *ck = new ContactKinematicsCircleNodeInterpolation(staticNodes(i, i + 1));
+      ContactKinematicsCircleNodeInterpolation *ck = new ContactKinematicsCircleNodeInterpolation(staticNodes(RangeV(i, i + 1)));
       ck->assignContours(contour);
       contactKinematics.push_back(ck);
     }

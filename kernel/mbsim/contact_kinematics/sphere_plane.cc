@@ -93,8 +93,8 @@ namespace MBSim {
     b(2) = -v2.T()*(Om2-Om1);
     b(3) = u2.T()*(Om2-Om1);
     Vec zetad =  slvLU(A,b);
-    Vec zetad1 = zetad(0,1);
-    Vec zetad2 = zetad(2,3);
+    Vec zetad1 = zetad(RangeV(0,1));
+    Vec zetad2 = zetad(RangeV(2,3));
 
     Mat3x3 tOm1 = tilde(Om1);
     Mat3x3 tOm2 = tilde(Om2);

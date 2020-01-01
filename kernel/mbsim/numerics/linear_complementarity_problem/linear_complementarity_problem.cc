@@ -156,9 +156,9 @@ namespace MBSim {
     Vec solution(2 * dimension, NONINIT);
 
     Vec w;
-    w &= solution(0, dimension - 1);
+    w &= solution(RangeV(0, dimension - 1));
     Vec z;
-    z &= solution(dimension, 2 * dimension - 1);
+    z &= solution(RangeV(dimension, 2 * dimension - 1));
 
     StopWatch mainwatch;
     mainwatch.start();

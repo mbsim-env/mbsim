@@ -51,7 +51,7 @@ namespace MBSimFlexibleBody {
 
   void ContactKinematicsPointNurbsDisk2s::updateg(SingleContact &contact, int i) {
     contact.getContourFrame(ipoint)->setPosition(point->getFrame()->evalPosition()); // position of the point in worldcoordinates
-    contact.getContourFrame(inurbsdisk)->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(contact.getContourFrame(ipoint)->getPosition(false) - nurbsdisk->evalPosition()))(0,1)); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
+    contact.getContourFrame(inurbsdisk)->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(contact.getContourFrame(ipoint)->getPosition(false) - nurbsdisk->evalPosition()))(RangeV(0,1))); // position of the point in the cylinder-coordinates of the disk -> NO CONTACTSEARCH
 
     double g;
     if(nurbsdisk->isZetaOutside(contact.getContourFrame(inurbsdisk)->getZeta(false)))

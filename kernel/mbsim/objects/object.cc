@@ -127,39 +127,39 @@ namespace MBSim {
   }
 
   void Object::updateqRef(const Vec &qParent) {
-    q &= qParent(qInd, qInd + qSize - 1);
+    q &= qParent(RangeV(qInd, qInd + qSize - 1));
   }
 
   void Object::updateqdRef(const Vec &qdParent) {
-    qd &= qdParent(qInd, qInd + qSize - 1);
+    qd &= qdParent(RangeV(qInd, qInd + qSize - 1));
   }
 
   void Object::updatedqRef(const Vec &dqParent) {
-    dq &= dqParent(qInd, qInd + qSize - 1);
+    dq &= dqParent(RangeV(qInd, qInd + qSize - 1));
   }
 
   void Object::updateuRef(const Vec &uParent) {
-    u &= uParent(uInd[0], uInd[0] + uSize[0] - 1);
+    u &= uParent(RangeV(uInd[0], uInd[0] + uSize[0] - 1));
   }
 
   void Object::updateuallRef(const Vec &uParent) {
-    uall &= uParent(hInd[0], hInd[0] + hSize[0] - 1);
+    uall &= uParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
   }
 
   void Object::updateudRef(const Vec &udParent) {
-    ud &= udParent(uInd[0], uInd[0] + uSize[0] - 1);
+    ud &= udParent(RangeV(uInd[0], uInd[0] + uSize[0] - 1));
   }
 
   void Object::updateduRef(const Vec &duParent) {
-    du &= duParent(uInd[0], uInd[0] + uSize[0] - 1);
+    du &= duParent(RangeV(uInd[0], uInd[0] + uSize[0] - 1));
   }
 
   void Object::updateudallRef(const Vec &udParent) {
-    udall &= udParent(hInd[0], hInd[0] + hSize[0] - 1);
+    udall &= udParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
   }
 
   void Object::updatehRef(const Vec& hParent, int i) {
-    h[i] &= hParent(hInd[i], hInd[i] + hSize[i] - 1);
+    h[i] &= hParent(RangeV(hInd[i], hInd[i] + hSize[i] - 1));
   }
 
   void Object::updatedhdqRef(const Mat& dhdqParent, int i) {
@@ -171,15 +171,15 @@ namespace MBSim {
   }
 
   void Object::updatedhdtRef(const Vec& dhdtParent, int i) {
-    dhdt &= dhdtParent(hInd[i], hInd[i] + hSize[i] - 1);
+    dhdt &= dhdtParent(RangeV(hInd[i], hInd[i] + hSize[i] - 1));
   }
 
   void Object::updaterRef(const Vec& rParent, int i) {
-    r[i] &= rParent(hInd[i], hInd[i] + hSize[i] - 1);
+    r[i] &= rParent(RangeV(hInd[i], hInd[i] + hSize[i] - 1));
   }
 
   void Object::updaterdtRef(const Vec& rdtParent) {
-    rdt &= rdtParent(hInd[0], hInd[0] + hSize[0] - 1);
+    rdt &= rdtParent(RangeV(hInd[0], hInd[0] + hSize[0] - 1));
   }
 
   void Object::updateTRef(const Mat &TParent) {

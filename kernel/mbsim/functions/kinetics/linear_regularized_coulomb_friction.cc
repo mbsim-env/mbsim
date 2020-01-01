@@ -32,22 +32,22 @@ namespace MBSim {
   Vec LinearRegularizedCoulombFriction::operator()(const Vec &gd, const double& laN) {
     int nFric = gd.size();
     Vec la(nFric, NONINIT);
-    double normgd = nrm2(gd(0, nFric - 1));
+    double normgd = nrm2(gd(RangeV(0, nFric - 1)));
     if (normgd < gdLim)
-      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / gdLim);
+      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-laN * mu / gdLim);
     else
-      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / normgd);
+      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-laN * mu / normgd);
     return la;
   }
 
   Vec LinearRegularizedCoulombFriction::parDer2(const Vec &gd, const double& laN) {
     int nFric = gd.size();
     Vec la(nFric, NONINIT);
-    double normgd = nrm2(gd(0, nFric - 1));
+    double normgd = nrm2(gd(RangeV(0, nFric - 1)));
     if (normgd < gdLim)
-      la(0, nFric - 1) = gd(0, nFric - 1) * (-mu / gdLim);
+      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-mu / gdLim);
     else
-      la(0, nFric - 1) = gd(0, nFric - 1) * (-mu / normgd);
+      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-mu / normgd);
     return la;
   }
 

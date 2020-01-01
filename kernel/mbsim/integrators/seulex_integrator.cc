@@ -57,12 +57,12 @@ namespace MBSim {
     Vec y(*neq, y_);
     Vec yd(*neq, yd_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(0,self->system->getzSize()-1));
+    self->getSystem()->setState(y(RangeV(0,self->system->getzSize()-1)));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->system->getzSize(),*neq-1));
+    self->getSystem()->setla(y(RangeV(self->system->getzSize(),*neq-1)));
     self->getSystem()->setUpdatela(false);
-    yd(0,self->system->getzSize()-1) = self->system->evalzd();
-    yd(self->system->getzSize(),*neq-1) = self->system->evalW().T()*yd(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1) + self->system->evalwb();
+    yd(RangeV(0,self->system->getzSize()-1)) = self->system->evalzd();
+    yd(RangeV(self->system->getzSize(),*neq-1)) = self->system->evalW().T()*yd(RangeV(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1)) + self->system->evalwb();
   }
 
   void SEULEXIntegrator::massFull(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
@@ -157,10 +157,10 @@ namespace MBSim {
       self->getSystem()->shift();
       if(self->formalism>1) { // DAE2, DAE3 or GGL
         self->system->calcgdSize(3); // IH
-        self->system->updategdRef(self->system->getgdParent()(0,self->system->getgdSize()-1));
+        self->system->updategdRef(self->system->getgdParent()(RangeV(0,self->system->getgdSize()-1)));
         if(self->formalism>2) { // DAE3 or GGL
           self->system->calcgSize(2); // IB
-          self->system->updategRef(self->system->getgParent()(0,self->system->getgSize()-1));
+          self->system->updategRef(self->system->getgParent()(RangeV(0,self->system->getgSize()-1)));
         }
       }
       if(self->plotOnRoot) {
@@ -215,7 +215,7 @@ namespace MBSim {
     double t = tStart;
 
     Vec y(neq);
-    Vec z = y(0,system->getzSize()-1);
+    Vec z = y(RangeV(0,system->getzSize()-1));
     if(z0.size()) {
       if(z0.size() != system->getzSize())
         throwError("(SEULEXIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
@@ -271,10 +271,10 @@ namespace MBSim {
     system->computeInitialCondition();
     if(formalism>1) { // DAE2, DAE3 or GGL
       system->calcgdSize(3); // IH
-      system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+      system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
       if(formalism>2) { // DAE3 or GGL
         system->calcgSize(2); // IB
-        system->updategRef(system->getgParent()(0,system->getgSize()-1));
+        system->updategRef(system->getgParent()(RangeV(0,system->getgSize()-1)));
       }
     }
     system->plot();
@@ -305,7 +305,7 @@ namespace MBSim {
       t = system->getTime();
       z = system->getState();
       if(formalism)
-        y(system->getzSize(),neq-1).init(0);
+        y(RangeV(system->getzSize(),neq-1)).init(0);
     }
   }
 
@@ -317,7 +317,7 @@ namespace MBSim {
   }
 
   void SEULEXIntegrator::reinit() {
-    work(20,work.size()-1).init(0);
+    work(RangeV(20,work.size()-1)).init(0);
     iWork(5) = neq; // number of components, for which dense output is required
     for(int i=0; i<neq; i++)
       iWork(20+i) = i+1;

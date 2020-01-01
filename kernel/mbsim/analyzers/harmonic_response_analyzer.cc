@@ -53,8 +53,8 @@ namespace MBSim {
     
     Vec y0, y1;
     Vec bri(2*n);
-    Vec br = bri(0,n-1);
-    Vec bi = bri(n,2*n-1);
+    Vec br = bri(RangeV(0,n-1));
+    Vec bi = bri(RangeV(n,2*n-1));
     //system->setTime(tStart);
     //system->resetUpToDate();
     //y0 = system->evalzd()(n/2,n-1);
@@ -67,10 +67,10 @@ namespace MBSim {
     system->resetUpToDate();
     system->computeInitialCondition();
     zEq = system->getState();
-    br(n/2,n-1) = system->evalzd()(n/2,n-1);
+    br(RangeV(n/2,n-1)) = system->evalzd()(RangeV(n/2,n-1));
     system->setTime(0.25*T);
     system->resetUpToDate();
-    bi(n/2,n-1) = system->evalzd()(n/2,n-1);
+    bi(RangeV(n/2,n-1)) = system->evalzd()(RangeV(n/2,n-1));
 
     SqrMat A(n,NONINIT);
     Vec zd(n,NONINIT), zdOld(n,NONINIT);
@@ -89,8 +89,8 @@ namespace MBSim {
     Q(Range<Var,Var>(0,n-1),Range<Var,Var>(0,n-1)) = -A;
     Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(n,2*n-1)) = -A;
     Vec zhri(2*n,NONINIT);
-    Vec zhr = zhri(0,n-1);
-    Vec zhi = zhri(n,2*n-1);
+    Vec zhr = zhri(RangeV(0,n-1));
+    Vec zhi = zhri(RangeV(n,2*n-1));
 //    int N = int((fE-fS)/df)+1;
     Zh.resize(fE.size(),n,NONINIT);
 

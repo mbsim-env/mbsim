@@ -42,13 +42,13 @@ namespace MBSim {
     for(auto & i : body1) {
       int dq = i->getGeneralizedPositionSize();
       i->resetPositionsUpToDate();
-      i->setqRel(x(nq,nq+dq-1));
+      i->setqRel(x(RangeV(nq,nq+dq-1)));
       nq += dq;
     }
     for(auto & i : body2) {
       int dq = i->getGeneralizedPositionSize();
       i->resetPositionsUpToDate();
-      i->setqRel(x(nq,nq+dq-1));
+      i->setqRel(x(RangeV(nq,nq+dq-1)));
       nq += dq;
     }
 

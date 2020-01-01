@@ -53,8 +53,8 @@ namespace MBSim {
     Vec returnVec(2 * NumberOfContacts, INIT, 0.);
 
     //reference to gap and lambda
-    Vec w = currentSolution(0, NumberOfContacts - 1);
-    Vec z = currentSolution(NumberOfContacts, 2 * NumberOfContacts - 1);
+    Vec w = currentSolution(RangeV(0, NumberOfContacts - 1));
+    Vec z = currentSolution(RangeV(NumberOfContacts, 2 * NumberOfContacts - 1));
 
     if (msg(Debug)) {
 
@@ -65,7 +65,7 @@ namespace MBSim {
     }
 
     //compute first part
-    returnVec(0, NumberOfContacts - 1) = q + M * z - w;
+    returnVec(RangeV(0, NumberOfContacts - 1)) = q + M * z - w;
 
     //loop for the prox-functions
     for (int contactIterator = 0; contactIterator < NumberOfContacts; contactIterator++) {
@@ -102,8 +102,8 @@ namespace MBSim {
     //reference to gap and lambda
     Vec w;
     Vec z;
-    w = currentSolution(0, NumberOfContacts - 1);
-    z = currentSolution(NumberOfContacts, 2 * NumberOfContacts - 1);
+    w = currentSolution(RangeV(0, NumberOfContacts - 1));
+    z = currentSolution(RangeV(NumberOfContacts, 2 * NumberOfContacts - 1));
 
     if (msgAct(Debug)) {
 
@@ -113,7 +113,7 @@ namespace MBSim {
       msg(Debug) << "M is: " << M << endl;
     }
 
-    returnVec(0, NumberOfContacts - 1) = q + M * z;
+    returnVec(RangeV(0, NumberOfContacts - 1)) = q + M * z;
     //loop for the prox-functions
     for (int contactIterator = 0; contactIterator < NumberOfContacts; contactIterator++) {
       returnVec(NumberOfContacts + contactIterator) = proxCN(z(contactIterator) - r * w(contactIterator));
@@ -145,8 +145,8 @@ namespace MBSim {
 
       J.resize(dim, INIT, 0.);
 
-      J(0, 0, dim / 2 - 1, dim / 2 - 1) = -SqrMat(dim / 2, EYE);
-      J(0, dim / 2, dim / 2 - 1, dim - 1) = static_cast<LCPNewtonReformulationFunction*>(function_)->getM();
+      J(RangeV(0, dim / 2 - 1), RangeV(0, dim / 2 - 1)) = -SqrMat(dim / 2, EYE);
+      J(RangeV(0, dim / 2 - 1), RangeV(dim / 2, dim - 1)) = static_cast<LCPNewtonReformulationFunction*>(function_)->getM();
     }
     else
       throwError("Not implemented"); //TODO: use error message
@@ -161,8 +161,8 @@ namespace MBSim {
   void LinearComplementarityJacobianFunction::updateJacobian(const Vec & x) {
     int dim = J.size();
     double r = static_cast<LCPNewtonReformulationFunction*>(function)->getr();
-    Vec w = x(0, dim / 2 - 1);
-    Vec z = x(dim / 2, dim - 1);
+    Vec w = x(RangeV(0, dim / 2 - 1));
+    Vec z = x(RangeV(dim / 2, dim - 1));
 
     //only to update lower half of Jacobian matrix
     for (int i = 0; i < dim / 2; i++) {

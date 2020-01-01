@@ -46,8 +46,8 @@ namespace MBSimFlexibleBody {
       //  | --------------> r
       // radial and azimuthal coordinates of the FE [ElementalNodes(r1,j1,r2,j2)]
       // r1 and j1 are defined with node 1, r2 and j2 with node 4
-      ElementalNodes[i](0, 1) = NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
-      ElementalNodes[i](2, 3) = NodeCoordinates.row(ElementNodeList(i, 3)).T(); // node 4
+      ElementalNodes[i](RangeV(0, 1)) = NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
+      ElementalNodes[i](RangeV(2, 3)) = NodeCoordinates.row(ElementNodeList(i, 3)).T(); // node 4
 
       if (ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
         ElementalNodes[i](3) += 2 * M_PI;
@@ -55,19 +55,19 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof position (w, a, b) from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      qElement[i](0, RefDofs - 1) = evalqExt()(0, RefDofs - 1);
-      qElement[i](RefDofs, RefDofs + NodeDofs - 1) = qext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) = qext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) = qext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
-      qElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) = qext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
+      qElement[i](RangeV(0, RefDofs - 1)) = evalqExt()(RangeV(0, RefDofs - 1));
+      qElement[i](RangeV(RefDofs, RefDofs + NodeDofs - 1)) = qext(RangeV(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1));
+      qElement[i](RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1)) = qext(RangeV(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1));
+      qElement[i](RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1)) = qext(RangeV(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1));
+      qElement[i](RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1)) = qext(RangeV(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1));
 
       // mapping node dof velocity from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      uElement[i](0, RefDofs - 1) = evaluExt()(0, RefDofs - 1);
-      uElement[i](RefDofs, RefDofs + NodeDofs - 1) = uext(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1) = uext(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1) = uext(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1);
-      uElement[i](RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1) = uext(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1);
+      uElement[i](RangeV(0, RefDofs - 1)) = evaluExt()(RangeV(0, RefDofs - 1));
+      uElement[i](RangeV(RefDofs, RefDofs + NodeDofs - 1)) = uext(RangeV(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1));
+      uElement[i](RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1)) = uext(RangeV(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1));
+      uElement[i](RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1)) = uext(RangeV(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1));
+      uElement[i](RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1)) = uext(RangeV(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1));
     }
     updEle = false;
   }
@@ -77,7 +77,7 @@ namespace MBSimFlexibleBody {
       case 2:
         return R->evalPosition() + R->evalOrientation() * Vec3("[0;0;1]") * getq()(0);
       case 6:
-        return R->evalPosition() + R->evalOrientation() * getq()(0,2);
+        return R->evalPosition() + R->evalOrientation() * getq()(RangeV(0,2));
       default:
         throwError("(FlexibleBody2s13Disk::updateKinematicsForFrame): Unknown number of reference dofs!");
     }
@@ -104,9 +104,9 @@ namespace MBSimFlexibleBody {
         frame->setAngularVelocity(R->getOrientation() * Vec3("[0;0;1]") * getu()(1));
         break;
         case 6:
-        frame->setPosition(R->evalOrientation() * getq()(0,2));
-        frame->setVelocity(R->getOrientation() * getu()(0,2));
-        frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(3,5));
+        frame->setPosition(R->evalOrientation() * getq()(RangeV(0,2)));
+        frame->setVelocity(R->getOrientation() * getu()(RangeV(0,2)));
+        frame->setAngularVelocity(R->getOrientation() * evalA() * evalG() * getu()(RangeV(3,5)));
         break;
         default:
         throwError("(FlexibleBody2s13Disk::updateVelocities): Unknown number of reference dofs!");
@@ -147,8 +147,8 @@ namespace MBSimFlexibleBody {
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
 
     // transformation
-    frame->setJacobianOfTranslation(R->evalOrientation().col(2) * Jacobian(0, 0, qSize - 1, 0).T(),j);
-    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T(),j);
+    frame->setJacobianOfTranslation(R->evalOrientation().col(2) * Jacobian(RangeV(0, qSize - 1), RangeV(0, 0)).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(1, 3)).T(),j);
   }
 
   void FlexibleBody2s13Disk::updateGyroscopicAccelerations(Frame2s *frame) {
@@ -255,8 +255,8 @@ namespace MBSimFlexibleBody {
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
 
     // transformation
-    WJP[j][node] = R->evalOrientation().col(2) * Jacobian(0, 0, qSize - 1, 0).T();
-    WJR[j][node] = R->getOrientation() * Jacobian(0, 1, qSize - 1, 3).T();
+    WJP[j][node] = R->evalOrientation().col(2) * Jacobian(RangeV(0, qSize - 1), RangeV(0, 0)).T();
+    WJR[j][node] = R->getOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(1, 3)).T();
 
     updNodalJac[j][node] = false;
   }
@@ -277,14 +277,14 @@ namespace MBSimFlexibleBody {
         case innerring: // 0: innerring
           ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
           Jext.resize(Dofs, qSize, INIT, 0.);
-          Jext(0, 0, RefDofs - 1, RefDofs - 1) = DiagMat(RefDofs, INIT, 1.);
-          Jext(RefDofs + NodeDofs * nj, RefDofs, Dofs - 1, qSize - 1) = DiagMat(qSize - RefDofs, INIT, 1.);
+          Jext(RangeV(0, RefDofs - 1), RangeV(0, RefDofs - 1)) = DiagMat(RefDofs, INIT, 1.);
+          Jext(RangeV(RefDofs + NodeDofs * nj, Dofs - 1), RangeV(RefDofs, qSize - 1)) = DiagMat(qSize - RefDofs, INIT, 1.);
         break;
 
         case outerring: // 1: outerring
           ILocked = RangeV(qSize, Dofs - 1);
           Jext.resize(Dofs, qSize, INIT, 0.);
-          Jext(0, 0, qSize - 1, qSize - 1) = DiagMat(qSize, INIT, 1.);
+          Jext(RangeV(0, qSize - 1), RangeV(0, qSize - 1)) = DiagMat(qSize, INIT, 1.);
         break;
       }
 

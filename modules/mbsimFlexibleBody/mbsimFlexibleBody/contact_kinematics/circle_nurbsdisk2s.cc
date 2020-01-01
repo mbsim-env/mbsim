@@ -73,7 +73,7 @@ namespace MBSimFlexibleBody {
     P_circle = circle->getFrame()->evalPosition() + circle->getRadius() * circle->getFrame()->evalOrientation() * P_circle;
     contact.getContourFrame(icircle)->setPosition(P_circle); // position of the point in world coordinates
 
-    contact.getContourFrame(inurbsdisk)->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(contact.getContourFrame(icircle)->getPosition(false) - nurbsdisk->evalPosition()))(0,1));
+    contact.getContourFrame(inurbsdisk)->setZeta(nurbsdisk->transformCW(nurbsdisk->evalOrientation().T()*(contact.getContourFrame(icircle)->getPosition(false) - nurbsdisk->evalPosition()))(RangeV(0,1)));
 
     double g;
     if(nurbsdisk->isZetaOutside(contact.getContourFrame(inurbsdisk)->getZeta(false)))

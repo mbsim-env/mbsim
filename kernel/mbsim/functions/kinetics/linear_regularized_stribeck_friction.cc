@@ -32,14 +32,14 @@ namespace MBSim {
   Vec LinearRegularizedStribeckFriction::operator()(const Vec &gd, const double& laN) {
     int nFric = gd.size();
     Vec la(nFric, NONINIT);
-    double normgd = nrm2(gd(0, nFric - 1));
+    double normgd = nrm2(gd(RangeV(0, nFric - 1)));
     if (normgd < gdLim) {
       double mu0 = (*fmu)(0);
-      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu0 / gdLim);
+      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-laN * mu0 / gdLim);
     }
     else {
-      double mu = (*fmu)(nrm2(gd(0, nFric - 1)) - gdLim);
-      la(0, nFric - 1) = gd(0, nFric - 1) * (-laN * mu / normgd);
+      double mu = (*fmu)(nrm2(gd(RangeV(0, nFric - 1))) - gdLim);
+      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-laN * mu / normgd);
     }
     return la;
   }

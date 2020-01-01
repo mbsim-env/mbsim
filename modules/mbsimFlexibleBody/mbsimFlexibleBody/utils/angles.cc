@@ -70,9 +70,9 @@ namespace MBSimFlexibleBody {
     Mat tq2 = computetq2(q);
 
     SqrMat tqt(3);
-    tqt(0,0,2,0) = tq2(0,0,2,0)*qt(0)+tq2(0,1,2,1)*qt(1)+tq2(0,2,2,2)*qt(2); 
-    tqt(0,1,2,1) = tq2(0,1,2,1)*qt(0)+tq2(0,3,2,3)*qt(1)+tq2(0,4,2,4)*qt(2); 
-    tqt(0,2,2,2) = tq2(0,2,2,2)*qt(0)+tq2(0,4,2,4)*qt(1)+tq2(0,5,2,5)*qt(2);
+    tqt(RangeV(0,2),RangeV(0,0)) = tq2(RangeV(0,2),RangeV(0,0))*qt(0)+tq2(RangeV(0,2),RangeV(1,1))*qt(1)+tq2(RangeV(0,2),RangeV(2,2))*qt(2); 
+    tqt(RangeV(0,2),RangeV(1,1)) = tq2(RangeV(0,2),RangeV(1,1))*qt(0)+tq2(RangeV(0,2),RangeV(3,3))*qt(1)+tq2(RangeV(0,2),RangeV(4,4))*qt(2); 
+    tqt(RangeV(0,2),RangeV(2,2)) = tq2(RangeV(0,2),RangeV(2,2))*qt(0)+tq2(RangeV(0,2),RangeV(4,4))*qt(1)+tq2(RangeV(0,2),RangeV(5,5))*qt(2);
     return tqt;
   }
 
@@ -80,9 +80,9 @@ namespace MBSimFlexibleBody {
     Mat nq2 = computenq2(q);
 
     SqrMat nqt(3);
-    nqt(0,0,2,0) = nq2(0,0,2,0)*qt(0)+nq2(0,1,2,1)*qt(1)+nq2(0,2,2,2)*qt(2); 
-    nqt(0,1,2,1) = nq2(0,1,2,1)*qt(0)+nq2(0,3,2,3)*qt(1)+nq2(0,4,2,4)*qt(2); 
-    nqt(0,2,2,2) = nq2(0,2,2,2)*qt(0)+nq2(0,4,2,4)*qt(1)+nq2(0,5,2,5)*qt(2);
+    nqt(RangeV(0,2),RangeV(0,0)) = nq2(RangeV(0,2),RangeV(0,0))*qt(0)+nq2(RangeV(0,2),RangeV(1,1))*qt(1)+nq2(RangeV(0,2),RangeV(2,2))*qt(2); 
+    nqt(RangeV(0,2),RangeV(1,1)) = nq2(RangeV(0,2),RangeV(1,1))*qt(0)+nq2(RangeV(0,2),RangeV(3,3))*qt(1)+nq2(RangeV(0,2),RangeV(4,4))*qt(2); 
+    nqt(RangeV(0,2),RangeV(2,2)) = nq2(RangeV(0,2),RangeV(2,2))*qt(0)+nq2(RangeV(0,2),RangeV(4,4))*qt(1)+nq2(RangeV(0,2),RangeV(5,5))*qt(2);
     return nqt;
   }
 
@@ -90,9 +90,9 @@ namespace MBSimFlexibleBody {
     Mat bq2 = computebq2(q);
 
     SqrMat bqt(3);
-    bqt(0,0,2,0) = bq2(0,0,2,0)*qt(0)+bq2(0,1,2,1)*qt(1)+bq2(0,2,2,2)*qt(2); 
-    bqt(0,1,2,1) = bq2(0,1,2,1)*qt(0)+bq2(0,3,2,3)*qt(1)+bq2(0,4,2,4)*qt(2); 
-    bqt(0,2,2,2) = bq2(0,2,2,2)*qt(0)+bq2(0,4,2,4)*qt(1)+bq2(0,5,2,5)*qt(2);
+    bqt(RangeV(0,2),RangeV(0,0)) = bq2(RangeV(0,2),RangeV(0,0))*qt(0)+bq2(RangeV(0,2),RangeV(1,1))*qt(1)+bq2(RangeV(0,2),RangeV(2,2))*qt(2); 
+    bqt(RangeV(0,2),RangeV(1,1)) = bq2(RangeV(0,2),RangeV(1,1))*qt(0)+bq2(RangeV(0,2),RangeV(3,3))*qt(1)+bq2(RangeV(0,2),RangeV(4,4))*qt(2); 
+    bqt(RangeV(0,2),RangeV(2,2)) = bq2(RangeV(0,2),RangeV(2,2))*qt(0)+bq2(RangeV(0,2),RangeV(4,4))*qt(1)+bq2(RangeV(0,2),RangeV(5,5))*qt(2);
     return bqt;
   }
 
@@ -100,9 +100,9 @@ namespace MBSimFlexibleBody {
     Mat ntilq2 = computentilq2(q);
 
     SqrMat ntilqt(3);
-    ntilqt(0,0,2,0) = ntilq2(0,0,2,0)*qt(0)+ntilq2(0,1,2,1)*qt(1)+ntilq2(0,2,2,2)*qt(2); 
-    ntilqt(0,1,2,1) = ntilq2(0,1,2,1)*qt(0)+ntilq2(0,3,2,3)*qt(1)+ntilq2(0,4,2,4)*qt(2); 
-    ntilqt(0,2,2,2) = ntilq2(0,2,2,2)*qt(0)+ntilq2(0,4,2,4)*qt(1)+ntilq2(0,5,2,5)*qt(2);
+    ntilqt(RangeV(0,2),RangeV(0,0)) = ntilq2(RangeV(0,2),RangeV(0,0))*qt(0)+ntilq2(RangeV(0,2),RangeV(1,1))*qt(1)+ntilq2(RangeV(0,2),RangeV(2,2))*qt(2); 
+    ntilqt(RangeV(0,2),RangeV(1,1)) = ntilq2(RangeV(0,2),RangeV(1,1))*qt(0)+ntilq2(RangeV(0,2),RangeV(3,3))*qt(1)+ntilq2(RangeV(0,2),RangeV(4,4))*qt(2); 
+    ntilqt(RangeV(0,2),RangeV(2,2)) = ntilq2(RangeV(0,2),RangeV(2,2))*qt(0)+ntilq2(RangeV(0,2),RangeV(4,4))*qt(1)+ntilq2(RangeV(0,2),RangeV(5,5))*qt(2);
     return ntilqt;
   }		
 
@@ -110,9 +110,9 @@ namespace MBSimFlexibleBody {
     Mat btilq2 = computebtilq2(q);
 
     SqrMat btilqt(3);
-    btilqt(0,0,2,0) = btilq2(0,0,2,0)*qt(0)+btilq2(0,1,2,1)*qt(1)+btilq2(0,2,2,2)*qt(2); 
-    btilqt(0,1,2,1) = btilq2(0,1,2,1)*qt(0)+btilq2(0,3,2,3)*qt(1)+btilq2(0,4,2,4)*qt(2); 
-    btilqt(0,2,2,2) = btilq2(0,2,2,2)*qt(0)+btilq2(0,4,2,4)*qt(1)+btilq2(0,5,2,5)*qt(2);
+    btilqt(RangeV(0,2),RangeV(0,0)) = btilq2(RangeV(0,2),RangeV(0,0))*qt(0)+btilq2(RangeV(0,2),RangeV(1,1))*qt(1)+btilq2(RangeV(0,2),RangeV(2,2))*qt(2); 
+    btilqt(RangeV(0,2),RangeV(1,1)) = btilq2(RangeV(0,2),RangeV(1,1))*qt(0)+btilq2(RangeV(0,2),RangeV(3,3))*qt(1)+btilq2(RangeV(0,2),RangeV(4,4))*qt(2); 
+    btilqt(RangeV(0,2),RangeV(2,2)) = btilq2(RangeV(0,2),RangeV(2,2))*qt(0)+btilq2(RangeV(0,2),RangeV(4,4))*qt(1)+btilq2(RangeV(0,2),RangeV(5,5))*qt(2);
     return btilqt;
   }
 
@@ -140,9 +140,9 @@ namespace MBSimFlexibleBody {
     SqrMat bq = computebq(q);
 
     SqrMat TMat(3);
-    TMat(0,0,0,2) = t(1)*tq(2,0,2,2)+n(1)*nq(2,0,2,2)+b(1)*bq(2,0,2,2);
-    TMat(1,0,1,2) = t(2)*tq(0,0,0,2)+n(2)*nq(0,0,0,2)+b(2)*bq(0,0,0,2);
-    TMat(2,0,2,2) = t(0)*tq(1,0,1,2)+n(0)*nq(1,0,1,2)+b(0)*bq(1,0,1,2);
+    TMat(RangeV(0,0),RangeV(0,2)) = t(1)*tq(RangeV(2,2),RangeV(0,2))+n(1)*nq(RangeV(2,2),RangeV(0,2))+b(1)*bq(RangeV(2,2),RangeV(0,2));
+    TMat(RangeV(1,1),RangeV(0,2)) = t(2)*tq(RangeV(0,0),RangeV(0,2))+n(2)*nq(RangeV(0,0),RangeV(0,2))+b(2)*bq(RangeV(0,0),RangeV(0,2));
+    TMat(RangeV(2,2),RangeV(0,2)) = t(0)*tq(RangeV(1,1),RangeV(0,2))+n(0)*nq(RangeV(1,1),RangeV(0,2))+b(0)*bq(RangeV(1,1),RangeV(0,2));
     return TMat;
   }
 

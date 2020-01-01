@@ -878,8 +878,8 @@ namespace MBSim {
         for(int i=0; i<nLinks;i++) {
           laSizesSynchron(i) = laSizes(i);
           if (laSizesSynchron(i)>laeSizes(i)) laSizesSynchron(i) = laeSizes(i);
-          laSynchron(iSynchron,iSynchron+laSizesSynchron(i)-1) = la(ila,ila+laSizesSynchron(i)-1);
-          laeSynchron(iSynchron,iSynchron+laSizesSynchron(i)-1) = lae(ilae,ilae+laSizesSynchron(i)-1);
+          laSynchron(RangeV(iSynchron,iSynchron+laSizesSynchron(i)-1)) = la(RangeV(ila,ila+laSizesSynchron(i)-1));
+          laeSynchron(RangeV(iSynchron,iSynchron+laSizesSynchron(i)-1)) = lae(RangeV(ilae,ilae+laSizesSynchron(i)-1));
           ilae+=laeSizes(i);
           ila+=laSizes(i);
           iSynchron+=laSizesSynchron(i);
@@ -1216,7 +1216,7 @@ namespace MBSim {
         if (testOK) { 
           // Mittelwert berechnen
           Vec Dq;
-          Dq= z1d(0,qSize) - ze(0,qSize);
+          Dq= z1d(RangeV(0,qSize)) - ze(RangeV(0,qSize));
           double mDq=0;
           for(int i=0; i<qSize; i++) mDq +=fabs(Dq(i));
           mDq=mDq/qSize;
@@ -1489,12 +1489,12 @@ namespace MBSim {
 
     system->updateWRef(system->getWParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
     system->updateVRef(system->getVParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
-    system->updatelaRef(system->getlaParent()(0,system->getlaSize()-1));
-    system->updateLaRef(system->getLaParent()(0,system->getlaSize()-1));
-    system->updategdRef(system->getgdParent()(0,system->getgdSize()-1));
+    system->updatelaRef(system->getlaParent()(RangeV(0,system->getlaSize()-1)));
+    system->updateLaRef(system->getLaParent()(RangeV(0,system->getlaSize()-1)));
+    system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
     if (system->getImpactSolver() == DynamicSystemSolver::rootfinding)
-      system->updateresRef(system->getresParent()(0,system->getlaSize()-1));
-    system->updaterFactorRef(system->getrFactorParent()(0,system->getrFactorSize()-1));
+      system->updateresRef(system->getresParent()(RangeV(0,system->getlaSize()-1)));
+    system->updaterFactorRef(system->getrFactorParent()(RangeV(0,system->getrFactorSize()-1)));
   }
 
 }

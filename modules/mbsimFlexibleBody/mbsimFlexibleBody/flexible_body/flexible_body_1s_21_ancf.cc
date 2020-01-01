@@ -41,11 +41,11 @@ namespace MBSimFlexibleBody {
     int j = 4 * n;
 
     if(n < Elements - 1 || openStructure==true) {
-      gloVec(j,j+7) += locVec;
+      gloVec(RangeV(j,j+7)) += locVec;
     }
     else { // ring closure at finite element (end,1)
-      gloVec(j,j+3) += locVec(0,3);
-      gloVec(0,  3) += locVec(4,7);
+      gloVec(RangeV(j,j+3)) += locVec(RangeV(0,3));
+      gloVec(RangeV(0,  3)) += locVec(RangeV(4,7));
     }
   }
 
@@ -256,14 +256,14 @@ namespace MBSimFlexibleBody {
       int n = 4 * i ;
 
       if(i<Elements-1 || openStructure==true) {
-        qElement[i] = q(n,n+7);
-        uElement[i] = u(n,n+7);
+        qElement[i] = q(RangeV(n,n+7));
+        uElement[i] = u(RangeV(n,n+7));
       }
       else { // last finite element and ring closure
-        qElement[i](0,3) = q(n,n+3);
-        uElement[i](0,3) = u(n,n+3);
-        qElement[i](4,7) = q(0,3);
-        uElement[i](4,7) = u(0,3);
+        qElement[i](RangeV(0,3)) = q(RangeV(n,n+3));
+        uElement[i](RangeV(0,3)) = u(RangeV(n,n+3));
+        qElement[i](RangeV(4,7)) = q(RangeV(0,3));
+        uElement[i](RangeV(4,7)) = u(RangeV(0,3));
       }
     }
     updEle = false;
@@ -320,7 +320,7 @@ namespace MBSimFlexibleBody {
         direction(1) = sin(alpha);
 
         for(int i=0;i<=Elements;i++) {
-          q0Dummy(4*i+0,4*i+1) = direction*double(L/Elements*i);
+          q0Dummy(RangeV(4*i+0,4*i+1)) = direction*double(L/Elements*i);
           q0Dummy(4*i+2) = direction(0);
           q0Dummy(4*i+3) = direction(1);
         }

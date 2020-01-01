@@ -62,7 +62,7 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setNormalRotationGrid(fmatvec::Vec normal_) { normalRotationGrid = normal_(0,2); }
+      void setNormalRotationGrid(fmatvec::Vec normal_) { normalRotationGrid = normal_(fmatvec::RangeV(0,2)); }
       /***************************************************/
 
       /**

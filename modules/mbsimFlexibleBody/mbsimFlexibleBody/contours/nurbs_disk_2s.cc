@@ -293,8 +293,8 @@ namespace MBSimFlexibleBody {
     ReturnMatrix(2,0) = Derivates(0,deg).z();
 
     //normalizes the tangent vectors
-    ReturnMatrix(0,0,2,0) = 1/nrm2(ReturnMatrix(0,0,2,0)) * ReturnMatrix(0,0,2,0);
-    ReturnMatrix(0,1,2,1) = 1/nrm2(ReturnMatrix(0,1,2,1)) * ReturnMatrix(0,1,2,1);
+    ReturnMatrix(RangeV(0,2),RangeV(0,0)) = 1/nrm2(ReturnMatrix(RangeV(0,2),RangeV(0,0))) * ReturnMatrix(RangeV(0,2),RangeV(0,0));
+    ReturnMatrix(RangeV(0,2),RangeV(1,1)) = 1/nrm2(ReturnMatrix(RangeV(0,2),RangeV(1,1))) * ReturnMatrix(RangeV(0,2),RangeV(1,1));
 
     return ReturnMatrix;
   }

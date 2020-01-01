@@ -99,7 +99,7 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   angleRxy(Nneu-1,0) = 2.*M_PI;
   angleRxy(Nneu-1,1) = rPhi0;  
   angleRxy(Nneu-1,2) = rPhi0; 
-  angleRxy(1,0,Nneu-2,3) = angleRxyTMP(index0,0,indexE,3);
+  angleRxy(RangeV(1,Nneu-2),RangeV(0,3)) = angleRxyTMP(RangeV(index0,indexE),RangeV(0,3));
   int N_diskret = Nneu -1; 
   N_diskret = (N_diskret -1)/discretization +1;
   N_diskret++;

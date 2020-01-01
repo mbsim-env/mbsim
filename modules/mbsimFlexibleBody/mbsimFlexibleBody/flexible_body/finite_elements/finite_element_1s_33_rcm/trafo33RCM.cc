@@ -36,7 +36,7 @@ namespace MBSimFlexibleBody {
   PositionFunction::~PositionFunction() {}
 
   Vec PositionFunction::operator()(const Vec& pos) {			
-    Vec pS = pos(0,2);
+    Vec pS = pos(RangeV(0,2));
 
     Vec nS = angle->computen(pS);
     Vec bS = angle->computeb(pS);
@@ -69,7 +69,7 @@ namespace MBSimFlexibleBody {
   PositionJacobian::~PositionJacobian() {}
 
   SqrMat PositionJacobian::operator()(const Vec& pos) {			
-    Vec pS = pos(0,2);
+    Vec pS = pos(RangeV(0,2));
 
     Vec nS = angle->computen(pS);
     Vec bS = angle->computeb(pS);
@@ -105,15 +105,15 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(0,1) = 0.5*cos(pS(1))*(pos(9)+pos(10));
     SMRHS_Jac(0,9) = 0.5*sin(pS(1));
     SMRHS_Jac(0,10) = 0.5*sin(pS(1));
-    SMRHS_Jac(5,0,5,10) = -rRrLmH*nSbE;
-    SMRHS_Jac(5,0,5,10) +=xintilbE*(pos(4)-pos(3))+xibtilbE*(pos(8)-pos(7));
+    SMRHS_Jac(RangeV(5,5),RangeV(0,10)) = -rRrLmH*nSbE;
+    SMRHS_Jac(RangeV(5,5),RangeV(0,10)) +=xintilbE*(pos(4)-pos(3))+xibtilbE*(pos(8)-pos(7));
     SMRHS_Jac(5,4) +=xintil;
     SMRHS_Jac(5,3) -=xintil;
     SMRHS_Jac(5,8) +=xibtil;
     SMRHS_Jac(5,7) -=xibtil;
 
-    SMRHS_Jac(6,0,6,10) = -rRrLmH*bSbE;
-    SMRHS_Jac(6,0,6,10) +=etantilbE*(pos(4)-pos(3))+etabtilbE*(pos(8)-pos(7));
+    SMRHS_Jac(RangeV(6,6),RangeV(0,10)) = -rRrLmH*bSbE;
+    SMRHS_Jac(RangeV(6,6),RangeV(0,10)) +=etantilbE*(pos(4)-pos(3))+etabtilbE*(pos(8)-pos(7));
     SMRHS_Jac(6,4) +=etantil;
     SMRHS_Jac(6,3) -=etantil;
     SMRHS_Jac(6,8) +=etabtil;
@@ -150,10 +150,10 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(2,2) = 1.; SMRHS_Jac(2,9) = 0.5; SMRHS_Jac(2,10) = 0.5;
     SMRHS_Jac(3,6) = 1.; SMRHS_Jac(3,5) = -1.;
     SMRHS_Jac(4,10) = 1.; SMRHS_Jac(4,9) = -1.;
-    SMRHS_Jac(7,3,7,6) = 2.*xstarh2*(V(1,0,1,3)*xstarh2+V(3,0,3,3));
-    SMRHS_Jac(8,3,8,6) = 2.*xstarh3*(V(0,0,0,3)*xstarh2+V(2,0,2,3));
-    SMRHS_Jac(9,7,9,10) = 2.*xstarh2*(V(1,0,1,3)*xstarh2+V(3,0,3,3));
-    SMRHS_Jac(10,7,10,10) = 2.*xstarh3*(V(0,0,0,3)*xstarh2+V(2,0,2,3));
+    SMRHS_Jac(RangeV(7,7),RangeV(3,6)) = 2.*xstarh2*(V(RangeV(1,1),RangeV(0,3))*xstarh2+V(RangeV(3,3),RangeV(0,3)));
+    SMRHS_Jac(RangeV(8,8),RangeV(3,6)) = 2.*xstarh3*(V(RangeV(0,0),RangeV(0,3))*xstarh2+V(RangeV(2,2),RangeV(0,3)));
+    SMRHS_Jac(RangeV(9,9),RangeV(7,10)) = 2.*xstarh2*(V(RangeV(1,1),RangeV(0,3))*xstarh2+V(RangeV(3,3),RangeV(0,3)));
+    SMRHS_Jac(RangeV(10,10),RangeV(7,10)) = 2.*xstarh3*(V(RangeV(0,0),RangeV(0,3))*xstarh2+V(RangeV(2,2),RangeV(0,3)));
 
     SMRHS_Jac(0,14) = 0.5; SMRHS_Jac(0,24) = 0.5;
     SMRHS_Jac(1,15) = 0.5; SMRHS_Jac(1,25) = 0.5;
@@ -175,11 +175,11 @@ namespace MBSimFlexibleBody {
   Trafo33RCM::~Trafo33RCM() {}
 
   void Trafo33RCM::computeprelim(const Vec& qG) {
-    rRrLmH = (qG(10,12)-qG(0,2)).T(); 
+    rRrLmH = (qG(RangeV(10,12))-qG(RangeV(0,2))).T(); 
   }
 
   Vec Trafo33RCM::computes0(const Vec& qG) {
-    Vec pM = 0.5*(qG(3,5)+qG(13,15));
+    Vec pM = 0.5*(qG(RangeV(3,5))+qG(RangeV(13,15)));
     Vec tM = angle->computet(pM);
     Vec nM = angle->computen(pM);
     Vec bM = angle->computeb(pM);
@@ -212,9 +212,9 @@ namespace MBSimFlexibleBody {
     SMRHS(6,8) = qG(8)+qG(9);
     SMRHS(7,8) = qG(9)-qG(8);
 
-    Vec sol = slvLU(static_cast<SqrMat>(SMRHS(0,0,7,7)),static_cast<Vec>(SMRHS(0,8,7,8)));	
+    Vec sol = slvLU(static_cast<SqrMat>(SMRHS(RangeV(0,7),RangeV(0,7))),static_cast<Vec>(SMRHS(RangeV(0,7),RangeV(8,8))));	
     Vec s0(11);
-    s0(3,10) = sol;
+    s0(RangeV(3,10)) = sol;
 
     s0(1) = 0.5*((qG(4)+qG(14))-(sol(2)+sol(3)));
     s0(2) = 0.5*((qG(5)+qG(15))-(sol(6)+sol(7)));
@@ -226,8 +226,8 @@ namespace MBSimFlexibleBody {
   void Trafo33RCM::computebe(const Vec& qG) {
     // REQUIRED	computeprelim()
 
-    Vec pL = qG(3,5);	
-    Vec pR = qG(13,15);
+    Vec pL = qG(RangeV(3,5));	
+    Vec pR = qG(RangeV(13,15));
 
     PositionFunction fun(angle,l0,pL,pR,qG(6),qG(7),qG(8),qG(9),rRrLmH); // (object itself no reference)
     PositionJacobian jac (angle,l0,rRrLmH,pSbE);
@@ -248,7 +248,7 @@ namespace MBSimFlexibleBody {
   void Trafo33RCM::computeCOSY() {
     // REQUIRED	computebe()
 
-    pS = be(0,2);
+    pS = be(RangeV(0,2));
     tS = angle->computet(pS);
     nS = angle->computen(pS);
     bS = angle->computeb(pS);
@@ -273,7 +273,7 @@ namespace MBSimFlexibleBody {
   void Trafo33RCM::computerSepstk0(const Vec& qG) {
     // REQUIRED	computeCOSY()
 
-    Vec rRrLp = qG(10,12)+qG(0,2);
+    Vec rRrLp = qG(RangeV(10,12))+qG(RangeV(0,2));
 
     rS = 0.5*(rRrLp-(xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nS-(etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bS);
     epstil = rRrLmH*tS/l0-1.;
@@ -333,34 +333,34 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(0,1) = 0.5*cos(pS(1))*(be(9)+be(10));
     SMRHS_Jac(0,9) = 0.5*sin(pS(1));
     SMRHS_Jac(0,10) = 0.5*sin(pS(1));
-    SMRHS_Jac(5,0,5,10) = -rRrLmH*nSbE;
-    SMRHS_Jac(5,0,5,10) +=xintilbE*(be(4)-be(3))+xibtilbE*(be(8)-be(7));
+    SMRHS_Jac(RangeV(5,5),RangeV(0,10)) = -rRrLmH*nSbE;
+    SMRHS_Jac(RangeV(5,5),RangeV(0,10)) +=xintilbE*(be(4)-be(3))+xibtilbE*(be(8)-be(7));
     SMRHS_Jac(5,4) +=xintil;
     SMRHS_Jac(5,3) -=xintil;
     SMRHS_Jac(5,8) +=xibtil;
     SMRHS_Jac(5,7) -=xibtil;
 
-    SMRHS_Jac(6,0,6,10) = -rRrLmH*bSbE;
-    SMRHS_Jac(6,0,6,10) +=etantilbE*(be(4)-be(3))+etabtilbE*(be(8)-be(7));
+    SMRHS_Jac(RangeV(6,6),RangeV(0,10)) = -rRrLmH*bSbE;
+    SMRHS_Jac(RangeV(6,6),RangeV(0,10)) +=etantilbE*(be(4)-be(3))+etabtilbE*(be(8)-be(7));
     SMRHS_Jac(6,4) +=etantil;
     SMRHS_Jac(6,3) -=etantil;
     SMRHS_Jac(6,8) +=etabtil;
     SMRHS_Jac(6,7) -=etabtil;
 
-    SMRHS_Jac(5,11,5,26) = nSH*drRdrLm;
-    SMRHS_Jac(6,11,6,26) = bSH*drRdrLm;
+    SMRHS_Jac(RangeV(5,5),RangeV(11,26)) = nSH*drRdrLm;
+    SMRHS_Jac(RangeV(6,6),RangeV(11,26)) = bSH*drRdrLm;
 
-    beqG = slvLU(static_cast<SqrMat>(SMRHS_Jac(0,0,10,10)),SMRHS_Jac(0,11,10,26));
+    beqG = slvLU(static_cast<SqrMat>(SMRHS_Jac(RangeV(0,10),RangeV(0,10))),SMRHS_Jac(RangeV(0,10),RangeV(11,26)));
   }
 
   void Trafo33RCM::computeCOSYqG() {
     // REQUIRED	computebeqG()
 
-    tSqG = tSpS*beqG(0,0,2,15); 
-    nSqG = nSpS*beqG(0,0,2,15); 
-    bSqG = bSpS*beqG(0,0,2,15);
-    ntilSqG = ntilSpS*beqG(0,0,2,15); 
-    btilSqG = btilSpS*beqG(0,0,2,15);
+    tSqG = tSpS*beqG(RangeV(0,2),RangeV(0,15)); 
+    nSqG = nSpS*beqG(RangeV(0,2),RangeV(0,15)); 
+    bSqG = bSpS*beqG(RangeV(0,2),RangeV(0,15));
+    ntilSqG = ntilSpS*beqG(RangeV(0,2),RangeV(0,15)); 
+    btilSqG = btilSpS*beqG(RangeV(0,2),RangeV(0,15));
 
     xintilqG = nSH*ntilSqG+ntilSH*nSqG;
     xibtilqG = nSH*btilSqG+btilSH*nSqG;
@@ -375,30 +375,30 @@ namespace MBSimFlexibleBody {
 
     RowVec tSH = tS.T();
 
-    JIG(0,0,2,15) = drRdrLp;
-    JIG(0,0,2,15) -= nS*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(3,0,3,15)+beqG(4,0,4,15))+xibtil*(beqG(7,0,7,15)+beqG(8,0,8,15)));
-    JIG(0,0,2,15) -= (xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nSqG;
-    JIG(0,0,2,15) -= bS*(etantilqG*(be(3)+be(4))+etabtilqG*(be(7)+be(8))+etantil*(beqG(3,0,3,15)+beqG(4,0,4,15))+etabtil*(beqG(7,0,7,15)+beqG(8,0,8,15)));
-    JIG(0,0,2,15) -= (etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bSqG;
-    JIG(0,0,2,15) *= 0.5;		
-    JIG(3,0,5,15) = beqG(0,0,2,15);
-    JIG(6,0,6,15) = (tSH*drRdrLm+rRrLmH*tSqG)/l0;
-    JIG(7,0,14,15) = beqG(3,0,10,15);
-    JIG(15,0,15,15) = -sin(pS(1))*(beqG(10,0,10,15)-beqG(9,0,9,15))-(be(10)-be(9))*cos(pS(1))*beqG(1,0,1,15);
+    JIG(RangeV(0,2),RangeV(0,15)) = drRdrLp;
+    JIG(RangeV(0,2),RangeV(0,15)) -= nS*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
+    JIG(RangeV(0,2),RangeV(0,15)) -= (xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nSqG;
+    JIG(RangeV(0,2),RangeV(0,15)) -= bS*(etantilqG*(be(3)+be(4))+etabtilqG*(be(7)+be(8))+etantil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
+    JIG(RangeV(0,2),RangeV(0,15)) -= (etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bSqG;
+    JIG(RangeV(0,2),RangeV(0,15)) *= 0.5;		
+    JIG(RangeV(3,5),RangeV(0,15)) = beqG(RangeV(0,2),RangeV(0,15));
+    JIG(RangeV(6,6),RangeV(0,15)) = (tSH*drRdrLm+rRrLmH*tSqG)/l0;
+    JIG(RangeV(7,14),RangeV(0,15)) = beqG(RangeV(3,10),RangeV(0,15));
+    JIG(RangeV(15,15),RangeV(0,15)) = -sin(pS(1))*(beqG(RangeV(10,10),RangeV(0,15))-beqG(RangeV(9,9),RangeV(0,15)))-(be(10)-be(9))*cos(pS(1))*beqG(RangeV(1,1),RangeV(0,15));
     JIG(15,3) -= 1.;
     JIG(15,13) += 1.;
-    JIG(15,0,15,15) /= l0;
+    JIG(RangeV(15,15),RangeV(0,15)) /= l0;
   }
 
   void Trafo33RCM::computezI(const Vec& qG,const Vec& qGt) {
     computeJIG(qG);
 
     qIt = JIG*qGt;
-    rSt = qIt(0,2);
-    pSt = qIt(3,5);
+    rSt = qIt(RangeV(0,2));
+    pSt = qIt(RangeV(3,5));
     epstilt = qIt(6);
-    bet(0,2) = pSt;
-    bet(3,10) = qIt(7,14);
+    bet(RangeV(0,2)) = pSt;
+    bet(RangeV(3,10)) = qIt(RangeV(7,14));
     k0t = qIt(15);
   }
 
@@ -431,7 +431,7 @@ namespace MBSimFlexibleBody {
   void Trafo33RCM::computeJIGt(const Vec& qGt) {
     // REQUIRED	computeCOSYt()
 
-    RowVec rRrLtmH = (qGt(10,12)-qGt(0,2)).T();		
+    RowVec rRrLtmH = (qGt(RangeV(10,12))-qGt(RangeV(0,2))).T();		
     RowVec tStH = tSt.T(); 
 
     Mat nSbEt = nSpSt*pSbE;
@@ -444,11 +444,11 @@ namespace MBSimFlexibleBody {
     RowVec etabtilbEt = bStH*btilSbE+btilStH*bSbE + bSH*btilSbEt+btilSH*bSbEt;
     RowVec etantilbEt = bStH*ntilSbE+ntilStH*bSbE + bSH*ntilSbEt+ntilSH*bSbEt;
 
-    Mat tSqGt = tSpSt*beqG(0,0,2,15)+tSpS*JIGt(3,0,5,15);
-    Mat nSqGt = nSpSt*beqG(0,0,2,15)+nSpS*JIGt(3,0,5,15);
-    Mat bSqGt = bSpSt*beqG(0,0,2,15)+bSpS*JIGt(3,0,5,15);
-    Mat ntilSqGt = ntilSpSt*beqG(0,0,2,15)+ntilSpS*JIGt(3,0,5,15);
-    Mat btilSqGt = btilSpSt*beqG(0,0,2,15)+btilSpS*JIGt(3,0,5,15);
+    Mat tSqGt = tSpSt*beqG(RangeV(0,2),RangeV(0,15))+tSpS*JIGt(RangeV(3,5),RangeV(0,15));
+    Mat nSqGt = nSpSt*beqG(RangeV(0,2),RangeV(0,15))+nSpS*JIGt(RangeV(3,5),RangeV(0,15));
+    Mat bSqGt = bSpSt*beqG(RangeV(0,2),RangeV(0,15))+bSpS*JIGt(RangeV(3,5),RangeV(0,15));
+    Mat ntilSqGt = ntilSpSt*beqG(RangeV(0,2),RangeV(0,15))+ntilSpS*JIGt(RangeV(3,5),RangeV(0,15));
+    Mat btilSqGt = btilSpSt*beqG(RangeV(0,2),RangeV(0,15))+btilSpS*JIGt(RangeV(3,5),RangeV(0,15));
 
     RowVec xibtilqGt = nStH*btilSqG+btilStH*nSqG + nSH*btilSqGt+btilSH*nSqGt;
     RowVec xintilqGt = nStH*ntilSqG+ntilStH*nSqG + nSH*ntilSqGt+ntilSH*nSqGt;
@@ -460,54 +460,54 @@ namespace MBSimFlexibleBody {
     SMt(0,9) = 0.5*cos(pS(1))*pSt(1);
     SMt(0,10) = 0.5*cos(pS(1))*pSt(1);
 
-    SMt(5,0,5,10) = -rRrLtmH*nSbE-rRrLmH*nSbEt;
-    SMt(5,0,5,10) += xintilbEt*(be(4)-be(3))+xibtilbEt*(be(8)-be(7));
-    SMt(5,0,5,10) += xintilbE*(bet(4)-bet(3))+xibtilbE*(bet(8)-bet(7));
+    SMt(RangeV(5,5),RangeV(0,10)) = -rRrLtmH*nSbE-rRrLmH*nSbEt;
+    SMt(RangeV(5,5),RangeV(0,10)) += xintilbEt*(be(4)-be(3))+xibtilbEt*(be(8)-be(7));
+    SMt(RangeV(5,5),RangeV(0,10)) += xintilbE*(bet(4)-bet(3))+xibtilbE*(bet(8)-bet(7));
     SMt(5,4) +=xintilt;
     SMt(5,3) -=xintilt;
     SMt(5,8) +=xibtilt;
     SMt(5,7) -=xibtilt;
 
-    SMt(6,0,6,10) = -rRrLtmH*bSbE-rRrLmH*bSbEt;
-    SMt(6,0,6,10) += etantilbEt*(be(4)-be(3))+etabtilbEt*(be(8)-be(7));
-    SMt(6,0,6,10) += etantilbE*(bet(4)-bet(3))+etabtilbE*(bet(8)-bet(7));
+    SMt(RangeV(6,6),RangeV(0,10)) = -rRrLtmH*bSbE-rRrLmH*bSbEt;
+    SMt(RangeV(6,6),RangeV(0,10)) += etantilbEt*(be(4)-be(3))+etabtilbEt*(be(8)-be(7));
+    SMt(RangeV(6,6),RangeV(0,10)) += etantilbE*(bet(4)-bet(3))+etabtilbE*(bet(8)-bet(7));
     SMt(6,4) +=etantilt;
     SMt(6,3) -=etantilt;
     SMt(6,8) +=etabtilt;
     SMt(6,7) -=etabtilt;
 
     Mat RHS_JIGt = -SMt*beqG;
-    RHS_JIGt(5,0,5,15) += nStH*drRdrLm;
-    RHS_JIGt(6,0,6,15) += bStH*drRdrLm;
+    RHS_JIGt(RangeV(5,5),RangeV(0,15)) += nStH*drRdrLm;
+    RHS_JIGt(RangeV(6,6),RangeV(0,15)) += bStH*drRdrLm;
 
-    Mat beqGt = slvLU(static_cast<SqrMat>(SMRHS_Jac(0,0,10,10)),RHS_JIGt);	
+    Mat beqGt = slvLU(static_cast<SqrMat>(SMRHS_Jac(RangeV(0,10),RangeV(0,10))),RHS_JIGt);	
 
-    JIGt(3,0,5,15) = beqGt(0,0,2,15);
-    JIGt(7,0,14,15) = beqGt(3,0,10,15);
+    JIGt(RangeV(3,5),RangeV(0,15)) = beqGt(RangeV(0,2),RangeV(0,15));
+    JIGt(RangeV(7,14),RangeV(0,15)) = beqGt(RangeV(3,10),RangeV(0,15));
 
-    JIGt(6,0,6,15) = (tStH*drRdrLm+rRrLtmH*tSqG+rRrLmH*tSqGt)/l0;
+    JIGt(RangeV(6,6),RangeV(0,15)) = (tStH*drRdrLm+rRrLtmH*tSqG+rRrLmH*tSqGt)/l0;
 
-    JIGt(0,0,2,15) = -nSt*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(3,0,3,15)+beqG(4,0,4,15))+xibtil*(beqG(7,0,7,15)+beqG(8,0,8,15)));
-    JIGt(0,0,2,15) -= nS*(xintilqGt*(be(3)+be(4))+xibtilqGt*(be(7)+be(8))+xintilt*(beqG(3,0,3,15)+beqG(4,0,4,15))+xibtilt*(beqG(7,0,7,15)+beqG(8,0,8,15)));
-    JIGt(0,0,2,15) -= nS*(xintilqG*(bet(3)+bet(4))+xibtilqG*(bet(7)+bet(8))+xintil*(beqGt(3,0,3,15)+beqGt(4,0,4,15))+xibtil*(beqGt(7,0,7,15)+beqGt(8,0,8,15)));
+    JIGt(RangeV(0,2),RangeV(0,15)) = -nSt*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
+    JIGt(RangeV(0,2),RangeV(0,15)) -= nS*(xintilqGt*(be(3)+be(4))+xibtilqGt*(be(7)+be(8))+xintilt*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtilt*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
+    JIGt(RangeV(0,2),RangeV(0,15)) -= nS*(xintilqG*(bet(3)+bet(4))+xibtilqG*(bet(7)+bet(8))+xintil*(beqGt(RangeV(3,3),RangeV(0,15))+beqGt(RangeV(4,4),RangeV(0,15)))+xibtil*(beqGt(RangeV(7,7),RangeV(0,15))+beqGt(RangeV(8,8),RangeV(0,15))));
 
-    JIGt(0,0,2,15) -= (xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nSqGt;
-    JIGt(0,0,2,15) -= (xintilt*(be(3)+be(4))+xibtilt*(be(7)+be(8)))*nSqG;
-    JIGt(0,0,2,15) -= (xintil*(bet(3)+bet(4))+xibtil*(bet(7)+bet(8)))*nSqG;
+    JIGt(RangeV(0,2),RangeV(0,15)) -= (xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nSqGt;
+    JIGt(RangeV(0,2),RangeV(0,15)) -= (xintilt*(be(3)+be(4))+xibtilt*(be(7)+be(8)))*nSqG;
+    JIGt(RangeV(0,2),RangeV(0,15)) -= (xintil*(bet(3)+bet(4))+xibtil*(bet(7)+bet(8)))*nSqG;
 
-    JIGt(0,0,2,15) -= bSt*(etantilqG*(be(3)+be(4))+etabtilqG*(be(7)+be(8))+etantil*(beqG(3,0,3,15)+beqG(4,0,4,15))+etabtil*(beqG(7,0,7,15)+beqG(8,0,8,15)));
-    JIGt(0,0,2,15) -= bS*(etantilqGt*(be(3)+be(4))+etabtilqGt*(be(7)+be(8))+etantilt*(beqG(3,0,3,15)+beqG(4,0,4,15))+etabtilt*(beqG(7,0,7,15)+beqG(8,0,8,15)));
-    JIGt(0,0,2,15) -= bS*(etantilqG*(bet(3)+bet(4))+etabtilqG*(bet(7)+bet(8))+etantil*(beqGt(3,0,3,15)+beqGt(4,0,4,15))+etabtil*(beqGt(7,0,7,15)+beqGt(8,0,8,15)));
+    JIGt(RangeV(0,2),RangeV(0,15)) -= bSt*(etantilqG*(be(3)+be(4))+etabtilqG*(be(7)+be(8))+etantil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
+    JIGt(RangeV(0,2),RangeV(0,15)) -= bS*(etantilqGt*(be(3)+be(4))+etabtilqGt*(be(7)+be(8))+etantilt*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtilt*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
+    JIGt(RangeV(0,2),RangeV(0,15)) -= bS*(etantilqG*(bet(3)+bet(4))+etabtilqG*(bet(7)+bet(8))+etantil*(beqGt(RangeV(3,3),RangeV(0,15))+beqGt(RangeV(4,4),RangeV(0,15)))+etabtil*(beqGt(RangeV(7,7),RangeV(0,15))+beqGt(RangeV(8,8),RangeV(0,15))));
 
-    JIGt(0,0,2,15) -= (etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bSqGt;
-    JIGt(0,0,2,15) -= (etantilt*(be(3)+be(4))+etabtilt*(be(7)+be(8)))*bSqG;
-    JIGt(0,0,2,15) -= (etantil*(bet(3)+bet(4))+etabtil*(bet(7)+bet(8)))*bSqG;
+    JIGt(RangeV(0,2),RangeV(0,15)) -= (etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bSqGt;
+    JIGt(RangeV(0,2),RangeV(0,15)) -= (etantilt*(be(3)+be(4))+etabtilt*(be(7)+be(8)))*bSqG;
+    JIGt(RangeV(0,2),RangeV(0,15)) -= (etantil*(bet(3)+bet(4))+etabtil*(bet(7)+bet(8)))*bSqG;
 
-    JIGt(0,0,2,15) *= 0.5;
+    JIGt(RangeV(0,2),RangeV(0,15)) *= 0.5;
 
-    JIGt(15,0,15,15) = -cos(pS(1))*pSt(1)*(beqG(10,0,10,15)-beqG(9,0,9,15))-((bet(10)-bet(9))*cos(pS(1))-(be(10)-be(9))*sin(pS(1))*pSt(1))*beqG(1,0,1,15);
-    JIGt(15,0,15,15) += -sin(pS(1))*(beqGt(10,0,10,15)-beqGt(9,0,9,15))-(be(10)-be(9))*cos(pS(1))*beqGt(1,0,1,15);
-    JIGt(15,0,15,15) /= l0;
+    JIGt(RangeV(15,15),RangeV(0,15)) = -cos(pS(1))*pSt(1)*(beqG(RangeV(10,10),RangeV(0,15))-beqG(RangeV(9,9),RangeV(0,15)))-((bet(10)-bet(9))*cos(pS(1))-(be(10)-be(9))*sin(pS(1))*pSt(1))*beqG(RangeV(1,1),RangeV(0,15));
+    JIGt(RangeV(15,15),RangeV(0,15)) += -sin(pS(1))*(beqGt(RangeV(10,10),RangeV(0,15))-beqGt(RangeV(9,9),RangeV(0,15)))-(be(10)-be(9))*cos(pS(1))*beqGt(RangeV(1,1),RangeV(0,15));
+    JIGt(RangeV(15,15),RangeV(0,15)) /= l0;
   }
 
   void Trafo33RCM::computeTrafo(const Vec& qG,const Vec& qGt) {	
