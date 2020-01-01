@@ -70,7 +70,7 @@ class FooMat {
 //    2 x o o x
 //    3 x o o x
 //    4 x o o x
-    FooMat() : mBase(5,4), m(mBase(2,1,4,2)) {
+    FooMat() : mBase(5,4), m(mBase(fmatvec::RangeV(2,4),fmatvec::RangeV(1,2))) {
       double v=0;
       for(int r=0; r<5; ++r)
         for(int c=0; c<4; ++c)
