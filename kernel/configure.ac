@@ -98,8 +98,8 @@ AC_ARG_WITH([swigpath], [  --with-swigpath=PATH  The path to the swig program.],
   [swigpath="$withval"],[swigpath=""])
 
 dnl Check for python
-AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: 2.7).],
-  [pythonversion="$withval"],[pythonversion="2.7"])
+AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: $(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")).],
+  [pythonversion="$withval"],[pythonversion=$(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")])
 AC_ARG_ENABLE([python], [--enable-python  Enable MBSim moudles in python. This is ALPHA hence it must be enabled explicitly.])
 AM_CONDITIONAL([COND_PYTHON], [test "x$enable_python" == "xyes"])
 if test "x$enable_python" == "xyes"; then
@@ -124,8 +124,8 @@ if test "x$enable_python" == "xyes"; then
     PYTHON_LIBDIR=$PYTHON_LIBDIR/python$pythonversion
   elif test -d $PYTHON_LIBDIR/site-packages/numpy/core/include; then
     PYTHON_LIBDIR=$PYTHON_LIBDIR
-  elif test -d $PYTHON_LIBDIR/dist-packages/numpy/core/include; then # debian special handling
-    PYTHON_LIBDIR=$PYTHON_LIBDIR
+  elif test -d /usr/lib/python3/dist-packages/numpy/core/include; then # debian special handling
+    PYTHON_LIBDIR=/usr/lib/python3
   else
     AC_MSG_ERROR([Numpy header not found in directory $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include or $PYTHON_LIBDIR/site-packages/numpy/core/include])
   fi
@@ -136,8 +136,8 @@ if test "x$enable_python" == "xyes"; then
     SWIGVERSION=$($swig -version | sed -rne "s/^SWIG Version (.*)$/\1/p")
     AC_MSG_NOTICE([Using SWIG version $SWIGVERSION])
     SWIGVERSION_=$[[$(echo $SWIGVERSION | sed -re "s/^([0-9]+)\.([0-9]+)\.([0-9]+)$/\1*1000000+\2*1000+\3/")]]
-    if test $SWIGVERSION_ -lt $[[3*1000000+0*1000+6]] -o $SWIGVERSION_ -eq $[[3*1000000+0*1000+9]] -o $SWIGVERSION_ -eq $[[3*1000000+0*1000+10]]; then
-      AC_MSG_ERROR([SWIG >= 3.0.6 needed, but SWIG = 3.0.9 and 3.0.10 has bugs])
+    if test $SWIGVERSION_ -lt $[[3*1000000+0*1000+11]]; then
+      AC_MSG_ERROR([SWIG >= 3.0.11])
     fi
   else
     AC_MSG_ERROR([SWIG not found])

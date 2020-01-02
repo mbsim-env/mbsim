@@ -20,7 +20,7 @@
 #include <config.h>
 #include <QtWidgets/QGridLayout>
 #include <QDesktopWidget>
-#include <QWebFrame>
+#include <QScrollBar>
 #include <QToolBar>
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "utils.h"
@@ -47,10 +47,9 @@ namespace MBSimGUI {
   EchoView::EchoView(QMainWindow *parent) : QMainWindow(parent) {
     setIconSize(iconSize()*0.5);
 
-    out=new QWebView(this);
-    out->setPage(new QWebPage(out));
-    out->page()->setLinkDelegationPolicy(QWebPage::DelegateAllLinks);
-    connect(out, SIGNAL(linkClicked(const QUrl &)), this, SLOT(linkClicked(const QUrl &)));
+    out=new QTextBrowser(this);
+    out->setOpenLinks(false);
+    connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(linkClicked(const QUrl &)));
     setCentralWidget(out);
     auto tb=new QToolBar(this);
     addToolBar(Qt::RightToolBarArea, tb);
@@ -124,10 +123,18 @@ namespace MBSimGUI {
         static_cast<int>(a.blue() *fac+b.blue() *(1-fac))
       );
     }
+
+    void removeSpan(const QString &span, QString &outText) {
+      int start;
+      while((start=outText.indexOf(span))!=-1) {
+        auto end=outText.indexOf("</span>", start);
+        outText.replace(start, end-start+7, "");
+      }
+    }
   }
 
   void EchoView::updateOutput(bool moveToErrorOrEnd) {
-    int currentScrollY=out->page()->mainFrame()->evaluateJavaScript(R"+(window.scrollY)+").toInt();
+    int currentSBValue=out->verticalScrollBar()->value();
     // some colors
     static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
     static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
@@ -137,19 +144,31 @@ namespace MBSimGUI {
     static const QColor green("green");
     // set the text as html, prefix with a style element and sourounded by a pre element
     QString html;
+    int firstErrorPos;
     {
       outTextMutex.lock();
       BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
+      // CSS display: none is not working with QTextBrowser. Hence we remove it manually.
+      auto outText2=outText;
+      if(!showSSE->isChecked()) removeSpan("<span class=\"MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE\">", outText2);
+      if(!showWarn->isChecked()) removeSpan("<span class=\"MBSIMGUI_WARN\">", outText2);
+      if(!showInfo->isChecked()) removeSpan("<span class=\"MBSIMGUI_INFO\">", outText2);
+      if(!showDebug->isChecked()) removeSpan("<span class=\"MBSIMGUI_DEBUG\">", outText2);
+      if(!showDepr->isChecked()) removeSpan("<span class=\"MBSIMGUI_DEPRECATED\">", outText2);
+      // add anchor at first error, if an error is present
+      firstErrorPos=outText.indexOf("<span class=\"MBSIMGUI_ERROR\">");
+      if(firstErrorPos!=-1)
+        outText2.replace(firstErrorPos, 0, "<a name=\"MBSIMGUI_FIRSTERROR\"/>");
+
       html=QString(R"+(
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>MBSim Echo View</title>
     <style>
       body {
         color: %1;
-        font-size: 12pt;
       }
       .MBSIMGUI_ERROR { 
         background-color: %2;
@@ -186,7 +205,7 @@ namespace MBSimGUI {
        arg(showSSE->isChecked()?"inline":"none").arg(showWarn->isChecked()?"inline":"none").
        arg(showInfo->isChecked()?"inline":"none").arg(showDebug->isChecked()?"inline":"none").
        arg(mergeColor(green, 0.3, bg).name()).arg(showDepr->isChecked()?"inline":"none")+
-        outText+
+        outText2+
 R"+(
     </pre>
   </body>
@@ -197,16 +216,13 @@ R"+(
 
     if(moveToErrorOrEnd) {
       // scroll to the first error if their is one, else scroll to the end
-      out->page()->mainFrame()->evaluateJavaScript(R"+(
-var e=document.getElementsByClassName("MBSIMGUI_ERROR");
-if(e.length==0)
-  window.scrollTo(0, document.body.scrollHeight);
-else
-  e[0].scrollIntoView(true);
-)+");
+      if(firstErrorPos==-1)
+        out->verticalScrollBar()->setValue(out->verticalScrollBar()->maximum());
+      else
+        out->scrollToAnchor("MBSIMGUI_FIRSTERROR");
     }
     else
-      out->page()->mainFrame()->evaluateJavaScript(QString(R"+(window.scrollTo(0, %1);)+").arg(currentScrollY));
+      out->verticalScrollBar()->setValue(currentSBValue);
   }
 
   QSize EchoView::sizeHint() const {

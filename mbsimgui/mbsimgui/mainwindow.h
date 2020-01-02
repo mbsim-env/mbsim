@@ -33,7 +33,6 @@
 
 class QAction;
 class QModelIndex;
-class QWebView;
 
 namespace OpenMBVGUI {
   class MainWindow;
@@ -73,7 +72,6 @@ namespace MBSimGUI {
   class Parameter;
   class EmbedItemData;
   class Project;
-  class WebDialog;
   class EchoStream;
 
   class MainWindow : public QMainWindow {
@@ -99,7 +97,6 @@ namespace MBSimGUI {
       QString currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
-      static WebDialog *xmlHelpDialog;
       bool allowUndo;
       xercesc::DOMDocument *doc;
       std::deque<xercesc::DOMDocument*> undos, redos;
