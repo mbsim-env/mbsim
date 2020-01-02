@@ -41,7 +41,7 @@ class FooVec {
   public:
     // 0 1 2 3 4 5
     // x x o o o x
-    FooVec(double x) : vBase(6), v(vBase(2,4)) {
+    FooVec(double x) : vBase(6), v(vBase(fmatvec::RangeV(2,4))) {
       for(int i=0; i<5; ++i)
         vBase(i)=i;
       if(v(0)!=2)

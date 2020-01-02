@@ -166,8 +166,8 @@ void _typemapOutMat_P_R(Mat *_1, PyObject *&_result) {
   if(!_result)
     throw std::runtime_error("Cannot create ndarray");
   npy_intp *strides=PyArray_STRIDES(reinterpret_cast<PyArrayObject*>(_result));
-  strides[0]=sizeof(typename Mat::value_type)*1;
-  strides[1]=sizeof(typename Mat::value_type)*_1->ldim();
+  strides[(_1->blasOrder()==101) ? 1 : 0]=sizeof(typename Mat::value_type)*1;
+  strides[(_1->blasOrder()==101) ? 0 : 1]=sizeof(typename Mat::value_type)*_1->ldim();
 }
 
 template<typename Mat>
