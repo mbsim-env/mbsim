@@ -136,7 +136,7 @@ namespace MBSim {
 
   double GlobalShiftCriteriaFunction::computeResults(const Vec & x, const Vec & fVal) {
     if(lastPoint.size() == 0) {
-      lastPoint = x;
+      lastPoint <<= x;
       return 1e30; //TODO: Guarantee that this returned value is larger than the tolerance and larger then the first result!
     }
 
@@ -145,7 +145,7 @@ namespace MBSim {
       functionValues <<= (*function)(x);
 
     double ret = nrmInf(functionValues - (*function)(lastPoint));
-    lastPoint = x;
+    lastPoint <<= x;
     return ret;
   }
 
@@ -156,7 +156,7 @@ namespace MBSim {
   vector<double> LocalShiftCriteriaFunction::computeResults(const Vec & x, const Vec & fVal) {
     vector<double> results;
     if(lastPoint.size() == 0) {
-      lastPoint = x;
+      lastPoint <<= x;
       for (auto iter = tolerances.begin(); iter != tolerances.end(); ++iter) {
         results.push_back(1e30); //TODO: Guarantee that this returned value is larger than the tolerance and larger then the first result!
       }
@@ -165,7 +165,7 @@ namespace MBSim {
       for (auto & tolerance : tolerances) {
         results.push_back(nrmInf((*function)(x)(tolerance.first) - (*function)(lastPoint)(tolerance.first)));
       }
-      lastPoint = x;
+      lastPoint <<= x;
     }
     return results;
   }

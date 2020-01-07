@@ -100,10 +100,8 @@ namespace MBSim {
     Vec returnVec(2 * NumberOfContacts, INIT, 0.);
 
     //reference to gap and lambda
-    Vec w;
-    Vec z;
-    w = currentSolution(RangeV(0, NumberOfContacts - 1));
-    z = currentSolution(RangeV(NumberOfContacts, 2 * NumberOfContacts - 1));
+    Vec w = currentSolution(RangeV(0, NumberOfContacts - 1));
+    Vec z = currentSolution(RangeV(NumberOfContacts, 2 * NumberOfContacts - 1));
 
     if (msgAct(Debug)) {
 

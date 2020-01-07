@@ -32,11 +32,11 @@ void solve(SymMat& C, Vec& q, int dim) {
     if (LinearComplementarityProblem::LCPSolvingStrategy(strategy) == 2) {
       for (int jactype = 0; jactype < 2; jactype++) {
         problem.setJacobianType(LinearComplementarityProblem::JacobianType(jactype));
-        result = problem.solve();
+        result <<= problem.solve();
       }
     }
     else {
-      result = problem.solve();
+      result <<= problem.solve();
     }
   }
 

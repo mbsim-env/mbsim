@@ -58,8 +58,8 @@ int main (int argc, char* argv[]) {
   for(int i =0; i< dimension; i++) {
     initialSolution(i) = 5*i;
   }
-  Vec test1 = initialSolution.copy();
-  Vec test2 = initialSolution.copy();
+  Vec test1 = initialSolution;
+  Vec test2 = initialSolution;
 
   StopWatch sw;
 
