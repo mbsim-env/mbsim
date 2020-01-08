@@ -104,7 +104,7 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,fixedArgDim,retDim,fixedRetDim,parent));
     }
     if(i==10)
-      return new PiecewisePolynomFunctionWidget;
+      return new PiecewisePolynomFunctionWidget(retDim,fixedRetDim);
     if(i==11)
       return new PolynomFunctionWidget;
     if(i==12)
@@ -118,7 +118,7 @@ namespace MBSimGUI {
     if(i==16)
       return new SymbolicFunctionWidget(QStringList(argName),vector<int>(1,argDim),fixedArgDim,retDim,fixedRetDim);
     if(i==17)
-      return new TabularFunctionWidget;
+      return new TabularFunctionWidget(retDim,fixedRetDim);
     if(i==18) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -193,7 +193,7 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy2,"q",1,false,3,true,parent));
     }
     if(i==3)
-      return new PiecewisePolynomFunctionWidget;
+      return new PiecewisePolynomFunctionWidget(3,true);
     if(i==4)
       return new SymbolicFunctionWidget(QStringList("q"),vector<int>(1,1),false,3,true);
     if(i==5)
@@ -246,11 +246,11 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy2,"t",0,true,3,true,parent));
     }
     if(i==2)
-      return new PiecewisePolynomFunctionWidget;
+      return new PiecewisePolynomFunctionWidget(3,true);
     if(i==3)
       return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,0),true,3,true);
     if(i==4)
-      return new TabularFunctionWidget;
+      return new TabularFunctionWidget(3,true);
     if(i==5) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -397,7 +397,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TabularFunctionWidgetFactory::TabularFunctionWidgetFactory() {
+  TabularFunctionWidgetFactory::TabularFunctionWidgetFactory(int retDim_, bool fixedRetDim_) : retDim(retDim_), fixedRetDim(fixedRetDim_) {
     name.emplace_back("x and y");
     name.emplace_back("xy");
     xmlName.push_back(MBSIM%"x");
@@ -408,11 +408,14 @@ namespace MBSimGUI {
     if(i==0) {
       auto *widgetContainer = new ContainerWidget;
       widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
-      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,1,"0","0"),vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
+      if(fixedRetDim)
+        widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,retDim,"0","0"),vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
+      else
+        widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatColsVarWidgetFactory(3,retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
       return widgetContainer;
     }
     if(i==1)
-      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
+      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,1+retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
     return nullptr;
   }
 
@@ -543,7 +546,7 @@ namespace MBSimGUI {
       return new PiecewiseDefinedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,var));
     }
     if(i==3)
-      return new PiecewisePolynomFunctionWidget;
+      return new PiecewisePolynomFunctionWidget(3,true);
     if(i==4)
       return new PolarContourFunctionWidget(element,parent);
     if(i==5)

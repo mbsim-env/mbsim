@@ -169,7 +169,7 @@ namespace MBSimGUI {
 
   class TabularFunctionWidgetFactory : public WidgetFactory {
     public:
-      TabularFunctionWidgetFactory();
+      TabularFunctionWidgetFactory(int retDim_, bool fixedRetDim_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -177,6 +177,8 @@ namespace MBSimGUI {
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      int retDim;
+      bool fixedRetDim;
   };
 
   class TwoDimensionalTabularFunctionWidgetFactory : public WidgetFactory {

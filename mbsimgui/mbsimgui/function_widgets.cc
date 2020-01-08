@@ -244,12 +244,12 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",retDim,0,fixedRetDim),false,false,MBSIM%"components");
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",max(1,retDim),0,fixedRetDim),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 
   void VectorValuedFunctionWidget::resize_(int m, int n) {
-    static_cast<ListWidget*>(functions->getWidget())->setSize(m);
+    static_cast<ListWidget*>(functions->getWidget())->setSize(max(1,m));
   }
 
   DOMElement* VectorValuedFunctionWidget::initializeUsingXML(DOMElement *element) {
@@ -450,12 +450,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  TabularFunctionWidget::TabularFunctionWidget() {
+  TabularFunctionWidget::TabularFunctionWidget(int retDim, bool fixedRetDim) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory,QBoxLayout::TopToBottom,5);
+    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory(max(1,retDim),fixedRetDim),QBoxLayout::TopToBottom,5);
     layout->addWidget(choice);
 
     choiceChanged();
@@ -478,7 +478,8 @@ namespace MBSimGUI {
     }
   }
 
-  void TabularFunctionWidget::resize_(int m, int n) {
+  void TabularFunctionWidget::resize_(int m_, int n) {
+    int m = max(1,m_);
     if(choice->getIndex()==0) {
       auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m);
@@ -538,12 +539,12 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PiecewisePolynomFunctionWidget::PiecewisePolynomFunctionWidget() {
+  PiecewisePolynomFunctionWidget::PiecewisePolynomFunctionWidget(int retDim, bool fixedRetDim) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory,QBoxLayout::TopToBottom,5);
+    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory(max(1,retDim),fixedRetDim),QBoxLayout::TopToBottom,5);
     layout->addWidget(choice);
 
     vector<QString> list;
@@ -573,7 +574,8 @@ namespace MBSimGUI {
     }
   }
 
-  void PiecewisePolynomFunctionWidget::resize_(int m, int n) {
+  void PiecewisePolynomFunctionWidget::resize_(int m_, int n) {
+    int m = max(1,m_);
     if(choice->getIndex()==0) {
       auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m);

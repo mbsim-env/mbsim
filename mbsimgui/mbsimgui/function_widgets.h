@@ -211,7 +211,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      TabularFunctionWidget();
+      TabularFunctionWidget(int retDim, bool fixedRetDim);
       QString getType() const override { return "TabularFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -242,7 +242,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      PiecewisePolynomFunctionWidget();
+      PiecewisePolynomFunctionWidget(int retDim, bool fixedRetDim);
       QString getType() const override { return "PiecewisePolynomFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
