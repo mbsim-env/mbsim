@@ -57,7 +57,7 @@ namespace MBSimGUI {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    A = new ExtWidget("Translation vectors",new ChoiceWidget2(new MatColsVarWidgetFactory(m,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationVectors");
+    A = new ExtWidget("Translation vectors",new ChoiceWidget2(new MatColsVarWidgetFactory(m,1,vector<QStringList>(3,QStringList()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationVectors");
     layout->addWidget(A);
 
     b = new ExtWidget("Offset",new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
