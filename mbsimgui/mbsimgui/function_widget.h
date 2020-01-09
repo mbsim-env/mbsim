@@ -27,6 +27,11 @@ namespace MBSimGUI {
 
   class FunctionWidget : public Widget {
     public:
+      enum VarType {
+        scalar=0,
+        fixedVec,
+        varVec
+      };
       virtual int getArg1Size() const { return 1; }
       virtual int getArg2Size() const { return 1; }
       virtual void setArg1Size(int i) { }

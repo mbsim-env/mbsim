@@ -20,7 +20,7 @@
 #ifndef _FUNCTION_WIDGET_FACTORY_H_
 #define _FUNCTION_WIDGET_FACTORY_H_
 
-#include "widget.h"
+#include "function_widget.h"
 #include "namespace.h"
 
 namespace MBSimGUI {
@@ -29,7 +29,7 @@ namespace MBSimGUI {
 
   class Function1ArgWidgetFactory : public WidgetFactory {
     public:
-      Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, bool fixedArgDim_, int retDim_, bool fixedRetDim_, QWidget *parent_, int index_=3);
+      Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, FunctionWidget::VarType argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_, int index_=3);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -39,9 +39,9 @@ namespace MBSimGUI {
       Element *element;
       QString argName;
       int argDim;
-      bool fixedArgDim;
+      FunctionWidget::VarType argType;
       int retDim;
-      bool fixedRetDim;
+      FunctionWidget::VarType retType;
       QWidget *parent;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
@@ -50,7 +50,7 @@ namespace MBSimGUI {
 
   class Function2ArgWidgetFactory : public WidgetFactory {
     public:
-      Function2ArgWidgetFactory(Element *element_, const QStringList &argName, const std::vector<int> argDim_, bool fixedArgDim, int retDim_, bool fixedRetDim_, QWidget *parent_);
+      Function2ArgWidgetFactory(Element *element_, const QStringList &argName, const std::vector<int> argDim_, const std::vector<FunctionWidget::VarType> &argType, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -59,9 +59,9 @@ namespace MBSimGUI {
       Element *element;
       QStringList argName;
       std::vector<int> argDim;
-      bool fixedArgDim;
+      std::vector<FunctionWidget::VarType> argType;
       int retDim;
-      bool fixedRetDim;
+      FunctionWidget::VarType retType;
       QWidget *parent;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
@@ -169,7 +169,7 @@ namespace MBSimGUI {
 
   class TabularFunctionWidgetFactory : public WidgetFactory {
     public:
-      TabularFunctionWidgetFactory(int retDim_, bool fixedRetDim_);
+      TabularFunctionWidgetFactory(int retDim_, FunctionWidget::VarType retType_);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -178,7 +178,7 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       int retDim;
-      bool fixedRetDim;
+      FunctionWidget::VarType retType;
   };
 
   class TwoDimensionalTabularFunctionWidgetFactory : public WidgetFactory {

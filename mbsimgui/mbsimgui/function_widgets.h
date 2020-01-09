@@ -137,7 +137,7 @@ namespace MBSimGUI {
   class VectorValuedFunctionWidget : public FunctionWidget {
 
     public:
-      VectorValuedFunctionWidget(WidgetFactory *factory, int retDim, bool fixedRetDim);
+      VectorValuedFunctionWidget(WidgetFactory *factory, int retDim, VarType retType);
       QString getType() const override { return "VectorValuedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -194,7 +194,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      SymbolicFunctionWidget(const QStringList &argName, const std::vector<int> &argDim, bool fixedArgDim, int retDim, bool fixedRetDim);
+      SymbolicFunctionWidget(const QStringList &argName, const std::vector<int> &argDim, const std::vector<VarType> &argType, int retDim, VarType retType);
       QString getType() const override { return "SymbolicFunction"; }
       int getArg1Size() const override;
       int getArg2Size() const override;
@@ -211,7 +211,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      TabularFunctionWidget(int retDim, bool fixedRetDim);
+      TabularFunctionWidget(int retDim, VarType retType);
       QString getType() const override { return "TabularFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -242,7 +242,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      PiecewisePolynomFunctionWidget(int retDim, bool fixedRetDim);
+      PiecewisePolynomFunctionWidget(int retDim, VarType retType);
       QString getType() const override { return "PiecewisePolynomFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -288,7 +288,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      BidirectionalFunctionWidget(Element *element, const QString &argName, int argDim, bool fixedArgDim, int retDim, bool fixedRetDim, QWidget *parent);
+      BidirectionalFunctionWidget(Element *element, const QString &argName, int argDim, VarType argType, int retDim, VarType retType, QWidget *parent);
       QString getType() const override { return "BidirectionalFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;

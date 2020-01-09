@@ -147,7 +147,7 @@ namespace MBSimGUI {
     setLayout(layout);
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(nullptr);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"v",0,true,0,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -168,7 +168,7 @@ namespace MBSimGUI {
     setLayout(layout);
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(nullptr);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"v",2,true,0,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"v",2,FunctionWidget::fixedVec,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -252,7 +252,7 @@ namespace MBSimGUI {
     setLayout(layout);
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(nullptr);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"v",0,true,0,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -273,7 +273,7 @@ namespace MBSimGUI {
     setLayout(layout);
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
     dummy->setParent(nullptr);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"v",2,true,0,true,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"v",2,FunctionWidget::fixedVec,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 
@@ -420,10 +420,10 @@ namespace MBSimGUI {
     if(i==2) {
       QStringList var;
       var << "gd" << "laN";
-      vector<int> argDim(2);
-      argDim[0] = 1;
-      argDim[1] = 0;
-      return new SymbolicFunctionWidget(QStringList("gd")<<"laN",argDim,false,1,false);
+      vector<FunctionWidget::VarType> argType(2);
+      argType[0] = FunctionWidget::varVec;
+      argType[1] = FunctionWidget::scalar;
+      return new SymbolicFunctionWidget(QStringList("gd")<<"laN",vector<int>(2,1),argType,1,FunctionWidget::varVec);
     }
     return nullptr;
   }

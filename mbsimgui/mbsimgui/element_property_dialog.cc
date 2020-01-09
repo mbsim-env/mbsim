@@ -1889,7 +1889,7 @@ namespace MBSimGUI {
 
   GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new Function1ArgWidgetFactory(constraint,"q",1,false,1,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new Function1ArgWidgetFactory(constraint,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
   }
@@ -2196,13 +2196,13 @@ namespace MBSimGUI {
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new Function1ArgWidgetFactory(kineticExcitation,"t",0,true,1,true,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceFunction");
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new Function1ArgWidgetFactory(kineticExcitation,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceFunction");
     addToTab("Kinetics",forceFunction);
 
     momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics",momentDirection);
 
-    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(kineticExcitation,"t",0,true,1,true,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
+    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(kineticExcitation,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
     addToTab("Kinetics",momentFunction);
 
     arrow = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -2308,10 +2308,10 @@ namespace MBSimGUI {
 
   IsotropicRotationalSpringDamperPropertyDialog::IsotropicRotationalSpringDamperPropertyDialog(Element *springDamper) : FixedFrameLinkPropertyDialog(springDamper) {
 
-    elasticMomentFunction = new ExtWidget("Elastic moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(springDamper,"phi",1,false,1,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"elasticMomentFunction");
+    elasticMomentFunction = new ExtWidget("Elastic moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(springDamper,"phi",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"elasticMomentFunction");
     addToTab("Kinetics", elasticMomentFunction);
 
-    dissipativeMomentFunction = new ExtWidget("Dissipative moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(springDamper,"phid",1,false,1,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"dissipativeMomentFunction");
+    dissipativeMomentFunction = new ExtWidget("Dissipative moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(springDamper,"phid",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"dissipativeMomentFunction");
     addToTab("Kinetics", dissipativeMomentFunction);
   }
 
@@ -2448,7 +2448,7 @@ namespace MBSimGUI {
     frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
-    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new Function1ArgWidgetFactory(friction,"t",0,true,1,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
+    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
     addToTab("Kinetics",normalForceFunction);
   }
 
@@ -3105,7 +3105,7 @@ namespace MBSimGUI {
   }
 
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
-    function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(sensor,"t",0,true,1,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(sensor,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
   }
 
@@ -3225,7 +3225,7 @@ namespace MBSimGUI {
     inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"");
     addToTab("General", inputSignal);
 
-    function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(signal,"s",1,false,1,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(signal,"s",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
 
     connect(inputSignal,SIGNAL(widgetChanged()),this,SLOT(updateFunctionFactory()));
@@ -3237,9 +3237,9 @@ namespace MBSimGUI {
 
   void SignalOperationPropertyDialog::updateFunctionFactory(bool defineWidget) {
     if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"x",1,false,1,false,this));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"x",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
     else
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new  Function2ArgWidgetFactory(getElement(),QStringList("x")<<"y",vector<int>(2,1),false,1,false,this));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new  Function2ArgWidgetFactory(getElement(),QStringList("x")<<"y",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
     if(defineWidget)
       static_cast<ChoiceWidget2*>(function->getWidget())->defineWidget(0);
   }
@@ -3357,7 +3357,7 @@ namespace MBSimGUI {
     displacedVolume = new ExtWidget("Displaced volume",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,volumeUnits()),vector<int>(2,5)),QBoxLayout::RightToLeft,5),false,false,MBSIMPHYSICS%"displacedVolume");
     addToTab("General",displacedVolume);
 
-    densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"rho",0,true,0,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
+    densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"rho",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
     addToTab("General",densityFunction);
 
     gravityFunction = new ExtWidget("Gravity function",new ChoiceWidget2(new GravityFunctionWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"gravityFunction");
@@ -3387,7 +3387,7 @@ namespace MBSimGUI {
 
   DragPropertyDialog::DragPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
 
-    dragFunction = new ExtWidget("Drag function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"F",0,true,0,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
+    dragFunction = new ExtWidget("Drag function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"F",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
     addToTab("General",dragFunction);
 
     enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
@@ -3410,7 +3410,7 @@ namespace MBSimGUI {
 
   AerodynamicsPropertyDialog::AerodynamicsPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
 
-    densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"rho",0,true,0,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
+    densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"rho",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
     addToTab("General",densityFunction);
 
     coefficientFunction = new ExtWidget("Coefficient function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(link,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"coefficientFunction");
