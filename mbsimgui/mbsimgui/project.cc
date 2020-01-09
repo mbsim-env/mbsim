@@ -42,11 +42,9 @@ namespace MBSimGUI {
   }
 
   void Project::removeXMLElements() {
-    DOMNode *e = element->getFirstChild();
-    if(E(e)->getTagName()==PV%"evaluator") {
-      element->removeChild(e);
-      cout << "remove evaluator" << endl;
-    }
+    DOMElement *ele = element->getFirstElementChild();
+    if(E(ele)->getTagName()==PV%"evaluator")
+      element->removeChild(ele);
   }
 
   DOMElement* Project::createXMLElement(DOMNode *parent) {
@@ -139,5 +137,4 @@ namespace MBSimGUI {
       }
     }
   }
-
 }
