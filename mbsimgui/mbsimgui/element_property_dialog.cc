@@ -975,7 +975,7 @@ namespace MBSimGUI {
   }
 
   FclContourPropertyDialog::FclContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
-    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory(mw->getProject()->getVarTrue()),QBoxLayout::RightToLeft,5),true,false,MBSIMFCL%"computeLocalAABB");
+    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFCL%"computeLocalAABB");
     addToTab("General", computeLocalAABB);
   }
 
@@ -1161,10 +1161,10 @@ namespace MBSimGUI {
     highIter = new ExtWidget("High number of iterations",new ChoiceWidget2(new ScalarWidgetFactory("1000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"highNumberOfIterations");
     addToTab("Solver parameters", highIter);
 
-    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget2(new BoolWidgetFactory(mw->getProject()->getVarFalse()),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
+    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
     addToTab("Solver parameters", numericalJacobian);
 
-    stopIfNoConvergence = new ExtWidget("Stop if no convergence",new ChoiceWidget2(new BoolWidgetFactory(mw->getProject()->getVarFalse()),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stopIfNoConvergence");
+    stopIfNoConvergence = new ExtWidget("Stop if no convergence",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stopIfNoConvergence");
     addToTab("Solver parameters", stopIfNoConvergence);
 
     projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
@@ -1191,19 +1191,19 @@ namespace MBSimGUI {
     gdCorr = new ExtWidget("Generalized relative velocity correction value",new ChoiceWidget2(new ScalarWidgetFactory("1e-16"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityCorrectionValue");
     addToTab("Solver parameters", gdCorr);
 
-    inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
+    inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
     addToTab("Extra", inverseKinetics);
 
     initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialProjection");
     addToTab("Extra", initialProjection);
 
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"determineEquilibriumState");
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"determineEquilibriumState");
     addToTab("Extra",determineEquilibriumState);
 
-    useConstraintSolverForSmoothMotion = new ExtWidget("Use constraint solver for smooth motion",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForSmoothMotion");
+    useConstraintSolverForSmoothMotion = new ExtWidget("Use constraint solver for smooth motion",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForSmoothMotion");
     addToTab("Extra", useConstraintSolverForSmoothMotion);
 
-    useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForPlot");
+    useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForPlot");
     addToTab("Extra", useConstraintSolverForPlot);
   }
 

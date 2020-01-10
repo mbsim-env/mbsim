@@ -549,7 +549,7 @@ namespace MBSimGUI {
     layout->addWidget(nspace,6,1);
 
     layout->addWidget(new QLabel("Status:"),5,0);
-    status = new ChoiceWidget2(new BoolWidgetFactory(mw->getProject()->getVarTrue()),QBoxLayout::RightToLeft,5);
+    status = new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5);
     layout->addWidget(status,5,1);
 
     nspace->blockSignals(true);

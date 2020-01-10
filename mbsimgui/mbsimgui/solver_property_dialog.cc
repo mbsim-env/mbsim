@@ -1074,7 +1074,7 @@ namespace MBSimGUI {
     vector<QString> list;
     list.emplace_back("\"eigenmodes\"");
     list.emplace_back("\"eigenmotion\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIM%"task");
+    task = new ExtWidget("Task",new TextChoiceWidget(list,0,true),true,false,MBSIM%"task");
     addToTab("General",task);
 
     initialDeviation = new ExtWidget("Initial deviation",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialDeviation");
