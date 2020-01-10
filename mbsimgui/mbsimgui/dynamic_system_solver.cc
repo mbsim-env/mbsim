@@ -93,7 +93,7 @@ namespace MBSimGUI {
       E(element)->setAttribute("name","MBS_tmp");
       DOMElement *ele1 = D(element->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
       E(ele1)->setAttribute("value","plotRecursive");
-      ele1->insertBefore(element->getOwnerDocument()->createTextNode(X()%"false"), nullptr);
+      ele1->insertBefore(element->getOwnerDocument()->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
       element->insertBefore( ele1, element->getFirstElementChild() );
     }
     return element;

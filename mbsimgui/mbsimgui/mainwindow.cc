@@ -804,7 +804,24 @@ namespace MBSimGUI {
     string message;
     try {
       D(doc)->validate();
-      eval=Eval::createEvaluator("octave", &dependencies);
+      string evalName="octave"; // default evaluator
+      if(project)
+        evalName = project->getEvaluator();
+      else {
+        DOMElement *root = this->doc->getDocumentElement();
+        DOMElement *evaluator;
+        if(E(root)->getTagName()==PV%"Embed") {
+          auto r=root->getFirstElementChild();
+          if(E(r)->getTagName()==PV%"Parameter")
+            r=r->getNextElementSibling();
+          evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
+        }
+        else
+          evaluator=E(root)->getFirstElementChildNamed(PV%"evaluator");
+        if(evaluator)
+          evalName=X()%E(evaluator)->getFirstTextChild()->getData();
+      }
+      eval=Eval::createEvaluator(evalName, &dependencies);
       eval->addParamSet(doc->getDocumentElement());
     }
     catch(const std::exception &error) {
@@ -936,7 +953,7 @@ namespace MBSimGUI {
       D(doc)->validate();
       root = doc->getDocumentElement();
       vector<boost::filesystem::path> dependencies;
-      shared_ptr<Eval> eval=Eval::createEvaluator("octave", &dependencies);
+      shared_ptr<Eval> eval=Eval::createEvaluator(project->getEvaluator(), &dependencies);
       Preprocess::preprocess(mbxmlparser, eval, dependencies, root);
     }
     catch(exception &ex) {
@@ -952,9 +969,14 @@ namespace MBSimGUI {
     }
     echoView->updateOutput(true);
     // adapt the evaluator in the dom
-    DOMElement *evaluator=D(doc)->createElement(PV%"evaluator");
-    evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
-    root->insertBefore(evaluator, root->getFirstChild());
+    DOMElement *evaluator=E(root)->getFirstElementChildNamed(PV%"evaluator");
+    if(evaluator)
+      E(evaluator)->getFirstTextChild()->setData(X()%"xmlflat");
+    else {
+      evaluator=D(doc)->createElement(PV%"evaluator");
+      evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
+      root->insertBefore(evaluator, root->getFirstChild());
+    }
     E(root)->setOriginalFilename();
     basicSerializer->writeToURI(doc.get(), X()%projectFile.toStdString());
     QStringList arg;
@@ -1076,6 +1098,7 @@ namespace MBSimGUI {
     model->removeRow(index.row(), index.parent());
 
     delete project;
+    project = 0;
 
     project=Embed<Project>::createAndInit(doc->getDocumentElement());
     projectView->setProject(project);

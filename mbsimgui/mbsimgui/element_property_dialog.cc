@@ -44,6 +44,7 @@
 #include <mbxmlutilshelper/getinstallpath.h>
 #include "mainwindow.h"
 #include "dialogs.h"
+#include "project.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -974,7 +975,7 @@ namespace MBSimGUI {
   }
 
   FclContourPropertyDialog::FclContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
-    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5),true,false,MBSIMFCL%"computeLocalAABB");
+    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory(mw->getProject()->getVarTrue()),QBoxLayout::RightToLeft,5),true,false,MBSIMFCL%"computeLocalAABB");
     addToTab("General", computeLocalAABB);
   }
 
@@ -1160,10 +1161,10 @@ namespace MBSimGUI {
     highIter = new ExtWidget("High number of iterations",new ChoiceWidget2(new ScalarWidgetFactory("1000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"highNumberOfIterations");
     addToTab("Solver parameters", highIter);
 
-    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget2(new BoolWidgetFactory("false"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
+    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget2(new BoolWidgetFactory(mw->getProject()->getVarFalse()),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
     addToTab("Solver parameters", numericalJacobian);
 
-    stopIfNoConvergence = new ExtWidget("Stop if no convergence",new ChoiceWidget2(new BoolWidgetFactory("false"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stopIfNoConvergence");
+    stopIfNoConvergence = new ExtWidget("Stop if no convergence",new ChoiceWidget2(new BoolWidgetFactory(mw->getProject()->getVarFalse()),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stopIfNoConvergence");
     addToTab("Solver parameters", stopIfNoConvergence);
 
     projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");

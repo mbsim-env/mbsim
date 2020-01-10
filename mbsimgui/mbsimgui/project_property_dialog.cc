@@ -40,7 +40,6 @@ namespace MBSimGUI {
     list.emplace_back("octave");
     list.emplace_back("python");
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,0),true,false,PV%"evaluator");
-    evalSelect->setDisabled(true);
     addToTab("General",evalSelect);
   }
 
@@ -54,6 +53,7 @@ namespace MBSimGUI {
     item->removeXMLElements();
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     evalSelect->writeXMLFile(item->getXMLElement(),item->getXMLElement()->getFirstElementChild());
+    static_cast<Project*>(item)->setEvaluator(static_cast<TextChoiceWidget*>(evalSelect->getWidget())->getText().toStdString());
     return nullptr;
   }
 

@@ -549,7 +549,7 @@ namespace MBSimGUI {
     layout->addWidget(nspace,6,1);
 
     layout->addWidget(new QLabel("Status:"),5,0);
-    status = new ChoiceWidget2(new BoolWidgetFactory("true"),QBoxLayout::RightToLeft,5);
+    status = new ChoiceWidget2(new BoolWidgetFactory(mw->getProject()->getVarTrue()),QBoxLayout::RightToLeft,5);
     layout->addWidget(status,5,1);
 
     nspace->blockSignals(true);
@@ -616,7 +616,7 @@ namespace MBSimGUI {
       type->blockSignals(false);
       value->setEditText(item->text(1));
       QString str = item->text(2);
-      if(str=="0" or str=="1" or str=="false" or str=="true")
+      if(str=="0" or str=="1" or str==mw->getProject()->getVarFalse() or str==mw->getProject()->getVarTrue())
         status->setIndex(0);
       else
         status->setIndex(1);

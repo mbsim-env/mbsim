@@ -36,6 +36,13 @@ namespace MBSimGUI {
   extern DOMImplementation *impl;
   extern DOMLSSerializer *serializer;
 
+  Project::Project() {
+    trueMap["octave"] = "true";
+    trueMap["python"] = "True";
+    falseMap["octave"] = "false";
+    falseMap["python"] = "False";
+  }
+
   Project::~Project() {
     delete dss;
     delete solver;
@@ -62,8 +69,10 @@ namespace MBSimGUI {
   void Project::initializeUsingXML(DOMElement *element) {
     this->element = element;
     DOMElement *ele = element->getFirstElementChild();
-    if(E(ele)->getTagName()==PV%"evaluator")
+    if(E(ele)->getTagName()==PV%"evaluator") {
+      setEvaluator(X()%E(ele)->getFirstTextChild()->getData());
       ele = ele->getNextElementSibling();
+    }
     setDynamicSystemSolver(Embed<DynamicSystemSolver>::createAndInit(ele,this));
     ele = ele->getNextElementSibling();
     setSolver(Embed<Solver>::createAndInit(ele,this));

@@ -36,7 +36,7 @@ namespace MBSimGUI {
 
   class Project : public EmbedItemData {
     public:
-      Project()  = default;
+      Project();
       ~Project() override;
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
@@ -55,9 +55,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* createEmbedXMLElement() override;
       void setEmbeded(bool embeded_) override;
       void maybeRemoveEmbedXMLElement() override;
+      void setEvaluator(const std::string &evaluator_) { evaluator = evaluator_; }
+      const std::string& getEvaluator() { return evaluator; }
+      const QString& getVarTrue() { return trueMap[evaluator]; }
+      const QString& getVarFalse() { return falseMap[evaluator]; }
     private:
       DynamicSystemSolver *dss{nullptr};
       Solver *solver{nullptr};
+      std::string evaluator{"octave"};
+      std::map<std::string,QString> trueMap;
+      std::map<std::string,QString> falseMap;
   };
 
 }

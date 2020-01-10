@@ -153,6 +153,14 @@ namespace MBSimGUI {
     layout->addWidget(value);
   }
 
+  QString BoolWidget::getValue() const {
+    return value->checkState()==Qt::Checked?mw->getProject()->getVarTrue():mw->getProject()->getVarFalse();
+  }
+
+  void BoolWidget::setValue(const QString &str) {
+    value->setCheckState(str=="0" or str==mw->getProject()->getVarFalse()?Qt::Unchecked:Qt::Checked);
+  }
+
   bool BoolWidget::validate(const vector<vector<QString> > &A) const {
     if(A.size()!=1)
       return false;
@@ -169,10 +177,10 @@ namespace MBSimGUI {
     DOMText* text = E(element)->getFirstTextChild();
     if(!text)
       return nullptr;
-    string str = X()%text->getData();
-    if(str!="0" and str!="1" and str!="false" and str!="true")
+    QString str = QString::fromStdString(X()%text->getData());
+    if(str!="0" and str!="1" and str!=mw->getProject()->getVarFalse() and str!=mw->getProject()->getVarTrue())
       return nullptr;
-    setValue(QString::fromStdString(str));
+    setValue(str);
     return element;
   }
 
