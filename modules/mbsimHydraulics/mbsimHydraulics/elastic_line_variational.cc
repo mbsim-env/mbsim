@@ -114,27 +114,27 @@ namespace MBSimHydraulics {
 
       const Vec b1Ges=BGes.col(0);
       const Vec b2Ges=BGes.col(1);
-      BGes.col(0)=.5*(b1Ges+b2Ges);
-      BGes.col(1)=.5*(-b1Ges+b2Ges);
+      BGes.set(0, .5*(b1Ges+b2Ges));
+      BGes.set(1, .5*(-b1Ges+b2Ges));
 
       const RowVec c1Ges=CGes.row(0);
       const RowVec c2Ges=CGes.row(1);
-      CGes.row(0)=(c1Ges+c2Ges)/Z0;
-      CGes.row(1)=(-c1Ges+c2Ges)/Z0;
+      CGes.set(0, (c1Ges+c2Ges)/Z0);
+      CGes.set(1, (-c1Ges+c2Ges)/Z0);
 
       // resort
       SqrMat AA(2*n-1, INIT, 0);
       Mat BB(2*n-1, 2, INIT, 0);
       Mat CC(2+n, 2*n-1, INIT, 0);
       AA(n-1, n-1)=AGes(0,0);
-      BB.row(n-1)=BGes.row(0);
-      CC.col(n-1)=CGes.col(0);
+      BB.set(n-1, BGes.row(0));
+      CC.set(n-1, CGes.col(0));
       for (int i=0; i<n-1; i++) {
         AA(i, n+i)=AGes(2*i+1, 2*i+2);
         AA(n+i, i)=AGes(2*i+2, 2*i+1);
         AA(n+i, n+i)=AGes(2*i+2, 2*i+2);
-        BB.row(n+i)=BGes.row(2*i+2);
-        CC.col(n+i)=CGes.col(2*i+2);
+        BB.set(n+i, BGes.row(2*i+2));
+        CC.set(n+i, CGes.col(2*i+2));
       }
       AGes=AA;
       BGes=BB;

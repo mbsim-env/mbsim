@@ -55,13 +55,13 @@ namespace MBSimPhysics {
       bool gActiveChanged() override { return false; }
       bool isSingleValued() const override { return true; }
 
-      void updateWRef(const fmatvec::Mat& ref, int i=0) override { }
-      void updateVRef(const fmatvec::Mat& ref, int i=0) override { }
-      void updatehRef(const fmatvec::Vec &hRef, int i=0) override;
-      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
-      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
-      void updaterRef(const fmatvec::Vec &ref, int i=0) override { }
+      void updateWRef(fmatvec::Mat& ref, int i=0) override { }
+      void updateVRef(fmatvec::Mat& ref, int i=0) override { }
+      void updatehRef(fmatvec::Vec &hRef, int i=0) override;
+      virtual void updatedhdqRef(fmatvec::Mat& ref, int i=0);
+      virtual void updatedhduRef(fmatvec::SqrMat& ref, int i=0);
+      virtual void updatedhdtRef(fmatvec::Vec& ref, int i=0);
+      void updaterRef(fmatvec::Vec &ref, int i=0) override { }
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (sideOfInteraction,(MBSim::OpenMBVInteractionArrow::SideOfInteraction),MBSim::OpenMBVInteractionArrow::action)(scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(MBSim::OpenMBVArrow::ReferencePoint),MBSim::OpenMBVArrow::toPoint)(colorRepresentation,(MBSim::OpenMBVArrow::ColorRepresentation),MBSim::OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombvArrow = std::shared_ptr<MBSim::OpenMBVInteractionArrow>(new MBSim::OpenMBVInteractionArrow(sideOfInteraction,scaleLength,scaleSize,MBSim::OpenMBVArrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));

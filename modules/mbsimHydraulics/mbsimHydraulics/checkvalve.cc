@@ -60,13 +60,13 @@ namespace MBSimHydraulics {
   class colorLink : public Link {
     public:
       colorLink(const std::string &name, shared_ptr<OpenMBV::DynamicColoredBody> body_, ClosableRigidLine * l_) : Link(name), body(std::move(body_)), l(l_) {}
-      void updateWRef(const fmatvec::Mat&, int) override { }
-      void updateVRef(const fmatvec::Mat&, int) override { }
-      void updatehRef(const fmatvec::Vec&, int) override { }
-      void updatedhdqRef(const fmatvec::Mat&, int) { }
-      void updatedhduRef(const fmatvec::SqrMat&, int) { }
-      void updatedhdtRef(const fmatvec::Vec&, int) { }
-      void updaterRef(const fmatvec::Vec&, int) override { }
+      void updateWRef(fmatvec::Mat&, int) override { }
+      void updateVRef(fmatvec::Mat&, int) override { }
+      void updatehRef(fmatvec::Vec&, int) override { }
+      void updatedhdqRef(fmatvec::Mat&, int) { }
+      void updatedhduRef(fmatvec::SqrMat&, int) { }
+      void updatedhdtRef(fmatvec::Vec&, int) { }
+      void updaterRef(fmatvec::Vec&, int) override { }
       bool isActive() const override { return false; }
       bool gActiveChanged() override { return false; }
       bool isSingleValued() const override { return true; }

@@ -159,55 +159,55 @@ namespace MBSimHydraulics {
     Link::init(stage, config);
   }
 
-  void HNode::updateWRef(const Mat &WParent, int j) {
+  void HNode::updateWRef(Mat &WParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int laI=laInd;
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(j);
       const int hJ=hI+connectedLines[i].line->getGeneralizedVelocitySize()-1;
-      W[j][i] &= WParent(RangeV(hI, hJ), RangeV(laI, laJ));
+      W[j][i].ref(WParent, RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
 
-  void HNode::updateVRef(const Mat &VParent, int j) {
+  void HNode::updateVRef(Mat &VParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int laI=laInd;
       const int laJ=laInd;
       const int hI=connectedLines[i].line->gethInd(j);
       const int hJ=hI+connectedLines[i].line->getGeneralizedVelocitySize()-1;
-      V[j][i] &= VParent(RangeV(hI, hJ), RangeV(laI, laJ));
+      V[j][i].ref(VParent, RangeV(hI, hJ), RangeV(laI, laJ));
     }
   }
 
-  void HNode::updatehRef(const Vec& hParent, int j) {
+  void HNode::updatehRef(Vec& hParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
       const RangeV I(hInd, hInd+connectedLines[i].line->getGeneralizedVelocitySize()-1);
-      h[j][i] &= hParent(I);
+      h[j][i].ref(hParent, I);
     }
   }
 
-  void HNode::updaterRef(const Vec& rParent, int j) {
+  void HNode::updaterRef(Vec& rParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd=connectedLines[i].line->gethInd(j);
       const RangeV I(hInd, hInd+connectedLines[i].line->getGeneralizedVelocitySize()-1);
-      r[j][i] &= rParent(I);
+      r[j][i].ref(rParent, I);
     }
   }
 
-  void HNode::updatedhdqRef(const Mat& dhdqParent, int j) {
+  void HNode::updatedhdqRef(Mat& dhdqParent, int j) {
     throw runtime_error("Error in HNode::updatedhdqRef");
   }
 
-  void HNode::updatedhduRef(const SqrMat& dhduParent, int j) {
+  void HNode::updatedhduRef(SqrMat& dhduParent, int j) {
     throw runtime_error("Error in HNode::updatedhduRef");
   }
 
-  void HNode::updatedhdtRef(const Vec& dhdtParent, int j) {
+  void HNode::updatedhdtRef(Vec& dhdtParent, int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hInd = connectedLines[i].line->gethInd(j);
       const RangeV I=RangeV(hInd, hInd+connectedLines[i].sign.size()-1);
-      dhdt[i] &= dhdtParent(I);
+      dhdt[i].ref(dhdtParent, I);
     }
   }
 
@@ -400,7 +400,7 @@ namespace MBSimHydraulics {
   void RigidNode::updateW(int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hJ=connectedLines[i].line->getGeneralizedVelocitySize()-1;
-      W[j][i](RangeV(0,hJ), RangeV(0, 0))+=trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign;
+      W[j][i].add(RangeV(0,hJ), RangeV(0, 0),trans(connectedLines[i].line->getJacobian()) * connectedLines[i].sign);
     }
   }
 
@@ -511,7 +511,7 @@ namespace MBSimHydraulics {
     const SqrMat G = ds->evalG();
 
     RowVec jp1;
-    jp1 &= ds->getJprox().row(laInd);
+    jp1.ref(ds->getJprox(), laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gil->diff(La(0), gdn, gd(0), rFactor(0));
@@ -525,7 +525,7 @@ namespace MBSimHydraulics {
     const SqrMat G = ds->evalG();
 
     RowVec jp1;
-    jp1 &= ds->getJprox().row(laInd);
+    jp1.ref(ds->getJprox(), laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gfl->diff(la(0), gdd, rFactor(0));
@@ -653,7 +653,7 @@ namespace MBSimHydraulics {
   void RigidCavitationNode::updateW(int j) {
     for (unsigned int i=0; i<nLines; i++) {
       const int hJ=connectedLines[i].sign.size()-1;
-      W[j][i](RangeV(0,hJ), RangeV(0, 0))=connectedLines[i].sign;
+      W[j][i].set(RangeV(0,hJ), RangeV(0, 0),connectedLines[i].sign);
     }
   }
 
@@ -791,7 +791,7 @@ namespace MBSimHydraulics {
     const SqrMat G = ds->evalG();
 
     RowVec jp1;
-    jp1 &= ds->getJprox().row(laInd);
+    jp1.ref(ds->getJprox(), laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gil->diff(la(0), gdn, gd(0), rFactor(0), pCav);
@@ -805,7 +805,7 @@ namespace MBSimHydraulics {
     const SqrMat G = ds->evalG();
 
     RowVec jp1;
-    jp1 &= ds->getJprox().row(laInd);
+    jp1.ref(ds->getJprox(), laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gfl->diff(la(0), gdd, rFactor(0));

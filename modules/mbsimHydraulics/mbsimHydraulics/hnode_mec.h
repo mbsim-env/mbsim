@@ -69,13 +69,13 @@ namespace MBSimHydraulics {
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void updateWRef(const fmatvec::Mat& Wref, int i=0) override;
-      void updateVRef(const fmatvec::Mat& Vref, int i=0) override;
-      void updatehRef(const fmatvec::Vec& href, int i=0) override;
-      virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
-      virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
-      virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
-      void updaterRef(const fmatvec::Vec& ref, int i=0) override;
+      void updateWRef(fmatvec::Mat& Wref, int i=0) override;
+      void updateVRef(fmatvec::Mat& Vref, int i=0) override;
+      void updatehRef(fmatvec::Vec& href, int i=0) override;
+      virtual void updatedhdqRef(fmatvec::Mat& dhdqRef, int i=0);
+      virtual void updatedhduRef(fmatvec::SqrMat& dhduRef, int i=0);
+      virtual void updatedhdtRef(fmatvec::Vec& dhdtRef, int i=0);
+      void updaterRef(fmatvec::Vec& ref, int i=0) override;
 
       double evalQMec() { if(updQMec) updateQMec(); return QMec; }
       double evalQMecTrans() { if(updQMec) updateQMec(); return QMecTrans; }
@@ -193,7 +193,7 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void updatewbRef(const fmatvec::Vec& wbParent) override;
+      void updatewbRef(fmatvec::Vec& wbParent) override;
 
       void updateGeneralizedForces() override;
 

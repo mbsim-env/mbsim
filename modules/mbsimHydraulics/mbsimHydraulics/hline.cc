@@ -111,11 +111,11 @@ namespace MBSimHydraulics {
       dep_check.push_back(this);
       for (auto & i : dependencyOnOutflow) {
         const Mat Jdep=((RigidHLine*)i)->calculateJacobian(dep_check);
-        JLocal(0,RangeV(0,Jdep.cols()-1))+=Jdep;
+        JLocal.add(0,RangeV(0,Jdep.cols()-1),Jdep);
       }
       for (auto & i : dependencyOnInflow) {
         const Mat Jdep=((RigidHLine*)i)->calculateJacobian(dep_check);
-        JLocal(0,RangeV(0,Jdep.cols()-1))-=Jdep;
+        JLocal.sub(0,RangeV(0,Jdep.cols()-1),Jdep);
       }
     }
     return JLocal;

@@ -124,8 +124,8 @@ namespace MBSimHydraulics {
         plotVecW.resize(mdim, plotdim);
         plotVecWS.resize(mdim, plotdim);
         for (int i=0; i<plotdim; i++) {
-          plotVecW.col(i)=ansatz->VecW(relPlotPoints(i));
-          plotVecWS.col(i)=ansatz->VecWS(relPlotPoints(i));
+          plotVecW.set(i, ansatz->VecW(relPlotPoints(i)));
+          plotVecWS.set(i, ansatz->VecWS(relPlotPoints(i)));
         }
         delete ansatz;
         if(plotFeature[volumeFlow]) {

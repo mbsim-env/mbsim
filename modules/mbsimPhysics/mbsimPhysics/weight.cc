@@ -163,22 +163,22 @@ namespace MBSimPhysics {
     body = body_;
   }
 
-  void Weight::updatehRef(const Vec &hParent, int j) {
+  void Weight::updatehRef(Vec &hParent, int j) {
     RangeV I = RangeV(frame->gethInd(j),frame->gethInd(j)+frame->gethSize(j)-1);
-    h[j][0] &= hParent(I);
+    h[j][0].ref(hParent,I);
     I = RangeV(body->gethInd(j),body->gethInd(j)+body->gethSize(j)-1);
-    h[j][1] &= hParent(I);
+    h[j][1].ref(hParent,I);
   }
 
-  void Weight::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+  void Weight::updatedhdqRef(fmatvec::Mat& dhdqParent, int k) {
     throwError("Internal error");
   }
 
-  void Weight::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+  void Weight::updatedhduRef(fmatvec::SqrMat& dhduParent, int k) {
     throwError("Internal error");
   }
 
-  void Weight::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+  void Weight::updatedhdtRef(fmatvec::Vec& dhdtParent, int j) {
     throwError("Internal error");
   }
 

@@ -71,13 +71,13 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void updateWRef(const fmatvec::Mat& WRef, int i=0) override;
-      void updateVRef(const fmatvec::Mat& VRef, int i=0) override;
-      void updatehRef(const fmatvec::Vec& hRef, int i=0) override;
-      void updaterRef(const fmatvec::Vec& rRef, int i=0) override;
-      void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
-      void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
-      void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
+      void updateWRef(fmatvec::Mat& WRef, int i=0) override;
+      void updateVRef(fmatvec::Mat& VRef, int i=0) override;
+      void updatehRef(fmatvec::Vec& hRef, int i=0) override;
+      void updaterRef(fmatvec::Vec& rRef, int i=0) override;
+      void updatedhdqRef(fmatvec::Mat& dhdqRef, int i=0);
+      void updatedhduRef(fmatvec::SqrMat& dhduRef, int i=0);
+      void updatedhdtRef(fmatvec::Vec& dhdtRef, int i=0);
 
       double evalQHyd() { if(updQHyd) updateQHyd(); return QHyd; }
       double getQHyd(bool check=true) const { assert((not check) or (not updQHyd)); return QHyd; }

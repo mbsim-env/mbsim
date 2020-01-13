@@ -142,22 +142,22 @@ namespace MBSimPhysics {
     body[1] = body1;
   }
 
-  void UniversalGravitation::updatehRef(const Vec &hParent, int j) {
+  void UniversalGravitation::updatehRef(Vec &hParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      h[j][i] &= hParent(I);
+      h[j][i].ref(hParent,I);
     }
   }
 
-  void UniversalGravitation::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+  void UniversalGravitation::updatedhdqRef(fmatvec::Mat& dhdqParent, int k) {
     throwError("Internal error");
   }
 
-  void UniversalGravitation::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+  void UniversalGravitation::updatedhduRef(fmatvec::SqrMat& dhduParent, int k) {
     throwError("Internal error");
   }
 
-  void UniversalGravitation::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+  void UniversalGravitation::updatedhdtRef(fmatvec::Vec& dhdtParent, int j) {
     throwError("Internal error");
   }
 

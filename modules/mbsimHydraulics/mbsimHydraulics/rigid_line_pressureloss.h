@@ -52,14 +52,14 @@ namespace MBSimHydraulics {
       bool isSingleValued() const override { return (not isSetValued()) or (bilateral or (unilateral and (fabs(dpMin)>1e-6))); }
       void calcgdSize(int j) override {gdSize=active?1:0; }
       void calcsvSize() override {svSize=isSetValued()?1:0; }
-      void updatehRef(const fmatvec::Vec& hRef, int i=0) override;
-      void updaterRef(const fmatvec::Vec& rRef, int i=0) override;
-      void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0) {};
-      void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
-      void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
-      void updaterRef(const fmatvec::Vec& rRef);
-      void updateWRef(const fmatvec::Mat& WRef, int i=0) override;
-      void updateVRef(const fmatvec::Mat& VRef, int i=0) override;
+      void updatehRef(fmatvec::Vec& hRef, int i=0) override;
+      void updaterRef(fmatvec::Vec& rRef, int i=0) override;
+      void updatedhdqRef(fmatvec::Mat& dhdqRef, int i=0) {};
+      void updatedhduRef(fmatvec::SqrMat& dhduRef, int i=0);
+      void updatedhdtRef(fmatvec::Vec& dhdtRef, int i=0);
+      void updaterRef(fmatvec::Vec& rRef);
+      void updateWRef(fmatvec::Mat& WRef, int i=0) override;
+      void updateVRef(fmatvec::Mat& VRef, int i=0) override;
       // ==== END Methods for init-Process ===
 
       // ================================

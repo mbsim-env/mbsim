@@ -126,40 +126,40 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage, config);
   }
 
-  void RigidLinePressureLoss::updatehRef(const Vec& hParent, int i) {
+  void RigidLinePressureLoss::updatehRef(Vec& hParent, int i) {
     const int hInd = line->gethInd(i);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
-    h[i][0] &= hParent(I);
+    h[i][0].ref(hParent,I);
   }
 
-  void RigidLinePressureLoss::updatedhduRef(const SqrMat& dhduParent, int i) {
+  void RigidLinePressureLoss::updatedhduRef(SqrMat& dhduParent, int i) {
     throw runtime_error("Error in RigidLinePressureLoss::updatedhduRef");
   }
 
-  void RigidLinePressureLoss::updatedhdtRef(const Vec& dhdtParent, int i) {
+  void RigidLinePressureLoss::updatedhdtRef(Vec& dhdtParent, int i) {
     const int hInd = line->gethInd(i);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
-    dhdt[i] &= dhdtParent(I);
+    dhdt[i].ref(dhdtParent,I);
   }
 
-  void RigidLinePressureLoss::updaterRef(const Vec &rParent, int i) {
+  void RigidLinePressureLoss::updaterRef(Vec &rParent, int i) {
     const int hInd = line->gethInd(i);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
-    r[i][0] &= rParent(I);
+    r[i][0].ref(rParent,I);
   }
 
-  void RigidLinePressureLoss::updateWRef(const Mat &WParent, int j) {
+  void RigidLinePressureLoss::updateWRef(Mat &WParent, int j) {
     const int hInd = line->gethInd(j);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
     const RangeV J=RangeV(laInd, laInd+laSize-1);
-    W[j][0] &= WParent(I,J);
+    W[j][0].ref(WParent,I,J);
   }
 
-  void RigidLinePressureLoss::updateVRef(const Mat &VParent, int j) {
+  void RigidLinePressureLoss::updateVRef(Mat &VParent, int j) {
     const int hInd = line->gethInd(j);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
     const RangeV J=RangeV(laInd, laInd+laSize-1);
-    V[j][0] &= VParent(I,J);
+    V[j][0].ref(VParent,I,J);
   }
 
   void RigidLinePressureLoss::checkActive(int j) {
@@ -352,7 +352,7 @@ namespace MBSimHydraulics {
     const SqrMat G = ds->getG();
 
     RowVec jp1;
-    jp1 &= ds->getJprox().row(laInd);
+    jp1.ref(ds->getJprox(), laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gil->diff(La(0), gdn, gd(0), rFactor(0));
@@ -366,7 +366,7 @@ namespace MBSimHydraulics {
     const SqrMat G = ds->getG();
 
     RowVec jp1;
-    jp1 &= ds->getJprox().row(laInd);
+    jp1.ref(ds->getJprox(), laInd);
     RowVec e1(jp1.size());
     e1(laInd) = 1;
     Vec diff = gfl->diff(la(0), gdd, rFactor(0));
