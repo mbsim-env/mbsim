@@ -315,13 +315,13 @@ namespace MBSim {
 
   void RigidBody::updateqd() {
     if(not constraint) {
-      qd(iqT) = evaluTRel();
-      qd(iqR) = fTR ? (*fTR)(evalqRRel())*getuRRel() : getuRRel();
+      qd.set(iqT, evaluTRel());
+      qd.set(iqR, fTR ? (*fTR)(evalqRRel())*getuRRel() : getuRRel());
     }
   }
 
   void RigidBody::updateT() {
-    if(fTR) T(iqR,iuR) = (*fTR)(evalqRRel());
+    if(fTR) T.set(iqR,iuR, (*fTR)(evalqRRel()));
   }
 
   void RigidBody::updateInertiaTensor() {

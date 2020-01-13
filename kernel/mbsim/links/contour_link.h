@@ -52,13 +52,13 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      void updateWRef(const fmatvec::Mat& ref, int i=0) override;
-      void updateVRef(const fmatvec::Mat& ref, int i=0) override;
-      void updatehRef(const fmatvec::Vec &hRef, int i=0) override;
-      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0);
-      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0);
-      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0);
-      void updaterRef(const fmatvec::Vec &ref, int i=0) override;
+      void updateWRef(fmatvec::Mat& ref, int i=0) override;
+      void updateVRef(fmatvec::Mat& ref, int i=0) override;
+      void updatehRef(fmatvec::Vec &hRef, int i=0) override;
+      virtual void updatedhdqRef(fmatvec::Mat& ref, int i=0);
+      virtual void updatedhduRef(fmatvec::SqrMat& ref, int i=0);
+      virtual void updatedhdtRef(fmatvec::Vec& ref, int i=0);
+      void updaterRef(fmatvec::Vec &ref, int i=0) override;
       /***************************************************/
 
       void connect(Contour *contour0, Contour* contour1);

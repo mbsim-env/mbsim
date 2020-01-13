@@ -32,41 +32,41 @@ namespace MBSim {
   RigidBodyLink::RigidBodyLink(const string &name) : MechanicalLink(name),  support(nullptr) {
   }
 
-  void RigidBodyLink::updatehRef(const Vec &hParent, int j) {
+  void RigidBodyLink::updatehRef(Vec &hParent, int j) {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      h[j][i]&=hParent(K);
-      h[j][body.size()+i]&=hParent(I);
+      h[j][i].ref(hParent,K);
+      h[j][body.size()+i].ref(hParent,I);
     }
   } 
 
-  void RigidBodyLink::updaterRef(const Vec &rParent, int j) {
+  void RigidBodyLink::updaterRef(Vec &rParent, int j) {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      r[j][i]&=rParent(K);
-      r[j][body.size()+i]&=rParent(I);
+      r[j][i].ref(rParent,K);
+      r[j][body.size()+i].ref(rParent,I);
     }
   } 
 
-  void RigidBodyLink::updateWRef(const Mat &WParent, int j) {
+  void RigidBodyLink::updateWRef(Mat &WParent, int j) {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     RangeV J = RangeV(laInd,laInd+laSize-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      W[j][i]&=WParent(K,J);
-      W[j][body.size()+i]&=WParent(I,J);
+      W[j][i].ref(WParent,K,J);
+      W[j][body.size()+i].ref(WParent,I,J);
     }
   } 
 
-  void RigidBodyLink::updateVRef(const Mat &VParent, int j) {
+  void RigidBodyLink::updateVRef(Mat &VParent, int j) {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     RangeV J = RangeV(laInd,laInd+laSize-1);
     for(unsigned i=0; i<body.size(); i++) {
       RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      V[j][i]&=VParent(K,J);
-      V[j][body.size()+i]&=VParent(I,J);
+      V[j][i].ref(VParent,K,J);
+      V[j][body.size()+i].ref(VParent,I,J);
     }
   } 
 

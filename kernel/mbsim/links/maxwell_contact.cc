@@ -123,35 +123,35 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updateWRef(const Mat& WParent, int j) {
+  void MaxwellContact::updateWRef(Mat& WParent, int j) {
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updateWRef(WParent, j);
     }
   }
 
-  void MaxwellContact::updateVRef(const Mat& VParent, int j) {
+  void MaxwellContact::updateVRef(Mat& VParent, int j) {
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updateVRef(VParent, j);
     }
   }
 
-  void MaxwellContact::updatehRef(const Vec& hParent, int j) {
+  void MaxwellContact::updatehRef(Vec& hParent, int j) {
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updatehRef(hParent, j);
     }
   }
 
-  void MaxwellContact::updaterRef(const Vec& rParent, int j) {
+  void MaxwellContact::updaterRef(Vec& rParent, int j) {
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updaterRef(rParent, j);
     }
   }
 
-  void MaxwellContact::updatewbRef(const Vec& wbParent) {
+  void MaxwellContact::updatewbRef(Vec& wbParent) {
     Link::updatewbRef(wbParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -159,7 +159,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updatelaRef(const Vec& laParent) {
+  void MaxwellContact::updatelaRef(Vec& laParent) {
     Link::updatelaRef(laParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -167,7 +167,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updateLaRef(const Vec& LaParent) {
+  void MaxwellContact::updateLaRef(Vec& LaParent) {
     Link::updateLaRef(LaParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -175,7 +175,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updategRef(const Vec& gParent) {
+  void MaxwellContact::updategRef(Vec& gParent) {
     Link::updategRef(gParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter) {
@@ -184,7 +184,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updategdRef(const Vec& gdParent) {
+  void MaxwellContact::updategdRef(Vec& gdParent) {
     Link::updategdRef(gdParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -192,7 +192,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updateresRef(const Vec& resParent) {
+  void MaxwellContact::updateresRef(Vec& resParent) {
     Link::updateresRef(resParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -200,7 +200,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updaterFactorRef(const Vec& rFactorParent) {
+  void MaxwellContact::updaterFactorRef(Vec& rFactorParent) {
     Link::updaterFactorRef(rFactorParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -208,7 +208,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updatesvRef(const Vec &svParent) {
+  void MaxwellContact::updatesvRef(Vec &svParent) {
     Link::updatesvRef(svParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -216,7 +216,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updatejsvRef(const VecInt &jsvParent) {
+  void MaxwellContact::updatejsvRef(VecInt &jsvParent) {
     Link::updatejsvRef(jsvParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -224,7 +224,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updateLinkStatusRef(const VecInt &LinkStatusParent) {
+  void MaxwellContact::updateLinkStatusRef(VecInt &LinkStatusParent) {
     Link::updateLinkStatusRef(LinkStatusParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -232,7 +232,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
+  void MaxwellContact::updateLinkStatusRegRef(VecInt &LinkStatusRegParent) {
     Link::updateLinkStatusRegRef(LinkStatusRegParent);
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
@@ -849,7 +849,7 @@ namespace MBSim {
     }
   }
 
-  void MaxwellContact::updatecorrRef(const Vec& corrParent) {
+  void MaxwellContact::updatecorrRef(Vec& corrParent) {
     for (std::vector<std::vector<SingleContact>>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       for (std::vector<SingleContact>::iterator jter = iter->begin(); jter != iter->end(); ++jter)
         jter->updatecorrRef(corrParent);

@@ -65,70 +65,70 @@ namespace MBSim {
     dx = xd * getStepSize();
   }
 
-  void Link::updatewbRef(const Vec& wbParent) {
-    wb &= wbParent(RangeV(laInd,laInd+laSize-1));
+  void Link::updatewbRef(Vec& wbParent) {
+    wb.ref(wbParent, RangeV(laInd,laInd+laSize-1));
   }
 
-  void Link::updatexRef(const Vec &xParent) {
-    x &= xParent(RangeV(xInd,xInd+xSize-1));
+  void Link::updatexRef(Vec &xParent) {
+    x.ref(xParent, RangeV(xInd,xInd+xSize-1));
   } 
 
-  void Link::updatexdRef(const Vec &xdParent) {
-    xd &= xdParent(RangeV(xInd,xInd+xSize-1));
+  void Link::updatexdRef(Vec &xdParent) {
+    xd.ref(xdParent, RangeV(xInd,xInd+xSize-1));
   } 
 
-  void Link::updatedxRef(const Vec &dxParent) {
-    dx &= dxParent(RangeV(xInd,xInd+xSize-1));
+  void Link::updatedxRef(Vec &dxParent) {
+    dx.ref(dxParent, RangeV(xInd,xInd+xSize-1));
   }
 
-  void Link::updatelaRef(const Vec& laParent) {
-    la &= laParent(RangeV(laInd,laInd+laSize-1));
+  void Link::updatelaRef(Vec& laParent) {
+    la.ref(laParent, RangeV(laInd,laInd+laSize-1));
   }
 
-  void Link::updateLaRef(const Vec& LaParent) {
-    La &= LaParent(RangeV(laInd,laInd+laSize-1));
+  void Link::updateLaRef(Vec& LaParent) {
+    La.ref(LaParent, RangeV(laInd,laInd+laSize-1));
   }
 
   void Link::deletelaRef() {
     la.resize(la.size(), NONINIT);
   }
 
-  void Link::updategRef(const Vec& gParent) {
-    g &= gParent(RangeV(gInd,gInd+gSize-1));
+  void Link::updategRef(Vec& gParent) {
+    g.ref(gParent, RangeV(gInd,gInd+gSize-1));
   }
 
-  void Link::updategdRef(const Vec& gdParent) {
-    gd &= gdParent(RangeV(gdInd,gdInd+gdSize-1));
+  void Link::updategdRef(Vec& gdParent) {
+    gd.ref(gdParent, RangeV(gdInd,gdInd+gdSize-1));
   }
 
-  void Link::updateresRef(const Vec& resParent) {
-    res &= resParent(RangeV(laInd,laInd+laSize-1));
+  void Link::updateresRef(Vec& resParent) {
+    res.ref(resParent, RangeV(laInd,laInd+laSize-1));
   }
 
-  void Link::updaterFactorRef(const Vec& rFactorParent) {
-    rFactor &= rFactorParent(RangeV(rFactorInd,rFactorInd+rFactorSize-1));
+  void Link::updaterFactorRef(Vec& rFactorParent) {
+    rFactor.ref(rFactorParent, RangeV(rFactorInd,rFactorInd+rFactorSize-1));
   }
 
-  void Link::updatesvRef(const Vec &svParent) {
-    sv &= svParent(RangeV(svInd,svInd+svSize-1));
+  void Link::updatesvRef(Vec &svParent) {
+    sv.ref(svParent, RangeV(svInd,svInd+svSize-1));
   }
 
-  void Link::updatejsvRef(const VecInt &jsvParent) {
-    jsv &= jsvParent(RangeV(svInd,svInd+svSize-1));
+  void Link::updatejsvRef(VecInt &jsvParent) {
+    jsv.ref(jsvParent, RangeV(svInd,svInd+svSize-1));
   }
    
-  void Link::updateLinkStatusRef(const VecInt &LinkStatusParent) {
-    LinkStatus &= LinkStatusParent(RangeV(LinkStatusInd,LinkStatusInd+LinkStatusSize-1));
+  void Link::updateLinkStatusRef(VecInt &LinkStatusParent) {
+    LinkStatus.ref(LinkStatusParent, RangeV(LinkStatusInd,LinkStatusInd+LinkStatusSize-1));
   }
 
-  void Link::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
-    LinkStatusReg &= LinkStatusRegParent(RangeV(LinkStatusRegInd,LinkStatusRegInd+LinkStatusRegSize-1));
+  void Link::updateLinkStatusRegRef(VecInt &LinkStatusRegParent) {
+    LinkStatusReg.ref(LinkStatusRegParent, RangeV(LinkStatusRegInd,LinkStatusRegInd+LinkStatusRegSize-1));
   }
 
-  void Link::updatebRef(const Mat &bParent) {
+  void Link::updatebRef(Mat &bParent) {
     RangeV J = RangeV(laInd,laInd+laSize-1);
     RangeV I = RangeV(bInd,bInd+bSize-1);
-    b&=bParent(I,J);
+    b.ref(bParent,I,J);
   } 
 
   void Link::init(InitStage stage, const InitConfigSet &config) {
@@ -205,8 +205,8 @@ namespace MBSim {
         rFactor(i) *= 0.9;
   }
 
-  void Link::updatecorrRef(const fmatvec::Vec &ref) {
-    corr &= ref(RangeV(corrInd,corrInd+corrSize-1));
+  void Link::updatecorrRef(fmatvec::Vec &ref) {
+    corr.ref(ref, RangeV(corrInd,corrInd+corrSize-1));
   }
 
   const Vec& Link::evalg() {

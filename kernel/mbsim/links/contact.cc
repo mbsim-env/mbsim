@@ -93,87 +93,87 @@ namespace MBSim {
       iter->updateJacobians(j);
   }
 
-  void Contact::updateWRef(const Mat& WParent, int j) {
+  void Contact::updateWRef(Mat& WParent, int j) {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updateWRef(WParent, j);
   }
 
-  void Contact::updateVRef(const Mat& VParent, int j) {
+  void Contact::updateVRef(Mat& VParent, int j) {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updateVRef(VParent, j);
   }
 
-  void Contact::updatehRef(const Vec& hParent, int j) {
+  void Contact::updatehRef(Vec& hParent, int j) {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updatehRef(hParent, j);
   }
 
-  void Contact::updaterRef(const Vec& rParent, int j) {
+  void Contact::updaterRef(Vec& rParent, int j) {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updaterRef(rParent, j);
   }
 
-  void Contact::updatewbRef(const Vec& wbParent) {
+  void Contact::updatewbRef(Vec& wbParent) {
     Link::updatewbRef(wbParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updatewbRef(wbParent);
   }
 
-  void Contact::updatelaRef(const Vec& laParent) {
+  void Contact::updatelaRef(Vec& laParent) {
     Link::updatelaRef(laParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updatelaRef(laParent);
   }
 
-  void Contact::updateLaRef(const Vec& LaParent) {
+  void Contact::updateLaRef(Vec& LaParent) {
     Link::updateLaRef(LaParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updateLaRef(LaParent);
   }
 
-  void Contact::updategRef(const Vec& gParent) {
+  void Contact::updategRef(Vec& gParent) {
     Link::updategRef(gParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updategRef(gParent);
   }
 
-  void Contact::updategdRef(const Vec& gdParent) {
+  void Contact::updategdRef(Vec& gdParent) {
     Link::updategdRef(gdParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updategdRef(gdParent);
   }
 
-  void Contact::updateresRef(const Vec& resParent) {
+  void Contact::updateresRef(Vec& resParent) {
     Link::updateresRef(resParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updateresRef(resParent);
   }
 
-  void Contact::updaterFactorRef(const Vec& rFactorParent) {
+  void Contact::updaterFactorRef(Vec& rFactorParent) {
     Link::updaterFactorRef(rFactorParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updaterFactorRef(rFactorParent);
   }
 
-  void Contact::updatesvRef(const Vec &svParent) {
+  void Contact::updatesvRef(Vec &svParent) {
     Link::updatesvRef(svParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updatesvRef(svParent);
   }
 
-  void Contact::updatejsvRef(const VecInt &jsvParent) {
+  void Contact::updatejsvRef(VecInt &jsvParent) {
     Link::updatejsvRef(jsvParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updatejsvRef(jsvParent);
   }
 
-  void Contact::updateLinkStatusRef(const VecInt &LinkStatusParent) {
+  void Contact::updateLinkStatusRef(VecInt &LinkStatusParent) {
     Link::updateLinkStatusRef(LinkStatusParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updateLinkStatusRef(LinkStatusParent);
   }
 
-  void Contact::updateLinkStatusRegRef(const VecInt &LinkStatusRegParent) {
+  void Contact::updateLinkStatusRegRef(VecInt &LinkStatusRegParent) {
     Link::updateLinkStatusRegRef(LinkStatusRegParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updateLinkStatusRegRef(LinkStatusRegParent);
@@ -656,7 +656,7 @@ namespace MBSim {
     if (e) setMaximumNumberOfContacts(E(e)->getText<int>());
   }
 
-  void Contact::updatecorrRef(const Vec& corrParent) {
+  void Contact::updatecorrRef(Vec& corrParent) {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
       iter->updatecorrRef(corrParent);
   }

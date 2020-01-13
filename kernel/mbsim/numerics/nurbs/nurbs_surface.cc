@@ -712,9 +712,9 @@ namespace MBSim {
     int dd, r, s;
     for (k = 0; k <= du; ++k) {
       for (s = 0; s <= degV; ++s) {
-        temp.col(s) = Vec4("[0.0; 0.0; 0.0; 0.0]");
+        temp.set(s, Vec4("[0.0; 0.0; 0.0; 0.0]"));
         for (r = 0; r <= degU; ++r)
-          temp.col(s) = temp.col(s) + Nu(k, r) * P(uspan - degU + r, vspan - degV + s);
+          temp.set(s, temp.col(s) + Nu(k, r) * P(uspan - degU + r, vspan - degV + s));
       }
       dd = ((d - k) <= dv) ? (d - k) : dv;
       for (l = 0; l <= dd; ++l) {
@@ -774,9 +774,9 @@ namespace MBSim {
 
     int l;
     for (l = 0; l <= degV; l++) {
-      temp.col(l) = Vec4("[0.0; 0.0; 0.0; 0.0]");
+      temp.set(l, Vec4("[0.0; 0.0; 0.0; 0.0]"));
       for (int k = 0; k <= degU; k++) {
-        temp.col(l) = temp.col(l) + Nu(k) * P(uspan - degU + k, vspan - degV + l);
+        temp.set(l, temp.col(l) + Nu(k) * P(uspan - degU + k, vspan - degV + l));
       }
     }
 

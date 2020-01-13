@@ -78,14 +78,14 @@ namespace MBSim {
     Mat3x2 V2 = sphere->evalWV(contact.getContourFrame(isphere)->getZeta());
 
     SqrMat A(4,NONINIT);
-    A(RangeV(0,0),RangeV(0,1)) = -u1.T()*R1;
-    A(RangeV(0,0),RangeV(2,3)) = u1.T()*R2;
-    A(RangeV(1,1),RangeV(0,1)) = -v1.T()*R1;
-    A(RangeV(1,1),RangeV(2,3)) = v1.T()*R2;
-    A(RangeV(2,2),RangeV(0,1)).init(0);
-    A(RangeV(2,2),RangeV(2,3)) = n1.T()*U2;
-    A(RangeV(3,3),RangeV(0,1)).init(0);
-    A(RangeV(3,3),RangeV(2,3)) = n1.T()*V2;
+    A.set(RangeV(0,0),RangeV(0,1), -u1.T()*R1);
+    A.set(RangeV(0,0),RangeV(2,3), u1.T()*R2);
+    A.set(RangeV(1,1),RangeV(0,1), -v1.T()*R1);
+    A.set(RangeV(1,1),RangeV(2,3), v1.T()*R2);
+    A.set(RangeV(2,2),RangeV(0,1), RowVec(2));
+    A.set(RangeV(2,2),RangeV(2,3), n1.T()*U2);
+    A.set(RangeV(3,3),RangeV(0,1), RowVec(2));
+    A.set(RangeV(3,3),RangeV(2,3), n1.T()*V2);
 
     Vec b(4,NONINIT);
     b(0) = -u1.T()*(vC2-vC1);

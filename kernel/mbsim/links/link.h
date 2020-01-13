@@ -78,10 +78,10 @@ namespace MBSim {
       virtual fmatvec::Vec& getx() { return x; }
       virtual void setxInd(int xInd_) { xInd = xInd_; };
       virtual int getxSize() const { return xSize; }
-      virtual void updatexRef(const fmatvec::Vec& ref);
-      virtual void updatexdRef(const fmatvec::Vec& ref);
-      virtual void updatedxRef(const fmatvec::Vec& ref);
-      virtual void updatebRef(const fmatvec::Mat &hRef);
+      virtual void updatexRef(fmatvec::Vec& ref);
+      virtual void updatexdRef(fmatvec::Vec& ref);
+      virtual void updatedxRef(fmatvec::Vec& ref);
+      virtual void updatebRef(fmatvec::Mat &hRef);
       void init(InitStage stage, const InitConfigSet &config) override;
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
@@ -97,37 +97,37 @@ namespace MBSim {
       /**
        * \brief references to contact force direction matrix of dynamic system parent
        */
-      virtual void updateWRef(const fmatvec::Mat& ref, int i=0) = 0;
+      virtual void updateWRef(fmatvec::Mat& ref, int i=0) = 0;
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
        */
-      virtual void updateVRef(const fmatvec::Mat& ref, int i=0) = 0;
+      virtual void updateVRef(fmatvec::Mat& ref, int i=0) = 0;
 
       /**
        * \brief references to complete and link smooth force vector of dynamic system parent
        */
-      virtual void updatehRef(const fmatvec::Vec &hRef, int i=0) = 0;
+      virtual void updatehRef(fmatvec::Vec &hRef, int i=0) = 0;
 
       /**
        * \brief references to nonsmooth force vector of dynamic system parent
        */
-      virtual void updaterRef(const fmatvec::Vec &ref, int i=0) = 0;
+      virtual void updaterRef(fmatvec::Vec &ref, int i=0) = 0;
 
       /**
        * \brief references to TODO of dynamic system parent
        */
-      virtual void updatewbRef(const fmatvec::Vec &ref);
+      virtual void updatewbRef(fmatvec::Vec &ref);
 
       /**
        * \brief references to contact force parameter of dynamic system parent
        */
-      virtual void updatelaRef(const fmatvec::Vec& ref);
+      virtual void updatelaRef(fmatvec::Vec& ref);
 
       /**
        * \brief references to contact force parameter of dynamic system parent
        */
-      virtual void updateLaRef(const fmatvec::Vec& ref);
+      virtual void updateLaRef(fmatvec::Vec& ref);
 
       /**
        * \brief delete reference to contact force parameter of dynamic system parent
@@ -137,42 +137,42 @@ namespace MBSim {
       /**
        * \brief references to contact relative distances of dynamic system parent
        */
-      virtual void updategRef(const fmatvec::Vec& ref);
+      virtual void updategRef(fmatvec::Vec& ref);
 
       /**
        * \brief references to contact relative velocities of dynamic system parent
        */
-      virtual void updategdRef(const fmatvec::Vec& ref);
+      virtual void updategdRef(fmatvec::Vec& ref);
 
       /**
        * \brief references to residuum of nonlinear contact equations of dynamic system parent
        */
-      virtual void updateresRef(const fmatvec::Vec& ref);
+      virtual void updateresRef(fmatvec::Vec& ref);
 
       /**
        * \brief references to rfactors of dynamic system parent
        */
-      virtual void updaterFactorRef(const fmatvec::Vec& ref);
+      virtual void updaterFactorRef(fmatvec::Vec& ref);
 
       /**
        * \brief references to stopvector of dynamic system parent (root function for event driven integration)
        */
-      virtual void updatesvRef(const fmatvec::Vec &sv);
+      virtual void updatesvRef(fmatvec::Vec &sv);
 
       /**
        * \brief references to stopvector evaluation of dynamic system parent (root detection with corresponding bool array by event driven integrator)
        */
-      virtual void updatejsvRef(const fmatvec::VecInt &jsvParent);
+      virtual void updatejsvRef(fmatvec::VecInt &jsvParent);
 
       /**
        * \brief reference to vector of link status (for set valued links with piecewise link equations)
        */
-       virtual void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent);
+       virtual void updateLinkStatusRef(fmatvec::VecInt &LinkStatusParent);
 
       /**
        * \brief reference to vector of link status (for single-valued links)
        */
-       virtual void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent);
+       virtual void updateLinkStatusRegRef(fmatvec::VecInt &LinkStatusRegParent);
 
       /**
        * \brief calculates size of contact force parameters
@@ -346,7 +346,7 @@ namespace MBSim {
        */
       virtual void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) { }
       virtual void updatecorr(int j) { corr.init(0); }
-      virtual void updatecorrRef(const fmatvec::Vec &ref);
+      virtual void updatecorrRef(fmatvec::Vec &ref);
       virtual void calccorrSize(int j) { corrSize = 0; }
       virtual void setcorrInd(int corrInd_) { corrInd = corrInd_; }
       virtual void checkRoot() { }

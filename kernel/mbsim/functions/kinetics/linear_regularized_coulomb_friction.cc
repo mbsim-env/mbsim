@@ -34,9 +34,9 @@ namespace MBSim {
     Vec la(nFric, NONINIT);
     double normgd = nrm2(gd(RangeV(0, nFric - 1)));
     if (normgd < gdLim)
-      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-laN * mu / gdLim);
+      la.set(RangeV(0, nFric - 1), gd(RangeV(0, nFric - 1)) * (-laN * mu / gdLim));
     else
-      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-laN * mu / normgd);
+      la.set(RangeV(0, nFric - 1), gd(RangeV(0, nFric - 1)) * (-laN * mu / normgd));
     return la;
   }
 
@@ -45,9 +45,9 @@ namespace MBSim {
     Vec la(nFric, NONINIT);
     double normgd = nrm2(gd(RangeV(0, nFric - 1)));
     if (normgd < gdLim)
-      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-mu / gdLim);
+      la.set(RangeV(0, nFric - 1), gd(RangeV(0, nFric - 1)) * (-mu / gdLim));
     else
-      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-mu / normgd);
+      la.set(RangeV(0, nFric - 1), gd(RangeV(0, nFric - 1)) * (-mu / normgd));
     return la;
   }
 

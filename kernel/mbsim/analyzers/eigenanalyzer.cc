@@ -81,7 +81,7 @@ namespace MBSim {
       system->getState()(i) += epsroot;
       system->resetUpToDate();
       zd = system->evalzd();
-      A.col(i) = (zd - zdOld) / epsroot;
+      A.set(i, (zd - zdOld) / epsroot);
       system->getState()(i) = ztmp;
     }
     eigvec(A,V,w);

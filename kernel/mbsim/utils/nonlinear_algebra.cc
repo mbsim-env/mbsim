@@ -219,7 +219,7 @@ namespace MBSim {
           x(j)+=dx;
           f2 = (*fct)(x);
           x(j)=xj;
-          J.col(j) = (f2-f)/dx;
+          J.set(j, (f2-f)/dx);
         }
       }
 

@@ -36,16 +36,16 @@ namespace MBSim {
     dx = xd * getStepSize();
   }
 
-  void Constraint::updatexRef(const Vec &xParent) {
-    x &= xParent(RangeV(xInd,xInd+xSize-1));
+  void Constraint::updatexRef(Vec &xParent) {
+    x.ref(xParent, RangeV(xInd,xInd+xSize-1));
   } 
 
-  void Constraint::updatexdRef(const Vec &xdParent) {
-    xd &= xdParent(RangeV(xInd,xInd+xSize-1));
+  void Constraint::updatexdRef(Vec &xdParent) {
+    xd.ref(xdParent, RangeV(xInd,xInd+xSize-1));
   } 
 
-  void Constraint::updatedxRef(const Vec &dxParent) {
-    dx &= dxParent(RangeV(xInd,xInd+xSize-1));
+  void Constraint::updatedxRef(Vec &dxParent) {
+    dx.ref(dxParent, RangeV(xInd,xInd+xSize-1));
   }
 
   void Constraint::initz() {

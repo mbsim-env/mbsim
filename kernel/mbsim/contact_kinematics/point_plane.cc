@@ -77,8 +77,8 @@ namespace MBSim {
     R1.set(1, t1);
 
     SqrMat A(2,NONINIT);
-    A(RangeV(0,0),RangeV(0,1)) = -u1.T()*R1; // first matrix row
-    A(RangeV(1,1),RangeV(0,1)) = -v1.T()*R1; // second matrix row
+    A.set(RangeV(0,0),RangeV(0,1), -u1.T()*R1); // first matrix row
+    A.set(RangeV(1,1),RangeV(0,1), -v1.T()*R1); // second matrix row
 
     Vec b(2,NONINIT);
     b(0) = -u1.T()*(vC2-vC1);

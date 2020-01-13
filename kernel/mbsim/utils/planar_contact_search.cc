@@ -52,7 +52,7 @@ namespace MBSim {
     if (searchAll) {
       RegulaFalsi rf(func);
       rf.setTolerance(tol);
-      gbuf &= Vec(alphaC.size());
+      gbuf.resize(alphaC.size());
 
       for (int i = 0; i < nodes.size() - 1; i++) {
         double fa = (*func)(nodes(i));
@@ -123,8 +123,8 @@ namespace MBSim {
     }
 
     Mat results(nRoots, 2);
-    results.col(0) = alphaC(RangeV(0, nRoots - 1));
-    results.col(1) = gbuf(RangeV(0, nRoots - 1));
+    results.set(0, alphaC(RangeV(0, nRoots - 1)));
+    results.set(1, gbuf(RangeV(0, nRoots - 1)));
 
     return results;
   }

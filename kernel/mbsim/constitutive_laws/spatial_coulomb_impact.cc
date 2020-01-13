@@ -41,15 +41,15 @@ namespace MBSim {
     Mat d(2, 5, NONINIT);
     if (nrm2(argT) < mu * fabs(laN)) {
       //d_dargT = Mat(2,2,EYE);
-      d(RangeV(0, 1), RangeV(0, 1)) = E;
-      d(RangeV(0, 1), RangeV(2, 3)) = -r * E;
-      d(RangeV(0, 1), RangeV(4, 4)).init(0);
+      d.set(RangeV(0, 1), RangeV(0, 1), E);
+      d.set(RangeV(0, 1), RangeV(2, 3), -r * E);
+      d.set(RangeV(0, 1), RangeV(4, 4), Vec(2));
     }
     else {
       Mat d_dargT = (E - (argT * argT.T()) / (argT.T() * argT)) * mu * la(0) / nrm2(argT);
-      d(RangeV(0, 1), RangeV(0, 1)) = d_dargT;
-      d(RangeV(0, 1), RangeV(2, 3)) = -r * d_dargT;
-      d(RangeV(0, 1), RangeV(4, 4)) = argT / nrm2(argT) * mu;
+      d.set(RangeV(0, 1), RangeV(0, 1), d_dargT);
+      d.set(RangeV(0, 1), RangeV(2, 3), -r * d_dargT);
+      d.set(RangeV(0, 1), RangeV(4, 4), argT / nrm2(argT) * mu);
     }
     return d;
   }

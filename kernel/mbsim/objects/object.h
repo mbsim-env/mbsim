@@ -80,109 +80,109 @@ namespace MBSim {
        * \brief references to positions of dynamic system parent
        * \param qRef vector to be referenced
        */
-      virtual void updateqRef(const fmatvec::Vec& qRef);
+      virtual void updateqRef(fmatvec::Vec& qRef);
 
       /**
        * \brief references to differentiated positions of dynamic system parent
        * \param qdRef vector to be referenced
        */
-      virtual void updateqdRef(const fmatvec::Vec& qdRef);
+      virtual void updateqdRef(fmatvec::Vec& qdRef);
 
       /**
        * \brief references to differentiated positions of dynamic system parent
        * \param qdRef vector to be referenced
        */
-      virtual void updatedqRef(const fmatvec::Vec& dqRef);
+      virtual void updatedqRef(fmatvec::Vec& dqRef);
 
       /**
        * \brief references to velocities of dynamic system parent
        * \param uRef vector to be referenced
        */
-      virtual void updateuRef(const fmatvec::Vec& uRef);
+      virtual void updateuRef(fmatvec::Vec& uRef);
 
       /**
        * \brief references to velocities of dynamic system parent
        * \param uallRef vector to be referenced
        */
-      virtual void updateuallRef(const fmatvec::Vec& uallRef);
+      virtual void updateuallRef(fmatvec::Vec& uallRef);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
        * \param udRef vector to be referenced
        */
-      virtual void updateudRef(const fmatvec::Vec& udRef);
+      virtual void updateudRef(fmatvec::Vec& udRef);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
        * \param udRef vector to be referenced
        */
-      virtual void updateduRef(const fmatvec::Vec& duRef);
+      virtual void updateduRef(fmatvec::Vec& duRef);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
        * \param udallRef vector to be referenced
        */
-      virtual void updateudallRef(const fmatvec::Vec& udallRef);
+      virtual void updateudallRef(fmatvec::Vec& udallRef);
 
       /**
        * \brief references to smooth force vector of dynamic system parent
        * \param hRef vector to be referenced
        * \param i    index of normal usage and inverse kinetics
        */
-      virtual void updatehRef(const fmatvec::Vec& hRef, int i=0);
+      virtual void updatehRef(fmatvec::Vec& hRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding positions
        * \param dhdqRef matrix concerning links to be referenced
        * \param i       index of normal usage and inverse kinetics
        */
-      virtual void updatedhdqRef(const fmatvec::Mat& dhdqRef, int i=0);
+      virtual void updatedhdqRef(fmatvec::Mat& dhdqRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding velocities
        * \param dhduRef matrix concerning links to be referenced
        * \param i       index of normal usage and inverse kinetics
        */
-      virtual void updatedhduRef(const fmatvec::SqrMat& dhduRef, int i=0);
+      virtual void updatedhduRef(fmatvec::SqrMat& dhduRef, int i=0);
 
       /**
        * \brief references to object Jacobian for implicit integration of dynamic system parent regarding time
        * \param dhdtRef matrix concerning links to be referenced
        * \param i       index of normal usage and inverse kinetics
        */
-      virtual void updatedhdtRef(const fmatvec::Vec& dhdtRef, int i=0);
+      virtual void updatedhdtRef(fmatvec::Vec& dhdtRef, int i=0);
 
       /**
        * \brief references to nonsmooth force vector of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updaterRef(const fmatvec::Vec& ref, int i=0);
+      virtual void updaterRef(fmatvec::Vec& ref, int i=0);
 
       /**
        * \brief references to nonsmooth force vector of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updaterdtRef(const fmatvec::Vec& ref);
+      virtual void updaterdtRef(fmatvec::Vec& ref);
 
       /**
        * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
        * \param matrix to be referenced
        */
-      virtual void updateTRef(const fmatvec::Mat &ref);
+      virtual void updateTRef(fmatvec::Mat &ref);
 
       /**
        * \brief references to mass matrix of dynamic system parent
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updateMRef(const fmatvec::SymMat &ref);
+      virtual void updateMRef(fmatvec::SymMat &ref);
 
       /**
        * \brief references to Cholesky decomposition of dynamic system parent
        * \param vector to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updateLLMRef(const fmatvec::SymMat &ref);
+      virtual void updateLLMRef(fmatvec::SymMat &ref);
 
       /**
        * \brief initialize object at start of simulation with respect to contours and frames

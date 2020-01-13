@@ -103,13 +103,13 @@ namespace MBSim {
   }
 
   void FloatingFrameLink::updateg() {
-    g(iF) = evalGeneralizedRelativePosition()(iF);
-    g(iM) = getGeneralizedRelativePosition()(iM);;
+    g.set(iF, evalGeneralizedRelativePosition()(iF));
+    g.set(iM, getGeneralizedRelativePosition()(iM));;
   }
 
   void FloatingFrameLink::updategd() {
-    gd(iF) = evalGeneralizedRelativeVelocity()(iF);
-    gd(iM) = getGeneralizedRelativeVelocity()(iM);
+    gd.set(iF, evalGeneralizedRelativeVelocity()(iF));
+    gd.set(iM, getGeneralizedRelativeVelocity()(iM));
   }
 
   void FloatingFrameLink::init(InitStage stage, const InitConfigSet &config) {

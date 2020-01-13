@@ -113,9 +113,9 @@ namespace MBSim {
       const fmatvec::Vec& getx() const { return x; };
       fmatvec::Vec& getx() { return x; };
       int getxSize() const { return xSize; }
-      void updatexRef(const fmatvec::Vec &xParent);
-      void updatexdRef(const fmatvec::Vec &xdParent);
-      void updatedxRef(const fmatvec::Vec &dxParent);
+      void updatexRef(fmatvec::Vec &xParent);
+      void updatexdRef(fmatvec::Vec &xdParent);
+      void updatedxRef(fmatvec::Vec &dxParent);
       void init(InitStage stage, const InitConfigSet &config) override;
       virtual void initz();
       virtual void writez(H5::GroupBase *parent);
@@ -296,41 +296,41 @@ namespace MBSim {
        * \brief references to positions of dynamic system parent
        * \param vector to be referenced
        */
-      void updateqRef(const fmatvec::Vec &qParent); 
+      void updateqRef(fmatvec::Vec &qParent);
 
       /**
        * \brief references to differentiated positions of dynamic system parent
        * \param vector to be referenced
        */
-      void updateqdRef(const fmatvec::Vec &qdParent);
+      void updateqdRef(fmatvec::Vec &qdParent);
 
-      void updatedqRef(const fmatvec::Vec &dqParent);
-
-      /**
-       * \brief references to velocities of dynamic system parent
-       * \param vector to be referenced
-       */
-      void updateuRef(const fmatvec::Vec &uParent);
+      void updatedqRef(fmatvec::Vec &dqParent);
 
       /**
        * \brief references to velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateuallRef(const fmatvec::Vec &uParent);
+      void updateuRef(fmatvec::Vec &uParent);
+
+      /**
+       * \brief references to velocities of dynamic system parent
+       * \param vector to be referenced
+       */
+      void updateuallRef(fmatvec::Vec &uParent);
 
       /**
        * \brief references to differentiated velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateudRef(const fmatvec::Vec &udParent);
+      void updateudRef(fmatvec::Vec &udParent);
 
-      void updateduRef(const fmatvec::Vec &duParent);
+      void updateduRef(fmatvec::Vec &duParent);
 
       /**
        * \brief references to velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updateudallRef(const fmatvec::Vec &udParent);
+      void updateudallRef(fmatvec::Vec &udParent);
 
       /**
        * \brief references to smooth right hand side of dynamic system parent
@@ -339,129 +339,129 @@ namespace MBSim {
        * \param vector concerning links to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updatehRef(const fmatvec::Vec &hParent, int j=0);
+      void updatehRef(fmatvec::Vec &hParent, int j=0);
 
       /**
        * \brief references to nonsmooth right hand side of dynamic system parent
        * \param vector to be referenced
        */
-      void updaterRef(const fmatvec::Vec &rParent, int j=0);
+      void updaterRef(fmatvec::Vec &rParent, int j=0);
 
       /**
        * \brief references to nonsmooth right hand side of dynamic system parent
        * \param vector to be referenced
        */
-      void updaterdtRef(const fmatvec::Vec &rdtParent);
+      void updaterdtRef(fmatvec::Vec &rdtParent);
 
       /**
        * \brief references to linear transformation matrix between differentiated positions and velocities of dynamic system parent
        * \param matrix to be referenced
        */
-      void updateTRef(const fmatvec::Mat &TParent);
+      void updateTRef(fmatvec::Mat &TParent);
 
       /**
        * \brief references to mass matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateMRef(const fmatvec::SymMat &MParent);
+      void updateMRef(fmatvec::SymMat &MParent);
 
       /**
        * \brief references to Cholesky decomposition of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateLLMRef(const fmatvec::SymMat &LLMParent);
+      void updateLLMRef(fmatvec::SymMat &LLMParent);
 
       /**
        * \brief references to relative distances of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updategRef(const fmatvec::Vec &gParent);
+      virtual void updategRef(fmatvec::Vec &gParent);
 
       /**
        * \brief references to relative velocities of dynamic system parent
        * \param vector to be referenced
        */
-      virtual void updategdRef(const fmatvec::Vec &gdParent);
+      virtual void updategdRef(fmatvec::Vec &gdParent);
 
       /**
        * \brief references to contact forces of dynamic system parent
        * \param vector to be referenced
        */
-      void updatelaRef(const fmatvec::Vec &laParent);
+      void updatelaRef(fmatvec::Vec &laParent);
 
       /**
        * \brief references to contact impulses of dynamic system parent
        * \param vector to be referenced
        */
-      void updateLaRef(const fmatvec::Vec &LaParent);
+      void updateLaRef(fmatvec::Vec &LaParent);
 
-      void updatelaInverseKineticsRef(const fmatvec::Vec &laParent);
-      void updatebInverseKineticsRef(const fmatvec::Mat &bParent);
+      void updatelaInverseKineticsRef(fmatvec::Vec &laParent);
+      void updatebInverseKineticsRef(fmatvec::Mat &bParent);
 
       /**
        * \brief references to TODO of dynamic system parent
        * \param vector to be referenced
        */      
-      virtual void updatewbRef(const fmatvec::Vec &wbParent);
+      virtual void updatewbRef(fmatvec::Vec &wbParent);
 
       /**
        * \brief references to contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updateWRef(const fmatvec::Mat &WParent, int j=0);
+      virtual void updateWRef(fmatvec::Mat &WParent, int j=0);
 
       /**
        * \brief references to contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateWInverseKineticsRef(const fmatvec::Mat &WParent);
+      void updateWInverseKineticsRef(fmatvec::Mat &WParent);
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      virtual void updateVRef(const fmatvec::Mat &VParent, int j=0);
+      virtual void updateVRef(fmatvec::Mat &VParent, int j=0);
 
       /**
        * \brief references to stopvector (rootfunction for event driven integrator) of dynamic system parent
        * \param vector to be referenced
        */
-      void updatesvRef(const fmatvec::Vec& svParent);
+      void updatesvRef(fmatvec::Vec& svParent);
 
       /**
        * \brief references to boolean evaluation of stopvector concerning roots of dynamic system parent
        * \param vector to be referenced
        */
-      void updatejsvRef(const fmatvec::VecInt &jsvParent);
+      void updatejsvRef(fmatvec::VecInt &jsvParent);
 
       /**
        * \brief references to status vector of set valued links with piecewise link equations (which piece is valid)
        * \param vector to be referenced 
        */
-      void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent);
+      void updateLinkStatusRef(fmatvec::VecInt &LinkStatusParent);
 
       /**
        * \brief references to status vector of single valued links
        * \param vector to be referenced 
        */
-      void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent);      
+      void updateLinkStatusRegRef(fmatvec::VecInt &LinkStatusRegParent);
             
       /**
        * \brief references to residuum of contact equations of dynamic system parent
        * \param vector to be referenced
        */
-      void updateresRef(const fmatvec::Vec &resParent);
+      void updateresRef(fmatvec::Vec &resParent);
 
       /**
        * \brief references to relaxation factors for contact equations of dynamic system parent
        * \param vector to be referenced
        */
-      void updaterFactorRef(const fmatvec::Vec &rFactorParent);
+      void updaterFactorRef(fmatvec::Vec &rFactorParent);
 
       void clearElementLists();
 
@@ -750,7 +750,7 @@ namespace MBSim {
       Element *getChildByContainerAndName(const std::string &container, const std::string &name) const override;
 
       virtual void updatecorr(int j);
-      void updatecorrRef(const fmatvec::Vec &ref);
+      void updatecorrRef(fmatvec::Vec &ref);
       void calccorrSize(int j);
 
       void checkRoot();

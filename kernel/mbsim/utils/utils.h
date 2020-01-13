@@ -147,7 +147,7 @@ namespace MBSim {
       static fmatvec::Mat cast(const std::vector<T> &x) {
         fmatvec::Mat y(x.size(),x[0].cols(),fmatvec::NONINIT);
         for (unsigned int i=0; i<x.size(); i++)
-          y.row(i)=x[i];
+          y.set(i,x[i]);
         return y;
       }
   };

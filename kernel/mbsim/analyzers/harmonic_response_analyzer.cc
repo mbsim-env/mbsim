@@ -53,8 +53,9 @@ namespace MBSim {
     
     Vec y0, y1;
     Vec bri(2*n);
-    Vec br = bri(RangeV(0,n-1));
-    Vec bi = bri(RangeV(n,2*n-1));
+    Vec br, bi;
+    br.ref(bri,RangeV(0,n-1));
+    bi.ref(bri,RangeV(n,2*n-1));
     //system->setTime(tStart);
     //system->resetUpToDate();
     //y0 = system->evalzd()(n/2,n-1);
@@ -67,10 +68,10 @@ namespace MBSim {
     system->resetUpToDate();
     system->computeInitialCondition();
     zEq = system->getState();
-    br(RangeV(n/2,n-1)) = system->evalzd()(RangeV(n/2,n-1));
+    br.set(RangeV(n/2,n-1), system->evalzd()(RangeV(n/2,n-1)));
     system->setTime(0.25*T);
     system->resetUpToDate();
-    bi(RangeV(n/2,n-1)) = system->evalzd()(RangeV(n/2,n-1));
+    bi.set(RangeV(n/2,n-1), system->evalzd()(RangeV(n/2,n-1)));
 
     SqrMat A(n,NONINIT);
     Vec zd(n,NONINIT), zdOld(n,NONINIT);
@@ -82,22 +83,23 @@ namespace MBSim {
       system->getState()(i) += epsroot;
       system->resetUpToDate();
       zd = system->evalzd();
-      A.col(i) = (zd - zdOld) / epsroot;
+      A.set(i, (zd - zdOld) / epsroot);
       system->getState()(i) = ztmp;
     }
     SqrMat Q(2*n);
-    Q(Range<Var,Var>(0,n-1),Range<Var,Var>(0,n-1)) = -A;
-    Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(n,2*n-1)) = -A;
+    Q.set(Range<Var,Var>(0,n-1),Range<Var,Var>(0,n-1), -A);
+    Q.set(Range<Var,Var>(n,2*n-1),Range<Var,Var>(n,2*n-1), -A);
     Vec zhri(2*n,NONINIT);
-    Vec zhr = zhri(RangeV(0,n-1));
-    Vec zhi = zhri(RangeV(n,2*n-1));
+    Vec zhr, zhi;
+    zhr.ref(zhri,RangeV(0,n-1));
+    zhi.ref(zhri,RangeV(n,2*n-1));
 //    int N = int((fE-fS)/df)+1;
     Zh.resize(fE.size(),n,NONINIT);
 
     for(int k=0; k<fE.size(); k++) {
       double Om = 2*M_PI*fE(k);
-      Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
-      Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
+      Q.set(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1), -Om*SqrMat(n,EYE));
+      Q.set(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1), Om*SqrMat(n,EYE));
       zhri = slvLU(Q,bri);
       for(int i=0; i<n; i++)
         Zh(k,i) = sqrt(pow(zhr(i),2) + pow(zhi(i),2));
@@ -132,8 +134,8 @@ namespace MBSim {
     }
 //    double t0 = tStart;
     double Om = 2*M_PI/T;
-    Q(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1)) = -Om*SqrMat(n,EYE);
-    Q(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1)) = Om*SqrMat(n,EYE);
+    Q.set(Range<Var,Var>(0,n-1),Range<Var,Var>(n,2*n-1), -Om*SqrMat(n,EYE));
+    Q.set(Range<Var,Var>(n,2*n-1),Range<Var,Var>(0,n-1), Om*SqrMat(n,EYE));
     zhri = slvLU(Q,bri);
     for(double t=tStart; t<tStart+T+dtPlot; t+=dtPlot) {
       system->setTime(t);

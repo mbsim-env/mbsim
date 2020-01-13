@@ -35,11 +35,11 @@ namespace MBSim {
     double normgd = nrm2(gd(RangeV(0, nFric - 1)));
     if (normgd < gdLim) {
       double mu0 = (*fmu)(0);
-      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-laN * mu0 / gdLim);
+      la.set(RangeV(0, nFric - 1), gd(RangeV(0, nFric - 1)) * (-laN * mu0 / gdLim));
     }
     else {
       double mu = (*fmu)(nrm2(gd(RangeV(0, nFric - 1))) - gdLim);
-      la(RangeV(0, nFric - 1)) = gd(RangeV(0, nFric - 1)) * (-laN * mu / normgd);
+      la.set(RangeV(0, nFric - 1), gd(RangeV(0, nFric - 1)) * (-laN * mu / normgd));
     }
     return la;
   }

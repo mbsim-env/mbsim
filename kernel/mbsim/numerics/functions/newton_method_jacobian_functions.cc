@@ -53,7 +53,7 @@ namespace MBSim {
       x2(j) += dx;
       f2 = (*function)(x2);
       x2(j) = xj;
-      J.col(j) = (f2 - f) / dx;
+      J.set(j, (f2 - f) / dx);
     }
 
     return J;

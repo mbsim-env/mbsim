@@ -312,12 +312,12 @@ namespace MBSim {
               sysT1->resetUpToDate();
               sysT1->checkActive(1);
               if (sysT1->gActiveChanged()) resize(sysT1);
-              sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dt;
+              sysT1->getbi(false) <<= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dt;
               sysT1->setUpdatebi(false);
               sysT1->getu() += sysT1->evaldu();
               sysT1->getx() += sysT1->evaldx();
               iterA  = sysT1->getIterI();
-              la1d &= sysT1->getLa()/dt;
+              la1d <<= sysT1->getLa()/dt;
               sysT1->getLinkStatus(LStmp_T1);
               sysT1->resetUpToDate();
               // wird jetzt von testTolerances() direkt aufgerufen; nach jedem erfolgreichen Schritt!
@@ -340,12 +340,12 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) <<= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
                 iterB1  = sysT1->getIterI();
-                la2b &= sysT1->getLa()/dtHalf;
+                la2b <<= sysT1->getLa()/dtHalf;
                 sysT1->getLinkStatus(LStmp_T1);
                 sysT1->resetUpToDate();
                 LSB1 <<= LStmp_T1;
@@ -364,7 +364,7 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) <<= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
@@ -386,12 +386,12 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) <<= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB1  = sysT2->getIterI();
-                la2b &= sysT2->getLa()/dtHalf;
+                la2b <<= sysT2->getLa()/dtHalf;
                 sysT2->getLinkStatus(LStmp_T2);
                 sysT2->resetUpToDate();
                 LSB1 <<= LStmp_T2;
@@ -410,7 +410,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) <<= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -427,7 +427,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) <<= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -449,7 +449,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) <<= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -462,7 +462,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) <<= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -484,7 +484,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) <<= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -500,7 +500,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) <<= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -516,7 +516,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) <<= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -561,7 +561,7 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) <<= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
@@ -582,7 +582,7 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
+                sysT1->getbi(false) <<= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtHalf;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
@@ -601,7 +601,7 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) <<= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
@@ -614,7 +614,7 @@ namespace MBSim {
                 sysT1->resetUpToDate();
                 sysT1->checkActive(1);
                 if (sysT1->gActiveChanged()) resize(sysT1);
-                sysT1->getbi(false) &= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
+                sysT1->getbi(false) <<= sysT1->evalgd() + sysT1->evalW().T()*slvLLFac(sysT1->evalLLM(),sysT1->evalh())*dtThird;
                 sysT1->setUpdatebi(false);
                 sysT1->getu() += sysT1->evaldu();
                 sysT1->getx() += sysT1->evaldx();
@@ -636,7 +636,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) <<= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -652,7 +652,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
+                sysT2->getbi(false) <<= sysT2->evalgd()+sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtQuarter;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -676,12 +676,12 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) <<= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
                 iterB2  = sysT2->getIterI();
-                la2b &= sysT2->getLa()/dtHalf;
+                la2b <<= sysT2->getLa()/dtHalf;
                 sysT2->getLinkStatus(LStmp_T2);
                 sysT2->resetUpToDate();
                 LSB2 <<= LStmp_T2;
@@ -699,7 +699,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
+                sysT2->getbi(false) <<= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtHalf;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -718,7 +718,7 @@ namespace MBSim {
                 sysT2->resetUpToDate();
                 sysT2->checkActive(1);
                 if (sysT2->gActiveChanged()) resize(sysT2);
-                sysT2->getbi(false) &= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
+                sysT2->getbi(false) <<= sysT2->evalgd() + sysT2->evalW().T()*slvLLFac(sysT2->evalLLM(),sysT2->evalh())*dtThird;
                 sysT2->setUpdatebi(false);
                 sysT2->getu() += sysT2->evaldu();
                 sysT2->getx() += sysT2->evaldx();
@@ -740,7 +740,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) <<= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -756,7 +756,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) <<= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -772,7 +772,7 @@ namespace MBSim {
                 sysT3->resetUpToDate();
                 sysT3->checkActive(1);
                 if (sysT3->gActiveChanged()) resize(sysT3);
-                sysT3->getbi(false) &= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
+                sysT3->getbi(false) <<= sysT3->evalgd() + sysT3->evalW().T()*slvLLFac(sysT3->evalLLM(),sysT3->evalh())*dtSixth;
                 sysT3->setUpdatebi(false);
                 sysT3->getu() += sysT3->evaldu();
                 sysT3->getx() += sysT3->evaldx();
@@ -825,7 +825,7 @@ namespace MBSim {
       zi = ze;
       LS <<= LSe;
       if (outputInterpolation) {
-        la &= lae;
+        la <<= lae;
         laSizes = laeSizes;
       }
 
@@ -878,8 +878,8 @@ namespace MBSim {
         for(int i=0; i<nLinks;i++) {
           laSizesSynchron(i) = laSizes(i);
           if (laSizesSynchron(i)>laeSizes(i)) laSizesSynchron(i) = laeSizes(i);
-          laSynchron(RangeV(iSynchron,iSynchron+laSizesSynchron(i)-1)) = la(RangeV(ila,ila+laSizesSynchron(i)-1));
-          laeSynchron(RangeV(iSynchron,iSynchron+laSizesSynchron(i)-1)) = lae(RangeV(ilae,ilae+laSizesSynchron(i)-1));
+          laSynchron.set(RangeV(iSynchron,iSynchron+laSizesSynchron(i)-1), la(RangeV(ila,ila+laSizesSynchron(i)-1)));
+          laeSynchron.set(RangeV(iSynchron,iSynchron+laSizesSynchron(i)-1), lae(RangeV(ilae,ilae+laSizesSynchron(i)-1)));
           ilae+=laeSizes(i);
           ila+=laSizes(i);
           iSynchron+=laSizesSynchron(i);
@@ -1175,14 +1175,14 @@ namespace MBSim {
     } //endif method>0
 
     if (dte<dt) {		// nur halber Integrationsschritt wurde akzeptiert dte==dt/2
-      lae &= la2b;
+      lae <<= la2b;
       laeSizes = la2bSizes;
       iter = iterB1;
       ConstraintsChanged = ConstraintsChangedBlock1;
       IterConvergenceBlock2 = true;
     }
     else {
-      lae &= la1d;
+      lae <<= la1d;
       laeSizes = la1dSizes;
       iter = iterA;
     }
@@ -1487,14 +1487,14 @@ namespace MBSim {
     system->calclaSize(2); // contacts which stay closed
     system->calcrFactorSize(2); // contacts which stay closed
 
-    system->updateWRef(system->getWParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
-    system->updateVRef(system->getVParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
-    system->updatelaRef(system->getlaParent()(RangeV(0,system->getlaSize()-1)));
-    system->updateLaRef(system->getLaParent()(RangeV(0,system->getlaSize()-1)));
-    system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
+    system->updateWRef(system->getWParent(0));
+    system->updateVRef(system->getVParent(0));
+    system->updatelaRef(system->getlaParent());
+    system->updateLaRef(system->getLaParent());
+    system->updategdRef(system->getgdParent());
     if (system->getImpactSolver() == DynamicSystemSolver::rootfinding)
-      system->updateresRef(system->getresParent()(RangeV(0,system->getlaSize()-1)));
-    system->updaterFactorRef(system->getrFactorParent()(RangeV(0,system->getrFactorSize()-1)));
+      system->updateresRef(system->getresParent());
+    system->updaterFactorRef(system->getrFactorParent());
   }
 
 }

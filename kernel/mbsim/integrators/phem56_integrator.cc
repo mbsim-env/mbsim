@@ -57,7 +57,7 @@ namespace MBSim {
       Vec h(*nv, f);
       h = self->getSystem()->evalh();
       Mat M(*lrda,*nv, am);
-      M(RangeV(0,*nv-1),RangeV(0,*nv-1)) = self->getSystem()->evalM();
+      M.set(RangeV(0,*nv-1),RangeV(0,*nv-1), self->getSystem()->evalM());
       Vec qd(nq[0], qdot);
       self->getSystem()->setStepSize(1);
       qd = self->getSystem()->evaldq();;
@@ -101,7 +101,7 @@ namespace MBSim {
       Vec h(*nv, f);
       h = self->getSystem()->evalh();
       Mat M(*lrda,*nv, am);
-      M(RangeV(0,*nv-1),RangeV(0,*nv-1)) = self->getSystem()->evalM();
+      M.set(RangeV(0,*nv-1),RangeV(0,*nv-1), self->getSystem()->evalM());
       Vec gpp(*nl, gpp_);
       gpp = -self->getSystem()->evalwb();
     }
@@ -109,7 +109,7 @@ namespace MBSim {
       Vec h(*nv, f);
       h = self->getSystem()->evalh();
       Mat M(*lrda,*nv, am);
-      M(RangeV(0,*nv-1),RangeV(0,*nv-1)) = self->getSystem()->evalM();
+      M.set(RangeV(0,*nv-1),RangeV(0,*nv-1), self->getSystem()->evalM());
       if(self->generalVMatrix) {
         Mat FL(*nv,*nl, fl);
         FL = -self->getSystem()->evalV();
@@ -117,7 +117,7 @@ namespace MBSim {
     }
     else if(*ifcn==9) {
       Mat M(*lrda,*nv, am);
-      M(RangeV(0,*nv-1),RangeV(0,*nv-1)) = self->getSystem()->evalM();
+      M.set(RangeV(0,*nv-1),RangeV(0,*nv-1), self->getSystem()->evalM());
     }
     else if(*ifcn==10) {
       Vec ih(*nl, gt);
@@ -125,7 +125,7 @@ namespace MBSim {
       Mat GQ(*nl,*nv, gp);
       GQ = -self->getSystem()->evalW().T();
       Mat M(*lrda,*nv, am);
-      M(RangeV(0,*nv-1),RangeV(0,*nv-1)) = self->getSystem()->evalM();
+      M.set(RangeV(0,*nv-1),RangeV(0,*nv-1), self->getSystem()->evalM());
       Vec qd(nq[0], qdot);
       self->getSystem()->setStepSize(1);
       qd = self->getSystem()->evaldq();;
@@ -139,7 +139,7 @@ namespace MBSim {
       Vec ih(*nl, gt);
       ih = self->getSystem()->evalW().T()*self->getSystem()->getu()-self->getSystem()->evalgd();
       Mat M(*lrda,*nv, am);
-      M(RangeV(0,*nv-1),RangeV(0,*nv-1)) = self->getSystem()->evalM();
+      M.set(RangeV(0,*nv-1),RangeV(0,*nv-1), self->getSystem()->evalM());
       Mat GQ(*nl,*nv, gp);
       GQ = -self->getSystem()->evalW().T();
       if(self->generalVMatrix) {
@@ -233,7 +233,7 @@ namespace MBSim {
         self->getSystem()->resetUpToDate();
         self->getSystem()->shift();
         self->system->calcgdSize(3); // IH
-        self->system->updategdRef(self->system->getgdParent()(RangeV(0,self->system->getgdSize()-1)));
+        self->system->updategdRef(self->system->getgdParent());
         if(self->plotOnRoot) {
           self->getSystem()->resetUpToDate();
           self->getSystem()->plot();
@@ -291,9 +291,10 @@ namespace MBSim {
     Vec ud(nv);
     Vec la(nl);
     Vec z(system->getzSize());
-    Vec q = z(RangeV(0,nq[0]-1));
-    Vec u = z(RangeV(nq[0],nq[0]+nv-1));
-    Vec x = z(RangeV(nq[0]+nv,nq[0]+nv+nu-1));
+    Vec q, u, x;
+    q.ref(z,RangeV(0,nq[0]-1));
+    u.ref(z,RangeV(nq[0],nq[0]+nv-1));
+    x.ref(z,RangeV(nq[0]+nv,nq[0]+nv+nu-1));
     if(z0.size()) {
       if(z0.size() != system->getzSize())
         throwError("(PHEM56Integrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
@@ -309,10 +310,10 @@ namespace MBSim {
     system->resetUpToDate();
     system->computeInitialCondition();
     system->calcgdSize(3); // IH
-    system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
+    system->updategdRef(system->getgdParent());
     if(initialProjection or numberOfStepsBetweenProjections) {
       system->calcgSize(2); // IB
-      system->updategRef(system->getgParent()(RangeV(0,system->getgSize()-1)));
+      system->updategRef(system->getgParent());
     }
     system->plot();
     svLast <<= system->evalsv();

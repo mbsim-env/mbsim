@@ -97,7 +97,7 @@ namespace MBSim {
       if(gMax>=0 and system->positionDriftCompensationNeeded(gMax))
         system->projectGeneralizedPositions(3);
 
-      system->getbi(false) &= system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
+      system->getbi(false) <<= system->evalgd() + system->evalW().T()*slvLLFac(system->evalLLM(),system->evalh())*dt;
       system->setUpdatebi(false);
 
       system->getu() += system->evaldu();
@@ -142,14 +142,14 @@ namespace MBSim {
     system->calclaSize(2); // contacts which stay closed
     system->calcrFactorSize(2); // contacts which stay closed
 
-    system->updateWRef(system->getWParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
-    system->updateVRef(system->getVParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
-    system->updatelaRef(system->getlaParent()(RangeV(0,system->getlaSize()-1)));
-    system->updateLaRef(system->getLaParent()(RangeV(0,system->getlaSize()-1)));
-    system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
+    system->updateWRef(system->getWParent(0));
+    system->updateVRef(system->getVParent(0));
+    system->updatelaRef(system->getlaParent());
+    system->updateLaRef(system->getLaParent());
+    system->updategdRef(system->getgdParent());
     if (system->getImpactSolver() == DynamicSystemSolver::rootfinding)
-      system->updateresRef(system->getresParent()(RangeV(0,system->getlaSize()-1)));
-    system->updaterFactorRef(system->getrFactorParent()(RangeV(0,system->getrFactorSize()-1)));
+      system->updateresRef(system->getresParent());
+    system->updaterFactorRef(system->getrFactorParent());
   }
 
 }

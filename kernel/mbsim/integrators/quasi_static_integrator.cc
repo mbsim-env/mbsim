@@ -56,9 +56,9 @@ namespace MBSim {
     RangeV Iu(nq, nq + nu - 1);
     RangeV Ix(nq + nu, n - 1);
     z.resize(n);
-    q &= z(Iq);
-    u &= z(Iu);
-    x &= z(Ix);
+    q.ref(z, Iq);
+    u.ref(z, Iu);
+    x.ref(z, Ix);
 
     if(z0.size()) {
       if(z0.size() != system->getzSize())
@@ -219,8 +219,8 @@ namespace MBSim {
     // need new h, W, g, input la (not from the system, but from the input value),
     sys->setTime(t);
     sys->resetUpToDate();
-    hg(RangeV(0, qSize - 1)) = sys->evalh() + sys->evalW() * qla(RangeV(qSize, qlaSize - 1));
-    hg(RangeV(qSize, qlaSize - 1)) = sys->evalg();
+    hg.set(RangeV(0, qSize - 1), sys->evalh() + sys->evalW() * qla(RangeV(qSize, qlaSize - 1)));
+    hg.set(RangeV(qSize, qlaSize - 1), sys->evalg());
 
 //    msg(Info) << "t = "  << t << "\n";
 //    msg(Info) << "sys.geth() = "  <<  sys->geth().T() << "\n";

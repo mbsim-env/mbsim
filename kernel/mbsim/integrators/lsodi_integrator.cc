@@ -60,8 +60,8 @@ namespace MBSim {
     self->getSystem()->setTime(*t);
     self->getSystem()->resetUpToDate();
     self->getSystem()->setUpdatela(false);
-    res(RangeV(0,self->system->getzSize()-1)) = self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1));
-    res(RangeV(self->system->getzSize(),neq[0]-1)) = self->system->evalgd();
+    res.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
+    res.set(RangeV(self->system->getzSize(),neq[0]-1), self->system->evalgd());
   }
 
   void LSODIIntegrator::resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires) {
@@ -72,19 +72,19 @@ namespace MBSim {
     self->getSystem()->setTime(*t);
     self->getSystem()->resetUpToDate();
     self->getSystem()->setUpdatela(false);
-    res(RangeV(0,self->system->getzSize()-1)) = self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1));
-    res(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1)) = self->system->evalgd();
-    res(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)) = self->system->evalg();
+    res.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
+    res.set(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1), self->system->evalgd());
+    res.set(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1), self->system->evalg());
     if(self->system->getgSize() != self->system->getgdSize()) {
       self->system->calclaSize(5);
-      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+      self->system->updateWRef(self->system->getWParent(0));
       self->system->setUpdateW(false);
-      res(RangeV(0,self->system->getqSize()-1)) += self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1));
+      res.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)));
       self->system->calclaSize(3);
-      self->system->updateWRef(self->system->getWParent(0)(RangeV(0, self->system->getuSize()-1),RangeV(0,self->system->getlaSize()-1)));
+      self->system->updateWRef(self->system->getWParent(0));
     }
     else
-      res(RangeV(0,self->system->getqSize()-1)) += self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1));
+      res.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)));
   }
 
   void LSODIIntegrator::adda(int *neq, double *t, double *y_, int *ml, int *mu, double *P_, int *nrowp) {
@@ -121,7 +121,7 @@ namespace MBSim {
     system->resizezParent(N);
     system->updatezRef(system->getzParent());
     if(formalism) {
-      system->getlaParent() &= system->getzParent()(RangeV(system->getzSize(),system->getzSize()+system->getlaSize()-1));
+      system->getlaParent().ref(system->getzParent(), RangeV(system->getzSize(),system->getzSize()+system->getlaSize()-1));
       system->updatelaRef(system->getlaParent());
     }
     // Integrator uses its own workspace for the state derivative
@@ -173,7 +173,7 @@ namespace MBSim {
         throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + to_string(N));
     }
 
-    if(excludeAlgebraicVariables) aTol(RangeV(system->getzSize(),N-1)).init(1e15);
+    if(excludeAlgebraicVariables) for(int i=system->getzSize(); i<N; i++) aTol(i) = 1e15;
 
     int itask=2, iopt=1, istate=1;
     int lrWork = 2*(22+9*N+N*N);
@@ -190,14 +190,14 @@ namespace MBSim {
     system->computeInitialCondition();
     if(formalism>0) { // DAE2 or GGL
       system->calcgdSize(3); // IH
-      system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
+      system->updategdRef(system->getgdParent());
       if(formalism==GGL) { // GGL
         system->calcgSize(2); // IB
-        system->updategRef(system->getgParent()(RangeV(0,system->getgSize()-1)));
+        system->updategRef(system->getgParent());
       }
     }
     system->plot();
-    yd(RangeV(0,system->getzSize()-1)) = system->evalzd();
+    yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
     svLast <<= system->evalsv();
 
     calcSize();
@@ -287,10 +287,10 @@ namespace MBSim {
           getSystem()->shift();
           if(formalism>0) { // DAE2 or GGL
             system->calcgdSize(3); // IH
-            system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
+            system->updategdRef(system->getgdParent());
             if(formalism==GGL) { // GGL
               system->calcgSize(2); // IB
-              system->updategRef(system->getgParent()(RangeV(0,system->getgSize()-1)));
+              system->updategRef(system->getgParent());
             }
           }
           if(plotOnRoot) {
@@ -325,7 +325,7 @@ namespace MBSim {
         if(istate==1) {
           t = system->getTime();
           system->resetUpToDate();
-          yd(RangeV(0,system->getzSize()-1)) = system->evalzd();
+          yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
           if(shift) {
             svLast = system->evalsv();
             calcSize();

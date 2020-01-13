@@ -91,9 +91,9 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      void updatelaRef(const fmatvec::Vec& ref) override;
-      void updateLaRef(const fmatvec::Vec& ref) override;
-      void updategdRef(const fmatvec::Vec& ref) override;
+      void updatelaRef(fmatvec::Vec& ref) override;
+      void updateLaRef(fmatvec::Vec& ref) override;
+      void updategdRef(fmatvec::Vec& ref) override;
       void calcSize() override;
       void calclaSize(int j) override;
       void calcgSize(int j) override;

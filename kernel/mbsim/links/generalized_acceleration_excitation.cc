@@ -40,8 +40,8 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationExcitation::updatexd() {
-    xd(RangeV(0,body[0]->getGeneralizedPositionSize()-1)) = x(RangeV(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1));
-    xd(RangeV(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1)) = (*f)(x,getTime());
+    xd.set(RangeV(0,body[0]->getGeneralizedPositionSize()-1), x(RangeV(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1)));
+    xd.set(RangeV(body[0]->getGeneralizedPositionSize(),body[0]->getGeneralizedPositionSize()+body[0]->getGeneralizedVelocitySize()-1), (*f)(x,getTime()));
   }
 
   void GeneralizedAccelerationExcitation::updateGeneralizedPositions() {

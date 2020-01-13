@@ -46,8 +46,8 @@ namespace MBSim {
   }
 
   void GeneralizedAccelerationConstraint::updatexd() {
-    xd(RangeV(0,bd->getGeneralizedPositionSize()-1)) = x(RangeV(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1));
-    xd(RangeV(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1)) = (*f)(x,getTime());
+    xd.set(RangeV(0,bd->getGeneralizedPositionSize()-1), x(RangeV(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1)));
+    xd.set(RangeV(bd->getGeneralizedPositionSize(),bd->getGeneralizedPositionSize()+bd->getGeneralizedVelocitySize()-1), (*f)(x,getTime()));
   }
 
   void GeneralizedAccelerationConstraint::updateGeneralizedCoordinates() {

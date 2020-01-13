@@ -58,7 +58,7 @@ namespace MBSim {
       MultiDimNewtonMethod rf(func, jac);
       rf.setTolerance(tol);
 
-      gbuf &= Vec(alphaC.size());  // TODO:: ??
+      gbuf.resize(alphaC.size());  // TODO:: ??
       Vec startingValue(2, NONINIT);
 
       // search in U direction

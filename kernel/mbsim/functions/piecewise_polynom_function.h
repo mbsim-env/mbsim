@@ -290,7 +290,7 @@ namespace MBSim {
       C(i,i) = hi;
       C(i,i+1) = 2*(hi+hii);
       C(i,i+2) = hii;
-      rs.row(i) = 3.*((y.row(i+2)-y.row(i+1))/hii - (y.row(i+1)-y.row(i))/hi);
+      rs.set(i, 3.*((y.row(i+2)-y.row(i+1))/hii - (y.row(i+1)-y.row(i))/hi));
     }
 
     // last but one row
@@ -299,7 +299,7 @@ namespace MBSim {
     C(N-3,N-3) = hi;
     C(N-3,N-2)= 2*(hi+hii);
     C(N-3,0)= hii;
-    rs.row(N-3) = 3.*((y.row(N-1)-y.row(N-2))/hii - (y.row(N-2)-y.row(N-3))/hi);
+    rs.set(N-3, 3.*((y.row(N-1)-y.row(N-2))/hii - (y.row(N-2)-y.row(N-3))/hi));
 
     // last row
     double h1 = x(1)-x(0);
@@ -307,13 +307,13 @@ namespace MBSim {
     C(N-2,0) = 2*(h1+hN_1);
     C(N-2,1) = h1;
     C(N-2,N-2)= hN_1;
-    rs.row(N-2) = 3.*((y.row(1)-y.row(0))/h1 - (y.row(0)-y.row(N-2))/hN_1);
+    rs.set(N-2, 3.*((y.row(1)-y.row(0))/h1 - (y.row(0)-y.row(N-2))/hN_1));
 
     // solve C*c = rs -> TODO BETTER: RANK-1-MODIFICATION FOR LINEAR EFFORT (Simeon - Numerik 1)
     fmatvec::Mat c = slvLU(C,rs);
     fmatvec::Mat ctmp(N,y.cols());
-    ctmp.row(N-1) = c.row(0); // CN = c1
-    ctmp(fmatvec::RangeV(0,N-2),fmatvec::RangeV(0,y.cols()-1))= c;
+    ctmp.set(N-1, c.row(0)); // CN = c1
+    ctmp.set(fmatvec::RangeV(0,N-2),fmatvec::RangeV(0,y.cols()-1), c);
 
     // vector ordering of the further coefficients
     fmatvec::Mat d(N-1,y.cols(),fmatvec::INIT,0.0);
@@ -322,9 +322,9 @@ namespace MBSim {
 
     for(int i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
-      a.row(i) = y.row(i);
-      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi;
-      b.row(i) = (y.row(i+1)-y.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
+      a.set(i, y.row(i));
+      d.set(i, (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi);
+      b.set(i, (y.row(i+1)-y.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi);
     }
 
     breaks.resize(N);
@@ -348,7 +348,7 @@ namespace MBSim {
     double hii = x(i+2)-x(i+1);
     C(i,i) = 2*hi+2*hii;
     C(i,i+1) = hii;
-    rs.row(i) = 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi;
+    rs.set(i, 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi);
 
     // last row
     i = (N-3);
@@ -356,7 +356,7 @@ namespace MBSim {
     hii = x(i+2)-x(i+1);
     C(i,i-1) = hi;
     C(i,i) = 2*hii + 2*hi;
-    rs.row(i) = 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi;
+    rs.set(i, 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi);
 
     for(i=1;i<N-3;i++) { 
       hi = x(i+1)-x(i);
@@ -364,14 +364,14 @@ namespace MBSim {
       C(i,i-1) = hi;
       C(i,i) = 2*(hi+hii);
       C(i,i+1) = hii;
-      rs.row(i) = 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi;
+      rs.set(i, 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi);
     }
 
     // solve C*c = rs with C tridiagonal
     fmatvec::Mat C_rs(N-2,N-1+y.cols(),fmatvec::INIT,0.0);
-    C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(0,N-3)) = C; // C_rs=[C rs] for Gauss in matrix
-    C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(N-2,N-2+y.cols()-1)) = rs;
-    for(i=1; i<N-2; i++) C_rs.row(i) = C_rs.row(i) - C_rs.row(i-1)*C_rs(i,i-1)/C_rs(i-1,i-1); // C_rs -> upper triangular matrix C1 -> C1 rs1
+    C_rs.set(fmatvec::RangeV(0,N-3),fmatvec::RangeV(0,N-3), C); // C_rs=[C rs] for Gauss in matrix
+    C_rs.set(fmatvec::RangeV(0,N-3),fmatvec::RangeV(N-2,N-2+y.cols()-1), rs);
+    for(i=1; i<N-2; i++) C_rs.set(i, C_rs.row(i) - C_rs.row(i-1)*C_rs(i,i-1)/C_rs(i-1,i-1)); // C_rs -> upper triangular matrix C1 -> C1 rs1
     fmatvec::Mat rs1 = C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(N-2,N-2+y.cols()-1));
     fmatvec::Mat C1 = C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(0,N-3));
     fmatvec::Mat c(N-2,y.cols(),fmatvec::INIT,0.0);
@@ -379,10 +379,10 @@ namespace MBSim {
       fmatvec::RowVecV sum_ciCi(y.cols(),fmatvec::NONINIT);
       sum_ciCi.init(0.);
       for(int ii=i+1; ii<=N-3; ii++) sum_ciCi = sum_ciCi + C1(i,ii)*c.row(ii);
-      c.row(i)= (rs1.row(i) - sum_ciCi)/C1(i,i);
+      c.set(i, (rs1.row(i) - sum_ciCi)/C1(i,i));
     }
     fmatvec::Mat ctmp(N,y.cols(),fmatvec::INIT,0.0);
-    ctmp(fmatvec::RangeV(1,N-2),fmatvec::RangeV(0,y.cols()-1)) = c; // c1=cN=0 natural splines c=[ 0; c; 0]
+    ctmp.set(fmatvec::RangeV(1,N-2),fmatvec::RangeV(0,y.cols()-1), c); // c1=cN=0 natural splines c=[ 0; c; 0]
 
     // vector ordering of the further coefficients
     fmatvec::Mat d(N-1,y.cols(),fmatvec::INIT,0.0);
@@ -391,9 +391,9 @@ namespace MBSim {
 
     for(i=0; i<N-1; i++) {
       hi = x(i+1)-x(i);  
-      a.row(i) = y.row(i);
-      d.row(i) = (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi;
-      b.row(i) = (y.row(i+1)-y.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi;
+      a.set(i, y.row(i));
+      d.set(i, (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi);
+      b.set(i, (y.row(i+1)-y.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi);
     }
 
     breaks.resize(N);
@@ -415,8 +415,8 @@ namespace MBSim {
     fmatvec::Mat m(N-1,y.cols(),fmatvec::INIT,0.0);
     fmatvec::Mat a(N-1,y.cols(),fmatvec::INIT,0.0);
     for(int i=1;i<N;i++) {
-      m.row(i-1) = (y.row(i)-y.row(i-1))/(x(i)-x(i-1)); // slope
-      a.row(i-1) = y.row(i-1);
+      m.set(i-1, (y.row(i)-y.row(i-1))/(x(i)-x(i-1))); // slope
+      a.set(i-1, y.row(i-1));
     }
     coefs.clear();
     coefs.push_back(m);

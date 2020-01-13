@@ -42,49 +42,49 @@ namespace MBSim {
     delete cFrame[1];
   }
 
-  void ContourLink::updateWRef(const Mat& WParent, int j) {
+  void ContourLink::updateWRef(Mat& WParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
       RangeV J = RangeV(laInd, laInd + laSize - 1);
-      W[j][i] &= WParent(I, J);
+      W[j][i].ref(WParent, I, J);
     }
   } 
 
-  void ContourLink::updateVRef(const Mat& VParent, int j) {
+  void ContourLink::updateVRef(Mat& VParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
       RangeV J = RangeV(laInd, laInd + laSize - 1);
-      V[j][i] &= VParent(I, J);
+      V[j][i].ref(VParent, I, J);
     }
   } 
 
-  void ContourLink::updatehRef(const Vec &hParent, int j) {
+  void ContourLink::updatehRef(Vec &hParent, int j) {
     for (unsigned i = 0; i < 2; i++) { //only two contours for one contactKinematic
       RangeV I = RangeV(contour[i]->gethInd(j), contour[i]->gethInd(j) + contour[i]->gethSize(j) - 1);
-      h[j][i] &= hParent(I);
+      h[j][i].ref(hParent, I);
     }
   } 
 
-  void ContourLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+  void ContourLink::updatedhdqRef(fmatvec::Mat& dhdqParent, int k) {
     throwError("Internal error");
   }
 
-  void ContourLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+  void ContourLink::updatedhduRef(fmatvec::SqrMat& dhduParent, int k) {
     throwError("Internal error");
   }
 
-  void ContourLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+  void ContourLink::updatedhdtRef(fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV I = RangeV(contour[i]->gethInd(j),contour[i]->gethInd(j)+contour[i]->gethSize(j)-1);
-      dhdt[i]&=dhdtParent(I);
+      dhdt[i].ref(dhdtParent, I);
     }
   }
 
-  void ContourLink::updaterRef(const Vec &rParent, int j) {
+  void ContourLink::updaterRef(Vec &rParent, int j) {
     for(unsigned i=0; i<2; i++) {
       int hInd =  contour[i]->gethInd(j);
       RangeV I = RangeV(hInd,hInd+contour[i]->gethSize(j)-1);
-      r[j][i]&=rParent(I);
+      r[j][i].ref(rParent, I);
     }
   } 
 

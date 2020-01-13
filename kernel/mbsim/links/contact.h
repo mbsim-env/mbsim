@@ -71,21 +71,21 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      void updateWRef(const fmatvec::Mat &ref, int j = 0) override;
-      void updateVRef(const fmatvec::Mat &ref, int j = 0) override;
-      void updatehRef(const fmatvec::Vec &hRef, int j = 0) override;
-      void updaterRef(const fmatvec::Vec &hRef, int j = 0) override;
-      void updatewbRef(const fmatvec::Vec &ref) override;
-      void updatelaRef(const fmatvec::Vec& ref) override;
-      void updateLaRef(const fmatvec::Vec& ref) override;
-      void updategRef(const fmatvec::Vec& ref) override;
-      void updategdRef(const fmatvec::Vec& ref) override;
-      void updateresRef(const fmatvec::Vec& ref) override;
-      void updaterFactorRef(const fmatvec::Vec &ref) override;
-      void updatesvRef(const fmatvec::Vec &ref) override;
-      void updatejsvRef(const fmatvec::VecInt &ref) override;
-      void updateLinkStatusRef(const fmatvec::VecInt &LinkStatusParent) override;
-      void updateLinkStatusRegRef(const fmatvec::VecInt &LinkStatusRegParent) override;
+      void updateWRef(fmatvec::Mat &ref, int j = 0) override;
+      void updateVRef(fmatvec::Mat &ref, int j = 0) override;
+      void updatehRef(fmatvec::Vec &hRef, int j = 0) override;
+      void updaterRef(fmatvec::Vec &hRef, int j = 0) override;
+      void updatewbRef(fmatvec::Vec &ref) override;
+      void updatelaRef(fmatvec::Vec& ref) override;
+      void updateLaRef(fmatvec::Vec& ref) override;
+      void updategRef(fmatvec::Vec& ref) override;
+      void updategdRef(fmatvec::Vec& ref) override;
+      void updateresRef(fmatvec::Vec& ref) override;
+      void updaterFactorRef(fmatvec::Vec &ref) override;
+      void updatesvRef(fmatvec::Vec &ref) override;
+      void updatejsvRef(fmatvec::VecInt &ref) override;
+      void updateLinkStatusRef(fmatvec::VecInt &LinkStatusParent) override;
+      void updateLinkStatusRegRef(fmatvec::VecInt &LinkStatusRegParent) override;
       void calclaSize(int j) override;
       void calcgSize(int j) override;
       void calcgdSize(int j) override;
@@ -130,7 +130,7 @@ namespace MBSim {
       void setrFactorInd(int rFactorInd_) override;
       void LinearImpactEstimation(double t, fmatvec::Vec &gInActive_, fmatvec::Vec &gdInActive_, int *IndInActive_, fmatvec::Vec &gAct_, int *IndActive_) override;
       void SizeLinearImpactEstimation(int *sizeInActive_, int *sizeActive_) override;
-      void updatecorrRef(const fmatvec::Vec& ref) override;
+      void updatecorrRef(fmatvec::Vec& ref) override;
       void updatecorr(int j) override;
       void calccorrSize(int j) override;
       void setcorrInd(int corrInd_) override;

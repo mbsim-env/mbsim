@@ -244,33 +244,33 @@ namespace MBSim {
     }
   }
 
-  void DiskContact::updatelaRef(const Vec& laParent) {
+  void DiskContact::updatelaRef(Vec& laParent) {
     ContourLink::updatelaRef(laParent);
     if (laSize) {
       if (fcl->isSetValued())
-        laN &= la(RangeV(0, 0));
+        laN.ref(la, RangeV(0, 0));
       if (fdf->isSetValued())
-        laT &= la(RangeV(fcl->isSetValued(), laSize - 1));
+        laT.ref(la, RangeV(fcl->isSetValued(), laSize - 1));
     }
   }
 
-  void DiskContact::updateLaRef(const Vec& LaParent) {
+  void DiskContact::updateLaRef(Vec& LaParent) {
     ContourLink::updateLaRef(LaParent);
     if (laSize) {
       if (fcl->isSetValued())
-        LaN &= La(RangeV(0, 0));
+        LaN.ref(La, RangeV(0, 0));
       if (fdf->isSetValued())
-        LaT &= La(RangeV(fcl->isSetValued(), laSize - 1));
+        LaT.ref(La, RangeV(fcl->isSetValued(), laSize - 1));
     }
   }
 
-  void DiskContact::updategdRef(const Vec& gdParent) {
+  void DiskContact::updategdRef(Vec& gdParent) {
     ContourLink::updategdRef(gdParent);
     if (gdSize) {
       if (fcl->isSetValued())
-        gdN &= gd(RangeV(0, 0));
+        gdN.ref(gd, RangeV(0, 0));
       if (fdf->isSetValued())
-        gdT &= gd(RangeV(fcl->isSetValued(), gdSize - 1));
+        gdT.ref(gd, RangeV(fcl->isSetValued(), gdSize - 1));
     }
   }
 
@@ -700,7 +700,7 @@ namespace MBSim {
         gdnT(0) = b(laInd + fcl->isSetValued());
         for (int j = ia[laInd + fcl->isSetValued()]; j < ia[laInd + 1 + fcl->isSetValued()]; j++)
           gdnT(0) += a[j] * LaMBS(ja[j]);
-        res(RangeV(fcl->isSetValued(), fcl->isSetValued())) = LaT - ftil->project(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(fcl->isSetValued()));
+        res.set(RangeV(fcl->isSetValued(), fcl->isSetValued()), LaT - ftil->project(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(fcl->isSetValued())));
       }
     }
   }
@@ -728,7 +728,7 @@ namespace MBSim {
         gddT(0) = b(laInd + fcl->isSetValued());
         for (int j = ia[laInd + fcl->isSetValued()]; j < ia[laInd + 1 + fcl->isSetValued()]; j++)
           gddT(0) += a[j] * laMBS(ja[j]);
-        res(RangeV(fcl->isSetValued(), fcl->isSetValued())) = laT - fdf->project(laT, gddT, fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
+        res.set(RangeV(fcl->isSetValued(), fcl->isSetValued()), laT - fdf->project(laT, gddT, fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued())));
       }
     }
   }
@@ -741,7 +741,7 @@ namespace MBSim {
       //TODO: separate normal and tangential
 
       RowVec jp1;
-      jp1 &= ds->getJprox().row(laInd);
+      jp1.ref(ds->getJprox(), laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
 
@@ -756,7 +756,7 @@ namespace MBSim {
       if(gdActive[tangential] and fdf->isSetValued()) {
         Mat diff = fdf->diff(laT, gddT(RangeV(0, 0)), fcl->isSetValued()?laN(0):lambdaN, rFactor(fcl->isSetValued()));
         RowVec jp2;
-        jp2 &= ds->getJprox().row(laInd + fcl->isSetValued());
+        jp2.ref(ds->getJprox(), laInd + fcl->isSetValued());
         RowVec e2(jp2.size());
         e2(laInd + 1) = 1;
         Mat e(2, jp2.size());
@@ -776,7 +776,7 @@ namespace MBSim {
       const SqrMat G = ds->evalG();
 
       RowVec jp1;
-      jp1 &= ds->getJprox().row(laInd);
+      jp1.ref(ds->getJprox(), laInd);
       RowVec e1(jp1.size());
       e1(laInd) = 1;
 
@@ -792,7 +792,7 @@ namespace MBSim {
       if(fdf->isSetValued()) {
         Mat diff = ftil->diff(LaT, gdnT, gdT, fcl->isSetValued()?LaN(0):lambdaN*getStepSize(), rFactor(fcl->isSetValued()));
         RowVec jp2;
-        jp2 &= ds->getJprox().row(laInd + fcl->isSetValued());
+        jp2.ref(ds->getJprox(), laInd + fcl->isSetValued());
         RowVec e2(jp2.size());
         e2(laInd + fcl->isSetValued()) = 1;
         Mat e(2, jp2.size());

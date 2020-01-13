@@ -44,18 +44,18 @@ namespace MBSim {
   }
 
   void Joint::updateg() {
-    if(iFM.size()) g(iFM) = evalGeneralizedRelativePosition()(iF);
-    if(iMM.size()) g(iMM) = evalGeneralizedRelativePosition()(iM);;
+    if(iFM.size()) g.set(iFM, evalGeneralizedRelativePosition()(iF));
+    if(iMM.size()) g.set(iMM, evalGeneralizedRelativePosition()(iM));
   }
 
   void Joint::updategd() {
-    if(iFM.size()) gd(iFM) = evalGeneralizedRelativeVelocity()(iF);
-    if(iMM.size()) gd(iMM) = evalGeneralizedRelativeVelocity()(iM);
+    if(iFM.size()) gd.set(iFM, evalGeneralizedRelativeVelocity()(iF));
+    if(iMM.size()) gd.set(iMM, evalGeneralizedRelativeVelocity()(iM));
   }
 
   void Joint::updatewb() {
-    if(iFM.size()) wb(iFM) += evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), 2.0*evalGlobalRelativeVelocity()));
-    if(iMM.size()) wb(iMM) += evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity()));
+    if(iFM.size()) wb.add(iFM, evalGlobalForceDirection().T() * (frame[1]->evalGyroscopicAccelerationOfTranslation() - C.evalGyroscopicAccelerationOfTranslation() - crossProduct(C.evalAngularVelocity(), 2.0*evalGlobalRelativeVelocity())));
+    if(iMM.size()) wb.add(iMM, evalGlobalMomentDirection().T() * (frame[1]->evalGyroscopicAccelerationOfRotation() - C.evalGyroscopicAccelerationOfRotation() - crossProduct(C.evalAngularVelocity(), evalGlobalRelativeAngularVelocity())));
   }
 
   void Joint::updatexd() {
@@ -344,7 +344,7 @@ namespace MBSim {
 
     for (int i = 0; i < iFM.size(); i++) {
       RowVec jp1;
-      jp1 &= ds->getJprox().row(laInd + i);
+      jp1.ref(ds->getJprox(), laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = ffl->diff(la(i), gdd(i), rFactor(i));
@@ -357,7 +357,7 @@ namespace MBSim {
     for (int i = iFM.size(); i < laSize; i++) {
 
       RowVec jp1;
-      jp1 &= ds->getJprox().row(laInd + i);
+      jp1.ref(ds->getJprox(), laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fml->diff(la(i), gdd(i), rFactor(i));
@@ -374,7 +374,7 @@ namespace MBSim {
 
     for (int i = 0; i < iFM.size(); i++) {
       RowVec jp1;
-      jp1 &= ds->getJprox().row(laInd + i);
+      jp1.ref(ds->getJprox(), laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fifl->diff(La(i), gdn(i), gd(i), rFactor(i));
@@ -386,7 +386,7 @@ namespace MBSim {
 
     for (int i = iFM.size(); i < laSize; i++) {
       RowVec jp1;
-      jp1 &= ds->getJprox().row(laInd + i);
+      jp1.ref(ds->getJprox(), laInd + i);
       RowVec e1(jp1.size());
       e1(laInd + i) = 1;
       Vec diff = fiml->diff(La(i), gdn(i), gd(i), rFactor(i));
@@ -523,8 +523,8 @@ namespace MBSim {
 
   void InverseKineticsJoint::updateb() {
     if(body) {
-      b(RangeV(0, bSize - 1), RangeV(0, 2)) = body->evalPJT().T();
-      b(RangeV(0, bSize - 1), RangeV(3, 5)) = body->evalPJR().T();
+      b.set(RangeV(0, bSize - 1), RangeV(0, 2), body->evalPJT().T());
+      b.set(RangeV(0, bSize - 1), RangeV(3, 5), body->evalPJR().T());
     }
   }
 

@@ -234,16 +234,19 @@ namespace MBSim {
       fmatvec::Vec& getzdParent() { return zdParent; }
       fmatvec::Vec& getlaParent() { return laParent; }
       fmatvec::Vec& getLaParent() { return LaParent; }
-      const fmatvec::Vec& getzParent() const { return zParent; }
-      const fmatvec::Vec& getzdParent() const { return zdParent; }
-      const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
-      const fmatvec::Mat& getVParent(int i=0) const { return VParent[i]; }
-      const fmatvec::Vec& getlaParent() const { return laParent; }
-      const fmatvec::Vec& getLaParent() const { return LaParent; }
-      const fmatvec::Vec& getgParent() const { return gParent; }
-      const fmatvec::Vec& getgdParent() const { return gdParent; }
-      const fmatvec::Vec& getresParent() const { return resParent; }
-      const fmatvec::Vec& getrFactorParent() const { return rFactorParent; }
+//      const fmatvec::Vec& getzParent() const { return zParent; }
+//      const fmatvec::Vec& getzdParent() const { return zdParent; }
+//      const fmatvec::Mat& getWParent(int i=0) const { return WParent[i]; }
+      fmatvec::Mat& getWParent(int i=0) { return WParent[i]; }
+      fmatvec::Mat& getVParent(int i=0) { return VParent[i]; }
+//      fmatvec::Vec& getlaParent() { return laParent; }
+//      fmatvec::Vec& getLaParent() { return LaParent; }
+//      const fmatvec::Vec& getgParent() const { return gParent; }
+      fmatvec::Vec& getgParent() { return gParent; }
+//      const fmatvec::Vec& getgdParent() const { return gdParent; }
+      fmatvec::Vec& getgdParent() { return gdParent; }
+      fmatvec::Vec& getresParent() { return resParent; }
+      fmatvec::Vec& getrFactorParent() { return rFactorParent; }
 
       void resizezParent(int nz) { zParent.resize(nz); }
       void resizezdParent(int nz) { zdParent.resize(nz); }
@@ -448,13 +451,13 @@ namespace MBSim {
        * \brief references to external state
        * \param external state
        */
-      void updatezRef(const fmatvec::Vec &ext);
+      void updatezRef(fmatvec::Vec &ext);
 
       /**
        * \brief references to differentiated external state
        * \param differentiated external state
        */
-      void updatezdRef(const fmatvec::Vec &ext);
+      void updatezdRef(fmatvec::Vec &ext);
 
       /**
        * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed
@@ -518,33 +521,33 @@ namespace MBSim {
        * \brief references to relative distances of dynamic system parent
        * \param vector to be referenced
        */
-      void updategRef(const fmatvec::Vec &ref) override { Group::updategRef(ref); updg = true; }
+      void updategRef(fmatvec::Vec &ref) override { Group::updategRef(ref); updg = true; }
 
       /**
        * \brief references to relative velocities of dynamic system parent
        * \param vector to be referenced
        */
-      void updategdRef(const fmatvec::Vec &ref) override { Group::updategdRef(ref); updgd = true; }
+      void updategdRef(fmatvec::Vec &ref) override { Group::updategdRef(ref); updgd = true; }
 
       /**
        * \brief references to TODO of dynamic system parent
        * \param vector to be referenced
        */      
-      void updatewbRef(const fmatvec::Vec &ref) override { Group::updatewbRef(ref); updwb = true; }
+      void updatewbRef(fmatvec::Vec &ref) override { Group::updatewbRef(ref); updwb = true; }
 
       /**
        * \brief references to contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateWRef(const fmatvec::Mat &ref, int i=0) override { Group::updateWRef(ref,i); updW[i] = true; }
+      void updateWRef(fmatvec::Mat &ref, int i=0) override { Group::updateWRef(ref,i); updW[i] = true; }
 
       /**
        * \brief references to condensed contact force direction matrix of dynamic system parent
        * \param matrix to be referenced
        * \param index of normal usage and inverse kinetics
        */
-      void updateVRef(const fmatvec::Mat &ref, int i=0) override { Group::updateVRef(ref,i); updV[i] = true; }
+      void updateVRef(fmatvec::Mat &ref, int i=0) override { Group::updateVRef(ref,i); updV[i] = true; }
 
       /**
        * \brief update inverse kinetics constraint forces

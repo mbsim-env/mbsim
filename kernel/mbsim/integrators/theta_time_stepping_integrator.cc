@@ -95,7 +95,7 @@ namespace MBSim {
         double qtmp = system->getq()(i);
         system->getq()(i) += epsroot;
         system->resetUpToDate();
-        dhdq.col(i) = (system->evalh()-hOld)/epsroot;
+        dhdq.set(i, (system->evalh()-hOld)/epsroot);
         system->getq()(i) = qtmp;
       }
       Mat dhdu(system->gethSize(),system->getuSize(),NONINIT);
@@ -103,7 +103,7 @@ namespace MBSim {
         double utmp = system->getu()(i);
         system->getu()(i) += epsroot;
         system->resetUpToDate();
-        dhdu.col(i) = (system->evalh()-hOld)/epsroot;
+        dhdu.set(i, (system->evalh()-hOld)/epsroot);
         system->getu()(i) = utmp;
       }
 
@@ -126,10 +126,10 @@ namespace MBSim {
       VecInt ipiv(M.size());
       SqrMat luMeff = SqrMat(facLU(M - (theta*dt)*dhdu - (theta*theta*dt*dt)*dhdq*T,ipiv));
       Vec heff = h + (theta*dt)*dhdq*T*system->getu();
-      system->getG(false) &= SqrMat(W.T()*slvLUFac(luMeff,V,ipiv));
+      system->getG(false) <<= W.T()*slvLUFac(luMeff,V,ipiv);
       system->getGs(false) <<= system->getG(false);
       system->setUpdateG(false);
-      system->getbi(false) &= system->evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
+      system->getbi(false) <<= system->evalgd() + W.T()*slvLUFac(luMeff,heff,ipiv)*dt;
       system->setUpdatebi(false);
 
       Vec du = slvLUFac(luMeff,heff*dt+system->evalrdt(),ipiv);
@@ -172,14 +172,14 @@ namespace MBSim {
     system->calclaSize(2); // contacts which stay closed
     system->calcrFactorSize(2); // contacts which stay closed
 
-    system->updateWRef(system->getWParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
-    system->updateVRef(system->getVParent(0)(RangeV(0,system->getuSize()-1),RangeV(0,system->getlaSize()-1)));
-    system->updatelaRef(system->getlaParent()(RangeV(0,system->getlaSize()-1)));
-    system->updateLaRef(system->getLaParent()(RangeV(0,system->getlaSize()-1)));
-    system->updategdRef(system->getgdParent()(RangeV(0,system->getgdSize()-1)));
+    system->updateWRef(system->getWParent(0));
+    system->updateVRef(system->getVParent(0));
+    system->updatelaRef(system->getlaParent());
+    system->updateLaRef(system->getLaParent());
+    system->updategdRef(system->getgdParent());
     if (system->getImpactSolver() == DynamicSystemSolver::rootfinding)
-      system->updateresRef(system->getresParent()(RangeV(0,system->getlaSize()-1)));
-    system->updaterFactorRef(system->getrFactorParent()(RangeV(0,system->getrFactorSize()-1)));
+      system->updateresRef(system->getresParent());
+    system->updaterFactorRef(system->getrFactorParent());
   }
 
 }

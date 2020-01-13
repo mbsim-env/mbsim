@@ -39,9 +39,9 @@ namespace MBSim {
       virtual fmatvec::Vec& getx() { return x; }
       virtual void setxInd(int xInd_) { xInd = xInd_; };
       virtual int getxSize() const { return xSize; }
-      virtual void updatexRef(const fmatvec::Vec& xParent);
-      virtual void updatexdRef(const fmatvec::Vec& xdParent);
-      virtual void updatedxRef(const fmatvec::Vec& dxParent);
+      virtual void updatexRef(fmatvec::Vec& xParent);
+      virtual void updatexdRef(fmatvec::Vec& xdParent);
+      virtual void updatedxRef(fmatvec::Vec& dxParent);
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *group);

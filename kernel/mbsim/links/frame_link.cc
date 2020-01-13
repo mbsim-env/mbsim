@@ -75,49 +75,49 @@ namespace MBSim {
     MechanicalLink::init(stage, config);
   }
 
-  void FrameLink::updateWRef(const Mat& WParent, int j) {
+  void FrameLink::updateWRef(Mat& WParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV J = RangeV(laInd,laInd+laSize-1);
       RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1); // TODO Prüfen ob hSize
-      W[j][i]&=WParent(I,J);
+      W[j][i].ref(WParent,I,J);
     }
   }
 
-  void FrameLink::updateVRef(const Mat& VParent, int j) {
+  void FrameLink::updateVRef(Mat& VParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV J = RangeV(laInd,laInd+laSize-1);
       RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      V[j][i]&=VParent(I,J);
+      V[j][i].ref(VParent,I,J);
     }
   }
 
-  void FrameLink::updatehRef(const Vec &hParent, int j) {
+  void FrameLink::updatehRef(Vec &hParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      h[j][i]&=hParent(I);
+      h[j][i].ref(hParent,I);
     }
   }
 
-  void FrameLink::updatedhdqRef(const fmatvec::Mat& dhdqParent, int k) {
+  void FrameLink::updatedhdqRef(fmatvec::Mat& dhdqParent, int k) {
     throwError("Internal error");
   }
 
-  void FrameLink::updatedhduRef(const fmatvec::SqrMat& dhduParent, int k) {
+  void FrameLink::updatedhduRef(fmatvec::SqrMat& dhduParent, int k) {
     throwError("Internal error");
   }
 
-  void FrameLink::updatedhdtRef(const fmatvec::Vec& dhdtParent, int j) {
+  void FrameLink::updatedhdtRef(fmatvec::Vec& dhdtParent, int j) {
     for(unsigned i=0; i<2; i++) {
       RangeV I = RangeV(frame[i]->gethInd(j),frame[i]->gethInd(j)+frame[i]->gethSize(j)-1);
-      dhdt[i]&=dhdtParent(I);
+      dhdt[i].ref(dhdtParent,I);
     }
   }
 
-  void FrameLink::updaterRef(const Vec &rParent, int j) {
+  void FrameLink::updaterRef(Vec &rParent, int j) {
     for(unsigned i=0; i<2; i++) {
       int hInd =  frame[i]->gethInd(j);
       RangeV I = RangeV(hInd,hInd+frame[i]->gethSize(j)-1);
-      r[j][i]&=rParent(I);
+      r[j][i].ref(rParent,I);
     }
   }
 

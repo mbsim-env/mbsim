@@ -65,7 +65,7 @@ namespace MBSim {
     }
 
     //compute first part
-    returnVec(RangeV(0, NumberOfContacts - 1)) = q + M * z - w;
+    returnVec.set(RangeV(0, NumberOfContacts - 1), q + M * z - w);
 
     //loop for the prox-functions
     for (int contactIterator = 0; contactIterator < NumberOfContacts; contactIterator++) {
@@ -111,7 +111,7 @@ namespace MBSim {
       msg(Debug) << "M is: " << M << endl;
     }
 
-    returnVec(RangeV(0, NumberOfContacts - 1)) = q + M * z;
+    returnVec.set(RangeV(0, NumberOfContacts - 1), q + M * z);
     //loop for the prox-functions
     for (int contactIterator = 0; contactIterator < NumberOfContacts; contactIterator++) {
       returnVec(NumberOfContacts + contactIterator) = proxCN(z(contactIterator) - r * w(contactIterator));
@@ -143,8 +143,8 @@ namespace MBSim {
 
       J.resize(dim, INIT, 0.);
 
-      J(RangeV(0, dim / 2 - 1), RangeV(0, dim / 2 - 1)) = -SqrMat(dim / 2, EYE);
-      J(RangeV(0, dim / 2 - 1), RangeV(dim / 2, dim - 1)) = static_cast<LCPNewtonReformulationFunction*>(function_)->getM();
+      J.set(RangeV(0, dim / 2 - 1), RangeV(0, dim / 2 - 1), -SqrMat(dim / 2, EYE));
+      J.set(RangeV(0, dim / 2 - 1), RangeV(dim / 2, dim - 1), static_cast<LCPNewtonReformulationFunction*>(function_)->getM());
     }
     else
       throwError("Not implemented"); //TODO: use error message

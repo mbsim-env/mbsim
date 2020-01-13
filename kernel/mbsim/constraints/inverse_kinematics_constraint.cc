@@ -49,10 +49,10 @@ namespace MBSim {
     }
 
     if(forceDir.cols())
-      res(Range<Var,Var>(0,forceDir.cols()-1)) = forceDir.T()*(frame->evalPosition()-r);
+      res.set(Range<Var,Var>(0,forceDir.cols()-1), forceDir.T()*(frame->evalPosition()-r));
 
     if(momentDir.cols())
-      res(Range<Var,Var>(forceDir.cols(),forceDir.cols()+momentDir.cols()-1)) = momentDir.T()*AIK2Cardan(frame->getOrientation().T()*A);
+      res.set(Range<Var,Var>(forceDir.cols(),forceDir.cols()+momentDir.cols()-1), momentDir.T()*AIK2Cardan(frame->getOrientation().T()*A));
 
     return res;
   } 
@@ -151,8 +151,8 @@ namespace MBSim {
   }
 
   void InverseKinematicsConstraint::updateA() {
-    A(iF,RangeV(0,nu-1)) = forceDir.T()*JT;
-    A(iM,RangeV(0,nu-1)) = momentDir.T()*JR;
+    A.set(iF,RangeV(0,nu-1), forceDir.T()*JT);
+    A.set(iM,RangeV(0,nu-1), momentDir.T()*JR);
     updA = false;
   }
 
@@ -167,8 +167,8 @@ namespace MBSim {
 
     for(size_t i=0; i<bd.size(); i++) {
       bd[i]->setUpdateByReference(false);
-      JT(RangeV(0,2),Iu[i]) = frame->evalJacobianOfTranslation(2);
-      JR(RangeV(0,2),Iu[i]) = frame->getJacobianOfRotation(2);
+      JT.set(RangeV(0,2),Iu[i], frame->evalJacobianOfTranslation(2));
+      JR.set(RangeV(0,2),Iu[i], frame->getJacobianOfRotation(2));
       for(size_t j=i+1; j<bd.size(); j++)
         bd[j]->resetJacobiansUpToDate();
       frame->resetJacobiansUpToDate();
@@ -179,8 +179,8 @@ namespace MBSim {
       i->setuRel(Vec(i->getGeneralizedVelocitySize()));
     }
     Vec b(nu);
-    b(iF) = -(forceDir.T()*(frame->evalVelocity()-fr->parDer(getTime())));
-    if(fA) b(iM) = -(momentDir.T()*(frame->getAngularVelocity()-fA->parDer(getTime())));
+    b.set(iF, -(forceDir.T()*(frame->evalVelocity()-fr->parDer(getTime()))));
+    if(fA) b.set(iM, -(momentDir.T()*(frame->getAngularVelocity()-fA->parDer(getTime()))));
     Vec u = slvLU(evalA(),b);
     for(unsigned int i=0; i<bd.size(); i++) {
       bd[i]->resetVelocitiesUpToDate();
@@ -198,10 +198,10 @@ namespace MBSim {
       }
       Vec b(nu);
       Vec3 WvP0P1 = fr->parDer(getTime()) - frame->evalVelocity();
-      b(iF) = forceDir.T()*(fr->parDerDirDer(1,getTime())-frame->evalGyroscopicAccelerationOfTranslation() - crossProduct(frame->evalAngularVelocity(), 2.0*WvP0P1));
+      b.set(iF, forceDir.T()*(fr->parDerDirDer(1,getTime())-frame->evalGyroscopicAccelerationOfTranslation() - crossProduct(frame->evalAngularVelocity(), 2.0*WvP0P1)));
       if(fA) {
         Vec3 WomK0K1 = fA->parDer(getTime()) - frame->getAngularVelocity();
-        b(iM) = momentDir.T()*(fA->parDerDirDer(1,getTime())-frame->getGyroscopicAccelerationOfRotation()-crossProduct(frame->getAngularVelocity(), WomK0K1));
+        b.set(iM, momentDir.T()*(fA->parDerDirDer(1,getTime())-frame->getGyroscopicAccelerationOfRotation()-crossProduct(frame->getAngularVelocity(), WomK0K1)));
       }
 
       Vec j = slvLU(evalA(),b);
