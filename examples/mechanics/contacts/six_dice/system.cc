@@ -142,7 +142,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
       WrOS0(0) = -0.06;
       WrOS0(2) = rB(2)-0.2-l/2+3*1.11*l;
     }
-    q0(RangeV(0,2)) = WrOS0;
+    q0.set(RangeV(0,2), WrOS0);
     SqrMat AWK0(3);
     double a = (i)*0.01;
     AWK0(0,0) = cos(a);

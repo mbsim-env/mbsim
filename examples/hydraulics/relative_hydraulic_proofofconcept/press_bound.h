@@ -15,14 +15,14 @@ class PressBound : public Link {
     PressBound(std::string name);
     void updateg() {}
     void updategd() {}
-    void updateWRef(const fmatvec::Mat&, int) {}
-    void updateVRef(const fmatvec::Mat&, int) {}
-    void updatehRef(const fmatvec::Vec&, int) {}
-    void updatedhdqRef(const fmatvec::Mat&, int) {}
-    void updatedhduRef(const fmatvec::SqrMat&, int) {}
-    void updatedhdtRef(const fmatvec::Vec&, int) {}
-    void updaterRef(const fmatvec::Vec&, int) {}
-    void updaterRef(const fmatvec::Vec&) {}
+    void updateWRef(fmatvec::Mat&, int) {}
+    void updateVRef(fmatvec::Mat&, int) {}
+    void updatehRef(fmatvec::Vec&, int) {}
+    void updatedhdqRef(fmatvec::Mat&, int) {}
+    void updatedhduRef(fmatvec::SqrMat&, int) {}
+    void updatedhdtRef(fmatvec::Vec&, int) {}
+    void updaterRef(fmatvec::Vec&, int) {}
+    void updaterRef(fmatvec::Vec&) {}
     bool isActive() const { return false; }
     virtual bool isSingleValued() const { return true; }
     bool gActiveChanged() { return false; }

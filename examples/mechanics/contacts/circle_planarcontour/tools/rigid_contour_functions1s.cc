@@ -44,8 +44,8 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   Vec rCOG = rCOG_u*scale;
   int N = ContourMat.rows();
   Mat angleRxyTMP0(N,4);
-  angleRxyTMP0.col(2) = ContourMat.col(0);
-  angleRxyTMP0.col(3) = ContourMat.col(1);
+  angleRxyTMP0.set(2, ContourMat.col(0));
+  angleRxyTMP0.set(3, ContourMat.col(1));
   int i;
   for(i=0;i<N;i++) {
     angleRxyTMP0(i,2) = angleRxyTMP0(i,2) - rCOG(0);
@@ -67,11 +67,11 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
       identXY++;
   Mat angleRxyTMP(N-identXY,4);
   int j=0;
-  angleRxyTMP.row(0) = angleRxyTMP0.row(0);
+  angleRxyTMP.set(0, angleRxyTMP0.row(0));
   for (i=1; i<N;i++) {
     if (!((abs(angleRxyTMP0(i,2)-angleRxyTMP0(i-1,2))<epsroot)&&(abs(angleRxyTMP0(i,3)-angleRxyTMP0(i-1,3))<epsroot)))
       j++;
-    angleRxyTMP.row(j) = angleRxyTMP0.row(i); 
+    angleRxyTMP.set(j, angleRxyTMP0.row(i));
   }
   N = N-identXY;
   double rPhi0, r0,rN,phi0,phiN;
@@ -99,7 +99,7 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   angleRxy(Nneu-1,0) = 2.*M_PI;
   angleRxy(Nneu-1,1) = rPhi0;  
   angleRxy(Nneu-1,2) = rPhi0; 
-  angleRxy(RangeV(1,Nneu-2),RangeV(0,3)) = angleRxyTMP(RangeV(index0,indexE),RangeV(0,3));
+  angleRxy.set(RangeV(1,Nneu-2),RangeV(0,3), angleRxyTMP(RangeV(index0,indexE),RangeV(0,3)));
   int N_diskret = Nneu -1; 
   N_diskret = (N_diskret -1)/discretization +1;
   N_diskret++;

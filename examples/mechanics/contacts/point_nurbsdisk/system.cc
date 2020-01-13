@@ -41,7 +41,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec d(3); d(0) = 0.025; // thickness at r==0 
   SqrMat A(2,NONINIT); A(0,0) = rI*rI; A(0,1) = rI; A(1,0) = rO*rO; A(1,1) = rO;
   Vec b(2,NONINIT); b(0) = 0.; b(1) = 0.15; // differences to thickness d(0) for r==rI and r==rO with b(1) = 0.05 for CUBE
-  d(RangeV(1,2)) = slvLU(A,b);
+  d.set(RangeV(1,2), slvLU(A,b));
 
   int nr = 3; // radial number of elements
   int nj = 6; // azimuthal number of elements
