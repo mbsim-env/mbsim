@@ -42,6 +42,8 @@ namespace MBSimControl {
     if (stage==resolveStringRef) {
       if (not contactString.empty())
         setContact(getByPath<Contact>(contactString));
+      if(not contact)
+        throwError("Contact is not given!");
       Sensor::init(stage, config);
     }
     else if (stage==unknownStage) {

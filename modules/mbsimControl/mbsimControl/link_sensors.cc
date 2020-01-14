@@ -40,6 +40,8 @@ namespace MBSimControl {
     if (stage==resolveStringRef) {
       if (not linkString.empty())
         setLink(getByPath<Link>(linkString));
+      if(not link)
+        throwError("Link is not given!");
       Sensor::init(stage, config);
     }
     else

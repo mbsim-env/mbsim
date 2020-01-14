@@ -45,6 +45,8 @@ namespace MBSimControl {
     if(stage==resolveStringRef) {
       for(unsigned int i=0; i<signalString.size(); i++)
         addInputSignal(getByPath<Signal>(signalString[i]));
+      if(signal.empty())
+        throwError("No input signal is given!");
     }
     else if(stage==preInit)
       s.resize(getSignalSize(),NONINIT);
@@ -84,6 +86,8 @@ namespace MBSimControl {
     if(stage==resolveStringRef) {
       if(not signalString.empty())
         setInputSignal(getByPath<Signal>(signalString));
+      if(not signal)
+        throwError("Input signal is not given!");
     }
     else if(stage==preInit)
       s.resize(getSignalSize(),NONINIT);
@@ -111,6 +115,8 @@ namespace MBSimControl {
     if (stage==resolveStringRef) {
       if (not signalString.empty())
         setInputSignal(getByPath<Signal>(signalString));
+      if(not s)
+        throwError("Input signal is not given!");
       Signal::init(stage, config);
     }
     else
@@ -145,6 +151,8 @@ namespace MBSimControl {
     if(stage==resolveStringRef) {
       for(unsigned int i=0; i<signalString.size(); i++)
         addInputSignal(getByPath<Signal>(signalString[i]));
+      if(signal.empty())
+        throwError("No input signal is given!");
       if(signal.size()==1)
         updateSignal_ = &SignalOperation::updateSignal1;
       else if(signal.size()==2)

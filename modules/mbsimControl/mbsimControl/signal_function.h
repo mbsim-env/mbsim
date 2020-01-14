@@ -75,6 +75,8 @@ namespace MBSimControl {
     if(stage==MBSim::Element::resolveStringRef) {
       if(not retString.empty())
         setReturnSignal(this->template getByPath<Signal>(retString));
+      if(not ret)
+        MBSim::Element::throwError("Signal is not given!");
       MBSim::Function<Ret(Arg)>::init(stage, config);
     }
     else
@@ -124,6 +126,8 @@ namespace MBSimControl {
     if(stage==MBSim::Element::resolveStringRef) {
       if(not retString.empty())
         setReturnSignal(this->template getByPath<Signal>(retString));
+      if(not ret)
+        MBSim::Element::throwError("Signal is not given!");
       MBSim::Function<Ret(Arg1,Arg2)>::init(stage, config);
     }
     else

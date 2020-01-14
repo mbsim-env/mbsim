@@ -35,7 +35,10 @@ namespace MBSimControl {
 
   void ExternSignalSink::init(InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      setSignal(getByPath<Signal>(signalString));
+      if(not signalString.empty())
+        setSignal(getByPath<Signal>(signalString));
+      if(not signal)
+        throwError("Signal is not given!");
       Signal::init(stage, config);
     }
     else

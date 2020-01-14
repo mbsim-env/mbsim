@@ -39,6 +39,8 @@ namespace MBSimControl {
     if(stage==resolveStringRef) {
       if(not frameString.empty())
         setFrame(getByPath<Frame>(frameString));
+      if(not frame)
+        throwError("Frame is not given!");
     }
     else if(stage==preInit)
       s.resize(getSignalSize());

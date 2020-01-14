@@ -39,7 +39,9 @@ namespace MBSimControl {
     if (stage==resolveStringRef) {
       if (not objectString.empty())
         setObject(getByPath<Object>(objectString));
-    }
+      if(not object)
+        throwError("Object is not given!");
+   }
     Sensor::init(stage, config);
   }
 
