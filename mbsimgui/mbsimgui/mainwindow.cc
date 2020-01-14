@@ -282,11 +282,11 @@ namespace MBSimGUI {
     connect(embeddingView,SIGNAL(pressed(QModelIndex)), this, SLOT(embeddingViewClicked()));
     connect(elementView->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&)));
 
-    QDockWidget *dockWidget0 = new QDockWidget("MBSim project");
+    QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget0);
     dockWidget0->setWidget(projectView);
 
-    QDockWidget *dockWidget1 = new QDockWidget("Multibody system");
+    QDockWidget *dockWidget1 = new QDockWidget("Multibody system", this);
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
     QWidget *widget1 = new QWidget(dockWidget1);
     dockWidget1->setWidget(widget1);
@@ -296,7 +296,7 @@ namespace MBSimGUI {
     widgetLayout1->addWidget(elementViewFilter, 0, 0);
     widgetLayout1->addWidget(elementView, 1, 0);
 
-    QDockWidget *dockWidget3 = new QDockWidget("Embeddings");
+    QDockWidget *dockWidget3 = new QDockWidget("Embeddings", this);
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
     QWidget *widget3 = new QWidget(dockWidget3);
     dockWidget3->setWidget(widget3);
@@ -306,16 +306,11 @@ namespace MBSimGUI {
     widgetLayout3->addWidget(embeddingViewFilter, 0, 0);
     widgetLayout3->addWidget(embeddingView, 1, 0);
 
-    QDockWidget *dockWidget2 = new QDockWidget("Solver");
+    QDockWidget *dockWidget2 = new QDockWidget("Solver", this);
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
     dockWidget2->setWidget(solverView);
 
-    //tabifyDockWidget(dockWidget3,dockWidget4);
-    //tabifyDockWidget(dockWidget2,dockWidget3);
-    //QList<QTabBar *> tabList = findChildren<QTabBar *>();
-    //tabBar = tabList.at(0);
-
-    QWidget *centralWidget = new QWidget;  
+    QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
     auto *mainlayout = new QHBoxLayout;
     centralWidget->setLayout(mainlayout);
