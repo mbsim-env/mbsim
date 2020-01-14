@@ -45,6 +45,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(not saved_body.empty())
         setRigidBody(getByPath<RigidBody>(saved_body));
+      if(not body)
+        throwError("Rigid body is not given!");
       if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Observer::init(stage, config);

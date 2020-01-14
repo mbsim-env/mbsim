@@ -46,6 +46,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(not saved_constraint.empty())
         setInverseKinematicsConstraint(getByPath<InverseKinematicsConstraint>(saved_constraint));
+      if(not constraint)
+        throwError("Inverse kinematics constraint is not given!");
       Observer::init(stage, config);
     }
     else if(stage==plotting) {

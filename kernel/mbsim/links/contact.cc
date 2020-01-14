@@ -239,14 +239,11 @@ namespace MBSim {
 
   void Contact::init(InitStage stage, const InitConfigSet &config) {
     if (stage ==resolveStringRef) {
-      //connect all contours given in xml file
-      for (size_t i = 0; i < saved_ref.size(); i++) {
-        if (not saved_ref[i].name1.empty() and not saved_ref[i].name2.empty())
-          connect(getByPath<Contour>(saved_ref[i].name1), getByPath<Contour>(saved_ref[i].name2));
-      }
+      if(not saved_ref1.empty() and not saved_ref2.empty())
+        connect(getByPath<Contour>(saved_ref1), getByPath<Contour>(saved_ref2));
 
-      if(not(contour.size()))
-        throwError("no connection given!");
+      if(not contour[0] or not contour[1])
+        throwError("Not all connections are given!");
 
       Link::init(stage, config);
     }
@@ -600,22 +597,10 @@ namespace MBSim {
     Link::initializeUsingXML(element);
     DOMElement *e;
 
-    /*Read all contour pairings*/
-    //Get all contours, that should be connected
-    e = E(element)->getFirstElementChildNamed(MBSIM%"connect"); //TODO: all connects must be in a row (is that okay?)
-    while (e) { //As long as there are siblings read them and save them
-      if (E(e)->getTagName() == MBSIM%"connect") {
-        saved_references ref;
-        ref.name1 = E(e)->getAttribute("ref1");
-        ref.name2 = E(e)->getAttribute("ref2");
-
-        saved_ref.push_back(ref);
-        e = e->getNextElementSibling();
-      }
-      else {
-        break;
-      }
-    }
+    //Save contour names for initialization
+    e = E(element)->getFirstElementChildNamed(MBSIM%"connect");
+    saved_ref1 = E(e)->getAttribute("ref1");
+    saved_ref2 = E(e)->getAttribute("ref2");
 
     //Set contact law
     e = E(element)->getFirstElementChildNamed(MBSIM%"normalForceLaw");

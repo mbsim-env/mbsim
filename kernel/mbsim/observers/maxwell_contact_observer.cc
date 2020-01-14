@@ -41,6 +41,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(not saved_link.empty())
         setMaxwellContact(getByPath<MaxwellContact>(saved_link));
+      if(not link)
+        throwError("Maxwell contact is not given!");
       Observer::init(stage, config);
     }
     else if(stage==preInit) {

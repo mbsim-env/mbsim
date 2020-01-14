@@ -247,11 +247,7 @@ namespace MBSim {
       int maxNumContacts{-1};
 
     private:
-      struct saved_references {
-        std::string name1;
-        std::string name2;
-      };
-      std::vector<saved_references> saved_ref;
+      std::string saved_ref1, saved_ref2;
   };
 
 }

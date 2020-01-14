@@ -41,6 +41,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(not saved_link.empty())
         setContact(getByPath<Contact>(saved_link));
+      if(not link)
+        throwError("Contact is not given!");
       Observer::init(stage, config);
     }
     else if(stage==preInit) {

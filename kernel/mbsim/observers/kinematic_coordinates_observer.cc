@@ -48,6 +48,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(not saved_frame.empty())
         setFrame(getByPath<Frame>(saved_frame));
+      if(not frame)
+        throwError("Frame is not given!");
       if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(not frameOfReference)

@@ -46,6 +46,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(not saved_constraint.empty())
         setMechanicalConstraint(getByPath<MechanicalConstraint>(saved_constraint));
+      if(not constraint)
+        throwError("Mechanical constraint is not given!");
       Observer::init(stage, config);
     }
     else if(stage==plotting) {

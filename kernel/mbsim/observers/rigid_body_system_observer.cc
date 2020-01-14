@@ -45,6 +45,8 @@ namespace MBSim {
         body.push_back(getByPath<RigidBody>(i));
       if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+      if(body.empty())
+        throwError("No rigid bodies are given!");
       Observer::init(stage, config);
     }
     else if(stage==plotting) {

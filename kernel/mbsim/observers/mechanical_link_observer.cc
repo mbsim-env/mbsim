@@ -44,6 +44,8 @@ namespace MBSim {
     if(stage==resolveStringRef) {
       if(not saved_link.empty())
         setMechanicalLink(getByPath<MechanicalLink>(saved_link));
+      if(not link)
+        throwError("Mechanical link is not given!");
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
