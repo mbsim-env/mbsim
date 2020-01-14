@@ -109,6 +109,13 @@ namespace MBSimGUI {
     QDialog::hideEvent(event);
   }
 
+  void PropertyDialog::closeEvent(QCloseEvent *event) {
+    if(getCancel())
+      QDialog::closeEvent(event);
+    else
+      event->ignore();
+  }
+
   EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_) : item(item_) {
     if(item->getEmbeded()) {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);

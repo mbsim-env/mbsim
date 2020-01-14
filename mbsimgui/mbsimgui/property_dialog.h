@@ -61,6 +61,7 @@ namespace MBSimGUI {
       virtual void showXMLHelp() { }
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
+      void closeEvent(QCloseEvent *event) override;
     public slots:
       void clicked(QAbstractButton *button);
       virtual void updateWidget() { }
