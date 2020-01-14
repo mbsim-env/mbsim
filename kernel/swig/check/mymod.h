@@ -41,7 +41,8 @@ class FooVec {
   public:
     // 0 1 2 3 4 5
     // x x o o o x
-    FooVec(double x) : vBase(6), v(vBase(fmatvec::RangeV(2,4))) {
+    FooVec(double x) : vBase(6) {
+      v.ref(vBase,fmatvec::RangeV(2,4));
       for(int i=0; i<5; ++i)
         vBase(i)=i;
       if(v(0)!=2)
@@ -70,7 +71,8 @@ class FooMat {
 //    2 x o o x
 //    3 x o o x
 //    4 x o o x
-    FooMat() : mBase(5,4), m(mBase(fmatvec::RangeV(2,4),fmatvec::RangeV(1,2))) {
+    FooMat() : mBase(5,4) {
+      m.ref(mBase,fmatvec::RangeV(2,4),fmatvec::RangeV(1,2));
       double v=0;
       for(int r=0; r<5; ++r)
         for(int c=0; c<4; ++c)
