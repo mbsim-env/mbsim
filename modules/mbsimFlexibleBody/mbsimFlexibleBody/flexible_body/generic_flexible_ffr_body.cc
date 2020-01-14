@@ -614,13 +614,13 @@ namespace MBSimFlexibleBody {
   }
 
   void GenericFlexibleFfrBody::updateqd() {
-    qd(iqT) = evaluTRel();
-    qd(iqR) = fTR ? (*fTR)(evalqRRel())*getuRRel() : getuRRel();
-    qd(iqE) = getuERel();
+    qd.set(iqT, evaluTRel());
+    qd.set(iqR, fTR ? (*fTR)(evalqRRel())*getuRRel() : getuRRel());
+    qd.set(iqE, getuERel());
   }
 
   void GenericFlexibleFfrBody::updateT() {
-    if(fTR) T(iqR,iuR) = (*fTR)(evalqRRel());
+    if(fTR) T.set(iqR,iuR, (*fTR)(evalqRRel()));
   }
 
   void GenericFlexibleFfrBody::updateGeneralizedPositions() {

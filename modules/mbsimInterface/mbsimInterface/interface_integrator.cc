@@ -412,7 +412,7 @@ namespace MBSimInterface {
           int index0=0, index1=0;
           for (unsigned int i=0; i<outputSignal.size(); i++) {
             index1=index0+outputSignalSize(i);
-            outputVector(RangeV(index0, index1))=outputSignal[i]->getSignal();
+            outputVector.set(RangeV(index0, index1), outputSignal[i]->getSignal());
             index0=index1+1;
           }
           double2str(mbsim2interface, &outputVector(0), outputVector.size());

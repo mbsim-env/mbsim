@@ -999,8 +999,8 @@ namespace MBSimFlexibleBody {
     dhLqpJp(7,6) = (11*(phi2p*sin(phi1) + phi1p*sin(phi2)))/(2.*l0*one_p_cos_dphi);
     dhLqpJp(7,7) = (11*(2*(-x1p + x2p - phi1p*y1 + phi1p*y2)*cos(phi1) + (-x1p + x2p - phi2p*y1 + phi2p*y2)*cos(2*phi1 - phi2) - x1p*cos(phi2) + x2p*cos(phi2) - 2*phi1p*y1*cos(phi2) + phi2p*y1*cos(phi2) + 2*phi1p*y2*cos(phi2) - phi2p*y2*cos(phi2) + 2*(phi1p*x1 - phi1p*x2 - y1p + y2p)*sin(phi1) + (phi2p*x1 - phi2p*x2 - y1p + y2p)*cos(phi2)*sin(2*phi1) + 2*phi1p*x1*sin(phi2) - phi2p*x1*sin(phi2) - 2*phi1p*x2*sin(phi2) + phi2p*x2*sin(phi2) - y1p*sin(phi2) + y2p*sin(phi2) - (phi2p*x1 - phi2p*x2 - y1p + y2p)*cos(2*phi1)*sin(phi2)))/(4.*l0*Power(1 + cos(phi1 - phi2),2));
 
-    Dhz(RangeV(0, 7),RangeV(0,7)) = dhqJ + Jeg.T()*( dhLq *Jeg - dhLqM*Jeg - MLocal*dhLqJp  );
-    Dhz(RangeV(8,15),RangeV(0,7)) =        Jeg.T()*( dhLqp*Jeg             - MLocal*dhLqpJp );
+    Dhz.set(RangeV(0, 7),RangeV(0,7), dhqJ + Jeg.T()*( dhLq *Jeg - dhLqM*Jeg - MLocal*dhLqJp  ));
+    Dhz.set(RangeV(8,15),RangeV(0,7),        Jeg.T()*( dhLqp*Jeg             - MLocal*dhLqpJp ));
 
     return Dhz;
   }

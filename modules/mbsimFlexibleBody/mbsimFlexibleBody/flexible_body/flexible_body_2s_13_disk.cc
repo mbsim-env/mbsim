@@ -46,8 +46,8 @@ namespace MBSimFlexibleBody {
       //  | --------------> r
       // radial and azimuthal coordinates of the FE [ElementalNodes(r1,j1,r2,j2)]
       // r1 and j1 are defined with node 1, r2 and j2 with node 4
-      ElementalNodes[i](RangeV(0, 1)) = NodeCoordinates.row(ElementNodeList(i, 0)).T(); // node 1
-      ElementalNodes[i](RangeV(2, 3)) = NodeCoordinates.row(ElementNodeList(i, 3)).T(); // node 4
+      ElementalNodes[i].set(RangeV(0, 1), NodeCoordinates.row(ElementNodeList(i, 0)).T()); // node 1
+      ElementalNodes[i].set(RangeV(2, 3), NodeCoordinates.row(ElementNodeList(i, 3)).T()); // node 4
 
       if (ElementalNodes[i](3) <= ElementalNodes[i](1)) { // ring closure
         ElementalNodes[i](3) += 2 * M_PI;
@@ -55,19 +55,19 @@ namespace MBSimFlexibleBody {
 
       // mapping node dof position (w, a, b) from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      qElement[i](RangeV(0, RefDofs - 1)) = evalqExt()(RangeV(0, RefDofs - 1));
-      qElement[i](RangeV(RefDofs, RefDofs + NodeDofs - 1)) = qext(RangeV(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1));
-      qElement[i](RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1)) = qext(RangeV(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1));
-      qElement[i](RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1)) = qext(RangeV(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1));
-      qElement[i](RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1)) = qext(RangeV(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1));
+      qElement[i].set(RangeV(0, RefDofs - 1), evalqExt()(RangeV(0, RefDofs - 1)));
+      qElement[i].set(RangeV(RefDofs, RefDofs + NodeDofs - 1), qext(RangeV(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1)));
+      qElement[i].set(RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1), qext(RangeV(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1)));
+      qElement[i].set(RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1), qext(RangeV(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1)));
+      qElement[i].set(RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1), qext(RangeV(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1)));
 
       // mapping node dof velocity from global vector to element vector
       // ref, node 1, node 2, node 3, node 4
-      uElement[i](RangeV(0, RefDofs - 1)) = evaluExt()(RangeV(0, RefDofs - 1));
-      uElement[i](RangeV(RefDofs, RefDofs + NodeDofs - 1)) = uext(RangeV(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1));
-      uElement[i](RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1)) = uext(RangeV(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1));
-      uElement[i](RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1)) = uext(RangeV(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1));
-      uElement[i](RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1)) = uext(RangeV(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1));
+      uElement[i].set(RangeV(0, RefDofs - 1), evaluExt()(RangeV(0, RefDofs - 1)));
+      uElement[i].set(RangeV(RefDofs, RefDofs + NodeDofs - 1), uext(RangeV(RefDofs + ElementNodeList(i, 0) * NodeDofs, RefDofs + (ElementNodeList(i, 0) + 1) * NodeDofs - 1)));
+      uElement[i].set(RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1), uext(RangeV(RefDofs + ElementNodeList(i, 1) * NodeDofs, RefDofs + (ElementNodeList(i, 1) + 1) * NodeDofs - 1)));
+      uElement[i].set(RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1), uext(RangeV(RefDofs + ElementNodeList(i, 2) * NodeDofs, RefDofs + (ElementNodeList(i, 2) + 1) * NodeDofs - 1)));
+      uElement[i].set(RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1), uext(RangeV(RefDofs + ElementNodeList(i, 3) * NodeDofs, RefDofs + (ElementNodeList(i, 3) + 1) * NodeDofs - 1)));
     }
     updEle = false;
   }
@@ -137,11 +137,11 @@ namespace MBSimFlexibleBody {
       Mat Wtmp = static_cast<FiniteElement2s13Disk*>(discretization[currentElement])->JGeneralized(ElementalNodes[currentElement], alpha);
 
       /* Jacobian of disk */
-      Wext(RangeV(0, RefDofs - 1), Wwidth) = Wtmp(RangeV(0, RefDofs - 1), Wwidth);
-      Wext(RangeV(RefDofs + ElementNodeList(currentElement, 0) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 0) + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
-      Wext(RangeV(RefDofs + ElementNodeList(currentElement, 1) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 1) + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1), Wwidth);
-      Wext(RangeV(RefDofs + ElementNodeList(currentElement, 2) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 2) + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1), Wwidth);
-      Wext(RangeV(RefDofs + ElementNodeList(currentElement, 3) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 3) + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1), Wwidth);
+      Wext.set(RangeV(0, RefDofs - 1), Wwidth, Wtmp(RangeV(0, RefDofs - 1), Wwidth));
+      Wext.set(RangeV(RefDofs + ElementNodeList(currentElement, 0) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 0) + 1) * NodeDofs - 1), Wwidth, Wtmp(RangeV(RefDofs, RefDofs + NodeDofs - 1), Wwidth));
+      Wext.set(RangeV(RefDofs + ElementNodeList(currentElement, 1) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 1) + 1) * NodeDofs - 1), Wwidth, Wtmp(RangeV(RefDofs + NodeDofs, RefDofs + 2 * NodeDofs - 1), Wwidth));
+      Wext.set(RangeV(RefDofs + ElementNodeList(currentElement, 2) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 2) + 1) * NodeDofs - 1), Wwidth, Wtmp(RangeV(RefDofs + 2 * NodeDofs, RefDofs + 3 * NodeDofs - 1), Wwidth));
+      Wext.set(RangeV(RefDofs + ElementNodeList(currentElement, 3) * NodeDofs, RefDofs + (ElementNodeList(currentElement, 3) + 1) * NodeDofs - 1), Wwidth, Wtmp(RangeV(RefDofs + 3 * NodeDofs, RefDofs + 4 * NodeDofs - 1), Wwidth));
     }
 
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
@@ -246,10 +246,10 @@ namespace MBSimFlexibleBody {
 
     /* Jacobian of disk */
     // reference
-    Wext(RangeV(0, RefDofs - 1), Wwidth) = Wtmp(RangeV(0, RefDofs - 1), Wwidth);
+    Wext.set(RangeV(0, RefDofs - 1), Wwidth, Wtmp(RangeV(0, RefDofs - 1), Wwidth));
 
     // nodes
-    Wext(RangeV(RefDofs + node * NodeDofs, RefDofs + (node + 1) * NodeDofs - 1), Wwidth) = Wtmp(RangeV(RefDofs, RefDofs + NodeDofs - 1), Wwidth);
+    Wext.set(RangeV(RefDofs + node * NodeDofs, RefDofs + (node + 1) * NodeDofs - 1), Wwidth, Wtmp(RangeV(RefDofs, RefDofs + NodeDofs - 1), Wwidth));
 
     // condensation
     Mat Jacobian = condenseMatrixRows(Wext, ILocked);
@@ -277,14 +277,14 @@ namespace MBSimFlexibleBody {
         case innerring: // 0: innerring
           ILocked = RangeV(RefDofs, RefDofs + NodeDofs * nj - 1);
           Jext.resize(Dofs, qSize, INIT, 0.);
-          Jext(RangeV(0, RefDofs - 1), RangeV(0, RefDofs - 1)) = DiagMat(RefDofs, INIT, 1.);
-          Jext(RangeV(RefDofs + NodeDofs * nj, Dofs - 1), RangeV(RefDofs, qSize - 1)) = DiagMat(qSize - RefDofs, INIT, 1.);
+          Jext.set(RangeV(0, RefDofs - 1), RangeV(0, RefDofs - 1), DiagMat(RefDofs, INIT, 1.));
+          Jext.set(RangeV(RefDofs + NodeDofs * nj, Dofs - 1), RangeV(RefDofs, qSize - 1), DiagMat(qSize - RefDofs, INIT, 1.));
         break;
 
         case outerring: // 1: outerring
           ILocked = RangeV(qSize, Dofs - 1);
           Jext.resize(Dofs, qSize, INIT, 0.);
-          Jext(RangeV(0, qSize - 1), RangeV(0, qSize - 1)) = DiagMat(qSize, INIT, 1.);
+          Jext.set(RangeV(0, qSize - 1), RangeV(0, qSize - 1), DiagMat(qSize, INIT, 1.));
         break;
       }
 
@@ -369,8 +369,8 @@ namespace MBSimFlexibleBody {
       RangeV IRef(0, RefDofs - 1);
 
       // reference components
-      Mext(IRef) += Mplatte(IRef);
-      Kext(IRef) += Kplatte(IRef);
+      Mext.add(IRef, Mplatte(IRef));
+      Kext.add(IRef, Kplatte(IRef));
 
       // nodes sort
       for (int k = 0; k < 4; k++) {
@@ -381,15 +381,15 @@ namespace MBSimFlexibleBody {
 
         // four nodes
         // ref,0 and 0,Ref
-        Mext(Ikges, IRef) += Mplatte(Ikelement, IRef);
-        Kext(Ikges, IRef) += Kplatte(Ikelement, IRef);
+        Mext.add(Ikges, IRef, Mplatte(Ikelement, IRef));
+        Kext.add(Ikges, IRef, Kplatte(Ikelement, IRef));
 
         // int n=k;
-        Mext(Ikges) += Mplatte(Ikelement); // diagonal
-        Kext(Ikges) += Kplatte(Ikelement); // diagonal
+        Mext.add(Ikges, Mplatte(Ikelement)); // diagonal
+        Kext.add(Ikges, Kplatte(Ikelement)); // diagonal
         for (int n = k + 1; n < 4; n++) {
-          Mext.add(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1), Mplatte.get(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1)));
-          Kext.add(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1), Kplatte.get(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1)));
+          Mext.add(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1), Mplatte(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1)));
+          Kext.add(Ikges, RangeV(RefDofs + ElementNodeList(i, n) * NodeDofs, RefDofs + (ElementNodeList(i, n) + 1) * NodeDofs - 1), Kplatte(Ikelement, RangeV(RefDofs + n * NodeDofs, RefDofs + (n + 1) * NodeDofs - 1)));
         }
       }
     }

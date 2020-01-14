@@ -84,21 +84,21 @@ namespace MBSimFlexibleBody {
     Vec deltaxt = qGt(RangeV(3,4))-qGt(RangeV(0,1));
 
     /* differentiation of strain energy */
-    dSETdqG(RangeV(0,1)) = -tangent;
+    dSETdqG.set(RangeV(0,1), -tangent);
     dSETdqG(2) 	 = deltax.T()*dtangentdgamma;
-    dSETdqG(RangeV(3,4)) = tangent;
+    dSETdqG.set(RangeV(3,4), tangent);
     dSETdqG 	*= E*A*(tangent.T()*deltax-l0)/l0;
 
-    dSENdqG(RangeV(0,1)) = -normal;
+    dSENdqG.set(RangeV(0,1), -normal);
     dSENdqG(2) 	 = deltax.T()*dnormaldgamma;
-    dSENdqG(RangeV(3,4)) = normal;
+    dSENdqG.set(RangeV(3,4), normal);
     dSENdqG 	*= G*sigma1*A*normal.T()*deltax/l0;
 
     dVeldqG = dSETdqG + dSENdqG;
 
     /* differentiation of gravitational energy */
-    dVgdqG(RangeV(0,1)) = -0.5*rho*A*l0*g(RangeV(0,1));
-    dVgdqG(RangeV(3,4)) = -0.5*rho*A*l0*g(RangeV(0,1));
+    dVgdqG.set(RangeV(0,1), -0.5*rho*A*l0*g(RangeV(0,1)));
+    dVgdqG.set(RangeV(3,4), -0.5*rho*A*l0*g(RangeV(0,1)));
 
     /* differentiation of translatory energy */
     // equal zero
@@ -107,14 +107,14 @@ namespace MBSimFlexibleBody {
     // equal zero
 
     /* differentiation of strain dissipation */ //DONE
-    dSDTdqGt(RangeV(0,1)) = -tangent ;
+    dSDTdqGt.set(RangeV(0,1), -tangent);
     dSDTdqGt(2) = -tangent.T()*dtangentdgamma*l0;
-    dSDTdqGt(RangeV(3,4)) = tangent;
+    dSDTdqGt.set(RangeV(3,4), tangent);
     dSDTdqGt *= 2.*cEps0D*(deltaxt.T()*tangent/l0 - tangent.T()*tangentt);
 
-    dSDNdqGt(RangeV(0,1)) = -normal;
+    dSDNdqGt.set(RangeV(0,1), -normal);
     dSDNdqGt(2) = -normal.T()*dtangentdgamma*l0;
-    dSDNdqGt(RangeV(3,4)) = normal;
+    dSDNdqGt.set(RangeV(3,4), normal);
     dSDNdqGt *= 2.*cEps1D*(deltaxt.T()*normal/l0 -normal.T()*tangentt);
 
     dSDdqGt = dSDTdqGt + dSDNdqGt;
@@ -152,8 +152,8 @@ namespace MBSimFlexibleBody {
   }
 
   const Vec& FiniteElement1s21CosseratTranslation::computeStateTranslation(const Vec& qG, const Vec& qGt,double s) {
-    X(RangeV(0,1)) = qG(RangeV(0,1)) + s*(qG(RangeV(3,4))-qG(RangeV(0,1)))/l0; // position
-    X(RangeV(3,4)) = qGt(RangeV(0,1)) + s*((qGt(RangeV(3,4))-qGt(RangeV(0,1)))/l0); // velocity
+    X.set(RangeV(0,1), qG(RangeV(0,1)) + s*(qG(RangeV(3,4))-qG(RangeV(0,1)))/l0); // position
+    X.set(RangeV(3,4), qGt(RangeV(0,1)) + s*((qGt(RangeV(3,4))-qGt(RangeV(0,1)))/l0)); // velocity
 
     X(5) = qG(2); // angles TODO in angle element or better in FlexibleBody
     X(11) = qGt(2); // time differentiated angels TODO in angle element or better in FlexibleBody

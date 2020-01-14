@@ -57,7 +57,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
         Mat    positionDisks = Mat(3,nDisks);    // radius of ball
   assert(nDisks == radiiDisks.size() && nDisks == massDisks.size());
 
-  positionDisks.col(0) = Vec("[0.00;0.0;0.0]"); sideInOut(0) = -1; // 1: inside; -1:outside
+  positionDisks.set(0, Vec("[0.00;0.0;0.0]")); sideInOut(0) = -1; // 1: inside; -1:outside
 //  positionDisks.col(1) = Vec("[0.50;0.0;0.0]"); sideInOut(1) = -1; // 1: inside; -1:outside
 //  positionDisks.col(2) = Vec("[0.25;0.3;0.0]"); sideInOut(2) = -1; // 1: inside; -1:outside
 

@@ -103,19 +103,19 @@ namespace MBSimElectronics {
       bool gActiveChanged() override {return true;}
       bool isSingleValued() const override { return true; }
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
-      void updatehRef(const fmatvec::Vec &hParent, int j=0) override;
-      void updaterRef(const fmatvec::Vec &rParent, int j=0) override;
+      void updatehRef(fmatvec::Vec &hParent, int j=0) override;
+      void updaterRef(fmatvec::Vec &rParent, int j=0) override;
 
       /* INHERITED INTERFACE OF LINKINTERFACE */
       virtual void updater() { throwError("(ElectronicLink::updater): Not implemented!"); }
       /*****************************************************/
 
       /* INHERITED INTERFACE OF LINK */
-      void updateWRef(const fmatvec::Mat& ref, int j) override; 
-      void updateVRef(const fmatvec::Mat& ref, int j) override;
-      virtual void updatedhdqRef(const fmatvec::Mat& ref, int i=0) {}
-      virtual void updatedhduRef(const fmatvec::SqrMat& ref, int i=0) {}
-      virtual void updatedhdtRef(const fmatvec::Vec& ref, int i=0) {}
+      void updateWRef(fmatvec::Mat& ref, int j) override;
+      void updateVRef(fmatvec::Mat& ref, int j) override;
+      virtual void updatedhdqRef(fmatvec::Mat& ref, int i=0) {}
+      virtual void updatedhduRef(fmatvec::SqrMat& ref, int i=0) {}
+      virtual void updatedhdtRef(fmatvec::Vec& ref, int i=0) {}
       void resetUpToDate() override { Link::resetUpToDate(); updQ = true; updI = true; }
       /*****************************************************/
   };

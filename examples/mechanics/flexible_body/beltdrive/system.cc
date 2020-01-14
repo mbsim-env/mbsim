@@ -152,9 +152,9 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
         Mat    positionDisks = Mat(3,nDisks);    // radius of ball
   assert(nDisks == radiiDisks.size() && nDisks == inertiaDisks.size());
 
-  positionDisks.col(0) = 1.0e-3*Vec("[  0;  0;  0]"); sideInOut(0) = -1; // 1: inside; -1:outside
-  positionDisks.col(1) = 1.0e-3*Vec("[200;  0;  0]"); sideInOut(1) = -1; // 1: inside; -1:outside
-  positionDisks.col(2) = 1.0e-3*Vec("[120; 50;  0]"); sideInOut(2) = +1; // 1: inside; -1:outside
+  positionDisks.set(0, 1.0e-3*Vec("[  0;  0;  0]")); sideInOut(0) = -1; // 1: inside; -1:outside
+  positionDisks.set(1, 1.0e-3*Vec("[200;  0;  0]")); sideInOut(1) = -1; // 1: inside; -1:outside
+  positionDisks.set(2, 1.0e-3*Vec("[120; 50;  0]")); sideInOut(2) = +1; // 1: inside; -1:outside
 
         double     v0 = omega0 * radiiDisks(0);
 
@@ -231,11 +231,11 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
         r0 *= 1.0+eps;
         Vec dir = (end.col(nPre) - start.col(nPre))/trackParts(1,nPre);
         SqrMat T(2); T(0,0) = cos(phi); T(0,1) = -sin(phi); T(1,0) = -T(0,1); T(1,1) = T(0,0);
-        q0(RangeV(5*i+0,5*i+1)) = positionDisks.col(part)(RangeV(0,1)) + T*r0;
+        q0.set(RangeV(5*i+0,5*i+1), positionDisks.col(part)(RangeV(0,1)) + T*r0);
 /********        cout << "      q0  " << q0(RangeV(5*i+0,5*i+1)) << endl; ********/
         dir = T*dir;
         q0(      5*i+2)        = atan2( dir(1), dir(0) );
-        u0(RangeV(5*i+0,5*i+1)) =   v0*dir;
+        u0.set(RangeV(5*i+0,5*i+1), v0*dir);
         u0(      5*i+2)        = - v0/radiiDisks(part) * sideInOut ( part );
         while(  i>0 && ( fabs(q0(5*i+2) - q0(5*(i-1)+2))>M_PI )   )
            if (q0(5*i+2) > q0(5*(i-1)+2))
@@ -255,8 +255,8 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
         pSpanWrap = 1;
         Vec dir = (end.col(part) - start.col(part))/trackParts(1,part);
 /********        cout << "      dir " << dir << endl; ************/
-        q0(RangeV(5*i+0,5*i+1)) = start.col(part) + dir * s;
-        u0(RangeV(5*i+0,5*i+1)) =                   dir * v0;
+        q0.set(RangeV(5*i+0,5*i+1), start.col(part) + dir * s);
+        u0.set(RangeV(5*i+0,5*i+1), dir * v0);
 /********        cout << "      q0  " << q0(RangeV(5*i+0,5*i+1)) << endl; ************/
         q0(      5*i+2)        = atan2( dir(1), dir(0) );
         while(  i>0 && ( fabs(q0(5*i+2) - q0(5*(i-1)+2))>M_PI )   )

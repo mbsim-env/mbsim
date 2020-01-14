@@ -56,10 +56,10 @@ namespace MBSimFlexibleBody {
         uElement[i] = u(RangeV(j, j + 8));
       }
       else { // last FE-Beam for closed structure	
-        qElement[i](RangeV(0, 5)) = q(RangeV(j, j + 5));
-        uElement[i](RangeV(0, 5)) = u(RangeV(j, j + 5));
-        qElement[i](RangeV(6, 8)) = q(RangeV(0, 2));
-        uElement[i](RangeV(6, 8)) = u(RangeV(0, 2));
+        qElement[i].set(RangeV(0, 5), q(RangeV(j, j + 5)));
+        uElement[i].set(RangeV(0, 5), u(RangeV(j, j + 5)));
+        qElement[i].set(RangeV(6, 8), q(RangeV(0, 2)));
+        uElement[i].set(RangeV(6, 8), u(RangeV(0, 2)));
       }
     }
 
@@ -76,16 +76,16 @@ namespace MBSimFlexibleBody {
       }
       else if (i == 0) { // first element
         if (openStructure) { // open structure
-          qRotationElement[i](RangeV(0, 2)) = bound_ang_start;
-          uRotationElement[i](RangeV(0, 2)) = bound_ang_vel_start;
-          qRotationElement[i](RangeV(3, 8)) = q(RangeV(j, j + 5));
-          uRotationElement[i](RangeV(3, 8)) = u(RangeV(j, j + 5));
+          qRotationElement[i].set(RangeV(0, 2), bound_ang_start);
+          uRotationElement[i].set(RangeV(0, 2), bound_ang_vel_start);
+          qRotationElement[i].set(RangeV(3, 8), q(RangeV(j, j + 5)));
+          uRotationElement[i].set(RangeV(3, 8), u(RangeV(j, j + 5)));
         }
         else { // closed structure concerning gamma
-          qRotationElement[i](RangeV(0, 2)) = q(RangeV(q.size() - 3, q.size() - 1));
-          uRotationElement[i](RangeV(0, 2)) = u(RangeV(u.size() - 3, u.size() - 1));
-          qRotationElement[i](RangeV(3, 8)) = q(RangeV(j, j + 5));
-          uRotationElement[i](RangeV(3, 8)) = u(RangeV(j, j + 5));
+          qRotationElement[i].set(RangeV(0, 2), q(RangeV(q.size() - 3, q.size() - 1)));
+          uRotationElement[i].set(RangeV(0, 2), u(RangeV(u.size() - 3, u.size() - 1)));
+          qRotationElement[i].set(RangeV(3, 8), q(RangeV(j, j + 5)));
+          uRotationElement[i].set(RangeV(3, 8), u(RangeV(j, j + 5)));
           if (q(j + 5) < q(q.size() - 1))
             qRotationElement[i](2) -= 2. * M_PI;
           else
@@ -94,10 +94,10 @@ namespace MBSimFlexibleBody {
       }
       else if (i == rotationalElements - 1) { // last element
         if (openStructure) { // open structure
-          qRotationElement[i](RangeV(0, 5)) = q(RangeV(j - 3, j + 2));
-          uRotationElement[i](RangeV(0, 5)) = u(RangeV(j - 3, j + 2));
-          qRotationElement[i](RangeV(6, 8)) = bound_ang_end;
-          uRotationElement[i](RangeV(6, 8)) = bound_ang_vel_end;
+          qRotationElement[i].set(RangeV(0, 5), q(RangeV(j - 3, j + 2)));
+          uRotationElement[i].set(RangeV(0, 5), u(RangeV(j - 3, j + 2)));
+          qRotationElement[i].set(RangeV(6, 8), bound_ang_end);
+          uRotationElement[i].set(RangeV(6, 8), bound_ang_vel_end);
         }
         else { // closed structure concerning gamma
           qRotationElement[i] = q(RangeV(j - 3, j + 5));
@@ -112,11 +112,11 @@ namespace MBSimFlexibleBody {
     int j = 6 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloVec(RangeV(j, j + 8)) += locVec;
+      gloVec.add(RangeV(j, j + 8), locVec);
     }
     else { // last FE for closed structure
-      gloVec(RangeV(j, j + 5)) += locVec(RangeV(0, 5));
-      gloVec(RangeV(0, 2)) += locVec(RangeV(6, 8));
+      gloVec.add(RangeV(j, j + 5), locVec(RangeV(0, 5)));
+      gloVec.add(RangeV(0, 2), locVec(RangeV(6, 8)));
     }
   }
 
@@ -124,13 +124,13 @@ namespace MBSimFlexibleBody {
     int j = 6 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloMat(RangeV(j, j + 8), RangeV(j, j + 8)) += locMat;
+      gloMat.add(RangeV(j, j + 8), RangeV(j, j + 8), locMat);
     }
     else { // last FE for closed structure
-      gloMat(RangeV(j, j + 5), RangeV(j, j + 5)) += locMat(RangeV(0, 5), RangeV(0, 5));
-      gloMat(RangeV(j, j + 5), RangeV(0, 2)) += locMat(RangeV(0, 5), RangeV(6, 8));
-      gloMat(RangeV(0, 2), RangeV(j, j + 5)) += locMat(RangeV(6, 8), RangeV(0, 5));
-      gloMat(RangeV(0, 2), RangeV(0, 2)) += locMat(RangeV(6, 8), RangeV(6, 8));
+      gloMat.add(RangeV(j, j + 5), RangeV(j, j + 5), locMat(RangeV(0, 5), RangeV(0, 5)));
+      gloMat.add(RangeV(j, j + 5), RangeV(0, 2), locMat(RangeV(0, 5), RangeV(6, 8)));
+      gloMat.add(RangeV(0, 2), RangeV(j, j + 5), locMat(RangeV(6, 8), RangeV(0, 5)));
+      gloMat.add(RangeV(0, 2), RangeV(0, 2), locMat(RangeV(6, 8), RangeV(6, 8)));
     }
   }
 
@@ -138,12 +138,12 @@ namespace MBSimFlexibleBody {
     int j = 6 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloMat(RangeV(j, j + 8)) += locMat;
+      gloMat.add(RangeV(j, j + 8), locMat);
     }
     else { // last FE for closed structure
-      gloMat(RangeV(j, j + 5)) += locMat(RangeV(0, 5));
-      gloMat.add(RangeV(j, j + 5), RangeV(0, 2), locMat.get(RangeV(0, 5), RangeV(6, 8)));
-      gloMat(RangeV(0, 2)) += locMat(RangeV(6, 8));
+      gloMat.add(RangeV(j, j + 5), locMat(RangeV(0, 5)));
+      gloMat.add(RangeV(j, j + 5), RangeV(0, 2), locMat(RangeV(0, 5), RangeV(6, 8)));
+      gloMat.add(RangeV(0, 2), locMat(RangeV(6, 8)));
     }
   }
 
@@ -281,7 +281,7 @@ namespace MBSimFlexibleBody {
     evalM(); // be sure that M is update to date
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
-      LLM(RangeV(j + 3, j + 5)) = facLL(discretization[i]->getM()(RangeV(3, 5)));
+      LLM.set(RangeV(j + 3, j + 5), facLL(discretization[i]->getM()(RangeV(3, 5))));
     }
   }
 
@@ -436,9 +436,9 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getM(), M); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 6 * i;
-      LLM(RangeV(j, j + 2)) = facLL(M(RangeV(j, j + 2)));
+      LLM.set(RangeV(j, j + 2), facLL(M(RangeV(j, j + 2))));
       if (openStructure && i == (int) discretization.size() - 1)
-        LLM(RangeV(j + 6, j + 8)) = facLL(M(RangeV(j + 6, j + 8)));
+        LLM.set(RangeV(j + 6, j + 8), facLL(M(RangeV(j + 6, j + 8))));
     }
   }
 
@@ -449,25 +449,25 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s33Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec, Vec& gloVec) {
     int j = 6 * n; // start index in entire beam coordinates
     if (n > 0 && n < rotationalElements - 1) { // no problem case
-      gloVec(RangeV(j - 3, j + 5)) += locVec; // staggered grid -> rotation offset
+      gloVec.add(RangeV(j - 3, j + 5), locVec); // staggered grid -> rotation offset
     }
     else if (n == 0) { // first element
       if (openStructure) { // open structure
-        gloVec(RangeV(j, j + 5)) += locVec(RangeV(3, 8));
-        gloVec(RangeV(j + 3, j + 5)) += locVec(RangeV(0, 2)); // TODO depends on computeBoundaryConditions()
+        gloVec.add(RangeV(j, j + 5), locVec(RangeV(3, 8)));
+        gloVec.add(RangeV(j + 3, j + 5), locVec(RangeV(0, 2))); // TODO depends on computeBoundaryConditions()
       }
       else { // closed structure 
-        gloVec(RangeV(j, j + 5)) += locVec(RangeV(3, 8));
-        gloVec(RangeV(q.size() - 3, q.size() - 1)) += locVec(RangeV(0, 2));
+        gloVec.add(RangeV(j, j + 5), locVec(RangeV(3, 8)));
+        gloVec.add(RangeV(q.size() - 3, q.size() - 1), locVec(RangeV(0, 2)));
       }
     }
     else if (n == rotationalElements - 1) { // last element
       if (openStructure) { // open structure
-        gloVec(RangeV(j - 3, j + 2)) += locVec(RangeV(0, 5));
-        gloVec(RangeV(j - 3, j - 1)) += locVec(RangeV(6, 8)); // TODO depends on computeBoundaryConditions()
+        gloVec.add(RangeV(j - 3, j + 2), locVec(RangeV(0, 5)));
+        gloVec.add(RangeV(j - 3, j - 1), locVec(RangeV(6, 8))); // TODO depends on computeBoundaryConditions()
       }
       else { // closed structure
-        gloVec(RangeV(j - 3, j + 5)) += locVec;
+        gloVec.add(RangeV(j - 3, j + 5), locVec);
       }
     }
   }

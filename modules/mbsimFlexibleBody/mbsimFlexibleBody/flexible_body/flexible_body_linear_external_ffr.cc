@@ -68,7 +68,7 @@ namespace MBSimFlexibleBody {
 
       phi.resize(3 * nNodes, nf, NONINIT);
       for(int col =0; col < nf; col++) {
-        phi.col(col) = phiFull.col(col);
+        phi.set(col, phiFull.col(col));
       }
 
       I_ThetaF_bar.resize(3, nf, INIT, 0.);
@@ -315,9 +315,9 @@ namespace MBSimFlexibleBody {
     fmatvec::Mat M_RF = Mat(3, nf, INIT, 0.);
     M_RF = A * S_bar;
     
-    I_ThetaF_bar(RangeV(0, 0), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[1][2] - S_kl_bar[2][1]) + (I_kl_bar[1][2] - I_kl_bar[2][1]);
-    I_ThetaF_bar(RangeV(1, 1), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[2][0] - S_kl_bar[0][2]) + (I_kl_bar[2][0] - I_kl_bar[0][2]);
-    I_ThetaF_bar(RangeV(2, 2), RangeV(0, nf - 1)) = qf.T() * (S_kl_bar[0][1] - S_kl_bar[1][0]) + (I_kl_bar[0][1] - I_kl_bar[1][0]);
+    I_ThetaF_bar.set(RangeV(0, 0), RangeV(0, nf - 1), qf.T() * (S_kl_bar[1][2] - S_kl_bar[2][1]) + (I_kl_bar[1][2] - I_kl_bar[2][1]));
+    I_ThetaF_bar.set(RangeV(1, 1), RangeV(0, nf - 1), qf.T() * (S_kl_bar[2][0] - S_kl_bar[0][2]) + (I_kl_bar[2][0] - I_kl_bar[0][2]));
+    I_ThetaF_bar.set(RangeV(2, 2), RangeV(0, nf - 1), qf.T() * (S_kl_bar[0][1] - S_kl_bar[1][0]) + (I_kl_bar[0][1] - I_kl_bar[1][0]));
     
     fmatvec::Mat M_ThetaF(G_bar.T() * I_ThetaF_bar);
     
@@ -381,11 +381,11 @@ namespace MBSimFlexibleBody {
     
     Qv.init(0.); // Qv has to be init every time step as for calculating Qv(6, nf + 5), the operator "+=" is used.
 
-    Qv(RangeV(0, 2)) = (-A) * (omega_bar_skew * omega_bar_skew * (I_1 + S_bar * qf) + 2. * omega_bar_skew * S_bar * uf);
-    Qv(RangeV(3, 5)) = -2. * G_bar_Dot.T() * I_ThetaTheta_bar * (G_bar * uTheta) - 2. * G_bar_Dot.T() * I_ThetaF_bar * uf - G_bar.T() * I_ThetaTheta_bar * (G_bar * uTheta);
+    Qv.set(RangeV(0, 2), (-A) * (omega_bar_skew * omega_bar_skew * (I_1 + S_bar * qf) + 2. * omega_bar_skew * S_bar * uf));
+    Qv.set(RangeV(3, 5), -2. * G_bar_Dot.T() * I_ThetaTheta_bar * (G_bar * uTheta) - 2. * G_bar_Dot.T() * I_ThetaF_bar * uf - G_bar.T() * I_ThetaTheta_bar * (G_bar * uTheta));
     for (int j = 0; j < nNodes; j++) {
       FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j]);
-      Qv(RangeV(6, nf + 5)) += -node->getMij() * (node->getModeShape().T() * (omega_bar_skew * omega_bar_skew * (node->getU0() + node->getModeShape() * qf) + 2. * omega_bar_skew * node->getModeShape() * uf));
+      Qv.add(RangeV(6, nf + 5), -node->getMij() * (node->getModeShape().T() * (omega_bar_skew * omega_bar_skew * (node->getU0() + node->getModeShape() * qf) + 2. * omega_bar_skew * node->getModeShape() * uf)));
     }
 
     if (msgAct(Debug)) {
@@ -633,14 +633,14 @@ namespace MBSimFlexibleBody {
     Mat Jactmp_trans(3, 6 + nf, INIT, 0.), Jactmp_rot(3, 6 + nf, INIT, 0.); // initializing Ref + 1 Node
 
     // translational DOFs (d/dR)
-    Jactmp_trans(RangeV(0, 2), RangeV(0, 2)) = SqrMat(3, EYE); // ref
+    Jactmp_trans.set(RangeV(0, 2), RangeV(0, 2), SqrMat(3, EYE)); // ref
     Vec3 u_bar = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getU0() + static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getModeShape() * q(RangeV(6, 5 + nf));
-    Jactmp_trans(RangeV(0, 2), RangeV(3, 5)) = -evalA() * tilde(u_bar) * evalG_bar();
-    Jactmp_rot(RangeV(0, 2), RangeV(3, 5)) = A * G_bar;
+    Jactmp_trans.set(RangeV(0, 2), RangeV(3, 5), -evalA() * tilde(u_bar) * evalG_bar());
+    Jactmp_rot.set(RangeV(0, 2), RangeV(3, 5), A * G_bar);
 
     // elastic DOFs
     // translation (A*phi)
-    Jactmp_trans(RangeV(0, 2), RangeV(6, 5 + nf)) = A * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getModeShape();
+    Jactmp_trans.set(RangeV(0, 2), RangeV(6, 5 + nf), A * static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex])->getModeShape());
 
     // rotation part for elastic DOFs is zero.
 

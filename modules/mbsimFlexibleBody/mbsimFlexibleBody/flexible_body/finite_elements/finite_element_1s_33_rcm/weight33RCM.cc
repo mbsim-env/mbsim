@@ -246,8 +246,8 @@ namespace MBSimFlexibleBody {
   }
 
   void Weight33RCM::computewcoefPosD() {
-    w1coefqI(RangeV(0,3),RangeV(7,10)) = tf->getV();
-    w2coefqI(RangeV(0,3),RangeV(11,14)) = tf->getV();
+    w1coefqI.set(RangeV(0,3),RangeV(7,10), tf->getV());
+    w2coefqI.set(RangeV(0,3),RangeV(11,14), tf->getV());
   }
 
   void Weight33RCM::computewhcoefPosD(const Vec& qG) {	 
@@ -280,15 +280,15 @@ namespace MBSimFlexibleBody {
     computewcoefVel();
     computewhcoefVel();
 
-    tStqI(RangeV(0,2),RangeV(3,5)) = tf->gettSpSt();
-    nStqI(RangeV(0,2),RangeV(3,5)) = tf->getnSpSt();
-    bStqI(RangeV(0,2),RangeV(3,5)) = tf->getbSpSt();
+    tStqI.set(RangeV(0,2),RangeV(3,5), tf->gettSpSt());
+    nStqI.set(RangeV(0,2),RangeV(3,5), tf->getnSpSt());
+    bStqI.set(RangeV(0,2),RangeV(3,5), tf->getbSpSt());
 
     Mat ntilStqI(3,16,INIT,0.);
-    ntilStqI(RangeV(0,2),RangeV(3,5)) = tf->getntilSpSt();
+    ntilStqI.set(RangeV(0,2),RangeV(3,5), tf->getntilSpSt());
 
     Mat btilStqI(3,16,INIT,0.);
-    btilStqI(RangeV(0,2),RangeV(3,5)) = tf->getbtilSpSt();
+    btilStqI.set(RangeV(0,2),RangeV(3,5), tf->getbtilSpSt());
 
     RowVec xintiltqI = tf->getntilSH()*nStqI+tf->getnStH()*ntilSqI+tf->getntilStH()*nSqI+tf->getnSH()*ntilStqI;
     RowVec xibtiltqI = tf->getbtilSH()*nStqI+tf->getnStH()*btilSqI+tf->getbtilStH()*nSqI+tf->getnSH()*btilStqI;

@@ -39,8 +39,8 @@ namespace MBSimFlexibleBody {
     RangeV lowerPartB(I.start(), B.rows() - 1);
     RangeV AllCols(0, C.cols() - 1);
 
-    B(upperPart, AllCols) = C(upperPart, AllCols); // upper
-    B(lowerPartB, AllCols) = C(lowerPartC, AllCols); // lower
+    B.set(upperPart, AllCols, C(upperPart, AllCols)); // upper
+    B.set(lowerPartB, AllCols, C(lowerPartC, AllCols)); // lower
     return B;
   }
 
@@ -51,8 +51,8 @@ namespace MBSimFlexibleBody {
     RangeV rightPartB(I.start(), B.cols() - 1);
     RangeV AllRows(0, C.rows() - 1);
 
-    B(AllRows, leftPart) = C(AllRows, leftPart); // left
-    B(AllRows, rightPartB) = C(AllRows, rightPartC); // right
+    B.set(AllRows, leftPart, C(AllRows, leftPart)); // left
+    B.set(AllRows, rightPartB, C(AllRows, rightPartC)); // right
     return B;
   }
 
@@ -64,9 +64,9 @@ namespace MBSimFlexibleBody {
     RangeV lowerPartB(I.start(), B.size() - 1);
 
     // assemble result matrix
-    B(upperPart) = C(upperPart); // upper left
-    B(lowerPartB, upperPart) = C(lowerPartC, upperPart); // upper right
-    B(lowerPartB) = C(lowerPartC); // lower right
+    B.set(upperPart, C(upperPart)); // upper left
+    B.set(lowerPartB, upperPart, C(lowerPartC, upperPart)); // upper right
+    B.set(lowerPartB, C(lowerPartC)); // lower right
     return B;
   }
 

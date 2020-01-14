@@ -52,14 +52,14 @@ namespace MBSimFlexibleBody {
         uElement[i] = u(RangeV(n, n + 7));
       }
       else { // last finite element and ring closure
-        qElement[i](RangeV(0, 4)) = q(RangeV(n, n + 4));
-        uElement[i](RangeV(0, 4)) = u(RangeV(n, n + 4));
-        qElement[i](RangeV(5, 7)) = q(RangeV(0, 2));
+        qElement[i].set(RangeV(0, 4), q(RangeV(n, n + 4)));
+        uElement[i].set(RangeV(0, 4), u(RangeV(n, n + 4)));
+        qElement[i].set(RangeV(5, 7), q(RangeV(0, 2)));
         if (qElement[i](2) - q(2) > 0.0)
           qElement[i](7) += 2 * M_PI;
         else
           qElement[i](7) -= 2 * M_PI;
-        uElement[i](RangeV(5, 7)) = u(RangeV(0, 2));
+        uElement[i].set(RangeV(5, 7), u(RangeV(0, 2)));
       }
     }
     updEle = false;
@@ -69,11 +69,11 @@ namespace MBSimFlexibleBody {
     int j = 5 * n;
 
     if (n < Elements - 1 || openStructure == true) {
-      gloVec(RangeV(j, j + 7)) += locVec;
+      gloVec.add(RangeV(j, j + 7), locVec);
     }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
-      gloVec(RangeV(j, j + 4)) += locVec(RangeV(0, 4));
-      gloVec(RangeV(0, 2)) += locVec(RangeV(5, 7));
+      gloVec.add(RangeV(j, j + 4), locVec(RangeV(0, 4)));
+      gloVec.add(RangeV(0, 2), locVec(RangeV(5, 7)));
     }
   }
 
@@ -81,13 +81,13 @@ namespace MBSimFlexibleBody {
     int j = 5 * n;
 
     if (n < Elements - 1 || openStructure == true) {
-      gloMat(RangeV(j, j + 7), RangeV(j, j + 7)) += locMat;
+      gloMat.add(RangeV(j, j + 7), RangeV(j, j + 7), locMat);
     }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
-      gloMat(RangeV(j, j + 4), RangeV(j, j + 4)) += locMat(RangeV(0, 4), RangeV(0, 4));
-      gloMat(RangeV(j, j + 4), RangeV(0, 2)) += locMat(RangeV(0, 4), RangeV(5, 7));
-      gloMat(RangeV(0, 2), RangeV(j, j + 4)) += locMat(RangeV(5, 7), RangeV(0, 4));
-      gloMat(RangeV(0, 2), RangeV(0, 2)) += locMat(RangeV(5, 7), RangeV(5, 7));
+      gloMat.add(RangeV(j, j + 4), RangeV(j, j + 4), locMat(RangeV(0, 4), RangeV(0, 4)));
+      gloMat.add(RangeV(j, j + 4), RangeV(0, 2), locMat(RangeV(0, 4), RangeV(5, 7)));
+      gloMat.add(RangeV(0, 2), RangeV(j, j + 4), locMat(RangeV(5, 7), RangeV(0, 4)));
+      gloMat.add(RangeV(0, 2), RangeV(0, 2), locMat(RangeV(5, 7), RangeV(5, 7)));
     }
   }
 
@@ -95,12 +95,12 @@ namespace MBSimFlexibleBody {
     int j = 5 * n;
 
     if (n < Elements - 1 || openStructure == true) {
-      gloMat(RangeV(j, j + 7)) += locMat;
+      gloMat.add(RangeV(j, j + 7), locMat);
     }
     else { // ring closure at finite element (end,1) with angle difference 2*M_PI
-      gloMat(RangeV(j, j + 4)) += locMat(RangeV(0, 4));
-      gloMat(RangeV(j, j + 4), RangeV(0, 2)) += locMat.get(RangeV(0, 4), RangeV(5, 7));
-      gloMat(RangeV(0, 2)) += locMat(RangeV(5, 7));
+      gloMat.add(RangeV(j, j + 4), locMat(RangeV(0, 4)));
+      gloMat.add(RangeV(j, j + 4), RangeV(0, 2), locMat(RangeV(0, 4), RangeV(5, 7)));
+      gloMat.add(RangeV(0, 2), locMat(RangeV(5, 7)));
     }
   }
 
@@ -146,11 +146,11 @@ namespace MBSimFlexibleBody {
     BuildElement(frame->getParameter(), sLocal, currentElement);
     Mat Jtmp = static_cast<FiniteElement1s21RCM*>(discretization[currentElement])->JGeneralized(getqElement(currentElement), sLocal);
     if (currentElement < Elements - 1 || openStructure) {
-      Jacobian(RangeV(5 * currentElement, 5 * currentElement + 7), All) = Jtmp;
+      Jacobian.set(RangeV(5 * currentElement, 5 * currentElement + 7), All, Jtmp);
     }
     else { // ringstructure
-      Jacobian(RangeV(5 * currentElement, 5 * currentElement + 4), All) = Jtmp(RangeV(0, 4), All);
-      Jacobian(RangeV(0, 2), All) = Jtmp(RangeV(5, 7), All);
+      Jacobian.set(RangeV(5 * currentElement, 5 * currentElement + 4), All, Jtmp(RangeV(0, 4), All));
+      Jacobian.set(RangeV(0, 2), All, Jtmp(RangeV(5, 7), All));
     }
 
     frame->setJacobianOfTranslation(R->evalOrientation()(RangeV(0, 2), RangeV(0, 1)) * Jacobian(RangeV(0, qSize - 1), RangeV(0, 1)).T(),j);
@@ -199,8 +199,8 @@ namespace MBSimFlexibleBody {
     Mat Jacobian(qSize, 3, INIT, 0.);
     int node = frame->getNodeNumber();
 
-    Jacobian(RangeV(5 * node, 5 * node + 2), All) = DiagMat(3, INIT, 1.0);
-    Jacobian(RangeV(5 * node, 5 * node + 2), All) = DiagMat(3, INIT, 1.0);
+    Jacobian.set(RangeV(5 * node, 5 * node + 2), All, DiagMat(3, INIT, 1.0));
+    Jacobian.set(RangeV(5 * node, 5 * node + 2), All, DiagMat(3, INIT, 1.0));
 
     frame->setJacobianOfTranslation(R->evalOrientation()(RangeV(0, 2), RangeV(0, 1)) * Jacobian(RangeV(0, qSize - 1), RangeV(0, 1)).T(),j);
     frame->setJacobianOfRotation(R->evalOrientation()(RangeV(0, 2), RangeV(2, 2)) * Jacobian(RangeV(0, qSize - 1), RangeV(2, 2)).T(),j);
@@ -319,7 +319,7 @@ namespace MBSimFlexibleBody {
         direction(1) = sin(alpha);
 
         for (int i = 0; i <= Elements; i++) {
-          q0Dummy(RangeV(5 * i + 0, 5 * i + 1)) = direction * double(L / Elements * i);
+          q0Dummy.set(RangeV(5 * i + 0, 5 * i + 1), direction * double(L / Elements * i));
           q0Dummy(5 * i + 2) = alpha;
         }
       }

@@ -57,14 +57,14 @@ namespace MBSimFlexibleBody {
         uElement[i] = u(RangeV(j, j + 15));
       }
       else { // last FE-Beam for closed structure
-        qElement[i](RangeV(0, 9)) = q(RangeV(j, j + 9));
-        uElement[i](RangeV(0, 9)) = u(RangeV(j, j + 9));
-        qElement[i](RangeV(10, 15)) = q(RangeV(0, 5));
+        qElement[i].set(RangeV(0, 9), q(RangeV(j, j + 9)));
+        uElement[i].set(RangeV(0, 9), u(RangeV(j, j + 9)));
+        qElement[i].set(RangeV(10, 15), q(RangeV(0, 5)));
         if (q(j + 5) < q(5))
           qElement[i](15) -= 2. * M_PI;
         else
           qElement[i](15) += 2. * M_PI;
-        uElement[i](RangeV(10, 15)) = u(RangeV(0, 5));
+        uElement[i].set(RangeV(10, 15), u(RangeV(0, 5)));
       }
     }
     updEle = false;
@@ -98,11 +98,11 @@ namespace MBSimFlexibleBody {
     int j = 10 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloVec(RangeV(j, j + 15)) += locVec;
+      gloVec.add(RangeV(j, j + 15), locVec);
     }
     else { // last FE for closed structure
-      gloVec(RangeV(j, j + 9)) += locVec(RangeV(0, 9));
-      gloVec(RangeV(0, 5)) += locVec(RangeV(10, 15));
+      gloVec.add(RangeV(j, j + 9), locVec(RangeV(0, 9)));
+      gloVec.add(RangeV(0, 5), locVec(RangeV(10, 15)));
     }
   }
 
@@ -110,13 +110,13 @@ namespace MBSimFlexibleBody {
     int j = 10 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloMat(RangeV(j, j + 15), RangeV(j, j + 15)) += locMat;
+      gloMat.add(RangeV(j, j + 15), RangeV(j, j + 15), locMat);
     }
     else { // last FE for closed structure
-      gloMat(RangeV(j, j + 9), RangeV(j, j + 9)) += locMat(RangeV(0, 9), RangeV(0, 9));
-      gloMat(RangeV(j, j + 9), RangeV(0, 5)) += locMat(RangeV(0, 9), RangeV(10, 15));
-      gloMat(RangeV(0, 5), RangeV(j, j + 9)) += locMat(RangeV(10, 15), RangeV(0, 9));
-      gloMat(RangeV(0, 5), RangeV(0, 5)) += locMat(RangeV(10, 15), RangeV(10, 15));
+      gloMat.add(RangeV(j, j + 9), RangeV(j, j + 9), locMat(RangeV(0, 9), RangeV(0, 9)));
+      gloMat.add(RangeV(j, j + 9), RangeV(0, 5), locMat(RangeV(0, 9), RangeV(10, 15)));
+      gloMat.add(RangeV(0, 5), RangeV(j, j + 9), locMat(RangeV(10, 15), RangeV(0, 9)));
+      gloMat.add(RangeV(0, 5), RangeV(0, 5), locMat(RangeV(10, 15), RangeV(10, 15)));
     }
   }
 
@@ -124,12 +124,12 @@ namespace MBSimFlexibleBody {
     int j = 10 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1 || openStructure) {
-      gloMat(RangeV(j, j + 15)) += locMat;
+      gloMat.add(RangeV(j, j + 15), locMat);
     }
     else { // last FE for closed structure
-      gloMat(RangeV(j, j + 9)) += locMat(RangeV(0, 9));
-      gloMat(RangeV(j, j + 9), RangeV(0, 5)) += locMat.get(RangeV(0, 9), RangeV(10, 15));
-      gloMat(RangeV(0, 5)) += locMat(RangeV(10, 15));
+      gloMat.add(RangeV(j, j + 9), locMat(RangeV(0, 9)));
+      gloMat.add(RangeV(j, j + 9), RangeV(0, 5), locMat(RangeV(0, 9), RangeV(10, 15)));
+      gloMat.add(RangeV(0, 5), locMat(RangeV(10, 15)));
     }
   }
 
@@ -162,11 +162,11 @@ namespace MBSimFlexibleBody {
     Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(getqElement(currentElement), sLocal); // this local ansatz yields continuous and finite wave propagation
 
     if (currentElement < Elements - 1 || openStructure) {
-      Jacobian(RangeV(10 * currentElement, 10 * currentElement + 15), All) = Jtmp;
+      Jacobian.set(RangeV(10 * currentElement, 10 * currentElement + 15), All, Jtmp);
     }
     else { // last FE for closed structure
-      Jacobian(RangeV(10 * currentElement, 10 * currentElement + 9), All) = Jtmp(RangeV(0, 9), All);
-      Jacobian(RangeV(0, 5), All) = Jtmp(RangeV(10, 15), All);
+      Jacobian.set(RangeV(10 * currentElement, 10 * currentElement + 9), All, Jtmp(RangeV(0, 9), All));
+      Jacobian.set(RangeV(0, 5), All, Jtmp(RangeV(10, 15), All));
     }
 
     frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(0, 2)).T(),j);
@@ -214,10 +214,10 @@ namespace MBSimFlexibleBody {
     SqrMat np = angle->computenq(p);
     SqrMat bp = angle->computebq(p);
 
-    Jacobian(RangeV(10 * node, 10 * node + 2), One) = SqrMat(3, EYE); // translation
-    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 3) = t(1) * tp(RangeV(2, 2), RangeV(0, 2)).T() + n(1) * np(RangeV(2, 2), RangeV(0, 2)).T() + b(1) * bp(RangeV(2, 2), RangeV(0, 2)).T(); // rotation
-    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 4) = t(2) * tp(RangeV(0, 0), RangeV(0, 2)).T() + n(2) * np(RangeV(0, 0), RangeV(0, 2)).T() + b(2) * bp(RangeV(0, 0), RangeV(0, 2)).T();
-    Jacobian(RangeV(10 * node + 3, 10 * node + 5), 5) = t(0) * tp(RangeV(1, 1), RangeV(0, 2)).T() + n(0) * np(RangeV(1, 1), RangeV(0, 2)).T() + b(0) * bp(RangeV(1, 1), RangeV(0, 2)).T();
+    Jacobian.set(RangeV(10 * node, 10 * node + 2), One, SqrMat(3, EYE)); // translation
+    Jacobian.set(RangeV(10 * node + 3, 10 * node + 5), 3, t(1) * tp(RangeV(2, 2), RangeV(0, 2)).T() + n(1) * np(RangeV(2, 2), RangeV(0, 2)).T() + b(1) * bp(RangeV(2, 2), RangeV(0, 2)).T()); // rotation
+    Jacobian.set(RangeV(10 * node + 3, 10 * node + 5), 4, t(2) * tp(RangeV(0, 0), RangeV(0, 2)).T() + n(2) * np(RangeV(0, 0), RangeV(0, 2)).T() + b(2) * bp(RangeV(0, 0), RangeV(0, 2)).T());
+    Jacobian.set(RangeV(10 * node + 3, 10 * node + 5), 5, t(0) * tp(RangeV(1, 1), RangeV(0, 2)).T() + n(0) * np(RangeV(1, 1), RangeV(0, 2)).T() + b(0) * bp(RangeV(1, 1), RangeV(0, 2)).T());
 
     frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(0, 2)).T(),j);
     frame->setJacobianOfRotation(R->getOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(3, 5)).T(),j);

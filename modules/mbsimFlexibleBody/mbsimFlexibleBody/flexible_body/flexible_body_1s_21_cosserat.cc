@@ -65,10 +65,10 @@ namespace MBSimFlexibleBody {
         uElement[i] = uFull(RangeV(j, j + 4));
       }
       else { // last FE-Beam for closed structure	
-        qElement[i](RangeV(0, 2)) = qFull(RangeV(j, j + 2));
-        uElement[i](RangeV(0, 2)) = uFull(RangeV(j, j + 2));
-        qElement[i](RangeV(3, 4)) = qFull(RangeV(0, 1));
-        uElement[i](RangeV(3, 4)) = uFull(RangeV(0, 1));
+        qElement[i].set(RangeV(0, 2), qFull(RangeV(j, j + 2)));
+        uElement[i].set(RangeV(0, 2), uFull(RangeV(j, j + 2)));
+        qElement[i].set(RangeV(3, 4), qFull(RangeV(0, 1)));
+        uElement[i].set(RangeV(3, 4), uFull(RangeV(0, 1)));
       }
     }
 
@@ -83,8 +83,8 @@ namespace MBSimFlexibleBody {
       else if (i == 0) { // first element
         qRotationElement[i](0) = qFull(qFull.size() - 1);
         uRotationElement[i](0) = uFull(uFull.size() - 1);
-        qRotationElement[i](RangeV(1, 3)) = qFull(RangeV(j, j + 2));
-        uRotationElement[i](RangeV(1, 3)) = uFull(RangeV(j, j + 2));
+        qRotationElement[i].set(RangeV(1, 3), qFull(RangeV(j, j + 2)));
+        uRotationElement[i].set(RangeV(1, 3), uFull(RangeV(j, j + 2)));
         if (qFull(j + 2) < qFull(qFull.size() - 1))
           qRotationElement[i](0) -= 2. * M_PI;
         else
@@ -102,22 +102,22 @@ namespace MBSimFlexibleBody {
     int j = 3 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1) {
-      gloVec(RangeV(j, j + 4)) += locVec;
+      gloVec.add(RangeV(j, j + 4), locVec);
     }
     else { // last FE for closed structure
-      gloVec(RangeV(j, j + 2)) += locVec(RangeV(0, 2));
-      gloVec(RangeV(0, 1)) += locVec(RangeV(3, 4));
+      gloVec.add(RangeV(j, j + 2), locVec(RangeV(0, 2)));
+      gloVec.add(RangeV(0, 1), locVec(RangeV(3, 4)));
     }
   }
 
   void FlexibleBody1s21Cosserat::GlobalVectorContributionRotation(int n, const Vec& locVec, Vec& gloVec) {
     int j = 3 * n;
     if (n == 0) {
-      gloVec(RangeV(0, 2)) += locVec(RangeV(1, 3));
+      gloVec.add(RangeV(0, 2), locVec(RangeV(1, 3)));
       gloVec(qFull.size() - 1) += locVec(0);
     }
     else if (n > 0 && n < rotationalElements) {
-      gloVec(RangeV(j - 1, j + 2)) += locVec;
+      gloVec.add(RangeV(j - 1, j + 2), locVec);
     }
   }
 
@@ -125,11 +125,11 @@ namespace MBSimFlexibleBody {
     int j = 3 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1) {
-      gloMat(RangeV(j, j + 4), RangeV(j, j + 4)) += locMat;
+      gloMat.add(RangeV(j, j + 4), RangeV(j, j + 4), locMat);
     }
     else { // last FE
-      gloMat(RangeV(j, j + 2), RangeV(j, j + 2)) += locMat(RangeV(0, 2), RangeV(0, 2));
-      gloMat(RangeV(0, 1), RangeV(0, 1)) += locMat(RangeV(3, 4), RangeV(3, 4));
+      gloMat.add(RangeV(j, j + 2), RangeV(j, j + 2), locMat(RangeV(0, 2), RangeV(0, 2)));
+      gloMat.add(RangeV(0, 1), RangeV(0, 1), locMat(RangeV(3, 4), RangeV(3, 4)));
     }
   }
 
@@ -137,11 +137,11 @@ namespace MBSimFlexibleBody {
     int j = 3 * n; // start index in entire beam coordinates
 
     if (n < Elements - 1) {
-      gloMat(RangeV(j, j + 4)) += locMat;
+      gloMat.add(RangeV(j, j + 4), locMat);
     }
     else { // last FE
-      gloMat(RangeV(j, j + 2)) += locMat(RangeV(0, 2));
-      gloMat(RangeV(0, 1)) += locMat(RangeV(3, 4));
+      gloMat.add(RangeV(j, j + 2), locMat(RangeV(0, 2)));
+      gloMat.add(RangeV(0, 1), locMat(RangeV(3, 4)));
     }
   }
 
@@ -168,7 +168,7 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::updatePositions(int node) {
     /* 2D -> 3D mapping */
     Vec qTmpNODE(3, INIT, 0.);
-    qTmpNODE(RangeV(0, 1)) = evalqFull()(RangeV(3 * node + 0, 3 * node + 1));
+    qTmpNODE.set(RangeV(0, 1), evalqFull()(RangeV(3 * node + 0, 3 * node + 1)));
     Vec qTmpANGLE(3, INIT, 0.);
     qTmpANGLE(2) = qFull(3 * node + 2);
 
@@ -185,7 +185,7 @@ namespace MBSimFlexibleBody {
     Vec qTmpANGLE(3, INIT, 0.);
     qTmpANGLE(2) = qFull(3 * node + 2);
     Vec uTmp(3, INIT, 0.);
-    uTmp(RangeV(0, 1)) = uFull(RangeV(3 * node + 0, 3 * node + 1));
+    uTmp.set(RangeV(0, 1), uFull(RangeV(3 * node + 0, 3 * node + 1)));
     Vec uTmpANGLE(3, INIT, 0.);
     uTmpANGLE(2) = uFull(3 * node + 2);
 
@@ -478,9 +478,9 @@ namespace MBSimFlexibleBody {
       GlobalMatrixContribution(i, discretization[i]->getM(), MConst); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {
       int j = 3 * i;
-      LLMConst(RangeV(j, j + 2)) = facLL(MConst(RangeV(j, j + 2)));
+      LLMConst.set(RangeV(j, j + 2), facLL(MConst(RangeV(j, j + 2))));
       if (openStructure && i == (int) discretization.size() - 1)
-        LLMConst(RangeV(j + 3, j + 4)) = facLL(MConst(RangeV(j + 3, j + 4)));
+        LLMConst.set(RangeV(j + 3, j + 4), facLL(MConst(RangeV(j + 3, j + 4))));
     }
 
     if (PODreduced) {
@@ -690,7 +690,7 @@ namespace MBSimFlexibleBody {
 
     for (i = start; i < end; i++) {
       Vec tmp(data->getColumn(i));
-      X_(RangeV(0, tsize - 1), RangeV(i - start, i - start)) = tmp(RangeV(0, tsize - 1));
+      X_.set(RangeV(0, tsize - 1), RangeV(i - start, i - start), tmp(RangeV(0, tsize - 1)));
     }
 
     return X_.T();

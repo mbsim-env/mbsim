@@ -105,15 +105,15 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(0,1) = 0.5*cos(pS(1))*(pos(9)+pos(10));
     SMRHS_Jac(0,9) = 0.5*sin(pS(1));
     SMRHS_Jac(0,10) = 0.5*sin(pS(1));
-    SMRHS_Jac(RangeV(5,5),RangeV(0,10)) = -rRrLmH*nSbE;
-    SMRHS_Jac(RangeV(5,5),RangeV(0,10)) +=xintilbE*(pos(4)-pos(3))+xibtilbE*(pos(8)-pos(7));
+    SMRHS_Jac.set(RangeV(5,5),RangeV(0,10), -rRrLmH*nSbE);
+    SMRHS_Jac.add(RangeV(5,5),RangeV(0,10), xintilbE*(pos(4)-pos(3))+xibtilbE*(pos(8)-pos(7)));
     SMRHS_Jac(5,4) +=xintil;
     SMRHS_Jac(5,3) -=xintil;
     SMRHS_Jac(5,8) +=xibtil;
     SMRHS_Jac(5,7) -=xibtil;
 
-    SMRHS_Jac(RangeV(6,6),RangeV(0,10)) = -rRrLmH*bSbE;
-    SMRHS_Jac(RangeV(6,6),RangeV(0,10)) +=etantilbE*(pos(4)-pos(3))+etabtilbE*(pos(8)-pos(7));
+    SMRHS_Jac.set(RangeV(6,6),RangeV(0,10), -rRrLmH*bSbE);
+    SMRHS_Jac.add(RangeV(6,6),RangeV(0,10), etantilbE*(pos(4)-pos(3))+etabtilbE*(pos(8)-pos(7)));
     SMRHS_Jac(6,4) +=etantil;
     SMRHS_Jac(6,3) -=etantil;
     SMRHS_Jac(6,8) +=etabtil;
@@ -150,10 +150,10 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(2,2) = 1.; SMRHS_Jac(2,9) = 0.5; SMRHS_Jac(2,10) = 0.5;
     SMRHS_Jac(3,6) = 1.; SMRHS_Jac(3,5) = -1.;
     SMRHS_Jac(4,10) = 1.; SMRHS_Jac(4,9) = -1.;
-    SMRHS_Jac(RangeV(7,7),RangeV(3,6)) = 2.*xstarh2*(V(RangeV(1,1),RangeV(0,3))*xstarh2+V(RangeV(3,3),RangeV(0,3)));
-    SMRHS_Jac(RangeV(8,8),RangeV(3,6)) = 2.*xstarh3*(V(RangeV(0,0),RangeV(0,3))*xstarh2+V(RangeV(2,2),RangeV(0,3)));
-    SMRHS_Jac(RangeV(9,9),RangeV(7,10)) = 2.*xstarh2*(V(RangeV(1,1),RangeV(0,3))*xstarh2+V(RangeV(3,3),RangeV(0,3)));
-    SMRHS_Jac(RangeV(10,10),RangeV(7,10)) = 2.*xstarh3*(V(RangeV(0,0),RangeV(0,3))*xstarh2+V(RangeV(2,2),RangeV(0,3)));
+    SMRHS_Jac.set(RangeV(7,7),RangeV(3,6), 2.*xstarh2*(V(RangeV(1,1),RangeV(0,3))*xstarh2+V(RangeV(3,3),RangeV(0,3))));
+    SMRHS_Jac.set(RangeV(8,8),RangeV(3,6), 2.*xstarh3*(V(RangeV(0,0),RangeV(0,3))*xstarh2+V(RangeV(2,2),RangeV(0,3))));
+    SMRHS_Jac.set(RangeV(9,9),RangeV(7,10), 2.*xstarh2*(V(RangeV(1,1),RangeV(0,3))*xstarh2+V(RangeV(3,3),RangeV(0,3))));
+    SMRHS_Jac.set(RangeV(10,10),RangeV(7,10), 2.*xstarh3*(V(RangeV(0,0),RangeV(0,3))*xstarh2+V(RangeV(2,2),RangeV(0,3))));
 
     SMRHS_Jac(0,14) = 0.5; SMRHS_Jac(0,24) = 0.5;
     SMRHS_Jac(1,15) = 0.5; SMRHS_Jac(1,25) = 0.5;
@@ -214,7 +214,7 @@ namespace MBSimFlexibleBody {
 
     Vec sol = slvLU(static_cast<SqrMat>(SMRHS(RangeV(0,7),RangeV(0,7))),static_cast<Vec>(SMRHS(RangeV(0,7),RangeV(8,8))));	
     Vec s0(11);
-    s0(RangeV(3,10)) = sol;
+    s0.set(RangeV(3,10), sol);
 
     s0(1) = 0.5*((qG(4)+qG(14))-(sol(2)+sol(3)));
     s0(2) = 0.5*((qG(5)+qG(15))-(sol(6)+sol(7)));
@@ -333,22 +333,22 @@ namespace MBSimFlexibleBody {
     SMRHS_Jac(0,1) = 0.5*cos(pS(1))*(be(9)+be(10));
     SMRHS_Jac(0,9) = 0.5*sin(pS(1));
     SMRHS_Jac(0,10) = 0.5*sin(pS(1));
-    SMRHS_Jac(RangeV(5,5),RangeV(0,10)) = -rRrLmH*nSbE;
-    SMRHS_Jac(RangeV(5,5),RangeV(0,10)) +=xintilbE*(be(4)-be(3))+xibtilbE*(be(8)-be(7));
+    SMRHS_Jac.set(RangeV(5,5),RangeV(0,10), -rRrLmH*nSbE);
+    SMRHS_Jac.add(RangeV(5,5),RangeV(0,10), xintilbE*(be(4)-be(3))+xibtilbE*(be(8)-be(7)));
     SMRHS_Jac(5,4) +=xintil;
     SMRHS_Jac(5,3) -=xintil;
     SMRHS_Jac(5,8) +=xibtil;
     SMRHS_Jac(5,7) -=xibtil;
 
-    SMRHS_Jac(RangeV(6,6),RangeV(0,10)) = -rRrLmH*bSbE;
-    SMRHS_Jac(RangeV(6,6),RangeV(0,10)) +=etantilbE*(be(4)-be(3))+etabtilbE*(be(8)-be(7));
+    SMRHS_Jac.set(RangeV(6,6),RangeV(0,10), -rRrLmH*bSbE);
+    SMRHS_Jac.add(RangeV(6,6),RangeV(0,10), etantilbE*(be(4)-be(3))+etabtilbE*(be(8)-be(7)));
     SMRHS_Jac(6,4) +=etantil;
     SMRHS_Jac(6,3) -=etantil;
     SMRHS_Jac(6,8) +=etabtil;
     SMRHS_Jac(6,7) -=etabtil;
 
-    SMRHS_Jac(RangeV(5,5),RangeV(11,26)) = nSH*drRdrLm;
-    SMRHS_Jac(RangeV(6,6),RangeV(11,26)) = bSH*drRdrLm;
+    SMRHS_Jac.set(RangeV(5,5),RangeV(11,26), nSH*drRdrLm);
+    SMRHS_Jac.set(RangeV(6,6),RangeV(11,26), bSH*drRdrLm);
 
     beqG = slvLU(static_cast<SqrMat>(SMRHS_Jac(RangeV(0,10),RangeV(0,10))),SMRHS_Jac(RangeV(0,10),RangeV(11,26)));
   }
@@ -375,19 +375,19 @@ namespace MBSimFlexibleBody {
 
     RowVec tSH = tS.T();
 
-    JIG(RangeV(0,2),RangeV(0,15)) = drRdrLp;
-    JIG(RangeV(0,2),RangeV(0,15)) -= nS*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
-    JIG(RangeV(0,2),RangeV(0,15)) -= (xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nSqG;
-    JIG(RangeV(0,2),RangeV(0,15)) -= bS*(etantilqG*(be(3)+be(4))+etabtilqG*(be(7)+be(8))+etantil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
-    JIG(RangeV(0,2),RangeV(0,15)) -= (etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bSqG;
-    JIG(RangeV(0,2),RangeV(0,15)) *= 0.5;		
-    JIG(RangeV(3,5),RangeV(0,15)) = beqG(RangeV(0,2),RangeV(0,15));
-    JIG(RangeV(6,6),RangeV(0,15)) = (tSH*drRdrLm+rRrLmH*tSqG)/l0;
-    JIG(RangeV(7,14),RangeV(0,15)) = beqG(RangeV(3,10),RangeV(0,15));
-    JIG(RangeV(15,15),RangeV(0,15)) = -sin(pS(1))*(beqG(RangeV(10,10),RangeV(0,15))-beqG(RangeV(9,9),RangeV(0,15)))-(be(10)-be(9))*cos(pS(1))*beqG(RangeV(1,1),RangeV(0,15));
+    JIG.set(RangeV(0,2),RangeV(0,15), drRdrLp);
+    JIG.sub(RangeV(0,2),RangeV(0,15), nS*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15)))));
+    JIG.sub(RangeV(0,2),RangeV(0,15), (xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nSqG);
+    JIG.sub(RangeV(0,2),RangeV(0,15), bS*(etantilqG*(be(3)+be(4))+etabtilqG*(be(7)+be(8))+etantil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15)))));
+    JIG.sub(RangeV(0,2),RangeV(0,15), (etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bSqG);
+    JIG.set(RangeV(0,2),RangeV(0,15), JIG(RangeV(0,2),RangeV(0,15))*0.5);
+    JIG.set(RangeV(3,5),RangeV(0,15), beqG(RangeV(0,2),RangeV(0,15)));
+    JIG.set(RangeV(6,6),RangeV(0,15), (tSH*drRdrLm+rRrLmH*tSqG)/l0);
+    JIG.set(RangeV(7,14),RangeV(0,15), beqG(RangeV(3,10),RangeV(0,15)));
+    JIG.set(RangeV(15,15),RangeV(0,15), -sin(pS(1))*(beqG(RangeV(10,10),RangeV(0,15))-beqG(RangeV(9,9),RangeV(0,15)))-(be(10)-be(9))*cos(pS(1))*beqG(RangeV(1,1),RangeV(0,15)));
     JIG(15,3) -= 1.;
     JIG(15,13) += 1.;
-    JIG(RangeV(15,15),RangeV(0,15)) /= l0;
+    JIG.set(RangeV(15,15),RangeV(0,15), JIG(RangeV(15,15),RangeV(0,15))/l0);
   }
 
   void Trafo33RCM::computezI(const Vec& qG,const Vec& qGt) {
@@ -397,8 +397,8 @@ namespace MBSimFlexibleBody {
     rSt = qIt(RangeV(0,2));
     pSt = qIt(RangeV(3,5));
     epstilt = qIt(6);
-    bet(RangeV(0,2)) = pSt;
-    bet(RangeV(3,10)) = qIt(RangeV(7,14));
+    bet.set(RangeV(0,2), pSt);
+    bet.set(RangeV(3,10), qIt(RangeV(7,14)));
     k0t = qIt(15);
   }
 
@@ -460,54 +460,54 @@ namespace MBSimFlexibleBody {
     SMt(0,9) = 0.5*cos(pS(1))*pSt(1);
     SMt(0,10) = 0.5*cos(pS(1))*pSt(1);
 
-    SMt(RangeV(5,5),RangeV(0,10)) = -rRrLtmH*nSbE-rRrLmH*nSbEt;
-    SMt(RangeV(5,5),RangeV(0,10)) += xintilbEt*(be(4)-be(3))+xibtilbEt*(be(8)-be(7));
-    SMt(RangeV(5,5),RangeV(0,10)) += xintilbE*(bet(4)-bet(3))+xibtilbE*(bet(8)-bet(7));
+    SMt.set(RangeV(5,5),RangeV(0,10), -rRrLtmH*nSbE-rRrLmH*nSbEt);
+    SMt.add(RangeV(5,5),RangeV(0,10), xintilbEt*(be(4)-be(3))+xibtilbEt*(be(8)-be(7)));
+    SMt.add(RangeV(5,5),RangeV(0,10), xintilbE*(bet(4)-bet(3))+xibtilbE*(bet(8)-bet(7)));
     SMt(5,4) +=xintilt;
     SMt(5,3) -=xintilt;
     SMt(5,8) +=xibtilt;
     SMt(5,7) -=xibtilt;
 
-    SMt(RangeV(6,6),RangeV(0,10)) = -rRrLtmH*bSbE-rRrLmH*bSbEt;
-    SMt(RangeV(6,6),RangeV(0,10)) += etantilbEt*(be(4)-be(3))+etabtilbEt*(be(8)-be(7));
-    SMt(RangeV(6,6),RangeV(0,10)) += etantilbE*(bet(4)-bet(3))+etabtilbE*(bet(8)-bet(7));
+    SMt.set(RangeV(6,6),RangeV(0,10), -rRrLtmH*bSbE-rRrLmH*bSbEt);
+    SMt.add(RangeV(6,6),RangeV(0,10), etantilbEt*(be(4)-be(3))+etabtilbEt*(be(8)-be(7)));
+    SMt.add(RangeV(6,6),RangeV(0,10), etantilbE*(bet(4)-bet(3))+etabtilbE*(bet(8)-bet(7)));
     SMt(6,4) +=etantilt;
     SMt(6,3) -=etantilt;
     SMt(6,8) +=etabtilt;
     SMt(6,7) -=etabtilt;
 
     Mat RHS_JIGt = -SMt*beqG;
-    RHS_JIGt(RangeV(5,5),RangeV(0,15)) += nStH*drRdrLm;
-    RHS_JIGt(RangeV(6,6),RangeV(0,15)) += bStH*drRdrLm;
+    RHS_JIGt.add(RangeV(5,5),RangeV(0,15), nStH*drRdrLm);
+    RHS_JIGt.add(RangeV(6,6),RangeV(0,15), bStH*drRdrLm);
 
     Mat beqGt = slvLU(static_cast<SqrMat>(SMRHS_Jac(RangeV(0,10),RangeV(0,10))),RHS_JIGt);	
 
-    JIGt(RangeV(3,5),RangeV(0,15)) = beqGt(RangeV(0,2),RangeV(0,15));
-    JIGt(RangeV(7,14),RangeV(0,15)) = beqGt(RangeV(3,10),RangeV(0,15));
+    JIGt.set(RangeV(3,5),RangeV(0,15), beqGt(RangeV(0,2),RangeV(0,15)));
+    JIGt.set(RangeV(7,14),RangeV(0,15), beqGt(RangeV(3,10),RangeV(0,15)));
 
-    JIGt(RangeV(6,6),RangeV(0,15)) = (tStH*drRdrLm+rRrLtmH*tSqG+rRrLmH*tSqGt)/l0;
+    JIGt.set(RangeV(6,6),RangeV(0,15), (tStH*drRdrLm+rRrLtmH*tSqG+rRrLmH*tSqGt)/l0);
 
-    JIGt(RangeV(0,2),RangeV(0,15)) = -nSt*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
-    JIGt(RangeV(0,2),RangeV(0,15)) -= nS*(xintilqGt*(be(3)+be(4))+xibtilqGt*(be(7)+be(8))+xintilt*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtilt*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
-    JIGt(RangeV(0,2),RangeV(0,15)) -= nS*(xintilqG*(bet(3)+bet(4))+xibtilqG*(bet(7)+bet(8))+xintil*(beqGt(RangeV(3,3),RangeV(0,15))+beqGt(RangeV(4,4),RangeV(0,15)))+xibtil*(beqGt(RangeV(7,7),RangeV(0,15))+beqGt(RangeV(8,8),RangeV(0,15))));
+    JIGt.set(RangeV(0,2),RangeV(0,15), -nSt*(xintilqG*(be(3)+be(4))+xibtilqG*(be(7)+be(8))+xintil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15)))));
+    JIGt.sub(RangeV(0,2),RangeV(0,15), nS*(xintilqGt*(be(3)+be(4))+xibtilqGt*(be(7)+be(8))+xintilt*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+xibtilt*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15)))));
+    JIGt.sub(RangeV(0,2),RangeV(0,15), nS*(xintilqG*(bet(3)+bet(4))+xibtilqG*(bet(7)+bet(8))+xintil*(beqGt(RangeV(3,3),RangeV(0,15))+beqGt(RangeV(4,4),RangeV(0,15)))+xibtil*(beqGt(RangeV(7,7),RangeV(0,15))+beqGt(RangeV(8,8),RangeV(0,15)))));
 
-    JIGt(RangeV(0,2),RangeV(0,15)) -= (xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nSqGt;
-    JIGt(RangeV(0,2),RangeV(0,15)) -= (xintilt*(be(3)+be(4))+xibtilt*(be(7)+be(8)))*nSqG;
-    JIGt(RangeV(0,2),RangeV(0,15)) -= (xintil*(bet(3)+bet(4))+xibtil*(bet(7)+bet(8)))*nSqG;
+    JIGt.sub(RangeV(0,2),RangeV(0,15), (xintil*(be(3)+be(4))+xibtil*(be(7)+be(8)))*nSqGt);
+    JIGt.sub(RangeV(0,2),RangeV(0,15), (xintilt*(be(3)+be(4))+xibtilt*(be(7)+be(8)))*nSqG);
+    JIGt.sub(RangeV(0,2),RangeV(0,15), (xintil*(bet(3)+bet(4))+xibtil*(bet(7)+bet(8)))*nSqG);
 
-    JIGt(RangeV(0,2),RangeV(0,15)) -= bSt*(etantilqG*(be(3)+be(4))+etabtilqG*(be(7)+be(8))+etantil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
-    JIGt(RangeV(0,2),RangeV(0,15)) -= bS*(etantilqGt*(be(3)+be(4))+etabtilqGt*(be(7)+be(8))+etantilt*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtilt*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15))));
-    JIGt(RangeV(0,2),RangeV(0,15)) -= bS*(etantilqG*(bet(3)+bet(4))+etabtilqG*(bet(7)+bet(8))+etantil*(beqGt(RangeV(3,3),RangeV(0,15))+beqGt(RangeV(4,4),RangeV(0,15)))+etabtil*(beqGt(RangeV(7,7),RangeV(0,15))+beqGt(RangeV(8,8),RangeV(0,15))));
+    JIGt.sub(RangeV(0,2),RangeV(0,15), bSt*(etantilqG*(be(3)+be(4))+etabtilqG*(be(7)+be(8))+etantil*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtil*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15)))));
+    JIGt.sub(RangeV(0,2),RangeV(0,15), bS*(etantilqGt*(be(3)+be(4))+etabtilqGt*(be(7)+be(8))+etantilt*(beqG(RangeV(3,3),RangeV(0,15))+beqG(RangeV(4,4),RangeV(0,15)))+etabtilt*(beqG(RangeV(7,7),RangeV(0,15))+beqG(RangeV(8,8),RangeV(0,15)))));
+    JIGt.sub(RangeV(0,2),RangeV(0,15), bS*(etantilqG*(bet(3)+bet(4))+etabtilqG*(bet(7)+bet(8))+etantil*(beqGt(RangeV(3,3),RangeV(0,15))+beqGt(RangeV(4,4),RangeV(0,15)))+etabtil*(beqGt(RangeV(7,7),RangeV(0,15))+beqGt(RangeV(8,8),RangeV(0,15)))));
 
-    JIGt(RangeV(0,2),RangeV(0,15)) -= (etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bSqGt;
-    JIGt(RangeV(0,2),RangeV(0,15)) -= (etantilt*(be(3)+be(4))+etabtilt*(be(7)+be(8)))*bSqG;
-    JIGt(RangeV(0,2),RangeV(0,15)) -= (etantil*(bet(3)+bet(4))+etabtil*(bet(7)+bet(8)))*bSqG;
+    JIGt.sub(RangeV(0,2),RangeV(0,15), (etantil*(be(3)+be(4))+etabtil*(be(7)+be(8)))*bSqGt);
+    JIGt.sub(RangeV(0,2),RangeV(0,15), (etantilt*(be(3)+be(4))+etabtilt*(be(7)+be(8)))*bSqG);
+    JIGt.sub(RangeV(0,2),RangeV(0,15), (etantil*(bet(3)+bet(4))+etabtil*(bet(7)+bet(8)))*bSqG);
 
-    JIGt(RangeV(0,2),RangeV(0,15)) *= 0.5;
+    JIGt.set(RangeV(0,2),RangeV(0,15), JIGt(RangeV(0,2),RangeV(0,15))*0.5);
 
-    JIGt(RangeV(15,15),RangeV(0,15)) = -cos(pS(1))*pSt(1)*(beqG(RangeV(10,10),RangeV(0,15))-beqG(RangeV(9,9),RangeV(0,15)))-((bet(10)-bet(9))*cos(pS(1))-(be(10)-be(9))*sin(pS(1))*pSt(1))*beqG(RangeV(1,1),RangeV(0,15));
-    JIGt(RangeV(15,15),RangeV(0,15)) += -sin(pS(1))*(beqGt(RangeV(10,10),RangeV(0,15))-beqGt(RangeV(9,9),RangeV(0,15)))-(be(10)-be(9))*cos(pS(1))*beqGt(RangeV(1,1),RangeV(0,15));
-    JIGt(RangeV(15,15),RangeV(0,15)) /= l0;
+    JIGt.set(RangeV(15,15),RangeV(0,15), -cos(pS(1))*pSt(1)*(beqG(RangeV(10,10),RangeV(0,15))-beqG(RangeV(9,9),RangeV(0,15)))-((bet(10)-bet(9))*cos(pS(1))-(be(10)-be(9))*sin(pS(1))*pSt(1))*beqG(RangeV(1,1),RangeV(0,15)));
+    JIGt.add(RangeV(15,15),RangeV(0,15), -sin(pS(1))*(beqGt(RangeV(10,10),RangeV(0,15))-beqGt(RangeV(9,9),RangeV(0,15)))-(be(10)-be(9))*cos(pS(1))*beqGt(RangeV(1,1),RangeV(0,15)));
+    JIGt.set(RangeV(15,15),RangeV(0,15), JIGt(RangeV(15,15),RangeV(0,15))/l0);
   }
 
   void Trafo33RCM::computeTrafo(const Vec& qG,const Vec& qGt) {	
