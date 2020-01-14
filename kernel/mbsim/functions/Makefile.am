@@ -7,7 +7,6 @@ libfunction_la_SOURCES = identity_function.cc\
 			 quadratic_function.cc\
 			 sinusoidal_function.cc\
 			 polynom_function.cc\
-			 step_function.cc\
 			 absolute_value_function.cc\
 			 modulo_function.cc\
 			 signum_function.cc\
@@ -40,7 +39,6 @@ functioninclude_HEADERS = function.h\
 			  quadratic_function.h\
 			  sinusoidal_function.h\
 			  polynom_function.h\
-			  step_function.h\
 			  absolute_value_function.h\
 			  modulo_function.h\
 			  signum_function.h\

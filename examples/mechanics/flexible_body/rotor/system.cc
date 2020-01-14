@@ -13,7 +13,7 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/functions/constant_function.h"
-#include "mbsim/functions/step_function.h"
+#include "mbsim/functions/piecewise_defined_function.h"
 #include "mbsim/observers/contact_observer.h"
 
 #include "openmbvcppinterface/frustum.h"
@@ -200,7 +200,10 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   /* Antrieb am Lager B */
   KineticExcitation *bantrieb = new KineticExcitation("Lager_B_Antrieb");
-  bantrieb->setMomentFunction(new StepFunction<VecV(double)>(0.05,0.,AntriebsmomentLagerB));
+  PiecewiseDefinedFunction<VecV(double)> *func = new PiecewiseDefinedFunction<VecV(double)>;
+  func->addLimitedFunction(LimitedFunction<VecV(double)>(new ConstantFunction<VecV(double)>(AntriebsmomentLagerB),0.05));
+  func->addLimitedFunction(LimitedFunction<VecV(double)>(new ConstantFunction<VecV(double)>(0),10));
+  bantrieb->setMomentFunction(func);
   bantrieb->setMomentDirection("[1;0;0]");
   bantrieb->connect(welle->getFrame("Ende"));
   bantrieb->enableOpenMBV(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=0.001);
