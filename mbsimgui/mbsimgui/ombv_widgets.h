@@ -129,7 +129,7 @@ namespace MBSimGUI {
   class ArrowMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
 
     public:
-      ArrowMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation());
+      ArrowMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation(), int refPoint=1);
       static std::vector<QString> getColorRepresentation();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

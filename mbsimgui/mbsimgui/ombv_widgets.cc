@@ -239,7 +239,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
+  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &cRL, int refPoint) : MBSOMBVDynamicColoreBodyWidget(cRL) {
 
     scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleLength");
     layout()->addWidget(scaleLength);
@@ -262,7 +262,7 @@ namespace MBSimGUI {
     list.emplace_back("\"toPoint\"");
     list.emplace_back("\"fromPoint\"");
     list.emplace_back("\"midPoint\"");
-    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,0,true),true,false,MBSIM%"referencePoint");
+    referencePoint = new ExtWidget("Reference point",new TextChoiceWidget(list,refPoint,true),true,false,MBSIM%"referencePoint");
     layout()->addWidget(referencePoint);
   }
 
@@ -291,7 +291,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  InteractionArrowMBSOMBVWidget::InteractionArrowMBSOMBVWidget(const vector<QString> &cRL) : ArrowMBSOMBVWidget(cRL) {
+  InteractionArrowMBSOMBVWidget::InteractionArrowMBSOMBVWidget(const vector<QString> &cRL) : ArrowMBSOMBVWidget(cRL,0) {
 
     vector<QString> list;
     list.emplace_back("\"action\"");
