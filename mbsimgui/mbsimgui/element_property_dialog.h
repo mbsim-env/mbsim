@@ -894,7 +894,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *contact;
+      ExtWidget *contact, *number;
   };
 
   class MultiplexerPropertyDialog : public SignalPropertyDialog {
