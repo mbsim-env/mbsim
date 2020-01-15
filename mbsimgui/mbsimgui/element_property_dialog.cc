@@ -3125,17 +3125,21 @@ namespace MBSimGUI {
   ContactSensorPropertyDialog::ContactSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
     contact = new ExtWidget("Contact of reference",new ElementOfReferenceWidget<Contact>(sensor,nullptr,this),false,false,MBSIMCONTROL%"contact");
     addToTab("General", contact);
-  }
+    number = new ExtWidget("Single contact number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"singleContactNumber");
+    addToTab("General", number);
+ }
 
   DOMElement* ContactSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
     contact->initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* ContactSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     contact->writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
