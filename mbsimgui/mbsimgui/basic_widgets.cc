@@ -485,29 +485,29 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    feature.push_back(MBSIM%"plotRecursive");
-    feature.push_back(MBSIM%"separateFilePerGroup");
-    feature.push_back(MBSIM%"openMBV");
-    feature.push_back(MBSIM%"debug");
-    feature.push_back(MBSIM%"position");
-    feature.push_back(MBSIM%"angle");
-    feature.push_back(MBSIM%"velocity");
-    feature.push_back(MBSIM%"angularVelocity");
     feature.push_back(MBSIM%"acceleration");
+    feature.push_back(MBSIM%"angle");
     feature.push_back(MBSIM%"angularAcceleration");
-    feature.push_back(MBSIM%"generalizedPosition");
-    feature.push_back(MBSIM%"generalizedVelocity");
+    feature.push_back(MBSIM%"angularVelocity");
+    feature.push_back(MBSIM%"debug");
+    feature.push_back(MBSIM%"deflection");
     feature.push_back(MBSIM%"derivativeOfGeneralizedPosition");
+    feature.push_back(MBSIM%"energy");
     feature.push_back(MBSIM%"generalizedAcceleration");
+    feature.push_back(MBSIM%"generalizedForce");
+    feature.push_back(MBSIM%"generalizedPosition");
     feature.push_back(MBSIM%"generalizedRelativePosition");
     feature.push_back(MBSIM%"generalizedRelativeVelocity");
-    feature.push_back(MBSIM%"generalizedForce");
-    feature.push_back(MBSIM%"energy");
-    feature.push_back(MBSIM%"deflection");
-    feature.push_back(MBSIMCONTROL%"signal");
+    feature.push_back(MBSIM%"generalizedVelocity");
     feature.push_back(MBSIMFLEX%"nodalDisplacement");
     feature.push_back(MBSIMFLEX%"nodalStress");
     feature.push_back(MBSIMFLEX%"nodalEquivalentStress");
+    feature.push_back(MBSIM%"openMBV");
+    feature.push_back(MBSIM%"plotRecursive");
+    feature.push_back(MBSIM%"position");
+    feature.push_back(MBSIM%"separateFilePerGroup");
+    feature.push_back(MBSIMCONTROL%"signal");
+    feature.push_back(MBSIM%"velocity");
 
     QStringList type_;
     if(types.isEmpty()) {
@@ -540,7 +540,7 @@ namespace MBSimGUI {
     layout->addWidget(value,4,1);
     for(auto & i : feature)
       value->addItem(QString::fromStdString(i.second));
-    value->setCurrentIndex(4);
+    value->setCurrentIndex(19);
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
 
     layout->addWidget(new QLabel("Namespace:"),6,0);

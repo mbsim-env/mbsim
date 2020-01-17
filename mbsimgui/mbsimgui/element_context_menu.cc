@@ -77,6 +77,12 @@ namespace MBSimGUI {
       connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
       action->setDisabled(element->getParent() and element->getParent()->getEmbeded());
       QMenu::addAction(action);
+      addSeparator();
+      action = new QAction("Enable", this);
+      action->setCheckable(true);
+      action->setChecked(element->enabled());
+      connect(action,SIGNAL(toggled(bool)),mw,SLOT(enableElement(bool)));
+      addAction(action);
     }
   }
 
@@ -237,17 +243,8 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
-    action = new QAction("Add point", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
-    addAction(action);
-    action = new QAction("Add line", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
-    addAction(action);
-    action = new QAction("Add plane", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
-    addAction(action);
-    action = new QAction("Add sphere", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
+    action = new QAction("Add bevel gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addBevelGear()));
     addAction(action);
     action = new QAction("Add circle", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addCircle()));
@@ -255,14 +252,66 @@ namespace MBSimGUI {
     action = new QAction("Add cuboid", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addCuboid()));
     addAction(action);
+    action = new QAction("Add cylindrical gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addCylindricalGear()));
+    addAction(action);
+    action = new QAction("Add disk", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addDisk()));
+    addAction(action);
+    QMenu *menu = new QMenu("Add fcl contour", this);
+    action = new QAction("Add fcl box", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclBox()));
+    menu->addAction(action);
+    action = new QAction("Add fcl mesh", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclMesh()));
+    menu->addAction(action);
+    action = new QAction("Add fcl plane", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclPlane()));
+    menu->addAction(action);
+    action = new QAction("Add fcl sphere", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFclSphere()));
+    menu->addAction(action);
+    addMenu(menu);
+    menu = new QMenu("Add flexible contour", this);
+    action = new QAction("Add flexible planar ffr nurbs contour", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarFfrNurbsContour()));
+    menu->addAction(action);
+    action = new QAction("Add flexible planar nurbs contour", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContour()));
+    menu->addAction(action);
+    action = new QAction("Add flexible spatial ffr nurbs contour", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialFfrNurbsContour()));
+    menu->addAction(action);
+    action = new QAction("Add flexible spatial nurbs contour", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContour()));
+    menu->addAction(action);
+    addMenu(menu);
+    action = new QAction("Add line", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addLine()));
+    addAction(action);
     action = new QAction("Add line segment", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addLineSegment()));
     addAction(action);
     action = new QAction("Add planar contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPlanarContour()));
     addAction(action);
+    action = new QAction("Add planar gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPlanarGear()));
+    addAction(action);
     action = new QAction("Add planar nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addPlanarNurbsContour()));
+    addAction(action);
+    action = new QAction("Add plane", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPlane()));
+    addAction(action);
+    action = new QAction("Add point", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPoint()));
+    addAction(action);
+    action = new QAction("Add rack", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRack()));
+    addAction(action);
+    action = new QAction("Add sphere", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSphere()));
     addAction(action);
     action = new QAction("Add spatial contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialContour()));
@@ -270,28 +319,6 @@ namespace MBSimGUI {
     action = new QAction("Add spatial nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialNurbsContour()));
     addAction(action);
-    action = new QAction("Add disk", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addDisk()));
-    addAction(action);
-    action = new QAction("Add cylindrical gear", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addCylindricalGear()));
-    addAction(action);
-    action = new QAction("Add rack", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addRack()));
-    addAction(action);
-    action = new QAction("Add bevel gear", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addBevelGear()));
-    addAction(action);
-    action = new QAction("Add planar gear", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addPlanarGear()));
-    addAction(action);
-
-    QMenu *menu = new FlexibleContoursContextMenu(element, "Add flexible contour");
-    addMenu(menu);
-
-    menu = new FclContoursContextMenu(element, "Add fcl contour");
-    addMenu(menu);
-
   }
 
   void ContoursContextMenu::paste() {
@@ -370,65 +397,35 @@ namespace MBSimGUI {
     mw->addContour(new PlanarGear, element);
   }
 
-  FlexibleContoursContextMenu::FlexibleContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
-    QAction *action = new QAction("Add flexible planar nurbs contour", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarNurbsContour()));
-    addAction(action);
-    action = new QAction("Add flexible planar ffr nurbs contour", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexiblePlanarFfrNurbsContour()));
-    addAction(action);
-    action = new QAction("Add flexible spatial nurbs contour", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialNurbsContour()));
-    addAction(action);
-    action = new QAction("Add flexible spatial ffr nurbs contour", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleSpatialFfrNurbsContour()));
-    addAction(action);
-  }
-
-  void FlexibleContoursContextMenu::addFlexiblePlanarNurbsContour() {
+  void ContoursContextMenu::addFlexiblePlanarNurbsContour() {
     mw->addContour(new FlexiblePlanarNurbsContour, element);
   }
 
-  void FlexibleContoursContextMenu::addFlexiblePlanarFfrNurbsContour() {
+  void ContoursContextMenu::addFlexiblePlanarFfrNurbsContour() {
     mw->addContour(new FlexiblePlanarFfrNurbsContour, element);
   }
 
-  void FlexibleContoursContextMenu::addFlexibleSpatialNurbsContour() {
+  void ContoursContextMenu::addFlexibleSpatialNurbsContour() {
     mw->addContour(new FlexibleSpatialNurbsContour, element);
   }
 
-  void FlexibleContoursContextMenu::addFlexibleSpatialFfrNurbsContour() {
+  void ContoursContextMenu::addFlexibleSpatialFfrNurbsContour() {
     mw->addContour(new FlexibleSpatialFfrNurbsContour, element);
   }
 
-  FclContoursContextMenu::FclContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
-    QAction *action = new QAction("Add fcl box", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFclBox()));
-    addAction(action);
-    action = new QAction("Add fcl sphere", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFclSphere()));
-    addAction(action);
-    action = new QAction("Add fcl plane", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFclPlane()));
-    addAction(action);
-    action = new QAction("Add fcl mesh", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFclMesh()));
-    addAction(action);
-  }
-
-  void FclContoursContextMenu::addFclBox() {
+  void ContoursContextMenu::addFclBox() {
     mw->addContour(new FclBox, element);
   }
 
-  void FclContoursContextMenu::addFclSphere() {
+  void ContoursContextMenu::addFclSphere() {
     mw->addContour(new FclSphere, element);
   }
 
-  void FclContoursContextMenu::addFclPlane() {
+  void ContoursContextMenu::addFclPlane() {
     mw->addContour(new FclPlane, element);
   }
 
-  void FclContoursContextMenu::addFclMesh() {
+  void ContoursContextMenu::addFclMesh() {
     mw->addContour(new FclMesh, element);
   }
 
@@ -477,7 +474,16 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
-    QMenu *menu = new BodiesContextMenu(element, "Add body");
+    QMenu *menu = new QMenu("Add body", this);
+    action = new QAction("Add calculix body", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addCalculixBody()));
+    menu->addAction(action);
+    action = new QAction("Add flexible ffr body", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleFfrBody()));
+    menu->addAction(action);
+    action = new QAction("Add rigid body", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
+    menu->addAction(action);
     addMenu(menu);
   }
 
@@ -493,27 +499,15 @@ namespace MBSimGUI {
     mw->loadObject(element,nullptr,true);
   }
 
-  BodiesContextMenu::BodiesContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
-    QAction *action = new QAction("Add rigid body", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
-    addAction(action);
-    action = new QAction("Add flexible ffr body", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFlexibleFfrBody()));
-    addAction(action);
-    action = new QAction("Add calculix body", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addCalculixBody()));
-    addAction(action);
-  }
-
-  void BodiesContextMenu::addRigidBody() {
+  void ObjectsContextMenu::addRigidBody() {
     mw->addObject(new RigidBody, element);
   }
 
-  void BodiesContextMenu::addFlexibleFfrBody() {
+  void ObjectsContextMenu::addFlexibleFfrBody() {
     mw->addObject(new FlexibleFfrBody, element);
   }
 
-  void BodiesContextMenu::addCalculixBody() {
+  void ObjectsContextMenu::addCalculixBody() {
     mw->addObject(new CalculixBody, element);
   }
 
@@ -529,40 +523,26 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
-    action = new QAction("Add kinetic excitation", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
+    action = new QAction("Add aerodynamics", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addAerodynamics()));
     addAction(action);
-    action = new QAction("Add spring damper", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
-    addAction(action);
-    action = new QAction("Add directional spring damper", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
-    addAction(action);
-    action = new QAction("Add isotropic rotational spring damper", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addIsotropicRotationalSpringDamper()));
-    addAction(action);
-    action = new QAction("Add joint", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
-    addAction(action);
-    action = new QAction("Add elastic joint", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addElasticJoint()));
+    action = new QAction("Add buoyancy", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addBuoyancy()));
     addAction(action);
     action = new QAction("Add contact", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addContact()));
     addAction(action);
+    action = new QAction("Add directional spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addDirectionalSpringDamper()));
+    addAction(action);
     action = new QAction("Add disk contact", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addDiskContact()));
     addAction(action);
-    QMenu *menu = new SignalsContextMenu(element, "Add signal");
-    addMenu(menu);
-    action = new QAction("Add generalized spring damper", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
+    action = new QAction("Add drag", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addDrag()));
     addAction(action);
-    action = new QAction("Add generalized friction", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
-    addAction(action);
-    action = new QAction("Add generalized gear", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGear()));
+    action = new QAction("Add elastic joint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addElasticJoint()));
     addAction(action);
     action = new QAction("Add generalized elastic connection", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticConnection()));
@@ -570,20 +550,34 @@ namespace MBSimGUI {
     action = new QAction("Add generalized elastic structure", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedElasticStructure()));
     addAction(action);
+    action = new QAction("Add generalized friction", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedFriction()));
+    addAction(action);
+    action = new QAction("Add generalized gear", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGear()));
+    addAction(action);
+    action = new QAction("Add isotropic rotational spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addIsotropicRotationalSpringDamper()));
+    addAction(action);
+    action = new QAction("Add generalized spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedSpringDamper()));
+    addAction(action);
+    action = new QAction("Add joint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addJoint()));
+    addAction(action);
+    action = new QAction("Add kinetic excitation", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addKineticExcitation()));
+    addAction(action);
+    QMenu *menu = new SignalsContextMenu(element, "Add signal");
+    addMenu(menu);
+    action = new QAction("Add spring damper", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSpringDamper()));
+    addAction(action);
     action = new QAction("Add universal gravitation", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addUniversalGravitation()));
     addAction(action);
     action = new QAction("Add weight", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addWeight()));
-    addAction(action);
-    action = new QAction("Add buoyancy", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addBuoyancy()));
-    addAction(action);
-    action = new QAction("Add drag", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addDrag()));
-    addAction(action);
-    action = new QAction("Add aerodynamics", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addAerodynamics()));
     addAction(action);
   }
 
@@ -683,26 +677,26 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
+    action = new QAction("Add gear constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGearConstraint()));
+    addAction(action);
+    action = new QAction("Add generalized acceleration constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedAccelerationConstraint()));
+    addAction(action);
+    action = new QAction("Add generalized connection constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedConnectionConstraint()));
+    addAction(action);
     action = new QAction("Add generalized position constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionConstraint()));
     addAction(action);
     action = new QAction("Add generalized velocity constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocityConstraint()));
     addAction(action);
-    action = new QAction("Add generalized acceleration constraint", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedAccelerationConstraint()));
-    addAction(action);
-    action = new QAction("Add gear constraint", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGearConstraint()));
+    action = new QAction("Add inverse kinematics constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addInverseKinematicsConstraint()));
     addAction(action);
     action = new QAction("Add joint constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
-    addAction(action);
-    action = new QAction("Add generalized connection constraint", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedConnectionConstraint()));
-    addAction(action);
-    action = new QAction("Add inverse kinematics constraint", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addInverseKinematicsConstraint()));
     addAction(action);
   }
 
@@ -758,32 +752,32 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
-    action = new QAction("Add mechanical link observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
-    addAction(action);
-    action = new QAction("Add mechanical constraint observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalConstraintObserver()));
-    addAction(action);
     action = new QAction("Add contact observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addContactObserver()));
     addAction(action);
     action = new QAction("Add frame observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFrameObserver()));
     addAction(action);
-    action = new QAction("Add rigid body observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyObserver()));
+    action = new QAction("Add inverse kinematics constraint observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addInverseKinematicsConstraintObserver()));
     addAction(action);
     action = new QAction("Add kinematic coordinates observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addKinematicCoordinatesObserver()));
     addAction(action);
+    action = new QAction("Add mechanical constraint observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalConstraintObserver()));
+    addAction(action);
+    action = new QAction("Add mechanical link observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
+    addAction(action);
     action = new QAction("Add relative kinematics observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
     addAction(action);
+    action = new QAction("Add rigid body observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyObserver()));
+    addAction(action);
     action = new QAction("Add rigid body system observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodySystemObserver()));
-    addAction(action);
-    action = new QAction("Add inverse kinematics constraint observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addInverseKinematicsConstraintObserver()));
     addAction(action);
   }
 
@@ -836,25 +830,64 @@ namespace MBSimGUI {
   }
 
   SignalsContextMenu::SignalsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
-    QMenu *menu = new SensorsContextMenu(element,"Add sensor");
-    addMenu(menu);
-    QAction *action = new QAction("Add multiplexer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addMultiplexer()));
-    addAction(action);
-    action = new QAction("Add demultiplexer", this);
+    QAction *action = new QAction("Add demultiplexer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addDemultiplexer()));
     addAction(action);
-    action = new QAction("Add linear transfer system", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
-    addAction(action);
-    action = new QAction("Add signal operation", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addSignalOperation()));
+    action = new QAction("Add extern signal sink", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addExternSignalSink()));
     addAction(action);
     action = new QAction("Add extern signal source", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addExternSignalSource()));
     addAction(action);
-    action = new QAction("Add extern signal sink", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addExternSignalSink()));
+    action = new QAction("Add linear transfer system", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addLinearTransferSystem()));
+    addAction(action);
+    action = new QAction("Add multiplexer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMultiplexer()));
+    addAction(action);
+    QMenu *menu = new QMenu("Add sensor", this);
+    action = new QAction("Add angular velocity sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addAngularVelocitySensor()));
+    menu->addAction(action);
+    action = new QAction("Add function sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addFunctionSensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized force sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedForceSensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized position sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionSensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized contact force sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedContactForceSensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized relative contact position sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeContactPositionSensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized relative contact velocity sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeContactVelocitySensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized relative position sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativePositionSensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized relative velocity sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeVelocitySensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized velocity sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocitySensor()));
+    menu->addAction(action);
+    action = new QAction("Add orientation sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addOrientationSensor()));
+    menu->addAction(action);
+    action = new QAction("Add position sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addPositionSensor()));
+    menu->addAction(action);
+    action = new QAction("Add velocity sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addVelocitySensor()));
+    menu->addAction(action);
+    addMenu(menu);
+    action = new QAction("Add signal operation", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSignalOperation()));
     addAction(action);
   }
 
@@ -882,97 +915,55 @@ namespace MBSimGUI {
     mw->addLink(new ExternSignalSink, element);
   }
 
-  SensorsContextMenu::SensorsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
-    QAction *action = new QAction("Add generalized position sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedPositionSensor()));
-    addAction(action);
-    action = new QAction("Add generalized velocity sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocitySensor()));
-    addAction(action);
-    action = new QAction("Add position sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addPositionSensor()));
-    addAction(action);
-    action = new QAction("Add orientation sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addOrientationSensor()));
-    addAction(action);
-    action = new QAction("Add velocity sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addVelocitySensor()));
-    addAction(action);
-    action = new QAction("Add angular velocity sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addAngularVelocitySensor()));
-    addAction(action);
-    action = new QAction("Add function sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addFunctionSensor()));
-    addAction(action);
-    action = new QAction("Add generalized relative position sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativePositionSensor()));
-    addAction(action);
-    action = new QAction("Add generalized relative velocity sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeVelocitySensor()));
-    addAction(action);
-    action = new QAction("Add generalized force sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedForceSensor()));
-    addAction(action);
-    action = new QAction("Add generalized relative contact position sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeContactPositionSensor()));
-    addAction(action);
-    action = new QAction("Add generalized relative contact velocity sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeContactVelocitySensor()));
-    addAction(action);
-    action = new QAction("Add generalized contact force sensor", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedContactForceSensor()));
-    addAction(action);
-  }
-
-  void SensorsContextMenu::addGeneralizedPositionSensor() {
+  void SignalsContextMenu::addGeneralizedPositionSensor() {
     mw->addLink(new GeneralizedPositionSensor, element);
   }
 
-  void SensorsContextMenu::addGeneralizedVelocitySensor() {
+  void SignalsContextMenu::addGeneralizedVelocitySensor() {
     mw->addLink(new GeneralizedVelocitySensor, element);
   }
 
-  void SensorsContextMenu::addPositionSensor() {
+  void SignalsContextMenu::addPositionSensor() {
     mw->addLink(new PositionSensor, element);
   }
 
-  void SensorsContextMenu::addOrientationSensor() {
+  void SignalsContextMenu::addOrientationSensor() {
     mw->addLink(new OrientationSensor, element);
   }
 
-  void SensorsContextMenu::addVelocitySensor() {
+  void SignalsContextMenu::addVelocitySensor() {
     mw->addLink(new VelocitySensor, element);
   }
 
-  void SensorsContextMenu::addAngularVelocitySensor() {
+  void SignalsContextMenu::addAngularVelocitySensor() {
     mw->addLink(new AngularVelocitySensor, element);
   }
 
-  void SensorsContextMenu::addFunctionSensor() {
+  void SignalsContextMenu::addFunctionSensor() {
     mw->addLink(new FunctionSensor, element);
   }
 
-  void SensorsContextMenu::addGeneralizedRelativePositionSensor() {
+  void SignalsContextMenu::addGeneralizedRelativePositionSensor() {
     mw->addLink(new GeneralizedRelativePositionSensor, element);
   }
 
-  void SensorsContextMenu::addGeneralizedRelativeVelocitySensor() {
+  void SignalsContextMenu::addGeneralizedRelativeVelocitySensor() {
     mw->addLink(new GeneralizedRelativeVelocitySensor, element);
   }
 
-  void SensorsContextMenu::addGeneralizedForceSensor() {
+  void SignalsContextMenu::addGeneralizedForceSensor() {
     mw->addLink(new GeneralizedForceSensor, element);
   }
 
-  void SensorsContextMenu::addGeneralizedRelativeContactPositionSensor() {
+  void SignalsContextMenu::addGeneralizedRelativeContactPositionSensor() {
     mw->addLink(new GeneralizedRelativeContactPositionSensor, element);
   }
 
-  void SensorsContextMenu::addGeneralizedRelativeContactVelocitySensor() {
+  void SignalsContextMenu::addGeneralizedRelativeContactVelocitySensor() {
     mw->addLink(new GeneralizedRelativeContactVelocitySensor, element);
   }
 
-  void SensorsContextMenu::addGeneralizedContactForceSensor() {
+  void SignalsContextMenu::addGeneralizedContactForceSensor() {
     mw->addLink(new GeneralizedContactForceSensor, element);
   }
 

@@ -138,35 +138,17 @@ namespace MBSimGUI {
       void addRack();
       void addBevelGear();
       void addPlanarGear();
-      void paste();
-      void load();
-      void embed();
-  };
-
-  class FlexibleContoursContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
-    public:
-      FlexibleContoursContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
       void addFlexiblePlanarNurbsContour();
       void addFlexiblePlanarFfrNurbsContour();
       void addFlexibleSpatialNurbsContour();
       void addFlexibleSpatialFfrNurbsContour();
-  };
-
-  class FclContoursContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
-    public:
-      FclContoursContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
       void addFclBox();
       void addFclSphere();
       void addFclPlane();
       void addFclMesh();
+      void paste();
+      void load();
+      void embed();
   };
 
   class GroupsContextMenu : public BasicElementMenu {
@@ -192,15 +174,6 @@ namespace MBSimGUI {
       void paste();
       void load();
       void embed();
-  };
-
-  class BodiesContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
-    public:
-      BodiesContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
       void addRigidBody();
       void addFlexibleFfrBody();
       void addCalculixBody();
@@ -290,15 +263,6 @@ namespace MBSimGUI {
       void addSignalOperation();
       void addExternSignalSource();
       void addExternSignalSink();
-  };
-
-  class SensorsContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
-    public:
-      SensorsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
       void addGeneralizedPositionSensor();
       void addGeneralizedVelocitySensor();
       void addPositionSensor();

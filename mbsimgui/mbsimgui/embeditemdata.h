@@ -46,6 +46,7 @@ namespace MBSimGUI {
       ~EmbedItemData() override;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return ""; }
+      bool enabled() const { return not embed or MBXMLUtils::E(embed)->getAttribute("count")!="0"; }
       virtual EmbedItemData* getEmbedItemParent() { return nullptr; }
       std::vector<EmbedItemData*> getEmbedItemParents();
       int getNumberOfParameters() const { return parameter.size(); }

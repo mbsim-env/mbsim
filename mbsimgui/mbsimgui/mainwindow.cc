@@ -661,7 +661,7 @@ namespace MBSimGUI {
       model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
       elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
-      solverView->setSolver(0);
+      solverView->setSolver(6);
 
       projectFile="";
       mbsimxml(1);
@@ -1508,6 +1508,20 @@ namespace MBSimGUI {
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
+  }
+
+  void MainWindow::enableElement(bool enabled) {
+    setProjectChanged(true);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    QModelIndex index = elementView->selectionModel()->currentIndex();
+    auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
+    DOMElement *embedNode = element->getEmbedXMLElement();
+    if(not embedNode) {
+      embedNode = element->createEmbedXMLElement();
+      E(embedNode)->setAttribute("counterName","n");
+    }
+    E(embedNode)->setAttribute("count",enabled?"1":"0");
+    mbsimxml(1);
   }
 
   void MainWindow::saveSolverAs() {

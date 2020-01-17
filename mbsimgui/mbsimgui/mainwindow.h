@@ -227,6 +227,7 @@ namespace MBSimGUI {
       void moveDownConstraint() { moveConstraint(false); }
       void moveUpObserver() { moveObserver(true); }
       void moveDownObserver() { moveObserver(false); }
+      void enableElement(bool enabled);
       void saveElementAs();
       void saveSolverAs();
       void saveEmbeddingAs();
