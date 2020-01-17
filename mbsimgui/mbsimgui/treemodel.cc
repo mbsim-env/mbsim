@@ -49,10 +49,6 @@ namespace MBSimGUI {
       TreeItem *item = getItem(index);
       return item->getForeground();
     }
-    else if(role==Qt::UserRole) {
-      TreeItem *item = getItem(index);
-      return item->getEnabled();
-    }
     return QVariant();
   }
 
@@ -130,32 +126,6 @@ namespace MBSimGUI {
 
   int TreeModel::rowCount(const QModelIndex &parent) const {
     return getItem(parent)->childCount();
-  }
-
-  bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-    if(role != Qt::EditRole && role != Qt::ForegroundRole)
-      return false;
-
-    TreeItem *item = getItem(index);
-//    if(role == Qt::EditRole && index.column()==0)
-//      item->setData0(value);
-    if(role == Qt::ForegroundRole && index.column()==0)
-      item->setForeground(value.value<QBrush>());
-
-    emit dataChanged(index, index);
-
-    return true;
-  }
-
-  bool TreeModel::setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role) {
-    if(role != Qt::EditRole || orientation != Qt::Horizontal)
-      return false;
-
-//    rootItem->setData(section,value);
-//
-    emit headerDataChanged(orientation, section, section);
-
-    return true;
   }
 
   ElementTreeModel::ElementTreeModel(QObject *parent) : TreeModel(parent) {

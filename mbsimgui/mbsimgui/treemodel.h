@@ -54,8 +54,6 @@ namespace MBSimGUI {
       int columnCount(const QModelIndex &) const override {return 3;}
 
       Qt::ItemFlags flags(const QModelIndex &index) const override;
-      bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
-      bool setHeaderData(int section, Qt::Orientation orientation, const QVariant &value, int role = Qt::EditRole) override;
 
       bool removeRows(int position, int rows, const QModelIndex &parent = QModelIndex()) override;
 
