@@ -280,7 +280,7 @@ namespace MBSimGUI {
 
     int i = rowCount(parent);
     beginInsertRows(parent, i, i);
-    TreeItem *item = new TreeItem(itemData,parentItem,1,Qt::gray);
+    TreeItem *item = new TreeItem(itemData,parentItem,1);
     parentItem->insertChildren(item,1);
     endInsertRows();
 
