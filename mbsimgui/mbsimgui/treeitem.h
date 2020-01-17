@@ -22,9 +22,8 @@
 
 #include "treeitemdata.h"
 #include <QList>
-#include <QMenu>
 #include <QVariant>
-#include <QVector>
+#include <QPalette>
 #include <QApplication>
 
 namespace MBSimGUI {
