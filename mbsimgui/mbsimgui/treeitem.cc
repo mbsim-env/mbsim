@@ -22,6 +22,14 @@
 
 namespace MBSimGUI {
 
+  TreeItem::TreeItem(TreeItemData *itemData, TreeItem *parent, int ID_, const QFont &font_, const QIcon &icon, const QBrush &foregoundA, const QBrush &foregoundD, const QBrush &background_) : itemData(itemData), parentItem(parent), ID(ID_), font(font_), decoration(icon), background(background_) {
+    foreground[0] = foregoundD;
+    foreground[1] = foregoundA;
+    getData_[0] = &TreeItem::getData0;
+    getData_[1] = &TreeItem::getData1;
+    getData_[2] = &TreeItem::getData2;
+  }
+
   TreeItem::~TreeItem() {
     qDeleteAll(childItems);
   }

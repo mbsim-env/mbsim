@@ -29,7 +29,6 @@
 #include "constraint.h"
 #include "observer.h"
 #include "parameter.h"
-#include <iostream>
 
 using namespace std;
 
@@ -45,9 +44,21 @@ namespace MBSimGUI {
       TreeItem *item = getItem(index);
       return item->getData(index.column());
     } 
+    else if(role==Qt::DecorationRole and index.column()==0) {
+      TreeItem *item = getItem(index);
+      return item->getDecoration();
+    }
     else if(role==Qt::ForegroundRole) {
       TreeItem *item = getItem(index);
       return item->getForeground();
+    }
+    else if(role==Qt::BackgroundRole) {
+      TreeItem *item = getItem(index);
+      return item->getBackground();
+    }
+    else if(role==Qt::FontRole) {
+      TreeItem *item = getItem(index);
+      return item->getFont();
     }
     return QVariant();
   }
@@ -177,13 +188,13 @@ namespace MBSimGUI {
         index = parent.child(i,0);
       i = rowCount(index);
       beginInsertRows(index, i, i+6);
-      item->insertChildren(new TreeItem(new FrameItemData(group),item,0,Qt::gray),1);
-      item->insertChildren(new TreeItem(new ContourItemData(group),item,1,Qt::gray),1);
-      item->insertChildren(new TreeItem(new GroupItemData(group),item,1,Qt::gray),1);
-      item->insertChildren(new TreeItem(new ObjectItemData(group),item,1,Qt::gray),1);
-      item->insertChildren(new TreeItem(new LinkItemData(group),item,1,Qt::gray),1);
-      item->insertChildren(new TreeItem(new ConstraintItemData(group),item,1,Qt::gray),1);
-      item->insertChildren(new TreeItem(new ObserverItemData(group),item,1,Qt::gray),1);
+      item->insertChildren(new TreeItem(new FrameItemData(group),item,0),1);
+      item->insertChildren(new TreeItem(new ContourItemData(group),item,1),1);
+      item->insertChildren(new TreeItem(new GroupItemData(group),item,1),1);
+      item->insertChildren(new TreeItem(new ObjectItemData(group),item,1),1);
+      item->insertChildren(new TreeItem(new LinkItemData(group),item,1),1);
+      item->insertChildren(new TreeItem(new ConstraintItemData(group),item,1),1);
+      item->insertChildren(new TreeItem(new ObserverItemData(group),item,1),1);
       endInsertRows();
 
       for(int i=0; i<group->getNumberOfFrames(); i++)
@@ -219,8 +230,8 @@ namespace MBSimGUI {
       QModelIndex index = parent.child(i,0);
       i = rowCount(index);
       beginInsertRows(index, i, i+1);
-      item->insertChildren(new TreeItem(new FrameItemData(object),item,0,Qt::gray),1);
-      item->insertChildren(new TreeItem(new ContourItemData(object),item,1,Qt::gray),1);
+      item->insertChildren(new TreeItem(new FrameItemData(object),item,0),1);
+      item->insertChildren(new TreeItem(new ContourItemData(object),item,1),1);
       endInsertRows();
 
       for(int i=0; i<object->getNumberOfFrames(); i++)
@@ -303,8 +314,7 @@ namespace MBSimGUI {
     int i = rowCount(parent);
     if(dynamic_cast<EmbedItemData*>(getItem(parent.child(i-1,0))->getItemData())) i--;
     beginInsertRows(parent, i, i);
-
-    TreeItem *item = new TreeItem(parameter,parentItem);
+    TreeItem *item = new TreeItem(parameter,parentItem,1);
     parentItem->insertChildren(item,i,1);
     endInsertRows();
     return parent.child(i,0);

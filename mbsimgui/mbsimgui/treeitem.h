@@ -24,6 +24,8 @@
 #include <QList>
 #include <QVariant>
 #include <QPalette>
+#include <QFont>
+#include <QIcon>
 #include <QApplication>
 
 namespace MBSimGUI {
@@ -31,11 +33,7 @@ namespace MBSimGUI {
   class TreeItem {
     public:
 
-      TreeItem(TreeItemData *itemData = nullptr, TreeItem *parent = nullptr, int ID_ = 1, const QBrush &brush=QApplication::palette().brush(QPalette::Active, QPalette::Text)) : itemData(itemData), parentItem(parent), ID(ID_), foreground(brush) {
-        getData_[0] = &TreeItem::getData0;
-        getData_[1] = &TreeItem::getData1;
-        getData_[2] = &TreeItem::getData2;
-      }
+      TreeItem(TreeItemData *itemData=nullptr, TreeItem *parent=nullptr, int ID_=1, const QFont &font=QApplication::font(), const QIcon &decoration=QIcon(), const QBrush &foregroundA=QApplication::palette().brush(QPalette::Active, QPalette::Text), const QBrush &foregroundD=QApplication::palette().brush(QPalette::Disabled, QPalette::Text), const QBrush &backGround=QApplication::palette().brush(QPalette::Active, QPalette::Base));
       ~TreeItem();
 
       TreeItem *child(int number) { return childItems.value(number); }
@@ -54,16 +52,19 @@ namespace MBSimGUI {
       QVariant (TreeItem::*getData_[3])() const;
       QVariant getData(int column) const { return (this->*getData_[column])(); }
       int getID() const { return ID; }
-      QBrush getForeground() { return foreground; }
-      void setForeground(const QBrush &brush) { foreground=brush; }
-      bool getEnabled() { return foreground==QApplication::palette().brush(QPalette::Active, QPalette::Text); }
+      QFont getFont() { return font; }
+      QIcon getDecoration() { return decoration; }
+      QBrush getForeground() { return foreground[itemData->isEnabled()]; }
+      QBrush getBackground() { return background; }
 
     protected:
       QList<TreeItem*> childItems;
       TreeItemData *itemData;
       TreeItem *parentItem;
       int ID;
-      QBrush foreground;
+      QFont font;
+      QIcon decoration;
+      QBrush foreground[2], background;
   };
 
 }

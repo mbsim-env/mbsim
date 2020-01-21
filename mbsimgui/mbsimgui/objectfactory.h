@@ -21,7 +21,6 @@
 #define _OBJECTFACTORY__H_
 
 #include <set>
-#include <iostream>
 #include <map>
 #include <xercesc/dom/DOMElement.hpp>
 

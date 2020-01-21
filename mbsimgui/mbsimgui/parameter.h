@@ -23,6 +23,7 @@
 #include "treeitemdata.h"
 #include "parameter_property_dialog.h"
 #include "parameter_context_menu.h"
+#include "embeditemdata.h"
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -42,6 +43,7 @@ namespace MBSimGUI {
       Parameter()  = default;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
+      bool isEnabled() const override { return parent->isEnabled(); }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }

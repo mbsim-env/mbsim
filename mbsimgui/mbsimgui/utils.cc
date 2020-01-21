@@ -21,7 +21,6 @@
 #include <cstdio>
 #include "utils.h"
 #include <unordered_map>
-#include <iostream>
 #include <cmath>
 #include <stdexcept>
 #include <mbxmlutilshelper/getinstallpath.h>

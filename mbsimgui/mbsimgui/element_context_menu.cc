@@ -80,7 +80,8 @@ namespace MBSimGUI {
       addSeparator();
       action = new QAction("Enable", this);
       action->setCheckable(true);
-      action->setChecked(element->enabled());
+      action->setChecked(element->isEnabled());
+      action->setEnabled(element->getParent()->isEnabled());
       connect(action,SIGNAL(toggled(bool)),mw,SLOT(enableElement(bool)));
       addAction(action);
     }

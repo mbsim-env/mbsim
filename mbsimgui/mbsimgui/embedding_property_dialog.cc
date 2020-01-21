@@ -103,6 +103,7 @@ namespace MBSimGUI {
       }
     }
     item->maybeRemoveEmbedXMLElement();
+    item->updateStatus();
     return nullptr;
   }
 

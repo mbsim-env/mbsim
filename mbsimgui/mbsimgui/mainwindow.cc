@@ -1521,6 +1521,7 @@ namespace MBSimGUI {
       E(embedNode)->setAttribute("counterName","n");
     }
     E(embedNode)->setAttribute("count",enabled?"1":"0");
+    element->updateStatus();
     mbsimxml(1);
   }
 

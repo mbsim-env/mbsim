@@ -47,6 +47,7 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> plotFeatures;
       QString ID;
       bool config{false};
+      bool enabled{true};
     public:
       Element() : ID(QString::number(IDcounter++)) { }
       QString getType() const override { return "Element"; }
@@ -115,6 +116,8 @@ namespace MBSimGUI {
       virtual QString getPlotFeatureType() const { return ""; }
       bool getConfig() { return config; }
       void setConfig(bool config_) { config = config_; }
+      bool isEnabled() const override { return enabled; }
+      void updateStatus() override { enabled = (not parent or parent->isEnabled()) and isActive(); }
   };
 
   template<class T>

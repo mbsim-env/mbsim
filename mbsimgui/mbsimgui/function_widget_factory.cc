@@ -26,7 +26,6 @@
 #include "basic_widgets.h"
 #include "rigid_body.h"
 #include "function.h"
-#include <iostream>
 
 using namespace std;
 

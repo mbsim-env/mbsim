@@ -64,36 +64,43 @@ namespace MBSimGUI {
   void Group::addFrame(Frame* frame_) {
     frame.push_back(frame_);
     frame_->setParent(this);
+    frame_->updateStatus();
   }
 
   void Group::addContour(Contour* contour_) {
     contour.push_back(contour_);
     contour_->setParent(this);
+    contour_->updateStatus();
   }
 
   void Group::addGroup(Group* group_) {
     group.push_back(group_);
     group_->setParent(this);
+    group_->updateStatus();
   }
 
   void Group::addObject(Object* object_) {
     object.push_back(object_);
     object_->setParent(this);
+    object_->updateStatus();
   }
 
   void Group::addLink(Link* link_) {
     link.push_back(link_);
     link_->setParent(this);
+    link_->updateStatus();
   }
 
   void Group::addConstraint(Constraint* constraint_) {
     constraint.push_back(constraint_);
     constraint_->setParent(this);
+    constraint_->updateStatus();
   }
 
   void Group::addObserver(Observer* observer_) {
     observer.push_back(observer_);
     observer_->setParent(this);
+    observer_->updateStatus();
   }
 
   void Group::removeElement(Element* element) {
@@ -514,6 +521,24 @@ namespace MBSimGUI {
       i->setEmbeded(embeded);
     for(auto & i : observer)
       i->setEmbeded(embeded);
+  }
+
+  void Group::updateStatus() {
+    Element::updateStatus();
+    for(auto & i : frame)
+      i->updateStatus();
+    for(auto & i : contour)
+      i->updateStatus();
+    for(auto & i : group)
+      i->updateStatus();
+    for(auto & i : object)
+      i->updateStatus();
+    for(auto & i : link)
+      i->updateStatus();
+    for(auto & i : constraint)
+      i->updateStatus();
+    for(auto & i : observer)
+      i->updateStatus();
   }
 
 }

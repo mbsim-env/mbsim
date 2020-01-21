@@ -31,7 +31,6 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "embeditemdata.h"
-#include <iostream>
 #include <QTextStream>
 #include <QProcessEnvironment>
 #include <QUrlQuery>

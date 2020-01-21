@@ -22,7 +22,6 @@
 
 #include <QIcon>
 #include <string>
-#include <iostream>
 #include <iomanip>
 #include <limits>
 #include <sstream>
