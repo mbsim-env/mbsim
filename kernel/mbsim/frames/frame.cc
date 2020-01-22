@@ -20,9 +20,7 @@
 #include <config.h>
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
-#include "mbsim/mbsim_event.h"
 #include <openmbvcppinterface/frame.h>
-#include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
 using namespace std;
