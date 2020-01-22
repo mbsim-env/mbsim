@@ -24,6 +24,8 @@
 
 namespace MBSim {
 
+  extern const PlotFeatureEnum force, moment;
+
   /** 
    * \brief mechanical link
    * \author Martin Foerg
@@ -47,6 +49,7 @@ namespace MBSim {
       virtual void updatelaF() { }
       virtual void updatelaM() { }
       virtual void updateR() { }
+
       const fmatvec::Vec3& evalForce(int i=1) { if(updF) updateForce(); return F[i]; }
       const fmatvec::Vec3& evalMoment(int i=1) { if(updM) updateMoment(); return M[i]; }
       const fmatvec::Mat3xV& evalRF(int i=1) { if(updRMV) updateR(); return RF[i]; }
@@ -54,9 +57,15 @@ namespace MBSim {
       const fmatvec::VecV& evallaF() { if(updlaF) updatelaF(); return lambdaF; }
       const fmatvec::VecV& evallaM() { if(updlaM) updatelaM(); return lambdaM; }
 
+      fmatvec::Vec3& getForce(int i=1, bool check=true) {  assert((not check) or (not updF)); return F[i]; }
+      fmatvec::Vec3& getMoment(int i=1, bool check=true) {  assert((not check) or (not updM)); return M[i]; }
+
       Frame* getPointOfApplication(int i) { return P[i]; }
 
       int getNumberOfLinks() { return F.size(); }
+
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void plot() override;
 
     protected:
       std::vector<Frame*> P;

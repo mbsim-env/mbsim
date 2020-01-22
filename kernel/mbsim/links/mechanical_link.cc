@@ -28,6 +28,12 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  const PlotFeatureEnum force;
+  const PlotFeatureEnum moment;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, force)
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, moment)
+
   MechanicalLink::MechanicalLink(const std::string &name) : Link(name), updF(true), updM(true), updRMV(true), updlaF(true), updlaM(true) {
   }
 
@@ -44,6 +50,46 @@ namespace MBSim {
     lambda.set(iF, evallaF());
     lambda.set(iM, evallaM());
     updla = false;
+  }
+
+  void MechanicalLink::plot() {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[force]) {
+        for(size_t i=0; i<F.size(); i++) {
+          for(int j=0; j<evalForce(i).size(); j++)
+            plotVector.push_back(getForce(i)(j));
+        }
+      }
+      if(plotFeature[moment]) {
+        for(size_t i=0; i<M.size(); i++) {
+          for(int j=0; j<evalMoment(i).size(); j++)
+            plotVector.push_back(getMoment(i)(j));
+        }
+      }
+    }
+    Link::plot();
+  }
+
+  void MechanicalLink::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==plotting) {
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[force]) {
+          for(size_t i=0; i<F.size(); i++) {
+            plotColumns.emplace_back("force "+to_string(i)+" (x)");
+            plotColumns.emplace_back("force "+to_string(i)+" (y)");
+            plotColumns.emplace_back("force "+to_string(i)+" (z)");
+          }
+        }
+        if(plotFeature[moment]) {
+          for(size_t i=0; i<M.size(); i++) {
+            plotColumns.emplace_back("moment "+to_string(i)+" (x)");
+            plotColumns.emplace_back("moment "+to_string(i)+" (y)");
+            plotColumns.emplace_back("moment "+to_string(i)+" (z)");
+          }
+        }
+      }
+    }
+    Link::init(stage, config);
   }
 
 }
