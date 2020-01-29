@@ -232,6 +232,8 @@ namespace MBSimGUI {
       return new GeneralizedPositionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedVelocitySensor")
       return new GeneralizedVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedAccelerationSensor")
+      return new GeneralizedAccelerationSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativePositionSensor")
       return new GeneralizedRelativePositionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativeVelocitySensor")
@@ -246,6 +248,10 @@ namespace MBSimGUI {
       return new VelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"AngularVelocitySensor")
       return new AngularVelocitySensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"AccelerationSensor")
+      return new AccelerationSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"AngularAccelerationSensor")
+      return new AngularAccelerationSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"FunctionSensor")
       return new FunctionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativeContactPositionSensor")
@@ -316,10 +322,6 @@ namespace MBSimGUI {
   }
   Observer* MBSimObjectFactory::createObserver(DOMElement *element) {
     if(element==nullptr) return nullptr;
-    if(E(element)->getTagName()==MBSIM%"KinematicCoordinatesObserver")
-      return new KinematicCoordinatesObserver;
-    if(E(element)->getTagName()==MBSIM%"RelativeKinematicsObserver")
-      return new RelativeKinematicsObserver;
     if(E(element)->getTagName()==MBSIM%"MechanicalLinkObserver")
       return new MechanicalLinkObserver;
     if(E(element)->getTagName()==MBSIM%"MechanicalConstraintObserver")
@@ -330,10 +332,10 @@ namespace MBSimGUI {
       return new FrameObserver;
     if(E(element)->getTagName()==MBSIM%"RigidBodyObserver")
       return new RigidBodyObserver;
-    if(E(element)->getTagName()==MBSIM%"RigidBodySystemObserver")
-      return new RigidBodySystemObserver;
     if(E(element)->getTagName()==MBSIM%"InverseKinematicsConstraintObserver")
       return new InverseKinematicsConstraintObserver;
+    if(E(element)->getTagName()==MBSIMCONTROL%"SignalObserver")
+      return new SignalObserver;
     else
       return new UnknownObserver;
     return nullptr;

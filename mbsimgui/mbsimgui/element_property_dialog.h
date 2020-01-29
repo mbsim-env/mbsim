@@ -658,6 +658,7 @@ namespace MBSimGUI {
   };
 
   class ElasticJointPropertyDialog : public FloatingFrameLinkPropertyDialog {
+    Q_OBJECT
 
     public:
       ElasticJointPropertyDialog(Element *joint);
@@ -666,6 +667,9 @@ namespace MBSimGUI {
     protected:
       ExtWidget *forceDirection, *momentDirection, *function, *integrate;
       void updateWidget() override;
+    protected slots:
+      void updateFunctionCheckState();
+      void updateDirectionsCheckState();
   };
 
   class GeneralizedSpringDamperPropertyDialog : public DualRigidBodyLinkPropertyDialog {
@@ -745,26 +749,6 @@ namespace MBSimGUI {
       ObserverPropertyDialog(Element *observer);
   };
 
-  class KinematicCoordinatesObserverPropertyDialog : public ObserverPropertyDialog {
-
-    public:
-      KinematicCoordinatesObserverPropertyDialog(Element *observer);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *frame, *frameOfReference, *position, *velocity, *acceleration;
-  };
-
-  class RelativeKinematicsObserverPropertyDialog : public ObserverPropertyDialog {
-
-    public:
-      RelativeKinematicsObserverPropertyDialog(Element *observer);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *frame, *refFrame, *position, *velocity, *angularVelocity, *acceleration, *angularAcceleration;
-  };
-
   class MechanicalLinkObserverPropertyDialog : public ObserverPropertyDialog {
 
     public:
@@ -815,16 +799,6 @@ namespace MBSimGUI {
       ExtWidget *body, *frameOfReference, *weight, *jointForce, *jointMoment, *axisOfRotation, *momentum, *angularMomentum, *derivativeOfMomentum, *derivativeOfAngularMomentum;
   };
 
-  class RigidBodySystemObserverPropertyDialog : public ObserverPropertyDialog {
-
-    public:
-      RigidBodySystemObserverPropertyDialog(Element *observer);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *bodies, *frameOfReference, *position, *velocity, *acceleration, *weight, *momentum, *angularMomentum, *derivativeOfMomentum, *derivativeOfAngularMomentum;
-  };
-
   class InverseKinematicsConstraintObserverPropertyDialog : public ObserverPropertyDialog {
 
     public:
@@ -833,6 +807,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *constraint, *ombv;
+  };
+
+  class SignalObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      SignalObserverPropertyDialog(Element *observer);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *signal, *position, *ombv;
   };
 
   class SignalPropertyDialog: public LinkPropertyDialog {

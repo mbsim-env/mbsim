@@ -43,6 +43,11 @@ namespace MBSimGUI {
       QString getType() const override { return "GeneralizedVelocitySensor"; }
   };
 
+  class GeneralizedAccelerationSensor : public ObjectSensor {
+    public:
+      QString getType() const override { return "GeneralizedAccelerationSensor"; }
+  };
+
   class LinkSensor : public Sensor {
     public:
       QString getType() const override { return "LinkSensor"; }
@@ -88,6 +93,16 @@ namespace MBSimGUI {
   class AngularVelocitySensor : public FrameSensor {
     public:
       QString getType() const override { return "AngularVelocitySensor"; }
+  };
+
+  class AccelerationSensor : public FrameSensor {
+    public:
+      QString getType() const override { return "AccelerationSensor"; }
+  };
+
+  class AngularAccelerationSensor : public FrameSensor {
+    public:
+      QString getType() const override { return "AngularAccelerationSensor"; }
   };
 
   class FunctionSensor : public Sensor {

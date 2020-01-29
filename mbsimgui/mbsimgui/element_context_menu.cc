@@ -762,23 +762,17 @@ namespace MBSimGUI {
     action = new QAction("Add inverse kinematics constraint observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addInverseKinematicsConstraintObserver()));
     addAction(action);
-    action = new QAction("Add kinematic coordinates observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addKinematicCoordinatesObserver()));
-    addAction(action);
     action = new QAction("Add mechanical constraint observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalConstraintObserver()));
     addAction(action);
     action = new QAction("Add mechanical link observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkObserver()));
     addAction(action);
-    action = new QAction("Add relative kinematics observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addRelativeKinematicsObserver()));
-    addAction(action);
     action = new QAction("Add rigid body observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyObserver()));
     addAction(action);
-    action = new QAction("Add rigid body system observer", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodySystemObserver()));
+    action = new QAction("Add signal observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addSignalObserver()));
     addAction(action);
   }
 
@@ -814,20 +808,12 @@ namespace MBSimGUI {
     mw->addObserver(new RigidBodyObserver, element);
   }
 
-  void ObserversContextMenu::addKinematicCoordinatesObserver() {
-    mw->addObserver(new KinematicCoordinatesObserver, element);
-  }
-
-  void ObserversContextMenu::addRelativeKinematicsObserver() {
-    mw->addObserver(new RelativeKinematicsObserver, element);
-  }
-
-  void ObserversContextMenu::addRigidBodySystemObserver() {
-    mw->addObserver(new RigidBodySystemObserver, element);
-  }
-
   void ObserversContextMenu::addInverseKinematicsConstraintObserver() {
     mw->addObserver(new InverseKinematicsConstraintObserver, element);
+  }
+
+  void ObserversContextMenu::addSignalObserver() {
+    mw->addObserver(new SignalObserver, element);
   }
 
   SignalsContextMenu::SignalsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
@@ -847,6 +833,12 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(addMultiplexer()));
     addAction(action);
     QMenu *menu = new QMenu("Add sensor", this);
+    action = new QAction("Add acceleration sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addAccelerationSensor()));
+    menu->addAction(action);
+    action = new QAction("Add angular acceleration sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addAngularAccelerationSensor()));
+    menu->addAction(action);
     action = new QAction("Add angular velocity sensor", menu);
     connect(action,SIGNAL(triggered()),this,SLOT(addAngularVelocitySensor()));
     menu->addAction(action);
@@ -873,6 +865,9 @@ namespace MBSimGUI {
     menu->addAction(action);
     action = new QAction("Add generalized relative velocity sensor", menu);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedRelativeVelocitySensor()));
+    menu->addAction(action);
+    action = new QAction("Add generalized acceleration sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedAccelerationSensor()));
     menu->addAction(action);
     action = new QAction("Add generalized velocity sensor", menu);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocitySensor()));
@@ -924,6 +919,10 @@ namespace MBSimGUI {
     mw->addLink(new GeneralizedVelocitySensor, element);
   }
 
+  void SignalsContextMenu::addGeneralizedAccelerationSensor() {
+    mw->addLink(new GeneralizedAccelerationSensor, element);
+  }
+
   void SignalsContextMenu::addPositionSensor() {
     mw->addLink(new PositionSensor, element);
   }
@@ -938,6 +937,14 @@ namespace MBSimGUI {
 
   void SignalsContextMenu::addAngularVelocitySensor() {
     mw->addLink(new AngularVelocitySensor, element);
+  }
+
+  void SignalsContextMenu::addAccelerationSensor() {
+    mw->addLink(new AccelerationSensor, element);
+  }
+
+  void SignalsContextMenu::addAngularAccelerationSensor() {
+    mw->addLink(new AngularAccelerationSensor, element);
   }
 
   void SignalsContextMenu::addFunctionSensor() {

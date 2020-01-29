@@ -36,20 +36,6 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
   };
 
-  class KinematicCoordinatesObserver : public Observer {
-    public:
-      QString getType() const override { return "KinematicCoordinatesObserver"; }
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new KinematicCoordinatesObserverPropertyDialog(this);}
-  };
-
-  class RelativeKinematicsObserver : public Observer {
-    public:
-      QString getType() const override { return "RelativeKinematicsObserver"; }
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new RelativeKinematicsObserverPropertyDialog(this);}
-  };
-
   class MechanicalLinkObserver : public Observer {
     public:
       QString getType() const override { return "MechanicalLinkObserver"; }
@@ -85,18 +71,19 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new RigidBodyObserverPropertyDialog(this);}
   };
 
-  class RigidBodySystemObserver : public Observer {
-    public:
-      QString getType() const override { return "RigidBodySystemObserver"; }
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new RigidBodySystemObserverPropertyDialog(this);}
-  };
-
   class InverseKinematicsConstraintObserver : public Observer {
     public:
       QString getType() const override { return "InverseKinematicsConstraintObserver"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       ElementPropertyDialog* createPropertyDialog() override {return new InverseKinematicsConstraintObserverPropertyDialog(this);}
+  };
+
+  class SignalObserver : public Observer {
+    public:
+      QString getType() const override { return "SignalObserver"; }
+      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      ElementPropertyDialog* createPropertyDialog() override {return new SignalObserverPropertyDialog(this);}
   };
 
 }

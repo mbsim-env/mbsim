@@ -241,10 +241,8 @@ namespace MBSimGUI {
       void addContactObserver();
       void addFrameObserver();
       void addRigidBodyObserver();
-      void addKinematicCoordinatesObserver();
-      void addRelativeKinematicsObserver();
-      void addRigidBodySystemObserver();
       void addInverseKinematicsConstraintObserver();
+      void addSignalObserver();
       void paste();
       void load();
       void embed();
@@ -265,10 +263,13 @@ namespace MBSimGUI {
       void addExternSignalSink();
       void addGeneralizedPositionSensor();
       void addGeneralizedVelocitySensor();
+      void addGeneralizedAccelerationSensor();
       void addPositionSensor();
       void addOrientationSensor();
       void addVelocitySensor();
       void addAngularVelocitySensor();
+      void addAccelerationSensor();
+      void addAngularAccelerationSensor();
       void addFunctionSensor();
       void addGeneralizedRelativePositionSensor();
       void addGeneralizedRelativeVelocitySensor();
