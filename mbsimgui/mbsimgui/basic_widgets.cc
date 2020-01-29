@@ -493,12 +493,14 @@ namespace MBSimGUI {
     feature.push_back(MBSIM%"deflection");
     feature.push_back(MBSIM%"derivativeOfGeneralizedPosition");
     feature.push_back(MBSIM%"energy");
+    feature.push_back(MBSIM%"force");
     feature.push_back(MBSIM%"generalizedAcceleration");
     feature.push_back(MBSIM%"generalizedForce");
     feature.push_back(MBSIM%"generalizedPosition");
     feature.push_back(MBSIM%"generalizedRelativePosition");
     feature.push_back(MBSIM%"generalizedRelativeVelocity");
     feature.push_back(MBSIM%"generalizedVelocity");
+    feature.push_back(MBSIM%"moment");
     feature.push_back(MBSIMFLEX%"nodalDisplacement");
     feature.push_back(MBSIMFLEX%"nodalStress");
     feature.push_back(MBSIMFLEX%"nodalEquivalentStress");
@@ -540,7 +542,7 @@ namespace MBSimGUI {
     layout->addWidget(value,4,1);
     for(auto & i : feature)
       value->addItem(QString::fromStdString(i.second));
-    value->setCurrentIndex(19);
+    value->setCurrentIndex(21);
     connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
 
     layout->addWidget(new QLabel("Namespace:"),6,0);
