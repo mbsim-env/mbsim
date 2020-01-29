@@ -52,6 +52,53 @@ namespace MBSim {
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[force]) {
+          plotColumns.emplace_back("weight (x)");
+          plotColumns.emplace_back("weight (y)");
+          plotColumns.emplace_back("weight (z)");
+          for(int i=0; i<body->getJoint()->getNumberOfLinks(); i++) {
+            plotColumns.emplace_back("joint force "+to_string(i)+" (x)");
+            plotColumns.emplace_back("joint force "+to_string(i)+" (y)");
+            plotColumns.emplace_back("joint force "+to_string(i)+" (z)");
+          }
+        }
+        if(plotFeature[moment]) {
+          for(int i=0; i<body->getJoint()->getNumberOfLinks(); i++) {
+            plotColumns.emplace_back("joint moment "+to_string(i)+" (x)");
+            plotColumns.emplace_back("joint moment "+to_string(i)+" (y)");
+            plotColumns.emplace_back("joint moment "+to_string(i)+" (z)");
+          }
+        }
+        if(plotFeature[position]) {
+          plotColumns.emplace_back("position (x)");
+          plotColumns.emplace_back("position (y)");
+          plotColumns.emplace_back("position (z)");
+          plotColumns.emplace_back("direction (x)");
+          plotColumns.emplace_back("direction (y)");
+          plotColumns.emplace_back("direction (z)");
+        }
+        if(plotFeature[velocity]) {
+          plotColumns.emplace_back("momentum (x)");
+          plotColumns.emplace_back("momentum (y)");
+          plotColumns.emplace_back("momentum (z)");
+        }
+        if(plotFeature[angularVelocity]) {
+          plotColumns.emplace_back("angular momentum (x)");
+          plotColumns.emplace_back("angular momentum (y)");
+          plotColumns.emplace_back("angular momentum (z)");
+        }
+        if(plotFeature[acceleration]) {
+          plotColumns.emplace_back("derivative of momentum (x)");
+          plotColumns.emplace_back("derivative of momentum (y)");
+          plotColumns.emplace_back("derivative of momentum (z)");
+        }
+        if(plotFeature[angularAcceleration]) {
+          plotColumns.emplace_back("derivative of angular momentum (x)");
+          plotColumns.emplace_back("derivative of angular momentum (y)");
+          plotColumns.emplace_back("derivative of angular momentum (z)");
+        }
+      }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         if(ombvWeight) {
@@ -112,13 +159,83 @@ namespace MBSim {
   }
 
   void RigidBodyObserver::plot() {
+    Vec3 rOS = body->getFrameC()->evalPosition();
+    Vec3 vS = body->getFrameC()->evalVelocity();
+    Vec3 aS = body->getFrameC()->evalAcceleration();
+    SqrMat3 AIK = body->getFrameC()->getOrientation();
+    Vec3 om = body->getFrameC()->getAngularVelocity();
+    Vec3 psi = body->getFrameC()->getAngularAcceleration();
+    Vec3 p = body->getMass()*vS;
+    Vec3 rOR = frameOfReference?frameOfReference->evalPosition():rOS;
+    Vec3 rRS = rOS - rOR;
+    Vec3 vR = frameOfReference?frameOfReference->evalVelocity():vS;
+    Vec3 vRS = vS - vR;
+    Mat3x3 WThetaS = AIK*body->getInertiaTensor()*AIK.T();
+    Vec3 L = WThetaS*om + crossProduct(rRS,body->getMass()*vRS);
+    Vec3 pd = body->getMass()*aS;
+    Vec3 aR = frameOfReference?frameOfReference->evalAcceleration():aS;
+    Vec3 aRS = aS - aR;
+    Vec3 Ld = WThetaS*psi + crossProduct(om,WThetaS*om) + crossProduct(rRS,body->getMass()*aRS);
+    Vec3 dr;
+    double absom = nrm2(om);
+    if(abs(om(2))>macheps) {
+      dr(0) = -vS(1)/om(2);
+      dr(1) = vS(0)/om(2);
+    }
+    else if(abs(om(1))>macheps) {
+      dr(0) = vS(2)/om(1);
+      dr(2) = -vS(0)/om(1);
+    }
+    else if(abs(om(0))>macheps) {
+      dr(1) = -vS(2)/om(0);
+      dr(2) = vS(1)/om(0);
+    }
+    else
+      absom = 1;
+    Vec3 r = rOS + dr;
+    Vec3 dir = om/absom;
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[force]) {
+        Vec3 force = body->getMass()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+        for(int j=0; j<force.size(); j++)
+          plotVector.push_back(force(j));
+        for(int i=0; i<body->getJoint()->getNumberOfLinks(); i++) {
+          force = body->getJoint()->evalForce(i);
+          for(int j=0; j<force.size(); j++)
+            plotVector.push_back(force(j));
+        }
+      }
+      if(plotFeature[moment]) {
+        for(int i=0; i<body->getJoint()->getNumberOfLinks(); i++) {
+          Vec3 moment = body->getJoint()->evalMoment(i);
+          for(int j=0; j<moment.size(); j++)
+            plotVector.push_back(moment(j));
+        }
+      }
+      if(plotFeature[position]) {
+        for(int j=0; j<r.size(); j++)
+          plotVector.push_back(r(j));
+        for(int j=0; j<dir.size(); j++)
+          plotVector.push_back(dir(j));
+      }
+      if(plotFeature[velocity]) {
+        for(int j=0; j<p.size(); j++)
+          plotVector.push_back(p(j));
+      }
+      if(plotFeature[angularVelocity]) {
+        for(int j=0; j<p.size(); j++)
+          plotVector.push_back(L(j));
+      }
+      if(plotFeature[acceleration]) {
+        for(int j=0; j<p.size(); j++)
+          plotVector.push_back(pd(j));
+      }
+      if(plotFeature[angularAcceleration]) {
+        for(int j=0; j<p.size(); j++)
+          plotVector.push_back(Ld(j));
+      }
+    }
     if(plotFeature[openMBV]) {
-      Vec3 rOS = body->getFrameC()->evalPosition();
-      Vec3 vS = body->getFrameC()->evalVelocity();
-      Vec3 aS = body->getFrameC()->evalAcceleration();
-      SqrMat3 AIK = body->getFrameC()->getOrientation();
-      Vec3 om = body->getFrameC()->getAngularVelocity();
-      Vec3 psi = body->getFrameC()->getAngularAcceleration();
       if(FWeight) {
         vector<double> data;
         data.push_back(getTime());
@@ -169,36 +286,16 @@ namespace MBSim {
       if(openMBVAxisOfRotation) {
         vector<double> data;
         data.push_back(getTime());
-        Vec3 dr;
-        double absom = nrm2(om);
-        if(abs(om(2))>macheps) {
-          dr(0) = -vS(1)/om(2);
-          dr(1) = vS(0)/om(2);
-        }
-        else if(abs(om(1))>macheps) {
-          dr(0) = vS(2)/om(1);
-          dr(2) = -vS(0)/om(1);
-        }
-        else if(abs(om(0))>macheps) {
-          dr(1) = -vS(2)/om(0);
-          dr(2) = vS(1)/om(0);
-        }
-        else
-          absom = 1;
-        Vec3 r = rOS + dr;
         data.push_back(r(0));
         data.push_back(r(1));
         data.push_back(r(2));
-        Vec3 dir = om/absom;
         data.push_back(dir(0));
         data.push_back(dir(1));
         data.push_back(dir(2));
         data.push_back(ombvAxisOfRotation->getColorRepresentation()?nrm2(dir):0);
         openMBVAxisOfRotation->append(data);
-        //          plotVector.push_back(nrm2(dir));
       }
       if(openMBVMomentum) {
-        Vec3 p = body->getMass()*vS;
         vector<double> data;
         data.push_back(getTime());
         data.push_back(rOS(0));
@@ -211,12 +308,6 @@ namespace MBSim {
         openMBVMomentum->append(data);
       }
       if(openMBVAngularMomentum) {
-        Vec3 rOR = frameOfReference?frameOfReference->evalPosition():rOS;
-        Vec3 rRS = rOS - rOR;
-        Vec3 vR = frameOfReference?frameOfReference->evalVelocity():vS;
-        Vec3 vRS = vS - vR;
-        Mat3x3 WThetaS = AIK*body->getInertiaTensor()*AIK.T();
-        Vec3 L = WThetaS*om + crossProduct(rRS,body->getMass()*vRS);
         vector<double> data;
         data.push_back(getTime());
         data.push_back(rOR(0));
@@ -229,7 +320,6 @@ namespace MBSim {
         openMBVAngularMomentum->append(data);
       }
       if(openMBVDerivativeOfMomentum) {
-        Vec3 pd = body->getMass()*aS;
         vector<double> data;
         data.push_back(getTime());
         data.push_back(rOS(0));
@@ -242,12 +332,6 @@ namespace MBSim {
         openMBVDerivativeOfMomentum->append(data);
       }
       if(openMBVDerivativeOfAngularMomentum) {
-        Vec3 rOR = frameOfReference?frameOfReference->evalPosition():rOS;
-        Vec3 rRS = rOS - rOR;
-        Vec3 aR = frameOfReference?frameOfReference->evalAcceleration():aS;
-        Vec3 aRS = aS - aR;
-        Mat3x3 WThetaS = AIK*body->getInertiaTensor()*AIK.T();
-        Vec3 Ld = WThetaS*psi + crossProduct(om,WThetaS*om) + crossProduct(rRS,body->getMass()*aRS);
         vector<double> data;
         data.push_back(getTime());
         data.push_back(rOR(0));

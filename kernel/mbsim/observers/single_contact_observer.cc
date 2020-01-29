@@ -54,11 +54,39 @@ namespace MBSim {
             plotColumns.emplace_back("position"+to_string(i)+" (z)");
           }
         }
+        if(plotFeature[angle]) {
+          for(int i=0; i<2; i++) {
+            plotColumns.emplace_back("angle"+to_string(i)+" (alpha)");
+            plotColumns.emplace_back("angle"+to_string(i)+" (beta)");
+            plotColumns.emplace_back("angle"+to_string(i)+" (gamma)");
+          }
+        }
         if(plotFeature[velocity]) {
           for(int i=0; i<2; i++) {
             plotColumns.emplace_back("velocity"+to_string(i)+" (x)");
             plotColumns.emplace_back("velocity"+to_string(i)+" (y)");
             plotColumns.emplace_back("velocity"+to_string(i)+" (z)");
+          }
+        }
+        if(plotFeature[angularVelocity]) {
+          for(int i=0; i<2; i++) {
+            plotColumns.emplace_back("angular velocity"+to_string(i)+" (x)");
+            plotColumns.emplace_back("angular velocity"+to_string(i)+" (y)");
+            plotColumns.emplace_back("angular velocity"+to_string(i)+" (z)");
+          }
+        }
+        if(plotFeature[acceleration]) {
+          for(int i=0; i<2; i++) {
+            plotColumns.emplace_back("acceleration"+to_string(i)+" (x)");
+            plotColumns.emplace_back("acceleration"+to_string(i)+" (y)");
+            plotColumns.emplace_back("acceleration"+to_string(i)+" (z)");
+          }
+        }
+        if(plotFeature[angularAcceleration]) {
+          for(int i=0; i<2; i++) {
+            plotColumns.emplace_back("angular acceleration"+to_string(i)+" (x)");
+            plotColumns.emplace_back("angular acceleration"+to_string(i)+" (y)");
+            plotColumns.emplace_back("angular acceleration"+to_string(i)+" (z)");
           }
         }
       }
@@ -102,11 +130,39 @@ namespace MBSim {
             plotVector.push_back(pos(j));
         }
       }
+      if(plotFeature[angle]) {
+        for(int i=0; i<2; i++) {
+          Vec3 cardan = AIK2Cardan(static_cast<SingleContact*>(link)->getContourFrame(i)->evalOrientation());
+          for(int j=0; j<cardan.size(); j++)
+            plotVector.push_back(cardan(j));
+        }
+      }
       if(plotFeature[velocity]) {
         for(int i=0; i<2; i++) {
           Vec3 vel = static_cast<SingleContact*>(link)->getContourFrame(i)->evalVelocity();
           for(int j=0; j<vel.size(); j++)
             plotVector.push_back(vel(j));
+        }
+      }
+      if(plotFeature[angularVelocity]) {
+        for(int i=0; i<2; i++) {
+          Vec3 om = static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularVelocity();
+          for(int j=0; j<om.size(); j++)
+            plotVector.push_back(om(j));
+        }
+      }
+      if(plotFeature[acceleration]) {
+        for(int i=0; i<2; i++) {
+          Vec3 acc = static_cast<SingleContact*>(link)->getContourFrame(i)->evalAcceleration();
+          for(int j=0; j<acc.size(); j++)
+            plotVector.push_back(acc(j));
+        }
+      }
+      if(plotFeature[angularAcceleration]) {
+        for(int i=0; i<2; i++) {
+          Vec3 psi = static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularAcceleration();
+          for(int j=0; j<psi.size(); j++)
+            plotVector.push_back(psi(j));
         }
       }
     }
