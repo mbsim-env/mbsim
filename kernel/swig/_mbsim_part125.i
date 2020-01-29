@@ -27,7 +27,6 @@ namespace MBSim {
   class GlobalCriteriaFunction;
   class GlobalResidualCriteriaFunction;
   class GlobalShiftCriteriaFunction;
-  class KinematicCoordinatesObserver;
   class LocalCriteriaFunction;
   class LocalResidualCriteriaFunction;
   class LocalShiftCriteriaFunction;
@@ -35,10 +34,8 @@ namespace MBSim {
   class MechanicalLink;
   class NewtonJacobianFunction;
   class NumericalNewtonJacobianFunction;
-  class RelativeKinematicsObserver;
   class StandardDampingFunction;
 }
-#include "mbsim/observers/rigid_body_system_observer.h"
 #include "mbsim/objects/object.h"
 #include "mbsim/objects/body.h"
 #include "mbsim/objects/rigid_body.h"
@@ -49,7 +46,6 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 
 
 // wrap the following classes
-%include "mbsim/observers/rigid_body_system_observer.h"
 %include "mbsim/objects/object.h"
 %include "mbsim/objects/body.h"
 %include "mbsim/objects/rigid_body.h"

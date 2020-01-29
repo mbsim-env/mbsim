@@ -39,8 +39,6 @@ namespace MBSim {
 }
 #include "mbsim/environment.h"
 #include "mbsim/observers/observer.h"
-#include "mbsim/observers/kinematic_coordinates_observer.h"
-#include "mbsim/observers/relative_kinematics_observer.h"
 using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fixes this
 using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this fixes this
 %}
@@ -49,6 +47,3 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 
 // wrap the following classes
 %include "mbsim/environment.h"
-%include "mbsim/observers/observer.h"
-%include "mbsim/observers/kinematic_coordinates_observer.h"
-%include "mbsim/observers/relative_kinematics_observer.h"

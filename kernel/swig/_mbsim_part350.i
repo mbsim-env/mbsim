@@ -41,7 +41,6 @@ namespace MBSim {
   class Graph;
   class Group;
   class JointConstraint;
-  class KinematicCoordinatesObserver;
   class MBSimEnvironment;
   class MechanicalConstraint;
   class Observer;
@@ -56,9 +55,7 @@ namespace MBSim {
   class RegularizedPlanarFriction;
   class RegularizedSpatialFriction;
   class RegularizedUnilateralConstraint;
-  class RelativeKinematicsObserver;
   class RigidBody;
-  class RigidBodySystemObserver;
   class Room;
   class SpatialContour;
   class SpatialCoulombFriction;

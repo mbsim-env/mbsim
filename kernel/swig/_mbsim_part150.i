@@ -26,7 +26,6 @@ namespace MBSim {
   class GlobalCriteriaFunction;
   class GlobalResidualCriteriaFunction;
   class GlobalShiftCriteriaFunction;
-  class KinematicCoordinatesObserver;
   class LocalCriteriaFunction;
   class LocalResidualCriteriaFunction;
   class LocalShiftCriteriaFunction;
@@ -34,8 +33,6 @@ namespace MBSim {
   class NewtonJacobianFunction;
   class NumericalNewtonJacobianFunction;
   class Observer;
-  class RelativeKinematicsObserver;
-  class RigidBodySystemObserver;
   class StandardDampingFunction;
 }
 #include "mbsim/links/contact.h"

@@ -51,7 +51,6 @@ namespace MBSim {
   class Graph;
   class Group;
   class JointConstraint;
-  class KinematicCoordinatesObserver;
   class Line;
   class LineSegment;
   class Link;
@@ -72,9 +71,7 @@ namespace MBSim {
   class Plate;
   class Point;
   class PolynomialFrustum;
-  class RelativeKinematicsObserver;
   class RigidBody;
-  class RigidBodySystemObserver;
   class RigidContour;
   class Room;
   class SpatialContour;

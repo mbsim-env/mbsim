@@ -82,7 +82,74 @@
             </length>
           </enableOpenMBV>
         </Plane>
-      </contours><groups/>
+      </contours><groups>
+        <Group name="Schwerpunkt">
+          <frames/>
+          <contours/>
+          <groups/>
+          <objects/>
+          <links>
+            <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="PositionRahmen">
+              <frame ref="../../Object[Rahmen]/Frame[C]"/>
+            </PositionSensor>
+            <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="PositionHinterrad">
+              <frame ref="../../Object[Hinterrad]/Frame[C]"/>
+            </PositionSensor>
+            <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="PositionVorderrad">
+              <frame ref="../../Object[Vorderrad]/Frame[C]"/>
+            </PositionSensor>
+            <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="PositionGabel">
+              <frame ref="../../Object[Gabel]/Frame[C]"/>
+            </PositionSensor>
+            <Multiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="Multiplexer">
+              <inputSignal ref="../Link[PositionRahmen]"/>
+              <inputSignal ref="../Link[PositionHinterrad]"/>
+              <inputSignal ref="../Link[PositionVorderrad]"/>
+              <inputSignal ref="../Link[PositionGabel]"/>
+            </Multiplexer>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="PositionSchwerpunkt">
+              <inputSignal ref="../Link[Multiplexer]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="s" arg1Dim="12">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>(mR*s(1)+mH*s(4)+mV*s(7)+mG*s(10))/(mR+mH+mV+mG)</ele>
+                    <ele>(mR*s(2)+mH*s(5)+mV*s(8)+mG*s(11))/(mR+mH+mV+mG)</ele>
+                    <ele>(mR*s(3)+mH*s(6)+mV*s(9)+mG*s(12))/(mR+mH+mV+mG)</ele>
+                  </xmlVector>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Gewicht">
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="t">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>-(mR+mH+mV+mG)*9.81</ele>
+                  </xmlVector>
+                </SymbolicFunction>
+              </function>
+            </FunctionSensor>
+          </links><constraints/>
+          <observers>
+            <SignalObserver xmlns="http://www.mbsim-env.de/MBSimControl" name="SignalObserver">
+              <signal ref="../Link[Gewicht]"/>
+              <position ref="../Link[PositionSchwerpunkt]"/>
+              <enableOpenMBV>
+                <diffuseColor xmlns="http://www.mbsim-env.de/MBSim">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>0</ele>
+                    <ele>1</ele>
+                    <ele>1</ele>
+                  </xmlVector>
+                </diffuseColor>
+                <scaleLength xmlns="http://www.mbsim-env.de/MBSim">0.01</scaleLength>
+                <referencePoint xmlns="http://www.mbsim-env.de/MBSim">"toPoint"</referencePoint>
+              </enableOpenMBV>
+            </SignalObserver>
+          </observers><enableOpenMBVFrameI/>
+        </Group>
+      </groups>
       <objects>
         <RigidBody name="Rahmen">
           <generalizedInitialPosition>
@@ -811,15 +878,6 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</SymbolicFunction>
             <scaleLength>0.01</scaleLength>
           </enableOpenMBVTangentialForce>
         </ContactObserver>
-        <RigidBodySystemObserver name="RigidBodySystemObserver">
-          <rigidBody ref="../Object[Rahmen]"/>
-          <rigidBody ref="../Object[Hinterrad]"/>
-          <rigidBody ref="../Object[Gabel]"/>
-          <rigidBody ref="../Object[Vorderrad]"/>
-          <enableOpenMBVWeight>
-            <scaleLength>0.01</scaleLength>
-          </enableOpenMBVWeight>
-        </RigidBodySystemObserver>
       </observers>
       <enableOpenMBVFrameI>
         <size unit="dm">1</size>
@@ -841,4 +899,7 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</SymbolicFunction>
     <endTime unit="s">6</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </RADAUIntegrator>
+
+
+
 </MBSimProject>

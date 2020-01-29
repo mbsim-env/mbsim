@@ -18,8 +18,6 @@ namespace MBSim {
   class Body;
   class Contact;
   class ContourLink;
-  class CoordinatesObserver;
-  class KinematicCoordinatesObserver;
   class CriteriaFunction;
   class DampingFunction;
   class DirectionalSpringDamper;
@@ -44,7 +42,6 @@ namespace MBSim {
   class InverseKineticsJoint;
   class IsotropicRotationalSpringDamper;
   class Joint;
-  class KinematicsObserver;
   class KineticExcitation;
   class Link;
   class MechanicalLink;
@@ -56,8 +53,6 @@ namespace MBSim {
   class NumericalNewtonJacobianFunction;
   class Object;
   class Observer;
-  class RelativeKinematicsObserver;
-  class RigidBodySystemObserver;
   class RigidBodyLink;
   class SpringDamper;
   class StandardDampingFunction;
