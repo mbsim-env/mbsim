@@ -80,64 +80,18 @@ namespace MBSimControl {
     upds = false;
   }
 
-//  void RelativeCoordinateSensor::initializeUsingXML(DOMElement * element) {
-//    Sensor::initializeUsingXML(element);
-//    DOMElement *e;
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frame");
-//    refFrameString=E(e)->getAttribute("ref");
-//    relFrameString=E(e)->getAttribute("rel");
-//    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"direction");
-//    direction=E(e)->getText<Mat>(3,0);
-//    for (int i=0; i<direction.cols(); i++)
-//      direction.col(i)=direction.col(i)/nrm2(direction.col(i));
-//  }
-//
-//  void RelativeCoordinateSensor::init(InitStage stage) {
-//    if (stage==resolveStringRef) {
-//      if (not refFrameString.empty())
-//        setReferenceFrame(getByPath<Frame>(refFrameString));
-//      if (not relFrameString.empty())
-//        setRelativeFrame(getByPath<Frame>(relFrameString));
-//      Sensor::init(stage, config);
-//    }
-//    else
-//      Sensor::init(stage, config);
-//  }
-//
-//  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativePositionSensor)
-//
-//  void RelativePositionSensor::updateSignal() {
-//    VecV WrRefRel=relFrame->evalPosition()-refFrame->evalPosition();
-//    s = (refFrame->getOrientation()*direction).T()*WrRefRel;
-//    upds = false;
-//  }
-//
-//  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeVelocitySensor)
-//
-//  void RelativeVelocitySensor::updateSignal() {
-//    VecV WvRefRel=relFrame->evalVelocity()-refFrame->evalVelocity();
-//    s = (refFrame->getOrientation()*direction).T()*WvRefRel;
-//    upds = false;
-//  }
-//
-//  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeAngularPositionSensor)
-//
-//  void RelativeAngularPositionSensor::updatexd() {
-//    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
-//    xd=(refFrame->getOrientation()*direction).T()*WomegaRefRel;
-//  }
-//
-//  void RelativeAngularPositionSensor::updateSignal() {
-//    s = x;
-//    upds = false;
-//  }
-//
-//  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, RelativeAngularVelocitySensor)
-//
-//  void RelativeAngularVelocitySensor::updateSignal() {
-//    VecV WomegaRefRel=relFrame->evalAngularVelocity()-refFrame->evalAngularVelocity();
-//    s = (refFrame->getOrientation()*direction).T()*WomegaRefRel;
-//    upds = false;
-//  }
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AccelerationSensor)
+
+  void AccelerationSensor::updateSignal() {
+    s = frame->evalAcceleration();
+    upds = false;
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AngularAccelerationSensor)
+
+  void AngularAccelerationSensor::updateSignal() {
+    s = frame->evalAngularAcceleration();
+    upds = false;
+  }
 
 }

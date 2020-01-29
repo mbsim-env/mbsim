@@ -67,4 +67,15 @@ namespace MBSimControl {
     upds = false;
   }
 
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, GeneralizedAccelerationSensor)
+
+  int GeneralizedAccelerationSensor::getSignalSize() const {
+    return object->getGeneralizedVelocitySize();
+  }
+
+  void GeneralizedAccelerationSensor::updateSignal() {
+    s = object->evalGeneralizedAcceleration();
+    upds = false;
+  }
+
 }

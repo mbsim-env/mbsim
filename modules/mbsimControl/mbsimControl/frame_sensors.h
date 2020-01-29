@@ -84,84 +84,26 @@ namespace MBSimControl {
       AngularVelocitySensor(const std::string &name="") : FrameSensor(name) { }
       void updateSignal() override;
   };
-  
-//  /*!
-//   * \brief RelativeCoordinateSensor
-//   * \author Markus Schneider
-//   */
-//  class RelativeCoordinateSensor : public Sensor {
-//    public:
-//      RelativeCoordinateSensor(const std::string &name) : Sensor(name), refFrame(NULL), relFrame(NULL), direction(), refFrameString(""), relFrameString("") {}
-//      void initializeUsingXML(xercesc::DOMElement *element);
-//      void init(InitStage stage);
-//      void setReferenceFrame(MBSim::Frame * refFrame_) {refFrame=refFrame_; }
-//      void setRelativeFrame(MBSim::Frame * relFrame_) {relFrame=relFrame_; }
-//      void setDirection(fmatvec::Mat direction_) {
-//        direction=direction_;
-//        for (int i=0; i<direction_.cols(); i++)
-//          direction.col(i)=direction.col(i)/nrm2(direction.col(i));
-//        assert(direction.rows()==3);
-//      }
-//      int getSignalSize() const { return direction.cols(); }
-//    protected:
-//      MBSim::Frame * refFrame;
-//      MBSim::Frame * relFrame;
-//      fmatvec::Mat direction;
-//      std::string refFrameString, relFrameString;
-//  };
-//
-//  /*!
-//   * \brief RelativePositionSensor
-//   * \author Markus Schneider
-//   */
-//  class RelativePositionSensor : public RelativeCoordinateSensor {
-//    public:
-//      RelativePositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-//      void updateSignal();
-//  };
-//
-//  /*!
-//   * \brief RelativeVelocitySensor
-//   * \author Markus Schneider
-//   */
-//  class RelativeVelocitySensor : public RelativeCoordinateSensor {
-//    public:
-//      RelativeVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-//      void updateSignal();
-//  };
-//
-//  /*!
-//   * \brief RelativeAngularPositionSensor
-//   * \author Markus Schneider
-//   */
-//  class RelativeAngularPositionSensor : public RelativeCoordinateSensor {
-//    public:
-//      RelativeAngularPositionSensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-//      void updateSignal();
-//
-//      void calcxSize() {xSize=direction.cols(); }
-//      void init(InitStage stage) {
-//        if (stage==preInit) {
-//          RelativeCoordinateSensor::init(stage, config);
-//          g.resize(direction.cols());
-//          gd.resize(direction.cols());
-//          x.resize(direction.cols());
-//        }
-//        else
-//          RelativeCoordinateSensor::init(stage, config);
-//      }
-//      void updatexd();
-//  };
-//
-//  /*!
-//   * \brief RelativeAngularVelocitySensor
-//   * \author Markus Schneider
-//   */
-//  class RelativeAngularVelocitySensor : public RelativeCoordinateSensor {
-//    public:
-//      RelativeAngularVelocitySensor(const std::string &name="") : RelativeCoordinateSensor(name) {}
-//      void updateSignal();
-//  };
+
+  /*!
+   * \brief AccelerationSensor
+   * \author Martin Förg
+   */
+  class AccelerationSensor : public FrameSensor {
+    public:
+      AccelerationSensor(const std::string &name="") : FrameSensor(name) { }
+      void updateSignal() override;
+  };
+
+  /*!
+   * \brief AngularAccelerationSensor
+   * \author Martin Förg
+   */
+  class AngularAccelerationSensor : public FrameSensor {
+    public:
+      AngularAccelerationSensor(const std::string &name="") : FrameSensor(name) { }
+      void updateSignal() override;
+  };
 
 }
 

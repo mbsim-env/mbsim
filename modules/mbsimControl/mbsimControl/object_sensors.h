@@ -65,6 +65,17 @@ namespace MBSimControl {
       void updateSignal() override;
   };
 
+  /*!
+   * \brief GeneralizedAccelerationSensor
+   * \author Martin Förg
+   */
+  class GeneralizedAccelerationSensor : public ObjectSensor {
+    public:
+      GeneralizedAccelerationSensor(const std::string &name="") : ObjectSensor(name) { }
+      int getSignalSize() const override;
+      void updateSignal() override;
+  };
+
 }
 
 #endif /* _OBJECT_SENSORS_H_ */

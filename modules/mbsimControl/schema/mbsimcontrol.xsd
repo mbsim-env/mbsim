@@ -153,7 +153,7 @@
   <xs:element name="GeneralizedPositionSensor" substitutionGroup="ObjectSensor" type="GeneralizedPositionSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen der generalisierten Positionen
+        Sensor zum Auslesen der generalisierten Position
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -166,11 +166,24 @@
   <xs:element name="GeneralizedVelocitySensor" substitutionGroup="ObjectSensor" type="GeneralizedVelocitySensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen der generalisierten Geschwindigkeiten
+        Sensor zum Auslesen der generalisierten Geschwindigkeit
       </xs:documentation>
     </xs:annotation>
   </xs:element>
   <xs:complexType name="GeneralizedVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="ObjectSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedAccelerationSensor" substitutionGroup="ObjectSensor" type="GeneralizedAccelerationSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der generalisierten Beschleunigung
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="GeneralizedAccelerationSensorType">
     <xs:complexContent>
       <xs:extension base="ObjectSensorType"/>
     </xs:complexContent>
@@ -205,7 +218,7 @@
   <xs:element name="PositionSensor" substitutionGroup="FrameSensor" type="PositionSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen der Positionen im Welt-Koordinatensystem
+        Sensor zum Auslesen der Position im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -231,7 +244,7 @@
   <xs:element name="VelocitySensor" substitutionGroup="FrameSensor" type="VelocitySensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen der Geschwindigkeiten im Welt-Koordinatensystem
+        Sensor zum Auslesen der Geschwindigkeit im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -254,94 +267,31 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!--
-  <xs:element name="RelativeCoordinateSensor" abstract="true" substitutionGroup="Sensor" type="RelativeCoordinateSensorType">
+  <xs:element name="AccelerationSensor" substitutionGroup="FrameSensor" type="AccelerationSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen von Zusammenhängen zweier Koordinatensystemen in relativen Koordinaten (Koordinatensystem des Referenzsystems)
+        Sensor zum Auslesen der Beschleunigung im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="RelativeCoordinateSensorType">
+  <xs:complexType name="AccelerationSensorType">
     <xs:complexContent>
-      <xs:extension base="SensorType">
-        <xs:sequence>
-          <xs:element name="frame">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                ref=Pfad zum Koordinatensystem des Referenzsystems
-                rel=Pfad zum Koordinatensystem dessen relative Größe zum Referenzsystem ausgewertet wird.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
-              <xs:attribute name="rel" type="mbsim:FrameReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="direction" type="pv:nounitMatrix">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Matrix der Richtungsvektoren
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>        
-        </xs:sequence>
-      </xs:extension>
+      <xs:extension base="FrameSensorType"/>
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RelativePositionSensor" substitutionGroup="RelativeCoordinateSensor" type="RelativePositionSensorType">
+  <xs:element name="AngularAccelerationSensor" substitutionGroup="FrameSensor" type="AngularAccelerationSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Relative Position
+        Sensor zum Auslesen der Winkelbeschleunigung im Welt-Koordinatensystem
       </xs:documentation>
     </xs:annotation>
   </xs:element>
-  <xs:complexType name="RelativePositionSensorType">
+  <xs:complexType name="AngularAccelerationSensorType">
     <xs:complexContent>
-      <xs:extension base="RelativeCoordinateSensorType"/>
+      <xs:extension base="FrameSensorType"/>
     </xs:complexContent>
   </xs:complexType>
-
-  <xs:element name="RelativeVelocitySensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeVelocitySensorType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Relative Geschwindigkeit
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="RelativeVelocitySensorType">
-    <xs:complexContent>
-      <xs:extension base="RelativeCoordinateSensorType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="RelativeAngularPositionSensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeAngularPositionSensorType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Relativer Winkel 
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="RelativeAngularPositionSensorType">
-    <xs:complexContent>
-      <xs:extension base="RelativeCoordinateSensorType"/>
-    </xs:complexContent>
-  </xs:complexType>
-
-  <xs:element name="RelativeAngularVelocitySensor" substitutionGroup="RelativeCoordinateSensor" type="RelativeAngularVelocitySensorType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Relative Winkelgeschwindigkeit
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="RelativeAngularVelocitySensorType">
-    <xs:complexContent>
-      <xs:extension base="RelativeCoordinateSensorType"/>
-    </xs:complexContent>
-  </xs:complexType>
-  -->
 
   <xs:element name="FunctionSensor" substitutionGroup="Sensor" type="FunctionSensorType">
     <xs:annotation>
@@ -724,6 +674,45 @@
               </xs:annotation>
             </xs:element>
           </xs:sequence>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="SignalObserver" substitutionGroup="mbsim:Observer" type="SignalObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalObserverType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:ObserverType">
+        <xs:sequence>
+          <xs:element name="signal">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="position" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
