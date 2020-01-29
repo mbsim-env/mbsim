@@ -115,7 +115,6 @@ namespace MBSim {
       ombvContact = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvContact->initializeUsingXML(e);
     }
-
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
     if (e) {
       ombvFriction = shared_ptr<OpenMBVFrictionArrow>(new OpenMBVFrictionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));

@@ -49,10 +49,24 @@ namespace MBSim {
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[force]) {
+          for(int i=0; i<link->getNumberOfLinks(); i++) {
+            plotColumns.emplace_back("force "+to_string(i)+" (x)");
+            plotColumns.emplace_back("force "+to_string(i)+" (y)");
+            plotColumns.emplace_back("force "+to_string(i)+" (z)");
+          }
+        }
+        if(plotFeature[moment]) {
+          for(int i=0; i<link->getNumberOfLinks(); i++) {
+            plotColumns.emplace_back("moment "+to_string(i)+" (x)");
+            plotColumns.emplace_back("moment "+to_string(i)+" (y)");
+            plotColumns.emplace_back("moment "+to_string(i)+" (z)");
+          }
+        }
+      }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
-//      if(openMBVForce) plotColumns.push_back("Force");
-//      if(openMBVMoment) plotColumns.push_back("Moment");
         if(ombvForce) {
           openMBVForce.resize(ombvForce->getSideOfInteraction()==2?link->getNumberOfLinks():link->getNumberOfLinks()/2);
           for(size_t i=0; i<openMBVForce.size(); i++) {
@@ -78,6 +92,22 @@ namespace MBSim {
   }
 
   void MechanicalLinkObserver::plot() {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[force]) {
+        for(int i=0; i<link->getNumberOfLinks(); i++) {
+          Vec3 force = link->evalForce(i);
+          for(int j=0; j<force.size(); j++)
+            plotVector.push_back(force(j));
+        }
+      }
+      if(plotFeature[moment]) {
+        for(int i=0; i<link->getNumberOfLinks(); i++) {
+          Vec3 moment = link->evalMoment(i);
+          for(int j=0; j<moment.size(); j++)
+            plotVector.push_back(moment(j));
+        }
+      }
+    }
     if(plotFeature[openMBV]) {
       if(ombvForce) {
         int off = ombvForce->getSideOfInteraction()==0?link->getNumberOfLinks()/2:0;

@@ -46,6 +46,22 @@ namespace MBSim {
 
   void SingleContactObserver::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[position]) {
+          for(int i=0; i<2; i++) {
+            plotColumns.emplace_back("position"+to_string(i)+" (x)");
+            plotColumns.emplace_back("position"+to_string(i)+" (y)");
+            plotColumns.emplace_back("position"+to_string(i)+" (z)");
+          }
+        }
+        if(plotFeature[velocity]) {
+          for(int i=0; i<2; i++) {
+            plotColumns.emplace_back("velocity"+to_string(i)+" (x)");
+            plotColumns.emplace_back("velocity"+to_string(i)+" (y)");
+            plotColumns.emplace_back("velocity"+to_string(i)+" (z)");
+          }
+        }
+      }
       MechanicalLinkObserver::init(stage, config);
       if (plotFeature[openMBV]) {
         if(openMBVContactFrame[0]) {
@@ -67,7 +83,7 @@ namespace MBSim {
           frictionArrow.resize(ombvFriction->getSideOfInteraction()==2?2:1);
           for(size_t i=0; i<frictionArrow.size(); i++) {
             frictionArrow[i]=ombvFriction->createOpenMBV();
-            frictionArrow[i]->setName(string("FrictionForce_")+(frictionArrow.size()>1?to_string(i):string("B")));
+            frictionArrow[i]->setName(string("TangentialForce_")+(frictionArrow.size()>1?to_string(i):string("B")));
             getOpenMBVGrp()->addObject(frictionArrow[i]);
           }
         }
@@ -78,15 +94,31 @@ namespace MBSim {
   }
 
   void SingleContactObserver::plot() {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[position]) {
+        for(int i=0; i<2; i++) {
+          Vec3 pos = static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition();
+          for(int j=0; j<pos.size(); j++)
+            plotVector.push_back(pos(j));
+        }
+      }
+      if(plotFeature[velocity]) {
+        for(int i=0; i<2; i++) {
+          Vec3 vel = static_cast<SingleContact*>(link)->getContourFrame(i)->evalVelocity();
+          for(int j=0; j<vel.size(); j++)
+            plotVector.push_back(vel(j));
+        }
+      }
+    }
     if(plotFeature[openMBV]) {
       if(openMBVContactFrame[0]) {
         for(unsigned int i = 0; i < 2; i++) {
           vector<double> data;
           data.push_back(getTime());
-          Vec3 toPoint = static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition();
-          data.push_back(toPoint(0));
-          data.push_back(toPoint(1));
-          data.push_back(toPoint(2));
+          Vec3 pos = static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition();
+          data.push_back(pos(0));
+          data.push_back(pos(1));
+          data.push_back(pos(2));
           Vec3 cardan = AIK2Cardan(static_cast<SingleContact*>(link)->getContourFrame(i)->evalOrientation());
           data.push_back(cardan(0));
           data.push_back(cardan(1));

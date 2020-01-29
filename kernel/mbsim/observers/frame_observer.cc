@@ -20,7 +20,7 @@
 #include <config.h>
 #include "mbsim/observers/frame_observer.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/utils/eps.h"
+#include "mbsim/utils/rotarymatrices.h"
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
@@ -55,11 +55,38 @@ namespace MBSim {
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
-//        if(plotFeature[position]) plotColumns.push_back("AbsolutePosition");
-//        if(plotFeature[velocity]) plotColumns.push_back("AbsoluteVelocity");
-//        if(plotFeature[velocity]) plotColumns.push_back("AbsoluteAngularVelocity");
-//        if(plotFeature[acceleration]) plotColumns.push_back("AbsoluteAcceleration");
-//        if(plotFeature[acceleration]) plotColumns.push_back("AbsoluteAngularAcceleration");
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[position]) {
+          plotColumns.emplace_back("position (x)");
+          plotColumns.emplace_back("position (y)");
+          plotColumns.emplace_back("position (z)");
+        }
+        if(plotFeature[angle]) {
+          plotColumns.emplace_back("angle (alpha)");
+          plotColumns.emplace_back("angle (beta)");
+          plotColumns.emplace_back("angle (gamma)");
+        }
+        if(plotFeature[velocity]) {
+          plotColumns.emplace_back("velocity (x)");
+          plotColumns.emplace_back("velocity (y)");
+          plotColumns.emplace_back("velocity (z)");
+        }
+        if(plotFeature[angularVelocity]) {
+          plotColumns.emplace_back("angular velocity (x)");
+          plotColumns.emplace_back("angular velocity (y)");
+          plotColumns.emplace_back("angular velocity (z)");
+        }
+        if(plotFeature[acceleration]) {
+          plotColumns.emplace_back("acceleration (x)");
+          plotColumns.emplace_back("acceleration (y)");
+          plotColumns.emplace_back("acceleration (z)");
+        }
+        if(plotFeature[angularAcceleration]) {
+          plotColumns.emplace_back("angular acceleration (x)");
+          plotColumns.emplace_back("angular acceleration (y)");
+          plotColumns.emplace_back("angular acceleration (z)");
+        }
+      }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         if(ombvPositionArrow) {
@@ -94,6 +121,33 @@ namespace MBSim {
   }
 
   void FrameObserver::plot() {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[position]) {
+        for(int i=0; i<frame->evalPosition().size(); i++)
+          plotVector.push_back(frame->getPosition()(i));
+      }
+      if(plotFeature[angle]) {
+        Vec3 cardan=AIK2Cardan(frame->evalOrientation());
+        for(int i=0; i<cardan.size(); i++)
+          plotVector.push_back(cardan(i));
+      }
+      if(plotFeature[velocity]) {
+        for(int i=0; i<frame->evalVelocity().size(); i++)
+          plotVector.push_back(frame->getVelocity()(i));
+      }
+      if(plotFeature[angularVelocity]) {
+        for(int i=0; i<frame->evalAngularVelocity().size(); i++)
+          plotVector.push_back(frame->getAngularVelocity()(i));
+      }
+      if(plotFeature[acceleration]) {
+        for(int i=0; i<frame->evalAcceleration().size(); i++)
+          plotVector.push_back(frame->getAcceleration()(i));
+      }
+      if(plotFeature[angularAcceleration]) {
+        for(int i=0; i<frame->evalAngularAcceleration().size(); i++)
+          plotVector.push_back(frame->getAngularAcceleration()(i));
+      }
+    }
     if(plotFeature[openMBV]) {
       if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
         vector<double> data;
@@ -107,7 +161,6 @@ namespace MBSim {
         data.push_back(r(2));
         data.push_back((this->*evalOMBVPositionColorRepresentation[ombvPositionArrow->getColorRepresentation()])());
         openMBVPosition->append(data);
-        //          plotVector.push_back(nrm2(r));
       }
       if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
         vector<double> data;
@@ -122,7 +175,6 @@ namespace MBSim {
         data.push_back(v(2));
         data.push_back((this->*evalOMBVVelocityColorRepresentation[ombvVelocityArrow->getColorRepresentation()])());
         openMBVVelocity->append(data);
-        //          plotVector.push_back(nrm2(v));
       }
       if(openMBVAngularVelocity && !openMBVAngularVelocity->isHDF5Link()) {
         vector<double> data;
@@ -137,7 +189,6 @@ namespace MBSim {
         data.push_back(om(2));
         data.push_back((this->*evalOMBVAngularVelocityColorRepresentation[ombvAngularVelocityArrow->getColorRepresentation()])());
         openMBVAngularVelocity->append(data);
-        //          plotVector.push_back(nrm2(om));
       }
       if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
         vector<double> data;
@@ -152,7 +203,6 @@ namespace MBSim {
         data.push_back(a(2));
         data.push_back((this->*evalOMBVAccelerationColorRepresentation[ombvAccelerationArrow->getColorRepresentation()])());
         openMBVAcceleration->append(data);
-        //          plotVector.push_back(nrm2(a));
       }
       if(openMBVAngularAcceleration && !openMBVAngularAcceleration->isHDF5Link()) {
         vector<double> data;
@@ -167,7 +217,6 @@ namespace MBSim {
         data.push_back(psi(2));
         data.push_back((this->*evalOMBVAngularAccelerationColorRepresentation[ombvAngularAccelerationArrow->getColorRepresentation()])());
         openMBVAngularAcceleration->append(data);
-        //          plotVector.push_back(nrm2(psi));
       }
     }
     Observer::plot();
