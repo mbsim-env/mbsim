@@ -62,7 +62,7 @@ namespace MBSim {
 
       Frame* getPointOfApplication(int i) { return P[i]; }
 
-      int getNumberOfLinks() { return F.size(); }
+      int getNumberOfForces() { return F.size(); }
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void plot() override;

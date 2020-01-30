@@ -57,14 +57,14 @@ namespace MBSim {
           plotColumns.emplace_back("weight (x)");
           plotColumns.emplace_back("weight (y)");
           plotColumns.emplace_back("weight (z)");
-          for(int i=0; i<body->getJoint()->getNumberOfLinks(); i++) {
+          for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
             plotColumns.emplace_back("joint force "+to_string(i)+" (x)");
             plotColumns.emplace_back("joint force "+to_string(i)+" (y)");
             plotColumns.emplace_back("joint force "+to_string(i)+" (z)");
           }
         }
         if(plotFeature[moment]) {
-          for(int i=0; i<body->getJoint()->getNumberOfLinks(); i++) {
+          for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
             plotColumns.emplace_back("joint moment "+to_string(i)+" (x)");
             plotColumns.emplace_back("joint moment "+to_string(i)+" (y)");
             plotColumns.emplace_back("joint moment "+to_string(i)+" (z)");
@@ -199,14 +199,14 @@ namespace MBSim {
         Vec3 force = body->getMass()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
         for(int j=0; j<force.size(); j++)
           plotVector.push_back(force(j));
-        for(int i=0; i<body->getJoint()->getNumberOfLinks(); i++) {
+        for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
           force = body->getJoint()->evalForce(i);
           for(int j=0; j<force.size(); j++)
             plotVector.push_back(force(j));
         }
       }
       if(plotFeature[moment]) {
-        for(int i=0; i<body->getJoint()->getNumberOfLinks(); i++) {
+        for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
           Vec3 moment = body->getJoint()->evalMoment(i);
           for(int j=0; j<moment.size(); j++)
             plotVector.push_back(moment(j));

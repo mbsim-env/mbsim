@@ -49,7 +49,7 @@ namespace MBSim {
     if(stage==plotting) {
       if(plotFeature[openMBV] and ombvArrow) {
         if(forceDir.cols()) {
-          openMBVForce.resize(ombvArrow->getSideOfInteraction()==2?getNumberOfLinks():getNumberOfLinks()/2);
+          openMBVForce.resize(ombvArrow->getSideOfInteraction()==2?getNumberOfForces():getNumberOfForces()/2);
           for(size_t i=0; i<openMBVForce.size(); i++) {
             openMBVForce[i]=ombvArrow->createOpenMBV();
             openMBVForce[i]->setName(name+"_Force"+(openMBVForce.size()>1?to_string(i):string("")));
@@ -57,7 +57,7 @@ namespace MBSim {
           }
         }
         if(momentDir.cols()) {
-          openMBVMoment.resize(ombvArrow->getSideOfInteraction()==2?getNumberOfLinks():getNumberOfLinks()/2);
+          openMBVMoment.resize(ombvArrow->getSideOfInteraction()==2?getNumberOfForces():getNumberOfForces()/2);
           for(size_t i=0; i<openMBVMoment.size(); i++) {
             openMBVMoment[i]=ombvArrow->createOpenMBV();
             openMBVMoment[i]->setName(name+"_Moment"+(openMBVMoment.size()>1?to_string(i):string("")));
@@ -100,7 +100,7 @@ namespace MBSim {
   void KineticExcitation::plot() {
     if(plotFeature[openMBV]) {
       if(openMBVForce.size()) {
-        int off = ombvArrow->getSideOfInteraction()==0?getNumberOfLinks()/2:0;
+        int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVForce.size(); i++) {
           vector<double> data;
           data.push_back(getTime());
@@ -117,7 +117,7 @@ namespace MBSim {
         }
       }
       if(openMBVMoment.size()) {
-        int off = ombvArrow->getSideOfInteraction()==0?getNumberOfLinks()/2:0;
+        int off = ombvArrow->getSideOfInteraction()==0?getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVMoment.size(); i++) {
           vector<double> data;
           data.push_back(getTime());

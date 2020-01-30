@@ -51,14 +51,14 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
-          for(int i=0; i<link->getNumberOfLinks(); i++) {
+          for(int i=0; i<link->getNumberOfForces(); i++) {
             plotColumns.emplace_back("force "+to_string(i)+" (x)");
             plotColumns.emplace_back("force "+to_string(i)+" (y)");
             plotColumns.emplace_back("force "+to_string(i)+" (z)");
           }
         }
         if(plotFeature[moment]) {
-          for(int i=0; i<link->getNumberOfLinks(); i++) {
+          for(int i=0; i<link->getNumberOfForces(); i++) {
             plotColumns.emplace_back("moment "+to_string(i)+" (x)");
             plotColumns.emplace_back("moment "+to_string(i)+" (y)");
             plotColumns.emplace_back("moment "+to_string(i)+" (z)");
@@ -68,19 +68,19 @@ namespace MBSim {
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
         if(ombvForce) {
-          openMBVForce.resize(ombvForce->getSideOfInteraction()==2?link->getNumberOfLinks():link->getNumberOfLinks()/2);
+          openMBVForce.resize(ombvForce->getSideOfInteraction()==2?link->getNumberOfForces():link->getNumberOfForces()/2);
           for(size_t i=0; i<openMBVForce.size(); i++) {
             openMBVForce[i]=ombvForce->createOpenMBV();
-            //openMBVForce[i]->setName(string("Force")+(i<size_t(link->getNumberOfLinks()/2)?"R":"A")+to_string(i%size_t(link->getNumberOfLinks()/2)));
+            //openMBVForce[i]->setName(string("Force")+(i<size_t(link->getNumberOfForces()/2)?"R":"A")+to_string(i%size_t(link->getNumberOfForces()/2)));
             openMBVForce[i]->setName(string("Force")+(openMBVForce.size()>1?to_string(i):string("")));
             getOpenMBVGrp()->addObject(openMBVForce[i]);
           }
         }
         if(ombvMoment) {
-          openMBVMoment.resize(ombvMoment->getSideOfInteraction()==2?link->getNumberOfLinks():link->getNumberOfLinks()/2);
+          openMBVMoment.resize(ombvMoment->getSideOfInteraction()==2?link->getNumberOfForces():link->getNumberOfForces()/2);
           for(size_t i=0; i<openMBVMoment.size(); i++) {
             openMBVMoment[i]=ombvMoment->createOpenMBV();
-            //openMBVMoment[i]->setName(string("Moment")+(i<size_t(link->getNumberOfLinks()/2)?"R":"A")+to_string(i%size_t(link->getNumberOfLinks()/2)));
+            //openMBVMoment[i]->setName(string("Moment")+(i<size_t(link->getNumberOfForces()/2)?"R":"A")+to_string(i%size_t(link->getNumberOfForces()/2)));
             openMBVMoment[i]->setName(string("Moment")+(openMBVMoment.size()>1?to_string(i):string("")));
             getOpenMBVGrp()->addObject(openMBVMoment[i]);
           }
@@ -94,14 +94,14 @@ namespace MBSim {
   void MechanicalLinkObserver::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[force]) {
-        for(int i=0; i<link->getNumberOfLinks(); i++) {
+        for(int i=0; i<link->getNumberOfForces(); i++) {
           Vec3 force = link->evalForce(i);
           for(int j=0; j<force.size(); j++)
             plotVector.push_back(force(j));
         }
       }
       if(plotFeature[moment]) {
-        for(int i=0; i<link->getNumberOfLinks(); i++) {
+        for(int i=0; i<link->getNumberOfForces(); i++) {
           Vec3 moment = link->evalMoment(i);
           for(int j=0; j<moment.size(); j++)
             plotVector.push_back(moment(j));
@@ -110,7 +110,7 @@ namespace MBSim {
     }
     if(plotFeature[openMBV]) {
       if(ombvForce) {
-        int off = ombvForce->getSideOfInteraction()==0?link->getNumberOfLinks()/2:0;
+        int off = ombvForce->getSideOfInteraction()==0?link->getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVForce.size(); i++) {
           vector<double> data;
           data.push_back(getTime());
@@ -127,7 +127,7 @@ namespace MBSim {
         }
       }
       if(ombvMoment) {
-        int off = ombvMoment->getSideOfInteraction()==0?link->getNumberOfLinks()/2:0;
+        int off = ombvMoment->getSideOfInteraction()==0?link->getNumberOfForces()/2:0;
         for(size_t i=0; i<openMBVMoment.size(); i++) {
           vector<double> data;
           data.push_back(getTime());
