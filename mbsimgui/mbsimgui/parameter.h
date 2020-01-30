@@ -66,7 +66,6 @@ namespace MBSimGUI {
     public:
       StringParameter() = default;
       QString getType() const override { return "stringParameter"; }
-      void initializeUsingXML(xercesc::DOMElement *element) override;
       ParameterPropertyDialog* createPropertyDialog() override {return new StringParameterPropertyDialog(this);}
   };
 
@@ -74,13 +73,13 @@ namespace MBSimGUI {
     public:
       ScalarParameter() = default;
       QString getType() const override { return "scalarParameter"; }
-      void initializeUsingXML(xercesc::DOMElement *element) override;
       ParameterPropertyDialog* createPropertyDialog() override {return new ScalarParameterPropertyDialog(this);}
   };
 
   class VectorParameter : public Parameter {
     public:
       VectorParameter() = default;
+      QString getValue() const override;
       QString getType() const override { return "vectorParameter"; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
       ParameterPropertyDialog* createPropertyDialog() override {return new VectorParameterPropertyDialog(this);}
@@ -89,6 +88,7 @@ namespace MBSimGUI {
   class MatrixParameter : public Parameter {
     public:
       MatrixParameter() = default;
+      QString getValue() const override;
       QString getType() const override { return "matrixParameter"; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
       ParameterPropertyDialog* createPropertyDialog() override {return new MatrixParameterPropertyDialog(this);}

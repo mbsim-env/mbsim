@@ -50,10 +50,27 @@ namespace MBSimGUI {
       virtual QString getValue() const = 0;
       virtual void setValue(const QString &str) = 0;
       virtual QString getType() const = 0;
+      virtual int getVarType() const { return 0; }
       virtual bool validate(const std::vector<std::vector<QString> > &A) const {return true;}
       virtual int rows() const { return 1; }
       virtual int cols() const { return 1; }
       virtual std::vector<std::vector<QString> > getEvalMat() const;
+  };
+
+  class StringWidget : public VariableWidget {
+    private:
+      QLineEdit* box;
+    public:
+      StringWidget(const QString &d="");
+      void setReadOnly(bool flag) override {box->setReadOnly(flag);}
+      QString getValue() const override {return box->text().isEmpty()?"\"\"":box->text();}
+      void setValue(const QString &str) override {box->setText(str=="\"\""?"":str);}
+      QString getType() const override {return "String";}
+      int getVarType() const override { return 1; }
+      bool validate(const std::vector<std::vector<QString> > &A) const override;
+      std::vector<std::vector<QString> > getEvalMat() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
   class BoolWidget : public VariableWidget {
@@ -74,10 +91,11 @@ namespace MBSimGUI {
 
   class ExpressionWidget : public VariableWidget {
     public:
-      ExpressionWidget(const QString &str="");
+      ExpressionWidget(const QString &str="", int varType_=0);
       QString getValue() const override { return value->toPlainText(); }
       void setValue(const QString &str) override { value->setPlainText(str); }
       QString getType() const override {return "Editor";}
+      int getVarType() const override { return varType; }
       int rows() const override { return getEvalMat().size(); }
       int cols() const override { return !getEvalMat().empty()?getEvalMat()[0].size():0; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -85,6 +103,7 @@ namespace MBSimGUI {
 
     private:
       QPlainTextEdit *value;
+      int varType;
   };
 
   class ScalarWidget : public VariableWidget {
@@ -131,7 +150,6 @@ namespace MBSimGUI {
       QString getType() const override {return "Vector";}
       bool validate(const std::vector<std::vector<QString> > &A) const override;
   };
-
 
   class VecSizeVarWidget : public BasicVecWidget {
 
@@ -520,6 +538,17 @@ namespace MBSimGUI {
       void changePath(int i);
   };
 
+  class StringWidgetFactory : public WidgetFactory {
+    public:
+      StringWidgetFactory(const QString &value_);
+      QWidget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      int getSize() const override { return name.size(); }
+    protected:
+      QString value;
+      std::vector<QString> name;
+  };
+
   class BoolWidgetFactory : public WidgetFactory {
     public:
       BoolWidgetFactory(const QString &value_);
@@ -529,8 +558,6 @@ namespace MBSimGUI {
     protected:
       QString value;
       std::vector<QString> name;
-      std::vector<QStringList> unit;
-      std::vector<int> defaultUnit;
   };
 
   class ScalarWidgetFactory : public WidgetFactory {

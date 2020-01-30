@@ -144,6 +144,47 @@ namespace MBSimGUI {
     return strToMat(str);
   }
 
+  StringWidget::StringWidget(const QString &d) {
+
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    box = new QLineEdit(this);
+    box->setPlaceholderText("\"\"");
+    setValue(d);
+    layout->addWidget(box);
+  }
+
+  bool StringWidget::validate(const vector<vector<QString> > &A) const {
+    if(A.size()!=1)
+      return false;
+    if(A[0].size()!=1)
+      return false;
+    return true;
+  }
+
+  vector<vector<QString> > StringWidget::getEvalMat() const {
+    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+  }
+
+  DOMElement* StringWidget::initializeUsingXML(DOMElement *element) {
+    DOMText* text = E(element)->getFirstTextChild();
+    if(!text)
+      return nullptr;
+    string str = X()%text->getData();
+    if(str.find('\n')!=string::npos)
+      return nullptr;
+    setValue(QString::fromStdString(str));
+    return element;
+  }
+
+  DOMElement* StringWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMText *text = doc->createTextNode(X()%getValue().toStdString());
+    parent->insertBefore(text, ref);
+    return nullptr;
+  }
+
   BoolWidget::BoolWidget(const QString &b) { 
     value = new QCheckBox;
     setValue(b);
@@ -191,7 +232,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ExpressionWidget::ExpressionWidget(const QString &str) {
+  ExpressionWidget::ExpressionWidget(const QString &str, int varType_) : varType(varType_) {
     auto *layout=new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -280,7 +321,7 @@ namespace MBSimGUI {
       return nullptr;
     DOMElement *ei=element->getFirstElementChild();
     vector<QString> value;
-    while(ei && E(ei)->getTagName()==PV%"ele") {
+    while(ei and E(ei)->getTagName()==PV%"ele") {
       value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
       ei=ei->getNextElementSibling();
     }
@@ -366,7 +407,7 @@ namespace MBSimGUI {
   bool VecWidget::validate(const vector<vector<QString> > &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
-    if(!A.empty() && A[0].size()!=1)
+    if(!A.empty() and A[0].size()!=1)
       return false;
     return true;
   }
@@ -414,7 +455,7 @@ namespace MBSimGUI {
   bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
     if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
       return false;
-    if(!A.empty() && A[0].size()!=1)
+    if(!A.empty() and A[0].size()!=1)
       return false;
     return true;
   }
@@ -480,7 +521,7 @@ namespace MBSimGUI {
   bool VecTableWidget::validate(const vector<vector<QString> > &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
-    if(!A.empty() && A[0].size()!=1)
+    if(!A.empty() and A[0].size()!=1)
       return false;
     return true;
   }
@@ -499,10 +540,10 @@ namespace MBSimGUI {
       return nullptr;
     DOMElement *ei=element->getFirstElementChild();
     vector<vector<QString> > value;
-    while(ei && E(ei)->getTagName()==PV%"row") {
+    while(ei and E(ei)->getTagName()==PV%"row") {
       DOMElement *ej=ei->getFirstElementChild();
       value.emplace_back();
-      while(ej && E(ej)->getTagName()==PV%"ele") {
+      while(ej and E(ej)->getTagName()==PV%"ele") {
         value[value.size()-1].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
         ej=ej->getNextElementSibling();
       }
@@ -1074,7 +1115,7 @@ namespace MBSimGUI {
   bool CardanWidget::validate(const vector<vector<QString> > &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
-    if(!A.empty() && A[0].size()!=1)
+    if(!A.empty() and A[0].size()!=1)
       return false;
     return true;
   }
@@ -1304,7 +1345,7 @@ namespace MBSimGUI {
 
   void PhysicalVariableWidget::openEvalDialog() {
     try {
-      EvalDialog evalDialog(widget->getEvalMat(),this);
+      EvalDialog evalDialog(widget->getEvalMat(),widget->getVarType(),this);
       evalDialog.exec();
     }
     catch(MBXMLUtils::DOMEvalException &e) {
@@ -1400,16 +1441,29 @@ namespace MBSimGUI {
     relativeFilePath->setText(i?mw->getProjectDir().absoluteFilePath(getFile()):mw->getProjectDir().relativeFilePath(getFile()));
   }
 
-  BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2), unit(2,QStringList()), defaultUnit(2,0) {
+  StringWidgetFactory::StringWidgetFactory(const QString &value_) : value(value_), name(2) {
+    name[0] = "String";
+    name[1] = "Editor";
+  }
+
+  QWidget* StringWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PhysicalVariableWidget(new StringWidget(value), QStringList(), 0);
+    if(i==1)
+      return new PhysicalVariableWidget(new ExpressionWidget("",1), QStringList(), 0);
+    return nullptr;
+  }
+
+  BoolWidgetFactory::BoolWidgetFactory(const QString &value_) : value(value_), name(2) {
     name[0] = "Boolean";
     name[1] = "Editor";
   }
 
   QWidget* BoolWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new BoolWidget(value), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new BoolWidget(value), QStringList(), 0);
     if(i==1)
-      return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1]);
+      return new PhysicalVariableWidget(new ExpressionWidget, QStringList(), 0);
     return nullptr;
   }
 

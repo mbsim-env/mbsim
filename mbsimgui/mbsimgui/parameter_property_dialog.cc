@@ -63,7 +63,7 @@ namespace MBSimGUI {
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
+    value = new ExtWidget("Value",new ChoiceWidget2(new StringWidgetFactory(""),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
 

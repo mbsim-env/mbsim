@@ -63,14 +63,12 @@ namespace MBSimGUI {
     return param;
   }
 
-  void StringParameter::initializeUsingXML(DOMElement *element) {
-    Parameter::initializeUsingXML(element);
- //   setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
-  }
-
-  void ScalarParameter::initializeUsingXML(DOMElement *element) {
-    Parameter::initializeUsingXML(element);
-  //  setValue(QString::fromStdString(X()%E(element)->getFirstTextChild()->getData()));
+  QString VectorParameter::getValue() const {
+    DOMElement *ele=element->getFirstElementChild();
+    if(ele and E(ele)->getTagName() == PV%"xmlVector")
+      return "xmlVector";
+    else
+      return Parameter::getValue();
   }
 
   void VectorParameter::initializeUsingXML(DOMElement *element) {
@@ -80,20 +78,20 @@ namespace MBSimGUI {
       if(E(ele)->getTagName() == PV%"xmlVector") {
         DOMElement *ei=ele->getFirstElementChild();
         vector<QString> value;
-        while(ei && E(ei)->getTagName()==PV%"ele") {
+        while(ei and E(ei)->getTagName()==PV%"ele") {
           value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
           ei=ei->getNextElementSibling();
         }
-//        setValue(toQStr<QString>(value));
       }
-//      else if(E(ele)->getTagName() == (PV%"fromFile"))
-//        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
     }
-    else {
-//      DOMText *text=E(element)->getFirstTextChild();
- //     if(text)
-//      setValue(QString::fromStdString(X()%text->getData()));
-    }
+  }
+
+  QString MatrixParameter::getValue() const {
+    DOMElement *ele=element->getFirstElementChild();
+    if(ele and E(ele)->getTagName() == PV%"xmlMatrix")
+      return "xmlMatrix";
+    else
+      return Parameter::getValue();
   }
 
   void MatrixParameter::initializeUsingXML(DOMElement *element) {
@@ -103,24 +101,16 @@ namespace MBSimGUI {
       if(E(ele)->getTagName() == PV%"xmlMatrix") {
         DOMElement *ei=ele->getFirstElementChild();
         vector<vector<QString> > value;
-        while(ei && E(ei)->getTagName()==PV%"row") {
+        while(ei and E(ei)->getTagName()==PV%"row") {
           DOMElement *ej=ei->getFirstElementChild();
           value.emplace_back();
-          while(ej && E(ej)->getTagName()==PV%"ele") {
+          while(ej and E(ej)->getTagName()==PV%"ele") {
             value[value.size()-1].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
             ej=ej->getNextElementSibling();
           }
           ei=ei->getNextElementSibling();
         }
-//        setValue(toQStr<QString>(value));
       }
-//      else if(E(ele)->getTagName() == (PV%"fromFile"))
-//        setValue(QString::fromStdString((E(ele)->getAttribute("href"))));
-    }
-    else {
-//      DOMText *text=E(element)->getFirstTextChild();
-//      if(text)
-//      setValue(QString::fromStdString(X()%text->getData()));
     }
   }
 

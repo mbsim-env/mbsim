@@ -65,13 +65,7 @@ namespace MBSimGUI {
     return QModelIndex();
   }
 
-  EvalDialog::EvalDialog(const vector<vector<QString> > &var_, QWidget *parent) : QDialog(parent) {
-    var.resize(var_.size());
-    for(int i=0; i<var_.size(); i++) {
-      var[i].resize(var_[i].size());
-      for(int j=0; j<var[i].size(); j++)
-        var[i][j] = var_[i][j].toDouble();
-    }
+  EvalDialog::EvalDialog(const vector<vector<QString> > &var_, int type_, QWidget *parent) : QDialog(parent), var(var_), varf(var_), type(type_) {
 
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
@@ -79,25 +73,29 @@ namespace MBSimGUI {
     auto *layout = new QGridLayout;
     mainlayout->addLayout(layout);
 
-    layout->addWidget(new QLabel("Format:"),0,0);
-    format = new QComboBox;
-    format->addItems(QStringList() << "e" << "E" << "f" << "g" << "G");
-    format->setCurrentIndex(3);
-    layout->addWidget(format,0,1);
-    connect(format, SIGNAL(currentIndexChanged(int)), this, SLOT(updateWidget()));
+    if(type==0) {
+      layout->addWidget(new QLabel("Format:"),0,0);
+      format = new QComboBox;
+      format->addItems(QStringList() << "e" << "E" << "f" << "g" << "G");
+      format->setCurrentIndex(3);
+      layout->addWidget(format,0,1);
+      connect(format, SIGNAL(currentIndexChanged(int)), this, SLOT(updateWidget()));
 
-    layout->addWidget(new QLabel("Precision:"),0,2);
-    precision = new QSpinBox;
-    precision->setValue(6);
-    layout->addWidget(precision,0,3);
-    connect(precision, SIGNAL(valueChanged(int)), this, SLOT(updateWidget()));
+      layout->addWidget(new QLabel("Precision:"),0,2);
+      precision = new QSpinBox;
+      precision->setValue(6);
+      layout->addWidget(precision,0,3);
+      connect(precision, SIGNAL(valueChanged(int)), this, SLOT(updateWidget()));
+    }
+
+    formatVariables();
 
     tab = new QTableWidget;
-    tab->setRowCount(var.size());
-    tab->setColumnCount(!var.empty()?var[0].size():0);
+    tab->setRowCount(varf.size());
+    tab->setColumnCount(!varf.empty()?varf[0].size():0);
     for(int i=0; i<tab->rowCount(); i++) {
       for(int j=0; j<tab->columnCount(); j++)
-        tab->setItem(i,j,new QTableWidgetItem(QString::number(var[i][j],'g',6)));
+        tab->setItem(i,j,new QTableWidgetItem(varf[i][j]));
     }
 
     layout->addWidget(tab,1,0,1,5);
@@ -114,12 +112,22 @@ namespace MBSimGUI {
     setWindowTitle("Expression evaluation");
   }
 
+  void EvalDialog::formatVariables() {
+    if(type==0) {
+      QString f = format->currentText();
+      int p = precision->value();
+      for(int i=0; i<var.size(); i++) {
+        for(int j=0; j<var[i].size(); j++)
+          varf[i][j] = QString::number(var[i][j].toDouble(),f[0].toLatin1(),p);
+      }
+    }
+  }
+
   void EvalDialog::updateWidget() {
-    QString f = format->currentText();
-    int p = precision->value();
+    formatVariables();
     for(int i=0; i<tab->rowCount(); i++) {
       for(int j=0; j<tab->columnCount(); j++)
-        tab->item(i,j)->setText(QString::number(var[i][j],f[0].toLatin1(),p));
+        tab->item(i,j)->setText(varf[i][j]);
     }
   }
 
