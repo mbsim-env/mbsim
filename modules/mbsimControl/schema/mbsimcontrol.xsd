@@ -189,6 +189,53 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="RigidBodySensor" abstract="true" substitutionGroup="ObjectSensor" type="RigidBodySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen von Daten eines Starrkörpers.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RigidBodySensorType">
+    <xs:complexContent>
+      <xs:extension base="ObjectSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RigidBodyJointForceSensor" substitutionGroup="RigidBodySensor" type="RigidBodyJointForceSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der kartesischen Gelenkkraft eines Starrkörpers.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RigidBodyJointForceSensorType">
+    <xs:complexContent>
+      <xs:extension base="RigidBodySensorType">
+        <xs:sequence>
+          <xs:element name="jointForceNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RigidBodyJointMomentSensor" substitutionGroup="RigidBodySensor" type="RigidBodyJointMomentSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen des kartesischen Gelenkmoments eines Starrkörpers.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="RigidBodyJointMomentSensorType">
+    <xs:complexContent>
+      <xs:extension base="RigidBodySensorType">
+        <xs:sequence>
+          <xs:element name="jointMomentNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="FrameSensor" abstract="true" substitutionGroup="Sensor" type="FrameSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -445,7 +492,7 @@
   <xs:element name="MechanicalLinkMomentSensor" substitutionGroup="MechanicalLinkSensor" type="MechanicalLinkMomentSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen der kartesischen Kraft eines Links.
+        Sensor zum Auslesen des kartesischen Moments eines Links.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -584,7 +631,7 @@
   <xs:element name="MechanicalConstraintMomentSensor" substitutionGroup="MechanicalConstraintSensor" type="MechanicalConstraintMomentSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen der kartesischen Kraft eines Constraints.
+        Sensor zum Auslesen des kartesischen Moments eines Constraints.
       </xs:documentation>
     </xs:annotation>
   </xs:element>

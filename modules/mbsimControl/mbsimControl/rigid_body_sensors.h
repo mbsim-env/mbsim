@@ -17,32 +17,32 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _MECHANICAL_LINK_SENSORS_H_
-#define _MECHANICAL_LINK_SENSORS_H_
+#ifndef _RIGID_BODY_SENSORS_H_
+#define _RIGID_BODY_SENSORS_H_
 
-#include "mbsimControl/link_sensors.h"
+#include "mbsimControl/object_sensors.h"
 #include "mbsim/utils/index.h"
 
 namespace MBSimControl {
 
   /*!
-   * \brief MechanicalLinkSensor
+   * \brief RigidBodySensor
    * \author Martin Foerg
    */
-  class MechanicalLinkSensor : public LinkSensor {
+  class RigidBodySensor : public ObjectSensor {
     public:
-      MechanicalLinkSensor(const std::string &name) : LinkSensor(name) { }
+      RigidBodySensor(const std::string &name) : ObjectSensor(name) { }
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
   };
 
   /*!
-   * \brief MechanicalLinkForceSensor
+   * \brief RigidBodyJointForceSensor
    * \author Martin Foerg
    */
-  class MechanicalLinkForceSensor : public MechanicalLinkSensor {
+  class RigidBodyJointForceSensor : public RigidBodySensor {
     public:
-      MechanicalLinkForceSensor(const std::string &name="") : MechanicalLinkSensor(name) { }
-      void setForceNumber(int i_) { i = i_; }
+      RigidBodyJointForceSensor(const std::string &name="") : RigidBodySensor(name) { }
+      void setJointForceNumber(int i_) { i = i_; }
       int getSignalSize() const override { return 3; }
       void updateSignal() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
@@ -51,13 +51,13 @@ namespace MBSimControl {
   };
 
   /*!
-   * \brief MechanicalLinkMomentSensor
+   * \brief RigidBodyJointMomentSensor
    * \author Martin Foerg
    */
-  class MechanicalLinkMomentSensor : public MechanicalLinkSensor {
+  class RigidBodyJointMomentSensor : public RigidBodySensor {
     public:
-      MechanicalLinkMomentSensor(const std::string &name="") : MechanicalLinkSensor(name) { }
-      void setMomentNumber(int i_) { i = i_; }
+      RigidBodyJointMomentSensor(const std::string &name="") : RigidBodySensor(name) { }
+      void setJointMomentNumber(int i_) { i = i_; }
       int getSignalSize() const override { return 3; }
       void updateSignal() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;

@@ -5,6 +5,7 @@ libmbsimControl_la_LDFLAGS = -avoid-version
 libmbsimControl_la_SOURCES = \
   signal_.cc\
   object_sensors.cc\
+  rigid_body_sensors.cc\
   frame_sensors.cc\
   function_sensor.cc\
   link_sensors.cc\
@@ -29,12 +30,13 @@ mbsimControlinclude_HEADERS = \
   extern_signal_sink.h\
   sensor.h\
   object_sensors.h\
+  rigid_body_sensors.h\
   frame_sensors.h\
   function_sensor.h\
   link_sensors.h\
   mechanical_link_sensors.h\
   contact_sensor.h\
-  constraint_sensors.cc\
+  constraint_sensors.h\
   signal_manipulation.h\
   linear_transfer_system.h\
   massless_spring_damper.h\
