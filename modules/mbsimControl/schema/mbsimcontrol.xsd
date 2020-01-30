@@ -525,6 +525,79 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="ConstraintSensor" abstract="true" substitutionGroup="Sensor" type="ConstraintSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen von Daten eines Constraints.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ConstraintSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="constraint">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Pfad des Constraints
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:ConstraintReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="MechanicalConstraintSensor" abstract="true" substitutionGroup="ConstraintSensor" type="MechanicalConstraintSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen von Daten eines mechanischen Constraints.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MechanicalConstraintSensorType">
+    <xs:complexContent>
+      <xs:extension base="ConstraintSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="MechanicalConstraintForceSensor" substitutionGroup="MechanicalConstraintSensor" type="MechanicalConstraintForceSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der kartesischen Kraft eines Constraints.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MechanicalConstraintForceSensorType">
+    <xs:complexContent>
+      <xs:extension base="MechanicalConstraintSensorType">
+        <xs:sequence>
+          <xs:element name="forceNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="MechanicalConstraintMomentSensor" substitutionGroup="MechanicalConstraintSensor" type="MechanicalConstraintMomentSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der kartesischen Kraft eines Constraints.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MechanicalConstraintMomentSensorType">
+    <xs:complexContent>
+      <xs:extension base="MechanicalConstraintSensorType">
+        <xs:sequence>
+          <xs:element name="momentNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Multiplexer" substitutionGroup="Signal" type="MultiplexerType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

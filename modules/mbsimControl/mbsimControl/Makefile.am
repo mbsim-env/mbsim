@@ -10,6 +10,7 @@ libmbsimControl_la_SOURCES = \
   link_sensors.cc\
   mechanical_link_sensors.cc\
   contact_sensor.cc\
+  constraint_sensors.cc\
   signal_manipulation.cc\
   linear_transfer_system.cc\
   massless_spring_damper.cc\
@@ -33,6 +34,7 @@ mbsimControlinclude_HEADERS = \
   link_sensors.h\
   mechanical_link_sensors.h\
   contact_sensor.h\
+  constraint_sensors.cc\
   signal_manipulation.h\
   linear_transfer_system.h\
   massless_spring_damper.h\
