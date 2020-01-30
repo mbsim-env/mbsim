@@ -2970,6 +2970,40 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  RigidBodyJointForceSensorPropertyDialog::RigidBodyJointForceSensorPropertyDialog(Element *sensor) : ObjectSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Joint force number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"jointForceNumber");
+    addToTab("General", number);
+  }
+
+  DOMElement* RigidBodyJointForceSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObjectSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RigidBodyJointForceSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObjectSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  RigidBodyJointMomentSensorPropertyDialog::RigidBodyJointMomentSensorPropertyDialog(Element *sensor) : ObjectSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Joint moment number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"jointMomentNumber");
+    addToTab("General", number);
+  }
+
+  DOMElement* RigidBodyJointMomentSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObjectSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RigidBodyJointMomentSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObjectSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   LinkSensorPropertyDialog::LinkSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
     link = new ExtWidget("Link of reference",new ElementOfReferenceWidget<Link>(sensor,nullptr,this),false,false,MBSIMCONTROL%"link");
     addToTab("General", link);
@@ -2984,6 +3018,91 @@ namespace MBSimGUI {
   DOMElement* LinkSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     link->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  MechanicalLinkForceSensorPropertyDialog::MechanicalLinkForceSensorPropertyDialog(Element *sensor) : LinkSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Force number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"forceNumber");
+    addToTab("General", number);
+  }
+
+  DOMElement* MechanicalLinkForceSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    LinkSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* MechanicalLinkForceSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    LinkSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  MechanicalLinkMomentSensorPropertyDialog::MechanicalLinkMomentSensorPropertyDialog(Element *sensor) : LinkSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Moment number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"momentNumber");
+    addToTab("General", number);
+  }
+
+  DOMElement* MechanicalLinkMomentSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    LinkSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* MechanicalLinkMomentSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    LinkSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  ConstraintSensorPropertyDialog::ConstraintSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    constraint = new ExtWidget("Constraint of reference",new ElementOfReferenceWidget<Constraint>(sensor,nullptr,this),false,false,MBSIMCONTROL%"constraint");
+    addToTab("General", constraint);
+  }
+
+  DOMElement* ConstraintSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    constraint->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ConstraintSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    constraint->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  MechanicalConstraintForceSensorPropertyDialog::MechanicalConstraintForceSensorPropertyDialog(Element *sensor) : ConstraintSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Force number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"forceNumber");
+    addToTab("General", number);
+  }
+
+  DOMElement* MechanicalConstraintForceSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ConstraintSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* MechanicalConstraintForceSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ConstraintSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  MechanicalConstraintMomentSensorPropertyDialog::MechanicalConstraintMomentSensorPropertyDialog(Element *sensor) : ConstraintSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Moment number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"momentNumber");
+    addToTab("General", number);
+  }
+
+  DOMElement* MechanicalConstraintMomentSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ConstraintSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* MechanicalConstraintMomentSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ConstraintSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

@@ -48,6 +48,18 @@ namespace MBSimGUI {
       QString getType() const override { return "GeneralizedAccelerationSensor"; }
   };
 
+  class RigidBodyJointForceSensor : public ObjectSensor {
+    public:
+      QString getType() const override { return "RigidBodyJointForceSensor"; }
+      ElementPropertyDialog* createPropertyDialog() override { return new RigidBodyJointForceSensorPropertyDialog(this); }
+  };
+
+  class RigidBodyJointMomentSensor : public ObjectSensor {
+    public:
+      QString getType() const override { return "RigidBodyJointMomentSensor"; }
+      ElementPropertyDialog* createPropertyDialog() override { return new RigidBodyJointMomentSensorPropertyDialog(this); }
+  };
+
   class LinkSensor : public Sensor {
     public:
       QString getType() const override { return "LinkSensor"; }
@@ -67,6 +79,36 @@ namespace MBSimGUI {
   class GeneralizedForceSensor : public LinkSensor {
     public:
       QString getType() const override { return "GeneralizedForceSensor"; }
+  };
+
+  class MechanicalLinkForceSensor : public LinkSensor {
+    public:
+      QString getType() const override { return "MechanicalLinkForceSensor"; }
+      ElementPropertyDialog* createPropertyDialog() override { return new MechanicalLinkForceSensorPropertyDialog(this); }
+  };
+
+  class MechanicalLinkMomentSensor : public LinkSensor {
+    public:
+      QString getType() const override { return "MechanicalLinkMomentSensor"; }
+      ElementPropertyDialog* createPropertyDialog() override { return new MechanicalLinkMomentSensorPropertyDialog(this); }
+  };
+
+  class ConstraintSensor : public Sensor {
+    public:
+      QString getType() const override { return "ConstraintSensor"; }
+      ElementPropertyDialog* createPropertyDialog() override { return new ConstraintSensorPropertyDialog(this); }
+  };
+
+  class MechanicalConstraintForceSensor : public ConstraintSensor {
+    public:
+      QString getType() const override { return "MechanicalConstraintForceSensor"; }
+      ElementPropertyDialog* createPropertyDialog() override { return new MechanicalConstraintForceSensorPropertyDialog(this); }
+  };
+
+  class MechanicalConstraintMomentSensor : public ConstraintSensor {
+    public:
+      QString getType() const override { return "MechanicalConstraintMomentSensor"; }
+      ElementPropertyDialog* createPropertyDialog() override { return new MechanicalConstraintMomentSensorPropertyDialog(this); }
   };
 
   class FrameSensor : public Sensor {

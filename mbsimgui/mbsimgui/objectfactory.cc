@@ -234,12 +234,24 @@ namespace MBSimGUI {
       return new GeneralizedVelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedAccelerationSensor")
       return new GeneralizedAccelerationSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"RigidBodyJointForceSensor")
+      return new RigidBodyJointForceSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"RigidBodyJointMomentSensor")
+      return new RigidBodyJointMomentSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativePositionSensor")
       return new GeneralizedRelativePositionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedRelativeVelocitySensor")
       return new GeneralizedRelativeVelocitySensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"GeneralizedForceSensor")
       return new GeneralizedForceSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"MechanicalLinkForceSensor")
+      return new MechanicalLinkForceSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"MechanicalLinkMomentSensor")
+      return new MechanicalLinkMomentSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"MechanicalConstraintForceSensor")
+      return new MechanicalConstraintForceSensor;
+    if(E(element)->getTagName()==MBSIMCONTROL%"MechanicalConstraintMomentSensor")
+      return new MechanicalConstraintMomentSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"PositionSensor")
       return new PositionSensor;
     if(E(element)->getTagName()==MBSIMCONTROL%"OrientationSensor")

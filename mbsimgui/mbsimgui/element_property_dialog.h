@@ -841,6 +841,26 @@ namespace MBSimGUI {
       ExtWidget *object;
   };
 
+  class RigidBodyJointForceSensorPropertyDialog : public ObjectSensorPropertyDialog {
+
+    public:
+      RigidBodyJointForceSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *number;
+  };
+
+  class RigidBodyJointMomentSensorPropertyDialog : public ObjectSensorPropertyDialog {
+
+    public:
+      RigidBodyJointMomentSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *number;
+  };
+
   class LinkSensorPropertyDialog : public SensorPropertyDialog {
 
     public:
@@ -849,6 +869,56 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *link;
+  };
+
+  class MechanicalLinkForceSensorPropertyDialog : public LinkSensorPropertyDialog {
+
+    public:
+      MechanicalLinkForceSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *number;
+  };
+
+  class MechanicalLinkMomentSensorPropertyDialog : public LinkSensorPropertyDialog {
+
+    public:
+      MechanicalLinkMomentSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *number;
+  };
+
+  class ConstraintSensorPropertyDialog : public SensorPropertyDialog {
+
+    public:
+      ConstraintSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *constraint;
+  };
+
+  class MechanicalConstraintForceSensorPropertyDialog : public ConstraintSensorPropertyDialog {
+
+    public:
+      MechanicalConstraintForceSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *number;
+  };
+
+  class MechanicalConstraintMomentSensorPropertyDialog : public ConstraintSensorPropertyDialog {
+
+    public:
+      MechanicalConstraintMomentSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *number;
   };
 
   class FrameSensorPropertyDialog : public SensorPropertyDialog {

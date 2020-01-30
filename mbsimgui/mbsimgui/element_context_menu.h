@@ -274,9 +274,15 @@ namespace MBSimGUI {
       void addGeneralizedRelativePositionSensor();
       void addGeneralizedRelativeVelocitySensor();
       void addGeneralizedForceSensor();
+      void addMechanicalLinkForceSensor();
+      void addMechanicalLinkMomentSensor();
+      void addMechanicalConstraintForceSensor();
+      void addMechanicalConstraintMomentSensor();
       void addGeneralizedRelativeContactPositionSensor();
       void addGeneralizedRelativeContactVelocitySensor();
       void addGeneralizedContactForceSensor();
+      void addRigidBodyJointForceSensor();
+      void addRigidBodyJointMomentSensor();
   };
 
 }

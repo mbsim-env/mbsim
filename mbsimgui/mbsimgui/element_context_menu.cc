@@ -872,6 +872,24 @@ namespace MBSimGUI {
     action = new QAction("Add generalized velocity sensor", menu);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedVelocitySensor()));
     menu->addAction(action);
+    action = new QAction("Add mechanical constraint force sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalConstraintForceSensor()));
+    menu->addAction(action);
+    action = new QAction("Add mechanical constraint moment sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalConstraintMomentSensor()));
+    menu->addAction(action);
+    action = new QAction("Add mechanical link force sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkForceSensor()));
+    menu->addAction(action);
+    action = new QAction("Add mechanical link moment sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addMechanicalLinkMomentSensor()));
+    menu->addAction(action);
+    action = new QAction("Add rigid body joint force sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyJointForceSensor()));
+    menu->addAction(action);
+    action = new QAction("Add rigid body joint moment sensor", menu);
+    connect(action,SIGNAL(triggered()),this,SLOT(addRigidBodyJointMomentSensor()));
+    menu->addAction(action);
     action = new QAction("Add orientation sensor", menu);
     connect(action,SIGNAL(triggered()),this,SLOT(addOrientationSensor()));
     menu->addAction(action);
@@ -963,6 +981,22 @@ namespace MBSimGUI {
     mw->addLink(new GeneralizedForceSensor, element);
   }
 
+  void SignalsContextMenu::addMechanicalLinkForceSensor() {
+    mw->addLink(new MechanicalLinkForceSensor, element);
+  }
+
+  void SignalsContextMenu::addMechanicalLinkMomentSensor() {
+    mw->addLink(new MechanicalLinkMomentSensor, element);
+  }
+
+  void SignalsContextMenu::addMechanicalConstraintForceSensor() {
+    mw->addLink(new MechanicalConstraintForceSensor, element);
+  }
+
+  void SignalsContextMenu::addMechanicalConstraintMomentSensor() {
+    mw->addLink(new MechanicalConstraintMomentSensor, element);
+  }
+
   void SignalsContextMenu::addGeneralizedRelativeContactPositionSensor() {
     mw->addLink(new GeneralizedRelativeContactPositionSensor, element);
   }
@@ -973,6 +1007,14 @@ namespace MBSimGUI {
 
   void SignalsContextMenu::addGeneralizedContactForceSensor() {
     mw->addLink(new GeneralizedContactForceSensor, element);
+  }
+
+  void SignalsContextMenu::addRigidBodyJointForceSensor() {
+    mw->addLink(new RigidBodyJointForceSensor, element);
+  }
+
+  void SignalsContextMenu::addRigidBodyJointMomentSensor() {
+    mw->addLink(new RigidBodyJointMomentSensor, element);
   }
 
 }
