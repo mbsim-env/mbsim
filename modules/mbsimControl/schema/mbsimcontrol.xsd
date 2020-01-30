@@ -412,6 +412,53 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="MechanicalLinkSensor" abstract="true" substitutionGroup="LinkSensor" type="MechanicalLinkSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen von Daten eines mechanischen Links.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MechanicalLinkSensorType">
+    <xs:complexContent>
+      <xs:extension base="LinkSensorType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="MechanicalLinkForceSensor" substitutionGroup="MechanicalLinkSensor" type="MechanicalLinkForceSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der kartesischen Kraft eines Links.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MechanicalLinkForceSensorType">
+    <xs:complexContent>
+      <xs:extension base="MechanicalLinkSensorType">
+        <xs:sequence>
+          <xs:element name="forceNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="MechanicalLinkMomentSensor" substitutionGroup="MechanicalLinkSensor" type="MechanicalLinkMomentSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der kartesischen Kraft eines Links.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MechanicalLinkMomentSensorType">
+    <xs:complexContent>
+      <xs:extension base="MechanicalLinkSensorType">
+        <xs:sequence>
+          <xs:element name="momentNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="ContactSensor" abstract="true" substitutionGroup="Sensor" type="ContactSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
