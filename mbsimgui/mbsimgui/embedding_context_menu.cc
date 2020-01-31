@@ -32,6 +32,9 @@ namespace MBSimGUI {
     QAction *action = new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
     QMenu::addAction(action);
+    action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
+    connect(action,SIGNAL(triggered()),mw,SLOT(viewEmbeddingSource()));
+    QMenu::addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
     action->setEnabled(item->getNumberOfParameters());

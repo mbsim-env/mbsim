@@ -48,6 +48,8 @@ namespace MBSimGUI {
       addToTab("Embedding",count);
       counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
       addToTab("Embedding",counterName);
+      connect(count,SIGNAL(clicked(bool)),counterName,SLOT(setChecked(bool)));
+      connect(counterName,SIGNAL(clicked(bool)),count,SLOT(setChecked(bool)));
     }
     href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false), true);
     href->setDisabled(true);
@@ -88,14 +90,7 @@ namespace MBSimGUI {
     if(count) {
       if(count->isActive()) {
         E(embedNode)->setAttribute("count",static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue().toStdString());
-        if(not(counterName->isActive())) {
-          E(embedNode)->setAttribute("counterName","n");
-        }
-      }
-      if(counterName->isActive()) {
         E(embedNode)->setAttribute("counterName",static_cast<TextWidget*>(counterName->getWidget())->getText().toStdString());
-        if(not(count->isActive()))
-          E(embedNode)->setAttribute("count","1");
       }
       if((not count->isActive()) and (not counterName->isActive())) {
         E(embedNode)->removeAttribute("count");

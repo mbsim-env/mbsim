@@ -2095,12 +2095,34 @@ namespace MBSimGUI {
     solverViewClicked();
   }
 
-  void MainWindow::viewSource() {
+  void MainWindow::viewElementSource() {
     QModelIndex index = elementView->selectionModel()->currentIndex();
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    auto *element = dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
     if(element) {
-      SourceDialog dialog(element,this);
+      SourceDialog dialog(element->getXMLElement(),this);
+      dialog.exec();
+    }
+  }
+
+  void MainWindow::viewEmbeddingSource() {
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    auto *item = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+    if(item) {
+      SourceDialog dialog(item->getEmbedXMLElement(),this);
+      dialog.exec();
+    }
+  }
+
+  void MainWindow::viewSolverSource() {
+    SourceDialog dialog(getProject()->getSolver()->getXMLElement(),this);
+    dialog.exec();
+  }
+
+  void MainWindow::viewParameterSource() {
+    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    auto *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+    if(parameter) {
+      SourceDialog dialog(parameter->getXMLElement(),this);
       dialog.exec();
     }
   }

@@ -154,6 +154,7 @@ namespace MBSimGUI {
       void loadProject(const QString &file);
       ElementView* getElementView() { return elementView; }
       EmbeddingView* getEmbeddingView() { return embeddingView; }
+      SolverView* getSolverView() { return solverView; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
       void setAllowUndo(bool allowUndo);
@@ -232,7 +233,10 @@ namespace MBSimGUI {
       void saveSolverAs();
       void saveEmbeddingAs();
       void loadSolver();
-      void viewSource();
+      void viewElementSource();
+      void viewEmbeddingSource();
+      void viewSolverSource();
+      void viewParameterSource();
 
     private slots:
       void selectElement(const std::string& ID);

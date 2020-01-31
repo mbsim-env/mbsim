@@ -296,12 +296,12 @@ namespace MBSimGUI {
     connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
   }
 
-  SourceDialog::SourceDialog(Element *element, QWidget *parent) : QDialog(parent) {
+  SourceDialog::SourceDialog(xercesc::DOMElement *ele, QWidget *parent) : QDialog(parent) {
     setWindowTitle(QString("XML View"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
     XMLEditorWidget *edit = new XMLEditorWidget;
-    edit->initializeUsingXML(element->getXMLElement());
+    edit->initializeUsingXML(ele);
     layout->addWidget(edit);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);

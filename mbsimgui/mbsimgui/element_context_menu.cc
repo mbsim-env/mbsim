@@ -56,7 +56,7 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
     QMenu::addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(viewSource()));
+    connect(action,SIGNAL(triggered()),mw,SLOT(viewElementSource()));
     QMenu::addAction(action);
     if(saveable) {
       addSeparator();

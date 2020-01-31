@@ -25,10 +25,16 @@
 #include <QTreeWidgetItem>
 #include <QCheckBox>
 #include <QUrl>
+#include <xercesc/util/XercesDefs.hpp>
 
 class QTableWidget;
 class QSpinBox;
 class QComboBox;
+
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMDocument;
+}
 
 namespace MBSimGUI {
 
@@ -118,7 +124,7 @@ namespace MBSimGUI {
 
   class SourceDialog : public QDialog {
     public:
-      SourceDialog(Element *element, QWidget *parent);
+      SourceDialog(xercesc::DOMElement *ele, QWidget *parent);
   };
 
 }
