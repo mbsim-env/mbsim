@@ -565,7 +565,7 @@ namespace MBSimGUI {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData();
-      if(itemData && index.column()==0) {
+      if(itemData) {
         QMenu *menu = itemData->createContextMenu();
         menu->exec(QCursor::pos());
         delete menu;
@@ -578,23 +578,21 @@ namespace MBSimGUI {
   void MainWindow::embeddingViewClicked() {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       QModelIndex index = embeddingView->selectionModel()->currentIndex();
-      if(index.column()==0) {
-        auto *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
-        if(parameter) {
-          QMenu *menu = parameter->createContextMenu();
+      auto *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+      if(parameter) {
+        QMenu *menu = parameter->createContextMenu();
+        menu->exec(QCursor::pos());
+        delete menu;
+        return;
+      }
+      else {
+        auto *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+        if(item and item->getXMLElement()) {
+          QMenu *menu = item->createEmbeddingContextMenu();
           menu->exec(QCursor::pos());
           delete menu;
-          return;
         }
-        else {
-          auto *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
-          if(item and item->getXMLElement()) {
-            QMenu *menu = item->createEmbeddingContextMenu();
-            menu->exec(QCursor::pos());
-            delete menu;
-          }
-        }
-      } 
+      }
     }
   }
 
