@@ -101,6 +101,7 @@ namespace MBSimGUI {
 
     protected slots:
       void addFixedRelativeFrame();
+      void addUnknownFrame();
   };
 
   class NodeFramesContextMenu : public FramesContextMenu {
@@ -113,6 +114,7 @@ namespace MBSimGUI {
       void addNodeFrame();
       void addInterfaceNodeFrame();
       void addFfrInterfaceNodeFrame();
+      void addUnknownFrame();
   };
 
   class ContoursContextMenu : public BasicElementMenu {
@@ -146,6 +148,7 @@ namespace MBSimGUI {
       void addFclSphere();
       void addFclPlane();
       void addFclMesh();
+      void addUnknownContour();
       void paste();
       void load();
       void embed();
@@ -177,6 +180,7 @@ namespace MBSimGUI {
       void addRigidBody();
       void addFlexibleFfrBody();
       void addCalculixBody();
+      void addUnknownObject();
   };
 
   class LinksContextMenu : public BasicElementMenu {
@@ -204,6 +208,7 @@ namespace MBSimGUI {
       void addBuoyancy();
       void addDrag();
       void addAerodynamics();
+      void addUnknownLink();
       void paste();
       void load();
       void embed();
@@ -223,6 +228,7 @@ namespace MBSimGUI {
       void addJointConstraint();
       void addGeneralizedConnectionConstraint();
       void addInverseKinematicsConstraint();
+      void addUnknownConstraint();
       void paste();
       void load();
       void embed();
@@ -243,6 +249,7 @@ namespace MBSimGUI {
       void addRigidBodyObserver();
       void addInverseKinematicsConstraintObserver();
       void addSignalObserver();
+      void addUnknownObserver();
       void paste();
       void load();
       void embed();

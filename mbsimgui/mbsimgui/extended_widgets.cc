@@ -120,7 +120,7 @@ namespace MBSimGUI {
     if (mode<=1) {
       DOMElement *e=(mode==0)?element->getFirstElementChild():element;
       if(e) {
-        int k = -1;
+        int k = factory->getFallbackIndex();
         for(int i=0; i<factory->getSize(); i++) {
           if(E(e)->getTagName()==factory->getXMLName(i)) {
             k = i;
@@ -135,7 +135,6 @@ namespace MBSimGUI {
         comboBox->blockSignals(false);
         return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
       }
-      return nullptr;
     }
     else if (mode<=3) {
       for(int i=0; i<factory->getSize(); i++) {
@@ -150,7 +149,6 @@ namespace MBSimGUI {
           return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
         }
       }
-      return nullptr;
     }
     else {
       for(int i=0; i<factory->getSize(); i++) {
@@ -163,7 +161,6 @@ namespace MBSimGUI {
         if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element))
           return element;
       }
-      return nullptr;
     }
     return nullptr;
   }

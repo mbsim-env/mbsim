@@ -24,6 +24,7 @@
 #include "extended_widgets.h"
 #include "variable_widgets.h"
 #include "basic_widgets.h"
+#include "unknown_widget.h"
 #include "rigid_body.h"
 #include "function.h"
 
@@ -50,6 +51,7 @@ namespace MBSimGUI {
     name.emplace_back("Sinusoidal function");
     name.emplace_back("Symbolic function");
     name.emplace_back("Tabular function");
+    name.emplace_back("Unknown function");
     name.emplace_back("Vector valued function");
     xmlName.push_back(MBSIM%"AbsoluteValueFunction");
     xmlName.push_back(MBSIM%"BidirectionalFunction");
@@ -69,6 +71,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"SinusoidalFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
     xmlName.push_back(MBSIM%"TabularFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
@@ -118,7 +121,9 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(QStringList(argName),vector<int>(1,argDim),vector<FunctionWidget::VarType>(1,argType),retDim,retType);
     if(i==17)
       return new TabularFunctionWidget(retDim,retType);
-    if(i==18) {
+    if(i==18)
+      return new UnknownWidget;
+    if(i==19) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
       return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,argType,1,FunctionWidget::scalar,parent),retDim,retType);
@@ -130,9 +135,11 @@ namespace MBSimGUI {
     name.emplace_back("Symbolic function");
     name.emplace_back("Two dimensional piecewise polynom function");
     name.emplace_back("Two dimensional tabular function");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"SymbolicFunction");
     xmlName.push_back(MBSIM%"TwoDimensionalPiecewisePolynomFunction");
     xmlName.push_back(MBSIM%"TwoDimensionalTabularFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   QWidget* Function2ArgWidgetFactory::createWidget(int i) {
@@ -142,6 +149,8 @@ namespace MBSimGUI {
       return new TwoDimensionalPiecewisePolynomFunctionWidget;
     if(i==2)
       return new TwoDimensionalTabularFunctionWidget;
+    if(i==3)
+      return new UnknownWidget;
     return nullptr;
   }
 
@@ -159,6 +168,7 @@ namespace MBSimGUI {
     name.emplace_back("Translation along axes x and z");
     name.emplace_back("Translation along axes x,y and z");
     name.emplace_back("Translation along fixed axis");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"LinearTranslation");
     xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
@@ -172,6 +182,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"TranslationAlongAxesXZ");
     xmlName.push_back(MBSIM%"TranslationAlongAxesXYZ");
     xmlName.push_back(MBSIM%"TranslationAlongFixedAxis");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   QWidget* StateDependentTranslationWidgetFactory::createWidget(int i) {
@@ -211,6 +222,8 @@ namespace MBSimGUI {
       return new TranslationAlongAxesXYZWidget;
     if(i==12)
       return new TranslationAlongFixedAxisWidget;
+    if(i==13)
+      return new UnknownWidget;
     return nullptr;
   }
 
@@ -220,12 +233,14 @@ namespace MBSimGUI {
     name.emplace_back("Piecewise polynom function");
     name.emplace_back("Symbolic function");
     name.emplace_back("Tabular function");
+    name.emplace_back("Unknown function");
     name.emplace_back("Vector valued function");
     xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"PiecewiseDefinedFunction");
     xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
     xmlName.push_back(MBSIM%"TabularFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
@@ -250,7 +265,9 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
     if(i==4)
       return new TabularFunctionWidget(3,FunctionWidget::fixedVec);
-    if(i==5) {
+    if(i==5)
+      return new UnknownWidget;
+    if(i==6) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
       auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
@@ -272,6 +289,7 @@ namespace MBSimGUI {
     name.emplace_back("Rotation about axes z,x and z");
     name.emplace_back("Rotation about axes z,y and x");
     name.emplace_back("Rotation about fixed axis");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"RotationAboutXAxis");
     xmlName.push_back(MBSIM%"RotationAboutYAxis");
@@ -283,6 +301,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"RotationAboutAxesZXZ");
     xmlName.push_back(MBSIM%"RotationAboutAxesZYX");
     xmlName.push_back(MBSIM%"RotationAboutFixedAxis");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   QWidget* StateDependentRotationWidgetFactory::createWidget(int i) {
@@ -313,14 +332,18 @@ namespace MBSimGUI {
       return new RotationAboutAxesZYXWidget;
     if(i==10)
       return new RotationAboutFixedAxisWidget;
+    if(i==11)
+      return new UnknownWidget;
     return nullptr;
   }
 
   TimeDependentRotationWidgetFactory::TimeDependentRotationWidgetFactory(Element *element_, QWidget *parent_) : parent(parent_) {
     name.emplace_back("Composite function");
     name.emplace_back("Symbolic function");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   QWidget* TimeDependentRotationWidgetFactory::createWidget(int i) {
@@ -333,6 +356,8 @@ namespace MBSimGUI {
     }
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
+    if(i==2)
+      return new UnknownWidget;
     return nullptr;
   }
 
@@ -489,10 +514,12 @@ namespace MBSimGUI {
     name.emplace_back("Linear spring damper force");
     name.emplace_back("Nonlinear spring damper force");
     name.emplace_back("Symbolic function");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"LinearElasticFunction");
     xmlName.push_back(MBSIM%"LinearSpringDamperForce");
     xmlName.push_back(MBSIM%"NonlinearSpringDamperForce");
     xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   QWidget* SpringDamperWidgetFactory::createWidget(int i) {
@@ -504,6 +531,8 @@ namespace MBSimGUI {
       return new NonlinearSpringDamperForceWidget(element,parent);
     if(i==3)
       return new SymbolicFunctionWidget(QStringList("g")<<"gd",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::scalar),1,FunctionWidget::scalar);
+    if(i==4)
+      return new UnknownWidget;
     return nullptr;
   }
 
@@ -514,6 +543,7 @@ namespace MBSimGUI {
     name.emplace_back("Piecewise polynom function");
     name.emplace_back("Polar contour function");
     name.emplace_back("Symbolic function");
+    name.emplace_back("Unknown function");
     name.emplace_back("Vector valued function");
     xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"ContinuedFunction");
@@ -521,6 +551,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"PiecewisePolynomFunction");
     xmlName.push_back(MBSIM%"PolarContourFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
@@ -546,7 +577,9 @@ namespace MBSimGUI {
       return new PolarContourFunctionWidget(element,parent);
     if(i==5)
       return new SymbolicFunctionWidget(QStringList(var),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
-    if(i==6) {
+    if(i==6)
+      return new UnknownWidget;
+    if(i==7) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
       return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),3,FunctionWidget::fixedVec);
@@ -558,10 +591,12 @@ namespace MBSimGUI {
     name.emplace_back("Composite function");
     name.emplace_back("Continued function");
     name.emplace_back("Symbolic function");
+    name.emplace_back("Unknown function");
     name.emplace_back("Vector valued function");
     xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"ContinuedFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
@@ -578,7 +613,9 @@ namespace MBSimGUI {
     }
     if(i==2)
       return new SymbolicFunctionWidget(QStringList(var),vector<int>(1,2),vector<FunctionWidget::VarType>(1,FunctionWidget::fixedVec),3,FunctionWidget::fixedVec);
-    if(i==3) {
+    if(i==3)
+      return new UnknownWidget;
+    if(i==4) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
       return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),3,FunctionWidget::fixedVec);
@@ -590,9 +627,11 @@ namespace MBSimGUI {
     name.emplace_back("Constant function");
     name.emplace_back("Gravity function");
     name.emplace_back("Symbolic function");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"ConstantFunction");
     xmlName.push_back(MBSIMPHYSICS%"GravityFunction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   QWidget* GravityFunctionWidgetFactory::createWidget(int i) {
@@ -602,6 +641,8 @@ namespace MBSimGUI {
       return new GravityFunctionWidget;
     if(i==2)
       return new SymbolicFunctionWidget(QStringList("g"),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),1,FunctionWidget::scalar);
+    if(i==3)
+      return new UnknownWidget;
     return nullptr;
   }
 }

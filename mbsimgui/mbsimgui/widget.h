@@ -56,6 +56,7 @@ namespace MBSimGUI {
       virtual QString getName(int i=0) const { return ""; }
       virtual int getSize() const { return 0; }
       virtual int getDefaultIndex() const { return 0; }
+      virtual int getFallbackIndex() const { return getDefaultIndex(); }
       virtual MBXMLUtils::FQN getXMLName(int i=0) const { return ""; }
   };
 

@@ -201,10 +201,17 @@ namespace MBSimGUI {
     QAction *action = new QAction("Add fixed relative frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFixedRelativeFrame()));
     addAction(action);
+    action = new QAction("Add unknown frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addUnknownFrame()));
+    addAction(action);
   }
 
   void FixedRelativeFramesContextMenu::addFixedRelativeFrame() {
     mw->addFrame(new FixedRelativeFrame, element);
+  }
+
+  void FixedRelativeFramesContextMenu::addUnknownFrame() {
+    mw->addFrame(new UnknownFrame, element);
   }
 
   NodeFramesContextMenu::NodeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {
@@ -218,6 +225,9 @@ namespace MBSimGUI {
     action = new QAction("Add ffr interface node frame", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addFfrInterfaceNodeFrame()));
     addAction(action);
+    action = new QAction("Add unknown frame", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addUnknownFrame()));
+    addAction(action);
   }
 
   void NodeFramesContextMenu::addNodeFrame() {
@@ -230,6 +240,10 @@ namespace MBSimGUI {
 
   void NodeFramesContextMenu::addFfrInterfaceNodeFrame() {
     mw->addFrame(new FfrInterfaceNodeFrame, element);
+  }
+
+  void NodeFramesContextMenu::addUnknownFrame() {
+    mw->addFrame(new UnknownFrame, element);
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
@@ -319,6 +333,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add spatial nurbs contour", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSpatialNurbsContour()));
+    addAction(action);
+    action = new QAction("Add unknown contour", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addUnknownContour()));
     addAction(action);
   }
 
@@ -430,6 +447,10 @@ namespace MBSimGUI {
     mw->addContour(new FclMesh, element);
   }
 
+  void ContoursContextMenu::addUnknownContour() {
+    mw->addContour(new UnknownContour, element);
+  }
+
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -486,6 +507,9 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(addRigidBody()));
     menu->addAction(action);
     addMenu(menu);
+    action = new QAction("Add unknown object", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addUnknownObject()));
+    addAction(action);
   }
 
   void ObjectsContextMenu::paste() {
@@ -510,6 +534,10 @@ namespace MBSimGUI {
 
   void ObjectsContextMenu::addCalculixBody() {
     mw->addObject(new CalculixBody, element);
+  }
+
+  void ObjectsContextMenu::addUnknownObject() {
+    mw->addObject(new UnknownObject, element);
   }
 
   LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : BasicElementMenu(element,title,parent) {
@@ -576,6 +604,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add universal gravitation", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addUniversalGravitation()));
+    addAction(action);
+    action = new QAction("Add unknown link", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addUnknownLink()));
     addAction(action);
     action = new QAction("Add weight", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addWeight()));
@@ -666,6 +697,10 @@ namespace MBSimGUI {
     mw->addLink(new Aerodynamics, element);
   }
 
+  void LinksContextMenu::addUnknownLink() {
+    mw->addLink(new UnknownLink, element);
+  }
+
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -698,6 +733,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add joint constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addJointConstraint()));
+    addAction(action);
+    action = new QAction("Add unknown constraint", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addUnknownConstraint()));
     addAction(action);
   }
 
@@ -741,6 +779,10 @@ namespace MBSimGUI {
     mw->addConstraint(new InverseKinematicsConstraint, element);
   }
 
+  void ConstraintsContextMenu::addUnknownConstraint() {
+    mw->addConstraint(new UnknownConstraint, element);
+  }
+
   ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     connect(action,SIGNAL(triggered()),this,SLOT(paste()));
@@ -773,6 +815,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add signal observer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addSignalObserver()));
+    addAction(action);
+    action = new QAction("Add unknown observer", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addUnknownObserver()));
     addAction(action);
   }
 
@@ -814,6 +859,10 @@ namespace MBSimGUI {
 
   void ObserversContextMenu::addSignalObserver() {
     mw->addObserver(new SignalObserver, element);
+  }
+
+  void ObserversContextMenu::addUnknownObserver() {
+    mw->addObserver(new UnknownObserver, element);
   }
 
   SignalsContextMenu::SignalsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
