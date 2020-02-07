@@ -49,9 +49,9 @@ namespace MBSim {
     z[1] = rack->getNumberOfTeeth();
     s0h2 = (m*M_PI/2-rack->getBacklash())/2;
     delh1 = (M_PI/2-gear->getBacklash()/m)/z[0];
-    etamax1[0][0] = gear->getEtaMax(m*z[0]*cos(al)/2,0);
+    etamax1[0][0] = gear->getEtaMax(m*z[0]*cos(al)/2,(beta[0]>=0?-1:1)*gear->getWidth()/2);
     etamax1[1][0] = gear->getEtaMax(m*z[0]*cos(al)/2,(beta[0]>=0?1:-1)*gear->getWidth()/2);
-    etamax1[0][1] = gear->getEtaMax(m*z[0]/2+gear->getModule(),0);
+    etamax1[0][1] = gear->getEtaMax(m*z[0]/2+gear->getModule(),(beta[0]>=0?1:-1)*gear->getWidth()/2);
     etamax1[1][1] = gear->getEtaMax(m*z[0]/2+gear->getModule(),(beta[0]>=0?-1:1)*gear->getWidth()/2);
   }
 
@@ -65,10 +65,12 @@ namespace MBSim {
     Vec3 ey1 = gear->getFrame()->evalOrientation().T()*rack->getFrame()->evalOrientation().col(1);
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2)));
     double xmax[2][2];
-    xmax[0][0] = fabs((-rack->getModule()/cos(al0)*(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2))/cos(beta[1])+y2*cos(al0)*cos(beta[1]))/sin(al0)+z2*tan(beta[1]));
-    xmax[1][0] = (beta[1]>=0?1:-1)*rack->getWidth()/2*tan(beta[1])+xmax[0][0];
-    xmax[0][1] = fabs((rack->getModule()/cos(al0)*(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2))/cos(beta[1])+y2*cos(al0)*cos(beta[1]))/sin(al0)+z2*tan(beta[1]));
-    xmax[1][1] = (beta[1]>=0?1:-1)*rack->getWidth()/2*tan(beta[1])+xmax[0][1];
+    double xmax0 = fabs((-rack->getModule()/cos(al0)*(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2))/cos(beta[1])+y2*cos(al0)*cos(beta[1]))/sin(al0)+z2*tan(beta[1]));
+    xmax[0][0] = (beta[1]>=0?-1:1)*rack->getWidth()/2*tan(beta[1])+xmax0;
+    xmax[1][0] = (beta[1]>=0?1:-1)*rack->getWidth()/2*tan(beta[1])+xmax0;
+    xmax0 = fabs((rack->getModule()/cos(al0)*(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2))/cos(beta[1])+y2*cos(al0)*cos(beta[1]))/sin(al0)+z2*tan(beta[1]));
+    xmax[0][1] = (beta[1]>=0?-1:1)*rack->getWidth()/2*tan(beta[1])+xmax0;
+    xmax[1][1] = (beta[1]>=0?1:-1)*rack->getWidth()/2*tan(beta[1])+xmax0;
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;
       Vec3 rOP[2];

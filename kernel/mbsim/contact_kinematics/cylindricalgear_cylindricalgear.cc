@@ -52,13 +52,13 @@ namespace MBSim {
     delh2 = (M_PI/2-(gear[1]->getExternalToothed()?1:-1)*gear[1]->getBacklash()/m)/z[1];
     a0 = m*((gear[1]->getExternalToothed()?z[0]:-z[0])+z[1])/2;
     signe = gear[1]->getExternalToothed()?1:-1;
-    etamax1[0][0] = gear[0]->getEtaMax(m*z[0]*cos(al)/2,0);
+    etamax1[0][0] = gear[0]->getEtaMax(m*z[0]*cos(al)/2,(beta[0]>=0?-1:1)*gear[0]->getWidth()/2);
     etamax1[1][0] = gear[0]->getEtaMax(m*z[0]*cos(al)/2,(beta[0]>=0?1:-1)*gear[0]->getWidth()/2);
-    etamax1[0][1] = gear[0]->getEtaMax(m*z[0]/2+gear[0]->getModule(),0);
+    etamax1[0][1] = gear[0]->getEtaMax(m*z[0]/2+gear[0]->getModule(),(beta[0]>=0?1:-1)*gear[0]->getWidth()/2);
     etamax1[1][1] = gear[0]->getEtaMax(m*z[0]/2+gear[0]->getModule(),(beta[0]>=0?-1:1)*gear[0]->getWidth()/2);
-    etamax2[0][0] = gear[1]->getEtaMax(m*z[1]*cos(al)/2,0);
+    etamax2[0][0] = gear[1]->getEtaMax(m*z[1]*cos(al)/2,(beta[1]>=0?-1:1)*gear[1]->getWidth()/2);
     etamax2[1][0] = gear[1]->getEtaMax(m*z[1]*cos(al)/2,(beta[1]>=0?1:-1)*gear[1]->getWidth()/2);
-    etamax2[0][1] = gear[1]->getEtaMax(m*z[1]/2+gear[1]->getModule(),0);
+    etamax2[0][1] = gear[1]->getEtaMax(m*z[1]/2+gear[1]->getModule(),(beta[1]>=0?1:-1)*gear[1]->getWidth()/2);
     etamax2[1][1] = gear[1]->getEtaMax(m*z[1]/2+gear[1]->getModule(),(beta[1]>=0?-1:1)*gear[1]->getWidth()/2);
   }
 
