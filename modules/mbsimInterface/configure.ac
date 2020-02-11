@@ -24,6 +24,11 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
+dnl Include path for Boost
+AC_ARG_WITH([boost-inc],
+  [  --with-boost-inc=PATH  The path Boost include directory.],
+  [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
+
 dnl Check for optional boost type_trains and static_assert
 AC_CHECK_HEADERS([boost/asio.hpp], [], [])
 

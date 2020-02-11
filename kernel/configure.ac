@@ -56,6 +56,11 @@ AC_TYPE_SIZE_T
 AC_ARG_WITH([lowram], [  --with-lowram  Disable parallel build for subdirs known to need mutch memory], [LOWRAM="1"], [LOWRAM="0"])
 AM_CONDITIONAL([COND_LOWRAM], [test "_$LOWRAM" == "_1"])
 
+dnl Include path for Boost
+AC_ARG_WITH([boost-inc],
+  [  --with-boost-inc=PATH  The path Boost include directory.],
+  [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
+
 dnl Include boost system lib
 AC_ARG_WITH([boost-system-lib],
   [  --with-boost-system-lib=LIBNAME  The library name of boost system excluding prefix/suffix (Default: boost_system).],
