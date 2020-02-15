@@ -47,6 +47,7 @@ namespace MBSim {
       std::stringstream func(MBXMLUtils::E(element)->getText<std::string>());
       char buf[10];
       func.read(buf, 9);
+      buf[9]=0;
       if(buf!=std::string("function("))
         throw MBXMLUtils::DOMEvalException("Function does not start with 'function(': "+
               MBXMLUtils::E(element)->getText<std::string>(), element);
@@ -104,6 +105,7 @@ namespace MBSim {
       std::stringstream func(MBXMLUtils::E(element)->getText<std::string>());
       char buf[10];
       func.read(buf, 9);
+      buf[9]=0;
       if(buf!=std::string("function("))
         throw MBXMLUtils::DOMEvalException("Function does not start with 'function(': "+
               MBXMLUtils::E(element)->getText<std::string>(), element);
