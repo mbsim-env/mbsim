@@ -23,6 +23,15 @@ AC_FC_WRAPPERS
 # enable C++11
 CXXFLAGS="$CXXFLAGS -std=c++11 -D_USE_MATH_DEFINES"
 
+# check compiler options
+AC_MSG_CHECKING([for compiler option -Wno-error=stringop-overflow=])
+OLDFLAGS=$CXXFLAGS
+CXXFLAGS="$CXXFLAGS -Wno-error=stringop-overflow="
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() { return 0; }])],
+  [AC_MSG_RESULT([yes]); AC_SUBST([CXXFLAGSNOWERRORSTRINGOP], [-Wno-error=stringop-overflow=])],
+  [AC_MSG_RESULT([no])])
+CXXFLAGS=$OLDFLAGS
+
 AC_C_CONST
 
 PKG_CHECK_MODULES(FMATVEC, fmatvec >= 1.0.1) # only fmatvec
