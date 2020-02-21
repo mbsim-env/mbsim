@@ -21,6 +21,7 @@
 #define PLANAR_GEAR_H_
 
 #include "mbsim/contours/rigid_contour.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
 #include <openmbvcppinterface/planargear.h>
@@ -68,6 +69,13 @@ namespace MBSim {
       double getBacklash() { return b; }
       void setFlank(int flank) { signi = flank; }
       void setTooth(int tooth) { k = tooth; }
+      double getPhiMax(double h, double s);
+      double getPhiMaxHigh(int i) { return phiMaxHigh; }
+      double getPhiMaxLow(int i) { return phiMaxLow; }
+      double getPhiMinHigh(int i) { return phiMinHigh; }
+      double getPhiMinLow(int i) { return phiMinLow; }
+      double getSPhiMaxHigh(int i) { return sPhiMaxHigh; }
+      double getSPhiMinHigh(int i) { return sPhiMinHigh; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
@@ -78,6 +86,14 @@ namespace MBSim {
     void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
+      class Residuum : public Function<double(double)> {
+        private:
+          double h, s, r0, al, be;
+        public:
+          Residuum(double h_, double s_, double r0_, double al_, double be_) : h(h_), s(s_), r0(r0_), al(al_), be(be_) { }
+          double operator()(const double &phi) override;
+      };
+
       int N{15};
       double h{5e-2};
       double w{5e-2};
@@ -90,6 +106,8 @@ namespace MBSim {
       int k{0};
       double delh;
       double r0;
+
+      double phiMaxHigh, phiMaxLow, phiMinHigh, phiMinLow, sPhiMaxHigh, sPhiMinHigh;
   };
 
 }

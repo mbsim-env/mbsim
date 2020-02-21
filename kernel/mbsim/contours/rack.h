@@ -68,6 +68,12 @@ namespace MBSim {
       double getBacklash() { return b; }
       void setFlank(int flank) { signi = flank; }
       void setTooth(int tooth) { k = tooth; }
+      double getXMaxHigh(int i) { return xHigh; }
+      double getXMaxLow(int i) { return xLow; }
+      double getXMinHigh(int i) { return -xHigh; }
+      double getXMinLow(int i) { return -xLow; }
+      double getSXMaxHigh(int i) { return sXHigh; }
+      double getSXMinHigh(int i) { return -sXHigh; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
@@ -89,6 +95,8 @@ namespace MBSim {
       int signi{0};
       int k{0};
       double s0h;
+
+      double xHigh, xLow, sXHigh;
   };
 
 }

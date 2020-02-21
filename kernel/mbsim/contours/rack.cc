@@ -58,6 +58,10 @@ namespace MBSim {
   void Rack::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       s0h = (m/cos(be)*M_PI/2-b)/2;
+      sXHigh = be>=0?-w/2:w/2;
+      double xMax0 = m/cos(al)*(pow(sin(be)*sin(al),2)+pow(cos(be),2))/cos(be)/sin(al);
+      xHigh = xMax0 - sXHigh*tan(be);
+      xLow = xMax0 + sXHigh*tan(be);
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {

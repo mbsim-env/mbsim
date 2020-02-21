@@ -60,7 +60,6 @@ namespace MBSim {
       double ga[2];
       double delh1, delh2;
       double delmin[2], delmax[2];
-      double etamax1[2][2], etamax2[2][2];
       int ksave[2][2];
       int signisave[2]{1,1};
 

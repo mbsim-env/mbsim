@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/contours/planar_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -29,6 +30,10 @@ using namespace xercesc;
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, PlanarGear)
+
+  double PlanarGear::Residuum::operator()(const double &phi) {
+    return sin(phi)*r0*cos(be)+s*sin(phi+be)-h/cos(al)/sin(al)*(sin(phi+be)*pow(sin(al),2)*sin(be)+cos(phi+be)*cos(be));
+  }
 
   Vec3 PlanarGear::evalKrPS(const Vec2 &zeta) {
     static Vec3 KrPS(NONINIT);
@@ -55,10 +60,42 @@ namespace MBSim {
     return BasicRotAIKy(k*2*M_PI/N+signi*delh)*Kt;
   }
 
+  double PlanarGear::getPhiMax(double h, double s) {
+    Residuum f(h,s,r0,al,be);
+    NewtonMethod newton(&f);
+    double phi = newton.solve(atan(2*h/(sin(al)*cos(al)*N*m)));
+    if(newton.getInfo()!=0) throw 1;
+    return phi;
+  }
+
   void PlanarGear::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       delh = (M_PI/2-b/m*cos(be))/N;
       r0 = m*N/cos(be)/2;
+      double mpsp = getPhiMax(m,w/2);
+      double mpsm = getPhiMax(m,-w/2);
+      double mmsp = getPhiMax(-m,w/2);
+      double mmsm = getPhiMax(-m,-w/2);
+      if(mpsp>=mpsm) {
+        phiMaxHigh = mpsp;
+        phiMaxLow = mpsm;
+        sPhiMaxHigh = w/2;
+      }
+      else {
+        phiMaxHigh = mpsm;
+        phiMaxLow = mpsp;
+        sPhiMaxHigh = -w/2;
+      }
+      if(mmsp<=mmsm) {
+        phiMinHigh = mmsp;
+        phiMinLow = mmsm;
+        sPhiMinHigh = w/2;
+      }
+      else {
+        phiMinHigh = mmsm;
+        phiMinLow = mmsp;
+        sPhiMinHigh = -w/2;
+      }
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {

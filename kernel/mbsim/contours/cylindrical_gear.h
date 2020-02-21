@@ -73,6 +73,12 @@ namespace MBSim {
       void setFlank(int flank) { signi = flank; }
       void setTooth(int tooth) { k = tooth; }
       double getEtaMax(double r, double s);
+      double getPhiMaxHigh(int i) { return phiHigh[i]; }
+      double getPhiMaxLow(int i) { return phiLow[i]; }
+      double getPhiMinHigh(int i) { return -phiHigh[not i]; }
+      double getPhiMinLow(int i) { return -phiLow[not i]; }
+      double getSPhiMaxHigh(int i) { return sPhiHigh; }
+      double getSPhiMinHigh(int i) { return -sPhiHigh; }
       /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
@@ -95,6 +101,8 @@ namespace MBSim {
       int k{0};
       double delh;
       double r0;
+
+      double phiHigh[2], phiLow[2], sPhiHigh;
   };
 
 }

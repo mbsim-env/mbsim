@@ -52,14 +52,6 @@ namespace MBSim {
     delh2 = (M_PI/2-(gear[1]->getExternalToothed()?1:-1)*gear[1]->getBacklash()/m)/z[1];
     a0 = m*((gear[1]->getExternalToothed()?z[0]:-z[0])+z[1])/2;
     signe = gear[1]->getExternalToothed()?1:-1;
-    etamax1[0][0] = gear[0]->getEtaMax(m*z[0]*cos(al)/2,(beta[0]>=0?-1:1)*gear[0]->getWidth()/2);
-    etamax1[1][0] = gear[0]->getEtaMax(m*z[0]*cos(al)/2,(beta[0]>=0?1:-1)*gear[0]->getWidth()/2);
-    etamax1[0][1] = gear[0]->getEtaMax(m*z[0]/2+gear[0]->getModule(),(beta[0]>=0?1:-1)*gear[0]->getWidth()/2);
-    etamax1[1][1] = gear[0]->getEtaMax(m*z[0]/2+gear[0]->getModule(),(beta[0]>=0?-1:1)*gear[0]->getWidth()/2);
-    etamax2[0][0] = gear[1]->getEtaMax(m*z[1]*cos(al)/2,(beta[1]>=0?-1:1)*gear[1]->getWidth()/2);
-    etamax2[1][0] = gear[1]->getEtaMax(m*z[1]*cos(al)/2,(beta[1]>=0?1:-1)*gear[1]->getWidth()/2);
-    etamax2[0][1] = gear[1]->getEtaMax(m*z[1]/2+gear[1]->getModule(),(beta[1]>=0?1:-1)*gear[1]->getWidth()/2);
-    etamax2[1][1] = gear[1]->getEtaMax(m*z[1]/2+gear[1]->getModule(),(beta[1]>=0?-1:1)*gear[1]->getWidth()/2);
   }
 
   void ContactKinematicsCylindricalGearCylindricalGear::updateg(SingleContact &contact, int ii) {
@@ -86,12 +78,12 @@ namespace MBSim {
         v[0].push_back(round(-(phi1 - signi*(delh1) + phi1corr)/(2*M_PI/z[0])));
       }
       else {
-        int kmax = floor(-(-etamax1[1][i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
-        int kmin = ceil(-(etamax1[1][not i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        int kmax = floor((gear[0]->getPhiMaxHigh(i) - (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        int kmin = ceil((gear[0]->getPhiMinHigh(i) - (phi1 - signi*delh1))/(2*M_PI/z[0]));
         for(int k_=kmin; k_<=kmax; k_++)
           v[0].push_back(k_);
-        kmax = floor(-(-etamax2[1][i] + (phi2 - signi*delh2))/(2*M_PI/z[1]));
-        kmin = ceil(-(etamax2[1][not i] + (phi2 - signi*delh2))/(2*M_PI/z[1]));
+        kmax = floor((gear[1]->getPhiMaxHigh(i) - (phi2 - signi*delh2))/(2*M_PI/z[1]));
+        kmin = ceil((gear[1]->getPhiMinHigh(i) - (phi2 - signi*delh2))/(2*M_PI/z[1]));
         for(int k_=kmin; k_<=kmax; k_++)
           v[1].push_back(k_);
       }
@@ -103,17 +95,21 @@ namespace MBSim {
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta1(NONINIT), zeta2(NONINIT);
-            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*(delh1+dal));
-            double s = 0;
-            if(zeta1(0)>etamax1[0][not i])
-              s = (beta[0]>=0?-1:1)*max(s,gear[0]->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]));
-            else if(zeta1(0)<-etamax1[0][i])
-              s = (beta[0]>=0?1:-1)*max(s,gear[0]->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]));
-            zeta2(0) = -(phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal));
-            if(zeta2(0)>etamax2[0][not i])
-              s = (beta[1]>=0?-1:1)*max(fabs(s),gear[0]->getWidth()/2/(etamax2[1][not i]-etamax2[0][not i])*(zeta2(0)-etamax2[0][not i]));
-            else if(zeta2(0)<-etamax2[0][i])
-              s = (beta[1]>=0?1:-1)*max(fabs(s),gear[0]->getWidth()/2/(-etamax2[1][i]+etamax2[0][i])*(zeta2(0)+etamax2[0][i]));
+            double phi1q = phi1+k[0]*2*M_PI/z[0]-signi*(delh1+dal);
+            zeta1(0) = -phi1q;
+            double s1 = 0;
+            if(phi1q>gear[0]->getPhiMaxLow(i))
+              s1 = gear[0]->getSPhiMaxHigh(i)/(gear[0]->getPhiMaxHigh(i)-gear[0]->getPhiMaxLow(i))*(phi1q-gear[0]->getPhiMaxLow(i));
+            else if(phi1q<gear[0]->getPhiMinLow(i))
+              s1 = gear[0]->getSPhiMinHigh(i)/(gear[0]->getPhiMinHigh(i)-gear[0]->getPhiMinLow(i))*(phi1q-gear[0]->getPhiMinLow(i));
+            double phi2q = phi2+k[1]*2*M_PI/z[1]-signi*(delh2+dal);
+            zeta2(0) = -phi2q;
+            double s2 = 0;
+            if(phi2q>gear[1]->getPhiMaxLow(i))
+              s2 = gear[1]->getSPhiMaxHigh(i)/(gear[1]->getPhiMaxHigh(i)-gear[1]->getPhiMaxLow(i))*(phi2q-gear[1]->getPhiMaxLow(i));
+            else if(phi2q<gear[1]->getPhiMinLow(i))
+              s2 = gear[1]->getSPhiMinHigh(i)/(gear[1]->getPhiMinHigh(i)-gear[1]->getPhiMinLow(i))*(phi2q-gear[1]->getPhiMinLow(i));
+            double s = fabs(s2)>fabs(s1)?s2:s1;
             zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+(s+z1)*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);

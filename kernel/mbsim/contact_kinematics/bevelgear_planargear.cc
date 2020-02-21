@@ -48,14 +48,6 @@ namespace MBSim {
     z[1] = planargear->getNumberOfTeeth();
     delh2 = (M_PI/2-planargear->getBacklash()/m)/z[1];
     delh1 = (M_PI/2-bevelgear->getBacklash()/m)/z[0];
-    etamax1[0][0] = bevelgear->getEtaMax(0,0); // TODO: determine correct etamax
-    etamax1[1][0] = bevelgear->getEtaMax(0,0); // TODO: determine correct etamax
-    etamax1[0][1] = bevelgear->getEtaMax(0,0); // TODO: determine correct etamax
-    etamax1[1][1] = bevelgear->getEtaMax(0,0); // TODO: determine correct etamax
-    phimax[0][0] = atan(2/cos(al0)/sin(al0)/z[0]); // TODO: determine phimax for helix angles
-    phimax[1][0] = phimax[0][0]; // TODO: determine phimax for helix angles
-    phimax[0][1] = atan(2/cos(al0)/sin(al0)/z[0]); // TODO: determine phimax for helix angles
-    phimax[1][1] = phimax[0][1]; // TODO: determine phimax for helix angles
   }
 
   void ContactKinematicsBevelGearPlanarGear::updateg(SingleContact &contact, int ii) {
@@ -77,12 +69,12 @@ namespace MBSim {
         v[0].push_back(round(-(phi1 - signi*delh1 - phi1corr)/(2*M_PI/z[0])));
       }
       else {
-        int kmax = floor(-(-etamax1[1][i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
-        int kmin = ceil(-(etamax1[1][not i] + (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        int kmax = floor((bevelgear->getPhiMaxHigh(i) - (phi1 - signi*delh1))/(2*M_PI/z[0]));
+        int kmin = ceil((bevelgear->getPhiMinHigh(i) - (phi1 - signi*delh1))/(2*M_PI/z[0]));
         for(int k_=kmin; k_<=kmax; k_++)
           v[0].push_back(k_);
-        kmax = floor((phimax[1][i] - (phi2 + signi*delh2))/(2*M_PI/z[1]));
-        kmin = ceil((-phimax[1][not i] - (phi2 + signi*delh2))/(2*M_PI/z[1]));
+        kmax = floor((planargear->getPhiMaxHigh(i) - (phi2 + signi*delh2))/(2*M_PI/z[1]));
+        kmin = ceil((planargear->getPhiMinHigh(i) - (phi2 + signi*delh2))/(2*M_PI/z[1]));
         for(int k_=kmin; k_<=kmax; k_++)
           v[1].push_back(k_);
       }
@@ -94,17 +86,20 @@ namespace MBSim {
           k[1] = i1;
           if(ii==0 or not(k[0]==ksave[0][0] and k[1]==ksave[0][1])) {
             Vec2 zeta1(NONINIT), zeta2(NONINIT);
-            zeta1(0) = -(phi1+k[0]*2*M_PI/z[0]-signi*delh1);
-            double s = 0;
-            if(zeta1(0)>etamax1[0][not i])
-              s = (beta[0]>=0?-1:1)*max(s,bevelgear->getWidth()/2/(etamax1[1][not i]-etamax1[0][not i])*(zeta1(0)-etamax1[0][not i]));
-            else if(zeta1(0)<-etamax1[0][i])
-              s = (beta[0]>=0?1:-1)*max(s,bevelgear->getWidth()/2/(-etamax1[1][i]+etamax1[0][i])*(zeta1(0)+etamax1[0][i]));
+            double phi1q = phi1+k[0]*2*M_PI/z[0]-signi*delh1;
+            zeta1(0) = -phi1q;
+            double s1 = 0;
+            if(phi1q>bevelgear->getPhiMaxLow(i))
+              s1 = bevelgear->getSPhiMaxHigh(i)/(bevelgear->getPhiMaxHigh(i)-bevelgear->getPhiMaxLow(i))*(phi1q-bevelgear->getPhiMaxLow(i));
+            else if(phi1q<bevelgear->getPhiMinLow(i))
+              s1 = bevelgear->getSPhiMinHigh(i)/(bevelgear->getPhiMinHigh(i)-bevelgear->getPhiMinLow(i))*(phi1q-bevelgear->getPhiMinLow(i));
             double phi2q = phi2+k[1]*2*M_PI/z[1]+signi*delh2;
-            if(phi2q>phimax[0][i])
-              s = (beta[1]>=0?-1:1)*max(fabs(s),planargear->getWidth()/2/(phimax[1][i]-phimax[0][i])*(phi2q-phimax[0][i]));
-            else if(phi2q<-phimax[0][not i])
-              s = (beta[1]>=0?1:-1)*max(fabs(s),planargear->getWidth()/2/(-phimax[1][not i]+phimax[0][not i])*(phi2q+phimax[0][not i]));
+            double s2 = 0;
+            if(phi2q>planargear->getPhiMaxLow(i))
+              s2 = planargear->getSPhiMaxHigh(i)/(planargear->getPhiMaxHigh(i)-planargear->getPhiMaxLow(i))*(phi2q-planargear->getPhiMaxLow(i));
+            else if(phi2q<planargear->getPhiMinLow(i))
+              s2 = planargear->getSPhiMinHigh(i)/(planargear->getPhiMinHigh(i)-planargear->getPhiMinLow(i))*(phi2q-planargear->getPhiMinLow(i));
+            double s = fabs(s2)>fabs(s1)?s2:s1;
             zeta2(1) = (s*cos(phi2q+beta[1])-m*z[1]/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[1]))/(sin(phi2q+beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2q+beta[1])*cos(beta[1]));
             zeta2(0) = (sin(phi2q)/cos(phi2q+beta[1])*m*z[1]/2 + zeta2(1)*tan(phi2q+beta[1]))*sin(al0);
             planargear->setFlank(signi);

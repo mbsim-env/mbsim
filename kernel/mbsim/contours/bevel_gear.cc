@@ -37,11 +37,11 @@ namespace MBSim {
     double phi = -r0/r1*eta;
     double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
-    double b = signi*l*cos(al)-d*sin(ga);
-    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
+    double b = signi*l*cos(al);
+    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi);
     KrPS(0) = a*cos(eta)-b*sin(eta)*cos(ga)+c*sin(eta)*sin(ga);
     KrPS(1) = a*sin(eta)+b*cos(eta)*cos(ga)-c*cos(eta)*sin(ga);
-    KrPS(2) = b*sin(ga)+c*cos(ga);
+    KrPS(2) = b*sin(ga)+c*cos(ga)-d;
     return BasicRotAIKz(k*2*M_PI/N-signi*delh)*KrPS;
   }
 
@@ -52,8 +52,8 @@ namespace MBSim {
     double phi = -r0/r1*eta;
     double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
-    double b = signi*l*cos(al)-d*sin(ga);
-    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
+    double b = signi*l*cos(al);
+    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi);
     double phis = -r0/r1;
     double ls = ((cos(phi)/cos(phi-be)+sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*r1+xi/pow(cos(phi-be),2))*phis*sin(al);
     double as = -ls*sin(al)*cos(phi-be)+(l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi))*phis;
@@ -86,8 +86,8 @@ namespace MBSim {
     double phi = -r0/r1*eta;
     double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
-    double b = signi*l*cos(al)-d*sin(ga);
-    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi)-d*cos(ga);
+    double b = signi*l*cos(al);
+    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi);
     double phis = -r0/r1;
     double ls = ((cos(phi)/cos(phi-be)+sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*r1+xi/pow(cos(phi-be),2))*phis*sin(al);
     double as = -ls*sin(al)*cos(phi-be)+(l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi))*phis;
@@ -118,16 +118,24 @@ namespace MBSim {
     return parDer2Kt;
   }
 
-  double BevelGear::getEtaMax(double h, double s) {
-    return 2*m/cos(al); // TODO: implement correct etamax for bevel gears
-  }
-
   void BevelGear::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       delh = (M_PI/2-b/m*cos(be))/N;
       r0 = m*N/cos(be)/2;
       r1 = r0/sin(ga);
       d = sqrt(pow(r1,2)-pow(r0,2));
+      phiMaxHigh[0] = 2*m/cos(al);
+      phiMaxLow[0] = 2*m/cos(al);
+      phiMinHigh[0] = -2*m/cos(al);
+      phiMinLow[0] = -2*m/cos(al);
+      phiMaxHigh[1] = 2*m/cos(al);
+      phiMaxLow[1] = 2*m/cos(al);
+      phiMinHigh[1] = -2*m/cos(al);
+      phiMinLow[1] = -2*m/cos(al);
+      sPhiMaxHigh[0] = 0;
+      sPhiMinHigh[0] = 0;
+      sPhiMaxHigh[1] = 0;
+      sPhiMinHigh[1] = 0;
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
