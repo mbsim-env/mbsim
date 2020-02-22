@@ -3,17 +3,17 @@
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
-      <scalarParameter name="m">15e-2</scalarParameter>
+      <scalarParameter name="m">15e-3</scalarParameter>
       <scalarParameter name="z1">20</scalarParameter>
       <scalarParameter name="z2">15</scalarParameter>
       <scalarParameter name="be">0</scalarParameter>
       <scalarParameter name="de1">m*z1/cosd(be)</scalarParameter>
       <scalarParameter name="de2">m*z2/cosd(be)</scalarParameter>
-      <scalarParameter name="al">30/180*pi</scalarParameter>
+      <scalarParameter name="al">20/180*pi</scalarParameter>
       <scalarParameter name="ga">asin(de2/de1)</scalarParameter>
       <scalarParameter name="d">sqrt(de1^2-de2^2)/2</scalarParameter>
-      <scalarParameter name="b1">5</scalarParameter>
-      <scalarParameter name="b2">5</scalarParameter>
+      <scalarParameter name="b1">0.5</scalarParameter>
+      <scalarParameter name="b2">0.5</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
@@ -199,11 +199,14 @@
           <contact ref="../Link[Contact]"/>
           <enableOpenMBVContactPoints>
             <lineWidth>5</lineWidth>
-            <size unit="dm">1</size>
+            <size unit="cm">1</size>
           </enableOpenMBVContactPoints>
-          <enableOpenMBVNormalForce/>
+          <enableOpenMBVNormalForce>
+            <scaleLength>0.1</scaleLength>
+          </enableOpenMBVNormalForce>
         </ContactObserver>
-      </observers><enableOpenMBVFrameI>
+      </observers>
+      <enableOpenMBVFrameI>
         <size unit="dm">1</size>
       </enableOpenMBVFrameI><environments>
         <MBSimEnvironment>
@@ -225,5 +228,7 @@
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
+
+
 
 </MBSimProject>
