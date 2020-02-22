@@ -325,7 +325,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(factory)),"Function",0,0),false,false,MBSIM%"limitedFunctions");
+    functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(factory)),"Function",1,0,false,1),false,false,MBSIM%"limitedFunctions");
     layout->addWidget(functions);
 
     shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
