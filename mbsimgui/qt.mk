@@ -3,7 +3,6 @@
 SUFFIXES=.moc.cc .moc.cpp .moc.cxx .moc.C\
 	 .h .hh \
          .ui .ui.h .ui.hh \
-         .qrc .qrc.cc .qrc.cpp .qrc.cxx .qrc.C \
          .rc .o
 
 # Moc rules
@@ -35,20 +34,6 @@ SUFFIXES=.moc.cc .moc.cpp .moc.cxx .moc.C\
 
 .ui.ui.h:
 	$(UIC) $< -o $@
-
-# Qrc rules
-
-.qrc.qrc.cc:
-	$(RCC) -name $$(echo "$<" | sed 's/\.qrc$$//') $< -o $@
-
-.qrc.qrc.cpp:
-	$(RCC) -name $$(echo "$<" | sed 's/\.qrc$$//') $< -o $@
-
-.qrc.qrc.cxx:
-	$(RCC) -name $$(echo "$<" | sed 's/\.qrc$$//') $< -o $@
-
-.qrc.qrc.C:
-	$(RCC) -name $$(echo "$<" | sed 's/\.qrc$$//') $< -o $@
 
 # windows rc rules
 .rc.o:

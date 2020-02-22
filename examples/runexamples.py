@@ -1999,7 +1999,7 @@ def coverage(mainFD):
     "*/openmbv*/mbxmlutils/mbxmlutils/*", # SWIG generated
     "*/mbsim*/thirdparty/nurbs++/*/*", "*/include/nurbs++/*", "*/mbsim*/kernel/mbsim/numerics/csparse.*", # 3rd party
     "*/mbsim*/examples/*", # mbsim examples
-    "*.moc.cc", "*.qrc.cc", # mbsim generated
+    "*.moc.cc", # mbsim generated
     "*/hdf5serie*/h5plotserie/h5plotserie/*", "*/openmbv*/openmbv/openmbv/*", "*/mbsim*/mbsimgui/mbsimgui/*", # GUI (untested)
     "*/mbsim*/modules/mbsimInterface/mbsimInterface/*", # other untested features
     "-o", pj(args.reportOutDir, "coverage", "cov.trace.final")], stdout=lcovFD, stderr=lcovFD))
