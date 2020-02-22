@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/contours/bevel_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -29,6 +30,19 @@ using namespace xercesc;
 namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, BevelGear)
+
+  double BevelGear::Residuum::operator()(const double &eta) {
+    double phi = -r0/r1*eta;
+    double xi = (s*cos(phi-be)+r1*sin(phi)*pow(sin(al),2)*sin(be))/(-sin(phi-be)*pow(sin(al),2)*sin(be)+cos(phi-be)*cos(be));
+    double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
+    double x = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
+    double b = signi*l*cos(al);
+    double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi);
+    double y = b*cos(ga)-c*sin(ga);
+    double z = b*sin(ga)+c*cos(ga);
+    double hm = z*tan(ga)+h/cos(ga);
+    return x*x+y*y-hm*hm;
+  }
 
   Vec3 BevelGear::evalKrPS(const Vec2 &zeta) {
     static Vec3 KrPS(NONINIT);
@@ -118,24 +132,50 @@ namespace MBSim {
     return parDer2Kt;
   }
 
+  double BevelGear::getPhiMax(double h, double s, int signi) {
+    Residuum f(h,s,r0,r1,al,be,ga,signi);
+    NewtonMethod newton(&f);
+    double phi = newton.solve(0);
+    if(newton.getInfo()!=0) throw 1;
+    return phi;
+  }
+
   void BevelGear::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       delh = (M_PI/2-b/m*cos(be))/N;
       r0 = m*N/cos(be)/2;
       r1 = r0/sin(ga);
       d = sqrt(pow(r1,2)-pow(r0,2));
-      phiMaxHigh[0] = 2*m/cos(al);
-      phiMaxLow[0] = 2*m/cos(al);
-      phiMinHigh[0] = -2*m/cos(al);
-      phiMinLow[0] = -2*m/cos(al);
-      phiMaxHigh[1] = 2*m/cos(al);
-      phiMaxLow[1] = 2*m/cos(al);
-      phiMinHigh[1] = -2*m/cos(al);
-      phiMinLow[1] = -2*m/cos(al);
-      sPhiMaxHigh[0] = 0;
-      sPhiMinHigh[0] = 0;
-      sPhiMaxHigh[1] = 0;
-      sPhiMinHigh[1] = 0;
+      double h[2];
+      h[0] = m;
+      h[1] = -m/2;
+      for(int i=0; i<2; i++) {
+        int signi=i?-1:1;
+      double mpsp = getPhiMax(h[i],w/2,signi);
+      double mpsm = getPhiMax(h[i],-w/2,signi);
+      double mmsp = getPhiMax(h[not i],w/2,signi);
+      double mmsm = getPhiMax(h[not i],-w/2,signi);
+      if(mpsp>=mpsm) {
+        phiMaxHigh[i] = mpsp;
+        phiMaxLow[i] = mpsm;
+        sPhiMaxHigh[i] = w/2;
+      }
+      else {
+        phiMaxHigh[i] = mpsm;
+        phiMaxLow[i] = mpsp;
+        sPhiMaxHigh[i] = -w/2;
+      }
+      if(mmsp<=mmsm) {
+        phiMinHigh[i] = mmsp;
+        phiMinLow[i] = mmsm;
+        sPhiMinHigh[i] = w/2;
+      }
+      else {
+        phiMinHigh[i] = mmsm;
+        phiMinLow[i] = mmsp;
+        sPhiMinHigh[i] = -w/2;
+      }
+      }
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {

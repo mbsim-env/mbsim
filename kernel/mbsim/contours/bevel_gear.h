@@ -21,6 +21,7 @@
 #define BEVELGEAR_H_
 
 #include "mbsim/contours/rigid_contour.h"
+#include "mbsim/functions/function.h"
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
 #include <openmbvcppinterface/bevelgear.h>
@@ -72,7 +73,7 @@ namespace MBSim {
       double getBacklash() { return b; }
       void setFlank(int flank) { signi = flank; }
       void setTooth(int tooth) { k = tooth; }
-      double getPhiMax(double h, double s);
+      double getPhiMax(double h, double s, int signi);
       double getPhiMaxHigh(int i) { return phiMaxHigh[i]; }
       double getPhiMaxLow(int i) { return phiMaxLow[i]; }
       double getPhiMinHigh(int i) { return phiMinHigh[i]; }
@@ -89,6 +90,15 @@ namespace MBSim {
     void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
+      class Residuum : public Function<double(double)> {
+        private:
+          double h, s, r0, r1, al, be, ga;
+          int signi;
+        public:
+          Residuum(double h_, double s_, double r0_, double r1_, double al_, double be_, double ga_, int signi_) : h(h_), s(s_), r0(r0_), r1(r1_), al(al_), be(be_), ga(ga_), signi(signi_) { }
+          double operator()(const double &phi) override;
+      };
+
       int N{15};
       double w{5e-2};
       double be{0};
