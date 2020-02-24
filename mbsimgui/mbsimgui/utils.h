@@ -449,7 +449,13 @@ namespace MBSimGUI {
 
   inline std::vector<QString> getGreenColor() {
     std::vector<QString> c(3);
-    c[0] = "0.5"; c[1] = "1"; c[2] = "1";
+    c[0] = "0.333333"; c[1] = "1"; c[2] = "1";
+    return c;
+  }
+
+  inline std::vector<QString> getRedColor() {
+    std::vector<QString> c(3);
+    c[0] = "0"; c[1] = "1"; c[2] = "1";
     return c;
   }
 

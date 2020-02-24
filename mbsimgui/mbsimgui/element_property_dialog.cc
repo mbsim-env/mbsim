@@ -2789,19 +2789,19 @@ namespace MBSimGUI {
     frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVPosition");
+    position = new ExtWidget("Enable openMBV position",new ArrowMBSOMBVWidget(getGreenColor()),true,false,MBSIM%"enableOpenMBVPosition");
     addToTab("Visualization",position);
 
-    velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVVelocity");
+    velocity = new ExtWidget("Enable openMBV velocity",new ArrowMBSOMBVWidget(getGreenColor()),true,false,MBSIM%"enableOpenMBVVelocity");
     addToTab("Visualization",velocity);
 
-    angularVelocity = new ExtWidget("Enable openMBV angular velocity",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularVelocity");
+    angularVelocity = new ExtWidget("Enable openMBV angular velocity",new ArrowMBSOMBVWidget(getGreenColor()),true,false,MBSIM%"enableOpenMBVAngularVelocity");
     addToTab("Visualization",angularVelocity);
 
-    acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAcceleration");
+    acceleration = new ExtWidget("Enable openMBV acceleration",new ArrowMBSOMBVWidget(getGreenColor()),true,false,MBSIM%"enableOpenMBVAcceleration");
     addToTab("Visualization",acceleration);
 
-    angularAcceleration = new ExtWidget("Enable openMBV angular acceleration",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAngularAcceleration");
+    angularAcceleration = new ExtWidget("Enable openMBV angular acceleration",new ArrowMBSOMBVWidget(getGreenColor()),true,false,MBSIM%"enableOpenMBVAngularAcceleration");
     addToTab("Visualization",angularAcceleration);
   }
 
@@ -2846,7 +2846,7 @@ namespace MBSimGUI {
     jointMoment = new ExtWidget("Enable openMBV joint moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVJointMoment");
     addToTab("Visualization",jointMoment);
 
-    axisOfRotation = new ExtWidget("Enable openMBV axis of rotation",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAxisOfRotation");
+    axisOfRotation = new ExtWidget("Enable openMBV axis of rotation",new ArrowMBSOMBVWidget(getBlueColor()),true,false,MBSIM%"enableOpenMBVAxisOfRotation");
     addToTab("Visualization",axisOfRotation);
 
     momentum = new ExtWidget("Enable openMBV momentum",new ArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVMomentum");

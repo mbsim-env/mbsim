@@ -69,7 +69,7 @@ namespace MBSimGUI {
   class MBSOMBVColoreBodyWidget : public MBSOMBVWidget {
 
     public:
-      MBSOMBVColoreBodyWidget();
+      MBSOMBVColoreBodyWidget(const std::vector<QString> &c=getBlueColor());
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -79,7 +79,7 @@ namespace MBSimGUI {
   class MBSOMBVDynamicColoreBodyWidget : public MBSOMBVColoreBodyWidget {
 
     public:
-      MBSOMBVDynamicColoreBodyWidget(const std::vector<QString> &cRL=std::vector<QString>(1,"\"none\""));
+      MBSOMBVDynamicColoreBodyWidget(const std::vector<QString> &c=getBlueColor(), const std::vector<QString> &cRL=std::vector<QString>(1,"\"none\""));
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -129,7 +129,7 @@ namespace MBSimGUI {
   class ArrowMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
 
     public:
-      ArrowMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation(), int refPoint=1);
+      ArrowMBSOMBVWidget(const std::vector<QString> &c=getRedColor(), const std::vector<QString> &cRL=getColorRepresentation(), int refPoint=1);
       static std::vector<QString> getColorRepresentation();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -178,7 +178,7 @@ namespace MBSimGUI {
   class FlexibleBodyMBSOMBVWidget : public MBSOMBVDynamicColoreBodyWidget {
 
     public:
-      FlexibleBodyMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation()) : MBSOMBVDynamicColoreBodyWidget(cRL) { }
+      FlexibleBodyMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation()) : MBSOMBVDynamicColoreBodyWidget(getBlueColor(),cRL) { }
       static std::vector<QString> getColorRepresentation();
   };
 

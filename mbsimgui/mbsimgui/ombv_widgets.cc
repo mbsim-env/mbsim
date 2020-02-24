@@ -101,12 +101,12 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget() {
+  MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget(const vector<QString> &c) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget(),true,false,MBSIM%"diffuseColor");
+    diffuseColor = new ExtWidget("Diffuse color",new ColorWidget(c),true,false,MBSIM%"diffuseColor");
     layout->addWidget(diffuseColor);
 
     transparency = new ExtWidget("Transparency",new ChoiceWidget2(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"transparency");
@@ -135,7 +135,7 @@ namespace MBSimGUI {
     return static_cast<DOMElement*>(parent);
   }
 
-  MBSOMBVDynamicColoreBodyWidget::MBSOMBVDynamicColoreBodyWidget(const vector<QString> &cRL) {
+  MBSOMBVDynamicColoreBodyWidget::MBSOMBVDynamicColoreBodyWidget(const vector<QString> &c, const vector<QString> &cRL) : MBSOMBVColoreBodyWidget(c) {
 
     colorRepresentation = new ExtWidget("Color representation",new TextChoiceWidget(cRL,0,true),true,false,MBSIM%"colorRepresentation");
     layout()->addWidget(colorRepresentation);
@@ -239,7 +239,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &cRL, int refPoint) : MBSOMBVDynamicColoreBodyWidget(cRL) {
+  ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &c, const vector<QString> &cRL, int refPoint) : MBSOMBVDynamicColoreBodyWidget(c,cRL) {
 
     scaleLength = new ExtWidget("Scale length",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleLength");
     layout()->addWidget(scaleLength);
@@ -291,7 +291,7 @@ namespace MBSimGUI {
     return e;
   }
 
-  InteractionArrowMBSOMBVWidget::InteractionArrowMBSOMBVWidget(const vector<QString> &cRL) : ArrowMBSOMBVWidget(cRL,0) {
+  InteractionArrowMBSOMBVWidget::InteractionArrowMBSOMBVWidget(const vector<QString> &cRL) : ArrowMBSOMBVWidget(getRedColor(),cRL,0) {
 
     vector<QString> list;
     list.emplace_back("\"action\"");
@@ -321,7 +321,7 @@ namespace MBSimGUI {
     return cRL;
   }
 
-  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const std::vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(cRL) {
+  CoilSpringMBSOMBVWidget::CoilSpringMBSOMBVWidget(const std::vector<QString> &cRL) : MBSOMBVDynamicColoreBodyWidget(getBlueColor(),cRL) {
 
     numberOfCoils = new ExtWidget("Number of coils",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfCoils");
     layout()->addWidget(numberOfCoils);
