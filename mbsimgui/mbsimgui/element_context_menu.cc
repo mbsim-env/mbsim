@@ -713,7 +713,7 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(embed()));
     addAction(action);
     addSeparator();
-    action = new QAction("Add gear constraint", this);
+    action = new QAction("Add generalized gear constraint", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addGeneralizedGearConstraint()));
     addAction(action);
     action = new QAction("Add generalized acceleration constraint", this);
