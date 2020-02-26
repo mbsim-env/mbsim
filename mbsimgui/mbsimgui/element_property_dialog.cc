@@ -1847,7 +1847,7 @@ namespace MBSimGUI {
     dependentBody = new ExtWidget("Dependent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"dependentRigidBody");
     addToTab("General", dependentBody);
 
-    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"independentRigidBody",constraint,true,this),"Independent body",0,2),false,false,"");
+    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"independentRigidBody",constraint,true,this),"Independent body",1,2,false,1),false,false,"");
     addToTab("General",independentBodies);
   }
 
@@ -1982,11 +1982,11 @@ namespace MBSimGUI {
     addTab("Visualization",2);
     addTab("Initial conditions",2);
 
-    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,2),false,false,"");
+    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",1,2,false,1),false,false,"");
     addToTab("General",dependentBodiesFirstSide);
     connect(dependentBodiesFirstSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
-    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,2),false,false,"");
+    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",1,2,false,1),false,false,"");
     addToTab("General",dependentBodiesSecondSide);
     connect(dependentBodiesSecondSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
 
@@ -2502,7 +2502,7 @@ namespace MBSimGUI {
     gearOutput = new ExtWidget("Gear output",new ElementOfReferenceWidget<RigidBody>(link,nullptr,this),false,false,MBSIM%"gearOutput");
     addToTab("General",gearOutput);
 
-    gearInput = new ExtWidget("Gear inputs",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"gearInput",link,true,this),"Gear input",0,2),false,false,"");
+    gearInput = new ExtWidget("Gear inputs",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"gearInput",link,true,this),"Gear input",1,2,false,1),false,false,"");
     addToTab("General",gearInput);
 
     function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
@@ -2552,7 +2552,7 @@ namespace MBSimGUI {
   GeneralizedElasticStructurePropertyDialog::GeneralizedElasticStructurePropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
 
-    rigidBody = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",link,this),"Rigid body",0,2),false,false,"");
+    rigidBody = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",link,this),"Rigid body",1,2,1,false),false,false,"");
     addToTab("General",rigidBody);
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
@@ -3163,7 +3163,7 @@ namespace MBSimGUI {
 
 
   MultiplexerPropertyDialog::MultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2),false,false,"");
+    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1),false,false,"");
     addToTab("General", inputSignal);
   }
 
@@ -3260,9 +3260,9 @@ namespace MBSimGUI {
 
   void SignalOperationPropertyDialog::updateFunctionFactory(bool defineWidget) {
     if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"x",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"s",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
     else
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new  Function2ArgWidgetFactory(getElement(),QStringList("x")<<"y",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new  Function2ArgWidgetFactory(getElement(),QStringList("s1")<<"s2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
     if(defineWidget)
       static_cast<ChoiceWidget2*>(function->getWidget())->defineWidget(0);
   }

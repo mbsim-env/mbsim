@@ -35,6 +35,7 @@ namespace MBSimGUI {
   Function1ArgWidgetFactory::Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, FunctionWidget::VarType argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_, int index_) : element(element_), argName(argName_), argDim(argDim_), argType(argType_), retDim(retDim_), retType(retType_), parent(parent_), index(index_) {
     name.emplace_back("Absolute value function");
     name.emplace_back("Bidirectional function");
+    name.emplace_back("Bounded function");
     name.emplace_back("Composite function");
     name.emplace_back("Constant function");
     name.emplace_back("Continued function");
@@ -55,6 +56,7 @@ namespace MBSimGUI {
     name.emplace_back("Vector valued function");
     xmlName.push_back(MBSIM%"AbsoluteValueFunction");
     xmlName.push_back(MBSIM%"BidirectionalFunction");
+    xmlName.push_back(MBSIM%"BoundedFunction");
     xmlName.push_back(MBSIM%"CompositeFunction");
     xmlName.push_back(MBSIM%"ConstantFunction");
     xmlName.push_back(MBSIM%"ContinuedFunction");
@@ -80,50 +82,52 @@ namespace MBSimGUI {
       return new AbsoluteValueFunctionWidget;
     if(i==1)
       return new BidirectionalFunctionWidget(element,argName,argDim,argType,retDim,retType,parent);
-    if(i==2) {
+    if(i==2)
+      return new BoundedFunctionWidget;
+    if(i==3) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
-      return new CompositeFunctionWidget(new Function1ArgWidgetFactory(dummy,"x",1,FunctionWidget::varVec,retDim,retType,parent,16),new Function2ArgWidgetFactory(dummy,QStringList("x")<<"y",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),retDim,retType,parent),new Function1ArgWidgetFactory(dummy,argName,argDim,FunctionWidget::fixedVec,1,retType,parent),16,0,3);
+      return new CompositeFunctionWidget(new Function1ArgWidgetFactory(dummy,"x",1,FunctionWidget::varVec,retDim,retType,parent,17),new Function2ArgWidgetFactory(dummy,QStringList("x")<<"y",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),retDim,retType,parent),new Function1ArgWidgetFactory(dummy,argName,argDim,argType,1,FunctionWidget::fixedVec,parent),17,0,3);
     }
-    if(i==3)
+    if(i==4)
       return new ConstantFunctionWidget;
-    if(i==4) {
+    if(i==5) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
       return new ContinuedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,argType,retDim,retType,parent),new Function1ArgWidgetFactory(dummy,argName,argDim,argType,retDim,retType,parent));
     }
-    if(i==5)
-      return new FourierFunctionWidget;
     if(i==6)
-      return new IdentityFunctionWidget;
+      return new FourierFunctionWidget;
     if(i==7)
-      return new LinearFunctionWidget;
+      return new IdentityFunctionWidget;
     if(i==8)
+      return new LinearFunctionWidget;
+    if(i==9)
       return new ModuloFunctionWidget;
-    if(i==9) {
+    if(i==10) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
       return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,argType,retDim,retType,parent));
     }
-    if(i==10)
-      return new PiecewisePolynomFunctionWidget(retDim,retType);
     if(i==11)
-      return new PolynomFunctionWidget;
+      return new PiecewisePolynomFunctionWidget(retDim,retType);
     if(i==12)
-      return new QuadraticFunctionWidget;
+      return new PolynomFunctionWidget;
     if(i==13)
-      return new SignalFunctionWidget(element,parent);
+      return new QuadraticFunctionWidget;
     if(i==14)
-      return new SignumFunctionWidget;
+      return new SignalFunctionWidget(element,parent);
     if(i==15)
-      return new SinusoidalFunctionWidget;
+      return new SignumFunctionWidget;
     if(i==16)
-      return new SymbolicFunctionWidget(QStringList(argName),vector<int>(1,argDim),vector<FunctionWidget::VarType>(1,argType),retDim,retType);
+      return new SinusoidalFunctionWidget;
     if(i==17)
-      return new TabularFunctionWidget(retDim,retType);
+      return new SymbolicFunctionWidget(QStringList(argName),vector<int>(1,argDim),vector<FunctionWidget::VarType>(1,argType),retDim,retType);
     if(i==18)
+      return new TabularFunctionWidget(retDim,retType);
+    if(i==19)
       return new UnknownWidget;
-    if(i==19) {
+    if(i==20) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
       return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,argType,1,FunctionWidget::scalar,parent),retDim,retType);

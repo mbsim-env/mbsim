@@ -29,13 +29,13 @@ namespace MBSimGUI {
 
   class Function1ArgWidgetFactory : public WidgetFactory {
     public:
-      Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, FunctionWidget::VarType argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_, int index_=3);
+      Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, FunctionWidget::VarType argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_, int index_=4);
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
       int getDefaultIndex() const override { return index; }
-      int getFallbackIndex() const override { return 18; }
+      int getFallbackIndex() const override { return 19; }
     protected:
       Element *element;
       QString argName;
