@@ -56,6 +56,8 @@ namespace MBSim {
   // If it comes to an dimension error during the initialization of this Function we just try it with the next one.
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<VecV   (double(double))>)
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<VecV   (VecV  (double))>)
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<Vec3   (Vec2(Vec2  ))>)
+  // The following functions are created using ...create<Function<Vec3(Vec2)>>(...).
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<Vec3   (Vec2(Vec2    ))>)
+  // The following functions are created using ...create<Function<VecV(VecV)>>(...).
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, CompositeFunction<VecV   (VecV  (VecV  ))>)
 }
