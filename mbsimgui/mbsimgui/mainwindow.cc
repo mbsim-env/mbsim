@@ -84,7 +84,7 @@ namespace MBSimGUI {
 
   vector<boost::filesystem::path> dependencies;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
     QSettings settings;
 
     impl=DOMImplementation::getImplementation();
@@ -420,15 +420,6 @@ namespace MBSimGUI {
         actionH5plotserie->setDisabled(false);
       }
       else {
-        actionSaveDataAs->setDisabled(true);
-        actionSaveMBSimH5DataAs->setDisabled(true);
-        actionSaveOpenMBVDataAs->setDisabled(true);
-        actionSaveStateVectorAs->setDisabled(true);
-        actionSaveEigenanalysisAs->setDisabled(true);
-        actionOpenMBV->setDisabled(true);
-        actionH5plotserie->setDisabled(true);
-        actionEigenanalysis->setDisabled(true);
-        actionFrequencyResponse->setDisabled(true);
       }
     }
     actionSimulate->setDisabled(false);
@@ -465,14 +456,14 @@ namespace MBSimGUI {
     setWindowModified(changed);
     if(changed) {
       QSettings settings;
-      actionOpenMBV->setDisabled(true);
-      actionH5plotserie->setDisabled(true);
-      actionEigenanalysis->setDisabled(true);
-      actionFrequencyResponse->setDisabled(true);
+      //actionOpenMBV->setDisabled(true);
+      //actionH5plotserie->setDisabled(true);
+      //actionEigenanalysis->setDisabled(true);
+      //actionFrequencyResponse->setDisabled(true);
       xercesc::DOMDocument* oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
       oldDoc->setDocumentURI(doc->getDocumentURI());
       undos.push_back(oldDoc);
-      if(undos.size() > settings.value("mainwindow/options/maxundo", 10).toInt())
+      if(undos.size() > maxUndo)
         undos.pop_front();
       redos.clear();
       if(allowUndo) actionUndo->setEnabled(true);
@@ -508,10 +499,19 @@ namespace MBSimGUI {
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", false).toBool());
+    menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
     int res = 1;
     if(!justSetOptions)
       res = menu.exec();
     if(res == 1) {
+      settings.setValue("mainwindow/options/autosave",         menu.getAutoSave());
+      settings.setValue("mainwindow/options/autosaveinterval", menu.getAutoSaveInterval());
+      settings.setValue("mainwindow/options/autoexport",       menu.getAutoExport());
+      settings.setValue("mainwindow/options/autoexportdir",    menu.getAutoExportDir());
+      settings.setValue("mainwindow/options/savestatevector",  menu.getSaveStateVector());
+      settings.setValue("mainwindow/options/maxundo",          menu.getMaxUndo());
+      settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
+      settings.setValue("mainwindow/options/autorefresh",      menu.getAutoRefresh());
       bool autoSave = menu.getAutoSave();
       int autoSaveInterval = menu.getAutoSaveInterval();
       if(not(menu.getSaveStateVector())) 
@@ -520,16 +520,11 @@ namespace MBSimGUI {
         autoSaveTimer.start(autoSaveInterval*60000);
       else
         autoSaveTimer.stop();
-      settings.setValue("mainwindow/options/autosave",         menu.getAutoSave());
-      settings.setValue("mainwindow/options/autosaveinterval", menu.getAutoSaveInterval());
-      settings.setValue("mainwindow/options/autoexport",       menu.getAutoExport());
-      settings.setValue("mainwindow/options/autoexportdir",    menu.getAutoExportDir());
-      settings.setValue("mainwindow/options/savestatevector",  menu.getSaveStateVector());
-      settings.setValue("mainwindow/options/maxundo",          menu.getMaxUndo());
-      settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
+      maxUndo = menu.getMaxUndo();
       bool showFilters = menu.getShowFilters();
       elementViewFilter->setVisible(showFilters);
       embeddingViewFilter->setVisible(showFilters);
+      autoRefresh = menu.getAutoRefresh();
     }
   }
 
@@ -662,7 +657,7 @@ namespace MBSimGUI {
       solverView->setSolver(6);
 
       projectFile="";
-      mbsimxml(1);
+      refresh();
       setWindowTitle("Project.mbsimprj.xml[*]");
     }
   }
@@ -700,7 +695,7 @@ namespace MBSimGUI {
       }
       setWindowTitle(projectFile+"[*]");
       rebuildTree();
-      mbsimxml(1);
+      refresh();
     }
     else
       QMessageBox::warning(nullptr, "Project load", "Project file does not exist.");
@@ -916,7 +911,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::mbsimxml(int task) {
-
     currentTask = task;
 
     shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
@@ -930,7 +924,20 @@ namespace MBSimGUI {
 
     projectFile=uniqueTempDir_+"/Project.mbsimprj.flat.xml";
 
-    if(task==1) {
+    actionSimulate->setDisabled(true);
+    actionRefresh->setDisabled(true);
+    if(task==0) {
+      actionSaveDataAs->setDisabled(true);
+      actionSaveMBSimH5DataAs->setDisabled(true);
+      actionSaveOpenMBVDataAs->setDisabled(true);
+      actionSaveStateVectorAs->setDisabled(true);
+      actionSaveEigenanalysisAs->setDisabled(true);
+      actionOpenMBV->setDisabled(true);
+      actionH5plotserie->setDisabled(true);
+      actionEigenanalysis->setDisabled(true);
+      actionFrequencyResponse->setDisabled(true);
+    }
+    else if(task==1) {
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
         static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
     }
@@ -958,6 +965,10 @@ namespace MBSimGUI {
     if(not errorText.isEmpty()) {
       echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">"+errorText+"</span>");
       echoView->updateOutput(true);
+      actionSimulate->setDisabled(false);
+      actionRefresh->setDisabled(false);
+      actionDebug->setDisabled(false);
+      statusBar()->showMessage(tr("Ready"));
       return;
     }
     echoView->updateOutput(true);
@@ -996,13 +1007,11 @@ namespace MBSimGUI {
   }
 
   void MainWindow::simulate() {
-    actionSimulate->setDisabled(true);
     statusBar()->showMessage(tr("Simulate"));
     mbsimxml(0);
   }
 
   void MainWindow::refresh() {
-    actionRefresh->setDisabled(true);
     statusBar()->showMessage(tr("Refresh"));
     mbsimxml(1);
   }
@@ -1122,7 +1131,7 @@ namespace MBSimGUI {
     doc = undos.back();
     undos.pop_back();
     rebuildTree();
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
     actionUndo->setDisabled(undos.empty());
     actionRedo->setEnabled(true);
   }
@@ -1132,7 +1141,7 @@ namespace MBSimGUI {
     doc = redos.back();
     redos.pop_back();
     rebuildTree();
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
     actionRedo->setDisabled(redos.empty());
     actionUndo->setEnabled(true);
   }
@@ -1148,7 +1157,7 @@ namespace MBSimGUI {
       element->removeXMLElement();
       element->getParent()->removeElement(element);
       model->removeRow(index.row(), index.parent());
-      mbsimxml(1);
+      if(getAutoRefresh()) refresh();
     }
   }
 
@@ -1167,7 +1176,7 @@ namespace MBSimGUI {
       parameter->getParent()->removeParameter(parameter);
       parameter->getParent()->maybeRemoveEmbedXMLElement();
       model->removeRow(index.row(), index.parent());
-      mbsimxml(1);
+      if(getAutoRefresh()) refresh();
     }
   }
 
@@ -1520,7 +1529,7 @@ namespace MBSimGUI {
     }
     E(embedNode)->setAttribute("count",enabled?"1":"0");
     element->updateStatus();
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::saveSolverAs() {
@@ -1729,7 +1738,7 @@ namespace MBSimGUI {
     }
     parent->maybeRemoveEmbedXMLElement();
     model->removeRows(0,n,index);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadFrame(Element *parent, Element *element, bool embed) {
@@ -1777,7 +1786,7 @@ namespace MBSimGUI {
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadContour(Element *parent, Element *element, bool embed) {
@@ -1825,7 +1834,7 @@ namespace MBSimGUI {
     model->createContourItem(contour,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadGroup(Element *parent, Element *element, bool embed) {
@@ -1873,7 +1882,7 @@ namespace MBSimGUI {
     model->createGroupItem(group,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadObject(Element *parent, Element *element, bool embed) {
@@ -1921,7 +1930,7 @@ namespace MBSimGUI {
     model->createObjectItem(object,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadLink(Element *parent, Element *element, bool embed) {
@@ -1969,7 +1978,7 @@ namespace MBSimGUI {
     model->createLinkItem(link,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadConstraint(Element *parent, Element *element, bool embed) {
@@ -2017,7 +2026,7 @@ namespace MBSimGUI {
     model->createConstraintItem(constraint,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadObserver(Element *parent, Element *element, bool embed) {
@@ -2065,7 +2074,7 @@ namespace MBSimGUI {
     model->createObserverItem(observer,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadSolver() {
@@ -2213,13 +2222,13 @@ namespace MBSimGUI {
   void MainWindow::settingsFinished(int result) {
     if(result != 0) {
       setProjectChanged(true);
-      mbsimxml(1);
+      if(getAutoRefresh()) refresh();
     }
   }
 
   void MainWindow::applySettings() {
     setProjectChanged(true);
-    mbsimxml(1);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::interrupt() {

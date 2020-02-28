@@ -64,7 +64,7 @@ namespace MBSimGUI {
       if(editor->getCancel())
         mw->setProjectChanged(true);
       editor->fromWidget();
-      mw->mbsimxml(1);
+      if(mw->getAutoRefresh()) mw->refresh();
       element->setConfig(true);
     }
     editor = nullptr;
@@ -77,7 +77,7 @@ namespace MBSimGUI {
       mw->setProjectChanged(true);
     editor->fromWidget();
     update(index);
-    mw->mbsimxml(1);
+    if(mw->getAutoRefresh()) mw->refresh();
     element->setConfig(true);
     editor->setCancel(true);
   }

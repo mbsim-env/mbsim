@@ -80,7 +80,7 @@ namespace MBSimGUI {
       mw->setProjectChanged(true);
       editor->fromWidget();
       updateName();
-      mw->mbsimxml(1);
+      if(mw->getAutoRefresh()) mw->refresh();
     }
     editor = nullptr;
     mw->setAllowUndo(true);
@@ -90,7 +90,7 @@ namespace MBSimGUI {
     mw->setProjectChanged(true);
     editor->fromWidget();
     updateName();
-    mw->mbsimxml(1);
+    if(mw->getAutoRefresh()) mw->refresh();
   }
 
   bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {

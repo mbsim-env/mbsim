@@ -76,6 +76,9 @@ namespace MBSimGUI {
     showFilters = new QCheckBox("Show list filters");
     layout->addWidget(showFilters);
 
+    autoRefresh = new QCheckBox("Auto refresh");
+    layout->addWidget(autoRefresh);
+
     layout->addWidget(buttonBox);
     setWindowTitle("GUI options");
   }
@@ -153,4 +156,11 @@ namespace MBSimGUI {
     showFilters->setCheckState(flag?Qt::Checked:Qt::Unchecked);
   }
 
+  bool OptionsDialog::getAutoRefresh() const {
+    return (autoRefresh->checkState()==Qt::Checked);
+  }
+
+  void OptionsDialog::setAutoRefresh(bool flag) {
+    autoRefresh->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
 }

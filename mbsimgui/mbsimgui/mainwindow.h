@@ -98,6 +98,8 @@ namespace MBSimGUI {
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
       bool allowUndo;
+      int maxUndo;
+      bool autoRefresh;
       xercesc::DOMDocument *doc;
       std::deque<xercesc::DOMDocument*> undos, redos;
       std::pair<Element*,bool> elementBuffer;
@@ -165,6 +167,7 @@ namespace MBSimGUI {
       QString getProjectFilePath() const;
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
+      bool getAutoRefresh() const { return autoRefresh; }
 
     public slots:
       void elementViewClicked();

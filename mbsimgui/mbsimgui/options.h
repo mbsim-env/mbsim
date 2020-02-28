@@ -48,8 +48,10 @@ namespace MBSimGUI {
       int getMaxUndo() const;
       bool getShowFilters() const;
       void setShowFilters(bool flag);
+      bool getAutoRefresh() const;
+      void setAutoRefresh(bool flag);
     private:
-      QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters;
+      QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *autoRefresh;
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;
       QPushButton *button;

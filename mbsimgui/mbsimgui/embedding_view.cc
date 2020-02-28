@@ -77,7 +77,7 @@ namespace MBSimGUI {
       if(editor->getCancel())
         mw->setProjectChanged(true);
       editor->fromWidget();
-      mw->mbsimxml(1);
+      if(mw->getAutoRefresh()) mw->refresh();
       if(parameter)
         parameter->setConfig(true);
     }
@@ -92,7 +92,7 @@ namespace MBSimGUI {
     editor->fromWidget();
     update(index);
     update(index.sibling(index.row(),1));
-    mw->mbsimxml(1);
+    if(mw->getAutoRefresh()) mw->refresh();
     if(parameter)
       parameter->setConfig(true);
     editor->setCancel(true);
