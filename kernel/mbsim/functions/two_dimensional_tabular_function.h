@@ -134,12 +134,14 @@ namespace MBSim {
         if (x <= X(0)) {
           xIndexPlus = 1;
           xIndexMinus = 0;
-          fmatvec::Atom::msg(fmatvec::Atom::Warn) << "TwoDimensionalTabularFunction: Value (" << x << ") is smaller than the smallest table value(" << X(0) << ")!" << std::endl;
+          if(x < X(0))
+            fmatvec::Atom::msg(fmatvec::Atom::Warn) << "TwoDimensionalTabularFunction: Value (" << x << ") is smaller than the smallest table value(" << X(0) << ")!" << std::endl;
         }
         else if (x >= X(xSize - 1)) {
           xIndexPlus = xSize - 1;
           xIndexMinus = xSize - 2;
-          fmatvec::Atom::msg(fmatvec::Atom::Warn) << "TwoDimensionalTabularFunction: Value (" << x << ") is greater than the greatest table value(" << X(xSize - 1) << ")!" << std::endl;
+          if(x > X(xSize - 1))
+            fmatvec::Atom::msg(fmatvec::Atom::Warn) << "TwoDimensionalTabularFunction: Value (" << x << ") is greater than the greatest table value(" << X(xSize - 1) << ")!" << std::endl;
         }
         else {
           if (x < X(xIndexPlus))
