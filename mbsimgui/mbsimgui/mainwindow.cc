@@ -1523,7 +1523,17 @@ namespace MBSimGUI {
       embedNode = element->createEmbedXMLElement();
       E(embedNode)->setAttribute("counterName","n");
     }
-    E(embedNode)->setAttribute("count",enabled?"1":"0");
+    if(enabled) {
+      if(element->getNumberOfParameters())
+        E(embedNode)->setAttribute("count","1");
+      else {
+        E(embedNode)->removeAttribute("count");
+        E(embedNode)->removeAttribute("counterName");
+      }
+    }
+    else
+      E(embedNode)->setAttribute("count","0");
+    element->maybeRemoveEmbedXMLElement();
     element->updateStatus();
     if(getAutoRefresh()) refresh();
   }
