@@ -77,13 +77,15 @@ namespace MBSimGUI {
       connect(action,SIGNAL(triggered()),mw,SLOT(removeElement()));
       action->setDisabled(element->getParent() and element->getParent()->getEmbeded());
       QMenu::addAction(action);
-      addSeparator();
-      action = new QAction("Enable", this);
-      action->setCheckable(true);
-      action->setChecked(element->isEnabled());
-      action->setEnabled(element->getParent()->isEnabled());
-      connect(action,SIGNAL(toggled(bool)),mw,SLOT(enableElement(bool)));
-      addAction(action);
+      if(not element->getEmbedXMLElement() or MBXMLUtils::E(element->getEmbedXMLElement())->getAttribute("count")=="0" or MBXMLUtils::E(element->getEmbedXMLElement())->getAttribute("count")=="1") {
+        addSeparator();
+        action = new QAction("Enable", this);
+        action->setCheckable(true);
+        action->setChecked(element->isEnabled());
+        action->setEnabled(element->getParent()->isEnabled());
+        connect(action,SIGNAL(toggled(bool)),mw,SLOT(enableElement(bool)));
+        addAction(action);
+      }
     }
   }
 
