@@ -456,10 +456,6 @@ namespace MBSimGUI {
     setWindowModified(changed);
     if(changed) {
       QSettings settings;
-      //actionOpenMBV->setDisabled(true);
-      //actionH5plotserie->setDisabled(true);
-      //actionEigenanalysis->setDisabled(true);
-      //actionFrequencyResponse->setDisabled(true);
       xercesc::DOMDocument* oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
       oldDoc->setDocumentURI(doc->getDocumentURI());
       undos.push_back(oldDoc);

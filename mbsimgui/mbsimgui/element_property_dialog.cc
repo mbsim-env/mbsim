@@ -3258,19 +3258,17 @@ namespace MBSimGUI {
     function->updateWidget();
   }
 
-  void SignalOperationPropertyDialog::updateFunctionFactory(bool defineWidget) {
+  void SignalOperationPropertyDialog::updateFunctionFactory() {
     if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
       static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"s",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
     else
       static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new  Function2ArgWidgetFactory(getElement(),QStringList("s1")<<"s2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
-    if(defineWidget)
-      static_cast<ChoiceWidget2*>(function->getWidget())->defineWidget(0);
   }
 
   DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
     inputSignal->initializeUsingXML(item->getXMLElement());
-    updateFunctionFactory(false);
+    updateFunctionFactory();
     function->initializeUsingXML(item->getXMLElement());
     return parent;
   }

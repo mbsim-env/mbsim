@@ -104,6 +104,8 @@ namespace MBSimGUI {
     comboBox->clear();
     for(int i=0; i<factory->getSize(); i++)
       comboBox->addItem(factory->getName(i));
+    comboBox->setCurrentIndex(factory->getDefaultIndex());
+    defineWidget(factory->getDefaultIndex());
     comboBox->blockSignals(false);
   }
 

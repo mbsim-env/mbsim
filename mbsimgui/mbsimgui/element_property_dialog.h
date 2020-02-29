@@ -993,7 +993,7 @@ namespace MBSimGUI {
       ExtWidget *inputSignal, *function;
       void updateWidget() override;
     protected slots:
-      void updateFunctionFactory(bool defineWidget=true);
+      void updateFunctionFactory();
   };
 
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {

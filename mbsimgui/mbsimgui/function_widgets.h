@@ -163,7 +163,7 @@ namespace MBSimGUI {
       WidgetFactory *factoryo1, *factoryo2, *factoryi;
     protected slots:
       void updateWidget();
-      void updateFunctionFactory(bool defineWidget=true);
+      void updateFunctionFactory();
   };
 
   class LimitedFunctionWidget : public FunctionWidget {

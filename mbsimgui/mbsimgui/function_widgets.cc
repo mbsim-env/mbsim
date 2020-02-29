@@ -285,13 +285,11 @@ namespace MBSimGUI {
     static_cast<FunctionWidget*>(fi->getWidget())->resize_(size,1);
   }
 
-  void CompositeFunctionWidget::updateFunctionFactory(bool defineWidget) {
+  void CompositeFunctionWidget::updateFunctionFactory() {
     if(fi->getIndex()==0)
       static_cast<ChoiceWidget2*>(fo->getWidget())->setWidgetFactory(factoryo1);
     else
       static_cast<ChoiceWidget2*>(fo->getWidget())->setWidgetFactory(factoryo2);
-    if(defineWidget)
-      static_cast<ChoiceWidget2*>(fo->getWidget())->defineWidget(0);
   }
 
   int CompositeFunctionWidget::getArg1Size() const {
@@ -308,7 +306,7 @@ namespace MBSimGUI {
 
   DOMElement* CompositeFunctionWidget::initializeUsingXML(DOMElement *element) {
     fi->initializeUsingXML(element);
-    updateFunctionFactory(false);
+    updateFunctionFactory();
     fo->initializeUsingXML(element);
     return element;
   }
