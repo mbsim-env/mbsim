@@ -116,19 +116,10 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::maybeRemoveEmbedXMLElement() {
-    if(embed and not getNumberOfParameters()) {
-      DOMElement *param = E(embed)->getFirstElementChildNamed(PV%"Parameter");
-      if(param) {
-        DOMNode *ps = param->getPreviousSibling();
-        if(ps and X()%ps->getNodeName()=="#text")
-          embed->removeChild(ps);
-        embed->removeChild(param);
-      }
-      if(not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref")) {
-        embed->getParentNode()->insertBefore(element,embed);
-        embed->getParentNode()->removeChild(embed);
-        embed = nullptr;
-      }
+    if(embed and not getNumberOfParameters() and not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref")) {
+      embed->getParentNode()->insertBefore(element,embed);
+      embed->getParentNode()->removeChild(embed);
+      embed = nullptr;
     }
   }
 
