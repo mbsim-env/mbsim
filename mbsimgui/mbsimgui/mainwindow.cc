@@ -1519,10 +1519,6 @@ namespace MBSimGUI {
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
     DOMElement *embedNode = element->getEmbedXMLElement();
-    if(not embedNode) {
-      embedNode = element->createEmbedXMLElement();
-      E(embedNode)->setAttribute("counterName","n");
-    }
     if(enabled) {
       if(element->getNumberOfParameters())
         E(embedNode)->setAttribute("count","1");
@@ -1531,8 +1527,12 @@ namespace MBSimGUI {
         E(embedNode)->removeAttribute("counterName");
       }
     }
-    else
+    else {
+      if(not embedNode)
+        embedNode = element->createEmbedXMLElement();
+      E(embedNode)->setAttribute("counterName","n");
       E(embedNode)->setAttribute("count","0");
+    }
     element->maybeRemoveEmbedXMLElement();
     element->updateStatus();
     if(getAutoRefresh()) refresh();
