@@ -65,7 +65,7 @@ namespace MBSimGUI {
     return QModelIndex();
   }
 
-  EvalDialog::EvalDialog(const vector<vector<QString> > &var_, int type_, QWidget *parent) : QDialog(parent), var(var_), varf(var_), type(type_) {
+  EvalDialog::EvalDialog(const vector<vector<QString>> &var_, int type_, QWidget *parent) : QDialog(parent), var(var_), varf(var_), type(type_) {
 
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
@@ -201,10 +201,10 @@ namespace MBSimGUI {
   EigenanalysisDialog::EigenanalysisDialog(const QString &name, QWidget *parent) : QDialog(parent) {
     OctaveParser parser(name.toStdString());
     parser.parse();
-    fmatvec::Vector<fmatvec::Var,complex<double> > w = static_cast<const OctaveComplexMatrix*>(parser.get(0))->get<fmatvec::Vector<fmatvec::Var,complex<double> > >();
-    fmatvec::SquareMatrix<fmatvec::Var,complex<double> > V = static_cast<const OctaveComplexMatrix*>(parser.get(1))->get<fmatvec::SquareMatrix<fmatvec::Var,complex<double> > >();
+    fmatvec::Vector<fmatvec::Var,complex<double>> w = static_cast<const OctaveComplexMatrix*>(parser.get(0))->get<fmatvec::Vector<fmatvec::Var,complex<double>>>();
+    fmatvec::SquareMatrix<fmatvec::Var,complex<double>> V = static_cast<const OctaveComplexMatrix*>(parser.get(1))->get<fmatvec::SquareMatrix<fmatvec::Var,complex<double>>>();
 
-    std::vector<std::pair<double,int> > f;
+    std::vector<std::pair<double,int>> f;
     for (int i=0; i<w.size(); i++) {
       if((abs(imag(w(i))) > 1e-13) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
         f.push_back(pair<double,int>(imag(w(i))/2/pi<double>(),i));
@@ -222,7 +222,7 @@ namespace MBSimGUI {
     layout->addWidget(table,0,0);
     int n = V.rows()/2;
     QVector<double> m(n);
-    QVector<QVector<double> > A(f.size(),QVector<double>(n));
+    QVector<QVector<double>> A(f.size(),QVector<double>(n));
     for(int k=0; k<n; k++)
       m[k] = k+1;
     for(int i=0; i<f.size(); i++) {
@@ -278,7 +278,7 @@ namespace MBSimGUI {
     fmatvec::MatV t_ = static_cast<const OctaveMatrix*>(parser.get(1))->get<fmatvec::MatV>();
     fmatvec::MatV A_ = static_cast<const OctaveMatrix*>(parser.get(2))->get<fmatvec::MatV>();
     QVector<double> t(t_.rows());
-    QVector<QVector<double> > A(A_.cols(),QVector<double>(A_.rows()));
+    QVector<QVector<double>> A(A_.cols(),QVector<double>(A_.rows()));
     for(int i=0; i<t_.rows(); i++) {
       t[i] = t_(i,0);
       for(int j=0; j<A_.cols(); j++)

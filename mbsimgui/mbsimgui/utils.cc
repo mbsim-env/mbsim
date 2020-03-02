@@ -45,8 +45,8 @@ namespace MBSimGUI {
     return ins.first->second;
   } 
 
-  vector<vector<double> > mult(const vector<vector<double> > &A, const vector<vector<double> > &B) {
-    vector<vector<double> > C(A.size());
+  vector<vector<double>> mult(const vector<vector<double>> &A, const vector<vector<double>> &B) {
+    vector<vector<double>> C(A.size());
     for(size_t i=0; i<A.size(); i++) {
       C[i].resize(B[0].size());
       for(size_t j=0; j<B[0].size(); j++) {
@@ -57,8 +57,8 @@ namespace MBSimGUI {
     return C;
   }
 
-  vector<vector<double> > BasicRotAKIx(double phi) {
-    vector<vector<double> > AKI(3);
+  vector<vector<double>> BasicRotAKIx(double phi) {
+    vector<vector<double>> AKI(3);
     for(int i=0; i<3; i++)
       AKI[i].resize(3);
     AKI[0][0]= 1.0;
@@ -69,8 +69,8 @@ namespace MBSimGUI {
     return AKI;
   }
 
-  vector<vector<double> > BasicRotAKIy(double phi) {
-    vector<vector<double> > AKI(3);
+  vector<vector<double>> BasicRotAKIy(double phi) {
+    vector<vector<double>> AKI(3);
     for(int i=0; i<3; i++)
       AKI[i].resize(3);
     AKI[1][1]= 1.0;
@@ -81,8 +81,8 @@ namespace MBSimGUI {
     return AKI; 
   }
 
-  vector<vector<double> > BasicRotAKIz(double phi) {
-    vector<vector<double> > AKI(3);
+  vector<vector<double>> BasicRotAKIz(double phi) {
+    vector<vector<double>> AKI(3);
     for(int i=0; i<3; i++)
       AKI[i].resize(3);
     AKI[2][2]= 1.0;
@@ -93,31 +93,31 @@ namespace MBSimGUI {
     return AKI; 
   }
 
-  vector<vector<double> > BasicRotAIKx(double phi) {
-    vector<vector<double> > AIK = BasicRotAKIx(-phi);
+  vector<vector<double>> BasicRotAIKx(double phi) {
+    vector<vector<double>> AIK = BasicRotAKIx(-phi);
     return AIK;
   }
 
-  vector<vector<double> > BasicRotAIKy(double phi) {
-    vector<vector<double> > AIK = BasicRotAKIy(-phi);
+  vector<vector<double>> BasicRotAIKy(double phi) {
+    vector<vector<double>> AIK = BasicRotAKIy(-phi);
     return AIK; 
   }
 
-  vector<vector<double> > BasicRotAIKz(double phi) {
-    vector<vector<double> > AIK = BasicRotAKIz(-phi);
+  vector<vector<double>> BasicRotAIKz(double phi) {
+    vector<vector<double>> AIK = BasicRotAKIz(-phi);
     return AIK; 
   }
 
-  vector<vector<double> > Cardan2AIK(const vector<vector<double> > &x) {
-    vector<vector<double> > AIKx =  BasicRotAIKx(x[0][0]);
-    vector<vector<double> > AIKy =  BasicRotAIKy(x[1][0]);
-    vector<vector<double> > AIKz = BasicRotAIKz(x[2][0]);
+  vector<vector<double>> Cardan2AIK(const vector<vector<double>> &x) {
+    vector<vector<double>> AIKx =  BasicRotAIKx(x[0][0]);
+    vector<vector<double>> AIKy =  BasicRotAIKy(x[1][0]);
+    vector<vector<double>> AIKz = BasicRotAIKz(x[2][0]);
 
     return mult(AIKx,mult(AIKy,AIKz));          //Wie im TM VI Skript
   }
 
-  vector<vector<double> > AIK2Cardan(const vector<vector<double> > &AIK) { 
-    vector<vector<double> > AlphaBetaGamma(3);
+  vector<vector<double>> AIK2Cardan(const vector<vector<double>> &AIK) {
+    vector<vector<double>> AlphaBetaGamma(3);
     for(int i=0; i<3; i++)
       AlphaBetaGamma[i].resize(1);
     AlphaBetaGamma[1][0]= asin(AIK[0][2]);

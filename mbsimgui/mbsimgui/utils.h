@@ -92,7 +92,7 @@ namespace MBSimGUI {
     }
 
   template <class AT>
-    inline std::string toStr(const std::vector<std::vector<AT> > &A) {
+    inline std::string toStr(const std::vector<std::vector<AT>> &A) {
       if(A.size()==0 || A[0].size()==0)
         return "[]";
       std::string s;
@@ -138,7 +138,7 @@ namespace MBSimGUI {
     }
 
   template <class AT>
-    inline QString toQStr(const std::vector<std::vector<AT> > &A) {
+    inline QString toQStr(const std::vector<std::vector<AT>> &A) {
       if(A.empty() || A[0].empty())
         return "[]";
       QString s;
@@ -190,14 +190,14 @@ namespace MBSimGUI {
     return x;
   }
 
-  inline std::vector<std::vector<std::string> > strToMat(const std::string &str) {
+  inline std::vector<std::vector<std::string>> strToMat(const std::string &str) {
     if(str.empty() || str=="[]" || str.substr(0,2) == "[;")
-      return std::vector<std::vector<std::string> >();
+      return std::vector<std::vector<std::string>>();
     int pos1 = str.find('['); 
     int pos2 = str.find(']'); 
     std::string str0 = str.substr(pos1+1,pos2-1);
     std::vector<std::string> str1 = extract(str0,';');
-    std::vector<std::vector<std::string> > A(str1.size());
+    std::vector<std::vector<std::string>> A(str1.size());
     for(unsigned int i=0; i<str1.size(); i++) {
       std::vector<std::string> str2 = extract(str1[i],',');
       A[i].resize(str2.size());
@@ -242,14 +242,14 @@ namespace MBSimGUI {
     return x;
   }
 
-  inline std::vector<std::vector<QString> > strToMat(const QString &str) {
+  inline std::vector<std::vector<QString>> strToMat(const QString &str) {
     if(str=="" || str=="[]" || str.mid(0,2) == "[;")
-      return std::vector<std::vector<QString> >();
+      return std::vector<std::vector<QString>>();
     int pos1 = str.indexOf("["); 
     int pos2 = str.indexOf("]"); 
     QString str0 = str.mid(pos1+1,pos2-1);
     std::vector<QString> str1 = extract(str0,';');
-    std::vector<std::vector<QString> > A(str1.size());
+    std::vector<std::vector<QString>> A(str1.size());
     for(unsigned int i=0; i<str1.size(); i++) {
       std::vector<QString> str2 = extract(str1[i],',');
       A[i].resize(str2.size());
@@ -270,8 +270,8 @@ namespace MBSimGUI {
       parent->insertBefore(ele, nullptr);
     }
 
-  std::vector<std::vector<double> > Cardan2AIK(const std::vector<std::vector<double> > &x);
-  std::vector<std::vector<double> > AIK2Cardan(const std::vector<std::vector<double> > &AIK);
+  std::vector<std::vector<double>> Cardan2AIK(const std::vector<std::vector<double>> &x);
+  std::vector<std::vector<double>> AIK2Cardan(const std::vector<std::vector<double>> &AIK);
 
   template <class T>
     inline T fromMatStr(const std::string &str) {
@@ -279,8 +279,8 @@ namespace MBSimGUI {
     }
 
   template <class AT>
-    inline std::vector<std::vector<AT> > transpose(const std::vector<std::vector<AT> > &A) {
-      std::vector<std::vector<AT> > B(A[0].size());
+    inline std::vector<std::vector<AT>> transpose(const std::vector<std::vector<AT>> &A) {
+      std::vector<std::vector<AT>> B(A[0].size());
       for(int i=0; i<B.size(); i++) {
         B[i].resize(A.size());
         for(int j=0; j<B[i].size(); j++) {
@@ -300,8 +300,8 @@ namespace MBSimGUI {
     }
 
   template <class AT>
-    inline std::vector<std::vector<AT> > getScalars(int m, int n, const AT &d) {
-      std::vector<std::vector<AT> > A(m);
+    inline std::vector<std::vector<AT>> getScalars(int m, int n, const AT &d) {
+      std::vector<std::vector<AT>> A(m);
       for(int i=0; i<m; i++) {
         A[i].resize(n);
         for(int j=0; j<n; j++)
@@ -311,8 +311,8 @@ namespace MBSimGUI {
     }
 
   template <class AT>
-    inline std::vector<std::vector<AT> > getEye(int m, int n, const AT &d, const AT &z) {
-      std::vector<std::vector<AT> > A(m);
+    inline std::vector<std::vector<AT>> getEye(int m, int n, const AT &d, const AT &z) {
+      std::vector<std::vector<AT>> A(m);
       for(int i=0; i<m; i++) {
         A[i].resize(n);
         for(int j=0; j<n; j++)
@@ -332,8 +332,8 @@ namespace MBSimGUI {
     }
 
   template <class AT>
-    inline std::vector<std::vector<AT> > getMat(int m, int n, const AT &d) {
-      std::vector<std::vector<AT> > A(m);
+    inline std::vector<std::vector<AT>> getMat(int m, int n, const AT &d) {
+      std::vector<std::vector<AT>> A(m);
       for(int i=0; i<m; i++) {
         A[i].resize(n);
         for(int j=0; j<n; j++)

@@ -79,16 +79,16 @@ namespace MBSimGUI {
 
   class OctaveComplexMatrix : public OctaveElement {
     private:
-      fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,std::complex<double> > A;
+      fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,std::complex<double>> A;
     public:
-      OctaveComplexMatrix(const std::string &name, const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,std::complex<double> > &A_) : OctaveElement(name,"complex matrix"), A(A_) { }
+      OctaveComplexMatrix(const std::string &name, const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,std::complex<double>> &A_) : OctaveElement(name,"complex matrix"), A(A_) { }
       void toStream(std::ostream &os=std::cout) const override;
       template <class T> T get() const { return T(A); }
   };
 
   class OctaveCell : public OctaveElement {
     private:
-      std::vector<std::vector<OctaveElement*> > ele;
+      std::vector<std::vector<OctaveElement*>> ele;
     public:
       OctaveCell(const std::string &name, int m, int n) : OctaveElement(name,"cell"), ele(m) {
         for(int i=0; i<m; i++)
@@ -104,8 +104,8 @@ namespace MBSimGUI {
       void setElement(int i, int j, OctaveElement *ele_) { ele[i][j] = ele_; }
       const OctaveElement* getElement(int i, int j) const { return ele[i][j]; }
       template <class T>
-        std::vector<std::vector<T> > get() const { 
-          std::vector<std::vector<T> > A(ele.size());
+        std::vector<std::vector<T>> get() const {
+          std::vector<std::vector<T>> A(ele.size());
           for(unsigned int i=0; i<ele.size(); i++) {
             for(unsigned int j=0; j<ele[i].size(); j++) {
               auto *octMat = dynamic_cast<OctaveMatrix*>(ele[i][j]);

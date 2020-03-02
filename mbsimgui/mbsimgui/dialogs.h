@@ -54,10 +54,10 @@ namespace MBSimGUI {
     Q_OBJECT
     public:
       //EvalDialog(VariableWidget *widget);
-      EvalDialog(const std::vector<std::vector<QString> > &var_, int type_, QWidget *parent);
+      EvalDialog(const std::vector<std::vector<QString>> &var_, int type_, QWidget *parent);
     private:
       void formatVariables();
-      std::vector<std::vector<QString> > var, varf;
+      std::vector<std::vector<QString>> var, varf;
       int type;
       QComboBox *format;
       QSpinBox *precision;

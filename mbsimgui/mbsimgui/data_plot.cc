@@ -28,7 +28,7 @@
 
 namespace MBSimGUI {
 
-  DataPlot::DataPlot(const QVector<double> &f_, const QVector<QVector<double> > &A_, const QString &spinBoxLabel, const QString &title, const QString &xLabel, const QString &yLabel, QWidget *parent) : QWidget(parent), f(f_), A(A_) {
+  DataPlot::DataPlot(const QVector<double> &f_, const QVector<QVector<double>> &A_, const QString &spinBoxLabel, const QString &title, const QString &xLabel, const QString &yLabel, QWidget *parent) : QWidget(parent), f(f_), A(A_) {
       auto *layout = new QGridLayout;
       setLayout(layout);
 

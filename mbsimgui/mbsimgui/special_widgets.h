@@ -59,10 +59,10 @@ namespace MBSimGUI {
 
   class TwoDimMatArrayWidget: public Widget {
     protected:
-      std::vector<std::vector<ExtWidget*> > ele;
+      std::vector<std::vector<ExtWidget*>> ele;
     public:
       TwoDimMatArrayWidget(int size=0, int m=0, int n=0);
-      const std::vector<std::vector<ExtWidget*> >& getArray() const { return ele; }
+      const std::vector<std::vector<ExtWidget*>>& getArray() const { return ele; }
       void resize_(int rsize, int csize, int m, int n);
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;

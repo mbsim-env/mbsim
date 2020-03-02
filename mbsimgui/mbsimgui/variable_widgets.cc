@@ -136,9 +136,9 @@ namespace MBSimGUI {
     }
   }
 
-  vector<vector<QString> > VariableWidget::getEvalMat() const {
+  vector<vector<QString>> VariableWidget::getEvalMat() const {
     if(getValue().isEmpty())
-      return vector<vector<QString> >();
+      return vector<vector<QString>>();
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())));
     str = removeWhiteSpace(str);
     return strToMat(str);
@@ -155,7 +155,7 @@ namespace MBSimGUI {
     layout->addWidget(box);
   }
 
-  bool StringWidget::validate(const vector<vector<QString> > &A) const {
+  bool StringWidget::validate(const vector<vector<QString>> &A) const {
     if(A.size()!=1)
       return false;
     if(A[0].size()!=1)
@@ -163,8 +163,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  vector<vector<QString> > StringWidget::getEvalMat() const {
-    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+  vector<vector<QString>> StringWidget::getEvalMat() const {
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
   }
 
   DOMElement* StringWidget::initializeUsingXML(DOMElement *element) {
@@ -202,7 +202,7 @@ namespace MBSimGUI {
     value->setCheckState(str=="0" or str==mw->getProject()->getVarFalse()?Qt::Unchecked:Qt::Checked);
   }
 
-  bool BoolWidget::validate(const vector<vector<QString> > &A) const {
+  bool BoolWidget::validate(const vector<vector<QString>> &A) const {
     if(A.size()!=1)
       return false;
     if(A[0].size()!=1)
@@ -210,8 +210,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  vector<vector<QString> > BoolWidget::getEvalMat() const {
-    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+  vector<vector<QString>> BoolWidget::getEvalMat() const {
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
   }
 
   DOMElement* BoolWidget::initializeUsingXML(DOMElement *element) {
@@ -277,7 +277,7 @@ namespace MBSimGUI {
     layout->addWidget(box);
   }
 
-  bool ScalarWidget::validate(const vector<vector<QString> > &A) const {
+  bool ScalarWidget::validate(const vector<vector<QString>> &A) const {
     if(A.size()!=1)
       return false;
     if(A[0].size()!=1)
@@ -285,8 +285,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  vector<vector<QString> > ScalarWidget::getEvalMat() const {
-    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+  vector<vector<QString>> ScalarWidget::getEvalMat() const {
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
   }
 
   DOMElement* ScalarWidget::initializeUsingXML(DOMElement *element) {
@@ -307,9 +307,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  vector<vector<QString> > BasicVecWidget::getEvalMat() const {
+  vector<vector<QString>> BasicVecWidget::getEvalMat() const {
     vector<QString> x = getVec();
-    vector<vector<QString> > A(x.size(),vector<QString>(1));
+    vector<vector<QString>> A(x.size(),vector<QString>(1));
     for(size_t i=0; i<x.size(); i++)
       A[i][0] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString(),mw->getProject()->getXMLElement())));
     return A;
@@ -404,7 +404,7 @@ namespace MBSimGUI {
     }
   }
 
-  bool VecWidget::validate(const vector<vector<QString> > &A) const {
+  bool VecWidget::validate(const vector<vector<QString>> &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
     if(!A.empty() and A[0].size()!=1)
@@ -452,7 +452,7 @@ namespace MBSimGUI {
     emit Widget::widgetChanged();
   }
 
-  bool VecSizeVarWidget::validate(const vector<vector<QString> > &A) const {
+  bool VecSizeVarWidget::validate(const vector<vector<QString>> &A) const {
     if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
       return false;
     if(!A.empty() and A[0].size()!=1)
@@ -518,7 +518,7 @@ namespace MBSimGUI {
       table->item(i,0)->setText(x[i]);
   }
 
-  bool VecTableWidget::validate(const vector<vector<QString> > &A) const {
+  bool VecTableWidget::validate(const vector<vector<QString>> &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
     if(!A.empty() and A[0].size()!=1)
@@ -526,8 +526,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  vector<vector<QString> > BasicMatWidget::getEvalMat() const {
-    vector<vector<QString> > A = getMat();
+  vector<vector<QString>> BasicMatWidget::getEvalMat() const {
+    vector<vector<QString>> A = getMat();
     for(auto & i : A)
       for(size_t j=0; j<i.size(); j++)
         i[j] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(i[j].toStdString(),mw->getProject()->getXMLElement())));
@@ -539,7 +539,7 @@ namespace MBSimGUI {
     if(!element || E(element)->getTagName() != PV%"xmlMatrix")
       return nullptr;
     DOMElement *ei=element->getFirstElementChild();
-    vector<vector<QString> > value;
+    vector<vector<QString>> value;
     while(ei and E(ei)->getTagName()==PV%"row") {
       DOMElement *ej=ei->getFirstElementChild();
       value.emplace_back();
@@ -578,7 +578,7 @@ namespace MBSimGUI {
     resize_(rows,cols);
   }
 
-  MatWidget::MatWidget(const vector<vector<QString> > &A) {
+  MatWidget::MatWidget(const vector<vector<QString>> &A) {
 
     auto *layout = new QGridLayout;
     layout->setMargin(0);
@@ -588,7 +588,7 @@ namespace MBSimGUI {
 
   void MatWidget::resize_(int rows, int cols) {
     if(static_cast<int>(box.size())!=rows or (!box.empty() and static_cast<int>(box[0].size())!=cols)) {
-      vector<vector<QString> > buf(box.size());
+      vector<vector<QString>> buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
         buf[i].resize(box[i].size());
         for(unsigned int j=0; j<box[i].size(); j++) {
@@ -613,8 +613,8 @@ namespace MBSimGUI {
     }
   }
 
-  vector<vector<QString> > MatWidget::getMat() const {
-    vector<vector<QString> > A(box.size());
+  vector<vector<QString>> MatWidget::getMat() const {
+    vector<vector<QString>> A(box.size());
     for(unsigned int i=0; i<box.size(); i++) {
       A[i].resize(box[i].size());
       for(unsigned int j=0; j<box[i].size(); j++) {
@@ -625,7 +625,7 @@ namespace MBSimGUI {
     return A;
   }
 
-  void MatWidget::setMat(const vector<vector<QString> > &A) {
+  void MatWidget::setMat(const vector<vector<QString>> &A) {
     resize_(A.size(),A.empty()?0:A[0].size());
     for(unsigned int i=0; i<box.size(); i++) 
       for(unsigned int j=0; j<box[i].size(); j++)
@@ -640,7 +640,7 @@ namespace MBSimGUI {
     }
   }
 
-  bool MatWidget::validate(const vector<vector<QString> > &A) const {
+  bool MatWidget::validate(const vector<vector<QString>> &A) const {
     return !(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()));
   }
 
@@ -665,7 +665,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void MatColsVarWidget::setMat(const vector<vector<QString> > &A) {
+  void MatColsVarWidget::setMat(const vector<vector<QString>> &A) {
     rowsLabel->setText(QString::number(A.size()));
     colsCombo->blockSignals(true);
     colsCombo->setValue(A[0].size());
@@ -687,7 +687,7 @@ namespace MBSimGUI {
     emit Widget::widgetChanged();
   }
 
-  bool MatColsVarWidget::validate(const vector<vector<QString> > &A) const {
+  bool MatColsVarWidget::validate(const vector<vector<QString>> &A) const {
     if(rows()!=static_cast<int>(A.size()))
       return false;
     if(static_cast<int>(A[0].size())<minCols || static_cast<int>(A[0].size())>maxCols)
@@ -715,7 +715,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void MatRowsVarWidget::setMat(const vector<vector<QString> > &A) {
+  void MatRowsVarWidget::setMat(const vector<vector<QString>> &A) {
     rowsCombo->blockSignals(true);
     rowsCombo->setValue(A.size());
     rowsCombo->blockSignals(false);
@@ -737,7 +737,7 @@ namespace MBSimGUI {
     emit Widget::widgetChanged();
   }
 
-  bool MatRowsVarWidget::validate(const vector<vector<QString> > &A) const {
+  bool MatRowsVarWidget::validate(const vector<vector<QString>> &A) const {
     if(static_cast<int>(A.size())<minRows || static_cast<int>(A.size())>maxRows)
       return false;
     if(cols()!=static_cast<int>(A[0].size()))
@@ -772,7 +772,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void MatRowsColsVarWidget::setMat(const vector<vector<QString> > &A) {
+  void MatRowsColsVarWidget::setMat(const vector<vector<QString>> &A) {
     rowsCombo->blockSignals(true);
     rowsCombo->setValue(A.size());
     rowsCombo->blockSignals(false);
@@ -804,7 +804,7 @@ namespace MBSimGUI {
     emit Widget::widgetChanged();
   }
 
-  bool MatRowsColsVarWidget::validate(const vector<vector<QString> > &A) const {
+  bool MatRowsColsVarWidget::validate(const vector<vector<QString>> &A) const {
     if(static_cast<int>(A.size())<minRows || static_cast<int>(A.size())>maxRows)
       return false;
     if(static_cast<int>(A[0].size())<minCols || static_cast<int>(A[0].size())>maxCols)
@@ -832,7 +832,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void SqrMatSizeVarWidget::setMat(const vector<vector<QString> > &A) {
+  void SqrMatSizeVarWidget::setMat(const vector<vector<QString>> &A) {
     sizeCombo->blockSignals(true);
     sizeCombo->setValue(A.size());
     sizeCombo->blockSignals(false);
@@ -852,7 +852,7 @@ namespace MBSimGUI {
     emit Widget::widgetChanged();
   }
 
-  bool SqrMatSizeVarWidget::validate(const vector<vector<QString> > &A) const {
+  bool SqrMatSizeVarWidget::validate(const vector<vector<QString>> &A) const {
     if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
       return false;
     if(static_cast<int>(A[0].size())<minSize || static_cast<int>(A[0].size())>maxSize)
@@ -868,7 +868,7 @@ namespace MBSimGUI {
     resize_(rows);
   }
 
-  SymMatWidget::SymMatWidget(const vector<vector<QString> > &A) {
+  SymMatWidget::SymMatWidget(const vector<vector<QString>> &A) {
 
     auto *layout = new QGridLayout;
     layout->setMargin(0);
@@ -878,7 +878,7 @@ namespace MBSimGUI {
 
   void SymMatWidget::resize_(int rows) {
     if(static_cast<int>(box.size())!=rows) {
-      vector<vector<QString> > buf(box.size());
+      vector<vector<QString>> buf(box.size());
       for(unsigned int i=0; i<box.size(); i++) {
         buf[i].resize(box[i].size());
         for(unsigned int j=0; j<box[i].size(); j++) {
@@ -907,8 +907,8 @@ namespace MBSimGUI {
     }
   }
 
-  vector<vector<QString> > SymMatWidget::getMat() const {
-    vector<vector<QString> > A(box.size());
+  vector<vector<QString>> SymMatWidget::getMat() const {
+    vector<vector<QString>> A(box.size());
     for(unsigned int i=0; i<box.size(); i++) {
       A[i].resize(box.size());
       for(unsigned int j=0; j<box[i].size(); j++) {
@@ -919,7 +919,7 @@ namespace MBSimGUI {
     return A;
   }
 
-  void SymMatWidget::setMat(const vector<vector<QString> > &A) {
+  void SymMatWidget::setMat(const vector<vector<QString>> &A) {
     resize_(A.size());
     for(unsigned int i=0; i<box.size(); i++) {
       for(unsigned int j=0; j<box.size(); j++)
@@ -935,7 +935,7 @@ namespace MBSimGUI {
     }
   }
 
-  bool SymMatWidget::validate(const vector<vector<QString> > &A) const {
+  bool SymMatWidget::validate(const vector<vector<QString>> &A) const {
     if(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()))
       return false;
     for(int i=0; i<rows(); i++) {
@@ -967,7 +967,7 @@ namespace MBSimGUI {
     setLayout(layout);
   }
 
-  void SymMatSizeVarWidget::setMat(const vector<vector<QString> > &A) {
+  void SymMatSizeVarWidget::setMat(const vector<vector<QString>> &A) {
     sizeCombo->blockSignals(true);
     sizeCombo->setValue(A.size());
     sizeCombo->blockSignals(false);
@@ -987,7 +987,7 @@ namespace MBSimGUI {
     emit Widget::widgetChanged();
   }
 
-  bool SymMatSizeVarWidget::validate(const vector<vector<QString> > &A) const {
+  bool SymMatSizeVarWidget::validate(const vector<vector<QString>> &A) const {
     if(static_cast<int>(A.size())<minSize || static_cast<int>(A.size())>maxSize)
       return false;
     if(static_cast<int>(A[0].size())<minSize || static_cast<int>(A[0].size())>maxSize)
@@ -1006,7 +1006,7 @@ namespace MBSimGUI {
     resize_(rows,cols);
   }
 
-  MatTableWidget::MatTableWidget(const vector<vector<QString> > &A) {
+  MatTableWidget::MatTableWidget(const vector<vector<QString>> &A) {
 
     auto *layout = new QVBoxLayout;
     table = new QTableWidget(this);
@@ -1027,7 +1027,7 @@ namespace MBSimGUI {
 
   void MatTableWidget::resize_(int rows, int cols) {
     if(this->rows()!=rows or this->cols()!=cols) {
-      vector<vector<QString> > buf(this->rows());
+      vector<vector<QString>> buf(this->rows());
       for(unsigned int i=0; i<this->rows(); i++) {
         buf[i].resize(this->cols());
         for(unsigned int j=0; j<this->cols(); j++)
@@ -1048,8 +1048,8 @@ namespace MBSimGUI {
     }
   }
 
-  vector<vector<QString> > MatTableWidget::getMat() const {
-    vector<vector<QString> > A(rows());
+  vector<vector<QString>> MatTableWidget::getMat() const {
+    vector<vector<QString>> A(rows());
     for(unsigned int i=0; i<rows(); i++) {
       A[i].resize(cols());
       for(unsigned int j=0; j<cols(); j++) {
@@ -1060,7 +1060,7 @@ namespace MBSimGUI {
     return A;
   }
 
-  void MatTableWidget::setMat(const vector<vector<QString> > &A) {
+  void MatTableWidget::setMat(const vector<vector<QString>> &A) {
     resize_(A.size(),A.empty()?0:A[0].size());
     for(unsigned int i=0; i<rows(); i++)
       for(unsigned int j=0; j<cols(); j++)
@@ -1068,7 +1068,7 @@ namespace MBSimGUI {
         //table->item(i,j)->setText(A[i][j]=="0"?"":A[i][j]);
   }
 
-  bool MatTableWidget::validate(const vector<vector<QString> > &A) const {
+  bool MatTableWidget::validate(const vector<vector<QString>> &A) const {
     return !(rows()!=static_cast<int>(A.size()) || cols()!=static_cast<int>(A[0].size()));
   }
 
@@ -1112,7 +1112,7 @@ namespace MBSimGUI {
     }
   }
 
-  bool CardanWidget::validate(const vector<vector<QString> > &A) const {
+  bool CardanWidget::validate(const vector<vector<QString>> &A) const {
     if(size()!=static_cast<int>(A.size()))
       return false;
     if(!A.empty() and A[0].size()!=1)
@@ -1120,9 +1120,9 @@ namespace MBSimGUI {
     return true;
   }
 
-  vector<vector<QString> > CardanWidget::getEvalMat() const {
+  vector<vector<QString>> CardanWidget::getEvalMat() const {
     vector<QString> x = getAngles();
-    vector<vector<QString> > A(x.size(),vector<QString>(1));
+    vector<vector<QString>> A(x.size(),vector<QString>(1));
     for(size_t i=0; i<x.size(); i++)
       A[i][0] = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(x[i].toStdString(),mw->getProject()->getXMLElement())));
     return A;
@@ -1183,7 +1183,7 @@ namespace MBSimGUI {
     mainlayout->addWidget(unit);
   }
 
-  bool AboutXWidget::validate(const vector<vector<QString> > &A) const {
+  bool AboutXWidget::validate(const vector<vector<QString>> &A) const {
     if(A.size()!=1)
       return false;
     if(A[0].size()!=1)
@@ -1191,8 +1191,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  vector<vector<QString> > AboutXWidget::getEvalMat() const {
-    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+  vector<vector<QString>> AboutXWidget::getEvalMat() const {
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
   }
 
   DOMElement* AboutXWidget::initializeUsingXML(DOMElement *parent) {
@@ -1235,7 +1235,7 @@ namespace MBSimGUI {
     mainlayout->addWidget(unit);
   }
 
-  bool AboutYWidget::validate(const vector<vector<QString> > &A) const {
+  bool AboutYWidget::validate(const vector<vector<QString>> &A) const {
     if(A.size()!=1)
       return false;
     if(A[0].size()!=1)
@@ -1243,8 +1243,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  vector<vector<QString> > AboutYWidget::getEvalMat() const {
-    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+  vector<vector<QString>> AboutYWidget::getEvalMat() const {
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
   }
 
   DOMElement* AboutYWidget::initializeUsingXML(DOMElement *parent) {
@@ -1287,7 +1287,7 @@ namespace MBSimGUI {
     mainlayout->addWidget(unit);
   }
 
-  bool AboutZWidget::validate(const vector<vector<QString> > &A) const {
+  bool AboutZWidget::validate(const vector<vector<QString>> &A) const {
     if(A.size()!=1)
       return false;
     if(A[0].size()!=1)
@@ -1295,8 +1295,8 @@ namespace MBSimGUI {
     return true;
   }
 
-  vector<vector<QString> > AboutZWidget::getEvalMat() const {
-    return vector<vector<QString> >(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
+  vector<vector<QString>> AboutZWidget::getEvalMat() const {
+    return vector<vector<QString>>(1,vector<QString>(1,QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())))));
   }
 
   DOMElement* AboutZWidget::initializeUsingXML(DOMElement *parent) {
@@ -1411,7 +1411,7 @@ namespace MBSimGUI {
     return getFile();
   }
 
-  vector<vector<QString> > FromFileWidget::getEvalMat() const {
+  vector<vector<QString>> FromFileWidget::getEvalMat() const {
     string file =
       mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue((path->isChecked()?getFile():mw->getProjectDir().absoluteFilePath(getFile())).toStdString(),mw->getProject()->getXMLElement(),false));
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue("ret=load(" + file + ")",mw->getProject()->getXMLElement())));
@@ -1524,7 +1524,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  MatWidgetFactory::MatWidgetFactory(vector<vector<QString> > A_, vector<QStringList> unit_, vector<int> defaultUnit_, bool table_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), table(table_) {
+  MatWidgetFactory::MatWidgetFactory(vector<vector<QString>> A_, vector<QStringList> unit_, vector<int> defaultUnit_, bool table_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), table(table_) {
     name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1604,7 +1604,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SymMatWidgetFactory::SymMatWidgetFactory(vector<vector<QString> > A_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
+  SymMatWidgetFactory::SymMatWidgetFactory(vector<vector<QString>> A_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";
@@ -1620,7 +1620,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(vector<vector<QString> > A_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
+  SymMatSizeVarWidgetFactory::SymMatSizeVarWidgetFactory(vector<vector<QString>> A_, vector<QStringList> unit_, vector<int> defaultUnit_) : A(std::move(A_)), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
     name[0] = "Matrix";
     name[1] = "File";
     name[2] = "Editor";

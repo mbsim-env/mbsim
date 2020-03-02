@@ -148,7 +148,7 @@ namespace MBSimGUI {
     int m, n;
     is >> buf >> buf >> m;
     is >> buf >> buf >> n;
-    fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,complex<double> > A(m,n,fmatvec::NONINIT);
+    fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Var,complex<double>> A(m,n,fmatvec::NONINIT);
     for(int i=0; i<m; i++) {
       for(int j=0; j<n; j++)
         is >> A(i,j);

@@ -100,7 +100,7 @@ namespace MBSimGUI {
     if(ele) {
       if(E(ele)->getTagName() == PV%"xmlMatrix") {
         DOMElement *ei=ele->getFirstElementChild();
-        vector<vector<QString> > value;
+        vector<vector<QString>> value;
         while(ei and E(ei)->getTagName()==PV%"row") {
           DOMElement *ej=ei->getFirstElementChild();
           value.emplace_back();
