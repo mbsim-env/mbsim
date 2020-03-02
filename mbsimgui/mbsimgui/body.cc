@@ -40,13 +40,11 @@ namespace MBSimGUI {
   void Body::addFrame(Frame* frame_) {
     frame.push_back(frame_);
     frame_->setParent(this);
-    frame_->updateStatus();
   }
 
   void Body::addContour(Contour* contour_) {
     contour.push_back(contour_);
     contour_->setParent(this);
-    contour_->updateStatus();
   }
 
   void Body::removeElement(Element* element) {

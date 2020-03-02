@@ -78,8 +78,10 @@ namespace MBSimGUI {
         mw->setProjectChanged(true);
       editor->fromWidget();
       if(mw->getAutoRefresh()) mw->refresh();
-      if(parameter)
+      if(parameter) {
         parameter->setConfig(true);
+        parameter->getParent()->updateStatus();
+      }
     }
     parameter = nullptr;
     editor = nullptr;
@@ -93,8 +95,10 @@ namespace MBSimGUI {
     update(index);
     update(index.sibling(index.row(),1));
     if(mw->getAutoRefresh()) mw->refresh();
-    if(parameter)
+    if(parameter) {
       parameter->setConfig(true);
+      parameter->getParent()->updateStatus();
+    }
     editor->setCancel(true);
   }
 

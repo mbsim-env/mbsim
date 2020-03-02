@@ -676,17 +676,16 @@ namespace MBSimGUI {
       actionSaveProject->setDisabled(false);
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
-      std::string message;
       try { 
         doc = parser->parseURI(X()%file.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
       }
       catch(const std::exception &ex) {
-        message = ex.what();
+        cout << ex.what() << endl;
         return;
       }
       catch(...) {
-        message = "Unknown exception.";
+        cout << "Unknown exception." << endl;
         return;
       }
       setWindowTitle(projectFile+"[*]");
@@ -785,7 +784,6 @@ namespace MBSimGUI {
       }
     }
 
-    string message;
     try {
       D(doc)->validate();
       string evalName="octave"; // default evaluator
@@ -809,12 +807,10 @@ namespace MBSimGUI {
       eval->addParamSet(doc->getDocumentElement());
     }
     catch(const std::exception &error) {
-      message = string("An exception occurred in updateParameters: ") + error.what();
-      cout << message << endl;
+      cout << string("An exception occurred in updateParameters: ") + error.what() << endl;
     }
     catch(...) {
-      message = "An unknown exception occurred in updateParameters.";
-      cout << message << endl;
+      cout << "An unknown exception occurred in updateParameters." << endl;
     }
   }
 
@@ -1106,6 +1102,8 @@ namespace MBSimGUI {
     elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
 
     solverView->setSolver(getProject()->getSolver());
+
+    project->getDynamicSystemSolver()->updateStatus();
   }
 
   void MainWindow::edit() {

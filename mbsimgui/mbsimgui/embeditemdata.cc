@@ -20,6 +20,8 @@
 #include <config.h>
 #include "embeditemdata.h"
 #include "parameter.h"
+#include "mainwindow.h"
+#include <mbxmlutils/eval.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
 
@@ -29,11 +31,30 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   EmbedItemData::~EmbedItemData() {
     for (auto & it : parameter)
       delete it;
     for(auto & i : removedParameter)
       delete i;
+  }
+  
+  bool EmbedItemData::isActive() {
+    if(not embed or not MBXMLUtils::E(embed)->hasAttribute("count"))
+      return true;
+    mw->updateParameters(this);
+    bool active = true;
+    try {
+      active = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(embed)->getAttribute("count"),element,true))!="0";
+    }
+    catch(MBXMLUtils::DOMEvalException &ex) {
+      cout << ex.getMessage() << endl;
+    }
+    catch(...) {
+      cout << "Unknown exception" << endl;
+    }
+    return active;
   }
 
   vector<EmbedItemData*> EmbedItemData::getEmbedItemParents() {
