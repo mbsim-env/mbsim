@@ -81,8 +81,8 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  void DynamicSystemSolver::createAndInit() {
-    Group::createAndInit();
+  void DynamicSystemSolver::create() {
+    Group::create();
     environments = E(element)->getFirstElementChildNamed(MBSIM%"environments");
   }
 

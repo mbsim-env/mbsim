@@ -40,7 +40,7 @@ namespace MBSimGUI {
       ~Project() override;
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual void createAndInit();
+      virtual void create();
       QString getType() const override { return "MBSimProject"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMXML; }
       virtual ProjectPropertyDialog* createPropertyDialog() { return new ProjectPropertyDialog(this); }

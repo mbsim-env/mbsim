@@ -298,17 +298,17 @@ namespace MBSimGUI {
     return element;
   }
 
-  void Group::createAndInit() {
-    Element::createAndInit();
+  void Group::create() {
+    Element::create();
 
     frames = E(element)->getFirstElementChildNamed(MBSIM%"frames");
     DOMElement *ELE=frames->getFirstElementChild();
     Frame *f;
     while(ELE) {
-      f = Embed<Frame>::createAndInit(ELE,this);
+      f = Embed<Frame>::create(ELE,this);
       if(f) {
         addFrame(f);
-        f->createAndInit();
+        f->create();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -317,10 +317,10 @@ namespace MBSimGUI {
     ELE=contours->getFirstElementChild();
     Contour *c;
     while(ELE) {
-      c = Embed<Contour>::createAndInit(ELE,this);
+      c = Embed<Contour>::create(ELE,this);
       if(c) {
         addContour(c);
-        c->createAndInit();
+        c->create();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -329,10 +329,10 @@ namespace MBSimGUI {
     ELE=groups->getFirstElementChild();
     Group *g;
     while(ELE) {
-      g = Embed<Group>::createAndInit(ELE,this);
+      g = Embed<Group>::create(ELE,this);
       if(g) {
         addGroup(g);
-        g->createAndInit();
+        g->create();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -341,10 +341,10 @@ namespace MBSimGUI {
     ELE=objects->getFirstElementChild();
     Object *o;
     while(ELE) {
-      o = Embed<Object>::createAndInit(ELE,this);
+      o = Embed<Object>::create(ELE,this);
       if(o) {
         addObject(o);
-        o->createAndInit();
+        o->create();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -353,10 +353,10 @@ namespace MBSimGUI {
     ELE=links->getFirstElementChild();
     Link *l;
     while(ELE) {
-      l = Embed<Link>::createAndInit(ELE,this);
+      l = Embed<Link>::create(ELE,this);
       if(l) {
         addLink(l);
-        l->createAndInit();
+        l->create();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -365,10 +365,10 @@ namespace MBSimGUI {
     ELE=constraints->getFirstElementChild();
     Constraint *constraint;
     while(ELE) {
-      constraint = Embed<Constraint>::createAndInit(ELE,this);
+      constraint = Embed<Constraint>::create(ELE,this);
       if(constraint) {
         addConstraint(constraint);
-        constraint->createAndInit();
+        constraint->create();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -377,10 +377,10 @@ namespace MBSimGUI {
     ELE=observers->getFirstElementChild();
     Observer *obsrv;
     while(ELE) {
-      obsrv = Embed<Observer>::createAndInit(ELE,this);
+      obsrv = Embed<Observer>::create(ELE,this);
       if(obsrv) {
         addObserver(obsrv);
-        obsrv->createAndInit();
+        obsrv->create();
       }
       ELE=ELE->getNextElementSibling();
     }

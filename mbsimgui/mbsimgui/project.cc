@@ -66,17 +66,17 @@ namespace MBSimGUI {
     return element;
   }
 
-  void Project::createAndInit() {
+  void Project::create() {
     DOMElement *ele = element->getFirstElementChild();
     if(E(ele)->getTagName()==PV%"evaluator") {
       setEvaluator(X()%E(ele)->getFirstTextChild()->getData());
       ele = ele->getNextElementSibling();
     }
-    setDynamicSystemSolver(Embed<DynamicSystemSolver>::createAndInit(ele,this));
-    dss->createAndInit();
+    setDynamicSystemSolver(Embed<DynamicSystemSolver>::create(ele,this));
+    dss->create();
     ele = ele->getNextElementSibling();
-    setSolver(Embed<Solver>::createAndInit(ele,this));
-    solver->createAndInit();
+    setSolver(Embed<Solver>::create(ele,this));
+    solver->create();
   }
 
   DOMElement* Project::processIDAndHref(DOMElement *element) {

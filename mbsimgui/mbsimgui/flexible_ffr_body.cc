@@ -92,14 +92,14 @@ namespace MBSimGUI {
     return element;
   }
 
-  void GenericFlexibleFfrBody::createAndInit() {
-    Body::createAndInit();
+  void GenericFlexibleFfrBody::create() {
+    Body::create();
 
     frames = E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames");
     DOMElement *e=frames->getFirstElementChild();
     Frame *f;
     while(e) {
-      f = Embed<Frame>::createAndInit(e,this);
+      f = Embed<Frame>::create(e,this);
       if(f) addFrame(f);
       e=e->getNextElementSibling();
     }
@@ -108,7 +108,7 @@ namespace MBSimGUI {
     e=contours->getFirstElementChild();
     Contour *c;
     while(e) {
-      c = Embed<Contour>::createAndInit(e,this);
+      c = Embed<Contour>::create(e,this);
       if(c) addContour(c);
       e=e->getNextElementSibling();
     }

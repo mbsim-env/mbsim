@@ -40,7 +40,7 @@ namespace MBSimGUI {
       public:
         static T* create(xercesc::DOMElement *element);
 
-        static T* createAndInit(xercesc::DOMElement *ele1, EmbedItemData* parent) {
+        static T* create(xercesc::DOMElement *ele1, EmbedItemData* parent) {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
@@ -97,13 +97,11 @@ namespace MBSimGUI {
               if(embededParam) object->setEmbededParameters(embededParam);
               for(auto & i : param)
                 object->addParameter(i);
-//              object->initializeUsingXML(ele2);
               if(embeded) object->setEmbeded(embeded);
             }
           }
           else {
             object=create(ele1);
-            //if(object) object->initializeUsingXML(ele1);
             if(object) object->setXMLElement(ele1);
           }
           return object;

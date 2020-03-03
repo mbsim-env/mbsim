@@ -1094,8 +1094,8 @@ namespace MBSimGUI {
     delete project;
     project = 0;
 
-    project=Embed<Project>::createAndInit(doc->getDocumentElement(),nullptr);
-    project->createAndInit();
+    project=Embed<Project>::create(doc->getDocumentElement(),nullptr);
+    project->create();
     projectView->setProject(project);
     projectView->updateName();
 
@@ -1775,8 +1775,8 @@ namespace MBSimGUI {
       else
         return;
     }
-    Frame *frame = Embed<Frame>::createAndInit(ele,parent);
-    frame->createAndInit();
+    Frame *frame = Embed<Frame>::create(ele,parent);
+    frame->create();
     if(not frame) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
@@ -1825,8 +1825,8 @@ namespace MBSimGUI {
       else
         return;
     }
-    Contour *contour = Embed<Contour>::createAndInit(ele,parent);
-    contour->createAndInit();
+    Contour *contour = Embed<Contour>::create(ele,parent);
+    contour->create();
     if(not contour) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
@@ -1875,8 +1875,8 @@ namespace MBSimGUI {
       else
         return;
     }
-    Group *group = Embed<Group>::createAndInit(ele,parent);
-    group->createAndInit();
+    Group *group = Embed<Group>::create(ele,parent);
+    group->create();
     if(not group) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
@@ -1925,8 +1925,8 @@ namespace MBSimGUI {
       else
         return;
     }
-    Object *object = Embed<Object>::createAndInit(ele,parent);
-    object->createAndInit();
+    Object *object = Embed<Object>::create(ele,parent);
+    object->create();
     if(not object) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
@@ -1975,8 +1975,8 @@ namespace MBSimGUI {
       else
         return;
     }
-    Link *link = Embed<Link>::createAndInit(ele,parent);
-    link->createAndInit();
+    Link *link = Embed<Link>::create(ele,parent);
+    link->create();
     if(not link) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
@@ -2025,8 +2025,8 @@ namespace MBSimGUI {
       else
         return;
     }
-    Constraint *constraint = Embed<Constraint>::createAndInit(ele,parent);
-    constraint->createAndInit();
+    Constraint *constraint = Embed<Constraint>::create(ele,parent);
+    constraint->create();
     if(not constraint) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
@@ -2075,8 +2075,8 @@ namespace MBSimGUI {
       else
         return;
     }
-    Observer *observer = Embed<Observer>::createAndInit(ele,parent);
-    observer->createAndInit();
+    Observer *observer = Embed<Observer>::create(ele,parent);
+    observer->create();
     if(not observer) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
@@ -2111,8 +2111,8 @@ namespace MBSimGUI {
     }
     else
       return;
-    Solver *solver = Embed<Solver>::createAndInit(ele,project);
-    solver->createAndInit();
+    Solver *solver = Embed<Solver>::create(ele,project);
+    solver->create();
     if(not solver) {
       QMessageBox::warning(0, "Load", "Cannot load file.");
       return;
