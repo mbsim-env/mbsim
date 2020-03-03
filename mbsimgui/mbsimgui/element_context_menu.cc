@@ -81,7 +81,7 @@ namespace MBSimGUI {
       action = new QAction("Enable", this);
       action->setCheckable(true);
       action->setChecked(element->isEnabled());
-      action->setEnabled(element->getParent()->isEnabled() and (not element->getEmbedXMLElement() or not MBXMLUtils::E(element->getEmbedXMLElement())->hasAttribute("count") or MBXMLUtils::E(element->getEmbedXMLElement())->getAttribute("count")=="0" or MBXMLUtils::E(element->getEmbedXMLElement())->getAttribute("count")=="1"));
+      action->setEnabled(element->getParent()->isEnabled());
       connect(action,SIGNAL(toggled(bool)),mw,SLOT(enableElement(bool)));
       addAction(action);
     }
