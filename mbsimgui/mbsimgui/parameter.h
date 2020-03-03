@@ -53,13 +53,10 @@ namespace MBSimGUI {
       virtual void removeXMLElements();
       EmbedItemData* getParent() { return parent; }
       void setParent(EmbedItemData* parent_) { parent = parent_; }
-      bool getConfig() { return config; }
-      void setConfig(bool config_) { config = config_; }
       static std::vector<Parameter*> initializeParametersUsingXML(xercesc::DOMElement *element);
     protected:
       EmbedItemData *parent{nullptr};
       xercesc::DOMElement *element;
-      bool config{false};
   };
 
   class StringParameter : public Parameter {

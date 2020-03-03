@@ -1578,7 +1578,7 @@ namespace MBSimGUI {
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor();
+    elementView->openEditor(false);
   }
 
   void MainWindow::addContour(Contour *contour, Element *parent) {
@@ -1591,7 +1591,7 @@ namespace MBSimGUI {
     model->createContourItem(contour,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor();
+    elementView->openEditor(false);
   }
 
   void MainWindow::addGroup(Group *group, Element *parent) {
@@ -1604,7 +1604,7 @@ namespace MBSimGUI {
     model->createGroupItem(group,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor();
+    elementView->openEditor(false);
   }
 
   void MainWindow::addObject(Object *object, Element *parent) {
@@ -1617,7 +1617,7 @@ namespace MBSimGUI {
     model->createObjectItem(object,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor();
+    elementView->openEditor(false);
   }
 
   void MainWindow::addLink(Link *link, Element *parent) {
@@ -1630,7 +1630,7 @@ namespace MBSimGUI {
     model->createLinkItem(link,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor();
+    elementView->openEditor(false);
   }
 
   void MainWindow::addConstraint(Constraint *constraint, Element *parent) {
@@ -1643,7 +1643,7 @@ namespace MBSimGUI {
     model->createConstraintItem(constraint,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor();
+    elementView->openEditor(false);
   }
 
   void MainWindow::addObserver(Observer *observer, Element *parent) {
@@ -1656,7 +1656,7 @@ namespace MBSimGUI {
     model->createObserverItem(observer,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor();
+    elementView->openEditor(false);
   }
 
   void MainWindow::addParameter(Parameter *parameter, EmbedItemData *parent) {
@@ -1669,7 +1669,7 @@ namespace MBSimGUI {
 //      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
     embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
-    embeddingView->openEditor();
+    embeddingView->openEditor(false);
   }
 
   void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param, bool embed) {

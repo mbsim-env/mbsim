@@ -31,7 +31,6 @@ namespace MBSimGUI {
 
   void Parameter::initializeUsingXML(DOMElement *element) {
     this->element = element;
-    config = true;
   }
 
   void Parameter::removeXMLElements() {

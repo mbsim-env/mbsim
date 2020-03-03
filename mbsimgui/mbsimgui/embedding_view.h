@@ -43,7 +43,7 @@ namespace MBSimGUI {
       void dialogFinished(int result);
       void apply();
     public slots:
-      void openEditor();
+      void openEditor(bool config=true);
   };
 
 }

@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void ElementView::openEditor() {
+  void ElementView::openEditor(bool config) {
     if(!editor) {
       mw->setAllowUndo(false);
       index = selectionModel()->currentIndex();
@@ -39,7 +39,7 @@ namespace MBSimGUI {
         mw->updateParameters(element);
         editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
-        if(element->getConfig())
+        if(config)
           editor->toWidget();
         else
           editor->setCancel(false);
@@ -65,7 +65,6 @@ namespace MBSimGUI {
         mw->setProjectChanged(true);
       editor->fromWidget();
       if(mw->getAutoRefresh()) mw->refresh();
-      element->setConfig(true);
     }
     editor = nullptr;
     element = nullptr;
@@ -78,7 +77,7 @@ namespace MBSimGUI {
     editor->fromWidget();
     update(index);
     if(mw->getAutoRefresh()) mw->refresh();
-    element->setConfig(true);
+    editor->setCancel(true);
     editor->setCancel(true);
   }
 

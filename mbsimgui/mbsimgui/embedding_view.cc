@@ -31,7 +31,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void EmbeddingView::openEditor() {
+  void EmbeddingView::openEditor(bool config) {
     if(!editor) {
 //      mw->getElementView()->setEnabled(false);
 //      mw->getSolverView()->setEnabled(false);
@@ -43,7 +43,7 @@ namespace MBSimGUI {
         mw->updateParameters(item,true);
         editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
-        if(parameter->getConfig())
+        if(config)
           editor->toWidget();
         else
           editor->setCancel(false);
@@ -82,10 +82,8 @@ namespace MBSimGUI {
         mw->setProjectChanged(true);
       editor->fromWidget();
       if(mw->getAutoRefresh()) mw->refresh();
-      if(parameter) {
-        parameter->setConfig(true);
+      if(parameter)
         parameter->getParent()->updateStatus();
-      }
     }
     parameter = nullptr;
     editor = nullptr;
@@ -105,7 +103,7 @@ namespace MBSimGUI {
     std::cout << "after update(index.sibling)" << std::endl;
     if(mw->getAutoRefresh()) mw->refresh();
     if(parameter) {
-      parameter->setConfig(true);
+      editor->setCancel(true);
       parameter->getParent()->updateStatus();
     }
     editor->setCancel(true);

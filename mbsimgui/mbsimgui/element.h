@@ -46,7 +46,6 @@ namespace MBSimGUI {
       static int IDcounter;
       std::vector<MBXMLUtils::FQN> plotFeatures;
       QString ID;
-      bool config{false};
       bool enabled{true};
     public:
       Element() : ID(QString::number(IDcounter++)) { }
@@ -61,7 +60,7 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* getXMLObservers() { return nullptr; }
       virtual xercesc::DOMElement* getXMLFrame() { return nullptr; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual void createAndInit() { config = true; }
+      virtual void createAndInit() { }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       virtual QString getFileExtension() const { return ".xml"; }
       template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;
@@ -114,8 +113,6 @@ namespace MBSimGUI {
       virtual QMenu* createFrameContextMenu() {return nullptr;}
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }
-      bool getConfig() { return config; }
-      void setConfig(bool config_) { config = config_; }
       bool isEnabled() const override { return enabled; }
       void updateStatus() override { enabled = (not parent or parent->isEnabled()) and isActive(); }
   };
