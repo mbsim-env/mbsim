@@ -298,15 +298,18 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* Group::initializeUsingXML(DOMElement *element) {
-    Element::initializeUsingXML(element);
+  void Group::createAndInit() {
+    Element::createAndInit();
 
     frames = E(element)->getFirstElementChildNamed(MBSIM%"frames");
     DOMElement *ELE=frames->getFirstElementChild();
     Frame *f;
     while(ELE) {
       f = Embed<Frame>::createAndInit(ELE,this);
-      if(f) addFrame(f);
+      if(f) {
+        addFrame(f);
+        f->createAndInit();
+      }
       ELE=ELE->getNextElementSibling();
     }
 
@@ -315,7 +318,10 @@ namespace MBSimGUI {
     Contour *c;
     while(ELE) {
       c = Embed<Contour>::createAndInit(ELE,this);
-      if(c) addContour(c);
+      if(c) {
+        addContour(c);
+        c->createAndInit();
+      }
       ELE=ELE->getNextElementSibling();
     }
 
@@ -324,7 +330,10 @@ namespace MBSimGUI {
     Group *g;
     while(ELE) {
       g = Embed<Group>::createAndInit(ELE,this);
-      if(g) addGroup(g);
+      if(g) {
+        addGroup(g);
+        g->createAndInit();
+      }
       ELE=ELE->getNextElementSibling();
     }
 
@@ -333,7 +342,10 @@ namespace MBSimGUI {
     Object *o;
     while(ELE) {
       o = Embed<Object>::createAndInit(ELE,this);
-      if(o) addObject(o);
+      if(o) {
+        addObject(o);
+        o->createAndInit();
+      }
       ELE=ELE->getNextElementSibling();
     }
 
@@ -342,7 +354,10 @@ namespace MBSimGUI {
     Link *l;
     while(ELE) {
       l = Embed<Link>::createAndInit(ELE,this);
-      if(l) addLink(l);
+      if(l) {
+        addLink(l);
+        l->createAndInit();
+      }
       ELE=ELE->getNextElementSibling();
     }
 
@@ -351,7 +366,10 @@ namespace MBSimGUI {
     Constraint *constraint;
     while(ELE) {
       constraint = Embed<Constraint>::createAndInit(ELE,this);
-      if(constraint) addConstraint(constraint);
+      if(constraint) {
+        addConstraint(constraint);
+        constraint->createAndInit();
+      }
       ELE=ELE->getNextElementSibling();
     }
 
@@ -360,11 +378,12 @@ namespace MBSimGUI {
     Observer *obsrv;
     while(ELE) {
       obsrv = Embed<Observer>::createAndInit(ELE,this);
-      if(obsrv) addObserver(obsrv);
+      if(obsrv) {
+        addObserver(obsrv);
+        obsrv->createAndInit();
+      }
       ELE=ELE->getNextElementSibling();
     }
-
-    return element;
   }
 
   Frame* Group::getFrame(const QString &name) const {

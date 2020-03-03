@@ -49,10 +49,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  void Solver::initializeUsingXML(DOMElement *element) {
-    this->element = element;
-  }
-
   EmbedItemData* Solver::getEmbedItemParent() {
     return project;
   }

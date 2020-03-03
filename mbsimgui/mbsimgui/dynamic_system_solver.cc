@@ -81,10 +81,9 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  DOMElement* DynamicSystemSolver::initializeUsingXML(DOMElement *element) {
-    Group::initializeUsingXML(element);
+  void DynamicSystemSolver::createAndInit() {
+    Group::createAndInit();
     environments = E(element)->getFirstElementChildNamed(MBSIM%"environments");
-    return element;
   }
 
   DOMElement* DynamicSystemSolver::processIDAndHref(DOMElement *element) {

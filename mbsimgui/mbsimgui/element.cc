@@ -51,12 +51,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* Element::initializeUsingXML(DOMElement *element) {
-    this->element = element;
-    config = true;
-    return element;
-  }
-
   QString Element::getXMLPath(Element *ref, bool rel) {
     if(rel) {
       vector<Element*> e0, e1;

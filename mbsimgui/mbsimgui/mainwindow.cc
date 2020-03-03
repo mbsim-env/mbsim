@@ -1094,7 +1094,8 @@ namespace MBSimGUI {
     delete project;
     project = 0;
 
-    project=Embed<Project>::createAndInit(doc->getDocumentElement());
+    project=Embed<Project>::createAndInit(doc->getDocumentElement(),nullptr);
+    project->createAndInit();
     projectView->setProject(project);
     projectView->updateName();
 
@@ -1715,6 +1716,7 @@ namespace MBSimGUI {
         return;
       }
       if(embed) {
+        parent->setEmbededParameters(true);
         E(parent->createEmbedXMLElement())->setAttribute("parameterHref",getProjectDir().relativeFilePath(file).toStdString());
       } 
       else
@@ -1773,12 +1775,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    Frame *frame = Embed<Frame>::createAndInit(ele);
+    Frame *frame = Embed<Frame>::createAndInit(ele,parent);
+    frame->createAndInit();
     if(not frame) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
     }
     if(embed) {
+      frame->setEmbeded(true);
       frame->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
       E(frame->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
@@ -1821,12 +1825,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    Contour *contour = Embed<Contour>::createAndInit(ele);
+    Contour *contour = Embed<Contour>::createAndInit(ele,parent);
+    contour->createAndInit();
     if(not contour) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
     }
     if(embed) {
+      contour->setEmbeded(true);
       contour->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
       E(contour->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
@@ -1869,12 +1875,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    Group *group = Embed<Group>::createAndInit(ele);
+    Group *group = Embed<Group>::createAndInit(ele,parent);
+    group->createAndInit();
     if(not group) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
     }
     if(embed) {
+      group->setEmbeded(true);
       group->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
       E(group->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
@@ -1917,12 +1925,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    Object *object = Embed<Object>::createAndInit(ele);
+    Object *object = Embed<Object>::createAndInit(ele,parent);
+    object->createAndInit();
     if(not object) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
     }
     if(embed) {
+      object->setEmbeded(true);
       object->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
       E(object->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
@@ -1965,12 +1975,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    Link *link = Embed<Link>::createAndInit(ele);
+    Link *link = Embed<Link>::createAndInit(ele,parent);
+    link->createAndInit();
     if(not link) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
     }
     if(embed) {
+      link->setEmbeded(true);
       link->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
       E(link->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
@@ -2013,12 +2025,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    Constraint *constraint = Embed<Constraint>::createAndInit(ele);
+    Constraint *constraint = Embed<Constraint>::createAndInit(ele,parent);
+    constraint->createAndInit();
     if(not constraint) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
     }
     if(embed) {
+      constraint->setEmbeded(true);
       constraint->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
       E(constraint->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
@@ -2061,12 +2075,14 @@ namespace MBSimGUI {
       else
         return;
     }
-    Observer *observer = Embed<Observer>::createAndInit(ele);
+    Observer *observer = Embed<Observer>::createAndInit(ele,parent);
+    observer->createAndInit();
     if(not observer) {
       QMessageBox::warning(nullptr, "Load", "Cannot load file.");
       return;
     }
     if(embed) {
+      observer->setEmbeded(true);
       observer->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
       E(observer->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
@@ -2095,7 +2111,8 @@ namespace MBSimGUI {
     }
     else
       return;
-    Solver *solver = Embed<Solver>::createAndInit(ele);
+    Solver *solver = Embed<Solver>::createAndInit(ele,project);
+    solver->createAndInit();
     if(not solver) {
       QMessageBox::warning(0, "Load", "Cannot load file.");
       return;

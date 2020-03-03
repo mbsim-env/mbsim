@@ -92,12 +92,11 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* GenericFlexibleFfrBody::initializeUsingXML(DOMElement *element) {
-    DOMElement *e;
-    Body::initializeUsingXML(element);
+  void GenericFlexibleFfrBody::createAndInit() {
+    Body::createAndInit();
 
     frames = E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames");
-    e=frames->getFirstElementChild();
+    DOMElement *e=frames->getFirstElementChild();
     Frame *f;
     while(e) {
       f = Embed<Frame>::createAndInit(e,this);
@@ -113,8 +112,6 @@ namespace MBSimGUI {
       if(c) addContour(c);
       e=e->getNextElementSibling();
     }
-
-    return element;
   }
 
   DOMElement* FlexibleFfrBody::processIDAndHref(DOMElement *element) {

@@ -33,7 +33,7 @@ namespace MBSimGUI {
       void removeXMLElements() override;
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      void createAndInit() override;
       QMenu* createFrameContextMenu() override { return new NodeFramesContextMenu(this); }
     protected:
       xercesc::DOMElement *frames, *contours;

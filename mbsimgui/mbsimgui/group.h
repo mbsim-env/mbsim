@@ -60,7 +60,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       xercesc::DOMElement* processHref(xercesc::DOMElement* element) override;
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      void createAndInit() override;
       Element *getChildByContainerAndName(const QString &container, const QString &name) const override;
       void setActionPasteDisabled(bool flag);
       int getNumberOfFrames() override {return frame.size();}
@@ -107,8 +107,8 @@ namespace MBSimGUI {
       void addObserver(Observer *observer_) override;
       void removeElement(Element *element) override;
       void setEmbeded(bool embeded_) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new GroupPropertyDialog(this);}
-      QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
+      ElementPropertyDialog* createPropertyDialog() override { return new GroupPropertyDialog(this); }
+      QMenu* createFrameContextMenu() override { return new FixedRelativeFramesContextMenu(this); }
       QMenu* createContextMenu() override { return new GroupContextMenu(this); }
       void updateStatus() override;
   };
@@ -118,8 +118,8 @@ namespace MBSimGUI {
       QString getType() const override { return "UnknownGroup"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override { return Element::processIDAndHref(element); }
       xercesc::DOMElement* processHref(xercesc::DOMElement* element) override { return Element::processHref(element); }
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override { return Element::initializeUsingXML(element); }
-      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+      void createAndInit() override { return Element::createAndInit(); }
+      ElementPropertyDialog* createPropertyDialog() override { return new UnknownElementPropertyDialog(this); }
   };
 
 }

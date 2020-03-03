@@ -61,7 +61,7 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* getXMLObservers() { return nullptr; }
       virtual xercesc::DOMElement* getXMLFrame() { return nullptr; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
+      virtual void createAndInit() { config = true; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       virtual QString getFileExtension() const { return ".xml"; }
       template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;

@@ -40,7 +40,7 @@ namespace MBSimGUI {
       public:
         static T* create(xercesc::DOMElement *element);
 
-        static T* createAndInit(xercesc::DOMElement *ele1, EmbedItemData* item=nullptr) {
+        static T* createAndInit(xercesc::DOMElement *ele1, EmbedItemData* parent) {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
@@ -48,7 +48,7 @@ namespace MBSimGUI {
             xercesc::DOMElement *ele2 = nullptr;
 
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              mw->updateParameters(item,false);
+              if(parent) mw->updateParameters(parent,false);
               std::string evaltmp;
               try{
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("parameterHref"),ele1,false));
@@ -74,7 +74,7 @@ namespace MBSimGUI {
               ele2 = ele1->getFirstElementChild();
             bool embeded = false;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-              if(not embededParam) mw->updateParameters(item,false);
+              if(not embededParam and parent) mw->updateParameters(parent,false);
               std::string evaltmp;
               try{
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
@@ -92,17 +92,19 @@ namespace MBSimGUI {
             }
             object=create(ele2);
             if(object) {
+              object->setXMLElement(ele2);
               object->setEmbedXMLElement(ele1);
               if(embededParam) object->setEmbededParameters(embededParam);
               for(auto & i : param)
                 object->addParameter(i);
-              object->initializeUsingXML(ele2);
+//              object->initializeUsingXML(ele2);
               if(embeded) object->setEmbeded(embeded);
             }
           }
           else {
             object=create(ele1);
-            if(object) object->initializeUsingXML(ele1);
+            //if(object) object->initializeUsingXML(ele1);
+            if(object) object->setXMLElement(ele1);
           }
           return object;
         }
