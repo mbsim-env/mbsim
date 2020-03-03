@@ -32,9 +32,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   void EmbeddingView::openEditor(bool config) {
-    if(!editor) {
-//      mw->getElementView()->setEnabled(false);
-//      mw->getSolverView()->setEnabled(false);
+    if(not mw->editorIsOpen()) {
       mw->setAllowUndo(false);
       index = selectionModel()->currentIndex();
       parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
@@ -88,19 +86,14 @@ namespace MBSimGUI {
     parameter = nullptr;
     editor = nullptr;
     mw->setAllowUndo(true);
-//    mw->getElementView()->setEnabled(true);
-//    mw->getSolverView()->setEnabled(true);
   }
 
   void EmbeddingView::apply() {
     if(editor->getCancel())
       mw->setProjectChanged(true);
     editor->fromWidget();
-    std::cout << "befor update(index)" << std::endl;
     update(index);
-    std::cout << "after update(index)" << std::endl;
     update(index.sibling(index.row(),1));
-    std::cout << "after update(index.sibling)" << std::endl;
     if(mw->getAutoRefresh()) mw->refresh();
     if(parameter) {
       editor->setCancel(true);

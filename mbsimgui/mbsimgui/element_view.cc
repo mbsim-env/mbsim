@@ -24,14 +24,15 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "mainwindow.h"
-#include <QEvent>
+#include "embedding_view.h"
+#include "solver_view.h"
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
   void ElementView::openEditor(bool config) {
-    if(!editor) {
+    if(not mw->editorIsOpen()) {
       mw->setAllowUndo(false);
       index = selectionModel()->currentIndex();
       element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());

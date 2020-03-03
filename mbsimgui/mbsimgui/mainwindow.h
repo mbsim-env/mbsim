@@ -168,6 +168,7 @@ namespace MBSimGUI {
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
       bool getAutoRefresh() const { return autoRefresh; }
+      bool editorIsOpen() const;
 
     public slots:
       void elementViewClicked();

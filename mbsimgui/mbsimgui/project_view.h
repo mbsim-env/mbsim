@@ -40,6 +40,7 @@ namespace MBSimGUI {
     public:
       ProjectView();
       ~ProjectView() override = default;
+      bool editorIsOpen() { return editor; }
       Project* getProject() { return project; }
       void setProject(Project *project_) { project = project_; }
       void updateName();

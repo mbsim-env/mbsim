@@ -61,13 +61,13 @@ namespace MBSimGUI {
               }
               xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
               MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
-              param = Parameter::initializeParametersUsingXML(doc->getDocumentElement());
+              param = Parameter::createParameters(doc->getDocumentElement());
               embededParam = true;
             }
             else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
             if(ele2) {
-              param = Parameter::initializeParametersUsingXML(ele2);
+              param = Parameter::createParameters(ele2);
               ele2 = ele2->getNextElementSibling();
             }
             else

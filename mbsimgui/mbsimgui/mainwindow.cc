@@ -530,26 +530,28 @@ namespace MBSimGUI {
   }
 
   void MainWindow::selectionChanged(const QModelIndex &current) {
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    auto *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
-    if(element) {
-      auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-      vector<EmbedItemData*> parents = element->getEmbedItemParents();
-      QModelIndex index = emodel->index(0,0);
-      emodel->removeRow(index.row(), index.parent());
-      if(!parents.empty()) {
-        index = emodel->createEmbeddingItem(parents[0]);
-        for(size_t i=0; i<parents.size()-1; i++)
-          index = emodel->createEmbeddingItem(parents[i+1],index);
-        emodel->createEmbeddingItem(element,index);
+    if(allowUndo) {
+      auto *model = static_cast<ElementTreeModel*>(elementView->model());
+      auto *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
+      if(element) {
+        auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+        vector<EmbedItemData*> parents = element->getEmbedItemParents();
+        QModelIndex index = emodel->index(0,0);
+        emodel->removeRow(index.row(), index.parent());
+        if(!parents.empty()) {
+          index = emodel->createEmbeddingItem(parents[0]);
+          for(size_t i=0; i<parents.size()-1; i++)
+            index = emodel->createEmbeddingItem(parents[i+1],index);
+          emodel->createEmbeddingItem(element,index);
+        }
+        else
+          index = emodel->createEmbeddingItem(element);
+        embeddingView->expandAll();
+        highlightObject(element->getID());
       }
       else
-        index = emodel->createEmbeddingItem(element);
-      embeddingView->expandAll();
-      highlightObject(element->getID());
+        highlightObject("");
     }
-    else
-      highlightObject("");
   }
 
   void MainWindow::elementViewClicked() {
@@ -588,28 +590,32 @@ namespace MBSimGUI {
   }
 
   void MainWindow::solverViewClicked() {
-    auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    vector<EmbedItemData*> parents = getProject()->getSolver()->getEmbedItemParents();
-    QModelIndex index = emodel->index(0,0);
-    emodel->removeRow(index.row(), index.parent());
-    if(!parents.empty()) {
-      index = emodel->createEmbeddingItem(parents[0]);
-      for(size_t i=0; i<parents.size()-1; i++)
-        index = emodel->createEmbeddingItem(parents[i+1],index);
-      emodel->createEmbeddingItem(getProject()->getSolver(),index);
+    if(allowUndo) {
+      auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+      vector<EmbedItemData*> parents = getProject()->getSolver()->getEmbedItemParents();
+      QModelIndex index = emodel->index(0,0);
+      emodel->removeRow(index.row(), index.parent());
+      if(!parents.empty()) {
+        index = emodel->createEmbeddingItem(parents[0]);
+        for(size_t i=0; i<parents.size()-1; i++)
+          index = emodel->createEmbeddingItem(parents[i+1],index);
+        emodel->createEmbeddingItem(getProject()->getSolver(),index);
+      }
+      else
+        index = emodel->createEmbeddingItem(getProject()->getSolver());
+      embeddingView->expandAll();
+      embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
     }
-    else
-      index = emodel->createEmbeddingItem(getProject()->getSolver());
-    embeddingView->expandAll();
-    embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
   }
 
   void MainWindow::projectViewClicked() {
-    auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    QModelIndex index = emodel->index(0,0);
-    emodel->removeRow(index.row(), index.parent());
-    emodel->createEmbeddingItem(projectView->getProject());
-    embeddingView->expandAll();
+    if(allowUndo) {
+      auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+      QModelIndex index = emodel->index(0,0);
+      emodel->removeRow(index.row(), index.parent());
+      emodel->createEmbeddingItem(projectView->getProject());
+      embeddingView->expandAll();
+    }
   }
 
   void MainWindow::newProject() {
@@ -746,7 +752,7 @@ namespace MBSimGUI {
     getProject()->getSolver()->createXMLElement(parent);
     std::vector<Parameter*> param;
     DOMElement *ele = MBXMLUtils::E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-    if(ele) param = Parameter::initializeParametersUsingXML(ele);
+    if(ele) param = Parameter::createParameters(ele);
     for(auto & i : param)
       getProject()->getSolver()->addParameter(i);
     solverViewClicked();
@@ -1721,7 +1727,7 @@ namespace MBSimGUI {
       } 
       else
         parent->createParameterXMLElement()->insertBefore(element,nullptr);
-      parameter->initializeUsingXML(element);
+      parameter->setXMLElement(element);
       parent->addParameter(parameter);
       newIndex = model->createParameterItem(parameter,index);
     }
@@ -2292,6 +2298,10 @@ namespace MBSimGUI {
 
   QString MainWindow::getProjectFilePath() const {
     return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).toLocalFile();
+  }
+
+  bool MainWindow::editorIsOpen() const {
+    return projectView->editorIsOpen() or elementView->editorIsOpen() or embeddingView->editorIsOpen() or solverView->editorIsOpen();
   }
 
 }

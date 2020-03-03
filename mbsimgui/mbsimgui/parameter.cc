@@ -29,10 +29,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  void Parameter::initializeUsingXML(DOMElement *element) {
-    this->element = element;
-  }
-
   void Parameter::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {
@@ -50,12 +46,12 @@ namespace MBSimGUI {
     return element;
   }
 
-  vector<Parameter*> Parameter::initializeParametersUsingXML(DOMElement *element) {
+  vector<Parameter*> Parameter::createParameters(DOMElement *element) {
     vector<Parameter*> param;
     DOMElement *e=element->getFirstElementChild();
     while(e) {
       Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
-      parameter->initializeUsingXML(e);
+      parameter->setXMLElement(e);
       param.push_back(parameter);
       e=e->getNextElementSibling();
     }
@@ -70,47 +66,12 @@ namespace MBSimGUI {
       return Parameter::getValue();
   }
 
-  void VectorParameter::initializeUsingXML(DOMElement *element) {
-    Parameter::initializeUsingXML(element);
-    DOMElement *ele=element->getFirstElementChild();
-    if(ele) {
-      if(E(ele)->getTagName() == PV%"xmlVector") {
-        DOMElement *ei=ele->getFirstElementChild();
-        vector<QString> value;
-        while(ei and E(ei)->getTagName()==PV%"ele") {
-          value.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
-          ei=ei->getNextElementSibling();
-        }
-      }
-    }
-  }
-
   QString MatrixParameter::getValue() const {
     DOMElement *ele=element->getFirstElementChild();
     if(ele and E(ele)->getTagName() == PV%"xmlMatrix")
       return "xmlMatrix";
     else
       return Parameter::getValue();
-  }
-
-  void MatrixParameter::initializeUsingXML(DOMElement *element) {
-    Parameter::initializeUsingXML(element);
-    DOMElement *ele=element->getFirstElementChild();
-    if(ele) {
-      if(E(ele)->getTagName() == PV%"xmlMatrix") {
-        DOMElement *ei=ele->getFirstElementChild();
-        vector<vector<QString>> value;
-        while(ei and E(ei)->getTagName()==PV%"row") {
-          DOMElement *ej=ei->getFirstElementChild();
-          value.emplace_back();
-          while(ej and E(ej)->getTagName()==PV%"ele") {
-            value[value.size()-1].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
-            ej=ej->getNextElementSibling();
-          }
-          ei=ei->getNextElementSibling();
-        }
-      }
-    }
   }
 
 }

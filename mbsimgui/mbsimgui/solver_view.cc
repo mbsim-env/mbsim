@@ -25,7 +25,8 @@
 #include "project.h"
 #include "utils.h"
 #include "mainwindow.h"
-#include <QEvent>
+#include "element_view.h"
+#include "embedding_view.h"
 
 namespace MBSimGUI {
 
@@ -111,7 +112,7 @@ namespace MBSimGUI {
   }
 
   void SolverView::openEditor() {
-    if(!editor) {
+    if(not mw->editorIsOpen()) {
       mw->setAllowUndo(false);
       mw->updateParameters(mw->getProject()->getSolver());
       editor = mw->getProject()->getSolver()->createPropertyDialog();

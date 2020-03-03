@@ -63,7 +63,7 @@ namespace MBSimGUI {
   }
 
   void ProjectView::openEditor() {
-    if(!editor) {
+    if(not mw->editorIsOpen()) {
       mw->setAllowUndo(false);
       mw->updateParameters(mw->getProject());
       editor = mw->getProject()->createPropertyDialog();

@@ -47,6 +47,7 @@ namespace MBSimGUI {
       Solver* createSolver(int i_);
       void updateText() { setText(type[i]); }
       QMenu* createContextMenu() { return new SolverViewContextMenu(type); }
+      bool editorIsOpen() { return editor; }
     private:
       std::vector<QString> type;
       int i{0};

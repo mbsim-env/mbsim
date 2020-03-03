@@ -45,7 +45,6 @@ namespace MBSimGUI {
       QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       bool isEnabled() const override { return parent->isEnabled(); }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
       virtual ParameterPropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       ParameterContextMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       xercesc::DOMElement* getXMLElement() { return element; }
@@ -53,7 +52,7 @@ namespace MBSimGUI {
       virtual void removeXMLElements();
       EmbedItemData* getParent() { return parent; }
       void setParent(EmbedItemData* parent_) { parent = parent_; }
-      static std::vector<Parameter*> initializeParametersUsingXML(xercesc::DOMElement *element);
+      static std::vector<Parameter*> createParameters(xercesc::DOMElement *element);
     protected:
       EmbedItemData *parent{nullptr};
       xercesc::DOMElement *element;
@@ -78,7 +77,6 @@ namespace MBSimGUI {
       VectorParameter() = default;
       QString getValue() const override;
       QString getType() const override { return "vectorParameter"; }
-      void initializeUsingXML(xercesc::DOMElement *element) override;
       ParameterPropertyDialog* createPropertyDialog() override {return new VectorParameterPropertyDialog(this);}
   };
 
@@ -87,7 +85,6 @@ namespace MBSimGUI {
       MatrixParameter() = default;
       QString getValue() const override;
       QString getType() const override { return "matrixParameter"; }
-      void initializeUsingXML(xercesc::DOMElement *element) override;
       ParameterPropertyDialog* createPropertyDialog() override {return new MatrixParameterPropertyDialog(this);}
   };
 

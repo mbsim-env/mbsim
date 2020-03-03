@@ -36,6 +36,7 @@ namespace MBSimGUI {
       ElementPropertyDialog *editor{nullptr};
     public:
       ElementView(QWidget *parent=nullptr) : QTreeView(parent) {}
+      bool editorIsOpen() { return editor; }
     protected:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;
