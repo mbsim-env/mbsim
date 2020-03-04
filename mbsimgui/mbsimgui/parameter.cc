@@ -74,4 +74,10 @@ namespace MBSimGUI {
       return Parameter::getValue();
   }
 
+  DOMElement* ImportParameter::createXMLElement(DOMNode *parent) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    element=D(doc)->createElement(PV%getType().toStdString());
+    parent->insertBefore(element, nullptr);
+    return element;
+  }
 }

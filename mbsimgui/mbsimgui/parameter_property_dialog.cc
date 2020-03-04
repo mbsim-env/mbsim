@@ -33,24 +33,26 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_, bool readOnly) : parameter(parameter_) {
+  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : parameter(parameter_), name(nullptr) {
     if((parameter->getParent()->getEmbedItemParent() and parameter->getParent()->getEmbedItemParent()->getEmbeded()) or parameter->getParent()->getEmbededParameters()) {
       buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
       buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
     }
     addTab("General");
-    name=new ExtWidget("Name",new TextWidget(parameter->getName()),readOnly);
-    addToTab("General",name);
+    if(not dynamic_cast<ImportParameter*>(parameter)) {
+      name=new ExtWidget("Name",new TextWidget(parameter->getName()));
+      addToTab("General",name);
+    }
   }
 
   DOMElement* ParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(parameter->getName());
+    if(name) static_cast<TextWidget*>(name->getWidget())->setText(parameter->getName());
     return parent;
   }
 
   DOMElement* ParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     parameter->removeXMLElements();
-    E(parameter->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    if(name) E(parameter->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     return nullptr;
   }
 
@@ -134,8 +136,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter,true) {
-    value = new ExtWidget("Value",new ExpressionWidget("0"));
+  ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
+    //value = new ExtWidget("Value",new ExpressionWidget("0"));
+    value = new ExtWidget("Value",new ChoiceWidget2(new StringWidgetFactory("","\".\""),QBoxLayout::RightToLeft,5));
     addToTab("General", value);
   }
 

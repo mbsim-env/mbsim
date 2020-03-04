@@ -61,10 +61,10 @@ namespace MBSimGUI {
     private:
       QLineEdit* box;
     public:
-      StringWidget(const QString &d="");
+      StringWidget(const QString &d="", const QString &p="\"\"");
       void setReadOnly(bool flag) override {box->setReadOnly(flag);}
-      QString getValue() const override {return box->text().isEmpty()?"\"\"":box->text();}
-      void setValue(const QString &str) override {box->setText(str=="\"\""?"":str);}
+      QString getValue() const override {return box->text().isEmpty()?box->placeholderText():box->text();}
+      void setValue(const QString &str) override {box->setText(str==box->placeholderText()?"":str);}
       QString getType() const override {return "String";}
       int getVarType() const override { return 1; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
@@ -540,12 +540,12 @@ namespace MBSimGUI {
 
   class StringWidgetFactory : public WidgetFactory {
     public:
-      StringWidgetFactory(const QString &value_);
+      StringWidgetFactory(const QString &value_, const QString &placeholderText_="\"\"");
       QWidget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      QString value;
+      QString value, placeholderText;
       std::vector<QString> name;
   };
 

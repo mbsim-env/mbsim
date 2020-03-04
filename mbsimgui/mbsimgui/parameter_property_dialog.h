@@ -30,7 +30,7 @@ namespace MBSimGUI {
   class ParameterPropertyDialog : public PropertyDialog {
 
     public:
-      ParameterPropertyDialog(Parameter *parameter_, bool readOnly=false);
+      ParameterPropertyDialog(Parameter *parameter_);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent);
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr);
       void toWidget() override;

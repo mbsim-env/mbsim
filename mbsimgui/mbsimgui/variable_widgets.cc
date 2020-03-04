@@ -144,13 +144,13 @@ namespace MBSimGUI {
     return strToMat(str);
   }
 
-  StringWidget::StringWidget(const QString &d) {
+  StringWidget::StringWidget(const QString &d, const QString &p) {
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     box = new QLineEdit(this);
-    box->setPlaceholderText("\"\"");
+    box->setPlaceholderText(p);
     setValue(d);
     layout->addWidget(box);
   }
@@ -1441,14 +1441,14 @@ namespace MBSimGUI {
     relativeFilePath->setText(i?mw->getProjectDir().absoluteFilePath(getFile()):mw->getProjectDir().relativeFilePath(getFile()));
   }
 
-  StringWidgetFactory::StringWidgetFactory(const QString &value_) : value(value_), name(2) {
+  StringWidgetFactory::StringWidgetFactory(const QString &value_, const QString &placeholderText_) : value(value_), placeholderText(placeholderText_), name(2) {
     name[0] = "String";
     name[1] = "Editor";
   }
 
   QWidget* StringWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new StringWidget(value), QStringList(), 0);
+      return new PhysicalVariableWidget(new StringWidget(value,placeholderText), QStringList(), 0);
     if(i==1)
       return new PhysicalVariableWidget(new ExpressionWidget("",1), QStringList(), 0);
     return nullptr;

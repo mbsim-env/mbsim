@@ -40,11 +40,11 @@ namespace MBSimGUI {
 
   class Parameter : public TreeItemData {
     public:
-      Parameter()  = default;
+      Parameter() = default;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       bool isEnabled() const override { return parent->isEnabled(); }
-      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual ParameterPropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       ParameterContextMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       xercesc::DOMElement* getXMLElement() { return element; }
@@ -92,6 +92,7 @@ namespace MBSimGUI {
     public:
       ImportParameter() = default;
       QString getType() const override { return "import"; }
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       ParameterPropertyDialog* createPropertyDialog() override {return new ImportParameterPropertyDialog(this);}
   };
 
