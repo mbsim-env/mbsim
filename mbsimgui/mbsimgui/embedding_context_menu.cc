@@ -76,7 +76,7 @@ namespace MBSimGUI {
   }
 
   void EmbeddingContextMenu::addAction(QAction *action) {
-    if(action->isEnabled()) action->setDisabled((item->getEmbedItemParent() and item->getEmbedItemParent()->getEmbeded()) or item->getEmbededParameters());
+    if(action->isEnabled()) action->setDisabled(item->getEmbeded() or (item->getEmbedItemParent() and item->getEmbedItemParent()->getEmbeded()) or item->getEmbededParameters());
     QMenu::addAction(action);
   }
 
