@@ -58,20 +58,20 @@ namespace MBSimGUI {
     connect(action,SIGNAL(triggered()),this,SLOT(remove()));
     QMenu::addAction(action);
     addSeparator();
-    action = new QAction("Add scalar parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
-    addAction(action);
-    action = new QAction("Add vector parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
+    action = new QAction("Add import parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
     addAction(action);
     action = new QAction("Add matrix parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMatrixParameter()));
     addAction(action);
+    action = new QAction("Add scalar parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addScalarParameter()));
+    addAction(action);
     action = new QAction("Add string parameter", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addStringParameter()));
     addAction(action);
-    action = new QAction("Add import parameter", this);
-    connect(action,SIGNAL(triggered()),this,SLOT(addImportParameter()));
+    action = new QAction("Add vector parameter", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addVectorParameter()));
     addAction(action);
   }
 
