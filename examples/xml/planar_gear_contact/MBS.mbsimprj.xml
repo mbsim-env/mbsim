@@ -75,7 +75,7 @@
           </frames><contours>
             <PlanarGear name="PlanarGear" xmlns="http://www.mbsim-env.de/MBSim">
               <numberOfTeeth>z1</numberOfTeeth>
-              <height unit="mm">10</height>
+              <height unit="mm">50</height>
               <width unit="mm">50</width>
               <helixAngle unit="degree">be</helixAngle>
               <module unit="m">m</module>
@@ -90,9 +90,10 @@
                   </xmlVector>
                 </diffuseColor>
                 <lineWidth>4</lineWidth>
-</enableOpenMBV>
+              </enableOpenMBV>
             </PlanarGear>
-          </contours><enableOpenMBVFrameC>
+          </contours>
+          <enableOpenMBVFrameC>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC></RigidBody>
         <RigidBody name="RigidBody2">
@@ -228,6 +229,7 @@
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
+
 
 
 
