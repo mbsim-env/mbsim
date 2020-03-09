@@ -45,28 +45,21 @@ namespace MBSim {
       Function<Ret(Arg)>::initializeUsingXML(element);
 
       std::stringstream func(MBXMLUtils::E(element)->getText<std::string>());
-      char ch;
-      func>>ch;
-      if(ch!='{')
-        throw MBXMLUtils::DOMEvalException("Function does not start with {; "+
+      char buf[3];
+      func.read(buf, 2); buf[2]=0;
+      if(buf!=std::string("f("))
+        throw MBXMLUtils::DOMEvalException("Function does not start with 'f(': "+
               MBXMLUtils::E(element)->getText<std::string>(), element);
-      int nrIndeps;
-      func>>nrIndeps;
-      if(nrIndeps!=1)
-        throw MBXMLUtils::DOMEvalException("Exactly one input must be given.", element);
       typename fmatvec::SymbolicFunction<Ret(Arg)>::ArgS argS;
-      func>>argS;
+      func >> argS;
       this->setIndependentVariable(argS);
+      func.read(buf, 2); buf[2]=0;
+      if(buf!=std::string(")="))
+        throw MBXMLUtils::DOMEvalException("Function does not end with ')=': "+
+              MBXMLUtils::E(element)->getText<std::string>(), element);
       typename fmatvec::SymbolicFunction<Ret(Arg)>::RetS retS;
-      func>>retS;
+      func >> retS;
       this->setDependentFunction(retS);
-      func>>ch;
-      if(ch!='}')
-        throw MBXMLUtils::DOMEvalException("Function does not end with }.", element);
-      std::string rest;
-      func>>rest;
-      if(rest!="")
-        throw MBXMLUtils::DOMEvalException("Trailing content in Function.", element);
 
       // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
       // to test other possible combinations (more general ones)
@@ -105,30 +98,28 @@ namespace MBSim {
       Function<Ret(Arg1, Arg2)>::initializeUsingXML(element);
 
       std::stringstream func(MBXMLUtils::E(element)->getText<std::string>());
-      char ch;
-      func>>ch;
-      if(ch!='{')
-        throw MBXMLUtils::DOMEvalException("Function does not start with {.", element);
-      int nrIndeps;
-      func>>nrIndeps;
-      if(nrIndeps!=2)
-        throw MBXMLUtils::DOMEvalException("Exactly two input must be given.", element);
+      char buf[3];
+      func.read(buf, 2); buf[2]=0;
+      if(buf!=std::string("f("))
+        throw MBXMLUtils::DOMEvalException("Function does not start with 'f(': "+
+              MBXMLUtils::E(element)->getText<std::string>(), element);
       typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg1S arg1S;
-      func>>arg1S;
+      func >> arg1S;
       this->setIndependentVariable1(arg1S);
+      func.read(buf, 1);
+      if(buf[0]!=',')
+        throw MBXMLUtils::DOMEvalException("Function must have two arguments: "+
+              MBXMLUtils::E(element)->getText<std::string>(), element);
       typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::Arg2S arg2S;
-      func>>arg2S;
+      func >> arg2S;
       this->setIndependentVariable2(arg2S);
+      func.read(buf, 2); buf[2]=0;
+      if(buf!=std::string(")="))
+        throw MBXMLUtils::DOMEvalException("Function does not end with ')=': "+
+              MBXMLUtils::E(element)->getText<std::string>(), element);
       typename fmatvec::SymbolicFunction<Ret(Arg1,Arg2)>::RetS retS;
-      func>>retS;
+      func >> retS;
       this->setDependentFunction(retS);
-      func>>ch;
-      if(ch!='}')
-        throw MBXMLUtils::DOMEvalException("Function does not end with }.", element);
-      std::string rest;
-      func>>rest;
-      if(rest!="")
-        throw MBXMLUtils::DOMEvalException("Trailing content in Function.", element);
 
       // check symbolic function arguments: we need to throw errors during initializeUsingXML to enable the ObjectFactory
       // to test other possible combinations (more general ones)

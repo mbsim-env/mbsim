@@ -661,7 +661,7 @@ namespace MBSim {
           pv = pv - Bin(l, j) * ders(0, j)(3) * skl(k, l - j);
         for (i = 1; i <= k; i++) {
           pv = pv - Bin(k, i) * ders(i, 0)(3) * skl(k - i, l);
-          pv2 = Vec3("[0; 0; 0]");
+          pv2 = Vec3(INIT, 0.0);
           for (j = 1; j <= l; j++)
             pv2 = pv2 + Bin(l, j) * ders(i, j)(3) * skl(k - i, l - j);
           pv = pv - Bin(k, i) * pv2;
@@ -695,11 +695,11 @@ namespace MBSim {
     du = (d <= degU) ? d : degU;
     for (k = degU + 1; k <= d; ++k)
       for (l = 0; l <= d - k; ++l)
-        skl(k, l) = Vec4("[0.0; 0.0; 0.0; 0.0]");
+        skl(k, l) = Vec4(INIT, 0.0);
     dv = (d <= degV) ? d : degV;
     for (l = degV + 1; l <= d; ++l)
       for (k = 0; k <= d - l; ++k)
-        skl(k, l) = Vec4("[0.0; 0.0; 0.0; 0.0]");
+        skl(k, l) = Vec4(INIT, 0.0);
     int uspan = findSpanU(u);
     int vspan = findSpanV(v);
 //  Matrix<T> Nu,Nv ;
@@ -712,13 +712,13 @@ namespace MBSim {
     int dd, r, s;
     for (k = 0; k <= du; ++k) {
       for (s = 0; s <= degV; ++s) {
-        temp.set(s, Vec4("[0.0; 0.0; 0.0; 0.0]"));
+        temp.set(s, Vec4(INIT, 0.0));
         for (r = 0; r <= degU; ++r)
           temp.set(s, temp.col(s) + Nu(k, r) * P(uspan - degU + r, vspan - degV + s));
       }
       dd = ((d - k) <= dv) ? (d - k) : dv;
       for (l = 0; l <= dd; ++l) {
-        skl(k, l) = Vec4("[0.0; 0.0; 0.0; 0.0]");
+        skl(k, l) = Vec4(INIT, 0.0);
         for (s = 0; s <= degV; ++s)
           skl(k, l) = skl(k, l) + Nv(l, s) * temp.col(s);
       }
@@ -774,14 +774,14 @@ namespace MBSim {
 
     int l;
     for (l = 0; l <= degV; l++) {
-      temp.set(l, Vec4("[0.0; 0.0; 0.0; 0.0]"));
+      temp.set(l, Vec4(INIT, 0.0));
       for (int k = 0; k <= degU; k++) {
         temp.set(l, temp.col(l) + Nu(k) * P(uspan - degU + k, vspan - degV + l));
       }
     }
 
 //  HPoint_nD sp(0,0,0,0) ;
-    Vec4 sp("[0.0; 0.0; 0.0; 0.0]");
+    Vec4 sp(INIT, 0.0);
 
     for (l = 0; l <= degV; l++) {
       sp = sp + Nv(l) * temp.col(l);

@@ -51,7 +51,7 @@ namespace MBSim {
       fmatvec::Vec3 dc;
       double tp, ps, lw;
     public:
-      OpenMBVColoredBody(const fmatvec::Vec3 &dc_="[-1;1;1]", double tp_=0, double ps_=0, double lw_=0) : dc(dc_), tp(tp_), ps(ps_), lw(lw_) { }
+      OpenMBVColoredBody(const fmatvec::Vec3 &dc_=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp_=0, double ps_=0, double lw_=0) : dc(dc_), tp(tp_), ps(ps_), lw(lw_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       template<class T>
       std::shared_ptr<T> createOpenMBV() {
@@ -69,7 +69,7 @@ namespace MBSim {
       double minCol, maxCol;
       std::vector<std::string> cRL;
     public:
-      OpenMBVDynamicColoredBody(unsigned cR_=0, double minCol_=0, double maxCol_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), cR(cR_), minCol(minCol_), maxCol(maxCol_), cRL(1,"none") { }
+      OpenMBVDynamicColoredBody(unsigned cR_=0, double minCol_=0, double maxCol_=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), cR(cR_), minCol(minCol_), maxCol(maxCol_), cRL(1,"none") { }
       void initializeUsingXML(xercesc::DOMElement *element);
       unsigned int getColorRepresentation() const { return cR; }
     protected:
@@ -101,7 +101,7 @@ namespace MBSim {
       OpenMBVArrow::Type type;
       OpenMBVArrow::ReferencePoint refPoint;
     public:
-      OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBVArrow::Type &type_=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint_=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0);
+      OpenMBVArrow(double sL_=1, double sS_=1, const OpenMBVArrow::Type &type_=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint_=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Arrow> createOpenMBV();
     protected:
@@ -118,7 +118,7 @@ namespace MBSim {
     protected:
       unsigned int sI;
     public:
-      OpenMBVInteractionArrow(unsigned int sI_=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0);
+      OpenMBVInteractionArrow(unsigned int sI_=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       unsigned int getSideOfInteraction() const { return sI; }
     protected:
@@ -133,14 +133,14 @@ namespace MBSim {
         stickslip
       };
     public:
-      OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0);
+      OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
   };
 
   class OpenMBVFrame : public OpenMBVColoredBody {
     protected:
       double size, offset;
     public:
-      OpenMBVFrame(double size_=1, double offset_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), size(size_), offset(offset_) { }
+      OpenMBVFrame(double size_=1, double offset_=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), size(size_), offset(offset_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Frame> createOpenMBV();
     protected:
@@ -151,7 +151,7 @@ namespace MBSim {
     protected:
       double l;
     public:
-      OpenMBVLine(double l_=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), l(l_) { }
+      OpenMBVLine(double l_=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::IndexedLineSet> createOpenMBV();
     protected:
@@ -162,7 +162,7 @@ namespace MBSim {
     protected:
       fmatvec::Vec2 l;
     public:
-      OpenMBVPlane(const fmatvec::Vec2 &l_=fmatvec::Vec2(fmatvec::INIT,1.), const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), l(l_) { }
+      OpenMBVPlane(const fmatvec::Vec2 &l_=fmatvec::Vec2(fmatvec::INIT,1.), const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), l(l_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Cuboid> createOpenMBV();
     protected:
@@ -187,7 +187,7 @@ namespace MBSim {
       double r, cr, sf, n, l;
       OpenMBVCoilSpring::Type type;
     public:
-      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBVCoilSpring::Type type_=OpenMBVCoilSpring::tube, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0);
+      OpenMBVCoilSpring(double r_=1, double cr_=-1, double sf_=1, double n_=3, double l_=-1, OpenMBVCoilSpring::Type type_=OpenMBVCoilSpring::tube, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::CoilSpring> createOpenMBV();
     protected:
@@ -199,7 +199,7 @@ namespace MBSim {
       std::vector<double> nodes;
       bool filled;
     public:
-      OpenMBVPlanarContour(const std::vector<double> &nodes_=std::vector<double>(), bool filled_=false, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), nodes(nodes_), filled(filled_) { }
+      OpenMBVPlanarContour(const std::vector<double> &nodes_=std::vector<double>(), bool filled_=false, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), nodes(nodes_), filled(filled_) { }
       std::shared_ptr<OpenMBV::RigidBody> createOpenMBV();
       void initializeUsingXML(xercesc::DOMElement *element);
       const std::vector<double>& getNodes() const { return nodes; }
@@ -210,7 +210,7 @@ namespace MBSim {
     protected:
       std::vector<double> etaNodes, xiNodes;
     public:
-      OpenMBVSpatialContour(const std::vector<double> &etaNodes_=std::vector<double>(), const std::vector<double> &xiNodes_=std::vector<double>(), const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), etaNodes(etaNodes_), xiNodes(xiNodes_) { }
+      OpenMBVSpatialContour(const std::vector<double> &etaNodes_=std::vector<double>(), const std::vector<double> &xiNodes_=std::vector<double>(), const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), etaNodes(etaNodes_), xiNodes(xiNodes_) { }
       std::shared_ptr<OpenMBV::RigidBody> createOpenMBV();
       void initializeUsingXML(xercesc::DOMElement *element);
       const std::vector<double>& getEtaNodes() const { return etaNodes; }

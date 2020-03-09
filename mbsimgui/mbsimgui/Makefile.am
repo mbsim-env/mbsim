@@ -71,7 +71,6 @@ nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 QT_BUILT_SOURCES = mainwindow.moc.cc \
-		   mbsimgui.qrc.cc \
 		   options.moc.cc \
 		   widget.moc.cc \
 		   basic_widgets.moc.cc \
@@ -132,9 +131,6 @@ pluginsplatforms_DATA = @QT_PLUGINS@/platforms/libqxcb.so
 pluginsxcbglintegrationsdir = @bindir@/xcbglintegrations
 pluginsxcbglintegrations_DATA = @QT_PLUGINS@/xcbglintegrations/*qxcb*
 endif
-
-# some dependencies for mbsimgui.qrc.cc
-mbsimgui.qrc.cc: mbsimgui.qrc icons/mbsimgui.svg
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
