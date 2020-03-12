@@ -893,7 +893,7 @@ def runExample(resultQueue, example):
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_"+tool+".txt"), "w", encoding="utf-8"), args.printToConsole)
         comm=prefixSimulation(example, tool)+exePrefix()+[pj(mbsimBinDir, tool+args.exeExt), "--autoExit"]+files
         print("Starting:\n"+str(comm)+"\n\n", file=outFD)
-        ret=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(8 if args.prefixSimulationKeyword=='VALGRIND' else 1))]
+        ret=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(10 if args.prefixSimulationKeyword=='VALGRIND' else 5))]
         outfiles=getOutFilesAndAdaptRet(example, ret)
         ret=ret[0]
         print("\n\nReturned with "+str(ret), file=outFD)
