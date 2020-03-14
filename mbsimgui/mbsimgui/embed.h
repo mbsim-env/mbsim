@@ -48,7 +48,7 @@ namespace MBSimGUI {
             xercesc::DOMElement *ele2 = nullptr;
 
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              if(parent) mw->updateParameters(parent,false);
+              mw->updateParameters(parent,false);
               std::string evaltmp;
               try{
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("parameterHref"),ele1,false));
@@ -74,7 +74,7 @@ namespace MBSimGUI {
               ele2 = ele1->getFirstElementChild();
             bool embeded = false;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-              if(not embededParam and parent) mw->updateParameters(parent,false);
+              if(not embededParam) mw->updateParameters(parent,false);
               std::string evaltmp;
               try{
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
