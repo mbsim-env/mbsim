@@ -890,13 +890,18 @@ def runExample(resultQueue, example):
       def runGUI(files, tool):
         if len(files)==0:
           return 0, []
+        # at least on Windows (wine) the DISPLAY is not found sometimes (unknown why). Hence, try this number of times before reporting an error
+        tries=5 if exePrefix()==["wine"] else 1
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_"+tool+".txt"), "w", encoding="utf-8"), args.printToConsole)
         comm=prefixSimulation(example, tool)+exePrefix()+[pj(mbsimBinDir, tool+args.exeExt), "--autoExit"]+files
-        print("Starting:\n"+str(comm)+"\n\n", file=outFD)
-        ret=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(10 if args.prefixSimulationKeyword=='VALGRIND' else 5))]
+        for t in range(0, tries):
+          print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
+          ret=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(10 if args.prefixSimulationKeyword=='VALGRIND' else 5))]
+          print("\n\nReturned with "+str(ret[0]), file=outFD)
+          if ret[0]==0: break
+          if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
         outfiles=getOutFilesAndAdaptRet(example, ret)
         ret=ret[0]
-        print("\n\nReturned with "+str(ret), file=outFD)
         outFD.close()
         return ret, outfiles
       ombvRet, outfiles1=runGUI(ombvFiles, "openmbv")
