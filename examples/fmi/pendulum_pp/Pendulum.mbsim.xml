@@ -4,7 +4,7 @@
   <frameOfReference ref="../Frame[QP{grpID-1}]"/>
 
   <frames>
-    <FixedRelativeFrame name="Stop">
+    <FixedRelativeFrame name="StopRED">
       <enableOpenMBV>
         <?OPENMBV_ID 38?>
         <size unit="m">0.05</size>
@@ -136,7 +136,7 @@
       </RigidBody>
     </Embed>
     <RigidBody name="Stop">
-      <frameOfReference ref="../Frame[Stop]"/>
+      <frameOfReference ref="../Frame[StopRED]"/>
       <mass unit="kg">1</mass>
       <inertiaTensor unit="kg*m^2">
         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -171,7 +171,7 @@
   <links>
     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
       <Parameter/>
-      <Contact xmlns="http://www.mbsim-env.de/MBSim" name="ChainLink_Contact_left_{n}">
+      <Contact xmlns="http://www.mbsim-env.de/MBSim" name="ChainLink_Contact_leftRED_{n}">
         <connect ref1="../Object[Stop]/Contour[stop]" ref2="../Object[ChainLink_{n}]/Contour[left]"/>
         <normalForceLaw>
           <UnilateralConstraint/>
@@ -230,7 +230,7 @@
   <observers>
     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
       <ContactObserver name="ChainLink_Contact_left_{n}" xmlns="http://www.mbsim-env.de/MBSim">
-        <contact ref="../Link[ChainLink_Contact_left_{n}]"/>
+        <contact ref="../Link[ChainLink_Contact_leftRED_{n}]"/>
         <enableOpenMBVContactPoints>
           <size>0.015</size>
           <offset>0</offset>

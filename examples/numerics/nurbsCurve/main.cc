@@ -1,6 +1,7 @@
 #include <mbsim/utils/stopwatch.h>
 #include <mbsim/utils/eps.h>
 #include <mbsim/numerics/nurbs/nurbs_curve.h>
+#include <fmatvec/stream_impl.h>
 
 #include <nurbs++/nurbs.h>
 using namespace PLib;

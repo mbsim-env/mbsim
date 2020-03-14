@@ -4,14 +4,14 @@
   <frameOfReference ref="../Frame[QB]"/>
 
   <frames>
-    <FixedRelativeFrame name="Plane">
+    <FixedRelativeFrame name="PlaneRED">
       <relativeOrientation>rotateAboutZ(pi/2)</relativeOrientation>
     </FixedRelativeFrame>
   </frames>
 
   <contours>
     <Plane name="Plane">
-      <frameOfReference ref="../Frame[Plane]"/>
+      <frameOfReference ref="../Frame[PlaneRED]"/>
       <enableOpenMBV>
         <length>[0.5;1]</length>
       </enableOpenMBV>
@@ -40,7 +40,7 @@
   </objects>
 
   <links>
-    <Contact xmlns="http://www.mbsim-env.de/MBSim" name="BallPlane">
+    <Contact xmlns="http://www.mbsim-env.de/MBSim" name="BallPlaneRED">
       <connect ref2="../Object[Ball]/Contour[Ball]" ref1="../Contour[Plane]"/>
       <normalForceLaw>
         <UnilateralConstraint/>
@@ -57,7 +57,7 @@
 
   <observers>
     <ContactObserver name="BallPlane">
-      <contact ref="../Link[BallPlane]"/>
+      <contact ref="../Link[BallPlaneRED]"/>
       <enableOpenMBVContactPoints>
         <size>0.015</size>
         <offset>0</offset>

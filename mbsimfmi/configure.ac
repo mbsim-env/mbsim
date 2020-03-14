@@ -39,6 +39,11 @@ else
 fi
 AC_SUBST([FMIPLATFORM])
 
+dnl Include path for Boost
+AC_ARG_WITH([boost-inc],
+  [  --with-boost-inc=PATH  The path Boost include directory.],
+  [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
+
 AC_ARG_WITH([boost-date-time-lib],
   [  --with-boost-date-time-lib=LIBNAME  The library name of boost data_time excluding prefix/suffix (Default: boost_data_time).],
   [BOOST_DATE_TIME_LIB="$withval"], [BOOST_DATE_TIME_LIB="boost_date_time"])

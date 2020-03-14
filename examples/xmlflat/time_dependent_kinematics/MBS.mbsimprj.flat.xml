@@ -16,9 +16,7 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <timeDependentTranslation>
-              <SymbolicFunction arg1="t">
-                { 1 { s e78c8882-e2b1-48b7-a137-c16854a11ef3 } [{ o sin 1 o + 2 o * 2 d 3.141592653589793 s e78c8882-e2b1-48b7-a137-c16854a11ef3 d 1.570796326794897 }; { s e78c8882-e2b1-48b7-a137-c16854a11ef3 }; { i 0 }] }
-              </SymbolicFunction>
+              <SymbolicFunction arg1="t">f(e78c8882-e2b1-48b7-a137-c16854a11ef3)=[sin(plus(mult(3.141592653589793, e78c8882-e2b1-48b7-a137-c16854a11ef3), 1.570796326794897)); e78c8882-e2b1-48b7-a137-c16854a11ef3; 0]</SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
               <CompositeFunction>
@@ -28,9 +26,7 @@
                   </RotationAboutFixedAxis>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="t">
-                    { 1 { s de7482aa-96fe-46df-9353-9d29d6a649b3 } { o * 2 i 5 o sin 1 o * 2 d 1.047197551196598 s de7482aa-96fe-46df-9353-9d29d6a649b3 } }
-                  </SymbolicFunction>
+                  <SymbolicFunction arg1="t">f(de7482aa-96fe-46df-9353-9d29d6a649b3)=mult(5, sin(mult(1.047197551196598, de7482aa-96fe-46df-9353-9d29d6a649b3)))</SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </timeDependentRotation>
@@ -51,9 +47,7 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <timeDependentTranslation>
-              <SymbolicFunction arg1="t">
-                { 1 { s 197dc201-8201-4ab1-999f-b08a26842aa4 } [{ o sin 1 o + 2 o * 2 d 3.141592653589793 s 197dc201-8201-4ab1-999f-b08a26842aa4 d 1.570796326794897 }; { s 197dc201-8201-4ab1-999f-b08a26842aa4 }; { i 0 }] }
-              </SymbolicFunction>
+              <SymbolicFunction arg1="t">f(197dc201-8201-4ab1-999f-b08a26842aa4)=[sin(plus(mult(3.141592653589793, 197dc201-8201-4ab1-999f-b08a26842aa4), 1.570796326794897)); 197dc201-8201-4ab1-999f-b08a26842aa4; 0]</SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
               <CompositeFunction>
@@ -61,9 +55,7 @@
                   <RotationAboutAxesXY></RotationAboutAxesXY>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="t">
-                    { 1 { s 0018750c-bb63-485d-b665-48cf1339b13d } [{ s 0018750c-bb63-485d-b665-48cf1339b13d }; { o * 2 i 2 s 0018750c-bb63-485d-b665-48cf1339b13d }] }
-                  </SymbolicFunction>
+                  <SymbolicFunction arg1="t">f(0018750c-bb63-485d-b665-48cf1339b13d)=[0018750c-bb63-485d-b665-48cf1339b13d; mult(2, 0018750c-bb63-485d-b665-48cf1339b13d)]</SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </timeDependentRotation>
@@ -84,9 +76,7 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <stateDependentTranslation>
-              <SymbolicFunction arg1="1">
-                { 1 [{ s c10c4475-70bd-4735-a61f-9b344f2b070b }] [{ o + 2 i 5 o cos 1 o * 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { o sin 1 o * 2 d 3.141592653589793 s c10c4475-70bd-4735-a61f-9b344f2b070b }; { i 0 }] }
-              </SymbolicFunction>
+              <SymbolicFunction arg1="1">f(c10c4475-70bd-4735-a61f-9b344f2b070b)=[plus(5, cos(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b))); sin(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b)); 0]</SymbolicFunction>
             </stateDependentTranslation>
             <frames></frames>
             <contours></contours>
@@ -106,9 +96,7 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <generalTranslation>
-              <SymbolicFunction arg1="t" arg2="q">
-                { 2 [{ s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { s a6191e97-3081-46d5-bbf4-6ff5c2d7d3be }] { s 9e1d80a0-299f-4dc4-8486-76d5077e90cf } [{ o + 2 o + 2 i 10 s 9e1d80a0-299f-4dc4-8486-76d5077e90cf o cos 1 o * 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { o sin 1 o * 2 d 3.141592653589793 s 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab }; { s a6191e97-3081-46d5-bbf4-6ff5c2d7d3be }] }
-              </SymbolicFunction>
+              <SymbolicFunction arg1="t" arg2="q">f([2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab; a6191e97-3081-46d5-bbf4-6ff5c2d7d3be], 9e1d80a0-299f-4dc4-8486-76d5077e90cf)=[plus(plus(10, 9e1d80a0-299f-4dc4-8486-76d5077e90cf), cos(mult(3.141592653589793, 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab))); sin(mult(3.141592653589793, 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab)); a6191e97-3081-46d5-bbf4-6ff5c2d7d3be]</SymbolicFunction>
             </generalTranslation>
             <frames></frames>
             <contours></contours>

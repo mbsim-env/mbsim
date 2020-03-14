@@ -853,6 +853,7 @@ namespace fmatvec {
 
 // add a local variable
 // (we cannot use the SWIG syntax "typemap(...) TYPE (LocalVarType localVar)" here since LocalVarType depends on the template type)
+//mfmf this is wrong? for fmatvec::Vector& where this must be in/out
 %typemap(arginit, noblock=1) fmatvec::Vector*,
                              fmatvec::Vector&,
                              fmatvec::Vector,

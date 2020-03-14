@@ -23,6 +23,15 @@ AC_FC_WRAPPERS
 # enable C++11
 CXXFLAGS="$CXXFLAGS -std=c++11 -D_USE_MATH_DEFINES"
 
+# check compiler options
+AC_MSG_CHECKING([for compiler option -Wno-error=stringop-overflow=])
+OLDFLAGS=$CXXFLAGS
+CXXFLAGS="$CXXFLAGS -Wno-error=stringop-overflow="
+AC_COMPILE_IFELSE([AC_LANG_SOURCE([int main() { return 0; }])],
+  [AC_MSG_RESULT([yes]); AC_SUBST([CXXFLAGSNOWERRORSTRINGOP], [-Wno-error=stringop-overflow=])],
+  [AC_MSG_RESULT([no])])
+CXXFLAGS=$OLDFLAGS
+
 AC_C_CONST
 
 PKG_CHECK_MODULES(FMATVEC, fmatvec >= 1.0.1) # only fmatvec
@@ -55,6 +64,11 @@ AC_TYPE_SIZE_T
 
 AC_ARG_WITH([lowram], [  --with-lowram  Disable parallel build for subdirs known to need mutch memory], [LOWRAM="1"], [LOWRAM="0"])
 AM_CONDITIONAL([COND_LOWRAM], [test "_$LOWRAM" == "_1"])
+
+dnl Include path for Boost
+AC_ARG_WITH([boost-inc],
+  [  --with-boost-inc=PATH  The path Boost include directory.],
+  [CPPFLAGS="$CPPFLAGS -I$withval"; DEFINES="$DEFINES -I$withval"])
 
 dnl Include boost system lib
 AC_ARG_WITH([boost-system-lib],

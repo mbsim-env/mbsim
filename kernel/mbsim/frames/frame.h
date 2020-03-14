@@ -116,7 +116,7 @@ namespace MBSim {
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        OpenMBVFrame ombv(size,offset,"[-1;1;1]",transparency,pointSize,lineWidth);
+        OpenMBVFrame ombv(size,offset,fmatvec::Vec3(std::vector<double>{-1,1,1}),transparency,pointSize,lineWidth);
         openMBVFrame=ombv.createOpenMBV();
       }
       void setOpenMBVFrame(const std::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
