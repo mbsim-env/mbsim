@@ -32,7 +32,7 @@ namespace MBSim {
 
   Vec3 CylindricalGear::evalKrPS(const Vec2 &zeta) {
     static Vec3 KrPS(NONINIT);
-    double signe = (ext?1:-1);
+    int signe = ext?1:-1;
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
@@ -48,7 +48,7 @@ namespace MBSim {
 
   Vec3 CylindricalGear::evalKs(const Vec2 &zeta) {
     static Vec3 Ks(NONINIT);
-    double signe = (ext?1:-1);
+    int signe = ext?1:-1;
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
@@ -67,7 +67,7 @@ namespace MBSim {
 
   Vec3 CylindricalGear::evalKt(const Vec2 &zeta) {
     static Vec3 Kt(NONINIT);
-    double signe = (ext?1:-1);
+    int signe = ext?1:-1;
     double eta = zeta(0);
     double lz = -signe*tan(be)*sin(al);
     double az = -lz*sin(al)*cos(be)-signe*sin(be);
@@ -81,7 +81,7 @@ namespace MBSim {
 
   Vec3 CylindricalGear::evalParDer1Ks(const Vec2 &zeta) {
     static Vec3 parDer1Ks;
-    double signe = (ext?1:-1);
+    int signe = ext?1:-1;
     double eta = zeta(0);
     double xi = zeta(1);
     double x = -r0*eta;
