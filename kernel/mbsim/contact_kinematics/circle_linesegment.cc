@@ -91,14 +91,14 @@ namespace MBSim {
       Vec3 Om2 = contact.getContourFrame(icircle)->getAngularVelocity();
       double r = circle->getRadius();
 
-      double ad2 = -v2.T()*(Om2-Om1);
-      double ad1 = u1.T()*(vC2-vC1) - r*ad2;
       Vec3 s2 = u2*r;
+      double ad2 = -v2.T()*(Om2-Om1);
+      double ad1 = u1.T()*(vC2-vC1) + (u1.T()*s2)*ad2;
 
-    if(contact.isNormalForceLawSetValued())
-      contact.getwb(false)(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
-    if(contact.isTangentialForceLawSetValuedAndActive())
-      contact.getwb(false)(contact.isNormalForceLawSetValued()) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
+      if(contact.isNormalForceLawSetValued())
+        contact.getwb(false)(0) += n1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
+      if(contact.isTangentialForceLawSetValuedAndActive())
+        contact.getwb(false)(contact.isNormalForceLawSetValued()) += u1.T()*(-crossProduct(Om1,vC2-vC1) - crossProduct(Om1,u1)*ad1 + crossProduct(Om2,s2)*ad2);
     }
     else
       throw runtime_error("ContactKinematicsCircleLineSegment::updatewb not implemented for contact on edge.");
