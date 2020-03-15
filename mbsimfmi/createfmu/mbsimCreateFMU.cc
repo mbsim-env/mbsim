@@ -511,8 +511,11 @@ namespace {
     // check if *.deplibs file exits
     path depFile=src.parent_path()/(src.filename().string()+".deplibs");
     if(!exists(depFile)) {
-      cerr<<endl<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
-      return;
+      depFile=getInstallPath()/"share"/"deplibs"/(src.filename().string()+".deplibs");
+      if(!exists(depFile)) {
+        cerr<<endl<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
+        return;
+      }
     }
 
     // read *.deplibs file
