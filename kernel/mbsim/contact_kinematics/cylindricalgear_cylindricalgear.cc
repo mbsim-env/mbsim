@@ -57,11 +57,10 @@ namespace MBSim {
   void ContactKinematicsCylindricalGearCylindricalGear::updateg(SingleContact &contact, int ii) {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
     Vec3 r = gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition();
-    double z1 = (gear[0]->getFrame()->getOrientation().col(2).T()*r)/2;
-    double z2 = (gear[1]->getFrame()->getOrientation().col(2).T()*r)/2;
-    Vec3 ea = r-(2*z1)*gear[0]->getFrame()->getOrientation().col(2);
-    double a = nrm2(ea);
-    ea/=a;
+    if(gear[0]->getFrame()->getOrientation().col(2).T()*r>1e-8)
+       msg(Warn)<<"Large devitation detected at t="<<gear[0]->getTime()<<"\nContact kinematics may be wrong!" <<endl;
+    double a = nrm2(r);
+    Vec3 ea = r/a;
     double dal = acos(a0/a*cos(al))-al;
     Vec3 ey1 = gear[0]->getFrame()->evalOrientation().T()*(double(-signe)*ea);
     Vec3 ey2 = gear[1]->getFrame()->evalOrientation().T()*(ea);
@@ -110,11 +109,11 @@ namespace MBSim {
             else if(phi2q<gear[1]->getPhiMinLow(i))
               s2 = gear[1]->getSPhiMinHigh(i)/(gear[1]->getPhiMinHigh(i)-gear[1]->getPhiMinLow(i))*(phi2q-gear[1]->getPhiMinLow(i));
             double s = fabs(s2)>fabs(s1)?s2:s1;
-            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+(s+z1)*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+s*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
             rOP[0] = gear[0]->evalPosition(zeta1);
-            zeta2(1) = (-signe*m*z[1]/2*zeta2(0)*pow(sin(al0),2)*sin(beta[1])+(s-z2)*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            zeta2(1) = signe*(-m*z[1]/2*zeta2(0)*pow(sin(al0),2)*sin(beta[1])+s*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
             gear[1]->setFlank(signi);
             gear[1]->setTooth(k[1]);
             rOP[1] = gear[1]->evalPosition(zeta2);
