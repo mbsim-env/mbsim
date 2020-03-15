@@ -117,11 +117,11 @@ namespace MBSimFcl {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFCL%"vertices");
     vertex <<= E(e)->getText<MatVx3>();
     e=E(element)->getFirstElementChildNamed(MBSIMFCL%"triangles");
-    Matrix<General,Var,Fixed<3>,Index> triangle1based=E(e)->getText<Matrix<General,Var,Fixed<3>,Index>>();
-    triangle.resize(triangle1based.rows(),NONINIT);
+    vector<vector<int>> triangle1based=E(e)->getText<vector<vector<int>>>();
+    triangle.resize(triangle1based.size(),NONINIT);
     for(int i=0; i<triangle.rows(); i++)
       for(int j=0; j<triangle.cols(); j++)
-        triangle(i,j) = triangle1based(i,j) - 1;
+        triangle(i,j) = triangle1based[i][j] - 1;
     e=E(element)->getFirstElementChildNamed(MBSIMFCL%"collisionStructure");
     if (e) {
       std::string str=X()%E(e)->getFirstTextChild()->getData();
