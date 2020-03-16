@@ -427,7 +427,7 @@ namespace MBSimGUI {
   LineSegmentPropertyDialog::LineSegmentPropertyDialog(Element *line) : RigidContourPropertyDialog(line) {
     addTab("Visualization",1);
 
-    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"length");
+    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
