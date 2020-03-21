@@ -83,18 +83,8 @@ template<> double _arrayGet<double>(PyArrayObject *a, int type, int r, int c) {
   throw std::runtime_error("Value is not of type floating point (wrong element type).");
 }
 
-template<class T> inline T& _deref(T*& t) { return *t; }
-template<class T> inline T& _deref(SwigValueWrapper<T>& t) { return static_cast<T&>(t); }
-
-template<class T> inline void _assignToRef(T*& d, T& s) { d=&s; }
-template<class T> inline void _assignToRef(SwigValueWrapper<T>& d, T& s) { d=s; }
-
-template<class T> inline void _assignToPtr(T*& d, T* s) { d=s; }
-template<class T> inline void _assignToPtr(SwigValueWrapper<T>& d, T* s) { d=*s; }
-
-template<class T> struct _RemoveSwigValueWrapperAndPtr;
-template<class T> struct _RemoveSwigValueWrapperAndPtr<T*> { typedef T type; };
-template<class T> struct _RemoveSwigValueWrapperAndPtr<SwigValueWrapper<T>> { typedef T type; };
+template<class T> inline const T& _deref(T* const& t) { return *t; }
+template<class T> inline const T& _deref(const SwigValueWrapper<T>& t) { return static_cast<const T&>(t); }
 
 template<typename AT> constexpr int _numPyType();
 template<> constexpr int _numPyType<int>() { return NPY_LONG; }
@@ -102,8 +92,21 @@ template<> constexpr int _numPyType<double>() { return NPY_DOUBLE; }
 
 
 
+// VECTOR
+
+template<typename Vec, typename Arg1>
+void _typemapOutVecOwnMemory(const Arg1 &_1, PyObject *&_result) {
+  npy_intp dims[1];
+  dims[0]=_deref(_1).size();
+  _result=PyArray_SimpleNew(1, dims, _numPyType<typename Vec::value_type>());
+  if(!_result)
+    throw std::runtime_error("Cannot create ndarray");
+  std::copy(&_deref(_1)(0), &_deref(_1)(0)+_deref(_1).size(),
+            static_cast<typename Vec::value_type*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>(_result), 0)));
+}
+
 template<typename Vec>
-void _typemapOutVec_P_R(Vec *_1, PyObject *&_result) {
+void _typemapOutVecShareMemory(Vec *_1, PyObject *&_result) {
   npy_intp dims[1];
   dims[0]=_1->size();
   _result=PyArray_SimpleNewFromData(1, dims, _numPyType<typename Vec::value_type>(), &(*_1)(0));
@@ -112,53 +115,90 @@ void _typemapOutVec_P_R(Vec *_1, PyObject *&_result) {
 }
 
 template<typename Vec>
-void _typemapOutVec_V_CR(Vec &_1, PyObject *&_result) {
-  typedef typename _RemoveSwigValueWrapperAndPtr<Vec>::type VecBT;
-  npy_intp dims[1];
-  dims[0]=_deref(_1).size();
-  _result=PyArray_SimpleNew(1, dims, _numPyType<typename VecBT::value_type>());
-  if(!_result)
-    throw std::runtime_error("Cannot create ndarray");
-  std::copy(&_deref(_1)(0), &_deref(_1)(0)+_deref(_1).size(),
-            static_cast<typename VecBT::value_type*>(PyArray_GETPTR1(reinterpret_cast<PyArrayObject*>(_result), 0)));
-}
-
-template<typename Vec>
-void _typemapInVec_P_R_V(Vec &_1, PyObject *_input, typename _RemoveSwigValueWrapperAndPtr<Vec>::type &localVar, swig_type_info *_1_descriptor) {
-  typedef typename _RemoveSwigValueWrapperAndPtr<Vec>::type VecBT;
+void _typemapInVecValue(SwigValueWrapper<Vec> &_1, PyObject *_input, swig_type_info *_1_descriptor) {
   void *inputp;
   int res=SWIG_ConvertPtr(_input, &inputp, _1_descriptor, 0);
   if(SWIG_IsOK(res))
-    _assignToPtr(_1, reinterpret_cast<VecBT*>(inputp));
+    _1=*reinterpret_cast<Vec*>(inputp);
   else if(PyArray_Check(_input)) {
     PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
     if(PyArray_NDIM(input)!=1)
       throw std::runtime_error("Must have 1 dimension.");
     int type=PyArray_TYPE(input);
-    _checkNumPyType<typename VecBT::value_type>(type);
-    _assignToRef(_1, localVar);
+    _checkNumPyType<typename Vec::value_type>(type);
     npy_intp *dims=PyArray_SHAPE(input);
-    _deref(_1).resize(dims[0]);
+    _1=Vec();
+    static_cast<Vec&>(_1).resize(dims[0]);
     for(int i=0; i<dims[0]; ++i)
-      _deref(_1)(i)=_arrayGet<typename VecBT::value_type>(input, type, i);
+      static_cast<Vec&>(_1)(i)=_arrayGet<typename Vec::value_type>(input, type, i);
   }
   else
     throw std::runtime_error("Wrong type.");
 }
 
 template<typename Vec>
-void _typemapArgoutVec_R(PyObject *_input, typename std::remove_reference<Vec>::type &localVar) {
-  typedef typename std::remove_reference<Vec>::type VecBT;
-  PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
-  int type=PyArray_TYPE(input);
-  if(type!=_numPyType<typename VecBT::value_type>())
-    throw std::runtime_error(std::string("Must have atomic type ")+boost::core::demangle(typeid(typename VecBT::value_type).name()));
-  std::copy(&localVar(0), &localVar(0)+localVar.size(),
-            static_cast<typename VecBT::value_type*>(PyArray_GETPTR1(input, 0)));
+void _typemapInVecPtr(Vec *&_1, PyObject *_input, swig_type_info *_1_descriptor, Vec &localVar) {
+  void *inputp;
+  int res=SWIG_ConvertPtr(_input, &inputp, _1_descriptor, 0);
+  if(SWIG_IsOK(res))
+    _1=reinterpret_cast<Vec*>(inputp);
+  else if(PyArray_Check(_input)) {
+    PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
+    if(PyArray_NDIM(input)!=1)
+      throw std::runtime_error("Must have 1 dimension.");
+    int type=PyArray_TYPE(input);
+    _checkNumPyType<typename Vec::value_type>(type);
+    npy_intp *dims=PyArray_SHAPE(input);
+    localVar.resize(dims[0]);
+    for(int i=0; i<dims[0]; ++i)
+      localVar(i)=_arrayGet<typename Vec::value_type>(input, type, i);
+    _1=&localVar;
+  }
+  else
+    throw std::runtime_error("Wrong type.");
+}
+
+template<typename Vec>
+void _typemapArgoutVec(const Vec *_1, PyObject *_input, swig_type_info *_1_descriptor, Vec &localVar) {
+  void *inputp;
+  int res=SWIG_ConvertPtr(_input, &inputp, _1_descriptor, 0);
+  if(SWIG_IsOK(res))
+    *reinterpret_cast<Vec*>(inputp)=*_1;
+  else if(PyArray_Check(_input)) {
+    PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
+    int type=PyArray_TYPE(input);
+    if(_numPyType<typename Vec::value_type>()!=type)
+      throw std::runtime_error("Wrong type of numpy array.");
+    npy_intp *dims=PyArray_SHAPE(input);
+    if(dims[0]!=localVar.size())
+      throw std::runtime_error("Dimension has changed");
+    std::copy(&localVar(0), &localVar(0)+localVar.size(),
+              static_cast<typename Vec::value_type*>(PyArray_GETPTR1(input, 0)));
+  }
+  else
+    throw std::runtime_error("Wrong type.");
+}
+
+
+
+// MATRIX
+
+template<typename Mat, typename Arg1>
+void _typemapOutMatOwnMemory(const Arg1 &_1, PyObject *&_result) {
+  npy_intp dims[2];
+  dims[0]=_deref(_1).rows();
+  dims[1]=_deref(_1).cols();
+  _result=PyArray_SimpleNew(2, dims, _numPyType<typename Mat::value_type>());
+  if(!_result)
+    throw std::runtime_error("Cannot create ndarray");
+  PyArrayObject *_resultArr=reinterpret_cast<PyArrayObject*>(_result);
+  for(int r=0; r<dims[0]; r++)
+    for(int c=0; c<dims[1]; c++)
+      *static_cast<typename Mat::value_type*>(PyArray_GETPTR2(_resultArr, r, c))=_deref(_1).operator()(r, c);
 }
 
 template<typename Mat>
-void _typemapOutMat_P_R(Mat *_1, PyObject *&_result) {
+void _typemapOutMatShareMemory(Mat *_1, PyObject *&_result) {
   npy_intp dims[2];
   dims[0]=_1->rows();
   dims[1]=_1->cols();
@@ -171,56 +211,73 @@ void _typemapOutMat_P_R(Mat *_1, PyObject *&_result) {
 }
 
 template<typename Mat>
-void _typemapOutMat_V_CR(Mat &_1, PyObject *&_result) {
-  typedef typename _RemoveSwigValueWrapperAndPtr<Mat>::type MatBT;
-  npy_intp dims[2];
-  dims[0]=_deref(_1).rows();
-  dims[1]=_deref(_1).cols();
-  _result=PyArray_SimpleNew(2, dims, _numPyType<typename MatBT::value_type>());
-  if(!_result)
-    throw std::runtime_error("Cannot create ndarray");
-  PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_result);
-  for(int r=0; r<dims[0]; r++)
-    for(int c=0; c<dims[1]; c++)
-      *static_cast<typename MatBT::value_type*>(PyArray_GETPTR2(input, r, c))=
-        _deref(_1)(r, c);
-}
-
-template<typename Mat>
-void _typemapInMat_P_R_V(Mat &_1, PyObject *_input, typename _RemoveSwigValueWrapperAndPtr<Mat>::type &localVar, swig_type_info *_1_descriptor) {
-  typedef typename _RemoveSwigValueWrapperAndPtr<Mat>::type MatBT;
+void _typemapInMatValue(SwigValueWrapper<Mat> &_1, PyObject *_input, swig_type_info *_1_descriptor) {
   void *inputp;
   int res=SWIG_ConvertPtr(_input, &inputp, _1_descriptor, 0);
   if(SWIG_IsOK(res))
-    _assignToPtr(_1, reinterpret_cast<MatBT*>(inputp));
+    _1=*reinterpret_cast<Mat*>(inputp);
   else if(PyArray_Check(_input)) {
     PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
     if(PyArray_NDIM(input)!=2)
       throw std::runtime_error("Must have 2 dimension.");
     int type=PyArray_TYPE(input);
-    _checkNumPyType<typename MatBT::value_type>(type);
-    _assignToRef(_1, localVar);
+    _checkNumPyType<typename Mat::value_type>(type);
     npy_intp *dims=PyArray_SHAPE(input);
-    _deref(_1).resize(dims[0], dims[1]);
+    _1=Mat();
+    static_cast<Mat&>(_1).resize(dims[0], dims[1]);
     for(int r=0; r<dims[0]; ++r)
       for(int c=0; c<dims[1]; ++c)
-        _deref(_1)(r, c)=_arrayGet<typename MatBT::value_type>(input, type, r, c);
+        static_cast<Mat&>(_1)(r, c)=_arrayGet<typename Mat::value_type>(input, type, r, c);
   }
   else
     throw std::runtime_error("Wrong type.");
 }
 
 template<typename Mat>
-void _typemapArgoutMat_R(PyObject *_input, typename std::remove_reference<Mat>::type &localVar) {
-  typedef typename std::remove_reference<Mat>::type MatBT;
-  PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
-  int type=PyArray_TYPE(input);
-  if(type!=_numPyType<typename MatBT::value_type>())
-    throw std::runtime_error(std::string("Must have atomic type ")+boost::core::demangle(typeid(typename MatBT::value_type).name()));
-  for(int r=0; r<localVar.rows(); ++r)
-    for(int c=0; c<localVar.cols(); ++c)
-      *static_cast<typename MatBT::value_type*>(PyArray_GETPTR2(input, r, c))=
-        localVar(r, c);
+void _typemapInMatPtr(Mat *&_1, PyObject *_input, swig_type_info *_1_descriptor, Mat &localVar) {
+  void *inputp;
+  int res=SWIG_ConvertPtr(_input, &inputp, _1_descriptor, 0);
+  if(SWIG_IsOK(res))
+    _1=reinterpret_cast<Mat*>(inputp);
+  else if(PyArray_Check(_input)) {
+    PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
+    if(PyArray_NDIM(input)!=2)
+      throw std::runtime_error("Must have 2 dimension.");
+    int type=PyArray_TYPE(input);
+    _checkNumPyType<typename Mat::value_type>(type);
+    npy_intp *dims=PyArray_SHAPE(input);
+    localVar.resize(dims[0], dims[1]);
+    for(int r=0; r<dims[0]; ++r)
+      for(int c=0; c<dims[1]; ++c)
+        localVar(r, c)=_arrayGet<typename Mat::value_type>(input, type, r, c);
+    _1=&localVar;
+  }
+  else
+    throw std::runtime_error("Wrong type.");
+}
+
+template<typename Mat>
+void _typemapArgoutMat(const Mat *_1, PyObject *_input, swig_type_info *_1_descriptor, Mat &localVar) {
+  void *inputp;
+  int res=SWIG_ConvertPtr(_input, &inputp, _1_descriptor, 0);
+  if(SWIG_IsOK(res))
+    *reinterpret_cast<Mat*>(inputp)=*_1;
+  else if(PyArray_Check(_input)) {
+    PyArrayObject *input=reinterpret_cast<PyArrayObject*>(_input);
+    int type=PyArray_TYPE(input);
+    if(_numPyType<typename Mat::value_type>()!=type)
+      throw std::runtime_error("Wrong type of numpy array.");
+    npy_intp *dims=PyArray_SHAPE(input);
+    if(dims[0]!=localVar.rows())
+      throw std::runtime_error("Number of rows has changed");
+    if(dims[1]!=localVar.cols())
+      throw std::runtime_error("Number of cols has changed");
+    for(int r=0; r<dims[0]; ++r)
+      for(int c=0; c<dims[1]; ++c)
+        *static_cast<typename Mat::value_type*>(PyArray_GETPTR2(input, r, c))=_deref(_1)(r, c);
+  }
+  else
+    throw std::runtime_error("Wrong type.");
 }
 
 %}
