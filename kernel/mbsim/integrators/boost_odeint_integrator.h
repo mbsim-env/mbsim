@@ -99,7 +99,6 @@ namespace MBSim {
   //! - SystemCategory must be a typedef of either ExplicitSystemTag or ImplicitSystemTag
   //! - UnderlayingStepperCategory must be a typedef of the underlaying stepper category
   //! - DOS(double aTol, double rTol, double dtMax) must be a valid constructor
-  //! - DOS(double aTol, double rTol) must be a valid constructor (just required to support boost version < 1.60, may be removed later)
   template<typename DOS>
   class BoostOdeintDOS : public RootFindingIntegrator {
     protected:
@@ -259,13 +258,7 @@ namespace MBSim {
     svLast <<= system->evalsv();
 
     // initialize odeint
-#if BOOST_VERSION >= 106000
     dos.reset(new DOS(aTol, rTol, dtMax));
-#else // boost odeint < 1.60 does not support dtMax
-    dos.reset(new DOS(aTol, rTol));
-    msg(Warn)<<"This build was done with boost < 1.60 which does not support a maximum step size."<<std::endl
-             <<"Integrator will not limit the maximum step size."<<std::endl;
-#endif
     dos->initialize(zTemp, tStart, dt0);
   }
 

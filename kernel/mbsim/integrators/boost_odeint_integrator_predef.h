@@ -50,13 +50,8 @@ namespace MBSim {
       public:
         typedef ExplicitSystemTag SystemCategory;
         typedef typename ControlledRK::stepper_category UnderlayingStepperCategory;
-#if BOOST_VERSION >= 106000
         RKDOPRI5(double aTol, double rTol, double dtMax) :
           DOSRK(ControlledRK(ControlledRK::error_checker_type(aTol, rTol), ControlledRK::step_adjuster_type(dtMax), RKDOPRI5Stepper())) {}
-#else // boost odeint < 1.60 does not support dtMax
-        RKDOPRI5(double aTol, double rTol) :
-          DOSRK(ControlledRK(ControlledRK::error_checker_type(aTol, rTol), RKDOPRI5Stepper())) {}
-#endif
     };
 
 
@@ -71,10 +66,7 @@ namespace MBSim {
       public:
         typedef ExplicitSystemTag SystemCategory;
         typedef boost::numeric::odeint::controlled_stepper_tag UnderlayingStepperCategory;
-#if BOOST_VERSION >= 106000
         BulirschStoer(double aTol, double rTol, double dtMax) : DOSBS(aTol, rTol, 1.0, 1.0, dtMax) {}
-#endif
-        BulirschStoer(double aTol, double rTol) : DOSBS(aTol, rTol) {}
     };
 
 
@@ -90,11 +82,7 @@ namespace MBSim {
       public:
         typedef ExplicitSystemTag SystemCategory;
         typedef typename EulerStepper::stepper_category UnderlayingStepperCategory;
-#if BOOST_VERSION >= 106000
         Euler(double aTol, double rTol, double dtMax) : DOSEuler() {}
-#else // boost odeint < 1.60 does not support dtMax
-        Euler(double aTol, double rTol) : DOSEuler() {}
-#endif
     };
 
 
@@ -111,10 +99,7 @@ namespace MBSim {
       public:
         typedef ImplicitSystemTag SystemCategory;
         typedef typename ControlledRB4::stepper_category UnderlayingStepperCategory;
-#if BOOST_VERSION >= 106000
         Rosenbrock4(double aTol, double rTol, double dtMax) : DOSRB4(ControlledRB4(aTol, rTol, dtMax)) {}
-#endif
-        Rosenbrock4(double aTol, double rTol) : DOSRB4(ControlledRB4(aTol, rTol)) {}
     };
 
   }
