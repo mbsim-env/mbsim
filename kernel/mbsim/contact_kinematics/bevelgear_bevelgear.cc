@@ -94,12 +94,12 @@ namespace MBSim {
             else if(phi2q<gear[1]->getPhiMinLow(i))
               s2 = gear[1]->getSPhiMinHigh(i)/(gear[1]->getPhiMinHigh(i)-gear[1]->getPhiMinLow(i))*(phi2q-gear[1]->getPhiMinLow(i));
             double s = fabs(s2)>fabs(s1)?s2:s1;
-            double phi2qq = -sin(gear[0]->getPitchAngle())*zeta1(0);
+            double phi2qq = sin(gear[0]->getPitchAngle())*phi1q;
             zeta1(1) = (s*cos(phi2qq-beta[0])+m*z[0]/sin(gear[0]->getPitchAngle())/2*sin(phi2qq)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2qq-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2qq-beta[0])*cos(beta[0]));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
             rOP[0] = gear[0]->evalPosition(zeta1);
-            phi2qq = -sin(gear[1]->getPitchAngle())*zeta2(0);
+            phi2qq = sin(gear[1]->getPitchAngle())*phi2q;
             zeta2(1) = (s*cos(phi2qq-beta[1])+m*z[1]/sin(gear[1]->getPitchAngle())/2*sin(phi2qq)*pow(sin(al0),2)*sin(beta[1]))/(-sin(phi2qq-beta[1])*pow(sin(al0),2)*sin(beta[1])+cos(phi2qq-beta[1])*cos(beta[1]));
             gear[1]->setFlank(signi);
             gear[1]->setTooth(k[1]);

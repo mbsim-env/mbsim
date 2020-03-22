@@ -105,7 +105,7 @@ namespace MBSim {
             planargear->setFlank(signi);
             planargear->setTooth(k[1]);
             rOP[1] = planargear->evalPosition(zeta2);
-            phi2q = -double(z[0])/z[1]*zeta1(0);
+            phi2q = double(z[0])/z[1]*phi1q;
             zeta1(1) = (s*cos(phi2q-beta[0])+m*z[1]/2*sin(phi2q)*pow(sin(al0),2)*sin(beta[0]))/(-sin(phi2q-beta[0])*pow(sin(al0),2)*sin(beta[0])+cos(phi2q-beta[0])*cos(beta[0]));
             bevelgear->setFlank(signi);
             bevelgear->setTooth(k[0]);
