@@ -109,11 +109,11 @@ namespace MBSim {
             else if(phi2q<gear[1]->getPhiMinLow(i))
               s2 = gear[1]->getSPhiMinHigh(i)/(gear[1]->getPhiMinHigh(i)-gear[1]->getPhiMinLow(i))*(phi2q-gear[1]->getPhiMinLow(i));
             double s = fabs(s2)>fabs(s1)?s2:s1;
-            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+s*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = (s*cos(beta[0])+m*z[0]/2*phi1q*pow(sin(al0),2)*sin(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
             gear[0]->setFlank(signi);
             gear[0]->setTooth(k[0]);
             rOP[0] = gear[0]->evalPosition(zeta1);
-            zeta2(1) = signe*(-m*z[1]/2*zeta2(0)*pow(sin(al0),2)*sin(beta[1])+s*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            zeta2(1) = signe*(s*cos(beta[1])+m*z[1]/2*phi2q*pow(sin(al0),2)*sin(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
             gear[1]->setFlank(signi);
             gear[1]->setTooth(k[1]);
             rOP[1] = gear[1]->evalPosition(zeta2);

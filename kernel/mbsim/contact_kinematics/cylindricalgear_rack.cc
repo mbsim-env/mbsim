@@ -101,12 +101,12 @@ namespace MBSim {
             else if(x2q<rack->getXMinLow(i)+xCorr)
               s2 = rack->getSXMinHigh(i)/(rack->getXMinHigh(i)-rack->getXMinLow(i))*(x2q-(rack->getXMinLow(i)+xCorr));
             double s = fabs(s2)>fabs(s1)?s2:s1;
-            zeta2(1) = ((signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1])+s*cos(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
+            zeta2(1) = (s*cos(beta[1])+(signi*y2*cos(al0)*cos(beta[1])-x2q*sin(al0))*sin(al0)*sin(beta[1]))/(pow(sin(beta[1])*sin(al0),2)+pow(cos(beta[1]),2));
             zeta2(0) = (x2q/cos(beta[1])+zeta2(1)*tan(beta[1]))*sin(al0)-signi*y2*cos(al0);
             rack->setFlank(signi);
             rack->setTooth(k[1]);
             rOP[1] = rack->evalPosition(zeta2);
-            zeta1(1) = (-m*z[0]/2*zeta1(0)*pow(sin(al0),2)*sin(beta[0])+s*cos(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
+            zeta1(1) = (s*cos(beta[0])+m*z[0]/2*phi1q*pow(sin(al0),2)*sin(beta[0]))/(pow(sin(beta[0])*sin(al0),2)+pow(cos(beta[0]),2));
             gear->setFlank(signi);
             gear->setTooth(k[0]);
             rOP[0] = gear->evalPosition(zeta1);
