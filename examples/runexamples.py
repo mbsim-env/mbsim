@@ -894,14 +894,17 @@ def runExample(resultQueue, example):
         tries=5 if exePrefix()==["wine"] else 1
         outFD=MultiFile(codecs.open(pj(args.reportOutDir, example[0], "gui_"+tool+".txt"), "w", encoding="utf-8"), args.printToConsole)
         comm=prefixSimulation(example, tool)+exePrefix()+[pj(mbsimBinDir, tool+args.exeExt), "--autoExit"]+files
+        allTimedOut=True
         for t in range(0, tries):
           print("Starting (try %d/%d):\n"%(t+1, tries)+str(comm)+"\n\n", file=outFD)
-          ret=[subprocessCall(comm, outFD, env=denv, maxExecutionTime=(10 if args.prefixSimulationKeyword=='VALGRIND' else 5))]
-          print("\n\nReturned with "+str(ret[0]), file=outFD)
-          if ret[0]==0: break
+          ret=subprocessCall(comm, outFD, env=denv, maxExecutionTime=(10 if args.prefixSimulationKeyword=='VALGRIND' else 5))
+          print("\n\nReturned with "+str(ret), file=outFD)
+          if ret!=subprocessCall.timedOutErrorCode: allTimedOut=False
+          if ret==0: break
           if t+1<tries: time.sleep(60) # wait some time, a direct next test will likely also fail (see above)
-        outfiles=getOutFilesAndAdaptRet(example, ret)
-        ret=ret[0]
+        if ret!=0 and not allTimedOut: ret=1 # if at least one example failed return with error (not with subprocessCall.timedOutErrorCode)
+        if exePrefix()!=["wine"] and allTimedOut: ret=1 # on none wine treat allTimedOut as error (allTimedOut is just a hack for Windows)
+        retl=[ret]; outfiles=getOutFilesAndAdaptRet(example, retl); ret=retl[0]
         outFD.close()
         return ret, outfiles
       ombvRet, outfiles1=runGUI(ombvFiles, "openmbv")
@@ -928,7 +931,10 @@ def runExample(resultQueue, example):
             resultStr+='<a href="'+urllib.request.pathname2url(pj(example[0], outfile))+'">'+os.path.splitext(outfile)[0]+'</a><br/>'
          resultStr+='</div></span>'
       resultStr+='</td>'
-      if ombvRet!=0 or h5pRet!=0 or guiRet!=0:
+      # treat timedOutErrorCode not as error: note that on Linux timedOutErrorCode can neven happen here, see above
+      if (ombvRet!=0 and ombvRet!=subprocessCall.timedOutErrorCode) or \
+         (h5pRet!=0 and h5pRet!=subprocessCall.timedOutErrorCode) or \
+         (guiRet!=0 and guiRet!=subprocessCall.timedOutErrorCode):
         runExampleRet=1
 
     compareRet=-1
