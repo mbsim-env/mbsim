@@ -73,7 +73,7 @@ namespace MBSim {
       double getBacklash() { return b; }
       void setFlank(int flank) { signi = flank; }
       void setTooth(int tooth) { k = tooth; }
-      double getPhiMax(double h, double s, int signi);
+      double getEtaMax(double h, double s, int signi);
       double getPhiMaxHigh(int i) { return phiMaxHigh[i]; }
       double getPhiMaxLow(int i) { return phiMaxLow[i]; }
       double getPhiMinHigh(int i) { return phiMinHigh[i]; }

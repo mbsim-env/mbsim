@@ -32,7 +32,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, BevelGear)
 
   double BevelGear::Residuum::operator()(const double &eta) {
-    double phi = -r0/r1*eta;
+    double phi = -sin(ga)*eta;
     double xi = (s*cos(phi-be)+r1*sin(phi)*pow(sin(al),2)*sin(be))/(-sin(phi-be)*pow(sin(al),2)*sin(be)+cos(phi-be)*cos(be));
     double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double x = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
@@ -48,7 +48,7 @@ namespace MBSim {
     static Vec3 KrPS(NONINIT);
     double eta = zeta(0);
     double xi = zeta(1);
-    double phi = -r0/r1*eta;
+    double phi = -sin(ga)*eta;
     double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
     double b = signi*l*cos(al);
@@ -63,12 +63,12 @@ namespace MBSim {
     static Vec3 Ks(NONINIT);
     double eta = zeta(0);
     double xi = zeta(1);
-    double phi = -r0/r1*eta;
+    double phi = -sin(ga)*eta;
     double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
     double b = signi*l*cos(al);
     double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi);
-    double phis = -r0/r1;
+    double phis = -sin(ga);
     double ls = ((cos(phi)/cos(phi-be)+sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*r1+xi/pow(cos(phi-be),2))*phis*sin(al);
     double as = -ls*sin(al)*cos(phi-be)+(l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi))*phis;
     double bs = signi*ls*cos(al);
@@ -82,7 +82,7 @@ namespace MBSim {
   Vec3 BevelGear::evalKt(const Vec2 &zeta) {
     static Vec3 Kt(NONINIT);
     double eta = zeta(0);
-    double phi = -r0/r1*eta;
+    double phi = -sin(ga)*eta;
     double lz = tan(phi-be)*sin(al);
     double az = -lz*sin(al)*cos(phi-be)+sin(phi-be);
     double bz = signi*lz*cos(al);
@@ -97,12 +97,12 @@ namespace MBSim {
     static Vec3 parDer1Ks(NONINIT);
     double eta = zeta(0);
     double xi = zeta(1);
-    double phi = -r0/r1*eta;
+    double phi = -sin(ga)*eta;
     double l = (sin(phi)/cos(phi-be)*r1+xi*tan(phi-be))*sin(al);
     double a = -l*sin(al)*cos(phi-be)+xi*sin(phi-be)+r1*sin(phi);
     double b = signi*l*cos(al);
     double c = l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi);
-    double phis = -r0/r1;
+    double phis = -sin(ga);
     double ls = ((cos(phi)/cos(phi-be)+sin(phi)/pow(cos(phi-be),2)*sin(phi-be))*r1+xi/pow(cos(phi-be),2))*phis*sin(al);
     double as = -ls*sin(al)*cos(phi-be)+(l*sin(al)*sin(phi-be)+xi*cos(phi-be)+r1*cos(phi))*phis;
     double bs = signi*ls*cos(al);
@@ -132,12 +132,12 @@ namespace MBSim {
     return parDer2Kt;
   }
 
-  double BevelGear::getPhiMax(double h, double s, int signi) {
+  double BevelGear::getEtaMax(double h, double s, int signi) {
     Residuum f(h,s,r0,r1,al,be,ga,signi);
     NewtonMethod newton(&f);
-    double phi = newton.solve(0);
+    double eta = newton.solve(0);
     if(newton.getInfo()!=0) throw 1;
-    return phi;
+    return eta;
   }
 
   void BevelGear::init(InitStage stage, const InitConfigSet &config) {
@@ -151,30 +151,30 @@ namespace MBSim {
       h[1] = -m/2;
       for(int i=0; i<2; i++) {
         int signi=i?-1:1;
-      double mpsp = getPhiMax(h[i],w/2,signi);
-      double mpsm = getPhiMax(h[i],-w/2,signi);
-      double mmsp = getPhiMax(h[not i],w/2,signi);
-      double mmsm = getPhiMax(h[not i],-w/2,signi);
-      if(mpsp>=mpsm) {
-        phiMaxHigh[i] = mpsp;
-        phiMaxLow[i] = mpsm;
-        sPhiMaxHigh[i] = w/2;
-      }
-      else {
-        phiMaxHigh[i] = mpsm;
-        phiMaxLow[i] = mpsp;
-        sPhiMaxHigh[i] = -w/2;
-      }
-      if(mmsp<=mmsm) {
-        phiMinHigh[i] = mmsp;
-        phiMinLow[i] = mmsm;
-        sPhiMinHigh[i] = w/2;
-      }
-      else {
-        phiMinHigh[i] = mmsm;
-        phiMinLow[i] = mmsp;
-        sPhiMinHigh[i] = -w/2;
-      }
+        double mpsp = getEtaMax(h[i],w/2,signi);
+        double mpsm = getEtaMax(h[i],-w/2,signi);
+        double mmsp = getEtaMax(h[not i],w/2,signi);
+        double mmsm = getEtaMax(h[not i],-w/2,signi);
+        if(mmsp<=mmsm) {
+          phiMaxHigh[i] = -mmsp;
+          phiMaxLow[i] = -mmsm;
+          sPhiMaxHigh[i] = w/2;
+        }
+        else {
+          phiMaxHigh[i] = -mmsm;
+          phiMaxLow[i] = -mmsp;
+          sPhiMaxHigh[i] = -w/2;
+        }
+        if(mpsp>=mpsm) {
+          phiMinHigh[i] = -mpsp;
+          phiMinLow[i] = -mpsm;
+          sPhiMinHigh[i] = w/2;
+        }
+        else {
+          phiMinHigh[i] = -mpsm;
+          phiMinLow[i] = -mpsp;
+          sPhiMinHigh[i] = -w/2;
+        }
       }
     }
     else if(stage==plotting) {
