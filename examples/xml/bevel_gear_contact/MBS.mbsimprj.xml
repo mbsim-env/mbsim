@@ -14,6 +14,7 @@
       <scalarParameter name="d">sqrt(de1^2-de2^2)/2</scalarParameter>
       <scalarParameter name="b1">0.5</scalarParameter>
       <scalarParameter name="b2">0.5</scalarParameter>
+      <scalarParameter name="w">50</scalarParameter>
     </Parameter>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
@@ -94,7 +95,7 @@
           </frames><contours>
             <BevelGear name="BevelGear" xmlns="http://www.mbsim-env.de/MBSim">
               <numberOfTeeth>z2</numberOfTeeth>
-              <width unit="mm">10</width>
+              <width unit="mm">w</width>
               <helixAngle unit="degree">-be</helixAngle>
               <pitchAngle unit="rad">ga</pitchAngle>
               <module unit="m">m</module>
@@ -108,11 +109,12 @@
                     <ele>1</ele>
                   </xmlVector>
                 </diffuseColor>
-                <transparency>0.5</transparency>
+                <transparency unit="-">0.3</transparency>
                 <lineWidth>4</lineWidth>
-              </enableOpenMBV>  
-           </BevelGear>
-          </contours><enableOpenMBVFrameC>
+              </enableOpenMBV>
+            </BevelGear>
+          </contours>
+          <enableOpenMBVFrameC>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC></RigidBody>
         <RigidBody name="RigidBody3">
@@ -152,7 +154,7 @@
           </frames><contours>
             <BevelGear name="BevelGear" xmlns="http://www.mbsim-env.de/MBSim">
               <numberOfTeeth>z1</numberOfTeeth>
-              <width unit="mm">10</width>
+              <width unit="mm">w</width>
               <helixAngle unit="degree">be</helixAngle>
               <pitchAngle unit="rad">ga</pitchAngle>
               <module unit="m">m</module>
@@ -166,11 +168,12 @@
                     <ele>1</ele>
                   </xmlVector>
                 </diffuseColor>
-                <transparency>0.5</transparency>
+                <transparency unit="-">0.3</transparency>
                 <lineWidth>4</lineWidth>
-              </enableOpenMBV>  
-           </BevelGear>
-          </contours><enableOpenMBVFrameC>
+              </enableOpenMBV>
+            </BevelGear>
+          </contours>
+          <enableOpenMBVFrameC>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC></RigidBody>
       </objects>
@@ -244,6 +247,5 @@
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
-
 
 </MBSimProject>

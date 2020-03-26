@@ -138,7 +138,7 @@
           </frames><contours>
             <BevelGear name="BevelGear" xmlns="http://www.mbsim-env.de/MBSim">
               <numberOfTeeth>z2</numberOfTeeth>
-              <width unit="mm">10</width>
+              <width unit="mm">50</width>
               <helixAngle unit="degree">-be</helixAngle>
               <pitchAngle unit="rad">ga</pitchAngle>
               <module unit="m">m</module>
@@ -153,9 +153,10 @@
                   </xmlVector>
                 </diffuseColor>
                 <lineWidth>4</lineWidth>
-              </enableOpenMBV>  
-           </BevelGear>
-          </contours><enableOpenMBVFrameC>
+              </enableOpenMBV>
+            </BevelGear>
+          </contours>
+          <enableOpenMBVFrameC>
             <size unit="dm">1</size>
           </enableOpenMBVFrameC></RigidBody>
       </objects>
@@ -229,8 +230,5 @@
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </DOPRI5Integrator>
-
-
-
 
 </MBSimProject>
