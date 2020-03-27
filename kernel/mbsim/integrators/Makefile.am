@@ -5,7 +5,6 @@ libintegrators_la_SOURCES = integrator.cc\
 			    lsoda_integrator.cc \
 			    lsodi_integrator.cc \
 			    rksuite_integrator.cc \
-			    boost_odeint_integrator.cc \
 			    dopri5_integrator.cc \
 			    dop853_integrator.cc \
 			    odex_integrator.cc \
@@ -38,9 +37,11 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/decsol.f\
 			    fortran/linsp.f\
 			    fortran/phem56.f
-
 libintegrators_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) libintegrators2.a
+noinst_LIBRARIES = libintegrators2.a
+libintegrators2_a_SOURCES = boost_odeint_integrator.cc
+libintegrators2_a_CPPFLAGS = $(libintegrators_la_CPPFLAGS) -Wno-error=misleading-indentation
 
 integratorsincludedir = $(includedir)/mbsim/integrators
 
