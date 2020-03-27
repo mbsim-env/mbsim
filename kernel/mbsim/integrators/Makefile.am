@@ -1,4 +1,4 @@
-noinst_LTLIBRARIES = libintegrators.la
+noinst_LTLIBRARIES = libintegrators.la libintegrators2.la
 libintegrators_la_SOURCES = integrator.cc\
 			    root_finding_integrator.cc \
 			    lsode_integrator.cc \
@@ -38,10 +38,10 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/linsp.f\
 			    fortran/phem56.f
 libintegrators_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
-libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) libintegrators2.a
-noinst_LIBRARIES = libintegrators2.a
-libintegrators2_a_SOURCES = boost_odeint_integrator.cc
-libintegrators2_a_CPPFLAGS = $(libintegrators_la_CPPFLAGS) -Wno-error=misleading-indentation
+libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libintegrators2_la_SOURCES = boost_odeint_integrator.cc
+libintegrators2_la_CPPFLAGS = $(libintegrators_la_CPPFLAGS) -Wno-error=misleading-indentation
+libintegrators2_la_LIBADD = $(libintegrators_la_LIBADD)
 
 integratorsincludedir = $(includedir)/mbsim/integrators
 

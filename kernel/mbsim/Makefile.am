@@ -10,7 +10,7 @@ libmbsim_la_SOURCES = element.cc\
 		      objectfactory.cc\
 		      graph.cc
 
-libmbsim_la_LIBADD = integrators/libintegrators.la
+libmbsim_la_LIBADD = integrators/libintegrators.la integrators/libintegrators2.la
 libmbsim_la_LIBADD += analyzers/libanalyzers.la
 libmbsim_la_LIBADD += utils/libutils.la
 libmbsim_la_LIBADD += constitutive_laws/libconstitutivelaws.la
