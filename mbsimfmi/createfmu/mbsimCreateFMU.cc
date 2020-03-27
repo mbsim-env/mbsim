@@ -502,11 +502,18 @@ int main(int argc, char *argv[]) {
 
 namespace {
 
+  path addDebugExtension(const path &p) {
+    path debug=p;
+    return debug.replace_extension(debug.extension().string()+".debug");
+  }
+
   void copyShLibToFMU(const std::shared_ptr<DOMParser> &parser,
                       CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src) {
     // copy src to FMU
     cout<<"."<<flush;
     fmuFile.add(dst, src);
+    if(exists(addDebugExtension(src)))
+      fmuFile.add(addDebugExtension(dst), addDebugExtension(src));
 
     // check if *.deplibs file exits
     path depFile=src.parent_path()/(src.filename().string()+".deplibs");
@@ -528,6 +535,8 @@ namespace {
       if(exists(getInstallPath()/reldir/file)) {
         cout<<"."<<flush;
         fmuFile.add(depdstdir/file, getInstallPath()/reldir/file);
+        if(exists(addDebugExtension(getInstallPath()/reldir/file)))
+          fmuFile.add(addDebugExtension(depdstdir/file), addDebugExtension(getInstallPath()/reldir/file));
         continue;
       }
 
@@ -536,6 +545,8 @@ namespace {
       if(exists(orgdir/file)) {
         cout<<"."<<flush;
         fmuFile.add(depdstdir/file, orgdir/file);
+        if(exists(addDebugExtension(orgdir/file)))
+          fmuFile.add(addDebugExtension(depdstdir/file), addDebugExtension(orgdir/file));
         continue;
       }
 

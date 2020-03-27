@@ -829,125 +829,138 @@ namespace fmatvec {
 
 
 
-// wrap output (member of function return value) as a numpy.ndarray which uses the date memory from the c++ member
-%typemap(out, noblock=1) fmatvec::Vector*,
-                         fmatvec::Vector&,
-                         fmatvec::RowVector*,
-                         fmatvec::RowVector& {
+// VECTOR
+
+// function return value: copy memory from fmatvec $1 to PyObject $result
+%typemap(out   , noblock=1)       fmatvec::Vector ,       fmatvec::RowVector  ,
+                            const fmatvec::Vector , const fmatvec::RowVector  ,
+                            const fmatvec::Vector&, const fmatvec::RowVector& {
   try {
-    _typemapOutVec_P_R($1, $result);
+    _typemapOutVecOwnMemory<$1_basetype>($1, $result);
   }
   FMATVEC_CATCHARG
 }
 
-// wrap output (function return value) as a numpy.ndarray with its own data memory
-%typemap(out, noblock=1) fmatvec::Vector,
-                         const fmatvec::Vector&,
-                         fmatvec::RowVector,
-                         const fmatvec::RowVector& {
+// function return value: use memory from fmatvec $1 in PyObject $result
+%typemap(out   , noblock=1)       fmatvec::Vector*,       fmatvec::RowVector* ,
+                                  fmatvec::Vector&,       fmatvec::RowVector& {
   try {
-    _typemapOutVec_V_CR($1, $result);
+    _typemapOutVecShareMemory<$1_basetype>($1, $result);
   }
   FMATVEC_CATCHARG
 }
 
-// add a local variable
-// (we cannot use the SWIG syntax "typemap(...) TYPE (LocalVarType localVar)" here since LocalVarType depends on the template type)
-//mfmf this is wrong? for fmatvec::Vector& where this must be in/out
-%typemap(arginit, noblock=1) fmatvec::Vector*,
-                             fmatvec::Vector&,
-                             fmatvec::Vector,
-                             fmatvec::RowVector*,
-                             fmatvec::RowVector&,
-                             fmatvec::RowVector {
+// local fmatvec variable used for in/out function parameter
+%typemap(arginit, noblock=1)       fmatvec::Vector*,       fmatvec::RowVector* ,
+                                   fmatvec::Vector&,       fmatvec::RowVector& ,
+                             const fmatvec::Vector&, const fmatvec::RowVector& {
   $1_basetype localVar$argnum;
 }
 
-// wrap input (member or function parameter) as a numpy.ndarray with its own data memory
-%typemap(in, noblock=1) fmatvec::Vector*,
-                        fmatvec::Vector&,
-                        fmatvec::Vector,
-                        fmatvec::RowVector*,
-                        fmatvec::RowVector&,
-                        fmatvec::RowVector {
+// no local variable required for in function parameter
+%typemap(arginit, noblock=1)       fmatvec::Vector ,       fmatvec::RowVector  ,
+                             const fmatvec::Vector , const fmatvec::RowVector  {
+}
+
+// function in parameter value: copy memory from PyObject $input to fmatvec $1
+%typemap(in    , noblock=1)       fmatvec::Vector ,       fmatvec::RowVector  ,
+                            const fmatvec::Vector , const fmatvec::RowVector  {
   try {
-    _typemapInVec_P_R_V($1, $input, localVar$argnum, $1_descriptor);
+    _typemapInVecValue<$1_basetype>($1, $input, $1_descriptor);
   }
   FMATVEC_CATCHARG
 }
 
-// wrap output function parameter -> do nothing for const references (no output)
-%typemap(argout, noblock=1) const fmatvec::Vector&,
-                            const fmatvec::RowVector& {
+// function in/out (and const reference) parameter value: copy memory from PyObject $input to fmatvec localVar$argnum
+%typemap(in    , noblock=1)       fmatvec::Vector*,       fmatvec::RowVector* ,
+                                  fmatvec::Vector&,       fmatvec::RowVector& ,
+                            const fmatvec::Vector&, const fmatvec::RowVector& {
+  try {
+    _typemapInVecPtr<$1_basetype>($1, $input, $1_descriptor, localVar$argnum);
+  }
+  FMATVEC_CATCHARG
 }
 
-// wrap output function parameter -> copy result back to input function parameter
-%typemap(argout, noblock=1) fmatvec::Vector&,
-                            fmatvec::RowVector& {
+// no argout required for function in parameter
+%typemap(argout, noblock=1)       fmatvec::Vector ,       fmatvec::RowVector  ,
+                            const fmatvec::Vector , const fmatvec::RowVector  ,
+                            const fmatvec::Vector&, const fmatvec::RowVector& {
+}
+
+// function out parameter value: copy memory from fmatvec localVar$argnum to PyObject $input
+%typemap(argout, noblock=1)       fmatvec::Vector&,       fmatvec::RowVector& ,
+                                  fmatvec::Vector*,       fmatvec::RowVector* {
   try {
-    _typemapArgoutVec_R<$1_type>($input, localVar$argnum);
+    _typemapArgoutVec<$1_basetype>($1, $input, $1_descriptor, localVar$argnum);
   }
   FMATVEC_CATCHARG
 }
 
 
 
-// wrap output (member of function return value) as a numpy.ndarray which uses the date memory from the c++ member
-%typemap(out, noblock=1) fmatvec::Matrix*,
-                         fmatvec::Matrix&,
-                         fmatvec::SquareMatrix*,
-                         fmatvec::SquareMatrix& {
+// MATRIX
+
+// function return value: copy memory from fmatvec $1 to PyObject $result
+%typemap(out   , noblock=1)       fmatvec::Matrix ,       fmatvec::SquareMatrix  ,
+                            const fmatvec::Matrix , const fmatvec::SquareMatrix  ,
+                            const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
   try {
-    _typemapOutMat_P_R($1, $result);
+    _typemapOutMatOwnMemory<$1_basetype>($1, $result);
   }
   FMATVEC_CATCHARG
 }
 
-// wrap output (function return value) as a numpy.ndarray with its own data memory
-%typemap(out, noblock=1) fmatvec::Matrix,
-                         const fmatvec::Matrix&,
-                         fmatvec::SquareMatrix,
-                         const fmatvec::SquareMatrix& {
+// function return value: use memory from fmatvec $1 in PyObject $result
+%typemap(out   , noblock=1)       fmatvec::Matrix*,       fmatvec::SquareMatrix* ,
+                                  fmatvec::Matrix&,       fmatvec::SquareMatrix& {
   try {
-    _typemapOutMat_V_CR($1, $result);
+    _typemapOutMatShareMemory<$1_basetype>($1, $result);
   }
   FMATVEC_CATCHARG
 }
 
-// add a local variable
-// (we cannot use the SWIG syntax "typemap(...) TYPE (LocalVarType localVar)" here since LocalVarType depends on the template type)
-%typemap(arginit, noblock=1) fmatvec::Matrix*,
-                             fmatvec::Matrix&,
-                             fmatvec::Matrix,
-                             fmatvec::SquareMatrix*,
-                             fmatvec::SquareMatrix&,
-                             fmatvec::SquareMatrix {
+// local fmatvec variable used for in/out function parameter
+%typemap(arginit, noblock=1)       fmatvec::Matrix*,       fmatvec::SquareMatrix* ,
+                                   fmatvec::Matrix&,       fmatvec::SquareMatrix& ,
+                             const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
   $1_basetype localVar$argnum;
 }
 
-// wrap input (member or function parameter) as a numpy.ndarray with its own data memory
-%typemap(in, noblock=1) fmatvec::Matrix*,
-                        fmatvec::Matrix&,
-                        fmatvec::Matrix,
-                        fmatvec::SquareMatrix*,
-                        fmatvec::SquareMatrix&,
-                        fmatvec::SquareMatrix {
+// no local variable required for in function parameter
+%typemap(arginit, noblock=1)       fmatvec::Matrix ,       fmatvec::SquareMatrix  ,
+                             const fmatvec::Matrix , const fmatvec::SquareMatrix  {
+}
+
+// function in parameter value: copy memory from PyObject $input to fmatvec $1
+%typemap(in    , noblock=1)       fmatvec::Matrix ,       fmatvec::SquareMatrix  ,
+                            const fmatvec::Matrix , const fmatvec::SquareMatrix  {
   try {
-    _typemapInMat_P_R_V($1, $input, localVar$argnum, $1_descriptor);
+    _typemapInMatValue<$1_basetype>($1, $input, $1_descriptor);
   }
   FMATVEC_CATCHARG
 }
 
-// wrap output function parameter -> do nothing for const references (no output)
-%typemap(argout, noblock=1) const fmatvec::Matrix&,
-                            const fmatvec::SquareMatrix& {
+// function in/out (and const reference) parameter value: copy memory from PyObject $input to fmatvec localVar$argnum
+%typemap(in    , noblock=1)       fmatvec::Matrix*,       fmatvec::SquareMatrix* ,
+                                  fmatvec::Matrix&,       fmatvec::SquareMatrix& ,
+                            const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
+  try {
+    _typemapInMatPtr<$1_basetype>($1, $input, $1_descriptor, localVar$argnum);
+  }
+  FMATVEC_CATCHARG
 }
 
-// wrap output function parameter -> copy result back to input function parameter
-%typemap(argout, noblock=1) fmatvec::Matrix&,
-                            fmatvec::SquareMatrix& {
+// no argout required for function in parameter
+%typemap(argout, noblock=1)       fmatvec::Matrix ,       fmatvec::SquareMatrix  ,
+                            const fmatvec::Matrix , const fmatvec::SquareMatrix  ,
+                            const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
+}
+
+// function out parameter value: copy memory from fmatvec localVar$argnum to PyObject $input
+%typemap(argout, noblock=1)       fmatvec::Matrix&,       fmatvec::SquareMatrix& ,
+                                  fmatvec::Matrix*,       fmatvec::SquareMatrix* {
   try {
-    _typemapArgoutMat_R<$1_type>($input, localVar$argnum);
+    _typemapArgoutMat<$1_basetype>($1, $input, $1_descriptor, localVar$argnum);
   }
   FMATVEC_CATCHARG
 }

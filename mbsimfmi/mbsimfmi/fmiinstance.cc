@@ -98,7 +98,7 @@ namespace MBSimFMI {
     // load modelDescription XML file
     parser=DOMParser::create();
     msg(Debug)<<"Read modelDescription file."<<endl;
-    path modelDescriptionXMLFile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path().parent_path()/
+    path modelDescriptionXMLFile=path(MBXMLUtils::getFMUSharedLibPath()).lexically_normal().parent_path().parent_path().parent_path().parent_path()/
       "modelDescription.xml";
     shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile, nullptr, false);
 
