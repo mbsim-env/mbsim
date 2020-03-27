@@ -15,7 +15,7 @@ AC_LANG([C++])
 AC_F77_WRAPPERS
 
 # enable C++11
-CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++17"
 
 # By autoscan
 AC_C_CONST

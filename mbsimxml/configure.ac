@@ -15,7 +15,7 @@ AC_TYPE_PID_T
 AC_TYPE_SIZE_T
 
 # enable C++11
-CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++17"
 
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
 PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)

@@ -21,7 +21,7 @@ AC_LANG([C++])
 AC_FC_WRAPPERS
 
 # enable C++11
-CXXFLAGS="$CXXFLAGS -std=c++11 -D_USE_MATH_DEFINES"
+CXXFLAGS="$CXXFLAGS -std=c++17 -D_USE_MATH_DEFINES"
 
 # check compiler options
 AC_MSG_CHECKING([for compiler option -Wno-error=stringop-overflow=])

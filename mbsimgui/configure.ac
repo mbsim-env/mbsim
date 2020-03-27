@@ -17,7 +17,7 @@ AC_C_INLINE
 AC_TYPE_SIZE_T
 
 # enable C++11
-CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++17"
 
 # windres
 AC_ARG_WITH(windres,
@@ -75,7 +75,7 @@ AC_ARG_WITH(qwt_lib_prefix,
   [  --with-qwt-lib-prefix=PFX  Prefix where qwt6 library is installed],
   [QWT_LIBS="-L$withval -l$QWT_LIBNAME"],
   [QWT_LIBS="-L$prefix/lib -l$QWT_LIBNAME"])
-OLDCPPFLAGS=$CPPFLAGS; CPPFLAGS="$CPPFLAGS $QWT_CFLAGS $QT_CFLAGS -std=c++11"
+OLDCPPFLAGS=$CPPFLAGS; CPPFLAGS="$CPPFLAGS $QWT_CFLAGS $QT_CFLAGS -std=c++17"
 OLDLIBS=$LIBS; LIBS="$LIBS $QWT_LIBS $QT_LIBS"
 AC_CHECK_HEADERS([qwt_wheel.h], [], [AC_MSG_ERROR([Can not find qwt_wheel.h!])])
 AC_TRY_LINK(

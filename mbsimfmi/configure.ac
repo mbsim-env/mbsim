@@ -16,7 +16,7 @@ AC_PROG_CXXCPP
 AC_LANG([C++])
 
 # enable C++11
-CXXFLAGS="$CXXFLAGS -std=c++11"
+CXXFLAGS="$CXXFLAGS -std=c++17"
 
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare"
 if test "_$host_os" != "_mingw32"; then
