@@ -1,12 +1,12 @@
 #include "config.h"
 #include <cstring>
 #include <regex>
+#include <chrono>
 #include "mbsimflatxml.h"
 #include "mbsim/mbsim_event.h"
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/solver.h"
 #include <boost/filesystem.hpp>
-#include <boost/timer/timer.hpp>
 #include <mbxmlutilshelper/last_write_time.h>
 
 using namespace std;
@@ -87,12 +87,11 @@ int main(int argc, char *argv[]) {
       if(stopAfterFirstStep)
         MBSimXML::plotInitialState(solver, dss);
       else {
-        boost::timer::cpu_timer t;
-        t.start();
+        auto start=std::chrono::high_resolution_clock::now();
         solver->setSystem(dss);
         solver->execute();
-        t.stop();
-        fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<t.format()<<endl;
+        auto end=std::chrono::high_resolution_clock::now();
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
       }
       // Remove the following block if --lastframe works in OpenMBV.
       // If this is removed openmbv should be opened with the --lastframe option.
