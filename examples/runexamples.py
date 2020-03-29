@@ -1319,6 +1319,8 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
       print("Failed.\n", file=executeFD)
     else:
       print("Done.\n", file=executeFD)
+  # remove unpacked fmu
+  if os.path.isdir("tmp_fmuCheck"): shutil.rmtree("tmp_fmuCheck")
 
   ### run using mbsimTestFMU
   # unpack FMU
@@ -1341,6 +1343,8 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
   print("\n", file=executeFD)
   ret3=[abs(subprocessCall(prefixSimulation(example, 'mbsimTestFMU')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/3))]
   outFiles3=getOutFilesAndAdaptRet(example, ret3)
+  # remove unpacked fmu
+  if os.path.isdir("tmp_mbsimTestFMU"): shutil.rmtree("tmp_mbsimTestFMU")
 
   # return
   if ret1[0]==subprocessCall.timedOutErrorCode or ret2[0]==subprocessCall.timedOutErrorCode or ret3[0]==subprocessCall.timedOutErrorCode:
