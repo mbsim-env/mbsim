@@ -5,13 +5,12 @@
 #include <utility>
 #include <mbxmlutilshelper/shared_library.h>
 
+#define BOOST_ERROR_CODE_HEADER_ONLY
+#include <mbxmlutilshelper/thislinelocation.h>
+
 // include the fmi header
 #define MODEL_IDENTIFIER mbsim
 #include <fmiinstancebase.h> // this includes 3rdparty/fmiModelFunctions
-
-// define getFMUWrapperSharedLibPath() which returns the FMU wrapper shared library path = .../binaries/<OS>/<fmuname>.[so|dll]
-#define MBXMLUTILS_SHAREDLIBNAME FMUWrapper
-#include <mbxmlutilshelper/getsharedlibpath_impl.h>
 
 #define DLLEXPORT __attribute__((visibility("default")))
 
@@ -21,6 +20,8 @@ using namespace MBSimFMI;
 using namespace MBXMLUtils;
 
 namespace {
+  ThisLineLocation fmuWrapperLoc;
+
   // some platform dependent values
 #ifdef _WIN32
   string SHEXT(".dll");
@@ -54,7 +55,7 @@ extern "C" {
   // Convert exceptions to FMI logger calls and return no instance.
   DLLEXPORT fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions_me functions, fmiBoolean loggingOn) {
     try {
-      string fmuDir=MBXMLUtils::getFMUWrapperSharedLibPath();
+      string fmuDir=fmuWrapperLoc().string();
       size_t s=string::npos;
       // replace /./ with /
       while((s=fmuDir.find("/./"))!=string::npos)

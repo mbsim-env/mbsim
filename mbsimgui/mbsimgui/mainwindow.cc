@@ -24,7 +24,7 @@
 #include "frame.h"
 #include "contour.h"
 #include "object.h"
-#include "link.h"
+#include "link_.h"
 #include "constraint.h"
 #include "observer.h"
 #include "integrator.h"
@@ -63,7 +63,7 @@
 #include <QDesktopServices>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
-#include <mbxmlutilshelper/getinstallpath.h>
+#include <boost/dll.hpp>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMException.hpp>
@@ -85,6 +85,7 @@ namespace MBSimGUI {
   vector<boost::filesystem::path> dependencies;
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     QSettings settings;
 
     impl=DOMImplementation::getImplementation();
@@ -110,7 +111,7 @@ namespace MBSimGUI {
 #endif
     bfs::create_directories(uniqueTempDir);
 
-    QString program = QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string());
+    QString program = QString::fromStdString((boost::dll::program_location().parent_path().parent_path()/"bin"/"mbsimxml").string());
     QStringList arguments;
     arguments << "--onlyListSchemas";
     QProcess processGetSchemas;
@@ -251,21 +252,21 @@ namespace MBSimGUI {
     actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
     connect(actionRefresh,SIGNAL(triggered()),this,SLOT(refresh()));
     toolBar->addAction(actionRefresh);
-    actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
+    actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
     connect(actionOpenMBV,SIGNAL(triggered()),this,SLOT(openmbv()));
     toolBar->addAction(actionOpenMBV);
-    actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
+    actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
     connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
     toolBar->addAction(actionH5plotserie);
-    actionEigenanalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Eigenanalysis");
+    actionEigenanalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Eigenanalysis");
     connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
     toolBar->addAction(actionEigenanalysis);
-    actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
+    actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
     connect(actionFrequencyResponse,SIGNAL(triggered()),this,SLOT(frequencyResponse()));
-    actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
+    actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
     toolBar->addAction(actionDebug);
-    QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
+    QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
     connect(actionKill,SIGNAL(triggered()),this,SLOT(kill()));
     toolBar->addAction(actionKill);
 
@@ -360,7 +361,7 @@ namespace MBSimGUI {
     autoSaveTimer.start(settings.value("mainwindow/options/autosaveinterval", 5).toInt()*60000);
     statusTime.start();
 
-    setWindowIcon(Utils::QIconCached(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
+    setWindowIcon(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
 
     // auto exit if everything is finished
     if(arg.contains("--autoExit")) {
@@ -429,9 +430,11 @@ namespace MBSimGUI {
   }
 
   void MainWindow::initInlineOpenMBV() {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
+
     std::list<string> arg;
     arg.emplace_back("--wst");
-    arg.push_back((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
+    arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
@@ -909,6 +912,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::mbsimxml(int task) {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     currentTask = task;
 
     shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
@@ -1001,7 +1005,7 @@ namespace MBSimGUI {
 
     arg.append(projectFile);
     process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"mbsimflatxml").string()), arg);
+    process.start(QString::fromStdString((installPath/"bin"/"mbsimflatxml").string()), arg);
   }
 
   void MainWindow::simulate() {
@@ -1015,21 +1019,23 @@ namespace MBSimGUI {
   }
 
   void MainWindow::openmbv() {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombv.xml";
     if(QFile::exists(name)) {
       QStringList arg;
       arg.append("--autoreload");
       arg.append(name);
-      QProcess::startDetached(QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"openmbv").string()), arg);
+      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"openmbv").string()), arg);
     }
   }
 
   void MainWindow::h5plotserie() {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsim.h5";
     if(QFile::exists(name)) {
       QStringList arg;
       arg.append(name);
-      QProcess::startDetached(QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"h5plotserie").string()), arg);
+      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"h5plotserie").string()), arg);
     }
   }
 
@@ -1050,6 +1056,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::debug() {//MFMF
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     currentTask = 0;
     auto *newdoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
     projectView->getProject()->processHref(newdoc->getDocumentElement());
@@ -1061,7 +1068,7 @@ namespace MBSimGUI {
     arg.append(projectFile);
     echoView->clearOutput();
     process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((MBXMLUtils::getInstallPath()/"bin"/"mbsimxml").string()), arg);
+    process.start(QString::fromStdString((installPath/"bin"/"mbsimxml").string()), arg);
   }
 
   void MainWindow::selectElement(const string& ID) {
@@ -1076,7 +1083,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::xmlHelp(const QString &url) {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((installPath/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
   }
 
   void MainWindow::about() {

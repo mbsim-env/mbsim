@@ -20,7 +20,7 @@
 #ifndef _FRICTION__H_
 #define _FRICTION__H_
 
-#include "link.h"
+#include "link_.h"
 
 namespace MBSimGUI {
 

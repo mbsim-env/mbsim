@@ -22,7 +22,7 @@
 #include "frame.h"
 #include "contour.h"
 #include "object.h"
-#include "link.h"
+#include "link_.h"
 #include "constraint.h"
 #include "observer.h"
 #include "objectfactory.h"

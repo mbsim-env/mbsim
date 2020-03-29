@@ -1,7 +1,7 @@
 #include "config.h"
 #include <mbxmlutils/eval.h>
 #include <mbsimxml/mbsimflatxml.h>
-#include <mbxmlutilshelper/getinstallpath.h>
+#include <boost/dll.hpp>
 #include <mbxmlutilshelper/shared_library.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
@@ -37,6 +37,8 @@ namespace {
 
 int main(int argc, char *argv[]) {
   try {
+    boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
+
     // help
     if(argc<2) {
       cout<<"Usage: "<<argv[0]<<" [--nocompress] [--cosim] [--param <name> [--param <name> ...]]"<<endl;
@@ -409,18 +411,18 @@ int main(int argc, char *argv[]) {
         // xml with no parameters -> save libmbsimxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for preprocessed XML models and dependencies to FMU."<<endl;
         copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
-                       getInstallPath()/LIBDIR/("libmbsimxml_fmi"+SHEXT));
+                       installPath/LIBDIR/("libmbsimxml_fmi"+SHEXT));
         cout<<endl;
       }
       else {
         // xml with parameters -> save libmbsimppxml_fmi.so to FMU
         cout<<"Copy MBSim FMI library for (normal) XML models and dependencies to FMU."<<endl;
         copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
-                       getInstallPath()/LIBDIR/("libmbsimppxml_fmi"+SHEXT));
+                       installPath/LIBDIR/("libmbsimppxml_fmi"+SHEXT));
         cout<<endl;
 
         cout<<"Copy XML schema files to FMU."<<endl;
-        path schemaDir=getInstallPath()/"share"/"mbxmlutils"/"schema";
+        path schemaDir=installPath/"share"/"mbxmlutils"/"schema";
         size_t depth=distance(schemaDir.begin(), schemaDir.end());
         for(recursive_directory_iterator srcIt=recursive_directory_iterator(schemaDir);
             srcIt!=recursive_directory_iterator(); ++srcIt) {
@@ -438,15 +440,15 @@ int main(int argc, char *argv[]) {
 
         cout<<"Copy MBXMLUtils measurement.xml file to FMU."<<endl;
         fmuFile.add(path("resources")/"local"/"share"/"mbxmlutils"/"xml"/"measurement.xml",
-          getInstallPath()/"share"/"mbxmlutils"/"xml"/"measurement.xml");
+          installPath/"share"/"mbxmlutils"/"xml"/"measurement.xml");
 
         map<path, pair<path, bool> > &files=eval->requiredFiles();
         cout<<"Copy files required by the evaluator and dependencies to FMU."<<endl;
         string evalFile="libmbxmlutils-eval-global-"+evalName+SHEXT;
-        if(!exists(getInstallPath()/LIBDIR/evalFile))
+        if(!exists(installPath/LIBDIR/evalFile))
           evalFile="libmbxmlutils-eval-"+evalName+SHEXT;
         copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/evalFile,
-                       path("resources")/"local"/LIBDIR, getInstallPath()/LIBDIR/evalFile);
+                       path("resources")/"local"/LIBDIR, installPath/LIBDIR/evalFile);
         for(auto & file : files) {
           cout<<"."<<flush;
           if(!file.second.second)
@@ -459,7 +461,7 @@ int main(int argc, char *argv[]) {
       }
 
       cout<<"Copy MBSim module files to FMU."<<endl;
-      for(directory_iterator srcIt=directory_iterator(getInstallPath()/"share"/"mbsimmodules");
+      for(directory_iterator srcIt=directory_iterator(installPath/"share"/"mbsimmodules");
         srcIt!=directory_iterator(); ++srcIt) {
         cout<<"."<<flush;
         fmuFile.add(path("resources")/"local"/"share"/"mbsimmodules"/srcIt->path().filename(), srcIt->path());
@@ -476,14 +478,14 @@ int main(int argc, char *argv[]) {
       // source model (always without parameters) -> save libmbsimppxml_fmi.so to FMU
       cout<<"Copy MBSim FMI library for source code models and dependencies to FMU."<<endl;
       copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/LIBDIR/("libmbsimXXX_fmi"+SHEXT), path("resources")/"local"/LIBDIR,
-                     getInstallPath()/LIBDIR/("libmbsimsrc_fmi"+SHEXT));
+                     installPath/LIBDIR/("libmbsimsrc_fmi"+SHEXT));
       cout<<endl;
     }
 
     cout<<"Copy MBSim FMI wrapper library and dependencies to FMU."<<endl;
     string fmuLibName(cosim?"mbsim_cosim":"mbsim_me");
     copyShLibToFMU(parserNoneVali, fmuFile, path("binaries")/FMIOS/("mbsim"+SHEXT), path("binaries")/FMIOS,
-                   getInstallPath()/"lib"/(fmuLibName+SHEXT));
+                   installPath/"lib"/(fmuLibName+SHEXT));
     cout<<endl;
 
     fmuFile.close();
@@ -509,6 +511,8 @@ namespace {
 
   void copyShLibToFMU(const std::shared_ptr<DOMParser> &parser,
                       CreateZip &fmuFile, const path &dst, const path &depdstdir, const path &src) {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
+
     // copy src to FMU
     cout<<"."<<flush;
     fmuFile.add(dst, src);
@@ -518,7 +522,7 @@ namespace {
     // check if *.deplibs file exits
     path depFile=src.parent_path()/(src.filename().string()+".deplibs");
     if(!exists(depFile)) {
-      depFile=getInstallPath()/"share"/"deplibs"/(src.filename().string()+".deplibs");
+      depFile=installPath/"share"/"deplibs"/(src.filename().string()+".deplibs");
       if(!exists(depFile)) {
         cerr<<endl<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
         return;
@@ -532,11 +536,11 @@ namespace {
 
       // check for file in reldir and copy it to FMU
       path reldir=E(e)->getAttribute("reldir");
-      if(exists(getInstallPath()/reldir/file)) {
+      if(exists(installPath/reldir/file)) {
         cout<<"."<<flush;
-        fmuFile.add(depdstdir/file, getInstallPath()/reldir/file);
-        if(exists(addDebugExtension(getInstallPath()/reldir/file)))
-          fmuFile.add(addDebugExtension(depdstdir/file), addDebugExtension(getInstallPath()/reldir/file));
+        fmuFile.add(depdstdir/file, installPath/reldir/file);
+        if(exists(addDebugExtension(installPath/reldir/file)))
+          fmuFile.add(addDebugExtension(depdstdir/file), addDebugExtension(installPath/reldir/file));
         continue;
       }
 

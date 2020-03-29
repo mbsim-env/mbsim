@@ -6,10 +6,6 @@
 #include <fmatvec/atom.h>
 #include "fmiinstancebase.h"
 
-// define getFMUSharedLibPath() which returns the FMU shared library path = .../resources/local/[lib|bin]/<name>.[so|dll]
-#define MBXMLUTILS_SHAREDLIBNAME FMU
-#include <mbxmlutilshelper/getsharedlibpath.h>
-
 // fmi function declarations must be included as extern C
 extern "C" {
   #include <3rdparty/fmiFunctions.h>
@@ -28,7 +24,13 @@ namespace MBSimControl {
   class ExternSignalSink;
 }
 
+namespace MBXMLUtils {
+  class ThisLineLocation;
+}
+
 namespace MBSimFMI {
+
+  extern MBXMLUtils::ThisLineLocation fmuLoc;
 
   /*! A MBSim FMI instance */
   class FMIInstance : public FMIInstanceBase, virtual public fmatvec::Atom {

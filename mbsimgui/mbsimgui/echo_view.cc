@@ -22,7 +22,7 @@
 #include <QDesktopWidget>
 #include <QScrollBar>
 #include <QToolBar>
-#include <mbxmlutilshelper/getinstallpath.h>
+#include <boost/dll.hpp>
 #include "utils.h"
 #include "echo_view.h"
 #include "file_editor.h"
@@ -44,6 +44,8 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   EchoView::EchoView(QMainWindow *parent) : QMainWindow(parent) {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
+
     setIconSize(iconSize()*0.5);
 
     out=new QTextBrowser(this);
@@ -53,7 +55,7 @@ namespace MBSimGUI {
     auto tb=new QToolBar(this);
     addToolBar(Qt::RightToolBarArea, tb);
 
-    showSSE=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"error.svg").string().c_str()),
+    showSSE=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"error.svg").string().c_str()),
                         "S", this);
     showSSE->setToolTip("<p>Show/hide subsequent errors message</p>");
     showSSE->setCheckable(true);
@@ -61,7 +63,7 @@ namespace MBSimGUI {
     connect(showSSE, SIGNAL(triggered()), this, SLOT(updateOutput()));
     tb->addAction(showSSE);
 
-    showWarn=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"warn.svg").string().c_str()),
+    showWarn=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"warn.svg").string().c_str()),
                          "W", this);
     showWarn->setToolTip("<p>Show/hide warning messages</p>");
     showWarn->setCheckable(true);
@@ -69,7 +71,7 @@ namespace MBSimGUI {
     connect(showWarn, SIGNAL(triggered()), this, SLOT(updateOutput()));
     tb->addAction(showWarn);
 
-    showInfo=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"info.svg").string().c_str()),
+    showInfo=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"info.svg").string().c_str()),
                          "I", this);
     showInfo->setToolTip("<p>Show/hide info messages</p>");
     showInfo->setCheckable(true);
@@ -77,7 +79,7 @@ namespace MBSimGUI {
     connect(showInfo, SIGNAL(triggered()), this, SLOT(updateOutput()));
     tb->addAction(showInfo);
 
-    showDepr=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"deprecated.svg").string().c_str()),
+    showDepr=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"deprecated.svg").string().c_str()),
                          "D", this);
     showDepr->setToolTip("<p>Show/hide messages about deprecated features.</p>");
     showDepr->setCheckable(true);
@@ -85,7 +87,7 @@ namespace MBSimGUI {
     connect(showDepr, SIGNAL(triggered()), this, SLOT(updateOutput()));
     tb->addAction(showDepr);
 
-    enableDebug=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debugBlueEnable.svg").string().c_str()),
+    enableDebug=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"debugBlueEnable.svg").string().c_str()),
                           "D", this);
     enableDebug->setToolTip("<p>Enable debug messages. This may decrease the performance.</p>");
     enableDebug->setCheckable(true);
@@ -93,7 +95,7 @@ namespace MBSimGUI {
     connect(enableDebug, SIGNAL(triggered()), this, SLOT(updateDebug()));
     tb->addAction(enableDebug);
 
-    showDebug=new QAction(Utils::QIconCached((MBXMLUtils::getInstallPath()/"share"/"mbsimgui"/"icons"/"debugBlue.svg").string().c_str()),
+    showDebug=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"debugBlue.svg").string().c_str()),
                           "D", this);
     showDebug->setToolTip("<p>Show/hide debug messages</p>");
     showDebug->setCheckable(true);

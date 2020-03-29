@@ -2,7 +2,7 @@
 #include <fmiinstance.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
-
+#include <mbxmlutilshelper/thislinelocation.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbsim/objectfactory.h>
 
@@ -14,7 +14,7 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateSystem(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model file
-    path mbsimflatxmlfile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path()/"model"/"Model.mbsimprj.flat.xml";
+    path mbsimflatxmlfile=fmuLoc().parent_path().parent_path().parent_path()/"model"/"Model.mbsimprj.flat.xml";
 
     // load all MBSim modules
     msg(Debug)<<"Load MBSim modules."<<endl;

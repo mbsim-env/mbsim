@@ -7,9 +7,7 @@
 #include <boost/scope_exit.hpp>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
-
-#define MBXMLUTILS_SHAREDLIBNAME FMU
-#include <mbxmlutilshelper/getsharedlibpath_impl.h>
+#include <mbxmlutilshelper/thislinelocation.h>
 
 // rethrow a catched exception after prefixing the what() string with the FMI variable name
 #define RETHROW_VR(vr) \
@@ -51,6 +49,8 @@ namespace {
 }
 
 namespace MBSimFMI {
+
+  ThisLineLocation fmuLoc;
 
   shared_ptr<FMIInstanceBase> fmiInstanceCreate(bool cosim, fmiString instanceName_, fmiString GUID,
                                                 fmiCallbackLogger logger, fmiBoolean loggingOn) {
@@ -98,7 +98,7 @@ namespace MBSimFMI {
     // load modelDescription XML file
     parser=DOMParser::create();
     msg(Debug)<<"Read modelDescription file."<<endl;
-    path modelDescriptionXMLFile=path(MBXMLUtils::getFMUSharedLibPath()).lexically_normal().parent_path().parent_path().parent_path().parent_path()/
+    path modelDescriptionXMLFile=fmuLoc().lexically_normal().parent_path().parent_path().parent_path().parent_path()/
       "modelDescription.xml";
     shared_ptr<xercesc::DOMDocument> doc=parser->parse(modelDescriptionXMLFile, nullptr, false);
 

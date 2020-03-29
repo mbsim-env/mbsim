@@ -20,7 +20,7 @@
 #ifndef _SPRING_DAMPER__H_
 #define _SPRING_DAMPER__H_
 
-#include "link.h"
+#include "link_.h"
 
 namespace MBSimGUI {
 

@@ -47,6 +47,8 @@ test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpa
 
 AC_CONFIG_FILES([Makefile mbsimPhysics/Makefile mbsimPhysics/functions/Makefile doc/doxyfile doc/Makefile mbsimPhysics.pc schema/Makefile xmldoc/Makefile xmldoc/Doxyfile])
 
+hardcode_into_libs=no # do not add hardcoded libdirs to ltlibraries
+hardcode_libdir_flag_spec_CXX= # do not add hardcodeed libdirs to ltbinaries
 AC_OUTPUT
 
 echo "

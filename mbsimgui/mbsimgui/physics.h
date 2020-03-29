@@ -20,7 +20,7 @@
 #ifndef _PHYSICS__H_
 #define _PHYSICN__H_
 
-#include "link.h"
+#include "link_.h"
 
 namespace MBSimGUI {
 

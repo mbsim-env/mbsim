@@ -20,7 +20,7 @@
 #ifndef _CONNECTION__H_
 #define _CONNECTION__H_
 
-#include "link.h"
+#include "link_.h"
 
 namespace MBSimGUI {
 

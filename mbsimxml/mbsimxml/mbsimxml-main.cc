@@ -6,7 +6,7 @@
 #include <algorithm>
 #include <cstring>
 #include <fstream>
-#include <mbxmlutilshelper/getinstallpath.h>
+#include <boost/dll.hpp>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbsim/element.h>
 #include <mbsim/integrators/integrator.h>
@@ -206,8 +206,8 @@ int main(int argc, char *argv[]) {
     EXEEXT="";
 #endif
   
-    bfs::path MBXMLUTILSBIN=getInstallPath()/"bin";
-    bfs::path MBXMLUTILSSCHEMA=getInstallPath()/"share"/"mbxmlutils"/"schema";
+    bfs::path MBXMLUTILSBIN=boost::dll::program_location().parent_path().parent_path()/"bin";
+    bfs::path MBXMLUTILSSCHEMA=boost::dll::program_location().parent_path().parent_path()/"share"/"mbxmlutils"/"schema";
   
     // parse parameters
 

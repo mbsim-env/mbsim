@@ -2,7 +2,7 @@
 #include <fmiinstance.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
-
+#include <mbxmlutilshelper/thislinelocation.h>
 #include <mbxmlutilshelper/shared_library.h>
 #include "../general/mbsimsrc_fmi.h"
 
@@ -15,7 +15,7 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateSystem(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model shared library
-    path mbsimsrclibfile=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path()/
+    path mbsimsrclibfile=fmuLoc().parent_path().parent_path().parent_path()/
       "model"/("libmbsimfmi_model"+SHEXT);
 
     // create DynamicSystemSolver

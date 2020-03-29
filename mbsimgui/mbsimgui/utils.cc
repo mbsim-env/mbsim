@@ -23,7 +23,6 @@
 #include <unordered_map>
 #include <cmath>
 #include <stdexcept>
-#include <mbxmlutilshelper/getinstallpath.h>
 
 using namespace std;
 

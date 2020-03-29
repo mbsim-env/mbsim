@@ -20,7 +20,7 @@
 #ifndef _SIGNAL__H_
 #define _SIGNAL__H_
 
-#include "link.h"
+#include "link_.h"
 
 namespace MBSimGUI {
 

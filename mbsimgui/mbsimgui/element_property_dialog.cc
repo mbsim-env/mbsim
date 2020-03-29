@@ -41,7 +41,7 @@
 #include <QFileInfo>
 #include <QMessageBox>
 #include <utility>
-#include <mbxmlutilshelper/getinstallpath.h>
+#include <boost/dll.hpp>
 #include "mainwindow.h"
 #include "dialogs.h"
 #include "project.h"
@@ -103,8 +103,10 @@ namespace MBSimGUI {
   }
 
   void ElementPropertyDialog::showXMLHelp() {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
+
     // generate url for current element
-    string url="file://"+(MBXMLUtils::getInstallPath()/"share"/"mbxmlutils"/"doc").string();
+    string url="file://"+(installPath/"share"/"mbxmlutils"/"doc").string();
     string ns=getElement()->getNameSpace().getNamespaceURI();
     replace(ns.begin(), ns.end(), ':', '_');
     replace(ns.begin(), ns.end(), '.', '_');

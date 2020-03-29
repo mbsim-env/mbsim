@@ -5,7 +5,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fmatvec/atom.h>
-#include <mbxmlutilshelper/getinstallpath.h>
+#include <mbxmlutilshelper/thislinelocation.h>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/dom.h>
 #include <mbxmlutilshelper/shared_library.h>
@@ -25,6 +25,12 @@ using namespace xercesc;
 #endif
 
 namespace {
+
+ThisLineLocation loc;
+
+boost::filesystem::path installPath() {
+  return loc().parent_path().parent_path();
+}
 
 // return the full relative path of a shared library (relative to the install directory, hance including the lib or bin subdir).
 // the library base filename 'base' is given with the prefix (lib on Linux) and without the extension.
@@ -48,10 +54,10 @@ void initPython() {
   if(isInitialized)
     return;
 
-  initializePython((getInstallPath()/"bin"/"mbsimflatxml").string());
+  initializePython((installPath()/"bin"/"mbsimflatxml").string());
   PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
   // add bin to python search path
-  PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
+  PyO pyBinPath(CALLPY(PyUnicode_FromString, (installPath()/"bin").string()));
   CALLPY(PyList_Append, pyPath, pyBinPath);
   
   isInitialized=true;
@@ -67,7 +73,7 @@ namespace MBSim {
 // last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
 set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
   static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
-  static const boost::filesystem::path installDir(getInstallPath());
+  static const boost::filesystem::path installDir(installPath());
   // note: we do not validate the module xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
   std::shared_ptr<DOMParser> parser=DOMParser::create();
 

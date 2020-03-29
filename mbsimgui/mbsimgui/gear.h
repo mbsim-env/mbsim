@@ -20,7 +20,7 @@
 #ifndef _GEAR__H_
 #define _GEAR__H_
 
-#include "link.h"
+#include "link_.h"
 #include "constraint.h"
 
 namespace MBSimGUI {

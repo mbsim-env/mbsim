@@ -2,7 +2,7 @@
 #include <fmiinstance.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
-
+#include <mbxmlutilshelper/thislinelocation.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include <mbsimxml/mbsimxml.h>
 #include <mbsim/objectfactory.h>
@@ -25,7 +25,7 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateSystem(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model file
-    path resourcesDir=path(MBXMLUtils::getFMUSharedLibPath()).parent_path().parent_path().parent_path();
+    path resourcesDir=fmuLoc().parent_path().parent_path().parent_path();
     // path to XML project file relative to resources/model
     boost::filesystem::ifstream xmlProjectStream(resourcesDir/"model"/"XMLProjectFile.txt");
     string xmlProjectFile;

@@ -24,7 +24,7 @@
 #include "contour.h"
 #include "dynamic_system_solver.h"
 #include "object.h"
-#include "link.h"
+#include "link_.h"
 #include "constraint.h"
 #include "observer.h"
 #include <xercesc/dom/DOMDocument.hpp>

@@ -20,7 +20,7 @@
 #ifndef _KINETIC_EXCITATION__H_
 #define _KINETIC_EXCITATION__H_
 
-#include "link.h"
+#include "link_.h"
 
 namespace MBSimGUI {
 

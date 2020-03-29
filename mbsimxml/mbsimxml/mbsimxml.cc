@@ -5,7 +5,7 @@
 #include <mbsimxml.h>
 #include <vector>
 #include <mbxmlutilshelper/dom.h>
-#include <mbxmlutilshelper/getinstallpath.h>
+#include <mbxmlutilshelper/thislinelocation.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <boost/filesystem/fstream.hpp>
 #include <boost/algorithm/string.hpp>
@@ -20,16 +20,22 @@ using namespace xercesc;
 
 namespace {
 
+ThisLineLocation loc;
+
+boost::filesystem::path installPath() {
+  return loc().parent_path().parent_path();
+}
+
 #if MBSIMXML_COND_PYTHON
 void initPython() {
   static bool isInitialized=false;
   if(isInitialized)
     return;
 
-  initializePython((getInstallPath()/"bin"/"mbsimxml").string());
+  initializePython((installPath()/"bin"/"mbsimxml").string());
   PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
   // add bin to python search path
-  PyO pyBinPath(CALLPY(PyUnicode_FromString, (getInstallPath()/"bin").string()));
+  PyO pyBinPath(CALLPY(PyUnicode_FromString, (installPath()/"bin").string()));
   CALLPY(PyList_Append, pyPath, pyBinPath);
   
   isInitialized=true;
@@ -41,7 +47,7 @@ void initPython() {
 namespace MBSim {
 
 set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
-  bfs::path MBXMLUTILSSCHEMA=getInstallPath()/"share"/"mbxmlutils"/"schema";
+  bfs::path MBXMLUTILSSCHEMA=installPath()/"share"/"mbxmlutils"/"schema";
   set<bfs::path> schemas {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_OpenMBV"/"openmbv.xsd",
@@ -55,7 +61,7 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
   parser=DOMParser::create({MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimModule"/"mbsimmodule.xsd"});
 
   set<bfs::path> allSearchDirs=searchDirs;
-  allSearchDirs.insert(getInstallPath()/"share"/"mbsimmodules");
+  allSearchDirs.insert(installPath()/"share"/"mbsimmodules");
   allSearchDirs.insert(bfs::current_path());
 
   // read MBSim module schemas
