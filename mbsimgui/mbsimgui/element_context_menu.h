@@ -39,6 +39,7 @@ namespace MBSimGUI {
     protected:
       Element *element;
       void addAction(QAction *action);
+      void addMenu(QMenu *menu);
   };
 
   class ElementContextMenu : public BasicElementMenu {
