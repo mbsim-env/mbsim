@@ -780,11 +780,13 @@ namespace MBSimGUI {
       vector<EmbedItemData*> parents = item->getEmbedItemParents();
       for(auto & parent : parents) {
         for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
+          E(parent->getParameter(j)->getXMLElement())->setOriginalFilename();
           DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
           ele0->insertBefore(node,nullptr);
         }
       }
       for(int j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
+        E(item->getParameter(j)->getXMLElement())->setOriginalFilename();
         DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
         ele0->insertBefore(node,nullptr);
       }
