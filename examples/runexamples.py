@@ -170,8 +170,9 @@ def killSubprocessCall(proc, f, killed, timeout):
 # subprocess call with MultiFile output
 def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   # remove core dumps from previous runs
-  for coreFile in glob.glob("core*"):
-    os.remove(coreFile)
+  for coreFile in glob.glob("*core*"):
+    if "LSB core file" in subprocess.check_output(["file", coreFile]).decode('utf-8'):
+      os.remove(coreFile)
   # start the program to execute
   proc=subprocess.Popen(args, stderr=subprocess.STDOUT, stdout=subprocess.PIPE, bufsize=-1, env=env)
   # a guard for the maximal execution time for the starte program
@@ -206,10 +207,11 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
     else:
       guard.cancel()
   # check for core dump file
-  exeRE=re.compile("^.*, *execfn: '([^']*)' *,.*$")
-  for coreFile in glob.glob("core*"):
-    out=subprocess.check_output(["file", coreFile]).decode('utf-8')
-    exe=exeRE.match(out).group(1)
+  exeRE=re.compile("^.*LSB core file.*, *from '([^']*)' *,.*$")
+  for coreFile in glob.glob("*core*"):
+    m=exeRE.match(subprocess.check_output(["file", coreFile]).decode('utf-8'))
+    if m==None: continue
+    exe=m.group(1).split(" ")[0]
     out=subprocess.check_output(["gdb", "-q", "-n", "-ex", "bt", "-batch", exe, coreFile]).decode('utf-8')
     f.write("\n\n\n******************** START: CORE DUMP BACKTRACE OF "+exe+" ********************\n\n\n")
     f.write(out)
@@ -1317,6 +1319,8 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
       print("Failed.\n", file=executeFD)
     else:
       print("Done.\n", file=executeFD)
+  # remove unpacked fmu
+  if os.path.isdir("tmp_fmuCheck"): shutil.rmtree("tmp_fmuCheck")
 
   ### run using mbsimTestFMU
   # unpack FMU
@@ -1339,6 +1343,8 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
   print("\n", file=executeFD)
   ret3=[abs(subprocessCall(prefixSimulation(example, 'mbsimTestFMU')+comm, executeFD, maxExecutionTime=args.maxExecutionTime/3))]
   outFiles3=getOutFilesAndAdaptRet(example, ret3)
+  # remove unpacked fmu
+  if os.path.isdir("tmp_mbsimTestFMU"): shutil.rmtree("tmp_mbsimTestFMU")
 
   # return
   if ret1[0]==subprocessCall.timedOutErrorCode or ret2[0]==subprocessCall.timedOutErrorCode or ret3[0]==subprocessCall.timedOutErrorCode:
