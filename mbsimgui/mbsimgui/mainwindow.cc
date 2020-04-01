@@ -799,7 +799,6 @@ namespace MBSimGUI {
     }
 
     try {
-      serializer->writeToURI(doc.get(), X()%"Paramtertest.xml");
       D(doc)->validate();
       string evalName="octave"; // default evaluator
       if(project)
