@@ -780,19 +780,26 @@ namespace MBSimGUI {
       vector<EmbedItemData*> parents = item->getEmbedItemParents();
       for(auto & parent : parents) {
         for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
-          E(parent->getParameter(j)->getXMLElement())->setOriginalFilename();
           DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
           ele0->insertBefore(node,nullptr);
+          boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
+          DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
+              X()%orgFileName.string());
+          node->insertBefore(filenamePI, node->getFirstChild());
         }
       }
       for(int j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
-        E(item->getParameter(j)->getXMLElement())->setOriginalFilename();
         DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
         ele0->insertBefore(node,nullptr);
+        boost::filesystem::path orgFileName=E(item->getParameter(j)->getXMLElement())->getOriginalFilename();
+        DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
+            X()%orgFileName.string());
+        node->insertBefore(filenamePI, node->getFirstChild());
       }
     }
 
     try {
+      serializer->writeToURI(doc.get(), X()%"Paramtertest.xml");
       D(doc)->validate();
       string evalName="octave"; // default evaluator
       if(project)

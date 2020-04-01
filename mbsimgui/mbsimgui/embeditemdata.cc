@@ -24,6 +24,7 @@
 #include <mbxmlutils/eval.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -150,15 +151,21 @@ namespace MBSimGUI {
 
   DOMElement* EmbedItemData::processIDAndHref(DOMElement *element) {
     if(MBXMLUtils::E(element)->hasAttribute("href")) {
-      E(getXMLElement())->setOriginalFilename();
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));
       element->insertBefore(ele2,NULL);
+      boost::filesystem::path orgFileName=E(getXMLElement())->getOriginalFilename();
+      DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
+          X()%orgFileName.string());
+      ele2->insertBefore(filenamePI, ele2->getFirstChild());
       MBXMLUtils::E(element)->removeAttribute("href");
     }
     if(MBXMLUtils::E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
-      E(static_cast<xercesc::DOMElement*>(getParameter(0)->getXMLElement()->getParentNode()))->setOriginalFilename();
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getParameter(0)->getXMLElement()->getParentNode(),true));
       element->insertBefore(ele2,element->getFirstElementChild());
+      boost::filesystem::path orgFileName=E(getParameter(0)->getXMLElement())->getOriginalFilename();
+      DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
+          X()%orgFileName.string());
+      ele2->insertBefore(filenamePI, ele2->getFirstChild());
       MBXMLUtils::E(element)->removeAttribute("parameterHref");
     }
     return E(element)->getTagName()==PV%"Embed"?element->getLastElementChild():element;
