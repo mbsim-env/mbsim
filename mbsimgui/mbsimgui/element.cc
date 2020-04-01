@@ -38,9 +38,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern DOMImplementation *impl;
-  extern DOMLSSerializer *serializer;
-
   int Element::IDcounter=0;
 
   DOMElement* Element::createXMLElement(DOMNode *parent) {

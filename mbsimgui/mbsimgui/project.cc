@@ -33,9 +33,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern DOMImplementation *impl;
-  extern DOMLSSerializer *serializer;
-
   Project::Project() {
     trueMap["octave"] = "true";
     trueMap["python"] = "True";
