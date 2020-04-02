@@ -762,8 +762,14 @@ namespace MBSimGUI {
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
     shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
-    DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
-    doc->insertBefore(ele0,nullptr);
+    DOMElement *eleE0 = D(doc)->createElement(PV%"Embed");
+    doc->insertBefore(eleE0,nullptr);
+    DOMElement *eleP0 = D(doc)->createElement(PV%"Parameter");
+    eleE0->insertBefore(eleP0,nullptr);
+    DOMElement *eleE1 = D(doc)->createElement(PV%"Embed");
+    eleE0->insertBefore(eleE1,nullptr);
+    DOMElement *eleP1 = D(doc)->createElement(PV%"Parameter");
+    eleE1->insertBefore(eleP1,nullptr);
     string evalName="octave"; // default evaluator
     if(project)
       evalName = project->getEvaluator();
@@ -787,7 +793,7 @@ namespace MBSimGUI {
       for(auto & parent : parents) {
         for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
           DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
-          ele0->insertBefore(node,nullptr);
+          eleP0->insertBefore(node,nullptr);
           boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
           DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
               X()%orgFileName.string());
@@ -796,7 +802,7 @@ namespace MBSimGUI {
       }
       for(int j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
         DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
-        ele0->insertBefore(node,nullptr);
+        eleP1->insertBefore(node,nullptr);
         boost::filesystem::path orgFileName=E(item->getParameter(j)->getXMLElement())->getOriginalFilename();
         DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
             X()%orgFileName.string());
@@ -804,18 +810,21 @@ namespace MBSimGUI {
       }
       try {
         D(doc)->validate();
-        eval->addParamSet(doc->getDocumentElement());
+        DOMElement *ele = doc->getDocumentElement()->getFirstElementChild();
+        eval->addParamSet(ele);
+        if(item->getXMLElement()) {
+          string counterName = item->getEmbedXMLElement()?E(item->getEmbedXMLElement())->getAttribute("counterName"):"";
+          if(not counterName.empty())
+            eval->addParam(eval->cast<string>(eval->stringToValue(counterName,item->getEmbedXMLElement(),false)),eval->create(1.0));
+        }
+        ele = ele->getNextElementSibling()->getFirstElementChild();
+        eval->addParamSet(ele);
       }
       catch(const std::exception &error) {
         cout << string("An exception occurred in updateParameters: ") + error.what() << endl;
       }
       catch(...) {
         cout << "An unknown exception occurred in updateParameters." << endl;
-      }
-      if(item->getXMLElement()) {
-        string counterName = item->getEmbedXMLElement()?E(item->getEmbedXMLElement())->getAttribute("counterName"):"";
-        if(not counterName.empty())
-          eval->addParam(eval->cast<string>(eval->stringToValue(counterName,item->getEmbedXMLElement(),false)),eval->create(1.0));
       }
     }
   }
