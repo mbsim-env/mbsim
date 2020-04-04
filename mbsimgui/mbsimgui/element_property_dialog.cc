@@ -702,6 +702,8 @@ namespace MBSimGUI {
     addToTab("General", backlash);
     externalToothed = new ExtWidget("External toothed",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"externalToothed");
     addToTab("General", externalToothed);
+    outsideRadius = new ExtWidget("outsideRadius",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"outsideRadius");
+    addToTab("General", outsideRadius);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
   }
@@ -715,6 +717,7 @@ namespace MBSimGUI {
     pressureAngle->initializeUsingXML(item->getXMLElement());
     backlash->initializeUsingXML(item->getXMLElement());
     externalToothed->initializeUsingXML(item->getXMLElement());
+    outsideRadius->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -728,6 +731,7 @@ namespace MBSimGUI {
     pressureAngle->writeXMLFile(item->getXMLElement(),nullptr);
     backlash->writeXMLFile(item->getXMLElement(),nullptr);
     externalToothed->writeXMLFile(item->getXMLElement(),nullptr);
+    outsideRadius->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

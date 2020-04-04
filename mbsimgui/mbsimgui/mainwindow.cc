@@ -765,61 +765,70 @@ namespace MBSimGUI {
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
     shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
-    DOMElement *ele0 = D(doc)->createElement(PV%"Parameter");
-    doc->insertBefore(ele0,nullptr);
-
-    if(item) {
-      if(item->getXMLElement()) {
-        QString counterName = item->getEmbedXMLElement()?QString::fromStdString(E(item->getEmbedXMLElement())->getAttribute("counterName")):"";
-        if(not(counterName.isEmpty())) {
-          DOMElement *ele1=D(doc)->createElement(PV%"scalarParameter");
-          E(ele1)->setAttribute("name", counterName.toStdString());
-          DOMText *text = doc->createTextNode(X()%"1");
-          ele1->insertBefore(text,nullptr);
-          ele0->insertBefore(ele1,nullptr);
-        }
+    DOMElement *eleE0 = D(doc)->createElement(PV%"Embed");
+    doc->insertBefore(eleE0,nullptr);
+    DOMElement *eleP0 = D(doc)->createElement(PV%"Parameter");
+    eleE0->insertBefore(eleP0,nullptr);
+    DOMElement *eleE1 = D(doc)->createElement(PV%"Embed");
+    eleE0->insertBefore(eleE1,nullptr);
+    DOMElement *eleP1 = D(doc)->createElement(PV%"Parameter");
+    eleE1->insertBefore(eleP1,nullptr);
+    string evalName="octave"; // default evaluator
+    if(project)
+      evalName = project->getEvaluator();
+    else {
+      DOMElement *root = this->doc->getDocumentElement();
+      DOMElement *evaluator;
+      if(E(root)->getTagName()==PV%"Embed") {
+        auto r=root->getFirstElementChild();
+        if(E(r)->getTagName()==PV%"Parameter")
+          r=r->getNextElementSibling();
+        evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
       }
-
+      else
+        evaluator=E(root)->getFirstElementChildNamed(PV%"evaluator");
+      if(evaluator)
+        evalName=X()%E(evaluator)->getFirstTextChild()->getData();
+    }
+    eval=Eval::createEvaluator(evalName, &dependencies);
+    if(item) {
       vector<EmbedItemData*> parents = item->getEmbedItemParents();
       for(auto & parent : parents) {
         for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
           DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
-          ele0->insertBefore(node,nullptr);
+          eleP0->insertBefore(node,nullptr);
+          boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
+          DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
+              X()%orgFileName.string());
+          node->insertBefore(filenamePI, node->getFirstChild());
         }
       }
       for(int j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
         DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
-        ele0->insertBefore(node,nullptr);
+        eleP1->insertBefore(node,nullptr);
+        boost::filesystem::path orgFileName=E(item->getParameter(j)->getXMLElement())->getOriginalFilename();
+        DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
+            X()%orgFileName.string());
+        node->insertBefore(filenamePI, node->getFirstChild());
       }
-    }
-
-    try {
-      D(doc)->validate();
-      string evalName="octave"; // default evaluator
-      if(project)
-        evalName = project->getEvaluator();
-      else {
-        DOMElement *root = this->doc->getDocumentElement();
-        DOMElement *evaluator;
-        if(E(root)->getTagName()==PV%"Embed") {
-          auto r=root->getFirstElementChild();
-          if(E(r)->getTagName()==PV%"Parameter")
-            r=r->getNextElementSibling();
-          evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
+      try {
+        D(doc)->validate();
+        DOMElement *ele = doc->getDocumentElement()->getFirstElementChild();
+        eval->addParamSet(ele);
+        if(item->getXMLElement()) {
+          string counterName = item->getEmbedXMLElement()?E(item->getEmbedXMLElement())->getAttribute("counterName"):"";
+          if(not counterName.empty())
+            eval->addParam(eval->cast<string>(eval->stringToValue(counterName,item->getEmbedXMLElement(),false)),eval->create(1.0));
         }
-        else
-          evaluator=E(root)->getFirstElementChildNamed(PV%"evaluator");
-        if(evaluator)
-          evalName=X()%E(evaluator)->getFirstTextChild()->getData();
+        ele = ele->getNextElementSibling()->getFirstElementChild();
+        eval->addParamSet(ele);
       }
-      eval=Eval::createEvaluator(evalName, &dependencies);
-      eval->addParamSet(doc->getDocumentElement());
-    }
-    catch(const std::exception &error) {
-      cout << string("An exception occurred in updateParameters: ") + error.what() << endl;
-    }
-    catch(...) {
-      cout << "An unknown exception occurred in updateParameters." << endl;
+      catch(const std::exception &error) {
+        cout << string("An exception occurred in updateParameters: ") + error.what() << endl;
+      }
+      catch(...) {
+        cout << "An unknown exception occurred in updateParameters." << endl;
+      }
     }
   }
 

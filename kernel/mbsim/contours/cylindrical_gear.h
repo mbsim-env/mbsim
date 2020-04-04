@@ -69,6 +69,8 @@ namespace MBSim {
       void setBacklash(double b_) { b = b_; }
       double getBacklash() { return b; }
       void setExternalToothed(bool ext_=true) { ext = ext_; }
+      double getOutsideRadius() const { return R; }
+      void setOutsideRadius(double R_) { R = R_; }
       bool getExternalToothed() const { return ext; }
       void setFlank(int flank) { signi = flank; }
       void setTooth(int tooth) { k = tooth; }
@@ -96,6 +98,7 @@ namespace MBSim {
       double al{0.349065850398866};
       double b{0};
       bool ext{true};
+      double R{0};
 
       int signi{0};
       int k{0};

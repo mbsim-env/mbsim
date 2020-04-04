@@ -139,6 +139,7 @@ namespace MBSim {
         static_pointer_cast<OpenMBV::CylindricalGear>(openMBVRigidBody)->setPressureAngle(al);
         static_pointer_cast<OpenMBV::CylindricalGear>(openMBVRigidBody)->setBacklash(b);
         static_pointer_cast<OpenMBV::CylindricalGear>(openMBVRigidBody)->setExternalToothed(ext);
+        static_pointer_cast<OpenMBV::CylindricalGear>(openMBVRigidBody)->setOutsideRadius(R);
       }
     }
     RigidContour::init(stage, config);
@@ -161,6 +162,8 @@ namespace MBSim {
     if(e) setBacklash(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"externalToothed");
     if(e) setExternalToothed(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"outsideRadius");
+    if(e) setOutsideRadius(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       OpenMBVColoredBody ombv;

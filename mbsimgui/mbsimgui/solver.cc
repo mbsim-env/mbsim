@@ -30,9 +30,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern DOMImplementation *impl;
-  extern DOMLSSerializer *serializer;
-
   void Solver::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {

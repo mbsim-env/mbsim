@@ -51,6 +51,11 @@ namespace MBSimGUI {
     QMenu::addAction(action);
   }
 
+  void BasicElementMenu::addMenu(QMenu *menu) {
+    if(menu->isEnabled()) menu->setDisabled(element->getEmbeded());
+    QMenu::addMenu(menu);
+  }
+
   ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : BasicElementMenu(element,"",parent) {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,SIGNAL(triggered()),mw->getElementView(),SLOT(openEditor()));
