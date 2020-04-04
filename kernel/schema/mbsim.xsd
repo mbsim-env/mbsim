@@ -3360,6 +3360,13 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="outsideRadius" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Außenradius, wenn das Stirnrad innen verzahnt ist (Hohlrad).
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
