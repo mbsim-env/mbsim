@@ -57,7 +57,7 @@ extern "C" {
                                              fmiString mimeType, fmiReal timeout, fmiBoolean visible,
                                              fmiBoolean interactive, fmiCallbackFunctions_cosim functions, fmiBoolean loggingOn) {
     try {
-      string fmuDir=fmuWrapperLoc().string();
+      string fmuDir=fmuWrapperLoc();
       size_t s=string::npos;
       // replace /./ with /
       while((s=fmuDir.find("/./"))!=string::npos)

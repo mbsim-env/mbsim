@@ -23,7 +23,7 @@ namespace {
 ThisLineLocation loc;
 
 boost::filesystem::path installPath() {
-  return loc().parent_path().parent_path();
+  return boost::filesystem::path(loc()).parent_path().parent_path();
 }
 
 #if MBSIMXML_COND_PYTHON

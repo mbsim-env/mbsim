@@ -14,7 +14,7 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateSystem(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model file
-    path mbsimflatxmlfile=fmuLoc().parent_path().parent_path().parent_path()/"model"/"Model.mbsimprj.flat.xml";
+    path mbsimflatxmlfile=path(fmuLoc()).parent_path().parent_path().parent_path()/"model"/"Model.mbsimprj.flat.xml";
 
     // load all MBSim modules
     msg(Debug)<<"Load MBSim modules."<<endl;

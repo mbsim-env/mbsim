@@ -55,7 +55,7 @@ extern "C" {
   // Convert exceptions to FMI logger calls and return no instance.
   DLLEXPORT fmiComponent fmiInstantiateModel(fmiString instanceName_, fmiString GUID, fmiCallbackFunctions_me functions, fmiBoolean loggingOn) {
     try {
-      string fmuDir=fmuWrapperLoc().string();
+      string fmuDir=fmuWrapperLoc();
       size_t s=string::npos;
       // replace /./ with /
       while((s=fmuDir.find("/./"))!=string::npos)

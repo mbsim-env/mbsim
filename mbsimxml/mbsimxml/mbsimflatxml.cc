@@ -29,7 +29,7 @@ namespace {
 ThisLineLocation loc;
 
 boost::filesystem::path installPath() {
-  return loc().parent_path().parent_path();
+  return boost::filesystem::path(loc()).parent_path().parent_path();
 }
 
 // return the full relative path of a shared library (relative to the install directory, hance including the lib or bin subdir).
