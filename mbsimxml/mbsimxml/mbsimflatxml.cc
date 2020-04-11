@@ -187,6 +187,9 @@ int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& s
       return 1;
     }
     searchDirs.insert(*itn);
+
+    args.erase(itn);
+    it=prev(args.erase(it));
   }
 
   loadModules(searchDirs);

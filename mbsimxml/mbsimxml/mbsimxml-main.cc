@@ -166,6 +166,15 @@ int main(int argc, char *argv[]) {
       streamArgs.emplace_back(*next(it));
     }
 
+    // get --modulePath args to pass to mbsimflatxml
+    vector<string> modulePath;
+    for(auto it=args.begin(); it!=args.end(); ++it) {
+      if(*it!="--modulePath") continue;
+
+      modulePath.emplace_back(*it);
+      modulePath.emplace_back(*next(it));
+    }
+
     // handle --stdout and --stderr args
     list<string>::iterator it;
     while((it=find_if(args.begin(), args.end(), [](const string &x){ return x=="--stdout" || x=="--stderr"; }))!=args.end()) {
@@ -295,6 +304,7 @@ int main(int argc, char *argv[]) {
         if(NOINT!="") command.push_back(NOINT);
         if(ONLY1OUT!="") command.push_back(ONLY1OUT);
         command.insert(command.end(), streamArgs.begin(), streamArgs.end());
+        command.insert(command.end(), modulePath.begin(), modulePath.end());
         command.push_back(PPMBSIMPRJ);
         ret=runProgram(command);
       }
