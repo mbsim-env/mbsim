@@ -451,8 +451,21 @@ int main(int argc, char *argv[]) {
                        path("resources")/"local"/LIBDIR, installPath/LIBDIR/evalFile);
         for(auto & file : files) {
           cout<<"."<<flush;
-          if(!file.second.second)
-            fmuFile.add(path("resources")/"local"/file.second.first/file.first.filename(), file.first);
+          if(!file.second.second) {
+            if(file.first.filename()=="PKG_ADD") {
+              // a special hack for octave: fix PKG_ADD file before adding to the archive
+              // see also the fixes in the Dockerfile's in mbsim-env/build
+              std::ifstream pkgAdd(file.first);
+              string content;
+              for(string line; getline(pkgAdd, line);) {
+                if(line.find("gnuplot")!=string::npos) continue;
+                content+=line+"\n";
+              }
+              fmuFile.add(path("resources")/"local"/file.second.first/file.first.filename(), content);
+            }
+            else
+              fmuFile.add(path("resources")/"local"/file.second.first/file.first.filename(), file.first);
+          }
           else
             copyShLibToFMU(parserNoneVali, fmuFile, path("resources")/"local"/file.second.first/file.first.filename(),
                            path("resources")/"local"/LIBDIR, file.first);
