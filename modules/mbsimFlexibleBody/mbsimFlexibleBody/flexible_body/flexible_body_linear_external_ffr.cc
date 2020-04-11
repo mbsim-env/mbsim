@@ -127,7 +127,7 @@ namespace MBSimFlexibleBody {
       power = 1000;
 
     /* read u0 */
-    ifstream u0Infile((inFilePath + "/u0.dat").c_str());
+    ifstream u0Infile(inFilePath + "/u0.dat");
     if (!u0Infile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "u0.dat" << endl;
       throw 1;
@@ -156,7 +156,7 @@ namespace MBSimFlexibleBody {
     mij.resize(nNodes, NONINIT);
 
     /* read mij */
-    ifstream mijInfile((inFilePath + "/mij.dat").c_str());
+    ifstream mijInfile(inFilePath + "/mij.dat");
     if (!mijInfile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "mij.dat" << endl;
       throw 1;
@@ -178,7 +178,7 @@ namespace MBSimFlexibleBody {
     }
     
     // get the number of mode shapes(nf) used to describe the deformation
-    ifstream phiInfile((inFilePath + "/modeShapeMatrix.dat").c_str());
+    ifstream phiInfile(inFilePath + "/modeShapeMatrix.dat");
     if (!phiInfile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "modeShapeMatrix.dat" << endl;
       throw 1;
@@ -209,7 +209,7 @@ namespace MBSimFlexibleBody {
 
     // read stiffness matrix
     KFull.resize(3 * nNodes, INIT, 0.0);
-    ifstream KInfile((inFilePath + "/stiffnessMatrix.dat").c_str());
+    ifstream KInfile(inFilePath + "/stiffnessMatrix.dat");
     if (!KInfile.is_open()) {
       msg(Error) << "Can not open file " << inFilePath << "stiffnessMatrix.dat" << endl;
       throw 1;

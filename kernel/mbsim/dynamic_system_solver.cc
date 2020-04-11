@@ -1236,7 +1236,7 @@ namespace MBSim {
       Group::writez(&file);
     }
     else {
-      ofstream file(fileName.c_str());
+      ofstream file(fileName);
       file.setf(ios::scientific);
       file.precision(numeric_limits<double>::digits10 + 1);
       for (int i = 0; i < q.size(); i++)

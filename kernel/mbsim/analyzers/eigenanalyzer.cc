@@ -158,7 +158,7 @@ namespace MBSim {
   }
 
   bool Eigenanalyzer::saveEigenanalyis(const string& fileName) {
-    ofstream os(fileName.c_str());
+    ofstream os(fileName);
     if(os.is_open()) {
       os << "# name: " << "lambda" << endl;
       os << "# type: " << "complex matrix" << endl;

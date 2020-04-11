@@ -455,7 +455,7 @@ int main(int argc, char *argv[]) {
             if(file.first.filename()=="PKG_ADD") {
               // a special hack for octave: fix PKG_ADD file before adding to the archive
               // see also the fixes in the Dockerfile's in mbsim-env/build
-              std::ifstream pkgAdd(file.first);
+              boost::filesystem::ifstream pkgAdd(file.first);
               string content;
               for(string line; getline(pkgAdd, line);) {
                 if(line.find("gnuplot")!=string::npos) continue;

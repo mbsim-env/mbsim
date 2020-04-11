@@ -824,7 +824,7 @@ namespace MBSim {
 
     if (FlagPlotIntegrator) {
 
-      integPlot.open((name + ".plt").c_str());
+      integPlot.open(name + ".plt");
       integPlot << "#1 t [s]  :" << endl; 
       integPlot << "#2 dt [s] :" << endl;
       integPlot << "#3 order  :" << endl; 
@@ -1706,7 +1706,7 @@ namespace MBSim {
       int maxStepsPerThread = singleStepsT1;
       if (maxStepsPerThread<singleStepsT2) maxStepsPerThread = singleStepsT2;
       if (maxStepsPerThread<singleStepsT3) maxStepsPerThread = singleStepsT3;
-      ofstream integSum((name + ".sum").c_str());
+      ofstream integSum(name + ".sum");
       integSum << "Integration time:   " << time << endl;
       integSum << "Integration steps:  " << integrationSteps << endl;
       integSum << "Evaluations MBS:    " << (singleStepsT1+singleStepsT2+singleStepsT3)<<"   (max/Thread: "<<maxStepsPerThread<<")"<<endl;

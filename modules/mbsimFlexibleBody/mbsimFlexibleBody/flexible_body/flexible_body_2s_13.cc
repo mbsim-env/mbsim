@@ -71,7 +71,7 @@ namespace MBSimFlexibleBody {
   }
 
   void MapleOutput(Mat C, std::string MatName, std::string file) {
-    ofstream dat(file.c_str(), ios::app);
+    ofstream dat(file, ios::app);
     dat << MatName;
     dat << " := Matrix([";
     for (int i = 0; i < C.rows(); i++) {
@@ -92,7 +92,7 @@ namespace MBSimFlexibleBody {
 
 
   void MapleOutput(SymMat C, std::string MatName, std::string file) {
-    ofstream dat(file.c_str(), ios::app);
+    ofstream dat(file, ios::app);
     dat << MatName;
     dat << " := Matrix([";
     for (int i = 0; i < C.rows(); i++) {

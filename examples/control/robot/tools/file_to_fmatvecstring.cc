@@ -7,7 +7,7 @@
 using namespace std;
 
 string FileTofmatvecString(const string &filename) {
-  ifstream filestream(filename.c_str(), ifstream::in);
+  ifstream filestream(filename, ifstream::in);
 
   string fmatvecString="[";
   string line;

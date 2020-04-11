@@ -241,7 +241,7 @@ namespace MBSim {
 
     std::ofstream ivFile;
 
-    ivFile.open((getPath(nullptr, ".").substr(1) + ".iv").c_str());
+    ivFile.open(getPath(nullptr, ".").substr(1) + ".iv");
 
     /*HEAD*/
     ivFile << "#Inventor V2.1 ascii" << endl << endl;

@@ -104,7 +104,7 @@ namespace MBSim {
       for(int i=0; i<n; i++)
         Zh(k,i) = sqrt(pow(zhr(i),2) + pow(zhi(i),2));
     }
-    ofstream os((system->getName()+".harmonic_response_analysis.mat").c_str());
+    ofstream os(system->getName()+".harmonic_response_analysis.mat");
     if(os.is_open()) {
       os << "# name: " << "z" << endl;
       os << "# type: " << "matrix" << endl;

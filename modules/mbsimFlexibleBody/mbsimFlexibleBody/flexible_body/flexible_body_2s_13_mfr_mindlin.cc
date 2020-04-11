@@ -104,7 +104,7 @@ namespace MBSimFlexibleBody {
     if (msgAct(Debug)) {
       stringstream filenameM;
       filenameM << "M" << nr << "x" << nj << "t" << getTime() << ".txt";
-      ofstream file_M(filenameM.str().c_str());
+      ofstream file_M(filenameM.str());
       file_M << M << endl;
       file_M << eigval(M) << endl;
       file_M.close();
@@ -115,7 +115,7 @@ namespace MBSimFlexibleBody {
 
       stringstream filenameMpart;
       filenameMpart << "Mpart" << nr << "x" << nj << ".txt";
-      ofstream file_Mpart(filenameMpart.str().c_str());
+      ofstream file_Mpart(filenameMpart.str());
       RangeV Ipart(3, 5);
       file_Mpart << "M_TT" << endl << M(Ipart) << endl;
       file_Mpart << eigval(M(Ipart)) << endl;
@@ -150,7 +150,7 @@ namespace MBSimFlexibleBody {
         }
       stringstream filenameEigVal;
       filenameEigVal << "EigVal" << nr << "x" << nj << ".txt";
-      ofstream file_eigval(filenameEigVal.str().c_str());
+      ofstream file_eigval(filenameEigVal.str());
       file_eigval << NaturalHarmonics << endl;
 
       file_eigval << eigval(H) << endl;
@@ -619,7 +619,7 @@ namespace MBSimFlexibleBody {
     //ofstream file_static;
     //stringstream filename_static
     //filename_static <<  "Static" <<  nr << "x" << nj << ".txt";
-    //file_static.open(filename_static.str().c_str());
+    //file_static.open(filename_static.str());
     //file_static << "error=" << maxerr << endl;
     //file_static << "static_mbsim=matrix([" ;
     //for(int i=0;i<u_mbsim.size();i++)

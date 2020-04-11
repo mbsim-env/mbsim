@@ -132,7 +132,7 @@ namespace MBSimFlexibleBody {
 	uSize[1] = discretization[0]->getuSize(); // TODO
   }
   void FlexibleBodyLinearExternal::readMassMatrix(const string &massfilename) {
-	fstream datafile(massfilename.c_str(),ios::in);
+	fstream datafile(massfilename,ios::in);
 	if (!datafile.is_open()) {
           stringstream error;
 	  error << "File " << massfilename << " containing massmatrix not found." << endl;
@@ -149,7 +149,7 @@ namespace MBSimFlexibleBody {
 	qSize = discretization[0]->getqSize();
   }
   void FlexibleBodyLinearExternal::readStiffnessMatrix(const string &stiffnessfilename) {
-    fstream datafile(stiffnessfilename.c_str(),ios::in);
+    fstream datafile(stiffnessfilename,ios::in);
     if (!datafile.is_open()) {
       stringstream error;
       error << "File " << stiffnessfilename << " containing stiffnessmatrix not found." << endl;
@@ -203,7 +203,7 @@ namespace MBSimFlexibleBody {
 
   ContourPointData FlexibleBodyLinearExternal::addInterface(const string &jacobifile) {
 
-    fstream datafile(jacobifile.c_str(),ios::in);
+    fstream datafile(jacobifile,ios::in);
     if (!datafile.is_open()) {
       stringstream error;
       error << "File " << jacobifile << " containing Jacobimatrix not found." << endl;

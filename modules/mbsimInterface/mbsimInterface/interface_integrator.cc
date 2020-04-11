@@ -90,7 +90,7 @@ namespace MBSimInterface {
 
     svSize=system->getsvSize();
 
-    integPlot.open((name + ".plt").c_str());
+    integPlot.open(name + ".plt");
 
     resolveInputOutputNames();
 

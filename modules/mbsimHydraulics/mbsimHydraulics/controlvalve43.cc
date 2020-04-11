@@ -163,7 +163,7 @@ namespace MBSimHydraulics {
 
       if (pRACC) {
         fstream o;
-        o.open(name.c_str(), ios::out);
+        o.open(name, ios::out);
         o << "#1: FunctionValue" << endl;
         o << "#2: " << checkSizeFunctionPA->getName() << endl;
         o << "#3: " << checkSizeFunctionAT->getName() << endl;

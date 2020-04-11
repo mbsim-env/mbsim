@@ -93,7 +93,7 @@ namespace MBSim {
     else
       z = system->evalz0();
 
-    integPlot.open((name + ".plt").c_str());
+    integPlot.open(name + ".plt");
     
     stepPlot = (int)(dtPlot/dt + 0.5);
     assert(fabs(stepPlot*dt - dtPlot) < dt*dt);
@@ -151,7 +151,7 @@ namespace MBSim {
   void ThetaTimeSteppingSSCIntegrator::postIntegrate() {
     integPlot.close();
 
-    ofstream integSum((name + ".sum").c_str());
+    ofstream integSum(name + ".sum");
     integSum << "Integration time: " << time << endl;
     integSum << "Integration steps: " << integrationSteps << endl;
     integSum << "Maximum number of iterations: " << maxIter << endl;

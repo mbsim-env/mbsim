@@ -136,7 +136,7 @@ namespace MBSimGUI {
 
     public:
       OctaveParser(const std::string &file) {
-        is.open(file.c_str());
+        is.open(file);
       }
 
       ~OctaveParser() {

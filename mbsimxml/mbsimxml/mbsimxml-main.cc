@@ -86,7 +86,7 @@ string basename(const string &filename) {
 
 // create filename if it does not exist or touch it if if exists (OS-independent)
 void createOrTouch(const string &filename) {
-  ofstream f(filename.c_str()); // Note: ofstream use precise file timestamp
+  ofstream f(filename); // Note: ofstream use precise file timestamp
 }
 
 int main(int argc, char *argv[]) {
@@ -315,7 +315,7 @@ int main(int argc, char *argv[]) {
       if(AUTORELOADTIME>0) {
         // get dependent files
         vector<string> depfiles;
-        ifstream deps(DEPMBSIMPRJ.c_str());
+        ifstream deps(DEPMBSIMPRJ);
         while(true) {
           string depfile;
           getline(deps, depfile);
