@@ -24,13 +24,13 @@ done
 
 # apps
 mkdir -p $HOME/.local/share/applications
-for F in $FREEDESKTOPORGDIR/mbsim-env.org.*.desktop; do
+for F in $FREEDESKTOPORGDIR/mbsim-env.de.*.desktop; do
   sed -re "s|@bindir@|$BINDIR|g" $F > $HOME/.local/share/applications/$(basename $F)
 done
 
 # mime types
 mkdir -p $HOME/.local/share/mime/packages
-for F in $FREEDESKTOPORGDIR/mbsim-env.org.*.xml; do
+for F in $FREEDESKTOPORGDIR/mbsim-env.de.*.xml; do
   cp $F $HOME/.local/share/mime/packages/
 done
 update-mime-database $HOME/.local/share/mime

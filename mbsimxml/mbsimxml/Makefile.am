@@ -31,5 +31,5 @@ dist_mbsimmoduleschema_DATA = mbsimmodule.xsd
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
-freedesktoporg_DATA = mbsim-env.org.mbsimxml.xml
+freedesktoporg_DATA = mbsim-env.de.mbsimxml.xml
 bin_SCRIPTS = desktopIntegration.sh
