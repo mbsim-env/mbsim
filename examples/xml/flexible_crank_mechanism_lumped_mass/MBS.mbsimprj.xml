@@ -137,34 +137,34 @@
             <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="derivativeOfGeneralizedPosition">true</plotFeature>
             <plotFeature xmlns="http://www.mbsim-env.de/MBSim" value="generalizedAcceleration">true</plotFeature>
             <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
-            <mass unit="kg">x=load('data.bin','m'); ret=x.m</mass>
-            <positionIntegral>x=load('data.bin','rdm'); ret=x.rdm</positionIntegral>
-            <positionPositionIntegral unit="kg*m^2">x=load('data.bin','rrdm'); ret=x.rrdm</positionPositionIntegral>
-            <shapeFunctionIntegral>x=load('data.bin','Pdm'); ret=x.Pdm</shapeFunctionIntegral>
+            <mass unit="kg">x=load('data.bin'); ret=x.m</mass>
+            <positionIntegral>x=load('data.bin'); ret=x.rdm</positionIntegral>
+            <positionPositionIntegral unit="kg*m^2">x=load('data.bin'); ret=x.rrdm</positionPositionIntegral>
+            <shapeFunctionIntegral>x=load('data.bin'); ret=x.Pdm</shapeFunctionIntegral>
             <positionShapeFunctionIntegralArray>
-              <ele>x=load('data.bin','rPdm'); ret=x.rPdm{1}
+              <ele>x=load('data.bin'); ret=x.rPdm{1}
 </ele>
-              <ele>x=load('data.bin','rPdm'); ret=x.rPdm{2}</ele>
-              <ele>x=load('data.bin','rPdm'); ret=x.rPdm{3}</ele>
+              <ele>x=load('data.bin'); ret=x.rPdm{2}</ele>
+              <ele>x=load('data.bin'); ret=x.rPdm{3}</ele>
             </positionShapeFunctionIntegralArray>
             <shapeFunctionShapeFunctionIntegralArray>
               <row>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{1,1}</ele>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{1,2}</ele>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{1,3}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{1,1}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{1,2}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{1,3}</ele>
               </row>
               <row>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{2,1}</ele>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{2,2}</ele>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{2,3}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{2,1}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{2,2}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{2,3}</ele>
               </row>
               <row>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{3,1}</ele>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{3,2}</ele>
-                <ele>x=load('data.bin','PPdm'); ret=x.PPdm{3,3}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{3,1}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{3,2}</ele>
+                <ele>x=load('data.bin'); ret=x.PPdm{3,3}</ele>
               </row>
             </shapeFunctionShapeFunctionIntegralArray>
-            <stiffnessMatrix>x=load('data.bin','Ke'); ret=x.Ke</stiffnessMatrix>
+            <stiffnessMatrix>x=load('data.bin'); ret=x.Ke</stiffnessMatrix>
             <proportionalDamping>
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>0</ele>

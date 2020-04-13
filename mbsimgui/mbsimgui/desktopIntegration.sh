@@ -1,16 +1,23 @@
 #!/bin/bash
 
-# Install all mbsim-env freedesktop.org modules in $HOME/.config/... or $HOME/.local/...
+# Install all mbsim-env freedesktop.org modules
 # This script is used in all mbsim-env projects (keep it in sync)
 
+# source dirs
 PREFIX=$(readlink -f $(dirname $0)/..)
 FREEDESKTOPORGDIR=$PREFIX/share/mbsim-env/freedesktop.org
 BINDIR=$PREFIX/bin
 
+# destination dirs
+DATAHOME=${XDG_DATA_HOME:-$HOME/.local/share}
+CONFIG=${XDG_CONFIG_HOME:-$HOME/.config}
+test -f $CONFIG/user-dirs.dirs && source $CONFIG/user-dirs.dirs
+DESKTOP=${XDG_DESKTOP_DIR:-$HOME/Desktop}
+
 # svgs
-mkdir -p $HOME/.local/share/icons/hicolor/scalable/apps
+mkdir -p $DATAHOME/icons/hicolor/scalable/apps
 for F in $FREEDESKTOPORGDIR/*.svg; do
-  cp $F $HOME/.local/share/icons/hicolor/scalable/apps/mbsim-env.$(basename $F)
+  cp $F $DATAHOME/icons/hicolor/scalable/apps/mbsim-env.$(basename $F)
 done
 
 # mimeapps
@@ -23,14 +30,16 @@ for F in $FREEDESKTOPORGDIR/mimeapps-*.list; do
 done
 
 # apps
-mkdir -p $HOME/.local/share/applications
+mkdir -p $DATAHOME/applications
 for F in $FREEDESKTOPORGDIR/mbsim-env.de.*.desktop; do
-  sed -re "s|@bindir@|$BINDIR|g" $F > $HOME/.local/share/applications/$(basename $F)
+  sed -re "s|@bindir@|$BINDIR|g" $F > $DATAHOME/applications/$(basename $F)
+  cp $DATAHOME/applications/$(basename $F) $DESKTOP/$(basename $F)
+  chmod +x $DESKTOP/$(basename $F)
 done
 
 # mime types
-mkdir -p $HOME/.local/share/mime/packages
+mkdir -p $DATAHOME/mime/packages
 for F in $FREEDESKTOPORGDIR/mbsim-env.de.*.xml; do
-  cp $F $HOME/.local/share/mime/packages/
+  cp $F $DATAHOME/mime/packages/
 done
-update-mime-database $HOME/.local/share/mime
+update-mime-database $DATAHOME/mime

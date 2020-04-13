@@ -6,4 +6,4 @@ Icon=mbsim-env.mbsimgui
 Exec=@bindir@/mbsimgui %f
 Terminal=false
 MimeType=application/vnd.mbsim-env.mbsimflatxml;application/vnd.mbsim-env.mbsimxml;
-Categories=Education;Science;ComputerScience;Math;NumericalAnalysis;Physics;Robotics;Engineering;
+Categories=Science;ComputerScience;NumericalAnalysis;Physics;Math;Robotics;
