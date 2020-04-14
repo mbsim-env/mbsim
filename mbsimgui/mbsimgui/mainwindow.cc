@@ -499,6 +499,16 @@ namespace MBSimGUI {
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", false).toBool());
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
+
+#ifdef _WIN32
+    QFile file(qgetenv("APPDATA")+"/mbsim-env/mbsimxml.modulepath");
+#else
+    QFile file(qgetenv("HOME")+"/.config/mbsim-env/mbsimxml.modulepath");
+#endif
+    file.open(QIODevice::ReadOnly | QIODevice::Text);
+    menu.setModulePath(file.readAll());
+    file.close();
+
     int res = 1;
     if(!justSetOptions)
       res = menu.exec();
@@ -511,6 +521,11 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/maxundo",          menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
       settings.setValue("mainwindow/options/autorefresh",      menu.getAutoRefresh());
+
+      file.open(QIODevice::WriteOnly | QIODevice::Text);
+      file.write(menu.getModulePath().toUtf8());
+      file.close();
+
       bool autoSave = menu.getAutoSave();
       int autoSaveInterval = menu.getAutoSaveInterval();
       if(not(menu.getSaveStateVector())) 

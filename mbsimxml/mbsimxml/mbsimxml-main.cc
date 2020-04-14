@@ -107,7 +107,7 @@ int main(int argc, char *argv[]) {
        std::find(args.begin(), args.end(), "-?")!=args.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
           <<"                 --autoreload|--onlyListSchemas]"<<endl
-          <<"                [--modulesPath <dir> [--modulePath <dir> ...]]"<<endl
+          <<"                [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
           <<"                <mbsimprjfile>"<<endl
           <<""<<endl
@@ -126,6 +126,10 @@ int main(int argc, char *argv[]) {
           <<"--onlyListSchemas    List all XML schema files including MBSim modules"<<endl
           <<"--modulePath <dir>   Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
           <<"                     module dir and the current dir is always included."<<endl
+          <<"                     Also added are all directories listed in the file"<<endl
+          <<"                     Linux: $HOME/.config/mbsim-env/mbsimxml.modulepath"<<endl
+          <<"                     Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath"<<endl
+          <<"                     This file contains one directory per line."<<endl
           <<"--stdout <msg>       Print on stdout messages of type <msg>."<<endl
           <<"                     <msg> may be info~<pre>~<post>, warn~<pre>~<post>, debug~<pre>~<post>"<<endl
           <<"                     error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl

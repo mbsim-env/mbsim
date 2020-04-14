@@ -27,6 +27,8 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QFileDialog>
+#include <QTextEdit>
+#include <QGroupBox>
 
 namespace MBSimGUI {
 
@@ -79,8 +81,17 @@ namespace MBSimGUI {
     autoRefresh = new QCheckBox("Auto refresh");
     layout->addWidget(autoRefresh);
 
+    auto mbsimxmlGroup = new QGroupBox("mbsimxml Options");
+    layout->addWidget(mbsimxmlGroup);
+    auto mbsimxmlGroupLayout = new QVBoxLayout;
+    mbsimxmlGroup->setLayout(mbsimxmlGroupLayout);
+    mbsimxmlGroupLayout->addWidget(new QLabel("Module search path (one directory per line):"));
+    modulePath = new QTextEdit;
+    modulePath->setLineWrapMode(QTextEdit::NoWrap);
+    mbsimxmlGroupLayout->addWidget(modulePath);
+
     layout->addWidget(buttonBox);
-    setWindowTitle("GUI options");
+    setWindowTitle("Options");
   }
 
   void OptionsDialog::openFileBrowser() {
@@ -162,5 +173,13 @@ namespace MBSimGUI {
 
   void OptionsDialog::setAutoRefresh(bool flag) {
     autoRefresh->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
+  QString OptionsDialog::getModulePath() const {
+    return modulePath->toPlainText();
+  }
+
+  void OptionsDialog::setModulePath(const QString &path) {
+    modulePath->setPlainText(path);
   }
 }

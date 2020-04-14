@@ -63,6 +63,19 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs) {
   set<bfs::path> allSearchDirs=searchDirs;
   allSearchDirs.insert(installPath()/"share"/"mbsimmodules");
   allSearchDirs.insert(bfs::current_path());
+  // add directories from configuration file
+#ifdef _WIN32
+  boost::filesystem::path modulePathConfigFile(
+    boost::filesystem::path(getenv("APPDATA")?getenv("APPDATA"):"")/"mbsim-env"/"mbsimxml.modulepath");
+#else
+  boost::filesystem::path modulePathConfigFile(
+    boost::filesystem::path(getenv("HOME")?getenv("HOME"):"")/".config"/"mbsim-env"/"mbsimxml.modulepath");
+#endif
+  if(boost::filesystem::exists(modulePathConfigFile)) {
+    boost::filesystem::ifstream modulePathConfig(modulePathConfigFile);
+    for(string line; getline(modulePathConfig, line);)
+      allSearchDirs.insert(line);
+  }
 
   // read MBSim module schemas
   enum Stage { SearchPath, Loading }; // we load in two stages: first just add all search path then to the real load

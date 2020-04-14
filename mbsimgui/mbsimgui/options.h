@@ -26,6 +26,7 @@ class QCheckBox;
 class QSpinBox;
 class QLineEdit;
 class QPushButton;
+class QTextEdit;
 
 namespace MBSimGUI {
 
@@ -50,11 +51,14 @@ namespace MBSimGUI {
       void setShowFilters(bool flag);
       bool getAutoRefresh() const;
       void setAutoRefresh(bool flag);
+      QString getModulePath() const;
+      void setModulePath(const QString &path);
     private:
       QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *autoRefresh;
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;
       QPushButton *button;
+      QTextEdit *modulePath;
     protected slots:
       void autoSaveChanged(int state);
       void autoExportChanged(int state);
