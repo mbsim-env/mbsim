@@ -53,7 +53,6 @@ namespace MBSimGUI {
       DynamicSystemSolver* getDynamicSystemSolver() const { return dss; }
       Solver* getSolver() const { return solver; }
       xercesc::DOMElement* createEmbedXMLElement() override;
-      void setEmbeded(bool embeded_) override;
       void maybeRemoveEmbedXMLElement() override;
       void setEvaluator(const std::string &evaluator_) { evaluator = evaluator_; }
       const std::string& getEvaluator() { return evaluator; }

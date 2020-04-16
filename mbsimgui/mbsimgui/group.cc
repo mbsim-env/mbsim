@@ -64,36 +64,50 @@ namespace MBSimGUI {
   void Group::addFrame(Frame* frame_) {
     frame.push_back(frame_);
     frame_->setParent(this);
+    if(embeded) frame_->setEmbeded(true);
+    frame_->updateStatus();
   }
 
   void Group::addContour(Contour* contour_) {
     contour.push_back(contour_);
     contour_->setParent(this);
+    if(embeded) contour_->setEmbeded(true);
+    contour_->updateStatus();
   }
 
   void Group::addGroup(Group* group_) {
     group.push_back(group_);
     group_->setParent(this);
+    if(embeded) group_->setEmbeded(true);
+    group_->updateStatus();
   }
 
   void Group::addObject(Object* object_) {
     object.push_back(object_);
     object_->setParent(this);
+    if(embeded) object_->setEmbeded(true);
+    object_->updateStatus();
   }
 
   void Group::addLink(Link* link_) {
     link.push_back(link_);
     link_->setParent(this);
+    if(embeded) link_->setEmbeded(true);
+    link_->updateStatus();
   }
 
   void Group::addConstraint(Constraint* constraint_) {
     constraint.push_back(constraint_);
     constraint_->setParent(this);
+    if(embeded) constraint_->setEmbeded(true);
+    constraint_->updateStatus();
   }
 
   void Group::addObserver(Observer* observer_) {
     observer.push_back(observer_);
     observer_->setParent(this);
+    if(embeded) observer_->setEmbeded(true);
+    observer_->updateStatus();
   }
 
   void Group::removeElement(Element* element) {
@@ -515,24 +529,6 @@ namespace MBSimGUI {
       if(observer[i] == observer_)
         return i;
     return -1;
-  }
-
-  void Group::setEmbeded(bool embeded) {
-    Element::setEmbeded(embeded);
-    for(auto & i : frame)
-      i->setEmbeded(embeded);
-    for(auto & i : contour)
-      i->setEmbeded(embeded);
-    for(auto & i : group)
-      i->setEmbeded(embeded);
-    for(auto & i : object)
-      i->setEmbeded(embeded);
-    for(auto & i : link)
-      i->setEmbeded(embeded);
-    for(auto & i : constraint)
-      i->setEmbeded(embeded);
-    for(auto & i : observer)
-      i->setEmbeded(embeded);
   }
 
   void Group::updateStatus() {
