@@ -8,7 +8,7 @@
   </mime-type>
   <mime-type type="application/vnd.mbsim-env.mbsimxml">
     <comment>MBSim-Env MBSimXML preprocessed files</comment>
-    <glob pattern="*.mbsimprj.xml"/>
+    <glob pattern="*.mbsx"/>
     <sub-class-of type="application/xml"/>
     <icon name="mbsim-env.mbsimgui"/>
   </mime-type>

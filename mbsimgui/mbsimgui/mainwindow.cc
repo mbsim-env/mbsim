@@ -336,7 +336,7 @@ namespace MBSimGUI {
       showMaximized();
 
     QString projectFile;
-    QRegExp filterProject(".+\\.mbsimprj\\.xml");
+    QRegExp filterProject(".+\\.mbsx");
     QDir dir;
     dir.setFilter(QDir::Files);
     for(auto & it : arg) {
@@ -386,7 +386,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::autoSaveProject() {
-    saveProject("./.Project.mbsimprj.xml",true,false);
+    saveProject("./.Project.mbsx",true,false);
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -454,7 +454,7 @@ namespace MBSimGUI {
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
-    bfs::remove("./.Project.mbsimprj.xml", ec);
+    bfs::remove("./.Project.mbsx", ec);
     delete project;
     parser->release();
     serializer->release();
@@ -670,7 +670,7 @@ namespace MBSimGUI {
       delete project;
 
       doc = impl->createDocument();
-      doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsimprj.xml").toString().toStdString());
+      doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
 
       project = new Project;
       project->createXMLElement(doc);
@@ -684,7 +684,7 @@ namespace MBSimGUI {
 
       projectFile="";
       refresh();
-      setWindowTitle("Project.mbsimprj.xml[*]");
+      setWindowTitle("Project.mbsx[*]");
     }
   }
 
@@ -728,7 +728,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject() {
     if(maybeSave()) {
-      QString file=QFileDialog::getOpenFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsimprj.xml)");
+      QString file=QFileDialog::getOpenFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsx)");
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       if(not file.isEmpty())
@@ -737,9 +737,9 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    QString file=QFileDialog::getSaveFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsx)");
     if(not(file.isEmpty())) {
-      file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
+      file = (file.length()>13 and file.right(13)==".mbsx")?file:file+".mbsx";
       doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
@@ -1091,7 +1091,7 @@ namespace MBSimGUI {
     auto *newdoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
     projectView->getProject()->processHref(newdoc->getDocumentElement());
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile = uniqueTempDir_+"/Project.mbsimprj.xml";
+    QString projectFile = uniqueTempDir_+"/Project.mbsx";
     serializer->writeToURI(newdoc, X()%projectFile.toStdString());
     QStringList arg;
     arg.append("--stopafterfirststep");
@@ -2208,7 +2208,7 @@ namespace MBSimGUI {
   void MainWindow::dropEvent(QDropEvent *event) {
     for (int i = 0; i < event->mimeData()->urls().size(); i++) {
       QString path = event->mimeData()->urls()[i].toLocalFile().toLocal8Bit().data();
-      if(path.endsWith("mbsimprj.xml")) {
+      if(path.endsWith("mbsx")) {
         QFile Fout(path);
         if (Fout.exists())
           loadProject(Fout.fileName());

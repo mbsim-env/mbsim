@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
     // xml or shared library
     bool xmlFile=false;
-    if(boost::iequals(extension(inputFilename), ".xml"))
+    if(boost::iequals(extension(inputFilename), ".mbsx"))
       xmlFile=true;
 
     // create FMU zip file
