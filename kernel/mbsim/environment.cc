@@ -22,6 +22,8 @@
 #include "mbsim/utils/utils.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/namespace.h"
+#include <openmbvcppinterface/objectfactory.h>
+#include <openmbvcppinterface/object.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -39,6 +41,22 @@ namespace MBSim {
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
     setAccelerationOfGravity(E(e)->getText<Vec3>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"openMBVObject");
+    if(e)
+      for(DOMElement *ee=e->getFirstElementChild(); ee!=nullptr; ee=ee->getNextElementSibling()) {
+        auto object=OpenMBV::ObjectFactory::create<OpenMBV::Object>(ee);
+        addOpenMBVObject(object);
+        object->initializeUsingXML(ee);
+      }
+  }
+
+  void MBSimEnvironment::addOpenMBVObject(const std::shared_ptr<OpenMBV::Object> &object) {
+    openMBVObject.emplace_back(object);
+  }
+
+  std::vector<std::shared_ptr<OpenMBV::Object>> MBSimEnvironment::getOpenMBVObjects() {
+    return openMBVObject;
   }
 
 }

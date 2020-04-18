@@ -25,6 +25,10 @@
 #include <xercesc/dom/DOMElement.hpp>
 #include <xercesc/dom/DOMNode.hpp>
 
+namespace OpenMBV {
+  class Object;
+}
+
 namespace MBSim {
 
   /**
@@ -41,7 +45,7 @@ namespace MBSim {
        */
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
       /***************************************************/
-    
+
     protected:
       /**
        * \brief constructor
@@ -69,6 +73,9 @@ namespace MBSim {
       static MBSimEnvironment *getInstance() { return instance.get(); }
       void setAccelerationOfGravity(const fmatvec::Vec3 &grav_) { grav=grav_; }
       const fmatvec::Vec3& getAccelerationOfGravity() const { return grav; }
+
+      void addOpenMBVObject(const std::shared_ptr<OpenMBV::Object> &object);
+      std::vector<std::shared_ptr<OpenMBV::Object>> getOpenMBVObjects();
       /***************************************************/
     
     private:
@@ -87,6 +94,8 @@ namespace MBSim {
        * \brief acceleration of gravity
        */
       fmatvec::Vec3 grav;
+
+      std::vector<std::shared_ptr<OpenMBV::Object>> openMBVObject;
   };
 
 }

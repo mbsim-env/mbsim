@@ -386,8 +386,22 @@ namespace MBSim {
     else if (stage == plotting) {
       msg(Info) << "  initialising plot-files ..." << endl;
       Group::init(stage, config);
-      if (plotFeature[openMBV])
+      if (plotFeature[openMBV]) {
+        // add MBSimEnvironment OpenMBV objects
+        auto envs=MBSimEnvironment::getInstance()->getOpenMBVObjects();
+        if(!envs.empty()) {
+          auto openmbvEnv=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+          openmbvEnv->setName("environments");
+          openMBVGrp->addObject(openmbvEnv);
+          for(auto env : envs) {
+            if(auto grp=dynamic_pointer_cast<OpenMBV::Group>(env))
+              grp->setSeparateFile(false);
+            openmbvEnv->addObject(env);
+          }
+        }
+        // write openmbv files
         openMBVGrp->write(true, truncateSimulationFiles);
+      }
       H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
     }

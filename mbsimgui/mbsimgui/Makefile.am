@@ -97,9 +97,7 @@ mbsimgui_HEADERS =
 		   
 		   
 mbsimguisharedir = @datadir@/mbsimgui
-dist_mbsimguishare_DATA = inlineopenmbv.ombv.wst \
-			  empty.ombv.xml \
-			  empty.ombv.h5
+dist_mbsimguishare_DATA = inlineopenmbv.ombvwst
 
 mbsimguiicondir = @datadir@/mbsimgui/icons
 dist_mbsimguiicon_DATA = icons/simulate.svg \

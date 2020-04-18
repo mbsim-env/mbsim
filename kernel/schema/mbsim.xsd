@@ -670,6 +670,21 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="openMBVObject" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Visualisierung der Umgebung (nicht bewegte Objekte).
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element ref="ombv:Object"/>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

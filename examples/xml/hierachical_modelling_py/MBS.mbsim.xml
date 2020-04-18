@@ -24,6 +24,9 @@
   <environments>
     <MBSimEnvironment>
       <accelerationOfGravity><pv:fromFile href="{grav}"/></accelerationOfGravity>
+      <openMBVObject>
+        <pv:Embed href="env.ombv.xml"/>
+      </openMBVObject>
     </MBSimEnvironment>
   </environments>
 </DynamicSystemSolver>
