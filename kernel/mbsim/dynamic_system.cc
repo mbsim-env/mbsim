@@ -403,7 +403,7 @@ namespace MBSim {
           // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
           // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
           // We can walk to the top here since stage plotting is done before reorganizeHierarchy.
-          string fileName="mbsim.h5";
+          string fileName="mbsh5";
           const DynamicSystem *ds=this;
           while(ds) {
             fileName=ds->getName()+"."+fileName;

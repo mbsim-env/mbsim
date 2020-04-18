@@ -876,7 +876,7 @@ def runExample(resultQueue, example):
       outfiles3=[]
       # get files to load
       ombvFiles=mainFiles(glob.glob("*.ombvx"), ".", ".ombvx")
-      h5pFiles=mainFiles(glob.glob("*.mbsim.h5"), ".", ".mbsim.h5")
+      h5pFiles=mainFiles(glob.glob("*.mbsh5"), ".", ".mbsh5")
       guiFile=None
       if os.path.exists("MBS.mbsimprj.xml"):
         guiFile='./MBS.mbsimprj.xml'
@@ -1105,12 +1105,12 @@ def webapp(example):
     ombv['file']=mainFiles(fl, example, ".ombvx")
   h5p={}
   for prefix in ['', 'reference/']:
-    fl=glob.glob(prefix+"*.mbsim.h5")
+    fl=glob.glob(prefix+"*.mbsh5")
     if len(fl)>0:
       h5p['buildType']=args.buildType
       h5p['prog']='h5plotserie'
       if 'file' not in h5p: h5p['file']=[]
-      h5p['file'].extend(mainFiles(fl, example, ".mbsim.h5"))
+      h5p['file'].extend(mainFiles(fl, example, ".mbsh5"))
   gui={}
   if os.path.exists("MBS.mbsimprj.xml") or os.path.exists("FMI.mbsimprj.xml") or os.path.exists("FMI_cosim.mbsimprj.xml"):
     gui={'buildType': args.buildType, 'prog': 'mbsimgui'}

@@ -405,7 +405,7 @@ namespace MBSimGUI {
         bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
         if(settings.value("mainwindow/options/autoexport", false).toBool()) {
           QString autoExportDir = settings.value("mainwindow/options/autoexportdir", "./").toString();
-          saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
+          saveMBSimH5Data(autoExportDir+"/MBS.mbsh5");
           saveOpenMBVXMLData(autoExportDir+"/MBS.ombvx");
           saveOpenMBVH5Data(autoExportDir+"/MBS.ombvh5");
           if(saveFinalStateVector)
@@ -862,7 +862,7 @@ namespace MBSimGUI {
         ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
       if(ret == QMessageBox::Ok) {
         QSettings settings;
-        saveMBSimH5Data(dir+"/MBS.mbsim.h5");
+        saveMBSimH5Data(dir+"/MBS.mbsh5");
         saveOpenMBVXMLData(dir+"/MBS.ombvx");
         saveOpenMBVH5Data(dir+"/MBS.ombvh5");
         saveEigenanalysis(dir+"/MBS.eigenanalysis.mat");
@@ -875,7 +875,7 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5DataAs() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsim.h5"), "H5 files (*.mbsim.h5)");
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsh5"), "H5 files (*.mbsh5)");
     if(file!="") {
       saveMBSimH5Data(file);
     }
@@ -884,7 +884,7 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5Data(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsim.h5",file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5",file);
   }
 
   void MainWindow::saveOpenMBVDataAs() {
@@ -1061,7 +1061,7 @@ namespace MBSimGUI {
 
   void MainWindow::h5plotserie() {
     static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsim.h5";
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5";
     if(QFile::exists(name)) {
       QStringList arg;
       arg.append(name);

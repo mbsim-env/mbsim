@@ -4,7 +4,7 @@
 **/MBS*.ombvx
 **/*.ombvh5
 **/.*.lock
-**/*.mbsim.h5
+**/*.mbsh5
 **/time.dat
 runexamples_report/
 **/*.o
@@ -18,6 +18,9 @@ runexamples_report/
 **/mbsimfmi_model.dll
 **/mbsimfmi_model.so.d
 **/mbsimfmi_model.dll.d
+**/fmuOutput/
+**/fmuOutput1/
+**/fmuOutput2/
 
 analysis/driven_two_mass_oscillator/TS.harmonic_response_analysis.mat
 analysis/spatial_pendulum/Eigenanalysis1.mat
