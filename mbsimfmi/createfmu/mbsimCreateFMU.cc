@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
         string ppModelStr;
         // serialize to string: this automatically normalized modelEle
         DOMParser::serializeToString(modelEle, ppModelStr, false);
-        fmuFile.add(path("resources")/"model"/"Model.mbsimprj.flat.xml", ppModelStr);
+        fmuFile.add(path("resources")/"model"/"Model.flat.mbsx", ppModelStr);
       }
       else {
         cout<<"Copy original XML model file to FMU."<<endl;

@@ -954,7 +954,7 @@ namespace MBSimGUI {
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile;
 
-    projectFile=uniqueTempDir_+"/Project.mbsimprj.flat.xml";
+    projectFile=uniqueTempDir_+"/Project.flat.mbsx";
 
     actionSimulate->setDisabled(true);
     actionRefresh->setDisabled(true);

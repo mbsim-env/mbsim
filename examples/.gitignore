@@ -21,6 +21,7 @@ runexamples_report/
 **/fmuOutput/
 **/fmuOutput1/
 **/fmuOutput2/
+**/.pp.*.mbsx
 
 analysis/driven_two_mass_oscillator/TS.harmonic_response_analysis.mat
 analysis/spatial_pendulum/Eigenanalysis1.mat
