@@ -885,7 +885,7 @@ def runExample(resultQueue, example):
       elif os.path.exists("FMI_cosim.mbsx"):
         guiFile='./FMI_cosim.mbsx'
       # run gui tests
-      denv=os.environ
+      denv=os.environ.copy()
       denv["DISPLAY"]=":"+str(displayNR)
       denv["COIN_FULL_INDIRECT_RENDERING"]="1"
       denv["QT_X11_NO_MITSHM"]="1"
@@ -1219,9 +1219,10 @@ def executeSrcExample(executeFD, example):
 
 
 # execute the XML example in the current directory (write everything to fd executeFD)
-def executeXMLExample(executeFD, example):
+def executeXMLExample(executeFD, example, env=os.environ):
   # we handle MBS.mbsx, MBS.mbsimprj.alpha_py.xml and FMI.mbsx files here
   if   os.path.isfile("MBS.mbsx"):          prjFile="MBS.mbsx"
+  elif os.path.isfile("MBS.flat.mbsx"):     prjFile="MBS.flat.mbsx"
   elif os.path.isfile("MBS.mbsimprj.alpha_py.xml"): prjFile="MBS.mbsimprj.alpha_py.xml"
   elif os.path.isfile("FMI.mbsx"):          prjFile="FMI.mbsx"
   elif os.path.isfile("FMI_cosim.mbsx"):    prjFile="FMI_cosim.mbsx"
@@ -1233,7 +1234,7 @@ def executeXMLExample(executeFD, example):
   executeFD.flush()
   t0=datetime.datetime.now()
   ret=[abs(subprocessCall(prefixSimulation(example, 'mbsimxml')+exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt)]+
-                          [prjFile], executeFD, maxExecutionTime=args.maxExecutionTime))]
+                          [prjFile], executeFD, env=env, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
   outFiles=getOutFilesAndAdaptRet(example, ret)
@@ -1244,18 +1245,32 @@ def executeXMLExample(executeFD, example):
 
 # execute the flat XML example in the current directory (write everything to fd executeFD)
 def executeFlatXMLExample(executeFD, example):
+  # first simple run the example as a preprocessing xml example
+  minimalTEndEnv=os.environ.copy()
+  minimalTEndEnv["MBSIM_SET_MINIMAL_TEND"]="1"
+  ret1, dt, outFiles1=executeXMLExample(executeFD, example, env=minimalTEndEnv)
+
+  print("\n\n\n", file=executeFD)
   print("Running command:", file=executeFD)
   list(map(lambda x: print(x, end=" ", file=executeFD), [pj(mbsimBinDir, "mbsimflatxml"), "MBS.flat.mbsx"]))
   print("\n", file=executeFD)
   executeFD.flush()
   t0=datetime.datetime.now()
-  ret=[abs(subprocessCall(prefixSimulation(example, 'mbsimflatxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt), "MBS.flat.mbsx"],
-                          executeFD, maxExecutionTime=args.maxExecutionTime))]
+  ret2=[abs(subprocessCall(prefixSimulation(example, 'mbsimflatxml')+exePrefix()+[pj(mbsimBinDir, "mbsimflatxml"+args.exeExt),
+        "MBS.flat.mbsx"], executeFD, maxExecutionTime=args.maxExecutionTime))]
   t1=datetime.datetime.now()
   dt=(t1-t0).total_seconds()
-  outFiles=getOutFilesAndAdaptRet(example, ret)
+  outFiles2=getOutFilesAndAdaptRet(example, ret2)
 
-  return ret[0], dt, outFiles
+  # return
+  if ret1==subprocessCall.timedOutErrorCode or ret2[0]==subprocessCall.timedOutErrorCode:
+    ret=subprocessCall.timedOutErrorCode
+  else:
+    ret=abs(ret1)+abs(ret2[0])
+  outFiles=[]
+  outFiles.extend(outFiles1)
+  outFiles.extend(outFiles2)
+  return ret, dt, outFiles
 
 
 
@@ -1361,7 +1376,9 @@ def executeFMIExample(executeFD, example, fmiInputFile, cosim):
 # execute the FMI XML export example in the current directory (write everything to fd executeFD)
 def executeFMIXMLExample(executeFD, example):
   # first simple run the example as a preprocessing xml example
-  ret1, dt, outFiles1=executeXMLExample(executeFD, example)
+  minimalTEndEnv=os.environ.copy()
+  minimalTEndEnv["MBSIM_SET_MINIMAL_TEND"]="1"
+  ret1, dt, outFiles1=executeXMLExample(executeFD, example, env=minimalTEndEnv)
   # create and run FMU
   basename="FMI.mbsx" if os.path.isfile("FMI.mbsx") else "FMI_cosim.mbsx"
   cosim=False if os.path.isfile("FMI.mbsx") else True

@@ -76,7 +76,7 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <stateDependentTranslation>
-              <SymbolicFunction arg1="1">f(c10c4475-70bd-4735-a61f-9b344f2b070b)=[plus(5, cos(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b))); sin(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b)); 0]</SymbolicFunction>
+              <SymbolicFunction arg1="a">f(c10c4475-70bd-4735-a61f-9b344f2b070b)=[plus(5, cos(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b))); sin(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b)); 0]</SymbolicFunction>
             </stateDependentTranslation>
             <frames></frames>
             <contours></contours>
