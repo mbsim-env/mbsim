@@ -1114,10 +1114,12 @@ def webapp(example):
       if 'file' not in h5p: h5p['file']=[]
       h5p['file'].extend(mainFiles(fl, example, ".mbsh5"))
   gui={}
-  if os.path.exists("MBS.mbsx") or os.path.exists("FMI.mbsx") or os.path.exists("FMI_cosim.mbsx"):
+  if os.path.exists("MBS.mbsx") or os.path.exists("MBS.flat.mbsx") or os.path.exists("FMI.mbsx") or os.path.exists("FMI_cosim.mbsx"):
     gui={'buildType': args.buildType, 'prog': 'mbsimgui'}
     if os.path.exists("MBS.mbsx"):
       gui['file']=[example+'/MBS.mbsx']
+    elif os.path.exists("MBS.flat.mbsx"):
+      gui['file']=[example+'/MBS.flat.mbsx']
     elif os.path.exists("FMI.mbsx"):
       gui['file']=[example+'/FMI.mbsx']
     else:
