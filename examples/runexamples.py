@@ -805,7 +805,7 @@ def runExample(resultQueue, example):
       dt=0
       if os.path.isfile("Makefile"):
         executeRet, dt, outfiles=executeSrcExample(executeFD, example)
-      elif os.path.isfile("MBS.mbsx") or os.path.isfile("MBS.mbsimprj.alpha_py.xml"):
+      elif os.path.isfile("MBS.mbsx"):
         executeRet, dt, outfiles=executeXMLExample(executeFD, example)
       elif os.path.isfile("MBS.flat.mbsx"):
         executeRet, dt, outfiles=executeFlatXMLExample(executeFD, example)
@@ -1224,10 +1224,9 @@ def executeSrcExample(executeFD, example):
 
 # execute the XML example in the current directory (write everything to fd executeFD)
 def executeXMLExample(executeFD, example, env=os.environ):
-  # we handle MBS.mbsx, MBS.mbsimprj.alpha_py.xml and FMI.mbsx files here
+  # we handle MBS.mbsx, MBS.flat.mbsx, FMI.mbsx, and FMI_cosim.mbsx files here
   if   os.path.isfile("MBS.mbsx"):          prjFile="MBS.mbsx"
   elif os.path.isfile("MBS.flat.mbsx"):     prjFile="MBS.flat.mbsx"
-  elif os.path.isfile("MBS.mbsimprj.alpha_py.xml"): prjFile="MBS.mbsimprj.alpha_py.xml"
   elif os.path.isfile("FMI.mbsx"):          prjFile="FMI.mbsx"
   elif os.path.isfile("FMI_cosim.mbsx"):    prjFile="FMI_cosim.mbsx"
   else: raise RuntimeError("Internal error: Unknown ppxml file.")
