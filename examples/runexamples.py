@@ -880,6 +880,8 @@ def runExample(resultQueue, example):
       guiFile=None
       if os.path.exists("MBS.mbsx"):
         guiFile='./MBS.mbsx'
+      elif os.path.exists("MBS.flat.mbsx"):
+        guiFile='./MBS.flat.mbsx'
       elif os.path.exists("FMI.mbsx"):
         guiFile='./FMI.mbsx'
       elif os.path.exists("FMI_cosim.mbsx"):
