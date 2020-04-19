@@ -120,15 +120,26 @@ dist_mbsimguiicon_DATA = icons/simulate.svg \
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines
-pluginsiconengines_DATA = @QT_PLUGINS@/iconengines/*qsvgicon*
 pluginsplatformsdir = @bindir@/platforms
+pluginsstylesdir = @bindir@/styles
+pluginsplatformthemesdir = @bindir@/platformthemes
+pluginsiconengines_DATA = @QT_PLUGINS@/iconengines/*qsvgicon*
 if COND_WIN32
 pluginsplatforms_DATA = @QT_PLUGINS@/platforms/qwindows.dll
+pluginsstyles_DATA = @QT_PLUGINS@/styles/qwindowsvistastyle.dll
 else
 pluginsplatforms_DATA = @QT_PLUGINS@/platforms/libqxcb.so
+pluginsstyles_DATA = @QT_PLUGINS@/styles/adwaita.so \
+                     @QT_PLUGINS@/styles/libbb10styleplugin.so \
+                     @QT_PLUGINS@/styles/libqcleanlooksstyle.so \
+                     @QT_PLUGINS@/styles/libqgtk2style.so \
+                     @QT_PLUGINS@/styles/libqmotifstyle.so \
+                     @QT_PLUGINS@/styles/libqplastiquestyle.so
+pluginsplatformthemes_DATA = @QT_PLUGINS@/platformthemes/libqgtk2.so
 pluginsxcbglintegrationsdir = @bindir@/xcbglintegrations
 pluginsxcbglintegrations_DATA = @QT_PLUGINS@/xcbglintegrations/*qxcb*
 endif
+
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
