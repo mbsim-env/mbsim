@@ -441,7 +441,7 @@ namespace MBSimHydraulics {
   void EnvironmentNodeMec::init(InitStage stage, const InitConfigSet &config) {
     if (stage==unknownStage) {
       HNodeMec::init(stage, config);
-      lambda(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      lambda(0)=hydEnv->getEnvironmentPressure();
     }
     else
       HNodeMec::init(stage, config);
@@ -460,7 +460,7 @@ namespace MBSimHydraulics {
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
     }
     else if (stage==unknownStage) {
-      double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      double pinf=hydEnv->getEnvironmentPressure();
       if (fabs(p0)<epsroot) {
         msg(Warn) << "ElasticNodeMec \"" << getPath() << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
@@ -469,8 +469,8 @@ namespace MBSimHydraulics {
       x0.resize(2);
       x0(1) = p0;
 
-      double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
-      double kappa=HydraulicEnvironment::getInstance()->getKappa();
+      double E0=hydEnv->getBasicBulkModulus();
+      double kappa=hydEnv->getKappa();
       bulkModulus = new OilBulkModulus(path, E0, pinf, kappa, fracAir);
     }
     HNodeMec::init(stage, config);

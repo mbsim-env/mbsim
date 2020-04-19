@@ -27,6 +27,8 @@
 namespace MBSim {
 
   class Graph;
+  class Environment;
+  class MBSimEnvironment;
 
   /**
    * \brief solver interface for modelling and simulation of dynamic systems
@@ -453,7 +455,7 @@ namespace MBSim {
        */
       void updatezRef(fmatvec::Vec &ext);
 
-      /**
+      /**mbsim/dynamic_system_solver.cc
        * \brief references to differentiated external state
        * \param differentiated external state
        */
@@ -561,6 +563,19 @@ namespace MBSim {
       void updateStopVector() override;
 
       void plot() override;
+
+      void addEnvironment(Environment* env);
+
+      /** Get the Environment of type Env.
+       * Note that this function uses runtime type information to get the correct environment. This may be slow!
+       * Instead of calling this method often you should call it once, store the returned pointer and use this pointer.
+       * If no Environment of type Env exits a new one (empty one) is added first and than returned. */
+      template<class Env>
+      Env* getEnvironment();
+
+      /** Get the MBSimEnvironment.
+       * This method a convinence method being fast compared to getEnvironment<MBSimEnvironment> */
+      MBSimEnvironment* getMBSimEnvironment();
 
     protected:
       /**
@@ -862,7 +877,22 @@ namespace MBSim {
       std::vector<DynamicSystem*> dynamicsystemPreReorganize;
 
       double facSizeGs;
+
+      std::vector<std::unique_ptr<Environment>> environments;
+      MBSimEnvironment *mbsimEnvironment = nullptr;
   };
+
+  template<class Env>
+  Env* DynamicSystemSolver::getEnvironment() {
+    // get the Environment of type Env
+    auto &reqType=typeid(Env);
+    for(auto &e : environments)
+      if(reqType==typeid(*e))
+        return static_cast<Env*>(e.get());
+    auto newEnv=new Env;
+    addEnvironment(newEnv);
+    return newEnv;
+  }
 
 }
 

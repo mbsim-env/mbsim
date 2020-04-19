@@ -20,7 +20,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3);
   grav(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   double m1 = 0.5;
   double m2 = 0.5;

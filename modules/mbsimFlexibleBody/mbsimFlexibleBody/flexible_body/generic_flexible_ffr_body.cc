@@ -37,6 +37,7 @@
 #include "mbsim/functions/kinematics/rotation_about_axes_xyz_transformed_mapping.h"
 #include "mbsim/functions/kinematics/rotation_about_axes_zxz_transformed_mapping.h"
 #include "mbsimFlexibleBody/namespace.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/flexiblebody.h>
 
 using namespace std;
@@ -587,7 +588,7 @@ namespace MBSimFlexibleBody {
     hom.set(RangeV(3,5),-(hom21*om) - crossProduct(om,I*om));
     hom.set(RangeV(6,6+ne-1),-(Ge_*om) - Oe_*omq);
 
-    Vec Kg = K->getOrientation().T()*(MBSimEnvironment::getInstance()->getAccelerationOfGravity());
+    Vec Kg = K->getOrientation().T()*(ds->getMBSimEnvironment()->getAccelerationOfGravity());
     hg.set(RangeV(0,2),m*Kg);
     hg.set(RangeV(3,5),mtc*Kg);
     hg.set(RangeV(6,hg.size()-1),Ct_*Kg);

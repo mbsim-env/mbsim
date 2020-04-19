@@ -15,7 +15,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Erdbeschleungigung definieren
   Vec g(3);
   g(1)=-9.81*0;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(g);
+  getMBSimEnvironment()->setAccelerationOfGravity(g);
 
   Group2 *group1 = new Group2("Hauptgruppe1");
   addGroup(group1);

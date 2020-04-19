@@ -51,7 +51,7 @@ SlidingMass::SlidingMass(const string &projectName) :
 
   Vec grav(3);
   grav(0) = -9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   if (runFFR) {
     Vec3 ffrDispl;

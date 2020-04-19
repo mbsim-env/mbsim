@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   group = new System(2,dDisk);
   sys->addGroup(group);
   group->setFrameOfReference(sys->getFrame("Q2"));
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;0;0]");
+  sys->getMBSimEnvironment()->setAccelerationOfGravity("[0;0;0]");
 
   sys->setConstraintSolver(DynamicSystemSolver::direct);
   sys->setImpactSolver(DynamicSystemSolver::direct);

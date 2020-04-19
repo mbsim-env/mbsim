@@ -32,9 +32,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  std::unique_ptr<MBSimEnvironment> MBSimEnvironment::instance(new MBSimEnvironment);
-
-  MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON(MBSIM, MBSimEnvironment)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MBSimEnvironment)
 
   void MBSimEnvironment::initializeUsingXML(DOMElement *element) {
     Environment::initializeUsingXML(element);

@@ -21,7 +21,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   Vec grav(3,INIT,0.);
   grav(0) = -10.;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   /* disk */
   Plate* plate = new Plate("Plate");

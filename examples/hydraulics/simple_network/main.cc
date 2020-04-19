@@ -60,15 +60,15 @@ int main (int argc, char* argv[]) {
           simulationName.push_back(valveTypeString+"_"+nodeTypeString+"_"+nameintegrator+"_"+namesolver);
           DynamicSystemSolver * dss = new DynamicSystemSolver(simulationName.back());
           dss->addGroup(new System("HS", (nodeType==1)/*  * (valveType==1)*/));
-          HydraulicEnvironment::getInstance()->setBasicBulkModulus(2e11);
-          HydraulicEnvironment::getInstance()->setConstantSpecificMass(800);
-          HydraulicEnvironment::getInstance()->setWalterUbbelohdeKinematicViscosity(40+273.16, 55e-6, 100+273.16, 10e-6);
-          HydraulicEnvironment::getInstance()->setKappa(1.3);
-          HydraulicEnvironment::getInstance()->setEnvironmentPressure(1e5);
-          HydraulicEnvironment::getInstance()->setTemperature(50+273.16);
-          HydraulicEnvironment::getInstance()->initializeFluidData();
+          dss->getEnvironment<HydraulicEnvironment>()->setBasicBulkModulus(2e11);
+          dss->getEnvironment<HydraulicEnvironment>()->setConstantSpecificMass(800);
+          dss->getEnvironment<HydraulicEnvironment>()->setWalterUbbelohdeKinematicViscosity(40+273.16, 55e-6, 100+273.16, 10e-6);
+          dss->getEnvironment<HydraulicEnvironment>()->setKappa(1.3);
+          dss->getEnvironment<HydraulicEnvironment>()->setEnvironmentPressure(1e5);
+          dss->getEnvironment<HydraulicEnvironment>()->setTemperature(50+273.16);
+          dss->getEnvironment<HydraulicEnvironment>()->initializeFluidData();
 
-          MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");
+          dss->getMBSimEnvironment()->setAccelerationOfGravity("[0;-9.81;0]");
 
           if (isolver==0) {
             dss->setConstraintSolver(DynamicSystemSolver::direct);

@@ -86,7 +86,7 @@ namespace MBSim {
 
   void RigidBody::updateh(int j) {
     if(j==0) {
-      Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec3 WF = m*ds->getMBSimEnvironment()->getAccelerationOfGravity();
       Vec3 WM = crossProduct(evalGlobalInertiaTensor()*C->evalAngularVelocity(),C->evalAngularVelocity()) ;
       h[j] += C->evalJacobianOfTranslation(j).T()*(WF - m*C->evalGyroscopicAccelerationOfTranslation()) + C->evalJacobianOfRotation(j).T()*(WM - getGlobalInertiaTensor()*C->evalGyroscopicAccelerationOfRotation());
     } else {
@@ -95,7 +95,7 @@ namespace MBSim {
       const Vec3 &rPS = C->evalGlobalRelativePosition();
       const Vec3 &Om = Z.evalAngularVelocity();
       SymMat3 Theta = evalGlobalInertiaTensor() + m*JTJ(tilde(rPS));
-      Vec3 WF = m*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec3 WF = m*ds->getMBSimEnvironment()->getAccelerationOfGravity();
       Vec3 WM = crossProduct(rPS,WF);
       h[j] += Z.evalJacobianOfTranslation(j).T()*(WF - m*(aP + crossProduct(Psi,rPS) + crossProduct(Om,crossProduct(Om,rPS)))) + Z.evalJacobianOfRotation(j).T()*(WM - (m*crossProduct(rPS,aP) + Theta*Psi + crossProduct(Om,Theta*Om)));
     }

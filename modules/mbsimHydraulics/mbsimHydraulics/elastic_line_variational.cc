@@ -42,13 +42,13 @@ namespace MBSimHydraulics {
 
   void ElasticLineVariational::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
-      const double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
-      const double kappa=HydraulicEnvironment::getInstance()->getKappa();
-      const double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      const double E0=hydEnv->getBasicBulkModulus();
+      const double kappa=hydEnv->getKappa();
+      const double pinf=hydEnv->getEnvironmentPressure();
       OilBulkModulus bulkModulus(name, E0, pinf, kappa, fracAir);
       const double E=bulkModulus(p0);
-      const double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
-      const double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      const double rho=hydEnv->getSpecificMass();
+      const double nu=hydEnv->getKinematicViscosity();
 
       const double speedOfSound=sqrt(E/rho);
       const double waveTime=l/speedOfSound;

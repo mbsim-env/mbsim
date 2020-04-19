@@ -46,11 +46,9 @@ namespace MBSimHydraulics {
     protected:
       double E0{0}, kappa{0}, rho{0}, nu{0};
       double pinf{0};
-      static std::unique_ptr<HydraulicEnvironment> instance;
-      HydraulicEnvironment() : Environment() {}
 
     public:
-      static HydraulicEnvironment * getInstance() {return instance.get(); }
+      HydraulicEnvironment() : Environment() {}
       void initializeUsingXML(xercesc::DOMElement *e) override;
       virtual void initializeFluidData();
 

@@ -22,7 +22,7 @@ System::System(const string &name) : DynamicSystemSolver(name) {
 
   Vec grav(3);
   grav(2)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   double mu = 0.3;
   Plane *ground = new Plane("Ground");

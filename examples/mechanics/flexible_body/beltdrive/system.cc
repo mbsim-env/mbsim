@@ -114,7 +114,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 // global environment
   Vec grav(3,INIT,0.0);//"[0.0;-9.81;0.0]");
 //  grav(1) = -9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
 // belt globals
 //  const double l0 = 4.0; // length

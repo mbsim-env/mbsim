@@ -39,7 +39,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
 
   Vec grav(3);
   grav(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   double E = 2.0e11;
   double nu = 0.3;

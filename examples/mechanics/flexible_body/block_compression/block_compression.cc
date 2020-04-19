@@ -74,7 +74,7 @@ BlockCompression::BlockCompression(const string &projectName) :
     // acceleration of gravity
     Vec grav(3, INIT, 0.);
     grav(1) = -9.81;
-//    MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+    //getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
     // input flexible ring
     double E = 2.1e11;  // E-Modul

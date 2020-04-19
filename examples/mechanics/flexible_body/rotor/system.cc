@@ -28,7 +28,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* Allgemeine Parameter */
   Vec grav(3,INIT,0.); 
   grav(2) = 9.81; 
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   /* Parameter Lager A */
   double StiffnessLagerA = 1e6;

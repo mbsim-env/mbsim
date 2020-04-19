@@ -58,7 +58,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // force elements
   Vec grav(3,INIT,0.);
   grav(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   // contact parameters
   double epsN = 0.4;

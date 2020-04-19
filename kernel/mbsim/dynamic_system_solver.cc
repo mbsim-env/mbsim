@@ -18,6 +18,7 @@
  */
 
 #include <config.h>
+#include <boost/core/demangle.hpp>
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/modelling_interface.h"
 #include "mbsim/frames/frame.h"
@@ -101,7 +102,14 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::init(InitStage stage, const InitConfigSet &config) {
-    if (stage == unknownStage) {
+    if(stage==resolveStringRef) {
+      // Set the ds member variable of all elements recursively (for the user defined elements)
+      // This should be one of the very first actions, e.g. to enable element to access the Environment of ds during initialization.
+      setDynamicSystemSolver(this);
+
+      Group::init(stage, config);
+    }
+    else if (stage == unknownStage) {
       msg(Info) << name << " (special group) stage==unknownStage:" << endl;
 
       vector<Element*> eleList;
@@ -264,6 +272,7 @@ namespace MBSim {
         if (dynamic_cast<Graph*>(dynamicsystem[i]))
           static_cast<Graph*>(dynamicsystem[i])->printGraph();
 
+      // Set the ds member variable of all elements recursively (this includes now generated elements of the graph)
       setDynamicSystemSolver(this);
 
       MParent.resize(getuSize(0));
@@ -388,7 +397,7 @@ namespace MBSim {
       Group::init(stage, config);
       if (plotFeature[openMBV]) {
         // add MBSimEnvironment OpenMBV objects
-        auto envs=MBSimEnvironment::getInstance()->getOpenMBVObjects();
+        auto envs=getMBSimEnvironment()->getOpenMBVObjects();
         if(!envs.empty()) {
           auto openmbvEnv=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
           openmbvEnv->setName("environments");
@@ -1314,7 +1323,7 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"environments")->getFirstElementChild();
 
     while (e) {
-      ObjectFactory::createAndInit<Environment>(e);
+      addEnvironment(ObjectFactory::createAndInit<Environment>(e));
       e = e->getNextElementSibling();
     }
 
@@ -1585,6 +1594,21 @@ namespace MBSim {
   const Vec& DynamicSystemSolver::evalz0() {
     initz();
     return z;
+  }
+
+  void DynamicSystemSolver::addEnvironment(Environment* env) {
+    // check for duplicates of the same type
+    auto &curType=typeid(*env);
+    for(auto &e : environments)
+      if(curType==typeid(*e))
+        throwError("An Environment of type "+boost::core::demangle(curType.name())+" already exists in this DynamicSystemSolver.");
+    environments.emplace_back(unique_ptr<Environment>(env));
+  }
+
+  MBSimEnvironment* DynamicSystemSolver::getMBSimEnvironment() {
+    if(!mbsimEnvironment)
+      mbsimEnvironment=getEnvironment<MBSimEnvironment>();
+    return mbsimEnvironment;
   }
 
 }

@@ -237,7 +237,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     observer->enableOpenMBVContactPoints(0.05);
   } 	
 
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(Vec("[0;-10;0]"));
+  getMBSimEnvironment()->setAccelerationOfGravity(Vec("[0;-10;0]"));
 
   setPlotFeatureRecursive(generalizedPosition, true);
   setPlotFeatureRecursive(generalizedVelocity, true);

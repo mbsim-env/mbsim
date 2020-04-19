@@ -14,7 +14,7 @@ int main (int argc, char* argv[]) {
   clock_t start, end;
 
   DynamicSystemSolver * sys = new System("MBS");
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");
+  sys->getMBSimEnvironment()->setAccelerationOfGravity("[0;-9.81;0]");
   sys->initialize();
   sys->setStopIfNoConvergence(true,true);
 

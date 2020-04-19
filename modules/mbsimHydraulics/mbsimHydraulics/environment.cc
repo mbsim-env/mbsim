@@ -29,9 +29,7 @@ using namespace xercesc;
 
 namespace MBSimHydraulics {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASSASSINGLETON(MBSIMHYDRAULICS, HydraulicEnvironment)
-
-  std::unique_ptr<HydraulicEnvironment> HydraulicEnvironment::instance(new HydraulicEnvironment);
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, HydraulicEnvironment)
 
   void HydraulicEnvironment::initializeUsingXML(DOMElement *element) {
     Environment::initializeUsingXML(element);

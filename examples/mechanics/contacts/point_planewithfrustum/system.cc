@@ -22,7 +22,7 @@ using namespace std;
 
 System::System(const string &projectName, bool setValued) : DynamicSystemSolver(projectName) {
 
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0; -9.81; 0]");
+  getMBSimEnvironment()->setAccelerationOfGravity("[0; -9.81; 0]");
 
   bool considerRotation=true;
 

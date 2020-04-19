@@ -57,7 +57,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
 
   Vec grav(3, INIT, 0.);
   grav(1) = -9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   // geometrical characteristics
   //ROD

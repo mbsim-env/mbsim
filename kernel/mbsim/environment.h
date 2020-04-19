@@ -32,9 +32,7 @@ namespace OpenMBV {
 namespace MBSim {
 
   /**
-   * \brief basic singleton (see GAMMA et al.) class to capsulate environment variables for XML
-   * \author Markus Friedrich
-   * \date 2009-07-28 some comments (Thorsten Schindler)
+   * Base class for all environment objects
    */
   class Environment : virtual public fmatvec::Atom {
     public:
@@ -46,22 +44,17 @@ namespace MBSim {
       virtual void initializeUsingXML(xercesc::DOMElement *element) {}
       /***************************************************/
 
+      ~Environment() override = default;
+
     protected:
       /**
        * \brief constructor
        */
       Environment()  {};
-
-      /**
-       * \brief destructor
-       */
-      ~Environment() override = default;
   };
 
   /**
-   * \brief singleton class (see GAMMA et al.) to capsulate environment variables for XML multibody systems
-   * \author Markus Friedrich
-   * \date 2009-07-28 some comments (Thorsten Schindler)
+   * Environment object for mechanical systems.
    */
   class MBSimEnvironment : public Environment {
     public:
@@ -70,25 +63,19 @@ namespace MBSim {
       /***************************************************/
 
       /* GETTER / SETTER */
-      static MBSimEnvironment *getInstance() { return instance.get(); }
       void setAccelerationOfGravity(const fmatvec::Vec3 &grav_) { grav=grav_; }
       const fmatvec::Vec3& getAccelerationOfGravity() const { return grav; }
 
       void addOpenMBVObject(const std::shared_ptr<OpenMBV::Object> &object);
       std::vector<std::shared_ptr<OpenMBV::Object>> getOpenMBVObjects();
       /***************************************************/
-    
-    private:
-      /**
-       * class pointer to ensure singleton status
-       */
-      static std::unique_ptr<MBSimEnvironment> instance;
-      
-    protected:
+
       /**
        * \brief constructor
        */
       MBSimEnvironment()  {}
+    
+    protected:
 
       /**
        * \brief acceleration of gravity

@@ -27,6 +27,7 @@
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/mbsim_event.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -181,7 +182,7 @@ namespace MBSimFlexibleBody {
       initialised = true;
 
       l0 = L/Elements;
-      Vec g = R->getOrientation().T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = R->getOrientation().T()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
 
       for(int i=0;i<Elements;i++) {
         qElement.push_back(Vec(12,INIT,0.));
