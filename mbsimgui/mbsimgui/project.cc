@@ -121,12 +121,6 @@ namespace MBSimGUI {
     return getEmbedXMLElement();
   }
 
-  void Project::setEmbeded(bool embeded) {
-    EmbedItemData::setEmbeded(embeded);
-    dss->setEmbeded(embeded);
-    solver->setEmbeded(embeded);
-  }
-
   void Project::maybeRemoveEmbedXMLElement() {
     if(embed and not getNumberOfParameters()) {
       DOMElement *param = E(embed)->getFirstElementChildNamed(PV%"Parameter");

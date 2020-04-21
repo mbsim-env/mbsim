@@ -40,11 +40,15 @@ namespace MBSimGUI {
   void Body::addFrame(Frame* frame_) {
     frame.push_back(frame_);
     frame_->setParent(this);
+    if(embeded) frame_->setEmbeded(true);
+    frame_->updateStatus();
   }
 
   void Body::addContour(Contour* contour_) {
     contour.push_back(contour_);
     contour_->setParent(this);
+    if(embeded) contour_->setEmbeded(true);
+    contour_->updateStatus();
   }
 
   void Body::removeElement(Element* element) {
@@ -104,14 +108,6 @@ namespace MBSimGUI {
       if(contour[i] == contour_)
         return i;
     return -1;
-  }
-
-  void Body::setEmbeded(bool embeded) {
-    Object::setEmbeded(embeded);
-    for(auto & i : frame)
-      i->setEmbeded(embeded);
-    for(auto & i : contour)
-      i->setEmbeded(embeded);
   }
 
   void Body::updateStatus() {
