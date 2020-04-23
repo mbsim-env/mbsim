@@ -12,7 +12,7 @@ using namespace fmatvec;
 int main (int argc, char* argv[]) {
 
   DynamicSystemSolver * sys = new System("MBS");
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity("[0;-9.81;0]");
+  sys->getMBSimEnvironment()->setAccelerationOfGravity("[0;-9.81;0]");
   sys->initialize();
 
   StopWatch Watch;

@@ -34,7 +34,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   /* gravity */
   Vec grav(3,INIT,0.);
   grav(1) = -10.;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   /* axis */
   RigidBody *axis = new RigidBody("Axis");

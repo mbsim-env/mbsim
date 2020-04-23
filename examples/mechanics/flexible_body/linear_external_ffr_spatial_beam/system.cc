@@ -36,7 +36,7 @@ using namespace std;
 System::System(const string &projectName) :
     DynamicSystemSolver(projectName) {
   Vec grav(3, INIT, 0.); //grav(1) = -9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   FlexibleBodyLinearExternalFFR *beam = new FlexibleBodyLinearExternalFFR("beam");
 

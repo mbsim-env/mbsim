@@ -26,7 +26,7 @@ System::System(const string &projectName) :
   //add in a gravity in x direction
   Vec3 g;
   g(1) = -9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(g);
+  getMBSimEnvironment()->setAccelerationOfGravity(g);
 
   /*Polynomial Frustum initialisation*/
 

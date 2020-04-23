@@ -23,6 +23,7 @@
 #include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsim/environment.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -135,7 +136,7 @@ namespace MBSimFlexibleBody {
       //else cylinderFlexible->setNodes(userContourNodes);
 
       l0 = L/Elements;
-      Vec g = R->getOrientation().T()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = R->getOrientation().T()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
       for(int i=0; i<Elements; i++) {
         discretization.push_back(new FiniteElement1s23BTA(l0, A*rho, E*Iyy, E*Izz, It*rho, G*It, g ));
         qElement.emplace_back(discretization[0]->getqSize(),INIT,0.);

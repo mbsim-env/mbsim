@@ -99,7 +99,7 @@ namespace MBSimHydraulics {
 
   double ZetaLinePressureLoss::operator()(const double& Q) {
     if (!initialized) {
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=line->getHydEnv()->getSpecificMass();
       double d=((const RigidLine*)(line))->getDiameter();
       double A=M_PI*d*d/4.;
       c*=rho/2./A/A;
@@ -119,7 +119,7 @@ namespace MBSimHydraulics {
 
   double ZetaPosNegLinePressureLoss::operator()(const double& Q) {
     if (!initialized) {
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=line->getHydEnv()->getSpecificMass();
       double d=((const RigidLine*)(line))->getDiameter();
       double A=M_PI*d*d/4.;
       cPos*=rho/2./A/A;
@@ -142,7 +142,7 @@ namespace MBSimHydraulics {
 
   double LaminarTubeFlowLinePressureLoss::operator()(const double& Q) {
     if (!initialized) {
-      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
+      double eta=line->getHydEnv()->getDynamicViscosity();
       double d=((const RigidLine*)(line))->getDiameter();
       double l=((const RigidLine*)(line))->getLength();
       double area=M_PI*d*d/4.;
@@ -167,12 +167,12 @@ namespace MBSimHydraulics {
   
   double TurbulentTubeFlowLinePressureLoss::operator()(const double& Q) {
     if (!initialized) {
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=line->getHydEnv()->getSpecificMass();
       double l=((const RigidLine*)(line))->getLength();
       double d=((const RigidLine*)(line))->getDiameter();
       double area=M_PI*d*d/4.;
       c=l/d*rho/2./area/area;
-      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      double nu=line->getHydEnv()->getKinematicViscosity();
       double areaRef=M_PI*dRef*dRef/4.;
       ReynoldsFactor=dHyd/areaRef/nu;
       ReynoldsFactorNeg=-dHydNeg/areaRef/nu;
@@ -247,7 +247,7 @@ namespace MBSimHydraulics {
 
   double CurveFittedLinePressureLoss::operator()(const double &Q) {
     if (!initialized) {
-      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      double nu=line->getHydEnv()->getKinematicViscosity();
       double areaRef=M_PI*dRef*dRef/4.;
       ReynoldsFactor=dHyd/areaRef/nu;
       initialized=true;
@@ -288,7 +288,7 @@ namespace MBSimHydraulics {
 
   double RelativeAreaZetaClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=line->getHydEnv()->getSpecificMass();
       double d=((const RigidLine*)(line))->getDiameter();
       double A=M_PI*d*d/4.;
       c*=rho/2./A/A;
@@ -319,7 +319,7 @@ namespace MBSimHydraulics {
 
   double GapHeightClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
-      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
+      double eta=line->getHydEnv()->getDynamicViscosity();
       c=12.*eta*l/b;
       initialized=true;
     }
@@ -337,8 +337,8 @@ namespace MBSimHydraulics {
 
   double ReynoldsClosablePressureLoss::operator()(const double& Q) {
     if (!initialized) {
-      nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      nu=line->getHydEnv()->getKinematicViscosity();
+      double rho=line->getHydEnv()->getSpecificMass();
       const double x0=1404.;
       const double x1=2320.;
       const double y0=64./1404.;
@@ -372,7 +372,7 @@ namespace MBSimHydraulics {
     if (!initialized) {
       double d=((const RigidLine*)(line))->getDiameter();
       double area=M_PI*d*d/4.;
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=line->getHydEnv()->getSpecificMass();
       alpha2=alpha*alpha;
       c=rho/2./area/area;
       initialized=true;
@@ -402,7 +402,7 @@ namespace MBSimHydraulics {
     if (!initialized) {
       siga=sin(gamma);
       coga=cos(gamma);
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=line->getHydEnv()->getSpecificMass();
       c=rho/2./alpha/alpha/M_PI/M_PI;
       initialized=true;
     }
@@ -426,7 +426,7 @@ namespace MBSimHydraulics {
     if (!initialized) {
       double d=((const RigidLine*)(line))->getDiameter();
       double area=M_PI*d*d*.25;
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=line->getHydEnv()->getSpecificMass();
       d0=d;
       c=rho/2./area/area;
       initialized=true;
@@ -446,7 +446,7 @@ namespace MBSimHydraulics {
       double rOpen=d/2.;
       double rBall2=rBall*rBall;
       double rOpen2=rOpen*rOpen;
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=line->getHydEnv()->getSpecificMass();
       c=rho/2./alpha/alpha/M_PI/M_PI;
       numer[0]=rBall2;
       numer[1]=2.*sqrt(rBall2-rOpen2);
@@ -483,7 +483,7 @@ namespace MBSimHydraulics {
         h=((const PlaneLeakageLine*)(line))->getGapHeight();
         w=((const PlaneLeakageLine*)(line))->getGapWidth();
       }
-      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
+      double eta=line->getHydEnv()->getDynamicViscosity();
       // vgl. E. Becker: Technische Strömungslehre, (6. 13)
       pVfac = -w*h*h*h/12./eta;
       xdfac = w*h/2.;
@@ -522,7 +522,7 @@ namespace MBSimHydraulics {
         hGap=((const CircularLeakageLine*)(line))->getGapHeight();
       }
       double area=M_PI*2.*rI*hGap;
-      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
+      double eta=line->getHydEnv()->getDynamicViscosity();
       pVfac=-area*hGap*hGap*(1.+1.5*ecc*ecc*ecc)/12./eta;
       xdfac=area/2.;
       initialized=true;
@@ -566,7 +566,7 @@ namespace MBSimHydraulics {
         rI=((const CircularLeakageLine*)(line))->getInnerRadius();
         rA=((const CircularLeakageLine*)(line))->getOuterRadius();
       }
-      double eta=HydraulicEnvironment::getInstance()->getDynamicViscosity();
+      double eta=line->getHydEnv()->getDynamicViscosity();
       vIfac=-(-rI*rI+2.*rI*rI*log(rI)-2.*rI*rI*log(rA)+rA*rA)*M_PI/(log(rI)-log(rA))/2.;
       vOfac=(rA*rA-2.*rA*rA*log(rA)+2.*rA*rA*log(rI)-rI*rI)*M_PI/(log(rI)-log(rA))/2.;
       pVfac=(1.+log(rI)-log(rA))*M_PI/eta/(log(rI)-log(rA))*rA*rA*rA*rA/8.-rA*rA*M_PI/eta/(log(rI)-log(rA))*rI*rI/4.+(log(rA)-log(rI)+1.)*M_PI/eta/(log(rI)-log(rA))*rI*rI*rI*rI/8.;
@@ -593,7 +593,7 @@ namespace MBSimHydraulics {
 
   double UnidirectionalZetaPressureLoss::operator()(const double& Q) {
     if (!initialized) {
-      const double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      const double rho=line->getHydEnv()->getSpecificMass();
       const double d=((const RigidLine*)(line))->getDiameter();
       const double A=M_PI*d*d/4.;
       c*=rho/2./A/A;

@@ -29,7 +29,7 @@ Woodpecker::Woodpecker(const string &projectName) : DynamicSystemSolver(projectN
   // Gravitation
   Vec grav(3,INIT,0.0);
   grav(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   // Bewegungsrichtung der Koerper --------------
   Mat JT(3,2);

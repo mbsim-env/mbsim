@@ -55,7 +55,7 @@ namespace MBSimHydraulics {
   void DimensionlessLine::plot() {
     if(plotFeature[plotRecursive]) {
       plotVector.push_back(evalQIn()(0)*6e4);
-      plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
+      plotVector.push_back(getQIn()(0)*hydEnv->getSpecificMass()*60.);
     }
     HLine::plot();
   }

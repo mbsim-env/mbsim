@@ -57,7 +57,7 @@ System::System(const string &projectName) :
   // acceleration of gravity
   Vec grav(3);
 //  grav(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   double length_crank = 0.2;
   double length_spring = 0.1;

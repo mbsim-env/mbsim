@@ -114,6 +114,7 @@ namespace MBSimHydraulics {
 
   void HNode::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveStringRef) {
+      hydEnv=ds->getEnvironment<HydraulicEnvironment>();
       for (unsigned int i=0; i<refInflowString.size(); i++)
         addInFlow(getByPath<HLine>(refInflowString[i]));
       for (unsigned int i=0; i<refOutflowString.size(); i++)
@@ -238,7 +239,7 @@ namespace MBSimHydraulics {
       plotVector.push_back(evalGeneralizedForce()(0)*1e-5);
       if(plotFeature[debug]) {
         plotVector.push_back(evalQHyd()*6e4);
-        plotVector.push_back(QHyd*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
+        plotVector.push_back(QHyd*hydEnv->getSpecificMass()*60.);
       }
       if(plotFeature[openMBV] and openMBVSphere) {
         vector<double> data;
@@ -288,7 +289,7 @@ namespace MBSimHydraulics {
   void EnvironmentNode::init(InitStage stage, const InitConfigSet &config) {
     if (stage==unknownStage) {
       HNode::init(stage, config);
-      lambda(0)=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      lambda(0)=hydEnv->getEnvironmentPressure();
     }
     else
       HNode::init(stage, config);
@@ -307,7 +308,7 @@ namespace MBSimHydraulics {
         plotColumns.push_back("Node bulk modulus [N/mm^2]");
     }
     else if (stage==unknownStage) {
-      double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      double pinf=hydEnv->getEnvironmentPressure();
       if (fabs(p0)<epsroot) {
         msg(Warn) << "ElasticNode \"" << getPath() << "\" has no initial pressure. Using EnvironmentPressure instead." << endl;
         p0=pinf;
@@ -315,8 +316,8 @@ namespace MBSimHydraulics {
       lambda(0)=p0;
       x0.resize(1, INIT, p0);
 
-      double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
-      double kappa=HydraulicEnvironment::getInstance()->getKappa();
+      double E0=hydEnv->getBasicBulkModulus();
+      double kappa=hydEnv->getKappa();
       bulkModulus = new OilBulkModulus(path, E0, pinf, kappa, fracAir);
     }
     HNode::init(stage, config);

@@ -86,7 +86,7 @@ namespace MBSimHydraulics {
   void PlaneLeakageLine::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {  
       LeakageLine::init(stage, config);
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=hydEnv->getSpecificMass();
       Mlocal.resize(1, INIT, rho*length/hGap/wGap);
     }
     else
@@ -116,7 +116,7 @@ namespace MBSimHydraulics {
     if (stage==preInit) {  
       rO=rI+hGap;
       LeakageLine::init(stage, config);
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=hydEnv->getSpecificMass();
       Mlocal.resize(1, INIT, rho*length/(M_PI*(rO*rO-rI*rI)));
     }
     else

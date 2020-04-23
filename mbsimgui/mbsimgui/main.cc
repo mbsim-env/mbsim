@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
     cout    <<"--fullscreen       Start in full screen mode"<<endl;
     cout    <<"<dir>              Load first *.mbsim.xml, *.mbsimparam.xml"<<endl;
     cout    <<"                   and *.mbsimint.xml file in <dir>."<<endl;
-    cout    <<"<mbsimfile>        Load <mbsimfile>"<<endl;
+    cout    <<"<mbsimfile>        Load <mbsimfile> (*.mbsx)"<<endl;
     cout    <<"<parameterfile>    Load <parameterfile>"<<endl;
     cout    <<"<integratorfile>   Load <integratorfile>"<<endl;
     cout    <<""<<endl;

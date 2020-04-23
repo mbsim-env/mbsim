@@ -15,7 +15,7 @@ void addPredefinedParameters(bool cosim, std::vector<std::shared_ptr<Variable> >
                              bool setToDefaultValue) {
   // output directory
   var.push_back(std::make_shared<PredefinedParameter<std::string> >("'Output directory'",
-    "MBSim output directory for all files: *.mbsim.h5, *.ombv.h5, *.ombv.xml, ...", std::ref(predefinedParameterStruct.outputDir)));
+    "MBSim output directory for all files: *.mbsh5, *.ombvh5, *.ombvx, ...", std::ref(predefinedParameterStruct.outputDir)));
   // default value: current dir
   if(setToDefaultValue)
     (*--var.end())->setValue(std::string("."));
@@ -35,7 +35,7 @@ void addPredefinedParameters(bool cosim, std::vector<std::shared_ptr<Variable> >
       "Plot in equidistant sample times, with sample time = 'Plot.sample time'."));
     // add variable
     var.push_back(std::make_shared<PredefinedParameter<int> >("Plot.mode",
-      "Write to *.mbsim.h5 and *.ombv.h5 files at every ...", std::ref(predefinedParameterStruct.plotMode), plotModeList));
+      "Write to *.mbsh5 and *.ombvh5 files at every ...", std::ref(predefinedParameterStruct.plotMode), plotModeList));
     // default value
     if(setToDefaultValue)
       (*--var.end())->setValue(int(NextCompletedStepAfterSampleTime));

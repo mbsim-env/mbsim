@@ -75,19 +75,19 @@ namespace MBSimHydraulics {
     if (stage==preInit) {
       Area=M_PI*d*d/4.;
       if (direction.size()>0)
-        g=trans(((DynamicSystem*)parent)->getFrame("I")->getOrientation(false)*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction;
+        g=trans(((DynamicSystem*)parent)->getFrame("I")->getOrientation(false)*ds->getMBSimEnvironment()->getAccelerationOfGravity())*direction;
       else
         g=0;
-      double E0=HydraulicEnvironment::getInstance()->getBasicBulkModulus();
-      double kappa=HydraulicEnvironment::getInstance()->getKappa();
-      double pinf=HydraulicEnvironment::getInstance()->getEnvironmentPressure();
+      double E0=hydEnv->getBasicBulkModulus();
+      double kappa=hydEnv->getKappa();
+      double pinf=hydEnv->getEnvironmentPressure();
       OilBulkModulus bulkModulus(name, E0, pinf, kappa, fracAir);
       E=bulkModulus(p0);
-      double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      double rho=hydEnv->getSpecificMass();
       k=rho*g*delta_h/l;
       MFac <<= Area*rho*MatIntWWT;
       K <<= Area*E*MatIntWSWST;
-      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      double nu=hydEnv->getKinematicViscosity();
       phi.resize(mdim);
       
       Jacobian.resize(mdim, mdim, INIT, 0);

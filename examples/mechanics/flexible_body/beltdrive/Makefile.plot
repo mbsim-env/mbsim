@@ -1,7 +1,7 @@
 # kill -USR2 <pid>
 GNUPLOT=gnuplot
 EPSTOEPS=eps2eps -dLanguageLevel=1
-dsource=MBS.mbsim.h5
+dsource=MBS.mbsh5
 ddata = Disk0.h5dat Disk1.h5dat Disk2.h5dat TorqueGenerator.h5dat TensionerSpring.h5dat
 #Belt.h5dat
 

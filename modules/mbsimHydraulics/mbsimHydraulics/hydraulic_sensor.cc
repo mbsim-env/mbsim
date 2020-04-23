@@ -22,6 +22,7 @@
 #include "mbsimHydraulics/hnode.h"
 #include "mbsimHydraulics/hline.h"
 #include "mbsimHydraulics/environment.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -87,7 +88,7 @@ namespace MBSimHydraulics {
   
   void TemperatureSensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
-      s(0)=HydraulicEnvironment::getInstance()->getTemperature();
+      s(0)=ds->getEnvironment<HydraulicEnvironment>()->getTemperature();
       Sensor::init(stage, config);
     }
     else
@@ -98,7 +99,7 @@ namespace MBSimHydraulics {
   
   void KinematicViscositySensor::init(InitStage stage, const InitConfigSet &config) {
     if (stage==preInit) {
-      s(0)=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      s(0)=ds->getEnvironment<HydraulicEnvironment>()->getKinematicViscosity();
       Sensor::init(stage, config);
     }
     else

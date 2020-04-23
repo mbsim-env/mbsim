@@ -19,7 +19,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // acceleration of gravity
   Vec grav(3);
   grav(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   // frames on environment 
   this->addFrame(new FixedRelativeFrame("L",Vec(3,INIT,1.),SqrMat(3,EYE)));

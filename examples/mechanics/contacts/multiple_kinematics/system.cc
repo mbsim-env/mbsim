@@ -41,7 +41,7 @@ System::System(const string &projectName, const int contactlaw, const int nB) : 
 
   Vec grav(3);
   grav(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   RigidBody* groundBase = new RigidBody("GroundBase");
   Frustum* ground = new Frustum("Ground");

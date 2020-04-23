@@ -28,6 +28,7 @@
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/frames/frame.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <mbsim/environment.h>
 
 #include "nurbs++/nurbs.h"
@@ -238,7 +239,7 @@ namespace MBSimFlexibleBody {
       initialised = true;
 
       l0 = L / Elements;
-      Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = R->getOrientation().T() * ds->getMBSimEnvironment()->getAccelerationOfGravity();
 
       for (int i = 0; i < Elements; i++) {
         discretization.push_back(new FiniteElement1s33RCM(l0, rho, A, E, G, I1, I2, I0, g, angle));

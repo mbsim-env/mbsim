@@ -25,7 +25,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 
   // acceleration of gravity
   Vec grav(3,INIT,0.); grav(1) = -9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   // input flexible ring
   double l0 = 1.; // length ring

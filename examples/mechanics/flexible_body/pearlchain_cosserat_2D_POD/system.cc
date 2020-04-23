@@ -36,7 +36,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
 //---------------------------------------------------------------------------------------------------------------------------------------//
 
 	Vec grav(3,INIT,0.); grav(1) = -9.81;
-	MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+        getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
 	int DOF = 3;					// DOFs per nod (x,y,z,alpha,beta,gamma)
 	int elements = 60; 				// number of finite elements

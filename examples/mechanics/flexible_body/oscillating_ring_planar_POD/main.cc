@@ -54,7 +54,7 @@ int main (int argc, char* argv[]) {
     //Run Reduced Simulation
     sys = new System(nameReducedSystem);
 //    sys->readz0("z0.h5");
-    sys->reduce(nameFullSystem + ".mbsim.h5");
+    sys->reduce(nameFullSystem + ".mbsh5");
     sys->setStopIfNoConvergence(true,true);
     sys->initialize();
 

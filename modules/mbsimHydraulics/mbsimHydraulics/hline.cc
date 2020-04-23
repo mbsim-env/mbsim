@@ -25,6 +25,7 @@
 #include "mbsimControl/signal_.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -48,6 +49,7 @@ namespace MBSimHydraulics {
 
   void HLine::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
+      hydEnv=ds->getEnvironment<HydraulicEnvironment>();
       if(saved_frameOfReference!="")
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       Object::init(stage, config);
@@ -137,7 +139,7 @@ namespace MBSimHydraulics {
 
   void RigidHLine::updatePressureLossGravity() {
     if (frameOfReference)
-      pressureLossGravity=-trans(frameOfReference->evalOrientation()*MBSimEnvironment::getInstance()->getAccelerationOfGravity())*direction*HydraulicEnvironment::getInstance()->getSpecificMass()*length;
+      pressureLossGravity=-trans(frameOfReference->evalOrientation()*ds->getMBSimEnvironment()->getAccelerationOfGravity())*direction*hydEnv->getSpecificMass()*length;
     updPLG = false;
   }
 
@@ -181,7 +183,7 @@ namespace MBSimHydraulics {
   void RigidHLine::plot() {
     if(plotFeature[plotRecursive]) {
       plotVector.push_back(evalQIn()(0)*6e4);
-      plotVector.push_back(getQIn()(0)*HydraulicEnvironment::getInstance()->getSpecificMass()*60.);
+      plotVector.push_back(getQIn()(0)*hydEnv->getSpecificMass()*60.);
       if (frameOfReference)
         plotVector.push_back(evalPressureLossGravity()*1e-5);
     }
@@ -302,7 +304,7 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==unknownStage) {
-      const double rho=HydraulicEnvironment::getInstance()->getSpecificMass();
+      const double rho=hydEnv->getSpecificMass();
       alpha=alpha*sqrt(2./rho);
     }
     HLine::init(stage, config);

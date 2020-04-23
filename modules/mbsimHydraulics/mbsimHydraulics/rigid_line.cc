@@ -60,8 +60,8 @@ namespace MBSimHydraulics {
     }
     else if (stage==unknownStage) {
       double area=M_PI*diameter*diameter/4.;
-      Mlocal.resize(1, INIT, HydraulicEnvironment::getInstance()->getSpecificMass()*length/area);
-      double nu=HydraulicEnvironment::getInstance()->getKinematicViscosity();
+      Mlocal.resize(1, INIT, hydEnv->getSpecificMass()*length/area);
+      double nu=hydEnv->getKinematicViscosity();
       ReynoldsFactor=diameter/nu/area;
     }
     RigidHLine::init(stage, config);

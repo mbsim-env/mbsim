@@ -99,8 +99,8 @@ int main(int argc, char *argv[]) {
       // after the first step has been written since this is not possible by the file locking mechanism in OpenMBVCppInterface.
       if(stopAfterFirstStep) {
         // touch the OpenMBV files
-        boost::myfilesystem::last_write_time((dss->getName()+".ombv.xml").c_str(), boost::posix_time::microsec_clock::universal_time());
-        boost::myfilesystem::last_write_time((dss->getName()+".ombv.h5" ).c_str(), boost::posix_time::microsec_clock::universal_time());
+        boost::myfilesystem::last_write_time((dss->getName()+".ombvx").c_str(), boost::posix_time::microsec_clock::universal_time());
+        boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), boost::posix_time::microsec_clock::universal_time());
       }
     }
 

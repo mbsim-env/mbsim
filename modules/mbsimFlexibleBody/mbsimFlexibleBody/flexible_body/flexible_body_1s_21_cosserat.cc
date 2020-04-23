@@ -26,6 +26,7 @@
 #include <mbsim/environment.h>
 #include "mbsim/utils/eps.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -242,7 +243,10 @@ namespace MBSimFlexibleBody {
 
       FlexibleBody1sCosserat::init(stage, config);
 
-      Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      // The example pearlchain_cosserat_2D_POD calls init(...) of this class which the instance of this class is not
+      // part of a DynamicSystemSolver. This is not allowed!!!!! (It does this to get some kinematics prior the simulation)
+      // The reenable this hack (ds is nullptr then) we use g = 0. This should be fixed by avoiding calling init(...) at all.
+      Vec g = ds ? R->getOrientation().T() * ds->getMBSimEnvironment()->getAccelerationOfGravity() : Vec3(3, INIT, 0.0);
 
       /* translational elements */
       for (int i = 0; i < Elements; i++) {

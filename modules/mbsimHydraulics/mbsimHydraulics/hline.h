@@ -31,6 +31,7 @@ namespace MBSimHydraulics {
 
   extern const MBSim::PlotFeatureEnum volumeFlow, pressure;
 
+  class HydraulicEnvironment;
   class HNode;
   class HydlinePressureloss;
   class PressureLoss;
@@ -75,7 +76,10 @@ namespace MBSimHydraulics {
 
       void resetUpToDate() override { MBSim::Object::resetUpToDate(); updQ = true; }
 
+      HydraulicEnvironment *getHydEnv() const { return hydEnv; }
+
     protected:
+      HydraulicEnvironment *hydEnv=nullptr;
       HNode * nFrom;
       HNode * nTo;
       bool nFromRelative, nToRelative;

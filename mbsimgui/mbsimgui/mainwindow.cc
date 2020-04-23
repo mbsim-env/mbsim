@@ -242,6 +242,7 @@ namespace MBSimGUI {
     menuBar()->addMenu(helpMenu);
 
     QToolBar *toolBar = addToolBar("Tasks");
+    toolBar->setObjectName("toolbar/tasks");
     actionSimulate = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaPlay)),"Start simulation");
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
@@ -284,10 +285,12 @@ namespace MBSimGUI {
     connect(elementView->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&)));
 
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);
+    dockWidget0->setObjectName("dockWidget/project");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget0);
     dockWidget0->setWidget(projectView);
 
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system", this);
+    dockWidget1->setObjectName("dockWidget/mbs");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
     QWidget *widget1 = new QWidget(dockWidget1);
     dockWidget1->setWidget(widget1);
@@ -298,6 +301,7 @@ namespace MBSimGUI {
     widgetLayout1->addWidget(elementView, 1, 0);
 
     QDockWidget *dockWidget3 = new QDockWidget("Embeddings", this);
+    dockWidget3->setObjectName("dockWidget/embeddings");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
     QWidget *widget3 = new QWidget(dockWidget3);
     dockWidget3->setWidget(widget3);
@@ -308,6 +312,7 @@ namespace MBSimGUI {
     widgetLayout3->addWidget(embeddingView, 1, 0);
 
     QDockWidget *dockWidget2 = new QDockWidget("Solver", this);
+    dockWidget2->setObjectName("dockWidget/solver");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
     dockWidget2->setWidget(solverView);
 
@@ -318,6 +323,7 @@ namespace MBSimGUI {
     mainlayout->addWidget(inlineOpenMBVMW);
 
     QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
+    mbsimDW->setObjectName("dockWidget/echoArea");
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
     mbsimDW->setWidget(echoView);
     connect(&process,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(processFinished(int,QProcess::ExitStatus)));
@@ -330,7 +336,7 @@ namespace MBSimGUI {
       showMaximized();
 
     QString projectFile;
-    QRegExp filterProject(".+\\.mbsimprj\\.xml");
+    QRegExp filterProject(".+\\.mbsx");
     QDir dir;
     dir.setFilter(QDir::Files);
     for(auto & it : arg) {
@@ -380,13 +386,13 @@ namespace MBSimGUI {
   }
 
   void MainWindow::autoSaveProject() {
-    saveProject("./.Project.mbsimprj.xml",true,false);
+    saveProject("./.Project.mbsx",true,false);
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     updateEchoView();
-    if(currentTask==1 && bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml") && process.state()==QProcess::NotRunning) {
-      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombv.xml");
+    if(currentTask==1 && bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx") && process.state()==QProcess::NotRunning) {
+      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
@@ -399,9 +405,9 @@ namespace MBSimGUI {
         bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
         if(settings.value("mainwindow/options/autoexport", false).toBool()) {
           QString autoExportDir = settings.value("mainwindow/options/autoexportdir", "./").toString();
-          saveMBSimH5Data(autoExportDir+"/MBS.mbsim.h5");
-          saveOpenMBVXMLData(autoExportDir+"/MBS.ombv.xml");
-          saveOpenMBVH5Data(autoExportDir+"/MBS.ombv.h5");
+          saveMBSimH5Data(autoExportDir+"/MBS.mbsh5");
+          saveOpenMBVXMLData(autoExportDir+"/MBS.ombvx");
+          saveOpenMBVH5Data(autoExportDir+"/MBS.ombvh5");
           if(saveFinalStateVector)
             saveStateVector(autoExportDir+"/statevector.asc");
         }
@@ -434,7 +440,7 @@ namespace MBSimGUI {
 
     std::list<string> arg;
     arg.emplace_back("--wst");
-    arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombv.wst").string());
+    arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
@@ -448,7 +454,7 @@ namespace MBSimGUI {
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
-    bfs::remove("./.Project.mbsimprj.xml", ec);
+    bfs::remove("./.Project.mbsx", ec);
     delete project;
     parser->release();
     serializer->release();
@@ -664,7 +670,7 @@ namespace MBSimGUI {
       delete project;
 
       doc = impl->createDocument();
-      doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsimprj.xml").toString().toStdString());
+      doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
 
       project = new Project;
       project->createXMLElement(doc);
@@ -678,7 +684,7 @@ namespace MBSimGUI {
 
       projectFile="";
       refresh();
-      setWindowTitle("Project.mbsimprj.xml[*]");
+      setWindowTitle("Project.mbsx[*]");
     }
   }
 
@@ -722,7 +728,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject() {
     if(maybeSave()) {
-      QString file=QFileDialog::getOpenFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsimprj.xml)");
+      QString file=QFileDialog::getOpenFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsx)");
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       if(not file.isEmpty())
@@ -731,9 +737,9 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    QString file=QFileDialog::getSaveFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsimprj.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsx)");
     if(not(file.isEmpty())) {
-      file = (file.length()>13 and file.right(13)==".mbsimprj.xml")?file:file+".mbsimprj.xml";
+      file = (file.length()>13 and file.right(13)==".mbsx")?file:file+".mbsx";
       doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
@@ -856,9 +862,9 @@ namespace MBSimGUI {
         ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
       if(ret == QMessageBox::Ok) {
         QSettings settings;
-        saveMBSimH5Data(dir+"/MBS.mbsim.h5");
-        saveOpenMBVXMLData(dir+"/MBS.ombv.xml");
-        saveOpenMBVH5Data(dir+"/MBS.ombv.h5");
+        saveMBSimH5Data(dir+"/MBS.mbsh5");
+        saveOpenMBVXMLData(dir+"/MBS.ombvx");
+        saveOpenMBVH5Data(dir+"/MBS.ombvh5");
         saveEigenanalysis(dir+"/MBS.eigenanalysis.mat");
         if(settings.value("mainwindow/options/savestatevector", false).toBool())
           saveStateVector(dir+"/statevector.asc");
@@ -869,7 +875,7 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5DataAs() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsim.h5"), "H5 files (*.mbsim.h5)");
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim H5 file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".mbsh5"), "H5 files (*.mbsh5)");
     if(file!="") {
       saveMBSimH5Data(file);
     }
@@ -878,7 +884,7 @@ namespace MBSimGUI {
   void MainWindow::saveMBSimH5Data(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsim.h5",file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5",file);
   }
 
   void MainWindow::saveOpenMBVDataAs() {
@@ -889,8 +895,8 @@ namespace MBSimGUI {
       if(directory.count()>2)
         ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
       if(ret == QMessageBox::Ok) {
-        saveOpenMBVXMLData(dir+"/MBS.ombv.xml");
-        saveOpenMBVH5Data(dir+"/MBS.ombv.h5");
+        saveOpenMBVXMLData(dir+"/MBS.ombvx");
+        saveOpenMBVH5Data(dir+"/MBS.ombvh5");
       }
     }
   }
@@ -898,13 +904,13 @@ namespace MBSimGUI {
   void MainWindow::saveOpenMBVXMLData(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombv.xml",file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx",file);
   }
 
   void MainWindow::saveOpenMBVH5Data(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombv.h5",file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvh5",file);
   }
 
   void MainWindow::saveStateVectorAs() {
@@ -948,7 +954,7 @@ namespace MBSimGUI {
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile;
 
-    projectFile=uniqueTempDir_+"/Project.mbsimprj.flat.xml";
+    projectFile=uniqueTempDir_+"/Project.flat.mbsx";
 
     actionSimulate->setDisabled(true);
     actionRefresh->setDisabled(true);
@@ -1044,7 +1050,7 @@ namespace MBSimGUI {
 
   void MainWindow::openmbv() {
     static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombv.xml";
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx";
     if(QFile::exists(name)) {
       QStringList arg;
       arg.append("--autoreload");
@@ -1055,7 +1061,7 @@ namespace MBSimGUI {
 
   void MainWindow::h5plotserie() {
     static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsim.h5";
+    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5";
     if(QFile::exists(name)) {
       QStringList arg;
       arg.append(name);
@@ -1085,7 +1091,7 @@ namespace MBSimGUI {
     auto *newdoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
     projectView->getProject()->processHref(newdoc->getDocumentElement());
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile = uniqueTempDir_+"/Project.mbsimprj.xml";
+    QString projectFile = uniqueTempDir_+"/Project.mbsx";
     serializer->writeToURI(newdoc, X()%projectFile.toStdString());
     QStringList arg;
     arg.append("--stopafterfirststep");
@@ -2209,7 +2215,7 @@ namespace MBSimGUI {
   void MainWindow::dropEvent(QDropEvent *event) {
     for (int i = 0; i < event->mimeData()->urls().size(); i++) {
       QString path = event->mimeData()->urls()[i].toLocalFile().toLocal8Bit().data();
-      if(path.endsWith("mbsimprj.xml")) {
+      if(path.endsWith("mbsx")) {
         QFile Fout(path);
         if (Fout.exists())
           loadProject(Fout.fileName());

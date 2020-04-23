@@ -73,9 +73,10 @@ _fmatvec_la_CPPFLAGS = $(PYTHON_CFLAGS) $(FMATVEC_CFLAGS) -I$(PYTHON_LIBDIR)/sit
   -Wno-error=unused-variable -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 _mbsim_la_CPPFLAGS = $(AM_CPPFLAGS)
 # set default compile flags for all __mbsim_partXXX.la targets
-AM_CPPFLAGS = -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include \
+AM_CPPFLAGS = -I$(top_srcdir) -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) \
+  -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include \
   -Wno-error=unused-variable -Wno-error=write-strings $(CXXFLAGSNOWERRORSTRINGOP) \
-  -I$(top_srcdir) $(DEPS_CFLAGS) -Wno-unused-label -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
+  $(DEPS_CFLAGS) -Wno-unused-label -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 
 # link flags for libtool libraries
 _fmatvec_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version $(PYTHON_LIBS) $(FMATVEC_LIBS)

@@ -28,7 +28,7 @@ System::System(const string &projectName) :
   
   Vec grav(3, INIT, 0.);
   grav(1) = -9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   double l0 = 1.5; // length
   double b0 = 0.1; // width

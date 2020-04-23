@@ -2,6 +2,7 @@
 #include "pendulum.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/environment.h"
+#include "openmbvcppinterface/group.h"
 
 using namespace MBSim;
 using namespace fmatvec;
@@ -10,7 +11,16 @@ using namespace std;
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Vec grav(3,INIT,0.);
   grav(1)=-9.81;
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+  getMBSimEnvironment()->setAccelerationOfGravity(grav);
+
+  auto env=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+  env->setFileName("env.ombvx");
+  env->read();
+  getMBSimEnvironment()->addOpenMBVObject(env);
+  auto env2=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+  env2->setFileName("env2.ombvx");
+  env2->read();
+  getMBSimEnvironment()->addOpenMBVObject(env2);
 
   Pendulum *pendel1 = new Pendulum("Pendel1"); 
   addGroup(pendel1);

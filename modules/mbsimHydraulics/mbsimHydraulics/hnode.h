@@ -42,6 +42,7 @@ namespace MBSimHydraulics {
   BOOST_PARAMETER_NAME(maximalPressure)
   BOOST_PARAMETER_NAME(position)
 
+  class HydraulicEnvironment;
   class HLine;
   class HydFluid;
   class OilBulkModulus;
@@ -96,6 +97,7 @@ namespace MBSimHydraulics {
       void resetUpToDate() override { MBSim::Link::resetUpToDate(); updQHyd = true; }
 
     protected:
+      HydraulicEnvironment *hydEnv=nullptr;
       std::vector<connectedLinesStruct> connectedLines;
       std::vector<connectedLinesStruct> connected0DOFLines;
       std::vector<std::string> refInflowString;

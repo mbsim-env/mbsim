@@ -16,7 +16,7 @@ using namespace fmatvec;
 
 System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // Gravitation
-  MBSimEnvironment::getInstance()->setAccelerationOfGravity(Vec("[0;-10;0]"));
+  getMBSimEnvironment()->setAccelerationOfGravity(Vec("[0;-10;0]"));
 
   // Koerper
   double alpha0 =  M_PI/2.0*0.6;

@@ -196,7 +196,7 @@ namespace MBSim {
     Vec3 dir = om/absom;
     if(plotFeature[plotRecursive]) {
       if(plotFeature[force]) {
-        Vec3 force = body->getMass()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+        Vec3 force = body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
         for(int j=0; j<force.size(); j++)
           plotVector.push_back(force(j));
         for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
@@ -239,7 +239,7 @@ namespace MBSim {
       if(FWeight) {
         vector<double> data;
         data.push_back(getTime());
-        Vec3 G = body->getMass()*MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+        Vec3 G = body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
         data.push_back(rOS(0));
         data.push_back(rOS(1));
         data.push_back(rOS(2));

@@ -97,9 +97,7 @@ mbsimgui_HEADERS =
 		   
 		   
 mbsimguisharedir = @datadir@/mbsimgui
-dist_mbsimguishare_DATA = inlineopenmbv.ombv.wst \
-			  empty.ombv.xml \
-			  empty.ombv.h5
+dist_mbsimguishare_DATA = inlineopenmbv.ombvwst
 
 mbsimguiicondir = @datadir@/mbsimgui/icons
 dist_mbsimguiicon_DATA = icons/simulate.svg \
@@ -122,17 +120,30 @@ dist_mbsimguiicon_DATA = icons/simulate.svg \
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines
-pluginsiconengines_DATA = @QT_PLUGINS@/iconengines/*qsvgicon*
 pluginsplatformsdir = @bindir@/platforms
+pluginsstylesdir = @bindir@/styles
+pluginsplatformthemesdir = @bindir@/platformthemes
+pluginsiconengines_DATA = @QT_PLUGINS@/iconengines/*qsvgicon*
 if COND_WIN32
 pluginsplatforms_DATA = @QT_PLUGINS@/platforms/qwindows.dll
+pluginsstyles_DATA = @QT_PLUGINS@/styles/qwindowsvistastyle.dll
 else
 pluginsplatforms_DATA = @QT_PLUGINS@/platforms/libqxcb.so
+pluginsstyles_DATA = @QT_PLUGINS@/styles/adwaita.so \
+                     @QT_PLUGINS@/styles/libbb10styleplugin.so \
+                     @QT_PLUGINS@/styles/libqcleanlooksstyle.so \
+                     @QT_PLUGINS@/styles/libqgtk2style.so \
+                     @QT_PLUGINS@/styles/libqmotifstyle.so \
+                     @QT_PLUGINS@/styles/libqplastiquestyle.so
+pluginsplatformthemes_DATA = @QT_PLUGINS@/platformthemes/libqgtk2.so
 pluginsxcbglintegrationsdir = @bindir@/xcbglintegrations
 pluginsxcbglintegrations_DATA = @QT_PLUGINS@/xcbglintegrations/*qxcb*
 endif
 
+
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
+windowsdir = @datadir@/mbsim-env/windows
 freedesktoporg_DATA = mbsim-env.de.mbsimgui.desktop mimeapps-mbsimgui.list icons/mbsimgui.svg
-bin_SCRIPTS = desktopIntegration.sh
+windows_DATA = createLnk.vbs mbsim-env.de.mbsimgui.source.bat
+bin_SCRIPTS = desktopIntegration.sh desktopIntegration.bat

@@ -40,7 +40,7 @@ SelfSiphoningBeats::SelfSiphoningBeats(const string &projectName, int elements, 
 
     Vec grav(3);
     grav(1) = -9.81;
-    MBSimEnvironment::getInstance()->setAccelerationOfGravity(grav);
+    getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
     /*Upper Area*/
     Vec3 rArea;

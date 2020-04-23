@@ -237,7 +237,7 @@ namespace MBSimFlexibleBody {
 
       initialised = true;
 
-      Vec g = R->getOrientation().T() * MBSimEnvironment::getInstance()->getAccelerationOfGravity();
+      Vec g = R->getOrientation().T() * ds->getMBSimEnvironment()->getAccelerationOfGravity();
 
       /* translational elements */
       for (int i = 0; i < Elements; i++) {

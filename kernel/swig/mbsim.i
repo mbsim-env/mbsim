@@ -236,28 +236,6 @@ class _DeallocatePython(DeallocateBase):
   def __call__(self, e):
     del e
 
-# internal helper class to register a director class in the MBSim::ObjectFactory
-class _GetSingletonPython(AllocateBase):
-  def __init__(self, className):
-    super(_GetSingletonPython, self).__init__() 
-    self.className=className
-  def __call__(self):
-    return self.classNname.getInstance().__disown__()
-  def isEqual(self, other):
-    otherDirector=_dynamic_cast_Director(other)
-    if otherDirector==None:
-      return False
-    if type(otherDirector)==_GetSingletonPython and otherDirector.className==self.className:
-      return True
-    return False;
-
-# internal helper class to register a director class in the MBSim::ObjectFactory
-class _DeallocateSingletonPython(DeallocateBase):
-  def __init__(self):
-    super(_DeallocateSingletonPython, self).__init__() 
-  def __call__(self, e):
-    pass
-
 # fix module name: convert _<name>_part[0-9] to <name> (this enables splitting of large modules)
 def _fixModuleName(moduleName):
   import re
@@ -328,14 +306,6 @@ def registerClass(className):
   _extendClass(className)
   registerClass_internal(_FQN(_getNSOf(className.__module__), _fixXMLLocalName(className.__name__)),
     _AllocatePython(className).__disown__(), _DeallocatePython().__disown__())
-
-# register singelton class in the MBSim::ObjectFactory
-# The class name of the class is used as the XML local name (excluding any part after _)
-# This also extents className with some special members.
-def registerClassAsSingleton(className):
-  _extendClass(className)
-  registerClass_internal(_FQN(_getNSOf(className.__module__), _fixXMLLocalName(className.__name__)),
-    _GetSingletonPython(className).__disown__(), _DeallocateSingletonPython().__disown__())
 
 # create the xsd for this module.
 def generateXMLSchemaFile(moduleName):
