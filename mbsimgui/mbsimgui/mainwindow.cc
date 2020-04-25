@@ -739,7 +739,7 @@ namespace MBSimGUI {
   bool MainWindow::saveProjectAs() {
     QString file=QFileDialog::getSaveFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsx)");
     if(not(file.isEmpty())) {
-      file = (file.length()>13 and file.right(13)==".mbsx")?file:file+".mbsx";
+      file = file.endsWith(".mbsx")?file:file+".mbsx";
       doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
       projectFile=QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
@@ -2215,7 +2215,7 @@ namespace MBSimGUI {
   void MainWindow::dropEvent(QDropEvent *event) {
     for (int i = 0; i < event->mimeData()->urls().size(); i++) {
       QString path = event->mimeData()->urls()[i].toLocalFile().toLocal8Bit().data();
-      if(path.endsWith("mbsx")) {
+      if(path.endsWith(".mbsx")) {
         QFile Fout(path);
         if (Fout.exists())
           loadProject(Fout.fileName());

@@ -25,7 +25,7 @@
     <MBSimEnvironment>
       <accelerationOfGravity><pv:fromFile href="{grav}"/></accelerationOfGravity>
       <openMBVObject>
-        <pv:Embed href="env.ombvx"/>
+        <pv:Embed href="env.ombvx.py.xml"/>
       </openMBVObject>
     </MBSimEnvironment>
   </environments>
