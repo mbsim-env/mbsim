@@ -39,7 +39,7 @@ class TestFunction : public MBSim::Function<fmatvec::Vec(fmatvec::Vec)> {
 
 int main (int argc, char* argv[]) {
 
-  int dimension = 1000;
+  int dimension = 500;
 
   TestFunction * function = new TestFunction();
   NewtonJacobianFunction * jac = new NumericalNewtonJacobianFunction();

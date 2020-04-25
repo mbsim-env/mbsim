@@ -8,7 +8,7 @@
    -->
 <TimeSteppingSSCIntegrator xmlns="http://www.mbsim-env.de/MBSim">
   <startTime>0</startTime>
-  <endTime>120</endTime>
+  <endTime>40</endTime>
   <plotStepSize>1e-2</plotStepSize>
   <method>'extrapolation'</method>
   <stepSizeControl>false</stepSizeControl>

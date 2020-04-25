@@ -18,7 +18,7 @@ int main (int argc, char* argv[]) {
   }
   else
     integrator = new LSODEIntegrator();
-  integrator->setEndTime(4e-0);
+  integrator->setEndTime(2.0);
   integrator->setPlotStepSize(1e-3);
   integrator->integrate(*sys);
 
