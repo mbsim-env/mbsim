@@ -1349,10 +1349,10 @@ namespace MBSimGUI {
       evalDialog.exec();
     }
     catch(MBXMLUtils::DOMEvalException &e) {
-      QMessageBox::warning(nullptr, "Expression evaluation", QString::fromStdString(e.getMessage()));
+      QMessageBox::warning(this, "Expression evaluation", QString::fromStdString(e.getMessage()));
     }
     catch(...) {
-      QMessageBox::warning(nullptr, "Expression evaluation", "Unknown error");
+      QMessageBox::warning(this, "Expression evaluation", "Unknown error");
     }
   }
 
@@ -1398,7 +1398,7 @@ namespace MBSimGUI {
 
   void FromFileWidget::selectFile() {
     QString file = getFile();
-    file=QFileDialog::getOpenFileName(nullptr, "ASCII files", path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), "all files (*.*)");
+    file=QFileDialog::getOpenFileName(this, "ASCII files", path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), "All files (*.*)");
     if(not file.isEmpty()) {
       if(path->isChecked())
         setFile(mw->getProjectDir().absoluteFilePath(file));

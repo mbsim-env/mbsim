@@ -351,7 +351,7 @@ namespace MBSimGUI {
         continue;
       }
       if(QFile::exists(it)) {
-        if(projectFile.isEmpty() and filterProject.exactMatch(it))
+        if(projectFile.isEmpty())
           projectFile = it;
         continue;
       }
@@ -728,7 +728,7 @@ namespace MBSimGUI {
 
   void MainWindow::loadProject() {
     if(maybeSave()) {
-      QString file=QFileDialog::getOpenFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsx)");
+      QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", QFileInfo(getProjectFilePath()).absolutePath(), "MBSim files (*.mbsx);;All files (*.*)");
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       if(not file.isEmpty())
@@ -737,7 +737,7 @@ namespace MBSimGUI {
   }
 
   bool MainWindow::saveProjectAs() {
-    QString file=QFileDialog::getSaveFileName(this, "XML project files", getProjectFilePath(), "XML files (*.mbsx)");
+    QString file=QFileDialog::getSaveFileName(this, "Save MBSim file", getProjectFilePath(), "MBSim files (*.mbsx)");
     if(not(file.isEmpty())) {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
       doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());

@@ -278,11 +278,11 @@ namespace MBSimGUI {
     QString file = getFile();
     if(quote) file = file.mid(1,file.length()-2);
     if(mode==0) 
-      file = QFileDialog::getOpenFileName(nullptr, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions);
+      file = QFileDialog::getOpenFileName(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions);
     else if(mode==1)
-      file = QFileDialog::getSaveFileName(nullptr, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions);
+      file = QFileDialog::getSaveFileName(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions);
     else
-      file = QFileDialog::getExistingDirectory(nullptr, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file));
+      file = QFileDialog::getExistingDirectory(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file));
     if(not file.isEmpty()) {
       if(path->isChecked())
         filePath->setText(quote?("\""+mw->getProjectDir().absoluteFilePath(file)+"\""):mw->getProjectDir().absoluteFilePath(file));
@@ -461,9 +461,9 @@ namespace MBSimGUI {
     vector<QString> vec = strToVec(val);
     QColor col;
     if(vec.size()==3)
-      col = QColorDialog::getColor(QColor::fromHsvF(vec[0].toDouble(),vec[1].toDouble(),vec[2].toDouble()));
+      col = QColorDialog::getColor(QColor::fromHsvF(vec[0].toDouble(),vec[1].toDouble(),vec[2].toDouble()),this);
     else
-      col = QColorDialog::getColor(Qt::blue);
+      col = QColorDialog::getColor(Qt::blue,this);
     if(col.isValid()) {
       QString str = "[" + QString::number(col.hueF()) + ";" + QString::number(col.saturationF()) + ";" + QString::number(col.valueF()) + "]";
       static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->setValue(str);
