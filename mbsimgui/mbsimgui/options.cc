@@ -95,7 +95,7 @@ namespace MBSimGUI {
   }
 
   void OptionsDialog::openFileBrowser() {
-    QString dir = QFileDialog::getExistingDirectory (nullptr, "Select directory", ".");
+    QString dir = QFileDialog::getExistingDirectory (this, "Select directory", ".");
     if(dir != "")
       setAutoExportDir(dir);
   }
