@@ -800,6 +800,8 @@ def runExample(resultQueue, example):
       # clean output of previous run
       if os.path.isfile("time.dat"): os.remove("time.dat")
       list(map(os.remove, glob.glob("*.h5")))
+      list(map(os.remove, glob.glob("*.mbsh5")))
+      list(map(os.remove, glob.glob("*.ombvh5")))
 
       executeFD=MultiFile(codecs.open(pj(args.reportOutDir, executeFN), "w", encoding="utf-8"), args.printToConsole)
       dt=0
@@ -1125,18 +1127,18 @@ def webapp(example):
     else:
       gui['file']=[example+'/FMI_cosim.mbsx']
   return '<td data-order="%03d%03d%03d">'%(len(ombv), len(h5p), len(gui))+\
-      ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
-       urllib.parse.urlencode(ombv, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+      ('<a href="/mbsim/html/noVNC/mbsimwebapp.html?'+urllib.parse.urlencode(ombv, doseq=True)+'"><button disabled="disabled" '+\
+       'type="button" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(ombv)>0 else 'hidden')+';">'+\
-       '<img src="/mbsim/html/openmbv.svg" alt="ombv"/></button>&nbsp;')+\
-      ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
-       urllib.parse.urlencode(h5p, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       '<img src="/mbsim/html/openmbv.svg" alt="ombv"/></button></a>&nbsp;')+\
+      ('<a href="/mbsim/html/noVNC/mbsimwebapp.html?'+urllib.parse.urlencode(h5p, doseq=True)+'"><button disabled="disabled" '+\
+       'type="button" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(h5p)>0 else 'hidden')+';">'+\
-       '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></button>&nbsp;')+\
-      ('<button disabled="disabled" type="button" onclick="location.href=\'/mbsim/html/noVNC/mbsimwebapp.html?'+\
-       urllib.parse.urlencode(gui, doseq=True)+'\';" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
+       '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></button></a>&nbsp;')+\
+      ('<a href="/mbsim/html/noVNC/mbsimwebapp.html?'+urllib.parse.urlencode(gui, doseq=True)+'"><button disabled="disabled" '+\
+       'type="button" class="_WEBAPP btn btn-default btn-xs" style="visibility:'+\
        ('visible' if len(gui)>0 else 'hidden')+';">'+\
-       '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></button>&nbsp;')+\
+       '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></button></a>&nbsp;')+\
     '</td>'
 
 # if args.exeEXt is set we must prefix every command with wine
@@ -1796,7 +1798,11 @@ def compareExample(example, compareFN):
     gnuplotProcess=None
     print("gnuplot not found. Hence no compare plot will be generated. Add gnuplot to PATH to enable.")
   data=[]
-  for h5RefFileName in glob.glob(pj("reference", "*.h5")):
+  refFiles=[]
+  refFiles.extend(glob.glob(pj("reference", "*.h5")))
+  refFiles.extend(glob.glob(pj("reference", "*.mbsh5")))
+  refFiles.extend(glob.glob(pj("reference", "*.ombvh5")))
+  for h5RefFileName in refFiles:
     # open h5 files
     h5RefFile=h5py.File(h5RefFileName, "r")
     try:
@@ -1837,8 +1843,11 @@ def compareExample(example, compareFN):
     if gnuplotProcess.wait()!=0:
       raise RuntimeError("Generating the SVG file using gnuplot failed.")
   # files in current but not in reference
-  refFiles=glob.glob(pj("reference", "*.h5"))
-  for curFile in glob.glob("*.h5"):
+  curFiles=[]
+  curFiles.extend(glob.glob("*.h5"))
+  curFiles.extend(glob.glob("*.mbsh5"))
+  curFiles.extend(glob.glob("*.ombvh5"))
+  for curFile in curFiles:
     if pj("reference", curFile) not in refFiles:
       data.append([
         (curFile,""),
@@ -1897,7 +1906,7 @@ def loopOverReferenceFiles(msg, srcPostfix, dstPrefix, action):
     print("%s: Example %03d/%03d; %5.1f%%; %s"%(msg, curNumber, lenDirs, curNumber/lenDirs*100, example[0]))
     if not os.path.isdir(pj(dstPrefix, example[0], "reference")): os.makedirs(pj(dstPrefix, example[0], "reference"))
     # apply action to all these files in the current dir (example dir)
-    for fnglob in ["time.dat", "*.h5"]:
+    for fnglob in ["time.dat", "*.h5", "*.mbsh5", "*.ombvh5"]:
       for fn in glob.glob(pj(example[0], srcPostfix, fnglob)):
         action(fn, pj(dstPrefix, example[0], "reference", os.path.basename(fn)))
 
