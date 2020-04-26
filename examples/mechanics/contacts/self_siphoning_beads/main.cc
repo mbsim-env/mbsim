@@ -20,7 +20,7 @@ int main(int argc, char *argv[]) {
   {
     integrator = new TimeSteppingSSCIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 0.1;
+    double endTime = 0.05;
 
     sys = new SelfSiphoningBeats("Metallkette_Assembly", numEles, 1e-6);
     sys->addEmptyLeader();
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
   {
     integrator = new TimeSteppingSSCIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 0.02;
+    double endTime = 0.01;
 
     sys = new SelfSiphoningBeats("Metallkette_PreInit", numEles);
     sys->addTrajectory(endTime);
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
   {
     integrator = new TimeSteppingSSCIntegrator;
     double plotStepSize = 1e-3;
-    double endTime = 0.05;
+    double endTime = 0.025;
 
     sys = new SelfSiphoningBeats("Metallkette", numEles);
 

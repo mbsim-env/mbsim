@@ -405,6 +405,7 @@ namespace MBSim {
           for(auto env : envs) {
             if(auto grp=dynamic_pointer_cast<OpenMBV::Group>(env))
               grp->setSeparateFile(false);
+            env->setEnvironment(true);
             openmbvEnv->addObject(env);
           }
         }
