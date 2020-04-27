@@ -109,7 +109,6 @@ namespace MBSimGUI {
       void dropEvent(QDropEvent *event) override;
       void closeEvent(QCloseEvent *event) override;
       void showEvent(QShowEvent *event) override;
-      void hideEvent(QHideEvent *event) override;
       bool maybeSave();
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
