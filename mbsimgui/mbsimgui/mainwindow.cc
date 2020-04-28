@@ -2224,10 +2224,15 @@ namespace MBSimGUI {
   }
 
   void MainWindow::closeEvent(QCloseEvent *event) {
+    QSettings settings;
+    settings.setValue("mainwindow/geometry", saveGeometry());
+    settings.setValue("mainwindow/state", saveState());
+    settings.setValue("mainwindow/embeddingview/state", embeddingView->header()->saveState());
     if(maybeSave())
       event->accept();
     else
       event->ignore();
+    QMainWindow::closeEvent(event);
   }
 
   void MainWindow::showEvent(QShowEvent *event) {
@@ -2237,14 +2242,6 @@ namespace MBSimGUI {
     elementView->header()->restoreState(settings.value("mainwindow/elementview/state").toByteArray());
     embeddingView->header()->restoreState(settings.value("mainwindow/embeddingview/state").toByteArray());
     QMainWindow::showEvent(event);
-  }
-
-  void MainWindow::hideEvent(QHideEvent *event) {
-    QSettings settings;
-    settings.setValue("mainwindow/geometry", saveGeometry());
-    settings.setValue("mainwindow/state", saveState());
-    settings.setValue("mainwindow/embeddingview/state", embeddingView->header()->saveState());
-    QMainWindow::hideEvent(event);
   }
 
   void MainWindow::openRecentProjectFile() {
