@@ -278,6 +278,8 @@ namespace MBSimGUI {
       return new Demultiplexer;
     if(E(element)->getTagName()==MBSIMCONTROL%"LinearTransferSystem")
       return new LinearTransferSystem;
+    if(E(element)->getTagName()==MBSIMCONTROL%"NonlinearTransferSystem")
+      return new NonlinearTransferSystem;
     if(E(element)->getTagName()==MBSIMCONTROL%"SignalOperation")
       return new SignalOperation;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSource")

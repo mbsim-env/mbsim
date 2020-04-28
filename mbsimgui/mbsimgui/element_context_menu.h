@@ -266,6 +266,7 @@ namespace MBSimGUI {
       void addMultiplexer();
       void addDemultiplexer();
       void addLinearTransferSystem();
+      void addNonlinearTransferSystem();
       void addSignalOperation();
       void addExternSignalSource();
       void addExternSignalSink();

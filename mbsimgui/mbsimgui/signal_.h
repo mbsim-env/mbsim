@@ -48,6 +48,12 @@ namespace MBSimGUI {
       ElementPropertyDialog* createPropertyDialog() override {return new LinearTransferSystemPropertyDialog(this);}
   };
 
+  class NonlinearTransferSystem : public Signal {
+    public:
+      QString getType() const override { return "NonlinearTransferSystem"; }
+      ElementPropertyDialog* createPropertyDialog() override {return new NonlinearTransferSystemPropertyDialog(this);}
+  };
+
   class SignalOperation : public Signal {
     public:
       QString getType() const override { return "SignalOperation"; }

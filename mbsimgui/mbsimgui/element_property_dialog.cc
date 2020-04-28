@@ -3233,7 +3233,7 @@ namespace MBSimGUI {
     B->blockSignals(true);
     C->blockSignals(true);
     D->blockSignals(true);
-    int n = A->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->rows():0;
+    int n = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->rows();
     int m = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(B->getWidget())->getWidget())->cols();
     int p = C->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(C->getWidget())->getWidget())->rows():m;
     B->resize_(n,m);
@@ -3265,11 +3265,53 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  NonlinearTransferSystemPropertyDialog::NonlinearTransferSystemPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
+    addToTab("General", inputSignal);
+
+    F = new ExtWidget("System function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"systemFunction");
+    addToTab("General", F);
+
+    H = new ExtWidget("Output function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::fixedVec),1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"outputFunction");
+    addToTab("General", H);
+
+    connect(F, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+//    connect(H, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+  }
+
+  void NonlinearTransferSystemPropertyDialog::updateWidget() {
+    F->blockSignals(true);
+//    H->blockSignals(true);
+    int n = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->getArg1Size();
+    int m = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->getArg2Size();
+    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->resize_(n,1);
+    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg1Size(n);
+    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg2Size(m);
+    F->blockSignals(false);
+//    H->blockSignals(false);
+  }
+
+  DOMElement* NonlinearTransferSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
+    F->initializeUsingXML(item->getXMLElement());
+    H->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* NonlinearTransferSystemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
+    F->writeXMLFile(item->getXMLElement(),ref);
+    H->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   SignalOperationPropertyDialog::SignalOperationPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
     inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"");
     addToTab("General", inputSignal);
 
-    function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(signal,"s",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(signal,"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
 
     connect(inputSignal,SIGNAL(widgetChanged()),this,SLOT(updateFunctionFactory()));
@@ -3281,9 +3323,9 @@ namespace MBSimGUI {
 
   void SignalOperationPropertyDialog::updateFunctionFactory() {
     if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"s",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
     else
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new  Function2ArgWidgetFactory(getElement(),QStringList("s1")<<"s2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
   }
 
   DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {

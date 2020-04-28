@@ -14,6 +14,7 @@ libmbsimControl_la_SOURCES = \
   constraint_sensors.cc\
   signal_manipulation.cc\
   linear_transfer_system.cc\
+  nonlinear_transfer_system.cc\
   massless_spring_damper.cc\
   signal_function.cc\
   extern_signal_sink.cc\
@@ -39,6 +40,7 @@ mbsimControlinclude_HEADERS = \
   constraint_sensors.h\
   signal_manipulation.h\
   linear_transfer_system.h\
+  nonlinear_transfer_system.h\
   massless_spring_damper.h\
   signal_function.h\
   signal_observer.h

@@ -886,6 +886,9 @@ namespace MBSimGUI {
     action = new QAction("Add multiplexer", this);
     connect(action,SIGNAL(triggered()),this,SLOT(addMultiplexer()));
     addAction(action);
+    action = new QAction("Add nonlinear transfer system", this);
+    connect(action,SIGNAL(triggered()),this,SLOT(addNonlinearTransferSystem()));
+    addAction(action);
     QMenu *menu = new QMenu("Add sensor", this);
     action = new QAction("Add acceleration sensor", menu);
     connect(action,SIGNAL(triggered()),this,SLOT(addAccelerationSensor()));
@@ -969,6 +972,10 @@ namespace MBSimGUI {
 
   void SignalsContextMenu::addLinearTransferSystem() {
     mw->addLink(new LinearTransferSystem, element);
+  }
+
+  void SignalsContextMenu::addNonlinearTransferSystem() {
+    mw->addLink(new NonlinearTransferSystem, element);
   }
 
   void SignalsContextMenu::addSignalOperation() {

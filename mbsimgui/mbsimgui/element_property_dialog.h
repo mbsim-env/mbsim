@@ -982,6 +982,17 @@ namespace MBSimGUI {
       void updateWidget() override;
   };
 
+  class NonlinearTransferSystemPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      NonlinearTransferSystemPropertyDialog(Element *signal);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *inputSignal, *F, *H;
+      void updateWidget() override;
+  };
+
   class SignalOperationPropertyDialog : public SignalPropertyDialog {
     Q_OBJECT
 
