@@ -199,6 +199,7 @@ namespace MBSimGUI {
       int getArg1Size() const override;
       int getArg2Size() const override;
       void setArg1Size(int i) override;
+      void setArg2Size(int i) override;
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

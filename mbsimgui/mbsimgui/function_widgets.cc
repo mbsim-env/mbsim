@@ -419,6 +419,10 @@ namespace MBSimGUI {
     static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->setValue(i);
   }
 
+  void SymbolicFunctionWidget::setArg2Size(int i) {
+    static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->setValue(i);
+  }
+
   void SymbolicFunctionWidget::resize_(int m, int n) {
     f->resize_(m,n);
   }
