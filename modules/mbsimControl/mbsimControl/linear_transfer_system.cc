@@ -37,9 +37,9 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     inputSignalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"systemMatrix");
-    if(e) setSystemMatrix(E(e)->getText<SqrMatV>());
+    setSystemMatrix(E(e)->getText<SqrMatV>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputMatrix");
-    if(e) setInputMatrix(E(e)->getText<MatV>(A.rows(), 0));
+    setInputMatrix(E(e)->getText<MatV>(A.rows(), 0));
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"outputMatrix");
     if(e) setOutputMatrix(E(e)->getText<MatV>(0, A.cols()));
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"feedthroughMatrix");
