@@ -3210,24 +3210,39 @@ namespace MBSimGUI {
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
 
-    A = new ExtWidget("System matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"systemMatrix");
+    A = new ExtWidget("System matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"systemMatrix");
     addToTab("General", A);
 
-    B = new ExtWidget("Input matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputMatrix");
+    B = new ExtWidget("Input matrix",new ChoiceWidget2(new MatColsVarWidgetFactory(1,1),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"inputMatrix");
     addToTab("General", B);
 
-    C = new ExtWidget("Output matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"outputMatrix");
+    C = new ExtWidget("Output matrix",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"outputMatrix");
     addToTab("General", C);
 
-    D = new ExtWidget("Feedthrough matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
+    D = new ExtWidget("Feedthrough matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
     addToTab("General", D);
+
+    connect(A, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(B, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(C, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(D, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
   }
 
   void LinearTransferSystemPropertyDialog::updateWidget() {
-    int sizeA = A->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->rows():0;
-    int sizeD = D->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(D->getWidget())->getWidget())->rows():0;
-    B->resize_(sizeA,sizeD);
-    C->resize_(sizeD,sizeA);
+    A->blockSignals(true);
+    B->blockSignals(true);
+    C->blockSignals(true);
+    D->blockSignals(true);
+    int n = A->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->rows():0;
+    int m = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(B->getWidget())->getWidget())->cols();
+    int p = C->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(C->getWidget())->getWidget())->rows():m;
+    B->resize_(n,m);
+    C->resize_(p,n);
+    D->resize_(p,m);
+    A->blockSignals(false);
+    B->blockSignals(false);
+    C->blockSignals(false);
+    D->blockSignals(false);
   }
 
   DOMElement* LinearTransferSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {

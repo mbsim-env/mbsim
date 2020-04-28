@@ -89,7 +89,7 @@ namespace MBSimControl {
    */
   class SignalOperation : public Signal {
     public:
-      SignalOperation(const std::string &name="") : Signal(name), f1(NULL), f2(NULL) { }
+      SignalOperation(const std::string &name="") : Signal(name) { }
       ~SignalOperation() { delete f1; delete f2; }
       void initializeUsingXML(xercesc::DOMElement *element);
       void init(InitStage stage, const MBSim::InitConfigSet &config);
@@ -112,8 +112,8 @@ namespace MBSimControl {
     private:
       std::vector<Signal*> signal;
       std::vector<std::string> signalString;
-      MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f1;
-      MBSim::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *f2;
+      MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f1{nullptr};
+      MBSim::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *f2{nullptr};
       void (SignalOperation::*updateSignal_)();
   };
 

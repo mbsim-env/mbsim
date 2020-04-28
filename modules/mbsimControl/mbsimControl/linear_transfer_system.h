@@ -20,8 +20,6 @@
 #ifndef _LINEAR_TRANSFER_SYSTEM_
 #define _LINEAR_TRANSFER_SYSTEM_
 
-#include <utility>
-
 #include "mbsimControl/signal_.h"
 
 namespace MBSimControl {
@@ -33,7 +31,7 @@ namespace MBSimControl {
   class LinearTransferSystem : public Signal {
 
     public:   
-      LinearTransferSystem(const std::string& name="") : Signal(name), inputSignal(nullptr) { }
+      LinearTransferSystem(const std::string& name="") : Signal(name) { }
 
       void initializeUsingXML(xercesc::DOMElement * element) override;
       
@@ -44,19 +42,19 @@ namespace MBSimControl {
       void updateSignal() override;
       void updatexd() override;
       
-      void setSystemMatrix(fmatvec::SqrMatV A_) { A <<= A_; }
-      void setInputMatrix(const fmatvec::MatV& B_) { B <<= B_; }
-      void setOutputMatrix(const fmatvec::MatV& C_) { C <<= C_; }
-      void setFeedthroughMatrix(fmatvec::SqrMatV D_) { D <<= D_; }
+      void setSystemMatrix(const fmatvec::SqrMatV &A_) { A <<= A_; }
+      void setInputMatrix(const fmatvec::MatV &B_) { B <<= B_; }
+      void setOutputMatrix(const fmatvec::MatV &C_) { C <<= C_; }
+      void setFeedthroughMatrix(const fmatvec::MatV &D_) { D <<= D_; }
 
       void setInputSignal(Signal * inputSignal_) { inputSignal = inputSignal_; }
       int getSignalSize() const override { return inputSignal->getSignalSize(); }
 
     protected:
-      Signal* inputSignal;
+      Signal* inputSignal{nullptr};
       std::string inputSignalString;
-      fmatvec::SqrMatV A, D;
-      fmatvec::MatV B, C;
+      fmatvec::SqrMatV A;
+      fmatvec::MatV B, C, D;
   };
 
 }

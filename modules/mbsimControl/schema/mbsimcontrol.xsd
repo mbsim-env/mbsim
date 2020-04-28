@@ -762,8 +762,8 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="systemMatrix" type="pv:nounitMatrix" minOccurs="0"/>
-          <xs:element name="inputMatrix" type="pv:nounitMatrix" minOccurs="0"/>
+          <xs:element name="systemMatrix" type="pv:nounitMatrix"/>
+          <xs:element name="inputMatrix" type="pv:nounitMatrix"/>
           <xs:element name="outputMatrix" type="pv:nounitMatrix" minOccurs="0"/>
           <xs:element name="feedthroughMatrix" type="pv:nounitMatrix" minOccurs="0"/>
         </xs:sequence>

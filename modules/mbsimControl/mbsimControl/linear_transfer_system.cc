@@ -37,13 +37,13 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     inputSignalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"systemMatrix");
-    if(e) setSystemMatrix(E(e)->getText<SqrMat>());
+    if(e) setSystemMatrix(E(e)->getText<SqrMatV>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputMatrix");
-    if(e) setInputMatrix(E(e)->getText<Mat>(A.rows(), 0));
+    if(e) setInputMatrix(E(e)->getText<MatV>(A.rows(), 0));
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"outputMatrix");
-    if(e) setOutputMatrix(E(e)->getText<Mat>(0, A.cols()));
+    if(e) setOutputMatrix(E(e)->getText<MatV>(0, A.cols()));
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"feedthroughMatrix");
-    if(e) setFeedthroughMatrix(E(e)->getText<SqrMat>());
+    if(e) setFeedthroughMatrix(E(e)->getText<MatV>());
   }
 
   void LinearTransferSystem::updateSignal() {
@@ -63,27 +63,22 @@ namespace MBSimControl {
         throwError("(LinearTransferSystem::init): input signal must be given");
     }
     else if(stage==preInit) {
-      if(not A.size()) {
-        B.resize(0,getSignalSize());
-        C.resize(B.cols(),0);
-      }
-      else
-      {
-        if(B.rows() != A.size())
-          throwError("Number of rows of input matrix must be equal to size of state matrix");
-        if(B.cols() != getSignalSize())
-          throwError("Number of columns of input matrix must be equal to signal size");
-        if(C.rows() != B.cols())
-          throwError("Number of rows of output matrix must be equal to signal size");
-        if(C.cols() != A.size())
-          throwError("Number of columns of output matrix must be equal size of state matrix");
-      }
-      if(not D.size())
-        D.resize(getSignalSize());
-      else {
-        if(D.size() != C.rows())
-          throwError("Size of feedthrough matrix must be equal to signal size");
-      }
+      if(not A.size())
+        throwError("Size of system matrix must be at least 1");
+      if(not C())
+        C.resize(inputSignal->getSignalSize(),A.size(),Eye());
+      if(not D())
+        D.resize(C.rows(),inputSignal->getSignalSize());
+      if(A.size() != C.cols())
+        throwError("Size of system matrix must be equal to number of columns of output matrix");
+      if(B.rows() != C.cols())
+        throwError("Number of rows of input matrix must be equal to number of columns of output matrix");
+      if(B.cols() != inputSignal->getSignalSize())
+        throwError("Number of columns of input matrix must be equal to input signal size");
+      if(D.rows() != C.rows())
+        throwError("Number of rows of feedthrough matrix must be equal to number of rows of output matrix");
+      if(D.cols() != inputSignal->getSignalSize())
+        throwError("Number of columns of feedthrough matrix must be equal to input signal size");
     }
     Signal::init(stage, config);
   }
