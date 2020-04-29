@@ -40,6 +40,8 @@ namespace MBSimControl {
       
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
+      void setInitialState(const fmatvec::Vec &x0_) { x0 <<= x0_; }
+
       void updateSignal() override;
       void updatexd() override;
       

@@ -34,6 +34,8 @@ namespace MBSimControl {
   void LinearTransferSystem::initializeUsingXML(DOMElement * element) {
     Signal::initializeUsingXML(element);
     DOMElement *e;
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"initialState");
+    if(e) setInitialState(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"inputSignal");
     inputSignalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"systemMatrix");

@@ -505,7 +505,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *constraintFunction, *x0;
+      ExtWidget *x0, *constraintFunction;
       void updateWidget() override;
   };
 
@@ -516,7 +516,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *constraintFunction, *x0;
+      ExtWidget *x0, *constraintFunction;
       void updateWidget() override;
   };
 
@@ -978,7 +978,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *inputSignal, *A, *B, *C, *D;
+      ExtWidget *x0, *inputSignal, *A, *B, *C, *D;
       void updateWidget() override;
   };
 
@@ -989,7 +989,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *inputSignal, *F, *H;
+      ExtWidget *x0, *inputSignal, *F, *H;
       void updateWidget() override;
   };
 

@@ -1922,12 +1922,12 @@ namespace MBSimGUI {
   GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
     addTab("Initial conditions",1);
 
+    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    addToTab("Initial conditions", x0);
+
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-
-    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
-    addToTab("Initial conditions", x0);
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::updateWidget() {
@@ -1951,12 +1951,12 @@ namespace MBSimGUI {
   GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
     addTab("Initial conditions",1);
 
+    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    addToTab("Initial conditions", x0);
+
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-
-    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
-    addToTab("Initial conditions", x0);
   }
 
   void GeneralizedAccelerationConstraintPropertyDialog::updateWidget() {
@@ -3207,6 +3207,12 @@ namespace MBSimGUI {
   }
 
   LinearTransferSystemPropertyDialog::LinearTransferSystemPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+
+    addTab("Initial conditions",1);
+
+    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
+    addToTab("Initial conditions", x0);
+
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
 
@@ -3222,6 +3228,7 @@ namespace MBSimGUI {
     D = new ExtWidget("Feedthrough matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
     addToTab("General", D);
 
+    connect(x0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
     connect(A, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
     connect(B, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
     connect(C, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
@@ -3236,6 +3243,7 @@ namespace MBSimGUI {
     int n = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->rows();
     int m = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(B->getWidget())->getWidget())->cols();
     int p = C->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(C->getWidget())->getWidget())->rows():m;
+    x0->resize_(n,1);
     B->resize_(n,m);
     C->resize_(p,n);
     D->resize_(p,m);
@@ -3247,6 +3255,7 @@ namespace MBSimGUI {
 
   DOMElement* LinearTransferSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    x0->initializeUsingXML(item->getXMLElement());
     inputSignal->initializeUsingXML(item->getXMLElement());
     A->initializeUsingXML(item->getXMLElement());
     B->initializeUsingXML(item->getXMLElement());
@@ -3257,6 +3266,7 @@ namespace MBSimGUI {
 
   DOMElement* LinearTransferSystemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    x0->writeXMLFile(item->getXMLElement(),ref);
     inputSignal->writeXMLFile(item->getXMLElement(),ref);
     A->writeXMLFile(item->getXMLElement(),ref);
     B->writeXMLFile(item->getXMLElement(),ref);
@@ -3266,6 +3276,12 @@ namespace MBSimGUI {
   }
 
   NonlinearTransferSystemPropertyDialog::NonlinearTransferSystemPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+
+    addTab("Initial conditions",1);
+
+    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
+    addToTab("Initial conditions", x0);
+
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
 
@@ -3275,6 +3291,7 @@ namespace MBSimGUI {
     H = new ExtWidget("Output function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::fixedVec),1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"outputFunction");
     addToTab("General", H);
 
+    connect(x0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
     connect(F, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
     connect(H, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
   }
@@ -3284,6 +3301,7 @@ namespace MBSimGUI {
     H->blockSignals(true);
     int n = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->getArg1Size();
     int m = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->getArg2Size();
+    x0->resize_(n,1);
     static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->resize_(n,1);
     if(H->isActive()) {
       static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg1Size(n);
@@ -3295,6 +3313,7 @@ namespace MBSimGUI {
 
   DOMElement* NonlinearTransferSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    x0->initializeUsingXML(item->getXMLElement());
     inputSignal->initializeUsingXML(item->getXMLElement());
     F->initializeUsingXML(item->getXMLElement());
     H->initializeUsingXML(item->getXMLElement());
@@ -3303,6 +3322,7 @@ namespace MBSimGUI {
 
   DOMElement* NonlinearTransferSystemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    x0->writeXMLFile(item->getXMLElement(),ref);
     inputSignal->writeXMLFile(item->getXMLElement(),ref);
     F->writeXMLFile(item->getXMLElement(),ref);
     H->writeXMLFile(item->getXMLElement(),ref);
