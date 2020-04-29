@@ -66,7 +66,7 @@ namespace MBSimControl {
       if(not A.size())
         throwError("Size of system matrix must be at least 1");
       if(not C())
-        C.resize(inputSignal->getSignalSize(),A.size(),Eye());
+        C.resize(A.size(),A.size(),Eye());
       if(not D())
         D.resize(C.rows(),inputSignal->getSignalSize());
       if(A.size() != C.cols())
