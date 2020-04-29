@@ -39,11 +39,11 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"systemFunction");
     setSystemFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"outputFunction");
-    setOutputFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)>>(e->getFirstElementChild()));
+    if(e) setOutputFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)>>(e->getFirstElementChild()));
   }
 
   void NonlinearTransferSystem::updateSignal() {
-    s = (*H)(x,inputSignal->evalSignal());
+    s = H?(*H)(x,inputSignal->evalSignal()):VecV(x);
     upds = false;
   }
 
@@ -65,10 +65,12 @@ namespace MBSimControl {
         throwError("Size of first argument of system function must be equal to size of system function");
       if(F->getArg2Size() != inputSignal->getSignalSize())
         throwError("Size of second argument of system function must be equal to input signal size");
-      if(H->getArg1Size() != F->getRetSize().first)
-        throwError("Size of first argument of output function must be equal to size of system function");
-      if(H->getArg2Size() != inputSignal->getSignalSize())
-        throwError("Size of second argument of output function must be equal to input signal size");
+      if(H) {
+        if(H->getArg1Size() != F->getRetSize().first)
+          throwError("Size of first argument of output function must be equal to size of system function");
+        if(H->getArg2Size() != inputSignal->getSignalSize())
+          throwError("Size of second argument of output function must be equal to input signal size");
+      }
     }
     Signal::init(stage, config);
     if(F) F->init(stage, config);

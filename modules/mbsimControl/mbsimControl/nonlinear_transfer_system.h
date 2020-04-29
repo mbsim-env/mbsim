@@ -55,7 +55,7 @@ namespace MBSimControl {
       };
 
       void setInputSignal(Signal * inputSignal_) { inputSignal = inputSignal_; }
-      int getSignalSize() const override { return H->getRetSize().first; }
+      int getSignalSize() const override { return H?H->getRetSize().first:F->getArg1Size(); }
 
     protected:
       Signal* inputSignal{nullptr};

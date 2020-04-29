@@ -791,7 +791,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="outputFunction">
+          <xs:element name="outputFunction" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Ausgabefunktion
             </xs:documentation></xs:annotation>

@@ -3272,23 +3272,25 @@ namespace MBSimGUI {
     F = new ExtWidget("System function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"systemFunction");
     addToTab("General", F);
 
-    H = new ExtWidget("Output function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::fixedVec),1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"outputFunction");
+    H = new ExtWidget("Output function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::fixedVec),1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"outputFunction");
     addToTab("General", H);
 
     connect(F, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-//    connect(H, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(H, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
   }
 
   void NonlinearTransferSystemPropertyDialog::updateWidget() {
     F->blockSignals(true);
-//    H->blockSignals(true);
+    H->blockSignals(true);
     int n = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->getArg1Size();
     int m = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->getArg2Size();
     static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->resize_(n,1);
-    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg1Size(n);
-    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg2Size(m);
+    if(H->isActive()) {
+      static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg1Size(n);
+      static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg2Size(m);
+    }
     F->blockSignals(false);
-//    H->blockSignals(false);
+    H->blockSignals(false);
   }
 
   DOMElement* NonlinearTransferSystemPropertyDialog::initializeUsingXML(DOMElement *parent) {
