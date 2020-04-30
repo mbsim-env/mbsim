@@ -109,7 +109,6 @@
                     <ele>1</ele>
                   </xmlVector>
                 </diffuseColor>
-                <transparency unit="-">0.3</transparency>
                 <lineWidth>4</lineWidth>
               </enableOpenMBV>
             </BevelGear>
@@ -163,12 +162,11 @@
               <enableOpenMBV>
                 <diffuseColor>
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>0.333333</ele>
-                    <ele>0</ele>
+                    <ele>0.111111</ele>
+                    <ele>1</ele>
                     <ele>1</ele>
                   </xmlVector>
                 </diffuseColor>
-                <transparency unit="-">0.3</transparency>
                 <lineWidth>4</lineWidth>
               </enableOpenMBV>
             </BevelGear>
