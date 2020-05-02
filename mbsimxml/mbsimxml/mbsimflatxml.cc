@@ -16,6 +16,7 @@
 #include "mbsim/integrators/integrator.h"
 #include "mbsimflatxml.h"
 #include <boost/algorithm/string.hpp>
+#include <chrono>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -156,7 +157,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
   return moduleLibFile;
 }
 
-int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& solver) {
+int MBSimXML::preInit(list<string> args, DynamicSystemSolver*& dss, Solver*& solver) {
 
   // help
   if(args.size()<1) {
@@ -239,14 +240,14 @@ int MBSimXML::preInit(vector<string> args, DynamicSystemSolver*& dss, Solver*& s
   return 0;
 }
 
-void MBSimXML::initDynamicSystemSolver(const vector<string> &args, DynamicSystemSolver*& dss) {
+void MBSimXML::initDynamicSystemSolver(const list<string> &args, DynamicSystemSolver*& dss) {
   if(find(args.begin(), args.end(), "--donotintegrate")!=args.end())
     dss->setTruncateSimulationFiles(false);
 
   dss->initialize();
 }
 
-void MBSimXML::plotInitialState(Solver*& solver, DynamicSystemSolver*& dss) {
+void MBSimXML::plotInitialState(Solver* solver, DynamicSystemSolver* dss) {
   if(solver->getInitialState().size())
     dss->setState(solver->getInitialState());
   else
@@ -255,7 +256,31 @@ void MBSimXML::plotInitialState(Solver*& solver, DynamicSystemSolver*& dss) {
   dss->plot();
 }
 
-void MBSimXML::postMain(const vector<string> &args, Solver *&solver, DynamicSystemSolver*& dss) {
+void MBSimXML::main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrate, bool stopAfterFirstStep) {
+  if(doNotIntegrate==false) {
+    if(stopAfterFirstStep)
+      MBSimXML::plotInitialState(solver, dss);
+    else {
+      auto start=std::chrono::high_resolution_clock::now();
+      solver->setSystem(dss);
+      DynamicSystemSolver::installSignalHandler();//mfmf deinstall after next line
+      solver->execute();
+      auto end=std::chrono::high_resolution_clock::now();
+      fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
+    }
+    // Remove the following block if --lastframe works in OpenMBV.
+    // If this is removed openmbv should be opened with the --lastframe option.
+    // Currently we use this block if --stopafterfirststep is given to reload the XML/H5 file in OpenMBV again
+    // after the first step has been written since this is not possible by the file locking mechanism in OpenMBVCppInterface.
+    if(stopAfterFirstStep) {
+      // touch the OpenMBV files
+      boost::myfilesystem::last_write_time((dss->getName()+".ombvx").c_str(), boost::posix_time::microsec_clock::universal_time());
+      boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), boost::posix_time::microsec_clock::universal_time());
+    }
+  }
+}
+
+void MBSimXML::postMain(const list<string> &args, Solver *&solver, DynamicSystemSolver*& dss) {
   if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
     dss->writez("statevector.asc", false);
   delete dss;

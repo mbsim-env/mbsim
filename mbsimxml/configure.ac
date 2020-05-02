@@ -18,7 +18,7 @@ AC_TYPE_SIZE_T
 CXXFLAGS="$CXXFLAGS -std=c++17"
 
 PKG_CHECK_MODULES(DEPS, mbsim openmbvcppinterface)
-PKG_CHECK_MODULES(NOLINK_DEPS, mbxmlutils)
+PKG_CHECK_MODULES(MBXMLUTILS, mbxmlutils)
 
 if test "_$host_os" = "_mingw32" ; then
   EXTRA_LIBS=""

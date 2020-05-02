@@ -19,8 +19,8 @@ mbsimflatxml_LDFLAGS = -L.
 mbsimflatxml_LDADD = $(DEPS_LIBS) ./libmbsimflatxml.la -lmbsim -l@BOOST_TIMER_LIB@ -l@BOOST_CHRONO_LIB@
 mbsimflatxml_SOURCES = mbsimflatxml-main.cc
 
-mbsimxml_CPPFLAGS = $(DEPS_CFLAGS)
-mbsimxml_LDADD = ./libmbsimxml.la $(DEPS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
+mbsimxml_CPPFLAGS = $(DEPS_CFLAGS) $(MBXMLUTILS_CFLAGS)
+mbsimxml_LDADD = ./libmbsimflatxml.la ./libmbsimxml.la $(DEPS_LIBS) $(MBXMLUTILS_LIBS) -l@BOOST_FILESYSTEM_LIB@ -l@BOOST_SYSTEM_LIB@
 mbsimxml_SOURCES = mbsimxml-main.cc
 
 schemadir = @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML
