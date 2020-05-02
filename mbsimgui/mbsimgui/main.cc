@@ -82,7 +82,13 @@ int main(int argc, char *argv[]) {
   moduleName[s]=0; // null terminate
 #endif
   QCoreApplication::setLibraryPaths(QStringList(QFileInfo(moduleName).absolutePath())); // do not load plugins from buildin defaults
+
   QApplication app(argc, argv);
+  // regenerate arg: QApplication removes all arguments known by Qt
+  arg.clear();
+  for (int i=1; i<argc; i++)
+    arg.push_back(argv[i]);
+
   app.setOrganizationName("mbsim-env");
   app.setApplicationName("mbsimgui");
   app.setOrganizationDomain("www.mbsim-env.de");
