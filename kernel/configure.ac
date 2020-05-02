@@ -132,7 +132,7 @@ if test "x$enable_python" == "xyes"; then
 
   PYTHON_LIBDIR=$($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST"))' | dos2unix)
   if test "$cross_compiling" == "yes"; then
-    PYTHON_LIBDIR=$(readlink -f $(winepath -u $PYTHON_LIBDIR))
+    PYTHON_LIBDIR=$(readlink -f $(winepath -u $PYTHON_LIBDIR | dos2unix))
   fi
   if test -d $PYTHON_LIBDIR/python$pythonversion/site-packages/numpy/core/include; then
     PYTHON_LIBDIR=$PYTHON_LIBDIR/python$pythonversion
