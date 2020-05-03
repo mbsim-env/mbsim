@@ -738,7 +738,6 @@ def getLabels(directory):
       if "tmp_fmuCheck" in filedir.split('/') or "tmp_mbsimTestFMU" in filedir.split('/'): # skip temp fmu directories
         continue
       for filename in fnmatch.filter(filenames, "*.xml"):
-        if filename[0:4]==".pp.": continue # skip generated .pp.* files
         filecont=codecs.open(pj(filedir, filename), "r", encoding="utf-8").read()
         for m in mbsimModules:
           if re.search('=\\s*"http://[^"]*'+m+'"', filecont, re.I): labels.append(m)
