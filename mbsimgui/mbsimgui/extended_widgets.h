@@ -22,8 +22,9 @@
 
 #include "widget.h"
 #include <QComboBox>
-#include <QCheckBox>
-#include <QVBoxLayout>
+#include <QToolButton>
+#include <QAction>
+#include <QBoxLayout>
 
 class QSpinBox;
 class QStackedWidget;
@@ -35,22 +36,20 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ExtWidget(const QString &name, Widget *widget_, bool checkable=false, bool active=false, MBXMLUtils::FQN xmlName_="");
+      ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="");
       Widget* getWidget() const { return widget; }
       void resize_(int m, int n) override { if(isActive()) widget->resize_(m,n); }
-      bool isActive() const {return ( isCheckable() and not(isChecked()))?false:true; }
-      void setActive(bool flag) { if(isCheckable()) setChecked(flag); }
+      bool isActive() const { return not checkable or checked; }
+      void setActive(bool active) { if(checkable) { checked = active; toolButton->setArrowType(checked?Qt::DownArrow:Qt::RightArrow); widget->setVisible(checked); } }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       void updateWidget() override { if(isActive()) widget->updateWidget(); }
-      bool isCheckable() const { return checkBox; }
-      bool isChecked() const { return checkBox and checkBox->isChecked(); }
-      void setChecked(bool checked) { if(checkBox) checkBox->setChecked(checked); }
 
     protected:
       Widget *widget;
       MBXMLUtils::FQN xmlName;
-      QCheckBox *checkBox{nullptr};
+      QToolButton *toolButton;
+      bool checkable, checked;
 
     signals:
       void clicked(bool);
@@ -96,7 +95,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
-      QVBoxLayout *layout;
+      QBoxLayout *layout;
       std::vector<Widget*> widget;
   };
 

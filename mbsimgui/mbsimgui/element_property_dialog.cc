@@ -2218,10 +2218,10 @@ namespace MBSimGUI {
     connect(forceFunction->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
     connect(momentDirection->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
     connect(momentFunction->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
-    connect(forceDirection,&ExtWidget::clicked,forceFunction,&ExtWidget::setChecked);
-    connect(forceFunction,&ExtWidget::clicked,forceDirection,&ExtWidget::setChecked);
-    connect(momentDirection,&ExtWidget::clicked,momentFunction,&ExtWidget::setChecked);
-    connect(momentFunction,&ExtWidget::clicked,momentDirection,&ExtWidget::setChecked);
+    connect(forceDirection,&ExtWidget::clicked,forceFunction,&ExtWidget::setActive);
+    connect(forceFunction,&ExtWidget::clicked,forceDirection,&ExtWidget::setActive);
+    connect(momentDirection,&ExtWidget::clicked,momentFunction,&ExtWidget::setActive);
+    connect(momentFunction,&ExtWidget::clicked,momentDirection,&ExtWidget::setActive);
   }
 
   void KineticExcitationPropertyDialog::updateWidget() {
@@ -2358,10 +2358,10 @@ namespace MBSimGUI {
     integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     addToTab("Extra",integrate);
 
-    connect(forceDirection,&ExtWidget::clicked,forceLaw,&ExtWidget::setChecked);
-    connect(forceLaw,&ExtWidget::clicked,forceDirection,&ExtWidget::setChecked);
-    connect(momentDirection,&ExtWidget::clicked,momentLaw,&ExtWidget::setChecked);
-    connect(momentLaw,&ExtWidget::clicked,momentDirection,&ExtWidget::setChecked);
+    connect(forceDirection,&ExtWidget::clicked,forceLaw,&ExtWidget::setActive);
+    connect(forceLaw,&ExtWidget::clicked,forceDirection,&ExtWidget::setActive);
+    connect(momentDirection,&ExtWidget::clicked,momentLaw,&ExtWidget::setActive);
+    connect(momentLaw,&ExtWidget::clicked,momentDirection,&ExtWidget::setActive);
   }
 
   DOMElement* JointPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2418,15 +2418,15 @@ namespace MBSimGUI {
   }
 
   void ElasticJointPropertyDialog::updateFunctionCheckState() {
-    function->setChecked(forceDirection->isActive() or momentDirection->isActive());
+    function->setActive(forceDirection->isActive() or momentDirection->isActive());
   }
 
   void ElasticJointPropertyDialog::updateDirectionsCheckState() {
     if(function->isActive())
-      forceDirection->setChecked(true);
+      forceDirection->setActive(true);
     else {
-      forceDirection->setChecked(false);
-      momentDirection->setChecked(false);
+      forceDirection->setActive(false);
+      momentDirection->setActive(false);
     }
   }
 

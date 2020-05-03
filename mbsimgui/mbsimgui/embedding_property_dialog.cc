@@ -48,8 +48,8 @@ namespace MBSimGUI {
       addToTab("Embedding",count);
       counterName = new ExtWidget("Counter name", new TextWidget("n"), true);
       addToTab("Embedding",counterName);
-      connect(count,&ExtWidget::clicked,counterName,&ExtWidget::setChecked);
-      connect(counterName,&ExtWidget::clicked,count,&ExtWidget::setChecked);
+      connect(count,&ExtWidget::clicked,counterName,&ExtWidget::setActive);
+      connect(counterName,&ExtWidget::clicked,count,&ExtWidget::setActive);
     }
     href = new ExtWidget("File", new FileWidget(item->getName()+".mbsim.xml", "XML model files", "xml files (*.xml)", 1, false), true);
     href->setDisabled(true);

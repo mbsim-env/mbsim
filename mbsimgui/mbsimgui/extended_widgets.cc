@@ -34,24 +34,22 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable, bool active, FQN xmlName_) : widget(widget_), xmlName(std::move(xmlName_)) {
+  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_) : widget(widget_), xmlName(std::move(xmlName_)), checkable(checkable_), checked(active) {
 
     auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    checkBox = new QCheckBox;
-    layout->addWidget(checkBox,0,0);
-    checkBox->setEnabled(checkable);
-    if(checkable) {
-      checkBox->setChecked(active);
-      widget->setVisible(active);
-      connect(checkBox,&QCheckBox::toggled,this,&ExtWidget::widgetChanged);
-      connect(checkBox,&QCheckBox::toggled,widget,&Widget::setVisible);
-      connect(checkBox,&QCheckBox::toggled,this,&ExtWidget::clicked);
-    }
-    else
-      checkBox->setChecked(true);
+    toolButton = new QToolButton;
+    toolButton->setArrowType(Qt::DownArrow);
+    toolButton->setEnabled(checkable);
+    toolButton->setAutoRaise(true);
+    QAction *action = new QAction("Action");
+    toolButton->setDefaultAction(action);
+    toolButton->setArrowType(isActive()?Qt::DownArrow:Qt::RightArrow);
+    widget->setVisible(isActive());
+    if(checkable) connect(action,&QAction::triggered,this,[=]{ setActive(not checked); emit widgetChanged(); emit clicked(checked); });
+    layout->addWidget(toolButton,0,0);
     layout->addWidget(new QLabel("<b>"+name+"</b>"),0,1);
     layout->addWidget(widget,1,1);
     layout->setColumnStretch(1,1);
@@ -67,10 +65,7 @@ namespace MBSimGUI {
     }
     else
       active = widget->initializeUsingXML(element);
-    blockSignals(true);
     setActive(active);
-    if(isCheckable()) widget->setVisible(active);
-    blockSignals(false);
     return active?element:nullptr;
   }
 
