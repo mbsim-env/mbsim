@@ -44,7 +44,7 @@ namespace MBSimGUI {
     toolButton->setArrowType(Qt::DownArrow);
     toolButton->setEnabled(checkable);
     toolButton->setAutoRaise(true);
-    QAction *action = new QAction("Action");
+    QAction *action = new QAction;
     toolButton->setDefaultAction(action);
     toolButton->setArrowType(isActive()?Qt::DownArrow:Qt::RightArrow);
     layout->addWidget(toolButton,0,0);
@@ -55,6 +55,8 @@ namespace MBSimGUI {
       widget->setVisible(active);
       connect(action,&QAction::triggered,this,[=]{ setActive(not checked); emit widgetChanged(); emit clicked(checked); });
     }
+    else
+      toolButton->setDisabled(true);
     connect(widget,&Widget::widgetChanged,this,&ExtWidget::widgetChanged);
   }
 
