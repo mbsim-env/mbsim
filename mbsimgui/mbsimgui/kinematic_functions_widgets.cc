@@ -37,7 +37,7 @@ namespace MBSimGUI {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    a = new ExtWidget("Axis of translation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"axisOfTranslation");
+    a = new ExtWidget("Axis of translation",new ChoiceWidget(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"axisOfTranslation");
     layout->addWidget(a);
   }
 
@@ -57,10 +57,10 @@ namespace MBSimGUI {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    A = new ExtWidget("Translation vectors",new ChoiceWidget2(new MatColsVarWidgetFactory(m,1,vector<QStringList>(3,QStringList()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationVectors");
+    A = new ExtWidget("Translation vectors",new ChoiceWidget(new MatColsVarWidgetFactory(m,1,vector<QStringList>(3,QStringList()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationVectors");
     layout->addWidget(A);
 
-    b = new ExtWidget("Offset",new ChoiceWidget2(new VecWidgetFactory(m),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
+    b = new ExtWidget("Offset",new ChoiceWidget(new VecWidgetFactory(m),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
     layout->addWidget(b);
   }
 
@@ -94,7 +94,7 @@ namespace MBSimGUI {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    a = new ExtWidget("Axis of rotation",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"axisOfRotation");
+    a = new ExtWidget("Axis of rotation",new ChoiceWidget(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"axisOfRotation");
     layout->addWidget(a);
   }
 

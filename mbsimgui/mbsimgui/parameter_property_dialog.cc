@@ -65,7 +65,7 @@ namespace MBSimGUI {
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    value = new ExtWidget("Value",new ChoiceWidget2(new StringWidgetFactory(""),QBoxLayout::RightToLeft,5),false,false,"");
+    value = new ExtWidget("Value",new ChoiceWidget(new StringWidgetFactory(""),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
 
@@ -78,12 +78,12 @@ namespace MBSimGUI {
   DOMElement* StringParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
+//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->getValue());
     return nullptr;
   }
 
   ScalarParameterPropertyDialog::ScalarParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    value = new ExtWidget("Value",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
+    value = new ExtWidget("Value",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
 
@@ -96,12 +96,12 @@ namespace MBSimGUI {
   DOMElement* ScalarParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
+//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->getValue());
     return nullptr;
   }
 
   VectorParameterPropertyDialog::VectorParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    value = new ExtWidget("Value",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,"");
+    value = new ExtWidget("Value",new ChoiceWidget(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
 
@@ -114,12 +114,12 @@ namespace MBSimGUI {
   DOMElement* VectorParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
+//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->getValue());
     return nullptr;
   }
 
   MatrixParameterPropertyDialog::MatrixParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    value = new ExtWidget("Value",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,"");
+    value = new ExtWidget("Value",new ChoiceWidget(new MatRowsColsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,"");
     addToTab("General", value);
   }
 
@@ -132,13 +132,13 @@ namespace MBSimGUI {
   DOMElement* MatrixParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(value->getWidget())->getWidget())->getValue());
+//    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->getValue());
     return nullptr;
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
     //value = new ExtWidget("Value",new ExpressionWidget("0"));
-    value = new ExtWidget("Value",new ChoiceWidget2(new StringWidgetFactory("","\".\""),QBoxLayout::RightToLeft,5));
+    value = new ExtWidget("Value",new ChoiceWidget(new StringWidgetFactory("","\".\""),QBoxLayout::RightToLeft,5));
     addToTab("General", value);
   }
 

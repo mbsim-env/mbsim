@@ -33,7 +33,7 @@ namespace MBSimGUI {
   class ExtWidget;
   class ListWidget;
   class ChoiceWidget;
-  class ChoiceWidget2;
+  class ChoiceWidget;
   class Element;
 
   class IdentityFunctionWidget : public FunctionWidget {
@@ -160,7 +160,7 @@ namespace MBSimGUI {
       void updateFunctionFactory();
       QString ext;
       ExtWidget *fo;
-      ChoiceWidget2 *fi;
+      ChoiceWidget *fi;
       WidgetFactory *factoryo1, *factoryo2, *factoryi;
   };
 
@@ -216,7 +216,7 @@ namespace MBSimGUI {
     protected:
       void choiceChanged();
       void updateWidget() override;
-      ChoiceWidget2* choice;
+      ChoiceWidget* choice;
   };
 
   class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
@@ -229,7 +229,7 @@ namespace MBSimGUI {
     protected:
       void choiceChanged();
       void updateWidget() override;
-      ChoiceWidget2* choice;
+      ChoiceWidget* choice;
   };
 
   class PiecewisePolynomFunctionWidget : public FunctionWidget {
@@ -243,7 +243,7 @@ namespace MBSimGUI {
     protected:
       void choiceChanged();
       void updateWidget() override;
-      ChoiceWidget2* choice;
+      ChoiceWidget* choice;
       ExtWidget *method;
   };
 
@@ -257,7 +257,7 @@ namespace MBSimGUI {
     protected:
       void choiceChanged();
       void updateWidget() override;
-      ChoiceWidget2* choice;
+      ChoiceWidget* choice;
       ExtWidget *method;
   };
 
@@ -271,7 +271,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *f, *a0, *amplitudePhaseAngleForm;
-      ChoiceWidget2* choice;
+      ChoiceWidget* choice;
   };
 
   class BidirectionalFunctionWidget : public FunctionWidget {

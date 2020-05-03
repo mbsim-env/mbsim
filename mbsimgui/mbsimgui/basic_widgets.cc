@@ -448,7 +448,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    color = new ExtWidget("HSV",new ChoiceWidget2(new VecWidgetFactory(c),QBoxLayout::RightToLeft,5),false,false,"");
+    color = new ExtWidget("HSV",new ChoiceWidget(new VecWidgetFactory(c),QBoxLayout::RightToLeft,5),false,false,"");
     layout->addWidget(color);
 
     button = new QPushButton(tr("Select"));
@@ -457,7 +457,7 @@ namespace MBSimGUI {
   }
 
   void ColorWidget::setColor() { 
-    QString val = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->getValue();
+    QString val = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(color->getWidget())->getWidget())->getValue();
     vector<QString> vec = strToVec(val);
     QColor col;
     if(vec.size()==3)
@@ -466,7 +466,7 @@ namespace MBSimGUI {
       col = QColorDialog::getColor(Qt::blue,this);
     if(col.isValid()) {
       QString str = "[" + QString::number(col.hueF()) + ";" + QString::number(col.saturationF()) + ";" + QString::number(col.valueF()) + "]";
-      static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(color->getWidget())->getWidget())->setValue(str);
+      static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(color->getWidget())->getWidget())->setValue(str);
     }
   }
 
@@ -551,7 +551,7 @@ namespace MBSimGUI {
     layout->addWidget(nspace,6,1);
 
     layout->addWidget(new QLabel("Status:"),5,0);
-    status = new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5);
+    status = new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5);
     layout->addWidget(status,5,1);
 
     nspace->blockSignals(true);

@@ -292,7 +292,7 @@ namespace MBSimGUI {
       void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
       std::vector<MBXMLUtils::FQN> feature;
       QComboBox *type, *value, *nspace;
-      ChoiceWidget2 *status;
+      ChoiceWidget *status;
       QTreeWidget *tree;
       MBXMLUtils::NamespaceURI uri;
 

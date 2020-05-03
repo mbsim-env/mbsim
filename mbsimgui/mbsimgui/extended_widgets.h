@@ -56,11 +56,11 @@ namespace MBSimGUI {
       void clicked(bool);
   };
 
-  class ChoiceWidget2 : public Widget {
+  class ChoiceWidget : public Widget {
     Q_OBJECT
 
     public:
-      ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode_=4);
+      ChoiceWidget(WidgetFactory *factory_, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode_=4);
       Widget* getWidget() const { return widget; }
       void updateWidget() override { widget->updateWidget(); }
       QString getName() const { return comboBox->currentText(); }

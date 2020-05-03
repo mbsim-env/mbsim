@@ -41,9 +41,9 @@ namespace MBSimGUI {
 
   Widget* ToleranceWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5);
+      return new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5);
     if(i==1)
-      return new ChoiceWidget2(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1e-6"),QBoxLayout::RightToLeft,5);
+      return new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1e-6"),QBoxLayout::RightToLeft,5);
     return nullptr;
   }
 
@@ -63,16 +63,16 @@ namespace MBSimGUI {
     addTab("General");
     addTab("Initial conditions");
 
-    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"startTime");
+    startTime = new ExtWidget("Start time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"startTime");
     addToTab("General", startTime);
 
-    endTime = new ExtWidget("End time",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"endTime");
+    endTime = new ExtWidget("End time",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"endTime");
     addToTab("General", endTime);
 
-    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"plotStepSize");
+    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"plotStepSize");
     addToTab("General", plotStepSize);
 
-    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    initialState = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", initialState);
   }
 
@@ -98,16 +98,16 @@ namespace MBSimGUI {
     addTab("Tolerances");
     addTab("Root-finding");
 
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget2(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForVelocityConstraints");
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForVelocityConstraints");
     addToTab("Tolerances", gdMax);
 
-    dtRoot = new ExtWidget("Root finding accuracy",new ChoiceWidget2(new ScalarWidgetFactory("1e-10",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"rootFindingAccuracy");
+    dtRoot = new ExtWidget("Root finding accuracy",new ChoiceWidget(new ScalarWidgetFactory("1e-10",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"rootFindingAccuracy");
     addToTab("Root-finding", dtRoot);
 
-    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"plotOnRoot");
+    plotOnRoot = new ExtWidget("Plot on root",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"plotOnRoot");
     addToTab("Root-finding", plotOnRoot);
   }
 
@@ -132,19 +132,19 @@ namespace MBSimGUI {
   DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
   }
 
@@ -171,19 +171,19 @@ namespace MBSimGUI {
   DOP853IntegratorPropertyDialog::DOP853IntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
   }
 
@@ -210,19 +210,19 @@ namespace MBSimGUI {
   ODEXIntegratorPropertyDialog::ODEXIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
   }
 
@@ -250,19 +250,19 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
 
     vector<QString> list;
@@ -274,7 +274,7 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIM%"formalism");
     addToTab("General", formalism);
 
-    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
     addToTab("Extra", reducedForm);
   }
 
@@ -306,19 +306,19 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
 
     vector<QString> list;
@@ -330,7 +330,7 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIM%"formalism");
     addToTab("General", formalism);
 
-    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
     addToTab("Extra", reducedForm);
   }
 
@@ -362,19 +362,19 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
 
     vector<QString> list;
@@ -383,10 +383,10 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIM%"formalism");
     addToTab("General", formalism);
 
-    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
     addToTab("Extra", reducedForm);
 
-    autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"autonomousSystem");
+    autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
   }
 
@@ -420,19 +420,19 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
 
     vector<QString> list;
@@ -441,10 +441,10 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,0,true),true,false,MBSIM%"formalism");
     addToTab("General", formalism);
 
-    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
     addToTab("Extra", reducedForm);
 
-    autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"autonomousSystem");
+    autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
   }
 
@@ -478,19 +478,19 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
 
     vector<QString> list;
@@ -499,16 +499,16 @@ namespace MBSimGUI {
     linearAlgebra = new ExtWidget("Linear algebra",new TextChoiceWidget(list,1,true),true,false,MBSIM%"linearAlgebra");
     addToTab("Extra", linearAlgebra);
 
-    generalVMatrix = new ExtWidget("General V matrix",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalVMatrix");
+    generalVMatrix = new ExtWidget("General V matrix",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalVMatrix");
     addToTab("Extra", generalVMatrix);
 
-    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialProjection");
+    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialProjection");
     addToTab("Extra", initialProjection);
 
-    numberOfStepsBetweenProjections = new ExtWidget("Number of steps between projections",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfStepsBetweenProjections");
+    numberOfStepsBetweenProjections = new ExtWidget("Number of steps between projections",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numberOfStepsBetweenProjections");
     addToTab("Extra", numberOfStepsBetweenProjections);
 
-    projectOntoIndex1ConstraintManifold = new ExtWidget("Project onto index 1 constraint manifold",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectOntoIndex1ConstraintManifold");
+    projectOntoIndex1ConstraintManifold = new ExtWidget("Project onto index 1 constraint manifold",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectOntoIndex1ConstraintManifold");
     addToTab("Extra", projectOntoIndex1ConstraintManifold);
   }
 
@@ -553,22 +553,22 @@ namespace MBSimGUI {
     method = new ExtWidget("Method",new TextChoiceWidget(list,1,true),true,false,MBSIM%"method");
     addToTab("General", method);
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimumStepSize");
+    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimumStepSize");
     addToTab("Step size", minimumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
   }
 
@@ -599,22 +599,22 @@ namespace MBSimGUI {
   LSODAIntegratorPropertyDialog::LSODAIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimumStepSize");
+    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimumStepSize");
     addToTab("Step size", minimumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
   }
 
@@ -643,22 +643,22 @@ namespace MBSimGUI {
   LSODIIntegratorPropertyDialog::LSODIIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimumStepSize");
+    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimumStepSize");
     addToTab("Step size", minimumStepSize);
 
-    maxSteps = new ExtWidget("Step limit",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
+    maxSteps = new ExtWidget("Step limit",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepLimit");
     addToTab("Step size", maxSteps);
 
     vector<QString> list;
@@ -696,16 +696,16 @@ namespace MBSimGUI {
   DASPKIntegratorPropertyDialog::DASPKIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
     vector<QString> list;
@@ -741,10 +741,10 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Tolerances");
 
-    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
+    stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
 
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
   }
 
@@ -766,13 +766,13 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Tolerances");
 
-    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
+    stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
 
-    theta = new ExtWidget("Theta",new ChoiceWidget2(new ScalarWidgetFactory("0.5",vector<QStringList>(2,noUnitUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"theta");
+    theta = new ExtWidget("Theta",new ChoiceWidget(new ScalarWidgetFactory("0.5",vector<QStringList>(2,noUnitUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"theta");
     addToTab("General", theta);
 
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
   }
 
@@ -797,16 +797,16 @@ namespace MBSimGUI {
     addTab("Tolerances");
     addTab("Extra");
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
 
-    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimumStepSize");
+    minimumStepSize = new ExtWidget("Minimum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"minimumStepSize");
     addToTab("Step size", minimumStepSize);
 
-    outputInterpolation = new ExtWidget("Output interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"outputInterpolation");
+    outputInterpolation = new ExtWidget("Output interpolation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"outputInterpolation");
     addToTab("Extra", outputInterpolation);
 
     vector<QString> list;
@@ -818,7 +818,7 @@ namespace MBSimGUI {
     gapControl = new ExtWidget("Gap control",new TextChoiceWidget(list,1,true),true,false,MBSIM%"gapControl");
     addToTab("Extra", gapControl);
 
-    maximumOrder = new ExtWidget("Maximum order",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumOrder");
+    maximumOrder = new ExtWidget("Maximum order",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumOrder");
     addToTab("Extra", maximumOrder);
 
     list.clear();
@@ -835,22 +835,22 @@ namespace MBSimGUI {
     errorTest = new ExtWidget("Error test",new TextChoiceWidget(list,0,true),true,false,MBSIM%"errorTest");
     addToTab("Extra", errorTest);
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", relTol);
 
-    stepSizeControl = new ExtWidget("Step size control",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSizeControl");
+    stepSizeControl = new ExtWidget("Step size control",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSizeControl");
     addToTab("Step size", stepSizeControl);
 
-    gapTolerance = new ExtWidget("Gap tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"gapTolerance");
+    gapTolerance = new ExtWidget("Gap tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-6",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"gapTolerance");
     addToTab("Tolerances", gapTolerance);
 
-    maximumGain = new ExtWidget("Maximum gain",new ChoiceWidget2(new ScalarWidgetFactory("2.2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumGain");
+    maximumGain = new ExtWidget("Maximum gain",new ChoiceWidget(new ScalarWidgetFactory("2.2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumGain");
     addToTab("Extra", maximumGain);
 
-    safetyFactor = new ExtWidget("Safety factor",new ChoiceWidget2(new ScalarWidgetFactory("0.7",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"safetyFactor");
+    safetyFactor = new ExtWidget("Safety factor",new ChoiceWidget(new ScalarWidgetFactory("0.7",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"safetyFactor");
     addToTab("Extra", safetyFactor);
   }
 
@@ -895,7 +895,7 @@ namespace MBSimGUI {
   HETS2IntegratorPropertyDialog::HETS2IntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
+    stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
   }
 
@@ -914,7 +914,7 @@ namespace MBSimGUI {
   ExplicitEulerIntegratorPropertyDialog::ExplicitEulerIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
+    stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
   }
 
@@ -934,10 +934,10 @@ namespace MBSimGUI {
     addTab("Step size");
     addTab("Extra");
 
-    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
+    stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
 
-    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
+    reducedForm = new ExtWidget("Reduced form",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
     addToTab("Extra", reducedForm);
   }
 
@@ -971,13 +971,13 @@ namespace MBSimGUI {
     task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIM%"task");
     addToTab("General", task);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativeToleranceScalar");
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativeToleranceScalar");
     addToTab("Tolerances", relTol);
 
-    threshold = new ExtWidget("Threshold",new ChoiceWidget2(new ToleranceWidgetFactory("threshold"),QBoxLayout::RightToLeft,3),true,false);
+    threshold = new ExtWidget("Threshold",new ChoiceWidget(new ToleranceWidgetFactory("threshold"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", threshold);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
   }
 
@@ -1004,16 +1004,16 @@ namespace MBSimGUI {
   BoostOdeintDOSPropertyDialog::BoostOdeintDOSPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6",vector<QStringList>(2),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"absoluteToleranceScalar");
+    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-6",vector<QStringList>(2),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"absoluteToleranceScalar");
     addToTab("Tolerances", absTol);
 
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-6",vector<QStringList>(2),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativeToleranceScalar");
+    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-6",vector<QStringList>(2),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativeToleranceScalar");
     addToTab("Tolerances", relTol);
 
-    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
+    initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
 
-    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
+    maximumStepSize = new ExtWidget("Maximum step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumStepSize");
     addToTab("Step size", maximumStepSize);
   }
 
@@ -1038,7 +1038,7 @@ namespace MBSimGUI {
   QuasiStaticIntegratorPropertyDialog::QuasiStaticIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
     addTab("Step size");
 
-    stepSize = new ExtWidget("Step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
+    stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
   }
 
@@ -1059,16 +1059,16 @@ namespace MBSimGUI {
     addTab("General");
     addTab("Initial conditions");
 
-    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"startTime");
+    startTime = new ExtWidget("Start time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"startTime");
     addToTab("General", startTime);
 
-    endTime = new ExtWidget("End time",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"endTime");
+    endTime = new ExtWidget("End time",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"endTime");
     addToTab("General", endTime);
 
-    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"plotStepSize");
+    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"plotStepSize");
     addToTab("General", plotStepSize);
 
-    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    initialState = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;
@@ -1077,13 +1077,13 @@ namespace MBSimGUI {
     task = new ExtWidget("Task",new TextChoiceWidget(list,0,true),true,false,MBSIM%"task");
     addToTab("General",task);
 
-    initialDeviation = new ExtWidget("Initial deviation",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialDeviation");
+    initialDeviation = new ExtWidget("Initial deviation",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialDeviation");
     addToTab("General",initialDeviation);
 
-    amplitude = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitude");
+    amplitude = new ExtWidget("Amplitude",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitude");
     addToTab("General",amplitude);
 
-    modeAmplitudeTable = new ExtWidget("Mode amplitude table",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"modeAmplitudeTable");
+    modeAmplitudeTable = new ExtWidget("Mode amplitude table",new ChoiceWidget(new MatRowsVarWidgetFactory(1,2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"modeAmplitudeTable");
     addToTab("General",modeAmplitudeTable);
 
     loops = new ExtWidget("Loops",new SpinBoxWidget(5),true,false,MBSIM%"loops");
@@ -1122,19 +1122,19 @@ namespace MBSimGUI {
     addTab("General");
     addTab("Initial conditions");
 
-    startTime = new ExtWidget("Start time",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"startTime");
+    startTime = new ExtWidget("Start time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"startTime");
     addToTab("General", startTime);
 
-    excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"excitationFrequencies");
+    excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"excitationFrequencies");
     addToTab("General", excitationFrequencies);
 
-    systemFrequencies = new ExtWidget("System frequencies",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"systemFrequencies");
+    systemFrequencies = new ExtWidget("System frequencies",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"systemFrequencies");
     addToTab("General", systemFrequencies);
 
-    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget2(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"plotStepSize");
+    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"plotStepSize");
     addToTab("General", plotStepSize);
 
-    initialState = new ExtWidget("Initial state",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    initialState = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", initialState);
 
     vector<QString> list;

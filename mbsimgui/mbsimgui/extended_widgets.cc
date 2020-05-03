@@ -88,7 +88,7 @@ namespace MBSimGUI {
     return ele;
   }
 
-  ChoiceWidget2::ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(nullptr), factory(factory_), mode(mode_) {
+  ChoiceWidget::ChoiceWidget(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(nullptr), factory(factory_), mode(mode_) {
     layout = new QBoxLayout(dir);
     layout->setMargin(0);
     setLayout(layout);
@@ -99,11 +99,11 @@ namespace MBSimGUI {
     layout->addWidget(comboBox);
     comboBox->setCurrentIndex(factory->getDefaultIndex());
     defineWidget(factory->getDefaultIndex());
-    connect(comboBox,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&ChoiceWidget2::defineWidget);
-    connect(comboBox,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&ChoiceWidget2::comboChanged);
+    connect(comboBox,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&ChoiceWidget::defineWidget);
+    connect(comboBox,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&ChoiceWidget::comboChanged);
   }
 
-  void ChoiceWidget2::setWidgetFactory(WidgetFactory *factory_) {
+  void ChoiceWidget::setWidgetFactory(WidgetFactory *factory_) {
     factory = factory_;
     comboBox->blockSignals(true);
     comboBox->clear();
@@ -114,16 +114,16 @@ namespace MBSimGUI {
     comboBox->blockSignals(false);
   }
 
-  void ChoiceWidget2::defineWidget(int index) {
+  void ChoiceWidget::defineWidget(int index) {
     layout->removeWidget(widget);
     delete widget;
     widget = (index!=-1)?factory->createWidget(index):new UnknownWidget;
     layout->addWidget(widget);
     emit widgetChanged();
-    connect(widget,&Widget::widgetChanged,this,&ChoiceWidget2::widgetChanged);
+    connect(widget,&Widget::widgetChanged,this,&ChoiceWidget::widgetChanged);
   }
 
-  DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
+  DOMElement* ChoiceWidget::initializeUsingXML(DOMElement *element) {
     if (mode<=1) {
       DOMElement *e=(mode==0)?element->getFirstElementChild():element;
       if(e) {
@@ -172,7 +172,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DOMElement* ChoiceWidget2::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* ChoiceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     if(mode==3) {
       DOMDocument *doc=parent->getOwnerDocument();
       DOMElement *ele0 = D(doc)->createElement(factory->getXMLName(getIndex()));
@@ -198,7 +198,7 @@ namespace MBSimGUI {
   void ContainerWidget::addWidget(Widget *widget_) {
     layout->addWidget(widget_); 
     widget.push_back(widget_);
-    connect(widget[widget.size()-1],&Widget::widgetChanged,this,&ChoiceWidget2::widgetChanged);
+    connect(widget[widget.size()-1],&Widget::widgetChanged,this,&ChoiceWidget::widgetChanged);
   }
 
   void ContainerWidget::updateWidget() {
@@ -358,7 +358,7 @@ namespace MBSimGUI {
   }
 
   Widget* ChoiceWidgetFactory::createWidget(int i) {
-    return new ChoiceWidget2(factory,QBoxLayout::TopToBottom,mode);
+    return new ChoiceWidget(factory,QBoxLayout::TopToBottom,mode);
   }
 
 }
