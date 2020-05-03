@@ -36,22 +36,25 @@ namespace MBSimGUI {
 
   ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable, bool active, FQN xmlName_) : widget(widget_), xmlName(std::move(xmlName_)) {
 
-    auto *layout = new QVBoxLayout;
+    auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
 
+    checkBox = new QCheckBox;
+    layout->addWidget(checkBox,0,0);
+    checkBox->setEnabled(checkable);
     if(checkable) {
-      checkBox = new QCheckBox(name);
       checkBox->setChecked(active);
       widget->setVisible(active);
       connect(checkBox,&QCheckBox::toggled,this,&ExtWidget::widgetChanged);
       connect(checkBox,&QCheckBox::toggled,widget,&Widget::setVisible);
       connect(checkBox,&QCheckBox::toggled,this,&ExtWidget::clicked);
-      layout->addWidget(checkBox);
     }
     else
-      layout->addWidget(new QLabel(name));
-    layout->addWidget(widget);
+      checkBox->setChecked(true);
+    layout->addWidget(new QLabel("<b>"+name+"</b>"),0,1);
+    layout->addWidget(widget,1,1);
+    layout->setColumnStretch(1,1);
     connect(widget,&Widget::widgetChanged,this,&ExtWidget::widgetChanged);
   }
 
