@@ -58,7 +58,7 @@ namespace MBSimGUI {
     xmlName.push_back(OPENMBV%"InvisibleBody");
   }
 
-  QWidget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
+  Widget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
     if(i==0)
       return new CubeWidget("Cube"+toQStr(count++),OPENMBV%"Cube");
     if(i==1)
@@ -91,7 +91,7 @@ namespace MBSimGUI {
     xmlName.push_back(OPENMBV%"DynamicIndexedFaceSet");
   }
 
-  QWidget* OMBVFlexibleBodyWidgetFactory::createWidget(int i) {
+  Widget* OMBVFlexibleBodyWidgetFactory::createWidget(int i) {
     if(i==0)
       return new DynamicPointSetWidget("DynamicPointSet"+toQStr(count++),OPENMBV%"DynamicPointSet");
     if(i==1)

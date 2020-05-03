@@ -31,7 +31,6 @@ class QTextEdit;
 namespace MBSimGUI {
 
   class OptionsDialog : public QDialog {
-    Q_OBJECT
 
     public:
       OptionsDialog(QWidget *parent);
@@ -54,15 +53,14 @@ namespace MBSimGUI {
       QString getModulePath() const;
       void setModulePath(const QString &path);
     private:
+      void autoSaveChanged(int state);
+      void autoExportChanged(int state);
+      void openFileBrowser();
       QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *autoRefresh;
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;
       QPushButton *button;
       QTextEdit *modulePath;
-    protected slots:
-      void autoSaveChanged(int state);
-      void autoExportChanged(int state);
-      void openFileBrowser();
   };
 
 }

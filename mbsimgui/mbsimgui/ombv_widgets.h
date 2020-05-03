@@ -37,7 +37,7 @@ namespace MBSimGUI {
   class OMBVRigidBodyWidgetFactory : public WidgetFactory {
     public:
       OMBVRigidBodyWidgetFactory();
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -50,7 +50,7 @@ namespace MBSimGUI {
   class OMBVFlexibleBodyWidgetFactory : public WidgetFactory {
     public:
       OMBVFlexibleBodyWidgetFactory();
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }

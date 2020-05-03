@@ -147,7 +147,6 @@ namespace MBSimGUI {
   };
 
   class CompositeFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       CompositeFunctionWidget(WidgetFactory *factoryo1_, WidgetFactory *factoryo2_, WidgetFactory *factoryi_, int defo1=0, int defo2=0, int defi=0);
@@ -157,13 +156,12 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
+      void updateWidget();
+      void updateFunctionFactory();
       QString ext;
       ExtWidget *fo;
       ChoiceWidget2 *fi;
       WidgetFactory *factoryo1, *factoryo2, *factoryi;
-    protected slots:
-      void updateWidget();
-      void updateFunctionFactory();
   };
 
   class LimitedFunctionWidget : public FunctionWidget {
@@ -191,7 +189,6 @@ namespace MBSimGUI {
   };
 
   class SymbolicFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       SymbolicFunctionWidget(const QStringList &argName, const std::vector<int> &argDim, const std::vector<VarType> &argType, int retDim, VarType retType);
@@ -209,7 +206,6 @@ namespace MBSimGUI {
   };
 
   class TabularFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       TabularFunctionWidget(int retDim, VarType retType);
@@ -218,14 +214,12 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ChoiceWidget2* choice;
-    protected slots:
       void choiceChanged();
       void updateWidget() override;
+      ChoiceWidget2* choice;
   };
 
   class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       TwoDimensionalTabularFunctionWidget();
@@ -233,14 +227,12 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ChoiceWidget2* choice;
-    protected slots:
       void choiceChanged();
       void updateWidget() override;
+      ChoiceWidget2* choice;
   };
 
   class PiecewisePolynomFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       PiecewisePolynomFunctionWidget(int retDim, VarType retType);
@@ -249,15 +241,13 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ChoiceWidget2* choice;
-      ExtWidget *method;
-    protected slots:
       void choiceChanged();
       void updateWidget() override;
+      ChoiceWidget2* choice;
+      ExtWidget *method;
   };
 
   class TwoDimensionalPiecewisePolynomFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       TwoDimensionalPiecewisePolynomFunctionWidget();
@@ -265,11 +255,10 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ChoiceWidget2* choice;
-      ExtWidget *method;
-    protected slots:
       void choiceChanged();
       void updateWidget() override;
+      ChoiceWidget2* choice;
+      ExtWidget *method;
   };
 
   class FourierFunctionWidget : public FunctionWidget {
@@ -286,7 +275,6 @@ namespace MBSimGUI {
   };
 
   class BidirectionalFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       BidirectionalFunctionWidget(Element *element, const QString &argName, int argDim, VarType argType, int retDim, VarType retType, QWidget *parent);
@@ -299,7 +287,6 @@ namespace MBSimGUI {
   };
 
   class ContinuedFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr);
@@ -334,7 +321,6 @@ namespace MBSimGUI {
   };
 
   class LinearElasticFunctionWidget : public FunctionWidget {
-    Q_OBJECT
 
     public:
       LinearElasticFunctionWidget(bool varSize=false);
@@ -343,9 +329,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     private:
-      ExtWidget *K, *D;
-    private slots:
       void updateWidget();
+      ExtWidget *K, *D;
   };
 
   class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {

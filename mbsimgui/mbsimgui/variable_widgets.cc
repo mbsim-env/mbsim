@@ -422,7 +422,7 @@ namespace MBSimGUI {
     layout->addWidget(new QLabel("Size:"),0,0);
     layout->addWidget(sizeCombo,0,1);
     sizeCombo->setValue(size);
-    connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(sizeCombo, QOverload<int>::of(&CustomSpinBox::valueChanged), this, &VecSizeVarWidget::currentIndexChanged);
     if(table) widget = new VecTableWidget(size);
     else widget = new VecWidget(size, transpose, defaultValue);
     layout->addWidget(widget,1,0,1,3);
@@ -656,7 +656,7 @@ namespace MBSimGUI {
     colsCombo = new CustomSpinBox;
     colsCombo->setRange(minCols,maxCols);
     colsCombo->setValue(cols);
-    connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(colsCombo, QOverload<int>::of(&CustomSpinBox::valueChanged), this, &MatColsVarWidget::currentIndexChanged);
     layout->addWidget(colsCombo,0,3);
     if(table) widget = new MatTableWidget(rows,cols);
     else widget = new MatWidget(rows,cols);
@@ -706,7 +706,7 @@ namespace MBSimGUI {
     rowsCombo = new CustomSpinBox;
     rowsCombo->setRange(minRows,maxRows);
     rowsCombo->setValue(rows);
-    connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(rowsCombo, QOverload<int>::of(&CustomSpinBox::valueChanged), this, &MatRowsVarWidget::currentIndexChanged);
     layout->addWidget(rowsCombo,0,1);
     if(table) widget = new MatTableWidget(rows,cols);
     else widget = new MatWidget(rows,cols);
@@ -760,8 +760,8 @@ namespace MBSimGUI {
     colsCombo = new CustomSpinBox;
     colsCombo->setRange(minCols,maxCols);
     colsCombo->setValue(cols);
-    connect(rowsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentRowIndexChanged(int)));
-    connect(colsCombo, SIGNAL(valueChanged(int)), this, SLOT(currentColIndexChanged(int)));
+    connect(rowsCombo, QOverload<int>::of(&CustomSpinBox::valueChanged), this, &MatRowsColsVarWidget::currentRowIndexChanged);
+    connect(colsCombo, QOverload<int>::of(&CustomSpinBox::valueChanged), this, &MatRowsColsVarWidget::currentColIndexChanged);
     hbox->addWidget(rowsCombo);
     hbox->addWidget(new QLabel("x"));
     hbox->addWidget(colsCombo);
@@ -824,7 +824,7 @@ namespace MBSimGUI {
     sizeCombo = new CustomSpinBox;
     sizeCombo->setRange(minSize,maxSize);
     sizeCombo->setValue(size);
-    connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(sizeCombo, QOverload<int>::of(&CustomSpinBox::valueChanged), this, &SqrMatSizeVarWidget::currentIndexChanged);
     hbox->addWidget(sizeCombo);
     hbox->addStretch(2);
     widget = new MatWidget(size,size);
@@ -899,7 +899,7 @@ namespace MBSimGUI {
       for(unsigned int i=0; i<box.size(); i++)
         for(unsigned int j=0; j<box.size(); j++)
           if(i!=j)
-            connect(box[i][j],SIGNAL(textEdited(const QString&)),box[j][i],SLOT(setText(const QString&)));
+            connect(box[i][j],&QLineEdit::textEdited,box[j][i],&QLineEdit::setText);
       for(int i=0; i<min((int)buf.size(),rows); i++) {
         for(int j=0; j<min((int)buf[i].size(),rows); j++)
           box[i][j]->setText(buf[i][j]);
@@ -959,7 +959,7 @@ namespace MBSimGUI {
     sizeCombo = new CustomSpinBox;
     sizeCombo->setRange(minSize,maxSize);
     sizeCombo->setValue(size);
-    connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(sizeCombo, QOverload<int>::of(&CustomSpinBox::valueChanged), this, &SymMatSizeVarWidget::currentIndexChanged);
     hbox->addWidget(sizeCombo);
     hbox->addStretch(2);
     widget = new SymMatWidget(size);
@@ -1336,11 +1336,11 @@ namespace MBSimGUI {
 
     if(eval) {
       QPushButton *evalButton = new QPushButton("Eval");
-      connect(evalButton,SIGNAL(clicked(bool)),this,SLOT(openEvalDialog()));
+      connect(evalButton,&QPushButton::clicked,this,&PhysicalVariableWidget::openEvalDialog);
       layout->addWidget(evalButton);
     }
 
-    connect(widget_,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+    connect(widget_,&VariableWidget::widgetChanged,this,&PhysicalVariableWidget::widgetChanged);
   }
 
   void PhysicalVariableWidget::openEvalDialog() {
@@ -1384,11 +1384,11 @@ namespace MBSimGUI {
     layout->addWidget(relativeFilePath);
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
+    connect(button,&QPushButton::clicked,this,&FromFileWidget::selectFile);
     path = new QCheckBox;
     layout->addWidget(new QLabel("Absolute"));
     layout->addWidget(path);
-    connect(path,SIGNAL(stateChanged(int)),this,SLOT(changePath(int)));
+    connect(path,&QCheckBox::stateChanged,this,&FromFileWidget::changePath);
   }
 
   void FromFileWidget::setFile(const QString &str) {
@@ -1446,7 +1446,7 @@ namespace MBSimGUI {
     name[1] = "Editor";
   }
 
-  QWidget* StringWidgetFactory::createWidget(int i) {
+  Widget* StringWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new StringWidget(value,placeholderText), QStringList(), 0);
     if(i==1)
@@ -1459,7 +1459,7 @@ namespace MBSimGUI {
     name[1] = "Editor";
   }
 
-  QWidget* BoolWidgetFactory::createWidget(int i) {
+  Widget* BoolWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new BoolWidget(value), QStringList(), 0);
     if(i==1)
@@ -1472,7 +1472,7 @@ namespace MBSimGUI {
     name[1] = "Editor";
   }
 
-  QWidget* ScalarWidgetFactory::createWidget(int i) {
+  Widget* ScalarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
     if(i==1)
@@ -1492,7 +1492,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* VecWidgetFactory::createWidget(int i) {
+  Widget* VecWidgetFactory::createWidget(int i) {
     if(i==0)
       return table?new PhysicalVariableWidget(new VecTableWidget(x), unit[0], defaultUnit[0]):new PhysicalVariableWidget(new VecWidget(x,transpose), unit[0], defaultUnit[0], eval);
     if(i==1)
@@ -1508,7 +1508,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* VecSizeVarWidgetFactory::createWidget(int i) {
+  Widget* VecSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new VecSizeVarWidget(m,mMin,mMax,singleStep,transpose,table,defaultValue), unit[0], defaultUnit[0], eval);
     if(i==1)
@@ -1530,7 +1530,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* MatWidgetFactory::createWidget(int i) {
+  Widget* MatWidgetFactory::createWidget(int i) {
     if(i==0)
       return table?new PhysicalVariableWidget(new MatTableWidget(A), unit[0], defaultUnit[0]):new PhysicalVariableWidget(new MatWidget(A), unit[0], defaultUnit[0]);
     if(i==1)
@@ -1546,7 +1546,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* MatRowsVarWidgetFactory::createWidget(int i) {
+  Widget* MatRowsVarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new MatRowsVarWidget(m,n,1,100,table), unit[0], defaultUnit[0]);
     if(i==1)
@@ -1562,7 +1562,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* MatColsVarWidgetFactory::createWidget(int i) {
+  Widget* MatColsVarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new MatColsVarWidget(m,n,1,100,table), unit[0], defaultUnit[0]);
     if(i==1)
@@ -1578,7 +1578,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* MatRowsColsVarWidgetFactory::createWidget(int i) {
+  Widget* MatRowsColsVarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new MatRowsColsVarWidget(2,2,1,100,1,100,table), unit[0], defaultUnit[0]);
     if(i==1)
@@ -1594,7 +1594,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* SqrMatSizeVarWidgetFactory::createWidget(int i) {
+  Widget* SqrMatSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new SqrMatSizeVarWidget(m,1,100), unit[0], defaultUnit[0]);
     if(i==1)
@@ -1610,7 +1610,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* SymMatWidgetFactory::createWidget(int i) {
+  Widget* SymMatWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new SymMatWidget(A), unit[0], defaultUnit[0]);
     if(i==1)
@@ -1626,7 +1626,7 @@ namespace MBSimGUI {
     name[2] = "Editor";
   }
 
-  QWidget* SymMatSizeVarWidgetFactory::createWidget(int i) {
+  Widget* SymMatSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new SymMatSizeVarWidget(2,1,100), unit[0], defaultUnit[0]);
     if(i==1)
@@ -1648,7 +1648,7 @@ namespace MBSimGUI {
   RotMatWidgetFactory::RotMatWidgetFactory(vector<QString> name_, vector<QStringList> unit_, vector<int> defaultUnit_) : name(std::move(name_)), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
   }
 
-  QWidget* RotMatWidgetFactory::createWidget(int i) {
+  Widget* RotMatWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PhysicalVariableWidget(new AboutXWidget,unit[0],defaultUnit[0]);
     if(i==1)

@@ -41,7 +41,7 @@ namespace MBSimGUI {
 
     auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Close);
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &FileEditor::reject);
     layout->addWidget(buttonBox);
 
     QFile file(filename);

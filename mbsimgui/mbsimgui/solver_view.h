@@ -29,16 +29,13 @@ namespace MBSimGUI {
   class SolverPropertyDialog;
 
   class SolverViewContextMenu : public QMenu {
-    Q_OBJECT
-
     public:
       SolverViewContextMenu(const std::vector<QString> &type, QWidget *parent=nullptr);
-    protected slots:
+    private:
       void selectSolver(QAction *action);
   };
 
   class SolverView : public QLineEdit {
-    Q_OBJECT
     public:
       SolverView();
       ~SolverView() override = default;
@@ -48,25 +45,23 @@ namespace MBSimGUI {
       void updateText() { setText(type[i]); }
       QMenu* createContextMenu() { return new SolverViewContextMenu(type); }
       bool editorIsOpen() { return editor; }
+      void openEditor();
     private:
-      std::vector<QString> type;
-      int i{0};
-      SolverPropertyDialog *editor{nullptr};
-    protected slots:
       void openContextMenu();
       void dialogFinished(int result);
       void apply();
-    public slots:
-      void openEditor();
+      std::vector<QString> type;
+      int i{0};
+      SolverPropertyDialog *editor{nullptr};
   };
 
   class SolverMouseEvent : public QObject {
     public:
       SolverMouseEvent(SolverView* view_) : QObject(view_), view(view_) { }
-    protected:
+    private:
+      bool eventFilter(QObject *obj, QEvent *event) override;
       SolverView *view;
       SolverPropertyDialog *editor;
-      bool eventFilter(QObject *obj, QEvent *event) override;
   };
 
 }

@@ -22,7 +22,7 @@
 
 #include "widget.h"
 #include <QComboBox>
-#include <QGroupBox>
+#include <QCheckBox>
 #include <QVBoxLayout>
 
 class QSpinBox;
@@ -31,26 +31,29 @@ class QListWidget;
 
 namespace MBSimGUI {
 
-  class ExtWidget : public QGroupBox, public WidgetInterface {
+  class ExtWidget : public Widget {
     Q_OBJECT
 
     public:
-      ExtWidget(const QString &name, QWidget *widget_, bool deactivatable=false, bool active=false, MBXMLUtils::FQN xmlName_="");
-      QWidget* getWidget() const {return widget;}
-      void resize_(int m, int n) override {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->resize_(m,n);}
-      bool isActive() const {return (isCheckable() && !isChecked())?false:true;}
-      void setActive(bool flag) {if(isCheckable()) setChecked(flag);}
-      void setWidgetVisible(bool flag) {if(isCheckable()) widget->setVisible(flag);}
+      ExtWidget(const QString &name, Widget *widget_, bool checkable=false, bool active=false, MBXMLUtils::FQN xmlName_="");
+      Widget* getWidget() const { return widget; }
+      void resize_(int m, int n) override { if(isActive()) widget->resize_(m,n); }
+      bool isActive() const {return ( isCheckable() and not(isChecked()))?false:true; }
+      void setActive(bool flag) { if(isCheckable()) setChecked(flag); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      void updateWidget() override { if(isActive()) widget->updateWidget(); }
+      bool isCheckable() const { return checkBox; }
+      bool isChecked() const { return checkBox and checkBox->isChecked(); }
+      void setChecked(bool checked) { if(checkBox) checkBox->setChecked(checked); }
 
     protected:
-      QWidget *widget;
+      Widget *widget;
       MBXMLUtils::FQN xmlName;
-    public slots:
-      void updateWidget() override {if(isActive()) dynamic_cast<WidgetInterface*>(widget)->updateWidget();}
+      QCheckBox *checkBox{nullptr};
+
     signals:
-      void widgetChanged();
+      void clicked(bool);
   };
 
   class ChoiceWidget2 : public Widget {
@@ -58,28 +61,26 @@ namespace MBSimGUI {
 
     public:
       ChoiceWidget2(WidgetFactory *factory_, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode_=4);
-      QWidget* getWidget() const { return widget; }
-      void updateWidget() override { dynamic_cast<WidgetInterface*>(getWidget())->updateWidget(); }
+      Widget* getWidget() const { return widget; }
+      void updateWidget() override { widget->updateWidget(); }
       QString getName() const { return comboBox->currentText(); }
       int getIndex() const { return comboBox->currentIndex(); }
       void setIndex(int i) { return comboBox->setCurrentIndex(i); }
-      void resize_(int m, int n) override { dynamic_cast<WidgetInterface*>(getWidget())->resize_(m,n); }
+      void resize_(int m, int n) override { widget->resize_(m,n); }
       void setWidgetFactory(WidgetFactory *factory_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-
-    public slots:
       void defineWidget(int);
-
-    signals:
-      void comboChanged(int);
 
     protected:
       QBoxLayout *layout;
       QComboBox *comboBox;
-      QWidget *widget;
+      Widget *widget;
       WidgetFactory *factory;
       int mode;
+
+    signals:
+      void comboChanged(int);
   };
 
   class ContainerWidget : public Widget {
@@ -88,19 +89,18 @@ namespace MBSimGUI {
       ContainerWidget();
 
       void resize_(int m, int n) override;
-      void addWidget(QWidget *widget_);
-      QWidget* getWidget(int i) const {return widget[i];}
+      void addWidget(Widget *widget_);
+      Widget* getWidget(int i) const {return widget[i];}
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
       QVBoxLayout *layout;
-      std::vector<QWidget*> widget;
+      std::vector<Widget*> widget;
   };
 
   class ListWidget : public Widget {
-    Q_OBJECT
 
     public:
       ListWidget(WidgetFactory *factory_, const QString &name_="Element", int m=0, int mode_=0, bool fixedSize=false, int minSize=0, int maxSize=100);
@@ -108,23 +108,21 @@ namespace MBSimGUI {
       void resize_(int m, int n) override;
       int getSize() const;
       void setSize(int m);
-      QWidget* getWidget(int i) const;
+      Widget* getWidget(int i) const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
+      void addElements(int n=1, bool emitSignals=true);
+      void removeElements(int n=1);
+      void changeCurrent(int idx);
+      void currentIndexChanged(int idx);
       QStackedWidget *stackedWidget;
       QSpinBox* spinBox;
       QListWidget *list;
       WidgetFactory *factory;
       QString name;
       int mode;
-      void addElements(int n=1, bool emitSignals=true);
-
-    protected slots:
-      void removeElements(int n=1);
-      void changeCurrent(int idx);
-      void currentIndexChanged(int idx);
   };
 
   class ChoiceWidgetFactory : public WidgetFactory {

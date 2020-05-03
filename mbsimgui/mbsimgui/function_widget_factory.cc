@@ -77,7 +77,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* Function1ArgWidgetFactory::createWidget(int i) {
+  Widget* Function1ArgWidgetFactory::createWidget(int i) {
     if(i==0)
       return new AbsoluteValueFunctionWidget;
     if(i==1)
@@ -146,7 +146,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* Function2ArgWidgetFactory::createWidget(int i) {
+  Widget* Function2ArgWidgetFactory::createWidget(int i) {
     if(i==0)
       return new SymbolicFunctionWidget(argName,argDim,argType,retDim,retType);
     if(i==1)
@@ -189,7 +189,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* StateDependentTranslationWidgetFactory::createWidget(int i) {
+  Widget* StateDependentTranslationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -248,7 +248,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* TimeDependentTranslationWidgetFactory::createWidget(int i) {
+  Widget* TimeDependentTranslationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -308,7 +308,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* StateDependentRotationWidgetFactory::createWidget(int i) {
+  Widget* StateDependentRotationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -350,7 +350,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* TimeDependentRotationWidgetFactory::createWidget(int i) {
+  Widget* TimeDependentRotationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -374,7 +374,7 @@ namespace MBSimGUI {
     xmlName.push_back(uri%"timeDependentTranslation");
   }
 
-  QWidget* TranslationWidgetFactory::createWidget(int i) {
+  Widget* TranslationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -397,7 +397,7 @@ namespace MBSimGUI {
     xmlName.push_back(uri%"timeDependentRotation");
   }
 
-  QWidget* RotationWidgetFactory::createWidget(int i) {
+  Widget* RotationWidgetFactory::createWidget(int i) {
     if(i==0)
       return new ChoiceWidget2(new StateDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     if(i==1)
@@ -412,7 +412,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"innerFunctions");
   }
 
-  QWidget* CompositeFunctionWidgetFactory::createWidget(int i) {
+  Widget* CompositeFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       return new ExtWidget("Inner function",new ChoiceWidget2(factory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"innerFunction");
     }
@@ -428,7 +428,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"xy");
   }
 
-  QWidget* TabularFunctionWidgetFactory::createWidget(int i) {
+  Widget* TabularFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *widgetContainer = new ContainerWidget;
       widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
@@ -450,7 +450,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"xyz");
   }
 
-  QWidget* TwoDimensionalTabularFunctionWidgetFactory::createWidget(int i) {
+  Widget* TwoDimensionalTabularFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *widgetContainer = new ContainerWidget;
       widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
@@ -470,7 +470,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"ab");
   }
 
-  QWidget* FourierFunctionWidgetFactory::createWidget(int i) {
+  Widget* FourierFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *widgetContainer = new ContainerWidget;
       widgetContainer->addWidget(new ExtWidget("a",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a"));
@@ -491,7 +491,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"timeDependentConstraintFunction");
   }
 
-  QWidget* ConstraintWidgetFactory::createWidget(int i) {
+  Widget* ConstraintWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -526,7 +526,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* SpringDamperWidgetFactory::createWidget(int i) {
+  Widget* SpringDamperWidgetFactory::createWidget(int i) {
     if(i==0)
       return new LinearElasticFunctionWidget(varSize);
     if(i==1)
@@ -559,7 +559,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
+  Widget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -604,7 +604,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
+  Widget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -638,7 +638,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* GravityFunctionWidgetFactory::createWidget(int i) {
+  Widget* GravityFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
       return new ConstantFunctionWidget;
     if(i==1)

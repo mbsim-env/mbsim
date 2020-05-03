@@ -31,28 +31,22 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class WidgetInterface {
+  class Widget : public QWidget {
+    Q_OBJECT
     public:
+      Widget(QWidget *parent=nullptr) : QWidget(parent) { }
       virtual void updateWidget() { }
       virtual void resize_(int m, int n) { }
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return nullptr; }
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) { return nullptr; }
-  };
-
-  class Widget : public QWidget, public WidgetInterface {
-    Q_OBJECT
-    public:
-      Widget(QWidget *parent=nullptr) : QWidget(parent) { }
     signals:
       void widgetChanged();
-    public slots:
-      void updateWidget() override { }
   };
 
   class WidgetFactory {
     public:
       virtual ~WidgetFactory() = default;
-      virtual QWidget* createWidget(int i=0) = 0;
+      virtual Widget* createWidget(int i=0) = 0;
       virtual QString getName(int i=0) const { return ""; }
       virtual int getSize() const { return 0; }
       virtual int getDefaultIndex() const { return 0; }

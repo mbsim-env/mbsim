@@ -30,30 +30,30 @@ namespace MBSimGUI {
 
   ParameterContextMenu::ParameterContextMenu(Parameter *parameter_, QWidget *parent) : QMenu(parent), parameter(parameter_) {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    connect(action,SIGNAL(triggered()),mw->getEmbeddingView(),SLOT(openEditor()));
+    connect(action,&QAction::triggered,this,[=](){ mw->getEmbeddingView()->openEditor(); });
     QMenu::addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(viewParameterSource()));
+    connect(action,&QAction::triggered,mw,&MainWindow::viewParameterSource);
     QMenu::addAction(action);
     addSeparator();
     action=new QAction(QIcon::fromTheme("edit-copy"), "Copy", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(copyParameter()));
+    connect(action,&QAction::triggered,this,[=](){ mw->copyParameter(); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("edit-cut"), "Cut", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(cutParameter()));
+      connect(action,&QAction::triggered,this,[=](){ mw->copyParameter(true); });
     addAction(action);
     addSeparator();
     action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(moveUpParameter()));
+    connect(action,&QAction::triggered,this,[=](){ mw->moveParameter(true); });
     addAction(action);
     if(action->isEnabled()) action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)>0);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(moveDownParameter()));
+    connect(action,&QAction::triggered,this,[=](){ mw->moveParameter(false); });
     addAction(action);
     if(action->isEnabled()) action->setEnabled(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1);
     addSeparator();
     action=new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(removeParameter()));
+    connect(action,&QAction::triggered,mw,QOverload<>::of(&MainWindow::removeParameter));
     addAction(action);
   }
 

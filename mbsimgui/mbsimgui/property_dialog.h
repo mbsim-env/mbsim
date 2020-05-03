@@ -54,17 +54,16 @@ namespace MBSimGUI {
       virtual void toWidget() { }
       virtual void fromWidget() { }
     protected:
-      std::map<QString,QVBoxLayout*> layout;
-      QTabWidget *tabWidget;
-      QDialogButtonBox *buttonBox;
-      QPushButton *buttonResize;
       virtual void showXMLHelp() { }
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       void closeEvent(QCloseEvent *event) override;
-    public slots:
       void clicked(QAbstractButton *button);
       virtual void updateWidget() { }
+      std::map<QString,QVBoxLayout*> layout;
+      QTabWidget *tabWidget;
+      QDialogButtonBox *buttonBox;
+      QPushButton *buttonResize;
     signals:
       void apply();
   };

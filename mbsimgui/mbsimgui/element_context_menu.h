@@ -83,215 +83,53 @@ namespace MBSimGUI {
   };
 
   class FramesContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
     public:
       FramesContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void paste();
-      void load();
-      void embed();
   };
 
   class FixedRelativeFramesContextMenu : public FramesContextMenu {
-    Q_OBJECT
-
     public:
       FixedRelativeFramesContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void addFixedRelativeFrame();
-      void addUnknownFrame();
   };
 
   class NodeFramesContextMenu : public FramesContextMenu {
-    Q_OBJECT
-
     public:
       NodeFramesContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void addNodeFrame();
-      void addInterfaceNodeFrame();
-      void addFfrInterfaceNodeFrame();
-      void addUnknownFrame();
   };
 
   class ContoursContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
     public:
       ContoursContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void addPoint();
-      void addLine();
-      void addPlane();
-      void addSphere();
-      void addCircle();
-      void addCuboid();
-      void addLineSegment();
-      void addPlanarContour();
-      void addPlanarNurbsContour();
-      void addSpatialContour();
-      void addSpatialNurbsContour();
-      void addDisk();
-      void addCylindricalGear();
-      void addRack();
-      void addBevelGear();
-      void addPlanarGear();
-      void addFlexiblePlanarNurbsContour();
-      void addFlexiblePlanarFfrNurbsContour();
-      void addFlexibleSpatialNurbsContour();
-      void addFlexibleSpatialFfrNurbsContour();
-      void addFclBox();
-      void addFclSphere();
-      void addFclPlane();
-      void addFclMesh();
-      void addUnknownContour();
-      void paste();
-      void load();
-      void embed();
   };
 
   class GroupsContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
     public:
       GroupsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void add();
-      void paste();
-      void load();
-      void embed();
   };
 
   class ObjectsContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
     public:
       ObjectsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void paste();
-      void load();
-      void embed();
-      void addRigidBody();
-      void addFlexibleFfrBody();
-      void addCalculixBody();
-      void addUnknownObject();
   };
 
   class LinksContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
     public:
       LinksContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void addSpringDamper();
-      void addDirectionalSpringDamper();
-      void addIsotropicRotationalSpringDamper();
-      void addGeneralizedSpringDamper();
-      void addKineticExcitation();
-      void addJoint();
-      void addElasticJoint();
-      void addContact();
-      void addDiskContact();
-      void addGeneralizedFriction();
-      void addGeneralizedGear();
-      void addGeneralizedElasticConnection();
-      void addGeneralizedElasticStructure();
-      void addUniversalGravitation();
-      void addWeight();
-      void addBuoyancy();
-      void addDrag();
-      void addAerodynamics();
-      void addUnknownLink();
-      void paste();
-      void load();
-      void embed();
   };
 
   class ConstraintsContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
     public:
       ConstraintsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void addGeneralizedGearConstraint();
-      void addGeneralizedPositionConstraint();
-      void addGeneralizedVelocityConstraint();
-      void addGeneralizedAccelerationConstraint();
-      void addJointConstraint();
-      void addGeneralizedConnectionConstraint();
-      void addInverseKinematicsConstraint();
-      void addUnknownConstraint();
-      void paste();
-      void load();
-      void embed();
   };
 
-
   class ObserversContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
     public:
       ObserversContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void addMechanicalLinkObserver();
-      void addMechanicalConstraintObserver();
-      void addContactObserver();
-      void addFrameObserver();
-      void addRigidBodyObserver();
-      void addInverseKinematicsConstraintObserver();
-      void addSignalObserver();
-      void addUnknownObserver();
-      void paste();
-      void load();
-      void embed();
   };
 
   class SignalsContextMenu : public BasicElementMenu {
-    Q_OBJECT
-
     public:
       SignalsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-
-    protected slots:
-      void addMultiplexer();
-      void addDemultiplexer();
-      void addLinearTransferSystem();
-      void addNonlinearTransferSystem();
-      void addSignalOperation();
-      void addExternSignalSource();
-      void addExternSignalSink();
-      void addGeneralizedPositionSensor();
-      void addGeneralizedVelocitySensor();
-      void addGeneralizedAccelerationSensor();
-      void addPositionSensor();
-      void addOrientationSensor();
-      void addVelocitySensor();
-      void addAngularVelocitySensor();
-      void addAccelerationSensor();
-      void addAngularAccelerationSensor();
-      void addFunctionSensor();
-      void addGeneralizedRelativePositionSensor();
-      void addGeneralizedRelativeVelocitySensor();
-      void addGeneralizedForceSensor();
-      void addMechanicalLinkForceSensor();
-      void addMechanicalLinkMomentSensor();
-      void addMechanicalConstraintForceSensor();
-      void addMechanicalConstraintMomentSensor();
-      void addGeneralizedRelativeContactPositionSensor();
-      void addGeneralizedRelativeContactVelocitySensor();
-      void addGeneralizedContactForceSensor();
-      void addRigidBodyJointForceSensor();
-      void addRigidBodyJointMomentSensor();
   };
 
 }

@@ -29,7 +29,6 @@ namespace MBSimGUI {
   class CustomSpinBox;
 
   class OneDimVecArrayWidget : public Widget {
-    Q_OBJECT
     protected:
       std::vector<ExtWidget*> ele;
       CustomSpinBox* sizeCombo;
@@ -41,8 +40,6 @@ namespace MBSimGUI {
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-    public slots:
-      void currentIndexChanged(int);
   };
 
   class OneDimMatArrayWidget : public Widget {
@@ -72,7 +69,7 @@ namespace MBSimGUI {
   class OneDimVecArrayWidgetFactory : public WidgetFactory {
     public:
       OneDimVecArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, bool var_=false);
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
@@ -86,7 +83,7 @@ namespace MBSimGUI {
   class OneDimMatArrayWidgetFactory : public WidgetFactory {
     public:
       OneDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0);
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
@@ -99,7 +96,7 @@ namespace MBSimGUI {
   class TwoDimMatArrayWidgetFactory : public WidgetFactory {
     public:
       TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0);
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }

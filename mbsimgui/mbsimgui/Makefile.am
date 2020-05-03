@@ -70,24 +70,11 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
-QT_BUILT_SOURCES = mainwindow.moc.cc \
-		   options.moc.cc \
-		   widget.moc.cc \
+QT_BUILT_SOURCES = widget.moc.cc \
 		   basic_widgets.moc.cc \
 		   variable_widgets.moc.cc \
-		   function_widgets.moc.cc \
 		   extended_widgets.moc.cc \
-		   special_widgets.moc.cc \
 		   property_dialog.moc.cc  \
-		   element_property_dialog.moc.cc \
-		   element_context_menu.moc.cc \
-		   embedding_context_menu.moc.cc \
-		   element_view.moc.cc \
-		   embedding_view.moc.cc \
-		   solver_view.moc.cc \
-		   project_view.moc.cc \
-		   echo_view.moc.cc \
-		   dialogs.moc.cc  \
 		   data_plot.moc.cc
 
 BUILT_SOURCES = $(QT_BUILT_SOURCES)

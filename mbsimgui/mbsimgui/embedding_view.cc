@@ -46,8 +46,8 @@ namespace MBSimGUI {
         else
           editor->setCancel(false);
         editor->show();
-        connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-        connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+        connect(editor,&ParameterPropertyDialog::apply,this,&EmbeddingView::apply);
+        connect(editor,&ParameterPropertyDialog::finished,this,&EmbeddingView::dialogFinished);
         return;
       }
       else {
@@ -58,8 +58,8 @@ namespace MBSimGUI {
           editor->setAttribute(Qt::WA_DeleteOnClose);
           editor->toWidget();
           editor->show();
-          connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-          connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+          connect(editor,&EmbeddingPropertyDialog::apply,this,&EmbeddingView::apply);
+          connect(editor,&EmbeddingPropertyDialog::finished,this,&EmbeddingView::dialogFinished);
         }
       }
     }

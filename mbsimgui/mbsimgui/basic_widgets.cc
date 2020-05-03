@@ -50,7 +50,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
-    connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
+    connect(this,QOverload<const QString&>::of(&QComboBox::highlighted),this,&LocalFrameComboBox::highlightObject);
   }
 
   void LocalFrameComboBox::showPopup() {
@@ -75,7 +75,7 @@ namespace MBSimGUI {
   }
 
   ParentFrameComboBox::ParentFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
-    connect(this,SIGNAL(highlighted(const QString&)),this,SLOT(highlightObject(const QString&)));
+    connect(this,QOverload<const QString&>::of(&QComboBox::highlighted),this,&ParentFrameComboBox::highlightObject);
   }
 
   void ParentFrameComboBox::showPopup() {
@@ -108,7 +108,7 @@ namespace MBSimGUI {
     frame->setEditable(true);
     layout->addWidget(frame);
     selectedFrame = element->getFrame(0);
-    connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
+    connect(frame,QOverload<const QString&>::of(&QComboBox::currentIndexChanged),this,&LocalFrameOfReferenceWidget::setFrame);
     updateWidget();
   }
 
@@ -160,7 +160,7 @@ namespace MBSimGUI {
     frame->setEditable(true);
     layout->addWidget(frame);
     selectedFrame = element->getParent()->getFrame(0);
-    connect(frame,SIGNAL(currentIndexChanged(const QString&)),this,SLOT(setFrame(const QString&)));
+    connect(frame,QOverload<const QString&>::of(&QComboBox::currentIndexChanged),this,&ParentFrameOfReferenceWidget::setFrame);
     updateWidget();
   }
 
@@ -214,8 +214,8 @@ namespace MBSimGUI {
     layout->addWidget(ele);
 
     QPushButton *button = new QPushButton(tr("Browse"));
-    connect(eleBrowser,SIGNAL(accepted()),this,SLOT(setElement()));
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(showBrowser()));
+    connect(eleBrowser,&BasicElementBrowser::accepted,this,QOverload<>::of(&BasicElementOfReferenceWidget::setElement));
+    connect(button,&QPushButton::clicked,this,&BasicElementOfReferenceWidget::showBrowser);
     layout->addWidget(button);
 
     if(addRatio) {
@@ -258,13 +258,13 @@ namespace MBSimGUI {
     layout->addWidget(filePath);
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(selectFile()));
+    connect(button,&QPushButton::clicked,this,&FileWidget::selectFile);
     path = new QCheckBox;
     setFile(file);
     if(absPath) {
       layout->addWidget(new QLabel("Absolute"));
       layout->addWidget(path);
-      connect(path,SIGNAL(stateChanged(int)),this,SLOT(changePath(int)));
+      connect(path,&QCheckBox::stateChanged,this,&FileWidget::changePath);
     }
   }
 
@@ -327,7 +327,7 @@ namespace MBSimGUI {
     value->setMinimum(min);
     value->setMaximum(max);
     layout->addWidget(value);
-    connect(value,SIGNAL(valueChanged(int)),this,SIGNAL(valueChanged(int)));
+    connect(value,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&SpinBoxWidget::valueChanged);
   }
 
   DOMElement* SpinBoxWidget::initializeUsingXML(DOMElement *element) {
@@ -357,7 +357,7 @@ namespace MBSimGUI {
     value->addItems(names);
     value->setCurrentIndex(currentIndex);
     layout->addWidget(value);
-    connect(value,SIGNAL(currentIndexChanged(int)),this,SIGNAL(valueChanged(int)));
+    connect(value,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&ComboBoxWidget::valueChanged);
   }
 
   DOMElement* BasicTextWidget::initializeUsingXML(DOMElement *element) {
@@ -452,7 +452,7 @@ namespace MBSimGUI {
     layout->addWidget(color);
 
     button = new QPushButton(tr("Select"));
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(setColor()));
+    connect(button,&QPushButton::clicked,this,&ColorWidget::setColor);
     layout->addWidget(button);
   }
 
@@ -543,7 +543,7 @@ namespace MBSimGUI {
     for(auto & i : feature)
       value->addItem(QString::fromStdString(i.second));
     value->setCurrentIndex(21);
-    connect(value,SIGNAL(currentIndexChanged(int)),this,SLOT(updateNamespace(int)));
+    connect(value,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&PlotFeatureWidget::updateNamespace);
 
     layout->addWidget(new QLabel("Namespace:"),6,0);
     nspace = new CustomComboBox;
@@ -561,20 +561,20 @@ namespace MBSimGUI {
     nspace->blockSignals(false);
 
     QPushButton *add = new QPushButton("Add");
-    connect(add,SIGNAL(pressed()),this,SLOT(addFeature()));
+    connect(add,&QPushButton::clicked,this,QOverload<>::of(&PlotFeatureWidget::addFeature));
     layout->addWidget(add,3,2);
 
     QPushButton *remove = new QPushButton("Remove");
-    connect(remove,SIGNAL(pressed()),this,SLOT(removeFeature()));
+    connect(remove,&QPushButton::clicked,this,&PlotFeatureWidget::removeFeature);
     layout->addWidget(remove,4,2);
 
     QPushButton *update = new QPushButton("Update");
-    connect(update,SIGNAL(pressed()),this,SLOT(updateFeature()));
+    connect(update,&QPushButton::clicked,this,&PlotFeatureWidget::updateFeature);
     layout->addWidget(update,5,2);
 
     layout->setColumnStretch(1,10);
 
-    connect(tree,SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),this,SLOT(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)));
+    connect(tree,&QTreeWidget::currentItemChanged,this,&PlotFeatureWidget::currentItemChanged);
   }
 
   void PlotFeatureWidget::updateNamespace(int i) {

@@ -42,13 +42,13 @@ namespace MBSimGUI {
       LimitedFunctionWidgetFactory(WidgetFactory *factory_) : factory(factory_) { }
       QString getName(int i=0) const override { return "Limited function"; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIM%"LimitedFunction"; }
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       int getSize() const override { return 1; }
     protected:
       WidgetFactory *factory;
   };
 
-  QWidget* LimitedFunctionWidgetFactory::createWidget(int i) {
+  Widget* LimitedFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
       return new LimitedFunctionWidget(factory);
     return nullptr;
@@ -273,11 +273,11 @@ namespace MBSimGUI {
     layout->addWidget(fo);
     fi = new ChoiceWidget2(new CompositeFunctionWidgetFactory(factoryi),QBoxLayout::TopToBottom,5);
     layout->addWidget(fi);
-    connect(fo->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(fi,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(fo->getWidget(),SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
-    connect(fi,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
-    if(factoryo2) connect(fi,SIGNAL(comboChanged(int)),this,SLOT(updateFunctionFactory()));
+    connect(static_cast<ChoiceWidget2*>(fo->getWidget()),&ChoiceWidget2::widgetChanged,this,&CompositeFunctionWidget::updateWidget);
+    connect(fi,&ChoiceWidget2::widgetChanged,this,&CompositeFunctionWidget::updateWidget);
+    connect(static_cast<ChoiceWidget2*>(fo->getWidget()),&ChoiceWidget2::widgetChanged,this,&CompositeFunctionWidget::widgetChanged);
+    connect(fi,&ChoiceWidget2::widgetChanged,this,&CompositeFunctionWidget::widgetChanged);
+    if(factoryo2) connect(fi,&ChoiceWidget2::comboChanged,this,&CompositeFunctionWidget::updateFunctionFactory);
   }
 
   void CompositeFunctionWidget::updateWidget() {
@@ -393,7 +393,7 @@ namespace MBSimGUI {
       argdim[i]->setDisabled(argType[i]==fixedVec);
       if(argType[i]!=scalar) {
         layout->addWidget(argdim[i],i,1);
-        connect(argdim[i]->getWidget(),SIGNAL(valueChanged(int)),this,SIGNAL(widgetChanged()));
+        connect(static_cast<SpinBoxWidget*>(argdim[i]->getWidget()),&SpinBoxWidget::valueChanged,this,&SymbolicFunctionWidget::widgetChanged);
       }
     }
     if(retType==scalar)
@@ -402,7 +402,7 @@ namespace MBSimGUI {
       f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(retDim,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
     else {
       f = new ExtWidget("Function",new ChoiceWidget2(new VecSizeVarWidgetFactory(retDim,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
-      connect(f,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+      connect(f,&ExtWidget::widgetChanged,this,&SymbolicFunctionWidget::widgetChanged);
     }
     layout->addWidget(f,argName.size(),0,1,2);
   }
@@ -461,14 +461,15 @@ namespace MBSimGUI {
     layout->addWidget(choice);
 
     choiceChanged();
-    connect(choice,SIGNAL(widgetChanged()),this,SLOT(choiceChanged()));
-    connect(choice,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+    connect(choice,&ChoiceWidget2::widgetChanged,this,&TabularFunctionWidget::choiceChanged);
+    connect(choice,&ChoiceWidget2::widgetChanged,this,&TabularFunctionWidget::widgetChanged);
   }
 
   void TabularFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
       updateWidget();
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TabularFunctionWidget::updateWidget);
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TabularFunctionWidget::updateWidget);
     }
   }
 
@@ -511,13 +512,13 @@ namespace MBSimGUI {
     layout->addWidget(choice);
 
     choiceChanged();
-    connect(choice,SIGNAL(widgetChanged()),this,SLOT(choiceChanged()));
+    connect(choice,&ChoiceWidget2::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::choiceChanged);
   }
 
   void TwoDimensionalTabularFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::updateWidget);
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1)),&Widget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::updateWidget);
     }
   }
 
@@ -556,14 +557,14 @@ namespace MBSimGUI {
     layout->addWidget(method);
 
     choiceChanged();
-    connect(choice,SIGNAL(widgetChanged()),this,SLOT(choiceChanged()));
-    connect(choice,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+    connect(choice,&ChoiceWidget2::widgetChanged,this,&PiecewisePolynomFunctionWidget::choiceChanged);
+    connect(choice,&ChoiceWidget2::widgetChanged,this,&PiecewisePolynomFunctionWidget::widgetChanged);
   }
 
   void PiecewisePolynomFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
       updateWidget();
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&PiecewisePolynomFunctionWidget::updateWidget);
     }
   }
 
@@ -615,13 +616,13 @@ namespace MBSimGUI {
     layout->addWidget(method);
 
     choiceChanged();
-    connect(choice,SIGNAL(widgetChanged()),this,SLOT(choiceChanged()));
+    connect(choice,&ChoiceWidget2::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::choiceChanged);
   }
 
   void TwoDimensionalPiecewisePolynomFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget);
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1)),&Widget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget);
     }
   }
 
@@ -808,13 +809,13 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    K = varSize?new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatSizeVarWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix"): new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix");
+    K = varSize?new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatSizeVarWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix"):new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix");
     layout->addWidget(K);
     D = new ExtWidget("Generalized damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"dampingMatrix");
     layout->addWidget(D);
 
-    connect(K->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(D,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(static_cast<ChoiceWidget2*>(K->getWidget()),&ChoiceWidget2::widgetChanged,this,&LinearElasticFunctionWidget::updateWidget);
+    connect(D,&ExtWidget::widgetChanged,this,&LinearElasticFunctionWidget::updateWidget);
   }
 
   void LinearElasticFunctionWidget::updateWidget() {

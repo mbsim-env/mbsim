@@ -51,39 +51,33 @@ namespace MBSimGUI {
   };
 
   class EvalDialog : public QDialog {
-    Q_OBJECT
     public:
-      //EvalDialog(VariableWidget *widget);
       EvalDialog(const std::vector<std::vector<QString>> &var_, int type_, QWidget *parent);
     private:
       void formatVariables();
+      void updateWidget();
       std::vector<std::vector<QString>> var, varf;
       int type;
       QComboBox *format;
       QSpinBox *precision;
       QTableWidget *tab;
-    private slots:
-      void updateWidget();
   };
 
   class BasicElementBrowser : public QDialog {
-    Q_OBJECT
-
     public:
       BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent);
       ~BasicElementBrowser() override = default;
       void setSelection(Element *selection_) { selection = selection_; }
       virtual Element* getSelection() const { return nullptr; }
     protected:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      virtual bool checkForElement(TreeItemData *element) { return false; }
+      void selectionChanged(const QModelIndex &current);
       QPushButton *okButton;
       QTreeView *eleList;
       Element *selection;
       QString oldID;
-      void showEvent(QShowEvent *event) override;
-      void hideEvent(QHideEvent *event) override;
-      virtual bool checkForElement(TreeItemData *element) { return false; }
-    protected slots:
-      void selectionChanged(const QModelIndex &current);
   };
 
   template <class T>
@@ -104,15 +98,13 @@ namespace MBSimGUI {
   };
 
   class EigenanalysisDialog : public QDialog {
-    Q_OBJECT
     public:
       EigenanalysisDialog(const QString &name, QWidget *parent);
     private:
-      QTableWidget *table;
-      DataPlot *plot;
-    private slots:
       void selectRow(int);
       void selectMode(int row, int col);
+      QTableWidget *table;
+      DataPlot *plot;
   };
 
   class HarmonicResponseDialog : public QDialog {

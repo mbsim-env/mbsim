@@ -34,18 +34,18 @@ namespace MBSimGUI {
 
   SolverViewContextMenu::SolverViewContextMenu(const std::vector<QString> &type, QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    connect(action,SIGNAL(triggered()),mw->getSolverView(),SLOT(openEditor()));
+    connect(action,&QAction::triggered,this,[=](){ mw->getSolverView()->openEditor(); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(viewSolverSource()));
+    connect(action,&QAction::triggered,mw,&MainWindow::viewSolverSource);
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(saveSolverAs()));
+    connect(action,&QAction::triggered,mw,&MainWindow::saveSolverAs);
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(loadSolver()));
+    connect(action,&QAction::triggered,mw,&MainWindow::loadSolver);
     addAction(action);
     addSeparator();
     QActionGroup *actionGroup = new QActionGroup(this);
@@ -64,7 +64,7 @@ namespace MBSimGUI {
     }
     addMenu(analyzers);
     addMenu(integrators);
-    connect(actionGroup,SIGNAL(triggered(QAction*)),this,SLOT(selectSolver(QAction*)));
+    connect(actionGroup,QOverload<QAction*>::of(&QActionGroup::triggered),this,&SolverViewContextMenu::selectSolver);
   }
 
   void SolverViewContextMenu::selectSolver(QAction *action) {
@@ -99,7 +99,7 @@ namespace MBSimGUI {
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Time stepping SSC integrator");
     setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
+    connect(this,&SolverView::customContextMenuRequested,this,&SolverView::openContextMenu);
 
     installEventFilter(new SolverMouseEvent(this));
     setReadOnly(true);
@@ -119,8 +119,8 @@ namespace MBSimGUI {
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
-      connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-      connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+      connect(editor,&SolverPropertyDialog::apply,this,&SolverView::apply);
+      connect(editor,&SolverPropertyDialog::finished,this,&SolverView::dialogFinished);
     }
   }
 

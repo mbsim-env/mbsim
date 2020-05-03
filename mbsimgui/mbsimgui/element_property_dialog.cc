@@ -57,7 +57,7 @@ namespace MBSimGUI {
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
       ConnectRigidBodiesWidgetFactory(Element *element_, QWidget *parent_);
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
     protected:
@@ -71,7 +71,7 @@ namespace MBSimGUI {
     name.emplace_back("2 rigid bodies");
   }
 
-  QWidget* ConnectRigidBodiesWidgetFactory::createWidget(int i) {
+  Widget* ConnectRigidBodiesWidgetFactory::createWidget(int i) {
     return new ConnectElementsWidget<RigidBody>(i+1,element,parent);
   }
 
@@ -1272,8 +1272,8 @@ namespace MBSimGUI {
     u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
     addToTab("Initial conditions", u0);
 
-    connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(u0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(q0, &ExtWidget::widgetChanged, this, &ObjectPropertyDialog::updateWidget);
+    connect(u0, &ExtWidget::widgetChanged, this, &ObjectPropertyDialog::updateWidget);
   }
 
   DOMElement* ObjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1326,11 +1326,11 @@ namespace MBSimGUI {
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory(body,MBSIM,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
-    connect(translation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(translation,&ExtWidget::widgetChanged,this,&RigidBodyPropertyDialog::updateWidget);
 
     rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory(body,MBSIM,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
-    connect(rotation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(rotation,&ExtWidget::widgetChanged,this,&RigidBodyPropertyDialog::updateWidget);
 
     translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
@@ -1415,11 +1415,11 @@ namespace MBSimGUI {
 
     translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
-    connect(translation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(translation,&ExtWidget::widgetChanged,this,&GenericFlexibleFfrBodyPropertyDialog::updateWidget);
 
     rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
-    connect(rotation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(rotation,&ExtWidget::widgetChanged,this,&GenericFlexibleFfrBodyPropertyDialog::updateWidget);
 
     translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
@@ -1581,8 +1581,7 @@ namespace MBSimGUI {
     plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
 
-    connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    //    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(Pdm->getWidget(),&Widget::widgetChanged,this,&FlexibleFfrBodyPropertyDialog::updateWidget);
   }
 
   void FlexibleFfrBodyPropertyDialog::updateWidget() {
@@ -1898,7 +1897,7 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new Function1ArgWidgetFactory(constraint,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedPositionConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedPositionConstraintPropertyDialog::updateWidget() {
@@ -1927,7 +1926,7 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedVelocityConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::updateWidget() {
@@ -1956,7 +1955,7 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedAccelerationConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedAccelerationConstraintPropertyDialog::updateWidget() {
@@ -1990,11 +1989,11 @@ namespace MBSimGUI {
 
     dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,2,false,0),false,false,"");
     addToTab("General",dependentBodiesFirstSide);
-    connect(dependentBodiesFirstSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(dependentBodiesFirstSide->getWidget(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
     dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,2,false,0),false,false,"");
     addToTab("General",dependentBodiesSecondSide);
-    connect(dependentBodiesSecondSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(dependentBodiesSecondSide->getWidget(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
     independentBody = new ExtWidget("Independent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);
@@ -2215,14 +2214,14 @@ namespace MBSimGUI {
     arrow = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization",arrow);
 
-    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(forceFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(momentFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(forceDirection,SIGNAL(clicked(bool)),forceFunction,SLOT(setChecked(bool)));
-    connect(forceFunction,SIGNAL(clicked(bool)),forceDirection,SLOT(setChecked(bool)));
-    connect(momentDirection,SIGNAL(clicked(bool)),momentFunction,SLOT(setChecked(bool)));
-    connect(momentFunction,SIGNAL(clicked(bool)),momentDirection,SLOT(setChecked(bool)));
+    connect(forceDirection->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(forceFunction->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(momentDirection->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(momentFunction->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(forceDirection,&ExtWidget::clicked,forceFunction,&ExtWidget::setChecked);
+    connect(forceFunction,&ExtWidget::clicked,forceDirection,&ExtWidget::setChecked);
+    connect(momentDirection,&ExtWidget::clicked,momentFunction,&ExtWidget::setChecked);
+    connect(momentFunction,&ExtWidget::clicked,momentDirection,&ExtWidget::setChecked);
   }
 
   void KineticExcitationPropertyDialog::updateWidget() {
@@ -2359,10 +2358,10 @@ namespace MBSimGUI {
     integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     addToTab("Extra",integrate);
 
-    connect(forceDirection,SIGNAL(clicked(bool)),forceLaw,SLOT(setChecked(bool)));
-    connect(forceLaw,SIGNAL(clicked(bool)),forceDirection,SLOT(setChecked(bool)));
-    connect(momentDirection,SIGNAL(clicked(bool)),momentLaw,SLOT(setChecked(bool)));
-    connect(momentLaw,SIGNAL(clicked(bool)),momentDirection,SLOT(setChecked(bool)));
+    connect(forceDirection,&ExtWidget::clicked,forceLaw,&ExtWidget::setChecked);
+    connect(forceLaw,&ExtWidget::clicked,forceDirection,&ExtWidget::setChecked);
+    connect(momentDirection,&ExtWidget::clicked,momentLaw,&ExtWidget::setChecked);
+    connect(momentLaw,&ExtWidget::clicked,momentDirection,&ExtWidget::setChecked);
   }
 
   DOMElement* JointPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2401,12 +2400,12 @@ namespace MBSimGUI {
     integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     addToTab("Extra", integrate);
 
-    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(function->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(forceDirection,SIGNAL(clicked(bool)),this,SLOT(updateFunctionCheckState()));
-    connect(momentDirection,SIGNAL(clicked(bool)),this,SLOT(updateFunctionCheckState()));
-    connect(function,SIGNAL(clicked(bool)),this,SLOT(updateDirectionsCheckState()));
+    connect(forceDirection->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(momentDirection->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(function->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(forceDirection,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateFunctionCheckState);
+    connect(momentDirection,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateFunctionCheckState);
+    connect(function,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateDirectionsCheckState);
   }
 
   void ElasticJointPropertyDialog::updateWidget() {
@@ -2536,8 +2535,8 @@ namespace MBSimGUI {
     function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(connection,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
-    connect(function,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(connections->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(function,&ExtWidget::widgetChanged,this,&GeneralizedElasticConnectionPropertyDialog::updateWidget);
+    connect(connections->getWidget(),&ExtWidget::widgetChanged,this,&GeneralizedElasticConnectionPropertyDialog::updateWidget);
   }
 
   void GeneralizedElasticConnectionPropertyDialog::updateWidget() {
@@ -3228,11 +3227,11 @@ namespace MBSimGUI {
     D = new ExtWidget("Feedthrough matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
     addToTab("General", D);
 
-    connect(x0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(A, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(B, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(C, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(D, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(x0, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
+    connect(A, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
+    connect(B, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
+    connect(C, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
+    connect(D, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
   }
 
   void LinearTransferSystemPropertyDialog::updateWidget() {
@@ -3291,9 +3290,9 @@ namespace MBSimGUI {
     H = new ExtWidget("Output function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::fixedVec),1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"outputFunction");
     addToTab("General", H);
 
-    connect(x0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(F, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(H, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(x0, &ExtWidget::widgetChanged, this, &NonlinearTransferSystemPropertyDialog::updateWidget);
+    connect(F, &ExtWidget::widgetChanged, this, &NonlinearTransferSystemPropertyDialog::updateWidget);
+    connect(H, &ExtWidget::widgetChanged, this, &NonlinearTransferSystemPropertyDialog::updateWidget);
   }
 
   void NonlinearTransferSystemPropertyDialog::updateWidget() {
@@ -3336,7 +3335,7 @@ namespace MBSimGUI {
     function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(signal,"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
 
-    connect(inputSignal,SIGNAL(widgetChanged()),this,SLOT(updateFunctionFactory()));
+    connect(inputSignal,&ExtWidget::widgetChanged,this,&SignalOperationPropertyDialog::updateFunctionFactory);
   }
 
   void SignalOperationPropertyDialog::updateWidget() {

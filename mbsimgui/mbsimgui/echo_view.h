@@ -29,16 +29,16 @@
 namespace MBSimGUI {
 
   class EchoView : public QMainWindow {
-    Q_OBJECT
     public:
       EchoView(QMainWindow *parent);
       void clearOutput();
       QSize sizeHint() const override;
       void addOutputText(const QString &outText_);
       bool debugEnabled() { return enableDebug->isChecked(); }
-    public slots:
       void updateOutput(bool moveToErrorOrEnd=false);
     private:
+      void linkClicked(const QUrl &link);
+      void updateDebug();
       QTextBrowser *out;
       QString outText;
       QMutex outTextMutex;
@@ -48,9 +48,6 @@ namespace MBSimGUI {
       QAction *showDepr;
       QAction *enableDebug;
       QAction *showDebug;
-    private slots:
-      void linkClicked(const QUrl &link);
-      void updateDebug();
   };
 
 }

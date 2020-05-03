@@ -39,7 +39,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%(type.toStdString()));
   }
 
-  QWidget* ToleranceWidgetFactory::createWidget(int i) {
+  Widget* ToleranceWidgetFactory::createWidget(int i) {
     if(i==0)
       return new ChoiceWidget2(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5);
     if(i==1)

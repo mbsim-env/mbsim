@@ -34,20 +34,25 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ExtWidget::ExtWidget(const QString &name, QWidget *widget_, bool deactivatable, bool active, FQN xmlName_) : QGroupBox(name), widget(widget_), xmlName(std::move(xmlName_)) {
+  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable, bool active, FQN xmlName_) : widget(widget_), xmlName(std::move(xmlName_)) {
 
     auto *layout = new QVBoxLayout;
-
-    if(deactivatable) {
-      setCheckable(true);
-      connect(this,SIGNAL(toggled(bool)),this,SIGNAL(widgetChanged()));
-      connect(this,SIGNAL(toggled(bool)),widget,SLOT(setVisible(bool)));
-//      connect(this,SIGNAL(toggled(bool)),this,SLOT(updateWidget()));
-      setChecked(active);
-    }
+    layout->setMargin(0);
     setLayout(layout);
+
+    if(checkable) {
+      checkBox = new QCheckBox(name);
+      checkBox->setChecked(active);
+      widget->setVisible(active);
+      connect(checkBox,&QCheckBox::toggled,this,&ExtWidget::widgetChanged);
+      connect(checkBox,&QCheckBox::toggled,widget,&Widget::setVisible);
+      connect(checkBox,&QCheckBox::toggled,this,&ExtWidget::clicked);
+      layout->addWidget(checkBox);
+    }
+    else
+      layout->addWidget(new QLabel(name));
     layout->addWidget(widget);
-    connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+    connect(widget,&Widget::widgetChanged,this,&ExtWidget::widgetChanged);
   }
 
   DOMElement* ExtWidget::initializeUsingXML(DOMElement *element) {
@@ -55,10 +60,10 @@ namespace MBSimGUI {
     if(xmlName!=FQN()) {
       DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
       if(e)
-        active = dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
+        active = widget->initializeUsingXML(e);
     }
     else
-      active = dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element);
+      active = widget->initializeUsingXML(element);
     blockSignals(true);
     setActive(active);
     if(isCheckable()) widget->setVisible(active);
@@ -72,13 +77,13 @@ namespace MBSimGUI {
       DOMDocument *doc = parent->getOwnerDocument();
       DOMElement *newele = D(doc)->createElement(xmlName);
       if(isActive()) {
-        ele = dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(newele);
+        ele = widget->writeXMLFile(newele);
         parent->insertBefore(newele,ref);
       }
     }
     else {
       if(isActive())
-        ele = dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
+        ele = widget->writeXMLFile(parent,ref);
     }
     return ele;
   }
@@ -94,8 +99,8 @@ namespace MBSimGUI {
     layout->addWidget(comboBox);
     comboBox->setCurrentIndex(factory->getDefaultIndex());
     defineWidget(factory->getDefaultIndex());
-    connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SLOT(defineWidget(int)));
-    connect(comboBox,SIGNAL(currentIndexChanged(int)),this,SIGNAL(comboChanged(int)));
+    connect(comboBox,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&ChoiceWidget2::defineWidget);
+    connect(comboBox,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&ChoiceWidget2::comboChanged);
   }
 
   void ChoiceWidget2::setWidgetFactory(WidgetFactory *factory_) {
@@ -115,7 +120,7 @@ namespace MBSimGUI {
     widget = (index!=-1)?factory->createWidget(index):new UnknownWidget;
     layout->addWidget(widget);
     emit widgetChanged();
-    connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+    connect(widget,&Widget::widgetChanged,this,&ChoiceWidget2::widgetChanged);
   }
 
   DOMElement* ChoiceWidget2::initializeUsingXML(DOMElement *element) {
@@ -135,7 +140,7 @@ namespace MBSimGUI {
         comboBox->blockSignals(true);
         comboBox->setCurrentIndex(k);
         comboBox->blockSignals(false);
-        return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
+        return widget->initializeUsingXML(e);
       }
     }
     else if (mode<=3) {
@@ -148,7 +153,7 @@ namespace MBSimGUI {
           comboBox->blockSignals(true);
           comboBox->setCurrentIndex(i);
           comboBox->blockSignals(false);
-          return dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(e);
+          return widget->initializeUsingXML(e);
         }
       }
     }
@@ -160,7 +165,7 @@ namespace MBSimGUI {
         comboBox->blockSignals(true);
         comboBox->setCurrentIndex(i);
         comboBox->blockSignals(false);
-        if(dynamic_cast<WidgetInterface*>(widget)->initializeUsingXML(element))
+        if(widget->initializeUsingXML(element))
           return element;
       }
     }
@@ -171,11 +176,11 @@ namespace MBSimGUI {
     if(mode==3) {
       DOMDocument *doc=parent->getOwnerDocument();
       DOMElement *ele0 = D(doc)->createElement(factory->getXMLName(getIndex()));
-      dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(ele0);
+      widget->writeXMLFile(ele0);
       parent->insertBefore(ele0,ref);
     }
     else
-      dynamic_cast<WidgetInterface*>(widget)->writeXMLFile(parent,ref);
+      widget->writeXMLFile(parent,ref);
     return nullptr;
   }
 
@@ -187,31 +192,31 @@ namespace MBSimGUI {
 
   void ContainerWidget::resize_(int m, int n) {
     for(auto & i : widget)
-      dynamic_cast<WidgetInterface*>(i)->resize_(m,n);
+      i->resize_(m,n);
   }
 
-  void ContainerWidget::addWidget(QWidget *widget_) {
+  void ContainerWidget::addWidget(Widget *widget_) {
     layout->addWidget(widget_); 
     widget.push_back(widget_);
-    connect(widget[widget.size()-1],SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+    connect(widget[widget.size()-1],&Widget::widgetChanged,this,&ChoiceWidget2::widgetChanged);
   }
 
   void ContainerWidget::updateWidget() {
     for(unsigned int i=0; i<widget.size(); i++)
-      dynamic_cast<WidgetInterface*>(getWidget(i))->updateWidget();
+      getWidget(i)->updateWidget();
   }
 
   DOMElement* ContainerWidget::initializeUsingXML(DOMElement *element) {
     bool flag = false;
     for(unsigned int i=0; i<widget.size(); i++)
-      if(dynamic_cast<WidgetInterface*>(getWidget(i))->initializeUsingXML(element))
+      if(getWidget(i)->initializeUsingXML(element))
         flag = true;
     return flag?element:nullptr;
   }
 
   DOMElement* ContainerWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     for(unsigned int i=0; i<widget.size(); i++)
-      dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent,ref);
+      getWidget(i)->writeXMLFile(parent,ref);
     return nullptr;
   }
 
@@ -226,11 +231,11 @@ namespace MBSimGUI {
     spinBox->setValue(m);
     layout->addWidget(new QLabel("Number:"),0,0);
     layout->addWidget(spinBox,0,1);
-    connect(spinBox, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&ListWidget::currentIndexChanged);
     list = new QListWidget;
     layout->addWidget(list,1,0,1,3);
     stackedWidget = new QStackedWidget;
-    connect(list,SIGNAL(currentRowChanged(int)),this,SLOT(changeCurrent(int)));
+    connect(list,&QListWidget::currentRowChanged,this,&ListWidget::changeCurrent);
     layout->addWidget(stackedWidget,2,0,1,3);
     layout->setColumnStretch(2,1);
     currentIndexChanged(m);
@@ -248,20 +253,16 @@ namespace MBSimGUI {
     spinBox->setValue(m);
   }
 
-  QWidget* ListWidget::getWidget(int i) const {
-    return stackedWidget->widget(i);
+  Widget* ListWidget::getWidget(int i) const {
+    return static_cast<Widget*>(stackedWidget->widget(i));
   }
 
   void ListWidget::currentIndexChanged(int idx) {
     int n = idx - list->count();
-    if(n>0) {
+    if(n>0)
       addElements(n);
-      //    list->setCurrentRow(idx-1);
-    }
-    else if(n<0) {
-      //    list->setCurrentRow(idx);
+    else if(n<0)
       removeElements(-n);
-    }
   }
 
   void ListWidget::changeCurrent(int idx) {
@@ -276,7 +277,7 @@ namespace MBSimGUI {
 
   void ListWidget::resize_(int m, int n) {
     for(int i=0; i<stackedWidget->count(); i++)
-      dynamic_cast<WidgetInterface*>(stackedWidget->widget(i))->resize_(m,n);
+      getWidget(i)->resize_(m,n);
   }
 
   void ListWidget::addElements(int n, bool emitSignals) {
@@ -286,21 +287,19 @@ namespace MBSimGUI {
     for(int j=1; j<=n; j++) {
       list->addItem(name+" "+QString::number(i+j));
 
-      QWidget *widget = factory->createWidget();
+      Widget *widget = factory->createWidget();
       stackedWidget->addWidget(widget);
-//      dynamic_cast<WidgetInterface*>(widget)->updateWidget();
       if(i>0)
         widget->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Ignored);
 
-      connect(widget,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+      connect(widget,&Widget::widgetChanged,this,&ListWidget::widgetChanged);
     }
 
     if(i==0)
       list->setCurrentRow(0);
 
-    if(emitSignals) {
+    if(emitSignals)
       emit Widget::widgetChanged();
-    }
   }
 
   void ListWidget::removeElements(int n) {
@@ -323,7 +322,7 @@ namespace MBSimGUI {
       DOMElement *e=(mode==0)?element->getFirstElementChild():element;
       while(e) {
         addElements(1,false);
-        dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
+        getWidget(getSize()-1)->initializeUsingXML(e);
         e=e->getNextElementSibling();
       }
       spinBox->setValue(getSize());
@@ -332,7 +331,7 @@ namespace MBSimGUI {
       DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName());
       while(e and E(e)->getTagName()==factory->getXMLName()) {
         addElements(1,false);
-        dynamic_cast<WidgetInterface*>(getWidget(getSize()-1))->initializeUsingXML(e);
+        getWidget(getSize()-1)->initializeUsingXML(e);
         e=e->getNextElementSibling();
       }
       spinBox->setValue(getSize());
@@ -345,13 +344,13 @@ namespace MBSimGUI {
   DOMElement* ListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     if(mode<=1) {
       for(unsigned int i=0; i<getSize(); i++)
-        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(parent,ref);
+        getWidget(i)->writeXMLFile(parent,ref);
     }
     else {
       DOMDocument *doc=parent->getOwnerDocument();
       for(unsigned int i=0; i<getSize(); i++) {
         DOMElement *ele0 = D(doc)->createElement(factory->getXMLName());
-        dynamic_cast<WidgetInterface*>(getWidget(i))->writeXMLFile(ele0);
+        getWidget(i)->writeXMLFile(ele0);
         parent->insertBefore(ele0,ref);
       }
     }

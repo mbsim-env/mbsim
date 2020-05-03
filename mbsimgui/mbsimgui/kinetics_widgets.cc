@@ -300,7 +300,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"RegularizedUnilateralConstraint");
   }
 
-  QWidget* GeneralizedForceLawWidgetFactory::createWidget(int i) {
+  Widget* GeneralizedForceLawWidgetFactory::createWidget(int i) {
     if(i==0)
       return new BilateralConstraintWidget;
     if(i==1)
@@ -327,7 +327,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"RegularizedSpatialFriction");
   }
 
-  QWidget* FrictionForceLawWidgetFactory::createWidget(int i) {
+  Widget* FrictionForceLawWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PlanarCoulombFrictionWidget;
     if(i==1)
@@ -350,7 +350,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnilateralNewtonImpact");
   }
 
-  QWidget* GeneralizedImpactLawWidgetFactory::createWidget(int i) {
+  Widget* GeneralizedImpactLawWidgetFactory::createWidget(int i) {
     if(i==0)
       return new BilateralImpactWidget;
     if(i==1)
@@ -369,7 +369,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"SpatialStribeckImpact");
   }
 
-  QWidget* FrictionImpactLawWidgetFactory::createWidget(int i) {
+  Widget* FrictionImpactLawWidgetFactory::createWidget(int i) {
     if(i==0)
       return new PlanarCoulombImpactWidget;
     if(i==1)
@@ -386,7 +386,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"LinearRegularizedBilateralConstraint");
   }
 
-  QWidget* RegularizedBilateralConstraintFunctionFactory::createWidget(int i) {
+  Widget* RegularizedBilateralConstraintFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedBilateralConstraintWidget;
     return nullptr;
@@ -397,7 +397,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"LinearRegularizedUnilateralConstraint");
   }
 
-  QWidget* RegularizedUnilateralConstraintFunctionFactory::createWidget(int i) {
+  Widget* RegularizedUnilateralConstraintFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedUnilateralConstraintWidget;
     return nullptr;
@@ -412,7 +412,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"SymbolicFunction");
   }
 
-  QWidget* FrictionFunctionFactory::createWidget(int i) {
+  Widget* FrictionFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedCoulombFrictionWidget;
     if(i==1)

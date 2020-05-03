@@ -40,16 +40,9 @@ namespace MBSimGUI {
       sizeCombo->setValue(size);
       sizeCombo->setRange(size,100);
       layout->addWidget(sizeCombo);
-      connect(sizeCombo, SIGNAL(valueChanged(int)), this, SLOT(currentIndexChanged(int)));
+      connect(sizeCombo, QOverload<int>::of(&CustomSpinBox::valueChanged), this, [=](){ resize_(sizeCombo->value(),m,1); });
     }
-//    else
-//      if(size) resize_(size,m,1);
-      if(size) resize_(size,m,1);
-  }
-
-  void OneDimVecArrayWidget::currentIndexChanged(int size) {
-    resize_(size,m,1);
-//    emit sizeChanged(size);
+    if(size) resize_(size,m,1);
   }
 
   void OneDimVecArrayWidget::resize_(int size, int m, int n) {
@@ -290,7 +283,7 @@ namespace MBSimGUI {
     xmlName[0].second += "Array";
   }
 
-  QWidget* OneDimVecArrayWidgetFactory::createWidget(int i) {
+  Widget* OneDimVecArrayWidgetFactory::createWidget(int i) {
     if(i==0)
       return new OneDimVecArrayWidget(size,m,var);
     if(i==1)
@@ -304,7 +297,7 @@ namespace MBSimGUI {
     xmlName[0].second += "Array";
   }
 
-  QWidget* OneDimMatArrayWidgetFactory::createWidget(int i) {
+  Widget* OneDimMatArrayWidgetFactory::createWidget(int i) {
     if(i==0)
       return new OneDimMatArrayWidget(size,m,n);
     if(i==1)
@@ -318,7 +311,7 @@ namespace MBSimGUI {
     xmlName[0].second += "Array";
   }
 
-  QWidget* TwoDimMatArrayWidgetFactory::createWidget(int i) {
+  Widget* TwoDimMatArrayWidgetFactory::createWidget(int i) {
     if(i==0)
       return new TwoDimMatArrayWidget(size,m,n);
     if(i==1)
