@@ -523,13 +523,13 @@ namespace MBSimGUI {
 
     transparency->setActive(true);
 
-    trans = new ExtWidget("Initial translation",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"initialTranslation");
+    trans = new ExtWidget("Initial translation",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"initialTranslation");
     layout->addWidget(trans);
 
-    rot = new ExtWidget("Initial rotation",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,angleUnits())),QBoxLayout::RightToLeft),false,false,OPENMBV%"initialRotation");
+    rot = new ExtWidget("Initial rotation",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,angleUnits())),QBoxLayout::RightToLeft),true,false,OPENMBV%"initialRotation");
     layout->addWidget(rot);
 //
-    scale = new ExtWidget("Scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"scaleFactor");
+    scale = new ExtWidget("Scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"scaleFactor");
     layout->addWidget(scale);
   }
 
