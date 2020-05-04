@@ -48,7 +48,7 @@ namespace MBSimGUI {
     toolButton->setDefaultAction(action);
     toolButton->setArrowType(isActive()?Qt::DownArrow:Qt::RightArrow);
     layout->addWidget(toolButton,0,0);
-    layout->addWidget(new QLabel("<b>"+name+"</b>"),0,1);
+    layout->addWidget(new QLabel(name),0,1);
     layout->addWidget(widget,1,1);
     layout->setColumnStretch(1,1);
     if(checkable) {
