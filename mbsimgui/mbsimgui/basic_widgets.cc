@@ -18,7 +18,6 @@
 */
 
 #include <config.h>
-#include <QtGui>
 #include "basic_widgets.h"
 #include "frame.h"
 #include "contour.h"

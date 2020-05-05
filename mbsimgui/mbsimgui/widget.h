@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _XML_WIDGETS_H_
-#define _XML_WIDGETS_H_
+#ifndef _WIDGET_H_
+#define _WIDGET_H_
 
 #include <QWidget>
 #include <xercesc/util/XercesDefs.hpp>
@@ -51,6 +51,7 @@ namespace MBSimGUI {
       virtual int getSize() const { return 0; }
       virtual int getDefaultIndex() const { return 0; }
       virtual int getFallbackIndex() const { return getDefaultIndex(); }
+      virtual int getMargin() const { return 10; }
       virtual MBXMLUtils::FQN getXMLName(int i=0) const { return ""; }
   };
 

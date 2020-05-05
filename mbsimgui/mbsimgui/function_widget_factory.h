@@ -167,6 +167,7 @@ namespace MBSimGUI {
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
+      int getMargin() const override { return 0; }
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;

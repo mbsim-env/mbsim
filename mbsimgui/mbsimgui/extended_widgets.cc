@@ -120,6 +120,8 @@ namespace MBSimGUI {
     layout->removeWidget(widget);
     delete widget;
     widget = (index!=-1)?factory->createWidget(index):new UnknownWidget;
+    if(layout->direction()==QBoxLayout::TopToBottom)
+      widget->setContentsMargins(factory->getMargin(),0,0,0);
     layout->addWidget(widget);
     emit widgetChanged();
     connect(widget,&Widget::widgetChanged,this,&ChoiceWidget::widgetChanged);
