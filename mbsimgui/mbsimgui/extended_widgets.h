@@ -36,11 +36,11 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="");
+      ExtWidget(const QString &name, Widget *widget_, bool checkable=false, bool active=false, MBXMLUtils::FQN xmlName_="");
       Widget* getWidget() const { return widget; }
       void resize_(int m, int n) override { if(isActive()) widget->resize_(m,n); }
-      bool isActive() const { return not checkable or checked; }
-      void setActive(bool active) { if(checkable) { checked = active; toolButton->setArrowType(checked?Qt::DownArrow:Qt::RightArrow); widget->setVisible(checked); } }
+      bool isActive() const { return not toolButton->defaultAction()->isCheckable() or toolButton->defaultAction()->isChecked(); }
+      void setActive(bool active) { if(toolButton->defaultAction()->isCheckable()) { toolButton->defaultAction()->setChecked(active); widget->setVisible(toolButton->defaultAction()->isChecked()); } }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       void updateWidget() override { if(isActive()) widget->updateWidget(); }
@@ -49,7 +49,6 @@ namespace MBSimGUI {
       Widget *widget;
       MBXMLUtils::FQN xmlName;
       QToolButton *toolButton;
-      bool checkable, checked;
 
     signals:
       void clicked(bool);
