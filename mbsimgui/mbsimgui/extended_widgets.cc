@@ -47,11 +47,13 @@ namespace MBSimGUI {
     toolButton->setDefaultAction(action);
     action->setCheckable(checkable);
     action->setChecked(active);
-    layout->addWidget(new QLabel(name),0,0);
+    label = new QLabel(name);
+    layout->addWidget(label,0,0);
     layout->addWidget(toolButton,0,1);
     layout->addWidget(widget,1,0,1,2);
     widget->setContentsMargins(10,0,0,0);
     if(checkable) {
+      label->setEnabled(active);
       widget->setVisible(active);
       connect(action,&QAction::triggered,this,[=]{ setActive(action->isChecked()); emit widgetChanged(); emit clicked(action->isChecked()); });
     }
