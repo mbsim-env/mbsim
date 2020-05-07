@@ -21,10 +21,8 @@
 #define _EXTENDED_WIDGETS_H_
 
 #include "widget.h"
-#include <QComboBox>
 #include <QLabel>
-#include <QToolButton>
-#include <QAction>
+#include <QComboBox>
 #include <QBoxLayout>
 
 class QSpinBox;
@@ -33,24 +31,34 @@ class QListWidget;
 
 namespace MBSimGUI {
 
+  class MouseEvent : public QObject {
+    Q_OBJECT
+    public:
+      MouseEvent(QLabel* label) : QObject(label) { }
+    protected:
+      bool eventFilter(QObject *obj, QEvent *event) override;
+    signals:
+      void mousePressed();
+  };
+
   class ExtWidget : public Widget {
     Q_OBJECT
 
     public:
-      ExtWidget(const QString &name, Widget *widget_, bool checkable=false, bool active=false, MBXMLUtils::FQN xmlName_="");
+      ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="");
       Widget* getWidget() const { return widget; }
       void resize_(int m, int n) override { if(isActive()) widget->resize_(m,n); }
-      bool isActive() const { return not toolButton->defaultAction()->isCheckable() or toolButton->defaultAction()->isChecked(); }
-      void setActive(bool active) { if(toolButton->defaultAction()->isCheckable()) { toolButton->defaultAction()->setChecked(active); label->setEnabled(toolButton->defaultAction()->isChecked()); widget->setVisible(toolButton->defaultAction()->isChecked()); } }
+      void setActive(bool active);
+      bool isActive() const { return not checkable or checked; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       void updateWidget() override { if(isActive()) widget->updateWidget(); }
 
     protected:
+      bool checkable, checked;
       Widget *widget;
       MBXMLUtils::FQN xmlName;
       QLabel *label;
-      QToolButton *toolButton;
 
     signals:
       void clicked(bool);

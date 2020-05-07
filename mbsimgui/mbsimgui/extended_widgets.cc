@@ -23,7 +23,6 @@
 #include "dialogs.h"
 #include "custom_widgets.h"
 #include "unknown_widget.h"
-#include <QLabel>
 #include <QListWidget>
 #include <QStackedWidget>
 #include <utility>
@@ -34,32 +33,51 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable, bool active, FQN xmlName_) : widget(widget_), xmlName(std::move(xmlName_)) {
+  bool MouseEvent::eventFilter(QObject *obj, QEvent *event) {
+    if(event->type() == QEvent::MouseButtonPress) {
+      emit mousePressed();
+      return true;
+    }
+    else
+      return QObject::eventFilter(obj, event);
+  }
+
+  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_) : checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
 
     auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    toolButton = new QToolButton;
-    toolButton->setAutoRaise(true);
-    QAction *action = new QAction("Define");
-    action->setToolTip("Define this property");
-    toolButton->setDefaultAction(action);
-    action->setCheckable(checkable);
-    action->setChecked(active);
     label = new QLabel(name);
-    layout->addWidget(label,0,0);
-    layout->addWidget(toolButton,0,1);
-    layout->addWidget(widget,1,0,1,2);
-    widget->setContentsMargins(10,0,0,0);
+    MouseEvent *mouseEvent = new MouseEvent(label);
+    label->installEventFilter(mouseEvent);
+    checkable = checkable_;
+    checked = active;
     if(checkable) {
+      QLabel *opt = new QLabel("*");
+      layout->addWidget(opt,0,1);
       label->setEnabled(active);
+      opt->setToolTip("This property is optional");
       widget->setVisible(active);
-      connect(action,&QAction::triggered,this,[=]{ setActive(action->isChecked()); emit widgetChanged(); emit clicked(action->isChecked()); });
+      connect(mouseEvent,&MouseEvent::mousePressed,this,[=]{
+          setActive(not checked);
+          emit widgetChanged();
+          emit clicked(checked);
+          });
     }
-    else
-      toolButton->setVisible(false);
+    layout->addWidget(label,0,0);
+    layout->addWidget(widget,1,0,1,2);
+    layout->setColumnStretch(0,2);
+    widget->setContentsMargins(10,0,0,0);
     connect(widget,&Widget::widgetChanged,this,&ExtWidget::widgetChanged);
+  }
+
+  void ExtWidget::setActive(bool active) {
+    if(checkable) {
+      checked = active;
+      label->setEnabled(checked);
+      widget->setVisible(checked);
+    }
   }
 
   DOMElement* ExtWidget::initializeUsingXML(DOMElement *element) {
