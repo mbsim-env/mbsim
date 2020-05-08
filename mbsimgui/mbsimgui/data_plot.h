@@ -36,15 +36,14 @@ namespace MBSimGUI {
       void setSymbol(const QwtSymbol::Style &style, int size=1);
       void setAxisScale(int axisId, double min, double max, double stepSize = 0);
       void replot();
+      void changePlot(int i);
+      void changeNum(int i);
     private:
       QVector<double> f;
       QVector<QVector<double>> A;
       QSpinBox *num;
       QwtPlot *plot;
       QwtPlotCurve *curve;
-    public slots:
-      void changePlot(int i);
-      void changeNum(int i);
     signals:
       void numChanged(int i);
   };

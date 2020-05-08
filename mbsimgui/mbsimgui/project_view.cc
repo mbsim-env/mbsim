@@ -28,26 +28,26 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ProjectViewContextMenu::ProjectViewContextMenu(QWidget *parent) : QMenu(parent) {
-    auto *action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(saveProjectAs()));
+    auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->getProjectView()->openEditor(); });
+    addAction(action);
+    action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
+    connect(action,&QAction::triggered,mw,&MainWindow::viewProjectSource);
+    addAction(action);
+    addSeparator();
+    action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
+    connect(action,&QAction::triggered,mw,&MainWindow::saveProjectAs);
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,SIGNAL(triggered()),mw,SLOT(loadProject()));
+    connect(action,&QAction::triggered,mw,QOverload<>::of(&MainWindow::loadProject));
     addAction(action);
   }
-
-//  void ProjectViewContextMenu::selectProject(QAction *action) {
-//    QActionGroup *actionGroup = action->actionGroup();
-//    QList<QAction*> list = actionGroup->actions();
-//    mw->selectProject(list.indexOf(action));
-//  }
 
   ProjectView::ProjectView() {
     setText("Project");
     setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this,SIGNAL(customContextMenuRequested(const QPoint&)),this,SLOT(openContextMenu()));
-//
+    connect(this,&ProjectView::customContextMenuRequested,this,&ProjectView::openContextMenu);
     installEventFilter(new ProjectMouseEvent(this));
     setReadOnly(true);
   }
@@ -70,8 +70,8 @@ namespace MBSimGUI {
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
-      connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-      connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+      connect(editor,&ProjectPropertyDialog::apply,this,&ProjectView::apply);
+      connect(editor,&ProjectPropertyDialog::finished,this,&ProjectView::dialogFinished);
     }
   }
 

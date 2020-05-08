@@ -77,7 +77,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* Function1ArgWidgetFactory::createWidget(int i) {
+  Widget* Function1ArgWidgetFactory::createWidget(int i) {
     if(i==0)
       return new AbsoluteValueFunctionWidget;
     if(i==1)
@@ -146,7 +146,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* Function2ArgWidgetFactory::createWidget(int i) {
+  Widget* Function2ArgWidgetFactory::createWidget(int i) {
     if(i==0)
       return new SymbolicFunctionWidget(argName,argDim,argType,retDim,retType);
     if(i==1)
@@ -189,7 +189,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* StateDependentTranslationWidgetFactory::createWidget(int i) {
+  Widget* StateDependentTranslationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -248,7 +248,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* TimeDependentTranslationWidgetFactory::createWidget(int i) {
+  Widget* TimeDependentTranslationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -308,7 +308,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* StateDependentRotationWidgetFactory::createWidget(int i) {
+  Widget* StateDependentRotationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -350,7 +350,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* TimeDependentRotationWidgetFactory::createWidget(int i) {
+  Widget* TimeDependentRotationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -374,19 +374,19 @@ namespace MBSimGUI {
     xmlName.push_back(uri%"timeDependentTranslation");
   }
 
-  QWidget* TranslationWidgetFactory::createWidget(int i) {
+  Widget* TranslationWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
       vector<FunctionWidget::VarType> argType(2);
       argType[0] = FunctionWidget::varVec;
       argType[1] = FunctionWidget::scalar;
-      return new ChoiceWidget2(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",vector<int>(2,1),argType,3,FunctionWidget::fixedVec,parent));
+      return new ChoiceWidget(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",vector<int>(2,1),argType,3,FunctionWidget::fixedVec,parent));
     }
     if(i==1)
-      return new ChoiceWidget2(new StateDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new StateDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     if(i==2)
-      return new ChoiceWidget2(new TimeDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new TimeDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     return nullptr;
   }
 
@@ -397,11 +397,11 @@ namespace MBSimGUI {
     xmlName.push_back(uri%"timeDependentRotation");
   }
 
-  QWidget* RotationWidgetFactory::createWidget(int i) {
+  Widget* RotationWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new ChoiceWidget2(new StateDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new StateDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     if(i==1)
-      return new ChoiceWidget2(new TimeDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new TimeDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     return nullptr;
   }
 
@@ -412,9 +412,9 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"innerFunctions");
   }
 
-  QWidget* CompositeFunctionWidgetFactory::createWidget(int i) {
+  Widget* CompositeFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
-      return new ExtWidget("Inner function",new ChoiceWidget2(factory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"innerFunction");
+      return new ExtWidget("Inner function",new ChoiceWidget(factory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"innerFunction");
     }
     if(i==1)
       return new ExtWidget("Inner functions",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",2,0,true),false,false,MBSIM%"innerFunctions");
@@ -428,18 +428,18 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"xy");
   }
 
-  QWidget* TabularFunctionWidgetFactory::createWidget(int i) {
+  Widget* TabularFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *widgetContainer = new ContainerWidget;
-      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
+      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
       if(retType==FunctionWidget::fixedVec)
-        widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatWidgetFactory(getEye<QString>(3,retDim,"0","0"),vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
+        widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget(new MatWidgetFactory(getEye<QString>(3,retDim,"0","0"),vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
       else
-        widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new MatColsVarWidgetFactory(3,retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
+        widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget(new MatColsVarWidgetFactory(3,retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
       return widgetContainer;
     }
     if(i==1)
-      return new ExtWidget("xy",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,1+retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
+      return new ExtWidget("xy",new ChoiceWidget(new MatRowsVarWidgetFactory(3,1+retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
     return nullptr;
   }
 
@@ -450,16 +450,16 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"xyz");
   }
 
-  QWidget* TwoDimensionalTabularFunctionWidgetFactory::createWidget(int i) {
+  Widget* TwoDimensionalTabularFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *widgetContainer = new ContainerWidget;
-      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
-      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
-      widgetContainer->addWidget(new ExtWidget("z",new ChoiceWidget2(new MatWidgetFactory(3,3,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"z"));
+      widgetContainer->addWidget(new ExtWidget("x",new ChoiceWidget(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"x"));
+      widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
+      widgetContainer->addWidget(new ExtWidget("z",new ChoiceWidget(new MatWidgetFactory(3,3,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"z"));
       return widgetContainer;
     }
     if(i==1)
-      return new ExtWidget("xyz",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(3,3,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xyz");
+      return new ExtWidget("xyz",new ChoiceWidget(new MatRowsColsVarWidgetFactory(3,3,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xyz");
     return nullptr;
   }
 
@@ -470,15 +470,15 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"ab");
   }
 
-  QWidget* FourierFunctionWidgetFactory::createWidget(int i) {
+  Widget* FourierFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *widgetContainer = new ContainerWidget;
-      widgetContainer->addWidget(new ExtWidget("a",new ChoiceWidget2(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a"));
-      widgetContainer->addWidget(new ExtWidget("b",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"b"));
+      widgetContainer->addWidget(new ExtWidget("a",new ChoiceWidget(new VecSizeVarWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a"));
+      widgetContainer->addWidget(new ExtWidget("b",new ChoiceWidget(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),false,false,MBSIM%"b"));
       return widgetContainer;
     }
     if(i==1)
-      return new ExtWidget("ab",new ChoiceWidget2(new MatRowsVarWidgetFactory(3,2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"ab");
+      return new ExtWidget("ab",new ChoiceWidget(new MatRowsVarWidgetFactory(3,2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"ab");
     return nullptr;
   }
 
@@ -491,24 +491,24 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"timeDependentConstraintFunction");
   }
 
-  QWidget* ConstraintWidgetFactory::createWidget(int i) {
+  Widget* ConstraintWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
       vector<FunctionWidget::VarType> argType(2);
       argType[0] = FunctionWidget::varVec;
       argType[1] = FunctionWidget::scalar;
-      return new ChoiceWidget2(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",vector<int>(2,1),argType,1,FunctionWidget::fixedVec,parent));
+      return new ChoiceWidget(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",vector<int>(2,1),argType,1,FunctionWidget::fixedVec,parent));
     }
     if(i==1) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
-      return new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
     }
     if(i==2) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
-      return new ChoiceWidget2(new Function1ArgWidgetFactory(dummy,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
     }
     return nullptr;
   }
@@ -526,7 +526,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* SpringDamperWidgetFactory::createWidget(int i) {
+  Widget* SpringDamperWidgetFactory::createWidget(int i) {
     if(i==0)
       return new LinearElasticFunctionWidget(varSize);
     if(i==1)
@@ -559,7 +559,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
+  Widget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -604,7 +604,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"VectorValuedFunction");
   }
 
-  QWidget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
+  Widget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
     if(i==0) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -638,7 +638,7 @@ namespace MBSimGUI {
     xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
-  QWidget* GravityFunctionWidgetFactory::createWidget(int i) {
+  Widget* GravityFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
       return new ConstantFunctionWidget;
     if(i==1)

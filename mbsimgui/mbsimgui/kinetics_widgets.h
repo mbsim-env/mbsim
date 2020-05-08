@@ -224,7 +224,7 @@ namespace MBSimGUI {
   class GeneralizedForceLawWidgetFactory : public WidgetFactory {
     public:
       GeneralizedForceLawWidgetFactory();
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -237,7 +237,7 @@ namespace MBSimGUI {
   class FrictionForceLawWidgetFactory : public WidgetFactory {
     public:
       FrictionForceLawWidgetFactory(QWidget *parent_);
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -251,7 +251,7 @@ namespace MBSimGUI {
   class GeneralizedImpactLawWidgetFactory : public WidgetFactory {
     public:
       GeneralizedImpactLawWidgetFactory();
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -264,7 +264,7 @@ namespace MBSimGUI {
   class FrictionImpactLawWidgetFactory : public WidgetFactory {
     public:
       FrictionImpactLawWidgetFactory(QWidget *parent_);
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -278,7 +278,7 @@ namespace MBSimGUI {
   class RegularizedBilateralConstraintFunctionFactory : public WidgetFactory {
     public:
       RegularizedBilateralConstraintFunctionFactory();
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -291,7 +291,7 @@ namespace MBSimGUI {
   class RegularizedUnilateralConstraintFunctionFactory : public WidgetFactory {
     public:
       RegularizedUnilateralConstraintFunctionFactory();
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -304,7 +304,7 @@ namespace MBSimGUI {
   class FrictionFunctionFactory : public WidgetFactory {
     public:
       FrictionFunctionFactory();
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }

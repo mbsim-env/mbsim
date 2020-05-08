@@ -38,8 +38,8 @@ namespace MBSimGUI {
     auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     buttonBox->addButton(QDialogButtonBox::Cancel);
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &OptionsDialog::reject);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &OptionsDialog::accept);
 
     auto *sublayout = new QHBoxLayout;
     layout->addLayout(sublayout);
@@ -47,7 +47,7 @@ namespace MBSimGUI {
     sublayout->addWidget(autoSave);
     autoSaveInterval = new QSpinBox;
     autoSaveInterval->setMinimum(1);
-    connect(autoSave,SIGNAL(stateChanged(int)),this,SLOT(autoSaveChanged(int)));
+    connect(autoSave,&QCheckBox::stateChanged,this,&OptionsDialog::autoSaveChanged);
     sublayout->addWidget(autoSaveInterval);
     QLabel *label = new QLabel("min");
     sublayout->addWidget(label);
@@ -55,13 +55,12 @@ namespace MBSimGUI {
     sublayout = new QHBoxLayout;
     layout->addLayout(sublayout);
     autoExport = new QCheckBox("Auto export simulation data");
-    connect(autoExport,SIGNAL(stateChanged(int)),this,SLOT(autoExportChanged(int)));
+    connect(autoExport,&QCheckBox::stateChanged,this,&OptionsDialog::autoExportChanged);
     sublayout->addWidget(autoExport);
-    //autoExportDir = new FileWidget("Export directory", "", 3);
     autoExportDir = new QLineEdit("Export directory");
     sublayout->addWidget(autoExportDir);
     button = new QPushButton("Browse");
-    connect(button,SIGNAL(clicked(bool)),this,SLOT(openFileBrowser()));
+    connect(button,&QPushButton::clicked,this,&OptionsDialog::openFileBrowser);
     sublayout->addWidget(button);
 
     saveStateVector = new QCheckBox("Save final state vector");

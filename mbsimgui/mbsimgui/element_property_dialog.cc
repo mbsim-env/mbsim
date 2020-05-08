@@ -57,7 +57,7 @@ namespace MBSimGUI {
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
       ConnectRigidBodiesWidgetFactory(Element *element_, QWidget *parent_);
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
     protected:
@@ -71,7 +71,7 @@ namespace MBSimGUI {
     name.emplace_back("2 rigid bodies");
   }
 
-  QWidget* ConnectRigidBodiesWidgetFactory::createWidget(int i) {
+  Widget* ConnectRigidBodiesWidgetFactory::createWidget(int i) {
     return new ConnectElementsWidget<RigidBody>(i+1,element,parent);
   }
 
@@ -194,10 +194,10 @@ namespace MBSimGUI {
     refFrame = new ExtWidget("Frame of reference",new ParentFrameOfReferenceWidget(frame,static_cast<Frame*>(frame)),true,false,MBSIM%"frameOfReference");
     addToTab("Kinematics", refFrame);
 
-    position = new ExtWidget("Relative position",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativePosition");
+    position = new ExtWidget("Relative position",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativePosition");
     addToTab("Kinematics", position);
 
-    orientation = new ExtWidget("Relative orientation",new ChoiceWidget2(new RotMatWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativeOrientation");
+    orientation = new ExtWidget("Relative orientation",new ChoiceWidget(new RotMatWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativeOrientation");
     addToTab("Kinematics", orientation);
   }
 
@@ -219,7 +219,7 @@ namespace MBSimGUI {
 
   NodeFramePropertyDialog::NodeFramePropertyDialog(Element *frame) : FramePropertyDialog(frame) {
 
-    nodeNumber = new ExtWidget("Node number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumber");
+    nodeNumber = new ExtWidget("Node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumber");
     addToTab("General", nodeNumber);
   }
 
@@ -237,11 +237,11 @@ namespace MBSimGUI {
 
   InterfaceNodeFramePropertyDialog::InterfaceNodeFramePropertyDialog(Element *frame, bool approx_) : FramePropertyDialog(frame) {
 
-    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
+    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", nodeNumbers);
 
     if(approx_) {
-      approx = new ExtWidget("Approximate shape matrix of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"approximateShapeMatrixOfRotation");
+      approx = new ExtWidget("Approximate shape matrix of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"approximateShapeMatrixOfRotation");
       addToTab("General", approx);
     }
   }
@@ -261,7 +261,7 @@ namespace MBSimGUI {
   }
 
   ContourPropertyDialog::ContourPropertyDialog(Element *contour) : ElementPropertyDialog(contour) {
-    thickness = new ExtWidget("Thickness",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"thickness");
+    thickness = new ExtWidget("Thickness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"thickness");
     addToTab("General", thickness);
   }
 
@@ -354,7 +354,7 @@ namespace MBSimGUI {
   SpherePropertyDialog::SpherePropertyDialog(Element *sphere) : RigidContourPropertyDialog(sphere) {
     addTab("Visualization",1);
 
-    radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
+    radius = new ExtWidget("Radius",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
     addToTab("General", radius);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
@@ -378,9 +378,9 @@ namespace MBSimGUI {
   CirclePropertyDialog::CirclePropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
     addTab("Visualization",1);
 
-    radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
+    radius = new ExtWidget("Radius",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
     addToTab("General", radius);
-    solid = new ExtWidget("Solid",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"solid");
+    solid = new ExtWidget("Solid",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"solid");
     addToTab("General", solid);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -405,7 +405,7 @@ namespace MBSimGUI {
   CuboidPropertyDialog::CuboidPropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
     addTab("Visualization",1);
 
-    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
+    length = new ExtWidget("Length",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
@@ -429,7 +429,7 @@ namespace MBSimGUI {
   LineSegmentPropertyDialog::LineSegmentPropertyDialog(Element *line) : RigidContourPropertyDialog(line) {
     addTab("Visualization",1);
 
-    length = new ExtWidget("Length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
+    length = new ExtWidget("Length",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
@@ -453,13 +453,13 @@ namespace MBSimGUI {
   PlanarContourPropertyDialog::PlanarContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
-    nodes = new ExtWidget("Nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"nodes");
+    nodes = new ExtWidget("Nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"nodes");
     addToTab("General", nodes);
 
-    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new PlanarContourFunctionWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget(new PlanarContourFunctionWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
     addToTab("General", contourFunction);
 
-    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
+    open = new ExtWidget("Open",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
     addToTab("General", open);
 
     visu = new ExtWidget("Enable openMBV",new PlanarContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -494,19 +494,19 @@ namespace MBSimGUI {
     interpolation = new ExtWidget("Interpolation",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolation");
     addToTab("General", interpolation);
 
-    controlPoints = new ExtWidget("Control points",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"controlPoints");
+    controlPoints = new ExtWidget("Control points",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"controlPoints");
     addToTab("General", controlPoints);
 
-    numberOfControlPoints = new ExtWidget("Number of control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfControlPoints");
+    numberOfControlPoints = new ExtWidget("Number of control points",new ChoiceWidget(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfControlPoints");
     addToTab("General", numberOfControlPoints);
 
-    knotVector = new ExtWidget("Knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"knotVector");
+    knotVector = new ExtWidget("Knot vector",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"knotVector");
     addToTab("General", knotVector);
 
-    degree = new ExtWidget("Degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"degree");
+    degree = new ExtWidget("Degree",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"degree");
     addToTab("General", degree);
 
-    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
+    open = new ExtWidget("Open",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"open");
     addToTab("General", open);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
@@ -540,19 +540,19 @@ namespace MBSimGUI {
   SpatialContourPropertyDialog::SpatialContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
-    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"etaNodes");
+    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"etaNodes");
     addToTab("General", etaNodes);
 
-    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget2(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xiNodes");
+    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xiNodes");
     addToTab("General", xiNodes);
 
-    contourFunction = new ExtWidget("Contour function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
+    contourFunction = new ExtWidget("Contour function",new ChoiceWidget(new SpatialContourFunctionWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"contourFunction");
     addToTab("General", contourFunction);
 
-    openEta = new ExtWidget("Open eta",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
+    openEta = new ExtWidget("Open eta",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
     addToTab("General", openEta);
 
-    openXi = new ExtWidget("Open xi",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openXi");
+    openXi = new ExtWidget("Open xi",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openXi");
     addToTab("General", openXi);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -591,31 +591,31 @@ namespace MBSimGUI {
     interpolation = new ExtWidget("Interpolation",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolation");
     addToTab("General", interpolation);
 
-    controlPoints = new ExtWidget("Control points",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"controlPoints");
+    controlPoints = new ExtWidget("Control points",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"controlPoints");
     addToTab("General", controlPoints);
 
-    numberOfEtaControlPoints = new ExtWidget("Number of eta control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfEtaControlPoints");
+    numberOfEtaControlPoints = new ExtWidget("Number of eta control points",new ChoiceWidget(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfEtaControlPoints");
     addToTab("General", numberOfEtaControlPoints);
 
-    numberOfXiControlPoints = new ExtWidget("Number of xi control points",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfXiControlPoints");
+    numberOfXiControlPoints = new ExtWidget("Number of xi control points",new ChoiceWidget(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfXiControlPoints");
     addToTab("General", numberOfXiControlPoints);
 
-    etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaKnotVector");
+    etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaKnotVector");
     addToTab("General", etaKnotVector);
 
-    xiKnotVector = new ExtWidget("Xi knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiKnotVector");
+    xiKnotVector = new ExtWidget("Xi knot vector",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiKnotVector");
     addToTab("General", xiKnotVector);
 
-    etaDegree = new ExtWidget("Eta degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaDegree");
+    etaDegree = new ExtWidget("Eta degree",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaDegree");
     addToTab("General", etaDegree);
 
-    xiDegree = new ExtWidget("Xi degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiDegree");
+    xiDegree = new ExtWidget("Xi degree",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiDegree");
     addToTab("General", xiDegree);
 
-    openEta = new ExtWidget("Open eta",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
+    openEta = new ExtWidget("Open eta",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
     addToTab("General", openEta);
 
-    openXi = new ExtWidget("Open xi",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openXi");
+    openXi = new ExtWidget("Open xi",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openXi");
     addToTab("General", openXi);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
@@ -657,11 +657,11 @@ namespace MBSimGUI {
   DiskPropertyDialog::DiskPropertyDialog(Element *disk) : RigidContourPropertyDialog(disk) {
     addTab("Visualization",1);
 
-    outerRadius = new ExtWidget("Outer radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"outerRadius");
+    outerRadius = new ExtWidget("Outer radius",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"outerRadius");
     addToTab("General", outerRadius);
-    width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("0.1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
+    width = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0.1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
     addToTab("General", width);
-    innerRadius = new ExtWidget("Inner radius",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"innerRadius");
+    innerRadius = new ExtWidget("Inner radius",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"innerRadius");
     addToTab("General", innerRadius);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -688,21 +688,21 @@ namespace MBSimGUI {
   CylindricalGearPropertyDialog::CylindricalGearPropertyDialog(Element *gear) : RigidContourPropertyDialog(gear) {
     addTab("Visualization",1);
 
-    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
+    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
     addToTab("General", numberOfTeeth);
-    width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
+    width = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
     addToTab("General", width);
-    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
+    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
     addToTab("General", helixAngle);
-    module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
+    module = new ExtWidget("Module",new ChoiceWidget(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
     addToTab("General", module);
-    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
+    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
     addToTab("General", pressureAngle);
-    backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
+    backlash = new ExtWidget("Backlash",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
     addToTab("General", backlash);
-    externalToothed = new ExtWidget("External toothed",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"externalToothed");
+    externalToothed = new ExtWidget("External toothed",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"externalToothed");
     addToTab("General", externalToothed);
-    outsideRadius = new ExtWidget("outsideRadius",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"outsideRadius");
+    outsideRadius = new ExtWidget("outsideRadius",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"outsideRadius");
     addToTab("General", outsideRadius);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -739,19 +739,19 @@ namespace MBSimGUI {
   RackPropertyDialog::RackPropertyDialog(Element *rack) : RigidContourPropertyDialog(rack) {
     addTab("Visualization",1);
 
-    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
+    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
     addToTab("General", numberOfTeeth);
-    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"height");
+    height = new ExtWidget("Height",new ChoiceWidget(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"height");
     addToTab("General", height);
-    width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
+    width = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
     addToTab("General", width);
-    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
+    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
     addToTab("General", helixAngle);
-    module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
+    module = new ExtWidget("Module",new ChoiceWidget(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
     addToTab("General", module);
-    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
+    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
     addToTab("General", pressureAngle);
-    backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
+    backlash = new ExtWidget("Backlash",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
     addToTab("General", backlash);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -786,19 +786,19 @@ namespace MBSimGUI {
   BevelGearPropertyDialog::BevelGearPropertyDialog(Element *gear) : RigidContourPropertyDialog(gear) {
     addTab("Visualization",1);
 
-    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
+    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
     addToTab("General", numberOfTeeth);
-    width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
+    width = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
     addToTab("General", width);
-    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
+    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
     addToTab("General", helixAngle);
-    pitchAngle = new ExtWidget("Pitch angle",new ChoiceWidget2(new ScalarWidgetFactory("45",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pitchAngle");
+    pitchAngle = new ExtWidget("Pitch angle",new ChoiceWidget(new ScalarWidgetFactory("45",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pitchAngle");
     addToTab("General", pitchAngle);
-    module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
+    module = new ExtWidget("Module",new ChoiceWidget(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
     addToTab("General", module);
-    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
+    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
     addToTab("General", pressureAngle);
-    backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
+    backlash = new ExtWidget("Backlash",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
     addToTab("General", backlash);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -833,19 +833,19 @@ namespace MBSimGUI {
   PlanarGearPropertyDialog::PlanarGearPropertyDialog(Element *gear) : RigidContourPropertyDialog(gear) {
     addTab("Visualization",1);
 
-    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget2(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
+    numberOfTeeth = new ExtWidget("Number of teeth",new ChoiceWidget(new ScalarWidgetFactory("15",vector<QStringList>(2,QStringList())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"numberOfTeeth");
     addToTab("General", numberOfTeeth);
-    height = new ExtWidget("Height",new ChoiceWidget2(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"height");
+    height = new ExtWidget("Height",new ChoiceWidget(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"height");
     addToTab("General", height);
-    width = new ExtWidget("Width",new ChoiceWidget2(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
+    width = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("50",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"width");
     addToTab("General", width);
-    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
+    helixAngle = new ExtWidget("Helix angle",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"helixAngle");
     addToTab("General", helixAngle);
-    module = new ExtWidget("Module",new ChoiceWidget2(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
+    module = new ExtWidget("Module",new ChoiceWidget(new ScalarWidgetFactory("16",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"module");
     addToTab("General", module);
-    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget2(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
+    pressureAngle = new ExtWidget("Pressure angle",new ChoiceWidget(new ScalarWidgetFactory("20",vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"pressureAngle");
     addToTab("General", pressureAngle);
-    backlash = new ExtWidget("Backlash",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
+    backlash = new ExtWidget("Backlash",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"backlash");
     addToTab("General", backlash);
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -880,19 +880,19 @@ namespace MBSimGUI {
   FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
-    interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
+    interpolation = new ExtWidget("Interpolation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
     addToTab("General", interpolation);
 
-    indices = new ExtWidget("Node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
+    indices = new ExtWidget("Node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", indices);
 
-    knotVector = new ExtWidget("Knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"knotVector");
+    knotVector = new ExtWidget("Knot vector",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"knotVector");
     addToTab("General", knotVector);
 
-    degree = new ExtWidget("Degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"degree");
+    degree = new ExtWidget("Degree",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"degree");
     addToTab("General", degree);
 
-    open = new ExtWidget("Open",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"open");
+    open = new ExtWidget("Open",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"open");
     addToTab("General", open);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFLEX%"enableOpenMBV");
@@ -924,28 +924,28 @@ namespace MBSimGUI {
   FlexibleSpatialNurbsContourPropertyDialog::FlexibleSpatialNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
-    interpolation = new ExtWidget("Interpolation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
+    interpolation = new ExtWidget("Interpolation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interpolation");
     addToTab("General", interpolation);
 
-    indices = new ExtWidget("Node numbers",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
+    indices = new ExtWidget("Node numbers",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", indices);
 
-    etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaKnotVector");
+    etaKnotVector = new ExtWidget("Eta knot vector",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaKnotVector");
     addToTab("General", etaKnotVector);
 
-    xiKnotVector = new ExtWidget("Xi knot vector",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"xiKnotVector");
+    xiKnotVector = new ExtWidget("Xi knot vector",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"xiKnotVector");
     addToTab("General", xiKnotVector);
 
-    etaDegree = new ExtWidget("Eta degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaDegree");
+    etaDegree = new ExtWidget("Eta degree",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"etaDegree");
     addToTab("General", etaDegree);
 
-    xiDegree = new ExtWidget("Xi degree",new ChoiceWidget2(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"xiDegree");
+    xiDegree = new ExtWidget("Xi degree",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"xiDegree");
     addToTab("General", xiDegree);
 
-    openEta = new ExtWidget("Open eta",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openEta");
+    openEta = new ExtWidget("Open eta",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openEta");
     addToTab("General", openEta);
 
-    openXi = new ExtWidget("Open xi",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openXi");
+    openXi = new ExtWidget("Open xi",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openXi");
     addToTab("General", openXi);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFLEX%"enableOpenMBV");
@@ -981,7 +981,7 @@ namespace MBSimGUI {
   }
 
   FclContourPropertyDialog::FclContourPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
-    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFCL%"computeLocalAABB");
+    computeLocalAABB = new ExtWidget("Compute local AABB",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFCL%"computeLocalAABB");
     addToTab("General", computeLocalAABB);
   }
 
@@ -1000,7 +1000,7 @@ namespace MBSimGUI {
   FclBoxPropertyDialog::FclBoxPropertyDialog(Element *contour) : FclContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
-    length = new ExtWidget("Length",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"length");
+    length = new ExtWidget("Length",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFCL%"enableOpenMBV");
@@ -1024,7 +1024,7 @@ namespace MBSimGUI {
   FclSpherePropertyDialog::FclSpherePropertyDialog(Element *contour) : FclContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
-    radius = new ExtWidget("Radius",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"radius");
+    radius = new ExtWidget("Radius",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"radius");
     addToTab("General", radius);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFCL%"enableOpenMBV");
@@ -1050,10 +1050,10 @@ namespace MBSimGUI {
 
     vector<QString> n = getVec<QString>(3,"0");
     n[0] = "1";
-    normal = new ExtWidget("Normal",new ChoiceWidget2(new VecWidgetFactory(n,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"normal");
+    normal = new ExtWidget("Normal",new ChoiceWidget(new VecWidgetFactory(n,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"normal");
     addToTab("General", normal);
 
-    offset = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"offset");
+    offset = new ExtWidget("Offset",new ChoiceWidget(new ScalarWidgetFactory(0),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"offset");
     addToTab("General", offset);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFCL%"enableOpenMBV");
@@ -1079,10 +1079,10 @@ namespace MBSimGUI {
   FclMeshPropertyDialog::FclMeshPropertyDialog(Element *contour) : FclContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
-    vertices = new ExtWidget("Vertices",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"vertices");
+    vertices = new ExtWidget("Vertices",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"vertices");
     addToTab("General", vertices);
 
-    triangles = new ExtWidget("Triangles",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,QStringList()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"triangles");
+    triangles = new ExtWidget("Triangles",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3,vector<QStringList>(3,QStringList()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFCL%"triangles");
     addToTab("General", triangles);
 
     vector<QString> list;
@@ -1147,7 +1147,7 @@ namespace MBSimGUI {
     addTab("Solver parameters",2);
     addTab("Extra");
 
-    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"accelerationOfGravity");
+    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"accelerationOfGravity");
     addToTab("Environment", environment);
 
     vector<QString> list;
@@ -1161,55 +1161,55 @@ namespace MBSimGUI {
     impactSolver = new ExtWidget("Impact solver",new TextChoiceWidget(list,0,true),true,false,MBSIM%"impactSolver");
     addToTab("Solver parameters", impactSolver);
 
-    maxIter = new ExtWidget("Maximum number of iterations",new ChoiceWidget2(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumNumberOfIterations");
+    maxIter = new ExtWidget("Maximum number of iterations",new ChoiceWidget(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumNumberOfIterations");
     addToTab("Solver parameters", maxIter);
 
-    highIter = new ExtWidget("High number of iterations",new ChoiceWidget2(new ScalarWidgetFactory("1000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"highNumberOfIterations");
+    highIter = new ExtWidget("High number of iterations",new ChoiceWidget(new ScalarWidgetFactory("1000"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"highNumberOfIterations");
     addToTab("Solver parameters", highIter);
 
-    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
+    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
     addToTab("Solver parameters", numericalJacobian);
 
-    stopIfNoConvergence = new ExtWidget("Stop if no convergence",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stopIfNoConvergence");
+    stopIfNoConvergence = new ExtWidget("Stop if no convergence",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stopIfNoConvergence");
     addToTab("Solver parameters", stopIfNoConvergence);
 
-    projection = new ExtWidget("Projection tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
+    projection = new ExtWidget("Projection tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
     addToTab("Solver parameters", projection);
 
-    gTol = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
+    gTol = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
     addToTab("Solver parameters", gTol);
 
-    gdTol = new ExtWidget("Generalized relative velocity tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityTolerance");
+    gdTol = new ExtWidget("Generalized relative velocity tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityTolerance");
     addToTab("Solver parameters", gdTol);
 
-    gddTol = new ExtWidget("Generalized relative acceleration tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeAccelerationTolerance");
+    gddTol = new ExtWidget("Generalized relative acceleration tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeAccelerationTolerance");
     addToTab("Solver parameters", gddTol);
 
-    laTol = new ExtWidget("Generalized force tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedForceTolerance");
+    laTol = new ExtWidget("Generalized force tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedForceTolerance");
     addToTab("Solver parameters", laTol);
 
-    LaTol = new ExtWidget("Generalized impulse tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedImpulseTolerance");
+    LaTol = new ExtWidget("Generalized impulse tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedImpulseTolerance");
     addToTab("Solver parameters", LaTol);
 
-    gCorr = new ExtWidget("Generalized relative position correction value",new ChoiceWidget2(new ScalarWidgetFactory("1e-14"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionCorrectionValue");
+    gCorr = new ExtWidget("Generalized relative position correction value",new ChoiceWidget(new ScalarWidgetFactory("1e-14"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionCorrectionValue");
     addToTab("Solver parameters", gCorr);
 
-    gdCorr = new ExtWidget("Generalized relative velocity correction value",new ChoiceWidget2(new ScalarWidgetFactory("1e-16"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityCorrectionValue");
+    gdCorr = new ExtWidget("Generalized relative velocity correction value",new ChoiceWidget(new ScalarWidgetFactory("1e-16"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityCorrectionValue");
     addToTab("Solver parameters", gdCorr);
 
-    inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
+    inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
     addToTab("Extra", inverseKinetics);
 
-    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget2(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialProjection");
+    initialProjection = new ExtWidget("Initial projection",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialProjection");
     addToTab("Extra", initialProjection);
 
-    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"determineEquilibriumState");
+    determineEquilibriumState = new ExtWidget("Determine equilibrium state",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"determineEquilibriumState");
     addToTab("Extra",determineEquilibriumState);
 
-    useConstraintSolverForSmoothMotion = new ExtWidget("Use constraint solver for smooth motion",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForSmoothMotion");
+    useConstraintSolverForSmoothMotion = new ExtWidget("Use constraint solver for smooth motion",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForSmoothMotion");
     addToTab("Extra", useConstraintSolverForSmoothMotion);
 
-    useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForPlot");
+    useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForPlot");
     addToTab("Extra", useConstraintSolverForPlot);
   }
 
@@ -1266,14 +1266,14 @@ namespace MBSimGUI {
   ObjectPropertyDialog::ObjectPropertyDialog(Element *object) : ElementPropertyDialog(object) {
     addTab("Initial conditions",1);
 
-    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
+    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
     addToTab("Initial conditions", q0);
 
-    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget2(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
+    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget(new VecWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
     addToTab("Initial conditions", u0);
 
-    connect(q0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(u0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(q0, &ExtWidget::widgetChanged, this, &ObjectPropertyDialog::updateWidget);
+    connect(u0, &ExtWidget::widgetChanged, this, &ObjectPropertyDialog::updateWidget);
   }
 
   DOMElement* ObjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1315,24 +1315,24 @@ namespace MBSimGUI {
     K = new ExtWidget("Frame for kinematics",new LocalFrameOfReferenceWidget(body,nullptr),true,false,MBSIM%"frameForKinematics");
     addToTab("Kinematics",K);
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"mass");
+    mass = new ExtWidget("Mass",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"mass");
     addToTab("General",mass);
 
-    inertia = new ExtWidget("Inertia tensor",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"inertiaTensor");
+    inertia = new ExtWidget("Inertia tensor",new ChoiceWidget(new SymMatWidgetFactory(getEye<QString>(3,3,"0.01","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"inertiaTensor");
     addToTab("General",inertia);
 
     frameForInertiaTensor = new ExtWidget("Frame for inertia tensor",new LocalFrameOfReferenceWidget(body,nullptr),true,false,MBSIM%"frameForInertiaTensor");
     addToTab("General",frameForInertiaTensor);
 
-    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory(body,MBSIM,this),QBoxLayout::TopToBottom,3),true,false,"");
+    translation = new ExtWidget("Translation",new ChoiceWidget(new TranslationWidgetFactory(body,MBSIM,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
-    connect(translation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(translation,&ExtWidget::widgetChanged,this,&RigidBodyPropertyDialog::updateWidget);
 
-    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory(body,MBSIM,this),QBoxLayout::TopToBottom,3),true,false,"");
+    rotation = new ExtWidget("Rotation",new ChoiceWidget(new RotationWidgetFactory(body,MBSIM,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
-    connect(rotation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(rotation,&ExtWidget::widgetChanged,this,&RigidBodyPropertyDialog::updateWidget);
 
-    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationDependentRotation");
+    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
 
     vector<QString> list;
@@ -1342,7 +1342,7 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation = new ExtWidget("Generalized velocity of rotation",new TextChoiceWidget(list,0,true),true,false,MBSIM%"generalizedVelocityOfRotation");
     addToTab("Kinematics", generalizedVelocityOfRotation);
 
-    ombv = new ExtWidget("OpenMBV Body",new ChoiceWidget2(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
+    ombv = new ExtWidget("OpenMBV Body",new ChoiceWidget(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
     addToTab("Visualization", ombv);
 
     ombvFrameRef=new ExtWidget("OpenMBV frame of reference",new LocalFrameOfReferenceWidget(body),true,false,MBSIM%"openMBVFrameOfReference");
@@ -1383,15 +1383,15 @@ namespace MBSimGUI {
   int RigidBodyPropertyDialog::getqRelSize() const {
     int nqT=0, nqR=0;
     if(translation->isActive()) {
-      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()!=2) {
-        auto *trans = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget())->getWidget());
+      if(static_cast<ChoiceWidget*>(translation->getWidget())->getIndex()!=2) {
+        auto *trans = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget());
         if(trans)
           nqT = trans->getArg1Size();
       }
     }
     if(rotation->isActive()) {
-      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()!=1) {
-        auto *rot = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget())->getWidget());
+      if(static_cast<ChoiceWidget*>(rotation->getWidget())->getIndex()!=1) {
+        auto *rot = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget());
         if(rot)
           nqR = rot->getArg1Size();
       }
@@ -1413,15 +1413,15 @@ namespace MBSimGUI {
 
   GenericFlexibleFfrBodyPropertyDialog::GenericFlexibleFfrBodyPropertyDialog(Element *body) : BodyPropertyDialog(body) {
 
-    translation = new ExtWidget("Translation",new ChoiceWidget2(new TranslationWidgetFactory(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
+    translation = new ExtWidget("Translation",new ChoiceWidget(new TranslationWidgetFactory(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", translation);
-    connect(translation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(translation,&ExtWidget::widgetChanged,this,&GenericFlexibleFfrBodyPropertyDialog::updateWidget);
 
-    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new RotationWidgetFactory(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
+    rotation = new ExtWidget("Rotation",new ChoiceWidget(new RotationWidgetFactory(body,MBSIMFLEX,this),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("Kinematics", rotation);
-    connect(rotation,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(rotation,&ExtWidget::widgetChanged,this,&GenericFlexibleFfrBodyPropertyDialog::updateWidget);
 
-    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"translationDependentRotation");
+    translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
 
     vector<QString> list;
@@ -1435,15 +1435,15 @@ namespace MBSimGUI {
   int GenericFlexibleFfrBodyPropertyDialog::getqRelSize() const {
     int nqT=0, nqR=0;
     if(translation->isActive()) {
-      if(static_cast<ChoiceWidget2*>(translation->getWidget())->getIndex()!=2) {
-        auto *trans = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(translation->getWidget())->getWidget())->getWidget());
+      if(static_cast<ChoiceWidget*>(translation->getWidget())->getIndex()!=2) {
+        auto *trans = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget());
         if(trans)
           nqT = trans->getArg1Size();
       }
     }
     if(rotation->isActive()) {
-      if(static_cast<ChoiceWidget2*>(rotation->getWidget())->getIndex()!=1) {
-        auto *rot = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(rotation->getWidget())->getWidget())->getWidget());
+      if(static_cast<ChoiceWidget*>(rotation->getWidget())->getIndex()!=1) {
+        auto *rot = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget());
         if(rot)
           nqR = rot->getArg1Size();
       }
@@ -1481,85 +1481,85 @@ namespace MBSimGUI {
     addTab("Visualization",3);
     addTab("Nodal data");
 
-    mass = new ExtWidget("Mass",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
+    mass = new ExtWidget("Mass",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
     addToTab("General",mass);
 
-    rdm = new ExtWidget("Position integral",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionIntegral");
+    rdm = new ExtWidget("Position integral",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionIntegral");
     addToTab("General", rdm);
 
-    rrdm = new ExtWidget("Position position integral",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionPositionIntegral");
+    rrdm = new ExtWidget("Position position integral",new ChoiceWidget(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3,inertiaUnits()),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"positionPositionIntegral");
     addToTab("General",rrdm);
 
-    Pdm = new ExtWidget("Shape function integral",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"shapeFunctionIntegral");
+    Pdm = new ExtWidget("Shape function integral",new ChoiceWidget(new MatColsVarWidgetFactory(3,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"shapeFunctionIntegral");
     addToTab("General",Pdm);
 
-    rPdm = new ExtWidget("Position shape function integral",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"positionShapeFunctionIntegral",3,3,1),QBoxLayout::TopToBottom,3),true,false,"");
+    rPdm = new ExtWidget("Position shape function integral",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"positionShapeFunctionIntegral",3,3,1),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("General",rPdm);
 
-    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral",3,1,1),QBoxLayout::TopToBottom,3),true,false,"");
+    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral",3,1,1),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("General",PPdm);
 
-    Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"stiffnessMatrix");
+    Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"stiffnessMatrix");
     addToTab("General",Ke);
 
-    De = new ExtWidget("Damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"dampingMatrix");
+    De = new ExtWidget("Damping matrix",new ChoiceWidget(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"dampingMatrix");
     addToTab("General",De);
 
-    beta = new ExtWidget("Proportional damping",new ChoiceWidget2(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
-    Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder"),QBoxLayout::RightToLeft,3),true,false,"");
+    Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",Knl1);
 
-    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder"),QBoxLayout::RightToLeft,3),true,false,"");
+    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",Knl2);
 
-    ksigma0 = new ExtWidget("Initial stress integral",new ChoiceWidget2(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"initialStressIntegral");
+    ksigma0 = new ExtWidget("Initial stress integral",new ChoiceWidget(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"initialStressIntegral");
     addToTab("General", ksigma0);
 
-    ksigma1 = new ExtWidget("Nonlinear initial stress integral",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nonlinearInitialStressIntegral");
+    ksigma1 = new ExtWidget("Nonlinear initial stress integral",new ChoiceWidget(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nonlinearInitialStressIntegral");
     addToTab("General", ksigma1);
 
-    K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration"),QBoxLayout::RightToLeft,3),true,false,"");
+    K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",K0t);
 
-    K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration"),QBoxLayout::RightToLeft,3),true,false,"");
+    K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",K0r);
 
-    K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"),QBoxLayout::RightToLeft,3),true,false,"");
+    K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("General",K0om);
 
-    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget2(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodeNumbers");
+    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodeNumbers");
     addToTab("Nodal data", nodeNumbers);
 
-    r = new ExtWidget("Nodal relative position",new ChoiceWidget2(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalRelativePosition",1,3,true),QBoxLayout::RightToLeft,3),true,false,"");
+    r = new ExtWidget("Nodal relative position",new ChoiceWidget(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalRelativePosition",1,3,true),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", r);
 
-    A = new ExtWidget("Nodal relative orientation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalRelativeOrientation"),QBoxLayout::RightToLeft,3),true,false,"");
+    A = new ExtWidget("Nodal relative orientation",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalRelativeOrientation"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", A);
 
-    Phi = new ExtWidget("Nodal shape matrix of translation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalShapeMatrixOfTranslation"),QBoxLayout::RightToLeft,3),true,false,"");
+    Phi = new ExtWidget("Nodal shape matrix of translation",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalShapeMatrixOfTranslation"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", Phi);
 
-    Psi = new ExtWidget("Nodal shape matrix of rotation",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalShapeMatrixOfRotation"),QBoxLayout::RightToLeft,3),true,false,"");
+    Psi = new ExtWidget("Nodal shape matrix of rotation",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalShapeMatrixOfRotation"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", Psi);
 
-    sigmahel = new ExtWidget("Nodal stress matrix",new ChoiceWidget2(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalStressMatrix"),QBoxLayout::RightToLeft,3),true,false,"");
+    sigmahel = new ExtWidget("Nodal stress matrix",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalStressMatrix"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", sigmahel);
 
-    sigmahen = new ExtWidget("Nodal nonlinear stress matrix",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalNonlinearStressMatrix"),QBoxLayout::RightToLeft,3),true,false,"");
+    sigmahen = new ExtWidget("Nodal nonlinear stress matrix",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalNonlinearStressMatrix"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", sigmahen);
 
-    sigma0 = new ExtWidget("Nodal initial stress",new ChoiceWidget2(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalInitialStress"),QBoxLayout::RightToLeft,3),true,false,"");
+    sigma0 = new ExtWidget("Nodal initial stress",new ChoiceWidget(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalInitialStress"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", sigma0);
 
-    K0F = new ExtWidget("Nodal geometric stiffness matrix due to force",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForce"),QBoxLayout::RightToLeft,3),true,false,"");
+    K0F = new ExtWidget("Nodal geometric stiffness matrix due to force",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForce"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", K0F);
 
-    K0M = new ExtWidget("Nodal geometric stiffness matrix due to moment",new ChoiceWidget2(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMoment"),QBoxLayout::RightToLeft,3),true,false,"");
+    K0M = new ExtWidget("Nodal geometric stiffness matrix due to moment",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMoment"),QBoxLayout::RightToLeft,3),true,false,"");
     addToTab("Nodal data", K0M);
 
-    ombv = new ExtWidget("OpenMBV body",new ChoiceWidget2(new OMBVFlexibleBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMFLEX%"openMBVFlexibleBody");
+    ombv = new ExtWidget("OpenMBV body",new ChoiceWidget(new OMBVFlexibleBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMFLEX%"openMBVFlexibleBody");
     addToTab("Visualization", ombv);
 
     vector<QString> list;
@@ -1578,109 +1578,108 @@ namespace MBSimGUI {
     ombvColorRepresentation = new ExtWidget("OpenMBV color representation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"openMBVColorRepresentation");
     addToTab("Visualization", ombvColorRepresentation);
 
-    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
 
-    connect(Pdm->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    //    connect(Knl1,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(Pdm->getWidget(),&Widget::widgetChanged,this,&FlexibleFfrBodyPropertyDialog::updateWidget);
   }
 
   void FlexibleFfrBodyPropertyDialog::updateWidget() {
     GenericFlexibleFfrBodyPropertyDialog::updateWidget();
-    int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
-    if(static_cast<ChoiceWidget2*>(rPdm->getWidget())->getIndex()==0)
+    int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(Pdm->getWidget())->getWidget())->cols();
+    if(static_cast<ChoiceWidget*>(rPdm->getWidget())->getIndex()==0)
       rPdm->resize_(3,size);
     else
       rPdm->resize_(9,size);
-    if(static_cast<ChoiceWidget2*>(PPdm->getWidget())->getIndex()==0)
+    if(static_cast<ChoiceWidget*>(PPdm->getWidget())->getIndex()==0)
       PPdm->resize_(size,size);
     else
       PPdm->resize_(9*size,size);
     Ke->resize_(size,size);
     De->resize_(size,size);
     if(Knl1->isActive()) {
-      if(static_cast<ChoiceWidget2*>(Knl1->getWidget())->getIndex()==0)
-        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(Knl1->getWidget())->getWidget())->resize_(size,size,size);
+      if(static_cast<ChoiceWidget*>(Knl1->getWidget())->getIndex()==0)
+        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(Knl1->getWidget())->getWidget())->resize_(size,size,size);
       else
         Knl1->resize_(size*size,size);
     }
     if(Knl2->isActive()) {
-      if(static_cast<ChoiceWidget2*>(Knl2->getWidget())->getIndex()==0)
-        static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(Knl2->getWidget())->getWidget())->resize_(size,size,size,size);
+      if(static_cast<ChoiceWidget*>(Knl2->getWidget())->getIndex()==0)
+        static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget*>(Knl2->getWidget())->getWidget())->resize_(size,size,size,size);
       else
         Knl2->resize_(size*size*size,size);
     }
     ksigma0->resize_(size,1);
     ksigma1->resize_(size,size);
     if(K0t->isActive()) {
-      if(static_cast<ChoiceWidget2*>(K0t->getWidget())->getIndex()==0)
-        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0t->getWidget())->getWidget())->resize_(3,size,size);
+      if(static_cast<ChoiceWidget*>(K0t->getWidget())->getIndex()==0)
+        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0t->getWidget())->getWidget())->resize_(3,size,size);
       else
         K0t->resize_(3*size,size);
     }
     if(K0r->isActive()) {
-      if(static_cast<ChoiceWidget2*>(K0r->getWidget())->getIndex()==0)
-        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0r->getWidget())->getWidget())->resize_(3,size,size);
+      if(static_cast<ChoiceWidget*>(K0r->getWidget())->getIndex()==0)
+        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0r->getWidget())->getWidget())->resize_(3,size,size);
       else
         K0r->resize_(3*size,size);
     }
     if(K0om->isActive()) {
-      if(static_cast<ChoiceWidget2*>(K0om->getWidget())->getIndex()==0)
-        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0om->getWidget())->getWidget())->resize_(3,size,size);
+      if(static_cast<ChoiceWidget*>(K0om->getWidget())->getIndex()==0)
+        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0om->getWidget())->getWidget())->resize_(3,size,size);
       else
         K0om->resize_(3*size,size);
     }
     if(r->isActive()) {
       int rsize;
-      if(static_cast<ChoiceWidget2*>(r->getWidget())->getIndex()==0)
-        rsize = static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getArray().size();
+      if(static_cast<ChoiceWidget*>(r->getWidget())->getIndex()==0)
+        rsize = static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(r->getWidget())->getWidget())->getArray().size();
       else
-        rsize = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(static_cast<ChoiceWidget2*>(r->getWidget())->getWidget())->getWidget())->rows()/3;
+        rsize = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(r->getWidget())->getWidget())->getWidget())->rows()/3;
       if(A->isActive()) {
-        if(static_cast<ChoiceWidget2*>(A->getWidget())->getIndex()==0)
-          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->resize_(rsize,3,3);
+        if(static_cast<ChoiceWidget*>(A->getWidget())->getIndex()==0)
+          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(A->getWidget())->getWidget())->resize_(rsize,3,3);
         else
           A->resize_(3*rsize,3);
       }
       if(Phi->isActive()) {
-        if(static_cast<ChoiceWidget2*>(Phi->getWidget())->getIndex()==0)
-          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(Phi->getWidget())->getWidget())->resize_(rsize,3,size);
+        if(static_cast<ChoiceWidget*>(Phi->getWidget())->getIndex()==0)
+          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(Phi->getWidget())->getWidget())->resize_(rsize,3,size);
         else
           Phi->resize_(3*rsize,size);
       }
       if(Psi->isActive()) {
-        if(static_cast<ChoiceWidget2*>(Psi->getWidget())->getIndex()==0)
-          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(Psi->getWidget())->getWidget())->resize_(rsize,3,size);
+        if(static_cast<ChoiceWidget*>(Psi->getWidget())->getIndex()==0)
+          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(Psi->getWidget())->getWidget())->resize_(rsize,3,size);
         else
           Psi->resize_(3*rsize,size);
       }
       if(sigmahel->isActive()) {
-        if(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getIndex()==0)
-          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(sigmahel->getWidget())->getWidget())->resize_(rsize,6,size);
+        if(static_cast<ChoiceWidget*>(sigmahel->getWidget())->getIndex()==0)
+          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(sigmahel->getWidget())->getWidget())->resize_(rsize,6,size);
         else
           sigmahel->resize_(6*rsize,size);
       }
       if(sigmahen->isActive()) {
-        if(static_cast<ChoiceWidget2*>(sigmahen->getWidget())->getIndex()==0)
-          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(sigmahen->getWidget())->getWidget())->resize_(rsize,size,6,size);
+        if(static_cast<ChoiceWidget*>(sigmahen->getWidget())->getIndex()==0)
+          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget*>(sigmahen->getWidget())->getWidget())->resize_(rsize,size,6,size);
         else
           sigmahen->resize_(6*rsize*size,size);
       }
       if(sigma0->isActive()) {
-        if(static_cast<ChoiceWidget2*>(sigma0->getWidget())->getIndex()==0)
-          static_cast<OneDimVecArrayWidget*>(static_cast<ChoiceWidget2*>(sigma0->getWidget())->getWidget())->resize_(rsize,6,1);
+        if(static_cast<ChoiceWidget*>(sigma0->getWidget())->getIndex()==0)
+          static_cast<OneDimVecArrayWidget*>(static_cast<ChoiceWidget*>(sigma0->getWidget())->getWidget())->resize_(rsize,6,1);
         else
           sigma0->resize_(6*rsize,1);
       }
       if(K0F->isActive()) {
-        if(static_cast<ChoiceWidget2*>(K0F->getWidget())->getIndex()==0)
-          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0F->getWidget())->getWidget())->resize_(rsize,size,size,size);
+        if(static_cast<ChoiceWidget*>(K0F->getWidget())->getIndex()==0)
+          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0F->getWidget())->getWidget())->resize_(rsize,size,size,size);
         else
           K0F->resize_(size*rsize*size,size);
       }
       if(K0M->isActive()) {
-        if(static_cast<ChoiceWidget2*>(K0M->getWidget())->getIndex()==0)
-          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget2*>(K0M->getWidget())->getWidget())->resize_(rsize,size,size,size);
+        if(static_cast<ChoiceWidget*>(K0M->getWidget())->getIndex()==0)
+          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0M->getWidget())->getWidget())->resize_(rsize,size,size,size);
         else
           K0M->resize_(size*rsize*size,size);
       }
@@ -1692,7 +1691,7 @@ namespace MBSimGUI {
   int FlexibleFfrBodyPropertyDialog::getqERelSize() const {
     int nqE=0;
     if(Pdm->isActive())
-      nqE = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(Pdm->getWidget())->getWidget())->cols();
+      nqE = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(Pdm->getWidget())->getWidget())->cols();
     return nqE;
   }
 
@@ -1781,13 +1780,13 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"formalism");
     addToTab("General", formalism);
 
-    beta = new ExtWidget("Proportional damping",new ChoiceWidget2(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
     ombv = new ExtWidget("Enable openMBV",new CalculixBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization",ombv);
 
-    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
   }
 
@@ -1896,9 +1895,9 @@ namespace MBSimGUI {
 
   GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new Function1ArgWidgetFactory(constraint,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new Function1ArgWidgetFactory(constraint,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedPositionConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedPositionConstraintPropertyDialog::updateWidget() {
@@ -1922,12 +1921,12 @@ namespace MBSimGUI {
   GeneralizedVelocityConstraintPropertyDialog::GeneralizedVelocityConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
     addTab("Initial conditions",1);
 
-    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    x0 = new ExtWidget("Initial state",new ChoiceWidget(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", x0);
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedVelocityConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::updateWidget() {
@@ -1951,21 +1950,21 @@ namespace MBSimGUI {
   GeneralizedAccelerationConstraintPropertyDialog::GeneralizedAccelerationConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
     addTab("Initial conditions",1);
 
-    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
+    x0 = new ExtWidget("Initial state",new ChoiceWidget(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
     addToTab("Initial conditions", x0);
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget2(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedAccelerationConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedAccelerationConstraintPropertyDialog::updateWidget() {
     //    RigidBody *refBody = static_cast<RigidBodyOfReferenceWidget*>(dependentBody->getWidget())->getSelectedBody();
     //    int size = refBody?(refBody->getqRelSize()+refBody->getuRelSize()):0;
-    //    static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->resize_(size,1);
+    //    static_cast<ChoiceWidget*>(constraintFunction->getWidget())->resize_(size,1);
     //    if(x0_ && x0_->size() != size)
     //      x0_->resize_(size);
-    //    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
+    //    static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(constraintFunction->getWidget())->getWidget())->setArg1Size(size);
   }
 
   DOMElement* GeneralizedAccelerationConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1990,11 +1989,11 @@ namespace MBSimGUI {
 
     dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,2,false,0),false,false,"");
     addToTab("General",dependentBodiesFirstSide);
-    connect(dependentBodiesFirstSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(dependentBodiesFirstSide->getWidget(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
     dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,2,false,0),false,false,"");
     addToTab("General",dependentBodiesSecondSide);
-    connect(dependentBodiesSecondSide->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(dependentBodiesSecondSide->getWidget(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
     independentBody = new ExtWidget("Independent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);
@@ -2008,13 +2007,13 @@ namespace MBSimGUI {
     refFrame = new ExtWidget("Frame of reference",new TextChoiceWidget(list,1,true),true,false,MBSIM%"frameOfReference");
     addToTab("Kinetics", refFrame);
 
-    force = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    force = new ExtWidget("Force direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics", force);
 
-    moment = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
+    moment = new ExtWidget("Moment direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics", moment);
 
-    q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    q0 = new ExtWidget("Initial guess",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Initial conditions", q0);
   }
 
@@ -2077,13 +2076,13 @@ namespace MBSimGUI {
     frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(constraint,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    translation = new ExtWidget("Translation",new ChoiceWidget2(new TimeDependentTranslationWidgetFactory(constraint,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"translation");
+    translation = new ExtWidget("Translation",new ChoiceWidget(new TimeDependentTranslationWidgetFactory(constraint,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"translation");
     addToTab("Kinematics", translation);
 
-    rotation = new ExtWidget("Rotation",new ChoiceWidget2(new TimeDependentRotationWidgetFactory(constraint,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"rotation");
+    rotation = new ExtWidget("Rotation",new ChoiceWidget(new TimeDependentRotationWidgetFactory(constraint,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"rotation");
     addToTab("Kinematics", rotation);
 
-    q0 = new ExtWidget("Initial guess",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    q0 = new ExtWidget("Initial guess",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Initial conditions", q0);
   }
 
@@ -2182,7 +2181,7 @@ namespace MBSimGUI {
   DualRigidBodyLinkPropertyDialog::DualRigidBodyLinkPropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
 
-    connections = new ExtWidget("Connections",new ChoiceWidget2(new ConnectRigidBodiesWidgetFactory(link,this),QBoxLayout::RightToLeft,5),false,false,MBSIM%"connect");
+    connections = new ExtWidget("Connections",new ChoiceWidget(new ConnectRigidBodiesWidgetFactory(link,this),QBoxLayout::RightToLeft,5),false,false,MBSIM%"connect");
     addToTab("Kinetics",connections);
   }
 
@@ -2200,38 +2199,38 @@ namespace MBSimGUI {
 
   KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(Element *kineticExcitation) : FloatingFrameLinkPropertyDialog(kineticExcitation) {
 
-    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new Function1ArgWidgetFactory(kineticExcitation,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceFunction");
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget(new Function1ArgWidgetFactory(kineticExcitation,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceFunction");
     addToTab("Kinetics",forceFunction);
 
-    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
+    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics",momentDirection);
 
-    momentFunction = new ExtWidget("Moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(kineticExcitation,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
+    momentFunction = new ExtWidget("Moment function",new ChoiceWidget(new Function1ArgWidgetFactory(kineticExcitation,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentFunction");
     addToTab("Kinetics",momentFunction);
 
     arrow = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization",arrow);
 
-    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(forceFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(momentFunction->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(forceDirection,SIGNAL(clicked(bool)),forceFunction,SLOT(setChecked(bool)));
-    connect(forceFunction,SIGNAL(clicked(bool)),forceDirection,SLOT(setChecked(bool)));
-    connect(momentDirection,SIGNAL(clicked(bool)),momentFunction,SLOT(setChecked(bool)));
-    connect(momentFunction,SIGNAL(clicked(bool)),momentDirection,SLOT(setChecked(bool)));
+    connect(forceDirection->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(forceFunction->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(momentDirection->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(momentFunction->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(forceDirection,&ExtWidget::clicked,forceFunction,&ExtWidget::setActive);
+    connect(forceFunction,&ExtWidget::clicked,forceDirection,&ExtWidget::setActive);
+    connect(momentDirection,&ExtWidget::clicked,momentFunction,&ExtWidget::setActive);
+    connect(momentFunction,&ExtWidget::clicked,momentDirection,&ExtWidget::setActive);
   }
 
   void KineticExcitationPropertyDialog::updateWidget() {
     if(forceDirection->isActive()) {
-      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(forceDirection->getWidget())->getWidget())->cols();
+      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(forceDirection->getWidget())->getWidget())->cols();
       forceFunction->resize_(size,1);
     }
     if(momentDirection->isActive()) {
-      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(momentDirection->getWidget())->getWidget())->cols();
+      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(momentDirection->getWidget())->getWidget())->cols();
       momentFunction->resize_(size,1);
     }
   }
@@ -2258,10 +2257,10 @@ namespace MBSimGUI {
 
   SpringDamperPropertyDialog::SpringDamperPropertyDialog(Element *springDamper) : FixedFrameLinkPropertyDialog(springDamper) {
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
     addToTab("Kinetics", forceFunction);
 
-    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
+    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
     addToTab("General",unloadedLength);
 
     coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -2286,13 +2285,13 @@ namespace MBSimGUI {
 
   DirectionalSpringDamperPropertyDialog::DirectionalSpringDamperPropertyDialog(Element *springDamper) : FloatingFrameLinkPropertyDialog(springDamper) {
 
-    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new VecWidgetFactory(3),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
-    forceFunction = new ExtWidget("Force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
+    forceFunction = new ExtWidget("Force function",new ChoiceWidget(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceFunction");
     addToTab("Kinetics", forceFunction);
 
-    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
+    unloadedLength = new ExtWidget("Unloaded length",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedLength");
     addToTab("General",unloadedLength);
 
     coilSpring = new ExtWidget("Enable openMBV",new CoilSpringMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -2319,10 +2318,10 @@ namespace MBSimGUI {
 
   IsotropicRotationalSpringDamperPropertyDialog::IsotropicRotationalSpringDamperPropertyDialog(Element *springDamper) : FixedFrameLinkPropertyDialog(springDamper) {
 
-    elasticMomentFunction = new ExtWidget("Elastic moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(springDamper,"phi",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"elasticMomentFunction");
+    elasticMomentFunction = new ExtWidget("Elastic moment function",new ChoiceWidget(new Function1ArgWidgetFactory(springDamper,"phi",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"elasticMomentFunction");
     addToTab("Kinetics", elasticMomentFunction);
 
-    dissipativeMomentFunction = new ExtWidget("Dissipative moment function",new ChoiceWidget2(new Function1ArgWidgetFactory(springDamper,"phid",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"dissipativeMomentFunction");
+    dissipativeMomentFunction = new ExtWidget("Dissipative moment function",new ChoiceWidget(new Function1ArgWidgetFactory(springDamper,"phid",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"dissipativeMomentFunction");
     addToTab("Kinetics", dissipativeMomentFunction);
   }
 
@@ -2344,25 +2343,25 @@ namespace MBSimGUI {
 
     addTab("Extra");
 
-    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
 
-    forceLaw = new ExtWidget("Force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceLaw");
+    forceLaw = new ExtWidget("Force law",new ChoiceWidget(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"forceLaw");
     addToTab("Kinetics",forceLaw);
 
-    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
+    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics",momentDirection);
 
-    momentLaw = new ExtWidget("Moment law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentLaw");
+    momentLaw = new ExtWidget("Moment law",new ChoiceWidget(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"momentLaw");
     addToTab("Kinetics",momentLaw);
 
-    integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
+    integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     addToTab("Extra",integrate);
 
-    connect(forceDirection,SIGNAL(clicked(bool)),forceLaw,SLOT(setChecked(bool)));
-    connect(forceLaw,SIGNAL(clicked(bool)),forceDirection,SLOT(setChecked(bool)));
-    connect(momentDirection,SIGNAL(clicked(bool)),momentLaw,SLOT(setChecked(bool)));
-    connect(momentLaw,SIGNAL(clicked(bool)),momentDirection,SLOT(setChecked(bool)));
+    connect(forceDirection,&ExtWidget::clicked,forceLaw,&ExtWidget::setActive);
+    connect(forceLaw,&ExtWidget::clicked,forceDirection,&ExtWidget::setActive);
+    connect(momentDirection,&ExtWidget::clicked,momentLaw,&ExtWidget::setActive);
+    connect(momentLaw,&ExtWidget::clicked,momentDirection,&ExtWidget::setActive);
   }
 
   DOMElement* JointPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -2389,45 +2388,45 @@ namespace MBSimGUI {
 
     addTab("Extra");
 
-    forceDirection = new ExtWidget("Force direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
+    forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics", forceDirection);
 
-    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget2(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
+    momentDirection = new ExtWidget("Moment direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"momentDirection");
     addToTab("Kinetics", momentDirection);
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(joint,false,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceFunction");
+    function = new ExtWidget("Generalized force function",new ChoiceWidget(new SpringDamperWidgetFactory(joint,false,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
-    integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
+    integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     addToTab("Extra", integrate);
 
-    connect(forceDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(momentDirection->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(function->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(forceDirection,SIGNAL(clicked(bool)),this,SLOT(updateFunctionCheckState()));
-    connect(momentDirection,SIGNAL(clicked(bool)),this,SLOT(updateFunctionCheckState()));
-    connect(function,SIGNAL(clicked(bool)),this,SLOT(updateDirectionsCheckState()));
+    connect(forceDirection->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(momentDirection->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(function->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(forceDirection,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateFunctionCheckState);
+    connect(momentDirection,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateFunctionCheckState);
+    connect(function,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateDirectionsCheckState);
   }
 
   void ElasticJointPropertyDialog::updateWidget() {
     int size = 0;
     if(forceDirection->isActive())
-      size += static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(forceDirection->getWidget())->getWidget())->cols();
+      size += static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(forceDirection->getWidget())->getWidget())->cols();
     if(momentDirection->isActive())
-      size += static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(momentDirection->getWidget())->getWidget())->cols();
+      size += static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(momentDirection->getWidget())->getWidget())->cols();
     function->resize_(size,1);
   }
 
   void ElasticJointPropertyDialog::updateFunctionCheckState() {
-    function->setChecked(forceDirection->isActive() or momentDirection->isActive());
+    function->setActive(forceDirection->isActive() or momentDirection->isActive());
   }
 
   void ElasticJointPropertyDialog::updateDirectionsCheckState() {
     if(function->isActive())
-      forceDirection->setChecked(true);
+      forceDirection->setActive(true);
     else {
-      forceDirection->setChecked(false);
-      momentDirection->setChecked(false);
+      forceDirection->setActive(false);
+      momentDirection->setActive(false);
     }
   }
 
@@ -2451,10 +2450,10 @@ namespace MBSimGUI {
 
   GeneralizedSpringDamperPropertyDialog::GeneralizedSpringDamperPropertyDialog(Element *springDamper) : DualRigidBodyLinkPropertyDialog(springDamper) {
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    function = new ExtWidget("Generalized force function",new ChoiceWidget(new SpringDamperWidgetFactory(springDamper,false,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
-    unloadedLength = new ExtWidget("Generalized Unloaded length",new ChoiceWidget2(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"generalizedUnloadedLength");
+    unloadedLength = new ExtWidget("Generalized Unloaded length",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"generalizedUnloadedLength");
     addToTab("General",unloadedLength);
   }
 
@@ -2474,13 +2473,13 @@ namespace MBSimGUI {
 
   GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(Element *friction) : DualRigidBodyLinkPropertyDialog(friction) {
 
-    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
+    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
+    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
-    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget2(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
+    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
     addToTab("Kinetics",normalForceFunction);
   }
 
@@ -2511,7 +2510,7 @@ namespace MBSimGUI {
     gearInput = new ExtWidget("Gear inputs",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"gearInput",link,true,this),"Gear input",1,2,false,1),false,false,"");
     addToTab("General",gearInput);
 
-    function = new ExtWidget("Generalized force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
+    function = new ExtWidget("Generalized force law",new ChoiceWidget(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
     addToTab("Kinetics",function);
   }
 
@@ -2533,11 +2532,11 @@ namespace MBSimGUI {
 
   GeneralizedElasticConnectionPropertyDialog::GeneralizedElasticConnectionPropertyDialog(Element *connection) : DualRigidBodyLinkPropertyDialog(connection) {
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(connection,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    function = new ExtWidget("Generalized force function",new ChoiceWidget(new SpringDamperWidgetFactory(connection,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
 
-    connect(function,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(connections->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(function,&ExtWidget::widgetChanged,this,&GeneralizedElasticConnectionPropertyDialog::updateWidget);
+    connect(connections->getWidget(),&ExtWidget::widgetChanged,this,&GeneralizedElasticConnectionPropertyDialog::updateWidget);
   }
 
   void GeneralizedElasticConnectionPropertyDialog::updateWidget() {
@@ -2561,7 +2560,7 @@ namespace MBSimGUI {
     rigidBody = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",link,this),"Rigid body",1,2,1,false),false,false,"");
     addToTab("General",rigidBody);
 
-    function = new ExtWidget("Generalized force function",new ChoiceWidget2(new SpringDamperWidgetFactory(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
+    function = new ExtWidget("Generalized force function",new ChoiceWidget(new SpringDamperWidgetFactory(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
     addToTab("Kinetics", function);
   }
 
@@ -2587,28 +2586,28 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
-    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"normalForceLaw");
+    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"normalForceLaw");
     addToTab("Kinetics", contactForceLaw);
 
-    contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget2(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
+    contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
     addToTab("Kinetics", contactImpactLaw);
 
-    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialForceLaw");
+    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
+    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
-    searchAllContactPoints = new ExtWidget("Search all contact points",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"searchAllContactPoints");
+    searchAllContactPoints = new ExtWidget("Search all contact points",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"searchAllContactPoints");
     addToTab("Extra", searchAllContactPoints);
 
-    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget2(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Extra", initialGuess);
 
-    tolerance = new ExtWidget("Tolerance",new ChoiceWidget2(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"tolerance");
+    tolerance = new ExtWidget("Tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"tolerance");
     addToTab("Extra", tolerance);
 
-    maxNumContacts = new ExtWidget("Maximum number of contacts",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumNumberOfContacts");
+    maxNumContacts = new ExtWidget("Maximum number of contacts",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumNumberOfContacts");
     addToTab("Extra", maxNumContacts);
   }
 
@@ -2647,16 +2646,16 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
-    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget2(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"normalForceLaw");
+    contactForceLaw = new ExtWidget("Normal force law",new ChoiceWidget(new GeneralizedForceLawWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"normalForceLaw");
     addToTab("Kinetics", contactForceLaw);
 
-    contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget2(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
+    contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
     addToTab("Kinetics", contactImpactLaw);
 
-    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget2(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"tangentialForceLaw");
+    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"tangentialForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget2(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
+    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
   }
 
@@ -2977,7 +2976,7 @@ namespace MBSimGUI {
   }
 
   RigidBodyJointForceSensorPropertyDialog::RigidBodyJointForceSensorPropertyDialog(Element *sensor) : ObjectSensorPropertyDialog(sensor) {
-    number = new ExtWidget("Joint force number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"jointForceNumber");
+    number = new ExtWidget("Joint force number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"jointForceNumber");
     addToTab("General", number);
   }
 
@@ -2994,7 +2993,7 @@ namespace MBSimGUI {
   }
 
   RigidBodyJointMomentSensorPropertyDialog::RigidBodyJointMomentSensorPropertyDialog(Element *sensor) : ObjectSensorPropertyDialog(sensor) {
-    number = new ExtWidget("Joint moment number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"jointMomentNumber");
+    number = new ExtWidget("Joint moment number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"jointMomentNumber");
     addToTab("General", number);
   }
 
@@ -3028,7 +3027,7 @@ namespace MBSimGUI {
   }
 
   MechanicalLinkForceSensorPropertyDialog::MechanicalLinkForceSensorPropertyDialog(Element *sensor) : LinkSensorPropertyDialog(sensor) {
-    number = new ExtWidget("Force number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"forceNumber");
+    number = new ExtWidget("Force number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"forceNumber");
     addToTab("General", number);
   }
 
@@ -3045,7 +3044,7 @@ namespace MBSimGUI {
   }
 
   MechanicalLinkMomentSensorPropertyDialog::MechanicalLinkMomentSensorPropertyDialog(Element *sensor) : LinkSensorPropertyDialog(sensor) {
-    number = new ExtWidget("Moment number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"momentNumber");
+    number = new ExtWidget("Moment number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"momentNumber");
     addToTab("General", number);
   }
 
@@ -3079,7 +3078,7 @@ namespace MBSimGUI {
   }
 
   MechanicalConstraintForceSensorPropertyDialog::MechanicalConstraintForceSensorPropertyDialog(Element *sensor) : ConstraintSensorPropertyDialog(sensor) {
-    number = new ExtWidget("Force number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"forceNumber");
+    number = new ExtWidget("Force number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"forceNumber");
     addToTab("General", number);
   }
 
@@ -3096,7 +3095,7 @@ namespace MBSimGUI {
   }
 
   MechanicalConstraintMomentSensorPropertyDialog::MechanicalConstraintMomentSensorPropertyDialog(Element *sensor) : ConstraintSensorPropertyDialog(sensor) {
-    number = new ExtWidget("Moment number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"momentNumber");
+    number = new ExtWidget("Moment number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"momentNumber");
     addToTab("General", number);
   }
 
@@ -3130,7 +3129,7 @@ namespace MBSimGUI {
   }
 
   FunctionSensorPropertyDialog::FunctionSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
-    function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(sensor,"t",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    function = new ExtWidget("Function",new ChoiceWidget(new Function1ArgWidgetFactory(sensor,"t",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
   }
 
@@ -3149,7 +3148,7 @@ namespace MBSimGUI {
   ContactSensorPropertyDialog::ContactSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
     contact = new ExtWidget("Contact of reference",new ElementOfReferenceWidget<Contact>(sensor,nullptr,this),false,false,MBSIMCONTROL%"contact");
     addToTab("General", contact);
-    number = new ExtWidget("Single contact number",new ChoiceWidget2(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"singleContactNumber");
+    number = new ExtWidget("Single contact number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"singleContactNumber");
     addToTab("General", number);
  }
 
@@ -3188,7 +3187,7 @@ namespace MBSimGUI {
   DemultiplexerPropertyDialog::DemultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
-    indices = new ExtWidget("Indices",new ChoiceWidget2(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"indices");
+    indices = new ExtWidget("Indices",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"indices");
     addToTab("General", indices);
   }
 
@@ -3210,29 +3209,29 @@ namespace MBSimGUI {
 
     addTab("Initial conditions",1);
 
-    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
+    x0 = new ExtWidget("Initial state",new ChoiceWidget(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
     addToTab("Initial conditions", x0);
 
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
 
-    A = new ExtWidget("System matrix",new ChoiceWidget2(new SqrMatSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"systemMatrix");
+    A = new ExtWidget("System matrix",new ChoiceWidget(new SqrMatSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"systemMatrix");
     addToTab("General", A);
 
-    B = new ExtWidget("Input matrix",new ChoiceWidget2(new MatColsVarWidgetFactory(1,1),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"inputMatrix");
+    B = new ExtWidget("Input matrix",new ChoiceWidget(new MatColsVarWidgetFactory(1,1),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"inputMatrix");
     addToTab("General", B);
 
-    C = new ExtWidget("Output matrix",new ChoiceWidget2(new MatRowsVarWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"outputMatrix");
+    C = new ExtWidget("Output matrix",new ChoiceWidget(new MatRowsVarWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"outputMatrix");
     addToTab("General", C);
 
-    D = new ExtWidget("Feedthrough matrix",new ChoiceWidget2(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
+    D = new ExtWidget("Feedthrough matrix",new ChoiceWidget(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"feedthroughMatrix");
     addToTab("General", D);
 
-    connect(x0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(A, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(B, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(C, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(D, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(x0, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
+    connect(A, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
+    connect(B, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
+    connect(C, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
+    connect(D, &ExtWidget::widgetChanged, this, &LinearTransferSystemPropertyDialog::updateWidget);
   }
 
   void LinearTransferSystemPropertyDialog::updateWidget() {
@@ -3240,9 +3239,9 @@ namespace MBSimGUI {
     B->blockSignals(true);
     C->blockSignals(true);
     D->blockSignals(true);
-    int n = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(A->getWidget())->getWidget())->rows();
-    int m = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(B->getWidget())->getWidget())->cols();
-    int p = C->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(C->getWidget())->getWidget())->rows():m;
+    int n = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(A->getWidget())->getWidget())->rows();
+    int m = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(B->getWidget())->getWidget())->cols();
+    int p = C->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(C->getWidget())->getWidget())->rows():m;
     x0->resize_(n,1);
     B->resize_(n,m);
     C->resize_(p,n);
@@ -3279,33 +3278,33 @@ namespace MBSimGUI {
 
     addTab("Initial conditions",1);
 
-    x0 = new ExtWidget("Initial state",new ChoiceWidget2(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
+    x0 = new ExtWidget("Initial state",new ChoiceWidget(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
     addToTab("Initial conditions", x0);
 
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
 
-    F = new ExtWidget("System function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"systemFunction");
+    F = new ExtWidget("System function",new ChoiceWidget(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"systemFunction");
     addToTab("General", F);
 
-    H = new ExtWidget("Output function",new ChoiceWidget2(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::fixedVec),1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"outputFunction");
+    H = new ExtWidget("Output function",new ChoiceWidget(new Function2ArgWidgetFactory(getElement(),QStringList("x")<<"u",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::fixedVec),1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"outputFunction");
     addToTab("General", H);
 
-    connect(x0, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(F, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
-    connect(H, SIGNAL(widgetChanged()), this, SLOT(updateWidget()));
+    connect(x0, &ExtWidget::widgetChanged, this, &NonlinearTransferSystemPropertyDialog::updateWidget);
+    connect(F, &ExtWidget::widgetChanged, this, &NonlinearTransferSystemPropertyDialog::updateWidget);
+    connect(H, &ExtWidget::widgetChanged, this, &NonlinearTransferSystemPropertyDialog::updateWidget);
   }
 
   void NonlinearTransferSystemPropertyDialog::updateWidget() {
     F->blockSignals(true);
     H->blockSignals(true);
-    int n = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->getArg1Size();
-    int m = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->getArg2Size();
+    int n = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(F->getWidget())->getWidget())->getArg1Size();
+    int m = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(F->getWidget())->getWidget())->getArg2Size();
     x0->resize_(n,1);
-    static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(F->getWidget())->getWidget())->resize_(n,1);
+    static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(F->getWidget())->getWidget())->resize_(n,1);
     if(H->isActive()) {
-      static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg1Size(n);
-      static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(H->getWidget())->getWidget())->setArg2Size(m);
+      static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(H->getWidget())->getWidget())->setArg1Size(n);
+      static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(H->getWidget())->getWidget())->setArg2Size(m);
     }
     F->blockSignals(false);
     H->blockSignals(false);
@@ -3333,10 +3332,10 @@ namespace MBSimGUI {
     inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"");
     addToTab("General", inputSignal);
 
-    function = new ExtWidget("Function",new ChoiceWidget2(new Function1ArgWidgetFactory(signal,"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    function = new ExtWidget("Function",new ChoiceWidget(new Function1ArgWidgetFactory(signal,"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
 
-    connect(inputSignal,SIGNAL(widgetChanged()),this,SLOT(updateFunctionFactory()));
+    connect(inputSignal,&ExtWidget::widgetChanged,this,&SignalOperationPropertyDialog::updateFunctionFactory);
   }
 
   void SignalOperationPropertyDialog::updateWidget() {
@@ -3345,9 +3344,9 @@ namespace MBSimGUI {
 
   void SignalOperationPropertyDialog::updateFunctionFactory() {
     if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
+      static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
     else
-      static_cast<ChoiceWidget2*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+      static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
   }
 
   DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -3405,7 +3404,7 @@ namespace MBSimGUI {
     connections = new ExtWidget("Connections",new ConnectElementsWidget<RigidBody>(2,link,this),false,false,MBSIMPHYSICS%"connect");
     addToTab("Kinetics",connections);
 
-    gravitationalConstant = new ExtWidget("Gravitational constant",new ChoiceWidget2(new ScalarWidgetFactory("6.67408e-11"),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"gravitationalConstant");
+    gravitationalConstant = new ExtWidget("Gravitational constant",new ChoiceWidget(new ScalarWidgetFactory("6.67408e-11"),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"gravitationalConstant");
     addToTab("General",gravitationalConstant);
 
     enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
@@ -3435,7 +3434,7 @@ namespace MBSimGUI {
     static_cast<ConnectElementsWidget<Frame,RigidBody>*>(connections->getWidget())->setDefaultElement("../Frame[I]");
     addToTab("Kinetics",connections);
 
-    gravityFunction = new ExtWidget("Gravity function",new ChoiceWidget2(new GravityFunctionWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"gravityFunction");
+    gravityFunction = new ExtWidget("Gravity function",new ChoiceWidget(new GravityFunctionWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"gravityFunction");
     addToTab("General",gravityFunction);
 
     enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
@@ -3460,13 +3459,13 @@ namespace MBSimGUI {
 
   BuoyancyPropertyDialog::BuoyancyPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
 
-    displacedVolume = new ExtWidget("Displaced volume",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,volumeUnits()),vector<int>(2,5)),QBoxLayout::RightToLeft,5),false,false,MBSIMPHYSICS%"displacedVolume");
+    displacedVolume = new ExtWidget("Displaced volume",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,volumeUnits()),vector<int>(2,5)),QBoxLayout::RightToLeft,5),false,false,MBSIMPHYSICS%"displacedVolume");
     addToTab("General",displacedVolume);
 
-    densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"rho",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
+    densityFunction = new ExtWidget("Density function",new ChoiceWidget(new Function1ArgWidgetFactory(link,"rho",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
     addToTab("General",densityFunction);
 
-    gravityFunction = new ExtWidget("Gravity function",new ChoiceWidget2(new GravityFunctionWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"gravityFunction");
+    gravityFunction = new ExtWidget("Gravity function",new ChoiceWidget(new GravityFunctionWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"gravityFunction");
     addToTab("General",gravityFunction);
 
     enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
@@ -3493,7 +3492,7 @@ namespace MBSimGUI {
 
   DragPropertyDialog::DragPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
 
-    dragFunction = new ExtWidget("Drag function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"F",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
+    dragFunction = new ExtWidget("Drag function",new ChoiceWidget(new Function1ArgWidgetFactory(link,"F",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
     addToTab("General",dragFunction);
 
     enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
@@ -3516,16 +3515,16 @@ namespace MBSimGUI {
 
   AerodynamicsPropertyDialog::AerodynamicsPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
 
-    densityFunction = new ExtWidget("Density function",new ChoiceWidget2(new Function1ArgWidgetFactory(link,"rho",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
+    densityFunction = new ExtWidget("Density function",new ChoiceWidget(new Function1ArgWidgetFactory(link,"rho",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"densityFunction");
     addToTab("General",densityFunction);
 
-    coefficientFunction = new ExtWidget("Coefficient function",new ChoiceWidget2(new SpatialContourFunctionWidgetFactory(link,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"coefficientFunction");
+    coefficientFunction = new ExtWidget("Coefficient function",new ChoiceWidget(new SpatialContourFunctionWidgetFactory(link,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"coefficientFunction");
     addToTab("General",coefficientFunction);
 
-    referenceSurface = new ExtWidget("Reference surface",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,areaUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"referenceSurface");
+    referenceSurface = new ExtWidget("Reference surface",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,areaUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"referenceSurface");
     addToTab("General",referenceSurface);
 
-    windSpeed = new ExtWidget("Wind speed",new ChoiceWidget2(new VecWidgetFactory(3,vector<QStringList>(3,velocityUnits()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"windSpeed");
+    windSpeed = new ExtWidget("Wind speed",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,velocityUnits()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"windSpeed");
     addToTab("General",windSpeed);
 
     enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");

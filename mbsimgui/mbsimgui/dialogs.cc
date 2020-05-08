@@ -79,13 +79,13 @@ namespace MBSimGUI {
       format->addItems(QStringList() << "e" << "E" << "f" << "g" << "G");
       format->setCurrentIndex(3);
       layout->addWidget(format,0,1);
-      connect(format, SIGNAL(currentIndexChanged(int)), this, SLOT(updateWidget()));
+      connect(format, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EvalDialog::updateWidget);
 
       layout->addWidget(new QLabel("Precision:"),0,2);
       precision = new QSpinBox;
       precision->setValue(6);
       layout->addWidget(precision,0,3);
-      connect(precision, SIGNAL(valueChanged(int)), this, SLOT(updateWidget()));
+      connect(precision, QOverload<int>::of(&QSpinBox::valueChanged), this, &EvalDialog::updateWidget);
     }
 
     formatVariables();
@@ -102,12 +102,11 @@ namespace MBSimGUI {
 
     auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Close);
-    connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &EvalDialog::reject);
 
     mainlayout->addWidget(buttonBox);
 
     layout->setColumnStretch(4, 10);
-//    layout->setColumnStretch(2, 20);
 
     setWindowTitle("Expression evaluation");
   }
@@ -140,17 +139,17 @@ namespace MBSimGUI {
     eleList->setColumnWidth(1,200);
     eleList->hideColumn(1);
     mainLayout->addWidget(eleList,0,0);
-    connect(eleList->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&)));
+    connect(eleList->selectionModel(),&QItemSelectionModel::currentChanged, this, &BasicElementBrowser::selectionChanged);
 
     okButton = new QPushButton("Ok");
     if(!selection)
       okButton->setDisabled(true);
     mainLayout->addWidget(okButton,1,0);
-    connect(okButton, SIGNAL(clicked(bool)), this, SLOT(accept()));
+    connect(okButton, &QPushButton::clicked, this, &BasicElementBrowser::accept);
 
     QPushButton *button = new QPushButton("Cancel");
     mainLayout->addWidget(button,1,1);
-    connect(button, SIGNAL(clicked(bool)), this, SLOT(reject()));
+    connect(button, &QPushButton::clicked, this, &BasicElementBrowser::reject);
 
     setWindowTitle(name+" browser");
   }
@@ -194,7 +193,7 @@ namespace MBSimGUI {
     layout->addWidget(parameter);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SaveDialog::accept);
     layout->addWidget(buttonBox);
   }
 
@@ -254,9 +253,9 @@ namespace MBSimGUI {
       QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
       buttonBox->addButton(QDialogButtonBox::Ok);
       layout->addWidget(buttonBox,1,0,1,2);
-      connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
-      connect(plot, SIGNAL(numChanged(int)), this, SLOT(selectRow(int)));
-      connect(table, SIGNAL(cellClicked(int,int)), this, SLOT(selectMode(int,int)));
+      connect(buttonBox, &QDialogButtonBox::accepted, this, &EigenanalysisDialog::accept);
+      connect(plot, &DataPlot::numChanged, this, &EigenanalysisDialog::selectRow);
+      connect(table, &QTableWidget::cellClicked, this, &EigenanalysisDialog::selectMode);
     }
   }
 
@@ -293,7 +292,7 @@ namespace MBSimGUI {
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox,1,0,1,1);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &HarmonicResponseDialog::accept);
   }
 
   SourceDialog::SourceDialog(xercesc::DOMElement *ele, QWidget *parent) : QDialog(parent) {
@@ -306,7 +305,7 @@ namespace MBSimGUI {
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
-    connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceDialog::accept);
   }
 
 }

@@ -27,13 +27,10 @@ class QTextEdit;
 namespace MBSimGUI {
 
   class FileEditor : public QDialog {
-//    Q_OBJECT
     public:
       FileEditor(const QString &title, const QString &filename, int n, const QString &text, QWidget *parent);
     private:
       QTextEdit *edit;
-//    private slots:
-//    public slots:
   };
 
 }

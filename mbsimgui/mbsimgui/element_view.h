@@ -29,22 +29,18 @@ namespace MBSimGUI {
   class ElementPropertyDialog;
 
   class ElementView : public QTreeView {
-    Q_OBJECT
-    private:
-      QModelIndex index;
-      Element *element{nullptr};
-      ElementPropertyDialog *editor{nullptr};
     public:
       ElementView(QWidget *parent=nullptr) : QTreeView(parent) {}
       bool editorIsOpen() { return editor; }
-    protected:
+      void openEditor(bool config=true);
+    private:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;
-    protected slots:
       void dialogFinished(int result);
       void apply();
-    public slots:
-      void openEditor(bool config=true);
+      QModelIndex index;
+      Element *element{nullptr};
+      ElementPropertyDialog *editor{nullptr};
   };
 
 }

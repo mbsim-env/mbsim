@@ -42,13 +42,13 @@ namespace MBSimGUI {
       LimitedFunctionWidgetFactory(WidgetFactory *factory_) : factory(factory_) { }
       QString getName(int i=0) const override { return "Limited function"; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIM%"LimitedFunction"; }
-      QWidget* createWidget(int i=0) override;
+      Widget* createWidget(int i=0) override;
       int getSize() const override { return 1; }
     protected:
       WidgetFactory *factory;
   };
 
-  QWidget* LimitedFunctionWidgetFactory::createWidget(int i) {
+  Widget* LimitedFunctionWidgetFactory::createWidget(int i) {
     if(i==0)
       return new LimitedFunctionWidget(factory);
     return nullptr;
@@ -61,14 +61,14 @@ namespace MBSimGUI {
   };
 
   Widget* CoefficientWidgetFactory::createWidget(int i) {
-    return new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5);
+    return new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5);
   }
 
   ConstantFunctionWidget::ConstantFunctionWidget() {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a0");
+    a0 = new ExtWidget("a0",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a0");
     layout->addWidget(a0);
   }
 
@@ -88,10 +88,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
+    a0 = new ExtWidget("a0",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
     layout->addWidget(a0);
 
-    a1 = new ExtWidget("a1",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a1");
+    a1 = new ExtWidget("a1",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a1");
     layout->addWidget(a1);
   }
 
@@ -113,13 +113,13 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
+    a0 = new ExtWidget("a0",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
     layout->addWidget(a0);
 
-    a1 = new ExtWidget("a1",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a1");
+    a1 = new ExtWidget("a1",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a1");
     layout->addWidget(a1);
 
-    a2 = new ExtWidget("a2",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a2");
+    a2 = new ExtWidget("a2",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"a2");
     layout->addWidget(a2);
   }
 
@@ -143,7 +143,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    a = new ExtWidget("Coefficients",new ChoiceWidget2(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"coefficients");
+    a = new ExtWidget("Coefficients",new ChoiceWidget(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"coefficients");
     layout->addWidget(a);
   }
 
@@ -163,16 +163,16 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    a = new ExtWidget("Amplitude",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"amplitude");
+    a = new ExtWidget("Amplitude",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"amplitude");
     layout->addWidget(a);
 
-    f = new ExtWidget("Frequency",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frequency");
+    f = new ExtWidget("Frequency",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frequency");
     layout->addWidget(f);
 
-    p = new ExtWidget("Phase",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"phase");
+    p = new ExtWidget("Phase",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"phase");
     layout->addWidget(p);
 
-    o = new ExtWidget("Offset",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
+    o = new ExtWidget("Offset",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
     layout->addWidget(o);
   }
 
@@ -198,7 +198,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    denom = new ExtWidget("Denominator",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"denominator");
+    denom = new ExtWidget("Denominator",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"denominator");
     layout->addWidget(denom);
   }
 
@@ -218,10 +218,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    lowerBound = new ExtWidget("Lower bound",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"lowerBound");
+    lowerBound = new ExtWidget("Lower bound",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"lowerBound");
     layout->addWidget(lowerBound);
 
-    upperBound = new ExtWidget("Upper bound",new ChoiceWidget2(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"upperBound");
+    upperBound = new ExtWidget("Upper bound",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"upperBound");
     layout->addWidget(upperBound);
   }
 
@@ -269,39 +269,39 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    fo = new ExtWidget("Outer function",new ChoiceWidget2(factoryo1,QBoxLayout::TopToBottom,0),false,false,MBSIM%"outerFunction");
+    fo = new ExtWidget("Outer function",new ChoiceWidget(factoryo1,QBoxLayout::TopToBottom,0),false,false,MBSIM%"outerFunction");
     layout->addWidget(fo);
-    fi = new ChoiceWidget2(new CompositeFunctionWidgetFactory(factoryi),QBoxLayout::TopToBottom,5);
+    fi = new ChoiceWidget(new CompositeFunctionWidgetFactory(factoryi),QBoxLayout::TopToBottom,5);
     layout->addWidget(fi);
-    connect(fo->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(fi,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(fo->getWidget(),SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
-    connect(fi,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
-    if(factoryo2) connect(fi,SIGNAL(comboChanged(int)),this,SLOT(updateFunctionFactory()));
+    connect(static_cast<ChoiceWidget*>(fo->getWidget()),&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::updateWidget);
+    connect(fi,&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::updateWidget);
+    connect(static_cast<ChoiceWidget*>(fo->getWidget()),&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::widgetChanged);
+    connect(fi,&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::widgetChanged);
+    if(factoryo2) connect(fi,&ChoiceWidget::comboChanged,this,&CompositeFunctionWidget::updateFunctionFactory);
   }
 
   void CompositeFunctionWidget::updateWidget() {
-    int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size();
+    int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
     static_cast<FunctionWidget*>(fi->getWidget())->resize_(size,1);
   }
 
   void CompositeFunctionWidget::updateFunctionFactory() {
     if(fi->getIndex()==0)
-      static_cast<ChoiceWidget2*>(fo->getWidget())->setWidgetFactory(factoryo1);
+      static_cast<ChoiceWidget*>(fo->getWidget())->setWidgetFactory(factoryo1);
     else
-      static_cast<ChoiceWidget2*>(fo->getWidget())->setWidgetFactory(factoryo2);
+      static_cast<ChoiceWidget*>(fo->getWidget())->setWidgetFactory(factoryo2);
   }
 
   int CompositeFunctionWidget::getArg1Size() const {
     if(fi->getIndex()==0)
-      return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(fi->getWidget())->getWidget())->getWidget())->getArg1Size();
+      return static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(fi->getWidget())->getWidget())->getWidget())->getArg1Size();
     else
-      return static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(static_cast<ListWidget*>(static_cast<ExtWidget*>(fi->getWidget())->getWidget())->getWidget(0))->getWidget())->getArg1Size();
+      return static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ListWidget*>(static_cast<ExtWidget*>(fi->getWidget())->getWidget())->getWidget(0))->getWidget())->getArg1Size();
   }
 
   void CompositeFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget2*>(fo->getWidget())->resize_(m,n);
-    static_cast<ChoiceWidget2*>(fi)->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget2*>(fo->getWidget())->getWidget())->getArg1Size(),n);
+    static_cast<ChoiceWidget*>(fo->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget*>(fi)->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size(),n);
   }
 
   DOMElement* CompositeFunctionWidget::initializeUsingXML(DOMElement *element) {
@@ -326,10 +326,10 @@ namespace MBSimGUI {
     functions = new ExtWidget("Limited functions",new ListWidget(new ChoiceWidgetFactory(new LimitedFunctionWidgetFactory(factory)),"Function",1,0,false,1),false,false,MBSIM%"limitedFunctions");
     layout->addWidget(functions);
 
-    shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
+    shiftAbscissa = new ExtWidget("Shift abscissa",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftAbscissa");
     layout->addWidget(shiftAbscissa);
 
-    shiftOrdinate = new ExtWidget("Shift ordinate",new ChoiceWidget2(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftOrdinate");
+    shiftOrdinate = new ExtWidget("Shift ordinate",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftOrdinate");
     layout->addWidget(shiftOrdinate);
   }
 
@@ -357,10 +357,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    function = new ExtWidget("Function",new ChoiceWidget2(factory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
+    function = new ExtWidget("Function",new ChoiceWidget(factory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
     layout->addWidget(function);
 
-    limit = new ExtWidget("Limit",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"limit");
+    limit = new ExtWidget("Limit",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"limit");
     layout->addWidget(limit);
   }
 
@@ -393,16 +393,16 @@ namespace MBSimGUI {
       argdim[i]->setDisabled(argType[i]==fixedVec);
       if(argType[i]!=scalar) {
         layout->addWidget(argdim[i],i,1);
-        connect(argdim[i]->getWidget(),SIGNAL(valueChanged(int)),this,SIGNAL(widgetChanged()));
+        connect(static_cast<SpinBoxWidget*>(argdim[i]->getWidget()),&SpinBoxWidget::valueChanged,this,&SymbolicFunctionWidget::widgetChanged);
       }
     }
     if(retType==scalar)
-      f = new ExtWidget("Function",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,"");
+      f = new ExtWidget("Function",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,"");
     else if(retType==fixedVec)
-      f = new ExtWidget("Function",new ChoiceWidget2(new VecWidgetFactory(retDim,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
+      f = new ExtWidget("Function",new ChoiceWidget(new VecWidgetFactory(retDim,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
     else {
-      f = new ExtWidget("Function",new ChoiceWidget2(new VecSizeVarWidgetFactory(retDim,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
-      connect(f,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+      f = new ExtWidget("Function",new ChoiceWidget(new VecSizeVarWidgetFactory(retDim,1,100,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,0),false,false,false),QBoxLayout::RightToLeft,5),false,false,"");
+      connect(f,&ExtWidget::widgetChanged,this,&SymbolicFunctionWidget::widgetChanged);
     }
     layout->addWidget(f,argName.size(),0,1,2);
   }
@@ -457,36 +457,37 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
+    choice = new ChoiceWidget(new TabularFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
     layout->addWidget(choice);
 
     choiceChanged();
-    connect(choice,SIGNAL(widgetChanged()),this,SLOT(choiceChanged()));
-    connect(choice,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+    connect(choice,&ChoiceWidget::widgetChanged,this,&TabularFunctionWidget::choiceChanged);
+    connect(choice,&ChoiceWidget::widgetChanged,this,&TabularFunctionWidget::widgetChanged);
   }
 
   void TabularFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
       updateWidget();
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TabularFunctionWidget::updateWidget);
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TabularFunctionWidget::updateWidget);
     }
   }
 
   void TabularFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      auto *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      auto *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      auto *choice1_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice2_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget()->cols());
     }
   }
 
   void TabularFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m);
     }
     else {
-      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
       choice->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m+1);
     }
   }
@@ -507,24 +508,24 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TwoDimensionalTabularFunctionWidgetFactory,QBoxLayout::TopToBottom,5);
+    choice = new ChoiceWidget(new TwoDimensionalTabularFunctionWidgetFactory,QBoxLayout::TopToBottom,5);
     layout->addWidget(choice);
 
     choiceChanged();
-    connect(choice,SIGNAL(widgetChanged()),this,SLOT(choiceChanged()));
+    connect(choice,&ChoiceWidget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::choiceChanged);
   }
 
   void TwoDimensionalTabularFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::updateWidget);
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1)),&Widget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::updateWidget);
     }
   }
 
   void TwoDimensionalTabularFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      auto *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      auto *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      auto *choice1_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice2_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(2))->resize_(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget()->rows());
     }
   }
@@ -545,7 +546,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TabularFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
+    choice = new ChoiceWidget(new TabularFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
     layout->addWidget(choice);
 
     vector<QString> list;
@@ -556,32 +557,32 @@ namespace MBSimGUI {
     layout->addWidget(method);
 
     choiceChanged();
-    connect(choice,SIGNAL(widgetChanged()),this,SLOT(choiceChanged()));
-    connect(choice,SIGNAL(widgetChanged()),this,SIGNAL(widgetChanged()));
+    connect(choice,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::choiceChanged);
+    connect(choice,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::widgetChanged);
   }
 
   void PiecewisePolynomFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
       updateWidget();
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&PiecewisePolynomFunctionWidget::updateWidget);
     }
   }
 
   void PiecewisePolynomFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      auto *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      auto *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      auto *choice1_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice2_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget()->cols());
     }
   }
 
   void PiecewisePolynomFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m);
     }
     else {
-      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
       choice->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m+1);
     }
   }
@@ -604,7 +605,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget2(new TwoDimensionalTabularFunctionWidgetFactory,QBoxLayout::TopToBottom,3);
+    choice = new ChoiceWidget(new TwoDimensionalTabularFunctionWidgetFactory,QBoxLayout::TopToBottom,3);
     layout->addWidget(choice);
 
     vector<QString> list;
@@ -615,20 +616,20 @@ namespace MBSimGUI {
     layout->addWidget(method);
 
     choiceChanged();
-    connect(choice,SIGNAL(widgetChanged()),this,SLOT(choiceChanged()));
+    connect(choice,&ChoiceWidget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::choiceChanged);
   }
 
   void TwoDimensionalPiecewisePolynomFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-      connect(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget);
+      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1)),&Widget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget);
     }
   }
 
   void TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      auto *choice1_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      auto *choice2_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
+      auto *choice1_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice2_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
       static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(2))->resize_(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget()->rows());
     }
   }
@@ -649,27 +650,27 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    f = new ExtWidget("Frequency",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"frequency");
+    f = new ExtWidget("Frequency",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"frequency");
     layout->addWidget(f);
 
-    a0 = new ExtWidget("a0",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
+    a0 = new ExtWidget("a0",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
     layout->addWidget(a0);
 
-    choice = new ChoiceWidget2(new FourierFunctionWidgetFactory,QBoxLayout::TopToBottom,5);
+    choice = new ChoiceWidget(new FourierFunctionWidgetFactory,QBoxLayout::TopToBottom,5);
     layout->addWidget(choice);
 
-    amplitudePhaseAngleForm = new ExtWidget("Amplitude phase angle form",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitudePhaseAngleForm");
+    amplitudePhaseAngleForm = new ExtWidget("Amplitude phase angle form",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitudePhaseAngleForm");
     layout->addWidget(amplitudePhaseAngleForm);
   }
 
   void FourierFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
       if(choice_->getIndex()==0)
         choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
     }
     else {
-      auto *choice_ = static_cast<ChoiceWidget2*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
       if(choice_->getIndex()==0)
         choice->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
     }
@@ -698,15 +699,15 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    fn = new ExtWidget("Negative directional function",new ChoiceWidget2(new Function1ArgWidgetFactory(element,argName,argDim,argType,retDim,retType,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"negativeDirectionalFunction");
+    fn = new ExtWidget("Negative directional function",new ChoiceWidget(new Function1ArgWidgetFactory(element,argName,argDim,argType,retDim,retType,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"negativeDirectionalFunction");
     layout->addWidget(fn);
-    fp = new ExtWidget("Positive directional function",new ChoiceWidget2(new Function1ArgWidgetFactory(element,argName,argDim,argType,retDim,retType,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"positiveDirectionalFunction");
+    fp = new ExtWidget("Positive directional function",new ChoiceWidget(new Function1ArgWidgetFactory(element,argName,argDim,argType,retDim,retType,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"positiveDirectionalFunction");
     layout->addWidget(fp);
   }
 
   void BidirectionalFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget2*>(fn->getWidget())->resize_(m,n);
-    static_cast<ChoiceWidget2*>(fp->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget*>(fn->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget*>(fp->getWidget())->resize_(m,n);
   }
 
   DOMElement* BidirectionalFunctionWidget::initializeUsingXML(DOMElement *element) {
@@ -728,16 +729,16 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    f = new ExtWidget("Function",new ChoiceWidget2(factoryf,QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
+    f = new ExtWidget("Function",new ChoiceWidget(factoryf,QBoxLayout::TopToBottom,0),false,false,MBSIM%"function");
     layout->addWidget(f);
 
-    r = new ExtWidget("Continuation rule",new ChoiceWidget2(factoryr,QBoxLayout::TopToBottom,0),false,false,MBSIM%"continuationRule");
+    r = new ExtWidget("Continuation rule",new ChoiceWidget(factoryr,QBoxLayout::TopToBottom,0),false,false,MBSIM%"continuationRule");
     layout->addWidget(r);
   }
 
   void ContinuedFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget2*>(f->getWidget())->resize_(m,n);
-    static_cast<ChoiceWidget2*>(r->getWidget())->resize_(n,n);
+    static_cast<ChoiceWidget*>(f->getWidget())->resize_(m,n);
+    static_cast<ChoiceWidget*>(r->getWidget())->resize_(n,n);
   }
 
   DOMElement* ContinuedFunctionWidget::initializeUsingXML(DOMElement *element) {
@@ -758,10 +759,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
+    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
     layout->addWidget(c);
 
-    d = new ExtWidget("Damping coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
+    d = new ExtWidget("Damping coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
     layout->addWidget(d);
   }
 
@@ -783,10 +784,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    s = new ExtWidget("Force deflection function",new ChoiceWidget2(new Function1ArgWidgetFactory(element,"s",1,scalar,1,scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceDeflectionFunction");
+    s = new ExtWidget("Force deflection function",new ChoiceWidget(new Function1ArgWidgetFactory(element,"s",1,scalar,1,scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceDeflectionFunction");
     layout->addWidget(s);
 
-    sd = new ExtWidget("Force velocity function",new ChoiceWidget2(new Function1ArgWidgetFactory(element,"sd",1,scalar,1,scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceVelocityFunction");
+    sd = new ExtWidget("Force velocity function",new ChoiceWidget(new Function1ArgWidgetFactory(element,"sd",1,scalar,1,scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"forceVelocityFunction");
     layout->addWidget(sd);
   }
 
@@ -808,18 +809,18 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    K = varSize?new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatSizeVarWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix"): new ExtWidget("Generalized stiffness matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix");
+    K = varSize?new ExtWidget("Generalized stiffness matrix",new ChoiceWidget(new SymMatSizeVarWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix"):new ExtWidget("Generalized stiffness matrix",new ChoiceWidget(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessMatrix");
     layout->addWidget(K);
-    D = new ExtWidget("Generalized damping matrix",new ChoiceWidget2(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"dampingMatrix");
+    D = new ExtWidget("Generalized damping matrix",new ChoiceWidget(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"dampingMatrix");
     layout->addWidget(D);
 
-    connect(K->getWidget(),SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
-    connect(D,SIGNAL(widgetChanged()),this,SLOT(updateWidget()));
+    connect(static_cast<ChoiceWidget*>(K->getWidget()),&ChoiceWidget::widgetChanged,this,&LinearElasticFunctionWidget::updateWidget);
+    connect(D,&ExtWidget::widgetChanged,this,&LinearElasticFunctionWidget::updateWidget);
   }
 
   void LinearElasticFunctionWidget::updateWidget() {
     if(D->isActive()) {
-      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget2*>(K->getWidget())->getWidget())->rows();
+      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(K->getWidget())->getWidget())->rows();
       D->resize_(size,size);
     }
   }
@@ -847,10 +848,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
+    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
     layout->addWidget(c);
 
-    d = new ExtWidget("Damping coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
+    d = new ExtWidget("Damping coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
     layout->addWidget(d);
   }
 
@@ -872,10 +873,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
+    c = new ExtWidget("Stiffness coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"stiffnessCoefficient");
     layout->addWidget(c);
 
-    d = new ExtWidget("Damping coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
+    d = new ExtWidget("Damping coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dampingCoefficient");
     layout->addWidget(d);
   }
 
@@ -897,10 +898,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    gd = new ExtWidget("Marginal velocity",new ChoiceWidget2(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
+    gd = new ExtWidget("Marginal velocity",new ChoiceWidget(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    mu = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
+    mu = new ExtWidget("Friction coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(mu);
   }
 
@@ -922,10 +923,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    gd = new ExtWidget("Marginal velocity",new ChoiceWidget2(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
+    gd = new ExtWidget("Marginal velocity",new ChoiceWidget(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    mu = new ExtWidget("Friction coefficient",new ChoiceWidget2(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
+    mu = new ExtWidget("Friction coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
     layout->addWidget(mu);
   }
 
@@ -976,7 +977,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget2(new Function1ArgWidgetFactory(element,"phi",1,scalar,1,scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
+    radiusFunction = new ExtWidget("Radius function",new ChoiceWidget(new Function1ArgWidgetFactory(element,"phi",1,scalar,1,scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"radiusFunction");
     layout->addWidget(radiusFunction);
   }
 
@@ -996,10 +997,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    standardGravity = new ExtWidget("Standard gravity",new ChoiceWidget2(new ScalarWidgetFactory("9.80665",vector<QStringList>(2,accelerationUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"standardGravity");
+    standardGravity = new ExtWidget("Standard gravity",new ChoiceWidget(new ScalarWidgetFactory("9.80665",vector<QStringList>(2,accelerationUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"standardGravity");
     layout->addWidget(standardGravity);
 
-    meanRadius = new ExtWidget("Mean radius",new ChoiceWidget2(new ScalarWidgetFactory("6371e3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"meanRadius");
+    meanRadius = new ExtWidget("Mean radius",new ChoiceWidget(new ScalarWidgetFactory("6371e3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMPHYSICS%"meanRadius");
     layout->addWidget(meanRadius);
   }
 

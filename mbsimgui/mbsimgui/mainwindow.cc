@@ -162,7 +162,7 @@ namespace MBSimGUI {
     QMenu *GUIMenu = new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
 
-    QAction *action = GUIMenu->addAction(QIcon::fromTheme("document-properties"), "Options", this, SLOT(openOptionsMenu()));
+    QAction *action = GUIMenu->addAction(QIcon::fromTheme("document-properties"), "Options", this, &MainWindow::openOptionsMenu);
     action->setStatusTip(tr("Open options menu"));
 
     GUIMenu->addSeparator();
@@ -175,23 +175,23 @@ namespace MBSimGUI {
 
     GUIMenu->addSeparator();
 
-    action = GUIMenu->addAction(QIcon::fromTheme("application-exit"), "E&xit", this, SLOT(close()));
+    action = GUIMenu->addAction(QIcon::fromTheme("application-exit"), "E&xit", this, &MainWindow::close);
     action->setShortcut(QKeySequence::Quit);
     action->setStatusTip(tr("Exit the application"));
 
     for (auto & recentProjectFileAct : recentProjectFileActs) {
       recentProjectFileAct = new QAction(this);
       recentProjectFileAct->setVisible(false);
-      connect(recentProjectFileAct, SIGNAL(triggered()), this, SLOT(openRecentProjectFile()));
+      connect(recentProjectFileAct, &QAction::triggered, this, &MainWindow::openRecentProjectFile);
     }
     QMenu *menu = new QMenu("Project", menuBar());
-    action = menu->addAction(QIcon::fromTheme("document-new"), "New", this, SLOT(newProject()));
+    action = menu->addAction(QIcon::fromTheme("document-new"), "New", this, &MainWindow::newProject);
     action->setShortcut(QKeySequence::New);
-    action = menu->addAction(QIcon::fromTheme("document-open"), "Load", this, SLOT(loadProject()));
+    action = menu->addAction(QIcon::fromTheme("document-open"), "Load", this, QOverload<>::of(&MainWindow::loadProject));
     action->setShortcut(QKeySequence::Open);
-    action = menu->addAction(QIcon::fromTheme("document-save-as"), "Save as", this, SLOT(saveProjectAs()));
+    action = menu->addAction(QIcon::fromTheme("document-save-as"), "Save as", this, &MainWindow::saveProjectAs);
     action->setShortcut(QKeySequence::SaveAs);
-    actionSaveProject = menu->addAction(QIcon::fromTheme("document-save"), "Save", this, SLOT(saveProject()));
+    actionSaveProject = menu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ this->saveProject(); });
     actionSaveProject->setShortcut(QKeySequence::Save);
     menu->addSeparator();
     for (auto & recentProjectFileAct : recentProjectFileActs)
@@ -200,75 +200,75 @@ namespace MBSimGUI {
     menuBar()->addMenu(menu);
 
     menu = new QMenu("Edit", menuBar());
-    action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, SLOT(edit()));
+    action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, &MainWindow::edit);
     action->setShortcut(QKeySequence("Ctrl+E"));
     menu->addSeparator();
-    actionUndo = menu->addAction(QIcon::fromTheme("edit-undo"), "Undo", this, SLOT(undo()));
+    actionUndo = menu->addAction(QIcon::fromTheme("edit-undo"), "Undo", this, &MainWindow::undo);
     actionUndo->setShortcut(QKeySequence::Undo);
     actionUndo->setDisabled(true);
-    actionRedo = menu->addAction(QIcon::fromTheme("edit-redo"), "Redo", this, SLOT(redo()));
+    actionRedo = menu->addAction(QIcon::fromTheme("edit-redo"), "Redo", this, &MainWindow::redo);
     actionRedo->setShortcut(QKeySequence::Redo);
     actionRedo->setDisabled(true);
     menu->addSeparator();
-    action = menu->addAction(QIcon::fromTheme("edit-copy"), "Copy", this, SLOT(copy()));
+    action = menu->addAction(QIcon::fromTheme("edit-copy"), "Copy", this, &MainWindow::copy);
     action->setShortcut(QKeySequence::Copy);
-    action = menu->addAction(QIcon::fromTheme("edit-cut"), "Cut", this, SLOT(cut()));
+    action = menu->addAction(QIcon::fromTheme("edit-cut"), "Cut", this, &MainWindow::cut);
     action->setShortcut(QKeySequence::Cut);
-    action = menu->addAction(QIcon::fromTheme("edit-paste"), "Paste", this, SLOT(paste()));
+    action = menu->addAction(QIcon::fromTheme("edit-paste"), "Paste", this, &MainWindow::paste);
     action->setShortcut(QKeySequence::Paste);
     menu->addSeparator();
-    action = menu->addAction(QIcon::fromTheme("edit-delete"), "Remove", this, SLOT(remove()));
+    action = menu->addAction(QIcon::fromTheme("edit-delete"), "Remove", this, &MainWindow::remove);
     action->setShortcut(QKeySequence::Delete);
     menu->addSeparator();
-    action = menu->addAction(QIcon::fromTheme("go-up"), "Move up", this, SLOT(moveUp()));
+    action = menu->addAction(QIcon::fromTheme("go-up"), "Move up", this, &MainWindow::moveUp);
     action->setShortcut(QKeySequence("Ctrl+Up"));
-    action = menu->addAction(QIcon::fromTheme("go-down"), "Move down", this, SLOT(moveDown()));
+    action = menu->addAction(QIcon::fromTheme("go-down"), "Move down", this, &MainWindow::moveDown);
     action->setShortcut(QKeySequence("Ctrl+Down"));
     menuBar()->addMenu(menu);
 
     menu = new QMenu("Export", menuBar());
-    actionSaveDataAs = menu->addAction("Export all data", this, SLOT(saveDataAs()));
-    actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, SLOT(saveMBSimH5DataAs()));
-    actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, SLOT(saveOpenMBVDataAs()));
-    actionSaveStateVectorAs = menu->addAction("Export state vector", this, SLOT(saveStateVectorAs()));
-    actionSaveEigenanalysisAs = menu->addAction("Export eigenanalysis", this, SLOT(saveEigenanalysisAs()));
+    actionSaveDataAs = menu->addAction("Export all data", this, &MainWindow::saveDataAs);
+    actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, &MainWindow::saveMBSimH5DataAs);
+    actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, &MainWindow::saveOpenMBVDataAs);
+    actionSaveStateVectorAs = menu->addAction("Export state vector", this, &MainWindow::saveStateVectorAs);
+    actionSaveEigenanalysisAs = menu->addAction("Export eigenanalysis", this, &MainWindow::saveEigenanalysisAs);
     menuBar()->addMenu(menu);
 
     menuBar()->addSeparator();
     QMenu *helpMenu = new QMenu("Help", menuBar());
-    helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, SLOT(help()));
-    helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help", this, SLOT(xmlHelp()));
-    helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, SLOT(about()));
+    helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, &MainWindow::help);
+    helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help", this, [=](){ this->xmlHelp(); });
+    helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, &MainWindow::about);
     menuBar()->addMenu(helpMenu);
 
     QToolBar *toolBar = addToolBar("Tasks");
     toolBar->setObjectName("toolbar/tasks");
     actionSimulate = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaPlay)),"Start simulation");
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
-    connect(actionSimulate,SIGNAL(triggered()),this,SLOT(simulate()));
+    connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
     toolBar->addAction(actionSimulate);
     QAction *actionInterrupt = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
-    connect(actionInterrupt,SIGNAL(triggered()),this,SLOT(interrupt()));
+    connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
     toolBar->addAction(actionInterrupt);
     actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
-    connect(actionRefresh,SIGNAL(triggered()),this,SLOT(refresh()));
+    connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
     toolBar->addAction(actionRefresh);
     actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
-    connect(actionOpenMBV,SIGNAL(triggered()),this,SLOT(openmbv()));
+    connect(actionOpenMBV,&QAction::triggered,this,&MainWindow::openmbv);
     toolBar->addAction(actionOpenMBV);
     actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
-    connect(actionH5plotserie,SIGNAL(triggered()),this,SLOT(h5plotserie()));
+    connect(actionH5plotserie,&QAction::triggered,this,&MainWindow::h5plotserie);
     toolBar->addAction(actionH5plotserie);
     actionEigenanalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Eigenanalysis");
-    connect(actionEigenanalysis,SIGNAL(triggered()),this,SLOT(eigenanalysis()));
+    connect(actionEigenanalysis,&QAction::triggered,this,&MainWindow::eigenanalysis);
     toolBar->addAction(actionEigenanalysis);
     actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
-    connect(actionFrequencyResponse,SIGNAL(triggered()),this,SLOT(frequencyResponse()));
+    connect(actionFrequencyResponse,&QAction::triggered,this,&MainWindow::frequencyResponse);
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
-    connect(actionDebug,SIGNAL(triggered()),this,SLOT(debug()));
+    connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
     toolBar->addAction(actionDebug);
     QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
-    connect(actionKill,SIGNAL(triggered()),this,SLOT(kill()));
+    connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
     toolBar->addAction(actionKill);
 
     elementView->setModel(new ElementTreeModel(this));
@@ -280,9 +280,9 @@ namespace MBSimGUI {
     embeddingView->setColumnWidth(0,150);
     embeddingView->setColumnWidth(1,200);
 
-    connect(elementView,SIGNAL(pressed(QModelIndex)), this, SLOT(elementViewClicked()));
-    connect(embeddingView,SIGNAL(pressed(QModelIndex)), this, SLOT(embeddingViewClicked()));
-    connect(elementView->selectionModel(),SIGNAL(currentChanged(const QModelIndex&,const QModelIndex&)), this, SLOT(selectionChanged(const QModelIndex&)));
+    connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
+    connect(embeddingView, &EmbeddingView::pressed, this, &MainWindow::embeddingViewClicked);
+    connect(elementView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::selectionChanged);
 
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);
     dockWidget0->setObjectName("dockWidget/project");
@@ -326,9 +326,9 @@ namespace MBSimGUI {
     mbsimDW->setObjectName("dockWidget/echoArea");
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
     mbsimDW->setWidget(echoView);
-    connect(&process,SIGNAL(finished(int,QProcess::ExitStatus)),this,SLOT(processFinished(int,QProcess::ExitStatus)));
-    connect(&process,SIGNAL(readyReadStandardOutput()),this,SLOT(updateEchoView()));
-    connect(&process,SIGNAL(readyReadStandardError()),this,SLOT(updateStatus()));
+    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::processFinished);
+    connect(&process,&QProcess::readyReadStandardOutput,this,&MainWindow::updateEchoView);
+    connect(&process,&QProcess::readyReadStandardError,this,&MainWindow::updateStatus);
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
@@ -363,7 +363,7 @@ namespace MBSimGUI {
 
     setAcceptDrops(true);
 
-    connect(&autoSaveTimer, SIGNAL(timeout()), this, SLOT(autoSaveProject()));
+    connect(&autoSaveTimer, &QTimer::timeout, this, &MainWindow::autoSaveProject);
     autoSaveTimer.start(settings.value("mainwindow/options/autosaveinterval", 5).toInt()*60000);
     statusTime.start();
 
@@ -386,7 +386,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::autoSaveProject() {
-    saveProject("./.Project.mbsx",true,false);
+    saveProject("./.Project.mbsx",false);
   }
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
@@ -443,8 +443,8 @@ namespace MBSimGUI {
     arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
-    connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
-    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), elementView, SLOT(openEditor()));
+    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::objectSelected, this, &MainWindow::selectElement);
+    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::objectDoubleClicked, this, [=](){ elementView->openEditor(); });
   }
 
   MainWindow::~MainWindow() {
@@ -750,7 +750,7 @@ namespace MBSimGUI {
     return false;
   }
 
-  bool MainWindow::saveProject(const QString &fileName, bool processDocument, bool modifyStatus) {
+  bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
     try {
       serializer->writeToURI(doc, X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
       if(modifyStatus) setProjectChanged(false);
@@ -2174,6 +2174,11 @@ namespace MBSimGUI {
     solverViewClicked();
   }
 
+  void MainWindow::viewProjectSource() {
+    SourceDialog dialog(getProject()->getXMLElement(),this);
+    dialog.exec();
+  }
+
   void MainWindow::viewElementSource() {
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
@@ -2258,14 +2263,14 @@ namespace MBSimGUI {
     QStringList files = settings.value("mainwindow/recentProjectFileList").toStringList();
     files.removeAll(fileName);
     files.prepend(fileName);
-    while (files.size() > maxRecentFiles)
+    while(files.size() > maxRecentFiles)
       files.removeLast();
 
     settings.setValue("mainwindow/recentProjectFileList", files);
 
-    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
-      auto *mainWin = qobject_cast<MainWindow *>(widget);
-      if (mainWin)
+    foreach(QWidget *widget, QApplication::topLevelWidgets()) {
+      auto *mainWin = dynamic_cast<MainWindow*>(widget);
+      if(mainWin)
         mainWin->updateRecentProjectFileActions();
     }
   }

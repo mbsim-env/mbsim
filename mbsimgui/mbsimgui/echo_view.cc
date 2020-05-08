@@ -50,7 +50,7 @@ namespace MBSimGUI {
 
     out=new QTextBrowser(this);
     out->setOpenLinks(false);
-    connect(out, SIGNAL(anchorClicked(const QUrl &)), this, SLOT(linkClicked(const QUrl &)));
+    connect(out, &QTextBrowser::anchorClicked, this, &EchoView::linkClicked);
     setCentralWidget(out);
     auto tb=new QToolBar(this);
     addToolBar(Qt::RightToolBarArea, tb);
@@ -60,7 +60,7 @@ namespace MBSimGUI {
     showSSE->setToolTip("<p>Show/hide subsequent errors message</p>");
     showSSE->setCheckable(true);
     showSSE->setChecked(true);
-    connect(showSSE, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    connect(showSSE, &QAction::triggered, this, [=](){ this->updateOutput(); });
     tb->addAction(showSSE);
 
     showWarn=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"warn.svg").string().c_str()),
@@ -68,7 +68,7 @@ namespace MBSimGUI {
     showWarn->setToolTip("<p>Show/hide warning messages</p>");
     showWarn->setCheckable(true);
     showWarn->setChecked(true);
-    connect(showWarn, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    connect(showWarn, &QAction::triggered, this, [=](){ this->updateOutput(); });
     tb->addAction(showWarn);
 
     showInfo=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"info.svg").string().c_str()),
@@ -76,7 +76,7 @@ namespace MBSimGUI {
     showInfo->setToolTip("<p>Show/hide info messages</p>");
     showInfo->setCheckable(true);
     showInfo->setChecked(true);
-    connect(showInfo, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    connect(showInfo, &QAction::triggered, this, [=](){ this->updateOutput(); });
     tb->addAction(showInfo);
 
     showDepr=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"deprecated.svg").string().c_str()),
@@ -84,7 +84,7 @@ namespace MBSimGUI {
     showDepr->setToolTip("<p>Show/hide messages about deprecated features.</p>");
     showDepr->setCheckable(true);
     showDepr->setChecked(true);
-    connect(showDepr, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    connect(showDepr, &QAction::triggered, this, [=](){ this->updateOutput(); });
     tb->addAction(showDepr);
 
     enableDebug=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"debugBlueEnable.svg").string().c_str()),
@@ -92,7 +92,7 @@ namespace MBSimGUI {
     enableDebug->setToolTip("<p>Enable debug messages. This may decrease the performance.</p>");
     enableDebug->setCheckable(true);
     enableDebug->setChecked(false);
-    connect(enableDebug, SIGNAL(triggered()), this, SLOT(updateDebug()));
+    connect(enableDebug, &QAction::triggered, this, &EchoView::updateDebug);
     tb->addAction(enableDebug);
 
     showDebug=new QAction(Utils::QIconCached((installPath/"share"/"mbsimgui"/"icons"/"debugBlue.svg").string().c_str()),
@@ -101,7 +101,7 @@ namespace MBSimGUI {
     showDebug->setCheckable(true);
     showDebug->setChecked(false);
     showDebug->setDisabled(true);
-    connect(showDebug, SIGNAL(triggered()), this, SLOT(updateOutput()));
+    connect(showDebug, &QAction::triggered, this, [=](){ this->updateOutput(); } );
     tb->addAction(showDebug);
 
     setMinimumHeight(80);

@@ -76,8 +76,6 @@ namespace MBSimGUI {
 
   class MainWindow : public QMainWindow {
 
-    Q_OBJECT
-
     private:
       Project *project;
       ElementView *elementView;
@@ -113,14 +111,45 @@ namespace MBSimGUI {
       void setCurrentProjectFile(const QString &fileName);
       void updateRecentProjectFileActions();
       void move(bool up);
-      void moveParameter(bool up);
-      void moveFrame(bool up);
-      void moveContour(bool up);
-      void moveGroup(bool up);
-      void moveObject(bool up);
-      void moveLink(bool up);
-      void moveConstraint(bool up);
-      void moveObserver(bool up);
+      void openOptionsMenu(bool justSetOptions=false);
+      void openRecentProjectFile();
+      void newProject();
+      void loadProject(const QString &file);
+      bool saveProject(const QString &fileName="", bool modifyStatus=true);
+      void edit();
+      void undo();
+      void redo();
+      void copy(bool cut=false);
+      void cut() { copy(true); }
+      void paste();
+      void remove();
+      void moveUp() { move(true); }
+      void moveDown() { move(false); }
+      void saveDataAs();
+      void saveMBSimH5DataAs();
+      void saveOpenMBVDataAs();
+      void saveStateVectorAs();
+      void saveEigenanalysisAs();
+      void help();
+      void about();
+      void simulate();
+      void interrupt();
+      void openmbv();
+      void h5plotserie();
+      void eigenanalysis();
+      void frequencyResponse();
+      void debug();
+      void settingsFinished(int result);
+      void applySettings();
+      void kill();
+      void elementViewClicked();
+      void embeddingViewClicked();
+      void selectionChanged(const QModelIndex &current);
+      void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
+      void updateEchoView();
+      void updateStatus();
+      void autoSaveProject();
+      void selectElement(const std::string& ID);
 
     public:
       MainWindow(QStringList &arg);
@@ -152,7 +181,7 @@ namespace MBSimGUI {
       void loadObserver(Element *parent, Element *element=nullptr, bool embed=false);
       void highlightObject(const QString &ID);
       const QString& getHighlightedObject() const {return currentID;}
-      void loadProject(const QString &file);
+      ProjectView* getProjectView() { return projectView; }
       ElementView* getElementView() { return elementView; }
       EmbeddingView* getEmbeddingView() { return embeddingView; }
       SolverView* getSolverView() { return solverView; }
@@ -168,92 +197,41 @@ namespace MBSimGUI {
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
       bool getAutoRefresh() const { return autoRefresh; }
       bool editorIsOpen() const;
-
-    public slots:
-      void elementViewClicked();
-      void embeddingViewClicked();
-      void solverViewClicked();
-      void projectViewClicked();
-      void newProject();
       void loadProject();
       bool saveProjectAs();
-      bool saveProject(const QString &fileName="", bool processDocument=true, bool modifyStatus=true);
-      void saveDataAs();
-      void saveMBSimH5DataAs();
+      void refresh();
+      void xmlHelp(const QString &url="");
+      void viewProjectSource();
+      void viewElementSource();
+      void viewSolverSource();
+      void saveElementAs();
+      void copyElement(bool cut=false);
+      void removeElement();
+      void enableElement(bool enabled);
+      void moveFrame(bool up);
+      void moveContour(bool up);
+      void moveGroup(bool up);
+      void moveObject(bool up);
+      void moveLink(bool up);
+      void moveConstraint(bool up);
+      void moveObserver(bool up);
+      void copyParameter(bool cut=false);
+      void removeParameter();
+      void moveParameter(bool up);
+      void solverViewClicked();
+      void projectViewClicked();
       void saveMBSimH5Data(const QString &file);
-      void saveOpenMBVDataAs();
       void saveOpenMBVXMLData(const QString &file);
       void saveOpenMBVH5Data(const QString &file);
-      void saveStateVectorAs();
       void saveStateVector(const QString &file);
-      void saveEigenanalysisAs();
       void saveEigenanalysis(const QString &file);
-      void simulate();
-      void refresh();
-      void openmbv();
-      void h5plotserie();
-      void eigenanalysis();
-      void debug();
-      void frequencyResponse();
-      void help();
-      void xmlHelp(const QString &url="");
-      void about();
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
-      void edit();
-      void undo();
-      void redo();
-      void removeElement();
-      void removeParameter();
-      void remove();
-      void copy(bool cut=false);
-      void cut() { copy(true); }
-      void paste();
-      void moveUp() { move(true); }
-      void moveDown() { move(false); }
-      void copyElement(bool cut=false);
-      void cutElement() { copyElement(true); }
-      void copyParameter(bool cut=false);
-      void cutParameter() { copyParameter(true); }
-      void moveUpParameter() { moveParameter(true); }
-      void moveDownParameter() { moveParameter(false); }
-      void moveUpFrame() { moveFrame(true); }
-      void moveDownFrame() { moveFrame(false); }
-      void moveUpContour() { moveContour(true); }
-      void moveDownContour() { moveContour(false); }
-      void moveUpGroup() { moveGroup(true); }
-      void moveDownGroup() { moveGroup(false); }
-      void moveUpObject() { moveObject(true); }
-      void moveDownObject() { moveObject(false); }
-      void moveUpLink() { moveLink(true); }
-      void moveDownLink() { moveLink(false); }
-      void moveUpConstraint() { moveConstraint(true); }
-      void moveDownConstraint() { moveConstraint(false); }
-      void moveUpObserver() { moveObserver(true); }
-      void moveDownObserver() { moveObserver(false); }
-      void enableElement(bool enabled);
-      void saveElementAs();
       void saveSolverAs();
       void saveEmbeddingAs();
       void loadSolver();
-      void viewElementSource();
       void viewEmbeddingSource();
-      void viewSolverSource();
       void viewParameterSource();
-
-    private slots:
-      void selectElement(const std::string& ID);
-      void openOptionsMenu(bool justSetOptions=false);
-      void selectionChanged(const QModelIndex &current);
-      void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
-      void openRecentProjectFile();
-      void autoSaveProject();
-      void applySettings();
-      void settingsFinished(int result);
-      void interrupt();
-      void kill();
-      void updateEchoView();
-      void updateStatus();
   };
 
 }

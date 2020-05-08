@@ -421,7 +421,6 @@ namespace MBSimGUI {
   };
 
   class FlexibleFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
-    Q_OBJECT
 
     public:
       FlexibleFfrBodyPropertyDialog(Element *body_);
@@ -434,7 +433,6 @@ namespace MBSimGUI {
   };
 
   class CalculixBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
-    Q_OBJECT
 
     public:
       CalculixBodyPropertyDialog(Element *body_);
@@ -658,18 +656,16 @@ namespace MBSimGUI {
   };
 
   class ElasticJointPropertyDialog : public FloatingFrameLinkPropertyDialog {
-    Q_OBJECT
 
     public:
       ElasticJointPropertyDialog(Element *joint);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *forceDirection, *momentDirection, *function, *integrate;
       void updateWidget() override;
-    protected slots:
       void updateFunctionCheckState();
       void updateDirectionsCheckState();
+      ExtWidget *forceDirection, *momentDirection, *function, *integrate;
   };
 
   class GeneralizedSpringDamperPropertyDialog : public DualRigidBodyLinkPropertyDialog {
@@ -994,17 +990,15 @@ namespace MBSimGUI {
   };
 
   class SignalOperationPropertyDialog : public SignalPropertyDialog {
-    Q_OBJECT
 
     public:
       SignalOperationPropertyDialog(Element *signal);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *inputSignal, *function;
       void updateWidget() override;
-    protected slots:
       void updateFunctionFactory();
+      ExtWidget *inputSignal, *function;
   };
 
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {

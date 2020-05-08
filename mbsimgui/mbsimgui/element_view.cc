@@ -45,8 +45,8 @@ namespace MBSimGUI {
         else
           editor->setCancel(false);
         editor->show();
-        connect(editor,SIGNAL(apply()),this,SLOT(apply()));
-        connect(editor,SIGNAL(finished(int)),this,SLOT(dialogFinished(int)));
+        connect(editor,&ElementPropertyDialog::apply,this,&ElementView::apply);
+        connect(editor,&ElementPropertyDialog::finished,this,&ElementView::dialogFinished);
       }
     }
   }
@@ -55,7 +55,7 @@ namespace MBSimGUI {
     openEditor();
   }
 
-  void ElementView::mousePressEvent (QMouseEvent *event) {
+  void ElementView::mousePressEvent(QMouseEvent *event) {
     if(!editor)
       QTreeView::mousePressEvent(event);
   }

@@ -50,8 +50,8 @@ namespace MBSimGUI {
       curve = new QwtPlotCurve("Curve 1");
       curve->setSamples(f,A[0]);
       curve->attach(plot);
-      connect(num,SIGNAL(valueChanged(int)),this,SLOT(changePlot(int)));
-      connect(num,SIGNAL(valueChanged(int)),this,SIGNAL(numChanged(int)));
+      connect(num,QOverload<int>::of(&QSpinBox::valueChanged),this,&DataPlot::changePlot);
+      connect(num,QOverload<int>::of(&QSpinBox::valueChanged),this,&DataPlot::numChanged);
   }
 
   void DataPlot::setSymbol(const QwtSymbol::Style &style, int size) {

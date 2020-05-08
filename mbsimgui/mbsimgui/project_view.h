@@ -29,14 +29,11 @@ namespace MBSimGUI {
   class ProjectPropertyDialog;
 
   class ProjectViewContextMenu : public QMenu {
-    Q_OBJECT
-
     public:
       ProjectViewContextMenu(QWidget * parent = nullptr);
   };
 
   class ProjectView : public QLineEdit {
-    Q_OBJECT
     public:
       ProjectView();
       ~ProjectView() override = default;
@@ -45,15 +42,13 @@ namespace MBSimGUI {
       void setProject(Project *project_) { project = project_; }
       void updateName();
       QMenu* createContextMenu() { return new ProjectViewContextMenu; }
+      void openEditor();
     protected:
       Project *project;
       ProjectPropertyDialog *editor{nullptr};
-    protected slots:
       void openContextMenu();
       void dialogFinished(int result);
       void apply();
-    public slots:
-      void openEditor();
   };
 
   class ProjectMouseEvent : public QObject {

@@ -46,33 +46,31 @@ namespace MBSimGUI {
   class ExtWidget;
 
   class LocalFrameComboBox : public CustomComboBox {
-    Q_OBJECT
+
     public:
       LocalFrameComboBox(Element *element_, QWidget *parent = nullptr);
     protected:
-      Element *element;
-      QString oldID;
       void showPopup() override;
       void hidePopup() override;
-    protected slots:
       void highlightObject(const QString &frame);
+      Element *element;
+      QString oldID;
   };
 
   class ParentFrameComboBox : public CustomComboBox {
-    Q_OBJECT
+
     public:
       ParentFrameComboBox(Element *element_, QWidget *parent = nullptr);
     protected:
-      Element *element;
-      QString oldID;
       void showPopup() override;
       void hidePopup() override;
-    protected slots:
       void highlightObject(const QString &frame);
+      Element *element;
+      QString oldID;
   };
 
   class LocalFrameOfReferenceWidget : public Widget {
-    Q_OBJECT
+
 
     public:
       LocalFrameOfReferenceWidget(Element* element_, Frame* omitFrame_=nullptr);
@@ -83,16 +81,13 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
+      void setFrame(const QString &str);
       QComboBox *frame;
       Element* element;
       Frame *selectedFrame, *omitFrame;
-
-    protected slots:
-      void setFrame(const QString &str);
   };
 
   class ParentFrameOfReferenceWidget : public Widget {
-    Q_OBJECT
 
     public:
       ParentFrameOfReferenceWidget(Element* element_, Frame* omitFrame_=nullptr);
@@ -103,16 +98,13 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
+      void setFrame(const QString &str);
       QComboBox *frame;
       Element* element;
       Frame *selectedFrame, *omitFrame;
-
-    protected slots:
-      void setFrame(const QString &str);
   };
 
   class BasicElementOfReferenceWidget : public Widget {
-    Q_OBJECT
 
     public:
       BasicElementOfReferenceWidget(Element* element_, Element* selectedElement, BasicElementBrowser *eleBrowser_, bool addRatio);
@@ -127,13 +119,11 @@ namespace MBSimGUI {
 
     protected:
       virtual Element* findElement(const QString &str) { return nullptr; }
+      void setElement();
+      void showBrowser();
       QLineEdit *ele, *ratio;
       Element *element;
       BasicElementBrowser *eleBrowser;
-
-    public slots:
-      void setElement();
-      void showBrowser();
   };
 
   template <class T>
@@ -147,7 +137,6 @@ namespace MBSimGUI {
   };
 
   class FileWidget : public Widget {
-    Q_OBJECT
 
     public:
       FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_=0, bool quote_=false, bool absPath=true);
@@ -157,15 +146,13 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
+      void selectFile();
+      void changePath(int i);
       QLineEdit *filePath;
       QCheckBox *path;
       QString description, extensions;
       int mode;
       bool quote;
-
-    protected slots:
-      void selectFile();
-      void changePath(int i);
   };
 
   class IntegerWidget : public Widget {
@@ -283,7 +270,6 @@ namespace MBSimGUI {
   };
 
   class ColorWidget : public Widget {
-    Q_OBJECT
 
     public:
       ColorWidget(const std::vector<QString> &c=getBlueColor());
@@ -291,20 +277,22 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
+      void setColor();
       ExtWidget *color;
       QPushButton *button;
-
-    protected slots:
-      void setColor(); 
   };
 
   class PlotFeatureWidget : public Widget {
-    Q_OBJECT
 
     protected:
+      void updateNamespace(int i);
+      void addFeature();
+      void removeFeature();
+      void updateFeature();
+      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
       std::vector<MBXMLUtils::FQN> feature;
       QComboBox *type, *value, *nspace;
-      ChoiceWidget2 *status;
+      ChoiceWidget *status;
       QTreeWidget *tree;
       MBXMLUtils::NamespaceURI uri;
 
@@ -315,17 +303,9 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       xercesc::DOMElement* initializeUsingXML2(xercesc::DOMElement *parent);
       xercesc::DOMElement* writeXMLFile2(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr);
-
-    protected slots:
-      void updateNamespace(int i);
-      void addFeature();
-      void removeFeature();
-      void updateFeature();
-      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
   };
 
   class XMLEditorWidget : public Widget {
-    Q_OBJECT
 
     public:
       XMLEditorWidget(const QString &text="");
@@ -343,7 +323,7 @@ namespace MBSimGUI {
     public:
       ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, QWidget *parent_) : xmlName(std::move(xmlName_)), element(element_), addRatio(false), parent(parent_) { }
       ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, bool addRatio_, QWidget *parent_) : xmlName(std::move(xmlName_)), element(element_), addRatio(addRatio_), parent(parent_) { }
-      QWidget* createWidget(int i=0) override { return new ElementOfReferenceWidget<T>(element,nullptr,addRatio,parent); }
+      Widget* createWidget(int i=0) override { return new ElementOfReferenceWidget<T>(element,nullptr,addRatio,parent); }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName; }
     protected:
       MBXMLUtils::FQN xmlName;
