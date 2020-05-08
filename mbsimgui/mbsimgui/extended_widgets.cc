@@ -44,20 +44,22 @@ namespace MBSimGUI {
 
   ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_) : checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
 
-    auto *layout = new QGridLayout;
+    auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    label = new QLabel(name);
+    label = new QLabel;
+    layout->addWidget(label);
+    layout->addWidget(widget);
+    widget->setContentsMargins(10,0,0,0);
     MouseEvent *mouseEvent = new MouseEvent(label);
     label->installEventFilter(mouseEvent);
     checkable = checkable_;
     checked = active;
     if(checkable) {
-      QLabel *opt = new QLabel("*");
-      layout->addWidget(opt,0,1);
       label->setEnabled(active);
-      opt->setToolTip("This property is optional");
+      label->setText("<b>"+name + " </b><small>optional</small>");
+      label->setToolTip("Click to define or remove this property");
       widget->setVisible(active);
       connect(mouseEvent,&MouseEvent::mousePressed,this,[=]{
           setActive(not checked);
@@ -65,10 +67,10 @@ namespace MBSimGUI {
           emit clicked(checked);
           });
     }
-    layout->addWidget(label,0,0);
-    layout->addWidget(widget,1,0,1,2);
-    layout->setColumnStretch(0,2);
-    widget->setContentsMargins(10,0,0,0);
+    else {
+      label->setToolTip("This property must be defined");
+      label->setText("<b>"+name+"</b>");
+    }
     connect(widget,&Widget::widgetChanged,this,&ExtWidget::widgetChanged);
   }
 
