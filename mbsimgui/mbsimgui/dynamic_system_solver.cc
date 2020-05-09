@@ -21,8 +21,10 @@
 #include "dynamic_system_solver.h"
 #include "project.h"
 #include "objectfactory.h"
+#include "mainwindow.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <mbxmlutils/eval.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -31,6 +33,7 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern bool currentTask;
+  extern MainWindow *mw;
 
   Environment *Environment::instance=nullptr;
 
@@ -98,8 +101,33 @@ namespace MBSimGUI {
     if(ele1) {
       ele1 = ele1->getFirstElementChild();
       if(ele1) {
+        if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
+          mw->updateParameters(this,false);
+          std::string evaltmp;
+          try{
+            evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
+          }
+          catch(MBXMLUtils::DOMEvalException &e) {
+            std::cout << e.getMessage() << std::endl;
+          }
+          catch(...) {
+            std::cout << "Unknwon error" << std::endl;
+          }
+          cout << evaltmp << endl;
+          xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
+          MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
+          DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+          ele1->insertBefore(ele2,NULL);
+          boost::filesystem::path orgFileName=E(doc->getDocumentElement())->getOriginalFilename();
+          DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
+              X()%orgFileName.string());
+          ele2->insertBefore(filenamePI, ele2->getFirstChild());
+          MBXMLUtils::E(ele1)->removeAttribute("href");
+        }
         DOMDocument *doc=element->getOwnerDocument();
         DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+        if(E(ele1)->getTagName()==PV%"Embed")
+          ele1 = ele1->getFirstElementChild();
         ele1->insertBefore(id, nullptr);
       }
     }
