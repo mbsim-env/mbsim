@@ -22,6 +22,7 @@
 #include "project.h"
 #include "objectfactory.h"
 #include <xercesc/dom/DOMDocument.hpp>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -39,12 +40,10 @@ namespace MBSimGUI {
       DOMNode *en=e->getNextSibling();
       if(e == environments) {
         DOMElement *env = E(static_cast<DOMElement*>(e))->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
-        DOMElement *grav = E(env)->getFirstElementChildNamed(MBSIM%"accelerationOfGravity");
         DOMNode *ee = env->getFirstChild();
         while(ee) {
           DOMNode *een=ee->getNextSibling();
-          if(ee == grav)
-            env->removeChild(ee);
+          env->removeChild(ee);
           ee = een;
         }
       }
@@ -94,6 +93,15 @@ namespace MBSimGUI {
       E(ele1)->setAttribute("value","plotRecursive");
       ele1->insertBefore(element->getOwnerDocument()->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
       element->insertBefore( ele1, element->getFirstElementChild() );
+    }
+    DOMElement *ele1=E(E(E(element)->getFirstElementChildNamed(MBSIM%"environments"))->getFirstElementChildNamed(MBSIM%"MBSimEnvironment"))->getFirstElementChildNamed(MBSIM%"openMBVObject");
+    if(ele1) {
+      ele1 = ele1->getFirstElementChild();
+      if(ele1) {
+        DOMDocument *doc=element->getOwnerDocument();
+        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+        ele1->insertBefore(id, nullptr);
+      }
     }
     return element;
   }

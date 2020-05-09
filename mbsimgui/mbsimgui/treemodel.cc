@@ -180,6 +180,9 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
+    if(not parent.isValid())
+      idEleMap[group->getID()] = index(0,0);
+
     if(recursive) {
       QModelIndex index;
       if(parent.row()==-1)

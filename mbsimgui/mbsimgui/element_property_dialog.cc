@@ -1147,8 +1147,11 @@ namespace MBSimGUI {
     addTab("Solver parameters",2);
     addTab("Extra");
 
-    environment = new ExtWidget("Acceleration of gravity",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"accelerationOfGravity");
-    addToTab("Environment", environment);
+    accelerationOfGravity = new ExtWidget("Acceleration of gravity",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"accelerationOfGravity");
+    addToTab("Environment", accelerationOfGravity);
+
+    openMBVObject = new ExtWidget("OpenMBV object",new ChoiceWidget(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"openMBVObject");
+    addToTab("Environment", openMBVObject);
 
     vector<QString> list;
     list.emplace_back("\"fixedpoint\"");
@@ -1215,7 +1218,8 @@ namespace MBSimGUI {
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GroupPropertyDialog::initializeUsingXML(item->getXMLElement());
-    environment->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    accelerationOfGravity->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    openMBVObject->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
     constraintSolver->initializeUsingXML(item->getXMLElement());
     impactSolver->initializeUsingXML(item->getXMLElement());
     maxIter->initializeUsingXML(item->getXMLElement());
@@ -1240,7 +1244,8 @@ namespace MBSimGUI {
 
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GroupPropertyDialog::writeXMLFile(parent,getElement()->getXMLFrames());
-    environment->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    accelerationOfGravity->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    openMBVObject->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
     constraintSolver->writeXMLFile(item->getXMLElement());
     impactSolver->writeXMLFile(item->getXMLElement());
     maxIter->writeXMLFile(item->getXMLElement());
@@ -1342,7 +1347,7 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation = new ExtWidget("Generalized velocity of rotation",new TextChoiceWidget(list,0,true),true,false,MBSIM%"generalizedVelocityOfRotation");
     addToTab("Kinematics", generalizedVelocityOfRotation);
 
-    ombv = new ExtWidget("OpenMBV Body",new ChoiceWidget(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
+    ombv = new ExtWidget("OpenMBV body",new ChoiceWidget(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIM%"openMBVRigidBody");
     addToTab("Visualization", ombv);
 
     ombvFrameRef=new ExtWidget("OpenMBV frame of reference",new LocalFrameOfReferenceWidget(body),true,false,MBSIM%"openMBVFrameOfReference");
