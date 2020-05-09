@@ -41,6 +41,8 @@ namespace MBSimGUI {
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getDefaultIndex() const override { return 1; }
+      int getFallbackIndex() const override { return 10; }
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
@@ -54,6 +56,8 @@ namespace MBSimGUI {
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getDefaultIndex() const override { return 2; }
+      int getFallbackIndex() const override { return 3; }
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;

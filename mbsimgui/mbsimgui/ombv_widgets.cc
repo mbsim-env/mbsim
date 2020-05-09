@@ -23,6 +23,7 @@
 #include "extended_widgets.h"
 #include "body.h"
 #include "frame.h"
+#include "unknown_widget.h"
 #include "mainwindow.h"
 #include <utility>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
@@ -36,68 +37,76 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   OMBVRigidBodyWidgetFactory::OMBVRigidBodyWidgetFactory()  {
+    name.emplace_back("Compound rigid body");
     name.emplace_back("Cube");
     name.emplace_back("Cuboid");
-    name.emplace_back("Sphere");
     name.emplace_back("Cylinder");
-    name.emplace_back("Frustum");
+    name.emplace_back("Cylindrical gear");
     name.emplace_back("Extrusion");
-    name.emplace_back("CylindricalGear");
-    name.emplace_back("IvBody");
-    name.emplace_back("CompoundRigidBody");
-    name.emplace_back("InvisibleBody");
+    name.emplace_back("Frustum");
+    name.emplace_back("Invisible body");
+    name.emplace_back("Open inventor body");
+    name.emplace_back("Sphere");
+    name.emplace_back("Unknown body");
+    xmlName.push_back(OPENMBV%"CompoundRigidBody");
     xmlName.push_back(OPENMBV%"Cube");
     xmlName.push_back(OPENMBV%"Cuboid");
-    xmlName.push_back(OPENMBV%"Sphere");
     xmlName.push_back(OPENMBV%"Cylinder");
-    xmlName.push_back(OPENMBV%"Frustum");
-    xmlName.push_back(OPENMBV%"Extrusion");
     xmlName.push_back(OPENMBV%"CylindricalGear");
-    xmlName.push_back(OPENMBV%"IvBody");
-    xmlName.push_back(OPENMBV%"CompoundRigidBody");
+    xmlName.push_back(OPENMBV%"Extrusion");
+    xmlName.push_back(OPENMBV%"Frustum");
     xmlName.push_back(OPENMBV%"InvisibleBody");
+    xmlName.push_back(OPENMBV%"IvBody");
+    xmlName.push_back(OPENMBV%"Sphere");
+    xmlName.push_back(OPENMBV%"UnknownWidget");
   }
 
   Widget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new CubeWidget("Cube"+toQStr(count++),OPENMBV%"Cube");
+      return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
     if(i==1)
-      return new CuboidWidget("Cuboid"+toQStr(count++),OPENMBV%"Cuboid");
+      return new CubeWidget("Cube"+toQStr(count++),OPENMBV%"Cube");
     if(i==2)
-      return new SphereWidget("Sphere"+toQStr(count++),OPENMBV%"Sphere");
+      return new CuboidWidget("Cuboid"+toQStr(count++),OPENMBV%"Cuboid");
     if(i==3)
       return new CylinderWidget("Cylinder"+toQStr(count++),OPENMBV%"Cylinder");
     if(i==4)
-      return new FrustumWidget("Frustum"+toQStr(count++),OPENMBV%"Frustum");
+      return new CylindricalGearWidget("CylindricalGear"+toQStr(count++),OPENMBV%"CylindricalGear");
     if(i==5)
       return new ExtrusionWidget("Extrusion"+toQStr(count++),OPENMBV%"Extrusion");
     if(i==6)
-      return new CylindricalGearWidget("CylindricalGear"+toQStr(count++),OPENMBV%"CylindricalGear");
+      return new FrustumWidget("Frustum"+toQStr(count++),OPENMBV%"Frustum");
     if(i==7)
-      return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
-    if(i==8)
-      return new CompoundRigidBodyWidget("CompoundRigidBody"+toQStr(count++),OPENMBV%"CompoundRigidBody");
-    if(i==9)
       return new InvisibleBodyWidget("InvisibleBody"+toQStr(count++),OPENMBV%"InvisibleBody");
+    if(i==8)
+      return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
+    if(i==9)
+      return new SphereWidget("Sphere"+toQStr(count++),OPENMBV%"Sphere");
+    if(i==10)
+      return new UnknownWidget;
     return nullptr;
   }
 
   OMBVFlexibleBodyWidgetFactory::OMBVFlexibleBodyWidgetFactory()  {
-    name.emplace_back("DynamicPointSet");
-    name.emplace_back("DynamicIndexedLineSet");
-    name.emplace_back("DynamicIndexedFaceSet");
-    xmlName.push_back(OPENMBV%"DynamicPointSet");
-    xmlName.push_back(OPENMBV%"DynamicIndexedLineSet");
+    name.emplace_back("Dynamic indexed face set");
+    name.emplace_back("Dynamic indexed line set");
+    name.emplace_back("Dynamic point set");
+    name.emplace_back("Unknown body");
     xmlName.push_back(OPENMBV%"DynamicIndexedFaceSet");
+    xmlName.push_back(OPENMBV%"DynamicIndexedLineSet");
+    xmlName.push_back(OPENMBV%"DynamicPointSet");
+    xmlName.push_back(OPENMBV%"UnknownWidget");
   }
 
   Widget* OMBVFlexibleBodyWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new DynamicPointSetWidget("DynamicPointSet"+toQStr(count++),OPENMBV%"DynamicPointSet");
+      return new DynamicIndexedFaceSetWidget("DynamicIndexedFaceSet"+toQStr(count++),OPENMBV%"DynamicIndexedFaceSet");
     if(i==1)
       return new DynamicIndexedLineSetWidget("DynamicIndexedLineSet"+toQStr(count++),OPENMBV%"DynamicIndexedLineSet");
     if(i==2)
-      return new DynamicIndexedFaceSetWidget("DynamicIndexedFaceSet"+toQStr(count++),OPENMBV%"DynamicIndexedFaceSet");
+      return new DynamicPointSetWidget("DynamicPointSet"+toQStr(count++),OPENMBV%"DynamicPointSet");
+    if(i==3)
+      return new UnknownWidget;
     return nullptr;
   }
 
@@ -679,7 +688,7 @@ namespace MBSimGUI {
 
   IvBodyWidget::IvBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
 
-    ivFileName = new ExtWidget("Iv file name",new FileWidget("", "XML model files", "iv files (*.iv *.wrl)", 0, true),false,false,OPENMBV%"ivFileName");
+    ivFileName = new ExtWidget("Open inventor file name",new FileWidget("", "XML model files", "iv files (*.iv *.wrl)", 0, true),false,false,OPENMBV%"ivFileName");
     layout->addWidget(ivFileName);
 
     creaseEdges = new ExtWidget("Crease edges",new ChoiceWidget(new ScalarWidgetFactory("-1",vector<QStringList>(2,angleUnits())),QBoxLayout::RightToLeft),true,false,OPENMBV%"creaseEdges");
