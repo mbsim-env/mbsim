@@ -23,7 +23,7 @@ goto:LOOPEND
   echo Windows Registry Editor Version 5.00 > %TEMP%\mbsim-env.reg
   echo. >> %TEMP%\mbsim-env.reg
   echo [HKEY_CURRENT_USER\Software\Classes\mbsim-env-%NAME%\shell\open\command] >> %TEMP%\mbsim-env.reg
-  echo @="\"%BINDIR:\=\\%\\%EXE%\" \"%%*\"" >> %TEMP%\mbsim-env.reg
+  echo @="\"%BINDIR:\=\\%\\%EXE%\" \"%%1\"" >> %TEMP%\mbsim-env.reg
   echo. >> %TEMP%\mbsim-env.reg
   echo [HKEY_CURRENT_USER\Software\Classes\%EXT%] >> %TEMP%\mbsim-env.reg
   echo @="mbsim-env-%NAME%" >> %TEMP%\mbsim-env.reg
