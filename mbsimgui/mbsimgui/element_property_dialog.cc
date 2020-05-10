@@ -1218,8 +1218,10 @@ namespace MBSimGUI {
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GroupPropertyDialog::initializeUsingXML(item->getXMLElement());
-    accelerationOfGravity->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
-    openMBVObject->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    if(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild()) {
+      accelerationOfGravity->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+      openMBVObject->initializeUsingXML(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    }
     constraintSolver->initializeUsingXML(item->getXMLElement());
     impactSolver->initializeUsingXML(item->getXMLElement());
     maxIter->initializeUsingXML(item->getXMLElement());
@@ -1244,8 +1246,10 @@ namespace MBSimGUI {
 
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GroupPropertyDialog::writeXMLFile(parent,getElement()->getXMLFrames());
-    accelerationOfGravity->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
-    openMBVObject->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    if(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild()) {
+      accelerationOfGravity->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+      openMBVObject->writeXMLFile(static_cast<DynamicSystemSolver*>(item)->getXMLEnvironments()->getFirstElementChild());
+    }
     constraintSolver->writeXMLFile(item->getXMLElement());
     impactSolver->writeXMLFile(item->getXMLElement());
     maxIter->writeXMLFile(item->getXMLElement());
