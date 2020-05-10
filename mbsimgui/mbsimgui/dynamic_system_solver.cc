@@ -58,7 +58,7 @@ namespace MBSimGUI {
 
   DOMElement* DynamicSystemSolver::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Group::createXMLElement(parent);
-    DOMDocument *doc=ele0->getOwnerDocument();
+    xercesc::DOMDocument *doc=ele0->getOwnerDocument();
 
     E(ele0)->setAttribute("name", "MBS");
     environments = D(doc)->createElement( MBSIM%"environments" );
@@ -124,7 +124,7 @@ namespace MBSimGUI {
           ele2->insertBefore(filenamePI, ele2->getFirstChild());
           MBXMLUtils::E(ele1)->removeAttribute("href");
         }
-        DOMDocument *doc=element->getOwnerDocument();
+        xercesc::DOMDocument *doc=element->getOwnerDocument();
         DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
         if(E(ele1)->getTagName()==PV%"Embed")
           ele1 = ele1->getFirstElementChild();
