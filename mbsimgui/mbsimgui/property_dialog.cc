@@ -77,6 +77,7 @@ namespace MBSimGUI {
 
     QWidget *box = new QWidget;
     auto *layout_ = new QVBoxLayout;
+    layout_->setSpacing(15);
     box->setLayout(layout_);
     layout[name] = layout_;
 
