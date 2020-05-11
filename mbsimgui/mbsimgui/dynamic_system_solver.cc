@@ -41,18 +41,7 @@ namespace MBSimGUI {
     DOMNode *e = element->getFirstChild();
     while(e) {
       DOMNode *en=e->getNextSibling();
-      if(e == environments) {
-        DOMElement *env = E(static_cast<DOMElement*>(e))->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
-        if(env) {
-          DOMNode *ee = env->getFirstChild();
-          while(ee) {
-            DOMNode *een=ee->getNextSibling();
-            env->removeChild(ee);
-            ee = een;
-          }
-        }
-      }
-      else if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (E(e)->getTagName() != MBSIM%"enableOpenMBVFrameI") and (E(e)->getTagName() != MBSIM%"plotFeatureFrameI"))
+      if((e != frames) and (e != contours) and (e != groups) and (e != objects) and (e != links) and (e != constraints) and (e != observers) and (E(e)->getTagName() != MBSIM%"enableOpenMBVFrameI") and (E(e)->getTagName() != MBSIM%"plotFeatureFrameI"))
         element->removeChild(e);
       e = en;
     }

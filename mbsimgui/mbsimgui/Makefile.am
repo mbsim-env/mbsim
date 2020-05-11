@@ -43,6 +43,7 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   ombv_widgets.cc \
 		   extended_widgets.cc \
 		   special_widgets.cc \
+		   environment_widgets.cc \
 		   property_dialog.cc \
 		   element_property_dialog.cc \
 		   solver_property_dialog.cc \

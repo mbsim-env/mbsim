@@ -362,7 +362,7 @@ namespace MBSimGUI {
 
   class DynamicSystemSolverPropertyDialog : public GroupPropertyDialog {
     protected:
-      ExtWidget *accelerationOfGravity, *openMBVObject, *constraintSolver, *impactSolver, *maxIter, *highIter, *numericalJacobian, *stopIfNoConvergence, *projection, *gTol, *gdTol, *gddTol, *laTol, *LaTol, *gCorr, *gdCorr, *inverseKinetics, *initialProjection, *determineEquilibriumState, *useConstraintSolverForSmoothMotion, *useConstraintSolverForPlot;
+      ExtWidget *environments, *constraintSolver, *impactSolver, *maxIter, *highIter, *numericalJacobian, *stopIfNoConvergence, *projection, *gTol, *gdTol, *gddTol, *laTol, *LaTol, *gCorr, *gdCorr, *inverseKinetics, *initialProjection, *determineEquilibriumState, *useConstraintSolverForSmoothMotion, *useConstraintSolverForPlot;
 
     public:
       DynamicSystemSolverPropertyDialog(Element *solver);
