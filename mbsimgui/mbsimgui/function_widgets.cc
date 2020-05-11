@@ -331,6 +331,8 @@ namespace MBSimGUI {
 
     shiftOrdinate = new ExtWidget("Shift ordinate",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"shiftOrdinate");
     layout->addWidget(shiftOrdinate);
+
+    connect(functions,&Widget::widgetChanged,this,&Widget::widgetChanged);
   }
 
   void PiecewiseDefinedFunctionWidget::resize_(int m, int n) {
