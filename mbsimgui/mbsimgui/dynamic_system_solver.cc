@@ -106,7 +106,6 @@ namespace MBSimGUI {
       catch(...) {
         std::cout << "Unknwon error" << std::endl;
       }
-      cout << evaltmp << endl;
       xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
       MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
