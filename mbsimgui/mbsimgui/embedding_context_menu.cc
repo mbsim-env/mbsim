@@ -36,7 +36,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,mw,&MainWindow::viewEmbeddingSource);
     QMenu::addAction(action);
     addSeparator();
-    action = new QAction(QIcon::fromTheme("document-save-as"), "Save as", this);
+    action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
     action->setEnabled(item->getNumberOfParameters());
     connect(action,&QAction::triggered,mw,&MainWindow::saveEmbeddingAs);
     addAction(action);
@@ -45,7 +45,7 @@ namespace MBSimGUI {
     action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
     connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,true); });
     addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
+    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);

@@ -1752,7 +1752,7 @@ namespace MBSimGUI {
     for(auto & element : elements) {
       Parameter *parameter=ObjectFactory::getInstance()->createParameter(element);
       if(not parameter) {
-        QMessageBox::warning(nullptr, "Load", "Cannot load file.");
+        QMessageBox::warning(nullptr, "Import", "Cannot import file.");
         return;
       }
       if(embed) {
@@ -1828,7 +1828,7 @@ namespace MBSimGUI {
     frame->setEmbeded(embed);
     frame->create();
     if(not frame) {
-      QMessageBox::warning(nullptr, "Load", "Cannot load file.");
+      QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
@@ -1878,7 +1878,7 @@ namespace MBSimGUI {
     contour->setEmbeded(embed);
     contour->create();
     if(not contour) {
-      QMessageBox::warning(nullptr, "Load", "Cannot load file.");
+      QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
@@ -1928,7 +1928,7 @@ namespace MBSimGUI {
     group->setEmbeded(embed);
     group->create();
     if(not group) {
-      QMessageBox::warning(nullptr, "Load", "Cannot load file.");
+      QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
@@ -1978,7 +1978,7 @@ namespace MBSimGUI {
     object->setEmbeded(embed);
     object->create();
     if(not object) {
-      QMessageBox::warning(nullptr, "Load", "Cannot load file.");
+      QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
@@ -2028,7 +2028,7 @@ namespace MBSimGUI {
     link->setEmbeded(embed);
     link->create();
     if(not link) {
-      QMessageBox::warning(nullptr, "Load", "Cannot load file.");
+      QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
@@ -2078,7 +2078,7 @@ namespace MBSimGUI {
     constraint->setEmbeded(embed);
     constraint->create();
     if(not constraint) {
-      QMessageBox::warning(nullptr, "Load", "Cannot load file.");
+      QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
@@ -2128,7 +2128,7 @@ namespace MBSimGUI {
     observer->setEmbeded(embed);
     observer->create();
     if(not observer) {
-      QMessageBox::warning(nullptr, "Load", "Cannot load file.");
+      QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
@@ -2163,7 +2163,7 @@ namespace MBSimGUI {
     Solver *solver = Embed<Solver>::create(ele,project);
     solver->create();
     if(not solver) {
-      QMessageBox::warning(0, "Load", "Cannot load file.");
+      QMessageBox::warning(0, "Import", "Cannot import file.");
       return;
     }
     project->getXMLElement()->insertBefore(ele, NULL);
