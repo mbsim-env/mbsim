@@ -258,60 +258,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* Group::processHref(DOMElement *element) {
-    element = Element::processHref(element);
-
-    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
-    for(size_t i=1; i<frame.size(); i++) {
-      frame[i]->processHref(ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
-    for(auto & i : contour) {
-      i->processHref(ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"groups")->getFirstElementChild();
-    for(auto & i : group) {
-      i->processHref(ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"objects")->getFirstElementChild();
-    for(auto & i : object) {
-      i->processHref(ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"links")->getFirstElementChild();
-    for(auto & i : link) {
-      i->processHref(ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"constraints");
-    if(ELE) {
-      ELE=ELE->getFirstElementChild();
-      for(auto & i : constraint) {
-        i->processHref(ELE);
-        ELE=ELE->getNextElementSibling();
-      }
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"observers");
-    if(ELE) {
-      ELE=ELE->getFirstElementChild();
-      for(auto & i : observer) {
-        i->processHref(ELE);
-        ELE=ELE->getNextElementSibling();
-      }
-    }
-
-    return element;
-  }
-
   void Group::create() {
     Element::create();
 

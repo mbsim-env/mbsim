@@ -87,17 +87,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* Project::processHref(DOMElement *element) {
-    element = EmbedItemData::processHref(element);
-    DOMElement* ele0 = element->getFirstElementChild();
-    if(E(ele0)->getTagName()==PV%"evaluator")
-      ele0 = ele0->getNextElementSibling();
-    dss->processHref(ele0);
-    ele0 = ele0->getNextElementSibling();
-    solver->processHref(ele0);
-    return element;
-  }
-
   void Project::setDynamicSystemSolver(DynamicSystemSolver *dss_) {
     delete dss;
     dss = dss_;

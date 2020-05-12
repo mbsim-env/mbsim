@@ -1085,14 +1085,12 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::debug() {//MFMF
+  void MainWindow::debug() {
     static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     currentTask = 0;
-    auto *newdoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
-    projectView->getProject()->processHref(newdoc->getDocumentElement());
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile = uniqueTempDir_+"/Project.mbsx";
-    serializer->writeToURI(newdoc, X()%projectFile.toStdString());
+    serializer->writeToURI(doc, X()%projectFile.toStdString());
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append(projectFile);

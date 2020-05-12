@@ -100,24 +100,6 @@ namespace MBSimGUI {
     return element;
   }
 
-  DOMElement* RigidBody::processHref(DOMElement *element) {
-    element = Body::processHref(element);
-
-    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
-    for(size_t i=1; i<frame.size(); i++) {
-      frame[i]->processHref(ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
-    for(auto & i : contour) {
-      i->processHref(ELE);
-      ELE=ELE->getNextElementSibling();
-    }
-
-    return element;
-  }
-
   void RigidBody::create() {
     Body::create();
 

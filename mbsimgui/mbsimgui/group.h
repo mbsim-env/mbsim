@@ -59,7 +59,6 @@ namespace MBSimGUI {
       void removeXMLElements() override;
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      xercesc::DOMElement* processHref(xercesc::DOMElement* element) override;
       void create() override;
       Element *getChildByContainerAndName(const QString &container, const QString &name) const override;
       void setActionPasteDisabled(bool flag);
@@ -116,7 +115,6 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "UnknownGroup"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override { return Element::processIDAndHref(element); }
-      xercesc::DOMElement* processHref(xercesc::DOMElement* element) override { return Element::processHref(element); }
       void create() override { return Element::create(); }
       ElementPropertyDialog* createPropertyDialog() override { return new UnknownElementPropertyDialog(this); }
   };
