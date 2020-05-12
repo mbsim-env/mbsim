@@ -300,8 +300,8 @@ namespace MBSimGUI {
     widgetLayout1->addWidget(elementViewFilter, 0, 0);
     widgetLayout1->addWidget(elementView, 1, 0);
 
-    QDockWidget *dockWidget3 = new QDockWidget("Embeddings", this);
-    dockWidget3->setObjectName("dockWidget/embeddings");
+    QDockWidget *dockWidget3 = new QDockWidget("Parameters", this);
+    dockWidget3->setObjectName("dockWidget/parameters");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
     QWidget *widget3 = new QWidget(dockWidget3);
     dockWidget3->setWidget(widget3);
