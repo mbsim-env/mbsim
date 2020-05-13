@@ -10,6 +10,7 @@
 #include <fmatvec/atom.h>
 %}
 
+%import <fmatvec/types.h>
 %include <fmatvec/fmatvec.h>
 
 // helper define to convert c++ exceptions in typemaps to target language exceptions
