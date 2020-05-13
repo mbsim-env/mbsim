@@ -51,9 +51,6 @@ int main(int argc, char *argv[]) {
   if(arg.contains("-h") || arg.contains("--help")) {
     cout<<"MBSimGUI - A Graphical User Interface for MBSim"<<endl;
     cout    <<""<<endl;
-    //cout    <<"Version "SVNVERSION<<endl;
-    //cout    <<""<<endl;
-            // 12345678901234567890123456789012345678901234567890123456789012345678901234567890
     cout    <<"Copyright (C) 2013 Martin Foerg <martin.o.foerg@googlemail.com"<<endl;
     cout    <<"This is free software; see the source for copying conditions. There is NO"<<endl;
     cout    <<"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE."<<endl;
@@ -61,15 +58,12 @@ int main(int argc, char *argv[]) {
     cout    <<"Licensed under the GNU General Public License (GPL)"<<endl;
     cout    <<""<<endl;
     cout    <<"Usage: mbsimgui [-h|--help]"<<endl;
-    cout    <<"                [<dir>] [<mbsimfile>] [<parameterfile>] [<integratorfile>]"<<endl;
+    cout    <<"                [<dir>] [<mbsimfile>]"<<endl;
     cout    <<""<<endl;
     cout    <<"-h|--help          Shows this help"<<endl;
     cout    <<"--fullscreen       Start in full screen mode"<<endl;
-    cout    <<"<dir>              Load first *.mbsim.xml, *.mbsimparam.xml"<<endl;
-    cout    <<"                   and *.mbsimint.xml file in <dir>."<<endl;
-    cout    <<"<mbsimfile>        Load <mbsimfile> (*.mbsx)"<<endl;
-    cout    <<"<parameterfile>    Load <parameterfile>"<<endl;
-    cout    <<"<integratorfile>   Load <integratorfile>"<<endl;
+    cout    <<"<dir>              Open first *.mbsx file in dir"<<endl;
+    cout    <<"<mbsimfile>        Open <mbsimfile> (*.mbsx)"<<endl;
     cout    <<""<<endl;
     return 0;
   }
