@@ -2190,7 +2190,7 @@ namespace MBSimGUI {
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
     auto *item = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
     if(item) {
-      SourceDialog dialog(item->getEmbedXMLElement()?item->getEmbedXMLElement():item->getXMLElement(),this);
+      SourceDialog dialog(item->getEmbedXMLElement()->getFirstElementChild(),this);
       dialog.exec();
     }
   }

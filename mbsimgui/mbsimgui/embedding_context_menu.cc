@@ -33,6 +33,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->getEmbeddingView()->openEditor(); });
     QMenu::addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
+    action->setEnabled(item->getNumberOfParameters());
     connect(action,&QAction::triggered,mw,&MainWindow::viewEmbeddingSource);
     QMenu::addAction(action);
     addSeparator();
