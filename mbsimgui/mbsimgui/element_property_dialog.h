@@ -35,10 +35,11 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       Element* getElement() const;
       void setName(const QString &str);
+      void updateName();
       void setReadOnly(bool readOnly);
     protected:
       void showXMLHelp() override;
-      ExtWidget *name, *plotFeature;
+      ExtWidget *name, *plotFeature, *clone;
   };
 
   class UnknownElementPropertyDialog : public ElementPropertyDialog {

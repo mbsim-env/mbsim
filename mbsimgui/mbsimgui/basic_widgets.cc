@@ -679,6 +679,33 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  CloneWidget::CloneWidget() {
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")));
+    layout->addWidget(count);
+    counterName = new ExtWidget("Countername",new TextWidget("n"));
+    connect(counterName->getWidget(),&TextWidget::widgetChanged,this,&CloneWidget::widgetChanged);
+    layout->addWidget(counterName);
+  }
+
+  void CloneWidget::setCount(const QString &count_) {
+    static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(count_);
+  }
+
+  QString CloneWidget::getCount() const {
+    return static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue();
+  }
+
+  void CloneWidget::setCounterName(const QString &counterName_) {
+    static_cast<TextWidget*>(counterName->getWidget())->setText(counterName_);
+  }
+
+  QString CloneWidget::getCounterName() const {
+    return static_cast<TextWidget*>(counterName->getWidget())->getText();
+  }
+
   XMLEditorWidget::XMLEditorWidget(const QString &text) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);

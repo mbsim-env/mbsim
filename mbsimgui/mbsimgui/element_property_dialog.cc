@@ -76,7 +76,7 @@ namespace MBSimGUI {
     return new ConnectElementsWidget<RigidBody>(i+1,element,parent);
   }
 
-  ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
+  ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element), clone(nullptr) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(item->getName()));
     name->setToolTip("Set the name of the element");
@@ -84,6 +84,11 @@ namespace MBSimGUI {
     addTab("Plot");
     plotFeature = new ExtWidget("Plot features",new PlotFeatureWidget(getElement()->getPlotFeatureType()));
     addToTab("Plot", plotFeature);
+    if(not dynamic_cast<DynamicSystemSolver*>(element)) {
+      clone = new ExtWidget("Clone",new CloneWidget,true,false);
+      connect(clone,&Widget::widgetChanged,this,&ElementPropertyDialog::updateName);
+      addToTab("General",clone);
+    }
   }
 
   Element* ElementPropertyDialog::getElement() const {
@@ -93,6 +98,14 @@ namespace MBSimGUI {
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
     static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
     plotFeature->initializeUsingXML(item->getXMLElement());
+    DOMElement *embed = item->getEmbedXMLElement();
+    if(embed) {
+      if(clone) {
+        clone->setActive(true);
+        if(E(embed)->hasAttribute("count")) static_cast<CloneWidget*>(clone->getWidget())->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
+        if(E(embed)->hasAttribute("counterName")) static_cast<CloneWidget*>(clone->getWidget())->setCounterName(QString::fromStdString(E(embed)->getAttribute("counterName")));
+      }
+    }
     return parent;
   }
 
@@ -100,6 +113,20 @@ namespace MBSimGUI {
     item->removeXMLElements();
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     plotFeature->writeXMLFile(item->getXMLElement(),ref);
+    if(clone) {
+      DOMElement *embedNode = item->getEmbedXMLElement();
+      if(clone->isActive()) {
+        if(not embedNode) embedNode = item->createEmbedXMLElement();
+        E(embedNode)->setAttribute("count",static_cast<CloneWidget*>(clone->getWidget())->getCount().toStdString());
+        E(embedNode)->setAttribute("counterName",static_cast<CloneWidget*>(clone->getWidget())->getCounterName().toStdString());
+      }
+      else if(embedNode) {
+        E(embedNode)->removeAttribute("count");
+        E(embedNode)->removeAttribute("counterName");
+      }
+    }
+    item->maybeRemoveEmbedXMLElement();
+    item->updateStatus();
     return nullptr;
   }
 
@@ -119,6 +146,26 @@ namespace MBSimGUI {
 
   void ElementPropertyDialog::setName(const QString &str) {
     static_cast<TextWidget*>(name->getWidget())->setText(str);
+  }
+
+  void ElementPropertyDialog::updateName() {
+    TextWidget *textWidget = static_cast<TextWidget*>(name->getWidget());
+    if(clone->isActive()) {
+      QString text = textWidget->getText();
+      int i1 = text.indexOf("{");
+      if(i1!=-1) {
+        int i2 = text.indexOf("}");
+        textWidget->setText(text.replace(i1+1,i2-i1-1,static_cast<CloneWidget*>(clone->getWidget())->getCounterName()));
+      }
+      else
+        textWidget->setText(textWidget->getText()+"{"+static_cast<CloneWidget*>(clone->getWidget())->getCounterName()+"}");
+    }
+    else {
+      QString text = textWidget->getText();
+      int i1 = text.indexOf("{");
+      int i2 = text.indexOf("}");
+      textWidget->setText(text.remove(i1,i2-i1+1));
+    }
   }
 
   void ElementPropertyDialog::setReadOnly(bool readOnly) {

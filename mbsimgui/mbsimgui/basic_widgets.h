@@ -318,6 +318,19 @@ namespace MBSimGUI {
       QTextEdit *edit;
   };
 
+  class CloneWidget : public Widget {
+
+    public:
+      CloneWidget();
+      void setCount(const QString &count_);
+      QString getCount() const;
+      void setCounterName(const QString &counterName_);
+      QString getCounterName() const;
+
+    protected:
+      ExtWidget *count, *counterName;
+  };
+
   template <class T>
   class ElementOfReferenceWidgetFactory : public WidgetFactory {
     public:
