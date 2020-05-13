@@ -187,7 +187,7 @@ namespace MBSimGUI {
     QMenu *menu = new QMenu("Project", menuBar());
     action = menu->addAction(QIcon::fromTheme("document-new"), "New", this, &MainWindow::newProject);
     action->setShortcut(QKeySequence::New);
-    action = menu->addAction(QIcon::fromTheme("document-open"), "Load", this, QOverload<>::of(&MainWindow::loadProject));
+    action = menu->addAction(QIcon::fromTheme("document-open"), "Open", this, QOverload<>::of(&MainWindow::loadProject));
     action->setShortcut(QKeySequence::Open);
     action = menu->addAction(QIcon::fromTheme("document-save-as"), "Save as", this, &MainWindow::saveProjectAs);
     action->setShortcut(QKeySequence::SaveAs);
