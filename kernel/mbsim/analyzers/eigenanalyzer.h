@@ -127,6 +127,7 @@ namespace MBSim {
     protected:
 
       fmatvec::Vec zEq, deltaz0;
+      fmatvec::SqrMat A_;
       double tStart, tEnd, dtPlot, A;
       int loops, plotsPerLoop;
       Task task;

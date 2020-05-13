@@ -69,7 +69,7 @@ namespace MBSim {
 
     system->setTime(tStart);
 
-    SqrMat A(system->getzSize(),NONINIT);
+    A_.resize(system->getzSize(),NONINIT);
     Vec zd(system->getzSize(),NONINIT), zdOld(system->getzSize(),NONINIT);
     system->setState(zEq);
     system->resetUpToDate();
@@ -81,10 +81,10 @@ namespace MBSim {
       system->getState()(i) += epsroot;
       system->resetUpToDate();
       zd = system->evalzd();
-      A.set(i, (zd - zdOld) / epsroot);
+      A_.set(i, (zd - zdOld) / epsroot);
       system->getState()(i) = ztmp;
     }
-    eigvec(A,V,w);
+    eigvec(A_,V,w);
     f.clear();
     for (int i=0; i<w.size(); i++) {
       if((abs(imag(w(i))) > macheps) and (i < w.size()-1) and (w(i+1)==conj(w(i)))) {
@@ -183,6 +183,16 @@ namespace MBSim {
       os << "# columns: " << 1 << endl;
       for(int i=0; i<zEq.size(); i++)
         os << setw(28) << zEq.e(i) << endl;
+      os << endl;
+      os << "# name: " << "A" << endl;
+      os << "# type: " << "matrix" << endl;
+      os << "# rows: " << A_.rows() << endl;
+      os << "# columns: " << A_.cols() << endl;
+      for(int i=0; i<A_.rows(); i++) {
+        for(int j=0; j<A_.cols(); j++)
+          os << setw(28) << A_.e(i,j) << " ";
+        os << endl;
+      }
       os << endl;
       os.close();
       return true;
