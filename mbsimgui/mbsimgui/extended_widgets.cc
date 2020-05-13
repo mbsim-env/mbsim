@@ -58,7 +58,7 @@ namespace MBSimGUI {
     checked = active;
     if(checkable) {
       label->setEnabled(active);
-      label->setText("<b>"+name + " </b><small>optional</small>");
+      label->setText(name + " <small>optional</small>");
       label->setToolTip("Click to define or remove this property");
       widget->setVisible(active);
       connect(mouseEvent,&MouseEvent::mousePressed,this,[=]{
@@ -69,7 +69,7 @@ namespace MBSimGUI {
     }
     else {
       label->setToolTip("This property must be defined");
-      label->setText("<b>"+name+"</b>");
+      label->setText(name);
     }
     connect(widget,&Widget::widgetChanged,this,&ExtWidget::widgetChanged);
   }
