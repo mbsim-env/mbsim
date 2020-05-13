@@ -384,6 +384,7 @@ namespace MBSimGUI {
     text->setText(text_);
     text->setReadOnly(readOnly);
     layout->addWidget(text);
+    connect(text,&QLineEdit::textEdited,this,&Widget::widgetChanged);
   }
 
   TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) {
