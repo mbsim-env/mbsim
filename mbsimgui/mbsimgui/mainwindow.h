@@ -82,7 +82,7 @@ namespace MBSimGUI {
       ElementView *elementView;
       ParameterView *parameterView;
       SolverView *solverView;
-      ProjectView *projectView;
+      QLineEdit *projectView;
       EchoView *echoView;
       PropertyDialog *projectEditor{nullptr};
       PropertyDialog *elementEditor{nullptr};
@@ -187,7 +187,6 @@ namespace MBSimGUI {
       void loadObserver(Element *parent, Element *element=nullptr, bool embed=false);
       void highlightObject(const QString &ID);
       const QString& getHighlightedObject() const {return currentID;}
-      ProjectView* getProjectView() { return projectView; }
       ElementView* getElementView() { return elementView; }
       ParameterView* getParameterView() { return parameterView; }
       SolverView* getSolverView() { return solverView; }

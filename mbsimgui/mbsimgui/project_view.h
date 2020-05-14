@@ -27,28 +27,15 @@ namespace MBSimGUI {
 
   class Project;
 
-  class ProjectViewContextMenu : public QMenu {
+  class ProjectContextMenu : public QMenu {
     public:
-      ProjectViewContextMenu(QWidget * parent = nullptr);
-  };
-
-  class ProjectView : public QLineEdit {
-    public:
-      ProjectView();
-      ~ProjectView() override = default;
-      Project* getProject() { return project; }
-      void setProject(Project *project_) { project = project_; }
-      QMenu* createContextMenu() { return new ProjectViewContextMenu; }
-    protected:
-      Project *project;
-      void openContextMenu();
+      ProjectContextMenu(QWidget * parent = nullptr);
   };
 
   class ProjectMouseEvent : public QObject {
     public:
-      ProjectMouseEvent(ProjectView* view_) : QObject(view_), view(view_) { }
+      ProjectMouseEvent(QLineEdit* view) : QObject(view) { }
     protected:
-      ProjectView *view;
       bool eventFilter(QObject *obj, QEvent *event) override;
   };
 

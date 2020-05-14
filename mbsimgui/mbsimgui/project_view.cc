@@ -19,7 +19,6 @@
 
 #include <config.h>
 #include "project_view.h"
-#include "project.h"
 #include "mainwindow.h"
 #include <QEvent>
 
@@ -27,7 +26,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ProjectViewContextMenu::ProjectViewContextMenu(QWidget *parent) : QMenu(parent) {
+  ProjectContextMenu::ProjectContextMenu(QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openProjectEditor(); });
     addAction(action);
@@ -42,20 +41,6 @@ namespace MBSimGUI {
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,mw,QOverload<>::of(&MainWindow::loadProject));
     addAction(action);
-  }
-
-  ProjectView::ProjectView() {
-    setText("Project");
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this,&ProjectView::customContextMenuRequested,this,&ProjectView::openContextMenu);
-    installEventFilter(new ProjectMouseEvent(this));
-    setReadOnly(true);
-  }
-
-  void ProjectView::openContextMenu() {
-    QMenu *menu = createContextMenu();
-    menu->exec(QCursor::pos());
-    delete menu;
   }
 
   bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {

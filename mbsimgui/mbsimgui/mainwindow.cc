@@ -124,7 +124,16 @@ namespace MBSimGUI {
 
     mbxmlparser=DOMParser::create(schemas);
 
-    projectView = new ProjectView;
+    projectView = new QLineEdit("Project");
+    projectView->setContextMenuPolicy(Qt::CustomContextMenu);
+    projectView->installEventFilter(new ProjectMouseEvent(projectView));
+    projectView->setReadOnly(true);
+    connect(projectView,&QLineEdit::customContextMenuRequested,this,[=]{
+        QMenu *menu=new ProjectContextMenu;
+        menu->exec(QCursor::pos());
+        delete menu;
+        });
+
     elementView = new ElementView;
     parameterView = new ParameterView;
     solverView = new SolverView;
@@ -634,7 +643,7 @@ namespace MBSimGUI {
       auto *emodel = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
-      emodel->createParametersItem(projectView->getProject()->getParameters());
+      emodel->createParametersItem(getProject()->getParameters());
       parameterView->expandAll();
     }
   }
@@ -671,7 +680,6 @@ namespace MBSimGUI {
 
       project = new Project;
       project->createXMLElement(doc);
-      projectView->setProject(project);
       projectView->setText(project->getName());
 
       model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
@@ -769,7 +777,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     DOMNode *parent = getProject()->getSolver()->getXMLElement()->getParentNode();
     getProject()->getSolver()->removeXMLElement(false);
-    projectView->getProject()->setSolver(solverView->createSolver(i));
+    getProject()->setSolver(solverView->createSolver(i));
     getProject()->getSolver()->createXMLElement(parent);
     std::vector<Parameter*> param;
     DOMElement *ele = MBXMLUtils::E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
@@ -945,7 +953,7 @@ namespace MBSimGUI {
     doc->setDocumentURI(this->doc->getDocumentURI());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
-    projectView->getProject()->processIDAndHref(newDocElement);
+    getProject()->processIDAndHref(newDocElement);
 
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile;
@@ -1130,7 +1138,6 @@ namespace MBSimGUI {
 
     project=Embed<Project>::create(doc->getDocumentElement(),nullptr);
     project->create();
-    projectView->setProject(project);
     projectView->setText(project->getName());
 
     model->createGroupItem(project->getDynamicSystemSolver());
