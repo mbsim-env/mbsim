@@ -39,8 +39,8 @@ namespace MBSimGUI {
       void dialogFinished(int result);
       void apply();
       QModelIndex index;
-      PropertyDialog *editor{nullptr};
       Parameter *parameter;
+      PropertyDialog *editor{nullptr};
   };
 
 }

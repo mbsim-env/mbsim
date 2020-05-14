@@ -46,7 +46,7 @@ namespace MBSimGUI {
       QString getFile() const override { return ""; }
       bool isEnabled() const override { return parent->isEnabled(); }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual ParameterPropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
+      virtual PropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       xercesc::DOMElement* getXMLElement() { return element; }
       void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
@@ -63,14 +63,14 @@ namespace MBSimGUI {
     public:
       StringParameter() = default;
       QString getType() const override { return "stringParameter"; }
-      ParameterPropertyDialog* createPropertyDialog() override {return new StringParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new StringParameterPropertyDialog(this);}
   };
 
   class ScalarParameter : public Parameter {
     public:
       ScalarParameter() = default;
       QString getType() const override { return "scalarParameter"; }
-      ParameterPropertyDialog* createPropertyDialog() override {return new ScalarParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new ScalarParameterPropertyDialog(this);}
   };
 
   class VectorParameter : public Parameter {
@@ -78,7 +78,7 @@ namespace MBSimGUI {
       VectorParameter() = default;
       QString getValue() const override;
       QString getType() const override { return "vectorParameter"; }
-      ParameterPropertyDialog* createPropertyDialog() override {return new VectorParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new VectorParameterPropertyDialog(this);}
   };
 
   class MatrixParameter : public Parameter {
@@ -86,7 +86,7 @@ namespace MBSimGUI {
       MatrixParameter() = default;
       QString getValue() const override;
       QString getType() const override { return "matrixParameter"; }
-      ParameterPropertyDialog* createPropertyDialog() override {return new MatrixParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new MatrixParameterPropertyDialog(this);}
   };
 
   class ImportParameter : public Parameter {
@@ -94,7 +94,7 @@ namespace MBSimGUI {
       ImportParameter() = default;
       QString getType() const override { return "import"; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
-      ParameterPropertyDialog* createPropertyDialog() override {return new ImportParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new ImportParameterPropertyDialog(this);}
   };
 
   class Parameters : public TreeItemData {
