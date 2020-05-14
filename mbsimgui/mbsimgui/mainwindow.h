@@ -56,10 +56,10 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class MBSimThread;
+  class ProjectView;
   class ElementView;
   class ParameterView;
   class SolverView;
-  class ProjectView;
   class EchoView;
   class PropertyDialog;
   class Element;
@@ -79,10 +79,10 @@ namespace MBSimGUI {
 
     private:
       Project *project;
+      ProjectView *projectView;
       ElementView *elementView;
       ParameterView *parameterView;
       SolverView *solverView;
-      QLineEdit *projectView;
       EchoView *echoView;
       PropertyDialog *projectEditor{nullptr};
       PropertyDialog *elementEditor{nullptr};
@@ -189,7 +189,6 @@ namespace MBSimGUI {
       const QString& getHighlightedObject() const {return currentID;}
       ElementView* getElementView() { return elementView; }
       ParameterView* getParameterView() { return parameterView; }
-      SolverView* getSolverView() { return solverView; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
       void setAllowUndo(bool allowUndo);

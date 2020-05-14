@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  SolverViewContextMenu::SolverViewContextMenu(const std::vector<QString> &type, QWidget *parent) : QMenu(parent) {
+  SolverContextMenu::SolverContextMenu(const std::vector<QString> &type, QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openSolverEditor(); });
     addAction(action);
@@ -62,10 +62,10 @@ namespace MBSimGUI {
     }
     addMenu(analyzers);
     addMenu(integrators);
-    connect(actionGroup,QOverload<QAction*>::of(&QActionGroup::triggered),this,&SolverViewContextMenu::selectSolver);
+    connect(actionGroup,QOverload<QAction*>::of(&QActionGroup::triggered),this,&SolverContextMenu::selectSolver);
   }
 
-  void SolverViewContextMenu::selectSolver(QAction *action) {
+  void SolverContextMenu::selectSolver(QAction *action) {
     QActionGroup *actionGroup = action->actionGroup();
     QList<QAction*> list = actionGroup->actions();
     mw->selectSolver(list.indexOf(action));
@@ -111,7 +111,7 @@ namespace MBSimGUI {
 
   Solver* SolverView::createSolver(int i_) {
     i = i_;
-    updateText();
+    setText(type[i]);
     if(i==0)
       return new Eigenanalyzer;
     else if(i==1)
@@ -212,7 +212,7 @@ namespace MBSimGUI {
       i=22;
     else if(dynamic_cast<TimeSteppingSSCIntegrator*>(solver))
       i=23;
-    updateText();
+    setText(type[i]);
   }
 
   bool SolverMouseEvent::eventFilter(QObject *obj, QEvent *event) {

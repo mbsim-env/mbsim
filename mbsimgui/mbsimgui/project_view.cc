@@ -43,6 +43,17 @@ namespace MBSimGUI {
     addAction(action);
   }
 
+  ProjectView::ProjectView() : QLineEdit("Project") {
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    installEventFilter(new ProjectMouseEvent(this));
+    setReadOnly(true);
+    connect(this,&ProjectView::customContextMenuRequested,this,[=]{
+        QMenu *menu=new ProjectContextMenu;
+        menu->exec(QCursor::pos());
+        delete menu;
+        });
+  }
+
   bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonDblClick) {
       mw->openProjectEditor();

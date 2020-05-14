@@ -124,16 +124,7 @@ namespace MBSimGUI {
 
     mbxmlparser=DOMParser::create(schemas);
 
-    projectView = new QLineEdit("Project");
-    projectView->setContextMenuPolicy(Qt::CustomContextMenu);
-    projectView->installEventFilter(new ProjectMouseEvent(projectView));
-    projectView->setReadOnly(true);
-    connect(projectView,&QLineEdit::customContextMenuRequested,this,[=]{
-        QMenu *menu=new ProjectContextMenu;
-        menu->exec(QCursor::pos());
-        delete menu;
-        });
-
+    projectView = new ProjectView;
     elementView = new ElementView;
     parameterView = new ParameterView;
     solverView = new SolverView;
