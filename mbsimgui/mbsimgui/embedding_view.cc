@@ -37,8 +37,8 @@ namespace MBSimGUI {
       index = selectionModel()->currentIndex();
       parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
       if(parameter) {
-        EmbedItemData *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData());
-        mw->updateParameters(item,true);
+        Parameters *item = static_cast<Parameters*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index.parent())->getItemData());
+        mw->updateParameters(item->getItem(),true);
         editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
@@ -49,18 +49,6 @@ namespace MBSimGUI {
         connect(editor,&ParameterPropertyDialog::apply,this,&EmbeddingView::apply);
         connect(editor,&ParameterPropertyDialog::finished,this,&EmbeddingView::dialogFinished);
         return;
-      }
-      else {
-        auto *item = dynamic_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(model())->getItem(index)->getItemData());
-        if(item and item->getXMLElement()) {
-          mw->updateParameters(item);
-          editor = item->createEmbeddingPropertyDialog();
-          editor->setAttribute(Qt::WA_DeleteOnClose);
-          editor->toWidget();
-          editor->show();
-          connect(editor,&EmbeddingPropertyDialog::apply,this,&EmbeddingView::apply);
-          connect(editor,&EmbeddingPropertyDialog::finished,this,&EmbeddingView::dialogFinished);
-        }
       }
     }
   }

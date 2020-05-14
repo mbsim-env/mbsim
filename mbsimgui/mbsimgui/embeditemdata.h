@@ -33,6 +33,7 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class Parameter;
+  class Parameters;
 
   class EmbedItemData : public TreeItemData {
     protected:
@@ -40,12 +41,14 @@ namespace MBSimGUI {
       std::vector<Parameter*> removedParameter;
       xercesc::DOMElement *element{nullptr}, *embed{nullptr};
       bool embeded{false}, embededParam{false};
+      Parameters *parameters;
 
     public:
-      EmbedItemData()  = default;
+      EmbedItemData();
       ~EmbedItemData() override;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return ""; }
+      QString getFile() const override { return embed?QString::fromStdString(MBXMLUtils::E(embed)->getAttribute("href")):""; }
       bool isActive();
       virtual EmbedItemData* getEmbedItemParent() { return nullptr; }
       std::vector<EmbedItemData*> getEmbedItemParents();
@@ -69,6 +72,7 @@ namespace MBSimGUI {
       virtual void setEmbeded(bool embeded_) { embeded = embeded_; }
       bool getEmbededParameters() const { return embededParam; }
       void setEmbededParameters(bool embededParam_) { embededParam = embededParam_; }
+      Parameters* getParameters() { return parameters; }
       virtual EmbeddingPropertyDialog* createEmbeddingPropertyDialog() { return new EmbeddingPropertyDialog(this); }
       QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);

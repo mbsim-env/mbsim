@@ -272,13 +272,13 @@ namespace MBSimGUI {
     toolBar->addAction(actionKill);
 
     elementView->setModel(new ElementTreeModel(this));
-    elementView->setColumnWidth(0,250);
-    elementView->setColumnWidth(1,200);
+    //elementView->setColumnWidth(0,250);
+    //elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
 
     embeddingView->setModel(new EmbeddingTreeModel(this));
-    embeddingView->setColumnWidth(0,150);
-    embeddingView->setColumnWidth(1,200);
+    //embeddingView->setColumnWidth(0,150);
+    //embeddingView->setColumnWidth(1,200);
 
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(embeddingView, &EmbeddingView::pressed, this, &MainWindow::embeddingViewClicked);
@@ -563,13 +563,13 @@ namespace MBSimGUI {
         QModelIndex index = emodel->index(0,0);
         emodel->removeRow(index.row(), index.parent());
         if(!parents.empty()) {
-          index = emodel->createEmbeddingItem(parents[0]);
+          index = emodel->createEmbeddingItem(parents[0]->getParameters());
           for(size_t i=0; i<parents.size()-1; i++)
-            index = emodel->createEmbeddingItem(parents[i+1],index);
-          emodel->createEmbeddingItem(element,index);
+            index = emodel->createEmbeddingItem(parents[i+1]->getParameters(),index);
+          emodel->createEmbeddingItem(element->getParameters(),index);
         }
         else
-          index = emodel->createEmbeddingItem(element);
+          index = emodel->createEmbeddingItem(element->getParameters());
         embeddingView->expandAll();
         highlightObject(element->getID());
       }
@@ -603,9 +603,9 @@ namespace MBSimGUI {
         return;
       }
       else {
-        auto *item = static_cast<EmbedItemData*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
-        if(item and item->getXMLElement()) {
-          QMenu *menu = item->createEmbeddingContextMenu();
+        auto *item = static_cast<Parameters*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+        if(item) { // and item->getXMLElement()) {
+          QMenu *menu = item->createContextMenu();
           menu->exec(QCursor::pos());
           delete menu;
         }
@@ -620,13 +620,13 @@ namespace MBSimGUI {
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
       if(!parents.empty()) {
-        index = emodel->createEmbeddingItem(parents[0]);
+        index = emodel->createEmbeddingItem(parents[0]->getParameters());
         for(size_t i=0; i<parents.size()-1; i++)
-          index = emodel->createEmbeddingItem(parents[i+1],index);
-        emodel->createEmbeddingItem(getProject()->getSolver(),index);
+          index = emodel->createEmbeddingItem(parents[i+1]->getParameters(),index);
+        emodel->createEmbeddingItem(getProject()->getSolver()->getParameters(),index);
       }
       else
-        index = emodel->createEmbeddingItem(getProject()->getSolver());
+        index = emodel->createEmbeddingItem(getProject()->getSolver()->getParameters());
       embeddingView->expandAll();
       embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
     }
@@ -637,7 +637,7 @@ namespace MBSimGUI {
       auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
-      emodel->createEmbeddingItem(projectView->getProject());
+      emodel->createEmbeddingItem(projectView->getProject()->getParameters());
       embeddingView->expandAll();
     }
   }
@@ -1272,9 +1272,9 @@ namespace MBSimGUI {
     else if(embeddingView->hasFocus()) {
       auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
       QModelIndex index = embeddingView->selectionModel()->currentIndex();
-      auto *item = dynamic_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+      auto *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
       if(item)
-        loadParameter(item,getParameterBuffer().first);
+        loadParameter(item->getItem(),getParameterBuffer().first);
     }
   }
 
@@ -1597,12 +1597,12 @@ namespace MBSimGUI {
   void MainWindow::saveEmbeddingAs() {
     EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    EmbedItemData *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(item->getName()+".mbsimembed.xml"), "XML files (*.xml)");
+    auto *item = static_cast<Parameters*>(model->getItem(index)->getItemData());
+    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(item->getItem()->getName()+".mbsimembed.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node;
-      node = edoc->importNode(item->getEmbedXMLElement()->getFirstElementChild(),true);
+      node = edoc->importNode(item->getItem()->getEmbedXMLElement()->getFirstElementChild(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -2188,9 +2188,9 @@ namespace MBSimGUI {
 
   void MainWindow::viewEmbeddingSource() {
     QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    auto *item = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+    auto *item = dynamic_cast<Parameters*>(static_cast<ElementTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
     if(item) {
-      SourceDialog dialog(item->getEmbedXMLElement()->getFirstElementChild(),this);
+      SourceDialog dialog(item->getItem()->getEmbedXMLElement()->getFirstElementChild(),this);
       dialog.exec();
     }
   }

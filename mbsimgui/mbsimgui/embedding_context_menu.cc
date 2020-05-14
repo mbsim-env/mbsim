@@ -29,10 +29,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   EmbeddingContextMenu::EmbeddingContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
-    QAction *action = new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->getEmbeddingView()->openEditor(); });
-    QMenu::addAction(action);
-    action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
+    QAction *action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     action->setEnabled(item->getNumberOfParameters());
     connect(action,&QAction::triggered,mw,&MainWindow::viewEmbeddingSource);
     QMenu::addAction(action);

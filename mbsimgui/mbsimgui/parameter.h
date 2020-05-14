@@ -43,10 +43,11 @@ namespace MBSimGUI {
       Parameter() = default;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
+      QString getFile() const override { return ""; }
       bool isEnabled() const override { return parent->isEnabled(); }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual ParameterPropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
-      ParameterContextMenu* createContextMenu() override { return new ParameterContextMenu(this); }
+      QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       xercesc::DOMElement* getXMLElement() { return element; }
       void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
       virtual void removeXMLElements();
@@ -94,6 +95,20 @@ namespace MBSimGUI {
       QString getType() const override { return "import"; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       ParameterPropertyDialog* createPropertyDialog() override {return new ImportParameterPropertyDialog(this);}
+  };
+
+  class Parameters : public TreeItemData {
+    public:
+      Parameters(EmbedItemData *item_) : item(item_) { }
+      QString getName() const override { return item->getName() + " parameters"; }
+      QString getValue() const override { return ""; }
+      QString getType() const override { return ""; }
+      QString getFile() const override { return item->getEmbedXMLElement()?QString::fromStdString(MBXMLUtils::E(item->getEmbedXMLElement())->getAttribute("parameterHref")):""; }
+      bool isEnabled() const override { return item->isEnabled(); }
+      EmbedItemData *getItem() const { return item; }
+      QMenu* createContextMenu() override { return new EmbeddingContextMenu(item); }
+    protected:
+      EmbedItemData *item{nullptr};
   };
 
 }

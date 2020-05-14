@@ -34,11 +34,15 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  EmbedItemData::EmbedItemData() : parameters(new Parameters(this)) {
+  }
+
   EmbedItemData::~EmbedItemData() {
     for (auto & it : parameter)
       delete it;
     for(auto & i : removedParameter)
       delete i;
+    delete parameters;
   }
   
   bool EmbedItemData::isActive() {

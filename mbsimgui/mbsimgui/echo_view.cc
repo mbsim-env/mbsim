@@ -31,6 +31,7 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "embeditemdata.h"
+#include "parameter.h"
 #include <QTextStream>
 #include <QProcessEnvironment>
 #include <QUrlQuery>
@@ -241,11 +242,11 @@ R"+(
       // loop over all elements in the current level
       while(index.isValid()) {
         // get the item of the current element (index)
-        EmbedItemData *item = dynamic_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+        Parameters *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
         // handle only embed elements but not parameters
         if(item) {
           // get the root element of this embed
-          xercesc::DOMElement *e = item->getXMLElement();
+          xercesc::DOMElement *e = item->getItem()->getXMLElement();
           // if the file name matchs than the error is from this embed
           if(errorFile==boost::filesystem::absolute(D(e->getOwnerDocument())->getDocumentFilename())) {
             // evalute the xpath expression of the error message in this embed ...
