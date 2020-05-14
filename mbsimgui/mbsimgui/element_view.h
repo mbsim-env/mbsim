@@ -21,26 +21,17 @@
 #define _ELEMENT_VIEW__H_
 
 #include <QTreeView>
-#include <QModelIndex>
 
 namespace MBSimGUI {
 
   class Element;
-  class PropertyDialog;
 
   class ElementView : public QTreeView {
     public:
-      ElementView(QWidget *parent=nullptr) : QTreeView(parent) {}
-      bool editorIsOpen() { return editor; }
-      void openEditor(bool config=true);
+      ElementView(QWidget *parent=nullptr) : QTreeView(parent) { }
     private:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;
-      void dialogFinished(int result);
-      void apply();
-      QModelIndex index;
-      Element *element{nullptr};
-      PropertyDialog *editor{nullptr};
   };
 
 }

@@ -79,11 +79,11 @@ namespace MBSimGUI {
       std::map<QString, QModelIndex> idEleMap;
   };
 
-  class EmbeddingTreeModel : public TreeModel {
+  class ParameterTreeModel : public TreeModel {
     public:
-      EmbeddingTreeModel(QObject *parent = nullptr);
+      ParameterTreeModel(QObject *parent = nullptr);
 
-      QModelIndex createEmbeddingItem(Parameters *itemData, const QModelIndex &parent = QModelIndex());
+      QModelIndex createParametersItem(Parameters *itemData, const QModelIndex &parent = QModelIndex());
       QModelIndex createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
 
       std::map<Element*, QModelIndex> idEleMap;

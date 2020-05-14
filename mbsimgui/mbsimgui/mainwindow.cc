@@ -84,8 +84,7 @@ namespace MBSimGUI {
 
   vector<boost::filesystem::path> dependencies;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false) {
-    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), doc(nullptr), elementBuffer(NULL,false), parameterBuffer(NULL,false), installPath(boost::dll::program_location().parent_path().parent_path()) {
     QSettings settings;
 
     impl=DOMImplementation::getImplementation();
@@ -127,7 +126,7 @@ namespace MBSimGUI {
 
     projectView = new ProjectView;
     elementView = new ElementView;
-    embeddingView = new ParameterView;
+    parameterView = new ParameterView;
     solverView = new SolverView;
     echoView = new EchoView(this);
 
@@ -170,8 +169,8 @@ namespace MBSimGUI {
     elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
     elementViewFilter->hide();
 
-    embeddingViewFilter = new OpenMBVGUI::AbstractViewFilter(embeddingView, 0, -2);
-    embeddingViewFilter->hide();
+    parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, -2);
+    parameterViewFilter->hide();
 
     GUIMenu->addSeparator();
 
@@ -276,12 +275,12 @@ namespace MBSimGUI {
     //elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
 
-    embeddingView->setModel(new EmbeddingTreeModel(this));
-    //embeddingView->setColumnWidth(0,150);
-    //embeddingView->setColumnWidth(1,200);
+    parameterView->setModel(new ParameterTreeModel(this));
+    //parameterView->setColumnWidth(0,150);
+    //parameterView->setColumnWidth(1,200);
 
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
-    connect(embeddingView, &ParameterView::pressed, this, &MainWindow::embeddingViewClicked);
+    connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
     connect(elementView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::selectionChanged);
 
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);
@@ -308,8 +307,8 @@ namespace MBSimGUI {
     auto *widgetLayout3 = new QGridLayout(widget3);
     widgetLayout3->setContentsMargins(0,0,0,0);
     widget3->setLayout(widgetLayout3);
-    widgetLayout3->addWidget(embeddingViewFilter, 0, 0);
-    widgetLayout3->addWidget(embeddingView, 1, 0);
+    widgetLayout3->addWidget(parameterViewFilter, 0, 0);
+    widgetLayout3->addWidget(parameterView, 1, 0);
 
     QDockWidget *dockWidget2 = new QDockWidget("Solver", this);
     dockWidget2->setObjectName("dockWidget/solver");
@@ -436,15 +435,13 @@ namespace MBSimGUI {
   }
 
   void MainWindow::initInlineOpenMBV() {
-    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
-
     std::list<string> arg;
     arg.emplace_back("--wst");
     arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
     connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::objectSelected, this, &MainWindow::selectElement);
-    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::objectDoubleClicked, this, [=](){ elementView->openEditor(); });
+    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::objectDoubleClicked, this, [=](){ openElementEditor(); });
   }
 
   MainWindow::~MainWindow() {
@@ -543,7 +540,7 @@ namespace MBSimGUI {
       maxUndo = menu.getMaxUndo();
       bool showFilters = menu.getShowFilters();
       elementViewFilter->setVisible(showFilters);
-      embeddingViewFilter->setVisible(showFilters);
+      parameterViewFilter->setVisible(showFilters);
       autoRefresh = menu.getAutoRefresh();
     }
   }
@@ -558,19 +555,19 @@ namespace MBSimGUI {
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       auto *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
       if(element) {
-        auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+        auto *emodel = static_cast<ParameterTreeModel*>(parameterView->model());
         vector<EmbedItemData*> parents = element->getEmbedItemParents();
         QModelIndex index = emodel->index(0,0);
         emodel->removeRow(index.row(), index.parent());
         if(!parents.empty()) {
-          index = emodel->createEmbeddingItem(parents[0]->getParameters());
+          index = emodel->createParametersItem(parents[0]->getParameters());
           for(size_t i=0; i<parents.size()-1; i++)
-            index = emodel->createEmbeddingItem(parents[i+1]->getParameters(),index);
-          emodel->createEmbeddingItem(element->getParameters(),index);
+            index = emodel->createParametersItem(parents[i+1]->getParameters(),index);
+          emodel->createParametersItem(element->getParameters(),index);
         }
         else
-          index = emodel->createEmbeddingItem(element->getParameters());
-        embeddingView->expandAll();
+          index = emodel->createParametersItem(element->getParameters());
+        parameterView->expandAll();
         highlightObject(element->getID());
       }
       else
@@ -592,10 +589,10 @@ namespace MBSimGUI {
       selectionChanged(elementView->selectionModel()->currentIndex());
   }
 
-  void MainWindow::embeddingViewClicked() {
+  void MainWindow::parameterViewClicked() {
     if(QApplication::mouseButtons()==Qt::RightButton) {
-      QModelIndex index = embeddingView->selectionModel()->currentIndex();
-      auto *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+      QModelIndex index = parameterView->selectionModel()->currentIndex();
+      auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       if(parameter) {
         QMenu *menu = parameter->createContextMenu();
         menu->exec(QCursor::pos());
@@ -603,7 +600,7 @@ namespace MBSimGUI {
         return;
       }
       else {
-        auto *item = static_cast<Parameters*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+        auto *item = static_cast<Parameters*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
         if(item) { // and item->getXMLElement()) {
           QMenu *menu = item->createContextMenu();
           menu->exec(QCursor::pos());
@@ -615,30 +612,30 @@ namespace MBSimGUI {
 
   void MainWindow::solverViewClicked() {
     if(allowUndo) {
-      auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+      auto *emodel = static_cast<ParameterTreeModel*>(parameterView->model());
       vector<EmbedItemData*> parents = getProject()->getSolver()->getEmbedItemParents();
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
       if(!parents.empty()) {
-        index = emodel->createEmbeddingItem(parents[0]->getParameters());
+        index = emodel->createParametersItem(parents[0]->getParameters());
         for(size_t i=0; i<parents.size()-1; i++)
-          index = emodel->createEmbeddingItem(parents[i+1]->getParameters(),index);
-        emodel->createEmbeddingItem(getProject()->getSolver()->getParameters(),index);
+          index = emodel->createParametersItem(parents[i+1]->getParameters(),index);
+        emodel->createParametersItem(getProject()->getSolver()->getParameters(),index);
       }
       else
-        index = emodel->createEmbeddingItem(getProject()->getSolver()->getParameters());
-      embeddingView->expandAll();
-      embeddingView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
+        index = emodel->createParametersItem(getProject()->getSolver()->getParameters());
+      parameterView->expandAll();
+      parameterView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
     }
   }
 
   void MainWindow::projectViewClicked() {
     if(allowUndo) {
-      auto *emodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+      auto *emodel = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
-      emodel->createEmbeddingItem(projectView->getProject()->getParameters());
-      embeddingView->expandAll();
+      emodel->createParametersItem(projectView->getProject()->getParameters());
+      parameterView->expandAll();
     }
   }
 
@@ -659,7 +656,7 @@ namespace MBSimGUI {
       actionSaveEigenanalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(true);
 
-      auto *pmodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+      auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = pmodel->index(0,0);
       pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
 
@@ -675,7 +672,7 @@ namespace MBSimGUI {
       project = new Project;
       project->createXMLElement(doc);
       projectView->setProject(project);
-      projectView->updateName();
+      projectView->setText(project->getName());
 
       model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
       elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
@@ -942,7 +939,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::mbsimxml(int task) {
-    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     currentTask = task;
 
     shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
@@ -1049,7 +1045,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::openmbv() {
-    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx";
     if(QFile::exists(name)) {
       QStringList arg;
@@ -1060,7 +1055,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::h5plotserie() {
-    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5";
     if(QFile::exists(name)) {
       QStringList arg;
@@ -1086,7 +1080,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::debug() {
-    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     currentTask = 0;
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile = uniqueTempDir_+"/Project.mbsx";
@@ -1111,7 +1104,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::xmlHelp(const QString &url) {
-    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
     QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((installPath/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
   }
 
@@ -1125,7 +1117,7 @@ namespace MBSimGUI {
 
   void MainWindow::rebuildTree() {
 
-    auto *pmodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+    auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = pmodel->index(0,0);
     pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
 
@@ -1139,7 +1131,7 @@ namespace MBSimGUI {
     project=Embed<Project>::create(doc->getDocumentElement(),nullptr);
     project->create();
     projectView->setProject(project);
-    projectView->updateName();
+    projectView->setText(project->getName());
 
     model->createGroupItem(project->getDynamicSystemSolver());
     elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
@@ -1148,14 +1140,14 @@ namespace MBSimGUI {
   }
 
   void MainWindow::edit() {
-    if(elementView->hasFocus())
-      elementView->openEditor();
-    else if(embeddingView->hasFocus())
-      embeddingView->openEditor();
+    if(projectView->hasFocus())
+      openProjectEditor();
+    else if(elementView->hasFocus())
+      openElementEditor();
+    else if(parameterView->hasFocus())
+      openParameterEditor();
     else if(solverView->hasFocus())
-      solverView->openEditor();
-    else if(projectView->hasFocus())
-      projectView->openEditor();
+      openSolverEditor();
   }
 
   void MainWindow::undo() {
@@ -1197,8 +1189,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeParameter() {
-    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
     if(parameter) {
       setProjectChanged(true);
@@ -1218,14 +1210,14 @@ namespace MBSimGUI {
   void MainWindow::remove() {
     if(elementView->hasFocus())
       removeElement();
-    else if(embeddingView->hasFocus())
+    else if(parameterView->hasFocus())
       removeParameter();
   }
 
   void MainWindow::copy(bool cut) {
     if(elementView->hasFocus())
       copyElement(cut);
-    else if(embeddingView->hasFocus())
+    else if(parameterView->hasFocus())
       copyParameter(cut);
   }
 
@@ -1269,9 +1261,9 @@ namespace MBSimGUI {
         return;
       }
     }
-    else if(embeddingView->hasFocus()) {
-      auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-      QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    else if(parameterView->hasFocus()) {
+      auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+      QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
       if(item)
         loadParameter(item->getItem(),getParameterBuffer().first);
@@ -1318,9 +1310,9 @@ namespace MBSimGUI {
         return;
       }
     }
-    else if(embeddingView->hasFocus()) {
-      auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-      QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    else if(parameterView->hasFocus()) {
+      auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+      QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
       if(parameter and (up?(parameter->getParent()->getIndexOfParameter(parameter)>0):(parameter->getParent()->getIndexOfParameter(parameter)<parameter->getParent()->getNumberOfParameters()-1)))
         moveParameter(up);
@@ -1336,16 +1328,16 @@ namespace MBSimGUI {
   }
 
   void MainWindow::copyParameter(bool cut) {
-    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
     parameterBuffer = make_pair(parameter,cut);
   }
 
   void MainWindow::moveParameter(bool up) {
     setProjectChanged(true);
-    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
     auto *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
     int i = parameter->getParent()->getIndexOfParameter(parameter);
@@ -1362,7 +1354,7 @@ namespace MBSimGUI {
     model->removeRows(0,parameter->getParent()->getNumberOfParameters(),parentIndex);
     for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
-    embeddingView->setCurrentIndex(parentIndex.child(j,0));
+    parameterView->setCurrentIndex(parentIndex.child(j,0));
   }
 
   void MainWindow::moveFrame(bool up) {
@@ -1594,9 +1586,9 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::saveEmbeddingAs() {
-    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+  void MainWindow::saveParametersAs() {
+    ParameterTreeModel *model = static_cast<ParameterTreeModel*>(parameterView->model());
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *item = static_cast<Parameters*>(model->getItem(index)->getItemData());
     QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(item->getItem()->getName()+".mbsimembed.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
@@ -1618,7 +1610,7 @@ namespace MBSimGUI {
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor(false);
+    openElementEditor(false);
   }
 
   void MainWindow::addContour(Contour *contour, Element *parent) {
@@ -1631,7 +1623,7 @@ namespace MBSimGUI {
     model->createContourItem(contour,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor(false);
+    openElementEditor(false);
   }
 
   void MainWindow::addGroup(Group *group, Element *parent) {
@@ -1644,7 +1636,7 @@ namespace MBSimGUI {
     model->createGroupItem(group,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor(false);
+    openElementEditor(false);
   }
 
   void MainWindow::addObject(Object *object, Element *parent) {
@@ -1657,7 +1649,7 @@ namespace MBSimGUI {
     model->createObjectItem(object,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor(false);
+    openElementEditor(false);
   }
 
   void MainWindow::addLink(Link *link, Element *parent) {
@@ -1670,7 +1662,7 @@ namespace MBSimGUI {
     model->createLinkItem(link,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor(false);
+    openElementEditor(false);
   }
 
   void MainWindow::addConstraint(Constraint *constraint, Element *parent) {
@@ -1683,7 +1675,7 @@ namespace MBSimGUI {
     model->createConstraintItem(constraint,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor(false);
+    openElementEditor(false);
   }
 
   void MainWindow::addObserver(Observer *observer, Element *parent) {
@@ -1696,28 +1688,28 @@ namespace MBSimGUI {
     model->createObserverItem(observer,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
-    elementView->openEditor(false);
+    openElementEditor(false);
   }
 
   void MainWindow::addParameter(Parameter *parameter, EmbedItemData *parent) {
     setProjectChanged(true);
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
+    auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     parent->addParameter(parameter);
     parameter->createXMLElement(parent->createParameterXMLElement());
 //    if(parameter->getName()!="import")
 //      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
     QModelIndex newIndex = model->createParameterItem(parameter,index);
-    embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
-    embeddingView->openEditor(false);
+    parameterView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+    openParameterEditor(false);
   }
 
   void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param, bool embed) {
     setProjectChanged(true);
     vector<DOMElement*> elements;
     QString file;
-    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
     if(param) {
       elements.push_back(static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true)));
       if(parameterBuffer.second) {
@@ -1765,13 +1757,13 @@ namespace MBSimGUI {
       parent->addParameter(parameter);
       newIndex = model->createParameterItem(parameter,index);
     }
-    embeddingView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+    parameterView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::removeParameter(EmbedItemData *parent) {
     setProjectChanged(true);
-    auto *model = static_cast<EmbeddingTreeModel*>(embeddingView->model());
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
+    auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
     int n = parent->getNumberOfParameters();
     if(parent->getEmbededParameters()) {
       for(int i=n-1; i>=0; i--) {
@@ -2186,9 +2178,9 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::viewEmbeddingSource() {
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    auto *item = dynamic_cast<Parameters*>(static_cast<ElementTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+  void MainWindow::viewParametersSource() {
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
+    auto *item = dynamic_cast<Parameters*>(static_cast<ElementTreeModel*>(parameterView->model())->getItem(index)->getItemData());
     if(item) {
       SourceDialog dialog(item->getItem()->getEmbedXMLElement()->getFirstElementChild(),this);
       dialog.exec();
@@ -2201,8 +2193,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::viewParameterSource() {
-    QModelIndex index = embeddingView->selectionModel()->currentIndex();
-    auto *parameter = dynamic_cast<Parameter*>(static_cast<EmbeddingTreeModel*>(embeddingView->model())->getItem(index)->getItemData());
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
+    auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
     if(parameter) {
       SourceDialog dialog(parameter->getXMLElement(),this);
       dialog.exec();
@@ -2227,15 +2219,15 @@ namespace MBSimGUI {
   }
 
   void MainWindow::closeEvent(QCloseEvent *event) {
-    QSettings settings;
-    settings.setValue("mainwindow/geometry", saveGeometry());
-    settings.setValue("mainwindow/state", saveState());
-    settings.setValue("mainwindow/embeddingview/state", embeddingView->header()->saveState());
-    if(maybeSave())
+    if(maybeSave()) {
+      QSettings settings;
+      settings.setValue("mainwindow/geometry", saveGeometry());
+      settings.setValue("mainwindow/state", saveState());
+      settings.setValue("mainwindow/embeddingview/state", parameterView->header()->saveState());
       event->accept();
+    }
     else
       event->ignore();
-    QMainWindow::closeEvent(event);
   }
 
   void MainWindow::showEvent(QShowEvent *event) {
@@ -2243,7 +2235,7 @@ namespace MBSimGUI {
     restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
     restoreState(settings.value("mainwindow/state").toByteArray());
     elementView->header()->restoreState(settings.value("mainwindow/elementview/state").toByteArray());
-    embeddingView->header()->restoreState(settings.value("mainwindow/embeddingview/state").toByteArray());
+    parameterView->header()->restoreState(settings.value("mainwindow/embeddingview/state").toByteArray());
     QMainWindow::showEvent(event);
   }
 
@@ -2345,8 +2337,133 @@ namespace MBSimGUI {
     return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).toLocalFile();
   }
 
-  bool MainWindow::editorIsOpen() const {
-    return projectView->editorIsOpen() or elementView->editorIsOpen() or embeddingView->editorIsOpen() or solverView->editorIsOpen();
+  void MainWindow::openProjectEditor() {
+    if(not editorIsOpen()) {
+      setAllowUndo(false);
+      updateParameters(getProject());
+      projectEditor = getProject()->createPropertyDialog();
+      projectEditor->setAttribute(Qt::WA_DeleteOnClose);
+      projectEditor->toWidget();
+      projectEditor->show();
+      connect(projectEditor,&ProjectPropertyDialog::finished,this,[=](){
+        if(projectEditor->result()==QDialog::Accepted) {
+          setProjectChanged(true);
+          projectEditor->fromWidget();
+          if(getAutoRefresh()) refresh();
+          projectView->setText(project->getName());
+        }
+        setAllowUndo(true);
+        projectEditor=nullptr;
+      });
+      connect(projectEditor,&ProjectPropertyDialog::apply,this,[=](){
+        setProjectChanged(true);
+        projectEditor->fromWidget();
+        if(getAutoRefresh()) refresh();
+        projectView->setText(project->getName());
+      });
+    }
+  }
+
+  void MainWindow::openElementEditor(bool config) {
+    if(not editorIsOpen()) {
+      setAllowUndo(false);
+      QModelIndex index = elementView->selectionModel()->currentIndex();
+      auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
+      if(element) {
+        updateParameters(element);
+        elementEditor = element->createPropertyDialog();
+        elementEditor->setAttribute(Qt::WA_DeleteOnClose);
+        if(config)
+          elementEditor->toWidget();
+        else
+          elementEditor->setCancel(false);
+        elementEditor->show();
+        connect(elementEditor,&QDialog::finished,this,[=](){
+          if(elementEditor->result()==QDialog::Accepted) {
+            if(elementEditor->getCancel()) setProjectChanged(true);
+            elementEditor->fromWidget();
+            if(getAutoRefresh()) refresh();
+          }
+          setAllowUndo(true);
+          elementEditor=nullptr;
+        });
+        connect(elementEditor,&ElementPropertyDialog::apply,this,[=](){
+          if(elementEditor->getCancel()) setProjectChanged(true);
+          elementEditor->fromWidget();
+          if(getAutoRefresh()) refresh();
+          elementEditor->setCancel(true);
+        });
+        connect(elementEditor,&ElementPropertyDialog::showXMLHelp,this,[=](){
+          // generate url for current element
+          string url="file://"+(installPath/"share"/"mbxmlutils"/"doc").string();
+          string ns=element->getNameSpace().getNamespaceURI();
+          replace(ns.begin(), ns.end(), ':', '_');
+          replace(ns.begin(), ns.end(), '.', '_');
+          replace(ns.begin(), ns.end(), '/', '_');
+          url+="/"+ns+"/index.html#"+element->getType().toStdString();
+          // open in XML help dialog
+          xmlHelp(QString::fromStdString(url));
+        });
+      }
+    }
+  }
+
+  void MainWindow::openParameterEditor(bool config) {
+    if(not editorIsOpen()) {
+      setAllowUndo(false);
+      QModelIndex index = parameterView->selectionModel()->currentIndex();
+      auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
+      if(parameter) {
+        updateParameters(parameter->getParent(),true);
+        parameterEditor = parameter->createPropertyDialog();
+        parameterEditor->setAttribute(Qt::WA_DeleteOnClose);
+        if(config)
+          parameterEditor->toWidget();
+        else
+          parameterEditor->setCancel(false);
+        parameterEditor->show();
+        connect(parameterEditor,&QDialog::finished,this,[=](){
+          if(parameterEditor->result()==QDialog::Accepted) {
+            if(parameterEditor->getCancel()) setProjectChanged(true);
+            parameterEditor->fromWidget();
+            if(getAutoRefresh()) refresh();
+            parameter->getParent()->updateStatus();
+          }
+        setAllowUndo(true);
+        parameterEditor=nullptr;
+        });
+        connect(parameterEditor,&ParameterPropertyDialog::apply,this,[=](){
+          if(parameterEditor->getCancel()) setProjectChanged(true);
+          parameterEditor->fromWidget();
+          if(getAutoRefresh()) refresh();
+          parameterEditor->setCancel(true);
+          parameter->getParent()->updateStatus();
+        });
+      }
+    }
+  }
+
+  void MainWindow::openSolverEditor() {
+    if(not editorIsOpen()) {
+      setAllowUndo(false);
+      updateParameters(getProject()->getSolver());
+      solverEditor = getProject()->getSolver()->createPropertyDialog();
+      solverEditor->setAttribute(Qt::WA_DeleteOnClose);
+      solverEditor->toWidget();
+      solverEditor->show();
+      connect(solverEditor,&ProjectPropertyDialog::finished,this,[=](){
+        if(solverEditor->result()==QDialog::Accepted) {
+          setProjectChanged(true);
+          solverEditor->fromWidget();
+        }
+        setAllowUndo(true);
+        solverEditor=nullptr;
+      });
+      connect(solverEditor,&ProjectPropertyDialog::apply,this,[=](){
+        setProjectChanged(true);
+        solverEditor->fromWidget();
+      });
+    }
   }
 
 }

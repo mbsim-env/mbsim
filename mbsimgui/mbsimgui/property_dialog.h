@@ -54,7 +54,6 @@ namespace MBSimGUI {
       virtual void toWidget() { }
       virtual void fromWidget() { }
     protected:
-      virtual void showXMLHelp() { }
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       void closeEvent(QCloseEvent *event) override;
@@ -66,6 +65,7 @@ namespace MBSimGUI {
       QPushButton *buttonResize;
     signals:
       void apply();
+      void showXMLHelp();
   };
 
   class EmbedItemPropertyDialog : public PropertyDialog {

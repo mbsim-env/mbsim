@@ -61,6 +61,7 @@ namespace MBSimGUI {
   class SolverView;
   class ProjectView;
   class EchoView;
+  class PropertyDialog;
   class Element;
   class Frame;
   class Contour;
@@ -79,17 +80,21 @@ namespace MBSimGUI {
     private:
       Project *project;
       ElementView *elementView;
-      ParameterView *embeddingView;
+      ParameterView *parameterView;
       SolverView *solverView;
       ProjectView *projectView;
       EchoView *echoView;
+      PropertyDialog *projectEditor{nullptr};
+      PropertyDialog *elementEditor{nullptr};
+      PropertyDialog *parameterEditor{nullptr};
+      PropertyDialog *solverEditor{nullptr};
       std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
       QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
       QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionFrequencyResponse, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs, *actionUndo, *actionRedo;
-      OpenMBVGUI::AbstractViewFilter *elementViewFilter, *embeddingViewFilter;
+      OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
       QTime statusTime;
       QString currentID;
@@ -102,6 +107,7 @@ namespace MBSimGUI {
       std::deque<xercesc::DOMDocument*> undos, redos;
       std::pair<Element*,bool> elementBuffer;
       std::pair<Parameter*,bool> parameterBuffer;
+      boost::filesystem::path installPath;
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event) override;
       void dropEvent(QDropEvent *event) override;
@@ -143,7 +149,7 @@ namespace MBSimGUI {
       void applySettings();
       void kill();
       void elementViewClicked();
-      void embeddingViewClicked();
+      void parameterViewClicked();
       void selectionChanged(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void updateEchoView();
@@ -183,7 +189,7 @@ namespace MBSimGUI {
       const QString& getHighlightedObject() const {return currentID;}
       ProjectView* getProjectView() { return projectView; }
       ElementView* getElementView() { return elementView; }
-      ParameterView* getParameterView() { return embeddingView; }
+      ParameterView* getParameterView() { return parameterView; }
       SolverView* getSolverView() { return solverView; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);
@@ -196,7 +202,7 @@ namespace MBSimGUI {
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
       bool getAutoRefresh() const { return autoRefresh; }
-      bool editorIsOpen() const;
+      bool editorIsOpen() const { return projectEditor or elementEditor or parameterEditor or solverEditor; }
       void loadProject();
       bool saveProjectAs();
       void refresh();
@@ -228,10 +234,14 @@ namespace MBSimGUI {
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
       void saveSolverAs();
-      void saveEmbeddingAs();
+      void saveParametersAs();
       void loadSolver();
-      void viewEmbeddingSource();
+      void viewParametersSource();
       void viewParameterSource();
+      void openProjectEditor();
+      void openElementEditor(bool config=true);
+      void openParameterEditor(bool config=true);
+      void openSolverEditor();
   };
 
 }

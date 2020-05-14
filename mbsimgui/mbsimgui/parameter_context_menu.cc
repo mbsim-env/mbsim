@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   ParameterContextMenu::ParameterContextMenu(Parameter *parameter_, QWidget *parent) : QMenu(parent), parameter(parameter_) {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->getParameterView()->openEditor(); });
+    connect(action,&QAction::triggered,this,[=](){ mw->openParameterEditor(); });
     QMenu::addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::viewParameterSource);

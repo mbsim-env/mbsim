@@ -26,7 +26,6 @@
 namespace MBSimGUI {
 
   class Solver;
-  class SolverPropertyDialog;
 
   class SolverViewContextMenu : public QMenu {
     public:
@@ -44,15 +43,10 @@ namespace MBSimGUI {
       Solver* createSolver(int i_);
       void updateText() { setText(type[i]); }
       QMenu* createContextMenu() { return new SolverViewContextMenu(type); }
-      bool editorIsOpen() { return editor; }
-      void openEditor();
     private:
       void openContextMenu();
-      void dialogFinished(int result);
-      void apply();
       std::vector<QString> type;
       int i{0};
-      SolverPropertyDialog *editor{nullptr};
   };
 
   class SolverMouseEvent : public QObject {

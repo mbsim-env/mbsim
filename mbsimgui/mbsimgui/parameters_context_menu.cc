@@ -30,12 +30,12 @@ namespace MBSimGUI {
   ParametersContextMenu::ParametersContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     action->setEnabled(item->getNumberOfParameters());
-    connect(action,&QAction::triggered,mw,&MainWindow::viewEmbeddingSource);
+    connect(action,&QAction::triggered,mw,&MainWindow::viewParametersSource);
     QMenu::addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
     action->setEnabled(item->getNumberOfParameters());
-    connect(action,&QAction::triggered,mw,&MainWindow::saveEmbeddingAs);
+    connect(action,&QAction::triggered,mw,&MainWindow::saveParametersAs);
     addAction(action);
     addSeparator();
     action = new QAction("Embed", this);

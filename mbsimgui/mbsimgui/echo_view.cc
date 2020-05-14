@@ -234,7 +234,7 @@ R"+(
   }
 
   namespace {
-    bool walk(QModelIndex index, EmbeddingTreeModel *model, const QUrl &link) {
+    bool walk(QModelIndex index, ParameterTreeModel *model, const QUrl &link) {
       // get the filename from the error message
       boost::filesystem::path errorFile(boost::filesystem::absolute(link.path().toStdString()));
 
@@ -272,7 +272,7 @@ R"+(
     //MISSING mbsimgui adds new elements e.g. <plotFeatureRecursive value="plotRecursive">false</plotFeatureRecursive>
     //MISSING this break the xpath of the error messages
     // get the model of the embedding
-    EmbeddingTreeModel *model = static_cast<EmbeddingTreeModel*>(mw->getParameterView()->model());
+    ParameterTreeModel *model = static_cast<ParameterTreeModel*>(mw->getParameterView()->model());
     // walk all embeded elements
     if(!walk(model->index(0,0), model, link))
       cout<<"MISSING No XML node found for file="<<link.path().toStdString()<<endl<<

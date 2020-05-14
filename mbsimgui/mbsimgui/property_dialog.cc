@@ -58,7 +58,7 @@ namespace MBSimGUI {
     else if(button == buttonBox->button(QDialogButtonBox::Cancel))
       reject();
     else if(button == buttonBox->button(QDialogButtonBox::Help)) {
-      showXMLHelp();
+      emit showXMLHelp();
     }
   }
 

@@ -79,10 +79,6 @@ QT_BUILT_SOURCES = widget.moc.cc \
 
 BUILT_SOURCES = $(QT_BUILT_SOURCES)
 
-mbsimgui_HEADERS = 
-		   
-		   
-		   
 mbsimguisharedir = @datadir@/mbsimgui
 dist_mbsimguishare_DATA = inlineopenmbv.ombvwst
 
@@ -126,7 +122,6 @@ pluginsplatformthemes_DATA = @QT_PLUGINS@/platformthemes/libqgtk2.so
 pluginsxcbglintegrationsdir = @bindir@/xcbglintegrations
 pluginsxcbglintegrations_DATA = @QT_PLUGINS@/xcbglintegrations/*qxcb*
 endif
-
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org

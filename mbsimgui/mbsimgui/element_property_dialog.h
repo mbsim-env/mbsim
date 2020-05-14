@@ -38,7 +38,6 @@ namespace MBSimGUI {
       void updateName();
       void setReadOnly(bool readOnly);
     protected:
-      void showXMLHelp() override;
       ExtWidget *name, *plotFeature, *clone;
   };
 

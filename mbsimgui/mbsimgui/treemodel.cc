@@ -283,12 +283,12 @@ namespace MBSimGUI {
     idEleMap[observer->getID()] = parent.child(i,0);
   }
 
-  EmbeddingTreeModel::EmbeddingTreeModel(QObject *parent) : TreeModel(parent) {
+  ParameterTreeModel::ParameterTreeModel(QObject *parent) : TreeModel(parent) {
 
     rootItem = new TreeItem(new TreeItemData);
   }
 
-  QModelIndex EmbeddingTreeModel::createEmbeddingItem(Parameters *itemData, const QModelIndex &parent) {
+  QModelIndex ParameterTreeModel::createParametersItem(Parameters *itemData, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
@@ -310,7 +310,7 @@ namespace MBSimGUI {
     return index;
   }
 
-  QModelIndex EmbeddingTreeModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
+  QModelIndex ParameterTreeModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 

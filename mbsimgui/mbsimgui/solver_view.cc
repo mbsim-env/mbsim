@@ -32,7 +32,7 @@ namespace MBSimGUI {
 
   SolverViewContextMenu::SolverViewContextMenu(const std::vector<QString> &type, QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->getSolverView()->openEditor(); });
+    connect(action,&QAction::triggered,this,[=](){ mw->openSolverEditor(); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::viewSolverSource);
@@ -107,33 +107,6 @@ namespace MBSimGUI {
     QMenu *menu = createContextMenu();
     menu->exec(QCursor::pos());
     delete menu;
-  }
-
-  void SolverView::openEditor() {
-    if(not mw->editorIsOpen()) {
-      mw->setAllowUndo(false);
-      mw->updateParameters(mw->getProject()->getSolver());
-      editor = mw->getProject()->getSolver()->createPropertyDialog();
-      editor->setAttribute(Qt::WA_DeleteOnClose);
-      editor->toWidget();
-      editor->show();
-      connect(editor,&SolverPropertyDialog::apply,this,&SolverView::apply);
-      connect(editor,&SolverPropertyDialog::finished,this,&SolverView::dialogFinished);
-    }
-  }
-
-  void SolverView::dialogFinished(int result) {
-    if(result != 0) {
-      mw->setProjectChanged(true);
-      editor->fromWidget();
-    }
-    editor = nullptr;
-    mw->setAllowUndo(true);
-  }
-
-  void SolverView::apply() {
-    mw->setProjectChanged(true);
-    editor->fromWidget();
   }
 
   Solver* SolverView::createSolver(int i_) {
@@ -244,7 +217,7 @@ namespace MBSimGUI {
 
   bool SolverMouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonDblClick) {
-      view->openEditor();
+      mw->openSolverEditor();
       return true;
     }
     else if(event->type() == QEvent::MouseButtonPress) {

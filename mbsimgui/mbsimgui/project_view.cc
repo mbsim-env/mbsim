@@ -29,7 +29,7 @@ namespace MBSimGUI {
 
   ProjectViewContextMenu::ProjectViewContextMenu(QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->getProjectView()->openEditor(); });
+    connect(action,&QAction::triggered,this,[=](){ mw->openProjectEditor(); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::viewProjectSource);
@@ -52,50 +52,15 @@ namespace MBSimGUI {
     setReadOnly(true);
   }
 
-  void ProjectView::updateName() {
-    setText(project->getName());
-  }
-
   void ProjectView::openContextMenu() {
     QMenu *menu = createContextMenu();
     menu->exec(QCursor::pos());
     delete menu;
   }
 
-  void ProjectView::openEditor() {
-    if(not mw->editorIsOpen()) {
-      mw->setAllowUndo(false);
-      mw->updateParameters(mw->getProject());
-      editor = mw->getProject()->createPropertyDialog();
-      editor->setAttribute(Qt::WA_DeleteOnClose);
-      editor->toWidget();
-      editor->show();
-      connect(editor,&ProjectPropertyDialog::apply,this,&ProjectView::apply);
-      connect(editor,&ProjectPropertyDialog::finished,this,&ProjectView::dialogFinished);
-    }
-  }
-
-  void ProjectView::dialogFinished(int result) {
-    if(result != 0) {
-      mw->setProjectChanged(true);
-      editor->fromWidget();
-      updateName();
-      if(mw->getAutoRefresh()) mw->refresh();
-    }
-    editor = nullptr;
-    mw->setAllowUndo(true);
-  }
-
-  void ProjectView::apply() {
-    mw->setProjectChanged(true);
-    editor->fromWidget();
-    updateName();
-    if(mw->getAutoRefresh()) mw->refresh();
-  }
-
   bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonDblClick) {
-      view->openEditor();
+      mw->openProjectEditor();
       return true;
     }
     else if(event->type() == QEvent::MouseButtonPress) {

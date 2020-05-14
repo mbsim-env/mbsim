@@ -26,7 +26,6 @@
 namespace MBSimGUI {
 
   class Project;
-  class ProjectPropertyDialog;
 
   class ProjectViewContextMenu : public QMenu {
     public:
@@ -37,18 +36,12 @@ namespace MBSimGUI {
     public:
       ProjectView();
       ~ProjectView() override = default;
-      bool editorIsOpen() { return editor; }
       Project* getProject() { return project; }
       void setProject(Project *project_) { project = project_; }
-      void updateName();
       QMenu* createContextMenu() { return new ProjectViewContextMenu; }
-      void openEditor();
     protected:
       Project *project;
-      ProjectPropertyDialog *editor{nullptr};
       void openContextMenu();
-      void dialogFinished(int result);
-      void apply();
   };
 
   class ProjectMouseEvent : public QObject {
@@ -56,7 +49,6 @@ namespace MBSimGUI {
       ProjectMouseEvent(ProjectView* view_) : QObject(view_), view(view_) { }
     protected:
       ProjectView *view;
-      ProjectPropertyDialog *editor;
       bool eventFilter(QObject *obj, QEvent *event) override;
   };
 

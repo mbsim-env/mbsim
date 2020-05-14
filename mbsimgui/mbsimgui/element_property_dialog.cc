@@ -43,7 +43,6 @@
 #include <QMessageBox>
 #include <utility>
 #include <boost/dll.hpp>
-#include "mainwindow.h"
 #include "dialogs.h"
 #include "project.h"
 
@@ -52,8 +51,6 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
-
-  extern MainWindow *mw;
 
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
@@ -128,20 +125,6 @@ namespace MBSimGUI {
     item->maybeRemoveEmbedXMLElement();
     item->updateStatus();
     return nullptr;
-  }
-
-  void ElementPropertyDialog::showXMLHelp() {
-    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
-
-    // generate url for current element
-    string url="file://"+(installPath/"share"/"mbxmlutils"/"doc").string();
-    string ns=getElement()->getNameSpace().getNamespaceURI();
-    replace(ns.begin(), ns.end(), ':', '_');
-    replace(ns.begin(), ns.end(), '.', '_');
-    replace(ns.begin(), ns.end(), '/', '_');
-    url+="/"+ns+"/index.html#"+getElement()->getType().toStdString();
-    // open in XML help dialog
-    mw->xmlHelp(QString::fromStdString(url));
   }
 
   void ElementPropertyDialog::setName(const QString &str) {

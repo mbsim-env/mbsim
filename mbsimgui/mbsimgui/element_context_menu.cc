@@ -58,7 +58,7 @@ namespace MBSimGUI {
 
   ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : BasicElementMenu(element,"",parent) {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->getElementView()->openEditor(); });
+    connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     QMenu::addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::viewElementSource);

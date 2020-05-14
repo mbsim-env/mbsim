@@ -21,26 +21,15 @@
 #define _PARAMETER_VIEW__H_
 
 #include <QTreeView>
-#include <QModelIndex>
 
 namespace MBSimGUI {
 
-  class PropertyDialog;
-  class Parameter;
-
   class ParameterView : public QTreeView {
     public:
-      ParameterView(QWidget *parent=nullptr) : QTreeView(parent) {}
-      bool editorIsOpen() { return editor; }
-      void openEditor(bool config=true);
+      ParameterView(QWidget *parent=nullptr) : QTreeView(parent) { }
     private:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;
-      void dialogFinished(int result);
-      void apply();
-      QModelIndex index;
-      Parameter *parameter;
-      PropertyDialog *editor{nullptr};
   };
 
 }

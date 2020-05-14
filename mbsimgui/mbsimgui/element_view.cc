@@ -19,65 +19,19 @@
 
 #include <config.h>
 #include "element_view.h"
-#include "element.h"
-#include "element_property_dialog.h"
-#include "treemodel.h"
-#include "treeitem.h"
 #include "mainwindow.h"
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void ElementView::openEditor(bool config) {
-    if(not mw->editorIsOpen()) {
-      mw->setAllowUndo(false);
-      index = selectionModel()->currentIndex();
-      element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(model())->getItem(index)->getItemData());
-      if(element) {
-        mw->updateParameters(element);
-        editor = element->createPropertyDialog();
-        editor->setAttribute(Qt::WA_DeleteOnClose);
-        if(config)
-          editor->toWidget();
-        else
-          editor->setCancel(false);
-        editor->show();
-        connect(editor,&ElementPropertyDialog::apply,this,&ElementView::apply);
-        connect(editor,&ElementPropertyDialog::finished,this,&ElementView::dialogFinished);
-      }
-    }
-  }
-
   void ElementView::mouseDoubleClickEvent(QMouseEvent *event) {
-    openEditor();
+    mw->openElementEditor();
   }
 
   void ElementView::mousePressEvent(QMouseEvent *event) {
-    if(!editor)
+    if(not mw->editorIsOpen())
       QTreeView::mousePressEvent(event);
-  }
-
-  void ElementView::dialogFinished(int result) {
-    if(result != 0) {
-      if(editor->getCancel())
-        mw->setProjectChanged(true);
-      editor->fromWidget();
-      if(mw->getAutoRefresh()) mw->refresh();
-    }
-    editor = nullptr;
-    element = nullptr;
-    mw->setAllowUndo(true);
-  }
-
-  void ElementView::apply() {
-    if(editor->getCancel())
-      mw->setProjectChanged(true);
-    editor->fromWidget();
-    update(index);
-    if(mw->getAutoRefresh()) mw->refresh();
-    editor->setCancel(true);
-    editor->setCancel(true);
   }
 
 }
