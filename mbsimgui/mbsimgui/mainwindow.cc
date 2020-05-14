@@ -127,7 +127,7 @@ namespace MBSimGUI {
 
     projectView = new ProjectView;
     elementView = new ElementView;
-    embeddingView = new EmbeddingView;
+    embeddingView = new ParameterView;
     solverView = new SolverView;
     echoView = new EchoView(this);
 
@@ -281,7 +281,7 @@ namespace MBSimGUI {
     //embeddingView->setColumnWidth(1,200);
 
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
-    connect(embeddingView, &EmbeddingView::pressed, this, &MainWindow::embeddingViewClicked);
+    connect(embeddingView, &ParameterView::pressed, this, &MainWindow::embeddingViewClicked);
     connect(elementView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::selectionChanged);
 
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);

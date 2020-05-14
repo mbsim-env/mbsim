@@ -57,7 +57,7 @@ namespace MBSimGUI {
 
   class MBSimThread;
   class ElementView;
-  class EmbeddingView;
+  class ParameterView;
   class SolverView;
   class ProjectView;
   class EchoView;
@@ -79,7 +79,7 @@ namespace MBSimGUI {
     private:
       Project *project;
       ElementView *elementView;
-      EmbeddingView *embeddingView;
+      ParameterView *embeddingView;
       SolverView *solverView;
       ProjectView *projectView;
       EchoView *echoView;
@@ -183,7 +183,7 @@ namespace MBSimGUI {
       const QString& getHighlightedObject() const {return currentID;}
       ProjectView* getProjectView() { return projectView; }
       ElementView* getElementView() { return elementView; }
-      EmbeddingView* getEmbeddingView() { return embeddingView; }
+      ParameterView* getParameterView() { return embeddingView; }
       SolverView* getSolverView() { return solverView; }
       void setProjectChanged(bool changed=true);
       void selectSolver(int i);

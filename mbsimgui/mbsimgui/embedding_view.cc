@@ -31,7 +31,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void EmbeddingView::openEditor(bool config) {
+  void ParameterView::openEditor(bool config) {
     if(not mw->editorIsOpen()) {
       mw->setAllowUndo(false);
       index = selectionModel()->currentIndex();
@@ -46,23 +46,23 @@ namespace MBSimGUI {
         else
           editor->setCancel(false);
         editor->show();
-        connect(editor,&ParameterPropertyDialog::apply,this,&EmbeddingView::apply);
-        connect(editor,&ParameterPropertyDialog::finished,this,&EmbeddingView::dialogFinished);
+        connect(editor,&ParameterPropertyDialog::apply,this,&ParameterView::apply);
+        connect(editor,&ParameterPropertyDialog::finished,this,&ParameterView::dialogFinished);
         return;
       }
     }
   }
 
-  void EmbeddingView::mouseDoubleClickEvent(QMouseEvent *event) {
+  void ParameterView::mouseDoubleClickEvent(QMouseEvent *event) {
     openEditor();
   }
 
-  void EmbeddingView::mousePressEvent ( QMouseEvent * event ) {
+  void ParameterView::mousePressEvent ( QMouseEvent * event ) {
     if(!editor)
       QTreeView::mousePressEvent(event);
   }
 
-  void EmbeddingView::dialogFinished(int result) {
+  void ParameterView::dialogFinished(int result) {
     if(result != 0) {
       if(editor->getCancel())
         mw->setProjectChanged(true);
@@ -76,7 +76,7 @@ namespace MBSimGUI {
     mw->setAllowUndo(true);
   }
 
-  void EmbeddingView::apply() {
+  void ParameterView::apply() {
     if(editor->getCancel())
       mw->setProjectChanged(true);
     editor->fromWidget();

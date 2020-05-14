@@ -28,9 +28,9 @@ namespace MBSimGUI {
   class PropertyDialog;
   class Parameter;
 
-  class EmbeddingView : public QTreeView {
+  class ParameterView : public QTreeView {
     public:
-      EmbeddingView(QWidget *parent=nullptr) : QTreeView(parent) {}
+      ParameterView(QWidget *parent=nullptr) : QTreeView(parent) {}
       bool editorIsOpen() { return editor; }
       void openEditor(bool config=true);
     private:
