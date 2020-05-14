@@ -26,9 +26,9 @@ namespace MBSimGUI {
 
   class EmbedItemData;
 
-  class EmbeddingContextMenu : public QMenu {
+  class ParametersContextMenu : public QMenu {
     public:
-      EmbeddingContextMenu(EmbedItemData *item_, const QString &title="", QWidget *parent=nullptr);
+      ParametersContextMenu(EmbedItemData *item_, const QString &title="", QWidget *parent=nullptr);
     private:
       EmbedItemData *item;
       void addAction(QAction *action);

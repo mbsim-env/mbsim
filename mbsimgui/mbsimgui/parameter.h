@@ -23,6 +23,7 @@
 #include "treeitemdata.h"
 #include "parameter_property_dialog.h"
 #include "parameter_context_menu.h"
+#include "embedding_context_menu.h"
 #include "embeditemdata.h"
 
 namespace XERCES_CPP_NAMESPACE {
@@ -106,7 +107,7 @@ namespace MBSimGUI {
       QString getFile() const override { return item->getEmbedXMLElement()?QString::fromStdString(MBXMLUtils::E(item->getEmbedXMLElement())->getAttribute("parameterHref")):""; }
       bool isEnabled() const override { return item->isEnabled(); }
       EmbedItemData *getItem() const { return item; }
-      QMenu* createContextMenu() override { return new EmbeddingContextMenu(item); }
+      QMenu* createContextMenu() override { return new ParametersContextMenu(item); }
     protected:
       EmbedItemData *item{nullptr};
   };

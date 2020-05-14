@@ -27,7 +27,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  EmbeddingContextMenu::EmbeddingContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
+  ParametersContextMenu::ParametersContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     action->setEnabled(item->getNumberOfParameters());
     connect(action,&QAction::triggered,mw,&MainWindow::viewEmbeddingSource);
@@ -72,7 +72,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  void EmbeddingContextMenu::addAction(QAction *action) {
+  void ParametersContextMenu::addAction(QAction *action) {
     if(action->isEnabled()) action->setDisabled(item->getEmbeded() or (item->getEmbedItemParent() and item->getEmbedItemParent()->getEmbeded()) or item->getEmbededParameters());
     QMenu::addAction(action);
   }

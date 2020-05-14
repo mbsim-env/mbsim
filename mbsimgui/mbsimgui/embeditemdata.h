@@ -21,7 +21,6 @@
 #define _EMBEDITEMDATA__H_
 
 #include "treeitemdata.h"
-#include "embedding_context_menu.h"
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
 
@@ -73,7 +72,6 @@ namespace MBSimGUI {
       bool getEmbededParameters() const { return embededParam; }
       void setEmbededParameters(bool embededParam_) { embededParam = embededParam_; }
       Parameters* getParameters() { return parameters; }
-      QMenu* createEmbeddingContextMenu() { return new EmbeddingContextMenu(this); }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
   };
