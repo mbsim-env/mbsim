@@ -44,7 +44,7 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "FlexibleFfrBody"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override { return new FlexibleFfrBodyPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new FlexibleFfrBodyPropertyDialog(this); }
   };
 
   class CalculixBody : public GenericFlexibleFfrBody {
@@ -52,7 +52,7 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "CalculixBody"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override { return new CalculixBodyPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new CalculixBodyPropertyDialog(this); }
   };
 
 }

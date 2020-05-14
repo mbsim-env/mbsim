@@ -26,7 +26,7 @@
 namespace MBSimGUI {
 
   class Element;
-  class ElementPropertyDialog;
+  class PropertyDialog;
 
   class ElementView : public QTreeView {
     public:
@@ -40,7 +40,7 @@ namespace MBSimGUI {
       void apply();
       QModelIndex index;
       Element *element{nullptr};
-      ElementPropertyDialog *editor{nullptr};
+      PropertyDialog *editor{nullptr};
   };
 
 }

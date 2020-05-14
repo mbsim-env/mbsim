@@ -21,7 +21,6 @@
 #include "embedding_context_menu.h"
 #include "mainwindow.h"
 #include "parameter.h"
-#include "embedding_view.h"
 #include "embeditemdata.h"
 
 namespace MBSimGUI {

@@ -28,7 +28,7 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "KineticExcitation"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new KineticExcitationPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new KineticExcitationPropertyDialog(this);}
   };
 
 }

@@ -24,8 +24,6 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "mainwindow.h"
-#include "embedding_view.h"
-#include "solver_view.h"
 
 namespace MBSimGUI {
 

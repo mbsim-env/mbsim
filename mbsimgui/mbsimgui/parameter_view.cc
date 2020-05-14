@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "embedding_view.h"
+#include "parameter_view.h"
 #include "treemodel.h"
 #include "treeitem.h"
 #include "embeditemdata.h"

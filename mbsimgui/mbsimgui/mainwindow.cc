@@ -35,7 +35,7 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "element_view.h"
-#include "embedding_view.h"
+#include "parameter_view.h"
 #include "solver_view.h"
 #include "project_view.h"
 #include "echo_view.h"

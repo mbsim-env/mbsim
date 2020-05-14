@@ -29,7 +29,7 @@ namespace MBSimGUI {
       QString getType() const override { return "UniversalGravitation"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new UniversalGravitationPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new UniversalGravitationPropertyDialog(this);}
   };
 
   class Weight : public MechanicalLink {
@@ -37,7 +37,7 @@ namespace MBSimGUI {
       QString getType() const override { return "Weight"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new WeightPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new WeightPropertyDialog(this);}
   };
 
   class Buoyancy : public FloatingFrameLink {
@@ -45,7 +45,7 @@ namespace MBSimGUI {
       QString getType() const override { return "Buoyancy"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new BuoyancyPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new BuoyancyPropertyDialog(this);}
   };
 
   class Drag : public FloatingFrameLink {
@@ -53,7 +53,7 @@ namespace MBSimGUI {
       QString getType() const override { return "Drag"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new DragPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new DragPropertyDialog(this);}
   };
 
   class Aerodynamics : public FloatingFrameLink {
@@ -61,7 +61,7 @@ namespace MBSimGUI {
       QString getType() const override { return "Aerodynamics"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override {return new AerodynamicsPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new AerodynamicsPropertyDialog(this);}
   };
 
 }

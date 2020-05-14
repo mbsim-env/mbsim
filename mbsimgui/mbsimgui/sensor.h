@@ -30,7 +30,7 @@ namespace MBSimGUI {
   class ObjectSensor : public Sensor {
     public:
       QString getType() const override { return "ObjectSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new ObjectSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ObjectSensorPropertyDialog(this); }
   };
 
   class GeneralizedPositionSensor : public ObjectSensor {
@@ -51,19 +51,19 @@ namespace MBSimGUI {
   class RigidBodyJointForceSensor : public ObjectSensor {
     public:
       QString getType() const override { return "RigidBodyJointForceSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new RigidBodyJointForceSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new RigidBodyJointForceSensorPropertyDialog(this); }
   };
 
   class RigidBodyJointMomentSensor : public ObjectSensor {
     public:
       QString getType() const override { return "RigidBodyJointMomentSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new RigidBodyJointMomentSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new RigidBodyJointMomentSensorPropertyDialog(this); }
   };
 
   class LinkSensor : public Sensor {
     public:
       QString getType() const override { return "LinkSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new LinkSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new LinkSensorPropertyDialog(this); }
   };
 
   class GeneralizedRelativePositionSensor : public LinkSensor {
@@ -84,37 +84,37 @@ namespace MBSimGUI {
   class MechanicalLinkForceSensor : public LinkSensor {
     public:
       QString getType() const override { return "MechanicalLinkForceSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new MechanicalLinkForceSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new MechanicalLinkForceSensorPropertyDialog(this); }
   };
 
   class MechanicalLinkMomentSensor : public LinkSensor {
     public:
       QString getType() const override { return "MechanicalLinkMomentSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new MechanicalLinkMomentSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new MechanicalLinkMomentSensorPropertyDialog(this); }
   };
 
   class ConstraintSensor : public Sensor {
     public:
       QString getType() const override { return "ConstraintSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new ConstraintSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ConstraintSensorPropertyDialog(this); }
   };
 
   class MechanicalConstraintForceSensor : public ConstraintSensor {
     public:
       QString getType() const override { return "MechanicalConstraintForceSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new MechanicalConstraintForceSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new MechanicalConstraintForceSensorPropertyDialog(this); }
   };
 
   class MechanicalConstraintMomentSensor : public ConstraintSensor {
     public:
       QString getType() const override { return "MechanicalConstraintMomentSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new MechanicalConstraintMomentSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new MechanicalConstraintMomentSensorPropertyDialog(this); }
   };
 
   class FrameSensor : public Sensor {
     public:
       QString getType() const override { return "FrameSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new FrameSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new FrameSensorPropertyDialog(this); }
   };
 
   class PositionSensor : public FrameSensor {
@@ -150,13 +150,13 @@ namespace MBSimGUI {
   class FunctionSensor : public Sensor {
     public:
       QString getType() const override { return "FunctionSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new FunctionSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new FunctionSensorPropertyDialog(this); }
   };
 
   class ContactSensor : public Sensor {
     public:
       QString getType() const override { return "ContactSensor"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new ContactSensorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ContactSensorPropertyDialog(this); }
   };
 
   class GeneralizedRelativeContactPositionSensor : public ContactSensor {

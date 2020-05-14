@@ -28,7 +28,7 @@ namespace MBSimGUI {
   class GeneralizedGear : public RigidBodyLink {
     public:
       QString getType() const override { return "GeneralizedGear"; }
-      ElementPropertyDialog* createPropertyDialog() override {return new GeneralizedGearPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new GeneralizedGearPropertyDialog(this);}
   };
 
 }

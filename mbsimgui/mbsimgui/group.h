@@ -105,7 +105,7 @@ namespace MBSimGUI {
       void addConstraint(Constraint *constraint_) override;
       void addObserver(Observer *observer_) override;
       void removeElement(Element *element) override;
-      ElementPropertyDialog* createPropertyDialog() override { return new GroupPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new GroupPropertyDialog(this); }
       QMenu* createFrameContextMenu() override { return new FixedRelativeFramesContextMenu(this); }
       QMenu* createContextMenu() override { return new GroupContextMenu(this); }
       void updateStatus() override;
@@ -116,7 +116,7 @@ namespace MBSimGUI {
       QString getType() const override { return "UnknownGroup"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override { return Element::processIDAndHref(element); }
       void create() override { return Element::create(); }
-      ElementPropertyDialog* createPropertyDialog() override { return new UnknownElementPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new UnknownElementPropertyDialog(this); }
   };
 
 }

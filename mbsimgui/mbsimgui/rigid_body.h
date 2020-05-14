@@ -34,7 +34,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       void create() override;
-      ElementPropertyDialog* createPropertyDialog() override {return new RigidBodyPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new RigidBodyPropertyDialog(this);}
       QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
     protected:
       xercesc::DOMElement *frames, *contours;

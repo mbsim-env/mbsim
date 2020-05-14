@@ -25,8 +25,6 @@
 #include "project.h"
 #include "utils.h"
 #include "mainwindow.h"
-#include "element_view.h"
-#include "embedding_view.h"
 
 namespace MBSimGUI {
 

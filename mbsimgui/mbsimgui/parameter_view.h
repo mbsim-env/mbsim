@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _EMBEDDING_VIEW__H_
-#define _EMBEDDING_VIEW__H_
+#ifndef _PARAMETER_VIEW__H_
+#define _PARAMETER_VIEW__H_
 
 #include <QTreeView>
 #include <QModelIndex>

@@ -30,14 +30,14 @@ namespace MBSimGUI {
     public:
       QString getType() const override { return "Frame"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      ElementPropertyDialog* createPropertyDialog() override { return new FramePropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new FramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new FrameContextMenu(this); }
   };
 
   class UnknownFrame : public Frame {
     public:
       QString getType() const override { return "UnknownFrame"; }
-      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
   };
 
   class InternalFrame : public Frame {
@@ -45,7 +45,7 @@ namespace MBSimGUI {
       InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const QString &plotFeatureType_="");
       QString getName() const override { return name; }
       QString getType() const override { return "InternalFrame"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new InternalFramePropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new InternalFramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new ElementContextMenu(this,nullptr,false,false); }
       void removeXMLElements() override;
       const MBXMLUtils::FQN& getXMLFrameName() const { return xmlFrameName; }
@@ -59,28 +59,28 @@ namespace MBSimGUI {
   class FixedRelativeFrame : public Frame {
     public:
       QString getType() const override { return "FixedRelativeFrame"; }
-      ElementPropertyDialog* createPropertyDialog() override { return new FixedRelativeFramePropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new FixedRelativeFramePropertyDialog(this); }
   };
 
   class NodeFrame : public Frame {
     public:
       QString getType() const override { return "NodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
-      ElementPropertyDialog* createPropertyDialog() override { return new NodeFramePropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new NodeFramePropertyDialog(this); }
   };
 
   class InterfaceNodeFrame : public Frame {
     public:
       QString getType() const override { return "InterfaceNodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
-      ElementPropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this); }
   };
 
   class FfrInterfaceNodeFrame : public Frame {
     public:
       QString getType() const override { return "FfrInterfaceNodeFrame"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
-      ElementPropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this,true); }
+      PropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this,true); }
   };
 
 }

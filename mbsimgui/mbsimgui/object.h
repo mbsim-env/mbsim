@@ -26,14 +26,14 @@ namespace MBSimGUI {
 
   class Object : public Element {
     public:
-      ElementPropertyDialog* createPropertyDialog() override { return new ObjectPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ObjectPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ObjectContextMenu(this); }
   };
 
   class UnknownObject : public Object {
     public:
       QString getType() const override { return "UnknownObject"; }
-      ElementPropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
   };
 
 }

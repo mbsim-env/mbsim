@@ -27,13 +27,13 @@ namespace MBSimGUI {
   class Contact : public Link {
     public:
       QString getType() const override { return "Contact"; }
-      ElementPropertyDialog* createPropertyDialog() override {return new ContactPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new ContactPropertyDialog(this);}
   };
 
   class DiskContact : public FixedFrameLink {
     public:
       QString getType() const override { return "DiskContact"; }
-      ElementPropertyDialog* createPropertyDialog() override {return new DiskContactPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new DiskContactPropertyDialog(this);}
   };
 
 }

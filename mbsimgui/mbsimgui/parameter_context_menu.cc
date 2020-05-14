@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "parameter_context_menu.h"
-#include "embedding_view.h"
+#include "parameter_view.h"
 #include "parameter.h"
 #include "embeditemdata.h"
 #include "mainwindow.h"
