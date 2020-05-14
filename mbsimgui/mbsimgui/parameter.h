@@ -23,7 +23,7 @@
 #include "treeitemdata.h"
 #include "parameter_property_dialog.h"
 #include "parameter_context_menu.h"
-#include "embedding_context_menu.h"
+#include "parameters_context_menu.h"
 #include "embeditemdata.h"
 
 namespace XERCES_CPP_NAMESPACE {

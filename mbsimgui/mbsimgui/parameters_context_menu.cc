@@ -18,7 +18,7 @@
 */
 
 #include <config.h>
-#include "embedding_context_menu.h"
+#include "parameters_context_menu.h"
 #include "mainwindow.h"
 #include "parameter.h"
 #include "embeditemdata.h"
