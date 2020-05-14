@@ -48,7 +48,6 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   element_property_dialog.cc \
 		   solver_property_dialog.cc \
 		   parameter_property_dialog.cc \
-		   embedding_property_dialog.cc \
 		   project_property_dialog.cc \
 		   element_context_menu.cc \
 		   parameter_context_menu.cc \
