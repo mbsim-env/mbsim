@@ -267,7 +267,7 @@ namespace MBSim {
       msg(Debug) << "hSize[1] = " << hSize[1] << endl;
       msg(Debug) << "LinkStatusSize = " << LinkStatusSize << endl;
       msg(Debug) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
-      print();
+      dumpElementData();
     }
 
       // Set the ds member variable of all elements recursively (this includes now generated elements of the graph)
