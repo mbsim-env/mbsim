@@ -1528,16 +1528,10 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    bool includeParameter = false;
-    if(element->getEmbedXMLElement()) {
-      SaveDialog saveDialog(this);
-      saveDialog.exec();
-      includeParameter = saveDialog.includeParameter();
-    }
     QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(element->getName()+".mbsimele.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(includeParameter?element->getEmbedXMLElement():element->getXMLElement(),true);
+      DOMNode *node = edoc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -1570,16 +1564,10 @@ namespace MBSimGUI {
 
   void MainWindow::saveSolverAs() {
     Solver *solver = project->getSolver();
-    bool includeParameter = false;
-    if(solver->getEmbedXMLElement()) {
-      SaveDialog saveDialog(this);
-      saveDialog.exec();
-      includeParameter = saveDialog.includeParameter();
-    }
     QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(solver->getName()+".mbsimslv.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(includeParameter?solver->getEmbedXMLElement():solver->getXMLElement(),true);
+      DOMNode *node = edoc->importNode(solver->getEmbedXMLElement()?solver->getEmbedXMLElement():solver->getXMLElement(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }

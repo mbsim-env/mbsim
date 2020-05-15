@@ -89,14 +89,6 @@ namespace MBSimGUI {
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }
   };
 
-  class SaveDialog : public QDialog {
-    public:
-      SaveDialog(QWidget *parent);
-      bool includeParameter() const { return parameter->checkState()==Qt::Checked; }
-    private:
-      QCheckBox *parameter;
-  };
-
   class EigenanalysisDialog : public QDialog {
     public:
       EigenanalysisDialog(const QString &name, QWidget *parent);

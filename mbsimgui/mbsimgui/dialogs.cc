@@ -186,17 +186,6 @@ namespace MBSimGUI {
     }
   }
 
-  SaveDialog::SaveDialog(QWidget *parent) : QDialog(parent) {
-    QVBoxLayout *layout = new QVBoxLayout;
-    setLayout(layout);
-    parameter = new QCheckBox("Include parameters");
-    layout->addWidget(parameter);
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
-    buttonBox->addButton(QDialogButtonBox::Ok);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &SaveDialog::accept);
-    layout->addWidget(buttonBox);
-  }
-
   EigenanalysisDialog::EigenanalysisDialog(const QString &name, QWidget *parent) : QDialog(parent) {
     OctaveParser parser(name.toStdString());
     parser.parse();
