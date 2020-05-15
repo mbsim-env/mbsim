@@ -1695,9 +1695,9 @@ namespace MBSim {
     return bInverseKinetics;
   }
 
-  void DynamicSystem::print() {
+  void DynamicSystem::dumpElementData() {
     for(auto & i : dynamicsystem)
-      i->print();
+      i->dumpElementData();
     for(auto & i : object)
       msg(Debug) << i->getPath() << ": qSize=" << i->getqSize() << ": uSize=" << i->getuSize() << ", hSize=" << i->gethSize() << ", qInd=" << i->getqInd() << ", uInd=" << i->getuInd() << ", hInd=" << i->gethInd() << endl;
     for (auto & i : link)
