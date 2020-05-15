@@ -155,15 +155,13 @@ namespace MBSimGUI {
     static_cast<TextWidget*>(name->getWidget())->setReadOnly(readOnly);
   }
 
-  UnknownElementPropertyDialog::UnknownElementPropertyDialog(Element *element) : ElementPropertyDialog(element) {
-    name->setDisabled(true);
-    plotFeature->setDisabled(true);
+  UnknownElementPropertyDialog::UnknownElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
+    addTab("General");
     editor = new ExtWidget("XML Editor",new XMLEditorWidget);
     addToTab("General", editor);
   }
 
   DOMElement* UnknownElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    ElementPropertyDialog::initializeUsingXML(item->getXMLElement());
     editor->initializeUsingXML(item->getXMLElement());
     return parent;
   }

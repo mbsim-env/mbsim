@@ -41,7 +41,7 @@ namespace MBSimGUI {
       ExtWidget *name, *plotFeature, *clone;
   };
 
-  class UnknownElementPropertyDialog : public ElementPropertyDialog {
+  class UnknownElementPropertyDialog : public EmbedItemPropertyDialog {
 
     public:
       UnknownElementPropertyDialog(Element *element);
