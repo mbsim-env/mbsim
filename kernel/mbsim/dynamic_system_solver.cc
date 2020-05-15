@@ -254,23 +254,21 @@ namespace MBSim {
       calcLinkStatusSize();
       calcLinkStatusRegSize();
 
-      msg(Info) << "qSize = " << qSize << endl;
-      msg(Info) << "uSize[0] = " << uSize[0] << endl;
-      msg(Info) << "xSize = " << xSize << endl;
-      msg(Info) << "gSize = " << gSize << endl;
-      msg(Info) << "gdSize = " << gdSize << endl;
-      msg(Info) << "laSize = " << laSize << endl;
-      msg(Info) << "svSize = " << svSize << endl;
-      msg(Info) << "LinkStatusSize = " << LinkStatusSize << endl;
-      msg(Info) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
-      msg(Info) << "hSize[0] = " << hSize[0] << endl;
-
-      msg(Info) << "uSize[1] = " << uSize[1] << endl;
-      msg(Info) << "hSize[1] = " << hSize[1] << endl;
-
-      for (unsigned int i = 0; i < dynamicsystem.size(); i++)
-        if (dynamic_cast<Graph*>(dynamicsystem[i]))
-          static_cast<Graph*>(dynamicsystem[i])->printGraph();
+    if(msgAct(Debug)) {
+      msg(Debug) << "qSize = " << qSize << endl;
+      msg(Debug) << "uSize = " << uSize[0] << endl;
+      msg(Debug) << "xSize = " << xSize << endl;
+      msg(Debug) << "hSize = " << hSize[0] << endl;
+      msg(Debug) << "gSize = " << gSize << endl;
+      msg(Debug) << "gdSize = " << gdSize << endl;
+      msg(Debug) << "laSize = " << laSize << endl;
+      msg(Debug) << "svSize = " << svSize << endl;
+      msg(Debug) << "uSize[1] = " << uSize[1] << endl;
+      msg(Debug) << "hSize[1] = " << hSize[1] << endl;
+      msg(Debug) << "LinkStatusSize = " << LinkStatusSize << endl;
+      msg(Debug) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
+      print();
+    }
 
       // Set the ds member variable of all elements recursively (this includes now generated elements of the graph)
       setDynamicSystemSolver(this);

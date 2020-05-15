@@ -152,16 +152,4 @@ namespace MBSim {
     obj[level].push_back(object);
   }
 
-  void Graph::printGraph() {
-    if(msgAct(Debug)) {
-      msg(Debug) << "Content of object graph "<< name << ":" << endl;
-      for(unsigned int i=0; i<obj.size(); i++) {
-        msg(Debug) << "  Objects in level "<< i << ":"<< endl;
-        for(auto & j : obj[i])
-          msg(Debug) << "    "<< j->getPath()<<" (uSize=" <<j->getuSize()<<", hSize="<< j->gethSize()<<
-            ", uInd=" << j->getuInd()<<", hInd=" << j->gethInd()<< ")"<<endl;
-      }
-    }
-  }
-
 }

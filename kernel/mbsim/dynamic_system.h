@@ -757,6 +757,8 @@ namespace MBSim {
 
       void resetUpToDate() override;
 
+      void print();
+
     private:
       friend class DynamicSystemSolver;
       void addFrame(Frame *frame_);
