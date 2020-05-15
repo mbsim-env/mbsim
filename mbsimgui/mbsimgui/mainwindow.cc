@@ -42,6 +42,7 @@
 #include "embed.h"
 #include "project.h"
 #include "project_property_dialog.h"
+#include "href_property_dialog.h"
 #include "file_editor.h"
 #include "utils.h"
 #include "basicitemdata.h"
@@ -2170,10 +2171,37 @@ namespace MBSimGUI {
   void MainWindow::viewElementSource() {
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
-    if(element) {
-      SourceDialog dialog(element->getXMLElement(),this);
-      dialog.exec();
-    }
+//    if(element) {
+//      SourceDialog dialog(element->getXMLElement(),this);
+//      dialog.exec();
+//    }
+        auto *editor = new HrefPropertyDialog(element);
+        editor->setAttribute(Qt::WA_DeleteOnClose);
+        editor->toWidget();
+        editor->show();
+        connect(editor,&QDialog::finished,this,[=](){
+          if(editor->result()==QDialog::Accepted) {
+            if(editor->getCancel()) setProjectChanged(true);
+            editor->fromWidget();
+            element->clear();
+            QModelIndex index = elementView->selectionModel()->currentIndex();
+            QModelIndex parentIndex = index.parent();
+            auto *model = static_cast<ElementTreeModel*>(elementView->model());
+            model->removeRow(index.row(), parentIndex);
+            element->create();
+            model->createObjectItem(static_cast<Object*>(element),parentIndex);
+//            QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
+ //           elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+            if(getAutoRefresh()) refresh();
+          }
+          setAllowUndo(true);
+        });
+        connect(editor,&ElementPropertyDialog::apply,this,[=](){
+          if(editor->getCancel()) setProjectChanged(true);
+          editor->fromWidget();
+          if(getAutoRefresh()) refresh();
+          editor->setCancel(true);
+        });
   }
 
   void MainWindow::viewParametersSource() {
@@ -2364,10 +2392,10 @@ namespace MBSimGUI {
 
   void MainWindow::openElementEditor(bool config) {
     if(not editorIsOpen()) {
-      setAllowUndo(false);
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
+        setAllowUndo(false);
         updateParameters(element);
         elementEditor = element->createPropertyDialog();
         elementEditor->setAttribute(Qt::WA_DeleteOnClose);
@@ -2408,10 +2436,10 @@ namespace MBSimGUI {
 
   void MainWindow::openParameterEditor(bool config) {
     if(not editorIsOpen()) {
-      setAllowUndo(false);
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       if(parameter) {
+        setAllowUndo(false);
         updateParameters(parameter->getParent(),true);
         parameterEditor = parameter->createPropertyDialog();
         parameterEditor->setAttribute(Qt::WA_DeleteOnClose);

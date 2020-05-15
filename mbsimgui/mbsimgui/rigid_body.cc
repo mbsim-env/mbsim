@@ -54,14 +54,8 @@ namespace MBSimGUI {
     ele0->insertBefore( frames, nullptr );
     contours = D(doc)->createElement( MBSIM%"contours" );
     ele0->insertBefore( contours, nullptr );
-
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
     ele0->insertBefore( ele1, nullptr );
-
-    for(size_t i=1; i<frame.size(); i++)
-      frame[i]->createXMLElement(frames);
-    for(auto & i : contour)
-      i->createXMLElement(contours);
     return ele0;
   }
 

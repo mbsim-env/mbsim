@@ -42,7 +42,6 @@ namespace MBSimGUI {
       Project* getProject() { return project; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual void create() { }
       QString getName() const override { return getType(); }
       QString getType() const override { return "Solver"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;

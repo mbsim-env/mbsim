@@ -51,16 +51,25 @@ namespace MBSimGUI {
     contour_->updateStatus();
   }
 
+  void Body::clear() {
+    for (auto it = frame.begin()+1; it != frame.end(); ++it)
+      delete *it;
+    for (auto it = contour.begin(); it != contour.end(); ++it)
+      delete *it;
+    frame.erase(frame.begin()+1,frame.end());
+    contour.erase(contour.begin(),contour.end());
+  }
+
   void Body::removeElement(Element* element) {
     if(dynamic_cast<Frame*>(element)) {
-      for (auto it = frame.begin() ; it != frame.end(); ++it)
+      for(auto it = frame.begin(); it != frame.end(); ++it)
         if(*it==element) {
           frame.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Contour*>(element)) {
-      for (auto it = contour.begin() ; it != contour.end(); ++it)
+      for(auto it = contour.begin(); it != contour.end(); ++it)
         if(*it==element) {
           contour.erase(it);
           break;

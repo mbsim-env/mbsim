@@ -112,49 +112,49 @@ namespace MBSimGUI {
 
   void Group::removeElement(Element* element) {
     if(dynamic_cast<Frame*>(element)) {
-      for (auto it = frame.begin() ; it != frame.end(); ++it)
+      for(auto it = frame.begin(); it != frame.end(); ++it)
         if(*it==element) {
           frame.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Contour*>(element)) {
-      for (auto it = contour.begin() ; it != contour.end(); ++it)
+      for(auto it = contour.begin(); it != contour.end(); ++it)
         if(*it==element) {
           contour.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Group*>(element)) {
-      for (auto it = group.begin() ; it != group.end(); ++it)
+      for(auto it = group.begin(); it != group.end(); ++it)
         if(*it==element) {
           group.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Object*>(element)) {
-      for (auto it = object.begin() ; it != object.end(); ++it)
+      for(auto it = object.begin(); it != object.end(); ++it)
         if(*it==element) {
           object.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Link*>(element)) {
-      for (auto it = link.begin() ; it != link.end(); ++it)
+      for(auto it = link.begin(); it != link.end(); ++it)
         if(*it==element) {
           link.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Constraint*>(element)) {
-      for (auto it = constraint.begin() ; it != constraint.end(); ++it)
+      for(auto it = constraint.begin(); it != constraint.end(); ++it)
         if(*it==element) {
           constraint.erase(it);
           break;
         }
     }
     else if(dynamic_cast<Observer*>(element)) {
-      for (auto it = observer.begin() ; it != observer.end(); ++it)
+      for(auto it = observer.begin(); it != observer.end(); ++it)
         if(*it==element) {
           observer.erase(it);
           break;

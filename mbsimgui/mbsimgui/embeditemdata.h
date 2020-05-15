@@ -49,6 +49,8 @@ namespace MBSimGUI {
       QString getValue() const override { return ""; }
       QString getFile() const override { return embed?QString::fromStdString(MBXMLUtils::E(embed)->getAttribute("href")):""; }
       bool isActive();
+      virtual void create() { }
+      virtual void clear() { }
       virtual EmbedItemData* getEmbedItemParent() { return nullptr; }
       std::vector<EmbedItemData*> getEmbedItemParents();
       int getNumberOfParameters() const { return parameter.size(); }
