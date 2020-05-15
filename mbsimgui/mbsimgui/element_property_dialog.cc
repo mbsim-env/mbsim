@@ -155,22 +155,6 @@ namespace MBSimGUI {
     static_cast<TextWidget*>(name->getWidget())->setReadOnly(readOnly);
   }
 
-  UnknownElementPropertyDialog::UnknownElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
-    addTab("General");
-    editor = new ExtWidget("XML Editor",new XMLEditorWidget);
-    addToTab("General", editor);
-  }
-
-  DOMElement* UnknownElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    editor->initializeUsingXML(item->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* UnknownElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    item->setXMLElement(editor->writeXMLFile(item->getXMLElement(),ref));
-    return nullptr;
-  }
-
   FramePropertyDialog::FramePropertyDialog(Element *frame) : ElementPropertyDialog(frame) {
     addTab("Visualization",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");

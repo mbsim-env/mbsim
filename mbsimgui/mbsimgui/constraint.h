@@ -33,7 +33,7 @@ namespace MBSimGUI {
   class UnknownConstraint : public Constraint {
     public:
       QString getType() const override { return "UnknownConstraint"; }
-      PropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new UnknownItemPropertyDialog(this);}
   };
 
   class MechanicalConstraint : public Constraint {

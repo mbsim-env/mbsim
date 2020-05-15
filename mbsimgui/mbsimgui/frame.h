@@ -37,7 +37,7 @@ namespace MBSimGUI {
   class UnknownFrame : public Frame {
     public:
       QString getType() const override { return "UnknownFrame"; }
-      PropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new UnknownItemPropertyDialog(this);}
   };
 
   class InternalFrame : public Frame {

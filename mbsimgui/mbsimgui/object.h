@@ -33,7 +33,7 @@ namespace MBSimGUI {
   class UnknownObject : public Object {
     public:
       QString getType() const override { return "UnknownObject"; }
-      PropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new UnknownItemPropertyDialog(this);}
   };
 
 }

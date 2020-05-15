@@ -33,7 +33,7 @@ namespace MBSimGUI {
   class UnknownLink : public Link {
     public:
       QString getType() const override { return "UnknownLink"; }
-      PropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new UnknownItemPropertyDialog(this);}
   };
 
   class MechanicalLink : public Link {

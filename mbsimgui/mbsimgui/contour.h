@@ -34,7 +34,7 @@ namespace MBSimGUI {
   class UnknownContour : public Contour {
     public:
       QString getType() const override { return "UnknownContour"; }
-      PropertyDialog* createPropertyDialog() override {return new UnknownElementPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override {return new UnknownItemPropertyDialog(this);}
   };
 
   class RigidContour : public Contour {

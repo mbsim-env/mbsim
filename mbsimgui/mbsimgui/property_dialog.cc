@@ -20,7 +20,7 @@
 #include <config.h>
 #include "property_dialog.h"
 #include "embeditemdata.h"
-#include "widget.h"
+#include "basic_widgets.h"
 #include "mainwindow.h"
 #include <QGridLayout>
 #include <QDialogButtonBox>
@@ -29,6 +29,8 @@
 #include <QSettings>
 
 using namespace std;
+using namespace MBXMLUtils;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
@@ -130,6 +132,22 @@ namespace MBSimGUI {
 
   void EmbedItemPropertyDialog::fromWidget() {
     writeXMLFile(item->getXMLElement());
+  }
+
+  UnknownItemPropertyDialog::UnknownItemPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog(item) {
+    addTab("General");
+    editor = new ExtWidget("XML Editor",new XMLEditorWidget);
+    addToTab("General", editor);
+  }
+
+  DOMElement* UnknownItemPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    editor->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* UnknownItemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    item->setXMLElement(editor->writeXMLFile(item->getXMLElement(),ref));
+    return nullptr;
   }
 
 }

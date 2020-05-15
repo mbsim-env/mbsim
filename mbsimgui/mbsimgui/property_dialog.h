@@ -39,6 +39,7 @@ class QAbstractButton;
 namespace MBSimGUI {
 
   class EmbedItemData;
+  class ExtWidget;
 
   class PropertyDialog : public QDialog {
     Q_OBJECT
@@ -79,6 +80,16 @@ namespace MBSimGUI {
       void fromWidget() override;
     protected:
       EmbedItemData *item;
+  };
+
+  class UnknownItemPropertyDialog : public EmbedItemPropertyDialog {
+
+    public:
+      UnknownItemPropertyDialog(EmbedItemData *item);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *editor;
   };
 
 }
