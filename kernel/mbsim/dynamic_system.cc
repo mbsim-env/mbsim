@@ -1695,4 +1695,15 @@ namespace MBSim {
     return bInverseKinetics;
   }
 
+  void DynamicSystem::print() {
+    for(auto & i : dynamicsystem)
+      i->print();
+    for(auto & i : object)
+      msg(Debug) << i->getPath() << ": qSize=" << i->getqSize() << ": uSize=" << i->getuSize() << ", hSize=" << i->gethSize() << ", qInd=" << i->getqInd() << ", uInd=" << i->getuInd() << ", hInd=" << i->gethInd() << endl;
+    for (auto & i : link)
+      msg(Debug) << i->getPath() << ": xSize=" << i->getxSize() << ", xInd=" << i->getxInd() << endl;
+    for (auto & i : constraint)
+      msg(Debug) << i->getPath() << ": xSize=" << i->getxSize() << ", xInd=" << i->getxInd() << endl;
+  }
+
 }
