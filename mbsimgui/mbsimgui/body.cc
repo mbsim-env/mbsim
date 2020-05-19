@@ -52,11 +52,11 @@ namespace MBSimGUI {
   }
 
   void Body::clear() {
-    for (auto it = frame.begin()+1; it != frame.end(); ++it)
+    for (auto it = frame.begin(); it != frame.end(); ++it)
       delete *it;
     for (auto it = contour.begin(); it != contour.end(); ++it)
       delete *it;
-    frame.erase(frame.begin()+1,frame.end());
+    frame.erase(frame.begin(),frame.end());
     contour.erase(contour.begin(),contour.end());
   }
 

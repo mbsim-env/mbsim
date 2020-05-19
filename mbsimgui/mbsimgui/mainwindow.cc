@@ -2177,7 +2177,7 @@ namespace MBSimGUI {
             auto *model = static_cast<ElementTreeModel*>(elementView->model());
             model->removeRow(index.row(), parentIndex);
             element->create();
-            model->createObjectItem(static_cast<Object*>(element),parentIndex);
+            model->createElementItem(element,parentIndex);
 //            QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
  //           elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
             if(getAutoRefresh()) refresh();

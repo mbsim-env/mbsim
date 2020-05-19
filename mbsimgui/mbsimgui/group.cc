@@ -346,6 +346,31 @@ namespace MBSimGUI {
     }
   }
 
+  void Group::clear() {
+    for (auto it = frame.begin()+1; it != frame.end(); ++it)
+      delete *it;
+    for (auto it = contour.begin(); it != contour.end(); ++it)
+      delete *it;
+    for (auto it = group.begin(); it != group.end(); ++it)
+      delete *it;
+    for (auto it = object.begin(); it != object.end(); ++it)
+      delete *it;
+    for (auto it = link.begin(); it != link.end(); ++it)
+      delete *it;
+    for (auto it = constraint.begin(); it != constraint.end(); ++it)
+      delete *it;
+    for (auto it = observer.begin(); it != observer.end(); ++it)
+      delete *it;
+    frame.erase(frame.begin()+1,frame.end());
+    contour.erase(contour.begin(),contour.end());
+    group.erase(group.begin(),group.end());
+    object.erase(object.begin(),object.end());
+    link.erase(link.begin(),link.end());
+    constraint.erase(constraint.begin(),constraint.end());
+    observer.erase(observer.begin(),observer.end());
+  }
+
+
   Frame* Group::getFrame(const QString &name) const {
     size_t i;
     for(i=0; i<frame.size(); i++) {

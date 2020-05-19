@@ -68,6 +68,7 @@ namespace MBSimGUI {
     public:
       ElementTreeModel(QObject *parent = nullptr);
 
+      void createElementItem(Element *element, const QModelIndex &parent = QModelIndex(), bool recursive=true);
       void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
       void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
       void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex(), bool recursive=true);

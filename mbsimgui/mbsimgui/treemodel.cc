@@ -144,6 +144,23 @@ namespace MBSimGUI {
     rootItem = new TreeItem(new TreeItemData);
   }
 
+  void ElementTreeModel::createElementItem(Element *element, const QModelIndex &parent, bool recursive) {
+    if(dynamic_cast<Frame*>(element))
+      createFrameItem(static_cast<Frame*>(element),parent);
+    else if(dynamic_cast<Contour*>(element))
+      createContourItem(static_cast<Contour*>(element),parent);
+    else if(dynamic_cast<Group*>(element))
+      createGroupItem(static_cast<Group*>(element),parent,recursive);
+    else if(dynamic_cast<Object*>(element))
+      createObjectItem(static_cast<Object*>(element),parent,recursive);
+    else if(dynamic_cast<Link*>(element))
+      createLinkItem(static_cast<Link*>(element),parent);
+    else if(dynamic_cast<Constraint*>(element))
+      createConstraintItem(static_cast<Constraint*>(element),parent);
+    else if(dynamic_cast<Observer*>(element))
+      createObserverItem(static_cast<Observer*>(element),parent);
+  }
+
   void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);

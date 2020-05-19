@@ -122,4 +122,13 @@ namespace MBSimGUI {
     }
   }
 
+  void RigidBody::clear() {
+    for (auto it = frame.begin()+1; it != frame.end(); ++it)
+      delete *it;
+    for (auto it = contour.begin(); it != contour.end(); ++it)
+      delete *it;
+    frame.erase(frame.begin()+1,frame.end());
+    contour.erase(contour.begin(),contour.end());
+  }
+
 }
