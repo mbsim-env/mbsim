@@ -231,7 +231,9 @@ namespace MBSimGUI {
     actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, &MainWindow::saveMBSimH5DataAs);
     actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, &MainWindow::saveOpenMBVDataAs);
     actionSaveStateVectorAs = menu->addAction("Export state vector", this, &MainWindow::saveStateVectorAs);
+    actionSaveStateTableAs = menu->addAction("Export state table", this, &MainWindow::saveStateTableAs);
     actionSaveEigenanalysisAs = menu->addAction("Export eigenanalysis", this, &MainWindow::saveEigenanalysisAs);
+    actionSaveHarmonicResponseAnalysisAs = menu->addAction("Export harmonic response analysis", this, &MainWindow::saveHarmonicResponseAnalysisAs);
     menuBar()->addMenu(menu);
 
     menuBar()->addSeparator();
@@ -262,8 +264,8 @@ namespace MBSimGUI {
     actionEigenanalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Eigenanalysis");
     connect(actionEigenanalysis,&QAction::triggered,this,&MainWindow::eigenanalysis);
     toolBar->addAction(actionEigenanalysis);
-    actionFrequencyResponse = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
-    connect(actionFrequencyResponse,&QAction::triggered,this,&MainWindow::frequencyResponse);
+    actionHarmonicResponseAnalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
+    connect(actionHarmonicResponseAnalysis,&QAction::triggered,this,&MainWindow::harmonicResponseAnalysis);
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
     toolBar->addAction(actionDebug);
@@ -416,12 +418,14 @@ namespace MBSimGUI {
         actionSaveOpenMBVDataAs->setDisabled(false);
         if(saveFinalStateVector)
           actionSaveStateVectorAs->setDisabled(false);
+        actionSaveStateTableAs->setDisabled(false);
         if(dynamic_cast<Eigenanalyzer*>(getProject()->getSolver())) {
           actionSaveEigenanalysisAs->setDisabled(false);
           actionEigenanalysis->setDisabled(false);
         }
         if(dynamic_cast<HarmonicResponseAnalyzer*>(getProject()->getSolver())) {
-          actionFrequencyResponse->setDisabled(false);
+          actionSaveHarmonicResponseAnalysisAs->setDisabled(false);
+          actionHarmonicResponseAnalysis->setDisabled(false);
         }
         actionOpenMBV->setDisabled(false);
         actionH5plotserie->setDisabled(false);
@@ -651,12 +655,14 @@ namespace MBSimGUI {
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
-      actionFrequencyResponse->setDisabled(true);
+      actionHarmonicResponseAnalysis->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
       actionSaveStateVectorAs->setDisabled(true);
+      actionSaveStateTableAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
+      actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(true);
 
       auto *pmodel = static_cast<EmbeddingTreeModel*>(embeddingView->model());
@@ -697,12 +703,14 @@ namespace MBSimGUI {
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
-      actionFrequencyResponse->setDisabled(true);
+      actionHarmonicResponseAnalysis->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
       actionSaveStateVectorAs->setDisabled(true);
+      actionSaveStateTableAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
+      actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(false);
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
@@ -865,9 +873,11 @@ namespace MBSimGUI {
         saveMBSimH5Data(dir+"/MBS.mbsh5");
         saveOpenMBVXMLData(dir+"/MBS.ombvx");
         saveOpenMBVH5Data(dir+"/MBS.ombvh5");
-        saveEigenanalysis(dir+"/MBS.eigenanalysis.mat");
+        saveEigenanalysis(dir+"/eigenanalysis.mat");
+        saveHarmonicResponseAnalysis(dir+"/harmonic_response_analysis.mat");
         if(settings.value("mainwindow/options/savestatevector", false).toBool())
           saveStateVector(dir+"/statevector.asc");
+        saveStateTable(dir+"/statetable.asc");
       }
     }
   }
@@ -914,7 +924,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveStateVectorAs() {
-    QString file=QFileDialog::getSaveFileName(this, "Export state vector file", getProjectDir().absoluteFilePath("statevector.asc"), "ASCII files (*.asc)");
+    QString file=QFileDialog::getSaveFileName(this, "Export state vector", getProjectDir().absoluteFilePath("statevector.asc"), "ASCII files (*.asc)");
     if(file!="") {
       saveStateVector(file);
     }
@@ -926,10 +936,21 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/statevector.asc",file);
   }
 
+  void MainWindow::saveStateTableAs() {
+    QString file=QFileDialog::getSaveFileName(this, "Export state table", getProjectDir().absoluteFilePath("statetable.asc"), "ASCII files (*.asc)");
+    if(file!="") {
+      saveStateTable(file);
+    }
+  }
+
+  void MainWindow::saveStateTable(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc",file);
+  }
+
   void MainWindow::saveEigenanalysisAs() {
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    QModelIndex index = model->index(0,0);
-    QString file=QFileDialog::getSaveFileName(this, "Export eigenanalysis file", getProjectDir().absoluteFilePath(model->getItem(index)->getItemData()->getName()+".eigenanalysis.mat"), "mat files (*.eigenanalysis.mat)");
+    QString file=QFileDialog::getSaveFileName(this, "Export eigenanalysis", getProjectDir().absoluteFilePath("eigenanalysis.mat"), "mat files (*.mat)");
     if(file!="") {
       saveEigenanalysis(file);
     }
@@ -938,7 +959,20 @@ namespace MBSimGUI {
   void MainWindow::saveEigenanalysis(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".eigenanalysis.mat",file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/eigenanalysis.mat",file);
+  }
+
+  void MainWindow::saveHarmonicResponseAnalysisAs() {
+    QString file=QFileDialog::getSaveFileName(this, "Export harmonic response analysis", getProjectDir().absoluteFilePath("harmonic_response_analysis.mat"), "mat files (*.mat)");
+    if(file!="") {
+      saveHarmonicResponseAnalysis(file);
+    }
+  }
+
+  void MainWindow::saveHarmonicResponseAnalysis(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/harmonic_response_analysis.mat",file);
   }
 
   void MainWindow::mbsimxml(int task) {
@@ -963,11 +997,13 @@ namespace MBSimGUI {
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
       actionSaveStateVectorAs->setDisabled(true);
+      actionSaveStateTableAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
+      actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
-      actionFrequencyResponse->setDisabled(true);
+      actionHarmonicResponseAnalysis->setDisabled(true);
     }
     else if(task==1) {
       if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
@@ -1019,8 +1055,11 @@ namespace MBSimGUI {
     QSettings settings;
     if(currentTask==1)
       arg.append("--stopafterfirststep");
-    else if(settings.value("mainwindow/options/savestatevector", false).toBool())
-      arg.append("--savefinalstatevector");
+    else {
+        arg.append("--savestatetable");
+      if(settings.value("mainwindow/options/savestatevector", false).toBool())
+        arg.append("--savefinalstatevector");
+    }
 
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>)#");
@@ -1070,17 +1109,19 @@ namespace MBSimGUI {
   }
 
   void MainWindow::eigenanalysis() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".eigenanalysis.mat";
-    if(QFile::exists(name)) {
-      EigenanalysisDialog *dialog = new EigenanalysisDialog(name,this);
+    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/eigenanalysis.mat";
+    QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
+    if(QFile::exists(file1) and QFile::exists(file2)) {
+      EigenanalysisDialog *dialog = new EigenanalysisDialog(this);
       dialog->show();
     }
   }
 
-  void MainWindow::frequencyResponse() {
-    QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".harmonic_response_analysis.mat";
-    if(QFile::exists(name)) {
-      HarmonicResponseDialog *dialog = new HarmonicResponseDialog(name,this);
+  void MainWindow::harmonicResponseAnalysis() {
+    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/harmonic_response_analysis.mat";
+    QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
+    if(QFile::exists(file1) and QFile::exists(file2)) {
+      HarmonicResponseDialog *dialog = new HarmonicResponseDialog(this);
       dialog->show();
     }
   }
