@@ -93,7 +93,7 @@ namespace MBSim {
       }
     }
     std::sort(f.begin(), f.end());
-    saveEigenanalyis(fileName.empty()?system->getName()+".eigenanalysis.mat":fileName);
+    saveEigenanalyis();
   }
 
   void Eigenanalyzer::computeEigenmodes() {
@@ -157,8 +157,8 @@ namespace MBSim {
     }
   }
 
-  bool Eigenanalyzer::saveEigenanalyis(const string& fileName) {
-    ofstream os(fileName);
+  void Eigenanalyzer::saveEigenanalyis() {
+    ofstream os("eigenanalysis.mat");
     if(os.is_open()) {
       os << "# name: " << "lambda" << endl;
       os << "# type: " << "complex matrix" << endl;
@@ -195,9 +195,7 @@ namespace MBSim {
       }
       os << endl;
       os.close();
-      return true;
     }
-    return false;
   }
 
   void Eigenanalyzer::initializeUsingXML(DOMElement *element) {

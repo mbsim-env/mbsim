@@ -757,7 +757,7 @@ namespace MBSim {
 
       void resetUpToDate() override;
 
-      void dumpElementData();
+      void updateStateTable();
 
     private:
       friend class DynamicSystemSolver;

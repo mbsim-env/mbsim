@@ -1695,15 +1695,21 @@ namespace MBSim {
     return bInverseKinetics;
   }
 
-  void DynamicSystem::dumpElementData() {
+  void DynamicSystem::updateStateTable() {
     for(auto & i : dynamicsystem)
-      i->dumpElementData();
-    for(auto & i : object)
-      msg(Debug) << i->getPath() << ": qSize=" << i->getqSize() << ": uSize=" << i->getuSize() << ", hSize=" << i->gethSize() << ", qInd=" << i->getqInd() << ", uInd=" << i->getuInd() << ", hInd=" << i->gethInd() << endl;
+      i->updateStateTable();
+    for(auto & i : object) {
+      for(int j=0; j<i->getqSize(); j++)
+        ds->getStateTable()[i->getqInd()+j] = StateTable(i->getPath(),'q',j);
+      for(int j=0; j<i->getuSize(); j++)
+        ds->getStateTable()[ds->getqSize()+i->getuInd()+j] = StateTable(i->getPath(),'u',j);
+    }
     for (auto & i : link)
-      msg(Debug) << i->getPath() << ": xSize=" << i->getxSize() << ", xInd=" << i->getxInd() << endl;
+      for(int j=0; j<i->getxSize(); j++)
+        ds->getStateTable()[ds->getqSize()+ds->getuSize()+i->getxInd()+j] = StateTable(i->getPath(),'x',j);
     for (auto & i : constraint)
-      msg(Debug) << i->getPath() << ": xSize=" << i->getxSize() << ", xInd=" << i->getxInd() << endl;
+      for(int j=0; j<i->getxSize(); j++)
+        ds->getStateTable()[ds->getqSize()+ds->getuSize()+i->getxInd()+j] = StateTable(i->getPath(),'x',j);
   }
 
 }

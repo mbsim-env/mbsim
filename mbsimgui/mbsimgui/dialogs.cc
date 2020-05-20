@@ -186,8 +186,9 @@ namespace MBSimGUI {
     }
   }
 
-  EigenanalysisDialog::EigenanalysisDialog(const QString &name, QWidget *parent) : QDialog(parent) {
-    OctaveParser parser(name.toStdString());
+  EigenanalysisDialog::EigenanalysisDialog(QWidget *parent) : QDialog(parent) {
+    setWindowTitle("Eigenanalysis");
+    OctaveParser parser(mw->getUniqueTempDir().generic_string()+"/eigenanalysis.mat");
     parser.parse();
     fmatvec::Vector<fmatvec::Var,complex<double>> w = static_cast<const OctaveComplexMatrix*>(parser.get(0))->get<fmatvec::Vector<fmatvec::Var,complex<double>>>();
     fmatvec::SquareMatrix<fmatvec::Var,complex<double>> V = static_cast<const OctaveComplexMatrix*>(parser.get(1))->get<fmatvec::SquareMatrix<fmatvec::Var,complex<double>>>();
@@ -201,15 +202,30 @@ namespace MBSimGUI {
     }
     std::sort(f.begin(), f.end());
 
-    QGridLayout *layout = new QGridLayout;
+    ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
+    QVector<QString> name;
+    QVector<int> number;
+    string name_;
+    char label_;
+    int number_;
+    while(is) {
+      is >> name_ >> label_ >> number_;
+      if(label_!='q')
+        break;
+      name.append(QString::fromStdString(name_));
+      number.append(number_);
+    }
+    is.close();
+
+    QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
     table = new QTableWidget(f.size(),5);
+    layout->addWidget(table);
     QStringList labels;
     labels << "Mode" << "Frequency" << "Exponential decay" << "Angular frequency" << "Damping ratio";
     table->setHorizontalHeaderLabels(labels);
-    layout->addWidget(table,0,0);
-    int n = V.rows()/2;
-    QVector<double> m(n);
+    int n = name.size();
+    QVector<double> m(name.size());
     QVector<QVector<double>> A(f.size(),QVector<double>(n));
     for(int k=0; k<n; k++)
       m[k] = k+1;
@@ -231,17 +247,29 @@ namespace MBSimGUI {
       for(int k=0; k<n; k++)
         A[i][k] = V(k+n,j).real()/V(ind+n,j).real();
     }
+    table->resizeColumnsToContents();
     if(f.size()) {
       table->selectRow(0);
       plot = new DataPlot(m,A,"Mode", "Eigenmode", "DOF", "-", this);
+      layout->addWidget(plot);
       plot->setSymbol(QwtSymbol::Diamond,10);
       plot->setAxisScale(QwtPlot::xBottom,1-0.1,n+0.1,1);
       plot->setAxisScale(QwtPlot::yLeft,-1.1,1.1);
       plot->replot();
-      layout->addWidget(plot,0,1);
+      QTreeWidget *stateTable = new QTreeWidget;
+      layout->addWidget(stateTable);
+      stateTable->setHeaderLabels(QStringList{"DOF","Element name","Element DOF number"});
+      for(unsigned int i=0; i<name.size(); i++) {
+        auto *item = new QTreeWidgetItem;
+        item->setText(0, QString::number(m[i]));
+        item->setText(1, name[i]);
+        item->setText(2, QString::number(number[i]+1));
+        stateTable->addTopLevelItem(item);
+      }
+      stateTable->resizeColumnToContents(1);
       QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+      layout->addWidget(buttonBox);
       buttonBox->addButton(QDialogButtonBox::Ok);
-      layout->addWidget(buttonBox,1,0,1,2);
       connect(buttonBox, &QDialogButtonBox::accepted, this, &EigenanalysisDialog::accept);
       connect(plot, &DataPlot::numChanged, this, &EigenanalysisDialog::selectRow);
       connect(table, &QTableWidget::cellClicked, this, &EigenanalysisDialog::selectMode);
@@ -260,27 +288,58 @@ namespace MBSimGUI {
     plot->blockSignals(false);
   }
 
-  HarmonicResponseDialog::HarmonicResponseDialog(const QString &name, QWidget *parent) : QDialog(parent) {
-    OctaveParser parser(name.toStdString());
+  HarmonicResponseDialog::HarmonicResponseDialog(QWidget *parent) : QDialog(parent) {
+    setWindowTitle("Harmonic response analysis");
+    OctaveParser parser(mw->getUniqueTempDir().generic_string()+"/harmonic_response_analysis.mat");
     parser.parse();
     fmatvec::MatV t_ = static_cast<const OctaveMatrix*>(parser.get(1))->get<fmatvec::MatV>();
     fmatvec::MatV A_ = static_cast<const OctaveMatrix*>(parser.get(2))->get<fmatvec::MatV>();
+
+    ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
+    QVector<QString> name;
+    QVector<int> number;
+    string name_;
+    char label_;
+    int number_;
+    while(is) {
+      is >> name_ >> label_ >> number_;
+      if(label_!='q')
+        break;
+      name.append(QString::fromStdString(name_));
+      number.append(number_);
+    }
+    is.close();
+
     QVector<double> t(t_.rows());
-    QVector<QVector<double>> A(A_.cols(),QVector<double>(A_.rows()));
+    QVector<QVector<double>> A(name.size(),QVector<double>(A_.rows()));
     for(int i=0; i<t_.rows(); i++) {
       t[i] = t_(i,0);
-      for(int j=0; j<A_.cols(); j++)
+      for(int j=0; j<A.size(); j++)
         A[j][i] = A_(i,j);
     }
 
-    QGridLayout *layout = new QGridLayout;
+    QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
     DataPlot *plot = new DataPlot(t,A,"DOF", "Frequency response", "f in Hz", "A", this);
+    layout->addWidget(plot);
     plot->replot();
-    layout->addWidget(plot,0,0);
+    QVector<double> m(name.size());
+    for(int k=0; k<name.size(); k++)
+      m[k] = k+1;
+    QTreeWidget *stateTable = new QTreeWidget;
+    layout->addWidget(stateTable);
+    stateTable->setHeaderLabels(QStringList{"DOF","Element name","Element DOF number"});
+    for(unsigned int i=0; i<name.size(); i++) {
+      auto *item = new QTreeWidgetItem;
+      item->setText(0, QString::number(m[i]));
+      item->setText(1, name[i]);
+      item->setText(2, QString::number(number[i]+1));
+      stateTable->addTopLevelItem(item);
+    }
+    stateTable->resizeColumnToContents(1);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    layout->addWidget(buttonBox);
     buttonBox->addButton(QDialogButtonBox::Ok);
-    layout->addWidget(buttonBox,1,0,1,1);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &HarmonicResponseDialog::accept);
   }
 

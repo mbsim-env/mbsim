@@ -116,12 +116,6 @@ namespace MBSim {
        */
       fmatvec::Vec getEigenfrequencies() const;
 
-      /**
-       * \brief Set the name of the output file
-       * \param fileName_ The output file name
-       */
-      void setOutputFileName(const std::string &fileName_) { fileName = fileName_; }
-
       void initializeUsingXML(xercesc::DOMElement *element);
 
     protected:
@@ -137,9 +131,7 @@ namespace MBSim {
       std::vector<std::pair<double,int>> f;
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<2>,double> MA;
 
-      std::string fileName;
-
-      bool saveEigenanalyis(const std::string &fileName);
+      void saveEigenanalyis();
 
       void computeEigenvalues();
       void computeEigenmodes();

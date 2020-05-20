@@ -281,6 +281,8 @@ void MBSimXML::main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrat
 }
 
 void MBSimXML::postMain(const list<string> &args, Solver *&solver, DynamicSystemSolver*& dss) {
+  if(find(args.begin(), args.end(), "--savestatetable")!=args.end())
+    dss->writeStateTable("statetable.asc");
   if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
     dss->writez("statevector.asc", false);
   delete dss;

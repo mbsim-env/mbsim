@@ -28,7 +28,7 @@
 
 namespace MBSimGUI {
 
-  DataPlot::DataPlot(const QVector<double> &f_, const QVector<QVector<double>> &A_, const QString &spinBoxLabel, const QString &title, const QString &xLabel, const QString &yLabel, QWidget *parent) : QWidget(parent), f(f_), A(A_) {
+  DataPlot::DataPlot(const QVector<double> &x_, const QVector<QVector<double>> &y_, const QString &spinBoxLabel, const QString &title, const QString &xLabel, const QString &yLabel, QWidget *parent) : QWidget(parent), x(x_), y(y_) {
       auto *layout = new QGridLayout;
       setLayout(layout);
 
@@ -37,7 +37,7 @@ namespace MBSimGUI {
       num = new QSpinBox;
       num->setValue(1);
       num->setMinimum(1);
-      num->setMaximum(A.size());
+      num->setMaximum(y.size());
       layout->addWidget(num,0,1);
       layout->setColumnStretch(2,1);
 
@@ -48,7 +48,7 @@ namespace MBSimGUI {
       layout->addWidget(plot,1,0,1,3);
 
       curve = new QwtPlotCurve("Curve 1");
-      curve->setSamples(f,A[0]);
+      curve->setSamples(x,y[0]);
       curve->attach(plot);
       connect(num,QOverload<int>::of(&QSpinBox::valueChanged),this,&DataPlot::changePlot);
       connect(num,QOverload<int>::of(&QSpinBox::valueChanged),this,&DataPlot::numChanged);
@@ -69,7 +69,7 @@ namespace MBSimGUI {
   }
 
   void DataPlot::changePlot(int i) {
-    curve->setSamples(f,A[i-1]);
+    curve->setSamples(x,y[i-1]);
     plot->replot();
   }
 

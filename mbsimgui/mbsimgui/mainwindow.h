@@ -93,7 +93,7 @@ namespace MBSimGUI {
       QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionFrequencyResponse, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveEigenanalysisAs, *actionUndo, *actionRedo;
+      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionHarmonicResponseAnalysis, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveEigenanalysisAs, *actionSaveHarmonicResponseAnalysisAs, *actionUndo, *actionRedo;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
       QTime statusTime;
@@ -135,7 +135,9 @@ namespace MBSimGUI {
       void saveMBSimH5DataAs();
       void saveOpenMBVDataAs();
       void saveStateVectorAs();
+      void saveStateTableAs();
       void saveEigenanalysisAs();
+      void saveHarmonicResponseAnalysisAs();
       void help();
       void about();
       void simulate();
@@ -143,7 +145,7 @@ namespace MBSimGUI {
       void openmbv();
       void h5plotserie();
       void eigenanalysis();
-      void frequencyResponse();
+      void harmonicResponseAnalysis();
       void debug();
       void settingsFinished(int result);
       void applySettings();
@@ -228,7 +230,9 @@ namespace MBSimGUI {
       void saveOpenMBVXMLData(const QString &file);
       void saveOpenMBVH5Data(const QString &file);
       void saveStateVector(const QString &file);
+      void saveStateTable(const QString &file);
       void saveEigenanalysis(const QString &file);
+      void saveHarmonicResponseAnalysis(const QString &file);
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
       void saveSolverAs();

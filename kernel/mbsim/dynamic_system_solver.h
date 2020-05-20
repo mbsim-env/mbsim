@@ -30,6 +30,14 @@ namespace MBSim {
   class Environment;
   class MBSimEnvironment;
 
+  struct StateTable {
+    std::string name;
+    char label;
+    int number;
+    StateTable() = default;
+    StateTable(const std::string &name_, char label_, int number_) : name(name_), label(label_), number(number_) { }
+  };
+
   /**
    * \brief solver interface for modelling and simulation of dynamic systems
    * \author Martin Foerg
@@ -436,6 +444,13 @@ namespace MBSim {
       void writez(std::string fileName, bool formatH5=true);
 
       /**
+       * \brief writes state table to a file
+       * \param name of the file
+       * \param h5, else ascii
+       */
+      void writeStateTable(std::string fileName);
+
+      /**
        * \brief reads state from a file
        * \param name of the file
        */
@@ -576,6 +591,8 @@ namespace MBSim {
       /** Get the MBSimEnvironment.
        * This method a convinence method being fast compared to getEnvironment<MBSimEnvironment> */
       MBSimEnvironment* getMBSimEnvironment();
+
+      std::vector<StateTable>& getStateTable() { return tabz; }
 
     protected:
       /**
@@ -835,6 +852,8 @@ namespace MBSim {
       bool updT, updh[2], updr[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa, upddq, upddu, upddx;
 
       bool solveDirectly;
+
+      std::vector<StateTable> tabz;
 
     private:
       /**

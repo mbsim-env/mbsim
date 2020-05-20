@@ -91,7 +91,7 @@ namespace MBSimGUI {
 
   class EigenanalysisDialog : public QDialog {
     public:
-      EigenanalysisDialog(const QString &name, QWidget *parent);
+      EigenanalysisDialog(QWidget *parent);
     private:
       void selectRow(int);
       void selectMode(int row, int col);
@@ -101,7 +101,7 @@ namespace MBSimGUI {
 
   class HarmonicResponseDialog : public QDialog {
     public:
-      HarmonicResponseDialog(const QString &name, QWidget *parent);
+      HarmonicResponseDialog(QWidget *parent);
     private:
       DataPlot *plot;
   };

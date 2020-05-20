@@ -254,21 +254,18 @@ namespace MBSim {
       calcLinkStatusSize();
       calcLinkStatusRegSize();
 
-    if(msgAct(Debug)) {
-      msg(Debug) << "qSize = " << qSize << endl;
-      msg(Debug) << "uSize = " << uSize[0] << endl;
-      msg(Debug) << "xSize = " << xSize << endl;
-      msg(Debug) << "hSize = " << hSize[0] << endl;
-      msg(Debug) << "gSize = " << gSize << endl;
-      msg(Debug) << "gdSize = " << gdSize << endl;
-      msg(Debug) << "laSize = " << laSize << endl;
-      msg(Debug) << "svSize = " << svSize << endl;
-      msg(Debug) << "uSize[1] = " << uSize[1] << endl;
-      msg(Debug) << "hSize[1] = " << hSize[1] << endl;
-      msg(Debug) << "LinkStatusSize = " << LinkStatusSize << endl;
-      msg(Debug) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
-      dumpElementData();
-    }
+      msg(Info) << "qSize = " << qSize << endl;
+      msg(Info) << "uSize = " << uSize[0] << endl;
+      msg(Info) << "xSize = " << xSize << endl;
+      msg(Info) << "hSize = " << hSize[0] << endl;
+      msg(Info) << "gSize = " << gSize << endl;
+      msg(Info) << "gdSize = " << gdSize << endl;
+      msg(Info) << "laSize = " << laSize << endl;
+      msg(Info) << "svSize = " << svSize << endl;
+      msg(Info) << "uSize[1] = " << uSize[1] << endl;
+      msg(Info) << "hSize[1] = " << hSize[1] << endl;
+      msg(Info) << "LinkStatusSize = " << LinkStatusSize << endl;
+      msg(Info) << "LinkStatusRegSize = " << LinkStatusRegSize << endl;
 
       // Set the ds member variable of all elements recursively (this includes now generated elements of the graph)
       setDynamicSystemSolver(this);
@@ -1269,6 +1266,17 @@ namespace MBSim {
         file << x(i) << endl;
       file.close();
     }
+  }
+
+  void DynamicSystemSolver::writeStateTable(string fileName) {
+    if(tabz.empty()) {
+      tabz.resize(zSize);
+      updateStateTable();
+    }
+    ofstream file(fileName);
+    for (size_t i = 0; i < tabz.size(); i++)
+      file << tabz[i].name << " " << tabz[i].label << " " << tabz[i].number << endl;
+    file.close();
   }
 
   void DynamicSystemSolver::readz0(string fileName) {
