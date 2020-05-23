@@ -24,7 +24,6 @@ int main (int argc, char* argv[]) {
 
   cout << "Analyse planar motion" << endl;
   Eigenanalyzer analyzer;
-  analyzer.setOutputFileName("Eigenanalysis1.mat");
   analyzer.setEndTime(4.5);
   Vec z0(sys->getzSize());
   z0(1) = 1.0/180*M_PI;
@@ -39,7 +38,6 @@ int main (int argc, char* argv[]) {
   cout << " (should be " << sqrt(g/a) << ")" << endl;
 
   cout << "Analyse cone-pendel" << endl;
-  analyzer.setOutputFileName("Eigenanalysis2.mat");
   z0.init(0);
   zEq.init(0);
   zEq(1) = theta0/180*M_PI;
