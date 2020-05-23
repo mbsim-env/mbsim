@@ -14,7 +14,6 @@ int main (int argc, char* argv[]) {
   sys->initialize();
 
   Eigenanalyzer analyzer;
-  analyzer.setOutputFileName("Eigenanalysis.mat");
   Vec z0(sys->getzSize());
   z0(0) = 0.02;
   analyzer.setInitialDeviation(z0);
