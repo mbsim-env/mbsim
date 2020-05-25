@@ -140,7 +140,7 @@ args = argparser.parse_args()
 class MultiFile(object):
   def __init__(self, file1, second=None):
     self.filelist=[file1]
-    if second!=None:
+    if second is not None:
       self.filelist.append(second)
   def write(self, str):
     for f in self.filelist:
@@ -162,7 +162,7 @@ def killSubprocessCall(proc, f, killed, timeout):
   proc.terminate()
   time.sleep(30)
   # if proc has not terminated after 30 seconds kill it
-  if proc.poll()==None:
+  if proc.poll() is None:
     f.write("\n\n\n******************** START: MESSAGE FROM runexamples.py ********************\n")
     f.write("Program has not terminated after 30 seconds, killing the program now.\n")
     f.write("******************** END: MESSAGE FROM runexamples.py **********************\n\n\n\n")
@@ -186,7 +186,7 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   fcntl.fcntl(fd, fcntl.F_SETFL, fcntl.fcntl(fd, fcntl.F_GETFL) | os.O_NONBLOCK)
   # read all output
   lineNP=b'' # not already processed bytes (required since we read 100 bytes which may break a unicode multi byte character)
-  while proc.poll()==None:
+  while proc.poll() is None:
     time.sleep(0.5)
     try:
       line=lineNP+proc.stdout.read()
@@ -210,7 +210,7 @@ def subprocessCall(args, f, env=os.environ, maxExecutionTime=0):
   exeRE=re.compile("^.*LSB core file.*, *from '([^']*)' *,.*$")
   for coreFile in glob.glob("*core*"):
     m=exeRE.match(subprocess.check_output(["file", coreFile]).decode('utf-8'))
-    if m==None: continue
+    if m is None: continue
     exe=m.group(1).split(" ")[0]
     out=subprocess.check_output(["gdb", "-q", "-n", "-ex", "bt", "-batch", exe, coreFile]).decode('utf-8')
     f.write("\n\n\n******************** START: CORE DUMP BACKTRACE OF "+exe+" ********************\n\n\n")
@@ -303,14 +303,14 @@ def main():
   if args.buildSystemRun:
     sys.path.append("/context")
     import buildSystemState
-    if args.coverage!=None:
+    if args.coverage is not None:
       buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-coverage.svg", "...", "#777")
     buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrFailed.svg", "...", "#777")
     buildSystemState.createStateSVGFile("/mbsim-state/"+args.buildType+"-examples.nrAll.svg", "...", "#777")
 
   # fix arguments
   args.reportOutDir=os.path.abspath(args.reportOutDir)
-  if args.prefixSimulation!=None:
+  if args.prefixSimulation is not None:
     args.prefixSimulation=args.prefixSimulation.split(' ')
   else:
     args.prefixSimulation=[]
@@ -344,7 +344,7 @@ def main():
   mbsimXMLSchemas=subprocess.check_output(exePrefix()+[pj(mbsimBinDir, "mbsimxml"+args.exeExt), "--onlyListSchemas"]).\
     decode("utf-8").split()
   ombvSchemaRE=re.compile(".http___www_mbsim-env_de_OpenMBV.openmbv.xsd$")
-  ombvSchema=list(filter(lambda x: ombvSchemaRE.search(x)!=None, mbsimXMLSchemas))[0]
+  ombvSchema=list(filter(lambda x: ombvSchemaRE.search(x) is not None, mbsimXMLSchemas))[0]
 
   # check args.directories
   for d in args.directories:
@@ -527,7 +527,7 @@ def main():
   print("Started running examples. Each example will print a message if finished.")
   print("See the log file "+pj(os.path.dirname(args.reportOutDir), "result_current", "index.html")+" for detailed results.\n")
 
-  if args.coverage!=None:
+  if args.coverage is not None:
     # backup the coverage files in the build directories
     coverageBackupRestore('backup')
     # remove all "*.gcno", "*.gcda" files in ALL the examples
@@ -584,7 +584,7 @@ def main():
   # coverage analyzis (postpare)
   coverageAll=0
   coverageFailed=0
-  if args.coverage!=None:
+  if args.coverage is not None:
     coverageAll=1
     print("Create coverage analyzis"); sys.stdout.flush()
     coverageFailed=coverage(mainFD)
@@ -918,7 +918,7 @@ def runExample(resultQueue, example):
       outfiles=outfiles1+outfiles2+outfiles3
       # result
       resultStr+='<td data-order="%d%d%d%d">'%(0 if abs(ombvRet)+abs(h5pRet)+abs(guiRet)==0 else (1 if willFail else 2),
-                                               int(len(ombvFiles)>0), int(len(h5pFiles)>0), int(guiFile!=None))+\
+                                               int(len(ombvFiles)>0), int(len(h5pFiles)>0), int(guiFile is not None))+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(urllib.request.pathname2url(pj(example[0], "gui_openmbv.txt")),
           "visible" if len(ombvFiles)>0 else "hidden", "success" if ombvRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/openmbv.svg" alt="ombv"/></a>'+\
@@ -926,7 +926,7 @@ def runExample(resultQueue, example):
           "visible" if len(h5pFiles)>0 else "hidden", "success" if h5pRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/h5plotserie.svg" alt="h5p"/></a>'+\
         '<a href="%s" style="visibility:%s;" class="label bg-%s">'%(urllib.request.pathname2url(pj(example[0], "gui_mbsimgui.txt")),
-          "visible" if guiFile!=None else "hidden", "success" if guiRet==0 else ("danger" if not willFail else "warning"))+\
+          "visible" if guiFile is not None else "hidden", "success" if guiRet==0 else ("danger" if not willFail else "warning"))+\
           '<img src="/mbsim/html/mbsimgui.svg" alt="gui"/></a>'
       # add all additional output files
       if len(outfiles)>0:
@@ -988,7 +988,7 @@ def runExample(resultQueue, example):
       nrDeprecated=0
       for line in fileinput.FileInput(pj(args.reportOutDir, executeFN)):
         match=re.search("Deprecated feature called:", line)
-        if match!=None:
+        if match is not None:
           nrDeprecated=nrDeprecated+1
       if nrDeprecated==0:
         resultStr+='<td data-order="0" class="success"><span class="glyphicon glyphicon-ok-sign alert-success"></span>&nbsp;none</td>'
@@ -1492,7 +1492,7 @@ def createDiffPlot(diffHTMLFileName, example, filename, datasetName, column, lab
   print('</html>', file=diffHTMLPlotFD)
   diffHTMLPlotFD.close()
 
-  if gnuplotProcess==None:
+  if gnuplotProcess is None:
     return
 
   # fix if all values are nan to prevent a gnuplot warning
@@ -1837,7 +1837,7 @@ def compareExample(example, compareFN):
       # close h5 files
       h5RefFile.close()
       h5CurFile.close()
-  if gnuplotProcess!=None:
+  if gnuplotProcess is not None:
     gnuplotProcess.stdin.close()
     if gnuplotProcess.wait()!=0:
       raise RuntimeError("Generating the SVG file using gnuplot failed.")
@@ -2082,7 +2082,7 @@ def coverage(mainFD):
   linesRE=re.compile("^ *lines\.*: *([0-9]+\.[0-9]+)% ")
   for line in fileinput.FileInput(pj(args.reportOutDir, "coverage", "log.txt")):
     m=linesRE.match(line)
-    if m!=None:
+    if m is not None:
       covRate=int(float(m.group(1))+0.5)
   covRateStr=str(covRate)+"%" if ret==0 else "ERR"
   # update build state (only if --buildSystemRun is used)
