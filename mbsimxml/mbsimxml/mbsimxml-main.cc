@@ -54,6 +54,7 @@ int main(int argc, char *argv[]) {
           <<"--onlypreprocess       Stop after the preprocessing stage"<<endl
           <<"--donotintegrate       Stop after the initialization stage, do not integrate"<<endl
           <<"--savefinalstatevector Save the state vector to the file \"statevector.asc\" after integration"<<endl
+          <<"--savestatetable       Save the state table to the file \"statetable.asc\""<<endl
           <<"--stopafterfirststep   Stop after outputting the first step (usually at t=0)"<<endl
           <<"                       This generates a HDF5 output file with only one time serie"<<endl
           <<"--autoreload           Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
@@ -126,7 +127,19 @@ int main(int argc, char *argv[]) {
       stopAfterFirstStep=true;
       args.erase(i);
     }
-  
+
+    bool savestatetable=false;
+    if((i=std::find(args.begin(), args.end(), "--savestatetable"))!=args.end()) {
+      savestatetable=true;
+      args.erase(i);
+    }
+
+    bool savestatevector=false;
+    if((i=std::find(args.begin(), args.end(), "--savefinalstatevector"))!=args.end()) {
+      savestatevector=true;
+      args.erase(i);
+    }
+
     int AUTORELOADTIME=0;
     if((i=std::find(args.begin(), args.end(), "--autoreload"))!=args.end()) {
       i2=i; i2++;
@@ -175,10 +188,7 @@ int main(int argc, char *argv[]) {
             dss->setTruncateSimulationFiles(false);
           dss->initialize();
 
-          MBSimXML::main(solver.get(), dss.get(), doNotIntegrate, stopAfterFirstStep);
-
-          if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
-            dss->writez("statevector.asc", false);
+          MBSimXML::main(solver.get(), dss.get(), doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
         }
       }
       catch(const exception &ex) {
