@@ -1264,7 +1264,9 @@ namespace MBSimGUI {
       if(element == elementBuffer.first)
         elementBuffer.first = NULL;
       element->removeXMLElement();
-      element->getParent()->removeElement(element);
+      Element *parent = element->getParent();
+      parent->removeElement(element);
+      updateReferences(parent);
       model->removeRow(index.row(), index.parent());
       if(getAutoRefresh()) refresh();
     }
