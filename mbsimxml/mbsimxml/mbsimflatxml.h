@@ -20,8 +20,7 @@ namespace MBSim {
       static int preInit(std::list<std::string> args, DynamicSystemSolver*& dss, Solver*& solver);
       static void initDynamicSystemSolver(const std::list<std::string> &args, DynamicSystemSolver*& dss);
       static void plotInitialState(Solver* solver, DynamicSystemSolver* dss);
-      static void main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrate, bool stopAfterFirstStep);
-      static void postMain(const std::list<std::string> &args, Solver *&solver, DynamicSystemSolver*& dss);
+      static void main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable);
 
       //! Load all MBSim modules and return a list of all loaded module libraries.
       static std::set<boost::filesystem::path> loadModules(const std::set<boost::filesystem::path> &searchDirs={});//MISSING remove ={} if mbsimfmi supports searchDirs
