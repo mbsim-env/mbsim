@@ -47,12 +47,12 @@ namespace MBSimGUI {
   }
 
   void BasicElementMenu::addAction(QAction *action) {
-    if(action->isEnabled()) action->setDisabled(element->getEmbeded());
+//    if(action->isEnabled()) action->setDisabled(element->getEmbeded());
     QMenu::addAction(action);
   }
 
   void BasicElementMenu::addMenu(QMenu *menu) {
-    if(menu->isEnabled()) menu->setDisabled(element->getEmbeded());
+//    if(menu->isEnabled()) menu->setDisabled(element->getEmbeded());
     QMenu::addMenu(menu);
   }
 
@@ -60,7 +60,7 @@ namespace MBSimGUI {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     QMenu::addAction(action);
-    action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
+    action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::viewElementSource);
     QMenu::addAction(action);
     if(saveable) {

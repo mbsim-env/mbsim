@@ -38,6 +38,7 @@ namespace MBSimGUI {
   class Parameters;
   class TreeItem;
   class TreeItemData;
+  class FileItemData;
 
   class TreeModel : public QAbstractItemModel {
     public:
@@ -51,7 +52,7 @@ namespace MBSimGUI {
       QModelIndex parent(const QModelIndex &index) const override;
 
       int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-      int columnCount(const QModelIndex &) const override { return 4; }
+      int columnCount(const QModelIndex &) const override { return 3; }
 
       Qt::ItemFlags flags(const QModelIndex &index) const override;
 
@@ -68,14 +69,17 @@ namespace MBSimGUI {
     public:
       ElementTreeModel(QObject *parent = nullptr);
 
-      void createElementItem(Element *element, const QModelIndex &parent = QModelIndex(), bool recursive=true);
+      void createElementItem(Element *element, const QModelIndex &parent = QModelIndex());
       void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
       void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
-      void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex(), bool recursive=true);
-      void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex(), bool recursive=true);
+      void createGroupItem(Group *group, const QModelIndex &parent = QModelIndex());
+      void createObjectItem(Object *object, const QModelIndex &parent = QModelIndex());
       void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
       void createConstraintItem(Constraint *constraint, const QModelIndex &parent = QModelIndex());
       void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
+      void updateElementItem(Element *element);
+      void updateGroupItem(Group *group);
+      void updateObjectItem(Object *object);
 
       std::map<QString, QModelIndex> idEleMap;
   };
@@ -86,8 +90,13 @@ namespace MBSimGUI {
 
       QModelIndex createParametersItem(Parameters *itemData, const QModelIndex &parent = QModelIndex());
       QModelIndex createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
+  };
 
-      std::map<Element*, QModelIndex> idEleMap;
+  class FileTreeModel : public TreeModel {
+    public:
+      FileTreeModel(QObject *parent = nullptr);
+
+      QModelIndex createFileItem(FileItemData *fileItemData, const QModelIndex &parent = QModelIndex());
   };
 
 }

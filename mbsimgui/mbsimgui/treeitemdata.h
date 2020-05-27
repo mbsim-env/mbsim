@@ -21,6 +21,7 @@
 #define _TREEITEMDATA__H_
 
 #include <QString>
+#include <QModelIndex>
 #include <vector>
 
 class QMenu;
@@ -34,12 +35,14 @@ namespace MBSimGUI {
       virtual QString getName() const { return "Name"; }
       virtual QString getValue() const { return "Value"; }
       virtual QString getType() const { return "Type"; }
-      virtual QString getFile() const { return "File"; }
       virtual bool isEnabled() const { return true; }
       virtual QMenu* createContextMenu() { return nullptr; }
       void addTreeItemData(TreeItemData *treeItemData_) { treeItemData.push_back(treeItemData_); }
+      void setModelIndex(const QModelIndex &index_) { index = index_; }
+      const QModelIndex& getModelIndex() const { return index; }
     protected:
       std::vector<TreeItemData*> treeItemData;
+      QModelIndex index;
   };
 
 }

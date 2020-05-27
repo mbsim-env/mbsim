@@ -28,7 +28,6 @@ namespace MBSimGUI {
     getData_[0] = &TreeItem::getData0;
     getData_[1] = &TreeItem::getData1;
     getData_[2] = &TreeItem::getData2;
-    getData_[3] = &TreeItem::getData3;
   }
 
   TreeItem::~TreeItem() {

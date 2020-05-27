@@ -24,6 +24,7 @@
 #include "parameter.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include "fileitemdata.h"
 #include <QFileInfo>
 #include <QDir>
 #include <QUrl>
@@ -72,7 +73,7 @@ namespace MBSimGUI {
             }
             else
               ele2 = ele1->getFirstElementChild();
-            bool embeded = false;
+            FileItemData *fileItem = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               if(not embededParam) mw->updateParameters(parent,false);
               std::string evaltmp;
@@ -85,10 +86,15 @@ namespace MBSimGUI {
               catch(...) {
                 std::cout << "Unknwon error" << std::endl;
               }
-              xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
-              MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
-              ele2 = doc->getDocumentElement();
-              embeded = true;
+              fileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
+              if(not fileItem->getItem()) {
+                auto *item = create(fileItem->getXMLElement());
+                if(item) item->setXMLElement(fileItem->getXMLElement());
+                item->create();
+                fileItem->setItem(item);
+              //  mw->addElementView(item);
+              }
+              ele2 = fileItem->getXMLElement();
             }
             object=create(ele2);
             if(object) {
@@ -97,7 +103,11 @@ namespace MBSimGUI {
               if(embededParam) object->setEmbededParameters(embededParam);
               for(auto & i : param)
                 object->addParameter(i);
-              if(embeded) object->setEmbeded(embeded);
+              if(fileItem) {
+                object->setEmbeded(true);
+                object->setFileItem(fileItem);
+                fileItem->addReference(object);
+              }
             }
           }
           else {

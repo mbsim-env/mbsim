@@ -35,11 +35,6 @@ namespace MBSimGUI {
   class Constraint;
   class Observer;
 
-  namespace XERCES_CPP_NAMESPACE {
-    class DOMElement;
-    class DOMNode;
-  }
-
   class Element : public EmbedItemData {
     protected:
       Element *parent{nullptr};
@@ -106,7 +101,7 @@ namespace MBSimGUI {
       Element* getParent() { return parent; }
       EmbedItemData* getEmbedItemParent() override { return getParent(); }
       void setParent(Element* parent_) { parent = parent_; }
-      virtual PropertyDialog* createPropertyDialog() { return new ElementPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ElementPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ElementContextMenu(this); }
       virtual QMenu* createFrameContextMenu() {return nullptr;}
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }

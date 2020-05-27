@@ -120,10 +120,10 @@ namespace MBSimGUI {
   }
 
   EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_) : item(item_) {
-    if(item->getEmbeded()) {
-      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
-      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
-    }
+//    if(item->getEmbeded()) {
+//      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
+//      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
+//    }
   }
 
   void EmbedItemPropertyDialog::toWidget() {

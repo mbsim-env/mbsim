@@ -61,6 +61,7 @@ namespace MBSimGUI {
   class ParameterView;
   class SolverView;
   class EchoView;
+  class FileView;
   class PropertyDialog;
   class Element;
   class Frame;
@@ -73,17 +74,22 @@ namespace MBSimGUI {
   class Parameter;
   class EmbedItemData;
   class Project;
+  class FileItemData;
   class EchoStream;
 
   class MainWindow : public QMainWindow {
 
     private:
       Project *project;
+      std::vector<FileItemData*> file;
       ProjectView *projectView;
       ElementView *elementView;
+      std::vector<ElementView*> itemView;
       ParameterView *parameterView;
       SolverView *solverView;
       EchoView *echoView;
+      FileView *fileView;
+      QTabWidget *tabWidget;
       PropertyDialog *projectEditor{nullptr};
       PropertyDialog *elementEditor{nullptr};
       PropertyDialog *parameterEditor{nullptr};
@@ -152,12 +158,14 @@ namespace MBSimGUI {
       void kill();
       void elementViewClicked();
       void parameterViewClicked();
+      void fileViewClicked();
       void selectionChanged(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void updateEchoView();
       void updateStatus();
       void autoSaveProject();
       void selectElement(const std::string& ID);
+      void updateReferences(Element *parent);
 
     public:
       MainWindow(QStringList &arg);
@@ -244,6 +252,9 @@ namespace MBSimGUI {
       void openElementEditor(bool config=true);
       void openParameterEditor(bool config=true);
       void openSolverEditor();
+      void openFileEditor();
+      FileItemData* addFile(const QFileInfo &file);
+      void addElementView(EmbedItemData *item);
   };
 
 }

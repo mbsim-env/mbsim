@@ -38,6 +38,7 @@
 #include "parameter_view.h"
 #include "solver_view.h"
 #include "project_view.h"
+#include "file_view.h"
 #include "echo_view.h"
 #include "embed.h"
 #include "project.h"
@@ -53,7 +54,7 @@
 #include <QToolBar>
 #include <QStatusBar>
 #include <QDockWidget>
-#include <QGridLayout>
+#include <QVBoxLayout>
 #include <QMessageBox>
 #include <QFileDialog>
 #include <QDragEnterEvent>
@@ -130,6 +131,7 @@ namespace MBSimGUI {
     parameterView = new ParameterView;
     solverView = new SolverView;
     echoView = new EchoView(this);
+    fileView = new FileView;
 
     // initialize streams
     auto f=[this](const string &s){
@@ -274,17 +276,20 @@ namespace MBSimGUI {
     toolBar->addAction(actionKill);
 
     elementView->setModel(new ElementTreeModel(this));
-    //elementView->setColumnWidth(0,250);
-    //elementView->setColumnWidth(1,200);
+    elementView->setColumnWidth(0,250);
+    elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
 
     parameterView->setModel(new ParameterTreeModel(this));
-    //parameterView->setColumnWidth(0,150);
-    //parameterView->setColumnWidth(1,200);
+    parameterView->setColumnWidth(0,150);
+    parameterView->setColumnWidth(1,200);
+
+    fileView->setModel(new FileTreeModel(this));
 
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
     connect(elementView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::selectionChanged);
+    connect(fileView, &ElementView::pressed, this, &MainWindow::fileViewClicked);
 
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);
     dockWidget0->setObjectName("dockWidget/project");
@@ -294,24 +299,27 @@ namespace MBSimGUI {
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system", this);
     dockWidget1->setObjectName("dockWidget/mbs");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
+//    tabWidget = new QTabWidget;
+//    dockWidget1->setWidget(tabWidget);
+//    tabWidget->addTab(elementView, "MBS");
     QWidget *widget1 = new QWidget(dockWidget1);
     dockWidget1->setWidget(widget1);
-    auto *widgetLayout1 = new QGridLayout(widget1);
+    auto *widgetLayout1 = new QVBoxLayout(widget1);
     widgetLayout1->setContentsMargins(0,0,0,0);
     widget1->setLayout(widgetLayout1);
-    widgetLayout1->addWidget(elementViewFilter, 0, 0);
-    widgetLayout1->addWidget(elementView, 1, 0);
+    widgetLayout1->addWidget(elementViewFilter);
+    widgetLayout1->addWidget(elementView);
 
     QDockWidget *dockWidget3 = new QDockWidget("Parameters", this);
     dockWidget3->setObjectName("dockWidget/parameters");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
     QWidget *widget3 = new QWidget(dockWidget3);
     dockWidget3->setWidget(widget3);
-    auto *widgetLayout3 = new QGridLayout(widget3);
+    auto *widgetLayout3 = new QVBoxLayout(widget3);
     widgetLayout3->setContentsMargins(0,0,0,0);
     widget3->setLayout(widgetLayout3);
-    widgetLayout3->addWidget(parameterViewFilter, 0, 0);
-    widgetLayout3->addWidget(parameterView, 1, 0);
+    widgetLayout3->addWidget(parameterViewFilter);
+    widgetLayout3->addWidget(parameterView);
 
     QDockWidget *dockWidget2 = new QDockWidget("Solver", this);
     dockWidget2->setObjectName("dockWidget/solver");
@@ -328,6 +336,12 @@ namespace MBSimGUI {
     mbsimDW->setObjectName("dockWidget/echoArea");
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
     mbsimDW->setWidget(echoView);
+
+    mbsimDW = new QDockWidget("Files", this);
+    mbsimDW->setObjectName("dockWidget/files");
+    addDockWidget(Qt::LeftDockWidgetArea, mbsimDW);
+    mbsimDW->setWidget(fileView);
+
     connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::processFinished);
     connect(&process,&QProcess::readyReadStandardOutput,this,&MainWindow::updateEchoView);
     connect(&process,&QProcess::readyReadStandardError,this,&MainWindow::updateStatus);
@@ -644,6 +658,19 @@ namespace MBSimGUI {
     }
   }
 
+  void MainWindow::fileViewClicked() {
+//    if(QApplication::mouseButtons()==Qt::LeftButton) {
+//      auto *emodel = static_cast<ElementTreeModel*>(elementView->model());
+//      QModelIndex index = emodel->index(0,0);
+//      emodel->removeRow(index.row(), index.parent());
+//      index = fileView->selectionModel()->currentIndex();
+//      emodel->removeRow(index.row(), index.parent());
+////      emodel->removeRows(index.row(), emodel->rowCount(QModelIndex()), index.parent());
+//      auto *element = static_cast<Element*>(static_cast<FileItemData*>(static_cast<FileTreeModel*>(fileView->model())->getItem(index)->getItemData())->getItem());
+//      emodel->createElementItem(element,QModelIndex());
+//    }
+  }
+
   void MainWindow::newProject() {
     if(maybeSave()) {
       undos.clear();
@@ -671,7 +698,13 @@ namespace MBSimGUI {
       index = model->index(0,0);
       model->removeRow(index.row(), index.parent());
 
+      auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
+      index = fmodel->index(0,0);
+      fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), index.parent());
+
       delete project;
+
+      file.clear();
 
       doc = impl->createDocument();
       doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
@@ -691,8 +724,8 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::loadProject(const QString &file) {
-    if(QFile::exists(file)) {
+  void MainWindow::loadProject(const QString &fileName) {
+    if(QFile::exists(fileName)) {
       undos.clear();
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
@@ -709,10 +742,10 @@ namespace MBSimGUI {
       actionSaveEigenanalysisAs->setDisabled(true);
       actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(false);
-      projectFile = QDir::current().relativeFilePath(file);
-      setCurrentProjectFile(file);
+      projectFile = QDir::current().relativeFilePath(fileName);
+      setCurrentProjectFile(fileName);
       try { 
-        doc = parser->parseURI(X()%file.toStdString());
+        doc = parser->parseURI(X()%fileName.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
       }
       catch(const std::exception &ex) {
@@ -725,6 +758,10 @@ namespace MBSimGUI {
       }
       setWindowTitle(projectFile+"[*]");
       rebuildTree();
+      //auto *fileItem = new FileItemData(fileName,doc);
+      //fileItem->setItem(project->getDynamicSystemSolver());
+      //file.push_back(fileItem);
+      //static_cast<FileTreeModel*>(fileView->model())->createFileItem(fileItem);
       refresh();
     }
     else
@@ -1166,8 +1203,13 @@ namespace MBSimGUI {
     index = model->index(0,0);
     model->removeRow(index.row(), index.parent());
 
+    auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
+    index = fmodel->index(0,0);
+    fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), index.parent());
+
     delete project;
-    project = 0;
+
+    file.clear();
 
     project=Embed<Project>::create(doc->getDocumentElement(),nullptr);
     project->create();
@@ -1628,6 +1670,22 @@ namespace MBSimGUI {
     }
   }
 
+  void MainWindow::updateReferences(Element *parent) {
+    FileItemData *fileItem = parent->getFileItem();
+    if(fileItem) {
+      for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
+        if(fileItem->getReference(i)!=parent) {
+          fileItem->getReference(i)->clear();
+          QModelIndex index = fileItem->getReference(i)->getModelIndex();
+          auto *model = static_cast<ElementTreeModel*>(elementView->model());
+          model->removeRows(0,model->rowCount(index),index);
+          fileItem->getReference(i)->create();
+          model->updateElementItem(static_cast<Element*>(fileItem->getReference(i)));
+        }
+      }
+    }
+  }
+
   void MainWindow::addFrame(Frame *frame, Element *parent) {
     setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
@@ -1636,6 +1694,7 @@ namespace MBSimGUI {
     parent->addFrame(frame);
     frame->createXMLElement(parent->getXMLFrames());
     model->createFrameItem(frame,index);
+    updateReferences(parent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
@@ -1649,6 +1708,7 @@ namespace MBSimGUI {
     parent->addContour(contour);
     contour->createXMLElement(parent->getXMLContours());
     model->createContourItem(contour,index);
+    updateReferences(parent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
@@ -1662,6 +1722,7 @@ namespace MBSimGUI {
     parent->addGroup(group);
     group->createXMLElement(parent->getXMLGroups());
     model->createGroupItem(group,index);
+    updateReferences(parent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
@@ -1675,6 +1736,7 @@ namespace MBSimGUI {
     parent->addObject(object);
     object->createXMLElement(parent->getXMLObjects());
     model->createObjectItem(object,index);
+    updateReferences(parent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
@@ -1688,6 +1750,7 @@ namespace MBSimGUI {
     parent->addLink(link);
     link->createXMLElement(parent->getXMLLinks());
     model->createLinkItem(link,index);
+    updateReferences(parent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
@@ -1701,6 +1764,7 @@ namespace MBSimGUI {
     parent->addConstraint(constraint);
     constraint->createXMLElement(parent->getXMLConstraints());
     model->createConstraintItem(constraint,index);
+    updateReferences(parent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
@@ -1714,6 +1778,7 @@ namespace MBSimGUI {
     parent->addObserver(observer);
     observer->createXMLElement(parent->getXMLObservers());
     model->createObserverItem(observer,index);
+    updateReferences(parent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
@@ -2213,14 +2278,11 @@ namespace MBSimGUI {
             if(editor->getCancel()) setProjectChanged(true);
             editor->fromWidget();
             element->clear();
-            QModelIndex index = elementView->selectionModel()->currentIndex();
-            QModelIndex parentIndex = index.parent();
+            QModelIndex index = element->getModelIndex();
             auto *model = static_cast<ElementTreeModel*>(elementView->model());
-            model->removeRow(index.row(), parentIndex);
+            model->removeRows(0,model->rowCount(index),index);
             element->create();
-            model->createElementItem(element,parentIndex);
-//            QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
- //           elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+            model->updateElementItem(static_cast<Element*>(element));
             if(getAutoRefresh()) refresh();
           }
           setAllowUndo(true);
@@ -2519,6 +2581,67 @@ namespace MBSimGUI {
         solverEditor->fromWidget();
       });
     }
+  }
+
+  void MainWindow::openFileEditor() {
+//    if(not editorIsOpen()) {
+//      QModelIndex index = fileView->selectionModel()->currentIndex();
+//      auto *fileItem = dynamic_cast<FileItemData*>(static_cast<FileTreeModel*>(fileView->model())->getItem(index)->getItemData());
+//      if(fileItem) {
+//        setAllowUndo(false);
+////        updateParameters(element);
+//        auto *fileItemEditor = fileItem->createPropertyDialog();
+//        fileItemEditor->setAttribute(Qt::WA_DeleteOnClose);
+//        fileItemEditor->toWidget();
+//        fileItemEditor->show();
+//        connect(fileItemEditor,&QDialog::finished,this,[=](){
+//          if(fileItemEditor->result()==QDialog::Accepted) {
+//            if(fileItemEditor->getCancel()) setProjectChanged(true);
+//            fileItemEditor->fromWidget();
+//            if(getAutoRefresh()) refresh();
+//          }
+//          setAllowUndo(true);
+////          fileItemEditor=nullptr;
+//        });
+//        connect(fileItemEditor,&ElementPropertyDialog::apply,this,[=](){
+//          if(fileItemEditor->getCancel()) setProjectChanged(true);
+//          fileItemEditor->fromWidget();
+//          if(getAutoRefresh()) refresh();
+//          fileItemEditor->setCancel(true);
+//        });
+//      }
+//    }
+  }
+
+  FileItemData* MainWindow::addFile(const QFileInfo &fileName) {
+    for(size_t i=0; i<file.size(); i++) {
+      if(fileName==file[i]->getFileInfo())
+        return file[i];
+    }
+    DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
+    MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
+    auto *fileItem = new FileItemData(fileName,doc);
+    file.push_back(fileItem);
+    static_cast<FileTreeModel*>(fileView->model())->createFileItem(fileItem);
+    return fileItem;
+  }
+
+  void MainWindow::addElementView(EmbedItemData *item) {
+    ElementView *elementView = new ElementView;
+    itemView.push_back(elementView);
+    auto *model = new ElementTreeModel(this);
+    elementView->setModel(model);
+    model->createElementItem(static_cast<Element*>(item),QModelIndex());
+//    QDockWidget *dockWidget = new QDockWidget(item->getName(), this);
+//    dockWidget->setObjectName("dockWidget/item");
+//    addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
+//    QWidget *widget = new QWidget(dockWidget);
+//    dockWidget->setWidget(widget);
+//    auto *widgetLayout = new QVBoxLayout(widget);
+//    widgetLayout->setContentsMargins(0,0,0,0);
+//    widget->setLayout(widgetLayout);
+//    widgetLayout->addWidget(elementView);
+    tabWidget->addTab(elementView,item->getName());
   }
 
 }

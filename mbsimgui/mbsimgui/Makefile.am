@@ -30,6 +30,7 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   parameter.cc \
 		   objectfactory.cc \
 		   embeditemdata.cc \
+		   fileitemdata.cc \
 		   treeitem.cc \
 		   treemodel.cc \
 		   unknown_widget.cc \
@@ -58,6 +59,7 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   solver_view.cc \
 		   project_view.cc \
 		   echo_view.cc \
+		   file_view.cc \
 		   dialogs.cc  \
 		   utils.cc \
 		   main.cc \

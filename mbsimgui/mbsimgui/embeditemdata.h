@@ -21,6 +21,7 @@
 #define _EMBEDITEMDATA__H_
 
 #include "treeitemdata.h"
+#include "property_dialog.h"
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
 
@@ -33,6 +34,7 @@ namespace MBSimGUI {
 
   class Parameter;
   class Parameters;
+  class FileItemData;
 
   class EmbedItemData : public TreeItemData {
     protected:
@@ -41,13 +43,13 @@ namespace MBSimGUI {
       xercesc::DOMElement *element{nullptr}, *embed{nullptr};
       bool embeded{false}, embededParam{false};
       Parameters *parameters;
+      FileItemData *fileItem{nullptr};
 
     public:
       EmbedItemData();
       ~EmbedItemData() override;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return ""; }
-      QString getFile() const override { return embed?QString::fromStdString(MBXMLUtils::E(embed)->getAttribute("href")):""; }
       bool isActive();
       virtual void create() { }
       virtual void clear() { }
@@ -74,8 +76,11 @@ namespace MBSimGUI {
       bool getEmbededParameters() const { return embededParam; }
       void setEmbededParameters(bool embededParam_) { embededParam = embededParam_; }
       Parameters* getParameters() { return parameters; }
+      void setFileItem(FileItemData *fileItem_) { fileItem = fileItem_; }
+      FileItemData *getFileItem() { return fileItem; }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
+      virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog(this); }
   };
 
 }

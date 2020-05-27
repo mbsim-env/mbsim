@@ -24,11 +24,12 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
-#include "object.h"
+#include "body.h"
 #include "link_.h"
 #include "constraint.h"
 #include "observer.h"
 #include "parameter.h"
+#include "fileitemdata.h"
 
 using namespace std;
 
@@ -144,15 +145,15 @@ namespace MBSimGUI {
     rootItem = new TreeItem(new TreeItemData);
   }
 
-  void ElementTreeModel::createElementItem(Element *element, const QModelIndex &parent, bool recursive) {
+  void ElementTreeModel::createElementItem(Element *element, const QModelIndex &parent) {
     if(dynamic_cast<Frame*>(element))
       createFrameItem(static_cast<Frame*>(element),parent);
     else if(dynamic_cast<Contour*>(element))
       createContourItem(static_cast<Contour*>(element),parent);
     else if(dynamic_cast<Group*>(element))
-      createGroupItem(static_cast<Group*>(element),parent,recursive);
+      createGroupItem(static_cast<Group*>(element),parent);
     else if(dynamic_cast<Object*>(element))
-      createObjectItem(static_cast<Object*>(element),parent,recursive);
+      createObjectItem(static_cast<Object*>(element),parent);
     else if(dynamic_cast<Link*>(element))
       createLinkItem(static_cast<Link*>(element),parent);
     else if(dynamic_cast<Constraint*>(element))
@@ -172,6 +173,7 @@ namespace MBSimGUI {
     endInsertRows();
 
     idEleMap[frame->getID()] = parent.child(i,0);
+    frame->setModelIndex(parent.child(i,0));
   }
 
   void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
@@ -185,9 +187,10 @@ namespace MBSimGUI {
     endInsertRows();
 
     idEleMap[contour->getID()] = parent.child(i,0);
+    contour->setModelIndex(parent.child(i,0));
   }
 
-  void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent, bool recursive) {
+  void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
@@ -200,41 +203,16 @@ namespace MBSimGUI {
     if(not parent.isValid())
       idEleMap[group->getID()] = index(0,0);
 
-    if(recursive) {
-      QModelIndex index;
-      if(parent.row()==-1)
-        index = this->index(0,0,parent);
-      else
-        index = parent.child(i,0);
-      i = rowCount(index);
-      beginInsertRows(index, i, i+6);
-      item->insertChildren(new TreeItem(new FrameItemData(group),item,0),1);
-      item->insertChildren(new TreeItem(new ContourItemData(group),item,1),1);
-      item->insertChildren(new TreeItem(new GroupItemData(group),item,1),1);
-      item->insertChildren(new TreeItem(new ObjectItemData(group),item,1),1);
-      item->insertChildren(new TreeItem(new LinkItemData(group),item,1),1);
-      item->insertChildren(new TreeItem(new ConstraintItemData(group),item,1),1);
-      item->insertChildren(new TreeItem(new ObserverItemData(group),item,1),1);
-      endInsertRows();
-
-      for(int i=0; i<group->getNumberOfFrames(); i++)
-        createFrameItem(group->getFrame(i),index.child(0,0));
-      for(int i=0; i<group->getNumberOfContours(); i++)
-        createContourItem(group->getContour(i),index.child(1,0));
-      for(int i=0; i<group->getNumberOfGroups(); i++)
-        createGroupItem(group->getGroup(i),index.child(2,0));
-      for(int i=0; i<group->getNumberOfObjects(); i++)
-        createObjectItem(group->getObject(i),index.child(3,0));
-      for(int i=0; i<group->getNumberOfLinks(); i++)
-        createLinkItem(group->getLink(i),index.child(4,0));
-      for(int i=0; i<group->getNumberOfConstraints(); i++)
-        createConstraintItem(group->getConstraint(i),index.child(5,0));
-      for(int i=0; i<group->getNumberOfObservers(); i++)
-        createObserverItem(group->getObserver(i),index.child(6,0));
-    }
+    QModelIndex index;
+    if(parent.row()==-1)
+      index = this->index(0,0,parent);
+    else
+      index = parent.child(i,0);
+    group->setModelIndex(index);
+    updateGroupItem(group);
   }
 
-  void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &parent, bool recursive) {
+  void ElementTreeModel::createObjectItem(Object *object, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
@@ -244,21 +222,10 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    idEleMap[object->getID()] = parent.child(i,0);
-
-    if(recursive) {
-      QModelIndex index = parent.child(i,0);
-      i = rowCount(index);
-      beginInsertRows(index, i, i+1);
-      item->insertChildren(new TreeItem(new FrameItemData(object),item,0),1);
-      item->insertChildren(new TreeItem(new ContourItemData(object),item,1),1);
-      endInsertRows();
-
-      for(int i=0; i<object->getNumberOfFrames(); i++)
-        createFrameItem(object->getFrame(i),index.child(0,0));
-      for(int i=0; i<object->getNumberOfContours(); i++)
-        createContourItem(object->getContour(i),index.child(1,0));
-    }
+    QModelIndex index = parent.child(i,0);
+    idEleMap[object->getID()] = index;
+    object->setModelIndex(index);
+    updateObjectItem(object);
   }
 
   void ElementTreeModel::createLinkItem(Link *link, const QModelIndex &parent) {
@@ -272,6 +239,7 @@ namespace MBSimGUI {
     endInsertRows();
 
     idEleMap[link->getID()] = parent.child(i,0);
+    link->setModelIndex(parent.child(i,0));
   }
 
   void ElementTreeModel::createConstraintItem(Constraint *constraint, const QModelIndex &parent) {
@@ -285,6 +253,7 @@ namespace MBSimGUI {
     endInsertRows();
 
     idEleMap[constraint->getID()] = parent.child(i,0);
+    constraint->setModelIndex(parent.child(i,0));
   }
 
   void ElementTreeModel::createObserverItem(Observer *observer, const QModelIndex &parent) {
@@ -298,6 +267,63 @@ namespace MBSimGUI {
     endInsertRows();
 
     idEleMap[observer->getID()] = parent.child(i,0);
+    observer->setModelIndex(parent.child(i,0));
+  }
+
+  void ElementTreeModel::updateElementItem(Element *element) {
+    if(dynamic_cast<Group*>(element))
+      updateGroupItem(static_cast<Group*>(element));
+    else if(dynamic_cast<Object*>(element))
+      updateObjectItem(static_cast<Object*>(element));
+  }
+
+  void ElementTreeModel::updateGroupItem(Group *group) {
+
+    QModelIndex index = group->getModelIndex();
+    TreeItem *item = getItem(index);
+    int i = rowCount(index);
+    beginInsertRows(index, i, i+6);
+    item->insertChildren(new TreeItem(new FrameItemData(group),item,0),1);
+    item->insertChildren(new TreeItem(new ContourItemData(group),item,1),1);
+    item->insertChildren(new TreeItem(new GroupItemData(group),item,1),1);
+    item->insertChildren(new TreeItem(new ObjectItemData(group),item,1),1);
+    item->insertChildren(new TreeItem(new LinkItemData(group),item,1),1);
+    item->insertChildren(new TreeItem(new ConstraintItemData(group),item,1),1);
+    item->insertChildren(new TreeItem(new ObserverItemData(group),item,1),1);
+    endInsertRows();
+
+    for(int i=0; i<group->getNumberOfFrames(); i++)
+      createFrameItem(group->getFrame(i),index.child(0,0));
+    for(int i=0; i<group->getNumberOfContours(); i++)
+      createContourItem(group->getContour(i),index.child(1,0));
+    for(int i=0; i<group->getNumberOfGroups(); i++)
+      createGroupItem(group->getGroup(i),index.child(2,0));
+    for(int i=0; i<group->getNumberOfObjects(); i++)
+      createObjectItem(group->getObject(i),index.child(3,0));
+    for(int i=0; i<group->getNumberOfLinks(); i++)
+      createLinkItem(group->getLink(i),index.child(4,0));
+    for(int i=0; i<group->getNumberOfConstraints(); i++)
+      createConstraintItem(group->getConstraint(i),index.child(5,0));
+    for(int i=0; i<group->getNumberOfObservers(); i++)
+      createObserverItem(group->getObserver(i),index.child(6,0));
+  }
+
+  void ElementTreeModel::updateObjectItem(Object *object) {
+
+    if(dynamic_cast<Body*>(object)) {
+      QModelIndex index = object->getModelIndex();
+      TreeItem *item = getItem(index);
+      int i = rowCount(index);
+      beginInsertRows(index, i, i+1);
+      item->insertChildren(new TreeItem(new FrameItemData(object),item,0),1);
+      item->insertChildren(new TreeItem(new ContourItemData(object),item,1),1);
+      endInsertRows();
+
+      for(int i=0; i<object->getNumberOfFrames(); i++)
+        createFrameItem(object->getFrame(i),index.child(0,0));
+      for(int i=0; i<object->getNumberOfContours(); i++)
+        createContourItem(object->getContour(i),index.child(1,0));
+    }
   }
 
   ParameterTreeModel::ParameterTreeModel(QObject *parent) : TreeModel(parent) {
@@ -340,5 +366,21 @@ namespace MBSimGUI {
     return parent.child(i,0);
   }
 
+  FileTreeModel::FileTreeModel(QObject *parent) : TreeModel(parent) {
+
+    rootItem = new TreeItem(new TreeItemData);
+  }
+
+  QModelIndex FileTreeModel::createFileItem(FileItemData *fileItemData, const QModelIndex &parent) {
+
+    TreeItem *parentItem = getItem(parent);
+
+    int i = rowCount(parent);
+    beginInsertRows(parent, i, i);
+    TreeItem *item = new TreeItem(fileItemData,parentItem,1);
+    parentItem->insertChildren(item,i,1);
+    endInsertRows();
+    return parent.child(i,0);
+  }
 
 }
