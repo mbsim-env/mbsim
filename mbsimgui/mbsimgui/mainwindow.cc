@@ -668,7 +668,6 @@ namespace MBSimGUI {
       else
         emodel->createParameterItem(getProject()->getSolver()->getParameters());
       parameterView->expandAll();
-      parameterView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
     }
   }
 
@@ -2352,36 +2351,36 @@ namespace MBSimGUI {
   }
 
   void MainWindow::viewElementSource() {
-    QModelIndex index = elementView->selectionModel()->currentIndex();
-    auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
-//    if(element) {
-//      SourceDialog dialog(element->getXMLElement(),this);
-//      dialog.exec();
-//    }
-        auto *editor = new HrefPropertyDialog(element);
-        editor->setAttribute(Qt::WA_DeleteOnClose);
-        editor->toWidget();
-        editor->show();
-        connect(editor,&QDialog::finished,this,[=](){
-          if(editor->result()==QDialog::Accepted) {
-            if(editor->getCancel()) setProjectChanged(true);
-            editor->fromWidget();
-            element->clear();
-            QModelIndex index = element->getModelIndex();
-            auto *model = static_cast<ElementTreeModel*>(elementView->model());
-            model->removeRows(0,model->rowCount(index),index);
-            element->create();
-            model->updateElementItem(static_cast<Element*>(element));
-            if(getAutoRefresh()) refresh();
-          }
-          setAllowUndo(true);
-        });
-        connect(editor,&ElementPropertyDialog::apply,this,[=](){
+    if(not editorIsOpen()) {
+      setAllowUndo(false);
+      QModelIndex index = elementView->selectionModel()->currentIndex();
+      auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
+      editor = new HrefPropertyDialog(element);
+      editor->setAttribute(Qt::WA_DeleteOnClose);
+      editor->toWidget();
+      editor->show();
+      connect(editor,&QDialog::finished,this,[=](){
+        if(editor->result()==QDialog::Accepted) {
           if(editor->getCancel()) setProjectChanged(true);
           editor->fromWidget();
+          element->clear();
+          QModelIndex index = element->getModelIndex();
+          auto *model = static_cast<ElementTreeModel*>(elementView->model());
+          model->removeRows(0,model->rowCount(index),index);
+          element->create();
+          model->updateElementItem(static_cast<Element*>(element));
           if(getAutoRefresh()) refresh();
-          editor->setCancel(true);
-        });
+        }
+        setAllowUndo(true);
+        editor=nullptr;
+      });
+      connect(editor,&ElementPropertyDialog::apply,this,[=](){
+        if(editor->getCancel()) setProjectChanged(true);
+        editor->fromWidget();
+        if(getAutoRefresh()) refresh();
+        editor->setCancel(true);
+      });
+    }
   }
 
   void MainWindow::viewParametersSource() {
@@ -2547,23 +2546,23 @@ namespace MBSimGUI {
     if(not editorIsOpen()) {
       setAllowUndo(false);
       updateParameters(getProject());
-      projectEditor = getProject()->createPropertyDialog();
-      projectEditor->setAttribute(Qt::WA_DeleteOnClose);
-      projectEditor->toWidget();
-      projectEditor->show();
-      connect(projectEditor,&ProjectPropertyDialog::finished,this,[=](){
-        if(projectEditor->result()==QDialog::Accepted) {
+      editor = getProject()->createPropertyDialog();
+      editor->setAttribute(Qt::WA_DeleteOnClose);
+      editor->toWidget();
+      editor->show();
+      connect(editor,&ProjectPropertyDialog::finished,this,[=](){
+        if(editor->result()==QDialog::Accepted) {
           setProjectChanged(true);
-          projectEditor->fromWidget();
+          editor->fromWidget();
           if(getAutoRefresh()) refresh();
           projectView->setText(project->getName());
         }
         setAllowUndo(true);
-        projectEditor=nullptr;
+        editor=nullptr;
       });
-      connect(projectEditor,&ProjectPropertyDialog::apply,this,[=](){
+      connect(editor,&ProjectPropertyDialog::apply,this,[=](){
         setProjectChanged(true);
-        projectEditor->fromWidget();
+        editor->fromWidget();
         if(getAutoRefresh()) refresh();
         projectView->setText(project->getName());
       });
@@ -2577,37 +2576,37 @@ namespace MBSimGUI {
       if(element) {
         setAllowUndo(false);
         updateParameters(element);
-        elementEditor = element->createPropertyDialog();
-        elementEditor->setAttribute(Qt::WA_DeleteOnClose);
+        editor = element->createPropertyDialog();
+        editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
-          elementEditor->toWidget();
+          editor->toWidget();
         else
-          elementEditor->setCancel(false);
-        elementEditor->show();
-        connect(elementEditor,&QDialog::finished,this,[=](){
-          if(elementEditor->result()==QDialog::Accepted) {
+          editor->setCancel(false);
+        editor->show();
+        connect(editor,&QDialog::finished,this,[=](){
+          if(editor->result()==QDialog::Accepted) {
             FileItemData* fileItem = element->getDedicatedFileItem();
             if(fileItem)
               fileItem->setModified(true);
-            else if(elementEditor->getCancel())
+            else if(editor->getCancel())
               setProjectChanged(true);
-            elementEditor->fromWidget();
+            editor->fromWidget();
             if(getAutoRefresh()) refresh();
           }
           setAllowUndo(true);
-          elementEditor=nullptr;
+          editor=nullptr;
         });
-        connect(elementEditor,&ElementPropertyDialog::apply,this,[=](){
+        connect(editor,&ElementPropertyDialog::apply,this,[=](){
           FileItemData* fileItem = element->getDedicatedFileItem();
           if(fileItem)
             fileItem->setModified(true);
-          else if(elementEditor->getCancel())
+          else if(editor->getCancel())
             setProjectChanged(true);
-          elementEditor->fromWidget();
+          editor->fromWidget();
           if(getAutoRefresh()) refresh();
-          elementEditor->setCancel(true);
+          editor->setCancel(true);
         });
-        connect(elementEditor,&ElementPropertyDialog::showXMLHelp,this,[=](){
+        connect(editor,&ElementPropertyDialog::showXMLHelp,this,[=](){
           // generate url for current element
           string url="file://"+(installPath/"share"/"mbxmlutils"/"doc").string();
           string ns=element->getNameSpace().getNamespaceURI();
@@ -2629,36 +2628,36 @@ namespace MBSimGUI {
       if(parameter) {
         setAllowUndo(false);
         updateParameters(parameter->getParent(),true);
-        parameterEditor = parameter->createPropertyDialog();
-        parameterEditor->setAttribute(Qt::WA_DeleteOnClose);
+        editor = parameter->createPropertyDialog();
+        editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
-          parameterEditor->toWidget();
+          editor->toWidget();
         else
-          parameterEditor->setCancel(false);
-        parameterEditor->show();
-        connect(parameterEditor,&QDialog::finished,this,[=](){
-          if(parameterEditor->result()==QDialog::Accepted) {
+          editor->setCancel(false);
+        editor->show();
+        connect(editor,&QDialog::finished,this,[=](){
+          if(editor->result()==QDialog::Accepted) {
             FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
             if(fileItem)
               fileItem->setModified(true);
-            else if(parameterEditor->getCancel())
+            else if(editor->getCancel())
               setProjectChanged(true);
-            parameterEditor->fromWidget();
+            editor->fromWidget();
             if(getAutoRefresh()) refresh();
             parameter->getParent()->updateStatus();
           }
         setAllowUndo(true);
-        parameterEditor=nullptr;
+        editor=nullptr;
         });
-        connect(parameterEditor,&ParameterPropertyDialog::apply,this,[=](){
+        connect(editor,&ParameterPropertyDialog::apply,this,[=](){
           FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
           if(fileItem)
             fileItem->setModified(true);
-          else if(parameterEditor->getCancel())
+          else if(editor->getCancel())
             setProjectChanged(true);
-          parameterEditor->fromWidget();
+          editor->fromWidget();
           if(getAutoRefresh()) refresh();
-          parameterEditor->setCancel(true);
+          editor->setCancel(true);
           parameter->getParent()->updateStatus();
         });
       }
@@ -2669,21 +2668,29 @@ namespace MBSimGUI {
     if(not editorIsOpen()) {
       setAllowUndo(false);
       updateParameters(getProject()->getSolver());
-      solverEditor = getProject()->getSolver()->createPropertyDialog();
-      solverEditor->setAttribute(Qt::WA_DeleteOnClose);
-      solverEditor->toWidget();
-      solverEditor->show();
-      connect(solverEditor,&ProjectPropertyDialog::finished,this,[=](){
-        if(solverEditor->result()==QDialog::Accepted) {
-          setProjectChanged(true);
-          solverEditor->fromWidget();
+      editor = getProject()->getSolver()->createPropertyDialog();
+      editor->setAttribute(Qt::WA_DeleteOnClose);
+      editor->toWidget();
+      editor->show();
+      connect(editor,&ProjectPropertyDialog::finished,this,[=](){
+        if(editor->result()==QDialog::Accepted) {
+          FileItemData* fileItem = getProject()->getSolver()->getFileItem();
+          if(fileItem)
+            fileItem->setModified(true);
+          else
+            setProjectChanged(true);
+          editor->fromWidget();
         }
         setAllowUndo(true);
-        solverEditor=nullptr;
+        editor=nullptr;
       });
-      connect(solverEditor,&ProjectPropertyDialog::apply,this,[=](){
-        setProjectChanged(true);
-        solverEditor->fromWidget();
+      connect(editor,&ProjectPropertyDialog::apply,this,[=](){
+        FileItemData* fileItem = getProject()->getSolver()->getFileItem();
+        if(fileItem)
+          fileItem->setModified(true);
+        else
+          setProjectChanged(true);
+        editor->fromWidget();
       });
     }
   }
@@ -2695,21 +2702,22 @@ namespace MBSimGUI {
       if(element) {
         setAllowUndo(false);
         updateParameters(element);
-        auto *cloneEditor = new ClonePropertyDialog(element);
-        cloneEditor->setAttribute(Qt::WA_DeleteOnClose);
-        cloneEditor->toWidget();
-        cloneEditor->show();
-        connect(cloneEditor,&QDialog::finished,this,[=](){
-          if(cloneEditor->result()==QDialog::Accepted) {
+        editor = new ClonePropertyDialog(element);
+        editor->setAttribute(Qt::WA_DeleteOnClose);
+        editor->toWidget();
+        editor->show();
+        connect(editor,&QDialog::finished,this,[=](){
+          if(editor->result()==QDialog::Accepted) {
             setProjectChanged(true);
-            cloneEditor->fromWidget();
+            editor->fromWidget();
             if(getAutoRefresh()) refresh();
           }
           setAllowUndo(true);
+          editor=nullptr;
         });
-        connect(cloneEditor,&ElementPropertyDialog::apply,this,[=](){
+        connect(editor,&ElementPropertyDialog::apply,this,[=](){
           setProjectChanged(true);
-          cloneEditor->fromWidget();
+          editor->fromWidget();
           if(getAutoRefresh()) refresh();
         });
       }

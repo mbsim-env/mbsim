@@ -47,7 +47,6 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     QActionGroup *actionGroup = new QActionGroup(this);
-    actionGroup->setEnabled(not(mw->getProject()->getSolver()->getEmbeded()));
     QMenu *analyzers = new QMenu("Analyzers", this);
     for(size_t i = 0; i<2; i++) {
       QAction *action = new QAction(type[i], analyzers);

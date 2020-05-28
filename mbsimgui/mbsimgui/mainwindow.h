@@ -90,10 +90,7 @@ namespace MBSimGUI {
       EchoView *echoView;
       FileView *fileView;
       QTabWidget *tabWidget;
-      PropertyDialog *projectEditor{nullptr};
-      PropertyDialog *elementEditor{nullptr};
-      PropertyDialog *parameterEditor{nullptr};
-      PropertyDialog *solverEditor{nullptr};
+      PropertyDialog *editor{nullptr};
       std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
       QProcess process;
@@ -212,7 +209,7 @@ namespace MBSimGUI {
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
       bool getAutoRefresh() const { return autoRefresh; }
-      bool editorIsOpen() const { return projectEditor or elementEditor or parameterEditor or solverEditor; }
+      bool editorIsOpen() const { return editor; }
       void loadProject();
       bool saveProjectAs();
       void refresh();
