@@ -31,7 +31,7 @@ namespace MBSimGUI {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     action->setEnabled(item->getNumberOfParameters());
     connect(action,&QAction::triggered,mw,&MainWindow::viewParametersSource);
-    QMenu::addAction(action);
+    addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
     action->setEnabled(item->getNumberOfParameters());
@@ -53,7 +53,7 @@ namespace MBSimGUI {
     action = new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
     action->setEnabled(item->getNumberOfParameters() and not(item->getEmbedItemParent() and item->getEmbedItemParent()->getEmbeded()));
     connect(action,&QAction::triggered,this,[=](){ mw->removeParameter(item); });
-    QMenu::addAction(action);
+    addAction(action);
     addSeparator();
     action = new QAction("Add import parameter", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new ImportParameter, item); });
@@ -70,11 +70,6 @@ namespace MBSimGUI {
     action = new QAction("Add vector parameter", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new VectorParameter, item); });
     addAction(action);
-  }
-
-  void ParametersContextMenu::addAction(QAction *action) {
-//    if(action->isEnabled()) action->setDisabled(item->getEmbeded() or (item->getEmbedItemParent() and item->getEmbedItemParent()->getEmbeded()) or item->getEmbededParameters());
-    QMenu::addAction(action);
   }
 
 }

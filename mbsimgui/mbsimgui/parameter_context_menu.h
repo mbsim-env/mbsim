@@ -33,7 +33,6 @@ namespace MBSimGUI {
 
     private:
       Parameter *parameter;
-      void addAction(QAction *action);
   };
 
 }

@@ -43,26 +43,13 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  BasicElementMenu::BasicElementMenu(Element *element_, const QString &title, QWidget *parent) : QMenu(title,parent), element(element_) {
-  }
-
-  void BasicElementMenu::addAction(QAction *action) {
-//    if(action->isEnabled()) action->setDisabled(element->getEmbeded());
-    QMenu::addAction(action);
-  }
-
-  void BasicElementMenu::addMenu(QMenu *menu) {
-//    if(menu->isEnabled()) menu->setDisabled(element->getEmbeded());
-    QMenu::addMenu(menu);
-  }
-
-  ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : BasicElementMenu(element,"",parent) {
+  ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : QMenu("",parent) {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
-    QMenu::addAction(action);
+    addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::viewElementSource);
-    QMenu::addAction(action);
+    addAction(action);
     if(saveable) {
       addSeparator();
       action=new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
@@ -80,7 +67,11 @@ namespace MBSimGUI {
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
       connect(action,&QAction::triggered,mw,&MainWindow::removeElement);
-      QMenu::addAction(action);
+      addAction(action);
+      addSeparator();
+      action=new QAction(QIcon::fromTheme("edit-copy"), "Clone", this);
+      connect(action,&QAction::triggered,this,[=](){ mw->openCloneEditor(); });
+      addAction(action);
       addSeparator();
       action = new QAction("Enable", this);
       action->setCheckable(true);
@@ -175,7 +166,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+  FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element,nullptr,true); });
     addAction(action);
@@ -214,7 +205,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+  ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element,nullptr,true); });
     addAction(action);
@@ -307,7 +298,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+  GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element,nullptr,true); });
     addAction(action);
@@ -324,7 +315,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+  ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element,nullptr,true); });
     addAction(action);
@@ -352,7 +343,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : BasicElementMenu(element,title,parent) {
+  LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element,nullptr,true); });
     addAction(action);
@@ -425,7 +416,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+  ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element,nullptr,true); });
     addAction(action);
@@ -463,7 +454,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+  ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element,nullptr,true); });
     addAction(action);
@@ -501,7 +492,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  SignalsContextMenu::SignalsContextMenu(Element *element, const QString &title, QWidget *parent) : BasicElementMenu(element,title,parent) {
+  SignalsContextMenu::SignalsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction("Add demultiplexer", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new Demultiplexer, element); });
     addAction(action);

@@ -31,10 +31,10 @@ namespace MBSimGUI {
   ParameterContextMenu::ParameterContextMenu(Parameter *parameter_, QWidget *parent) : QMenu(parent), parameter(parameter_) {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openParameterEditor(); });
-    QMenu::addAction(action);
+    addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::viewParameterSource);
-    QMenu::addAction(action);
+    addAction(action);
     addSeparator();
     action=new QAction(QIcon::fromTheme("edit-copy"), "Copy", this);
     connect(action,&QAction::triggered,this,[=](){ mw->copyParameter(); });
@@ -55,11 +55,6 @@ namespace MBSimGUI {
     action=new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
     connect(action,&QAction::triggered,mw,QOverload<>::of(&MainWindow::removeParameter));
     addAction(action);
-  }
-
-  void ParameterContextMenu::addAction(QAction *action) {
-    if(action->isEnabled()) action->setDisabled((parameter->getParent()->getEmbedItemParent() and parameter->getParent()->getEmbedItemParent()->getEmbeded()) or parameter->getParent()->getEmbededParameters());
-    QMenu::addAction(action);
   }
 
 }

@@ -44,6 +44,7 @@
 #include "project.h"
 #include "project_property_dialog.h"
 #include "href_property_dialog.h"
+#include "clone_property_dialog.h"
 #include "file_editor.h"
 #include "utils.h"
 #include "basicitemdata.h"
@@ -2687,34 +2688,32 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::openFileEditor() {
-//    if(not editorIsOpen()) {
-//      QModelIndex index = fileView->selectionModel()->currentIndex();
-//      auto *fileItem = dynamic_cast<FileItemData*>(static_cast<FileTreeModel*>(fileView->model())->getItem(index)->getItemData());
-//      if(fileItem) {
-//        setAllowUndo(false);
-////        updateParameters(element);
-//        auto *fileItemEditor = fileItem->createPropertyDialog();
-//        fileItemEditor->setAttribute(Qt::WA_DeleteOnClose);
-//        fileItemEditor->toWidget();
-//        fileItemEditor->show();
-//        connect(fileItemEditor,&QDialog::finished,this,[=](){
-//          if(fileItemEditor->result()==QDialog::Accepted) {
-//            if(fileItemEditor->getCancel()) setProjectChanged(true);
-//            fileItemEditor->fromWidget();
-//            if(getAutoRefresh()) refresh();
-//          }
-//          setAllowUndo(true);
-////          fileItemEditor=nullptr;
-//        });
-//        connect(fileItemEditor,&ElementPropertyDialog::apply,this,[=](){
-//          if(fileItemEditor->getCancel()) setProjectChanged(true);
-//          fileItemEditor->fromWidget();
-//          if(getAutoRefresh()) refresh();
-//          fileItemEditor->setCancel(true);
-//        });
-//      }
-//    }
+  void MainWindow::openCloneEditor() {
+    if(not editorIsOpen()) {
+      QModelIndex index = elementView->selectionModel()->currentIndex();
+      auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
+      if(element) {
+        setAllowUndo(false);
+        updateParameters(element);
+        auto *cloneEditor = new ClonePropertyDialog(element);
+        cloneEditor->setAttribute(Qt::WA_DeleteOnClose);
+        cloneEditor->toWidget();
+        cloneEditor->show();
+        connect(cloneEditor,&QDialog::finished,this,[=](){
+          if(cloneEditor->result()==QDialog::Accepted) {
+            setProjectChanged(true);
+            cloneEditor->fromWidget();
+            if(getAutoRefresh()) refresh();
+          }
+          setAllowUndo(true);
+        });
+        connect(cloneEditor,&ElementPropertyDialog::apply,this,[=](){
+          setProjectChanged(true);
+          cloneEditor->fromWidget();
+          if(getAutoRefresh()) refresh();
+        });
+      }
+    }
   }
 
   FileItemData* MainWindow::addFile(const QFileInfo &fileName) {

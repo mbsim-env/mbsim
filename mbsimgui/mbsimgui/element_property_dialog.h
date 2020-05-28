@@ -24,8 +24,8 @@
 
 namespace MBSimGUI {
 
-  class Element;
   class ExtWidget;
+  class Element;
 
   class ElementPropertyDialog : public EmbedItemPropertyDialog {
 
@@ -34,11 +34,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       Element* getElement() const;
-      void setName(const QString &str);
-      void updateName();
-      void setReadOnly(bool readOnly);
     protected:
-      ExtWidget *name, *plotFeature, *clone;
+      ExtWidget *name, *plotFeature;
   };
 
   class FramePropertyDialog : public ElementPropertyDialog {

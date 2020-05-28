@@ -254,7 +254,7 @@ namespace MBSimGUI {
       void openElementEditor(bool config=true);
       void openParameterEditor(bool config=true);
       void openSolverEditor();
-      void openFileEditor();
+      void openCloneEditor();
       FileItemData* addFile(const QFileInfo &file);
       void addElementView(EmbedItemData *item);
   };
