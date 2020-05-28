@@ -34,10 +34,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : parameter(parameter_), name(nullptr) {
-    if((parameter->getParent()->getEmbedItemParent() and parameter->getParent()->getEmbedItemParent()->getEmbeded()) or parameter->getParent()->getEmbededParameters()) {
-      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
-      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
-    }
     addTab("General");
     if(not dynamic_cast<ImportParameter*>(parameter)) {
       name=new ExtWidget("Name",new TextWidget(parameter->getName()));

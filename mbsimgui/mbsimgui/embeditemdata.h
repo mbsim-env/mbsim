@@ -44,6 +44,7 @@ namespace MBSimGUI {
       bool embeded{false}, embededParam{false};
       Parameters *parameters;
       FileItemData *fileItem{nullptr};
+      FileItemData *parameterFileItem{nullptr};
 
     public:
       EmbedItemData();
@@ -53,6 +54,8 @@ namespace MBSimGUI {
       bool isActive();
       virtual void create() { }
       virtual void clear() { }
+      void createParameters();
+      void clearParameters();
       virtual EmbedItemData* getEmbedItemParent() { return nullptr; }
       std::vector<EmbedItemData*> getEmbedItemParents();
       int getNumberOfParameters() const { return parameter.size(); }
@@ -78,6 +81,8 @@ namespace MBSimGUI {
       Parameters* getParameters() { return parameters; }
       void setFileItem(FileItemData *fileItem_) { fileItem = fileItem_; }
       FileItemData *getFileItem() { return fileItem; }
+      void setParameterFileItem(FileItemData *parameterFileItem_) { parameterFileItem = parameterFileItem_; }
+      FileItemData *getParameterFileItem() { return parameterFileItem; }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
       virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog(this); }

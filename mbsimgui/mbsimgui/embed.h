@@ -45,9 +45,8 @@ namespace MBSimGUI {
           T *object;
           std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
-            bool embededParam = false;
             xercesc::DOMElement *ele2 = nullptr;
-
+            FileItemData *parameterFileItem = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               mw->updateParameters(parent,false);
               std::string evaltmp;
@@ -60,10 +59,10 @@ namespace MBSimGUI {
               catch(...) {
                 std::cout << "Unknwon error" << std::endl;
               }
-              xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
-              MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
-              param = Parameter::createParameters(doc->getDocumentElement());
-              embededParam = true;
+              //xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
+              //MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
+              parameterFileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
+              param = Parameter::createParameters(parameterFileItem->getXMLElement());
             }
             else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
@@ -75,7 +74,7 @@ namespace MBSimGUI {
               ele2 = ele1->getFirstElementChild();
             FileItemData *fileItem = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-              if(not embededParam) mw->updateParameters(parent,false);
+              if(not parameterFileItem) mw->updateParameters(parent,false);
               std::string evaltmp;
               try{
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
@@ -93,7 +92,11 @@ namespace MBSimGUI {
             if(object) {
               object->setXMLElement(ele2);
               object->setEmbedXMLElement(ele1);
-              if(embededParam) object->setEmbededParameters(embededParam);
+              if(parameterFileItem) {
+                object->setEmbededParameters(true);
+                object->setParameterFileItem(parameterFileItem);
+                parameterFileItem->addReference(object);
+              }
               for(auto & i : param)
                 object->addParameter(i);
               if(fileItem) {

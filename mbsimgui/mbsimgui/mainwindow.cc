@@ -602,13 +602,13 @@ namespace MBSimGUI {
         QModelIndex index = emodel->index(0,0);
         emodel->removeRow(index.row(), index.parent());
         if(!parents.empty()) {
-          index = emodel->createParametersItem(parents[0]->getParameters());
+          emodel->createParameterItem(parents[0]->getParameters());
           for(size_t i=0; i<parents.size()-1; i++)
-            index = emodel->createParametersItem(parents[i+1]->getParameters(),index);
-          emodel->createParametersItem(element->getParameters(),index);
+            emodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
+          emodel->createParameterItem(element->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
         }
         else
-          index = emodel->createParametersItem(element->getParameters());
+          emodel->createParameterItem(element->getParameters());
         parameterView->expandAll();
         highlightObject(element->getID());
       }
@@ -659,13 +659,13 @@ namespace MBSimGUI {
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
       if(!parents.empty()) {
-        index = emodel->createParametersItem(parents[0]->getParameters());
+        emodel->createParameterItem(parents[0]->getParameters());
         for(size_t i=0; i<parents.size()-1; i++)
-          index = emodel->createParametersItem(parents[i+1]->getParameters(),index);
-        emodel->createParametersItem(getProject()->getSolver()->getParameters(),index);
+          emodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
+        emodel->createParameterItem(getProject()->getSolver()->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
       }
       else
-        index = emodel->createParametersItem(getProject()->getSolver()->getParameters());
+        emodel->createParameterItem(getProject()->getSolver()->getParameters());
       parameterView->expandAll();
       parameterView->scrollTo(index.child(emodel->rowCount(index)-1,0),QAbstractItemView::PositionAtTop);
     }
@@ -676,7 +676,7 @@ namespace MBSimGUI {
       auto *emodel = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = emodel->index(0,0);
       emodel->removeRow(index.row(), index.parent());
-      emodel->createParametersItem(getProject()->getParameters());
+      emodel->createParameterItem(getProject()->getParameters());
       parameterView->expandAll();
     }
   }
@@ -1716,6 +1716,18 @@ namespace MBSimGUI {
     }
   }
 
+  void MainWindow::updateParameterReferences(EmbedItemData *parent) {
+    FileItemData *fileItem = parent->getParameterFileItem();
+    if(fileItem) {
+      for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
+        if(fileItem->getReference(i)!=parent) {
+          fileItem->getReference(i)->clearParameters();
+          fileItem->getReference(i)->createParameters();
+        }
+      }
+    }
+  }
+
   void MainWindow::addFrame(Frame *frame, Element *parent) {
     Element *dedicatedParent = parent->getDedicatedElement();
     FileItemData* fileItem = dedicatedParent->getFileItem();
@@ -1855,10 +1867,11 @@ namespace MBSimGUI {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     parent->addParameter(parameter);
     parameter->createXMLElement(parent->createParameterXMLElement());
+    updateParameterReferences(parent);
 //    if(parameter->getName()!="import")
 //      parameter->setName(parameter->getName()+toQStr(model->getItem(index)->getID()));
-    QModelIndex newIndex = model->createParameterItem(parameter,index);
-    parameterView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
+    model->createParameterItem(parameter,index);
+    parameterView->selectionModel()->setCurrentIndex(parameter->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openParameterEditor(false);
   }
 
@@ -1913,7 +1926,8 @@ namespace MBSimGUI {
         parent->createParameterXMLElement()->insertBefore(element,nullptr);
       parameter->setXMLElement(element);
       parent->addParameter(parameter);
-      newIndex = model->createParameterItem(parameter,index);
+      model->createParameterItem(parameter,index);
+      newIndex = parameter->getModelIndex();
     }
     parameterView->selectionModel()->setCurrentIndex(newIndex, QItemSelectionModel::ClearAndSelect);
   }

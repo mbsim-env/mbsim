@@ -331,13 +331,13 @@ namespace MBSimGUI {
     rootItem = new TreeItem(new TreeItemData);
   }
 
-  QModelIndex ParameterTreeModel::createParametersItem(Parameters *itemData, const QModelIndex &parent) {
+  void ParameterTreeModel::createParameterItem(Parameters *parameters, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
     int i = rowCount(parent);
     beginInsertRows(parent, i, i);
-    TreeItem *item = new TreeItem(itemData,parentItem,1);
+    TreeItem *item = new TreeItem(parameters,parentItem,1);
     parentItem->insertChildren(item,1);
     endInsertRows();
 
@@ -347,13 +347,19 @@ namespace MBSimGUI {
     else
       index = parent.child(i,0);
 
-    for(int i=0; i<itemData->getItem()->getNumberOfParameters(); i++)
-      createParameterItem(itemData->getItem()->getParameter(i),index);
-
-    return index;
+    parameters->setModelIndex(index);
+    updateParameterItem(parameters);
   }
 
-  QModelIndex ParameterTreeModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
+  void ParameterTreeModel::updateParameterItem(Parameters *parameters) {
+
+    QModelIndex index = parameters->getModelIndex();
+
+    for(int i=0; i<parameters->getItem()->getNumberOfParameters(); i++)
+      createParameterItem(parameters->getItem()->getParameter(i),index);
+  }
+
+  void ParameterTreeModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
@@ -363,7 +369,9 @@ namespace MBSimGUI {
     TreeItem *item = new TreeItem(parameter,parentItem,1);
     parentItem->insertChildren(item,i,1);
     endInsertRows();
-    return parent.child(i,0);
+
+    QModelIndex index = parent.child(i,0);
+    parameter->setModelIndex(index);
   }
 
   FileTreeModel::FileTreeModel(QObject *parent) : TreeModel(parent) {

@@ -40,7 +40,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->copyParameter(); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("edit-cut"), "Cut", this);
-      connect(action,&QAction::triggered,this,[=](){ mw->copyParameter(true); });
+    connect(action,&QAction::triggered,this,[=](){ mw->copyParameter(true); });
     addAction(action);
     addSeparator();
     action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);

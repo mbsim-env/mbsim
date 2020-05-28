@@ -88,8 +88,9 @@ namespace MBSimGUI {
     public:
       ParameterTreeModel(QObject *parent = nullptr);
 
-      QModelIndex createParametersItem(Parameters *itemData, const QModelIndex &parent = QModelIndex());
-      QModelIndex createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
+      void createParameterItem(Parameters *parameters, const QModelIndex &parent = QModelIndex());
+      void updateParameterItem(Parameters *parameters);
+      void createParameterItem(Parameter *parameter, const QModelIndex &parent = QModelIndex());
   };
 
   class FileTreeModel : public TreeModel {

@@ -20,6 +20,7 @@
 #include <config.h>
 #include "embeditemdata.h"
 #include "parameter.h"
+#include "fileitemdata.h"
 #include "mainwindow.h"
 #include <mbxmlutils/eval.h>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -60,6 +61,18 @@ namespace MBSimGUI {
       cout << "Unknown exception" << endl;
     }
     return active;
+  }
+
+  void EmbedItemData::createParameters() {
+    auto param = Parameter::createParameters(createParameterXMLElement());
+    for(auto & i : param)
+      addParameter(i);
+  }
+
+  void EmbedItemData::clearParameters() {
+    for (auto it = parameter.begin(); it != parameter.end(); ++it)
+      delete *it;
+    parameter.erase(parameter.begin(),parameter.end());
   }
 
   vector<EmbedItemData*> EmbedItemData::getEmbedItemParents() {
@@ -124,6 +137,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbedItemData::createParameterXMLElement() {
+    if(parameterFileItem) return parameterFileItem->getXMLElement();
     DOMElement *param = E(createEmbedXMLElement())->getFirstElementChildNamed(PV%"Parameter");
     if(not param) {
       param = D(getEmbedXMLElement()->getOwnerDocument())->createElement(PV%"Parameter");
