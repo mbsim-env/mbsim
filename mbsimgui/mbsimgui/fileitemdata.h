@@ -23,13 +23,7 @@
 #include "treeitemdata.h"
 #include "embeditemdata.h"
 #include <QFileInfo>
-#include <xercesc/util/XercesDefs.hpp>
-
-namespace XERCES_CPP_NAMESPACE {
-  class DOMDocument;
-  class DOMElement;
-  class DOMNode;
-}
+#include <QUrl>
 
 namespace MBSimGUI {
 
@@ -38,29 +32,27 @@ namespace MBSimGUI {
   class FileItemData : public TreeItemData {
     public:
 
-      FileItemData(const QFileInfo &fileInfo_, xercesc::DOMDocument *doc_) : fileInfo(fileInfo_), doc(doc_) { } 
+      FileItemData(xercesc::DOMDocument *doc_) : doc(doc_), fileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%doc->getDocumentURI())).toLocalFile()) { }
 
-      QString getName() const override { return fileInfo.absoluteFilePath(); }
+      QString getName() const override { return fileInfo.fileName()+(modified?"*":""); }
       QString getType() const override { return ""; }
-      QString getValue() const override { return ""; }
+      QString getValue() const override { return fileInfo.canonicalFilePath(); }
 
       const QFileInfo& getFileInfo() const { return fileInfo; }
-      EmbedItemData* getItem() { return item; }
       xercesc::DOMDocument *getXMLDocument() { return doc; }
       xercesc::DOMElement *getXMLElement() { return doc->getDocumentElement(); }
 
-      void setItem(EmbedItemData *item_) { item = item_; }
       void addReference(EmbedItemData *item) { ref.push_back(item); }
       int getNumberOfReferences() const { return ref.size(); }
       EmbedItemData *getReference(int i) { return ref[i]; }
-
-      PropertyDialog* createPropertyDialog() { return item->createPropertyDialog(); }
+      void setModified(bool modified_) { modified = modified_; }
+      bool getModified() const { return modified; }
 
     protected:
-      QFileInfo fileInfo;
       xercesc::DOMDocument *doc;
-      EmbedItemData *item{nullptr};
+      QFileInfo fileInfo;
       std::vector<EmbedItemData*> ref;
+      bool modified{false};
   };
 
 }

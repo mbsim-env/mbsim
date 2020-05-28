@@ -87,13 +87,6 @@ namespace MBSimGUI {
                 std::cout << "Unknwon error" << std::endl;
               }
               fileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
-              if(not fileItem->getItem()) {
-                auto *item = create(fileItem->getXMLElement());
-                if(item) item->setXMLElement(fileItem->getXMLElement());
-                item->create();
-                fileItem->setItem(item);
-              //  mw->addElementView(item);
-              }
               ele2 = fileItem->getXMLElement();
             }
             object=create(ele2);

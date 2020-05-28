@@ -19,29 +19,7 @@
 
 #include <config.h>
 #include "fileitemdata.h"
-#include "mainwindow.h"
-#include "embed.h"
-#include "object.h"
-//#include <mbxmlutils/eval.h>
-//#include <xercesc/dom/DOMDocument.hpp>
-//#include <xercesc/dom/DOMNamedNodeMap.hpp>
-//#include <xercesc/dom/DOMProcessingInstruction.hpp>
-
-using namespace std;
-using namespace MBXMLUtils;
-using namespace xercesc;
 
 namespace MBSimGUI {
-
-  extern MainWindow *mw;
-
-//  FileItemData::FileItemData(const QFileInfo &fileInfo_) : fileInfo(fileInfo_) {
-//    doc = mw->parser->parseURI(MBXMLUtils::X()%fileInfo.absoluteFilePath().toStdString());
-//    MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
-//    DOMElement *ele = doc->getDocumentElement();
-//    item = Embed<Object>::create(ele,nullptr);
-//    //item = Embed<EmbedItemData>::create(ele,nullptr);
-//    item->create();
-//  }
 
 }

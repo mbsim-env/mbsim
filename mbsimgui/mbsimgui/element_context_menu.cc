@@ -80,7 +80,6 @@ namespace MBSimGUI {
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
       connect(action,&QAction::triggered,mw,&MainWindow::removeElement);
-      action->setDisabled(element->getParent() and element->getParent()->getEmbeded());
       QMenu::addAction(action);
       addSeparator();
       action = new QAction("Enable", this);

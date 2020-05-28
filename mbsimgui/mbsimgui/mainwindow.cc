@@ -493,7 +493,12 @@ namespace MBSimGUI {
   }
   
   bool MainWindow::maybeSave() {
-    if(isWindowModified()) {
+    bool modified = isWindowModified();
+    for(int i=0; i<file.size(); i++) {
+      if(file[i]->getModified())
+        modified = true;
+    }
+    if(modified) {
       QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"),
           tr("Project has been modified.\n"
             "Do you want to save your changes?"),
@@ -1673,19 +1678,24 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateReferences(Element *parent) {
-    FileItemData *fileItem = parent->getFileItem();
-    if(fileItem) {
-      for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-        if(fileItem->getReference(i)!=parent) {
-          fileItem->getReference(i)->clear();
-          QModelIndex index = fileItem->getReference(i)->getModelIndex();
-          auto *model = static_cast<ElementTreeModel*>(elementView->model());
-          model->removeRows(0,model->rowCount(index),index);
-          fileItem->getReference(i)->create();
-          model->updateElementItem(static_cast<Element*>(fileItem->getReference(i)));
+//    if(parent->getEmbeded()) {
+//      while(not parent->getFileItem())
+//        parent=parent->getParent();
+//      FileItemData *fileItem = parent->getFileItem();
+      FileItemData *fileItem = parent->getDedicatedFileItem();
+      if(fileItem) {
+        for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
+          if(fileItem->getReference(i)!=parent) {
+            fileItem->getReference(i)->clear();
+            QModelIndex index = fileItem->getReference(i)->getModelIndex();
+            auto *model = static_cast<ElementTreeModel*>(elementView->model());
+            model->removeRows(0,model->rowCount(index),index);
+            fileItem->getReference(i)->create();
+            model->updateElementItem(static_cast<Element*>(fileItem->getReference(i)));
+          }
         }
       }
-    }
+//    }
   }
 
   void MainWindow::addFrame(Frame *frame, Element *parent) {
@@ -2499,7 +2509,11 @@ namespace MBSimGUI {
         elementEditor->show();
         connect(elementEditor,&QDialog::finished,this,[=](){
           if(elementEditor->result()==QDialog::Accepted) {
-            if(elementEditor->getCancel()) setProjectChanged(true);
+            FileItemData* fileItem = element->getDedicatedFileItem();
+            if(fileItem)
+              fileItem->setModified(true);
+            else if(elementEditor->getCancel())
+              setProjectChanged(true);
             elementEditor->fromWidget();
             if(getAutoRefresh()) refresh();
           }
@@ -2507,7 +2521,11 @@ namespace MBSimGUI {
           elementEditor=nullptr;
         });
         connect(elementEditor,&ElementPropertyDialog::apply,this,[=](){
-          if(elementEditor->getCancel()) setProjectChanged(true);
+          FileItemData* fileItem = element->getDedicatedFileItem();
+          if(fileItem)
+            fileItem->setModified(true);
+          else if(elementEditor->getCancel())
+            setProjectChanged(true);
           elementEditor->fromWidget();
           if(getAutoRefresh()) refresh();
           elementEditor->setCancel(true);
@@ -2622,7 +2640,7 @@ namespace MBSimGUI {
     }
     DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
     MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
-    auto *fileItem = new FileItemData(fileName,doc);
+    auto *fileItem = new FileItemData(doc);
     file.push_back(fileItem);
     static_cast<FileTreeModel*>(fileView->model())->createFileItem(fileItem);
     return fileItem;
