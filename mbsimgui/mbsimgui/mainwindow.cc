@@ -201,6 +201,15 @@ namespace MBSimGUI {
     updateRecentProjectFileActions();
     menuBar()->addMenu(menu);
 
+    menu = new QMenu("Referenced files", menuBar());
+    menu->addAction(QIcon::fromTheme("document-save"), "Save all", this, [=](){ for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
+    menuBar()->addMenu(menu);
+//    menu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){
+//      QModelIndex index = fileView->selectionModel()->currentIndex();
+//      auto *model = static_cast<FileTreeModel*>(fileView->model());
+//      auto *fileItem=dynamic_cast<FileItemData*>(model->getItem(index)->getItemData());
+//      });
+
     menu = new QMenu("Edit", menuBar());
     action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, &MainWindow::edit);
     action->setShortcut(QKeySequence("Ctrl+E"));
@@ -493,21 +502,30 @@ namespace MBSimGUI {
   }
   
   bool MainWindow::maybeSave() {
-    bool modified = isWindowModified();
-    for(int i=0; i<file.size(); i++) {
+    //bool referencedFileModified = false;
+    vector<int> modifiedFiles;
+    for(size_t i=0; i<file.size(); i++) {
       if(file[i]->getModified())
-        modified = true;
+        modifiedFiles.push_back(i);
     }
-    if(modified) {
-      QMessageBox::StandardButton ret = QMessageBox::warning(this, tr("Application"),
-          tr("Project has been modified.\n"
-            "Do you want to save your changes?"),
-          QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
+    if(isWindowModified() or modifiedFiles.size()) {
+      QString text;
+      if(not modifiedFiles.size())
+        text = "Project has been modified.";
+      else if(not isWindowModified())
+        text = "Referenced file has been modified.";
+      else
+        text = "Project and referenced file have been modified.";
+      QMessageBox::StandardButton ret = QMessageBox::warning(this, "Application", text+"\nDo you want to save your changes?", QMessageBox::Save | QMessageBox::Discard | QMessageBox::Cancel);
       if(ret == QMessageBox::Save) {
-        if(actionSaveProject->isEnabled())
-          return saveProject();
-        else
-          return saveProjectAs();
+        if(isWindowModified()) {
+          if(actionSaveProject->isEnabled())
+            return saveProject();
+          else
+            return saveProjectAs();
+        }
+        for(size_t i=0; i<modifiedFiles.size(); i++)
+          saveReferencedFile(modifiedFiles[i]);
       } 
       else if(ret == QMessageBox::Cancel) 
         return false;
@@ -2697,6 +2715,22 @@ namespace MBSimGUI {
 //    widget->setLayout(widgetLayout);
 //    widgetLayout->addWidget(elementView);
     tabWidget->addTab(elementView,item->getName());
+  }
+
+  void MainWindow::saveReferencedFile(int i) {
+    try {
+      serializer->writeToURI(file[i]->getXMLDocument(), X()%file[i]->getValue().toStdString());
+      file[i]->setModified(false);
+    }
+    catch(const std::exception &ex) {
+      cout << ex.what() << endl;
+    }
+    catch(const DOMException &ex) {
+      cout << X()%ex.getMessage() << endl;
+    }
+    catch(...) {
+      cout << "Unknown exception." << endl;
+    }
   }
 
 }

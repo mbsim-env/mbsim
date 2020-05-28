@@ -166,6 +166,7 @@ namespace MBSimGUI {
       void autoSaveProject();
       void selectElement(const std::string& ID);
       void updateReferences(Element *parent);
+      void saveReferencedFile(int i);
 
     public:
       MainWindow(QStringList &arg);
