@@ -337,7 +337,7 @@ namespace MBSimGUI {
     addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
     mbsimDW->setWidget(echoView);
 
-    mbsimDW = new QDockWidget("Files", this);
+    mbsimDW = new QDockWidget("Referenced files", this);
     mbsimDW->setObjectName("dockWidget/files");
     addDockWidget(Qt::LeftDockWidgetArea, mbsimDW);
     mbsimDW->setWidget(fileView);
@@ -1265,13 +1265,18 @@ namespace MBSimGUI {
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = dynamic_cast<Element*>(model->getItem(index)->getItemData());
     if(element and (not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
-      setProjectChanged(true);
+      Element *parent = element->getParent();
+      Element *dedicatedParent = parent->getDedicatedElement();
+      FileItemData* fileItem = dedicatedParent->getFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
       if(element == elementBuffer.first)
         elementBuffer.first = NULL;
       element->removeXMLElement();
-      Element *parent = element->getParent();
       parent->removeElement(element);
-      updateReferences(parent);
+      updateReferences(dedicatedParent);
       model->removeRow(index.row(), index.parent());
       if(getAutoRefresh()) refresh();
     }
@@ -1678,119 +1683,149 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateReferences(Element *parent) {
-//    if(parent->getEmbeded()) {
-//      while(not parent->getFileItem())
-//        parent=parent->getParent();
-//      FileItemData *fileItem = parent->getFileItem();
-      FileItemData *fileItem = parent->getDedicatedFileItem();
-      if(fileItem) {
-        for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-          if(fileItem->getReference(i)!=parent) {
-            fileItem->getReference(i)->clear();
-            QModelIndex index = fileItem->getReference(i)->getModelIndex();
-            auto *model = static_cast<ElementTreeModel*>(elementView->model());
-            model->removeRows(0,model->rowCount(index),index);
-            fileItem->getReference(i)->create();
-            model->updateElementItem(static_cast<Element*>(fileItem->getReference(i)));
-          }
+    FileItemData *fileItem = parent->getFileItem();
+    if(fileItem) {
+      for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
+        if(fileItem->getReference(i)!=parent) {
+          fileItem->getReference(i)->clear();
+          QModelIndex index = fileItem->getReference(i)->getModelIndex();
+          auto *model = static_cast<ElementTreeModel*>(elementView->model());
+          model->removeRows(0,model->rowCount(index),index);
+          fileItem->getReference(i)->create();
+          model->updateElementItem(static_cast<Element*>(fileItem->getReference(i)));
         }
       }
-//    }
+    }
   }
 
   void MainWindow::addFrame(Frame *frame, Element *parent) {
-    setProjectChanged(true);
+    Element *dedicatedParent = parent->getDedicatedElement();
+    FileItemData* fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
 //    frame->setName(frame->getName()+toQStr(model->getItem(index)->getID()));
     parent->addFrame(frame);
     frame->createXMLElement(parent->getXMLFrames());
     model->createFrameItem(frame,index);
-    updateReferences(parent);
+    updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
   void MainWindow::addContour(Contour *contour, Element *parent) {
-    setProjectChanged(true);
+    Element *dedicatedParent = parent->getDedicatedElement();
+    FileItemData* fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
 //    contour->setName(contour->getName()+toQStr(model->getItem(index)->getID()));
     parent->addContour(contour);
     contour->createXMLElement(parent->getXMLContours());
     model->createContourItem(contour,index);
-    updateReferences(parent);
+    updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
   void MainWindow::addGroup(Group *group, Element *parent) {
-    setProjectChanged(true);
+    Element *dedicatedParent = parent->getDedicatedElement();
+    FileItemData* fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
 //    group->setName(group->getName()+toQStr(model->getItem(index)->getID()));
     parent->addGroup(group);
     group->createXMLElement(parent->getXMLGroups());
     model->createGroupItem(group,index);
-    updateReferences(parent);
+    updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
   void MainWindow::addObject(Object *object, Element *parent) {
-    setProjectChanged(true);
+    Element *dedicatedParent = parent->getDedicatedElement();
+    FileItemData* fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
 //    object->setName(object->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObject(object);
     object->createXMLElement(parent->getXMLObjects());
     model->createObjectItem(object,index);
-    updateReferences(parent);
+    updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
   void MainWindow::addLink(Link *link, Element *parent) {
-    setProjectChanged(true);
+    Element *dedicatedParent = parent->getDedicatedElement();
+    FileItemData* fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
 //    link->setName(link->getName()+toQStr(model->getItem(index)->getID()));
     parent->addLink(link);
     link->createXMLElement(parent->getXMLLinks());
     model->createLinkItem(link,index);
-    updateReferences(parent);
+    updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
   void MainWindow::addConstraint(Constraint *constraint, Element *parent) {
-    setProjectChanged(true);
+    Element *dedicatedParent = parent->getDedicatedElement();
+    FileItemData* fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
 //    constraint->setName(constraint->getName()+toQStr(model->getItem(index)->getID()));
     parent->addConstraint(constraint);
     constraint->createXMLElement(parent->getXMLConstraints());
     model->createConstraintItem(constraint,index);
-    updateReferences(parent);
+    updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
   void MainWindow::addObserver(Observer *observer, Element *parent) {
-    setProjectChanged(true);
+    Element *dedicatedParent = parent->getDedicatedElement();
+    FileItemData* fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
 //    observer->setName(observer->getName()+toQStr(model->getItem(index)->getID()));
     parent->addObserver(observer);
     observer->createXMLElement(parent->getXMLObservers());
     model->createObserverItem(observer,index);
-    updateReferences(parent);
+    updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
