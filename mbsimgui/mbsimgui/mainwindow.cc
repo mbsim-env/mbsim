@@ -1305,7 +1305,11 @@ namespace MBSimGUI {
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
     if(parameter) {
-      setProjectChanged(true);
+      FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
       if(parameter == parameterBuffer.first)
         parameterBuffer.first = NULL;
       DOMNode *ps = parameter->getXMLElement()->getPreviousSibling();
@@ -1314,6 +1318,7 @@ namespace MBSimGUI {
       parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
       parameter->getParent()->removeParameter(parameter);
       parameter->getParent()->maybeRemoveEmbedXMLElement();
+      updateParameterReferences(parameter->getParent());
       model->removeRow(index.row(), index.parent());
       if(getAutoRefresh()) refresh();
     }
@@ -1862,7 +1867,11 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addParameter(Parameter *parameter, EmbedItemData *parent) {
-    setProjectChanged(true);
+    FileItemData* fileItem = parent->getParameterFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     parent->addParameter(parameter);
@@ -2628,7 +2637,11 @@ namespace MBSimGUI {
         parameterEditor->show();
         connect(parameterEditor,&QDialog::finished,this,[=](){
           if(parameterEditor->result()==QDialog::Accepted) {
-            if(parameterEditor->getCancel()) setProjectChanged(true);
+            FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
+            if(fileItem)
+              fileItem->setModified(true);
+            else if(parameterEditor->getCancel())
+              setProjectChanged(true);
             parameterEditor->fromWidget();
             if(getAutoRefresh()) refresh();
             parameter->getParent()->updateStatus();
@@ -2637,7 +2650,11 @@ namespace MBSimGUI {
         parameterEditor=nullptr;
         });
         connect(parameterEditor,&ParameterPropertyDialog::apply,this,[=](){
-          if(parameterEditor->getCancel()) setProjectChanged(true);
+          FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
+          if(fileItem)
+            fileItem->setModified(true);
+          else if(parameterEditor->getCancel())
+            setProjectChanged(true);
           parameterEditor->fromWidget();
           if(getAutoRefresh()) refresh();
           parameterEditor->setCancel(true);
