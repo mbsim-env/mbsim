@@ -835,15 +835,32 @@ namespace MBSimGUI {
 
   void MainWindow::selectSolver(int i) {
     setProjectChanged(true);
-    DOMNode *parent = getProject()->getSolver()->getXMLElement()->getParentNode();
-    getProject()->getSolver()->removeXMLElement(false);
+    DOMElement *ele=nullptr;
+    FileItemData *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
+    DOMElement *embed = getProject()->getSolver()->getEmbedXMLElement();
+    if(parameterFileItem)
+      ele = getProject()->getSolver()->getParameterFileItem()->getXMLElement();
+    else if(getProject()->getSolver()->getEmbedXMLElement())
+      ele = MBXMLUtils::E(getProject()->getSolver()->getEmbedXMLElement())->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
+    DOMElement *parent;
+    if(getProject()->getSolver()->getEmbedXMLElement())
+      parent = getProject()->getSolver()->getEmbedXMLElement();
+    else
+      parent = getProject()->getXMLElement();
+    if(getProject()->getSolver()->getEmbeded())
+      E(getProject()->getSolver()->getEmbedXMLElement())->removeAttribute("href");
+    else
+      getProject()->getSolver()->removeXMLElement(false);
     getProject()->setSolver(solverView->createSolver(i));
     getProject()->getSolver()->createXMLElement(parent);
-    std::vector<Parameter*> param;
-    DOMElement *ele = MBXMLUtils::E(static_cast<DOMElement*>(parent))->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-    if(ele) param = Parameter::createParameters(ele);
-    for(auto & i : param)
-      getProject()->getSolver()->addParameter(i);
+    getProject()->getSolver()->setEmbedXMLElement(embed);
+    if(ele) {
+      getProject()->getSolver()->setEmbededParameters(true);
+      getProject()->getSolver()->setParameterFileItem(parameterFileItem);
+      std::vector<Parameter*> param = Parameter::createParameters(ele);
+      for(auto & i : param)
+        getProject()->getSolver()->addParameter(i);
+    }
     solverViewClicked();
   }
 
@@ -1947,9 +1964,8 @@ namespace MBSimGUI {
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     int n = parent->getNumberOfParameters();
     if(parent->getEmbededParameters()) {
-      for(int i=n-1; i>=0; i--) {
+      for(int i=n-1; i>=0; i--)
         parent->removeParameter(parent->getParameter(i));
-      }
       parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
       parent->setEmbededParameters(false);
     }

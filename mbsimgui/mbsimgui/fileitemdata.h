@@ -32,17 +32,18 @@ namespace MBSimGUI {
   class FileItemData : public TreeItemData {
     public:
 
-      FileItemData(xercesc::DOMDocument *doc_) : doc(doc_), fileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%doc->getDocumentURI())).toLocalFile()) { }
+      FileItemData(xercesc::DOMDocument *doc_);
 
-      QString getName() const override { return fileInfo.fileName()+(modified?"*":""); }
-      QString getType() const override { return ""; }
-      QString getValue() const override { return fileInfo.canonicalFilePath(); }
+      QString getName() const override { return name+(modified?"*":""); }
+      QString getType() const override { return type; }
+      QString getValue() const override { return QString::number(ref.size()); }
 
       const QFileInfo& getFileInfo() const { return fileInfo; }
       xercesc::DOMDocument *getXMLDocument() { return doc; }
       xercesc::DOMElement *getXMLElement() { return doc->getDocumentElement(); }
 
       void addReference(EmbedItemData *item) { ref.push_back(item); }
+      void removeReference(EmbedItemData *item);
       int getNumberOfReferences() const { return ref.size(); }
       EmbedItemData *getReference(int i) { return ref[i]; }
       void setModified(bool modified_) { modified = modified_; }
@@ -53,6 +54,7 @@ namespace MBSimGUI {
       QFileInfo fileInfo;
       std::vector<EmbedItemData*> ref;
       bool modified{false};
+      QString name, type;
   };
 
 }

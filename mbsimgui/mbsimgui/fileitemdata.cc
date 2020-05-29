@@ -19,7 +19,21 @@
 
 #include <config.h>
 #include "fileitemdata.h"
+#include <QDir>
 
 namespace MBSimGUI {
 
+  FileItemData::FileItemData(xercesc::DOMDocument *doc_) : doc(doc_), fileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%doc->getDocumentURI())).toLocalFile()) {
+    name = QDir::current().relativeFilePath(fileInfo.absoluteFilePath());
+    type = QString::fromStdString(MBXMLUtils::E(getXMLElement())->getTagName().second);
+  }
+
+  void FileItemData::removeReference(EmbedItemData *item) {
+    for(auto it = ref.begin(); it != ref.end(); ++it) {
+      if(*it==item) {
+        ref.erase(it);
+        break;
+      }
+    }
+  }
 }
