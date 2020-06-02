@@ -283,13 +283,13 @@ namespace MBSimGUI {
     TreeItem *item = getItem(index);
     int i = rowCount(index);
     beginInsertRows(index, i, i+6);
-    item->insertChildren(new TreeItem(new FrameItemData(group),item,0),1);
-    item->insertChildren(new TreeItem(new ContourItemData(group),item,1),1);
-    item->insertChildren(new TreeItem(new GroupItemData(group),item,1),1);
-    item->insertChildren(new TreeItem(new ObjectItemData(group),item,1),1);
-    item->insertChildren(new TreeItem(new LinkItemData(group),item,1),1);
-    item->insertChildren(new TreeItem(new ConstraintItemData(group),item,1),1);
-    item->insertChildren(new TreeItem(new ObserverItemData(group),item,1),1);
+    item->insertChildren(new TreeItem(new FrameItemData(group),item),1);
+    item->insertChildren(new TreeItem(new ContourItemData(group),item),1);
+    item->insertChildren(new TreeItem(new GroupItemData(group),item),1);
+    item->insertChildren(new TreeItem(new ObjectItemData(group),item),1);
+    item->insertChildren(new TreeItem(new LinkItemData(group),item),1);
+    item->insertChildren(new TreeItem(new ConstraintItemData(group),item),1);
+    item->insertChildren(new TreeItem(new ObserverItemData(group),item),1);
     endInsertRows();
 
     for(int i=0; i<group->getNumberOfFrames(); i++)
@@ -315,8 +315,8 @@ namespace MBSimGUI {
       TreeItem *item = getItem(index);
       int i = rowCount(index);
       beginInsertRows(index, i, i+1);
-      item->insertChildren(new TreeItem(new FrameItemData(object),item,0),1);
-      item->insertChildren(new TreeItem(new ContourItemData(object),item,1),1);
+      item->insertChildren(new TreeItem(new FrameItemData(object),item),1);
+      item->insertChildren(new TreeItem(new ContourItemData(object),item),1);
       endInsertRows();
 
       for(int i=0; i<object->getNumberOfFrames(); i++)
@@ -337,7 +337,7 @@ namespace MBSimGUI {
 
     int i = rowCount(parent);
     beginInsertRows(parent, i, i);
-    TreeItem *item = new TreeItem(parameters,parentItem,1);
+    TreeItem *item = new TreeItem(parameters,parentItem);
     parentItem->insertChildren(item,1);
     endInsertRows();
 
@@ -366,7 +366,7 @@ namespace MBSimGUI {
     int i = rowCount(parent);
     if(dynamic_cast<Parameters*>(getItem(parent.child(i-1,0))->getItemData())) i--;
     beginInsertRows(parent, i, i);
-    TreeItem *item = new TreeItem(parameter,parentItem,1);
+    TreeItem *item = new TreeItem(parameter,parentItem);
     parentItem->insertChildren(item,i,1);
     endInsertRows();
 
@@ -385,7 +385,7 @@ namespace MBSimGUI {
 
     int i = rowCount(parent);
     beginInsertRows(parent, i, i);
-    TreeItem *item = new TreeItem(fileItemData,parentItem,1);
+    TreeItem *item = new TreeItem(fileItemData,parentItem);
     parentItem->insertChildren(item,i,1);
     endInsertRows();
     return parent.child(i,0);

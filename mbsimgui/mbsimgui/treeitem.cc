@@ -22,7 +22,7 @@
 
 namespace MBSimGUI {
 
-  TreeItem::TreeItem(TreeItemData *itemData, TreeItem *parent, int ID_, const QFont &font_, const QIcon &icon, const QBrush &foregoundA, const QBrush &foregoundD, const QBrush &background_) : itemData(itemData), parentItem(parent), ID(ID_), font(font_), decoration(icon), background(background_) {
+  TreeItem::TreeItem(TreeItemData *itemData, TreeItem *parent, const QFont &font_, const QIcon &icon, const QBrush &foregoundA, const QBrush &foregoundD, const QBrush &background_) : itemData(itemData), parentItem(parent), font(font_), decoration(icon), background(background_) {
     foreground[0] = foregoundD;
     foreground[1] = foregoundA;
     getData_[0] = &TreeItem::getData0;
@@ -43,8 +43,6 @@ namespace MBSimGUI {
 
   bool TreeItem::insertChildren(TreeItem *item, int count) {
 
-    ID++;
-
     for (int row = 0; row < count; ++row)
       childItems.insert(childItems.count(), item);
 
@@ -52,8 +50,6 @@ namespace MBSimGUI {
   }
 
   bool TreeItem::insertChildren(TreeItem *item, int index, int count) {
-
-    ID++;
 
     for (int row = 0; row < count; ++row)
       childItems.insert(index, item);

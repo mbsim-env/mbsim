@@ -33,7 +33,7 @@ namespace MBSimGUI {
   class TreeItem {
     public:
 
-      TreeItem(TreeItemData *itemData=nullptr, TreeItem *parent=nullptr, int ID_=1, const QFont &font=QApplication::font(), const QIcon &decoration=QIcon(), const QBrush &foregroundA=QApplication::palette().brush(QPalette::Active, QPalette::Text), const QBrush &foregroundD=QApplication::palette().brush(QPalette::Disabled, QPalette::Text), const QBrush &backGround=QApplication::palette().brush(QPalette::Active, QPalette::Base));
+      TreeItem(TreeItemData *itemData=nullptr, TreeItem *parent=nullptr, const QFont &font=QApplication::font(), const QIcon &decoration=QIcon(), const QBrush &foregroundA=QApplication::palette().brush(QPalette::Active, QPalette::Text), const QBrush &foregroundD=QApplication::palette().brush(QPalette::Disabled, QPalette::Text), const QBrush &backGround=QApplication::palette().brush(QPalette::Active, QPalette::Base));
       ~TreeItem();
 
       TreeItem *child(int number) { return childItems.value(number); }
@@ -51,7 +51,6 @@ namespace MBSimGUI {
       QVariant getData2() const { return itemData->getType(); }
       QVariant (TreeItem::*getData_[3])() const;
       QVariant getData(int column) const { return (this->*getData_[column])(); }
-      int getID() const { return ID; }
       QFont getFont() { return font; }
       QIcon getDecoration() { return decoration; }
       QBrush getForeground() { return foreground[itemData->isEnabled()]; }
@@ -61,7 +60,6 @@ namespace MBSimGUI {
       QList<TreeItem*> childItems;
       TreeItemData *itemData;
       TreeItem *parentItem;
-      int ID;
       QFont font;
       QIcon decoration;
       QBrush foreground[2], background;
