@@ -39,7 +39,6 @@ namespace MBSimGUI {
       std::vector<Link*> link;
       std::vector<Constraint*> constraint;
       std::vector<Observer*> observer;
-      std::vector<Element*> removedElement;
       xercesc::DOMElement *frames, *contours, *groups, *objects, *links, *constraints, *observers;
 
     public:

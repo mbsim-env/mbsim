@@ -46,7 +46,6 @@ namespace MBSimGUI {
     protected:
       std::vector<Frame*> frame;
       std::vector<Contour*> contour;
-      std::vector<Element*> removedElement;
   };
 
 }

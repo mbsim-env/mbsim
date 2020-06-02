@@ -41,9 +41,9 @@ namespace MBSimGUI {
   EmbedItemData::~EmbedItemData() {
     for (auto & it : parameter)
       delete it;
-    for(auto & i : removedParameter)
-      delete i;
     delete parameters;
+    if(parameterFileItem) parameterFileItem->removeReference(this);
+    if(fileItem) fileItem->removeReference(this);
   }
   
   bool EmbedItemData::isActive() {
@@ -96,7 +96,7 @@ namespace MBSimGUI {
         break;
       }
     }
-    removedParameter.push_back(param);
+    delete param;
   }
 
   int EmbedItemData::getIndexOfParameter(Parameter *param) const {

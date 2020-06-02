@@ -39,7 +39,6 @@ namespace MBSimGUI {
   class EmbedItemData : public TreeItemData {
     protected:
       std::vector<Parameter*> parameter;
-      std::vector<Parameter*> removedParameter;
       xercesc::DOMElement *element{nullptr}, *embed{nullptr};
       bool embeded{false}, embededParam{false};
       Parameters *parameters;

@@ -33,8 +33,6 @@ namespace MBSimGUI {
       delete i;
     for(auto & i : contour) 
       delete i;
-    for(auto & i : removedElement) 
-      delete i;
   }
 
   void Body::addFrame(Frame* frame_) {
@@ -75,7 +73,7 @@ namespace MBSimGUI {
           break;
         }
     }
-    removedElement.push_back(element);
+    delete element;
   }
 
   Frame* Body::getFrame(const QString &name) const {

@@ -598,18 +598,18 @@ namespace MBSimGUI {
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       auto *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
       if(element) {
-        auto *emodel = static_cast<ParameterTreeModel*>(parameterView->model());
+        auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
         vector<EmbedItemData*> parents = element->getEmbedItemParents();
-        QModelIndex index = emodel->index(0,0);
-        emodel->removeRow(index.row(), index.parent());
+        QModelIndex index = pmodel->index(0,0);
+        pmodel->removeRow(index.row(), index.parent());
         if(!parents.empty()) {
-          emodel->createParameterItem(parents[0]->getParameters());
+          pmodel->createParameterItem(parents[0]->getParameters());
           for(size_t i=0; i<parents.size()-1; i++)
-            emodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
-          emodel->createParameterItem(element->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
+            pmodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
+          pmodel->createParameterItem(element->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
         }
         else
-          emodel->createParameterItem(element->getParameters());
+          pmodel->createParameterItem(element->getParameters());
         parameterView->expandAll();
         highlightObject(element->getID());
       }
@@ -655,42 +655,42 @@ namespace MBSimGUI {
 
   void MainWindow::solverViewClicked() {
     if(allowUndo) {
-      auto *emodel = static_cast<ParameterTreeModel*>(parameterView->model());
+      auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
       vector<EmbedItemData*> parents = getProject()->getSolver()->getEmbedItemParents();
-      QModelIndex index = emodel->index(0,0);
-      emodel->removeRow(index.row(), index.parent());
+      QModelIndex index = pmodel->index(0,0);
+      pmodel->removeRow(index.row(), index.parent());
       if(!parents.empty()) {
-        emodel->createParameterItem(parents[0]->getParameters());
+        pmodel->createParameterItem(parents[0]->getParameters());
         for(size_t i=0; i<parents.size()-1; i++)
-          emodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
-        emodel->createParameterItem(getProject()->getSolver()->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
+          pmodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
+        pmodel->createParameterItem(getProject()->getSolver()->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
       }
       else
-        emodel->createParameterItem(getProject()->getSolver()->getParameters());
+        pmodel->createParameterItem(getProject()->getSolver()->getParameters());
       parameterView->expandAll();
     }
   }
 
   void MainWindow::projectViewClicked() {
     if(allowUndo) {
-      auto *emodel = static_cast<ParameterTreeModel*>(parameterView->model());
-      QModelIndex index = emodel->index(0,0);
-      emodel->removeRow(index.row(), index.parent());
-      emodel->createParameterItem(getProject()->getParameters());
+      auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
+      QModelIndex index = pmodel->index(0,0);
+      pmodel->removeRow(index.row(), index.parent());
+      pmodel->createParameterItem(getProject()->getParameters());
       parameterView->expandAll();
     }
   }
 
   void MainWindow::fileViewClicked() {
 //    if(QApplication::mouseButtons()==Qt::LeftButton) {
-//      auto *emodel = static_cast<ElementTreeModel*>(elementView->model());
-//      QModelIndex index = emodel->index(0,0);
-//      emodel->removeRow(index.row(), index.parent());
+//      auto *pmodel = static_cast<ElementTreeModel*>(elementView->model());
+//      QModelIndex index = pmodel->index(0,0);
+//      pmodel->removeRow(index.row(), index.parent());
 //      index = fileView->selectionModel()->currentIndex();
-//      emodel->removeRow(index.row(), index.parent());
-////      emodel->removeRows(index.row(), emodel->rowCount(QModelIndex()), index.parent());
+//      pmodel->removeRow(index.row(), index.parent());
+////      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
 //      auto *element = static_cast<Element*>(static_cast<FileItemData*>(static_cast<FileTreeModel*>(fileView->model())->getItem(index)->getItemData())->getItem());
-//      emodel->createElementItem(element,QModelIndex());
+//      pmodel->createElementItem(element,QModelIndex());
 //    }
   }
 
@@ -1309,10 +1309,12 @@ namespace MBSimGUI {
         setProjectChanged(true);
       if(element == elementBuffer.first)
         elementBuffer.first = NULL;
+      QModelIndex pindex = element->getParameters()->getModelIndex();
+      static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
+      model->removeRow(index.row(), index.parent());
       element->removeXMLElement();
       parent->removeElement(element);
       updateReferences(dedicatedParent);
-      model->removeRow(index.row(), index.parent());
       if(getAutoRefresh()) refresh();
     }
   }

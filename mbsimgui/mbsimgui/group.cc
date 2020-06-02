@@ -57,8 +57,6 @@ namespace MBSimGUI {
       delete i;
     for(auto & i : observer)
       delete i;
-    for(auto & i : removedElement)
-      delete i;
   }
 
   void Group::addFrame(Frame* frame_) {
@@ -160,7 +158,7 @@ namespace MBSimGUI {
           break;
         }
     }
-    removedElement.push_back(element);
+    delete element;
   }
 
   void Group::removeXMLElements() {
