@@ -1970,6 +1970,7 @@ namespace MBSimGUI {
         parent->removeParameter(parent->getParameter(i));
       parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
       parent->setEmbededParameters(false);
+      parent->setParameterFileItem(nullptr);
     }
     else {
       for(int i=n-1; i>=0; i--) {

@@ -167,6 +167,17 @@ namespace MBSimGUI {
     return embed and E(embed)->getFirstElementChildNamed(PV%"Parameter");
   }
 
+  void EmbedItemData::setFileItem(FileItemData *fileItem_) {
+    fileItem = fileItem_;
+    fileItem->addReference(this);
+  }
+
+  void EmbedItemData::setParameterFileItem(FileItemData *parameterFileItem_) {
+    if(parameterFileItem) parameterFileItem->removeReference(this);
+    parameterFileItem = parameterFileItem_;
+    if(parameterFileItem) parameterFileItem->addReference(this);
+  }
+
   DOMElement* EmbedItemData::processIDAndHref(DOMElement *element) {
     if(MBXMLUtils::E(element)->hasAttribute("href")) {
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));

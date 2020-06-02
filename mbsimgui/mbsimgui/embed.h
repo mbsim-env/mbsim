@@ -95,14 +95,12 @@ namespace MBSimGUI {
               if(parameterFileItem) {
                 object->setEmbededParameters(true);
                 object->setParameterFileItem(parameterFileItem);
-                parameterFileItem->addReference(object);
               }
               for(auto & i : param)
                 object->addParameter(i);
               if(fileItem) {
                 object->setEmbeded(true);
                 object->setFileItem(fileItem);
-                fileItem->addReference(object);
               }
             }
           }

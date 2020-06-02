@@ -78,9 +78,9 @@ namespace MBSimGUI {
       bool getEmbededParameters() const { return embededParam; }
       void setEmbededParameters(bool embededParam_) { embededParam = embededParam_; }
       Parameters* getParameters() { return parameters; }
-      void setFileItem(FileItemData *fileItem_) { fileItem = fileItem_; }
+      void setFileItem(FileItemData *fileItem_);
       FileItemData *getFileItem() { return fileItem; }
-      void setParameterFileItem(FileItemData *parameterFileItem_) { parameterFileItem = parameterFileItem_; }
+      void setParameterFileItem(FileItemData *parameterFileItem_);
       FileItemData *getParameterFileItem() { return parameterFileItem; }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
