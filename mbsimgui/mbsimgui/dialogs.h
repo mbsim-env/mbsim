@@ -77,7 +77,7 @@ namespace MBSimGUI {
       QPushButton *okButton;
       QTreeView *eleList;
       Element *selection;
-      QString oldID;
+      std::string oldID;
   };
 
   template <class T>

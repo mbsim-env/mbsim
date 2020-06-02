@@ -54,7 +54,7 @@ namespace MBSimGUI {
       void hidePopup() override;
       void highlightObject(const QString &frame);
       Element *element;
-      QString oldID;
+      std::string oldID;
   };
 
   class ParentFrameComboBox : public CustomComboBox {
@@ -66,7 +66,7 @@ namespace MBSimGUI {
       void hidePopup() override;
       void highlightObject(const QString &frame);
       Element *element;
-      QString oldID;
+      std::string oldID;
   };
 
   class LocalFrameOfReferenceWidget : public Widget {

@@ -172,7 +172,6 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    idEleMap[frame->getID()] = parent.child(i,0);
     frame->setModelIndex(parent.child(i,0));
   }
 
@@ -186,7 +185,6 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    idEleMap[contour->getID()] = parent.child(i,0);
     contour->setModelIndex(parent.child(i,0));
   }
 
@@ -199,9 +197,6 @@ namespace MBSimGUI {
     TreeItem *item = new TreeItem(group,parentItem);
     parentItem->insertChildren(item,1);
     endInsertRows();
-
-    if(not parent.isValid())
-      idEleMap[group->getID()] = index(0,0);
 
     QModelIndex index;
     if(parent.row()==-1)
@@ -223,7 +218,6 @@ namespace MBSimGUI {
     endInsertRows();
 
     QModelIndex index = parent.child(i,0);
-    idEleMap[object->getID()] = index;
     object->setModelIndex(index);
     updateObjectItem(object);
   }
@@ -238,7 +232,6 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    idEleMap[link->getID()] = parent.child(i,0);
     link->setModelIndex(parent.child(i,0));
   }
 
@@ -252,7 +245,6 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    idEleMap[constraint->getID()] = parent.child(i,0);
     constraint->setModelIndex(parent.child(i,0));
   }
 
@@ -266,7 +258,6 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    idEleMap[observer->getID()] = parent.child(i,0);
     observer->setModelIndex(parent.child(i,0));
   }
 

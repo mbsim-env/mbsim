@@ -80,8 +80,6 @@ namespace MBSimGUI {
       void updateElementItem(Element *element);
       void updateGroupItem(Group *group);
       void updateObjectItem(Object *object);
-
-      std::map<QString, QModelIndex> idEleMap;
   };
 
   class ParameterTreeModel : public TreeModel {

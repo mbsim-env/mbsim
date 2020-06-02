@@ -80,6 +80,7 @@ namespace MBSimGUI {
   class MainWindow : public QMainWindow {
 
     private:
+      std::unordered_map<std::string,Element*> idMap;
       Project *project;
       std::vector<FileItemData*> file;
       ProjectView *projectView;
@@ -100,7 +101,8 @@ namespace MBSimGUI {
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
       QTime statusTime;
-      QString currentID;
+      int IDcounter{0};
+      std::string currentID;
       enum { maxRecentFiles = 5 };
       QAction *recentProjectFileActs[maxRecentFiles];
       bool allowUndo;
@@ -194,8 +196,8 @@ namespace MBSimGUI {
       void loadLink(Element *parent, Element *element=nullptr, bool embed=false);
       void loadConstraint(Element *parent, Element *element=nullptr, bool embed=false);
       void loadObserver(Element *parent, Element *element=nullptr, bool embed=false);
-      void highlightObject(const QString &ID);
-      const QString& getHighlightedObject() const {return currentID;}
+      void highlightObject(const std::string &ID);
+      const std::string& getHighlightedObject() const { return currentID; }
       ElementView* getElementView() { return elementView; }
       ParameterView* getParameterView() { return parameterView; }
       void setProjectChanged(bool changed=true);
@@ -254,6 +256,7 @@ namespace MBSimGUI {
       void openCloneEditor();
       FileItemData* addFile(const QFileInfo &file);
       void addElementView(EmbedItemData *item);
+      std::string getID(Element* element) { std::string ID = std::to_string(IDcounter++); idMap[ID] = element; return ID; }
   };
 
 }

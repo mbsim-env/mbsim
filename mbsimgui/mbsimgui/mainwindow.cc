@@ -588,9 +588,9 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::highlightObject(const QString &ID) {
+  void MainWindow::highlightObject(const string &ID) {
     currentID = ID;
-    inlineOpenMBVMW->highlightObject(ID.toStdString());
+    inlineOpenMBVMW->highlightObject(ID);
   }
 
   void MainWindow::selectionChanged(const QModelIndex &current) {
@@ -728,6 +728,8 @@ namespace MBSimGUI {
       delete project;
 
       file.clear();
+      idMap.clear();
+      IDcounter = 0;
 
       doc = impl->createDocument();
       doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
@@ -1211,10 +1213,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::selectElement(const string& ID) {
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    auto it=model->idEleMap.find(QString::fromStdString(ID));
-    if(it!=model->idEleMap.end())
-      elementView->selectionModel()->setCurrentIndex(it->second,QItemSelectionModel::ClearAndSelect);
+    Element *element = idMap[ID];
+    if(element) elementView->selectionModel()->setCurrentIndex(element->getModelIndex(),QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::help() {
@@ -1250,6 +1250,8 @@ namespace MBSimGUI {
     delete project;
 
     file.clear();
+    idMap.clear();
+    IDcounter = 0;
 
     project=Embed<Project>::create(doc->getDocumentElement(),nullptr);
     project->create();

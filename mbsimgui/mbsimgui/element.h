@@ -38,12 +38,11 @@ namespace MBSimGUI {
   class Element : public EmbedItemData {
     protected:
       Element *parent{nullptr};
-      static int IDcounter;
       std::vector<MBXMLUtils::FQN> plotFeatures;
-      QString ID;
+      std::string ID;
       bool enabled{true};
     public:
-      Element() : ID(QString::number(IDcounter++)) { }
+      Element();
       QString getType() const override { return "Element"; }
       QString getXMLPath(Element *ref=nullptr, bool rel=false);
       virtual xercesc::DOMElement* getXMLFrames() { return nullptr; }
@@ -96,8 +95,8 @@ namespace MBSimGUI {
       virtual void addConstraint(Constraint *constraint) { }
       virtual void addObserver(Observer *observer) { }
       virtual void removeElement(Element *element) { }
-      const QString& getID() const { return ID; }
-      void setID(const QString &ID_) { ID = ID_; }
+      const std::string& getID() const { return ID; }
+      void setID(const std::string &ID_) { ID = ID_; }
       Element* getParent() { return parent; }
       EmbedItemData* getEmbedItemParent() override { return getParent(); }
       void setParent(Element* parent_) { parent = parent_; }

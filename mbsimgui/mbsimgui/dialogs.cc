@@ -181,7 +181,7 @@ namespace MBSimGUI {
       okButton->setDisabled(false);
     }
     else {
-      mw->highlightObject(0);
+      mw->highlightObject("");
       okButton->setDisabled(true);
     }
   }

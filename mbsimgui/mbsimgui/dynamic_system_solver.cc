@@ -117,7 +117,7 @@ namespace MBSimGUI {
       MBXMLUtils::E(ele1)->removeAttribute("href");
     }
     xercesc::DOMDocument *doc=element->getOwnerDocument();
-    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID().toStdString());
+    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
     if(E(ele1)->getTagName()==PV%"Embed")
       ele1 = ele1->getFirstElementChild();
     ele1->insertBefore(id, nullptr);

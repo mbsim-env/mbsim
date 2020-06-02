@@ -59,7 +59,7 @@ namespace MBSimGUI {
 
   void LocalFrameComboBox::hidePopup() {
     CustomComboBox::hidePopup();
-    if(oldID!="") {
+    if(not oldID.empty()) {
       mw->highlightObject(oldID);
       oldID="";
     }
@@ -84,7 +84,7 @@ namespace MBSimGUI {
 
   void ParentFrameComboBox::hidePopup() {
     CustomComboBox::hidePopup();
-    if(oldID!="") {
+    if(not oldID.empty()) {
       mw->highlightObject(oldID);
       oldID="";
     }

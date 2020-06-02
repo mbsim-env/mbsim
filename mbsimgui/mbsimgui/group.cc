@@ -249,7 +249,7 @@ namespace MBSimGUI {
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameI");
     if(ELE) {
       xercesc::DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID().toStdString());
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
       ELE->insertBefore(id, nullptr);
     }
 

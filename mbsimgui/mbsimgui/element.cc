@@ -27,6 +27,7 @@
 #include "link_.h"
 #include "constraint.h"
 #include "observer.h"
+#include "mainwindow.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
@@ -38,7 +39,11 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  int Element::IDcounter=0;
+  extern MainWindow *mw;
+
+  Element::Element() {
+    ID = mw->getID(this);
+  }
 
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
