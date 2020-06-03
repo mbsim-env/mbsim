@@ -1993,13 +1993,14 @@ namespace MBSimGUI {
     if(getAutoRefresh()) refresh();
   }
 
-  void MainWindow::loadFrame(Element *parent, Element *element, bool embed) {
+  tuple<DOMElement*, FileItemData*> MainWindow::loadElement(Element *parent, Element *element, bool embed) {
     setProjectChanged(true);
     DOMElement *ele = nullptr;
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    FileItemData *fileItem = nullptr;
     if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
+      ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
         element->removeXMLElement();
@@ -2009,32 +2010,44 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(this, "XML frame files", ".", "XML files (*.xml)");
+      xercesc::DOMDocument *doc = nullptr;
+      file=QFileDialog::getOpenFileName(this, "XML object files", ".", "XML files (*.xml)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
+        if(embed) {
+          fileItem = addFile(file);
+          doc = fileItem->getXMLDocument();
+        }
+        else {
+          doc = parser->parseURI(X()%file.toStdString());
+          DOMParser::handleCDATA(doc->getDocumentElement());
+        }
         ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
-      else
-        return;
     }
-    Frame *frame = Embed<Frame>::create(ele,parent);
-    frame->setEmbeded(embed);
+    return tuple<DOMElement*,FileItemData*>(ele,fileItem);
+  }
+
+  void MainWindow::loadFrame(Element *parent, Element *element, bool embed) {
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    Frame *frame = Embed<Frame>::create(std::get<0>(data),parent);
     frame->create();
     if(not frame) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      frame->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      frame->setEmbeded(embed);
+      frame->setFileItem(std::get<1>(data));
+      frame->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
-      E(frame->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
+      E(frame->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
     else
-      parent->getXMLFrames()->insertBefore(ele, nullptr);
+      parent->getXMLFrames()->insertBefore(std::get<0>(data), nullptr);
     parent->addFrame(frame);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createFrameItem(frame,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
@@ -2043,47 +2056,24 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadContour(Element *parent, Element *element, bool embed) {
-    setProjectChanged(true);
-    DOMElement *ele = nullptr;
-    QString file;
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
-      if(elementBuffer.second) {
-        elementBuffer.first = NULL;
-        element->removeXMLElement();
-        element->getParent()->removeElement(element);
-        QModelIndex index = element->getModelIndex();
-        model->removeRow(index.row(), index.parent());
-      }
-    }
-    else {
-      file=QFileDialog::getOpenFileName(this, "XML contour files", ".", "XML files (*.xml)");
-      if(not file.isEmpty()) {
-        if(file.startsWith("//"))
-          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
-        ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-      }
-      else
-        return;
-    }
-    Contour *contour = Embed<Contour>::create(ele,parent);
-    contour->setEmbeded(embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    Contour *contour = Embed<Contour>::create(std::get<0>(data),parent);
     contour->create();
     if(not contour) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      contour->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      contour->setEmbeded(embed);
+      contour->setFileItem(std::get<1>(data));
+      contour->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
-      E(contour->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
+      E(contour->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
     else
-      parent->getXMLContours()->insertBefore(ele, nullptr);
+      parent->getXMLContours()->insertBefore(std::get<0>(data), nullptr);
     parent->addContour(contour);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createContourItem(contour,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
@@ -2092,47 +2082,24 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadGroup(Element *parent, Element *element, bool embed) {
-    setProjectChanged(true);
-    DOMElement *ele = nullptr;
-    QString file;
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
-      if(elementBuffer.second) {
-        elementBuffer.first = NULL;
-        element->removeXMLElement();
-        element->getParent()->removeElement(element);
-        QModelIndex index = element->getModelIndex();
-        model->removeRow(index.row(), index.parent());
-      }
-    }
-    else {
-      file=QFileDialog::getOpenFileName(this, "XML group files", ".", "XML files (*.xml)");
-      if(not file.isEmpty()) {
-        if(file.startsWith("//"))
-          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
-        ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-      }
-      else
-        return;
-    }
-    Group *group = Embed<Group>::create(ele,parent);
-    group->setEmbeded(embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    Group *group = Embed<Group>::create(std::get<0>(data),parent);
     group->create();
     if(not group) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      group->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      group->setEmbeded(embed);
+      group->setFileItem(std::get<1>(data));
+      group->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
-      E(group->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
+      E(group->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
     else
-      parent->getXMLGroups()->insertBefore(ele, nullptr);
+      parent->getXMLGroups()->insertBefore(std::get<0>(data), nullptr);
     parent->addGroup(group);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createGroupItem(group,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
@@ -2141,47 +2108,24 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadObject(Element *parent, Element *element, bool embed) {
-    setProjectChanged(true);
-    DOMElement *ele = nullptr;
-    QString file;
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
-      if(elementBuffer.second) {
-        elementBuffer.first = NULL;
-        element->removeXMLElement();
-        element->getParent()->removeElement(element);
-        QModelIndex index = element->getModelIndex();
-        model->removeRow(index.row(), index.parent());
-      }
-    }
-    else {
-      file=QFileDialog::getOpenFileName(this, "XML object files", ".", "XML files (*.xml)");
-      if(not file.isEmpty()) {
-        if(file.startsWith("//"))
-          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
-        ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-      }
-      else
-        return;
-    }
-    Object *object = Embed<Object>::create(ele,parent);
-    object->setEmbeded(embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    Object *object = Embed<Object>::create(std::get<0>(data),parent);
     object->create();
     if(not object) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      object->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      object->setEmbeded(true);
+      object->setFileItem(std::get<1>(data));
+      object->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
-      E(object->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
+      E(object->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
     else
-      parent->getXMLObjects()->insertBefore(ele, nullptr);
+      parent->getXMLObjects()->insertBefore(std::get<0>(data), nullptr);
     parent->addObject(object);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createObjectItem(object,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
@@ -2190,47 +2134,24 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadLink(Element *parent, Element *element, bool embed) {
-    setProjectChanged(true);
-    DOMElement *ele = nullptr;
-    QString file;
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
-      if(elementBuffer.second) {
-        elementBuffer.first = NULL;
-        element->removeXMLElement();
-        element->getParent()->removeElement(element);
-        QModelIndex index = element->getModelIndex();
-        model->removeRow(index.row(), index.parent());
-      }
-    }
-    else {
-      file=QFileDialog::getOpenFileName(this, "XML link files", ".", "XML files (*.xml)");
-      if(not file.isEmpty()) {
-        if(file.startsWith("//"))
-          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
-        ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-      }
-      else
-        return;
-    }
-    Link *link = Embed<Link>::create(ele,parent);
-    link->setEmbeded(embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    Link *link = Embed<Link>::create(std::get<0>(data),parent);
     link->create();
     if(not link) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      link->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      link->setEmbeded(embed);
+      link->setFileItem(std::get<1>(data));
+      link->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
-      E(link->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
+      E(link->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
     else
-      parent->getXMLLinks()->insertBefore(ele, nullptr);
+      parent->getXMLLinks()->insertBefore(std::get<0>(data), nullptr);
     parent->addLink(link);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createLinkItem(link,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
@@ -2239,47 +2160,24 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadConstraint(Element *parent, Element *element, bool embed) {
-    setProjectChanged(true);
-    DOMElement *ele = nullptr;
-    QString file;
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
-      if(elementBuffer.second) {
-        elementBuffer.first = NULL;
-        element->removeXMLElement();
-        element->getParent()->removeElement(element);
-        QModelIndex index = element->getModelIndex();
-        model->removeRow(index.row(), index.parent());
-      }
-    }
-    else {
-      file=QFileDialog::getOpenFileName(this, "XML constraint files", ".", "XML files (*.xml)");
-      if(not file.isEmpty()) {
-        if(file.startsWith("//"))
-          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
-        ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-      }
-      else
-        return;
-    }
-    Constraint *constraint = Embed<Constraint>::create(ele,parent);
-    constraint->setEmbeded(embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    Constraint *constraint = Embed<Constraint>::create(std::get<0>(data),parent);
     constraint->create();
     if(not constraint) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      constraint->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      constraint->setEmbeded(embed);
+      constraint->setFileItem(std::get<1>(data));
+      constraint->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
-      E(constraint->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
+      E(constraint->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
     else
-      parent->getXMLConstraints()->insertBefore(ele, nullptr);
+      parent->getXMLConstraints()->insertBefore(std::get<0>(data), nullptr);
     parent->addConstraint(constraint);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createConstraintItem(constraint,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
@@ -2288,47 +2186,24 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadObserver(Element *parent, Element *element, bool embed) {
-    setProjectChanged(true);
-    DOMElement *ele = nullptr;
-    QString file;
-    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    if(element) {
-      ele = static_cast<DOMElement*>(doc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
-      if(elementBuffer.second) {
-        elementBuffer.first = NULL;
-        element->removeXMLElement();
-        element->getParent()->removeElement(element);
-        QModelIndex index = element->getModelIndex();
-        model->removeRow(index.row(), index.parent());
-      }
-    }
-    else {
-      file=QFileDialog::getOpenFileName(this, "XML observer files", ".", "XML files (*.xml)");
-      if(not file.isEmpty()) {
-        if(file.startsWith("//"))
-          file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-        xercesc::DOMDocument *doc = parser->parseURI(X()%file.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
-        ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-      }
-      else
-        return;
-    }
-    Observer *observer = Embed<Observer>::create(ele,parent);
-    observer->setEmbeded(embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    Observer *observer = Embed<Observer>::create(std::get<0>(data),parent);
     observer->create();
     if(not observer) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      observer->setEmbedXMLElement(D(doc)->createElement(PV%"Embed"));
+      observer->setEmbeded(embed);
+      observer->setFileItem(std::get<1>(data));
+      observer->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
-      E(observer->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(file).toStdString());
+      E(observer->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
     else
-      parent->getXMLObservers()->insertBefore(ele, nullptr);
+      parent->getXMLObservers()->insertBefore(std::get<0>(data), nullptr);
     parent->addObserver(observer);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     model->createObserverItem(observer,index);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
@@ -2752,6 +2627,18 @@ namespace MBSimGUI {
     file.push_back(fileItem);
     static_cast<FileTreeModel*>(fileView->model())->createFileItem(fileItem);
     return fileItem;
+  }
+
+  void MainWindow::removeFile(FileItemData *fileItem) {
+    QModelIndex index = fileItem->getModelIndex();
+    fileView->model()->removeRow(index.row(), index.parent());
+    for(auto it = file.begin(); it != file.end(); ++it) {
+      if(*it==fileItem) {
+        file.erase(it);
+        break;
+      }
+    }
+    delete fileItem;
   }
 
   void MainWindow::addElementView(EmbedItemData *item) {

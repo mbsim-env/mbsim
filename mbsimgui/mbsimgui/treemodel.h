@@ -95,7 +95,7 @@ namespace MBSimGUI {
     public:
       FileTreeModel(QObject *parent = nullptr);
 
-      QModelIndex createFileItem(FileItemData *fileItemData, const QModelIndex &parent = QModelIndex());
+      void createFileItem(FileItemData *fileItemData, const QModelIndex &parent = QModelIndex());
   };
 
 }

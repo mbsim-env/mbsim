@@ -19,9 +19,12 @@
 
 #include <config.h>
 #include "fileitemdata.h"
+#include "mainwindow.h"
 #include <QDir>
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   FileItemData::FileItemData(xercesc::DOMDocument *doc_) : doc(doc_), fileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%doc->getDocumentURI())).toLocalFile()) {
     name = QDir::current().relativeFilePath(fileInfo.absoluteFilePath());
@@ -35,5 +38,6 @@ namespace MBSimGUI {
         break;
       }
     }
+    if(ref.empty()) mw->removeFile(this);
   }
 }

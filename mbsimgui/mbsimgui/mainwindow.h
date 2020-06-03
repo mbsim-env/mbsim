@@ -189,6 +189,7 @@ namespace MBSimGUI {
       void addObserver(Observer *observer, Element *parent);
       void loadParameter(EmbedItemData *parent, Parameter *param=nullptr, bool embed=false);
       void removeParameter(EmbedItemData *parent);
+      std::tuple<xercesc::DOMElement*,FileItemData*> loadElement(Element *parent, Element *element=nullptr, bool embed=false);
       void loadFrame(Element *parent, Element *element=nullptr, bool embed=false);
       void loadContour(Element *parent, Element *element=nullptr, bool embed=false);
       void loadGroup(Element *parent, Element *element=nullptr, bool embed=false);
@@ -255,6 +256,7 @@ namespace MBSimGUI {
       void openSolverEditor();
       void openCloneEditor();
       FileItemData* addFile(const QFileInfo &file);
+      void removeFile(FileItemData *fileItem);
       void addElementView(EmbedItemData *item);
       std::string getID(Element* element) { std::string ID = std::to_string(IDcounter++); idMap[ID] = element; return ID; }
   };

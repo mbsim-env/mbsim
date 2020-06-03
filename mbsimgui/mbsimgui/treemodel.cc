@@ -361,8 +361,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,i,1);
     endInsertRows();
 
-    QModelIndex index = parent.child(i,0);
-    parameter->setModelIndex(index);
+    parameter->setModelIndex(parent.child(i,0));
   }
 
   FileTreeModel::FileTreeModel(QObject *parent) : TreeModel(parent) {
@@ -370,16 +369,17 @@ namespace MBSimGUI {
     rootItem = new TreeItem(new TreeItemData);
   }
 
-  QModelIndex FileTreeModel::createFileItem(FileItemData *fileItemData, const QModelIndex &parent) {
+  void FileTreeModel::createFileItem(FileItemData *fileItemData, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
 
     int i = rowCount(parent);
     beginInsertRows(parent, i, i);
     TreeItem *item = new TreeItem(fileItemData,parentItem);
-    parentItem->insertChildren(item,i,1);
+    parentItem->insertChildren(item,1);
     endInsertRows();
-    return parent.child(i,0);
+
+    fileItemData->setModelIndex(this->index(i,0,parent));
   }
 
 }
