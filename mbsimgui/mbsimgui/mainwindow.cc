@@ -1924,9 +1924,8 @@ namespace MBSimGUI {
           param->getXMLElement()->getParentNode()->removeChild(ps);
         param->getXMLElement()->getParentNode()->removeChild(param->getXMLElement());
         param->getParent()->removeParameter(param);
-        QModelIndex index = model->findItem(param,model->index(0,0));
-        if(index.isValid())
-          model->removeRow(index.row(), index.parent());
+        QModelIndex index = param->getModelIndex();
+        model->removeRow(index.row(), index.parent());
       }
     }
     else {
@@ -2005,9 +2004,8 @@ namespace MBSimGUI {
         elementBuffer.first = NULL;
         element->removeXMLElement();
         element->getParent()->removeElement(element);
-        QModelIndex index = model->findItem(element,model->index(0,0));
-        if(index.isValid())
-          model->removeRow(index.row(), index.parent());
+        QModelIndex index = element->getModelIndex();
+        model->removeRow(index.row(), index.parent());
       }
     }
     else {
@@ -2055,9 +2053,8 @@ namespace MBSimGUI {
         elementBuffer.first = NULL;
         element->removeXMLElement();
         element->getParent()->removeElement(element);
-        QModelIndex index = model->findItem(element,model->index(0,0));
-        if(index.isValid())
-          model->removeRow(index.row(), index.parent());
+        QModelIndex index = element->getModelIndex();
+        model->removeRow(index.row(), index.parent());
       }
     }
     else {
@@ -2105,9 +2102,8 @@ namespace MBSimGUI {
         elementBuffer.first = NULL;
         element->removeXMLElement();
         element->getParent()->removeElement(element);
-        QModelIndex index = model->findItem(element,model->index(0,0));
-        if(index.isValid())
-          model->removeRow(index.row(), index.parent());
+        QModelIndex index = element->getModelIndex();
+        model->removeRow(index.row(), index.parent());
       }
     }
     else {
@@ -2155,9 +2151,8 @@ namespace MBSimGUI {
         elementBuffer.first = NULL;
         element->removeXMLElement();
         element->getParent()->removeElement(element);
-        QModelIndex index = model->findItem(element,model->index(0,0));
-        if(index.isValid())
-          model->removeRow(index.row(), index.parent());
+        QModelIndex index = element->getModelIndex();
+        model->removeRow(index.row(), index.parent());
       }
     }
     else {
@@ -2205,9 +2200,8 @@ namespace MBSimGUI {
         elementBuffer.first = NULL;
         element->removeXMLElement();
         element->getParent()->removeElement(element);
-        QModelIndex index = model->findItem(element,model->index(0,0));
-        if(index.isValid())
-          model->removeRow(index.row(), index.parent());
+        QModelIndex index = element->getModelIndex();
+        model->removeRow(index.row(), index.parent());
       }
     }
     else {
@@ -2255,9 +2249,8 @@ namespace MBSimGUI {
         elementBuffer.first = NULL;
         element->removeXMLElement();
         element->getParent()->removeElement(element);
-        QModelIndex index = model->findItem(element,model->index(0,0));
-        if(index.isValid())
-          model->removeRow(index.row(), index.parent());
+        QModelIndex index = element->getModelIndex();
+        model->removeRow(index.row(), index.parent());
       }
     }
     else {
@@ -2305,9 +2298,8 @@ namespace MBSimGUI {
         elementBuffer.first = NULL;
         element->removeXMLElement();
         element->getParent()->removeElement(element);
-        QModelIndex index = model->findItem(element,model->index(0,0));
-        if(index.isValid())
-          model->removeRow(index.row(), index.parent());
+        QModelIndex index = element->getModelIndex();
+        model->removeRow(index.row(), index.parent());
       }
     }
     else {
