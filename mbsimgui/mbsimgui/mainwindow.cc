@@ -697,6 +697,8 @@ namespace MBSimGUI {
   void MainWindow::newProject() {
     if(maybeSave()) {
       undos.clear();
+      actionUndo->setDisabled(true);
+      actionRedo->setDisabled(true);
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
       setProjectChanged(false);
@@ -752,6 +754,8 @@ namespace MBSimGUI {
   void MainWindow::loadProject(const QString &fileName) {
     if(QFile::exists(fileName)) {
       undos.clear();
+      actionUndo->setDisabled(true);
+      actionRedo->setDisabled(true);
       elementBuffer.first = NULL;
       parameterBuffer.first = NULL;
       setProjectChanged(false);
