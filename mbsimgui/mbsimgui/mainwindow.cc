@@ -1973,7 +1973,6 @@ namespace MBSimGUI {
   }
 
   tuple<DOMElement*, FileItemData*> MainWindow::loadElement(Element *parent, Element *element, bool embed) {
-    setProjectChanged(true);
     DOMElement *ele = nullptr;
     QString file;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
