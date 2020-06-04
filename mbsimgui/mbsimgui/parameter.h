@@ -39,24 +39,30 @@ namespace MBSimGUI {
   class ExtWidget;
   class TextWidget;
 
-  class Parameter : public TreeItemData {
+  class ParameterItem : public TreeItemData {
+    public:
+      ParameterItem(EmbedItemData *parent_=nullptr) : parent(parent_) { }
+      bool getEnabled() const override { return parent->getEnabled(); }
+      bool getEmbeded() const override { return parent->getEmbededParameters(); }
+      EmbedItemData *getParent() const { return parent; }
+    protected:
+      EmbedItemData *parent;
+  };
+
+  class Parameter : public ParameterItem {
     public:
       Parameter() = default;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
-      bool getEnabled() const override { return parent->getEnabled(); }
-      bool getEmbeded() const override { return parent->getEmbededParameters(); }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual PropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       xercesc::DOMElement* getXMLElement() { return element; }
       void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
       virtual void removeXMLElements();
-      EmbedItemData* getParent() { return parent; }
       void setParent(EmbedItemData* parent_) { parent = parent_; }
       static std::vector<Parameter*> createParameters(xercesc::DOMElement *element);
     protected:
-      EmbedItemData *parent{nullptr};
       xercesc::DOMElement *element;
   };
 
@@ -98,18 +104,13 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override {return new ImportParameterPropertyDialog(this);}
   };
 
-  class Parameters : public TreeItemData {
+  class Parameters : public ParameterItem {
     public:
-      Parameters(EmbedItemData *item_) : item(item_) { }
-      QString getName() const override { return item->getName() + " parameters"; }
+      Parameters(EmbedItemData *parent) : ParameterItem(parent) { }
+      QString getName() const override { return parent->getName() + " parameters"; }
       QString getValue() const override { return ""; }
       QString getType() const override { return ""; }
-      bool getEnabled() const override { return item->getEnabled(); }
-      bool getEmbeded() const override { return item->getEmbededParameters(); }
-      EmbedItemData *getItem() const { return item; }
-      QMenu* createContextMenu() override { return new ParametersContextMenu(item); }
-    protected:
-      EmbedItemData *item{nullptr};
+      QMenu* createContextMenu() override { return new ParametersContextMenu(parent); }
   };
 
 }

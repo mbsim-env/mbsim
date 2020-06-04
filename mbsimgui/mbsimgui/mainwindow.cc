@@ -627,11 +627,9 @@ namespace MBSimGUI {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData();
-      if(itemData) {
-        QMenu *menu = itemData->createContextMenu();
-        menu->exec(QCursor::pos());
-        delete menu;
-      } 
+      QMenu *menu = itemData->createContextMenu();
+      menu->exec(QCursor::pos());
+      delete menu;
     }
     else if(QApplication::mouseButtons()==Qt::LeftButton)
       selectionChanged(elementView->selectionModel()->currentIndex());
@@ -640,21 +638,19 @@ namespace MBSimGUI {
   void MainWindow::parameterViewClicked() {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
-      auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
-      if(parameter) {
-        QMenu *menu = parameter->createContextMenu();
-        menu->exec(QCursor::pos());
-        delete menu;
-        return;
-      }
-      else {
-        auto *item = static_cast<Parameters*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
-        if(item) { // and item->getXMLElement()) {
-          QMenu *menu = item->createContextMenu();
-          menu->exec(QCursor::pos());
-          delete menu;
-        }
-      }
+      auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
+      QMenu *menu = item->createContextMenu();
+      menu->exec(QCursor::pos());
+      delete menu;
+    }
+    else if(QApplication::mouseButtons()==Qt::LeftButton) {
+      QModelIndex index = parameterView->selectionModel()->currentIndex();
+      auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
+      FileItemData *fileItem = item->getParent()->getDedicatedParameterFileItem();
+      if(fileItem)
+        fileView->selectionModel()->setCurrentIndex(fileItem->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+      else
+        fileView->selectionModel()->clearSelection();
     }
   }
 
@@ -1301,8 +1297,8 @@ namespace MBSimGUI {
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = dynamic_cast<Element*>(model->getItem(index)->getItemData());
     if(element and (not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
-      Element *parent = element->getParent();
-      Element *dedicatedParent = parent->getDedicatedElement();
+      auto *parent = element->getParent();
+      auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
       FileItemData* fileItem = dedicatedParent->getFileItem();
       if(fileItem)
         fileItem->setModified(true);
@@ -1403,7 +1399,7 @@ namespace MBSimGUI {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
       if(item)
-        loadParameter(item->getItem(),getParameterBuffer().first);
+        loadParameter(item->getParent(),getParameterBuffer().first);
     }
   }
 
@@ -1715,11 +1711,11 @@ namespace MBSimGUI {
     ParameterTreeModel *model = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *item = static_cast<Parameters*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(item->getItem()->getName()+".mbsimembed.xml"), "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(item->getParent()->getName()+".mbsimembed.xml"), "XML files (*.xml)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node;
-      node = edoc->importNode(item->getItem()->getEmbedXMLElement()->getFirstElementChild(),true);
+      node = edoc->importNode(item->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }
@@ -1754,8 +1750,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addFrame(Frame *frame, Element *parent) {
-    Element *dedicatedParent = parent->getDedicatedElement();
-    FileItemData* fileItem = dedicatedParent->getFileItem();
+    auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1773,8 +1769,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addContour(Contour *contour, Element *parent) {
-    Element *dedicatedParent = parent->getDedicatedElement();
-    FileItemData* fileItem = dedicatedParent->getFileItem();
+    auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1792,8 +1788,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addGroup(Group *group, Element *parent) {
-    Element *dedicatedParent = parent->getDedicatedElement();
-    FileItemData* fileItem = dedicatedParent->getFileItem();
+    auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1811,8 +1807,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addObject(Object *object, Element *parent) {
-    Element *dedicatedParent = parent->getDedicatedElement();
-    FileItemData* fileItem = dedicatedParent->getFileItem();
+    auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1830,8 +1826,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addLink(Link *link, Element *parent) {
-    Element *dedicatedParent = parent->getDedicatedElement();
-    FileItemData* fileItem = dedicatedParent->getFileItem();
+    auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1849,8 +1845,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addConstraint(Constraint *constraint, Element *parent) {
-    Element *dedicatedParent = parent->getDedicatedElement();
-    FileItemData* fileItem = dedicatedParent->getFileItem();
+    auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1868,8 +1864,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addObserver(Observer *observer, Element *parent) {
-    Element *dedicatedParent = parent->getDedicatedElement();
-    FileItemData* fileItem = dedicatedParent->getFileItem();
+    auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -2274,7 +2270,7 @@ namespace MBSimGUI {
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *item = dynamic_cast<Parameters*>(static_cast<ElementTreeModel*>(parameterView->model())->getItem(index)->getItemData());
     if(item) {
-      SourceDialog dialog(item->getItem()->getEmbedXMLElement()->getFirstElementChild(),this);
+      SourceDialog dialog(item->getParent()->getEmbedXMLElement()->getFirstElementChild(),this);
       dialog.exec();
     }
   }

@@ -246,7 +246,7 @@ R"+(
         // handle only embed elements but not parameters
         if(item) {
           // get the root element of this embed
-          xercesc::DOMElement *e = item->getItem()->getXMLElement();
+          xercesc::DOMElement *e = item->getParent()->getXMLElement();
           // if the file name matchs than the error is from this embed
           if(errorFile==boost::filesystem::absolute(D(e->getOwnerDocument())->getDocumentFilename())) {
             // evalute the xpath expression of the error message in this embed ...

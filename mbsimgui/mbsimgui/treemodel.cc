@@ -346,8 +346,8 @@ namespace MBSimGUI {
 
     QModelIndex index = parameters->getModelIndex();
 
-    for(int i=0; i<parameters->getItem()->getNumberOfParameters(); i++)
-      createParameterItem(parameters->getItem()->getParameter(i),index);
+    for(int i=0; i<parameters->getParent()->getNumberOfParameters(); i++)
+      createParameterItem(parameters->getParent()->getParameter(i),index);
   }
 
   void ParameterTreeModel::createParameterItem(Parameter *parameter, const QModelIndex &parent) {

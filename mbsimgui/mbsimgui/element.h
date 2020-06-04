@@ -107,8 +107,7 @@ namespace MBSimGUI {
       virtual QString getPlotFeatureType() const { return ""; }
       bool getEnabled() const override { return enabled; }
       void updateStatus() override { enabled = (not parent or parent->getEnabled()) and isActive(); }
-      Element *getDedicatedElement() { return embeded?(fileItem?this:parent->getDedicatedElement()):this; }
-      FileItemData *getDedicatedFileItem() { return getDedicatedElement()->getFileItem(); }
+      EmbedItemData *getDedicatedItem() override { return embeded?(fileItem?this:parent->getDedicatedItem()):this; }
   };
 
   template<class T>

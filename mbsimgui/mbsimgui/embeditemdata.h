@@ -82,6 +82,9 @@ namespace MBSimGUI {
       FileItemData *getFileItem() { return fileItem; }
       void setParameterFileItem(FileItemData *parameterFileItem_);
       FileItemData *getParameterFileItem() { return parameterFileItem; }
+      virtual EmbedItemData *getDedicatedItem() { return this; }
+      FileItemData *getDedicatedFileItem() { return getDedicatedItem()->getFileItem(); }
+      FileItemData *getDedicatedParameterFileItem() { return getDedicatedItem()->getParameterFileItem(); }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
       virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog(this); }
