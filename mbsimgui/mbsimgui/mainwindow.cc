@@ -2703,7 +2703,7 @@ namespace MBSimGUI {
 
   void MainWindow::saveReferencedFile(int i) {
     try {
-      serializer->writeToURI(file[i]->getXMLDocument(), X()%file[i]->getValue().toStdString());
+      serializer->writeToURI(file[i]->getXMLDocument(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
       file[i]->setModified(false);
     }
     catch(const std::exception &ex) {
