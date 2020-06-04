@@ -1479,7 +1479,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::moveFrame(bool up) {
-    setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -1500,10 +1499,16 @@ namespace MBSimGUI {
     for(int i=0; i<frame->getParent()->getNumberOfFrames(); i++)
       model->createFrameItem(frame->getParent()->getFrame(i),parentIndex);
     elementView->setCurrentIndex(parentIndex.child(j,0));
+    auto *dedicatedParent = static_cast<Element*>(frame->getParent()->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    updateReferences(dedicatedParent);
   }
 
   void MainWindow::moveContour(bool up) {
-    setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -1524,10 +1529,16 @@ namespace MBSimGUI {
     for(int i=0; i<contour->getParent()->getNumberOfContours(); i++)
       model->createContourItem(contour->getParent()->getContour(i),parentIndex);
     elementView->setCurrentIndex(parentIndex.child(j,0));
+    auto *dedicatedParent = static_cast<Element*>(contour->getParent()->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    updateReferences(dedicatedParent);
   }
 
   void MainWindow::moveGroup(bool up) {
-    setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -1548,10 +1559,16 @@ namespace MBSimGUI {
     for(int i=0; i<group->getParent()->getNumberOfGroups(); i++)
       model->createGroupItem(group->getParent()->getGroup(i),parentIndex);
     elementView->setCurrentIndex(parentIndex.child(j,0));
+    auto *dedicatedParent = static_cast<Element*>(group->getParent()->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    updateReferences(dedicatedParent);
   }
 
   void MainWindow::moveObject(bool up) {
-    setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -1572,10 +1589,16 @@ namespace MBSimGUI {
     for(int i=0; i<object->getParent()->getNumberOfObjects(); i++)
       model->createObjectItem(object->getParent()->getObject(i),parentIndex);
     elementView->setCurrentIndex(parentIndex.child(j,0));
+    auto *dedicatedParent = static_cast<Element*>(object->getParent()->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    updateReferences(dedicatedParent);
   }
 
   void MainWindow::moveLink(bool up) {
-    setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -1596,10 +1619,16 @@ namespace MBSimGUI {
     for(int i=0; i<link->getParent()->getNumberOfLinks(); i++)
       model->createLinkItem(link->getParent()->getLink(i),parentIndex);
     elementView->setCurrentIndex(parentIndex.child(j,0));
+    auto *dedicatedParent = static_cast<Element*>(link->getParent()->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    updateReferences(dedicatedParent);
   }
 
   void MainWindow::moveConstraint(bool up) {
-    setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -1620,10 +1649,16 @@ namespace MBSimGUI {
     for(int i=0; i<constraint->getParent()->getNumberOfConstraints(); i++)
       model->createConstraintItem(constraint->getParent()->getConstraint(i),parentIndex);
     elementView->setCurrentIndex(parentIndex.child(j,0));
+    auto *dedicatedParent = static_cast<Element*>(constraint->getParent()->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    updateReferences(dedicatedParent);
   }
 
   void MainWindow::moveObserver(bool up) {
-    setProjectChanged(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -1644,6 +1679,13 @@ namespace MBSimGUI {
     for(int i=0; i<observer->getParent()->getNumberOfObservers(); i++)
       model->createObserverItem(observer->getParent()->getObserver(i),parentIndex);
     elementView->setCurrentIndex(parentIndex.child(j,0));
+    auto *dedicatedParent = static_cast<Element*>(observer->getParent()->getDedicatedItem());
+    auto *fileItem = dedicatedParent->getFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    updateReferences(dedicatedParent);
   }
 
   void MainWindow::saveElementAs() {
