@@ -1982,10 +1982,18 @@ namespace MBSimGUI {
       ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
       if(elementBuffer.second) {
         elementBuffer.first = NULL;
-        element->removeXMLElement();
-        element->getParent()->removeElement(element);
         QModelIndex index = element->getModelIndex();
         model->removeRow(index.row(), index.parent());
+        auto *parent = element->getParent();
+        auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+        FileItemData* fileItem = dedicatedParent->getFileItem();
+        if(fileItem)
+          fileItem->setModified(true);
+        else
+          setProjectChanged(true);
+        element->removeXMLElement();
+        parent->removeElement(element);
+        updateReferences(dedicatedParent);
       }
     }
     else {
@@ -2023,8 +2031,16 @@ namespace MBSimGUI {
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
       E(frame->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
-    else
+    else {
       parent->getXMLFrames()->insertBefore(std::get<0>(data), nullptr);
+      auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+      auto *fileItem = dedicatedParent->getFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
+      updateReferences(dedicatedParent);
+    }
     parent->addFrame(frame);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -2049,8 +2065,16 @@ namespace MBSimGUI {
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
       E(contour->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
-    else
+    else {
       parent->getXMLContours()->insertBefore(std::get<0>(data), nullptr);
+      auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+      auto *fileItem = dedicatedParent->getFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
+      updateReferences(dedicatedParent);
+    }
     parent->addContour(contour);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -2075,8 +2099,16 @@ namespace MBSimGUI {
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
       E(group->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
-    else
+    else {
       parent->getXMLGroups()->insertBefore(std::get<0>(data), nullptr);
+      auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+      auto *fileItem = dedicatedParent->getFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
+      updateReferences(dedicatedParent);
+    }
     parent->addGroup(group);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -2101,8 +2133,16 @@ namespace MBSimGUI {
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
       E(object->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
-    else
+    else {
       parent->getXMLObjects()->insertBefore(std::get<0>(data), nullptr);
+      auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+      auto *fileItem = dedicatedParent->getFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
+      updateReferences(dedicatedParent);
+    }
     parent->addObject(object);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -2127,8 +2167,16 @@ namespace MBSimGUI {
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
       E(link->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
-    else
+    else {
       parent->getXMLLinks()->insertBefore(std::get<0>(data), nullptr);
+      auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+      auto *fileItem = dedicatedParent->getFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
+      updateReferences(dedicatedParent);
+    }
     parent->addLink(link);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -2153,8 +2201,16 @@ namespace MBSimGUI {
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
       E(constraint->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
-    else
+    else {
       parent->getXMLConstraints()->insertBefore(std::get<0>(data), nullptr);
+      auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+      auto *fileItem = dedicatedParent->getFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
+      updateReferences(dedicatedParent);
+    }
     parent->addConstraint(constraint);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -2179,8 +2235,16 @@ namespace MBSimGUI {
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
       E(observer->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
     }
-    else
+    else {
       parent->getXMLObservers()->insertBefore(std::get<0>(data), nullptr);
+      auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
+      auto *fileItem = dedicatedParent->getFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
+      updateReferences(dedicatedParent);
+    }
     parent->addObserver(observer);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
