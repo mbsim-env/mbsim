@@ -630,7 +630,7 @@ namespace MBSimGUI {
 
   void MainWindow::parameterViewClicked(const QModelIndex &current) {
     auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(current)->getItemData());
-    FileItemData *fileItem = item->getParent()->getDedicatedParameterFileItem();
+    FileItemData *fileItem = item->getParent()->getParameterFileItem();
     if(fileItem)
       fileView->selectionModel()->setCurrentIndex(fileItem->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     else
@@ -1456,7 +1456,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::moveParameter(bool up) {
-    setProjectChanged(true);
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     QModelIndex parentIndex = index.parent();
@@ -1476,6 +1475,12 @@ namespace MBSimGUI {
     for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
     parameterView->setCurrentIndex(parentIndex.child(j,0));
+    FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    updateParameterReferences(parameter->getParent());
   }
 
   void MainWindow::moveFrame(bool up) {
