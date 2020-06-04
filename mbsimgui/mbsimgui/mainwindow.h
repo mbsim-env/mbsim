@@ -155,10 +155,9 @@ namespace MBSimGUI {
       void settingsFinished(int result);
       void applySettings();
       void kill();
-      void elementViewClicked();
-      void parameterViewClicked();
-      void fileViewClicked();
-      void selectionChanged(const QModelIndex &current);
+      void elementViewClicked(const QModelIndex &current);
+      void parameterViewClicked(const QModelIndex &current);
+      void fileViewClicked(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void updateEchoView();
       void updateStatus();

@@ -298,7 +298,6 @@ namespace MBSimGUI {
 
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
-    connect(elementView->selectionModel(), &QItemSelectionModel::currentChanged, this, &MainWindow::selectionChanged);
     connect(fileView, &ElementView::pressed, this, &MainWindow::fileViewClicked);
 
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);
@@ -593,7 +592,7 @@ namespace MBSimGUI {
     inlineOpenMBVMW->highlightObject(ID);
   }
 
-  void MainWindow::selectionChanged(const QModelIndex &current) {
+  void MainWindow::elementViewClicked(const QModelIndex &current) {
     if(allowUndo) {
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       auto *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
@@ -621,36 +620,25 @@ namespace MBSimGUI {
       else
         highlightObject("");
     }
-  }
-
-  void MainWindow::elementViewClicked() {
     if(QApplication::mouseButtons()==Qt::RightButton) {
-      QModelIndex index = elementView->selectionModel()->currentIndex();
-      TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData();
+      TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(current)->getItemData();
       QMenu *menu = itemData->createContextMenu();
       menu->exec(QCursor::pos());
       delete menu;
     }
-    else if(QApplication::mouseButtons()==Qt::LeftButton)
-      selectionChanged(elementView->selectionModel()->currentIndex());
   }
 
-  void MainWindow::parameterViewClicked() {
+  void MainWindow::parameterViewClicked(const QModelIndex &current) {
+    auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(current)->getItemData());
+    FileItemData *fileItem = item->getParent()->getDedicatedParameterFileItem();
+    if(fileItem)
+      fileView->selectionModel()->setCurrentIndex(fileItem->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    else
+      fileView->selectionModel()->clearSelection();
     if(QApplication::mouseButtons()==Qt::RightButton) {
-      QModelIndex index = parameterView->selectionModel()->currentIndex();
-      auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       QMenu *menu = item->createContextMenu();
       menu->exec(QCursor::pos());
       delete menu;
-    }
-    else if(QApplication::mouseButtons()==Qt::LeftButton) {
-      QModelIndex index = parameterView->selectionModel()->currentIndex();
-      auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
-      FileItemData *fileItem = item->getParent()->getDedicatedParameterFileItem();
-      if(fileItem)
-        fileView->selectionModel()->setCurrentIndex(fileItem->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-      else
-        fileView->selectionModel()->clearSelection();
     }
   }
 
@@ -682,7 +670,7 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::fileViewClicked() {
+  void MainWindow::fileViewClicked(const QModelIndex &current) {
   }
 
   void MainWindow::newProject() {
@@ -1021,7 +1009,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveEigenanalysisAs() {
-    QString file=QFileDialog::getSaveFileName(this, "Export eigenanalysis", getProjectDir().absoluteFilePath("eigenanalysis.mat"), "mat files (*.mat)");
+    QString file=QFileDialog::getSaveFileName(this, "Export eigenanalysis", getProjectDir().absoluteFilePath("eigenanalysis.mat"), "MAT files (*.mat)");
     if(file!="") {
       saveEigenanalysis(file);
     }
@@ -1034,7 +1022,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::saveHarmonicResponseAnalysisAs() {
-    QString file=QFileDialog::getSaveFileName(this, "Export harmonic response analysis", getProjectDir().absoluteFilePath("harmonic_response_analysis.mat"), "mat files (*.mat)");
+    QString file=QFileDialog::getSaveFileName(this, "Export harmonic response analysis", getProjectDir().absoluteFilePath("harmonic_response_analysis.mat"), "MAT files (*.mat)");
     if(file!="") {
       saveHarmonicResponseAnalysis(file);
     }
@@ -1662,7 +1650,7 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(element->getName()+".mbsimele.xml"), "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim element file", getProjectDir().absoluteFilePath(element->getName()+".mbsex"), "MBSim element files (*.mbsex)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node = edoc->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true);
@@ -1698,7 +1686,7 @@ namespace MBSimGUI {
 
   void MainWindow::saveSolverAs() {
     Solver *solver = project->getSolver();
-    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(solver->getName()+".mbsimslv.xml"), "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim solver file", getProjectDir().absoluteFilePath(solver->getName()+".mbssx"), "MBSim solver files (*.mbssx)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node = edoc->importNode(solver->getEmbedXMLElement()?solver->getEmbedXMLElement():solver->getXMLElement(),true);
@@ -1711,7 +1699,7 @@ namespace MBSimGUI {
     ParameterTreeModel *model = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *item = static_cast<Parameters*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(this, "XML model files", getProjectDir().absoluteFilePath(item->getParent()->getName()+".mbsimembed.xml"), "XML files (*.xml)");
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim parameter file", getProjectDir().absoluteFilePath(item->getParent()->getName()+".mbspx"), "MBSim parameter files (*.mbspx)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node;
@@ -1920,7 +1908,7 @@ namespace MBSimGUI {
       }
     }
     else {
-      file=QFileDialog::getOpenFileName(this, "XML frame files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "Open MBSim parameter file", ".", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2002,7 +1990,7 @@ namespace MBSimGUI {
     }
     else {
       xercesc::DOMDocument *doc = nullptr;
-      file=QFileDialog::getOpenFileName(this, "XML object files", ".", "XML files (*.xml)");
+      file=QFileDialog::getOpenFileName(this, "Open MBSim element file", ".", "MBSim element files (*.mbsex);;XML files (*.xml);;All files (*.*)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2206,7 +2194,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     project->getSolver()->removeXMLElement();
     DOMElement *ele = NULL;
-    QString file=QFileDialog::getOpenFileName(this, "XML frame files", ".", "XML files (*.xml)");
+    QString file=QFileDialog::getOpenFileName(this, "Open MBSim solver file", ".", "MBSim solver files (*.mbssx);;XML files (*.xml);;All files (*.*)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"

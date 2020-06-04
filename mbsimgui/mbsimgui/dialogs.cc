@@ -139,7 +139,7 @@ namespace MBSimGUI {
     eleList->setColumnWidth(1,200);
     eleList->hideColumn(1);
     mainLayout->addWidget(eleList,0,0);
-    connect(eleList->selectionModel(),&QItemSelectionModel::currentChanged, this, &BasicElementBrowser::selectionChanged);
+    connect(eleList, &QTreeView::pressed, this, &BasicElementBrowser::selectionChanged);
 
     okButton = new QPushButton("Ok");
     if(!selection)

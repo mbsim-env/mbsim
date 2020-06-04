@@ -1398,7 +1398,7 @@ namespace MBSimGUI {
 
   void FromFileWidget::selectFile() {
     QString file = getFile();
-    file=QFileDialog::getOpenFileName(this, "ASCII files", path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), "All files (*.*)");
+    file=QFileDialog::getOpenFileName(this, "Open ASCII files", path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), "ASCII files (*.asc);;All files (*.*)");
     if(not file.isEmpty()) {
       if(path->isChecked())
         setFile(mw->getProjectDir().absoluteFilePath(file));
