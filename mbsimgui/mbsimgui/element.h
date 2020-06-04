@@ -105,8 +105,8 @@ namespace MBSimGUI {
       virtual QMenu* createFrameContextMenu() {return nullptr;}
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }
-      bool isEnabled() const override { return enabled; }
-      void updateStatus() override { enabled = (not parent or parent->isEnabled()) and isActive(); }
+      bool getEnabled() const override { return enabled; }
+      void updateStatus() override { enabled = (not parent or parent->getEnabled()) and isActive(); }
       Element *getDedicatedElement() { return embeded?(fileItem?this:parent->getDedicatedElement()):this; }
       FileItemData *getDedicatedFileItem() { return getDedicatedElement()->getFileItem(); }
   };

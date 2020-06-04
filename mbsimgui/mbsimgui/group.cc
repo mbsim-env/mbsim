@@ -368,6 +368,10 @@ namespace MBSimGUI {
     observer.erase(observer.begin(),observer.end());
   }
 
+  void Group::setEmbeded(bool embeded_) {
+    Element::setEmbeded(embeded_);
+    frame[0]->setEmbeded(embeded_);
+  }
 
   Frame* Group::getFrame(const QString &name) const {
     size_t i;

@@ -75,8 +75,8 @@ namespace MBSimGUI {
       addSeparator();
       action = new QAction("Enable", this);
       action->setCheckable(true);
-      action->setChecked(element->isEnabled());
-      action->setEnabled(element->getParent()->isEnabled());
+      action->setChecked(element->getEnabled());
+      action->setEnabled(element->getParent()->getEnabled());
       connect(action,&QAction::toggled,mw,&MainWindow::enableElement);
       addAction(action);
     }

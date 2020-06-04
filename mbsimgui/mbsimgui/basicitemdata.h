@@ -32,7 +32,8 @@ namespace MBSimGUI {
       ContainerItemData(Element *element_) : element(element_) { element->addTreeItemData(this); }
       QString getValue() const override { return ""; }
       QString getType() const override { return ""; }
-      bool isEnabled() const override { return element->isEnabled(); }
+      bool getEnabled() const override { return element->getEnabled(); }
+      bool getEmbeded() const override { return element->getEmbeded(); }
       Element* getElement() { return element; }
   };
 

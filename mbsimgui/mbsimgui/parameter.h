@@ -44,7 +44,8 @@ namespace MBSimGUI {
       Parameter() = default;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
-      bool isEnabled() const override { return parent->isEnabled(); }
+      bool getEnabled() const override { return parent->getEnabled(); }
+      bool getEmbeded() const override { return parent->getEmbededParameters(); }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual PropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
@@ -103,7 +104,8 @@ namespace MBSimGUI {
       QString getName() const override { return item->getName() + " parameters"; }
       QString getValue() const override { return ""; }
       QString getType() const override { return ""; }
-      bool isEnabled() const override { return item->isEnabled(); }
+      bool getEnabled() const override { return item->getEnabled(); }
+      bool getEmbeded() const override { return item->getEmbededParameters(); }
       EmbedItemData *getItem() const { return item; }
       QMenu* createContextMenu() override { return new ParametersContextMenu(item); }
     protected:

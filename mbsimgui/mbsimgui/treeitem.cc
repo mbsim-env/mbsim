@@ -22,12 +22,17 @@
 
 namespace MBSimGUI {
 
-  TreeItem::TreeItem(TreeItemData *itemData, TreeItem *parent, const QFont &font_, const QIcon &icon, const QBrush &foregoundA, const QBrush &foregoundD, const QBrush &background_) : itemData(itemData), parentItem(parent), font(font_), decoration(icon), background(background_) {
-    foreground[0] = foregoundD;
-    foreground[1] = foregoundA;
+  TreeItem::TreeItem(TreeItemData *itemData, TreeItem *parent) : itemData(itemData), parentItem(parent) {
+    foreground[0] = QApplication::palette().brush(QPalette::Disabled, QPalette::Text);
+    foreground[1] = QApplication::palette().brush(QPalette::Active, QPalette::Text);
+    background[0] = QApplication::palette().brush(QPalette::Active, QPalette::Base);
+    background[1] = QApplication::palette().brush(QPalette::Active, QPalette::AlternateBase);
     getData_[0] = &TreeItem::getData0;
     getData_[1] = &TreeItem::getData1;
     getData_[2] = &TreeItem::getData2;
+    font[0] = QApplication::font();
+    font[1] = QApplication::font();
+//    font[1].setItalic(true);
   }
 
   TreeItem::~TreeItem() {
