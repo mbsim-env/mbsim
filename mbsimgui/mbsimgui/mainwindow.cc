@@ -611,6 +611,11 @@ namespace MBSimGUI {
         else
           pmodel->createParameterItem(element->getParameters());
         parameterView->expandAll();
+        FileItemData *fileItem = element->getDedicatedFileItem();
+        if(fileItem)
+          fileView->selectionModel()->setCurrentIndex(fileItem->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+        else
+          fileView->selectionModel()->clearSelection();
         highlightObject(element->getID());
       }
       else
@@ -682,16 +687,6 @@ namespace MBSimGUI {
   }
 
   void MainWindow::fileViewClicked() {
-//    if(QApplication::mouseButtons()==Qt::LeftButton) {
-//      auto *pmodel = static_cast<ElementTreeModel*>(elementView->model());
-//      QModelIndex index = pmodel->index(0,0);
-//      pmodel->removeRow(index.row(), index.parent());
-//      index = fileView->selectionModel()->currentIndex();
-//      pmodel->removeRow(index.row(), index.parent());
-////      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
-//      auto *element = static_cast<Element*>(static_cast<FileItemData*>(static_cast<FileTreeModel*>(fileView->model())->getItem(index)->getItemData())->getItem());
-//      pmodel->createElementItem(element,QModelIndex());
-//    }
   }
 
   void MainWindow::newProject() {
