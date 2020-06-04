@@ -120,10 +120,6 @@ namespace MBSimGUI {
   }
 
   InternalFramePropertyDialog::InternalFramePropertyDialog(Element *frame) : ElementPropertyDialog(frame) {
-    if(frame->getParent()->getEmbeded()) {
-      buttonBox->button(QDialogButtonBox::Apply)->setDisabled(true);
-      buttonBox->button(QDialogButtonBox::Ok)->setDisabled(true);
-    }
     addTab("Visualization",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,static_cast<InternalFrame*>(frame)->getXMLFrameName());
     visu->setToolTip("Set the visualisation parameters for the frame");
