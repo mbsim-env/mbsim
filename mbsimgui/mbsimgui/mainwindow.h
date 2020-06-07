@@ -189,13 +189,13 @@ namespace MBSimGUI {
       void loadParameter(EmbedItemData *parent, Parameter *param=nullptr, bool embed=false);
       void removeParameter(EmbedItemData *parent);
       std::tuple<xercesc::DOMElement*,FileItemData*> loadElement(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadFrame(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadContour(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadGroup(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadObject(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadLink(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadConstraint(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadObserver(Element *parent, Element *element=nullptr, bool embed=false);
+      void loadFrame(Element *parent, Element *element=nullptr, bool embed=false, bool includeParameters=false);
+      void loadContour(Element *parent, Element *element=nullptr, bool embed=false, bool includeParameters=false);
+      void loadGroup(Element *parent, Element *element=nullptr, bool embed=false, bool includeParameters=false);
+      void loadObject(Element *parent, Element *element=nullptr, bool embed=false, bool includeParameters=false);
+      void loadLink(Element *parent, Element *element=nullptr, bool embed=false, bool includeParameters=false);
+      void loadConstraint(Element *parent, Element *element=nullptr, bool embed=false, bool includeParameters=false);
+      void loadObserver(Element *parent, Element *element=nullptr, bool embed=false, bool includeParameters=false);
       void highlightObject(const std::string &ID);
       const std::string& getHighlightedObject() const { return currentID; }
       ElementView* getElementView() { return elementView; }
@@ -219,7 +219,7 @@ namespace MBSimGUI {
       void viewProjectSource();
       void viewElementSource();
       void viewSolverSource();
-      void saveElementAs();
+      void saveElementAs(bool includeParameters);
       void copyElement(bool cut=false);
       void removeElement();
       void enableElement(bool enabled);
@@ -244,9 +244,9 @@ namespace MBSimGUI {
       void saveHarmonicResponseAnalysis(const QString &file);
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
-      void saveSolverAs();
+      void saveSolverAs(bool includeParameters);
       void saveParametersAs();
-      void loadSolver();
+      void loadSolver(bool embed=false);
       void viewParametersSource();
       void viewParameterSource();
       void openProjectEditor();

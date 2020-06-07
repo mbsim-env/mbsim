@@ -181,7 +181,7 @@ namespace MBSimGUI {
   DOMElement* EmbedItemData::processIDAndHref(DOMElement *element) {
     if(MBXMLUtils::E(element)->hasAttribute("href")) {
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));
-      element->insertBefore(ele2,NULL);
+      element->insertBefore(ele2,nullptr);
       boost::filesystem::path orgFileName=E(getXMLElement())->getOriginalFilename();
       DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
           X()%orgFileName.string());
