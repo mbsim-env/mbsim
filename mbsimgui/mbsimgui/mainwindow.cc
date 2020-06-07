@@ -1709,8 +1709,11 @@ namespace MBSimGUI {
       DOMNode *node = edoc->importNode(element->getXMLElement(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
+      if(element->getEmbedXMLElement()) {
+        QMessageBox::StandardButton button = QMessageBox::question(this, "Export parameters", "Export parameters?");
+        if(button==QMessageBox::Yes) saveParametersAs();
+      }
     }
-    if(includeParameters) saveParametersAs();
   }
 
   void MainWindow::enableElement(bool enabled) {

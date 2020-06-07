@@ -55,10 +55,6 @@ namespace MBSimGUI {
       action=new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
       connect(action,&QAction::triggered,this,[=](){ mw->saveElementAs(false); });
       addAction(action);
-      action=new QAction(QIcon::fromTheme("document-save-as"), "Export+", this);
-      action->setEnabled(element->getEmbedXMLElement());
-      connect(action,&QAction::triggered,this,[=](){ mw->saveElementAs(true); });
-      addAction(action);
     }
     if(removable) {
       addSeparator();
