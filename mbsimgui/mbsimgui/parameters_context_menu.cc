@@ -38,8 +38,11 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,mw,&MainWindow::exportParameters);
     addAction(action);
     addSeparator();
+    action = new QAction("Add", this);
+    action->setDisabled(item->getEmbededParameters());
+    connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,false,true); });
+    addAction(action);
     action = new QAction("Embed", this);
-    action->setDisabled(item->getNumberOfParameters() or item->hasParameterXMLElement());
     connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
@@ -51,7 +54,7 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
-    action->setEnabled(item->getNumberOfParameters() and not(item->getEmbedItemParent() and item->getEmbedItemParent()->getEmbeded()));
+    action->setEnabled(item->getNumberOfParameters());
     connect(action,&QAction::triggered,this,[=](){ mw->removeParameter(item); });
     addAction(action);
     addSeparator();

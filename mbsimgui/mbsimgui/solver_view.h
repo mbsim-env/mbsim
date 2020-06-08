@@ -42,6 +42,7 @@ namespace MBSimGUI {
       void setSolver(Solver *solver);
       Solver* createSolver(int i_);
       QMenu* createContextMenu() { return new SolverContextMenu(type); }
+      void paintEvent(QPaintEvent *event) override;
     private:
       void openContextMenu();
       std::vector<QString> type;

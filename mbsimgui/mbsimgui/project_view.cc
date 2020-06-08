@@ -34,13 +34,6 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,mw,&MainWindow::viewProjectSource);
     addAction(action);
     addSeparator();
-    action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
-    connect(action,&QAction::triggered,mw,&MainWindow::exportProject);
-    addAction(action);
-    addSeparator();
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
-    connect(action,&QAction::triggered,mw,QOverload<>::of(&MainWindow::loadProject));
-    addAction(action);
   }
 
   ProjectView::ProjectView() : QLineEdit("Project") {

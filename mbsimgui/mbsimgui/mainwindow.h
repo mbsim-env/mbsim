@@ -186,7 +186,7 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent);
       void addConstraint(Constraint *constraint, Element *parent);
       void addObserver(Observer *observer, Element *parent);
-      void loadParameter(EmbedItemData *parent, Parameter *param=nullptr, bool embed=false);
+      void loadParameter(EmbedItemData *parent, Parameter *param=nullptr, bool embed=false, bool add=false);
       void removeParameter(EmbedItemData *parent);
       std::tuple<xercesc::DOMElement*,FileItemData*> loadElement(Element *parent, Element *element=nullptr, bool embed=false);
       void loadFrame(Element *parent, Element *element=nullptr, bool embed=false);
@@ -196,6 +196,7 @@ namespace MBSimGUI {
       void loadLink(Element *parent, Element *element=nullptr, bool embed=false);
       void loadConstraint(Element *parent, Element *element=nullptr, bool embed=false);
       void loadObserver(Element *parent, Element *element=nullptr, bool embed=false);
+      void loadDynamicSystemSolver(bool embed=false);
       void highlightObject(const std::string &ID);
       const std::string& getHighlightedObject() const { return currentID; }
       ElementView* getElementView() { return elementView; }
@@ -244,7 +245,6 @@ namespace MBSimGUI {
       void saveHarmonicResponseAnalysis(const QString &file);
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
-      void exportProject();
       void exportSolver();
       void exportParameters();
       void loadSolver(bool embed=false);

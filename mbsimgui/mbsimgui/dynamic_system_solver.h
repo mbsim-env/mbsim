@@ -52,7 +52,7 @@ namespace MBSimGUI {
       void create() override;
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new DynamicSystemSolverPropertyDialog(this); }
-      QMenu* createContextMenu() override { return new ElementContextMenu(this,nullptr,false,true); }
+      QMenu* createContextMenu() override { return new DynamicSystemSolverContextMenu(this); }
       EmbedItemData* getEmbedItemParent() override;
   };
 

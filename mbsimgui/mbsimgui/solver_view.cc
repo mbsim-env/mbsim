@@ -25,6 +25,7 @@
 #include "project.h"
 #include "utils.h"
 #include "mainwindow.h"
+#include <QApplication>
 
 namespace MBSimGUI {
 
@@ -215,6 +216,18 @@ namespace MBSimGUI {
     else if(dynamic_cast<TimeSteppingSSCIntegrator*>(solver))
       i=23;
     setText(type[i]);
+  }
+
+  void SolverView::paintEvent(QPaintEvent *event) {
+    QLineEdit::paintEvent(event);
+    //QPalette palette;
+    //palette.setBrush(QPalette::Active,QPalette::Base,QApplication::palette().brush(QPalette::Active, QPalette::AlternateBase));
+    //setPalette(palette);
+    if(mw->getProject()->getSolver()->getEmbeded()) {
+      QPalette palette;
+      palette.setBrush(QPalette::Active,QPalette::Text,QApplication::palette().brush(QPalette::Active, QPalette::Link));
+      setPalette(palette);
+    }
   }
 
   bool SolverMouseEvent::eventFilter(QObject *obj, QEvent *event) {

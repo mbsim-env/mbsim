@@ -1755,20 +1755,6 @@ namespace MBSimGUI {
     if(getAutoRefresh()) refresh();
   }
 
-  void MainWindow::exportProject() {
-    QString file = QFileDialog::getSaveFileName(this, "Export MBSim project file", getProjectDir().absoluteFilePath(project->getName()+".mbsprjx"), "Project files (*.mbsprjx)");
-    if(not file.isEmpty()) {
-      xercesc::DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(project->getXMLElement(),true);
-      edoc->insertBefore(node,nullptr);
-      serializer->writeToURI(edoc, X()%file.toStdString());
-      if(project->getEmbedXMLElement()) {
-        QMessageBox::StandardButton button = QMessageBox::question(this, "Question", "Export parameters?");
-        if(button==QMessageBox::Yes) exportParameters();
-      }
-    }
-  }
-
   void MainWindow::exportSolver() {
     Solver *solver = project->getSolver();
     QString file = QFileDialog::getSaveFileName(this, "Export MBSim solver file", getProjectDir().absoluteFilePath(solver->getName()+".mbssx"), "Solver files (*.mbssx)");
@@ -1977,7 +1963,7 @@ namespace MBSimGUI {
     openParameterEditor(false);
   }
 
-  void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param, bool embed) {
+  void MainWindow::loadParameter(EmbedItemData *parent, Parameter *param, bool embed, bool add) {
     vector<DOMElement*> elements;
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     FileItemData *parameterFileItem = nullptr;
@@ -1995,6 +1981,7 @@ namespace MBSimGUI {
       }
     }
     else {
+      if(parent->getNumberOfParameters() and not add) removeParameter(parent);
       xercesc::DOMDocument *doc = nullptr;
       QString file = QFileDialog::getOpenFileName(this, "Open MBSim parameter file", ".", "Parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)");
       if(not file.isEmpty()) {
@@ -2044,7 +2031,11 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeParameter(EmbedItemData *parent) {
-    setProjectChanged(true);
+    auto *fileItem = parent->getDedicatedFileItemOfParent();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     int n = parent->getNumberOfParameters();
@@ -2117,7 +2108,6 @@ namespace MBSimGUI {
     tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Frame *frame = Embed<Frame>::create(std::get<0>(data),parent);
-    frame->create();
     if(not frame) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
@@ -2131,6 +2121,8 @@ namespace MBSimGUI {
     }
     else
       parent->getXMLFrames()->insertBefore(std::get<0>(data), nullptr);
+    parent->addFrame(frame);
+    frame->create();
     auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -2138,7 +2130,6 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
-    parent->addFrame(frame);
     static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     elementViewClicked(frame->getModelIndex());
@@ -2151,13 +2142,12 @@ namespace MBSimGUI {
     tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Contour *contour = Embed<Contour>::create(std::get<0>(data),parent);
-    contour->create();
     if(not contour) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      contour->setEmbeded(embed);
+      contour->setEmbeded(true);
       contour->setFileItem(std::get<1>(data));
       contour->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
@@ -2165,6 +2155,8 @@ namespace MBSimGUI {
     }
     else
       parent->getXMLContours()->insertBefore(std::get<0>(data), nullptr);
+    parent->addContour(contour);
+    contour->create();
     auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -2172,7 +2164,6 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
-    parent->addContour(contour);
     static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     elementViewClicked(contour->getModelIndex());
@@ -2185,13 +2176,12 @@ namespace MBSimGUI {
     tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Group *group = Embed<Group>::create(std::get<0>(data),parent);
-    group->create();
     if(not group) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      group->setEmbeded(embed);
+      group->setEmbeded(true);
       group->setFileItem(std::get<1>(data));
       group->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
@@ -2199,6 +2189,8 @@ namespace MBSimGUI {
     }
     else
       parent->getXMLGroups()->insertBefore(std::get<0>(data), nullptr);
+    parent->addGroup(group);
+    group->create();
     auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -2206,7 +2198,6 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
-    parent->addGroup(group);
     static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     elementViewClicked(group->getModelIndex());
@@ -2219,7 +2210,6 @@ namespace MBSimGUI {
     tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Object *object = Embed<Object>::create(std::get<0>(data),parent);
-    object->create();
     if(not object) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
@@ -2233,6 +2223,8 @@ namespace MBSimGUI {
     }
     else
       parent->getXMLObjects()->insertBefore(std::get<0>(data), nullptr);
+    parent->addObject(object);
+    object->create();
     auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -2240,7 +2232,6 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
-    parent->addObject(object);
     static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     elementViewClicked(object->getModelIndex());
@@ -2253,13 +2244,12 @@ namespace MBSimGUI {
     tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Link *link = Embed<Link>::create(std::get<0>(data),parent);
-    link->create();
     if(not link) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      link->setEmbeded(embed);
+      link->setEmbeded(true);
       link->setFileItem(std::get<1>(data));
       link->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
@@ -2267,6 +2257,8 @@ namespace MBSimGUI {
     }
     else
       parent->getXMLLinks()->insertBefore(std::get<0>(data), nullptr);
+    parent->addLink(link);
+    link->create();
     auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -2274,7 +2266,6 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
-    parent->addLink(link);
     static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     elementViewClicked(link->getModelIndex());
@@ -2287,13 +2278,12 @@ namespace MBSimGUI {
     tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Constraint *constraint = Embed<Constraint>::create(std::get<0>(data),parent);
-    constraint->create();
     if(not constraint) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      constraint->setEmbeded(embed);
+      constraint->setEmbeded(true);
       constraint->setFileItem(std::get<1>(data));
       constraint->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
@@ -2301,6 +2291,8 @@ namespace MBSimGUI {
     }
     else
       parent->getXMLConstraints()->insertBefore(std::get<0>(data), nullptr);
+    parent->addConstraint(constraint);
+    constraint->create();
     auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -2308,7 +2300,6 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
-    parent->addConstraint(constraint);
     static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     elementViewClicked(constraint->getModelIndex());
@@ -2321,13 +2312,12 @@ namespace MBSimGUI {
     tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Observer *observer = Embed<Observer>::create(std::get<0>(data),parent);
-    observer->create();
     if(not observer) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      observer->setEmbeded(embed);
+      observer->setEmbeded(true);
       observer->setFileItem(std::get<1>(data));
       observer->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
@@ -2335,6 +2325,8 @@ namespace MBSimGUI {
     }
     else
       parent->getXMLObservers()->insertBefore(std::get<0>(data), nullptr);
+    parent->addObserver(observer);
+    observer->create();
     auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -2342,7 +2334,6 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
-    parent->addObserver(observer);
     static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     elementViewClicked(observer->getModelIndex());
@@ -2351,24 +2342,85 @@ namespace MBSimGUI {
     if(getAutoRefresh()) refresh();
   }
 
-  void MainWindow::loadSolver(bool embed) {
-    setProjectChanged(true);
-    DOMElement *paramele = nullptr;
+  void MainWindow::loadDynamicSystemSolver(bool embed) {
+    DOMElement *ele = nullptr;
+    xercesc::DOMDocument *doc = nullptr;
     FileItemData *fileItem = nullptr;
-    FileItemData *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
-    DOMElement *embedele = getProject()->getSolver()->getEmbedXMLElement();
+    QString file = QFileDialog::getOpenFileName(this, "Open MBSim element file", ".", "Element files (*.mbsex);;XML files (*.xml);;All files (*.*)");
+    if(not file.isEmpty()) {
+      if(file.startsWith("//"))
+        file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
+      if(embed) {
+        fileItem = addFile(file);
+        doc = fileItem->getXMLDocument();
+      }
+      else {
+        doc = parser->parseURI(X()%file.toStdString());
+        DOMParser::handleCDATA(doc->getDocumentElement());
+      }
+      ele = embed?doc->getDocumentElement():static_cast<DOMElement*>(project->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+    }
+    else
+      return;
+    setProjectChanged(true);
+    DOMElement *embedele = getProject()->getDynamicSystemSolver()->getEmbedXMLElement();
+    DOMElement *paramele = nullptr;
+    FileItemData *parameterFileItem = getProject()->getDynamicSystemSolver()->getParameterFileItem();
     if(parameterFileItem)
       paramele = parameterFileItem->getXMLElement();
     else if(embedele)
       paramele = MBXMLUtils::E(embedele)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-    QModelIndex pindex = getProject()->getSolver()->getParameters()->getModelIndex();
+    QModelIndex pindex = getProject()->getDynamicSystemSolver()->getParameters()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
-    if(getProject()->getSolver()->getEmbeded())
+    if(getProject()->getDynamicSystemSolver()->getEmbeded())
       E(embedele)->removeAttribute("href");
     else
-      getProject()->getSolver()->removeXMLElement(false);
+      getProject()->getDynamicSystemSolver()->removeXMLElement(false);
+    DynamicSystemSolver *dss = Embed<DynamicSystemSolver>::create(ele,project);
+    if(not dss) {
+      QMessageBox::warning(0, "Import", "Cannot import file.");
+      return;
+    }
+    if(embed) {
+      dss->setEmbeded(true);
+      dss->setFileItem(fileItem);
+      dss->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
+      project->getXMLElement()->insertBefore(dss->getEmbedXMLElement(), project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
+      E(dss->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(fileItem->getFileInfo().absoluteFilePath()).toStdString());
+    }
+    else {
+      if(embedele)
+        embedele->insertBefore(ele, nullptr);
+      else
+        project->getXMLElement()->insertBefore(ele, project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
+    }
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    auto index = project->getDynamicSystemSolver()->getModelIndex();
+    model->removeRow(index.row(), index.parent());
+    project->setDynamicSystemSolver(dss);
+    dss->create();
+    model->createGroupItem(dss);
+    elementView->selectionModel()->setCurrentIndex(dss->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    if(embed or not dss->getEmbedXMLElement()) {
+      if(not dss->getEmbedXMLElement()) dss->setEmbedXMLElement(embedele);
+      if(paramele) {
+        if(parameterFileItem) {
+          dss->setEmbededParameters(true);
+          dss->setParameterFileItem(parameterFileItem);
+        }
+        std::vector<Parameter*> param = Parameter::createParameters(paramele);
+        for(auto & i : param)
+          dss->addParameter(i);
+      }
+    }
+    elementViewClicked(dss->getModelIndex());
+    if(getAutoRefresh()) refresh();
+  }
+
+  void MainWindow::loadSolver(bool embed) {
     DOMElement *ele = nullptr;
     xercesc::DOMDocument *doc = nullptr;
+    FileItemData *fileItem = nullptr;
     QString file = QFileDialog::getOpenFileName(this, "Open MBSim solver file", ".", "Solver files (*.mbssx);;XML files (*.xml);;All files (*.*)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
@@ -2385,14 +2437,27 @@ namespace MBSimGUI {
     }
     else
       return;
+    setProjectChanged(true);
+    DOMElement *embedele = getProject()->getSolver()->getEmbedXMLElement();
+    DOMElement *paramele = nullptr;
+    FileItemData *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
+    if(parameterFileItem)
+      paramele = parameterFileItem->getXMLElement();
+    else if(embedele)
+      paramele = MBXMLUtils::E(embedele)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
+    QModelIndex pindex = getProject()->getSolver()->getParameters()->getModelIndex();
+    static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
+    if(getProject()->getSolver()->getEmbeded())
+      E(embedele)->removeAttribute("href");
+    else
+      getProject()->getSolver()->removeXMLElement(false);
     Solver *solver = Embed<Solver>::create(ele,project);
-    solver->create();
     if(not solver) {
       QMessageBox::warning(0, "Import", "Cannot import file.");
       return;
     }
     if(embed) {
-      solver->setEmbeded(embed);
+      solver->setEmbeded(true);
       solver->setFileItem(fileItem);
       solver->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(solver->getEmbedXMLElement(), nullptr);
@@ -2405,6 +2470,7 @@ namespace MBSimGUI {
         project->getXMLElement()->insertBefore(ele, nullptr);
     }
     project->setSolver(solver);
+    solver->create();
     solverView->setSolver(solver);
     if(embed or not solver->getEmbedXMLElement()) {
       if(not solver->getEmbedXMLElement()) solver->setEmbedXMLElement(embedele);
@@ -2419,6 +2485,8 @@ namespace MBSimGUI {
       }
     }
     solverViewClicked();
+    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+    if(button==QMessageBox::Yes) loadParameter(solver,nullptr,embed);
   }
 
   void MainWindow::viewProjectSource() {

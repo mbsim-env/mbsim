@@ -82,6 +82,16 @@ namespace MBSimGUI {
     }
   }
 
+  DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,false,true) {
+    addSeparator();
+    QAction *action = new QAction("Embed", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->loadDynamicSystemSolver(true); });
+    addAction(action);
+    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->loadDynamicSystemSolver(false); });
+    addAction(action);
+  }
+
   FrameContextMenu::FrameContextMenu(Frame *frame, QWidget *parent, bool removable) : ElementContextMenu(frame,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);

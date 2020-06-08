@@ -38,6 +38,11 @@ namespace MBSimGUI {
       ElementContextMenu(Element *element, QWidget *parent=nullptr, bool removable=true, bool saveable=true);
    };
 
+  class DynamicSystemSolverContextMenu : public ElementContextMenu {
+    public:
+      DynamicSystemSolverContextMenu(Element *element, QWidget *parent=nullptr);
+  };
+
   class FrameContextMenu : public ElementContextMenu {
     public:
       FrameContextMenu(Frame *frame, QWidget *parent=nullptr, bool removable=true);
