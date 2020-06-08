@@ -39,11 +39,7 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->saveSolverAs(false); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-save-as"), "Export all", this);
-    action->setEnabled(mw->getProject()->getSolver()->getEmbedXMLElement());
-    connect(action,&QAction::triggered,this,[=](){ mw->saveSolverAs(true); });
+    connect(action,&QAction::triggered,mw,&MainWindow::exportSolver);
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-open"), "Embed", this);

@@ -53,7 +53,7 @@ namespace MBSimGUI {
     if(saveable) {
       addSeparator();
       action=new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
-      connect(action,&QAction::triggered,this,[=](){ mw->saveElementAs(false); });
+      connect(action,&QAction::triggered,mw,&MainWindow::exportElement);
       addAction(action);
     }
     if(removable) {
@@ -170,14 +170,8 @@ namespace MBSimGUI {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element,nullptr,true); });
     addAction(action);
-    action = new QAction("Embed+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element,nullptr,true,true); });
-    addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element,nullptr,false,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
@@ -215,14 +209,8 @@ namespace MBSimGUI {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element,nullptr,true); });
     addAction(action);
-    action = new QAction("Embed+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element,nullptr,true,true); });
-    addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element,nullptr,false,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
@@ -314,14 +302,8 @@ namespace MBSimGUI {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element,nullptr,true); });
     addAction(action);
-    action = new QAction("Embed+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element,nullptr,true,true); });
-    addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element,nullptr,false,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
@@ -337,14 +319,8 @@ namespace MBSimGUI {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element,nullptr,true); });
     addAction(action);
-    action = new QAction("Embed+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element,nullptr,true,true); });
-    addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element,nullptr,false,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
@@ -371,14 +347,8 @@ namespace MBSimGUI {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element,nullptr,true); });
     addAction(action);
-    action = new QAction("Embed+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element,nullptr,true,true); });
-    addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element,nullptr,false,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
@@ -450,14 +420,8 @@ namespace MBSimGUI {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element,nullptr,true); });
     addAction(action);
-    action = new QAction("Embed+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element,nullptr,true,true); });
-    addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element,nullptr,false,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
@@ -494,14 +458,8 @@ namespace MBSimGUI {
     QAction *action = new QAction("Embed", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element,nullptr,true); });
     addAction(action);
-    action = new QAction("Embed+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element,nullptr,true,true); });
-    addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import+", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element,nullptr,false,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
