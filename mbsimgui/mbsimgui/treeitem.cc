@@ -24,15 +24,14 @@
 namespace MBSimGUI {
 
   TreeItem::TreeItem(TreeItemData *itemData, TreeItem *parent) : itemData(itemData), parentItem(parent) {
-    foreground[0] = Qt::black;
-    foreground[1] = QColor::fromRgb(0,0,125);
-    foreground[2] = Qt::blue;
-//    foreground[0] = QApplication::palette().brush(QPalette::Disabled, QPalette::Text);
+    foreground[0] = QApplication::palette().brush(QPalette::Disabled, QPalette::Text);
+    foreground[1] = QApplication::palette().brush(QPalette::Active, QPalette::Text);
     background[0] = QApplication::palette().brush(QPalette::Active, QPalette::Base);
     background[1] = QApplication::palette().brush(QPalette::Active, QPalette::AlternateBase);
     getData_[0] = &TreeItem::getData0;
     getData_[1] = &TreeItem::getData1;
     getData_[2] = &TreeItem::getData2;
+    getData_[3] = &TreeItem::getData3;
     font[0] = QApplication::font();
     font[1] = QApplication::font();
 //    font[1].setItalic(true);

@@ -60,7 +60,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       void create() override;
       void clear() override;
-      void setEmbeded(bool embeded_) override;
+      void setDedicatedFileItem(FileItemData *dedicatedFileItem) override;
       Element *getChildByContainerAndName(const QString &container, const QString &name) const override;
       void setActionPasteDisabled(bool flag);
       int getNumberOfFrames() override {return frame.size();}

@@ -75,6 +75,13 @@ namespace MBSimGUI {
   }
 
   SolverView::SolverView()  {
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    lineEdit = new QLineEdit;
+    layout->addWidget(lineEdit);
+    label = new QLabel;
+    layout->addWidget(label);
     type.emplace_back("Eigenanalyzer");
     type.emplace_back("Harmonic response analyzer");
     type.emplace_back("Boost odeint DOS RKDOPRI5");
@@ -99,11 +106,11 @@ namespace MBSimGUI {
     type.emplace_back("Theta time stepping integrator");
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Time stepping SSC integrator");
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(this,&SolverView::customContextMenuRequested,this,&SolverView::openContextMenu);
+    lineEdit->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(lineEdit,&QLineEdit::customContextMenuRequested,this,&SolverView::openContextMenu);
 
-    installEventFilter(new SolverMouseEvent(this));
-    setReadOnly(true);
+    lineEdit->installEventFilter(new SolverMouseEvent(lineEdit));
+    lineEdit->setReadOnly(true);
   }
 
   void SolverView::openContextMenu() {
@@ -167,6 +174,7 @@ namespace MBSimGUI {
   }
 
   void SolverView::setSolver(Solver *solver) {
+    label->setText(QString::number(solver->getSelfEmbeded()));
     if(dynamic_cast<Eigenanalyzer*>(solver))
       i=0;
     else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
@@ -216,13 +224,6 @@ namespace MBSimGUI {
     else if(dynamic_cast<TimeSteppingSSCIntegrator*>(solver))
       i=23;
     setText(type[i]);
-  }
-
-  void SolverView::paintEvent(QPaintEvent *event) {
-    QLineEdit::paintEvent(event);
-    QPalette palette;
-    palette.setBrush(QPalette::Active,QPalette::Text,mw->getProject()->getSolver()->getEmbeded()?Qt::blue:Qt::black);
-    setPalette(palette);
   }
 
   bool SolverMouseEvent::eventFilter(QObject *obj, QEvent *event) {

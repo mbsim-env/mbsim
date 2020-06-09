@@ -857,10 +857,8 @@ namespace MBSimGUI {
     getProject()->getSolver()->createXMLElement(embed?embed:getProject()->getXMLElement());
     getProject()->getSolver()->setEmbedXMLElement(embed);
     if(ele) {
-      if(parameterFileItem) {
-        getProject()->getSolver()->setEmbededParameters(true);
+      if(parameterFileItem)
         getProject()->getSolver()->setParameterFileItem(parameterFileItem);
-      }
       std::vector<Parameter*> param = Parameter::createParameters(ele);
       for(auto & i : param)
         getProject()->getSolver()->addParameter(i);
@@ -2016,9 +2014,7 @@ namespace MBSimGUI {
         return;
     }
     if(embed) {
-      parent->setEmbededParameters(true);
       parent->setParameterFileItem(parameterFileItem);
-      cout << getProjectDir().relativeFilePath(parameterFileItem->getFileInfo().absoluteFilePath()).toStdString() << endl;
       E(parent->createEmbedXMLElement())->setAttribute("parameterHref",getProjectDir().relativeFilePath(parameterFileItem->getFileInfo().absoluteFilePath()).toStdString());
     }
     for(auto & element : elements) {
@@ -2053,7 +2049,6 @@ namespace MBSimGUI {
       for(int i=n-1; i>=0; i--)
         parent->removeParameter(parent->getParameter(i));
       parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
-      parent->setEmbededParameters(false);
       parent->setParameterFileItem(nullptr);
     }
     else {
@@ -2123,7 +2118,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      frame->setEmbeded(true);
+      frame->setDedicatedFileItem(std::get<1>(data));
       frame->setFileItem(std::get<1>(data));
       frame->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
@@ -2157,7 +2152,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      contour->setEmbeded(true);
+      contour->setDedicatedFileItem(std::get<1>(data));
       contour->setFileItem(std::get<1>(data));
       contour->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
@@ -2191,7 +2186,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      group->setEmbeded(true);
+      group->setDedicatedFileItem(std::get<1>(data));
       group->setFileItem(std::get<1>(data));
       group->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
@@ -2225,7 +2220,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      object->setEmbeded(true);
+      object->setDedicatedFileItem(std::get<1>(data));
       object->setFileItem(std::get<1>(data));
       object->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
@@ -2259,7 +2254,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      link->setEmbeded(true);
+      link->setDedicatedFileItem(std::get<1>(data));
       link->setFileItem(std::get<1>(data));
       link->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
@@ -2293,7 +2288,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      constraint->setEmbeded(true);
+      constraint->setDedicatedFileItem(std::get<1>(data));
       constraint->setFileItem(std::get<1>(data));
       constraint->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
@@ -2327,7 +2322,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      observer->setEmbeded(true);
+      observer->setDedicatedFileItem(std::get<1>(data));
       observer->setFileItem(std::get<1>(data));
       observer->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
@@ -2392,7 +2387,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      dss->setEmbeded(true);
+      dss->setDedicatedFileItem(fileItem);
       dss->setFileItem(fileItem);
       dss->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(dss->getEmbedXMLElement(), project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
@@ -2414,10 +2409,8 @@ namespace MBSimGUI {
     if(embed or not dss->getEmbedXMLElement()) {
       if(not dss->getEmbedXMLElement()) dss->setEmbedXMLElement(embedele);
       if(paramele) {
-        if(parameterFileItem) {
-          dss->setEmbededParameters(true);
+        if(parameterFileItem)
           dss->setParameterFileItem(parameterFileItem);
-        }
         std::vector<Parameter*> param = Parameter::createParameters(paramele);
         for(auto & i : param)
           dss->addParameter(i);
@@ -2467,7 +2460,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      solver->setEmbeded(true);
+      solver->setDedicatedFileItem(fileItem);
       solver->setFileItem(fileItem);
       solver->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(solver->getEmbedXMLElement(), nullptr);
@@ -2485,10 +2478,8 @@ namespace MBSimGUI {
     if(embed or not solver->getEmbedXMLElement()) {
       if(not solver->getEmbedXMLElement()) solver->setEmbedXMLElement(embedele);
       if(paramele) {
-        if(parameterFileItem) {
-          solver->setEmbededParameters(true);
+        if(parameterFileItem)
           solver->setParameterFileItem(parameterFileItem);
-        }
         std::vector<Parameter*> param = Parameter::createParameters(paramele);
         for(auto & i : param)
           solver->addParameter(i);

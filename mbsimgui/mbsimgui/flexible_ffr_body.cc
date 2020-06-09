@@ -123,9 +123,9 @@ namespace MBSimGUI {
     contour.erase(contour.begin(),contour.end());
   }
 
-  void GenericFlexibleFfrBody::setEmbeded(bool embeded_) {
-    Body::setEmbeded(embeded_);
-    frame[0]->setEmbeded(embeded_);
+  void GenericFlexibleFfrBody::setDedicatedFileItem(FileItemData* dedicatedFileItem) {
+    Body::setDedicatedFileItem(dedicatedFileItem);
+    frame[0]->setDedicatedFileItem(dedicatedFileItem);
   }
 
   DOMElement* FlexibleFfrBody::processIDAndHref(DOMElement *element) {

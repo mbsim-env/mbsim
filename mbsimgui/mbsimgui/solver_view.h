@@ -21,6 +21,7 @@
 #define _SOLVER_VIEW__H_
 
 #include <QLineEdit>
+#include <QLabel>
 #include <QMenu>
 
 namespace MBSimGUI {
@@ -34,16 +35,20 @@ namespace MBSimGUI {
       void selectSolver(QAction *action);
   };
 
-  class SolverView : public QLineEdit {
+  class SolverView : public QWidget {
     public:
       SolverView();
       ~SolverView() override = default;
-      void setSolver(int i_) { i = i_; setText(type[i]); }
+      void setText(const QString &text) { lineEdit->setText(text); }
+      QString text()const { return lineEdit->text(); }
+      bool hasFocus() const { return lineEdit->hasFocus(); }
+      void setSolver(int i_) { i = i_; setText(type[i]); label->setText("0"); }
       void setSolver(Solver *solver);
       Solver* createSolver(int i_);
       QMenu* createContextMenu() { return new SolverContextMenu(type); }
-      void paintEvent(QPaintEvent *event) override;
     private:
+      QLineEdit *lineEdit;
+      QLabel *label;
       void openContextMenu();
       std::vector<QString> type;
       int i{0};
@@ -51,11 +56,9 @@ namespace MBSimGUI {
 
   class SolverMouseEvent : public QObject {
     public:
-      SolverMouseEvent(SolverView* view_) : QObject(view_), view(view_) { }
+      SolverMouseEvent(QLineEdit *lineEdit) : QObject(lineEdit) { }
     private:
       bool eventFilter(QObject *obj, QEvent *event) override;
-      SolverView *view;
-      SolverPropertyDialog *editor;
   };
 
 }

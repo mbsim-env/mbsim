@@ -35,7 +35,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       void create() override;
       void clear() override;
-      void setEmbeded(bool embeded_) override;
+      void setDedicatedFileItem(FileItemData *dedicatedFileItem) override;
       PropertyDialog* createPropertyDialog() override {return new RigidBodyPropertyDialog(this);}
       QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
     protected:

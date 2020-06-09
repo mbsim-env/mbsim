@@ -35,6 +35,7 @@ namespace MBSimGUI {
       virtual QString getName() const { return "Name"; }
       virtual QString getValue() const { return "Value"; }
       virtual QString getType() const { return "Type"; }
+      virtual QString getStatus() const { return "Status"; }
       virtual bool getEnabled() const { return true; }
       virtual int getEmbededStatus() const { return 0; }
       virtual QMenu* createContextMenu() { return nullptr; }

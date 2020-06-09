@@ -52,7 +52,7 @@ namespace MBSimGUI {
       QModelIndex parent(const QModelIndex &index) const override;
 
       int rowCount(const QModelIndex &parent = QModelIndex()) const override;
-      int columnCount(const QModelIndex &) const override { return 3; }
+      int columnCount(const QModelIndex &) const override { return 4; }
 
       Qt::ItemFlags flags(const QModelIndex &index) const override;
 

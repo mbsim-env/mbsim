@@ -49,11 +49,12 @@ namespace MBSimGUI {
       QVariant getData0() const { return itemData->getName(); }
       QVariant getData1() const { return itemData->getValue(); }
       QVariant getData2() const { return itemData->getType(); }
-      QVariant (TreeItem::*getData_[3])() const;
+      QVariant getData3() const { return itemData->getStatus(); }
+      QVariant (TreeItem::*getData_[4])() const;
       QVariant getData(int column) const { return (this->*getData_[column])(); }
       QFont getFont() { return font[0]; }
       QIcon getDecoration() { return decoration; }
-      QBrush getForeground() { return itemData->getEnabled()?foreground[itemData->getEmbededStatus()]:Qt::gray; }
+      QBrush getForeground() { return foreground[itemData->getEnabled()]; }
       QBrush getBackground() { return background[0]; }
 
     protected:
@@ -62,7 +63,7 @@ namespace MBSimGUI {
       TreeItem *parentItem;
       QFont font[2];
       QIcon decoration;
-      QBrush foreground[3], background[2];
+      QBrush foreground[2], background[2];
   };
 
 }

@@ -62,49 +62,49 @@ namespace MBSimGUI {
   void Group::addFrame(Frame* frame_) {
     frame.push_back(frame_);
     frame_->setParent(this);
-    if(embeded) frame_->setEmbeded(true);
+    if(not frame_->getDedicatedFileItem()) frame_->setDedicatedFileItem(dedicatedFileItem);
     frame_->updateStatus();
   }
 
   void Group::addContour(Contour* contour_) {
     contour.push_back(contour_);
     contour_->setParent(this);
-    if(embeded) contour_->setEmbeded(true);
+    if(not contour_->getDedicatedFileItem()) contour_->setDedicatedFileItem(dedicatedFileItem);
     contour_->updateStatus();
   }
 
   void Group::addGroup(Group* group_) {
     group.push_back(group_);
     group_->setParent(this);
-    if(embeded) group_->setEmbeded(true);
+    if(not group_->getDedicatedFileItem()) group_->setDedicatedFileItem(dedicatedFileItem);
     group_->updateStatus();
   }
 
   void Group::addObject(Object* object_) {
     object.push_back(object_);
     object_->setParent(this);
-    if(embeded) object_->setEmbeded(true);
+    if(not object_->getDedicatedFileItem()) object_->setDedicatedFileItem(dedicatedFileItem);
     object_->updateStatus();
   }
 
   void Group::addLink(Link* link_) {
     link.push_back(link_);
     link_->setParent(this);
-    if(embeded) link_->setEmbeded(true);
+    if(not link_->getDedicatedFileItem()) link_->setDedicatedFileItem(dedicatedFileItem);
     link_->updateStatus();
   }
 
   void Group::addConstraint(Constraint* constraint_) {
     constraint.push_back(constraint_);
     constraint_->setParent(this);
-    if(embeded) constraint_->setEmbeded(true);
+    if(not constraint_->getDedicatedFileItem()) constraint_->setDedicatedFileItem(dedicatedFileItem);
     constraint_->updateStatus();
   }
 
   void Group::addObserver(Observer* observer_) {
     observer.push_back(observer_);
     observer_->setParent(this);
-    if(embeded) observer_->setEmbeded(true);
+    if(not observer_->getDedicatedFileItem()) observer_->setDedicatedFileItem(dedicatedFileItem);
     observer_->updateStatus();
   }
 
@@ -368,9 +368,9 @@ namespace MBSimGUI {
     observer.erase(observer.begin(),observer.end());
   }
 
-  void Group::setEmbeded(bool embeded_) {
-    Element::setEmbeded(embeded_);
-    frame[0]->setEmbeded(embeded_);
+  void Group::setDedicatedFileItem(FileItemData *dedicatedFileItem) {
+    Element::setDedicatedFileItem(dedicatedFileItem);
+    frame[0]->setDedicatedFileItem(dedicatedFileItem);
   }
 
   Frame* Group::getFrame(const QString &name) const {

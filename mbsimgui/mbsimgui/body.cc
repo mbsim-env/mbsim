@@ -38,14 +38,14 @@ namespace MBSimGUI {
   void Body::addFrame(Frame* frame_) {
     frame.push_back(frame_);
     frame_->setParent(this);
-    if(embeded) frame_->setEmbeded(true);
+    if(not frame_->getDedicatedFileItem()) frame_->setDedicatedFileItem(dedicatedFileItem);
     frame_->updateStatus();
   }
 
   void Body::addContour(Contour* contour_) {
     contour.push_back(contour_);
     contour_->setParent(this);
-    if(embeded) contour_->setEmbeded(true);
+    if(not contour_->getDedicatedFileItem()) contour_->setDedicatedFileItem(dedicatedFileItem);
     contour_->updateStatus();
   }
 

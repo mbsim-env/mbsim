@@ -21,6 +21,7 @@
 #include "parameter.h"
 #include "objectfactory.h"
 #include "utils.h"
+#include "fileitemdata.h"
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
@@ -80,4 +81,9 @@ namespace MBSimGUI {
     parent->insertBefore(element, nullptr);
     return element;
   }
+
+  QString Parameters::getStatus() const {
+    return parent->getParameterFileItem()?parent->getParameterFileItem()->getName():(parent->getEmbedItemParent()?parent->getEmbedItemParent()->getStatus():"");
+  }
+
 }

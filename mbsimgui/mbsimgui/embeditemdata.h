@@ -40,10 +40,10 @@ namespace MBSimGUI {
     protected:
       std::vector<Parameter*> parameter;
       xercesc::DOMElement *element{nullptr}, *embed{nullptr};
-      bool embeded{false}, embededParam{false};
       Parameters *parameters;
       FileItemData *fileItem{nullptr};
       FileItemData *parameterFileItem{nullptr};
+      FileItemData *dedicatedFileItem{nullptr};
 
     public:
       EmbedItemData();
@@ -73,21 +73,22 @@ namespace MBSimGUI {
       void setEmbedXMLElement(xercesc::DOMElement *embed_) { embed = embed_; }
       virtual void maybeRemoveEmbedXMLElement();
       bool hasParameterXMLElement() const;
-      bool getEmbeded() const { return embeded; }
-      virtual void setEmbeded(bool embeded_) { embeded = embeded_; }
-      bool getEmbededParameters() const { return embededParam; }
-      void setEmbededParameters(bool embededParam_) { embededParam = embededParam_; }
+      bool getEmbeded() const { return dedicatedFileItem; }
+      virtual void setDedicatedFileItem(FileItemData *dedicatedFileItem_) { dedicatedFileItem = dedicatedFileItem_; }
+      bool getEmbededParameters() const { return parameterFileItem; }
       Parameters* getParameters() { return parameters; }
       void setFileItem(FileItemData *fileItem_);
       FileItemData *getFileItem() { return fileItem; }
       void setParameterFileItem(FileItemData *parameterFileItem_);
       FileItemData *getParameterFileItem() { return parameterFileItem; }
       virtual EmbedItemData *getDedicatedItem() { return this; }
-      FileItemData *getDedicatedFileItem() { return getDedicatedItem()->getFileItem(); }
+      //FileItemData *getDedicatedFileItem() { return getDedicatedItem()->getFileItem(); }
+      FileItemData *getDedicatedFileItem() { return dedicatedFileItem; }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
       virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog(this); }
       bool getSelfEmbeded() const { return embed and MBXMLUtils::E(embed)->hasAttribute("href"); }
+      QString getStatus() const override;
   };
 
 }

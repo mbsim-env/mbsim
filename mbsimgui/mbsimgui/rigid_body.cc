@@ -131,9 +131,9 @@ namespace MBSimGUI {
     contour.erase(contour.begin(),contour.end());
   }
 
-  void RigidBody::setEmbeded(bool embeded_) {
-    Body::setEmbeded(embeded_);
-    frame[0]->setEmbeded(embeded_);
+  void RigidBody::setDedicatedFileItem(FileItemData* dedicatedFileItem) {
+    Body::setDedicatedFileItem(dedicatedFileItem);
+    frame[0]->setDedicatedFileItem(dedicatedFileItem);
   }
 
 }
