@@ -43,7 +43,7 @@ namespace MBSimGUI {
     public:
       ParameterItem(EmbedItemData *parent_=nullptr) : parent(parent_) { }
       bool getEnabled() const override { return parent->getEnabled(); }
-      bool getEmbeded() const override { return parent->getEmbededParameters(); }
+      int getEmbededStatus() const override { return parent->getEmbededParameters()?2:((parent->getEmbededStatus()==1)?1:0); }
       EmbedItemData *getParent() const { return parent; }
     protected:
       EmbedItemData *parent;

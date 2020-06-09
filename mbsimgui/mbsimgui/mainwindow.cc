@@ -635,6 +635,7 @@ namespace MBSimGUI {
   void MainWindow::parameterViewClicked(const QModelIndex &current) {
     auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(current)->getItemData());
     FileItemData *fileItem = item->getParent()->getParameterFileItem();
+    if(not fileItem) fileItem = item->getParent()->getEmbedItemParent()?item->getParent()->getEmbedItemParent()->getDedicatedFileItem():nullptr;
     if(fileItem)
       fileView->selectionModel()->setCurrentIndex(fileItem->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     else
@@ -739,6 +740,7 @@ namespace MBSimGUI {
 
       model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
       elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+      elementViewClicked(project->getDynamicSystemSolver()->getModelIndex());
 
       solverView->setSolver(6);
 
@@ -1262,6 +1264,7 @@ namespace MBSimGUI {
 
     model->createGroupItem(project->getDynamicSystemSolver());
     elementView->selectionModel()->setCurrentIndex(model->index(0,0), QItemSelectionModel::ClearAndSelect);
+    elementViewClicked(project->getDynamicSystemSolver()->getModelIndex());
 
     solverView->setSolver(getProject()->getSolver());
   }
@@ -1828,6 +1831,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementViewClicked(currentIndex);
     openElementEditor(false);
   }
 
@@ -1847,6 +1851,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementViewClicked(currentIndex);
     openElementEditor(false);
   }
 
@@ -1866,6 +1871,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementViewClicked(currentIndex);
     openElementEditor(false);
   }
 
@@ -1885,6 +1891,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementViewClicked(currentIndex);
     openElementEditor(false);
   }
 
@@ -1904,6 +1911,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementViewClicked(currentIndex);
     openElementEditor(false);
   }
 
@@ -1923,6 +1931,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementViewClicked(currentIndex);
     openElementEditor(false);
   }
 
@@ -1942,6 +1951,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
     elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementViewClicked(currentIndex);
     openElementEditor(false);
   }
 
@@ -2022,7 +2032,7 @@ namespace MBSimGUI {
       parent->addParameter(parameter);
       model->createParameterItem(parameter,parameterView->selectionModel()->currentIndex());
     }
-    auto *fileItem = parent->getDedicatedFileItemOfParent();
+    auto *fileItem = parent->getEmbedItemParent()?parent->getEmbedItemParent()->getDedicatedFileItem():nullptr;
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -2031,7 +2041,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeParameter(EmbedItemData *parent) {
-    auto *fileItem = parent->getDedicatedFileItemOfParent();
+    auto *fileItem = parent->getEmbedItemParent()?parent->getEmbedItemParent()->getDedicatedFileItem():nullptr;
     if(fileItem)
       fileItem->setModified(true);
     else

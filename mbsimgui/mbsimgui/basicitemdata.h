@@ -33,7 +33,7 @@ namespace MBSimGUI {
       QString getValue() const override { return ""; }
       QString getType() const override { return ""; }
       bool getEnabled() const override { return element->getEnabled(); }
-      bool getEmbeded() const override { return element->getEmbeded(); }
+      int getEmbededStatus() const override { return element->getEmbededStatus(); }
       Element* getElement() { return element; }
   };
 

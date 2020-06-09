@@ -220,14 +220,9 @@ namespace MBSimGUI {
 
   void SolverView::paintEvent(QPaintEvent *event) {
     QLineEdit::paintEvent(event);
-    //QPalette palette;
-    //palette.setBrush(QPalette::Active,QPalette::Base,QApplication::palette().brush(QPalette::Active, QPalette::AlternateBase));
-    //setPalette(palette);
-    if(mw->getProject()->getSolver()->getEmbeded()) {
-      QPalette palette;
-      palette.setBrush(QPalette::Active,QPalette::Text,QApplication::palette().brush(QPalette::Active, QPalette::Link));
-      setPalette(palette);
-    }
+    QPalette palette;
+    palette.setBrush(QPalette::Active,QPalette::Text,mw->getProject()->getSolver()->getEmbeded()?Qt::blue:Qt::black);
+    setPalette(palette);
   }
 
   bool SolverMouseEvent::eventFilter(QObject *obj, QEvent *event) {

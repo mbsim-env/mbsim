@@ -73,7 +73,7 @@ namespace MBSimGUI {
       void setEmbedXMLElement(xercesc::DOMElement *embed_) { embed = embed_; }
       virtual void maybeRemoveEmbedXMLElement();
       bool hasParameterXMLElement() const;
-      bool getEmbeded() const override { return embeded; }
+      bool getEmbeded() const { return embeded; }
       virtual void setEmbeded(bool embeded_) { embeded = embeded_; }
       bool getEmbededParameters() const { return embededParam; }
       void setEmbededParameters(bool embededParam_) { embededParam = embededParam_; }
@@ -84,10 +84,10 @@ namespace MBSimGUI {
       FileItemData *getParameterFileItem() { return parameterFileItem; }
       virtual EmbedItemData *getDedicatedItem() { return this; }
       FileItemData *getDedicatedFileItem() { return getDedicatedItem()->getFileItem(); }
-      virtual FileItemData *getDedicatedFileItemOfParent() { return nullptr; }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
       virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog(this); }
+      bool getSelfEmbeded() const { return embed and MBXMLUtils::E(embed)->hasAttribute("href"); }
   };
 
 }

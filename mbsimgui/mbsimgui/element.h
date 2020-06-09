@@ -108,7 +108,7 @@ namespace MBSimGUI {
       bool getEnabled() const override { return enabled; }
       void updateStatus() override { enabled = (not parent or parent->getEnabled()) and isActive(); }
       EmbedItemData *getDedicatedItem() override { return embeded?(fileItem?this:parent->getDedicatedItem()):this; }
-      FileItemData *getDedicatedFileItemOfParent() override { return parent?parent->getDedicatedFileItem():nullptr; }
+      int getEmbededStatus() const override { return getSelfEmbeded()?2:(parent?parent->getEmbeded():0); }
   };
 
   template<class T>
