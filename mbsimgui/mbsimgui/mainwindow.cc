@@ -780,7 +780,7 @@ namespace MBSimGUI {
     if(not(file.isEmpty())) {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
       doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
-      projectFile=QDir::current().relativeFilePath(file);
+      projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
       actionSaveProject->setDisabled(false);
@@ -826,10 +826,7 @@ namespace MBSimGUI {
     getProject()->getSolver()->createXMLElement(embed?embed:getProject()->getXMLElement());
     getProject()->getSolver()->setEmbedXMLElement(embed);
     if(ele) {
-      if(parameterFileItem) {
-        getProject()->getSolver()->setDedicatedParameterFileItem(parameterFileItem);
-        getProject()->getSolver()->setParameterFileItem(parameterFileItem);
-      }
+      if(parameterFileItem) getProject()->getSolver()->setDedicatedParameterFileItem(parameterFileItem);
       std::vector<Parameter*> param = Parameter::createParameters(ele);
       for(auto & i : param)
         getProject()->getSolver()->addParameter(i);
@@ -1967,7 +1964,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       parent->setDedicatedParameterFileItem(parameterFileItem);
-      parent->setParameterFileItem(parameterFileItem);
       E(parent->createEmbedXMLElement())->setAttribute("parameterHref",getProjectDir().relativeFilePath(parameterFileItem->getFileInfo().absoluteFilePath()).toStdString());
     }
     for(auto & element : elements) {
@@ -2003,7 +1999,6 @@ namespace MBSimGUI {
         parent->removeParameter(parent->getParameter(i));
       parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
       parent->setDedicatedParameterFileItem(nullptr);
-      parent->setParameterFileItem(nullptr);
     }
     else {
       for(int i=n-1; i>=0; i--) {
@@ -2073,7 +2068,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       frame->setDedicatedFileItem(std::get<1>(data));
-      frame->setFileItem(std::get<1>(data));
       frame->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
       E(frame->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2106,7 +2100,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       contour->setDedicatedFileItem(std::get<1>(data));
-      contour->setFileItem(std::get<1>(data));
       contour->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
       E(contour->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2139,7 +2132,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       group->setDedicatedFileItem(std::get<1>(data));
-      group->setFileItem(std::get<1>(data));
       group->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
       E(group->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2172,7 +2164,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       object->setDedicatedFileItem(std::get<1>(data));
-      object->setFileItem(std::get<1>(data));
       object->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
       E(object->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2205,7 +2196,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       link->setDedicatedFileItem(std::get<1>(data));
-      link->setFileItem(std::get<1>(data));
       link->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
       E(link->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2238,7 +2228,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       constraint->setDedicatedFileItem(std::get<1>(data));
-      constraint->setFileItem(std::get<1>(data));
       constraint->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
       E(constraint->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2271,7 +2260,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       observer->setDedicatedFileItem(std::get<1>(data));
-      observer->setFileItem(std::get<1>(data));
       observer->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
       E(observer->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2335,7 +2323,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       dss->setDedicatedFileItem(fileItem);
-      dss->setFileItem(fileItem);
       dss->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(dss->getEmbedXMLElement(), project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
       E(dss->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(fileItem->getFileInfo().absoluteFilePath()).toStdString());
@@ -2356,10 +2343,7 @@ namespace MBSimGUI {
     if(embed or not dss->getEmbedXMLElement()) {
       if(not dss->getEmbedXMLElement()) dss->setEmbedXMLElement(embedele);
       if(paramele) {
-        if(parameterFileItem) {
-          dss->setDedicatedParameterFileItem(parameterFileItem);
-          dss->setParameterFileItem(parameterFileItem);
-        }
+        if(parameterFileItem) dss->setDedicatedParameterFileItem(parameterFileItem);
         std::vector<Parameter*> param = Parameter::createParameters(paramele);
         for(auto & i : param)
           dss->addParameter(i);
@@ -2409,7 +2393,6 @@ namespace MBSimGUI {
     }
     if(embed) {
       solver->setDedicatedFileItem(fileItem);
-      solver->setFileItem(fileItem);
       solver->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(solver->getEmbedXMLElement(), nullptr);
       E(solver->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(fileItem->getFileInfo().absoluteFilePath()).toStdString());
@@ -2426,10 +2409,7 @@ namespace MBSimGUI {
     if(embed or not solver->getEmbedXMLElement()) {
       if(not solver->getEmbedXMLElement()) solver->setEmbedXMLElement(embedele);
       if(paramele) {
-        if(parameterFileItem) {
-          solver->setDedicatedParameterFileItem(parameterFileItem);
-          solver->setParameterFileItem(parameterFileItem);
-        }
+        if(parameterFileItem) solver->setDedicatedParameterFileItem(parameterFileItem);
         std::vector<Parameter*> param = Parameter::createParameters(paramele);
         for(auto & i : param)
           solver->addParameter(i);
