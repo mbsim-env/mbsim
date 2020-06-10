@@ -20,9 +20,8 @@
 #ifndef _SOLVER_VIEW__H_
 #define _SOLVER_VIEW__H_
 
-#include <QLineEdit>
-#include <QLabel>
 #include <QMenu>
+#include <QLineEdit>
 
 namespace MBSimGUI {
 
@@ -42,13 +41,13 @@ namespace MBSimGUI {
       void setText(const QString &text) { lineEdit->setText(text); }
       QString text()const { return lineEdit->text(); }
       bool hasFocus() const { return lineEdit->hasFocus(); }
-      void setSolver(int i_) { i = i_; setText(type[i]); label->setText("0"); }
+      void setSolver(int i_) { i = i_; setText(type[i]); file->setText(""); }
       void setSolver(Solver *solver);
       Solver* createSolver(int i_);
       QMenu* createContextMenu() { return new SolverContextMenu(type); }
     private:
       QLineEdit *lineEdit;
-      QLabel *label;
+      QLineEdit *file;
       void openContextMenu();
       std::vector<QString> type;
       int i{0};

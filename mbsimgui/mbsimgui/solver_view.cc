@@ -26,6 +26,7 @@
 #include "utils.h"
 #include "mainwindow.h"
 #include <QApplication>
+#include <QLabel>
 
 namespace MBSimGUI {
 
@@ -78,10 +79,14 @@ namespace MBSimGUI {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
+    layout->addWidget(new QLabel("Name:"));
     lineEdit = new QLineEdit;
+    lineEdit->setReadOnly(true);
     layout->addWidget(lineEdit);
-    label = new QLabel;
-    layout->addWidget(label);
+    layout->addWidget(new QLabel("File:"));
+    file = new QLineEdit;
+    file->setReadOnly(true);
+    layout->addWidget(file);
     type.emplace_back("Eigenanalyzer");
     type.emplace_back("Harmonic response analyzer");
     type.emplace_back("Boost odeint DOS RKDOPRI5");
@@ -110,7 +115,6 @@ namespace MBSimGUI {
     connect(lineEdit,&QLineEdit::customContextMenuRequested,this,&SolverView::openContextMenu);
 
     lineEdit->installEventFilter(new SolverMouseEvent(lineEdit));
-    lineEdit->setReadOnly(true);
   }
 
   void SolverView::openContextMenu() {
@@ -122,6 +126,7 @@ namespace MBSimGUI {
   Solver* SolverView::createSolver(int i_) {
     i = i_;
     setText(type[i]);
+    file->setText("");
     if(i==0)
       return new Eigenanalyzer;
     else if(i==1)
@@ -174,7 +179,7 @@ namespace MBSimGUI {
   }
 
   void SolverView::setSolver(Solver *solver) {
-    label->setText(QString::number(solver->getSelfEmbeded()));
+    file->setText(solver->getStatus());
     if(dynamic_cast<Eigenanalyzer*>(solver))
       i=0;
     else if(dynamic_cast<HarmonicResponseAnalyzer*>(solver))
