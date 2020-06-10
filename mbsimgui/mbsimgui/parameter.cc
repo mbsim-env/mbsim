@@ -83,7 +83,7 @@ namespace MBSimGUI {
   }
 
   QString Parameters::getStatus() const {
-    return parent->getParameterFileItem()?parent->getParameterFileItem()->getName():(parent->getEmbedItemParent()?parent->getEmbedItemParent()->getStatus():"");
+    return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():"";
   }
 
 }

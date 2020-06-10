@@ -44,6 +44,7 @@ namespace MBSimGUI {
       FileItemData *fileItem{nullptr};
       FileItemData *parameterFileItem{nullptr};
       FileItemData *dedicatedFileItem{nullptr};
+      FileItemData *dedicatedParameterFileItem{nullptr};
 
     public:
       EmbedItemData();
@@ -75,6 +76,7 @@ namespace MBSimGUI {
       bool hasParameterXMLElement() const;
       bool getEmbeded() const { return dedicatedFileItem; }
       virtual void setDedicatedFileItem(FileItemData *dedicatedFileItem_) { dedicatedFileItem = dedicatedFileItem_; }
+      virtual void setDedicatedParameterFileItem(FileItemData *dedicatedParameterFileItem_) { dedicatedParameterFileItem = dedicatedParameterFileItem_; }
       bool getEmbededParameters() const { return parameterFileItem; }
       Parameters* getParameters() { return parameters; }
       void setFileItem(FileItemData *fileItem_);
@@ -82,8 +84,8 @@ namespace MBSimGUI {
       void setParameterFileItem(FileItemData *parameterFileItem_);
       FileItemData *getParameterFileItem() { return parameterFileItem; }
       virtual EmbedItemData *getDedicatedItem() { return this; }
-      //FileItemData *getDedicatedFileItem() { return getDedicatedItem()->getFileItem(); }
       FileItemData *getDedicatedFileItem() { return dedicatedFileItem; }
+      FileItemData *getDedicatedParameterFileItem() { return dedicatedParameterFileItem; }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
       virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog(this); }

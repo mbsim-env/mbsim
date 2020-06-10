@@ -63,6 +63,7 @@ namespace MBSimGUI {
     frame.push_back(frame_);
     frame_->setParent(this);
     if(not frame_->getDedicatedFileItem()) frame_->setDedicatedFileItem(dedicatedFileItem);
+    if(not frame_->getDedicatedParameterFileItem()) frame_->setDedicatedParameterFileItem(dedicatedFileItem);
     frame_->updateStatus();
   }
 
@@ -70,6 +71,7 @@ namespace MBSimGUI {
     contour.push_back(contour_);
     contour_->setParent(this);
     if(not contour_->getDedicatedFileItem()) contour_->setDedicatedFileItem(dedicatedFileItem);
+    if(not contour_->getDedicatedParameterFileItem()) contour_->setDedicatedParameterFileItem(dedicatedFileItem);
     contour_->updateStatus();
   }
 
@@ -77,6 +79,7 @@ namespace MBSimGUI {
     group.push_back(group_);
     group_->setParent(this);
     if(not group_->getDedicatedFileItem()) group_->setDedicatedFileItem(dedicatedFileItem);
+    if(not group_->getDedicatedParameterFileItem()) group_->setDedicatedParameterFileItem(dedicatedFileItem);
     group_->updateStatus();
   }
 
@@ -84,6 +87,7 @@ namespace MBSimGUI {
     object.push_back(object_);
     object_->setParent(this);
     if(not object_->getDedicatedFileItem()) object_->setDedicatedFileItem(dedicatedFileItem);
+    if(not object_->getDedicatedParameterFileItem()) object_->setDedicatedParameterFileItem(dedicatedFileItem);
     object_->updateStatus();
   }
 
@@ -91,6 +95,7 @@ namespace MBSimGUI {
     link.push_back(link_);
     link_->setParent(this);
     if(not link_->getDedicatedFileItem()) link_->setDedicatedFileItem(dedicatedFileItem);
+    if(not link_->getDedicatedParameterFileItem()) link_->setDedicatedParameterFileItem(dedicatedFileItem);
     link_->updateStatus();
   }
 
@@ -98,6 +103,7 @@ namespace MBSimGUI {
     constraint.push_back(constraint_);
     constraint_->setParent(this);
     if(not constraint_->getDedicatedFileItem()) constraint_->setDedicatedFileItem(dedicatedFileItem);
+    if(not constraint_->getDedicatedParameterFileItem()) constraint_->setDedicatedParameterFileItem(dedicatedFileItem);
     constraint_->updateStatus();
   }
 
@@ -105,6 +111,7 @@ namespace MBSimGUI {
     observer.push_back(observer_);
     observer_->setParent(this);
     if(not observer_->getDedicatedFileItem()) observer_->setDedicatedFileItem(dedicatedFileItem);
+    if(not observer_->getDedicatedParameterFileItem()) observer_->setDedicatedParameterFileItem(dedicatedFileItem);
     observer_->updateStatus();
   }
 
@@ -371,6 +378,11 @@ namespace MBSimGUI {
   void Group::setDedicatedFileItem(FileItemData *dedicatedFileItem) {
     Element::setDedicatedFileItem(dedicatedFileItem);
     frame[0]->setDedicatedFileItem(dedicatedFileItem);
+  }
+
+  void Group::setDedicatedParameterFileItem(FileItemData* dedicatedParameterFileItem) {
+    Element::setDedicatedParameterFileItem(dedicatedParameterFileItem);
+    frame[0]->setDedicatedParameterFileItem(dedicatedFileItem);
   }
 
   Frame* Group::getFrame(const QString &name) const {

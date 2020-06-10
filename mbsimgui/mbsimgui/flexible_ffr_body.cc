@@ -128,6 +128,11 @@ namespace MBSimGUI {
     frame[0]->setDedicatedFileItem(dedicatedFileItem);
   }
 
+  void GenericFlexibleFfrBody::setDedicatedParameterFileItem(FileItemData* dedicatedParameterFileItem) {
+    Body::setDedicatedParameterFileItem(dedicatedParameterFileItem);
+    frame[0]->setDedicatedParameterFileItem(dedicatedFileItem);
+  }
+
   DOMElement* FlexibleFfrBody::processIDAndHref(DOMElement *element) {
     element = GenericFlexibleFfrBody::processIDAndHref(element);
 

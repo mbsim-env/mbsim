@@ -136,4 +136,9 @@ namespace MBSimGUI {
     frame[0]->setDedicatedFileItem(dedicatedFileItem);
   }
 
+  void RigidBody::setDedicatedParameterFileItem(FileItemData* dedicatedParameterFileItem) {
+    Body::setDedicatedParameterFileItem(dedicatedParameterFileItem);
+    frame[0]->setDedicatedParameterFileItem(dedicatedFileItem);
+  }
+
 }

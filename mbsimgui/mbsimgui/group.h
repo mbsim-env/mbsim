@@ -61,6 +61,7 @@ namespace MBSimGUI {
       void create() override;
       void clear() override;
       void setDedicatedFileItem(FileItemData *dedicatedFileItem) override;
+      void setDedicatedParameterFileItem(FileItemData *dedicatedFileItem) override;
       Element *getChildByContainerAndName(const QString &container, const QString &name) const override;
       void setActionPasteDisabled(bool flag);
       int getNumberOfFrames() override {return frame.size();}

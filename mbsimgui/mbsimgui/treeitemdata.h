@@ -37,7 +37,6 @@ namespace MBSimGUI {
       virtual QString getType() const { return "Type"; }
       virtual QString getStatus() const { return "Status"; }
       virtual bool getEnabled() const { return true; }
-      virtual int getEmbededStatus() const { return 0; }
       virtual QMenu* createContextMenu() { return nullptr; }
       void addTreeItemData(TreeItemData *treeItemData_) { treeItemData.push_back(treeItemData_); }
       void setModelIndex(const QModelIndex &index_) { index = index_; }

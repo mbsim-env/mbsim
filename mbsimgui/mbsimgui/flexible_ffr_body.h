@@ -36,6 +36,7 @@ namespace MBSimGUI {
       void create() override;
       void clear() override;
       void setDedicatedFileItem(FileItemData *dedicatedFileItem) override;
+      void setDedicatedParameterFileItem(FileItemData *dedicatedFileItem) override;
       QMenu* createFrameContextMenu() override { return new NodeFramesContextMenu(this); }
     protected:
       xercesc::DOMElement *frames, *contours;

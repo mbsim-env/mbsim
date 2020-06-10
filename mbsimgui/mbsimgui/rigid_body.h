@@ -36,6 +36,7 @@ namespace MBSimGUI {
       void create() override;
       void clear() override;
       void setDedicatedFileItem(FileItemData *dedicatedFileItem) override;
+      void setDedicatedParameterFileItem(FileItemData *dedicatedFileItem) override;
       PropertyDialog* createPropertyDialog() override {return new RigidBodyPropertyDialog(this);}
       QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
     protected:

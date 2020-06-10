@@ -62,7 +62,6 @@ namespace MBSimGUI {
       virtual void removeXMLElements();
       void setParent(EmbedItemData* parent_) { parent = parent_; }
       static std::vector<Parameter*> createParameters(xercesc::DOMElement *element);
-      int getEmbededStatus() const override { return parent->getEmbededParameters()?2:((parent->getEmbededStatus()==1)?1:0); }
     protected:
       xercesc::DOMElement *element;
   };

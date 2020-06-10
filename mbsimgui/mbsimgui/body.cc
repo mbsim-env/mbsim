@@ -39,6 +39,7 @@ namespace MBSimGUI {
     frame.push_back(frame_);
     frame_->setParent(this);
     if(not frame_->getDedicatedFileItem()) frame_->setDedicatedFileItem(dedicatedFileItem);
+    if(not frame_->getDedicatedParameterFileItem()) frame_->setDedicatedParameterFileItem(dedicatedFileItem);
     frame_->updateStatus();
   }
 
@@ -46,6 +47,7 @@ namespace MBSimGUI {
     contour.push_back(contour_);
     contour_->setParent(this);
     if(not contour_->getDedicatedFileItem()) contour_->setDedicatedFileItem(dedicatedFileItem);
+    if(not contour_->getDedicatedParameterFileItem()) contour_->setDedicatedParameterFileItem(dedicatedFileItem);
     contour_->updateStatus();
   }
 
