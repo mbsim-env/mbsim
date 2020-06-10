@@ -74,10 +74,8 @@ namespace MBSimGUI {
       void setEmbedXMLElement(xercesc::DOMElement *embed_) { embed = embed_; }
       virtual void maybeRemoveEmbedXMLElement();
       bool hasParameterXMLElement() const;
-      bool getEmbeded() const { return dedicatedFileItem; }
       virtual void setDedicatedFileItem(FileItemData *dedicatedFileItem_);
       virtual void setDedicatedParameterFileItem(FileItemData *dedicatedParameterFileItem_);
-      bool getEmbededParameters() const { return parameterFileItem; }
       virtual EmbedItemData *getDedicatedItem() { return this; }
       Parameters* getParameters() { return parameters; }
       FileItemData *getFileItem() { return fileItem; }

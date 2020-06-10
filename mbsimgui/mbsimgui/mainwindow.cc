@@ -818,7 +818,7 @@ namespace MBSimGUI {
       ele = MBXMLUtils::E(embed)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
     QModelIndex pindex = getProject()->getSolver()->getParameters()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
-    if(getProject()->getSolver()->getEmbeded())
+    if(getProject()->getSolver()->getFileItem())
       E(embed)->removeAttribute("href");
     else
       getProject()->getSolver()->removeXMLElement(false);
@@ -1994,7 +1994,7 @@ namespace MBSimGUI {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     int n = parent->getNumberOfParameters();
-    if(parent->getEmbededParameters()) {
+    if(parent->getParameterFileItem()) {
       for(int i=n-1; i>=0; i--)
         parent->removeParameter(parent->getParameter(i));
       parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
@@ -2312,7 +2312,7 @@ namespace MBSimGUI {
       paramele = MBXMLUtils::E(embedele)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
     QModelIndex pindex = getProject()->getDynamicSystemSolver()->getParameters()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
-    if(getProject()->getDynamicSystemSolver()->getEmbeded())
+    if(getProject()->getDynamicSystemSolver()->getFileItem())
       E(embedele)->removeAttribute("href");
     else
       getProject()->getDynamicSystemSolver()->removeXMLElement(false);
@@ -2382,7 +2382,7 @@ namespace MBSimGUI {
       paramele = MBXMLUtils::E(embedele)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
     QModelIndex pindex = getProject()->getSolver()->getParameters()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
-    if(getProject()->getSolver()->getEmbeded())
+    if(getProject()->getSolver()->getFileItem())
       E(embedele)->removeAttribute("href");
     else
       getProject()->getSolver()->removeXMLElement(false);

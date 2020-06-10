@@ -39,7 +39,7 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     action = new QAction("Add", this);
-    action->setDisabled(item->getEmbededParameters());
+    action->setDisabled(item->getParameterFileItem());
     connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,false,true); });
     addAction(action);
     action = new QAction("Embed", this);
