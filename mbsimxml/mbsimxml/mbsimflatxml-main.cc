@@ -27,6 +27,12 @@ int main(int argc, char *argv[]) {
     bool stopAfterFirstStep=false;
     if(find(args.begin(), args.end(), "--stopafterfirststep")!=args.end())
       stopAfterFirstStep=true;
+    bool savestatetable=false;
+    if(find(args.begin(), args.end(), "--savestatetable")!=args.end())
+      savestatetable=true;
+    bool savestatevector=false;
+    if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
+      savestatevector=true;
 
     Solver *solver;
     DynamicSystemSolver *dss;
@@ -34,9 +40,10 @@ int main(int argc, char *argv[]) {
     if(MBSimXML::preInit(args, dss, solver)!=0) return 0; 
     MBSimXML::initDynamicSystemSolver(args, dss);
   
-    MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep);
+    MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
 
-    MBSimXML::postMain(args, solver, dss);
+    delete dss;
+    delete solver;
   }
   catch(const exception &e) {
     fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;

@@ -176,6 +176,7 @@ int MBSimXML::preInit(list<string> args, DynamicSystemSolver*& dss, Solver*& sol
     cout<<"--stopafterfirststep           Stop after outputting the first step (usually at t=0)"<<endl;
     cout<<"                               This generates a HDF5 output file with only one time serie"<<endl;
     cout<<"--savefinalstatevector         Save the state vector to the file \"statevector.asc\" after integration"<<endl;
+    cout<<"--savestatetable               Save the state table to the file \"statetable.asc\""<<endl;
     cout<<"--modulePath <dir>             Add <dir> to MBSim module serach path. The central MBSim installation"<<endl;
     cout<<"                               module dir and the current dir is always included."<<endl;
     cout<<"                               Also added are all directories listed in the file"<<endl;
@@ -256,7 +257,9 @@ void MBSimXML::plotInitialState(Solver* solver, DynamicSystemSolver* dss) {
   dss->plot();
 }
 
-void MBSimXML::main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrate, bool stopAfterFirstStep) {
+void MBSimXML::main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable) {
+  if(savestatetable)
+    dss->writeStateTable("statetable.asc");
   if(doNotIntegrate==false) {
     if(stopAfterFirstStep)
       MBSimXML::plotInitialState(solver, dss);
@@ -278,15 +281,8 @@ void MBSimXML::main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrat
       boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), boost::posix_time::microsec_clock::universal_time());
     }
   }
-}
-
-void MBSimXML::postMain(const list<string> &args, Solver *&solver, DynamicSystemSolver*& dss) {
-  if(find(args.begin(), args.end(), "--savestatetable")!=args.end())
-    dss->writeStateTable("statetable.asc");
-  if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
+  if(savestatevector)
     dss->writez("statevector.asc", false);
-  delete dss;
-  delete solver;
 }
 
 }
