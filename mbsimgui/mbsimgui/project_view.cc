@@ -36,10 +36,16 @@ namespace MBSimGUI {
     addSeparator();
   }
 
-  ProjectView::ProjectView() : QLineEdit("Project") {
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    installEventFilter(new ProjectMouseEvent(this));
-    setReadOnly(true);
+  ProjectView::ProjectView() {
+    setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
+    QHBoxLayout *layout = new QHBoxLayout;
+    setLayout(layout);
+    layout->addWidget(new QLabel("Name:"));
+    name = new QLineEdit("Project");
+    name->setReadOnly(true);
+    layout->addWidget(name);
+    name->setContextMenuPolicy(Qt::CustomContextMenu);
+    name->installEventFilter(new ProjectMouseEvent(name));
     connect(this,&ProjectView::customContextMenuRequested,this,[=]{
         QMenu *menu=new ProjectContextMenu;
         menu->exec(QCursor::pos());

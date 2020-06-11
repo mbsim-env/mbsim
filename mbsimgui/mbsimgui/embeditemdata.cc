@@ -167,17 +167,17 @@ namespace MBSimGUI {
     return embed and E(embed)->getFirstElementChildNamed(PV%"Parameter");
   }
 
-  void EmbedItemData::setDedicatedFileItem(FileItemData *dedicatedFileItem_) { 
-    dedicatedFileItem = dedicatedFileItem_;
-    fileItem = dedicatedFileItem_;
+  void EmbedItemData::setFileItem(FileItemData *fileItem_) {
+    fileItem = fileItem_;
     if(fileItem) fileItem->addReference(this);
+    setDedicatedFileItem(fileItem);
   }
 
-  void EmbedItemData::setDedicatedParameterFileItem(FileItemData *dedicatedParameterFileItem_) {
-    dedicatedParameterFileItem = dedicatedParameterFileItem_;
+  void EmbedItemData::setParameterFileItem(FileItemData *parameterFileItem_) {
     if(parameterFileItem) parameterFileItem->removeReference(this);
-    parameterFileItem = dedicatedParameterFileItem_;
+    parameterFileItem = parameterFileItem_;
     if(parameterFileItem) parameterFileItem->addReference(this);
+    setDedicatedParameterFileItem(parameterFileItem);
   }
 
   DOMElement* EmbedItemData::processIDAndHref(DOMElement *element) {

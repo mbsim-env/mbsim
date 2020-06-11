@@ -59,7 +59,6 @@ namespace MBSimGUI {
               catch(...) {
                 std::cout << "Unknwon error" << std::endl;
               }
-              //xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
               //MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
               parameterFileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
               param = Parameter::createParameters(parameterFileItem->getXMLElement());
@@ -92,10 +91,10 @@ namespace MBSimGUI {
             if(object) {
               object->setXMLElement(ele2);
               object->setEmbedXMLElement(ele1);
-              if(parameterFileItem) object->setDedicatedParameterFileItem(parameterFileItem);
+              object->setParameterFileItem(parameterFileItem);
               for(auto & i : param)
                 object->addParameter(i);
-              if(fileItem) object->setDedicatedFileItem(fileItem);
+              object->setFileItem(fileItem);
             }
           }
           else {

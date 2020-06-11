@@ -295,6 +295,9 @@ namespace MBSimGUI {
     parameterView->setColumnWidth(1,200);
 
     fileView->setModel(new FileTreeModel(this));
+    fileView->setColumnWidth(0,250);
+    fileView->setColumnWidth(1,50);
+    fileView->hideColumn(3);
 
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
@@ -303,14 +306,17 @@ namespace MBSimGUI {
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);
     dockWidget0->setObjectName("dockWidget/project");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget0);
+    QWidget *view = new QWidget;
     dockWidget0->setWidget(projectView);
+
+    QDockWidget *dockWidget5 = new QDockWidget("Referenced files", this);
+    dockWidget5->setObjectName("dockWidget/files");
+    addDockWidget(Qt::LeftDockWidgetArea, dockWidget5);
+    dockWidget5->setWidget(fileView);
 
     QDockWidget *dockWidget1 = new QDockWidget("Multibody system", this);
     dockWidget1->setObjectName("dockWidget/mbs");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
-//    tabWidget = new QTabWidget;
-//    dockWidget1->setWidget(tabWidget);
-//    tabWidget->addTab(elementView, "MBS");
     QWidget *widget1 = new QWidget(dockWidget1);
     dockWidget1->setWidget(widget1);
     auto *widgetLayout1 = new QVBoxLayout(widget1);
@@ -318,6 +324,8 @@ namespace MBSimGUI {
     widget1->setLayout(widgetLayout1);
     widgetLayout1->addWidget(elementViewFilter);
     widgetLayout1->addWidget(elementView);
+
+    tabifyDockWidget(dockWidget5,dockWidget1);
 
     QDockWidget *dockWidget3 = new QDockWidget("Parameters", this);
     dockWidget3->setObjectName("dockWidget/parameters");
@@ -335,21 +343,16 @@ namespace MBSimGUI {
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget2);
     dockWidget2->setWidget(solverView);
 
+    QDockWidget *dockWidget4 = new QDockWidget("MBSim Echo Area", this);
+    dockWidget4->setObjectName("dockWidget/echoArea");
+    addDockWidget(Qt::BottomDockWidgetArea, dockWidget4);
+    dockWidget4->setWidget(echoView);
+
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
     auto *mainlayout = new QHBoxLayout;
     centralWidget->setLayout(mainlayout);
     mainlayout->addWidget(inlineOpenMBVMW);
-
-    QDockWidget *mbsimDW = new QDockWidget("MBSim Echo Area", this);
-    mbsimDW->setObjectName("dockWidget/echoArea");
-    addDockWidget(Qt::BottomDockWidgetArea, mbsimDW);
-    mbsimDW->setWidget(echoView);
-
-    mbsimDW = new QDockWidget("Referenced files", this);
-    mbsimDW->setObjectName("dockWidget/files");
-    addDockWidget(Qt::LeftDockWidgetArea, mbsimDW);
-    mbsimDW->setWidget(fileView);
 
     connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::processFinished);
     connect(&process,&QProcess::readyReadStandardOutput,this,&MainWindow::updateEchoView);
@@ -826,7 +829,7 @@ namespace MBSimGUI {
     getProject()->getSolver()->createXMLElement(embed?embed:getProject()->getXMLElement());
     getProject()->getSolver()->setEmbedXMLElement(embed);
     if(ele) {
-      if(parameterFileItem) getProject()->getSolver()->setDedicatedParameterFileItem(parameterFileItem);
+      getProject()->getSolver()->setParameterFileItem(parameterFileItem);
       std::vector<Parameter*> param = Parameter::createParameters(ele);
       for(auto & i : param)
         getProject()->getSolver()->addParameter(i);
@@ -1683,7 +1686,24 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    QString file = QFileDialog::getSaveFileName(this, "Export MBSim element file", getProjectDir().absoluteFilePath(element->getName()+".mbsex"), "Element files (*.mbsex)");
+    QStringList list;
+    if(dynamic_cast<DynamicSystemSolver*>(element))
+      list = QStringList{ "Export MBSim dynamic system solver file", ".dssx", "Dynamic system solver files (*.dssx)" };
+    else if(dynamic_cast<Frame*>(element))
+      list = QStringList{ "Export MBSim frame file", ".frmx", "Frame files (*.frmx)" };
+    else if(dynamic_cast<Contour*>(element))
+      list = QStringList{ "Export MBSim contour file", ".cntx", "Contour files (*.cntx)" };
+    else if(dynamic_cast<Group*>(element))
+      list = QStringList{ "Export MBSim group file", ".grpx", "Group files (*.grpx)" };
+    else if(dynamic_cast<Object*>(element))
+      list = QStringList{ "Export MBSim object file", ".objx", "Object files (*.objx)" };
+    else if(dynamic_cast<Link*>(element))
+      list = QStringList{ "Export MBSim link file", ".lnkx", "Link files (*.lnkx)" };
+    else if(dynamic_cast<Constraint*>(element))
+      list = QStringList{ "Export MBSim constraint file", ".cntx", "Constraint files (*.cntx)" };
+    else if(dynamic_cast<Observer*>(element))
+      list = QStringList{ "Export MBSim observer file", ".obsx", "Observer files (*.obsx)" };
+    QString file = QFileDialog::getSaveFileName(this, list[0], getProjectDir().absoluteFilePath(element->getName()+list[1]), list[2]);
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node = edoc->importNode(element->getXMLElement(),true);
@@ -1940,7 +1960,8 @@ namespace MBSimGUI {
     else {
       if(parent->getNumberOfParameters() and not add) removeParameter(parent);
       xercesc::DOMDocument *doc = nullptr;
-      QString file = QFileDialog::getOpenFileName(this, "Open MBSim parameter file", ".", "Parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)");
+      QString action = add?"Add":(embed?"Embed":"Import");
+      QString file = QFileDialog::getOpenFileName(this, action+" MBSim parameter file", ".", "Parameter files (*.parx);;XML files (*.xml);;All files (*.*)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -1963,7 +1984,7 @@ namespace MBSimGUI {
         return;
     }
     if(embed) {
-      parent->setDedicatedParameterFileItem(parameterFileItem);
+      parent->setParameterFileItem(parameterFileItem);
       E(parent->createEmbedXMLElement())->setAttribute("parameterHref",getProjectDir().relativeFilePath(parameterFileItem->getFileInfo().absoluteFilePath()).toStdString());
     }
     for(auto & element : elements) {
@@ -1998,7 +2019,7 @@ namespace MBSimGUI {
       for(int i=n-1; i>=0; i--)
         parent->removeParameter(parent->getParameter(i));
       parent->getEmbedXMLElement()->removeAttribute(X()%"parameterHref");
-      parent->setDedicatedParameterFileItem(nullptr);
+      parent->setParameterFileItem(nullptr);
     }
     else {
       for(int i=n-1; i>=0; i--) {
@@ -2016,7 +2037,7 @@ namespace MBSimGUI {
     if(getAutoRefresh()) refresh();
   }
 
-  tuple<DOMElement*, FileItemData*> MainWindow::loadElement(Element *parent, Element *element, bool embed) {
+  tuple<DOMElement*, FileItemData*> MainWindow::loadElement(Element *parent, Element *element, bool embed, const QString &title, const QString &types) {
     DOMElement *ele = nullptr;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     FileItemData *fileItem = nullptr;
@@ -2040,7 +2061,8 @@ namespace MBSimGUI {
     }
     else {
       xercesc::DOMDocument *doc = nullptr;
-      QString file = QFileDialog::getOpenFileName(this, "Open MBSim element file", ".", "Element files (*.mbsex);;XML files (*.xml);;All files (*.*)");
+      QString action = embed?"Embed":"Import";
+      QString file = QFileDialog::getOpenFileName(this, action+title, ".", types);
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2059,7 +2081,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadFrame(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim frame file","Frame files (*.frmx);;XML files (*.xml);;All files (*.*)");
     if(not std::get<0>(data)) return;
     Frame *frame = Embed<Frame>::create(std::get<0>(data),parent);
     if(not frame) {
@@ -2067,7 +2089,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      frame->setDedicatedFileItem(std::get<1>(data));
+      frame->setFileItem(std::get<1>(data));
       frame->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
       E(frame->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2091,7 +2113,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadContour(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim contour file","Contour files (*.cntx);;XML files (*.xml);;All files (*.*)");
     if(not std::get<0>(data)) return;
     Contour *contour = Embed<Contour>::create(std::get<0>(data),parent);
     if(not contour) {
@@ -2099,7 +2121,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      contour->setDedicatedFileItem(std::get<1>(data));
+      contour->setFileItem(std::get<1>(data));
       contour->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
       E(contour->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2123,7 +2145,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadGroup(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim group file","Group files (*.grpx);;XML files (*.xml);;All files (*.*)");
     if(not std::get<0>(data)) return;
     Group *group = Embed<Group>::create(std::get<0>(data),parent);
     if(not group) {
@@ -2131,7 +2153,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      group->setDedicatedFileItem(std::get<1>(data));
+      group->setFileItem(std::get<1>(data));
       group->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
       E(group->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2155,7 +2177,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadObject(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim object file","Object files (*.objx);;XML files (*.xml);;All files (*.*)");
     if(not std::get<0>(data)) return;
     Object *object = Embed<Object>::create(std::get<0>(data),parent);
     if(not object) {
@@ -2163,7 +2185,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      object->setDedicatedFileItem(std::get<1>(data));
+      object->setFileItem(std::get<1>(data));
       object->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
       E(object->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2187,7 +2209,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadLink(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim link file","Link files (*.lnkx);;XML files (*.xml);;All files (*.*)");
     if(not std::get<0>(data)) return;
     Link *link = Embed<Link>::create(std::get<0>(data),parent);
     if(not link) {
@@ -2195,7 +2217,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      link->setDedicatedFileItem(std::get<1>(data));
+      link->setFileItem(std::get<1>(data));
       link->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
       E(link->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2219,7 +2241,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadConstraint(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim constraint file","Constraint files (*.cnsx);;XML files (*.xml);;All files (*.*)");
     if(not std::get<0>(data)) return;
     Constraint *constraint = Embed<Constraint>::create(std::get<0>(data),parent);
     if(not constraint) {
@@ -2227,7 +2249,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      constraint->setDedicatedFileItem(std::get<1>(data));
+      constraint->setFileItem(std::get<1>(data));
       constraint->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
       E(constraint->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2251,7 +2273,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadObserver(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim observer file","Observer files (*.obsx);;XML files (*.xml);;All files (*.*)");
     if(not std::get<0>(data)) return;
     Observer *observer = Embed<Observer>::create(std::get<0>(data),parent);
     if(not observer) {
@@ -2259,7 +2281,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      observer->setDedicatedFileItem(std::get<1>(data));
+      observer->setFileItem(std::get<1>(data));
       observer->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
       E(observer->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(std::get<1>(data)->getFileInfo().absoluteFilePath()).toStdString());
@@ -2286,7 +2308,8 @@ namespace MBSimGUI {
     DOMElement *ele = nullptr;
     xercesc::DOMDocument *doc = nullptr;
     FileItemData *fileItem = nullptr;
-    QString file = QFileDialog::getOpenFileName(this, "Open MBSim element file", ".", "Element files (*.mbsex);;XML files (*.xml);;All files (*.*)");
+    QString action = embed?"Embed":"Import";
+    QString file = QFileDialog::getOpenFileName(this, action+" MBSim dynamic system solver file", ".", "Dynamic system solver files (*.dssx);;XML files (*.xml);;All files (*.*)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2322,7 +2345,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      dss->setDedicatedFileItem(fileItem);
+      dss->setFileItem(fileItem);
       dss->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(dss->getEmbedXMLElement(), project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
       E(dss->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(fileItem->getFileInfo().absoluteFilePath()).toStdString());
@@ -2343,7 +2366,7 @@ namespace MBSimGUI {
     if(embed or not dss->getEmbedXMLElement()) {
       if(not dss->getEmbedXMLElement()) dss->setEmbedXMLElement(embedele);
       if(paramele) {
-        if(parameterFileItem) dss->setDedicatedParameterFileItem(parameterFileItem);
+        dss->setParameterFileItem(parameterFileItem);
         std::vector<Parameter*> param = Parameter::createParameters(paramele);
         for(auto & i : param)
           dss->addParameter(i);
@@ -2356,7 +2379,8 @@ namespace MBSimGUI {
     DOMElement *ele = nullptr;
     xercesc::DOMDocument *doc = nullptr;
     FileItemData *fileItem = nullptr;
-    QString file = QFileDialog::getOpenFileName(this, "Open MBSim solver file", ".", "Solver files (*.mbssx);;XML files (*.xml);;All files (*.*)");
+    QString action = embed?"Embed":"Import";
+    QString file = QFileDialog::getOpenFileName(this, action+" MBSim solver file", ".", "Solver files (*.slvx);;XML files (*.xml);;All files (*.*)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2392,7 +2416,7 @@ namespace MBSimGUI {
       return;
     }
     if(embed) {
-      solver->setDedicatedFileItem(fileItem);
+      solver->setFileItem(fileItem);
       solver->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(solver->getEmbedXMLElement(), nullptr);
       E(solver->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(fileItem->getFileInfo().absoluteFilePath()).toStdString());
@@ -2409,7 +2433,7 @@ namespace MBSimGUI {
     if(embed or not solver->getEmbedXMLElement()) {
       if(not solver->getEmbedXMLElement()) solver->setEmbedXMLElement(embedele);
       if(paramele) {
-        if(parameterFileItem) solver->setDedicatedParameterFileItem(parameterFileItem);
+        solver->setParameterFileItem(parameterFileItem);
         std::vector<Parameter*> param = Parameter::createParameters(paramele);
         for(auto & i : param)
           solver->addParameter(i);

@@ -38,17 +38,16 @@ namespace MBSimGUI {
     public:
       SolverView();
       ~SolverView() override = default;
-      void setText(const QString &text) { lineEdit->setText(text); }
-      QString text()const { return lineEdit->text(); }
-      bool hasFocus() const { return lineEdit->hasFocus(); }
+      void setText(const QString &text) { name->setText(text); }
+      QString text()const { return name->text(); }
+      bool hasFocus() const { return name->hasFocus(); }
       void setSolver(int i_) { i = i_; setText(type[i]); file->setText(""); }
       void setSolver(Solver *solver);
       Solver* createSolver(int i_);
       QMenu* createContextMenu() { return new SolverContextMenu(type); }
     private:
-      QLineEdit *lineEdit;
+      QLineEdit *name;
       QLineEdit *file;
-      void openContextMenu();
       std::vector<QString> type;
       int i{0};
   };

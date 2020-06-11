@@ -188,7 +188,7 @@ namespace MBSimGUI {
       void addObserver(Observer *observer, Element *parent);
       void loadParameter(EmbedItemData *parent, Parameter *param=nullptr, bool embed=false, bool add=false);
       void removeParameter(EmbedItemData *parent);
-      std::tuple<xercesc::DOMElement*,FileItemData*> loadElement(Element *parent, Element *element=nullptr, bool embed=false);
+      std::tuple<xercesc::DOMElement*,FileItemData*> loadElement(Element *parent, Element *element=nullptr, bool embed=false, const QString &title="", const QString &types="");
       void loadFrame(Element *parent, Element *element=nullptr, bool embed=false);
       void loadContour(Element *parent, Element *element=nullptr, bool embed=false);
       void loadGroup(Element *parent, Element *element=nullptr, bool embed=false);

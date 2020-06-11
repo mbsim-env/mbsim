@@ -76,13 +76,13 @@ namespace MBSimGUI {
   }
 
   SolverView::SolverView()  {
+    setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
     QHBoxLayout *layout = new QHBoxLayout;
-    layout->setMargin(0);
     setLayout(layout);
-    layout->addWidget(new QLabel("Name:"));
-    lineEdit = new QLineEdit;
-    lineEdit->setReadOnly(true);
-    layout->addWidget(lineEdit);
+    layout->addWidget(new QLabel("Type:"));
+    name = new QLineEdit;
+    name->setReadOnly(true);
+    layout->addWidget(name);
     layout->addWidget(new QLabel("File:"));
     file = new QLineEdit;
     file->setReadOnly(true);
@@ -111,16 +111,13 @@ namespace MBSimGUI {
     type.emplace_back("Theta time stepping integrator");
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Time stepping SSC integrator");
-    lineEdit->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(lineEdit,&QLineEdit::customContextMenuRequested,this,&SolverView::openContextMenu);
-
-    lineEdit->installEventFilter(new SolverMouseEvent(lineEdit));
-  }
-
-  void SolverView::openContextMenu() {
-    QMenu *menu = createContextMenu();
-    menu->exec(QCursor::pos());
-    delete menu;
+    name->setContextMenuPolicy(Qt::CustomContextMenu);
+    name->installEventFilter(new SolverMouseEvent(name));
+    connect(name,&QLineEdit::customContextMenuRequested,this,[=]{
+        QMenu *menu = createContextMenu();
+        menu->exec(QCursor::pos());
+        delete menu;
+        });
   }
 
   Solver* SolverView::createSolver(int i_) {
