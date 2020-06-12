@@ -34,14 +34,14 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Eigenanalyzer"; }
       QString getType() const override { return "Eigenanalyzer"; }
-      EigenanalyzerPropertyDialog* createPropertyDialog() override { return new EigenanalyzerPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new EigenanalyzerPropertyDialog(this); }
   };
 
   class HarmonicResponseAnalyzer : public Solver {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"HarmonicResponseAnalyzer"; }
       QString getType() const override { return "Harmonic response analyzer"; }
-      HarmonicResponseAnalyzerPropertyDialog* createPropertyDialog() override { return new HarmonicResponseAnalyzerPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new HarmonicResponseAnalyzerPropertyDialog(this); }
   };
 
 }

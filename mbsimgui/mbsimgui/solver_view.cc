@@ -59,14 +59,17 @@ namespace MBSimGUI {
       analyzers->addAction(action);
     }
     QMenu *integrators = new QMenu("Integrators", this);
-    for(size_t i = 2; i<type.size(); i++) {
+    for(size_t i = 2; i<type.size()-1; i++) {
       QAction *action = new QAction(type[i], integrators);
       actionGroup->addAction(action);
       integrators->addAction(action);
     }
     addMenu(analyzers);
     addMenu(integrators);
+    action = new QAction(type[type.size()-1], integrators);
+    addAction(action);
     connect(actionGroup,QOverload<QAction*>::of(&QActionGroup::triggered),this,&SolverContextMenu::selectSolver);
+    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(type.size()-1); });
   }
 
   void SolverContextMenu::selectSolver(QAction *action) {
@@ -111,6 +114,7 @@ namespace MBSimGUI {
     type.emplace_back("Theta time stepping integrator");
     type.emplace_back("Time stepping integrator");
     type.emplace_back("Time stepping SSC integrator");
+    type.emplace_back("Unknown solver");
     name->setContextMenuPolicy(Qt::CustomContextMenu);
     name->installEventFilter(new SolverMouseEvent(name));
     connect(name,&QLineEdit::customContextMenuRequested,this,[=]{
@@ -172,6 +176,8 @@ namespace MBSimGUI {
       return new TimeSteppingIntegrator;
     else if(i==23)
       return new TimeSteppingSSCIntegrator;
+    else if(i==24)
+      return new UnknownSolver;
     return nullptr;
   }
 
@@ -225,6 +231,8 @@ namespace MBSimGUI {
       i=22;
     else if(dynamic_cast<TimeSteppingSSCIntegrator*>(solver))
       i=23;
+    else if(dynamic_cast<UnknownSolver*>(solver))
+      i=24;
     setText(type[i]);
   }
 

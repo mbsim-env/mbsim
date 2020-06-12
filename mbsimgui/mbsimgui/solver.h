@@ -42,10 +42,16 @@ namespace MBSimGUI {
       Project* getProject() { return project; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
+      QString getName() const override { return "Solver"; }
       virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Solver"; }
-      virtual SolverPropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
+      virtual PropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
       QMenu* createContextMenu() override { return nullptr; }
       EmbedItemData* getEmbedItemParent() override;
+  };
+
+  class UnknownSolver : public Solver {
+    public:
+      PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
 }

@@ -33,145 +33,144 @@ namespace MBSimGUI {
   class Integrator : public Solver {
     public:
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
-      IntegratorPropertyDialog* createPropertyDialog() override { return new IntegratorPropertyDialog(this); }
   };
 
   class DOPRI5Integrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"DOPRI5Integrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new DOPRI5IntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new DOPRI5IntegratorPropertyDialog(this); }
   };
 
   class DOP853Integrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"DOP853Integrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new DOP853IntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new DOP853IntegratorPropertyDialog(this); }
   };
 
   class ODEXIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ODEXIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new ODEXIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ODEXIntegratorPropertyDialog(this); }
   };
 
   class RADAU5Integrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RADAU5Integrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new RADAU5IntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new RADAU5IntegratorPropertyDialog(this); }
   };
 
   class RADAUIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RADAUIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new RADAUIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new RADAUIntegratorPropertyDialog(this); }
   };
 
   class RODASIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RODASIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new RODASIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new RODASIntegratorPropertyDialog(this); }
   };
 
   class SEULEXIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SEULEXIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new SEULEXIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new SEULEXIntegratorPropertyDialog(this); }
   };
 
   class PHEM56Integrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PHEM56Integrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new PHEM56IntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new PHEM56IntegratorPropertyDialog(this); }
   };
 
   class LSODEIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LSODEIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODEIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new LSODEIntegratorPropertyDialog(this); }
   };
 
   class LSODAIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LSODAIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODAIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new LSODAIntegratorPropertyDialog(this); }
   };
 
   class LSODIIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LSODIIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new LSODIIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new LSODIIntegratorPropertyDialog(this); }
   };
 
   class DASPKIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"DASPKIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new DASPKIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new DASPKIntegratorPropertyDialog(this); }
   };
 
   class TimeSteppingIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TimeSteppingIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new TimeSteppingIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new TimeSteppingIntegratorPropertyDialog(this); }
   };
 
   class ThetaTimeSteppingIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ThetaTimeSteppingIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new ThetaTimeSteppingIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ThetaTimeSteppingIntegratorPropertyDialog(this); }
   };
 
   class TimeSteppingSSCIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TimeSteppingSSCIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new TimeSteppingSSCIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new TimeSteppingSSCIntegratorPropertyDialog(this); }
   };
 
   class HETS2Integrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"HETS2Integrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new HETS2IntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new HETS2IntegratorPropertyDialog(this); }
   };
 
   class ExplicitEulerIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ExplicitEulerIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new ExplicitEulerIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ExplicitEulerIntegratorPropertyDialog(this); }
   };
 
   class ImplicitEulerIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ImplicitEulerIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new ImplicitEulerIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new ImplicitEulerIntegratorPropertyDialog(this); }
   };
 
   class RKSuiteIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RKSuiteIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new RKSuiteIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new RKSuiteIntegratorPropertyDialog(this); }
   };
 
   class BoostOdeintDOS_RKDOPRI5 : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"BoostOdeintDOS_RKDOPRI5"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new BoostOdeintDOS_RKDOPRI5PropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new BoostOdeintDOS_RKDOPRI5PropertyDialog(this); }
   };
 
   class BoostOdeintDOS_BulirschStoer : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"BoostOdeintDOS_BulirschStoer"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new BoostOdeintDOS_BulirschStoerPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new BoostOdeintDOS_BulirschStoerPropertyDialog(this); }
   };
 
   class BoostOdeintDOS_Rosenbrock4 : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"BoostOdeintDOS_Rosenbrock4"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new BoostOdeintDOS_Rosenbrock4PropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new BoostOdeintDOS_Rosenbrock4PropertyDialog(this); }
   };
 
   class QuasiStaticIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"QuasiStaticIntegrator"; }
-      IntegratorPropertyDialog* createPropertyDialog() override { return new QuasiStaticIntegratorPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new QuasiStaticIntegratorPropertyDialog(this); }
   };
 
 }
