@@ -48,7 +48,7 @@ namespace MBSimGUI {
   DOMElement* Element::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getXMLType());
-    E(element)->setAttribute("name",getType().toStdString());
+    E(element)->setAttribute("name",getXMLType().second);
     parent->insertBefore(element, nullptr);
     return element;
   }
@@ -87,7 +87,7 @@ namespace MBSimGUI {
       else if(dynamic_cast<Observer*>(this))
         type = "Observer";
       else 
-        type = getType();
+        type = "UnknownElement";
       QString str = type + "[" + getName() + "]";
       for(auto i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
         if(dynamic_cast<Group*>(*i1))
@@ -123,7 +123,7 @@ namespace MBSimGUI {
       else if(dynamic_cast<Observer*>(this))
         type = "Observer";
       else 
-        type = getType();
+        type = "UnknownElement";
       QString str = type + "[" + getName() + "]";
       Element* element = parent;
       while(!dynamic_cast<DynamicSystemSolver*>(element)) {

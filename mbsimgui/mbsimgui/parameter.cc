@@ -41,7 +41,7 @@ namespace MBSimGUI {
   DOMElement* Parameter::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(getXMLType());
-    E(element)->setAttribute("name", getType().toStdString());
+    E(element)->setAttribute("name", getXMLType().second);
     parent->insertBefore(element, nullptr);
     return element;
   }
