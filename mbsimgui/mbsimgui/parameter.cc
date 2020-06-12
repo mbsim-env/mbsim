@@ -22,7 +22,6 @@
 #include "objectfactory.h"
 #include "utils.h"
 #include "fileitemdata.h"
-#include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -41,7 +40,7 @@ namespace MBSimGUI {
 
   DOMElement* Parameter::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    element=D(doc)->createElement(PV%getType().toStdString());
+    element=D(doc)->createElement(getXMLType());
     E(element)->setAttribute("name", getType().toStdString());
     parent->insertBefore(element, nullptr);
     return element;
@@ -77,7 +76,7 @@ namespace MBSimGUI {
 
   DOMElement* ImportParameter::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
-    element=D(doc)->createElement(PV%getType().toStdString());
+    element=D(doc)->createElement(getXMLType());
     parent->insertBefore(element, nullptr);
     return element;
   }
