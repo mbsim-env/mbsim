@@ -2707,11 +2707,11 @@ namespace MBSimGUI {
         connect(editor,&ElementPropertyDialog::showXMLHelp,this,[=](){
           // generate url for current element
           string url="file://"+(installPath/"share"/"mbxmlutils"/"doc").string();
-          string ns=element->getNameSpace().getNamespaceURI();
+          string ns=element->getXMLType().first;
           replace(ns.begin(), ns.end(), ':', '_');
           replace(ns.begin(), ns.end(), '.', '_');
           replace(ns.begin(), ns.end(), '/', '_');
-          url+="/"+ns+"/index.html#"+element->getType().toStdString();
+          url+="/"+ns+"/index.html#"+element->getXMLType().second;
           // open in XML help dialog
           xmlHelp(QString::fromStdString(url));
         });

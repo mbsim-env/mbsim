@@ -159,7 +159,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexiblePlanarNurbsContour"; }
       QString getType() const override { return "Flexible planar nurbs contour"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       PropertyDialog* createPropertyDialog() override { return new FlexiblePlanarNurbsContourPropertyDialog(this); }
   };
 
@@ -167,7 +166,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexiblePlanarFfrNurbsContour"; }
       QString getType() const override { return "Flexible planar ffr nurbs contour"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       PropertyDialog* createPropertyDialog() override { return new FlexiblePlanarNurbsContourPropertyDialog(this); }
   };
 
@@ -175,7 +173,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexibleSpatialNurbsContour"; }
       QString getType() const override { return "Flexible spatial nurbs contour"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       PropertyDialog* createPropertyDialog() override { return new FlexibleSpatialNurbsContourPropertyDialog(this); }
   };
 
@@ -183,13 +180,10 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexibleSpatialFfrNurbsContour"; }
       QString getType() const override { return "Flexible spatial ffr nurbs contour"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       PropertyDialog* createPropertyDialog() override { return new FlexibleSpatialNurbsContourPropertyDialog(this); }
   };
 
   class FclContour : public RigidContour {
-    public:
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFCL; }
   };
 
   class FclBox : public FclContour {

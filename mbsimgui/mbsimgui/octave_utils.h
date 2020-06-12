@@ -35,7 +35,6 @@ namespace MBSimGUI {
       OctaveElement(std::string name_, std::string type_) : name(std::move(name_)), type(std::move(type_)) { }
       virtual ~OctaveElement() = default;
       const std::string& getName() const { return name; }
-      const std::string& getType() const { return type; }
       void setName(const std::string &name_) { name = name_; }
       void setType(const std::string &type_) { type = type_; }
       virtual void toStream(std::ostream &os=std::cout) const;

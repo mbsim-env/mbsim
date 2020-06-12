@@ -27,7 +27,6 @@ namespace MBSimGUI {
   class GenericFlexibleFfrBody : public Body {
     public:
       GenericFlexibleFfrBody();
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       xercesc::DOMElement* getXMLFrames() override { return frames; }
       xercesc::DOMElement* getXMLContours() override { return contours; }
       void removeXMLElements() override;

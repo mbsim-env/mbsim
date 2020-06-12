@@ -37,8 +37,6 @@ namespace MBSimGUI {
       virtual void setArg1Size(int i) { }
       virtual void setArg2Size(int i) { }
       virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Function"; }
-      virtual QString getType() const { return "Function"; }
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override { return element; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };

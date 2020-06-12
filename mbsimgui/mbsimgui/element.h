@@ -54,7 +54,6 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* getXMLObservers() { return nullptr; }
       virtual xercesc::DOMElement* getXMLFrame() { return nullptr; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       template<class T> T* getByPath(const QString &path, bool initialCaller=true) const;
       virtual Element* getChildByContainerAndName(const QString &container, const QString &name) const { return nullptr; }
       virtual int getNumberOfFrames() { return 0; }

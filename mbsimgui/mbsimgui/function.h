@@ -25,8 +25,6 @@
 namespace MBSimGUI {
 
   class Function : public Element {
-    public:
-      QString getType() const override { return "Function"; }
   };
 
 }

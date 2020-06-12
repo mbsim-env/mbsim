@@ -32,7 +32,6 @@ namespace MBSimGUI {
     public:
       EnvironmentWidget() = default;
       virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Environment"; }
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr);
   };

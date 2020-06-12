@@ -67,7 +67,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"NodeFrame"; }
       QString getType() const override { return "Node frame"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       PropertyDialog* createPropertyDialog() override { return new NodeFramePropertyDialog(this); }
   };
 
@@ -75,7 +74,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"InterfaceNodeFrame"; }
       QString getType() const override { return "Interface node Frame"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       PropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this); }
   };
 
@@ -83,7 +81,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FfrInterfaceNodeFrame"; }
       QString getType() const override { return "Ffr interface node Frame"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMFLEX; }
       PropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this,true); }
   };
 

@@ -28,7 +28,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"UniversalGravitation"; }
       QString getType() const override { return "Universal gravitation"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new UniversalGravitationPropertyDialog(this); }
   };
@@ -37,7 +36,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"Weight"; }
       QString getType() const override { return "Weight"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new WeightPropertyDialog(this); }
   };
@@ -46,7 +44,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"Buoyancy"; }
       QString getType() const override { return "Buoyancy"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new BuoyancyPropertyDialog(this); }
   };
@@ -55,7 +52,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"Drag"; }
       QString getType() const override { return "Drag"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new DragPropertyDialog(this); }
   };
@@ -64,7 +60,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"Aerodynamics"; }
       QString getType() const override { return "Aerodynamics"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMPHYSICS; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new AerodynamicsPropertyDialog(this); }
   };

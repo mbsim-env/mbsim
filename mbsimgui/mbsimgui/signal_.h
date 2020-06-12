@@ -25,8 +25,6 @@
 namespace MBSimGUI {
 
   class Signal : public Link {
-    public:
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
   };
 
   class Multiplexer : public Signal {

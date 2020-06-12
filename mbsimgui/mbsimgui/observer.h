@@ -88,7 +88,6 @@ namespace MBSimGUI {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SignalObserver"; }
       QString getType() const override { return "Signal observer"; }
-      MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new SignalObserverPropertyDialog(this); }
   };

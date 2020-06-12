@@ -43,7 +43,6 @@ namespace MBSimGUI {
       void create() override;
       virtual MBXMLUtils::FQN getXMLType() const { return MBSIMXML%"MBSimProject"; }
       QString getType() const override { return "MBSim project"; }
-      virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIMXML; }
       virtual ProjectPropertyDialog* createPropertyDialog() { return new ProjectPropertyDialog(this); }
       QMenu* createContextMenu() override { return nullptr; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
