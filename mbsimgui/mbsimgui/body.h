@@ -28,12 +28,12 @@ namespace MBSimGUI {
     public:
       ~Body() override;
       Element * getChildByContainerAndName(const QString &container, const QString &name) const override;
-      int getNumberOfFrames() override {return frame.size();}
-      int getNumberOfContours() override {return contour.size();}
+      int getNumberOfFrames() override { return frame.size(); }
+      int getNumberOfContours() override { return contour.size(); }
       int getIndexOfFrame(Frame *frame_) override;
       int getIndexOfContour(Contour *contour_) override;
-      Frame* getFrame(int i) const override {return frame[i];}
-      Contour* getContour(int i) const override {return contour[i];}
+      Frame* getFrame(int i) const override { return frame[i]; }
+      Contour* getContour(int i) const override { return contour[i]; }
       Frame* getFrame(const QString &name) const override;
       Contour* getContour(const QString &name) const;
       void setFrame(Frame *frame_, int i) override { frame[i] = frame_; }

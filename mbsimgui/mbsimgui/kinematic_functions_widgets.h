@@ -30,64 +30,72 @@ namespace MBSimGUI {
 
     public:
       TranslationAlongXAxisWidget() = default;
-      int getArg1Size() const override {return 1;}
-      QString getType() const override { return "TranslationAlongXAxis"; }
+      int getArg1Size() const override { return 1; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongXAxis"; }
+      QString getType() const override { return "Translation along x axis"; }
   };
 
   class TranslationAlongYAxisWidget : public FunctionWidget {
 
     public:
       TranslationAlongYAxisWidget() = default;
-      int getArg1Size() const override {return 1;}
-      QString getType() const override { return "TranslationAlongYAxis"; }
+      int getArg1Size() const override { return 1; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongYAxis"; }
+      QString getType() const override { return "Translation along y axis"; }
   };
 
   class TranslationAlongZAxisWidget : public FunctionWidget {
 
     public:
       TranslationAlongZAxisWidget() = default;
-      int getArg1Size() const override {return 1;}
-      QString getType() const override { return "TranslationAlongZAxis"; }
+      int getArg1Size() const override { return 1; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongZAxis"; }
+      QString getType() const override { return "Translation along z axis"; }
   };
 
   class TranslationAlongAxesXYWidget : public FunctionWidget {
 
     public:
       TranslationAlongAxesXYWidget() = default;
-      int getArg1Size() const override {return 2;}
-      QString getType() const override { return "TranslationAlongAxesXY"; }
+      int getArg1Size() const override { return 2; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongAxesXY"; }
+      QString getType() const override { return "Translation along axes x and y"; }
   };
 
   class TranslationAlongAxesYZWidget : public FunctionWidget {
 
     public:
       TranslationAlongAxesYZWidget() = default;
-      int getArg1Size() const override {return 2;}
-      QString getType() const override { return "TranslationAlongAxesYZ"; }
+      int getArg1Size() const override { return 2; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongAxesYZ"; }
+      QString getType() const override { return "Translation along axes y and z"; }
   };
 
   class TranslationAlongAxesXZWidget : public FunctionWidget {
 
     public:
       TranslationAlongAxesXZWidget() = default;
-      int getArg1Size() const override {return 2;}
-      QString getType() const override { return "TranslationAlongAxesXZ"; }
+      int getArg1Size() const override { return 2; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongAxesXZ"; }
+      QString getType() const override { return "Translation along axes x and z"; }
   };
 
   class TranslationAlongAxesXYZWidget : public FunctionWidget {
 
     public:
       TranslationAlongAxesXYZWidget() = default;
-      int getArg1Size() const override {return 3;}
-      QString getType() const override { return "TranslationAlongAxesXYZ"; }
+      int getArg1Size() const override { return 3; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongAxesXYZ"; }
+      QString getType() const override { return "Translation along axes x, y and z"; }
   };
 
   class TranslationAlongFixedAxisWidget : public FunctionWidget {
 
     public:
       TranslationAlongFixedAxisWidget();
-      int getArg1Size() const override {return 1;}
-      QString getType() const override { return "TranslationAlongFixedAxis"; }
+      int getArg1Size() const override { return 1; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongFixedAxis"; }
+      QString getType() const override { return "Translation along fixed axis"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -100,7 +108,8 @@ namespace MBSimGUI {
       LinearTranslationWidget(int m=1, int n=1);
       int getArg1Size() const override;
       void resize_(int m, int n) override;
-      QString getType() const override { return "LinearTranslation"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearTranslation"; }
+      QString getType() const override { return "Linear translation"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -111,80 +120,90 @@ namespace MBSimGUI {
 
     public:
       RotationAboutXAxisWidget() = default;
-      int getArg1Size() const override {return 1;}
-      QString getType() const override { return "RotationAboutXAxis"; }
+      int getArg1Size() const override { return 1; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutXAxis"; }
+      QString getType() const override { return "Rotation about x axis"; }
   };
 
   class RotationAboutYAxisWidget : public FunctionWidget {
 
     public:
       RotationAboutYAxisWidget() = default;
-      int getArg1Size() const override {return 1;}
-      QString getType() const override { return "RotationAboutYAxis"; }
+      int getArg1Size() const override { return 1; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutYAxis"; }
+      QString getType() const override { return "Rotation about y axis"; }
   };
 
   class RotationAboutZAxisWidget : public FunctionWidget {
 
     public:
       RotationAboutZAxisWidget() = default;
-      int getArg1Size() const override {return 1;}
-      QString getType() const override { return "RotationAboutZAxis"; }
+      int getArg1Size() const override { return 1; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutZAxis"; }
+      QString getType() const override { return "Rotation about z axis"; }
   };
 
   class RotationAboutAxesXYWidget : public FunctionWidget {
 
     public:
       RotationAboutAxesXYWidget() = default;
-      int getArg1Size() const override {return 2;}
-      QString getType() const override { return "RotationAboutAxesXY"; }
+      int getArg1Size() const override { return 2; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesXY"; }
+      QString getType() const override { return "Rotation about axes x and y"; }
   };
 
   class RotationAboutAxesYZWidget : public FunctionWidget {
 
     public:
       RotationAboutAxesYZWidget() = default;
-      int getArg1Size() const override {return 2;}
-      QString getType() const override { return "RotationAboutAxesYZ"; }
+      int getArg1Size() const override { return 2; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesYZ"; }
+      QString getType() const override { return "Rotation about axes y and z"; }
   };
 
   class RotationAboutAxesXZWidget : public FunctionWidget {
 
     public:
       RotationAboutAxesXZWidget() = default;
-      int getArg1Size() const override {return 2;}
-      QString getType() const override { return "RotationAboutAxesXZ"; }
+      int getArg1Size() const override { return 2; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesXZ"; }
+      QString getType() const override { return "Rotation about axes x and z"; }
   };
 
   class RotationAboutAxesXYZWidget : public FunctionWidget {
 
     public:
       RotationAboutAxesXYZWidget() = default;
-      int getArg1Size() const override {return 3;}
-      QString getType() const override { return "RotationAboutAxesXYZ"; }
+      int getArg1Size() const override { return 3; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesXYZ"; }
+      QString getType() const override { return "Rotation about axes x, y and z"; }
   };
 
   class RotationAboutAxesZXZWidget : public FunctionWidget {
 
     public:
       RotationAboutAxesZXZWidget() = default;
-      int getArg1Size() const override {return 3;}
-      QString getType() const override { return "RotationAboutAxesZXZ"; }
+      int getArg1Size() const override { return 3; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesZXZ"; }
+      QString getType() const override { return "Rotation about axes z, x and z"; }
   };
 
   class RotationAboutAxesZYXWidget : public FunctionWidget {
 
     public:
       RotationAboutAxesZYXWidget() = default;
-      int getArg1Size() const override {return 3;}
-      QString getType() const override { return "RotationAboutAxesZYX"; }
+      int getArg1Size() const override { return 3; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesZYX"; }
+      QString getType() const override { return "Rotation about axes z, y and x"; }
   };
 
   class RotationAboutFixedAxisWidget : public FunctionWidget {
 
     public:
       RotationAboutFixedAxisWidget();
-      int getArg1Size() const override {return 1;}
-      QString getType() const override { return "RotationAboutFixedAxis"; }
+      int getArg1Size() const override { return 1; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutFixedAxis"; }
+      QString getType() const override { return "Rotation about fixed axis"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:

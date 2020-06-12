@@ -42,8 +42,7 @@ namespace MBSimGUI {
       Project* getProject() { return project; }
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      QString getName() const override { return getType(); }
-      QString getType() const override { return "Solver"; }
+      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Solver"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const = 0;
       virtual SolverPropertyDialog* createPropertyDialog() { return new SolverPropertyDialog(this); }
       QMenu* createContextMenu() override { return nullptr; }

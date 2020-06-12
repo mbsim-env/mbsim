@@ -44,6 +44,7 @@ namespace MBSimGUI {
     public:
       Group();
       ~Group() override;
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Group"; }
       QString getType() const override { return "Group"; }
       void createXMLConstraints();
       void createXMLObservers();
@@ -64,13 +65,13 @@ namespace MBSimGUI {
       void setDedicatedParameterFileItem(FileItemData *dedicatedFileItem) override;
       Element *getChildByContainerAndName(const QString &container, const QString &name) const override;
       void setActionPasteDisabled(bool flag);
-      int getNumberOfFrames() override {return frame.size();}
-      int getNumberOfContours() override {return contour.size();}
-      int getNumberOfGroups() override {return group.size();}
-      int getNumberOfObjects() override {return object.size();}
-      int getNumberOfLinks() override {return link.size();}
-      int getNumberOfConstraints() override {return constraint.size();}
-      int getNumberOfObservers() override {return observer.size();}
+      int getNumberOfFrames() override { return frame.size(); }
+      int getNumberOfContours() override { return contour.size(); }
+      int getNumberOfGroups() override { return group.size(); }
+      int getNumberOfObjects() override { return object.size(); }
+      int getNumberOfLinks() override { return link.size(); }
+      int getNumberOfConstraints() override { return constraint.size(); }
+      int getNumberOfObservers() override { return observer.size(); }
       int getIndexOfFrame(Frame *frame_) override;
       int getIndexOfContour(Contour *contour_) override;
       int getIndexOfGroup(Group *group_) override;
@@ -78,13 +79,13 @@ namespace MBSimGUI {
       int getIndexOfLink(Link *link_) override;
       int getIndexOfConstraint(Constraint *constraint_) override;
       int getIndexOfObserver(Observer *observer_) override;
-      Frame* getFrame(int i) const override {return frame[i];}
-      Contour* getContour(int i) const override {return contour[i];}
-      Object* getObject(int i) const override {return object[i];}
-      Group* getGroup(int i) const override {return group[i];}
-      Link* getLink(int i) const override {return link[i];}
-      Constraint* getConstraint(int i) const override {return constraint[i];}
-      Observer* getObserver(int i) const override {return observer[i];}
+      Frame* getFrame(int i) const override { return frame[i]; }
+      Contour* getContour(int i) const override { return contour[i]; }
+      Object* getObject(int i) const override { return object[i]; }
+      Group* getGroup(int i) const override { return group[i]; }
+      Link* getLink(int i) const override { return link[i]; }
+      Constraint* getConstraint(int i) const override { return constraint[i]; }
+      Observer* getObserver(int i) const override { return observer[i]; }
       Frame* getFrame(const QString &name) const override;
       Contour* getContour(const QString &name) const;
       Object* getObject(const QString &name) const;
@@ -115,7 +116,7 @@ namespace MBSimGUI {
 
   class UnknownGroup : public Group {
     public:
-      QString getType() const override { return "UnknownGroup"; }
+      QString getType() const override { return "Unknown group"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override { return Element::processIDAndHref(element); }
       void create() override { return Element::create(); }
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }

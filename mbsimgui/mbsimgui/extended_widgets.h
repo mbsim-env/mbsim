@@ -98,7 +98,7 @@ namespace MBSimGUI {
 
       void resize_(int m, int n) override;
       void addWidget(Widget *widget_);
-      Widget* getWidget(int i) const {return widget[i];}
+      Widget* getWidget(int i) const { return widget[i]; }
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

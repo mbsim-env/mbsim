@@ -47,7 +47,7 @@ namespace MBSimGUI {
       Element* element;
     public:
       ElementItem(Element *element_) : element(element_) { }
-      Element* getElement() const {return element;}
+      Element* getElement() const { return element; }
   };
 
   class EvalDialog : public QDialog {

@@ -26,28 +26,32 @@ namespace MBSimGUI {
 
   class SpringDamper : public FixedFrameLink {
     public:
-      QString getType() const override { return "SpringDamper"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SpringDamper"; }
+      QString getType() const override { return "Spring damper"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new SpringDamperPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new SpringDamperPropertyDialog(this); }
   };
 
   class DirectionalSpringDamper : public FloatingFrameLink {
     public:
-      QString getType() const override { return "DirectionalSpringDamper"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"DirectionalSpringDamper"; }
+      QString getType() const override { return "Directional spring damper"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new DirectionalSpringDamperPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new DirectionalSpringDamperPropertyDialog(this); }
   };
 
   class IsotropicRotationalSpringDamper : public FixedFrameLink {
     public:
-      QString getType() const override { return "IsotropicRotationalSpringDamper"; }
-      PropertyDialog* createPropertyDialog() override {return new IsotropicRotationalSpringDamperPropertyDialog(this);}
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"IsotropicRotationalSpringDamper"; }
+      QString getType() const override { return "Isotropic rotational spring damper"; }
+      PropertyDialog* createPropertyDialog() override { return new IsotropicRotationalSpringDamperPropertyDialog(this); }
   };
 
   class GeneralizedSpringDamper : public DualRigidBodyLink {
     public:
-      QString getType() const override { return "GeneralizedSpringDamper"; }
-      PropertyDialog* createPropertyDialog() override {return new GeneralizedSpringDamperPropertyDialog(this);}
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedSpringDamper"; }
+      QString getType() const override { return "Generalized spring damper"; }
+      PropertyDialog* createPropertyDialog() override { return new GeneralizedSpringDamperPropertyDialog(this); }
   };
 
 }

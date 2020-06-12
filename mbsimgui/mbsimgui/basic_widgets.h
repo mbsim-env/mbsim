@@ -113,7 +113,7 @@ namespace MBSimGUI {
       void setElement(const QString &str) { if(str!=ele->placeholderText()) ele->setText(str); }
       QString getElement() const { return ele->text().isEmpty()?ele->placeholderText():ele->text(); }
       void setRatio(const QString &str) { ratio->setText(str=="0"?"":str); }
-      QString getRatio() const {return ratio->text().isEmpty()?"0":ratio->text();}
+      QString getRatio() const { return ratio->text().isEmpty()?"0":ratio->text(); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
@@ -167,7 +167,7 @@ namespace MBSimGUI {
 
     public:
       SpinBoxWidget(int val=0, int min=0, int max=99);
-      int getValue() override {return value->value();}
+      int getValue() override { return value->value(); }
       void setValue(int val) override {value->setValue(val);}
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -184,7 +184,7 @@ namespace MBSimGUI {
 
     public:
       ComboBoxWidget(const QStringList &names, int currentIndex=0);
-      int getValue() override {return value->currentIndex();}
+      int getValue() override { return value->currentIndex(); }
       void setValue(int val) override {value->setCurrentIndex(val);}
 
     protected:
@@ -209,7 +209,7 @@ namespace MBSimGUI {
     public:
       TextWidget(const QString &text_="", bool readOnly=false);
 
-      QString getText() const override {return text->text();}
+      QString getText() const override { return text->text(); }
       void setText(const QString &text_) override {text->setText(text_);}
       void setReadOnly(bool readOnly) { text->setReadOnly(readOnly); }
 
@@ -221,7 +221,7 @@ namespace MBSimGUI {
 
     public:
       TextChoiceWidget(const std::vector<QString> &list, int num=0, bool editable=false);
-      QString getText() const override {return text->currentText();}
+      QString getText() const override { return text->currentText(); }
       void setText(const QString &str) override {
         if(text->isEditable())
           text->setEditText(str);

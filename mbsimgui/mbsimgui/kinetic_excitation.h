@@ -26,9 +26,10 @@ namespace MBSimGUI {
 
   class KineticExcitation : public FloatingFrameLink {
     public:
-      QString getType() const override { return "KineticExcitation"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"KineticExcitation"; }
+      QString getType() const override { return "Kinetic excitation"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new KineticExcitationPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new KineticExcitationPropertyDialog(this); }
   };
 
 }

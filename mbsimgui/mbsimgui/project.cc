@@ -53,7 +53,7 @@ namespace MBSimGUI {
 
   DOMElement* Project::createXMLElement(DOMNode *parent) {
     auto *doc=static_cast<xercesc::DOMDocument*>(parent);
-    element=D(doc)->createElement(getNameSpace()%getType().toStdString());
+    element=D(doc)->createElement(getXMLType());
     E(element)->setAttribute("name","Project");
     parent->insertBefore(element, nullptr);
     setDynamicSystemSolver(new DynamicSystemSolver);

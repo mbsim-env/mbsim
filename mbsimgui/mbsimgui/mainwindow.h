@@ -177,7 +177,7 @@ namespace MBSimGUI {
       xercesc::DOMLSSerializer *serializer;
       xercesc::DOMLSSerializer *basicSerializer;
       void mbsimxml(int task);
-      const boost::filesystem::path& getUniqueTempDir() const {return uniqueTempDir;}
+      const boost::filesystem::path& getUniqueTempDir() const { return uniqueTempDir; }
       void addParameter(Parameter *parameter, EmbedItemData *parent);
       void addFrame(Frame *frame, Element *parent);
       void addContour(Contour *contour, Element *parent);

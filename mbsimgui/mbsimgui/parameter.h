@@ -70,14 +70,14 @@ namespace MBSimGUI {
     public:
       StringParameter() = default;
       QString getType() const override { return "stringParameter"; }
-      PropertyDialog* createPropertyDialog() override {return new StringParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new StringParameterPropertyDialog(this); }
   };
 
   class ScalarParameter : public Parameter {
     public:
       ScalarParameter() = default;
       QString getType() const override { return "scalarParameter"; }
-      PropertyDialog* createPropertyDialog() override {return new ScalarParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new ScalarParameterPropertyDialog(this); }
   };
 
   class VectorParameter : public Parameter {
@@ -85,7 +85,7 @@ namespace MBSimGUI {
       VectorParameter() = default;
       QString getValue() const override;
       QString getType() const override { return "vectorParameter"; }
-      PropertyDialog* createPropertyDialog() override {return new VectorParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new VectorParameterPropertyDialog(this); }
   };
 
   class MatrixParameter : public Parameter {
@@ -93,7 +93,7 @@ namespace MBSimGUI {
       MatrixParameter() = default;
       QString getValue() const override;
       QString getType() const override { return "matrixParameter"; }
-      PropertyDialog* createPropertyDialog() override {return new MatrixParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new MatrixParameterPropertyDialog(this); }
   };
 
   class ImportParameter : public Parameter {
@@ -101,7 +101,7 @@ namespace MBSimGUI {
       ImportParameter() = default;
       QString getType() const override { return "import"; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
-      PropertyDialog* createPropertyDialog() override {return new ImportParameterPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new ImportParameterPropertyDialog(this); }
   };
 
   class Parameters : public ParameterItem {

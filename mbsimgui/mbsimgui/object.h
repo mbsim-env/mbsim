@@ -26,14 +26,15 @@ namespace MBSimGUI {
 
   class Object : public Element {
     public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Object"; }
       PropertyDialog* createPropertyDialog() override { return new ObjectPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ObjectContextMenu(this); }
   };
 
   class UnknownObject : public Object {
     public:
-      QString getType() const override { return "UnknownObject"; }
-      PropertyDialog* createPropertyDialog() override {return new UnknownItemPropertyDialog(this);}
+      QString getType() const override { return "Unknown object"; }
+      PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
 }

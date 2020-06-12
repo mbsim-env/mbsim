@@ -43,7 +43,7 @@ namespace MBSimGUI {
       bool enabled{true};
     public:
       Element();
-      QString getType() const override { return "Element"; }
+      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Element"; }
       QString getXMLPath(Element *ref=nullptr, bool rel=false);
       virtual xercesc::DOMElement* getXMLFrames() { return nullptr; }
       virtual xercesc::DOMElement* getXMLContours() { return nullptr; }
@@ -102,7 +102,7 @@ namespace MBSimGUI {
       void setParent(Element* parent_) { parent = parent_; }
       PropertyDialog* createPropertyDialog() override { return new ElementPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ElementContextMenu(this); }
-      virtual QMenu* createFrameContextMenu() {return nullptr;}
+      virtual QMenu* createFrameContextMenu() { return nullptr; }
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual QString getPlotFeatureType() const { return ""; }
       bool getEnabled() const override { return enabled; }

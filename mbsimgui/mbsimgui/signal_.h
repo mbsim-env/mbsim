@@ -26,50 +26,56 @@ namespace MBSimGUI {
 
   class Signal : public Link {
     public:
-      QString getType() const override { return "Signal"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
   };
 
   class Multiplexer : public Signal {
     public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"Multiplexer"; }
       QString getType() const override { return "Multiplexer"; }
-      PropertyDialog* createPropertyDialog() override {return new MultiplexerPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new MultiplexerPropertyDialog(this); }
   };
 
   class Demultiplexer : public Signal {
     public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"Demultiplexer"; }
       QString getType() const override { return "Demultiplexer"; }
-      PropertyDialog* createPropertyDialog() override {return new DemultiplexerPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new DemultiplexerPropertyDialog(this); }
   };
 
   class LinearTransferSystem : public Signal {
     public:
-      QString getType() const override { return "LinearTransferSystem"; }
-      PropertyDialog* createPropertyDialog() override {return new LinearTransferSystemPropertyDialog(this);}
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"LinearTransferSystem"; }
+      QString getType() const override { return "Linear transfer system"; }
+      PropertyDialog* createPropertyDialog() override { return new LinearTransferSystemPropertyDialog(this); }
   };
 
   class NonlinearTransferSystem : public Signal {
     public:
-      QString getType() const override { return "NonlinearTransferSystem"; }
-      PropertyDialog* createPropertyDialog() override {return new NonlinearTransferSystemPropertyDialog(this);}
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"NonlinearTransferSystem"; }
+      QString getType() const override { return "Nonlinear transfer system"; }
+      PropertyDialog* createPropertyDialog() override { return new NonlinearTransferSystemPropertyDialog(this); }
   };
 
   class SignalOperation : public Signal {
     public:
-      QString getType() const override { return "SignalOperation"; }
-      PropertyDialog* createPropertyDialog() override {return new SignalOperationPropertyDialog(this);}
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"SignalOperation"; }
+      QString getType() const override { return "Signal operation"; }
+      PropertyDialog* createPropertyDialog() override { return new SignalOperationPropertyDialog(this); }
   };
 
   class ExternSignalSource : public Signal {
     public:
-      QString getType() const override { return "ExternSignalSource"; }
-      PropertyDialog* createPropertyDialog() override {return new ExternSignalSourcePropertyDialog(this);}
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"ExternSignalSource"; }
+      QString getType() const override { return "Extern signal source"; }
+      PropertyDialog* createPropertyDialog() override { return new ExternSignalSourcePropertyDialog(this); }
   };
 
   class ExternSignalSink : public Signal {
     public:
-      QString getType() const override { return "ExternSignalSink"; }
-      PropertyDialog* createPropertyDialog() override {return new ExternSignalSinkPropertyDialog(this);}
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"ExternSignalSink"; }
+      QString getType() const override { return "Extern signal sink"; }
+      PropertyDialog* createPropertyDialog() override { return new ExternSignalSinkPropertyDialog(this); }
   };
 
 }

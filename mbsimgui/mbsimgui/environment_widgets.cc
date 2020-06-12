@@ -33,7 +33,7 @@ namespace MBSimGUI {
 
   DOMElement* EnvironmentWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0=D(doc)->createElement(getNameSpace()%getType().toStdString());
+    DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     return ele0;
   }

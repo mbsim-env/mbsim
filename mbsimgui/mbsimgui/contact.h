@@ -26,14 +26,16 @@ namespace MBSimGUI {
 
   class Contact : public Link {
     public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Contact"; }
       QString getType() const override { return "Contact"; }
-      PropertyDialog* createPropertyDialog() override {return new ContactPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new ContactPropertyDialog(this); }
   };
 
   class DiskContact : public FixedFrameLink {
     public:
-      QString getType() const override { return "DiskContact"; }
-      PropertyDialog* createPropertyDialog() override {return new DiskContactPropertyDialog(this);}
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"DiskContact"; }
+      QString getType() const override { return "Disk contact"; }
+      PropertyDialog* createPropertyDialog() override { return new DiskContactPropertyDialog(this); }
   };
 
 }

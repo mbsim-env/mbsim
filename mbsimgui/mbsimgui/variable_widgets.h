@@ -51,7 +51,7 @@ namespace MBSimGUI {
       virtual void setValue(const QString &str) = 0;
       virtual QString getType() const = 0;
       virtual int getVarType() const { return 0; }
-      virtual bool validate(const std::vector<std::vector<QString>> &A) const {return true;}
+      virtual bool validate(const std::vector<std::vector<QString>> &A) const { return true; }
       virtual int rows() const { return 1; }
       virtual int cols() const { return 1; }
       virtual std::vector<std::vector<QString>> getEvalMat() const;
@@ -63,9 +63,9 @@ namespace MBSimGUI {
     public:
       StringWidget(const QString &d="", const QString &p="\"\"");
       void setReadOnly(bool flag) override {box->setReadOnly(flag);}
-      QString getValue() const override {return box->text().isEmpty()?box->placeholderText():box->text();}
+      QString getValue() const override { return box->text().isEmpty()?box->placeholderText():box->text(); }
       void setValue(const QString &str) override {box->setText(str==box->placeholderText()?"":str);}
-      QString getType() const override {return "String";}
+      QString getType() const override { return "String"; }
       int getVarType() const override { return 1; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       std::vector<std::vector<QString>> getEvalMat() const override;
@@ -79,7 +79,7 @@ namespace MBSimGUI {
       BoolWidget(const QString &b="0");
       QString getValue() const override;
       void setValue(const QString &str) override;
-      QString getType() const override {return "Boolean";}
+      QString getType() const override { return "Boolean"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       std::vector<std::vector<QString>> getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -94,7 +94,7 @@ namespace MBSimGUI {
       ExpressionWidget(const QString &str="", int varType_=0);
       QString getValue() const override { return value->toPlainText(); }
       void setValue(const QString &str) override { value->setPlainText(str); }
-      QString getType() const override {return "Editor";}
+      QString getType() const override { return "Editor"; }
       int getVarType() const override { return varType; }
       int rows() const override { return getEvalMat().size(); }
       int cols() const override { return !getEvalMat().empty()?getEvalMat()[0].size():0; }
@@ -112,9 +112,9 @@ namespace MBSimGUI {
     public:
       ScalarWidget(const QString &d="1");
       void setReadOnly(bool flag) override {box->setReadOnly(flag);}
-      QString getValue() const override {return box->text().isEmpty()?"0":box->text();}
+      QString getValue() const override { return box->text().isEmpty()?"0":box->text(); }
       void setValue(const QString &str) override {box->setText(str=="0"?"":str);}
-      QString getType() const override {return "Scalar";}
+      QString getType() const override { return "Scalar"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       std::vector<std::vector<QString>> getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -143,11 +143,11 @@ namespace MBSimGUI {
       std::vector<QString> getVec() const override;
       void setVec(const std::vector<QString> &x) override;
       void setReadOnly(bool flag) override;
-      QString getValue() const override {return toQStr(getVec());}
+      QString getValue() const override { return toQStr(getVec()); }
       void setValue(const QString &str) override {setVec(strToVec(str));}
-      int size() const {return box.size();}
+      int size() const { return box.size(); }
       int rows() const override { return size(); }
-      QString getType() const override {return "Vector";}
+      QString getType() const override { return "Vector"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
   };
 
@@ -160,17 +160,17 @@ namespace MBSimGUI {
       int minSize, maxSize;
     public:
       VecSizeVarWidget(int size, int minSize_, int maxSize_, int singleStep=1, bool transpose=false, bool table=false, QString defaultValue="0");
-      std::vector<QString> getVec() const override {return widget->getVec();}
+      std::vector<QString> getVec() const override { return widget->getVec(); }
       void setVec(const std::vector<QString> &x) override;
       void resize_(int size);
       void resize_(int rows, int cols) override { resize_(rows); }
-      int size() const {return sizeCombo->value();}
+      int size() const { return sizeCombo->value(); }
       int rows() const override { return size(); }
       int cols() const override { return 1; }
-      QString getValue() const override {return toQStr(getVec());}
+      QString getValue() const override { return toQStr(getVec()); }
       void setValue(const QString &str) override {setVec(strToVec(str));}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
-      QString getType() const override {return "Vector";}
+      QString getType() const override { return "Vector"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
     signals:
@@ -188,11 +188,11 @@ namespace MBSimGUI {
       void resize_(int rows, int cols) override { resize_(rows); }
       std::vector<QString> getVec() const override;
       void setVec(const std::vector<QString> &x) override;
-      QString getValue() const override {return toQStr(getVec());}
+      QString getValue() const override { return toQStr(getVec()); }
       void setValue(const QString &str) override {setVec(strToVec(str));}
       int size() const;
       int rows() const override { return size(); }
-      QString getType() const override {return "Vector";}
+      QString getType() const override { return "Vector"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
   };
 
@@ -216,11 +216,11 @@ namespace MBSimGUI {
       std::vector<std::vector<QString>> getMat() const override;
       void setMat(const std::vector<std::vector<QString>> &A) override;
       void setReadOnly(bool flag) override;
-      QString getValue() const override {return toQStr(getMat());}
+      QString getValue() const override { return toQStr(getMat()); }
       void setValue(const QString &str) override {setMat(strToMat(str));}
-      int rows() const override {return box.size();}
-      int cols() const override {return box[0].size();}
-      QString getType() const override {return "Matrix";}
+      int rows() const override { return box.size(); }
+      int cols() const override { return box[0].size(); }
+      QString getType() const override { return "Matrix"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
   };
 
@@ -234,15 +234,15 @@ namespace MBSimGUI {
       int minCols, maxCols;
     public:
       MatColsVarWidget(int rows, int cols, int minCols_, int maxCols_, int table=false);
-      std::vector<std::vector<QString>> getMat() const override {return widget->getMat();}
+      std::vector<std::vector<QString>> getMat() const override { return widget->getMat(); }
       void setMat(const std::vector<std::vector<QString>> &A) override;
       void resize_(int rows, int cols) override;
-      int rows() const override {return widget->rows();}
-      int cols() const override {return colsCombo->value();}
-      QString getValue() const override {return toQStr(getMat());}
+      int rows() const override { return widget->rows(); }
+      int cols() const override { return colsCombo->value(); }
+      QString getValue() const override { return toQStr(getMat()); }
       void setValue(const QString &str) override {setMat(strToMat(str));}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
-      QString getType() const override {return "Matrix";}
+      QString getType() const override { return "Matrix"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
     signals:
@@ -259,15 +259,15 @@ namespace MBSimGUI {
       int minRows, maxRows;
     public:
       MatRowsVarWidget(int rows, int cols, int minRows_, int maxRows_, int table=false);
-      std::vector<std::vector<QString>> getMat() const override {return widget->getMat();}
+      std::vector<std::vector<QString>> getMat() const override  { return widget->getMat(); }
       void setMat(const std::vector<std::vector<QString>> &A) override;
       void resize_(int rows, int cols) override;
-      int rows() const override {return rowsCombo->value();}
-      int cols() const override {return widget->cols();}
-      QString getValue() const override {return toQStr(getMat());}
+      int rows() const override { return rowsCombo->value(); }
+      int cols() const override { return widget->cols(); }
+      QString getValue() const override { return toQStr(getMat()); }
       void setValue(const QString &str) override {setMat(strToMat(str));}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
-      QString getType() const override {return "Matrix";}
+      QString getType() const override { return "Matrix"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
     signals:
@@ -283,15 +283,15 @@ namespace MBSimGUI {
       int minRows, maxRows, minCols, maxCols;
     public:
       MatRowsColsVarWidget(int rows, int cols, int minRows_, int maxRows_, int minCols_, int maxCols_, int table=false);
-      std::vector<std::vector<QString>> getMat() const override {return widget->getMat();}
+      std::vector<std::vector<QString>> getMat() const override { return widget->getMat(); }
       void setMat(const std::vector<std::vector<QString>> &A) override;
       void resize_(int rows, int cols) override;
-      int rows() const override {return rowsCombo->value();}
-      int cols() const override {return colsCombo->value();}
-      QString getValue() const override {return toQStr(getMat());}
+      int rows() const override { return rowsCombo->value(); }
+      int cols() const override { return colsCombo->value(); }
+      QString getValue() const override { return toQStr(getMat()); }
       void setValue(const QString &str) override {setMat(strToMat(str));}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
-      QString getType() const override {return "Matrix";}
+      QString getType() const override { return "Matrix"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentRowIndexChanged(int);
       void currentColIndexChanged(int);
@@ -309,15 +309,15 @@ namespace MBSimGUI {
       int minSize, maxSize;
     public:
       SqrMatSizeVarWidget(int size, int minSize_, int maxSize_);
-      std::vector<std::vector<QString>> getMat() const override {return widget->getMat();}
+      std::vector<std::vector<QString>> getMat() const override { return widget->getMat(); }
       void setMat(const std::vector<std::vector<QString>> &A) override;
       void resize_(int rows, int cols) override;
-      int rows() const override {return sizeCombo->value();}
-      int cols() const override {return rows();}
-      QString getValue() const override {return toQStr(getMat());}
+      int rows() const override { return sizeCombo->value(); }
+      int cols() const override { return rows(); }
+      QString getValue() const override { return toQStr(getMat()); }
       void setValue(const QString &str) override {setMat(strToMat(str));}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
-      QString getType() const override {return "Matrix";}
+      QString getType() const override { return "Matrix"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
     signals:
@@ -336,11 +336,11 @@ namespace MBSimGUI {
       std::vector<std::vector<QString>> getMat() const override;
       void setMat(const std::vector<std::vector<QString>> &A) override;
       void setReadOnly(bool flag) override;
-      QString getValue() const override {return toQStr(getMat());}
+      QString getValue() const override { return toQStr(getMat()); }
       void setValue(const QString &str) override {setMat(strToMat(str));}
-      int rows() const override {return box.size();}
-      int cols() const override {return box[0].size();}
-      QString getType() const override {return "Matrix";}
+      int rows() const override { return box.size(); }
+      int cols() const override { return box[0].size(); }
+      QString getType() const override { return "Matrix"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
   };
 
@@ -353,15 +353,15 @@ namespace MBSimGUI {
       int minSize, maxSize;
     public:
       SymMatSizeVarWidget(int size, int minSize_, int maxSize_);
-      std::vector<std::vector<QString>> getMat() const override {return widget->getMat();}
+      std::vector<std::vector<QString>> getMat() const override { return widget->getMat(); }
       void setMat(const std::vector<std::vector<QString>> &A) override;
       void resize_(int rows, int cols) override;
-      int rows() const override {return sizeCombo->value();}
-      int cols() const override {return rows();}
-      QString getValue() const override {return toQStr(getMat());}
+      int rows() const override { return sizeCombo->value(); }
+      int cols() const override { return rows(); }
+      QString getValue() const override { return toQStr(getMat()); }
       void setValue(const QString &str) override {setMat(strToMat(str));}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
-      QString getType() const override {return "Matrix";}
+      QString getType() const override { return "Matrix"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       void currentIndexChanged(int);
     signals:
@@ -378,11 +378,11 @@ namespace MBSimGUI {
       void resize_(int rows, int cols) override;
       std::vector<std::vector<QString>> getMat() const override;
       void setMat(const std::vector<std::vector<QString>> &A) override;
-      QString getValue() const override {return toQStr(getMat());}
+      QString getValue() const override { return toQStr(getMat()); }
       void setValue(const QString &str) override {setMat(strToMat(str));}
       int rows() const override;
       int cols() const override;
-      QString getType() const override {return "Matrix";}
+      QString getType() const override { return "Matrix"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
   };
 
@@ -396,12 +396,12 @@ namespace MBSimGUI {
       std::vector<QString> getAngles() const;
       void setAngles(const std::vector<QString> &x);
       void setReadOnly(bool flag) override;
-      QString getValue() const override {return toQStr(getAngles());}
+      QString getValue() const override { return toQStr(getAngles()); }
       void setValue(const QString &str) override {setAngles(strToVec(str));}
-      int size() const {return box.size();}
-      QString getType() const override {return "Cardan";}
+      int size() const { return box.size(); }
+      QString getType() const override { return "Cardan"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
-      QString getUnit() const {return unit->currentText();}
+      QString getUnit() const { return unit->currentText(); }
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       std::vector<std::vector<QString>> getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
@@ -415,11 +415,11 @@ namespace MBSimGUI {
       QComboBox* unit;
     public:
       AboutXWidget();
-      QString getValue() const override {return box->text().isEmpty()?"0":box->text();}
+      QString getValue() const override { return box->text().isEmpty()?"0":box->text(); }
       void setValue(const QString &str) override {box->setText(str=="0"?"":str);}
-      QString getType() const override {return "AboutX";}
+      QString getType() const override { return "AboutX"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
-      QString getUnit() const {return unit->currentText();}
+      QString getUnit() const { return unit->currentText(); }
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       std::vector<std::vector<QString>> getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
@@ -433,11 +433,11 @@ namespace MBSimGUI {
       QComboBox* unit;
     public:
       AboutYWidget();
-      QString getValue() const override {return box->text().isEmpty()?"0":box->text();}
+      QString getValue() const override { return box->text().isEmpty()?"0":box->text(); }
       void setValue(const QString &str) override {box->setText(str=="0"?"":str);}
-      QString getType() const override {return "AboutY";}
+      QString getType() const override { return "AboutY"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
-      QString getUnit() const {return unit->currentText();}
+      QString getUnit() const { return unit->currentText(); }
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       std::vector<std::vector<QString>> getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
@@ -451,11 +451,11 @@ namespace MBSimGUI {
       QComboBox* unit;
     public:
       AboutZWidget();
-      QString getValue() const override {return box->text().isEmpty()?"0":box->text();}
+      QString getValue() const override { return box->text().isEmpty()?"0":box->text(); }
       void setValue(const QString &str) override {box->setText(str=="0"?"":str);}
-      QString getType() const override {return "AboutZ";}
+      QString getType() const override { return "AboutZ"; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
-      QString getUnit() const {return unit->currentText();}
+      QString getUnit() const { return unit->currentText(); }
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       std::vector<std::vector<QString>> getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
@@ -472,15 +472,15 @@ namespace MBSimGUI {
       int defaultUnit;
     public:
       PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_=QStringList(), int defaultUnit_=0, bool eval=true);
-      QString getValue() const override {return widget->getValue();}
+      QString getValue() const override { return widget->getValue(); }
       void setValue(const QString &str) override {widget->setValue(str);}
       void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
-      virtual VariableWidget* getWidget() {return widget;}
-      const QStringList& getUnitList() const {return units;}
-      int getDefaultUnit() const {return defaultUnit;}
-      QString getType() const override {return widget->getType();}
-      bool validate(const std::vector<std::vector<QString>> &A) const override {return widget->validate(A);}
-      QString getUnit() const {return unit->currentText();}
+      virtual VariableWidget* getWidget() { return widget; }
+      const QStringList& getUnitList() const { return units; }
+      int getDefaultUnit() const { return defaultUnit; }
+      QString getType() const override { return widget->getType(); }
+      bool validate(const std::vector<std::vector<QString>> &A) const override { return widget->validate(A); }
+      QString getUnit() const { return unit->currentText(); }
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
       void resize_(int rows, int cols) override { widget->resize_(rows,cols); }
       int rows() const override { return widget->rows(); }
@@ -497,9 +497,9 @@ namespace MBSimGUI {
       FromFileWidget();
       QString getValue() const override;
       void setValue(const QString &str) override {}
-      QString getFile() const {return relativeFilePath->text();}
+      QString getFile() const { return relativeFilePath->text(); }
       void setFile(const QString &str);
-      QString getType() const override {return "File";}
+      QString getType() const override { return "File"; }
       std::vector<std::vector<QString>> getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

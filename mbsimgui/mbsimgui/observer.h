@@ -26,64 +26,71 @@ namespace MBSimGUI {
 
   class Observer : public Element {
     public:
-      QString getType() const override { return "Observer"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Observer"; }
       QMenu* createContextMenu() override { return new ObserverContextMenu(this); }
   };
 
   class UnknownObserver : public Observer {
     public:
-      QString getType() const override { return "UnknownObserver"; }
-      PropertyDialog* createPropertyDialog() override {return new UnknownItemPropertyDialog(this);}
+      QString getType() const override { return "Unknown observer"; }
+      PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
   class MechanicalLinkObserver : public Observer {
     public:
-      QString getType() const override { return "MechanicalLinkObserver"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"MechanicalLinkObserver"; }
+      QString getType() const override { return "Mechanical link observer"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new MechanicalLinkObserverPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new MechanicalLinkObserverPropertyDialog(this); }
   };
 
   class MechanicalConstraintObserver : public Observer {
     public:
-      QString getType() const override { return "MechanicalConstraintObserver"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"MechanicalConstraintObserver"; }
+      QString getType() const override { return "Mechanical constraint observer"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new MechanicalConstraintObserverPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new MechanicalConstraintObserverPropertyDialog(this); }
   };
 
   class ContactObserver : public Observer {
     public:
-      QString getType() const override { return "ContactObserver"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ContactObserver"; }
+      QString getType() const override { return "Contact observer"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new ContactObserverPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new ContactObserverPropertyDialog(this); }
   };
 
   class FrameObserver : public Observer {
     public:
-      QString getType() const override { return "FrameObserver"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"FrameObserver"; }
+      QString getType() const override { return "Frame observer"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new FrameObserverPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new FrameObserverPropertyDialog(this); }
   };
 
   class RigidBodyObserver : public Observer {
     public:
-      QString getType() const override { return "RigidBodyObserver"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RigidBodyObserver"; }
+      QString getType() const override { return "Rigid body observer"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new RigidBodyObserverPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new RigidBodyObserverPropertyDialog(this); }
   };
 
   class InverseKinematicsConstraintObserver : public Observer {
     public:
-      QString getType() const override { return "InverseKinematicsConstraintObserver"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"InverseKinematicsConstraintObserver"; }
+      QString getType() const override { return "Inverse kinematics constraint observer"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new InverseKinematicsConstraintObserverPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new InverseKinematicsConstraintObserverPropertyDialog(this); }
   };
 
   class SignalObserver : public Observer {
     public:
-      QString getType() const override { return "SignalObserver"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SignalObserver"; }
+      QString getType() const override { return "Signal observer"; }
       MBXMLUtils::NamespaceURI getNameSpace() const override { return MBSIMCONTROL; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override {return new SignalObserverPropertyDialog(this);}
+      PropertyDialog* createPropertyDialog() override { return new SignalObserverPropertyDialog(this); }
   };
 
 }

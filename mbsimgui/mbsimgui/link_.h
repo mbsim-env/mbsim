@@ -26,14 +26,14 @@ namespace MBSimGUI {
 
   class Link : public Element {
     public:
-      QString getType() const override { return "Link"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Link"; }
       QMenu* createContextMenu() override { return new LinkContextMenu(this); }
   };
 
   class UnknownLink : public Link {
     public:
-      QString getType() const override { return "UnknownLink"; }
-      PropertyDialog* createPropertyDialog() override {return new UnknownItemPropertyDialog(this);}
+      QString getType() const override { return "Unknown link"; }
+      PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
   class MechanicalLink : public Link {

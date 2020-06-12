@@ -27,7 +27,8 @@ namespace MBSimGUI {
   class RigidBody : public Body {
     public:
       RigidBody();
-      QString getType() const override { return "RigidBody"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RigidBody"; }
+      QString getType() const override { return "Rigid body"; }
       xercesc::DOMElement* getXMLFrames() override { return frames; }
       xercesc::DOMElement* getXMLContours() override { return contours; }
       void removeXMLElements() override;
@@ -37,8 +38,8 @@ namespace MBSimGUI {
       void clear() override;
       void setDedicatedFileItem(FileItemData *dedicatedFileItem) override;
       void setDedicatedParameterFileItem(FileItemData *dedicatedFileItem) override;
-      PropertyDialog* createPropertyDialog() override {return new RigidBodyPropertyDialog(this);}
-      QMenu* createFrameContextMenu() override {return new FixedRelativeFramesContextMenu(this);}
+      PropertyDialog* createPropertyDialog() override { return new RigidBodyPropertyDialog(this); }
+      QMenu* createFrameContextMenu() override { return new FixedRelativeFramesContextMenu(this); }
     protected:
       xercesc::DOMElement *frames, *contours;
   };

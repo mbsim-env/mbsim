@@ -35,7 +35,8 @@ namespace MBSimGUI {
 
     public:
       GeneralizedForceLawWidget()  = default;
-      virtual QString getType() const { return "GeneralizedForceLaw"; }
+      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"GeneralizedForceLaw"; }
+      virtual QString getType() const { return "Generalized force law"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -47,35 +48,40 @@ namespace MBSimGUI {
 
     public:
       BilateralConstraintWidget() = default;
-      QString getType() const override { return "BilateralConstraint"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"BilateralConstraint"; }
+      QString getType() const override { return "Bilateral constraint"; }
   };
 
   class RegularizedBilateralConstraintWidget : public GeneralizedForceLawWidget {
 
     public:
       RegularizedBilateralConstraintWidget();
-      QString getType() const override { return "RegularizedBilateralConstraint"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RegularizedBilateralConstraint"; }
+      QString getType() const override { return "Regularized bilateral constraint"; }
   };
 
   class UnilateralConstraintWidget : public GeneralizedForceLawWidget {
 
     public:
       UnilateralConstraintWidget() = default;
-      QString getType() const override { return "UnilateralConstraint"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"UnilateralConstraint"; }
+      QString getType() const override { return "Unilateral constraint"; }
   };
 
   class RegularizedUnilateralConstraintWidget : public GeneralizedForceLawWidget {
 
     public:
       RegularizedUnilateralConstraintWidget();
-      QString getType() const override { return "RegularizedUnilateralConstraint"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RegularizedUnilateralConstraint"; }
+      QString getType() const override { return "Regularized unilateral constraint"; }
   };
 
   class GeneralizedImpactLawWidget : public Widget {
 
     public:
       GeneralizedImpactLawWidget() = default;
-      virtual QString getType() const { return "GeneralizedImpactLaw"; }
+      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"GeneralizedImpactLaw"; }
+      virtual QString getType() const { return "Generalized impact law"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -85,6 +91,7 @@ namespace MBSimGUI {
 
     public:
       BilateralImpactWidget() = default;
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"BilateralImpact"; }
       QString getType() const override { return "BilateralImpact"; }
   };
 
@@ -92,7 +99,8 @@ namespace MBSimGUI {
 
     public:
       UnilateralNewtonImpactWidget();
-      QString getType() const override { return "UnilateralNewtonImpact"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"UnilateralNewtonImpact"; }
+      QString getType() const override { return "Unilateral newton impact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -103,7 +111,8 @@ namespace MBSimGUI {
 
     public:
       FrictionForceLawWidget()  = default;
-      virtual QString getType() const { return "FrictionForceLaw"; }
+      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"FrictionForceLaw"; }
+      virtual QString getType() const { return "Friction force law"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -115,7 +124,8 @@ namespace MBSimGUI {
 
     public:
       PlanarCoulombFrictionWidget();
-      QString getType() const override { return "PlanarCoulombFriction"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PlanarCoulombFriction"; }
+      QString getType() const override { return "Planar coulomb friction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -126,7 +136,8 @@ namespace MBSimGUI {
 
     public:
       SpatialCoulombFrictionWidget();
-      QString getType() const override { return "SpatialCoulombFriction"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SpatialCoulombFriction"; }
+      QString getType() const override { return "Spatial coulomb friction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -137,7 +148,8 @@ namespace MBSimGUI {
 
     public:
       PlanarStribeckFrictionWidget(QWidget *parent);
-      QString getType() const override { return "PlanarStribeckFriction"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PlanarStribeckFriction"; }
+      QString getType() const override { return "Planar stribeck friction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -148,7 +160,8 @@ namespace MBSimGUI {
 
     public:
       SpatialStribeckFrictionWidget(QWidget *parent);
-      QString getType() const override { return "SpatialStribeckFriction"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SpatialStribeckFriction"; }
+      QString getType() const override { return "Spatial stribeck friction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -158,20 +171,23 @@ namespace MBSimGUI {
   class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
     public:
       RegularizedPlanarFrictionWidget();
-      QString getType() const override { return "RegularizedPlanarFriction"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RegularizedPlanarFriction"; }
+      QString getType() const override { return "Regularized planar friction"; }
   };
 
   class RegularizedSpatialFrictionWidget : public FrictionForceLawWidget {
     public:
       RegularizedSpatialFrictionWidget();
-      QString getType() const override { return "RegularizedSpatialFriction"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RegularizedSpatialFriction"; }
+      QString getType() const override { return "Regularized spatial friction"; }
   };
 
   class FrictionImpactLawWidget : public Widget {
 
     public:
       FrictionImpactLawWidget() = default;
-      virtual QString getType() const { return "FrictionImpactLaw"; }
+      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"FrictionImpactLaw"; }
+      virtual QString getType() const { return "Friction impact law"; }
       virtual MBXMLUtils::NamespaceURI getNameSpace() const { return MBSIM; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -181,7 +197,8 @@ namespace MBSimGUI {
 
     public:
       PlanarCoulombImpactWidget();
-      QString getType() const override { return "PlanarCoulombImpact"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PlanarCoulombImpact"; }
+      QString getType() const override { return "Planar coulomb impact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -192,7 +209,8 @@ namespace MBSimGUI {
 
     public:
       SpatialCoulombImpactWidget();
-      QString getType() const override { return "SpatialCoulombImpact"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SpatialCoulombImpact"; }
+      QString getType() const override { return "Spatial coulomb impact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -203,7 +221,8 @@ namespace MBSimGUI {
 
     public:
       PlanarStribeckImpactWidget(QWidget *parent);
-      QString getType() const override { return "PlanarStribeckImpact"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PlanarStribeckImpact"; }
+      QString getType() const override { return "Planar stribeck impact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -214,7 +233,8 @@ namespace MBSimGUI {
 
     public:
       SpatialStribeckImpactWidget(QWidget *parent);
-      QString getType() const override { return "SpatialStribeckImpact"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SpatialStribeckImpact"; }
+      QString getType() const override { return "Spatial stribeck impact"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:

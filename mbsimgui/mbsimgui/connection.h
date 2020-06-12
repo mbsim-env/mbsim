@@ -26,7 +26,8 @@ namespace MBSimGUI {
 
   class GeneralizedElasticConnection : public DualRigidBodyLink {
     public:
-      QString getType() const override { return "GeneralizedElasticConnection"; }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedElasticConnection"; }
+      QString getType() const override { return "Generalized elastic connection"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedElasticConnectionPropertyDialog(this); }
   };
 

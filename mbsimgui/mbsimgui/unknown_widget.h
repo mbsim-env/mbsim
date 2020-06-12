@@ -29,7 +29,7 @@ namespace MBSimGUI {
   class UnknownWidget : public Widget {
     public:
       UnknownWidget();
-      virtual QString getType() const { return "UnknownWidget"; }
+      virtual QString getType() const { return "Unknown widget"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
