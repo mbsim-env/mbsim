@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2020 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _HREF_PROPERTY_DIALOG_H_
-#define _HREF_PROPERTY_DIALOG_H_
+#ifndef _XML_PROPERTY_DIALOG_H_
+#define _XML_PROPERTY_DIALOG_H_
 
 #include "property_dialog.h"
 
@@ -26,10 +26,10 @@ namespace MBSimGUI {
 
   class ExtWidget;
 
-  class HrefPropertyDialog : public EmbedItemPropertyDialog {
+  class XMLPropertyDialog : public EmbedItemPropertyDialog {
 
     public:
-      HrefPropertyDialog(EmbedItemData *item);
+      XMLPropertyDialog(EmbedItemData *item);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:

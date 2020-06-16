@@ -43,7 +43,7 @@
 #include "embed.h"
 #include "project.h"
 #include "project_property_dialog.h"
-#include "href_property_dialog.h"
+#include "xml_property_dialog.h"
 #include "clone_property_dialog.h"
 #include "file_editor.h"
 #include "utils.h"
@@ -2453,7 +2453,7 @@ namespace MBSimGUI {
       setAllowUndo(false);
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
-      editor = new HrefPropertyDialog(element);
+      editor = new XMLPropertyDialog(element);
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
