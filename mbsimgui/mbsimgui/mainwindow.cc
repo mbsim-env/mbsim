@@ -2107,8 +2107,10 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
-    if(button==QMessageBox::Yes) loadParameter(frame,nullptr,embed);
+    if(not element) {
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      if(button==QMessageBox::Yes) loadParameter(frame,nullptr,embed);
+    }
     if(getAutoRefresh()) refresh();
   }
 
@@ -2139,8 +2141,10 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
-    if(button==QMessageBox::Yes) loadParameter(contour,nullptr,embed);
+    if(not element) {
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      if(button==QMessageBox::Yes) loadParameter(contour,nullptr,embed);
+    }
     if(getAutoRefresh()) refresh();
   }
 
@@ -2171,8 +2175,10 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
-    if(button==QMessageBox::Yes) loadParameter(group,nullptr,embed);
+    if(not element) {
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      if(button==QMessageBox::Yes) loadParameter(group,nullptr,embed);
+    }
     if(getAutoRefresh()) refresh();
   }
 
@@ -2203,8 +2209,10 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
-    if(button==QMessageBox::Yes) loadParameter(object,nullptr,embed);
+    if(not element) {
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      if(button==QMessageBox::Yes) loadParameter(object,nullptr,embed);
+    }
     if(getAutoRefresh()) refresh();
   }
 
@@ -2235,8 +2243,10 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
-    if(button==QMessageBox::Yes) loadParameter(link,nullptr,embed);
+    if(not element) {
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      if(button==QMessageBox::Yes) loadParameter(link,nullptr,embed);
+    }
     if(getAutoRefresh()) refresh();
   }
 
@@ -2267,8 +2277,10 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
-    if(button==QMessageBox::Yes) loadParameter(constraint,nullptr,embed);
+    if(not element) {
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      if(button==QMessageBox::Yes) loadParameter(constraint,nullptr,embed);
+    }
     if(getAutoRefresh()) refresh();
   }
 
@@ -2299,8 +2311,10 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
-    if(button==QMessageBox::Yes) loadParameter(observer,nullptr,embed);
+    if(not element) {
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      if(button==QMessageBox::Yes) loadParameter(observer,nullptr,embed);
+    }
     if(getAutoRefresh()) refresh();
   }
 
