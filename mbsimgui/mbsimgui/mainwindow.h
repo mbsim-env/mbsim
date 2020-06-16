@@ -163,7 +163,7 @@ namespace MBSimGUI {
       void updateStatus();
       void autoSaveProject();
       void selectElement(const std::string& ID);
-      void updateReferences(Element *parent);
+      void updateReferences(Element *element);
       void updateParameterReferences(EmbedItemData *parent);
       void saveReferencedFile(int i);
 
@@ -218,7 +218,7 @@ namespace MBSimGUI {
       void refresh();
       void xmlHelp(const QString &url="");
       void viewProjectSource();
-      void viewElementSource();
+      void editElementSource();
       void viewSolverSource();
       void exportElement();
       void copyElement(bool cut=false);

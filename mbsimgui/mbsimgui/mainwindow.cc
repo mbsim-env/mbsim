@@ -306,7 +306,6 @@ namespace MBSimGUI {
     QDockWidget *dockWidget0 = new QDockWidget("MBSim project", this);
     dockWidget0->setObjectName("dockWidget/project");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget0);
-    QWidget *view = new QWidget;
     dockWidget0->setWidget(projectView);
 
     QDockWidget *dockWidget5 = new QDockWidget("Referenced files", this);
@@ -1770,11 +1769,12 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::updateReferences(Element *parent) {
-    FileItemData *fileItem = parent->getFileItem();
+  void MainWindow::updateReferences(Element *element) {
+    FileItemData *fileItem = element->getFileItem();
     if(fileItem) {
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-        if(fileItem->getReference(i)!=parent) {
+        if(fileItem->getReference(i)!=element) {
+          fileItem->getReference(i)->setXMLElement(element->getXMLElement());
           fileItem->getReference(i)->clear();
           QModelIndex index = fileItem->getReference(i)->getModelIndex();
           auto *model = static_cast<ElementTreeModel*>(elementView->model());
@@ -2448,7 +2448,7 @@ namespace MBSimGUI {
     dialog.exec();
   }
 
-  void MainWindow::viewElementSource() {
+  void MainWindow::editElementSource() {
     if(not editorIsOpen()) {
       setAllowUndo(false);
       QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -2459,7 +2459,12 @@ namespace MBSimGUI {
       editor->show();
       connect(editor,&QDialog::finished,this,[=](){
         if(editor->result()==QDialog::Accepted) {
-          if(editor->getCancel()) setProjectChanged(true);
+          auto dedicatedElement = static_cast<Element*>(element->getDedicatedItem());
+          FileItemData* fileItem = dedicatedElement->getFileItem();
+          if(fileItem)
+            fileItem->setModified(true);
+          else
+            setProjectChanged(true);
           editor->fromWidget();
           element->clear();
           QModelIndex index = element->getModelIndex();
@@ -2467,14 +2472,27 @@ namespace MBSimGUI {
           model->removeRows(0,model->rowCount(index),index);
           element->create();
           model->updateElementItem(static_cast<Element*>(element));
+          updateReferences(dedicatedElement);
           if(getAutoRefresh()) refresh();
         }
         setAllowUndo(true);
         editor = nullptr;
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
-        if(editor->getCancel()) setProjectChanged(true);
+        auto dedicatedElement = static_cast<Element*>(element->getDedicatedItem());
+        FileItemData* fileItem = dedicatedElement->getFileItem();
+        if(fileItem)
+          fileItem->setModified(true);
+        else
+          setProjectChanged(true);
         editor->fromWidget();
+        element->clear();
+        QModelIndex index = element->getModelIndex();
+        auto *model = static_cast<ElementTreeModel*>(elementView->model());
+        model->removeRows(0,model->rowCount(index),index);
+        element->create();
+        model->updateElementItem(static_cast<Element*>(element));
+        updateReferences(dedicatedElement);
         if(getAutoRefresh()) refresh();
         editor->setCancel(true);
       });
@@ -2806,7 +2824,11 @@ namespace MBSimGUI {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            setProjectChanged(true);
+            FileItemData* fileItem = element->getDedicatedFileItem();
+            if(fileItem)
+              fileItem->setModified(true);
+            else
+              setProjectChanged(true);
             editor->fromWidget();
             if(getAutoRefresh()) refresh();
           }
@@ -2814,7 +2836,11 @@ namespace MBSimGUI {
           editor = nullptr;
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
-          setProjectChanged(true);
+          FileItemData* fileItem = element->getDedicatedFileItem();
+          if(fileItem)
+            fileItem->setModified(true);
+          else
+            setProjectChanged(true);
           editor->fromWidget();
           if(getAutoRefresh()) refresh();
         });

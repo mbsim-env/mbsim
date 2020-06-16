@@ -41,12 +41,6 @@ namespace MBSimGUI {
 
   DOMElement* HrefPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
 
-    //cout << item->getXMLElement() << " ";
-    //DOMElement* ele = edit->writeXMLFile(item->getXMLElement(),ref);
-    //item->setXMLElement(ele);
-    //cout << ele << endl;
-    //cout << E(item->getXMLElement())->getTagName().second << " ";
-    //cout << E(ele)->getTagName().second << endl;
     item->setXMLElement(editor->writeXMLFile(item->getXMLElement(),ref));
     return nullptr;
   }
