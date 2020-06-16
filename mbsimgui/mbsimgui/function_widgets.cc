@@ -306,7 +306,9 @@ namespace MBSimGUI {
 
   DOMElement* CompositeFunctionWidget::initializeUsingXML(DOMElement *element) {
     fi->initializeUsingXML(element);
+    fo->getWidget()->blockSignals(true);
     updateFunctionFactory();
+    fo->getWidget()->blockSignals(false);
     fo->initializeUsingXML(element);
     return element;
   }
