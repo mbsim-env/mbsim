@@ -1297,7 +1297,7 @@ namespace MBSimGUI {
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
     if(parameter) {
-      FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
+      FileItemData* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
       if(fileItem)
         fileItem->setModified(true);
       else
@@ -1310,6 +1310,8 @@ namespace MBSimGUI {
       parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
       parameter->getParent()->removeParameter(parameter);
       parameter->getParent()->maybeRemoveEmbedXMLElement();
+      auto *dedicatedParent = dynamic_cast<Element*>(parameter->getParent()->getDedicatedItem());
+      if(dedicatedParent) updateReferences(dedicatedParent);
       updateParameterReferences(parameter->getParent());
       model->removeRow(index.row(), index.parent());
       if(getAutoRefresh()) refresh();
@@ -1463,11 +1465,13 @@ namespace MBSimGUI {
     for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
     parameterView->setCurrentIndex(parentIndex.child(j,0));
-    FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
+    FileItemData* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
       setProjectChanged(true);
+    auto *dedicatedParent = dynamic_cast<Element*>(parameter->getParent()->getDedicatedItem());
+    if(dedicatedParent) updateReferences(dedicatedParent);
     updateParameterReferences(parameter->getParent());
   }
 
@@ -1925,7 +1929,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addParameter(Parameter *parameter, EmbedItemData *parent) {
-    FileItemData* fileItem = parent->getParameterFileItem();
+    FileItemData* fileItem = parent->getDedicatedParameterFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1934,6 +1938,8 @@ namespace MBSimGUI {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     parent->addParameter(parameter);
     parameter->createXMLElement(parent->createParameterXMLElement());
+    auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
+    if(dedicatedParent) updateReferences(dedicatedParent);
     updateParameterReferences(parent);
     model->createParameterItem(parameter,index);
     parameterView->selectionModel()->setCurrentIndex(parameter->getModelIndex(), QItemSelectionModel::ClearAndSelect);
@@ -2767,7 +2773,7 @@ namespace MBSimGUI {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
+            FileItemData* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
             if(fileItem)
               fileItem->setModified(true);
             else if(editor->getCancel())
@@ -2780,7 +2786,7 @@ namespace MBSimGUI {
         editor = nullptr;
         });
         connect(editor,&ParameterPropertyDialog::apply,this,[=](){
-          FileItemData* fileItem = parameter->getParent()->getParameterFileItem();
+          FileItemData* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
           if(fileItem)
             fileItem->setModified(true);
           else if(editor->getCancel())
