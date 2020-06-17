@@ -812,7 +812,7 @@ namespace MBSimGUI {
   void MainWindow::selectSolver(int i) {
     setProjectChanged(true);
     DOMElement *ele = nullptr;
-    FileItemData *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
+    auto *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
     DOMElement *embed = getProject()->getSolver()->getEmbedXMLElement();
     if(parameterFileItem)
       ele = parameterFileItem->getXMLElement();
@@ -1275,7 +1275,7 @@ namespace MBSimGUI {
     if(element and (not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element))) {
       auto *parent = element->getParent();
       auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
-      FileItemData* fileItem = dedicatedParent->getFileItem();
+      auto* fileItem = dedicatedParent->getFileItem();
       if(fileItem)
         fileItem->setModified(true);
       else
@@ -1297,7 +1297,7 @@ namespace MBSimGUI {
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
     if(parameter) {
-      FileItemData* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
+      auto *fileItem = parameter->getParent()->getDedicatedParameterFileItem();
       if(fileItem)
         fileItem->setModified(true);
       else
@@ -1465,7 +1465,7 @@ namespace MBSimGUI {
     for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
     parameterView->setCurrentIndex(parentIndex.child(j,0));
-    FileItemData* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
+    auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1774,7 +1774,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateReferences(Element *element) {
-    FileItemData *fileItem = element->getFileItem();
+    auto *fileItem = element->getFileItem();
     if(fileItem) {
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
         if(fileItem->getReference(i)!=element) {
@@ -1791,7 +1791,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateParameterReferences(EmbedItemData *parent) {
-    FileItemData *fileItem = parent->getParameterFileItem();
+    auto *fileItem = parent->getParameterFileItem();
     if(fileItem) {
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
         if(fileItem->getReference(i)!=parent) {
@@ -1929,7 +1929,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::addParameter(Parameter *parameter, EmbedItemData *parent) {
-    FileItemData* fileItem = parent->getDedicatedParameterFileItem();
+    auto* fileItem = parent->getDedicatedParameterFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -1951,7 +1951,8 @@ namespace MBSimGUI {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     FileItemData *parameterFileItem = nullptr;
     if(param) {
-      elements.push_back(static_cast<DOMElement*>(doc->importNode(param->getXMLElement(),true)));
+      DOMElement *parentele = parent->getEmbedXMLElement()?parent->getEmbedXMLElement():parent->getXMLElement();
+      elements.push_back(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(param->getXMLElement(),true)));
       if(parameterBuffer.second) {
         parameterBuffer.first = nullptr;
         DOMNode *ps = param->getXMLElement()->getPreviousSibling();
@@ -1961,6 +1962,14 @@ namespace MBSimGUI {
         param->getParent()->removeParameter(param);
         QModelIndex index = param->getModelIndex();
         model->removeRow(index.row(), index.parent());
+        auto* fileItem = param->getParent()->getDedicatedParameterFileItem();
+        if(fileItem)
+          fileItem->setModified(true);
+        else
+          setProjectChanged(true);
+        auto *dedicatedParent = dynamic_cast<Element*>(param->getParent()->getDedicatedItem());
+        if(dedicatedParent) updateReferences(dedicatedParent);
+        updateParameterReferences(param->getParent());
       }
     }
     else {
@@ -2004,16 +2013,19 @@ namespace MBSimGUI {
       parent->addParameter(parameter);
       model->createParameterItem(parameter,parameterView->selectionModel()->currentIndex());
     }
-    auto *fileItem = parent->getEmbedItemParent()?parent->getEmbedItemParent()->getDedicatedFileItem():nullptr;
+    auto* fileItem = parent->getDedicatedParameterFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
       setProjectChanged(true);
+    auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
+    if(dedicatedParent) updateReferences(dedicatedParent);
+    updateParameterReferences(parent);
     parameterView->selectionModel()->setCurrentIndex(parent->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::removeParameter(EmbedItemData *parent) {
-    auto *fileItem = parent->getEmbedItemParent()?parent->getEmbedItemParent()->getDedicatedFileItem():nullptr;
+    auto *fileItem = parent->getDedicatedParameterFileItem();
     if(fileItem)
       fileItem->setModified(true);
     else
@@ -2039,6 +2051,9 @@ namespace MBSimGUI {
       }
     }
     parent->maybeRemoveEmbedXMLElement();
+    auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
+    if(dedicatedParent) updateReferences(dedicatedParent);
+    updateParameterReferences(parent);
     model->removeRows(0,n,index);
     if(getAutoRefresh()) refresh();
   }
@@ -2055,7 +2070,7 @@ namespace MBSimGUI {
         model->removeRow(index.row(), index.parent());
         auto *parent = element->getParent();
         auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
-        FileItemData* fileItem = dedicatedParent->getFileItem();
+        auto *fileItem = dedicatedParent->getFileItem();
         if(fileItem)
           fileItem->setModified(true);
         else
@@ -2348,7 +2363,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     DOMElement *embedele = getProject()->getDynamicSystemSolver()->getEmbedXMLElement();
     DOMElement *paramele = nullptr;
-    FileItemData *parameterFileItem = getProject()->getDynamicSystemSolver()->getParameterFileItem();
+    auto *parameterFileItem = getProject()->getDynamicSystemSolver()->getParameterFileItem();
     if(parameterFileItem)
       paramele = parameterFileItem->getXMLElement();
     else if(embedele)
@@ -2419,7 +2434,7 @@ namespace MBSimGUI {
     setProjectChanged(true);
     DOMElement *embedele = getProject()->getSolver()->getEmbedXMLElement();
     DOMElement *paramele = nullptr;
-    FileItemData *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
+    auto *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
     if(parameterFileItem)
       paramele = parameterFileItem->getXMLElement();
     else if(embedele)
@@ -2480,7 +2495,7 @@ namespace MBSimGUI {
       connect(editor,&QDialog::finished,this,[=](){
         if(editor->result()==QDialog::Accepted) {
           auto dedicatedElement = static_cast<Element*>(element->getDedicatedItem());
-          FileItemData* fileItem = dedicatedElement->getFileItem();
+          auto* fileItem = dedicatedElement->getFileItem();
           if(fileItem)
             fileItem->setModified(true);
           else
@@ -2500,7 +2515,7 @@ namespace MBSimGUI {
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
         auto dedicatedElement = static_cast<Element*>(element->getDedicatedItem());
-        FileItemData* fileItem = dedicatedElement->getFileItem();
+        auto* fileItem = dedicatedElement->getFileItem();
         if(fileItem)
           fileItem->setModified(true);
         else
@@ -2721,7 +2736,7 @@ namespace MBSimGUI {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            FileItemData* fileItem = element->getDedicatedFileItem();
+            auto* fileItem = element->getDedicatedFileItem();
             if(fileItem)
               fileItem->setModified(true);
             else if(editor->getCancel())
@@ -2733,7 +2748,7 @@ namespace MBSimGUI {
           editor = nullptr;
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
-          FileItemData* fileItem = element->getDedicatedFileItem();
+          auto* fileItem = element->getDedicatedFileItem();
           if(fileItem)
             fileItem->setModified(true);
           else if(editor->getCancel())
@@ -2773,7 +2788,7 @@ namespace MBSimGUI {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            FileItemData* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
+            auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
             if(fileItem)
               fileItem->setModified(true);
             else if(editor->getCancel())
@@ -2786,7 +2801,7 @@ namespace MBSimGUI {
         editor = nullptr;
         });
         connect(editor,&ParameterPropertyDialog::apply,this,[=](){
-          FileItemData* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
+          auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
           if(fileItem)
             fileItem->setModified(true);
           else if(editor->getCancel())
@@ -2810,7 +2825,7 @@ namespace MBSimGUI {
       editor->show();
       connect(editor,&ProjectPropertyDialog::finished,this,[=](){
         if(editor->result()==QDialog::Accepted) {
-          FileItemData* fileItem = getProject()->getSolver()->getFileItem();
+          auto* fileItem = getProject()->getSolver()->getFileItem();
           if(fileItem)
             fileItem->setModified(true);
           else
@@ -2821,7 +2836,7 @@ namespace MBSimGUI {
         editor = nullptr;
       });
       connect(editor,&ProjectPropertyDialog::apply,this,[=](){
-        FileItemData* fileItem = getProject()->getSolver()->getFileItem();
+        auto* fileItem = getProject()->getSolver()->getFileItem();
         if(fileItem)
           fileItem->setModified(true);
         else
@@ -2844,7 +2859,7 @@ namespace MBSimGUI {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            FileItemData* fileItem = element->getDedicatedFileItem();
+            auto* fileItem = element->getDedicatedFileItem();
             if(fileItem)
               fileItem->setModified(true);
             else
@@ -2856,7 +2871,7 @@ namespace MBSimGUI {
           editor = nullptr;
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
-          FileItemData* fileItem = element->getDedicatedFileItem();
+          auto* fileItem = element->getDedicatedFileItem();
           if(fileItem)
             fileItem->setModified(true);
           else
