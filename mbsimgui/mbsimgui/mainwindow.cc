@@ -1699,7 +1699,7 @@ namespace MBSimGUI {
     else if(dynamic_cast<Link*>(element))
       list = QStringList{ "Export MBSim link file", ".lnkx", "Link files (*.lnkx)" };
     else if(dynamic_cast<Constraint*>(element))
-      list = QStringList{ "Export MBSim constraint file", ".cntx", "Constraint files (*.cntx)" };
+      list = QStringList{ "Export MBSim constraint file", ".cnsx", "Constraint files (*.cnsx)" };
     else if(dynamic_cast<Observer*>(element))
       list = QStringList{ "Export MBSim observer file", ".obsx", "Observer files (*.obsx)" };
     QString file = QFileDialog::getSaveFileName(this, list[0], getProjectDir().absoluteFilePath(element->getName()+list[1]), list[2]);
