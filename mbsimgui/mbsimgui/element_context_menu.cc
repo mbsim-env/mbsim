@@ -47,10 +47,10 @@ namespace MBSimGUI {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
-    action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
-    connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
-    addAction(action);
     if(saveable) {
+      action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
+      connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
+      addAction(action);
       addSeparator();
       action=new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
       connect(action,&QAction::triggered,mw,&MainWindow::exportElement);

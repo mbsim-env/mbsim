@@ -1376,7 +1376,7 @@ namespace MBSimGUI {
       auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
-      if(item)
+      if(item and not dynamic_cast<InternalFrame*>(item->getParent()))
         loadParameter(item->getParent(),getParameterBuffer().first);
     }
   }

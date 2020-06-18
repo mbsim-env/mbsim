@@ -22,57 +22,60 @@
 #include "mainwindow.h"
 #include "parameter.h"
 #include "embeditemdata.h"
+#include "frame.h"
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
   ParametersContextMenu::ParametersContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
-    QAction *action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
-    action->setEnabled(item->getNumberOfParameters());
-    connect(action,&QAction::triggered,mw,&MainWindow::viewParametersSource);
-    addAction(action);
-    addSeparator();
-    action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
-    action->setEnabled(item->getNumberOfParameters());
-    connect(action,&QAction::triggered,mw,&MainWindow::exportParameters);
-    addAction(action);
-    addSeparator();
-    action = new QAction("Add", this);
-    action->setDisabled(item->getParameterFileItem());
-    connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,false,true); });
-    addAction(action);
-    action = new QAction("Embed", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
-    action->setEnabled(mw->getParameterBuffer().first);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item, mw->getParameterBuffer().first); });
-    addAction(action);
-    addSeparator();
-    action = new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
-    action->setEnabled(item->getNumberOfParameters());
-    connect(action,&QAction::triggered,this,[=](){ mw->removeParameter(item); });
-    addAction(action);
-    addSeparator();
-    action = new QAction("Add import parameter", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new ImportParameter, item); });
-    addAction(action);
-    action = new QAction("Add matrix parameter", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new MatrixParameter, item); });
-    addAction(action);
-    action = new QAction("Add scalar parameter", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new ScalarParameter, item); });
-    addAction(action);
-    action = new QAction("Add string parameter", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new StringParameter, item); });
-    addAction(action);
-    action = new QAction("Add vector parameter", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new VectorParameter, item); });
-    addAction(action);
+    if(not dynamic_cast<InternalFrame*>(item_)) {
+      QAction *action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
+      action->setEnabled(item->getNumberOfParameters());
+      connect(action,&QAction::triggered,mw,&MainWindow::viewParametersSource);
+      addAction(action);
+      addSeparator();
+      action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
+      action->setEnabled(item->getNumberOfParameters());
+      connect(action,&QAction::triggered,mw,&MainWindow::exportParameters);
+      addAction(action);
+      addSeparator();
+      action = new QAction("Add", this);
+      action->setDisabled(item->getParameterFileItem());
+      connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,false,true); });
+      addAction(action);
+      action = new QAction("Embed", this);
+      connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,true); });
+      addAction(action);
+      action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+      connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item); });
+      addAction(action);
+      action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+      action->setEnabled(mw->getParameterBuffer().first);
+      connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item, mw->getParameterBuffer().first); });
+      addAction(action);
+      addSeparator();
+      action = new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
+      action->setEnabled(item->getNumberOfParameters());
+      connect(action,&QAction::triggered,this,[=](){ mw->removeParameter(item); });
+      addAction(action);
+      addSeparator();
+      action = new QAction("Add import parameter", this);
+      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new ImportParameter, item); });
+      addAction(action);
+      action = new QAction("Add matrix parameter", this);
+      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new MatrixParameter, item); });
+      addAction(action);
+      action = new QAction("Add scalar parameter", this);
+      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new ScalarParameter, item); });
+      addAction(action);
+      action = new QAction("Add string parameter", this);
+      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new StringParameter, item); });
+      addAction(action);
+      action = new QAction("Add vector parameter", this);
+      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new VectorParameter, item); });
+      addAction(action);
+    }
   }
 
 }
