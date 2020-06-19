@@ -46,7 +46,7 @@ namespace MBSimGUI {
     layout->addWidget(name);
     name->setContextMenuPolicy(Qt::CustomContextMenu);
     name->installEventFilter(new ProjectMouseEvent(name));
-    connect(this,&ProjectView::customContextMenuRequested,this,[=]{
+    connect(name,&ProjectView::customContextMenuRequested,this,[=]{
         QMenu *menu=new ProjectContextMenu;
         menu->exec(QCursor::pos());
         delete menu;

@@ -44,7 +44,7 @@ namespace MBSimGUI {
       void setSolver(int i_) { i = i_; setText(type[i]); file->setText(""); }
       void setSolver(Solver *solver);
       Solver* createSolver(int i_);
-      QMenu* createContextMenu() { return new SolverContextMenu(type); }
+      QMenu* createContextMenu() { return new SolverContextMenu(type,this); }
     private:
       QLineEdit *name;
       QLineEdit *file;
