@@ -18,9 +18,8 @@
 */
 
 #include <config.h>
-#include "project_view.h"
+#include "project_context_menu.h"
 #include "mainwindow.h"
-#include <QEvent>
 
 namespace MBSimGUI {
 
@@ -34,36 +33,6 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,mw,&MainWindow::viewProjectSource);
     addAction(action);
     addSeparator();
-  }
-
-  ProjectView::ProjectView() {
-    setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Fixed);
-    QHBoxLayout *layout = new QHBoxLayout;
-    setLayout(layout);
-    layout->addWidget(new QLabel("Name:"));
-    name = new QLineEdit("Project");
-    name->setReadOnly(true);
-    layout->addWidget(name);
-    name->setContextMenuPolicy(Qt::CustomContextMenu);
-    name->installEventFilter(new ProjectMouseEvent(name));
-    connect(name,&ProjectView::customContextMenuRequested,this,[=]{
-        QMenu *menu=new ProjectContextMenu;
-        menu->exec(QCursor::pos());
-        delete menu;
-        });
-  }
-
-  bool ProjectMouseEvent::eventFilter(QObject *obj, QEvent *event) {
-    if(event->type() == QEvent::MouseButtonDblClick) {
-      mw->openProjectEditor();
-      return true;
-    }
-    else if(event->type() == QEvent::MouseButtonPress) {
-//      mw->projectViewClicked();
-      return true;
-    }
-    else
-      return QObject::eventFilter(obj, event);
   }
 
 }

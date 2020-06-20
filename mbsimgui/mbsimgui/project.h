@@ -22,7 +22,7 @@
 
 #include "embeditemdata.h"
 #include "project_property_dialog.h"
-#include "project_view.h"
+#include "project_context_menu.h"
 #include "namespace.h"
 
 namespace XERCES_CPP_NAMESPACE {

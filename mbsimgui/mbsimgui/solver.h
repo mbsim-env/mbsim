@@ -22,7 +22,7 @@
 
 #include "embeditemdata.h"
 #include "solver_property_dialog.h"
-#include "solver_view.h"
+#include "solver_context_menu.h"
 #include "namespace.h"
 
 namespace XERCES_CPP_NAMESPACE {
@@ -46,7 +46,7 @@ namespace MBSimGUI {
       QString getName() const override { return "Solver"; }
       virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Solver"; }
       PropertyDialog* createPropertyDialog() override { return new SolverPropertyDialog(this); }
-      QMenu* createContextMenu() override { return new SolverContextMenu(std::vector<QString>()); }
+      QMenu* createContextMenu() override { return new SolverContextMenu; }
       EmbedItemData* getEmbedItemParent() override;
   };
 

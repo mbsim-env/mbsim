@@ -36,8 +36,6 @@
 #include "treeitem.h"
 #include "element_view.h"
 #include "parameter_view.h"
-#include "solver_view.h"
-#include "project_view.h"
 #include "file_view.h"
 #include "echo_view.h"
 #include "embed.h"
@@ -300,12 +298,12 @@ namespace MBSimGUI {
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
 
-    QDockWidget *dockWidget5 = new QDockWidget("Referenced files", this);
+    QDockWidget *dockWidget5 = new QDockWidget("File list", this);
     dockWidget5->setObjectName("dockWidget/files");
     addDockWidget(Qt::LeftDockWidgetArea, dockWidget5);
     dockWidget5->setWidget(fileView);
 
-    QDockWidget *dockWidget1 = new QDockWidget("Multibody system", this);
+    QDockWidget *dockWidget1 = new QDockWidget("Element tree", this);
     dockWidget1->setObjectName("dockWidget/mbs");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
     QWidget *widget1 = new QWidget(dockWidget1);
@@ -318,7 +316,7 @@ namespace MBSimGUI {
 
     tabifyDockWidget(dockWidget5,dockWidget1);
 
-    QDockWidget *dockWidget3 = new QDockWidget("Parameters", this);
+    QDockWidget *dockWidget3 = new QDockWidget("Parameter tree", this);
     dockWidget3->setObjectName("dockWidget/parameters");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
     QWidget *widget3 = new QWidget(dockWidget3);

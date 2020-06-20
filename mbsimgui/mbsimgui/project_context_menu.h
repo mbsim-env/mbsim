@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _PROJECT_VIEW__H_
-#define _PROJECT_VIEW__H_
+#ifndef _PROJECT_CONTEXT_MENU__H_
+#define _PROJECT_CONTEXT_MENU__H_
 
 #include <QLineEdit>
 #include <QMenu>
@@ -30,25 +30,6 @@ namespace MBSimGUI {
   class ProjectContextMenu : public QMenu {
     public:
       ProjectContextMenu(QWidget *parent=nullptr);
-  };
-
-  class ProjectView : public QWidget {
-    public:
-      ProjectView();
-      ~ProjectView() override = default;
-      void setText(const QString &text) { name->setText(text); }
-      QString text()const { return name->text(); }
-      bool hasFocus() const { return name->hasFocus(); }
-      QMenu* createContextMenu() { return new ProjectContextMenu(this); }
-    private:
-      QLineEdit *name;
-  };
-
-  class ProjectMouseEvent : public QObject {
-    public:
-      ProjectMouseEvent(QLineEdit* lineEdit) : QObject(lineEdit) { }
-    protected:
-      bool eventFilter(QObject *obj, QEvent *event) override;
   };
 
 }

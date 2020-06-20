@@ -57,8 +57,8 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   parameters_context_menu.cc \
 		   element_view.cc \
 		   parameter_view.cc \
-		   solver_view.cc \
-		   project_view.cc \
+		   solver_context_menu.cc \
+		   project_context_menu.cc \
 		   echo_view.cc \
 		   file_view.cc \
 		   dialogs.cc  \
