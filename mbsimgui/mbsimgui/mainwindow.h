@@ -56,10 +56,8 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class MBSimThread;
-  class ProjectView;
   class ElementView;
   class ParameterView;
-  class SolverView;
   class EchoView;
   class FileView;
   class PropertyDialog;
@@ -71,6 +69,7 @@ namespace MBSimGUI {
   class Link;
   class Constraint;
   class Observer;
+  class Solver;
   class Parameter;
   class EmbedItemData;
   class Project;
@@ -83,11 +82,9 @@ namespace MBSimGUI {
       std::unordered_map<std::string,Element*> idMap;
       Project *project;
       std::vector<FileItemData*> file;
-      ProjectView *projectView;
       ElementView *elementView;
       std::vector<ElementView*> itemView;
       ParameterView *parameterView;
-      SolverView *solverView;
       EchoView *echoView;
       FileView *fileView;
       QTabWidget *tabWidget;
@@ -157,7 +154,6 @@ namespace MBSimGUI {
       void kill();
       void elementViewClicked(const QModelIndex &current);
       void parameterViewClicked(const QModelIndex &current);
-      void fileViewClicked(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
       void updateEchoView();
       void updateStatus();
@@ -202,7 +198,7 @@ namespace MBSimGUI {
       ElementView* getElementView() { return elementView; }
       ParameterView* getParameterView() { return parameterView; }
       void setProjectChanged(bool changed=true);
-      void selectSolver(int i);
+      void selectSolver(Solver *solver);
       void setAllowUndo(bool allowUndo);
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
@@ -234,8 +230,6 @@ namespace MBSimGUI {
       void copyParameter(bool cut=false);
       void removeParameter();
       void moveParameter(bool up);
-      void solverViewClicked();
-      void projectViewClicked();
       void saveMBSimH5Data(const QString &file);
       void saveOpenMBVXMLData(const QString &file);
       void saveOpenMBVH5Data(const QString &file);

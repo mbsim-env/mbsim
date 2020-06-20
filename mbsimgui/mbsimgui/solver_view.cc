@@ -51,31 +51,22 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->loadSolver(); });
     addAction(action);
     addSeparator();
-    QActionGroup *actionGroup = new QActionGroup(this);
-    QMenu *analyzers = new QMenu("Analyzers", this);
-    for(size_t i = 0; i<2; i++) {
-      QAction *action = new QAction(type[i], analyzers);
-      actionGroup->addAction(action);
-      analyzers->addAction(action);
-    }
-    QMenu *integrators = new QMenu("Integrators", this);
-    for(size_t i = 2; i<type.size()-1; i++) {
-      QAction *action = new QAction(type[i], integrators);
-      actionGroup->addAction(action);
-      integrators->addAction(action);
-    }
+    QMenu *analyzers = new QMenu("Select analyzer", this);
+    action = new QAction("Select eigenanalyzer", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new Eigenanalyzer); });
+    analyzers->addAction(action);
+    action = new QAction("Select harmonic response analyzer", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new HarmonicResponseAnalyzer); });
+    analyzers->addAction(action);
     addMenu(analyzers);
+    QMenu *integrators = new QMenu("Select integrator", this);
+    action = new QAction("Select DOPRI5 Integrator", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new DOPRI5Integrator); });
+    integrators->addAction(action);
     addMenu(integrators);
-    action = new QAction(type[type.size()-1], integrators);
-    addAction(action);
-    connect(actionGroup,QOverload<QAction*>::of(&QActionGroup::triggered),this,&SolverContextMenu::selectSolver);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(type.size()-1); });
   }
 
   void SolverContextMenu::selectSolver(QAction *action) {
-    QActionGroup *actionGroup = action->actionGroup();
-    QList<QAction*> list = actionGroup->actions();
-    mw->selectSolver(list.indexOf(action));
   }
 
   SolverView::SolverView()  {
@@ -242,7 +233,7 @@ namespace MBSimGUI {
       return true;
     }
     else if(event->type() == QEvent::MouseButtonPress) {
-      mw->solverViewClicked();
+//      mw->solverViewClicked();
       return true;
     }
     else

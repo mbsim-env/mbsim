@@ -22,6 +22,7 @@
 
 #include "embeditemdata.h"
 #include "project_property_dialog.h"
+#include "project_view.h"
 #include "namespace.h"
 
 namespace XERCES_CPP_NAMESPACE {
@@ -43,8 +44,8 @@ namespace MBSimGUI {
       void create() override;
       virtual MBXMLUtils::FQN getXMLType() const { return MBSIMXML%"MBSimProject"; }
       QString getType() const override { return "MBSim project"; }
-      virtual ProjectPropertyDialog* createPropertyDialog() { return new ProjectPropertyDialog(this); }
-      QMenu* createContextMenu() override { return nullptr; }
+      ProjectPropertyDialog* createPropertyDialog() override { return new ProjectPropertyDialog(this); }
+      QMenu* createContextMenu() override { return new ProjectContextMenu; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       void setDynamicSystemSolver(DynamicSystemSolver *dss_);
       void setSolver(Solver *solver_);

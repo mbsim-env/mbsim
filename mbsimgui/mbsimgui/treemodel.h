@@ -26,6 +26,7 @@
 
 namespace MBSimGUI {
 
+  class Project;
   class Element;
   class Frame;
   class Contour;
@@ -34,6 +35,7 @@ namespace MBSimGUI {
   class Link;
   class Constraint;
   class Observer;
+  class Solver;
   class Parameter;
   class Parameters;
   class TreeItem;
@@ -69,6 +71,7 @@ namespace MBSimGUI {
     public:
       ElementTreeModel(QObject *parent = nullptr);
 
+      void createProjectItem(Project *project, const QModelIndex &parent = QModelIndex());
       void createElementItem(Element *element, const QModelIndex &parent = QModelIndex());
       void createFrameItem(Frame *frame, const QModelIndex &parent = QModelIndex());
       void createContourItem(Contour *contour, const QModelIndex &parent = QModelIndex());
@@ -77,6 +80,8 @@ namespace MBSimGUI {
       void createLinkItem(Link *link, const QModelIndex &parent = QModelIndex());
       void createConstraintItem(Constraint *constraint, const QModelIndex &parent = QModelIndex());
       void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
+      void createSolverItem(Solver *solver, const QModelIndex &parent = QModelIndex());
+      void updateProjectItem(Project *project);
       void updateElementItem(Element *element);
       void updateGroupItem(Group *group);
       void updateObjectItem(Object *object);

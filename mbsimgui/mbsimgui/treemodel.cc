@@ -21,6 +21,8 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "basicitemdata.h"
+#include "project.h"
+#include "dynamic_system_solver.h"
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
@@ -28,6 +30,7 @@
 #include "link_.h"
 #include "constraint.h"
 #include "observer.h"
+#include "solver.h"
 #include "parameter.h"
 #include "fileitemdata.h"
 
@@ -145,6 +148,20 @@ namespace MBSimGUI {
     rootItem = new TreeItem(new TreeItemData);
   }
 
+  void ElementTreeModel::createProjectItem(Project *project, const QModelIndex &parent) {
+
+    TreeItem *parentItem = getItem(parent);
+
+    int i = rowCount(parent);
+    beginInsertRows(parent, i, i);
+    TreeItem *item = new TreeItem(project,parentItem);
+    parentItem->insertChildren(item,1);
+    endInsertRows();
+
+    project->setModelIndex(this->index(0,0,parent));
+    updateProjectItem(project);
+  }
+
   void ElementTreeModel::createElementItem(Element *element, const QModelIndex &parent) {
     if(dynamic_cast<Frame*>(element))
       createFrameItem(static_cast<Frame*>(element),parent);
@@ -259,6 +276,25 @@ namespace MBSimGUI {
     endInsertRows();
 
     observer->setModelIndex(parent.child(i,0));
+  }
+
+  void ElementTreeModel::createSolverItem(Solver *solver, const QModelIndex &parent) {
+
+    TreeItem *parentItem = getItem(parent);
+
+    int i = rowCount(parent);
+    beginInsertRows(parent, i, i);
+    TreeItem *item = new TreeItem(solver,parentItem);
+    parentItem->insertChildren(item,1);
+    endInsertRows();
+
+    solver->setModelIndex(parent.child(i,0));
+  }
+
+  void ElementTreeModel::updateProjectItem(Project *project) {
+
+    createGroupItem(project->getDynamicSystemSolver(),index(0,0));
+    createSolverItem(project->getSolver(),index(0,0));
   }
 
   void ElementTreeModel::updateElementItem(Element *element) {

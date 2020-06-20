@@ -59,7 +59,7 @@ namespace MBSimGUI {
       return true;
     }
     else if(event->type() == QEvent::MouseButtonPress) {
-      mw->projectViewClicked();
+//      mw->projectViewClicked();
       return true;
     }
     else
