@@ -192,7 +192,7 @@ namespace MBSimGUI {
   class QuasiStaticIntegrator : public Integrator {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"QuasiStaticIntegrator"; }
-      QString getType() const override { return "Quasistatic integrator"; }
+      QString getType() const override { return "Quasi static integrator"; }
       PropertyDialog* createPropertyDialog() override { return new QuasiStaticIntegratorPropertyDialog(this); }
   };
 
