@@ -184,7 +184,7 @@ namespace MBSimGUI {
       void addObserver(Observer *observer, Element *parent);
       void loadParameter(EmbedItemData *parent, Parameter *param=nullptr, bool embed=false, bool add=false);
       void removeParameter(EmbedItemData *parent);
-      std::tuple<xercesc::DOMElement*,FileItemData*> loadElement(Element *parent, Element *element=nullptr, bool embed=false, const QString &title="", const QString &types="");
+      std::tuple<xercesc::DOMElement*,FileItemData*> loadElement(Element *parent, Element *element=nullptr, bool embed=false);
       void loadFrame(Element *parent, Element *element=nullptr, bool embed=false);
       void loadContour(Element *parent, Element *element=nullptr, bool embed=false);
       void loadGroup(Element *parent, Element *element=nullptr, bool embed=false);
@@ -239,7 +239,6 @@ namespace MBSimGUI {
       void saveHarmonicResponseAnalysis(const QString &file);
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
-      void exportSolver();
       void exportParameters();
       void loadSolver(bool embed=false);
       void viewParametersSource();

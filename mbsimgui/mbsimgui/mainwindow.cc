@@ -303,7 +303,7 @@ namespace MBSimGUI {
     addDockWidget(Qt::LeftDockWidgetArea, dockWidget5);
     dockWidget5->setWidget(fileView);
 
-    QDockWidget *dockWidget1 = new QDockWidget("Element tree", this);
+    QDockWidget *dockWidget1 = new QDockWidget("Model tree", this);
     dockWidget1->setObjectName("dockWidget/mbs");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
     QWidget *widget1 = new QWidget(dockWidget1);
@@ -1647,24 +1647,7 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    QStringList list;
-    if(dynamic_cast<DynamicSystemSolver*>(element))
-      list = QStringList{ "Export MBSim dynamic system solver file", ".dssx", "Dynamic system solver files (*.dssx)" };
-    else if(dynamic_cast<Frame*>(element))
-      list = QStringList{ "Export MBSim frame file", ".frmx", "Frame files (*.frmx)" };
-    else if(dynamic_cast<Contour*>(element))
-      list = QStringList{ "Export MBSim contour file", ".cntx", "Contour files (*.cntx)" };
-    else if(dynamic_cast<Group*>(element))
-      list = QStringList{ "Export MBSim group file", ".grpx", "Group files (*.grpx)" };
-    else if(dynamic_cast<Object*>(element))
-      list = QStringList{ "Export MBSim object file", ".objx", "Object files (*.objx)" };
-    else if(dynamic_cast<Link*>(element))
-      list = QStringList{ "Export MBSim link file", ".lnkx", "Link files (*.lnkx)" };
-    else if(dynamic_cast<Constraint*>(element))
-      list = QStringList{ "Export MBSim constraint file", ".cnsx", "Constraint files (*.cnsx)" };
-    else if(dynamic_cast<Observer*>(element))
-      list = QStringList{ "Export MBSim observer file", ".obsx", "Observer files (*.obsx)" };
-    QString file = QFileDialog::getSaveFileName(this, list[0], getProjectDir().absoluteFilePath(element->getName()+list[1]), list[2]);
+    QString file = QFileDialog::getSaveFileName(this, "Export MBSim model file", getProjectDir().absoluteFilePath(element->getName()+".mbsmx"), "MBSim model files (*.mbsmx)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node = edoc->importNode(element->getXMLElement(),true);
@@ -1700,21 +1683,6 @@ namespace MBSimGUI {
     element->maybeRemoveEmbedXMLElement();
     element->updateStatus();
     if(getAutoRefresh()) refresh();
-  }
-
-  void MainWindow::exportSolver() {
-    Solver *solver = project->getSolver();
-    QString file = QFileDialog::getSaveFileName(this, "Export MBSim solver file", getProjectDir().absoluteFilePath(solver->getName()+".mbssx"), "Solver files (*.mbssx)");
-    if(not file.isEmpty()) {
-      xercesc::DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(solver->getXMLElement(),true);
-      edoc->insertBefore(node,nullptr);
-      serializer->writeToURI(edoc, X()%file.toStdString());
-      if(solver->getEmbedXMLElement()) {
-        QMessageBox::StandardButton button = QMessageBox::question(this, "Question", "Export parameters?");
-        if(button==QMessageBox::Yes) exportParameters();
-      }
-    }
   }
 
   void MainWindow::exportParameters() {
@@ -1934,7 +1902,7 @@ namespace MBSimGUI {
       if(parent->getNumberOfParameters() and not add) removeParameter(parent);
       xercesc::DOMDocument *doc = nullptr;
       QString action = add?"Add":(embed?"Embed":"Import");
-      QString file = QFileDialog::getOpenFileName(this, action+" MBSim parameter file", ".", "Parameter files (*.parx);;XML files (*.xml);;All files (*.*)");
+      QString file = QFileDialog::getOpenFileName(this, action+" MBSim parameter file", ".", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2016,7 +1984,7 @@ namespace MBSimGUI {
     if(getAutoRefresh()) refresh();
   }
 
-  tuple<DOMElement*, FileItemData*> MainWindow::loadElement(Element *parent, Element *element, bool embed, const QString &title, const QString &types) {
+  tuple<DOMElement*, FileItemData*> MainWindow::loadElement(Element *parent, Element *element, bool embed) {
     DOMElement *ele = nullptr;
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     FileItemData *fileItem = nullptr;
@@ -2041,7 +2009,7 @@ namespace MBSimGUI {
     else {
       xercesc::DOMDocument *doc = nullptr;
       QString action = embed?"Embed":"Import";
-      QString file = QFileDialog::getOpenFileName(this, action+title, ".", types);
+      QString file = QFileDialog::getOpenFileName(this, action+" MBSim model file", ".", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
           file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2060,7 +2028,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadFrame(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim frame file","Frame files (*.frmx);;XML files (*.xml);;All files (*.*)");
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Frame *frame = Embed<Frame>::create(std::get<0>(data),parent);
     if(not frame) {
@@ -2094,7 +2062,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadContour(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim contour file","Contour files (*.cntx);;XML files (*.xml);;All files (*.*)");
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Contour *contour = Embed<Contour>::create(std::get<0>(data),parent);
     if(not contour) {
@@ -2128,7 +2096,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadGroup(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim group file","Group files (*.grpx);;XML files (*.xml);;All files (*.*)");
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Group *group = Embed<Group>::create(std::get<0>(data),parent);
     if(not group) {
@@ -2162,7 +2130,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadObject(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim object file","Object files (*.objx);;XML files (*.xml);;All files (*.*)");
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Object *object = Embed<Object>::create(std::get<0>(data),parent);
     if(not object) {
@@ -2196,7 +2164,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadLink(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim link file","Link files (*.lnkx);;XML files (*.xml);;All files (*.*)");
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Link *link = Embed<Link>::create(std::get<0>(data),parent);
     if(not link) {
@@ -2230,7 +2198,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadConstraint(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim constraint file","Constraint files (*.cnsx);;XML files (*.xml);;All files (*.*)");
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Constraint *constraint = Embed<Constraint>::create(std::get<0>(data),parent);
     if(not constraint) {
@@ -2264,7 +2232,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::loadObserver(Element *parent, Element *element, bool embed) {
-    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed," MBSim observer file","Observer files (*.obsx);;XML files (*.xml);;All files (*.*)");
+    tuple<DOMElement*, FileItemData*> data = loadElement(parent,element,embed);
     if(not std::get<0>(data)) return;
     Observer *observer = Embed<Observer>::create(std::get<0>(data),parent);
     if(not observer) {
@@ -2373,7 +2341,7 @@ namespace MBSimGUI {
     xercesc::DOMDocument *doc = nullptr;
     FileItemData *fileItem = nullptr;
     QString action = embed?"Embed":"Import";
-    QString file = QFileDialog::getOpenFileName(this, action+" MBSim solver file", ".", "Solver files (*.slvx);;XML files (*.xml);;All files (*.*)");
+    QString file = QFileDialog::getOpenFileName(this, action+" MBSim model file", ".", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2399,6 +2367,8 @@ namespace MBSimGUI {
       paramele = MBXMLUtils::E(embedele)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
     QModelIndex pindex = getProject()->getSolver()->getParameters()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    model->removeRow(getProject()->getSolver()->getModelIndex().row(), project->getModelIndex());
     if(getProject()->getSolver()->getFileItem())
       E(embedele)->removeAttribute("href");
     else
@@ -2422,6 +2392,8 @@ namespace MBSimGUI {
     }
     project->setSolver(solver);
     solver->create();
+    model->createSolverItem(solver,getProject()->getModelIndex());
+    elementView->selectionModel()->setCurrentIndex(solver->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(embed or not solver->getEmbedXMLElement()) {
       if(not solver->getEmbedXMLElement()) solver->setEmbedXMLElement(embedele);
       if(paramele) {
