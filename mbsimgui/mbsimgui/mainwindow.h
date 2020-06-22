@@ -250,7 +250,6 @@ namespace MBSimGUI {
       void openCloneEditor();
       FileItemData* addFile(const QFileInfo &file);
       void removeFile(FileItemData *fileItem);
-      void addElementView(EmbedItemData *item);
       std::string getID(Element* element) { std::string ID = std::to_string(IDcounter++); idMap[ID] = element; return ID; }
   };
 

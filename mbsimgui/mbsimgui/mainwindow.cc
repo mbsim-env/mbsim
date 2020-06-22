@@ -62,6 +62,7 @@
 #include <QHeaderView>
 #include <QtWidgets/QDesktopWidget>
 #include <QDesktopServices>
+#include <QDialogButtonBox>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
@@ -198,14 +199,19 @@ namespace MBSimGUI {
     updateRecentProjectFileActions();
     menuBar()->addMenu(menu);
 
-    menu = new QMenu("Referenced files", menuBar());
+    auto dialog = new QDialog(this);
+    auto *layout = new QVBoxLayout;
+    dialog->setLayout(layout);
+    layout->addWidget(fileView);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Close);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::hide);
+
+    menu = new QMenu("References", menuBar());
+    menu->addAction(QIcon::fromTheme("document-open"), "Open list", dialog, &QDialog::show);
     menu->addAction(QIcon::fromTheme("document-save"), "Save all", this, [=](){ for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
     menuBar()->addMenu(menu);
-//    menu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){
-//      QModelIndex index = fileView->selectionModel()->currentIndex();
-//      auto *model = static_cast<FileTreeModel*>(fileView->model());
-//      auto *fileItem=dynamic_cast<FileItemData*>(model->getItem(index)->getItemData());
-//      });
 
     menu = new QMenu("Edit", menuBar());
     action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, &MainWindow::edit);
@@ -298,11 +304,6 @@ namespace MBSimGUI {
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
 
-    QDockWidget *dockWidget5 = new QDockWidget("File list", this);
-    dockWidget5->setObjectName("dockWidget/files");
-    addDockWidget(Qt::LeftDockWidgetArea, dockWidget5);
-    dockWidget5->setWidget(fileView);
-
     QDockWidget *dockWidget1 = new QDockWidget("Model tree", this);
     dockWidget1->setObjectName("dockWidget/mbs");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
@@ -313,8 +314,6 @@ namespace MBSimGUI {
     widget1->setLayout(widgetLayout1);
     widgetLayout1->addWidget(elementViewFilter);
     widgetLayout1->addWidget(elementView);
-
-    tabifyDockWidget(dockWidget5,dockWidget1);
 
     QDockWidget *dockWidget3 = new QDockWidget("Parameter tree", this);
     dockWidget3->setObjectName("dockWidget/parameters");
@@ -2833,24 +2832,6 @@ namespace MBSimGUI {
       }
     }
     delete fileItem;
-  }
-
-  void MainWindow::addElementView(EmbedItemData *item) {
-    ElementView *elementView = new ElementView;
-    itemView.push_back(elementView);
-    auto *model = new ElementTreeModel(this);
-    elementView->setModel(model);
-    model->createElementItem(static_cast<Element*>(item),QModelIndex());
-//    QDockWidget *dockWidget = new QDockWidget(item->getName(), this);
-//    dockWidget->setObjectName("dockWidget/item");
-//    addDockWidget(Qt::LeftDockWidgetArea,dockWidget);
-//    QWidget *widget = new QWidget(dockWidget);
-//    dockWidget->setWidget(widget);
-//    auto *widgetLayout = new QVBoxLayout(widget);
-//    widgetLayout->setContentsMargins(0,0,0,0);
-//    widget->setLayout(widgetLayout);
-//    widgetLayout->addWidget(elementView);
-    tabWidget->addTab(elementView,item->getName());
   }
 
   void MainWindow::saveReferencedFile(int i) {
