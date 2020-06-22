@@ -108,14 +108,8 @@
       </xsl:apply-templates>
     </ul>
     <hr/>
-    <span class="pull-left small">
-      <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#impressum">Impressum</a> /
-      <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#disclaimer">Disclaimer</a> /
-      <a href="/mbsim/html/impressum_disclaimer_datenschutz.html#datenschutz">Datenschutz</a>
-    </span>
     <span class="pull-right small">
-      Generated on <span class="DATETIME"><xsl:value-of select="$DATETIME"/></span> for MBSimXML by MBSimXML<xsl:text> </xsl:text><xsl:value-of select="$MBSIMXMLVERSION"/>
-      <a href="/">Home</a>
+      Generated with MBSimXML on <span class="DATETIME"><xsl:value-of select="$DATETIME"/></span>
     </span>
     </body></html>
   </xsl:template>

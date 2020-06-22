@@ -47,6 +47,8 @@ AC_ARG_WITH(qmake, [  --with-qmake=PATH qmake program],
   [QMAKE="$withval"], [QMAKE="qmake"])
 QT_PLUGINS=$($QMAKE -query QT_INSTALL_PLUGINS)
 AC_SUBST([QT_PLUGINS])
+AC_SUBST([QT_PLUGINSSTYLES_DATA], [$(ls -1 $QT_PLUGINS/styles/*.so 2> /dev/null | tr '\n' ' ')])
+AC_SUBST([QT_PLUGINSPLATFORMTHEMES_DATA], [$(ls -1 $QT_PLUGINS/platformthemes/*.so 2> /dev/null | tr '\n' ' ')])
 
 dnl OpenMBV
 PKG_CHECK_MODULES(OPENMBV, [openmbv])

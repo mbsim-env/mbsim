@@ -1,7 +1,10 @@
 Installation
 ====================
 
-This project provides a simulation environment for mechanical systems. It needs kernel, openmbv. After the installation proceed with the following steps.
+This project provides a simulation environment for mechanical systems. It needs, beside other tools:
+- kernel
+- openmbv
+- ...
 
 
 1. Checkout from git
