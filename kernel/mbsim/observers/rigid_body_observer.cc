@@ -178,17 +178,17 @@ namespace MBSim {
     Vec3 Ld = WThetaS*psi + crossProduct(om,WThetaS*om) + crossProduct(rRS,body->getMass()*aRS);
     double absom = nrm2(om);
     Vec3 dr, dir;
-    dir(2) = 1;
     if(absom>1e-8) {
       SqrMat A(4,NONINIT);
       A.set(RangeV(0,2),RangeV(0,2),tilde(om));
-      A.set(RangeV(0,2),RangeV(3,3),om);
+      A.set(RangeV(0,2),RangeV(3,3),-om);
       A.set(RangeV(3,3),RangeV(0,2),om.T());
       A(3,3) = 0;
       Vec b(4,NONINIT);
       b.set(RangeV(0,2),-vS);
       b(3) = 0;
-      dr = slvLU(A,b);
+      Vec x = slvLU(A,b);
+      dr = x(RangeV(0,2));
       dir = om/absom;
     }
     Vec3 r = rOS + dr;
