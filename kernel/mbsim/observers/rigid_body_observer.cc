@@ -176,24 +176,22 @@ namespace MBSim {
     Vec3 aR = frameOfReference?frameOfReference->evalAcceleration():aS;
     Vec3 aRS = aS - aR;
     Vec3 Ld = WThetaS*psi + crossProduct(om,WThetaS*om) + crossProduct(rRS,body->getMass()*aRS);
-    Vec3 dr;
     double absom = nrm2(om);
-    if(abs(om(2))>macheps) {
-      dr(0) = -vS(1)/om(2);
-      dr(1) = vS(0)/om(2);
+    Vec3 dr, dir;
+    dir(2) = 1;
+    if(absom>1e-8) {
+      SqrMat A(4,NONINIT);
+      A.set(RangeV(0,2),RangeV(0,2),tilde(om));
+      A.set(RangeV(0,2),RangeV(3,3),om);
+      A.set(RangeV(3,3),RangeV(0,2),om.T());
+      A(3,3) = 0;
+      Vec b(4,NONINIT);
+      b.set(RangeV(0,2),-vS);
+      b(3) = 0;
+      dr = slvLU(A,b);
+      dir = om/absom;
     }
-    else if(abs(om(1))>macheps) {
-      dr(0) = vS(2)/om(1);
-      dr(2) = -vS(0)/om(1);
-    }
-    else if(abs(om(0))>macheps) {
-      dr(1) = -vS(2)/om(0);
-      dr(2) = vS(1)/om(0);
-    }
-    else
-      absom = 1;
     Vec3 r = rOS + dr;
-    Vec3 dir = om/absom;
     if(plotFeature[plotRecursive]) {
       if(plotFeature[force]) {
         Vec3 force = body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
