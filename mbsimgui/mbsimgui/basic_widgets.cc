@@ -727,13 +727,12 @@ namespace MBSimGUI {
     X x;
     source->setStringData(x%edit->toPlainText().toStdString());
     try {
-      DOMLSParser::ActionType action = DOMLSParser::ACTION_REPLACE;
       DOMElement *element;
       if(dynamic_cast<DOMDocument*>(parent->getParentNode())) {
         DOMDocument *doc = mw->parser->parse(source);
         DOMElement *ele = doc->getDocumentElement();
         element = static_cast<xercesc::DOMElement*>(parent->getOwnerDocument()->importNode(ele,true));
-        DOMNode *oldele = element->getOwnerDocument()->replaceChild (element, parent);
+        element->getOwnerDocument()->replaceChild(element, parent);
       }
       else
         element = static_cast<xercesc::DOMElement*>(mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_REPLACE));
