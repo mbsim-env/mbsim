@@ -586,7 +586,7 @@ namespace MBSimGUI {
         auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
         vector<EmbedItemData*> parents = embeditem->getEmbedItemParents();
         QModelIndex index = pmodel->index(0,0);
-        pmodel->removeRow(index.row(), index.parent());
+        pmodel->removeRow(index.row(), QModelIndex());
         if(!parents.empty()) {
           pmodel->createParameterItem(parents[0]->getParameters());
           for(size_t i=0; i<parents.size()-1; i++)
@@ -647,15 +647,15 @@ namespace MBSimGUI {
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = pmodel->index(0,0);
-      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
+      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), QModelIndex());
 
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
       index = model->index(0,0);
-      model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
+      model->removeRows(index.row(), model->rowCount(QModelIndex()), QModelIndex());
 
       auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
       index = fmodel->index(0,0);
-      fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), index.parent());
+      fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), QModelIndex());
 
       delete project;
 
@@ -1886,7 +1886,7 @@ namespace MBSimGUI {
         param->getXMLElement()->getParentNode()->removeChild(param->getXMLElement());
         param->getParent()->removeParameter(param);
         QModelIndex index = param->getModelIndex();
-        model->removeRow(index.row(), index.parent());
+        model->removeRow(index.row(), QModelIndex());
         auto* fileItem = param->getParent()->getDedicatedParameterFileItem();
         if(fileItem)
           fileItem->setModified(true);
@@ -2824,7 +2824,7 @@ namespace MBSimGUI {
 
   void MainWindow::removeFile(FileItemData *fileItem) {
     QModelIndex index = fileItem->getModelIndex();
-    fileView->model()->removeRow(index.row(), index.parent());
+    fileView->model()->removeRow(index.row(), QModelIndex());
     for(auto it = file.begin(); it != file.end(); ++it) {
       if(*it==fileItem) {
         file.erase(it);
