@@ -22,12 +22,15 @@
 #include "objectfactory.h"
 #include "utils.h"
 #include "fileitemdata.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   void Parameter::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
@@ -81,8 +84,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  QString Parameters::getStatus() const {
-    return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():"";
+  QString Parameters::getFile() const {
+    return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():mw->getProjectFile();
   }
 
 }
