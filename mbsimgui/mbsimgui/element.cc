@@ -46,7 +46,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* Element::createXMLElement(DOMNode *parent) {
-    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
     element=D(doc)->createElement(getXMLType());
     E(element)->setAttribute("name",getXMLType().second);
     parent->insertBefore(element, nullptr);

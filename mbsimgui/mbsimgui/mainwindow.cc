@@ -2814,7 +2814,7 @@ namespace MBSimGUI {
       if(fileName==file[i]->getFileInfo())
         return file[i];
     }
-    DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
+    xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
     MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
     auto *fileItem = new FileItemData(doc);
     file.push_back(fileItem);

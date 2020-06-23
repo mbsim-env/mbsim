@@ -728,8 +728,8 @@ namespace MBSimGUI {
     source->setStringData(x%edit->toPlainText().toStdString());
     try {
       DOMElement *element;
-      if(dynamic_cast<DOMDocument*>(parent->getParentNode())) {
-        DOMDocument *doc = mw->parser->parse(source);
+      if(dynamic_cast<xercesc::DOMDocument*>(parent->getParentNode())) {
+        xercesc::DOMDocument *doc = mw->parser->parse(source);
         DOMElement *ele = doc->getDocumentElement();
         element = static_cast<xercesc::DOMElement*>(parent->getOwnerDocument()->importNode(ele,true));
         element->getOwnerDocument()->replaceChild(element, parent);
