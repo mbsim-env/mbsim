@@ -202,8 +202,8 @@ namespace MBSimGUI {
     return E(element)->getTagName()==PV%"Embed"?element->getLastElementChild():element;
   }
 
-  QString EmbedItemData::getFile() const {
-    return dedicatedFileItem?dedicatedFileItem->getName():mw->getProjectFile();
+  QString EmbedItemData::getReference() const {
+    return dedicatedFileItem?dedicatedFileItem->getName():"";
   }
 
 }

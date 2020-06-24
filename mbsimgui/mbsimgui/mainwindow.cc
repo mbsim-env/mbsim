@@ -199,20 +199,6 @@ namespace MBSimGUI {
     updateRecentProjectFileActions();
     menuBar()->addMenu(menu);
 
-    auto dialog = new QDialog(this);
-    auto *layout = new QVBoxLayout;
-    dialog->setLayout(layout);
-    layout->addWidget(fileView);
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
-    buttonBox->addButton(QDialogButtonBox::Close);
-    layout->addWidget(buttonBox);
-    connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::hide);
-
-    menu = new QMenu("References", menuBar());
-    menu->addAction(QIcon::fromTheme("document-open"), "Open list", dialog, &QDialog::show);
-    menu->addAction(QIcon::fromTheme("document-save"), "Save all", this, [=](){ for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
-    menuBar()->addMenu(menu);
-
     menu = new QMenu("Edit", menuBar());
     action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, &MainWindow::edit);
     action->setShortcut(QKeySequence("Ctrl+E"));
@@ -250,7 +236,20 @@ namespace MBSimGUI {
     actionSaveHarmonicResponseAnalysisAs = menu->addAction("Export harmonic response analysis", this, &MainWindow::saveHarmonicResponseAnalysisAs);
     menuBar()->addMenu(menu);
 
-    menuBar()->addSeparator();
+    auto dialog = new QDialog(this);
+    auto *layout = new QVBoxLayout;
+    dialog->setLayout(layout);
+    layout->addWidget(fileView);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Close);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::hide);
+
+    menu = new QMenu("References", menuBar());
+    menu->addAction(QIcon::fromTheme("document-open"), "Open list", dialog, &QDialog::show);
+    menu->addAction(QIcon::fromTheme("document-save"), "Save all", this, [=](){ for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
+    menuBar()->addMenu(menu);
+
     QMenu *helpMenu = new QMenu("Help", menuBar());
     helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, &MainWindow::help);
     helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help", this, [=](){ this->xmlHelp(); });

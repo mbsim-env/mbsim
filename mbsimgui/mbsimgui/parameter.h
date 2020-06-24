@@ -44,7 +44,7 @@ namespace MBSimGUI {
       ParameterItem(EmbedItemData *parent_=nullptr) : parent(parent_) { }
       bool getEnabled() const override { return parent->getEnabled(); }
       EmbedItemData *getParent() const { return parent; }
-      QString getFile() const override { return ""; }
+      QString getReference() const override { return ""; }
     protected:
       EmbedItemData *parent;
   };
@@ -117,7 +117,7 @@ namespace MBSimGUI {
       QString getValue() const override { return ""; }
       QString getType() const override { return ""; }
       QMenu* createContextMenu() override { return new ParametersContextMenu(parent); }
-      QString getFile() const override;
+      QString getReference() const override;
   };
 
 }

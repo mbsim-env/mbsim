@@ -84,8 +84,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  QString Parameters::getFile() const {
-    return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():mw->getProjectFile();
+  QString Parameters::getReference() const {
+    return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():"";
   }
 
 }
