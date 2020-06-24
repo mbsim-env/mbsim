@@ -55,7 +55,7 @@ namespace MBSimGUI {
       QFont getFont() { return font[0]; }
       QIcon getDecoration() { return decoration; }
       QBrush getForeground() { return foreground[itemData->getEnabled()]; }
-      QBrush getBackground() { return background[0]; }
+      QBrush getBackground() { return background[itemData->hasReference()]; }
 
     protected:
       QList<TreeItem*> childItems;

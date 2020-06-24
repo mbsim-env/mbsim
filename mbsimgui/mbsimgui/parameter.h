@@ -118,6 +118,7 @@ namespace MBSimGUI {
       QString getType() const override { return ""; }
       QMenu* createContextMenu() override { return new ParametersContextMenu(parent); }
       QString getReference() const override;
+      bool hasReference() const override { return parent->hasParameterReference(); }
   };
 
 }

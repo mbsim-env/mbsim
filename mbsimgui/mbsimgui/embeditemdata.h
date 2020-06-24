@@ -89,6 +89,8 @@ namespace MBSimGUI {
       virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog(this); }
       bool getSelfEmbeded() const { return embed and MBXMLUtils::E(embed)->hasAttribute("href"); }
       QString getReference() const override;
+      bool hasReference() const override { return fileItem; }
+      bool hasParameterReference() const { return parameterFileItem; }
   };
 
 }
