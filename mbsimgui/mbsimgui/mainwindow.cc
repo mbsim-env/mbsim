@@ -1420,7 +1420,7 @@ namespace MBSimGUI {
     model->removeRows(0,parameter->getParent()->getNumberOfParameters(),parentIndex);
     for(int i=0; i<parameter->getParent()->getNumberOfParameters(); i++)
       model->createParameterItem(parameter->getParent()->getParameter(i),parentIndex);
-    parameterView->setCurrentIndex(parentIndex.child(j,0));
+    parameterView->setCurrentIndex(parameter->getParent()->getParameter(j)->getModelIndex());
     auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
     if(fileItem)
       fileItem->setModified(true);
@@ -1451,7 +1451,7 @@ namespace MBSimGUI {
     model->removeRows(0,frame->getParent()->getNumberOfFrames(),parentIndex);
     for(int i=0; i<frame->getParent()->getNumberOfFrames(); i++)
       model->createFrameItem(frame->getParent()->getFrame(i),parentIndex);
-    elementView->setCurrentIndex(parentIndex.child(j,0));
+    elementView->setCurrentIndex(frame->getParent()->getFrame(j)->getModelIndex());
     auto *dedicatedParent = static_cast<Element*>(frame->getParent()->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -1481,7 +1481,7 @@ namespace MBSimGUI {
     model->removeRows(0,contour->getParent()->getNumberOfContours(),parentIndex);
     for(int i=0; i<contour->getParent()->getNumberOfContours(); i++)
       model->createContourItem(contour->getParent()->getContour(i),parentIndex);
-    elementView->setCurrentIndex(parentIndex.child(j,0));
+    elementView->setCurrentIndex(contour->getParent()->getContour(j)->getModelIndex());
     auto *dedicatedParent = static_cast<Element*>(contour->getParent()->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -1511,7 +1511,7 @@ namespace MBSimGUI {
     model->removeRows(0,group->getParent()->getNumberOfGroups(),parentIndex);
     for(int i=0; i<group->getParent()->getNumberOfGroups(); i++)
       model->createGroupItem(group->getParent()->getGroup(i),parentIndex);
-    elementView->setCurrentIndex(parentIndex.child(j,0));
+    elementView->setCurrentIndex(group->getParent()->getGroup(j)->getModelIndex());
     auto *dedicatedParent = static_cast<Element*>(group->getParent()->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -1541,7 +1541,7 @@ namespace MBSimGUI {
     model->removeRows(0,object->getParent()->getNumberOfObjects(),parentIndex);
     for(int i=0; i<object->getParent()->getNumberOfObjects(); i++)
       model->createObjectItem(object->getParent()->getObject(i),parentIndex);
-    elementView->setCurrentIndex(parentIndex.child(j,0));
+    elementView->setCurrentIndex(object->getParent()->getObject(j)->getModelIndex());
     auto *dedicatedParent = static_cast<Element*>(object->getParent()->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -1571,7 +1571,7 @@ namespace MBSimGUI {
     model->removeRows(0,link->getParent()->getNumberOfLinks(),parentIndex);
     for(int i=0; i<link->getParent()->getNumberOfLinks(); i++)
       model->createLinkItem(link->getParent()->getLink(i),parentIndex);
-    elementView->setCurrentIndex(parentIndex.child(j,0));
+    elementView->setCurrentIndex(link->getParent()->getLink(j)->getModelIndex());
     auto *dedicatedParent = static_cast<Element*>(link->getParent()->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -1601,7 +1601,7 @@ namespace MBSimGUI {
     model->removeRows(0,constraint->getParent()->getNumberOfConstraints(),parentIndex);
     for(int i=0; i<constraint->getParent()->getNumberOfConstraints(); i++)
       model->createConstraintItem(constraint->getParent()->getConstraint(i),parentIndex);
-    elementView->setCurrentIndex(parentIndex.child(j,0));
+    elementView->setCurrentIndex(constraint->getParent()->getConstraint(j)->getModelIndex());
     auto *dedicatedParent = static_cast<Element*>(constraint->getParent()->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -1631,7 +1631,7 @@ namespace MBSimGUI {
     model->removeRows(0,observer->getParent()->getNumberOfObservers(),parentIndex);
     for(int i=0; i<observer->getParent()->getNumberOfObservers(); i++)
       model->createObserverItem(observer->getParent()->getObserver(i),parentIndex);
-    elementView->setCurrentIndex(parentIndex.child(j,0));
+    elementView->setCurrentIndex(observer->getParent()->getObserver(j)->getModelIndex());
     auto *dedicatedParent = static_cast<Element*>(observer->getParent()->getDedicatedItem());
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem)
@@ -1739,8 +1739,7 @@ namespace MBSimGUI {
     frame->createXMLElement(parent->getXMLFrames());
     model->createFrameItem(frame,index);
     updateReferences(dedicatedParent);
-    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
@@ -1757,8 +1756,7 @@ namespace MBSimGUI {
     contour->createXMLElement(parent->getXMLContours());
     model->createContourItem(contour,index);
     updateReferences(dedicatedParent);
-    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
@@ -1775,8 +1773,7 @@ namespace MBSimGUI {
     group->createXMLElement(parent->getXMLGroups());
     model->createGroupItem(group,index);
     updateReferences(dedicatedParent);
-    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
@@ -1793,8 +1790,7 @@ namespace MBSimGUI {
     object->createXMLElement(parent->getXMLObjects());
     model->createObjectItem(object,index);
     updateReferences(dedicatedParent);
-    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
@@ -1811,8 +1807,7 @@ namespace MBSimGUI {
     link->createXMLElement(parent->getXMLLinks());
     model->createLinkItem(link,index);
     updateReferences(dedicatedParent);
-    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
@@ -1829,8 +1824,7 @@ namespace MBSimGUI {
     constraint->createXMLElement(parent->getXMLConstraints());
     model->createConstraintItem(constraint,index);
     updateReferences(dedicatedParent);
-    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
@@ -1847,8 +1841,7 @@ namespace MBSimGUI {
     observer->createXMLElement(parent->getXMLObservers());
     model->createObserverItem(observer,index);
     updateReferences(dedicatedParent);
-    QModelIndex currentIndex = index.child(model->rowCount(index)-1,0);
-    elementView->selectionModel()->setCurrentIndex(currentIndex, QItemSelectionModel::ClearAndSelect);
+    elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     openElementEditor(false);
   }
 
