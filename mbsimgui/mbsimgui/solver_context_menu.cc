@@ -31,8 +31,8 @@ namespace MBSimGUI {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openSolverEditor(); });
     addAction(action);
-    action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
-    connect(action,&QAction::triggered,mw,&MainWindow::viewSolverSource);
+    action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
+    connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);

@@ -27,6 +27,7 @@
 namespace MBSimGUI {
 
   class Project;
+  class EmbedItemData;
   class Element;
   class Frame;
   class Contour;
@@ -82,7 +83,7 @@ namespace MBSimGUI {
       void createObserverItem(Observer *observer, const QModelIndex &parent = QModelIndex());
       void createSolverItem(Solver *solver, const QModelIndex &parent = QModelIndex());
       void updateProjectItem(Project *project);
-      void updateElementItem(Element *element);
+      void updateElementItem(EmbedItemData *element);
       void updateGroupItem(Group *group);
       void updateObjectItem(Object *object);
   };

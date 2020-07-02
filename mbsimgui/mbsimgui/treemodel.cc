@@ -297,11 +297,13 @@ namespace MBSimGUI {
     createSolverItem(project->getSolver(),index(0,0));
   }
 
-  void ElementTreeModel::updateElementItem(Element *element) {
+  void ElementTreeModel::updateElementItem(EmbedItemData *element) {
     if(dynamic_cast<Group*>(element))
       updateGroupItem(static_cast<Group*>(element));
     else if(dynamic_cast<Object*>(element))
       updateObjectItem(static_cast<Object*>(element));
+    else if(dynamic_cast<Project*>(element))
+      updateProjectItem(static_cast<Project*>(element));
   }
 
   void ElementTreeModel::updateGroupItem(Group *group) {

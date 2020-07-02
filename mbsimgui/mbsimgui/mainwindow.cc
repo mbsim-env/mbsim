@@ -2398,16 +2398,11 @@ namespace MBSimGUI {
     if(button==QMessageBox::Yes) loadParameter(solver,nullptr,embed);
   }
 
-  void MainWindow::viewProjectSource() {
-    SourceDialog dialog(getProject()->getXMLElement(),this);
-    dialog.exec();
-  }
-
   void MainWindow::editElementSource() {
     if(not editorIsOpen()) {
       setAllowUndo(false);
       QModelIndex index = elementView->selectionModel()->currentIndex();
-      auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
+      auto *element = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       editor = new XMLPropertyDialog(element);
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
@@ -2449,7 +2444,6 @@ namespace MBSimGUI {
         model->updateElementItem(static_cast<Element*>(element));
         updateReferences(dedicatedElement);
         if(getAutoRefresh()) refresh();
-        editor->setCancel(true);
       });
     }
   }
@@ -2461,11 +2455,6 @@ namespace MBSimGUI {
       SourceDialog dialog(item->getParent()->getEmbedXMLElement()->getFirstElementChild(),this);
       dialog.exec();
     }
-  }
-
-  void MainWindow::viewSolverSource() {
-    SourceDialog dialog(getProject()->getSolver()->getXMLElement(),this);
-    dialog.exec();
   }
 
   void MainWindow::viewParameterSource() {
