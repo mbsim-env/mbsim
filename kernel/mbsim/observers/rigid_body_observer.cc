@@ -49,6 +49,8 @@ namespace MBSim {
         throwError("Rigid body is not given!");
       if(not saved_frameOfReference.empty())
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
+      if(not frameOfReference)
+        setFrameOfReference(ds->getFrameI());
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
@@ -166,14 +168,14 @@ namespace MBSim {
     Vec3 om = body->getFrameC()->getAngularVelocity();
     Vec3 psi = body->getFrameC()->getAngularAcceleration();
     Vec3 p = body->getMass()*vS;
-    Vec3 rOR = frameOfReference?frameOfReference->evalPosition():rOS;
+    Vec3 rOR = frameOfReference->evalPosition();
     Vec3 rRS = rOS - rOR;
-    Vec3 vR = frameOfReference?frameOfReference->evalVelocity():vS;
+    Vec3 vR = frameOfReference->evalVelocity();
     Vec3 vRS = vS - vR;
     Mat3x3 WThetaS = AIK*body->getInertiaTensor()*AIK.T();
     Vec3 L = WThetaS*om + crossProduct(rRS,body->getMass()*vRS);
     Vec3 pd = body->getMass()*aS;
-    Vec3 aR = frameOfReference?frameOfReference->evalAcceleration():aS;
+    Vec3 aR = frameOfReference->evalAcceleration();
     Vec3 aRS = aS - aR;
     Vec3 Ld = WThetaS*psi + crossProduct(om,WThetaS*om) + crossProduct(rRS,body->getMass()*aRS);
     double absom = nrm2(om);
