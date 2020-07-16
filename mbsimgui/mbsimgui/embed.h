@@ -43,7 +43,6 @@ namespace MBSimGUI {
 
         static T* create(xercesc::DOMElement *ele1, EmbedItemData* parent) {
           T *object;
-          std::vector<Parameter*> param;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             xercesc::DOMElement *ele2 = nullptr;
             FileItemData *parameterFileItem = nullptr;
@@ -59,16 +58,12 @@ namespace MBSimGUI {
               catch(...) {
                 std::cout << "Unknwon error" << std::endl;
               }
-              //MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
               parameterFileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
-              param = Parameter::createParameters(parameterFileItem->getXMLElement());
             }
             else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-            if(ele2) {
-              param = Parameter::createParameters(ele2);
+            if(ele2)
               ele2 = ele2->getNextElementSibling();
-            }
             else
               ele2 = ele1->getFirstElementChild();
             FileItemData *fileItem = nullptr;
@@ -92,8 +87,7 @@ namespace MBSimGUI {
               object->setXMLElement(ele2);
               object->setEmbedXMLElement(ele1);
               object->setParameterFileItem(parameterFileItem);
-              for(auto & i : param)
-                object->addParameter(i);
+              object->createParameters();
               object->setFileItem(fileItem);
             }
           }

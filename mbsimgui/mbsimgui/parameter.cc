@@ -32,7 +32,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  void Parameter::removeXMLElements() {
+  void ParameterItem::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {
       DOMNode *en=e->getNextSibling();
@@ -41,15 +41,7 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* Parameter::createXMLElement(DOMNode *parent) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
-    element=D(doc)->createElement(getXMLType());
-    E(element)->setAttribute("name", getXMLType().second);
-    parent->insertBefore(element, nullptr);
-    return element;
-  }
-
-  vector<Parameter*> Parameter::createParameters(DOMElement *element) {
+  vector<Parameter*> ParameterItem::createParameters(DOMElement *element) {
     vector<Parameter*> param;
     DOMElement *e=element->getFirstElementChild();
     while(e) {
@@ -59,6 +51,14 @@ namespace MBSimGUI {
       e=e->getNextElementSibling();
     }
     return param;
+  }
+
+  DOMElement* Parameter::createXMLElement(DOMNode *parent) {
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    element=D(doc)->createElement(getXMLType());
+    E(element)->setAttribute("name", getXMLType().second);
+    parent->insertBefore(element, nullptr);
+    return element;
   }
 
   QString VectorParameter::getValue() const {

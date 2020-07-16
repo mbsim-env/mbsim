@@ -215,6 +215,7 @@ namespace MBSimGUI {
       void refresh();
       void xmlHelp(const QString &url="");
       void editElementSource();
+      void editParametersSource();
       void exportElement();
       void copyElement(bool cut=false);
       void removeElement();
@@ -240,8 +241,6 @@ namespace MBSimGUI {
       void rebuildTree();
       void exportParameters();
       void loadSolver(bool embed=false);
-      void viewParametersSource();
-      void viewParameterSource();
       void openProjectEditor();
       void openElementEditor(bool config=true);
       void openParameterEditor(bool config=true);

@@ -32,9 +32,6 @@ namespace MBSimGUI {
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openParameterEditor(); });
     addAction(action);
-    action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
-    connect(action,&QAction::triggered,mw,&MainWindow::viewParameterSource);
-    addAction(action);
     addSeparator();
     action=new QAction(QIcon::fromTheme("edit-copy"), "Copy", this);
     connect(action,&QAction::triggered,this,[=](){ mw->copyParameter(); });

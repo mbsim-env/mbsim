@@ -33,8 +33,19 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *file, *editor;
+      ExtWidget *editor;
   };
+
+  class ParameterXMLPropertyDialog : public EmbedItemPropertyDialog {
+
+    public:
+      ParameterXMLPropertyDialog(EmbedItemData *item);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *editor;
+  };
+
 
 }
 

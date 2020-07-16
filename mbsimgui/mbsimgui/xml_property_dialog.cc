@@ -20,6 +20,7 @@
 #include <config.h>
 #include "xml_property_dialog.h"
 #include "basic_widgets.h"
+#include "parameter.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -42,6 +43,24 @@ namespace MBSimGUI {
   DOMElement* XMLPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
 
     item->setXMLElement(editor->writeXMLFile(item->getXMLElement(),ref));
+    return nullptr;
+  }
+
+  ParameterXMLPropertyDialog::ParameterXMLPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog(item) {
+    addTab("General");
+    editor = new ExtWidget("XML editor",new XMLEditorWidget);
+    addToTab("General", editor);
+  }
+
+  DOMElement* ParameterXMLPropertyDialog::initializeUsingXML(DOMElement *parent) {
+
+    editor->initializeUsingXML(static_cast<DOMElement*>(item->getParameter(0)->getXMLElement()->getParentNode()));
+    return parent;
+  }
+
+  DOMElement* ParameterXMLPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+
+    editor->writeXMLFile(static_cast<DOMElement*>(item->getParameter(0)->getXMLElement()->getParentNode()));
     return nullptr;
   }
 

@@ -30,9 +30,9 @@ namespace MBSimGUI {
 
   ParametersContextMenu::ParametersContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
     if(not dynamic_cast<InternalFrame*>(item_)) {
-      QAction *action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
+      QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
       action->setEnabled(item->getNumberOfParameters());
-      connect(action,&QAction::triggered,mw,&MainWindow::viewParametersSource);
+      connect(action,&QAction::triggered,mw,&MainWindow::editParametersSource);
       addAction(action);
       addSeparator();
       action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);

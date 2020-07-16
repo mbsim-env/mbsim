@@ -43,10 +43,16 @@ namespace MBSimGUI {
     public:
       ParameterItem(EmbedItemData *parent_=nullptr) : parent(parent_) { }
       bool getEnabled() const override { return parent->getEnabled(); }
+      void setParent(EmbedItemData* parent_) { parent = parent_; }
       EmbedItemData *getParent() const { return parent; }
       QString getReference() const override { return ""; }
+      xercesc::DOMElement* getXMLElement() { return element; }
+      void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
+      void removeXMLElements();
+      static std::vector<Parameter*> createParameters(xercesc::DOMElement *element);
     protected:
       EmbedItemData *parent;
+      xercesc::DOMElement *element;
   };
 
   class Parameter : public ParameterItem {
@@ -58,13 +64,6 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual PropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
-      xercesc::DOMElement* getXMLElement() { return element; }
-      void setXMLElement(xercesc::DOMElement *element_) { element = element_; }
-      virtual void removeXMLElements();
-      void setParent(EmbedItemData* parent_) { parent = parent_; }
-      static std::vector<Parameter*> createParameters(xercesc::DOMElement *element);
-    protected:
-      xercesc::DOMElement *element;
   };
 
   class StringParameter : public Parameter {

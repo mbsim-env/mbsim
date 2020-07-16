@@ -787,9 +787,7 @@ namespace MBSimGUI {
     solver->setEmbedXMLElement(embed);
     if(ele) {
       solver->setParameterFileItem(parameterFileItem);
-      std::vector<Parameter*> param = Parameter::createParameters(ele);
-      for(auto & i : param)
-        solver->addParameter(i);
+      solver->createParameters();
     }
   }
 
@@ -2319,9 +2317,7 @@ namespace MBSimGUI {
       if(not dss->getEmbedXMLElement()) dss->setEmbedXMLElement(embedele);
       if(paramele) {
         dss->setParameterFileItem(parameterFileItem);
-        std::vector<Parameter*> param = Parameter::createParameters(paramele);
-        for(auto & i : param)
-          dss->addParameter(i);
+        dss->createParameters();
       }
     }
     if(getAutoRefresh()) refresh();
@@ -2389,9 +2385,7 @@ namespace MBSimGUI {
       if(not solver->getEmbedXMLElement()) solver->setEmbedXMLElement(embedele);
       if(paramele) {
         solver->setParameterFileItem(parameterFileItem);
-        std::vector<Parameter*> param = Parameter::createParameters(paramele);
-        for(auto & i : param)
-          solver->addParameter(i);
+        solver->createParameters();
       }
     }
     QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
@@ -2402,7 +2396,7 @@ namespace MBSimGUI {
     if(not editorIsOpen()) {
       setAllowUndo(false);
       QModelIndex index = elementView->selectionModel()->currentIndex();
-      auto *element = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
+      auto *element = static_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       editor = new XMLPropertyDialog(element);
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
@@ -2448,21 +2442,58 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::viewParametersSource() {
-    QModelIndex index = parameterView->selectionModel()->currentIndex();
-    auto *item = dynamic_cast<Parameters*>(static_cast<ElementTreeModel*>(parameterView->model())->getItem(index)->getItemData());
-    if(item) {
-      SourceDialog dialog(item->getParent()->getEmbedXMLElement()->getFirstElementChild(),this);
-      dialog.exec();
-    }
-  }
-
-  void MainWindow::viewParameterSource() {
-    QModelIndex index = parameterView->selectionModel()->currentIndex();
-    auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
-    if(parameter) {
-      SourceDialog dialog(parameter->getXMLElement(),this);
-      dialog.exec();
+  void MainWindow::editParametersSource() {
+    if(not editorIsOpen()) {
+      setAllowUndo(false);
+      QModelIndex index = parameterView->selectionModel()->currentIndex();
+      auto *item = static_cast<Parameters*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
+      EmbedItemData *parent = item->getParent();
+      editor = new ParameterXMLPropertyDialog(parent);
+      editor->setAttribute(Qt::WA_DeleteOnClose);
+      editor->toWidget();
+      editor->show();
+      connect(editor,&QDialog::finished,this,[=](){
+        if(editor->result()==QDialog::Accepted) {
+          auto *fileItem = item->getParent()->getDedicatedParameterFileItem();
+          if(fileItem)
+            fileItem->setModified(true);
+          else
+            setProjectChanged(true);
+          editor->fromWidget();
+          int n = parent->getNumberOfParameters();
+          for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
+          QModelIndex index = parent->getParameters()->getModelIndex();
+          auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+          model->removeRows(0,n,index);
+          parent->createParameters();
+          model->updateParameterItem(parent->getParameters());
+          auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
+          if(dedicatedParent) updateReferences(dedicatedParent);
+          updateParameterReferences(parent);
+          if(getAutoRefresh()) refresh();
+        }
+        setAllowUndo(true);
+        editor = nullptr;
+      });
+      connect(editor,&ElementPropertyDialog::apply,this,[=](){
+        auto *fileItem = item->getParent()->getDedicatedParameterFileItem();
+        if(fileItem)
+          fileItem->setModified(true);
+        else
+          setProjectChanged(true);
+        editor->fromWidget();
+        int n = parent->getNumberOfParameters();
+        for(int i=n-1; i>=0; i--) parent->removeParameter(parent->getParameter(i));
+        QModelIndex index = parent->getParameters()->getModelIndex();
+        auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+        model->removeRows(0,n,index);
+        parent->createParameters();
+        model->updateParameterItem(parent->getParameters());
+        auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
+        if(dedicatedParent) updateReferences(dedicatedParent);
+        updateParameterReferences(parent);
+        if(getAutoRefresh()) refresh();
+      });
     }
   }
 
