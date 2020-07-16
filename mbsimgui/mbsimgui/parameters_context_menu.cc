@@ -44,7 +44,7 @@ namespace MBSimGUI {
       action->setDisabled(item->getParameterFileItem());
       connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,false,true); });
       addAction(action);
-      action = new QAction("Embed", this);
+      action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
       connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item,nullptr,true); });
       addAction(action);
       action = new QAction(QIcon::fromTheme("document-open"), "Import", this);

@@ -39,7 +39,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,mw,&MainWindow::exportElement);
     addAction(action);
     addSeparator();
-    action = new QAction(QIcon::fromTheme("document-open"), "Embed", this);
+    action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadSolver(true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);

@@ -862,7 +862,7 @@ namespace MBSimGUI {
     layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    href = new QCheckBox("Embed");
+    href = new QCheckBox("Reference");
     layout->addWidget(href);
     defineWidget(false);
     connect(href,&QCheckBox::clicked,this,&OpenMBVEnvironmentWidget::defineWidget);

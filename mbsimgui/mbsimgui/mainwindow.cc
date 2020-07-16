@@ -1890,7 +1890,7 @@ namespace MBSimGUI {
     else {
       if(parent->getNumberOfParameters() and not add) removeParameter(parent);
       xercesc::DOMDocument *doc = nullptr;
-      QString action = add?"Add":(embed?"Embed":"Import");
+      QString action = add?"Add":(embed?"Reference":"Import");
       QString file = QFileDialog::getOpenFileName(this, action+" MBSim parameter file", ".", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
@@ -1997,7 +1997,7 @@ namespace MBSimGUI {
     }
     else {
       xercesc::DOMDocument *doc = nullptr;
-      QString action = embed?"Embed":"Import";
+      QString action = embed?"Reference":"Import";
       QString file = QFileDialog::getOpenFileName(this, action+" MBSim model file", ".", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
       if(not file.isEmpty()) {
         if(file.startsWith("//"))
@@ -2044,7 +2044,7 @@ namespace MBSimGUI {
     static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(not element) {
-      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(frame,nullptr,embed);
     }
     if(getAutoRefresh()) refresh();
@@ -2078,7 +2078,7 @@ namespace MBSimGUI {
     static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(not element) {
-      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(contour,nullptr,embed);
     }
     if(getAutoRefresh()) refresh();
@@ -2112,7 +2112,7 @@ namespace MBSimGUI {
     static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(not element) {
-      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(group,nullptr,embed);
     }
     if(getAutoRefresh()) refresh();
@@ -2146,7 +2146,7 @@ namespace MBSimGUI {
     static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(not element) {
-      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(object,nullptr,embed);
     }
     if(getAutoRefresh()) refresh();
@@ -2180,7 +2180,7 @@ namespace MBSimGUI {
     static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(not element) {
-      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(link,nullptr,embed);
     }
     if(getAutoRefresh()) refresh();
@@ -2214,7 +2214,7 @@ namespace MBSimGUI {
     static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(not element) {
-      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(constraint,nullptr,embed);
     }
     if(getAutoRefresh()) refresh();
@@ -2248,7 +2248,7 @@ namespace MBSimGUI {
     static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(not element) {
-      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+      QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(observer,nullptr,embed);
     }
     if(getAutoRefresh()) refresh();
@@ -2258,7 +2258,7 @@ namespace MBSimGUI {
     DOMElement *ele = nullptr;
     xercesc::DOMDocument *doc = nullptr;
     FileItemData *fileItem = nullptr;
-    QString action = embed?"Embed":"Import";
+    QString action = embed?"Reference":"Import";
     QString file = QFileDialog::getOpenFileName(this, action+" MBSim dynamic system solver file", ".", "Dynamic system solver files (*.dssx);;XML files (*.xml);;All files (*.*)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
@@ -2327,7 +2327,7 @@ namespace MBSimGUI {
     DOMElement *ele = nullptr;
     xercesc::DOMDocument *doc = nullptr;
     FileItemData *fileItem = nullptr;
-    QString action = embed?"Embed":"Import";
+    QString action = embed?"Reference":"Import";
     QString file = QFileDialog::getOpenFileName(this, action+" MBSim model file", ".", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
@@ -2388,7 +2388,7 @@ namespace MBSimGUI {
         solver->createParameters();
       }
     }
-    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Embed parameters?":"Import parameters?");
+    QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
     if(button==QMessageBox::Yes) loadParameter(solver,nullptr,embed);
   }
 

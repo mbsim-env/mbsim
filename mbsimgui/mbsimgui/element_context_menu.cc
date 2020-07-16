@@ -84,7 +84,7 @@ namespace MBSimGUI {
 
   DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,false,true) {
     addSeparator();
-    QAction *action = new QAction("Embed", this);
+    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadDynamicSystemSolver(true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
@@ -177,7 +177,7 @@ namespace MBSimGUI {
   }
 
   FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction("Embed", this);
+    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element,nullptr,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
@@ -216,7 +216,7 @@ namespace MBSimGUI {
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction("Embed", this);
+    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element,nullptr,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
@@ -309,7 +309,7 @@ namespace MBSimGUI {
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction("Embed", this);
+    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element,nullptr,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
@@ -326,7 +326,7 @@ namespace MBSimGUI {
   }
 
   ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction("Embed", this);
+    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element,nullptr,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
@@ -354,7 +354,7 @@ namespace MBSimGUI {
   }
 
   LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction("Embed", this);
+    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element,nullptr,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
@@ -427,7 +427,7 @@ namespace MBSimGUI {
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction("Embed", this);
+    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element,nullptr,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
@@ -465,7 +465,7 @@ namespace MBSimGUI {
   }
 
   ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction("Embed", this);
+    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element,nullptr,true); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
