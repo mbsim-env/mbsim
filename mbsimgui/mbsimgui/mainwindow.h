@@ -214,9 +214,7 @@ namespace MBSimGUI {
       bool saveProjectAs();
       void refresh();
       void xmlHelp(const QString &url="");
-      void viewProjectSource();
       void editElementSource();
-      void viewSolverSource();
       void exportElement();
       void copyElement(bool cut=false);
       void removeElement();

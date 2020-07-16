@@ -29,8 +29,8 @@ namespace MBSimGUI {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openProjectEditor(); });
     addAction(action);
-    action=new QAction(QIcon::fromTheme("document-properties"), "View XML", this);
-    connect(action,&QAction::triggered,mw,&MainWindow::viewProjectSource);
+    action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
+    connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
     addAction(action);
     addSeparator();
   }
