@@ -2259,7 +2259,7 @@ namespace MBSimGUI {
     xercesc::DOMDocument *doc = nullptr;
     FileItemData *fileItem = nullptr;
     QString action = embed?"Reference":"Import";
-    QString file = QFileDialog::getOpenFileName(this, action+" MBSim dynamic system solver file", ".", "Dynamic system solver files (*.dssx);;XML files (*.xml);;All files (*.*)");
+    QString file = QFileDialog::getOpenFileName(this, action+" MBSim model file", ".", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not file.isEmpty()) {
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2307,11 +2307,11 @@ namespace MBSimGUI {
         project->getXMLElement()->insertBefore(ele, project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
     }
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    auto index = project->getDynamicSystemSolver()->getModelIndex();
-    model->removeRow(index.row(), index.parent());
+    model->removeRows(0,model->rowCount(project->getModelIndex()),project->getModelIndex());
     project->setDynamicSystemSolver(dss);
     dss->create();
-    model->createGroupItem(dss);
+    model->createGroupItem(dss,getProject()->getModelIndex());
+    model->createSolverItem(project->getSolver(),getProject()->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(dss->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(embed or not dss->getEmbedXMLElement()) {
       if(not dss->getEmbedXMLElement()) dss->setEmbedXMLElement(embedele);

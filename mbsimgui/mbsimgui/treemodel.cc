@@ -162,23 +162,6 @@ namespace MBSimGUI {
     updateProjectItem(project);
   }
 
-  void ElementTreeModel::createElementItem(Element *element, const QModelIndex &parent) {
-    if(dynamic_cast<Frame*>(element))
-      createFrameItem(static_cast<Frame*>(element),parent);
-    else if(dynamic_cast<Contour*>(element))
-      createContourItem(static_cast<Contour*>(element),parent);
-    else if(dynamic_cast<Group*>(element))
-      createGroupItem(static_cast<Group*>(element),parent);
-    else if(dynamic_cast<Object*>(element))
-      createObjectItem(static_cast<Object*>(element),parent);
-    else if(dynamic_cast<Link*>(element))
-      createLinkItem(static_cast<Link*>(element),parent);
-    else if(dynamic_cast<Constraint*>(element))
-      createConstraintItem(static_cast<Constraint*>(element),parent);
-    else if(dynamic_cast<Observer*>(element))
-      createObserverItem(static_cast<Observer*>(element),parent);
-  }
-
   void ElementTreeModel::createFrameItem(Frame *frame, const QModelIndex &parent) {
 
     TreeItem *parentItem = getItem(parent);
@@ -215,11 +198,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    QModelIndex index;
-    if(parent.row()==-1)
-      index = this->index(0,0,parent);
-    else
-      index = parent.child(i,0);
+    QModelIndex index = parent.child(i,0);
     group->setModelIndex(index);
     updateGroupItem(group);
   }
