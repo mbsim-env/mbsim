@@ -1642,16 +1642,16 @@ namespace MBSimGUI {
   void MainWindow::exportElement() {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
-    auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    QString file = QFileDialog::getSaveFileName(this, "Export MBSim model file", getProjectDir().absoluteFilePath(element->getName()+".mbsmx"), "MBSim model files (*.mbsmx)");
+    auto *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
+    QString file = QFileDialog::getSaveFileName(this, "Export MBSim model file", getProjectDir().absoluteFilePath(item->getName()+".mbsmx"), "MBSim model files (*.mbsmx)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
-      DOMNode *node = edoc->importNode(element->getXMLElement(),true);
+      DOMNode *node = edoc->importNode(item->getXMLElement(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
-      if(element->getEmbedXMLElement()) {
+      if(item->getEmbedXMLElement()) {
         QMessageBox::StandardButton button = QMessageBox::question(this, "Question", "Export parameters?");
-        if(button==QMessageBox::Yes) exportParameters();
+        if(button==QMessageBox::Yes) exportParameters(item);
       }
     }
   }
@@ -1681,15 +1681,20 @@ namespace MBSimGUI {
     if(getAutoRefresh()) refresh();
   }
 
-  void MainWindow::exportParameters() {
-    ParameterTreeModel *model = static_cast<ParameterTreeModel*>(parameterView->model());
-    QModelIndex index = parameterView->selectionModel()->currentIndex();
-    auto *item = static_cast<Parameters*>(model->getItem(index)->getItemData());
-    QString file=QFileDialog::getSaveFileName(this, "Export MBSim parameter file", getProjectDir().absoluteFilePath(item->getParent()->getName()+".mbspx"), "Parameter files (*.mbspx)");
+  void MainWindow::exportParameters(EmbedItemData *item) {
+    Parameters *parameters;
+    if(item)
+      parameters = item->getParameters();
+    else {
+      ParameterTreeModel *model = static_cast<ParameterTreeModel*>(parameterView->model());
+      QModelIndex index = parameterView->selectionModel()->currentIndex();
+      parameters = static_cast<Parameters*>(model->getItem(index)->getItemData());
+    }
+    QString file=QFileDialog::getSaveFileName(this, "Export MBSim parameter file", getProjectDir().absoluteFilePath(parameters->getParent()->getName()+".mbspx"), "Parameter files (*.mbspx)");
     if(not file.isEmpty()) {
       xercesc::DOMDocument *edoc = impl->createDocument();
       DOMNode *node;
-      node = edoc->importNode(item->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
+      node = edoc->importNode(parameters->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
       edoc->insertBefore(node,nullptr);
       serializer->writeToURI(edoc, X()%file.toStdString());
     }

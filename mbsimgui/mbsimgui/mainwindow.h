@@ -239,7 +239,7 @@ namespace MBSimGUI {
       void saveHarmonicResponseAnalysis(const QString &file);
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
-      void exportParameters();
+      void exportParameters(EmbedItemData *item=nullptr);
       void loadSolver(bool embed=false);
       void openProjectEditor();
       void openElementEditor(bool config=true);

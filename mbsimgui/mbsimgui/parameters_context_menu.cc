@@ -37,7 +37,7 @@ namespace MBSimGUI {
       addSeparator();
       action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
       action->setEnabled(item->getNumberOfParameters());
-      connect(action,&QAction::triggered,mw,&MainWindow::exportParameters);
+      connect(action,&QAction::triggered,this,[=](){ mw->exportParameters(); });
       addAction(action);
       addSeparator();
       action = new QAction("Add", this);
