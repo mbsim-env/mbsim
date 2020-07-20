@@ -3319,7 +3319,7 @@ namespace MBSimGUI {
   }
 
   ExternSignalSourcePropertyDialog::ExternSignalSourcePropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
-    sourceSize = new ExtWidget("Length of input vector",new SpinBoxWidget(1,1,1000),false,false,MBSIMCONTROL%"sourceSize");
+    sourceSize = new ExtWidget("Source size",new SpinBoxWidget(1,1,1000),false,false,MBSIMCONTROL%"sourceSize");
     addToTab("General", sourceSize);
   }
 
