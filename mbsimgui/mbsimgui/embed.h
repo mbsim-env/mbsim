@@ -53,9 +53,11 @@ namespace MBSimGUI {
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("parameterHref"),ele1,false));
               }
               catch(MBXMLUtils::DOMEvalException &e) {
+                mw->setExitBad();
                 std::cout << e.getMessage() << std::endl;
               }
               catch(...) {
+                mw->setExitBad();
                 std::cout << "Unknwon error" << std::endl;
               }
               parameterFileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
@@ -74,9 +76,11 @@ namespace MBSimGUI {
                 evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
               }
               catch(MBXMLUtils::DOMEvalException &e) {
+                mw->setExitBad();
                 std::cout << e.getMessage() << std::endl;
               }
               catch(...) {
+                mw->setExitBad();
                 std::cout << "Unknwon error" << std::endl;
               }
               fileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));

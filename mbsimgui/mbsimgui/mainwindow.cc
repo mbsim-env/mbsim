@@ -118,6 +118,8 @@ namespace MBSimGUI {
     QProcess processGetSchemas;
     processGetSchemas.start(program,arguments);
     processGetSchemas.waitForFinished(-1);
+    if(processGetSchemas.exitStatus()!=QProcess::NormalExit || processGetSchemas.exitCode()!=0)
+      throw runtime_error("Failed to call mbsimxml --onlyListSchemas.");
     QStringList line=QString(processGetSchemas.readAllStandardOutput().data()).split("\n");
     set<bfs::path> schemas;
     for(int i=0; i<line.size(); ++i)
@@ -439,6 +441,7 @@ namespace MBSimGUI {
         actionH5plotserie->setDisabled(false);
       }
       else {
+        setExitBad();
       }
     }
     actionSimulate->setDisabled(false);
@@ -459,6 +462,10 @@ namespace MBSimGUI {
 
   MainWindow::~MainWindow() {
     process.waitForFinished(-1);
+    if(process.exitStatus()!=QProcess::NormalExit || process.exitCode()!=0) {
+      setExitBad();
+      cerr<<"The last call to mbsimflatxml/mbsimxml failed.";
+    }
     centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
     delete inlineOpenMBVMW;
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
@@ -706,10 +713,12 @@ namespace MBSimGUI {
         DOMParser::handleCDATA(doc->getDocumentElement());
       }
       catch(const std::exception &ex) {
+        mw->setExitBad();
         cout << ex.what() << endl;
         return;
       }
       catch(...) {
+        mw->setExitBad();
         cout << "Unknown exception." << endl;
         return;
       }
@@ -752,12 +761,15 @@ namespace MBSimGUI {
       return true;
     }
     catch(const std::exception &ex) {
+      mw->setExitBad();
       cout << ex.what() << endl;
     }
     catch(const DOMException &ex) {
+      mw->setExitBad();
       cout << X()%ex.getMessage() << endl;
     }
     catch(...) {
+      mw->setExitBad();
       cout << "Unknown exception." << endl;
     }
     return false;
@@ -854,9 +866,11 @@ namespace MBSimGUI {
         eval->addParamSet(ele);
       }
       catch(const std::exception &error) {
+        mw->setExitBad();
         cout << string("An exception occurred in updateParameters: ") + error.what() << endl;
       }
       catch(...) {
+        mw->setExitBad();
         cout << "An unknown exception occurred in updateParameters." << endl;
       }
     }
@@ -1025,9 +1039,11 @@ namespace MBSimGUI {
       Preprocess::preprocess(mbxmlparser, eval, dependencies, root);
     }
     catch(exception &ex) {
+      mw->setExitBad();
       errorText = ex.what();
     }
     catch(...) {
+      mw->setExitBad();
       errorText = "Unknown error";
     }
     if(not errorText.isEmpty()) {
@@ -2857,12 +2873,15 @@ namespace MBSimGUI {
       file[i]->setModified(false);
     }
     catch(const std::exception &ex) {
+      mw->setExitBad();
       cout << ex.what() << endl;
     }
     catch(const DOMException &ex) {
+      mw->setExitBad();
       cout << X()%ex.getMessage() << endl;
     }
     catch(...) {
+      mw->setExitBad();
       cout << "Unknown exception." << endl;
     }
   }
