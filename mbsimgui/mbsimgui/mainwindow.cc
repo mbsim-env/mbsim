@@ -1053,6 +1053,8 @@ namespace MBSimGUI {
       actionRefresh->setDisabled(false);
       actionDebug->setDisabled(false);
       statusBar()->showMessage(tr("Ready"));
+      auto out=errorText;
+      cerr<<out.remove(QRegExp("<[^>]*>")).toStdString()<<endl;
       return;
     }
     echoView->updateOutput(true);

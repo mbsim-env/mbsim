@@ -1351,10 +1351,12 @@ namespace MBSimGUI {
     catch(MBXMLUtils::DOMEvalException &e) {
       mw->setExitBad();
       QMessageBox::warning(this, "Expression evaluation", QString::fromStdString(e.getMessage()));
+      cerr<<"Error: Expression evaluation "<<e.getMessage()<<endl;
     }
     catch(...) {
       mw->setExitBad();
       QMessageBox::warning(this, "Expression evaluation", "Unknown error");
+      cerr<<"Error: Expression evaluation Unknown error"<<endl;
     }
   }
 
