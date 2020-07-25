@@ -102,11 +102,11 @@ namespace MBSimGUI {
       }
       catch(MBXMLUtils::DOMEvalException &e) {
         mw->setExitBad();
-        std::cout << e.getMessage() << std::endl;
+        std::cerr << e.getMessage() << std::endl;
       }
       catch(...) {
         mw->setExitBad();
-        std::cout << "Unknwon error" << std::endl;
+        std::cerr << "Unknwon error" << std::endl;
       }
       xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
       MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());

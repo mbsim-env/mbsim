@@ -714,12 +714,12 @@ namespace MBSimGUI {
       }
       catch(const std::exception &ex) {
         mw->setExitBad();
-        cout << ex.what() << endl;
+        cerr << ex.what() << endl;
         return;
       }
       catch(...) {
         mw->setExitBad();
-        cout << "Unknown exception." << endl;
+        cerr << "Unknown exception." << endl;
         return;
       }
       setWindowTitle(projectFile+"[*]");
@@ -762,15 +762,15 @@ namespace MBSimGUI {
     }
     catch(const std::exception &ex) {
       mw->setExitBad();
-      cout << ex.what() << endl;
+      cerr << ex.what() << endl;
     }
     catch(const DOMException &ex) {
       mw->setExitBad();
-      cout << X()%ex.getMessage() << endl;
+      cerr << X()%ex.getMessage() << endl;
     }
     catch(...) {
       mw->setExitBad();
-      cout << "Unknown exception." << endl;
+      cerr << "Unknown exception." << endl;
     }
     return false;
   }
@@ -867,11 +867,11 @@ namespace MBSimGUI {
       }
       catch(const std::exception &error) {
         mw->setExitBad();
-        cout << string("An exception occurred in updateParameters: ") + error.what() << endl;
+        cerr << string("An exception occurred in updateParameters: ") + error.what() << endl;
       }
       catch(...) {
         mw->setExitBad();
-        cout << "An unknown exception occurred in updateParameters." << endl;
+        cerr << "An unknown exception occurred in updateParameters." << endl;
       }
     }
   }
@@ -2874,15 +2874,15 @@ namespace MBSimGUI {
     }
     catch(const std::exception &ex) {
       mw->setExitBad();
-      cout << ex.what() << endl;
+      cerr << ex.what() << endl;
     }
     catch(const DOMException &ex) {
       mw->setExitBad();
-      cout << X()%ex.getMessage() << endl;
+      cerr << X()%ex.getMessage() << endl;
     }
     catch(...) {
       mw->setExitBad();
-      cout << "Unknown exception." << endl;
+      cerr << "Unknown exception." << endl;
     }
   }
 

@@ -252,7 +252,7 @@ R"+(
             // evalute the xpath expression of the error message in this embed ...
             xercesc::DOMNode *n=D(e->getOwnerDocument())->evalRootXPathExpression(QUrlQuery(link).queryItemValue("xpath").toStdString());
             // ... the node n is there the error occured:
-            cout<<"MISSING this XML node generated the error addr="<<n<<" name="<<X()%n->getNodeName()<<" value="<<X()%n->getNodeValue()<<endl;
+            cerr<<"MISSING this XML node generated the error addr="<<n<<" name="<<X()%n->getNodeName()<<" value="<<X()%n->getNodeValue()<<endl;
             return true;
           }
         }
@@ -275,7 +275,7 @@ R"+(
     ParameterTreeModel *model = static_cast<ParameterTreeModel*>(mw->getParameterView()->model());
     // walk all embeded elements
     if(!walk(model->index(0,0), model, link))
-      cout<<"MISSING No XML node found for file="<<link.path().toStdString()<<endl<<
+      cerr<<"MISSING No XML node found for file="<<link.path().toStdString()<<endl<<
             "        xpath="<<QUrlQuery(link).queryItemValue("xpath").toStdString()<<endl;
   }
 

@@ -242,7 +242,7 @@ namespace MBSimGUI {
     if(mw->eval->getName()=="octave")
       new OctaveHighlighter(value->document());
     else
-      cout<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
+      cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
     QFont font;
     font.setFamily("Monospace");
     value->setFont(font);

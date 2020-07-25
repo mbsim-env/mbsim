@@ -1884,7 +1884,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::updateWidget() {
-    cout << "GeneralizedVelocityConstraintPropertyDialog::updateWidget() not yet implemented" << endl;
+    cerr << "GeneralizedVelocityConstraintPropertyDialog::updateWidget() not yet implemented" << endl;
   }
 
   DOMElement* GeneralizedVelocityConstraintPropertyDialog::initializeUsingXML(DOMElement *parent) {

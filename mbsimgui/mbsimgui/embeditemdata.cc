@@ -56,11 +56,11 @@ namespace MBSimGUI {
     }
     catch(MBXMLUtils::DOMEvalException &ex) {
       mw->setExitBad();
-      cout << ex.getMessage() << endl;
+      cerr << ex.getMessage() << endl;
     }
     catch(...) {
       mw->setExitBad();
-      cout << "Unknown exception" << endl;
+      cerr << "Unknown exception" << endl;
     }
     return active;
   }
