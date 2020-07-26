@@ -39,6 +39,7 @@ namespace MBSimGUI {
     vector<QString> list;
     list.emplace_back("octave");
     list.emplace_back("python");
+    list.emplace_back("xmlflat");
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,0),true,false,PV%"evaluator");
     addToTab("General",evalSelect);
   }

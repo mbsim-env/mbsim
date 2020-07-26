@@ -275,7 +275,8 @@ R"+(
     ParameterTreeModel *model = static_cast<ParameterTreeModel*>(mw->getParameterView()->model());
     // walk all embeded elements
     if(!walk(model->index(0,0), model, link))
-      cerr<<"MISSING No XML node found for file="<<link.path().toStdString()<<endl<<
+      cerr<<"MISSING No XML node found for file="<<link.path().toStdString()<<
+            " line="<<QUrlQuery(link).queryItemValue("line").toStdString()<<endl<<
             "        xpath="<<QUrlQuery(link).queryItemValue("xpath").toStdString()<<endl;
   }
 
