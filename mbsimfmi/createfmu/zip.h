@@ -33,6 +33,7 @@ class CreateZip : virtual public fmatvec::Atom {
     archive *a; // zip archive handle
     archive_entry *entry; // zip entry handle
     std::set<boost::filesystem::path> content;
+    std::vector<char> buf;
 };
 
 }

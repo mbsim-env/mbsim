@@ -62,7 +62,7 @@ void CreateZip::add(const path &filenameInZip, const path &srcFilename) {
   path filenameInZipCano=parentCanonical(filenameInZip);
   if(!content.insert(filenameInZipCano).second)
     return;
-  vector<char> buf(1024*1024*10); // read/write file content in 10MB blocks
+  buf.resize(1024*1024*10); // read/write file content in 10MB blocks
   archive_entry_set_pathname(entry, filenameInZipCano.string().c_str());
   archive_entry_set_size(entry, file_size(srcFilename));
   archive_entry_set_filetype(entry, AE_IFREG);
