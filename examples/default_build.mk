@@ -39,7 +39,7 @@ fmiexport: mbsimfmi_model$(SHEXT)
 
 # mingw -Wl,-Map generates some dependencies named rtr0*.o which needs to be removed
 
-# link main executable with pkg-config options from PACKAGES (runexamples.py executes always ./main)
+# link main executable with pkg-config options from PACKAGES
 main$(EXEEXT): $(OBJECTS)
 	$(CXX) -Wl,-Map=$@.linkmap -o $@ $(OBJECTS) $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
 	@sed -rne "/^LOAD /s/^LOAD (.*)$$/ \1 \\\/p" $@.linkmap | grep -Ev rtr[0-9]+\.o > $@.d2 || true
