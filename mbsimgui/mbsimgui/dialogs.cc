@@ -222,7 +222,7 @@ namespace MBSimGUI {
     table = new QTableWidget(f.size(),5);
     layout->addWidget(table);
     QStringList labels;
-    labels << "Mode" << "Frequency" << "Exponential decay" << "Angular frequency" << "Damping ratio";
+    labels << "Mode number" << "Frequency" << "Exponential decay" << "Angular frequency" << "Damping ratio";
     table->setHorizontalHeaderLabels(labels);
     int n = name.size();
     QVector<double> m(name.size());
@@ -250,7 +250,7 @@ namespace MBSimGUI {
     table->resizeColumnsToContents();
     if(f.size()) {
       table->selectRow(0);
-      plot = new DataPlot(m,A,"Mode", "Eigenmode", "DOF", "-", this);
+      plot = new DataPlot(m,A,"Mode number", "Mode shape", "DOF number", "Relative amplitude", this);
       layout->addWidget(plot);
       plot->setSymbol(QwtSymbol::Diamond,10);
       plot->setAxisScale(QwtPlot::xBottom,1-0.1,n+0.1,1);
@@ -258,7 +258,7 @@ namespace MBSimGUI {
       plot->replot();
       QTreeWidget *stateTable = new QTreeWidget;
       layout->addWidget(stateTable);
-      stateTable->setHeaderLabels(QStringList{"DOF","Element name","Element DOF number"});
+      stateTable->setHeaderLabels(QStringList{"DOF number","Element name","Element DOF number"});
       for(unsigned int i=0; i<name.size(); i++) {
         auto *item = new QTreeWidgetItem;
         item->setText(0, QString::number(m[i]));
@@ -320,7 +320,7 @@ namespace MBSimGUI {
 
     QVBoxLayout *layout = new QVBoxLayout;
     setLayout(layout);
-    DataPlot *plot = new DataPlot(t,A,"DOF", "Frequency response", "f in Hz", "A", this);
+    DataPlot *plot = new DataPlot(t,A,"DOF number", "Frequency response", "Frequency", "Amplitude", this);
     layout->addWidget(plot);
     plot->replot();
     QVector<double> m(name.size());
@@ -328,7 +328,7 @@ namespace MBSimGUI {
       m[k] = k+1;
     QTreeWidget *stateTable = new QTreeWidget;
     layout->addWidget(stateTable);
-    stateTable->setHeaderLabels(QStringList{"DOF","Element name","Element DOF number"});
+    stateTable->setHeaderLabels(QStringList{"DOF number","Element name","Element DOF number"});
     for(unsigned int i=0; i<name.size(); i++) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::number(m[i]));
@@ -366,22 +366,22 @@ namespace MBSimGUI {
     QVector<QString> number;
     string name_;
     string label_;
-    string number_;
+    int number_;
     while(is) {
       is >> name_ >> label_ >> number_;
-      if(not number_.empty()) {
+      if(not label_.empty()) {
         name.append(QString::fromStdString(name_));
         label.append(QString::fromStdString(label_));
-        number.append(QString::fromStdString(number_));
+        number.append(QString::number(number_+1));
       }
     }
     is.close();
     QTreeWidget *stateTable = new QTreeWidget;
     layout->addWidget(stateTable);
-    stateTable->setHeaderLabels(QStringList{"State number","Name","Label","Label number"});
+    stateTable->setHeaderLabels(QStringList{"State number","Element name","State label","Label number"});
     for(unsigned int i=0; i<name.size(); i++) {
       auto *item = new QTreeWidgetItem;
-      item->setText(0, QString::number(i));
+      item->setText(0, QString::number(i+1));
       item->setText(1, name[i]);
       item->setText(2, label[i]);
       item->setText(3, number[i]);
