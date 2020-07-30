@@ -243,10 +243,8 @@ namespace MBSimGUI {
       void rebuildTree();
       void exportParameters(EmbedItemData *item=nullptr);
       void loadSolver(bool embed=false);
-      void openProjectEditor();
       void openElementEditor(bool config=true);
       void openParameterEditor(bool config=true);
-      void openSolverEditor();
       void openCloneEditor();
       FileItemData* addFile(const QFileInfo &file);
       void removeFile(FileItemData *fileItem);

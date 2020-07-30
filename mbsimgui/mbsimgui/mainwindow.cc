@@ -2664,31 +2664,6 @@ namespace MBSimGUI {
     return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).toLocalFile();
   }
 
-  void MainWindow::openProjectEditor() {
-    if(not editorIsOpen()) {
-      setAllowUndo(false);
-      updateParameters(getProject());
-      editor = getProject()->createPropertyDialog();
-      editor->setAttribute(Qt::WA_DeleteOnClose);
-      editor->toWidget();
-      editor->show();
-      connect(editor,&ProjectPropertyDialog::finished,this,[=](){
-        if(editor->result()==QDialog::Accepted) {
-          setProjectChanged(true);
-          editor->fromWidget();
-          if(getAutoRefresh()) refresh();
-        }
-        setAllowUndo(true);
-        editor = nullptr;
-      });
-      connect(editor,&ProjectPropertyDialog::apply,this,[=](){
-        setProjectChanged(true);
-        editor->fromWidget();
-        if(getAutoRefresh()) refresh();
-      });
-    }
-  }
-
   void MainWindow::openElementEditor(bool config) {
     if(not editorIsOpen()) {
       QModelIndex index = elementView->selectionModel()->currentIndex();
@@ -2781,37 +2756,6 @@ namespace MBSimGUI {
           parameter->getParent()->updateStatus();
         });
       }
-    }
-  }
-
-  void MainWindow::openSolverEditor() {
-    if(not editorIsOpen()) {
-      setAllowUndo(false);
-      updateParameters(getProject()->getSolver());
-      editor = getProject()->getSolver()->createPropertyDialog();
-      editor->setAttribute(Qt::WA_DeleteOnClose);
-      editor->toWidget();
-      editor->show();
-      connect(editor,&ProjectPropertyDialog::finished,this,[=](){
-        if(editor->result()==QDialog::Accepted) {
-          auto* fileItem = getProject()->getSolver()->getFileItem();
-          if(fileItem)
-            fileItem->setModified(true);
-          else
-            setProjectChanged(true);
-          editor->fromWidget();
-        }
-        setAllowUndo(true);
-        editor = nullptr;
-      });
-      connect(editor,&ProjectPropertyDialog::apply,this,[=](){
-        auto* fileItem = getProject()->getSolver()->getFileItem();
-        if(fileItem)
-          fileItem->setModified(true);
-        else
-          setProjectChanged(true);
-        editor->fromWidget();
-      });
     }
   }
 

@@ -29,7 +29,7 @@ namespace MBSimGUI {
 
   SolverContextMenu::SolverContextMenu(QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->openSolverEditor(); });
+    connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
