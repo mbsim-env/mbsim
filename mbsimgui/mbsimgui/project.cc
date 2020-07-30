@@ -34,8 +34,10 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   Project::Project() {
+    trueMap["xmlflat"] = "true";
     trueMap["octave"] = "true";
     trueMap["python"] = "True";
+    falseMap["xmlflat"] = "false";
     falseMap["octave"] = "false";
     falseMap["python"] = "False";
   }

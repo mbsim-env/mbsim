@@ -14,7 +14,7 @@ int main(int argc, char *argv[]) {
   SelfSiphoningBeats *sys;
   TimeSteppingSSCIntegrator *integrator;
 
-  int numEles = 30;
+  int numEles = 5;
 
   /* Assembly */
   {

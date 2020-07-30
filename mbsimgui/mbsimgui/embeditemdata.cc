@@ -55,10 +55,12 @@ namespace MBSimGUI {
       active = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(embed)->getAttribute("count"),element,true))!="0";
     }
     catch(MBXMLUtils::DOMEvalException &ex) {
-      cout << ex.getMessage() << endl;
+      mw->setExitBad();
+      cerr << ex.getMessage() << endl;
     }
     catch(...) {
-      cout << "Unknown exception" << endl;
+      mw->setExitBad();
+      cerr << "Unknown exception" << endl;
     }
     return active;
   }

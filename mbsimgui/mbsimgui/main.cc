@@ -92,6 +92,7 @@ int main(int argc, char *argv[]) {
   MainWindow mainwindow(arg);
   mainwindow.show();
   if(arg.contains("--fullscreen")) mainwindow.showFullScreen(); // must be done after mainwindow.show()
-  int ret=app.exec();
-  return ret;
+  if(int ret=app.exec(); ret!=0) return ret;
+  if(!mainwindow.getExitOK()) return 1;
+  return 0;
 }

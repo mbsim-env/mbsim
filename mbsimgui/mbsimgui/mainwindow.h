@@ -79,6 +79,7 @@ namespace MBSimGUI {
   class MainWindow : public QMainWindow {
 
     private:
+      bool exitOK = true;
       std::unordered_map<std::string,Element*> idMap;
       Project *project;
       std::vector<FileItemData*> file;
@@ -250,6 +251,8 @@ namespace MBSimGUI {
       FileItemData* addFile(const QFileInfo &file);
       void removeFile(FileItemData *fileItem);
       std::string getID(Element* element) { std::string ID = std::to_string(IDcounter++); idMap[ID] = element; return ID; }
+      int getExitOK() { return exitOK; }
+      void setExitBad() { exitOK=false; }
   };
 
 }

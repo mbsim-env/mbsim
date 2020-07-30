@@ -242,7 +242,7 @@ namespace MBSimGUI {
     if(mw->eval->getName()=="octave")
       new OctaveHighlighter(value->document());
     else
-      cout<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
+      cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
     QFont font;
     font.setFamily("Monospace");
     value->setFont(font);
@@ -1349,10 +1349,14 @@ namespace MBSimGUI {
       evalDialog.exec();
     }
     catch(MBXMLUtils::DOMEvalException &e) {
+      mw->setExitBad();
       QMessageBox::warning(this, "Expression evaluation", QString::fromStdString(e.getMessage()));
+      cerr<<"Error: Expression evaluation "<<e.getMessage()<<endl;
     }
     catch(...) {
+      mw->setExitBad();
       QMessageBox::warning(this, "Expression evaluation", "Unknown error");
+      cerr<<"Error: Expression evaluation Unknown error"<<endl;
     }
   }
 

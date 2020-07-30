@@ -55,7 +55,7 @@ namespace MBSimGUI {
     Environment *obj;
     for(auto factorie : factories)
       if((obj=factorie->getEnvironment(element))) return obj;
-    cout << string("No Environment of type {")+E(element)->getTagName().first+"}"+E(element)->getTagName().second+" exists.";
+    cerr << string("No Environment of type {")+E(element)->getTagName().first+"}"+E(element)->getTagName().second+" exists.";
     return nullptr;
   }
 

@@ -739,7 +739,8 @@ namespace MBSimGUI {
       return element;
     }
     catch(DOMLSException &ex) {
-      cout << X()%ex.msg << endl;
+      mw->setExitBad();
+      cerr << X()%ex.msg << endl;
     }
     return nullptr;
   }
