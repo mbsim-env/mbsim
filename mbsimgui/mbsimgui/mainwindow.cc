@@ -261,30 +261,24 @@ namespace MBSimGUI {
     actionSimulate = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaPlay)),"Start simulation");
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
-    toolBar->addAction(actionSimulate);
     QAction *actionInterrupt = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
     connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
-    toolBar->addAction(actionInterrupt);
     actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
     connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
-    toolBar->addAction(actionRefresh);
     actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
     connect(actionOpenMBV,&QAction::triggered,this,&MainWindow::openmbv);
-    toolBar->addAction(actionOpenMBV);
     actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
     connect(actionH5plotserie,&QAction::triggered,this,&MainWindow::h5plotserie);
-    toolBar->addAction(actionH5plotserie);
     actionEigenanalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Eigenanalysis");
     connect(actionEigenanalysis,&QAction::triggered,this,&MainWindow::eigenanalysis);
-    toolBar->addAction(actionEigenanalysis);
     actionHarmonicResponseAnalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
     connect(actionHarmonicResponseAnalysis,&QAction::triggered,this,&MainWindow::harmonicResponseAnalysis);
+    actionStateTable = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"state_table.svg").string())),"Show state table");
+    connect(actionStateTable,&QAction::triggered,this,&MainWindow::showStateTable);
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
-    toolBar->addAction(actionDebug);
     QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
-    toolBar->addAction(actionKill);
 
     elementView->setModel(new ElementTreeModel(this));
     elementView->setColumnWidth(0,250);
@@ -437,6 +431,7 @@ namespace MBSimGUI {
         }
         actionOpenMBV->setDisabled(false);
         actionH5plotserie->setDisabled(false);
+        actionStateTable->setDisabled(false);
       }
       else {
       }
@@ -635,6 +630,7 @@ namespace MBSimGUI {
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
       actionHarmonicResponseAnalysis->setDisabled(true);
+      actionStateTable->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
@@ -690,6 +686,7 @@ namespace MBSimGUI {
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
+      actionStateTable->setDisabled(true);
       actionHarmonicResponseAnalysis->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
@@ -1120,6 +1117,14 @@ namespace MBSimGUI {
     QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
     if(QFile::exists(file1) and QFile::exists(file2)) {
       HarmonicResponseDialog *dialog = new HarmonicResponseDialog(this);
+      dialog->show();
+    }
+  }
+
+  void MainWindow::showStateTable() {
+    QString file = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
+    if(QFile::exists(file)) {
+      StateTableDialog *dialog = new StateTableDialog(this);
       dialog->show();
     }
   }

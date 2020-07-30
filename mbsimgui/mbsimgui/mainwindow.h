@@ -94,7 +94,7 @@ namespace MBSimGUI {
       QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionHarmonicResponseAnalysis, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveEigenanalysisAs, *actionSaveHarmonicResponseAnalysisAs, *actionUndo, *actionRedo;
+      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionHarmonicResponseAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveEigenanalysisAs, *actionSaveHarmonicResponseAnalysisAs, *actionUndo, *actionRedo;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
       QTime statusTime;
@@ -148,6 +148,7 @@ namespace MBSimGUI {
       void h5plotserie();
       void eigenanalysis();
       void harmonicResponseAnalysis();
+      void showStateTable();
       void debug();
       void settingsFinished(int result);
       void applySettings();

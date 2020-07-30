@@ -111,6 +111,11 @@ namespace MBSimGUI {
       SourceDialog(xercesc::DOMElement *ele, QWidget *parent);
   };
 
+  class StateTableDialog : public QDialog {
+    public:
+      StateTableDialog(QWidget *parent);
+  };
+
 }
 
 #endif

@@ -103,7 +103,8 @@ dist_mbsimguiicon_DATA = icons/simulate.svg \
 			 icons/debugBlueEnable.svg \
 			 icons/kill.svg \
 			 icons/mbsimgui.svg \
-			 icons/frequency_response.svg
+			 icons/frequency_response.svg \
+			 icons/state_table.svg
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines

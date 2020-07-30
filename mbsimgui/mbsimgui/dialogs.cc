@@ -344,12 +344,50 @@ namespace MBSimGUI {
   }
 
   SourceDialog::SourceDialog(xercesc::DOMElement *ele, QWidget *parent) : QDialog(parent) {
-    setWindowTitle(QString("XML View"));
+    setWindowTitle(QString("XML view"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
     XMLEditorWidget *edit = new XMLEditorWidget;
     edit->initializeUsingXML(ele);
     layout->addWidget(edit);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceDialog::accept);
+  }
+
+  StateTableDialog::StateTableDialog(QWidget *parent) : QDialog(parent) {
+    setWindowTitle(QString("State table"));
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
+    QVector<QString> name;
+    QVector<QString> label;
+    QVector<QString> number;
+    string name_;
+    string label_;
+    string number_;
+    while(is) {
+      is >> name_ >> label_ >> number_;
+      if(not number_.empty()) {
+        name.append(QString::fromStdString(name_));
+        label.append(QString::fromStdString(label_));
+        number.append(QString::fromStdString(number_));
+      }
+    }
+    is.close();
+    QTreeWidget *stateTable = new QTreeWidget;
+    layout->addWidget(stateTable);
+    stateTable->setHeaderLabels(QStringList{"State number","Name","Label","Label number"});
+    for(unsigned int i=0; i<name.size(); i++) {
+      auto *item = new QTreeWidgetItem;
+      item->setText(0, QString::number(i));
+      item->setText(1, name[i]);
+      item->setText(2, label[i]);
+      item->setText(3, number[i]);
+      stateTable->addTopLevelItem(item);
+    }
+    stateTable->resizeColumnToContents(1);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
