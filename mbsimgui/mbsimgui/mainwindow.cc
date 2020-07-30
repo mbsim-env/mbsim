@@ -840,13 +840,16 @@ namespace MBSimGUI {
       }
       try {
         D(doc)->validate();
+        for(auto & parent : parents) {
+          string counterName = parent->getEmbedXMLElement()?E(parent->getEmbedXMLElement())->getAttribute("counterName"):"";
+          if(not counterName.empty())
+            eval->addParam(eval->cast<string>(eval->stringToValue(counterName,parent->getEmbedXMLElement(),false)),eval->create(1.0));
+        }
         DOMElement *ele = doc->getDocumentElement()->getFirstElementChild();
         eval->addParamSet(ele);
-        if(item->getXMLElement()) {
-          string counterName = item->getEmbedXMLElement()?E(item->getEmbedXMLElement())->getAttribute("counterName"):"";
-          if(not counterName.empty())
-            eval->addParam(eval->cast<string>(eval->stringToValue(counterName,item->getEmbedXMLElement(),false)),eval->create(1.0));
-        }
+        string counterName = item->getEmbedXMLElement()?E(item->getEmbedXMLElement())->getAttribute("counterName"):"";
+        if(not counterName.empty())
+          eval->addParam(eval->cast<string>(eval->stringToValue(counterName,item->getEmbedXMLElement(),false)),eval->create(1.0));
         ele = ele->getNextElementSibling()->getFirstElementChild();
         eval->addParamSet(ele);
       }
