@@ -673,8 +673,7 @@ namespace MBSimGUI {
 
       model->createProjectItem(project,QModelIndex());
 
-//      model->createGroupItem(project->getDynamicSystemSolver(),QModelIndex());
-//      model->createSolverItem(getProject()->getSolver(),model->index(1,0));
+      elementViewClicked(project->getModelIndex());
 
       projectFile="";
       refresh();
@@ -1212,10 +1211,7 @@ namespace MBSimGUI {
 
     model->createProjectItem(project);
 
-//    model->createGroupItem(project->getDynamicSystemSolver());
-//    model->createSolverItem(getProject()->getSolver(),model->index(1,0));
-
- //   solverView->setSolver(getProject()->getSolver());
+    elementViewClicked(project->getModelIndex());
   }
 
   void MainWindow::edit() {
