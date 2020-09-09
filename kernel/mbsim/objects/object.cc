@@ -115,13 +115,6 @@ namespace MBSim {
         for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
           plotVector.push_back(getGeneralizedAcceleration()(i));
       }
-      if (plotFeature[energy]) {
-        double Ttemp = evalKineticEnergy();
-        double Vtemp = evalPotentialEnergy();
-        plotVector.push_back(Ttemp);
-        plotVector.push_back(Vtemp);
-        plotVector.push_back(Ttemp + Vtemp);
-      }
     }
     Element::plot();
   }
@@ -218,11 +211,6 @@ namespace MBSim {
         if (plotFeature[generalizedAcceleration]) {
           for (int i = 0; i < udRel.size(); ++i)
             plotColumns.push_back("generalized acceleration (" + to_string(i) + ")");
-        }
-        if (plotFeature[energy]) {
-          plotColumns.push_back("kinetic energy");
-          plotColumns.push_back("potential energy");
-          plotColumns.push_back("total energy");
         }
       }
     }

@@ -53,9 +53,6 @@ namespace MBSim {
         for(int i=0; i<evalGeneralizedForce().size(); ++i)
           plotVector.push_back(getGeneralizedForce()(i));
       }
-      if(plotFeature[energy]) {
-        plotVector.push_back(evalPotentialEnergy());
-      }
     }
     Element::plot();
   }
@@ -151,8 +148,6 @@ namespace MBSim {
           for(int i=0; i<lambda.size(); ++i)
             plotColumns.push_back("generalized force ("+to_string(i)+")");
         }
-        if(plotFeature[energy])
-          plotColumns.emplace_back("potential energy");
       }
     }
     else if(stage==unknownStage)

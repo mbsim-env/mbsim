@@ -61,13 +61,11 @@ namespace MBSim {
   const PlotFeatureEnum openMBV;
   const PlotFeatureEnum debug;
   const PlotFeatureEnum separateFilePerGroup;
-  const PlotFeatureEnum energy;
 
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, plotRecursive)
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, openMBV)
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, debug)
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, separateFilePerGroup)
-  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, energy)
 
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
   }

@@ -313,11 +313,6 @@ namespace MBSim {
        */
       virtual void checkActive(int j) { }
 
-      /**
-       * \brief compute potential energy
-       */
-      virtual double evalPotentialEnergy() { return 0; }
-
       virtual void setGeneralizedForceTolerance(double tol) { laTol = tol; }
       virtual void setGeneralizedImpulseTolerance(double tol) { LaTol = tol; }
       virtual void setGeneralizedRelativePositionTolerance(double tol) { gTol = tol; }

@@ -36,6 +36,10 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  const PlotFeatureEnum energy;
+
+  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, energy)
+
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RigidBodyObserver)
 
   RigidBodyObserver::RigidBodyObserver(const std::string &name) : Observer(name), body(NULL), frameOfReference(NULL) {
@@ -99,6 +103,11 @@ namespace MBSim {
           plotColumns.emplace_back("derivative of angular momentum (x)");
           plotColumns.emplace_back("derivative of angular momentum (y)");
           plotColumns.emplace_back("derivative of angular momentum (z)");
+        }
+        if(plotFeature[energy]) {
+          plotColumns.push_back("kinetic energy");
+          plotColumns.push_back("potential energy");
+          plotColumns.push_back("total energy");
         }
       }
       Observer::init(stage, config);
@@ -233,6 +242,13 @@ namespace MBSim {
       if(plotFeature[angularAcceleration]) {
         for(int j=0; j<p.size(); j++)
           plotVector.push_back(Ld(j));
+      }
+      if(plotFeature[energy]) {
+        double T = 0.5*(body->getMass()*vS.T()*vS + om.T()*WThetaS*om);
+        double V = -body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity().T()*rOS;
+        plotVector.push_back(T);
+        plotVector.push_back(V);
+        plotVector.push_back(T+V);
       }
     }
     if(plotFeature[openMBV]) {

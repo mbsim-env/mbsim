@@ -1119,19 +1119,6 @@ namespace MBSim {
       (**i).initLa();
   }
 
-  double DynamicSystemSolver::evalPotentialEnergy() {
-    double Vpot = 0.0;
-
-    vector<Object*>::iterator i;
-    for (i = object.begin(); i != object.end(); ++i)
-      Vpot += (**i).evalPotentialEnergy();
-
-    vector<Link*>::iterator ic;
-    for (ic = link.begin(); ic != link.end(); ++ic)
-      Vpot += (**ic).evalPotentialEnergy();
-    return Vpot;
-  }
-
   void DynamicSystemSolver::addElement(Element *element_) {
     Object* object_ = dynamic_cast<Object*>(element_);
     Link* link_ = dynamic_cast<Link*>(element_);

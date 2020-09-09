@@ -377,17 +377,6 @@ namespace MBSim {
       void initLa();
 
       /**
-       * \brief compute kinetic energy of entire dynamic system
-       */
-      double evalKineticEnergy() { return 0.5*u.T()*M*u; }
-
-      /**
-       * \brief compute potential energy of entire dynamic system
-       * \tofo change? TODO
-       */
-      double evalPotentialEnergy();
-
-      /**
        * \param element to add
        * \todo necessary? TODO
        */

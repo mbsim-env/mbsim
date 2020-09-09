@@ -39,7 +39,6 @@ namespace MBSim {
    * \date 2009-12-14 revised inverse kinetics (Martin Foerg)
    * \date 2010-06-20 revision of doxygen comments: add parameter names (Roland Zander)
    */
-  //class Object : public Element, public ObjectInterface {
   class Object : public Element {
     public: 
       /**
@@ -209,16 +208,6 @@ namespace MBSim {
        * \brief perform Cholesky decomposition of mass martix
        */
       virtual void updateLLM() { LLM = facLL(evalM()); }
-
-      /**
-       * \return kinetic energy 
-       */
-      virtual double evalKineticEnergy() { return 0.5*u.T()*evalM()*u; }
-
-      /**
-       * \return potential energy
-       */
-      virtual double evalPotentialEnergy() { return 0; }
 
       /**
        * \brief TODO
