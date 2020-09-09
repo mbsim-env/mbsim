@@ -1,3 +1,4 @@
+%\documentclass[a4paper,10pt]{article}
 \documentclass[
 a4paper,
 fleqn,
@@ -5,7 +6,7 @@ DIV=15,
 pagesize
 ]{scrartcl}
 \usepackage{color}
-\usepackage{scrpage2}
+\usepackage{scrlayer-scrpage}
 \usepackage{subfigure}
 \usepackage{booktabs}
 \usepackage{enumitem}
@@ -22,7 +23,7 @@ pagesize
 \title{MBSimGUI}
 \subtitle{First Steps}
 \author{Martin Förg}
-\date{04.09.2019}
+\date{09.09.2020}
 
 \maketitle
 
@@ -38,38 +39,19 @@ simple model of a free falling body will be set up and simulated. Finally, it is
 
 %\cleardoublepage
 
-\section{Installation}
-For official test releases go to \url{https://www.mbsim-env.de/mbsim/releases}
-and download the newest release.
-\begin{itemize}
-\item On \textsc{Linux}
-download the newest *.tar.bz2 file.
-Then change to the installation folder of your choice, e.\,g. your home directory
-\emph{/home/dir}, and extract the archive:
-\begin{verbatim}
-cd /home/dir
-tar xfj mbsim-env-release-x.y-linux64.tar.bz2
-\end{verbatim}
-
-\item On \textsc{Windows}
-download the newest *.zip file
-and extract it to a folder of your choice, e.\,g. your home directory.
-\end{itemize}
+\section{Installation} \label{installation}
+Download the latest release from
+\url{https://www.mbsim-env.de/service/releases} and extract it to a folder of
+your choice. \textsc{MBSimGUI} is now ready to use. If you want to integrate
+\textsc{MBSimGUI} in your desktop environment, e.\,g. to have a shortcut on
+your desktop, descend to the \emph{bin} folder and execute the script
+\emph{desktopintegration}\footnote{There are two files named
+\emph{desktopintegration} in this folder, one for \textsc{Linux}
+(*.\emph{sh}) and one for \textsc{Windows} (\emph{*.bat}).}.
 
 \section{Starting the GUI}
 
-\begin{itemize}
-\item On \textsc{Linux} change to the \emph{bin} folder of the new directory and start
-\emph{mbsimgui}
-\begin{verbatim}
-cd mbsim-env/bin
-mbsimgui
-\end{verbatim}
-
-\item On \textsc{Windows}
-descend to the \emph{bin} folder of the new directory and double-click on
-\emph{mbsimgui.exe}.
-\end{itemize}
+If you have run \emph{desktopintegration} in chapter \ref{installation}, just double-click on \textsc{MBSimGUI} on your desktop. Otherwise, change to the \emph{bin} folder and start the application from there.
 
 Starting \textsc{MBSimGUI} opens a new window, the main window, as shown in figure \ref{GUI}.
 \begin{figure}
@@ -83,21 +65,15 @@ The main window provides the following widgets:
   projects and exporting project data.
   \item the buttons bar provides buttons to start and stop the simulation, to open
   the animation or the plotting tool and to debug the model.
-  \item the project panel allows for setting project options.
-  \item the MBS tree contains all elements of the MBS.
-  It allows for adding and removing elements as well as setting their properties.
-  \item the embeddings tree contains all parameters associated with an element of
-  the MBS. It allows for adding and removing parameters as well as setting their
-  properties.
-  \item the solver panel offers different numerical solvers like integrators or
+  \item the model tree contains all elements of the project in particular the multi-body system (MBS) and its elements as well as the solver.
+  It allows for adding and removing elements as well as setting their properties. Moreover, the solver element offers different numerical solvers like integrators or
   linear system analyzers.
-  \item the 3D view shows the model in terms of the design of its elements. The
-  view on the MBS can be translated, rotated and zoomed.
-  \item the echo area gives some informations to the simulation process and shows
-  possible model errors.
+  \item the parameter tree contains all parameters associated with the project or one of its elements. It allows for adding and removing parameters as well as setting their properties.
+  \item the 3D view shows the model in terms of the design of its elements. The view on the MBS can be translated, rotated and zoomed.
+  \item the echo area gives some informations to the simulation process and shows possible model errors.
 \end{itemize}
 
-Currently only one element exists within the MBS. It is the inertial frame named
+Whenever we begin a new project there is already one element existing within the MBS. It is the inertial frame named
 "I" which is always the starting point of your modeling. All absolute values to
 be defined or calculated are related to this frame. The different colors refer
 to the axes {\color{red} x}, {\color{green} y} and {\color{blue} z} of the
@@ -109,12 +85,13 @@ view. For rotation use the left, for translation the right and for zoom the
 middle mouse button.
 
 \section{A simple example}
-Now we are going to simulate a free fall. By default gravitation is enabled
+Now we are going to simulate a free fall of a rigid body. By default gravitation is enabled
 acting along the negative {\color{green}y-axis}.
 
-First, we will add a body with a DOF along the {\color{green}y-axis}.  For this,
-left-click on the arrow next to the element "MBS" to open the MBS tree.
-Right-click on the container named "objects" shows a context menu. From there
+First, we will add a rigid body with a DOF along the {\color{green}y-axis}. For this,
+open the elements "Project" and "MBS" in the model tree. In order to open an
+element within the tree just left-click on the arrow next to the element.
+A right-click on the container named "objects" shows a context menu. From there
 choose "Add body" and then "Add rigid body".
 
 A properties dialog opens for setting the body's data. Go to the tab named
