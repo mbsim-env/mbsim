@@ -34,8 +34,8 @@ CXXFLAGS=$OLDFLAGS
 
 AC_C_CONST
 
-PKG_CHECK_MODULES(FMATVEC, fmatvec >= 1.0.1) # only fmatvec
-PKG_CHECK_MODULES(DEPS, fmatvec >= 1.0.1 hdf5serie mbxmlutilshelper) # all deps
+PKG_CHECK_MODULES(FMATVEC, fmatvec) # only fmatvec
+PKG_CHECK_MODULES(DEPS, fmatvec hdf5serie mbxmlutilshelper) # all deps
 
 FFLAGS="$FFLAGS -cpp -ffixed-line-length-none"
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
