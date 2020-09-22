@@ -296,6 +296,7 @@ namespace MBSimGUI {
     fileView->setColumnWidth(1,50);
     fileView->hideColumn(3);
 
+    connect(elementView->selectionModel(), &QItemSelectionModel::currentRowChanged, this, &MainWindow::elementChanged);
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
 
@@ -579,15 +580,19 @@ namespace MBSimGUI {
     inlineOpenMBVMW->highlightObject(ID);
   }
 
-  void MainWindow::elementViewClicked(const QModelIndex &current) {
+  void MainWindow::elementChanged(const QModelIndex &current) {
     if(allowUndo) {
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      auto *embeditem=dynamic_cast<EmbedItemData*>(model->getItem(current)->getItemData());
+      auto *item = model->getItem(current)->getItemData();
+      auto *embeditem = dynamic_cast<EmbedItemData*>(item);
+      if(not embeditem) {
+        auto *container = dynamic_cast<ContainerItemData*>(item);
+        if(container) embeditem = container->getElement();
+      }
       if(embeditem) {
         auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
         vector<EmbedItemData*> parents = embeditem->getEmbedItemParents();
-        QModelIndex index = pmodel->index(0,0);
-        pmodel->removeRow(index.row(), QModelIndex());
+        pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
         if(!parents.empty()) {
           pmodel->createParameterItem(parents[0]->getParameters());
           for(size_t i=0; i<parents.size()-1; i++)
@@ -597,17 +602,16 @@ namespace MBSimGUI {
         else
           pmodel->createParameterItem(embeditem->getParameters());
         parameterView->expandAll();
-        auto *element=dynamic_cast<Element*>(model->getItem(current)->getItemData());
+        auto *element = dynamic_cast<Element*>(item);
         if(element)
           highlightObject(element->getID());
         else
           highlightObject("");
       }
-      else {
-        parameterView->selectionModel()->clearSelection();
-        fileView->selectionModel()->clearSelection();
-      }
     }
+  }
+
+  void MainWindow::elementViewClicked(const QModelIndex &current) {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(current)->getItemData();
       QMenu *menu = itemData->createContextMenu();
@@ -617,8 +621,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::parameterViewClicked(const QModelIndex &current) {
-    auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(current)->getItemData());
     if(QApplication::mouseButtons()==Qt::RightButton) {
+      auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(current)->getItemData());
       QMenu *menu = item->createContextMenu();
       menu->exec(QCursor::pos());
       delete menu;
@@ -673,7 +677,7 @@ namespace MBSimGUI {
 
       model->createProjectItem(project,QModelIndex());
 
-      elementViewClicked(project->getModelIndex());
+      elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
 
       projectFile="";
       refresh();
@@ -797,7 +801,6 @@ namespace MBSimGUI {
       solver->setParameterFileItem(parameterFileItem);
       solver->createParameters();
     }
-    elementViewClicked(solver->getModelIndex());
   }
 
   // update model parameters including additional paramters from paramList
@@ -1165,10 +1168,7 @@ namespace MBSimGUI {
 
   void MainWindow::selectElement(const string& ID) {
     Element *element = idMap[ID];
-    if(element) {
-      elementView->selectionModel()->setCurrentIndex(element->getModelIndex(),QItemSelectionModel::ClearAndSelect);
-      elementViewClicked(element->getModelIndex());
-    }
+    if(element) elementView->selectionModel()->setCurrentIndex(element->getModelIndex(),QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::help() {
@@ -1212,7 +1212,7 @@ namespace MBSimGUI {
 
     model->createProjectItem(project);
 
-    elementViewClicked(project->getModelIndex());
+    elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::edit() {
@@ -1766,7 +1766,6 @@ namespace MBSimGUI {
     model->createFrameItem(frame,index);
     updateReferences(dedicatedParent);
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(frame->getModelIndex());
     openElementEditor(false);
   }
 
@@ -1784,7 +1783,6 @@ namespace MBSimGUI {
     model->createContourItem(contour,index);
     updateReferences(dedicatedParent);
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(contour->getModelIndex());
     openElementEditor(false);
   }
 
@@ -1802,7 +1800,6 @@ namespace MBSimGUI {
     model->createGroupItem(group,index);
     updateReferences(dedicatedParent);
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(group->getModelIndex());
     openElementEditor(false);
   }
 
@@ -1820,7 +1817,6 @@ namespace MBSimGUI {
     model->createObjectItem(object,index);
     updateReferences(dedicatedParent);
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(object->getModelIndex());
     openElementEditor(false);
   }
 
@@ -1838,7 +1834,6 @@ namespace MBSimGUI {
     model->createLinkItem(link,index);
     updateReferences(dedicatedParent);
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(link->getModelIndex());
     openElementEditor(false);
   }
 
@@ -1856,7 +1851,6 @@ namespace MBSimGUI {
     model->createConstraintItem(constraint,index);
     updateReferences(dedicatedParent);
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(constraint->getModelIndex());
     openElementEditor(false);
   }
 
@@ -1874,7 +1868,6 @@ namespace MBSimGUI {
     model->createObserverItem(observer,index);
     updateReferences(dedicatedParent);
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(observer->getModelIndex());
     openElementEditor(false);
   }
 
@@ -2078,7 +2071,6 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(frame->getModelIndex());
     if(not element) {
       QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(frame,nullptr,embed);
@@ -2113,7 +2105,6 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(contour->getModelIndex());
     if(not element) {
       QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(contour,nullptr,embed);
@@ -2148,7 +2139,6 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(group->getModelIndex());
     if(not element) {
       QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(group,nullptr,embed);
@@ -2183,7 +2173,6 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(object->getModelIndex());
     if(not element) {
       QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(object,nullptr,embed);
@@ -2218,7 +2207,6 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(link->getModelIndex());
     if(not element) {
       QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(link,nullptr,embed);
@@ -2253,7 +2241,6 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(constraint->getModelIndex());
     if(not element) {
       QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(constraint,nullptr,embed);
@@ -2288,7 +2275,6 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(observer->getModelIndex());
     if(not element) {
       QMessageBox::StandardButton button = QMessageBox::question(this, "Question", embed?"Reference parameters?":"Import parameters?");
       if(button==QMessageBox::Yes) loadParameter(observer,nullptr,embed);
@@ -2355,7 +2341,6 @@ namespace MBSimGUI {
     model->createGroupItem(dss,getProject()->getModelIndex());
     model->createSolverItem(project->getSolver(),getProject()->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(dss->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(dss->getModelIndex());
     if(embed or not dss->getEmbedXMLElement()) {
       if(not dss->getEmbedXMLElement()) dss->setEmbedXMLElement(embedele);
       if(paramele) {
@@ -2426,7 +2411,6 @@ namespace MBSimGUI {
     solver->create();
     model->createSolverItem(solver,getProject()->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(solver->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    elementViewClicked(solver->getModelIndex());
     if(embed or not solver->getEmbedXMLElement()) {
       if(not solver->getEmbedXMLElement()) solver->setEmbedXMLElement(embedele);
       if(paramele) {
