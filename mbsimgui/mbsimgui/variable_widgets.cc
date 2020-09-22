@@ -192,6 +192,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
     layout->addWidget(value);
+    connect(value,&QCheckBox::clicked,this,&BoolWidget::widgetChanged);
   }
 
   QString BoolWidget::getValue() const {
