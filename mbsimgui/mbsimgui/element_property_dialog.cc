@@ -45,12 +45,15 @@
 #include <boost/dll.hpp>
 #include "dialogs.h"
 #include "project.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
@@ -1288,6 +1291,7 @@ namespace MBSimGUI {
 
     translationDependentRotation = new ExtWidget("Translation dependent rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"translationDependentRotation");
     addToTab("Kinematics", translationDependentRotation);
+    connect(translationDependentRotation,&ExtWidget::widgetChanged,this,&RigidBodyPropertyDialog::updateWidget);
 
     vector<QString> list;
     list.emplace_back("\"derivativeOfGeneralizedPositionOfRotation\"");
@@ -1350,6 +1354,8 @@ namespace MBSimGUI {
           nqR = rot->getArg1Size();
       }
     }
+    if(translationDependentRotation->isActive() and static_cast<ChoiceWidget*>(translationDependentRotation->getWidget())->getIndex()==0 and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(translationDependentRotation->getWidget())->getWidget())->getValue()==mw->getProject()->getVarTrue())
+      return nqT;
     return nqT + nqR;
   }
 
