@@ -50,7 +50,7 @@ namespace MBSimControl {
       void setFeedthroughMatrix(const fmatvec::MatV &D_) { D <<= D_; }
 
       void setInputSignal(Signal * inputSignal_) { inputSignal = inputSignal_; }
-      int getSignalSize() const override { return inputSignal->getSignalSize(); }
+      int getSignalSize() const override { return C()?C.rows():A.size(); }
 
     protected:
       Signal* inputSignal{nullptr};
