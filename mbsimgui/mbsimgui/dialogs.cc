@@ -367,13 +367,13 @@ namespace MBSimGUI {
     string name_;
     string label_;
     int number_;
-    while(is) {
-      is >> name_ >> label_ >> number_;
-      if(not label_.empty()) {
-        name.append(QString::fromStdString(name_));
-        label.append(QString::fromStdString(label_));
-        number.append(QString::number(number_+1));
-      }
+    while(true) {
+      is >> name_;
+      if(not is) break;
+      is >> label_ >> number_;
+      name.append(QString::fromStdString(name_));
+      label.append(QString::fromStdString(label_));
+      number.append(QString::number(number_+1));
     }
     is.close();
     QTreeWidget *stateTable = new QTreeWidget;
