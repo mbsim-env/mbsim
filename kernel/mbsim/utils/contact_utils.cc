@@ -56,6 +56,7 @@
 #include <mbsim/contact_kinematics/circle_line.h>
 #include <mbsim/contact_kinematics/circle_linesegment.h>
 #include <mbsim/contact_kinematics/circle_plane.h>
+#include <mbsim/contact_kinematics/circle_spatialcontour.h>
 #include <mbsim/contact_kinematics/compoundcontour_compoundcontour.h>
 #include <mbsim/contact_kinematics/compoundcontour_contour.h>
 #include <mbsim/contact_kinematics/edge_edge.h>
@@ -143,6 +144,9 @@ namespace MBSim {
 
     else if ( contour0==typeid(Circle) && contour1==typeid(Plane) )
       return new ContactKinematicsCirclePlane;
+
+    else if ( contour0==typeid(Circle) && contour1==typeid(SpatialContour) )
+      return new ContactKinematicsCircleSpatialContour;
     
     else if (( contour0==typeid(Cuboid) && contour1==typeid(Plane) ))
       return new ContactKinematicsCompoundContourContour(4);
