@@ -187,6 +187,8 @@ namespace MBSim {
     BoostOdeintHelper::assign(system->getState(), z);
     system->resetUpToDate();
     BoostOdeintHelper::assign(zd, system->evalzd());
+    if(dtPlot<0)
+      system->plot();
   }
 
   template<typename DOS>
@@ -307,20 +309,29 @@ namespace MBSim {
           jsv(i)=svLast(i)*sv(i)<0;
       }
 
-      // plot every dtPlot up to the end of the current step (the current step end may already be shorted by roots)
-      while(tPlot<=step.second && tPlot<tSamplePoint) {
-        dos->calc_state(tPlot, zTemp);
-        if(curTimeAndState!=tPlot) {
-          curTimeAndState=tPlot;
-          system->setTime(tPlot);
-          BoostOdeintHelper::assign(system->getState(), zTemp);
-          system->resetUpToDate();
+      if(dtPlot>0) {
+        // plot every dtPlot up to the end of the current step (the current step end may already be shorted by roots)
+        while(tPlot<=step.second && tPlot<tSamplePoint) {
+          dos->calc_state(tPlot, zTemp);
+          if(curTimeAndState!=tPlot) {
+            curTimeAndState=tPlot;
+            system->setTime(tPlot);
+            BoostOdeintHelper::assign(system->getState(), zTemp);
+            system->resetUpToDate();
+          }
+          nrPlots++;
+          system->plot();
+          if(msgAct(Status))
+            msg(Status)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<"                    "<<std::flush;
+          tPlot+=dtPlot;
         }
+      }
+      else {
+        // for dtPlot<=0 plot every integrator step
         nrPlots++;
         system->plot();
         if(msgAct(Status))
-          msg(Status)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<std::flush;
-        tPlot+=dtPlot;
+          msg(Status)<<"t = "<<step.second<<", dt="<<dos->current_time_step()<<"                    "<<std::flush;
       }
 
       if(step.second<tSamplePoint) {
