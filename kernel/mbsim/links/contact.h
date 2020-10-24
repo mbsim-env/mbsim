@@ -78,6 +78,7 @@ namespace MBSim {
       void updatewbRef(fmatvec::Vec &ref) override;
       void updatelaRef(fmatvec::Vec& ref) override;
       void updateLaRef(fmatvec::Vec& ref) override;
+      void updateisRef(fmatvec::Vec& cur, fmatvec::Vec& next) override;
       void updategRef(fmatvec::Vec& ref) override;
       void updategdRef(fmatvec::Vec& ref) override;
       void updateresRef(fmatvec::Vec& ref) override;
@@ -87,6 +88,7 @@ namespace MBSim {
       void updateLinkStatusRef(fmatvec::VecInt &LinkStatusParent) override;
       void updateLinkStatusRegRef(fmatvec::VecInt &LinkStatusRegParent) override;
       void calclaSize(int j) override;
+      void calcisSize() override;
       void calcgSize(int j) override;
       void calcgdSize(int j) override;
       void calcrFactorSize(int j) override;

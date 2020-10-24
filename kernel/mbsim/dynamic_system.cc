@@ -43,7 +43,7 @@ using namespace MBXMLUtils;
 namespace MBSim {
 
   DynamicSystem::DynamicSystem(const string &name) :
-      Element(name), R(nullptr), qSize(0), qInd(0), xSize(0), xInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0), corrInd(0)
+      Element(name), R(nullptr), qSize(0), qInd(0), xSize(0), xInd(0), isSize(0), isInd(0), gSize(0), gInd(0), gdSize(0), gdInd(0), laSize(0), laInd(0), rFactorSize(0), rFactorInd(0), svSize(0), svInd(0), LinkStatusSize(0), LinkStatusInd(0), LinkStatusRegSize(0), LinkStatusRegInd(0), corrInd(0)
   {
     uSize[0] = 0;
     uSize[1] = 0;
@@ -744,6 +744,17 @@ namespace MBSim {
       i->updateLLMRef(LLMParent);
   }
 
+  void DynamicSystem::updateisRef(Vec &curisParent, Vec &nextisParent) {
+    curis.ref(curisParent, RangeV(isInd, isInd + isSize - 1));
+    nextis.ref(nextisParent, RangeV(isInd, isInd + isSize - 1));
+
+    for(auto & ds : dynamicsystem)
+      ds->updateisRef(curisParent, nextisParent);
+
+    for(auto & l : link)
+      l->updateisRef(curisParent, nextisParent);
+  }
+
   void DynamicSystem::updategRef(Vec& gParent) {
     g.ref(gParent, RangeV(gInd, gInd + gSize - 1));
 
@@ -1170,6 +1181,22 @@ namespace MBSim {
       i->calcbSize();
       i->setbInd(bInverseKineticsSize);
       bInverseKineticsSize += i->getbSize();
+    }
+  }
+
+  void DynamicSystem::calcisSize() {
+    isSize = 0;
+
+    for(auto & ds : dynamicsystem) {
+      ds->calcisSize();
+      ds->setisInd(isSize);
+      isSize += ds->getisSize();
+    }
+
+    for(auto & l : link) {
+      l->calcisSize();
+      l->setisInd(isSize);
+      isSize += l->getisSize();
     }
   }
 

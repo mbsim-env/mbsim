@@ -265,6 +265,7 @@ namespace MBSim {
 
       int gethInd(int i=0) { return hInd[i]; }
       void setlaInd(int ind) { laInd = ind; }
+      void setisInd(int ind) { isInd = ind; }
       void setgInd(int ind) { gInd = ind; }
       void setgdInd(int ind) { gdInd = ind; }
       void setrFactorInd(int ind) { rFactorInd = ind; }
@@ -276,6 +277,7 @@ namespace MBSim {
       void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
       void setxSize(int xSize_) { xSize = xSize_; }
 
+      int getisSize() const { return isSize; } 
       int getlaSize() const { return laSize; } 
       int getgSize() const { return gSize; } 
       int getgdSize() const { return gdSize; } 
@@ -372,6 +374,11 @@ namespace MBSim {
        * \param index of normal usage and inverse kinetics
        */
       void updateLLMRef(fmatvec::SymMat &LLMParent);
+
+      /**
+       * \brief references to internal state of dynamic system parent
+       */
+      virtual void updateisRef(fmatvec::Vec &curisParent, fmatvec::Vec &nextisParent);
 
       /**
        * \brief references to relative distances of dynamic system parent
@@ -573,6 +580,8 @@ namespace MBSim {
        * \brief calculates size of contact force parameters
        */
       void calcbInverseKineticsSize();
+
+      void calcisSize();
 
       /**
        * \brief calculates size of relative distances
@@ -831,6 +840,8 @@ namespace MBSim {
        */
       fmatvec::Vec la, La;
 
+      fmatvec::Vec curis, nextis;
+
       /** 
        * \brief relative distances and velocities
        */
@@ -890,6 +901,8 @@ namespace MBSim {
        * \brief size and local start index of order smooth right hand side relative to parent
        */
       int hSize[2], hInd[2];
+
+      int isSize, isInd;
 
       /** 
        * \brief size and local start index of relative distances relative to parent

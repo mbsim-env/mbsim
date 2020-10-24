@@ -566,6 +566,8 @@ namespace MBSim {
 
       void updateStopVector() override;
 
+      void updateis();
+
       void plot() override;
 
       void addEnvironment(Environment* env);
@@ -658,6 +660,8 @@ namespace MBSim {
        * \brief residuum of contact equations
        */
       fmatvec::Vec resParent;
+
+      fmatvec::Vec curisParent, nextisParent;
 
       /**
        * \brief relative distances

@@ -35,12 +35,13 @@ namespace MBSim {
     circleOrientation(NONINIT),
     spatialContourPosition(NONINIT),
     spatialContourOrientation(NONINIT),
-    parS(NONINIT),
-    par(INIT, 0) {}
+    parS(NONINIT) {}
 
   void ContactKinematicsCircleSpatialContour::setInitialGuess(const MatV &zeta0_) {
     if(zeta0_.rows()!=3 || zeta0_.cols()!=1)
       throw runtime_error("Initial guess value must be a vector of 3 entries [circleAngle0; xi0; eta0].");
+    par.ref(curis, RangeV(0,2));
+    parSol.ref(nextis, RangeV(0,2));
     par(0) = zeta0_(0,0);
     par(1) = zeta0_(1,0);
     par(2) = zeta0_(2,0);
@@ -118,10 +119,13 @@ namespace MBSim {
     spatialContourPosition ^= spatialContour->getFrame()->evalPosition();
     spatialContourOrientation ^= spatialContour->getFrame()->evalOrientation();
 
-    par = rootFinding.solve(par);
+    // solve the system using the start value par and write solution to parSol;
+    // NOTE: after a sucessfull step the integrator copies parSol to par. This way the start value is update for the
+    // next integrator step using the solution of the last successfull intergration step.
+    parSol = rootFinding.solve(par);
     if(rootFinding.getInfo()!=0 && rootFinding.getInfo()!=-1)
       throw runtime_error("Root finding in ContactKinematicsCircleSpatialContour failed.");
-    parS ^= par;
+    parS ^= parSol; // set solution to symbolic parS
 
     auto W_r_WC_ = eval(W_r_WC);
     auto W_r_WS_ = eval(W_r_WS);

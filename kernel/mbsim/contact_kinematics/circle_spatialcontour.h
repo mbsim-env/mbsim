@@ -39,6 +39,7 @@ namespace MBSim {
       void assignContours(const std::vector<Contour*> &contour) override;
       void updateg(SingleContact &contact, int i=0) override;
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
+      void calcisSize() override { isSize = 3; }
       /***************************************************/
 
     private:
@@ -58,7 +59,8 @@ namespace MBSim {
       fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::IndependentVariable> spatialContourPosition;
       fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<3>, fmatvec::Fixed<3>, fmatvec::IndependentVariable> spatialContourOrientation;
       fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::IndependentVariable> parS;
-      fmatvec::Vec3 par;
+      fmatvec::Vec par; // the parameter vector = free variables for the root finding (as a reference to internal state curis)
+      fmatvec::Vec parSol; // the solution of the free varaibles for the root finding (as a reference to internal state nextis)
       fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> W_r_WC;
       fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> W_r_WS;
       fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> t0S;

@@ -136,6 +136,11 @@ namespace MBSim {
       virtual void deletelaRef();
 
       /**
+       * \brief references to internal state of dynamic system parent
+       */
+      virtual void updateisRef(fmatvec::Vec& cur, fmatvec::Vec& next);
+
+      /**
        * \brief references to contact relative distances of dynamic system parent
        */
       virtual void updategRef(fmatvec::Vec& ref);
@@ -179,6 +184,9 @@ namespace MBSim {
        * \brief calculates size of contact force parameters
        */
       virtual void calclaSize(int j) { laSize = 0; }
+
+      int getisSize() { return isSize; }
+      virtual void calcisSize() { isSize = 0; }
 
       /**
        * \brief calculates size of relative distances
@@ -324,6 +332,7 @@ namespace MBSim {
       virtual void setLinkStatusInd(int LinkStatusInd_) { LinkStatusInd = LinkStatusInd_; };
       virtual void setLinkStatusRegInd(int LinkStatusRegInd_) { LinkStatusRegInd = LinkStatusRegInd_; };
       virtual void setlaInd(int laInd_) { laInd = laInd_;Ila=fmatvec::RangeV(laInd,laInd+laSize-1); }
+      virtual void setisInd(int isInd_) { isInd = isInd_; }
       virtual void setgInd(int gInd_) { gInd = gInd_; Ig=fmatvec::RangeV(gInd,gInd+gSize-1); }
       virtual void setgdInd(int gdInd_) { gdInd = gdInd_; }
       virtual void setrFactorInd(int rFactorInd_) { rFactorInd = rFactorInd_; }
@@ -488,6 +497,8 @@ namespace MBSim {
        */
        int LinkStatusRegSize, LinkStatusRegInd; 
 
+      fmatvec::Vec curis, nextis;
+
       /**
        * \brief relative position, relative velocity, contact force and impact parameters
        */
@@ -497,6 +508,8 @@ namespace MBSim {
        * \brief contact forces of smooth contact laws
        */
       fmatvec::Vec laS;
+
+      int isSize, isInd;
 
       /**
        * \brief size and local index of relative distances

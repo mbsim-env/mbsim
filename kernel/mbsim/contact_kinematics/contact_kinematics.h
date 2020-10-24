@@ -56,6 +56,14 @@ namespace MBSim {
        */
       virtual void assignContours(const std::vector<Contour*> &contour) = 0;
 
+      virtual void calcisSize() { isSize = 0; }
+      void setisInd(int ind) { isInd = ind; }
+      int getisSize() { return isSize; }
+      virtual void updateisRef(fmatvec::Vec &curisParent, fmatvec::Vec &nextisParent) {
+        curis.ref(curisParent, fmatvec::RangeV(isInd,isInd+isSize-1));
+        nextis.ref(nextisParent, fmatvec::RangeV(isInd,isInd+isSize-1));
+      }
+
       /**
        * \brief compute contact kinematics for all contacts
        * \param contact vector of all contacts
@@ -123,6 +131,10 @@ namespace MBSim {
        * \brief maximum number of contacts
        */
       int maxNumContacts{1};
+
+      fmatvec::Vec curis, nextis;
+      int isInd { 0 };
+      int isSize { 0 };
   };
 
 }

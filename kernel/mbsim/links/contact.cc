@@ -131,6 +131,12 @@ namespace MBSim {
       iter->updateLaRef(LaParent);
   }
 
+  void Contact::updateisRef(Vec& curisParent, Vec& nextisParent) {
+    Link::updateisRef(curisParent, nextisParent);
+    if(contactKinematics)
+      contactKinematics->updateisRef(curis, nextis);
+  }
+
   void Contact::updategRef(Vec& gParent) {
     Link::updategRef(gParent);
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
@@ -184,6 +190,16 @@ namespace MBSim {
     for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter) {
       iter->calclaSize(j);
       laSize += iter->getlaSize();
+    }
+  }
+
+  void Contact::calcisSize() {
+    Link::calcisSize();
+    if(contactKinematics)
+    {
+      contactKinematics->calcisSize();
+      contactKinematics->setisInd(isSize);
+      isSize += contactKinematics->getisSize();
     }
   }
 
@@ -271,7 +287,6 @@ namespace MBSim {
       contactKinematics->setSearchAllContactPoints(searchAllCP);
       if(maxNumContacts>-1) contactKinematics->setMaximumNumberOfContacts(maxNumContacts);
       contactKinematics->assignContours(contour[0], contour[1]);
-      contactKinematics->setInitialGuess(zeta0);
       contactKinematics->setTolerance(tol);
       for (int k = 0; k < contactKinematics->getMaximumNumberOfContacts(); ++k) {
         stringstream contactName;
@@ -315,6 +330,7 @@ namespace MBSim {
       Link::init(stage, config);
       for (vector<SingleContact>::iterator iter = contacts.begin(); iter != contacts.end(); ++iter)
         iter->init(stage, config);
+      contactKinematics->setInitialGuess(zeta0);
     }
     //Don't call init()-routines for "sub"-contacts with stage "LASTINITSTAGE" as here is checked if contactKinematics has more than one possible contact point, which is only possible in multi-contact
     fcl->init(stage, config);

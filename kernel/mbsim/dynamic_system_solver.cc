@@ -244,6 +244,7 @@ namespace MBSim {
       calclaInverseKineticsSize();
       calcbInverseKineticsSize();
 
+      calcisSize();
       calclaSize(0);
       calcgSize(0);
       calcgdSize(0);
@@ -258,6 +259,7 @@ namespace MBSim {
       msg(Info) << "uSize = " << uSize[0] << endl;
       msg(Info) << "xSize = " << xSize << endl;
       msg(Info) << "hSize = " << hSize[0] << endl;
+      msg(Info) << "isSize = " << isSize << endl;
       msg(Info) << "gSize = " << gSize << endl;
       msg(Info) << "gdSize = " << gdSize << endl;
       msg(Info) << "laSize = " << laSize << endl;
@@ -284,6 +286,8 @@ namespace MBSim {
       sParent.resize(getlaSize());
       if (impactSolver == rootfinding)
         resParent.resize(getlaSize());
+      curisParent.resize(getisSize());
+      nextisParent.resize(getisSize());
       gParent.resize(getgSize());
       gdParent.resize(getgdSize());
       zParent.resize(getzSize());
@@ -320,6 +324,7 @@ namespace MBSim {
       updateduRef(duParent);
       updatelaRef(laParent);
       updateLaRef(LaParent);
+      updateisRef(curisParent, nextisParent);
       updategRef(gParent);
       updategdRef(gdParent);
       updatehRef(hParent[0], 0);
@@ -1532,6 +1537,10 @@ namespace MBSim {
   void DynamicSystemSolver::updateStopVector() {
     Group::updateStopVector();
     updsv = false;
+  }
+
+  void DynamicSystemSolver::updateis() {
+    curisParent = nextisParent;
   }
 
   void DynamicSystemSolver::resetUpToDate() {
