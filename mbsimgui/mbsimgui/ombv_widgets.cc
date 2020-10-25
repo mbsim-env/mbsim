@@ -721,8 +721,24 @@ namespace MBSimGUI {
 
   DOMElement* CompoundRigidBodyWidget::initializeUsingXML(DOMElement *element) {
     OMBVRigidBodyWidget::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(OPENMBV%"scaleFactor");
-    bodies->initializeUsingXML(e->getNextElementSibling());
+
+    // search last element of OMBVRigidBodyWidget
+    // TODO/MISSING: initializeUsingXML(...) should return the first unparsed DOMElement NOT just the input DOMElement "element".
+    // Then we can avoid such ugly hacks to detect the element here which needs to know all base class definitions.
+    DOMElement *e;
+           e=E(element)->getFirstElementChildNamed(OPENMBV%"scaleFactor");
+    if(!e) e=E(element)->getFirstElementChildNamed(OPENMBV%"initialRotation");
+    if(!e) e=E(element)->getFirstElementChildNamed(OPENMBV%"initialTranslation");
+    if(!e) e=E(element)->getFirstElementChildNamed(OPENMBV%"transparency");
+    if(!e) e=E(element)->getFirstElementChildNamed(OPENMBV%"diffuseColor");
+    if(!e) e=E(element)->getFirstElementChildNamed(OPENMBV%"maximalColorValue");
+    if(!e) e=E(element)->getFirstElementChildNamed(OPENMBV%"minimalColorValue");
+    if(e)
+      e=e->getNextElementSibling();
+    else
+      e=element->getFirstElementChild();
+
+    bodies->initializeUsingXML(e);
     return element;
   }
 
