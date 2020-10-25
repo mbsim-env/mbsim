@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<Group xmlns="http://www.mbsim-env.de/MBSim" name="bike{phaseIdx}">
+<Group xmlns="http://www.mbsim-env.de/MBSim" name="bike{idx}">
   <frames/>
   <contours/>
   <groups/>
@@ -8,7 +8,7 @@
       <generalizedInitialPosition>
         <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <ele>0</ele>
-          <ele>1*(phaseIdx-1)</ele>
+          <ele>1*(idx-1)</ele>
           <ele>h + r -0.11</ele>
           <ele>0</ele>
           <ele>-0.18</ele>
@@ -313,7 +313,7 @@
       </enableOpenMBVFrameC></RigidBody>
     <RigidBody name="Fahrer">
       <generalizedInitialPosition>
-        [0.2*sin(-0.3667-(pumpPhase(phaseIdx)-pumpPhaseOffset)*pi/180)]
+        [pumpAmpl(idx)*sin(-0.3667-(pumpPhase(idx)-pumpPhaseOffset)*pi/180)]
       </generalizedInitialPosition>
       <frameOfReference ref="../Object[Rahmen]/Frame[F]"/>
       <mass unit="kg">mF</mass>
@@ -342,18 +342,47 @@
       <frames/>
       <contours>
       </contours><openMBVRigidBody>
-        <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
-          <transparency unit="-">0.8</transparency>
-          <initialRotation unit="degree">
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>180</ele>
-              <ele>-20</ele>
-              <ele>90</ele>
-            </xmlVector>
-          </initialRotation>
-          <scaleFactor unit="-">0.007</scaleFactor>
-          <ivFileName>"body.wrl"</ivFileName>
-        </IvBody>
+        <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="CompoundRigidBody2">
+          <transparency unit="-">0.3</transparency>
+          <IvBody name="IvBody3">
+            <transparency unit="-">0.3</transparency>
+            <initialRotation unit="degree">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>180</ele>
+                <ele>-20</ele>
+                <ele>90</ele>
+              </xmlVector>
+            </initialRotation>
+            <scaleFactor unit="-">0.007</scaleFactor>
+            <ivFileName>"body.wrl"</ivFileName>
+          </IvBody>
+          <IvBody name="IvBody6">
+            <diffuseColor>
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0.5</ele>
+                <ele>1</ele>
+                <ele>1</ele>
+              </xmlVector>
+            </diffuseColor>
+            <transparency unit="-">0</transparency>
+            <initialTranslation unit="m">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>0.15</ele>
+                <ele>0</ele>
+                <ele>0.33</ele>
+              </xmlVector>
+            </initialTranslation>
+            <initialRotation unit="degree">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>180</ele>
+                <ele>0</ele>
+                <ele>90</ele>
+              </xmlVector>
+            </initialRotation>
+            <scaleFactor unit="-">0.01</scaleFactor>
+            <ivFileName>"helm.wrl"</ivFileName>
+          </IvBody>
+        </CompoundRigidBody>
       </openMBVRigidBody>
       <enableOpenMBVFrameC/>
     </RigidBody>
@@ -381,6 +410,7 @@
         </RegularizedSpatialFriction>
       </tangentialForceLaw>
       <initialGuess>[pi/2;0.15;0]</initialGuess>
+      <tolerance>tol/100</tolerance>
     </Contact>
     <Contact name="KontaktHR">
       <connect ref1="../../Contour[Boden]" ref2="../Object[Hinterrad]/Contour[Rad]"/>
@@ -404,6 +434,7 @@
         </RegularizedSpatialFriction>
       </tangentialForceLaw>
       <initialGuess>[pi/2;-0.85;0]</initialGuess>
+      <tolerance>tol/100</tolerance>
     </Contact>
     <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="FahrerPos">
       <frame ref="../Object[Fahrer]/Frame[C]"/>
@@ -422,7 +453,7 @@
           zF=input(3);
           zR=input(6);
           xR=input(4);
-          hSoll=pumpFak*     0.2*sin(xR-(pumpPhase(phaseIdx)-pumpPhaseOffset)*pi/180);
+          hSoll=pumpFak*     pumpAmpl(idx)*sin(xR-(pumpPhase(idx)-pumpPhaseOffset)*pi/180);
           ret=mF*9.81   -100000*(zF-(zR+hSoll));
         </SymbolicFunction>
       </function>
@@ -504,5 +535,7 @@
   <enableOpenMBVFrameI>
     <size unit="dm">1</size>
   </enableOpenMBVFrameI>
+
+
 
 </Group>

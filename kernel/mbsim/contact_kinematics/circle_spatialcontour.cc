@@ -107,7 +107,7 @@ namespace MBSim {
     jacobianFunction.setDep(SquareMatrix<Fixed<3>, SymbolicExpression>(parDer(rootFunctionS, parS)));
     rootFinding.setJacobianFunction(&jacobianFunction);
 
-    criteria.setTolerance(1e-8);
+    criteria.setTolerance(tol);
     rootFinding.setCriteriaFunction(&criteria);
 
     rootFinding.setDampingFunction(&damping);

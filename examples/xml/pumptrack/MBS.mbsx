@@ -1,64 +1,66 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
-  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
-    <Parameter>
-      <scalarParameter name="be">(90-73)/180*pi</scalarParameter>
-      <scalarParameter name="h">400e-3</scalarParameter>
-      <scalarParameter name="s">45e-3</scalarParameter>
-      <scalarParameter name="r">0.3</scalarParameter>
-      <scalarParameter name="al">-0.1*0</scalarParameter>
-      <scalarParameter name="v0">5</scalarParameter>
-      <scalarParameter name="phi0">0</scalarParameter>
-      <scalarParameter name="mR">5</scalarParameter>
-      <scalarParameter name="pumpFak">0.9</scalarParameter>
-      <vectorParameter name="pumpPhase">[0; 90; 180; 270]</vectorParameter>
-      <vectorParameter name="pumpPhaseOffset">15</vectorParameter>
-      <matrixParameter name="JR">
-        <xmlMatrix>
-          <row>
-            <ele>0.1</ele>
-            <ele>0</ele>
-            <ele>0</ele>
-          </row>
-          <row>
-            <ele>0</ele>
-            <ele>1</ele>
-            <ele>0</ele>
-          </row>
-          <row>
-            <ele>0</ele>
-            <ele>0</ele>
-            <ele>1</ele>
-          </row>
-        </xmlMatrix>
-      </matrixParameter>
-      <scalarParameter name="mG">2.3</scalarParameter>
-      <matrixParameter name="JG">
-        <xmlMatrix>
-          <row>
-            <ele>0.1</ele>
-            <ele>0</ele>
-            <ele>0</ele>
-          </row>
-          <row>
-            <ele>0</ele>
-            <ele>0.1</ele>
-            <ele>0</ele>
-          </row>
-          <row>
-            <ele>0</ele>
-            <ele>0</ele>
-            <ele>0.01</ele>
-          </row>
-        </xmlMatrix>
-      </matrixParameter>
-      <scalarParameter name="mV">1</scalarParameter>
-      <scalarParameter name="mH">1.5</scalarParameter>
-      <scalarParameter name="mF">50</scalarParameter>
-      <scalarParameter name="mu">1</scalarParameter>
-      <scalarParameter name="c">4e5</scalarParameter>
-      <scalarParameter name="d">2e4</scalarParameter>
-    </Parameter>
+<Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <Parameter>
+    <scalarParameter name="be">(90-73)/180*pi</scalarParameter>
+    <scalarParameter name="h">400e-3</scalarParameter>
+    <scalarParameter name="s">45e-3</scalarParameter>
+    <scalarParameter name="r">0.3</scalarParameter>
+    <scalarParameter name="al">-0.1*0</scalarParameter>
+    <scalarParameter name="v0">5</scalarParameter>
+    <scalarParameter name="phi0">0</scalarParameter>
+    <scalarParameter name="mR">5</scalarParameter>
+    <scalarParameter name="tol">1e-4</scalarParameter>
+    <scalarParameter name="pumpFak">0.9</scalarParameter>
+    <vectorParameter name="pumpAmpl">[0; 0.2; 0.2; 0.2; 0.2]</vectorParameter>
+    <vectorParameter name="pumpPhase">[0; 0; 90; 180; 270]</vectorParameter>
+    <vectorParameter name="pumpPhaseOffset">8.5</vectorParameter>
+    <matrixParameter name="JR">
+      <xmlMatrix>
+        <row>
+          <ele>0.1</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+        </row>
+        <row>
+          <ele>0</ele>
+          <ele>1</ele>
+          <ele>0</ele>
+        </row>
+        <row>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>1</ele>
+        </row>
+      </xmlMatrix>
+    </matrixParameter>
+    <scalarParameter name="mG">2.3</scalarParameter>
+    <matrixParameter name="JG">
+      <xmlMatrix>
+        <row>
+          <ele>0.1</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+        </row>
+        <row>
+          <ele>0</ele>
+          <ele>0.1</ele>
+          <ele>0</ele>
+        </row>
+        <row>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0.01</ele>
+        </row>
+      </xmlMatrix>
+    </matrixParameter>
+    <scalarParameter name="mV">1</scalarParameter>
+    <scalarParameter name="mH">1.5</scalarParameter>
+    <scalarParameter name="mF">50</scalarParameter>
+    <scalarParameter name="mu">1</scalarParameter>
+    <scalarParameter name="c">4e5</scalarParameter>
+    <scalarParameter name="d">2e4</scalarParameter>
+  </Parameter>
+  <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
       <plotFeatureRecursive value="c:signal" xmlns:c="http://www.mbsim-env.de/MBSimControl">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
@@ -78,8 +80,8 @@
       <contours>
         <SpatialContour name="Boden">
           <frameOfReference ref="../Frame[B2]"/>
-          <etaNodes>[-10;50]</etaNodes>
-          <xiNodes>[-1;4]</xiNodes>
+          <etaNodes>[-10;70]</etaNodes>
+          <xiNodes>[-1;5]</xiNodes>
           <contourFunction>
             <SymbolicFunction arg1="zeta" arg1Dim="2">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -97,7 +99,7 @@
         </SpatialContour>
       </contours>
       <groups>
-        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="4" counterName="phaseIdx" href="system.xml">
+        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="5" counterName="idx" href="system.xml">
           <Parameter/>
         </Embed>
       </groups>
@@ -117,16 +119,15 @@
         </MBSimEnvironment>
       </environments>
     </DynamicSystemSolver>
-  </Embed>
-  <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSim">
-    <startTime>0</startTime>
-    <endTime>6</endTime>
-    <plotStepSize>1e-3</plotStepSize>
-    <toleranceForPositionConstraints>1e-6</toleranceForPositionConstraints>
-    <toleranceForVelocityConstraints>1e-6</toleranceForVelocityConstraints>
-    <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
-    <relativeToleranceScalar>1e-6</relativeToleranceScalar>
-    <maximumStepSize>1e-3</maximumStepSize>
-  </BoostOdeintDOS_RKDOPRI5>
-
-</MBSimProject>
+    <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSim">
+      <startTime>0</startTime>
+      <endTime>9</endTime>
+      <plotStepSize>5e-3</plotStepSize>
+      <toleranceForPositionConstraints>tol</toleranceForPositionConstraints>
+      <toleranceForVelocityConstraints>tol</toleranceForVelocityConstraints>
+      <absoluteToleranceScalar>tol</absoluteToleranceScalar>
+      <relativeToleranceScalar>tol</relativeToleranceScalar>
+      <maximumStepSize>1e-2</maximumStepSize>
+    </BoostOdeintDOS_RKDOPRI5>
+  </MBSimProject>
+</Embed>
