@@ -13,7 +13,7 @@
     <scalarParameter name="pumpFak">0.9</scalarParameter>
     <vectorParameter name="pumpAmpl">[0; 0.2; 0.2; 0.2; 0.2]</vectorParameter>
     <vectorParameter name="pumpPhase">[0; 0; 90; 180; 270]</vectorParameter>
-    <vectorParameter name="pumpPhaseOffset">8.5</vectorParameter>
+    <vectorParameter name="pumpPhaseOffset">6.5</vectorParameter>
     <matrixParameter name="JR">
       <xmlMatrix>
         <row>
@@ -94,7 +94,8 @@
           <openEta>true</openEta>
           <openXi>true</openXi>
           <enableOpenMBV>
-            <etaNodes>[-10:0.1:50]'</etaNodes>
+            <transparency>0.3</transparency>
+            <etaNodes>[-10:0.1:70]'</etaNodes>
           </enableOpenMBV>
         </SpatialContour>
       </contours>
