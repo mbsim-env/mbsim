@@ -4,7 +4,6 @@
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="E">2e11</scalarParameter>
-      <scalarParameter name="nu">0.3</scalarParameter>
       <scalarParameter name="m1">0.36</scalarParameter>
       <scalarParameter name="J1">0.002727</scalarParameter>
       <scalarParameter name="m2">0.151104</scalarParameter>
@@ -503,28 +502,28 @@
           <stiffnessMatrix>
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
-                <ele>1/24*pi^4*(h2/l2)^2*E/(1-nu^2)*d2*h2/l2</ele>
+                <ele>1/24*pi^4*(h2/l2)^2*E*d2*h2/l2</ele>
                 <ele>0</ele>
                 <ele>0</ele>
                 <ele>0</ele>
               </row>
               <row>
                 <ele>0</ele>
-                <ele>2/3*pi^4*(h2/l2)^2*E/(1-nu^2)*d2*h2/l2</ele>
+                <ele>2/3*pi^4*(h2/l2)^2*E*d2*h2/l2</ele>
                 <ele>0</ele>
                 <ele>0</ele>
               </row>
               <row>
                 <ele>0</ele>
                 <ele>0</ele>
-                <ele>16/3*E/(1-nu^2)*d2*h2/l2</ele>
-                <ele>-8/3*E/(1-nu^2)*d2*h2/l2</ele>
+                <ele>16/3*E*d2*h2/l2</ele>
+                <ele>-8/3*E*d2*h2/l2</ele>
               </row>
               <row>
                 <ele>0</ele>
                 <ele>0</ele>
-                <ele>-8/3*E/(1-nu^2)*d2*h2/l2</ele>
-                <ele>7/3*E/(1-nu^2)*d2*h2/l2</ele>
+                <ele>-8/3*E*d2*h2/l2</ele>
+                <ele>7/3*E*d2*h2/l2</ele>
               </row>
             </xmlMatrix>
           </stiffnessMatrix>
@@ -591,14 +590,14 @@
                 <row>
                   <ele>0</ele>
                   <ele>0</ele>
-                  <ele>-E/(1-nu^2)*4/l2</ele>
-                  <ele>E/(1-nu^2)*3/l2</ele>
+                  <ele>-E*4/l2</ele>
+                  <ele>E*3/l2</ele>
                 </row>
                 <row>
                   <ele>0</ele>
                   <ele>0</ele>
-                  <ele>-E/(1-nu^2)*nu*4/l2</ele>
-                  <ele>E/(1-nu^2)*nu*3/l2</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
                 </row>
                 <row>
                   <ele>0</ele>

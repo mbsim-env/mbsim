@@ -4,7 +4,6 @@
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="E">2e11</scalarParameter>
-      <scalarParameter name="nu">0.3</scalarParameter>
       <scalarParameter name="m1">0.36</scalarParameter>
       <scalarParameter name="J1">0.002727</scalarParameter>
       <scalarParameter name="m2">0.151104</scalarParameter>
@@ -191,7 +190,7 @@ for i=1:4
     Kee(j,i) = Kee(i,j);
   end
 end
-Kee*=E/(12*(1-nu^2))*d2*h2^3;
+Kee*=E/12*d2*h2^3;
 
 for i=1:n
   i1=2*i-1;

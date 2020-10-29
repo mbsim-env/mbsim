@@ -42,7 +42,6 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   double E = 2.0e11;
-  double nu = 0.3;
   double m1 = 0.36;
   double J1 = 0.002727; 
   double m2 = 0.151104;
@@ -144,7 +143,7 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   Ke(2,2) = 16./3;
   Ke(2,3) = -8./3;
   Ke(3,3) = 7./3;
-  Ke*=E/(1-pow(nu,2))*d2*h2/l2;
+  Ke*=E*d2*h2/l2;
 
   body2->setMass(m2);
   body2->setPositionIntegral(m2*Kr);

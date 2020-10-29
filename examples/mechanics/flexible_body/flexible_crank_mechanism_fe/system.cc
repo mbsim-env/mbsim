@@ -42,7 +42,6 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
   getMBSimEnvironment()->setAccelerationOfGravity(grav);
 
   double E = 2.0e11;
-  double nu = 0.3;
   double m1 = 0.36;
   double J1 = 0.002727; 
   double m2 = 0.151104;
@@ -181,7 +180,7 @@ CrankMechanism::CrankMechanism(const string &name, int n) : DynamicSystemSolver(
     Kee(2,2) = 12./pow(D,3);
     Kee(2,3) = -6./pow(D,2);
     Kee(3,3) = 4./D;
-    Kee*=E/(12*(1-pow(nu,2)))*d2*pow(h2,3);
+    Kee*=E/12*d2*pow(h2,3);
     Keg.add(RangeV(i1,i2),RangeV(i1,i2),Kee);
   }
 
