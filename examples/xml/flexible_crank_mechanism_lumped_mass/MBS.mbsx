@@ -4,7 +4,6 @@
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="E">2e11</scalarParameter>
-      <scalarParameter name="nu">0.3</scalarParameter>
       <scalarParameter name="m1">0.36</scalarParameter>
       <scalarParameter name="J1">0.002727</scalarParameter>
       <scalarParameter name="m3">0.075552</scalarParameter>
