@@ -7,7 +7,6 @@ libobserver_la_SOURCES = observer.cc\
 			 contact_observer.cc \
 			 maxwell_contact_observer.cc \
 			 frame_observer.cc \
-			 filtered_frame_observer.cc \
 			 inverse_kinematics_constraint_observer.cc
 
 observerincludedir = $(includedir)/mbsim/observers
@@ -23,5 +22,4 @@ observerinclude_HEADERS = observer.h\
 			  contact_observer.h \
 			  maxwell_contact_observer.h \
 			  frame_observer.h \
-			  filtered_frame_observer.h \
                           inverse_kinematics_constraint_observer.h

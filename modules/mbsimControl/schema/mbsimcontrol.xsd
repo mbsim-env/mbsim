@@ -934,4 +934,103 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="FrameChaserObserver" substitutionGroup="mbsim:Observer" type="FrameChaserObserverType">
+    <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+    Creates a OpenMBV <a class="link" href="openmbv:Frame"><span class="_element">&lt;Frame&gt;</span></a> which
+    moves (translation and rotation) according to a given definition.
+    This definition can be provided per component of the translation and rotation.
+    It can also reference a MBSim <a class="link" href="mbsim:Frame"><span class="_element">&lt;Frame&gt;</span></a> to chase.
+    Single components for the translation and rotation can still be overwritten when following a Frame.
+    This is even the basic usage of this observer: following a MBSim Frame but using different definitions for some
+    components of the translation and/or rotation.
+    This is very useful in OpenMBV to move the camera with such a FrameChaserObserver.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="FrameChaserObserverType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:ObserverType">
+        <xs:sequence>
+          <xs:element name="frame" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+              The frame to chase. If given, this observer follows the referenced Frame but the following definitions can
+              be used to overwrite single components for translation and rotation.
+              If not given, this observer is fixed in space at the world coordinate system but the following defintions can
+              still be used to overwrite single components.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:choice minOccurs="0">
+            <xs:element name="constantX" type="pv:lengthScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+                Defines a constant value for the x-translation of the observer frame.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="signalX">
+              <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+                Defines a signal being used for the x-translation of the observer frame.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:choice minOccurs="0">
+            <xs:element name="constantY" type="pv:lengthScalar" minOccurs="0"/>
+            <xs:element name="signalY">
+              <xs:complexType>
+                <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:choice minOccurs="0">
+            <xs:element name="constantZ" type="pv:lengthScalar" minOccurs="0"/>
+            <xs:element name="signalZ">
+              <xs:complexType>
+                <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:choice minOccurs="0">
+            <xs:element name="constantRotationX" type="pv:angleScalar" minOccurs="0">
+              <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+                Defines a constant angle for the rotation about the world x-axis of the observer frame.
+              </xs:documentation></xs:annotation>
+            </xs:element>
+            <xs:element name="signalRotationX">
+              <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+                Defines a signal being used for the rotation angle about the world x-axis of the observer frame.
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:choice minOccurs="0">
+            <xs:element name="constantRotationY" type="pv:angleScalar" minOccurs="0"/>
+            <xs:element name="signalRotationY">
+              <xs:complexType>
+                <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:choice minOccurs="0">
+            <xs:element name="constantRotationZ" type="pv:angleScalar" minOccurs="0"/>
+            <xs:element name="signalRotationZ">
+              <xs:complexType>
+                <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVFrameParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>

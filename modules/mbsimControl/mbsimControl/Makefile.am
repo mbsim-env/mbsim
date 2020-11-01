@@ -18,6 +18,7 @@ libmbsimControl_la_SOURCES = \
   massless_spring_damper.cc\
   signal_function.cc\
   extern_signal_sink.cc\
+  frame_chaser_observer.cc \
   signal_observer.cc
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
@@ -43,6 +44,7 @@ mbsimControlinclude_HEADERS = \
   nonlinear_transfer_system.h\
   massless_spring_damper.h\
   signal_function.h\
+  frame_chaser_observer.h \
   signal_observer.h
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk

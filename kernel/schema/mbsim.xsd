@@ -5667,46 +5667,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="FilteredFrameObserver" substitutionGroup="Observer" type="FilteredFrameObserverType">
-    <xs:annotation><xs:documentation xml:lang="en" xmlns="">
-    Creates a OpenMBV Frame which moves (translation and rotation) analog to the referenced frame.
-    However, the translation in x, y and z direction can be set independently to an constant value.
-    Also the rotation about the world frame axis about x, y and z can be set independently to an constant value.
-    This allowes e.g. that the OpneMBV Frame moves with the the referenced frame in x direction but does not move
-    in y and z direction.
-    This is very useful in OpenMBV to e.g. move the camera with a frame but keeping differrent axis or angle constant.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="FilteredFrameObserverType">
-    <xs:complexContent>
-      <xs:extension base="ObserverType">
-        <xs:sequence>
-          <xs:element name="frame">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-              The frame being observed.
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-          <xs:element name="constantX" type="pv:lengthScalar" minOccurs="0"/>
-          <xs:element name="constantY" type="pv:lengthScalar" minOccurs="0"/>
-          <xs:element name="constantZ" type="pv:lengthScalar" minOccurs="0"/>
-          <xs:element name="constantRotationX" type="pv:angleScalar" minOccurs="0"/>
-          <xs:element name="constantRotationY" type="pv:angleScalar" minOccurs="0"/>
-          <xs:element name="constantRotationZ" type="pv:angleScalar" minOccurs="0"/>
-          <xs:element name="enableOpenMBV" minOccurs="0">
-            <xs:complexType>
-              <xs:group ref="OpenMBVFrameParameters"/>
-            </xs:complexType>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="InverseKinematicsConstraintObserver" substitutionGroup="Observer" type="InverseKinematicsConstraintObserverType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
     tbd.
