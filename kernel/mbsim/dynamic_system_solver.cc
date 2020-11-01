@@ -324,7 +324,7 @@ namespace MBSim {
       updateduRef(duParent);
       updatelaRef(laParent);
       updateLaRef(LaParent);
-      updateisRef(curisParent, nextisParent);
+      updateInternalStateRef(curisParent, nextisParent);
       updategRef(gParent);
       updategdRef(gdParent);
       updatehRef(hParent[0], 0);
@@ -1539,7 +1539,7 @@ namespace MBSim {
     updsv = false;
   }
 
-  void DynamicSystemSolver::updateis() {
+  void DynamicSystemSolver::updateInternalState() {
     curisParent = nextisParent;
   }
 

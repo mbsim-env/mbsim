@@ -90,7 +90,7 @@ namespace MBSim {
     la.resize(la.size(), NONINIT);
   }
 
-  void Link::updateisRef(Vec& curisParent, Vec& nextisParent) {
+  void Link::updateInternalStateRef(Vec& curisParent, Vec& nextisParent) {
     curis.ref(curisParent, RangeV(isInd,isInd+isSize-1));
     nextis.ref(nextisParent, RangeV(isInd,isInd+isSize-1));
   }

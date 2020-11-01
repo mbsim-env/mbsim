@@ -523,14 +523,14 @@
         <scaleLength>0.01</scaleLength>
       </enableOpenMBVTangentialForce>
     </ContactObserver>
-    <FilteredFrameObserver name="RahmenTrackPos">
+    <FrameChaserObserver name="RahmenTrackPos" xmlns="http://www.mbsim-env.de/MBSimControl">
       <frame ref="../Object[Rahmen]/Frame[F]"/>
       <constantZ>0</constantZ>
       <constantRotationX>0</constantRotationX>
       <constantRotationY>0</constantRotationY>
       <constantRotationZ>0</constantRotationZ>
       <enableOpenMBV/>
-    </FilteredFrameObserver>
+    </FrameChaserObserver>
   </observers>
   <enableOpenMBVFrameI>
     <size unit="dm">1</size>

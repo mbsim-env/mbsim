@@ -744,15 +744,15 @@ namespace MBSim {
       i->updateLLMRef(LLMParent);
   }
 
-  void DynamicSystem::updateisRef(Vec &curisParent, Vec &nextisParent) {
+  void DynamicSystem::updateInternalStateRef(Vec &curisParent, Vec &nextisParent) {
     curis.ref(curisParent, RangeV(isInd, isInd + isSize - 1));
     nextis.ref(nextisParent, RangeV(isInd, isInd + isSize - 1));
 
     for(auto & ds : dynamicsystem)
-      ds->updateisRef(curisParent, nextisParent);
+      ds->updateInternalStateRef(curisParent, nextisParent);
 
     for(auto & l : link)
-      l->updateisRef(curisParent, nextisParent);
+      l->updateInternalStateRef(curisParent, nextisParent);
   }
 
   void DynamicSystem::updategRef(Vec& gParent) {

@@ -59,7 +59,7 @@ namespace MBSim {
       virtual void calcisSize() { isSize = 0; }
       void setisInd(int ind) { isInd = ind; }
       int getisSize() { return isSize; }
-      virtual void updateisRef(fmatvec::Vec &curisParent, fmatvec::Vec &nextisParent) {
+      virtual void updateInternalStateRef(fmatvec::Vec &curisParent, fmatvec::Vec &nextisParent) {
         curis.ref(curisParent, fmatvec::RangeV(isInd,isInd+isSize-1));
         nextis.ref(nextisParent, fmatvec::RangeV(isInd,isInd+isSize-1));
       }

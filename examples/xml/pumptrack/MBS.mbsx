@@ -122,7 +122,7 @@
     </DynamicSystemSolver>
     <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSim">
       <startTime>0</startTime>
-      <endTime>9</endTime>
+      <endTime>0.005 + 0*9</endTime>
       <plotStepSize>5e-3</plotStepSize>
       <toleranceForPositionConstraints>tol</toleranceForPositionConstraints>
       <toleranceForVelocityConstraints>tol</toleranceForVelocityConstraints>

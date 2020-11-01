@@ -78,7 +78,7 @@ namespace MBSim {
       void updatewbRef(fmatvec::Vec &ref) override;
       void updatelaRef(fmatvec::Vec& ref) override;
       void updateLaRef(fmatvec::Vec& ref) override;
-      void updateisRef(fmatvec::Vec& cur, fmatvec::Vec& next) override;
+      void updateInternalStateRef(fmatvec::Vec& cur, fmatvec::Vec& next) override;
       void updategRef(fmatvec::Vec& ref) override;
       void updategdRef(fmatvec::Vec& ref) override;
       void updateresRef(fmatvec::Vec& ref) override;

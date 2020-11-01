@@ -138,7 +138,7 @@ namespace MBSim {
       /**
        * \brief references to internal state of dynamic system parent
        */
-      virtual void updateisRef(fmatvec::Vec& cur, fmatvec::Vec& next);
+      virtual void updateInternalStateRef(fmatvec::Vec& cur, fmatvec::Vec& next);
 
       /**
        * \brief references to contact relative distances of dynamic system parent

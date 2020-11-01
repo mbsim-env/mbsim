@@ -271,7 +271,7 @@ namespace MBSim {
       // make one step with odeint
       nrSteps++;
       auto step=dos->do_step(boostOdeintSystem());
-      system->updateis();
+      system->updateInternalState();
 
       // check if a root exists in the current step
       double curTimeAndState=dos->current_time(); // save current time/state as double: just used to avoid unnessesary system updates

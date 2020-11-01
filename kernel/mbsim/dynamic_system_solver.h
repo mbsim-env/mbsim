@@ -566,7 +566,7 @@ namespace MBSim {
 
       void updateStopVector() override;
 
-      void updateis();
+      void updateInternalState();
 
       void plot() override;
 

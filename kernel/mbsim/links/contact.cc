@@ -131,10 +131,10 @@ namespace MBSim {
       iter->updateLaRef(LaParent);
   }
 
-  void Contact::updateisRef(Vec& curisParent, Vec& nextisParent) {
-    Link::updateisRef(curisParent, nextisParent);
+  void Contact::updateInternalStateRef(Vec& curisParent, Vec& nextisParent) {
+    Link::updateInternalStateRef(curisParent, nextisParent);
     if(contactKinematics)
-      contactKinematics->updateisRef(curis, nextis);
+      contactKinematics->updateInternalStateRef(curis, nextis);
   }
 
   void Contact::updategRef(Vec& gParent) {
