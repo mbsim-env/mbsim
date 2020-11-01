@@ -24,6 +24,7 @@
 
 #include <mbsim/utils/boost_parameters.h>
 #include <mbsim/utils/openmbv_utils.h>
+#include <variant>
 
 namespace MBSim {
   class Frame;
