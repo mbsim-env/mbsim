@@ -129,9 +129,10 @@ namespace MBSim {
     Vec yd(neq);
 
     if(z0.size()) {
-      if(z0.size() != system->getzSize())
-        throwError("(DASPKIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
-      system->setState(z0);
+      if(z0.size() != system->getzSize()+system->getisSize())
+        throwError("(DASPKIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()+system->getisSize()));
+      system->setState(z0(RangeV(0,system->getzSize()-1)));
+      system->setcuris(z0(RangeV(system->getzSize(),z0.size()-1)));
     }
     else
       system->evalz0();

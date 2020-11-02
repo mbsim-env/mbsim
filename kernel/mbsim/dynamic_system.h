@@ -106,6 +106,7 @@ namespace MBSim {
       void setu(const fmatvec::Vec& u_) { u = u_;}
       void setx(const fmatvec::Vec& x_) { x = x_; }
       void setjsv(const fmatvec::VecInt& jsv_) { jsv = jsv_;}
+      void setcuris(const fmatvec::Vec& curis_) { curis = curis_;}
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override;
 

@@ -174,9 +174,10 @@ namespace MBSim {
     else FlagPlotEveryStep = false;
 
     if(z0.size()) {
-      if(z0.size() != zSize)
-        throwError("(TimeSteppingSSCIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
-      zi = z0;
+      if(z0.size() != system->getzSize()+system->getisSize())
+        throwError("(ThetaTimeSteppingIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()+system->getisSize()));
+      zi = z0(RangeV(0,system->getzSize()-1));
+      system->setcuris(z0(RangeV(system->getzSize(),z0.size()-1)));
     }
     else
       zi = sysT1->evalz0();

@@ -61,9 +61,10 @@ namespace MBSim {
     x.ref(z, Ix);
 
     if(z0.size()) {
-      if(z0.size() != system->getzSize())
-        throwError("(QuasiStaticIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()));
-      z = z0;
+      if(z0.size() != system->getzSize()+system->getisSize())
+        throwError("(QuasiStaticIntegrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()+system->getisSize()));
+      z = z0(RangeV(0,system->getzSize()-1));
+      system->setcuris(z0(RangeV(system->getzSize(),z0.size()-1)));
     }
     else
       z = system->evalz0();

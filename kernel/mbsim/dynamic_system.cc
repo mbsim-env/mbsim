@@ -1737,6 +1737,9 @@ namespace MBSim {
     for (auto & i : constraint)
       for(int j=0; j<i->getxSize(); j++)
         ds->getStateTable()[ds->getqSize()+ds->getuSize()+i->getxInd()+j] = StateTable(i->getPath(),'x',j);
+    for (auto & i : link)
+      for(int j=0; j<i->getisSize(); j++)
+        ds->getStateTable()[ds->getqSize()+ds->getuSize()+ds->getxSize()+i->getisInd()+j] = StateTable(i->getPath(),'i',j);
   }
 
 }

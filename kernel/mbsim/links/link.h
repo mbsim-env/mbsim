@@ -185,6 +185,7 @@ namespace MBSim {
        */
       virtual void calclaSize(int j) { laSize = 0; }
 
+      int getisInd() { return isInd; }
       int getisSize() { return isSize; }
       virtual void calcisSize() { isSize = 0; }
 

@@ -244,13 +244,15 @@ namespace MBSim {
 
     // get initial state
     if(z0.size()) {
-      if(z0.size()!=system->getzSize())
-        throwError("BoostOdeintDOS:: size of z0 does not match, must be " + std::to_string(system->getzSize()));
-      BoostOdeintHelper::assign(zTemp, z0);
+      if(z0.size()!=system->getzSize()+system->getisSize())
+        throwError("BoostOdeintDOS:: size of z0 does not match, must be " + std::to_string(system->getzSize()+system->getisSize()));
+      BoostOdeintHelper::assign(zTemp, z0(fmatvec::RangeV(0,system->getzSize()-1)));
+      system->setcuris(z0(fmatvec::RangeV(system->getzSize(),z0.size()-1)));
     }
     else
       BoostOdeintHelper::assign(zTemp, system->evalz0());
 
+    BoostOdeintHelper::assign(system->getState(), zTemp);
     system->resetUpToDate();
     system->computeInitialCondition();
     nrPlots++;
