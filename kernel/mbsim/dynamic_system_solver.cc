@@ -1256,13 +1256,15 @@ namespace MBSim {
         file << u(i) << endl;
       for (int i = 0; i < x.size(); i++)
         file << x(i) << endl;
+      for (int i = 0; i < curis.size(); i++)
+        file << curis(i) << endl;
       file.close();
     }
   }
 
   void DynamicSystemSolver::writeStateTable(string fileName) {
     if(tabz.empty()) {
-      tabz.resize(zSize);
+      tabz.resize(zSize+isSize);
       updateStateTable();
     }
     ofstream file(fileName);

@@ -71,9 +71,10 @@ namespace MBSim {
     memcpy(&neq[1], &self, sizeof(void*));
 
     if(z0.size()) {
-      if(z0.size() != zSize)
-        throwError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize));
-      system->setState(z0);
+      if(z0.size() != zSize+system->getisSize())
+        throwError("(LSODEIntegrator::integrate): size of z0 does not match, must be " + to_string(zSize+system->getisSize()));
+      system->setState(z0(RangeV(0,zSize-1)));
+      system->setcuris(z0(RangeV(zSize,z0.size()-1)));
     }
     else
       system->evalz0();
