@@ -838,6 +838,8 @@ namespace MBSim {
         else UnchangedSteps =0;
         if (UnchangedSteps >= StepsWithUnchangedConstraints) ExitIntegration = true;
       }
+
+      sysT1->updateInternalState();
     }
   }
 

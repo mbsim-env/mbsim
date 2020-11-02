@@ -128,6 +128,9 @@ namespace MBSim {
       if(result==1 or result==2) {
         double curTimeAndState = -1;
         double tRoot = t;
+
+	getSystem()->updateInternalState();
+
         // root-finding
         if(getSystem()->getsvSize()) {
           getSystem()->setTime(t);

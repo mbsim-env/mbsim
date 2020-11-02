@@ -175,6 +175,8 @@ namespace MBSim {
       t += dt;   // step 0: update time, go into new time step.
 
 //      x += system->deltax(z, t, dt);  // todo: framework is not ready for x.
+
+      system->updateInternalState();
     }
     delete jac;
   }

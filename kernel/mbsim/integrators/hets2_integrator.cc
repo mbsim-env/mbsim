@@ -163,6 +163,8 @@ namespace MBSim {
           sumIter += system->getIterC();
 
           system->resetUpToDate();
+
+	  system->updateInternalState();
       }
     }
   }

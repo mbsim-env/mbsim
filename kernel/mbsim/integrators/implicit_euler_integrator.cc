@@ -116,6 +116,8 @@ namespace MBSim {
         system->getState() = newton.solve(system->getState());
       if(newton.getInfo() != 0)
         throwError("(ImplicitEulerIntegrator::subIntegrate): computation of new state failed!");
+
+      system->updateInternalState();
     }
   }
 

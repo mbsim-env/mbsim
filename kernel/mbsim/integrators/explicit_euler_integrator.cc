@@ -84,6 +84,8 @@ namespace MBSim {
       system->resetUpToDate();
       system->getState() += system->evalzd()*dt;
       system->getTime() += dt;
+
+      system->updateInternalState();
     }
   }
 

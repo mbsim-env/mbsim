@@ -144,6 +144,8 @@ namespace MBSim {
 
       if(system->getIterI()>maxIter) maxIter = system->getIterI();
       sumIter += system->getIterI();
+
+      system->updateInternalState();
     }
   }
 
