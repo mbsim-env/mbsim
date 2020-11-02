@@ -120,15 +120,15 @@
         </MBSimEnvironment>
       </environments>
     </DynamicSystemSolver>
-    <BoostOdeintDOS_RKDOPRI5 xmlns="http://www.mbsim-env.de/MBSim">
+    <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSim">
       <startTime>0</startTime>
-      <endTime>0.005 + 0*9</endTime>
-      <plotStepSize>5e-3</plotStepSize>
+      <endTime>0.005      +0*9</endTime>
+      <plotStepSize>5e-3   /20</plotStepSize>
       <toleranceForPositionConstraints>tol</toleranceForPositionConstraints>
       <toleranceForVelocityConstraints>tol</toleranceForVelocityConstraints>
       <absoluteToleranceScalar>tol</absoluteToleranceScalar>
       <relativeToleranceScalar>tol</relativeToleranceScalar>
       <maximumStepSize>1e-2</maximumStepSize>
-    </BoostOdeintDOS_RKDOPRI5>
+    </RADAU5Integrator>
   </MBSimProject>
 </Embed>
