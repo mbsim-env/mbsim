@@ -52,6 +52,7 @@ namespace MBSim {
 
       void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
+      void calcisSize() override { isSize = maxNumContacts; }
 
     private:
       /**
@@ -72,8 +73,6 @@ namespace MBSim {
       FuncPairPlanarContourCircle *func;
 
       bool searchAllCP{false};
-
-      std::vector<double> zeta0;
   };
 
 }

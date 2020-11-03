@@ -51,6 +51,7 @@ namespace MBSim {
 
       void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
+      void calcisSize() override { isSize = 2*maxNumContacts; }
 
    private:
       /**
@@ -71,8 +72,6 @@ namespace MBSim {
       FuncPairSpatialContourPlane *func;
 
       bool searchAllCP{false};
-
-      std::vector<fmatvec::Vec2> zeta0;
   };
 
 }

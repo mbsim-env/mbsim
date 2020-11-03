@@ -53,7 +53,8 @@ namespace MBSim {
   void ContactKinematicsPointSpatialContour::setInitialGuess(const fmatvec::MatV &zeta0_) {
     if(zeta0_.rows()) {
       if(zeta0_.rows() != 1 or zeta0_.cols() != 2) throw runtime_error("(ContactKinematicsPointSpatialContour::assignContours): size of zeta0 does not match");
-      zeta0 = zeta0_.row(0).T();
+      curis(0) = zeta0_(0,0);
+      curis(1) = zeta0_(0,1);
     }
   }
 
@@ -68,15 +69,15 @@ namespace MBSim {
       search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 
     if (!searchAllCP) {
-      search.setInitialValue(zeta0);
+      search.setInitialValue(curis);
     }
     else {
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    zeta0 = search.slv();
-    contact.getContourFrame(ispatialcontour)->setZeta(zeta0);
+    nextis = search.slv();
+    contact.getContourFrame(ispatialcontour)->setZeta(nextis);
 
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, spatialcontour->evalWn(contact.getContourFrame(ispatialcontour)->getZeta(false)));
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(1, spatialcontour->evalWu(contact.getContourFrame(ispatialcontour)->getZeta(false)));

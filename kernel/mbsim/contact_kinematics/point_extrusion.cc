@@ -57,14 +57,15 @@ namespace MBSim {
     search.setNodes(Vec(extrusion->getEtaNodes())); // defining search areas for contacts
 
     if (!searchAllCP) { // select start value from last search
-      search.setInitialValue(contact.getContourFrame(iextrusion)->getEta(false));
+      search.setInitialValue(curis(0));
     }
     else { // define start search with regula falsi
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    contact.getContourFrame(iextrusion)->setEta(search.slv());
+    nextis(0) = search.slv();
+    contact.getContourFrame(iextrusion)->setEta(nextis(0));
 
     contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta(false)));
     contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta(false)));

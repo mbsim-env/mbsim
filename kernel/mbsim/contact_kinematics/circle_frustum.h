@@ -58,6 +58,8 @@ namespace MBSim {
       void setLocalSearch(bool LOCALSEARCH_);
       /***************************************************/
 
+      void calcisSize() override { isSize = 1; }
+
     protected:
       /**
        * \brief contour index
@@ -74,8 +76,6 @@ namespace MBSim {
        * \brief local contact search?
        */
       bool LOCALSEARCH;
-
-      fmatvec::Vec2 zeta;
   };
 
   inline void ContactKinematicsCircleFrustum::setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }

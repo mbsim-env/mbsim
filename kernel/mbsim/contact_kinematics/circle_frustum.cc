@@ -208,7 +208,7 @@ namespace MBSim {
           searchRho.setTolerance(tol);
 
           if (LOCALSEARCH) { // select start value from last search if decided by user
-            searchRho.setInitialValue(zeta(0));
+            searchRho.setInitialValue(curis(0));
           }
           else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
             searchRho.setSearchAll(true);
@@ -217,12 +217,12 @@ namespace MBSim {
           double drho = 2. * M_PI / SEC * 1.01; // 10% intersection for improved convergence of solver
           double rhoStartSpacing = -2. * M_PI * 0.01 * 0.5;
           searchRho.setEqualSpacing(SEC, rhoStartSpacing, drho);
-          zeta(0) = searchRho.slv();
+          nextis(0) = searchRho.slv();
 
-          if ((*funcRho)[zeta(0)] > eps)
+          if ((*funcRho)[nextis(0)] > eps)
             g = 1.; // too far away?
           else {
-            Vec3 dTilde_tmp = funcRho->evalWrD(zeta(0));
+            Vec3 dTilde_tmp = funcRho->evalWrD(nextis(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
             contact.getContourFrame(icircle)->setPosition(circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde));
             Vec3 Wd_PF = contact.getContourFrame(icircle)->getPosition(false) - frustum->getFrame()->getPosition();
@@ -346,18 +346,18 @@ namespace MBSim {
           searchRho.setTolerance(tol);
 
           if(LOCALSEARCH) { // select start value from last search if decided by user
-            searchRho.setInitialValue(zeta(0));
+            searchRho.setInitialValue(curis(0));
           }
           else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
             searchRho.setSearchAll(true);
           }
           searchRho.setEqualSpacing(SEC, rhoStartSpacing, drho);
-          zeta(0) = searchRho.slv();
+          nextis(0) = searchRho.slv();
 
-          if ((*funcRho)[zeta(0)] > eps)
+          if ((*funcRho)[nextis(0)] > eps)
             g = 1.; // too far away?
           else {
-            Vec3 dTilde_tmp = funcRho->evalWrD(zeta(0));
+            Vec3 dTilde_tmp = funcRho->evalWrD(nextis(0));
             Vec3 dTilde = dTilde_tmp - Wb_C.T() * dTilde_tmp * Wb_C; // projection in plane of circle
             contact.getContourFrame(icircle)->setPosition(circle->getFrame()->getPosition() + r_C * dTilde / nrm2(dTilde));
             Vec3 Wd_PF = contact.getContourFrame(icircle)->getPosition(false) - frustum->getFrame()->getPosition();
@@ -387,9 +387,9 @@ namespace MBSim {
             }
           }
           if (msgAct(Debug)) {
-            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): zeta(0)= " << zeta(0) << endl;
-            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): rootfunction= " << (*funcRho)(zeta(0)) << endl;
-            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): dist= " << (*funcRho)[zeta(0)] << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): zeta(0)= " << nextis(0) << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): rootfunction= " << (*funcRho)(nextis(0)) << endl;
+            msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): dist= " << (*funcRho)[nextis(0)] << endl;
             msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Wd_SC= " << Wd_SC << endl;
             msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): eF1= " << eF1 << endl;
             msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): eF2= " << eF2 << endl;
@@ -398,7 +398,7 @@ namespace MBSim {
             msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): Non-Complanar Circle-Conesection= " << Wd_SC.T() * crossProduct(c1, c2) << endl;
             msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c1^T*Wd_SC= " << c1.T() * Wd_SC << endl;
             msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c2^T*Wd_SC= " << c2.T() * Wd_SC << endl;
-            if ((*funcRho)[zeta(0)] < eps) {
+            if ((*funcRho)[nextis(0)] < eps) {
               msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c1^T*Contact_Circle= " << c1.T() * (contact.getContourFrame(icircle)->getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
               msg(Debug) << "(ContactKinematicsCircleFrustum:updateg): c2^T*Contact_Circle= " << c2.T() * (contact.getContourFrame(icircle)->getPosition(false) - circle->getFrame()->getPosition() - Wd_SC) << endl;
             }

@@ -47,14 +47,13 @@ namespace MBSim {
       planarcontour = static_cast<Contour*>(contour[0]);
     }
     func = new FuncPairPlanarContourLine(line,planarcontour);
-    zeta0.resize(maxNumContacts);
   }
 
   void ContactKinematicsLinePlanarContour::setInitialGuess(const fmatvec::MatV &zeta0_) {
     if(zeta0_.rows()) {
       if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsLinePlanarContour::assignContours): size of zeta0 does not match");
       for(int i=0; i<maxNumContacts; i++)
-        zeta0[i] = zeta0_(i,0);
+        curis(i) = zeta0_(i,0);
     }
   }
 
@@ -65,15 +64,15 @@ namespace MBSim {
     search.setNodes(Vec(planarcontour->getEtaNodes()));
 
     if (!searchAllCP) {
-      search.setInitialValue(zeta0[i]);
+      search.setInitialValue(curis(i));
     }
     else {
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    zeta0[i] = search.slv();
-    contact.getContourFrame(iplanarcontour)->setEta(zeta0[i]);
+    nextis(i) = search.slv();
+    contact.getContourFrame(iplanarcontour)->setEta(nextis(i));
 
     contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, planarcontour->evalWn(contact.getContourFrame(iplanarcontour)->getZeta(false)));

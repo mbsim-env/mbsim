@@ -47,14 +47,15 @@ namespace MBSim {
       spatialcontour = static_cast<Contour*>(contour[0]);
     }
     func = new FuncPairSpatialContourPlane(plane,spatialcontour);
-    zeta0.resize(maxNumContacts);
   }
 
   void ContactKinematicsPlaneSpatialContour::setInitialGuess(const fmatvec::MatV &zeta0_) {
     if(zeta0_.rows()) {
       if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 2) throw runtime_error("(ContactKinematicsPlaneSpatialContour::assignContours): size of zeta0 does not match");
-      for(int i=0; i<maxNumContacts; i++)
-        zeta0[i] = zeta0_.row(i).T();
+      for(int i=0; i<maxNumContacts; i++) {
+        curis(2*i) = zeta0_(i,0);
+        curis(2*i+1) = zeta0_(i,1);
+      }
     }
   }
 
@@ -68,15 +69,15 @@ namespace MBSim {
       search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 
     if (!searchAllCP) {
-      search.setInitialValue(zeta0[i]);
+      search.setInitialValue(curis(RangeV(2*i,2*i+1)));
     }
     else {
       search.setSearchAll(true);
       searchAllCP = false;
     }
 
-    zeta0[i] = search.slv();
-    contact.getContourFrame(ispatialcontour)->setZeta(zeta0[i]);
+    nextis.set(RangeV(2*i,2*i+1),search.slv());
+    contact.getContourFrame(ispatialcontour)->setZeta(nextis(RangeV(2*i,2*i+1)));
 
     contact.getContourFrame(iplane)->setOrientation(plane->getFrame()->evalOrientation());
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, spatialcontour->evalWn(contact.getContourFrame(ispatialcontour)->getZeta(false)));

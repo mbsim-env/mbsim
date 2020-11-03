@@ -51,6 +51,7 @@ namespace MBSim {
       /***************************************************/
 
       void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
+      void calcisSize() override { isSize = 1; }
 
     private:
       /**
