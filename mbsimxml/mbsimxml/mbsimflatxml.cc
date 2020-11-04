@@ -249,8 +249,12 @@ void MBSimXML::initDynamicSystemSolver(const list<string> &args, DynamicSystemSo
 }
 
 void MBSimXML::plotInitialState(Solver* solver, DynamicSystemSolver* dss) {
-  if(solver->getInitialState().size())
-    dss->setState(solver->getInitialState());
+  if(solver->getInitialState().size()) {
+    if(solver->getInitialState().size() != dss->getzSize()+dss->getisSize())
+      throw runtime_error("Size of z0 does not match, must be " + to_string(dss->getzSize()+dss->getisSize()));
+    dss->setState(solver->getInitialState()(fmatvec::RangeV(0,dss->getzSize()-1)));
+    dss->setcuris(solver->getInitialState()(fmatvec::RangeV(dss->getzSize(),solver->getInitialState().size()-1)));
+  }
   else
     dss->evalz0();
   dss->computeInitialCondition();
