@@ -68,15 +68,16 @@ namespace MBSim {
     else
       search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
 
-    if (!searchAllCP) {
-      search.setInitialValue(curis);
-    }
-    else {
-      search.setSearchAll(true);
-      searchAllCP = false;
-    }
+    search.setInitialValue(curis);
 
-    nextis = search.slv();
+    if(searchAllCP) {
+      search.setSearchAll(true);
+      nextis = search.slv();
+      curis = nextis;
+      searchAllCP=false;
+    }
+    else
+      nextis = search.slv();
     contact.getContourFrame(ispatialcontour)->setZeta(nextis);
 
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, spatialcontour->evalWn(contact.getContourFrame(ispatialcontour)->getZeta(false)));

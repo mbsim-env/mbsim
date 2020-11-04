@@ -62,16 +62,16 @@ namespace MBSim {
     PlanarContactSearch search(func);
     search.setTolerance(tol);
     search.setNodes(Vec(planarcontour->getEtaNodes()));
+    search.setInitialValue(curis(i));
 
-    if (!searchAllCP) {
-      search.setInitialValue(curis(i));
-    }
-    else {
+    if(searchAllCP) {
       search.setSearchAll(true);
-      searchAllCP = false;
+      nextis(i) = search.slv();
+      curis(i) = nextis(i);
+      searchAllCP=false;
     }
-
-    nextis(i) = search.slv();
+    else
+      nextis(i) = search.slv();
     contact.getContourFrame(iplanarcontour)->setEta(nextis(i));
 
     contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());
