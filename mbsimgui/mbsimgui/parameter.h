@@ -68,7 +68,7 @@ namespace MBSimGUI {
 
   class StringParameter : public Parameter {
     public:
-      StringParameter() = default;
+      StringParameter();
       MBXMLUtils::FQN getXMLType() const override { return MBXMLUtils::PV%"stringParameter"; }
       QString getType() const override { return "String parameter"; }
       PropertyDialog* createPropertyDialog() override { return new StringParameterPropertyDialog(this); }
@@ -76,7 +76,7 @@ namespace MBSimGUI {
 
   class ScalarParameter : public Parameter {
     public:
-      ScalarParameter() = default;
+      ScalarParameter();
       MBXMLUtils::FQN getXMLType() const override { return MBXMLUtils::PV%"scalarParameter"; }
       QString getType() const override { return "Scalar parameter"; }
       PropertyDialog* createPropertyDialog() override { return new ScalarParameterPropertyDialog(this); }
@@ -84,7 +84,7 @@ namespace MBSimGUI {
 
   class VectorParameter : public Parameter {
     public:
-      VectorParameter() = default;
+      VectorParameter();
       QString getValue() const override;
       MBXMLUtils::FQN getXMLType() const override { return MBXMLUtils::PV%"vectorParameter"; }
       QString getType() const override { return "Vector parameter"; }
@@ -93,7 +93,7 @@ namespace MBSimGUI {
 
   class MatrixParameter : public Parameter {
     public:
-      MatrixParameter() = default;
+      MatrixParameter();
       QString getValue() const override;
       MBXMLUtils::FQN getXMLType() const override { return MBXMLUtils::PV%"matrixParameter"; }
       QString getType() const override { return "Matrix parameter"; }
@@ -111,7 +111,7 @@ namespace MBSimGUI {
 
   class Parameters : public ParameterItem {
     public:
-      Parameters(EmbedItemData *parent) : ParameterItem(parent) { }
+      Parameters(EmbedItemData *parent);
       QString getName() const override { return parent->getName() + " parameters"; }
       QString getValue() const override { return ""; }
       QString getType() const override { return ""; }

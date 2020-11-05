@@ -22,6 +22,7 @@
 
 #include <QString>
 #include <QModelIndex>
+#include <QIcon>
 #include <vector>
 
 class QMenu;
@@ -36,6 +37,7 @@ namespace MBSimGUI {
       virtual QString getValue() const { return "Value"; }
       virtual QString getType() const { return "Type"; }
       virtual QString getReference() const { return "Reference"; }
+      QIcon getDecoration() const { return icon; }
       virtual bool getEnabled() const { return true; }
       virtual bool hasReference() const { return false; }
       virtual QMenu* createContextMenu() { return nullptr; }
@@ -45,6 +47,7 @@ namespace MBSimGUI {
     protected:
       std::vector<TreeItemData*> treeItemData;
       QModelIndex index;
+      QIcon icon;
   };
 
 }

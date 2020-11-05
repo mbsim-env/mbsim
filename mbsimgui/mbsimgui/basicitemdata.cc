@@ -1,6 +1,6 @@
 /*
    MBSimGUI - A fronted for MBSim.
-   Copyright (C) 2012 Martin Förg
+   Copyright (C) 2020 Martin Förg
 
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -18,11 +18,9 @@
    */
 
 #include <config.h>
-#include "contour.h"
+#include "basicitemdata.h"
 #include "utils.h"
 #include "mainwindow.h"
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -32,19 +30,9 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  Contour::Contour() {
-    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string()));
-  }
-
-  DOMElement* Contour::processIDAndHref(DOMElement *element) {
-    element = Element::processIDAndHref(element);
-    DOMElement *ELE=E(element)->getFirstElementChildNamed(NamespaceURI(getXMLType().first)%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
-    return element;
-  }
+ContainerItemData::ContainerItemData(Element *element_) : element(element_) {
+  element->addTreeItemData(this);
+  icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string()));
+}
 
 }

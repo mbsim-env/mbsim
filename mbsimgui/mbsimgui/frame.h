@@ -28,6 +28,7 @@ namespace MBSimGUI {
 
   class Frame : public Element {
     public:
+      Frame();
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Frame"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new FramePropertyDialog(this); }

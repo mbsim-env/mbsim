@@ -61,12 +61,28 @@ namespace MBSimGUI {
     return element;
   }
 
+  StringParameter::StringParameter() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"string.svg").string()));
+  }
+
+  ScalarParameter::ScalarParameter() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"scalar.svg").string()));
+  }
+
+  VectorParameter::VectorParameter() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"vector.svg").string()));
+  }
+
   QString VectorParameter::getValue() const {
     DOMElement *ele=element->getFirstElementChild();
     if(ele and E(ele)->getTagName() == PV%"xmlVector")
       return "xmlVector";
     else
       return Parameter::getValue();
+  }
+
+  MatrixParameter::MatrixParameter() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"matrix.svg").string()));
   }
 
   QString MatrixParameter::getValue() const {
@@ -82,6 +98,10 @@ namespace MBSimGUI {
     element=D(doc)->createElement(getXMLType());
     parent->insertBefore(element, nullptr);
     return element;
+  }
+
+  Parameters::Parameters(EmbedItemData *parent) : ParameterItem(parent) {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string()));
   }
 
   QString Parameters::getReference() const {

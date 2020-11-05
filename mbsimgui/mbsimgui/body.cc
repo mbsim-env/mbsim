@@ -21,12 +21,20 @@
 #include "body.h"
 #include "frame.h"
 #include "contour.h"
+#include "utils.h"
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
+
+  Body::Body() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string()));
+  }
 
   Body::~Body() {
     for(auto & i : frame) 

@@ -32,6 +32,7 @@ namespace MBSimGUI {
 
   class Integrator : public Solver {
     public:
+      Integrator() = default;
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
   };
 

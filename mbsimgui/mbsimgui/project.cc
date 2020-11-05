@@ -40,6 +40,7 @@ namespace MBSimGUI {
     falseMap["xmlflat"] = "false";
     falseMap["octave"] = "false";
     falseMap["python"] = "False";
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"project.svg").string()));
   }
 
   Project::~Project() {

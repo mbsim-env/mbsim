@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class Constraint : public Element {
     public:
+      Constraint();
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Constraint"; }
       QMenu* createContextMenu() override { return new ConstraintContextMenu(this); }
   };

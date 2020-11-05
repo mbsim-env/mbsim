@@ -22,6 +22,8 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   body.cc \
 		   rigid_body.cc \
 		   flexible_ffr_body.cc \
+		   link.cc \
+		   constraint.cc \
 		   observer.cc \
 		   kinetic_excitation.cc \
 		   spring_damper.cc \
@@ -29,6 +31,7 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
 		   integrator.cc \
 		   parameter.cc \
 		   objectfactory.cc \
+		   basicitemdata.cc \
 		   embeditemdata.cc \
 		   fileitemdata.cc \
 		   treeitem.cc \
@@ -87,13 +90,9 @@ mbsimguisharedir = @datadir@/mbsimgui
 dist_mbsimguishare_DATA = inlineopenmbv.ombvwst
 
 mbsimguiicondir = @datadir@/mbsimgui/icons
-dist_mbsimguiicon_DATA = icons/simulate.svg \
-			 icons/preview.svg \
-			 icons/openmbv.svg \
+dist_mbsimguiicon_DATA = icons/openmbv.svg \
 			 icons/h5plotserie.svg \
 			 icons/eigenanalysis.svg \
-			 icons/resize.svg \
-			 icons/workdir.svg \
 			 icons/debug.svg \
 			 icons/error.svg \
 			 icons/warn.svg \
@@ -104,7 +103,22 @@ dist_mbsimguiicon_DATA = icons/simulate.svg \
 			 icons/kill.svg \
 			 icons/mbsimgui.svg \
 			 icons/frequency_response.svg \
-			 icons/state_table.svg
+			 icons/state_table.svg \
+			 icons/frame.svg \
+			 icons/dss.svg \
+			 icons/project.svg \
+			 icons/solver.svg \
+			 icons/container.svg \
+			 icons/group.svg \
+			 icons/body.svg \
+			 icons/link.svg \
+			 icons/constraint.svg \
+			 icons/observer.svg \
+			 icons/contour.svg \
+			 icons/scalar.svg \
+			 icons/vector.svg \
+			 icons/matrix.svg \
+			 icons/string.svg
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines

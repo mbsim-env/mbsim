@@ -19,15 +19,22 @@
 
 #include <config.h>
 #include "frame.h"
-#include <utility>
+#include "utils.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
+
+  Frame::Frame() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string()));
+  }
 
   DOMElement* Frame::processIDAndHref(DOMElement *element) {
     element = Element::processIDAndHref(element);

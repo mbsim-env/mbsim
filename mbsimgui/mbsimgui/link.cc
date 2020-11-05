@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2020 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,44 +18,21 @@
 */
 
 #include <config.h>
-#include "solver.h"
-#include "project.h"
+#include "link_.h"
 #include "utils.h"
 #include "mainwindow.h"
-#include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMImplementation.hpp>
-#include <xercesc/dom/DOMLSSerializer.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
-
+  
   extern MainWindow *mw;
 
-  Solver::Solver() {
-    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"solver.svg").string()));
-  }
-
-  void Solver::removeXMLElements() {
-    DOMNode *e = element->getFirstChild();
-    while(e) {
-      DOMNode *en=e->getNextSibling();
-      element->removeChild(e);
-      e = en;
-    }
-  }
-
-  DOMElement* Solver::createXMLElement(DOMNode *parent) {
-    DOMDocument *doc=parent->getNodeType()==DOMNode::DOCUMENT_NODE ? static_cast<DOMDocument*>(parent) : parent->getOwnerDocument();
-    element=D(doc)->createElement(getXMLType());
-    parent->insertBefore(element, nullptr);
-    return element;
-  }
-
-  EmbedItemData* Solver::getEmbedItemParent() {
-    return project;
+  Link::Link() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string()));
   }
 
 }
+

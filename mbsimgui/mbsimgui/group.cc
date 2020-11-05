@@ -28,16 +28,20 @@
 #include "objectfactory.h"
 #include "utils.h"
 #include "embed.h"
+#include "mainwindow.h"
 #include "mbxmlutilshelper/dom.h"
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
-using namespace std; using namespace MBXMLUtils;
+using namespace std;
+using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
 
-  Group::Group() : constraints(nullptr), observers(nullptr) {
+  extern MainWindow *mw;
 
+  Group::Group() : constraints(nullptr), observers(nullptr) {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string()));
     InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
     addFrame(I);
   }

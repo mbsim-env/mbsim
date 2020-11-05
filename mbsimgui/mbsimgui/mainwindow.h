@@ -252,6 +252,8 @@ namespace MBSimGUI {
       std::string getID(Element* element) { std::string ID = std::to_string(IDcounter++); idMap[ID] = element; return ID; }
       int getExitOK() { return exitOK; }
       void setExitBad() { exitOK=false; }
+      boost::filesystem::path getInstallPath() const { return installPath; }
+
   };
 
 }

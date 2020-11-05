@@ -42,7 +42,7 @@ namespace MBSimGUI {
       xercesc::DOMElement *environments;
       Project *project{nullptr};
     public:
-      DynamicSystemSolver() = default;
+      DynamicSystemSolver();
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"DynamicSystemSolver"; }
       QString getType() const override { return "Dynamic system solver"; }
       void setProject(Project* project_) { project = project_; }

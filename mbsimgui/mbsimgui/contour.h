@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class Contour : public Element {
     public:
+      Contour();
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Contour"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new ContourPropertyDialog(this); }

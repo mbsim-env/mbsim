@@ -30,14 +30,19 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class Eigenanalyzer : public Solver {
+  class Analyzer : public Solver {
+    public:
+      Analyzer() = default;
+  };
+
+  class Eigenanalyzer : public Analyzer {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Eigenanalyzer"; }
       QString getType() const override { return "Eigenanalyzer"; }
       PropertyDialog* createPropertyDialog() override { return new EigenanalyzerPropertyDialog(this); }
   };
 
-  class HarmonicResponseAnalyzer : public Solver {
+  class HarmonicResponseAnalyzer : public Analyzer {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"HarmonicResponseAnalyzer"; }
       QString getType() const override { return "Harmonic response analyzer"; }

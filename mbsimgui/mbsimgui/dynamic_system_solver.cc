@@ -21,6 +21,7 @@
 #include "dynamic_system_solver.h"
 #include "project.h"
 #include "objectfactory.h"
+#include "utils.h"
 #include "mainwindow.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
@@ -36,6 +37,10 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   Environment *Environment::instance=nullptr;
+
+  DynamicSystemSolver::DynamicSystemSolver() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"dss.svg").string()));
+  }
 
   void DynamicSystemSolver::removeXMLElements() {
     DOMNode *e = element->getFirstChild();

@@ -38,7 +38,7 @@ namespace MBSimGUI {
     protected:
       Project *project{nullptr};
     public:
-      Solver()  = default;
+      Solver();
       void setProject(Project* project_) { project = project_; }
       Project* getProject() { return project; }
       virtual void removeXMLElements();

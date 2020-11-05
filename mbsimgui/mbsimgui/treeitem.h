@@ -53,7 +53,7 @@ namespace MBSimGUI {
       QVariant (TreeItem::*getData_[4])() const;
       QVariant getData(int column) const { return (this->*getData_[column])(); }
       QFont getFont() { return font[0]; }
-      QIcon getDecoration() { return decoration; }
+      QIcon getDecoration() { return itemData->getDecoration(); }
       QBrush getForeground() { return foreground[itemData->getEnabled()]; }
       QBrush getBackground() { return background[itemData->hasReference()]; }
 

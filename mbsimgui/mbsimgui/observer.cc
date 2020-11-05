@@ -19,6 +19,8 @@
 
 #include <config.h>
 #include "observer.h"
+#include "utils.h"
+#include "mainwindow.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
@@ -27,6 +29,12 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
+
+  Observer::Observer() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"observer.svg").string()));
+  }
 
   DOMElement* MechanicalLinkObserver::processIDAndHref(DOMElement *element) {
     Observer::processIDAndHref(element);

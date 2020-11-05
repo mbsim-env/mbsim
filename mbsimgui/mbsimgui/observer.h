@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class Observer : public Element {
     public:
+      Observer();
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Observer"; }
       QMenu* createContextMenu() override { return new ObserverContextMenu(this); }
   };
