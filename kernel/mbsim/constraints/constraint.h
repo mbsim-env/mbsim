@@ -54,6 +54,8 @@ namespace MBSim {
 
       const fmatvec::Vec& evalxd();
 
+      void createPlotGroup() override;
+
     protected:
       /** 
        * \brief order one parameters

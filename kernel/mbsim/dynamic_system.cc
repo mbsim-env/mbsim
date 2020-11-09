@@ -302,10 +302,6 @@ namespace MBSim {
     }
   }
 
-  shared_ptr<OpenMBV::Group> DynamicSystem::getOpenMBVGrp() {
-    return openMBVGrp;
-  }
-
   void DynamicSystem::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Element::setDynamicSystemSolver(sys);
     for (auto & i : dynamicsystem)
@@ -411,13 +407,22 @@ namespace MBSim {
           }
           // create symbolic link in parent plot file if exist
           if (parent)
-            parent->getPlotGroup()->createExternalLink(name, make_pair(boost::filesystem::path(fileName), string("/")));
+            parent->getGroupsPlotGroup()->createExternalLink(name, make_pair(boost::filesystem::path(fileName), string("/")));
           // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
           hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
+          //plotGroup = hdf5File.get()->createChildObject<H5::Group>(name)();
           plotGroup = hdf5File.get();
         }
         else
-          plotGroup = parent->getPlotGroup()->createChildObject<H5::Group>(name)();
+          plotGroup = parent->getGroupsPlotGroup()->createChildObject<H5::Group>(name)();
+
+	framesPlotGroup = plotGroup->createChildObject<H5::Group>("frames")();
+	contoursPlotGroup = plotGroup->createChildObject<H5::Group>("contours")();
+	groupsPlotGroup = plotGroup->createChildObject<H5::Group>("groups")();
+	objectsPlotGroup = plotGroup->createChildObject<H5::Group>("objects")();
+	linksPlotGroup = plotGroup->createChildObject<H5::Group>("links")();
+	constraintsPlotGroup = plotGroup->createChildObject<H5::Group>("constraints")();
+	observersPlotGroup = plotGroup->createChildObject<H5::Group>("observers")();
 
         plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write(string("Object of class: ")+boost::core::demangle(typeid(*this).name()));
         plotVectorSerie = nullptr;
@@ -430,7 +435,28 @@ namespace MBSim {
         openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
         openMBVGrp->setName(name);
         if (parent)
-          parent->getOpenMBVGrp()->addObject(openMBVGrp);
+          parent->getGroupsOpenMBVGrp()->addObject(openMBVGrp);
+	framesOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	framesOpenMBVGrp->setName("frames");
+	openMBVGrp->addObject(framesOpenMBVGrp);
+	contoursOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	contoursOpenMBVGrp->setName("contours");
+	openMBVGrp->addObject(contoursOpenMBVGrp);
+	groupsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	groupsOpenMBVGrp->setName("groups");
+	openMBVGrp->addObject(groupsOpenMBVGrp);
+	objectsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	objectsOpenMBVGrp->setName("objects");
+	openMBVGrp->addObject(objectsOpenMBVGrp);
+	linksOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	linksOpenMBVGrp->setName("links");
+	openMBVGrp->addObject(linksOpenMBVGrp);
+	constraintsOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	constraintsOpenMBVGrp->setName("constraints");
+	openMBVGrp->addObject(constraintsOpenMBVGrp);
+	observersOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	observersOpenMBVGrp->setName("observers");
+	openMBVGrp->addObject(observersOpenMBVGrp);
         if (plotFeature[separateFilePerGroup])
           openMBVGrp->setSeparateFile(true);
       }

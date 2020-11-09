@@ -41,7 +41,7 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
         openMBVRigidBody->setName(name);
-        parent->getOpenMBVGrp()->addObject(openMBVRigidBody);
+        parent->getContoursOpenMBVGrp()->addObject(openMBVRigidBody);
       }
     }
     Contour::init(stage, config);

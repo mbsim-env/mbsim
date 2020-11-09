@@ -63,7 +63,7 @@ namespace MBSim {
       if(plotFeature[openMBV] and ombvCoilSpring) {
         coilspringOpenMBV=ombvCoilSpring->createOpenMBV();
         coilspringOpenMBV->setName(name);
-        parent->getOpenMBVGrp()->addObject(coilspringOpenMBV);
+        parent->getLinksOpenMBVGrp()->addObject(coilspringOpenMBV);
       }
     }
     FixedFrameLink::init(stage, config);

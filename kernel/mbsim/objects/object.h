@@ -273,6 +273,8 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
+      void createPlotGroup() override;
+
     protected:
       int nq, nu;
 

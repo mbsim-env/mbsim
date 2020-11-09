@@ -90,9 +90,15 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[openMBV]) {
         openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVGrp->setName(name+"_Group");
+        openMBVGrp->setName(name);
         openMBVGrp->setExpand(false);
-        parent->getOpenMBVGrp()->addObject(openMBVGrp);
+        parent->getObjectsOpenMBVGrp()->addObject(openMBVGrp);
+	framesOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	framesOpenMBVGrp->setName("frames");
+	openMBVGrp->addObject(framesOpenMBVGrp);
+	contoursOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
+	contoursOpenMBVGrp->setName("contours");
+	openMBVGrp->addObject(contoursOpenMBVGrp);
         if(openMBVBody) {
           openMBVBody->setName(name);
           openMBVGrp->addObject(openMBVBody);
@@ -105,6 +111,12 @@ namespace MBSim {
       i->init(stage, config);
     for(auto & i : contour) 
       i->init(stage, config);
+  }
+
+  void Body::createPlotGroup() {
+    Object::createPlotGroup();
+    framesPlotGroup = plotGroup->createChildObject<H5::Group>("frames")();
+    contoursPlotGroup = plotGroup->createChildObject<H5::Group>("contours")();
   }
 
   void Body::addContour(Contour* contour_) {

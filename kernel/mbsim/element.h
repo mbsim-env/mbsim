@@ -137,6 +137,13 @@ namespace MBSim {
        * \return associated plot group
        */
       H5::GroupBase *getPlotGroup() { return plotGroup; }
+      virtual H5::GroupBase *getFramesPlotGroup() { return nullptr; }
+      virtual H5::GroupBase *getContoursPlotGroup() { return nullptr; }
+      virtual H5::GroupBase *getGroupsPlotGroup() { return nullptr; }
+      virtual H5::GroupBase *getObjectsPlotGroup() { return nullptr; }
+      virtual H5::GroupBase *getLinksPlotGroup() { return nullptr; }
+      virtual H5::GroupBase *getConstraintsPlotGroup() { return nullptr; }
+      virtual H5::GroupBase *getObserversPlotGroup() { return nullptr; }
 
       /** Get the state of the plot feature pf.
        * Returns false if the plot feature pf is not set till now. */
@@ -190,7 +197,14 @@ namespace MBSim {
         throwError("This element has no containers with childs.");
       }
 
-      virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() {return std::shared_ptr<OpenMBV::Group>();}
+      virtual std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      virtual std::shared_ptr<OpenMBV::Group> getFramesOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      virtual std::shared_ptr<OpenMBV::Group> getContoursOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      virtual std::shared_ptr<OpenMBV::Group> getGroupsOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      virtual std::shared_ptr<OpenMBV::Group> getObjectsOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      virtual std::shared_ptr<OpenMBV::Group> getLinksOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      virtual std::shared_ptr<OpenMBV::Group> getConstraintsOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
+      virtual std::shared_ptr<OpenMBV::Group> getObserversOpenMBVGrp() { return std::shared_ptr<OpenMBV::Group>(); }
 
       virtual Element* getParent() {return parent;}
       virtual const Element* getParent() const {return parent;}

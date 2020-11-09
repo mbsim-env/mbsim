@@ -70,4 +70,10 @@ namespace MBSim {
     return xd;
   }
 
+  void Constraint::createPlotGroup() {
+    plotGroup=parent->getConstraintsPlotGroup()->createChildObject<H5::Group>(name)();
+    plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write("Object of class: "+boost::core::demangle(typeid(*this).name()));
+    plotColumns.insert(plotColumns.begin(), "time");
+  }
+
 }

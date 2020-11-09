@@ -33,6 +33,8 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
 
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGrp; }
+
+      void createPlotGroup() override;
   };
 
 }  

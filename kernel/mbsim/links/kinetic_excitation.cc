@@ -53,7 +53,7 @@ namespace MBSim {
           for(size_t i=0; i<openMBVForce.size(); i++) {
             openMBVForce[i]=ombvArrow->createOpenMBV();
             openMBVForce[i]->setName(name+"_Force"+(openMBVForce.size()>1?to_string(i):string("")));
-            parent->getOpenMBVGrp()->addObject(openMBVForce[i]);
+            parent->getLinksOpenMBVGrp()->addObject(openMBVForce[i]);
           }
         }
         if(momentDir.cols()) {
@@ -61,7 +61,7 @@ namespace MBSim {
           for(size_t i=0; i<openMBVMoment.size(); i++) {
             openMBVMoment[i]=ombvArrow->createOpenMBV();
             openMBVMoment[i]->setName(name+"_Moment"+(openMBVMoment.size()>1?to_string(i):string("")));
-            parent->getOpenMBVGrp()->addObject(openMBVMoment[i]);
+            parent->getLinksOpenMBVGrp()->addObject(openMBVMoment[i]);
           }
         }
       }

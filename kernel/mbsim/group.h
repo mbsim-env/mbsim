@@ -49,6 +49,7 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
+    protected:
       fmatvec::Vec RrRD;
       fmatvec::SqrMat ARD;
   };

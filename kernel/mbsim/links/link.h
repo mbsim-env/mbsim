@@ -436,6 +436,8 @@ namespace MBSim {
 
       bool getUpdaterrel() const { return updrrel; }
 
+      void createPlotGroup() override;
+
     protected:
       int ng, ngd, nla;
 

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/contours/contour.h"
+#include <hdf5serie/simpleattribute.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -168,6 +169,12 @@ namespace MBSim {
     Element::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"thickness");
     if(e) setThickness(E(e)->getText<double>());
+  }
+
+  void Contour::createPlotGroup() {
+    plotGroup=parent->getContoursPlotGroup()->createChildObject<H5::Group>(name)();
+    plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write("Object of class: "+boost::core::demangle(typeid(*this).name()));
+    plotColumns.insert(plotColumns.begin(), "time");
   }
 
 }

@@ -22,6 +22,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include <openmbvcppinterface/frame.h>
 #include <openmbvcppinterface/group.h>
+#include <hdf5serie/simpleattribute.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -140,8 +141,8 @@ namespace MBSim {
         }
       }
       if(plotFeature[openMBV] and openMBVFrame) {
-          openMBVFrame->setName(name);
-          parent->getOpenMBVGrp()->addObject(openMBVFrame);
+	openMBVFrame->setName(name);
+	parent->getFramesOpenMBVGrp()->addObject(openMBVFrame);
       }
     }
     Element::init(stage, config);
@@ -184,6 +185,12 @@ namespace MBSim {
 
   void Frame::resetGyroscopicAccelerationsUpToDate() {
     updGA = true;
+  }
+
+  void Frame::createPlotGroup() {
+    plotGroup=parent->getFramesPlotGroup()->createChildObject<H5::Group>(name)();
+    plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write("Object of class: "+boost::core::demangle(typeid(*this).name()));
+    plotColumns.insert(plotColumns.begin(), "time");
   }
 
 }

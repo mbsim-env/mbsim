@@ -189,6 +189,8 @@ namespace MBSim {
 
       virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return false; }
 
+      void createPlotGroup() override;
+
     protected:
       /**
        * \brief size and index of right hand side for frame JACOBIAN settings

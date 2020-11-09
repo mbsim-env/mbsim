@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsim/observers/observer.h"
 #include <openmbvcppinterface/group.h>
+#include "hdf5serie/simpleattribute.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -33,12 +34,18 @@ namespace MBSim {
     if(stage==plotting) {
       if(plotFeature[openMBV]) {
         openMBVGrp=OpenMBV::ObjectFactory::create<OpenMBV::Group>();
-        openMBVGrp->setName(name+"_Group");
+        openMBVGrp->setName(name);
         openMBVGrp->setExpand(false);
-        parent->getOpenMBVGrp()->addObject(openMBVGrp);
+        parent->getObserversOpenMBVGrp()->addObject(openMBVGrp);
       }
     }
     Element::init(stage, config);
+  }
+
+  void Observer::createPlotGroup() {
+    plotGroup=parent->getObserversPlotGroup()->createChildObject<H5::Group>(name)();
+    plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write("Object of class: "+boost::core::demangle(typeid(*this).name()));
+    plotColumns.insert(plotColumns.begin(), "time");
   }
 
 }

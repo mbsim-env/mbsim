@@ -108,7 +108,14 @@ namespace MBSim {
       void setjsv(const fmatvec::VecInt& jsv_) { jsv = jsv_;}
       void setcuris(const fmatvec::Vec& curis_) { curis = curis_;}
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
-      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override;
+      std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getFramesOpenMBVGrp() override { return framesOpenMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getContoursOpenMBVGrp() override { return contoursOpenMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getGroupsOpenMBVGrp() override { return groupsOpenMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getObjectsOpenMBVGrp() override { return objectsOpenMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getLinksOpenMBVGrp() override { return linksOpenMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getConstraintsOpenMBVGrp() override { return constraintsOpenMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getObserversOpenMBVGrp() override { return observersOpenMBVGrp; }
 
       virtual void calcxSize();
       const fmatvec::Vec& getx() const { return x; };
@@ -769,13 +776,20 @@ namespace MBSim {
 
       void updateStateTable();
 
+      H5::GroupBase *getFramesPlotGroup() override { return framesPlotGroup; }
+      H5::GroupBase *getContoursPlotGroup() override { return contoursPlotGroup; }
+      H5::GroupBase *getGroupsPlotGroup() override { return groupsPlotGroup; }
+      H5::GroupBase *getObjectsPlotGroup() override { return objectsPlotGroup; }
+      H5::GroupBase *getLinksPlotGroup() override { return linksPlotGroup; }
+      H5::GroupBase *getConstraintsPlotGroup() override { return constraintsPlotGroup; }
+      H5::GroupBase *getObserversPlotGroup() override { return observersPlotGroup; }
+
     private:
       friend class DynamicSystemSolver;
       void addFrame(Frame *frame_);
-
       void addContour(Contour *contour_);
-    protected:
 
+    protected:
       /**
        * \brief parent frame
        */
@@ -947,6 +961,13 @@ namespace MBSim {
       std::vector<Contour*> contour;
 
       std::shared_ptr<OpenMBV::Group> openMBVGrp;
+      std::shared_ptr<OpenMBV::Group> framesOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> contoursOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> groupsOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> objectsOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> linksOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> constraintsOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> observersOpenMBVGrp;
       std::shared_ptr<H5::File> hdf5File;
 
       /** A pointer to frame "I" */
@@ -964,6 +985,14 @@ namespace MBSim {
       fmatvec::Vec corr;
 
       std::string saved_frameOfReference;
+
+      H5::GroupBase *framesPlotGroup;
+      H5::GroupBase *contoursPlotGroup;
+      H5::GroupBase *groupsPlotGroup;
+      H5::GroupBase *objectsPlotGroup;
+      H5::GroupBase *linksPlotGroup;
+      H5::GroupBase *constraintsPlotGroup;
+      H5::GroupBase *observersPlotGroup;
   };
 }
 

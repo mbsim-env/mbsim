@@ -78,6 +78,8 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
       /*******************************************************/ 
 
+      void createPlotGroup() override;
+
       /* INTERFACE FOR DERIVED CLASSES */
 
       /**
@@ -115,6 +117,10 @@ namespace MBSim {
       const std::vector<Contour*>& getContours() const { return contour; }
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGrp; }
       std::shared_ptr<OpenMBV::Body>& getOpenMBVBody() { return openMBVBody; }
+      std::shared_ptr<OpenMBV::Group> getFramesOpenMBVGrp() override { return framesOpenMBVGrp; }
+      std::shared_ptr<OpenMBV::Group> getContoursOpenMBVGrp() override { return contoursOpenMBVGrp; }
+      H5::GroupBase *getFramesPlotGroup() override { return framesPlotGroup; }
+      H5::GroupBase *getContoursPlotGroup() override { return contoursPlotGroup; }
       /*******************************************************/ 
 
       /**
@@ -177,6 +183,10 @@ namespace MBSim {
 
       std::shared_ptr<OpenMBV::Body> openMBVBody;
       std::shared_ptr<OpenMBV::Group> openMBVGrp;
+      std::shared_ptr<OpenMBV::Group> framesOpenMBVGrp;
+      std::shared_ptr<OpenMBV::Group> contoursOpenMBVGrp;
+      H5::GroupBase *framesPlotGroup;
+      H5::GroupBase *contoursPlotGroup;
 
     private:
       std::string saved_frameOfReference;

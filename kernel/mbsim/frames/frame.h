@@ -120,7 +120,7 @@ namespace MBSim {
         openMBVFrame=ombv.createOpenMBV();
       }
       void setOpenMBVFrame(const std::shared_ptr<OpenMBV::Frame> &frame) { openMBVFrame = frame; }
-      std::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() {return openMBVFrame; }
+      std::shared_ptr<OpenMBV::Frame> &getOpenMBVFrame() { return openMBVFrame; }
 
       void resetUpToDate() override;
       virtual void resetPositionsUpToDate();
@@ -132,6 +132,8 @@ namespace MBSim {
       virtual void updateAccelerations() { parent->updateAccelerations(this); updAcc = false; }
       virtual void updateJacobians(int j=0) { parent->updateJacobians(this,j); updJac[j] = false; }
       virtual void updateGyroscopicAccelerations() { parent->updateGyroscopicAccelerations(this); updGA = false; }
+
+      void createPlotGroup() override;
 
     protected:
       /**
