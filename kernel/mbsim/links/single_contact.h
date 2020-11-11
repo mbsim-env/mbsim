@@ -165,8 +165,6 @@ namespace MBSim {
       bool isNormalForceLawSetValuedAndActive() const { return isNormalForceLawSetValued() and gdActive[normal]; }
       bool isTangentialForceLawSetValuedAndActive() const { return isTangentialForceLawSetValued() and gdActive[tangential]; }
 
-      void createPlotGroup() override { Element::createPlotGroup(); }
-
     protected:
       /**
        * \brief force laws in normal and tangential direction on acceleration and velocity level

@@ -194,6 +194,9 @@ namespace MBSim {
 
       void updateGeneralizedPositions() override;
 
+      std::shared_ptr<OpenMBV::Group> getLinksOpenMBVGrp() override { return getOpenMBVGrp(); }
+      H5::GroupBase *getLinksPlotGroup() override { return getPlotGroup(); }
+
     protected:
       /**
        * \brief list of the single sub-contact(-points)

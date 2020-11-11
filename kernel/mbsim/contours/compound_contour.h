@@ -47,6 +47,8 @@ namespace MBSim {
       /* INHERITED INTERFACE OF ELEMENT */
       void plot() override;
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGroup; }
+      std::shared_ptr<OpenMBV::Group> getContoursOpenMBVGrp() override { return getOpenMBVGrp(); }
+      H5::GroupBase *getContoursPlotGroup() override { return getPlotGroup(); }
       /***************************************************/
 
       void init(InitStage stage, const InitConfigSet &config) override;
