@@ -22,6 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/circle.h"
+#include "mbsim/utils/contact_utils.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -45,9 +46,6 @@ namespace MBSim {
 
   void ContactKinematicsCirclePlane::updateg(SingleContact &contact, int i) {
     contact.getContourFrame(iplane)->setOrientation(plane->getFrame()->evalOrientation());
-    contact.getContourFrame(icircle)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    contact.getContourFrame(icircle)->getOrientation(false).set(1, -plane->getFrame()->getOrientation().col(1));
-    contact.getContourFrame(icircle)->getOrientation(false).set(2, plane->getFrame()->getOrientation().col(2));
 
     Vec3 Wd;
     Vec3 Wn = contact.getContourFrame(iplane)->getOrientation(false).col(0);
@@ -69,6 +67,68 @@ namespace MBSim {
     contact.getContourFrame(icircle)->setPosition(circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC);
     contact.getContourFrame(iplane)->setPosition(contact.getContourFrame(icircle)->getPosition(false) - Wn*g);
     contact.getGeneralizedRelativePosition(false)(0) = g;
+
+    contact.getContourFrame(icircle)->setEta(computeAngleOnUnitCircle(circle->getFrame()->evalOrientation().T()*(z_EC/(-z_EC_nrm2))));
+    contact.getContourFrame(icircle)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(icircle)->getOrientation(false).set(1, circle->evalWu(contact.getContourFrame(icircle)->getZeta()));
+    contact.getContourFrame(icircle)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(0),contact.getContourFrame(icircle)->getOrientation(false).col(1)));
+  }
+
+  void ContactKinematicsCirclePlane::updatewb(SingleContact &contact, int i) {
+
+    Vec3 n1 = contact.getContourFrame(iplane)->evalOrientation().col(0);
+    Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1);
+    Vec3 v1 = contact.getContourFrame(iplane)->getOrientation().col(2);
+    Vec3 u2 = contact.getContourFrame(icircle)->evalOrientation().col(1);
+    Vec3 v2 = contact.getContourFrame(icircle)->evalOrientation().col(2);
+    Vec3 vC1 = contact.getContourFrame(iplane)->evalVelocity();
+    Vec3 vC2 = contact.getContourFrame(icircle)->evalVelocity();
+    Vec3 Om1 = contact.getContourFrame(iplane)->evalAngularVelocity();
+    Vec3 Om2 = contact.getContourFrame(icircle)->evalAngularVelocity();
+
+    Mat3x2 R1 = plane->evalWR(contact.getContourFrame(iplane)->getZeta());
+    Mat3x2 KU2, KV2;
+    KU2(0,0) = -cos(contact.getContourFrame(icircle)->getEta());
+    KU2(1,0) = -sin(contact.getContourFrame(icircle)->getEta());
+    KV2(0,0) = -sin(contact.getContourFrame(icircle)->getEta())*sin(contact.getContourFrame(icircle)->getXi());
+    KV2(1,0) = cos(contact.getContourFrame(icircle)->getEta())*sin(contact.getContourFrame(icircle)->getXi());
+    KV2(0,1) = cos(contact.getContourFrame(icircle)->getEta())*cos(contact.getContourFrame(icircle)->getXi());
+    KV2(1,1) = sin(contact.getContourFrame(icircle)->getEta())*cos(contact.getContourFrame(icircle)->getXi());
+    KV2(2,1) = -sin(contact.getContourFrame(icircle)->getXi());
+    Mat3x2 U2 = circle->getFrame()->getOrientation()*KU2;
+    Mat3x2 V2 = circle->getFrame()->getOrientation()*KV2;
+    Mat3x2 R2;
+    R2.set(0,u2);
+
+    SqrMat A(4,NONINIT);
+    A.set(RangeV(0,0),RangeV(0,1), -u1.T()*R1);
+    A.set(RangeV(0,0),RangeV(2,3), u1.T()*R2);
+    A.set(RangeV(1,1),RangeV(0,1), -v1.T()*R1);
+    A.set(RangeV(1,1),RangeV(2,3), v1.T()*R2);
+    A.set(RangeV(2,2),RangeV(0,1), RowVec(2));
+    A.set(RangeV(2,2),RangeV(2,3), n1.T()*U2);
+    A.set(RangeV(3,3),RangeV(0,1), RowVec(2));
+    A.set(RangeV(3,3),RangeV(2,3), n1.T()*V2);
+
+    Vec b(4,NONINIT);
+    b(0) = -u1.T()*(vC2-vC1);
+    b(1) = -v1.T()*(vC2-vC1);
+    b(2) = -v2.T()*(Om2-Om1);
+    b(3) = u2.T()*(Om2-Om1);
+    Vec zetad =  slvLU(A,b);
+    Vec zetad1 = zetad(RangeV(0,1));
+    Vec zetad2 = zetad(RangeV(2,3));
+
+    Mat3x3 tOm1 = tilde(Om1);
+    Mat3x3 tOm2 = tilde(Om2);
+
+    if(contact.isNormalForceLawSetValued())
+      contact.getwb(false)(0) += n1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    if(contact.isTangentialForceLawSetValuedAndActive()) {
+      contact.getwb(false)(contact.isNormalForceLawSetValued()) += u1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+      if(contact.getFrictionDirections()>1)
+        contact.getwb(false)(contact.isNormalForceLawSetValued()+1) += v1.T()*(-tOm1*(vC2-vC1) - tOm1*R1*zetad1 + tOm2*R2*zetad2);
+    }
   }
 
 }
