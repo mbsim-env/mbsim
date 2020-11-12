@@ -654,7 +654,7 @@ namespace MBSimFlexibleBody {
 
   Mat FlexibleBody1s21Cosserat::readPositionMatrix(const string & h5File, const string & Job) {
     H5::File file(h5File, H5::File::read);
-    H5::Group *group = file.openChildObject<H5::Group>(name);
+    H5::Group *group = file.openChildObject<H5::Group>("objects")->openChildObject<H5::Group>(name);
     H5::VectorSerie<double> *data = group->openChildObject<H5::VectorSerie<double>>("data");
 
     int qsize = data->getColumns();
