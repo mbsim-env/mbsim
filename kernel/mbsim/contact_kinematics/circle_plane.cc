@@ -70,7 +70,7 @@ namespace MBSim {
 
     contact.getContourFrame(icircle)->setEta(computeAngleOnUnitCircle(circle->getFrame()->evalOrientation().T()*(z_EC/(-z_EC_nrm2))));
     contact.getContourFrame(icircle)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
-    contact.getContourFrame(icircle)->getOrientation(false).set(1, circle->evalWu(contact.getContourFrame(icircle)->getZeta()));
+    contact.getContourFrame(icircle)->getOrientation(false).set(1, circle->evalWu(contact.getContourFrame(icircle)->getZeta(false)));
     contact.getContourFrame(icircle)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(0),contact.getContourFrame(icircle)->getOrientation(false).col(1)));
   }
 
@@ -86,7 +86,7 @@ namespace MBSim {
     Vec3 Om1 = contact.getContourFrame(iplane)->evalAngularVelocity();
     Vec3 Om2 = contact.getContourFrame(icircle)->evalAngularVelocity();
 
-    Mat3x2 R1 = plane->evalWR(contact.getContourFrame(iplane)->getZeta());
+    Mat3x2 R1 = plane->evalWR(contact.getContourFrame(iplane)->getZeta(false));
     Mat3x2 KU2, KV2;
     KU2(0,0) = -cos(contact.getContourFrame(icircle)->getEta());
     KU2(1,0) = -sin(contact.getContourFrame(icircle)->getEta());
