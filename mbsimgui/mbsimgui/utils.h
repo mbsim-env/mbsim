@@ -21,6 +21,7 @@
 #define _UTILS_H_
 
 #include <QIcon>
+#include <QIconEngine>
 #include <string>
 #include <iomanip>
 #include <limits>
@@ -58,6 +59,17 @@ namespace MBSimGUI {
     private:
       // INITIALIZATION
       static bool initialized;
+  };
+
+  class OverlayIconEngine : public QIconEngine {
+    public:
+      OverlayIconEngine(const std::string &baseFile, const std::string &overlayFile);
+      OverlayIconEngine(const QIcon &baseIcon_, const QIcon &overlayIcon_);
+      void paint(QPainter* painter, const QRect& rect, QIcon::Mode mode, QIcon::State state) override;
+      QIconEngine* clone() const override;
+    private:
+      QIcon baseIcon;
+      QIcon overlayIcon;
   };
 
   inline std::string toStr(const std::string &str) {

@@ -101,7 +101,8 @@ namespace MBSimGUI {
   }
 
   Parameters::Parameters(EmbedItemData *parent) : ParameterItem(parent) {
-    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string()));
+    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
+                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"matrix.svg").string()));
   }
 
   QString Parameters::getReference() const {

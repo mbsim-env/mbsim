@@ -23,6 +23,7 @@
 #include <unordered_map>
 #include <cmath>
 #include <stdexcept>
+#include <QPainter>
 
 using namespace std;
 
@@ -43,6 +44,31 @@ namespace MBSimGUI {
       return ins.first->second=QIcon(filename);
     return ins.first->second;
   } 
+
+  OverlayIconEngine::OverlayIconEngine(const string &baseFile, const string &overlayFile) {
+    baseIcon    = Utils::QIconCached(QString::fromStdString(baseFile));
+    overlayIcon = Utils::QIconCached(QString::fromStdString(overlayFile));
+  }
+
+  OverlayIconEngine::OverlayIconEngine(const QIcon &baseIcon_, const QIcon &overlayIcon_) {
+    baseIcon    = baseIcon_;
+    overlayIcon = overlayIcon_;
+  }
+
+  void OverlayIconEngine::paint(QPainter* painter, const QRect& rect, QIcon::Mode mode, QIcon::State state) {
+    QPixmap basePixmap = baseIcon.pixmap(rect.size());
+    painter->drawPixmap(rect, basePixmap, QRect(QPoint(0,0), rect.size()));
+
+    QSize overlaySize = rect.size()*(14.0/16.0);
+    QPixmap overlayPixmap = overlayIcon.pixmap(overlaySize);
+    painter->drawPixmap(QRectF(QPoint(rect.x()+lround(1.0/16.0*rect.size().width()),
+                                      rect.y()+lround(1.0/16.0*rect.size().height())),overlaySize),
+                        overlayPixmap, QRectF(QPoint(0,0),overlaySize));
+  }
+
+  QIconEngine* OverlayIconEngine::clone() const {
+    return new OverlayIconEngine(baseIcon, overlayIcon);
+  }
 
   vector<vector<double>> mult(const vector<vector<double>> &A, const vector<vector<double>> &B) {
     vector<vector<double>> C(A.size());

@@ -19,8 +19,6 @@
 
 #include <config.h>
 #include "basicitemdata.h"
-#include "utils.h"
-#include "mainwindow.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -28,11 +26,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
 ContainerItemData::ContainerItemData(Element *element_) : element(element_) {
   element->addTreeItemData(this);
-  icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string()));
 }
 
 }
