@@ -452,8 +452,11 @@ namespace MBSimGUI {
     arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
-    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::objectSelected, this, &MainWindow::selectElement);
-    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::objectDoubleClicked, this, [=](){ openElementEditor(); });
+    // We cannot use the new Qt function pointer-based connection mechanism here since this seems not to work
+    // on Windows if the signal and slot lives in different DLLs as it is for the following two connections.
+    // Hence, we keep here the old macro base mechanism and use Q_OBJECT and moc for this class.
+    connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
+    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openElementEditor()));
   }
 
   MainWindow::~MainWindow() {

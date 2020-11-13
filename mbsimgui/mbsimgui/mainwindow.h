@@ -77,6 +77,7 @@ namespace MBSimGUI {
   class EchoStream;
 
   class MainWindow : public QMainWindow {
+    Q_OBJECT
 
     private:
       bool exitOK = true;
@@ -161,10 +162,11 @@ namespace MBSimGUI {
       void updateEchoView();
       void updateStatus();
       void autoSaveProject();
-      void selectElement(const std::string& ID);
       void updateReferences(Element *element);
       void updateParameterReferences(EmbedItemData *parent);
       void saveReferencedFile(int i);
+    private slots:
+      void selectElement(const std::string& ID);
 
     public:
       MainWindow(QStringList &arg);
@@ -244,7 +246,6 @@ namespace MBSimGUI {
       void rebuildTree();
       void exportParameters(EmbedItemData *item=nullptr);
       void loadSolver(bool embed=false);
-      void openElementEditor(bool config=true);
       void openParameterEditor(bool config=true);
       void openCloneEditor();
       FileItemData* addFile(const QFileInfo &file);
@@ -253,6 +254,8 @@ namespace MBSimGUI {
       int getExitOK() { return exitOK; }
       void setExitBad() { exitOK=false; }
       boost::filesystem::path getInstallPath() const { return installPath; }
+    public slots:
+      void openElementEditor(bool config=true);
 
   };
 

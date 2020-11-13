@@ -82,6 +82,7 @@ QT_BUILT_SOURCES = widget.moc.cc \
 		   variable_widgets.moc.cc \
 		   extended_widgets.moc.cc \
 		   property_dialog.moc.cc  \
+ 		   mainwindow.moc.cc \
 		   data_plot.moc.cc
 
 BUILT_SOURCES = $(QT_BUILT_SOURCES)
