@@ -23,6 +23,7 @@
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
+#include <QBrush>
 
 namespace MBSimGUI {
 
@@ -48,6 +49,7 @@ namespace MBSimGUI {
       TreeModel(QObject *parent = nullptr) : QAbstractItemModel(parent) { }
       ~TreeModel() override;
 
+      bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
       QVariant data(const QModelIndex &index, int role) const override;
       QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
@@ -66,6 +68,7 @@ namespace MBSimGUI {
 
     protected:
       TreeItem *rootItem{0};
+      std::map<QModelIndex, QBrush> foregroundBrush;
   };
 
   class ElementTreeModel : public TreeModel {

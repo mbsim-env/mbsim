@@ -169,10 +169,10 @@ namespace MBSimGUI {
 
     GUIMenu->addSeparator();
 
-    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
+    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 2);
     elementViewFilter->hide();
 
-    parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, -2);
+    parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, 2);
     parameterViewFilter->hide();
 
     GUIMenu->addSeparator();
@@ -533,7 +533,7 @@ namespace MBSimGUI {
     menu.setAutoExportDir(settings.value("mainwindow/options/autoexportdir", "./").toString());
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
-    menu.setShowFilters(settings.value("mainwindow/options/showfilters", false).toBool());
+    menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
 
 #ifdef _WIN32
