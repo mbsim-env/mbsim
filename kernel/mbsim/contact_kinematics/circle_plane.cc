@@ -70,12 +70,14 @@ namespace MBSim {
 
     contact.getContourFrame(icircle)->setEta(computeAngleOnUnitCircle(circle->getFrame()->evalOrientation().T()*(z_EC/(-z_EC_nrm2))));
     contact.getContourFrame(icircle)->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    contact.getContourFrame(icircle)->setXi(asin((circle->getFrame()->evalOrientation().T()*contact.getContourFrame(icircle)->getOrientation(false).col(0))(2)));
     contact.getContourFrame(icircle)->getOrientation(false).set(1, circle->evalWu(contact.getContourFrame(icircle)->getZeta(false)));
     contact.getContourFrame(icircle)->getOrientation(false).set(2, crossProduct(contact.getContourFrame(icircle)->getOrientation(false).col(0),contact.getContourFrame(icircle)->getOrientation(false).col(1)));
   }
 
   void ContactKinematicsCirclePlane::updatewb(SingleContact &contact, int i) {
-
+    if(not iplane == 0)
+      throw std::runtime_error("(ContactKinematics:updatewb): plane must be first contour!");
     Vec3 n1 = contact.getContourFrame(iplane)->evalOrientation().col(0);
     Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1);
     Vec3 v1 = contact.getContourFrame(iplane)->getOrientation().col(2);
@@ -87,18 +89,9 @@ namespace MBSim {
     Vec3 Om2 = contact.getContourFrame(icircle)->evalAngularVelocity();
 
     Mat3x2 R1 = plane->evalWR(contact.getContourFrame(iplane)->getZeta(false));
-    Mat3x2 KU2, KV2;
-    KU2(0,0) = -cos(contact.getContourFrame(icircle)->getEta());
-    KU2(1,0) = -sin(contact.getContourFrame(icircle)->getEta());
-    KV2(0,0) = -sin(contact.getContourFrame(icircle)->getEta())*sin(contact.getContourFrame(icircle)->getXi());
-    KV2(1,0) = cos(contact.getContourFrame(icircle)->getEta())*sin(contact.getContourFrame(icircle)->getXi());
-    KV2(0,1) = cos(contact.getContourFrame(icircle)->getEta())*cos(contact.getContourFrame(icircle)->getXi());
-    KV2(1,1) = sin(contact.getContourFrame(icircle)->getEta())*cos(contact.getContourFrame(icircle)->getXi());
-    KV2(2,1) = -sin(contact.getContourFrame(icircle)->getXi());
-    Mat3x2 U2 = circle->getFrame()->getOrientation()*KU2;
-    Mat3x2 V2 = circle->getFrame()->getOrientation()*KV2;
-    Mat3x2 R2;
-    R2.set(0,u2);
+    Mat3x2 R2 = circle->evalWR(contact.getContourFrame(icircle)->getZeta(false));
+    Mat3x2 U2 = circle->evalWU(contact.getContourFrame(icircle)->getZeta(false));
+    Mat3x2 V2 = circle->evalWV(contact.getContourFrame(icircle)->getZeta(false));
 
     SqrMat A(4,NONINIT);
     A.set(RangeV(0,0),RangeV(0,1), -u1.T()*R1);
