@@ -20,7 +20,6 @@
 #include <config.h>
 #include "mbsim/links/elastic_joint.h"
 #include "mbsim/objectfactory.h"
-#include "mbsim/contact_kinematics/contact_kinematics.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;
