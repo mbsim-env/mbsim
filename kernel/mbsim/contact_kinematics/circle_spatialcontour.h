@@ -21,69 +21,43 @@
 #define _CONTACT_KINIMATICS_CIRCLE_SPATIALCONTOUR_H_
 
 #include "contact_kinematics.h"
-#include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
-#include "mbsim/functions/symbolic_function.h"
 
 namespace MBSim {
 
   class Circle;
   class SpatialContour;
+  class FuncPairSpatialContourCircle;
 
   /*! \brief pairing circle outer side to spatial contour
    * \author Markus Friedrich
    */
   class ContactKinematicsCircleSpatialContour : public ContactKinematics {
     public:
-      ContactKinematicsCircleSpatialContour();
+      ContactKinematicsCircleSpatialContour() = default;
+      ~ContactKinematicsCircleSpatialContour();
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
       void updateg(SingleContact &contact, int i=0) override;
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
-      void calcisSize() override { isSize = 3; }
+      void calcisSize() override { isSize = 2*maxNumContacts; }
       /***************************************************/
 
     private:
       /**
        * \brief contour index
        */
-      int icircle, ispatialContour;
+      int icircle, ispatialcontour;
 
       /**
        * \brief contour classes
        */
       Circle *circle;
-      SpatialContour *spatialContour;
+      SpatialContour *spatialcontour;
 
-      fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::IndependentVariable> circlePosition;
-      fmatvec::SquareMatrix<fmatvec::Fixed<3>, fmatvec::IndependentVariable> circleOrientation;
-      fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::IndependentVariable> spatialContourPosition;
-      fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<3>, fmatvec::Fixed<3>, fmatvec::IndependentVariable> spatialContourOrientation;
-      fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::IndependentVariable> parS;
-      fmatvec::Vec par; // the parameter vector = free variables for the root finding (as a reference to internal state curis)
-      fmatvec::Vec parSol; // the solution of the free varaibles for the root finding (as a reference to internal state nextis)
-      fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> W_r_WC;
-      fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> W_r_WS;
-      fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> t0S;
-      fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> t1S;
-      fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> tC;
-      SymbolicFunction<fmatvec::Vec(fmatvec::Vec)> rootFunction;
-      class MyJac : public NewtonJacobianFunction {
-        public:
-          MyJac() : indep(fmatvec::NONINIT) {}
-          void setIndep(const fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::IndependentVariable>& indep_) { indep = indep_; };
-          void setDep(const fmatvec::SquareMatrix<fmatvec::Fixed<3>, fmatvec::SymbolicExpression>& dep_) { dep = dep_; };
-          fmatvec::SqrMat operator()(const fmatvec::Vec &x) override {
-            indep ^= x;
-            return fmatvec::eval(dep);
-          }
-        private:
-          fmatvec::Vector<fmatvec::Fixed<3>, fmatvec::IndependentVariable> indep;
-          fmatvec::SquareMatrix<fmatvec::Fixed<3>, fmatvec::SymbolicExpression> dep;
-      };
-      MyJac jacobianFunction;
-      GlobalResidualCriteriaFunction criteria;
-      StandardDampingFunction damping;
-      MultiDimensionalNewtonMethod rootFinding;
+      /**
+       * \brief root function
+       */
+      MBSim::FuncPairSpatialContourCircle *func;
   };
 
 }
