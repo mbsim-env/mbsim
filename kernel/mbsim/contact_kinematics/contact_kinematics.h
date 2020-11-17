@@ -54,7 +54,7 @@ namespace MBSim {
        * \brief treats ordering of contours 
        * \param contour vector
        */
-      virtual void assignContours(const std::vector<Contour*> &contour) = 0;
+      virtual void assignContours(const std::vector<Contour*> &contour_) { contour = contour_; }
 
       virtual void calcisSize() { isSize = 0; }
       void setisInd(int ind) { isInd = ind; }
@@ -90,7 +90,7 @@ namespace MBSim {
        * \param conctact single contact
        * \param i index of the contact that should be updated
        */
-      virtual void updatewb(SingleContact &contact, int i=0) { throw std::runtime_error("(ContactKinematics:updatewb): Not implemented!"); }
+      virtual void updatewb(SingleContact &contact, int i=0);
       
       /** 
        * \brief treats ordering of contours
@@ -135,6 +135,8 @@ namespace MBSim {
       fmatvec::Vec curis, nextis;
       int isInd { 0 };
       int isSize { 0 };
+
+      std::vector<Contour*> contour;
   };
 
 }
