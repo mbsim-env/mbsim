@@ -409,8 +409,7 @@
           </frictionForceFunction>
         </RegularizedSpatialFriction>
       </tangentialForceLaw>
-      <initialGuess>[pi/2;0.15;0]</initialGuess>
-      <tolerance>tol/100</tolerance>
+      <initialGuess>[pi/2,0.15]</initialGuess>
     </Contact>
     <Contact name="KontaktHR">
       <connect ref1="../../Contour[Boden]" ref2="../Object[Hinterrad]/Contour[Rad]"/>
@@ -433,8 +432,7 @@
           </frictionForceFunction>
         </RegularizedSpatialFriction>
       </tangentialForceLaw>
-      <initialGuess>[pi/2;-0.85;0]</initialGuess>
-      <tolerance>tol/100</tolerance>
+      <initialGuess>[pi/2,-0.85]</initialGuess>
     </Contact>
     <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="FahrerPos">
       <frame ref="../Object[Fahrer]/Frame[C]"/>
@@ -523,7 +521,7 @@
         <scaleLength>0.01</scaleLength>
       </enableOpenMBVTangentialForce>
     </ContactObserver>
-    <FrameChaserObserver name="RahmenTrackPos" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <FrameChaserObserver xmlns="http://www.mbsim-env.de/MBSimControl" name="RahmenTrackPos">
       <frame ref="../Object[Rahmen]/Frame[F]"/>
       <constantZ>0</constantZ>
       <constantRotationX>0</constantRotationX>
@@ -535,6 +533,7 @@
   <enableOpenMBVFrameI>
     <size unit="dm">1</size>
   </enableOpenMBVFrameI>
+
 
 
 
