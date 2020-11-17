@@ -59,9 +59,9 @@ namespace MBSim {
 
       fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta) override;
 
-      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta) override;
 
-      fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer2Kn(const fmatvec::Vec2 &zeta) override;
 
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint) override;
       /**********************************/

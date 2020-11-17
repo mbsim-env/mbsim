@@ -66,24 +66,24 @@ namespace MBSim {
     return parDer2Kv;
   }
 
-  Vec3 Point::evalParDer1Wn(const Vec2 &zeta) {
-    Vec3 parDer1Wn(NONINIT);
+  Vec3 Point::evalParDer1Kn(const Vec2 &zeta) {
+    Vec3 parDer1Kn(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
-    parDer1Wn(0) = -sin(a)*cos(b);
-    parDer1Wn(1) = cos(a)*cos(b);
-    parDer1Wn(2) = 0;
-    return parDer1Wn;
+    parDer1Kn(0) = -sin(a)*cos(b);
+    parDer1Kn(1) = cos(a)*cos(b);
+    parDer1Kn(2) = 0;
+    return parDer1Kn;
   }
 
-  Vec3 Point::evalParDer2Wn(const Vec2 &zeta) {
-    Vec3 parDer2Wn(NONINIT);
+  Vec3 Point::evalParDer2Kn(const Vec2 &zeta) {
+    Vec3 parDer2Kn(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
-    parDer2Wn(0) = -cos(a)*sin(b);
-    parDer2Wn(1) = -sin(a)*sin(b);
-    parDer2Wn(2) = cos(b);
-    return parDer2Wn;
+    parDer2Kn(0) = -cos(a)*sin(b);
+    parDer2Kn(1) = -sin(a)*sin(b);
+    parDer2Kn(2) = cos(b);
+    return parDer2Kn;
   }
 
   void Point::init(InitStage stage, const InitConfigSet &config) {
