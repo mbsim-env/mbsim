@@ -24,7 +24,7 @@
 #include <mbsim/constitutive_laws/friction_force_law.h>
 #include <mbsim/constitutive_laws/generalized_impact_law.h>
 #include <mbsim/constitutive_laws/friction_impact_law.h>
-#include <mbsim/contact_kinematics/contact_kinematics.h>
+#include <mbsim/contact_kinematics/spatialcontour_spatialcontour.h>
 #include <mbsim/objectfactory.h>
 
 using namespace std;
@@ -278,7 +278,7 @@ namespace MBSim {
             if (contactKinematics == 0) {
               contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
               if (contactKinematics == 0) {
-                throwError("(Contact::init): Unknown contact pairing between Contour \"" + boost::core::demangle(typeid(*contour[0]).name()) + "\" and Contour \"" + boost::core::demangle(typeid(*contour[1]).name()) + "\"!");
+		contactKinematics = new ContactKinematicsSpatialContourSpatialContour;
               }
             }
           }

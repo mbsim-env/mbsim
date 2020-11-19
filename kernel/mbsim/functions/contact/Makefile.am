@@ -5,6 +5,7 @@ libcontact_la_SOURCES = funcpair_planarcontour_point.cc\
 			funcpair_spatialcontour_point.cc\
 			funcpair_spatialcontour_plane.cc\
 			funcpair_spatialcontour_circle.cc\
+			funcpair_spatialcontour_spatialcontour.cc\
 			funcpair_point_contourinterpolation.cc\
 			funcpair_conesection_circle.cc\
 			funcpair_ellipse_circle.cc\
@@ -26,6 +27,7 @@ contactinclude_HEADERS = distance_function.h\
 			 funcpair_spatialcontour_point.h\
 			 funcpair_spatialcontour_plane.h\
 			 funcpair_spatialcontour_circle.h\
+			 funcpair_spatialcontour_spatialcontour.h\
 			 funcpair_point_contourinterpolation.h\
 			 funcpair_conesection_circle.h\
 			 funcpair_ellipse_circle.h\
