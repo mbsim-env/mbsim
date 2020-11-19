@@ -47,8 +47,13 @@ namespace MBSim {
   }
 
   Vec3 PlanarContour::evalKt(const Vec2 &zeta) {
-    static Vec3 Kt("[0;0;1]");
+    static Vec3 Kt;
     return Kt;
+  }
+
+  Vec3 PlanarContour::evalKn(const Vec2 &zeta) {
+    static Vec3 Ke("[0;0;1]");
+    return crossProduct(evalKu(zeta),Ke);
   }
 
   Vec3 PlanarContour::evalParDer1Ks(const Vec2 &zeta) {

@@ -58,9 +58,9 @@ namespace MBSim {
     static Vec3 Kv;
     double a = zeta(0);
     double b = zeta(1);
-    Kv(0)=-cos(a)*sin(b);
-    Kv(1)=-sin(a)*sin(b);
-    Kv(2)=cos(b);
+    Kv(0)=-sign*cos(a)*sin(b);
+    Kv(1)=-sign*sin(a)*sin(b);
+    Kv(2)=sign*cos(b);
     return Kv;
   }
 
@@ -68,22 +68,10 @@ namespace MBSim {
     static Vec3 Kn;
     double a = zeta(0);
     double b = zeta(1);
-    Kn(0)=cos(a)*cos(b);
-    Kn(1)=sin(a)*cos(b);
-    Kn(2)=sin(b);
+    Kn(0)=sign*cos(a)*cos(b);
+    Kn(1)=sign*sin(a)*cos(b);
+    Kn(2)=sign*sin(b);
     return Kn;
-  }
-
-  Vec3 Circle::evalWu(const Vec2 &zeta) {
-    return R->evalOrientation()*evalKu(zeta);
-  }
-
-  Vec3 Circle::evalWv(const Vec2 &zeta) {
-    return R->evalOrientation()*evalKv(zeta);
-  }
-
-  Vec3 Circle::evalWn(const Vec2 &zeta) {
-    return R->evalOrientation()*evalKn(zeta);
   }
 
   Vec3 Circle::evalParDer1Ku(const fmatvec::Vec2 &zeta) {
@@ -103,8 +91,8 @@ namespace MBSim {
     Vec3 parDer1Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
-    parDer1Kv(0) = sin(a)*sin(b);
-    parDer1Kv(1) = -cos(a)*sin(b);
+    parDer1Kv(0) = sign*sin(a)*sin(b);
+    parDer1Kv(1) = -sign*cos(a)*sin(b);
     parDer1Kv(2) = 0;
     return parDer1Kv;
   }
@@ -113,9 +101,9 @@ namespace MBSim {
     Vec3 parDer2Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
-    parDer2Kv(0) = -cos(a)*cos(b);
-    parDer2Kv(1) = -sin(a)*cos(b);
-    parDer2Kv(2) = -sin(b);
+    parDer2Kv(0) = -sign*cos(a)*cos(b);
+    parDer2Kv(1) = -sign*sin(a)*cos(b);
+    parDer2Kv(2) = -sign*sin(b);
     return parDer2Kv;
   }
 

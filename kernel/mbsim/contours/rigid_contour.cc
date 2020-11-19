@@ -64,6 +64,7 @@ namespace MBSim {
   Vec3 RigidContour::evalKt(const Vec2 &zeta) {
     throwError("(RigidContour::evalKt): Not implemented.");
   }
+
   Vec3 RigidContour::evalParDer1Ks(const Vec2 &zeta) {
     throwError("(RigidContour::evalParDer1Ks): Not implemented.");
   }
@@ -128,6 +129,18 @@ namespace MBSim {
 
   Vec3 RigidContour::evalPosition(const Vec2 &zeta) {
     return R->evalPosition() + R->evalOrientation()*evalKrPS(zeta);
+  }
+
+  Vec3 RigidContour::evalWu(const Vec2 &zeta) {
+    return R->evalOrientation()*evalKu(zeta);
+  }
+
+  Vec3 RigidContour::evalWv(const Vec2 &zeta) {
+    return R->evalOrientation()*evalKv(zeta);
+  }
+
+  Vec3 RigidContour::evalWn(const Vec2 &zeta) {
+    return R->evalOrientation()*evalKn(zeta);
   }
 
   Vec3 RigidContour::evalParDer1Wn(const Vec2 &zeta) {

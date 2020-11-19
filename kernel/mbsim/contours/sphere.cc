@@ -60,6 +60,35 @@ namespace MBSim {
     return Kt;
   }
 
+  Vec3 Sphere::evalKu(const fmatvec::Vec2 &zeta) {
+    Vec3 Ku(NONINIT);
+    double a = zeta(0);
+    Ku(0) = -sin(a);
+    Ku(1) = cos(a);
+    Ku(2) = 0;
+    return Ku;
+  }
+
+  Vec3 Sphere::evalKv(const fmatvec::Vec2 &zeta) {
+    Vec3 Kv(NONINIT);
+    double a = zeta(0);
+    double b = zeta(1);
+    Kv(0) = -cos(a)*sin(b);
+    Kv(1) = -sin(a)*sin(b);
+    Kv(2) = cos(b);
+    return Kv;
+  }
+
+  Vec3 Sphere::evalKn(const fmatvec::Vec2 &zeta) {
+    Vec3 Kn(NONINIT);
+    double a = zeta(0);
+    double b = zeta(1);
+    Kn(0) = cos(a)*cos(b);
+    Kn(1) = sin(a)*cos(b);
+    Kn(2) = sin(b);
+    return Kn;
+  }
+
   Vec3 Sphere::evalParDer1Ku(const fmatvec::Vec2 &zeta) {
     Vec3 parDer1Ku(NONINIT);
     double a = zeta(0);
