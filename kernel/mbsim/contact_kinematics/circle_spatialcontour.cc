@@ -54,7 +54,7 @@ namespace MBSim {
 
   void ContactKinematicsCircleSpatialContour::setInitialGuess(const MatV &zeta0_) {
     if(zeta0_.rows()) {
-      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 2) throw runtime_error("(ContactKinematicsCircleSpatialContour::assignContours): size of zeta0 does not match");
+      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 2) throw runtime_error("(ContactKinematicsCircleSpatialContour::setInitialGuess): size of zeta0 does not match");
       for(int i=0; i<maxNumContacts; i++) {
 	curis(2*i) = zeta0_(i,0);
 	curis(2*i+1) = zeta0_(i,1);
@@ -92,9 +92,9 @@ namespace MBSim {
     double z_EC_nrm2 = nrm2(z_EC);
     Vec3 WrD;
     if(z_EC_nrm2 <= 1e-8)
-      WrD = circle->getFrame()->getPosition() - contact.getContourFrame(ispatialcontour)->getPosition();
+      WrD = circle->getFrame()->getPosition() - contact.getContourFrame(ispatialcontour)->getPosition(false);
     else
-      WrD = (circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC) - contact.getContourFrame(ispatialcontour)->getPosition();
+      WrD = (circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC) - contact.getContourFrame(ispatialcontour)->getPosition(false);
 
     double g;
     if(spatialcontour->isZetaOutside(contact.getContourFrame(ispatialcontour)->getZeta(false)))
