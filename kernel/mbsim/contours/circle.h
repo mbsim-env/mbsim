@@ -48,17 +48,22 @@ namespace MBSim {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
+      fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override { return zero3; }
       fmatvec::Vec3 evalKu(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKn(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta) override;
-      fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta) override { return zero3; }
       fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParDer2Kn(const fmatvec::Vec2 &zeta) override;
+
+      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta) override { return zero3; }
+
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3& WrPoint) override;
       /***************************************************/
 

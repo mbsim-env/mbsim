@@ -21,6 +21,7 @@
 #define _LINE_H_
 
 #include "mbsim/contours/rigid_contour.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
 #include <openmbvcppinterface/indexedlineset.h>
@@ -40,12 +41,28 @@ namespace MBSim {
        */
       Line(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) { }
 
-      /* INHERITED INTERFACE OF ELEMENT */
+      /* INHERITED INTERFACE OF CONTOUR */
+      fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override { return ey; }
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalKu(const fmatvec::Vec2 &zeta) override { return evalKs(zeta); }
+      fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta) override { return evalKt(zeta); }
+      fmatvec::Vec3 evalKn(const fmatvec::Vec2 &zeta) override { return ex; }
+      fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta) override { return zero3; }
+
+      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override { return R->evalOrientation().col(1); }
+      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) override { return evalWs(zeta); }
+      fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) override { return evalWt(zeta); }
+      fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta) override { return R->evalOrientation().col(0); }
+      fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override { return zero3; }
       /***************************************************/
 
-      /* INHERITED INTERFACE OF CONTOUR */
       virtual double getCurvature(const fmatvec::Vec2 &zeta) { return 0; } 
-      /***************************************************/
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (length,(double),1)(diffuseColor,(const fmatvec::Vec3&),fmatvec::Vec3(std::vector<double>{-1,1,1}))(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         OpenMBVLine ombv(length,diffuseColor,transparency,pointSize,lineWidth);

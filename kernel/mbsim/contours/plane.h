@@ -21,6 +21,7 @@
 #define _PLANE_H_
 
 #include "mbsim/contours/rigid_contour.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/boost_parameters.h"
 #include "mbsim/utils/openmbv_utils.h"
 #include <openmbvcppinterface/cuboid.h>
@@ -47,40 +48,30 @@ namespace MBSim {
       /***************************************************/
 
       /* INTERFACE OF CONTOUR */
-     /**
-       * \return first tangent in world frame
-       * \param t time
-       * \param zeta contour position
-       */
-      fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override { return ey; }
+      fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override { return ez; }
+      fmatvec::Vec3 evalKu(const fmatvec::Vec2 &zeta) override { return evalKs(zeta); }
+      fmatvec::Vec3 evalKv(const fmatvec::Vec2 &zeta) override { return evalKt(zeta); }
+      fmatvec::Vec3 evalKn(const fmatvec::Vec2 &zeta) override { return ex; }
+      fmatvec::Vec3 evalParDer1Ku(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer2Ku(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Kv(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer2Kv(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer2Kn(const fmatvec::Vec2 &zeta) override { return zero3; }
 
-      /**
-       * \return second tangent in world frame
-       * \param t time
-       * \param zeta contour position
-       */
-      fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) override;
-
-      /**
-       * \return second tangent in world frame
-       * \param t time
-       * \param zeta contour position
-       */
-      fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta) override;
-
-     /**
-       * \return first tangent in world frame
-       * \param t time
-       * \param zeta contour position
-       */
-      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
-
-      /**
-       * \return second tangent in world frame
-       * \param t time
-       * \param zeta contour position
-       */
-      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override { return R->evalOrientation().col(1); }
+      fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override { return R->evalOrientation().col(2); }
+      fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) override { return evalWs(zeta); }
+      fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) override { return evalWt(zeta); }
+      fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta) override { return R->evalOrientation().col(0); }
+      fmatvec::Vec3 evalParDer1Wu(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Wv(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer2Wv(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer2Wn(const fmatvec::Vec2 &zeta) override { return zero3; }
 
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPoint) override;
       /***************************************************/
@@ -91,7 +82,6 @@ namespace MBSim {
       }
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
-
   };
 }
 

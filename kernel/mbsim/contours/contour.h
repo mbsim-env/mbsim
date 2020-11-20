@@ -204,6 +204,11 @@ namespace MBSim {
        * \brief thickness of contour
        */
       double thickness;
+
+      static fmatvec::Vec3 zero3;
+      static fmatvec::Vec3 ex;
+      static fmatvec::Vec3 ey;
+      static fmatvec::Vec3 ez;
   };
 
 }

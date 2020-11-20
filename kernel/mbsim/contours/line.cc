@@ -29,6 +29,12 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Line)
 
+  Vec3 Line::evalKrPS(const Vec2 &zeta) {
+    static Vec3 Kr;
+    Kr(1) = zeta(0);
+    return Kr;
+  }
+
   void Line::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");

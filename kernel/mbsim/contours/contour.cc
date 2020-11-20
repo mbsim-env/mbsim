@@ -28,6 +28,11 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  Vec3 Contour::zero3;
+  Vec3 Contour::ex("[1;0;0]");
+  Vec3 Contour::ey("[0;1;0]");
+  Vec3 Contour::ez("[0;0;1]");
+
   Contour::Contour(const string &name) : Element(name), thickness(0.01) {
     hSize[0] = 0;
     hSize[1] = 0;

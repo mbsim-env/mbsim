@@ -19,9 +19,6 @@
 
 #include <config.h>
 #include "mbsim/contours/plane.h"
-#include "mbsim/frames/frame.h"
-
-#include <openmbvcppinterface/grid.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -32,24 +29,11 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Plane)
 
-  Vec3 Plane::evalWu(const Vec2 &zeta) {
-    return evalWs(zeta);
-  }
-
-  Vec3 Plane::evalWv(const Vec2 &zeta) {
-    return evalWt(zeta);
-  }
-
-  Vec3 Plane::evalWn(const Vec2 &zeta) {
-    return R->evalOrientation().col(0);
-  }
-
-  Vec3 Plane::evalWs(const Vec2 &zeta) {
-    return R->evalOrientation().col(1);
-  }
-
-  Vec3 Plane::evalWt(const Vec2 &zeta) {
-    return R->evalOrientation().col(2);
+  Vec3 Plane::evalKrPS(const Vec2 &zeta) {
+    static Vec3 Kr;
+    Kr(1) = zeta(0);
+    Kr(2) = zeta(1);
+    return Kr;
   }
 
   Vec2 Plane::evalZeta(const Vec3 &WrPoint) {

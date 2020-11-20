@@ -39,6 +39,12 @@ namespace MBSim {
   LineSegment::LineSegment(const std::string& name, Frame *R) : RigidContour(name,R) {
   }
 
+  Vec3 LineSegment::evalKrPS(const Vec2 &zeta) {
+    static Vec3 Kr;
+    Kr(1) = zeta(0);
+    return Kr;
+  }
+
   void LineSegment::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody)

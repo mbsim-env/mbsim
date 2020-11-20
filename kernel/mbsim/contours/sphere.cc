@@ -40,18 +40,27 @@ namespace MBSim {
     RigidContour::init(stage, config);
   }
 
+  Vec3 Sphere::evalKrPS(const Vec2 &zeta) {
+    static Vec3 Kr;
+    double a = zeta(0);
+    double b = zeta(1);
+    Kr(0) = r*cos(a)*cos(b);
+    Kr(1) = r*sin(a)*cos(b);
+    Kr(2) = r*sin(b);
+    return Kr;
+  }
+
   Vec3 Sphere::evalKs(const fmatvec::Vec2 &zeta) {
-    Vec3 Ks(NONINIT);
+    static Vec3 Ks;
     double a = zeta(0);
     double b = zeta(1);
     Ks(0) = -r*sin(a)*cos(b);
     Ks(1) = r*cos(a)*cos(b);
-    Ks(2) = 0;
     return Ks;
   }
 
   Vec3 Sphere::evalKt(const fmatvec::Vec2 &zeta) {
-    Vec3 Kt(NONINIT);
+    static Vec3 Kt(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     Kt(0) = -r*cos(a)*sin(b);
@@ -61,16 +70,15 @@ namespace MBSim {
   }
 
   Vec3 Sphere::evalKu(const fmatvec::Vec2 &zeta) {
-    Vec3 Ku(NONINIT);
+    static Vec3 Ku;
     double a = zeta(0);
     Ku(0) = -sin(a);
     Ku(1) = cos(a);
-    Ku(2) = 0;
     return Ku;
   }
 
   Vec3 Sphere::evalKv(const fmatvec::Vec2 &zeta) {
-    Vec3 Kv(NONINIT);
+    static Vec3 Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     Kv(0) = -cos(a)*sin(b);
@@ -80,7 +88,7 @@ namespace MBSim {
   }
 
   Vec3 Sphere::evalKn(const fmatvec::Vec2 &zeta) {
-    Vec3 Kn(NONINIT);
+    static Vec3 Kn(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     Kn(0) = cos(a)*cos(b);
@@ -90,31 +98,24 @@ namespace MBSim {
   }
 
   Vec3 Sphere::evalParDer1Ku(const fmatvec::Vec2 &zeta) {
-    Vec3 parDer1Ku(NONINIT);
+    static Vec3 parDer1Ku;
     double a = zeta(0);
     parDer1Ku(0) = -cos(a);
     parDer1Ku(1) = -sin(a);
-    parDer1Ku(2) = 0;
     return parDer1Ku;
   }
 
-  Vec3 Sphere::evalParDer2Ku(const fmatvec::Vec2 &zeta) {
-    static Vec3 parDer2Ku;
-    return parDer2Ku;
-  }
-
   Vec3 Sphere::evalParDer1Kv(const fmatvec::Vec2 &zeta) {
-    Vec3 parDer1Kv(NONINIT);
+    static Vec3 parDer1Kv;
     double a = zeta(0);
     double b = zeta(1);
     parDer1Kv(0) = sin(a)*sin(b);
     parDer1Kv(1) = -cos(a)*sin(b);
-    parDer1Kv(2) = 0;
     return parDer1Kv;
   }
 
   Vec3 Sphere::evalParDer2Kv(const fmatvec::Vec2 &zeta) {
-    Vec3 parDer2Kv(NONINIT);
+    static Vec3 parDer2Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     parDer2Kv(0) = -cos(a)*cos(b);
@@ -124,17 +125,16 @@ namespace MBSim {
   }
 
   Vec3 Sphere::evalParDer1Kn(const Vec2 &zeta) {
-    Vec3 parDer1Kn(NONINIT);
+    static Vec3 parDer1Kn;
     double a = zeta(0);
     double b = zeta(1);
     parDer1Kn(0) = -sin(a)*cos(b);
     parDer1Kn(1) = cos(a)*cos(b);
-    parDer1Kn(2) = 0;
     return parDer1Kn;
   }
 
   Vec3 Sphere::evalParDer2Kn(const Vec2 &zeta) {
-    Vec3 parDer2Kn(NONINIT);
+    static Vec3 parDer2Kn(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     parDer2Kn(0) = -cos(a)*sin(b);

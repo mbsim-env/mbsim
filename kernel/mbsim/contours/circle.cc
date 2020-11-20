@@ -33,17 +33,20 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Circle)
 
+  Vec3 Circle::evalKrPS(const Vec2 &zeta) {
+    static Vec3 Kr;
+    double a = zeta(0);
+    Kr(0)=r*cos(a);
+    Kr(1)=r*sin(a);
+    return Kr;
+  }
+
   Vec3 Circle::evalKs(const fmatvec::Vec2 &zeta) {
     static Vec3 Ks;
     double a = zeta(0);
     Ks(0)=-r*sin(a);
     Ks(1)=r*cos(a);
     return Ks;
-  }
-
-  Vec3 Circle::evalKt(const fmatvec::Vec2 &zeta) {
-    static Vec3 Kt;
-    return Kt;
   }
 
   Vec3 Circle::evalKu(const fmatvec::Vec2 &zeta) {
@@ -55,7 +58,7 @@ namespace MBSim {
   }
 
   Vec3 Circle::evalKv(const fmatvec::Vec2 &zeta) {
-    static Vec3 Kv;
+    static Vec3 Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     Kv(0)=-sign*cos(a)*sin(b);
@@ -65,7 +68,7 @@ namespace MBSim {
   }
 
   Vec3 Circle::evalKn(const fmatvec::Vec2 &zeta) {
-    static Vec3 Kn;
+    static Vec3 Kn(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     Kn(0)=sign*cos(a)*cos(b);
@@ -82,13 +85,8 @@ namespace MBSim {
     return parDer1Ku;
   }
 
-  Vec3 Circle::evalParDer2Ku(const fmatvec::Vec2 &zeta) {
-    static Vec3 parDer2Ku;
-    return parDer2Ku;
-  }
-
   Vec3 Circle::evalParDer1Kv(const fmatvec::Vec2 &zeta) {
-    Vec3 parDer1Kv(NONINIT);
+    static Vec3 parDer1Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     parDer1Kv(0) = sign*sin(a)*sin(b);
@@ -98,7 +96,7 @@ namespace MBSim {
   }
 
   Vec3 Circle::evalParDer2Kv(const fmatvec::Vec2 &zeta) {
-    Vec3 parDer2Kv(NONINIT);
+    static Vec3 parDer2Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     parDer2Kv(0) = -sign*cos(a)*cos(b);
