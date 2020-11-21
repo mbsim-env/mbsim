@@ -50,6 +50,12 @@ namespace MBSim {
     return funcCrPC->parDerDirDer(1,zeta(0));
   }
 
+  Vec3 PlanarContour::evalParDer1Kn(const fmatvec::Vec2 &zeta) {
+    Vec3 Ksxe = crossProduct(evalKs(zeta),ez);
+    Vec3 Ksxed = crossProduct(evalParDer1Ks(zeta),ez);
+    return Ksxed/nrm2(Ksxe) - Ksxe*((Ksxe.T()*Ksxed)/pow(nrm2(Ksxe),3));
+  }
+
   void PlanarContour::init(InitStage stage, const InitConfigSet &config) {
     if (stage == preInit) {
       if (etaNodes.size() < 2)

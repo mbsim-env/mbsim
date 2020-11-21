@@ -2,6 +2,7 @@ noinst_LTLIBRARIES = libcontact.la
 libcontact_la_SOURCES = funcpair_planarcontour_point.cc\
 			funcpair_planarcontour_circle.cc\
 			funcpair_planarcontour_line.cc\
+			funcpair_planarcontour_planarcontour.cc\
 			funcpair_spatialcontour_point.cc\
 			funcpair_spatialcontour_plane.cc\
 			funcpair_spatialcontour_circle.cc\
@@ -24,6 +25,7 @@ contactinclude_HEADERS = distance_function.h\
 			 funcpair_planarcontour_point.h\
 			 funcpair_planarcontour_circle.h\
 			 funcpair_planarcontour_line.h\
+			 funcpair_planarcontour_planarcontour.h\
 			 funcpair_spatialcontour_point.h\
 			 funcpair_spatialcontour_plane.h\
 			 funcpair_spatialcontour_circle.h\

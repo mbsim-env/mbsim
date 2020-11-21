@@ -59,6 +59,8 @@ namespace MBSim {
       fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override { return zero3; }
       fmatvec::Vec3 evalKn(const fmatvec::Vec2 &zeta) override { return crossProduct(evalKu(zeta),ez); }
       fmatvec::Vec3 evalParDer1Ks(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParDer1Kt(const fmatvec::Vec2 &zeta) override { return zero3; }
+      fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta) override;
 
       fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta) override { return crossProduct(evalWu(zeta),R->evalOrientation().col(2)); }
       /***************************************************/

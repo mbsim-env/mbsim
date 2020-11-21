@@ -17,34 +17,35 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_SPATIALCONTOUR_SPATIALCONTOUR_H_
-#define _CONTACT_KINIMATICS_SPATIALCONTOUR_SPATIALCONTOUR_H_
+#ifndef _CONTACT_KINEMATICS_PLANARCONTOUR_PLANARCONTOUR_H_
+#define _CONTACT_KINIMATICS_PLANARCONTOUR_PLANARCONTOUR_H_
 
 #include "contact_kinematics.h"
 
 namespace MBSim {
 
-  class FuncPairSpatialContourSpatialContour;
+  class FuncPairPlanarContourPlanarContour;
 
   /*! \brief pairing spatial contour to spatial contour
    * \author Martin Foerg
    */
-  class ContactKinematicsSpatialContourSpatialContour : public ContactKinematics {
+  class ContactKinematicsPlanarContourPlanarContour : public ContactKinematics {
     public:
-      ContactKinematicsSpatialContourSpatialContour() = default;
-      ~ContactKinematicsSpatialContourSpatialContour();
+      ContactKinematicsPlanarContourPlanarContour() = default;
+      ~ContactKinematicsPlanarContourPlanarContour();
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
       void updateg(SingleContact &contact, int i=0) override;
+      void updatewb(SingleContact &contact, int i=0) override;
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
-      void calcisSize() override { isSize = 4*maxNumContacts; }
+      void calcisSize() override { isSize = 2*maxNumContacts; }
       /***************************************************/
 
     private:
       /**
        * \brief root function
        */
-      MBSim::FuncPairSpatialContourSpatialContour *func;
+      MBSim::FuncPairPlanarContourPlanarContour *func;
   };
 
 }

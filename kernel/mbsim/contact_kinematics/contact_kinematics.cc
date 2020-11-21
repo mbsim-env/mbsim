@@ -31,9 +31,9 @@ namespace MBSim {
 
     const Vec3 u2 = contact.getContourFrame(1)->evalOrientation().col(1);
     const Vec3 v2 = contact.getContourFrame(1)->getOrientation().col(2);
-    Mat3x2 R2 = contour[1]->evalWR(contact.getContourFrame(1)->getZeta(false));
-    Mat3x2 U2 = contour[1]->evalWU(contact.getContourFrame(1)->getZeta(false));
-    Mat3x2 V2 = contour[1]->evalWV(contact.getContourFrame(1)->getZeta(false));
+    const Mat3x2 R2 = contour[1]->evalWR(contact.getContourFrame(1)->getZeta());
+    const Mat3x2 U2 = contour[1]->evalWU(contact.getContourFrame(1)->getZeta());
+    const Mat3x2 V2 = contour[1]->evalWV(contact.getContourFrame(1)->getZeta());
     const Vec3 paruPart2 = contour[1]->evalParWuPart(contact.getContourFrame(1)->getZeta());
     const Vec3 parvPart2 = contour[1]->evalParWvPart(contact.getContourFrame(1)->getZeta());
     const Mat3x2 parWvCParZeta2 = contour[1]->evalParWvCParZeta(contact.getContourFrame(1)->getZeta());
