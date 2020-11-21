@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="r">0.3</scalarParameter>
+      <scalarParameter name="mu">0.5</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+      <frames>
+        <FixedRelativeFrame name="P">
+          <enableOpenMBV>
+            <size unit="dm">1</size>
+          </enableOpenMBV>
+          <relativeOrientation>
+            <aboutZ xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">20</aboutZ>
+          </relativeOrientation>
+        </FixedRelativeFrame>
+      </frames>
+      <contours>
+        <PlanarContour name="PlanarContour">
+          <thickness unit="m">1</thickness>
+          <frameOfReference ref="../Frame[P]"/>
+          <nodes>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>-5</ele>
+              <ele>5</ele>
+            </xmlVector>
+          </nodes>
+          <contourFunction>
+            <SymbolicFunction arg1="eta">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>-eta</ele>
+                <ele>0.2*sin(eta)</ele>
+                <ele>0</ele>
+              </xmlVector>
+            </SymbolicFunction>
+          </contourFunction>
+          <open>true</open>
+          <enableOpenMBV>
+            <diffuseColor>
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>-1</ele>
+                <ele>0</ele>
+                <ele>0.196078</ele>
+              </xmlVector>
+            </diffuseColor>
+          </enableOpenMBV>
+        </PlanarContour>
+      </contours>
+      <groups/>
+      <objects>
+        <RigidBody name="RigidBody">
+          <generalizedInitialPosition>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>3</ele>
+              <ele>1.5</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </generalizedInitialPosition>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongAxesXY/>
+          </stateDependentTranslation>
+          <stateDependentRotation>
+            <RotationAboutZAxis/>
+          </stateDependentRotation>
+          <frames/>
+          <contours>
+            <PlanarContour name="PlanarContour">
+              <thickness unit="m">1</thickness>
+              <nodes>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>2*pi</ele>
+                </xmlVector>
+              </nodes>
+              <contourFunction>
+                <SymbolicFunction arg1="eta">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>r*cos(eta)</ele>
+                    <ele>r*sin(eta)</ele>
+                    <ele>0</ele>
+                  </xmlVector>
+                </SymbolicFunction>
+              </contourFunction>
+              <enableOpenMBV/>
+            </PlanarContour>
+          </contours>
+          <enableOpenMBVFrameC>
+            <size unit="dm">1</size>
+          </enableOpenMBVFrameC>
+        </RigidBody>
+      </objects>
+      <links>
+        <Contact name="Contact">
+          <connect ref1="../Contour[PlanarContour]" ref2="../Object[RigidBody]/Contour[PlanarContour]"/>
+          <normalForceLaw>
+            <UnilateralConstraint/>
+          </normalForceLaw>
+          <normalImpactLaw>
+            <UnilateralNewtonImpact>
+              <restitutionCoefficient>0</restitutionCoefficient>
+            </UnilateralNewtonImpact>
+          </normalImpactLaw>
+          <tangentialForceLaw>
+            <PlanarCoulombFriction>
+              <frictionCoefficient>mu</frictionCoefficient>
+            </PlanarCoulombFriction>
+          </tangentialForceLaw>
+          <tangentialImpactLaw>
+            <PlanarCoulombImpact>
+              <frictionCoefficient>mu</frictionCoefficient>
+            </PlanarCoulombImpact>
+          </tangentialImpactLaw>
+          <initialGuess>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>-3</ele>
+                <ele>3/2*pi</ele>
+              </row>
+            </xmlMatrix>
+          </initialGuess>
+        </Contact>
+      </links>
+      <constraints/>
+      <observers>
+        <ContactObserver name="ContactObserver">
+          <contact ref="../Link[Contact]"/>
+          <enableOpenMBVContactPoints>
+            <size unit="dm">1</size>
+          </enableOpenMBVContactPoints>
+        </ContactObserver>
+      </observers>
+      <enableOpenMBVFrameI>
+        <size unit="dm">1</size>
+      </enableOpenMBVFrameI>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+  </DOPRI5Integrator>
+
+
+</MBSimProject>
