@@ -101,7 +101,6 @@ namespace MBSim {
       g = 1;
     else
       g = contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0).T() * WrD;
-//      g = contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0).T() * func->evalWrD(contact.getContourFrame(ispatialcontour)->getZeta(false));
     if(g < -spatialcontour->getThickness()) g = 1;
     contact.getGeneralizedRelativePosition(false)(0) = g;
 
