@@ -27,9 +27,11 @@ using namespace fmatvec;
 namespace MBSim {
 
   Vec FuncPairPlanarContourPlanarContour::operator()(const Vec &zeta) {
-    Vec3 Wu1 = contour1->evalWu(zeta(I1));
-    Vec3 Wn1 = contour1->evalWn(zeta(I1));
-    Vec3 Wu2 = contour2->evalWu(zeta(I2));
+    zeta1(0) = zeta(0);
+    zeta2(0) = zeta(1);
+    Vec3 Wu1 = contour1->evalWu(zeta1);
+    Vec3 Wn1 = contour1->evalWn(zeta1);
+    Vec3 Wu2 = contour2->evalWu(zeta2);
     Vec3 WrD = evalWrD(zeta);
     Vec res(2,NONINIT);
     res(0) = Wu1.T() * WrD;
@@ -38,7 +40,9 @@ namespace MBSim {
   }
 
   Vec3 FuncPairPlanarContourPlanarContour::evalWrD(const Vec &zeta) {
-    return contour2->evalPosition(zeta(I2)) - contour1->evalPosition(zeta(I1));
+    zeta1(0) = zeta(0);
+    zeta2(0) = zeta(1);
+    return contour2->evalPosition(zeta2) - contour1->evalPosition(zeta1);
   }
 
 }

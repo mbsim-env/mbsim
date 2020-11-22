@@ -31,7 +31,7 @@ namespace MBSim {
    */
   class FuncPairPlanarContourPlanarContour : public DistanceFunction<fmatvec::Vec(fmatvec::Vec)> {
     public:
-      FuncPairPlanarContourPlanarContour(Contour *contour1_, Contour *contour2_) : contour1(contour1_), contour2(contour2_), I1(0,0), I2(1,1) { }
+      FuncPairPlanarContourPlanarContour(Contour *contour1_, Contour *contour2_) : contour1(contour1_), contour2(contour2_) { }
 
       fmatvec::Vec operator()(const fmatvec::Vec &zeta) override;
 
@@ -40,8 +40,7 @@ namespace MBSim {
     private:
       Contour *contour1;
       Contour *contour2;
-      fmatvec::RangeV I1;
-      fmatvec::RangeV I2;
+      fmatvec::Vec2 zeta1, zeta2;
   };
 
 }
