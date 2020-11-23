@@ -23,8 +23,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_circle.h"
-#include "mbsim/utils/planar_contact_search.h"
-#include "mbsim/links/single_contact.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -118,15 +117,23 @@ namespace MBSimFlexibleBody {
 
   void ContactKinematicsCircleNodeInterpolation::updateg(SingleContact &contact, int i) {
     auto *func = new FuncPairPlanarContourCircle(circle, extrusion); // root function for searching contact parameters
-    PlanarContactSearch search(func);
+    NewtonMethod search(func, nullptr);
+    search.setTolerance(tol);
+    nextis(i) = search.solve(curis(i));
+    if(search.getInfo()!=0)
+      throw std::runtime_error("(ContactKinematicsCircleNodeInterpolation:updateg): contact search failed!");
 
-    search.setNodes(nodes); // defining search areas for contacts
-    Mat result = search.slvAll();
-    delete func;
+    contact.getContourFrame(inode)->setEta(nextis(0));
 
-    if (result.rows()) {
+//    PlanarContactSearch search(func);
+//
+//    search.setNodes(nodes); // defining search areas for contacts
+//    Mat result = search.slvAll();
+//    delete func;
+//
+//    if (result.rows()) {
 
-      contact.getContourFrame(inode)->setEta(result(0,0));
+//      contact.getContourFrame(inode)->setEta(result(0,0));
 
       contact.getContourFrame(inode)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(inode)->getZeta(false)));
       contact.getContourFrame(inode)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(inode)->getZeta(false)));
@@ -149,7 +156,7 @@ namespace MBSimFlexibleBody {
         g = contact.getContourFrame(inode)->getOrientation(false).col(0).T() * (contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(inode)->getPosition(false));
       if(g < -extrusion->getThickness()) g = 1;
       contact.getGeneralizedRelativePosition(false)(0) = g;
-    }
+//    }
   }
 
   ContactKinematicsCircleFlexibleBand::~ContactKinematicsCircleFlexibleBand() {

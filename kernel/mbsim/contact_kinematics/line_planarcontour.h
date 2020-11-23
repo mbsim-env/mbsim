@@ -49,7 +49,6 @@ namespace MBSim {
       void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
-      void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
       void calcisSize() override { isSize = maxNumContacts; }
 
@@ -70,8 +69,6 @@ namespace MBSim {
        * \brief root function
        */
       FuncPairPlanarContourLine *func;
-
-      bool searchAllCP{false};
   };
 
 }

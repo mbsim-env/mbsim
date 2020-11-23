@@ -36,10 +36,4 @@ namespace MBSim {
     return Wt;
   }
 
-  Vec3 FuncPairSpatialContourPlane::evalWrD(const Vec &alpha) {
-    Vec3 Wn = plane->getFrame()->evalOrientation().col(0);
-    double g = Wn.T()*(contour->evalPosition(alpha) - plane->getFrame()->getPosition());
-    return Wn*g;
-  }
-
 }

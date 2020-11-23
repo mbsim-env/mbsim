@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_SPATIALCONTOUR_SPATIALCONTOUR_H_
 #define _FUNCPAIR_SPATIALCONTOUR_SPATIALCONTOUR_H_
 
-#include <mbsim/functions/contact/distance_function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -29,13 +29,11 @@ namespace MBSim {
   /*!
    * \brief root function for pairing spatial contour and spatial contour
    */
-  class FuncPairSpatialContourSpatialContour : public DistanceFunction<fmatvec::Vec(fmatvec::Vec)> {
+  class FuncPairSpatialContourSpatialContour : public Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       FuncPairSpatialContourSpatialContour(Contour *contour1_, Contour *contour2_) : contour1(contour1_), contour2(contour2_), I1(0,1), I2(2,3) { }
 
       fmatvec::Vec operator()(const fmatvec::Vec &zeta) override;
-
-      fmatvec::Vec3 evalWrD(const fmatvec::Vec &zeta) override;
 
     private:
       Contour *contour1;

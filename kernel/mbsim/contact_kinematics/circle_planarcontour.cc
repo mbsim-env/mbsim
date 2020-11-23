@@ -22,9 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_circle.h"
-#include "mbsim/utils/planar_contact_search.h"
-#include "mbsim/utils/eps.h"
-#include "mbsim/utils/utils.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -60,18 +58,12 @@ namespace MBSim {
   }
 
   void ContactKinematicsCirclePlanarContour::updateg(SingleContact &contact, int i) {
-    PlanarContactSearch search(func);
+    NewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    search.setNodes(Vec(planarcontour->getEtaNodes()));
+    nextis(i) = search.solve(curis(i));
+    if(search.getInfo()!=0)
+      throw std::runtime_error("(ContactKinematicsCirclePlanarContour:updateg): contact search failed!");
 
-    if(searchAllCP==false)
-      search.setInitialValue(curis(i));
-    else {
-      search.setSearchAll(true);
-      searchAllCP=false;
-    }
-
-    nextis(i) = search.slv();
     contact.getContourFrame(iplanarcontour)->setEta(nextis(i));
 
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, planarcontour->evalWn(contact.getContourFrame(iplanarcontour)->getZeta(false)));

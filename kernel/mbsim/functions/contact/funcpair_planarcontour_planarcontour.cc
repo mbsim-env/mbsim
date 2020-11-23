@@ -32,17 +32,11 @@ namespace MBSim {
     Vec3 Wu1 = contour1->evalWu(zeta1);
     Vec3 Wn1 = contour1->evalWn(zeta1);
     Vec3 Wu2 = contour2->evalWu(zeta2);
-    Vec3 WrD = evalWrD(zeta);
+    Vec3 WrD = contour2->evalPosition(zeta2) - contour1->evalPosition(zeta1);
     Vec res(2,NONINIT);
     res(0) = Wu1.T() * WrD;
     res(1) = Wn1.T() * Wu2;
     return res;
-  }
-
-  Vec3 FuncPairPlanarContourPlanarContour::evalWrD(const Vec &zeta) {
-    zeta1(0) = zeta(0);
-    zeta2(0) = zeta(1);
-    return contour2->evalPosition(zeta2) - contour1->evalPosition(zeta1);
   }
 
 }

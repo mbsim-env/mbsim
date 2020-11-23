@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_PLANARCONTOUR_CIRCLE_H_
 #define _FUNCPAIR_PLANARCONTOUR_CIRCLE_H_
 
-#include <mbsim/functions/contact/distance_function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -31,7 +31,7 @@ namespace MBSim {
    * \brief root function for pairing PlanarContour and Circle
    * \author Martin Foerg
    */
-  class FuncPairPlanarContourCircle : public DistanceFunction<double(double)> {
+  class FuncPairPlanarContourCircle : public Function<double(double)> {
     public:
       /**
        * \brief constructor
@@ -39,8 +39,6 @@ namespace MBSim {
       FuncPairPlanarContourCircle(Circle* circle_, Contour *contour_) : contour(contour_), circle(circle_) { }
 
       double operator()(const double &alpha) override;
-
-      fmatvec::Vec3 evalWrD(const double &alpha) override;
 
     private:
       /**

@@ -20,10 +20,7 @@
 #ifndef _FUNCPAIR_PLANARCONTOUR_LINE_H_
 #define _FUNCPAIR_PLANARCONTOUR_LINE_H_
 
-#include <mbsim/functions/contact/distance_function.h>
-#include "mbsim/frames/frame.h"
-#include "mbsim/contours/contour.h"
-#include "mbsim/contours/line.h"
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -34,7 +31,7 @@ namespace MBSim {
    * \brief root function for pairing PlanarContour and Line
    * \author Martin Foerg
    */
-  class FuncPairPlanarContourLine : public DistanceFunction<double(double)> {
+  class FuncPairPlanarContourLine : public Function<double(double)> {
     public:
       /**
        * \brief constructor
@@ -42,8 +39,6 @@ namespace MBSim {
       FuncPairPlanarContourLine(Line* line_, Contour *contour_) : contour(contour_), line(line_) { }
 
       double operator()(const double &alpha) override;
-
-      fmatvec::Vec3 evalWrD(const double &alpha) override;
 
     private:
       Contour *contour;

@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_PLANARCONTOUR_PLANARCONTOUR_H_
 #define _FUNCPAIR_PLANARCONTOUR_PLANARCONTOUR_H_
 
-#include <mbsim/functions/contact/distance_function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -29,13 +29,11 @@ namespace MBSim {
   /*!
    * \brief root function for pairing planar contour and planar contour
    */
-  class FuncPairPlanarContourPlanarContour : public DistanceFunction<fmatvec::Vec(fmatvec::Vec)> {
+  class FuncPairPlanarContourPlanarContour : public Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       FuncPairPlanarContourPlanarContour(Contour *contour1_, Contour *contour2_) : contour1(contour1_), contour2(contour2_) { }
 
       fmatvec::Vec operator()(const fmatvec::Vec &zeta) override;
-
-      fmatvec::Vec3 evalWrD(const fmatvec::Vec &zeta) override;
 
     private:
       Contour *contour1;

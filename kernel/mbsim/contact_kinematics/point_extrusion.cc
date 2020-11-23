@@ -22,7 +22,7 @@
 #include "mbsim/contours/point.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_point.h"
-#include "mbsim/utils/planar_contact_search.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -51,20 +51,12 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointExtrusion::updateg(SingleContact &contact, int i) {
-
-    PlanarContactSearch search(func);
+    NewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    search.setNodes(Vec(extrusion->getEtaNodes())); // defining search areas for contacts
-    search.setInitialValue(curis(0));
+    nextis(0) = search.solve(curis(0));
+    if(search.getInfo()!=0)
+      throw std::runtime_error("(ContactKinematicsPointExtrusion:updateg): contact search failed!");
 
-    if(searchAllCP) {
-      search.setSearchAll(true);
-      nextis(0) = search.slv();
-      curis(0) = nextis(0);
-      searchAllCP=false;
-    }
-    else
-      nextis(0) = search.slv();
     contact.getContourFrame(iextrusion)->setEta(nextis(0));
 
     contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta(false)));

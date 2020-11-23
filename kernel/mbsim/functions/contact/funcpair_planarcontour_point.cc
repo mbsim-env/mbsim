@@ -29,14 +29,9 @@ namespace MBSim {
 
   double FuncPairPlanarContourPoint::operator()(const double &alpha) {
     zeta(0) = alpha;
-    Vec3 Wd = evalWrD(alpha);
+    Vec3 WrD = contour->evalPosition(zeta) - point->getFrame()->evalPosition();
     Vec3 Wt = contour->evalWu(zeta);
-    return Wt.T() * Wd;
-  }
-
-  Vec3 FuncPairPlanarContourPoint::evalWrD(const double &alpha) {
-    zeta(0) = alpha;
-    return contour->evalPosition(zeta) - point->getFrame()->evalPosition();
+    return Wt.T() * WrD;
   }
 
 }

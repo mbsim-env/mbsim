@@ -40,7 +40,7 @@ namespace MBSim {
 
   void ContactKinematicsSpatialContourSpatialContour::setInitialGuess(const MatV &zeta0_) {
     if(zeta0_.rows()) {
-      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 4) throw runtime_error("(ContactKinematics::setInitialGuess): size of zeta0 does not match");
+      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 4) throw runtime_error("(ContactKinematicsSpatialContourSpatialContour::setInitialGuess): size of zeta0 does not match");
       for(int i=0; i<maxNumContacts; i++) {
 	curis(4*i) = zeta0_(i,0);
 	curis(4*i+1) = zeta0_(i,1);
@@ -55,7 +55,7 @@ namespace MBSim {
     search.setTolerance(tol);
     nextis.set(RangeV(4*i,4*i+3),search.solve(curis(RangeV(4*i,4*i+3))));
     if(search.getInfo()!=0)
-      throw std::runtime_error("(ContactKinematics:updateg): contact search failed!");
+      throw std::runtime_error("(ContactKinematicsSpatialContourSpatialContour:updateg): contact search failed!");
 
     contact.getContourFrame(0)->setZeta(nextis(RangeV(4*i,4*i+1)));
     contact.getContourFrame(1)->setZeta(nextis(RangeV(4*i+2,4*i+3)));

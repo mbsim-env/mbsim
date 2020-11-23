@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_SPATIALCONTOUR_PLANE_H_
 #define _FUNCPAIR_SPATIALCONTOUR_PLANE_H_
 
-#include <mbsim/functions/contact/distance_function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -32,7 +32,7 @@ namespace MBSim {
    * \author Zhan Wang
    * \date 2013-12-05
    */
-  class FuncPairSpatialContourPlane : public DistanceFunction<fmatvec::Vec(fmatvec::Vec)> {
+  class FuncPairSpatialContourPlane : public Function<fmatvec::Vec(fmatvec::Vec)> {
     public:
       /**
        * \brief constructor
@@ -42,8 +42,6 @@ namespace MBSim {
       FuncPairSpatialContourPlane(Plane* plane_, Contour *contour_) : contour(contour_), plane(plane_) { }
 
       fmatvec::Vec operator()(const fmatvec::Vec &alpha) override;
-
-      fmatvec::Vec3 evalWrD(const fmatvec::Vec &alpha) override;
 
     private:
       /**

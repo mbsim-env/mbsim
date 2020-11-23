@@ -28,16 +28,6 @@ using namespace fmatvec;
 namespace MBSim {
 
   Vec FuncPairSpatialContourCircle::operator()(const Vec &alpha) {
-    Vec3 Wd = evalWrD(alpha);
-    Vec3 Wu = contour->evalWu(alpha);
-    Vec3 Wv = contour->evalWv(alpha);
-    Vec2 Wt(NONINIT);
-    Wt(0) = Wu.T() * Wd;
-    Wt(1) = Wv.T() * Wd;
-    return Wt;
-  }
-
-  Vec3 FuncPairSpatialContourCircle::evalWrD(const Vec &alpha) {
     Vec3 Wn = contour->evalWn(alpha);
     Vec3 Wb = circle->getFrame()->evalOrientation().col(2);
     double t_EC = Wn.T()*Wb;
@@ -52,7 +42,12 @@ namespace MBSim {
       WrD = circle->getFrame()->getPosition() - contour->evalPosition(alpha);
     else
       WrD = (circle->getFrame()->getPosition() - (circle->getRadius()/z_EC_nrm2)*z_EC) - contour->evalPosition(alpha);
-    return WrD;
+    Vec3 Wu = contour->evalWu(alpha);
+    Vec3 Wv = contour->evalWv(alpha);
+    Vec2 Wt(NONINIT);
+    Wt(0) = Wu.T() * WrD;
+    Wt(1) = Wv.T() * WrD;
+    return Wt;
   }
 
 }

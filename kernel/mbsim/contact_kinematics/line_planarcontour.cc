@@ -22,7 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/line.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_line.h"
-#include "mbsim/utils/planar_contact_search.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -51,27 +51,19 @@ namespace MBSim {
 
   void ContactKinematicsLinePlanarContour::setInitialGuess(const fmatvec::MatV &zeta0_) {
     if(zeta0_.rows()) {
-      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsLinePlanarContour::assignContours): size of zeta0 does not match");
+      if(zeta0_.rows() != maxNumContacts or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsLinePlanarContour::setInitialGuess): size of zeta0 does not match");
       for(int i=0; i<maxNumContacts; i++)
         curis(i) = zeta0_(i,0);
     }
   }
 
   void ContactKinematicsLinePlanarContour::updateg(SingleContact &contact, int i) {
-
-    PlanarContactSearch search(func);
+    NewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    search.setNodes(Vec(planarcontour->getEtaNodes()));
-    search.setInitialValue(curis(i));
+    nextis(i) = search.solve(curis(i));
+    if(search.getInfo()!=0)
+      throw std::runtime_error("(ContactKinematicsLinePlanarContour:updateg): contact search failed!");
 
-    if(searchAllCP) {
-      search.setSearchAll(true);
-      nextis(i) = search.slv();
-      curis(i) = nextis(i);
-      searchAllCP=false;
-    }
-    else
-      nextis(i) = search.slv();
     contact.getContourFrame(iplanarcontour)->setEta(nextis(i));
 
     contact.getContourFrame(iline)->setOrientation(line->getFrame()->evalOrientation());

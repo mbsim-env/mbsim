@@ -22,7 +22,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/plane.h"
 #include "mbsim/functions/contact/funcpair_spatialcontour_plane.h"
-#include "mbsim/utils/spatial_contact_search.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace fmatvec;
 using namespace std;
@@ -60,24 +60,12 @@ namespace MBSim {
   }
 
   void ContactKinematicsPlaneSpatialContour::updateg(SingleContact &contact, int i) {
-    SpatialContactSearch search(func);
+    MultiDimNewtonMethod search(func, nullptr);
     search.setTolerance(tol);
+    nextis.set(RangeV(2*i,2*i+1),search.solve(curis(RangeV(2*i,2*i+1))));
+    if(search.getInfo()!=0)
+      throw std::runtime_error("(ContactKinematicsPlaneSpatialContour:updateg): contact search failed!");
 
-    if ((!spatialcontour->getEtaNodes().empty()) && (!spatialcontour->getXiNodes().empty()))
-      search.setNodes(Vec(spatialcontour->getEtaNodes()), Vec(spatialcontour->getXiNodes()));
-    else
-      search.setEqualSpacing(10, 10, 0, 0, 0.1, 0.1);
-
-    search.setInitialValue(curis(RangeV(2*i,2*i+1)));
-
-    if(searchAllCP) {
-      nextis.set(RangeV(2*i,2*i+1),search.slv());
-      curis(2*i) = nextis(2*i);
-      curis(2*i+1) = nextis(2*i+1);
-      searchAllCP=false;
-    }
-    else
-      nextis.set(RangeV(2*i,2*i+1),search.slv());
     contact.getContourFrame(ispatialcontour)->setZeta(nextis(RangeV(2*i,2*i+1)));
 
     contact.getContourFrame(iplane)->setOrientation(plane->getFrame()->evalOrientation());

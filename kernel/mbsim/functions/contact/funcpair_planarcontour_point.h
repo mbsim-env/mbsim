@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_PLANARCONTOUR_POINT_H_
 #define _FUNCPAIR_PLANARCONTOUR_POINT_H_
 
-#include <mbsim/functions/contact/distance_function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -31,16 +31,14 @@ namespace MBSim {
    * \brief root function for pairing PlanarContour and Point
    * \author Martin Foerg
    */
-  class FuncPairPlanarContourPoint : public DistanceFunction<double(double)> {
+  class FuncPairPlanarContourPoint : public Function<double(double)> {
     public:
       /*!
        * \brief constructor
        */
-      FuncPairPlanarContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) {}
+      FuncPairPlanarContourPoint(Point* point_, Contour *contour_) : contour(contour_), point(point_) { }
 
       double operator()(const double &alpha) override;
-
-      fmatvec::Vec3 evalWrD(const double &alpha) override;
 
     private:
       /**
@@ -58,4 +56,3 @@ namespace MBSim {
 }
 
 #endif /* FUNCTIONS_CONTACT_H_ */
-
