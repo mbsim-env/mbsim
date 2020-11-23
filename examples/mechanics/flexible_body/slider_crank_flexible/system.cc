@@ -223,6 +223,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
 
   Vec3 pointRelPos;
   int numberOfPoints = 10;
+  MatV zeta("[4.5833333311171068e-01, 0.5; 3.5833323800546744e-01, 0.5; 2.583335003183282e-01, 0.5; 1.5833316590509634e-01, 0.5; 5.8333428217988956e-02, 0.5; 9.5833333311170962e-01, 0.5; 8.5833323800547348e-01, 0.5; 7.5833350031832918e-01, 0.5; 6.5833316590509732e-01, 0.5; 5.5833342821795472e-01, 0.5]");
   for (int i = 0; i < numberOfPoints; i++) {
     string pointName = "Point" + toString(i);
     double phi = i * 2 * M_PI / numberOfPoints;
@@ -243,7 +244,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
       contactCrankRod->setNormalForceLaw(new UnilateralConstraint());
       contactCrankRod->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     }
-    contactCrankRod->setSearchAllContactPoints(true);
+    contactCrankRod->setInitialGuess(zeta(RangeV(i,i),RangeV(0,1)));
     contactCrankRod->connect(pnt, ncc);
     contactCrankRod->setContactKinematics(new ContactKinematicsPointSpatialContour);
 
