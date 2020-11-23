@@ -189,7 +189,7 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
     contact->setNormalForceLaw(new BilateralConstraint);
     contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
-    contact->setSearchAllContactPoints(true);
+    contact->setInitialGuess(MatV(1,1,INIT,i/80.));
     this->addLink(contact);
 
     ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");
