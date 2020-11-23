@@ -50,6 +50,13 @@ namespace MBSim {
     func = new FuncPairPlanarContourPoint(point, extrusion); // root function for searching contact parameters
   }
 
+  void ContactKinematicsPointExtrusion::setInitialGuess(const MatV &zeta0_) {
+    if(zeta0_.rows()) {
+      if(zeta0_.rows() != 1 or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsPointExtrusion::assignContours): size of zeta0 does not match");
+      curis(0) = zeta0_(0,0);
+    }
+  }
+
   void ContactKinematicsPointExtrusion::updateg(SingleContact &contact, int i) {
     NewtonMethod search(func, nullptr);
     search.setTolerance(tol);

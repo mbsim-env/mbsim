@@ -45,6 +45,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<MBSim::Contour*>& contour) override;
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
       void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 

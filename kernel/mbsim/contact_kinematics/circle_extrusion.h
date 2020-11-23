@@ -45,7 +45,8 @@ namespace MBSim {
       virtual ~ContactKinematicsCircleExtrusion();
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<Contour*> &contour);
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
       void updateg(SingleContact &contact, int i=0) override;
       void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/

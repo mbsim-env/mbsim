@@ -24,6 +24,7 @@
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_circle.h"
 #include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -117,23 +118,23 @@ namespace MBSimFlexibleBody {
 
   void ContactKinematicsCircleNodeInterpolation::updateg(SingleContact &contact, int i) {
     auto *func = new FuncPairPlanarContourCircle(circle, extrusion); // root function for searching contact parameters
-    NewtonMethod search(func, nullptr);
-    search.setTolerance(tol);
-    nextis(i) = search.solve(curis(i));
-    if(search.getInfo()!=0)
-      throw std::runtime_error("(ContactKinematicsCircleNodeInterpolation:updateg): contact search failed!");
+    RegulaFalsi rf(func);
+    double eta = -1e13;
+    for (int i = 0; i < nodes.size() - 1; i++) {
+      double fa = (*func)(nodes(i));
+      double fb = (*func)(nodes(i + 1));
+      if (fa * fb < 0)
+	eta = rf.solve(nodes(i), nodes(i + 1));
+      else if (fabs(fa) < epsroot && fabs(fb) < epsroot)
+	eta = 0.5 * (nodes(i) + nodes(i + 1));
+      else if (fabs(fa) < epsroot)
+	eta = nodes(i);
+      else if (fabs(fb) < epsroot)
+	eta = nodes(i + 1);
+    }
 
-    contact.getContourFrame(inode)->setEta(nextis(0));
-
-//    PlanarContactSearch search(func);
-//
-//    search.setNodes(nodes); // defining search areas for contacts
-//    Mat result = search.slvAll();
-//    delete func;
-//
-//    if (result.rows()) {
-
-//      contact.getContourFrame(inode)->setEta(result(0,0));
+    if(eta > -1e13) {
+      contact.getContourFrame(inode)->setEta(eta);
 
       contact.getContourFrame(inode)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(inode)->getZeta(false)));
       contact.getContourFrame(inode)->getOrientation(false).set(1, extrusion->evalWu(contact.getContourFrame(inode)->getZeta(false)));
@@ -156,7 +157,7 @@ namespace MBSimFlexibleBody {
         g = contact.getContourFrame(inode)->getOrientation(false).col(0).T() * (contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(inode)->getPosition(false));
       if(g < -extrusion->getThickness()) g = 1;
       contact.getGeneralizedRelativePosition(false)(0) = g;
-//    }
+    }
   }
 
   ContactKinematicsCircleFlexibleBand::~ContactKinematicsCircleFlexibleBand() {

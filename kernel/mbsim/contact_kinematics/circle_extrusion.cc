@@ -50,6 +50,13 @@ namespace MBSim {
     func = new FuncPairPlanarContourCircle(circle,extrusion);
   }
 
+  void ContactKinematicsCircleExtrusion::setInitialGuess(const MatV &zeta0_) {
+    if(zeta0_.rows()) {
+      if(zeta0_.rows() != 1 or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsCircleExtrusion::assignContours): size of zeta0 does not match");
+      curis(0) = zeta0_(0,0);
+    }
+  }
+
   void ContactKinematicsCircleExtrusion::updateg(SingleContact &contact, int i) {
     NewtonMethod search(func, nullptr);
     search.setTolerance(tol);
