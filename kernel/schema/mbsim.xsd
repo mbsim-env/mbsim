@@ -2303,7 +2303,7 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="searchAllContactPoints" minOccurs="0" type="pv:booleanFullEval">
+          <xs:element name="determineInitialGuess" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.
             </xs:documentation></xs:annotation>
@@ -2393,19 +2393,19 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="searchAllContactPoints" minOccurs="0" type="pv:booleanFullEval">
+          <xs:element name="determineInitialGuess" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.
+                Definiert, ob die Anfangswerte für den Newton-Löser automatisch bestimmt werden sollen.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialGuess" minOccurs="0" type="pv:unknownMatrix">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Anfangswerte für Newton-Löser.
+                Anfangswerte für den Newton-Löser.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="tolerance" minOccurs="0" type="pv:nounitScalar">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Toleranz für Newton-Löser.
+                Toleranz für den Newton-Löser.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="InfluenceFunction">

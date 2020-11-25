@@ -284,7 +284,7 @@ namespace MBSim {
           }
         }
       }
-      contactKinematics->setDetermineInitialGuess(searchAllCP);
+      contactKinematics->setDetermineInitialGuess(dIG);
       if(maxNumContacts>-1) contactKinematics->setMaximumNumberOfContacts(maxNumContacts);
       contactKinematics->assignContours(contour[0], contour[1]);
       contactKinematics->setTolerance(tol);
@@ -644,8 +644,8 @@ namespace MBSim {
       setTangentialImpactLaw(fil);
     }
 
-    e = E(element)->getFirstElementChildNamed(MBSIM%"searchAllContactPoints");
-    if (e) setSearchAllContactPoints(E(e)->getText<bool>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"determineInitialGuess");
+    if (e) setDetermineInitialGuess(E(e)->getText<bool>());
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
     if (e) setInitialGuess(E(e)->getText<Vec>());

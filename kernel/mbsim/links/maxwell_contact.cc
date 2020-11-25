@@ -44,7 +44,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MaxwellContact)
 
-  MaxwellContact::MaxwellContact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), searchAllCP(false), tol(1e-10), LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(0.), gLim(0.), matConst(0), matConstSetted(false), saved_ref(0) {
+  MaxwellContact::MaxwellContact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), dIG(false), tol(1e-10), LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(0.), gLim(0.), matConst(0), matConstSetted(false), saved_ref(0) {
   }
 
   MaxwellContact::~MaxwellContact() {
@@ -332,7 +332,7 @@ namespace MBSim {
     else if (stage == preInit) {
       Link::init(stage, config);
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
-        contactKinematics[cK]->setDetermineInitialGuess(searchAllCP);
+        contactKinematics[cK]->setDetermineInitialGuess(dIG);
         contactKinematics[cK]->setInitialGuess(zeta0);
         contactKinematics[cK]->setTolerance(tol);
         contactKinematics[cK]->assignContours(contour[0][cK], contour[1][cK]);
@@ -827,8 +827,8 @@ namespace MBSim {
       setTangentialImpactLaw(fil);
     }
 
-    e = E(element)->getFirstElementChildNamed(MBSIM%"searchAllContactPoints");
-    if (e) setSearchAllContactPoints(E(e)->getText<bool>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"determineInitialGuess");
+    if (e) setDetermineInitialGuess(E(e)->getText<bool>());
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
     if (e) setInitialGuess(E(e)->getText<Vec>());
