@@ -61,13 +61,7 @@ namespace MBSim {
     search.setTolerance(tol);
     double nrd = 1e13;
     double eta = 0;
-    vector<double> etaNodes = planarcontour->getEtaNodes();
-    if(etaNodes.empty()) {
-      etaNodes.resize(11);
-      for(size_t i=0; i<11; i++)
-	etaNodes[i] = i/10.;
-    }
-    vector<double> zeta0 = searchPossibleContactPoints(func,eta,etaNodes,tol);
+    vector<double> zeta0 = searchPossibleContactPoints(func,eta,planarcontour->getEtaNodes(),tol);
     for(size_t i=0; i<zeta0.size(); i++) {
       eta = zeta0[i];
       Vec2 zeta_;

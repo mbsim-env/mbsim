@@ -142,6 +142,11 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
   // add neutral contour to the rod
   Contour2sNeutralLinearExternalFFR* ncc = new Contour2sNeutralLinearExternalFFR("InnerRing");
   rod->addContour(ncc);
+  vector<double> nodes(11);
+  for(size_t i=0; i<11; i++)
+    nodes[i] = i/10.;
+  ncc->setEtaNodes(nodes);
+  ncc->setXiNodes(nodes);
   ncc->readTransNodes("rod/InnerRing.txt");
   ncc->setOpenStructure(false);
 
