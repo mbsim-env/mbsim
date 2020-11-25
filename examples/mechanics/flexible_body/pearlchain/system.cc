@@ -755,7 +755,7 @@ Perlchain::Perlchain(const string &projectName) :
     contact->setNormalForceLaw(new BilateralConstraint);
     contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"),rod->getContour("Contour1sFlexible"));
-    contact->setInitialGuess(MatV(1,1,INIT,fmod(i/80.+0.25,1)));
+    contact->setSearchAllContactPoints(true);
     this->addLink(contact);
 
     ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");

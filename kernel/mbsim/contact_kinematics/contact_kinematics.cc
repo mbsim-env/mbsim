@@ -21,11 +21,21 @@
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include "mbsim/contours/contour.h"
 #include "mbsim/frames/contour_frame.h"
+#include "mbsim/functions/function.h"
 
 using namespace fmatvec;
 using namespace std;
 
 namespace MBSim {
+
+  void ContactKinematics::updateg(vector<SingleContact> &contact) {
+    if(dIG) {
+      determineInitialGuess();
+      dIG = false;
+    }
+    for(int i=0; i<maxNumContacts; i++)
+      updateg(contact[i],i);
+  }
 
   void ContactKinematics::updatewb(SingleContact &contact, int i) {
 
@@ -80,4 +90,39 @@ namespace MBSim {
 	contact.getwb(false)(contact.isNormalForceLawSetValued()+1) += (V1*zetad1+parvPart1).T()*(vC2-vC1)+v1.T()*(parWvCParZeta2*zetad2-parWvCParZeta1*zetad1);
     }
   }
+
+  vector<double> ContactKinematics::searchPossibleContactPoints(Function<double(double)> *func, double eta, const vector<double> &nodes, double tol) {
+    vector<double> zetai;
+    for(size_t j=0; j<nodes.size()-1; j++) {
+      eta = nodes[j];
+      double fa = (*func)(eta);
+      eta = nodes[j+1];
+      double fb = (*func)(eta);
+      if(fa*fb < 0)
+	zetai.push_back((nodes[j]+nodes[j+1])/2.);
+      else if(fabs(fa) < tol)
+	zetai.push_back(nodes[j]);
+      else if(fabs(fb) < tol)
+	zetai.push_back(nodes[j+1]);
+    }
+    return zetai;
+  }
+
+  vector<double> ContactKinematics::searchPossibleContactPoints(Function<Vec(Vec)> *func, int i, Vec &zeta, const vector<double> &nodes, double tol) {
+    vector<double> zetai;
+    for(size_t j=0; j<nodes.size()-1; j++) {
+      zeta(i) = nodes[j];
+      double fa = (*func)(zeta)(i);
+      zeta(i) = nodes[j+1];
+      double fb = (*func)(zeta)(i);
+      if(fa*fb < 0)
+	zetai.push_back((nodes[j]+nodes[j+1])/2.);
+      else if(fabs(fa) < tol)
+	zetai.push_back(nodes[j]);
+      else if(fabs(fb) < tol)
+	zetai.push_back(nodes[j+1]);
+    }
+    return zetai;
+  }
+
 }

@@ -332,7 +332,7 @@ namespace MBSim {
     else if (stage == preInit) {
       Link::init(stage, config);
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
-        contactKinematics[cK]->setSearchAllContactPoints(searchAllCP);
+        contactKinematics[cK]->setDetermineInitialGuess(searchAllCP);
         contactKinematics[cK]->setInitialGuess(zeta0);
         contactKinematics[cK]->setTolerance(tol);
         contactKinematics[cK]->assignContours(contour[0][cK], contour[1][cK]);

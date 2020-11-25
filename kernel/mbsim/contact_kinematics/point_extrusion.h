@@ -36,7 +36,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointExtrusion()  { }
+      ContactKinematicsPointExtrusion() { }
       
       /**
        * \brief destructor
@@ -45,11 +45,11 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
       void assignContours(const std::vector<MBSim::Contour*>& contour) override;
+      void determineInitialGuess() override;
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
       void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
-      void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
       void calcisSize() override { isSize = 1; }
 
     protected:
@@ -66,8 +66,6 @@ namespace MBSim {
       Contour *extrusion{0};
 
       MBSim::FuncPairPlanarContourPoint *func;
-
-      bool searchAllCP{false};
   };
 
 }

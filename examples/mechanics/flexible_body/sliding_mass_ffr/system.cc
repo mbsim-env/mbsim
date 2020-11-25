@@ -154,7 +154,7 @@ SlidingMass::SlidingMass(const string &projectName) :
     contact1->setNormalImpactLaw(new BilateralImpact);
     contact1->connect(ballContour1, ncc);
     contact1->setContactKinematics(new ContactKinematicsPointPlanarContour);
-    contact1->setInitialGuess(MatV(1,1,INIT,8.8524590164197576e-01));
+    contact1->setSearchAllContactPoints(true);
     this->addLink(contact1);
 
   }

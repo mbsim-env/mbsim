@@ -29,6 +29,7 @@ namespace MBSim {
 
   class ContourFrame;
   class Contour;
+  template<typename Sig> class Function;
 
   /** 
    * \brief basic class for contact kinematical calculations
@@ -64,12 +65,14 @@ namespace MBSim {
         nextis.ref(nextisParent, fmatvec::RangeV(isInd,isInd+isSize-1));
       }
 
+      virtual void determineInitialGuess() { }
+
       /**
        * \brief compute contact kinematics for all contacts
        * \param contact vector of all contacts
        * \param i index of the contact point that should be updated
        */
-      virtual void updateg(std::vector<SingleContact> &contact) { for(int i=0; i<maxNumContacts; i++) updateg(contact[i],i); }
+      virtual void updateg(std::vector<SingleContact> &contact);
 
       /**
        * \brief compute contact kinematics for a single contact
@@ -104,7 +107,7 @@ namespace MBSim {
        */
       int getMaximumNumberOfContacts() const { return maxNumContacts; }
 
-      virtual void setSearchAllContactPoints(bool searchAllCP_=true) { }
+      void setDetermineInitialGuess(bool dIG_=true) { dIG = dIG_; }
 
       /**
        * \brief set initial guess for root-finding
@@ -120,6 +123,10 @@ namespace MBSim {
        * \brief set maximum number of contacts
        */
       void setMaximumNumberOfContacts(int maxNumContacts_) { maxNumContacts = maxNumContacts_; }
+
+      static std::vector<double> searchPossibleContactPoints(Function<double(double)> *func, double eta, const std::vector<double> &nodes, double tol);
+
+      static std::vector<double> searchPossibleContactPoints(Function<fmatvec::Vec(fmatvec::Vec)> *func, int i, fmatvec::Vec &zeta, const std::vector<double> &nodes, double tol);
 
     protected:
       /**
@@ -137,6 +144,8 @@ namespace MBSim {
       int isSize { 0 };
 
       std::vector<Contour*> contour;
+
+      bool dIG{false};
   };
 
 }

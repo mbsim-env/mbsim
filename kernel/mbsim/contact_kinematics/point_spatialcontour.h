@@ -45,11 +45,11 @@ namespace MBSim {
 
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<Contour*> &contour) override;
+      void determineInitialGuess() override;
       void updateg(SingleContact &contact, int i=0) override;
       void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
-      void setSearchAllContactPoints(bool searchAllCP_=true) override { searchAllCP = searchAllCP_; }
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
       void calcisSize() override { isSize = 2; }
 
@@ -69,9 +69,7 @@ namespace MBSim {
       /**
        * \brief root function
        */
-      MBSim::FuncPairSpatialContourPoint *func;
-
-      bool searchAllCP{false};
+      FuncPairSpatialContourPoint *func;
   };
 
 }

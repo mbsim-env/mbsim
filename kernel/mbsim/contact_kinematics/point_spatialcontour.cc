@@ -58,6 +58,39 @@ namespace MBSim {
     }
   }
 
+  void ContactKinematicsPointSpatialContour::determineInitialGuess() {
+    MultiDimNewtonMethod search(func, nullptr);
+    search.setTolerance(tol);
+    double nrd = 1e13;
+    Vec zeta(2);
+    vector<double> etaNodes = spatialcontour->getEtaNodes();
+    if(etaNodes.empty()) {
+      etaNodes.resize(11);
+      for(size_t i=0; i<11; i++)
+	etaNodes[i] = i/10.;
+    }
+    vector<double> xiNodes = spatialcontour->getEtaNodes();
+    if(xiNodes.empty()) {
+      xiNodes.resize(11);
+      for(size_t i=0; i<11; i++)
+	xiNodes[i] = i/10.;
+    }
+    vector<double> zeta0 = searchPossibleContactPoints(func,0,zeta,etaNodes,tol);
+    for(size_t i=0; i<zeta0.size(); i++) {
+      zeta(0) = zeta0[i];
+      vector<double> zeta1 = searchPossibleContactPoints(func,1,zeta,xiNodes,tol);
+      for(size_t j=0; j<zeta1.size(); j++) {
+	zeta(1) = zeta1[i];
+	Vec zeta_ = search.solve(zeta);
+	double nrd_ = nrm2(point->getFrame()->evalPosition()-spatialcontour->evalPosition(zeta_));
+	if(nrd_<nrd) {
+	  curis = zeta_;
+	  nrd = nrd_;
+	}
+      }
+    }
+  }
+
   void ContactKinematicsPointSpatialContour::updateg(SingleContact &contact, int i) {
     MultiDimNewtonMethod search(func, nullptr);
     search.setTolerance(tol);

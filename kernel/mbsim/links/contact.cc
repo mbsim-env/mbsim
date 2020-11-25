@@ -284,7 +284,7 @@ namespace MBSim {
           }
         }
       }
-      contactKinematics->setSearchAllContactPoints(searchAllCP);
+      contactKinematics->setDetermineInitialGuess(searchAllCP);
       if(maxNumContacts>-1) contactKinematics->setMaximumNumberOfContacts(maxNumContacts);
       contactKinematics->assignContours(contour[0], contour[1]);
       contactKinematics->setTolerance(tol);

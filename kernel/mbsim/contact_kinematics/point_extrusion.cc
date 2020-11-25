@@ -57,6 +57,30 @@ namespace MBSim {
     }
   }
 
+  void ContactKinematicsPointExtrusion::determineInitialGuess() {
+    NewtonMethod search(func, nullptr);
+    search.setTolerance(tol);
+    double nrd = 1e13;
+    double eta = 0;
+    vector<double> etaNodes = extrusion->getEtaNodes();
+    if(etaNodes.empty()) {
+      etaNodes.resize(11);
+      for(size_t i=0; i<11; i++)
+	etaNodes[i] = i/10.;
+    }
+    vector<double> zeta0 = searchPossibleContactPoints(func,eta,etaNodes,tol);
+    for(size_t i=0; i<zeta0.size(); i++) {
+      eta = zeta0[i];
+      Vec2 zeta_;
+      zeta_(0) = search.solve(eta);
+      double nrd_ = nrm2(point->getFrame()->evalPosition()-extrusion->evalPosition(zeta_));
+      if(nrd_<nrd) {
+	curis(0) = zeta_(0);
+	nrd = nrd_;
+      }
+    }
+  }
+
   void ContactKinematicsPointExtrusion::updateg(SingleContact &contact, int i) {
     NewtonMethod search(func, nullptr);
     search.setTolerance(tol);

@@ -37,7 +37,7 @@ namespace MBSim {
       /**
        * \brief constructor
        */
-      ContactKinematicsCircleExtrusion() : icircle(0), iextrusion(0), circle(NULL), extrusion(NULL), func(NULL), searchAllCP(false) { }
+      ContactKinematicsCircleExtrusion() : icircle(0), iextrusion(0), circle(NULL), extrusion(NULL), func(NULL) { }
 
       /**
        * \brief destructor
@@ -51,7 +51,6 @@ namespace MBSim {
       void updatewb(SingleContact &contact, int i=0) override;
       /***************************************************/
 
-      void setSearchAllContactPoints(bool searchAllCP_=true) { searchAllCP = searchAllCP_; }
       void calcisSize() override { isSize = 1; }
 
     private:
@@ -70,8 +69,6 @@ namespace MBSim {
        * \brief root function
        */
       FuncPairPlanarContourCircle *func;
-
-      bool searchAllCP;
   };
 
 }
