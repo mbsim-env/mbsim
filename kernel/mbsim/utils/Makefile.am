@@ -9,9 +9,7 @@ libutils_la_SOURCES = colors.cc\
                       xmlutils.cc\
                       stopwatch.cc\
                       ansatz_functions.cc\
-                      openmbv_utils.cc\
-		      planar_contact_search.cc\
-		      spatial_contact_search.cc
+                      openmbv_utils.cc
 
 utilsincludedir = $(includedir)/mbsim/utils
 
@@ -32,6 +30,4 @@ utilsinclude_HEADERS = colors.h\
                        ansatz_functions.h\
 		       boost_parameters.h\
 		       openmbv_utils.h\
-		       planar_contact_search.h\
-		       spatial_contact_search.h\
 		       index.h
