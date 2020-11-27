@@ -192,7 +192,7 @@ System::System(const string &projectName) :
     contact->setNormalImpactLaw(new BilateralImpact);
     contact->connect(balls[i]->getContour("COG"), rodCont);
     contact->setContactKinematics(new ContactKinematicsPointPlanarContour);
-    contact->setDetermineInitialGuess(true);
+    contact->setInitialGlobalSearch(true);
     this->addLink(contact);
 
     ContactObserver *observer = new ContactObserver(contact->getName()+"_Observer");

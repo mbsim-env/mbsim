@@ -29,10 +29,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematics::updateg(vector<SingleContact> &contact) {
-    if(dIG) {
-      determineInitialGuess();
-      dIG = false;
-    }
+    search();
     for(int i=0; i<maxNumContacts; i++)
       updateg(contact[i],i);
   }

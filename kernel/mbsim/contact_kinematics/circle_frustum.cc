@@ -65,7 +65,7 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleFrustum::determineInitialGuess() {
+  void ContactKinematicsCircleFrustum::search_() {
     NewtonMethod search(funcRho, jacRho);
     search.setTolerance(tol);
     double nrd = 1e13;
@@ -236,7 +236,7 @@ namespace MBSim {
 	  for (int i = 0; i <= SEC; i++)
 	    nodes[i] = rhoStartSpacing + i * drho;
 
-	  determineInitialGuess();
+	  search_();
           nextis(0) = curis(0);
 
           if ((*funcRho)[nextis(0)] > eps)
@@ -365,7 +365,7 @@ namespace MBSim {
 	  for (int i = 0; i <= SEC; i++)
 	    nodes[i] = rhoStartSpacing + i * drho;
 
-	  determineInitialGuess();
+	  search_();
           nextis(0) = curis(0);
 
           if ((*funcRho)[nextis(0)] > eps)

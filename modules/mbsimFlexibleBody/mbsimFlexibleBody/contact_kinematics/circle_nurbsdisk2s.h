@@ -26,6 +26,8 @@
 
 namespace MBSimFlexibleBody {
 
+  class FuncPairCircleNurbsDisk2s;
+
   /*!
    * \brief contact kinematics for contact between circle and nurbsdisk2s
    * \author Kilian Grundl
@@ -47,15 +49,15 @@ namespace MBSimFlexibleBody {
       ~ContactKinematicsCircleNurbsDisk2s() override;
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
+      void calcisSize() override { isSize = 1; }
       void assignContours(const std::vector<MBSim::Contour*> &contour) override;
+      void search() override;
       void updateg(MBSim::SingleContact &contact, int i=0) override;
       /***************************************************/
 
       /* GETTER / SETTER */
       void setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }
       /***************************************************/
-
-      void calcisSize() override { isSize = 1; }
 
     private:
       /** 
@@ -68,6 +70,8 @@ namespace MBSimFlexibleBody {
        */
       NurbsDisk2s *nurbsdisk{0}; 
       MBSim::Circle *circle{0};
+
+      FuncPairCircleNurbsDisk2s *func;
 
       /**
        * \brief local contact search?

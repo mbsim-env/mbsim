@@ -57,31 +57,36 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointExtrusion::determineInitialGuess() {
+  void ContactKinematicsPointExtrusion::search() {
     NewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    double nrd = 1e13;
-    double eta = 0;
-    vector<double> zeta0 = searchPossibleContactPoints(func,eta,extrusion->getEtaNodes(),tol);
-    for(size_t i=0; i<zeta0.size(); i++) {
-      eta = zeta0[i];
-      Vec2 zeta_;
-      zeta_(0) = search.solve(eta);
-      double nrd_ = nrm2(point->getFrame()->evalPosition()-extrusion->evalPosition(zeta_));
-      if(nrd_<nrd) {
-	curis(0) = zeta_(0);
-	nrd = nrd_;
+    if(iGS or gS) {
+      double nrd = 1e13;
+      double eta = 0;
+      vector<double> zeta0 = searchPossibleContactPoints(func,eta,extrusion->getEtaNodes(),tol);
+      for(size_t i=0; i<zeta0.size(); i++) {
+	eta = zeta0[i];
+	Vec2 zeta_;
+	zeta_(0) = search.solve(eta);
+	double nrd_ = nrm2(point->getFrame()->evalPosition()-extrusion->evalPosition(zeta_));
+	if(nrd_<nrd) {
+	  nextis(0) = zeta_(0);
+	  nrd = nrd_;
+	}
       }
+      if(iGS) {
+	curis(0) = nextis(0);
+	iGS = false;
+      }
+    }
+    else {
+      nextis(0) = search.solve(curis(0));
+      if(search.getInfo()!=0)
+	throw std::runtime_error("(ContactKinematicsPointExtrusion:updateg): contact search failed!");
     }
   }
 
   void ContactKinematicsPointExtrusion::updateg(SingleContact &contact, int i) {
-    NewtonMethod search(func, nullptr);
-    search.setTolerance(tol);
-    nextis(0) = search.solve(curis(0));
-    if(search.getInfo()!=0)
-      throw std::runtime_error("(ContactKinematicsPointExtrusion:updateg): contact search failed!");
-
     contact.getContourFrame(iextrusion)->setEta(nextis(0));
 
     contact.getContourFrame(iextrusion)->setPosition(extrusion->evalPosition(contact.getContourFrame(iextrusion)->getZeta(false)));

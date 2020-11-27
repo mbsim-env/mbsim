@@ -179,7 +179,7 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void setDetermineInitialGuess(bool dIG_) { dIG = dIG_; }
+      void setInitialGlobalSearch(bool iGS_) { iGS = iGS_; }
       void setInitialGuess(const fmatvec::MatV &zeta0_) { zeta0 <<= zeta0_; }
 
       /**
@@ -237,7 +237,7 @@ namespace MBSim {
        */
       FrictionImpactLaw *ftil{nullptr};
 
-      bool dIG{false};
+      bool iGS{false};
 
       fmatvec::MatV zeta0;
 

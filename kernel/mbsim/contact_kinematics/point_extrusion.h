@@ -44,13 +44,12 @@ namespace MBSim {
       ~ContactKinematicsPointExtrusion() override;
 
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
+      void calcisSize() override { isSize = 1; }
       void assignContours(const std::vector<MBSim::Contour*>& contour) override;
-      void determineInitialGuess() override;
+      void search() override;
       void setInitialGuess(const fmatvec::MatV &zeta0_) override;
       void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
-
-      void calcisSize() override { isSize = 1; }
 
     protected:
       /** 

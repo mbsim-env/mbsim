@@ -32,7 +32,9 @@ namespace MBSimFlexibleBody {
   ContactKinematicsCircleNurbsDisk2s::ContactKinematicsCircleNurbsDisk2s()  {
   }
 
-  ContactKinematicsCircleNurbsDisk2s::~ContactKinematicsCircleNurbsDisk2s() = default;
+  ContactKinematicsCircleNurbsDisk2s::~ContactKinematicsCircleNurbsDisk2s() {
+    delete func;
+  }
 
   void ContactKinematicsCircleNurbsDisk2s::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Circle*>(contour[0])) {
@@ -47,12 +49,17 @@ namespace MBSimFlexibleBody {
       circle = static_cast<Circle*>(contour[1]);
       nurbsdisk = static_cast<NurbsDisk2s*>(contour[0]);
     }
+    func = new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
+  }
+
+  void ContactKinematicsCircleNurbsDisk2s::search() {
+    NewtonMethod search(func,nullptr);
+    nextis(0) = search.solve(curis(0));
+    if(search.getInfo()!=0)
+      throw std::runtime_error("(ContactKinematicsCircleNurbsDisk2s:updateg): contact search failed!");
   }
 
   void ContactKinematicsCircleNurbsDisk2s::updateg(SingleContact &contact, int i) {
-    auto *func= new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
-    NewtonMethod search(func,nullptr);
-    nextis(0) = search.solve(curis(0));
     contact.getContourFrame(icircle)->setEta(nextis(0)); // get contact parameter
 
     // point on the circle
@@ -81,8 +88,6 @@ namespace MBSimFlexibleBody {
       g = contact.getContourFrame(inurbsdisk)->getOrientation(false).col(0).T() * (contact.getContourFrame(icircle)->getPosition(false) - contact.getContourFrame(inurbsdisk)->getPosition(false));
     }
     contact.getGeneralizedRelativePosition(false)(0) = g;
-
-    delete func;
   }
 
 }

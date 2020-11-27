@@ -33,11 +33,13 @@ namespace MBSim {
     public:
       ContactKinematicsSpatialContourSpatialContour() = default;
       ~ContactKinematicsSpatialContourSpatialContour();
+
       /* INHERITED INTERFACE */
-      void assignContours(const std::vector<Contour*> &contour) override;
-      void updateg(SingleContact &contact, int i=0) override;
-      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
       void calcisSize() override { isSize = 4*maxNumContacts; }
+      void assignContours(const std::vector<Contour*> &contour) override;
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
+      void search() override;
+      void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
     private:

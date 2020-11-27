@@ -51,18 +51,18 @@ namespace MBSim {
        */
       ~ContactKinematicsCircleFrustum() override;
 
+      void search_();
+
       /* INHERITED INTERFACE OF CONTACTKINEAMTICS */
+      void calcisSize() override { isSize = 1; }
       void assignContours(const std::vector<Contour*> &contour) override;
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
       void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
       /* GETTER / SETTER */
       void setLocalSearch(bool LOCALSEARCH_);
       /***************************************************/
-
-      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
-      void determineInitialGuess() override;
-      void calcisSize() override { isSize = 1; }
 
     protected:
       /**

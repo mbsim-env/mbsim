@@ -58,34 +58,39 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointSpatialContour::determineInitialGuess() {
+  void ContactKinematicsPointSpatialContour::search() {
     MultiDimNewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    double nrd = 1e13;
-    Vec zeta(2);
-    vector<double> zeta0 = searchPossibleContactPoints(func,0,zeta,spatialcontour->getEtaNodes(),tol);
-    for(size_t i=0; i<zeta0.size(); i++) {
-      zeta(0) = zeta0[i];
-      vector<double> zeta1 = searchPossibleContactPoints(func,1,zeta,spatialcontour->getXiNodes(),tol);
-      for(size_t j=0; j<zeta1.size(); j++) {
-	zeta(1) = zeta1[i];
-	Vec zeta_ = search.solve(zeta);
-	double nrd_ = nrm2(point->getFrame()->evalPosition()-spatialcontour->evalPosition(zeta_));
-	if(nrd_<nrd) {
-	  curis = zeta_;
-	  nrd = nrd_;
+    if(iGS or gS) {
+      double nrd = 1e13;
+      Vec zeta(2);
+      vector<double> zeta0 = searchPossibleContactPoints(func,0,zeta,spatialcontour->getEtaNodes(),tol);
+      for(size_t i=0; i<zeta0.size(); i++) {
+	zeta(0) = zeta0[i];
+	vector<double> zeta1 = searchPossibleContactPoints(func,1,zeta,spatialcontour->getXiNodes(),tol);
+	for(size_t j=0; j<zeta1.size(); j++) {
+	  zeta(1) = zeta1[i];
+	  Vec zeta_ = search.solve(zeta);
+	  double nrd_ = nrm2(point->getFrame()->evalPosition()-spatialcontour->evalPosition(zeta_));
+	  if(nrd_<nrd) {
+	    nextis = zeta_;
+	    nrd = nrd_;
+	  }
 	}
       }
+      if(iGS) {
+	curis = nextis;
+	iGS = false;
+      }
+    }
+    else {
+      nextis = search.solve(curis);
+      if(search.getInfo()!=0)
+	throw std::runtime_error("(ContactKinematicsPointSpatialContour:updateg): contact search failed!");
     }
   }
 
   void ContactKinematicsPointSpatialContour::updateg(SingleContact &contact, int i) {
-    MultiDimNewtonMethod search(func, nullptr);
-    search.setTolerance(tol);
-    nextis = search.solve(curis);
-    if(search.getInfo()!=0)
-      throw std::runtime_error("(ContactKinematicsCircleSpatialContour:updateg): contact search failed!");
-
     contact.getContourFrame(ispatialcontour)->setZeta(nextis);
 
     contact.getContourFrame(ispatialcontour)->getOrientation(false).set(0, spatialcontour->evalWn(contact.getContourFrame(ispatialcontour)->getZeta(false)));

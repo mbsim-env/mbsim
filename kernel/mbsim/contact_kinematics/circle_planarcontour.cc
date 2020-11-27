@@ -57,13 +57,17 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCirclePlanarContour::updateg(SingleContact &contact, int i) {
+  void ContactKinematicsCirclePlanarContour::search() {
     NewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    nextis(i) = search.solve(curis(i));
-    if(search.getInfo()!=0)
-      throw std::runtime_error("(ContactKinematicsCirclePlanarContour:updateg): contact search failed!");
+    for(int i=0; i<maxNumContacts; i++) {
+      nextis(i) = search.solve(curis(i));
+      if(search.getInfo()!=0)
+	throw std::runtime_error("(ContactKinematicsCirclePlanarContour:updateg): contact search failed!");
+    }
+  }
 
+  void ContactKinematicsCirclePlanarContour::updateg(SingleContact &contact, int i) {
     contact.getContourFrame(iplanarcontour)->setEta(nextis(i));
 
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, planarcontour->evalWn(contact.getContourFrame(iplanarcontour)->getZeta(false)));

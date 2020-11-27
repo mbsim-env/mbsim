@@ -56,13 +56,15 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsCircleExtrusion::updateg(SingleContact &contact, int i) {
+  void ContactKinematicsCircleExtrusion::search() {
     NewtonMethod search(func, nullptr);
     search.setTolerance(tol);
     nextis(0) = search.solve(curis(0));
     if(search.getInfo()!=0)
       throw std::runtime_error("(ContactKinematicsPointExtrusion:updateg): contact search failed!");
+  }
 
+  void ContactKinematicsCircleExtrusion::updateg(SingleContact &contact, int i) {
     contact.getContourFrame(iextrusion)->setEta(nextis(0));
 
     contact.getContourFrame(iextrusion)->getOrientation(false).set(0, extrusion->evalWn(contact.getContourFrame(iextrusion)->getZeta(false)));

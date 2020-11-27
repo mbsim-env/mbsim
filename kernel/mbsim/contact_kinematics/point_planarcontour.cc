@@ -56,31 +56,36 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPointPlanarContour::determineInitialGuess() {
+  void ContactKinematicsPointPlanarContour::search() {
     NewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    double nrd = 1e13;
-    double eta = 0;
-    vector<double> zeta0 = searchPossibleContactPoints(func,eta,planarcontour->getEtaNodes(),tol);
-    for(size_t i=0; i<zeta0.size(); i++) {
-      eta = zeta0[i];
-      Vec2 zeta_;
-      zeta_(0) = search.solve(eta);
-      double nrd_ = nrm2(point->getFrame()->evalPosition()-planarcontour->evalPosition(zeta_));
-      if(nrd_<nrd) {
-	curis(0) = zeta_(0);
-	nrd = nrd_;
+    if(iGS or gS) {
+      double nrd = 1e13;
+      double eta = 0;
+      vector<double> zeta0 = searchPossibleContactPoints(func,eta,planarcontour->getEtaNodes(),tol);
+      for(size_t i=0; i<zeta0.size(); i++) {
+	eta = zeta0[i];
+	Vec2 zeta_;
+	zeta_(0) = search.solve(eta);
+	double nrd_ = nrm2(point->getFrame()->evalPosition()-planarcontour->evalPosition(zeta_));
+	if(nrd_<nrd) {
+	  nextis(0) = zeta_(0);
+	  nrd = nrd_;
+	}
       }
+      if(iGS) {
+	curis(0) = nextis(0);
+	iGS = false;
+      }
+    }
+    else {
+      nextis(0) = search.solve(curis(0));
+      if(search.getInfo()!=0)
+	throw std::runtime_error("(ContactKinematicsPointPlanarContour:updateg): contact search failed!");
     }
   }
 
   void ContactKinematicsPointPlanarContour::updateg(SingleContact &contact, int i) {
-    NewtonMethod search(func, nullptr);
-    search.setTolerance(tol);
-    nextis(0) = search.solve(curis(0));
-    if(search.getInfo()!=0)
-      throw std::runtime_error("(ContactKinematicsPointPlanarContour:updateg): contact search failed!");
-
     contact.getContourFrame(iplanarcontour)->setEta(nextis(0));
 
     contact.getContourFrame(iplanarcontour)->getOrientation(false).set(0, planarcontour->evalWn(contact.getContourFrame(iplanarcontour)->getZeta(false)));

@@ -50,13 +50,17 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsSpatialContourSpatialContour::updateg(SingleContact &contact, int i) {
+  void ContactKinematicsSpatialContourSpatialContour::search() {
     MultiDimNewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    nextis.set(RangeV(4*i,4*i+3),search.solve(curis(RangeV(4*i,4*i+3))));
-    if(search.getInfo()!=0)
-      throw std::runtime_error("(ContactKinematicsSpatialContourSpatialContour:updateg): contact search failed!");
+    for(int i=0; i<maxNumContacts; i++) {
+      nextis.set(RangeV(4*i,4*i+3),search.solve(curis(RangeV(4*i,4*i+3))));
+      if(search.getInfo()!=0)
+	throw std::runtime_error("(ContactKinematicsSpatialContourSpatialContour:updateg): contact search failed!");
+    }
+  }
 
+  void ContactKinematicsSpatialContourSpatialContour::updateg(SingleContact &contact, int i) {
     contact.getContourFrame(0)->setZeta(nextis(RangeV(4*i,4*i+1)));
     contact.getContourFrame(1)->setZeta(nextis(RangeV(4*i+2,4*i+3)));
 

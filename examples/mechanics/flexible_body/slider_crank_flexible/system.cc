@@ -248,7 +248,7 @@ FlexibleSliderCrankSystem::FlexibleSliderCrankSystem(const string &projectName) 
       contactCrankRod->setNormalForceLaw(new UnilateralConstraint());
       contactCrankRod->setNormalImpactLaw(new UnilateralNewtonImpact(0.));
     }
-    contactCrankRod->setDetermineInitialGuess(true);
+    contactCrankRod->setInitialGlobalSearch(true);
     contactCrankRod->connect(pnt, ncc);
     contactCrankRod->setContactKinematics(new ContactKinematicsPointSpatialContour);
 

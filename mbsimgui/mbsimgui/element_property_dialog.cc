@@ -2558,8 +2558,8 @@ namespace MBSimGUI {
     frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
-    determineInitialGuess = new ExtWidget("Determine initial guess",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"determineInitialGuess");
-    addToTab("Extra", determineInitialGuess);
+    initialGlobalSearch = new ExtWidget("Initial global search",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGlobalSearch");
+    addToTab("Extra", initialGlobalSearch);
 
     initialGuess = new ExtWidget("Initial guess",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
     addToTab("Extra", initialGuess);
@@ -2578,7 +2578,7 @@ namespace MBSimGUI {
     contactImpactLaw->initializeUsingXML(item->getXMLElement());
     frictionForceLaw->initializeUsingXML(item->getXMLElement());
     frictionImpactLaw->initializeUsingXML(item->getXMLElement());
-    determineInitialGuess->initializeUsingXML(item->getXMLElement());
+    initialGlobalSearch->initializeUsingXML(item->getXMLElement());
     initialGuess->initializeUsingXML(item->getXMLElement());
     tolerance->initializeUsingXML(item->getXMLElement());
     maxNumContacts->initializeUsingXML(item->getXMLElement());
@@ -2592,7 +2592,7 @@ namespace MBSimGUI {
     contactImpactLaw->writeXMLFile(item->getXMLElement(),ref);
     frictionForceLaw->writeXMLFile(item->getXMLElement(),ref);
     frictionImpactLaw->writeXMLFile(item->getXMLElement(),ref);
-    determineInitialGuess->writeXMLFile(item->getXMLElement(),ref);
+    initialGlobalSearch->writeXMLFile(item->getXMLElement(),ref);
     initialGuess->writeXMLFile(item->getXMLElement(),ref);
     tolerance->writeXMLFile(item->getXMLElement(),ref);
     maxNumContacts->writeXMLFile(item->getXMLElement(),ref);

@@ -134,7 +134,7 @@
               <restitutionCoefficient unit="-">0</restitutionCoefficient>
             </UnilateralNewtonImpact>
           </normalImpactLaw>
-          <determineInitialGuess>true</determineInitialGuess>
+          <initialGlobalSearch>true</initialGlobalSearch>
         </Contact>
       </links>
       <constraints/>

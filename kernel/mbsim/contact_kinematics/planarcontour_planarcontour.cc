@@ -48,13 +48,17 @@ namespace MBSim {
     }
   }
 
-  void ContactKinematicsPlanarContourPlanarContour::updateg(SingleContact &contact, int i) {
+  void ContactKinematicsPlanarContourPlanarContour::search() {
     MultiDimNewtonMethod search(func, nullptr);
     search.setTolerance(tol);
-    nextis.set(RangeV(2*i,2*i+1),search.solve(curis(RangeV(2*i,2*i+1))));
-    if(search.getInfo()!=0)
-      throw std::runtime_error("(ContactKinematicsPlanarContourPlanarContour:updateg): contact search failed!");
+    for(int i=0; i<maxNumContacts; i++) {
+      nextis.set(RangeV(2*i,2*i+1),search.solve(curis(RangeV(2*i,2*i+1))));
+      if(search.getInfo()!=0)
+	throw std::runtime_error("(ContactKinematicsPlanarContourPlanarContour:updateg): contact search failed!");
+    }
+  }
 
+  void ContactKinematicsPlanarContourPlanarContour::updateg(SingleContact &contact, int i) {
     contact.getContourFrame(0)->setEta(nextis(2*i));
     contact.getContourFrame(1)->setEta(nextis(2*i+1));
 

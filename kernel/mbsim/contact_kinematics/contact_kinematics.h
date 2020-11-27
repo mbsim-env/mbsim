@@ -65,7 +65,7 @@ namespace MBSim {
         nextis.ref(nextisParent, fmatvec::RangeV(isInd,isInd+isSize-1));
       }
 
-      virtual void determineInitialGuess() { }
+      virtual void search() { }
 
       /**
        * \brief compute contact kinematics for all contacts
@@ -107,7 +107,7 @@ namespace MBSim {
        */
       int getMaximumNumberOfContacts() const { return maxNumContacts; }
 
-      void setDetermineInitialGuess(bool dIG_=true) { dIG = dIG_; }
+      void setInitialGlobalSearch(bool iGS_=true) { iGS = iGS_; }
 
       /**
        * \brief set initial guess for root-finding
@@ -145,7 +145,8 @@ namespace MBSim {
 
       std::vector<Contour*> contour;
 
-      bool dIG{false};
+      bool iGS{false};
+      bool gS{false};
   };
 
 }
