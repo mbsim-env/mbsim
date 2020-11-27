@@ -76,6 +76,7 @@
 #include <mbsim/contact_kinematics/sphere_plate.h>
 #include <mbsim/contact_kinematics/sphere_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/sphere_sphere.h>
+#include <mbsim/contact_kinematics/sphere_spatialcontour.h>
 #include <mbsim/contact_kinematics/plate_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_polynomialfrustum.h>
 #include <mbsim/contact_kinematics/point_spatialcontour.h>
@@ -215,6 +216,9 @@ namespace MBSim {
 
     else if ( contour0==typeid(Sphere) && contour1==typeid(Sphere) )
       return new ContactKinematicsSphereSphere;
+
+    else if ( contour0==typeid(Sphere) && contour1==typeid(SpatialContour) )
+      return new ContactKinematicsSphereSpatialContour;
 
     else if ( contour0==typeid(Plate) && contour1==typeid(PolynomialFrustum) )
       return new ContactKinematicsPlatePolynomialFrustum;

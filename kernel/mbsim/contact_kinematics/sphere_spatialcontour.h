@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2020 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -17,24 +17,24 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _CONTACT_KINEMATICS_CIRCLE_SPATIALCONTOUR_H_
-#define _CONTACT_KINIMATICS_CIRCLE_SPATIALCONTOUR_H_
+#ifndef _CONTACT_KINEMATICS_SPHERE_SPATIALCONTOUR_H_
+#define _CONTACT_KINIMATICS_SPHERE_SPATIALCONTOUR_H_
 
 #include "contact_kinematics.h"
 
 namespace MBSim {
 
-  class Circle;
+  class Sphere;
   class SpatialContour;
-  class FuncPairSpatialContourCircle;
+  class FuncPairSpatialContourSphere;
 
-  /*! \brief pairing circle outer side to spatial contour
-   * \author Markus Friedrich
+  /*! \brief pairing sphere to spatial contour
+   * \author Martin Förg
    */
-  class ContactKinematicsCircleSpatialContour : public ContactKinematics {
+  class ContactKinematicsSphereSpatialContour : public ContactKinematics {
     public:
-      ContactKinematicsCircleSpatialContour() = default;
-      ~ContactKinematicsCircleSpatialContour();
+      ContactKinematicsSphereSpatialContour() = default;
+      ~ContactKinematicsSphereSpatialContour();
 
       /* INHERITED INTERFACE */
       void calcisSize() override { isSize = 2*maxNumContacts; }
@@ -48,20 +48,20 @@ namespace MBSim {
       /**
        * \brief contour index
        */
-      int icircle, ispatialcontour;
+      int isphere, ispatialcontour;
 
       /**
        * \brief contour classes
        */
-      Circle *circle;
+      Sphere *sphere;
       SpatialContour *spatialcontour;
 
       /**
        * \brief root function
        */
-      MBSim::FuncPairSpatialContourCircle *func;
+      MBSim::FuncPairSpatialContourSphere *func;
   };
 
 }
 
-#endif /* _CONTACT_KINEMATICS_CIRCLESOLID_SPATIALCONTOUR_H_ */
+#endif

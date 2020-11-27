@@ -29,6 +29,7 @@ libcontactkinematics_la_SOURCES = contact_kinematics.cc\
 				  sphere_frustum.cc\
 				  sphere_plate.cc\
 				  sphere_polynomialfrustum.cc\
+				  sphere_spatialcontour.cc\
 				  plane_spatialcontour.cc\
 				  spatialcontour_spatialcontour.cc\
 				  edge_edge.cc\
@@ -75,6 +76,7 @@ contactkinematicsinclude_HEADERS = contact_kinematics.h\
 				   sphere_frustum.h\
 				   sphere_plate.h\
 				   sphere_polynomialfrustum.h\
+				   sphere_spatialcontour.h\
 				   plane_spatialcontour.h\
 				   spatialcontour_spatialcontour.h\
 				   edge_edge.h\
