@@ -2558,6 +2558,9 @@ namespace MBSimGUI {
     frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
+    globalSearch = new ExtWidget("Global search",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"globalSearch");
+    addToTab("Extra", globalSearch);
+
     initialGlobalSearch = new ExtWidget("Initial global search",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGlobalSearch");
     addToTab("Extra", initialGlobalSearch);
 
@@ -2578,6 +2581,7 @@ namespace MBSimGUI {
     contactImpactLaw->initializeUsingXML(item->getXMLElement());
     frictionForceLaw->initializeUsingXML(item->getXMLElement());
     frictionImpactLaw->initializeUsingXML(item->getXMLElement());
+    globalSearch->initializeUsingXML(item->getXMLElement());
     initialGlobalSearch->initializeUsingXML(item->getXMLElement());
     initialGuess->initializeUsingXML(item->getXMLElement());
     tolerance->initializeUsingXML(item->getXMLElement());
@@ -2592,6 +2596,7 @@ namespace MBSimGUI {
     contactImpactLaw->writeXMLFile(item->getXMLElement(),ref);
     frictionForceLaw->writeXMLFile(item->getXMLElement(),ref);
     frictionImpactLaw->writeXMLFile(item->getXMLElement(),ref);
+    globalSearch->writeXMLFile(item->getXMLElement(),ref);
     initialGlobalSearch->writeXMLFile(item->getXMLElement(),ref);
     initialGuess->writeXMLFile(item->getXMLElement(),ref);
     tolerance->writeXMLFile(item->getXMLElement(),ref);

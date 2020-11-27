@@ -2303,6 +2303,11 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
+          <xs:element name="globalSearch" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob alle möglichen Kontaktpunkte gesucht werden sollen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="initialGlobalSearch" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.
@@ -2393,9 +2398,14 @@
               </xs:complexType>
             </xs:element>
           </xs:sequence>
-          <xs:element name="determineInitialGuess" minOccurs="0" type="pv:booleanFullEval">
+          <xs:element name="globalSearch" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob die Anfangswerte für den Newton-Löser automatisch bestimmt werden sollen.
+                Definiert, ob alle möglichen Kontaktpunkte gesucht werden sollen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialGlobalSearch" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob initial alle möglichen Kontaktpunkte gesucht werden sollen.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialGuess" minOccurs="0" type="pv:unknownMatrix">

@@ -44,7 +44,7 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MaxwellContact)
 
-  MaxwellContact::MaxwellContact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), iGS(false), tol(1e-10), LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(0.), gLim(0.), matConst(0), matConstSetted(false), saved_ref(0) {
+  MaxwellContact::MaxwellContact(const string &name) : Link(name), contacts(0), contactKinematics(0), contour(2), ckNames(0), plotFeatureMap(), fcl(0), fdf(0), fnil(0), ftil(0), gS(false), iGS(false), tol(1e-10), LCP(SymMat(0,NONINIT), Vec(0,NONINIT)), dampingCoefficient(0.), gLim(0.), matConst(0), matConstSetted(false), saved_ref(0) {
   }
 
   MaxwellContact::~MaxwellContact() {
@@ -332,6 +332,7 @@ namespace MBSim {
     else if (stage == preInit) {
       Link::init(stage, config);
       for (size_t cK = 0; cK < contactKinematics.size(); cK++) {
+        contactKinematics[cK]->setGlobalSearch(gS);
         contactKinematics[cK]->setInitialGlobalSearch(iGS);
         contactKinematics[cK]->setInitialGuess(zeta0);
         contactKinematics[cK]->setTolerance(tol);
@@ -826,6 +827,9 @@ namespace MBSim {
       FrictionImpactLaw *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
     }
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"globalSearch");
+    if (e) setGlobalSearch(E(e)->getText<bool>());
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialGlobalSearch");
     if (e) setInitialGlobalSearch(E(e)->getText<bool>());

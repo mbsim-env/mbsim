@@ -184,6 +184,7 @@ namespace MBSim {
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
+      void setGlobalSearch(bool gS_) { gS = gS_; }
       void setInitialGlobalSearch(bool iGS_) { iGS = iGS_; }
       void setInitialGuess(const fmatvec::MatV &zeta0_) { zeta0 <<= zeta0_; }
 
@@ -300,6 +301,7 @@ namespace MBSim {
        */
       FrictionImpactLaw *ftil;
 
+      bool gS;
       bool iGS;
 
       fmatvec::MatV zeta0;

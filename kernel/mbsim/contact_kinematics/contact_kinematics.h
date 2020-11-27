@@ -107,6 +107,7 @@ namespace MBSim {
        */
       int getMaximumNumberOfContacts() const { return maxNumContacts; }
 
+      void setGlobalSearch(bool gS_=true) { gS = gS_; }
       void setInitialGlobalSearch(bool iGS_=true) { iGS = iGS_; }
 
       /**
@@ -145,8 +146,8 @@ namespace MBSim {
 
       std::vector<Contour*> contour;
 
-      bool iGS{false};
       bool gS{false};
+      bool iGS{false};
   };
 
 }

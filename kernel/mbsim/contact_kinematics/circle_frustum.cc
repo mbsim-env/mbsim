@@ -26,7 +26,6 @@
 #include "mbsim/functions/contact/funcpair_hyperbola_circle.h"
 #include "mbsim/functions/contact/jacpair_ellipse_circle.h"
 #include "mbsim/functions/contact/jacpair_hyperbola_circle.h"
-#include "mbsim/utils/planar_contact_search.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 

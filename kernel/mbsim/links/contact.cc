@@ -284,6 +284,7 @@ namespace MBSim {
           }
         }
       }
+      contactKinematics->setGlobalSearch(gS);
       contactKinematics->setInitialGlobalSearch(iGS);
       if(maxNumContacts>-1) contactKinematics->setMaximumNumberOfContacts(maxNumContacts);
       contactKinematics->assignContours(contour[0], contour[1]);
@@ -643,6 +644,9 @@ namespace MBSim {
       FrictionImpactLaw *fil = ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild());
       setTangentialImpactLaw(fil);
     }
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"globalSearch");
+    if (e) setGlobalSearch(E(e)->getText<bool>());
 
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialGlobalSearch");
     if (e) setInitialGlobalSearch(E(e)->getText<bool>());
