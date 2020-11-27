@@ -22,7 +22,6 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/circle.h"
 #include "mbsim/functions/contact/funcpair_planarcontour_circle.h"
-#include "mbsim/utils/planar_contact_search.h"
 #include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace fmatvec;

@@ -27,6 +27,7 @@
 #include "mbsim/functions/contact/jacpair_ellipse_circle.h"
 #include "mbsim/functions/contact/jacpair_hyperbola_circle.h"
 #include "mbsim/utils/planar_contact_search.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 
 using namespace std;
@@ -53,6 +54,32 @@ namespace MBSim {
       ifrustum = 0;
       circle = static_cast<Circle*>(contour[1]);
       frustum = static_cast<Frustum*>(contour[0]);
+    }
+  }
+
+  void ContactKinematicsCircleFrustum::setInitialGuess(const fmatvec::MatV &zeta0_) {
+    if(zeta0_.rows()) {
+      if(zeta0_.rows() != 1 or zeta0_.cols() != 1) throw runtime_error("(ContactKinematicsCircleFrustum::assignContours): size of zeta0 does not match");
+      curis(0) = zeta0_(0,0);
+      nextis(0) = curis(0);
+    }
+  }
+
+  void ContactKinematicsCircleFrustum::determineInitialGuess() {
+    NewtonMethod search(funcRho, jacRho);
+    search.setTolerance(tol);
+    double nrd = 1e13;
+    double eta = 0;
+    vector<double> zeta0 = searchPossibleContactPoints(funcRho,eta,nodes,tol);
+    for(size_t i=0; i<zeta0.size(); i++) {
+      eta = zeta0[i];
+      double eta_;
+      eta_ = search.solve(eta);
+      double nrd_ = (*funcRho)[eta_];
+      if(nrd_<nrd) {
+	curis(0) = eta_;
+	nrd = nrd_;
+      }
     }
   }
 
@@ -189,8 +216,6 @@ namespace MBSim {
           Vec3 cE2 = eF2; // semi-minor axis
           Vec3 Wd_EC = -Wd_CF + (xi_2 - tan(al_CF) * xi_1) * Wa_F;
 
-          FuncPairEllipseCircle* funcRho;
-
           if (outCont_F && !outCont_C) { // inner circle, outer frustum
             funcRho = new FuncPairEllipseCircle(r_C, cE1_star_nrm2, r_F(0), true);
           }
@@ -200,24 +225,19 @@ namespace MBSim {
           funcRho->setDiffVec(Wd_EC);
           funcRho->setSectionCOS(cE1, cE2);
 
-          JacobianPairEllipseCircle* jacRho = new JacobianPairEllipseCircle(cE1_star_nrm2, r_F(0));
+          jacRho = new JacobianPairEllipseCircle(cE1_star_nrm2, r_F(0));
           jacRho->setDiffVec(Wd_EC);
           jacRho->setSectionCOS(cE1, cE2);
 
-          PlanarContactSearch searchRho(funcRho, jacRho);
-          searchRho.setTolerance(tol);
-
-          if (LOCALSEARCH) { // select start value from last search if decided by user
-            searchRho.setInitialValue(curis(0));
-          }
-          else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
-            searchRho.setSearchAll(true);
-          }
           int SEC = 16; // partition for regula falsi
           double drho = 2. * M_PI / SEC * 1.01; // 10% intersection for improved convergence of solver
           double rhoStartSpacing = -2. * M_PI * 0.01 * 0.5;
-          searchRho.setEqualSpacing(SEC, rhoStartSpacing, drho);
-          nextis(0) = searchRho.slv();
+	  nodes.resize(SEC+1);
+	  for (int i = 0; i <= SEC; i++)
+	    nodes[i] = rhoStartSpacing + i * drho;
+
+	  determineInitialGuess();
+          nextis(0) = curis(0);
 
           if ((*funcRho)[nextis(0)] > eps)
             g = 1.; // too far away?
@@ -256,11 +276,10 @@ namespace MBSim {
         /**************************************************************************/
 
         else { // no special case: it is frustum-circle
-          FuncPairConeSectionCircle* funcRho = NULL;
-          JacobianPairConeSectionCircle* jacRho = NULL;
           Vec3 Wd_SC, c1, c2;
           int SEC = 16; // global search setting
-          double drho, rhoStartSpacing;
+          double drho = 0;
+	  double rhoStartSpacing = 0;
           double ctan_al_CF = 1. / tan(al_CF);
 
           double q = tan(phi_F) * tan(al_CF);
@@ -342,17 +361,12 @@ namespace MBSim {
           jacRho->setDiffVec(Wd_SC);
           jacRho->setSectionCOS(c1, c2);
 
-          PlanarContactSearch searchRho(funcRho, jacRho);
-          searchRho.setTolerance(tol);
+	  nodes.resize(SEC+1);
+	  for (int i = 0; i <= SEC; i++)
+	    nodes[i] = rhoStartSpacing + i * drho;
 
-          if(LOCALSEARCH) { // select start value from last search if decided by user
-            searchRho.setInitialValue(curis(0));
-          }
-          else { // define start search with regula falsi (in general necessary because of discontinuous transitions of contact points)
-            searchRho.setSearchAll(true);
-          }
-          searchRho.setEqualSpacing(SEC, rhoStartSpacing, drho);
-          nextis(0) = searchRho.slv();
+	  determineInitialGuess();
+          nextis(0) = curis(0);
 
           if ((*funcRho)[nextis(0)] > eps)
             g = 1.; // too far away?

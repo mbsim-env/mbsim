@@ -55,6 +55,8 @@ namespace MBSimFlexibleBody {
       void setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }
       /***************************************************/
 
+      void calcisSize() override { isSize = 1; }
+
     private:
       /** 
        * \brief contour index

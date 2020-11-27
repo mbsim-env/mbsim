@@ -26,6 +26,8 @@ namespace MBSim {
 
   class Circle;
   class Frustum;
+  class FuncPairConeSectionCircle;
+  class JacobianPairConeSectionCircle;
 
   /*!
    * \brief contact kinematics for unilateral contact between circle and frustum with at most one contact point
@@ -58,6 +60,8 @@ namespace MBSim {
       void setLocalSearch(bool LOCALSEARCH_);
       /***************************************************/
 
+      void setInitialGuess(const fmatvec::MatV &zeta0_) override;
+      void determineInitialGuess() override;
       void calcisSize() override { isSize = 1; }
 
     protected:
@@ -76,6 +80,10 @@ namespace MBSim {
        * \brief local contact search?
        */
       bool LOCALSEARCH;
+
+      FuncPairConeSectionCircle *funcRho;
+      JacobianPairConeSectionCircle *jacRho;
+      std::vector<double> nodes;
   };
 
   inline void ContactKinematicsCircleFrustum::setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }

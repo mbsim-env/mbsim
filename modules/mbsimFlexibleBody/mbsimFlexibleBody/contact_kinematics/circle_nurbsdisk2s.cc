@@ -21,7 +21,7 @@
 #include "mbsimFlexibleBody/contact_kinematics/circle_nurbsdisk2s.h"
 #include "mbsim/frames/contour_frame.h"
 #include "mbsimFlexibleBody/functions_contact.h"
-#include "mbsim/utils/planar_contact_search.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -51,20 +51,9 @@ namespace MBSimFlexibleBody {
 
   void ContactKinematicsCircleNurbsDisk2s::updateg(SingleContact &contact, int i) {
     auto *func= new FuncPairCircleNurbsDisk2s(circle, nurbsdisk); // root function for searching contact parameters
-    PlanarContactSearch search(func);
-
-    if(LOCALSEARCH) { // select start value from last search (local search)
-      search.setInitialValue(contact.getContourFrame(icircle)->getEta(false));
-    }
-    else { // define start search with regula falsi (global search)
-      search.setSearchAll(true);
-    }
-
-    int SEC = 16; // partition for regula falsi
-    double drho = 2.*M_PI/SEC * 1.01; // 10% intersection for improved convergence of solver
-    double rhoStartSpacing = -2.*M_PI*0.01*0.5;
-    search.setEqualSpacing(SEC,rhoStartSpacing,drho); //set the nodes for regula falsi
-    contact.getContourFrame(icircle)->setEta(search.slv()); // get contact parameter
+    NewtonMethod search(func,nullptr);
+    nextis(0) = search.solve(curis(0));
+    contact.getContourFrame(icircle)->setEta(nextis(0)); // get contact parameter
 
     // point on the circle
     fmatvec::Vec P_circle(3,fmatvec::INIT,0);
