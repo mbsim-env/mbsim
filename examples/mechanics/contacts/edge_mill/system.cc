@@ -306,11 +306,3 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   setPlotFeatureRecursive(generalizedRelativeVelocity, true);
   setPlotFeatureRecursive(generalizedForce, true);
 }
-
-void System::initialize() {
-  DynamicSystemSolver::initialize();
-
-  for(unsigned i=0; i<link.size(); i++) {
-    dynamic_cast<ContactKinematicsCircleFrustum*>(dynamic_cast<Contact*>(link[i])->getContactKinematics())->setLocalSearch(true);
-  }
-}

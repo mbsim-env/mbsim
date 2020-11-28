@@ -221,12 +221,3 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   setPlotFeatureRecursive(generalizedRelativeVelocity, true);
   setPlotFeatureRecursive(generalizedForce, true);
 } 
-
-void System::init(InitStage stage, const InitConfigSet &config) {
-  if(stage==preInit) {
-    DynamicSystemSolver::init(stage, config);
-    static_cast<ContactKinematicsCircleNurbsDisk2s*>(static_cast<Contact*>(this->getLink("Contact"))->getContactKinematics())->setLocalSearch(true);
-  }
-  else DynamicSystemSolver::init(stage, config);
-}
-

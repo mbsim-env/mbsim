@@ -55,10 +55,6 @@ namespace MBSimFlexibleBody {
       void updateg(MBSim::SingleContact &contact, int i=0) override;
       /***************************************************/
 
-      /* GETTER / SETTER */
-      void setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }
-      /***************************************************/
-
     private:
       /** 
        * \brief contour index
@@ -72,11 +68,6 @@ namespace MBSimFlexibleBody {
       MBSim::Circle *circle{0};
 
       FuncPairCircleNurbsDisk2s *func;
-
-      /**
-       * \brief local contact search?
-       */
-      bool LOCALSEARCH{false};
   };
 
 }

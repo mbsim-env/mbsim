@@ -7,7 +7,6 @@
 class System : public MBSim::DynamicSystemSolver {
   public:
     System(const std::string &projectName);
-    virtual void initialize();
 
   private:
     struct Vertex { // data structure for vertices
@@ -19,4 +18,3 @@ class System : public MBSim::DynamicSystemSolver {
 };
 
 #endif
-

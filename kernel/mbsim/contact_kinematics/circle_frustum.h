@@ -60,10 +60,6 @@ namespace MBSim {
       void updateg(SingleContact &contact, int i=0) override;
       /***************************************************/
 
-      /* GETTER / SETTER */
-      void setLocalSearch(bool LOCALSEARCH_);
-      /***************************************************/
-
     protected:
       /**
        * \brief contour index
@@ -76,17 +72,10 @@ namespace MBSim {
       Frustum *frustum;
       Circle *circle;
 
-      /**
-       * \brief local contact search?
-       */
-      bool LOCALSEARCH;
-
       FuncPairConeSectionCircle *funcRho;
       JacobianPairConeSectionCircle *jacRho;
       std::vector<double> nodes;
   };
-
-  inline void ContactKinematicsCircleFrustum::setLocalSearch(bool LOCALSEARCH_) { LOCALSEARCH=LOCALSEARCH_; }
 
 }
 

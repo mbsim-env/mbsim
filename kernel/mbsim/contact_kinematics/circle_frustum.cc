@@ -35,7 +35,7 @@ using namespace fmatvec;
 namespace MBSim {
 
   ContactKinematicsCircleFrustum::ContactKinematicsCircleFrustum() :
-      icircle(0), ifrustum(0), frustum(0), circle(0), LOCALSEARCH(false) {
+      icircle(0), ifrustum(0), frustum(0), circle(0) {
   }
 
   ContactKinematicsCircleFrustum::~ContactKinematicsCircleFrustum() {
