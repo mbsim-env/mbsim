@@ -135,15 +135,6 @@ FUNCTION2(fmatvec::VecV   , fmatvec::VecV, fmatvec::VecV,   VecV_VecV_VecV)
 // wrap the following classes
 %include "mbsim/numerics/functions/criteria_functions.h"
 %include "mbsim/numerics/functions/newton_method_jacobian_functions.h"
-// mbsim/functions/contact/distance_function.h: SWIG cannot handle template partial specializations of the form MBSim::Function<double(int)>.
-%rename(DistanceFunction_d_d) MBSim::DistanceFunction<double(double)>;
-%rename(nrm2) MBSim::DistanceFunction<double(double)>::operator[];
-class MBSim::DistanceFunction<double(double)> : public MBSim::Function<double(double)> {
-  public:
-    virtual double operator()(const double &x) = 0;
-    virtual double operator[](const double& x);
-    virtual fmatvec::Vec3 evalWrD(const double& x) = 0;
-};
 %include "mbsim/numerics/functions/damping_functions.h"
 %include "mbsim/functions/contact/funcpair_planarcontour_point.h"
 

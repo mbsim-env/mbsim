@@ -29,7 +29,6 @@ namespace MBSim {
   class CriteriaFunction;
   class Cuboid;
   class DampingFunction;
-  template<typename Sig> class DistanceFunction;
   class DynamicSystem;
   class Edge;
   class Environment;

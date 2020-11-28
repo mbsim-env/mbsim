@@ -20,7 +20,7 @@
 #ifndef MBSIMFLEXIBLEBODY_FUNCTIONS_CONTACT_H_
 #define MBSIMFLEXIBLEBODY_FUNCTIONS_CONTACT_H_
 
-#include <mbsim/functions/contact/distance_function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
   class Circle;
@@ -35,7 +35,7 @@ namespace MBSimFlexibleBody {
    * \author Kilian Grundl
    * \date 2009-10-06 initial commit (Thorsten Schindler)
    */
-  class FuncPairCircleNurbsDisk2s : public MBSim::DistanceFunction<double(double)> {
+  class FuncPairCircleNurbsDisk2s : public MBSim::Function<double(double)> {
     public:
       /**
        * \brief constructor
@@ -47,7 +47,7 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &alpha) override;
 
-      fmatvec::Vec3 evalWrD(const double &alpha) override;
+      fmatvec::Vec3 evalWrD(const double &alpha);
       /***************************************************/
 
     private:

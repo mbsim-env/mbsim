@@ -13,7 +13,6 @@
 namespace MBSim {
   class CriteriaFunction;
   class DampingFunction;
-  template<typename Sig> class DistanceFunction;
   class FuncPairPlanarContourPoint;
   class FunctionBase;
   template<typename Sig> class Function;

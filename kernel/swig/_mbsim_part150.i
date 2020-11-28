@@ -16,7 +16,6 @@ namespace MBSim {
   class FixedContourFrame;
   class FloatingContourFrame;
   class FloatingRelativeContourFrame;
-  template<typename Sig> class DistanceFunction;
   class FuncPairPlanarContourPoint;
   class Object;
   class CriteriaFunction;

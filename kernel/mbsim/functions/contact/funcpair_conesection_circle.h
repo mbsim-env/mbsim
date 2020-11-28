@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_CONESECTION_CIRCLE_H_
 #define _FUNCPAIR_CONESECTION_CIRCLE_H_
 
-#include <mbsim/functions/contact/distance_function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -29,7 +29,7 @@ namespace MBSim {
    * \author Thorsten Schindler
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class FuncPairConeSectionCircle : public DistanceFunction<double(double)> {
+  class FuncPairConeSectionCircle : public Function<double(double)> {
     public:
       /*!
        * \brief constructor
@@ -53,8 +53,8 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF DISTANCEFUNCTION */
       double operator()(const double &phi) override = 0;
-      double operator[](const double &phi) override;
-      fmatvec::Vec3 evalWrD(const double &phi) override = 0;
+      double operator[](const double &phi);
+      virtual fmatvec::Vec3 evalWrD(const double &phi) = 0;
       /*************************************************/
 
       /* GETTER / SETTER */

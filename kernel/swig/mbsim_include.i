@@ -80,7 +80,6 @@
   WRAPPED_CLASS(MBSim::Function<fmatvec::Vector<fmatvec::Var,double>(fmatvec::VecV,fmatvec::VecV)>::DRetDArg2)
   WRAPPED_CLASS(MBSim::Function<int(fmatvec::Vector<fmatvec::Ref,double>)>::DDRetDDArg)
   WRAPPED_CLASS(MBSim::Function<int(fmatvec::Vector<fmatvec::Ref,double>)>::DRetDArg)
-  WRAPPED_CLASS(MBSim::DistanceFunction<double(double)>)
   WRAPPED_CLASS(H5::GroupBase)
   WRAPPED_CLASS(H5::VectorSerie<double>)
   WRAPPED_CLASS(std::ostream)

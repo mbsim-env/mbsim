@@ -21,7 +21,6 @@ namespace MBSim {
   class CriteriaFunction;
   class DampingFunction;
   class DirectionalSpringDamper;
-  template<typename Sig> class DistanceFunction;
   class DualRigidBodyLink;
   class Environment;
   class FixedContourFrame;

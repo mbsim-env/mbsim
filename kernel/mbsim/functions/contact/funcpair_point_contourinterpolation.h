@@ -20,7 +20,7 @@
 #ifndef _FUNCPAIR_POINT_CONTOURINTERPOLATION_H_
 #define _FUNCPAIR_POINT_CONTOURINTERPOLATION_H_
 
-#include <mbsim/functions/contact/distance_function.h>
+#include <mbsim/functions/function.h>
 
 namespace MBSim {
 
@@ -32,7 +32,7 @@ namespace MBSim {
    * \author Roland Zander
    * \date 2009-07-10 some comments (Thorsten Schindler)
    */
-  class FuncPairPointContourInterpolation : public DistanceFunction<fmatvec::Vec2(fmatvec::Vec2)> {
+  class FuncPairPointContourInterpolation : public Function<fmatvec::Vec2(fmatvec::Vec2)> {
     public:
       /**
        * \brief constructor
@@ -43,7 +43,7 @@ namespace MBSim {
 
       fmatvec::Vec2 operator()(const fmatvec::Vec2 &alpha) override;
 
-      fmatvec::Vec3 evalWrD(const fmatvec::Vec2 &alpha) override;
+      fmatvec::Vec3 evalWrD(const fmatvec::Vec2 &alpha);
 
     private:
       /**

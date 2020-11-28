@@ -28,7 +28,6 @@ namespace MBSim {
   class Cuboid;
   class DampingFunction;
   class DirectionalSpringDamper;
-  template<typename Sig> class DistanceFunction;
   class DualRigidBodyLink;
   class Edge;
   class Environment;

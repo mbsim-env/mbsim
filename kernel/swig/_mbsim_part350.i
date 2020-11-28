@@ -24,7 +24,6 @@ namespace MBSim {
   class Constraint;
   class ContourQuad;
   class Cuboid;
-  template<typename Sig> class DistanceFunction;
   class DynamicSystem;
   class Environment;
   class FixedContourFrame;
