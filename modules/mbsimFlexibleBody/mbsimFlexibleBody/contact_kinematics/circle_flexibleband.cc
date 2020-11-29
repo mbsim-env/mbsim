@@ -92,6 +92,7 @@ namespace MBSimFlexibleBody {
   class ContactKinematicsCircleNodeInterpolation : public ContactKinematics {
     public:
       ContactKinematicsCircleNodeInterpolation(const Vec &nodes_) : nodes(nodes_), circle(nullptr), extrusion(nullptr) { }
+      ~ContactKinematicsCircleNodeInterpolation() override;
       void assignContours(const vector<Contour*> &contour) override;
       void updateg(SingleContact &contact, int i=0) override;
     private:
@@ -99,7 +100,12 @@ namespace MBSimFlexibleBody {
       int icircle, inode;
       Circle *circle;
       Contour *extrusion;
+      FuncPairPlanarContourCircle *func;
   };
+
+  ContactKinematicsCircleNodeInterpolation::~ContactKinematicsCircleNodeInterpolation() {
+    delete func;
+  }
 
   void ContactKinematicsCircleNodeInterpolation::assignContours(const vector<Contour*>& contour) {
     if (dynamic_cast<Circle*>(contour[0])) {
@@ -114,10 +120,10 @@ namespace MBSimFlexibleBody {
       circle = static_cast<Circle*>(contour[1]);
       extrusion = static_cast<Contour*>(contour[0]);
     }
+    func = new FuncPairPlanarContourCircle(circle, extrusion); // root function for searching contact parameters
   }
 
   void ContactKinematicsCircleNodeInterpolation::updateg(SingleContact &contact, int i) {
-    auto *func = new FuncPairPlanarContourCircle(circle, extrusion); // root function for searching contact parameters
     RegulaFalsi rf(func);
     double eta = -1e13;
     for (int i = 0; i < nodes.size() - 1; i++) {
