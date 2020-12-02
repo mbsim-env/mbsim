@@ -141,12 +141,12 @@
     </PositionSensor>
     <Demultiplexer name="FrameChaserSensorX" xmlns="http://www.mbsim-env.de/MBSimControl">
       <mbsim:plotFeature value="signal">1</mbsim:plotFeature>
-      <inputSignal ref="../Link[FrameChaserSensor]"/>
+      <inputSignal ref="../Link[{'FrameChaserSensor'}]"/>
       <indices>1</indices>
     </Demultiplexer>
     <Demultiplexer name="FrameChaserSensorY" xmlns="http://www.mbsim-env.de/MBSimControl">
       <mbsim:plotFeature value="signal">1</mbsim:plotFeature>
-      <inputSignal ref="../Link[FrameChaserSensor]"/>
+      <inputSignal ref="{ret='../Link'; ret=strcat(ret, '[FrameChaserSensor]');}"/>
       <indices>2</indices>
     </Demultiplexer>
     <LinearTransferSystem name="FilterX" xmlns="http://www.mbsim-env.de/MBSimControl">

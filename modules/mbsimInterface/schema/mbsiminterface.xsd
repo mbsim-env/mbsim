@@ -23,20 +23,10 @@
 
   <!-- A reference to a Link somewhere in the hierarchy in absolute path-->
   <xs:simpleType name="AbsoluteSignalReferenceType">
-    <xs:restriction base="pv:stringPartialEval">
-      <!-- pattern value="/(Group\[X\]/)*Link\[X\]" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
   <xs:simpleType name="AbsoluteExternSignalSourceReferenceType">
-    <xs:restriction base="pv:stringPartialEval">
-      <!-- pattern value="/(Group\[X\]/)*Link\[X\]" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/(Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]/)*Link\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]"/>
-    </xs:restriction>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <xs:element name="InterfaceIntegrator" substitutionGroup="mbsim:Integrator" type="InterfaceIntegratorType">

@@ -16,12 +16,7 @@
   <xs:import namespace="http://www.mbsim-env.de/MBSimControl"/>
 
   <xs:simpleType name="HLineReferenceType">
-    <xs:restriction base="pv:stringPartialEval">
-      <!-- pattern value="/?((\.\.|Group\[X\])/)*(Object\[X\]|Object\[X\])" with
-      X=((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)
-      from physicalvariable.xsd name attribute -->
-      <xs:pattern value="/?((\.\.|Group\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])/)*(Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\]|Object\[((([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_]*[a-zA-Z_])\{[^\}]+\})+([a-zA-Z_][a-zA-Z0-9_]*)?|[a-zA-Z_][a-zA-Z0-9_]*)\])"/>
-    </xs:restriction>
+    <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
 
   <xs:element name="HydraulicEnvironment" substitutionGroup="mbsim:Environment" type="HydraulicEnvironmentType">
