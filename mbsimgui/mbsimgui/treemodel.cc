@@ -43,15 +43,6 @@ namespace MBSimGUI {
     delete rootItem;
   }
 
-  bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
-    if(role==Qt::ForegroundRole) {
-      foregroundBrush[index] = value.value<QBrush>();
-      dataChanged(index, index, {Qt::ForegroundRole});
-      return true;
-    }
-    return false;
-  }
-
   QVariant TreeModel::data(const QModelIndex &index, int role) const {
     if(role==Qt::DisplayRole || role==Qt::EditRole) {
       TreeItem *item = getItem(index);
@@ -62,9 +53,6 @@ namespace MBSimGUI {
       return item->getDecoration();
     }
     else if(role==Qt::ForegroundRole) {
-      auto it = foregroundBrush.find(index);
-      if(it != foregroundBrush.end())
-        return it->second;
       TreeItem *item = getItem(index);
       return item->getForeground();
     }
