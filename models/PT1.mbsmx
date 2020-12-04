@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="{name}">
+  <inputSignal ref="{inputSignal}"/>
+  <systemMatrix>
+    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <row>
+        <ele>-1/T</ele>
+      </row>
+    </xmlMatrix>
+  </systemMatrix>
+  <inputMatrix>
+    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <row>
+        <ele>P/T</ele>
+      </row>
+    </xmlMatrix>
+  </inputMatrix>
+</LinearTransferSystem>

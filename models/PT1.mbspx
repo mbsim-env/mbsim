@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <stringParameter name="name">'PT1'</stringParameter>
+  <stringParameter name="inputSignal">''</stringParameter> 
+  <scalarParameter name="T">0.1</scalarParameter>
+  <scalarParameter name="P">1</scalarParameter>
+</Parameter>
