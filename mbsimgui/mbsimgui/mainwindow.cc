@@ -1944,6 +1944,11 @@ namespace MBSimGUI {
       else
         return;
     }
+    auto* fileItem = parent->getDedicatedParameterFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
     if(embed) {
       parent->setParameterFileItem(parameterFileItem);
       E(parent->createEmbedXMLElement())->setAttribute("parameterHref",getProjectDir().relativeFilePath(parameterFileItem->getFileInfo().absoluteFilePath()).toStdString());
@@ -1959,11 +1964,6 @@ namespace MBSimGUI {
       parent->addParameter(parameter);
       model->createParameterItem(parameter,parent->getParameters()->getModelIndex());
     }
-    auto* fileItem = parent->getDedicatedParameterFileItem();
-    if(fileItem)
-      fileItem->setModified(true);
-    else
-      setProjectChanged(true);
     auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
     if(dedicatedParent) updateReferences(dedicatedParent);
     updateParameterReferences(parent);
