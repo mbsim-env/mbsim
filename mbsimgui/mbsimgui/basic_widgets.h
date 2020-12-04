@@ -345,6 +345,20 @@ namespace MBSimGUI {
       QWidget *parent;
   };
 
+  class ExtStringWidget : public Widget {
+   public:
+      ExtStringWidget(Element *element_);
+      void showBrowser();
+      void setElement();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override { return value->initializeUsingXML(element); }
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override { return value->writeXMLFile(parent,ref); }
+
+    protected:
+      Element *element;
+      ChoiceWidget *value;
+      BasicElementBrowser *eleBrowser;
+  };
+
 }
 
 #endif

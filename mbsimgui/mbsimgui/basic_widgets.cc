@@ -745,4 +745,30 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  ExtStringWidget::ExtStringWidget(Element *element_) : element(element_) {
+    auto *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    value = new ChoiceWidget(new StringWidgetFactory(""),QBoxLayout::RightToLeft,5);
+    layout->addWidget(value);
+    if(element) {
+      QPushButton *button = new QPushButton(tr("Browse"));
+      layout->addWidget(button);
+      eleBrowser = new ElementBrowser<Element>(nullptr,this);
+      connect(eleBrowser,&BasicElementBrowser::accepted,this,&ExtStringWidget::setElement);
+      connect(button,&QPushButton::clicked,this,&ExtStringWidget::showBrowser);
+    }
+  }
+
+  void ExtStringWidget::showBrowser() {
+    QString val = static_cast<PhysicalVariableWidget*>(value->getWidget())->getValue();
+    eleBrowser->setSelection(static_cast<Element*>(element)->getByPath<Element>(val.mid(1,val.size()-2)));
+    eleBrowser->show();
+  }
+
+  void ExtStringWidget::setElement() {
+    Element *selectedElement = eleBrowser->getSelection();
+    static_cast<PhysicalVariableWidget*>(value->getWidget())->setValue((selectedElement and selectedElement->getParent())?"\""+selectedElement->getXMLPath(static_cast<Element*>(element),true)+"\"":"");
+  }
+
 }
