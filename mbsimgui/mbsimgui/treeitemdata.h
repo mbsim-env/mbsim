@@ -33,7 +33,7 @@ namespace MBSimGUI {
 
     public:
       virtual ~TreeItemData() { for(auto & i : treeItemData) delete i; }
-      virtual QString getName() const { return "Name"; }
+      virtual QString getName() { return "Name"; }
       virtual QString getValue() const { return "Value"; }
       virtual QString getType() const { return "Type"; }
       virtual QString getReference() const { return "Reference"; }

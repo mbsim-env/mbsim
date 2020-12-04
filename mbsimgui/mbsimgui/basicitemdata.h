@@ -47,7 +47,7 @@ namespace MBSimGUI {
         icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
                                            (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string()));
       }
-      QString getName() const override { return "frames"; }
+      QString getName() override { return "frames"; }
       QMenu* createContextMenu() override { return element->createFrameContextMenu(); }
   };
 
@@ -57,7 +57,7 @@ namespace MBSimGUI {
         icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
                                            (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string()));
       }
-      QString getName() const override { return "contours"; }
+      QString getName() override { return "contours"; }
       QMenu* createContextMenu() override { return new ContoursContextMenu(element); }
   };
 
@@ -67,7 +67,7 @@ namespace MBSimGUI {
         icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
                                            (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string()));
       }
-      QString getName() const override { return "groups"; }
+      QString getName() override { return "groups"; }
       QMenu* createContextMenu() override { return new GroupsContextMenu(element); }
   };
 
@@ -78,7 +78,7 @@ namespace MBSimGUI {
         icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
                                            (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string()));
       }
-      QString getName() const override { return "objects"; }
+      QString getName() override { return "objects"; }
       QMenu* createContextMenu() override { return new ObjectsContextMenu(element); }
   };
 
@@ -88,7 +88,7 @@ namespace MBSimGUI {
         icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
                                            (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string()));
       }
-      QString getName() const override { return "links"; }
+      QString getName() override { return "links"; }
       QMenu* createContextMenu() override { return new LinksContextMenu(element); }
   };
 
@@ -98,7 +98,7 @@ namespace MBSimGUI {
         icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
                                            (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string()));
       }
-      QString getName() const override { return "constraints"; }
+      QString getName() override { return "constraints"; }
       QMenu* createContextMenu() override { return new ConstraintsContextMenu(element); }
   };
 
@@ -108,7 +108,7 @@ namespace MBSimGUI {
         icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"container.svg").string(),
                                            (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"observer.svg").string()));
       }
-      QString getName() const override { return "observers"; }
+      QString getName() override { return "observers"; }
       QMenu* createContextMenu() override { return new ObserversContextMenu(element); }
   };
 

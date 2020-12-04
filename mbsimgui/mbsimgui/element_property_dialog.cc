@@ -87,7 +87,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
+    static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     plotFeature->initializeUsingXML(item->getXMLElement());
     return parent;
   }

@@ -49,7 +49,7 @@ namespace MBSimGUI {
     public:
       EmbedItemData();
       ~EmbedItemData() override;
-      QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
+      QString getName() override;
       QString getValue() const override { return ""; }
       bool isActive();
       virtual void create() { }

@@ -44,7 +44,7 @@ namespace MBSimGUI {
   class InternalFrame : public Frame {
     public:
       InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const QString &plotFeatureType_="");
-      QString getName() const override { return name; }
+      QString getName() override { return name; }
       QString getType() const override { return "Internal frame"; }
       PropertyDialog* createPropertyDialog() override { return new InternalFramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new ElementContextMenu(this,nullptr,false,false); }
