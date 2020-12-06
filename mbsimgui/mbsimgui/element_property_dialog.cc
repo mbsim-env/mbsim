@@ -78,7 +78,7 @@ namespace MBSimGUI {
 
   ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
     addTab("General");
-    name = new ExtWidget("Name",new TextWidget(item->getName()));
+    name = new ExtWidget("Name",new TextWidget(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name"))));
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
@@ -95,6 +95,7 @@ namespace MBSimGUI {
   DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     item->removeXMLElements();
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    item->updateName();
     plotFeature->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }

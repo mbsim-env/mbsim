@@ -74,6 +74,7 @@ namespace MBSimGUI {
   DOMElement* StringParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
+    parameter->getParent()->updateName();
 //    parameter->setValue(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->getValue());
     return nullptr;
   }

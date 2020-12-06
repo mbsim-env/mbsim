@@ -34,7 +34,7 @@ namespace MBSimGUI {
 
       FileItemData(xercesc::DOMDocument *doc_);
 
-      QString getName() override { return name+(modified?"*":""); }
+      QString getName() const override { return name+(modified?"*":""); }
       QString getType() const override { return type; }
       QString getValue() const override { return QString::number(ref.size()); }
 

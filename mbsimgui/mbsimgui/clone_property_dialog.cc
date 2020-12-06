@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   ClonePropertyDialog::ClonePropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
     addTab("General");
-    name = new ExtWidget("Name",new TextWidget(item->getName()));
+    name = new ExtWidget("Name",new TextWidget(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name"))));
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     clone = new ExtWidget("Clone",new CloneWidget,true,false);
@@ -39,7 +39,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ClonePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
+    static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     DOMElement *embed = item->getEmbedXMLElement();
     if(embed) {
       clone->setActive(E(embed)->hasAttribute("count"));
@@ -51,6 +51,7 @@ namespace MBSimGUI {
 
   DOMElement* ClonePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    item->updateName();
     DOMElement *embedNode = item->getEmbedXMLElement();
     if(clone->isActive()) {
       if(not embedNode) embedNode = item->createEmbedXMLElement();

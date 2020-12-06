@@ -58,7 +58,7 @@ namespace MBSimGUI {
   class Parameter : public ParameterItem {
     public:
       Parameter() = default;
-      QString getName() override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
+      QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       virtual MBXMLUtils::FQN getXMLType() const { return MBXMLUtils::PV%"Parameter"; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
@@ -112,7 +112,7 @@ namespace MBSimGUI {
   class Parameters : public ParameterItem {
     public:
       Parameters(EmbedItemData *parent);
-      QString getName() override { return parent->getName() + " parameters"; }
+      QString getName() const override { return parent->getName() + " parameters"; }
       QString getValue() const override { return ""; }
       QString getType() const override { return ""; }
       QMenu* createContextMenu() override { return new ParametersContextMenu(parent); }

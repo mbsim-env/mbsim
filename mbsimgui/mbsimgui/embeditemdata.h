@@ -38,6 +38,7 @@ namespace MBSimGUI {
 
   class EmbedItemData : public TreeItemData {
     protected:
+      QString name;
       std::vector<Parameter*> parameter;
       xercesc::DOMElement *element{nullptr}, *embed{nullptr};
       Parameters *parameters;
@@ -49,7 +50,7 @@ namespace MBSimGUI {
     public:
       EmbedItemData();
       ~EmbedItemData() override;
-      QString getName() override;
+      QString getName() const override { return name; }
       QString getValue() const override { return ""; }
       bool isActive();
       virtual void create() { }
@@ -91,6 +92,7 @@ namespace MBSimGUI {
       QString getReference() const override;
       bool hasReference() const override { return fileItem; }
       bool hasParameterReference() const { return parameterFileItem; }
+      void updateName();
   };
 
 }

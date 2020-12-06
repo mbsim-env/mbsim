@@ -46,30 +46,6 @@ namespace MBSimGUI {
     if(fileItem) fileItem->removeReference(this);
   }
 
-  QString EmbedItemData::getName() {
-    string name = MBXMLUtils::E(element)->getAttribute("name");
-    if(name[0]=='{') {
-      mw->updateParameters(this,false);
-      string ename;
-      try{
-	ename = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(name,getXMLElement(),false));
-      }
-      catch(MBXMLUtils::DOMEvalException &e) {
-	mw->setExitBad();
-	std::cerr << e.getMessage() << std::endl;
-	return QString::fromStdString(name);
-      }
-      catch(...) {
-	mw->setExitBad();
-	std::cerr << "Unknwon error" << std::endl;
-	return QString::fromStdString(name);
-      }
-      return QString::fromStdString(ename.substr(1,ename.size()-2));
-    }
-    else
-      return QString::fromStdString(name);
-  }
-
   bool EmbedItemData::isActive() {
     if(not embed or not MBXMLUtils::E(embed)->hasAttribute("count"))
       return true;
@@ -232,4 +208,22 @@ namespace MBSimGUI {
     return dedicatedFileItem?dedicatedFileItem->getName():"";
   }
 
+  void EmbedItemData::updateName() {
+    name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
+    if(name[0]=='{') {
+      mw->updateParameters(this,false);
+      try{
+	name = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(name.toStdString(),getXMLElement(),false)));
+	name = name.mid(1,name.size()-2);
+      }
+      catch(MBXMLUtils::DOMEvalException &e) {
+	mw->setExitBad();
+	std::cerr << e.getMessage() << std::endl;
+      }
+      catch(...) {
+	mw->setExitBad();
+	std::cerr << "Unknwon error" << std::endl;
+      }
+    }
+  }
 }
