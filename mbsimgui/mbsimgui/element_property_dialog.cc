@@ -78,7 +78,7 @@ namespace MBSimGUI {
 
   ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
     addTab("General");
-    name = new ExtWidget("Name",new TextWidget(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name"))));
+    name = new ExtWidget("Name",new TextWidget(item->getXMLElement()?QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")):item->getName()));
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");

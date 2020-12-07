@@ -57,6 +57,7 @@ namespace MBSimGUI {
     xercesc::DOMDocument *doc=ele0->getOwnerDocument();
 
     E(ele0)->setAttribute("name", "MBS");
+    name = "MBS";
     environments = D(doc)->createElement( MBSIM%"environments" );
     DOMElement *ele2 = D(doc)->createElement( MBSIM%"MBSimEnvironment" );
     DOMElement *ele3 = D(doc)->createElement( MBSIM%"accelerationOfGravity" );
