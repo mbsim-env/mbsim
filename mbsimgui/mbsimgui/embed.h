@@ -92,16 +92,12 @@ namespace MBSimGUI {
               object->setEmbedXMLElement(ele1);
               object->setParameterFileItem(parameterFileItem);
               object->createParameters();
-	      object->updateName();
               object->setFileItem(fileItem);
             }
           }
           else {
             object=create(ele1);
-            if(object) {
-	      object->setXMLElement(ele1);
-	      object->updateName();
-	    }
+            if(object) object->setXMLElement(ele1);
           }
           return object;
         }

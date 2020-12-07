@@ -68,6 +68,7 @@ namespace MBSimGUI {
   }
 
   void Project::create() {
+    EmbedItemData::create();
     DOMElement *ele = element->getFirstElementChild();
     if(E(ele)->getTagName()==PV%"evaluator") {
       setEvaluator(X()%E(ele)->getFirstTextChild()->getData());
