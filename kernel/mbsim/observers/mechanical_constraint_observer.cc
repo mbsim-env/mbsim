@@ -50,6 +50,11 @@ namespace MBSim {
         throwError("Mechanical constraint is not given!");
       Observer::init(stage, config);
     }
+    else if(stage==preInit) {
+      Observer::init(stage, config);
+      if(not getDynamicSystemSolver()->getInverseKinetics())
+        throwError("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
+    }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
@@ -88,11 +93,6 @@ namespace MBSim {
           }
         }
       }
-    }
-    else if(stage==unknownStage) {
-      Observer::init(stage, config);
-      if((openMBVForce.size() or openMBVMoment.size()) and not getDynamicSystemSolver()->getInverseKinetics())
-        throwError("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
     }
     else
       Observer::init(stage, config);
