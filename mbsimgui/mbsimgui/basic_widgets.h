@@ -29,6 +29,7 @@
 #include <QLineEdit>
 #include <QTextEdit>
 #include <QSpinBox>
+#include <QFileDialog>
 #include <mbxmlutilshelper/dom.h>
 
 class QPushButton;
@@ -137,9 +138,10 @@ namespace MBSimGUI {
   };
 
   class FileWidget : public Widget {
+    Q_OBJECT
 
     public:
-      FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_=0, bool quote_=false, bool absPath=true);
+      FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_=0, bool quote_=false, bool absPath=true, QFileDialog::Options options_=QFileDialog::Options());
       QString getFile() const { return filePath->text(); }
       void setFile(const QString &str);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
@@ -153,6 +155,10 @@ namespace MBSimGUI {
       QString description, extensions;
       int mode;
       bool quote;
+      QFileDialog::Options options;
+
+    signals:
+      void valueChanged(const QString&);
   };
 
   class IntegerWidget : public Widget {

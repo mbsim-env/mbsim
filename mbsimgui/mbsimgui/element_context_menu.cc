@@ -84,11 +84,8 @@ namespace MBSimGUI {
 
   DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,false,true) {
     addSeparator();
-    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadDynamicSystemSolver(true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadDynamicSystemSolver(false); });
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->loadDynamicSystemSolver(); });
     addAction(action);
   }
 
@@ -177,15 +174,12 @@ namespace MBSimGUI {
   }
 
   FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element,nullptr,true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element,mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->pasteFrame(element,mw->getElementBuffer().first); });
     addAction(action);
   }
 
@@ -216,15 +210,12 @@ namespace MBSimGUI {
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element,nullptr,true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->pasteContour(element, mw->getElementBuffer().first); });
     addAction(action);
     addSeparator();
     action = new QAction("Add bevel gear", this);
@@ -309,15 +300,12 @@ namespace MBSimGUI {
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element,nullptr,true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->pasteGroup(element, mw->getElementBuffer().first); });
     addAction(action);
     addSeparator();
     action = new QAction("Add group", this);
@@ -326,15 +314,12 @@ namespace MBSimGUI {
   }
 
   ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element,nullptr,true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->pasteObject(element, mw->getElementBuffer().first); });
     addAction(action);
     addSeparator();
     QMenu *menu = new QMenu("Add body", this);
@@ -354,15 +339,12 @@ namespace MBSimGUI {
   }
 
   LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element,nullptr,true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->pasteLink(element, mw->getElementBuffer().first); });
     addAction(action);
     addSeparator();
     action = new QAction("Add aerodynamics", this);
@@ -427,15 +409,12 @@ namespace MBSimGUI {
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element,nullptr,true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->pasteConstraint(element, mw->getElementBuffer().first); });
     addAction(action);
     addSeparator();
     action = new QAction("Add generalized acceleration constraint", this);
@@ -465,15 +444,12 @@ namespace MBSimGUI {
   }
 
   ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("insert-link"), "Reference", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element,nullptr,true); });
-    addAction(action);
-    action = new QAction(QIcon::fromTheme("document-open"), "Import", this);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
     connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->pasteObserver(element, mw->getElementBuffer().first); });
     addAction(action);
     addSeparator();
     action = new QAction("Add contact observer", this);

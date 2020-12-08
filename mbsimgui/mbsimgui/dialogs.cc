@@ -40,6 +40,8 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QSpinBox>
+#include <QButtonGroup>
+#include <QRadioButton>
 #include <QMessageBox>
 #include <QFileInfo>
 #include <QSettings>
@@ -392,6 +394,219 @@ namespace MBSimGUI {
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceDialog::accept);
+  }
+
+  LoadModelDialog::LoadModelDialog() {
+    setWindowTitle("Load model file");
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    mainlayout->addLayout(layout);
+
+    modelFile = new ExtWidget("Model file", new FileWidget("", "Open model file", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)", 0, false),false,false,"");
+    layout->addWidget(modelFile);
+
+    mOpt = new QButtonGroup(this);
+    QRadioButton *radio1 = new QRadioButton("Import");
+    QRadioButton *radio2 = new QRadioButton("Reference");
+    radio1->setChecked(true);
+    mOpt->addButton(radio1);
+    mOpt->addButton(radio2);
+
+    Widget *widget = new Widget;
+    QHBoxLayout *hl = new QHBoxLayout;
+    hl->setMargin(0);
+    widget->setLayout(hl);
+    hl->addWidget(radio1);
+    hl->addWidget(radio2);
+    e = new ExtWidget("Option",widget,false,false,"");
+    layout->addWidget(e);
+
+    parameterFile = new ExtWidget("Parameter file", new FileWidget("", "Open parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 0, false),true,false,"");
+    layout->addWidget(parameterFile);
+
+    connect(static_cast<FileWidget*>(modelFile->getWidget()),&FileWidget::valueChanged,this,&LoadModelDialog::modelFileChanged);
+
+    pOpt = new QButtonGroup(this);
+    radio1 = new QRadioButton("Import");
+    radio2 = new QRadioButton("Reference");
+    radio1->setChecked(true);
+    pOpt->addButton(radio1);
+    pOpt->addButton(radio2);
+
+    widget = new Widget;
+    hl = new QHBoxLayout;
+    hl->setMargin(0);
+    widget->setLayout(hl);
+    hl->addWidget(radio1);
+    hl->addWidget(radio2);
+    e = new ExtWidget("Option",widget,true,false,"");
+    layout->addWidget(e);
+
+    connect(parameterFile,&ExtWidget::clicked,e,&ExtWidget::setActive);
+    connect(e,&ExtWidget::clicked,parameterFile,&ExtWidget::setActive);
+
+    layout->addStretch(1);
+
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &LoadModelDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &LoadModelDialog::reject);
+    mainlayout->addWidget(buttonBox);
+  }
+
+  QString LoadModelDialog::getModelFileName() const {
+    return static_cast<FileWidget*>(modelFile->getWidget())->getFile();
+  }
+
+  QString LoadModelDialog::getParameterFileName() const {
+    return parameterFile->isActive()?static_cast<FileWidget*>(parameterFile->getWidget())->getFile():"";
+  }
+
+  bool LoadModelDialog::referenceModel() const {
+    return mOpt->button(-3)->isChecked();
+  }
+
+  bool LoadModelDialog::referenceParameter() const {
+    return pOpt->button(-3)->isChecked();
+  }
+
+  void LoadModelDialog::modelFileChanged(const QString &fileName) {
+    QFileInfo fileInfo(fileName);
+    QString pFileName = fileName;
+    pFileName.replace(pFileName.size()-2,1,'p');
+    if(QFileInfo::exists(pFileName)) {
+      static_cast<FileWidget*>(parameterFile->getWidget())->setFile(pFileName);
+      parameterFile->setActive(true);
+      e->setActive(true);
+    }
+    else {
+      static_cast<FileWidget*>(parameterFile->getWidget())->setFile("");
+      parameterFile->setActive(false);
+      e->setActive(false);
+    }
+  }
+
+  SaveModelDialog::SaveModelDialog(const QString &fileName, bool param) {
+    QString pFileName = fileName;
+    pFileName.replace(pFileName.size()-2,1,'p');
+
+    setWindowTitle("Save model file");
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    mainlayout->addLayout(layout);
+
+    modelFile = new ExtWidget("Model file", new FileWidget(fileName, "Save model file", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)", 1, false, true, QFileDialog::DontConfirmOverwrite),false,false,"");
+    layout->addWidget(modelFile);
+    if(param) {
+      parameterFile = new ExtWidget("Parameter file", new FileWidget(pFileName, "Save parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 1, false, true, QFileDialog::DontConfirmOverwrite),true,true,"");
+      connect(static_cast<FileWidget*>(modelFile->getWidget()),&FileWidget::valueChanged,this,&SaveModelDialog::modelFileChanged);
+      layout->addWidget(parameterFile);
+    }
+    else
+      parameterFile = nullptr;
+    layout->addStretch(1);
+
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SaveModelDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &SaveModelDialog::reject);
+    mainlayout->addWidget(buttonBox);
+  }
+
+  QString SaveModelDialog::getModelFileName() const {
+    return static_cast<FileWidget*>(modelFile->getWidget())->getFile();
+  }
+
+  QString SaveModelDialog::getParameterFileName() const {
+    return (parameterFile and parameterFile->isActive())?static_cast<FileWidget*>(parameterFile->getWidget())->getFile():"";
+  }
+
+  void SaveModelDialog::modelFileChanged(const QString &fileName) {
+    QFileInfo fileInfo(fileName);
+    QString pFileName = fileName;
+    pFileName.replace(pFileName.size()-2,1,'p');
+    static_cast<FileWidget*>(parameterFile->getWidget())->setFile(pFileName);
+  }
+
+  LoadParameterDialog::LoadParameterDialog() {
+    setWindowTitle("Load model file");
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    mainlayout->addLayout(layout);
+
+    parameterFile = new ExtWidget("Parameter file", new FileWidget("", "Open parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 0, false),false,false,"");
+    layout->addWidget(parameterFile);
+
+    pOpt = new QButtonGroup(this);
+    QRadioButton *radio1 = new QRadioButton("Import");
+    QRadioButton *radio2 = new QRadioButton("Reference");
+    radio1->setChecked(true);
+    pOpt->addButton(radio1);
+    pOpt->addButton(radio2);
+    checkbox = new QCheckBox("Replace");
+    checkbox->setChecked(true);
+    connect(radio2,&QRadioButton::clicked,this,[=](){ checkbox->setDisabled(true); checkbox->setChecked(true); });
+    connect(radio1,&QRadioButton::clicked,this,[=](){ checkbox->setDisabled(false); });
+
+    Widget *widget = new Widget;
+    QHBoxLayout *hl = new QHBoxLayout;
+    hl->setMargin(0);
+    widget->setLayout(hl);
+    hl->addWidget(radio1);
+    hl->addWidget(radio2);
+    hl->addWidget(checkbox);
+    ExtWidget *e = new ExtWidget("Option",widget,false,false,"");
+    layout->addWidget(e);
+
+    layout->addStretch(1);
+
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &LoadParameterDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &LoadParameterDialog::reject);
+    mainlayout->addWidget(buttonBox);
+  }
+
+  QString LoadParameterDialog::getParameterFileName() const {
+    return static_cast<FileWidget*>(parameterFile->getWidget())->getFile();
+  }
+
+  bool LoadParameterDialog::referenceParameter() const {
+    return pOpt->button(-3)->isChecked();
+  }
+
+  bool LoadParameterDialog::replaceParameter() const {
+    return checkbox->isChecked();
+  }
+
+  SaveParameterDialog::SaveParameterDialog(const QString &fileName) {
+    setWindowTitle("Save parameter file");
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    mainlayout->addLayout(layout);
+
+    parameterFile = new ExtWidget("Parameter file", new FileWidget(fileName, "Save parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 1, false, true, QFileDialog::DontConfirmOverwrite),false,false,"");
+    layout->addWidget(parameterFile);
+
+    layout->addStretch(1);
+
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SaveParameterDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &SaveParameterDialog::reject);
+    mainlayout->addWidget(buttonBox);
+  }
+
+  QString SaveParameterDialog::getParameterFileName() const {
+    return static_cast<FileWidget*>(parameterFile->getWidget())->getFile();
   }
 
 }

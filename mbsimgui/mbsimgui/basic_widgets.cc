@@ -30,9 +30,8 @@
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include "project.h"
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QFileDialog>
-#include <QtWidgets/QColorDialog>
+#include <QLabel>
+#include <QColorDialog>
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -248,7 +247,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_, bool absPath) : description(description_), extensions(extensions_), mode(mode_), quote(quote_) {
+  FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_, bool absPath, QFileDialog::Options options_) : description(description_), extensions(extensions_), mode(mode_), quote(quote_), options(options_) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -258,6 +257,7 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton("Browse");
     layout->addWidget(button);
     connect(button,&QPushButton::clicked,this,&FileWidget::selectFile);
+    connect(filePath,&QLineEdit::textChanged,this,&FileWidget::valueChanged);
     path = new QCheckBox;
     setFile(file);
     if(absPath) {
@@ -277,9 +277,9 @@ namespace MBSimGUI {
     QString file = getFile();
     if(quote) file = file.mid(1,file.length()-2);
     if(mode==0) 
-      file = QFileDialog::getOpenFileName(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions);
+      file = QFileDialog::getOpenFileName(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions, nullptr, options);
     else if(mode==1)
-      file = QFileDialog::getSaveFileName(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions);
+      file = QFileDialog::getSaveFileName(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions, nullptr, options);
     else
       file = QFileDialog::getExistingDirectory(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file));
     if(not file.isEmpty()) {
@@ -288,6 +288,8 @@ namespace MBSimGUI {
       else
         filePath->setText(quote?("\""+mw->getProjectDir().relativeFilePath(file)+"\""):mw->getProjectDir().relativeFilePath(file));
     }
+    else
+      filePath->setText(quote?("\"\""):"");
   }
 
   DOMElement* FileWidget::initializeUsingXML(DOMElement *parent) {

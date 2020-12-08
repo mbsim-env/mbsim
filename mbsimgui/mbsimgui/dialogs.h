@@ -41,6 +41,7 @@ namespace MBSimGUI {
   class TreeItemData;
   class Element;
   class DataPlot;
+  class ExtWidget;
 
   class ElementItem : public QTreeWidgetItem {
     private:
@@ -114,6 +115,49 @@ namespace MBSimGUI {
   class StateTableDialog : public QDialog {
     public:
       StateTableDialog(QWidget *parent);
+  };
+
+  class LoadModelDialog : public QDialog {
+    public:
+      LoadModelDialog();
+      QString getModelFileName() const;
+      QString getParameterFileName() const;
+      bool referenceModel() const;
+      bool referenceParameter() const;
+    private:
+      ExtWidget *modelFile, *parameterFile, *e;
+      QButtonGroup *mOpt, *pOpt;
+      void modelFileChanged(const QString &fileName);
+  };
+
+  class SaveModelDialog : public QDialog {
+    public:
+      SaveModelDialog(const QString &name, bool param);
+      QString getModelFileName() const;
+      QString getParameterFileName() const;
+    private:
+      ExtWidget *modelFile, *parameterFile;
+      void modelFileChanged(const QString &fileName);
+  };
+
+  class LoadParameterDialog : public QDialog {
+    public:
+      LoadParameterDialog();
+      QString getParameterFileName() const;
+      bool referenceParameter() const;
+      bool replaceParameter() const;
+    private:
+      ExtWidget *parameterFile;;
+      QButtonGroup *pOpt;
+      QCheckBox *checkbox;
+  };
+
+  class SaveParameterDialog : public QDialog {
+    public:
+      SaveParameterDialog(const QString &name);
+      QString getParameterFileName() const;
+    private:
+      ExtWidget *parameterFile;;
   };
 
 }

@@ -76,6 +76,13 @@ namespace MBSimGUI {
   class FileItemData;
   class EchoStream;
 
+  struct FileData {
+    xercesc::DOMElement *mele{nullptr};
+    std::vector<xercesc::DOMElement*> pele;
+    FileItemData *mfileitem{nullptr};
+    FileItemData *pfileitem{nullptr};
+  };
+
   class MainWindow : public QMainWindow {
     Q_OBJECT
 
@@ -187,17 +194,27 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent);
       void addConstraint(Constraint *constraint, Element *parent);
       void addObserver(Observer *observer, Element *parent);
-      void loadParameter(EmbedItemData *parent, Parameter *param=nullptr, bool embed=false, bool add=false);
+      void pasteParameter(EmbedItemData *parent, Parameter *param=nullptr);
+      void loadParameter(EmbedItemData *parent);
+      void loadParameter(EmbedItemData *parent, const std::vector<xercesc::DOMElement*> &elements, FileItemData *parameterFileItem);
       void removeParameter(EmbedItemData *parent);
-      std::tuple<xercesc::DOMElement*,FileItemData*> loadElement(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadFrame(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadContour(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadGroup(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadObject(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadLink(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadConstraint(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadObserver(Element *parent, Element *element=nullptr, bool embed=false);
-      void loadDynamicSystemSolver(bool embed=false);
+      xercesc::DOMElement* pasteElement(Element *parent, Element *element);
+      void pasteFrame(Element *parent, Element *element);
+      void pasteContour(Element *parent, Element *element);
+      void pasteGroup(Element *parent, Element *element);
+      void pasteObject(Element *parent, Element *element);
+      void pasteLink(Element *parent, Element *element);
+      void pasteConstraint(Element *parent, Element *element);
+      void pasteObserver(Element *parent, Element *element);
+      FileData loadElement(EmbedItemData *parent);
+      void loadFrame(Element *parent);
+      void loadContour(Element *parent);
+      void loadGroup(Element *parent);
+      void loadObject(Element *parent);
+      void loadLink(Element *parent);
+      void loadConstraint(Element *parent);
+      void loadObserver(Element *parent);
+      void loadDynamicSystemSolver();
       void highlightObject(const std::string &ID);
       const std::string& getHighlightedObject() const { return currentID; }
       ElementView* getElementView() { return elementView; }
@@ -244,8 +261,8 @@ namespace MBSimGUI {
       void saveHarmonicResponseAnalysis(const QString &file);
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
-      void exportParameters(EmbedItemData *item=nullptr);
-      void loadSolver(bool embed=false);
+      void exportParameters();
+      void loadSolver();
       void openParameterEditor(bool config=true);
       void openCloneEditor();
       FileItemData* addFile(const QFileInfo &file);
