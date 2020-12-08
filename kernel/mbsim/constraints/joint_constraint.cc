@@ -70,6 +70,14 @@ namespace MBSim {
     C.setParent(this);
   }
 
+  void JointConstraint::calcisSize() {
+    MechanicalConstraint::calcisSize();
+    for(unsigned int i=0; i<bd1.size(); i++)
+      isSize += bd1[i]->getGeneralizedPositionSize();
+    for(unsigned int i=0; i<bd2.size(); i++)
+      isSize += bd2[i]->getGeneralizedPositionSize();
+  }
+
   void JointConstraint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
       for (const auto & i : saved_RigidBodyFirstSide)
@@ -138,16 +146,15 @@ namespace MBSim {
         nh = max(nh,dh);
       }
 
-      q.resize(nq);
       JT.resize(3,nu);
       JR.resize(3,nu);
 
       if(not q0())
-        q.init(0);
-      else if(q0.size() == q.size())
-        q = q0;
+        curis.init(0);
+      else if(q0.size() == curis.size())
+        curis = q0;
       else
-        throwError("(JointConstraint::initz): size of q0 does not match, must be " + to_string(q.size()));
+        throwError("(JointConstraint::initz): size of q0 does not match, must be " + to_string(curis.size()));
 
       A.resize(nu);
     }
@@ -181,13 +188,13 @@ namespace MBSim {
   void JointConstraint::updateGeneralizedCoordinates() {
     Residuum f(bd1,bd2,forceDir,momentDir,frame,refFrame);
     MultiDimNewtonMethod newton(&f);
-    q = newton.solve(q);
+    nextis = newton.solve(curis);
     if(newton.getInfo()!=0)
       msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed!" << endl;
     for(unsigned int i=0; i<bd1.size(); i++)
-      bd1[i]->setqRel(q(Iq1[i]));
+      bd1[i]->setqRel(curis(Iq1[i]));
     for(unsigned int i=0; i<bd2.size(); i++)
-      bd2[i]->setqRel(q(Iq2[i]));
+      bd2[i]->setqRel(curis(Iq2[i]));
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);

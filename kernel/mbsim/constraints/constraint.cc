@@ -48,6 +48,11 @@ namespace MBSim {
     dx.ref(dxParent, RangeV(xInd,xInd+xSize-1));
   }
 
+  void Constraint::updateInternalStateRef(Vec& curisParent, Vec& nextisParent) {
+    curis.ref(curisParent, RangeV(isInd,isInd+isSize-1));
+    nextis.ref(nextisParent, RangeV(isInd,isInd+isSize-1));
+  }
+
   void Constraint::initz() {
     if(x0() == NULL)
       x.init(0);

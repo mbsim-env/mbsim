@@ -43,6 +43,8 @@ namespace MBSim {
 
       JointConstraint(const std::string &name="");
 
+      void calcisSize() override;
+
       void init(InitStage stage, const InitConfigSet &config) override;
 
       void resetUpToDate() override;
@@ -110,7 +112,7 @@ namespace MBSim {
       int nq{0};
       int nu{0};
       int nh{0};
-      fmatvec::Vec q, q0;
+      fmatvec::Vec q0;
       fmatvec::Mat JT, JR;
       fmatvec::SqrMat A;
 

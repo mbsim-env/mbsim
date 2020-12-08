@@ -40,9 +40,13 @@ namespace MBSim {
       virtual int getxInd() { return xInd; }
       virtual void setxInd(int xInd_) { xInd = xInd_; };
       virtual int getxSize() const { return xSize; }
+      int getisInd() { return isInd; }
+      virtual void setisInd(int isInd_) { isInd = isInd_; }
+      int getisSize() { return isSize; }
       virtual void updatexRef(fmatvec::Vec& xParent);
       virtual void updatexdRef(fmatvec::Vec& xdParent);
       virtual void updatedxRef(fmatvec::Vec& dxParent);
+      virtual void calcisSize() { isSize = 0; }
       virtual void initz();
       virtual void writez(H5::GroupBase *group);
       virtual void readz0(H5::GroupBase *group);
@@ -50,6 +54,7 @@ namespace MBSim {
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override {return std::shared_ptr<OpenMBV::Group>();}
       bool getUpdateGeneralizedCoordinates() const { return updGC; }
       bool getUpdateGeneralizedJacobians() const { return updGJ; }
+      virtual void updateInternalStateRef(fmatvec::Vec& cur, fmatvec::Vec& next);
       void resetUpToDate() override { updGC = true; updGJ = true; }
 
       const fmatvec::Vec& evalxd();
@@ -74,10 +79,13 @@ namespace MBSim {
        */
       fmatvec::Vec x0;
 
+      fmatvec::Vec curis, nextis;
+
       /**
        * \brief size  and local index of order one parameters
        */
       int xSize, xInd;
+      int isSize, isInd;
       bool updGC, updGJ;
   };
 
