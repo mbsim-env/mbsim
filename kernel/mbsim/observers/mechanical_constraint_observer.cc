@@ -50,21 +50,16 @@ namespace MBSim {
         throwError("Mechanical constraint is not given!");
       Observer::init(stage, config);
     }
-    else if(stage==preInit) {
-      Observer::init(stage, config);
-      if(not getDynamicSystemSolver()->getInverseKinetics())
-        throwError("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
-    }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        if(plotFeature[force]) {
+        if(plotFeature[force] and getDynamicSystemSolver()->getInverseKinetics()) {
           for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++) {
             plotColumns.emplace_back("force "+to_string(i)+" (x)");
             plotColumns.emplace_back("force "+to_string(i)+" (y)");
             plotColumns.emplace_back("force "+to_string(i)+" (z)");
           }
         }
-        if(plotFeature[moment]) {
+        if(plotFeature[moment] and getDynamicSystemSolver()->getInverseKinetics()) {
           for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++) {
             plotColumns.emplace_back("moment "+to_string(i)+" (x)");
             plotColumns.emplace_back("moment "+to_string(i)+" (y)");
@@ -74,7 +69,7 @@ namespace MBSim {
       }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
-        if(ombvForce) {
+        if(ombvForce and getDynamicSystemSolver()->getInverseKinetics()) {
           openMBVForce.resize(ombvForce->getSideOfInteraction()==2?constraint->getMechanicalLink()->getNumberOfForces():constraint->getMechanicalLink()->getNumberOfForces()/2);
           for(size_t i=0; i<openMBVForce.size(); i++) {
             openMBVForce[i]=ombvForce->createOpenMBV();
@@ -83,7 +78,7 @@ namespace MBSim {
             getOpenMBVGrp()->addObject(openMBVForce[i]);
           }
         }
-        if(ombvMoment) {
+        if(ombvMoment and getDynamicSystemSolver()->getInverseKinetics()) {
           openMBVMoment.resize(ombvMoment->getSideOfInteraction()==2?constraint->getMechanicalLink()->getNumberOfForces():constraint->getMechanicalLink()->getNumberOfForces()/2);
           for(size_t i=0; i<openMBVMoment.size(); i++) {
             openMBVMoment[i]=ombvMoment->createOpenMBV();
@@ -93,6 +88,11 @@ namespace MBSim {
           }
         }
       }
+    }
+    else if(stage==unknownStage) {
+      Observer::init(stage, config);
+      if((ombvForce or ombvMoment) and not getDynamicSystemSolver()->getInverseKinetics())
+	throwError("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
     }
     else
       Observer::init(stage, config);
