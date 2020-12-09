@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+
+  <stringParameter name="name">"Cuboid"</stringParameter>
+
+  <scalarParameter name="m">1</scalarParameter>
+
+  <vectorParameter name="l">
+    <xmlVector>
+      <ele>3</ele>
+      <ele>2</ele>
+      <ele>1</ele>
+    </xmlVector>
+  </vectorParameter>
+
+  <vectorParameter name="q0">
+    <xmlVector>
+      <ele>0</ele>
+      <ele>0</ele>
+      <ele>0</ele>
+      <ele>0</ele>
+      <ele>0</ele>
+      <ele>0</ele>
+    </xmlVector>
+  </vectorParameter>
+
+  <vectorParameter name="u0">
+    <xmlVector>
+      <ele>0</ele>
+      <ele>0</ele>
+      <ele>0</ele>
+      <ele>0</ele>
+      <ele>0</ele>
+      <ele>0</ele>
+    </xmlVector>
+  </vectorParameter>
+
+  <scalarParameter name="N">3</scalarParameter>
+
+  <matrixParameter name="positions">
+    <xmlMatrix>
+      <row>
+        <ele>l(1)/2</ele>
+        <ele>0</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>l(2)/2</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>0</ele>
+        <ele>l(3)/2</ele>
+      </row>
+    </xmlMatrix>
+  </matrixParameter>
+
+  <matrixParameter name="angles">
+    <xmlMatrix>
+      <row>
+        <ele>0</ele>
+        <ele>0</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>0</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>0</ele>
+        <ele>30</ele>
+      </row>
+    </xmlMatrix>
+  </matrixParameter>
+
+</Parameter>

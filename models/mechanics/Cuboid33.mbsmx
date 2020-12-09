@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="{name}">
+
+  <generalizedInitialPosition>q0</generalizedInitialPosition>
+
+  <generalizedInitialVelocity>u0</generalizedInitialVelocity>
+
+  <mass unit="kg">m</mass>
+
+  <inertiaTensor unit="kg*m^2">
+    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <row>
+        <ele>1/12*m*(l(2)^2+l(3)^2)</ele>
+        <ele>0</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>1/12*m*(l(1)^2+l(3)^2)</ele>
+        <ele>0</ele>
+      </row>
+      <row>
+        <ele>0</ele>
+        <ele>0</ele>
+        <ele>1/12*m*(l(1)^2+l(2)^2)</ele>
+      </row>
+    </xmlMatrix>
+  </inertiaTensor>
+
+  <stateDependentTranslation>
+    <TranslationAlongAxesXYZ/>
+  </stateDependentTranslation>
+
+  <stateDependentRotation>
+    <RotationAboutAxesXYZ/>
+  </stateDependentRotation>
+
+  <frames>
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="N" counterName="n">
+      <FixedRelativeFrame xmlns="http://www.mbsim-env.de/MBSim" name="P{n}">
+        <enableOpenMBV/>
+        <relativePosition unit="m">
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>positions(n,1)</ele>
+            <ele>positions(n,2)</ele>
+            <ele>positions(n,3)</ele>
+          </xmlVector>
+        </relativePosition>
+        <relativeOrientation>
+          <cardan xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">
+            <alpha>angles(n,1)</alpha>
+            <beta>angles(n,2)</beta>
+            <gamma>angles(n,3)</gamma>
+          </cardan>
+        </relativeOrientation>
+      </FixedRelativeFrame>
+    </Embed>
+  </frames>
+
+  <contours/>
+
+  <openMBVRigidBody>
+    <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="Cuboid2">
+      <transparency unit="-">0.3</transparency>
+      <length unit="m">l</length>
+    </Cuboid>
+  </openMBVRigidBody>
+
+  <enableOpenMBVFrameC/>
+
+</RigidBody>
