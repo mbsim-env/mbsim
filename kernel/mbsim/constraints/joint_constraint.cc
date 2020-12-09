@@ -192,9 +192,9 @@ namespace MBSim {
     if(newton.getInfo()!=0)
       msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed!" << endl;
     for(unsigned int i=0; i<bd1.size(); i++)
-      bd1[i]->setqRel(curis(Iq1[i]));
+      bd1[i]->setqRel(nextis(Iq1[i]));
     for(unsigned int i=0; i<bd2.size(); i++)
-      bd2[i]->setqRel(curis(Iq2[i]));
+      bd2[i]->setqRel(nextis(Iq2[i]));
 
     for(size_t i=0; i<bd1.size(); i++) {
       bd1[i]->setUpdateByReference(false);
