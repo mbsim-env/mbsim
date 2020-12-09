@@ -1901,6 +1901,8 @@
     <startTime unit="s">0</startTime>
     <endTime unit="s">5</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
+    <maximumStepSize unit="s">5e-2</maximumStepSize>
   </RADAU5Integrator>
+
 
 </MBSimProject>
