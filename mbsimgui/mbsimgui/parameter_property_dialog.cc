@@ -58,6 +58,7 @@ namespace MBSimGUI {
 
   void ParameterPropertyDialog::fromWidget() {
     writeXMLFile(parameter->getXMLElement());
+    parameter->updateValue();
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {

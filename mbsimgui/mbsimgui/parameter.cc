@@ -47,6 +47,7 @@ namespace MBSimGUI {
     while(e) {
       Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
       parameter->setXMLElement(e);
+      parameter->updateValue();
       param.push_back(parameter);
       e=e->getNextElementSibling();
     }
@@ -65,32 +66,63 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"string.svg").string()));
   }
 
+  void StringParameter::updateValue() {
+    value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
+  }
+
   ScalarParameter::ScalarParameter() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"scalar.svg").string()));
+  }
+
+  void ScalarParameter::updateValue() {
+    value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
   VectorParameter::VectorParameter() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"vector.svg").string()));
   }
 
-  QString VectorParameter::getValue() const {
+  void VectorParameter::updateValue() {
     DOMElement *ele=element->getFirstElementChild();
-    if(ele and E(ele)->getTagName() == PV%"xmlVector")
-      return "xmlVector";
-    else
-      return Parameter::getValue();
+    if(ele and E(ele)->getTagName() == PV%"xmlVector") {
+      vector<QString> v;
+      DOMElement *ei=ele->getFirstElementChild();
+      while(ei and E(ei)->getTagName()==PV%"ele") {
+	v.push_back(QString::fromStdString(X()%E(ei)->getFirstTextChild()->getData()));
+	ei=ei->getNextElementSibling();
+      }
+      value = toQStr(v);
+    }
+    else if(ele and E(ele)->getTagName() == PV%"fromFile")
+      value = QString::fromStdString(MBXMLUtils::E(ele)->getAttribute("href"));
+    else if(MBXMLUtils::E(element)->getFirstTextChild())
+      value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
   }
 
   MatrixParameter::MatrixParameter() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"matrix.svg").string()));
   }
 
-  QString MatrixParameter::getValue() const {
+  void MatrixParameter::updateValue() {
     DOMElement *ele=element->getFirstElementChild();
-    if(ele and E(ele)->getTagName() == PV%"xmlMatrix")
-      return "xmlMatrix";
-    else
-      return Parameter::getValue();
+    if(ele and E(ele)->getTagName() == PV%"xmlMatrix") {
+      vector<vector<QString>> m;
+      DOMElement *ei=ele->getFirstElementChild();
+      while(ei and E(ei)->getTagName()==PV%"row") {
+	DOMElement *ej=ei->getFirstElementChild();
+	m.emplace_back();
+	while(ej and E(ej)->getTagName()==PV%"ele") {
+	  m[m.size()-1].push_back(QString::fromStdString(X()%E(ej)->getFirstTextChild()->getData()));
+	  ej=ej->getNextElementSibling();
+	}
+	ei=ei->getNextElementSibling();
+      }
+      value = toQStr(m);
+    }
+    else if(ele and E(ele)->getTagName() == PV%"fromFile")
+      value = QString::fromStdString(MBXMLUtils::E(ele)->getAttribute("href"));
+    else if(MBXMLUtils::E(element)->getFirstTextChild())
+      value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
   }
 
   DOMElement* ImportParameter::createXMLElement(DOMNode *parent) {
@@ -98,6 +130,10 @@ namespace MBSimGUI {
     element=D(doc)->createElement(getXMLType());
     parent->insertBefore(element, nullptr);
     return element;
+  }
+
+  void ImportParameter::updateValue() {
+    value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
   Parameters::Parameters(EmbedItemData *parent) : ParameterItem(parent) {

@@ -1925,6 +1925,7 @@ namespace MBSimGUI {
       }
       if(not parameterFileItem) parent->createParameterXMLElement()->insertBefore(element,nullptr);
       parameter->setXMLElement(element);
+      parameter->updateValue();
       parent->addParameter(parameter);
       static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameters()->getModelIndex());
     }
