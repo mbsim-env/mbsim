@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <stringParameter name="name">'PID'</stringParameter>
+  <stringParameter name="inputSignal">''</stringParameter> 
+  <scalarParameter name="P">1</scalarParameter>
+  <scalarParameter name="I">1</scalarParameter>
+  <scalarParameter name="D">1</scalarParameter>
+  <scalarParameter name="T">1e-3</scalarParameter>
+</Parameter>
