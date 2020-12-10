@@ -2,6 +2,6 @@
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <stringParameter name="name">'PT1'</stringParameter>
   <stringParameter name="inputSignal">''</stringParameter> 
-  <scalarParameter name="T">0.1</scalarParameter>
   <scalarParameter name="P">1</scalarParameter>
+  <scalarParameter name="T">0.1</scalarParameter>
 </Parameter>
