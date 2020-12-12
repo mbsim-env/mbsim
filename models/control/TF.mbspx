@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <stringParameter name="name">'TF'</stringParameter>
+  <stringParameter name="inputSignal">''</stringParameter> 
+  <vectorParameter name="b">
+    <xmlVector>
+      <ele>1</ele>
+      <ele>2</ele>
+      <ele>1</ele>
+    </xmlVector>
+  </vectorParameter>
+  <vectorParameter name="a">
+    <xmlVector>
+      <ele>1</ele>
+      <ele>0.5</ele>
+      <ele>1</ele>
+    </xmlVector>
+  </vectorParameter>
+</Parameter>

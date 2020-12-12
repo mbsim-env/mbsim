@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="{name}">
+  <inputSignal ref="{inputSignal}"/>
+  <systemMatrix>
+    N = length(a)-1;
+    A = diag(ones(1,N-1),1);
+    A(N,:) = -a(end:-1:2);
+    ret = A
+  </systemMatrix>
+  <inputMatrix>
+    N = length(a)-1;
+    B=zeros(N,1);
+    B(end) = 1;
+    ret = B;
+  </inputMatrix>
+  <outputMatrix>
+    N = length(a)-1;
+    M = length(b)-1;
+    b_ = [zeros(N-M,1);b];
+    ret = (b_(end:-1:2)-a(end:-1:2)*b_(1))';
+  </outputMatrix>
+  <feedthroughMatrix>
+    N = length(a)-1;
+    M = length(b)-1;
+    b_ = [zeros(N-M,1);b];
+    ret = b_(1)
+  </feedthroughMatrix>
+</LinearTransferSystem>
