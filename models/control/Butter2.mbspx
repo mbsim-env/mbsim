@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <stringParameter name="name">'Butter2'</stringParameter>
+  <stringParameter name="inputSignal">''</stringParameter> 
+  <scalarParameter name="f">1</scalarParameter>
+</Parameter>
