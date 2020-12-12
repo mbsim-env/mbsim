@@ -1940,22 +1940,23 @@ namespace MBSimGUI {
     DOMElement *parentele = parent->getEmbedXMLElement()?parent->getEmbedXMLElement():parent->getXMLElement();
     pele.push_back(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(param->getXMLElement(),true)));
     if(parameterBuffer.second) {
+      auto *fileItem = param->getParent()->getDedicatedParameterFileItem();
+      if(fileItem)
+        fileItem->setModified(true);
+      else
+        setProjectChanged(true);
       parameterBuffer.first = nullptr;
       DOMNode *ps = param->getXMLElement()->getPreviousSibling();
       if(ps and X()%ps->getNodeName()=="#text")
-	param->getXMLElement()->getParentNode()->removeChild(ps);
+        param->getXMLElement()->getParentNode()->removeChild(ps);
       param->getXMLElement()->getParentNode()->removeChild(param->getXMLElement());
       param->getParent()->removeParameter(param);
-      QModelIndex index = param->getModelIndex();
-      static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(index.row(), QModelIndex());
-      auto* fileItem = param->getParent()->getDedicatedParameterFileItem();
-      if(fileItem)
-	fileItem->setModified(true);
-      else
-	setProjectChanged(true);
+      param->getParent()->maybeRemoveEmbedXMLElement();
       auto *dedicatedParent = dynamic_cast<Element*>(param->getParent()->getDedicatedItem());
       if(dedicatedParent) updateReferences(dedicatedParent);
       updateParameterReferences(param->getParent());
+      QModelIndex index = param->getModelIndex();
+      static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(index.row(), index.parent());
     }
     loadParameter(parent,pele,nullptr);
   }
