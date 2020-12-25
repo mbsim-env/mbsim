@@ -275,8 +275,10 @@ namespace MBSim {
     while(dos->current_time()<tSamplePoint*oneMinusEps) {
       // make one step with odeint
       nrSteps++;
+#if BOOST_VERSION >= 107100
       // do not make a step which exceeds tSamplePoint
       dos->setDtMax(std::min(dtMax, tSamplePoint-dos->current_time()));
+#endif
       auto step=dos->do_step(boostOdeintSystem());
       system->updateInternalState();
 
@@ -319,7 +321,12 @@ namespace MBSim {
 
       if(dtPlot>0) {
         // plot every dtPlot up to the end of the current step (the current step end may already be shorted by roots)
-        while(tPlot<=step.second) {
+        static constexpr double onePlusEps = 1 + std::numeric_limits<double>::epsilon();
+        while(tPlot<=step.second*onePlusEps
+#if BOOST_VERSION < 107100
+              && tPlot<=tSamplePoint*onePlusEps
+#endif
+             ) {
           dos->calc_state(tPlot, zTemp);
           if(curTimeAndState!=tPlot) {
             curTimeAndState=tPlot;
@@ -343,52 +350,72 @@ namespace MBSim {
           msg(Status)<<"t = "<<step.second<<", dt="<<dos->current_time_step()<<"                    "<<std::flush;
       }
 
-      if(shift) {
-        // shift the system
-        dos->calc_state(step.second, zTemp);
-        if(curTimeAndState!=step.second) {
-          curTimeAndState=step.second;
-          system->setTime(step.second);
-          BoostOdeintHelper::assign(system->getState(), zTemp);
+#if BOOST_VERSION < 107100
+      if(step.second<tSamplePoint) {
+#endif
+        if(shift) {
+          // shift the system
+          dos->calc_state(step.second, zTemp);
+          if(curTimeAndState!=step.second) {
+            curTimeAndState=step.second;
+            system->setTime(step.second);
+            BoostOdeintHelper::assign(system->getState(), zTemp);
+            system->resetUpToDate();
+          }
+          if(plotOnRoot) {
+            nrPlots++;
+            system->plot();
+          }
+          nrRoots++;
           system->resetUpToDate();
-        }
-        if(plotOnRoot) {
-          nrPlots++;
-          system->plot();
-        }
-        nrRoots++;
-        system->resetUpToDate();
-        system->shift();
-        if(plotOnRoot) {
-          nrPlots++;
-          system->plot();
-        }
-        nrSVs++;
-        svLast=system->evalsv();
-        // reinit odeint with new state
-        BoostOdeintHelper::assign(zTemp, system->getState());
-        dos->initialize(zTemp, step.second, dos->current_time_step());
-      }
-      else {
-        // check if projection is needed (if a root was found projection is done anyway by shift())
-        bool reinitNeeded=false;
-        if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) {
-          system->projectGeneralizedPositions(3);
-          system->projectGeneralizedVelocities(3);
-          reinitNeeded=true;
-        }
-        else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) {
-          system->projectGeneralizedVelocities(3);
-          reinitNeeded=true;
-        }
-        if(reinitNeeded) {
-          nrDriftCorr++;
+          system->shift();
+          if(plotOnRoot) {
+            nrPlots++;
+            system->plot();
+          }
+          nrSVs++;
+          svLast=system->evalsv();
+          // reinit odeint with new state
           BoostOdeintHelper::assign(zTemp, system->getState());
           dos->initialize(zTemp, step.second, dos->current_time_step());
         }
+        else {
+          // check if projection is needed (if a root was found projection is done anyway by shift())
+          bool reinitNeeded=false;
+          if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) {
+            system->projectGeneralizedPositions(3);
+            system->projectGeneralizedVelocities(3);
+            reinitNeeded=true;
+          }
+          else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) {
+            system->projectGeneralizedVelocities(3);
+            reinitNeeded=true;
+          }
+          if(reinitNeeded) {
+            nrDriftCorr++;
+            BoostOdeintHelper::assign(zTemp, system->getState());
+            dos->initialize(zTemp, step.second, dos->current_time_step());
+          }
+          system->updateStopVectorParameters();
+        }
+#if BOOST_VERSION < 107100
+      }
+      else {
+        // TODO: this code block (espezially the dos->initialize) should be avoided since initializting the integrator
+        // is expensive and not needed at macro sample points or updates of discrete states.
+        // For this the do_step call at the top must be restricted to reach at most tSamplePoint.
+        // However, this seem currently not possible with the boost odeint integrators.
+        // That's why we use this workaround here which has not the optimal performance.
+        dos->calc_state(tSamplePoint, zTemp);
+        curTimeAndState=tSamplePoint;
+        system->setTime(tSamplePoint);
+        BoostOdeintHelper::assign(system->getState(), zTemp);
+        dos->initialize(zTemp, tSamplePoint, dos->current_time_step());
         system->updateStopVectorParameters();
       }
+#endif
 
+#if BOOST_VERSION >= 107100
       // if the system time or state was changed after do_step (for plotting, root-finding, ...)
       // we need to reset it to the integrator state
       if(curTimeAndState!=dos->current_time()) {
@@ -396,6 +423,7 @@ namespace MBSim {
         BoostOdeintHelper::assign(system->getState(), dos->current_state());
         system->resetUpToDate();
       }
+#endif
     }
   }
 
