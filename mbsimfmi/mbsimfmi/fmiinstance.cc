@@ -505,7 +505,7 @@ namespace MBSimFMI {
         eventInfo->upcomingTimeEvent=true;
 
         // next event wenn plotting with sample time and we currently match that time
-        if(fabs(time-nextPlotTime)<1.0e-10) {
+        if(fabs(time-nextPlotTime)<1e4*numeric_limits<double>::epsilon()*time+1e4*numeric_limits<double>::epsilon()) {
           // plot
           dss->plot();
           // next time event

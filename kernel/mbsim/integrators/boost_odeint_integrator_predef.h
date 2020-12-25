@@ -42,7 +42,15 @@ namespace MBSim {
   
     // type definitions
     typedef boost::numeric::odeint::runge_kutta_dopri5<fmatvec::Vec> RKDOPRI5Stepper;
-    typedef boost::numeric::odeint::controlled_runge_kutta<RKDOPRI5Stepper> ControlledRK;
+    typedef boost::numeric::odeint::default_error_checker<double, boost::numeric::odeint::range_algebra,
+                                                          boost::numeric::odeint::default_operations> RKDOPRI5Checker;
+    class RKDOPRI5Adjuster : public boost::numeric::odeint::default_step_adjuster<double, double> {
+      public:
+        RKDOPRI5Adjuster(double dtMax) : boost::numeric::odeint::default_step_adjuster<double, double>(dtMax) {}
+        void setDtMax(double dtMax) { m_max_dt = dtMax; }
+    };
+    typedef boost::numeric::odeint::controlled_runge_kutta<RKDOPRI5Stepper, RKDOPRI5Checker,
+                                                           boost::reference_wrapper<RKDOPRI5Adjuster>> ControlledRK;
     typedef boost::numeric::odeint::dense_output_runge_kutta<ControlledRK> DOSRK;
 
     // DOS concept for the boost odeint runge_kutta_dopri5<Vec> stepper
@@ -51,7 +59,10 @@ namespace MBSim {
         typedef ExplicitSystemTag SystemCategory;
         typedef typename ControlledRK::stepper_category UnderlayingStepperCategory;
         RKDOPRI5(double aTol, double rTol, double dtMax) :
-          DOSRK(ControlledRK(ControlledRK::error_checker_type(aTol, rTol), ControlledRK::step_adjuster_type(dtMax), RKDOPRI5Stepper())) {}
+          DOSRK(ControlledRK(RKDOPRI5Checker(aTol, rTol), boost::ref(rkdopri5Adjuster), RKDOPRI5Stepper())), rkdopri5Adjuster(dtMax) {}
+        void setDtMax(double dtMax) { rkdopri5Adjuster.setDtMax(dtMax); }
+      private:
+        RKDOPRI5Adjuster rkdopri5Adjuster;
     };
 
 
@@ -67,6 +78,7 @@ namespace MBSim {
         typedef ExplicitSystemTag SystemCategory;
         typedef boost::numeric::odeint::controlled_stepper_tag UnderlayingStepperCategory;
         BulirschStoer(double aTol, double rTol, double dtMax) : DOSBS(aTol, rTol, 1.0, 1.0, dtMax) {}
+        void setDtMax(double dtMax) { m_max_dt = dtMax; }
     };
 
 
@@ -83,6 +95,7 @@ namespace MBSim {
         typedef ExplicitSystemTag SystemCategory;
         typedef typename EulerStepper::stepper_category UnderlayingStepperCategory;
         Euler(double aTol, double rTol, double dtMax) : DOSEuler() {}
+        void setDtMax(double) {}
     };
 
 
@@ -91,15 +104,22 @@ namespace MBSim {
 
     // type definitions
     typedef boost::numeric::odeint::rosenbrock4<double> RB4;
-    typedef boost::numeric::odeint::rosenbrock4_controller<RB4> ControlledRB4;
-    typedef boost::numeric::odeint::rosenbrock4_dense_output<ControlledRB4> DOSRB4;
+    class ControlledRB4 : public boost::numeric::odeint::rosenbrock4_controller<RB4> {
+      public:
+        ControlledRB4(double aTol, double rTol, double dtMax) : boost::numeric::odeint::rosenbrock4_controller<RB4>(aTol, rTol, dtMax) {}
+        void setDtMax(double dtMax) { m_max_dt = dtMax; }
+    };
+    typedef boost::numeric::odeint::rosenbrock4_dense_output<boost::reference_wrapper<ControlledRB4>> DOSRB4;
   
     // DOS concept for the boost odeint rosenbrock4<double> stepper
     class Rosenbrock4 : public DOSRB4 {
       public:
         typedef ImplicitSystemTag SystemCategory;
         typedef typename ControlledRB4::stepper_category UnderlayingStepperCategory;
-        Rosenbrock4(double aTol, double rTol, double dtMax) : DOSRB4(ControlledRB4(aTol, rTol, dtMax)) {}
+        Rosenbrock4(double aTol, double rTol, double dtMax) : DOSRB4(boost::ref(controlledRB4)), controlledRB4(aTol, rTol, dtMax) {}
+        void setDtMax(double dtMax) { controlledRB4.setDtMax(dtMax); }
+      private:
+        ControlledRB4 controlledRB4;
     };
 
   }
@@ -107,8 +127,7 @@ namespace MBSim {
   // explicit integrators
   typedef BoostOdeintDOS<BoostOdeintHelper::RKDOPRI5     > BoostOdeintDOS_RKDOPRI5;
   typedef BoostOdeintDOS<BoostOdeintHelper::BulirschStoer> BoostOdeintDOS_BulirschStoer;
-  // not working due to but in boost odeint, see https://github.com/boostorg/odeint/pull/27
-  // typedef BoostOdeintDOS<BoostOdeintHelper::Euler        > BoostOdeintDOS_Euler;
+  typedef BoostOdeintDOS<BoostOdeintHelper::Euler        > BoostOdeintDOS_Euler;
   // implicit integrators
   typedef BoostOdeintDOS<BoostOdeintHelper::Rosenbrock4  > BoostOdeintDOS_Rosenbrock4;
 

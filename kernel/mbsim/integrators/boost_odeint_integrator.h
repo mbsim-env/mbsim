@@ -162,6 +162,7 @@ namespace MBSim {
 
       // internal variables
       double tPlot;
+      size_t plotSample;
       typename DOS::state_type zTemp;
 
       // internal variables required for the numerical jacobian calculation
@@ -257,7 +258,8 @@ namespace MBSim {
     system->computeInitialCondition();
     nrPlots++;
     system->plot();
-    tPlot=tStart+dtPlot;
+    plotSample=1;
+    tPlot=tStart+plotSample*dtPlot;
     nrSVs++;
     svLast <<= system->evalsv();
 
@@ -269,9 +271,12 @@ namespace MBSim {
   template<typename DOS>
   void BoostOdeintDOS<DOS>::subIntegrate(double tSamplePoint) {
     // loop until at least tSamplePoint is reached
-    while(dos->current_time()<tSamplePoint) {
+    static constexpr double oneMinusEps = 1 - std::numeric_limits<double>::epsilon();
+    while(dos->current_time()<tSamplePoint*oneMinusEps) {
       // make one step with odeint
       nrSteps++;
+      // do not make a step which exceeds tSamplePoint
+      dos->setDtMax(std::min(dtMax, tSamplePoint-dos->current_time()));
       auto step=dos->do_step(boostOdeintSystem());
       system->updateInternalState();
 
@@ -314,7 +319,7 @@ namespace MBSim {
 
       if(dtPlot>0) {
         // plot every dtPlot up to the end of the current step (the current step end may already be shorted by roots)
-        while(tPlot<=step.second && tPlot<tSamplePoint) {
+        while(tPlot<=step.second) {
           dos->calc_state(tPlot, zTemp);
           if(curTimeAndState!=tPlot) {
             curTimeAndState=tPlot;
@@ -326,7 +331,8 @@ namespace MBSim {
           system->plot();
           if(msgAct(Status))
             msg(Status)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<"                    "<<std::flush;
-          tPlot+=dtPlot;
+          plotSample++;
+          tPlot=tStart+plotSample*dtPlot;
         }
       }
       else {
@@ -337,65 +343,58 @@ namespace MBSim {
           msg(Status)<<"t = "<<step.second<<", dt="<<dos->current_time_step()<<"                    "<<std::flush;
       }
 
-      if(step.second<tSamplePoint) {
-        if(shift) {
-          // shift the system
-          dos->calc_state(step.second, zTemp);
-          if(curTimeAndState!=step.second) {
-            curTimeAndState=step.second;
-            system->setTime(step.second);
-            BoostOdeintHelper::assign(system->getState(), zTemp);
-            system->resetUpToDate();
-          }
-          if(plotOnRoot) {
-            nrPlots++;
-            system->plot();
-          }
-          nrRoots++;
+      if(shift) {
+        // shift the system
+        dos->calc_state(step.second, zTemp);
+        if(curTimeAndState!=step.second) {
+          curTimeAndState=step.second;
+          system->setTime(step.second);
+          BoostOdeintHelper::assign(system->getState(), zTemp);
           system->resetUpToDate();
-          system->shift();
-          if(plotOnRoot) {
-            nrPlots++;
-            system->plot();
-          }
-          nrSVs++;
-          svLast=system->evalsv();
-          // reinit odeint with new state
+        }
+        if(plotOnRoot) {
+          nrPlots++;
+          system->plot();
+        }
+        nrRoots++;
+        system->resetUpToDate();
+        system->shift();
+        if(plotOnRoot) {
+          nrPlots++;
+          system->plot();
+        }
+        nrSVs++;
+        svLast=system->evalsv();
+        // reinit odeint with new state
+        BoostOdeintHelper::assign(zTemp, system->getState());
+        dos->initialize(zTemp, step.second, dos->current_time_step());
+      }
+      else {
+        // check if projection is needed (if a root was found projection is done anyway by shift())
+        bool reinitNeeded=false;
+        if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) {
+          system->projectGeneralizedPositions(3);
+          system->projectGeneralizedVelocities(3);
+          reinitNeeded=true;
+        }
+        else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) {
+          system->projectGeneralizedVelocities(3);
+          reinitNeeded=true;
+        }
+        if(reinitNeeded) {
+          nrDriftCorr++;
           BoostOdeintHelper::assign(zTemp, system->getState());
           dos->initialize(zTemp, step.second, dos->current_time_step());
         }
-        else {
-          // check if projection is needed (if a root was found projection is done anyway by shift())
-          bool reinitNeeded=false;
-          if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) {
-            system->projectGeneralizedPositions(3);
-            system->projectGeneralizedVelocities(3);
-            reinitNeeded=true;
-          }
-          else if(gdMax>=0 and system->velocityDriftCompensationNeeded(gdMax)) {
-            system->projectGeneralizedVelocities(3);
-            reinitNeeded=true;
-          }
-          if(reinitNeeded) {
-            nrDriftCorr++;
-            BoostOdeintHelper::assign(zTemp, system->getState());
-            dos->initialize(zTemp, step.second, dos->current_time_step());
-          }
-          system->updateStopVectorParameters();
-        }
-      }
-      else {
-        // TODO: this code block (espezially the dos->initialize) should be avoided since initializting the integrator
-        // is expensive and not needed at macro sample points or updates of discrete states.
-        // For this the do_step call at the top must be restricted to reach at most tSamplePoint.
-        // However, this seem currently not possible with the boost odeint integrators.
-        // That's why we use this workaround here which has not the optimal performance.
-        dos->calc_state(tSamplePoint, zTemp);
-        curTimeAndState=tSamplePoint;
-        system->setTime(tSamplePoint);
-        BoostOdeintHelper::assign(system->getState(), zTemp);
-        dos->initialize(zTemp, tSamplePoint, dos->current_time_step());
         system->updateStopVectorParameters();
+      }
+
+      // if the system time or state was changed after do_step (for plotting, root-finding, ...)
+      // we need to reset it to the integrator state
+      if(curTimeAndState!=dos->current_time()) {
+        system->setTime(dos->current_time());
+        BoostOdeintHelper::assign(system->getState(), dos->current_state());
+        system->resetUpToDate();
       }
     }
   }

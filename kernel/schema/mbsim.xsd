@@ -6870,7 +6870,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <!-- not working due to but in boost odeint, see https://github.com/boostorg/odeint/pull/27
   <xs:element name="BoostOdeintDOS_Euler" substitutionGroup="BoostOdeintDOS" type="BoostOdeintDOS_EulerType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
        Explicit, fixed step-size Euler integrator from Boost Odeint.
@@ -6880,7 +6879,7 @@
     <xs:complexContent>
       <xs:extension base="BoostOdeintDOSType"/>
     </xs:complexContent>
-  </xs:complexType>-->
+  </xs:complexType>
 
   <xs:element name="BoostOdeintDOS_Rosenbrock4" substitutionGroup="BoostOdeintDOS" type="BoostOdeintDOS_Rosenbrock4Type">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
