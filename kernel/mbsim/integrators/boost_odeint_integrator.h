@@ -162,6 +162,7 @@ namespace MBSim {
 
       // internal variables
       double tPlot;
+      size_t plotSample;
       typename DOS::state_type zTemp;
 
       // internal variables required for the numerical jacobian calculation
@@ -257,7 +258,8 @@ namespace MBSim {
     system->computeInitialCondition();
     nrPlots++;
     system->plot();
-    tPlot=tStart+dtPlot;
+    plotSample=1;
+    tPlot=tStart+plotSample*dtPlot;
     nrSVs++;
     svLast <<= system->evalsv();
 
@@ -269,9 +271,14 @@ namespace MBSim {
   template<typename DOS>
   void BoostOdeintDOS<DOS>::subIntegrate(double tSamplePoint) {
     // loop until at least tSamplePoint is reached
-    while(dos->current_time()<tSamplePoint) {
+    static constexpr double oneMinusEps = 1 - std::numeric_limits<double>::epsilon();
+    while(dos->current_time()<tSamplePoint*oneMinusEps) {
       // make one step with odeint
       nrSteps++;
+#if BOOST_VERSION >= 107100
+      // do not make a step which exceeds tSamplePoint
+      dos->setDtMax(std::min(dtMax, tSamplePoint-dos->current_time()));
+#endif
       auto step=dos->do_step(boostOdeintSystem());
       system->updateInternalState();
 
@@ -314,7 +321,12 @@ namespace MBSim {
 
       if(dtPlot>0) {
         // plot every dtPlot up to the end of the current step (the current step end may already be shorted by roots)
-        while(tPlot<=step.second && tPlot<tSamplePoint) {
+        static constexpr double onePlusEps = 1 + std::numeric_limits<double>::epsilon();
+        while(tPlot<=step.second*onePlusEps
+#if BOOST_VERSION < 107100
+              && tPlot<=tSamplePoint*onePlusEps
+#endif
+             ) {
           dos->calc_state(tPlot, zTemp);
           if(curTimeAndState!=tPlot) {
             curTimeAndState=tPlot;
@@ -326,7 +338,8 @@ namespace MBSim {
           system->plot();
           if(msgAct(Status))
             msg(Status)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<"                    "<<std::flush;
-          tPlot+=dtPlot;
+          plotSample++;
+          tPlot=tStart+plotSample*dtPlot;
         }
       }
       else {
@@ -337,7 +350,9 @@ namespace MBSim {
           msg(Status)<<"t = "<<step.second<<", dt="<<dos->current_time_step()<<"                    "<<std::flush;
       }
 
+#if BOOST_VERSION < 107100
       if(step.second<tSamplePoint) {
+#endif
         if(shift) {
           // shift the system
           dos->calc_state(step.second, zTemp);
@@ -383,6 +398,7 @@ namespace MBSim {
           }
           system->updateStopVectorParameters();
         }
+#if BOOST_VERSION < 107100
       }
       else {
         // TODO: this code block (espezially the dos->initialize) should be avoided since initializting the integrator
@@ -397,6 +413,17 @@ namespace MBSim {
         dos->initialize(zTemp, tSamplePoint, dos->current_time_step());
         system->updateStopVectorParameters();
       }
+#endif
+
+#if BOOST_VERSION >= 107100
+      // if the system time or state was changed after do_step (for plotting, root-finding, ...)
+      // we need to reset it to the integrator state
+      if(curTimeAndState!=dos->current_time()) {
+        system->setTime(dos->current_time());
+        BoostOdeintHelper::assign(system->getState(), dos->current_state());
+        system->resetUpToDate();
+      }
+#endif
     }
   }
 
