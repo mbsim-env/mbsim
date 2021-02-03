@@ -81,6 +81,8 @@ namespace MBSimGUI {
     std::vector<xercesc::DOMElement*> pele;
     FileItemData *mfileitem{nullptr};
     FileItemData *pfileitem{nullptr};
+    bool absmfilepath{false};
+    bool abspfilepath{false};
   };
 
   class MainWindow : public QMainWindow {
@@ -196,7 +198,7 @@ namespace MBSimGUI {
       void addObserver(Observer *observer, Element *parent);
       void pasteParameter(EmbedItemData *parent, Parameter *param=nullptr);
       void loadParameter(EmbedItemData *parent);
-      void loadParameter(EmbedItemData *parent, const std::vector<xercesc::DOMElement*> &elements, FileItemData *parameterFileItem);
+      void loadParameter(EmbedItemData *parent, const std::vector<xercesc::DOMElement*> &elements, FileItemData *parameterFileItem, bool absfilepath=false);
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       void pasteFrame(Element *parent, Element *element);

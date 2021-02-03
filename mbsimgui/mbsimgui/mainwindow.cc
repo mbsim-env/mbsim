@@ -1907,7 +1907,7 @@ namespace MBSimGUI {
     openParameterEditor(false);
   }
 
-  void MainWindow::loadParameter(EmbedItemData *parent, const vector<DOMElement*> &elements, FileItemData *parameterFileItem) {
+  void MainWindow::loadParameter(EmbedItemData *parent, const vector<DOMElement*> &elements, FileItemData *parameterFileItem, bool absfilepath) {
     auto* fileItem = parent->getDedicatedParameterFileItem();
     if(fileItem)
       fileItem->setModified(true);
@@ -1915,7 +1915,8 @@ namespace MBSimGUI {
       setProjectChanged(true);
     if(parameterFileItem) {
       parent->setParameterFileItem(parameterFileItem);
-      E(parent->createEmbedXMLElement())->setAttribute("parameterHref",getProjectDir().relativeFilePath(parameterFileItem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->createEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(parent->getEmbedXMLElement())->setAttribute("parameterHref",(absfilepath?parentDir.absoluteFilePath(parameterFileItem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(parameterFileItem->getFileInfo().absoluteFilePath())).toStdString());
     }
     for(auto & element : elements) {
       Parameter *parameter=ObjectFactory::getInstance()->createParameter(element);
@@ -1964,17 +1965,19 @@ namespace MBSimGUI {
   void MainWindow::loadParameter(EmbedItemData *parent) {
     vector<DOMElement*> pele;
     FileItemData *pfileitem = nullptr;
+    bool absfilepath = false;
     LoadParameterDialog dialog;
     int result = dialog.exec();
     if(result) {
       xercesc::DOMDocument *doc = nullptr;
-      QString file = dialog.getParameterFileName();
+      QString file = dialog.getParameterFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getParameterFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	if(dialog.referenceParameter()) {
 	  pfileitem = addFile(file);
 	  doc = pfileitem->getXMLDocument();
+	  absfilepath = dialog.getAbsoluteFilePath();
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
@@ -1989,7 +1992,7 @@ namespace MBSimGUI {
       }
     }
     if(parent->getNumberOfParameters() and dialog.replaceParameter()) removeParameter(parent);
-    loadParameter(parent,pele,pfileitem);
+    loadParameter(parent,pele,pfileitem,absfilepath);
   }
 
   void MainWindow::removeParameter(EmbedItemData *parent) {
@@ -2179,13 +2182,14 @@ namespace MBSimGUI {
     int result = dialog.exec();
     if(result) {
       xercesc::DOMDocument *doc = nullptr;
-      QString file = dialog.getModelFileName();
+      QString file = dialog.getModelFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getModelFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	if(dialog.referenceModel()) {
 	  fileData.mfileitem = addFile(file);
 	  doc = fileData.mfileitem->getXMLDocument();
+	  fileData.absmfilepath = dialog.getAbsoluteModelFilePath();
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
@@ -2193,13 +2197,14 @@ namespace MBSimGUI {
 	}
 	fileData.mele = dialog.referenceModel()?doc->getDocumentElement():static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
       }
-      file = dialog.getParameterFileName();
+      file = dialog.getParameterFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getParameterFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	if(dialog.referenceParameter()) {
 	  fileData.pfileitem = addFile(file);
 	  doc = fileData.pfileitem->getXMLDocument();
+	  fileData.abspfilepath = dialog.getAbsoluteParameterFilePath();
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
@@ -2228,7 +2233,8 @@ namespace MBSimGUI {
       frame->setFileItem(data.mfileitem);
       frame->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLFrames()->insertBefore(frame->getEmbedXMLElement(), nullptr);
-      E(frame->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%frame->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(frame->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else
       parent->getXMLFrames()->insertBefore(data.mele, nullptr);
@@ -2242,7 +2248,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    loadParameter(frame,data.pele,data.pfileitem);
+    loadParameter(frame,data.pele,data.pfileitem,data.abspfilepath);
     frame->create();
     if(getAutoRefresh()) refresh();
   }
@@ -2259,7 +2265,8 @@ namespace MBSimGUI {
       contour->setFileItem(data.mfileitem);
       contour->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLContours()->insertBefore(contour->getEmbedXMLElement(), nullptr);
-      E(contour->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%contour->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(contour->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else
       parent->getXMLContours()->insertBefore(data.mele, nullptr);
@@ -2273,7 +2280,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    loadParameter(contour,data.pele,data.pfileitem);
+    loadParameter(contour,data.pele,data.pfileitem,data.abspfilepath);
     contour->create();
     if(getAutoRefresh()) refresh();
   }
@@ -2290,7 +2297,8 @@ namespace MBSimGUI {
       group->setFileItem(data.mfileitem);
       group->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLGroups()->insertBefore(group->getEmbedXMLElement(), nullptr);
-      E(group->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%group->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(group->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else
       parent->getXMLGroups()->insertBefore(data.mele, nullptr);
@@ -2304,7 +2312,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    loadParameter(group,data.pele,data.pfileitem);
+    loadParameter(group,data.pele,data.pfileitem,data.abspfilepath);
     group->create();
     if(getAutoRefresh()) refresh();
   }
@@ -2321,7 +2329,8 @@ namespace MBSimGUI {
       object->setFileItem(data.mfileitem);
       object->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObjects()->insertBefore(object->getEmbedXMLElement(), nullptr);
-      E(object->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%object->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(object->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else
       parent->getXMLObjects()->insertBefore(data.mele, nullptr);
@@ -2335,7 +2344,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    loadParameter(object,data.pele,data.pfileitem);
+    loadParameter(object,data.pele,data.pfileitem,data.abspfilepath);
     object->create();
     if(getAutoRefresh()) refresh();
   }
@@ -2352,7 +2361,8 @@ namespace MBSimGUI {
       link->setFileItem(data.mfileitem);
       link->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLLinks()->insertBefore(link->getEmbedXMLElement(), nullptr);
-      E(link->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%link->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(link->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else
       parent->getXMLLinks()->insertBefore(data.mele, nullptr);
@@ -2366,7 +2376,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    loadParameter(link,data.pele,data.pfileitem);
+    loadParameter(link,data.pele,data.pfileitem,data.abspfilepath);
     link->create();
     if(getAutoRefresh()) refresh();
   }
@@ -2383,7 +2393,8 @@ namespace MBSimGUI {
       constraint->setFileItem(data.mfileitem);
       constraint->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLConstraints()->insertBefore(constraint->getEmbedXMLElement(), nullptr);
-      E(constraint->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%constraint->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(constraint->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else
       parent->getXMLConstraints()->insertBefore(data.mele, nullptr);
@@ -2397,7 +2408,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    loadParameter(constraint,data.pele,data.pfileitem);
+    loadParameter(constraint,data.pele,data.pfileitem,data.abspfilepath);
     constraint->create();
     if(getAutoRefresh()) refresh();
   }
@@ -2414,7 +2425,8 @@ namespace MBSimGUI {
       observer->setFileItem(data.mfileitem);
       observer->setEmbedXMLElement(D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       parent->getXMLObservers()->insertBefore(observer->getEmbedXMLElement(), nullptr);
-      E(observer->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%observer->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(observer->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else
       parent->getXMLObservers()->insertBefore(data.mele, nullptr);
@@ -2428,7 +2440,7 @@ namespace MBSimGUI {
     updateReferences(dedicatedParent);
     static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
-    loadParameter(observer,data.pele,data.pfileitem);
+    loadParameter(observer,data.pele,data.pfileitem,data.abspfilepath);
     observer->create();
     if(getAutoRefresh()) refresh();
   }
@@ -2459,7 +2471,8 @@ namespace MBSimGUI {
       dss->setFileItem(data.mfileitem);
       dss->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(dss->getEmbedXMLElement(), project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
-      E(dss->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%dss->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(dss->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else {
       if(embedele)
@@ -2481,7 +2494,7 @@ namespace MBSimGUI {
         dss->createParameters();
       }
     }
-    loadParameter(dss,data.pele,data.pfileitem);
+    loadParameter(dss,data.pele,data.pfileitem,data.abspfilepath);
     if(getAutoRefresh()) refresh();
   }
 
@@ -2513,7 +2526,8 @@ namespace MBSimGUI {
       solver->setFileItem(data.mfileitem);
       solver->setEmbedXMLElement(embedele?embedele:D(project->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed"));
       project->getXMLElement()->insertBefore(solver->getEmbedXMLElement(), nullptr);
-      E(solver->getEmbedXMLElement())->setAttribute("href",getProjectDir().relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath()).toStdString());
+      QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%solver->getEmbedXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+      E(solver->getEmbedXMLElement())->setAttribute("href",(data.absmfilepath?parentDir.absoluteFilePath(data.mfileitem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(data.mfileitem->getFileInfo().absoluteFilePath())).toStdString());
     }
     else {
       if(embedele)
@@ -2532,7 +2546,7 @@ namespace MBSimGUI {
         solver->createParameters();
       }
     }
-    loadParameter(solver,data.pele,data.pfileitem);
+    loadParameter(solver,data.pele,data.pfileitem,data.abspfilepath);
   }
 
   void MainWindow::editElementSource() {

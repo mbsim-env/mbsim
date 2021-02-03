@@ -144,6 +144,7 @@ namespace MBSimGUI {
       FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_=0, bool quote_=false, bool absPath=true, QFileDialog::Options options_=QFileDialog::Options());
       QString getFile() const { return filePath->text(); }
       void setFile(const QString &str);
+      bool getAbsolutePath() const { return path->isChecked(); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 

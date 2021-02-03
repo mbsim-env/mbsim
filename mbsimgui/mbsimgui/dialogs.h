@@ -124,6 +124,8 @@ namespace MBSimGUI {
       QString getParameterFileName() const;
       bool referenceModel() const;
       bool referenceParameter() const;
+      bool getAbsoluteModelFilePath() const;
+      bool getAbsoluteParameterFilePath() const;
     private:
       ExtWidget *modelFile, *parameterFile, *e;
       QButtonGroup *mOpt, *pOpt;
@@ -146,6 +148,7 @@ namespace MBSimGUI {
       QString getParameterFileName() const;
       bool referenceParameter() const;
       bool replaceParameter() const;
+      bool getAbsoluteFilePath() const;
     private:
       ExtWidget *parameterFile;;
       QButtonGroup *pOpt;

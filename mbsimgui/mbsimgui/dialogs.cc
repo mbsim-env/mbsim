@@ -472,11 +472,19 @@ namespace MBSimGUI {
     return pOpt->button(-3)->isChecked();
   }
 
+  bool LoadModelDialog::getAbsoluteModelFilePath() const {
+    return static_cast<FileWidget*>(modelFile->getWidget())->getAbsolutePath();
+  }
+
+  bool LoadModelDialog::getAbsoluteParameterFilePath() const {
+    return static_cast<FileWidget*>(parameterFile->getWidget())->getAbsolutePath();
+  }
+
   void LoadModelDialog::modelFileChanged(const QString &fileName) {
     QFileInfo fileInfo(fileName);
     QString pFileName = fileName;
     pFileName.replace(pFileName.size()-2,1,'p');
-    if(QFileInfo::exists(pFileName)) {
+    if(QFileInfo::exists(mw->getProjectDir().absoluteFilePath(pFileName))) {
       static_cast<FileWidget*>(parameterFile->getWidget())->setFile(pFileName);
       parameterFile->setActive(true);
       e->setActive(true);
@@ -583,6 +591,10 @@ namespace MBSimGUI {
 
   bool LoadParameterDialog::replaceParameter() const {
     return checkbox->isChecked();
+  }
+
+  bool LoadParameterDialog::getAbsoluteFilePath() const {
+    return static_cast<FileWidget*>(parameterFile->getWidget())->getAbsolutePath();
   }
 
   SaveParameterDialog::SaveParameterDialog(const QString &fileName) {
