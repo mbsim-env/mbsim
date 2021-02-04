@@ -1356,7 +1356,7 @@ namespace MBSimGUI {
       auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *item = dynamic_cast<Parameters*>(model->getItem(index)->getItemData());
-      if(item and not dynamic_cast<InternalFrame*>(item->getParent()))
+      if(item and dynamic_cast<Parameter*>(getParameterBuffer().first) and not dynamic_cast<InternalFrame*>(item->getParent()))
         pasteParameter(item->getParent(),getParameterBuffer().first);
     }
   }
@@ -1413,16 +1413,17 @@ namespace MBSimGUI {
   void MainWindow::copyElement(bool cut) {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
-    auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
-    if((not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element)))
+    auto *element = dynamic_cast<Element*>(model->getItem(index)->getItemData());
+    if(element and (not dynamic_cast<DynamicSystemSolver*>(element)) and (not dynamic_cast<InternalFrame*>(element)))
       elementBuffer = make_pair(element,cut);
   }
 
   void MainWindow::copyParameter(bool cut) {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = parameterView->selectionModel()->currentIndex();
-    auto *parameter = static_cast<Parameter*>(model->getItem(index)->getItemData());
-    parameterBuffer = make_pair(parameter,cut);
+    auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
+    if(parameter)
+      parameterBuffer = make_pair(parameter,cut);
   }
 
   void MainWindow::moveParameter(bool up) {
@@ -1937,9 +1938,8 @@ namespace MBSimGUI {
   }
 
   void MainWindow::pasteParameter(EmbedItemData *parent, Parameter *param) {
-    vector<DOMElement*> pele;
-    DOMElement *parentele = parent->getEmbedXMLElement()?parent->getEmbedXMLElement():parent->getXMLElement();
-    pele.push_back(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(param->getXMLElement(),true)));
+    DOMElement *parentele = parent->createParameterXMLElement();
+    DOMElement *pele = static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(param->getXMLElement(),true));
     if(parameterBuffer.second) {
       auto *fileItem = param->getParent()->getDedicatedParameterFileItem();
       if(fileItem)
@@ -1959,7 +1959,21 @@ namespace MBSimGUI {
       QModelIndex index = param->getModelIndex();
       static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(index.row(), index.parent());
     }
-    loadParameter(parent,pele,nullptr);
+    auto* fileItem = parent->getDedicatedParameterFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setProjectChanged(true);
+    Parameter *parameter=ObjectFactory::getInstance()->createParameter(pele);
+    parentele->insertBefore(pele,nullptr);
+    parameter->setXMLElement(pele);
+    parameter->updateValue();
+    parent->addParameter(parameter);
+    static_cast<ParameterTreeModel*>(parameterView->model())->createParameterItem(parameter,parent->getParameters()->getModelIndex());
+    auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
+    if(dedicatedParent) updateReferences(dedicatedParent);
+    updateParameterReferences(parent);
+    parameterView->selectionModel()->setCurrentIndex(parent->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::loadParameter(EmbedItemData *parent) {
