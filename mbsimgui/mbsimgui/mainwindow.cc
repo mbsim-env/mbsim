@@ -471,6 +471,15 @@ namespace MBSimGUI {
     boost::system::error_code ec;
     bfs::remove_all(uniqueTempDir, ec);
     bfs::remove("./.Project.mbsx", ec);
+    auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
+    QModelIndex index = pmodel->index(0,0);
+    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), QModelIndex());
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    index = model->index(0,0);
+    model->removeRows(index.row(), model->rowCount(QModelIndex()), QModelIndex());
+    auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
+    index = fmodel->index(0,0);
+    fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), QModelIndex());
     delete project;
     parser->release();
     serializer->release();
