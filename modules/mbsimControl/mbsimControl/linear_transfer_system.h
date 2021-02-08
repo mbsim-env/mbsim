@@ -57,6 +57,7 @@ namespace MBSimControl {
       std::string inputSignalString;
       fmatvec::SqrMatV A;
       fmatvec::MatV B, C, D;
+      bool feedthrough{true};
   };
 
 }

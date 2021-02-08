@@ -49,7 +49,7 @@ namespace MBSimControl {
   }
 
   void LinearTransferSystem::updateSignal() {
-    s = C*x + D*inputSignal->evalSignal();
+    s = feedthrough ? (C*x + D*inputSignal->evalSignal()) : C*x;
     upds = false;
   }
 
@@ -69,8 +69,10 @@ namespace MBSimControl {
         throwError("Size of system matrix must be at least 1");
       if(not C())
         C.resize(A.size(),A.size(),Eye());
-      if(not D())
+      if(not D()) {
         D.resize(C.rows(),inputSignal->getSignalSize());
+	feedthrough = false;
+      }
       if(A.size() != C.cols())
         throwError("Size of system matrix must be equal to number of columns of output matrix");
       if(B.rows() != C.cols())
