@@ -424,11 +424,11 @@ namespace MBSimGUI {
         if(saveFinalStateVector)
           actionSaveStateVectorAs->setDisabled(false);
         actionSaveStateTableAs->setDisabled(false);
-        if(dynamic_cast<Eigenanalyzer*>(getProject()->getSolver())) {
+        if(dynamic_cast<Eigenanalyzer*>(project->getSolver())) {
           actionSaveEigenanalysisAs->setDisabled(false);
           actionEigenanalysis->setDisabled(false);
         }
-        if(dynamic_cast<HarmonicResponseAnalyzer*>(getProject()->getSolver())) {
+        if(dynamic_cast<HarmonicResponseAnalyzer*>(project->getSolver())) {
           actionSaveHarmonicResponseAnalysisAs->setDisabled(false);
           actionHarmonicResponseAnalysis->setDisabled(false);
         }
@@ -790,23 +790,23 @@ namespace MBSimGUI {
   void MainWindow::selectSolver(Solver *solver) {
     setProjectChanged(true);
     DOMElement *ele = nullptr;
-    auto *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
-    DOMElement *embed = getProject()->getSolver()->getEmbedXMLElement();
+    auto *parameterFileItem = project->getSolver()->getParameterFileItem();
+    DOMElement *embed = project->getSolver()->getEmbedXMLElement();
     if(parameterFileItem)
       ele = parameterFileItem->getXMLElement();
     else if(embed)
       ele = MBXMLUtils::E(embed)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-    QModelIndex pindex = getProject()->getSolver()->getParameters()->getModelIndex();
+    QModelIndex pindex = project->getSolver()->getParameters()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    model->removeRow(getProject()->getSolver()->getModelIndex().row(), project->getModelIndex());
-    if(getProject()->getSolver()->getFileItem())
+    model->removeRow(project->getSolver()->getModelIndex().row(), project->getModelIndex());
+    if(project->getSolver()->getFileItem())
       E(embed)->removeAttribute("href");
     else
-      getProject()->getSolver()->removeXMLElement(false);
-    getProject()->setSolver(solver);
-    model->createSolverItem(solver,getProject()->getModelIndex());
-    solver->createXMLElement(embed?embed:getProject()->getXMLElement());
+      project->getSolver()->removeXMLElement(false);
+    project->setSolver(solver);
+    model->createSolverItem(solver,project->getModelIndex());
+    solver->createXMLElement(embed?embed:project->getXMLElement());
     solver->setEmbedXMLElement(embed);
     elementView->selectionModel()->setCurrentIndex(solver->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(ele) {
@@ -1012,7 +1012,7 @@ namespace MBSimGUI {
     doc->setDocumentURI(this->doc->getDocumentURI());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
-    getProject()->processIDAndHref(newDocElement);
+    project->processIDAndHref(newDocElement);
 
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile;
@@ -1180,7 +1180,8 @@ namespace MBSimGUI {
 
   void MainWindow::selectElement(const string& ID) {
     Element *element = idMap[ID];
-    if(element) elementView->selectionModel()->setCurrentIndex(element->getModelIndex(),QItemSelectionModel::ClearAndSelect);
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    if(element) elementView->selectionModel()->setCurrentIndex(model->findItem(element,project->getDynamicSystemSolver()->getModelIndex()),QItemSelectionModel::ClearAndSelect);
   }
 
   void MainWindow::help() {
@@ -1286,7 +1287,8 @@ namespace MBSimGUI {
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
     if(parameter) {
-      auto *fileItem = parameter->getParent()->getDedicatedParameterFileItem();
+      auto *parent = parameter->getParent();
+      auto *fileItem = parent->getDedicatedParameterFileItem();
       if(fileItem)
         fileItem->setModified(true);
       else
@@ -1297,11 +1299,11 @@ namespace MBSimGUI {
       if(ps and X()%ps->getNodeName()=="#text")
         parameter->getXMLElement()->getParentNode()->removeChild(ps);
       parameter->getXMLElement()->getParentNode()->removeChild(parameter->getXMLElement());
-      parameter->getParent()->removeParameter(parameter);
-      parameter->getParent()->maybeRemoveEmbedXMLElement();
-      auto *dedicatedParent = dynamic_cast<Element*>(parameter->getParent()->getDedicatedItem());
+      parent->removeParameter(parameter);
+      parent->maybeRemoveEmbedXMLElement();
+      auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
       if(dedicatedParent) updateReferences(dedicatedParent);
-      updateParameterReferences(parameter->getParent());
+      updateParameterReferences(parent);
       model->removeRow(index.row(), index.parent());
       if(getAutoRefresh()) refresh();
     }
@@ -1758,8 +1760,8 @@ namespace MBSimGUI {
         if(fileItem->getReference(i)!=element) {
           fileItem->getReference(i)->setXMLElement(element->getXMLElement());
           fileItem->getReference(i)->clear();
-          QModelIndex index = fileItem->getReference(i)->getModelIndex();
           auto *model = static_cast<ElementTreeModel*>(elementView->model());
+	  QModelIndex index = model->findItem(fileItem->getReference(i),project->getModelIndex());
           model->removeRows(0,model->rowCount(index),index);
           fileItem->getReference(i)->create();
           model->updateElementItem(static_cast<Element*>(fileItem->getReference(i)));
@@ -1950,7 +1952,8 @@ namespace MBSimGUI {
     DOMElement *parentele = parent->createParameterXMLElement();
     DOMElement *pele = static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(param->getXMLElement(),true));
     if(parameterBuffer.second) {
-      auto *fileItem = param->getParent()->getDedicatedParameterFileItem();
+      auto *parent = param->getParent();
+      auto *fileItem = parent->getDedicatedParameterFileItem();
       if(fileItem)
         fileItem->setModified(true);
       else
@@ -1960,13 +1963,14 @@ namespace MBSimGUI {
       if(ps and X()%ps->getNodeName()=="#text")
         param->getXMLElement()->getParentNode()->removeChild(ps);
       param->getXMLElement()->getParentNode()->removeChild(param->getXMLElement());
-      param->getParent()->removeParameter(param);
-      param->getParent()->maybeRemoveEmbedXMLElement();
-      auto *dedicatedParent = dynamic_cast<Element*>(param->getParent()->getDedicatedItem());
+      auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
+      QModelIndex index = model->findItem(param,project->getParameters()->getModelIndex());
+      if(index.isValid()) model->removeRow(index.row(), index.parent());
+      parent->removeParameter(param);
+      parent->maybeRemoveEmbedXMLElement();
+      auto *dedicatedParent = dynamic_cast<Element*>(parent->getDedicatedItem());
       if(dedicatedParent) updateReferences(dedicatedParent);
-      updateParameterReferences(param->getParent());
-      QModelIndex index = param->getModelIndex();
-      static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(index.row(), index.parent());
+      updateParameterReferences(parent);
     }
     auto* fileItem = parent->getDedicatedParameterFileItem();
     if(fileItem)
@@ -2057,8 +2061,6 @@ namespace MBSimGUI {
     DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(element->getEmbedXMLElement()?element->getEmbedXMLElement():element->getXMLElement(),true));
     if(elementBuffer.second) {
       elementBuffer.first = nullptr;
-      QModelIndex index = element->getModelIndex();
-      model->removeRow(index.row(), index.parent());
       auto *parent = element->getParent();
       auto *dedicatedParent = static_cast<Element*>(parent->getDedicatedItem());
       auto *fileItem = dedicatedParent->getFileItem();
@@ -2066,6 +2068,8 @@ namespace MBSimGUI {
 	fileItem->setModified(true);
       else
 	setProjectChanged(true);
+      QModelIndex index = model->findItem(element,project->getDynamicSystemSolver()->getModelIndex());
+      model->removeRow(index.row(), index.parent());
       element->removeXMLElement();
       parent->removeElement(element);
       updateReferences(dedicatedParent);
@@ -2472,19 +2476,19 @@ namespace MBSimGUI {
     FileData data = loadElement(project);
     if(not data.mele) return;
     setProjectChanged(true);
-    DOMElement *embedele = getProject()->getDynamicSystemSolver()->getEmbedXMLElement();
+    DOMElement *embedele = project->getDynamicSystemSolver()->getEmbedXMLElement();
     DOMElement *paramele = nullptr;
-    auto *parameterFileItem = getProject()->getDynamicSystemSolver()->getParameterFileItem();
+    auto *parameterFileItem = project->getDynamicSystemSolver()->getParameterFileItem();
     if(parameterFileItem)
       paramele = parameterFileItem->getXMLElement();
     else if(embedele)
       paramele = MBXMLUtils::E(embedele)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-    QModelIndex pindex = getProject()->getDynamicSystemSolver()->getParameters()->getModelIndex();
+    QModelIndex pindex = project->getDynamicSystemSolver()->getParameters()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
-    if(getProject()->getDynamicSystemSolver()->getFileItem())
+    if(project->getDynamicSystemSolver()->getFileItem())
       E(embedele)->removeAttribute("href");
     else
-      getProject()->getDynamicSystemSolver()->removeXMLElement(false);
+      project->getDynamicSystemSolver()->removeXMLElement(false);
     DynamicSystemSolver *dss = Embed<DynamicSystemSolver>::create(data.mele,project);
     if(not dss) {
       QMessageBox::warning(0, "Import", "Cannot import file.");
@@ -2507,8 +2511,8 @@ namespace MBSimGUI {
     model->removeRows(0,model->rowCount(project->getModelIndex()),project->getModelIndex());
     project->setDynamicSystemSolver(dss);
     dss->create();
-    model->createGroupItem(dss,getProject()->getModelIndex());
-    model->createSolverItem(project->getSolver(),getProject()->getModelIndex());
+    model->createGroupItem(dss,project->getModelIndex());
+    model->createSolverItem(project->getSolver(),project->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(dss->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(data.mfileitem or not dss->getEmbedXMLElement()) {
       if(not dss->getEmbedXMLElement()) dss->setEmbedXMLElement(embedele);
@@ -2525,21 +2529,21 @@ namespace MBSimGUI {
     FileData data = loadElement(project);
     if(not data.mele) return;
     setProjectChanged(true);
-    DOMElement *embedele = getProject()->getSolver()->getEmbedXMLElement();
+    DOMElement *embedele = project->getSolver()->getEmbedXMLElement();
     DOMElement *paramele = nullptr;
-    auto *parameterFileItem = getProject()->getSolver()->getParameterFileItem();
+    auto *parameterFileItem = project->getSolver()->getParameterFileItem();
     if(parameterFileItem)
       paramele = parameterFileItem->getXMLElement();
     else if(embedele)
       paramele = MBXMLUtils::E(embedele)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
-    QModelIndex pindex = getProject()->getSolver()->getParameters()->getModelIndex();
+    QModelIndex pindex = project->getSolver()->getParameters()->getModelIndex();
     static_cast<ParameterTreeModel*>(parameterView->model())->removeRow(pindex.row(), pindex.parent());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    model->removeRow(getProject()->getSolver()->getModelIndex().row(), project->getModelIndex());
-    if(getProject()->getSolver()->getFileItem())
+    model->removeRow(project->getSolver()->getModelIndex().row(), project->getModelIndex());
+    if(project->getSolver()->getFileItem())
       E(embedele)->removeAttribute("href");
     else
-      getProject()->getSolver()->removeXMLElement(false);
+      project->getSolver()->removeXMLElement(false);
     Solver *solver = Embed<Solver>::create(data.mele,project);
     if(not solver) {
       QMessageBox::warning(0, "Import", "Cannot import file.");
@@ -2560,7 +2564,7 @@ namespace MBSimGUI {
     }
     project->setSolver(solver);
     solver->create();
-    model->createSolverItem(solver,getProject()->getModelIndex());
+    model->createSolverItem(solver,project->getModelIndex());
     elementView->selectionModel()->setCurrentIndex(solver->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(data.mfileitem or not solver->getEmbedXMLElement()) {
       if(not solver->getEmbedXMLElement()) solver->setEmbedXMLElement(embedele);
@@ -2591,8 +2595,8 @@ namespace MBSimGUI {
             setProjectChanged(true);
           editor->fromWidget();
           element->clear();
-          QModelIndex index = element->getModelIndex();
           auto *model = static_cast<ElementTreeModel*>(elementView->model());
+          QModelIndex index = model->findItem(element,project->getModelIndex());
           model->removeRows(0,model->rowCount(index),index);
           element->create();
           model->updateElementItem(static_cast<Element*>(element));
@@ -2611,8 +2615,8 @@ namespace MBSimGUI {
           setProjectChanged(true);
         editor->fromWidget();
         element->clear();
-        QModelIndex index = element->getModelIndex();
         auto *model = static_cast<ElementTreeModel*>(elementView->model());
+	QModelIndex index = model->findItem(element,project->getModelIndex());
         model->removeRows(0,model->rowCount(index),index);
         element->create();
         model->updateElementItem(static_cast<Element*>(element));
@@ -2959,8 +2963,9 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeFile(FileItemData *fileItem) {
-    QModelIndex index = fileItem->getModelIndex();
-    fileView->model()->removeRow(index.row(), QModelIndex());
+    auto *model = static_cast<FileTreeModel*>(fileView->model());
+    QModelIndex index = model->findItem(fileItem,QModelIndex());
+    fileView->model()->removeRow(index.row(),QModelIndex());
     for(auto it = file.begin(); it != file.end(); ++it) {
       if(*it==fileItem) {
         file.erase(it);
