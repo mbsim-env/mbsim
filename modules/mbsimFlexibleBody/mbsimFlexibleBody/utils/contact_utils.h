@@ -20,6 +20,8 @@
 #ifndef _MBSIMFLEXIBLEBODY_CONTACT_UTILS_H_
 #define _MBSIMFLEXIBLEBODY_CONTACT_UTILS_H_
 
+#include <typeinfo>
+
 namespace MBSim {
   class ContactKinematics;
 }

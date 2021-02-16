@@ -23,11 +23,11 @@
 #include "mbsim/group.h"
 #include "fmatvec/sparse_matrix.h"
 #include "mbsim/functions/function.h"
+#include "mbsim/environment.h"
 
 namespace MBSim {
 
   class Graph;
-  class Environment;
   class MBSimEnvironment;
 
   struct StateTable {

@@ -24,6 +24,7 @@
 
 #include "mbsim/utils/boost_parameters.h"
 #include <mbsim/utils/openmbv_utils.h>
+#include <openmbvcppinterface/cuboid.h>
 
 namespace MBSim {
 
