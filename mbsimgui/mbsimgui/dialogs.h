@@ -97,7 +97,7 @@ namespace MBSimGUI {
       void selectRow(int);
       void selectMode(int row, int col);
       QTableWidget *table;
-      DataPlot *plot;
+      DataPlot *plotAmp, *plotPhase;
   };
 
   class HarmonicResponseDialog : public QDialog {

@@ -219,16 +219,20 @@ namespace MBSimGUI {
     }
     is.close();
 
-    QVBoxLayout *layout = new QVBoxLayout;
+    auto *layout = new QGridLayout;
     setLayout(layout);
     table = new QTableWidget(f.size(),5);
-    layout->addWidget(table);
+    layout->addWidget(table,0,0);
+    layout->setRowStretch(0,2);
+    layout->setRowStretch(1,2);
+    layout->setRowStretch(2,1);
     QStringList labels;
     labels << "Mode number" << "Frequency" << "Exponential decay" << "Angular frequency" << "Damping ratio";
     table->setHorizontalHeaderLabels(labels);
     int n = name.size();
     QVector<double> m(name.size());
     QVector<QVector<double>> A(f.size(),QVector<double>(n));
+    QVector<QVector<double>> phi(f.size(),QVector<double>(n));
     for(int k=0; k<n; k++)
       m[k] = k+1;
     for(int i=0; i<f.size(); i++) {
@@ -238,28 +242,34 @@ namespace MBSimGUI {
       table->setItem(i, 2, new QTableWidgetItem(QString::number(-w(j).real())));
       table->setItem(i, 3, new QTableWidgetItem(QString::number(w(j).imag())));
       table->setItem(i, 4, new QTableWidgetItem(QString::number(-w(j).real()/w(j).imag())));
-      double max = fabs(V(n,j).real());
-      int ind = 0;
-      for(int k=1; k<n; k++) {
-        if(fabs(V(n+k,j).real())>max) {
-          max = fabs(V(n+k,j).real());
-          ind= k;
-        }
+      double max = abs(V(0,j));
+      for(int k=1; k<V.rows()/2; k++) {
+        if(abs(V(k,j))>max) {
+          max = abs(V(k,j));
+	}
       }
-      for(int k=0; k<n; k++)
-        A[i][k] = V(k+n,j).real()/V(ind+n,j).real();
+      for(int k=0; k<V.rows()/2; k++) {
+        A[i][k] = abs(V(k,j))/max;
+        phi[i][k] = atan2(V(k,j).real(),-V(k,j).imag())*180/M_PI;
+      }
     }
     table->resizeColumnsToContents();
     if(f.size()) {
       table->selectRow(0);
-      plot = new DataPlot(m,A,"Mode number", "Mode shape", "DOF number", "Relative amplitude", this);
-      layout->addWidget(plot);
-      plot->setSymbol(QwtSymbol::Diamond,10);
-      plot->setAxisScale(QwtPlot::xBottom,1-0.1,n+0.1,1);
-      plot->setAxisScale(QwtPlot::yLeft,-1.1,1.1);
-      plot->replot();
+      plotAmp = new DataPlot(m,A,"Mode number", "", "DOF number", "Amplitude", this);
+      layout->addWidget(plotAmp,0,1);
+      plotAmp->setSymbol(QwtSymbol::Diamond,10);
+      plotAmp->setAxisScale(QwtPlot::xBottom,1-0.1,n+0.1,1);
+      plotAmp->setAxisScale(QwtPlot::yLeft,-1.1,1.1);
+      plotAmp->replot();
+      plotPhase = new DataPlot(m,phi,"Mode number", "", "DOF number", "Phase", this);
+      layout->addWidget(plotPhase,1,1);
+      plotPhase->setSymbol(QwtSymbol::Diamond,10);
+      plotPhase->setAxisScale(QwtPlot::xBottom,1-0.1,n+0.1,1);
+      plotPhase->setAxisScale(QwtPlot::yLeft,-181,181,45);
+      plotPhase->replot();
       QTreeWidget *stateTable = new QTreeWidget;
-      layout->addWidget(stateTable);
+      layout->addWidget(stateTable,1,0);
       stateTable->setHeaderLabels(QStringList{"DOF number","Element name","Element DOF number"});
       for(unsigned int i=0; i<name.size(); i++) {
         auto *item = new QTreeWidgetItem;
@@ -270,10 +280,11 @@ namespace MBSimGUI {
       }
       stateTable->resizeColumnToContents(1);
       QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
-      layout->addWidget(buttonBox);
+      layout->addWidget(buttonBox,2,0,1,2);
       buttonBox->addButton(QDialogButtonBox::Ok);
       connect(buttonBox, &QDialogButtonBox::accepted, this, &EigenanalysisDialog::accept);
-      connect(plot, &DataPlot::numChanged, this, &EigenanalysisDialog::selectRow);
+      connect(plotAmp, &DataPlot::numChanged, this, &EigenanalysisDialog::selectRow);
+      connect(plotPhase, &DataPlot::numChanged, this, &EigenanalysisDialog::selectRow);
       connect(table, &QTableWidget::cellClicked, this, &EigenanalysisDialog::selectMode);
     }
   }
@@ -282,12 +293,16 @@ namespace MBSimGUI {
     table->blockSignals(true);
     table->selectRow(i-1);
     table->blockSignals(false);
+    selectMode(i-1,0);
   }
 
   void EigenanalysisDialog::selectMode(int row, int col) {
-    plot->blockSignals(true);
-    plot->changeNum(row+1);
-    plot->blockSignals(false);
+    plotAmp->blockSignals(true);
+    plotAmp->changeNum(row+1);
+    plotAmp->blockSignals(false);
+    plotPhase->blockSignals(true);
+    plotPhase->changeNum(row+1);
+    plotPhase->blockSignals(false);
   }
 
   HarmonicResponseDialog::HarmonicResponseDialog(QWidget *parent) : QDialog(parent) {
