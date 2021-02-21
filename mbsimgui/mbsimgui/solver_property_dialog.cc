@@ -1165,4 +1165,24 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  LTISystemExporterPropertyDialog::LTISystemExporterPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
+    addTab("General");
+    addTab("Initial conditions");
+
+    time = new ExtWidget("Time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"time");
+    addToTab("General", time);
+  }
+
+  DOMElement* LTISystemExporterPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    time->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* LTISystemExporterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SolverPropertyDialog::writeXMLFile(item->getXMLElement());
+    time->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
 }

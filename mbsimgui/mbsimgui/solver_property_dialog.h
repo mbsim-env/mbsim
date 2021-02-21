@@ -317,6 +317,16 @@ namespace MBSimGUI {
       ExtWidget *startTime, *excitationFrequencies, *systemFrequencies, *plotStepSize, *initialState, *task;
   };
 
+  class LTISystemExporterPropertyDialog : public SolverPropertyDialog {
+
+    public:
+      LTISystemExporterPropertyDialog(Solver *solver);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *time;
+  };
+
 }
 
 #endif
