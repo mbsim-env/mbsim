@@ -19,7 +19,8 @@ libmbsimControl_la_SOURCES = \
   signal_function.cc\
   extern_signal_sink.cc\
   frame_chaser_observer.cc \
-  signal_observer.cc
+  signal_observer.cc \
+  lti_system_exporter.cc
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
 libmbsimControl_la_LIBADD = $(DEPS_LIBS)
@@ -45,7 +46,8 @@ mbsimControlinclude_HEADERS = \
   massless_spring_damper.h\
   signal_function.h\
   frame_chaser_observer.h \
-  signal_observer.h
+  signal_observer.h \
+  lti_system_exporter.h
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk
 install-exec-hook: deplibs.target
