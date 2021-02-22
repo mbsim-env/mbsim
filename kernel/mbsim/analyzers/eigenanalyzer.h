@@ -44,7 +44,7 @@ namespace MBSim {
       /**
        * \brief Perform an eigenanalysis of the system
        */
-      void execute();
+      void execute() override;
 
       /**
        * \brief Set the initial deviation of the equilibrium
@@ -96,7 +96,7 @@ namespace MBSim {
 
       void setTask(Task task_) { task = task_; }
 
-      const fmatvec::Vec& getInitialState() const { return zEq; }
+      const fmatvec::Vec& getInitialState() const override { return zEq; }
 
       /**
        * \brief Get the eigenvalues
@@ -116,7 +116,7 @@ namespace MBSim {
        */
       fmatvec::Vec getEigenfrequencies() const;
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
 
