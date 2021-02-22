@@ -105,7 +105,7 @@ namespace MBSimGUI {
       QProcess process;
       OpenMBVGUI::MainWindow *inlineOpenMBVMW;
       boost::filesystem::path uniqueTempDir;
-      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionHarmonicResponseAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveEigenanalysisAs, *actionSaveHarmonicResponseAnalysisAs, *actionUndo, *actionRedo;
+      QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionEigenanalysis, *actionHarmonicResponseAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveEigenanalysisAs, *actionSaveHarmonicResponseAnalysisAs, *actionSaveLTISystemDataAs, *actionUndo, *actionRedo;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
       QTime statusTime;
@@ -151,6 +151,7 @@ namespace MBSimGUI {
       void saveStateTableAs();
       void saveEigenanalysisAs();
       void saveHarmonicResponseAnalysisAs();
+      void saveLTISystemDataAs();
       void help();
       void about();
       void simulate();
@@ -261,6 +262,9 @@ namespace MBSimGUI {
       void saveStateTable(const QString &file);
       void saveEigenanalysis(const QString &file);
       void saveHarmonicResponseAnalysis(const QString &file);
+      void saveInputTable(const QString &file);
+      void saveOutputTable(const QString &file);
+      void saveLTISystem(const QString &file);
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
       void exportParameters();

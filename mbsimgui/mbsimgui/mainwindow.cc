@@ -29,6 +29,7 @@
 #include "observer.h"
 #include "integrator.h"
 #include "analyzer.h"
+#include "exporter.h"
 #include "objectfactory.h"
 #include "parameter.h"
 #include "widget.h"
@@ -236,6 +237,7 @@ namespace MBSimGUI {
     actionSaveStateTableAs = menu->addAction("Export state table", this, &MainWindow::saveStateTableAs);
     actionSaveEigenanalysisAs = menu->addAction("Export eigenanalysis", this, &MainWindow::saveEigenanalysisAs);
     actionSaveHarmonicResponseAnalysisAs = menu->addAction("Export harmonic response analysis", this, &MainWindow::saveHarmonicResponseAnalysisAs);
+    actionSaveLTISystemDataAs = menu->addAction("Export LTI system data", this, &MainWindow::saveLTISystemDataAs);
     menuBar()->addMenu(menu);
 
     auto dialog = new QDialog(this);
@@ -419,22 +421,26 @@ namespace MBSimGUI {
             saveStateVector(autoExportDir+"/statevector.asc");
         }
         actionSaveDataAs->setDisabled(false);
-        actionSaveMBSimH5DataAs->setDisabled(false);
-        actionSaveOpenMBVDataAs->setDisabled(false);
-        if(saveFinalStateVector)
-          actionSaveStateVectorAs->setDisabled(false);
-        actionSaveStateTableAs->setDisabled(false);
-        if(dynamic_cast<Eigenanalyzer*>(project->getSolver())) {
-          actionSaveEigenanalysisAs->setDisabled(false);
-          actionEigenanalysis->setDisabled(false);
-        }
-        if(dynamic_cast<HarmonicResponseAnalyzer*>(project->getSolver())) {
-          actionSaveHarmonicResponseAnalysisAs->setDisabled(false);
-          actionHarmonicResponseAnalysis->setDisabled(false);
-        }
-        actionOpenMBV->setDisabled(false);
-        actionH5plotserie->setDisabled(false);
-        actionStateTable->setDisabled(false);
+	actionSaveStateTableAs->setDisabled(false);
+	actionStateTable->setDisabled(false);
+	if(dynamic_cast<LTISystemExporter*>(project->getSolver()))
+          actionSaveLTISystemDataAs->setDisabled(false);
+	else {
+	  actionSaveMBSimH5DataAs->setDisabled(false);
+	  actionSaveOpenMBVDataAs->setDisabled(false);
+	  if(saveFinalStateVector)
+	    actionSaveStateVectorAs->setDisabled(false);
+	  if(dynamic_cast<Eigenanalyzer*>(project->getSolver())) {
+	    actionSaveEigenanalysisAs->setDisabled(false);
+	    actionEigenanalysis->setDisabled(false);
+	  }
+	  else if(dynamic_cast<HarmonicResponseAnalyzer*>(project->getSolver())) {
+	    actionSaveHarmonicResponseAnalysisAs->setDisabled(false);
+	    actionHarmonicResponseAnalysis->setDisabled(false);
+	  }
+	  actionOpenMBV->setDisabled(false);
+	  actionH5plotserie->setDisabled(false);
+	}
       }
       else {
         setExitBad();
@@ -661,6 +667,7 @@ namespace MBSimGUI {
       actionSaveStateTableAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
       actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
+      actionSaveLTISystemDataAs->setDisabled(true);
       actionSaveProject->setDisabled(true);
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
@@ -717,6 +724,7 @@ namespace MBSimGUI {
       actionSaveStateTableAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
       actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
+      actionSaveLTISystemDataAs->setDisabled(true);
       actionSaveProject->setDisabled(false);
       projectFile = QDir::current().relativeFilePath(fileName);
       setCurrentProjectFile(fileName);
@@ -1005,6 +1013,39 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/harmonic_response_analysis.mat",file);
   }
 
+  void MainWindow::saveLTISystemDataAs() {
+    QString dir = QFileDialog::getExistingDirectory(this, "Export LTI system data", getProjectPath());
+    if(dir != "") {
+      QDir directory(dir);
+      QMessageBox::StandardButton ret = QMessageBox::Ok;
+      if(directory.count()>2)
+        ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
+      if(ret == QMessageBox::Ok) {
+	saveInputTable(dir+"/inputtable.asc");
+	saveOutputTable(dir+"/outputtable.asc");
+	saveLTISystem(dir+"/lti_system.mat");
+      }
+    }
+  }
+
+  void MainWindow::saveInputTable(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/inputtable.asc",file);
+  }
+
+  void MainWindow::saveOutputTable(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/outputtable.asc",file);
+  }
+
+  void MainWindow::saveLTISystem(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/lti_system.mat",file);
+  }
+
   void MainWindow::mbsimxml(int task) {
     currentTask = task;
 
@@ -1029,6 +1070,7 @@ namespace MBSimGUI {
       actionSaveStateTableAs->setDisabled(true);
       actionSaveEigenanalysisAs->setDisabled(true);
       actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
+      actionSaveLTISystemDataAs->setDisabled(true);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionEigenanalysis->setDisabled(true);
