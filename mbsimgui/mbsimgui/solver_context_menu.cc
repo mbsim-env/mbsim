@@ -21,6 +21,7 @@
 #include "solver_context_menu.h"
 #include "integrator.h"
 #include "analyzer.h"
+#include "exporter.h"
 #include "mainwindow.h"
 
 namespace MBSimGUI {
@@ -51,6 +52,11 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new HarmonicResponseAnalyzer); });
     analyzers->addAction(action);
     addMenu(analyzers);
+    QMenu *exporters = new QMenu("Select exporter", this);
+    action = new QAction("Select LTI system exporter", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new LTISystemExporter); });
+    exporters->addAction(action);
+    addMenu(exporters);
     QMenu *integrators = new QMenu("Select integrator", this);
     action = new QAction("Select Boost odeint DOS RKDOPRI5", this);
     connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new BoostOdeintDOS_RKDOPRI5); });
