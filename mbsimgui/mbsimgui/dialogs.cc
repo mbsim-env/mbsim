@@ -164,7 +164,10 @@ namespace MBSimGUI {
     QModelIndex index1 = findTreeItemData(eleList->model()->index(0,0),selection);
     QModelIndex index2 = mw->getElementView()->selectionModel()->currentIndex().parent().parent();
     eleList->setCurrentIndex(index1.isValid()?index1:index2);
-    if(selection) mw->highlightObject(selection->getID());
+    if(selection) {
+      mw->highlightObject(selection->getID());
+      okButton->setDisabled(false);
+    }
   }
 
   void BasicElementBrowser::hideEvent(QHideEvent *event) {
