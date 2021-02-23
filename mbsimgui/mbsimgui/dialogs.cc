@@ -246,12 +246,12 @@ namespace MBSimGUI {
       table->setItem(i, 3, new QTableWidgetItem(QString::number(w(j).imag())));
       table->setItem(i, 4, new QTableWidgetItem(QString::number(-w(j).real()/w(j).imag())));
       double max = abs(V(0,j));
-      for(int k=1; k<V.rows()/2; k++) {
+      for(int k=1; k<n; k++) {
         if(abs(V(k,j))>max) {
           max = abs(V(k,j));
 	}
       }
-      for(int k=0; k<V.rows()/2; k++) {
+      for(int k=0; k<n; k++) {
         A[i][k] = abs(V(k,j))/max;
         phi[i][k] = atan2(V(k,j).real(),-V(k,j).imag())*180/M_PI;
       }
