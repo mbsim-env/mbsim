@@ -92,11 +92,11 @@ namespace MBSim {
        * \brief Set the initital state for the analysis
        * \param z0 The initital state
        */
-      void setInitialState(const fmatvec::Vec &z0) { zEq <<= z0; }
+      void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
 
       void setTask(Task task_) { task = task_; }
 
-      const fmatvec::Vec& getInitialState() const override { return zEq; }
+      const fmatvec::Vec& getInitialState() const override { return z0; }
 
       /**
        * \brief Get the eigenvalues
@@ -120,7 +120,7 @@ namespace MBSim {
 
     protected:
 
-      fmatvec::Vec zEq, deltaz0;
+      fmatvec::Vec z0, zEq, deltaz0;
       fmatvec::SqrMat A_;
       double tStart, tEnd, dtPlot, A;
       int loops, plotsPerLoop;

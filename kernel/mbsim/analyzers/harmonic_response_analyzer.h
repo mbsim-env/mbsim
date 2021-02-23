@@ -66,7 +66,7 @@ namespace MBSim {
        * \brief Set the initital state for the analysis
        * \param z0 The initital state
        */
-      void setInitialState(const fmatvec::Vec &z0) { zEq <<= z0; }
+      void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
 
       void setTask(Task task_) { task = task_; }
 
@@ -82,7 +82,7 @@ namespace MBSim {
 
     protected:
 
-      fmatvec::Vec zEq, zh;
+      fmatvec::Vec z0, zEq, zh;
       fmatvec::VecV fE, fS;
       fmatvec::Mat Zh;
       double tStart, dtPlot;
