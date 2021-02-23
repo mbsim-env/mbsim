@@ -192,6 +192,13 @@ namespace MBSimControl {
         os << endl;
       }
       os << endl;
+      os << "# name: " << "z" << endl;
+      os << "# type: " << "matrix" << endl;
+      os << "# rows: " << zEq.size() << endl;
+      os << "# columns: " << 1 << endl;
+      for(int i=0; i<zEq.size(); i++)
+        os << setw(28) << zEq.e(i) << endl;
+      os << endl;
       os.close();
     }
   }
