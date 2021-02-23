@@ -51,10 +51,20 @@ namespace MBSimControl {
 	nsink += sink[sink.size()-1]->getSignalSize();
       }
     }
-    if(not(zEq.size()))
+    if(not(z0.size()))
       zEq <<= system->evalz0();
-    else if(zEq.size()!=system->getzSize()+system->getisSize())
-      throwError(string("(LTISystemExporter::computeEigenvalues): size of z0 does not match, must be ") + to_string(system->getzSize()));
+    else {
+      if(z0.size()!=system->getzSize()+system->getisSize())
+	throwError(string("(LTISystemExporter::execute): size of z0 does not match, must be ") + to_string(system->getzSize()));
+      zEq <<= z0(RangeV(0,system->getzSize()-1));
+      system->setcuris(z0(RangeV(system->getzSize(),z0.size()-1)));
+    }
+
+    if(not(u0.size()))
+      u0.resize(nsource);
+    else if(u0.size()!=nsource) {
+      throwError(string("(LTISystemExporter::execute): size of u0 does not match, must be ") + to_string(nsource));
+    }
 
     SqrMat A(system->getzSize(),NONINIT);
     Mat B(system->getzSize(),nsource,NONINIT);
@@ -63,6 +73,15 @@ namespace MBSimControl {
 
     system->setTime(t);
     system->setState(zEq);
+    int l=0;
+    for(size_t i=0; i<source.size(); i++) {
+      Vec sigso(source[i]->getSignalSize());
+      for(int k=0; k<source[i]->getSignalSize(); k++) {
+	sigso(k) = u0(l);
+	source[i]->setSignal(sigso);
+	l++;
+      }
+    }
     system->resetUpToDate();
     system->computeInitialCondition();
     zEq = system->getState();
@@ -82,24 +101,24 @@ namespace MBSimControl {
       system->getState()(i) = ztmp;
     }
 
-    int l=0;
+    l=0;
     for(size_t i=0; i<source.size(); i++) {
       Vec sigso(source[i]->getSignalSize());
       for(int k=0; k<source[i]->getSignalSize(); k++) {
-	sigso(k) = 1;
+	sigso(k) = u0(l) + epsroot;
 	source[i]->setSignal(sigso);
 	system->resetUpToDate();
 	Vec zd1 = system->evalzd();
-	B.set(l, zd1 - zd0);
+	B.set(l, (zd1 - zd0) / epsroot);
 	j=0;
-	for(size_t l=0; l<sink.size(); l++) {
-	  sigsi1.set(RangeV(j,j+sink[l]->getSignalSize()-1), sink[l]->evalSignal());
-	  j+=sink[l]->getSignalSize();
+	for(size_t m=0; m<sink.size(); m++) {
+	  sigsi1.set(RangeV(j,j+sink[m]->getSignalSize()-1), sink[m]->evalSignal());
+	  j+=sink[m]->getSignalSize();
 	}
-	D.set(l, sigsi1 - sigsi0);
-	l++;
-	sigso(k) = 0;
+	D.set(l, (sigsi1 - sigsi0) / epsroot);
+	sigso(k) = u0(l);
 	source[i]->setSignal(sigso);
+	l++;
       }
     }
     for(int i=0; i<system->getzSize(); i++) {
@@ -179,8 +198,12 @@ namespace MBSimControl {
 
   void LTISystemExporter::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"time");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"time");
     if(e) setTime(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"initialState");
+    if(e) setInitialState(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"initialInput");
+    if(e) setInitialInput(E(e)->getText<fmatvec::Vec>());
   }
 
 }

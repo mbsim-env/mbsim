@@ -32,13 +32,14 @@ namespace MBSimControl {
     public:
       LTISystemExporter() { }
       void execute() override;
-      void setInitialState(const fmatvec::Vec &z0) { zEq <<= z0; }
-      const fmatvec::Vec& getInitialState() const override { return zEq; }
+      void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
+      void setInitialInput(const fmatvec::Vec &u0_) { u0 <<= u0_; }
+      const fmatvec::Vec& getInitialState() const override { return z0; }
       void setTime(double t_) { t=t_; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
-      fmatvec::Vec zEq;
+      fmatvec::Vec z0, zEq, u0;
       double t{0};
   };
 

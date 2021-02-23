@@ -1171,17 +1171,27 @@ namespace MBSimGUI {
 
     time = new ExtWidget("Time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"time");
     addToTab("General", time);
+
+    initialState = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
+    addToTab("Initial conditions", initialState);
+
+    initialInput = new ExtWidget("Initial input",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialInput");
+    addToTab("Initial conditions", initialInput);
   }
 
   DOMElement* LTISystemExporterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
     time->initializeUsingXML(item->getXMLElement());
+    initialState->initializeUsingXML(item->getXMLElement());
+    initialInput->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* LTISystemExporterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SolverPropertyDialog::writeXMLFile(item->getXMLElement());
     time->writeXMLFile(item->getXMLElement());
+    initialState->writeXMLFile(item->getXMLElement());
+    initialInput->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 

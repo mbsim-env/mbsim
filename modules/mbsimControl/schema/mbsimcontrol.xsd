@@ -1042,6 +1042,16 @@
                 Zeitpunkt, zu dem das System linearisiert werden soll.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="initialState" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Anfangszustand.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialInput" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Startwerte der Eingangsgrößen
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
