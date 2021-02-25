@@ -412,7 +412,6 @@ namespace MBSim {
         // write openmbv files
         openMBVGrp->write(true, truncateSimulationFiles);
       }
-      H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
     }
     else
@@ -1216,14 +1215,14 @@ namespace MBSim {
   void DynamicSystemSolver::sigAbortHandler(int) {
     signal(SIGABRT, SIG_DFL);
     msgStatic(Info) << "MBSim: Received abort signal! Flushing HDF5 files (this may crash) and abort!" << endl;
-    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
+//mfmf    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
     raise(SIGABRT);
   }
 
   void DynamicSystemSolver::sigSegfaultHandler(int) {
     signal(SIGSEGV, SIG_DFL);
     msgStatic(Info) << "MBSim: Received segmentation fault signal! Flushing HDF5 files (this may crash again) and abort!" << endl;
-    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
+//mfmf    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
     raise(SIGSEGV);
   }
 
@@ -1233,11 +1232,11 @@ namespace MBSim {
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
       msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
-      H5::File::flushAllFiles(); // flush files
+//mfmf      H5::File::flushAllFiles(); // flush files
       integratorExitRequest = true;
     }
 
-    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
+//mfmf    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
   }
 
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {

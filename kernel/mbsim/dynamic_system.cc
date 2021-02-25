@@ -461,6 +461,10 @@ namespace MBSim {
           openMBVGrp->setSeparateFile(true);
       }
     }
+    else if (stage == unknownStage) {
+      if(hdf5File)
+        hdf5File->reopenAsSWMR();
+    }
 
     for (auto & i : frame)
       i->init(stage, config);
