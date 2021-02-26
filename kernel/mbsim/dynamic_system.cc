@@ -463,7 +463,7 @@ namespace MBSim {
     }
     else if (stage == unknownStage) {
       if(hdf5File)
-        hdf5File->reopenAsSWMR();
+        hdf5File->enableSWMR();
     }
 
     for (auto & i : frame)
