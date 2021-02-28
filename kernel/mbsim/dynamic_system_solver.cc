@@ -1585,6 +1585,7 @@ namespace MBSim {
     solveDirectly = not(useConstraintSolverForPlot);
     if (inverseKinetics) updatelaInverseKinetics();
     Group::plot();
+    hdf5File->flush();//mfmf temporary workaround
   }
 
   const Vec& DynamicSystemSolver::evalsv() {
