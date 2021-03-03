@@ -393,6 +393,7 @@ namespace MBSim {
       Group::init(stage, config);
     }
     else if (stage == plotting) {
+      firstPlot=true;
       msg(Info) << "  initialising plot-files ..." << endl;
       Group::init(stage, config);
       if (plotFeature[openMBV]) {
@@ -1585,6 +1586,12 @@ namespace MBSim {
     solveDirectly = not(useConstraintSolverForPlot);
     if (inverseKinetics) updatelaInverseKinetics();
     Group::plot();
+    if(firstPlot) {
+      // we enable SWMR after the frist plot to ensure that readers see at least the initial plot step
+      firstPlot=false;
+      hdf5File->enableSWMR();
+      openMBVGrp->enableSWMR();
+    }
     hdf5File->flush();//mfmf temporary workaround
   }
 

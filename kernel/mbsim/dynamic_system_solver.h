@@ -892,6 +892,8 @@ namespace MBSim {
 
       std::vector<std::unique_ptr<Environment>> environments;
       MBSimEnvironment *mbsimEnvironment = nullptr;
+
+      bool firstPlot { true };
   };
 
   template<class Env>
