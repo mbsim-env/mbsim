@@ -509,7 +509,6 @@ namespace MBSimGUI {
     feature.push_back(MBSIM%"openMBV");
     feature.push_back(MBSIM%"plotRecursive");
     feature.push_back(MBSIM%"position");
-    feature.push_back(MBSIM%"separateFilePerGroup");
     feature.push_back(MBSIMCONTROL%"signal");
     feature.push_back(MBSIM%"velocity");
 

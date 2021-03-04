@@ -84,7 +84,7 @@ namespace MBSim {
           plotVector.push_back(getAngularAcceleration()(i));
       }
     }
-    if(plotFeature[openMBV] and openMBVFrame && !openMBVFrame->isHDF5Link()) {
+    if(plotFeature[openMBV] and openMBVFrame) {
       vector<double> data;
       data.push_back(getTime());
       data.push_back(evalPosition()(0));

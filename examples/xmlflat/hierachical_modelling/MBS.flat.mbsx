@@ -175,7 +175,6 @@
         <observers/>
       </Group>
       <Group name="Hauptgruppe2">
-        <plotFeature value="separateFilePerGroup">true</plotFeature>
         <frameOfReference ref="../Frame[Q]"/>
         <frames>
           <FixedRelativeFrame name="Q">

@@ -395,7 +395,21 @@ namespace MBSim {
     else if (stage == plotting) {
       firstPlot=true;
       msg(Info) << "  initialising plot-files ..." << endl;
+
+      // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
+      // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
+      // We can walk to the top here since stage plotting is done before reorganizeHierarchy.
+      string fileName="mbsh5";
+      const DynamicSystem *ds=this;
+      while(ds) {
+        fileName=ds->getName()+"."+fileName;
+        ds=static_cast<const DynamicSystem*>(ds->getParent());
+      }
+      // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
+      hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
+
       Group::init(stage, config);
+
       if (plotFeature[openMBV]) {
         // add MBSimEnvironment OpenMBV objects
         auto envs=getMBSimEnvironment()->getOpenMBVObjects();
@@ -404,8 +418,6 @@ namespace MBSim {
           openmbvEnv->setName("environments");
           openMBVGrp->addObject(openmbvEnv);
           for(auto env : envs) {
-            if(auto grp=dynamic_pointer_cast<OpenMBV::Group>(env))
-              grp->setSeparateFile(false);
             env->setEnvironment(true);
             openmbvEnv->addObject(env);
           }
@@ -1311,8 +1323,6 @@ namespace MBSim {
     integratorExitRequest = false;
     plotFeature[plotRecursive] = true;
     plotFeatureForChildren[plotRecursive] = true;
-    plotFeature[separateFilePerGroup] = true;
-    plotFeatureForChildren[separateFilePerGroup] = false;
     plotFeature[openMBV] = true;
     plotFeatureForChildren[openMBV] = true;
   }
@@ -1589,8 +1599,10 @@ namespace MBSim {
     if(firstPlot) {
       // we enable SWMR after the frist plot to ensure that readers see at least the initial plot step
       firstPlot=false;
-      hdf5File->enableSWMR();
-      openMBVGrp->enableSWMR();
+      if(hdf5File)
+        hdf5File->enableSWMR();
+      if(openMBVGrp)
+        openMBVGrp->enableSWMR();
     }
     hdf5File->flush();//mfmf temporary workaround
   }

@@ -23,7 +23,6 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   Group2 *group2 = new Group2("Hauptgruppe2");
   group2->setPlotFeatureRecursive(derivativeOfGeneralizedPosition, true);
   group2->setPlotFeatureRecursive(generalizedAcceleration, true);
-  group2->setPlotFeature(separateFilePerGroup, true);
   Vec r(3);
   r(0) = 2;
   SqrMat A(3);
