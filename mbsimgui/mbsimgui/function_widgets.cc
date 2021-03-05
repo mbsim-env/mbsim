@@ -244,7 +244,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",retDim,0,retType),false,false,MBSIM%"components");
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",retDim,0,retType==varVec?false:true),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 
