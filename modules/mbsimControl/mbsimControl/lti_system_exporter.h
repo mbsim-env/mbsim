@@ -35,7 +35,7 @@ namespace MBSimControl {
       void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
       void setInitialInput(const fmatvec::Vec &u0_) { u0 <<= u0_; }
       const fmatvec::Vec& getInitialState() const override { return z0; }
-      void setTime(double t_) { t=t_; }
+      void setInitialTime(double t_) { t=t_; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:

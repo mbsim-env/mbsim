@@ -205,8 +205,8 @@ namespace MBSimControl {
 
   void LTISystemExporter::initializeUsingXML(DOMElement *element) {
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"time");
-    if(e) setTime(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"initialTime");
+    if(e) setInitialTime(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"initialState");
     if(e) setInitialState(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"initialInput");
