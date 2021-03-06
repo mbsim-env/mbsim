@@ -410,10 +410,6 @@ namespace MBSim {
 
         plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write(string("Object of class: ")+boost::core::demangle(typeid(*this).name()));
         plotVectorSerie = nullptr;
-
-        auto *file=dynamic_cast<H5::File*>(plotGroup);
-        if(file)
-          file->flush();
       }
       if (plotFeature[openMBV]) {
         openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
