@@ -188,14 +188,18 @@ ret = 0;</scalarParameter>
     </DynamicSystemSolver>
   </Embed>
 
-  <Eigenanalyzer xmlns="http://www.mbsim-env.de/MBSim">
-    <startTime unit="s">0</startTime>
-    <endTime unit="s">1</endTime>
+  <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
+    <visualizeNaturalModeShapes>
+      <naturalModeScale>
+        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <ele>10</ele>
+          <ele>10</ele>
+        </xmlVector>
+      </naturalModeScale>
+    </visualizeNaturalModeShapes>
     <plotStepSize unit="s">1e-2</plotStepSize>
-    <task>"eigenmodes"</task>
-    <amplitude>0</amplitude>
-    <modeAmplitudeTable>[2,10]</modeAmplitudeTable>
     <loops>1</loops>
-  </Eigenanalyzer>
+  </LinearSystemAnalyzer>
+
 
 </MBSimProject>

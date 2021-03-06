@@ -1,9 +1,10 @@
 #include "system.h"
-#include <mbsim/analyzers/harmonic_response_analyzer.h>
-#include "mbsim/utils/eps.h"
+#include "mbsim/functions/constant_function.h"
+#include "mbsimControl/linear_system_analyzer.h"
 
 using namespace std;
 using namespace MBSim;
+using namespace MBSimControl;
 using namespace fmatvec;
 
 double f = 2;
@@ -15,13 +16,14 @@ int main (int argc, char* argv[]) {
   sys->setDetermineEquilibriumState(true);
   sys->initialize();
 
-  HarmonicResponseAnalyzer analyzer;
+  LinearSystemAnalyzer analyzer;
   Vec z0(sys->getzSize());
   Vec freq(50);
   for(int i=0; i<freq.size(); i++)
     freq(i) = 0.1 + i*0.1;
   analyzer.setExcitationFrequencies(freq);
-  analyzer.setSystemFrequencies(VecV(1,INIT,f));
+  analyzer.setExcitationAmplitudeFunction(new ConstantFunction<VecV(double)>(10));
+  analyzer.visualizeFrequencyResponse(_minimumExcitationFrequency=1.5,_maximumExcitationFrequency=2);
   analyzer.setSystem(sys);
   analyzer.execute();
 

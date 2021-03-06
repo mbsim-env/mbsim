@@ -2,7 +2,10 @@
 <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="freq" unit="-">1</scalarParameter>
-    </Parameter>
+    <scalarParameter name="cR">400e3</scalarParameter>
+    <scalarParameter name="dR">200</scalarParameter>
+    <scalarParameter name="A">0.02</scalarParameter>
+  </Parameter>
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
     <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -14,13 +17,10 @@
         <scalarParameter name="l0" unit="-">0.25</scalarParameter>
         <scalarParameter name="R">0.3</scalarParameter>
         <scalarParameter name="l0R">R</scalarParameter>
-        <scalarParameter name="A">0.02</scalarParameter>
         <scalarParameter name="mA">500</scalarParameter>
         <scalarParameter name="mR">30</scalarParameter>
         <scalarParameter name="cA">250e3</scalarParameter>
         <scalarParameter name="dA">2000</scalarParameter>
-        <scalarParameter name="cR">400e3</scalarParameter>
-        <scalarParameter name="dR">200</scalarParameter>
     </Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
         <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
@@ -107,7 +107,8 @@
                 </xmlVector>
               </relativePosition>
             </FixedRelativeFrame>
-          </frames>  <contours/>
+          </frames>
+            <contours/>
             <openMBVRigidBody>
               <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="CompoundRigidBody3">
                 <transparency unit="-">0.3</transparency>
@@ -307,41 +308,19 @@
                   <ele>0.01</ele>
                   <ele>0</ele>
                   <ele>0</ele>
-              </row>
+                </row>
                 <row>
                   <ele>0</ele>
                   <ele>0.01</ele>
                   <ele>0</ele>
-              </row>
+                </row>
                 <row>
                   <ele>0</ele>
                   <ele>0</ele>
                   <ele>0.01</ele>
-              </row>
-            </xmlMatrix>
-          </inertiaTensor>
-            <timeDependentTranslation>
-              <CompositeFunction>
-                <outerFunction>
-                  <TranslationAlongYAxis/>
-              </outerFunction>
-                <innerFunction>
-                  <PiecewiseDefinedFunction>
-                    <limitedFunctions>
-                      <LimitedFunction>
-                        <function>
-                          <SinusoidalFunction>
-                            <amplitude>A</amplitude>
-                            <frequency>freq</frequency>
-                        </SinusoidalFunction>
-                      </function>
-                        <limit>100</limit>
-                    </LimitedFunction>
-                  </limitedFunctions>
-                </PiecewiseDefinedFunction>
-              </innerFunction>
-            </CompositeFunction>
-          </timeDependentTranslation>
+                </row>
+              </xmlMatrix>
+            </inertiaTensor>
             <frames/>
             <contours/>
             <openMBVRigidBody>
@@ -352,25 +331,25 @@
                     <ele>0</ele>
                     <ele>0</ele>
                     <ele>0</ele>
-                </xmlVector>
-              </initialTranslation>
+                  </xmlVector>
+                </initialTranslation>
                 <initialRotation unit="rad">
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>0</ele>
                     <ele>0</ele>
                     <ele>0</ele>
-                </xmlVector>
-              </initialRotation>
+                  </xmlVector>
+                </initialRotation>
                 <scaleFactor unit="-">1</scaleFactor>
                 <length unit="m">
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>1</ele>
                     <ele>0.01</ele>
                     <ele>0.01</ele>
-                </xmlVector>
-              </length>
-            </Cuboid>
-          </openMBVRigidBody>
+                  </xmlVector>
+                </length>
+              </Cuboid>
+            </openMBVRigidBody>
             <enableOpenMBVFrameC>
               <size unit="dm">1</size>
           </enableOpenMBVFrameC></RigidBody>
@@ -405,7 +384,34 @@
               <springRadius unit="m">0.05</springRadius>
           </enableOpenMBV>
         </SpringDamper>
-      </links>
+          <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="ExternSignalSource">
+            <sourceSize>1</sourceSize>
+          </ExternSignalSource>
+          <KineticExcitation name="KineticExcitation">
+            <connect ref2="../Object[Rad]/Frame[C]"/>
+            <forceDirection unit="-">
+              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <row>
+                  <ele>0</ele>
+                </row>
+                <row>
+                  <ele>1</ele>
+                </row>
+                <row>
+                  <ele>0</ele>
+                </row>
+              </xmlMatrix>
+            </forceDirection>
+            <forceFunction>
+              <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                <returnSignal ref="../../Link[ExternSignalSource]"/>
+              </SignalFunction>
+            </forceFunction>
+            <enableOpenMBV>
+              <scaleLength>0.001</scaleLength>
+            </enableOpenMBV>
+          </KineticExcitation>
+        </links>
         <constraints/>
         <observers>
           <RigidBodyObserver name="RigidBodyObserver1">
@@ -433,15 +439,21 @@
       </DynamicSystemSolver>
     </Embed>
 
-    <HarmonicResponseAnalyzer xmlns="http://www.mbsim-env.de/MBSim">
+    <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
       <excitationFrequencies>[0.1:0.5:30]'</excitationFrequencies>
-      <systemFrequencies>
-        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-          <ele>freq</ele>
-      </xmlVector>
-    </systemFrequencies>
-  </HarmonicResponseAnalyzer>
+      <excitationAmplitudeFunction>
+        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="f">
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>A*sqrt(cR^2 + (2*pi*dR*f)^2)</ele>
+          </xmlVector>
+        </SymbolicFunction>
+      </excitationAmplitudeFunction>
+      <visualizeFrequencyResponse>
+        <minimumExcitationFrequency>2</minimumExcitationFrequency>
+        <maximumExcitationFrequency>5</maximumExcitationFrequency>
+      </visualizeFrequencyResponse>
+    </LinearSystemAnalyzer>
 
   </MBSimProject>
-  
+
 </Embed>

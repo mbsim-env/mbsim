@@ -35,30 +35,30 @@
     </environments>
   </DynamicSystemSolver>
 
-  <Eigenanalyzer xmlns="http://www.mbsim-env.de/MBSim">
+  <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
+    <visualizeNaturalModeShapes>
+      <naturalModeScale>
+        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <ele>1e3</ele>
+          <ele>1e3</ele>
+          <ele>1e3</ele>
+          <ele>1e3</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+          <ele>0</ele>
+        </xmlVector>
+      </naturalModeScale>
+    </visualizeNaturalModeShapes>
     <plotStepSize unit="s">1e-3</plotStepSize>
-    <amplitude>0</amplitude>
-    <modeAmplitudeTable>
-      <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-        <row>
-          <ele>1</ele>
-          <ele>1e3</ele>
-        </row>
-        <row>
-          <ele>2</ele>
-          <ele>1e3</ele>
-        </row>
-        <row>
-          <ele>3</ele>
-          <ele>1e3</ele>
-        </row>
-        <row>
-          <ele>4</ele>
-          <ele>1e3</ele>
-        </row>
-      </xmlMatrix>
-    </modeAmplitudeTable>
-  </Eigenanalyzer>
+  </LinearSystemAnalyzer>
+
 
 
 </MBSimProject>
