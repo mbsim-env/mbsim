@@ -21,7 +21,6 @@
 #include "solver_context_menu.h"
 #include "integrator.h"
 #include "analyzer.h"
-#include "exporter.h"
 #include "mainwindow.h"
 
 namespace MBSimGUI {
@@ -45,18 +44,10 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     QMenu *analyzers = new QMenu("Select analyzer", this);
-    action = new QAction("Select eigenanalyzer", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new Eigenanalyzer); });
-    analyzers->addAction(action);
-    action = new QAction("Select harmonic response analyzer", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new HarmonicResponseAnalyzer); });
+    action = new QAction("Select linear system analyzer", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new LinearSystemAnalyzer); });
     analyzers->addAction(action);
     addMenu(analyzers);
-    QMenu *exporters = new QMenu("Select exporter", this);
-    action = new QAction("Select LTI system exporter", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new LTISystemExporter); });
-    exporters->addAction(action);
-    addMenu(exporters);
     QMenu *integrators = new QMenu("Select integrator", this);
     action = new QAction("Select Boost odeint DOS RKDOPRI5", this);
     connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new BoostOdeintDOS_RKDOPRI5); });

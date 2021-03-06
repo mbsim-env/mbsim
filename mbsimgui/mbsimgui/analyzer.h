@@ -35,20 +35,12 @@ namespace MBSimGUI {
       Analyzer() = default;
   };
 
-  class Eigenanalyzer : public Analyzer {
+  class LinearSystemAnalyzer : public Analyzer {
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Eigenanalyzer"; }
-      QString getType() const override { return "Eigenanalyzer"; }
-      PropertyDialog* createPropertyDialog() override { return new EigenanalyzerPropertyDialog(this); }
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"LinearSystemAnalyzer"; }
+      QString getType() const override { return "Linear system analyzer"; }
+      PropertyDialog* createPropertyDialog() override { return new LinearSystemAnalyzerPropertyDialog(this); }
   };
-
-  class HarmonicResponseAnalyzer : public Analyzer {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"HarmonicResponseAnalyzer"; }
-      QString getType() const override { return "Harmonic response analyzer"; }
-      PropertyDialog* createPropertyDialog() override { return new HarmonicResponseAnalyzerPropertyDialog(this); }
-  };
-
 }
 
 #endif

@@ -90,23 +90,6 @@ namespace MBSimGUI {
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }
   };
 
-  class EigenanalysisDialog : public QDialog {
-    public:
-      EigenanalysisDialog(QWidget *parent);
-    private:
-      void selectRow(int);
-      void selectMode(int row, int col);
-      QTableWidget *table;
-      DataPlot *plotAmp, *plotPhase;
-  };
-
-  class HarmonicResponseDialog : public QDialog {
-    public:
-      HarmonicResponseDialog(QWidget *parent);
-    private:
-      DataPlot *plot;
-  };
-
   class SourceDialog : public QDialog {
     public:
       SourceDialog(xercesc::DOMElement *ele, QWidget *parent);
@@ -161,6 +144,31 @@ namespace MBSimGUI {
       QString getParameterFileName() const;
     private:
       ExtWidget *parameterFile;;
+  };
+
+  class InitialOutputWidget : public QWidget {
+    public:
+      InitialOutputWidget();
+  };
+
+  class EigenanalysisWidget : public QWidget {
+    public:
+      EigenanalysisWidget();
+  };
+
+  class ModalAnalysisWidget : public QWidget {
+    public:
+      ModalAnalysisWidget();
+  };
+
+  class FrequencyResponseWidget : public QWidget {
+    public:
+      FrequencyResponseWidget();
+  };
+
+  class LinearSystemAnalysisDialog : public QDialog {
+    public:
+      LinearSystemAnalysisDialog(QWidget *parent);
   };
 
 }

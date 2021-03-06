@@ -40,7 +40,6 @@
 #include "parameter.h"
 #include "integrator.h"
 #include "analyzer.h"
-#include "exporter.h"
 #include <string>
 
 using namespace std;
@@ -409,12 +408,8 @@ namespace MBSimGUI {
       return new BoostOdeintDOS_BulirschStoer;
     else if(E(element)->getTagName()==MBSIM%"BoostOdeintDOS_Rosenbrock4")
       return new BoostOdeintDOS_Rosenbrock4;
-    else if(E(element)->getTagName()==MBSIM%"Eigenanalyzer")
-      return new Eigenanalyzer;
-    else if(E(element)->getTagName()==MBSIM%"HarmonicResponseAnalyzer")
-      return new HarmonicResponseAnalyzer;
-    else if(E(element)->getTagName()==MBSIMCONTROL%"LTISystemExporter")
-      return new LTISystemExporter;
+    else if(E(element)->getTagName()==MBSIMCONTROL%"LinearSystemAnalyzer")
+      return new LinearSystemAnalyzer;
     return nullptr;
   }
 

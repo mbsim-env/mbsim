@@ -23,6 +23,7 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include "function_widget_factory.h"
 #include <QDialogButtonBox>
 #include <QPushButton>
 
@@ -31,6 +32,68 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  class ModeShapeVisualization : public Widget {
+    public:
+      ModeShapeVisualization();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *modeScale;
+  };
+
+  ModeShapeVisualization::ModeShapeVisualization() {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    modeScale = new ExtWidget("Natural mode scale",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"naturalModeScale");
+    layout->addWidget(modeScale);
+  }
+
+  DOMElement* ModeShapeVisualization::initializeUsingXML(DOMElement *e) {
+    modeScale->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* ModeShapeVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    modeScale->writeXMLFile(parent);
+    return static_cast<DOMElement*>(parent);
+  }
+
+  class FrequencyResponseVisualization : public Widget {
+    public:
+      FrequencyResponseVisualization();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *minimumExcitationFrequency, *maximumExcitationFrequency, *inputNumber;
+  };
+
+  FrequencyResponseVisualization::FrequencyResponseVisualization() {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    minimumExcitationFrequency = new ExtWidget("Minimum excitation frequency",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"minimumExcitationFrequency");
+    layout->addWidget(minimumExcitationFrequency);
+    maximumExcitationFrequency = new ExtWidget("Maximum excitation frequency",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"maximumExcitationFrequency");
+    layout->addWidget(maximumExcitationFrequency);
+    inputNumber = new ExtWidget("Input number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputNumber");
+    layout->addWidget(inputNumber);
+  }
+
+  DOMElement* FrequencyResponseVisualization::initializeUsingXML(DOMElement *e) {
+    minimumExcitationFrequency->initializeUsingXML(e);
+    maximumExcitationFrequency->initializeUsingXML(e);
+    inputNumber->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* FrequencyResponseVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    minimumExcitationFrequency->writeXMLFile(parent);
+    maximumExcitationFrequency->writeXMLFile(parent);
+    inputNumber->writeXMLFile(parent);
+    return static_cast<DOMElement*>(parent);
+  }
 
   ToleranceWidgetFactory::ToleranceWidgetFactory(const QString &type_) : type(type_) {
     name.emplace_back("Scalar");
@@ -1054,144 +1117,75 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-
-  EigenanalyzerPropertyDialog::EigenanalyzerPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
+  LinearSystemAnalyzerPropertyDialog::LinearSystemAnalyzerPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
     addTab("General");
+    addTab("Modal analysis");
+    addTab("Frequency response analysis");
     addTab("Initial conditions");
 
-    startTime = new ExtWidget("Start time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"startTime");
-    addToTab("General", startTime);
-
-    endTime = new ExtWidget("End time",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"endTime");
-    addToTab("General", endTime);
-
-    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"plotStepSize");
-    addToTab("General", plotStepSize);
-
-    initialState = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
-    addToTab("Initial conditions", initialState);
-
-    vector<QString> list;
-    list.emplace_back("\"eigenmodes\"");
-    list.emplace_back("\"eigenmotion\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,0,true),true,false,MBSIM%"task");
-    addToTab("General",task);
-
-    initialDeviation = new ExtWidget("Initial deviation",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialDeviation");
-    addToTab("General",initialDeviation);
-
-    amplitude = new ExtWidget("Amplitude",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitude");
-    addToTab("General",amplitude);
-
-    modeAmplitudeTable = new ExtWidget("Mode amplitude table",new ChoiceWidget(new MatRowsVarWidgetFactory(1,2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"modeAmplitudeTable");
-    addToTab("General",modeAmplitudeTable);
-
-    loops = new ExtWidget("Loops",new SpinBoxWidget(5),true,false,MBSIM%"loops");
-    addToTab("General",loops);
-  }
-
-  DOMElement* EigenanalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
-    startTime->initializeUsingXML(item->getXMLElement());
-    endTime->initializeUsingXML(item->getXMLElement());
-    plotStepSize->initializeUsingXML(item->getXMLElement());
-    initialState->initializeUsingXML(item->getXMLElement());
-    task->initializeUsingXML(item->getXMLElement());
-    initialDeviation->initializeUsingXML(item->getXMLElement());
-    amplitude->initializeUsingXML(item->getXMLElement());
-    modeAmplitudeTable->initializeUsingXML(item->getXMLElement());
-    loops->initializeUsingXML(item->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* EigenanalyzerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SolverPropertyDialog::writeXMLFile(item->getXMLElement());
-    startTime->writeXMLFile(item->getXMLElement());
-    endTime->writeXMLFile(item->getXMLElement());
-    plotStepSize->writeXMLFile(item->getXMLElement());
-    initialState->writeXMLFile(item->getXMLElement());
-    task->writeXMLFile(item->getXMLElement());
-    initialDeviation->writeXMLFile(item->getXMLElement());
-    amplitude->writeXMLFile(item->getXMLElement());
-    modeAmplitudeTable->writeXMLFile(item->getXMLElement());
-    loops->writeXMLFile(item->getXMLElement());
-    return nullptr;
-  }
-
-  HarmonicResponseAnalyzerPropertyDialog::HarmonicResponseAnalyzerPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
-    addTab("General");
-    addTab("Initial conditions");
-
-    startTime = new ExtWidget("Start time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"startTime");
-    addToTab("General", startTime);
-
-    excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"excitationFrequencies");
-    addToTab("General", excitationFrequencies);
-
-    systemFrequencies = new ExtWidget("System frequencies",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"systemFrequencies");
-    addToTab("General", systemFrequencies);
-
-    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"plotStepSize");
-    addToTab("General", plotStepSize);
-
-    initialState = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialState");
-    addToTab("Initial conditions", initialState);
-
-    vector<QString> list;
-    list.emplace_back("\"frequencyResponse\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIM%"task");
-    addToTab("General",task);
-  }
-
-  DOMElement* HarmonicResponseAnalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
-    startTime->initializeUsingXML(item->getXMLElement());
-    excitationFrequencies->initializeUsingXML(item->getXMLElement());
-    systemFrequencies->initializeUsingXML(item->getXMLElement());
-    plotStepSize->initializeUsingXML(item->getXMLElement());
-    initialState->initializeUsingXML(item->getXMLElement());
-    task->initializeUsingXML(item->getXMLElement());
-    return parent;
-  }
-
-  DOMElement* HarmonicResponseAnalyzerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    SolverPropertyDialog::writeXMLFile(item->getXMLElement());
-    startTime->writeXMLFile(item->getXMLElement());
-    excitationFrequencies->writeXMLFile(item->getXMLElement());
-    systemFrequencies->writeXMLFile(item->getXMLElement());
-    plotStepSize->writeXMLFile(item->getXMLElement());
-    initialState->writeXMLFile(item->getXMLElement());
-    task->writeXMLFile(item->getXMLElement());
-    return nullptr;
-  }
-
-  LTISystemExporterPropertyDialog::LTISystemExporterPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
-    addTab("General");
-    addTab("Initial conditions");
-
-    time = new ExtWidget("Time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"time");
-    addToTab("General", time);
+    initialTime = new ExtWidget("Initial time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialTime");
+    addToTab("Initial conditions", initialTime);
 
     initialState = new ExtWidget("Initial state",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
     addToTab("Initial conditions", initialState);
 
     initialInput = new ExtWidget("Initial input",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialInput");
     addToTab("Initial conditions", initialInput);
+
+    minimumNaturalFrequency = new ExtWidget("Minimum natural frequency",new ChoiceWidget(new ScalarWidgetFactory("0.01"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"minimumNaturalFrequency");
+    addToTab("Modal analysis", minimumNaturalFrequency);
+
+    maximumNaturalFrequency = new ExtWidget("Maximum natural frequency",new ChoiceWidget(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"maximumNaturalFrequency");
+    addToTab("Modal analysis", maximumNaturalFrequency);
+
+    excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"excitationFrequencies");
+    addToTab("Frequency response analysis", excitationFrequencies);
+
+    excitationAmplitudeFunction = new ExtWidget("Excitation amplitude function",new ChoiceWidget(new Function1ArgWidgetFactory(0,"t",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"excitationAmplitudeFunction");
+    addToTab("Frequency response analysis", excitationAmplitudeFunction);
+
+    visualizeModeShapes = new ExtWidget("Visualize mode shapes",new ModeShapeVisualization,true,true,MBSIMCONTROL%"visualizeNaturalModeShapes");
+    addToTab("Modal analysis", visualizeModeShapes);
+
+    visualizeFrequencyResponse = new ExtWidget("Visualize frequency response",new FrequencyResponseVisualization,true,true,MBSIMCONTROL%"visualizeFrequencyResponse");
+    addToTab("Frequency response analysis", visualizeFrequencyResponse);
+
+    plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"plotStepSize");
+    addToTab("General", plotStepSize);
+
+    loops = new ExtWidget("Loops",new SpinBoxWidget(5),true,false,MBSIMCONTROL%"loops");
+    addToTab("General",loops);
   }
 
-  DOMElement* LTISystemExporterPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* LinearSystemAnalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SolverPropertyDialog::initializeUsingXML(item->getXMLElement());
-    time->initializeUsingXML(item->getXMLElement());
+    initialTime->initializeUsingXML(item->getXMLElement());
     initialState->initializeUsingXML(item->getXMLElement());
     initialInput->initializeUsingXML(item->getXMLElement());
+    minimumNaturalFrequency->initializeUsingXML(item->getXMLElement());
+    maximumNaturalFrequency->initializeUsingXML(item->getXMLElement());
+    excitationFrequencies->initializeUsingXML(item->getXMLElement());
+    excitationAmplitudeFunction->initializeUsingXML(item->getXMLElement());
+    visualizeModeShapes->initializeUsingXML(item->getXMLElement());
+    visualizeFrequencyResponse->initializeUsingXML(item->getXMLElement());
+    plotStepSize->initializeUsingXML(item->getXMLElement());
+    loops->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
-  DOMElement* LTISystemExporterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* LinearSystemAnalyzerPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SolverPropertyDialog::writeXMLFile(item->getXMLElement());
-    time->writeXMLFile(item->getXMLElement());
+    initialTime->writeXMLFile(item->getXMLElement());
     initialState->writeXMLFile(item->getXMLElement());
     initialInput->writeXMLFile(item->getXMLElement());
+    minimumNaturalFrequency->writeXMLFile(item->getXMLElement());
+    maximumNaturalFrequency->writeXMLFile(item->getXMLElement());
+    excitationFrequencies->writeXMLFile(item->getXMLElement());
+    excitationAmplitudeFunction->writeXMLFile(item->getXMLElement());
+    visualizeModeShapes->writeXMLFile(item->getXMLElement());
+    visualizeFrequencyResponse->writeXMLFile(item->getXMLElement());
+    plotStepSize->writeXMLFile(item->getXMLElement());
+    loops->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
