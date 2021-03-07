@@ -163,10 +163,15 @@ namespace MBSimControl {
     }
     sort(fna.begin(), fna.end());
 
+    if(not(modeScale.size()))
+      modeScale.resize(fna.size(),INIT,1);
+    else if(modeScale.size()!=(int)fna.size())
+      throwError(string("(LinearSystemAnalyzer::execute): size of mode scale does not match, must be ") + to_string(fna.size()));
+
     Matrix<General,Ref,Ref,complex<double>> Zhna(Matrix<General,Ref,Ref,complex<double>>(system->getzSize(),fna.size(),NONINIT));
     Matrix<General,Ref,Ref,complex<double>> Yhna(Matrix<General,Ref,Ref,complex<double>>(nsink,fna.size(),NONINIT));
     for(size_t i=0; i<fna.size(); i++) {
-      Vector<Ref,complex<double>> zh = V.col(fna[i].second);
+      Vector<Ref,complex<double>> zh = modeScale(i)*V.col(fna[i].second);
       Vector<Ref,complex<double>> yh = C*zh;
       Zhna.set(i,zh);
       Yhna.set(i,yh);
@@ -376,17 +381,13 @@ namespace MBSimControl {
     t0 = 0;
 
     if(msv) {
-      if(not(modeScale.size()))
-	modeScale.resize(fna.size(),INIT,1);
-      else if(modeScale.size()!=(int)fna.size())
-	throwError(string("(LinearSystemAnalyzer::execute): size of mode scale does not match, must be ") + to_string(fna.size()));
       for(size_t i=0; i<fna.size(); i++) {
-	if(modeScale(i)>0) {
+	if((int)i>=minMode and (int)i<=maxMode and modeScale(i)>0) {
 	  complex<double> iom(0,2*M_PI*fna[i].first);
 	  double T = double(loops)/fna[i].first;
 	  for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
 	    system->setTime(t);
-	    system->setState(zEq + fromComplex(Zhna.col(i)*(modeScale(i)*exp(iom*t))));
+	    system->setState(zEq + fromComplex(Zhna.col(i)*exp(iom*t)));
 	    system->resetUpToDate();
 	    system->plot();
 	    system->checkExitRequest();
@@ -449,6 +450,8 @@ namespace MBSimControl {
     if(e) setMinimumNaturalFrequency(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximumNaturalFrequency");
     if(e) setMaximumNaturalFrequency(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"naturalModeScale");
+    if(e) setNaturalModeScale(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationFrequencies");
     if(e) setExcitationFrequencies(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationAmplitudeFunction");
@@ -456,8 +459,10 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeNaturalModeShapes");
     if(e) {
       msv = true;
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"naturalModeScale");
-      if(ee) modeScale <<= E(ee)->getText<VecV>();
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"minimumNaturalMode");
+      if(ee) minMode = E(ee)->getText<Index>()-1;
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"maximumNaturalMode");
+      if(ee) maxMode = E(ee)->getText<Index>()-1;
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeFrequencyResponse");
     if(e) {

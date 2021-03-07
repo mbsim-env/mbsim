@@ -1091,6 +1091,11 @@
               Maximale Eigenfrequenz, die berechnet werden soll. Standardardmäßig 10 kHz.
             </xs:documentation></xs:annotation>
           </xs:element>
+	  <xs:element name="naturalModeScale" type="pv:nounitVector" minOccurs="0">
+	    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+	      Faktoren, mit der die Eigenmoden skaliert werden sollen.
+	    </xs:documentation></xs:annotation>
+	  </xs:element>
           <xs:element name="excitationFrequencies" type="pv:unknownVector" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Vektor der Anregungsfrequenzen.
@@ -1112,9 +1117,14 @@
             </xs:documentation></xs:annotation>
 	    <xs:complexType>
 	      <xs:sequence>
-                <xs:element name="naturalModeScale" type="pv:nounitVector" minOccurs="0">
+                <xs:element name="minimumNaturalMode" type="pv:indexFullEval" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Faktoren, mit der die Eigenmoden skaliert werden sollen.
+                    Minimale Mode, die visualisiert werden soll. Standardardmäßig 1.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="maximumNaturalMode" type="pv:indexFullEval" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Maximale Mode, die visualisiert werden soll. Standardardmäßig 10.
                   </xs:documentation></xs:annotation>
                 </xs:element>
 	      </xs:sequence>
