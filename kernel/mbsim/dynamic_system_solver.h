@@ -413,13 +413,6 @@ namespace MBSim {
        */
       static void sigInterruptHandler(int);
 
-      /**
-       * \brief handler for abort signals
-       */
-      static void sigAbortHandler(int);
-
-      static void sigSegfaultHandler(int);
-
       void checkExitRequest();
 
       // TODO just for testing
@@ -464,12 +457,6 @@ namespace MBSim {
        * \param differentiated external state
        */
       void updatezdRef(fmatvec::Vec &ext);
-
-      /**
-       * \brief set the number of plot-routine-calls after which all hdf5-files will be flushed
-       * \param flag
-       */
-      void setFlushEvery(unsigned int every) { flushEvery = every; }
 
       void setAlwaysConsiderContact(bool alwaysConsiderContact_) { alwaysConsiderContact = alwaysConsiderContact_; }
 
@@ -802,18 +789,6 @@ namespace MBSim {
       bool peds;
 
       /**
-       * \brief flushes all hdf5-files every x-times the plot-routine is called
-       * TODO
-       */
-      unsigned int flushEvery;
-
-      /**
-       * \brief counts plot-calls until files to be flushed
-       * TODO
-       */
-      unsigned int flushCount;
-
-      /**
        * \brief Tolerance for projection of generalized position.
        */
       double tolProj;
@@ -862,7 +837,8 @@ namespace MBSim {
       /**
        * \brief boolean signal evaluation for end integration set by user
        */
-      static bool exitRequest;
+      static std::atomic<bool> exitRequest;
+      static_assert(decltype(exitRequest)::is_always_lock_free);
 
       /**
        * \brief is a state read from a file

@@ -10,8 +10,6 @@ using namespace MBSimFlexibleBody;
 ALETester::ALETester(const std::string & name_) :
     DynamicSystemSolver(name_) {
 
-  flushEvery = 1;
-
   int elements = 1; // use number of finite elements (1 means: only reference movement, if additional dofs are locked properly)
   int elementOrder = 3;
   int nodeDofs = 2;

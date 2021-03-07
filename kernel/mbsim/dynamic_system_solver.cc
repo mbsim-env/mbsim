@@ -57,7 +57,7 @@ namespace MBSim {
   double tP = 20.0;
   bool gflag = false;
 
-  bool DynamicSystemSolver::exitRequest = false;
+  atomic<bool> DynamicSystemSolver::exitRequest = false;
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
@@ -67,7 +67,7 @@ namespace MBSim {
     return sys->evalzd();
   }
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -1215,41 +1215,21 @@ namespace MBSim {
 #ifdef HAVE_ANSICSIGNAL
     signal(SIGINT, sigInterruptHandler);
     signal(SIGTERM, sigInterruptHandler);
-    signal(SIGABRT, sigAbortHandler);
-    signal(SIGSEGV, sigSegfaultHandler);
 #endif
   }
 
   void DynamicSystemSolver::sigInterruptHandler(int) {
-    msgStatic(Info) << "MBSim: Received user interrupt or terminate signal!" << endl;
     exitRequest = true;
-  }
-
-  void DynamicSystemSolver::sigAbortHandler(int) {
-    signal(SIGABRT, SIG_DFL);
-    msgStatic(Info) << "MBSim: Received abort signal! Flushing HDF5 files (this may crash) and abort!" << endl;
-//mfmf    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
-    raise(SIGABRT);
-  }
-
-  void DynamicSystemSolver::sigSegfaultHandler(int) {
-    signal(SIGSEGV, SIG_DFL);
-    msgStatic(Info) << "MBSim: Received segmentation fault signal! Flushing HDF5 files (this may crash again) and abort!" << endl;
-//mfmf    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
-    raise(SIGSEGV);
   }
 
   void DynamicSystemSolver::checkExitRequest() {
     if (integratorExitRequest) // if the integrator has not exit after a integratorExitRequest
-      throwError("MBSim: Integrator has not stopped integration! Terminate NOW the hard way!");
+      throwError("MBSim: Integrator has not stopped integration! Terminate NOW by throwing an exception!");
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
-      msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
-//mfmf      H5::File::flushAllFiles(); // flush files
+      msg(Info) << "MBSim: User exit request: Ask integrator to terminate!" << endl;
       integratorExitRequest = true;
     }
-
-//mfmf    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
   }
 
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {
