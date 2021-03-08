@@ -474,136 +474,15 @@ namespace MBSimGUI {
   }
 
   InitialOutputWidget::InitialOutputWidget() {
-    OctaveParser parser(mw->getUniqueTempDir().generic_string()+"/initial_output.mat");
-    parser.parse();
-    VecV z = static_cast<const OctaveMatrix*>(parser.get(0))->get<VecV>();
-    VecV y = static_cast<const OctaveMatrix*>(parser.get(1))->get<VecV>();
+    QFile data(QString::fromStdString(mw->getUniqueTempDir().generic_string()+"/initial_output.mat"));
+    if(data.open(QFile::ReadOnly)) {
+      auto *layout = new QVBoxLayout;
+      setLayout(layout);
 
-    QVector<QString> stateName, outputName;
-    QVector<QString> stateLabel, outputLabel;
-    QVector<int> stateLabelNumber, outputLabelNumber;
-    string name_;
-    char label_;
-    int number_;
-
-    ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
-    while(is) {
-      is >> name_ >> label_ >> number_;
-      if(is.eof()) break;
-      stateName.append(QString::fromStdString(name_));
-      stateLabel.append(QString(label_));
-      stateLabelNumber.append(number_);
-    }
-    is.close();
-
-    is.open(mw->getUniqueTempDir().generic_string()+"/outputtable.asc");
-    while(is) {
-      is >> name_ >> label_ >> number_;
-      if(is.eof()) break;
-      outputName.append(QString::fromStdString(name_));
-      outputLabel.append(QString(label_));
-      outputLabelNumber.append(number_);
-    }
-    is.close();
-
-    auto *layout = new QGridLayout;
-    setLayout(layout);
-
-    QVector<double> mz(z.size());
-    QVector<double> Az(z.size());
-    QVector<double> my(y.size());
-    QVector<double> Ay(y.size());
-    for(int k=0; k<z.size(); k++) mz[k] = k+1;
-    for(int k=0; k<y.size(); k++) my[k] = k+1;
-    for(int k=0; k<z.size(); k++)
-      Az[k] = z(k);
-    for(int k=0; k<y.size(); k++)
-      Ay[k] = y(k);
-
-    if(z.size()) {
-      auto *plot = new QwtPlot(this);
-      plot->setTitle("State");
-      plot->setAxisTitle(QwtPlot::xBottom,"State number");
-      plot->setAxisTitle(QwtPlot::yLeft,"Amplitude");
-      plot->setAxisScale(QwtPlot::xBottom,1-0.1,mz.size()+0.1,1);
-
-      QwtPlotCanvas *canvas = new QwtPlotCanvas();
-      plot->setCanvas(canvas);
-      plot->setCanvasBackground(Qt::white);
-
-      auto *curve1 = new QwtPlotCurve;
-      curve1->setTitle("Amplitude");
-      curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setSamples(mz,Az);
-      curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setPen(Qt::red);
-      curve1->setYAxis(QwtPlot::yLeft);
-      curve1->attach(plot);
-
-      QwtPlotGrid *grid = new QwtPlotGrid;
-      grid->enableYMin(true);
-      grid->setMajorPen(Qt::black,0,Qt::DotLine);
-      grid->setMinorPen(Qt::white,0,Qt::DotLine);
-      grid->attach(plot);
-
-      layout->addWidget(plot,1,0);
-      plot->replot();
-
-      auto *table = new QTreeWidget;
-      layout->addWidget(table,2,0);
-      table->setHeaderLabels(QStringList{"State number","Element name","State label","Label number"});
-      for(unsigned int i=0; i<stateName.size(); i++) {
-        auto *item = new QTreeWidgetItem;
-        item->setText(0, QString::number(i+1));
-        item->setText(1, stateName[i]);
-        item->setText(2, stateLabel[i]);
-        item->setText(3, QString::number(stateLabelNumber[i]+1));
-        table->addTopLevelItem(item);
-      }
-      table->resizeColumnToContents(1);
-    }
-
-    if(y.size()) {
-      auto *plot = new QwtPlot(this);
-      plot->setTitle("Output");
-      plot->setAxisTitle(QwtPlot::xBottom,"Output number");
-      plot->setAxisTitle(QwtPlot::yLeft,"Amplitude");
-      plot->setAxisScale(QwtPlot::xBottom,1-0.1,my.size()+0.1,1);
-
-      QwtPlotCanvas *canvas = new QwtPlotCanvas();
-      plot->setCanvas(canvas);
-      plot->setCanvasBackground(Qt::white);
-
-      auto *curve1 = new QwtPlotCurve;
-      curve1->setTitle("Amplitude");
-      curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setSamples(my,Ay);
-      curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setPen(Qt::red);
-      curve1->setYAxis(QwtPlot::yLeft);
-      curve1->attach(plot);
-
-      QwtPlotGrid *grid = new QwtPlotGrid;
-      grid->enableYMin(true);
-      grid->setMajorPen(Qt::black,0,Qt::DotLine);
-      grid->setMinorPen(Qt::white,0,Qt::DotLine);
-      grid->attach(plot);
-
-      layout->addWidget(plot,1,1);
-      plot->replot();
-
-      auto *table = new QTreeWidget;
-      layout->addWidget(table,2,1);
-      table->setHeaderLabels(QStringList{"Output number","Element name","Output label","Label number"});
-      for(unsigned int i=0; i<outputName.size(); i++) {
-	auto *item = new QTreeWidgetItem;
-	item->setText(0, QString::number(i+1));
-	item->setText(1, outputName[i]);
-	item->setText(2, outputLabel[i]);
-	item->setText(3, QString::number(outputLabelNumber[i]+1));
-	table->addTopLevelItem(item);
-      }
-      table->resizeColumnToContents(1);
+      QTextStream in(&data);
+      auto *text = new QTextEdit;
+      text->setPlainText(in.readAll());
+      layout->addWidget(text);
     }
   }
 
@@ -627,48 +506,50 @@ namespace MBSimGUI {
     Matrix<General,Var,Var,complex<double>> Zh = static_cast<const OctaveComplexMatrix*>(parser.get(1))->get<Matrix<General,Var,Var,complex<double>>>();
     Matrix<General,Var,Var,complex<double>> Yh = static_cast<const OctaveComplexMatrix*>(parser.get(2))->get<Matrix<General,Var,Var,complex<double>>>();
 
-    QVector<QString> stateName, outputName;
-    QVector<QString> stateLabel, outputLabel;
-    QVector<int> stateLabelNumber, outputLabelNumber;
-    string name_;
-    char label_;
-    int number_;
+    string name;
+    char label;
+    int number;
 
     ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
     while(is) {
-      is >> name_ >> label_ >> number_;
+      is >> name >> label >> number;
       if(is.eof()) break;
-      stateName.append(QString::fromStdString(name_));
-      stateLabel.append(QString(label_));
-      stateLabelNumber.append(number_);
+      stateName.append(QString::fromStdString(name));
+      stateLabel.append(QString(label));
+      stateLabelNumber.append(number);
     }
     is.close();
 
     is.open(mw->getUniqueTempDir().generic_string()+"/outputtable.asc");
     while(is) {
-      is >> name_ >> label_ >> number_;
+      is >> name >> label >> number;
       if(is.eof()) break;
-      outputName.append(QString::fromStdString(name_));
-      outputLabel.append(QString(label_));
-      outputLabelNumber.append(number_);
+      outputName.append(QString::fromStdString(name));
+      outputLabel.append(QString(label));
+      outputLabelNumber.append(number);
     }
     is.close();
 
-    auto *layout = new QGridLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
 
-    auto *table = new QTreeWidget;
-    layout->addWidget(table,0,0,1,2);
-    table->setHeaderLabels(QStringList{"Mode number","Natural frequency","Expotential decay","Natural angular frequency","Damping ratio"});
+    modeTable = new QTreeWidget;
+    layout->addWidget(modeTable);
+    modeTable->setHeaderLabels(QStringList{"Mode number","Natural frequency","Expotential decay","Natural angular frequency","Damping ratio"});
 
-    QVector<double> mZh(Zh.rows());
-    QVector<QVector<double>> AZh(w.size(),QVector<double>(Zh.rows()));
-    QVector<QVector<double>> phiZh(w.size(),QVector<double>(Zh.rows()));
-    QVector<double> mYh(Yh.rows());
-    QVector<QVector<double>> AYh(w.size(),QVector<double>(Yh.rows()));
-    QVector<QVector<double>> phiYh(w.size(),QVector<double>(Yh.rows()));
-    for(int k=0; k<Zh.rows(); k++) mZh[k] = k+1;
-    for(int k=0; k<Yh.rows(); k++) mYh[k] = k+1;
+    for(int k=0; k<Zh.rows(); k++)
+      num[stateLabel[k]].append(k+1);
+    for(int k=0; k<Yh.rows(); k++)
+      num[outputLabel[k]].append(k+1);
+    for(QMap<QString,QVector<double>>::iterator i=num.begin(); i!=num.end(); i++) {
+      A[i.key()].resize(w.size());
+      phi[i.key()].resize(w.size());
+      for(int j=0; j<w.size(); j++) {
+	A[i.key()][j].resize(i.value().size());
+	phi[i.key()][j].resize(i.value().size());
+      }
+    }
+
     for(int i=0; i<w.size(); i++) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::number(i+1));
@@ -676,46 +557,55 @@ namespace MBSimGUI {
       item->setText(2, QString::number(-w(i).real()));
       item->setText(3, QString::number(w(i).imag()));
       item->setText(4, QString::number(-w(i).real()/w(i).imag()));
-      table->addTopLevelItem(item);
-      for(int k=0; k<Zh.rows(); k++) {
-        AZh[i][k] = abs(Zh(k,i));
-        phiZh[i][k] = atan2(Zh(k,i).real(),-Zh(k,i).imag())*180/M_PI;
-      }
-      for(int k=0; k<Yh.rows(); k++) {
-        AYh[i][k] = abs(Yh(k,i));
-        phiYh[i][k] = atan2(Yh(k,i).real(),-Yh(k,i).imag())*180/M_PI;
+      modeTable->addTopLevelItem(item);
+      int l=0;
+      for(QMap<QString,QVector<double>>::iterator j=num.begin(); j!=num.end(); j++) {
+	if(j.key()=="y") {
+	  for(int k=0; k<j.value().size(); k++) {
+	    A[j.key()][i][k] = abs(Yh(k,i));
+	    phi[j.key()][i][k] = atan2(Yh(k,i).real(),-Yh(k,i).imag())*180/M_PI;
+	  }
+	}
+	else {
+	  for(int k=0; k<j.value().size(); k++) {
+	    A[j.key()][i][k] = abs(Zh(l,i));
+	    phi[j.key()][i][k] = atan2(Zh(l,i).real(),-Zh(l,i).imag())*180/M_PI;
+	    l++;
+	  }
+	}
       }
     }
-    table->resizeColumnToContents(1);
-    table->setCurrentItem(table->topLevelItem(0));
+    modeTable->resizeColumnToContents(1);
+    modeTable->setCurrentItem(modeTable->topLevelItem(0));
+
+    choice = new QComboBox;
+    for(QMap<QString,QVector<double>>::iterator i=num.begin(); i!=num.end(); i++)
+      choice->addItem((i.key()=="y"?"Output (":"State (")+i.key()+")");
+    layout->addWidget(choice);
 
     if(Zh.rows() and Zh.cols()) {
-      auto *plot = new QwtPlot(this);
-      plot->setTitle("Natural modes");
-      plot->setAxisTitle(QwtPlot::xBottom,"State number");
+      plot = new QwtPlot(this);
+//      plot->setTitle("Natural mode");
       plot->setAxisTitle(QwtPlot::yLeft,"Normalized Amplitude");
       plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
-      plot->setAxisScale(QwtPlot::xBottom,1-0.1,mZh.size()+0.1,1);
-      plot->setAxisScale(QwtPlot::yRight,-181,181,45);
+      plot->setAxisScale(QwtPlot::yRight,-180,180,45);
 
       QwtPlotCanvas *canvas = new QwtPlotCanvas();
       plot->setCanvas(canvas);
       plot->setCanvasBackground(Qt::white);
 
-      auto *curve1 = new QwtPlotCurve;
+      curve1 = new QwtPlotCurve;
       curve1->setTitle("Amplitude");
       curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setSamples(mZh,AZh[0]);
       curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
       curve1->setPen(Qt::red);
       curve1->setYAxis(QwtPlot::yLeft);
       curve1->attach(plot);
       plot->enableAxis(QwtPlot::yRight);
 
-      auto *curve2 = new QwtPlotCurve;
+      curve2 = new QwtPlotCurve;
       curve2->setTitle("Phase");
       curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
-      curve2->setSamples(mZh,phiZh[0]);
       curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
       curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
       curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
@@ -732,94 +622,54 @@ namespace MBSimGUI {
       grid->setMinorPen(Qt::white,0,Qt::DotLine);
       grid->attach(plot);
 
-      layout->addWidget(plot,1,0);
-      plot->replot();
+      layout->addWidget(plot);
 
-      connect(table, &QTreeWidget::currentItemChanged, this, [=]() {
-	  curve1->setSamples(mZh,AZh[table->indexOfTopLevelItem(table->currentItem())]);
-	  curve2->setSamples(mZh,phiZh[table->indexOfTopLevelItem(table->currentItem())]);
-	  plot->replot();
-	  });
+      elementTable = new QTreeWidget;
+      layout->addWidget(elementTable);
 
-      auto *table = new QTreeWidget;
-      layout->addWidget(table,2,0);
-      table->setHeaderLabels(QStringList{"State number","Element name","State label","Label number"});
-      for(unsigned int i=0; i<stateName.size(); i++) {
-        auto *item = new QTreeWidgetItem;
-        item->setText(0, QString::number(i+1));
-        item->setText(1, stateName[i]);
-        item->setText(2, stateLabel[i]);
-        item->setText(3, QString::number(stateLabelNumber[i]+1));
-        table->addTopLevelItem(item);
-      }
-      table->resizeColumnToContents(1);
+      connect(modeTable, &QTreeWidget::currentItemChanged, this, &ModalAnalysisWidget::updateWidget);
+      connect(choice, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ModalAnalysisWidget::updateWidget);
+
+      updateWidget();
     }
 
-    if(Yh.rows() and Yh.cols()) {
-      auto *plot = new QwtPlot(this);
-      plot->setTitle("Natural modes");
+  }
+
+  void ModalAnalysisWidget::updateWidget() {
+    //int c = choice->currentIndex();
+    QString c = choice->currentText();
+    c = c.mid(c.size()-2,1);
+    int m = modeTable->indexOfTopLevelItem(modeTable->currentItem());
+    curve1->setSamples(num[c],A[c][m]);
+    curve2->setSamples(num[c],phi[c][m]);
+    plot->setAxisScale(QwtPlot::xBottom,num[c][0],num[c][num[c].size()-1],1);
+    plot->replot();
+    elementTable->clear();
+    if(c=="y") {
       plot->setAxisTitle(QwtPlot::xBottom,"Output number");
-      plot->setAxisTitle(QwtPlot::yLeft,"Normalized Amplitude");
-      plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
-      plot->setAxisScale(QwtPlot::xBottom,1-0.1,mYh.size()+0.1,1);
-      plot->setAxisScale(QwtPlot::yRight,-181,181,45);
-
-      QwtPlotCanvas *canvas = new QwtPlotCanvas();
-      plot->setCanvas(canvas);
-      plot->setCanvasBackground(Qt::white);
-
-      auto *curve1 = new QwtPlotCurve;
-      curve1->setTitle("Amplitude");
-      curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setSamples(mYh,AYh[0]);
-      curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setPen(Qt::red);
-      curve1->setYAxis(QwtPlot::yLeft);
-      curve1->attach(plot);
-      plot->enableAxis(QwtPlot::yRight);
-
-      auto *curve2 = new QwtPlotCurve;
-      curve2->setTitle("Phase");
-      curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
-      curve2->setSamples(mYh,phiYh[0]);
-      curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setPen(Qt::green);
-      curve2->setYAxis(QwtPlot::yRight);
-      curve2->attach(plot);
-
-      QwtLegend *legend = new QwtLegend;
-      plot->insertLegend(legend,QwtPlot::BottomLegend);
-
-      QwtPlotGrid *grid = new QwtPlotGrid;
-      grid->enableYMin(true);
-      grid->setMajorPen(Qt::black,0,Qt::DotLine);
-      grid->setMinorPen(Qt::white,0,Qt::DotLine);
-      grid->attach(plot);
-
-      layout->addWidget(plot,1,1);
-      plot->replot();
-
-      connect(table, &QTreeWidget::currentItemChanged, this, [=]() {
-	  curve1->setSamples(mYh,AYh[table->indexOfTopLevelItem(table->currentItem())]);
-	  curve2->setSamples(mYh,phiYh[table->indexOfTopLevelItem(table->currentItem())]);
-	  plot->replot();
-	  });
-
-      auto *table = new QTreeWidget;
-      layout->addWidget(table,2,1);
-      table->setHeaderLabels(QStringList{"Output number","Element name","Output label","Label number"});
+      elementTable->setHeaderLabels(QStringList{"Output number","Element name","Output label","Label number"});
       for(unsigned int i=0; i<outputName.size(); i++) {
 	auto *item = new QTreeWidgetItem;
 	item->setText(0, QString::number(i+1));
 	item->setText(1, outputName[i]);
 	item->setText(2, outputLabel[i]);
 	item->setText(3, QString::number(outputLabelNumber[i]+1));
-	table->addTopLevelItem(item);
+	elementTable->addTopLevelItem(item);
       }
-      table->resizeColumnToContents(1);
     }
+    else {
+      plot->setAxisTitle(QwtPlot::xBottom,"State number");
+      elementTable->setHeaderLabels(QStringList{"State number","Element name","State label","Label number"});
+      for(unsigned int i=num[c][0]-1; i<num[c][num[c].size()-1]; i++) {
+	auto *item = new QTreeWidgetItem;
+	item->setText(0, QString::number(i+1));
+	item->setText(1, stateName[i]);
+	item->setText(2, stateLabel[i]);
+	item->setText(3, QString::number(stateLabelNumber[i]+1));
+	elementTable->addTopLevelItem(item);
+      }
+    }
+    elementTable->resizeColumnToContents(1);
   }
 
   FrequencyResponseWidget::FrequencyResponseWidget() {
@@ -869,31 +719,28 @@ namespace MBSimGUI {
     int rZh = Zh.size()?Zh[0][0].rows():0;
     int cZh = Zh.size()?Zh[0][0].cols():0;
     int rYh = Yh.size()?Yh[0][0].rows():0;
-    int cYh = Yh.size()?Yh[0][0].cols():0;
     QVector<double> freq(f.size());
-    QVector<QVector<QVector<double>>> AZh(rZh,QVector<QVector<double>>(Zh.size(),QVector<double>(cZh)));
-    QVector<QVector<QVector<double>>> phiZh(rZh,QVector<QVector<double>>(Zh.size(),QVector<double>(cZh)));
-    QVector<QVector<QVector<double>>> AYh(rYh,QVector<QVector<double>>(Yh.size(),QVector<double>(cYh)));
-    QVector<QVector<QVector<double>>> phiYh(rYh,QVector<QVector<double>>(Yh.size(),QVector<double>(cYh)));
+    QVector<QVector<QVector<double>>> A(rZh+rYh,QVector<QVector<double>>(Zh.size(),QVector<double>(cZh)));
+    QVector<QVector<QVector<double>>> phi(rZh+rYh,QVector<QVector<double>>(Zh.size(),QVector<double>(cZh)));
     for(int i=0; i<f.size(); i++) {
       freq[i] = f(i);
       for(size_t k=0; k<Zh.size(); k++) {
 	for(int j=0; j<Zh[k][0].rows(); j++) {
-	  AZh[j][k][i] = abs(Zh[k][0](j,i));
-	  phiZh[j][k][i] = atan2(Zh[k][0](j,i).real(),-Zh[k][0](j,i).imag())*180/M_PI;
+	  A[j][k][i] = abs(Zh[k][0](j,i));
+	  phi[j][k][i] = atan2(Zh[k][0](j,i).real(),-Zh[k][0](j,i).imag())*180/M_PI;
 	}
 	for(int j=0; j<Yh[k][0].rows(); j++) {
-	  AYh[j][k][i] = abs(Yh[k][0](j,i));
-	  phiYh[j][k][i] = atan2(Yh[k][0](j,i).real(),-Yh[k][0](j,i).imag())*180/M_PI;
+	  A[Zh[k][0].rows()+j][k][i] = abs(Yh[k][0](j,i));
+	  phi[Zh[k][0].rows()+j][k][i] = atan2(Yh[k][0](j,i).real(),-Yh[k][0](j,i).imag())*180/M_PI;
 	}
       }
     }
 
-    auto *layout = new QGridLayout;
+    auto *layout = new QVBoxLayout;
     setLayout(layout);
 
     QTreeWidget *inputTable = new QTreeWidget;
-    layout->addWidget(inputTable,0,0,1,2);
+    layout->addWidget(inputTable);
     inputTable->setHeaderLabels(QStringList{"Input number","Element name","Input label","Label number"});
     for(unsigned int i=0; i<inputName.size(); i++) {
       auto *item = new QTreeWidgetItem;
@@ -908,7 +755,7 @@ namespace MBSimGUI {
 
     if(Zh.size() and Zh[0].size() and Zh[0][0].rows() and Zh[0][0].cols()) {
       auto *plot = new QwtPlot(this);
-      plot->setTitle("Frequency response");
+//      plot->setTitle("Frequency response");
       plot->setAxisTitle(QwtPlot::xBottom,"Excitation frequency (Hz)");
       plot->setAxisTitle(QwtPlot::yLeft,"Amplitude");
       plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
@@ -921,7 +768,7 @@ namespace MBSimGUI {
       auto *curve1 = new QwtPlotCurve;
       curve1->setTitle("Amplitude");
       curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setSamples(freq,AZh[0][0]);
+      curve1->setSamples(freq,A[0][0]);
       curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
       curve1->setPen(Qt::red);
       curve1->setYAxis(QwtPlot::yLeft);
@@ -931,7 +778,7 @@ namespace MBSimGUI {
       auto *curve2 = new QwtPlotCurve;
       curve2->setTitle("Phase");
       curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
-      curve2->setSamples(freq,phiZh[0][0]);
+      curve2->setSamples(freq,phi[0][0]);
       curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
       curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
       curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
@@ -948,117 +795,46 @@ namespace MBSimGUI {
       grid->setMinorPen(Qt::white,0,Qt::DotLine);
       grid->attach(plot);
 
-      layout->addWidget(plot,2,0);
+      layout->addWidget(plot);
       plot->replot();
 
       QTreeWidget *table = new QTreeWidget;
-      layout->addWidget(table,1,0);
-      table->setHeaderLabels(QStringList{"State number","Element name","State label","Label number"});
+      layout->addWidget(table);
+      table->setHeaderLabels(QStringList{"Magnitude","Magnitude number","Element name","Magnitude label","Label number"});
       for(unsigned int i=0; i<stateName.size(); i++) {
 	auto *item = new QTreeWidgetItem;
-	item->setText(0, QString::number(i+1));
-	item->setText(1, stateName[i]);
-	item->setText(2, stateLabel[i]);
-	item->setText(3, QString::number(stateLabelNumber[i]+1));
+	item->setText(0, "State");
+	item->setText(1, QString::number(i+1));
+	item->setText(2, stateName[i]);
+	item->setText(3, stateLabel[i]);
+	item->setText(4, QString::number(stateLabelNumber[i]+1));
 	table->addTopLevelItem(item);
       }
-      table->resizeColumnToContents(1);
-      table->setCurrentItem(table->topLevelItem(0));
-
-      connect(inputTable, &QTreeWidget::currentItemChanged, this, [=]() {
-	  curve1->setSamples(freq,AZh[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
-	  curve2->setSamples(freq,phiZh[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
-	  plot->replot();
-	  });
-      connect(table, &QTreeWidget::currentItemChanged, this, [=]() {
-	  curve1->setSamples(freq,AZh[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
-	  curve2->setSamples(freq,phiZh[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
-	  plot->replot();
-	  });
-
-      auto *checkbox = new QCheckBox("Log scale");
-      layout->addWidget(checkbox,3,0);
-      connect(checkbox,&QCheckBox::toggled,this,[=]() {
-	  if(checkbox->isChecked())
-	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLogScaleEngine);
-	  else
-	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLinearScaleEngine);
-	  plot->replot();
-	  });
-    }
-
-    if(Yh.size() and Yh[0].size() and Yh[0][0].rows() and Yh[0][0].cols()) {
-      auto *plot = new QwtPlot(this);
-      plot->setTitle("Frequency response");
-      plot->setAxisTitle(QwtPlot::xBottom,"Excitation frequency (Hz)");
-      plot->setAxisTitle(QwtPlot::yLeft,"Amplitude");
-      plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
-      plot->setAxisScale(QwtPlot::yRight,-181,181,45);
-
-      QwtPlotCanvas *canvas = new QwtPlotCanvas();
-      plot->setCanvas(canvas);
-      plot->setCanvasBackground(Qt::white);
-
-      auto *curve1 = new QwtPlotCurve;
-      curve1->setTitle("Amplitude");
-      curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setSamples(freq,AYh[0][0]);
-      curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setPen(Qt::red);
-      curve1->setYAxis(QwtPlot::yLeft);
-      curve1->attach(plot);
-      plot->enableAxis(QwtPlot::yRight);
-
-      auto *curve2 = new QwtPlotCurve;
-      curve2->setTitle("Phase");
-      curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
-      curve2->setSamples(freq,phiYh[0][0]);
-      curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setPen(Qt::green);
-      curve2->setYAxis(QwtPlot::yRight);
-      curve2->attach(plot);
-
-      QwtLegend *legend = new QwtLegend;
-      plot->insertLegend(legend,QwtPlot::BottomLegend);
-
-      QwtPlotGrid *grid = new QwtPlotGrid;
-      grid->enableYMin(true);
-      grid->setMajorPen(Qt::black,0,Qt::DotLine);
-      grid->setMinorPen(Qt::white,0,Qt::DotLine);
-      grid->attach(plot);
-
-      layout->addWidget(plot,2,1);
-      plot->replot();
-
-      QTreeWidget *table = new QTreeWidget;
-      layout->addWidget(table,1,1);
-      table->setHeaderLabels(QStringList{"Output number","Element name","Output label","Label number"});
       for(unsigned int i=0; i<outputName.size(); i++) {
 	auto *item = new QTreeWidgetItem;
-	item->setText(0, QString::number(i+1));
-	item->setText(1, outputName[i]);
-	item->setText(2, outputLabel[i]);
-	item->setText(3, QString::number(outputLabelNumber[i]+1));
+	item->setText(0, "Output");
+	item->setText(1, QString::number(i+1));
+	item->setText(2, outputName[i]);
+	item->setText(3, outputLabel[i]);
+	item->setText(4, QString::number(outputLabelNumber[i]+1));
 	table->addTopLevelItem(item);
       }
-      table->resizeColumnToContents(1);
+      table->resizeColumnToContents(2);
       table->setCurrentItem(table->topLevelItem(0));
 
       connect(inputTable, &QTreeWidget::currentItemChanged, this, [=]() {
-	  curve1->setSamples(freq,AYh[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
-	  curve2->setSamples(freq,phiYh[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
+	  curve1->setSamples(freq,A[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
+	  curve2->setSamples(freq,phi[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
 	  plot->replot();
 	  });
       connect(table, &QTreeWidget::currentItemChanged, this, [=]() {
-	  curve1->setSamples(freq,AYh[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
-	  curve2->setSamples(freq,phiYh[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
+	  curve1->setSamples(freq,A[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
+	  curve2->setSamples(freq,phi[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
 	  plot->replot();
 	  });
 
       auto *checkbox = new QCheckBox("Log scale");
-      layout->addWidget(checkbox,3,1);
+      layout->addWidget(checkbox);
       connect(checkbox,&QCheckBox::toggled,this,[=]() {
 	  if(checkbox->isChecked())
 	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLogScaleEngine);

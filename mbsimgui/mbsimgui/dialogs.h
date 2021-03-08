@@ -30,6 +30,8 @@
 class QTableWidget;
 class QSpinBox;
 class QComboBox;
+class QwtPlot;
+class QwtPlotCurve;
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -159,6 +161,17 @@ namespace MBSimGUI {
   class ModalAnalysisWidget : public QWidget {
     public:
       ModalAnalysisWidget();
+    private:
+      QTreeWidget *modeTable, *elementTable;
+      QComboBox *choice;
+      QwtPlot *plot;
+      QwtPlotCurve *curve1, *curve2;
+      QMap<QString,QVector<double>> num;
+      QMap<QString,QVector<QVector<double>>> A, phi;
+      QVector<QString> stateName, outputName;
+      QVector<QString> stateLabel, outputLabel;
+      QVector<int> stateLabelNumber, outputLabelNumber;
+      void updateWidget();
   };
 
   class FrequencyResponseWidget : public QWidget {

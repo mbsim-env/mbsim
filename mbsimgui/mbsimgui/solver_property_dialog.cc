@@ -39,24 +39,25 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *modeScale;
+      ExtWidget *modeRange;
   };
 
   ModeShapeVisualization::ModeShapeVisualization() {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    modeScale = new ExtWidget("Natural mode scale",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"naturalModeScale");
-    layout->addWidget(modeScale);
+    vector<QString> x(2); x[0] = "1"; x[1] = "10";
+    modeRange = new ExtWidget("Mode range",new ChoiceWidget(new VecWidgetFactory(x),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"modeRange");
+    layout->addWidget(modeRange);
   }
 
   DOMElement* ModeShapeVisualization::initializeUsingXML(DOMElement *e) {
-    modeScale->initializeUsingXML(e);
+    modeRange->initializeUsingXML(e);
     return e;
   }
 
   DOMElement* ModeShapeVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    modeScale->writeXMLFile(parent);
+    modeRange->writeXMLFile(parent);
     return static_cast<DOMElement*>(parent);
   }
 
@@ -66,31 +67,28 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *minimumExcitationFrequency, *maximumExcitationFrequency, *inputNumber;
+      ExtWidget *frequencyRange, *inputNumber;
   };
 
   FrequencyResponseVisualization::FrequencyResponseVisualization() {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    minimumExcitationFrequency = new ExtWidget("Minimum excitation frequency",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"minimumExcitationFrequency");
-    layout->addWidget(minimumExcitationFrequency);
-    maximumExcitationFrequency = new ExtWidget("Maximum excitation frequency",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"maximumExcitationFrequency");
-    layout->addWidget(maximumExcitationFrequency);
+    vector<QString> x(2); x[0] = "0"; x[1] = "1e4";
+    frequencyRange = new ExtWidget("Frequency range",new ChoiceWidget(new VecWidgetFactory(x),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"frequencyRange");
+    layout->addWidget(frequencyRange);
     inputNumber = new ExtWidget("Input number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputNumber");
     layout->addWidget(inputNumber);
   }
 
   DOMElement* FrequencyResponseVisualization::initializeUsingXML(DOMElement *e) {
-    minimumExcitationFrequency->initializeUsingXML(e);
-    maximumExcitationFrequency->initializeUsingXML(e);
+    frequencyRange->initializeUsingXML(e);
     inputNumber->initializeUsingXML(e);
     return e;
   }
 
   DOMElement* FrequencyResponseVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    minimumExcitationFrequency->writeXMLFile(parent);
-    maximumExcitationFrequency->writeXMLFile(parent);
+    frequencyRange->writeXMLFile(parent);
     inputNumber->writeXMLFile(parent);
     return static_cast<DOMElement*>(parent);
   }
@@ -1138,6 +1136,9 @@ namespace MBSimGUI {
     maximumNaturalFrequency = new ExtWidget("Maximum natural frequency",new ChoiceWidget(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"maximumNaturalFrequency");
     addToTab("Modal analysis", maximumNaturalFrequency);
 
+    modeScale = new ExtWidget("Natural mode scale",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"naturalModeScale");
+    addToTab("Modal analysis", modeScale);
+
     excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"excitationFrequencies");
     addToTab("Frequency response analysis", excitationFrequencies);
 
@@ -1164,6 +1165,7 @@ namespace MBSimGUI {
     initialInput->initializeUsingXML(item->getXMLElement());
     minimumNaturalFrequency->initializeUsingXML(item->getXMLElement());
     maximumNaturalFrequency->initializeUsingXML(item->getXMLElement());
+    modeScale->initializeUsingXML(item->getXMLElement());
     excitationFrequencies->initializeUsingXML(item->getXMLElement());
     excitationAmplitudeFunction->initializeUsingXML(item->getXMLElement());
     visualizeModeShapes->initializeUsingXML(item->getXMLElement());
@@ -1180,6 +1182,7 @@ namespace MBSimGUI {
     initialInput->writeXMLFile(item->getXMLElement());
     minimumNaturalFrequency->writeXMLFile(item->getXMLElement());
     maximumNaturalFrequency->writeXMLFile(item->getXMLElement());
+    modeScale->writeXMLFile(item->getXMLElement());
     excitationFrequencies->writeXMLFile(item->getXMLElement());
     excitationAmplitudeFunction->writeXMLFile(item->getXMLElement());
     visualizeModeShapes->writeXMLFile(item->getXMLElement());
