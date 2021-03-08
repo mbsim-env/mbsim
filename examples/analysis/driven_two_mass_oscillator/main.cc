@@ -23,7 +23,7 @@ int main (int argc, char* argv[]) {
     freq(i) = 0.1 + i*0.1;
   analyzer.setExcitationFrequencies(freq);
   analyzer.setExcitationAmplitudeFunction(new ConstantFunction<VecV(double)>(10));
-  analyzer.visualizeFrequencyResponse(_minimumExcitationFrequency=1.5,_maximumExcitationFrequency=2);
+  analyzer.visualizeFrequencyResponse(_frequencyRange="[1.5;2]");
   analyzer.setSystem(sys);
   analyzer.execute();
 

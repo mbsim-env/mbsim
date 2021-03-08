@@ -449,8 +449,7 @@
         </SymbolicFunction>
       </excitationAmplitudeFunction>
       <visualizeFrequencyResponse>
-        <minimumExcitationFrequency>2</minimumExcitationFrequency>
-        <maximumExcitationFrequency>5</maximumExcitationFrequency>
+        <frequencyRange>[2;5]</frequencyRange>
       </visualizeFrequencyResponse>
     </LinearSystemAnalyzer>
 
