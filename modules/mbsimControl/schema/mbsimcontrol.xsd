@@ -1117,14 +1117,9 @@
             </xs:documentation></xs:annotation>
 	    <xs:complexType>
 	      <xs:sequence>
-                <xs:element name="minimumNaturalMode" type="pv:indexFullEval" minOccurs="0">
+                <xs:element name="modeRange" type="pv:indexVector" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Minimale Mode, die visualisiert werden soll. Standardardmäßig 1.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-                <xs:element name="maximumNaturalMode" type="pv:indexFullEval" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Maximale Mode, die visualisiert werden soll. Standardardmäßig 10.
+                    Bereich der Moden, die visualisiert werden sollen. Standardardmäßig 1 bis 10.
                   </xs:documentation></xs:annotation>
                 </xs:element>
 	      </xs:sequence>
@@ -1136,19 +1131,14 @@
             </xs:documentation></xs:annotation>
 	    <xs:complexType>
 	      <xs:sequence>
-                <xs:element name="minimumExcitationFrequency" type="pv:unknownScalar" minOccurs="0">
+                <xs:element name="frequencyRange" type="pv:unknownVector" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Minimale Anregungsfrequenz, die visualisiert werden soll. Standardardmäßig 0 Hz.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-                <xs:element name="maximumExcitationFrequency" type="pv:unknownScalar" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Maximale Anregungsfrequenz, die visualisiert werden soll. Standardardmäßig 10 kHz.
+                    Frequenzbreich, der visualisiert werden soll. Standardardmäßig 0 bis 10 Hz.
                   </xs:documentation></xs:annotation>
                 </xs:element>
                 <xs:element name="inputNumber" type="pv:indexFullEval" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Nummer des Eingangssignals.
+                    Nummer des Eingangssignals, über das die Anregung erfolgt.
                   </xs:documentation></xs:annotation>
                 </xs:element>
 	      </xs:sequence>

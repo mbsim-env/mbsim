@@ -27,10 +27,8 @@
 
 namespace MBSim {
 
-  BOOST_PARAMETER_NAME(minimumNaturalMode)
-  BOOST_PARAMETER_NAME(maximumNaturalMode)
-  BOOST_PARAMETER_NAME(minimumExcitationFrequency)
-  BOOST_PARAMETER_NAME(maximumExcitationFrequency)
+  BOOST_PARAMETER_NAME(modeRange)
+  BOOST_PARAMETER_NAME(frequencyRange)
   BOOST_PARAMETER_NAME(inputNumber)
 
 }
@@ -43,7 +41,7 @@ namespace MBSimControl {
    */
   class LinearSystemAnalyzer : public MBSim::Solver {
     public:
-      LinearSystemAnalyzer() = default;
+      LinearSystemAnalyzer() : mRange("[0;9]"), fRange("[0;1e4]") { }
       void execute() override;
       void setInitialTime(double t0_) { t0 = t0_; }
       void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
@@ -58,16 +56,14 @@ namespace MBSimControl {
       const fmatvec::Vec& getInitialState() const override { return z0; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeNaturalModeShapes, MBSim::tag, (optional (minimumNaturalMode,(MBSim::Index),0))(optional (maximumNaturalMode,(MBSim::Index),9))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeNaturalModeShapes, MBSim::tag, (optional (modeRange,(fmatvec::Vec2),"[0;9]"))) {
 	msv = true;
-	minMode = minimumNaturalMode;
-	maxMode = maximumNaturalMode;
+	mRange = modeRange;
       }
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeFrequencyResponse, MBSim::tag, (optional (minimumExcitationFrequency,(double),0)(maximumExcitationFrequency,(double),1e4)(inputNumber,(double),0))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeFrequencyResponse, MBSim::tag, (optional (frequencyRange,(fmatvec::Vec2),"[0;1e4]")(inputNumber,(double),0))) {
 	frv = true;
-	fexmin = minimumExcitationFrequency;
-	fexmax = maximumExcitationFrequency;
+	fRange = frequencyRange;
 	inum = inputNumber;
       }
 
@@ -79,11 +75,8 @@ namespace MBSimControl {
       MBSim::Function<fmatvec::VecV(double)> *Amp{nullptr};
       fmatvec::Vec z0, zEq, u0, fex;
       bool msv{false};
-      MBSim::Index minMode{0};
-      MBSim::Index maxMode{9};
       bool frv{false};
-      double fexmin{0};
-      double fexmax{1e4};
+      fmatvec::Vec2 mRange, fRange;
       MBSim::Index inum{0};
       int loops{5};
       double dtPlot{1e-2};

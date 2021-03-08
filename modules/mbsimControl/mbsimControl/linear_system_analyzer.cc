@@ -382,7 +382,7 @@ namespace MBSimControl {
 
     if(msv) {
       for(size_t i=0; i<fna.size(); i++) {
-	if((int)i>=minMode and (int)i<=maxMode and modeScale(i)>0) {
+	if((int)i>=mRange(0) and (int)i<=mRange(1) and modeScale(i)>0) {
 	  complex<double> iom(0,2*M_PI*fna[i].first);
 	  double T = double(loops)/fna[i].first;
 	  for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
@@ -410,7 +410,7 @@ namespace MBSimControl {
 	for(int k=0; k<source[j]->getSignalSize(); k++) {
 	  if(l==inum) {
 	    for(int i=0; i<fex.size(); i++) {
-	      if(fex(i)>=fexmin and fex(i)<=fexmax and (*Amp)(fex(i))(l)>0) {
+	      if(fex(i)>=fRange(0) and fex(i)<=fRange(1) and (*Amp)(fex(i))(l)>0) {
 		complex<double> iOm(0,2*M_PI*fex(i));
 		double T = double(loops)/fex(i);
 		for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
@@ -459,18 +459,14 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeNaturalModeShapes");
     if(e) {
       msv = true;
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"minimumNaturalMode");
-      if(ee) minMode = E(ee)->getText<Index>()-1;
-      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"maximumNaturalMode");
-      if(ee) maxMode = E(ee)->getText<Index>()-1;
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"modeRange");
+      if(ee) mRange = E(ee)->getText<Vec2>()-Vec2(INIT,1);
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeFrequencyResponse");
     if(e) {
       frv = true;
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"minimumExcitationFrequency");
-      if(ee) fexmin = E(ee)->getText<double>();
-      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"maximumExcitationFrequency");
-      if(ee) fexmax = E(ee)->getText<double>();
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"frequencyRange");
+      if(ee) fRange = E(ee)->getText<Vec2>();
       ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"inputNumber");
       if(ee) inum = E(ee)->getText<Index>()-1;
     }
