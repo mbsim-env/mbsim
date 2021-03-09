@@ -398,15 +398,7 @@ namespace MBSimGUI {
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     updateEchoView();
-    if(currentTask==1 && bfs::exists(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx") && process.state()==QProcess::NotRunning) {
-      inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
-      QModelIndex index = elementView->selectionModel()->currentIndex();
-      auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
-      if(element)
-        highlightObject(element->getID());
-    }
-    else {
+    if(currentTask!=1) {
       if(exitStatus == QProcess::NormalExit) {
         QSettings settings;
         bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
@@ -457,6 +449,10 @@ namespace MBSimGUI {
     // Hence, we keep here the old macro base mechanism and use Q_OBJECT and moc for this class.
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openElementEditor()));
+
+    bfs::copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  bfs::copy_option::overwrite_if_exists);
+    bfs::copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", bfs::copy_option::overwrite_if_exists);
+    inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
   }
 
   MainWindow::~MainWindow() {
@@ -1034,10 +1030,6 @@ namespace MBSimGUI {
       actionEigenanalysis->setDisabled(true);
       actionHarmonicResponseAnalysis->setDisabled(true);
     }
-    else if(task==1) {
-      if(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->childCount())
-        static_cast<OpenMBVGUI::Group*>(OpenMBVGUI::MainWindow::getInstance()->getObjectList()->invisibleRootItem()->child(0))->unloadFileSlot();
-    }
 
     echoView->clearOutput();
     DOMElement *root;
@@ -1122,12 +1114,8 @@ namespace MBSimGUI {
 
   void MainWindow::openmbv() {
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx";
-    if(QFile::exists(name)) {
-      QStringList arg;
-      arg.append("--autoreload");
-      arg.append(name);
-      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"openmbv").string()), arg);
-    }
+    if(QFile::exists(name))
+      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"openmbv").string()));
   }
 
   void MainWindow::h5plotserie() {

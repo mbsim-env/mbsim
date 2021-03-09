@@ -157,7 +157,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
   return moduleLibFile;
 }
 
-int MBSimXML::preInit(list<string> args, DynamicSystemSolver*& dss, Solver*& solver) {
+int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, unique_ptr<Solver>& solver) {
 
   // help
   if(args.size()<1) {
@@ -233,22 +233,22 @@ int MBSimXML::preInit(list<string> args, DynamicSystemSolver*& dss, Solver*& sol
 
   // create object for DynamicSystemSolver and check correct type
   e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
-  dss=ObjectFactory::createAndInit<DynamicSystemSolver>(e);
+  dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(e));
 
   // create object for Solver and check correct type
-  solver=ObjectFactory::createAndInit<Solver>(e->getNextElementSibling());
+  solver.reset(ObjectFactory::createAndInit<Solver>(e->getNextElementSibling()));
 
   return 0;
 }
 
-void MBSimXML::initDynamicSystemSolver(const list<string> &args, DynamicSystemSolver*& dss) {
+void MBSimXML::initDynamicSystemSolver(const list<string> &args, const unique_ptr<DynamicSystemSolver>& dss) {
   if(find(args.begin(), args.end(), "--donotintegrate")!=args.end())
     dss->setTruncateSimulationFiles(false);
 
   dss->initialize();
 }
 
-void MBSimXML::plotInitialState(Solver* solver, DynamicSystemSolver* dss) {
+void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss) {
   if(solver->getInitialState().size()) {
     if(solver->getInitialState().size() != dss->getzSize()+dss->getisSize())
       throw runtime_error("Size of z0 does not match, must be " + to_string(dss->getzSize()+dss->getisSize()));
@@ -261,7 +261,7 @@ void MBSimXML::plotInitialState(Solver* solver, DynamicSystemSolver* dss) {
   dss->plot();
 }
 
-void MBSimXML::main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable) {
+void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable) {
   if(savestatetable)
     dss->writeStateTable("statetable.asc");
   if(doNotIntegrate==false) {
@@ -269,7 +269,7 @@ void MBSimXML::main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrat
       MBSimXML::plotInitialState(solver, dss);
     else {
       auto start=std::chrono::high_resolution_clock::now();
-      solver->setSystem(dss);
+      solver->setSystem(dss.get());
       DynamicSystemSolver::installSignalHandler();//mfmf deinstall after next line
       solver->execute();
       auto end=std::chrono::high_resolution_clock::now();

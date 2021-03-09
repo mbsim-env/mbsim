@@ -88,7 +88,9 @@ QT_BUILT_SOURCES = widget.moc.cc \
 BUILT_SOURCES = $(QT_BUILT_SOURCES)
 
 mbsimguisharedir = @datadir@/mbsimgui
-dist_mbsimguishare_DATA = inlineopenmbv.ombvwst
+dist_mbsimguishare_DATA = inlineopenmbv.ombvwst \
+  MBS_tmp.ombvx \
+  MBS_tmp.ombvh5
 
 mbsimguiicondir = @datadir@/mbsimgui/icons
 dist_mbsimguiicon_DATA = icons/openmbv.svg \

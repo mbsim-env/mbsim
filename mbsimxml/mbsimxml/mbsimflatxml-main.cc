@@ -34,16 +34,13 @@ int main(int argc, char *argv[]) {
     if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
       savestatevector=true;
 
-    Solver *solver;
-    DynamicSystemSolver *dss;
+    unique_ptr<Solver> solver;
+    unique_ptr<DynamicSystemSolver> dss;
   
     if(MBSimXML::preInit(args, dss, solver)!=0) return 0; 
     MBSimXML::initDynamicSystemSolver(args, dss);
   
     MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
-
-    delete dss;
-    delete solver;
   }
   catch(const exception &e) {
     fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;

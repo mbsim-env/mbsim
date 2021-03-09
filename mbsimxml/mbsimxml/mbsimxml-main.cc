@@ -188,7 +188,7 @@ int main(int argc, char *argv[]) {
             dss->setTruncateSimulationFiles(false);
           dss->initialize();
 
-          MBSimXML::main(solver.get(), dss.get(), doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
+          MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
         }
       }
       catch(const exception &ex) {
