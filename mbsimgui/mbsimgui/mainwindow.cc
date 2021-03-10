@@ -133,6 +133,8 @@ namespace MBSimGUI {
     echoView = new EchoView(this);
     fileView = new FileView;
 
+    initInlineOpenMBV();
+
     // initialize streams
     auto f=[this](const string &s){
       echoView->addOutputText(QString::fromStdString(s));
@@ -156,8 +158,6 @@ namespace MBSimGUI {
         // print to status bar
         statusBar()->showMessage(QString::fromStdString(s));
       }));
-
-    initInlineOpenMBV();
 
     MBSimObjectFactory::initialize();
 
@@ -398,7 +398,14 @@ namespace MBSimGUI {
 
   void MainWindow::processFinished(int exitCode, QProcess::ExitStatus exitStatus) {
     updateEchoView();
-    if(currentTask!=1) {
+    if(currentTask==1) {
+      QModelIndex index = elementView->selectionModel()->currentIndex();
+      auto *model = static_cast<ElementTreeModel*>(elementView->model());
+      auto *element=dynamic_cast<Element*>(model->getItem(index)->getItemData());
+      if(element)
+        highlightObject(element->getID());
+    }
+    else {
       if(exitStatus == QProcess::NormalExit) {
         QSettings settings;
         bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
@@ -442,6 +449,8 @@ namespace MBSimGUI {
     std::list<string> arg;
     arg.emplace_back("--wst");
     arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
+    arg.emplace_back("--hdf5RefreshDelta");
+    arg.emplace_back("0");
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
 
     // We cannot use the new Qt function pointer-based connection mechanism here since this seems not to work
