@@ -922,7 +922,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  LinearRegularizedStribeckFrictionWidget::LinearRegularizedStribeckFrictionWidget() {
+  LinearRegularizedStribeckFrictionWidget::LinearRegularizedStribeckFrictionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -930,9 +930,11 @@ namespace MBSimGUI {
     gd = new ExtWidget("Marginal velocity",new ChoiceWidget(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-    dummy->setParent(nullptr);
-    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    auto *dummy1 = new Function;
+    dummy1->setParent(element);
+    auto *dummy2 = new Function;
+    dummy2->setParent(dummy1);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget(new Function1ArgWidgetFactory(dummy2,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
 

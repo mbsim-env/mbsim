@@ -142,11 +142,11 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PlanarStribeckFrictionWidget::PlanarStribeckFrictionWidget(QWidget *parent) {
+  PlanarStribeckFrictionWidget::PlanarStribeckFrictionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-    dummy->setParent(nullptr);
+    dummy->setParent(element);
     frictionFunction = new ExtWidget("Friction function",new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
@@ -163,11 +163,11 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SpatialStribeckFrictionWidget::SpatialStribeckFrictionWidget(QWidget *parent) {
+  SpatialStribeckFrictionWidget::SpatialStribeckFrictionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-    dummy->setParent(nullptr);
+    dummy->setParent(element);
     frictionFunction = new ExtWidget("Friction function",new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"v",2,FunctionWidget::fixedVec,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
@@ -184,17 +184,17 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget() {
+  RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget(new FrictionFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
+    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget(new FrictionFunctionFactory(element,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
     layout->addWidget(frictionForceFunc);
   }
 
-  RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget() {
+  RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget(new FrictionFunctionFactory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
+    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget(new FrictionFunctionFactory(element,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
     layout->addWidget(frictionForceFunc);
   }
 
@@ -247,11 +247,11 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  PlanarStribeckImpactWidget::PlanarStribeckImpactWidget(QWidget *parent) {
+  PlanarStribeckImpactWidget::PlanarStribeckImpactWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-    dummy->setParent(nullptr);
+    dummy->setParent(element);
     frictionFunction = new ExtWidget("Friction function",new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
@@ -268,11 +268,11 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  SpatialStribeckImpactWidget::SpatialStribeckImpactWidget(QWidget *parent) {
+  SpatialStribeckImpactWidget::SpatialStribeckImpactWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
     auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-    dummy->setParent(nullptr);
+    dummy->setParent(element);
     frictionFunction = new ExtWidget("Friction function",new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"v",2,FunctionWidget::fixedVec,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
     layout->addWidget(frictionFunction);
   }
@@ -312,7 +312,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrictionForceLawWidgetFactory::FrictionForceLawWidgetFactory(QWidget *parent_) : parent(parent_) {
+  FrictionForceLawWidgetFactory::FrictionForceLawWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
     name.emplace_back("Planar Coulomb friction");
     name.emplace_back("Planar Stribeck friction");
     name.emplace_back("Regularized planar friction");
@@ -331,15 +331,15 @@ namespace MBSimGUI {
     if(i==0)
       return new PlanarCoulombFrictionWidget;
     if(i==1)
-      return new PlanarStribeckFrictionWidget(parent);
+      return new PlanarStribeckFrictionWidget(element,parent);
     if(i==2)
-      return new RegularizedPlanarFrictionWidget;
+      return new RegularizedPlanarFrictionWidget(element,parent);
     if(i==3)
       return new SpatialCoulombFrictionWidget;
     if(i==4)
-      return new SpatialStribeckFrictionWidget(parent);
+      return new SpatialStribeckFrictionWidget(element,parent);
     if(i==5)
-      return new RegularizedSpatialFrictionWidget;
+      return new RegularizedSpatialFrictionWidget(element,parent);
     return nullptr;
   }
 
@@ -358,7 +358,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrictionImpactLawWidgetFactory::FrictionImpactLawWidgetFactory(QWidget *parent_) : parent(parent_) {
+  FrictionImpactLawWidgetFactory::FrictionImpactLawWidgetFactory(Element* element_, QWidget *parent_) : element(element_), parent(parent_) {
     name.emplace_back("Planar Coulomb impact");
     name.emplace_back("Planar Stribeck impact");
     name.emplace_back("Spatial Coulomb impact");
@@ -373,11 +373,11 @@ namespace MBSimGUI {
     if(i==0)
       return new PlanarCoulombImpactWidget;
     if(i==1)
-      return new PlanarStribeckImpactWidget(parent);
+      return new PlanarStribeckImpactWidget(element,parent);
     if(i==2)
       return new SpatialCoulombImpactWidget;
     if(i==3)
-      return new SpatialStribeckImpactWidget(parent);
+      return new SpatialStribeckImpactWidget(element,parent);
     return nullptr;
   }
 
@@ -403,7 +403,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrictionFunctionFactory::FrictionFunctionFactory() {
+  FrictionFunctionFactory::FrictionFunctionFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
     name.emplace_back("Linear regularized Coulomb friction");
     name.emplace_back("Linear regularized Stribeck friction");
     name.emplace_back("Symbolic function");
@@ -416,7 +416,7 @@ namespace MBSimGUI {
     if(i==0)
       return new LinearRegularizedCoulombFrictionWidget;
     if(i==1)
-      return new LinearRegularizedStribeckFrictionWidget;
+      return new LinearRegularizedStribeckFrictionWidget(element,parent);
     if(i==2) {
       QStringList var;
       var << "gd" << "laN";
