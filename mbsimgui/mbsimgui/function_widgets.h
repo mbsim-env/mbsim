@@ -374,7 +374,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     private:
-      ExtWidget *gd, *mu;
+      ExtWidget *gd, *frictionFunction;
   };
 
   class SignalFunctionWidget: public FunctionWidget {

@@ -930,20 +930,22 @@ namespace MBSimGUI {
     gd = new ExtWidget("Marginal velocity",new ChoiceWidget(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    mu = new ExtWidget("Friction coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
-    layout->addWidget(mu);
+    auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
+    dummy->setParent(nullptr);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,nullptr),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    layout->addWidget(frictionFunction);
   }
 
   DOMElement* LinearRegularizedStribeckFrictionWidget::initializeUsingXML(DOMElement *element) {
     gd->initializeUsingXML(element);
-    mu->initializeUsingXML(element);
+    frictionFunction->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* LinearRegularizedStribeckFrictionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
     gd->writeXMLFile(ele0);
-    mu->writeXMLFile(ele0);
+    frictionFunction->writeXMLFile(ele0);
     return ele0;
   }
 
