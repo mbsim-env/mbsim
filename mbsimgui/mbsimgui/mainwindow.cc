@@ -2300,10 +2300,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    frame->create();
     static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(frame,data.pele,data.pfileitem,data.abspfilepath);
-    frame->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2332,10 +2332,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    contour->create();
     static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(contour,data.pele,data.pfileitem,data.abspfilepath);
-    contour->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2364,10 +2364,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    group->create();
     static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(group,data.pele,data.pfileitem,data.abspfilepath);
-    group->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2396,10 +2396,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    object->create();
     static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(object,data.pele,data.pfileitem,data.abspfilepath);
-    object->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2428,10 +2428,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    link->create();
     static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(link,data.pele,data.pfileitem,data.abspfilepath);
-    link->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2460,10 +2460,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    constraint->create();
     static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(constraint,data.pele,data.pfileitem,data.abspfilepath);
-    constraint->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2492,10 +2492,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    observer->create();
     static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(observer,data.pele,data.pfileitem,data.abspfilepath);
-    observer->create();
     if(getAutoRefresh()) refresh();
   }
 
