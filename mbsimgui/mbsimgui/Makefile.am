@@ -2,6 +2,9 @@ include $(top_srcdir)/qt.mk
 
 if COND_WIN32
   MAYBE_WIN32_SRC = mbsimgui.rc
+else
+  MAYBE_SIGWATCH_SRC = qt-unix-signals/sigwatch.cpp
+  MAYBE_SIGWATCH_MOC = qt-unix-signals/sigwatch.moc.cc
 endif
 
 bin_PROGRAMS = mbsimgui
@@ -12,7 +15,7 @@ mbsimgui_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
 
 mbsimgui_LDFLAGS = $(HDF5SERIE_LIBS) $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS)
 
-mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) mainwindow.cc \
+mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) $(MAYBE_SIGWATCH_SRC) mainwindow.cc \
 		   options.cc \
 		   element.cc \
 		   frame.cc \
@@ -85,7 +88,7 @@ QT_BUILT_SOURCES = widget.moc.cc \
  		   mainwindow.moc.cc \
 		   data_plot.moc.cc
 
-BUILT_SOURCES = $(QT_BUILT_SOURCES)
+BUILT_SOURCES = $(QT_BUILT_SOURCES) $(MAYBE_SIGWATCH_MOC)
 
 mbsimguisharedir = @datadir@/mbsimgui
 dist_mbsimguishare_DATA = inlineopenmbv.ombvwst \

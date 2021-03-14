@@ -28,6 +28,8 @@
 #include <QLocale>
 #ifdef _WIN32
 #  include <windows.h>
+#else
+#  include "qt-unix-signals/sigwatch.h"
 #endif
 
 using namespace std;
@@ -78,6 +80,13 @@ int main(int argc, char *argv[]) {
   QCoreApplication::setLibraryPaths(QStringList(QFileInfo(moduleName).absolutePath())); // do not load plugins from buildin defaults
 
   QApplication app(argc, argv);
+#ifndef _WIN32
+  UnixSignalWatcher sigwatch;
+  sigwatch.watchForSignal(SIGINT);
+  sigwatch.watchForSignal(SIGTERM);
+  QObject::connect(&sigwatch, &UnixSignalWatcher::unixSignal, &app, &QApplication::quit);
+#endif
+
   // regenerate arg: QApplication removes all arguments known by Qt
   arg.clear();
   for (int i=1; i<argc; i++)
