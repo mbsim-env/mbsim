@@ -150,7 +150,7 @@
           </generalizedFrictionForceLaw>
           <generalizedFrictionImpactLaw>
             <PlanarCoulombImpact>
-              <frictionCoefficient>0.3</frictionCoefficient>
+              <frictionCoefficient>mu</frictionCoefficient>
             </PlanarCoulombImpact>
           </generalizedFrictionImpactLaw>
           <generalizedNormalForceFunction>
@@ -221,5 +221,6 @@
     <endTime unit="s">1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
+
 
 </MBSimProject>
