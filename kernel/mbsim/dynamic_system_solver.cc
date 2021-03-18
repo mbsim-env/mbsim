@@ -1584,8 +1584,10 @@ namespace MBSim {
       if(openMBVGrp)
         openMBVGrp->enableSWMR();
     }
-    hdf5File->flushIfRequested();
-    openMBVGrp->flushIfRequested();
+    if(hdf5File)
+      hdf5File->flushIfRequested();
+    if(openMBVGrp)
+      openMBVGrp->flushIfRequested();
   }
 
   const Vec& DynamicSystemSolver::evalsv() {
