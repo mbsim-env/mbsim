@@ -42,6 +42,7 @@ namespace MBSimControl {
   class LinearSystemAnalyzer : public MBSim::Solver {
     public:
       LinearSystemAnalyzer() : mRange("[0;9]"), fRange("[0;1e4]") { }
+      ~LinearSystemAnalyzer() override;
       void execute() override;
       void setInitialTime(double t0_) { t0 = t0_; }
       void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }

@@ -43,6 +43,10 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, LinearSystemAnalyzer)
 
+  LinearSystemAnalyzer::~LinearSystemAnalyzer() {
+    delete Amp;
+  }
+
   void LinearSystemAnalyzer::execute() {
     vector<ExternSignalSource*> source;
     vector<ExternSignalSink*> sink;
