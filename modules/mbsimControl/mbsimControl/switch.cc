@@ -1,0 +1,70 @@
+/* Copyright (C) 2004-2021 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: martin.o.foerg@gmail.com
+ */
+
+
+#include <config.h>
+#include "mbsimControl/switch.h"
+
+using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
+
+namespace MBSimControl {
+
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, Switch)
+
+  void Switch::initializeUsingXML(DOMElement *element) {
+    Signal::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"firstDataInputSignal");
+    dataSignalString1=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"secondDataInputSignal");
+    dataSignalString2=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"controlInputSignal");
+    controlSignalString=E(e)->getAttribute("ref");
+  }
+
+  void Switch::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==resolveStringRef) {
+      setFirstDataInputSignal(getByPath<Signal>(dataSignalString1));
+      setSecondDataInputSignal(getByPath<Signal>(dataSignalString2));
+      setControlInputSignal(getByPath<Signal>(controlSignalString));
+      if(not dataSignal1)
+        throwError("First data input signal is not given!");
+      if(not dataSignal2)
+        throwError("Second data input signal is not given!");
+      if(not controlSignal)
+        throwError("Control input signal is not given!");
+    }
+    else if(stage==preInit) {
+      if(dataSignal1->getSignalSize() != dataSignal2->getSignalSize())
+        throwError("Size of first data input signal must be equal to size of second data input signal");
+      if(controlSignal->getSignalSize() != 1)
+        throwError("Size of control input signal must be equal to 1");
+    }
+    Signal::init(stage, config);
+  }
+
+  void Switch::updateSignal() {
+    s = controlSignal->evalSignal()(0)>0?dataSignal1->evalSignal():dataSignal2->evalSignal();
+    upds = false;
+  }
+
+}

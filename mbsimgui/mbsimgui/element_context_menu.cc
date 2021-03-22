@@ -568,6 +568,9 @@ namespace MBSimGUI {
     action = new QAction("Add signal operation", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new SignalOperation, element); });
     addAction(action);
+    action = new QAction("Add switch", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new Switch, element); });
+    addAction(action);
   }
 
 }

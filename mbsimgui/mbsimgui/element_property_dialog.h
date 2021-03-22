@@ -1008,6 +1008,16 @@ namespace MBSimGUI {
       ExtWidget *inputSignal;
   };
 
+  class SwitchPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      SwitchPropertyDialog(Element *signal);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *dataSignal1, *dataSignal2, *controlSignal;
+  };
+
   class UniversalGravitationPropertyDialog : public MechanicalLinkPropertyDialog {
 
     public:

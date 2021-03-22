@@ -20,6 +20,7 @@ libmbsimControl_la_SOURCES = \
   extern_signal_sink.cc\
   frame_chaser_observer.cc \
   signal_observer.cc \
+  switch.cc \
   lti_system_exporter.cc \
   linear_system_analyzer.cc
 
@@ -48,6 +49,7 @@ mbsimControlinclude_HEADERS = \
   signal_function.h\
   frame_chaser_observer.h \
   signal_observer.h \
+  switch.h \
   lti_system_exporter.h \
   linear_system_analyzer.h
 

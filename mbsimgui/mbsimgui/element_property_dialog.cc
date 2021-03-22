@@ -3364,6 +3364,34 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  SwitchPropertyDialog::SwitchPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+
+    dataSignal1 = new ExtWidget("First data input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"firstDataInputSignal");
+    addToTab("General", dataSignal1);
+
+    dataSignal2 = new ExtWidget("Second data input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"secondDataInputSignal");
+    addToTab("General", dataSignal2);
+
+    controlSignal = new ExtWidget("Control input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"controlInputSignal");
+    addToTab("General", controlSignal);
+  }
+
+  DOMElement* SwitchPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    dataSignal1->initializeUsingXML(item->getXMLElement());
+    dataSignal2->initializeUsingXML(item->getXMLElement());
+    controlSignal->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SwitchPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    dataSignal1->writeXMLFile(item->getXMLElement(),ref);
+    dataSignal2->writeXMLFile(item->getXMLElement(),ref);
+    controlSignal->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   UniversalGravitationPropertyDialog::UniversalGravitationPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
     addTab("Kinetics",1);
     addTab("Visualization",2);

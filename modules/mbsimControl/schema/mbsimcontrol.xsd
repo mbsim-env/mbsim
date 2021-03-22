@@ -1028,6 +1028,31 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="Switch" substitutionGroup="Signal" type="SwitchType"/>
+  <xs:complexType name="SwitchType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="firstDataInputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondDataInputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="controlInputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="LTISystemExporter" substitutionGroup="mbsim:Solver" type="LTISystemExporterType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
        Transformiert ein nichtlineares, dynamisches System in ein lineares zeitinvariantes System in Zustandsform und exportiert die zugehörigen Matrizen A, B, C und D.
