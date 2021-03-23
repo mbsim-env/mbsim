@@ -3486,7 +3486,7 @@ namespace MBSimGUI {
 
   DragPropertyDialog::DragPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
 
-    dragFunction = new ExtWidget("Drag function",new ChoiceWidget(new Function1ArgWidgetFactory(link,"F",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
+    dragFunction = new ExtWidget("Drag function",new ChoiceWidget(new Function1ArgWidgetFactory(link,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
     addToTab("General",dragFunction);
 
     enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");
