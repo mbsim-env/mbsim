@@ -1577,7 +1577,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  MatRowsColsVarWidgetFactory::MatRowsColsVarWidgetFactory(int m, int n, bool table_) : A(getScalars<QString>(m,n,"0")), name(3), unit(3,QStringList()), defaultUnit(3,1), table(table_) {
+  MatRowsColsVarWidgetFactory::MatRowsColsVarWidgetFactory(int m, int n, vector<QStringList> unit_, vector<int> defaultUnit_, bool table_) : A(getScalars<QString>(m,n,"0")), name(3), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), table(table_) {
     name[0] = table?"Table":"Matrix";
     name[1] = "File";
     name[2] = "Editor";

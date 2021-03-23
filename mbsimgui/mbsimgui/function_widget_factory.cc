@@ -438,8 +438,12 @@ namespace MBSimGUI {
         widgetContainer->addWidget(new ExtWidget("y",new ChoiceWidget(new MatColsVarWidgetFactory(3,retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"y"));
       return widgetContainer;
     }
-    if(i==1)
-      return new ExtWidget("xy",new ChoiceWidget(new MatRowsVarWidgetFactory(3,1+retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
+    if(i==1) {
+      if(retType==FunctionWidget::fixedVec)
+	return new ExtWidget("xy",new ChoiceWidget(new MatRowsVarWidgetFactory(3,1+retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
+      else
+	return new ExtWidget("xy",new ChoiceWidget(new MatRowsColsVarWidgetFactory(3,1+retDim,vector<QStringList>(3,noUnitUnits()),std::vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xy");
+    }
     return nullptr;
   }
 
@@ -459,7 +463,7 @@ namespace MBSimGUI {
       return widgetContainer;
     }
     if(i==1)
-      return new ExtWidget("xyz",new ChoiceWidget(new MatRowsColsVarWidgetFactory(3,3,true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xyz");
+      return new ExtWidget("xyz",new ChoiceWidget(new MatRowsColsVarWidgetFactory(3,3,vector<QStringList>(3,QStringList()),vector<int>(3,0),true),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xyz");
     return nullptr;
   }
 

@@ -599,7 +599,7 @@ namespace MBSimGUI {
 
   class MatRowsColsVarWidgetFactory : public WidgetFactory {
     public:
-      MatRowsColsVarWidgetFactory(int m=0, int n=0, bool table_=false);
+      MatRowsColsVarWidgetFactory(int m=0, int n=0, std::vector<QStringList> unit_=std::vector<QStringList>(3,QStringList()), std::vector<int> defaultUnit_=std::vector<int>(3,0), bool table_=false);
       Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
