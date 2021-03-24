@@ -1015,7 +1015,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *dataSignal1, *dataSignal2, *controlSignal;
+      ExtWidget *dataSignal1, *dataSignal2, *controlSignal, *threshold, *rootFinding;
   };
 
   class UniversalGravitationPropertyDialog : public MechanicalLinkPropertyDialog {

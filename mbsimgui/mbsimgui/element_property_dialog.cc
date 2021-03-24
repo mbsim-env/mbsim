@@ -3374,6 +3374,12 @@ namespace MBSimGUI {
 
     controlSignal = new ExtWidget("Control input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"controlInputSignal");
     addToTab("General", controlSignal);
+
+    threshold = new ExtWidget("Threshold",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"threshold");
+    addToTab("General", threshold);
+
+    rootFinding = new ExtWidget("Root finding",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"rootFinding");
+    addToTab("General", rootFinding);
   }
 
   DOMElement* SwitchPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -3381,6 +3387,8 @@ namespace MBSimGUI {
     dataSignal1->initializeUsingXML(item->getXMLElement());
     dataSignal2->initializeUsingXML(item->getXMLElement());
     controlSignal->initializeUsingXML(item->getXMLElement());
+    threshold->initializeUsingXML(item->getXMLElement());
+    rootFinding->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -3389,6 +3397,8 @@ namespace MBSimGUI {
     dataSignal1->writeXMLFile(item->getXMLElement(),ref);
     dataSignal2->writeXMLFile(item->getXMLElement(),ref);
     controlSignal->writeXMLFile(item->getXMLElement(),ref);
+    threshold->writeXMLFile(item->getXMLElement(),ref);
+    rootFinding->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
