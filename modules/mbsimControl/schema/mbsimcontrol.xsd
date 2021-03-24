@@ -1048,6 +1048,8 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+	  <xs:element name="threshold" type="pv:unknownScalar" minOccurs="0"/>
+	  <xs:element name="rootFinding" type="pv:booleanFullEval" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

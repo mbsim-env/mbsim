@@ -39,6 +39,10 @@ namespace MBSimControl {
     dataSignalString2=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"controlInputSignal");
     controlSignalString=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"threshold");
+    if(e) setThreshold(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"rootFinding");
+    if(e) setRootFinding(E(e)->getText<bool>());
   }
 
   void Switch::init(InitStage stage, const InitConfigSet &config) {
@@ -63,8 +67,12 @@ namespace MBSimControl {
   }
 
   void Switch::updateSignal() {
-    s = controlSignal->evalSignal()(0)>0?dataSignal1->evalSignal():dataSignal2->evalSignal();
+    s = controlSignal->evalSignal()(0)>=s0?dataSignal1->evalSignal():dataSignal2->evalSignal();
     upds = false;
+  }
+
+  void Switch::updateStopVector() {
+    sv(0) = controlSignal->evalSignal()(0) - s0;
   }
 
 }

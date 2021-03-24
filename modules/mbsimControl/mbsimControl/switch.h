@@ -35,17 +35,24 @@ namespace MBSimControl {
   class Switch : public Signal {
     public:
       Switch(const std::string &name="") : Signal(name) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setFirstDataInputSignal(Signal *signal_) { dataSignal1 = signal_; }
       void setSecondDataInputSignal(Signal *signal_) { dataSignal2 = signal_; }
       void setControlInputSignal(Signal *signal_) { controlSignal = signal_; }
-      void updateSignal();
-      int getSignalSize() const { return dataSignal1->getSignalSize(); }
+      void setThreshold(double s0_) { s0 = s0_; }
+      void setRootFinding(bool rf_) { rf = rf_; }
+      void updateSignal() override;
+      int getSignalSize() const override { return dataSignal1->getSignalSize(); }
+      bool isSetValued() const override { return rf; }
+      void calcsvSize() override { svSize = isSetValued(); }
+      void updateStopVector() override;
     private:
       Signal* dataSignal1{nullptr};
       Signal* dataSignal2{nullptr};
       Signal* controlSignal{nullptr};
+      double s0{0};
+      bool rf{false};
       std::string dataSignalString1, dataSignalString2, controlSignalString;
   };
 
