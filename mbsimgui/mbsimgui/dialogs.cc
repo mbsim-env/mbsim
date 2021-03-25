@@ -871,4 +871,56 @@ namespace MBSimGUI {
     connect(buttonBox, &QDialogButtonBox::accepted, this, &LinearSystemAnalysisDialog::accept);
   }
 
+  CreateFMUDialog::CreateFMUDialog(const QString &fileName) {
+    setWindowTitle("Save FMU file");
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    mainlayout->addLayout(layout);
+
+    file = new ExtWidget("FMU file", new FileWidget(fileName, "FMU file", "MBSim FMU files (*.fmu);;All files (*.*)", 1, false, true, QFileDialog::DontConfirmOverwrite),false,false,"");
+    layout->addWidget(file);
+    layout->addStretch(1);
+
+    opt = new QButtonGroup(this);
+    QRadioButton *radio1 = new QRadioButton("Model exchange");
+    QRadioButton *radio2 = new QRadioButton("Co-simulation");
+    radio1->setChecked(true);
+    opt->addButton(radio1);
+    opt->addButton(radio2);
+    checkbox = new QCheckBox("Compression");
+    checkbox->setChecked(false);
+
+    Widget *widget = new Widget;
+    QHBoxLayout *hl = new QHBoxLayout;
+    hl->setMargin(0);
+    widget->setLayout(hl);
+    hl->addWidget(radio1);
+    hl->addWidget(radio2);
+    hl->addWidget(checkbox);
+    ExtWidget *e = new ExtWidget("Option",widget,false,false,"");
+    layout->addWidget(e);
+
+    layout->addStretch(1);
+
+   auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SaveModelDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &SaveModelDialog::reject);
+    mainlayout->addWidget(buttonBox);
+  }
+
+  QString CreateFMUDialog::getFileName() const {
+    return static_cast<FileWidget*>(file->getWidget())->getFile();
+  }
+
+  bool CreateFMUDialog::cosim() const {
+    return opt->button(-3)->isChecked();
+  }
+
+  bool CreateFMUDialog::nocompress() const {
+    return not checkbox->isChecked();
+  }
+
 }

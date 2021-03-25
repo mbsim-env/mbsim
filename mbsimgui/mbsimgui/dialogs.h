@@ -184,6 +184,18 @@ namespace MBSimGUI {
       LinearSystemAnalysisDialog(QWidget *parent);
   };
 
+  class CreateFMUDialog : public QDialog {
+    public:
+      CreateFMUDialog(const QString &name);
+      QString getFileName() const;
+      bool cosim() const;
+      bool nocompress() const;
+    private:
+      ExtWidget *file;
+      QButtonGroup *opt;
+      QCheckBox *checkbox;
+  };
+
 }
 
 #endif

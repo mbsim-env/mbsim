@@ -278,6 +278,8 @@ namespace MBSimGUI {
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
     QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
+    QAction *actionCreateFMU = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"create_FMU.svg").string())),"Create FMU");
+    connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
 
     elementView->setModel(new ElementTreeModel(this));
     elementView->setColumnWidth(0,250);
@@ -1194,15 +1196,21 @@ namespace MBSimGUI {
 
   void MainWindow::debug() {
     currentTask = 0;
+    shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
+    doc->setDocumentURI(this->doc->getDocumentURI());
+    auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
+    doc->insertBefore(newDocElement, nullptr);
+    project->processIDAndHref(newDocElement);
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile = uniqueTempDir_+"/Project.mbsx";
-    serializer->writeToURI(doc, X()%projectFile.toStdString());
+    serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append(projectFile);
     echoView->clearOutput();
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((installPath/"bin"/"mbsimxml").string()), arg);
+    statusBar()->showMessage(tr("Debug model"));
   }
 
   void MainWindow::selectElement(const string& ID) {
@@ -1708,7 +1716,7 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     auto index = elementView->selectionModel()->currentIndex();
     auto *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
-    SaveModelDialog dialog(getProjectDir().absoluteFilePath(item->getName()+".mbsmx"),item->getNumberOfParameters());
+    SaveModelDialog dialog(getProjectDir().relativeFilePath(item->getName()+".mbsmx"),item->getNumberOfParameters());
     int result = dialog.exec();
     if(result) {
       if(not dialog.getModelFileName().isEmpty()) {
@@ -1765,7 +1773,7 @@ namespace MBSimGUI {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     auto index = parameterView->selectionModel()->currentIndex();
     auto *parameters = static_cast<Parameters*>(model->getItem(index)->getItemData());
-    SaveParameterDialog dialog(getProjectDir().absoluteFilePath(parameters->getParent()->getName()+".mbspx"));
+    SaveParameterDialog dialog(getProjectDir().relativeFilePath(parameters->getParent()->getName()+".mbspx"));
     int result = dialog.exec();
     if(result and not dialog.getParameterFileName().isEmpty()) {
       QMessageBox::StandardButton ret = QMessageBox::Yes;
@@ -2814,6 +2822,38 @@ namespace MBSimGUI {
     echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation killed</span>\n");
     echoView->updateOutput(true);
     process.kill();
+  }
+
+  void MainWindow::createFMU() {
+    QFileInfo projectFile = QFileInfo(getProjectFilePath());
+    CreateFMUDialog dialog(getProjectDir().relativeFilePath(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu"));
+    int result = dialog.exec();
+    if(result) {
+      if(not dialog.getFileName().isEmpty()) {
+	QMessageBox::StandardButton ret = QMessageBox::Yes;
+	if(QFileInfo::exists(dialog.getFileName()))
+	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getFileName() + " already exists. Do you want to replace it?", QMessageBox::YesToAll | QMessageBox::Yes | QMessageBox::No);
+	if(ret == QMessageBox::Yes) {
+	  shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
+	  doc->setDocumentURI(this->doc->getDocumentURI());
+	  auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
+	  doc->insertBefore(newDocElement, nullptr);
+	  project->processIDAndHref(newDocElement);
+	  QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+	  QString projectFile = uniqueTempDir_+"/Project.mbsx";
+	  serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
+	  QStringList arg;
+	  if(dialog.cosim()) arg.append("--cosim");
+	  if(dialog.nocompress()) arg.append("--nocompress");
+	  arg.append(projectFile);
+	  arg.append(dialog.getFileName());
+	  echoView->clearOutput();
+	  process.setWorkingDirectory(uniqueTempDir_);
+	  process.start(QString::fromStdString((installPath/"bin"/"mbsimCreateFMU").string()), arg);
+	  statusBar()->showMessage(tr("Create FMU"));
+	}
+      }
+    }
   }
 
   void MainWindow::updateEchoView() {
