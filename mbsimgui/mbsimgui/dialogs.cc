@@ -872,7 +872,7 @@ namespace MBSimGUI {
   }
 
   CreateFMUDialog::CreateFMUDialog(const QString &fileName) {
-    setWindowTitle("Save FMU file");
+    setWindowTitle("Create FMU file");
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
@@ -900,7 +900,7 @@ namespace MBSimGUI {
     hl->addWidget(radio1);
     hl->addWidget(radio2);
     hl->addWidget(checkbox);
-    ExtWidget *e = new ExtWidget("Option",widget,false,false,"");
+    ExtWidget *e = new ExtWidget("Options",widget,false,false,"");
     layout->addWidget(e);
 
     layout->addStretch(1);

@@ -274,12 +274,12 @@ namespace MBSimGUI {
     connect(actionLinearSystemAnalysis,&QAction::triggered,this,&MainWindow::linearSystemAnalysis);
     actionStateTable = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"state_table.svg").string())),"Show state table");
     connect(actionStateTable,&QAction::triggered,this,&MainWindow::showStateTable);
+    QAction *actionCreateFMU = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"FMI_bare.svg").string())),"Create FMU");
+    connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
     QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
-    QAction *actionCreateFMU = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"create_FMU.svg").string())),"Create FMU");
-    connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
 
     elementView->setModel(new ElementTreeModel(this));
     elementView->setColumnWidth(0,250);

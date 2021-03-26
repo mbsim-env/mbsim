@@ -103,7 +103,7 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
 			 icons/mbsimgui.svg \
 			 icons/frequency_response.svg \
 			 icons/state_table.svg \
-			 icons/create_FMU.svg \
+			 icons/FMI_bare.svg \
 			 icons/frame.svg \
 			 icons/dss.svg \
 			 icons/project.svg \
