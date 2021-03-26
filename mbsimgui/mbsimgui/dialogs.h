@@ -132,12 +132,10 @@ namespace MBSimGUI {
       LoadParameterDialog();
       QString getParameterFileName() const;
       bool referenceParameter() const;
-      bool replaceParameter() const;
       bool getAbsoluteFilePath() const;
     private:
       ExtWidget *parameterFile;;
       QButtonGroup *pOpt;
-      QCheckBox *checkbox;
   };
 
   class SaveParameterDialog : public QDialog {

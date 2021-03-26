@@ -2022,6 +2022,7 @@ namespace MBSimGUI {
     if(dedicatedParent) updateReferences(dedicatedParent);
     updateParameterReferences(parent);
     parameterView->selectionModel()->setCurrentIndex(parent->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadParameter(EmbedItemData *parent) {
@@ -2052,9 +2053,10 @@ namespace MBSimGUI {
 	  ele = ele->getNextElementSibling();
 	}
       }
+      if(parent->getNumberOfParameters()) removeParameter(parent);
+      loadParameter(parent,pele,pfileitem,absfilepath);
+      if(getAutoRefresh()) refresh();
     }
-    if(parent->getNumberOfParameters() and dialog.replaceParameter()) removeParameter(parent);
-    loadParameter(parent,pele,pfileitem,absfilepath);
   }
 
   void MainWindow::removeParameter(EmbedItemData *parent) {

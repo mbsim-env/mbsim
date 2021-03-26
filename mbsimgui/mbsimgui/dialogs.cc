@@ -410,10 +410,6 @@ namespace MBSimGUI {
     radio1->setChecked(true);
     pOpt->addButton(radio1);
     pOpt->addButton(radio2);
-    checkbox = new QCheckBox("Replace");
-    checkbox->setChecked(true);
-    connect(radio2,&QRadioButton::clicked,this,[=](){ checkbox->setDisabled(true); checkbox->setChecked(true); });
-    connect(radio1,&QRadioButton::clicked,this,[=](){ checkbox->setDisabled(false); });
 
     Widget *widget = new Widget;
     QHBoxLayout *hl = new QHBoxLayout;
@@ -421,7 +417,6 @@ namespace MBSimGUI {
     widget->setLayout(hl);
     hl->addWidget(radio1);
     hl->addWidget(radio2);
-    hl->addWidget(checkbox);
     ExtWidget *e = new ExtWidget("Option",widget,false,false,"");
     layout->addWidget(e);
 
@@ -439,10 +434,6 @@ namespace MBSimGUI {
 
   bool LoadParameterDialog::referenceParameter() const {
     return pOpt->button(-3)->isChecked();
-  }
-
-  bool LoadParameterDialog::replaceParameter() const {
-    return checkbox->isChecked();
   }
 
   bool LoadParameterDialog::getAbsoluteFilePath() const {
