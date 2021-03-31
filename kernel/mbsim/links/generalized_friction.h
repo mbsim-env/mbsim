@@ -51,6 +51,7 @@ namespace MBSim {
       bool isSetValued() const override;
       bool isSingleValued() const override { return true; }
       void init(InitStage stage, const InitConfigSet &config) override;
+      void plot() override;
 
       void setGeneralizedFrictionForceLaw(FrictionForceLaw *laT_);
       void setGeneralizedFrictionImpactLaw(FrictionImpactLaw *LaT_);

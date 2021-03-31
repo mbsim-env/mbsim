@@ -83,6 +83,12 @@ namespace MBSim {
       if(laT->isSetValued() and not LaT)
         throwError("Friction impact law must be defined!");
     }
+    else if(stage==plotting) {
+      if(plotFeature[plotRecursive]) {
+        if(plotFeature[generalizedForce])
+	  plotColumns.emplace_back("generalizedNormalForce");
+      }
+    }
     else if(stage==unknownStage) {
       if(body[0]->getGeneralizedVelocitySize()!=1)
         throwError("rigid bodies must have 1 dof!");
@@ -91,6 +97,14 @@ namespace MBSim {
     laT->init(stage, config);
     if(LaT) LaT->init(stage, config);
     laN->init(stage, config);
+  }
+
+  void GeneralizedFriction::plot() {
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[generalizedForce])
+	plotVector.push_back((*laN)(getTime()));
+    }
+    DualRigidBodyLink::plot();
   }
 
   void GeneralizedFriction::setGeneralizedFrictionForceLaw(FrictionForceLaw *laT_) {
