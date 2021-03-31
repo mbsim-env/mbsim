@@ -20,6 +20,7 @@ liblink_la_SOURCES = link.cc\
 		     isotropic_rotational_spring_damper.cc\
 		     generalized_spring_damper.cc\
 		     generalized_friction.cc\
+		     generalized_clutch.cc\
 		     generalized_kinematic_excitation.cc\
 		     generalized_position_excitation.cc\
 		     generalized_velocity_excitation.cc\
@@ -37,6 +38,7 @@ linkincludedir = $(includedir)/mbsim/links
 linkinclude_HEADERS = link.h\
 		      mechanical_link.h\
 		      generalized_friction.h\
+		      generalized_clutch.h\
 		      frame_link.h\
 		      fixed_frame_link.h\
 		      floating_frame_link.h\
