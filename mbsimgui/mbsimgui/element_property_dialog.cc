@@ -2460,6 +2460,38 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  GeneralizedClutchPropertyDialog::GeneralizedClutchPropertyDialog(Element *friction) : DualRigidBodyLinkPropertyDialog(friction) {
+
+    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(friction,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
+    addToTab("Kinetics", frictionForceLaw);
+
+    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(friction,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
+    addToTab("Kinetics", frictionImpactLaw);
+
+    engagementFunction = new ExtWidget("Engagement function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"engagementFunction");
+    addToTab("Kinetics",engagementFunction);
+
+    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
+    addToTab("Kinetics",normalForceFunction);
+  }
+
+  DOMElement* GeneralizedClutchPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    frictionForceLaw->initializeUsingXML(item->getXMLElement());
+    frictionImpactLaw->initializeUsingXML(item->getXMLElement());
+    engagementFunction->initializeUsingXML(item->getXMLElement());
+    normalForceFunction->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedClutchPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    frictionForceLaw->writeXMLFile(item->getXMLElement(),ref);
+    frictionImpactLaw->writeXMLFile(item->getXMLElement(),ref);
+    engagementFunction->writeXMLFile(item->getXMLElement(),ref);
+    normalForceFunction->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
 
   GeneralizedGearPropertyDialog::GeneralizedGearPropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);

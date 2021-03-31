@@ -27,6 +27,7 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "friction.h"
+#include "clutch.h"
 #include "contact.h"
 #include "observer.h"
 #include "frame.h"
@@ -367,6 +368,9 @@ namespace MBSimGUI {
     addAction(action);
     action = new QAction("Add elastic joint", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new ElasticJoint, element); });
+    addAction(action);
+    action = new QAction("Add generalized clutch", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedClutch, element); });
     addAction(action);
     action = new QAction("Add generalized elastic connection", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedElasticConnection, element); });

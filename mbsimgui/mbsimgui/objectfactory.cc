@@ -30,6 +30,7 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "friction.h"
+#include "clutch.h"
 #include "contact.h"
 #include "gear.h"
 #include "connection.h"
@@ -224,6 +225,8 @@ namespace MBSimGUI {
       return new GeneralizedElasticConnection;
     if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
       return new GeneralizedFriction;
+    if(E(element)->getTagName()==MBSIM%"GeneralizedClutch")
+      return new GeneralizedClutch;
     if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
       return new GeneralizedGear;
     if(E(element)->getTagName()==MBSIM%"GeneralizedElasticStructure")
