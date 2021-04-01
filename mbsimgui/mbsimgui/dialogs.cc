@@ -360,10 +360,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     mainlayout->addLayout(layout);
 
-    modelFile = new ExtWidget("Model file", new FileWidget(fileName, "Save model file", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)", 1, false, true, QFileDialog::DontConfirmOverwrite),false,false,"");
+    modelFile = new ExtWidget("Model file", new FileWidget(fileName, "Save model file", "MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)", 1, false, false, QFileDialog::DontConfirmOverwrite),false,false,"");
     layout->addWidget(modelFile);
     if(param) {
-      parameterFile = new ExtWidget("Parameter file", new FileWidget(pFileName, "Save parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 1, false, true, QFileDialog::DontConfirmOverwrite),true,true,"");
+      parameterFile = new ExtWidget("Parameter file", new FileWidget(pFileName, "Save parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 1, false, false, QFileDialog::DontConfirmOverwrite),true,true,"");
       connect(static_cast<FileWidget*>(modelFile->getWidget()),&FileWidget::valueChanged,this,&SaveModelDialog::modelFileChanged);
       layout->addWidget(parameterFile);
     }
@@ -449,7 +449,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     mainlayout->addLayout(layout);
 
-    parameterFile = new ExtWidget("Parameter file", new FileWidget(fileName, "Save parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 1, false, true, QFileDialog::DontConfirmOverwrite),false,false,"");
+    parameterFile = new ExtWidget("Parameter file", new FileWidget(fileName, "Save parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 1, false, false, QFileDialog::DontConfirmOverwrite),false,false,"");
     layout->addWidget(parameterFile);
 
     layout->addStretch(1);
@@ -871,7 +871,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     mainlayout->addLayout(layout);
 
-    file = new ExtWidget("FMU file", new FileWidget(fileName, "FMU file", "MBSim FMU files (*.fmu);;All files (*.*)", 1, false, true, QFileDialog::DontConfirmOverwrite),false,false,"");
+    file = new ExtWidget("FMU file", new FileWidget(fileName, "FMU file", "MBSim FMU files (*.fmu);;All files (*.*)", 1, false, false, QFileDialog::DontConfirmOverwrite),false,false,"");
     layout->addWidget(file);
     layout->addStretch(1);
 

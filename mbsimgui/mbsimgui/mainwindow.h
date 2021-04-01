@@ -121,6 +121,7 @@ namespace MBSimGUI {
       std::pair<Element*,bool> elementBuffer;
       std::pair<Parameter*,bool> parameterBuffer;
       boost::filesystem::path installPath;
+      QString fmuFileName;
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event) override;
       void dropEvent(QDropEvent *event) override;

@@ -1716,7 +1716,7 @@ namespace MBSimGUI {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     auto index = elementView->selectionModel()->currentIndex();
     auto *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
-    SaveModelDialog dialog(getProjectDir().relativeFilePath(item->getName()+".mbsmx"),item->getNumberOfParameters());
+    SaveModelDialog dialog(getProjectDir().absoluteFilePath(item->getName()+".mbsmx"),item->getNumberOfParameters());
     int result = dialog.exec();
     if(result) {
       if(not dialog.getModelFileName().isEmpty()) {
@@ -1773,7 +1773,7 @@ namespace MBSimGUI {
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     auto index = parameterView->selectionModel()->currentIndex();
     auto *parameters = static_cast<Parameters*>(model->getItem(index)->getItemData());
-    SaveParameterDialog dialog(getProjectDir().relativeFilePath(parameters->getParent()->getName()+".mbspx"));
+    SaveParameterDialog dialog(getProjectDir().absoluteFilePath(parameters->getParent()->getName()+".mbspx"));
     int result = dialog.exec();
     if(result and not dialog.getParameterFileName().isEmpty()) {
       QMessageBox::StandardButton ret = QMessageBox::Yes;
@@ -2828,7 +2828,7 @@ namespace MBSimGUI {
 
   void MainWindow::createFMU() {
     QFileInfo projectFile = QFileInfo(getProjectFilePath());
-    CreateFMUDialog dialog(getProjectDir().relativeFilePath(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu"));
+    CreateFMUDialog dialog(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu");
     int result = dialog.exec();
     if(result) {
       if(not dialog.getFileName().isEmpty()) {
@@ -2848,10 +2848,13 @@ namespace MBSimGUI {
 	  if(dialog.cosim()) arg.append("--cosim");
 	  if(dialog.nocompress()) arg.append("--nocompress");
 	  arg.append(projectFile);
-	  arg.append(dialog.getFileName());
 	  echoView->clearOutput();
 	  process.setWorkingDirectory(uniqueTempDir_);
+	  fmuFileName = dialog.getFileName();
 	  process.start(QString::fromStdString((installPath/"bin"/"mbsimCreateFMU").string()), arg);
+	  connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
+	    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+"mbsim.fmu",fmuFileName);
+	  });
 	  statusBar()->showMessage(tr("Create FMU"));
 	}
       }
