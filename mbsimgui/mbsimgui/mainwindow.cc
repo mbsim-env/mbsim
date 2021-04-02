@@ -1722,7 +1722,7 @@ namespace MBSimGUI {
       if(not dialog.getModelFileName().isEmpty()) {
 	QMessageBox::StandardButton ret = QMessageBox::Yes;
 	if(QFileInfo::exists(dialog.getModelFileName()))
-	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getModelFileName() + " already exists. Do you want to replace it?", QMessageBox::YesToAll | QMessageBox::Yes | QMessageBox::No);
+	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getModelFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
 	  xercesc::DOMDocument *doc = impl->createDocument();
 	  DOMNode *node = doc->importNode(item->getXMLElement(),true);
@@ -2834,7 +2834,7 @@ namespace MBSimGUI {
       if(not dialog.getFileName().isEmpty()) {
 	QMessageBox::StandardButton ret = QMessageBox::Yes;
 	if(QFileInfo::exists(dialog.getFileName()))
-	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getFileName() + " already exists. Do you want to replace it?", QMessageBox::YesToAll | QMessageBox::Yes | QMessageBox::No);
+	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
 	  shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
 	  doc->setDocumentURI(this->doc->getDocumentURI());
@@ -2853,6 +2853,8 @@ namespace MBSimGUI {
 	  fmuFileName = dialog.getFileName();
 	  process.start(QString::fromStdString((installPath/"bin"/"mbsimCreateFMU").string()), arg);
 	  connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
+	    if(QFile::exists(fmuFileName))
+	      QFile::remove(fmuFileName);
 	    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+"mbsim.fmu",fmuFileName);
 	  });
 	  statusBar()->showMessage(tr("Create FMU"));
