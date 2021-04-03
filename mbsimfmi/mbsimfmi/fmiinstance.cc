@@ -361,6 +361,9 @@ namespace MBSimFMI {
   // the error tolerances of the integrator)
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
     assert(!cosim);
+    // update internal system state (we are here at a valid step)
+    dss->updateInternalState();
+
     // plot the current system state dependent on plotMode
     switch(predefinedParameterStruct.plotMode) {
       // plot at each n-th completed step
