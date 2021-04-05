@@ -221,12 +221,12 @@ namespace MBSim {
           gdActive = false;
       }
     }
-//    else if (j == 6) {
-//      if (rootID == 3) {
-//        gdActive = true;
-//        gddActive = true;
-//      }
-//    }
+    else if (j == 6) {
+     if (not gdActive) {
+        gdActive = true;
+        gddActive = true;
+      }
+    }
     else if (j == 7) {
       if (rootID == 2) {
         gdActive = true;

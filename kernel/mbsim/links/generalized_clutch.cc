@@ -251,6 +251,12 @@ namespace MBSim {
 	}
       }
     }
+    else if (j == 6) {
+     if(gActive and not gdActive) {
+        gdActive = true;
+        gddActive = true;
+      }
+    }
     else if (j == 7) {
       if(rootID == 2) {
         gdActive = true;
