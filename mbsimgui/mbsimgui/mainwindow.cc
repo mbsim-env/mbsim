@@ -1124,7 +1124,7 @@ namespace MBSimGUI {
   void MainWindow::openmbv() {
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx";
     if(QFile::exists(name))
-      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"openmbv").string()));
+      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"openmbv").string()), QStringList(name));
   }
 
   void MainWindow::h5plotserie() {
