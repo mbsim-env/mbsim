@@ -17,7 +17,7 @@
  */
 
 #include <config.h>
-#include "mbsim/links/generalized_friction.h"
+#include "mbsim/links/generalized_clutch.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/objects/rigid_body.h"
 #include <mbsim/constitutive_laws/friction_force_law.h>
@@ -31,61 +31,75 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedFriction)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedClutch)
 
-  GeneralizedFriction::~GeneralizedFriction() {
+  GeneralizedClutch::~GeneralizedClutch() {
     delete laT;
     delete LaT;
     delete laN;
   }
 
-  bool GeneralizedFriction::isSetValued() const {
+  bool GeneralizedClutch::isSetValued() const {
     return laT->isSetValued();
   }
 
-  void GeneralizedFriction::updateGeneralizedForces() {
+  void GeneralizedClutch::updateGeneralizedForces() {
     if(isSetValued()) {
       if(gdActive)
         lambda = evalla();
-      else {
+      else if(gActive) {
         Vec gd = evalGeneralizedRelativeVelocity();
         lambda = laT->dlaTdlaN(gd)*(*laN)(getTime());
         if(gd(0)*gdDir<0) lambda*=-1.0;
       }
+      else
+	lambda.init(0);
     }
     else
       lambda = (*laT)(evalGeneralizedRelativeVelocity(),(*laN)(getTime()));
     updla = false;
   }
 
-  void GeneralizedFriction::updateh(int j) {
+  void GeneralizedClutch::updateh(int j) {
     if(not(isSetValued() and gdActive))
       DualRigidBodyLink::updateh(j);
   }
 
-  void GeneralizedFriction::updateW(int j) {
+  void GeneralizedClutch::updateW(int j) {
     if(isSetValued() and gdActive)
       DualRigidBodyLink::updateW(j);
   }
 
-  const double& GeneralizedFriction::evalgdn() {
+  const double& GeneralizedClutch::evalgdn() {
     if(ds->getUpdateLa()) ds->updateLa();
     return gdn(0);
   }
 
-  const double& GeneralizedFriction::evalgdd() {
+  const double& GeneralizedClutch::evalgdd() {
     if(ds->getUpdatela()) ds->updatela();
     return gdd(0);
   }
 
-  void GeneralizedFriction::init(InitStage stage, const InitConfigSet &config) {
+  bool GeneralizedClutch::isActive() const {
+    return gActive ? true : false;
+  }
+
+  bool GeneralizedClutch::gActiveChanged() {
+    bool changed = (gActive0 != gActive ? true : false);
+    gActive0 = gActive;
+    return changed;
+  }
+
+  void GeneralizedClutch::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       if(laT->isSetValued() and not LaT)
         throwError("Friction impact law must be defined!");
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        if(plotFeature[generalizedForce])
+        if(plotFeature[generalizedRelativePosition])
+	  plotColumns.emplace_back("engagement");
+	if(plotFeature[generalizedForce])
 	  plotColumns.emplace_back("generalizedNormalForce");
       }
     }
@@ -96,51 +110,59 @@ namespace MBSim {
     DualRigidBodyLink::init(stage, config);
     laT->init(stage, config);
     if(LaT) LaT->init(stage, config);
+    e->init(stage, config);
     laN->init(stage, config);
   }
 
-  void GeneralizedFriction::plot() {
+  void GeneralizedClutch::plot() {
     if(plotFeature[plotRecursive]) {
+      if(plotFeature[generalizedRelativePosition])
+	plotVector.push_back((*e)(getTime()));
       if(plotFeature[generalizedForce])
 	plotVector.push_back((*laN)(getTime()));
     }
     DualRigidBodyLink::plot();
   }
 
-  void GeneralizedFriction::setGeneralizedFrictionForceLaw(FrictionForceLaw *laT_) {
+  void GeneralizedClutch::setGeneralizedFrictionForceLaw(FrictionForceLaw *laT_) {
     laT = laT_;
     laT->setParent(this);
   }
 
-  void GeneralizedFriction::setGeneralizedFrictionImpactLaw(FrictionImpactLaw *LaT_) {
+  void GeneralizedClutch::setGeneralizedFrictionImpactLaw(FrictionImpactLaw *LaT_) {
     LaT = LaT_;
     LaT->setParent(this);
   }
 
-  void GeneralizedFriction::updateStopVector() {
-    if (gdActive)
-      sv(0) = fabs(evalgdd()) - gddTol;
+  void GeneralizedClutch::updateStopVector() {
+    sv(0) = (*e)(getTime());
+    if(gActive) {
+      if(gdActive)
+	sv(1) = fabs(evalgdd()) - gddTol;
+      else
+	sv(1) = evalGeneralizedRelativeVelocity()(0);
+    }
     else
-      sv(0) = evalGeneralizedRelativeVelocity()(0);
+      sv(1) = 1;
   }
 
-  void GeneralizedFriction::calclaSize(int j) {
+  void GeneralizedClutch::calclaSize(int j) {
     DualRigidBodyLink::calclaSize(j);
     if (j <= 2) { // IA
       if (laT->isSetValued())
-        laSize = 1;
+        laSize = gActive * 1;
       else
         laSize = 0;
     }
     else if (j == 3) { // IB
       if (laT->isSetValued() and gdActive)
-        laSize = 1;
+        laSize = gActive * 1;
       else
         laSize = 0;
     }
     else if (j <= 5) { // IG
       if (laT->isSetValued())
-        laSize = 1;
+        laSize = gActive * 1;
       else
         laSize = 0;
     }
@@ -148,22 +170,22 @@ namespace MBSim {
       throwError("Internal error");
   }
 
-  void GeneralizedFriction::calcgSize(int j) {
+  void GeneralizedClutch::calcgSize(int j) {
     DualRigidBodyLink::calcgSize(j);
     gSize = 0;
   }
 
-  void GeneralizedFriction::calcgdSize(int j) {
+  void GeneralizedClutch::calcgdSize(int j) {
     DualRigidBodyLink::calcgdSize(j);
     if (j <= 2) { // all contacts
       if (laT->isSetValued())
-        gdSize = 1;
+        gdSize = gActive * 1;
       else
         gdSize = 0;
     }
     else if (j == 3) { // sticking contacts
       if (laT->isSetValued() and gdActive)
-        gdSize = 1;
+        gdSize = gActive * 1;
       else
         gdSize = 0;
     }
@@ -171,70 +193,86 @@ namespace MBSim {
       throwError("Internal error");
   }
 
-  void GeneralizedFriction::calcrFactorSize(int j) {
+  void GeneralizedClutch::calcrFactorSize(int j) {
     DualRigidBodyLink::calcrFactorSize(j);
     if (j <= 2) // IA
-      rFactorSize = 1;
+      rFactorSize = gActive * 1;
     else if (j == 3) // IB
-      rFactorSize = gdActive;
+      rFactorSize = gActive * gdActive;
   }
 
-  void GeneralizedFriction::calcsvSize() {
+  void GeneralizedClutch::calcsvSize() {
     DualRigidBodyLink::calcsvSize();
-    svSize = laT->isSetValued() ? 1 : 0;
+    svSize = laT->isSetValued() ? 2 : 0;
   }
 
-  void GeneralizedFriction::checkActive(int j) {
-    if (j == 1)
-      gdActive = 1;
+  void GeneralizedClutch::checkActive(int j) {
+    if (j == 1) {
+      gActive = (*e)(getTime())<0 ? 0 : 1;
+      gdActive = gActive;
+    }
     else if (j == 2) {
       Vec gd = evalGeneralizedRelativeVelocity();
-      gdActive = laT->isSticking(gd, gdTol) ? 1 : 0;
+      gdActive = gActive ? (laT->isSticking(gd, gdTol) ? 1 : 0) : 0;
       gddActive = gdActive;
       if(not gdActive)
         gdDir = gd(0)>0?1:-1;
     }
     else if (j == 3) {
-      if (fabs(evalgdn()) <= gdTol) {
-        gdActive = true;
-        gddActive = true;
-      }
-      else {
-        gdActive = false;
-        gddActive = false;
-        gdDir = gdn(0)>0?1:-1;
+      if(gActive) {
+	if(fabs(evalgdn()) <= gdTol) {
+	  gdActive = true;
+	  gddActive = true;
+	}
+	else {
+	  gdActive = false;
+	  gddActive = false;
+	  gdDir = gdn(0)>0?1:-1;
+	}
       }
     }
     else if (j == 4) {
-      if (gdActive) {
-        if (fabs(evalgdd()) <= gddTol)
-          gddActive = true;
-        else {
-          gddActive = false;
-          gdDir = gdd(0)>0?1:-1;
-        }
+      if(gActive) {
+	if(gdActive) {
+	  if(fabs(evalgdd()) <= gddTol)
+	    gddActive = true;
+	  else {
+	    gddActive = false;
+	    gdDir = gdd(0)>0?1:-1;
+	  }
+	}
       }
     }
     else if (j == 5) {
-      if (gdActive) {
-        if (!gddActive)
-          gdActive = false;
+      if(gActive) {
+	if(gdActive) {
+	  if(!gddActive)
+	    gdActive = false;
+	}
       }
     }
     else if (j == 6) {
-     if (not gdActive) {
+     if(gActive and not gdActive) {
         gdActive = true;
         gddActive = true;
       }
     }
     else if (j == 7) {
-      if (rootID == 2) {
+      if(rootID == 2) {
         gdActive = true;
         gddActive = true;
       }
     }
     else if (j == 8) {
-      if (jsv(0) && rootID == 1) { // stick-slip transition
+      if(jsv(0) and rootID == 1) { // opening or closing contact
+	gActive = not gActive;
+	Vec gd = evalGeneralizedRelativeVelocity();
+	gdActive = gActive ? (laT->isSticking(gd, gdTol) ? 1 : 0) : 0;
+	gddActive = gdActive;
+	if(gActive and not gddActive)
+	  gdDir = gd(0)>0?1:-1;
+      }
+      if(jsv(1) && rootID == 1) { // stick-slip transition
         gddActive = false;
         gdDir = gdd(0)>0?1:-1;
       }
@@ -243,12 +281,12 @@ namespace MBSim {
       throwError("Internal error");
   }
 
-  void GeneralizedFriction::updatecorr(int j) {
-    if (j <= 2) { // IG position
+  void GeneralizedClutch::updatecorr(int j) {
+    if(j <= 2) { // IG position
     }
     else if (j == 4) {
-      if (gdActive) { // Contact was sticking
-        if (gddActive) {
+      if(gActive and gdActive) { // Contact was sticking
+        if(gddActive) {
           corr(0) = 0; // Contact stays sticking, regular projection
         }
         else {
@@ -260,22 +298,24 @@ namespace MBSim {
       throwError("Internal error");
   }
 
-  void GeneralizedFriction::calccorrSize(int j) {
+  void GeneralizedClutch::calccorrSize(int j) {
     DualRigidBodyLink::calccorrSize(j);
     if (j <= 2) { // IG
       corrSize = 0;
     }
     else if (j == 4) { // IH
-      corrSize = gdActive;
+      corrSize = gActive * gdActive;
     }
     else
       throwError("Internal error");
   }
 
-  void GeneralizedFriction::checkRoot() {
+  void GeneralizedClutch::checkRoot() {
     rootID = 0;
-    if (jsv(0)) {
-      if (gdActive)
+    if(jsv(0))
+      rootID = 1; // clutch was closed -> opening
+    if(jsv(1)) {
+      if(gdActive)
         rootID = 1; // contact was sticking -> sliding
       else
         rootID = 2; // contact was sliding -> sticking
@@ -283,7 +323,7 @@ namespace MBSim {
     ds->setRootID(max(ds->getRootID(), rootID));
   }
 
-  void GeneralizedFriction::updaterFactors() {
+  void GeneralizedClutch::updaterFactors() {
     if (gdActive) {
 
       const double *a = ds->evalGs()();
@@ -305,7 +345,7 @@ namespace MBSim {
     }
   }
 
-  void GeneralizedFriction::solveConstraintsFixpointSingle() {
+  void GeneralizedClutch::solveConstraintsFixpointSingle() {
     if (gdActive) {
 
       const double *a = ds->evalGs()();
@@ -322,7 +362,7 @@ namespace MBSim {
     }
   }
 
-  void GeneralizedFriction::solveImpactsFixpointSingle() {
+  void GeneralizedClutch::solveImpactsFixpointSingle() {
     if (gdActive) {
 
       const double *a = ds->evalGs()();
@@ -339,7 +379,7 @@ namespace MBSim {
     }
   }
 
-  void GeneralizedFriction::checkConstraintsForTermination() {
+  void GeneralizedClutch::checkConstraintsForTermination() {
     if (gdActive) {
 
       const double *a = ds->evalGs()();
@@ -359,7 +399,7 @@ namespace MBSim {
     }
   }
 
-  void GeneralizedFriction::checkImpactsForTermination() {
+  void GeneralizedClutch::checkImpactsForTermination() {
     if (gdActive) {
 
       const double *a = ds->evalGs()();
@@ -379,12 +419,14 @@ namespace MBSim {
     }
   }
 
-  void GeneralizedFriction::initializeUsingXML(DOMElement *element) {
+  void GeneralizedClutch::initializeUsingXML(DOMElement *element) {
     DualRigidBodyLink::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionForceLaw");
     setGeneralizedFrictionForceLaw(ObjectFactory::createAndInit<FrictionForceLaw>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionImpactLaw");
     if(e) setGeneralizedFrictionImpactLaw(ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"engagementFunction");
+    setEngagementFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedNormalForceFunction");
     setGeneralizedNormalForceFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
   }

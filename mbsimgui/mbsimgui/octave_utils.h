@@ -108,10 +108,10 @@ namespace MBSimGUI {
           for(unsigned int i=0; i<ele.size(); i++) {
             for(unsigned int j=0; j<ele[i].size(); j++) {
               auto *octMat = dynamic_cast<OctaveMatrix*>(ele[i][j]);
-              if(octMat) 
-                A[i].push_back(T(octMat->get<T>()));
-              else 
-                A[i].push_back(T());
+              auto *octComplexMat = dynamic_cast<OctaveComplexMatrix*>(ele[i][j]);
+              if(octMat) A[i].emplace_back(T(octMat->get<T>()));
+	      else if(octComplexMat) A[i].emplace_back(T(octComplexMat->get<T>()));
+              else A[i].emplace_back(T());
             }
           }
           return A;

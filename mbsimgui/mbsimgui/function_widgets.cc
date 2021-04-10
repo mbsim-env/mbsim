@@ -244,7 +244,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",retDim,0,retType),false,false,MBSIM%"components");
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",retDim,0,retType==varVec?false:true),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 
@@ -922,7 +922,7 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  LinearRegularizedStribeckFrictionWidget::LinearRegularizedStribeckFrictionWidget() {
+  LinearRegularizedStribeckFrictionWidget::LinearRegularizedStribeckFrictionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -930,20 +930,24 @@ namespace MBSimGUI {
     gd = new ExtWidget("Marginal velocity",new ChoiceWidget(new ScalarWidgetFactory("0.01",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"marginalVelocity");
     layout->addWidget(gd);
 
-    mu = new ExtWidget("Friction coefficient",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frictionCoefficient");
-    layout->addWidget(mu);
+    auto *dummy1 = new Function;
+    dummy1->setParent(element);
+    auto *dummy2 = new Function;
+    dummy2->setParent(dummy1);
+    frictionFunction = new ExtWidget("Friction function",new ChoiceWidget(new Function1ArgWidgetFactory(dummy2,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionFunction");
+    layout->addWidget(frictionFunction);
   }
 
   DOMElement* LinearRegularizedStribeckFrictionWidget::initializeUsingXML(DOMElement *element) {
     gd->initializeUsingXML(element);
-    mu->initializeUsingXML(element);
+    frictionFunction->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* LinearRegularizedStribeckFrictionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
     gd->writeXMLFile(ele0);
-    mu->writeXMLFile(ele0);
+    frictionFunction->writeXMLFile(ele0);
     return ele0;
   }
 

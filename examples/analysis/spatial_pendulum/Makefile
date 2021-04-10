@@ -1,4 +1,4 @@
-PACKAGES=mbsim
+PACKAGES=mbsimControl
 
 SRCDIR:=$(dir $(lastword $(MAKEFILE_LIST)))
 include $(SRCDIR)../../default_build.mk

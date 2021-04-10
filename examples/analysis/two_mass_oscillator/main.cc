@@ -1,9 +1,10 @@
 #include "system.h"
-#include <mbsim/analyzers/eigenanalyzer.h>
+#include <mbsimControl/linear_system_analyzer.h>
 #include "mbsim/utils/eps.h"
 
 using namespace std;
 using namespace MBSim;
+using namespace MBSimControl;
 using namespace fmatvec;
 
 int main (int argc, char* argv[]) {
@@ -13,14 +14,8 @@ int main (int argc, char* argv[]) {
   sys->setDetermineEquilibriumState(true);
   sys->initialize();
 
-  Eigenanalyzer analyzer;
-  Vec z0(sys->getzSize());
-  z0(0) = 0.02;
-  analyzer.setInitialDeviation(z0);
-  analyzer.setAmplitude(0);
-  analyzer.setModeAmplitudeTable("[1,0.5]");
-  analyzer.setLoops(1);
-  analyzer.setTask(Eigenanalyzer::eigenmodes);
+  LinearSystemAnalyzer analyzer;
+  analyzer.visualizeNaturalModeShapes();
   analyzer.setSystem(sys);
   analyzer.execute();
 

@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2021 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,30 +17,21 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _ANALYZER__H_
-#define _ANALYZER__H_
+#ifndef _CLUTCH__H_
+#define _CLUTCH__H_
 
-#include "solver.h"
-#include "solver_property_dialog.h"
-
-namespace XERCES_CPP_NAMESPACE {
-  class DOMElement;
-  class DOMNode;
-}
+#include "link_.h"
+#include "constraint.h"
 
 namespace MBSimGUI {
 
-  class Analyzer : public Solver {
+  class GeneralizedClutch : public DualRigidBodyLink {
     public:
-      Analyzer() = default;
+      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedClutch"; }
+      QString getType() const override { return "Generalized clutch"; }
+      PropertyDialog* createPropertyDialog() override { return new GeneralizedClutchPropertyDialog(this); }
   };
 
-  class LinearSystemAnalyzer : public Analyzer {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"LinearSystemAnalyzer"; }
-      QString getType() const override { return "Linear system analyzer"; }
-      PropertyDialog* createPropertyDialog() override { return new LinearSystemAnalyzerPropertyDialog(this); }
-  };
 }
 
 #endif

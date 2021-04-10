@@ -49,6 +49,7 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF FUNCTION2 */
       fmatvec::Vec operator()(const fmatvec::Vec &gd, const double& laN) override;
+      fmatvec::Vec parDer2(const fmatvec::Vec &gd, const double& laN) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void init(Element::InitStage stage, const InitConfigSet &config) override {
         Function<fmatvec::Vec(fmatvec::Vec,double)>::init(stage, config);

@@ -48,8 +48,6 @@ namespace MBSimControl {
       if(signal.empty())
         throwError("No input signal is given!");
     }
-    else if(stage==preInit)
-      s.resize(getSignalSize(),NONINIT);
     Signal::init(stage, config);
   }
 
@@ -89,8 +87,6 @@ namespace MBSimControl {
       if(not signal)
         throwError("Input signal is not given!");
     }
-    else if(stage==preInit)
-      s.resize(getSignalSize(),NONINIT);
     Signal::init(stage, config);
   }
 

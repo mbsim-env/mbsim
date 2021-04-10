@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+    Copyright (C) 2021 Martin Förg
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -17,8 +17,8 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#ifndef _ANALYZER__H_
-#define _ANALYZER__H_
+#ifndef _EXPORTER__H_
+#define _EXPORTER__H_
 
 #include "solver.h"
 #include "solver_property_dialog.h"
@@ -30,17 +30,13 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class Analyzer : public Solver {
+  class LTISystemExporter : public Solver {
     public:
-      Analyzer() = default;
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"LTISystemExporter"; }
+      QString getType() const override { return "LTI system exporter"; }
+      PropertyDialog* createPropertyDialog() override { return new LTISystemExporterPropertyDialog(this); }
   };
 
-  class LinearSystemAnalyzer : public Analyzer {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"LinearSystemAnalyzer"; }
-      QString getType() const override { return "Linear system analyzer"; }
-      PropertyDialog* createPropertyDialog() override { return new LinearSystemAnalyzerPropertyDialog(this); }
-  };
 }
 
 #endif

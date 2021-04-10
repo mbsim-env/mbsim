@@ -297,24 +297,14 @@ namespace MBSimGUI {
       ExtWidget *stepSize;
   };
 
-  class EigenanalyzerPropertyDialog : public SolverPropertyDialog {
+  class LinearSystemAnalyzerPropertyDialog : public SolverPropertyDialog {
 
     public:
-      EigenanalyzerPropertyDialog(Solver *solver);
+      LinearSystemAnalyzerPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *startTime, *endTime, *plotStepSize, *initialState, *task, *initialDeviation, *amplitude, *modeAmplitudeTable, *loops;
-  };
-
-  class HarmonicResponseAnalyzerPropertyDialog : public SolverPropertyDialog {
-
-    public:
-      HarmonicResponseAnalyzerPropertyDialog(Solver *solver);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *startTime, *excitationFrequencies, *systemFrequencies, *plotStepSize, *initialState, *task;
+      ExtWidget *initialTime, *initialState, *initialInput, *minimumNaturalFrequency, *maximumNaturalFrequency, *modeScale, *excitationFrequencies, *excitationAmplitudeFunction, *visualizeModeShapes, *visualizeFrequencyResponse, *plotStepSize, *loops;
   };
 
 }

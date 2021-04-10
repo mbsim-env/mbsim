@@ -2434,10 +2434,10 @@ namespace MBSimGUI {
 
   GeneralizedFrictionPropertyDialog::GeneralizedFrictionPropertyDialog(Element *friction) : DualRigidBodyLinkPropertyDialog(friction) {
 
-    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
+    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(friction,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
+    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(friction,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
     normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
@@ -2460,6 +2460,38 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  GeneralizedClutchPropertyDialog::GeneralizedClutchPropertyDialog(Element *friction) : DualRigidBodyLinkPropertyDialog(friction) {
+
+    frictionForceLaw = new ExtWidget("Generalized friction force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(friction,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedFrictionForceLaw");
+    addToTab("Kinetics", frictionForceLaw);
+
+    frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(friction,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
+    addToTab("Kinetics", frictionImpactLaw);
+
+    engagementFunction = new ExtWidget("Engagement function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"engagementFunction");
+    addToTab("Kinetics",engagementFunction);
+
+    normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
+    addToTab("Kinetics",normalForceFunction);
+  }
+
+  DOMElement* GeneralizedClutchPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    DualRigidBodyLinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    frictionForceLaw->initializeUsingXML(item->getXMLElement());
+    frictionImpactLaw->initializeUsingXML(item->getXMLElement());
+    engagementFunction->initializeUsingXML(item->getXMLElement());
+    normalForceFunction->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* GeneralizedClutchPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DualRigidBodyLinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    frictionForceLaw->writeXMLFile(item->getXMLElement(),ref);
+    frictionImpactLaw->writeXMLFile(item->getXMLElement(),ref);
+    engagementFunction->writeXMLFile(item->getXMLElement(),ref);
+    normalForceFunction->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
 
   GeneralizedGearPropertyDialog::GeneralizedGearPropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
@@ -2553,10 +2585,10 @@ namespace MBSimGUI {
     contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
     addToTab("Kinetics", contactImpactLaw);
 
-    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialForceLaw");
+    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(contact,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
+    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(contact,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
     globalSearch = new ExtWidget("Global search",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"globalSearch");
@@ -2618,10 +2650,10 @@ namespace MBSimGUI {
     contactImpactLaw = new ExtWidget("Normal impact law",new ChoiceWidget(new GeneralizedImpactLawWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIM%"normalImpactLaw");
     addToTab("Kinetics", contactImpactLaw);
 
-    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"tangentialForceLaw");
+    frictionForceLaw = new ExtWidget("Tangential force law",new ChoiceWidget(new FrictionForceLawWidgetFactory(contact,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"tangentialForceLaw");
     addToTab("Kinetics", frictionForceLaw);
 
-    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
+    frictionImpactLaw = new ExtWidget("Tangential impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(contact,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"tangentialImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
   }
 
@@ -3153,7 +3185,7 @@ namespace MBSimGUI {
   DemultiplexerPropertyDialog::DemultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
-    indices = new ExtWidget("Indices",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"indices");
+    indices = new ExtWidget("Indices",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"indices");
     addToTab("General", indices);
   }
 
@@ -3364,6 +3396,44 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  SwitchPropertyDialog::SwitchPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+
+    dataSignal1 = new ExtWidget("First data input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"firstDataInputSignal");
+    addToTab("General", dataSignal1);
+
+    dataSignal2 = new ExtWidget("Second data input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"secondDataInputSignal");
+    addToTab("General", dataSignal2);
+
+    controlSignal = new ExtWidget("Control input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"controlInputSignal");
+    addToTab("General", controlSignal);
+
+    threshold = new ExtWidget("Threshold",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"threshold");
+    addToTab("General", threshold);
+
+    rootFinding = new ExtWidget("Root finding",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"rootFinding");
+    addToTab("General", rootFinding);
+  }
+
+  DOMElement* SwitchPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    dataSignal1->initializeUsingXML(item->getXMLElement());
+    dataSignal2->initializeUsingXML(item->getXMLElement());
+    controlSignal->initializeUsingXML(item->getXMLElement());
+    threshold->initializeUsingXML(item->getXMLElement());
+    rootFinding->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* SwitchPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    dataSignal1->writeXMLFile(item->getXMLElement(),ref);
+    dataSignal2->writeXMLFile(item->getXMLElement(),ref);
+    controlSignal->writeXMLFile(item->getXMLElement(),ref);
+    threshold->writeXMLFile(item->getXMLElement(),ref);
+    rootFinding->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   UniversalGravitationPropertyDialog::UniversalGravitationPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
     addTab("Kinetics",1);
     addTab("Visualization",2);
@@ -3458,7 +3528,7 @@ namespace MBSimGUI {
 
   DragPropertyDialog::DragPropertyDialog(Element *link) : FloatingFrameLinkPropertyDialog(link) {
 
-    dragFunction = new ExtWidget("Drag function",new ChoiceWidget(new Function1ArgWidgetFactory(link,"F",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
+    dragFunction = new ExtWidget("Drag function",new ChoiceWidget(new Function1ArgWidgetFactory(link,"v",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"dragFunction");
     addToTab("General",dragFunction);
 
     enableOpenMBV = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIMPHYSICS%"enableOpenMBV");

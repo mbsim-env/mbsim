@@ -44,11 +44,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     QMenu *analyzers = new QMenu("Select analyzer", this);
-    action = new QAction("Select eigenanalyzer", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new Eigenanalyzer); });
-    analyzers->addAction(action);
-    action = new QAction("Select harmonic response analyzer", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new HarmonicResponseAnalyzer); });
+    action = new QAction("Select linear system analyzer", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new LinearSystemAnalyzer); });
     analyzers->addAction(action);
     addMenu(analyzers);
     QMenu *integrators = new QMenu("Select integrator", this);

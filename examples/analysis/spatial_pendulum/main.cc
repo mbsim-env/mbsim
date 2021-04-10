@@ -1,10 +1,11 @@
 #include "system.h"
-#include <mbsim/analyzers/eigenanalyzer.h>
-#include "mbsim/utils/eps.h"
+#include <mbsimControl/linear_system_analyzer.h>
 #include "mbsim/integrators/integrators.h"
+#include <boost/filesystem.hpp>
 
 using namespace std;
 using namespace MBSim;
+using namespace MBSimControl;
 using namespace fmatvec;
 
 int main (int argc, char* argv[]) {
@@ -23,32 +24,28 @@ int main (int argc, char* argv[]) {
   integrator.integrate(*sys);
 
   cout << "Analyse planar motion" << endl;
-  Eigenanalyzer analyzer;
-  analyzer.setEndTime(4.5);
+  LinearSystemAnalyzer analyzer;
   Vec z0(sys->getzSize());
   z0(1) = 1.0/180*M_PI;
-  analyzer.setInitialDeviation(z0);
   Vec zEq(sys->getzSize());
   analyzer.setInitialState(zEq);
-  analyzer.setAmplitude(0);
   analyzer.setSystem(sys);
   analyzer.execute();
 
-  cout << "Eigenfrequency is " << analyzer.getEigenvalues()(0).imag();
-  cout << " (should be " << sqrt(g/a) << ")" << endl;
+  cout << "Eigenfrequency should be " << sqrt(g/a) << endl;
+  boost::filesystem::rename("modal_analysis.mat","modal_analysis1.mat");
 
   cout << "Analyse cone-pendel" << endl;
   z0.init(0);
   zEq.init(0);
   zEq(1) = theta0/180*M_PI;
   zEq(2) = psid;
-  analyzer.setInitialDeviation(z0);
   analyzer.setInitialState(zEq);
   analyzer.setSystem(sys);
   analyzer.execute();
 
-  cout << "Eigenfrequency is " << analyzer.getEigenvalues()(0).imag();
-  cout << " (should be " << sqrt(g/a*(1./cos(theta0/180*M_PI)+3*cos(theta0/180*M_PI))) << ")" << endl;
+  cout << "Eigenfrequency should be " << sqrt(g/a*(1./cos(theta0/180*M_PI)+3*cos(theta0/180*M_PI))) << endl;
+  boost::filesystem::rename("modal_analysis.mat","modal_analysis2.mat");
 
   delete sys;
 

@@ -1028,4 +1028,162 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="Switch" substitutionGroup="Signal" type="SwitchType"/>
+  <xs:complexType name="SwitchType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="firstDataInputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="secondDataInputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="controlInputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+	  <xs:element name="threshold" type="pv:unknownScalar" minOccurs="0"/>
+	  <xs:element name="rootFinding" type="pv:booleanFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LTISystemExporter" substitutionGroup="mbsim:Solver" type="LTISystemExporterType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+       Transformiert ein nichtlineares, dynamisches System in ein lineares zeitinvariantes System in Zustandsform und exportiert die zugehörigen Matrizen A, B, C und D.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="LTISystemExporterType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:SolverType">
+        <xs:sequence>
+          <xs:element name="initialTime" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Zeitpunkt, zu dem das System linearisiert werden soll.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialState" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Anfangszustand.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialInput" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Startwerte der Eingangsgrößen
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="LinearSystemAnalyzer" substitutionGroup="mbsim:Solver" type="LinearSystemAnalyzerType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Führt eine Eigenanalyse, eine Modalanalyse und eine Frequenzganganalyse eines dynamischen Systems durch. Dabei wird das nichtlineare System in ein lineares, zeitinvariantes System transformiert. Die zugehörigen Matrizen A, B, C und D werden in einer Datei gespeichert.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinearSystemAnalyzerType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:SolverType">
+        <xs:sequence>
+          <xs:element name="initialTime" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Anfangszeitpunkt. Entspricht dem Zeitpunkt, zu dem das System linearisiert werden soll.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialState" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Anfangszustand.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="initialInput" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Startwerte der Eingangsgrößen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="minimumNaturalFrequency" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Kleinste Eigenfrequenz, die berechnet werden soll. Standardardmäßig 0 Hz.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumNaturalFrequency" type="pv:unknownScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Maximale Eigenfrequenz, die berechnet werden soll. Standardardmäßig 10 kHz.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+	  <xs:element name="naturalModeScale" type="pv:nounitVector" minOccurs="0">
+	    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+	      Faktoren, mit der die Eigenmoden skaliert werden sollen.
+	    </xs:documentation></xs:annotation>
+	  </xs:element>
+          <xs:element name="excitationFrequencies" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Vektor der Anregungsfrequenzen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+	  <xs:element name="excitationAmplitudeFunction" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Anregungsamplituden der Eingänge als Funktion der Anregungsfrequenz.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="visualizeNaturalModeShapes" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Visualisierung der Schwingformen in OpenMBV.
+            </xs:documentation></xs:annotation>
+	    <xs:complexType>
+	      <xs:sequence>
+                <xs:element name="modeRange" type="pv:indexVector" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Bereich der Moden, die visualisiert werden sollen. Standardardmäßig 1 bis 10.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+	      </xs:sequence>
+	    </xs:complexType>
+          </xs:element>
+          <xs:element name="visualizeFrequencyResponse" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Visualisierung des Frequenzgangs in OpenMBV.
+            </xs:documentation></xs:annotation>
+	    <xs:complexType>
+	      <xs:sequence>
+                <xs:element name="frequencyRange" type="pv:unknownVector" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Frequenzbreich, der visualisiert werden soll. Standardardmäßig 0 bis 10 Hz.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="inputNumber" type="pv:indexFullEval" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Nummer des Eingangssignals, über das die Anregung erfolgt.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+	      </xs:sequence>
+	    </xs:complexType>
+          </xs:element>
+          <xs:element name="plotStepSize" type="pv:timeScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Zeitschrittweite bei der Visualisierung.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="loops" type="pv:integerFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Anzahl der Schwingungen pro Eigenmode bzw. pro Anregungsfrquenz bei der Visualisierung.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>

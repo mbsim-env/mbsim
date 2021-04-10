@@ -100,7 +100,10 @@ namespace MBSimGUI {
     Frame *f;
     while(e) {
       f = Embed<Frame>::create(e,this);
-      if(f) addFrame(f);
+      if(f) {
+        addFrame(f);
+        f->create();
+      }
       e=e->getNextElementSibling();
     }
 
@@ -109,7 +112,10 @@ namespace MBSimGUI {
     Contour *c;
     while(e) {
       c = Embed<Contour>::create(e,this);
-      if(c) addContour(c);
+      if(c) {
+        addContour(c);
+        c->create();
+      }
       e=e->getNextElementSibling();
     }
   }

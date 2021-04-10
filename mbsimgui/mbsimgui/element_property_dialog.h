@@ -675,6 +675,16 @@ namespace MBSimGUI {
       ExtWidget *frictionForceLaw, *frictionImpactLaw, *normalForceFunction;
   };
 
+  class GeneralizedClutchPropertyDialog : public DualRigidBodyLinkPropertyDialog {
+
+    public:
+      GeneralizedClutchPropertyDialog(Element *link);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *frictionForceLaw, *frictionImpactLaw, *normalForceFunction, *engagementFunction;
+  };
+
   class GeneralizedGearPropertyDialog : public RigidBodyLinkPropertyDialog {
 
     public:
@@ -1006,6 +1016,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *inputSignal;
+  };
+
+  class SwitchPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      SwitchPropertyDialog(Element *signal);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *dataSignal1, *dataSignal2, *controlSignal, *threshold, *rootFinding;
   };
 
   class UniversalGravitationPropertyDialog : public MechanicalLinkPropertyDialog {

@@ -42,8 +42,6 @@ namespace MBSimControl {
       if(not frame)
         throwError("Frame is not given!");
     }
-    else if(stage==preInit)
-      s.resize(getSignalSize());
     Sensor::init(stage, config);
   }
 

@@ -74,7 +74,6 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) $(MAYBE_SIGWATCH_SRC) mainwindow.cc \
 		   solver.cc \
 		   project.cc \
 		   octave_utils.cc \
-		   data_plot.cc \
 		   file_editor.cc
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)
@@ -85,8 +84,7 @@ QT_BUILT_SOURCES = widget.moc.cc \
 		   variable_widgets.moc.cc \
 		   extended_widgets.moc.cc \
 		   property_dialog.moc.cc  \
- 		   mainwindow.moc.cc \
-		   data_plot.moc.cc
+		   mainwindow.moc.cc
 
 BUILT_SOURCES = $(QT_BUILT_SOURCES) $(MAYBE_SIGWATCH_MOC)
 
@@ -110,6 +108,7 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
 			 icons/mbsimgui.svg \
 			 icons/frequency_response.svg \
 			 icons/state_table.svg \
+			 icons/FMI_bare.svg \
 			 icons/frame.svg \
 			 icons/dss.svg \
 			 icons/project.svg \

@@ -30,6 +30,8 @@
 class QTableWidget;
 class QSpinBox;
 class QComboBox;
+class QwtPlot;
+class QwtPlotCurve;
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -90,23 +92,6 @@ namespace MBSimGUI {
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }
   };
 
-  class EigenanalysisDialog : public QDialog {
-    public:
-      EigenanalysisDialog(QWidget *parent);
-    private:
-      void selectRow(int);
-      void selectMode(int row, int col);
-      QTableWidget *table;
-      DataPlot *plot;
-  };
-
-  class HarmonicResponseDialog : public QDialog {
-    public:
-      HarmonicResponseDialog(QWidget *parent);
-    private:
-      DataPlot *plot;
-  };
-
   class SourceDialog : public QDialog {
     public:
       SourceDialog(xercesc::DOMElement *ele, QWidget *parent);
@@ -147,12 +132,10 @@ namespace MBSimGUI {
       LoadParameterDialog();
       QString getParameterFileName() const;
       bool referenceParameter() const;
-      bool replaceParameter() const;
       bool getAbsoluteFilePath() const;
     private:
       ExtWidget *parameterFile;;
       QButtonGroup *pOpt;
-      QCheckBox *checkbox;
   };
 
   class SaveParameterDialog : public QDialog {
@@ -161,6 +144,54 @@ namespace MBSimGUI {
       QString getParameterFileName() const;
     private:
       ExtWidget *parameterFile;;
+  };
+
+  class InitialOutputWidget : public QWidget {
+    public:
+      InitialOutputWidget();
+  };
+
+  class EigenanalysisWidget : public QWidget {
+    public:
+      EigenanalysisWidget();
+  };
+
+  class ModalAnalysisWidget : public QWidget {
+    public:
+      ModalAnalysisWidget();
+    private:
+      QTreeWidget *modeTable, *elementTable;
+      QComboBox *choice;
+      QwtPlot *plot;
+      QwtPlotCurve *curve1, *curve2;
+      QMap<QString,QVector<double>> num;
+      QMap<QString,QVector<QVector<double>>> A, phi;
+      QVector<QString> stateName, outputName;
+      QVector<QString> stateLabel, outputLabel;
+      QVector<int> stateLabelNumber, outputLabelNumber;
+      void updateWidget();
+  };
+
+  class FrequencyResponseWidget : public QWidget {
+    public:
+      FrequencyResponseWidget();
+  };
+
+  class LinearSystemAnalysisDialog : public QDialog {
+    public:
+      LinearSystemAnalysisDialog(QWidget *parent);
+  };
+
+  class CreateFMUDialog : public QDialog {
+    public:
+      CreateFMUDialog(const QString &name);
+      QString getFileName() const;
+      bool cosim() const;
+      bool nocompress() const;
+    private:
+      ExtWidget *file;
+      QButtonGroup *opt;
+      QCheckBox *checkbox;
   };
 
 }

@@ -234,8 +234,7 @@ namespace MBSimGUI {
     actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, &MainWindow::saveOpenMBVDataAs);
     actionSaveStateVectorAs = menu->addAction("Export state vector", this, &MainWindow::saveStateVectorAs);
     actionSaveStateTableAs = menu->addAction("Export state table", this, &MainWindow::saveStateTableAs);
-    actionSaveEigenanalysisAs = menu->addAction("Export eigenanalysis", this, &MainWindow::saveEigenanalysisAs);
-    actionSaveHarmonicResponseAnalysisAs = menu->addAction("Export harmonic response analysis", this, &MainWindow::saveHarmonicResponseAnalysisAs);
+    actionSaveLinearSystemAnalysisAs = menu->addAction("Export linear system analysis", this, &MainWindow::saveLinearSystemAnalysisAs);
     menuBar()->addMenu(menu);
 
     auto dialog = new QDialog(this);
@@ -271,12 +270,12 @@ namespace MBSimGUI {
     connect(actionOpenMBV,&QAction::triggered,this,&MainWindow::openmbv);
     actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
     connect(actionH5plotserie,&QAction::triggered,this,&MainWindow::h5plotserie);
-    actionEigenanalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Eigenanalysis");
-    connect(actionEigenanalysis,&QAction::triggered,this,&MainWindow::eigenanalysis);
-    actionHarmonicResponseAnalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"frequency_response.svg").string())),"Harmonic response analysis");
-    connect(actionHarmonicResponseAnalysis,&QAction::triggered,this,&MainWindow::harmonicResponseAnalysis);
+    actionLinearSystemAnalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Linear system analysis");
+    connect(actionLinearSystemAnalysis,&QAction::triggered,this,&MainWindow::linearSystemAnalysis);
     actionStateTable = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"state_table.svg").string())),"Show state table");
     connect(actionStateTable,&QAction::triggered,this,&MainWindow::showStateTable);
+    QAction *actionCreateFMU = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"FMI_bare.svg").string())),"Create FMU");
+    connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
     QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
@@ -410,30 +409,34 @@ namespace MBSimGUI {
         QSettings settings;
         bool saveFinalStateVector = settings.value("mainwindow/options/savestatevector", false).toBool();
         if(settings.value("mainwindow/options/autoexport", false).toBool()) {
-          QString autoExportDir = settings.value("mainwindow/options/autoexportdir", "./").toString();
-          saveMBSimH5Data(autoExportDir+"/MBS.mbsh5");
-          saveOpenMBVXMLData(autoExportDir+"/MBS.ombvx");
-          saveOpenMBVH5Data(autoExportDir+"/MBS.ombvh5");
-          if(saveFinalStateVector)
-            saveStateVector(autoExportDir+"/statevector.asc");
+	  QString dir = settings.value("mainwindow/options/autoexportdir", "./").toString();
+	  saveMBSimH5Data(dir+"/MBS.mbsh5");
+	  saveOpenMBVXMLData(dir+"/MBS.ombvx");
+	  saveOpenMBVH5Data(dir+"/MBS.ombvh5");
+	  saveInitialOutput(dir+"/initial_output.mat");
+	  saveEigenanalysis(dir+"/eigenanalysis.mat");
+	  saveModalAnalysis(dir+"/modal_analysis.mat");
+	  saveFrequencyResponseAnalysis(dir+"/frequency_response_analysis.mat");
+	  saveLTISystem(dir+"/lti_system.mat");
+	  saveInputTable(dir+"/inputtable.asc");
+	  saveOutputTable(dir+"/outputtable.asc");
+	  if(saveFinalStateVector)
+	    saveStateVector(dir+"/statevector.asc");
+	  saveStateTable(dir+"/statetable.asc");
         }
         actionSaveDataAs->setDisabled(false);
-        actionSaveMBSimH5DataAs->setDisabled(false);
-        actionSaveOpenMBVDataAs->setDisabled(false);
-        if(saveFinalStateVector)
-          actionSaveStateVectorAs->setDisabled(false);
-        actionSaveStateTableAs->setDisabled(false);
-        if(dynamic_cast<Eigenanalyzer*>(project->getSolver())) {
-          actionSaveEigenanalysisAs->setDisabled(false);
-          actionEigenanalysis->setDisabled(false);
-        }
-        if(dynamic_cast<HarmonicResponseAnalyzer*>(project->getSolver())) {
-          actionSaveHarmonicResponseAnalysisAs->setDisabled(false);
-          actionHarmonicResponseAnalysis->setDisabled(false);
-        }
-        actionOpenMBV->setDisabled(false);
-        actionH5plotserie->setDisabled(false);
-        actionStateTable->setDisabled(false);
+	actionSaveStateTableAs->setDisabled(false);
+	actionStateTable->setDisabled(false);
+	actionSaveMBSimH5DataAs->setDisabled(false);
+	actionSaveOpenMBVDataAs->setDisabled(false);
+	if(saveFinalStateVector)
+	  actionSaveStateVectorAs->setDisabled(false);
+	if(dynamic_cast<LinearSystemAnalyzer*>(project->getSolver())) {
+	  actionSaveLinearSystemAnalysisAs->setDisabled(false);
+	  actionLinearSystemAnalysis->setDisabled(false);
+	}
+	actionOpenMBV->setDisabled(false);
+	actionH5plotserie->setDisabled(false);
       }
       else {
         setExitBad();
@@ -656,16 +659,14 @@ namespace MBSimGUI {
       setProjectChanged(false);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
-      actionEigenanalysis->setDisabled(true);
-      actionHarmonicResponseAnalysis->setDisabled(true);
+      actionLinearSystemAnalysis->setDisabled(true);
       actionStateTable->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
-      actionSaveEigenanalysisAs->setDisabled(true);
-      actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
+      actionSaveLinearSystemAnalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(true);
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
@@ -712,16 +713,14 @@ namespace MBSimGUI {
       setProjectChanged(false);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
-      actionEigenanalysis->setDisabled(true);
+      actionLinearSystemAnalysis->setDisabled(true);
       actionStateTable->setDisabled(true);
-      actionHarmonicResponseAnalysis->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
-      actionSaveEigenanalysisAs->setDisabled(true);
-      actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
+      actionSaveLinearSystemAnalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(false);
       projectFile = QDir::current().relativeFilePath(fileName);
       setCurrentProjectFile(fileName);
@@ -818,6 +817,7 @@ namespace MBSimGUI {
       solver->setParameterFileItem(parameterFileItem);
       solver->createParameters();
     }
+    openElementEditor(false);
   }
 
   // update model parameters including additional paramters from paramList
@@ -908,8 +908,13 @@ namespace MBSimGUI {
         saveMBSimH5Data(dir+"/MBS.mbsh5");
         saveOpenMBVXMLData(dir+"/MBS.ombvx");
         saveOpenMBVH5Data(dir+"/MBS.ombvh5");
+	saveInitialOutput(dir+"/initial_output.mat");
         saveEigenanalysis(dir+"/eigenanalysis.mat");
-        saveHarmonicResponseAnalysis(dir+"/harmonic_response_analysis.mat");
+        saveModalAnalysis(dir+"/modal_analysis.mat");
+        saveFrequencyResponseAnalysis(dir+"/frequency_response_analysis.mat");
+	saveLTISystem(dir+"/lti_system.mat");
+	saveInputTable(dir+"/inputtable.asc");
+	saveOutputTable(dir+"/outputtable.asc");
         if(settings.value("mainwindow/options/savestatevector", false).toBool())
           saveStateVector(dir+"/statevector.asc");
         saveStateTable(dir+"/statetable.asc");
@@ -984,11 +989,41 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc",file);
   }
 
-  void MainWindow::saveEigenanalysisAs() {
-    QString file=QFileDialog::getSaveFileName(this, "Export eigenanalysis", getProjectDir().absoluteFilePath("eigenanalysis.mat"), "MAT files (*.mat)");
-    if(file!="") {
-      saveEigenanalysis(file);
+  void MainWindow::saveLinearSystemAnalysisAs() {
+    QString dir = QFileDialog::getExistingDirectory(this, "Export linear system analysis", getProjectPath());
+    if(dir != "") {
+      QDir directory(dir);
+      QMessageBox::StandardButton ret = QMessageBox::Ok;
+      if(directory.count()>2)
+        ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
+      if(ret == QMessageBox::Ok) {
+	saveInitialOutput(dir+"/initial_output.mat");
+	saveEigenanalysis(dir+"/eigenanalysis.mat");
+	saveModalAnalysis(dir+"/modal_analysis.mat");
+	saveFrequencyResponseAnalysis(dir+"/frequency_response_analysis.mat");
+	saveLTISystem(dir+"/lti_system.mat");
+	saveInputTable(dir+"/inputtable.asc");
+	saveOutputTable(dir+"/outputtable.asc");
+      }
     }
+  }
+
+  void MainWindow::saveInputTable(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/inputtable.asc",file);
+  }
+
+  void MainWindow::saveOutputTable(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/outputtable.asc",file);
+  }
+
+  void MainWindow::saveInitialOutput(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/initial_output.mat",file);
   }
 
   void MainWindow::saveEigenanalysis(const QString &file) {
@@ -997,17 +1032,22 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/eigenanalysis.mat",file);
   }
 
-  void MainWindow::saveHarmonicResponseAnalysisAs() {
-    QString file=QFileDialog::getSaveFileName(this, "Export harmonic response analysis", getProjectDir().absoluteFilePath("harmonic_response_analysis.mat"), "MAT files (*.mat)");
-    if(file!="") {
-      saveHarmonicResponseAnalysis(file);
-    }
-  }
-
-  void MainWindow::saveHarmonicResponseAnalysis(const QString &file) {
+  void MainWindow::saveModalAnalysis(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/harmonic_response_analysis.mat",file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/modal_analysis.mat",file);
+  }
+
+  void MainWindow::saveFrequencyResponseAnalysis(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/frequency_response_analysis.mat",file);
+  }
+
+  void MainWindow::saveLTISystem(const QString &file) {
+    if(QFile::exists(file))
+      QFile::remove(file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/lti_system.mat",file);
   }
 
   void MainWindow::mbsimxml(int task) {
@@ -1032,12 +1072,10 @@ namespace MBSimGUI {
       actionSaveOpenMBVDataAs->setDisabled(true);
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
-      actionSaveEigenanalysisAs->setDisabled(true);
-      actionSaveHarmonicResponseAnalysisAs->setDisabled(true);
+      actionSaveLinearSystemAnalysisAs->setDisabled(true);
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
-      actionEigenanalysis->setDisabled(true);
-      actionHarmonicResponseAnalysis->setDisabled(true);
+      actionLinearSystemAnalysis->setDisabled(true);
     }
 
     echoView->clearOutput();
@@ -1136,20 +1174,11 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::eigenanalysis() {
-    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/eigenanalysis.mat";
+  void MainWindow::linearSystemAnalysis() {
+    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/modal_analysis.mat";
     QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
     if(QFile::exists(file1) and QFile::exists(file2)) {
-      EigenanalysisDialog *dialog = new EigenanalysisDialog(this);
-      dialog->show();
-    }
-  }
-
-  void MainWindow::harmonicResponseAnalysis() {
-    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/harmonic_response_analysis.mat";
-    QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
-    if(QFile::exists(file1) and QFile::exists(file2)) {
-      HarmonicResponseDialog *dialog = new HarmonicResponseDialog(this);
+      LinearSystemAnalysisDialog *dialog = new LinearSystemAnalysisDialog(this);
       dialog->show();
     }
   }
@@ -1164,15 +1193,21 @@ namespace MBSimGUI {
 
   void MainWindow::debug() {
     currentTask = 0;
+    shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
+    doc->setDocumentURI(this->doc->getDocumentURI());
+    auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
+    doc->insertBefore(newDocElement, nullptr);
+    project->processIDAndHref(newDocElement);
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
     QString projectFile = uniqueTempDir_+"/Project.mbsx";
-    serializer->writeToURI(doc, X()%projectFile.toStdString());
+    serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
     QStringList arg;
     arg.append("--stopafterfirststep");
     arg.append(projectFile);
     echoView->clearOutput();
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((installPath/"bin"/"mbsimxml").string()), arg);
+    statusBar()->showMessage(tr("Debug model"));
   }
 
   void MainWindow::selectElement(const string& ID) {
@@ -1684,7 +1719,7 @@ namespace MBSimGUI {
       if(not dialog.getModelFileName().isEmpty()) {
 	QMessageBox::StandardButton ret = QMessageBox::Yes;
 	if(QFileInfo::exists(dialog.getModelFileName()))
-	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getModelFileName() + " already exists. Do you want to replace it?", QMessageBox::YesToAll | QMessageBox::Yes | QMessageBox::No);
+	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getModelFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
 	  xercesc::DOMDocument *doc = impl->createDocument();
 	  DOMNode *node = doc->importNode(item->getXMLElement(),true);
@@ -1984,6 +2019,7 @@ namespace MBSimGUI {
     if(dedicatedParent) updateReferences(dedicatedParent);
     updateParameterReferences(parent);
     parameterView->selectionModel()->setCurrentIndex(parent->getParameters()->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    if(getAutoRefresh()) refresh();
   }
 
   void MainWindow::loadParameter(EmbedItemData *parent) {
@@ -2014,9 +2050,10 @@ namespace MBSimGUI {
 	  ele = ele->getNextElementSibling();
 	}
       }
+      if(parent->getNumberOfParameters()) removeParameter(parent);
+      loadParameter(parent,pele,pfileitem,absfilepath);
+      if(getAutoRefresh()) refresh();
     }
-    if(parent->getNumberOfParameters() and dialog.replaceParameter()) removeParameter(parent);
-    loadParameter(parent,pele,pfileitem,absfilepath);
   }
 
   void MainWindow::removeParameter(EmbedItemData *parent) {
@@ -2270,10 +2307,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    frame->create();
     static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(frame,data.pele,data.pfileitem,data.abspfilepath);
-    frame->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2302,10 +2339,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    contour->create();
     static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(contour,data.pele,data.pfileitem,data.abspfilepath);
-    contour->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2334,10 +2371,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    group->create();
     static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(group,data.pele,data.pfileitem,data.abspfilepath);
-    group->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2366,10 +2403,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    object->create();
     static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(object,data.pele,data.pfileitem,data.abspfilepath);
-    object->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2398,10 +2435,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    link->create();
     static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(link,data.pele,data.pfileitem,data.abspfilepath);
-    link->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2430,10 +2467,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    constraint->create();
     static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(constraint,data.pele,data.pfileitem,data.abspfilepath);
-    constraint->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2462,10 +2499,10 @@ namespace MBSimGUI {
     else
       setProjectChanged(true);
     updateReferences(dedicatedParent);
+    observer->create();
     static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,elementView->selectionModel()->currentIndex());
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     loadParameter(observer,data.pele,data.pfileitem,data.abspfilepath);
-    observer->create();
     if(getAutoRefresh()) refresh();
   }
 
@@ -2784,6 +2821,43 @@ namespace MBSimGUI {
     echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation killed</span>\n");
     echoView->updateOutput(true);
     process.kill();
+  }
+
+  void MainWindow::createFMU() {
+    QFileInfo projectFile = QFileInfo(getProjectFilePath());
+    CreateFMUDialog dialog(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu");
+    int result = dialog.exec();
+    if(result) {
+      if(not dialog.getFileName().isEmpty()) {
+	QMessageBox::StandardButton ret = QMessageBox::Yes;
+	if(QFileInfo::exists(dialog.getFileName()))
+	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
+	if(ret == QMessageBox::Yes) {
+	  shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
+	  doc->setDocumentURI(this->doc->getDocumentURI());
+	  auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
+	  doc->insertBefore(newDocElement, nullptr);
+	  project->processIDAndHref(newDocElement);
+	  QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
+	  QString projectFile = uniqueTempDir_+"/Project.mbsx";
+	  serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
+	  QStringList arg;
+	  if(dialog.cosim()) arg.append("--cosim");
+	  if(dialog.nocompress()) arg.append("--nocompress");
+	  arg.append(projectFile);
+	  echoView->clearOutput();
+	  process.setWorkingDirectory(uniqueTempDir_);
+	  fmuFileName = dialog.getFileName();
+	  process.start(QString::fromStdString((installPath/"bin"/"mbsimCreateFMU").string()), arg);
+	  connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
+	    if(QFile::exists(fmuFileName))
+	      QFile::remove(fmuFileName);
+	    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/"+"mbsim.fmu",fmuFileName);
+	  });
+	  statusBar()->showMessage(tr("Create FMU"));
+	}
+      }
+    }
   }
 
   void MainWindow::updateEchoView() {

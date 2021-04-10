@@ -6,11 +6,13 @@
 #include "mbsim/functions/kinematics/kinematics.h"
 #include "mbsim/functions/kinetics/kinetics.h"
 #include "mbsim/links/kinetic_excitation.h"
-#include "mbsim/functions/sinusoidal_function.h"
+#include "mbsimControl/signal_function.h"
+#include "mbsimControl/extern_signal_source.h"
 
 #include "openmbvcppinterface/cube.h"
 #include "openmbvcppinterface/coilspring.h"
 
+using namespace MBSimControl;
 using namespace MBSim;
 using namespace fmatvec;
 using namespace std;
@@ -151,11 +153,15 @@ System::System(const string &projectName) : DynamicSystemSolver(projectName) {
   // define initial generalized position of box2 (directly)
   box2->setGeneralizedInitialPosition(Vec(1,INIT,l01 + l02 + h1 + h2/2));
 
+  auto *source = new ExternSignalSource("ExternSignalSource");
+  source->setSourceSize(1);
+  addLink(source);
+
   KineticExcitation *ke = new KineticExcitation("Anregung");
   addLink(ke);
   ke->connect(box2->getFrameC());
   ke->setForceDirection("[0;1;0]");
-  ke->setForceFunction(new SinusoidalFunction<VecV(double)>(10,f));
+  ke->setForceFunction(new SignalFunction<VecV(double)>(source));
   ke->enableOpenMBV(_colorRepresentation=OpenMBVArrow::absoluteValue);
 
   // ----------------------- Visualization in OpenMBV --------------------

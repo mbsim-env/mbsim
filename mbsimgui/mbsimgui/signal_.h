@@ -76,6 +76,13 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new ExternSignalSinkPropertyDialog(this); }
   };
 
+  class Switch : public Signal {
+    public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"Switch"; }
+      QString getType() const override { return "Switch"; }
+      PropertyDialog* createPropertyDialog() override { return new SwitchPropertyDialog(this); }
+  };
+
 }
 
 #endif

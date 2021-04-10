@@ -44,7 +44,7 @@ namespace MBSim {
       /**
        * \brief Perform a harmonic response analysis of the system
        */
-      void execute();
+      void execute() override;
 
       /**
        * \brief Set the start time for the analysis
@@ -66,11 +66,11 @@ namespace MBSim {
        * \brief Set the initital state for the analysis
        * \param z0 The initital state
        */
-      void setInitialState(const fmatvec::Vec &z0) { zEq <<= z0; }
+      void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
 
       void setTask(Task task_) { task = task_; }
 
-      const fmatvec::Vec& getInitialState() const { return zEq; }
+      const fmatvec::Vec& getInitialState() const override { return zEq; }
 
       /**
        * \brief Set the name of the output file
@@ -78,11 +78,11 @@ namespace MBSim {
        */
       void setOutputFileName(const std::string &fileName_) { fileName = fileName_; }
 
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
 
-      fmatvec::Vec zEq, zh;
+      fmatvec::Vec z0, zEq, zh;
       fmatvec::VecV fE, fS;
       fmatvec::Mat Zh;
       double tStart, dtPlot;

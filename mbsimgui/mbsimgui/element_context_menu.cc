@@ -27,6 +27,7 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "friction.h"
+#include "clutch.h"
 #include "contact.h"
 #include "observer.h"
 #include "frame.h"
@@ -368,6 +369,9 @@ namespace MBSimGUI {
     action = new QAction("Add elastic joint", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new ElasticJoint, element); });
     addAction(action);
+    action = new QAction("Add generalized clutch", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedClutch, element); });
+    addAction(action);
     action = new QAction("Add generalized elastic connection", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedElasticConnection, element); });
     addAction(action);
@@ -510,6 +514,9 @@ namespace MBSimGUI {
     action = new QAction("Add function sensor", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new FunctionSensor, element); });
     menu->addAction(action);
+    action = new QAction("Add generalized acceleration sensor", menu);
+    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedAccelerationSensor, element); });
+    menu->addAction(action);
     action = new QAction("Add generalized contact force sensor", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedContactForceSensor, element); });
     menu->addAction(action);
@@ -530,9 +537,6 @@ namespace MBSimGUI {
     menu->addAction(action);
     action = new QAction("Add generalized relative velocity sensor", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedRelativeVelocitySensor, element); });
-    menu->addAction(action);
-    action = new QAction("Add generalized acceleration sensor", menu);
-    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedAccelerationSensor, element); });
     menu->addAction(action);
     action = new QAction("Add generalized velocity sensor", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new GeneralizedVelocitySensor, element); });
@@ -567,6 +571,9 @@ namespace MBSimGUI {
     addMenu(menu);
     action = new QAction("Add signal operation", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new SignalOperation, element); });
+    addAction(action);
+    action = new QAction("Add switch", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new Switch, element); });
     addAction(action);
   }
 

@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2009 MBSim Development Team
+/* Copyright (C) 2004-2021 MBSim Development Team
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
  * License as published by the Free Software Foundation; either 
@@ -16,8 +16,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _GENERALIZED_FRICTION_H_
-#define _GENERALIZED_FRICTION_H_
+#ifndef _GENERALIZED_CLUTCH_H_
+#define _GENERALIZED_CLUTCH_H_
 
 #include "mbsim/links/dual_rigid_body_link.h"
 #include "mbsim/functions/function.h"
@@ -27,34 +27,40 @@ namespace MBSim {
   class FrictionForceLaw;
   class FrictionImpactLaw;
 
-  class GeneralizedFriction : public DualRigidBodyLink {
+class GeneralizedClutch : public DualRigidBodyLink {
     protected:
       FrictionForceLaw *laT{nullptr};
       FrictionImpactLaw *LaT{nullptr};
+      Function<double(double)> *e{nullptr};
       Function<double(double)> *laN{nullptr};
+      unsigned int gActive{1}, gActive0{0};
       unsigned int gdActive{1};
       unsigned int gddActive{1};
       fmatvec::Vec gdn, gdd;
       int gdDir;
       int rootID{0};
     public:
-      GeneralizedFriction(const std::string &name="") : DualRigidBodyLink(name), gdn(1), gdd(1) { }
-      ~GeneralizedFriction() override;
+      GeneralizedClutch(const std::string &name="") : DualRigidBodyLink(name), gdn(1), gdd(1) { }
+      ~GeneralizedClutch() override;
       void updateGeneralizedForces() override;
       void updateh(int i=0) override;
       void updateW(int i=0) override;
       const double& evalgdn();
       const double& evalgdd();
 
-      bool isActive() const override { return true; }
-      bool gActiveChanged() override { return false; }
+      bool isActive() const override;
+      bool gActiveChanged() override;
       bool isSetValued() const override;
       bool isSingleValued() const override { return true; }
-      void init(InitStage stage, const InitConfigSet &config) override;
       void plot() override;
+      void init(InitStage stage, const InitConfigSet &config) override;
 
       void setGeneralizedFrictionForceLaw(FrictionForceLaw *laT_);
       void setGeneralizedFrictionImpactLaw(FrictionImpactLaw *LaT_);
+      void setEngagementFunction(Function<double(double)> *e_) { 
+        e = e_; 
+        e->setParent(this);
+      }
       void setGeneralizedNormalForceFunction(Function<double(double)> *laN_) { 
         laN = laN_; 
         laN->setParent(this);

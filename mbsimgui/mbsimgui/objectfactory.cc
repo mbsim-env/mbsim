@@ -30,6 +30,7 @@
 #include "spring_damper.h"
 #include "joint.h"
 #include "friction.h"
+#include "clutch.h"
 #include "contact.h"
 #include "gear.h"
 #include "connection.h"
@@ -224,6 +225,8 @@ namespace MBSimGUI {
       return new GeneralizedElasticConnection;
     if(E(element)->getTagName()==MBSIM%"GeneralizedFriction")
       return new GeneralizedFriction;
+    if(E(element)->getTagName()==MBSIM%"GeneralizedClutch")
+      return new GeneralizedClutch;
     if(E(element)->getTagName()==MBSIM%"GeneralizedGear")
       return new GeneralizedGear;
     if(E(element)->getTagName()==MBSIM%"GeneralizedElasticStructure")
@@ -286,6 +289,8 @@ namespace MBSimGUI {
       return new ExternSignalSource;
     if(E(element)->getTagName()==MBSIMCONTROL%"ExternSignalSink")
       return new ExternSignalSink;
+    if(E(element)->getTagName()==MBSIMCONTROL%"Switch")
+      return new Switch;
     if(E(element)->getTagName()==MBSIMPHYSICS%"UniversalGravitation")
       return new UniversalGravitation;
     if(E(element)->getTagName()==MBSIMPHYSICS%"Weight")
@@ -408,10 +413,8 @@ namespace MBSimGUI {
       return new BoostOdeintDOS_BulirschStoer;
     else if(E(element)->getTagName()==MBSIM%"BoostOdeintDOS_Rosenbrock4")
       return new BoostOdeintDOS_Rosenbrock4;
-    else if(E(element)->getTagName()==MBSIM%"Eigenanalyzer")
-      return new Eigenanalyzer;
-    else if(E(element)->getTagName()==MBSIM%"HarmonicResponseAnalyzer")
-      return new HarmonicResponseAnalyzer;
+    else if(E(element)->getTagName()==MBSIMCONTROL%"LinearSystemAnalyzer")
+      return new LinearSystemAnalyzer;
     return nullptr;
   }
 

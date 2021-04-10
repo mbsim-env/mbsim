@@ -43,9 +43,9 @@ namespace MBSimGUI {
       FunctionWidget::VarType argType;
       int retDim;
       FunctionWidget::VarType retType;
-      QWidget *parent;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
       int index;
   };
 
@@ -64,9 +64,9 @@ namespace MBSimGUI {
       std::vector<FunctionWidget::VarType> argType;
       int retDim;
       FunctionWidget::VarType retType;
-      QWidget *parent;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
   };
 
   class StateDependentTranslationWidgetFactory : public WidgetFactory {
