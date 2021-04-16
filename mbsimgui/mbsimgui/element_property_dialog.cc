@@ -193,7 +193,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  InterfaceNodeFramePropertyDialog::InterfaceNodeFramePropertyDialog(Element *frame, bool approx_) : FramePropertyDialog(frame) {
+  InterfaceNodeFramePropertyDialog::InterfaceNodeFramePropertyDialog(Element *frame, bool approx_) : FramePropertyDialog(frame), approx(nullptr) {
 
     nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", nodeNumbers);
