@@ -42,7 +42,7 @@ namespace H5 {
  */
 namespace MBSim {
 
-  extern const PlotFeatureEnum plotRecursive, openMBV, debug, separateFilePerGroup;
+  extern const PlotFeatureEnum plotRecursive, openMBV, debug;
 
   class DynamicSystemSolver;
   class Frame;

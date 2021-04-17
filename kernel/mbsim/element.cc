@@ -60,12 +60,10 @@ namespace MBSim {
   const PlotFeatureEnum plotRecursive;
   const PlotFeatureEnum openMBV;
   const PlotFeatureEnum debug;
-  const PlotFeatureEnum separateFilePerGroup;
 
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, plotRecursive)
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, openMBV)
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, debug)
-  MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, separateFilePerGroup)
 
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
   }

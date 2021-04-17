@@ -26,7 +26,6 @@
 
 using namespace fmatvec;
 using namespace std;
-using namespace std::placeholders;
 
 namespace MBSim {
 
@@ -182,9 +181,9 @@ namespace MBSim {
     std::function<Vec(const SqrMat&,const Vec&)> slv;
 
     if(linAlg==0)
-      slv = std::bind(fslvLU, _1, _2);
+      slv = std::bind(fslvLU, placeholders::_1, placeholders::_2);
     else if(linAlg==1)
-      slv = std::bind(fslvLS, _1, _2);
+      slv = std::bind(fslvLS, placeholders::_1, placeholders::_2);
 
     iter=0;
     Vec x(x0.size(),NONINIT), xold(x0.size(),NONINIT);

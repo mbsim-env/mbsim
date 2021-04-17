@@ -2,7 +2,6 @@
 <Group name="Hauptgruppe{numHG+1}" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
     xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
-  <plotFeature value="{plotSubType}">plotSubTypeEnabled</plotFeature>
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">

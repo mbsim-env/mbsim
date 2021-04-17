@@ -8,7 +8,6 @@
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
-  <plotFeature value="{plotSubType}">plotSubTypeEnabled</plotFeature>
   <frameOfReference ref="../Frame[Q{numHG}]"/>
   <frames>
     <FixedRelativeFrame name="Q">

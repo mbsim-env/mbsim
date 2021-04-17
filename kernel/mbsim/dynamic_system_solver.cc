@@ -57,7 +57,7 @@ namespace MBSim {
   double tP = 20.0;
   bool gflag = false;
 
-  bool DynamicSystemSolver::exitRequest = false;
+  atomic<bool> DynamicSystemSolver::exitRequest = false;
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
@@ -67,7 +67,7 @@ namespace MBSim {
     return sys->evalzd();
   }
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), flushEvery(100000), flushCount(flushEvery), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), tolProj(1e-15), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -393,8 +393,23 @@ namespace MBSim {
       Group::init(stage, config);
     }
     else if (stage == plotting) {
+      firstPlot=true;
       msg(Info) << "  initialising plot-files ..." << endl;
+
+      // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
+      // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
+      // We can walk to the top here since stage plotting is done before reorganizeHierarchy.
+      string fileName="mbsh5";
+      const DynamicSystem *ds=this;
+      while(ds) {
+        fileName=ds->getName()+"."+fileName;
+        ds=static_cast<const DynamicSystem*>(ds->getParent());
+      }
+      // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
+      hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
+
       Group::init(stage, config);
+
       if (plotFeature[openMBV]) {
         // add MBSimEnvironment OpenMBV objects
         auto envs=getMBSimEnvironment()->getOpenMBVObjects();
@@ -403,8 +418,6 @@ namespace MBSim {
           openmbvEnv->setName("environments");
           openMBVGrp->addObject(openmbvEnv);
           for(auto env : envs) {
-            if(auto grp=dynamic_pointer_cast<OpenMBV::Group>(env))
-              grp->setSeparateFile(false);
             env->setEnvironment(true);
             openmbvEnv->addObject(env);
           }
@@ -412,7 +425,6 @@ namespace MBSim {
         // write openmbv files
         openMBVGrp->write(true, truncateSimulationFiles);
       }
-      H5::File::reopenAllFilesAsSWMR();
       msg(Info) << "...... done initialising." << endl << endl;
     }
     else
@@ -1203,41 +1215,21 @@ namespace MBSim {
 #ifdef HAVE_ANSICSIGNAL
     signal(SIGINT, sigInterruptHandler);
     signal(SIGTERM, sigInterruptHandler);
-    signal(SIGABRT, sigAbortHandler);
-    signal(SIGSEGV, sigSegfaultHandler);
 #endif
   }
 
   void DynamicSystemSolver::sigInterruptHandler(int) {
-    msgStatic(Info) << "MBSim: Received user interrupt or terminate signal!" << endl;
     exitRequest = true;
-  }
-
-  void DynamicSystemSolver::sigAbortHandler(int) {
-    signal(SIGABRT, SIG_DFL);
-    msgStatic(Info) << "MBSim: Received abort signal! Flushing HDF5 files (this may crash) and abort!" << endl;
-    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
-    raise(SIGABRT);
-  }
-
-  void DynamicSystemSolver::sigSegfaultHandler(int) {
-    signal(SIGSEGV, SIG_DFL);
-    msgStatic(Info) << "MBSim: Received segmentation fault signal! Flushing HDF5 files (this may crash again) and abort!" << endl;
-    H5::File::flushAllFiles(); // This call is unsafe, since it may call (signal) unsafe functions. However, we call it here
-    raise(SIGSEGV);
   }
 
   void DynamicSystemSolver::checkExitRequest() {
     if (integratorExitRequest) // if the integrator has not exit after a integratorExitRequest
-      throwError("MBSim: Integrator has not stopped integration! Terminate NOW the hard way!");
+      throwError("MBSim: Integrator has not stopped integration! Terminate NOW by throwing an exception!");
 
     if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
-      msg(Info) << "MBSim: Flushing HDF5 files and ask integrator to terminate!" << endl;
-      H5::File::flushAllFiles(); // flush files
+      msg(Info) << "MBSim: User exit request: Ask integrator to terminate!" << endl;
       integratorExitRequest = true;
     }
-
-    H5::File::flushAllFilesIfRequested(); // flush files if requested by reader process
   }
 
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {
@@ -1311,8 +1303,6 @@ namespace MBSim {
     integratorExitRequest = false;
     plotFeature[plotRecursive] = true;
     plotFeatureForChildren[plotRecursive] = true;
-    plotFeature[separateFilePerGroup] = true;
-    plotFeatureForChildren[separateFilePerGroup] = false;
     plotFeature[openMBV] = true;
     plotFeatureForChildren[openMBV] = true;
   }
@@ -1586,6 +1576,18 @@ namespace MBSim {
     solveDirectly = not(useConstraintSolverForPlot);
     if (inverseKinetics) updatelaInverseKinetics();
     Group::plot();
+    if(firstPlot) {
+      // we enable SWMR after the frist plot to ensure that readers see at least the initial plot step
+      firstPlot=false;
+      if(hdf5File)
+        hdf5File->enableSWMR();
+      if(openMBVGrp)
+        openMBVGrp->enableSWMR();
+    }
+    if(hdf5File)
+      hdf5File->flushIfRequested();
+    if(openMBVGrp)
+      openMBVGrp->flushIfRequested();
   }
 
   const Vec& DynamicSystemSolver::evalsv() {

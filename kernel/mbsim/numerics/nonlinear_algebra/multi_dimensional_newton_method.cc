@@ -27,7 +27,6 @@
 
 using namespace fmatvec;
 using namespace std;
-using namespace std::placeholders;
 
 namespace fmatvec {
   bool operator<(const RangeV & i1, const RangeV & i2) {
@@ -66,9 +65,9 @@ namespace MBSim {
     iter = 0;
 
     if (linAlg == 0)
-      slv = std::bind(fslvLUMDNW, _1, _2, _3);
+      slv = std::bind(fslvLUMDNW, placeholders::_1, placeholders::_2, placeholders::_3);
     else if (linAlg == 1)
-      slv = std::bind(fslvLSMDNW, _1, _2, _3);
+      slv = std::bind(fslvLSMDNW, placeholders::_1, placeholders::_2, placeholders::_3);
 
     /*Reset for comparing*/
     criteria->clear();

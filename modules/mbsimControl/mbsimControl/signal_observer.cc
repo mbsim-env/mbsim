@@ -77,7 +77,7 @@ namespace MBSimControl {
     if(plotFeature[openMBV]) {
       Vec3 r;
       if(position) r = position->evalSignal();
-      if(openMBVArrow && !openMBVArrow->isHDF5Link()) {
+      if(openMBVArrow) {
         vector<double> data;
         data.push_back(getTime());
         data.push_back(r(0));

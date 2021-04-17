@@ -74,7 +74,7 @@ namespace MBSimControl {
   }
   void FrameChaserObserver::plot() {
     if(plotFeature[MBSim::openMBV]) {
-      if(openMBVFrame && !openMBVFrame->isHDF5Link()) {
+      if(openMBVFrame) {
         // translation and rotation is 0 per default
         Vec3 r(INIT, 0.0);
         Vec3 revCardan(INIT, 0.0);

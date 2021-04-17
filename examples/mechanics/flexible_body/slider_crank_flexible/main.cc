@@ -16,7 +16,6 @@ int main (int argc, char* argv[]) {
   integrator.setEndTime(2 * 1e-5);
   integrator.setStepSize(1e-5);
   integrator.setPlotStepSize(1e-5);
-  sys->setFlushEvery(10);
 
   integrator.integrate(*sys);
 

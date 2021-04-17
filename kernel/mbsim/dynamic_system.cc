@@ -395,41 +395,21 @@ namespace MBSim {
     }
     else if (stage == plotting) {
       if (plotFeature[plotRecursive]) {
-        if (plotFeature[separateFilePerGroup]) {
-          // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
-          // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
-          // We can walk to the top here since stage plotting is done before reorganizeHierarchy.
-          string fileName="mbsh5";
-          const DynamicSystem *ds=this;
-          while(ds) {
-            fileName=ds->getName()+"."+fileName;
-            ds=static_cast<const DynamicSystem*>(ds->getParent());
-          }
-          // create symbolic link in parent plot file if exist
-          if (parent)
-            parent->getGroupsPlotGroup()->createExternalLink(name, make_pair(boost::filesystem::path(fileName), string("/")));
-          // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
-          hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
-          //plotGroup = hdf5File.get()->createChildObject<H5::Group>(name)();
+        if (!parent)
           plotGroup = hdf5File.get();
-        }
         else
           plotGroup = parent->getGroupsPlotGroup()->createChildObject<H5::Group>(name)();
 
-	framesPlotGroup = plotGroup->createChildObject<H5::Group>("frames")();
-	contoursPlotGroup = plotGroup->createChildObject<H5::Group>("contours")();
-	groupsPlotGroup = plotGroup->createChildObject<H5::Group>("groups")();
-	objectsPlotGroup = plotGroup->createChildObject<H5::Group>("objects")();
-	linksPlotGroup = plotGroup->createChildObject<H5::Group>("links")();
-	constraintsPlotGroup = plotGroup->createChildObject<H5::Group>("constraints")();
-	observersPlotGroup = plotGroup->createChildObject<H5::Group>("observers")();
+        framesPlotGroup = plotGroup->createChildObject<H5::Group>("frames")();
+        contoursPlotGroup = plotGroup->createChildObject<H5::Group>("contours")();
+        groupsPlotGroup = plotGroup->createChildObject<H5::Group>("groups")();
+        objectsPlotGroup = plotGroup->createChildObject<H5::Group>("objects")();
+        linksPlotGroup = plotGroup->createChildObject<H5::Group>("links")();
+        constraintsPlotGroup = plotGroup->createChildObject<H5::Group>("constraints")();
+        observersPlotGroup = plotGroup->createChildObject<H5::Group>("observers")();
 
         plotGroup->createChildAttribute<H5::SimpleAttribute<string>>("Description")()->write(string("Object of class: ")+boost::core::demangle(typeid(*this).name()));
         plotVectorSerie = nullptr;
-
-        auto *file=dynamic_cast<H5::File*>(plotGroup);
-        if(file)
-          file->flush();
       }
       if (plotFeature[openMBV]) {
         openMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
@@ -457,8 +437,6 @@ namespace MBSim {
 	observersOpenMBVGrp = OpenMBV::ObjectFactory::create<OpenMBV::Group>();
 	observersOpenMBVGrp->setName("observers");
 	openMBVGrp->addObject(observersOpenMBVGrp);
-        if (plotFeature[separateFilePerGroup])
-          openMBVGrp->setSeparateFile(true);
       }
     }
 

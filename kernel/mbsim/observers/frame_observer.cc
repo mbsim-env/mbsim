@@ -149,7 +149,7 @@ namespace MBSim {
       }
     }
     if(plotFeature[openMBV]) {
-      if(openMBVPosition && !openMBVPosition->isHDF5Link()) {
+      if(openMBVPosition) {
         vector<double> data;
         data.push_back(getTime());
         data.push_back(0);
@@ -162,7 +162,7 @@ namespace MBSim {
         data.push_back((this->*evalOMBVPositionColorRepresentation[ombvPositionArrow->getColorRepresentation()])());
         openMBVPosition->append(data);
       }
-      if(openMBVVelocity && !openMBVVelocity->isHDF5Link()) {
+      if(openMBVVelocity) {
         vector<double> data;
         data.push_back(getTime());
         Vec3 r = frame->evalPosition();
@@ -176,7 +176,7 @@ namespace MBSim {
         data.push_back((this->*evalOMBVVelocityColorRepresentation[ombvVelocityArrow->getColorRepresentation()])());
         openMBVVelocity->append(data);
       }
-      if(openMBVAngularVelocity && !openMBVAngularVelocity->isHDF5Link()) {
+      if(openMBVAngularVelocity) {
         vector<double> data;
         data.push_back(getTime());
         Vec3 r = frame->evalPosition();
@@ -190,7 +190,7 @@ namespace MBSim {
         data.push_back((this->*evalOMBVAngularVelocityColorRepresentation[ombvAngularVelocityArrow->getColorRepresentation()])());
         openMBVAngularVelocity->append(data);
       }
-      if(openMBVAcceleration && !openMBVAcceleration->isHDF5Link()) {
+      if(openMBVAcceleration) {
         vector<double> data;
         data.push_back(getTime());
         Vec3 r = frame->evalPosition();
@@ -204,7 +204,7 @@ namespace MBSim {
         data.push_back((this->*evalOMBVAccelerationColorRepresentation[ombvAccelerationArrow->getColorRepresentation()])());
         openMBVAcceleration->append(data);
       }
-      if(openMBVAngularAcceleration && !openMBVAngularAcceleration->isHDF5Link()) {
+      if(openMBVAngularAcceleration) {
         vector<double> data;
         data.push_back(getTime());
         Vec3 r = frame->evalPosition();

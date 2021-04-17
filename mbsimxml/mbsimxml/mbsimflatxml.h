@@ -17,10 +17,10 @@ namespace MBSim {
 
   class MBSimXML {
     public:
-      static int preInit(std::list<std::string> args, DynamicSystemSolver*& dss, Solver*& solver);
-      static void initDynamicSystemSolver(const std::list<std::string> &args, DynamicSystemSolver*& dss);
-      static void plotInitialState(Solver* solver, DynamicSystemSolver* dss);
-      static void main(Solver* solver, DynamicSystemSolver* dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable);
+      static int preInit(std::list<std::string> args, std::unique_ptr<DynamicSystemSolver>& dss, std::unique_ptr<Solver>& solver);
+      static void initDynamicSystemSolver(const std::list<std::string> &args, const std::unique_ptr<DynamicSystemSolver>& dss);
+      static void plotInitialState(const std::unique_ptr<Solver>& solver, const std::unique_ptr<DynamicSystemSolver>& dss);
+      static void main(const std::unique_ptr<Solver>& solver, const std::unique_ptr<DynamicSystemSolver>& dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable);
 
       //! Load all MBSim modules and return a list of all loaded module libraries.
       static std::set<boost::filesystem::path> loadModules(const std::set<boost::filesystem::path> &searchDirs={});//MISSING remove ={} if mbsimfmi supports searchDirs
