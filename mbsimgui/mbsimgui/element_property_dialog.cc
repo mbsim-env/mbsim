@@ -198,6 +198,9 @@ namespace MBSimGUI {
     nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
     addToTab("General", nodeNumbers);
 
+    weightingFactors = new ExtWidget("Weighting factors",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"weightingFactors");
+    addToTab("General", weightingFactors);
+
     if(approx_) {
       approx = new ExtWidget("Approximate shape matrix of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"approximateShapeMatrixOfRotation");
       addToTab("General", approx);
@@ -207,6 +210,7 @@ namespace MBSimGUI {
   DOMElement* InterfaceNodeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
     FramePropertyDialog::initializeUsingXML(item->getXMLElement());
     nodeNumbers->initializeUsingXML(item->getXMLElement());
+    weightingFactors->initializeUsingXML(item->getXMLElement());
     if(approx) approx->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -214,6 +218,7 @@ namespace MBSimGUI {
   DOMElement* InterfaceNodeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     FramePropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     nodeNumbers->writeXMLFile(item->getXMLElement(),nullptr);
+    weightingFactors->writeXMLFile(item->getXMLElement(),nullptr);
     if(approx) approx->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

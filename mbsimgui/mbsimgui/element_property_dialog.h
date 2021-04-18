@@ -85,7 +85,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *nodeNumbers, *approx;
+      ExtWidget *nodeNumbers, *weightingFactors, *approx;
   };
 
   class ContourPropertyDialog : public ElementPropertyDialog {
