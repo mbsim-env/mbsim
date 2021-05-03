@@ -66,6 +66,23 @@ namespace MBSimFlexibleBody {
     return object;
   }
 
+  void OpenMBVFlexibleFfrBeam::initializeUsingXML(DOMElement *e) {
+    OpenMBVFlexibleBody::initializeUsingXML(e);
+    DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"visualization");
+    if(ee) {
+      string str=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+      if(str=="points") visu=points;
+    }
+  }
+
+  shared_ptr<OpenMBV::FlexibleBody> OpenMBVFlexibleFfrBeam::createOpenMBV() {
+    shared_ptr<OpenMBV::FlexibleBody> object;
+    if(visu==points)
+      object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicPointSet>();
+    initializeObject(object);
+    return object;
+  }
+
   shared_ptr<OpenMBV::DynamicNurbsCurve> OpenMBVDynamicNurbsCurve::createOpenMBV() {
     shared_ptr<OpenMBV::DynamicNurbsCurve> object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicNurbsCurve>();
     initializeObject(object);

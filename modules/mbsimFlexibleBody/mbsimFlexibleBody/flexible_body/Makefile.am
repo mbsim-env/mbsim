@@ -4,6 +4,7 @@ noinst_LTLIBRARIES = libflexiblebody.la
 libflexiblebody_la_SOURCES = generic_flexible_ffr_body.cc\
                              flexible_ffr_body.cc\
                              calculix_body.cc\
+                             flexible_ffr_beam.cc\
 			     flexible_body_1s.cc\
 			     flexible_body_1s_21_rcm.cc\
 			     flexible_body_1s_21_ancf.cc\
@@ -28,6 +29,7 @@ flexiblebodyincludedir = $(includedir)/mbsimFlexibleBody/flexible_body
 flexiblebodyinclude_HEADERS = generic_flexible_ffr_body.h\
 			      flexible_ffr_body.h\
 			      calculix_body.h\
+			      flexible_ffr_beam.h\
 			      flexible_body_1s.h\
 			      flexible_body_1s_21_rcm.h\
 			      flexible_body_1s_21_ancf.h\

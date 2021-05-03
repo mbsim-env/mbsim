@@ -566,7 +566,7 @@
   <xs:element name="FlexibleFfrBody" substitutionGroup="mbsim:Body" type="FlexibleFfrBodyType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Definiert einen elatsichen Körper mit einer Frame Of Reference Formulierung.<br/>
+        Definiert einen elastischen Körper mit einer Frame Of Reference Formulierung.<br/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1060,7 +1060,7 @@
   <xs:element name="CalculixBody" substitutionGroup="mbsim:Body" type="CalculixBodyType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Definiert einen elatsichen Körper aus einer CalculiX-Ergebnisdatei.<br/>
+        Definiert einen elastischen Körper aus einer CalculiX-Ergebnisdatei.<br/>
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -1090,6 +1090,132 @@
                 Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
               </xs:documentation>
             </xs:annotation>
+          </xs:element>
+          <xs:group ref="CommonFlexibleFfrBody"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFlexibleBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="plotNodeNumbers" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten, die geplottet werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBVFrameK" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung des Referenzkoordinatensystems "K" dieses Körpers in OpenMBV.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVFrameParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="plotFeatureFrameK" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Plotfeatures des Schwerpunktskoordinatensystems "C" dieses Körpers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:simpleContent>
+                <xs:extension base="pv:booleanFullEval">
+                  <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+                </xs:extension>
+              </xs:simpleContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FlexibleFfrBeam" substitutionGroup="mbsim:Body" type="FlexibleFfrBeamType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Definiert einen elastischen Balken.<br/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FlexibleFfrBeamType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:BodyType">
+        <xs:sequence>
+          <xs:element name="numberOfNodes" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Anzahl der Knoten.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="length" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Länge des Balkens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="crossSectionArea" type="pv:areaScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Querschnittsfläche.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="momentOfInertia" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Flächenträgheitsmomente Iy, Iz und Iyz.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="youngsModulus" type="pv:bulkModulusScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                E-Modul.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="density" type="pv:densityScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Dichte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="boundaryConditions" type="pv:unknownMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Randbedingungen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="modalReduction" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob eine modale Reduktion durchgeführt werden soll.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+	  <xs:element name="modeRange" type="pv:indexVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Bereich der Moden, die bei der Reduktion berücksichtigt werden sollen.
+            </xs:documentation></xs:annotation>
           </xs:element>
           <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:element name="enableOpenMBV" minOccurs="0">

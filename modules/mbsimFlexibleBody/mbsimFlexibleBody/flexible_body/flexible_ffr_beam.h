@@ -1,0 +1,75 @@
+/* Copyright (C) 2004-2020 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU Lesser General Public 
+ * License as published by the Free Software Foundation; either 
+ * version 2.1 of the License, or (at your option) any later version. 
+ *  
+ * This library is distributed in the hope that it will be useful, 
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of 
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU 
+ * Lesser General Public License for more details. 
+ *  
+ * You should have received a copy of the GNU Lesser General Public 
+ * License along with this library; if not, write to the Free Software 
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: martin.o.foerg@googlemail.com
+ */
+
+#ifndef _FLEXIBLE_BEAM_H_
+#define _FLEXIBLE_BEAM_H_
+
+#include "mbsimFlexibleBody/flexible_body/generic_flexible_ffr_body.h"
+#include "mbsim/utils/boost_parameters.h"
+
+namespace MBSim {
+
+  BOOST_PARAMETER_NAME(visualization)
+}
+
+namespace MBSimFlexibleBody {
+
+  /*!
+   *  \brief Flexible beam using a floating frame of reference formulation
+   *
+   * */
+  class FlexibleFfrBeam : public GenericFlexibleFfrBody {
+
+    public:
+      FlexibleFfrBeam(const std::string &name="") : GenericFlexibleFfrBody(name), mRange("[0;4]") { }
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void setNumberOfNodes(int nN_) { nN = nN_; }
+      void setLength(double l_) { l = l_; }
+      void setCrossSectionArea(double A_) { A = A_; }
+      void setMomentOfInertia(const fmatvec::Vec3 &I) { Iy=I(0); Iz=I(1); Iyz=I(2); }
+      void setYoungsModulus(double E_) { E = E_; }
+      void setDensity(double rho_) { rho = rho_; }
+      void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
+      void setBoundaryConditions(const fmatvec::MatVx3 &bc_) { bc <<= bc_; }
+      void setModalReduction(bool modalReduction_) { modalReduction = modalReduction_; }
+      void setModeRange(const fmatvec::Vec2 &mRange_) { mRange = mRange_; }
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (visualization,(OpenMBVFlexibleFfrBeam::Visualization),OpenMBVFlexibleFfrBeam::points)(colorRepresentation,(OpenMBVFlexibleBody::ColorRepresentation),OpenMBVFlexibleBody::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        ombvBody = std::shared_ptr<OpenMBVFlexibleFfrBeam>(new OpenMBVFlexibleFfrBeam(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
+      }
+      void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes <<= plotNodes_; }
+
+    private:
+      int nN{3};
+      double l{1};
+      double A{1e-4};
+      double Iy{1e-10};
+      double Iz{1e-10};
+      double Iyz{0};
+      double E{2e11};
+      double rho{7870};
+      fmatvec::MatVx3 bc;
+      bool modalReduction{false};
+      fmatvec::Vec2 mRange;
+      std::shared_ptr<OpenMBVFlexibleFfrBeam> ombvBody;
+  };
+
+}
+
+#endif

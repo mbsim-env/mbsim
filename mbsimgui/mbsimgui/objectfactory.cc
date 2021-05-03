@@ -190,6 +190,8 @@ namespace MBSimGUI {
       return new FlexibleFfrBody;
     if(E(element)->getTagName()==MBSIMFLEX%"CalculixBody")
       return new CalculixBody;
+    if(E(element)->getTagName()==MBSIMFLEX%"FlexibleFfrBeam")
+      return new FlexibleFfrBeam;
     else
       return new UnknownObject;
     return nullptr;

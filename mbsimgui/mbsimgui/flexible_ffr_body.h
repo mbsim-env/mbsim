@@ -59,6 +59,15 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new CalculixBodyPropertyDialog(this); }
   };
 
+  class FlexibleFfrBeam : public GenericFlexibleFfrBody {
+    friend class FlexibleFfrBeamPropertyDialog;
+    public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexibleFfrBeam"; }
+      QString getType() const override { return "Flexible ffr body"; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      PropertyDialog* createPropertyDialog() override { return new FlexibleFfrBeamPropertyDialog(this); }
+  };
+
 }
 
 #endif

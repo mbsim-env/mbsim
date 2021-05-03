@@ -444,6 +444,26 @@ namespace MBSimGUI {
     return e;
   }
 
+  FlexibleFfrBeamMBSOMBVWidget::FlexibleFfrBeamMBSOMBVWidget(const vector<QString> &cRL) : FlexibleBodyMBSOMBVWidget(cRL) {
+
+    vector<QString> list;
+    list.emplace_back("\"points\"");
+    visu = new ExtWidget("Visualization",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"visualization");
+    layout()->addWidget(visu);
+  }
+
+  DOMElement* FlexibleFfrBeamMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    FlexibleBodyMBSOMBVWidget::initializeUsingXML(element);
+    visu->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FlexibleFfrBeamMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=FlexibleBodyMBSOMBVWidget::writeXMLFile(parent);
+    visu->writeXMLFile(e);
+    return e;
+  }
+
   DOMElement* OMBVObjectWidget::initializeUsingXML(DOMElement *element) {
     return element;
   }

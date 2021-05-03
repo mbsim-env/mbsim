@@ -449,6 +449,18 @@ namespace MBSimGUI {
     return units;
   }
 
+  inline QStringList densityUnits() {
+    QStringList units;
+    units << "kg/m^3";
+    return units;
+  }
+
+  inline QStringList bulkModulusUnits() {
+    QStringList units;
+    units << "N/mm^2" << "N/m^2";
+    return units;
+  }
+
   std::string removeWhiteSpace(const std::string &str);
 
   QString removeWhiteSpace(const QString &str);

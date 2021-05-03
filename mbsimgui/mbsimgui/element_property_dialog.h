@@ -430,6 +430,17 @@ namespace MBSimGUI {
       ExtWidget *resultFileName, *formalism, *beta, *ombv, *plotNodes;
   };
 
+  class FlexibleFfrBeamPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
+
+    public:
+      FlexibleFfrBeamPropertyDialog(Element *body_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      int getqERelSize() const override;
+    protected:
+      ExtWidget *n, *l, *A, *I, *E, *rho, *beta, *bc, *mRed, *mRange, *ombv, *plotNodes;
+  };
+
   class ConstraintPropertyDialog : public ElementPropertyDialog {
 
     public:

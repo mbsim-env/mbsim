@@ -62,6 +62,19 @@ namespace MBSimFlexibleBody {
       Visualization visu;
   };
 
+  class OpenMBVFlexibleFfrBeam : public OpenMBVFlexibleBody {
+    public:
+      enum Visualization {
+        points=0,
+      };
+      OpenMBVFlexibleFfrBeam(Visualization visu_=points, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVFlexibleBody(cR,minCol,maxCol,dc,tp,ps,lw), visu(visu_) { }
+      void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::FlexibleBody> createOpenMBV();
+      Visualization getVisualization() const { return visu; }
+    private:
+      Visualization visu;
+  };
+
   class OpenMBVDynamicNurbsCurve : public MBSim::OpenMBVColoredBody {
     public:
       OpenMBVDynamicNurbsCurve(const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : MBSim::OpenMBVColoredBody(dc,tp,ps,lw) { }

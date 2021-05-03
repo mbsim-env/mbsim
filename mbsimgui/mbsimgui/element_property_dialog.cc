@@ -1787,6 +1787,93 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  FlexibleFfrBeamPropertyDialog::FlexibleFfrBeamPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
+    addTab("Visualization",3);
+
+    n = new ExtWidget("Number of nodes",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfNodes");
+    addToTab("General", n);
+
+    l = new ExtWidget("Length",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"length");
+    addToTab("General", l);
+
+    A = new ExtWidget("Cross-section area",new ChoiceWidget(new ScalarWidgetFactory("1e-4",vector<QStringList>(2,areaUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"crossSectionArea");
+    addToTab("General", A);
+
+    vector<QString> I_(3); I_[0] = "1e-10"; I_[1] = "1e-10"; I_[2] = "0";
+    I = new ExtWidget("Moment of inertia",new ChoiceWidget(new VecWidgetFactory(I_),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"momentOfInertia");
+    addToTab("General", I);
+
+    E = new ExtWidget("Young's modulus",new ChoiceWidget(new ScalarWidgetFactory("1e-4",vector<QStringList>(2,bulkModulusUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"youngsModulus");
+    addToTab("General", E);
+
+    rho = new ExtWidget("Density",new ChoiceWidget(new ScalarWidgetFactory("7870",vector<QStringList>(2,densityUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"density");
+    addToTab("General", rho);
+
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
+    addToTab("General", beta);
+
+    bc = new ExtWidget("Boundary conditions",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"boundaryConditions");
+    addToTab("General", bc);
+
+    mRed = new ExtWidget("ModalReduction",new ChoiceWidget(new BoolWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"modalReduction");
+    addToTab("General", mRed);
+
+    vector<QString> x(2); x[0] = "1"; x[1] = "5";
+    mRange = new ExtWidget("Mode range",new ChoiceWidget(new VecWidgetFactory(x),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"modeRange");
+    addToTab("General", mRange);
+
+    ombv = new ExtWidget("Enable openMBV",new FlexibleFfrBeamMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
+    addToTab("Visualization",ombv);
+
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    addToTab("Visualization", plotNodes);
+  }
+
+  int FlexibleFfrBeamPropertyDialog::getqERelSize() const {
+    int nqE=1;
+    // TODO: determine size of qE
+    return nqE;
+  }
+
+  DOMElement* FlexibleFfrBeamPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
+    n->initializeUsingXML(item->getXMLElement());
+    l->initializeUsingXML(item->getXMLElement());
+    A->initializeUsingXML(item->getXMLElement());
+    I->initializeUsingXML(item->getXMLElement());
+    E->initializeUsingXML(item->getXMLElement());
+    rho->initializeUsingXML(item->getXMLElement());
+    beta->initializeUsingXML(item->getXMLElement());
+    bc->initializeUsingXML(item->getXMLElement());
+    mRed->initializeUsingXML(item->getXMLElement());
+    mRange->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    plotNodes->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FlexibleFfrBeamPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    n->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    l->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    A->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    I->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    E->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rho->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mRange->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
+    ombv->writeXMLFile(item->getXMLElement(),ele);
+    plotNodes->writeXMLFile(item->getXMLElement(),ele);
+    return nullptr;
+  }
+
   ConstraintPropertyDialog::ConstraintPropertyDialog(Element *constraint) : ElementPropertyDialog(constraint) {
   }
 
