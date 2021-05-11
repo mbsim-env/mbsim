@@ -117,6 +117,12 @@ namespace MBSimFlexibleBody {
       /* GETTER / SETTER */
       int getNumberOfModeShapes() { if(updSize) calcSize(); return ne; }
 
+      void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
+
+      void setModalReduction(bool modalReduction_) { modalReduction = modalReduction_; }
+      void setModeRange(const fmatvec::Vec2 &mRange_) { mRange = mRange_; }
+      void setModalDamping(const fmatvec::VecV &mDamping_) { mDamping <<= mDamping_; }
+
       // NOTE: we can not use a overloaded setTranslation here due to restrictions in XML but define them for convinience in c++
       /*!
        * \brief set Kinematic for genral translational motion
@@ -402,6 +408,10 @@ namespace MBSimFlexibleBody {
       OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation{OpenMBVFlexibleBody::none};
 
       fmatvec::VecVI plotNodes;
+
+      bool modalReduction{false};
+      fmatvec::Vec2 mRange;
+      fmatvec::VecV mDamping;
 
     private:
       double (GenericFlexibleFfrBody::*evalOMBVColorRepresentation[12])(int i);

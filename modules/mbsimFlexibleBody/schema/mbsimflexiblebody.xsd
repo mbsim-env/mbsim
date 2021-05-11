@@ -51,6 +51,21 @@
 
   <xs:group name="CommonFlexibleFfrBody">
     <xs:sequence>
+      <xs:element name="modalReduction" type="pv:booleanFullEval" minOccurs="0">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+          Definiert, ob eine modale Reduktion durchgeführt werden soll.
+        </xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="modeRange" type="pv:indexVector" minOccurs="0">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+          Bereich der Moden, die bei der Reduktion berücksichtigt werden sollen.
+        </xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="modalDamping" type="pv:unknownVector" minOccurs="0">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+          Definiert den Dämpfungsgrad für jede Mode.
+        </xs:documentation></xs:annotation>
+      </xs:element>
       <xs:choice minOccurs="0">
         <xs:element name="generalTranslation">
           <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -1204,18 +1219,6 @@
                 Definiert die Randbedingungen.
               </xs:documentation>
             </xs:annotation>
-          </xs:element>
-          <xs:element name="modalReduction" type="pv:booleanFullEval" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob eine modale Reduktion durchgeführt werden soll.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-	  <xs:element name="modeRange" type="pv:indexVector" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Bereich der Moden, die bei der Reduktion berücksichtigt werden sollen.
-            </xs:documentation></xs:annotation>
           </xs:element>
           <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:element name="enableOpenMBV" minOccurs="0">

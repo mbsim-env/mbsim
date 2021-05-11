@@ -37,7 +37,7 @@ namespace MBSimFlexibleBody {
   class FlexibleFfrBeam : public GenericFlexibleFfrBody {
 
     public:
-      FlexibleFfrBeam(const std::string &name="") : GenericFlexibleFfrBody(name), mRange("[0;4]") { }
+      FlexibleFfrBeam(const std::string &name="") : GenericFlexibleFfrBody(name) { }
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void setNumberOfNodes(int nN_) { nN = nN_; }
@@ -46,10 +46,7 @@ namespace MBSimFlexibleBody {
       void setMomentOfInertia(const fmatvec::Vec3 &I) { Iy=I(0); Iz=I(1); Iyz=I(2); }
       void setYoungsModulus(double E_) { E = E_; }
       void setDensity(double rho_) { rho = rho_; }
-      void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       void setBoundaryConditions(const fmatvec::MatVx3 &bc_) { bc <<= bc_; }
-      void setModalReduction(bool modalReduction_) { modalReduction = modalReduction_; }
-      void setModeRange(const fmatvec::Vec2 &mRange_) { mRange = mRange_; }
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (visualization,(OpenMBVFlexibleFfrBeam::Visualization),OpenMBVFlexibleFfrBeam::points)(colorRepresentation,(OpenMBVFlexibleBody::ColorRepresentation),OpenMBVFlexibleBody::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombvBody = std::shared_ptr<OpenMBVFlexibleFfrBeam>(new OpenMBVFlexibleFfrBeam(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
@@ -65,8 +62,6 @@ namespace MBSimFlexibleBody {
       double E{2e11};
       double rho{7870};
       fmatvec::MatVx3 bc;
-      bool modalReduction{false};
-      fmatvec::Vec2 mRange;
       std::shared_ptr<OpenMBVFlexibleFfrBeam> ombvBody;
   };
 

@@ -297,24 +297,6 @@ namespace MBSimFlexibleBody {
 	  }
 	}
       }
-
-      if(modalReduction) {
-	SquareMatrix<Ref,double> V;
-	Vector<Ref,double> w;
-	eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
-	MatV Vr = V(RangeV(0,V.rows()-1),RangeV(mRange(0),mRange(1)));
-	Pdm <<= Pdm*Vr;
-	for(int i=0; i<3; i++) {
-	   rPdm[i] <<= rPdm[i]*Vr;
-	  for(int j=0; j<3; j++)
-	    PPdm[i][j] <<= Vr.T()*PPdm[i][j]*Vr;
-	}
-	Ke0 <<= JTMJ(Ke0,Vr);
-	for(int i=0; i<nN; i++) {
-	  Phi[i] <<= Phi[i]*Vr;
-	  Psi[i] <<= Psi[i]*Vr;
-	}
-      }
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvBody) {
@@ -350,10 +332,6 @@ namespace MBSimFlexibleBody {
 	  bc(i,j)--;
       }
     }
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalReduction");
-    if(e) setModalReduction(MBXMLUtils::E(e)->getText<bool>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeRange");
-    if(e) setModeRange(MBXMLUtils::E(e)->getText<Vec2>()-Vec2(INIT,1));
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       ombvBody = shared_ptr<OpenMBVFlexibleFfrBeam>(new OpenMBVFlexibleFfrBeam);

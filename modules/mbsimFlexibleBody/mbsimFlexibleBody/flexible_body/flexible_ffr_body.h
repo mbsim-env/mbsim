@@ -61,7 +61,6 @@ namespace MBSimFlexibleBody {
 
       void setStiffnessMatrix(const fmatvec::SymMatV &Ke0_) { Ke0 <<= Ke0_; }
       void setDampingMatrix(const fmatvec::SymMatV &De0_) { De0 <<= De0_; }
-      void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       // End of interface
 
       // Interface for nonlinear stiffness matrices

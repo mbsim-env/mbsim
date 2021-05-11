@@ -404,7 +404,7 @@ namespace MBSimGUI {
       int getuRelSize() const { return getqRelSize(); }
       virtual int getqERelSize() const { return 0; }
     protected:
-      ExtWidget *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
+      ExtWidget *mRed, *mRange, *mDamping, *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
   };
 
   class FlexibleFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
@@ -438,7 +438,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *n, *l, *A, *I, *E, *rho, *beta, *bc, *mRed, *mRange, *ombv, *plotNodes;
+      ExtWidget *n, *l, *A, *I, *E, *rho, *beta, *bc, *ombv, *plotNodes;
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {

@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
 
   Range<Var,Var> i02(0,2);
 
-  GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name),  Id(Eye()),  APK(EYE) {
+  GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name), Id(Eye()), APK(EYE), mRange("[0;3]") {
 
     updKJ[0] = true;
     updKJ[1] = true;
@@ -283,6 +283,31 @@ namespace MBSimFlexibleBody {
 
   void GenericFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if(modalReduction) {
+	SquareMatrix<Ref,double> V;
+	Vector<Ref,double> w;
+	eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
+	MatV Vr = V(RangeV(0,V.rows()-1),RangeV(mRange(0),mRange(1)));
+	Pdm <<= Pdm*Vr;
+	for(int i=0; i<3; i++) {
+	   rPdm[i] <<= rPdm[i]*Vr;
+	  for(int j=0; j<3; j++)
+	    PPdm[i][j] <<= Vr.T()*PPdm[i][j]*Vr;
+	}
+	Ke0 <<= JTMJ(Ke0,Vr);
+	for(size_t i=0; i<Phi.size(); i++)
+	  Phi[i] <<= Phi[i]*Vr;
+	for(size_t i=0; i<Psi.size(); i++)
+	  Psi[i] <<= Psi[i]*Vr;
+	if(mDamping.size()) {
+	  if(mDamping.size()!=(int)Vr.cols())
+	    throwError(string("(GenericFlexibleFfrBody::execute): size of modal damping does not match, must be ") + to_string(Vr.cols()));
+	  De0.resize(Vr.cols(),INIT,0);
+	  for(int i=0; i<De0.size(); i++)
+	    De0(i,i) = 2*sqrt((PPdm[0][0](i,i)+PPdm[1][1](i,i)+PPdm[2][2](i,i))*Ke0(i,i))*mDamping(i);
+	}
+      }
+
       if(generalizedVelocityOfRotation==unknown)
         throwError("Generalized velocity of rotation unknown");
 
@@ -770,6 +795,13 @@ namespace MBSimFlexibleBody {
       addContour(c);
       e=e->getNextElementSibling();
     }
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalReduction");
+    if(e) setModalReduction(MBXMLUtils::E(e)->getText<bool>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeRange");
+    if(e) setModeRange(MBXMLUtils::E(e)->getText<Vec2>()-Vec2(INIT,1));
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
+    if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");
     if(e) {
