@@ -37,7 +37,9 @@ namespace MBSimFlexibleBody {
       int nE = nN-1;
       ne = 8;
       int ng = nN*ne/2;
-      int nr = 4;
+      int nr = 0;
+      for(int i=0; i<bc.rows(); i++)
+	nr += bc(i,2)-bc(i,1)+1;
       int n = ng-nr;
       vector<Mat3xV> rPdme(3,Mat3xV(ne));
       vector<Mat3xV> rPdmg(3,Mat3xV(ng));
@@ -252,48 +254,50 @@ namespace MBSimFlexibleBody {
 	Keg.add(J,J,Kee);
       }
 
-      vector<int> c;
-      for(int i=0; i<bc.rows(); i++) {
-	for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
-	  c.push_back(bc(i,0)*ne/2+j);
-      }
-
-      int k=0, h=0;
-      for(int i=0; i<ng; i++) {
-	if(i==c[h])
-	  h++;
-	else {
-	  Pdm.set(k,Pdmg.col(i));
-	  for(int ii=0; ii<3; ii++)
-	    rPdm[ii].set(k,rPdmg[ii].col(i));
-	  int l=0, r=0;
-	  for(int j=0; j<ng; j++) {
-	    if(j==c[r])
-	      r++;
-	    else {
-	      Ke0(k,l) = Keg(i,j);
-	      for(int ii=0; ii<3; ii++) {
-		for(int jj=0; jj<3; jj++)
-		  PPdm[ii][jj](k,l) = PPdmg[ii][jj](i,j);
-	      }
-	      l++;
-	    }
-	  }
-	  k++;
+      if(nr) {
+	vector<int> c;
+	for(int i=0; i<bc.rows(); i++) {
+	  for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
+	    c.push_back(bc(i,0)*ne/2+j);
 	}
-      }
-      for(int i=0; i<nN; i++) {
-	KrKP[i](0) = i*D;
-	k=0; h=0;
-	for(int j=0; j<ng; j++) {
-	  if(j==c[h])
+
+	int k=0, h=0;
+	for(int i=0; i<ng; i++) {
+	  if(i==c[h])
 	    h++;
 	  else {
-	    if(j==i*ne/2) Phi[i](1,k) = 1;
-	    else if(j==i*ne/2+1) Phi[i](2,k) = 1;
-	    else if(j==i*ne/2+2) Psi[i](1,k) = 1;
-	    else if(j==i*ne/2+3) Psi[i](2,k) = 1;
+	    Pdm.set(k,Pdmg.col(i));
+	    for(int ii=0; ii<3; ii++)
+	      rPdm[ii].set(k,rPdmg[ii].col(i));
+	    int l=0, r=0;
+	    for(int j=0; j<ng; j++) {
+	      if(j==c[r])
+		r++;
+	      else {
+		Ke0(k,l) = Keg(i,j);
+		for(int ii=0; ii<3; ii++) {
+		  for(int jj=0; jj<3; jj++)
+		    PPdm[ii][jj](k,l) = PPdmg[ii][jj](i,j);
+		}
+		l++;
+	      }
+	    }
 	    k++;
+	  }
+	}
+	for(int i=0; i<nN; i++) {
+	  KrKP[i](0) = i*D;
+	  k=0; h=0;
+	  for(int j=0; j<ng; j++) {
+	    if(j==c[h])
+	      h++;
+	    else {
+	      if(j==i*ne/2) Phi[i](1,k) = 1;
+	      else if(j==i*ne/2+1) Phi[i](2,k) = 1;
+	      else if(j==i*ne/2+2) Psi[i](1,k) = 1;
+	      else if(j==i*ne/2+3) Psi[i](2,k) = 1;
+	      k++;
+	    }
 	  }
 	}
       }
