@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="nN">21</scalarParameter>
+      <scalarParameter name="l">0.3</scalarParameter>
+      <scalarParameter name="h">0.008</scalarParameter>
+      <scalarParameter name="d">0.005</scalarParameter>
+      <scalarParameter name="A">h*d</scalarParameter>
+      <vectorParameter name="I">[1/12*h*d^3;1/12*d*h^3;0]</vectorParameter>
+      <scalarParameter name="E">2e11</scalarParameter>
+      <scalarParameter name="rho">7870</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <frames/>
+      <contours/>
+      <groups/>
+      <objects>
+        <FlexibleFfrBeam xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBeam">
+          <numberOfNodes>nN</numberOfNodes>
+          <length unit="m">l</length>
+          <crossSectionArea unit="m^2">A</crossSectionArea>
+          <momentOfInertia>I</momentOfInertia>
+          <youngsModulus unit="N/m^2">E</youngsModulus>
+          <density unit="kg/m^3">rho</density>
+          <boundaryConditions>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>1</ele>
+                <ele>1</ele>
+                <ele>2</ele>
+              </row>
+              <row>
+                <ele>nN</ele>
+                <ele>1</ele>
+                <ele>2</ele>
+              </row>
+            </xmlMatrix>
+          </boundaryConditions>
+          <modalReduction>true</modalReduction>
+          <frames>
+            <NodeFrame name="P1">
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <nodeNumber>1</nodeNumber>
+            </NodeFrame>
+            <NodeFrame name="P2">
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <nodeNumber>round(nN/2)</nodeNumber>
+            </NodeFrame>
+            <NodeFrame name="P3">
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <nodeNumber>nN</nodeNumber>
+            </NodeFrame>
+        </frames>  <contours/>
+          <enableOpenMBV>
+            <pointSize xmlns="http://www.mbsim-env.de/MBSim">5</pointSize>
+          </enableOpenMBV>
+          <enableOpenMBVFrameK>
+            <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
+        </enableOpenMBVFrameK></FlexibleFfrBeam>
+      </objects>  
+      <links/>
+      <constraints/>
+      <observers/>
+      <enableOpenMBVFrameI>
+        <size unit="cm">1</size>
+    </enableOpenMBVFrameI>  
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+          </xmlVector>
+        </accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
+    <naturalModeScale>
+      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+        <ele>1e3</ele>
+        <ele>1e3</ele>
+        <ele>1</ele>
+        <ele>1</ele>
+      </xmlVector>
+    </naturalModeScale>
+    <visualizeNaturalModeShapes>
+      <modeRange>
+        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <ele>1</ele>
+          <ele>2</ele>
+        </xmlVector>
+      </modeRange>
+    </visualizeNaturalModeShapes>
+    <visualizeFrequencyResponse/>
+    <plotStepSize unit="s">1e-4</plotStepSize>
+  </LinearSystemAnalyzer>
+
+</MBSimProject>
