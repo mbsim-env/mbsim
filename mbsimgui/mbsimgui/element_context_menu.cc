@@ -327,6 +327,9 @@ namespace MBSimGUI {
     action = new QAction("Add calculix body", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addObject(new CalculixBody, element); });
     menu->addAction(action);
+    action = new QAction("Add flexible ffr beam", menu);
+    connect(action,&QAction::triggered,this,[=](){ mw->addObject(new FlexibleFfrBeam, element); });
+    menu->addAction(action);
     action = new QAction("Add flexible ffr body", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addObject(new FlexibleFfrBody, element); });
     menu->addAction(action);
