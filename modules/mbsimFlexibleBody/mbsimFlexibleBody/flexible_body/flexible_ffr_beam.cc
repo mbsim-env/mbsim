@@ -254,50 +254,49 @@ namespace MBSimFlexibleBody {
 	Keg.add(J,J,Kee);
       }
 
-      if(nr) {
-	vector<int> c;
-	for(int i=0; i<bc.rows(); i++) {
-	  for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
-	    c.push_back(bc(i,0)*ne/2+j);
-	}
+      vector<int> c;
+      for(int i=0; i<bc.rows(); i++) {
+	for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
+	  c.push_back(bc(i,0)*ne/2+j);
+      }
+      sort(c.begin(), c.end());
 
-	int k=0, h=0;
-	for(int i=0; i<ng; i++) {
-	  if(i==c[h])
+      size_t k=0, h=0;
+      for(int i=0; i<ng; i++) {
+	if(h<c.size() and i==c[h])
+	  h++;
+	else {
+	  Pdm.set(k,Pdmg.col(i));
+	  for(int ii=0; ii<3; ii++)
+	    rPdm[ii].set(k,rPdmg[ii].col(i));
+	  size_t l=0, r=0;
+	  for(int j=0; j<ng; j++) {
+	    if(r<c.size() and j==c[r])
+	      r++;
+	    else {
+	      Ke0(k,l) = Keg(i,j);
+	      for(int ii=0; ii<3; ii++) {
+		for(int jj=0; jj<3; jj++)
+		  PPdm[ii][jj](k,l) = PPdmg[ii][jj](i,j);
+	      }
+	      l++;
+	    }
+	  }
+	  k++;
+	}
+      }
+      for(int i=0; i<nN; i++) {
+	KrKP[i](0) = i*D;
+	k=0; h=0;
+	for(int j=0; j<ng; j++) {
+	  if(h<c.size() and j==c[h])
 	    h++;
 	  else {
-	    Pdm.set(k,Pdmg.col(i));
-	    for(int ii=0; ii<3; ii++)
-	      rPdm[ii].set(k,rPdmg[ii].col(i));
-	    int l=0, r=0;
-	    for(int j=0; j<ng; j++) {
-	      if(j==c[r])
-		r++;
-	      else {
-		Ke0(k,l) = Keg(i,j);
-		for(int ii=0; ii<3; ii++) {
-		  for(int jj=0; jj<3; jj++)
-		    PPdm[ii][jj](k,l) = PPdmg[ii][jj](i,j);
-		}
-		l++;
-	      }
-	    }
+	    if(j==i*ne/2) Phi[i](1,k) = 1;
+	    else if(j==i*ne/2+1) Phi[i](2,k) = 1;
+	    else if(j==i*ne/2+2) Psi[i](1,k) = 1;
+	    else if(j==i*ne/2+3) Psi[i](2,k) = 1;
 	    k++;
-	  }
-	}
-	for(int i=0; i<nN; i++) {
-	  KrKP[i](0) = i*D;
-	  k=0; h=0;
-	  for(int j=0; j<ng; j++) {
-	    if(j==c[h])
-	      h++;
-	    else {
-	      if(j==i*ne/2) Phi[i](1,k) = 1;
-	      else if(j==i*ne/2+1) Phi[i](2,k) = 1;
-	      else if(j==i*ne/2+2) Psi[i](1,k) = 1;
-	      else if(j==i*ne/2+3) Psi[i](2,k) = 1;
-	      k++;
-	    }
 	  }
 	}
       }
