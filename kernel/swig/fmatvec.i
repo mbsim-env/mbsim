@@ -34,10 +34,10 @@
 %feature("director") fmatvec::Atom;
 namespace fmatvec {
   %extend Atom {
-    void msg(MsgType type, const std::string &msg) {
+    void msg(const MsgType &type, const std::string &msg) {
       $self->msg(type)<<msg<<std::endl;
     }
-    static void msgStatic(MsgType type, const std::string &msg) {
+    static void msgStatic(const MsgType &type, const std::string &msg) {
       fmatvec::Atom::msgStatic(type)<<msg<<std::endl;
     }
   };

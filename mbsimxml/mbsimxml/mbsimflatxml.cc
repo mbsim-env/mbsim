@@ -70,8 +70,6 @@ void initPython() {
 namespace MBSim {
 
 // load all MBSim modules:
-// If a module (shared library) is already loaded but the file has a newer last write time than the
-// last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
 set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
   static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
   static const boost::filesystem::path installDir(installPath());
