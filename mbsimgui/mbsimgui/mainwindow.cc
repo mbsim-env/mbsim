@@ -1167,11 +1167,8 @@ namespace MBSimGUI {
 
   void MainWindow::h5plotserie() {
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5";
-    if(QFile::exists(name)) {
-      QStringList arg;
-      arg.append(name);
-      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"h5plotserie").string()), arg);
-    }
+    if(QFile::exists(name))
+      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"h5plotserie").string()), QStringList(name));
   }
 
   void MainWindow::linearSystemAnalysis() {
