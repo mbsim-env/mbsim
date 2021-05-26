@@ -21,7 +21,6 @@ libmbsimControl_la_SOURCES = \
   frame_chaser_observer.cc \
   signal_observer.cc \
   switch.cc \
-  lti_system_exporter.cc \
   linear_system_analyzer.cc
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
@@ -50,7 +49,6 @@ mbsimControlinclude_HEADERS = \
   frame_chaser_observer.h \
   signal_observer.h \
   switch.h \
-  lti_system_exporter.h \
   linear_system_analyzer.h
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk

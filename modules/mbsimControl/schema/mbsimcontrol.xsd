@@ -1055,35 +1055,6 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LTISystemExporter" substitutionGroup="mbsim:Solver" type="LTISystemExporterType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-       Transformiert ein nichtlineares, dynamisches System in ein lineares zeitinvariantes System in Zustandsform und exportiert die zugehörigen Matrizen A, B, C und D.
-    </xs:documentation></xs:annotation>
-  </xs:element>
-  <xs:complexType name="LTISystemExporterType">
-    <xs:complexContent>
-      <xs:extension base="mbsim:SolverType">
-        <xs:sequence>
-          <xs:element name="initialTime" type="pv:timeScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Zeitpunkt, zu dem das System linearisiert werden soll.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="initialState" type="pv:unknownVector" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Anfangszustand.
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="initialInput" type="pv:unknownVector" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Startwerte der Eingangsgrößen
-            </xs:documentation></xs:annotation>
-          </xs:element>
-        </xs:sequence>
-      </xs:extension>
-    </xs:complexContent>
-  </xs:complexType>
-
   <xs:element name="LinearSystemAnalyzer" substitutionGroup="mbsim:Solver" type="LinearSystemAnalyzerType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
       Führt eine Eigenanalyse, eine Modalanalyse und eine Frequenzganganalyse eines dynamischen Systems durch. Dabei wird das nichtlineare System in ein lineares, zeitinvariantes System transformiert. Die zugehörigen Matrizen A, B, C und D werden in einer Datei gespeichert.
