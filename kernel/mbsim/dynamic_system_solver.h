@@ -25,6 +25,10 @@
 #include "mbsim/functions/function.h"
 #include "mbsim/environment.h"
 
+#ifdef HAVE_ANSICSIGNAL
+#  include <signal.h>
+#endif
+
 namespace MBSim {
 
   class Graph;
@@ -405,8 +409,19 @@ namespace MBSim {
        */
       void dropContactMatrices();
 
-      // install the MBSim signal handler
-      static void installSignalHandler();
+      // MBSim signal handler
+#ifndef SWIG
+      class SignalHandler {
+        public:
+          SignalHandler();
+          ~SignalHandler();
+        private:
+          #ifdef HAVE_ANSICSIGNAL
+            sighandler_t oldSigInt;
+            sighandler_t oldSigTerm;
+          #endif
+      };
+#endif
 
       /**
        * \brief handler for user interrupt signal

@@ -268,8 +268,10 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
     else {
       auto start=std::chrono::high_resolution_clock::now();
       solver->setSystem(dss.get());
-      DynamicSystemSolver::installSignalHandler();//mfmf deinstall after next line
-      solver->execute();
+      {
+        DynamicSystemSolver::SignalHandler dummy; // install signal handler for next line (and deinstall on scope exit)
+        solver->execute();
+      }
       auto end=std::chrono::high_resolution_clock::now();
       fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
     }
