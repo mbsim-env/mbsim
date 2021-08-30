@@ -25,10 +25,6 @@
 #include "mbsim/functions/function.h"
 #include "mbsim/environment.h"
 
-#ifdef HAVE_ANSICSIGNAL
-#  include <signal.h>
-#endif
-
 namespace MBSim {
 
   class Graph;
@@ -417,8 +413,9 @@ namespace MBSim {
           ~SignalHandler();
         private:
           #ifdef HAVE_ANSICSIGNAL
-            sighandler_t oldSigInt;
-            sighandler_t oldSigTerm;
+            using SigHandle = void (*)(int);
+            SigHandle oldSigInt;
+            SigHandle oldSigTerm;
           #endif
       };
 #endif

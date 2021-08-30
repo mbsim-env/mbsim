@@ -38,6 +38,10 @@
 #include <hdf5serie/simpledataset.h>
 #include <limits>
 
+#ifdef HAVE_ANSICSIGNAL
+#  include <signal.h>
+#endif
+
 #include "openmbvcppinterface/group.h"
 
 //#ifdef _OPENMP
