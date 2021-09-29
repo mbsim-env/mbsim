@@ -405,8 +405,20 @@ namespace MBSim {
        */
       void dropContactMatrices();
 
-      // install the MBSim signal handler
-      static void installSignalHandler();
+      // MBSim signal handler
+#ifndef SWIG
+      class SignalHandler {
+        public:
+          SignalHandler();
+          ~SignalHandler();
+        private:
+          #ifdef HAVE_ANSICSIGNAL
+            using SigHandle = void (*)(int);
+            SigHandle oldSigInt;
+            SigHandle oldSigTerm;
+          #endif
+      };
+#endif
 
       /**
        * \brief handler for user interrupt signal

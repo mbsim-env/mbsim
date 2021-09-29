@@ -1211,10 +1211,17 @@ namespace MBSim {
     contactDrop.close();
   }
 
-  void DynamicSystemSolver::installSignalHandler() {
+  DynamicSystemSolver::SignalHandler::SignalHandler() {
 #ifdef HAVE_ANSICSIGNAL
-    signal(SIGINT, sigInterruptHandler);
-    signal(SIGTERM, sigInterruptHandler);
+    oldSigInt=signal(SIGINT, sigInterruptHandler);
+    oldSigTerm=signal(SIGTERM, sigInterruptHandler);
+#endif
+  }
+
+  DynamicSystemSolver::SignalHandler::~SignalHandler() {
+#ifdef HAVE_ANSICSIGNAL
+    signal(SIGINT, oldSigInt);
+    signal(SIGTERM, oldSigTerm);
 #endif
   }
 

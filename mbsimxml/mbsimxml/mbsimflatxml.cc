@@ -70,8 +70,6 @@ void initPython() {
 namespace MBSim {
 
 // load all MBSim modules:
-// If a module (shared library) is already loaded but the file has a newer last write time than the
-// last write time of the file at the time the shared library was loaded it is unloaded and reloaded.
 set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
   static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
   static const boost::filesystem::path installDir(installPath());
@@ -270,8 +268,10 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
     else {
       auto start=std::chrono::high_resolution_clock::now();
       solver->setSystem(dss.get());
-      DynamicSystemSolver::installSignalHandler();//mfmf deinstall after next line
-      solver->execute();
+      {
+        DynamicSystemSolver::SignalHandler dummy; // install signal handler for next line (and deinstall on scope exit)
+        solver->execute();
+      }
       auto end=std::chrono::high_resolution_clock::now();
       fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
     }
