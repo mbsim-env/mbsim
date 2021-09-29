@@ -56,6 +56,7 @@ namespace MBSimFlexibleBody {
       KrKP.resize(nN,Vec3());
       Phi.resize(nN,Mat3xV(n));
       Psi.resize(nN,Mat3xV(n));
+      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(n));
 
       const int vl = 0;
       const int wl = 1;

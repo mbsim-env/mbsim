@@ -299,6 +299,8 @@ namespace MBSimFlexibleBody {
 	  Phi[i] <<= Phi[i]*Vr;
 	for(size_t i=0; i<Psi.size(); i++)
 	  Psi[i] <<= Psi[i]*Vr;
+	for(size_t i=0; i<sigmahel.size(); i++)
+	  sigmahel[i] <<= sigmahel[i]*Vr;
 	if(mDamping.size()) {
 	  if(mDamping.size()!=(int)Vr.cols())
 	    throwError(string("(GenericFlexibleFfrBody::execute): size of modal damping does not match, must be ") + to_string(Vr.cols()));
