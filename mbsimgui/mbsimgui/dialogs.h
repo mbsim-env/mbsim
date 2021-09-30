@@ -175,6 +175,14 @@ namespace MBSimGUI {
   class FrequencyResponseWidget : public QWidget {
     public:
       FrequencyResponseWidget();
+    private:
+      QTreeWidget *inputTable, *table;
+      QwtPlot *plot;
+      QwtPlotCurve *curve1, *curve2;
+      QVector<double> freq;
+      QVector<QVector<QVector<double>>> A;
+      QVector<QVector<QVector<double>>> phi;
+      void updateWidget();
   };
 
   class LinearSystemAnalysisDialog : public QDialog {
