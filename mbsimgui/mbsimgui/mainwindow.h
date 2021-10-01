@@ -261,11 +261,7 @@ namespace MBSimGUI {
       void saveStateTable(const QString &file);
       void saveInputTable(const QString &file);
       void saveOutputTable(const QString &file);
-      void saveInitialOutput(const QString &file);
-      void saveEigenanalysis(const QString &file);
-      void saveModalAnalysis(const QString &file);
-      void saveFrequencyResponseAnalysis(const QString &file);
-      void saveLTISystem(const QString &file);
+      void saveLinearSystemAnalysis(const QString &file);
       void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
       void rebuildTree();
       void exportParameters();

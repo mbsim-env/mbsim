@@ -413,11 +413,7 @@ namespace MBSimGUI {
 	  saveMBSimH5Data(dir+"/MBS.mbsh5");
 	  saveOpenMBVXMLData(dir+"/MBS.ombvx");
 	  saveOpenMBVH5Data(dir+"/MBS.ombvh5");
-	  saveInitialOutput(dir+"/initial_output.mat");
-	  saveEigenanalysis(dir+"/eigenanalysis.mat");
-	  saveModalAnalysis(dir+"/modal_analysis.mat");
-	  saveFrequencyResponseAnalysis(dir+"/frequency_response_analysis.mat");
-	  saveLTISystem(dir+"/lti_system.mat");
+	  saveLinearSystemAnalysis(dir+"/eigenanalysis.mat");
 	  saveInputTable(dir+"/inputtable.asc");
 	  saveOutputTable(dir+"/outputtable.asc");
 	  if(saveFinalStateVector)
@@ -908,11 +904,7 @@ namespace MBSimGUI {
         saveMBSimH5Data(dir+"/MBS.mbsh5");
         saveOpenMBVXMLData(dir+"/MBS.ombvx");
         saveOpenMBVH5Data(dir+"/MBS.ombvh5");
-	saveInitialOutput(dir+"/initial_output.mat");
-        saveEigenanalysis(dir+"/eigenanalysis.mat");
-        saveModalAnalysis(dir+"/modal_analysis.mat");
-        saveFrequencyResponseAnalysis(dir+"/frequency_response_analysis.mat");
-	saveLTISystem(dir+"/lti_system.mat");
+	saveLinearSystemAnalysis(dir+"/linear_system_analysis.h5");
 	saveInputTable(dir+"/inputtable.asc");
 	saveOutputTable(dir+"/outputtable.asc");
         if(settings.value("mainwindow/options/savestatevector", false).toBool())
@@ -997,11 +989,7 @@ namespace MBSimGUI {
       if(directory.count()>2)
         ret = QMessageBox::warning(this, tr("Application"), tr("Directory not empty. Overwrite existing files?"), QMessageBox::Ok | QMessageBox::Cancel);
       if(ret == QMessageBox::Ok) {
-	saveInitialOutput(dir+"/initial_output.mat");
-	saveEigenanalysis(dir+"/eigenanalysis.mat");
-	saveModalAnalysis(dir+"/modal_analysis.mat");
-	saveFrequencyResponseAnalysis(dir+"/frequency_response_analysis.mat");
-	saveLTISystem(dir+"/lti_system.mat");
+	saveLinearSystemAnalysis(dir+"/linear_system_analysis.h5");
 	saveInputTable(dir+"/inputtable.asc");
 	saveOutputTable(dir+"/outputtable.asc");
       }
@@ -1020,34 +1008,10 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/outputtable.asc",file);
   }
 
-  void MainWindow::saveInitialOutput(const QString &file) {
+  void MainWindow::saveLinearSystemAnalysis(const QString &file) {
     if(QFile::exists(file))
       QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/initial_output.mat",file);
-  }
-
-  void MainWindow::saveEigenanalysis(const QString &file) {
-    if(QFile::exists(file))
-      QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/eigenanalysis.mat",file);
-  }
-
-  void MainWindow::saveModalAnalysis(const QString &file) {
-    if(QFile::exists(file))
-      QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/modal_analysis.mat",file);
-  }
-
-  void MainWindow::saveFrequencyResponseAnalysis(const QString &file) {
-    if(QFile::exists(file))
-      QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/frequency_response_analysis.mat",file);
-  }
-
-  void MainWindow::saveLTISystem(const QString &file) {
-    if(QFile::exists(file))
-      QFile::remove(file);
-    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/lti_system.mat",file);
+    QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5",file);
   }
 
   void MainWindow::mbsimxml(int task) {
