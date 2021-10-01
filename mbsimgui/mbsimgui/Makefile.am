@@ -73,7 +73,6 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) $(MAYBE_SIGWATCH_SRC) mainwindow.cc \
 		   embed.cc \
 		   solver.cc \
 		   project.cc \
-		   octave_utils.cc \
 		   file_editor.cc
 
 nodist_mbsimgui_SOURCES=$(QT_BUILT_SOURCES)

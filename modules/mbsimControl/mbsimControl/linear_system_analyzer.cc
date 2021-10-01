@@ -25,6 +25,8 @@
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/utils/eps.h"
 #include "fmatvec/linear_algebra_complex.h"
+#include "hdf5serie/simpledataset.h"
+#include "hdf5serie/complexdataset.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -214,173 +216,46 @@ namespace MBSimControl {
       os.close();
     }
 
-    os.open("initial_output.mat");
-    if(os.is_open()) {
-      os << "# name: " << "z0" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << zEq.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i<zEq.size(); i++)
-        os << setw(28) << zEq.e(i) << endl;
-      os << endl;
-      os << "# name: " << "y0" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << sigsi0.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i<sigsi0.size(); i++)
-        os << setw(28) << sigsi0.e(i) << endl;
-      os.close();
+    H5::File file("linear_system_analysis.h5", H5::File::write);
+
+    auto group=file.createChildObject<H5::Group>("initial output")();
+    auto vdata=group->createChildObject<H5::SimpleDataset<vector<double>>>("state (z)")(zEq.size());
+    if(zEq.size()) vdata->write((vector<double>)zEq);
+    vdata=group->createChildObject<H5::SimpleDataset<vector<double>>>("output (y)")(sigsi0.size());
+    if(sigsi0.size()) vdata->write((vector<double>)sigsi0);
+
+    group=file.createChildObject<H5::Group>("frequency response analysis")();
+    vdata=group->createChildObject<H5::SimpleDataset<vector<double>>>("excitation frequencies")(fex.size());
+    if(fex.size()) vdata->write((vector<double>)fex);
+    for(int i=0; i<nsource; i++) {
+      auto subgroup=group->createChildObject<H5::Group>("input "+to_string(i))();
+      writeComplexDataset("state response",subgroup,(vector<vector<complex<double>>>)Zhex[i]);
+      writeComplexDataset("output response",subgroup,(vector<vector<complex<double>>>)Yhex[i]);
     }
 
-    os.open("eigenanalysis.mat");
-    if(os.is_open()) {
-      os << "# name: " << "lambda" << endl;
-      os << "# type: " << "complex matrix" << endl;
-      os << "# rows: " << w.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i<w.size(); i++)
-        os << setw(28) << w.e(i) << endl;
-      os << endl;
-      os << "# name: " << "V" << endl;
-      os << "# type: " << "complex matrix" << endl;
-      os << "# rows: " << V.rows() << endl;
-      os << "# columns: " << V.cols() << endl;
-      for(int i=0; i<V.rows(); i++) {
-        for(int j=0; j<V.cols(); j++)
-          os << setw(28) << V.e(i,j) << " ";
-        os << endl;
-      }
-      os.close();
-    }
+    group=file.createChildObject<H5::Group>("modal analysis")();
+    vector<complex<double>> lambda(fna.size());
+    for(size_t i=0; i<fna.size(); i++)
+      lambda[i] = w(fna[i].second);
+    writeComplexDataset("eigenvalues",group,lambda);
+    writeComplexDataset("state modes",group,(vector<vector<complex<double>>>)Zhna);
+    writeComplexDataset("output modes",group,(vector<vector<complex<double>>>)Yhna);
 
-    os.open("modal_analysis.mat");
-    if(os.is_open()) {
-      os << "# name: " << "lambda" << endl;
-      os << "# type: " << "complex matrix" << endl;
-      os << "# rows: " << fna.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(size_t i=0; i<fna.size(); i++)
-        os << setw(28) << w(fna[i].second) << endl;
-      os << endl;
-      os << "# name: " << "Zh" << endl;
-      os << "# type: " << "complex matrix" << endl;
-      os << "# rows: " << Zhna.rows() << endl;
-      os << "# columns: " << Zhna.cols() << endl;
-      for(int k=0; k<Zhna.rows(); k++) {
-	for(int i=0; i<Zhna.cols(); i++)
-	  os << setw(28) << Zhna(k,i) << " ";
-	os << endl;
-      }
-      os << endl;
-      os << "# name: " << "Yh" << endl;
-      os << "# type: " << "complex matrix" << endl;
-      os << "# rows: " << Yhna.rows() << endl;
-      os << "# columns: " << Yhna.cols() << endl;
-      for(int k=0; k<Yhna.rows(); k++) {
-	for(int i=0; i<Yhna.cols(); i++)
-	  os << setw(28) << Yhna(k,i) << " ";
-	os << endl;
-      }
-      os.close();
-    }
+    group=file.createChildObject<H5::Group>("eigenanalysis")();
+    writeComplexDataset("eigenvalues",group,(vector<complex<double>>)w);
+    writeComplexDataset("eigenvectors",group,(vector<vector<complex<double>>>)V);
 
-    os.open("frequency_response_analysis.mat");
-    if(os.is_open()) {
-      os << "# name: " << "f" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << fex.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i<fex.size(); i++)
-	os << setw(28) << fex.e(i) << endl;
-      os << endl;
-
-      os << "# name: " << "Zh" << endl;
-      os << "# type: " << "cell" << endl;
-      os << "# rows: " << nsource << endl;
-      os << "# columns: " << 1 << endl;
-      os << endl;
-      for(int i=0; i<nsource; i++) {
-	os << "# name: " << "<cell-element>" << endl;
-	os << "# type: " << "complex matrix" << endl;
-	os << "# rows: " << Zhex[i].rows() << endl;
-	os << "# columns: " << Zhex[i].cols() << endl;
-	for(int j=0; j<Zhex[i].rows(); j++) {
-	  for(int k=0; k<Zhex[i].cols(); k++)
-	    os << setw(28) << Zhex[i].e(j,k) << " ";
-	  os << endl;
-	}
-	os << endl;
-      }
-      os << "# name: " << "Yh" << endl;
-      os << "# type: " << "cell" << endl;
-      os << "# rows: " << nsource << endl;
-      os << "# columns: " << 1 << endl;
-      os << endl;
-      for(int i=0; i<nsource; i++) {
-	os << "# name: " << "<cell-element>" << endl;
-	os << "# type: " << "complex matrix" << endl;
-	os << "# rows: " << Yhex[i].rows() << endl;
-	os << "# columns: " << Yhex[i].cols() << endl;
-	for(int j=0; j<Yhex[i].rows(); j++) {
-	  for(int k=0; k<Yhex[i].cols(); k++)
-	    os << setw(28) << Yhex[i].e(j,k) << " ";
-	  os << endl;
-	}
-	os << endl;
-      }
-      os.close();
-    }
-
-    os.open("lti_system.mat");
-    if(os.is_open()) {
-      os << "# name: " << "A" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << A.rows() << endl;
-      os << "# columns: " << A.cols() << endl;
-      for(int i=0; i<A.rows(); i++) {
-        for(int j=0; j<A.cols(); j++)
-          os << setw(28) << A.e(i,j) << " ";
-        os << endl;
-      }
-      os << endl;
-      os << "# name: " << "B" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << B.rows() << endl;
-      os << "# columns: " << B.cols() << endl;
-      for(int i=0; i<B.rows(); i++) {
-	for(int j=0; j<B.cols(); j++)
-	  os << setw(28) << B.e(i,j) << " ";
-	os << endl;
-      }
-      os << endl;
-      os << "# name: " << "C" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << C.rows() << endl;
-      os << "# columns: " << C.cols() << endl;
-      for(int i=0; i<C.rows(); i++) {
-        for(int j=0; j<C.cols(); j++)
-          os << setw(28) << C.e(i,j) << " ";
-        os << endl;
-      }
-      os << endl;
-      os << "# name: " << "D" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << D.rows() << endl;
-      os << "# columns: " << D.cols() << endl;
-      for(int i=0; i<D.rows(); i++) {
-        for(int j=0; j<D.cols(); j++)
-          os << setw(28) << D.e(i,j) << " ";
-        os << endl;
-      }
-      os << endl;
-      os << "# name: " << "z0" << endl;
-      os << "# type: " << "matrix" << endl;
-      os << "# rows: " << zEq.size() << endl;
-      os << "# columns: " << 1 << endl;
-      for(int i=0; i<zEq.size(); i++)
-        os << setw(28) << zEq.e(i) << endl;
-      os.close();
-    }
+    group=file.createChildObject<H5::Group>("lti system")();
+    auto data=group->createChildObject<H5::SimpleDataset<vector<vector<double>>>>("system matrix")(A.rows(),A.cols());
+    if(A.rows() and A.cols()) data->write((vector<vector<double>>)A);
+    data=group->createChildObject<H5::SimpleDataset<vector<vector<double>>>>("input matrix")(B.rows(),B.cols());
+    if(B.rows() and B.cols()) data->write((vector<vector<double>>)B);
+    data=group->createChildObject<H5::SimpleDataset<vector<vector<double>>>>("output matrix")(C.rows(),C.cols());
+    if(C.rows() and C.cols()) data->write((vector<vector<double>>)C);
+    data=group->createChildObject<H5::SimpleDataset<vector<vector<double>>>>("feedthrough matrix")(D.rows(),D.cols());
+    if(D.rows() and D.cols()) data->write((vector<vector<double>>)D);
+    vdata=group->createChildObject<H5::SimpleDataset<vector<double>>>("initial state")(z0.size());
+    if(z0.size()) vdata->write((vector<double>)z0);
 
     t0 = 0;
 

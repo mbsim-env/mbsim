@@ -1172,7 +1172,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::linearSystemAnalysis() {
-    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/modal_analysis.mat";
+    QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5";
     QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
     if(QFile::exists(file1) and QFile::exists(file2)) {
       LinearSystemAnalysisDialog *dialog = new LinearSystemAnalysisDialog(this);

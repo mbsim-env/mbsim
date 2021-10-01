@@ -28,7 +28,6 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "mainwindow.h"
-#include "octave_utils.h"
 #include "element_view.h"
 #include "treemodel.h"
 #include "treeitem.h"
@@ -52,6 +51,9 @@
 #include <qwt_symbol.h>
 #include <qwt_scale_engine.h>
 #include <boost/math/constants/constants.hpp>
+#include "hdf5serie/file.h"
+#include "hdf5serie/simpledataset.h"
+#include "hdf5serie/complexdataset.h"
 
 using namespace std;
 using namespace boost::math::constants;
@@ -465,37 +467,54 @@ namespace MBSimGUI {
   }
 
   InitialOutputWidget::InitialOutputWidget() {
-    QFile data(QString::fromStdString(mw->getUniqueTempDir().generic_string()+"/initial_output.mat"));
-    if(data.open(QFile::ReadOnly)) {
-      auto *layout = new QVBoxLayout;
-      setLayout(layout);
-
-      QTextStream in(&data);
-      auto *text = new QTextEdit;
-      text->setPlainText(in.readAll());
-      layout->addWidget(text);
-    }
+    H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
+    auto group=file.openChildObject<H5::Group>("initial output");
+    auto data=group->openChildObject<H5::SimpleDataset<vector<double>>>("state (z)");
+    auto z = data->read();
+    data=group->openChildObject<H5::SimpleDataset<vector<double>>>("output (y)");
+    auto y = data->read();
+    stringstream stream;
+    stream << "State (z)" << endl;
+    for(size_t i=0; i<z.size(); i++)
+      stream << setw(28) << z[i] << endl;
+    stream << endl << "Output (y)" << endl;
+    for(size_t i=0; i<y.size(); i++)
+      stream << setw(28) << y[i] << endl;
+    auto *text = new QTextEdit;
+    text->setPlainText(QString::fromStdString(stream.str()));
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    layout->addWidget(text);
   }
 
   EigenanalysisWidget::EigenanalysisWidget() {
-    QFile data(QString::fromStdString(mw->getUniqueTempDir().generic_string()+"/eigenanalysis.mat"));
-    if(data.open(QFile::ReadOnly)) {
-      auto *layout = new QVBoxLayout;
-      setLayout(layout);
-
-      QTextStream in(&data);
-      auto *text = new QTextEdit;
-      text->setPlainText(in.readAll());
-      layout->addWidget(text);
+    H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
+    auto group=file.openChildObject<H5::Group>("eigenanalysis");
+    auto w = readComplexVector("eigenvalues",group);
+    auto V = readComplexMatrix("eigenvectors",group);
+    stringstream stream;
+    stream << "Eigenvalues" << endl;
+    for(size_t i=0; i<w.size(); i++)
+      stream << setw(28) << w[i] << endl;
+    stream << endl << "Eigenvectors" << endl;
+    for(size_t i=0; i<V.size(); i++) {
+      for(size_t j=0; j<V[0].size(); j++)
+	stream << setw(28) << V[i][j] << " ";
+      stream << endl;
     }
+    auto *text = new QTextEdit;
+    text->setPlainText(QString::fromStdString(stream.str()));
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    layout->addWidget(text);
   }
 
   ModalAnalysisWidget::ModalAnalysisWidget() {
-    OctaveParser parser(mw->getUniqueTempDir().generic_string()+"/modal_analysis.mat");
-    parser.parse();
-    Vector<Var,complex<double>> w = static_cast<const OctaveComplexMatrix*>(parser.get(0))->get<Vector<Var,complex<double>>>();
-    Matrix<General,Var,Var,complex<double>> Zh = static_cast<const OctaveComplexMatrix*>(parser.get(1))->get<Matrix<General,Var,Var,complex<double>>>();
-    Matrix<General,Var,Var,complex<double>> Yh = static_cast<const OctaveComplexMatrix*>(parser.get(2))->get<Matrix<General,Var,Var,complex<double>>>();
+    H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
+    auto group=file.openChildObject<H5::Group>("modal analysis");
+    auto w = readComplexVector("eigenvalues",group);
+    auto Zh = readComplexMatrix("state modes",group);
+    auto Yh = readComplexMatrix("output modes",group);
 
     string name;
     char label;
@@ -528,9 +547,9 @@ namespace MBSimGUI {
     layout->addWidget(modeTable,0,0);
     modeTable->setHeaderLabels(QStringList{"Mode number","Natural frequency","Expotential decay","Natural angular frequency","Damping ratio"});
 
-    for(int k=0; k<Zh.rows(); k++)
+    for(int k=0; k<Zh.size(); k++)
       num[stateLabel[k]].append(k+1);
-    for(int k=0; k<Yh.rows(); k++)
+    for(int k=0; k<Yh.size(); k++)
       num[outputLabel[k]].append(k+1);
     for(QMap<QString,QVector<double>>::iterator i=num.begin(); i!=num.end(); i++) {
       A[i.key()].resize(w.size());
@@ -544,23 +563,23 @@ namespace MBSimGUI {
     for(int i=0; i<w.size(); i++) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::number(i+1));
-      item->setText(1, QString::number(w(i).imag()/2/M_PI));
-      item->setText(2, QString::number(-w(i).real()));
-      item->setText(3, QString::number(w(i).imag()));
-      item->setText(4, QString::number(-w(i).real()/w(i).imag()));
+      item->setText(1, QString::number(w[i].imag()/2/M_PI));
+      item->setText(2, QString::number(-w[i].real()));
+      item->setText(3, QString::number(w[i].imag()));
+      item->setText(4, QString::number(-w[i].real()/w[i].imag()));
       modeTable->addTopLevelItem(item);
       int l=0;
       for(QMap<QString,QVector<double>>::iterator j=num.begin(); j!=num.end(); j++) {
 	if(j.key()=="y") {
 	  for(int k=0; k<j.value().size(); k++) {
-	    A[j.key()][i][k] = abs(Yh(k,i));
-	    phi[j.key()][i][k] = atan2(Yh(k,i).real(),-Yh(k,i).imag())*180/M_PI;
+	    A[j.key()][i][k] = abs(Yh[k][i]);
+	    phi[j.key()][i][k] = atan2(Yh[k][i].real(),-Yh[k][i].imag())*180/M_PI;
 	  }
 	}
 	else {
 	  for(int k=0; k<j.value().size(); k++) {
-	    A[j.key()][i][k] = abs(Zh(l,i));
-	    phi[j.key()][i][k] = atan2(Zh(l,i).real(),-Zh(l,i).imag())*180/M_PI;
+	    A[j.key()][i][k] = abs(Zh[l][i]);
+	    phi[j.key()][i][k] = atan2(Zh[l][i].real(),-Zh[l][i].imag())*180/M_PI;
 	    l++;
 	  }
 	}
@@ -574,7 +593,7 @@ namespace MBSimGUI {
       choice->addItem((i.key()=="y"?"Output (":"State (")+i.key()+")");
     layout->addWidget(choice,1,0);
 
-    if(Zh.rows() and Zh.cols()) {
+    if(Zh.size() and Zh[0].size()) {
       auto *scrollArea = new QScrollArea(this);
       scrollArea->setWidgetResizable(true);
       plot = new QwtPlot(scrollArea);
@@ -633,6 +652,7 @@ namespace MBSimGUI {
     QString c = choice->currentText();
     c = c.mid(c.size()-2,1);
     int m = modeTable->indexOfTopLevelItem(modeTable->currentItem());
+    plot->setTitle("Mode " + modeTable->currentItem()->text(0) + " of " + choice->currentText());
     curve1->setSamples(num[c],A[c][m]);
     curve2->setSamples(num[c],phi[c][m]);
     plot->setAxisScale(QwtPlot::xBottom,num[c][0],num[c][num[c].size()-1],1);
@@ -666,12 +686,20 @@ namespace MBSimGUI {
   }
 
   FrequencyResponseWidget::FrequencyResponseWidget() {
-    OctaveParser parser(mw->getUniqueTempDir().generic_string()+"/frequency_response_analysis.mat");
-    parser.parse();
-    VecV f = static_cast<const OctaveMatrix*>(parser.get(0))->get<VecV>();
-    vector<vector<Matrix<General,Var,Var,complex<double>>>> Zh = static_cast<const OctaveCell*>(parser.get(1))->get<Matrix<General,Var,Var,complex<double>>>();
-    vector<vector<Matrix<General,Var,Var,complex<double>>>> Yh = static_cast<const OctaveCell*>(parser.get(2))->get<Matrix<General,Var,Var,complex<double>>>();
+    H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
+    auto group=file.openChildObject<H5::Group>("frequency response analysis");
+    auto data=group->openChildObject<H5::SimpleDataset<vector<double>>>("excitation frequencies");
+    auto f = data->read();
 
+    auto names=group->getChildObjectNames();
+    list<string>::iterator it=names.begin();
+    it++;
+    vector<vector<vector<complex<double>>>> Zh, Yh;
+    while(it != names.end()) {
+      auto subgroup=group->openChildObject<H5::Group>(*it++);
+      Zh.push_back(readComplexMatrix("state response",subgroup));
+      Yh.push_back(readComplexMatrix("output response",subgroup));
+    }
     QVector<QString> stateName, inputName, outputName;
     QVector<QString> stateLabel, inputLabel, outputLabel;
     QVector<int> stateLabelNumber, inputLabelNumber, outputLabelNumber;
@@ -710,22 +738,22 @@ namespace MBSimGUI {
     is.close();
 
     int nZh = Zh.size();
-    int rZh = nZh?Zh[0][0].rows():0;
-    int cZh = rZh?Zh[0][0].cols():0;
-    int rYh = Yh.size()?Yh[0][0].rows():0;
+    int rZh = nZh?Zh[0].size():0;
+    int cZh = rZh?Zh[0][0].size():0;
+    int rYh = Yh.size()?Yh[0].size():0;
     freq = QVector<double>(f.size());
     A = QVector<QVector<QVector<double>>>(rZh+rYh,QVector<QVector<double>>(nZh,QVector<double>(cZh)));
     phi = QVector<QVector<QVector<double>>>(rZh+rYh,QVector<QVector<double>>(nZh,QVector<double>(cZh)));
     for(int i=0; i<f.size(); i++) {
-      freq[i] = f(i);
-      for(size_t k=0; k<Zh.size(); k++) {
-	for(int j=0; j<Zh[k][0].rows(); j++) {
-	  A[j][k][i] = abs(Zh[k][0](j,i));
-	  phi[j][k][i] = atan2(Zh[k][0](j,i).real(),-Zh[k][0](j,i).imag())*180/M_PI;
+      freq[i] = f[i];
+      for(size_t k=0; k<nZh; k++) {
+	for(int j=0; j<rZh; j++) {
+	  A[j][k][i] = abs(Zh[k][j][i]);
+	  phi[j][k][i] = atan2(Zh[k][j][i].real(),-Zh[k][j][i].imag())*180/M_PI;
 	}
-	for(int j=0; j<Yh[k][0].rows(); j++) {
-	  A[Zh[k][0].rows()+j][k][i] = abs(Yh[k][0](j,i));
-	  phi[Zh[k][0].rows()+j][k][i] = atan2(Yh[k][0](j,i).real(),-Yh[k][0](j,i).imag())*180/M_PI;
+	for(int j=0; j<rYh; j++) {
+	  A[rZh+j][k][i] = abs(Yh[k][j][i]);
+	  phi[rZh+j][k][i] = atan2(Yh[k][j][i].real(),-Yh[k][j][i].imag())*180/M_PI;
 	}
       }
     }
@@ -747,7 +775,7 @@ namespace MBSimGUI {
     inputTable->resizeColumnToContents(1);
     inputTable->setCurrentItem(inputTable->topLevelItem(0));
 
-    if(Zh.size() and Zh[0].size() and Zh[0][0].rows() and Zh[0][0].cols()) {
+    if(nZh and rZh and cZh) {
       auto *scrollArea = new QScrollArea(this);
       scrollArea->setWidgetResizable(true);
       plot = new QwtPlot(scrollArea);
