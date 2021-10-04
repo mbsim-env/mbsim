@@ -53,7 +53,6 @@
 #include <boost/math/constants/constants.hpp>
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpledataset.h"
-#include "hdf5serie/complexdataset.h"
 
 using namespace std;
 using namespace boost::math::constants;
@@ -490,8 +489,10 @@ namespace MBSimGUI {
   EigenanalysisWidget::EigenanalysisWidget() {
     H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("eigenanalysis");
-    auto w = readComplexVector("eigenvalues",group);
-    auto V = readComplexMatrix("eigenvectors",group);
+    auto cvdata = group->openChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues");
+    auto w = cvdata->read();
+    auto cmdata = group->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("eigenvectors");
+    auto V = cmdata->read();
     stringstream stream;
     stream << "Eigenvalues" << endl;
     for(size_t i=0; i<w.size(); i++)
@@ -512,9 +513,12 @@ namespace MBSimGUI {
   ModalAnalysisWidget::ModalAnalysisWidget() {
     H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("modal analysis");
-    auto w = readComplexVector("eigenvalues",group);
-    auto Zh = readComplexMatrix("state modes",group);
-    auto Yh = readComplexMatrix("output modes",group);
+    auto cvdata = group->openChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues");
+    auto w = cvdata->read();
+    auto cmdata = group->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state modes");
+    auto Zh = cmdata->read();
+    cmdata = group->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output modes");
+    auto Yh = cmdata->read();
 
     string name;
     char label;
@@ -697,8 +701,10 @@ namespace MBSimGUI {
     vector<vector<vector<complex<double>>>> Zh, Yh;
     while(it != names.end()) {
       auto subgroup=group->openChildObject<H5::Group>(*it++);
-      Zh.push_back(readComplexMatrix("state response",subgroup));
-      Yh.push_back(readComplexMatrix("output response",subgroup));
+      auto cmdata = subgroup->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state response");
+      Zh.push_back(cmdata->read());
+      cmdata = subgroup->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output response");
+      Yh.push_back(cmdata->read());
     }
     QVector<QString> stateName, inputName, outputName;
     QVector<QString> stateLabel, inputLabel, outputLabel;

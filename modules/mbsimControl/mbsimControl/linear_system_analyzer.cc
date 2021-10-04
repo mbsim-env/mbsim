@@ -26,7 +26,6 @@
 #include "mbsim/utils/eps.h"
 #include "fmatvec/linear_algebra_complex.h"
 #include "hdf5serie/simpledataset.h"
-#include "hdf5serie/complexdataset.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -229,21 +228,28 @@ namespace MBSimControl {
     if(fex.size()) vdata->write((vector<double>)fex);
     for(int i=0; i<nsource; i++) {
       auto subgroup=group->createChildObject<H5::Group>("input "+to_string(i))();
-      writeComplexDataset("state response",subgroup,(vector<vector<complex<double>>>)Zhex[i]);
-      writeComplexDataset("output response",subgroup,(vector<vector<complex<double>>>)Yhex[i]);
+      auto cmdata=subgroup->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state response")(Zhex[i].rows(),Zhex[i].cols());
+      if(Zhex[i].rows() and Zhex[i].cols()) cmdata->write((vector<vector<complex<double>>>)Zhex[i]);
+      cmdata=subgroup->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output response")(Yhex[i].rows(),Yhex[i].cols());
+      if(Yhex[i].rows() and Yhex[i].cols()) cmdata->write((vector<vector<complex<double>>>)Yhex[i]);
     }
 
     group=file.createChildObject<H5::Group>("modal analysis")();
     vector<complex<double>> lambda(fna.size());
     for(size_t i=0; i<fna.size(); i++)
       lambda[i] = w(fna[i].second);
-    writeComplexDataset("eigenvalues",group,lambda);
-    writeComplexDataset("state modes",group,(vector<vector<complex<double>>>)Zhna);
-    writeComplexDataset("output modes",group,(vector<vector<complex<double>>>)Yhna);
+    auto cvdata=group->createChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues")(lambda.size());
+    if(lambda.size()) cvdata->write(lambda);
+    auto cmdata=group->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state modes")(Zhna.rows(),Zhna.cols());
+    if(Zhna.rows() and Zhna.cols()) cmdata->write((vector<vector<complex<double>>>)Zhna);
+    cmdata=group->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output modes")(Yhna.rows(),Yhna.cols());
+    if(Yhna.rows() and Yhna.cols()) cmdata->write((vector<vector<complex<double>>>)Yhna);
 
     group=file.createChildObject<H5::Group>("eigenanalysis")();
-    writeComplexDataset("eigenvalues",group,(vector<complex<double>>)w);
-    writeComplexDataset("eigenvectors",group,(vector<vector<complex<double>>>)V);
+    cvdata=group->createChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues")(w.size());
+    if(w.size()) cvdata->write((vector<complex<double>>)w);
+    cmdata=group->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("eigenvectors")(V.rows(),V.cols());
+    if(V.rows() and V.cols()) cmdata->write((vector<vector<complex<double>>>)V);
 
     group=file.createChildObject<H5::Group>("lti system")();
     auto data=group->createChildObject<H5::SimpleDataset<vector<vector<double>>>>("system matrix")(A.rows(),A.cols());
