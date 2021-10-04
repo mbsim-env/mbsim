@@ -33,7 +33,7 @@ int main (int argc, char* argv[]) {
   analyzer.execute();
 
   cout << "Eigenfrequency should be " << sqrt(g/a) << endl;
-  boost::filesystem::rename("modal_analysis.mat","modal_analysis1.mat");
+  boost::filesystem::rename("linear_system_analysis.h5","linear_system_analysis1.h5");
 
   cout << "Analyse cone-pendel" << endl;
   z0.init(0);
@@ -45,7 +45,7 @@ int main (int argc, char* argv[]) {
   analyzer.execute();
 
   cout << "Eigenfrequency should be " << sqrt(g/a*(1./cos(theta0/180*M_PI)+3*cos(theta0/180*M_PI))) << endl;
-  boost::filesystem::rename("modal_analysis.mat","modal_analysis2.mat");
+  boost::filesystem::rename("linear_system_analysis.h5","linear_system_analysis2.h5");
 
   delete sys;
 
