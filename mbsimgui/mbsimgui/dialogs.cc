@@ -570,7 +570,7 @@ namespace MBSimGUI {
       item->setText(1, QString::number(w[i].imag()/2/M_PI));
       item->setText(2, QString::number(-w[i].real()));
       item->setText(3, QString::number(w[i].imag()));
-      item->setText(4, QString::number(-w[i].real()/w[i].imag()));
+      item->setText(4, QString::number(-w[i].real()/abs(w[i])));
       modeTable->addTopLevelItem(item);
       int l=0;
       for(QMap<QString,QVector<double>>::iterator j=num.begin(); j!=num.end(); j++) {
