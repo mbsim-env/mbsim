@@ -1081,17 +1081,22 @@
           </xs:element>
           <xs:element name="minimumNaturalFrequency" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Kleinste Eigenfrequenz, die berechnet werden soll. Standardardmäßig 0 Hz.
+              Kleinste Eigenfrequenz, die berechnet werden soll. Standardardmäßig 0.01 Hz.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="maximumNaturalFrequency" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Maximale Eigenfrequenz, die berechnet werden soll. Standardardmäßig 10 kHz.
+              Größte Eigenfrequenz, die berechnet werden soll. Standardardmäßig 100 kHz.
             </xs:documentation></xs:annotation>
           </xs:element>
+	  <xs:element name="naturalModeScaleFactor" type="pv:nounitScalar" minOccurs="0">
+	    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+	      Faktor, mit der alle Eigenmoden skaliert werden sollen.
+	    </xs:documentation></xs:annotation>
+	  </xs:element>
 	  <xs:element name="naturalModeScale" type="pv:nounitVector" minOccurs="0">
 	    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-	      Faktoren, mit der die Eigenmoden skaliert werden sollen.
+	      Faktoren, mit denen die einzelen Eigenmoden skaliert werden sollen.
 	    </xs:documentation></xs:annotation>
 	  </xs:element>
           <xs:element name="excitationFrequencies" type="pv:unknownVector" minOccurs="0">

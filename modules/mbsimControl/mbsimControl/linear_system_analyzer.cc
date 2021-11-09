@@ -168,15 +168,18 @@ namespace MBSimControl {
     }
     sort(fna.begin(), fna.end());
 
-    if(not(modeScale.size()))
+    if(modeScale.size() and modeScale.size()!=(int)fna.size())
+      fmatvec::Atom::msg(fmatvec::Atom::Warn) << "LinearSystemAnalyzer: size of mode scale does not match number of modes!" << std::endl;
+    if(modeScale.size()<(int)fna.size()) {
+      VecV modeScaleTmp = modeScale;
       modeScale.resize(fna.size(),INIT,1);
-    else if(modeScale.size()!=(int)fna.size())
-      throwError(string("(LinearSystemAnalyzer::execute): size of mode scale does not match, must be ") + to_string(fna.size()));
+      modeScale.set(RangeV(0,modeScaleTmp.size()-1),modeScaleTmp);
+    }
 
     Matrix<General,Ref,Ref,complex<double>> Zhna(Matrix<General,Ref,Ref,complex<double>>(system->getzSize(),fna.size(),NONINIT));
     Matrix<General,Ref,Ref,complex<double>> Yhna(Matrix<General,Ref,Ref,complex<double>>(nsink,fna.size(),NONINIT));
     for(size_t i=0; i<fna.size(); i++) {
-      Vector<Ref,complex<double>> zh = modeScale(i)*V.col(fna[i].second);
+      Vector<Ref,complex<double>> zh = modeScaleFactor*modeScale(i)*V.col(fna[i].second);
       Vector<Ref,complex<double>> yh = C*zh;
       Zhna.set(i,zh);
       Yhna.set(i,yh);
@@ -335,6 +338,8 @@ namespace MBSimControl {
     if(e) setMinimumNaturalFrequency(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximumNaturalFrequency");
     if(e) setMaximumNaturalFrequency(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"naturalModeScaleFactor");
+    if(e) setNaturalModeScaleFactor(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"naturalModeScale");
     if(e) setNaturalModeScale(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationFrequencies");

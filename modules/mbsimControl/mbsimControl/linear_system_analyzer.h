@@ -49,6 +49,7 @@ namespace MBSimControl {
       void setInitialInput(const fmatvec::Vec &u0_) { u0 <<= u0_; }
       void setMinimumNaturalFrequency(double fmin_) { fmin = fmin_; }
       void setMaximumNaturalFrequency(double fmax_) { fmax = fmax_; }
+      void setNaturalModeScaleFactor(double modeScaleFactor_) { modeScaleFactor = modeScaleFactor_; }
       void setNaturalModeScale(const fmatvec::VecV &modeScale_) { modeScale <<= modeScale_; }
       void setExcitationFrequencies(const fmatvec::VecV &fex_) { fex <<= fex_; }
       void setExcitationAmplitudeFunction(MBSim::Function<fmatvec::VecV(double)> *Amp_) { Amp = Amp_; }
@@ -71,7 +72,8 @@ namespace MBSimControl {
     protected:
       double t0{0};
       double fmin{1e-2};
-      double fmax{1e4};
+      double fmax{1e5};
+      double modeScaleFactor{1};
       fmatvec::VecV modeScale;
       MBSim::Function<fmatvec::VecV(double)> *Amp{nullptr};
       fmatvec::Vec z0, zEq, u0, fex;
