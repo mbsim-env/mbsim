@@ -120,7 +120,9 @@ namespace MBSimFlexibleBody {
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
 
       void setModalReduction(bool modalReduction_) { modalReduction = modalReduction_; }
-      void setModeRange(const fmatvec::Vec2 &mRange_) { mRange = mRange_; }
+      void setMinimumFrequency(double fmin_) { fmin = fmin_; }
+      void setMaximumFrequency(double fmax_) { fmax = fmax_; }
+      void setModeNumbers(const fmatvec::VecVI &modes_) { modes <<= modes_; }
       void setModalDamping(const fmatvec::VecV &mDamping_) { mDamping <<= mDamping_; }
 
       // NOTE: we can not use a overloaded setTranslation here due to restrictions in XML but define them for convinience in c++
@@ -410,7 +412,9 @@ namespace MBSimFlexibleBody {
       fmatvec::VecVI plotNodes;
 
       bool modalReduction{false};
-      fmatvec::Vec2 mRange;
+      double fmin{1e-2};
+      double fmax{1e5};
+      fmatvec::VecVI modes;
       fmatvec::VecV mDamping;
 
     private:

@@ -56,9 +56,19 @@
           Definiert, ob eine modale Reduktion durchgeführt werden soll.
         </xs:documentation></xs:annotation>
       </xs:element>
-      <xs:element name="modeRange" type="pv:indexVector" minOccurs="0">
+      <xs:element name="minimumFrequency" type="pv:unknownScalar" minOccurs="0">
         <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-          Bereich der Moden, die bei der Reduktion berücksichtigt werden sollen.
+          Kleinste Eigenfrequenz, die bei der Reduktion berücksichtigt werden soll. Standardardmäßig 0.01 Hz.
+        </xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="maximumFrequency" type="pv:unknownScalar" minOccurs="0">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+          Größte Eigenfrequenz, die bei der Reduktion berücksichtigt werden soll. Standardardmäßig 100 kHz.
+        </xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="modeNumbers" type="pv:nounitVector" minOccurs="0">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+          Moden, die bei der Reduktion berücksichtigt werden sollen.
         </xs:documentation></xs:annotation>
       </xs:element>
       <xs:element name="modalDamping" type="pv:unknownVector" minOccurs="0">

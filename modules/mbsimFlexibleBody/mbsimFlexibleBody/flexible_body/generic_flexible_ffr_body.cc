@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
 
   Range<Var,Var> i02(0,2);
 
-  GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name), Id(Eye()), APK(EYE), mRange("[0;3]") {
+  GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name), Id(Eye()), APK(EYE) {
 
     updKJ[0] = true;
     updKJ[1] = true;
@@ -287,7 +287,21 @@ namespace MBSimFlexibleBody {
 	SquareMatrix<Ref,double> V;
 	Vector<Ref,double> w;
 	eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
-	MatV Vr = V(RangeV(0,V.rows()-1),RangeV(mRange(0),mRange(1)));
+	vector<int> imod;
+	for(int i=0; i<w.size(); i++) {
+	  if(w(i)>pow(2*M_PI*fmin,2) and w(i)<pow(2*M_PI*fmax,2))
+	    imod.push_back(i);
+	}
+	if(not modes.size()) {
+	  modes.resize(imod.size(),NONINIT);
+	  for(size_t i=0; i<imod.size(); i++)
+	    modes(i) = i+1;
+	}
+	else if(min(modes)<1 or max(modes)>imod.size())
+	  throwError(string("(GenericFlexibleFfrBody::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	MatV Vr(V.rows(),modes.size(),NONINIT);
+	for(int i=0; i<modes.size(); i++)
+	  Vr.set(i,V.col(imod[modes(i)-1]));
 	Pdm <<= Pdm*Vr;
 	for(int i=0; i<3; i++) {
 	   rPdm[i] <<= rPdm[i]*Vr;
@@ -303,7 +317,7 @@ namespace MBSimFlexibleBody {
 	  sigmahel[i] <<= sigmahel[i]*Vr;
 	if(mDamping.size()) {
 	  if(mDamping.size()!=(int)Vr.cols())
-	    throwError(string("(GenericFlexibleFfrBody::execute): size of modal damping does not match, must be ") + to_string(Vr.cols()));
+	    throwError(string("(GenericFlexibleFfrBody::init): size of modal damping does not match, must be ") + to_string(Vr.cols()));
 	  De0.resize(Vr.cols(),INIT,0);
 	  for(int i=0; i<De0.size(); i++)
 	    De0(i,i) = 2*sqrt((PPdm[0][0](i,i)+PPdm[1][1](i,i)+PPdm[2][2](i,i))*Ke0(i,i))*mDamping(i);
@@ -800,8 +814,12 @@ namespace MBSimFlexibleBody {
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalReduction");
     if(e) setModalReduction(MBXMLUtils::E(e)->getText<bool>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeRange");
-    if(e) setModeRange(MBXMLUtils::E(e)->getText<Vec2>()-Vec2(INIT,1));
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"minimumFrequency");
+    if(e) setMinimumFrequency(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"maximumFrequency");
+    if(e) setMaximumFrequency(E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeNumbers");
+    if(e) setModeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
     if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
 
