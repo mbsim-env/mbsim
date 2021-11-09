@@ -1383,9 +1383,14 @@ namespace MBSimGUI {
     mRed = new ExtWidget("Modal Reduction",new ChoiceWidget(new BoolWidgetFactory(0),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"modalReduction");
     addToTab("Modal reduction", mRed);
 
-    vector<QString> x(2); x[0] = "1"; x[1] = "4";
-    mRange = new ExtWidget("Mode range",new ChoiceWidget(new VecWidgetFactory(x),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"modeRange");
-    addToTab("Modal reduction", mRange);
+    minimumFrequency = new ExtWidget("Minimum frequency",new ChoiceWidget(new ScalarWidgetFactory("0.01"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"minimumFrequency");
+    addToTab("Modal reduction", minimumFrequency);
+
+    maximumFrequency = new ExtWidget("Maximum frequency",new ChoiceWidget(new ScalarWidgetFactory("100000"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"maximumFrequency");
+    addToTab("Modal reduction", maximumFrequency);
+
+    modes = new ExtWidget("Mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"modeNumbers");
+    addToTab("Modal reduction", modes);
 
     mDamping = new ExtWidget("Modal damping",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"modalDamping");
     addToTab("Modal reduction", mDamping);
@@ -1443,7 +1448,9 @@ namespace MBSimGUI {
   DOMElement* GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     BodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     mRed->initializeUsingXML(item->getXMLElement());
-    mRange->initializeUsingXML(item->getXMLElement());
+    minimumFrequency->initializeUsingXML(item->getXMLElement());
+    maximumFrequency->initializeUsingXML(item->getXMLElement());
+    modes->initializeUsingXML(item->getXMLElement());
     mDamping->initializeUsingXML(item->getXMLElement());
     translation->initializeUsingXML(item->getXMLElement());
     rotation->initializeUsingXML(item->getXMLElement());
@@ -1738,7 +1745,9 @@ namespace MBSimGUI {
     K0F->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     K0M->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    mRange->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    minimumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    maximumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    modes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mDamping->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
@@ -1795,7 +1804,9 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    mRange->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    minimumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    maximumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    modes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mDamping->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
@@ -1874,7 +1885,9 @@ namespace MBSimGUI {
     beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    mRange->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    minimumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    maximumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    modes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mDamping->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());

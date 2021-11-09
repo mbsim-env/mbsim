@@ -404,7 +404,7 @@ namespace MBSimGUI {
       int getuRelSize() const { return getqRelSize(); }
       virtual int getqERelSize() const { return 0; }
     protected:
-      ExtWidget *mRed, *mRange, *mDamping, *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
+      ExtWidget *mRed, *minimumFrequency, *maximumFrequency, *modes, *mDamping, *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
   };
 
   class FlexibleFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
