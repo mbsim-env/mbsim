@@ -1133,8 +1133,11 @@ namespace MBSimGUI {
     minimumNaturalFrequency = new ExtWidget("Minimum natural frequency",new ChoiceWidget(new ScalarWidgetFactory("0.01"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"minimumNaturalFrequency");
     addToTab("Modal analysis", minimumNaturalFrequency);
 
-    maximumNaturalFrequency = new ExtWidget("Maximum natural frequency",new ChoiceWidget(new ScalarWidgetFactory("10000"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"maximumNaturalFrequency");
+    maximumNaturalFrequency = new ExtWidget("Maximum natural frequency",new ChoiceWidget(new ScalarWidgetFactory("100000"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"maximumNaturalFrequency");
     addToTab("Modal analysis", maximumNaturalFrequency);
+
+    modeScaleFactor = new ExtWidget("Natural mode scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"naturalModeScaleFactor");
+    addToTab("Modal analysis", modeScaleFactor);
 
     modeScale = new ExtWidget("Natural mode scale",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"naturalModeScale");
     addToTab("Modal analysis", modeScale);
@@ -1165,6 +1168,7 @@ namespace MBSimGUI {
     initialInput->initializeUsingXML(item->getXMLElement());
     minimumNaturalFrequency->initializeUsingXML(item->getXMLElement());
     maximumNaturalFrequency->initializeUsingXML(item->getXMLElement());
+    modeScaleFactor->initializeUsingXML(item->getXMLElement());
     modeScale->initializeUsingXML(item->getXMLElement());
     excitationFrequencies->initializeUsingXML(item->getXMLElement());
     excitationAmplitudeFunction->initializeUsingXML(item->getXMLElement());
@@ -1182,6 +1186,7 @@ namespace MBSimGUI {
     initialInput->writeXMLFile(item->getXMLElement());
     minimumNaturalFrequency->writeXMLFile(item->getXMLElement());
     maximumNaturalFrequency->writeXMLFile(item->getXMLElement());
+    modeScaleFactor->writeXMLFile(item->getXMLElement());
     modeScale->writeXMLFile(item->getXMLElement());
     excitationFrequencies->writeXMLFile(item->getXMLElement());
     excitationAmplitudeFunction->writeXMLFile(item->getXMLElement());
