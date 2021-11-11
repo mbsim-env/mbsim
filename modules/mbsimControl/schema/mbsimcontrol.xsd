@@ -1120,11 +1120,11 @@
             </xs:documentation></xs:annotation>
 	    <xs:complexType>
 	      <xs:sequence>
-                <xs:element name="modeRange" type="pv:indexVector" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Bereich der Moden, die visualisiert werden sollen. Standardardmäßig 1 bis 10.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
+	        <xs:element name="modeNumbers" type="pv:nounitVector" minOccurs="0">
+	          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+		    Auswahl der Moden, die visualisiert werden sollen.
+		  </xs:documentation></xs:annotation>
+	        </xs:element>
 	      </xs:sequence>
 	    </xs:complexType>
           </xs:element>

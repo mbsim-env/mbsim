@@ -269,8 +269,16 @@ namespace MBSimControl {
     t0 = 0;
 
     if(msv) {
-      for(size_t i=0; i<fna.size(); i++) {
-	if((int)i>=mRange(0) and (int)i<=mRange(1) and modeScale(i)>0) {
+      if(not modes.size()) {
+	modes.resize(fna.size(),NONINIT);
+	for(int i=0; i<modes.size(); i++)
+	  modes(i) = i+1;
+      }
+      else if(min(modes)<1 or max(modes)>(int)fna.size())
+	throwError(string("(LinearSystemAnalyzer::execute): node numbers do not match, must be within the range [1,") + to_string(fna.size()) + "]");
+      for(int k=0; k<modes.size(); k++) {
+	int i = modes(k)-1;
+	if(modeScale(i)>0) {
 	  complex<double> iom(0,2*M_PI*fna[i].first);
 	  double T = double(loops)/fna[i].first;
 	  for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
@@ -290,13 +298,13 @@ namespace MBSimControl {
     }
 
     if(frv) {
-      if(nsource and (inum<0 or inum>=nsource))
+      if(nsource and (inum<1 or inum>nsource))
 	throwError(string("(LinearSystemAnalyzer::execute): input number does not match, must be greater than zero and smaller than ") + to_string(nsource));
       l=0;
       for(size_t j=0; j<source.size(); j++) {
 	Vec sigso(source[j]->getSignalSize());
 	for(int k=0; k<source[j]->getSignalSize(); k++) {
-	  if(l==inum) {
+	  if(l==inum-1) {
 	    for(int i=0; i<fex.size(); i++) {
 	      if(fex(i)>=fRange(0) and fex(i)<=fRange(1) and (*Amp)(fex(i))(l)>0) {
 		complex<double> iOm(0,2*M_PI*fex(i));
@@ -349,8 +357,8 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeNaturalModeShapes");
     if(e) {
       msv = true;
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"modeRange");
-      if(ee) mRange = E(ee)->getText<Vec2>()-Vec2(INIT,1);
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"modeNumbers");
+      if(ee) modes <<= E(ee)->getText<VecVI>();
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeFrequencyResponse");
     if(e) {
@@ -358,7 +366,7 @@ namespace MBSimControl {
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"frequencyRange");
       if(ee) fRange = E(ee)->getText<Vec2>();
       ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"inputNumber");
-      if(ee) inum = E(ee)->getText<Index>()-1;
+      if(ee) inum = E(ee)->getText<Index>();
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"plotStepSize");
     if(e) setPlotStepSize(E(e)->getText<double>());

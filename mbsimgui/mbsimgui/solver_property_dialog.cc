@@ -39,25 +39,24 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *modeRange;
+      ExtWidget *modes;
   };
 
   ModeShapeVisualization::ModeShapeVisualization() {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    vector<QString> x(2); x[0] = "1"; x[1] = "10";
-    modeRange = new ExtWidget("Mode range",new ChoiceWidget(new VecWidgetFactory(x),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"modeRange");
-    layout->addWidget(modeRange);
+    modes = new ExtWidget("Mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"modeNumbers");
+    layout->addWidget(modes);
   }
 
   DOMElement* ModeShapeVisualization::initializeUsingXML(DOMElement *e) {
-    modeRange->initializeUsingXML(e);
+    modes->initializeUsingXML(e);
     return e;
   }
 
   DOMElement* ModeShapeVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    modeRange->writeXMLFile(parent);
+    modes->writeXMLFile(parent);
     return static_cast<DOMElement*>(parent);
   }
 

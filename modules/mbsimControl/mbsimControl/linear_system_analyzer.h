@@ -27,7 +27,7 @@
 
 namespace MBSim {
 
-  BOOST_PARAMETER_NAME(modeRange)
+  BOOST_PARAMETER_NAME(modeNumbers)
   BOOST_PARAMETER_NAME(frequencyRange)
   BOOST_PARAMETER_NAME(inputNumber)
 
@@ -41,7 +41,7 @@ namespace MBSimControl {
    */
   class LinearSystemAnalyzer : public MBSim::Solver {
     public:
-      LinearSystemAnalyzer() : mRange("[0;9]"), fRange("[0;1e4]") { }
+      LinearSystemAnalyzer() : fRange("[0;1e4]") { }
       ~LinearSystemAnalyzer() override;
       void execute() override;
       void setInitialTime(double t0_) { t0 = t0_; }
@@ -58,12 +58,12 @@ namespace MBSimControl {
       const fmatvec::Vec& getInitialState() const override { return z0; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeNaturalModeShapes, MBSim::tag, (optional (modeRange,(fmatvec::Vec2),"[0;9]"))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeNaturalModeShapes, MBSim::tag, (optional (modeNumbers,(fmatvec::VecVI),fmatvec::VecVI()))) {
 	msv = true;
-	mRange = modeRange;
+	modes = modeNumbers;
       }
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeFrequencyResponse, MBSim::tag, (optional (frequencyRange,(fmatvec::Vec2),"[0;1e4]")(inputNumber,(double),0))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeFrequencyResponse, MBSim::tag, (optional (frequencyRange,(fmatvec::Vec2),"[0;1e4]")(inputNumber,(double),1))) {
 	frv = true;
 	fRange = frequencyRange;
 	inum = inputNumber;
@@ -79,8 +79,9 @@ namespace MBSimControl {
       fmatvec::Vec z0, zEq, u0, fex;
       bool msv{false};
       bool frv{false};
-      fmatvec::Vec2 mRange, fRange;
-      MBSim::Index inum{0};
+      fmatvec::VecVI modes;
+      fmatvec::Vec2 fRange;
+      MBSim::Index inum{1};
       int loops{5};
       double dtPlot{1e-2};
   };
