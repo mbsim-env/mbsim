@@ -39,6 +39,12 @@
             </xmlMatrix>
           </boundaryConditions>
           <modalReduction>true</modalReduction>
+          <modeNumbers>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>1</ele>
+              <ele>2</ele>
+            </xmlVector>
+          </modeNumbers>
           <frames>
             <NodeFrame name="P1">
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
@@ -87,22 +93,8 @@
   </Embed>
 
   <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
-    <naturalModeScale>
-      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-        <ele>1e3</ele>
-        <ele>1e3</ele>
-        <ele>1</ele>
-        <ele>1</ele>
-      </xmlVector>
-    </naturalModeScale>
-    <visualizeNaturalModeShapes>
-      <modeRange>
-        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-          <ele>1</ele>
-          <ele>2</ele>
-        </xmlVector>
-      </modeRange>
-    </visualizeNaturalModeShapes>
+    <naturalModeScaleFactor>1e3</naturalModeScaleFactor>
+    <visualizeNaturalModeShapes/>
     <visualizeFrequencyResponse/>
     <plotStepSize unit="s">1e-4</plotStepSize>
   </LinearSystemAnalyzer>
