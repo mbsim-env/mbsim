@@ -1465,7 +1465,7 @@ namespace MBSimGUI {
   }
 
   FlexibleFfrBodyPropertyDialog::FlexibleFfrBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
-    addTab("Visualization",3);
+    addTab("Visualization",4);
     addTab("Nodal data");
 
     mass = new ExtWidget("Mass",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
@@ -1761,7 +1761,7 @@ namespace MBSimGUI {
   }
 
   CalculixBodyPropertyDialog::CalculixBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
-    addTab("Visualization",3);
+    addTab("Visualization",4);
 
     resultFileName = new ExtWidget("Result file name",new FileWidget("", "Open CalculiX result file", "CalculiX result files (*.frd)", 0, true),false,false,MBSIMFLEX%"resultFileName");
     addToTab("General",resultFileName);
@@ -1819,7 +1819,7 @@ namespace MBSimGUI {
   }
 
   FlexibleFfrBeamPropertyDialog::FlexibleFfrBeamPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
-    addTab("Visualization",3);
+    addTab("Visualization",4);
 
     n = new ExtWidget("Number of nodes",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfNodes");
     addToTab("General", n);
