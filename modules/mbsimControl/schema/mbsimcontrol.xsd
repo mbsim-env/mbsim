@@ -1134,14 +1134,14 @@
             </xs:documentation></xs:annotation>
 	    <xs:complexType>
 	      <xs:sequence>
+	        <xs:element name="inputNumbers" type="pv:nounitVector" minOccurs="0">
+	          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Auswahl der Eingangssignale, über die Anregung erfolgen soll.
+		  </xs:documentation></xs:annotation>
+	        </xs:element>
                 <xs:element name="frequencyRange" type="pv:unknownVector" minOccurs="0">
                   <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                     Frequenzbreich, der visualisiert werden soll. Standardardmäßig 0 bis 10 Hz.
-                  </xs:documentation></xs:annotation>
-                </xs:element>
-                <xs:element name="inputNumber" type="pv:indexFullEval" minOccurs="0">
-                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                    Nummer des Eingangssignals, über das die Anregung erfolgt.
                   </xs:documentation></xs:annotation>
                 </xs:element>
 	      </xs:sequence>

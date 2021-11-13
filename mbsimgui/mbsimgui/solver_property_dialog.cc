@@ -66,29 +66,29 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *frequencyRange, *inputNumber;
+      ExtWidget *inputs, *frequencyRange;
   };
 
   FrequencyResponseVisualization::FrequencyResponseVisualization() {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
+    inputs = new ExtWidget("Input numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputNumbers");
+    layout->addWidget(inputs);
     vector<QString> x(2); x[0] = "0"; x[1] = "1e4";
     frequencyRange = new ExtWidget("Frequency range",new ChoiceWidget(new VecWidgetFactory(x),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"frequencyRange");
     layout->addWidget(frequencyRange);
-    inputNumber = new ExtWidget("Input number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputNumber");
-    layout->addWidget(inputNumber);
   }
 
   DOMElement* FrequencyResponseVisualization::initializeUsingXML(DOMElement *e) {
+    inputs->initializeUsingXML(e);
     frequencyRange->initializeUsingXML(e);
-    inputNumber->initializeUsingXML(e);
     return e;
   }
 
   DOMElement* FrequencyResponseVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    inputs->writeXMLFile(parent);
     frequencyRange->writeXMLFile(parent);
-    inputNumber->writeXMLFile(parent);
     return static_cast<DOMElement*>(parent);
   }
 
