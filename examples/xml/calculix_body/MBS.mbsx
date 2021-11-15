@@ -55,7 +55,7 @@
         </xmlVector>
       </naturalModeScale>
     <visualizeNaturalModeShapes>
-      <modeRange>[1;4]</modeRange>
+      <modeNumbers>[1:1:4]'</modeNumbers>
     </visualizeNaturalModeShapes>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </LinearSystemAnalyzer>
