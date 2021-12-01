@@ -143,6 +143,7 @@ namespace MBSimGUI {
 
   DOMElement* UnknownItemPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     item->setXMLElement(editor->writeXMLFile(item->getXMLElement(),ref));
+    item->updateName();
     return nullptr;
   }
 
