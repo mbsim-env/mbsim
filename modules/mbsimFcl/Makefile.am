@@ -5,6 +5,9 @@ DIST_SUBDIRS = mbsimFcl doc schema
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimFcl.pc
 
+licdir = @datadir@/mbsimFcl
+lic_DATA = COPYING NOTICE
+
 mbsimmodulesdir = $(datadir)/mbsimmodules
 mbsimmodules_DATA = mbsimFcl.mbsimmodule.xml
 

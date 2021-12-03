@@ -7,6 +7,9 @@ else
   MAYBE_SIGWATCH_MOC = qt-unix-signals/sigwatch.moc.cc
 endif
 
+licdir = @datadir@/mbsimgui/qt-unix-signals
+lic_DATA = qt-unix-signals/LICENCE
+
 bin_PROGRAMS = mbsimgui
 
 mbsimguidir = $(includedir)/mbsimgui

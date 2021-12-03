@@ -5,6 +5,9 @@ DIST_SUBDIRS = mbsimHydraulics schema
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimHydraulics.pc
 
+licdir = @datadir@/mbsimHydraulics
+lic_DATA = COPYING NOTICE
+
 mbsimmodulesdir = $(datadir)/mbsimmodules
 mbsimmodules_DATA = mbsimHydraulics.mbsimmodule.xml
 

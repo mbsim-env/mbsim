@@ -1186,11 +1186,18 @@ namespace MBSimGUI {
   }
 
   void MainWindow::about() {
-     QMessageBox::about(this, tr("About MBSimGUI"), (tr("<p><b>MBSimGUI %1</b></p><p>MBSimGUI is a graphical user interface for the multibody simulation software MBSim.</p>").arg(VERSION)
+     QMessageBox::about(this, tr("About MBSimGUI"), (tr("<h1>MBSimGUI %1</h1><p>MBSimGUI is a graphical user interface for the multibody simulation software MBSim.</p>").arg(VERSION)
            + tr("<p>See <a href=\"https://www.mbsim-env.de\">MBSim-Environment</a> for more information.</p>"
+             "<h2>Copyright</h2>"
              "<p>Copyright &copy; Martin Foerg <tt>&lt;martin.o.foerg@googlemail.com&gt;</tt><p/>"
              "<p>Licensed under the General Public License (see file COPYING).</p>"
-             "<p>This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>")));
+             "<p>This is free software; see the source for copying conditions. There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.</p>"
+             "<h2>Dependencies:</h2>"
+             "<pre>"
+#include "../NOTICE"
+             "</pre>"
+             "<p>A special thanks to all authors of these projects.</p>"
+     )));
   }
 
   void MainWindow::rebuildTree() {
