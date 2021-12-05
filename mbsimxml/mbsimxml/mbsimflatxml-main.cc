@@ -8,12 +8,31 @@
 #include <boost/filesystem.hpp>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/utils.h>
+#include <openmbvcppinterface/objectfactory.h>
 
 using namespace std;
 using namespace MBSim;
 
 int main(int argc, char *argv[]) {
   try {
+    // check for errors during ObjectFactory
+    string errorMsg(OpenMBV::ObjectFactory::getAndClearErrorMsg());
+    if(!errorMsg.empty()) {
+      cerr<<"The following errors occured during the pre-main code of the OpenMBVC++Interface object factory:"<<endl;
+      cerr<<errorMsg;
+      cerr<<"Exiting now."<<endl;
+      return 1;
+    }
+
+    // check for errors during ObjectFactory
+    string errorMsg2(ObjectFactory::getAndClearErrorMsg());
+    if(!errorMsg2.empty()) {
+      cerr<<"The following errors occured during the pre-main code of the MBSim object factory:"<<endl;
+      cerr<<errorMsg2;
+      cerr<<"Exiting now."<<endl;
+      return 1;
+    }
+
     list<string> args;
     for(int i=1; i<argc; ++i)
       args.emplace_back(argv[i]);

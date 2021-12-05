@@ -27,6 +27,8 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
+string ObjectFactory::errorMsg;
+
 void DOMEvalExceptionStack::add(const string &type, const std::shared_ptr<DOMEvalException> &ex) {
   exVec.emplace_back(type, ex);
 }
@@ -145,6 +147,16 @@ std::string fixXMLLocalName(std::string name) {
   if(c!=std::string::npos)
     return name.substr(c+1);
   return name;
+}
+
+void ObjectFactory::addErrorMsg(const std::string &msg) {
+  errorMsg+=msg+"\n";
+}
+
+std::string ObjectFactory::getAndClearErrorMsg() {
+  auto ret=errorMsg;
+  errorMsg.clear();
+  return ret;
 }
 
 }

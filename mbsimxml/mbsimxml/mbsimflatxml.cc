@@ -210,6 +210,14 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
   }
 
   loadModules(searchDirs);
+  // check for errors during ObjectFactory
+  string errorMsg3(ObjectFactory::getAndClearErrorMsg());
+  if(!errorMsg3.empty()) {
+    cerr<<"The following errors occured during the loading of MBSim modules object factory:"<<endl;
+    cerr<<errorMsg3;
+    cerr<<"Exiting now."<<endl;
+    return 1;
+  }
 
   // load MBSim project XML document
   auto fileIt=find_if(args.begin(), args.end(), [](const string &x){
