@@ -1694,7 +1694,7 @@ namespace MBSimGUI {
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
 	  xercesc::DOMDocument *doc = impl->createDocument();
-	  DOMNode *node = doc->importNode(item->getEmbedXMLElement()->getFirstElementChild(),true);
+	  DOMNode *node = doc->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true);
 	  doc->insertBefore(node,nullptr);
 	  serializer->writeToURI(doc, X()%dialog.getParameterFileName().toStdString());
 	}
