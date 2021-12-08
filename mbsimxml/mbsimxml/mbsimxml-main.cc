@@ -17,6 +17,7 @@
 #include <xercesc/dom/DOMDocument.hpp>
 #include "mbsimxml.h"
 #include "mbsimflatxml.h"
+#include <openmbvcppinterface/objectfactory.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -25,6 +26,23 @@ namespace bfs=boost::filesystem;
 
 int main(int argc, char *argv[]) {
   try {
+    // check for errors during ObjectFactory
+    string errorMsg(OpenMBV::ObjectFactory::getAndClearErrorMsg());
+    if(!errorMsg.empty()) {
+      cerr<<"The following errors occured during the pre-main code of the OpenMBVC++Interface object factory:"<<endl;
+      cerr<<errorMsg;
+      cerr<<"Exiting now."<<endl;
+      return 1;
+    }
+
+    // check for errors during ObjectFactory
+    string errorMsg2(ObjectFactory::getAndClearErrorMsg());
+    if(!errorMsg2.empty()) {
+      cerr<<"The following errors occured during the pre-main code of the MBSim object factory:"<<endl;
+      cerr<<errorMsg2;
+      cerr<<"Exiting now."<<endl;
+      return 1;
+    }
 
     // convert args to c++
     list<string> args;
@@ -174,6 +192,14 @@ int main(int argc, char *argv[]) {
         if(!ONLYPP) {
           // load MBSim modules
           MBSimXML::loadModules(searchDirs);
+          // check for errors during ObjectFactory
+          string errorMsg3(ObjectFactory::getAndClearErrorMsg());
+          if(!errorMsg3.empty()) {
+            cerr<<"The following errors occured during the loading of MBSim modules object factory:"<<endl;
+            cerr<<errorMsg3;
+            cerr<<"Exiting now."<<endl;
+            return 1;
+          }
 
           auto e=mainXMLDoc->getDocumentElement();
           // create object for DynamicSystemSolver and check correct type

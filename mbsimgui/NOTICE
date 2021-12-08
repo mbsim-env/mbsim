@@ -1,0 +1,7 @@
+R"=====(
+This software has the following direct dependencies:
+- mbsim (https://github.com/mbsim-env/mbsim) [LGPL]
+- openmbv (https://github.com/mbsim-env/openmbv) [LGPL]
+- Qt (https://www.qt.io/) [LGPL]
+- Qwt (https://qwt.sourceforge.io/) [LGPL]
+)====="

@@ -116,6 +116,14 @@ int main(int argc, char *argv[]) {
     // load all MBSim modules
     cout<<"Load MBSim modules."<<endl;
     set<path> moduleLibs=MBSimXML::loadModules();
+    // check for errors during ObjectFactory
+    string errorMsg3(ObjectFactory::getAndClearErrorMsg());
+    if(!errorMsg3.empty()) {
+      cerr<<"The following errors occured during the loading of MBSim modules object factory:"<<endl;
+      cerr<<errorMsg3;
+      cerr<<"Exiting now."<<endl;
+      return 1;
+    }
 
     // create parser (none validating parser for use in copyShLibToFMU)
     std::shared_ptr<DOMParser> parserNoneVali=DOMParser::create();

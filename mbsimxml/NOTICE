@@ -1,0 +1,6 @@
+This software has the following direct dependencies:
+- boost C++ (https://www.boost.org/) [Boost Software License]
+- mbsim (https://github.com/mbsim-env/mbsim) [LGPL]
+- openmbv (https://github.com/mbsim-env/openmbv) [LGPL]
+- python (https://www.python.org/) [PSL] <only for a interface wrapper>
+- xalan-c (https://apache.github.io/xalan-c/) [Apache] <only at build time>

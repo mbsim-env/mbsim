@@ -5,6 +5,9 @@ DIST_SUBDIRS = mbsimFlexibleBody schema
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimFlexibleBody.pc
 
+licdir = @datadir@/mbsimFlexibleBody
+lic_DATA = COPYING NOTICE
+
 mbsimmodulesdir = $(datadir)/mbsimmodules
 mbsimmodules_DATA = mbsimFlexibleBody.mbsimmodule.xml
 

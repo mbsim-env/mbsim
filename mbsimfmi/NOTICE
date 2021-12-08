@@ -1,0 +1,5 @@
+This software has the following direct dependencies:
+- boost C++ (https://www.boost.org/) [Boost Software License]
+- hdf5serie (https://github.com/mbsim-env/hdf5serie) [LGPL]
+- libarchive (https://github.com/libarchive/libarchive) [libarchive]
+- mbsim (https://github.com/mbsim-env/mbsim) [LGPL]

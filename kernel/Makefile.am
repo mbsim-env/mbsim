@@ -12,6 +12,9 @@ EXTRA_DIST = doc/macros.sty
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsim.pc
 
+licdir = @datadir@/mbsim
+lic_DATA = COPYING NOTICE
+
 # wrapper target for doxygen in dir doc
 .PHONY: doc clean-doc install-doc uninstall-doc xmldoc clean-xmldoc install-xmldoc uninstall-xmldoc
 

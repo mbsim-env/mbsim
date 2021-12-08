@@ -40,6 +40,15 @@ int main(int argc, char *argv[]) {
 //MISSING Qt seems to generate some FPE, hence disabled  assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
 #endif
 
+  // check for errors during ObjectFactory
+  string errorMsg(OpenMBV::ObjectFactory::getAndClearErrorMsg());
+  if(!errorMsg.empty()) {
+    cerr<<"The following errors occured during the pre-main code of the OpenMBVC++Interface object factory:"<<endl;
+    cerr<<errorMsg;
+    cerr<<"Exiting now."<<endl;
+    return 1;
+  }
+
   // environment variables
   // Disable COIN VBO per default (see --help)
   static char COIN_VBO[11];

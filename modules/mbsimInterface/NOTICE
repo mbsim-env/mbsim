@@ -1,0 +1,3 @@
+This software has the following direct dependencies:
+- boost C++ (https://www.boost.org/) [Boost Software License]
+- mbsim (https://github.com/mbsim-env/mbsim) [LGPL]

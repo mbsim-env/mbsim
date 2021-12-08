@@ -5,6 +5,9 @@ DIST_SUBDIRS = mbsimPhysics doc schema
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = mbsimPhysics.pc
 
+licdir = @datadir@/mbsimPhysics
+lic_DATA = COPYING NOTICE
+
 mbsimmodulesdir = $(datadir)/mbsimmodules
 mbsimmodules_DATA = mbsimPhysics.mbsimmodule.xml
 

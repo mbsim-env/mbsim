@@ -1,0 +1,8 @@
+This software has the following direct dependencies:
+- boost C++ (https://www.boost.org/) [Boost Software License]
+- fmatvec (https://github.com/mbsim-env/fmatvec) [LGPL]
+- HDF5 (https://www.hdfgroup.org/solutions/hdf5) [HDF5]
+- hdf5serie (https://github.com/mbsim-env/hdf5serie) [LGPL]
+- openmbv (https://github.com/mbsim-env/openmbv) [LGPL]
+- python (https://www.python.org/) [PSL] <only for a interface wrapper>
+- SWIG (http://www.swig.org/) [GPL] <only at build time>

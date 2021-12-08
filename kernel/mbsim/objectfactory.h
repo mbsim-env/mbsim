@@ -73,56 +73,10 @@ class ObjectFactory {
     /** Create and initialize an object corresponding to the XML element element and return a pointer of type ContainerType.
      * Throws if the created object is not of type ContainerType or no object can be create without errors. */
     template<class ContainerType>
-    static ContainerType* createAndInit(const xercesc::DOMElement *element) {
-      // just check if ContainerType is derived from fmatvec::Atom if not throw a compile error
-      static_assert(std::is_convertible<ContainerType*, fmatvec::Atom*>::value,
-        "In MBSim::ObjectFactory::create<ContainerType>(...) ContainerType must be derived from fmatvec::Atom.");
-      // throw error if NULL is supplied as element
-      if(element==nullptr)
-        throw std::runtime_error("Internal error: NULL argument specified.");
-      // get all allocate functions for the given name
-      MBXMLUtils::FQN fqn=MBXMLUtils::E(element)->getTagName();
-      auto nameIt=instance().registeredType.find(fqn);
-      if(nameIt==instance().registeredType.end())
-        throw MBXMLUtils::DOMEvalException("Internal error: No objects of name {"+fqn.first+"}"+fqn.second+" registred", element);
-      DOMEvalExceptionStack allErrors(static_cast<xercesc::DOMElement*>(element->getParentNode()));
-      // try to create and init a object which each of the allocate function
-      for(auto & allocDeallocIt : nameIt->second) {
-        // create element
-        fmatvec::Atom *ele=(*allocDeallocIt.first)();
-        // try to cast the element to ContainerType
-        auto *ret=dynamic_cast<ContainerType*>(ele);
-        if(!ret) {
-          // cast not possible -> deallocate again and try next
-          allErrors.add(boost::core::demangle(typeid(*ele).name()),
-                        std::make_shared<DOMEvalExceptionWrongType>(
-                        boost::core::demangle(typeid(ContainerType).name()), element));
-          (*allocDeallocIt.second)(ele); 
-          continue;
-        }
-        try {
-          ret->initializeUsingXML(const_cast<xercesc::DOMElement*>(element));
-          return ret;
-        }
-        catch(DOMEvalExceptionStack &ex) {
-          allErrors.add(boost::core::demangle(typeid(*ele).name()), std::make_shared<DOMEvalExceptionStack>(ex));
-        }
-        catch(MBXMLUtils::DOMEvalException &ex) {
-          allErrors.add(boost::core::demangle(typeid(*ele).name()), std::make_shared<MBXMLUtils::DOMEvalException>(ex));
-        }
-        catch(std::exception &ex) { // handles also MBSimError
-          allErrors.add(boost::core::demangle(typeid(*ele).name()),
-                        std::make_shared<MBXMLUtils::DOMEvalException>(ex.what(), element));
-        }
-        catch(...) {
-          allErrors.add(boost::core::demangle(typeid(*ele).name()),
-                        std::make_shared<MBXMLUtils::DOMEvalException>("Unknwon exception", element));
-        }
-        (*allocDeallocIt.second)(ele);
-      }
-      // if all failed -> return errors of all trys
-      throw allErrors;
-    }
+    static ContainerType* createAndInit(const xercesc::DOMElement *element);
+
+    static void addErrorMsg(const std::string &msg);
+    static std::string getAndClearErrorMsg();
 
   private:
 
@@ -141,7 +95,61 @@ class ObjectFactory {
 
     // a vector of all registered types
     NameMap registeredType;
+
+    static std::string errorMsg;
 };
+
+template<class ContainerType>
+ContainerType* ObjectFactory::createAndInit(const xercesc::DOMElement *element) {
+  // just check if ContainerType is derived from fmatvec::Atom if not throw a compile error
+  static_assert(std::is_convertible<ContainerType*, fmatvec::Atom*>::value,
+    "In MBSim::ObjectFactory::create<ContainerType>(...) ContainerType must be derived from fmatvec::Atom.");
+  // throw error if NULL is supplied as element
+  if(element==nullptr)
+    throw std::runtime_error("Internal error: NULL argument specified.");
+  // get all allocate functions for the given name
+  MBXMLUtils::FQN fqn=MBXMLUtils::E(element)->getTagName();
+  auto nameIt=instance().registeredType.find(fqn);
+  if(nameIt==instance().registeredType.end())
+    throw MBXMLUtils::DOMEvalException("Internal error: No objects of name {"+fqn.first+"}"+fqn.second+" registred", element);
+  DOMEvalExceptionStack allErrors(static_cast<xercesc::DOMElement*>(element->getParentNode()));
+  // try to create and init a object which each of the allocate function
+  for(auto & allocDeallocIt : nameIt->second) {
+    // create element
+    fmatvec::Atom *ele=(*allocDeallocIt.first)();
+    // try to cast the element to ContainerType
+    auto *ret=dynamic_cast<ContainerType*>(ele);
+    if(!ret) {
+      // cast not possible -> deallocate again and try next
+      allErrors.add(boost::core::demangle(typeid(*ele).name()),
+                    std::make_shared<DOMEvalExceptionWrongType>(
+                    boost::core::demangle(typeid(ContainerType).name()), element));
+      (*allocDeallocIt.second)(ele); 
+      continue;
+    }
+    try {
+      ret->initializeUsingXML(const_cast<xercesc::DOMElement*>(element));
+      return ret;
+    }
+    catch(DOMEvalExceptionStack &ex) {
+      allErrors.add(boost::core::demangle(typeid(*ele).name()), std::make_shared<DOMEvalExceptionStack>(ex));
+    }
+    catch(MBXMLUtils::DOMEvalException &ex) {
+      allErrors.add(boost::core::demangle(typeid(*ele).name()), std::make_shared<MBXMLUtils::DOMEvalException>(ex));
+    }
+    catch(std::exception &ex) { // handles also MBSimError
+      allErrors.add(boost::core::demangle(typeid(*ele).name()),
+                    std::make_shared<MBXMLUtils::DOMEvalException>(ex.what(), element));
+    }
+    catch(...) {
+      allErrors.add(boost::core::demangle(typeid(*ele).name()),
+                    std::make_shared<MBXMLUtils::DOMEvalException>("Unknwon exception", element));
+    }
+    (*allocDeallocIt.second)(ele);
+  }
+  // if all failed -> return errors of all trys
+  throw allErrors;
+}
 
 // a wrapper to allocate an object of type CreateType
 template<class CreateType>
@@ -175,13 +183,29 @@ class ObjectFactoryRegisterClassHelper {
   public:
 
     /** ctor registring the new type */
-    ObjectFactoryRegisterClassHelper(MBXMLUtils::FQN name_) : name(std::move(name_)) {
-      MBSim::registerClass_internal(name, new Allocate<CreateType>(), new Deallocate());
+    ObjectFactoryRegisterClassHelper(MBXMLUtils::FQN name_) noexcept : name(std::move(name_)) {
+      try {
+        MBSim::registerClass_internal(name, new Allocate<CreateType>(), new Deallocate());
+      }
+      catch(std::exception &ex) {
+        ObjectFactory::addErrorMsg(ex.what());
+      }
+      catch(...) {
+        ObjectFactory::addErrorMsg("Unknown error");
+      }
     }
 
     /** dtor deregistring the type */
     ~ObjectFactoryRegisterClassHelper() {
-      MBSim::deregisterClass_internal(name, new Allocate<CreateType>());
+      try {
+        MBSim::deregisterClass_internal(name, new Allocate<CreateType>());
+      }
+      catch(std::exception &ex) {
+        fprintf(stderr, ex.what());
+      }
+      catch(...) {
+        fprintf(stderr, "Unknown error");
+      }
     }
 
   private:
@@ -202,12 +226,28 @@ class EnumFactory {
 
     /** ctor registring the new enum */
     EnumFactory(const EnumType &enumVar, MBXMLUtils::FQN fqn_) : fqn(std::move(fqn_)) {
-      registerEnum_internal<EnumType>(fqn, enumVar);
+      try {
+        registerEnum_internal<EnumType>(fqn, enumVar);
+      }
+      catch(std::exception &ex) {
+        ObjectFactory::addErrorMsg(ex.what());
+      }
+      catch(...) {
+        ObjectFactory::addErrorMsg("Unknown error");
+      }
     }
 
     /** dtor deregistring the enum */
     ~EnumFactory() {
-      deregisterEnum_internal<EnumType>(fqn);
+      try {
+        deregisterEnum_internal<EnumType>(fqn);
+      }
+      catch(std::exception &ex) {
+        fprintf(stderr, ex.what());
+      }
+      catch(...) {
+        fprintf(stderr, "Unknown error");
+      }
     }
 
     /** get an enum value given by the string enumStr **/
@@ -241,34 +281,30 @@ std::string fixXMLLocalName(std::string name);
 
 }
 
-#define MBSIM_OBJECTFACTORY_CONCAT1(X, Y) X##Y
-#define MBSIM_OBJECTFACTORY_CONCAT(X, Y) MBSIM_OBJECTFACTORY_CONCAT1(X, Y)
-#define MBSIM_OBJECTFACTORY_APPENDLINE(X) MBSIM_OBJECTFACTORY_CONCAT(X, __LINE__)
-
 /** Use this macro somewhere at the class definition of Class to register it by the ObjectFactory.
  * fmatvec::Atom is the base of Class and also the template parameter of ObjectFactory.
  * Class must have a public default ctor and a public dtor and a getXMLFQN() static member function. */
 #define MBSIM_OBJECTFACTORY_REGISTERCLASS(NS, Class) \
   static MBSim::ObjectFactoryRegisterClassHelper<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%MBSim::fixXMLLocalName(#Class));
+    BOOST_PP_CAT(objectFactoryRegistrationDummyVariable_, __LINE__)((NS)%MBSim::fixXMLLocalName(#Class));
 
 /** Same as MBSIM_OBJECTFACTORY_REGISTERCLASS but also explicitly instantiates the template class Class.
  * Please note that template member functions of Class must be explicitly instantated by hand. */
 #define MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(NS, Class) \
   template class Class; \
   static MBSim::ObjectFactoryRegisterClassHelper<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%MBSim::fixXMLLocalName(#Class));
+    BOOST_PP_CAT(objectFactoryRegistrationDummyVariable_, __LINE__)((NS)%MBSim::fixXMLLocalName(#Class));
 
 /** Same as MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE but use a unique XML name for each template instance.
  * The XML name is the class name (without template and without namespace) + _ + TemplateName. */
 #define MBSIM_OBJECTFACTORY_REGISTERCLASSWITHTEMPLATENAME_AND_INSTANTIATE(NS, Class, TemplateName) \
   template class Class; \
   static MBSim::ObjectFactoryRegisterClassHelper<Class> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)((NS)%(MBSim::fixXMLLocalName(#Class)+"_"+#TemplateName));
+    BOOST_PP_CAT(objectFactoryRegistrationDummyVariable_, __LINE__)((NS)%(MBSim::fixXMLLocalName(#Class)+"_"+#TemplateName));
 
 /** Use this macro somewhere at the definition of PlotFeatureEnum enumName to register it by the ObjectFactory. */
 #define MBSIM_OBJECTFACTORY_REGISTERENUM(EnumType, NS, enumName) \
   static MBSim::EnumFactory<EnumType> \
-    MBSIM_OBJECTFACTORY_APPENDLINE(objectFactoryRegistrationDummyVariable)(enumName, (NS)%#enumName);
+    BOOST_PP_CAT(objectFactoryRegistrationDummyVariable_, __LINE__)(enumName, (NS)%#enumName);
 
 #endif

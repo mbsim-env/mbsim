@@ -1,0 +1,5 @@
+This software has the following direct dependencies:
+- ccd (https://github.com/danfis/libccd) [BSD]
+- eigen3 (https://eigen.tuxfamily.org/) [MPL2]
+- fcl (https://github.com/flexible-collision-library/fcl) [BSD]
+- mbsim (https://github.com/mbsim-env/mbsim) [LGPL]
