@@ -35,7 +35,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  EmbedItemData::EmbedItemData() : parameters(new Parameters(this)) {
+  EmbedItemData::EmbedItemData() : name("Unnamed"), parameters(new Parameters(this)) {
   }
 
   EmbedItemData::~EmbedItemData() {
