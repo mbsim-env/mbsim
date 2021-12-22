@@ -98,13 +98,17 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
 
 
   // read MBSim module libraries
-  enum Stage { SearchPath, Loading }; // we load in two stages: first just add all search path then to the real load
+  enum Stage { SearchPath, Loading }; // we load in two stages: first just add all search path then do the real load
   for(auto stage: {SearchPath, Loading})
-    for(auto &dir: allSearchDirs)
+    for(auto &dir: allSearchDirs) {
+      if(stage==SearchPath)
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Searching for MBSimXML plugins in directory: "<<dir<<endl;
       for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(dir);
           it!=boost::filesystem::directory_iterator(); it++) {
         if(it->path().string().length()<=string(".mbsimmodule.xml").length()) continue;
         if(it->path().string().substr(it->path().string().length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
+        if(stage==SearchPath)
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load: "<<it->path().leaf().string()<<endl;
         std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it, nullptr, false);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
             getFirstElementChild();
@@ -147,6 +151,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
           }
         }
       }
+    }
 
   // load MBSim modules which are not already loaded
   for(const auto & it : moduleLibFile)
