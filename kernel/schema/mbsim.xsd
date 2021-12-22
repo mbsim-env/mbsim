@@ -6817,15 +6817,6 @@
               </ul>
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="task" type="pv:stringFullEval" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Auswahl der Aufgabe.
-              <ul>
-                <li>usual: einfach (ohne Schaltpunktsuche)</li>
-                <li>complex: komplex (mit Schaltpunktsuche)</li>
-              </ul>
-            </xs:documentation></xs:annotation>
-          </xs:element>
           <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.

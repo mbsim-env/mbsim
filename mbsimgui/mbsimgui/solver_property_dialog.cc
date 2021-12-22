@@ -773,7 +773,7 @@ namespace MBSimGUI {
     list.emplace_back("\"DAE1\"");
     list.emplace_back("\"DAE2\"");
     list.emplace_back("\"GGL\"");
-    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIM%"formalism");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,2,true),true,false,MBSIM%"formalism");
     addToTab("General", formalism);
   }
 
@@ -892,7 +892,7 @@ namespace MBSimGUI {
     list.emplace_back("\"all\"");
     list.emplace_back("\"scale\"");
     list.emplace_back("\"exclude\"");
-    errorTest = new ExtWidget("Error test",new TextChoiceWidget(list,0,true),true,false,MBSIM%"errorTest");
+    errorTest = new ExtWidget("Error test",new TextChoiceWidget(list,1,true),true,false,MBSIM%"errorTest");
     addToTab("Extra", errorTest);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
@@ -1025,12 +1025,6 @@ namespace MBSimGUI {
     method = new ExtWidget("Method",new TextChoiceWidget(list,1,true),true,false,MBSIM%"method");
     addToTab("General", method);
 
-    list.clear();
-    list.emplace_back("\"usual\"");
-    list.emplace_back("\"complex\"");
-    task = new ExtWidget("Task",new TextChoiceWidget(list,1,true),true,false,MBSIM%"task");
-    addToTab("General", task);
-
     relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relativeToleranceScalar");
     addToTab("Tolerances", relTol);
 
@@ -1044,7 +1038,6 @@ namespace MBSimGUI {
   DOMElement* RKSuiteIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     method->initializeUsingXML(item->getXMLElement());
-    task->initializeUsingXML(item->getXMLElement());
     relTol->initializeUsingXML(item->getXMLElement());
     threshold->initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
@@ -1054,7 +1047,6 @@ namespace MBSimGUI {
   DOMElement* RKSuiteIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     method->writeXMLFile(item->getXMLElement());
-    task->writeXMLFile(item->getXMLElement());
     relTol->writeXMLFile(item->getXMLElement());
     threshold->writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
