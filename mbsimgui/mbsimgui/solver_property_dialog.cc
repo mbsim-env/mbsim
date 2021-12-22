@@ -158,10 +158,10 @@ namespace MBSimGUI {
     addTab("Tolerances");
     addTab("Root-finding");
 
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("-1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
 
-    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForVelocityConstraints");
+    gdMax = new ExtWidget("Tolerance for velocity constraint",new ChoiceWidget(new ScalarWidgetFactory("-1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForVelocityConstraints");
     addToTab("Tolerances", gdMax);
 
     dtRoot = new ExtWidget("Root finding accuracy",new ChoiceWidget(new ScalarWidgetFactory("1e-10",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"rootFindingAccuracy");
@@ -804,7 +804,7 @@ namespace MBSimGUI {
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
 
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("-1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
   }
 
@@ -832,7 +832,7 @@ namespace MBSimGUI {
     theta = new ExtWidget("Theta",new ChoiceWidget(new ScalarWidgetFactory("0.5",vector<QStringList>(2,noUnitUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"theta");
     addToTab("General", theta);
 
-    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
+    gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("-1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
   }
 
