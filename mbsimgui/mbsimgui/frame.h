@@ -30,6 +30,7 @@ namespace MBSimGUI {
     public:
       Frame();
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Frame"; }
+      QString getType() const override { return "Frame"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new FramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new FrameContextMenu(this); }

@@ -28,6 +28,7 @@ namespace MBSimGUI {
     public:
       Contour();
       MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Contour"; }
+      QString getType() const override { return "Contour"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new ContourPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ContourContextMenu(this); }
