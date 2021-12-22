@@ -235,6 +235,7 @@ namespace MBSimGUI {
         else
           text->setCurrentIndex(text->findText(str));
       }
+      void setCurrentIndex(int num);
 
     protected:
       QComboBox *text;

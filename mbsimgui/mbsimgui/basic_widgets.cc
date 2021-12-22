@@ -401,6 +401,10 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
+  void TextChoiceWidget::setCurrentIndex(int num) {
+    text->setCurrentIndex(num);
+  }
+
   BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_) {
 
     auto *layout = new QVBoxLayout;

@@ -454,7 +454,7 @@ namespace MBSimGUI {
     list.emplace_back("\"equallySpaced\"");
     list.emplace_back("\"chordLength\"");
     list.emplace_back("\"none\"");
-    interpolation = new ExtWidget("Interpolation",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolation");
+    interpolation = new ExtWidget("Interpolation",new TextChoiceWidget(list,2,true),true,false,MBSIM%"interpolation");
     addToTab("General", interpolation);
 
     controlPoints = new ExtWidget("Control points",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"controlPoints");
@@ -551,7 +551,7 @@ namespace MBSimGUI {
     list.emplace_back("\"equallySpaced\"");
     list.emplace_back("\"chordLength\"");
     list.emplace_back("\"none\"");
-    interpolation = new ExtWidget("Interpolation",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolation");
+    interpolation = new ExtWidget("Interpolation",new TextChoiceWidget(list,2,true),true,false,MBSIM%"interpolation");
     addToTab("General", interpolation);
 
     controlPoints = new ExtWidget("Control points",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIM%"controlPoints");
@@ -2082,7 +2082,7 @@ namespace MBSimGUI {
     vector<QString> list;
     list.emplace_back("\"firstFrame\"");
     list.emplace_back("\"secondFrame\"");
-    refFrame = new ExtWidget("Frame of reference",new TextChoiceWidget(list,1,true),true,false,MBSIM%"frameOfReference");
+    refFrame = new ExtWidget("Frame of reference",new TextChoiceWidget(list,0,true),true,false,MBSIM%"frameOfReference");
     addToTab("Kinetics", refFrame);
 
     force = new ExtWidget("Force direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
@@ -2221,7 +2221,7 @@ namespace MBSimGUI {
     vector<QString> list;
     list.emplace_back("\"firstFrame\"");
     list.emplace_back("\"secondFrame\"");
-    refFrame = new ExtWidget("Frame of reference",new TextChoiceWidget(list,1,true),true,false,MBSIM%"frameOfReference");
+    refFrame = new ExtWidget("Frame of reference",new TextChoiceWidget(list,0,true),true,false,MBSIM%"frameOfReference");
     addToTab("Kinetics", refFrame);
   }
 
@@ -2276,6 +2276,8 @@ namespace MBSimGUI {
   }
 
   KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(Element *kineticExcitation) : FloatingFrameLinkPropertyDialog(kineticExcitation) {
+
+    static_cast<TextChoiceWidget*>(refFrame->getWidget())->setCurrentIndex(1);
 
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
