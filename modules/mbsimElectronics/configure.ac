@@ -22,7 +22,7 @@ AC_C_CONST
 AC_CHECK_FUNCS([sqrt])
 AC_HEADER_STDBOOL
 
-PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsim)
+PKG_CHECK_MODULES(DEPS, mbsim >= 3.0.0 mbsimControl)
 
 CPPFLAGS="$CPPFLAGS -Wall -Werror"
 if test "_$host_os" != "_mingw32"; then

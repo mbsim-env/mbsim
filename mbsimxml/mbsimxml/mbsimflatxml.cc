@@ -105,10 +105,11 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
         fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Searching for MBSimXML plugins in directory: "<<dir<<endl;
       for(boost::filesystem::directory_iterator it=boost::filesystem::directory_iterator(dir);
           it!=boost::filesystem::directory_iterator(); it++) {
-        if(it->path().string().length()<=string(".mbsimmodule.xml").length()) continue;
-        if(it->path().string().substr(it->path().string().length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
+        string path=it->path().string();
+        if(path.length()<=string(".mbsimmodule.xml").length()) continue;
+        if(path.substr(path.length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
         if(stage==SearchPath)
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load: "<<it->path().leaf().string()<<endl;
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load library for "<<it->path().leaf().string()<<endl;
         std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it, nullptr, false);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
             getFirstElementChild();
@@ -118,14 +119,14 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
             bool global=false;
             if(E(e)->hasAttribute("global") && (E(e)->getAttribute("global")=="true" || E(e)->getAttribute("global")=="1"))
               global=true;
-            if(location.substr(0, 13)=="@MBSIMLIBDIR@") {
-              moduleLibFile.insert(installDir/libDir/location.substr(13)/fullLibName(E(e)->getAttribute("basename")));
-              moduleLibFlag[installDir/libDir/location.substr(13)/fullLibName(E(e)->getAttribute("basename"))]=global;
-            }
-            else {
-              moduleLibFile.insert(E(e)->convertPath(location)/fullLibName(E(e)->getAttribute("basename")));
-              moduleLibFlag[E(e)->convertPath(location)/fullLibName(E(e)->getAttribute("basename"))]=global;
-            }
+            boost::algorithm::replace_all(location, "@MBSIMLIBSUBDIR@", libDir);
+            boost::filesystem::path lib;
+            if(location.substr(0, 13)=="@MBSIMLIBDIR@")
+              lib=installDir/libDir/location.substr(13)/fullLibName(E(e)->getAttribute("basename"));
+            else
+              lib=E(e)->convertPath(location)/fullLibName(E(e)->getAttribute("basename"));
+            moduleLibFile.insert(lib);
+            moduleLibFlag[lib]=global;
           }
           if(E(e)->getTagName()==MBSIMMODULE%"PythonModule") {
             string moduleName=E(e)->getAttribute("moduleName");
@@ -144,7 +145,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
 #else
             if(stage==SearchPath)
               fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
-                "Python MBSim module found in "+it->path().string()+" '"+moduleName+"'\n"<<
+                "Python MBSim module found in "+path+" '"+moduleName+"'\n"<<
                 "but MBSim is not build with Python support. Skipping this module.\n";
             continue;
 #endif
