@@ -60,7 +60,6 @@
       </script>
     </head>
     <body style="margin:0.5em">
-    <script src="/mbsim/html/cookiewarning.js"> </script>
     <div class="page-header">
       <h1>MBSimXML - Main MBSim XML Documentation</h1>
     </div>
