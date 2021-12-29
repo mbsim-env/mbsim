@@ -169,7 +169,7 @@
               <SymbolicFunction arg1="t">
                 <pv:xmlVector>
                   <pv:ele>
-                    condition(-t+2, 1, condition(-t+4, max(2.5,t), condition(-t+6, 3, condition(t-9, 0.5, 0))))
+                    condition(-t+2, 1, condition(-t+4, max([2.5;t]), condition(-t+6, 3, condition(t-9, 0.5, 0))))
                   </pv:ele>
                   <pv:ele>0</pv:ele>
                   <pv:ele>0</pv:ele>
