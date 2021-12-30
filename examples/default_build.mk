@@ -7,6 +7,7 @@
 # Enable VPATH builds with sources at SRCDIR
 VPATH=$(SRCDIR)
 
+MAKEFILE_LIST_DEPS:=$(MAKEFILE_LIST)
 # use a sources all *.cc file under SRCDIR
 SOURCES:=$(shell (cd $(SRCDIR); find -name "*.cc"))
 # object and dependency files (derived from SOURCES)
@@ -40,24 +41,20 @@ fmiexport: mbsimfmi_model$(SHEXT)
 # mingw -Wl,-Map generates some dependencies named rtr0*.o which needs to be removed
 
 # link main executable with pkg-config options from PACKAGES
-main$(EXEEXT): $(OBJECTS) | main$(EXEEXT).d
-	$(CXX) -Wl,-Map=$@.linkmap -o $@ $(OBJECTS) $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
+main$(EXEEXT): $(OBJECTS) $(MAKEFILE_LIST_DEPS) | main$(EXEEXT).d
+	$(CXX) -Wl,-Map=$@.linkmap -o $@ $(OBJECTS) $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES)) $(shell pkg-config --libs-only-L $(PACKAGES) | sed 's/-L/-Wl,-rpath,/g')
 	@sed -rne "/^LOAD /s/^LOAD (.*)$$/ \1 \\\/p" $@.linkmap | grep -Ev rtr[0-9]+\.o > $@.d2 || true
 	@test $(WIN) -eq 0 && (echo "$@: \\" > $@.d && cat $@.d2 >> $@.d && rm -f $@.linkmap $@.d2) || (rm -f $@.d2)
 
 # FMI export target
-mbsimfmi_model$(SHEXT): $(OBJECTS) | mbsimfmi_model$(SHEXT).d
+mbsimfmi_model$(SHEXT): $(OBJECTS) $(MAKEFILE_LIST_DEPS) | mbsimfmi_model$(SHEXT).d
 	$(CXX) -shared $(LDFLAGSRPATH) -Wl,-rpath,\$$ORIGIN,-Map=$@.linkmap -o $@ $(OBJECTS) $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))
 	@sed -rne "/^LOAD /s/^LOAD (.*)$$/ \1 \\\/p" $@.linkmap | grep -Ev rtr[0-9]+\.o > $@.d2 || true
 	@test $(WIN) -eq 0 && (echo "$@: \\" > $@.d && cat $@.d2 >> $@.d && rm -f $@.linkmap $@.d2) || (rm -f $@.d2)
 
-rpath: $(OBJECTS)
-	$(CXX) -o $@ $^ $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES))  $(shell pkg-config --libs-only-L $(PACKAGES) | sed 's/-L/-Wl,-rpath,/g')
-
 # compile source with pkg-config options from PACKAGES (and generate dependency file)
-%.o: %.cc | %.o.d
-	@$(CXX) -MM -MP -MF $@.d $(PIC) $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $<
-	$(CXX) -c $(PIC) -o $@ $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $<
+%.o: %.cc $(MAKEFILE_LIST_DEPS) | %.o.d
+	$(CXX) -MMD -MP -MF $@.d -c $(PIC) -o $@ $(CPPFLAGS) $(CXXFLAGS) $(shell pkg-config --cflags $(PACKAGES)) $<
 
 # clean target: remove all generated files
 clean:
@@ -75,6 +72,6 @@ mbsimfmi_model$(SHEXT).d:
 	@touch $@
 	@touch -c $(OBJECTS)
 # include the generated make rules
-include $(DEPFILES)
-include main$(EXEEXT).d
-include mbsimfmi_model$(SHEXT).d
+-include $(DEPFILES)
+-include main$(EXEEXT).d
+-include mbsimfmi_model$(SHEXT).d
