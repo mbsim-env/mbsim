@@ -31,14 +31,12 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class Analyzer : public Solver {
-    public:
-      Analyzer() = default;
+    MBSIMGUI_OBJECTFACTORY_CLASS(Analyzer, Solver, MBSIMCONTROL%"Analyzer", "Analyzer");
   };
 
   class LinearSystemAnalyzer : public Analyzer {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearSystemAnalyzer, Analyzer, MBSIMCONTROL%"LinearSystemAnalyzer", "Linear system analyzer");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"LinearSystemAnalyzer"; }
-      QString getType() const override { return "Linear system analyzer"; }
       PropertyDialog* createPropertyDialog() override { return new LinearSystemAnalyzerPropertyDialog(this); }
   };
 }

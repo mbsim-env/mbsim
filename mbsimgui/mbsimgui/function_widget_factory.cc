@@ -126,7 +126,7 @@ namespace MBSimGUI {
     if(i==18)
       return new TabularFunctionWidget(retDim,retType);
     if(i==19)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     if(i==20) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -154,7 +154,7 @@ namespace MBSimGUI {
     if(i==2)
       return new TwoDimensionalTabularFunctionWidget;
     if(i==3)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
@@ -227,7 +227,7 @@ namespace MBSimGUI {
     if(i==12)
       return new TranslationAlongFixedAxisWidget;
     if(i==13)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
@@ -270,7 +270,7 @@ namespace MBSimGUI {
     if(i==4)
       return new TabularFunctionWidget(3,FunctionWidget::fixedVec);
     if(i==5)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     if(i==6) {
       auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy1->setParent(element);
@@ -337,7 +337,7 @@ namespace MBSimGUI {
     if(i==10)
       return new RotationAboutFixedAxisWidget;
     if(i==11)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
@@ -361,7 +361,7 @@ namespace MBSimGUI {
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
     if(i==2)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
@@ -540,7 +540,7 @@ namespace MBSimGUI {
     if(i==3)
       return new SymbolicFunctionWidget(QStringList("g")<<"gd",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::scalar),1,FunctionWidget::scalar);
     if(i==4)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
@@ -586,7 +586,7 @@ namespace MBSimGUI {
     if(i==5)
       return new SymbolicFunctionWidget(QStringList(var),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
     if(i==6)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     if(i==7) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -622,7 +622,7 @@ namespace MBSimGUI {
     if(i==2)
       return new SymbolicFunctionWidget(QStringList(var),vector<int>(1,2),vector<FunctionWidget::VarType>(1,FunctionWidget::fixedVec),3,FunctionWidget::fixedVec);
     if(i==3)
-      return new UnknownWidget;
+      return new UnknownWidget<FunctionWidget>;
     if(i==4) {
       auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
       dummy->setParent(element);
@@ -650,7 +650,7 @@ namespace MBSimGUI {
     if(i==2)
       return new SymbolicFunctionWidget(QStringList("g"),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),1,FunctionWidget::scalar);
     if(i==3)
-      return new UnknownWidget;
+      return new UnknownWidget<GravityFunctionWidget>;
     return nullptr;
   }
 }

@@ -23,6 +23,7 @@
 #include "variable_widgets.h"
 #include "ombv_widgets.h"
 #include "unknown_widget.h"
+#include "objectfactory.h"
 #include <QVBoxLayout>
 
 using namespace std;
@@ -31,8 +32,11 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  MBSIMGUI_REGOBJECTFACTORY(MBSimEnvironmentWidget);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<EnvironmentWidget>);
+
   DOMElement* EnvironmentWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     return ele0;
@@ -63,18 +67,4 @@ namespace MBSimGUI {
     return ele0;
   }
 
-  EnvironmentWidgetFactory::EnvironmentWidgetFactory() {
-    name.emplace_back("MBSim environment");
-    name.emplace_back("Unknown environment");
-    xmlName.push_back(MBSIM%"MBSimEnvironment");
-    xmlName.push_back(MBSIM%"UnknownEnvironment");
-  }
-
-  Widget* EnvironmentWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new MBSimEnvironmentWidget;
-    if(i==1)
-      return new UnknownWidget;
-    return nullptr;
-  }
 }

@@ -25,41 +25,36 @@
 namespace MBSimGUI {
 
   class UniversalGravitation : public MechanicalLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UniversalGravitation, MechanicalLink, MBSIMPHYSICS%"UniversalGravitation", "Universal gravitation");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"UniversalGravitation"; }
-      QString getType() const override { return "Universal gravitation"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new UniversalGravitationPropertyDialog(this); }
   };
 
   class Weight : public MechanicalLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Weight, MechanicalLink, MBSIMPHYSICS%"Weight", "Weight");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"Weight"; }
-      QString getType() const override { return "Weight"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new WeightPropertyDialog(this); }
   };
 
   class Buoyancy : public FloatingFrameLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Buoyancy, FloatingFrameLink, MBSIMPHYSICS%"Buoyancy", "Buoyancy");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"Buoyancy"; }
-      QString getType() const override { return "Buoyancy"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new BuoyancyPropertyDialog(this); }
   };
 
   class Drag : public FloatingFrameLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Drag, FloatingFrameLink, MBSIMPHYSICS%"Drag", "Drag");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"Drag"; }
-      QString getType() const override { return "Drag"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new DragPropertyDialog(this); }
   };
 
   class Aerodynamics : public FloatingFrameLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Aerodynamics, FloatingFrameLink, MBSIMPHYSICS%"Aerodynamics", "Aerodynamics");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"Aerodynamics"; }
-      QString getType() const override { return "Aerodynamics"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new AerodynamicsPropertyDialog(this); }
   };

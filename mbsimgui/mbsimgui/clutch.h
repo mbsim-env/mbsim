@@ -26,9 +26,8 @@
 namespace MBSimGUI {
 
   class GeneralizedClutch : public DualRigidBodyLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedClutch, DualRigidBodyLink, MBSIM%"GeneralizedClutch", "Generalized clutch");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedClutch"; }
-      QString getType() const override { return "Generalized clutch"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedClutchPropertyDialog(this); }
   };
 

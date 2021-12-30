@@ -27,67 +27,67 @@ namespace MBSimGUI {
   class ExtWidget;
 
   class TranslationAlongXAxisWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TranslationAlongXAxisWidget, FunctionWidget, MBSIM%"TranslationAlongXAxis", "dummy");
 
     public:
       TranslationAlongXAxisWidget() = default;
       int getArg1Size() const override { return 1; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongXAxis"; }
   };
 
   class TranslationAlongYAxisWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TranslationAlongYAxisWidget, FunctionWidget, MBSIM%"TranslationAlongYAxis", "dummy");
 
     public:
       TranslationAlongYAxisWidget() = default;
       int getArg1Size() const override { return 1; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongYAxis"; }
   };
 
   class TranslationAlongZAxisWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TranslationAlongZAxisWidget, FunctionWidget, MBSIM%"TranslationAlongZAxis", "dummy");
 
     public:
       TranslationAlongZAxisWidget() = default;
       int getArg1Size() const override { return 1; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongZAxis"; }
   };
 
   class TranslationAlongAxesXYWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TranslationAlongAxesXYWidget, FunctionWidget, MBSIM%"TranslationAlongAxesXY", "dummy");
 
     public:
       TranslationAlongAxesXYWidget() = default;
       int getArg1Size() const override { return 2; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongAxesXY"; }
   };
 
   class TranslationAlongAxesYZWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TranslationAlongAxesYZWidget, FunctionWidget, MBSIM%"TranslationAlongAxesYZ", "dummy");
 
     public:
       TranslationAlongAxesYZWidget() = default;
       int getArg1Size() const override { return 2; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongAxesYZ"; }
   };
 
   class TranslationAlongAxesXZWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TranslationAlongAxesXZWidget, FunctionWidget, MBSIM%"TranslationAlongAxesXZ", "dummy");
 
     public:
       TranslationAlongAxesXZWidget() = default;
       int getArg1Size() const override { return 2; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongAxesXZ"; }
   };
 
   class TranslationAlongAxesXYZWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TranslationAlongAxesXYZWidget, FunctionWidget, MBSIM%"TranslationAlongAxesXYZ", "dummy");
 
     public:
       TranslationAlongAxesXYZWidget() = default;
       int getArg1Size() const override { return 3; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongAxesXYZ"; }
   };
 
   class TranslationAlongFixedAxisWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TranslationAlongFixedAxisWidget, FunctionWidget, MBSIM%"TranslationAlongFixedAxis", "dummy");
 
     public:
       TranslationAlongFixedAxisWidget();
       int getArg1Size() const override { return 1; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TranslationAlongFixedAxis"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -95,12 +95,12 @@ namespace MBSimGUI {
   };
 
   class LinearTranslationWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearTranslationWidget, FunctionWidget, MBSIM%"LinearTranslation", "dummy");
 
     public:
       LinearTranslationWidget(int m=1, int n=1);
       int getArg1Size() const override;
       void resize_(int m, int n) override;
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearTranslation"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -108,83 +108,83 @@ namespace MBSimGUI {
   };
 
   class RotationAboutXAxisWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutXAxisWidget, FunctionWidget, MBSIM%"RotationAboutXAxis", "dummy");
 
     public:
       RotationAboutXAxisWidget() = default;
       int getArg1Size() const override { return 1; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutXAxis"; }
   };
 
   class RotationAboutYAxisWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutYAxisWidget, FunctionWidget, MBSIM%"RotationAboutYAxis", "dummy");
 
     public:
       RotationAboutYAxisWidget() = default;
       int getArg1Size() const override { return 1; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutYAxis"; }
   };
 
   class RotationAboutZAxisWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutZAxisWidget, FunctionWidget, MBSIM%"RotationAboutZAxis", "dummy");
 
     public:
       RotationAboutZAxisWidget() = default;
       int getArg1Size() const override { return 1; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutZAxis"; }
   };
 
   class RotationAboutAxesXYWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutAxesXYWidget, FunctionWidget, MBSIM%"RotationAboutAxesXY", "dummy");
 
     public:
       RotationAboutAxesXYWidget() = default;
       int getArg1Size() const override { return 2; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesXY"; }
   };
 
   class RotationAboutAxesYZWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutAxesYZWidget, FunctionWidget, MBSIM%"RotationAboutAxesYZ", "dummy");
 
     public:
       RotationAboutAxesYZWidget() = default;
       int getArg1Size() const override { return 2; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesYZ"; }
   };
 
   class RotationAboutAxesXZWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutAxesXZWidget, FunctionWidget, MBSIM%"RotationAboutAxesXZ", "dummy");
 
     public:
       RotationAboutAxesXZWidget() = default;
       int getArg1Size() const override { return 2; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesXZ"; }
   };
 
   class RotationAboutAxesXYZWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutAxesXYZWidget, FunctionWidget, MBSIM%"RotationAboutAxesXYZ", "dummy");
 
     public:
       RotationAboutAxesXYZWidget() = default;
       int getArg1Size() const override { return 3; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesXYZ"; }
   };
 
   class RotationAboutAxesZXZWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutAxesZXZWidget, FunctionWidget, MBSIM%"RotationAboutAxesZXZ", "dummy");
 
     public:
       RotationAboutAxesZXZWidget() = default;
       int getArg1Size() const override { return 3; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesZXZ"; }
   };
 
   class RotationAboutAxesZYXWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutAxesZYXWidget, FunctionWidget, MBSIM%"RotationAboutAxesZYX", "dummy");
 
     public:
       RotationAboutAxesZYXWidget() = default;
       int getArg1Size() const override { return 3; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutAxesZYX"; }
   };
 
   class RotationAboutFixedAxisWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RotationAboutFixedAxisWidget, FunctionWidget, MBSIM%"RotationAboutFixedAxis", "dummy");
 
     public:
       RotationAboutFixedAxisWidget();
       int getArg1Size() const override { return 1; }
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RotationAboutFixedAxis"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:

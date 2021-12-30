@@ -186,21 +186,6 @@ namespace MBSimGUI {
       void valueChanged(int);
   };
 
-  class ComboBoxWidget : public IntegerWidget {
-    Q_OBJECT
-
-    public:
-      ComboBoxWidget(const QStringList &names, int currentIndex=0);
-      int getValue() override { return value->currentIndex(); }
-      void setValue(int val) override {value->setCurrentIndex(val);}
-
-    protected:
-      QComboBox *value;
-
-    signals:
-      void valueChanged(int);
-  };
-
   class BasicTextWidget : public Widget {
 
     public:
@@ -270,9 +255,9 @@ namespace MBSimGUI {
       }
       std::vector<QString> create(int n) {
         std::vector<QString> name(n);
-        name[0] = T1().getType();
+        name[0] = T1::getTypeStatic();
         if(n>1)
-          name[1] = T2().getType();
+          name[1] = T2::getTypeStatic();
         return name;
       }
   };

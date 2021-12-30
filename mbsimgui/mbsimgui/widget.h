@@ -23,6 +23,8 @@
 #include <QWidget>
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
+#include <objectfactory.h>
+#include <namespace.h>
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -31,8 +33,9 @@ namespace XERCES_CPP_NAMESPACE {
 
 namespace MBSimGUI {
 
-  class Widget : public QWidget {
+  class Widget : public QWidget, public ObjectFactoryBase {
     Q_OBJECT
+    MBSIMGUI_OBJECTFACTORY_CLASS(Widget, ObjectFactoryBase, MBSIM%"Widget", "Widget");
     public:
       Widget(QWidget *parent=nullptr) : QWidget(parent) { }
       virtual void updateWidget() { }
@@ -54,6 +57,75 @@ namespace MBSimGUI {
       virtual int getMargin() const { return 10; }
       virtual MBXMLUtils::FQN getXMLName(int i=0) const { return ""; }
   };
+
+  template<class Container>
+  class WidgetFactoryFor : public WidgetFactory {
+    public:
+      WidgetFactoryFor(Element *e_=nullptr, QWidget *pw_=nullptr);
+      virtual ~WidgetFactoryFor() = default;
+      QString getName(int i=0) const override;
+      MBXMLUtils::FQN getXMLName(int i=0) const override;
+      int getDefaultIndex() const override;
+      int getFallbackIndex() const override;
+      Widget* createWidget(int i=0) override;
+      int getSize() const override;
+    private:
+      Element *e;
+      QWidget *pw;
+  };
+
+  template<class Container>
+  WidgetFactoryFor<Container>::WidgetFactoryFor(Element *e_, QWidget *pw_) :e(e_), pw(pw_) {}
+
+  template<class Container>
+  QString WidgetFactoryFor<Container>::getName(int i) const {
+    return ObjectFactory::getInstance().getAllTypesForContainer<Container>()[i]->getType();
+  }
+
+  template<class Container>
+  MBXMLUtils::FQN WidgetFactoryFor<Container>::getXMLName(int i) const {
+    return ObjectFactory::getInstance().getAllTypesForContainer<Container>()[i]->getXMLType();
+  }
+
+  template<class Container>
+  int WidgetFactoryFor<Container>::getDefaultIndex() const {
+    static int defaultIndex=-1;
+    if(defaultIndex==-1) {
+      defaultIndex=0;
+      for(const auto *func : ObjectFactory::getInstance().getAllTypesForContainer<Container>()) {
+        if(func->typeInfo==
+           typeid(typename boost::mpl::at<ObjectFactory::MapContainerToDefaultAndUnknown, Container>::type::first))
+          break;
+        defaultIndex++;
+      }
+    }
+    return defaultIndex;
+  }
+
+  template<class Container>
+  int WidgetFactoryFor<Container>::getFallbackIndex() const {
+    static int fallBackIndex=-1;
+    if(fallBackIndex==-1) {
+      fallBackIndex=0;
+      for(const auto *func : ObjectFactory::getInstance().getAllTypesForContainer<Container>()) {
+        if(func->typeInfo==
+           typeid(typename boost::mpl::at<ObjectFactory::MapContainerToDefaultAndUnknown, Container>::type::second))
+          break;
+        fallBackIndex++;
+      }
+    }
+    return fallBackIndex;
+  }
+
+  template<class Container>
+  Widget* WidgetFactoryFor<Container>::createWidget(int i) {
+    return static_cast<Container*>(ObjectFactory::getInstance().getAllTypesForContainer<Container>()[i]->ctor(e, pw));
+  }
+
+  template<class Container>
+  int WidgetFactoryFor<Container>::getSize() const {
+    return ObjectFactory::getInstance().getAllTypesForContainer<Container>().size();
+  }
 
 }
 

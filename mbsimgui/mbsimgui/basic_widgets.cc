@@ -349,18 +349,6 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ComboBoxWidget::ComboBoxWidget(const QStringList &names, int currentIndex) {
-    auto *layout = new QHBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-
-    value = new CustomComboBox;
-    value->addItems(names);
-    value->setCurrentIndex(currentIndex);
-    layout->addWidget(value);
-    connect(value,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&ComboBoxWidget::valueChanged);
-  }
-
   DOMElement* BasicTextWidget::initializeUsingXML(DOMElement *element) {
     DOMText *text_ = E(element)->getFirstTextChild();
     if(text_) {

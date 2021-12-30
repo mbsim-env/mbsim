@@ -25,10 +25,9 @@
 namespace MBSimGUI {
 
   class RigidBody : public Body {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RigidBody, Body, MBSIM%"RigidBody", "Rigid body");
     public:
       RigidBody();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"RigidBody"; }
-      QString getType() const override { return "Rigid body"; }
       xercesc::DOMElement* getXMLFrames() override { return frames; }
       xercesc::DOMElement* getXMLContours() override { return contours; }
       void removeXMLElements() override;

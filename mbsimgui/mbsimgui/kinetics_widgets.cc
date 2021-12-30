@@ -25,6 +25,7 @@
 #include "custom_widgets.h"
 #include "function.h"
 #include "function_widget_factory.h"
+#include "unknown_widget.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -32,13 +33,37 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  MBSIMGUI_REGOBJECTFACTORY(BilateralConstraintWidget);
+  MBSIMGUI_REGOBJECTFACTORY(RegularizedBilateralConstraintWidget);
+  MBSIMGUI_REGOBJECTFACTORY(UnilateralConstraintWidget);
+  MBSIMGUI_REGOBJECTFACTORY(RegularizedUnilateralConstraintWidget);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<GeneralizedForceLawWidget>);
+
+  MBSIMGUI_REGOBJECTFACTORY(PlanarCoulombFrictionWidget);
+  MBSIMGUI_REGOBJECTFACTORY(PlanarStribeckFrictionWidget);
+  MBSIMGUI_REGOBJECTFACTORY(RegularizedPlanarFrictionWidget);
+  MBSIMGUI_REGOBJECTFACTORY(SpatialCoulombFrictionWidget);
+  MBSIMGUI_REGOBJECTFACTORY(SpatialStribeckFrictionWidget);
+  MBSIMGUI_REGOBJECTFACTORY(RegularizedSpatialFrictionWidget);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<FrictionForceLawWidget>);
+
+  MBSIMGUI_REGOBJECTFACTORY(BilateralImpactWidget);
+  MBSIMGUI_REGOBJECTFACTORY(UnilateralNewtonImpactWidget);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<GeneralizedImpactLawWidget>);
+
+  MBSIMGUI_REGOBJECTFACTORY(PlanarCoulombImpactWidget);
+  MBSIMGUI_REGOBJECTFACTORY(PlanarStribeckImpactWidget);
+  MBSIMGUI_REGOBJECTFACTORY(SpatialCoulombImpactWidget);
+  MBSIMGUI_REGOBJECTFACTORY(SpatialStribeckImpactWidget);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<FrictionImpactLawWidget>);
+
   DOMElement* GeneralizedForceLawWidget::initializeUsingXML(DOMElement *element) {
     if(forceFunc) forceFunc->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* GeneralizedForceLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     if(forceFunc) forceFunc->writeXMLFile(ele0);
@@ -66,7 +91,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedImpactLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     return ele0;
@@ -97,7 +122,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrictionForceLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     if(frictionForceFunc) frictionForceFunc->writeXMLFile(ele0);
@@ -203,7 +228,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrictionImpactLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     return ele0;
@@ -287,98 +312,6 @@ namespace MBSimGUI {
     DOMElement *ele0 = FrictionImpactLawWidget::writeXMLFile(parent,ref);
     frictionFunction->writeXMLFile(ele0);
     return ele0;
-  }
-
-  GeneralizedForceLawWidgetFactory::GeneralizedForceLawWidgetFactory() {
-    name.emplace_back("Bilateral constraint");
-    name.emplace_back("Regularized bilateral constraint");
-    name.emplace_back("Unilateral constraint");
-    name.emplace_back("Regularized unilateral constraint");
-    xmlName.push_back(MBSIM%"BilateralConstraint");
-    xmlName.push_back(MBSIM%"RegularizedBilateralConstraint");
-    xmlName.push_back(MBSIM%"UnilateralConstraint");
-    xmlName.push_back(MBSIM%"RegularizedUnilateralConstraint");
-  }
-
-  Widget* GeneralizedForceLawWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new BilateralConstraintWidget;
-    if(i==1)
-      return new RegularizedBilateralConstraintWidget;
-    if(i==2)
-      return new UnilateralConstraintWidget;
-    if(i==3)
-      return new RegularizedUnilateralConstraintWidget;
-    return nullptr;
-  }
-
-  FrictionForceLawWidgetFactory::FrictionForceLawWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
-    name.emplace_back("Planar Coulomb friction");
-    name.emplace_back("Planar Stribeck friction");
-    name.emplace_back("Regularized planar friction");
-    name.emplace_back("Spatial Coulomb friction");
-    name.emplace_back("Spatial Stribeck friction");
-    name.emplace_back("Regularized spatial friction");
-    xmlName.push_back(MBSIM%"PlanarCoulombFriction");
-    xmlName.push_back(MBSIM%"PlanarStribeckFriction");
-    xmlName.push_back(MBSIM%"RegularizedPlanarFriction");
-    xmlName.push_back(MBSIM%"SpatialCoulombFriction");
-    xmlName.push_back(MBSIM%"SpatialStribeckFriction");
-    xmlName.push_back(MBSIM%"RegularizedSpatialFriction");
-  }
-
-  Widget* FrictionForceLawWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new PlanarCoulombFrictionWidget;
-    if(i==1)
-      return new PlanarStribeckFrictionWidget(element,parent);
-    if(i==2)
-      return new RegularizedPlanarFrictionWidget(element,parent);
-    if(i==3)
-      return new SpatialCoulombFrictionWidget;
-    if(i==4)
-      return new SpatialStribeckFrictionWidget(element,parent);
-    if(i==5)
-      return new RegularizedSpatialFrictionWidget(element,parent);
-    return nullptr;
-  }
-
-  GeneralizedImpactLawWidgetFactory::GeneralizedImpactLawWidgetFactory() {
-    name.emplace_back("Bilateral impact");
-    name.emplace_back("Unilateral Newton impact");
-    xmlName.push_back(MBSIM%"BilateralImpact");
-    xmlName.push_back(MBSIM%"UnilateralNewtonImpact");
-  }
-
-  Widget* GeneralizedImpactLawWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new BilateralImpactWidget;
-    if(i==1)
-      return new UnilateralNewtonImpactWidget;
-    return nullptr;
-  }
-
-  FrictionImpactLawWidgetFactory::FrictionImpactLawWidgetFactory(Element* element_, QWidget *parent_) : element(element_), parent(parent_) {
-    name.emplace_back("Planar Coulomb impact");
-    name.emplace_back("Planar Stribeck impact");
-    name.emplace_back("Spatial Coulomb impact");
-    name.emplace_back("Spatial Stribeck impact");
-    xmlName.push_back(MBSIM%"PlanarCoulombImpact");
-    xmlName.push_back(MBSIM%"PlanarStribeckImpact");
-    xmlName.push_back(MBSIM%"SpatialCoulombImpact");
-    xmlName.push_back(MBSIM%"SpatialStribeckImpact");
-  }
-
-  Widget* FrictionImpactLawWidgetFactory::createWidget(int i) {
-    if(i==0)
-      return new PlanarCoulombImpactWidget;
-    if(i==1)
-      return new PlanarStribeckImpactWidget(element,parent);
-    if(i==2)
-      return new SpatialCoulombImpactWidget;
-    if(i==3)
-      return new SpatialStribeckImpactWidget(element,parent);
-    return nullptr;
   }
 
   RegularizedBilateralConstraintFunctionFactory::RegularizedBilateralConstraintFunctionFactory() {

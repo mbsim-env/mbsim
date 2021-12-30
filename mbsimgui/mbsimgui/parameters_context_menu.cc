@@ -23,6 +23,7 @@
 #include "parameter.h"
 #include "embeditemdata.h"
 #include "frame.h"
+#include "utils.h"
 
 namespace MBSimGUI {
 
@@ -53,21 +54,7 @@ namespace MBSimGUI {
       connect(action,&QAction::triggered,this,[=](){ mw->removeParameter(item); });
       addAction(action);
       addSeparator();
-      action = new QAction("Add import parameter", this);
-      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new ImportParameter, item); });
-      addAction(action);
-      action = new QAction("Add matrix parameter", this);
-      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new MatrixParameter, item); });
-      addAction(action);
-      action = new QAction("Add scalar parameter", this);
-      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new ScalarParameter, item); });
-      addAction(action);
-      action = new QAction("Add string parameter", this);
-      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new StringParameter, item); });
-      addAction(action);
-      action = new QAction("Add vector parameter", this);
-      connect(action,&QAction::triggered,this,[=](){ mw->addParameter(new VectorParameter, item); });
-      addAction(action);
+      createContextMenuFor<Parameter>(this, item, "Add '");
     }
   }
 

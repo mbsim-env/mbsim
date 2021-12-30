@@ -37,17 +37,17 @@ namespace MBSimGUI {
   class Element;
 
   class IdentityFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(IdentityFunctionWidget, FunctionWidget, MBSIM%"IdentityFunction", "dummy");
 
     public:
       IdentityFunctionWidget() = default;
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"IdentityFunction"; }
   };
 
   class ConstantFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ConstantFunctionWidget, FunctionWidget, MBSIM%"ConstantFunction", "dummy");
 
     public:
       ConstantFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ConstantFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -55,10 +55,10 @@ namespace MBSimGUI {
   };
 
   class LinearFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearFunctionWidget, FunctionWidget, MBSIM%"LinearFunction", "dummy");
 
     public:
       LinearFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -66,10 +66,10 @@ namespace MBSimGUI {
   };
 
   class QuadraticFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(QuadraticFunctionWidget, FunctionWidget, MBSIM%"QuadraticFunction", "dummy");
 
     public:
       QuadraticFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"QuadraticFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -77,10 +77,10 @@ namespace MBSimGUI {
   };
 
   class PolynomFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(PolynomFunctionWidget, FunctionWidget, MBSIM%"PolynomFunction", "dummy");
 
     public:
       PolynomFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PolynomFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -88,10 +88,10 @@ namespace MBSimGUI {
   };
 
   class SinusoidalFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(SinusoidalFunctionWidget, FunctionWidget, MBSIM%"SinusoidalFunction", "dummy");
 
     public:
       SinusoidalFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SinusoidalFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -99,17 +99,17 @@ namespace MBSimGUI {
   };
 
   class AbsoluteValueFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(AbsoluteValueFunctionWidget, FunctionWidget, MBSIM%"AbsoluteValueFunction", "dummy");
 
     public:
       AbsoluteValueFunctionWidget() = default;
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"AbsoluteValueFunction"; }
   };
 
   class ModuloFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ModuloFunctionWidget, FunctionWidget, MBSIM%"ModuloFunction", "dummy");
 
     public:
       ModuloFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ModuloFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -117,10 +117,10 @@ namespace MBSimGUI {
   };
 
   class BoundedFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(BoundedFunctionWidget, FunctionWidget, MBSIM%"BoundedFunction", "dummy");
 
     public:
       BoundedFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"BoundedFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -128,17 +128,17 @@ namespace MBSimGUI {
   };
 
   class SignumFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(SignumFunctionWidget, FunctionWidget, MBSIM%"SignumFunction", "dummy");
 
     public:
       SignumFunctionWidget() = default;
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SignumFunction"; }
   };
 
   class VectorValuedFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(VectorValuedFunctionWidget, FunctionWidget, MBSIM%"VectorValuedFunction", "dummy");
 
     public:
       VectorValuedFunctionWidget(WidgetFactory *factory, int retDim, VarType retType);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"VectorValuedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -147,10 +147,10 @@ namespace MBSimGUI {
   };
 
   class CompositeFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(CompositeFunctionWidget, FunctionWidget, MBSIM%"CompositeFunction", "dummy");
 
     public:
       CompositeFunctionWidget(WidgetFactory *factoryo1_, WidgetFactory *factoryo2_, WidgetFactory *factoryi_, int defo1=0, int defo2=0, int defi=0);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"CompositeFunction"; }
       int getArg1Size() const override;
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -165,10 +165,10 @@ namespace MBSimGUI {
   };
 
   class LimitedFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LimitedFunctionWidget, FunctionWidget, MBSIM%"LimitedFunction", "dummy");
 
     public:
       LimitedFunctionWidget(WidgetFactory *factory);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LimitedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -177,10 +177,10 @@ namespace MBSimGUI {
   };
 
   class PiecewiseDefinedFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(PiecewiseDefinedFunctionWidget, FunctionWidget, MBSIM%"PiecewiseDefinedFunction", "dummy");
 
     public:
       PiecewiseDefinedFunctionWidget(WidgetFactory *factory);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PiecewiseDefinedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -189,10 +189,10 @@ namespace MBSimGUI {
   };
 
   class SymbolicFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(SymbolicFunctionWidget, FunctionWidget, MBSIM%"SymbolicFunction", "Symbolic function");
 
     public:
       SymbolicFunctionWidget(const QStringList &argName, const std::vector<int> &argDim, const std::vector<VarType> &argType, int retDim, VarType retType);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SymbolicFunction"; }
       int getArg1Size() const override;
       int getArg2Size() const override;
       void setArg1Size(int i) override;
@@ -206,10 +206,10 @@ namespace MBSimGUI {
   };
 
   class TabularFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TabularFunctionWidget, FunctionWidget, MBSIM%"TabularFunction", "dummy");
 
     public:
       TabularFunctionWidget(int retDim, VarType retType);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TabularFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -220,10 +220,10 @@ namespace MBSimGUI {
   };
 
   class TwoDimensionalTabularFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TwoDimensionalTabularFunctionWidget, FunctionWidget, MBSIM%"TwoDimensionalTabularFunction", "Two dimensional tabular function");
 
     public:
       TwoDimensionalTabularFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TwoDimensionalTabularFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -233,10 +233,10 @@ namespace MBSimGUI {
   };
 
   class PiecewisePolynomFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(PiecewisePolynomFunctionWidget, FunctionWidget, MBSIM%"PiecewisePolynomFunction", "dummy");
 
     public:
       PiecewisePolynomFunctionWidget(int retDim, VarType retType);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PiecewisePolynomFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -248,10 +248,10 @@ namespace MBSimGUI {
   };
 
   class TwoDimensionalPiecewisePolynomFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TwoDimensionalPiecewisePolynomFunctionWidget, FunctionWidget, MBSIM%"TwoDimensionalPiecewisePolynomFunction", "dummy");
 
     public:
       TwoDimensionalPiecewisePolynomFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"TwoDimensionalPiecewisePolynomFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -262,10 +262,10 @@ namespace MBSimGUI {
   };
 
   class FourierFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FourierFunctionWidget, FunctionWidget, MBSIM%"FourierFunction", "dummy");
 
     public:
       FourierFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"FourierFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -275,10 +275,10 @@ namespace MBSimGUI {
   };
 
   class BidirectionalFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(BidirectionalFunctionWidget, FunctionWidget, MBSIM%"BidirectionalFunction", "dummy");
 
     public:
       BidirectionalFunctionWidget(Element *element, const QString &argName, int argDim, VarType argType, int retDim, VarType retType, QWidget *parent);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"BidirectionalFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -287,10 +287,10 @@ namespace MBSimGUI {
   };
 
   class ContinuedFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ContinuedFunctionWidget, FunctionWidget, MBSIM%"ContinuedFunction", "dummy");
 
     public:
       ContinuedFunctionWidget(WidgetFactory *factoryf, WidgetFactory *factoryr);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ContinuedFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -299,10 +299,10 @@ namespace MBSimGUI {
   };
 
   class LinearSpringDamperForceWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearSpringDamperForceWidget, FunctionWidget, MBSIM%"LinearSpringDamperForce", "dummy");
 
     public:
       LinearSpringDamperForceWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearSpringDamperForce"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -310,10 +310,10 @@ namespace MBSimGUI {
   };
 
   class NonlinearSpringDamperForceWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(NonlinearSpringDamperForceWidget, FunctionWidget, MBSIM%"NonlinearSpringDamperForce", "dummy");
 
     public:
       NonlinearSpringDamperForceWidget(Element *element, QWidget *parent);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"NonlinearSpringDamperForce"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -321,10 +321,10 @@ namespace MBSimGUI {
   };
 
   class LinearElasticFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearElasticFunctionWidget, FunctionWidget, MBSIM%"LinearElasticFunction", "dummy");
 
     public:
       LinearElasticFunctionWidget(bool varSize=false);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearElasticFunction"; }
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -334,10 +334,10 @@ namespace MBSimGUI {
   };
 
   class LinearRegularizedBilateralConstraintWidget: public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearRegularizedBilateralConstraintWidget, FunctionWidget, MBSIM%"LinearRegularizedBilateralConstraint", "Linear regularized bilateral constraint");
 
     public:
       LinearRegularizedBilateralConstraintWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearRegularizedBilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     private:
@@ -345,10 +345,10 @@ namespace MBSimGUI {
   };
 
   class LinearRegularizedUnilateralConstraintWidget: public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearRegularizedUnilateralConstraintWidget, FunctionWidget, MBSIM%"LinearRegularizedUnilateralConstraint", "Linear regularized unilateral constraint");
 
     public:
       LinearRegularizedUnilateralConstraintWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearRegularizedUnilateralConstraint"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     private:
@@ -356,10 +356,10 @@ namespace MBSimGUI {
   };
 
   class LinearRegularizedCoulombFrictionWidget: public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearRegularizedCoulombFrictionWidget, FunctionWidget, MBSIM%"LinearRegularizedCoulombFriction", "Linear regularized Coulomb friction");
 
     public:
       LinearRegularizedCoulombFrictionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearRegularizedCoulombFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     private:
@@ -367,10 +367,10 @@ namespace MBSimGUI {
   };
 
   class LinearRegularizedStribeckFrictionWidget: public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearRegularizedStribeckFrictionWidget, FunctionWidget, MBSIM%"LinearRegularizedStribeckFriction", "Linear regularized Stribeck friction");
 
     public:
       LinearRegularizedStribeckFrictionWidget(Element *element, QWidget *parent);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LinearRegularizedStribeckFriction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     private:
@@ -378,11 +378,11 @@ namespace MBSimGUI {
   };
 
   class SignalFunctionWidget: public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(SignalFunctionWidget, FunctionWidget, MBSIMCONTROL%"SignalFunction", "dummy");
 
     public:
       SignalFunctionWidget(Element *element, QWidget *parent);
       ~SignalFunctionWidget() override;
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"SignalFunction"; }
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -392,10 +392,10 @@ namespace MBSimGUI {
   };
 
   class PolarContourFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(PolarContourFunctionWidget, FunctionWidget, MBSIM%"PolarContourFunction", "dummy");
 
     public:
       PolarContourFunctionWidget(Element *element, QWidget *parent);
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PolarContourFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -403,10 +403,10 @@ namespace MBSimGUI {
   };
 
   class GravityFunctionWidget : public FunctionWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GravityFunctionWidget, FunctionWidget, MBSIMPHYSICS%"GravityFunction", "dummy");
 
     public:
       GravityFunctionWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMPHYSICS%"GravityFunction"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:

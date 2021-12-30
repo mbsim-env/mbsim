@@ -25,194 +25,171 @@
 namespace MBSimGUI {
 
   class Contour : public Element {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Contour, Element, MBSIM%"Contour", "Contour");
     public:
       Contour();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Contour"; }
-      QString getType() const override { return "Contour"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new ContourPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ContourContextMenu(this); }
   };
 
   class UnknownContour : public Contour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UnknownContour, Contour, MBSIM%"UnknownContour_dummy", "Unknown contour");
     public:
-      QString getType() const override { return "Unknown contour"; }
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
   class RigidContour : public Contour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RigidContour, Contour, MBSIM%"RigidContour", "Rigid contour");
     public:
       PropertyDialog* createPropertyDialog() override { return new RigidContourPropertyDialog(this); }
   };
 
   class Point : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Point, RigidContour, MBSIM%"Point", "Point");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Point"; }
-      QString getType() const override { return "Point"; }
       PropertyDialog* createPropertyDialog() override { return new PointPropertyDialog(this); }
   };
 
   class Line : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Line, RigidContour, MBSIM%"Line", "Line");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Line"; }
-      QString getType() const override { return "Line"; }
       PropertyDialog* createPropertyDialog() override { return new LinePropertyDialog(this); }
   };
 
   class Plane : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Plane, RigidContour, MBSIM%"Plane", "Plane");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Plane"; }
-      QString getType() const override { return "Plane"; }
       PropertyDialog* createPropertyDialog() override { return new PlanePropertyDialog(this); }
   };
 
   class Sphere : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Sphere, RigidContour, MBSIM%"Sphere", "Sphere");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Sphere"; }
-      QString getType() const override { return "Sphere"; }
       PropertyDialog* createPropertyDialog() override { return new SpherePropertyDialog(this); }
   };
 
   class Circle : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Circle, RigidContour, MBSIM%"Circle", "Circle");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Circle"; }
-      QString getType() const override { return "Circle"; }
       PropertyDialog* createPropertyDialog() override { return new CirclePropertyDialog(this); }
   };
 
   class Cuboid : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Cuboid, RigidContour, MBSIM%"Cuboid", "Cuboid");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Cuboid"; }
-      QString getType() const override { return "Cuboid"; }
       PropertyDialog* createPropertyDialog() override { return new CuboidPropertyDialog(this); }
   };
 
   class LineSegment : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LineSegment, RigidContour, MBSIM%"LineSegment", "Line segment");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"LineSegment"; }
-      QString getType() const override { return "Line segment"; }
       PropertyDialog* createPropertyDialog() override { return new LineSegmentPropertyDialog(this); }
   };
 
   class PlanarContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(PlanarContour, RigidContour, MBSIM%"PlanarContour", "Planar contour");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PlanarContour"; }
-      QString getType() const override { return "Planar contour"; }
       PropertyDialog* createPropertyDialog() override { return new PlanarContourPropertyDialog(this); }
   };
 
   class PlanarNurbsContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(PlanarNurbsContour, RigidContour, MBSIM%"PlanarNurbsContour", "Planar nurbs contour");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PlanarNurbsContour"; }
-      QString getType() const override { return "Planar nurbs contour"; }
       PropertyDialog* createPropertyDialog() override { return new PlanarNurbsContourPropertyDialog(this); }
   };
 
   class SpatialContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(SpatialContour, RigidContour, MBSIM%"SpatialContour", "Spatial contour");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SpatialContour"; }
-      QString getType() const override { return "Spatial contour"; }
       PropertyDialog* createPropertyDialog() override { return new SpatialContourPropertyDialog(this); }
   };
 
   class SpatialNurbsContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(SpatialNurbsContour, RigidContour, MBSIM%"SpatialNurbsContour", "Spatial nurbs contour");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"SpatialNurbsContour"; }
-      QString getType() const override { return "Spatial nurbs contour"; }
       PropertyDialog* createPropertyDialog() override { return new SpatialNurbsContourPropertyDialog(this); }
   };
 
   class Disk : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Disk, RigidContour, MBSIM%"Disk", "Disk");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Disk"; }
-      QString getType() const override { return "Disk"; }
       PropertyDialog* createPropertyDialog() override { return new DiskPropertyDialog(this); }
   };
 
   class CylindricalGear : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(CylindricalGear, RigidContour, MBSIM%"CylindricalGear", "Cylindrical gear");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"CylindricalGear"; }
-      QString getType() const override { return "Cylindrical gear"; }
       PropertyDialog* createPropertyDialog() override { return new CylindricalGearPropertyDialog(this); }
   };
 
   class Rack : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Rack, RigidContour, MBSIM%"Rack", "Rack");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Rack"; }
-      QString getType() const override { return "Rack"; }
       PropertyDialog* createPropertyDialog() override { return new RackPropertyDialog(this); }
   };
 
   class BevelGear : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(BevelGear, RigidContour, MBSIM%"BevelGear", "Bevel gear");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"BevelGear"; }
-      QString getType() const override { return "Bevel gear"; }
       PropertyDialog* createPropertyDialog() override { return new BevelGearPropertyDialog(this); }
   };
 
   class PlanarGear : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(PlanarGear, RigidContour, MBSIM%"PlanarGear", "Planar gear");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"PlanarGear"; }
-      QString getType() const override { return "Planar gear"; }
       PropertyDialog* createPropertyDialog() override { return new PlanarGearPropertyDialog(this); }
   };
 
   class FlexiblePlanarNurbsContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FlexiblePlanarNurbsContour, RigidContour, MBSIMFLEX%"FlexiblePlanarNurbsContour", "Flexible planar nurbs contour");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexiblePlanarNurbsContour"; }
-      QString getType() const override { return "Flexible planar nurbs contour"; }
       PropertyDialog* createPropertyDialog() override { return new FlexiblePlanarNurbsContourPropertyDialog(this); }
   };
 
   class FlexiblePlanarFfrNurbsContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FlexiblePlanarFfrNurbsContour, RigidContour, MBSIMFLEX%"FlexiblePlanarFfrNurbsContour", "Flexible planar ffr nurbs contour");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexiblePlanarFfrNurbsContour"; }
-      QString getType() const override { return "Flexible planar ffr nurbs contour"; }
       PropertyDialog* createPropertyDialog() override { return new FlexiblePlanarNurbsContourPropertyDialog(this); }
   };
 
   class FlexibleSpatialNurbsContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FlexibleSpatialNurbsContour, RigidContour, MBSIMFLEX%"FlexibleSpatialNurbsContour", "Flexible spatial nurbs contour");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexibleSpatialNurbsContour"; }
-      QString getType() const override { return "Flexible spatial nurbs contour"; }
       PropertyDialog* createPropertyDialog() override { return new FlexibleSpatialNurbsContourPropertyDialog(this); }
   };
 
   class FlexibleSpatialFfrNurbsContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FlexibleSpatialFfrNurbsContour, RigidContour, MBSIMFLEX%"FlexibleSpatialFfrNurbsContour", "Flexible spatial ffr nurbs contour");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexibleSpatialFfrNurbsContour"; }
-      QString getType() const override { return "Flexible spatial ffr nurbs contour"; }
       PropertyDialog* createPropertyDialog() override { return new FlexibleSpatialNurbsContourPropertyDialog(this); }
   };
 
   class FclContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FclContour, RigidContour, MBSIMFLEX%"FclContour", "Flexible spatial ffr nurbs contour");
   };
 
   class FclBox : public FclContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FclBox, FclContour, MBSIMFCL%"FclBox", "Fcl box");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFCL%"FclBox"; }
-      QString getType() const override { return "Fcl box"; }
       PropertyDialog* createPropertyDialog() override { return new FclBoxPropertyDialog(this); }
   };
 
   class FclSphere : public FclContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FclSphere, FclContour, MBSIMFCL%"FclSphere", "Fcl sphere");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFCL%"FclSphere"; }
-      QString getType() const override { return "Fcl sphere"; }
       PropertyDialog* createPropertyDialog() override { return new FclSpherePropertyDialog(this); }
   };
 
   class FclPlane : public FclContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FclPlane, FclContour, MBSIMFCL%"FclPlane", "Fcl plane");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFCL%"FclPlane"; }
-      QString getType() const override { return "Fcl plane"; }
       PropertyDialog* createPropertyDialog() override { return new FclPlanePropertyDialog(this); }
   };
 
   class FclMesh : public FclContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FclMesh, FclContour, MBSIMFCL%"FclMesh", "Fcl mesh");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFCL%"FclMesh"; }
-      QString getType() const override { return "Fcl mesh"; }
       PropertyDialog* createPropertyDialog() override { return new FclMeshPropertyDialog(this); }
   };
 

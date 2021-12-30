@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "integrator.h"
+#include "objectfactory.h"
 #include <xercesc/dom/DOMDocument.hpp>
 
 using namespace std;
@@ -27,9 +28,33 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  MBSIMGUI_REGOBJECTFACTORY(DOPRI5Integrator);
+  MBSIMGUI_REGOBJECTFACTORY(DOP853Integrator);
+  MBSIMGUI_REGOBJECTFACTORY(ODEXIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(RADAU5Integrator);
+  MBSIMGUI_REGOBJECTFACTORY(RADAUIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(RODASIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(SEULEXIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(PHEM56Integrator);
+  MBSIMGUI_REGOBJECTFACTORY(LSODEIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(LSODAIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(LSODIIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(DASPKIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(TimeSteppingIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(ThetaTimeSteppingIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(TimeSteppingSSCIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(HETS2Integrator);
+  MBSIMGUI_REGOBJECTFACTORY(ExplicitEulerIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(ImplicitEulerIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(RKSuiteIntegrator);
+  MBSIMGUI_REGOBJECTFACTORY(BoostOdeintDOS_RKDOPRI5);
+  MBSIMGUI_REGOBJECTFACTORY(BoostOdeintDOS_BulirschStoer);
+  MBSIMGUI_REGOBJECTFACTORY(BoostOdeintDOS_Rosenbrock4);
+  MBSIMGUI_REGOBJECTFACTORY(QuasiStaticIntegrator);
+
   DOMElement* Integrator::createXMLElement(DOMNode *parent) {
     DOMElement *element = Solver::createXMLElement(parent);
-    DOMDocument *doc=element->getOwnerDocument();
+    xercesc::DOMDocument *doc=element->getOwnerDocument();
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"startTime" );
     E(ele1)->setAttribute("unit", "s");
     DOMText *text = doc->createTextNode(X()%"0");

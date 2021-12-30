@@ -25,77 +25,71 @@
 namespace MBSimGUI {
 
   class Constraint : public Element {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Constraint, Element, MBSIM%"Constraint", "Constraint");
     public:
       Constraint();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Constraint"; }
       QMenu* createContextMenu() override { return new ConstraintContextMenu(this); }
   };
 
   class UnknownConstraint : public Constraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UnknownConstraint, Constraint, MBSIM%"UnknownConstraint_dummy", "Unknown constraint");
     public:
-      QString getType() const override { return "Unknown constraint"; }
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
   class MechanicalConstraint : public Constraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(MechanicalConstraint, Constraint, MBSIM%"MechanicalConstraint", "Mechanical constraint");
   };
 
   class GeneralizedConstraint : public MechanicalConstraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedConstraint, MechanicalConstraint, MBSIM%"GeneralizedConstraint", "Generalized constraint");
   };
 
   class GeneralizedGearConstraint : public GeneralizedConstraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedGearConstraint, GeneralizedConstraint, MBSIM%"GeneralizedGearConstraint", "Generalized gear constraint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedGearConstraint"; }
-      QString getType() const override { return "Generalized gear constraint"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedGearConstraintPropertyDialog(this); }
   };
 
   class GeneralizedDualConstraint : public GeneralizedConstraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedDualConstraint, GeneralizedConstraint, MBSIM%"GeneralizedDualConstraint", "Generalized dual constraint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedDualConstraint"; }
-      QString getType() const override { return "Generalized dual constraint"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedDualConstraintPropertyDialog(this); }
   };
 
   class GeneralizedPositionConstraint : public GeneralizedDualConstraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedPositionConstraint, GeneralizedDualConstraint, MBSIM%"GeneralizedPositionConstraint", "Generalized position constraint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedPositionConstraint"; }
-      QString getType() const override { return "Generalized position constraint"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedPositionConstraintPropertyDialog(this); }
   };
 
   class GeneralizedVelocityConstraint : public GeneralizedDualConstraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedVelocityConstraint, GeneralizedDualConstraint, MBSIM%"GeneralizedVelocityConstraint", "Generalized velocity constraint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedVelocityConstraint"; }
-      QString getType() const override { return "Generalized velocity constraint"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedVelocityConstraintPropertyDialog(this); }
   };
 
   class GeneralizedAccelerationConstraint : public GeneralizedDualConstraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedAccelerationConstraint, GeneralizedDualConstraint, MBSIM%"GeneralizedAccelerationConstraint", "Generalized acceleration constraint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedAccelerationConstraint"; }
-      QString getType() const override { return "Generalized acceleration constraint"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedAccelerationConstraintPropertyDialog(this); }
   };
 
   class JointConstraint : public MechanicalConstraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(JointConstraint, MechanicalConstraint, MBSIM%"JointConstraint", "Joint constraint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"JointConstraint"; }
-      QString getType() const override { return "Joint constraint"; }
       PropertyDialog* createPropertyDialog() override { return new JointConstraintPropertyDialog(this); }
   };
 
   class GeneralizedConnectionConstraint : public GeneralizedDualConstraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedConnectionConstraint, GeneralizedDualConstraint, MBSIM%"GeneralizedConnectionConstraint", "Generalized connection constraint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedConnectionConstraint"; }
-      QString getType() const override { return "Generalized connection constraint"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedConnectionConstraintPropertyDialog(this); }
   };
 
   class InverseKinematicsConstraint : public Constraint {
+    MBSIMGUI_OBJECTFACTORY_CLASS(InverseKinematicsConstraint, Constraint, MBSIM%"InverseKinematicsConstraint", "Inverse kinematics constraint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"InverseKinematicsConstraint"; }
-      QString getType() const override { return "Inverse kinematics constraint"; }
       PropertyDialog* createPropertyDialog() override { return new InverseKinematicsConstraintPropertyDialog(this); }
   };
 

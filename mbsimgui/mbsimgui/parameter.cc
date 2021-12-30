@@ -32,6 +32,12 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  MBSIMGUI_REGOBJECTFACTORY(StringParameter);
+  MBSIMGUI_REGOBJECTFACTORY(ScalarParameter);
+  MBSIMGUI_REGOBJECTFACTORY(VectorParameter);
+  MBSIMGUI_REGOBJECTFACTORY(MatrixParameter);
+  MBSIMGUI_REGOBJECTFACTORY(ImportParameter);
+
   void ParameterItem::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {
@@ -45,7 +51,7 @@ namespace MBSimGUI {
     vector<Parameter*> param;
     DOMElement *e=element->getFirstElementChild();
     while(e) {
-      Parameter *parameter=ObjectFactory::getInstance()->createParameter(e);
+      Parameter *parameter=ObjectFactory::getInstance().create<Parameter>(e);
       parameter->setXMLElement(e);
       parameter->updateValue();
       param.push_back(parameter);

@@ -47,7 +47,6 @@ namespace MBSimGUI {
     name.emplace_back("Invisible body");
     name.emplace_back("Open inventor body");
     name.emplace_back("Sphere");
-    name.emplace_back("Unknown body");
     xmlName.push_back(OPENMBV%"CompoundRigidBody");
     xmlName.push_back(OPENMBV%"Cube");
     xmlName.push_back(OPENMBV%"Cuboid");
@@ -58,7 +57,6 @@ namespace MBSimGUI {
     xmlName.push_back(OPENMBV%"InvisibleBody");
     xmlName.push_back(OPENMBV%"IvBody");
     xmlName.push_back(OPENMBV%"Sphere");
-    xmlName.push_back(OPENMBV%"UnknownWidget");
   }
 
   Widget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
@@ -82,8 +80,6 @@ namespace MBSimGUI {
       return new IvBodyWidget("IvBody"+toQStr(count++),OPENMBV%"IvBody");
     if(i==9)
       return new SphereWidget("Sphere"+toQStr(count++),OPENMBV%"Sphere");
-    if(i==10)
-      return new UnknownWidget;
     return nullptr;
   }
 
@@ -91,11 +87,9 @@ namespace MBSimGUI {
     name.emplace_back("Dynamic indexed face set");
     name.emplace_back("Dynamic indexed line set");
     name.emplace_back("Dynamic point set");
-    name.emplace_back("Unknown body");
     xmlName.push_back(OPENMBV%"DynamicIndexedFaceSet");
     xmlName.push_back(OPENMBV%"DynamicIndexedLineSet");
     xmlName.push_back(OPENMBV%"DynamicPointSet");
-    xmlName.push_back(OPENMBV%"UnknownWidget");
   }
 
   Widget* OMBVFlexibleBodyWidgetFactory::createWidget(int i) {
@@ -105,8 +99,6 @@ namespace MBSimGUI {
       return new DynamicIndexedLineSetWidget("DynamicIndexedLineSet"+toQStr(count++),OPENMBV%"DynamicIndexedLineSet");
     if(i==2)
       return new DynamicPointSetWidget("DynamicPointSet"+toQStr(count++),OPENMBV%"DynamicPointSet");
-    if(i==3)
-      return new UnknownWidget;
     return nullptr;
   }
 

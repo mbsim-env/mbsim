@@ -25,42 +25,36 @@
 namespace MBSimGUI {
 
   class Sensor : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Sensor, Signal, MBSIMCONTROL%"Sensor", "Sensor");
   };
 
   class ObjectSensor : public Sensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ObjectSensor, Sensor, MBSIMCONTROL%"ObjectSensor", "Object sensor");
     public:
       PropertyDialog* createPropertyDialog() override { return new ObjectSensorPropertyDialog(this); }
   };
 
   class GeneralizedPositionSensor : public ObjectSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedPositionSensor"; }
-      QString getType() const override { return "Generalized position sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedPositionSensor, ObjectSensor, MBSIMCONTROL%"GeneralizedPositionSensor", "Generalized position sensor");
   };
 
   class GeneralizedVelocitySensor : public ObjectSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedVelocitySensor"; }
-      QString getType() const override { return "Generalized velocity sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedVelocitySensor, ObjectSensor, MBSIMCONTROL%"GeneralizedVelocitySensor", "Generalized velocity sensor");
   };
 
   class GeneralizedAccelerationSensor : public ObjectSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedAccelerationSensor"; }
-      QString getType() const override { return "Generalized acceleration sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedAccelerationSensor, ObjectSensor, MBSIMCONTROL%"GeneralizedAccelerationSensor", "Generalized acceleration sensor");
   };
 
   class RigidBodyJointForceSensor : public ObjectSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RigidBodyJointForceSensor, ObjectSensor, MBSIMCONTROL%"RigidBodyJointForceSensor", "Rigid body joint force sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"RigidBodyJointForceSensor"; }
-      QString getType() const override { return "Rigid body joint force sensor"; }
       PropertyDialog* createPropertyDialog() override { return new RigidBodyJointForceSensorPropertyDialog(this); }
   };
 
   class RigidBodyJointMomentSensor : public ObjectSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RigidBodyJointMomentSensor, ObjectSensor, MBSIMCONTROL%"RigidBodyJointMomentSensor", "Rigid body joint moment sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"RigidBodyJointMomentSensor"; }
-      QString getType() const override { return "Rigid body joint moment sensor"; }
       PropertyDialog* createPropertyDialog() override { return new RigidBodyJointMomentSensorPropertyDialog(this); }
   };
 
@@ -70,34 +64,26 @@ namespace MBSimGUI {
   };
 
   class GeneralizedRelativePositionSensor : public LinkSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedRelativePositionSensor"; }
-      QString getType() const override { return "Generalized relative position sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedRelativePositionSensor, LinkSensor, MBSIMCONTROL%"GeneralizedRelativePositionSensor", "Generalized relative position sensor");
   };
 
   class GeneralizedRelativeVelocitySensor : public LinkSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedRelativeVelocitySensor"; }
-      QString getType() const override { return "Generalized relative velocity sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedRelativeVelocitySensor, LinkSensor, MBSIMCONTROL%"GeneralizedRelativeVelocitySensor", "Generalized relative velocity sensor");
   };
 
   class GeneralizedForceSensor : public LinkSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedForceSensor"; }
-      QString getType() const override { return "Generalized force sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedForceSensor, LinkSensor, MBSIMCONTROL%"GeneralizedForceSensor", "Generalized force sensor");
   };
 
   class MechanicalLinkForceSensor : public LinkSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(MechanicalLinkForceSensor, LinkSensor, MBSIMCONTROL%"MechanicalLinkForceSensor", "Mechanical link force sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"MechanicalLinkForceSensor"; }
-      QString getType() const override { return "Mechanical link force sensor"; }
       PropertyDialog* createPropertyDialog() override { return new MechanicalLinkForceSensorPropertyDialog(this); }
   };
 
   class MechanicalLinkMomentSensor : public LinkSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(MechanicalLinkMomentSensor, LinkSensor, MBSIMCONTROL%"MechanicalLinkMomentSensor", "Mechanical link moment sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"MechanicalLinkMomentSensor"; }
-      QString getType() const override { return "Mechanical link moment sensor"; }
       PropertyDialog* createPropertyDialog() override { return new MechanicalLinkMomentSensorPropertyDialog(this); }
   };
 
@@ -107,91 +93,71 @@ namespace MBSimGUI {
   };
 
   class MechanicalConstraintForceSensor : public ConstraintSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(MechanicalConstraintForceSensor, ConstraintSensor, MBSIMCONTROL%"MechanicalConstraintForceSensor", "Mechanical constraint force sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"MechanicalConstraintForceSensor"; }
-      QString getType() const override { return "Mechanical constraint force sensor"; }
       PropertyDialog* createPropertyDialog() override { return new MechanicalConstraintForceSensorPropertyDialog(this); }
   };
 
   class MechanicalConstraintMomentSensor : public ConstraintSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(MechanicalConstraintMomentSensor, ConstraintSensor, MBSIMCONTROL%"MechanicalConstraintMomentSensor", "Mechanical constraint moment sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"MechanicalConstraintMomentSensor"; }
-      QString getType() const override { return "Mechanical constraint moment sensor"; }
       PropertyDialog* createPropertyDialog() override { return new MechanicalConstraintMomentSensorPropertyDialog(this); }
   };
 
   class FrameSensor : public Sensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FrameSensor, Sensor, MBSIMCONTROL%"FrameSensor", "Frame sensor");
     public:
       PropertyDialog* createPropertyDialog() override { return new FrameSensorPropertyDialog(this); }
   };
 
   class PositionSensor : public FrameSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"PositionSensor"; }
-      QString getType() const override { return "Position sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(PositionSensor, FrameSensor, MBSIMCONTROL%"PositionSensor", "Position sensor");
   };
 
   class OrientationSensor : public FrameSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"OrientationSensor"; }
-      QString getType() const override { return "Orientation sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(OrientationSensor, FrameSensor, MBSIMCONTROL%"OrientationSensor", "Orientation sensor");
   };
 
   class VelocitySensor : public FrameSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"VelocitySensor"; }
-      QString getType() const override { return "Velocity sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(VelocitySensor, FrameSensor, MBSIMCONTROL%"VelocitySensor", "Velocity sensor");
   };
 
   class AngularVelocitySensor : public FrameSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"AngularVelocitySensor"; }
-      QString getType() const override { return "Angular velocity sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(AngularVelocitySensor, FrameSensor, MBSIMCONTROL%"AngularVelocitySensor", "Angular velocity sensor");
   };
 
   class AccelerationSensor : public FrameSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"AccelerationSensor"; }
-      QString getType() const override { return "Acceleration sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(AccelerationSensor, FrameSensor, MBSIMCONTROL%"AccelerationSensor", "Acceleration sensor");
   };
 
   class AngularAccelerationSensor : public FrameSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"AngularAccelerationSensor"; }
-      QString getType() const override { return "Angular acceleration sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(AngularAccelerationSensor, FrameSensor, MBSIMCONTROL%"AngularAccelerationSensor", "Angular acceleration sensor");
   };
 
   class FunctionSensor : public Sensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FunctionSensor, Sensor, MBSIMCONTROL%"FunctionSensor", "Function sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"FunctionSensor"; }
-      QString getType() const override { return "Function sensor"; }
       PropertyDialog* createPropertyDialog() override { return new FunctionSensorPropertyDialog(this); }
   };
 
   class ContactSensor : public Sensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ContactSensor, Sensor, MBSIMCONTROL%"ContactSensor", "Contact sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"ContactSensor"; }
-      QString getType() const override { return "Contact sensor"; }
       PropertyDialog* createPropertyDialog() override { return new ContactSensorPropertyDialog(this); }
   };
 
   class GeneralizedRelativeContactPositionSensor : public ContactSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedRelativeContactPositionSensor, ContactSensor, MBSIMCONTROL%"GeneralizedRelativeContactPositionSensor", "Generalized relative contact position sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedRelativeContactPositionSensor"; }
-      QString getType() const override { return "Generalized relative contact position sensor"; }
 
   };
 
   class GeneralizedRelativeContactVelocitySensor : public ContactSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedRelativeContactVelocitySensor"; }
-      QString getType() const override { return "Generalized relative contact velocity sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedRelativeContactVelocitySensor, ContactSensor, MBSIMCONTROL%"GeneralizedRelativeContactVelocitySensor", "Generalized relative contact velocity sensor");
   };
 
   class GeneralizedContactForceSensor : public ContactSensor {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"GeneralizedContactForceSensor"; }
-      QString getType() const override { return "Generalized contact force sensor"; }
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedContactForceSensor, ContactSensor, MBSIMCONTROL%"GeneralizedContactForceSensor", "Generalized contact force sensor");
   };
 
 }

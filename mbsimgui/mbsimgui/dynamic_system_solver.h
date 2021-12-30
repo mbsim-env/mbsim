@@ -27,24 +27,13 @@ namespace MBSimGUI {
 
   class Project;
 
-  class Environment : public QObject {
-    public:
-      static Environment *getInstance() { return instance?instance:(instance=new Environment); }
-
-    protected:
-      Environment() = default;
-      ~Environment() override = default;
-      static Environment *instance;
-  };
-
   class DynamicSystemSolver : public Group {
+    MBSIMGUI_OBJECTFACTORY_CLASS(DynamicSystemSolver, Group, MBSIM%"DynamicSystemSolver", "Dynamic system solver");
     protected:
       xercesc::DOMElement *environments;
       Project *project{nullptr};
     public:
       DynamicSystemSolver();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"DynamicSystemSolver"; }
-      QString getType() const override { return "Dynamic system solver"; }
       void setProject(Project* project_) { project = project_; }
       Project* getProject() { return project; }
       xercesc::DOMElement* getXMLEnvironments() { return environments; }

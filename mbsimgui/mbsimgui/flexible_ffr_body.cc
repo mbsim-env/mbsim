@@ -32,6 +32,10 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  MBSIMGUI_REGOBJECTFACTORY(FlexibleFfrBeam);
+  MBSIMGUI_REGOBJECTFACTORY(CalculixBody);
+  MBSIMGUI_REGOBJECTFACTORY(FlexibleFfrBody);
+
   GenericFlexibleFfrBody::GenericFlexibleFfrBody() {
     InternalFrame *K = new InternalFrame("K",MBSIMFLEX%"enableOpenMBVFrameK","plotFeatureFrameK");
     addFrame(K);
@@ -99,7 +103,7 @@ namespace MBSimGUI {
     DOMElement *e=frames->getFirstElementChild();
     Frame *f;
     while(e) {
-      f = Embed<Frame>::create(e,this);
+      f = Embed<NodeFrame>::create(e,this);
       if(f) {
         addFrame(f);
         f->create();

@@ -26,9 +26,8 @@
 namespace MBSimGUI {
 
   class GeneralizedGear : public RigidBodyLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedGear, RigidBodyLink, MBSIM%"GeneralizedGear", "Generalized gear");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"GeneralizedGear"; }
-      QString getType() const override { return "Generalized gear"; }
       PropertyDialog* createPropertyDialog() override { return new GeneralizedGearPropertyDialog(this); }
   };
 

@@ -25,16 +25,14 @@
 namespace MBSimGUI {
 
   class Joint : public FloatingFrameLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Joint, FloatingFrameLink, MBSIM%"Joint", "Joint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Joint"; }
-      QString getType() const override { return "Joint"; }
       PropertyDialog* createPropertyDialog() override { return new JointPropertyDialog(this); }
   };
 
   class ElasticJoint : public FloatingFrameLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ElasticJoint, FloatingFrameLink, MBSIM%"ElasticJoint", "Elastic joint");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"ElasticJoint"; }
-      QString getType() const override { return "Elastic joint"; }
       PropertyDialog* createPropertyDialog() override { return new ElasticJointPropertyDialog(this); }
   };
 

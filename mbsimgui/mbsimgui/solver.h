@@ -35,6 +35,7 @@ namespace MBSimGUI {
   class Project;
 
   class Solver : public EmbedItemData {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Solver, EmbedItemData, MBSIM%"Solver", "Solver");
     protected:
       Project *project{nullptr};
     public:
@@ -44,13 +45,13 @@ namespace MBSimGUI {
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       QString getName() const override { return "Solver"; }
-      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Solver"; }
       PropertyDialog* createPropertyDialog() override { return new SolverPropertyDialog(this); }
       QMenu* createContextMenu() override { return new SolverContextMenu; }
       EmbedItemData* getEmbedItemParent() override;
   };
 
   class UnknownSolver : public Solver {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UnknownSolver, ObjectFactoryBase, MBSIM%"UnknownSolver", "Unknown solver");
     public:
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };

@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include <cassert>
 #include "extended_widgets.h"
 #include "variable_widgets.h"
 #include "dialogs.h"
@@ -98,7 +99,7 @@ namespace MBSimGUI {
   DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele = nullptr;
     if(xmlName!=FQN()) {
-      DOMDocument *doc = parent->getOwnerDocument();
+      xercesc::DOMDocument *doc = parent->getOwnerDocument();
       DOMElement *newele = D(doc)->createElement(xmlName);
       if(isActive()) {
         ele = widget->writeXMLFile(newele);
@@ -141,7 +142,8 @@ namespace MBSimGUI {
   void ChoiceWidget::defineWidget(int index) {
     layout->removeWidget(widget);
     delete widget;
-    widget = (index!=-1)?factory->createWidget(index):new UnknownWidget;
+    assert(index!=-1 && "index==-1 is no longer supported!");
+    widget = (index!=-1)?factory->createWidget(index):new UnknownWidget<Widget>;
     if(layout->direction()==QBoxLayout::TopToBottom)
       widget->setContentsMargins(factory->getMargin(),0,0,0);
     layout->addWidget(widget);
@@ -200,7 +202,7 @@ namespace MBSimGUI {
 
   DOMElement* ChoiceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     if(mode==3) {
-      DOMDocument *doc=parent->getOwnerDocument();
+      xercesc::DOMDocument *doc=parent->getOwnerDocument();
       DOMElement *ele0 = D(doc)->createElement(factory->getXMLName(getIndex()));
       widget->writeXMLFile(ele0);
       parent->insertBefore(ele0,ref);
@@ -373,7 +375,7 @@ namespace MBSimGUI {
         getWidget(i)->writeXMLFile(parent,ref);
     }
     else {
-      DOMDocument *doc=parent->getOwnerDocument();
+      xercesc::DOMDocument *doc=parent->getOwnerDocument();
       for(unsigned int i=0; i<getSize(); i++) {
         DOMElement *ele0 = D(doc)->createElement(factory->getXMLName());
         getWidget(i)->writeXMLFile(ele0);

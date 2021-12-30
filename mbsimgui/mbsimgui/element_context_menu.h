@@ -123,11 +123,6 @@ namespace MBSimGUI {
       ObserversContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };
 
-  class SignalsContextMenu : public QMenu {
-    public:
-      SignalsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
-  };
-
 }
 
 #endif

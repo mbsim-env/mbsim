@@ -28,35 +28,23 @@ namespace MBSimGUI {
   class ExtWidget;
 
   class EnvironmentWidget : public Widget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(EnvironmentWidget, Widget, MBSIM%"Environment", "Environment");
 
     public:
       EnvironmentWidget() = default;
-      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Environment"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr);
   };
 
   class MBSimEnvironmentWidget : public EnvironmentWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(MBSimEnvironmentWidget, EnvironmentWidget, MBSIM%"MBSimEnvironment", "MBSim environment");
 
     public:
       MBSimEnvironmentWidget();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"MBSimEnvironment"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element);
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr);
     private:
       ExtWidget *accelerationOfGravity, *openMBVObject;
-  };
-
-  class EnvironmentWidgetFactory : public WidgetFactory {
-    public:
-      EnvironmentWidgetFactory();
-      QString getName(int i=0) const override { return name[i]; }
-      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
-      Widget* createWidget(int i=0) override;
-      int getSize() const override { return name.size(); }
-    protected:
-      std::vector<QString> name;
-      std::vector<MBXMLUtils::FQN> xmlName;
   };
 
 }

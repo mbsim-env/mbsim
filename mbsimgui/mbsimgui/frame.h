@@ -27,26 +27,19 @@ namespace MBSimGUI {
   class ExtWidget;
 
   class Frame : public Element {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Frame, Element, MBSIM%"Frame", "Frame");
     public:
       Frame();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Frame"; }
-      QString getType() const override { return "Frame"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new FramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new FrameContextMenu(this); }
   };
 
-  class UnknownFrame : public Frame {
-    public:
-      QString getType() const override { return "Unknown frame"; }
-      PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
-  };
-
   class InternalFrame : public Frame {
+    MBSIMGUI_OBJECTFACTORY_CLASS(InternalFrame, Frame, MBSIM%"InternalFrame", "Internal frame");
     public:
       InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const QString &plotFeatureType_="");
       QString getName() const override { return name; }
-      QString getType() const override { return "Internal frame"; }
       PropertyDialog* createPropertyDialog() override { return new InternalFramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new ElementContextMenu(this,nullptr,false,false); }
       void removeXMLElements() override;
@@ -59,30 +52,38 @@ namespace MBSimGUI {
   };
 
   class FixedRelativeFrame : public Frame {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FixedRelativeFrame, Frame, MBSIM%"FixedRelativeFrame", "Fixed relative frame");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"FixedRelativeFrame"; }
-      QString getType() const override { return "Fixed relative frame"; }
       PropertyDialog* createPropertyDialog() override { return new FixedRelativeFramePropertyDialog(this); }
   };
 
-  class NodeFrame : public Frame {
+  class UnknownFixedRelativeFrame : public FixedRelativeFrame {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UnknownFixedRelativeFrame, FixedRelativeFrame, MBSIM%"UnknownFixedRelativeFrame_dummy", "Unknown fixed relative frame");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"NodeFrame"; }
-      QString getType() const override { return "Node frame"; }
+      PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
+  };
+
+  class NodeFrame : public Frame {
+    MBSIMGUI_OBJECTFACTORY_CLASS(NodeFrame, Frame, MBSIMFLEX%"NodeFrame", "Node frame");
+    public:
       PropertyDialog* createPropertyDialog() override { return new NodeFramePropertyDialog(this); }
   };
 
-  class InterfaceNodeFrame : public Frame {
+  class UnknownNodeFrame : public NodeFrame {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UnknownNodeFrame, NodeFrame, MBSIM%"UnknownNodeFrame_dummy", "Unknown node frame");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"InterfaceNodeFrame"; }
-      QString getType() const override { return "Interface node Frame"; }
+      PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
+  };
+
+  class InterfaceNodeFrame : public NodeFrame {
+    MBSIMGUI_OBJECTFACTORY_CLASS(InterfaceNodeFrame, NodeFrame, MBSIMFLEX%"InterfaceNodeFrame", "Interface node Frame");
+    public:
       PropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this); }
   };
 
-  class FfrInterfaceNodeFrame : public Frame {
+  class FfrInterfaceNodeFrame : public NodeFrame {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FfrInterfaceNodeFrame, NodeFrame, MBSIMFLEX%"FfrInterfaceNodeFrame", "Ffr interface node Frame");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FfrInterfaceNodeFrame"; }
-      QString getType() const override { return "Ffr interface node Frame"; }
       PropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this,true); }
   };
 

@@ -36,6 +36,7 @@ namespace MBSimGUI {
   class Observer;
 
   class Element : public EmbedItemData {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Element, EmbedItemData, MBSIM%"Element", "Element");
     protected:
       Element *parent{nullptr};
       std::vector<MBXMLUtils::FQN> plotFeatures;
@@ -43,7 +44,6 @@ namespace MBSimGUI {
       bool enabled{true};
     public:
       Element();
-      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Element"; }
       QString getXMLPath(Element *ref=nullptr, bool rel=false);
       virtual xercesc::DOMElement* getXMLFrames() { return nullptr; }
       virtual xercesc::DOMElement* getXMLContours() { return nullptr; }

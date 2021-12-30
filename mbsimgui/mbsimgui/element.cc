@@ -87,7 +87,7 @@ namespace MBSimGUI {
       else if(dynamic_cast<Observer*>(this))
         type = "Observer";
       else 
-        type = "UnknownElement";
+        type = "<unknown container>";
       QString str = type + "[" + getName() + "]";
       for(auto i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
         if(dynamic_cast<Group*>(*i1))
@@ -123,7 +123,7 @@ namespace MBSimGUI {
       else if(dynamic_cast<Observer*>(this))
         type = "Observer";
       else 
-        type = "UnknownElement";
+        type = "<unknown container>";
       QString str = type + "[" + getName() + "]";
       Element* element = parent;
       while(!dynamic_cast<DynamicSystemSolver*>(element)) {

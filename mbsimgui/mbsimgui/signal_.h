@@ -25,61 +25,54 @@
 namespace MBSimGUI {
 
   class Signal : public Link {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Signal, Link, MBSIMCONTROL%"Signal", "Signal");
   };
 
   class Multiplexer : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Multiplexer, Signal, MBSIMCONTROL%"Multiplexer", "Multiplexer");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"Multiplexer"; }
-      QString getType() const override { return "Multiplexer"; }
       PropertyDialog* createPropertyDialog() override { return new MultiplexerPropertyDialog(this); }
   };
 
   class Demultiplexer : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Demultiplexer, Signal, MBSIMCONTROL%"Demultiplexer", "Demultiplexer");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"Demultiplexer"; }
-      QString getType() const override { return "Demultiplexer"; }
       PropertyDialog* createPropertyDialog() override { return new DemultiplexerPropertyDialog(this); }
   };
 
   class LinearTransferSystem : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearTransferSystem, Signal, MBSIMCONTROL%"LinearTransferSystem", "Linear transfer system");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"LinearTransferSystem"; }
-      QString getType() const override { return "Linear transfer system"; }
       PropertyDialog* createPropertyDialog() override { return new LinearTransferSystemPropertyDialog(this); }
   };
 
   class NonlinearTransferSystem : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(NonlinearTransferSystem, Signal, MBSIMCONTROL%"NonlinearTransferSystem", "Nonlinear transfer system");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"NonlinearTransferSystem"; }
-      QString getType() const override { return "Nonlinear transfer system"; }
       PropertyDialog* createPropertyDialog() override { return new NonlinearTransferSystemPropertyDialog(this); }
   };
 
   class SignalOperation : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(SignalOperation, Signal, MBSIMCONTROL%"SignalOperation", "Signal operation");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"SignalOperation"; }
-      QString getType() const override { return "Signal operation"; }
       PropertyDialog* createPropertyDialog() override { return new SignalOperationPropertyDialog(this); }
   };
 
   class ExternSignalSource : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ExternSignalSource, Signal, MBSIMCONTROL%"ExternSignalSource", "Extern signal source");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"ExternSignalSource"; }
-      QString getType() const override { return "Extern signal source"; }
       PropertyDialog* createPropertyDialog() override { return new ExternSignalSourcePropertyDialog(this); }
   };
 
   class ExternSignalSink : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ExternSignalSink, Signal, MBSIMCONTROL%"ExternSignalSink", "Extern signal sink");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"ExternSignalSink"; }
-      QString getType() const override { return "Extern signal sink"; }
       PropertyDialog* createPropertyDialog() override { return new ExternSignalSinkPropertyDialog(this); }
   };
 
   class Switch : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Switch, Signal, MBSIMCONTROL%"Switch", "Switch");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"Switch"; }
-      QString getType() const override { return "Switch"; }
       PropertyDialog* createPropertyDialog() override { return new SwitchPropertyDialog(this); }
   };
 

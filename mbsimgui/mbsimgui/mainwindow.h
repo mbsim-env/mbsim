@@ -30,6 +30,7 @@
 #include <deque>
 #include <sstream>
 #include <openmbv/mainwindow.h>
+#include "frame.h"
 
 class QAction;
 class QModelIndex;
@@ -196,6 +197,7 @@ namespace MBSimGUI {
       void addLink(Link *link, Element *parent);
       void addConstraint(Constraint *constraint, Element *parent);
       void addObserver(Observer *observer, Element *parent);
+      template<class Base> void add(Base *base, TreeItemData *item);
       void pasteParameter(EmbedItemData *parent, Parameter *param=nullptr);
       void loadParameter(EmbedItemData *parent);
       void loadParameter(EmbedItemData *parent, const std::vector<xercesc::DOMElement*> &elements, FileItemData *parameterFileItem, bool absfilepath=false);
@@ -278,6 +280,17 @@ namespace MBSimGUI {
       void openElementEditor(bool config=true);
 
   };
+
+  template<> inline void MainWindow::add<FixedRelativeFrame>(FixedRelativeFrame *base, TreeItemData *item) { addFrame(base, static_cast<Element*>(item)); }
+  template<> inline void MainWindow::add<Object>(Object *base, TreeItemData *item) { addObject(base, static_cast<Element*>(item)); }
+  template<> inline void MainWindow::add<Link>(Link *base, TreeItemData *item) { addLink(base, static_cast<Element*>(item)); }
+  template<> inline void MainWindow::add<Observer>(Observer *base, TreeItemData *item) { addObserver(base, static_cast<Element*>(item)); }
+  template<> inline void MainWindow::add<Constraint>(Constraint *base, TreeItemData *item) { addConstraint(base, static_cast<Element*>(item)); }
+  template<> inline void MainWindow::add<Group>(Group *base, TreeItemData *item) { addGroup(base, static_cast<Element*>(item)); }
+  template<> inline void MainWindow::add<Contour>(Contour *base, TreeItemData *item) { addContour(base, static_cast<Element*>(item)); }
+  template<> inline void MainWindow::add<NodeFrame>(NodeFrame *base, TreeItemData *item) { addFrame(base, static_cast<Element*>(item)); }
+  template<> inline void MainWindow::add<Solver>(Solver *base, TreeItemData *item) { selectSolver(base); }
+  template<> inline void MainWindow::add<Parameter>(Parameter *base, TreeItemData *item) { addParameter(base, static_cast<EmbedItemData*>(item)); }
 
 }
 

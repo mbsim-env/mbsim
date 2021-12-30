@@ -22,53 +22,63 @@
 #include "dynamic_system_solver.h"
 #include "parameter.h"
 #include "project.h"
+#include "contour.h"
+#include "link_.h"
+#include "constraint.h"
+#include "observer.h"
+#include "solver.h"
 #include "objectfactory.h"
 
 namespace MBSimGUI {
 
   template <>
     DynamicSystemSolver* Embed<DynamicSystemSolver>::create(xercesc::DOMElement *element) {
-      return static_cast<DynamicSystemSolver*>(ObjectFactory::getInstance()->createGroup(element));
+      return new DynamicSystemSolver; // this object is very spezial -> do not use the ObjectFactory
     }
 
   template <>
     Group* Embed<Group>::create(xercesc::DOMElement *element) {
-      return static_cast<Group*>(ObjectFactory::getInstance()->createGroup(element));
+      return ObjectFactory::getInstance().create<Group>(element);
     }
 
   template <>
     Contour* Embed<Contour>::create(xercesc::DOMElement *element) {
-      return static_cast<Contour*>(ObjectFactory::getInstance()->createContour(element));
+      return ObjectFactory::getInstance().create<Contour>(element);
     }
 
   template <>
-    Frame* Embed<Frame>::create(xercesc::DOMElement *element) {
-      return static_cast<Frame*>(ObjectFactory::getInstance()->createFrame(element));
+    FixedRelativeFrame* Embed<FixedRelativeFrame>::create(xercesc::DOMElement *element) {
+      return ObjectFactory::getInstance().create<FixedRelativeFrame>(element);
+    }
+
+  template <>
+    NodeFrame* Embed<NodeFrame>::create(xercesc::DOMElement *element) {
+      return ObjectFactory::getInstance().create<NodeFrame>(element);
     }
 
   template <>
     Object* Embed<Object>::create(xercesc::DOMElement *element) {
-      return static_cast<Object*>(ObjectFactory::getInstance()->createObject(element));
+      return ObjectFactory::getInstance().create<Object>(element);
     }
 
   template <>
     Link* Embed<Link>::create(xercesc::DOMElement *element) {
-      return static_cast<Link*>(ObjectFactory::getInstance()->createLink(element));
+      return ObjectFactory::getInstance().create<Link>(element);
     }
 
   template <>
     Constraint* Embed<Constraint>::create(xercesc::DOMElement *element) {
-      return static_cast<Constraint*>(ObjectFactory::getInstance()->createConstraint(element));
+      return ObjectFactory::getInstance().create<Constraint>(element);
     }
 
   template <>
     Observer* Embed<Observer>::create(xercesc::DOMElement *element) {
-      return static_cast<Observer*>(ObjectFactory::getInstance()->createObserver(element));
+      return ObjectFactory::getInstance().create<Observer>(element);
     }
 
   template <>
     Solver* Embed<Solver>::create(xercesc::DOMElement *element) {
-      return static_cast<Solver*>(ObjectFactory::getInstance()->createSolver(element));
+      return ObjectFactory::getInstance().create<Solver>(element);
     }
 
   template <>

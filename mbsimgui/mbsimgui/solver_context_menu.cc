@@ -22,6 +22,7 @@
 #include "integrator.h"
 #include "analyzer.h"
 #include "mainwindow.h"
+#include "utils.h"
 
 namespace MBSimGUI {
 
@@ -43,82 +44,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->loadSolver(); });
     addAction(action);
     addSeparator();
-    QMenu *analyzers = new QMenu("Select analyzer", this);
-    action = new QAction("Select linear system analyzer", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new LinearSystemAnalyzer); });
-    analyzers->addAction(action);
-    addMenu(analyzers);
-    QMenu *integrators = new QMenu("Select integrator", this);
-    action = new QAction("Select Boost odeint DOS RKDOPRI5", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new BoostOdeintDOS_RKDOPRI5); });
-    integrators->addAction(action);
-    action = new QAction("Select Boost odeint DOS Burlisch Stoer", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new BoostOdeintDOS_BulirschStoer); });
-    integrators->addAction(action);
-    action = new QAction("Select Boost odeint DOS Rosenbrock4", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new BoostOdeintDOS_Rosenbrock4); });
-    integrators->addAction(action);
-    action = new QAction("Select DASPK integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new DASPKIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select DOPRI5 Integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new DOPRI5Integrator); });
-    integrators->addAction(action);
-    action = new QAction("Select DOP853 integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new DOP853Integrator); });
-    integrators->addAction(action);
-    action = new QAction("Select Explicit Euler integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new ExplicitEulerIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select HETS2 integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new HETS2Integrator); });
-    integrators->addAction(action);
-    action = new QAction("Select Implicit Euler integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new ImplicitEulerIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select LSODA integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new LSODAIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select LSODE integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new LSODEIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select LSODI integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new LSODIIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select ODEX integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new ODEXIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select Quasi static integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new QuasiStaticIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select PHEM56 integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new PHEM56Integrator); });
-    integrators->addAction(action);
-    action = new QAction("Select RADAU integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new RADAUIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select RADAU5 integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new RADAU5Integrator); });
-    integrators->addAction(action);
-    action = new QAction("Select RKSuite integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new RKSuiteIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select RODAS integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new RODASIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select SEULEX integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new SEULEXIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select Theta time stepping integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new ThetaTimeSteppingIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select Time stepping integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new TimeSteppingIntegrator); });
-    integrators->addAction(action);
-    action = new QAction("Select Time stepping SSC integrator", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->selectSolver(new TimeSteppingSSCIntegrator); });
-    integrators->addAction(action);
-    addMenu(integrators);
+    createContextMenuFor<Solver>(this, nullptr, "Select '");
   }
 
 }

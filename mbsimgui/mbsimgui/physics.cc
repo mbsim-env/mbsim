@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "physics.h"
+#include "objectfactory.h"
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 
@@ -28,12 +29,18 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  MBSIMGUI_REGOBJECTFACTORY(Aerodynamics);
+  MBSIMGUI_REGOBJECTFACTORY(Buoyancy);
+  MBSIMGUI_REGOBJECTFACTORY(Drag);
+  MBSIMGUI_REGOBJECTFACTORY(Weight);
+  MBSIMGUI_REGOBJECTFACTORY(UniversalGravitation);
+
   DOMElement* UniversalGravitation::processIDAndHref(DOMElement *element) {
     element = Link::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -46,7 +53,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -59,7 +66,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -72,7 +79,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -85,7 +92,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }

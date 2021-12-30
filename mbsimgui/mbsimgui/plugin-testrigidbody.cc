@@ -17,8 +17,14 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
    */
 
+/*
+ This file is just for testing the plugin mechanism!!!
+ It just copies the RigidBody code from MBSimGUI and renames the class to TestRigidBody
+ to test the plugin mechanism of MBSimGUI.
+*/
+
 #include <config.h>
-#include "rigid_body.h"
+#include "body.h"
 #include "objectfactory.h"
 #include "frame.h"
 #include "contour.h"
@@ -30,53 +36,74 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
-namespace MBSimGUI {
+namespace MBSimGUITestPlugin {
 
-  MBSIMGUI_REGOBJECTFACTORY(RigidBody);
+  const MBXMLUtils::NamespaceURI MBSIMGUITESTPLUGIN("http://www.mbsim-env.de/MBSimGUI/TestPlugin");
 
-  RigidBody::RigidBody()  {
-    InternalFrame *C = new InternalFrame("C",MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
+  class TestRigidBody : public MBSimGUI::Body {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TestRigidBody, Body, MBSIMGUITESTPLUGIN%"TestRigidBody", "Plugin test rigid body");
+    public:
+      TestRigidBody();
+      xercesc::DOMElement* getXMLFrames() override { return frames; }
+      xercesc::DOMElement* getXMLContours() override { return contours; }
+      void removeXMLElements() override;
+      xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      void create() override;
+      void clear() override;
+      void setDedicatedFileItem(MBSimGUI::FileItemData *dedicatedFileItem) override;
+      void setDedicatedParameterFileItem(MBSimGUI::FileItemData *dedicatedFileItem) override;
+      MBSimGUI::PropertyDialog* createPropertyDialog() override { return new MBSimGUI::RigidBodyPropertyDialog(this); }
+      QMenu* createFrameContextMenu() override { return new MBSimGUI::FixedRelativeFramesContextMenu(this); }
+    protected:
+      xercesc::DOMElement *frames, *contours;
+  };
+
+  MBSIMGUI_REGOBJECTFACTORY(TestRigidBody);
+
+  TestRigidBody::TestRigidBody()  {
+    MBSimGUI::InternalFrame *C = new MBSimGUI::InternalFrame("C",MBSimGUI::MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
     addFrame(C);
   }
 
-  void RigidBody::removeXMLElements() {
+  void TestRigidBody::removeXMLElements() {
     DOMNode *e = element->getFirstChild();
     while(e) {
       DOMNode *en=e->getNextSibling();
-      if((e != frames) and (e != contours) and (E(e)->getTagName() != MBSIM%"enableOpenMBVFrameC") and (E(e)->getTagName() != MBSIM%"plotFeatureFrameC"))
+      if((e != frames) and (e != contours) and (E(e)->getTagName() != MBSimGUI::MBSIM%"enableOpenMBVFrameC") and (E(e)->getTagName() != MBSimGUI::MBSIM%"plotFeatureFrameC"))
         element->removeChild(e);
       e = en;
     }
   }
 
-  DOMElement* RigidBody::createXMLElement(DOMNode *parent) {
+  DOMElement* TestRigidBody::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
     xercesc::DOMDocument *doc=ele0->getOwnerDocument();
-    frames = D(doc)->createElement( MBSIM%"frames" );
+    frames = D(doc)->createElement( MBSimGUI::MBSIM%"frames" );
     ele0->insertBefore( frames, nullptr );
-    contours = D(doc)->createElement( MBSIM%"contours" );
+    contours = D(doc)->createElement( MBSimGUI::MBSIM%"contours" );
     ele0->insertBefore( contours, nullptr );
-    DOMElement *ele1 = D(doc)->createElement( MBSIM%"enableOpenMBVFrameC" );
+    DOMElement *ele1 = D(doc)->createElement( MBSimGUI::MBSIM%"enableOpenMBVFrameC" );
     ele0->insertBefore( ele1, nullptr );
     return ele0;
   }
 
-  DOMElement* RigidBody::processIDAndHref(DOMElement *element) {
+  DOMElement* TestRigidBody::processIDAndHref(DOMElement *element) {
     element = Body::processIDAndHref(element);
 
-    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"frames")->getFirstElementChild();
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSimGUI::MBSIM%"frames")->getFirstElementChild();
     for(size_t i=1; i<frame.size(); i++) {
       frame[i]->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"contours")->getFirstElementChild();
+    ELE=E(element)->getFirstElementChildNamed(MBSimGUI::MBSIM%"contours")->getFirstElementChild();
     for(auto & i : contour) {
       i->processIDAndHref(ELE);
       ELE=ELE->getNextElementSibling();
     }
 
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
+    ELE=E(element)->getFirstElementChildNamed(MBSimGUI::MBSIM%"openMBVRigidBody");
     if(ELE) {
       ELE = ELE->getFirstElementChild();
       if(ELE) {
@@ -86,7 +113,7 @@ namespace MBSimGUI {
       }
     }
 
-    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
+    ELE=E(element)->getFirstElementChildNamed(MBSimGUI::MBSIM%"enableOpenMBVFrameC");
     if(ELE) {
       xercesc::DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
@@ -96,14 +123,14 @@ namespace MBSimGUI {
     return element;
   }
 
-  void RigidBody::create() {
+  void TestRigidBody::create() {
     Body::create();
 
-    frames = E(element)->getFirstElementChildNamed(MBSIM%"frames");
+    frames = E(element)->getFirstElementChildNamed(MBSimGUI::MBSIM%"frames");
     DOMElement *e=frames->getFirstElementChild();
-    Frame *f;
+    MBSimGUI::Frame *f;
     while(e) {
-      f = Embed<FixedRelativeFrame>::create(e,this);
+      f = MBSimGUI::Embed<MBSimGUI::FixedRelativeFrame>::create(e,this);
       if(f) {
         addFrame(f);
         f->create();
@@ -111,11 +138,11 @@ namespace MBSimGUI {
       e=e->getNextElementSibling();
     }
 
-    contours = E(element)->getFirstElementChildNamed(MBSIM%"contours");
+    contours = E(element)->getFirstElementChildNamed(MBSimGUI::MBSIM%"contours");
     e=contours->getFirstElementChild();
-    Contour *c;
+    MBSimGUI::Contour *c;
     while(e) {
-      c = Embed<Contour>::create(e,this);
+      c = MBSimGUI::Embed<MBSimGUI::Contour>::create(e,this);
       if(c) {
         addContour(c);
         c->create();
@@ -124,7 +151,7 @@ namespace MBSimGUI {
     }
   }
 
-  void RigidBody::clear() {
+  void TestRigidBody::clear() {
     for (auto it = frame.begin()+1; it != frame.end(); ++it)
       delete *it;
     for (auto it = contour.begin(); it != contour.end(); ++it)
@@ -133,12 +160,12 @@ namespace MBSimGUI {
     contour.erase(contour.begin(),contour.end());
   }
 
-  void RigidBody::setDedicatedFileItem(FileItemData* dedicatedFileItem) {
+  void TestRigidBody::setDedicatedFileItem(MBSimGUI::FileItemData* dedicatedFileItem) {
     Body::setDedicatedFileItem(dedicatedFileItem);
     frame[0]->setDedicatedFileItem(dedicatedFileItem);
   }
 
-  void RigidBody::setDedicatedParameterFileItem(FileItemData* dedicatedParameterFileItem) {
+  void TestRigidBody::setDedicatedParameterFileItem(MBSimGUI::FileItemData* dedicatedParameterFileItem) {
     Body::setDedicatedParameterFileItem(dedicatedParameterFileItem);
     frame[0]->setDedicatedParameterFileItem(dedicatedFileItem);
   }

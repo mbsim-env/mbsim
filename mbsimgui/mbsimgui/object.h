@@ -25,15 +25,15 @@
 namespace MBSimGUI {
 
   class Object : public Element {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Object, Element, MBSIM%"Object", "Object");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Object"; }
       PropertyDialog* createPropertyDialog() override { return new ObjectPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ObjectContextMenu(this); }
   };
 
   class UnknownObject : public Object {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UnknownObject, Object, MBSIM%"UnknownObject_dummy", "Unknown object");
     public:
-      QString getType() const override { return "Unknown object"; }
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 

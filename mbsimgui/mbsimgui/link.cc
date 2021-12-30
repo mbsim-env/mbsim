@@ -30,6 +30,8 @@ namespace MBSimGUI {
   
   extern MainWindow *mw;
 
+  MBSIMGUI_REGOBJECTFACTORY(UnknownLink);
+
   Link::Link() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string()));
   }

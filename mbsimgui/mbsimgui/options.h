@@ -50,6 +50,8 @@ namespace MBSimGUI {
       void setShowFilters(bool flag);
       bool getAutoRefresh() const;
       void setAutoRefresh(bool flag);
+      QString getPlugins() const;
+      void setPlugins(const QString &path);
       QString getModulePath() const;
       void setModulePath(const QString &path);
     private:
@@ -60,6 +62,7 @@ namespace MBSimGUI {
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;
       QPushButton *button;
+      QTextEdit *plugins;
       QTextEdit *modulePath;
   };
 

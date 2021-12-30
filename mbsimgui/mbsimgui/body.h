@@ -25,6 +25,7 @@
 namespace MBSimGUI {
 
   class Body : public Object {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Body, Object, MBSIM%"Body", "Body");
     public:
       Body();
       ~Body() override;

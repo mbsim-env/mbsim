@@ -1,6 +1,6 @@
 /*
-    MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2012 Martin Förg
+   MBSimGUI - A fronted for MBSim.
+   Copyright (C) 2021 MBSim-Env
 
   This library is free software; you can redistribute it and/or 
   modify it under the terms of the GNU Lesser General Public 
@@ -15,21 +15,23 @@
   You should have received a copy of the GNU Lesser General Public 
   License along with this library; if not, write to the Free Software 
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-*/
+   */
 
-#ifndef _FRICTION__H_
-#define _FRICTION__H_
+#include <config.h>
+#include "signal_.h"
+#include "objectfactory.h"
 
-#include "link_.h"
+using namespace std;
 
 namespace MBSimGUI {
 
-  class GeneralizedFriction : public DualRigidBodyLink {
-    MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedFriction, DualRigidBodyLink, MBSIM%"GeneralizedFriction", "Generalized friction");
-    public:
-      PropertyDialog* createPropertyDialog() override { return new GeneralizedFrictionPropertyDialog(this); }
-  };
+  MBSIMGUI_REGOBJECTFACTORY(Demultiplexer);
+  MBSIMGUI_REGOBJECTFACTORY(ExternSignalSink);
+  MBSIMGUI_REGOBJECTFACTORY(ExternSignalSource);
+  MBSIMGUI_REGOBJECTFACTORY(LinearTransferSystem);
+  MBSIMGUI_REGOBJECTFACTORY(Multiplexer);
+  MBSIMGUI_REGOBJECTFACTORY(NonlinearTransferSystem);
+  MBSIMGUI_REGOBJECTFACTORY(SignalOperation);
+  MBSIMGUI_REGOBJECTFACTORY(Switch);
 
 }
-
-#endif

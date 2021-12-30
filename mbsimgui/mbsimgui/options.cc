@@ -80,11 +80,15 @@ namespace MBSimGUI {
     autoRefresh = new QCheckBox("Auto refresh");
     layout->addWidget(autoRefresh);
 
+    layout->addWidget(new QLabel("MBSimGUI plugin search dirs (one directory per line; libmbsimgui-plugin-*.[so|dll]):"));
+    plugins = new QTextEdit;
+    layout->addWidget(plugins);
+
     auto mbsimxmlGroup = new QGroupBox("mbsimxml Options");
     layout->addWidget(mbsimxmlGroup);
     auto mbsimxmlGroupLayout = new QVBoxLayout;
     mbsimxmlGroup->setLayout(mbsimxmlGroupLayout);
-    mbsimxmlGroupLayout->addWidget(new QLabel("Module search path (one directory per line):"));
+    mbsimxmlGroupLayout->addWidget(new QLabel("MBSim module search path (one directory per line):"));
     modulePath = new QTextEdit;
     modulePath->setLineWrapMode(QTextEdit::NoWrap);
     mbsimxmlGroupLayout->addWidget(modulePath);
@@ -172,6 +176,14 @@ namespace MBSimGUI {
 
   void OptionsDialog::setAutoRefresh(bool flag) {
     autoRefresh->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
+  QString OptionsDialog::getPlugins() const {
+    return plugins->toPlainText();
+  }
+
+  void OptionsDialog::setPlugins(const QString &path) {
+    plugins->setPlainText(path);
   }
 
   QString OptionsDialog::getModulePath() const {

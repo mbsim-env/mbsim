@@ -44,7 +44,6 @@ namespace MBSimGUI {
       bool insertChildren(TreeItem *item, int index, int count);
       bool removeChildren(int position, int count);
       int childNumber() const;
-      void setItemData(TreeItemData *data_) { itemData = data_; }
       TreeItemData* getItemData() const { return itemData; }
       QVariant getData0() const { return itemData->getName(); }
       QVariant getData1() const { return itemData->getValue(); }

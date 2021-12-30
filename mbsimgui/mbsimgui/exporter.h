@@ -31,9 +31,8 @@ namespace XERCES_CPP_NAMESPACE {
 namespace MBSimGUI {
 
   class LTISystemExporter : public Solver {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LTISystemExporter, Solver, MBSIMCONTROL%"LTISystemExporter", "LTI system exporter");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"LTISystemExporter"; }
-      QString getType() const override { return "LTI system exporter"; }
       PropertyDialog* createPropertyDialog() override { return new LTISystemExporterPropertyDialog(this); }
   };
 

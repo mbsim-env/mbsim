@@ -159,8 +159,6 @@ namespace MBSimGUI {
         statusBar()->showMessage(QString::fromStdString(s));
       }));
 
-    MBSimObjectFactory::initialize();
-
     QMenu *GUIMenu = new QMenu("GUI", menuBar());
     menuBar()->addMenu(GUIMenu);
 
@@ -548,6 +546,7 @@ namespace MBSimGUI {
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
+    menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
 
 #ifdef _WIN32
     QFile file(qgetenv("APPDATA")+"/mbsim-env/mbsimxml.modulepath");
@@ -557,6 +556,8 @@ namespace MBSimGUI {
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     menu.setModulePath(file.readAll());
     file.close();
+
+    auto oldPlugins=menu.getPlugins();
 
     int res = 1;
     if(!justSetOptions)
@@ -570,6 +571,7 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/maxundo",          menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
       settings.setValue("mainwindow/options/autorefresh",      menu.getAutoRefresh());
+      settings.setValue("mainwindow/options/plugins",          menu.getPlugins());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
       file.write(menu.getModulePath().toUtf8());
@@ -588,6 +590,10 @@ namespace MBSimGUI {
       elementViewFilter->setVisible(showFilters);
       parameterViewFilter->setVisible(showFilters);
       autoRefresh = menu.getAutoRefresh();
+
+      if(oldPlugins!=menu.getPlugins())
+        QMessageBox::information(this, "Program restart required!",
+          "The MBSimGUI plugin search path has changed.\nThis needs a restart of MBSimGUI to take effect.");
     }
   }
 
@@ -1931,7 +1937,7 @@ namespace MBSimGUI {
       E(parent->getEmbedXMLElement())->setAttribute("parameterHref",(absfilepath?parentDir.absoluteFilePath(parameterFileItem->getFileInfo().absoluteFilePath()):parentDir.relativeFilePath(parameterFileItem->getFileInfo().absoluteFilePath())).toStdString());
     }
     for(auto & element : elements) {
-      Parameter *parameter=ObjectFactory::getInstance()->createParameter(element);
+      Parameter *parameter=ObjectFactory::getInstance().create<Parameter>(element);
       if(not parameter) {
         QMessageBox::warning(nullptr, "Import", "Cannot import file.");
         return;
@@ -1977,7 +1983,7 @@ namespace MBSimGUI {
       fileItem->setModified(true);
     else
       setProjectChanged(true);
-    Parameter *parameter=ObjectFactory::getInstance()->createParameter(pele);
+    Parameter *parameter=ObjectFactory::getInstance().create<Parameter>(pele);
     parentele->insertBefore(pele,nullptr);
     parameter->setXMLElement(pele);
     parameter->updateValue();
@@ -2081,7 +2087,9 @@ namespace MBSimGUI {
 
   void MainWindow::pasteFrame(Element *parent, Element *element) {
     DOMElement *ele = pasteElement(parent,element);
-    Frame *frame = Embed<Frame>::create(ele,parent);
+    Frame *frame = Embed<NodeFrame>::create(ele,parent);
+    if(typeid(*frame)==typeid(UnknownNodeFrame)) // spezia hack for the two container FixedRelativeFrame and NodeFrame is needed here
+      frame = Embed<FixedRelativeFrame>::create(ele,parent);
     parent->getXMLFrames()->insertBefore(ele, nullptr);
     parent->addFrame(frame);
     frame->create();
@@ -2253,7 +2261,9 @@ namespace MBSimGUI {
   void MainWindow::loadFrame(Element *parent) {
     FileData data = loadElement(parent);
     if(not data.mele) return;
-    Frame *frame = Embed<Frame>::create(data.mele,parent);
+    Frame *frame = Embed<NodeFrame>::create(data.mele,parent);
+    if(typeid(*frame)==typeid(UnknownNodeFrame)) // spezia hack for the two container FixedRelativeFrame and NodeFrame is needed here
+      frame = Embed<FixedRelativeFrame>::create(data.mele,parent);
     if(not frame) {
       QMessageBox::warning(nullptr, "Import", "Cannot import file.");
       return;

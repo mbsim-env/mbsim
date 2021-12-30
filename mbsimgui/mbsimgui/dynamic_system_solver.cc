@@ -36,8 +36,6 @@ namespace MBSimGUI {
   extern bool currentTask;
   extern MainWindow *mw;
 
-  Environment *Environment::instance=nullptr;
-
   DynamicSystemSolver::DynamicSystemSolver() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"dss.svg").string()));
   }

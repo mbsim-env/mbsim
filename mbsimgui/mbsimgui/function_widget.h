@@ -26,6 +26,7 @@
 namespace MBSimGUI {
 
   class FunctionWidget : public Widget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FunctionWidget, Widget, MBSIM%"Function", "Function");
     public:
       enum VarType {
         scalar=0,
@@ -36,7 +37,6 @@ namespace MBSimGUI {
       virtual int getArg2Size() const { return 1; }
       virtual void setArg1Size(int i) { }
       virtual void setArg2Size(int i) { }
-      virtual MBXMLUtils::FQN getXMLType() const { return MBSIM%"Function"; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override { return element; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };

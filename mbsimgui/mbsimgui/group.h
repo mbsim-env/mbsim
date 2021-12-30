@@ -31,6 +31,7 @@ namespace MBSimGUI {
   class Observer;
 
   class Group : public Element {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Group, Element, MBSIM%"Group", "Group");
     protected:
       std::vector<Frame*> frame;
       std::vector<Contour*> contour;
@@ -44,8 +45,6 @@ namespace MBSimGUI {
     public:
       Group();
       ~Group() override;
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Group"; }
-      QString getType() const override { return "Group"; }
       void createXMLConstraints();
       void createXMLObservers();
       xercesc::DOMElement* getXMLFrames() override { return frames; }
@@ -115,8 +114,8 @@ namespace MBSimGUI {
   };
 
   class UnknownGroup : public Group {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UnknownGroup, Group, MBSIM%"UnknownGroup_dummy", "Unknown group");
     public:
-      QString getType() const override { return "Unknown group"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override { return Element::processIDAndHref(element); }
       void create() override { return Element::create(); }
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }

@@ -40,6 +40,8 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  MBSIMGUI_REGOBJECTFACTORY(Group);
+
   Group::Group() : constraints(nullptr), observers(nullptr) {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string()));
     InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI","plotFeatureFrameI");
@@ -274,7 +276,7 @@ namespace MBSimGUI {
     DOMElement *ELE=frames->getFirstElementChild();
     Frame *f;
     while(ELE) {
-      f = Embed<Frame>::create(ELE,this);
+      f = Embed<FixedRelativeFrame>::create(ELE,this);
       if(f) {
         addFrame(f);
         f->create();

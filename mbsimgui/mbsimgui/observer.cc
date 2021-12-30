@@ -32,6 +32,15 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  MBSIMGUI_REGOBJECTFACTORY(ContactObserver);
+  MBSIMGUI_REGOBJECTFACTORY(FrameObserver);
+  MBSIMGUI_REGOBJECTFACTORY(InverseKinematicsConstraintObserver);
+  MBSIMGUI_REGOBJECTFACTORY(MechanicalConstraintObserver);
+  MBSIMGUI_REGOBJECTFACTORY(MechanicalLinkObserver);
+  MBSIMGUI_REGOBJECTFACTORY(RigidBodyObserver);
+  MBSIMGUI_REGOBJECTFACTORY(SignalObserver);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownObserver);
+
   Observer::Observer() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"observer.svg").string()));
   }

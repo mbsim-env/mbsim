@@ -32,6 +32,13 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  MBSIMGUI_REGOBJECTFACTORY(FixedRelativeFrame);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownFixedRelativeFrame);
+  MBSIMGUI_REGOBJECTFACTORY(NodeFrame);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownNodeFrame);
+  MBSIMGUI_REGOBJECTFACTORY(InterfaceNodeFrame);
+  MBSIMGUI_REGOBJECTFACTORY(FfrInterfaceNodeFrame);
+
   Frame::Frame() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string()));
   }

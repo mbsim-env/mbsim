@@ -36,14 +36,13 @@ namespace MBSimGUI {
   class Solver;
 
   class Project : public EmbedItemData {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Project, EmbedItemData, MBSIMXML%"MBSimProject", "MBSim project");
     public:
       Project();
       ~Project() override;
       virtual void removeXMLElements();
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       void create() override;
-      virtual MBXMLUtils::FQN getXMLType() const { return MBSIMXML%"MBSimProject"; }
-      QString getType() const override { return "MBSim project"; }
       ProjectPropertyDialog* createPropertyDialog() override { return new ProjectPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ProjectContextMenu; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;

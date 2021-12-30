@@ -28,26 +28,4 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  UnknownWidget::UnknownWidget() : tagName("http://www.mbsim-env.de/MBSimXML","Type") {
-    auto *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    editor = new ExtWidget("XML Editor",new XMLEditorWidget);
-    layout->addWidget(editor);
-  }
-
-  DOMElement* UnknownWidget::initializeUsingXML(DOMElement *element) {
-    tagName = E(element)->getTagName();
-    editor->initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* UnknownWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMDocument *doc=parent->getOwnerDocument();
-    DOMElement *ele0 = D(doc)->createElement(tagName);
-    parent->insertBefore(ele0,ref);
-    editor->writeXMLFile(ele0,ref);
-    return ele0;
-  }
-
 }

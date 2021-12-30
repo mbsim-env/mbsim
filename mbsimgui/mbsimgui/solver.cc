@@ -34,6 +34,8 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  MBSIMGUI_REGOBJECTFACTORY(UnknownSolver);
+
   Solver::Solver() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"solver.svg").string()));
   }

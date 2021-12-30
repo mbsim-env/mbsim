@@ -25,34 +25,40 @@
 namespace MBSimGUI {
 
   class Link : public Element {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Link, Element, MBSIM%"Link", "Link");
     public:
       Link();
-      MBXMLUtils::FQN getXMLType() const override { return MBSIM%"Link"; }
       QMenu* createContextMenu() override { return new LinkContextMenu(this); }
   };
 
   class UnknownLink : public Link {
+    MBSIMGUI_OBJECTFACTORY_CLASS(UnknownLink, Link, MBSIM%"UnknownLink_dummy", "Unknown link");
     public:
-      QString getType() const override { return "Unknown link"; }
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
   class MechanicalLink : public Link {
+    MBSIMGUI_OBJECTFACTORY_CLASS(MechanicalLink, Link, MBSIM%"MechanicalLink", "Mechanical link");
   };
 
   class FrameLink : public MechanicalLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FrameLink, MechanicalLink, MBSIM%"FrameLink", "Frame link");
   };
 
   class FixedFrameLink : public FrameLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FixedFrameLink, FrameLink, MBSIM%"FixedFrameLink", "Fixed frame link");
   };
 
   class FloatingFrameLink : public FrameLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FloatingFrameLink, FrameLink, MBSIM%"FloatingFrameLink", "Floating frame link");
   };
 
   class RigidBodyLink : public MechanicalLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(RigidBodyLink, MechanicalLink, MBSIM%"RigidBodyLink", "Rigidbody link");
   };
 
   class DualRigidBodyLink : public RigidBodyLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(DualRigidBodyLink, RigidBodyLink, MBSIM%"DualRigidBodyLink", "Dual rigidbody link");
   };
 
 }

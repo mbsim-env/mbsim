@@ -24,18 +24,24 @@
 #include <QModelIndex>
 #include <QIcon>
 #include <vector>
+#include <mbxmlutilshelper/dom.h>
+#include <objectfactory.h>
 
 class QMenu;
 
+namespace MBXMLUtils {
+  class FQN;
+}
+
 namespace MBSimGUI {
 
-  class TreeItemData {
+  class TreeItemData : public ObjectFactoryBase {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TreeItemData, ObjectFactoryBase, MBXMLUtils::FQN("dummy"), "Type");
 
     public:
       virtual ~TreeItemData() { for(auto & i : treeItemData) delete i; }
       virtual QString getName() const { return "Name"; }
       virtual QString getValue() const { return "Value"; }
-      virtual QString getType() const { return "Type"; }
       virtual QString getReference() const { return "Reference"; }
       QIcon getDecoration() const { return icon; }
       virtual bool getEnabled() const { return true; }

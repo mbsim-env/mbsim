@@ -30,6 +30,15 @@ namespace MBSimGUI {
   
   extern MainWindow *mw;
 
+  MBSIMGUI_REGOBJECTFACTORY(GeneralizedAccelerationConstraint);
+  MBSIMGUI_REGOBJECTFACTORY(GeneralizedConnectionConstraint);
+  MBSIMGUI_REGOBJECTFACTORY(GeneralizedGearConstraint);
+  MBSIMGUI_REGOBJECTFACTORY(GeneralizedPositionConstraint);
+  MBSIMGUI_REGOBJECTFACTORY(GeneralizedVelocityConstraint);
+  MBSIMGUI_REGOBJECTFACTORY(InverseKinematicsConstraint);
+  MBSIMGUI_REGOBJECTFACTORY(JointConstraint);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownConstraint);
+
   Constraint::Constraint() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string()));
   }

@@ -25,6 +25,7 @@
 namespace MBSimGUI {
 
   class GenericFlexibleFfrBody : public Body {
+    MBSIMGUI_OBJECTFACTORY_CLASS(GenericFlexibleFfrBody, Body, MBSIMFLEX%"GenericFlexibleFfrBody", "Flexible ffr body");
     public:
       GenericFlexibleFfrBody();
       xercesc::DOMElement* getXMLFrames() override { return frames; }
@@ -42,28 +43,25 @@ namespace MBSimGUI {
   };
 
   class FlexibleFfrBody : public GenericFlexibleFfrBody {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FlexibleFfrBody, GenericFlexibleFfrBody, MBSIMFLEX%"FlexibleFfrBody", "Flexible ffr body");
     friend class FlexibleFfrBodyPropertyDialog;
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexibleFfrBody"; }
-      QString getType() const override { return "Flexible ffr body"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new FlexibleFfrBodyPropertyDialog(this); }
   };
 
   class CalculixBody : public GenericFlexibleFfrBody {
+    MBSIMGUI_OBJECTFACTORY_CLASS(CalculixBody, GenericFlexibleFfrBody, MBSIMFLEX%"CalculixBody", "Calculix body");
     friend class CalculixBodyPropertyDialog;
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"CalculixBody"; }
-      QString getType() const override { return "Calculix body"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new CalculixBodyPropertyDialog(this); }
   };
 
   class FlexibleFfrBeam : public GenericFlexibleFfrBody {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FlexibleFfrBeam, GenericFlexibleFfrBody, MBSIMFLEX%"FlexibleFfrBeam", "Flexible ffr beam");
     friend class FlexibleFfrBeamPropertyDialog;
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FlexibleFfrBeam"; }
-      QString getType() const override { return "Flexible ffr beam"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new FlexibleFfrBeamPropertyDialog(this); }
   };
