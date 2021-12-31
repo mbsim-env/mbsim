@@ -204,7 +204,7 @@ namespace MBSimGUI {
         if(typePathIt->second.get()==typeid(Container))
           break;
       // if the class is the container itself a special handling is applied (see container_is_constructable)
-      if(std::next(typePathIt)==func->getTypePath().end()) {
+      if(next(typePathIt)==func->getTypePath().end()) {
         funcForContainer=func;
         continue;
       }
@@ -219,19 +219,27 @@ namespace MBSimGUI {
         bool createNew=true;
         QAction *createBefore=nullptr;
         for(auto actIt=parentActions.begin(); actIt!=parentActions.end(); ++actIt) {
-          // use exists menu which equals the current menu (to be added)
+          // if actIt is a menu and its text equals the to be created menu then
+          // use the menu of actIt instead of creating a new one
           if((*actIt)->menu() && (*actIt)->text()==typePathIt->first+menuPostfix) {
             menu=(*actIt)->menu();
             createNew=false;
             break;
           }
-          // if the next action exists and its not a menu insert the new menu before this (we add menus before actions) OR
-          // if this menu has a text larger then the new menu insert the new menu before this (we sort menus (and actions))
-          if((std::next(actIt)!=parentActions.end() && (*std::next(actIt))->menu()==nullptr) ||
-             ((*actIt)->text() > typePathIt->first+menuPostfix)) {
+          // if actIt is a menu and its text is larger then the to be created menu then
+          // insert the to be created menu before actIt (we sort menus)
+          if((*actIt)->menu() &&(*actIt)->text() > typePathIt->first+menuPostfix) {
             createBefore=*actIt;
             break;
           }
+          // if actIt is not a menu then
+          // insert the to be created menu before actIt (we add menus before actions)
+          if((*actIt)->menu()==nullptr) {
+            createBefore=*actIt;
+            break;
+          }
+          // if none of the above "if" breaks the loop then
+          // we need to insert the to be created menu at the end (createBefore==nullptr will insert back)
         }
         if(createNew) {
           menu = new QMenu(typePathIt->first+menuPostfix, parent);
@@ -254,7 +262,7 @@ namespace MBSimGUI {
       tempTopMenu->addSeparator();
     }
     // remove all submenus which have only one entry
-    std::function<void(QMenu*)> removeEmptySubMenus=[&removeEmptySubMenus](QMenu *parentMenu) {
+    function<void(QMenu*)> removeEmptySubMenus=[&removeEmptySubMenus](QMenu *parentMenu) {
       for(auto &action : parentMenu->actions()) { // loop over all menus
         QMenu *menu=action->menu();
         if(menu==nullptr) continue; // really loop only over menus (not actions)
