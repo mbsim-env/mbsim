@@ -30,6 +30,7 @@ libmbsimgui_la_SOURCES = \
   dialogs.cc  \
   unknown_widget.cc \
   basic_widgets.cc \
+  widget.cc \
   variable_widgets.cc \
   function_widget.cc \
   function_widgets.cc \

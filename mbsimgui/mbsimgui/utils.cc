@@ -24,6 +24,16 @@
 #include <cmath>
 #include <stdexcept>
 #include <QPainter>
+#include "group.h"
+#include "contour.h"
+#include "frame.h"
+#include "frame.h"
+#include "object.h"
+#include "link_.h"
+#include "constraint.h"
+#include "observer.h"
+#include "solver.h"
+#include "parameter.h"
 
 using namespace std;
 
@@ -178,5 +188,93 @@ namespace MBSimGUI {
     }
     return ret;
   }
+
+  template<class Container>
+  void createContextMenuFor(QMenu *self, TreeItemData *item, const QString &prefix) {
+    QMenu* tempTopMenu=new QMenu(self); // create a temporary parent for everything
+    const static QString menuPostfix("'s");
+    const auto &funcs=ObjectFactory::getInstance().getAllTypesForContainer<Container>();
+    // create a menu action for each class derived from Container
+    const ObjectFactory::Funcs* funcForContainer=nullptr;
+    for(const auto &func : funcs) {
+      // build all submenus
+      // search where to start in the class hierarchy.
+      decltype(func->getTypePath().end()) typePathIt;
+      for(typePathIt=--func->getTypePath().end(); typePathIt!=func->getTypePath().begin(); --typePathIt)
+        if(typePathIt->second.get()==typeid(Container))
+          break;
+      // if the class is the container itself a special handling is applied (see container_is_constructable)
+      if(std::next(typePathIt)==func->getTypePath().end()) {
+        funcForContainer=func;
+        continue;
+      }
+      QMenu *parent = tempTopMenu; // at start the tempTopMenu is the parent submenu
+      // add submenu starting from ++typePathIt (the container itself is not a submenu
+      for(++typePathIt; typePathIt!=func->getTypePath().end(); ++typePathIt) {
+        // skip the last entry, this is the action not a submenu
+        if(next(typePathIt)==func->getTypePath().end()) break;
+        // search already existing menu or add new menu sorted alphabetically
+        QMenu *menu;
+        auto parentActions=parent->actions();
+        bool createNew=true;
+        QAction *createBefore=nullptr;
+        for(auto actIt=parentActions.begin(); actIt!=parentActions.end(); ++actIt) {
+          // use exists menu which equals the current menu (to be added)
+          if((*actIt)->menu() && (*actIt)->text()==typePathIt->first+menuPostfix) {
+            menu=(*actIt)->menu();
+            createNew=false;
+            break;
+          }
+          // if the next action exists and its not a menu insert the new menu before this (we add menus before actions) OR
+          // if this menu has a text larger then the new menu insert the new menu before this (we sort menus (and actions))
+          if((std::next(actIt)!=parentActions.end() && (*std::next(actIt))->menu()==nullptr) ||
+             ((*actIt)->text() > typePathIt->first+menuPostfix)) {
+            createBefore=*actIt;
+            break;
+          }
+        }
+        if(createNew) {
+          menu = new QMenu(typePathIt->first+menuPostfix, parent);
+          parent->insertMenu(createBefore, menu);
+        }
+        // use this menu as new parent
+        parent = menu;
+      }
+      // add the action (for the last entry). This is the current func
+      // the element lists are already sorted by func->getType() -> hence no sorting neede here
+      auto action = new QAction(prefix+func->getType()+"'", parent);
+      QObject::connect(action,&QAction::triggered,[=](){ mw->add<Container>(dynamic_cast<Container*>(func->ctor(nullptr, nullptr)), item); });
+      parent->addAction(action);
+    }
+    // handle the action for the container if it exits (see container_is_constructable) -> add as first entry and add seperator
+    if(funcForContainer) {
+      auto action = new QAction(prefix+funcForContainer->getType()+"'", tempTopMenu);
+      QObject::connect(action,&QAction::triggered,[=](){ mw->add<Container>(dynamic_cast<Container*>(funcForContainer->ctor(nullptr, nullptr)), item); });
+      tempTopMenu->insertAction(tempTopMenu->actions().size()==0 ? nullptr : tempTopMenu->actions()[0], action);
+      tempTopMenu->addSeparator();
+    }
+    // remove all submenus which have only one entry
+    std::function<void(QMenu*)> removeEmptySubMenus=[&removeEmptySubMenus](QMenu *parentMenu) {
+      for(auto &action : parentMenu->actions()) { // loop over all menus
+        QMenu *menu=action->menu();
+        if(menu==nullptr) continue; // really loop only over menus (not actions)
+        if(menu->actions().size()==1 && menu->actions()[0]->menu()!=nullptr) { // menu contains only 1 menu, nothing else
+          for(auto &childAction : menu->actions()[0]->menu()->actions())
+            menu->addAction(childAction);
+          menu->removeAction(menu->actions()[0]);
+        }
+        removeEmptySubMenus(menu);
+      }
+    };
+    removeEmptySubMenus(tempTopMenu);
+    // append all children from the temporary parent to self
+    self->addActions(tempTopMenu->actions());
+  }
+
+  // explizit instantiation
+  #define X(Type) \
+    template void createContextMenuFor<Type>(QMenu *self, TreeItemData *item, const QString &prefix="");
+  MBSIMGUI_TREE_CONTAINERS
+  #undef X
 
 }

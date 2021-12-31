@@ -40,31 +40,6 @@ namespace MBSimGUI {
       ExtWidget *editor;
   };
 
-  template<class ContainerWidget>
-  UnknownWidget<ContainerWidget>::UnknownWidget() : tagName("http://www.mbsim-env.de/MBSimXML","Type") {
-    auto *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    this->setLayout(layout);
-    editor = new ExtWidget("XML Editor",new XMLEditorWidget);
-    layout->addWidget(editor);
-  }
-
-  template<class ContainerWidget>
-  xercesc::DOMElement* UnknownWidget<ContainerWidget>::initializeUsingXML(xercesc::DOMElement *element) {
-    tagName = MBXMLUtils::E(element)->getTagName();
-    editor->initializeUsingXML(element);
-    return element;
-  }
-
-  template<class ContainerWidget>
-  xercesc::DOMElement* UnknownWidget<ContainerWidget>::writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
-    xercesc::DOMElement *ele0 = MBXMLUtils::D(doc)->createElement(tagName);
-    parent->insertBefore(ele0,ref);
-    editor->writeXMLFile(ele0,ref);
-    return ele0;
-  }
-
 }
 
 #endif

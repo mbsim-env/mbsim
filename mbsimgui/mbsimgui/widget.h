@@ -74,59 +74,6 @@ namespace MBSimGUI {
       QWidget *pw;
   };
 
-  template<class Container>
-  WidgetFactoryFor<Container>::WidgetFactoryFor(Element *e_, QWidget *pw_) :e(e_), pw(pw_) {}
-
-  template<class Container>
-  QString WidgetFactoryFor<Container>::getName(int i) const {
-    return ObjectFactory::getInstance().getAllTypesForContainer<Container>()[i]->getType();
-  }
-
-  template<class Container>
-  MBXMLUtils::FQN WidgetFactoryFor<Container>::getXMLName(int i) const {
-    return ObjectFactory::getInstance().getAllTypesForContainer<Container>()[i]->getXMLType();
-  }
-
-  template<class Container>
-  int WidgetFactoryFor<Container>::getDefaultIndex() const {
-    static int defaultIndex=-1;
-    if(defaultIndex==-1) {
-      defaultIndex=0;
-      for(const auto *func : ObjectFactory::getInstance().getAllTypesForContainer<Container>()) {
-        if(func->typeInfo==
-           typeid(typename boost::mpl::at<ObjectFactory::MapContainerToDefaultAndUnknown, Container>::type::first))
-          break;
-        defaultIndex++;
-      }
-    }
-    return defaultIndex;
-  }
-
-  template<class Container>
-  int WidgetFactoryFor<Container>::getFallbackIndex() const {
-    static int fallBackIndex=-1;
-    if(fallBackIndex==-1) {
-      fallBackIndex=0;
-      for(const auto *func : ObjectFactory::getInstance().getAllTypesForContainer<Container>()) {
-        if(func->typeInfo==
-           typeid(typename boost::mpl::at<ObjectFactory::MapContainerToDefaultAndUnknown, Container>::type::second))
-          break;
-        fallBackIndex++;
-      }
-    }
-    return fallBackIndex;
-  }
-
-  template<class Container>
-  Widget* WidgetFactoryFor<Container>::createWidget(int i) {
-    return static_cast<Container*>(ObjectFactory::getInstance().getAllTypesForContainer<Container>()[i]->ctor(e, pw));
-  }
-
-  template<class Container>
-  int WidgetFactoryFor<Container>::getSize() const {
-    return ObjectFactory::getInstance().getAllTypesForContainer<Container>().size();
-  }
-
 }
 
 #endif

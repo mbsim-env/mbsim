@@ -33,19 +33,38 @@
 #include <boost/fusion/mpl.hpp>
 #include <boost/fusion/include/for_each.hpp>
 
+// Some X-Macros to do task for all ...
+// ... tree container types
+#define MBSIMGUI_TREE_CONTAINERS \
+  X(Group) \
+  X(Contour) \
+  X(FixedRelativeFrame) \
+  X(NodeFrame) \
+  X(Object) \
+  X(Link) \
+  X(Constraint) \
+  X(Observer) \
+  X(Solver) \
+  X(Parameter)
+// ... widget container types
+#define MBSIMGUI_WIDGET_CONTAINERS \
+  X(GeneralizedImpactLawWidget) \
+  X(FrictionImpactLawWidget) \
+  X(FrictionForceLawWidget) \
+  X(GeneralizedForceLawWidget) \
+  X(EnvironmentWidget) \
+  X(FunctionWidget) \
+  X(GravityFunctionWidget)
+// ... all container types
+#define MBSIMGUI_ALL_CONTAINERS \
+  MBSIMGUI_TREE_CONTAINERS \
+  MBSIMGUI_WIDGET_CONTAINERS
+
 class QWidget;
 
 namespace MBSimGUI {
 
   class Element;
-  class Contour;
-  class Group;
-  class Object;
-  class Link;
-  class FixedRelativeFrame;
-  class NodeFrame;
-  class Constraint;
-  class Observer;
   class UnknownObject;
   class UnknownConstraint;
   class UnknownContour;
@@ -54,15 +73,8 @@ namespace MBSimGUI {
   class UnknownLink;
   class UnknownObserver;
   class UnknownGroup;
-  class Solver;
   class DOPRI5Integrator;
   class UnknownSolver;
-  class Parameter;
-  class EnvironmentWidget;
-  class GeneralizedForceLawWidget;
-  class FrictionForceLawWidget;
-  class GeneralizedImpactLawWidget;
-  class FrictionImpactLawWidget;
   template<class Container> class UnknownWidget;
   class GeneralizedPositionConstraint;
   class Line;
@@ -74,6 +86,11 @@ namespace MBSimGUI {
   class PlanarCoulombFrictionWidget;
   class BilateralImpactWidget;
   class PlanarCoulombImpactWidget;
+  // class forward declarations
+  #define X(Type) \
+    class Type;
+  MBSIMGUI_ALL_CONTAINERS
+  #undef X
 
   //! Use this macro in every class which is derived from ObjectFactoryBase to define all
   //! static and member functions needed by the object factory.
@@ -168,7 +185,9 @@ namespace MBSimGUI {
         P<GeneralizedForceLawWidget , P<BilateralConstraintWidget    , UnknownWidget<GeneralizedForceLawWidget>>>,
         P<FrictionForceLawWidget    , P<PlanarCoulombFrictionWidget  , UnknownWidget<FrictionForceLawWidget>>>,
         P<GeneralizedImpactLawWidget, P<BilateralImpactWidget        , UnknownWidget<GeneralizedImpactLawWidget>>>,
-        P<FrictionImpactLawWidget   , P<PlanarCoulombImpactWidget    , UnknownWidget<FrictionImpactLawWidget>>>
+        P<FrictionImpactLawWidget   , P<PlanarCoulombImpactWidget    , UnknownWidget<FrictionImpactLawWidget>>>,
+        P<FunctionWidget            , P<void                         , UnknownWidget<FunctionWidget>>>,
+        P<GravityFunctionWidget     , P<void                         , UnknownWidget<GravityFunctionWidget>>>
       >;
 
       // All errors during class registration are catched and added to a global error message using addErrorMsg.
@@ -227,36 +246,6 @@ namespace MBSimGUI {
   //! This macro must be called at global scope to execute the registration at load time.
   #define MBSIMGUI_REGOBJECTFACTORY(T) \
     static MBSimGUI::RegObjectFactory<T> BOOST_PP_CAT(regObjectFactoryVar_, __LINE__);
-
-  template<class Container>
-  Container* ObjectFactory::create(xercesc::DOMElement *element, Element *e, QWidget *pw) const {
-    auto it=mapElementNameToValue.find(MBXMLUtils::E(element)->getTagName());
-    if(it!=mapElementNameToValue.end()) {
-      ObjectFactoryBase *ele=it->second->ctor(e, pw);
-      Container *cont=dynamic_cast<Container*>(ele);
-      if(!cont) {
-        delete ele;
-        throw std::runtime_error(std::string("This XML element is not of type ")+boost::core::demangle(typeid(Container).name())+".");
-      }
-      return cont;
-    }
-    static_assert(boost::mpl::has_key<MapContainerToDefaultAndUnknown, Container>::value,
-      "ObjectFactroy::create called for Container but MapContainerToDefaultAndUnknown has no such key. "
-      "Please add Container to MapContainerToDefaultAndUnknown.");
-    if constexpr (!std::is_same_v<typename boost::mpl::at<MapContainerToDefaultAndUnknown, Container>::type::second, void>)
-      return new typename boost::mpl::at<MapContainerToDefaultAndUnknown, Container>::type::second;
-    throw std::runtime_error(std::string("No class found for XML element {")+
-            MBXMLUtils::E(element)->getTagName().first+"}"+MBXMLUtils::E(element)->getTagName().second+
-            " and no \"unknown\" class exists for the type "+boost::core::demangle(typeid(Container).name()));
-  }
-
-  template<class Container>
-  const std::vector<const ObjectFactory::Funcs*>& ObjectFactory::getAllTypesForContainer() const {
-    static_assert(boost::mpl::has_key<MapContainerToDefaultAndUnknown, Container>::value,
-      "ObjectFactory::getAllTypesForContainer called with Container not part of type MapContainerToDefaultAndUnknown. "
-      "Add Container key to type MapContainerToDefaultAndUnknown.");
-    return boost::fusion::at_key<Container>(allTypesForContainer);
-  }
 
   template<class T>
   void ObjectFactory::registerClass() {

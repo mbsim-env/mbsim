@@ -30,6 +30,9 @@
 #include "link_.h"
 #include "environment_widgets.h"
 #include "kinetics_widgets.h"
+#include "function_widget.h"
+#include "function_widget.h"
+#include "function_widgets.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -56,11 +59,53 @@ namespace MBSimGUI {
     return instance;
   }
 
-  void ObjectFactory::addErrorMsg(const std::string &msg) {
+  template<class Container>
+  Container* ObjectFactory::create(xercesc::DOMElement *element, Element *e, QWidget *pw) const {
+    auto it=mapElementNameToValue.find(MBXMLUtils::E(element)->getTagName());
+    if(it!=mapElementNameToValue.end()) {
+      ObjectFactoryBase *ele=it->second->ctor(e, pw);
+      Container *cont=dynamic_cast<Container*>(ele);
+      if(!cont) {
+        delete ele;
+        throw runtime_error(string("This XML element is not of type ")+boost::core::demangle(typeid(Container).name())+".");
+      }
+      return cont;
+    }
+    static_assert(boost::mpl::has_key<MapContainerToDefaultAndUnknown, Container>::value,
+      "ObjectFactroy::create called for Container but MapContainerToDefaultAndUnknown has no such key. "
+      "Please add Container to MapContainerToDefaultAndUnknown.");
+    if constexpr (!is_same_v<typename boost::mpl::at<MapContainerToDefaultAndUnknown, Container>::type::second, void>)
+      return new typename boost::mpl::at<MapContainerToDefaultAndUnknown, Container>::type::second;
+    throw runtime_error(string("No class found for XML element {")+
+            MBXMLUtils::E(element)->getTagName().first+"}"+MBXMLUtils::E(element)->getTagName().second+
+            " and no \"unknown\" class exists for the type "+boost::core::demangle(typeid(Container).name()));
+  }
+
+  // explizit instantiation
+  #define X(Type) \
+    template Type* ObjectFactory::create<Type>(xercesc::DOMElement *element, Element *e, QWidget *pw) const;
+  MBSIMGUI_TREE_CONTAINERS
+  #undef X
+
+  template<class Container>
+  const vector<const ObjectFactory::Funcs*>& ObjectFactory::getAllTypesForContainer() const {
+    static_assert(boost::mpl::has_key<MapContainerToDefaultAndUnknown, Container>::value,
+      "ObjectFactory::getAllTypesForContainer called with Container not part of type MapContainerToDefaultAndUnknown. "
+      "Add Container key to type MapContainerToDefaultAndUnknown.");
+    return boost::fusion::at_key<Container>(allTypesForContainer);
+  }
+
+  // explizit instantiation
+  #define X(Type) \
+    template const vector<const ObjectFactory::Funcs*>& ObjectFactory::getAllTypesForContainer<Type>() const;
+  MBSIMGUI_ALL_CONTAINERS
+  #undef X
+
+  void ObjectFactory::addErrorMsg(const string &msg) {
     errorMsg+=msg+"\n";
   }
 
-  std::string ObjectFactory::getAndClearErrorMsg() {
+  string ObjectFactory::getAndClearErrorMsg() {
     auto ret=errorMsg;
     errorMsg.clear();
     return ret;
