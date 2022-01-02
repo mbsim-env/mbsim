@@ -160,6 +160,36 @@
                 </ombv:Cube>
             </openMBVRigidBody>
         </RigidBody>
+        <RigidBody name="Box4">
+            <plotFeatureRecursive value="position">True</plotFeatureRecursive>
+            <frameOfReference ref="../Frame[I]" />
+            <frameForKinematics ref="Frame[C]" />
+            <mass>3</mass>
+            <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
+            <timeDependentTranslation>
+              <SymbolicFunction arg1="t">
+                <pv:xmlVector>
+                  <pv:ele>
+                    <![CDATA[
+                      sympy.Piecewise((1, t<2), (sympy.Max(2.5,t), t<4), (3, t<6), (0.5, t>9))
+                    ]]>
+                  </pv:ele>
+                  <pv:ele>0</pv:ele>
+                  <pv:ele>0</pv:ele>
+                </pv:xmlVector>
+              </SymbolicFunction>
+            </timeDependentTranslation>
+            <frames />
+            <contours />
+            <openMBVRigidBody>
+                <ombv:Cube name="Box4">
+                    <ombv:initialTranslation>[0,0,0]</ombv:initialTranslation>
+                    <ombv:initialRotation>[0,0,0]</ombv:initialRotation>
+                    <ombv:scaleFactor>1</ombv:scaleFactor>
+                    <ombv:length>1</ombv:length>
+                </ombv:Cube>
+            </openMBVRigidBody>
+        </RigidBody>
     </objects>
     <links />
     <constraints />

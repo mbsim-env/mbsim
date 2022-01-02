@@ -121,7 +121,7 @@ int main(int argc, char *argv[]) {
       args.erase(i);
       args.erase(i2);
     }
-    set<bfs::path> schemas=MBSim::getMBSimXMLSchemas(searchDirs);
+    set<bfs::path> schemas=MBSim::getMBSimXMLSchemas(searchDirs, !ONLYLISTSCHEMAS);
     if(ONLYLISTSCHEMAS) {
       for(auto &schema: schemas)
         cout<<schema.string()<<endl;

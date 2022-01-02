@@ -69,12 +69,13 @@
                   </xs:attribute>
                   <xs:attribute name="location" type="xs:anyURI" use="required">
                     <xs:annotation><xs:documentation xml:lang="en" xmlns="">
-                      Location of the C++ library file. May be a
+                      Location of the directory which contains the C++ library. May be a
                       <dl>
-                        <dt>absolute path</dt><dd>The file is just used</dd>
-                        <dt>relative path</dt><dd>The file is searched relative to this *.mbsimmodule.xml file</dd>
-                        <dt>start with @MBSIMLIBDIR@</dt><dd>The file is searched from the central MBSim installation library dir</dd>
+                        <dt>absolute path</dt><dd>The directory is just used</dd>
+                        <dt>relative path</dt><dd>The directory is searched relative to this *.mbsimmodule.xml file</dd>
+                        <dt>start with @MBSIMLIBDIR@/</dt><dd>The directory is searched from the central MBSim installation library dir</dd>
                       </dl>
+                      The string @MBSIMLIBSUBDIR@ is replaced with "bin" in Windows and with "lib" on Linux.
                     </xs:documentation></xs:annotation>
                   </xs:attribute>
                   <xs:attribute name="global" type="xs:boolean" use="optional" default="false">
