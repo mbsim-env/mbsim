@@ -51,6 +51,10 @@ namespace MBSimFlexibleBody {
         ombvBody = std::shared_ptr<OpenMBVFlexibleFfrBeam>(new OpenMBVFlexibleFfrBeam(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
       void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes <<= plotNodes_; }
+      void setTension(bool ten_) { ten = ten_; }
+      void setBendingAboutZAxis(bool benz_) { benz = benz_; }
+      void setBendingAboutYAxis(bool beny_) { beny = beny_; }
+      void setTorsion(bool tor_) { tor = tor_; }
 
     private:
       int nN{3};
@@ -63,6 +67,10 @@ namespace MBSimFlexibleBody {
       double rho{7870};
       fmatvec::MatVx3 bc;
       std::shared_ptr<OpenMBVFlexibleFfrBeam> ombvBody;
+      bool ten{false};
+      bool benz{true};
+      bool beny{true};
+      bool tor{false};
   };
 
 }
