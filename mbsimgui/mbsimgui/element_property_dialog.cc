@@ -1465,8 +1465,8 @@ namespace MBSimGUI {
   }
 
   FlexibleFfrBodyPropertyDialog::FlexibleFfrBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
-    addTab("Visualization",4);
-    addTab("Nodal data");
+    addTab("Nodal data", 4);
+    addTab("Visualization",5);
 
     mass = new ExtWidget("Mass",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,massUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"mass");
     addToTab("General",mass);
@@ -1819,6 +1819,7 @@ namespace MBSimGUI {
   }
 
   FlexibleFfrBeamPropertyDialog::FlexibleFfrBeamPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
+    addTab("Load cases",1);
     addTab("Visualization",4);
 
     n = new ExtWidget("Number of nodes",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfNodes");
@@ -1839,6 +1840,18 @@ namespace MBSimGUI {
 
     rho = new ExtWidget("Density",new ChoiceWidget(new ScalarWidgetFactory("7870",vector<QStringList>(2,densityUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"density");
     addToTab("General", rho);
+
+    ten = new ExtWidget("Tension",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"tension");
+    addToTab("Load cases", ten);
+
+    beny = new ExtWidget("Bending about y axis",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"bendingAboutYAxis");
+    addToTab("Load cases", beny);
+
+    benz = new ExtWidget("Bending about z axis",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"bendingAboutZAxis");
+    addToTab("Load cases", benz);
+
+    tor = new ExtWidget("Torsion",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"torsion");
+    addToTab("Load cases", tor);
 
     beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
@@ -1867,6 +1880,10 @@ namespace MBSimGUI {
     I->initializeUsingXML(item->getXMLElement());
     E->initializeUsingXML(item->getXMLElement());
     rho->initializeUsingXML(item->getXMLElement());
+    ten->initializeUsingXML(item->getXMLElement());
+    beny->initializeUsingXML(item->getXMLElement());
+    benz->initializeUsingXML(item->getXMLElement());
+    tor->initializeUsingXML(item->getXMLElement());
     beta->initializeUsingXML(item->getXMLElement());
     bc->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
@@ -1882,6 +1899,10 @@ namespace MBSimGUI {
     I->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     E->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rho->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    ten->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    beny->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    benz->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    tor->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
