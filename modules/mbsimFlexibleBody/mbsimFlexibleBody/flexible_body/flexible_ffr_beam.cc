@@ -39,27 +39,29 @@ namespace MBSimFlexibleBody {
       const int x = 0;
       const int y = 1;
       const int z = 2;
-      int ul=-1, vl=-1, wl=-1, bel=-1, gal=-1, ur=-1, vr=-1, wr=-1, ber=-1, gar=-1;
-      if(tor)
-	throwError("(FlexibleFfrBeam::initz): torsion not yet implemented");
+      int ul=-1, vl=-1, wl=-1, all=-1, bel=-1, gal=-1, ur=-1, vr=-1, wr=-1, alr=-1, ber=-1, gar=-1;
       if(ten)
 	ul = ne++;
       if(benz)
 	vl = ne++;
-      if(beny) {
+      if(beny)
 	wl = ne++;
+      if(tor)
+	all = ne++;
+      if(beny)
 	bel = ne++;
-      }
       if(benz)
 	gal = ne++;
       if(ten)
 	ur = ne++;
       if(benz)
 	vr = ne++;
-      if(beny) {
+      if(beny)
 	wr = ne++;
+      if(tor)
+	alr = ne++;
+      if(beny)
 	ber = ne++;
-      }
       if(benz)
 	gar = ne++;
       int ng = nN*ne/2;
@@ -164,7 +166,6 @@ namespace MBSimFlexibleBody {
 	  PPdme[x][x](ber,gar) = 2*D/15*rho*Iyz;
 	}
       }
-
       if(benz) { // v and ga
 	PPdme[y][y](vl,vl) = 13./35*me;
 	PPdme[y][y](vl,gal) = 11./210*me*D;
@@ -177,7 +178,6 @@ namespace MBSimFlexibleBody {
 	PPdme[y][y](vr,gar) = -11./210*me*D;
 	PPdme[y][y](gar,gar) = me*pow(D,2)/105;
       }
-
       if(beny) { // w and be
 	PPdme[z][z](wl,wl) = 13./35*me;
 	PPdme[z][z](wl,bel) = -11./210*me*D;
@@ -190,41 +190,74 @@ namespace MBSimFlexibleBody {
 	PPdme[z][z](wr,ber) = 11./210*me*D;
 	PPdme[z][z](ber,ber) = me*pow(D,2)/105;
       }
-
-      for(int k=0; k<ne; k++) {
-	for(int j=0; j<k; j++) {
-	  PPdme[x][x](k,j) = PPdme[x][x](j,k);
-	  PPdme[y][y](k,j) = PPdme[y][y](j,k);
-	  PPdme[z][z](k,j) = PPdme[z][z](j,k);
-	}
+      if(tor) {
+	PPdme[y][y](all,all) = rho*Iy*D/3;
+	PPdme[y][y](all,alr) = rho*Iy*D/6;
+	PPdme[y][y](alr,alr) = rho*Iy*D/3;
+	PPdme[z][z](all,all) = rho*Iz*D/3;
+	PPdme[z][z](all,alr) = rho*Iz*D/6;
+	PPdme[z][z](alr,alr) = rho*Iz*D/3;
+	PPdme[y][z](all,all) = D/3*rho*Iyz;
+	PPdme[y][z](all,alr) = D/6*rho*Iyz;
+	PPdme[y][z](alr,all) = D/6*rho*Iyz;
+	PPdme[y][z](alr,alr) = D/3*rho*Iyz;
       }
-
-      if(ten and benz) {
+      if(ten and benz) { // u, v and ga
 	PPdme[x][y](ul,vl) = 7./20*me;
 	PPdme[x][y](ul,gal) = 1./20*me*D;
 	PPdme[x][y](ul,vr) = 3./20*me;
 	PPdme[x][y](ul,gar) = -1./30*me*D;
-
 	PPdme[x][y](ur,vl) = 3./20*me;
 	PPdme[x][y](ur,gal) = 1./30*me*D;
 	PPdme[x][y](ur,vr) = 7./20*me;
 	PPdme[x][y](ur,gar) = -1./20*me*D;
-	PPdme[y][x] = PPdme[x][y].T();
       }
-
-      if(ten and beny) {
+      if(ten and beny) { // u, w and be
 	PPdme[x][z](ul,wl) = 7./20*me;
 	PPdme[x][z](ul,bel) = -1./20*me*D;
 	PPdme[x][z](ul,wr) = 3./20*me;
 	PPdme[x][z](ul,ber) = 1./30*me*D;
-
 	PPdme[x][z](ur,wl) = 3./20*me;
 	PPdme[x][z](ur,bel) = -1./30*me*D;
 	PPdme[x][z](ur,wr) = 7./20*me;
 	PPdme[x][z](ur,ber) = 1./20*me*D;
-	PPdme[z][x] = PPdme[x][z].T();
       }
-
+      if(tor and benz) { // al, v and ga
+	PPdme[x][y](vl,all) = 1./2*rho*Iyz;
+	PPdme[x][y](vl,alr) = 1./2*rho*Iyz;
+	PPdme[x][y](gal,all) = -D/12*rho*Iyz;
+	PPdme[x][y](gal,alr) = D/12*rho*Iyz;
+	PPdme[x][y](vr,all) = -1./2*rho*Iyz;
+	PPdme[x][y](vr,alr) = -1./2*rho*Iyz;
+	PPdme[x][y](gar,all) = D/12*rho*Iyz;
+	PPdme[x][y](gar,alr) = -D/12*rho*Iyz;
+	PPdme[x][z](vl,all) = 1./2*rho*Iz;
+	PPdme[x][z](vl,alr) = 1./2*rho*Iz;
+	PPdme[x][z](gal,all) = -D/12*rho*Iz;
+	PPdme[x][z](gal,alr) = D/12*rho*Iz;
+	PPdme[x][z](vr,all) = -1./2*rho*Iz;
+	PPdme[x][z](vr,alr) = -1./2*rho*Iz;
+	PPdme[x][z](gar,all) = D/12*rho*Iz;
+	PPdme[x][z](gar,alr) = -D/12*rho*Iz;
+      }
+      if(tor and beny) { // al, w and be
+	PPdme[x][y](wl,all) = -1./2*rho*Iy;
+	PPdme[x][y](wl,alr) = -1./2*rho*Iy;
+	PPdme[x][y](bel,all) = -D/12*rho*Iy;
+	PPdme[x][y](bel,alr) = D/12*rho*Iy;
+	PPdme[x][y](wr,all) = 1./2*rho*Iy;
+	PPdme[x][y](wr,alr) = 1./2*rho*Iy;
+	PPdme[x][y](ber,all) = D/12*rho*Iy;
+	PPdme[x][y](ber,alr) = -D/12*rho*Iy;
+	PPdme[x][z](wl,all) = -1./2*rho*Iyz;
+	PPdme[x][z](wl,alr) = -1./2*rho*Iyz;
+	PPdme[x][z](bel,all) = -D/12*rho*Iyz;
+	PPdme[x][z](bel,alr) = D/12*rho*Iyz;
+	PPdme[x][z](wr,all) = 1./2*rho*Iyz;
+	PPdme[x][z](wr,alr) = 1./2*rho*Iyz;
+	PPdme[x][z](ber,all) = D/12*rho*Iyz;
+	PPdme[x][z](ber,alr) = -D/12*rho*Iyz;
+      }
       if(beny and benz) {
 	PPdme[y][z](vl,wl) = 13./35*me;
 	PPdme[y][z](vl,bel) = -11./210*me*D;
@@ -242,8 +275,17 @@ namespace MBSimFlexibleBody {
 	PPdme[y][z](gar,bel) = me*pow(D,2)/140;
 	PPdme[y][z](gar,wr) = -11./210*me*D;
 	PPdme[y][z](gar,ber) = -me*pow(D,2)/105;
-	PPdme[z][y] = PPdme[y][z].T();
       }
+      for(int k=0; k<ne; k++) {
+	for(int j=0; j<k; j++) {
+	  PPdme[x][x](k,j) = PPdme[x][x](j,k);
+	  PPdme[y][y](k,j) = PPdme[y][y](j,k);
+	  PPdme[z][z](k,j) = PPdme[z][z](j,k);
+	}
+      }
+      PPdme[y][x] = PPdme[x][y].T();
+      PPdme[z][x] = PPdme[x][z].T();
+      PPdme[z][y] = PPdme[y][z].T();
 
       if(benz) { // v and ga
 	rPdme[y](x,vl) = rho*Iz;
@@ -256,6 +298,16 @@ namespace MBSimFlexibleBody {
 	rPdme[y](x,wr) = rho*Iyz;
 	rPdme[z](x,wl) = rho*Iy;
 	rPdme[z](x,wr) = -rho*Iy;
+      }
+      if(tor) {
+	rPdme[y](y,all) = D/2*rho*Iyz;
+	rPdme[y](y,alr) = D/2*rho*Iyz;
+	rPdme[y](z,all) = D/2*rho*Iz;
+	rPdme[y](z,alr) = D/2*rho*Iz;
+	rPdme[z](y,all) = -D/2*rho*Iy;
+	rPdme[z](y,alr) = -D/2*rho*Iy;
+	rPdme[z](z,all) = -D/2*rho*Iyz;
+	rPdme[z](z,alr) = -D/2*rho*Iyz;
       }
 
       if(ten) {
@@ -306,6 +358,11 @@ namespace MBSimFlexibleBody {
 	  Kee(wr,gar) = 6./pow(D,2)*E*Iyz;
 	  Kee(ber,gar) = 4./D*E*Iyz;
 	}
+      }
+      if(tor) {
+	Kee(all,all) = E/2/D*(Iy+Iz);
+	Kee(all,alr) = -E/2/D*(Iy+Iz);
+	Kee(alr,alr) = E/2/D*(Iy+Iz);
       }
 
       RangeV I(0,2);
@@ -377,6 +434,7 @@ namespace MBSimFlexibleBody {
 	    if(ten and j==i*ne/2+ul) Phi[i](x,k) = 1;
 	    else if(benz and j==i*ne/2+vl) Phi[i](y,k) = 1;
 	    else if(beny and j==i*ne/2+wl) Phi[i](z,k) = 1;
+	    else if(tor and j==i*ne/2+all) Psi[i](x,k) = 1;
 	    else if(beny and j==i*ne/2+bel) Psi[i](y,k) = 1;
 	    else if(benz and j==i*ne/2+gal) Psi[i](z,k) = 1;
 	    k++;
