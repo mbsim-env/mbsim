@@ -1216,6 +1216,34 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="tension" type="pv:booleanFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+		Berücksichtigung von Zug und Druck.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="bendingAboutYAxis" type="pv:booleanFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+		Berücksichtigung von Biegung um die y-Achse.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="bendingAboutZAxis" type="pv:booleanFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+		Berücksichtigung von Biegung um die z-Achse.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="torsion" type="pv:booleanFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+		Berücksichtigung von Torsion.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">

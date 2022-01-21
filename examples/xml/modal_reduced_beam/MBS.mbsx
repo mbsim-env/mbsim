@@ -24,6 +24,10 @@
           <momentOfInertia>I</momentOfInertia>
           <youngsModulus unit="N/m^2">E</youngsModulus>
           <density unit="kg/m^3">rho</density>
+          <tension>false</tension>
+          <bendingAboutYAxis>true</bendingAboutYAxis>
+          <bendingAboutZAxis>true</bendingAboutZAxis>
+          <torsion>false</torsion>
           <boundaryConditions>
             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <row>
