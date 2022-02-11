@@ -602,7 +602,7 @@ namespace MBSimGUI {
       scrollArea->setWidgetResizable(true);
       plot = new QwtPlot(scrollArea);
       scrollArea->setWidget(plot);
-//      plot->setTitle("Natural mode");
+//      plot->setTitle("Normal mode");
       plot->setAxisTitle(QwtPlot::yLeft,"Normalized Amplitude");
       plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
       plot->setAxisScale(QwtPlot::yRight,-180,180,45);

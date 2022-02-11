@@ -49,8 +49,8 @@ namespace MBSimControl {
       void setInitialInput(const fmatvec::Vec &u0_) { u0 <<= u0_; }
       void setMinimumNaturalFrequency(double fmin_) { fmin = fmin_; }
       void setMaximumNaturalFrequency(double fmax_) { fmax = fmax_; }
-      void setNaturalModeScaleFactor(double modeScaleFactor_) { modeScaleFactor = modeScaleFactor_; }
-      void setNaturalModeScale(const fmatvec::VecV &modeScale_) { modeScale <<= modeScale_; }
+      void setNormalModeScaleFactor(double modeScaleFactor_) { modeScaleFactor = modeScaleFactor_; }
+      void setNormalModeScale(const fmatvec::VecV &modeScale_) { modeScale <<= modeScale_; }
       void setExcitationFrequencies(const fmatvec::VecV &fex_) { fex <<= fex_; }
       void setExcitationAmplitudeFunction(MBSim::Function<fmatvec::VecV(double)> *Amp_) { Amp = Amp_; }
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
@@ -58,7 +58,7 @@ namespace MBSimControl {
       const fmatvec::Vec& getInitialState() const override { return z0; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeNaturalModeShapes, MBSim::tag, (optional (modeNumbers,(fmatvec::VecVI),fmatvec::VecVI()))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeNormalModes, MBSim::tag, (optional (modeNumbers,(fmatvec::VecVI),fmatvec::VecVI()))) {
 	msv = true;
 	modes = modeNumbers;
       }

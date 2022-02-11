@@ -174,6 +174,7 @@ namespace MBSimGUI {
       void updateReferences(Element *element);
       void updateParameterReferences(EmbedItemData *parent);
       void saveReferencedFile(int i);
+      void convertDocument();
     private slots:
       void selectElement(const std::string& ID);
 
