@@ -98,7 +98,7 @@
 
   <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
     <normalModeScaleFactor>1e3</normalModeScaleFactor>
-    <visualizeNormalModeShapes/>
+    <visualizeNormalModes/>
     <visualizeFrequencyResponse/>
     <plotStepSize unit="s">1e-4</plotStepSize>
   </LinearSystemAnalyzer>

@@ -54,9 +54,9 @@
           <ele>1e3</ele>
         </xmlVector>
       </normalModeScale>
-    <visualizeNormalModeShapes>
+    <visualizeNormalModes>
       <modeNumbers>[1:1:4]'</modeNumbers>
-    </visualizeNormalModeShapes>
+    </visualizeNormalModes>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </LinearSystemAnalyzer>
 

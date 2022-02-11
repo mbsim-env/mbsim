@@ -195,7 +195,7 @@ ret = 0;</scalarParameter>
           <ele>10</ele>
         </xmlVector>
       </normalModeScale>
-    <visualizeNormalModeShapes/>
+    <visualizeNormalModes/>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <loops>1</loops>
   </LinearSystemAnalyzer>
