@@ -15,7 +15,7 @@ int main (int argc, char* argv[]) {
   sys->initialize();
 
   LinearSystemAnalyzer analyzer;
-  analyzer.visualizeNaturalModeShapes();
+  analyzer.visualizeNormalModes();
   analyzer.setSystem(sys);
   analyzer.execute();
 
