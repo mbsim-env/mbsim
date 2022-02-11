@@ -82,9 +82,12 @@ namespace MBSimFlexibleBody {
       SqrMatV Keg(ng);
       Ke0.resize(n,NONINIT);
       KrKP.resize(nN,Vec3());
-      Phi.resize(nN,Mat3xV(n));
-      Psi.resize(nN,Mat3xV(n));
-      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(n));
+      vector<Mat3xV> Phig(nN,Mat3xV(ng));
+      vector<Mat3xV> Psig(nN,Mat3xV(ng));
+      Phi.resize(nN,Mat3xV(n,NONINIT));
+      Psi.resize(nN,Mat3xV(n,NONINIT));
+      vector<Matrix<General,Fixed<6>,Var,double>> sigmahelg(nN,Matrix<General,Fixed<6>,Var,double>(ng));
+      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(n,NONINIT));
 
       double D = l/nE;
 
@@ -400,45 +403,138 @@ namespace MBSimFlexibleBody {
       }
       sort(c.begin(), c.end());
 
-      size_t k=0, h=0;
+      size_t h=0;
+      Indices IF;
       for(int i=0; i<ng; i++) {
 	if(h<c.size() and i==c[h])
 	  h++;
-	else {
-	  Pdm.set(k,Pdmg.col(i));
-	  for(int ii=0; ii<3; ii++)
-	    rPdm[ii].set(k,rPdmg[ii].col(i));
-	  size_t l=0, r=0;
-	  for(int j=0; j<ng; j++) {
-	    if(r<c.size() and j==c[r])
-	      r++;
-	    else {
-	      Ke0(k,l) = Keg(i,j);
-	      for(int ii=0; ii<3; ii++) {
-		for(int jj=0; jj<3; jj++)
-		  PPdm[ii][jj](k,l) = PPdmg[ii][jj](i,j);
-	      }
-	      l++;
-	    }
-	  }
-	  k++;
-	}
+	else
+	  IF.add(i);
       }
+      Indices I3{0,1,2};
+      Indices I6{0,1,2,3,4,5};
+      Pdm = Pdmg(I3,IF);
+      for(size_t i=0; i<3; i++) {
+	rPdm[i] = rPdmg[i](I3,IF);
+	for(size_t j=0; j<3; j++)
+	  PPdm[i][j] = PPdmg[i][j](IF,IF);
+      }
+      Ke0 = Keg(IF,IF);
       for(int i=0; i<nN; i++) {
 	KrKP[i](0) = i*D;
-	k=0; h=0;
-	for(int j=0; j<ng; j++) {
-	  if(h<c.size() and j==c[h])
-	    h++;
-	  else {
-	    if(ten and j==i*ne/2+ul) Phi[i](x,k) = 1;
-	    else if(benz and j==i*ne/2+vl) Phi[i](y,k) = 1;
-	    else if(beny and j==i*ne/2+wl) Phi[i](z,k) = 1;
-	    else if(tor and j==i*ne/2+all) Psi[i](x,k) = 1;
-	    else if(beny and j==i*ne/2+bel) Psi[i](y,k) = 1;
-	    else if(benz and j==i*ne/2+gal) Psi[i](z,k) = 1;
-	    k++;
+	if(ten) {
+	  Phig[i](x,i*ne/2+ul) = 1;
+	  if(i>0 and i<nN-1) {
+	    sigmahelg[i](x,(i-1)*ne/2+ul) = -E/D/2;
+	    sigmahelg[i](x,(i+1)*ne/2+ul) = E/D/2;
 	  }
+	  else if(i<nN-1) { // i=0
+	    sigmahelg[i](x,i*ne/2+ul) = -E/D;
+	    sigmahelg[i](x,(i+1)*ne/2+ul) = E/D;
+	  }
+	  else { // i=nN-1
+	    sigmahelg[i](x,(i-1)*ne/2+ul) = -E/D;
+	    sigmahelg[i](x,i*ne/2+ul) = E/D;
+	  }
+	}
+	if(benz) Phig[i](y,i*ne/2+vl) = 1;
+	if(beny) Phig[i](z,i*ne/2+wl) = 1;
+	if(tor) Psig[i](x,i*ne/2+all) = 1;
+	if(beny) Psig[i](y,i*ne/2+bel) = 1;
+	if(benz) Psig[i](z,i*ne/2+gal) = 1;
+	Phi[i] = Phig[i](I3,IF);
+	Psi[i] = Psig[i](I3,IF);
+	sigmahel[i] = sigmahelg[i](I6,IF);
+      }
+
+      c.clear();
+      for(int i=0; i<inodes.size(); i++) {
+	int j1=ne/2;
+	int j2=-1;
+	for(int k=0; k<bc.rows(); k++) {
+	  if(inodes(i)==(int)bc(k,0)) {
+	    j1=bc(k,1);
+	    j2=bc(k,2);
+	  }
+	}
+	for(int j=0; j<ne/2; j++)
+	  if(j<j1 or j>j2) c.push_back(inodes(i)*ne/2+j);
+      }
+      sort(c.begin(), c.end());
+      h=0;
+      Indices IH, IN;
+      for(int i=0; i<IF.size(); i++) {
+	if(h<c.size() and IF[i]==c[h]) {
+	  IH.add(i);
+	  h++;
+	}
+	else
+	  IN.add(i);
+      }
+      if(IH.size()) {
+	Indices IJ;
+	for(int i=0; i<IH.size(); i++)
+	  IJ.add(i);
+	MatV Vs(IF.size(),IH.size(),NONINIT);
+	Vs.set(IN,IJ,-slvLL(Ke0(IN),Ke0(IN,IH)));
+	Vs.set(IH,IJ,MatV(IH.size(),IH.size(),Eye()));
+
+	MatV Vsd(n,Vs.cols()+nmodes.size(),NONINIT);
+	Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
+	Mat Vm(n,nmodes.size(),NONINIT);
+	SqrMat V;
+	Vec w;
+	if(nmodes.size()) {
+	  if(fixedBoundaryNormalModes) {
+	    eigvec(Ke0(IN),SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2])(IN),V,w);
+	    vector<int> imod;
+	    for(int i=0; i<w.size(); i++) {
+	      if(w(i)>pow(2*M_PI*0.1,2))
+		imod.push_back(i);
+	    }
+	    if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	      throwError(string("(FlexibleFfrBeam::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	    for(int i=0; i<nmodes.size(); i++) {
+	      Vsd.set(IN,Vs.cols()+i,V.col(imod[nmodes(i)-1]));
+	      Vsd.set(IH,Vs.cols()+i,Vec(IH.size()));
+	    }
+	  }
+	  else {
+	    eigvec(SymMat(Ke0),SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
+	    vector<int> imod;
+	    for(int i=0; i<w.size(); i++) {
+	      if(w(i)>pow(2*M_PI*0.1,2))
+		imod.push_back(i);
+	    }
+	    if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	      throwError(string("(FlexibleFfrBeam::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	    for(int i=0; i<nmodes.size(); i++)
+	      Vsd.set(Vs.cols()+i,V.col(imod[nmodes(i)-1]));
+	  }
+	}
+
+	eigvec(JTMJ(Ke0,Vsd),SymMat(Vsd.T()*(PPdm[0][0]+PPdm[1][1]+PPdm[2][2])*Vsd),V,w);
+	vector<int> imod;
+	for(int i=0; i<w.size(); i++) {
+	  if(w(i)>pow(2*M_PI*0.1,2))
+	    imod.push_back(i);
+	}
+	MatV Vr(w.size(),imod.size(),NONINIT);
+	for(size_t i=0; i<imod.size(); i++)
+	  Vr.set(i,V.col(imod[i]));
+	Vr <<= Vsd*Vr;
+
+	Pdm <<= Pdm*Vr;
+	for(int i=0; i<3; i++) {
+	   rPdm[i] <<= rPdm[i]*Vr;
+	  for(int j=0; j<3; j++)
+	    PPdm[i][j] <<= Vr.T()*PPdm[i][j]*Vr;
+	}
+	Ke0 <<= JTMJ(Ke0,Vr);
+	for(int i=0; i<nN; i++) {
+	  Phi[i] <<= Phi[i]*Vr;
+	  Psi[i] <<= Psi[i]*Vr;
+	  sigmahel[i] <<= sigmahel[i]*Vr;
 	}
       }
     }
@@ -484,6 +580,16 @@ namespace MBSimFlexibleBody {
 	  bc(i,j)--;
       }
     }
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"interfaceNodeNumbers");
+    if(e) {
+      setInterfaceNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
+      for(int i=0; i<inodes.size(); i++)
+	  inodes(i)--;
+    }
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"normalModeNumbers");
+    if(e) setNormalModeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"fixedBoundaryNormalModes");
+    if(e) setFixedBoundaryNormalModes(MBXMLUtils::E(e)->getText<bool>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       ombvBody = shared_ptr<OpenMBVFlexibleFfrBeam>(new OpenMBVFlexibleFfrBeam);

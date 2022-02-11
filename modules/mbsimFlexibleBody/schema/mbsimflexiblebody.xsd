@@ -1258,6 +1258,27 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="interfaceNodeNumbers" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Interface-Knoten.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="normalModeNumbers" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Eigenmoden, die bei der CMS berücksichtigt werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="fixedBoundaryNormalModes" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Eigenmoden bei fixierten Hauptfreiheitsgraden berechnet werden. Standardmäßig erfolgt die Berechnug bei nicht-fixierten Hauptfreiheitsgraden.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
