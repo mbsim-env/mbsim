@@ -3036,7 +3036,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::convertDocument() {
-    DOMDocument *sdoc = doc;
+    xercesc::DOMDocument *sdoc = doc;
     if(project->getSolver()->getFileItem())
      sdoc = project->getSolver()->getFileItem()->getXMLDocument();
     vector<DOMNodeList*> list;
