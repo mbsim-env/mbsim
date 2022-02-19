@@ -79,7 +79,7 @@ namespace MBSimFlexibleBody {
       Mat3xV Pdmg(ng);
       Pdm.resize(n,NONINIT);
       SymMatV Kee(ne);
-      SqrMatV Keg(ng);
+      SymMatV Keg(ng);
       Ke0.resize(n,NONINIT);
       KrKP.resize(nN,Vec3());
       vector<Mat3xV> Phig(nN,Mat3xV(ng));
@@ -393,7 +393,7 @@ namespace MBSimFlexibleBody {
 	  for(int k=0; k<3; k++)
 	    PPdmg[j][k].add(J,J,PPdme[j][k]);
 	}
-	Keg.add(J,J,Kee);
+	Keg.add(J,Kee);
       }
 
       vector<int> c;
@@ -419,7 +419,7 @@ namespace MBSimFlexibleBody {
 	for(size_t j=0; j<3; j++)
 	  PPdm[i][j] = PPdmg[i][j](IF,IF);
       }
-      Ke0 = Keg(IF,IF);
+      Ke0 = Keg(IF);
       for(int i=0; i<nN; i++) {
 	KrKP[i](0) = i*D;
 	if(ten) {
@@ -500,7 +500,7 @@ namespace MBSimFlexibleBody {
 	    }
 	  }
 	  else {
-	    eigvec(SymMat(Ke0),SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
+	    eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
 	    vector<int> imod;
 	    for(int i=0; i<w.size(); i++) {
 	      if(w(i)>pow(2*M_PI*0.1,2))
@@ -513,7 +513,7 @@ namespace MBSimFlexibleBody {
 	  }
 	}
 
-	eigvec(JTMJ(Ke0,Vsd),SymMat(Vsd.T()*(PPdm[0][0]+PPdm[1][1]+PPdm[2][2])*Vsd),V,w);
+	eigvec(JTMJ(Ke0,Vsd),JTMJ(SymMatV(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),Vsd),V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
