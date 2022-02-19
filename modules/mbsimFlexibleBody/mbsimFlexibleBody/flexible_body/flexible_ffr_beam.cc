@@ -471,6 +471,7 @@ namespace MBSimFlexibleBody {
 	else
 	  IN.add(i);
       }
+      MatV Vsd(n,IH.size()+nmodes.size(),NONINIT);
       if(IH.size()) {
 	Indices IJ;
 	for(int i=0; i<IH.size(); i++)
@@ -478,41 +479,41 @@ namespace MBSimFlexibleBody {
 	MatV Vs(IF.size(),IH.size(),NONINIT);
 	Vs.set(IN,IJ,-slvLL(Ke0(IN),Ke0(IN,IH)));
 	Vs.set(IH,IJ,MatV(IH.size(),IH.size(),Eye()));
-
-	MatV Vsd(n,Vs.cols()+nmodes.size(),NONINIT);
 	Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
-	Mat Vm(n,nmodes.size(),NONINIT);
-	SqrMat V;
-	Vec w;
-	if(nmodes.size()) {
-	  if(fixedBoundaryNormalModes) {
-	    eigvec(Ke0(IN),SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2])(IN),V,w);
-	    vector<int> imod;
-	    for(int i=0; i<w.size(); i++) {
-	      if(w(i)>pow(2*M_PI*0.1,2))
-		imod.push_back(i);
-	    }
-	    if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	      throwError(string("(FlexibleFfrBeam::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-	    for(int i=0; i<nmodes.size(); i++) {
-	      Vsd.set(IN,Vs.cols()+i,V.col(imod[nmodes(i)-1]));
-	      Vsd.set(IH,Vs.cols()+i,Vec(IH.size()));
-	    }
+      }
+
+      SqrMat V;
+      Vec w;
+      if(nmodes.size()) {
+	if(fixedBoundaryNormalModes) {
+	  eigvec(Ke0(IN),SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2])(IN),V,w);
+	  vector<int> imod;
+	  for(int i=0; i<w.size(); i++) {
+	    if(w(i)>pow(2*M_PI*0.1,2))
+	      imod.push_back(i);
 	  }
-	  else {
-	    eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
-	    vector<int> imod;
-	    for(int i=0; i<w.size(); i++) {
-	      if(w(i)>pow(2*M_PI*0.1,2))
-		imod.push_back(i);
-	    }
-	    if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	      throwError(string("(FlexibleFfrBeam::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-	    for(int i=0; i<nmodes.size(); i++)
-	      Vsd.set(Vs.cols()+i,V.col(imod[nmodes(i)-1]));
+	  if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	    throwError(string("(FlexibleFfrBeam::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	  for(int i=0; i<nmodes.size(); i++) {
+	    Vsd.set(IN,IH.size()+i,V.col(imod[nmodes(i)-1]));
+	    Vsd.set(IH,IH.size()+i,Vec(IH.size()));
 	  }
 	}
+	else {
+	  eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
+	  vector<int> imod;
+	  for(int i=0; i<w.size(); i++) {
+	    if(w(i)>pow(2*M_PI*0.1,2))
+	      imod.push_back(i);
+	  }
+	  if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	    throwError(string("(FlexibleFfrBeam::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	  for(int i=0; i<nmodes.size(); i++)
+	    Vsd.set(IH.size()+i,V.col(imod[nmodes(i)-1]));
+	}
+      }
 
+      if(Vsd.cols()) {
 	eigvec(JTMJ(Ke0,Vsd),JTMJ(SymMatV(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),Vsd),V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
@@ -526,7 +527,7 @@ namespace MBSimFlexibleBody {
 
 	Pdm <<= Pdm*Vr;
 	for(int i=0; i<3; i++) {
-	   rPdm[i] <<= rPdm[i]*Vr;
+	  rPdm[i] <<= rPdm[i]*Vr;
 	  for(int j=0; j<3; j++)
 	    PPdm[i][j] <<= Vr.T()*PPdm[i][j]*Vr;
 	}
