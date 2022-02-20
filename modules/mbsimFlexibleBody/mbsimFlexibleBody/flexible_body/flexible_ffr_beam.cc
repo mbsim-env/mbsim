@@ -513,7 +513,7 @@ namespace MBSimFlexibleBody {
 	}
       }
 
-      if(Vsd.cols()) {
+      if(IH.size()) {
 	eigvec(JTMJ(Ke0,Vsd),JTMJ(SymMatV(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),Vsd),V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
@@ -523,19 +523,21 @@ namespace MBSimFlexibleBody {
 	MatV Vr(w.size(),imod.size(),NONINIT);
 	for(size_t i=0; i<imod.size(); i++)
 	  Vr.set(i,V.col(imod[i]));
-	Vr <<= Vsd*Vr;
+	Vsd <<= Vsd*Vr;
+      }
 
-	Pdm <<= Pdm*Vr;
+      if(Vsd.cols()) {
+	Pdm <<= Pdm*Vsd;
 	for(int i=0; i<3; i++) {
-	  rPdm[i] <<= rPdm[i]*Vr;
+	  rPdm[i] <<= rPdm[i]*Vsd;
 	  for(int j=0; j<3; j++)
-	    PPdm[i][j] <<= Vr.T()*PPdm[i][j]*Vr;
+	    PPdm[i][j] <<= Vsd.T()*PPdm[i][j]*Vsd;
 	}
-	Ke0 <<= JTMJ(Ke0,Vr);
+	Ke0 <<= JTMJ(Ke0,Vsd);
 	for(int i=0; i<nN; i++) {
-	  Phi[i] <<= Phi[i]*Vr;
-	  Psi[i] <<= Psi[i]*Vr;
-	  sigmahel[i] <<= sigmahel[i]*Vr;
+	  Phi[i] <<= Phi[i]*Vsd;
+	  Psi[i] <<= Psi[i]*Vsd;
+	  sigmahel[i] <<= sigmahel[i]*Vsd;
 	}
       }
     }
