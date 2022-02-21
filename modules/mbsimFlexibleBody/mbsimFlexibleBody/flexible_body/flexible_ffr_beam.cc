@@ -35,59 +35,52 @@ namespace MBSimFlexibleBody {
   void FlexibleFfrBeam::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       int nE = nN-1;
-      ne = 0;
+      int nee = 0;
       const int x = 0;
       const int y = 1;
       const int z = 2;
       int ul=-1, vl=-1, wl=-1, all=-1, bel=-1, gal=-1, ur=-1, vr=-1, wr=-1, alr=-1, ber=-1, gar=-1;
       if(ten)
-	ul = ne++;
+	ul = nee++;
       if(benz)
-	vl = ne++;
+	vl = nee++;
       if(beny)
-	wl = ne++;
+	wl = nee++;
       if(tor)
-	all = ne++;
+	all = nee++;
       if(beny)
-	bel = ne++;
+	bel = nee++;
       if(benz)
-	gal = ne++;
+	gal = nee++;
       if(ten)
-	ur = ne++;
+	ur = nee++;
       if(benz)
-	vr = ne++;
+	vr = nee++;
       if(beny)
-	wr = ne++;
+	wr = nee++;
       if(tor)
-	alr = ne++;
+	alr = nee++;
       if(beny)
-	ber = ne++;
+	ber = nee++;
       if(benz)
-	gar = ne++;
-      int ng = nN*ne/2;
+	gar = nee++;
+      int ng = nN*nee/2;
       int nr = 0;
       for(int i=0; i<bc.rows(); i++)
 	nr += bc(i,2)-bc(i,1)+1;
       int n = ng-nr;
-      vector<Mat3xV> rPdme(3,Mat3xV(ne));
-      vector<Mat3xV> rPdmg(3,Mat3xV(ng));
-      rPdm.resize(3,Mat3xV(n,NONINIT));
-      vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(ne)));
-      vector<vector<SqrMatV>> PPdmg(3,vector<SqrMatV>(3,SqrMatV(ng)));
-      PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(n,NONINIT)));
-      Mat3xV Pdme(ne);
-      Mat3xV Pdmg(ng);
-      Pdm.resize(n,NONINIT);
-      SymMatV Kee(ne);
-      SymMatV Keg(ng);
-      Ke0.resize(n,NONINIT);
+      vector<Mat3xV> rPdme(3,Mat3xV(nee));
+      rPdm.resize(3,Mat3xV(ng));
+      vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(nee)));
+      PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(ng)));
+      Mat3xV Pdme(nee);
+      Pdm.resize(ng);
+      SymMatV Kee(nee);
+      Ke0.resize(ng);
       KrKP.resize(nN,Vec3());
-      vector<Mat3xV> Phig(nN,Mat3xV(ng));
-      vector<Mat3xV> Psig(nN,Mat3xV(ng));
-      Phi.resize(nN,Mat3xV(n,NONINIT));
-      Psi.resize(nN,Mat3xV(n,NONINIT));
-      vector<Matrix<General,Fixed<6>,Var,double>> sigmahelg(nN,Matrix<General,Fixed<6>,Var,double>(ng));
-      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(n,NONINIT));
+      Phi.resize(nN,Mat3xV(ng));
+      Psi.resize(nN,Mat3xV(ng));
+      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(ng));
 
       double D = l/nE;
 
@@ -279,7 +272,7 @@ namespace MBSimFlexibleBody {
 	PPdme[y][z](gar,wr) = -11./210*me*D;
 	PPdme[y][z](gar,ber) = -me*pow(D,2)/105;
       }
-      for(int k=0; k<ne; k++) {
+      for(int k=0; k<nee; k++) {
 	for(int j=0; j<k; j++) {
 	  PPdme[x][x](k,j) = PPdme[x][x](j,k);
 	  PPdme[y][y](k,j) = PPdme[y][y](j,k);
@@ -370,7 +363,7 @@ namespace MBSimFlexibleBody {
 
       RangeV I(0,2);
       for(int i=0; i<nE; i++) {
-	RangeV J(i*ne/2,i*ne/2+ne-1);
+	RangeV J(i*nee/2,i*nee/2+nee-1);
 	if(ten) {
 	  rPdme[x](x,ul) = me*D*(i/2.+1./6);
 	  rPdme[x](x,ur) = me*D*(i/2.+1./3);
@@ -387,19 +380,19 @@ namespace MBSimFlexibleBody {
 	  rPdme[x](z,wr) = me*D*(i/2.+7./20);
 	  rPdme[x](z,ber) = me*D*(i*D/12.+D/20);
 	}
-	Pdmg.add(I,J,Pdme);
+	Pdm.add(I,J,Pdme);
 	for(int j=0; j<3; j++) {
-	  rPdmg[j].add(I,J,rPdme[j]);
+	  rPdm[j].add(I,J,rPdme[j]);
 	  for(int k=0; k<3; k++)
-	    PPdmg[j][k].add(J,J,PPdme[j][k]);
+	    PPdm[j][k].add(J,J,PPdme[j][k]);
 	}
-	Keg.add(J,Kee);
+	Ke0.add(J,Kee);
       }
 
       vector<int> c;
       for(int i=0; i<bc.rows(); i++) {
 	for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
-	  c.push_back(bc(i,0)*ne/2+j);
+	  c.push_back(bc(i,0)*nee/2+j);
       }
       sort(c.begin(), c.end());
 
@@ -413,43 +406,43 @@ namespace MBSimFlexibleBody {
       }
       Indices I3{0,1,2};
       Indices I6{0,1,2,3,4,5};
-      Pdm = Pdmg(I3,IF);
+      Pdm <<= Pdm(I3,IF);
       for(size_t i=0; i<3; i++) {
-	rPdm[i] = rPdmg[i](I3,IF);
+	rPdm[i] <<= rPdm[i](I3,IF);
 	for(size_t j=0; j<3; j++)
-	  PPdm[i][j] = PPdmg[i][j](IF,IF);
+	  PPdm[i][j] <<= PPdm[i][j](IF,IF);
       }
-      Ke0 = Keg(IF);
+      Ke0 <<= Ke0(IF);
       for(int i=0; i<nN; i++) {
 	KrKP[i](0) = i*D;
 	if(ten) {
-	  Phig[i](x,i*ne/2+ul) = 1;
+	  Phi[i](x,i*nee/2+ul) = 1;
 	  if(i>0 and i<nN-1) {
-	    sigmahelg[i](x,(i-1)*ne/2+ul) = -E/D/2;
-	    sigmahelg[i](x,(i+1)*ne/2+ul) = E/D/2;
+	    sigmahel[i](x,(i-1)*nee/2+ul) = -E/D/2;
+	    sigmahel[i](x,(i+1)*nee/2+ul) = E/D/2;
 	  }
 	  else if(i<nN-1) { // i=0
-	    sigmahelg[i](x,i*ne/2+ul) = -E/D;
-	    sigmahelg[i](x,(i+1)*ne/2+ul) = E/D;
+	    sigmahel[i](x,i*nee/2+ul) = -E/D;
+	    sigmahel[i](x,(i+1)*nee/2+ul) = E/D;
 	  }
 	  else { // i=nN-1
-	    sigmahelg[i](x,(i-1)*ne/2+ul) = -E/D;
-	    sigmahelg[i](x,i*ne/2+ul) = E/D;
+	    sigmahel[i](x,(i-1)*nee/2+ul) = -E/D;
+	    sigmahel[i](x,i*nee/2+ul) = E/D;
 	  }
 	}
-	if(benz) Phig[i](y,i*ne/2+vl) = 1;
-	if(beny) Phig[i](z,i*ne/2+wl) = 1;
-	if(tor) Psig[i](x,i*ne/2+all) = 1;
-	if(beny) Psig[i](y,i*ne/2+bel) = 1;
-	if(benz) Psig[i](z,i*ne/2+gal) = 1;
-	Phi[i] = Phig[i](I3,IF);
-	Psi[i] = Psig[i](I3,IF);
-	sigmahel[i] = sigmahelg[i](I6,IF);
+	if(benz) Phi[i](y,i*nee/2+vl) = 1;
+	if(beny) Phi[i](z,i*nee/2+wl) = 1;
+	if(tor) Psi[i](x,i*nee/2+all) = 1;
+	if(beny) Psi[i](y,i*nee/2+bel) = 1;
+	if(benz) Psi[i](z,i*nee/2+gal) = 1;
+	Phi[i] <<= Phi[i](I3,IF);
+	Psi[i] <<= Psi[i](I3,IF);
+	sigmahel[i] <<= sigmahel[i](I6,IF);
       }
 
       c.clear();
       for(int i=0; i<inodes.size(); i++) {
-	int j1=ne/2;
+	int j1=nee/2;
 	int j2=-1;
 	for(int k=0; k<bc.rows(); k++) {
 	  if(inodes(i)==(int)bc(k,0)) {
@@ -457,8 +450,8 @@ namespace MBSimFlexibleBody {
 	    j2=bc(k,2);
 	  }
 	}
-	for(int j=0; j<ne/2; j++)
-	  if(j<j1 or j>j2) c.push_back(inodes(i)*ne/2+j);
+	for(int j=0; j<nee/2; j++)
+	  if(j<j1 or j>j2) c.push_back(inodes(i)*nee/2+j);
       }
       sort(c.begin(), c.end());
       h=0;
