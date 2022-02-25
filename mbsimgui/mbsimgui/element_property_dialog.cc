@@ -1820,7 +1820,9 @@ namespace MBSimGUI {
 
   FlexibleFfrBeamPropertyDialog::FlexibleFfrBeamPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
     addTab("Load cases",1);
-    addTab("Visualization",4);
+    addTab("Boundary conditions",2);
+    addTab("Component mode synthesis",3);
+    addTab("Visualization",7);
 
     n = new ExtWidget("Number of nodes",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfNodes");
     addToTab("General", n);
@@ -1857,7 +1859,16 @@ namespace MBSimGUI {
     addToTab("General", beta);
 
     bc = new ExtWidget("Boundary conditions",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"boundaryConditions");
-    addToTab("General", bc);
+    addToTab("Boundary conditions", bc);
+
+    inodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interfaceNodeNumbers");
+    addToTab("Component mode synthesis", inodes);
+
+    nmodes = new ExtWidget("Normal mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"normalModeNumbers");
+    addToTab("Component mode synthesis", nmodes);
+
+    fbnm = new ExtWidget("Fixed-boundary normal modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"fixedBoundaryNormalModes");
+    addToTab("Component mode synthesis", fbnm);
 
     ombv = new ExtWidget("Enable openMBV",new FlexibleFfrBeamMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization",ombv);
@@ -1886,6 +1897,9 @@ namespace MBSimGUI {
     tor->initializeUsingXML(item->getXMLElement());
     beta->initializeUsingXML(item->getXMLElement());
     bc->initializeUsingXML(item->getXMLElement());
+    inodes->initializeUsingXML(item->getXMLElement());
+    nmodes->initializeUsingXML(item->getXMLElement());
+    fbnm->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
     plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1905,6 +1919,9 @@ namespace MBSimGUI {
     tor->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    inodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nmodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    fbnm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     minimumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     maximumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());

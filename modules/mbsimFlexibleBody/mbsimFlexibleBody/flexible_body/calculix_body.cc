@@ -200,7 +200,7 @@ namespace MBSimFlexibleBody {
     PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(nm)));
     if(formalism==lumpedMass) {
       // compute mass and lumped mass matrix
-      VecV mij(M.size(),NONINIT);
+      vector<double> mi(nn);
       VecV m_(3);
       for(size_t r=0; r<3; r++) {
         double ds = 0;
@@ -215,28 +215,24 @@ namespace MBSimFlexibleBody {
           }
         }
         for(size_t i=0; i<dof.size(); i++) {
-          if(dof[i].second==r)
-            mij(i) = M.e(i,i)/ds*m_.e(r);
+          if(r==0 and dof[i].second==r)
+            mi[dof[i].first] = M.e(i,i)/ds*m_.e(r);
         }
       }
       m = m_.e(0);
 
       // compute integrals
-      RangeV J = RangeV(0,nm-1);
       for(size_t i=0; i<nn; i++) {
-        RangeV I = RangeV(3*i,3*i+2);
-        Vec3 u0i = u0(I);
-        double mi = mij.e(3*i);
-        rdm += mi*u0i;
-        rrdm += mi*JTJ(u0i.T());
-        Pdm += mi*Phi_(I,J);
+        rdm += mi[i]*KrKP[i];
+        rrdm += mi[i]*JTJ(KrKP[i].T());
+        Pdm += mi[i]*Phi[i];
       }
-      for(size_t k=0; k<3; k++) {
-        for(size_t i=0; i<nn; i++)
-          rPdm[k] += mij.e(3*i)*u0.e(3*i+k)*Phi_(RangeV(3*i,3*i+2),J);
-        for(size_t l=0; l<3; l++) {
-          for(size_t i=0; i<nn; i++)
-            PPdm[k][l] += mij.e(3*i)*Phi_.row(3*i+k).T()*Phi_.row(3*i+l);
+      for(int k=0; k<3; k++) {
+        for(int i=0; i<nn; i++)
+          rPdm[k] += mi[i]*KrKP[i](k)*Phi[i];
+        for(int l=0; l<3; l++) {
+          for(int i=0; i<nn; i++)
+            PPdm[k][l] += mi[i]*Phi[i].row(k).T()*Phi[i].row(l);
         }
       }
     }

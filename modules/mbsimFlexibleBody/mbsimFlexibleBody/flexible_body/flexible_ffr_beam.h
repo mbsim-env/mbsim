@@ -55,6 +55,9 @@ namespace MBSimFlexibleBody {
       void setBendingAboutZAxis(bool benz_) { benz = benz_; }
       void setBendingAboutYAxis(bool beny_) { beny = beny_; }
       void setTorsion(bool tor_) { tor = tor_; }
+      void setInterfaceNodeNumbers(const fmatvec::VecVI &inodes_) { inodes <<= inodes_; }
+      void setNormalModeNumbers(const fmatvec::VecVI &nmodes_) { nmodes <<= nmodes_; }
+      void setFixedBoundaryNormalModes(bool fixedBoundaryNormalModes_) { fixedBoundaryNormalModes = fixedBoundaryNormalModes_; }
 
     private:
       int nN{3};
@@ -71,6 +74,9 @@ namespace MBSimFlexibleBody {
       bool benz{true};
       bool beny{true};
       bool tor{false};
+      fmatvec::VecVI inodes;
+      fmatvec::VecVI nmodes;
+      bool fixedBoundaryNormalModes{false};
   };
 
 }

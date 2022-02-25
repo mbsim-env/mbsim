@@ -33,16 +33,16 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  class ModeShapeVisualization : public Widget {
+  class NormalModeVisualization : public Widget {
     public:
-      ModeShapeVisualization();
+      NormalModeVisualization();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *modes;
   };
 
-  ModeShapeVisualization::ModeShapeVisualization() {
+  NormalModeVisualization::NormalModeVisualization() {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -50,12 +50,12 @@ namespace MBSimGUI {
     layout->addWidget(modes);
   }
 
-  DOMElement* ModeShapeVisualization::initializeUsingXML(DOMElement *e) {
+  DOMElement* NormalModeVisualization::initializeUsingXML(DOMElement *e) {
     modes->initializeUsingXML(e);
     return e;
   }
 
-  DOMElement* ModeShapeVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+  DOMElement* NormalModeVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     modes->writeXMLFile(parent);
     return static_cast<DOMElement*>(parent);
   }
@@ -1127,10 +1127,10 @@ namespace MBSimGUI {
     maximumNaturalFrequency = new ExtWidget("Maximum natural frequency",new ChoiceWidget(new ScalarWidgetFactory("100000"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"maximumNaturalFrequency");
     addToTab("Modal analysis", maximumNaturalFrequency);
 
-    modeScaleFactor = new ExtWidget("Natural mode scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"naturalModeScaleFactor");
+    modeScaleFactor = new ExtWidget("Normal mode scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"normalModeScaleFactor");
     addToTab("Modal analysis", modeScaleFactor);
 
-    modeScale = new ExtWidget("Natural mode scale",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"naturalModeScale");
+    modeScale = new ExtWidget("Normal mode scale",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"normalModeScale");
     addToTab("Modal analysis", modeScale);
 
     excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"excitationFrequencies");
@@ -1139,8 +1139,8 @@ namespace MBSimGUI {
     excitationAmplitudeFunction = new ExtWidget("Excitation amplitude function",new ChoiceWidget(new Function1ArgWidgetFactory(0,"t",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"excitationAmplitudeFunction");
     addToTab("Frequency response analysis", excitationAmplitudeFunction);
 
-    visualizeModeShapes = new ExtWidget("Visualize mode shapes",new ModeShapeVisualization,true,true,MBSIMCONTROL%"visualizeNaturalModeShapes");
-    addToTab("Modal analysis", visualizeModeShapes);
+    visualizeNormalModes = new ExtWidget("Visualize normal modes",new NormalModeVisualization,true,true,MBSIMCONTROL%"visualizeNormalModes");
+    addToTab("Modal analysis", visualizeNormalModes);
 
     visualizeFrequencyResponse = new ExtWidget("Visualize frequency response",new FrequencyResponseVisualization,true,true,MBSIMCONTROL%"visualizeFrequencyResponse");
     addToTab("Frequency response analysis", visualizeFrequencyResponse);
@@ -1163,7 +1163,7 @@ namespace MBSimGUI {
     modeScale->initializeUsingXML(item->getXMLElement());
     excitationFrequencies->initializeUsingXML(item->getXMLElement());
     excitationAmplitudeFunction->initializeUsingXML(item->getXMLElement());
-    visualizeModeShapes->initializeUsingXML(item->getXMLElement());
+    visualizeNormalModes->initializeUsingXML(item->getXMLElement());
     visualizeFrequencyResponse->initializeUsingXML(item->getXMLElement());
     plotStepSize->initializeUsingXML(item->getXMLElement());
     loops->initializeUsingXML(item->getXMLElement());
@@ -1181,7 +1181,7 @@ namespace MBSimGUI {
     modeScale->writeXMLFile(item->getXMLElement());
     excitationFrequencies->writeXMLFile(item->getXMLElement());
     excitationAmplitudeFunction->writeXMLFile(item->getXMLElement());
-    visualizeModeShapes->writeXMLFile(item->getXMLElement());
+    visualizeNormalModes->writeXMLFile(item->getXMLElement());
     visualizeFrequencyResponse->writeXMLFile(item->getXMLElement());
     plotStepSize->writeXMLFile(item->getXMLElement());
     loops->writeXMLFile(item->getXMLElement());

@@ -97,8 +97,8 @@
   </Embed>
 
   <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
-    <naturalModeScaleFactor>1e3</naturalModeScaleFactor>
-    <visualizeNaturalModeShapes/>
+    <normalModeScaleFactor>1e3</normalModeScaleFactor>
+    <visualizeNormalModes/>
     <visualizeFrequencyResponse/>
     <plotStepSize unit="s">1e-4</plotStepSize>
   </LinearSystemAnalyzer>

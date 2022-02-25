@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="E">2e11</scalarParameter>
+      <scalarParameter name="rho">7870</scalarParameter>
+      <scalarParameter name="l">0.3</scalarParameter>
+      <scalarParameter name="d">0.005</scalarParameter>
+      <scalarParameter name="h">0.005</scalarParameter>
+      <scalarParameter name="nFE">20</scalarParameter>
+      <scalarParameter name="Iy"> 1/12*d^3*h</scalarParameter>
+      <scalarParameter name="Iz"> 1/12*h^3*d</scalarParameter>
+      <scalarParameter name="F">1e2</scalarParameter>
+      <scalarParameter name="M">F*l</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="position">true</plotFeatureRecursive>
+      <frames/>
+      <contours/>
+      <groups/>
+      <objects>
+        <FlexibleFfrBeam xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Beam">
+          <numberOfNodes>nFE+1</numberOfNodes>
+          <length unit="m">l</length>
+          <crossSectionArea unit="m^2">d*h</crossSectionArea>
+          <momentOfInertia>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>Iy</ele>
+              <ele>Iz</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </momentOfInertia>
+          <youngsModulus unit="N/m^2">E</youngsModulus>
+          <density unit="kg/m^3">rho</density>
+          <tension>false</tension>
+          <bendingAboutYAxis>false</bendingAboutYAxis>
+          <bendingAboutZAxis>true</bendingAboutZAxis>
+          <torsion>false</torsion>
+          <proportionalDamping>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0.001</ele>
+            </xmlVector>
+          </proportionalDamping>
+          <interfaceNodeNumbers>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>1</ele>
+              <ele>nFE+1</ele>
+            </xmlVector>
+          </interfaceNodeNumbers>
+          <normalModeNumbers>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>1</ele>
+            </xmlVector>
+          </normalModeNumbers>
+          <stateDependentTranslation>
+            <TranslationAlongYAxis xmlns="http://www.mbsim-env.de/MBSim"/>
+          </stateDependentTranslation>
+          <stateDependentRotation>
+            <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
+          </stateDependentRotation>
+          <frames>
+            <NodeFrame name="Q">
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <nodeNumber>nFE+1</nodeNumber>
+            </NodeFrame>
+            <NodeFrame name="P">
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <nodeNumber>1</nodeNumber>
+            </NodeFrame>
+          </frames><contours/>
+          <enableOpenMBV>
+            <pointSize xmlns="http://www.mbsim-env.de/MBSim">5</pointSize>
+          </enableOpenMBV>
+          <enableOpenMBVFrameK>
+            <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
+          </enableOpenMBVFrameK></FlexibleFfrBeam>
+      </objects>
+      <links>
+        <KineticExcitation name="KineticExcitation1">
+          <connect ref2="../Object[Beam]/Frame[P]"/>
+          <frameOfReference>"firstFrame"</frameOfReference>
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>1</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </forceDirection>
+          <forceFunction>
+            <ConstantFunction>
+              <a0>-F</a0>
+            </ConstantFunction>
+          </forceFunction>
+          <momentDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>1</ele>
+              </row>
+            </xmlMatrix>
+          </momentDirection>
+          <momentFunction>
+            <ConstantFunction>
+              <a0>-M</a0>
+            </ConstantFunction>
+          </momentFunction>
+          <enableOpenMBV>
+            <scaleLength>0.0001</scaleLength>
+          </enableOpenMBV>
+        </KineticExcitation>
+        <KineticExcitation name="KineticExcitation2">
+          <connect ref2="../Object[Beam]/Frame[Q]"/>
+          <frameOfReference>"firstFrame"</frameOfReference>
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>1</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </forceDirection>
+          <forceFunction>
+            <ConstantFunction>
+              <a0>F</a0>
+            </ConstantFunction>
+          </forceFunction>
+          <enableOpenMBV>
+            <scaleLength>0.0001</scaleLength>
+          </enableOpenMBV>
+        </KineticExcitation>
+      </links>
+      <constraints/>
+      <observers/>
+      <enableOpenMBVFrameI>
+        <size unit="cm">1</size>
+      </enableOpenMBVFrameI><environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+      <determineEquilibriumState>false</determineEquilibriumState>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">0.005</endTime>
+    <plotStepSize unit="s">1e-4</plotStepSize>
+  </DOPRI5Integrator>
+
+</MBSimProject>

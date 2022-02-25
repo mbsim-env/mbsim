@@ -36,7 +36,7 @@
   </DynamicSystemSolver>
 
   <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
-      <naturalModeScale>
+      <normalModeScale>
         <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <ele>1e3</ele>
           <ele>1e3</ele>
@@ -53,13 +53,11 @@
           <ele>1e3</ele>
           <ele>1e3</ele>
         </xmlVector>
-      </naturalModeScale>
-    <visualizeNaturalModeShapes>
+      </normalModeScale>
+    <visualizeNormalModes>
       <modeNumbers>[1:1:4]'</modeNumbers>
-    </visualizeNaturalModeShapes>
+    </visualizeNormalModes>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </LinearSystemAnalyzer>
-
-
 
 </MBSimProject>

@@ -1089,12 +1089,12 @@
               Größte Eigenfrequenz, die berechnet werden soll. Standardardmäßig 100 kHz.
             </xs:documentation></xs:annotation>
           </xs:element>
-	  <xs:element name="naturalModeScaleFactor" type="pv:nounitScalar" minOccurs="0">
+	  <xs:element name="normalModeScaleFactor" type="pv:nounitScalar" minOccurs="0">
 	    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
 	      Faktor, mit der alle Eigenmoden skaliert werden sollen.
 	    </xs:documentation></xs:annotation>
 	  </xs:element>
-	  <xs:element name="naturalModeScale" type="pv:nounitVector" minOccurs="0">
+	  <xs:element name="normalModeScale" type="pv:nounitVector" minOccurs="0">
 	    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
 	      Faktoren, mit denen die einzelen Eigenmoden skaliert werden sollen.
 	    </xs:documentation></xs:annotation>
@@ -1114,7 +1114,7 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="visualizeNaturalModeShapes" minOccurs="0">
+          <xs:element name="visualizeNormalModes" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Visualisierung der Schwingformen in OpenMBV.
             </xs:documentation></xs:annotation>

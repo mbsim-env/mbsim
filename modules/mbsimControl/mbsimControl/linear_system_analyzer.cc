@@ -277,7 +277,7 @@ namespace MBSimControl {
 	  modes(i) = i+1;
       }
       else if(min(modes)<1 or max(modes)>(int)fna.size())
-	throwError(string("(LinearSystemAnalyzer::execute): node numbers do not match, must be within the range [1,") + to_string(fna.size()) + "]");
+	throwError(string("(LinearSystemAnalyzer::execute): mode numbers do not match, must be within the range [1,") + to_string(fna.size()) + "]");
       for(int k=0; k<modes.size(); k++) {
 	int i = modes(k)-1;
 	if(modeScale(i)>0) {
@@ -349,15 +349,15 @@ namespace MBSimControl {
     if(e) setMinimumNaturalFrequency(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"maximumNaturalFrequency");
     if(e) setMaximumNaturalFrequency(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"naturalModeScaleFactor");
-    if(e) setNaturalModeScaleFactor(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"naturalModeScale");
-    if(e) setNaturalModeScale(E(e)->getText<VecV>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"normalModeScaleFactor");
+    if(e) setNormalModeScaleFactor(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"normalModeScale");
+    if(e) setNormalModeScale(E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationFrequencies");
     if(e) setExcitationFrequencies(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationAmplitudeFunction");
     if(e) setExcitationAmplitudeFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(double)>>(e->getFirstElementChild()));
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeNaturalModeShapes");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeNormalModes");
     if(e) {
       msv = true;
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"modeNumbers");

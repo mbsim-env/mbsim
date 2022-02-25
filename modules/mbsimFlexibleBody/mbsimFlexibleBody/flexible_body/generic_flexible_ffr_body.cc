@@ -298,7 +298,7 @@ namespace MBSimFlexibleBody {
 	    modes(i) = i+1;
 	}
 	else if(min(modes)<1 or max(modes)>imod.size())
-	  throwError(string("(GenericFlexibleFfrBody::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	  throwError(string("(GenericFlexibleFfrBody::init): mode numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
 	MatV Vr(V.rows(),modes.size(),NONINIT);
 	for(int i=0; i<modes.size(); i++)
 	  Vr.set(i,V.col(imod[modes(i)-1]));

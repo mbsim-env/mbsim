@@ -189,16 +189,15 @@ ret = 0;</scalarParameter>
   </Embed>
 
   <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
-      <naturalModeScale>
+      <normalModeScale>
         <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <ele>10</ele>
           <ele>10</ele>
         </xmlVector>
-      </naturalModeScale>
-    <visualizeNaturalModeShapes/>
+      </normalModeScale>
+    <visualizeNormalModes/>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <loops>1</loops>
   </LinearSystemAnalyzer>
-
 
 </MBSimProject>

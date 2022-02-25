@@ -71,6 +71,7 @@
 #include <xercesc/dom/DOMException.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
+#include <xercesc/dom/DOMNodeList.hpp>
 #include "dialogs.h"
 
 using namespace std;
@@ -742,6 +743,7 @@ namespace MBSimGUI {
       }
       setWindowTitle(projectFile+"[*]");
       rebuildTree();
+      convertDocument();
       refresh();
     }
     else
@@ -3040,6 +3042,45 @@ namespace MBSimGUI {
     catch(...) {
       mw->setExitBad();
       cerr << "Unknown exception." << endl;
+    }
+  }
+
+  void MainWindow::convertDocument() {
+    xercesc::DOMDocument *sdoc = doc;
+    if(project->getSolver()->getFileItem())
+     sdoc = project->getSolver()->getFileItem()->getXMLDocument();
+    vector<DOMNodeList*> list;
+    list.push_back(sdoc->getElementsByTagName(X()%"naturalModeScaleFactor"));
+    list.push_back(sdoc->getElementsByTagName(X()%"naturalModeScale"));
+    list.push_back(sdoc->getElementsByTagName(X()%"visualizeNaturalModeShapes"));
+    int nl = 0;
+    for(size_t i=0; i<list.size(); i++)
+      nl += list[i]->getLength();
+    cout << nl << endl;
+    if(nl > 0) {
+      QMessageBox::StandardButton ret = QMessageBox::question(this, "Convert project", "The project file is not compatible with the current version of MBSim. Do you want to convert it?", QMessageBox::Yes | QMessageBox::No);
+      if(ret == QMessageBox::Yes) {
+	vector<string> newname = {"normalModeScaleFactor","normalModeScale","visualizeNormalModes"};
+	for(size_t i=0; i<list.size(); i++) {
+	  for(int j=0; j<list[i]->getLength(); j++) {
+	    DOMNode *node = list[i]->item(j);
+	    DOMNode *parent = node->getParentNode();
+	    DOMElement *ele = D(sdoc)->createElement(MBSIMCONTROL%newname[i]);
+	    DOMNode *e = node->getFirstChild();
+	    while(e) {
+	      DOMNode *en = e->getNextSibling();
+	      ele->appendChild(node->removeChild(e));
+	      e = en;
+	    }
+	    parent->replaceChild(ele,node);
+	  }
+	}
+	if(sdoc == doc)
+	  setProjectChanged(true);
+	else
+	  project->getSolver()->getFileItem()->setModified(true);
+	refresh();
+      }
     }
   }
 
