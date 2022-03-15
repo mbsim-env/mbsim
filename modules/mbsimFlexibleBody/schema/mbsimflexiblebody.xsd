@@ -1340,7 +1340,14 @@
           <xs:element name="youngsModulus" type="pv:bulkModulusScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                E-Modul.
+                Elastizitätsmodul.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="poissonsRatio" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Querkontraktionszahl.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -1364,6 +1371,14 @@
                 Elemente.
               </xs:documentation>
             </xs:annotation>
+          </xs:element>
+          <xs:element name="elementType" type="pv:stringFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl des Elementtyps.
+              <ul>
+                <li>C3D20: Hexaeder-Element mit 20 Knoten und voller Integration</li>
+              </ul>
+            </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>

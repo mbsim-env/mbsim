@@ -37,13 +37,20 @@ namespace MBSimFlexibleBody {
   class FiniteElementsFfrBody : public GenericFlexibleFfrBody {
 
     public:
+      enum ElementType {
+        C3D20=0,
+        unknownElementType
+      };
+
       FiniteElementsFfrBody(const std::string &name="") : GenericFlexibleFfrBody(name) { }
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void setYoungsModulus(double E_) { E = E_; }
+      void setPoissonsRatio(double nu_) { nu = nu_; }
       void setDensity(double rho_) { rho = rho_; }
       void setNodes(const fmatvec::MatVx3 u_) { u <<= u_; }
       void setElements(const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<20>,int> e_) { e <<= e_; }
+      void setElementType(ElementType type_) { type = type_; }
       void setBoundaryConditions(const fmatvec::MatVx3 &bc_) { bc <<= bc_; }
       void setInterfaceNodeNumbers(const fmatvec::VecVI &inodes_) { inodes <<= inodes_; }
       void setNormalModeNumbers(const fmatvec::VecVI &nmodes_) { nmodes <<= nmodes_; }
@@ -80,6 +87,7 @@ namespace MBSimFlexibleBody {
       double E{2e11};
       double rho{7870};
       double nu{0.3};
+      ElementType type{C3D20};
       fmatvec::MatVx3 u;
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<20>,int> e;
       std::vector<fmatvec::Vec3> rN;

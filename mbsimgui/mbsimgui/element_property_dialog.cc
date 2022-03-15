@@ -1945,6 +1945,9 @@ namespace MBSimGUI {
     E = new ExtWidget("Young's modulus",new ChoiceWidget(new ScalarWidgetFactory("2e11",vector<QStringList>(2,bulkModulusUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"youngsModulus");
     addToTab("General", E);
 
+    nu = new ExtWidget("Poisson's ratio",new ChoiceWidget(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"poissonsRatio");
+    addToTab("General", nu);
+
     rho = new ExtWidget("Density",new ChoiceWidget(new ScalarWidgetFactory("7870",vector<QStringList>(2,densityUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"density");
     addToTab("General", rho);
 
@@ -1953,6 +1956,11 @@ namespace MBSimGUI {
 
     elements = new ExtWidget("Elements",new ChoiceWidget(new MatRowsVarWidgetFactory(3,20),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elements");
     addToTab("General", elements);
+
+    vector<QString> list;
+    list.emplace_back("\"C3D20\"");
+    type = new ExtWidget("Element type",new TextChoiceWidget(list,0,true),false,false,MBSIMFLEX%"elementType");
+    addToTab("General", type);
 
     beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
@@ -1985,9 +1993,11 @@ namespace MBSimGUI {
   DOMElement* FiniteElementsFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     E->initializeUsingXML(item->getXMLElement());
+    nu->initializeUsingXML(item->getXMLElement());
     rho->initializeUsingXML(item->getXMLElement());
     nodes->initializeUsingXML(item->getXMLElement());
     elements->initializeUsingXML(item->getXMLElement());
+    type->initializeUsingXML(item->getXMLElement());
     beta->initializeUsingXML(item->getXMLElement());
     bc->initializeUsingXML(item->getXMLElement());
     inodes->initializeUsingXML(item->getXMLElement());
@@ -2001,9 +2011,11 @@ namespace MBSimGUI {
   DOMElement* FiniteElementsFfrBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     E->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nu->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rho->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     nodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     elements->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    type->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     inodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());

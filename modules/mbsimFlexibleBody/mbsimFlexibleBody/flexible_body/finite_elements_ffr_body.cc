@@ -32,6 +32,8 @@ namespace MBSimFlexibleBody {
 
   void FiniteElementsFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if(type==unknownElementType)
+	throwError("(FiniteElementsFfrBody::init): element type unknown");
       for(int i=0; i<8; i++) {
 	Ni[i] = &FiniteElementsFfrBody::N1;
 	dNidxq[i] = &FiniteElementsFfrBody::dN1dxq;
@@ -420,6 +422,8 @@ namespace MBSimFlexibleBody {
     GenericFlexibleFfrBody::initializeUsingXML(element);
     DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"youngsModulus");
     setYoungsModulus(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"poissonsRatio");
+    setPoissonsRatio(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"density");
     setDensity(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
@@ -430,6 +434,10 @@ namespace MBSimFlexibleBody {
       for(int j=0; j<this->e.cols(); j++)
 	this->e(i,j)--;
     }
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"elementType");
+    string typeStr=string(X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).substr(1,string(X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).length()-2);
+    if(typeStr=="C3D20") type=C3D20;
+    else type=unknownElementType;
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
     if(e) setProportionalDamping(MBXMLUtils::E(e)->getText<Vec>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"boundaryConditions");

@@ -10,6 +10,7 @@
     <objects>
       <FiniteElementsFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FiniteElementsFfrBody">
         <youngsModulus unit="N/m^2">2.1e11</youngsModulus>
+        <poissonsRatio>0.3</poissonsRatio>
         <density unit="kg/m^3">7800</density>
         <nodes>
           <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="nodes.asc"/>
@@ -17,6 +18,7 @@
         <elements>
           <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="elements.asc"/>
         </elements>
+        <elementType>'C3D20'</elementType>
         <proportionalDamping>
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>50</ele>
