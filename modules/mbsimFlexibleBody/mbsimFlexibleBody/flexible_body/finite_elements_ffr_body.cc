@@ -235,23 +235,6 @@ namespace MBSimFlexibleBody {
     PPdm[1][0] = PPdm[0][1].T();
     PPdm[2][0] = PPdm[0][2].T();
     PPdm[2][1] = PPdm[1][2].T();
-//    ofstream os("data.m");
-//    os << "m_ = " << m << ";" << endl;
-//    os << "rdm_ = " << rdm << ";" << endl;
-//    os << "rrdm_ = " << rrdm << ";" << endl;
-//    os << "Pdm_ = " << Pdm <<  ";" <<endl;
-//    os << "rPdm1_ = " << rPdm[0] <<  ";" <<endl;
-//    os << "rPdm2_ = " << rPdm[1] <<  ";" <<endl;
-//    os << "rPdm3_ = " << rPdm[2] <<  ";" <<endl;
-//    os << "PPdm11_ = " << PPdm[0][0] <<  ";" <<endl;
-//    os << "PPdm22_ = " << PPdm[1][1] <<  ";" <<endl;
-//    os << "PPdm33_ = " << PPdm[2][2] <<  ";" <<endl;
-//    os << "PPdm12_ = " << PPdm[0][1] <<  ";" <<endl;
-//    os << "PPdm13_ = " << PPdm[0][2] <<  ";" <<endl;
-//    os << "PPdm23_ = " << PPdm[1][2] <<  ";" <<endl;
-//    os << "Ke0_ = " << Ke0 <<  ";" <<endl;
-//    os.close();
-//    throw 1;
 
     vector<int> c;
     for(int i=0; i<bc.rows(); i++) {
@@ -282,6 +265,43 @@ namespace MBSimFlexibleBody {
     }
     Ke0 <<= Ke0(IF);
 
+    for(int ee=0; ee<nE; ee++) {
+      for(int k=0; k<20; k++) {
+	int ku = map[e(ee,k)];
+	SqrMat J(3);
+	for(int ll=0; ll<20; ll++) {
+	  J.add(0,(this->*dNidxq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
+	  J.add(1,(this->*dNidyq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
+	  J.add(2,(this->*dNidzq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
+	}
+	Vector<Ref,int> ipiv(J.size(),NONINIT);
+	SqrMat LUJ = facLU(J,ipiv);
+	for(int i=0; i<20; i++) {
+	  int u = map[e(ee,i)];
+	  Vec dN(3,NONINIT);
+	  dN(0) = (this->*dNidxq[i])(rN[k](0),rN[k](1),rN[k](2),i);
+	  dN(1) = (this->*dNidyq[i])(rN[k](0),rN[k](1),rN[k](2),i);
+	  dN(2) = (this->*dNidzq[i])(rN[k](0),rN[k](1),rN[k](2),i);
+	  Vec dNi = slvLUFac(LUJ,dN,ipiv);
+	  double al = E/(1+nu)/nI(e(ee,k));
+	  sigmahel[ku](0,u*3) += al*(1-nu)/(1-2*nu)*dNi(0);
+	  sigmahel[ku](0,u*3+1) += al*nu/(1-2*nu)*dNi(1);
+	  sigmahel[ku](0,u*3+2) += al*nu/(1-2*nu)*dNi(2);
+	  sigmahel[ku](1,u*3) += al*nu/(1-2*nu)*dNi(0);
+	  sigmahel[ku](1,u*3+1) += al*(1-nu)/(1-2*nu)*dNi(1);
+	  sigmahel[ku](1,u*3+2) += al*nu/(1-2*nu)*dNi(2);
+	  sigmahel[ku](2,u*3) += al*nu/(1-2*nu)*dNi(0);
+	  sigmahel[ku](2,u*3+1) += al*nu/(1-2*nu)*dNi(1);
+	  sigmahel[ku](2,u*3+2) += al*(1-nu)/(1-2*nu)*dNi(2);
+	  sigmahel[ku](3,u*3) += al*0.5*dNi(1);
+	  sigmahel[ku](3,u*3+1) += al*0.5*dNi(0);
+	  sigmahel[ku](4,u*3+1) += al*0.5*dNi(2);
+	  sigmahel[ku](4,u*3+2) += al*0.5*dNi(1);
+	  sigmahel[ku](5,u*3) += al*0.5*dNi(2);
+	  sigmahel[ku](5,u*3+2) += al*0.5*dNi(0);
+	}
+      }
+    }
     for(int i=0; i<I.size(); i++) {
       Phi[i](0,3*i) = 1;
       Phi[i](1,3*i+1) = 1;
