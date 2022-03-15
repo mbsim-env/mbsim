@@ -98,6 +98,7 @@ namespace MBSimFlexibleBody {
       for(int i=0; i<nI.size(); i++) {
 	if(nI(i)>0) {
 	  ng+=3;
+          nodeMap[i+1] = I.size();
 	  I.push_back(i);
 	}
       }
