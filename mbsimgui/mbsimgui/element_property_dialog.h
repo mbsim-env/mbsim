@@ -441,6 +441,28 @@ namespace MBSimGUI {
       ExtWidget *n, *l, *A, *I, *E, *rho, *ten, *beny, *benz, *tor, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
   };
 
+  class FiniteElementsFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
+
+    public:
+      FiniteElementsFfrBodyPropertyDialog(Element *body_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      int getqERelSize() const override;
+    protected:
+      ExtWidget *E, *rho, *nodes, *elements, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
+  };
+
+  class ExternalFiniteElementsFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
+
+    public:
+      ExternalFiniteElementsFfrBodyPropertyDialog(Element *body_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      int getqERelSize() const override;
+    protected:
+      ExtWidget *net, *ner, *nodes, *mass, *stiff, *formalism, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
+  };
+
   class ConstraintPropertyDialog : public ElementPropertyDialog {
 
     public:

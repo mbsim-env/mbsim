@@ -432,8 +432,6 @@ namespace MBSimGUI {
 	  actionSaveLinearSystemAnalysisAs->setDisabled(false);
 	  actionLinearSystemAnalysis->setDisabled(false);
 	}
-	actionOpenMBV->setDisabled(false);
-	actionH5plotserie->setDisabled(false);
       }
       else {
         setExitBad();
@@ -1039,8 +1037,8 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
-      actionOpenMBV->setDisabled(true);
-      actionH5plotserie->setDisabled(true);
+      actionOpenMBV->setDisabled(false);
+      actionH5plotserie->setDisabled(false);
       actionLinearSystemAnalysis->setDisabled(true);
     }
 
