@@ -358,7 +358,7 @@ namespace MBSimFlexibleBody {
 	      imod.push_back(i);
 	  }
 	  if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	    throwError(string("(FlexibleFfrBeam::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	    throwError(string("(FiniteElementsFfrBody::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
 	  for(int i=0; i<nmodes.size(); i++) {
 	    Vsd.set(IN,IH.size()+i,V.col(imod[nmodes(i)-1]));
 	    Vsd.set(IH,IH.size()+i,Vec(IH.size()));
@@ -372,7 +372,7 @@ namespace MBSimFlexibleBody {
 	      imod.push_back(i);
 	  }
 	  if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	    throwError(string("(FlexibleFfrBeam::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	    throwError(string("(FiniteElementsFfrBody::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
 	  for(int i=0; i<nmodes.size(); i++)
 	    Vsd.set(IH.size()+i,V.col(imod[nmodes(i)-1]));
 	}
