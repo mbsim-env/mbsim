@@ -54,7 +54,6 @@ namespace MBSimFlexibleBody {
       void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes <<= plotNodes_; }
 
     private:
-      void importData();
       double N1(double x, double y, double z, int i);
       double N2(double x, double y, double z, int i);
       double N3(double x, double y, double z, int i);

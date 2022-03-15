@@ -30,286 +30,287 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FiniteElementsFfrBody)
 
-  void FiniteElementsFfrBody::importData() {
-    for(int i=0; i<8; i++) {
-      Ni[i] = &FiniteElementsFfrBody::N1;
-      dNidxq[i] = &FiniteElementsFfrBody::dN1dxq;
-      dNidyq[i] = &FiniteElementsFfrBody::dN1dyq;
-      dNidzq[i] = &FiniteElementsFfrBody::dN1dzq;
-    }
-    for(int i=8; i<15; i+=2) {
-      Ni[i] = &FiniteElementsFfrBody::N2;
-      dNidxq[i] = &FiniteElementsFfrBody::dN2dxq;
-      dNidyq[i] = &FiniteElementsFfrBody::dN2dyq;
-      dNidzq[i] = &FiniteElementsFfrBody::dN2dzq;
-    }
-    for(int i=9; i<16; i+=2) {
-      Ni[i] = &FiniteElementsFfrBody::N3;
-      dNidxq[i] = &FiniteElementsFfrBody::dN3dxq;
-      dNidyq[i] = &FiniteElementsFfrBody::dN3dyq;
-      dNidzq[i] = &FiniteElementsFfrBody::dN3dzq;
-    }
-    for(int i=16; i<20; i++) {
-      Ni[i] = &FiniteElementsFfrBody::N4;
-      dNidxq[i] = &FiniteElementsFfrBody::dN4dxq;
-      dNidyq[i] = &FiniteElementsFfrBody::dN4dyq;
-      dNidzq[i] = &FiniteElementsFfrBody::dN4dzq;
-    }
-
-    rN.resize(20,Vec3(NONINIT));
-    rN[0](0)  = -1;   rN[0](1)  = -1;  rN[0](2)  = -1;
-    rN[1](0)  =  1;   rN[1](1)  = -1;  rN[1](2)  = -1;
-    rN[2](0)  =  1;   rN[2](1)  =  1;  rN[2](2)  = -1;
-    rN[3](0)  = -1;   rN[3](1)  =  1;  rN[3](2)  = -1;
-    rN[4](0)  = -1;   rN[4](1)  = -1;  rN[4](2)  =  1;
-    rN[5](0)  =  1;   rN[5](1)  = -1;  rN[5](2)  =  1;
-    rN[6](0)  =  1;   rN[6](1)  =  1;  rN[6](2)  =  1;
-    rN[7](0)  = -1;   rN[7](1)  =  1;  rN[7](2)  =  1;
-    rN[8](0)  =  0;   rN[8](1)  = -1;  rN[8](2)  = -1;
-    rN[9](0)  =  1;   rN[9](1)  =  0;  rN[9](2)  = -1;
-    rN[10](0) =  0;   rN[10](1) =  1;  rN[10](2) = -1;
-    rN[11](0) = -1;   rN[11](1) =  0;  rN[11](2) = -1;
-    rN[12](0) =  0;   rN[12](1) = -1;  rN[12](2) =  1;
-    rN[13](0) =  1;   rN[13](1) =  0;  rN[13](2) =  1;
-    rN[14](0) =  0;   rN[14](1) =  1;  rN[14](2) =  1;
-    rN[15](0) = -1;   rN[15](1) =  0;  rN[15](2) =  1;
-    rN[16](0) = -1;   rN[16](1) = -1;  rN[16](2) =  0;
-    rN[17](0) =  1;   rN[17](1) = -1;  rN[17](2) =  0;
-    rN[18](0) =  1;   rN[18](1) =  1;  rN[18](2) =  0;
-    rN[19](0) = -1;   rN[19](1) =  1;  rN[19](2) =  0;
-
-    xi(0) = -sqrt(3./5);
-    xi(2) = sqrt(3./5);
-    wi(0) = 5./9;
-    wi(1) = 8./9;
-    wi(2) = 5./9;
-
-    int nE = e.rows();
-
-    VecV nI(u.rows());
-    for(int i=0; i<e.rows(); i++) {
-      for(int j=0; j<e.cols(); j++)
-	nI(e(i,j)) += 1;
-    }
-
-    int ng = 0;
-    vector<int> I;
-    for(int i=0; i<nI.size(); i++) {
-      if(nI(i)>0) {
-	ng+=3;
-	I.push_back(i);
+  void FiniteElementsFfrBody::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==preInit) {
+      for(int i=0; i<8; i++) {
+	Ni[i] = &FiniteElementsFfrBody::N1;
+	dNidxq[i] = &FiniteElementsFfrBody::dN1dxq;
+	dNidyq[i] = &FiniteElementsFfrBody::dN1dyq;
+	dNidzq[i] = &FiniteElementsFfrBody::dN1dzq;
       }
-    }
+      for(int i=8; i<15; i+=2) {
+	Ni[i] = &FiniteElementsFfrBody::N2;
+	dNidxq[i] = &FiniteElementsFfrBody::dN2dxq;
+	dNidyq[i] = &FiniteElementsFfrBody::dN2dyq;
+	dNidzq[i] = &FiniteElementsFfrBody::dN2dzq;
+      }
+      for(int i=9; i<16; i+=2) {
+	Ni[i] = &FiniteElementsFfrBody::N3;
+	dNidxq[i] = &FiniteElementsFfrBody::dN3dxq;
+	dNidyq[i] = &FiniteElementsFfrBody::dN3dyq;
+	dNidzq[i] = &FiniteElementsFfrBody::dN3dzq;
+      }
+      for(int i=16; i<20; i++) {
+	Ni[i] = &FiniteElementsFfrBody::N4;
+	dNidxq[i] = &FiniteElementsFfrBody::dN4dxq;
+	dNidyq[i] = &FiniteElementsFfrBody::dN4dyq;
+	dNidzq[i] = &FiniteElementsFfrBody::dN4dzq;
+      }
 
-    int nN = I.size();
+      rN.resize(20,Vec3(NONINIT));
+      rN[0](0)  = -1;   rN[0](1)  = -1;  rN[0](2)  = -1;
+      rN[1](0)  =  1;   rN[1](1)  = -1;  rN[1](2)  = -1;
+      rN[2](0)  =  1;   rN[2](1)  =  1;  rN[2](2)  = -1;
+      rN[3](0)  = -1;   rN[3](1)  =  1;  rN[3](2)  = -1;
+      rN[4](0)  = -1;   rN[4](1)  = -1;  rN[4](2)  =  1;
+      rN[5](0)  =  1;   rN[5](1)  = -1;  rN[5](2)  =  1;
+      rN[6](0)  =  1;   rN[6](1)  =  1;  rN[6](2)  =  1;
+      rN[7](0)  = -1;   rN[7](1)  =  1;  rN[7](2)  =  1;
+      rN[8](0)  =  0;   rN[8](1)  = -1;  rN[8](2)  = -1;
+      rN[9](0)  =  1;   rN[9](1)  =  0;  rN[9](2)  = -1;
+      rN[10](0) =  0;   rN[10](1) =  1;  rN[10](2) = -1;
+      rN[11](0) = -1;   rN[11](1) =  0;  rN[11](2) = -1;
+      rN[12](0) =  0;   rN[12](1) = -1;  rN[12](2) =  1;
+      rN[13](0) =  1;   rN[13](1) =  0;  rN[13](2) =  1;
+      rN[14](0) =  0;   rN[14](1) =  1;  rN[14](2) =  1;
+      rN[15](0) = -1;   rN[15](1) =  0;  rN[15](2) =  1;
+      rN[16](0) = -1;   rN[16](1) = -1;  rN[16](2) =  0;
+      rN[17](0) =  1;   rN[17](1) = -1;  rN[17](2) =  0;
+      rN[18](0) =  1;   rN[18](1) =  1;  rN[18](2) =  0;
+      rN[19](0) = -1;   rN[19](1) =  1;  rN[19](2) =  0;
 
-    unordered_map<int,int> map;
-    for(size_t i=0; i<I.size(); i++)
-      map[I[i]]=i;
+      xi(0) = -sqrt(3./5);
+      xi(2) = sqrt(3./5);
+      wi(0) = 5./9;
+      wi(1) = 8./9;
+      wi(2) = 5./9;
 
-    int nr = 0;
-    for(int i=0; i<bc.rows(); i++)
-      nr += bc(i,2)-bc(i,1)+1;
-    int n = ng-nr;
+      int nE = e.rows();
 
-    rPdm.resize(3,Mat3xV(ng));
-    PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(ng)));
-    Pdm.resize(ng);
-    Ke0.resize(ng);
-    KrKP.resize(nN,Vec3());
-    Phi.resize(nN,Mat3xV(ng));
-    Psi.resize(nN,Mat3xV(ng));
-    sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(ng));
+      VecV nI(u.rows());
+      for(int i=0; i<e.rows(); i++) {
+	for(int j=0; j<e.cols(); j++)
+	  nI(e(i,j)) += 1;
+      }
 
-    KrKP.resize(nN);
-    for(int i=0; i<nN; i++)
-      KrKP[i] = u.row(I[i]).T();
+      int ng = 0;
+      vector<int> I;
+      for(int i=0; i<nI.size(); i++) {
+	if(nI(i)>0) {
+	  ng+=3;
+	  I.push_back(i);
+	}
+      }
 
-    for(int ee=0; ee<nE; ee++) {
-      for(int ii=0; ii<3; ii++) {
-	for(int jj=0; jj<3; jj++) {
-	  for(int kk=0; kk<3; kk++) {
-	    SqrMat J(3);
-	    Vec r(3);
-	    for(int ll=0; ll<20; ll++) {
-	      J.add(0,(this->*dNidxq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
-	      J.add(1,(this->*dNidyq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
-	      J.add(2,(this->*dNidzq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
-	      r += (this->*Ni[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)).T();
-	    }
-	    Vector<Ref,int> ipiv(J.size(),NONINIT);
-	    SqrMat LUJ = facLU(J,ipiv);
-	    double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
-	    double wijk = wi(ii)*wi(jj)*wi(kk);
-	    double dm = rho*wijk*detJ;
-	    double dk = E/(1+nu)*wijk*detJ;
-	    m += dm;
-	    rdm += dm*r;
-	    rrdm += dm*JTJ(r.T());
-	    for(int i=0; i<20; i++) {
-	      int u = map[e(ee,i)];
-	      double Ni_ = (this->*Ni[i])(xi(ii),xi(jj),xi(kk),i);
-	      Vec dN(3,NONINIT);
-	      dN(0) = (this->*dNidxq[i])(xi(ii),xi(jj),xi(kk),i);
-	      dN(1) = (this->*dNidyq[i])(xi(ii),xi(jj),xi(kk),i);
-	      dN(2) = (this->*dNidzq[i])(xi(ii),xi(jj),xi(kk),i);
-	      Vec dNi = slvLUFac(LUJ,dN,ipiv);
-	      Pdm(0,u*3) += dm*Ni_;
-	      Pdm(1,u*3+1) = Pdm(0,u*3);
-	      Pdm(2,u*3+2) = Pdm(0,u*3);
-	      for(int j=0; j<3; j++) {
-		rPdm[j](0,u*3) += dm*r(j)*Ni_;
-		rPdm[j](1,u*3+1) = rPdm[j](0,u*3);
-		rPdm[j](2,u*3+2) = rPdm[j](0,u*3);
+      int nN = I.size();
+
+      unordered_map<int,int> map;
+      for(size_t i=0; i<I.size(); i++)
+	map[I[i]]=i;
+
+      int nr = 0;
+      for(int i=0; i<bc.rows(); i++)
+	nr += bc(i,2)-bc(i,1)+1;
+      int n = ng-nr;
+
+      rPdm.resize(3,Mat3xV(ng));
+      PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(ng)));
+      Pdm.resize(ng);
+      Ke0.resize(ng);
+      KrKP.resize(nN,Vec3());
+      Phi.resize(nN,Mat3xV(ng));
+      Psi.resize(nN,Mat3xV(ng));
+      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(ng));
+
+      KrKP.resize(nN);
+      for(int i=0; i<nN; i++)
+	KrKP[i] = u.row(I[i]).T();
+
+      for(int ee=0; ee<nE; ee++) {
+	for(int ii=0; ii<3; ii++) {
+	  for(int jj=0; jj<3; jj++) {
+	    for(int kk=0; kk<3; kk++) {
+	      SqrMat J(3);
+	      Vec r(3);
+	      for(int ll=0; ll<20; ll++) {
+		J.add(0,(this->*dNidxq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
+		J.add(1,(this->*dNidyq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
+		J.add(2,(this->*dNidzq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
+		r += (this->*Ni[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)).T();
 	      }
-	      for(int j=i; j<20; j++) {
-		int v = map[e(ee,j)];
-		double Nj_ = (this->*Ni[j])(xi(ii),xi(jj),xi(kk),j);
+	      Vector<Ref,int> ipiv(J.size(),NONINIT);
+	      SqrMat LUJ = facLU(J,ipiv);
+	      double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
+	      double wijk = wi(ii)*wi(jj)*wi(kk);
+	      double dm = rho*wijk*detJ;
+	      double dk = E/(1+nu)*wijk*detJ;
+	      m += dm;
+	      rdm += dm*r;
+	      rrdm += dm*JTJ(r.T());
+	      for(int i=0; i<20; i++) {
+		int u = map[e(ee,i)];
+		double Ni_ = (this->*Ni[i])(xi(ii),xi(jj),xi(kk),i);
 		Vec dN(3,NONINIT);
-		dN(0) = (this->*dNidxq[j])(xi(ii),xi(jj),xi(kk),j);
-		dN(1) = (this->*dNidyq[j])(xi(ii),xi(jj),xi(kk),j);
-		dN(2) = (this->*dNidzq[j])(xi(ii),xi(jj),xi(kk),j);
-		Vec dNj = slvLUFac(LUJ,dN,ipiv);
-		double dPPdm = dm*Ni_*Nj_;
-		double dK1 = dk*((1-nu)/(1-2*nu)*dNi(0)*dNj(0)+0.5*(dNi(1)*dNj(1)+dNi(2)*dNj(2)));
-		double dK2 = dk*(nu/(1-2*nu)*dNi(1)*dNj(0)+0.5*dNi(0)*dNj(1));
-		double dK3 = dk*(nu/(1-2*nu)*dNi(2)*dNj(0)+0.5*dNi(0)*dNj(2));
-		double dK4 = dk*(nu/(1-2*nu)*dNi(0)*dNj(1)+0.5*dNi(1)*dNj(0));
-		double dK5 = dk*((1-nu)/(1-2*nu)*dNi(1)*dNj(1)+0.5*(dNi(0)*dNj(0)+dNi(2)*dNj(2)));
-		double dK6 = dk*(nu/(1-2*nu)*dNi(2)*dNj(1)+0.5*dNi(1)*dNj(2));
-		double dK7 = dk*(nu/(1-2*nu)*dNi(0)*dNj(2)+0.5*dNi(2)*dNj(0));
-		double dK8 = dk*(nu/(1-2*nu)*dNi(1)*dNj(2)+0.5*dNi(2)*dNj(1));
-		double dK9 = dk*((1-nu)/(1-2*nu)*dNi(2)*dNj(2)+0.5*(dNi(0)*dNj(0)+dNi(1)*dNj(1)));
-		if(v>=u) { 
-		  PPdm[0][0](u*3,v*3) += dPPdm;
-		  PPdm[0][0](v*3,u*3) = PPdm[0][0](u*3,v*3);
-		  PPdm[1][1](u*3+1,v*3+1) = PPdm[0][0](u*3,v*3);
-		  PPdm[1][1](v*3+1,u*3+1) = PPdm[0][0](u*3,v*3);
-		  PPdm[2][2](u*3+2,v*3+2) = PPdm[0][0](u*3,v*3);
-		  PPdm[2][2](v*3+2,u*3+2) = PPdm[0][0](u*3,v*3);
-		  PPdm[0][1](u*3,v*3+1) = PPdm[0][0](u*3,v*3);
-		  PPdm[0][1](v*3,u*3+1) = PPdm[0][0](u*3,v*3);
-		  PPdm[0][2](u*3,v*3+2) = PPdm[0][0](u*3,v*3);
-		  PPdm[0][2](v*3,u*3+2) = PPdm[0][0](u*3,v*3);
-		  PPdm[1][2](u*3+1,v*3+2) = PPdm[0][0](u*3,v*3);
-		  PPdm[1][2](v*3+1,u*3+2) = PPdm[0][0](u*3,v*3);
-		  Ke0(u*3,v*3) += dK1;
-		  if(v!=u) Ke0(u*3+1,v*3) += dK2;
-		  if(v!=u) Ke0(u*3+2,v*3) += dK3;
-		  Ke0(u*3,v*3+1) += dK4;
-		  Ke0(u*3+1,v*3+1) += dK5;
-		  if(v!=u) Ke0(u*3+2,v*3+1) += dK6;
-		  Ke0(u*3,v*3+2) += dK7;
-		  Ke0(u*3+1,v*3+2) += dK8;
-		  Ke0(u*3+2,v*3+2) += dK9;
+		dN(0) = (this->*dNidxq[i])(xi(ii),xi(jj),xi(kk),i);
+		dN(1) = (this->*dNidyq[i])(xi(ii),xi(jj),xi(kk),i);
+		dN(2) = (this->*dNidzq[i])(xi(ii),xi(jj),xi(kk),i);
+		Vec dNi = slvLUFac(LUJ,dN,ipiv);
+		Pdm(0,u*3) += dm*Ni_;
+		Pdm(1,u*3+1) = Pdm(0,u*3);
+		Pdm(2,u*3+2) = Pdm(0,u*3);
+		for(int j=0; j<3; j++) {
+		  rPdm[j](0,u*3) += dm*r(j)*Ni_;
+		  rPdm[j](1,u*3+1) = rPdm[j](0,u*3);
+		  rPdm[j](2,u*3+2) = rPdm[j](0,u*3);
 		}
-		else {
-		  PPdm[0][0](v*3,u*3) += dPPdm;
-		  PPdm[0][0](u*3,v*3) = PPdm[0][0](v*3,u*3);
-		  PPdm[1][1](v*3+1,u*3+1) = PPdm[0][0](v*3,u*3);
-		  PPdm[1][1](u*3+1,v*3+1) = PPdm[0][0](v*3,u*3);
-		  PPdm[2][2](v*3+2,u*3+2) = PPdm[0][0](v*3,u*3);
-		  PPdm[2][2](u*3+2,v*3+2) = PPdm[0][0](v*3,u*3);
-		  PPdm[0][1](v*3+1,u*3) = PPdm[0][0](v*3,u*3);
-		  PPdm[0][1](u*3+1,v*3) = PPdm[0][0](v*3,u*3);
-		  PPdm[0][2](v*3+2,u*3) = PPdm[0][0](v*3,u*3);
-		  PPdm[0][2](u*3+2,v*3) = PPdm[0][0](v*3,u*3);
-		  PPdm[1][2](v*3+2,u*3+1) = PPdm[0][0](v*3,u*3);
-		  PPdm[1][2](u*3+2,v*3+1) = PPdm[0][0](v*3,u*3);
-		  Ke0(v*3,u*3) += dK1;
-		  Ke0(v*3,u*3+1) += dK2;
-		  Ke0(v*3,u*3+2) += dK3;
-		  Ke0(v*3+1,u*3) += dK4;
-		  Ke0(v*3+1,u*3+1) += dK5;
-		  Ke0(v*3+1,u*3+2) += dK6;
-		  Ke0(v*3+2,u*3) += dK7;
-		  Ke0(v*3+2,u*3+1) += dK8;
-		  Ke0(v*3+2,u*3+2) += dK9;
+		for(int j=i; j<20; j++) {
+		  int v = map[e(ee,j)];
+		  double Nj_ = (this->*Ni[j])(xi(ii),xi(jj),xi(kk),j);
+		  Vec dN(3,NONINIT);
+		  dN(0) = (this->*dNidxq[j])(xi(ii),xi(jj),xi(kk),j);
+		  dN(1) = (this->*dNidyq[j])(xi(ii),xi(jj),xi(kk),j);
+		  dN(2) = (this->*dNidzq[j])(xi(ii),xi(jj),xi(kk),j);
+		  Vec dNj = slvLUFac(LUJ,dN,ipiv);
+		  double dPPdm = dm*Ni_*Nj_;
+		  double dK1 = dk*((1-nu)/(1-2*nu)*dNi(0)*dNj(0)+0.5*(dNi(1)*dNj(1)+dNi(2)*dNj(2)));
+		  double dK2 = dk*(nu/(1-2*nu)*dNi(1)*dNj(0)+0.5*dNi(0)*dNj(1));
+		  double dK3 = dk*(nu/(1-2*nu)*dNi(2)*dNj(0)+0.5*dNi(0)*dNj(2));
+		  double dK4 = dk*(nu/(1-2*nu)*dNi(0)*dNj(1)+0.5*dNi(1)*dNj(0));
+		  double dK5 = dk*((1-nu)/(1-2*nu)*dNi(1)*dNj(1)+0.5*(dNi(0)*dNj(0)+dNi(2)*dNj(2)));
+		  double dK6 = dk*(nu/(1-2*nu)*dNi(2)*dNj(1)+0.5*dNi(1)*dNj(2));
+		  double dK7 = dk*(nu/(1-2*nu)*dNi(0)*dNj(2)+0.5*dNi(2)*dNj(0));
+		  double dK8 = dk*(nu/(1-2*nu)*dNi(1)*dNj(2)+0.5*dNi(2)*dNj(1));
+		  double dK9 = dk*((1-nu)/(1-2*nu)*dNi(2)*dNj(2)+0.5*(dNi(0)*dNj(0)+dNi(1)*dNj(1)));
+		  if(v>=u) {
+		    PPdm[0][0](u*3,v*3) += dPPdm;
+		    PPdm[0][0](v*3,u*3) = PPdm[0][0](u*3,v*3);
+		    PPdm[1][1](u*3+1,v*3+1) = PPdm[0][0](u*3,v*3);
+		    PPdm[1][1](v*3+1,u*3+1) = PPdm[0][0](u*3,v*3);
+		    PPdm[2][2](u*3+2,v*3+2) = PPdm[0][0](u*3,v*3);
+		    PPdm[2][2](v*3+2,u*3+2) = PPdm[0][0](u*3,v*3);
+		    PPdm[0][1](u*3,v*3+1) = PPdm[0][0](u*3,v*3);
+		    PPdm[0][1](v*3,u*3+1) = PPdm[0][0](u*3,v*3);
+		    PPdm[0][2](u*3,v*3+2) = PPdm[0][0](u*3,v*3);
+		    PPdm[0][2](v*3,u*3+2) = PPdm[0][0](u*3,v*3);
+		    PPdm[1][2](u*3+1,v*3+2) = PPdm[0][0](u*3,v*3);
+		    PPdm[1][2](v*3+1,u*3+2) = PPdm[0][0](u*3,v*3);
+		    Ke0(u*3,v*3) += dK1;
+		    if(v!=u) Ke0(u*3+1,v*3) += dK2;
+		    if(v!=u) Ke0(u*3+2,v*3) += dK3;
+		    Ke0(u*3,v*3+1) += dK4;
+		    Ke0(u*3+1,v*3+1) += dK5;
+		    if(v!=u) Ke0(u*3+2,v*3+1) += dK6;
+		    Ke0(u*3,v*3+2) += dK7;
+		    Ke0(u*3+1,v*3+2) += dK8;
+		    Ke0(u*3+2,v*3+2) += dK9;
+		  }
+		  else {
+		    PPdm[0][0](v*3,u*3) += dPPdm;
+		    PPdm[0][0](u*3,v*3) = PPdm[0][0](v*3,u*3);
+		    PPdm[1][1](v*3+1,u*3+1) = PPdm[0][0](v*3,u*3);
+		    PPdm[1][1](u*3+1,v*3+1) = PPdm[0][0](v*3,u*3);
+		    PPdm[2][2](v*3+2,u*3+2) = PPdm[0][0](v*3,u*3);
+		    PPdm[2][2](u*3+2,v*3+2) = PPdm[0][0](v*3,u*3);
+		    PPdm[0][1](v*3+1,u*3) = PPdm[0][0](v*3,u*3);
+		    PPdm[0][1](u*3+1,v*3) = PPdm[0][0](v*3,u*3);
+		    PPdm[0][2](v*3+2,u*3) = PPdm[0][0](v*3,u*3);
+		    PPdm[0][2](u*3+2,v*3) = PPdm[0][0](v*3,u*3);
+		    PPdm[1][2](v*3+2,u*3+1) = PPdm[0][0](v*3,u*3);
+		    PPdm[1][2](u*3+2,v*3+1) = PPdm[0][0](v*3,u*3);
+		    Ke0(v*3,u*3) += dK1;
+		    Ke0(v*3,u*3+1) += dK2;
+		    Ke0(v*3,u*3+2) += dK3;
+		    Ke0(v*3+1,u*3) += dK4;
+		    Ke0(v*3+1,u*3+1) += dK5;
+		    Ke0(v*3+1,u*3+2) += dK6;
+		    Ke0(v*3+2,u*3) += dK7;
+		    Ke0(v*3+2,u*3+1) += dK8;
+		    Ke0(v*3+2,u*3+2) += dK9;
+		  }
 		}
 	      }
 	    }
 	  }
 	}
       }
-    }
-    PPdm[1][0] = PPdm[0][1].T();
-    PPdm[2][0] = PPdm[0][2].T();
-    PPdm[2][1] = PPdm[1][2].T();
+      PPdm[1][0] = PPdm[0][1].T();
+      PPdm[2][0] = PPdm[0][2].T();
+      PPdm[2][1] = PPdm[1][2].T();
 
-    vector<int> c;
-    for(int i=0; i<bc.rows(); i++) {
-      for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
-	c.push_back(map[bc(i,0)]*3+j);
-    }
-    sort(c.begin(), c.end());
-
-    size_t h=0;
-    Indices IF;
-    Indices IX;
-    for(int i=0; i<ng; i++) {
-      if(h<c.size() and i==c[h]) {
-	h++;
-	IX.add(i);
+      vector<int> c;
+      for(int i=0; i<bc.rows(); i++) {
+	for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
+	  c.push_back(map[bc(i,0)]*3+j);
       }
-      else
-	IF.add(i);
-    }
+      sort(c.begin(), c.end());
 
-    Indices I3{0,1,2};
-    Indices I6{0,1,2,3,4,5};
-    Pdm <<= Pdm(I3,IF);
-    for(size_t i=0; i<3; i++) {
-      rPdm[i] <<= rPdm[i](I3,IF);
-      for(size_t j=0; j<3; j++)
-	PPdm[i][j] <<= PPdm[i][j](IF,IF);
-    }
-    Ke0 <<= Ke0(IF);
-
-    for(int ee=0; ee<nE; ee++) {
-      for(int k=0; k<20; k++) {
-	int ku = map[e(ee,k)];
-	SqrMat J(3);
-	for(int ll=0; ll<20; ll++) {
-	  J.add(0,(this->*dNidxq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
-	  J.add(1,(this->*dNidyq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
-	  J.add(2,(this->*dNidzq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
+      size_t h=0;
+      Indices IF;
+      Indices IX;
+      for(int i=0; i<ng; i++) {
+	if(h<c.size() and i==c[h]) {
+	  h++;
+	  IX.add(i);
 	}
-	Vector<Ref,int> ipiv(J.size(),NONINIT);
-	SqrMat LUJ = facLU(J,ipiv);
-	for(int i=0; i<20; i++) {
-	  int u = map[e(ee,i)];
-	  Vec dN(3,NONINIT);
-	  dN(0) = (this->*dNidxq[i])(rN[k](0),rN[k](1),rN[k](2),i);
-	  dN(1) = (this->*dNidyq[i])(rN[k](0),rN[k](1),rN[k](2),i);
-	  dN(2) = (this->*dNidzq[i])(rN[k](0),rN[k](1),rN[k](2),i);
-	  Vec dNi = slvLUFac(LUJ,dN,ipiv);
-	  double al = E/(1+nu)/nI(e(ee,k));
-	  sigmahel[ku](0,u*3) += al*(1-nu)/(1-2*nu)*dNi(0);
-	  sigmahel[ku](0,u*3+1) += al*nu/(1-2*nu)*dNi(1);
-	  sigmahel[ku](0,u*3+2) += al*nu/(1-2*nu)*dNi(2);
-	  sigmahel[ku](1,u*3) += al*nu/(1-2*nu)*dNi(0);
-	  sigmahel[ku](1,u*3+1) += al*(1-nu)/(1-2*nu)*dNi(1);
-	  sigmahel[ku](1,u*3+2) += al*nu/(1-2*nu)*dNi(2);
-	  sigmahel[ku](2,u*3) += al*nu/(1-2*nu)*dNi(0);
-	  sigmahel[ku](2,u*3+1) += al*nu/(1-2*nu)*dNi(1);
-	  sigmahel[ku](2,u*3+2) += al*(1-nu)/(1-2*nu)*dNi(2);
-	  sigmahel[ku](3,u*3) += al*0.5*dNi(1);
-	  sigmahel[ku](3,u*3+1) += al*0.5*dNi(0);
-	  sigmahel[ku](4,u*3+1) += al*0.5*dNi(2);
-	  sigmahel[ku](4,u*3+2) += al*0.5*dNi(1);
-	  sigmahel[ku](5,u*3) += al*0.5*dNi(2);
-	  sigmahel[ku](5,u*3+2) += al*0.5*dNi(0);
+	else
+	  IF.add(i);
+      }
+
+      Indices I3{0,1,2};
+      Indices I6{0,1,2,3,4,5};
+      Pdm <<= Pdm(I3,IF);
+      for(size_t i=0; i<3; i++) {
+	rPdm[i] <<= rPdm[i](I3,IF);
+	for(size_t j=0; j<3; j++)
+	  PPdm[i][j] <<= PPdm[i][j](IF,IF);
+      }
+      Ke0 <<= Ke0(IF);
+
+      for(int ee=0; ee<nE; ee++) {
+	for(int k=0; k<20; k++) {
+	  int ku = map[e(ee,k)];
+	  SqrMat J(3);
+	  for(int ll=0; ll<20; ll++) {
+	    J.add(0,(this->*dNidxq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
+	    J.add(1,(this->*dNidyq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
+	    J.add(2,(this->*dNidzq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
+	  }
+	  Vector<Ref,int> ipiv(J.size(),NONINIT);
+	  SqrMat LUJ = facLU(J,ipiv);
+	  for(int i=0; i<20; i++) {
+	    int u = map[e(ee,i)];
+	    Vec dN(3,NONINIT);
+	    dN(0) = (this->*dNidxq[i])(rN[k](0),rN[k](1),rN[k](2),i);
+	    dN(1) = (this->*dNidyq[i])(rN[k](0),rN[k](1),rN[k](2),i);
+	    dN(2) = (this->*dNidzq[i])(rN[k](0),rN[k](1),rN[k](2),i);
+	    Vec dNi = slvLUFac(LUJ,dN,ipiv);
+	    double al = E/(1+nu)/nI(e(ee,k));
+	    sigmahel[ku](0,u*3) += al*(1-nu)/(1-2*nu)*dNi(0);
+	    sigmahel[ku](0,u*3+1) += al*nu/(1-2*nu)*dNi(1);
+	    sigmahel[ku](0,u*3+2) += al*nu/(1-2*nu)*dNi(2);
+	    sigmahel[ku](1,u*3) += al*nu/(1-2*nu)*dNi(0);
+	    sigmahel[ku](1,u*3+1) += al*(1-nu)/(1-2*nu)*dNi(1);
+	    sigmahel[ku](1,u*3+2) += al*nu/(1-2*nu)*dNi(2);
+	    sigmahel[ku](2,u*3) += al*nu/(1-2*nu)*dNi(0);
+	    sigmahel[ku](2,u*3+1) += al*nu/(1-2*nu)*dNi(1);
+	    sigmahel[ku](2,u*3+2) += al*(1-nu)/(1-2*nu)*dNi(2);
+	    sigmahel[ku](3,u*3) += al*0.5*dNi(1);
+	    sigmahel[ku](3,u*3+1) += al*0.5*dNi(0);
+	    sigmahel[ku](4,u*3+1) += al*0.5*dNi(2);
+	    sigmahel[ku](4,u*3+2) += al*0.5*dNi(1);
+	    sigmahel[ku](5,u*3) += al*0.5*dNi(2);
+	    sigmahel[ku](5,u*3+2) += al*0.5*dNi(0);
+	  }
 	}
       }
-    }
-    for(int i=0; i<I.size(); i++) {
-      Phi[i](0,3*i) = 1;
-      Phi[i](1,3*i+1) = 1;
-      Phi[i](2,3*i+2) = 1;
-      Phi[i] <<= Phi[i](I3,IF);
-      Psi[i] <<= Psi[i](I3,IF);
-      sigmahel[i] <<= sigmahel[i](I6,IF);
-    }
+      for(int i=0; i<I.size(); i++) {
+	Phi[i](0,3*i) = 1;
+	Phi[i](1,3*i+1) = 1;
+	Phi[i](2,3*i+2) = 1;
+	Phi[i] <<= Phi[i](I3,IF);
+	Psi[i] <<= Psi[i](I3,IF);
+	sigmahel[i] <<= sigmahel[i](I6,IF);
+      }
       c.clear();
       for(int i=0; i<inodes.size(); i++) {
 	int j1=3;
@@ -403,11 +404,7 @@ namespace MBSimFlexibleBody {
 	  sigmahel[i] <<= sigmahel[i]*Vsd;
 	}
       }
-  }
-
-  void FiniteElementsFfrBody::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==resolveStringRef)
-      importData();
+    }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvBody) {
         std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
