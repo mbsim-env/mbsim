@@ -2051,6 +2051,9 @@ namespace MBSimGUI {
     nodes = new ExtWidget("Nodes",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodes");
     addToTab("General", nodes);
 
+    nnum = new ExtWidget("Node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodeNumbers");
+    addToTab("General", nnum);
+
     mass = new ExtWidget("Mass matrix",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"massMatrix");
     addToTab("General", mass);
 
@@ -2096,6 +2099,7 @@ namespace MBSimGUI {
     net->initializeUsingXML(item->getXMLElement());
     ner->initializeUsingXML(item->getXMLElement());
     nodes->initializeUsingXML(item->getXMLElement());
+    nnum->initializeUsingXML(item->getXMLElement());
     mass->initializeUsingXML(item->getXMLElement());
     stiff->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
@@ -2114,6 +2118,7 @@ namespace MBSimGUI {
     net->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     ner->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     nodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nnum->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     mass->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     stiff->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     formalism->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());

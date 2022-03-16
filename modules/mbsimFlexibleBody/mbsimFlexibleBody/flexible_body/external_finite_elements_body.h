@@ -46,7 +46,8 @@ namespace MBSimFlexibleBody {
       ExternalFiniteElementsFfrBody(const std::string &name="") : GenericFlexibleFfrBody(name) { }
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
-      void setNodes(const fmatvec::MatVx3 u_) { u <<= u_; }
+      void setNodes(const fmatvec::MatVx3 u_) { nodes <<= u_; }
+      void setNodeNumbers(const fmatvec::VecVI &nodes);
       void setMassMatrix(const fmatvec::MatVx3 M_) { M <<= M_; }
       void setStiffnessMatrix(const fmatvec::MatVx3 K_) { K <<= K_; }
       void setNumberOfNodalTranslationalDegreesOfFreedom(int net_) { net = net_; }
@@ -64,7 +65,7 @@ namespace MBSimFlexibleBody {
     private:
       void importData();
 
-      fmatvec::MatVx3 u, M, K;
+      fmatvec::MatVx3 nodes, M, K;
       Formalism formalism{lumpedMass};
       fmatvec::MatVx3 bc;
       std::shared_ptr<OpenMBVFlexibleFfrBeam> ombvBody;

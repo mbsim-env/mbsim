@@ -1494,6 +1494,13 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="nodeNumbers" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, welche Knoten berücksichtigt werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="massMatrix" type="pv:unknownMatrix">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">

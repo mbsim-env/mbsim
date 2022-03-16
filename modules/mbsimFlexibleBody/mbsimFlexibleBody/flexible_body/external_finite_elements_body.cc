@@ -30,10 +30,21 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, ExternalFiniteElementsFfrBody)
 
-  void ExternalFiniteElementsFfrBody::importData() {
+  void ExternalFiniteElementsFfrBody::setNodeNumbers(const VecVI &nodes) {
+    for(int i=0; i<nodes.size(); i++)
+      nodeMap[nodes(i)] = i;
+  }
 
+  void ExternalFiniteElementsFfrBody::importData() {
+    if(inodes.size()==0 and nmodes.size()==0)
+      throwError("(ExternalFiniteElementsFfrBody::init): error in component mode synthesis. At least one interface node number or normal mode number must be given.");
+
+    if(nodeMap.empty()) {
+      for(int i=0; i<nodes.rows(); i++)
+	nodeMap[i+1] = i;
+    }
     int nen = net + ner;
-    int nN = u.rows();
+    int nN = nodeMap.size();
     int ng = nN*nen;
     int nr = 0;
     for(int i=0; i<bc.rows(); i++)
@@ -44,8 +55,9 @@ namespace MBSimFlexibleBody {
     Ke0.resize(ng);
 
     KrKP.resize(nN);
-    for(int i=0; i<nN; i++)
-      KrKP[i] = u.row(i).T();
+    int j=0;
+    for(const auto & i : nodeMap)
+      KrKP[j++] = nodes.row(i.first-1).T();
 
     for(int i=0; i<M.rows(); i++)
       M0.e(M(i,0),M(i,1)) = M(i,2);
@@ -65,10 +77,11 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<nN; i++)
       mi[i] = M0.e(i*nen,i*nen)/ds*m;
 
+    j=0;
     vector<int> c;
     for(int i=0; i<bc.rows(); i++) {
       for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
-	c.push_back(bc(i,0)*nen+j);
+	c.push_back(nodeMap[bc(i,0)]*nen+j);
     }
     sort(c.begin(), c.end());
 
@@ -98,7 +111,7 @@ namespace MBSimFlexibleBody {
 	}
       }
       for(int j=0; j<nen; j++)
-	if(j<j1 or j>j2) c.push_back(inodes(i)*nen+j);
+	if(j<j1 or j>j2) c.push_back(nodeMap[inodes(i)]*nen+j);
     }
     sort(c.begin(), c.end());
     h=0;
@@ -233,6 +246,8 @@ namespace MBSimFlexibleBody {
     setNumberOfNodalRotationalDegreesOfFreedom(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
     setNodes(E(e)->getText<MatVx3>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumbers");
+    if(e) setNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"massMatrix");
     setMassMatrix(E(e)->getText<MatVx3>());
     for(int i=0; i<M.rows(); i++) {
@@ -256,16 +271,12 @@ namespace MBSimFlexibleBody {
     if(e) {
       setBoundaryConditions(MBXMLUtils::E(e)->getText<MatVx3>());
       for(int i=0; i<bc.rows(); i++) {
-	for(int j=0; j<bc.cols(); j++)
+	for(int j=1; j<bc.cols(); j++)
 	  bc(i,j)--;
       }
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"interfaceNodeNumbers");
-    if(e) {
-      setInterfaceNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
-      for(int i=0; i<inodes.size(); i++)
-	  inodes(i)--;
-    }
+    if(e) setInterfaceNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"normalModeNumbers");
     if(e) setNormalModeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"fixedBoundaryNormalModes");

@@ -460,7 +460,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *net, *ner, *nodes, *mass, *stiff, *formalism, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
+      ExtWidget *net, *ner, *nodes, *nnum, *mass, *stiff, *formalism, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {
