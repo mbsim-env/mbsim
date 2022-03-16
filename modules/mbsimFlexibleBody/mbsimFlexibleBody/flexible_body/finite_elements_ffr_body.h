@@ -48,8 +48,8 @@ namespace MBSimFlexibleBody {
       void setYoungsModulus(double E_) { E = E_; }
       void setPoissonsRatio(double nu_) { nu = nu_; }
       void setDensity(double rho_) { rho = rho_; }
-      void setNodes(const fmatvec::MatVx3 u_) { u <<= u_; }
-      void setElements(const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<20>,int> e_) { e <<= e_; }
+      void setNodes(const fmatvec::MatVx3 u_) { nodes <<= u_; }
+      void setElements(const fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<20>,int> e_) { elements <<= e_; }
       void setElementType(ElementType type_) { type = type_; }
       void setBoundaryConditions(const fmatvec::MatVx3 &bc_) { bc <<= bc_; }
       void setInterfaceNodeNumbers(const fmatvec::VecVI &inodes_) { inodes <<= inodes_; }
@@ -88,8 +88,8 @@ namespace MBSimFlexibleBody {
       double rho{7870};
       double nu{0.3};
       ElementType type{C3D20};
-      fmatvec::MatVx3 u;
-      fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<20>,int> e;
+      fmatvec::MatVx3 nodes;
+      fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<20>,int> elements;
       std::vector<fmatvec::Vec3> rN;
       fmatvec::Vec3 xi;
       fmatvec::Vec3 wi;

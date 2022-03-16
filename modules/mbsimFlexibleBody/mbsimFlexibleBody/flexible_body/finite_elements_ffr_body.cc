@@ -87,29 +87,22 @@ namespace MBSimFlexibleBody {
       wi(1) = 8./9;
       wi(2) = 5./9;
 
-      int nE = e.rows();
+      int nE = elements.rows();
 
-      VecV nI(u.rows());
-      for(int i=0; i<e.rows(); i++) {
-	for(int j=0; j<e.cols(); j++)
-	  nI(e(i,j)) += 1;
+      VecV nI(nodes.rows());
+      for(int i=0; i<elements.rows(); i++) {
+	for(int j=0; j<elements.cols(); j++)
+	  nI(elements(i,j)-1) += 1;
       }
 
       int ng = 0;
-      vector<int> I;
+      int nN = 0;
       for(int i=0; i<nI.size(); i++) {
 	if(nI(i)>0) {
 	  ng+=3;
-          nodeMap[i+1] = I.size();
-	  I.push_back(i);
+          nodeMap[i+1] = nN++;
 	}
       }
-
-      int nN = I.size();
-
-      unordered_map<int,int> map;
-      for(size_t i=0; i<I.size(); i++)
-	map[I[i]]=i;
 
       int nr = 0;
       for(int i=0; i<bc.rows(); i++)
@@ -126,8 +119,9 @@ namespace MBSimFlexibleBody {
       sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(ng));
 
       KrKP.resize(nN);
-      for(int i=0; i<nN; i++)
-	KrKP[i] = u.row(I[i]).T();
+      int j=0;
+      for(const auto & i : nodeMap)
+	KrKP[j++] = nodes.row(i.first-1).T();
 
       for(int ee=0; ee<nE; ee++) {
 	for(int ii=0; ii<3; ii++) {
@@ -136,10 +130,10 @@ namespace MBSimFlexibleBody {
 	      SqrMat J(3);
 	      Vec r(3);
 	      for(int ll=0; ll<20; ll++) {
-		J.add(0,(this->*dNidxq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
-		J.add(1,(this->*dNidyq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
-		J.add(2,(this->*dNidzq[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)));
-		r += (this->*Ni[ll])(xi(ii),xi(jj),xi(kk),ll)*u.row(e(ee,ll)).T();
+		J.add(0,(this->*dNidxq[ll])(xi(ii),xi(jj),xi(kk),ll)*nodes.row(elements(ee,ll)-1));
+		J.add(1,(this->*dNidyq[ll])(xi(ii),xi(jj),xi(kk),ll)*nodes.row(elements(ee,ll)-1));
+		J.add(2,(this->*dNidzq[ll])(xi(ii),xi(jj),xi(kk),ll)*nodes.row(elements(ee,ll)-1));
+		r += (this->*Ni[ll])(xi(ii),xi(jj),xi(kk),ll)*nodes.row(elements(ee,ll)-1).T();
 	      }
 	      Vector<Ref,int> ipiv(J.size(),NONINIT);
 	      SqrMat LUJ = facLU(J,ipiv);
@@ -151,7 +145,7 @@ namespace MBSimFlexibleBody {
 	      rdm += dm*r;
 	      rrdm += dm*JTJ(r.T());
 	      for(int i=0; i<20; i++) {
-		int u = map[e(ee,i)];
+		int u = nodeMap[elements(ee,i)];
 		double Ni_ = (this->*Ni[i])(xi(ii),xi(jj),xi(kk),i);
 		Vec dN(3,NONINIT);
 		dN(0) = (this->*dNidxq[i])(xi(ii),xi(jj),xi(kk),i);
@@ -167,7 +161,7 @@ namespace MBSimFlexibleBody {
 		  rPdm[j](2,u*3+2) = rPdm[j](0,u*3);
 		}
 		for(int j=i; j<20; j++) {
-		  int v = map[e(ee,j)];
+		  int v = nodeMap[elements(ee,j)];
 		  double Nj_ = (this->*Ni[j])(xi(ii),xi(jj),xi(kk),j);
 		  Vec dN(3,NONINIT);
 		  dN(0) = (this->*dNidxq[j])(xi(ii),xi(jj),xi(kk),j);
@@ -243,7 +237,7 @@ namespace MBSimFlexibleBody {
       vector<int> c;
       for(int i=0; i<bc.rows(); i++) {
 	for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
-	  c.push_back(map[bc(i,0)]*3+j);
+	  c.push_back(nodeMap[bc(i,0)]*3+j);
       }
       sort(c.begin(), c.end());
 
@@ -271,23 +265,23 @@ namespace MBSimFlexibleBody {
 
       for(int ee=0; ee<nE; ee++) {
 	for(int k=0; k<20; k++) {
-	  int ku = map[e(ee,k)];
+	  int ku = nodeMap[elements(ee,k)];
 	  SqrMat J(3);
 	  for(int ll=0; ll<20; ll++) {
-	    J.add(0,(this->*dNidxq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
-	    J.add(1,(this->*dNidyq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
-	    J.add(2,(this->*dNidzq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*u.row(e(ee,ll)));
+	    J.add(0,(this->*dNidxq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*nodes.row(elements(ee,ll)-1));
+	    J.add(1,(this->*dNidyq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*nodes.row(elements(ee,ll)-1));
+	    J.add(2,(this->*dNidzq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*nodes.row(elements(ee,ll)-1));
 	  }
 	  Vector<Ref,int> ipiv(J.size(),NONINIT);
 	  SqrMat LUJ = facLU(J,ipiv);
 	  for(int i=0; i<20; i++) {
-	    int u = map[e(ee,i)];
+	    int u = nodeMap[elements(ee,i)];
 	    Vec dN(3,NONINIT);
 	    dN(0) = (this->*dNidxq[i])(rN[k](0),rN[k](1),rN[k](2),i);
 	    dN(1) = (this->*dNidyq[i])(rN[k](0),rN[k](1),rN[k](2),i);
 	    dN(2) = (this->*dNidzq[i])(rN[k](0),rN[k](1),rN[k](2),i);
 	    Vec dNi = slvLUFac(LUJ,dN,ipiv);
-	    double al = E/(1+nu)/nI(e(ee,k));
+	    double al = E/(1+nu)/nI(elements(ee,k)-1);
 	    sigmahel[ku](0,u*3) += al*(1-nu)/(1-2*nu)*dNi(0);
 	    sigmahel[ku](0,u*3+1) += al*nu/(1-2*nu)*dNi(1);
 	    sigmahel[ku](0,u*3+2) += al*nu/(1-2*nu)*dNi(2);
@@ -306,7 +300,7 @@ namespace MBSimFlexibleBody {
 	  }
 	}
       }
-      for(int i=0; i<I.size(); i++) {
+      for(int i=0; i<nN; i++) {
 	Phi[i](0,3*i) = 1;
 	Phi[i](1,3*i+1) = 1;
 	Phi[i](2,3*i+2) = 1;
@@ -325,7 +319,7 @@ namespace MBSimFlexibleBody {
 	  }
 	}
 	for(int j=0; j<3; j++)
-	  if(j<j1 or j>j2) c.push_back(map[inodes(i)]*3+j);
+	  if(j<j1 or j>j2) c.push_back(nodeMap[inodes(i)]*3+j);
       }
       sort(c.begin(), c.end());
       h=0;
@@ -430,10 +424,6 @@ namespace MBSimFlexibleBody {
     setNodes(MBXMLUtils::E(e)->getText<MatVx3>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"elements");
     setElements(MBXMLUtils::E(e)->getText<MatVI>());
-    for(int i=0; i<this->e.rows(); i++) {
-      for(int j=0; j<this->e.cols(); j++)
-	this->e(i,j)--;
-    }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"elementType");
     string typeStr=string(X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).substr(1,string(X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).length()-2);
     if(typeStr=="C3D20") type=C3D20;
@@ -444,16 +434,12 @@ namespace MBSimFlexibleBody {
     if(e) {
       setBoundaryConditions(MBXMLUtils::E(e)->getText<MatVx3>());
       for(int i=0; i<bc.rows(); i++) {
-	for(int j=0; j<bc.cols(); j++)
+	for(int j=1; j<bc.cols(); j++)
 	  bc(i,j)--;
       }
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"interfaceNodeNumbers");
-    if(e) {
-      setInterfaceNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
-      for(int i=0; i<inodes.size(); i++)
-	  inodes(i)--;
-    }
+    if(e) setInterfaceNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"normalModeNumbers");
     if(e) setNormalModeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"fixedBoundaryNormalModes");
