@@ -86,7 +86,7 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[generalizedForce])
-	  plotColumns.emplace_back("generalizedNormalForce");
+	  addToPlot("generalizedNormalForce");
       }
     }
     else if(stage==unknownStage) {
@@ -102,7 +102,7 @@ namespace MBSim {
   void GeneralizedFriction::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[generalizedForce])
-	plotVector.push_back((*laN)(getTime()));
+	Element::plot((*laN)(getTime()));
     }
     DualRigidBodyLink::plot();
   }

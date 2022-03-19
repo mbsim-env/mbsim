@@ -255,5 +255,19 @@ namespace MBSim {
   double Element::getStepSize() const {
     return ds->getStepSize();
   }
-  
+
+  void Element::addToPlot(const string &name) {
+    plotColumns.emplace_back(name);
+  }
+
+  void Element::addToPlot(const string &name, int size) {
+    for(int i=baseIndexForPlot; i<baseIndexForPlot+size; i++)
+      plotColumns.emplace_back(name+" ("+to_string(i)+")");
+  }
+
+  void Element::addToPlot(const string &name, const vector<string> &iname) {
+    for(size_t i=0; i<iname.size(); i++)
+      plotColumns.emplace_back(name+" ("+iname[i]+")");
+  }
+
 }

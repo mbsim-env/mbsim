@@ -57,6 +57,8 @@ namespace MBSim {
   double tP = 20.0;
   bool gflag = false;
 
+  int baseIndexForPlot = 0;
+
   atomic<bool> DynamicSystemSolver::exitRequest = false;
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)

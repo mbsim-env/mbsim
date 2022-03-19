@@ -47,11 +47,8 @@ namespace MBSimControl {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        if(plotFeature[MBSimControl::signal]) {
-          plotColumns.emplace_back("signal (x)");
-          plotColumns.emplace_back("signal (y)");
-          plotColumns.emplace_back("signal (z)");
-        }
+        if(plotFeature[MBSimControl::signal])
+	  addToPlot("signal",{"x","y","z"});
       }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
@@ -69,10 +66,8 @@ namespace MBSimControl {
   void SignalObserver::plot() {
     Vec3 s = signal->evalSignal();
     if(plotFeature[plotRecursive]) {
-      if(plotFeature[MBSimControl::signal]) {
-        for(int i=0; i<s.size(); i++)
-          plotVector.push_back(s(i));
-      }
+      if(plotFeature[MBSimControl::signal])
+	Element::plot(s);
     }
     if(plotFeature[openMBV]) {
       Vec3 r;

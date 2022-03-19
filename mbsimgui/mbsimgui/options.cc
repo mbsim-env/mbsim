@@ -29,6 +29,7 @@
 #include <QFileDialog>
 #include <QTextEdit>
 #include <QGroupBox>
+#include <QComboBox>
 
 namespace MBSimGUI {
 
@@ -80,7 +81,16 @@ namespace MBSimGUI {
     autoRefresh = new QCheckBox("Auto refresh");
     layout->addWidget(autoRefresh);
 
-    auto mbsimxmlGroup = new QGroupBox("mbsimxml Options");
+    sublayout = new QHBoxLayout;
+    layout->addLayout(sublayout);
+    label = new QLabel("Base index for plot");
+    sublayout->addWidget(label);
+    baseIndex = new QComboBox;
+    baseIndex->addItem("0");
+    baseIndex->addItem("1");
+    sublayout->addWidget(baseIndex);
+
+    auto mbsimxmlGroup = new QGroupBox("mbsimxml options");
     layout->addWidget(mbsimxmlGroup);
     auto mbsimxmlGroupLayout = new QVBoxLayout;
     mbsimxmlGroup->setLayout(mbsimxmlGroupLayout);
@@ -172,6 +182,14 @@ namespace MBSimGUI {
 
   void OptionsDialog::setAutoRefresh(bool flag) {
     autoRefresh->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
+  int OptionsDialog::getBaseIndexForPlot() const {
+    return baseIndex->currentIndex();
+  }
+
+  void OptionsDialog::setBaseIndexForPlot(int index) {
+    baseIndex->setCurrentIndex(index);
   }
 
   QString OptionsDialog::getModulePath() const {

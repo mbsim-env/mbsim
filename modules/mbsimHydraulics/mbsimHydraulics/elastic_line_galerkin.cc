@@ -130,11 +130,11 @@ namespace MBSimHydraulics {
         delete ansatz;
         if(plotFeature[volumeFlow]) {
           for (int i=0; i<plotdim; i++)
-            plotColumns.push_back("Q(x="+toString(relPlotPoints(i)*l, -1)+") [l/min]");
+            Element::addToPlot("Q(x="+toString(relPlotPoints(i)*l, -1)+") [l/min]");
         }
         if(plotFeature[pressure]) {
           for (int i=0; i<plotdim; i++)
-            plotColumns.push_back("p(x="+toString(relPlotPoints(i)*l, -1)+") [bar]");
+            Element::addToPlot("p(x="+toString(relPlotPoints(i)*l, -1)+") [bar]");
         }
       }
     }
@@ -168,11 +168,11 @@ namespace MBSimHydraulics {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[volumeFlow]) {
         for (int i=0; i<plotdim; i++)
-          plotVector.push_back(Area*trans(u)*plotVecW.col(i)*6e4);
+          Element::plot(Area*trans(u)*plotVecW.col(i)*6e4);
       }
       if(plotFeature[pressure]) {
         for (int i=0; i<plotdim; i++)
-          plotVector.push_back((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
+          Element::plot((-E*trans(q)*plotVecWS.col(i)+p0)*1e-5);
       }
     }
     HLine::plot();

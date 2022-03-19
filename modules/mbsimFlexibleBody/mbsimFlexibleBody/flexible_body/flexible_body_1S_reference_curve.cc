@@ -251,10 +251,8 @@ namespace MBSimFlexibleBody {
     else if (stage == plotting) {
       if (getPlotFeature(plotRecursive)) {
         if (getPlotFeature(notMinimalState)) {
-          for (int i = 0; i < qSize; ++i)
-            plotColumns.push_back("qF(" + toString(i) + ")");
-          for (int i = 0; i < uSize[0]; ++i)
-            plotColumns.push_back("uF(" + toString(i) + ")");
+	  addToPlot("qF",qSize);
+	  addToPlot("uF",uSize[0]);
         }
       }
     }
@@ -416,10 +414,8 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1SReferenceCurve::plot(double t, double dt) {
     if (getPlotFeature(plotRecursive)) {
       if (getPlotFeature(notMinimalState)) {
-        for (int i = 0; i < qSize; ++i)
-          plotVector.push_back(qF(i));
-        for (int i = 0; i < uSize[0]; ++i)
-          plotVector.push_back(uF(i));
+	Element::plot(qF);
+	Element::plot(uF);
       }
     }
     FlexibleBodyContinuum<double>::plot(t, dt);

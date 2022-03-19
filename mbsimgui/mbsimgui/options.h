@@ -27,6 +27,7 @@ class QSpinBox;
 class QLineEdit;
 class QPushButton;
 class QTextEdit;
+class QComboBox;
 
 namespace MBSimGUI {
 
@@ -50,6 +51,8 @@ namespace MBSimGUI {
       void setShowFilters(bool flag);
       bool getAutoRefresh() const;
       void setAutoRefresh(bool flag);
+      int getBaseIndexForPlot() const;
+      void setBaseIndexForPlot(int index);
       QString getModulePath() const;
       void setModulePath(const QString &path);
     private:
@@ -57,6 +60,7 @@ namespace MBSimGUI {
       void autoExportChanged(int state);
       void openFileBrowser();
       QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *autoRefresh;
+      QComboBox *baseIndex;
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;
       QPushButton *button;

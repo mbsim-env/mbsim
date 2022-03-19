@@ -231,14 +231,14 @@ namespace MBSimFlexibleBody {
     }
     else if (stage == plotting) {
       for (int i = 0; i < plotElements.size(); i++) {
-        plotColumns.push_back("eps (" + toString(plotElements(i)) + ")"); // 0
-        plotColumns.push_back("epsp(" + toString(plotElements(i)) + ")"); // 1
-        plotColumns.push_back("xS  (" + toString(plotElements(i)) + ")"); // 2
-        plotColumns.push_back("yS  (" + toString(plotElements(i)) + ")"); // 3
-        plotColumns.push_back("xSp (" + toString(plotElements(i)) + ")"); // 4
-        plotColumns.push_back("ySp (" + toString(plotElements(i)) + ")"); // 5
-        plotColumns.push_back("Dal (" + toString(plotElements(i)) + ")"); // 6
-        plotColumns.push_back("Dalp(" + toString(plotElements(i)) + ")"); // 7
+        addToPlot("eps (" + toString(plotElements(i)) + ")"); // 0
+        addToPlot("epsp(" + toString(plotElements(i)) + ")"); // 1
+        addToPlot("xS  (" + toString(plotElements(i)) + ")"); // 2
+        addToPlot("yS  (" + toString(plotElements(i)) + ")"); // 3
+        addToPlot("xSp (" + toString(plotElements(i)) + ")"); // 4
+        addToPlot("ySp (" + toString(plotElements(i)) + ")"); // 5
+        addToPlot("Dal (" + toString(plotElements(i)) + ")"); // 6
+        addToPlot("Dalp(" + toString(plotElements(i)) + ")"); // 7
       }
       FlexibleBody1s::init(stage, config);
     }
@@ -250,7 +250,7 @@ namespace MBSimFlexibleBody {
     for (int i = 0; i < plotElements.size(); i++) {
       Vec elementData = static_cast<FiniteElement1s21RCM*>(discretization[i])->computeAdditionalElementData(getqElement(plotElements(i)), getuElement(plotElements(i)));
       for (int j = 0; j < elementData.size(); j++)
-        plotVector.push_back(elementData(j));
+        Element::plot(elementData(j));
     }
     FlexibleBody1s::plot();
   }

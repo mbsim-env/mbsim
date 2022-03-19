@@ -60,58 +60,34 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
-          plotColumns.emplace_back("weight (x)");
-          plotColumns.emplace_back("weight (y)");
-          plotColumns.emplace_back("weight (z)");
+	  addToPlot("weight",{"x","y","z"});
 	  if(getDynamicSystemSolver()->getInverseKinetics()) {
-	    for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
-	      plotColumns.emplace_back("joint force "+to_string(i)+" (x)");
-	      plotColumns.emplace_back("joint force "+to_string(i)+" (y)");
-	      plotColumns.emplace_back("joint force "+to_string(i)+" (z)");
-	    }
+	    for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
+	      addToPlot("joint force "+to_string(convertIndex(i)),{"x","y","z"});
 	  }
         }
         if(plotFeature[moment]) {
 	  if(getDynamicSystemSolver()->getInverseKinetics()) {
-	    for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
-	      plotColumns.emplace_back("joint moment "+to_string(i)+" (x)");
-	      plotColumns.emplace_back("joint moment "+to_string(i)+" (y)");
-	      plotColumns.emplace_back("joint moment "+to_string(i)+" (z)");
-	    }
+	    for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
+	      addToPlot("joint moment "+to_string(convertIndex(i)),{"x","y","z"});
 	  }
         }
         if(plotFeature[position]) {
-          plotColumns.emplace_back("position (x)");
-          plotColumns.emplace_back("position (y)");
-          plotColumns.emplace_back("position (z)");
-          plotColumns.emplace_back("direction (x)");
-          plotColumns.emplace_back("direction (y)");
-          plotColumns.emplace_back("direction (z)");
+	  addToPlot("position",{"x","y","z"});
+	  addToPlot("direction",{"x","y","z"});
         }
-        if(plotFeature[velocity]) {
-          plotColumns.emplace_back("momentum (x)");
-          plotColumns.emplace_back("momentum (y)");
-          plotColumns.emplace_back("momentum (z)");
-        }
-        if(plotFeature[angularVelocity]) {
-          plotColumns.emplace_back("angular momentum (x)");
-          plotColumns.emplace_back("angular momentum (y)");
-          plotColumns.emplace_back("angular momentum (z)");
-        }
-        if(plotFeature[acceleration]) {
-          plotColumns.emplace_back("derivative of momentum (x)");
-          plotColumns.emplace_back("derivative of momentum (y)");
-          plotColumns.emplace_back("derivative of momentum (z)");
-        }
-        if(plotFeature[angularAcceleration]) {
-          plotColumns.emplace_back("derivative of angular momentum (x)");
-          plotColumns.emplace_back("derivative of angular momentum (y)");
-          plotColumns.emplace_back("derivative of angular momentum (z)");
-        }
+        if(plotFeature[velocity])
+	  addToPlot("momentum",{"x","y","z"});
+        if(plotFeature[angularVelocity])
+	  addToPlot("angular momentum",{"x","y","z"});
+        if(plotFeature[acceleration])
+	  addToPlot("derivative of momentum",{"x","y","z"});
+        if(plotFeature[angularAcceleration])
+	  addToPlot("derivative of angular momentum",{"x","y","z"});
         if(plotFeature[energy]) {
-          plotColumns.push_back("kinetic energy");
-          plotColumns.push_back("potential energy");
-          plotColumns.push_back("total energy");
+          addToPlot("kinetic energy");
+          addToPlot("potential energy");
+          addToPlot("total energy");
         }
       }
       Observer::init(stage, config);
@@ -209,54 +185,36 @@ namespace MBSim {
     Vec3 r = rOS + dr;
     if(plotFeature[plotRecursive]) {
       if(plotFeature[force]) {
-        Vec3 force = body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity();
-        for(int j=0; j<force.size(); j++)
-          plotVector.push_back(force(j));
+	Element::plot(body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity());
 	if(getDynamicSystemSolver()->getInverseKinetics()) {
-	  for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
-	    force = body->getJoint()->evalForce(i);
-	    for(int j=0; j<force.size(); j++)
-	      plotVector.push_back(force(j));
-	  }
+	  for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
+	    Element::plot(body->getJoint()->evalForce(i));
 	}
       }
       if(plotFeature[moment]) {
 	if(getDynamicSystemSolver()->getInverseKinetics()) {
-	  for(int i=0; i<body->getJoint()->getNumberOfForces(); i++) {
-	    Vec3 moment = body->getJoint()->evalMoment(i);
-	    for(int j=0; j<moment.size(); j++)
-	      plotVector.push_back(moment(j));
-	  }
+	  for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
+	    Element::plot(body->getJoint()->evalMoment(i));
 	}
       }
       if(plotFeature[position]) {
-        for(int j=0; j<r.size(); j++)
-          plotVector.push_back(r(j));
-        for(int j=0; j<dir.size(); j++)
-          plotVector.push_back(dir(j));
+	Element::plot(r);
+	Element::plot(dir);
       }
-      if(plotFeature[velocity]) {
-        for(int j=0; j<p.size(); j++)
-          plotVector.push_back(p(j));
-      }
-      if(plotFeature[angularVelocity]) {
-        for(int j=0; j<p.size(); j++)
-          plotVector.push_back(L(j));
-      }
-      if(plotFeature[acceleration]) {
-        for(int j=0; j<p.size(); j++)
-          plotVector.push_back(pd(j));
-      }
-      if(plotFeature[angularAcceleration]) {
-        for(int j=0; j<p.size(); j++)
-          plotVector.push_back(Ld(j));
-      }
+      if(plotFeature[velocity])
+	Element::plot(p);
+      if(plotFeature[angularVelocity])
+	Element::plot(L);
+      if(plotFeature[acceleration])
+	Element::plot(pd);
+      if(plotFeature[angularAcceleration])
+	Element::plot(Ld);
       if(plotFeature[energy]) {
         double T = 0.5*(body->getMass()*vS.T()*vS + om.T()*WThetaS*om);
         double V = -body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity().T()*rOS;
-        plotVector.push_back(T);
-        plotVector.push_back(V);
-        plotVector.push_back(T+V);
+	Element::plot(T);
+	Element::plot(V);
+	Element::plot(T+V);
       }
     }
     if(plotFeature[openMBV]) {

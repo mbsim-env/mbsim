@@ -98,9 +98,9 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[generalizedRelativePosition])
-	  plotColumns.emplace_back("engagement");
+	  addToPlot("engagement");
 	if(plotFeature[generalizedForce])
-	  plotColumns.emplace_back("generalizedNormalForce");
+	  addToPlot("generalizedNormalForce");
       }
     }
     else if(stage==unknownStage) {
@@ -117,9 +117,9 @@ namespace MBSim {
   void GeneralizedClutch::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[generalizedRelativePosition])
-	plotVector.push_back((*e)(getTime()));
+	Element::plot((*e)(getTime()));
       if(plotFeature[generalizedForce])
-	plotVector.push_back((*laN)(getTime()));
+	Element::plot((*laN)(getTime()));
     }
     DualRigidBodyLink::plot();
   }

@@ -24,6 +24,10 @@ using namespace MBXMLUtils;
 using namespace MBSim;
 namespace bfs=boost::filesystem;
 
+namespace MBSim {
+  extern int baseIndexForPlot;
+}
+
 int main(int argc, char *argv[]) {
   try {
     // check for errors during ObjectFactory
@@ -59,7 +63,7 @@ int main(int argc, char *argv[]) {
        std::find(args.begin(), args.end(), "-?")!=args.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
           <<"                 --autoreload [ms]|--onlyListSchemas] [--savefinalstatevector]"<<endl
-          <<"                [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
+          <<"                [--baseindexforplot <bi>] [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
           <<"                <mbsimprjfile>"<<endl
           <<""<<endl
@@ -69,31 +73,32 @@ int main(int argc, char *argv[]) {
           <<""<<endl
           <<"Licensed under the GNU Lesser General Public License (LGPL)"<<endl
           <<""<<endl
-          <<"--onlypreprocess       Stop after the preprocessing stage"<<endl
-          <<"--donotintegrate       Stop after the initialization stage, do not integrate"<<endl
-          <<"--savefinalstatevector Save the state vector to the file \"statevector.asc\" after integration"<<endl
-          <<"--savestatetable       Save the state table to the file \"statetable.asc\""<<endl
-          <<"--stopafterfirststep   Stop after outputting the first step (usually at t=0)"<<endl
-          <<"                       This generates a HDF5 output file with only one time serie"<<endl
-          <<"--autoreload           Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
-          <<"                       a input file is newer than the output file. Checked every ms."<<endl
-          <<"--onlyListSchemas      List all XML schema files including MBSim modules"<<endl
-          <<"--modulePath <dir>     Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
-          <<"                       module dir and the current dir is always included."<<endl
-          <<"                       Also added are all directories listed in the file"<<endl
-          <<"                       Linux: $HOME/.config/mbsim-env/mbsimxml.modulepath"<<endl
-          <<"                       Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath"<<endl
-          <<"                       This file contains one directory per line."<<endl
-          <<"--stdout <msg>         Print on stdout messages of type <msg>."<<endl
-          <<"                       <msg> may be info~<pre>~<post>, warn~<pre>~<post>, debug~<pre>~<post>"<<endl
-          <<"                       error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl
-          <<"                       Each message is prefixed/postfixed with <pre>/<post>."<<endl
-          <<"                       --stdout may be specified multiple times."<<endl
-          <<"                       If --stdout and --stderr is not specified --stdout 'info~Info: ~'"<<endl
-          <<"                       --stderr 'warn~Warn: ~' --stderr 'error~~' --stderr 'depr~Depr:~'"<<endl
-          <<"                       --stderr 'status~~\\r' is used."<<endl
-          <<"--stderr <msg>         Analog to --stdout but prints to stderr."<<endl
-          <<"<mbsimprjfile>         Use <mbsimprjfile> as mbsim xml project file"<<endl;
+          <<"--onlypreprocess         Stop after the preprocessing stage"<<endl
+          <<"--donotintegrate         Stop after the initialization stage, do not integrate"<<endl
+          <<"--savefinalstatevector   Save the state vector to the file \"statevector.asc\" after integration"<<endl
+          <<"--savestatetable         Save the state table to the file \"statetable.asc\""<<endl
+	  <<"--baseindexforplot <bi>  Use the base index <bi> in MBSim plot files"<<endl
+          <<"--stopafterfirststep     Stop after outputting the first step (usually at t=0)"<<endl
+          <<"                         This generates a HDF5 output file with only one time serie"<<endl
+          <<"--autoreload             Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
+          <<"                         a input file is newer than the output file. Checked every ms."<<endl
+          <<"--onlyListSchemas        List all XML schema files including MBSim modules"<<endl
+          <<"--modulePath <dir>       Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
+          <<"                         module dir and the current dir is always included."<<endl
+          <<"                         Also added are all directories listed in the file"<<endl
+          <<"                         Linux: $HOME/.config/mbsim-env/mbsimxml.modulepath"<<endl
+          <<"                         Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath"<<endl
+          <<"                         This file contains one directory per line."<<endl
+          <<"--stdout <msg>           Print on stdout messages of type <msg>."<<endl
+          <<"                         <msg> may be info~<pre>~<post>, warn~<pre>~<post>, debug~<pre>~<post>"<<endl
+          <<"                         error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl
+          <<"                         Each message is prefixed/postfixed with <pre>/<post>."<<endl
+          <<"                         --stdout may be specified multiple times."<<endl
+          <<"                         If --stdout and --stderr is not specified --stdout 'info~Info: ~'"<<endl
+          <<"                         --stderr 'warn~Warn: ~' --stderr 'error~~' --stderr 'depr~Depr:~'"<<endl
+          <<"                         --stderr 'status~~\\r' is used."<<endl
+          <<"--stderr <msg>           Analog to --stdout but prints to stderr."<<endl
+          <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file"<<endl;
       return 0;
     }
 
@@ -156,6 +161,13 @@ int main(int argc, char *argv[]) {
     if((i=std::find(args.begin(), args.end(), "--savefinalstatevector"))!=args.end()) {
       savestatevector=true;
       args.erase(i);
+    }
+
+    if((i=std::find(args.begin(), args.end(), "--baseindexforplot"))!=args.end()) {
+      i2=i; i2++;
+      MBSim::baseIndexForPlot=stoi(*i2);
+      args.erase(i);
+      args.erase(i2);
     }
 
     int AUTORELOADTIME=0;

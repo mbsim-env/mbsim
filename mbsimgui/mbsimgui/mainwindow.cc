@@ -547,6 +547,7 @@ namespace MBSimGUI {
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
+    menu.setBaseIndexForPlot(settings.value("mainwindow/options/baseindexforplot", 1).toInt());
 
 #ifdef _WIN32
     QFile file(qgetenv("APPDATA")+"/mbsim-env/mbsimxml.modulepath");
@@ -569,6 +570,7 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/maxundo",          menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
       settings.setValue("mainwindow/options/autorefresh",      menu.getAutoRefresh());
+      settings.setValue("mainwindow/options/baseindexforplot", menu.getBaseIndexForPlot());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
       file.write(menu.getModulePath().toUtf8());
@@ -1092,9 +1094,11 @@ namespace MBSimGUI {
     if(currentTask==1)
       arg.append("--stopafterfirststep");
     else {
-        arg.append("--savestatetable");
+      arg.append("--savestatetable");
       if(settings.value("mainwindow/options/savestatevector", false).toBool())
         arg.append("--savefinalstatevector");
+      arg.append("--baseindexforplot");
+      arg.append(settings.value("mainwindow/options/baseindexforplot", "1").toString());
     }
 
     // we print everything except status messages to stdout
@@ -3044,7 +3048,6 @@ namespace MBSimGUI {
     int nl = 0;
     for(size_t i=0; i<list.size(); i++)
       nl += list[i]->getLength();
-    cout << nl << endl;
     if(nl > 0) {
       QMessageBox::StandardButton ret = QMessageBox::question(this, "Convert project", "The project file is not compatible with the current version of MBSim. Do you want to convert it?", QMessageBox::Yes | QMessageBox::No);
       if(ret == QMessageBox::Yes) {

@@ -48,46 +48,28 @@ namespace MBSim {
     if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[position]) {
-          for(int i=0; i<2; i++) {
-            plotColumns.emplace_back("position"+to_string(i)+" (x)");
-            plotColumns.emplace_back("position"+to_string(i)+" (y)");
-            plotColumns.emplace_back("position"+to_string(i)+" (z)");
-          }
+          for(int i=0; i<2; i++)
+	    addToPlot("position "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[angle]) {
-          for(int i=0; i<2; i++) {
-            plotColumns.emplace_back("angle"+to_string(i)+" (alpha)");
-            plotColumns.emplace_back("angle"+to_string(i)+" (beta)");
-            plotColumns.emplace_back("angle"+to_string(i)+" (gamma)");
-          }
+          for(int i=0; i<2; i++)
+	    addToPlot("angle "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[velocity]) {
-          for(int i=0; i<2; i++) {
-            plotColumns.emplace_back("velocity"+to_string(i)+" (x)");
-            plotColumns.emplace_back("velocity"+to_string(i)+" (y)");
-            plotColumns.emplace_back("velocity"+to_string(i)+" (z)");
-          }
+          for(int i=0; i<2; i++)
+	    addToPlot("velocity "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[angularVelocity]) {
-          for(int i=0; i<2; i++) {
-            plotColumns.emplace_back("angular velocity"+to_string(i)+" (x)");
-            plotColumns.emplace_back("angular velocity"+to_string(i)+" (y)");
-            plotColumns.emplace_back("angular velocity"+to_string(i)+" (z)");
-          }
+          for(int i=0; i<2; i++)
+	    addToPlot("angular velocity "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[acceleration]) {
-          for(int i=0; i<2; i++) {
-            plotColumns.emplace_back("acceleration"+to_string(i)+" (x)");
-            plotColumns.emplace_back("acceleration"+to_string(i)+" (y)");
-            plotColumns.emplace_back("acceleration"+to_string(i)+" (z)");
-          }
+          for(int i=0; i<2; i++)
+	    addToPlot("acceleration "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[angularAcceleration]) {
-          for(int i=0; i<2; i++) {
-            plotColumns.emplace_back("angular acceleration"+to_string(i)+" (x)");
-            plotColumns.emplace_back("angular acceleration"+to_string(i)+" (y)");
-            plotColumns.emplace_back("angular acceleration"+to_string(i)+" (z)");
-          }
+          for(int i=0; i<2; i++)
+	    addToPlot("angular acceleration "+to_string(convertIndex(i)),{"x","y","z"});
         }
       }
       MechanicalLinkObserver::init(stage, config);
@@ -124,46 +106,28 @@ namespace MBSim {
   void SingleContactObserver::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[position]) {
-        for(int i=0; i<2; i++) {
-          Vec3 pos = static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition();
-          for(int j=0; j<pos.size(); j++)
-            plotVector.push_back(pos(j));
-        }
+        for(int i=0; i<2; i++)
+	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition());
       }
       if(plotFeature[angle]) {
-        for(int i=0; i<2; i++) {
-          Vec3 cardan = AIK2Cardan(static_cast<SingleContact*>(link)->getContourFrame(i)->evalOrientation());
-          for(int j=0; j<cardan.size(); j++)
-            plotVector.push_back(cardan(j));
-        }
+        for(int i=0; i<2; i++)
+	  Element::plot(AIK2Cardan(static_cast<SingleContact*>(link)->getContourFrame(i)->evalOrientation()));
       }
       if(plotFeature[velocity]) {
-        for(int i=0; i<2; i++) {
-          Vec3 vel = static_cast<SingleContact*>(link)->getContourFrame(i)->evalVelocity();
-          for(int j=0; j<vel.size(); j++)
-            plotVector.push_back(vel(j));
-        }
+        for(int i=0; i<2; i++)
+	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalVelocity());
       }
       if(plotFeature[angularVelocity]) {
-        for(int i=0; i<2; i++) {
-          Vec3 om = static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularVelocity();
-          for(int j=0; j<om.size(); j++)
-            plotVector.push_back(om(j));
-        }
+        for(int i=0; i<2; i++)
+	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularVelocity());
       }
       if(plotFeature[acceleration]) {
-        for(int i=0; i<2; i++) {
-          Vec3 acc = static_cast<SingleContact*>(link)->getContourFrame(i)->evalAcceleration();
-          for(int j=0; j<acc.size(); j++)
-            plotVector.push_back(acc(j));
-        }
+        for(int i=0; i<2; i++)
+	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalAcceleration());
       }
       if(plotFeature[angularAcceleration]) {
-        for(int i=0; i<2; i++) {
-          Vec3 psi = static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularAcceleration();
-          for(int j=0; j<psi.size(); j++)
-            plotVector.push_back(psi(j));
-        }
+        for(int i=0; i<2; i++)
+	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularAcceleration());
       }
     }
     if(plotFeature[openMBV]) {

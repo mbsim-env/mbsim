@@ -56,7 +56,7 @@ namespace MBSimHydraulics {
     }
     else if (stage==plotting) {
       if(plotFeature[plotRecursive])
-        plotColumns.emplace_back("Reynolds number [-]");
+        addToPlot("Reynolds number [-]");
     }
     else if (stage==unknownStage) {
       double area=M_PI*diameter*diameter/4.;
@@ -70,7 +70,7 @@ namespace MBSimHydraulics {
   
   void RigidLine::plot() {
     if(plotFeature[plotRecursive])
-      plotVector.push_back(fabs(evalQIn()(0))*ReynoldsFactor);
+      Element::plot(fabs(evalQIn()(0))*ReynoldsFactor);
     RigidHLine::plot();
   }
 

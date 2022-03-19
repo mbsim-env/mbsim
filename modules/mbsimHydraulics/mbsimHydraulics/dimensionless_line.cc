@@ -45,8 +45,8 @@ namespace MBSimHydraulics {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        plotColumns.emplace_back("Volume flow [l/min]");
-        plotColumns.emplace_back("Mass flow [kg/min]");
+        addToPlot("Volume flow [l/min]");
+        addToPlot("Mass flow [kg/min]");
       }
     }
     HLine::init(stage, config);
@@ -54,8 +54,8 @@ namespace MBSimHydraulics {
 
   void DimensionlessLine::plot() {
     if(plotFeature[plotRecursive]) {
-      plotVector.push_back(evalQIn()(0)*6e4);
-      plotVector.push_back(getQIn()(0)*hydEnv->getSpecificMass()*60.);
+      Element::plot(evalQIn()(0)*6e4);
+      Element::plot(getQIn()(0)*hydEnv->getSpecificMass()*60.);
     }
     HLine::plot();
   }

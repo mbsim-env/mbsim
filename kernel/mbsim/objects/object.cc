@@ -99,22 +99,10 @@ namespace MBSim {
 
   void Object::plot() {
     if (plotFeature[plotRecursive]) {
-      if (plotFeature[generalizedPosition]) {
-        for (int i = 0; i < evalGeneralizedPosition().size(); ++i)
-          plotVector.push_back(getGeneralizedPosition()(i));
-      }
-      if (plotFeature[generalizedVelocity]) {
-        for (int i = 0; i < evalGeneralizedVelocity().size(); ++i)
-          plotVector.push_back(getGeneralizedVelocity()(i));
-      }
-      if (plotFeature[derivativeOfGeneralizedPosition]) {
-        for (int i = 0; i < evalDerivativeOfGeneralizedPosition().size(); ++i)
-          plotVector.push_back(getDerivativeOfGeneralizedPosition()(i));
-      }
-      if (plotFeature[generalizedAcceleration]) {
-        for (int i = 0; i < evalGeneralizedAcceleration().size(); ++i)
-          plotVector.push_back(getGeneralizedAcceleration()(i));
-      }
+      if (plotFeature[generalizedPosition]) Element::plot(evalGeneralizedPosition());
+      if (plotFeature[generalizedVelocity]) Element::plot(evalGeneralizedVelocity());
+      if (plotFeature[derivativeOfGeneralizedPosition]) Element::plot(evalDerivativeOfGeneralizedPosition());
+      if (plotFeature[generalizedAcceleration]) Element::plot(evalGeneralizedAcceleration());
     }
     Element::plot();
   }
@@ -196,22 +184,10 @@ namespace MBSim {
     }
     if (stage == plotting) {
       if (plotFeature[plotRecursive]) {
-        if (plotFeature[generalizedPosition]) {
-          for (int i = 0; i < qRel.size(); ++i)
-            plotColumns.push_back("generalized position (" + to_string(i) + ")");
-        }
-        if (plotFeature[generalizedVelocity]) {
-          for (int i = 0; i < uRel.size(); ++i)
-            plotColumns.push_back("generalized velocity (" + to_string(i) + ")");
-        }
-        if (plotFeature[derivativeOfGeneralizedPosition]) {
-          for (int i = 0; i < qdRel.size(); ++i)
-            plotColumns.push_back("derivative of generalized position (" + to_string(i) + ")");
-        }
-        if (plotFeature[generalizedAcceleration]) {
-          for (int i = 0; i < udRel.size(); ++i)
-            plotColumns.push_back("generalized acceleration (" + to_string(i) + ")");
-        }
+        if (plotFeature[generalizedPosition]) addToPlot("generalized position",qRel.size());
+        if (plotFeature[generalizedVelocity]) addToPlot("generalized velocity",uRel.size());
+        if (plotFeature[derivativeOfGeneralizedPosition]) addToPlot("derivative of generalized position",qdRel.size());
+        if (plotFeature[generalizedAcceleration]) addToPlot("generalized acceleration",udRel.size());
       }
     }
     Element::init(stage, config);
