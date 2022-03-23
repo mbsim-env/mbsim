@@ -72,6 +72,7 @@ namespace MBSimFlexibleBody {
     if(ee) {
       string str=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
       if(str=="points") visu=points;
+      else if(str=="lines") visu=lines;
     }
   }
 
@@ -79,6 +80,8 @@ namespace MBSimFlexibleBody {
     shared_ptr<OpenMBV::FlexibleBody> object;
     if(visu==points)
       object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicPointSet>();
+    else
+      object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicIndexedLineSet>();
     initializeObject(object);
     return object;
   }
