@@ -540,6 +540,17 @@ namespace MBSimFlexibleBody {
       if(plotFeature[openMBV] and ombvBody) {
         std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
         openMBVBody = flexbody;
+	if(ombvBody->getVisualization()==OpenMBVFlexibleFfrBeam::lines) {
+	  // visualization
+	  vector<int> ombvIndices(3*(nN-1));
+	  int j = 0;
+	  for(int i=0; i<nN-1; i++) {
+	    ombvIndices[j++] = i;
+	    ombvIndices[j++] = i+1;
+	    ombvIndices[j++] = -1;
+	  }
+	  static_pointer_cast<OpenMBV::DynamicIndexedLineSet>(flexbody)->setIndices(ombvIndices);
+	}
         ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
       }
     }
