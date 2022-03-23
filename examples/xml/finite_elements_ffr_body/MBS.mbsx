@@ -10,7 +10,7 @@
     <objects>
       <FiniteElementsFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FiniteElementsFfrBody">
         <youngsModulus unit="N/m^2">2.1e11</youngsModulus>
-        <poissonsRatio>0.3</poissonsRatio>
+        <poissonsRatio unit="-">0.3</poissonsRatio>
         <density unit="kg/m^3">7800</density>
         <nodes>
           <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="nodes.asc"/>
@@ -33,15 +33,16 @@
         </interfaceNodeNumbers>
         <frames>
           <FfrInterfaceNodeFrame name="FfrInterfaceNodeFrame" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
-          <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
-          <nodeNumbers>
+            <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
+            <nodeNumbers>
             [5;  6;  7;  8;  22;  25;  28;  31;  100]
           </nodeNumbers>
         </FfrInterfaceNodeFrame> 
-        </frames>
-        <contours/>
+        </frames><contours/>
         <enableOpenMBV>
-          <pointSize xmlns="http://www.mbsim-env.de/MBSim">5</pointSize>
+          <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"yDisplacement"</colorRepresentation>
+          <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">0</minimalColorValue>
+          <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">3e-4</maximalColorValue>
         </enableOpenMBV>
       </FiniteElementsFfrBody>
       </objects>

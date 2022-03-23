@@ -76,7 +76,7 @@
             </NodeFrame>
           </frames><contours/>
           <enableOpenMBV>
-            <pointSize xmlns="http://www.mbsim-env.de/MBSim">5</pointSize>
+            <lineWidth xmlns="http://www.mbsim-env.de/MBSim">5</lineWidth>
           </enableOpenMBV>
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
@@ -176,5 +176,6 @@
     <endTime unit="s">0.005</endTime>
     <plotStepSize unit="s">1e-4</plotStepSize>
   </DOPRI5Integrator>
+
 
 </MBSimProject>
