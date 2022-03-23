@@ -448,6 +448,7 @@ namespace MBSimGUI {
 
     vector<QString> list;
     list.emplace_back("\"points\"");
+    list.emplace_back("\"lines\"");
     visu = new ExtWidget("Visualization",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"visualization");
     layout()->addWidget(visu);
   }
