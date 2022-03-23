@@ -404,9 +404,47 @@ namespace MBSimFlexibleBody {
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvBody) {
-        std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
+	std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
         openMBVBody = flexbody;
-        ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
+	if(ombvBody->getVisualization()==OpenMBVCalculixBody::faces) {
+	  // visualization
+	  vector<int> ombvIndices(5*6*elements.rows());
+	  int j = 0;
+	  for(int i=0; i<elements.rows(); i++) {
+	    ombvIndices[j++] = nodeMap[elements(i,3)];
+	    ombvIndices[j++] = nodeMap[elements(i,2)];
+	    ombvIndices[j++] = nodeMap[elements(i,1)];
+	    ombvIndices[j++] = nodeMap[elements(i,0)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[elements(i,4)];
+	    ombvIndices[j++] = nodeMap[elements(i,5)];
+	    ombvIndices[j++] = nodeMap[elements(i,6)];
+	    ombvIndices[j++] = nodeMap[elements(i,7)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[elements(i,1)];
+	    ombvIndices[j++] = nodeMap[elements(i,2)];
+	    ombvIndices[j++] = nodeMap[elements(i,6)];
+	    ombvIndices[j++] = nodeMap[elements(i,5)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[elements(i,2)];
+	    ombvIndices[j++] = nodeMap[elements(i,3)];
+	    ombvIndices[j++] = nodeMap[elements(i,7)];
+	    ombvIndices[j++] = nodeMap[elements(i,6)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[elements(i,4)];
+	    ombvIndices[j++] = nodeMap[elements(i,7)];
+	    ombvIndices[j++] = nodeMap[elements(i,3)];
+	    ombvIndices[j++] = nodeMap[elements(i,0)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[elements(i,0)];
+	    ombvIndices[j++] = nodeMap[elements(i,1)];
+	    ombvIndices[j++] = nodeMap[elements(i,5)];
+	    ombvIndices[j++] = nodeMap[elements(i,4)];
+	    ombvIndices[j++] = -1;
+	  }
+	  static_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(flexbody)->setIndices(ombvIndices);
+	}
+	ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
       }
     }
     GenericFlexibleFfrBody::init(stage, config);
@@ -446,7 +484,7 @@ namespace MBSimFlexibleBody {
     if(e) setFixedBoundaryNormalModes(MBXMLUtils::E(e)->getText<bool>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
-      ombvBody = shared_ptr<OpenMBVFlexibleFfrBeam>(new OpenMBVFlexibleFfrBeam);
+      ombvBody = shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody);
       ombvBody->initializeUsingXML(e);
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
