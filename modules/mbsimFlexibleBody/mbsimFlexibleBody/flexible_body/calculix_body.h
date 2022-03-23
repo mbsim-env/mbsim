@@ -75,7 +75,6 @@ namespace MBSimFlexibleBody {
       std::vector<std::pair<size_t,size_t>> dof;
       std::vector<fmatvec::VecV> disp;
       std::vector<fmatvec::VecV> stress;
-      std::vector<MBSim::Index> ombvIndices;
       std::shared_ptr<OpenMBVCalculixBody> ombvBody;
   };
 
