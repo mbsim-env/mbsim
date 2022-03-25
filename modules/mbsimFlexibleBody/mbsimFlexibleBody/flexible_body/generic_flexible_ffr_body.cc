@@ -297,7 +297,7 @@ namespace MBSimFlexibleBody {
 	  for(size_t i=0; i<imod.size(); i++)
 	    modes(i) = i+1;
 	}
-	else if(min(modes)<1 or max(modes)>imod.size())
+	else if(min(modes)<1 or max(modes)>int(imod.size()))
 	  throwError(string("(GenericFlexibleFfrBody::init): mode numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
 	MatV Vr(V.rows(),modes.size(),NONINIT);
 	for(int i=0; i<modes.size(); i++)
