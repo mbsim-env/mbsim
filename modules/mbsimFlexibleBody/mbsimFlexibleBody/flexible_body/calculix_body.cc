@@ -261,7 +261,7 @@ namespace MBSimFlexibleBody {
       if(plotFeature[openMBV] and ombvBody) {
         std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
         openMBVBody = flexbody;
-        if(ombvBody->getVisualization()==OpenMBVCalculixBody::faces) {
+        if(ombvBody->getVisualization()==OpenMBVFiniteElementsBody::faces) {
 	  // visualization
 	  vector<int> ombvIndices(5*6*eles.rows());
 	  int j = 0;
@@ -321,7 +321,7 @@ namespace MBSimFlexibleBody {
     if(e) setProportionalDamping(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
-      ombvBody = shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody);
+      ombvBody = shared_ptr<OpenMBVFiniteElementsBody>(new OpenMBVFiniteElementsBody);
       ombvBody->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
