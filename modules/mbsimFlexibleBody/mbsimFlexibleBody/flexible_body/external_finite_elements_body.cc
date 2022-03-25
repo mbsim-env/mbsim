@@ -283,7 +283,7 @@ namespace MBSimFlexibleBody {
     if(e) setFixedBoundaryNormalModes(MBXMLUtils::E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
-      ombvBody = shared_ptr<OpenMBVFlexibleFfrBeam>(new OpenMBVFlexibleFfrBeam);
+      ombvBody = shared_ptr<OpenMBVFlexibleFfrBody>(new OpenMBVFlexibleFfrBody);
       ombvBody->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
