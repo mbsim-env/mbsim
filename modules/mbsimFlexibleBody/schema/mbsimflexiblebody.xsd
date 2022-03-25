@@ -71,7 +71,7 @@
           Moden, die bei der Reduktion berücksichtigt werden sollen.
         </xs:documentation></xs:annotation>
       </xs:element>
-      <xs:element name="modalDamping" type="pv:unknownVector" minOccurs="0">
+      <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
         <xs:annotation><xs:documentation xml:lang="de" xmlns="">
           Definiert den Dämpfungsgrad für jede Mode.
         </xs:documentation></xs:annotation>
@@ -1258,14 +1258,14 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="interfaceNodeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="interfaceNodeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Interface-Knoten.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="normalModeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="normalModeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Eigenmoden, die bei der CMS berücksichtigt werden sollen.
@@ -1394,14 +1394,14 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="interfaceNodeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="interfaceNodeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Interface-Knoten.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="normalModeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="normalModeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Eigenmoden, die bei der CMS berücksichtigt werden sollen.
@@ -1494,7 +1494,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="nodeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert, welche Knoten berücksichtigt werden sollen.
@@ -1538,14 +1538,14 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="interfaceNodeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="interfaceNodeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Interface-Knoten.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="normalModeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="normalModeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Eigenmoden, die bei der CMS berücksichtigt werden sollen.
