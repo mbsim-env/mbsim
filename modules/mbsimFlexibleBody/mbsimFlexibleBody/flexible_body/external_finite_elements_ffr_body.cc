@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "external_finite_elements_body.h"
+#include "external_finite_elements_ffr_body.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -88,7 +88,6 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<nN; i++)
       mi[i] = M0.e(i*nen,i*nen)/ds*m;
 
-    int j=0;
     vector<int> c;
     for(int i=0; i<bc.rows(); i++) {
       for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)

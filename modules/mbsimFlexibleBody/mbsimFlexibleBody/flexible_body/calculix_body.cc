@@ -228,10 +228,10 @@ namespace MBSimFlexibleBody {
         Pdm += mi[i]*Phi[i];
       }
       for(int k=0; k<3; k++) {
-        for(int i=0; i<nn; i++)
+        for(size_t i=0; i<nn; i++)
           rPdm[k] += mi[i]*KrKP[i](k)*Phi[i];
         for(int l=0; l<3; l++) {
-          for(int i=0; i<nn; i++)
+          for(size_t i=0; i<nn; i++)
             PPdm[k][l] += mi[i]*Phi[i].row(k).T()*Phi[i].row(l);
         }
       }
