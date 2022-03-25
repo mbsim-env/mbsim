@@ -30,19 +30,31 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, ExternalFiniteElementsFfrBody)
 
-  void ExternalFiniteElementsFfrBody::setNodeNumbers(const VecVI &nodes) {
-    for(int i=0; i<nodes.size(); i++)
-      nodeMap[nodes(i)] = i;
+  void ExternalFiniteElementsFfrBody::setNodeNumbers(const VecVI &nodeNum) {
+    for(int i=0; i<nodeNum.size(); i++)
+      nodeMap[nodeNum(i)] = i;
   }
 
   void ExternalFiniteElementsFfrBody::importData() {
     if(inodes.size()==0 and nmodes.size()==0)
       throwError("(ExternalFiniteElementsFfrBody::init): error in component mode synthesis. At least one interface node number or normal mode number must be given.");
 
+    if(nodes.cols()==4) {
+      for(int i=0; i<nodes.rows(); i++)
+	nodalPos[nodes(i,0)] = nodes.row(i)(RangeV(1,3)).T();
+    }
+    else if(nodes.cols()==3) {
+      for(int i=0; i<nodes.rows(); i++)
+	nodalPos[i+1] = nodes.row(i).T();
+    }
+    else
+      throwError("(FiniteElementsFfrBody::init): number of columns in nodes does not match, must be 3 or 4");
+
     if(nodeMap.empty()) {
       for(int i=0; i<nodes.rows(); i++)
 	nodeMap[i+1] = i;
     }
+
     int nen = net + ner;
     int nN = nodeMap.size();
     int ng = nN*nen;
@@ -55,9 +67,8 @@ namespace MBSimFlexibleBody {
     Ke0.resize(ng);
 
     KrKP.resize(nN);
-    int j=0;
     for(const auto & i : nodeMap)
-      KrKP[j++] = nodes.row(i.first-1).T();
+      KrKP[i.second] = nodalPos[i.first];
 
     for(int i=0; i<M.rows(); i++)
       M0.e(M(i,0),M(i,1)) = M(i,2);
@@ -77,7 +88,7 @@ namespace MBSimFlexibleBody {
     for(int i=0; i<nN; i++)
       mi[i] = M0.e(i*nen,i*nen)/ds*m;
 
-    j=0;
+    int j=0;
     vector<int> c;
     for(int i=0; i<bc.rows(); i++) {
       for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
@@ -245,7 +256,7 @@ namespace MBSimFlexibleBody {
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfNodalRotationalDegreesOfFreedom");
     setNumberOfNodalRotationalDegreesOfFreedom(E(e)->getText<int>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
-    setNodes(E(e)->getText<MatVx3>());
+    setNodes(E(e)->getText<MatV>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumbers");
     if(e) setNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"massMatrix");
