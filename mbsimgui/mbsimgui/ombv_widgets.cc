@@ -423,7 +423,27 @@ namespace MBSimGUI {
     return cRL;
   }
 
-  CalculixBodyMBSOMBVWidget::CalculixBodyMBSOMBVWidget(const vector<QString> &cRL) : FlexibleBodyMBSOMBVWidget(cRL) {
+  FlexibleFfrBodyMBSOMBVWidget::FlexibleFfrBodyMBSOMBVWidget(const vector<QString> &cRL) : FlexibleBodyMBSOMBVWidget(cRL) {
+
+    vector<QString> list;
+    list.emplace_back("\"points\"");
+    visu = new ExtWidget("Visualization",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"visualization");
+    layout()->addWidget(visu);
+  }
+
+  DOMElement* FlexibleFfrBodyMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+    FlexibleBodyMBSOMBVWidget::initializeUsingXML(element);
+    visu->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* FlexibleFfrBodyMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=FlexibleBodyMBSOMBVWidget::writeXMLFile(parent);
+    visu->writeXMLFile(e);
+    return e;
+  }
+
+  FiniteElementsBodyMBSOMBVWidget::FiniteElementsBodyMBSOMBVWidget(const vector<QString> &cRL) : FlexibleBodyMBSOMBVWidget(cRL) {
 
     vector<QString> list;
     list.emplace_back("\"points\"");
@@ -432,13 +452,13 @@ namespace MBSimGUI {
     layout()->addWidget(visu);
   }
 
-  DOMElement* CalculixBodyMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+  DOMElement* FiniteElementsBodyMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
     FlexibleBodyMBSOMBVWidget::initializeUsingXML(element);
     visu->initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* CalculixBodyMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+  DOMElement* FiniteElementsBodyMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=FlexibleBodyMBSOMBVWidget::writeXMLFile(parent);
     visu->writeXMLFile(e);
     return e;
