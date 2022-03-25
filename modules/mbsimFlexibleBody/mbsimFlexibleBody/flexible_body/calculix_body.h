@@ -48,8 +48,8 @@ namespace MBSimFlexibleBody {
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void setResultFileName(const std::string &resultFileName_) { resultFileName = resultFileName_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (visualization,(OpenMBVCalculixBody::Visualization),OpenMBVCalculixBody::faces)(colorRepresentation,(OpenMBVFlexibleBody::ColorRepresentation),OpenMBVFlexibleBody::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        ombvBody = std::shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (visualization,(OpenMBVFiniteElementsBody::Visualization),OpenMBVFiniteElementsBody::faces)(colorRepresentation,(OpenMBVFlexibleBody::ColorRepresentation),OpenMBVFlexibleBody::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        ombvBody = std::shared_ptr<OpenMBVFiniteElementsBody>(new OpenMBVFiniteElementsBody(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
       void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes <<= plotNodes_; }
 
@@ -75,7 +75,7 @@ namespace MBSimFlexibleBody {
       std::vector<std::pair<size_t,size_t>> dof;
       std::vector<fmatvec::VecV> disp;
       std::vector<fmatvec::VecV> stress;
-      std::shared_ptr<OpenMBVCalculixBody> ombvBody;
+      std::shared_ptr<OpenMBVFiniteElementsBody> ombvBody;
   };
 
 }
