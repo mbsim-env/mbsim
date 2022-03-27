@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
         sum += weights(i);
       R = static_cast<GenericFlexibleFfrBody*>(parent)->getFrameK();
       KrKP = (weights(0)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0));
-      ARP = weights(0)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativeOrientation(nodes(0));
+      ARP = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativeOrientation(nodes(0));
       Phi <<= (weights(0)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(0));
       for(int i=1; i<nodes.size(); i++) {
         KrKP += (weights(i)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i));
