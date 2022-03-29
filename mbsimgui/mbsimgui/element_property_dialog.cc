@@ -223,6 +223,36 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  DistributingInterfaceNodeFramePropertyDialog::DistributingInterfaceNodeFramePropertyDialog(Element *frame, bool approx_) : FramePropertyDialog(frame), approx(nullptr) {
+
+    elementNumbers = new ExtWidget("Element numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elementNumbers");
+    addToTab("General", elementNumbers);
+
+    faceNumber = new ExtWidget("Face number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"faceNumber");
+    addToTab("General", faceNumber);
+
+    if(approx_) {
+      approx = new ExtWidget("Approximate shape matrix of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"approximateShapeMatrixOfRotation");
+      addToTab("General", approx);
+    }
+  }
+
+  DOMElement* DistributingInterfaceNodeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FramePropertyDialog::initializeUsingXML(item->getXMLElement());
+    elementNumbers->initializeUsingXML(item->getXMLElement());
+    faceNumber->initializeUsingXML(item->getXMLElement());
+    if(approx) approx->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DistributingInterfaceNodeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FramePropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    elementNumbers->writeXMLFile(item->getXMLElement(),nullptr);
+    faceNumber->writeXMLFile(item->getXMLElement(),nullptr);
+    if(approx) approx->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   ContourPropertyDialog::ContourPropertyDialog(Element *contour) : ElementPropertyDialog(contour) {
     thickness = new ExtWidget("Thickness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"thickness");
     addToTab("General", thickness);

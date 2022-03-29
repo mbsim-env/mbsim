@@ -92,6 +92,8 @@ namespace MBSimGUI {
       return new InterfaceNodeFrame;
     if(E(element)->getTagName()==MBSIMFLEX%"FfrInterfaceNodeFrame")
       return new FfrInterfaceNodeFrame;
+    if(E(element)->getTagName()==MBSIMFLEX%"DistributingFfrInterfaceNodeFrame")
+      return new DistributingFfrInterfaceNodeFrame;
     else
       return new UnknownFrame;
     return nullptr;

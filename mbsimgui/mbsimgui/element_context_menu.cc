@@ -205,6 +205,9 @@ namespace MBSimGUI {
     action = new QAction("Add ffr interface node frame", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addFrame(new FfrInterfaceNodeFrame, element); });
     addAction(action);
+    action = new QAction("Add distributing ffr interface node frame", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addFrame(new DistributingFfrInterfaceNodeFrame, element); });
+    addAction(action);
     action = new QAction("Add unknown frame", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addFrame(new UnknownFrame, element); });
     addAction(action);

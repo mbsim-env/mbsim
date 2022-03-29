@@ -88,6 +88,16 @@ namespace MBSimGUI {
       ExtWidget *nodeNumbers, *weightingFactors, *approx;
   };
 
+  class DistributingInterfaceNodeFramePropertyDialog : public FramePropertyDialog {
+
+    public:
+      DistributingInterfaceNodeFramePropertyDialog(Element *frame, bool approx=false);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *elementNumbers, *faceNumber, *approx;
+  };
+
   class ContourPropertyDialog : public ElementPropertyDialog {
 
     public:
