@@ -226,6 +226,18 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:group name="CommonFfrInterfaceNodeFrame">
+    <xs:sequence>
+      <xs:element name="approximateShapeMatrixOfRotation" type="pv:booleanFullEval" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="">
+            Gibt an, ob die Knotenverdrehungen aus den Knotenverschiebungen approximiert werden sollen. Diese Option muss aktiviert werden, wenn auf eine FE-Struktur, bei der die Verdrehungen an den Knoten nicht bekannt ist, ein Moment eingeleitet werden soll.<br/>
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
   <xs:element name="FlexibleBody" substitutionGroup="mbsim:Body" abstract="true" type="FlexibleBodyType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -576,13 +588,36 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="approximateShapeMatrixOfRotation" type="pv:booleanFullEval" minOccurs="0">
+          <xs:group ref="CommonFfrInterfaceNodeFrame"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="DistributingFfrInterfaceNodeFrame" substitutionGroup="NodeBasedFrame" type="DistributingFfrInterfaceNodeFrameType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Interface-Koordinatensystem für FFR-Körper.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="DistributingFfrInterfaceNodeFrameType">
+    <xs:complexContent>
+      <xs:extension base="NodeBasedFrameType">
+        <xs:sequence>
+          <xs:element name="elementNumbers" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Gibt an, ob die Knotenverdrehungen aus den Knotenverschiebungen approximiert werden sollen. Diese Option muss aktiviert werden, wenn auf eine FE-Struktur, bei der die Verdrehungen an den Knoten nicht bekannt ist, ein Moment eingeleitet werden soll.<br/>
+                Elementnummern.<br/>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="faceNumber" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Flächennummer.<br/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:group ref="CommonFfrInterfaceNodeFrame"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
