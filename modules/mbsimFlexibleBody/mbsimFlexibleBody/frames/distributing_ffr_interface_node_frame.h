@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2019 MBSim Development Team
+/* Copyright (C) 2004-2022 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,30 +17,34 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _FFR_INTERFACE_NODE_FRAME_H__
-#define _FFR_INTERFACE_NODE_FRAME_H__
+#ifndef _DISTRIBUTING_FFR_INTERFACE_NODE_FRAME_H__
+#define _DISTRIBUTING_FFR_INTERFACE_NODE_FRAME_H__
 
 #include "mbsimFlexibleBody/frames/generic_ffr_interface_node_frame.h"
 
 namespace MBSimFlexibleBody {
 
   /**
-   * \brief interface node frame for flexible ffr bodies
+   * \brief distributing interface node frame for flexible ffr bodies
    * \author Martin Förg
    */
-  class FfrInterfaceNodeFrame : public GenericFfrInterfaceNodeFrame {
+  class DistributingFfrInterfaceNodeFrame : public GenericFfrInterfaceNodeFrame {
 
     public:
-      FfrInterfaceNodeFrame(const std::string &name = "dummy") : GenericFfrInterfaceNodeFrame(name) { }
+      DistributingFfrInterfaceNodeFrame(const std::string &name = "dummy") : GenericFfrInterfaceNodeFrame(name) { }
 
-      void setNodeNumbers(const fmatvec::VecVI &nodes_) { nodes <<= nodes_; }
-      const fmatvec::VecVI& getNodeNumbers() const { return nodes; }
+      void setElementNumbers(const fmatvec::VecVI &elements_) { elements <<= elements_; }
+      const fmatvec::VecVI& getElementNumbers() const { return elements; }
 
-      void setWeightingFactors(const fmatvec::VecV &weights_) { weights <<= weights_; }
-      const fmatvec::VecV& getWeightingFactors() const { return weights; }
+      void setFaceNumber(int faceNumber_) { faceNumber = faceNumber_; }
+      int getFaceNumber() const { return faceNumber; }
 
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
+
+    protected:
+      fmatvec::VecVI elements;
+      int faceNumber;
   };
 
 }

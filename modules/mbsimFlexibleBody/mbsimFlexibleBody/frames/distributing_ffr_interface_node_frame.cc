@@ -18,9 +18,10 @@
  */
 
 #include <config.h>
-#include "ffr_interface_node_frame.h"
-#include "mbsimFlexibleBody/flexible_body/generic_flexible_ffr_body.h"
+#include "distributing_ffr_interface_node_frame.h"
+#include "mbsimFlexibleBody/flexible_body/finite_elements_ffr_body.h"
 
+using namespace std;
 using namespace fmatvec;
 using namespace MBSim;
 using namespace MBXMLUtils;
@@ -28,24 +29,30 @@ using namespace xercesc;
 
 namespace MBSimFlexibleBody {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FfrInterfaceNodeFrame)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, DistributingFfrInterfaceNodeFrame)
 
-  void FfrInterfaceNodeFrame::init(InitStage stage, const InitConfigSet &config) {
+  void DistributingFfrInterfaceNodeFrame::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      if(weights.size()==0)
-        weights.resize(nodes.size(),INIT,1.0);
+      map<int,double> w = static_cast<FiniteElementsFfrBody*>(parent)->getWeightingFactors(elements,faceNumber);
+      nodes.resize(w.size(),NONINIT);
+      weights.resize(w.size(),NONINIT);
+      int j=0;
+      for(auto & i : w) {
+        nodes(j) = i.first;
+	weights(j++) = i.second;
+      }
     }
     GenericFfrInterfaceNodeFrame::init(stage,config);
   }
 
-  void FfrInterfaceNodeFrame::initializeUsingXML(DOMElement *element) {
+  void DistributingFfrInterfaceNodeFrame::initializeUsingXML(DOMElement *element) {
     GenericFfrInterfaceNodeFrame::initializeUsingXML(element);
 
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodeNumbers");
-    setNodeNumbers(E(e)->getText<VecVI>());
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"weightingFactors");
-    if(e) setWeightingFactors(E(e)->getText<VecV>());
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"elementNumbers");
+    setElementNumbers(E(e)->getText<VecVI>());
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"faceNumber");
+    setFaceNumber(E(e)->getText<int>());
   }
 
 }
