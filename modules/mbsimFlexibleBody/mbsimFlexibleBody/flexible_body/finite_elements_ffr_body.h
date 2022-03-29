@@ -42,7 +42,7 @@ namespace MBSimFlexibleBody {
         unknownElementType
       };
 
-      FiniteElementsFfrBody(const std::string &name="") : GenericFlexibleFfrBody(name) { }
+      FiniteElementsFfrBody(const std::string &name="") : GenericFlexibleFfrBody(name), xi(fmatvec::NONINIT), wi(fmatvec::NONINIT) { }
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void setYoungsModulus(double E_) { E = E_; }
@@ -59,6 +59,7 @@ namespace MBSimFlexibleBody {
         ombvBody = std::shared_ptr<OpenMBVFiniteElementsBody>(new OpenMBVFiniteElementsBody(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
       void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes <<= plotNodes_; }
+      std::map<int,double> getWeightingFactors(const fmatvec::VecVI &elesel, int faceNum);
 
     private:
       double N1(double x, double y, double z, int i);
@@ -79,9 +80,7 @@ namespace MBSimFlexibleBody {
       double dN4dzq(double x, double y, double z, int i);
 #ifndef SWIG
       double (FiniteElementsFfrBody::*Ni[20])(double x, double y, double z, int i);
-      double (FiniteElementsFfrBody::*dNidxq[20])(double x, double y, double z, int i);
-      double (FiniteElementsFfrBody::*dNidyq[20])(double x, double y, double z, int i);
-      double (FiniteElementsFfrBody::*dNidzq[20])(double x, double y, double z, int i);
+      double (FiniteElementsFfrBody::*dNidq[20][3])(double x, double y, double z, int i);
 #endif
 
       double E{2e11};

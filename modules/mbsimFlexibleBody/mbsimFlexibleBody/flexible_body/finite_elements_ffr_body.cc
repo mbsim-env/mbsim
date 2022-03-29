@@ -34,29 +34,30 @@ namespace MBSimFlexibleBody {
     if(stage==preInit) {
       if(type==unknownElementType)
 	throwError("(FiniteElementsFfrBody::init): element type unknown");
+
       for(int i=0; i<8; i++) {
 	Ni[i] = &FiniteElementsFfrBody::N1;
-	dNidxq[i] = &FiniteElementsFfrBody::dN1dxq;
-	dNidyq[i] = &FiniteElementsFfrBody::dN1dyq;
-	dNidzq[i] = &FiniteElementsFfrBody::dN1dzq;
+	dNidq[i][0] = &FiniteElementsFfrBody::dN1dxq;
+	dNidq[i][1] = &FiniteElementsFfrBody::dN1dyq;
+	dNidq[i][2] = &FiniteElementsFfrBody::dN1dzq;
       }
       for(int i=8; i<15; i+=2) {
 	Ni[i] = &FiniteElementsFfrBody::N2;
-	dNidxq[i] = &FiniteElementsFfrBody::dN2dxq;
-	dNidyq[i] = &FiniteElementsFfrBody::dN2dyq;
-	dNidzq[i] = &FiniteElementsFfrBody::dN2dzq;
+	dNidq[i][0] = &FiniteElementsFfrBody::dN2dxq;
+	dNidq[i][1] = &FiniteElementsFfrBody::dN2dyq;
+	dNidq[i][2] = &FiniteElementsFfrBody::dN2dzq;
       }
       for(int i=9; i<16; i+=2) {
 	Ni[i] = &FiniteElementsFfrBody::N3;
-	dNidxq[i] = &FiniteElementsFfrBody::dN3dxq;
-	dNidyq[i] = &FiniteElementsFfrBody::dN3dyq;
-	dNidzq[i] = &FiniteElementsFfrBody::dN3dzq;
+	dNidq[i][0] = &FiniteElementsFfrBody::dN3dxq;
+	dNidq[i][1] = &FiniteElementsFfrBody::dN3dyq;
+	dNidq[i][2] = &FiniteElementsFfrBody::dN3dzq;
       }
       for(int i=16; i<20; i++) {
 	Ni[i] = &FiniteElementsFfrBody::N4;
-	dNidxq[i] = &FiniteElementsFfrBody::dN4dxq;
-	dNidyq[i] = &FiniteElementsFfrBody::dN4dyq;
-	dNidzq[i] = &FiniteElementsFfrBody::dN4dzq;
+	dNidq[i][0] = &FiniteElementsFfrBody::dN4dxq;
+	dNidq[i][1] = &FiniteElementsFfrBody::dN4dyq;
+	dNidq[i][2] = &FiniteElementsFfrBody::dN4dzq;
       }
 
       rN.resize(20,Vec3(NONINIT));
@@ -82,7 +83,9 @@ namespace MBSimFlexibleBody {
       rN[19](0) = -1;   rN[19](1) =  1;  rN[19](2) =  0;
 
       xi(0) = -sqrt(3./5);
+      xi(1) = 0;
       xi(2) = sqrt(3./5);
+
       wi(0) = 5./9;
       wi(1) = 8./9;
       wi(2) = 5./9;
@@ -145,16 +148,18 @@ namespace MBSimFlexibleBody {
 
       for(const auto & ee : ele) {
 	for(int ii=0; ii<3; ii++) {
+	  double x = xi(ii);
 	  for(int jj=0; jj<3; jj++) {
+	    double y = xi(jj);
 	    for(int kk=0; kk<3; kk++) {
+	      double z = xi(kk);
 	      SqrMat J(3);
 	      Vec r(3);
 	      for(int ll=0; ll<20; ll++) {
 		Vec3 r0 = nodalPos[ee.second(ll)];
-		J.add(0,(this->*dNidxq[ll])(xi(ii),xi(jj),xi(kk),ll)*r0);
-		J.add(1,(this->*dNidyq[ll])(xi(ii),xi(jj),xi(kk),ll)*r0);
-		J.add(2,(this->*dNidzq[ll])(xi(ii),xi(jj),xi(kk),ll)*r0);
-		r += (this->*Ni[ll])(xi(ii),xi(jj),xi(kk),ll)*r0;
+		for(int rr=0; rr<3; rr++)
+		  J.add(rr,(this->*dNidq[ll][rr])(x,y,z,ll)*r0);
+		r += (this->*Ni[ll])(x,y,z,ll)*r0;
 	      }
 	      Vector<Ref,int> ipiv(J.size(),NONINIT);
 	      SqrMat LUJ = facLU(J,ipiv);
@@ -167,11 +172,10 @@ namespace MBSimFlexibleBody {
 	      rrdm += dm*JTJ(r.T());
 	      for(int i=0; i<20; i++) {
 		int u = nodeMap[ee.second(i)];
-		double Ni_ = (this->*Ni[i])(xi(ii),xi(jj),xi(kk),i);
+		double Ni_ = (this->*Ni[i])(x,y,z,i);
 		Vec dN(3,NONINIT);
-		dN(0) = (this->*dNidxq[i])(xi(ii),xi(jj),xi(kk),i);
-		dN(1) = (this->*dNidyq[i])(xi(ii),xi(jj),xi(kk),i);
-		dN(2) = (this->*dNidzq[i])(xi(ii),xi(jj),xi(kk),i);
+		for(int rr=0; rr<3; rr++)
+		  dN(rr) = (this->*dNidq[i][rr])(x,y,z,i);
 		Vec dNi = slvLUFac(LUJ,dN,ipiv);
 		Pdm(0,u*3) += dm*Ni_;
 		Pdm(1,u*3+1) = Pdm(0,u*3);
@@ -183,11 +187,10 @@ namespace MBSimFlexibleBody {
 		}
 		for(int j=i; j<20; j++) {
 		  int v = nodeMap[ee.second(j)];
-		  double Nj_ = (this->*Ni[j])(xi(ii),xi(jj),xi(kk),j);
+		  double Nj_ = (this->*Ni[j])(x,y,z,j);
 		  Vec dN(3,NONINIT);
-		  dN(0) = (this->*dNidxq[j])(xi(ii),xi(jj),xi(kk),j);
-		  dN(1) = (this->*dNidyq[j])(xi(ii),xi(jj),xi(kk),j);
-		  dN(2) = (this->*dNidzq[j])(xi(ii),xi(jj),xi(kk),j);
+		  for(int rr=0; rr<3; rr++)
+		    dN(rr) = (this->*dNidq[j][rr])(x,y,z,j);
 		  Vec dNj = slvLUFac(LUJ,dN,ipiv);
 		  double dPPdm = dm*Ni_*Nj_;
 		  double dK1 = dk*((1-nu)/(1-2*nu)*dNi(0)*dNj(0)+0.5*(dNi(1)*dNj(1)+dNi(2)*dNj(2)));
@@ -286,22 +289,23 @@ namespace MBSimFlexibleBody {
 
       for(const auto & ee : ele) {
 	for(int k=0; k<20; k++) {
+	  double x = rN[k](0);
+	  double y = rN[k](1);
+	  double z = rN[k](2);
 	  int ku = nodeMap[ee.second(k)];
 	  SqrMat J(3);
 	  for(int ll=0; ll<20; ll++) {
 	    Vec3 r0 = nodalPos[ee.second(ll)];
-	    J.add(0,(this->*dNidxq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*r0);
-	    J.add(1,(this->*dNidyq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*r0);
-	    J.add(2,(this->*dNidzq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*r0);
+	    for(int rr=0; rr<3; rr++)
+	      J.add(rr,(this->*dNidq[ll][rr])(x,y,z,ll)*r0);
 	  }
 	  Vector<Ref,int> ipiv(J.size(),NONINIT);
 	  SqrMat LUJ = facLU(J,ipiv);
 	  for(int i=0; i<20; i++) {
 	    int u = nodeMap[ee.second(i)];
 	    Vec dN(3,NONINIT);
-	    dN(0) = (this->*dNidxq[i])(rN[k](0),rN[k](1),rN[k](2),i);
-	    dN(1) = (this->*dNidyq[i])(rN[k](0),rN[k](1),rN[k](2),i);
-	    dN(2) = (this->*dNidzq[i])(rN[k](0),rN[k](1),rN[k](2),i);
+	    for(int rr=0; rr<3; rr++)
+	      dN(rr) = (this->*dNidq[i][rr])(x,y,z,i);
 	    Vec dNi = slvLUFac(LUJ,dN,ipiv);
 	    double al = E/(1+nu)/nodeCount[ee.second(k)];
 	    sigmahel[ku](0,u*3) += al*(1-nu)/(1-2*nu)*dNi(0);
@@ -511,6 +515,63 @@ namespace MBSimFlexibleBody {
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
     if(e) setPlotNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
+  }
+
+  map<int,double> FiniteElementsFfrBody::getWeightingFactors(const VecVI &elesel, int faceNum) {
+    map<int,double> weights;
+    double A = 0;
+    for(int e=0; e<elesel.size(); e++) {
+      Vec4 val(NONINIT);
+      val(2) = -1;
+      val(3) = 1;
+      vector<Indices> faceInd(6,Indices(8));
+      vector<vector<int>> ind1(6,vector<int>(3)), ind2(6,vector<int>(2));
+      faceInd[0] = {0,1,2,3,8,9,10,11};   ind1[0] = {0,1,2}; ind2[0] = {0,1};
+      faceInd[1] = {4,5,6,7,12,13,14,15}; ind1[1] = {0,1,3}; ind2[1] = {0,1};
+      faceInd[2] = {0,1,4,5,8,12,16,17};  ind1[2] = {0,2,1}; ind2[2] = {0,2};
+      faceInd[3] = {1,2,5,6,9,13,17,18};  ind1[3] = {3,0,1}; ind2[3] = {1,2};
+      faceInd[4] = {2,3,6,7,10,14,18,19}; ind1[4] = {0,3,1}; ind2[4] = {0,2};
+      faceInd[5] = {0,3,4,7,11,15,16,19}; ind1[5] = {2,0,1}; ind2[5] = {1,2};
+      int eleNum = elesel(e);
+      VecVI eleNodes = ele[eleNum];
+      VecVI faceNodes = eleNodes(faceInd[faceNum-1]);
+      for(int ii=0; ii<3; ii++) {
+	val(0) = xi(ii);
+	for(int jj=0; jj<3; jj++) {
+	  val(1) = xi(jj);
+	  double x = val(ind1[faceNum-1][0]);
+	  double y = val(ind1[faceNum-1][1]);
+	  double z = val(ind1[faceNum-1][2]);
+	  SqrMat J(2);
+	  for(int ll=0; ll<faceNodes.size(); ll++) {
+	    int fn = faceNodes(ll);
+	    int ni = faceInd[faceNum-1][ll];
+	    Vec3 r0 = nodalPos[fn];
+	    int i1 = ind2[faceNum-1][0];
+	    int i2 = ind2[faceNum-1][1];
+	    J(0,0) += (this->*dNidq[ni][i1])(x,y,z,ni)*r0(i1);
+	    J(0,1) += (this->*dNidq[ni][i2])(x,y,z,ni)*r0(i1);
+	    J(1,0) += (this->*dNidq[ni][i1])(x,y,z,ni)*r0(i2);
+	    J(1,1) += (this->*dNidq[ni][i2])(x,y,z,ni)*r0(i2);
+	  }
+	  double detJ = J(0,0)*J(1,1)-J(0,1)*J(1,0);
+	  double wij = wi(ii)*wi(jj);
+	  double dA = wij*detJ;
+	  A += dA;
+	  for(int i=0; i<faceNodes.size(); i++) {
+	    int fn = faceNodes(i);
+	    int ni = faceInd[faceNum-1][i];
+	    double Ni_ = (this->*Ni[ni])(x,y,z,ni);
+	    weights[fn] += dA*Ni_;
+	  }
+	}
+      }
+    }
+
+    for(auto & i : weights)
+      i.second /= A;
+
+    return weights;
   }
 
   double FiniteElementsFfrBody::N1(double x, double y, double z, int i) {
