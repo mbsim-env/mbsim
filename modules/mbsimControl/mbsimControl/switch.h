@@ -22,10 +22,6 @@
 
 #include "mbsimControl/signal_.h"
 
-namespace MBSim {
-  typedef int Index;
-}
-
 namespace MBSimControl {
 
   /*!
@@ -37,23 +33,23 @@ namespace MBSimControl {
       Switch(const std::string &name="") : Signal(name) { }
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
-      void setFirstDataInputSignal(Signal *signal_) { dataSignal1 = signal_; }
-      void setSecondDataInputSignal(Signal *signal_) { dataSignal2 = signal_; }
-      void setControlInputSignal(Signal *signal_) { controlSignal = signal_; }
+      void setFirstInputSignal(Signal *signal_) { inputSignal1 = signal_; }
+      void setSecondInputSignal(Signal *signal_) { inputSignal2 = signal_; }
+      void setControlSignal(Signal *signal_) { controlSignal = signal_; }
       void setThreshold(double s0_) { s0 = s0_; }
       void setRootFinding(bool rf_) { rf = rf_; }
       void updateSignal() override;
-      int getSignalSize() const override { return dataSignal1->getSignalSize(); }
+      int getSignalSize() const override { return inputSignal1->getSignalSize(); }
       bool isSetValued() const override { return rf; }
       void calcsvSize() override { svSize = isSetValued(); }
       void updateStopVector() override;
     private:
-      Signal* dataSignal1{nullptr};
-      Signal* dataSignal2{nullptr};
+      Signal* inputSignal1{nullptr};
+      Signal* inputSignal2{nullptr};
       Signal* controlSignal{nullptr};
       double s0{0};
-      bool rf{false};
-      std::string dataSignalString1, dataSignalString2, controlSignalString;
+      bool rf{true};
+      std::string inputSignalString1, inputSignalString2, controlSignalString;
   };
 
 }
