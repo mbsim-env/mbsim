@@ -41,9 +41,9 @@
           </DistributingFfrInterfaceNodeFrame> 
         </frames><contours/>
         <enableOpenMBV>
-          <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"yDisplacement"</colorRepresentation>
+          <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"zDisplacement"</colorRepresentation>
           <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">0</minimalColorValue>
-          <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">3e-4</maximalColorValue>
+          <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">2.5e-6</maximalColorValue>
         </enableOpenMBV>
       </FiniteElementsFfrBody>
       </objects>
@@ -111,5 +111,6 @@
     <endTime unit="s">0.3</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
+
 
 </MBSimProject>
