@@ -1055,6 +1055,57 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="Duration" substitutionGroup="Signal" type="DurationType"/>
+  <xs:complexType name="DurationType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+	  <xs:element name="threshold" type="pv:unknownScalar" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="StateMachine" substitutionGroup="Signal" type="StateMachineType"/>
+  <xs:complexType name="StateMachineType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="state" minOccurs="1" maxOccurs="unbounded">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Zustand
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="name" type="pv:stringFullEval" use="required"/>
+              <xs:attribute name="value" type="pv:floatFullEval" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="transition" minOccurs="1" maxOccurs="unbounded">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Zustand
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="source" type="pv:stringFullEval" use="required"/>
+              <xs:attribute name="destination" type="pv:stringFullEval" use="required"/>
+              <xs:attribute name="signal" type="SignalReferenceType" use="required"/>
+              <xs:attribute name="threshold" type="pv:floatFullEval" use="optional"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="initialState" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Anfangszustand.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="LinearSystemAnalyzer" substitutionGroup="mbsim:Solver" type="LinearSystemAnalyzerType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
       Führt eine Eigenanalyse, eine Modalanalyse und eine Frequenzganganalyse eines dynamischen Systems durch. Dabei wird das nichtlineare System in ein lineares, zeitinvariantes System transformiert. Die zugehörigen Matrizen A, B, C und D werden in einer Datei gespeichert.
