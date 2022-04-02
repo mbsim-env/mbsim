@@ -1033,17 +1033,17 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="firstInputSignal">
+          <xs:element name="firstDataInputSignal">
             <xs:complexType>
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="secondInputSignal">
+          <xs:element name="secondDataInputSignal">
             <xs:complexType>
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="controlSignal">
+          <xs:element name="controlInputSignal">
             <xs:complexType>
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
