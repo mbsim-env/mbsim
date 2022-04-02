@@ -33,11 +33,11 @@ namespace MBSimControl {
 
   void Switch::initializeUsingXML(DOMElement *element) {
     Signal::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"firstInputSignal");
-    inputSignalString1=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"secondInputSignal");
-    inputSignalString2=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"controlSignal");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"firstDataInputSignal");
+    dataSignalString1=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"secondDataInputSignal");
+    dataSignalString2=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"controlInputSignal");
     controlSignalString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"threshold");
     if(e) setThreshold(E(e)->getText<double>());
@@ -47,22 +47,19 @@ namespace MBSimControl {
 
   void Switch::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(not inputSignalString1.empty())
-	setFirstInputSignal(getByPath<Signal>(inputSignalString1));
-      if(not inputSignalString2.empty())
-	setSecondInputSignal(getByPath<Signal>(inputSignalString2));
-      if(not controlSignalString.empty())
-	setControlSignal(getByPath<Signal>(controlSignalString));
-      if(not inputSignal1)
-        throwError("First input input signal is not given!");
-      if(not inputSignal2)
-        throwError("Second input input signal is not given!");
+      setFirstDataInputSignal(getByPath<Signal>(dataSignalString1));
+      setSecondDataInputSignal(getByPath<Signal>(dataSignalString2));
+      setControlInputSignal(getByPath<Signal>(controlSignalString));
+      if(not dataSignal1)
+        throwError("First data input signal is not given!");
+      if(not dataSignal2)
+        throwError("Second data input signal is not given!");
       if(not controlSignal)
         throwError("Control input signal is not given!");
     }
     else if(stage==preInit) {
-      if(inputSignal1->getSignalSize() != inputSignal2->getSignalSize())
-        throwError("Size of first input signal must be equal to size of second input signal");
+      if(dataSignal1->getSignalSize() != dataSignal2->getSignalSize())
+        throwError("Size of first data input signal must be equal to size of second data input signal");
       if(controlSignal->getSignalSize() != 1)
         throwError("Size of control input signal must be equal to 1");
     }
@@ -70,12 +67,21 @@ namespace MBSimControl {
   }
 
   void Switch::updateSignal() {
-    s = controlSignal->evalSignal()(0)>=s0?inputSignal1->evalSignal():inputSignal2->evalSignal();
+    s = (isSetValued()?active:controlSignal->evalSignal()(0)>=s0)?dataSignal1->evalSignal():dataSignal2->evalSignal();
     upds = false;
   }
 
   void Switch::updateStopVector() {
     sv(0) = controlSignal->evalSignal()(0) - s0;
+  }
+
+  void Switch::checkActive(int j) {
+    if(j==1)
+      active = controlSignal->evalSignal()(0) >= s0;
+    else if(j==5) {
+      if(jsv(0))
+	active = not active;
+    }
   }
 
 }
