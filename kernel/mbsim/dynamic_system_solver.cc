@@ -1419,9 +1419,9 @@ namespace MBSim {
 
     solveDirectly = false;
 
+    setRootID(0);
     checkRoot();
-    int maxj = getRootID();
-    if (maxj == 3) { // impact (velocity jump)
+    if (getRootID() == 3) { // impact (velocity jump)
       bool saveUseOldLa = useOldla;
       useOldla = false;
 
@@ -1453,7 +1453,6 @@ namespace MBSim {
       //projectGeneralizedVelocities(3);
 
       if (laSize) {
-
         calclaSize(3); // IH
         calcrFactorSize(3); // IH
         updateWRef(WParent[0]);
@@ -1468,7 +1467,7 @@ namespace MBSim {
       }
       useOldla = saveUseOldLa;
     }
-    else if (maxj == 2) { // transition from slip to stick (acceleration jump)
+    else if (getRootID() == 2) { // transition from slip to stick (acceleration jump)
       //msg(Info) << "haften" << endl;
       checkActive(7); // decide which contacts may stick
 
@@ -1487,7 +1486,7 @@ namespace MBSim {
         projectGeneralizedVelocities(2);
       }
     }
-    else if (maxj == 1) { // contact opens or transition from stick to slip
+    else if (getRootID() == 1) { // contact opens or transition from stick to slip
       checkActive(8);
 
       projectGeneralizedPositions(1);
