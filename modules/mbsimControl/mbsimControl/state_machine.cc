@@ -51,7 +51,7 @@ namespace MBSimControl {
 
   void StateMachine::setInitialState(const std::string &name) {
     activeState = -1;
-    for(int j=0; j<state.size(); j++) {
+    for(size_t j=0; j<state.size(); j++) {
       if(state[j].name==name) {
 	activeState = j;
 	return;
