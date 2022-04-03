@@ -401,6 +401,17 @@ namespace MBSimGUI {
     layout->addWidget(text);
   }
 
+  void TextChoiceWidget::setStringList(const vector<QString> &list) {
+    QString cur = text->currentText();
+    text->clear();
+    for(const auto & i : list)
+      text->addItem(i);
+    if(cur.isEmpty())
+      text->setCurrentIndex(0);
+    else
+      text->setCurrentText(cur);
+  }
+
   void TextChoiceWidget::setCurrentIndex(int num) {
     text->setCurrentIndex(num);
   }
@@ -529,35 +540,35 @@ namespace MBSimGUI {
     QStringList labels;
     labels << "Type" << "Value" << "Status" << "Namespace";
     tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,1,3);
+    layout->addWidget(tree,0,0,4,2);
     tree->setColumnWidth(0,200);
     tree->setColumnWidth(1,150);
     tree->setColumnWidth(2,50);
     tree->setColumnWidth(3,250);
 
-    layout->addWidget(new QLabel("Type:"),3,0);
+    layout->addWidget(new QLabel("Type:"),4,0);
     type = new CustomComboBox;
     type->addItems(type_);
-    layout->addWidget(type,3,1);
+    layout->addWidget(type,4,1);
     type->setCurrentIndex(2);
 
-    layout->addWidget(new QLabel("Value:"),4,0);
+    layout->addWidget(new QLabel("Value:"),5,0);
     value = new CustomComboBox;
     value->setEditable(true);
-    layout->addWidget(value,4,1);
+    layout->addWidget(value,5,1);
     for(auto & i : feature)
       value->addItem(QString::fromStdString(i.second));
     value->setCurrentIndex(21);
     connect(value,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&PlotFeatureWidget::updateNamespace);
 
-    layout->addWidget(new QLabel("Namespace:"),6,0);
+    layout->addWidget(new QLabel("Status:"),6,0);
+    status = new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5);
+    layout->addWidget(status,6,1);
+
+    layout->addWidget(new QLabel("Namespace:"),7,0);
     nspace = new CustomComboBox;
     nspace->setEditable(true);
-    layout->addWidget(nspace,6,1);
-
-    layout->addWidget(new QLabel("Status:"),5,0);
-    status = new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5);
-    layout->addWidget(status,5,1);
+    layout->addWidget(nspace,7,1);
 
     nspace->blockSignals(true);
     nspace->addItem(QString::fromStdString(MBSIM.getNamespaceURI()));
@@ -567,15 +578,15 @@ namespace MBSimGUI {
 
     QPushButton *add = new QPushButton("Add");
     connect(add,&QPushButton::clicked,this,QOverload<>::of(&PlotFeatureWidget::addFeature));
-    layout->addWidget(add,3,2);
+    layout->addWidget(add,0,2);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,&QPushButton::clicked,this,&PlotFeatureWidget::removeFeature);
-    layout->addWidget(remove,4,2);
+    layout->addWidget(remove,1,2);
 
     QPushButton *update = new QPushButton("Update");
     connect(update,&QPushButton::clicked,this,&PlotFeatureWidget::updateFeature);
-    layout->addWidget(update,5,2);
+    layout->addWidget(update,2,2);
 
     layout->setColumnStretch(1,10);
 
@@ -774,6 +785,210 @@ namespace MBSimGUI {
   void ExtStringWidget::setElement() {
     Element *selectedElement = eleBrowser->getSelection();
     static_cast<PhysicalVariableWidget*>(value->getWidget())->setValue((selectedElement and selectedElement->getParent())?"\""+selectedElement->getXMLPath(static_cast<Element*>(element),true)+"\"":"");
+  }
+
+  StateWidget::StateWidget() {
+    auto *layout = new QGridLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    tree = new QTreeWidget;
+    QStringList labels;
+    labels << "Name" << "Value";
+    tree->setHeaderLabels(labels);
+    layout->addWidget(tree,0,0,4,2);
+    tree->setColumnWidth(0,150);
+    tree->setColumnWidth(1,50);
+
+    layout->addWidget(new QLabel("Name:"),4,0);
+    name = new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5);
+    layout->addWidget(name,4,1);
+
+    layout->addWidget(new QLabel("Value:"),5,0);
+    value = new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5);
+    layout->addWidget(value,5,1);
+
+    QPushButton *add = new QPushButton("Add");
+    connect(add,&QPushButton::clicked,this,QOverload<>::of(&StateWidget::addState));
+    connect(add,&QPushButton::clicked,this,&StateWidget::widgetChanged);
+    layout->addWidget(add,0,2);
+
+    QPushButton *remove = new QPushButton("Remove");
+    connect(remove,&QPushButton::clicked,this,&StateWidget::removeState);
+    connect(remove,&QPushButton::clicked,this,&StateWidget::widgetChanged);
+    layout->addWidget(remove,1,2);
+
+    QPushButton *update = new QPushButton("Update");
+    connect(update,&QPushButton::clicked,this,&StateWidget::updateState);
+    connect(update,&QPushButton::clicked,this,&StateWidget::widgetChanged);
+    layout->addWidget(update,2,2);
+
+    layout->setColumnStretch(1,10);
+
+    connect(tree,&QTreeWidget::currentItemChanged,this,&StateWidget::currentItemChanged);
+  }
+
+  vector<QString> StateWidget::getNames() const {
+    vector<QString> names;
+    for(size_t i=0; i<tree->topLevelItemCount(); i++)
+      names.push_back(tree->topLevelItem(i)->text(0));
+    return names;
+  }
+
+  void StateWidget::addState() {
+    auto *item = new QTreeWidgetItem;
+    item->setText(0, static_cast<PhysicalVariableWidget*>(name->getWidget())->getValue());
+    item->setText(1, static_cast<PhysicalVariableWidget*>(value->getWidget())->getValue());
+    tree->addTopLevelItem(item);
+  }
+
+  void StateWidget::removeState() {
+    tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
+  }
+
+  void StateWidget::updateState() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      item->setText(0, static_cast<PhysicalVariableWidget*>(name->getWidget())->getValue());
+      item->setText(1, static_cast<PhysicalVariableWidget*>(value->getWidget())->getValue());
+    }
+  }
+
+  void StateWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
+    if(item) {
+      static_cast<PhysicalVariableWidget*>(name->getWidget())->setValue(item->text(0));
+      static_cast<PhysicalVariableWidget*>(value->getWidget())->setValue(item->text(1));
+    }
+  }
+
+  DOMElement* StateWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"state");
+    while(e && (E(e)->getTagName()==MBSIMCONTROL%"state")) {
+      auto *item = new QTreeWidgetItem;
+      item->setText(0, QString::fromStdString(E(e)->getAttributeQName("name").second));
+      item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
+      tree->addTopLevelItem(item);
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
+  DOMElement* StateWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    for(size_t i=0; i<tree->topLevelItemCount(); i++) {
+      DOMElement *ele = D(doc)->createElement(MBSIMCONTROL%"state");
+      E(ele)->setAttribute("name",tree->topLevelItem(i)->text(0).toStdString());
+      E(ele)->setAttribute("value",tree->topLevelItem(i)->text(1).toStdString());
+      parent->insertBefore(ele, ref);
+    }
+    return nullptr;
+  }
+
+  TransitionWidget::TransitionWidget(Element *element_) : element(element_) {
+    auto *layout = new QGridLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    tree = new QTreeWidget;
+    QStringList labels;
+    labels << "Source" << "Destination" << "Signal" << "Threshold";
+    tree->setHeaderLabels(labels);
+    layout->addWidget(tree,0,0,4,2);
+    tree->setColumnWidth(0,150);
+    tree->setColumnWidth(1,150);
+    tree->setColumnWidth(2,250);
+    tree->setColumnWidth(3,50);
+
+    layout->addWidget(new QLabel("Source:"),4,0);
+    src = new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5);
+    layout->addWidget(src,4,1);
+
+    layout->addWidget(new QLabel("Destination:"),5,0);
+    dest = new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5);
+    layout->addWidget(dest,5,1);
+
+    layout->addWidget(new QLabel("Signal:"),6,0);
+    sig = new ElementOfReferenceWidget<Signal>(element,nullptr,this);
+    layout->addWidget(sig,6,1);
+
+    layout->addWidget(new QLabel("Threshold:"),7,0);
+    th = new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5);
+    layout->addWidget(th,7,1);
+
+    QPushButton *add = new QPushButton("Add");
+    connect(add,&QPushButton::clicked,this,QOverload<>::of(&TransitionWidget::addTransition));
+    layout->addWidget(add,0,2);
+
+    QPushButton *remove = new QPushButton("Remove");
+    connect(remove,&QPushButton::clicked,this,&TransitionWidget::removeTransition);
+    layout->addWidget(remove,1,2);
+
+    QPushButton *update = new QPushButton("Update");
+    connect(update,&QPushButton::clicked,this,&TransitionWidget::updateTransition);
+    layout->addWidget(update,2,2);
+
+    layout->setColumnStretch(1,10);
+
+    connect(tree,&QTreeWidget::currentItemChanged,this,&TransitionWidget::currentItemChanged);
+  }
+
+  void TransitionWidget::addTransition() {
+    auto *item = new QTreeWidgetItem;
+    item->setText(0, static_cast<PhysicalVariableWidget*>(src->getWidget())->getValue());
+    item->setText(1, static_cast<PhysicalVariableWidget*>(dest->getWidget())->getValue());
+    item->setText(2, sig->getElement());
+    item->setText(3, static_cast<PhysicalVariableWidget*>(th->getWidget())->getValue());
+    tree->addTopLevelItem(item);
+  }
+
+  void TransitionWidget::removeTransition() {
+    tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
+  }
+
+  void TransitionWidget::updateTransition() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      item->setText(0, static_cast<PhysicalVariableWidget*>(src->getWidget())->getValue());
+      item->setText(1, static_cast<PhysicalVariableWidget*>(dest->getWidget())->getValue());
+      item->setText(2, sig->getElement());
+      item->setText(3, static_cast<PhysicalVariableWidget*>(th->getWidget())->getValue());
+    }
+  }
+
+  void TransitionWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
+    if(item) {
+      static_cast<PhysicalVariableWidget*>(src->getWidget())->setValue(item->text(0));
+      static_cast<PhysicalVariableWidget*>(dest->getWidget())->setValue(item->text(1));
+      sig->setElement(item->text(2));
+      static_cast<PhysicalVariableWidget*>(th->getWidget())->setValue(item->text(3));
+    }
+  }
+
+  DOMElement* TransitionWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"transition");
+    while(e && (E(e)->getTagName()==MBSIMCONTROL%"transition")) {
+      auto *item = new QTreeWidgetItem;
+      item->setText(0, QString::fromStdString(E(e)->getAttributeQName("source").second));
+      item->setText(1, QString::fromStdString(E(e)->getAttributeQName("destination").second));
+      item->setText(2, QString::fromStdString(E(e)->getAttributeQName("signal").second));
+      item->setText(3, QString::fromStdString(E(e)->getAttributeQName("threshold").second));
+      tree->addTopLevelItem(item);
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
+  DOMElement* TransitionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    for(size_t i=0; i<tree->topLevelItemCount(); i++) {
+      DOMElement *ele = D(doc)->createElement(MBSIMCONTROL%"transition");
+      E(ele)->setAttribute("source",tree->topLevelItem(i)->text(0).toStdString());
+      E(ele)->setAttribute("destination",tree->topLevelItem(i)->text(1).toStdString());
+      E(ele)->setAttribute("signal",tree->topLevelItem(i)->text(2).toStdString());
+      E(ele)->setAttribute("threshold",tree->topLevelItem(i)->text(3).toStdString());
+      parent->insertBefore(ele, ref);
+    }
+    return nullptr;
   }
 
 }

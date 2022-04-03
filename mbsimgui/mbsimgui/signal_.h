@@ -83,6 +83,20 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new SwitchPropertyDialog(this); }
   };
 
+  class Duration : public Signal {
+    public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"Duration"; }
+      QString getType() const override { return "Duration"; }
+      PropertyDialog* createPropertyDialog() override { return new DurationPropertyDialog(this); }
+  };
+
+  class StateMachine : public Signal {
+    public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"StateMachine"; }
+      QString getType() const override { return "StateMachine"; }
+      PropertyDialog* createPropertyDialog() override { return new StateMachinePropertyDialog(this); }
+  };
+
 }
 
 #endif

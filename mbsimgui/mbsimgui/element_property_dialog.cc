@@ -3826,6 +3826,64 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  DurationPropertyDialog::DurationPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+
+    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
+    addToTab("General", inputSignal);
+
+    threshold = new ExtWidget("Threshold",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"threshold");
+    addToTab("General", threshold);
+  }
+
+  DOMElement* DurationPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
+    threshold->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DurationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
+    threshold->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  StateMachinePropertyDialog::StateMachinePropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+
+    state = new ExtWidget("States",new StateWidget,false,false,"");
+    connect(state, &ExtWidget::widgetChanged, this, &StateMachinePropertyDialog::updateWidget);
+    addToTab("General", state);
+
+    transition = new ExtWidget("Transitions",new TransitionWidget(signal),false,false,"");
+    addToTab("General", transition);
+
+    initialState = new ExtWidget("Initial state",new TextChoiceWidget(vector<QString>(),0,true),true,false,MBSIMCONTROL%"initialState");
+//    initialState = new ExtWidget("Initial state",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
+    addToTab("General", initialState);
+  }
+
+  void StateMachinePropertyDialog::updateWidget() {
+    static_cast<TextChoiceWidget*>(initialState->getWidget())->setStringList(static_cast<StateWidget*>(state->getWidget())->getNames());
+  }
+
+  DOMElement* StateMachinePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    state->initializeUsingXML(item->getXMLElement());
+    updateWidget();
+    transition->initializeUsingXML(item->getXMLElement());
+    initialState->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* StateMachinePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    state->writeXMLFile(item->getXMLElement(),ref);
+    transition->writeXMLFile(item->getXMLElement(),ref);
+    initialState->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   UniversalGravitationPropertyDialog::UniversalGravitationPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
     addTab("Kinetics",1);
     addTab("Visualization",2);

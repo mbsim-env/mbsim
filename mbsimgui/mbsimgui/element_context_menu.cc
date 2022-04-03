@@ -587,6 +587,12 @@ namespace MBSimGUI {
     action = new QAction("Add switch", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new Switch, element); });
     addAction(action);
+    action = new QAction("Add duration", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new Duration, element); });
+    addAction(action);
+    action = new QAction("Add state machine", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new StateMachine, element); });
+    addAction(action);
   }
 
 }

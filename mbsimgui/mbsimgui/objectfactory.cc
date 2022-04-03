@@ -299,6 +299,10 @@ namespace MBSimGUI {
       return new ExternSignalSink;
     if(E(element)->getTagName()==MBSIMCONTROL%"Switch")
       return new Switch;
+    if(E(element)->getTagName()==MBSIMCONTROL%"Duration")
+      return new Duration;
+    if(E(element)->getTagName()==MBSIMCONTROL%"StateMachine")
+      return new StateMachine;
     if(E(element)->getTagName()==MBSIMPHYSICS%"UniversalGravitation")
       return new UniversalGravitation;
     if(E(element)->getTagName()==MBSIMPHYSICS%"Weight")
