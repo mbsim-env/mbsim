@@ -37,10 +37,11 @@ namespace MBSimControl {
       std::string signalStr;
     };
     struct State {
-      State(const std::string &name_, double val_) : name(name_), val(val_) { }
+      State(const std::string &name_, double val_) : name(name_), val(val_), t0(0) { }
       void addTransition(const Transition &trans_) { trans.emplace_back(trans_); }
       std::string name;
       double val;
+      double t0;
       std::vector<Transition> trans;
     };
     public:
@@ -50,6 +51,7 @@ namespace MBSimControl {
       void addState(const std::string &name, double val) { state.emplace_back(State(name,val)); }
       Transition& addTransition(const std::string &name, const std::string &dest, Signal *sig, double s0=0);
       void setInitialState(const std::string &name);
+      const State& getActiveState() const { return state[activeState]; }
       void updateSignal() override;
       int getSignalSize() const override { return 1; }
       bool isSetValued() const override { return true; }

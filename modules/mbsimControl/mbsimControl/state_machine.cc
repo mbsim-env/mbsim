@@ -130,6 +130,7 @@ namespace MBSimControl {
       for(int i=0; i<jsv.size(); i++) {
 	if(jsv(i)) {
 	  activeState = state[activeState].trans[i].dest;
+	  state[activeState].t0 = getTime();
 	  return;
 	}
       }
