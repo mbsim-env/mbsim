@@ -1419,7 +1419,6 @@ namespace MBSim {
 
     solveDirectly = false;
 
-    setRootID(0);
     checkRoot();
     if (getRootID() == 3) { // impact (velocity jump)
       bool saveUseOldLa = useOldla;
