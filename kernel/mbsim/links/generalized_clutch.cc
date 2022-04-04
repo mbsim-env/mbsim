@@ -97,8 +97,10 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        if(plotFeature[generalizedRelativePosition])
-	  addToPlot("engagement");
+        if(plotFeature[generalizedRelativePosition]) {
+	  if(e)
+	    addToPlot("engagement");
+	}
 	if(plotFeature[generalizedForce])
 	  addToPlot("generalizedNormalForce");
       }
@@ -110,14 +112,16 @@ namespace MBSim {
     DualRigidBodyLink::init(stage, config);
     laT->init(stage, config);
     if(LaT) LaT->init(stage, config);
-    e->init(stage, config);
+    if(e) e->init(stage, config);
     laN->init(stage, config);
   }
 
   void GeneralizedClutch::plot() {
     if(plotFeature[plotRecursive]) {
-      if(plotFeature[generalizedRelativePosition])
-	Element::plot((*e)(getTime()));
+      if(plotFeature[generalizedRelativePosition]) {
+	if(e)
+	  Element::plot((*e)(getTime()));
+      }
       if(plotFeature[generalizedForce])
 	Element::plot((*laN)(getTime()));
     }
@@ -135,15 +139,16 @@ namespace MBSim {
   }
 
   void GeneralizedClutch::updateStopVector() {
-    sv(0) = (*e)(getTime());
+    if(e)
+      sv(0) = (*e)(getTime());
     if(gActive) {
       if(gdActive)
-	sv(1) = fabs(evalgdd()) - gddTol;
+	sv(e?1:0) = fabs(evalgdd()) - gddTol;
       else
-	sv(1) = evalGeneralizedRelativeVelocity()(0);
+	sv(e?1:0) = evalGeneralizedRelativeVelocity()(0);
     }
     else
-      sv(1) = 1;
+      sv(e?1:0) = 1;
   }
 
   void GeneralizedClutch::calclaSize(int j) {
@@ -203,12 +208,13 @@ namespace MBSim {
 
   void GeneralizedClutch::calcsvSize() {
     DualRigidBodyLink::calcsvSize();
-    svSize = laT->isSetValued() ? 2 : 0;
+    svSize = laT->isSetValued() ? (e?2:1) : 0;
   }
 
   void GeneralizedClutch::checkActive(int j) {
     if (j == 1) {
-      gActive = (*e)(getTime())<0 ? 0 : 1;
+      if(e)
+	gActive = (*e)(getTime())<0 ? 0 : 1;
       gdActive = gActive;
     }
     else if (j == 2) {
@@ -264,7 +270,7 @@ namespace MBSim {
       }
     }
     else if (j == 8) {
-      if(jsv(0) and rootID == 1) { // opening or closing contact
+      if(e and jsv(0) and rootID == 1) { // opening or closing contact
 	gActive = not gActive;
 	Vec gd = evalGeneralizedRelativeVelocity();
 	gdActive = gActive ? (laT->isSticking(gd, gdTol) ? 1 : 0) : 0;
@@ -272,7 +278,7 @@ namespace MBSim {
 	if(gActive and not gddActive)
 	  gdDir = gd(0)>0?1:-1;
       }
-      if(jsv(1) && rootID == 1) { // stick-slip transition
+      if(jsv(e?1:0) && rootID == 1) { // stick-slip transition
         gddActive = false;
         gdDir = gdd(0)>0?1:-1;
       }
@@ -312,9 +318,9 @@ namespace MBSim {
 
   void GeneralizedClutch::checkRoot() {
     rootID = 0;
-    if(jsv(0))
+    if(e and jsv(0))
       rootID = 1; // clutch was closed -> opening
-    if(jsv(1)) {
+    if(jsv(e?1:0)) {
       if(gdActive)
         rootID = 1; // contact was sticking -> sliding
       else
@@ -426,7 +432,7 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedFrictionImpactLaw");
     if(e) setGeneralizedFrictionImpactLaw(ObjectFactory::createAndInit<FrictionImpactLaw>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"engagementFunction");
-    setEngagementFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
+    if(e) setEngagementFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedNormalForceFunction");
     setGeneralizedNormalForceFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
   }
