@@ -23,6 +23,7 @@ libmbsimControl_la_SOURCES = \
   switch.cc \
   duration.cc \
   state_machine.cc \
+  state_machine_sensor.cc \
   linear_system_analyzer.cc
 
 libmbsimControl_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS)
@@ -53,6 +54,7 @@ mbsimControlinclude_HEADERS = \
   switch.h \
   duration.h \
   state_machine.h \
+  state_machine_sensor.h \
   linear_system_analyzer.h
 
 include $(prefix)/share/mbxmlutils/python/deplibs.mk
