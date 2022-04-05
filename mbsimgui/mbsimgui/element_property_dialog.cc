@@ -2860,7 +2860,7 @@ namespace MBSimGUI {
     frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget(new FrictionImpactLawWidgetFactory(friction,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
-    engagementFunction = new ExtWidget("Engagement function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"engagementFunction");
+    engagementFunction = new ExtWidget("Engagement function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,true,MBSIM%"engagementFunction");
     addToTab("Kinetics",engagementFunction);
 
     normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
