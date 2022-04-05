@@ -3850,6 +3850,7 @@ namespace MBSimGUI {
   }
 
   StateMachinePropertyDialog::StateMachinePropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+    addTab("Initial conditions",1);
 
     state = new ExtWidget("States",new StateWidget,false,false,"");
     connect(state, &ExtWidget::widgetChanged, this, &StateMachinePropertyDialog::updateWidget);
@@ -3860,7 +3861,7 @@ namespace MBSimGUI {
 
     initialState = new ExtWidget("Initial state",new TextChoiceWidget(vector<QString>(),0,true),true,false,MBSIMCONTROL%"initialState");
 //    initialState = new ExtWidget("Initial state",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
-    addToTab("General", initialState);
+    addToTab("Initial conditions", initialState);
   }
 
   void StateMachinePropertyDialog::updateWidget() {
