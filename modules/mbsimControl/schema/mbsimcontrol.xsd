@@ -1076,7 +1076,7 @@
         <xs:sequence>
           <xs:element name="state" minOccurs="1" maxOccurs="unbounded">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Zustand
+              Zustände.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="name" type="pv:stringFullEval" use="required"/>
@@ -1085,7 +1085,7 @@
           </xs:element>
           <xs:element name="transition" minOccurs="1" maxOccurs="unbounded">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Zustand
+	      Zustandsübergänge.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="source" type="pv:stringFullEval" use="required"/>
@@ -1117,7 +1117,7 @@
 	  <xs:element name="state" type="pv:stringFullEval" minOccurs="0"/>
           <xs:element name="selection" type="pv:stringFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Auswahl des Sensortyps.
+              Auswahl des Sensorsignals (standardmäßig durationOfActivity).
               <ul>
                 <li>value: Wert</li>
                 <li>activity: Aktivität</li>
