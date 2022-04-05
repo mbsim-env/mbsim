@@ -1,4 +1,4 @@
-/* Copyright (C) 2004-2021 MBSim Development Team
+/* Copyright (C) 2004-2022 MBSim Development Team
  *
  * This library is free software; you can redistribute it and/or 
  * modify it under the terms of the GNU Lesser General Public 
@@ -33,7 +33,7 @@ namespace MBSimControl {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, StateMachineSensor)
 
   void StateMachineSensor::initializeUsingXML(DOMElement *element) {
-    Signal::initializeUsingXML(element);
+    Sensor::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"stateMachine");
     stateMachineString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"state");
@@ -60,7 +60,7 @@ namespace MBSimControl {
       if(selection==unknownSelection)
 	throwError("(StateMachineSensor::init): selection unknown");
     }
-    Signal::init(stage, config);
+    Sensor::init(stage, config);
   }
 
   void StateMachineSensor::updateSignal() {

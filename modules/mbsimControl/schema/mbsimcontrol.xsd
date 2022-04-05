@@ -1104,10 +1104,10 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="StateMachineSensor" substitutionGroup="Signal" type="StateMachineSensorType"/>
+  <xs:element name="StateMachineSensor" substitutionGroup="Sensor" type="StateMachineSensorType"/>
   <xs:complexType name="StateMachineSensorType">
     <xs:complexContent>
-      <xs:extension base="SignalType">
+      <xs:extension base="SensorType">
         <xs:sequence>
           <xs:element name="stateMachine">
             <xs:complexType>
