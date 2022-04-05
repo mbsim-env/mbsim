@@ -580,6 +580,9 @@ namespace MBSimGUI {
     action = new QAction("Add position sensor", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new PositionSensor, element); });
     menu->addAction(action);
+    action = new QAction("Add state machine sensor", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addLink(new StateMachineSensor, element); });
+    addAction(action);
     action = new QAction("Add velocity sensor", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new VelocitySensor, element); });
     menu->addAction(action);

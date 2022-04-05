@@ -1092,6 +1092,16 @@ namespace MBSimGUI {
       void updateWidget() override;
   };
 
+  class StateMachineSensorPropertyDialog : public SensorPropertyDialog {
+
+    public:
+      StateMachineSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *stateMachine, *state, *selection;
+  };
+
   class UniversalGravitationPropertyDialog : public MechanicalLinkPropertyDialog {
 
     public:

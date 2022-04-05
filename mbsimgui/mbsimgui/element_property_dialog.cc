@@ -3884,6 +3884,37 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  StateMachineSensorPropertyDialog::StateMachineSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    stateMachine = new ExtWidget("State machine",new ElementOfReferenceWidget<Frame>(sensor,nullptr,this),false,false,MBSIMCONTROL%"stateMachine");
+    addToTab("General", stateMachine);
+
+    state = new ExtWidget("State",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"state");
+    addToTab("General", state);
+
+    vector<QString> list;
+    list.emplace_back("\"activity\"");
+    list.emplace_back("\"durationOfActivity\"");
+    list.emplace_back("\"value\"");
+    selection = new ExtWidget("selection",new TextChoiceWidget(list,1,true),true,false,MBSIMCONTROL%"selection");
+    addToTab("General", selection);
+  }
+
+  DOMElement* StateMachineSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    stateMachine->initializeUsingXML(item->getXMLElement());
+    state->initializeUsingXML(item->getXMLElement());
+    selection->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* StateMachineSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    stateMachine->writeXMLFile(item->getXMLElement(),ref);
+    state->writeXMLFile(item->getXMLElement(),ref);
+    selection->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   UniversalGravitationPropertyDialog::UniversalGravitationPropertyDialog(Element *link) : MechanicalLinkPropertyDialog(link) {
     addTab("Kinetics",1);
     addTab("Visualization",2);

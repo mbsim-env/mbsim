@@ -194,6 +194,13 @@ namespace MBSimGUI {
       QString getType() const override { return "Generalized contact force sensor"; }
   };
 
+  class StateMachineSensor : public Sensor {
+    public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"StateMachineSensor"; }
+      QString getType() const override { return "State machine sensor"; }
+      PropertyDialog* createPropertyDialog() override { return new StateMachineSensorPropertyDialog(this); }
+  };
+
 }
 
 #endif
