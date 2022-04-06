@@ -3886,7 +3886,7 @@ namespace MBSimGUI {
   }
 
   StateMachineSensorPropertyDialog::StateMachineSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
-    stateMachine = new ExtWidget("State machine",new ElementOfReferenceWidget<Frame>(sensor,nullptr,this),false,false,MBSIMCONTROL%"stateMachine");
+    stateMachine = new ExtWidget("State machine",new ElementOfReferenceWidget<Signal>(sensor,nullptr,this),false,false,MBSIMCONTROL%"stateMachine");
     addToTab("General", stateMachine);
 
     state = new ExtWidget("State",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"state");

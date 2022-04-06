@@ -582,7 +582,7 @@ namespace MBSimGUI {
     menu->addAction(action);
     action = new QAction("Add state machine sensor", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new StateMachineSensor, element); });
-    addAction(action);
+    menu->addAction(action);
     action = new QAction("Add velocity sensor", menu);
     connect(action,&QAction::triggered,this,[=](){ mw->addLink(new VelocitySensor, element); });
     menu->addAction(action);
