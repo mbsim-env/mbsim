@@ -93,7 +93,7 @@ namespace MBSimGUI {
   class StateMachine : public Signal {
     public:
       MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"StateMachine"; }
-      QString getType() const override { return "StateMachine"; }
+      QString getType() const override { return "State machine"; }
       PropertyDialog* createPropertyDialog() override { return new StateMachinePropertyDialog(this); }
   };
 
