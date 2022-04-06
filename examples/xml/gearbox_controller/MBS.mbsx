@@ -1,0 +1,939 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="c">0.15</scalarParameter>
+      <scalarParameter name="ME">150</scalarParameter>
+      <scalarParameter name="ML">100</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive value="generalizedAcceleration">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="ns1:signal" xmlns:ns1="http://www.mbsim-env.de/MBSimControl">true</plotFeatureRecursive>
+      <frames>
+        <FixedRelativeFrame name="E">
+          <enableOpenMBV>
+            <size unit="cm">1</size>
+        </enableOpenMBV>
+          <frameOfReference ref="../Frame[K]"/>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>-0.16</ele>
+              <ele>0</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>  
+        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
+          <Parameter/>
+          <FixedRelativeFrame xmlns="http://www.mbsim-env.de/MBSim" name="Z{n}">
+           <enableOpenMBV>
+              <size unit="cm">1</size>
+           </enableOpenMBV>
+           <frameOfReference ref="../Frame[A]"/>
+           <relativePosition unit="m">
+             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+               <ele>-0.06+n*0.02</ele>
+               <ele>0</ele>
+               <ele>0</ele>
+             </xmlVector>
+           </relativePosition>
+         </FixedRelativeFrame>
+        </Embed>  
+        <FixedRelativeFrame name="A">
+         <enableOpenMBV>
+           <size unit="cm">1</size>
+         </enableOpenMBV>
+         <frameOfReference ref="../Frame[K]"/>
+         <relativePosition unit="m">
+           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+             <ele>-0.16</ele>
+             <ele>0</ele>
+             <ele>c</ele>
+           </xmlVector>
+         </relativePosition>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="K">
+          <enableOpenMBV>
+            <size unit="cm">1</size>
+          </enableOpenMBV>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0.8</ele>
+              <ele>-0.1</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+      </frames>
+      <contours/>  
+      <groups>
+        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <Parameter>
+            <vectorParameter name="iG">
+              <xmlVector>
+                <ele>4.25</ele>
+                <ele>2.5</ele>
+                <ele>1.75</ele>
+                <ele>1.25</ele>
+                <ele>1</ele>
+                <ele>0.85</ele>
+              </xmlVector>
+            </vectorParameter>            
+            <scalarParameter name="FC">1e3</scalarParameter>
+            <scalarParameter name="FGC">5e3</scalarParameter>
+            <scalarParameter name="JM">0.25</scalarParameter>
+            <scalarParameter name="JG">100</scalarParameter>
+            <scalarParameter name="JZ">0.01</scalarParameter>
+	  </Parameter>
+          <Group xmlns="http://www.mbsim-env.de/MBSim" name="Gearbox">
+            <frames/>
+            <contours/>
+            <groups/>
+            <objects>
+              <RigidBody name="InputShaft">
+                <frameOfReference ref="../../Frame[K]"/>
+                <mass unit="kg">0</mass>
+                <inertiaTensor unit="kg*m^2">
+                  <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <row>
+                      <ele>JM-JZ</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                  </xmlMatrix>
+                </inertiaTensor>
+                <stateDependentRotation>
+                  <RotationAboutXAxis/>
+                </stateDependentRotation>
+                <frames>
+                  <FixedRelativeFrame name="P">
+                    <relativePosition unit="m">
+                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <ele>0.04</ele>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                      </xmlVector>
+                    </relativePosition>
+                  </FixedRelativeFrame>
+                </frames>
+                <contours/>
+                <openMBVRigidBody>
+                  <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="CompoundRigidBody2">
+                    <Cylinder name="Cylinder3">
+                      <diffuseColor>
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0.148361</ele>
+                          <ele>0.686503</ele>
+                          <ele>0.988235</ele>
+                        </xmlVector>
+                      </diffuseColor>
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">0.015</radius>
+                      <height unit="m">0.09</height>
+                    </Cylinder>
+                    <Cylinder name="Cylinder5">
+                      <diffuseColor>
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0.148361</ele>
+                          <ele>0.686503</ele>
+                          <ele>0.988235</ele>
+                        </xmlVector>
+                      </diffuseColor>
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>-0.05</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">c/2</radius>
+                      <height unit="m">0.01</height>
+                    </Cylinder>
+                  </CompoundRigidBody>
+                </openMBVRigidBody>
+                <enableOpenMBVFrameC>
+                  <size unit="cm">1</size>
+              </enableOpenMBVFrameC></RigidBody>
+              <RigidBody name="IntermediateShaft">
+                <frameOfReference ref="../../Frame[E]"/>
+                <mass unit="kg">0</mass>
+                <inertiaTensor unit="kg*m^2">
+                  <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <row>
+                      <ele>JZ</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                  </xmlMatrix>
+                </inertiaTensor>
+                <stateDependentRotation>
+                  <RotationAboutXAxis/>
+                </stateDependentRotation>
+                <frames/>
+                <contours/>
+                <openMBVRigidBody>
+                  <CompoundRigidBody xmlns="http://www.mbsim-env.de/OpenMBV" name="CompoundRigidBody2">
+                    <initialRotation unit="rad">
+                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <ele>0</ele>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                      </xmlVector>
+                    </initialRotation>
+                    <Cylinder name="Cylinder3">
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0.03</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">0.015</radius>
+                      <height unit="m">0.13</height>
+                    </Cylinder>
+                    <Cylinder name="Cylinder5">
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0.1</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">c/2</radius>
+                      <height unit="m">0.01</height>
+                    </Cylinder>
+                    <Cylinder name="Cylinder7">
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>-0.04</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">c/(1+iG(1))</radius>
+                      <height unit="m">0.01</height>
+                    </Cylinder>
+                    <Cylinder name="Cylinder9">
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>-0.02</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">c/(1+iG(2))</radius>
+                      <height unit="m">0.01</height>
+                    </Cylinder>
+                    <Cylinder name="Cylinder11">
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">c/(1+iG(3))</radius>
+                      <height unit="m">0.01</height>
+                    </Cylinder>
+                    <Cylinder name="Cylinder13">
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0.02</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">c/(1+iG(4))</radius>
+                      <height unit="m">0.01</height>
+                    </Cylinder>
+                    <Cylinder name="Cylinder15">
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0.04</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">c/(1+iG(5))</radius>
+                      <height unit="m">0.01</height>
+                    </Cylinder>
+                    <Cylinder name="Cylinder17">
+                      <initialTranslation unit="m">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0.06</ele>
+                          <ele>0</ele>
+                          <ele>0</ele>
+                        </xmlVector>
+                      </initialTranslation>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                        </xmlVector>
+                      </initialRotation>
+                      <radius unit="m">c/(1+iG(6))</radius>
+                      <height unit="m">0.01</height>
+                  </Cylinder>
+                </CompoundRigidBody>
+              </openMBVRigidBody>
+              <enableOpenMBVFrameC>
+                <size unit="cm">1</size>
+              </enableOpenMBVFrameC></RigidBody>
+              <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
+                <Parameter/>
+                <RigidBody xmlns="http://www.mbsim-env.de/MBSim" name="Gearwheel{n}">
+                  <frameOfReference ref="../../Frame[Z{n}]"/>
+                  <mass unit="kg">0</mass>
+                  <inertiaTensor unit="kg*m^2">
+                    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <row>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                      </row>
+                      <row>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                      </row>
+                      <row>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                      </row>
+                    </xmlMatrix>
+                  </inertiaTensor>
+                  <stateDependentRotation>
+                    <RotationAboutXAxis/>
+                  </stateDependentRotation>
+                  <frames/>
+                  <contours/>
+                  <openMBVRigidBody>
+                    <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
+                      <diffuseColor>
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0.311778</ele>
+                          <ele>1</ele>
+                          <ele>1</ele>
+                      </xmlVector>
+                    </diffuseColor>
+                      <initialRotation unit="rad">
+                        <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                          <ele>0</ele>
+                          <ele>0</ele>
+                          <ele>pi/2</ele>
+                      </xmlVector>
+                    </initialRotation>
+                      <radius unit="m">c*iG(n)/(1+iG(n))</radius>
+                      <height unit="m">0.01</height>
+                  </Cylinder>
+                </openMBVRigidBody>
+                <enableOpenMBVFrameC>
+                  <size unit="cm">1</size>
+                </enableOpenMBVFrameC></RigidBody>
+              </Embed>
+              <RigidBody name="OutputShaft">
+                <frameOfReference ref="../../Frame[A]"/>
+                <mass unit="kg">0</mass>
+                <inertiaTensor unit="kg*m^2">
+                  <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <row>
+                      <ele>JG</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                      <ele>0</ele>
+                    </row>
+                  </xmlMatrix>
+                </inertiaTensor>
+                <stateDependentRotation>
+                  <RotationAboutXAxis/>
+                </stateDependentRotation>
+                <frames>
+                  <FixedRelativeFrame name="P">
+                    <relativePosition unit="m">
+                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <ele>-0.1</ele>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                      </xmlVector>
+                    </relativePosition>
+                  </FixedRelativeFrame>
+                </frames>
+                <contours/>
+                <openMBVRigidBody>
+                  <Cylinder xmlns="http://www.mbsim-env.de/OpenMBV" name="Cylinder2">
+                    <diffuseColor>
+                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <ele>0.311778</ele>
+                        <ele>1</ele>
+                        <ele>1</ele>
+                      </xmlVector>
+                    </diffuseColor>
+                    <initialTranslation unit="m">
+                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <ele>-0.04</ele>
+                        <ele>0</ele>
+                        <ele>0</ele>
+                      </xmlVector>
+                    </initialTranslation>
+                    <initialRotation unit="rad">
+                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <ele>0</ele>
+                        <ele>0</ele>
+                        <ele>pi/2</ele>
+                      </xmlVector>
+                    </initialRotation>
+                    <radius unit="m">0.015</radius>
+                    <height unit="m">0.2</height>
+                  </Cylinder>
+                </openMBVRigidBody>
+                <enableOpenMBVFrameC>
+                  <size unit="cm">1</size>
+                </enableOpenMBVFrameC>
+	      </RigidBody>
+            </objects>
+            <links>
+              <KineticExcitation name="Engine">
+                <connect ref2="../Object[InputShaft]/Frame[P]"/>
+                <momentDirection unit="-">
+                  <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <row>
+                      <ele>-1</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                    </row>
+                  </xmlMatrix>
+                </momentDirection>
+                <momentFunction>
+                  <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                    <returnSignal ref="../../Link[EngineTorque]"/>
+                  </SignalFunction>
+                </momentFunction>
+                <enableOpenMBV>
+                  <scaleLength>0.001</scaleLength>
+                </enableOpenMBV>
+              </KineticExcitation>
+              <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="TorqueSignal">
+                <function>
+                  <PiecewiseDefinedFunction xmlns="http://www.mbsim-env.de/MBSim">
+                    <limitedFunctions>
+                      <LimitedFunction>
+                        <function>
+                          <ConstantFunction>
+                            <a0>ME</a0>
+                          </ConstantFunction>
+                        </function>
+                        <limit>25</limit>
+                      </LimitedFunction>
+                      <LimitedFunction>
+                        <function>
+                          <ConstantFunction>
+                            <a0>0</a0>
+                          </ConstantFunction>
+                        </function>
+                        <limit>100</limit>
+                      </LimitedFunction>
+                    </limitedFunctions>
+                  </PiecewiseDefinedFunction>
+                </function>
+              </FunctionSensor>
+              <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineTorque">
+                <inputSignal ref="../../Group[GearboxController]/Link[EngineSignal]"/>
+                <inputSignal ref="../Link[TorqueSignal]"/>
+                <function>
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>u1(1)*u2(1)</ele>
+                    </xmlVector>
+                  </SymbolicFunction>
+                </function>
+              </SignalOperation>
+              <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineAngularVelocity">
+                <object ref="../../Group[Gearbox]/Object[InputShaft]"/>
+              </GeneralizedVelocitySensor>    
+              <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineSpeed">
+                <inputSignal ref="../Link[EngineAngularVelocity]"/>
+                <function>
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u" arg1Dim="1">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>abs(u(1))*60/2/pi</ele>
+                    </xmlVector>
+                  </SymbolicFunction>
+                </function>
+              </SignalOperation>    
+              <KineticExcitation name="Load">
+                <connect ref2="../Object[OutputShaft]/Frame[P]"/>
+                <momentDirection unit="-">
+                  <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <row>
+                      <ele>-1</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                    </row>
+                    <row>
+                      <ele>0</ele>
+                    </row>
+                  </xmlMatrix>
+                </momentDirection>
+                <momentFunction>
+                  <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                    <returnSignal ref="../../Link[LoadTorque]"/>
+                  </SignalFunction>
+                </momentFunction>
+                <enableOpenMBV>
+                  <scaleLength>0.001</scaleLength>
+                  <referencePoint>"fromPoint"</referencePoint>
+                </enableOpenMBV>
+              </KineticExcitation>    
+              <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="LoadTorque">
+                <inputSignal ref="../../Group[GearboxController]/Link[EngineSignal]"/>
+                <function>
+                  <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+                    <a0>ML</a0>
+                  </ConstantFunction>
+                </function>
+              </SignalOperation>    
+              <GeneralizedClutch name="Clutch">
+                <connect ref1="../Object[InputShaft]" ref2="../Object[IntermediateShaft]"/>
+                <generalizedFrictionForceLaw>
+                  <PlanarCoulombFriction>
+                    <frictionCoefficient>0.195</frictionCoefficient>
+                </PlanarCoulombFriction>
+              </generalizedFrictionForceLaw>
+                <generalizedFrictionImpactLaw>
+                  <PlanarCoulombImpact>
+                    <frictionCoefficient>0.195</frictionCoefficient>
+                </PlanarCoulombImpact>
+              </generalizedFrictionImpactLaw>
+                <engagementFunction>
+                  <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                    <returnSignal ref="../../../Group[GearboxController]/Link[ClutchSignal]"/>
+                </SignalFunction>
+              </engagementFunction>
+                <generalizedNormalForceFunction>
+                  <ConstantFunction>
+                    <a0>FC</a0>
+                </ConstantFunction>
+              </generalizedNormalForceFunction>
+            </GeneralizedClutch>  
+              <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
+                <Parameter/>
+                <GeneralizedClutch xmlns="http://www.mbsim-env.de/MBSim" name="GearClutch{n}">
+                  <connect ref1="../Object[OutputShaft]" ref2="../Object[Gearwheel{n}]"/>
+                  <generalizedFrictionForceLaw>
+                    <PlanarCoulombFriction>
+                      <frictionCoefficient>0.195</frictionCoefficient>
+                  </PlanarCoulombFriction>
+                </generalizedFrictionForceLaw>
+                  <generalizedFrictionImpactLaw>
+                    <PlanarCoulombImpact>
+                      <frictionCoefficient>0.195</frictionCoefficient>
+                  </PlanarCoulombImpact>
+                </generalizedFrictionImpactLaw>
+                  <engagementFunction>
+                    <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                      <returnSignal ref="../../Link[GearClutchSignal{n}]"/>
+                  </SignalFunction>
+                </engagementFunction>
+                  <generalizedNormalForceFunction>
+                    <ConstantFunction>
+                      <a0>FGC</a0>
+                  </ConstantFunction>
+                </generalizedNormalForceFunction>
+              </GeneralizedClutch>
+            </Embed>  
+              <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
+                <Parameter/>
+                <Demultiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="GearClutchSignal{n}">
+                  <inputSignal ref="../Link[GearClutchController]"/>
+                  <indices>
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>n</ele>
+                </xmlVector>
+              </indices>
+            </Demultiplexer>
+            </Embed>  
+              <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="GearClutchController">
+                <inputSignal ref="../../Group[GearboxController]/Link[GearSignal]"/>
+                <function>
+                  <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
+                    <x>[1:6]'</x>
+                    <y>2*eye(6)-ones(6)</y>
+                </TabularFunction>
+              </function>
+            </SignalOperation></links>
+            <constraints>
+              <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="6" counterName="n">
+                <Parameter/>
+                <GeneralizedGearConstraint xmlns="http://www.mbsim-env.de/MBSim" name="GeneralizedGearConstraint{n}">
+                  <dependentRigidBody ref="../Object[Gearwheel{n}]"/>
+                  <independentRigidBody ratio="-1/iG(n)" ref="../Object[IntermediateShaft]"/>
+                </GeneralizedGearConstraint>
+              </Embed>
+            </constraints>
+            <observers/>
+          </Group>
+        </Embed>
+        <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <Parameter>
+            <scalarParameter name="tS">0.1</scalarParameter>
+            <scalarParameter name="tEoff">0.01</scalarParameter>
+            <scalarParameter name="tCde">0.02</scalarParameter>
+            <scalarParameter name="tG">0.05</scalarParameter>
+            <scalarParameter name="tCen">0.22</scalarParameter>
+            <scalarParameter name="tEon">0.23</scalarParameter>
+            <scalarParameter name="tEnd">1</scalarParameter>
+          </Parameter>
+          <Group xmlns="http://www.mbsim-env.de/MBSim" name="GearboxController">
+            <frames/>
+            <contours/>
+            <groups/>
+            <objects/>
+            <links>        
+              <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineUpshiftSpeed">
+                <inputSignal ref="../Link[GearSignal]"/>
+                <function>
+                  <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
+                    <xy>
+                      <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <row>
+                          <ele>1</ele>
+                          <ele>1000</ele>
+                      </row>
+                        <row>
+                          <ele>2</ele>
+                          <ele>1500</ele>
+                      </row>
+                        <row>
+                          <ele>3</ele>
+                          <ele>2000</ele>
+                      </row>
+                        <row>
+                          <ele>4</ele>
+                          <ele>2000</ele>
+                      </row>
+                        <row>
+                          <ele>5</ele>
+                          <ele>3000</ele>
+                      </row>
+                        <row>
+                          <ele>6</ele>
+                          <ele>10000</ele>
+                      </row>
+                    </xmlMatrix>
+                  </xy>
+                </TabularFunction>
+              </function>
+              </SignalOperation>  
+              <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineDownshiftSpeed">
+                <inputSignal ref="../Link[GearSignal]"/>
+                <function>
+                  <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
+                    <xy>
+                      <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <row>
+                          <ele>1</ele>
+                          <ele>0</ele>
+                        </row>
+                        <row>
+                          <ele>2</ele>
+                          <ele>500</ele>
+                        </row>
+                        <row>
+                          <ele>3</ele>
+                          <ele>1000</ele>
+                        </row>
+                        <row>
+                          <ele>4</ele>
+                          <ele>1000</ele>
+                        </row>
+                        <row>
+                          <ele>5</ele>
+                          <ele>1000</ele>
+                        </row>
+                        <row>
+                          <ele>6</ele>
+                          <ele>1000</ele>
+                        </row>
+                      </xmlMatrix>
+                    </xy>
+                  </TabularFunction>
+                </function>
+              </SignalOperation>  
+              <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="UpshiftRequest">
+                <inputSignal ref="../Link[EngineUpshiftSpeed]"/>
+                <inputSignal ref="../../Group[Gearbox]/Link[EngineSpeed]"/>
+                <function>
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="3">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>u2(1)-u1(1)</ele>
+                    </xmlVector>
+                  </SymbolicFunction>
+                </function>
+              </SignalOperation>
+              <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="DownshiftRequest">
+                <inputSignal ref="../Link[EngineDownshiftSpeed]"/>
+                <inputSignal ref="../../Group[Gearbox]/Link[EngineSpeed]"/>
+                <function>
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="3">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>u1(1)-u2(1)</ele>
+                    </xmlVector>
+                  </SymbolicFunction>
+                </function>
+              </SignalOperation>
+              <StateMachineSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="TimeElapsedUpshift">
+                <stateMachine ref="../Link[ShiftState]"/>
+                <state>'upshift'</state>
+              </StateMachineSensor>
+              <StateMachineSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="TimeElapsedDownshift">
+                <stateMachine ref="../Link[ShiftState]"/>
+                <state>'downshift'</state>
+              </StateMachineSensor>
+              <StateMachine xmlns="http://www.mbsim-env.de/MBSimControl" name="ShiftState">
+                <state name="'steadystate'" value="0"/>
+                <state name="'upshift'" value="1"/>
+                <state name="'downshift'" value="-1"/>
+                <transition destination="'upshift'" signal="../Link[UpshiftRequest]" source="'steadystate'" threshold="tS"/>
+                <transition destination="'steadystate'" signal="../Link[TimeElapsedUpshift]" source="'upshift'" threshold="tEnd"/>
+                <transition destination="'downshift'" signal="../Link[DownshiftRequest]" source="'steadystate'" threshold="tS"/>
+                <transition destination="'steadystate'" signal="../Link[TimeElapsedDownshift]" source="'downshift'" threshold="tEnd"/>
+              </StateMachine>  
+              <StateMachine xmlns="http://www.mbsim-env.de/MBSimControl" name="ClutchState">
+                <state name="'open'" value="-1"/>
+                <state name="'closed'" value="1"/>
+                <transition destination="'open'" signal="../Link[TimeElapsedUpshift]" source="'closed'" threshold="tCde"/>
+                <transition destination="'closed'" signal="../Link[TimeElapsedUpshift]" source="'open'" threshold="tCen"/>
+                <initialState>'closed'</initialState>
+              </StateMachine>  
+              <StateMachine xmlns="http://www.mbsim-env.de/MBSimControl" name="GearState">
+                <state name="'first'" value="1"/>
+                <state name="'second'" value="2"/>
+                <state name="'third'" value="3"/>
+                <state name="'fourth'" value="4"/>
+                <state name="'fifth'" value="5"/>
+                <state name="'sixth'" value="6"/>
+                <transition destination="'second'" signal="../Link[TimeElapsedUpshift]" source="'first'" threshold="tG"/>
+                <transition destination="'third'" signal="../Link[TimeElapsedUpshift]" source="'second'" threshold="tG"/>
+                <transition destination="'fourth'" signal="../Link[TimeElapsedUpshift]" source="'third'" threshold="tG"/>
+                <transition destination="'fifth'" signal="../Link[TimeElapsedUpshift]" source="'fourth'" threshold="tG"/>
+                <transition destination="'sixth'" signal="../Link[TimeElapsedUpshift]" source="'fifth'" threshold="tG"/>
+                <transition destination="'first'" signal="../Link[TimeElapsedDownshift]" source="'second'" threshold="tG"/>
+                <transition destination="'second'" signal="../Link[TimeElapsedDownshift]" source="'third'" threshold="tG"/>
+                <transition destination="'third'" signal="../Link[TimeElapsedDownshift]" source="'fourth'" threshold="tG"/>
+                <transition destination="'fourth'" signal="../Link[TimeElapsedDownshift]" source="'fifth'" threshold="tG"/>
+                <transition destination="'fifth'" signal="../Link[TimeElapsedDownshift]" source="'sixth'" threshold="tG"/>
+              </StateMachine>
+              <StateMachine xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineSignal">
+                <state name="'off'" value="0"/>
+                <state name="'on'" value="1"/>
+                <transition destination="'off'" signal="../Link[TimeElapsedUpshift]" source="'on'" threshold="tEoff"/>
+                <transition destination="'on'" signal="../Link[TimeElapsedUpshift]" source="'off'" threshold="tEon"/>
+                <initialState>'on'</initialState>
+              </StateMachine>
+              <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <Parameter>
+                  <stringParameter name="name">'PT1'</stringParameter>
+                  <stringParameter name="inputSignal">''</stringParameter>
+                  <scalarParameter name="P">1</scalarParameter>
+                  <scalarParameter name="T">0.005</scalarParameter>
+                </Parameter>
+                <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="ClutchSignal">
+                    <initialState>
+                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <ele>-1</ele>
+                      </xmlVector>
+                    </initialState>
+                    <inputSignal ref="../Link[ClutchState]"/>
+                    <systemMatrix>
+                      <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <row>
+                          <ele>-1/T</ele>
+                        </row>
+                      </xmlMatrix>
+                    </systemMatrix>
+                    <inputMatrix>
+                      <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                        <row>
+                          <ele>P/T</ele>
+                        </row>
+   		   </xmlMatrix>
+                   </inputMatrix>
+                </LinearTransferSystem>
+              </Embed>
+              <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <Parameter>
+                  <stringParameter name="name">'PT1'</stringParameter>
+                  <stringParameter name="inputSignal">''</stringParameter>
+                  <scalarParameter name="P">1</scalarParameter>
+                  <scalarParameter name="T">0.1</scalarParameter>
+               </Parameter>
+               <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="GearSignal">
+                  <initialState>
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>1</ele>
+                  </xmlVector>
+                  </initialState>
+                  <inputSignal ref="../Link[GearState]"/>
+                  <systemMatrix>
+                    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <row>
+                        <ele>-1/T</ele>
+                      </row>
+                    </xmlMatrix>
+                  </systemMatrix>
+                  <inputMatrix>
+                    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <row>
+                        <ele>P/T</ele>
+                      </row>
+                    </xmlMatrix>
+                  </inputMatrix>
+                </LinearTransferSystem>
+              </Embed>
+            </links>
+            <constraints/>
+            <observers/>
+          </Group>
+        </Embed>
+      </groups>
+      <objects/> 
+      <links/>
+      <constraints/>
+      <observers/>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+      <projectionTolerance>1e-14</projectionTolerance>
+      <generalizedRelativePositionTolerance>1e-6</generalizedRelativePositionTolerance>
+      <generalizedRelativeVelocityTolerance>1e-8</generalizedRelativeVelocityTolerance>
+      <generalizedRelativeAccelerationTolerance>1e-10</generalizedRelativeAccelerationTolerance>
+      <generalizedForceTolerance>1e-10</generalizedForceTolerance>
+      <generalizedImpulseTolerance>1e-12</generalizedImpulseTolerance>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">50</endTime>
+    <plotStepSize unit="s">0.1</plotStepSize>
+  </DOPRI5Integrator>
+
+</MBSimProject>
