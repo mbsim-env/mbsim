@@ -228,10 +228,10 @@ namespace MBSimFlexibleBody {
         Pdm += mi[i]*Phi[i];
       }
       for(int k=0; k<3; k++) {
-        for(int i=0; i<nn; i++)
+        for(size_t i=0; i<nn; i++)
           rPdm[k] += mi[i]*KrKP[i](k)*Phi[i];
         for(int l=0; l<3; l++) {
-          for(int i=0; i<nn; i++)
+          for(size_t i=0; i<nn; i++)
             PPdm[k][l] += mi[i]*Phi[i].row(k).T()*Phi[i].row(l);
         }
       }
@@ -248,42 +248,6 @@ namespace MBSimFlexibleBody {
     // compute reduced stiffness matrix
     Ke0 <<= JTMJ(K,Phi_);
 
-    // visualization
-    ombvIndices.resize(5*6*ne);
-    int j = 0;
-    for(int i=0; i<eles.rows(); i++) {
-      ombvIndices[j++] = nodeMap[eles(i,3)];
-      ombvIndices[j++] = nodeMap[eles(i,2)];
-      ombvIndices[j++] = nodeMap[eles(i,1)];
-      ombvIndices[j++] = nodeMap[eles(i,0)];
-      ombvIndices[j++] = -1;
-      ombvIndices[j++] = nodeMap[eles(i,4)];
-      ombvIndices[j++] = nodeMap[eles(i,5)];
-      ombvIndices[j++] = nodeMap[eles(i,6)];
-      ombvIndices[j++] = nodeMap[eles(i,7)];
-      ombvIndices[j++] = -1;
-      ombvIndices[j++] = nodeMap[eles(i,1)];
-      ombvIndices[j++] = nodeMap[eles(i,2)];
-      ombvIndices[j++] = nodeMap[eles(i,6)];
-      ombvIndices[j++] = nodeMap[eles(i,5)];
-      ombvIndices[j++] = -1;
-      ombvIndices[j++] = nodeMap[eles(i,2)];
-      ombvIndices[j++] = nodeMap[eles(i,3)];
-      ombvIndices[j++] = nodeMap[eles(i,7)];
-      ombvIndices[j++] = nodeMap[eles(i,6)];
-      ombvIndices[j++] = -1;
-      ombvIndices[j++] = nodeMap[eles(i,4)];
-      ombvIndices[j++] = nodeMap[eles(i,7)];
-      ombvIndices[j++] = nodeMap[eles(i,3)];
-      ombvIndices[j++] = nodeMap[eles(i,0)];
-      ombvIndices[j++] = -1;
-      ombvIndices[j++] = nodeMap[eles(i,0)];
-      ombvIndices[j++] = nodeMap[eles(i,1)];
-      ombvIndices[j++] = nodeMap[eles(i,5)];
-      ombvIndices[j++] = nodeMap[eles(i,4)];
-      ombvIndices[j++] = -1;
-    }
-
     isRes.close();
     isStiff.close();
     isMass.close();
@@ -297,8 +261,44 @@ namespace MBSimFlexibleBody {
       if(plotFeature[openMBV] and ombvBody) {
         std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
         openMBVBody = flexbody;
-        if(ombvBody->getVisualization()==OpenMBVCalculixBody::faces)
-          static_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(flexbody)->setIndices(ombvIndices);
+        if(ombvBody->getVisualization()==OpenMBVFiniteElementsBody::faces) {
+	  // visualization
+	  vector<int> ombvIndices(5*6*eles.rows());
+	  int j = 0;
+	  for(int i=0; i<eles.rows(); i++) {
+	    ombvIndices[j++] = nodeMap[eles(i,3)];
+	    ombvIndices[j++] = nodeMap[eles(i,2)];
+	    ombvIndices[j++] = nodeMap[eles(i,1)];
+	    ombvIndices[j++] = nodeMap[eles(i,0)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[eles(i,4)];
+	    ombvIndices[j++] = nodeMap[eles(i,5)];
+	    ombvIndices[j++] = nodeMap[eles(i,6)];
+	    ombvIndices[j++] = nodeMap[eles(i,7)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[eles(i,1)];
+	    ombvIndices[j++] = nodeMap[eles(i,2)];
+	    ombvIndices[j++] = nodeMap[eles(i,6)];
+	    ombvIndices[j++] = nodeMap[eles(i,5)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[eles(i,2)];
+	    ombvIndices[j++] = nodeMap[eles(i,3)];
+	    ombvIndices[j++] = nodeMap[eles(i,7)];
+	    ombvIndices[j++] = nodeMap[eles(i,6)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[eles(i,4)];
+	    ombvIndices[j++] = nodeMap[eles(i,7)];
+	    ombvIndices[j++] = nodeMap[eles(i,3)];
+	    ombvIndices[j++] = nodeMap[eles(i,0)];
+	    ombvIndices[j++] = -1;
+	    ombvIndices[j++] = nodeMap[eles(i,0)];
+	    ombvIndices[j++] = nodeMap[eles(i,1)];
+	    ombvIndices[j++] = nodeMap[eles(i,5)];
+	    ombvIndices[j++] = nodeMap[eles(i,4)];
+	    ombvIndices[j++] = -1;
+	  }
+	  static_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(flexbody)->setIndices(ombvIndices);
+	}
         ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
       }
     }
@@ -321,7 +321,7 @@ namespace MBSimFlexibleBody {
     if(e) setProportionalDamping(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
-      ombvBody = shared_ptr<OpenMBVCalculixBody>(new OpenMBVCalculixBody);
+      ombvBody = shared_ptr<OpenMBVFiniteElementsBody>(new OpenMBVFiniteElementsBody);
       ombvBody->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");

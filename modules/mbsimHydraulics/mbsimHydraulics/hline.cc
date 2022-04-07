@@ -166,10 +166,10 @@ namespace MBSimHydraulics {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        plotColumns.emplace_back("Volume flow [l/min]");
-        plotColumns.emplace_back("Mass flow [kg/min]");
+        addToPlot("Volume flow [l/min]");
+        addToPlot("Mass flow [kg/min]");
         if (frameOfReference)
-          plotColumns.emplace_back("pressureLoss due to gravity [bar]");
+          addToPlot("pressureLoss due to gravity [bar]");
       }
     }
     else if(stage==unknownStage) {
@@ -182,10 +182,10 @@ namespace MBSimHydraulics {
   
   void RigidHLine::plot() {
     if(plotFeature[plotRecursive]) {
-      plotVector.push_back(evalQIn()(0)*6e4);
-      plotVector.push_back(getQIn()(0)*hydEnv->getSpecificMass()*60.);
+      Element::plot(evalQIn()(0)*6e4);
+      Element::plot(getQIn()(0)*hydEnv->getSpecificMass()*60.);
       if (frameOfReference)
-        plotVector.push_back(evalPressureLossGravity()*1e-5);
+        Element::plot(evalPressureLossGravity()*1e-5);
     }
     HLine::plot();
   }
@@ -293,14 +293,14 @@ namespace MBSimHydraulics {
     }
     else if (stage==plotting) {
       if (plotFeature[plotRecursive]) {
-        plotColumns.emplace_back("pInflow [bar]");
-        plotColumns.emplace_back("pOutflow [bar]");
-        plotColumns.emplace_back("dp [bar]");
-        plotColumns.emplace_back("sign [-]");
-        plotColumns.emplace_back("opening [mm]");
-        plotColumns.emplace_back("area [mm^2]");
-        plotColumns.emplace_back("sqrt_dp [sqrt(bar)]");
-        plotColumns.emplace_back("Q [l/min]");
+        addToPlot("pInflow [bar]");
+        addToPlot("pOutflow [bar]");
+        addToPlot("dp [bar]");
+        addToPlot("sign [-]");
+        addToPlot("opening [mm]");
+        addToPlot("area [mm^2]");
+        addToPlot("sqrt_dp [sqrt(bar)]");
+        addToPlot("Q [l/min]");
       }
     }
     else if (stage==unknownStage) {
@@ -316,14 +316,14 @@ namespace MBSimHydraulics {
   void StatelessOrifice::plot() {
     if (plotFeature[plotRecursive]) {
       double Q = evalQIn()(0);
-      plotVector.push_back(pIn*1e-5);
-      plotVector.push_back(pOut*1e-5);
-      plotVector.push_back(dp*1e-5);
-      plotVector.push_back(sign);
-      plotVector.push_back(opening*1e3);
-      plotVector.push_back(area*1e6);
-      plotVector.push_back(sqrt_dp*sqrt(1e-5));
-      plotVector.push_back(Q*6e4);
+      Element::plot(pIn*1e-5);
+      Element::plot(pOut*1e-5);
+      Element::plot(dp*1e-5);
+      Element::plot(sign);
+      Element::plot(opening*1e3);
+      Element::plot(area*1e6);
+      Element::plot(sqrt_dp*sqrt(1e-5));
+      Element::plot(Q*6e4);
     }
     HLine::plot();
   }

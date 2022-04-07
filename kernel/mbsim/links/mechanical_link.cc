@@ -55,16 +55,12 @@ namespace MBSim {
   void MechanicalLink::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[force]) {
-        for(size_t i=0; i<F.size(); i++) {
-          for(int j=0; j<evalForce(i).size(); j++)
-            plotVector.push_back(getForce(i)(j));
-        }
+        for(size_t i=0; i<F.size(); i++)
+	  Element::plot(evalForce(i));
       }
       if(plotFeature[moment]) {
-        for(size_t i=0; i<M.size(); i++) {
-          for(int j=0; j<evalMoment(i).size(); j++)
-            plotVector.push_back(getMoment(i)(j));
-        }
+        for(size_t i=0; i<M.size(); i++)
+	  Element::plot(evalMoment(i));
       }
     }
     Link::plot();
@@ -74,18 +70,12 @@ namespace MBSim {
     if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
-          for(size_t i=0; i<F.size(); i++) {
-            plotColumns.emplace_back("force "+to_string(i)+" (x)");
-            plotColumns.emplace_back("force "+to_string(i)+" (y)");
-            plotColumns.emplace_back("force "+to_string(i)+" (z)");
-          }
+          for(size_t i=0; i<F.size(); i++)
+	    addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[moment]) {
-          for(size_t i=0; i<M.size(); i++) {
-            plotColumns.emplace_back("moment "+to_string(i)+" (x)");
-            plotColumns.emplace_back("moment "+to_string(i)+" (y)");
-            plotColumns.emplace_back("moment "+to_string(i)+" (z)");
-          }
+          for(size_t i=0; i<M.size(); i++)
+	    addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
         }
       }
     }

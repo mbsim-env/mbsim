@@ -46,7 +46,24 @@ namespace MBSimFlexibleBody {
     cRL[11]="equivalentStress";
   }
 
-  void OpenMBVCalculixBody::initializeUsingXML(DOMElement *e) {
+  void OpenMBVFlexibleFfrBody::initializeUsingXML(DOMElement *e) {
+    OpenMBVFlexibleBody::initializeUsingXML(e);
+    DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"visualization");
+    if(ee) {
+      string str=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+      if(str=="points") visu=points;
+    }
+  }
+
+  shared_ptr<OpenMBV::FlexibleBody> OpenMBVFlexibleFfrBody::createOpenMBV() {
+    shared_ptr<OpenMBV::FlexibleBody> object;
+    if(visu==points)
+      object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicPointSet>();
+    initializeObject(object);
+    return object;
+  }
+
+  void OpenMBVFiniteElementsBody::initializeUsingXML(DOMElement *e) {
     OpenMBVFlexibleBody::initializeUsingXML(e);
     DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"visualization");
     if(ee) {
@@ -56,7 +73,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  shared_ptr<OpenMBV::FlexibleBody> OpenMBVCalculixBody::createOpenMBV() {
+  shared_ptr<OpenMBV::FlexibleBody> OpenMBVFiniteElementsBody::createOpenMBV() {
     shared_ptr<OpenMBV::FlexibleBody> object;
     if(visu==points)
       object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicPointSet>();
@@ -72,6 +89,7 @@ namespace MBSimFlexibleBody {
     if(ee) {
       string str=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
       if(str=="points") visu=points;
+      else if(str=="lines") visu=lines;
     }
   }
 
@@ -79,6 +97,8 @@ namespace MBSimFlexibleBody {
     shared_ptr<OpenMBV::FlexibleBody> object;
     if(visu==points)
       object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicPointSet>();
+    else
+      object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicIndexedLineSet>();
     initializeObject(object);
     return object;
   }
@@ -96,4 +116,3 @@ namespace MBSimFlexibleBody {
   }
 
 }
-

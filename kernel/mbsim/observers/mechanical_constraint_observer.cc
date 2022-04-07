@@ -53,18 +53,12 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force] and getDynamicSystemSolver()->getInverseKinetics()) {
-          for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++) {
-            plotColumns.emplace_back("force "+to_string(i)+" (x)");
-            plotColumns.emplace_back("force "+to_string(i)+" (y)");
-            plotColumns.emplace_back("force "+to_string(i)+" (z)");
-          }
+          for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
+	    addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[moment] and getDynamicSystemSolver()->getInverseKinetics()) {
-          for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++) {
-            plotColumns.emplace_back("moment "+to_string(i)+" (x)");
-            plotColumns.emplace_back("moment "+to_string(i)+" (y)");
-            plotColumns.emplace_back("moment "+to_string(i)+" (z)");
-          }
+          for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
+	    addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
         }
       }
       Observer::init(stage, config);
@@ -101,18 +95,12 @@ namespace MBSim {
   void MechanicalConstraintObserver::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[force]) {
-        for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++) {
-          Vec3 force = constraint->getMechanicalLink()->evalForce(i);
-          for(int j=0; j<force.size(); j++)
-            plotVector.push_back(force(j));
-        }
+        for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
+	  Element::plot(constraint->getMechanicalLink()->evalForce(i));
       }
       if(plotFeature[moment]) {
-        for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++) {
-          Vec3 moment = constraint->getMechanicalLink()->evalMoment(i);
-          for(int j=0; j<moment.size(); j++)
-            plotVector.push_back(moment(j));
-        }
+        for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
+	  Element::plot(constraint->getMechanicalLink()->evalMoment(i));
       }
     }
     if(plotFeature[openMBV]) {

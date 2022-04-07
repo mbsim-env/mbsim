@@ -41,18 +41,9 @@ namespace MBSim {
 
   void Link::plot() {
     if(plotFeature[plotRecursive]) {
-      if(plotFeature[generalizedRelativePosition]) {
-        for(int i=0; i<evalGeneralizedRelativePosition().size(); ++i)
-          plotVector.push_back(getGeneralizedRelativePosition()(i));
-      }
-      if(plotFeature[generalizedRelativeVelocity]) {
-        for(int i=0; i<evalGeneralizedRelativeVelocity().size(); ++i)
-          plotVector.push_back(getGeneralizedRelativeVelocity()(i));
-      }
-      if(plotFeature[generalizedForce]) {
-        for(int i=0; i<evalGeneralizedForce().size(); ++i)
-          plotVector.push_back(getGeneralizedForce()(i));
-      }
+      if(plotFeature[generalizedRelativePosition]) Element::plot(evalGeneralizedRelativePosition());
+      if(plotFeature[generalizedRelativeVelocity]) Element::plot(evalGeneralizedRelativeVelocity());
+      if(plotFeature[generalizedForce]) Element::plot(evalGeneralizedForce());
     }
     Element::plot();
   }
@@ -141,18 +132,9 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        if(plotFeature[generalizedRelativePosition]) {
-          for(int i=0; i<rrel.size(); ++i)
-            plotColumns.push_back("generalized relative position ("+to_string(i)+")");
-        }
-        if(plotFeature[generalizedRelativeVelocity]) {
-          for(int i=0; i<vrel.size(); ++i)
-            plotColumns.push_back("generalized relative velocity ("+to_string(i)+")");
-        }
-        if(plotFeature[generalizedForce]) { // TODO perhaps one should change the order and distinguish from derived classes which sometimes use different calculation rules
-          for(int i=0; i<lambda.size(); ++i)
-            plotColumns.push_back("generalized force ("+to_string(i)+")");
-        }
+        if(plotFeature[generalizedRelativePosition]) addToPlot("generalized relative position",rrel.size());
+        if(plotFeature[generalizedRelativeVelocity]) addToPlot("generalized relative velocity",vrel.size());
+        if(plotFeature[generalizedForce]) addToPlot("generalized force",lambda.size());
       }
     }
     else if(stage==unknownStage)

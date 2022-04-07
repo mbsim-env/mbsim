@@ -181,6 +181,7 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
     cout<<"                               This generates a HDF5 output file with only one time serie"<<endl;
     cout<<"--savefinalstatevector         Save the state vector to the file \"statevector.asc\" after integration"<<endl;
     cout<<"--savestatetable               Save the state table to the file \"statetable.asc\""<<endl;
+    cout<<"--baseindexforplot <bi>        Use the base index <bi> in MBSim plot files"<<endl;
     cout<<"--modulePath <dir>             Add <dir> to MBSim module serach path. The central MBSim installation"<<endl;
     cout<<"                               module dir and the current dir is always included."<<endl;
     cout<<"                               Also added are all directories listed in the file"<<endl;

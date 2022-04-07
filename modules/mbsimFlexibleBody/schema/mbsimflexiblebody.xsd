@@ -71,7 +71,7 @@
           Moden, die bei der Reduktion berücksichtigt werden sollen.
         </xs:documentation></xs:annotation>
       </xs:element>
-      <xs:element name="modalDamping" type="pv:unknownVector" minOccurs="0">
+      <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
         <xs:annotation><xs:documentation xml:lang="de" xmlns="">
           Definiert den Dämpfungsgrad für jede Mode.
         </xs:documentation></xs:annotation>
@@ -222,6 +222,18 @@
           </xs:choice>
           </xs:sequence>
         </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
+  <xs:group name="CommonFfrInterfaceNodeFrame">
+    <xs:sequence>
+      <xs:element name="approximateShapeMatrixOfRotation" type="pv:booleanFullEval" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="">
+            Gibt an, ob die Knotenverdrehungen aus den Knotenverschiebungen approximiert werden sollen. Diese Option muss aktiviert werden, wenn auf eine FE-Struktur, bei der die Verdrehungen an den Knoten nicht bekannt ist, ein Moment eingeleitet werden soll.<br/>
+          </xs:documentation>
+        </xs:annotation>
       </xs:element>
     </xs:sequence>
   </xs:group>
@@ -576,13 +588,36 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="approximateShapeMatrixOfRotation" type="pv:booleanFullEval" minOccurs="0">
+          <xs:group ref="CommonFfrInterfaceNodeFrame"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="DistributingFfrInterfaceNodeFrame" substitutionGroup="NodeBasedFrame" type="DistributingFfrInterfaceNodeFrameType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+      Interface-Koordinatensystem für FFR-Körper.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="DistributingFfrInterfaceNodeFrameType">
+    <xs:complexContent>
+      <xs:extension base="NodeBasedFrameType">
+        <xs:sequence>
+          <xs:element name="elementNumbers" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Gibt an, ob die Knotenverdrehungen aus den Knotenverschiebungen approximiert werden sollen. Diese Option muss aktiviert werden, wenn auf eine FE-Struktur, bei der die Verdrehungen an den Knoten nicht bekannt ist, ein Moment eingeleitet werden soll.<br/>
+                Elementnummern.<br/>
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="faceNumber" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Flächennummer.<br/>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:group ref="CommonFfrInterfaceNodeFrame"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1258,14 +1293,294 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="interfaceNodeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="interfaceNodeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Interface-Knoten.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="normalModeNumbers" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="normalModeNumbers" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Eigenmoden, die bei der CMS berücksichtigt werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="fixedBoundaryNormalModes" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Eigenmoden bei fixierten Hauptfreiheitsgraden berechnet werden. Standardmäßig erfolgt die Berechnug bei nicht-fixierten Hauptfreiheitsgraden.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:group ref="CommonFlexibleFfrBody"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFlexibleBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="plotNodeNumbers" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten, die geplottet werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBVFrameK" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung des Referenzkoordinatensystems "K" dieses Körpers in OpenMBV.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVFrameParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="plotFeatureFrameK" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Plotfeatures des Schwerpunktskoordinatensystems "C" dieses Körpers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:simpleContent>
+                <xs:extension base="pv:booleanFullEval">
+                  <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+                </xs:extension>
+              </xs:simpleContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="FiniteElementsFfrBody" substitutionGroup="mbsim:Body" type="FiniteElementsFfrBodyType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Definiert einen elastischen Körper aus einer CalculiX-Ergebnisdatei.<br/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="FiniteElementsFfrBodyType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:BodyType">
+        <xs:sequence>
+          <xs:element name="youngsModulus" type="pv:bulkModulusScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Elastizitätsmodul.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="poissonsRatio" type="pv:nounitScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Querkontraktionszahl.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="density" type="pv:densityScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Dichte.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="nodes" type="pv:lengthMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="elements" type="pv:lengthMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Elemente.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="elementType" type="pv:stringFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl des Elementtyps.
+              <ul>
+                <li>C3D20: Hexaeder-Element mit 20 Knoten und voller Integration</li>
+              </ul>
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="boundaryConditions" type="pv:unknownMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Randbedingungen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="interfaceNodeNumbers" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Interface-Knoten.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="normalModeNumbers" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Eigenmoden, die bei der CMS berücksichtigt werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="fixedBoundaryNormalModes" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Eigenmoden bei fixierten Hauptfreiheitsgraden berechnet werden. Standardmäßig erfolgt die Berechnug bei nicht-fixierten Hauptfreiheitsgraden.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:group ref="CommonFlexibleFfrBody"/>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFlexibleBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="plotNodeNumbers" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten, die geplottet werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBVFrameK" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung des Referenzkoordinatensystems "K" dieses Körpers in OpenMBV.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="mbsim:OpenMBVFrameParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="plotFeatureFrameK" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Plotfeatures des Schwerpunktskoordinatensystems "C" dieses Körpers.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:simpleContent>
+                <xs:extension base="pv:booleanFullEval">
+                  <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+                </xs:extension>
+              </xs:simpleContent>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="ExternalFiniteElementsFfrBody" substitutionGroup="mbsim:Body" type="ExternalFiniteElementsFfrBodyType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Definiert einen elastischen Körper aus einer CalculiX-Ergebnisdatei.<br/>
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ExternalFiniteElementsFfrBodyType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:BodyType">
+        <xs:sequence>
+          <xs:element name="numberOfNodalTranslationalDegreesOfFreedom" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der translatorischen Freiheitsgrade eines Knotens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="numberOfNodalRotationalDegreesOfFreedom" type="pv:integerFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Anzahl der rotatorischen Freiheitsgrade eines Knotens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="nodes" type="pv:lengthMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knotenpositionen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="nodeNumbers" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, welche Knoten berücksichtigt werden sollen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="massMatrix" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Massenmatrix.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="stiffnessMatrix" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Steifigkeistmatrix.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="formalism" type="pv:stringFullEval" minOccurs="0">
+             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Formalismus, der definiert, wie Massen und Massenträgheiten berücksichtigt werden sollen.
+               <ul>
+                 <li>consistentMass: Die Massenmatrix wird vollständig berücksichtigt.</li>
+                 <li>lumpedMass: Die Massenmatrix wird als Diagonalmatrix berücksichtigt. Die Masse des Körpers wird dabei auf die Knoten verteilt.</li>
+               </ul>
+             </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="boundaryConditions" type="pv:unknownMatrix" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Randbedingungen.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="interfaceNodeNumbers" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Interface-Knoten.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="normalModeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Eigenmoden, die bei der CMS berücksichtigt werden sollen.

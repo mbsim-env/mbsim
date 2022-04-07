@@ -34,6 +34,8 @@ namespace MBSimFlexibleBody {
 
   void FlexibleFfrBeam::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      for(int i=0; i<nN; i++)
+	nodeMap[i+1] = i;
       int nE = nN-1;
       int nee = 0;
       const int x = 0;
@@ -392,7 +394,7 @@ namespace MBSimFlexibleBody {
       vector<int> c;
       for(int i=0; i<bc.rows(); i++) {
 	for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
-	  c.push_back(bc(i,0)*nee/2+j);
+	  c.push_back(nodeMap[bc(i,0)]*nee/2+j);
       }
       sort(c.begin(), c.end());
 
@@ -451,7 +453,7 @@ namespace MBSimFlexibleBody {
 	  }
 	}
 	for(int j=0; j<nee/2; j++)
-	  if(j<j1 or j>j2) c.push_back(inodes(i)*nee/2+j);
+	  if(j<j1 or j>j2) c.push_back(nodeMap[inodes(i)]*nee/2+j);
       }
       sort(c.begin(), c.end());
       h=0;
@@ -538,6 +540,17 @@ namespace MBSimFlexibleBody {
       if(plotFeature[openMBV] and ombvBody) {
         std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
         openMBVBody = flexbody;
+	if(ombvBody->getVisualization()==OpenMBVFlexibleFfrBeam::lines) {
+	  // visualization
+	  vector<int> ombvIndices(3*(nN-1));
+	  int j = 0;
+	  for(int i=0; i<nN-1; i++) {
+	    ombvIndices[j++] = i;
+	    ombvIndices[j++] = i+1;
+	    ombvIndices[j++] = -1;
+	  }
+	  static_pointer_cast<OpenMBV::DynamicIndexedLineSet>(flexbody)->setIndices(ombvIndices);
+	}
         ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
       }
     }
@@ -572,16 +585,12 @@ namespace MBSimFlexibleBody {
     if(e) {
       setBoundaryConditions(MBXMLUtils::E(e)->getText<MatVx3>());
       for(int i=0; i<bc.rows(); i++) {
-	for(int j=0; j<bc.cols(); j++)
+	for(int j=1; j<bc.cols(); j++)
 	  bc(i,j)--;
       }
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"interfaceNodeNumbers");
-    if(e) {
-      setInterfaceNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
-      for(int i=0; i<inodes.size(); i++)
-	  inodes(i)--;
-    }
+    if(e) setInterfaceNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"normalModeNumbers");
     if(e) setNormalModeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"fixedBoundaryNormalModes");

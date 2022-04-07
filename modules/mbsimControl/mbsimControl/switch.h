@@ -14,17 +14,13 @@
  * License along with this library; if not, write to the Free Software 
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
  *
- * Contact: markus.ms.schneider@gmail.com
+ * Contact: martin.o.foerg@gmail.com
  */
 
 #ifndef _SWITCH_H_
 #define _SWITCH_H_
 
 #include "mbsimControl/signal_.h"
-
-namespace MBSim {
-  typedef int Index;
-}
 
 namespace MBSimControl {
 
@@ -47,11 +43,14 @@ namespace MBSimControl {
       bool isSetValued() const override { return rf; }
       void calcsvSize() override { svSize = isSetValued(); }
       void updateStopVector() override;
+      void checkActive(int j) override;
+      bool isActive() const override { return active; }
     private:
       Signal* dataSignal1{nullptr};
       Signal* dataSignal2{nullptr};
       Signal* controlSignal{nullptr};
       double s0{0};
+      bool active{false};
       bool rf{false};
       std::string dataSignalString1, dataSignalString2, controlSignalString;
   };

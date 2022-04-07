@@ -297,7 +297,7 @@ namespace MBSimFlexibleBody {
 	  for(size_t i=0; i<imod.size(); i++)
 	    modes(i) = i+1;
 	}
-	else if(min(modes)<1 or max(modes)>imod.size())
+	else if(min(modes)<1 or max(modes)>int(imod.size()))
 	  throwError(string("(GenericFlexibleFfrBody::init): mode numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
 	MatV Vr(V.rows(),modes.size(),NONINIT);
 	for(int i=0; i<modes.size(); i++)
@@ -474,25 +474,16 @@ namespace MBSimFlexibleBody {
             plotNodes(j++) = i.first;
         }
         if(plotFeature[MBSimFlexibleBody::nodalDisplacement]) {
-          for(int i=0; i<plotNodes.size(); i++) {
-            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (x)");
-            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (y)");
-            plotColumns.push_back("nodal displacement " + to_string(plotNodes(i)) + " (z)");
-          }
+          for(int i=0; i<plotNodes.size(); i++)
+	    addToPlot("nodal displacement "+to_string(plotNodes(i)),{"x","y","z"});
         }
         if(plotFeature[MBSimFlexibleBody::nodalStress]) {
-          for(int i=0; i<plotNodes.size(); i++) {
-            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XX)");
-            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (YY)");
-            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (ZZ)");
-            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XY)");
-            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (YZ)");
-            plotColumns.push_back("nodal stress " + to_string(plotNodes(i)) + " (XZ)");
-          }
+          for(int i=0; i<plotNodes.size(); i++)
+	    addToPlot("nodal stress "+to_string(plotNodes(i)),{"xx","yy","zz","xy","yz","xz"});
         }
         if(plotFeature[MBSimFlexibleBody::nodalEquivalentStress]) {
           for(int i=0; i<plotNodes.size(); i++)
-            plotColumns.push_back("nodal equivalent stress " + to_string(plotNodes(i)));
+            addToPlot("nodal equivalent stress "+to_string(plotNodes(i)));
         }
       }
       if(plotFeature[ref(openMBV)] and openMBVBody) {
@@ -527,22 +518,16 @@ namespace MBSimFlexibleBody {
   void GenericFlexibleFfrBody::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[nodalDisplacement]) {
-        for(int i=0; i<plotNodes.size(); i++) {
-          const Vec3 &disp = evalNodalDisplacement(plotNodes(i));
-          for(size_t j=0; j<3; j++)
-            plotVector.push_back(disp(j));
-        }
+        for(int i=0; i<plotNodes.size(); i++)
+	  Element::plot(evalNodalDisplacement(plotNodes(i)));
       }
       if(plotFeature[nodalStress]) {
-        for(int i=0; i<plotNodes.size(); i++) {
-          const Vector<Fixed<6>,double> &stress = evalNodalStress(plotNodes(i));
-          for(size_t j=0; j<6; j++)
-            plotVector.push_back(stress(j));
-        }
+        for(int i=0; i<plotNodes.size(); i++)
+	  Element::plot(evalNodalStress(plotNodes(i)));
       }
       if(plotFeature[nodalEquivalentStress]) {
         for(int i=0; i<plotNodes.size(); i++)
-          plotVector.push_back(evalEquivalentStress(plotNodes(i)));
+          Element::plot(evalEquivalentStress(plotNodes(i)));
       }
     }
     if(plotFeature[ref(openMBV)] and openMBVBody) {

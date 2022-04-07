@@ -50,7 +50,7 @@ namespace MBSimFlexibleBody {
 
     protected:
       /*!
-       * \brief node number
+       * \brief node numbers
        */
       fmatvec::VecVI nodes;
 

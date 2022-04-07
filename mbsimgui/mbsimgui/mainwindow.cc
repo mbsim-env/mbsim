@@ -430,8 +430,6 @@ namespace MBSimGUI {
 	  actionSaveLinearSystemAnalysisAs->setDisabled(false);
 	  actionLinearSystemAnalysis->setDisabled(false);
 	}
-	actionOpenMBV->setDisabled(false);
-	actionH5plotserie->setDisabled(false);
       }
       else {
         setExitBad();
@@ -548,6 +546,7 @@ namespace MBSimGUI {
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
+    menu.setBaseIndexForPlot(settings.value("mainwindow/options/baseindexforplot", 1).toInt());
 
 #ifdef _WIN32
     QFile file(qgetenv("APPDATA")+"/mbsim-env/mbsimxml.modulepath");
@@ -573,6 +572,7 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
       settings.setValue("mainwindow/options/autorefresh",      menu.getAutoRefresh());
       settings.setValue("mainwindow/options/plugins",          menu.getPlugins());
+      settings.setValue("mainwindow/options/baseindexforplot", menu.getBaseIndexForPlot());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
       file.write(menu.getModulePath().toUtf8());
@@ -625,6 +625,7 @@ namespace MBSimGUI {
         else
           pmodel->createParameterItem(embeditem->getParameters());
         parameterView->expandAll();
+	parameterView->scrollToBottom();
         auto *element = dynamic_cast<Element*>(item);
         if(element)
           highlightObject(element->getID());
@@ -1045,8 +1046,8 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
-      actionOpenMBV->setDisabled(true);
-      actionH5plotserie->setDisabled(true);
+      actionOpenMBV->setDisabled(false);
+      actionH5plotserie->setDisabled(false);
       actionLinearSystemAnalysis->setDisabled(true);
     }
 
@@ -1100,9 +1101,11 @@ namespace MBSimGUI {
     if(currentTask==1)
       arg.append("--stopafterfirststep");
     else {
-        arg.append("--savestatetable");
+      arg.append("--savestatetable");
       if(settings.value("mainwindow/options/savestatevector", false).toBool())
         arg.append("--savefinalstatevector");
+      arg.append("--baseindexforplot");
+      arg.append(settings.value("mainwindow/options/baseindexforplot", "1").toString());
     }
 
     // we print everything except status messages to stdout
@@ -3056,7 +3059,6 @@ namespace MBSimGUI {
     int nl = 0;
     for(size_t i=0; i<list.size(); i++)
       nl += list[i]->getLength();
-    cout << nl << endl;
     if(nl > 0) {
       QMessageBox::StandardButton ret = QMessageBox::question(this, "Convert project", "The project file is not compatible with the current version of MBSim. Do you want to convert it?", QMessageBox::Yes | QMessageBox::No);
       if(ret == QMessageBox::Yes) {

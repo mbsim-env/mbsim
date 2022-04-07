@@ -13,6 +13,10 @@
 using namespace std;
 using namespace MBSim;
 
+namespace MBSim {
+  extern int baseIndexForPlot;
+}
+
 int main(int argc, char *argv[]) {
   try {
     // check for errors during ObjectFactory
@@ -34,12 +38,12 @@ int main(int argc, char *argv[]) {
     }
 
     list<string> args;
+    list<string>::iterator i, i2;
     for(int i=1; i<argc; ++i)
       args.emplace_back(argv[i]);
 
     // handle --stdout and --stderr args
     MBXMLUtils::setupMessageStreams(args);
-  
     bool doNotIntegrate=false;
     if(find(args.begin(), args.end(), "--donotintegrate")!=args.end())
       doNotIntegrate=true;
@@ -52,6 +56,12 @@ int main(int argc, char *argv[]) {
     bool savestatevector=false;
     if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
       savestatevector=true;
+    if((i=find(args.begin(), args.end(), "--baseindexforplot"))!=args.end()) {
+      i2=i; i2++;
+      MBSim::baseIndexForPlot=stoi(*i2);
+      args.erase(i);
+      args.erase(i2);
+    }
 
     unique_ptr<Solver> solver;
     unique_ptr<DynamicSystemSolver> dss;

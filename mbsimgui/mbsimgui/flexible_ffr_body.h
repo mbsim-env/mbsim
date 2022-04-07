@@ -66,6 +66,23 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new FlexibleFfrBeamPropertyDialog(this); }
   };
 
+  class FiniteElementsFfrBody : public GenericFlexibleFfrBody {
+    friend class FiniteElementsFfrBodyPropertyDialog;
+    public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FiniteElementsFfrBody"; }
+      QString getType() const override { return "Finite elements ffr body"; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      PropertyDialog* createPropertyDialog() override { return new FiniteElementsFfrBodyPropertyDialog(this); }
+  };
+
+  class ExternalFiniteElementsFfrBody : public GenericFlexibleFfrBody {
+    friend class ExternalFiniteElementsFfrBodyPropertyDialog;
+    public:
+      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"ExternalFiniteElementsFfrBody"; }
+      QString getType() const override { return "External finite elements ffr body"; }
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      PropertyDialog* createPropertyDialog() override { return new ExternalFiniteElementsFfrBodyPropertyDialog(this); }
+  };
 }
 
 #endif

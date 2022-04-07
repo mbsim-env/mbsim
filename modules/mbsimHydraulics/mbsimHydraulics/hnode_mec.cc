@@ -113,15 +113,15 @@ namespace MBSimHydraulics {
       r[0].resize(nLines+nTrans+nRot);
       r[1].resize(nLines+nTrans+nRot);
       if(plotFeature[plotRecursive]) {
-        plotColumns.push_back("Volume [mm^3]");
+        addToPlot("Volume [mm^3]");
         if(plotFeature[debug]) {
-          plotColumns.push_back("QTrans [mm^3/s]");
-          plotColumns.push_back("QRot [mm^3/s]");
-          plotColumns.push_back("Mechanical surface flow into and out the node [mm^3/s]");
+          addToPlot("QTrans [mm^3/s]");
+          addToPlot("QRot [mm^3/s]");
+          addToPlot("Mechanical surface flow into and out the node [mm^3/s]");
           for (unsigned int i=0; i<nTrans; i++)
-            plotColumns.push_back("interface force on area " + toString(int(i)));
+            addToPlot("interface force on area " + toString(int(i)));
           for (unsigned int i=0; i<nRot; i++)
-            plotColumns.push_back("interface force on area " + toString(int(i)));
+            addToPlot("interface force on area " + toString(int(i)));
         }
       }
       if(plotFeature[openMBV] and openMBVSphere) {
@@ -321,15 +321,15 @@ namespace MBSimHydraulics {
 
   void HNodeMec::plot() {
     if(plotFeature[plotRecursive]) {
-      plotVector.push_back(x(0)*1e9);
+      Element::plot(x(0)*1e9);
       if(plotFeature[debug]) {
-        plotVector.push_back(evalQMecTrans()*1e9);
-        plotVector.push_back(getQMecRot()*1e9);
-        plotVector.push_back(getQMec()*1e9);
+	Element::plot(evalQMecTrans()*1e9);
+	Element::plot(getQMecRot()*1e9);
+	Element::plot(getQMec()*1e9);
         for (unsigned int i=0; i<nTrans; i++)
-          plotVector.push_back(connectedTransFrames[i].area*evalGeneralizedForce()(0));
+          Element::plot(connectedTransFrames[i].area*evalGeneralizedForce()(0));
         for (unsigned int i=0; i<nRot; i++)
-          plotVector.push_back(connectedRotFrames[i].area*evalGeneralizedForce()(0));
+          Element::plot(connectedRotFrames[i].area*evalGeneralizedForce()(0));
       }
     }
     if(plotFeature[openMBV] and openMBVSphere) {
@@ -457,7 +457,7 @@ namespace MBSimHydraulics {
   void ElasticNodeMec::init(InitStage stage, const InitConfigSet &config) {
     if (stage==plotting) {
       if(plotFeature[plotRecursive])
-        plotColumns.push_back("Node bulk modulus [N/mm^2]");
+        addToPlot("Node bulk modulus [N/mm^2]");
     }
     else if (stage==unknownStage) {
       double pinf=hydEnv->getEnvironmentPressure();
@@ -489,7 +489,7 @@ namespace MBSimHydraulics {
 
   void ElasticNodeMec::plot() {
     if(plotFeature[plotRecursive])
-      plotVector.push_back((*bulkModulus)(evalGeneralizedForce()(0))*1e-6);
+      Element::plot((*bulkModulus)(evalGeneralizedForce()(0))*1e-6);
     HNodeMec::plot();
   }
 

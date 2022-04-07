@@ -223,6 +223,36 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  DistributingInterfaceNodeFramePropertyDialog::DistributingInterfaceNodeFramePropertyDialog(Element *frame, bool approx_) : FramePropertyDialog(frame), approx(nullptr) {
+
+    elementNumbers = new ExtWidget("Element numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elementNumbers");
+    addToTab("General", elementNumbers);
+
+    faceNumber = new ExtWidget("Face number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"faceNumber");
+    addToTab("General", faceNumber);
+
+    if(approx_) {
+      approx = new ExtWidget("Approximate shape matrix of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"approximateShapeMatrixOfRotation");
+      addToTab("General", approx);
+    }
+  }
+
+  DOMElement* DistributingInterfaceNodeFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    FramePropertyDialog::initializeUsingXML(item->getXMLElement());
+    elementNumbers->initializeUsingXML(item->getXMLElement());
+    faceNumber->initializeUsingXML(item->getXMLElement());
+    if(approx) approx->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DistributingInterfaceNodeFramePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    FramePropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    elementNumbers->writeXMLFile(item->getXMLElement(),nullptr);
+    faceNumber->writeXMLFile(item->getXMLElement(),nullptr);
+    if(approx) approx->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   ContourPropertyDialog::ContourPropertyDialog(Element *contour) : ElementPropertyDialog(contour) {
     thickness = new ExtWidget("Thickness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"thickness");
     addToTab("General", thickness);
@@ -1775,7 +1805,7 @@ namespace MBSimGUI {
     beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
-    ombv = new ExtWidget("Enable openMBV",new CalculixBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
+    ombv = new ExtWidget("Enable openMBV",new FiniteElementsBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization",ombv);
 
     plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
@@ -1849,7 +1879,7 @@ namespace MBSimGUI {
     beny = new ExtWidget("Bending about y axis",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"bendingAboutYAxis");
     addToTab("Load cases", beny);
 
-    benz = new ExtWidget("Bending about z axis",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"bendingAboutZAxis");
+    benz = new ExtWidget("Bending about z axis",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,true,MBSIMFLEX%"bendingAboutZAxis");
     addToTab("Load cases", benz);
 
     tor = new ExtWidget("Torsion",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"torsion");
@@ -1917,6 +1947,211 @@ namespace MBSimGUI {
     beny->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     benz->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     tor->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    inodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nmodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    fbnm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    minimumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    maximumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    modes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mDamping->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
+    ombv->writeXMLFile(item->getXMLElement(),ele);
+    plotNodes->writeXMLFile(item->getXMLElement(),ele);
+    return nullptr;
+  }
+
+  FiniteElementsFfrBodyPropertyDialog::FiniteElementsFfrBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
+    addTab("Boundary conditions",1);
+    addTab("Component mode synthesis",2);
+    addTab("Visualization",7);
+
+    E = new ExtWidget("Young's modulus",new ChoiceWidget(new ScalarWidgetFactory("2e11",vector<QStringList>(2,bulkModulusUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"youngsModulus");
+    addToTab("General", E);
+
+    nu = new ExtWidget("Poisson's ratio",new ChoiceWidget(new ScalarWidgetFactory("0.3",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"poissonsRatio");
+    addToTab("General", nu);
+
+    rho = new ExtWidget("Density",new ChoiceWidget(new ScalarWidgetFactory("7870",vector<QStringList>(2,densityUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"density");
+    addToTab("General", rho);
+
+    nodes = new ExtWidget("Nodes",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodes");
+    addToTab("General", nodes);
+
+    elements = new ExtWidget("Elements",new ChoiceWidget(new MatRowsVarWidgetFactory(3,20),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elements");
+    addToTab("General", elements);
+
+    vector<QString> list;
+    list.emplace_back("\"C3D20\"");
+    type = new ExtWidget("Element type",new TextChoiceWidget(list,0,true),false,false,MBSIMFLEX%"elementType");
+    addToTab("General", type);
+
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
+    addToTab("General", beta);
+
+    bc = new ExtWidget("Boundary conditions",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"boundaryConditions");
+    addToTab("Boundary conditions", bc);
+
+    inodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interfaceNodeNumbers");
+    addToTab("Component mode synthesis", inodes);
+
+    nmodes = new ExtWidget("Normal mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"normalModeNumbers");
+    addToTab("Component mode synthesis", nmodes);
+
+    fbnm = new ExtWidget("Fixed-boundary normal modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"fixedBoundaryNormalModes");
+    addToTab("Component mode synthesis", fbnm);
+
+    ombv = new ExtWidget("Enable openMBV",new FiniteElementsBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
+    addToTab("Visualization",ombv);
+
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    addToTab("Visualization", plotNodes);
+  }
+
+  int FiniteElementsFfrBodyPropertyDialog::getqERelSize() const {
+    int nqE=1;
+    // TODO: determine size of qE
+    return nqE;
+  }
+
+  DOMElement* FiniteElementsFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
+    E->initializeUsingXML(item->getXMLElement());
+    nu->initializeUsingXML(item->getXMLElement());
+    rho->initializeUsingXML(item->getXMLElement());
+    nodes->initializeUsingXML(item->getXMLElement());
+    elements->initializeUsingXML(item->getXMLElement());
+    type->initializeUsingXML(item->getXMLElement());
+    beta->initializeUsingXML(item->getXMLElement());
+    bc->initializeUsingXML(item->getXMLElement());
+    inodes->initializeUsingXML(item->getXMLElement());
+    nmodes->initializeUsingXML(item->getXMLElement());
+    fbnm->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    plotNodes->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FiniteElementsFfrBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    E->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nu->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rho->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    elements->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    type->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    inodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nmodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    fbnm->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    minimumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    maximumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    modes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mDamping->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
+    ombv->writeXMLFile(item->getXMLElement(),ele);
+    plotNodes->writeXMLFile(item->getXMLElement(),ele);
+    return nullptr;
+  }
+
+
+  ExternalFiniteElementsFfrBodyPropertyDialog::ExternalFiniteElementsFfrBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
+    addTab("Boundary conditions",1);
+    addTab("Component mode synthesis",2);
+    addTab("Visualization",7);
+
+    net = new ExtWidget("Number of nodal translational degrees of freedom",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfNodalTranslationalDegreesOfFreedom");
+    addToTab("General", net);
+
+    ner = new ExtWidget("Number of nodal rotational degrees of freedom",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfNodalRotationalDegreesOfFreedom");
+    addToTab("General", ner);
+
+    nodes = new ExtWidget("Nodes",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodes");
+    addToTab("General", nodes);
+
+    nnum = new ExtWidget("Node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodeNumbers");
+    addToTab("General", nnum);
+
+    mass = new ExtWidget("Mass matrix",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"massMatrix");
+    addToTab("General", mass);
+
+    stiff = new ExtWidget("Stiffness matrix",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"stiffnessMatrix");
+    addToTab("General", stiff);
+
+    vector<QString> list;
+    list.emplace_back("\"consistentMass\"");
+    list.emplace_back("\"lumpedMass\"");
+    formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"formalism");
+    addToTab("General", formalism);
+
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
+    addToTab("General", beta);
+
+    bc = new ExtWidget("Boundary conditions",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"boundaryConditions");
+    addToTab("Boundary conditions", bc);
+
+    inodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interfaceNodeNumbers");
+    addToTab("Component mode synthesis", inodes);
+
+    nmodes = new ExtWidget("Normal mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"normalModeNumbers");
+    addToTab("Component mode synthesis", nmodes);
+
+    fbnm = new ExtWidget("Fixed-boundary normal modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"fixedBoundaryNormalModes");
+    addToTab("Component mode synthesis", fbnm);
+
+    ombv = new ExtWidget("Enable openMBV",new FlexibleFfrBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
+    addToTab("Visualization",ombv);
+
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    addToTab("Visualization", plotNodes);
+  }
+
+  int ExternalFiniteElementsFfrBodyPropertyDialog::getqERelSize() const {
+    int nqE=1;
+    // TODO: determine size of qE
+    return nqE;
+  }
+
+  DOMElement* ExternalFiniteElementsFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
+    net->initializeUsingXML(item->getXMLElement());
+    ner->initializeUsingXML(item->getXMLElement());
+    nodes->initializeUsingXML(item->getXMLElement());
+    nnum->initializeUsingXML(item->getXMLElement());
+    mass->initializeUsingXML(item->getXMLElement());
+    stiff->initializeUsingXML(item->getXMLElement());
+    formalism->initializeUsingXML(item->getXMLElement());
+    beta->initializeUsingXML(item->getXMLElement());
+    bc->initializeUsingXML(item->getXMLElement());
+    inodes->initializeUsingXML(item->getXMLElement());
+    nmodes->initializeUsingXML(item->getXMLElement());
+    fbnm->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    plotNodes->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ExternalFiniteElementsFfrBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    net->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    ner->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    nnum->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mass->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    stiff->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    formalism->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     inodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
@@ -2625,7 +2860,7 @@ namespace MBSimGUI {
     frictionImpactLaw = new ExtWidget("Generalized friction impact law",new ChoiceWidget(new WidgetFactoryFor<FrictionImpactLawWidget>(friction,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedFrictionImpactLaw");
     addToTab("Kinetics", frictionImpactLaw);
 
-    engagementFunction = new ExtWidget("Engagement function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"engagementFunction");
+    engagementFunction = new ExtWidget("Engagement function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),true,true,MBSIM%"engagementFunction");
     addToTab("Kinetics",engagementFunction);
 
     normalForceFunction = new ExtWidget("Generalized normal force function",new ChoiceWidget(new Function1ArgWidgetFactory(friction,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedNormalForceFunction");
@@ -3588,6 +3823,96 @@ namespace MBSimGUI {
     controlSignal->writeXMLFile(item->getXMLElement(),ref);
     threshold->writeXMLFile(item->getXMLElement(),ref);
     rootFinding->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  DurationPropertyDialog::DurationPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+
+    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
+    addToTab("General", inputSignal);
+
+    threshold = new ExtWidget("Threshold",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"threshold");
+    addToTab("General", threshold);
+  }
+
+  DOMElement* DurationPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
+    threshold->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DurationPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
+    threshold->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  StateMachinePropertyDialog::StateMachinePropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+    addTab("Initial conditions",1);
+
+    state = new ExtWidget("States",new StateWidget,false,false,"");
+    connect(state, &ExtWidget::widgetChanged, this, &StateMachinePropertyDialog::updateWidget);
+    addToTab("General", state);
+
+    transition = new ExtWidget("Transitions",new TransitionWidget(signal),false,false,"");
+    addToTab("General", transition);
+
+    initialState = new ExtWidget("Initial state",new TextChoiceWidget(vector<QString>(),0,true),true,false,MBSIMCONTROL%"initialState");
+//    initialState = new ExtWidget("Initial state",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
+    addToTab("Initial conditions", initialState);
+  }
+
+  void StateMachinePropertyDialog::updateWidget() {
+    static_cast<TextChoiceWidget*>(initialState->getWidget())->setStringList(static_cast<StateWidget*>(state->getWidget())->getNames());
+  }
+
+  DOMElement* StateMachinePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    state->initializeUsingXML(item->getXMLElement());
+    updateWidget();
+    transition->initializeUsingXML(item->getXMLElement());
+    initialState->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* StateMachinePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    state->writeXMLFile(item->getXMLElement(),ref);
+    transition->writeXMLFile(item->getXMLElement(),ref);
+    initialState->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  StateMachineSensorPropertyDialog::StateMachineSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    stateMachine = new ExtWidget("State machine",new ElementOfReferenceWidget<Signal>(sensor,nullptr,this),false,false,MBSIMCONTROL%"stateMachine");
+    addToTab("General", stateMachine);
+
+    state = new ExtWidget("State",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"state");
+    addToTab("General", state);
+
+    vector<QString> list;
+    list.emplace_back("\"activity\"");
+    list.emplace_back("\"durationOfActivity\"");
+    list.emplace_back("\"value\"");
+    selection = new ExtWidget("selection",new TextChoiceWidget(list,1,true),true,false,MBSIMCONTROL%"selection");
+    addToTab("General", selection);
+  }
+
+  DOMElement* StateMachineSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    stateMachine->initializeUsingXML(item->getXMLElement());
+    state->initializeUsingXML(item->getXMLElement());
+    selection->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* StateMachineSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    stateMachine->writeXMLFile(item->getXMLElement(),ref);
+    state->writeXMLFile(item->getXMLElement(),ref);
+    selection->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

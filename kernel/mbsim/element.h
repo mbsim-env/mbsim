@@ -42,6 +42,8 @@ namespace H5 {
  */
 namespace MBSim {
 
+  extern int baseIndexForPlot;
+
   extern const PlotFeatureEnum plotRecursive, openMBV, debug;
 
   class DynamicSystemSolver;
@@ -296,6 +298,20 @@ namespace MBSim {
        * \brief plot feature
        */
       PlotFeatureMap plotFeature, plotFeatureForChildren;
+
+      int convertIndex(int i) { return baseIndexForPlot+i; }
+
+      void addToPlot(const std::string &name);
+      void addToPlot(const std::string &name, int size);
+      void addToPlot(const std::string &name, const std::vector<std::string> &iname);
+
+      template<class AT> void plot(const AT &x) {
+	plotVector.push_back(x);
+      }
+      template<class Type, class AT> void plot(const fmatvec::Vector<Type,AT> &x) {
+	for(int i=0; i<x.size(); i++)
+	  plotVector.push_back(x(i));
+      }
   };
 
   template<class T>

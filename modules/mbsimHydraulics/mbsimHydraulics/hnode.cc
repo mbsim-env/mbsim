@@ -137,10 +137,10 @@ namespace MBSimHydraulics {
     }
     else if (stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        plotColumns.push_back("Node pressure [bar]");
+        addToPlot("Node pressure [bar]");
         if(plotFeature[debug]) {
-          plotColumns.push_back("Volume flow into and out the node [l/min]");
-          plotColumns.push_back("Mass flow into and out the node [kg/min]");
+          addToPlot("Volume flow into and out the node [l/min]");
+          addToPlot("Mass flow into and out the node [kg/min]");
         }
       }
       if(plotFeature[openMBV] and openMBVSphere) {
@@ -236,10 +236,10 @@ namespace MBSimHydraulics {
 
   void HNode::plot() {
     if(plotFeature[plotRecursive]) {
-      plotVector.push_back(evalGeneralizedForce()(0)*1e-5);
+      Element::plot(evalGeneralizedForce()(0)*1e-5);
       if(plotFeature[debug]) {
-        plotVector.push_back(evalQHyd()*6e4);
-        plotVector.push_back(QHyd*hydEnv->getSpecificMass()*60.);
+	Element::plot(evalQHyd()*6e4);
+	Element::plot(QHyd*hydEnv->getSpecificMass()*60.);
       }
       if(plotFeature[openMBV] and openMBVSphere) {
         vector<double> data;
@@ -305,7 +305,7 @@ namespace MBSimHydraulics {
   void ElasticNode::init(InitStage stage, const InitConfigSet &config) {
     if (stage==plotting) {
       if(plotFeature[plotRecursive])
-        plotColumns.push_back("Node bulk modulus [N/mm^2]");
+        addToPlot("Node bulk modulus [N/mm^2]");
     }
     else if (stage==unknownStage) {
       double pinf=hydEnv->getEnvironmentPressure();
@@ -345,7 +345,7 @@ namespace MBSimHydraulics {
 
   void ElasticNode::plot() {
     if(plotFeature[plotRecursive])
-      plotVector.push_back((*bulkModulus)(evalGeneralizedForce()(0))*1e-6);
+      Element::plot((*bulkModulus)(evalGeneralizedForce()(0))*1e-6);
     HNode::plot();
   }
 
@@ -587,7 +587,7 @@ namespace MBSimHydraulics {
       x0=Vec(1, INIT, 0);
     else if (stage==plotting) {
       if(plotFeature[plotRecursive])
-        plotColumns.push_back("active");
+        addToPlot("active");
     }
     else if (stage==unknownStage)
       lambda(0) = pCav;
@@ -598,7 +598,7 @@ namespace MBSimHydraulics {
 
   void RigidCavitationNode::plot() {
     if(plotFeature[plotRecursive])
-      plotVector.push_back(active);
+      Element::plot(active);
     HNode::plot();
   }
 

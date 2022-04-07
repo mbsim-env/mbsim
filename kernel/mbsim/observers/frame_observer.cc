@@ -56,36 +56,18 @@ namespace MBSim {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        if(plotFeature[position]) {
-          plotColumns.emplace_back("position (x)");
-          plotColumns.emplace_back("position (y)");
-          plotColumns.emplace_back("position (z)");
-        }
-        if(plotFeature[angle]) {
-          plotColumns.emplace_back("angle (alpha)");
-          plotColumns.emplace_back("angle (beta)");
-          plotColumns.emplace_back("angle (gamma)");
-        }
-        if(plotFeature[velocity]) {
-          plotColumns.emplace_back("velocity (x)");
-          plotColumns.emplace_back("velocity (y)");
-          plotColumns.emplace_back("velocity (z)");
-        }
-        if(plotFeature[angularVelocity]) {
-          plotColumns.emplace_back("angular velocity (x)");
-          plotColumns.emplace_back("angular velocity (y)");
-          plotColumns.emplace_back("angular velocity (z)");
-        }
-        if(plotFeature[acceleration]) {
-          plotColumns.emplace_back("acceleration (x)");
-          plotColumns.emplace_back("acceleration (y)");
-          plotColumns.emplace_back("acceleration (z)");
-        }
-        if(plotFeature[angularAcceleration]) {
-          plotColumns.emplace_back("angular acceleration (x)");
-          plotColumns.emplace_back("angular acceleration (y)");
-          plotColumns.emplace_back("angular acceleration (z)");
-        }
+        if(plotFeature[position])
+	  addToPlot("position",{"x","y","z"});
+        if(plotFeature[angle])
+	  addToPlot("angle",{"alpha","beta","gamma"});
+        if(plotFeature[velocity])
+	  addToPlot("velocity",{"x","y","z"});
+        if(plotFeature[angularVelocity])
+	  addToPlot("angular velocity",{"x","y","z"});
+        if(plotFeature[acceleration])
+	  addToPlot("acceleration",{"x","y","z"});
+        if(plotFeature[angularAcceleration])
+	  addToPlot("angular acceleration",{"x","y","z"});
       }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
@@ -122,31 +104,18 @@ namespace MBSim {
 
   void FrameObserver::plot() {
     if(plotFeature[plotRecursive]) {
-      if(plotFeature[position]) {
-        for(int i=0; i<frame->evalPosition().size(); i++)
-          plotVector.push_back(frame->getPosition()(i));
-      }
-      if(plotFeature[angle]) {
-        Vec3 cardan=AIK2Cardan(frame->evalOrientation());
-        for(int i=0; i<cardan.size(); i++)
-          plotVector.push_back(cardan(i));
-      }
-      if(plotFeature[velocity]) {
-        for(int i=0; i<frame->evalVelocity().size(); i++)
-          plotVector.push_back(frame->getVelocity()(i));
-      }
-      if(plotFeature[angularVelocity]) {
-        for(int i=0; i<frame->evalAngularVelocity().size(); i++)
-          plotVector.push_back(frame->getAngularVelocity()(i));
-      }
-      if(plotFeature[acceleration]) {
-        for(int i=0; i<frame->evalAcceleration().size(); i++)
-          plotVector.push_back(frame->getAcceleration()(i));
-      }
-      if(plotFeature[angularAcceleration]) {
-        for(int i=0; i<frame->evalAngularAcceleration().size(); i++)
-          plotVector.push_back(frame->getAngularAcceleration()(i));
-      }
+      if(plotFeature[position])
+	Element::plot(frame->evalPosition());
+      if(plotFeature[angle])
+        Element::plot(AIK2Cardan(frame->evalOrientation()));
+      if(plotFeature[velocity])
+	Element::plot(frame->evalVelocity());
+      if(plotFeature[angularVelocity])
+	Element::plot(frame->evalAngularVelocity());
+      if(plotFeature[acceleration])
+	Element::plot(frame->evalAcceleration());
+      if(plotFeature[angularAcceleration])
+	Element::plot(frame->evalAngularAcceleration());
     }
     if(plotFeature[openMBV]) {
       if(openMBVPosition) {

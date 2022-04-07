@@ -190,13 +190,13 @@ namespace MBSimHydraulics {
     }
     else if (stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        plotColumns.push_back("QIn [l/min]");
-        plotColumns.push_back("QOut [l/min]");
+        addToPlot("QIn [l/min]");
+        addToPlot("QOut [l/min]");
         for (int i=0; i<relPlotPoints.size(); i++)
-          plotColumns.push_back("p(x="+toString(relPlotPoints(i)*l, -1)+") [bar]");
+          addToPlot("p(x="+toString(relPlotPoints(i)*l, -1)+") [bar]");
         if(plotFeature[generalizedPosition]) {
           for (int i=0; i<n; i++)
-            plotColumns.push_back("y("+toString(i)+")");
+            addToPlot("y("+toString(i)+")");
         }
       }
     }
@@ -226,13 +226,13 @@ namespace MBSimHydraulics {
       VecV y(n,NONINIT);
       for (int i=0; i<n; i++)
         y(i) = cu(i)*u(i);
-      plotVector.push_back(QIn(0)*6e4);
-      plotVector.push_back(QOut(0)*6e4);
+      Element::plot(QIn(0)*6e4);
+      Element::plot(QOut(0)*6e4);
       for (int i=0; i<relPlotPoints.size(); i++)
-        plotVector.push_back((nFrom->getGeneralizedForce()(0)*(1-relPlotPoints(i))+nTo->getGeneralizedForce()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
+        Element::plot((nFrom->getGeneralizedForce()(0)*(1-relPlotPoints(i))+nTo->getGeneralizedForce()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
       if(plotFeature[generalizedPosition]) {
         for (int i=0; i<n; i++)
-          plotVector.push_back(y(i));
+          Element::plot(y(i));
       }
     }
     HLine::plot();

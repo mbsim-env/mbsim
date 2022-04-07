@@ -20,18 +20,18 @@
 #ifndef _FFR_INTERFACE_NODE_FRAME_H__
 #define _FFR_INTERFACE_NODE_FRAME_H__
 
-#include "mbsimFlexibleBody/frames/node_based_frame.h"
+#include "mbsimFlexibleBody/frames/generic_ffr_interface_node_frame.h"
 
 namespace MBSimFlexibleBody {
 
   /**
-   * \brief frame on interface nodes for flexible ffr bodies
+   * \brief interface node frame for flexible ffr bodies
    * \author Martin Förg
    */
-  class FfrInterfaceNodeFrame : public NodeBasedFrame {
+  class FfrInterfaceNodeFrame : public GenericFfrInterfaceNodeFrame {
 
     public:
-      FfrInterfaceNodeFrame(const std::string &name = "dummy") : NodeBasedFrame(name), Id(fmatvec::Eye()) { }
+      FfrInterfaceNodeFrame(const std::string &name = "dummy") : GenericFfrInterfaceNodeFrame(name) { }
 
       void setNodeNumbers(const fmatvec::VecVI &nodes_) { nodes <<= nodes_; }
       const fmatvec::VecVI& getNodeNumbers() const { return nodes; }
@@ -39,41 +39,8 @@ namespace MBSimFlexibleBody {
       void setWeightingFactors(const fmatvec::VecV &weights_) { weights <<= weights_; }
       const fmatvec::VecV& getWeightingFactors() const { return weights; }
 
-      void setApproximateShapeMatrixOfRotation(bool approximateShapeMatrixOfRotation_) { approximateShapeMatrixOfRotation = approximateShapeMatrixOfRotation_; }
-      bool getApproximateShapeMatrixOfRotation() const { return approximateShapeMatrixOfRotation; }
-
-      void updatePositions() override;
-      void updateVelocities() override;
-      void updateAccelerations() override;
-      void updateJacobians(int j=0) override;
-      void updateGyroscopicAccelerations() override;
-      const fmatvec::Vec3& evalGlobalRelativePosition() { if(updPos) updatePositions(); return WrRP; }
-      const fmatvec::Vec3& evalGlobalRelativeVelocity() { if(updVel) updateVelocities(); return Wvrel; }
-      const fmatvec::Vec3& evalGlobalRelativeAngularVelocity() { if(updVel) updateVelocities(); return Womrel; }
-      fmatvec::Vec3& getGlobalRelativeVelocity(bool check=true) { assert((not check) or (not updVel)); return Wvrel; }
-
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
-
-    protected:
-      MBSim::Frame *R;
-
-      /*!
-       * \brief node number
-       */
-      fmatvec::VecVI nodes;
-
-      /*!
-       * \brief weights
-       */
-      fmatvec::VecV weights;
-
-      fmatvec::Vec3 KrKP, WrRP, Wvrel, Womrel;
-      fmatvec::SqrMat3 ARP;
-      fmatvec::Mat3xV Phi, Psi;
-      fmatvec::SqrMat3 Id;
-
-      bool approximateShapeMatrixOfRotation{false};
   };
 
 }

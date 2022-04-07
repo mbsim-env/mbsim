@@ -67,12 +67,21 @@ namespace MBSimControl {
   }
 
   void Switch::updateSignal() {
-    s = controlSignal->evalSignal()(0)>=s0?dataSignal1->evalSignal():dataSignal2->evalSignal();
+    s = (isSetValued()?active:controlSignal->evalSignal()(0)>=s0)?dataSignal1->evalSignal():dataSignal2->evalSignal();
     upds = false;
   }
 
   void Switch::updateStopVector() {
     sv(0) = controlSignal->evalSignal()(0) - s0;
+  }
+
+  void Switch::checkActive(int j) {
+    if(j==1)
+      active = controlSignal->evalSignal()(0) >= s0;
+    else if(j==5) {
+      if(jsv(0))
+	active = not active;
+    }
   }
 
 }

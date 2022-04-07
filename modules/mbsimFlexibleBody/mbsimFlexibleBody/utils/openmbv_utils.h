@@ -22,6 +22,7 @@
 
 #include <mbsim/utils/openmbv_utils.h>
 #include <openmbvcppinterface/dynamicpointset.h>
+#include <openmbvcppinterface/dynamicindexedlineset.h>
 #include <openmbvcppinterface/dynamicindexedfaceset.h>
 #include <openmbvcppinterface/dynamicnurbscurve.h>
 #include <openmbvcppinterface/dynamicnurbssurface.h>
@@ -48,13 +49,26 @@ namespace MBSimFlexibleBody {
       OpenMBVFlexibleBody(unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0);
   };
 
-  class OpenMBVCalculixBody : public OpenMBVFlexibleBody {
+  class OpenMBVFlexibleFfrBody : public OpenMBVFlexibleBody {
+    public:
+      enum Visualization {
+        points=0
+      };
+      OpenMBVFlexibleFfrBody(Visualization visu_=points, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVFlexibleBody(cR,minCol,maxCol,dc,tp,ps,lw), visu(visu_) { }
+      void initializeUsingXML(xercesc::DOMElement *element);
+      std::shared_ptr<OpenMBV::FlexibleBody> createOpenMBV();
+      Visualization getVisualization() const { return visu; }
+    private:
+      Visualization visu;
+  };
+
+  class OpenMBVFiniteElementsBody : public OpenMBVFlexibleBody {
     public:
       enum Visualization {
         points=0,
         faces
       };
-      OpenMBVCalculixBody(Visualization visu_=faces, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVFlexibleBody(cR,minCol,maxCol,dc,tp,ps,lw), visu(visu_) { }
+      OpenMBVFiniteElementsBody(Visualization visu_=faces, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVFlexibleBody(cR,minCol,maxCol,dc,tp,ps,lw), visu(visu_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::FlexibleBody> createOpenMBV();
       Visualization getVisualization() const { return visu; }
@@ -66,8 +80,9 @@ namespace MBSimFlexibleBody {
     public:
       enum Visualization {
         points=0,
+	lines
       };
-      OpenMBVFlexibleFfrBeam(Visualization visu_=points, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVFlexibleBody(cR,minCol,maxCol,dc,tp,ps,lw), visu(visu_) { }
+      OpenMBVFlexibleFfrBeam(Visualization visu_=lines, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc="[-1;1;1]", double tp=0, double ps=0, double lw=0) : OpenMBVFlexibleBody(cR,minCol,maxCol,dc,tp,ps,lw), visu(visu_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::FlexibleBody> createOpenMBV();
       Visualization getVisualization() const { return visu; }

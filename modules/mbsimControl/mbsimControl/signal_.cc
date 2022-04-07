@@ -37,10 +37,8 @@ namespace MBSimControl {
 
   void Signal::init(InitStage stage, const InitConfigSet &config) {
     if (stage==plotting) {
-      if(plotFeature[plotRecursive] and plotFeature[signal]) {
-        for (int i=0; i<getSignalSize(); i++)
-          plotColumns.push_back("signal (" + toString(i) + ")");
-      }
+      if(plotFeature[plotRecursive] and plotFeature[signal])
+	addToPlot("signal",getSignalSize());
     }
     else if (stage==unknownStage) {
       s.resize(getSignalSize(),NONINIT);
@@ -50,10 +48,8 @@ namespace MBSimControl {
 
 
   void Signal::plot() {
-    if(plotFeature[plotRecursive] and plotFeature[signal]) {
-      for (int i=0; i<evalSignal().size(); i++)
-        plotVector.push_back(getSignal()(i));
-    }
+    if(plotFeature[plotRecursive] and plotFeature[signal])
+      Element::plot(evalSignal());
     Link::plot();
   }
 

@@ -185,4 +185,30 @@ namespace MBSimGUI {
     return element;
   }
 
+  DOMElement* FiniteElementsFfrBody::processIDAndHref(DOMElement *element) {
+    element = GenericFlexibleFfrBody::processIDAndHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
+    if(ELE) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
+
+    return element;
+  }
+
+  DOMElement* ExternalFiniteElementsFfrBody::processIDAndHref(DOMElement *element) {
+    element = GenericFlexibleFfrBody::processIDAndHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
+    if(ELE) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
+
+    return element;
+  }
+
 }

@@ -88,6 +88,16 @@ namespace MBSimGUI {
       ExtWidget *nodeNumbers, *weightingFactors, *approx;
   };
 
+  class DistributingInterfaceNodeFramePropertyDialog : public FramePropertyDialog {
+
+    public:
+      DistributingInterfaceNodeFramePropertyDialog(Element *frame, bool approx=false);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *elementNumbers, *faceNumber, *approx;
+  };
+
   class ContourPropertyDialog : public ElementPropertyDialog {
 
     public:
@@ -439,6 +449,28 @@ namespace MBSimGUI {
       int getqERelSize() const override;
     protected:
       ExtWidget *n, *l, *A, *I, *E, *rho, *ten, *beny, *benz, *tor, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
+  };
+
+  class FiniteElementsFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
+
+    public:
+      FiniteElementsFfrBodyPropertyDialog(Element *body_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      int getqERelSize() const override;
+    protected:
+      ExtWidget *E, *rho, *nu, *nodes, *elements, *type, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
+  };
+
+  class ExternalFiniteElementsFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
+
+    public:
+      ExternalFiniteElementsFfrBodyPropertyDialog(Element *body_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      int getqERelSize() const override;
+    protected:
+      ExtWidget *net, *ner, *nodes, *nnum, *mass, *stiff, *formalism, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {
@@ -1037,6 +1069,37 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *dataSignal1, *dataSignal2, *controlSignal, *threshold, *rootFinding;
+  };
+
+  class DurationPropertyDialog : public SignalPropertyDialog {
+
+    public:
+      DurationPropertyDialog(Element *signal);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *inputSignal, *threshold;
+  };
+
+  class StateMachinePropertyDialog : public SignalPropertyDialog {
+
+    public:
+      StateMachinePropertyDialog(Element *signal);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *state, *transition, *initialState;
+      void updateWidget() override;
+  };
+
+  class StateMachineSensorPropertyDialog : public SensorPropertyDialog {
+
+    public:
+      StateMachineSensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *stateMachine, *state, *selection;
   };
 
   class UniversalGravitationPropertyDialog : public MechanicalLinkPropertyDialog {

@@ -214,6 +214,7 @@ namespace MBSimGUI {
     public:
       TextChoiceWidget(const std::vector<QString> &list, int num=0, bool editable=false);
       QString getText() const override { return text->currentText(); }
+      void setStringList(const std::vector<QString> &list);
       void setText(const QString &str) override {
         if(text->isEditable())
           text->setEditText(str);
@@ -350,6 +351,42 @@ namespace MBSimGUI {
       Element *element;
       ChoiceWidget *value;
       BasicElementBrowser *eleBrowser;
+  };
+
+  class StateWidget : public Widget {
+    protected:
+      void addState();
+      void removeState();
+      void updateState();
+      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
+      ChoiceWidget *name;
+      ChoiceWidget *value;
+      QTreeWidget *tree;
+
+    public:
+      StateWidget();
+      std::vector<QString> getNames() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+  };
+
+  class TransitionWidget : public Widget {
+    protected:
+      void addTransition();
+      void removeTransition();
+      void updateTransition();
+      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
+      Element *element;
+      ChoiceWidget *src;
+      ChoiceWidget *dest;
+      BasicElementOfReferenceWidget *sig;
+      ChoiceWidget *th;
+      QTreeWidget *tree;
+
+    public:
+      TransitionWidget(Element *element_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
 }

@@ -56,6 +56,9 @@ namespace MBSimControl {
       bool isActive() const override { return false; }
       bool gActiveChanged() override { return false; }
       bool isSingleValued() const override { return true; }
+      void updaterFactors() override { }
+      void solveConstraintsFixpointSingle() override { }
+      void checkConstraintsForTermination() override { }
 
       void plot() override;
       
