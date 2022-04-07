@@ -619,6 +619,7 @@ namespace MBSimGUI {
         else
           pmodel->createParameterItem(embeditem->getParameters());
         parameterView->expandAll();
+	parameterView->scrollToBottom();
         auto *element = dynamic_cast<Element*>(item);
         if(element)
           highlightObject(element->getID());
