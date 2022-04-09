@@ -68,6 +68,17 @@ namespace MBSim {
       DualRigidBodyLink::updateW(j);
   }
 
+  void GeneralizedFriction::updatewb() {
+    if(wb.size()) {
+      for(unsigned i=0; i<body.size(); i++)
+	wb += body[i]->evaljRel()*ratio[i];
+    }
+  }
+
+  void GeneralizedFriction::updategd() {
+    gd = evalGeneralizedRelativeVelocity()(RangeV(0,gdSize-1));
+  }
+
   const double& GeneralizedFriction::evalgdn() {
     if(ds->getUpdateLa()) ds->updateLa();
     return gdn(0);

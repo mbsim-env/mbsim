@@ -70,6 +70,17 @@ namespace MBSim {
       DualRigidBodyLink::updateW(j);
   }
 
+  void GeneralizedClutch::updatewb() {
+    if(wb.size()) {
+      for(unsigned i=0; i<body.size(); i++)
+	wb += body[i]->evaljRel()*ratio[i];
+    }
+  }
+
+  void GeneralizedClutch::updategd() {
+    gd = evalGeneralizedRelativeVelocity()(RangeV(0,gdSize-1));
+  }
+
   const double& GeneralizedClutch::evalgdn() {
     if(ds->getUpdateLa()) ds->updateLa();
     return gdn(0);

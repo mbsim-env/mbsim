@@ -45,6 +45,9 @@ class GeneralizedClutch : public DualRigidBodyLink {
       void updateGeneralizedForces() override;
       void updateh(int i=0) override;
       void updateW(int i=0) override;
+      void updatewb() override;
+      void updateg() override { }
+      void updategd() override;
       const double& evalgdn();
       const double& evalgdd();
 
@@ -66,7 +69,6 @@ class GeneralizedClutch : public DualRigidBodyLink {
         laN->setParent(this);
       }
 
-      void updateg() override { }
       void updateStopVector() override;
       void calclaSize(int j) override;
       void calcgSize(int j) override;
