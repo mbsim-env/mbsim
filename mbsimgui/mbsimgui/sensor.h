@@ -148,8 +148,6 @@ namespace MBSimGUI {
 
   class GeneralizedRelativeContactPositionSensor : public ContactSensor {
     MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedRelativeContactPositionSensor, ContactSensor, MBSIMCONTROL%"GeneralizedRelativeContactPositionSensor", "Generalized relative contact position sensor");
-    public:
-
   };
 
   class GeneralizedRelativeContactVelocitySensor : public ContactSensor {
@@ -161,9 +159,8 @@ namespace MBSimGUI {
   };
 
   class StateMachineSensor : public Sensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(StateMachineSensor, Sensor, MBSIMCONTROL%"StateMachineSensor", "State machine sensor");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"StateMachineSensor"; }
-      QString getType() const override { return "State machine sensor"; }
       PropertyDialog* createPropertyDialog() override { return new StateMachineSensorPropertyDialog(this); }
   };
 

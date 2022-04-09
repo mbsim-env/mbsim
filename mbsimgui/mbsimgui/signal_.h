@@ -77,16 +77,14 @@ namespace MBSimGUI {
   };
 
   class Duration : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Duration, Signal, MBSIMCONTROL%"Duration", "Duration");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"Duration"; }
-      QString getType() const override { return "Duration"; }
       PropertyDialog* createPropertyDialog() override { return new DurationPropertyDialog(this); }
   };
 
   class StateMachine : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(StateMachine, Signal, MBSIMCONTROL%"StateMachine", "State machine");
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMCONTROL%"StateMachine"; }
-      QString getType() const override { return "State machine"; }
       PropertyDialog* createPropertyDialog() override { return new StateMachinePropertyDialog(this); }
   };
 
