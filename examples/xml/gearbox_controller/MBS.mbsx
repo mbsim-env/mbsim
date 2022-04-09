@@ -419,8 +419,8 @@
                           <ele>pi/2</ele>
                       </xmlVector>
                     </initialRotation>
-                      <radius unit="m">c*iG(n)/(1+iG(n))</radius>
-                      <height unit="m">0.01</height>
+                    <radius unit="m">c*iG(n)/(1+iG(n))</radius>
+                    <height unit="m">0.01</height>
                   </Cylinder>
                 </openMBVRigidBody>
                 <enableOpenMBVFrameC>
@@ -813,6 +813,8 @@
                 <state name="'closed'" value="1"/>
                 <transition destination="'open'" signal="../Link[TimeElapsedUpshift]" source="'closed'" threshold="tCde"/>
                 <transition destination="'closed'" signal="../Link[TimeElapsedUpshift]" source="'open'" threshold="tCen"/>
+                <transition destination="'open'" signal="../Link[TimeElapsedDownshift]" source="'closed'" threshold="tCde"/>
+                <transition destination="'closed'" signal="../Link[TimeElapsedDownshift]" source="'open'" threshold="tCen"/>
                 <initialState>'closed'</initialState>
               </StateMachine>  
               <StateMachine xmlns="http://www.mbsim-env.de/MBSimControl" name="GearState">
@@ -838,6 +840,8 @@
                 <state name="'on'" value="1"/>
                 <transition destination="'off'" signal="../Link[TimeElapsedUpshift]" source="'on'" threshold="tEoff"/>
                 <transition destination="'on'" signal="../Link[TimeElapsedUpshift]" source="'off'" threshold="tEon"/>
+                <transition destination="'off'" signal="../Link[TimeElapsedDownshift]" source="'on'" threshold="tEoff"/>
+                <transition destination="'on'" signal="../Link[TimeElapsedDownshift]" source="'off'" threshold="tEon"/>
                 <initialState>'on'</initialState>
               </StateMachine>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -848,26 +852,26 @@
                   <scalarParameter name="T">0.005</scalarParameter>
                 </Parameter>
                 <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="ClutchSignal">
-                    <initialState>
-                      <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                        <ele>-1</ele>
-                      </xmlVector>
-                    </initialState>
-                    <inputSignal ref="../Link[ClutchState]"/>
-                    <systemMatrix>
-                      <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                        <row>
-                          <ele>-1/T</ele>
-                        </row>
-                      </xmlMatrix>
-                    </systemMatrix>
-                    <inputMatrix>
-                      <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                        <row>
-                          <ele>P/T</ele>
-                        </row>
-   		   </xmlMatrix>
-                   </inputMatrix>
+                  <initialState>
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>1</ele>
+                    </xmlVector>
+                  </initialState>
+                  <inputSignal ref="../Link[ClutchState]"/>
+                  <systemMatrix>
+                    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <row>
+                        <ele>-1/T</ele>
+                      </row>
+                    </xmlMatrix>
+                  </systemMatrix>
+                  <inputMatrix>
+                    <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <row>
+                        <ele>P/T</ele>
+                      </row>
+                    </xmlMatrix>
+                  </inputMatrix>
                 </LinearTransferSystem>
               </Embed>
               <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -935,5 +939,6 @@
     <endTime unit="s">50</endTime>
     <plotStepSize unit="s">0.1</plotStepSize>
   </DOPRI5Integrator>
+
 
 </MBSimProject>
