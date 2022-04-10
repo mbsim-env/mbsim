@@ -784,7 +784,7 @@
                 <inputSignal ref="../Link[EngineDownshiftSpeed]"/>
                 <inputSignal ref="../../Group[Gearbox]/Link[EngineSpeed]"/>
                 <function>
-                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="3">
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">
                     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <ele>u1(1)-u2(1)</ele>
                     </xmlVector>
