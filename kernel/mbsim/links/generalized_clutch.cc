@@ -34,6 +34,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedClutch)
 
   GeneralizedClutch::~GeneralizedClutch() {
+    if(e) delete e;
     delete laT;
     delete LaT;
     delete laN;
