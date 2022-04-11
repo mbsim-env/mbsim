@@ -156,6 +156,10 @@ namespace MBSimControl {
       else
         throwError("(SignalOperation::init): number of input signals must be 1 or 2");
     }
+    else if(stage==unknownStage) {
+      if(f1 and (f1->getArgSize()!=signal[0]->getSignalSize())) throwError("Size of input signal does not match argument size of function. Size of input signal is " + to_string(signal[0]->getSignalSize()) + ", size of argument is " + to_string(f1->getArgSize()));
+      else if(f2 and (f2->getArg1Size()!=signal[0]->getSignalSize() or f2->getArg2Size()!=signal[1]->getSignalSize())) throwError("Size of input signal does not match argument size of function. Size of first input signal is " + to_string(signal[0]->getSignalSize()) + ", size of first argument is " + to_string(f2->getArg1Size()) + ". Size of second input signal is " + to_string(signal[1]->getSignalSize()) + ", size of second argument is " + to_string(f2->getArg2Size()));
+    }
     Signal::init(stage, config);
     if(f1) f1->init(stage, config);
     if(f2) f2->init(stage, config);
