@@ -172,7 +172,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    frame->setModelIndex(parent.child(i,0));
+    frame->setModelIndex(index(i,0,parent));
   }
 
   void ElementTreeModel::createContourItem(Contour *contour, const QModelIndex &parent) {
@@ -185,7 +185,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    contour->setModelIndex(parent.child(i,0));
+    contour->setModelIndex(index(i,0,parent));
   }
 
   void ElementTreeModel::createGroupItem(Group *group, const QModelIndex &parent) {
@@ -198,7 +198,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    QModelIndex index = parent.child(i,0);
+    QModelIndex index = ElementTreeModel::index(i,0,parent);
     group->setModelIndex(index);
     updateGroupItem(group);
   }
@@ -213,7 +213,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    QModelIndex index = parent.child(i,0);
+    QModelIndex index = ElementTreeModel::index(i,0,parent);
     object->setModelIndex(index);
     updateObjectItem(object);
   }
@@ -228,7 +228,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    link->setModelIndex(parent.child(i,0));
+    link->setModelIndex(index(i,0,parent));
   }
 
   void ElementTreeModel::createConstraintItem(Constraint *constraint, const QModelIndex &parent) {
@@ -241,7 +241,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    constraint->setModelIndex(parent.child(i,0));
+    constraint->setModelIndex(index(i,0,parent));
   }
 
   void ElementTreeModel::createObserverItem(Observer *observer, const QModelIndex &parent) {
@@ -254,7 +254,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    observer->setModelIndex(parent.child(i,0));
+    observer->setModelIndex(index(i,0,parent));
   }
 
   void ElementTreeModel::createSolverItem(Solver *solver, const QModelIndex &parent) {
@@ -267,7 +267,7 @@ namespace MBSimGUI {
     parentItem->insertChildren(item,1);
     endInsertRows();
 
-    solver->setModelIndex(parent.child(i,0));
+    solver->setModelIndex(index(i,0,parent));
   }
 
   void ElementTreeModel::updateProjectItem(Project *project) {
@@ -301,19 +301,19 @@ namespace MBSimGUI {
     endInsertRows();
 
     for(int i=0; i<group->getNumberOfFrames(); i++)
-      createFrameItem(group->getFrame(i),index.child(0,0));
+      createFrameItem(group->getFrame(i),ElementTreeModel::index(0,0,index));
     for(int i=0; i<group->getNumberOfContours(); i++)
-      createContourItem(group->getContour(i),index.child(1,0));
+      createContourItem(group->getContour(i),ElementTreeModel::index(1,0,index));
     for(int i=0; i<group->getNumberOfGroups(); i++)
-      createGroupItem(group->getGroup(i),index.child(2,0));
+      createGroupItem(group->getGroup(i),ElementTreeModel::index(2,0,index));
     for(int i=0; i<group->getNumberOfObjects(); i++)
-      createObjectItem(group->getObject(i),index.child(3,0));
+      createObjectItem(group->getObject(i),ElementTreeModel::index(3,0,index));
     for(int i=0; i<group->getNumberOfLinks(); i++)
-      createLinkItem(group->getLink(i),index.child(4,0));
+      createLinkItem(group->getLink(i),ElementTreeModel::index(4,0,index));
     for(int i=0; i<group->getNumberOfConstraints(); i++)
-      createConstraintItem(group->getConstraint(i),index.child(5,0));
+      createConstraintItem(group->getConstraint(i),ElementTreeModel::index(5,0,index));
     for(int i=0; i<group->getNumberOfObservers(); i++)
-      createObserverItem(group->getObserver(i),index.child(6,0));
+      createObserverItem(group->getObserver(i),ElementTreeModel::index(6,0,index));
   }
 
   void ElementTreeModel::updateObjectItem(Object *object) {
@@ -328,9 +328,9 @@ namespace MBSimGUI {
       endInsertRows();
 
       for(int i=0; i<object->getNumberOfFrames(); i++)
-        createFrameItem(object->getFrame(i),index.child(0,0));
+        createFrameItem(object->getFrame(i),ElementTreeModel::index(0,0,index));
       for(int i=0; i<object->getNumberOfContours(); i++)
-        createContourItem(object->getContour(i),index.child(1,0));
+        createContourItem(object->getContour(i),ElementTreeModel::index(1,0,index));
     }
   }
 
@@ -353,7 +353,7 @@ namespace MBSimGUI {
     if(parent.row()==-1)
       index = this->index(0,0,parent);
     else
-      index = parent.child(i,0);
+      index = ParameterTreeModel::index(i,0,parent);
 
     parameters->setModelIndex(index);
     updateParameterItem(parameters);
@@ -372,13 +372,13 @@ namespace MBSimGUI {
     TreeItem *parentItem = getItem(parent);
 
     int i = rowCount(parent);
-    if(dynamic_cast<Parameters*>(getItem(parent.child(i-1,0))->getItemData())) i--;
+    if(dynamic_cast<Parameters*>(getItem(ParameterTreeModel::index(i-1,0,parent))->getItemData())) i--;
     beginInsertRows(parent, i, i);
     TreeItem *item = new TreeItem(parameter,parentItem);
     parentItem->insertChildren(item,i,1);
     endInsertRows();
 
-    parameter->setModelIndex(parent.child(i,0));
+    parameter->setModelIndex(ParameterTreeModel::index(i,0,parent));
   }
 
   FileTreeModel::FileTreeModel(QObject *parent) : TreeModel(parent) {

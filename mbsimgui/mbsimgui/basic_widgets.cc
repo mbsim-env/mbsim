@@ -48,7 +48,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
-    connect(this,QOverload<const QString&>::of(&QComboBox::highlighted),this,&LocalFrameComboBox::highlightObject);
+    connect(this,QOverload<const QString&>::of(&QComboBox::textHighlighted),this,&LocalFrameComboBox::highlightObject);
   }
 
   void LocalFrameComboBox::showPopup() {
@@ -73,7 +73,7 @@ namespace MBSimGUI {
   }
 
   ParentFrameComboBox::ParentFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
-    connect(this,QOverload<const QString&>::of(&QComboBox::highlighted),this,&ParentFrameComboBox::highlightObject);
+    connect(this,QOverload<const QString&>::of(&QComboBox::textHighlighted),this,&ParentFrameComboBox::highlightObject);
   }
 
   void ParentFrameComboBox::showPopup() {
@@ -106,7 +106,7 @@ namespace MBSimGUI {
     frame->setEditable(true);
     layout->addWidget(frame);
     selectedFrame = element->getFrame(0);
-    connect(frame,QOverload<const QString&>::of(&QComboBox::currentIndexChanged),this,&LocalFrameOfReferenceWidget::setFrame);
+    connect(frame,QOverload<const QString&>::of(&QComboBox::currentTextChanged),this,&LocalFrameOfReferenceWidget::setFrame);
     updateWidget();
   }
 
@@ -158,7 +158,7 @@ namespace MBSimGUI {
     frame->setEditable(true);
     layout->addWidget(frame);
     selectedFrame = element->getParent()->getFrame(0);
-    connect(frame,QOverload<const QString&>::of(&QComboBox::currentIndexChanged),this,&ParentFrameOfReferenceWidget::setFrame);
+    connect(frame,QOverload<const QString&>::of(&QComboBox::currentTextChanged),this,&ParentFrameOfReferenceWidget::setFrame);
     updateWidget();
   }
 
