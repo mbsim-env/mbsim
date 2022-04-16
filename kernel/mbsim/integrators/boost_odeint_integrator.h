@@ -60,7 +60,7 @@ namespace MBSim {
     inline void assign(Dst &d, const Src &s) {
       if(static_cast<size_t>(d.size())!=static_cast<size_t>(s.size()))
         d.resize(s.size());
-      copy(s.begin(), s.end(), d.begin());
+      std::copy(s.begin(), s.end(), d.begin());
     }
 
     // type to define a boost odeint system concept of type "system"
@@ -212,7 +212,7 @@ namespace MBSim {
       system->resetUpToDate();
       auto col=boost::numeric::ublas::column(jac, i);
       auto zd=(system->evalzd()-zd0)*MBSim::epsrootInv;
-      copy(zd.begin(), zd.end(), col.begin());
+      std::copy(zd.begin(), zd.end(), col.begin());
       zDisturbed(i)-=MBSim::epsroot;
     }
 
