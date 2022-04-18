@@ -37,7 +37,7 @@ AC_C_CONST
 PKG_CHECK_MODULES(FMATVEC, fmatvec) # only fmatvec
 PKG_CHECK_MODULES(DEPS, fmatvec hdf5serie mbxmlutilshelper) # all deps
 
-FFLAGS="$FFLAGS -cpp -ffixed-line-length-none"
+FFLAGS="$FFLAGS -cpp -ffixed-line-length-none -fallow-argument-mismatch"
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-unknown-pragmas"
 AC_SUBST([HOST_OS],[$host_os])
 if test "_$host_os" != "_mingw32"; then
