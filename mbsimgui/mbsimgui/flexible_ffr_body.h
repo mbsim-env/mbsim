@@ -67,19 +67,17 @@ namespace MBSimGUI {
   };
 
   class FiniteElementsFfrBody : public GenericFlexibleFfrBody {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FiniteElementsFfrBody, GenericFlexibleFfrBody, MBSIMFLEX%"FiniteElementsFfrBody", "Finite elements ffr body");
     friend class FiniteElementsFfrBodyPropertyDialog;
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"FiniteElementsFfrBody"; }
-      QString getType() const override { return "Finite elements ffr body"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new FiniteElementsFfrBodyPropertyDialog(this); }
   };
 
   class ExternalFiniteElementsFfrBody : public GenericFlexibleFfrBody {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ExternalFiniteElementsFfrBody, GenericFlexibleFfrBody, MBSIMFLEX%"ExternalFiniteElementsFfrBody", "External finite elements ffr body");
     friend class ExternalFiniteElementsFfrBodyPropertyDialog;
     public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"ExternalFiniteElementsFfrBody"; }
-      QString getType() const override { return "External finite elements ffr body"; }
       xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       PropertyDialog* createPropertyDialog() override { return new ExternalFiniteElementsFfrBodyPropertyDialog(this); }
   };
