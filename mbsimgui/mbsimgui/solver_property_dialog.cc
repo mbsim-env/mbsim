@@ -1136,7 +1136,7 @@ namespace MBSimGUI {
     excitationFrequencies = new ExtWidget("Excitation frequencies",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"excitationFrequencies");
     addToTab("Frequency response analysis", excitationFrequencies);
 
-    excitationAmplitudeFunction = new ExtWidget("Excitation amplitude function",new ChoiceWidget(new Function1ArgWidgetFactory(0,"t",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"excitationAmplitudeFunction");
+    excitationAmplitudeFunction = new ExtWidget("Excitation amplitude function",new ChoiceWidget(new Function1ArgWidgetFactory(0,"f",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"excitationAmplitudeFunction");
     addToTab("Frequency response analysis", excitationAmplitudeFunction);
 
     visualizeNormalModes = new ExtWidget("Visualize normal modes",new NormalModeVisualization,true,true,MBSIMCONTROL%"visualizeNormalModes");
@@ -1150,6 +1150,9 @@ namespace MBSimGUI {
 
     loops = new ExtWidget("Loops",new SpinBoxWidget(5),true,false,MBSIMCONTROL%"loops");
     addToTab("General",loops);
+
+    connect(excitationFrequencies,&ExtWidget::clicked,excitationAmplitudeFunction,&ExtWidget::setActive);
+    connect(excitationAmplitudeFunction,&ExtWidget::clicked,excitationFrequencies,&ExtWidget::setActive);
   }
 
   DOMElement* LinearSystemAnalyzerPropertyDialog::initializeUsingXML(DOMElement *parent) {
