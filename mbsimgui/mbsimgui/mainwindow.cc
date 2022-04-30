@@ -85,6 +85,8 @@ namespace MBSimGUI {
 
   MainWindow *mw;
 
+  bool MainWindow::exitOK = true;
+
   vector<boost::filesystem::path> dependencies;
 
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), doc(nullptr), elementBuffer(nullptr,false), parameterBuffer(nullptr,false), installPath(boost::dll::program_location().parent_path().parent_path()) {
@@ -376,6 +378,7 @@ namespace MBSimGUI {
 
     // auto exit if everything is finished
     if(arg.contains("--autoExit")) {
+      autoExit=true;
       auto timer=new QTimer(this);
       connect(timer, &QTimer::timeout, [this, timer](){
         if(process.state()==QProcess::NotRunning) {
@@ -462,10 +465,8 @@ namespace MBSimGUI {
 
   MainWindow::~MainWindow() {
     process.waitForFinished(-1);
-    if(process.exitStatus()!=QProcess::NormalExit || process.exitCode()!=0) {
+    if(process.exitStatus()!=QProcess::NormalExit || process.exitCode()!=0)
       setExitBad();
-      cerr<<"The last call to mbsimflatxml/mbsimxml failed.";
-    }
     centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
     delete inlineOpenMBVMW;
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
@@ -2844,7 +2845,9 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateEchoView() {
-    echoView->addOutputText(process.readAllStandardOutput().data());
+    auto data=process.readAllStandardOutput();
+    if(autoExit) cout<<data.data()<<endl;
+    echoView->addOutputText(data.data());
     echoView->updateOutput(true);
   }
 
@@ -2860,7 +2863,9 @@ namespace MBSimGUI {
     statusTime.restart();
 
     // show only last line
-    string s=process.readAllStandardError().data();
+    auto data=process.readAllStandardError();
+    if(autoExit) cout<<data.data()<<endl;
+    string s=data.data();
     s.resize(s.length()-1);
     auto i=s.rfind('\n');
     i = i==string::npos ? 0 : i+1;
