@@ -109,6 +109,7 @@ namespace MBSimGUI {
       if(f) {
         addFrame(f);
         f->create();
+	f->updateName();
       }
       e=e->getNextElementSibling();
     }
@@ -121,6 +122,7 @@ namespace MBSimGUI {
       if(c) {
         addContour(c);
         c->create();
+	c->updateName();
       }
       e=e->getNextElementSibling();
     }
