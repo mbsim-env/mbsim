@@ -38,6 +38,20 @@ numerics/nurbsSurface/torus.wrl
 xml/flexible_beam_lumped_mass/data.asc
 xml/flexible_spatial_interpolated_nurbs_contour/data.asc
 xml/python_mbsimmodule/.mbsimmodule.python.mypytest.xsd
+analysis/driven_two_mass_oscillator/inputtable.asc
+analysis/driven_two_mass_oscillator/outputtable.asc
+analysis/spatial_pendulum/inputtable.asc
+analysis/spatial_pendulum/outputtable.asc
+analysis/two_mass_oscillator/inputtable.asc
+analysis/two_mass_oscillator/outputtable.asc
+xml/calculix_body/inputtable.asc
+xml/calculix_body/outputtable.asc
+xml/flexible_beam_lumped_mass/inputtable.asc
+xml/flexible_beam_lumped_mass/outputtable.asc
+xml/modal_reduced_beam/inputtable.asc
+xml/modal_reduced_beam/outputtable.asc
+xml/trailer/inputtable.asc
+xml/trailer/outputtable.asc
 
 # ignored *.ombvx files
 hydraulics/checkvalve/cornerValves_TimeStepping_FixedPointSingle.ombvx
