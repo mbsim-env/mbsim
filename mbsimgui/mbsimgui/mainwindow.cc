@@ -363,6 +363,21 @@ namespace MBSimGUI {
         continue;
       }
     }
+
+    // auto exit if everything is finished
+    if(arg.contains("--autoExit")) {
+      process.setProcessChannelMode(QProcess::ForwardedChannels);
+      auto timer=new QTimer(this);
+      connect(timer, &QTimer::timeout, [this, timer](){
+        if(process.state()==QProcess::NotRunning) {
+          timer->stop();
+          if(!close())
+            timer->start(100);
+        }
+      });
+      timer->start(100);
+    }
+
     if(projectFile.size())
       loadProject(QDir::current().absoluteFilePath(projectFile));
     else
@@ -375,20 +390,6 @@ namespace MBSimGUI {
     statusTime.start();
 
     setWindowIcon(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
-
-    // auto exit if everything is finished
-    if(arg.contains("--autoExit")) {
-      autoExit=true;
-      auto timer=new QTimer(this);
-      connect(timer, &QTimer::timeout, [this, timer](){
-        if(process.state()==QProcess::NotRunning) {
-          timer->stop();
-          if(!close())
-            timer->start(100);
-        }
-      });
-      timer->start(100);
-    }
 
     openOptionsMenu(true);
   }
@@ -2874,7 +2875,6 @@ namespace MBSimGUI {
 
   void MainWindow::updateEchoView() {
     auto data=process.readAllStandardOutput();
-    if(autoExit) cout<<data.data()<<endl;
     echoView->addOutputText(data.data());
     echoView->updateOutput(true);
   }
@@ -2892,7 +2892,6 @@ namespace MBSimGUI {
 
     // show only last line
     auto data=process.readAllStandardError();
-    if(autoExit) cout<<data.data()<<endl;
     string s=data.data();
     s.resize(s.length()-1);
     auto i=s.rfind('\n');
@@ -3095,26 +3094,26 @@ namespace MBSimGUI {
     if(nl > 0) {
       QMessageBox::StandardButton ret = QMessageBox::question(this, "Convert project", "The project file is not compatible with the current version of MBSim. Do you want to convert it?", QMessageBox::Yes | QMessageBox::No);
       if(ret == QMessageBox::Yes) {
-	vector<string> newname = {"normalModeScaleFactor","normalModeScale","visualizeNormalModes"};
-	for(size_t i=0; i<list.size(); i++) {
-	  for(int j=0; j<list[i]->getLength(); j++) {
-	    DOMNode *node = list[i]->item(j);
-	    DOMNode *parent = node->getParentNode();
-	    DOMElement *ele = D(sdoc)->createElement(MBSIMCONTROL%newname[i]);
-	    DOMNode *e = node->getFirstChild();
-	    while(e) {
-	      DOMNode *en = e->getNextSibling();
-	      ele->appendChild(node->removeChild(e));
-	      e = en;
-	    }
-	    parent->replaceChild(ele,node);
-	  }
-	}
-	if(sdoc == doc)
-	  setProjectChanged(true);
-	else
-	  project->getSolver()->getFileItem()->setModified(true);
-	refresh();
+        vector<string> newname = {"normalModeScaleFactor","normalModeScale","visualizeNormalModes"};
+        for(size_t i=0; i<list.size(); i++) {
+          for(int j=0; j<list[i]->getLength(); j++) {
+            DOMNode *node = list[i]->item(j);
+            DOMNode *parent = node->getParentNode();
+            DOMElement *ele = D(sdoc)->createElement(MBSIMCONTROL%newname[i]);
+            DOMNode *e = node->getFirstChild();
+            while(e) {
+              DOMNode *en = e->getNextSibling();
+              ele->appendChild(node->removeChild(e));
+              e = en;
+            }
+            parent->replaceChild(ele,node);
+          }
+        }
+        if(sdoc == doc)
+          setProjectChanged(true);
+        else
+          project->getSolver()->getFileItem()->setModified(true);
+        refresh();
       }
     }
   }
