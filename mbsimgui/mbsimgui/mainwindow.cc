@@ -1120,6 +1120,10 @@ namespace MBSimGUI {
     // status message go to stderr
     arg.append("--stderr"); arg.append("status~~\n");
 
+    // we change the current directory (see below) hence we need to add the current dir as modulePath
+    arg.append("--modulePath");
+    arg.append(QDir::currentPath());
+
     arg.append(projectFile);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((installPath/"bin"/"mbsimflatxml").string()), arg);
@@ -1176,6 +1180,11 @@ namespace MBSimGUI {
     serializer->writeToURI(doc.get(), X()%projectFile.toStdString());
     QStringList arg;
     arg.append("--stopafterfirststep");
+
+    // we change the current directory (see below) hence we need to add the current dir as modulePath
+    arg.append("--modulePath");
+    arg.append(QDir::currentPath());
+
     arg.append(projectFile);
     echoView->clearOutput();
     process.setWorkingDirectory(uniqueTempDir_);
