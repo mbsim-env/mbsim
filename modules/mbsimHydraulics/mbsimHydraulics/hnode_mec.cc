@@ -561,6 +561,15 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage, config);
   }
 
+  void HNodeMec::calccorrSize(int j) {
+    if (j == 1)
+      corrSize = 0;
+    else if (j == 2)
+      corrSize = 0;
+    else
+      corrSize = 1;
+  }
+
   void RigidNodeMec::updatewbRef(Vec &wbParent) {
     Link::updatewbRef(wbParent);
     gd &= wb;

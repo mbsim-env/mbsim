@@ -126,6 +126,15 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage, config);
   }
 
+  void RigidLinePressureLoss::calccorrSize(int j) {
+    if (j == 1)
+      corrSize = 0;
+    else if (j == 2)
+      corrSize = 0;
+    else
+      corrSize = active?1:0;
+  }
+
   void RigidLinePressureLoss::updatehRef(Vec& hParent, int i) {
     const int hInd = line->gethInd(i);
     const RangeV I=RangeV(hInd, hInd+line->getGeneralizedVelocitySize()-1);
