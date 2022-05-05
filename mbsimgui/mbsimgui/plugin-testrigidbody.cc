@@ -134,7 +134,6 @@ namespace MBSimGUITestPlugin {
       if(f) {
         addFrame(f);
         f->create();
-	f->updateName();
       }
       e=e->getNextElementSibling();
     }
@@ -147,7 +146,6 @@ namespace MBSimGUITestPlugin {
       if(c) {
         addContour(c);
         c->create();
-	c->updateName();
       }
       e=e->getNextElementSibling();
     }

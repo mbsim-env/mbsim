@@ -280,7 +280,6 @@ namespace MBSimGUI {
       if(f) {
         addFrame(f);
         f->create();
-	f->updateName();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -293,7 +292,6 @@ namespace MBSimGUI {
       if(c) {
         addContour(c);
         c->create();
-	c->updateName();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -306,7 +304,6 @@ namespace MBSimGUI {
       if(g) {
         addGroup(g);
         g->create();
-	g->updateName();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -319,7 +316,6 @@ namespace MBSimGUI {
       if(o) {
         addObject(o);
         o->create();
-	o->updateName();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -332,7 +328,6 @@ namespace MBSimGUI {
       if(l) {
         addLink(l);
         l->create();
-	l->updateName();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -345,7 +340,6 @@ namespace MBSimGUI {
       if(constraint) {
         addConstraint(constraint);
         constraint->create();
-	constraint->updateName();
       }
       ELE=ELE->getNextElementSibling();
     }
@@ -358,7 +352,6 @@ namespace MBSimGUI {
       if(obsrv) {
         addObserver(obsrv);
         obsrv->create();
-	obsrv->updateName();
       }
       ELE=ELE->getNextElementSibling();
     }

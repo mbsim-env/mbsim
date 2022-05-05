@@ -76,7 +76,6 @@ namespace MBSimGUI {
     }
     setDynamicSystemSolver(Embed<DynamicSystemSolver>::create(ele,this));
     dss->create();
-    dss->updateName();
     ele = ele->getNextElementSibling();
     setSolver(Embed<Solver>::create(ele,this));
     solver->create();

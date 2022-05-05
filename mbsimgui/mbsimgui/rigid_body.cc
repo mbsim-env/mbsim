@@ -107,7 +107,6 @@ namespace MBSimGUI {
       if(f) {
         addFrame(f);
         f->create();
-	f->updateName();
       }
       e=e->getNextElementSibling();
     }
@@ -120,7 +119,6 @@ namespace MBSimGUI {
       if(c) {
         addContour(c);
         c->create();
-	c->updateName();
       }
       e=e->getNextElementSibling();
     }
@@ -143,6 +141,22 @@ namespace MBSimGUI {
   void RigidBody::setDedicatedParameterFileItem(FileItemData* dedicatedParameterFileItem) {
     Body::setDedicatedParameterFileItem(dedicatedParameterFileItem);
     frame[0]->setDedicatedParameterFileItem(dedicatedFileItem);
+  }
+
+  void RigidBody::updateNames() {
+    Body::updateName();
+    for(size_t i=1; i<frame.size(); i++)
+      frame[i]->updateName();
+    for(auto & i : contour)
+      i->updateName();
+  }
+
+  void RigidBody::updateValues() {
+    Body::updateValues();
+    for(size_t i=1; i<frame.size(); i++)
+      frame[i]->updateValues();
+    for(auto & i : contour)
+      i->updateValues();
   }
 
 }

@@ -87,7 +87,7 @@ namespace MBSimGUI {
   DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,false,true) {
     addSeparator();
     QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadDynamicSystemSolver(); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createDynamicSystemSolver(mw->loadElement(element)); });
     addAction(action);
   }
 
@@ -177,11 +177,11 @@ namespace MBSimGUI {
 
   FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadFrame(element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createFrame(mw->loadElement(element),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->pasteFrame(element,mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createFrame(mw->pasteElement(element,mw->getElementBuffer().first),element); });
     addAction(action);
   }
 
@@ -197,11 +197,11 @@ namespace MBSimGUI {
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadContour(element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createContour(mw->loadElement(element),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->pasteContour(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createContour(mw->pasteElement(element,mw->getElementBuffer().first),element); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Contour>(this, element, "Add '");
@@ -209,11 +209,11 @@ namespace MBSimGUI {
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadGroup(element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createGroup(mw->loadElement(element),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->pasteGroup(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createGroup(mw->pasteElement(element,mw->getElementBuffer().first),element); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Group>(this, element, "Add '");
@@ -221,11 +221,11 @@ namespace MBSimGUI {
 
   ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObject(element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createObject(mw->loadElement(element),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->pasteObject(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createObject(mw->pasteElement(element,mw->getElementBuffer().first),element); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Object>(this, element, "Add '");
@@ -233,11 +233,11 @@ namespace MBSimGUI {
 
   LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadLink(element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createLink(mw->loadElement(element),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->pasteLink(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createLink(mw->pasteElement(element,mw->getElementBuffer().first),element); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Link>(this, element, "Add '");
@@ -245,11 +245,11 @@ namespace MBSimGUI {
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadConstraint(element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createConstraint(mw->loadElement(element),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->pasteConstraint(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createConstraint(mw->pasteElement(element,mw->getElementBuffer().first),element); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Constraint>(this, element, "Add '");
@@ -257,11 +257,11 @@ namespace MBSimGUI {
 
   ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
     QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadObserver(element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createObserver(mw->loadElement(element),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->pasteObserver(element, mw->getElementBuffer().first); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createObserver(mw->pasteElement(element,mw->getElementBuffer().first),element); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Observer>(this, element, "Add '");
