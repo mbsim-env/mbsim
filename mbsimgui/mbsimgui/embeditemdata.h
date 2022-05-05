@@ -53,7 +53,7 @@ namespace MBSimGUI {
       QString getName() const override { return name; }
       QString getValue() const override { return ""; }
       bool isActive();
-      virtual void create() { }
+      virtual void create() { updateName(); }
       virtual void clear() { }
       void createParameters();
       void clearParameters();
@@ -93,6 +93,8 @@ namespace MBSimGUI {
       bool hasReference() const override { return fileItem; }
       bool hasParameterReference() const { return parameterFileItem; }
       void updateName();
+      virtual void updateNames() { updateName(); }
+      virtual void updateValues();
   };
 
 }

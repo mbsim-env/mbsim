@@ -226,4 +226,10 @@ namespace MBSimGUI {
       }
     }
   }
+
+  void EmbedItemData::updateValues() {
+    for(auto & i : parameter)
+      i->updateValue();
+  }
+
 }

@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "solver_context_menu.h"
+#include "project.h"
 #include "integrator.h"
 #include "analyzer.h"
 #include "mainwindow.h"
@@ -41,7 +42,7 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->loadSolver(); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createSolver(mw->loadElement(mw->getProject())); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Solver>(this, nullptr, "Select '");

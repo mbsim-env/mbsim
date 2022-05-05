@@ -86,18 +86,26 @@ namespace MBSimGUI {
               fileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
               ele2 = fileItem->getXMLElement();
             }
-            object=create(ele2);
-            if(object) {
-              object->setXMLElement(ele2);
-              object->setEmbedXMLElement(ele1);
-              object->setParameterFileItem(parameterFileItem);
-              object->createParameters();
-              object->setFileItem(fileItem);
-            }
+	    try {
+	      object=create(ele2);
+	    }
+	    catch(std::exception &ex) {
+	      return nullptr;
+	    }
+	    object->setXMLElement(ele2);
+	    object->setEmbedXMLElement(ele1);
+	    object->setParameterFileItem(parameterFileItem);
+	    object->createParameters();
+	    object->setFileItem(fileItem);
           }
           else {
-            object=create(ele1);
-            if(object) object->setXMLElement(ele1);
+	    try {
+	      object=create(ele1);
+	    }
+	    catch(std::exception &ex) {
+	      return nullptr;
+	    }
+            object->setXMLElement(ele1);
           }
           return object;
         }
