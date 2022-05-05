@@ -52,6 +52,7 @@ namespace MBSimHydraulics {
       bool isSingleValued() const override { return (not isSetValued()) or (bilateral or (unilateral and (fabs(dpMin)>1e-6))); }
       void calcgdSize(int j) override {gdSize=active?1:0; }
       void calcsvSize() override {svSize=isSetValued()?1:0; }
+      void calccorrSize(int j) override;
       void updatehRef(fmatvec::Vec& hRef, int i=0) override;
       void updaterRef(fmatvec::Vec& rRef, int i=0) override;
       void updatedhdqRef(fmatvec::Mat& dhdqRef, int i=0) {};

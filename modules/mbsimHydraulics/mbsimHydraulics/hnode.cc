@@ -375,6 +375,15 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage, config);
   }
 
+  void RigidNode::calccorrSize(int j) {
+    if (j == 1)
+      corrSize = 0;
+    else if (j == 2)
+      corrSize = 0;
+    else
+      corrSize = 1;
+  }
+
   const double& RigidNode::evalgdn() {
     if(ds->getUpdateLa()) ds->updateLa();
     return gdn;

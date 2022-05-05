@@ -65,6 +65,7 @@ namespace MBSimHydraulics {
       void setTransMecArea(unsigned int i, double area) {connectedTransFrames[i].area=area; }
 
       void calcxSize() override {xSize=1; }
+      void calccorrSize(int j) override;
 
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
