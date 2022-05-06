@@ -52,7 +52,11 @@ namespace MBSimHydraulics {
       bool isSingleValued() const override { return (not isSetValued()) or (bilateral or (unilateral and (fabs(dpMin)>1e-6))); }
       void calcgdSize(int j) override {gdSize=active?1:0; }
       void calcsvSize() override {svSize=isSetValued()?1:0; }
+      void calclaSize(int j) override;
       void calccorrSize(int j) override;
+      void calcrFactorSize(int j) override {rFactorSize=active?1:0; }
+      //void calcgdSizeActive() {gdSize=1; }
+      //void calclaSizeForActiveg() {laSize=0; } // event-driven
       void updatehRef(fmatvec::Vec& hRef, int i=0) override;
       void updaterRef(fmatvec::Vec& rRef, int i=0) override;
       void updatedhdqRef(fmatvec::Mat& dhdqRef, int i=0) {};
@@ -70,10 +74,6 @@ namespace MBSimHydraulics {
       //void checkActivegdn(); // event-driven
       bool gActiveChanged() override; /* update */
       bool isActive() const override {return active; }
-      //void calcgdSizeActive() {gdSize=1; }
-      void calclaSize(int j) override {laSize=active?1:0; }
-      //void calclaSizeForActiveg() {laSize=0; } // event-driven
-      void calcrFactorSize(int j) override {rFactorSize=active?1:0; }
       void updateGeneralizedForces() override;
       void updategd() override; /* zdotStandard */
       void updateStopVector() override; // event-driven

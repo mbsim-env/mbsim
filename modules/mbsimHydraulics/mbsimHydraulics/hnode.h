@@ -186,7 +186,7 @@ namespace MBSimHydraulics {
 
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void calclaSize(int j) override {laSize=1; }
+      void calclaSize(int j) override;
       //void calclaSizeForActiveg() {laSize=0; }
       void calcrFactorSize(int j) override {rFactorSize=1; }
       void calccorrSize(int j) override;
