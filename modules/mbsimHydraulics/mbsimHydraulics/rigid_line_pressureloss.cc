@@ -126,6 +126,13 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage, config);
   }
 
+  void RigidLinePressureLoss::calclaSize(int j) {
+    if (j == 5)
+      laSize = 0;
+    else
+      laSize = active?1:0;
+  }
+
   void RigidLinePressureLoss::calccorrSize(int j) {
     if (j == 1)
       corrSize = 0;
@@ -232,7 +239,7 @@ namespace MBSimHydraulics {
 
   void RigidLinePressureLoss::updateW(int j) {
     if(active)
-      W[j][0]=trans(line->getJacobian())*Mat(1,1,INIT,1.);
+      W[j][0]=trans(line->getJacobian())*Mat(1,laSize,INIT,1.);
   }
 
   void RigidLinePressureLoss::checkRoot() {

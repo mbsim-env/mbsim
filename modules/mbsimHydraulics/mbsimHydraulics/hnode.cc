@@ -375,6 +375,13 @@ namespace MBSimHydraulics {
     if(gil) gil->init(stage, config);
   }
 
+  void RigidNode::calclaSize(int j) {
+    if (j == 5)
+      laSize = 0;
+    else
+      laSize = 1;
+  }
+
   void RigidNode::calccorrSize(int j) {
     if (j == 1)
       corrSize = 0;
