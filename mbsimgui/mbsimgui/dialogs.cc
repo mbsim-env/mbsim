@@ -215,6 +215,18 @@ namespace MBSimGUI {
     setWindowTitle(QString("State table"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
+    stateTable = new QTreeWidget;
+    layout->addWidget(stateTable);
+    stateTable->setHeaderLabels(QStringList{"State number","Element name","State label","Label number"});
+    stateTable->resizeColumnToContents(1);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox);
+    updateWidget();
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceDialog::accept);
+  }
+
+  void StateTableDialog::updateWidget() {
     ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
     QVector<QString> name;
     QVector<QString> label;
@@ -231,9 +243,7 @@ namespace MBSimGUI {
       number.append(QString::number(number_+1));
     }
     is.close();
-    QTreeWidget *stateTable = new QTreeWidget;
-    layout->addWidget(stateTable);
-    stateTable->setHeaderLabels(QStringList{"State number","Element name","State label","Label number"});
+    stateTable->clear();
     for(unsigned int i=0; i<name.size(); i++) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::number(i+1));
@@ -242,11 +252,6 @@ namespace MBSimGUI {
       item->setText(3, number[i]);
       stateTable->addTopLevelItem(item);
     }
-    stateTable->resizeColumnToContents(1);
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
-    buttonBox->addButton(QDialogButtonBox::Ok);
-    layout->addWidget(buttonBox);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceDialog::accept);
   }
 
   LoadModelDialog::LoadModelDialog() {
@@ -466,6 +471,14 @@ namespace MBSimGUI {
   }
 
   InitialOutputWidget::InitialOutputWidget() {
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    text = new QTextEdit;
+    layout->addWidget(text);
+    loadData();
+  }
+
+  void InitialOutputWidget::loadData() {
     H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("initial output");
     auto data=group->openChildObject<H5::SimpleDataset<vector<double>>>("state (z)");
@@ -479,14 +492,18 @@ namespace MBSimGUI {
     stream << endl << "Output (y)" << endl;
     for(size_t i=0; i<y.size(); i++)
       stream << setw(28) << y[i] << endl;
-    auto *text = new QTextEdit;
     text->setPlainText(QString::fromStdString(stream.str()));
-    auto *layout = new QVBoxLayout;
-    setLayout(layout);
-    layout->addWidget(text);
   }
 
   EigenanalysisWidget::EigenanalysisWidget() {
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    text = new QTextEdit;
+    layout->addWidget(text);
+    loadData();
+  }
+
+  void EigenanalysisWidget::loadData() {
     H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("eigenanalysis");
     auto cvdata = group->openChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues");
@@ -503,14 +520,71 @@ namespace MBSimGUI {
 	stream << setw(28) << V[i][j] << " ";
       stream << endl;
     }
-    auto *text = new QTextEdit;
     text->setPlainText(QString::fromStdString(stream.str()));
-    auto *layout = new QVBoxLayout;
-    setLayout(layout);
-    layout->addWidget(text);
   }
 
   ModalAnalysisWidget::ModalAnalysisWidget() {
+    auto *layout = new QGridLayout;
+    setLayout(layout);
+
+    modeTable = new QTreeWidget;
+    layout->addWidget(modeTable,0,0);
+    modeTable->setHeaderLabels(QStringList{"Mode number","Natural frequency","Expotential decay","Natural angular frequency","Damping ratio"});
+
+    choice = new QComboBox;
+    layout->addWidget(choice,1,0);
+
+    auto *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
+
+    plot = new QwtPlot(scrollArea);
+    scrollArea->setWidget(plot);
+    QwtLegend *legend = new QwtLegend;
+    plot->insertLegend(legend,QwtPlot::BottomLegend);
+    plot->setAxisTitle(QwtPlot::yLeft,"Normalized Amplitude");
+    plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
+    plot->setAxisScale(QwtPlot::yRight,-180,180,45);
+    plot->setCanvasBackground(Qt::white);
+
+    curve1 = new QwtPlotCurve;
+    curve1->setTitle("Amplitude");
+    curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
+    curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
+    curve1->setPen(Qt::red);
+    curve1->setYAxis(QwtPlot::yLeft);
+    curve1->attach(plot);
+    plot->enableAxis(QwtPlot::yRight);
+
+    curve2 = new QwtPlotCurve;
+    curve2->setTitle("Phase");
+    curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
+    curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
+    curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
+    curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
+    curve2->setPen(Qt::green);
+    curve2->setYAxis(QwtPlot::yRight);
+    curve2->attach(plot);
+
+    QwtPlotGrid *grid = new QwtPlotGrid;
+    grid->enableYMin(true);
+    grid->setMajorPen(Qt::black,0,Qt::DotLine);
+    grid->setMinorPen(Qt::white,0,Qt::DotLine);
+    grid->attach(plot);
+
+    layout->addWidget(scrollArea,0,1,3,1);
+    layout->setColumnStretch(0,1);
+    layout->setColumnStretch(1,2);
+
+    elementTable = new QTreeWidget;
+    layout->addWidget(elementTable,2,0);
+
+    loadData();
+
+    connect(modeTable, &QTreeWidget::currentItemChanged, this, &ModalAnalysisWidget::updateWidget);
+    connect(choice, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ModalAnalysisWidget::updateWidget);
+  }
+
+  void ModalAnalysisWidget::loadData() {
     H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("modal analysis");
     auto cvdata = group->openChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues");
@@ -524,6 +598,9 @@ namespace MBSimGUI {
     char label;
     int number;
 
+    stateName.clear();
+    stateLabel.clear();
+    stateLabelNumber.clear();
     ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
     while(is) {
       is >> name >> label >> number;
@@ -534,6 +611,9 @@ namespace MBSimGUI {
     }
     is.close();
 
+    outputName.clear();
+    outputLabel.clear();
+    outputLabelNumber.clear();
     is.open(mw->getUniqueTempDir().generic_string()+"/outputtable.asc");
     while(is) {
       is >> name >> label >> number;
@@ -544,13 +624,9 @@ namespace MBSimGUI {
     }
     is.close();
 
-    auto *layout = new QGridLayout;
-    setLayout(layout);
-
-    modeTable = new QTreeWidget;
-    layout->addWidget(modeTable,0,0);
-    modeTable->setHeaderLabels(QStringList{"Mode number","Natural frequency","Expotential decay","Natural angular frequency","Damping ratio"});
-
+    num.clear();
+    A.clear();
+    phi.clear();
     for(int k=0; k<Zh.size(); k++)
       num[stateLabel[k]].append(k+1);
     for(int k=0; k<Yh.size(); k++)
@@ -564,6 +640,10 @@ namespace MBSimGUI {
       }
     }
 
+    modeTable->blockSignals(true);
+    QString item;
+    if(modeTable->currentItem()) item = modeTable->currentItem()->text(0);
+    modeTable->clear();
     for(int i=0; i<w.size(); i++) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::number(i+1));
@@ -590,69 +670,25 @@ namespace MBSimGUI {
       }
     }
     modeTable->resizeColumnToContents(1);
-    modeTable->setCurrentItem(modeTable->topLevelItem(0));
+    auto itemlist = modeTable->findItems(item,Qt::MatchExactly);
+    if(itemlist.size())
+      modeTable->setCurrentItem(itemlist.at(0));
+    else
+      modeTable->setCurrentItem(modeTable->topLevelItem(0));
+    modeTable->blockSignals(false);
 
-    choice = new QComboBox;
+    choice->blockSignals(true);
+    auto text = choice->currentText();
+    choice->clear();
     for(QMap<QString,QVector<double>>::iterator i=num.begin(); i!=num.end(); i++)
       choice->addItem((i.key()=="y"?"Output (":"State (")+i.key()+")");
-    layout->addWidget(choice,1,0);
+    choice->setCurrentText(text);
+    choice->blockSignals(false);
 
-    if(Zh.size() and Zh[0].size()) {
-      auto *scrollArea = new QScrollArea(this);
-      scrollArea->setWidgetResizable(true);
-      plot = new QwtPlot(scrollArea);
-      scrollArea->setWidget(plot);
-//      plot->setTitle("Normal mode");
-      plot->setAxisTitle(QwtPlot::yLeft,"Normalized Amplitude");
-      plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
-      plot->setAxisScale(QwtPlot::yRight,-180,180,45);
-      plot->setCanvasBackground(Qt::white);
-
-      curve1 = new QwtPlotCurve;
-      curve1->setTitle("Amplitude");
-      curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setPen(Qt::red);
-      curve1->setYAxis(QwtPlot::yLeft);
-      curve1->attach(plot);
-      plot->enableAxis(QwtPlot::yRight);
-
-      curve2 = new QwtPlotCurve;
-      curve2->setTitle("Phase");
-      curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
-      curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setPen(Qt::green);
-      curve2->setYAxis(QwtPlot::yRight);
-      curve2->attach(plot);
-
-      QwtLegend *legend = new QwtLegend;
-      plot->insertLegend(legend,QwtPlot::BottomLegend);
-
-      QwtPlotGrid *grid = new QwtPlotGrid;
-      grid->enableYMin(true);
-      grid->setMajorPen(Qt::black,0,Qt::DotLine);
-      grid->setMinorPen(Qt::white,0,Qt::DotLine);
-      grid->attach(plot);
-
-      layout->addWidget(scrollArea,0,1,3,1);
-      layout->setColumnStretch(0,1);
-      layout->setColumnStretch(1,2);
-
-      elementTable = new QTreeWidget;
-      layout->addWidget(elementTable,2,0);
-
-      connect(modeTable, &QTreeWidget::currentItemChanged, this, &ModalAnalysisWidget::updateWidget);
-      connect(choice, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &ModalAnalysisWidget::updateWidget);
-
-      updateWidget();
-    }
-
+    updateWidget();
   }
 
   void ModalAnalysisWidget::updateWidget() {
-    //int c = choice->currentIndex();
     QString c = choice->currentText();
     c = c.mid(c.size()-2,1);
     int m = modeTable->indexOfTopLevelItem(modeTable->currentItem());
@@ -690,6 +726,87 @@ namespace MBSimGUI {
   }
 
   FrequencyResponseWidget::FrequencyResponseWidget() {
+    auto *layout = new QGridLayout;
+    setLayout(layout);
+
+    inputTable = new QTreeWidget;
+    layout->addWidget(inputTable,0,0);
+    inputTable->setHeaderLabels(QStringList{"Input number","Element name","Input label","Label number"});
+
+      auto *scrollArea = new QScrollArea(this);
+      scrollArea->setWidgetResizable(true);
+      plot = new QwtPlot(scrollArea);
+      scrollArea->setWidget(plot);
+//      plot->setTitle("Frequency response");
+      plot->setAxisTitle(QwtPlot::xBottom,"Excitation frequency (Hz)");
+      plot->setAxisTitle(QwtPlot::yLeft,"Amplitude");
+      plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
+      plot->setAxisScale(QwtPlot::yRight,-181,181,45);
+      plot->setCanvasBackground(Qt::white);
+
+      curve1 = new QwtPlotCurve;
+      curve1->setTitle("Amplitude");
+      curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
+      curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
+      curve1->setPen(Qt::red);
+      curve1->setYAxis(QwtPlot::yLeft);
+      curve1->attach(plot);
+      plot->enableAxis(QwtPlot::yRight);
+
+      curve2 = new QwtPlotCurve;
+      curve2->setTitle("Phase");
+      curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
+      curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
+      curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
+      curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
+      curve2->setPen(Qt::green);
+      curve2->setYAxis(QwtPlot::yRight);
+      curve2->attach(plot);
+
+      QwtLegend *legend = new QwtLegend;
+      plot->insertLegend(legend,QwtPlot::BottomLegend);
+
+      QwtPlotGrid *grid = new QwtPlotGrid;
+      grid->enableYMin(true);
+      grid->setMajorPen(Qt::black,0,Qt::DotLine);
+      grid->setMinorPen(Qt::white,0,Qt::DotLine);
+      grid->attach(plot);
+
+      layout->addWidget(scrollArea,0,1,2,3);
+      layout->setColumnStretch(0,1);
+      layout->setColumnStretch(3,2);
+      plot->replot();
+
+      table = new QTreeWidget;
+      layout->addWidget(table,1,0);
+      table->setHeaderLabels(QStringList{"Magnitude","Magnitude number","Element name","Magnitude label","Label number"});
+
+      auto *checkbox = new QCheckBox("Log scale (x)");
+      layout->addWidget(checkbox,2,1);
+      connect(checkbox,&QCheckBox::toggled,this,[=]() {
+	  if(checkbox->isChecked())
+	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLogScaleEngine);
+	  else
+	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLinearScaleEngine);
+	  plot->replot();
+	  });
+      checkbox = new QCheckBox("Log scale (y)");
+      layout->addWidget(checkbox,2,2);
+      connect(checkbox,&QCheckBox::toggled,this,[=]() {
+	  if(checkbox->isChecked())
+	    plot->setAxisScaleEngine(QwtPlot::yLeft, new QwtLogScaleEngine);
+	  else
+	    plot->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+	  plot->replot();
+	  });
+
+      loadData();
+
+      connect(inputTable, &QTreeWidget::currentItemChanged, this, &FrequencyResponseWidget::updateWidget);
+      connect(table, &QTreeWidget::currentItemChanged, this, &FrequencyResponseWidget::updateWidget);
+  }
+
+  void FrequencyResponseWidget::loadData() {
     H5::File file(mw->getUniqueTempDir().generic_string()+"/linear_system_analysis.h5", H5::File::read);
     auto group=file.openChildObject<H5::Group>("frequency response analysis");
     auto data=group->openChildObject<H5::SimpleDataset<vector<double>>>("excitation frequencies");
@@ -706,13 +823,13 @@ namespace MBSimGUI {
       cmdata = subgroup->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output response");
       Yh.push_back(cmdata->read());
     }
-    QVector<QString> stateName, inputName, outputName;
-    QVector<QString> stateLabel, inputLabel, outputLabel;
-    QVector<int> stateLabelNumber, inputLabelNumber, outputLabelNumber;
     string name_;
     char label_;
     int number_;
 
+    stateName.clear();
+    stateLabel.clear();
+    stateLabelNumber.clear();
     ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
     while(is) {
       is >> name_ >> label_ >> number_;
@@ -723,6 +840,9 @@ namespace MBSimGUI {
     }
     is.close();
 
+    inputName.clear();
+    inputLabel.clear();
+    inputLabelNumber.clear();
     is.open(mw->getUniqueTempDir().generic_string()+"/inputtable.asc");
     while(is) {
       is >> name_ >> label_ >> number_;
@@ -733,6 +853,9 @@ namespace MBSimGUI {
     }
     is.close();
 
+    outputName.clear();
+    outputLabel.clear();
+    outputLabelNumber.clear();
     is.open(mw->getUniqueTempDir().generic_string()+"/outputtable.asc");
     while(is) {
       is >> name_ >> label_ >> number_;
@@ -764,12 +887,10 @@ namespace MBSimGUI {
       }
     }
 
-    auto *layout = new QGridLayout;
-    setLayout(layout);
-
-    inputTable = new QTreeWidget;
-    layout->addWidget(inputTable,0,0);
-    inputTable->setHeaderLabels(QStringList{"Input number","Element name","Input label","Label number"});
+    inputTable->blockSignals(true);
+    QString item;
+    if(inputTable->currentItem()) item = inputTable->currentItem()->text(0);
+    inputTable->clear();
     for(unsigned int i=0; i<inputName.size(); i++) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::number(i+1));
@@ -779,58 +900,21 @@ namespace MBSimGUI {
       inputTable->addTopLevelItem(item);
     }
     inputTable->resizeColumnToContents(1);
-    inputTable->setCurrentItem(inputTable->topLevelItem(0));
+    auto itemlist = inputTable->findItems(item,Qt::MatchExactly);
+    if(itemlist.size())
+      inputTable->setCurrentItem(itemlist.at(0));
+    else
+      inputTable->setCurrentItem(inputTable->topLevelItem(0));
+    inputTable->blockSignals(false);
 
     if(nZh and rZh and cZh) {
-      auto *scrollArea = new QScrollArea(this);
-      scrollArea->setWidgetResizable(true);
-      plot = new QwtPlot(scrollArea);
-      scrollArea->setWidget(plot);
-//      plot->setTitle("Frequency response");
-      plot->setAxisTitle(QwtPlot::xBottom,"Excitation frequency (Hz)");
-      plot->setAxisTitle(QwtPlot::yLeft,"Amplitude");
-      plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
-      plot->setAxisScale(QwtPlot::yRight,-181,181,45);
-      plot->setCanvasBackground(Qt::white);
-
-      curve1 = new QwtPlotCurve;
-      curve1->setTitle("Amplitude");
-      curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setSamples(freq,A[0][0]);
-      curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setPen(Qt::red);
-      curve1->setYAxis(QwtPlot::yLeft);
-      curve1->attach(plot);
-      plot->enableAxis(QwtPlot::yRight);
-
-      curve2 = new QwtPlotCurve;
-      curve2->setTitle("Phase");
-      curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
-      curve2->setSamples(freq,phi[0][0]);
-      curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setPen(Qt::green);
-      curve2->setYAxis(QwtPlot::yRight);
-      curve2->attach(plot);
-
-      QwtLegend *legend = new QwtLegend;
-      plot->insertLegend(legend,QwtPlot::BottomLegend);
-
-      QwtPlotGrid *grid = new QwtPlotGrid;
-      grid->enableYMin(true);
-      grid->setMajorPen(Qt::black,0,Qt::DotLine);
-      grid->setMinorPen(Qt::white,0,Qt::DotLine);
-      grid->attach(plot);
-
-      layout->addWidget(scrollArea,0,1,2,1);
-      layout->setColumnStretch(0,1);
-      layout->setColumnStretch(1,2);
-      plot->replot();
-
-      table = new QTreeWidget;
-      layout->addWidget(table,1,0);
-      table->setHeaderLabels(QStringList{"Magnitude","Magnitude number","Element name","Magnitude label","Label number"});
+      table->blockSignals(true);
+      QString item1, item2;
+      if(table->currentItem()) {
+	item1 = table->currentItem()->text(0);
+	item2 = table->currentItem()->text(1);
+      }
+      table->clear();
       for(unsigned int i=0; i<stateName.size(); i++) {
 	auto *item = new QTreeWidgetItem;
 	item->setText(0, "State");
@@ -850,20 +934,18 @@ namespace MBSimGUI {
 	table->addTopLevelItem(item);
       }
       table->resizeColumnToContents(2);
-      table->setCurrentItem(table->topLevelItem(0));
-
-      connect(inputTable, &QTreeWidget::currentItemChanged, this, &FrequencyResponseWidget::updateWidget);
-      connect(table, &QTreeWidget::currentItemChanged, this, &FrequencyResponseWidget::updateWidget);
-
-      auto *checkbox = new QCheckBox("Log scale");
-      layout->addWidget(checkbox,2,1);
-      connect(checkbox,&QCheckBox::toggled,this,[=]() {
-	  if(checkbox->isChecked())
-	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLogScaleEngine);
-	  else
-	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLinearScaleEngine);
-	  plot->replot();
-	  });
+      auto itemlist = table->findItems(item2,Qt::MatchExactly,1);
+      bool found = false;
+      for(int i=0; i<itemlist.size(); i++) {
+	if(itemlist.at(i)->text(0)==item1 and itemlist.at(i)->text(1)==item2) {
+	  table->setCurrentItem(itemlist.at(i));
+	  found = true;
+	  break;
+	}
+      }
+      if(not found)
+	table->setCurrentItem(table->topLevelItem(0));
+      table->blockSignals(false);
 
       updateWidget();
     }
@@ -883,23 +965,30 @@ namespace MBSimGUI {
     auto *tabWidget = new QTabWidget(this);
     layout->addWidget(tabWidget);
 
-    auto *mawidget = new ModalAnalysisWidget;
+    mawidget = new ModalAnalysisWidget;
     tabWidget->addTab(mawidget,"Modal analysis");
 
-    auto *frwidget = new FrequencyResponseWidget;
+    frwidget = new FrequencyResponseWidget;
     tabWidget->addTab(frwidget,"Frequency response analysis");
 
-    auto *iowidget = new InitialOutputWidget;
+    iowidget = new InitialOutputWidget;
     tabWidget->addTab(iowidget,"Initial output");
 
-    auto *ewidget = new EigenanalysisWidget;
-    tabWidget->addTab(ewidget,"Eigenanalysis");
+    eawidget = new EigenanalysisWidget;
+    tabWidget->addTab(eawidget,"Eigenanalysis");
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     layout->addWidget(buttonBox);
     buttonBox->addButton(QDialogButtonBox::Ok);
 
     connect(buttonBox, &QDialogButtonBox::accepted, this, &LinearSystemAnalysisDialog::accept);
+  }
+
+  void LinearSystemAnalysisDialog::updateWidget() {
+    mawidget->loadData();
+    frwidget->loadData();
+    iowidget->loadData();
+    eawidget->loadData();
   }
 
   CreateFMUDialog::CreateFMUDialog(const QString &fileName) {

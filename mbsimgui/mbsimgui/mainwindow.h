@@ -76,6 +76,8 @@ namespace MBSimGUI {
   class Project;
   class FileItemData;
   class EchoStream;
+  class LinearSystemAnalysisDialog;
+  class StateTableDialog;
 
   class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -114,6 +116,8 @@ namespace MBSimGUI {
       std::pair<Parameter*,bool> parameterBuffer;
       boost::filesystem::path installPath;
       QString fmuFileName;
+      LinearSystemAnalysisDialog *lsa{nullptr};
+      StateTableDialog *st{nullptr};
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event) override;
       void dropEvent(QDropEvent *event) override;
