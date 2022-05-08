@@ -156,8 +156,6 @@ namespace MBSimGUI {
       void linearSystemAnalysis();
       void showStateTable();
       void debug();
-      void settingsFinished(int result);
-      void applySettings();
       void kill();
       void createFMU();
       void elementChanged(const QModelIndex &current);
@@ -200,7 +198,7 @@ namespace MBSimGUI {
       void loadParameter(EmbedItemData *parent);
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
-      xercesc::DOMElement* loadElement(EmbedItemData *parent);
+      xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent);
       void createFrame(xercesc::DOMElement *ele, Element *parent);
       void createContour(xercesc::DOMElement *ele, Element *parent);
       void createGroup(xercesc::DOMElement *ele, Element *parent);
@@ -214,9 +212,8 @@ namespace MBSimGUI {
       const std::string& getHighlightedObject() const { return currentID; }
       ElementView* getElementView() { return elementView; }
       ParameterView* getParameterView() { return parameterView; }
-      void setProjectChanged(bool changed=true);
+      void updateUndos();
       void selectSolver(Solver *solver);
-      void setAllowUndo(bool allowUndo);
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
       Project* getProject() { return project; }
