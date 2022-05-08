@@ -468,6 +468,8 @@ namespace MBSimGUI {
     process.waitForFinished(-1);
     if(process.exitStatus()!=QProcess::NormalExit || process.exitCode()!=0)
       setExitBad();
+    if(lsa) delete lsa;
+    if(st) delete st;
     centralWidget()->layout()->removeWidget(inlineOpenMBVMW);
     delete inlineOpenMBVMW;
     // use nothrow boost::filesystem functions to avoid exceptions in this dtor
@@ -1156,16 +1158,22 @@ namespace MBSimGUI {
     QString file1 = QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5";
     QString file2 = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
     if(QFile::exists(file1) and QFile::exists(file2)) {
-      LinearSystemAnalysisDialog *dialog = new LinearSystemAnalysisDialog(this);
-      dialog->show();
+      if(not lsa) {
+	lsa = new LinearSystemAnalysisDialog(this);
+	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),lsa,&LinearSystemAnalysisDialog::updateWidget);
+      }
+      lsa->show();
     }
   }
 
   void MainWindow::showStateTable() {
     QString file = QString::fromStdString(uniqueTempDir.generic_string())+"/statetable.asc";
     if(QFile::exists(file)) {
-      StateTableDialog *dialog = new StateTableDialog(this);
-      dialog->show();
+      if(not st) {
+	st = new StateTableDialog(this);
+	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),st,&StateTableDialog::updateWidget);
+      }
+      st->show();
     }
   }
 

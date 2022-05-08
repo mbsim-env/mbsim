@@ -32,6 +32,7 @@ class QSpinBox;
 class QComboBox;
 class QwtPlot;
 class QwtPlotCurve;
+class QTextEdit;
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -100,6 +101,9 @@ namespace MBSimGUI {
   class StateTableDialog : public QDialog {
     public:
       StateTableDialog(QWidget *parent);
+      void updateWidget();
+    private:
+      QTreeWidget *stateTable;
   };
 
   class LoadModelDialog : public QDialog {
@@ -149,16 +153,23 @@ namespace MBSimGUI {
   class InitialOutputWidget : public QWidget {
     public:
       InitialOutputWidget();
+      void loadData();
+    private:
+      QTextEdit *text;
   };
 
   class EigenanalysisWidget : public QWidget {
     public:
       EigenanalysisWidget();
+      void loadData();
+    private:
+      QTextEdit *text;
   };
 
   class ModalAnalysisWidget : public QWidget {
     public:
       ModalAnalysisWidget();
+      void loadData();
     private:
       QTreeWidget *modeTable, *elementTable;
       QComboBox *choice;
@@ -175,6 +186,7 @@ namespace MBSimGUI {
   class FrequencyResponseWidget : public QWidget {
     public:
       FrequencyResponseWidget();
+      void loadData();
     private:
       QTreeWidget *inputTable, *table;
       QwtPlot *plot;
@@ -182,12 +194,21 @@ namespace MBSimGUI {
       QVector<double> freq;
       QVector<QVector<QVector<double>>> A;
       QVector<QVector<QVector<double>>> phi;
+      QVector<QString> stateName, inputName, outputName;
+      QVector<QString> stateLabel, inputLabel, outputLabel;
+      QVector<int> stateLabelNumber, inputLabelNumber, outputLabelNumber;
       void updateWidget();
   };
 
   class LinearSystemAnalysisDialog : public QDialog {
     public:
       LinearSystemAnalysisDialog(QWidget *parent);
+      void updateWidget();
+    private:
+      ModalAnalysisWidget *mawidget;
+      FrequencyResponseWidget *frwidget;
+      InitialOutputWidget *iowidget;
+      EigenanalysisWidget *eawidget;
   };
 
   class CreateFMUDialog : public QDialog {
