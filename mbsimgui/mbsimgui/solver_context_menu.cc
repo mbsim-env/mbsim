@@ -42,7 +42,7 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createSolver(mw->loadElement(mw->getProject())); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createSolver(mw->loadEmbedItemData(mw->getProject())); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Solver>(this, nullptr, "Select '");
