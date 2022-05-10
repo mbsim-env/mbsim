@@ -111,7 +111,7 @@ namespace MBSimGUI {
       int maxUndo;
       bool autoRefresh;
       xercesc::DOMDocument *doc;
-      std::deque<xercesc::DOMDocument*> undos, redos;
+      std::deque<std::vector<xercesc::DOMDocument*>> undos, redos;
       std::pair<Element*,bool> elementBuffer;
       std::pair<Parameter*,bool> parameterBuffer;
       boost::filesystem::path installPath;
