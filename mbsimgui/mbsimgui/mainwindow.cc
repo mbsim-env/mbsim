@@ -492,9 +492,16 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateUndos() {
-    xercesc::DOMDocument* oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
+    auto *oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
     oldDoc->setDocumentURI(doc->getDocumentURI());
-    undos.push_back(oldDoc);
+    auto u = vector<DOMDocument*>(1+file.size());
+    u[0] = oldDoc;
+    for(int i=0; i<file.size();i++) {
+      auto *oldDoc = static_cast<xercesc::DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true));
+      oldDoc->setDocumentURI(file[i]->getXMLDocument()->getDocumentURI());
+      u[i+1] = oldDoc;
+    }
+    undos.push_back(u);
     if(undos.size() > maxUndo)
       undos.pop_front();
     redos.clear();
@@ -670,6 +677,8 @@ namespace MBSimGUI {
       actionSaveStateTableAs->setDisabled(true);
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(true);
+      projectFile="";
+      setWindowTitle("Project.mbsx[*]");
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
       QModelIndex index = pmodel->index(0,0);
@@ -695,13 +704,11 @@ namespace MBSimGUI {
       project = new Project;
       project->createXMLElement(doc);
 
-      model->createProjectItem(project,QModelIndex());
+      model->createProjectItem(project);
 
       elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
 
-      projectFile="";
       refresh();
-      setWindowTitle("Project.mbsx[*]");
     }
   }
 
@@ -725,7 +732,9 @@ namespace MBSimGUI {
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
       actionSaveProject->setDisabled(false);
       projectFile = QDir::current().relativeFilePath(fileName);
+      setWindowTitle(projectFile+"[*]");
       setCurrentProjectFile(fileName);
+
       try { 
         doc = parser->parseURI(X()%fileName.toStdString());
         DOMParser::handleCDATA(doc->getDocumentElement());
@@ -740,9 +749,34 @@ namespace MBSimGUI {
         cerr << "Unknown exception." << endl;
         return;
       }
-      setWindowTitle(projectFile+"[*]");
-      rebuildTree();
+
+      auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
+      QModelIndex index = pmodel->index(0,0);
+      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), QModelIndex());
+
+      auto *model = static_cast<ElementTreeModel*>(elementView->model());
+      index = model->index(0,0);
+      model->removeRows(index.row(), model->rowCount(QModelIndex()), QModelIndex());
+
+      auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
+      index = fmodel->index(0,0);
+      fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), QModelIndex());
+
+      delete project;
+
+      file.clear();
+      idMap.clear();
+      IDcounter = 0;
+
+      project=Embed<Project>::create(doc->getDocumentElement(),nullptr);
+      project->create();
+
+      model->createProjectItem(project);
+
       convertDocument();
+
+      elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+
       refresh();
     }
     else
@@ -1229,19 +1263,18 @@ namespace MBSimGUI {
 
     auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = pmodel->index(0,0);
-    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), index.parent());
+    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), QModelIndex());
 
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     index = model->index(0,0);
-    model->removeRows(index.row(), model->rowCount(QModelIndex()), index.parent());
+    model->removeRows(index.row(), model->rowCount(QModelIndex()), QModelIndex());
 
     auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
     index = fmodel->index(0,0);
-    fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), index.parent());
+    fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), QModelIndex());
 
     delete project;
 
-    file.clear();
     idMap.clear();
     IDcounter = 0;
 
@@ -1264,8 +1297,16 @@ namespace MBSimGUI {
     elementBuffer.first = nullptr;
     parameterBuffer.first = nullptr;
     setWindowModified(true);
-    redos.push_back(doc);
-    doc = undos.back();
+    auto r = vector<DOMDocument*>(1+file.size());
+    r[0] = doc;
+    for(int i=0; i<file.size(); i++)
+      r[i+1] = file[i]->getXMLDocument();
+    redos.push_back(r);
+    auto u = undos.back();
+    doc = u[0];
+    file.resize(u.size()-1);
+    for(int i=0; i<u.size()-1; i++)
+      file[i] = new FileItemData(u[i+1]);
     undos.pop_back();
     rebuildTree();
     if(getAutoRefresh()) refresh();
@@ -1274,8 +1315,16 @@ namespace MBSimGUI {
   }
 
   void MainWindow::redo() {
-    undos.push_back(doc);
-    doc = redos.back();
+    auto u = vector<DOMDocument*>(1+file.size());
+    u[0] = doc;
+    for(int i=0; i<file.size(); i++)
+      u[i+1] = file[i]->getXMLDocument();
+    undos.push_back(u);
+    auto r = redos.back();
+    doc = r[0];
+    file.resize(r.size()-1);
+    for(int i=0; i<r.size()-1; i++)
+      file[i] = new FileItemData(r[i+1]);
     redos.pop_back();
     rebuildTree();
     if(getAutoRefresh()) refresh();
@@ -2453,13 +2502,13 @@ namespace MBSimGUI {
         editor->show();
         connect(editor,&QDialog::finished,this,[=](){
           if(editor->result()==QDialog::Accepted) {
-            auto* fileItem = element->getDedicatedFileItem();
+            auto *fileItem = element->getDedicatedFileItem();
             if(fileItem)
               fileItem->setModified(true);
-            else if(editor->getCancel()) {
-              updateUndos();
+            else
 	      setWindowModified(true);
-	    }
+	    if(editor->getCancel())
+              updateUndos();
             editor->fromWidget();
 	    updateNames(element);
             if(getAutoRefresh()) refresh();
@@ -2468,13 +2517,13 @@ namespace MBSimGUI {
           editor = nullptr;
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
-          auto* fileItem = element->getDedicatedFileItem();
+          auto *fileItem = element->getDedicatedFileItem();
           if(fileItem)
             fileItem->setModified(true);
-          else if(editor->getCancel()) {
+          else
+            setWindowModified(true);
+          if(editor->getCancel())
             updateUndos();
-	    setWindowModified(true);
-	  }
           editor->fromWidget();
 	  updateNames(element);
           if(getAutoRefresh()) refresh();
@@ -2514,10 +2563,10 @@ namespace MBSimGUI {
             auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
             if(fileItem)
               fileItem->setModified(true);
-            else if(editor->getCancel()) {
-              updateUndos();
+            else
 	      setWindowModified(true);
-	    }
+	    if(editor->getCancel())
+              updateUndos();
             editor->fromWidget();
 	    updateValues(parameter->getParent());
             if(getAutoRefresh()) refresh();
@@ -2530,10 +2579,10 @@ namespace MBSimGUI {
           auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
           if(fileItem)
             fileItem->setModified(true);
-          else if(editor->getCancel()) {
+          else
+            setWindowModified(true);
+          if(editor->getCancel())
             updateUndos();
-	    setWindowModified(true);
-	  }
           editor->fromWidget();
 	  updateValues(parameter->getParent());
           if(getAutoRefresh()) refresh();
@@ -2560,10 +2609,10 @@ namespace MBSimGUI {
             auto* fileItem = element->getDedicatedFileItem();
             if(fileItem)
               fileItem->setModified(true);
-            else {
-              updateUndos();
+            else
 	      setWindowModified(true);
-	    }
+	    if(editor->getCancel())
+              updateUndos();
             editor->fromWidget();
             if(getAutoRefresh()) refresh();
           }
@@ -2574,10 +2623,10 @@ namespace MBSimGUI {
           auto* fileItem = element->getDedicatedFileItem();
           if(fileItem)
             fileItem->setModified(true);
-          else {
+          else
+            setWindowModified(true);
+          if(editor->getCancel())
             updateUndos();
-	    setWindowModified(true);
-	  }
           editor->fromWidget();
           if(getAutoRefresh()) refresh();
         });
