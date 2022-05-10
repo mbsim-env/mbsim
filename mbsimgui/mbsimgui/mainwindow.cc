@@ -451,7 +451,7 @@ namespace MBSimGUI {
     arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
     arg.emplace_back("--hdf5RefreshDelta");
     arg.emplace_back("0");
-    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg);
+    inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg, true);
 
     // We cannot use the new Qt function pointer-based connection mechanism here since this seems not to work
     // on Windows if the signal and slot lives in different DLLs as it is for the following two connections.
