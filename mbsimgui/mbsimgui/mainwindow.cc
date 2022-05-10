@@ -494,7 +494,7 @@ namespace MBSimGUI {
   void MainWindow::updateUndos() {
     auto *oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
     oldDoc->setDocumentURI(doc->getDocumentURI());
-    auto u = vector<DOMDocument*>(1+file.size());
+    auto u = vector<xercesc::DOMDocument*>(1+file.size());
     u[0] = oldDoc;
     for(int i=0; i<file.size();i++) {
       auto *oldDoc = static_cast<xercesc::DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true));
@@ -1297,7 +1297,7 @@ namespace MBSimGUI {
     elementBuffer.first = nullptr;
     parameterBuffer.first = nullptr;
     setWindowModified(true);
-    auto r = vector<DOMDocument*>(1+file.size());
+    auto r = vector<xercesc::DOMDocument*>(1+file.size());
     r[0] = doc;
     for(int i=0; i<file.size(); i++)
       r[i+1] = file[i]->getXMLDocument();
@@ -1315,7 +1315,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::redo() {
-    auto u = vector<DOMDocument*>(1+file.size());
+    auto u = vector<xercesc::DOMDocument*>(1+file.size());
     u[0] = doc;
     for(int i=0; i<file.size(); i++)
       u[i+1] = file[i]->getXMLDocument();
