@@ -28,7 +28,24 @@ namespace MBSimGUI {
 
   class ElementView : public QTreeView {
     public:
+      class Node {
+	public:
+	  Node(const QString &name_, bool expanded_, bool selected_) : name(name_), expanded(expanded_), selected(selected_) { }
+	  void addChild(const Node &node) { child.push_back(node); }
+	  int getNumberOfChilds() const { return child.size(); }
+	  Node& getChild(int i) { return child[i]; }
+	  const QString& getName() const { return name; }
+	  bool isExpanded() const { return expanded; }
+	  bool isSelected() const { return selected; }
+	private:
+	  QString name;
+	  bool expanded{false};
+	  bool selected{false};
+	  std::vector<Node> child;
+      };
       ElementView(QWidget *parent=nullptr) : QTreeView(parent) { }
+      void save(const QModelIndex &index, Node &node);
+      void restore(const QModelIndex &index, Node &node);
     private:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;

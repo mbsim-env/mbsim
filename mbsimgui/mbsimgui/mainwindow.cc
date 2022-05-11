@@ -477,14 +477,11 @@ namespace MBSimGUI {
     bfs::remove_all(uniqueTempDir, ec);
     bfs::remove("./.Project.mbsx", ec);
     auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
-    QModelIndex index = pmodel->index(0,0);
-    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), QModelIndex());
+    pmodel->removeRows(pmodel->index(0,0).row(), pmodel->rowCount(QModelIndex()), QModelIndex());
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    index = model->index(0,0);
-    model->removeRows(index.row(), model->rowCount(QModelIndex()), QModelIndex());
+    model->removeRows(model->index(0,0).row(), model->rowCount(QModelIndex()), QModelIndex());
     auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
-    index = fmodel->index(0,0);
-    fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), QModelIndex());
+    fmodel->removeRows(fmodel->index(0,0).row(), fmodel->rowCount(QModelIndex()), QModelIndex());
     delete project;
     parser->release();
     serializer->release();
@@ -681,16 +678,13 @@ namespace MBSimGUI {
       setWindowTitle("Project.mbsx[*]");
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
-      QModelIndex index = pmodel->index(0,0);
-      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), QModelIndex());
+      pmodel->removeRows(pmodel->index(0,0).row(), pmodel->rowCount(QModelIndex()), QModelIndex());
 
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      index = model->index(0,0);
-      model->removeRows(index.row(), model->rowCount(QModelIndex()), QModelIndex());
+      model->removeRows(model->index(0,0).row(), model->rowCount(QModelIndex()), QModelIndex());
 
       auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
-      index = fmodel->index(0,0);
-      fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), QModelIndex());
+      fmodel->removeRows(fmodel->index(0,0).row(), fmodel->rowCount(QModelIndex()), QModelIndex());
 
       delete project;
 
@@ -751,16 +745,13 @@ namespace MBSimGUI {
       }
 
       auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
-      QModelIndex index = pmodel->index(0,0);
-      pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), QModelIndex());
+      pmodel->removeRows(pmodel->index(0,0).row(), pmodel->rowCount(QModelIndex()), QModelIndex());
 
       auto *model = static_cast<ElementTreeModel*>(elementView->model());
-      index = model->index(0,0);
-      model->removeRows(index.row(), model->rowCount(QModelIndex()), QModelIndex());
+      model->removeRows(model->index(0,0).row(), model->rowCount(QModelIndex()), QModelIndex());
 
       auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
-      index = fmodel->index(0,0);
-      fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), QModelIndex());
+      fmodel->removeRows(fmodel->index(0,0).row(), fmodel->rowCount(QModelIndex()), QModelIndex());
 
       delete project;
 
@@ -1260,18 +1251,16 @@ namespace MBSimGUI {
   }
 
   void MainWindow::rebuildTree() {
-
-    auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
-    QModelIndex index = pmodel->index(0,0);
-    pmodel->removeRows(index.row(), pmodel->rowCount(QModelIndex()), QModelIndex());
-
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
-    index = model->index(0,0);
-    model->removeRows(index.row(), model->rowCount(QModelIndex()), QModelIndex());
-
+    auto *pmodel = static_cast<ParameterTreeModel*>(parameterView->model());
     auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
-    index = fmodel->index(0,0);
-    fmodel->removeRows(index.row(), fmodel->rowCount(QModelIndex()), QModelIndex());
+
+    ElementView::Node root("Root",false,false);
+    elementView->save(model->index(0,0),root);
+
+    pmodel->removeRows(pmodel->index(0,0).row(), pmodel->rowCount(QModelIndex()), QModelIndex());
+    model->removeRows(model->index(0,0).row(), model->rowCount(QModelIndex()), QModelIndex());
+    fmodel->removeRows(fmodel->index(0,0).row(), fmodel->rowCount(QModelIndex()), QModelIndex());
 
     delete project;
 
@@ -1283,7 +1272,7 @@ namespace MBSimGUI {
 
     model->createProjectItem(project);
 
-    elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
+    elementView->restore(model->index(0,0),root);
   }
 
   void MainWindow::edit() {
