@@ -64,8 +64,7 @@ namespace MBSim {
   }
 
   void GeneralizedFriction::updateW(int j) {
-    if(isSetValued() and gdActive)
-      DualRigidBodyLink::updateW(j);
+    if(laSize) DualRigidBodyLink::updateW(j);
   }
 
   void GeneralizedFriction::updatewb() {
@@ -76,7 +75,7 @@ namespace MBSim {
   }
 
   void GeneralizedFriction::updategd() {
-    gd = evalGeneralizedRelativeVelocity()(RangeV(0,gdSize-1));
+    if(gdSize) gd = evalGeneralizedRelativeVelocity();
   }
 
   const double& GeneralizedFriction::evalgdn() {
@@ -137,24 +136,12 @@ namespace MBSim {
 
   void GeneralizedFriction::calclaSize(int j) {
     DualRigidBodyLink::calclaSize(j);
-    if (j <= 2) { // IA
-      if (laT->isSetValued())
-        laSize = 1;
-      else
-        laSize = 0;
-    }
-    else if (j == 3) { // IB
-      if (laT->isSetValued() and gdActive)
-        laSize = 1;
-      else
-        laSize = 0;
-    }
-    else if (j <= 5) { // IG
-      if (laT->isSetValued())
-        laSize = 1;
-      else
-        laSize = 0;
-    }
+    if (j <= 2) // IA, IG, IB
+      laSize = laT->isSetValued();
+    else if (j == 3) // IH, IG
+      laSize = laT->isSetValued() and gdActive;
+    else if (j <= 5) // IG, IB
+      laSize = 0;
     else
       throwError("Internal error");
   }
@@ -166,18 +153,12 @@ namespace MBSim {
 
   void GeneralizedFriction::calcgdSize(int j) {
     DualRigidBodyLink::calcgdSize(j);
-    if (j <= 2) { // all contacts
-      if (laT->isSetValued())
-        gdSize = 1;
-      else
-        gdSize = 0;
-    }
-    else if (j == 3) { // sticking contacts
-      if (laT->isSetValued() and gdActive)
-        gdSize = 1;
-      else
-        gdSize = 0;
-    }
+    if (j <= 2) //  IA, IG, IB
+      gdSize = laT->isSetValued();
+    else if (j == 3) // IH, IG
+      gdSize = laT->isSetValued() and gdActive;
+    else if (j <= 5) // IG, IB
+      gdSize = 0;
     else
       throwError("Internal error");
   }
