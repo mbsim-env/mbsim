@@ -1100,6 +1100,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *stateMachine, *state, *selection;
+      void updateWidget() override;
   };
 
   class UniversalGravitationPropertyDialog : public MechanicalLinkPropertyDialog {

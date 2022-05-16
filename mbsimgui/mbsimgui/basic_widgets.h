@@ -112,6 +112,7 @@ namespace MBSimGUI {
 
       void setDefaultElement(const QString &def) { ele->setPlaceholderText(def); }
       void setElement(const QString &str) { if(str!=ele->placeholderText()) ele->setText(str); }
+      void clear() { ele->setText(""); }
       QString getElement() const { return ele->text().isEmpty()?ele->placeholderText():ele->text(); }
       void setRatio(const QString &str) { ratio->setText(str=="0"?"":str); }
       QString getRatio() const { return ratio->text().isEmpty()?"0":ratio->text(); }
@@ -358,6 +359,7 @@ namespace MBSimGUI {
       void addState();
       void removeState();
       void updateState();
+      void clear();
       void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
       ChoiceWidget *name;
       ChoiceWidget *value;
@@ -375,16 +377,19 @@ namespace MBSimGUI {
       void addTransition();
       void removeTransition();
       void updateTransition();
+      void clear();
       void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
       Element *element;
-      ChoiceWidget *src;
-      ChoiceWidget *dest;
+      TextChoiceWidget *src;
+      TextChoiceWidget *dest;
       BasicElementOfReferenceWidget *sig;
       ChoiceWidget *th;
       QTreeWidget *tree;
 
     public:
       TransitionWidget(Element *element_);
+      void setStringList(const std::vector<QString> &list) { src->setStringList(list); dest->setStringList(list); }
+      TextChoiceWidget *getDestChoice() { return dest; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
