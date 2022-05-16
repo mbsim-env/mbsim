@@ -3860,12 +3860,12 @@ namespace MBSimGUI {
     addToTab("General", transition);
 
     initialState = new ExtWidget("Initial state",new TextChoiceWidget(vector<QString>(),0,true),true,false,MBSIMCONTROL%"initialState");
-//    initialState = new ExtWidget("Initial state",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialState");
     addToTab("Initial conditions", initialState);
   }
 
   void StateMachinePropertyDialog::updateWidget() {
     static_cast<TextChoiceWidget*>(initialState->getWidget())->setStringList(static_cast<StateWidget*>(state->getWidget())->getNames());
+    static_cast<TransitionWidget*>(transition->getWidget())->setStringList(static_cast<StateWidget*>(state->getWidget())->getNames());
   }
 
   DOMElement* StateMachinePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -3886,10 +3886,12 @@ namespace MBSimGUI {
   }
 
   StateMachineSensorPropertyDialog::StateMachineSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
-    stateMachine = new ExtWidget("State machine",new ElementOfReferenceWidget<Signal>(sensor,nullptr,this),false,false,MBSIMCONTROL%"stateMachine");
+    stateMachine = new ExtWidget("State machine",new ElementOfReferenceWidget<StateMachine>(sensor,nullptr,this),false,false,MBSIMCONTROL%"stateMachine");
+    connect(stateMachine, &ExtWidget::widgetChanged, this, &StateMachineSensorPropertyDialog::updateWidget);
     addToTab("General", stateMachine);
 
-    state = new ExtWidget("State",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"state");
+//    state = new ExtWidget("State",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"state");
+    state = new ExtWidget("State",new TextChoiceWidget(vector<QString>(),0,true),true,false,MBSIMCONTROL%"state");
     addToTab("General", state);
 
     vector<QString> list;
@@ -3900,9 +3902,24 @@ namespace MBSimGUI {
     addToTab("General", selection);
   }
 
+  void StateMachineSensorPropertyDialog::updateWidget() {
+    auto *sm = getElement()->getByPath<StateMachine>(static_cast<ElementOfReferenceWidget<StateMachine>*>(stateMachine->getWidget())->getElement());
+    if(sm) {
+      vector<QString> stringList;
+      DOMElement *e=E(sm->getXMLElement())->getFirstElementChildNamed(MBSIMCONTROL%"state");
+      while(e && (E(e)->getTagName()==MBSIMCONTROL%"state")) {
+	stringList.emplace_back(QString::fromStdString(E(e)->getAttributeQName("name").second));
+	e=e->getNextElementSibling();
+      }
+      static_cast<TextChoiceWidget*>(state->getWidget())->setStringList(stringList);
+      static_cast<TextChoiceWidget*>(state->getWidget())->setCurrentIndex(0);
+    }
+  }
+
   DOMElement* StateMachineSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SensorPropertyDialog::initializeUsingXML(item->getXMLElement());
     stateMachine->initializeUsingXML(item->getXMLElement());
+    updateWidget();
     state->initializeUsingXML(item->getXMLElement());
     selection->initializeUsingXML(item->getXMLElement());
     return parent;

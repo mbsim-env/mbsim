@@ -213,6 +213,7 @@ namespace MBSimGUI {
 
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(eleBrowser,&BasicElementBrowser::accepted,this,QOverload<>::of(&BasicElementOfReferenceWidget::setElement));
+    connect(eleBrowser,&BasicElementBrowser::accepted,this,&BasicElementOfReferenceWidget::widgetChanged);
     connect(button,&QPushButton::clicked,this,&BasicElementOfReferenceWidget::showBrowser);
     layout->addWidget(button);
 
@@ -811,6 +812,10 @@ namespace MBSimGUI {
     connect(update,&QPushButton::clicked,this,&StateWidget::widgetChanged);
     layout->addWidget(update,2,2);
 
+    QPushButton *clear = new QPushButton("Clear");
+    connect(clear,&QPushButton::clicked,this,&StateWidget::clear);
+    layout->addWidget(clear,4,2);
+
     layout->setColumnStretch(1,10);
 
     connect(tree,&QTreeWidget::currentItemChanged,this,&StateWidget::currentItemChanged);
@@ -840,6 +845,11 @@ namespace MBSimGUI {
       item->setText(0, static_cast<PhysicalVariableWidget*>(name->getWidget())->getValue());
       item->setText(1, static_cast<PhysicalVariableWidget*>(value->getWidget())->getValue());
     }
+  }
+
+  void StateWidget::clear() {
+    static_cast<PhysicalVariableWidget*>(name->getWidget())->setValue("");
+    static_cast<PhysicalVariableWidget*>(value->getWidget())->setValue("");
   }
 
   void StateWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
@@ -888,11 +898,11 @@ namespace MBSimGUI {
     tree->setColumnWidth(3,50);
 
     layout->addWidget(new QLabel("Source:"),4,0);
-    src = new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5);
+    src = new TextChoiceWidget(vector<QString>(),0,true);
     layout->addWidget(src,4,1);
 
     layout->addWidget(new QLabel("Destination:"),5,0);
-    dest = new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5);
+    dest = new TextChoiceWidget(vector<QString>(),0,true);
     layout->addWidget(dest,5,1);
 
     layout->addWidget(new QLabel("Signal:"),6,0);
@@ -915,6 +925,10 @@ namespace MBSimGUI {
     connect(update,&QPushButton::clicked,this,&TransitionWidget::updateTransition);
     layout->addWidget(update,2,2);
 
+    QPushButton *clear = new QPushButton("Clear");
+    connect(clear,&QPushButton::clicked,this,&TransitionWidget::clear);
+    layout->addWidget(clear,4,2);
+
     layout->setColumnStretch(1,10);
 
     connect(tree,&QTreeWidget::currentItemChanged,this,&TransitionWidget::currentItemChanged);
@@ -922,8 +936,8 @@ namespace MBSimGUI {
 
   void TransitionWidget::addTransition() {
     auto *item = new QTreeWidgetItem;
-    item->setText(0, static_cast<PhysicalVariableWidget*>(src->getWidget())->getValue());
-    item->setText(1, static_cast<PhysicalVariableWidget*>(dest->getWidget())->getValue());
+    item->setText(0, src->getText());
+    item->setText(1, dest->getText());
     item->setText(2, sig->getElement());
     item->setText(3, static_cast<PhysicalVariableWidget*>(th->getWidget())->getValue());
     tree->addTopLevelItem(item);
@@ -936,8 +950,8 @@ namespace MBSimGUI {
   void TransitionWidget::updateTransition() {
     QTreeWidgetItem *item = tree->currentItem();
     if(item) {
-      item->setText(0, static_cast<PhysicalVariableWidget*>(src->getWidget())->getValue());
-      item->setText(1, static_cast<PhysicalVariableWidget*>(dest->getWidget())->getValue());
+      item->setText(0, src->getText());
+      item->setText(1, dest->getText());
       item->setText(2, sig->getElement());
       item->setText(3, static_cast<PhysicalVariableWidget*>(th->getWidget())->getValue());
     }
@@ -945,11 +959,18 @@ namespace MBSimGUI {
 
   void TransitionWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
     if(item) {
-      static_cast<PhysicalVariableWidget*>(src->getWidget())->setValue(item->text(0));
-      static_cast<PhysicalVariableWidget*>(dest->getWidget())->setValue(item->text(1));
+      src->setText(item->text(0));
+      dest->setText(item->text(1));
       sig->setElement(item->text(2));
       static_cast<PhysicalVariableWidget*>(th->getWidget())->setValue(item->text(3));
     }
+  }
+
+  void TransitionWidget::clear() {
+    src->setCurrentIndex(0);
+    dest->setCurrentIndex(0);
+    sig->clear();
+    static_cast<PhysicalVariableWidget*>(th->getWidget())->setValue("");
   }
 
   DOMElement* TransitionWidget::initializeUsingXML(DOMElement *element) {
