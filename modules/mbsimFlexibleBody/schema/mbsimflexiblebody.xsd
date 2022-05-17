@@ -238,6 +238,26 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:group name="FiniteElementsData">
+    <xs:sequence>
+      <xs:element name="elementType" type="pv:stringFullEval">
+        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+          Auswahl des Elementtyps.
+          <ul>
+            <li>C3D20: Hexaeder-Element mit 20 Knoten und voller Integration</li>
+          </ul>
+        </xs:documentation></xs:annotation>
+      </xs:element>
+      <xs:element name="elements" type="pv:lengthMatrix">
+        <xs:annotation>
+          <xs:documentation xml:lang="de" xmlns="">
+            Elemente.
+          </xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:group>
+
   <xs:element name="FlexibleBody" substitutionGroup="mbsim:Body" abstract="true" type="FlexibleBodyType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -1400,21 +1420,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="elements" type="pv:lengthMatrix">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Elemente.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="elementType" type="pv:stringFullEval">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Auswahl des Elementtyps.
-              <ul>
-                <li>C3D20: Hexaeder-Element mit 20 Knoten und voller Integration</li>
-              </ul>
-            </xs:documentation></xs:annotation>
-          </xs:element>
+	  <xs:group ref="FiniteElementsData" maxOccurs="unbounded"/>
           <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">

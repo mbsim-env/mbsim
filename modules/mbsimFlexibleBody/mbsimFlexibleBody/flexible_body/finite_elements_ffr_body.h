@@ -49,8 +49,8 @@ namespace MBSimFlexibleBody {
       void setPoissonsRatio(double nu_) { nu = nu_; }
       void setDensity(double rho_) { rho = rho_; }
       void setNodes(const fmatvec::MatV &nodes_) { nodes <<= nodes_; }
-      void setElements(const fmatvec::MatVI &elements_) { elements <<= elements_; }
-      void setElementType(ElementType type_) { type = type_; }
+      void addElementType(ElementType type) { types.emplace_back(type); }
+      void addElements(const fmatvec::MatVI &elements_) { elements.emplace_back(elements_); }
       void setBoundaryConditions(const fmatvec::MatVx3 &bc_) { bc <<= bc_; }
       void setInterfaceNodeNumbers(const fmatvec::VecVI &inodes_) { inodes <<= inodes_; }
       void setNormalModeNumbers(const fmatvec::VecVI &nmodes_) { nmodes <<= nmodes_; }
@@ -86,10 +86,11 @@ namespace MBSimFlexibleBody {
       double E{2e11};
       double rho{7870};
       double nu{0.3};
-      ElementType type{C3D20};
+      std::vector<ElementType> types;
       fmatvec::MatV nodes;
-      fmatvec::MatVI elements;
+      std::vector<fmatvec::MatVI> elements;
       std::map<int,fmatvec::Vec3> nodalPos;
+      std::map<int,ElementType> type;
       std::map<int,fmatvec::VecVI> ele;
       std::vector<fmatvec::Vec3> rN;
       fmatvec::Vec3 xi;
