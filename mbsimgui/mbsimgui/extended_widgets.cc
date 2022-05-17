@@ -355,12 +355,20 @@ namespace MBSimGUI {
       }
       spinBox->setValue(getSize());
     }
-    else {
+    else if(mode==2) {
       DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName());
       while(e and E(e)->getTagName()==factory->getXMLName()) {
         addElements(1,false);
         getWidget(getSize()-1)->initializeUsingXML(e);
         e=e->getNextElementSibling();
+      }
+      spinBox->setValue(getSize());
+    }
+    else {
+      DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName());
+      while(e and E(e)->getTagName()==factory->getXMLName()) {
+        addElements(1,false);
+        e = getWidget(getSize()-1)->initializeUsingXML(e);
       }
       spinBox->setValue(getSize());
     }
@@ -370,7 +378,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    if(mode<=1) {
+    if(mode<=1 or mode==3) {
       for(unsigned int i=0; i<getSize(); i++)
         getWidget(i)->writeXMLFile(parent,ref);
     }

@@ -76,6 +76,61 @@ namespace MBSimGUI {
     return new ConnectElementsWidget<RigidBody>(i+1,element,parent);
   }
 
+  class FiniteElementsDataWidget : public Widget {
+    public:
+      FiniteElementsDataWidget(QWidget *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    private:
+      ExtWidget *type, *elements;
+  };
+
+  FiniteElementsDataWidget::FiniteElementsDataWidget(QWidget *parent) : Widget(parent) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    vector<QString> list;
+    list.emplace_back("\"C3D20\"");
+    type = new ExtWidget("Element type",new TextChoiceWidget(list,0,true),false,false,MBSIMFLEX%"elementType");
+    layout->addWidget(type);
+
+    elements = new ExtWidget("Elements",new ChoiceWidget(new MatRowsVarWidgetFactory(3,20),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elements");
+    layout->addWidget(elements);
+  }
+
+  DOMElement* FiniteElementsDataWidget::initializeUsingXML(DOMElement *element) {
+    type->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    if(E(element)->getTagName()==MBSIMFLEX%"elements")
+      elements->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    return element;
+  }
+
+  DOMElement* FiniteElementsDataWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"elementType");
+    type->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"elements");
+    elements->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    return nullptr;
+  }
+
+  class FiniteElementsDataWidgetFactory : public WidgetFactory {
+    public:
+      FiniteElementsDataWidgetFactory(QWidget *parent_) : parent(parent_) { }
+      Widget* createWidget(int i=0) override;
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"elementType"; }
+    protected:
+      QWidget *parent;
+  };
+
+  Widget* FiniteElementsDataWidgetFactory::createWidget(int i) {
+    return new FiniteElementsDataWidget(parent);
+  }
+
   ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(item->getXMLElement()?QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")):item->getName()));
@@ -1984,13 +2039,8 @@ namespace MBSimGUI {
     nodes = new ExtWidget("Nodes",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodes");
     addToTab("General", nodes);
 
-    elements = new ExtWidget("Elements",new ChoiceWidget(new MatRowsVarWidgetFactory(3,20),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elements");
+    elements = new ExtWidget("Element data",new ListWidget(new FiniteElementsDataWidgetFactory(this),"Element data",1,3,false,1),false,false,"");
     addToTab("General", elements);
-
-    vector<QString> list;
-    list.emplace_back("\"C3D20\"");
-    type = new ExtWidget("Element type",new TextChoiceWidget(list,0,true),false,false,MBSIMFLEX%"elementType");
-    addToTab("General", type);
 
     beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
@@ -2027,7 +2077,6 @@ namespace MBSimGUI {
     rho->initializeUsingXML(item->getXMLElement());
     nodes->initializeUsingXML(item->getXMLElement());
     elements->initializeUsingXML(item->getXMLElement());
-    type->initializeUsingXML(item->getXMLElement());
     beta->initializeUsingXML(item->getXMLElement());
     bc->initializeUsingXML(item->getXMLElement());
     inodes->initializeUsingXML(item->getXMLElement());
@@ -2045,7 +2094,6 @@ namespace MBSimGUI {
     rho->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     nodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     elements->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    type->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     bc->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     inodes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
@@ -3890,7 +3938,6 @@ namespace MBSimGUI {
     connect(stateMachine, &ExtWidget::widgetChanged, this, &StateMachineSensorPropertyDialog::updateWidget);
     addToTab("General", stateMachine);
 
-//    state = new ExtWidget("State",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"state");
     state = new ExtWidget("State",new TextChoiceWidget(vector<QString>(),0,true),true,false,MBSIMCONTROL%"state");
     addToTab("General", state);
 
