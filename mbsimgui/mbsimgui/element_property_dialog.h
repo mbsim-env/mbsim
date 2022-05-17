@@ -459,7 +459,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *E, *rho, *nu, *nodes, *elements, *type, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
+      ExtWidget *E, *rho, *nu, *nodes, *elements, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
   };
 
   class ExternalFiniteElementsFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
