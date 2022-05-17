@@ -15,10 +15,10 @@
         <nodes>
           <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="nodes.asc"/>
         </nodes>
+        <elementType>'C3D20'</elementType>
         <elements>
           <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="elements.asc"/>
         </elements>
-        <elementType>'C3D20'</elementType>
         <proportionalDamping>
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>50</ele>
