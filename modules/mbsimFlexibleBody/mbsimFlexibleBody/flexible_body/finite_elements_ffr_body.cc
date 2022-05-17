@@ -32,8 +32,10 @@ namespace MBSimFlexibleBody {
 
   void FiniteElementsFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      if(type==unknownElementType)
-	throwError("(FiniteElementsFfrBody::init): element type unknown");
+      for(size_t i=0; i<types.size(); i++) {
+	if(types[i]==unknownElementType)
+	  throwError("(FiniteElementsFfrBody::init): element type number " + to_string(i) + " unknown");
+      }
 
       for(int i=0; i<8; i++) {
 	Ni[i] = &FiniteElementsFfrBody::N1;
@@ -101,17 +103,26 @@ namespace MBSimFlexibleBody {
       else
 	throwError("(FiniteElementsFfrBody::init): number of columns in nodes does not match, must be 3 or 4");
 
-      int nE = elements.rows();
-      if(elements.cols()==21) {
-	for(int i=0; i<nE; i++)
-	  ele[elements(i,0)] <<= elements.row(i)(RangeV(1,20)).T();
+      if(types.size() != elements.size())
+	throwError("(FiniteElementsFfrBody::init): number of element types (" + to_string(types.size()) + ") must equal number of element data sets (" + to_string(elements.size()) + ")");
+      for(size_t e=0, j=0; e<elements.size(); e++) {
+	if(types[e] != C3D20)
+	  throwError("(FiniteElementsFfrBody::init): only elements of type C3D20 are currently supported");
+	if(elements[e].cols()==21) {
+	  for(int i=0; i<elements[e].rows(); i++) {
+	    type[elements[e](i,0)] = types[e];
+	    ele[elements[e](i,0)] <<= elements[e].row(i)(RangeV(1,20)).T();
+	  }
+	}
+	else if(elements[e].cols()==20) {
+	  for(int i=0; i<elements[e].rows(); i++, j++) {
+	    type[j+1] = types[e];
+	    ele[j+1] <<= elements[e].row(i).T();
+	  }
+	}
+	else
+	  throwError("(FiniteElementsFfrBody::init): number of columns in elements does not match, must be " + to_string(20) + " or " + to_string(21));
       }
-      else if(elements.cols()==20) {
-	for(int i=0; i<nE; i++)
-	  ele[i+1] <<= elements.row(i).T();
-      }
-      else
-	throwError("(FiniteElementsFfrBody::init): number of columns in elements does not match, must be " + to_string(20) + " or " + to_string(21));
 
       map<int,int> nodeCount;
       for(const auto & i : ele) {
@@ -486,12 +497,17 @@ namespace MBSimFlexibleBody {
     setDensity(MBXMLUtils::E(e)->getText<double>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes");
     setNodes(MBXMLUtils::E(e)->getText<MatV>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"elements");
-    setElements(MBXMLUtils::E(e)->getText<MatVI>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"elementType");
-    string typeStr=string(X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).substr(1,string(X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).length()-2);
-    if(typeStr=="C3D20") type=C3D20;
-    else type=unknownElementType;
+    while(e && MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"elementType") {
+      ElementType type;
+      string typeStr=string(X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).substr(1,string(X()%MBXMLUtils::E(e)->getFirstTextChild()->getData()).length()-2);
+      if(typeStr=="C3D20") type=C3D20;
+      else type=unknownElementType;
+      addElementType(type);
+      e=e->getNextElementSibling();
+      if(MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"elements") addElements(MBXMLUtils::E(e)->getText<MatVI>());
+      e=e->getNextElementSibling();
+    }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
     if(e) setProportionalDamping(MBXMLUtils::E(e)->getText<Vec>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"boundaryConditions");
