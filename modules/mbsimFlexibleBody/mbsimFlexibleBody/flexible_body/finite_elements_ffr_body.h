@@ -51,7 +51,8 @@ namespace MBSimFlexibleBody {
       void setNodes(const fmatvec::MatV &nodes_) { nodes <<= nodes_; }
       void addElementType(ElementType type) { types.emplace_back(type); }
       void addElements(const fmatvec::MatVI &elements_) { elements.emplace_back(elements_); }
-      void setBoundaryConditions(const fmatvec::MatVx3 &bc_) { bc <<= bc_; }
+      void addBoundaryNodes(const fmatvec::VecVI &bnodes_) { bnodes.emplace_back(bnodes_); }
+      void addDegreesOfFreedom(const fmatvec::VecVI &dof_) { dof.emplace_back(dof_); }
       void setInterfaceNodeNumbers(const fmatvec::VecVI &inodes_) { inodes <<= inodes_; }
       void setNormalModeNumbers(const fmatvec::VecVI &nmodes_) { nmodes <<= nmodes_; }
       void setFixedBoundaryNormalModes(bool fixedBoundaryNormalModes_) { fixedBoundaryNormalModes = fixedBoundaryNormalModes_; }
@@ -95,7 +96,9 @@ namespace MBSimFlexibleBody {
       std::vector<fmatvec::Vec3> rN;
       fmatvec::Vec3 xi;
       fmatvec::Vec3 wi;
-      fmatvec::MatVx3 bc;
+      std::map<int,fmatvec::VecVI> bc;
+      std::vector<fmatvec::VecVI> bnodes;
+      std::vector<fmatvec::VecVI> dof;
       std::shared_ptr<OpenMBVFiniteElementsBody> ombvBody;
       fmatvec::VecVI inodes;
       fmatvec::VecVI nmodes;

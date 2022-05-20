@@ -46,7 +46,8 @@ namespace MBSimFlexibleBody {
       void setMomentOfInertia(const fmatvec::Vec3 &I) { Iy=I(0); Iz=I(1); Iyz=I(2); }
       void setYoungsModulus(double E_) { E = E_; }
       void setDensity(double rho_) { rho = rho_; }
-      void setBoundaryConditions(const fmatvec::MatVx3 &bc_) { bc <<= bc_; }
+      void addBoundaryNodes(const fmatvec::VecVI &bnodes_) { bnodes.emplace_back(bnodes_); }
+      void addDegreesOfFreedom(const fmatvec::VecVI &dof_) { dof.emplace_back(dof_); }
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (visualization,(OpenMBVFlexibleFfrBeam::Visualization),OpenMBVFlexibleFfrBeam::points)(colorRepresentation,(OpenMBVFlexibleBody::ColorRepresentation),OpenMBVFlexibleBody::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombvBody = std::shared_ptr<OpenMBVFlexibleFfrBeam>(new OpenMBVFlexibleFfrBeam(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
@@ -68,7 +69,9 @@ namespace MBSimFlexibleBody {
       double Iyz{0};
       double E{2e11};
       double rho{7870};
-      fmatvec::MatVx3 bc;
+      std::map<int,fmatvec::VecVI> bc;
+      std::vector<fmatvec::VecVI> bnodes;
+      std::vector<fmatvec::VecVI> dof;
       std::shared_ptr<OpenMBVFlexibleFfrBeam> ombvBody;
       bool ten{false};
       bool benz{true};
