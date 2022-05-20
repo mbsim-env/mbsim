@@ -76,6 +76,59 @@ namespace MBSimGUI {
     return new ConnectElementsWidget<RigidBody>(i+1,element,parent);
   }
 
+  class BoundaryConditionWidget : public Widget {
+    public:
+      BoundaryConditionWidget(QWidget *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    private:
+      ExtWidget *nodes, *dof;
+  };
+
+  BoundaryConditionWidget::BoundaryConditionWidget(QWidget *parent) : Widget(parent) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    nodes = new ExtWidget("Boundary node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"boundaryNodeNumbers");
+    layout->addWidget(nodes);
+
+    dof = new ExtWidget("Degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"degreesOfFreedom");
+    layout->addWidget(dof);
+  }
+
+  DOMElement* BoundaryConditionWidget::initializeUsingXML(DOMElement *element) {
+    nodes->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    if(E(element)->getTagName()==MBSIMFLEX%"degreesOfFreedom")
+      dof->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    return element;
+  }
+
+  DOMElement* BoundaryConditionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"boundaryNodeNumbers");
+    nodes->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"degreesOfFreedom");
+    dof->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    return nullptr;
+  }
+
+  class BoundaryConditionWidgetFactory : public WidgetFactory {
+    public:
+      BoundaryConditionWidgetFactory(QWidget *parent_) : parent(parent_) { }
+      Widget* createWidget(int i=0) override;
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"boundaryNodeNumbers"; }
+    protected:
+      QWidget *parent;
+  };
+
+  Widget* BoundaryConditionWidgetFactory::createWidget(int i) {
+    return new BoundaryConditionWidget(parent);
+  }
+
   class FiniteElementsDataWidget : public Widget {
     public:
       FiniteElementsDataWidget(QWidget *parent);
@@ -1943,7 +1996,7 @@ namespace MBSimGUI {
     beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
-    bc = new ExtWidget("Boundary conditions",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"boundaryConditions");
+    bc = new ExtWidget("Boundary condition",new ListWidget(new BoundaryConditionWidgetFactory(this),"Boundary condition",0,3,false),false,false,"");
     addToTab("Boundary conditions", bc);
 
     inodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interfaceNodeNumbers");
@@ -2045,7 +2098,7 @@ namespace MBSimGUI {
     beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
-    bc = new ExtWidget("Boundary conditions",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"boundaryConditions");
+    bc = new ExtWidget("Boundary condition",new ListWidget(new BoundaryConditionWidgetFactory(this),"Boundary condition",0,3,false),false,false,"");
     addToTab("Boundary conditions", bc);
 
     inodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interfaceNodeNumbers");
@@ -2147,7 +2200,7 @@ namespace MBSimGUI {
     beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
-    bc = new ExtWidget("Boundary conditions",new ChoiceWidget(new MatRowsVarWidgetFactory(1,3),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"boundaryConditions");
+    bc = new ExtWidget("Boundary condition",new ListWidget(new BoundaryConditionWidgetFactory(this),"Boundary condition",0,3,false),false,false,"");
     addToTab("Boundary conditions", bc);
 
     inodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interfaceNodeNumbers");

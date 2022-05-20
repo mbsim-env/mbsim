@@ -127,20 +127,12 @@
           <bendingAboutYAxis>false</bendingAboutYAxis>
           <bendingAboutZAxis>true</bendingAboutZAxis>
           <torsion>false</torsion>
-          <boundaryConditions>
-            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <row>
-                <ele>1</ele>
-                <ele>1</ele>
-                <ele>1</ele>
-              </row>
-              <row>
-                <ele>nFE+1</ele>
-                <ele>1</ele>
-                <ele>1</ele>
-              </row>
-            </xmlMatrix>
-          </boundaryConditions>
+          <boundaryNodeNumbers>
+	    [1;nFE+1]
+          </boundaryNodeNumbers>
+          <degreesOfFreedom>
+	    1
+          </degreesOfFreedom>
           <stateDependentRotation>
             <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
           </stateDependentRotation>

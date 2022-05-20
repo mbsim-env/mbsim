@@ -140,8 +140,15 @@ namespace MBSimFlexibleBody {
       }
 
       int nr = 0;
-      for(int i=0; i<bc.rows(); i++)
-	nr += bc(i,2)-bc(i,1)+1;
+      if(bnodes.size() != dof.size())
+	throwError("(FlexibleFfrBeam::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
+      for(size_t i=0; i<bnodes.size(); i++) {
+	for(int j=0; j<bnodes[i].size(); j++)
+	  // TODO Abfrage ob size>1 und ob Redundanz
+	  bc[bnodes[i](j)] <<= dof[i];
+      }
+      for(const auto & i : bc)
+	nr += i.second.size();
       int n = ng-nr;
 
       rPdm.resize(3,Mat3xV(ng));
@@ -270,9 +277,9 @@ namespace MBSimFlexibleBody {
       PPdm[2][1] = PPdm[1][2].T();
 
       vector<int> c;
-      for(int i=0; i<bc.rows(); i++) {
-	for(int j=(int)bc(i,1); j<=(int)bc(i,2); j++)
-	  c.push_back(nodeMap[bc(i,0)]*3+j);
+      for(const auto & i : bc) {
+	for(int j=0; j<i.second.size(); j++)
+	  c.push_back(nodeMap[i.first]*3+i.second(j));
       }
       sort(c.begin(), c.end());
 
@@ -347,16 +354,19 @@ namespace MBSimFlexibleBody {
       }
       c.clear();
       for(int i=0; i<inodes.size(); i++) {
-	int j1=3;
-	int j2=-1;
-	for(int k=0; k<bc.rows(); k++) {
-	  if(inodes(i)==(int)bc(k,0)) {
-	    j1=bc(k,1);
-	    j2=bc(k,2);
+	auto it = bc.find(inodes(i));
+	if(it != bc.end()) {
+	  for(int j=0, k=0; j<3; j++) {
+	    if(k<it->second.size() and j==it->second(k))
+	      k++;
+	    else
+	      c.push_back(nodeMap[inodes(i)]*3+j);
 	  }
 	}
-	for(int j=0; j<3; j++)
-	  if(j<j1 or j>j2) c.push_back(nodeMap[inodes(i)]*3+j);
+	else {
+	  for(int j=0; j<3; j++)
+	    c.push_back(nodeMap[inodes(i)]*3+j);
+	}
       }
       sort(c.begin(), c.end());
       h=0;
@@ -510,13 +520,17 @@ namespace MBSimFlexibleBody {
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
     if(e) setProportionalDamping(MBXMLUtils::E(e)->getText<Vec>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"boundaryConditions");
-    if(e) {
-      setBoundaryConditions(MBXMLUtils::E(e)->getText<MatVx3>());
-      for(int i=0; i<bc.rows(); i++) {
-	for(int j=1; j<bc.cols(); j++)
-	  bc(i,j)--;
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"boundaryNodeNumbers");
+    while(e && MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"boundaryNodeNumbers") {
+      addBoundaryNodes(MBXMLUtils::E(e)->getText<VecVI>());
+      e=e->getNextElementSibling();
+      if(MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"degreesOfFreedom") {
+	VecVI dof = MBXMLUtils::E(e)->getText<VecVI>();
+	for(int i=0; i<dof.size(); i++)
+	  dof(i)--;
+	addDegreesOfFreedom(dof);
       }
+      e=e->getNextElementSibling();
     }
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"interfaceNodeNumbers");
     if(e) setInterfaceNodeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
