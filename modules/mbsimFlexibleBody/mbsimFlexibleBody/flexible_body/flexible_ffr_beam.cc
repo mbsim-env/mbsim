@@ -71,12 +71,18 @@ namespace MBSimFlexibleBody {
       if(bnodes.size() != dof.size())
 	throwError("(FlexibleFfrBeam::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
       for(size_t i=0; i<bnodes.size(); i++) {
-	for(int j=0; j<bnodes[i].size(); j++)
-	  // TODO Abfrage ob size>1 und ob Redundanz
-	  bc[bnodes[i](j)] <<= dof[i];
+	for(int j=0; j<bnodes[i].size(); j++) {
+	  bc[bnodes[i](j)].resize(nee/2);
+	  for(int k=0; k<dof[i].size(); k++) {
+	    if(dof[i](k)<0 or dof[i](k)>nee/2-1)
+	      throwError("(FlexibleFfrBeam::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be in the range of [0,3]");
+	    bc[bnodes[i](j)](dof[i](k)) = 1;
+	  }
+	}
       }
       for(const auto & i : bc)
-	nr += i.second.size();
+	for(int j=0; j<i.second.size(); j++)
+	  nr += i.second(j);
       int n = ng-nr;
 
       vector<Mat3xV> rPdme(3,Mat3xV(nee));
@@ -402,7 +408,7 @@ namespace MBSimFlexibleBody {
       vector<int> c;
       for(const auto & i : bc) {
 	for(int j=0; j<i.second.size(); j++)
-	  c.push_back(nodeMap[i.first]*nee/2+i.second(j));
+	  if(i.second(j)) c.push_back(nodeMap[i.first]*nee/2+j);
       }
       sort(c.begin(), c.end());
 
@@ -452,19 +458,11 @@ namespace MBSimFlexibleBody {
 
       c.clear();
       for(int i=0; i<inodes.size(); i++) {
-	 auto it = bc.find(inodes(i));
-	 if(it != bc.end()) {
-	   for(int j=0, k=0; j<nee/2; j++) {
-	     if(k<it->second.size() and j==it->second(k))
-	       k++;
-	     else
-	       c.push_back(nodeMap[inodes(i)]*nee/2+j);
-	   }
-	 }
-	 else {
-	   for(int j=0; j<nee/2; j++)
-	     c.push_back(nodeMap[inodes(i)]*nee/2+j);
-	 }
+	VecVI bci = bc[inodes(i)];
+	for(int j=0; j<nee/2; j++) {
+	  if((not bci.size()) or (not bci(j)))
+	    c.push_back(nodeMap[inodes(i)]*nee/2+j);
+	}
       }
       sort(c.begin(), c.end());
       h=0;
