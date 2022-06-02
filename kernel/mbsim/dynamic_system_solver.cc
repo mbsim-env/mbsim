@@ -888,14 +888,14 @@ namespace MBSim {
     G <<= evalW().T() * slvLLFac(evalLLM(), evalV());
 
     if (checkGSize) {
-      int k = G.countElements();
-      if(G.size() != Gs.cols() or k != Gs.countElements())
-        Gs.resize(G.size(),k,NONINIT);
+      int k = G.nonZeroElements();
+      if(G.size() != Gs.cols() or k != Gs.nonZeroElements())
+        Gs.resize(G.size(),G.size(),k,NONINIT);
     }
     else if (Gs.cols() != G.size()) {
       if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot)
-        facSizeGs = double(G.countElements()) / double(G.size() * G.size()) * 1.5;
-      Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
+        facSizeGs = double(G.nonZeroElements()) / double(G.size() * G.size()) * 1.5;
+      Gs.resize(G.size(), G.size(), int(G.size() * G.size() * facSizeGs));
     }
     Gs = G;
 
