@@ -66,7 +66,7 @@ namespace MBSimFlexibleBody {
 	bc[bnodes[i](j)].resize(nen);
 	for(int k=0; k<dof[i].size(); k++) {
 	  if(dof[i](k)<0 or dof[i](k)>nen-1)
-	    throwError("(ExternalFiniteElementsFfrBody::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be in the range of [0,3]");
+	    throwError("(ExternalFiniteElementsFfrBody::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be within range [0,3]");
 	  bc[bnodes[i](j)](dof[i](k)) = 1;
 	}
       }
