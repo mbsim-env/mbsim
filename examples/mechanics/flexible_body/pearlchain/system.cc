@@ -97,7 +97,7 @@ void Perlchain::updateG() {
       static double facSizeGs = 1;
       if (Gsym.size() > limitGSize && fabs(facSizeGs - 1) < epsroot)
         facSizeGs = double(nzEles) / double(Gsym.size() * Gsym.size()) * 1.5;
-      Gs.resize(Gsym.size(), int(Gsym.size() * Gsym.size() * facSizeGs));
+      Gs.resize(Gsym.size(), Gsym.size(), int(Gsym.size() * Gsym.size() * facSizeGs));
     }
     Gs <<= Gsym;
     updG = false;
@@ -263,8 +263,8 @@ void Perlchain::updateG() {
     else if (Gs.cols() != G.size()) {
       static double facSizeGs = 1;
       if (G.size() > limitGSize && fabs(facSizeGs - 1) < epsroot)
-        facSizeGs = double(G.countElements()) / double(G.size() * G.size()) * 1.5;
-      Gs.resize(G.size(), int(G.size() * G.size() * facSizeGs));
+        facSizeGs = double(G.nonZeroElements()) / double(G.size() * G.size()) * 1.5;
+      Gs.resize(G.size(), G.size(), int(G.size() * G.size() * facSizeGs));
     }
     Gs <<= G;
     updG = false;
@@ -377,9 +377,9 @@ cs * Perlchain::compressLLM_LToCsparse(int j) {
     static int nz0, nz1;
     if (getTime() < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
       if (j == 0)
-        nz0 = LLM.countElements() + 50;
+        nz0 = LLM.nonZeroElements() + 50;
       else if (j == 1)
-        nz1 = LLM.countElements() + 50;
+        nz1 = LLM.nonZeroElements() + 50;
     }
     nz = (j == 0) ? nz0 : nz1;
     //  cout << "j = " << j << endl; // j is always 0 ??
@@ -537,9 +537,9 @@ cs * Perlchain::compressLLM_LToCsparse_direct(int j) {
     static int nz0, nz1;
     if (getTime() < 2e-6) { // 2e-6 should be timestep size // todo: find a better way to do this  if(nz0 == 0 || nz1 == 0)?
       if (j == 0)
-        nz0 = LLM.countElements() + 50;
+        nz0 = LLM.nonZeroElements() + 50;
       else if (j == 1)
-        nz1 = LLM.countElements() + 50;
+        nz1 = LLM.nonZeroElements() + 50;
     }
     nzMax = (j == 0) ? nz0 : nz1;
   }
