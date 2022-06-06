@@ -31,22 +31,21 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FiniteElementsFfrBody)
 
-  SymSparseMat sparseSub(const SymSparseMat &K, map<int,VecVI> &adof, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &links, const VecVI &inodes) {
+  SymSparseMat sparseSub(const SymSparseMat &K, map<int,VecVI> &adofn, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &links, const VecVI &inodes) {
     int nzs = 0;
     int nrows = 0;
-    for(int i=0; i<inodes.size(); i++) {
-      VecVI &ai = adof[inodes(i)];
+    for(auto & i : links) {
+      VecVI &ai = adofn[i.first];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1) {
-	  for(int j=i; j<inodes.size(); j++) {
-	    map<int,Matrix<General,Fixed<3>,Fixed<3>,int>> &map = links[inodes(i)];
-	    auto itj = map.find(inodes(j));
-	    if (itj != map.end()) {
-	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = map[inodes(j)];
-	      for(int jj=0; jj<3; jj++) {
-		if(A(ii,jj)>-1)
-		  nzs++;
-	      }
+	  for(auto & j : i.second) {
+	    VecVI &aj = adofn[j.first];
+	    int js=0;
+	    if(i.first==j.first)
+	      js=ii;
+	    for(int jj=js; jj<3; jj++) {
+	      if(aj(jj)>-1)
+		nzs++;
 	    }
 	  }
 	  nrows++;
@@ -58,21 +57,21 @@ namespace MBSimFlexibleBody {
     nrows = 0;
     int kk = 0;
     B.Ip()[0]=0;
-    for(int i=0; i<inodes.size(); i++) {
-      VecVI &ai = adof[inodes(i)];
+    for(auto & i : links) {
+      VecVI &ai = adofn[i.first];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1) {
-	  for(int j=i; j<inodes.size(); j++) {
-	    map<int,Matrix<General,Fixed<3>,Fixed<3>,int>> &map = links[inodes(i)];
-	    auto itj = map.find(inodes(j));
-	    if(itj != map.end()) {
-	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = map[inodes(j)];
-	      for(int jj=0; jj<3; jj++) {
-		if(A(ii,jj)>-1) {
-		  kk++;
-		  B.Jp()[nzs] = K.Jp()[A(ii,jj)];
-		  B()[nzs++] = K()[A(ii,jj)];
-		}
+	  for(auto & j : i.second) {
+	    Matrix<General,Fixed<3>,Fixed<3>,int> &A = j.second;
+	    VecVI &aj = adofn[j.first];
+	    int js=0;
+	    if(i.first==j.first)
+	      js=ii;
+	    for(int jj=js; jj<3; jj++) {
+	      if(aj(jj)>-1) {
+		kk++;
+		B.Jp()[nzs] = adofn[j.first].e(jj);
+		B()[nzs++] = K()[A(ii,jj)];
 	      }
 	    }
 	  }
@@ -83,18 +82,18 @@ namespace MBSimFlexibleBody {
     return B;
   }
 
-  Mat denseSub(const SymSparseMat &K, map<int,VecVI> &adof, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &links, const VecVI &inodes, const VecVI &jnodes) {
+  Mat denseSub(const SymSparseMat &K, map<int,VecVI> &adofn, map<int,VecVI> &adofh, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &links, const VecVI &inodes, const VecVI &jnodes) {
     int nrows = 0;
+    int ncols = 0;
     for(int i=0; i<inodes.size(); i++) {
-      VecVI &ai = adof[inodes(i)];
+      VecVI &ai = adofn[inodes(i)];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1)
 	  nrows++;
       }
     }
-    int ncols = 0;
     for(int i=0; i<jnodes.size(); i++) {
-      VecVI &ai = adof[jnodes(i)];
+      VecVI &ai = adofh[jnodes(i)];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1)
 	  ncols++;
@@ -103,36 +102,28 @@ namespace MBSimFlexibleBody {
     Mat B(nrows,ncols);
     nrows = 0;
     for(int i=0; i<inodes.size(); i++) {
+      VecVI &ai = adofn[inodes(i)];
       for(int ii=0; ii<3; ii++) {
-	ncols = 0;
-	for(int j=0; j<jnodes.size(); j++) {
-	  int ini = inodes(i);
-	  int jnj = jnodes(j);
-	  if(ini>jnj) {
-	    int inib = ini; ini = jnj; jnj = inib;
-	  }
-	  map<int,Matrix<General,Fixed<3>,Fixed<3>,int>> &map = links[ini];
-	  auto itj = map.find(jnj);
-	  if(itj != map.end()) {
-	    Matrix<General,Fixed<3>,Fixed<3>,int> &A = map[jnj];
-	    for(int jj=0; jj<3; jj++) {
-	      if(A(ii,jj)>-1)
-		B(nrows,ncols++) = K()[A(ii,jj)];
-	    }
-	  }
-	  else {
-	    VecVI &ai = adof[inodes(i)];
-	    if(ai(ii)>-1) {
-	      VecVI &aj = adof[jnodes(j)];
+	if(ai(ii)>-1) {
+	  ncols = 0;
+	  for(int j=0; j<jnodes.size(); j++) {
+	    VecVI &aj = adofh[jnodes(j)];
+	    if(jnodes(j)>=inodes(i)) {
+	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = links[inodes(i)][jnodes(j)];
 	      for(int jj=0; jj<3; jj++) {
 		if(aj(jj)>-1)
-		  B(nrows,ncols++) = 0;
+		  B(nrows,ncols++) = K()[A(ii,jj)];
+	      }
+	    }
+	    else {
+	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = links[jnodes(j)][inodes(i)];
+	      for(int jj=0; jj<3; jj++) {
+		if(aj(jj)>-1)
+		  B(nrows,ncols++) = K()[A(jj,ii)];
 	      }
 	    }
 	  }
-	  VecVI &ai = adof[inodes(i)];
-	  if(j==jnodes.size()-1 and ai(ii)>-1)
-	    nrows++;
+	  nrows++;
 	}
       }
     }
@@ -295,6 +286,28 @@ namespace MBSimFlexibleBody {
 	    i.second(j) = k++;
 	  else
 	    i.second(j) = -1;
+	}
+      }
+
+      map<int,VecVI> adofn = adof;
+      for(int i=0; i<inodes.size(); i++)
+	adofn[inodes(i)].init(-1);
+      k=0;
+      for(auto & i : adofn) {
+	for(int j=0; j<3; j++) {
+	  if(i.second(j)!=-1)
+	    i.second(j) = k++;
+	}
+      }
+
+      map<int,VecVI> adofh = adof;
+      for(int i=0; i<nnodes.size(); i++)
+	adofh[nnodes(i)].init(-1);
+      k=0;
+      for(auto & i : adofh) {
+	for(int j=0; j<3; j++) {
+	  if(i.second(j)!=-1)
+	    i.second(j) = k++;
 	}
       }
 
@@ -636,14 +649,8 @@ namespace MBSimFlexibleBody {
 	for(int i=0; i<IH.size(); i++)
 	  IJ.add(i);
 	MatV Vs(n,IH.size(),NONINIT);
-
-	//Spooles spooles(sparseSub(KS,adof,links,nnodes));
-	//spooles.factorize();
-
-	//Vs.set(IN,IJ,-spooles.solve(denseSub(KS,adof,links,nnodes,inodes)));
-	Vs.set(IN,IJ,-slvLU(sparseSub(KS,adof,links,nnodes),denseSub(KS,adof,links,nnodes,inodes)));
+	Vs.set(IN,IJ,-slvLU(sparseSub(KS,adofn,links,nnodes),denseSub(KS,adofn,adofh,links,nnodes,inodes)));
 	Vs.set(IH,IJ,MatV(IH.size(),IH.size(),Eye()));
-
 	Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
       }
 
@@ -669,10 +676,16 @@ namespace MBSimFlexibleBody {
 	  for(int i=0; i<M.nonZeroElements(); i++)
 	    M()[i] += PPdmS[1]()[i]+PPdmS[2]()[i];
 	  Mat V; Vec w;
-	  eigvec(KS,M,nmodes.size(),1,V,w);
-//	  if(nmodes.size() != V.cols())
-//	    throwError(string("(FiniteElementsFfrBody::init): node numbers do not match, must be within the range [1,") + to_string(V.cols()) + "]");
-	  Vsd.set(RangeV(0,Vsd.rows()-1),RangeV(IH.size(),IH.size()+V.cols()-1),V);
+	  eigvec(KS,M,6+nmodes.size(),1,V,w);
+	  vector<int> imod;
+	  for(int i=0; i<w.size(); i++) {
+	    if(w(i)>pow(2*M_PI*0.1,2))
+	      imod.push_back(i);
+	  }
+	  if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	    throwError(string("(FiniteElementsFfrBody::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	  for(int i=0; i<nmodes.size(); i++)
+	    Vsd.set(IH.size()+i,V.col(imod[nmodes(i)-1]));
 	}
       }
 
