@@ -100,30 +100,33 @@ namespace MBSimFlexibleBody {
       }
     }
     Mat B(nrows,ncols);
-    nrows = 0;
     for(int i=0; i<inodes.size(); i++) {
       VecVI &ai = adofn[inodes(i)];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1) {
-	  ncols = 0;
 	  for(int j=0; j<jnodes.size(); j++) {
 	    VecVI &aj = adofh[jnodes(j)];
 	    if(jnodes(j)>=inodes(i)) {
-	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = links[inodes(i)][jnodes(j)];
-	      for(int jj=0; jj<3; jj++) {
-		if(aj(jj)>-1)
-		  B(nrows,ncols++) = K()[A(ii,jj)];
+	      auto it = links[inodes(i)].find(jnodes(j));
+	      if(it!=links[inodes(i)].end()) {
+		Matrix<General,Fixed<3>,Fixed<3>,int> &A = links[inodes(i)][jnodes(j)];
+		for(int jj=0; jj<3; jj++) {
+		  if(aj(jj)>-1)
+		    B(ai(ii),aj(jj)) = K()[A(ii,jj)];
+		}
 	      }
 	    }
 	    else {
+	      auto it = links[jnodes(j)].find(inodes(i));
+	      if(it!=links[jnodes(j)].end()) {
 	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = links[jnodes(j)][inodes(i)];
 	      for(int jj=0; jj<3; jj++) {
 		if(aj(jj)>-1)
-		  B(nrows,ncols++) = K()[A(jj,ii)];
+		  B(ai(ii),aj(jj)) = K()[A(jj,ii)];
 	      }
 	    }
+	    }
 	  }
-	  nrows++;
 	}
       }
     }
