@@ -144,11 +144,15 @@ namespace MBSimFlexibleBody {
 	throwError("(FiniteElementsFfrBody::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
       for(size_t i=0; i<bnodes.size(); i++) {
 	for(int j=0; j<bnodes[i].size(); j++) {
-	  bc[bnodes[i](j)].resize(3);
-	  for(int k=0; k<dof[i].size(); k++) {
-	    if(dof[i](k)<0 or dof[i](k)>2)
-	      throwError("(FiniteElementsFfrBody::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be in the range of [0,3]");
-	    bc[bnodes[i](j)](dof[i](k)) = 1;
+	  int node = bnodes[i](j);
+	  auto it = nodeMap.find(node);
+	  if(it!=nodeMap.end()) {
+	    bc[node].resize(3);
+	    for(int k=0; k<dof[i].size(); k++) {
+	      if(dof[i](k)<0 or dof[i](k)>2)
+		throwError("(FiniteElementsFfrBody::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be within the range [0,3]");
+	      bc[node](dof[i](k)) = 1;
+	    }
 	  }
 	}
       }
@@ -187,7 +191,7 @@ namespace MBSimFlexibleBody {
 		r += (this->*Ni[ll])(x,y,z,ll)*r0;
 	      }
 	      Vector<Ref,int> ipiv(J.size(),NONINIT);
-	      SqrMat LUJ = facLU(J,ipiv);
+	      SqrMat LUJ = facLU(J.T(),ipiv);
 	      double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
 	      double wijk = wi(ii)*wi(jj)*wi(kk);
 	      double dm = rho*wijk*detJ;
@@ -325,7 +329,7 @@ namespace MBSimFlexibleBody {
 	      J.add(rr,(this->*dNidq[ll][rr])(x,y,z,ll)*r0);
 	  }
 	  Vector<Ref,int> ipiv(J.size(),NONINIT);
-	  SqrMat LUJ = facLU(J,ipiv);
+	  SqrMat LUJ = facLU(J.T(),ipiv);
 	  for(int i=0; i<20; i++) {
 	    int u = nodeMap[ee.second(i)];
 	    Vec dN(3,NONINIT);
