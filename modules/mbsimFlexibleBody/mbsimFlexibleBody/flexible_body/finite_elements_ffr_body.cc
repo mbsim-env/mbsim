@@ -481,12 +481,15 @@ namespace MBSimFlexibleBody {
 	      Vec r(3);
 	      for(int ll=0; ll<20; ll++) {
 		Vec3 r0 = nodalPos[ee.second(ll)];
-		for(int rr=0; rr<3; rr++)
-		  J.add(rr,(this->*dNidq[ll][rr])(x,y,z,ll)*r0);
+		for(int mm=0; mm<3; mm++) {
+		  double dN = (this->*dNidq[ll][mm])(x,y,z,ll);
+		  for(int nn=0; nn<3; nn++)
+		    J(mm,nn) += dN*r0(nn);
+		}
 		r += (this->*Ni[ll])(x,y,z,ll)*r0;
 	      }
 	      Vector<Ref,int> ipiv(J.size(),NONINIT);
-	      SqrMat LUJ = facLU(J.T(),ipiv);
+	      SqrMat LUJ = facLU(J,ipiv);
 	      double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
 	      double wijk = wi(ii)*wi(jj)*wi(kk);
 	      double dm = rho*wijk*detJ;
@@ -597,11 +600,14 @@ namespace MBSimFlexibleBody {
 	  SqrMat J(3);
 	  for(int ll=0; ll<20; ll++) {
 	    Vec3 r0 = nodalPos[ee.second(ll)];
-	    for(int rr=0; rr<3; rr++)
-	      J.add(rr,(this->*dNidq[ll][rr])(x,y,z,ll)*r0);
+	    for(int mm=0; mm<3; mm++) {
+	      double dN = (this->*dNidq[ll][mm])(x,y,z,ll);
+	      for(int nn=0; nn<3; nn++)
+		J(mm,nn) += dN*r0(nn);
+	    }
 	  }
 	  Vector<Ref,int> ipiv(J.size(),NONINIT);
-	  SqrMat LUJ = facLU(J.T(),ipiv);
+	  SqrMat LUJ = facLU(J,ipiv);
 	  for(int i=0; i<20; i++) {
 	    Vec dN(3,NONINIT);
 	    for(int rr=0; rr<3; rr++)
