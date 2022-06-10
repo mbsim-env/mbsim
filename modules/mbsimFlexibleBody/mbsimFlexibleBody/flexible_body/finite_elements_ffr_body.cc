@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "finite_elements_ffr_body.h"
+#include <fmatvec/sparse_linear_algebra_double.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -29,6 +30,108 @@ using namespace xercesc;
 namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FiniteElementsFfrBody)
+
+  SymSparseMat sparseSub(const SymSparseMat &K, map<int,VecVI> &dofN, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &linksK, const VecVI &inodes) {
+    int nzs = 0;
+    int nrows = 0;
+    for(auto & i : linksK) {
+      VecVI &ai = dofN[i.first];
+      for(int ii=0; ii<3; ii++) {
+	if(ai(ii)>-1) {
+	  for(auto & j : i.second) {
+	    VecVI &aj = dofN[j.first];
+	    int js=0;
+	    if(i.first==j.first)
+	      js=ii;
+	    for(int jj=js; jj<3; jj++) {
+	      if(aj(jj)>-1)
+		nzs++;
+	    }
+	  }
+	  nrows++;
+	}
+      }
+    }
+    SymSparseMat B(nrows,nzs,NONINIT);
+    nzs = 0;
+    nrows = 0;
+    int kk = 0;
+    B.Ip()[0]=0;
+    for(auto & i : linksK) {
+      VecVI &ai = dofN[i.first];
+      for(int ii=0; ii<3; ii++) {
+	if(ai(ii)>-1) {
+	  for(auto & j : i.second) {
+	    Matrix<General,Fixed<3>,Fixed<3>,int> &A = j.second;
+	    VecVI &aj = dofN[j.first];
+	    int js=0;
+	    if(i.first==j.first)
+	      js=ii;
+	    for(int jj=js; jj<3; jj++) {
+	      if(aj(jj)>-1) {
+		kk++;
+		B.Jp()[nzs] = aj.e(jj);
+		B()[nzs++] = K()[A(ii,jj)];
+	      }
+	    }
+	  }
+	  B.Ip()[++nrows]=kk;
+	}
+      }
+    }
+    return B;
+  }
+
+  Mat denseSub(const SymSparseMat &K, map<int,VecVI> &dofN, map<int,VecVI> &dofH, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &linksK, const VecVI &inodes, const VecVI &jnodes) {
+    int nrows = 0;
+    int ncols = 0;
+    for(int i=0; i<inodes.size(); i++) {
+      VecVI &ai = dofN[inodes(i)];
+      for(int ii=0; ii<3; ii++) {
+	if(ai(ii)>-1)
+	  nrows++;
+      }
+    }
+    for(int i=0; i<jnodes.size(); i++) {
+      VecVI &ai = dofH[jnodes(i)];
+      for(int ii=0; ii<3; ii++) {
+	if(ai(ii)>-1)
+	  ncols++;
+      }
+    }
+    Mat B(nrows,ncols);
+    for(int i=0; i<inodes.size(); i++) {
+      VecVI &ai = dofN[inodes(i)];
+      for(int ii=0; ii<3; ii++) {
+	if(ai(ii)>-1) {
+	  for(int j=0; j<jnodes.size(); j++) {
+	    VecVI &aj = dofH[jnodes(j)];
+	    if(jnodes(j)>=inodes(i)) {
+	      auto it = linksK[inodes(i)].find(jnodes(j));
+	      if(it!=linksK[inodes(i)].end()) {
+		Matrix<General,Fixed<3>,Fixed<3>,int> &A = linksK[inodes(i)][jnodes(j)];
+		for(int jj=0; jj<3; jj++) {
+		  if(aj(jj)>-1)
+		    B(ai(ii),aj(jj)) = K()[A(ii,jj)];
+		}
+	      }
+	    }
+	    else {
+	      auto it = linksK[jnodes(j)].find(inodes(i));
+	      if(it!=linksK[jnodes(j)].end()) {
+	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = linksK[jnodes(j)][inodes(i)];
+	      for(int jj=0; jj<3; jj++) {
+		if(aj(jj)>-1)
+		  B(ai(ii),aj(jj)) = K()[A(jj,ii)];
+	      }
+	    }
+	    }
+	  }
+	}
+      }
+    }
+    return B;
+  }
 
   void FiniteElementsFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
@@ -162,16 +265,208 @@ namespace MBSimFlexibleBody {
       }
       int n = ng-nr;
 
-      rPdm.resize(3,Mat3xV(ng));
-      PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(ng)));
-      Pdm.resize(ng);
-      Ke0.resize(ng);
-      KrKP.resize(nN,Vec3());
-      Phi.resize(nN,Mat3xV(ng));
-      Psi.resize(nN,Mat3xV(ng));
-      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(ng));
+      VecVI nnodes;
+      if(inodes.size()) {
+	sort(inodes.begin(),inodes.end());
+	nnodes.resize(nN-inodes.size(),NONINIT);
+	int k=0, kk=0;
+	for(const auto & i : nodeMap) {
+	  if(k<inodes.size() and i.first==inodes(k))
+	    k++;
+	  else
+	    nnodes(kk++) = i.first;
+	}
+      }
 
-      KrKP.resize(nN);
+      map<int,VecVI> dofA;
+      for(const auto & i : nodeMap) {
+	VecVI d = bc[i.first];
+	if(d.size())
+	  dofA[i.first] <<= d;
+	else
+	  dofA[i.first] <<= VecVI(3,INIT,0);
+      }
+      int k=0;
+      for(auto & i : dofA) {
+	for(int j=0; j<3; j++) {
+	  if(i.second(j)<1)
+	    i.second(j) = k++;
+	  else
+	    i.second(j) = -1;
+	}
+      }
+
+      map<int,VecVI> dofN = dofA;
+      for(int i=0; i<inodes.size(); i++)
+	dofN[inodes(i)].init(-1);
+      k=0;
+      for(auto & i : dofN) {
+	for(int j=0; j<3; j++) {
+	  if(i.second(j)!=-1)
+	    i.second(j) = k++;
+	}
+      }
+
+      map<int,VecVI> dofH = dofA;
+      for(int i=0; i<nnodes.size(); i++)
+	dofH[nnodes(i)].init(-1);
+      k=0;
+      for(auto & i : dofH) {
+	for(int j=0; j<3; j++) {
+	  if(i.second(j)!=-1)
+	    i.second(j) = k++;
+	}
+      }
+
+      map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> linksK;
+      map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> linksP;
+      map<int,map<int,RowVector<Fixed<3>,int>>> linksS;
+      for(const auto & ee : ele) {
+	for(int i=0; i<20; i++) {
+	  int nri = ee.second(i);
+	  for(int j=0; j<i; j++) {
+	    int nrj = ee.second(j);
+	    linksP[nri][nrj].init(-1);
+	    linksS[nri][nrj].init(-1);
+	  }
+	  for(int j=i; j<20; j++) {
+	    int nrj = ee.second(j);
+	    linksP[nri][nrj].init(-1);
+	    linksS[nri][nrj].init(-1);
+	    if(nrj>=nri)
+	      linksK[nri][nrj].init(-1);
+	    else
+	      linksK[nrj][nri].init(-1);
+	  }
+	}
+      }
+      int nzsK = 0;
+      for(auto & i : linksK) {
+	VecVI &ai = dofA[i.first];
+	for(int ii=0; ii<3; ii++) {
+	  if(ai(ii)>-1) {
+	    for(auto & j : i.second) {
+	      VecVI &aj = dofA[j.first];
+	      int js=0;
+	      if(i.first==j.first)
+		js=ii;
+	      for(int jj=js; jj<3; jj++) {
+		if(aj(jj)>-1)
+		  j.second.e(ii,jj) = nzsK++;
+	      }
+	    }
+	  }
+	}
+      }
+      int nzsP = 0;
+      for(auto & i : linksP) {
+	VecVI &ai = dofA[i.first];
+	for(int ii=0; ii<3; ii++) {
+	  if(ai(ii)>-1) {
+	    for(auto & j : i.second) {
+	      VecVI &aj = dofA[j.first];
+	      for(int jj=0; jj<3; jj++) {
+		if(aj(jj)>-1)
+		  j.second.e(ii,jj) = nzsP++;
+	      }
+	    }
+	  }
+	}
+      }
+
+      vector<int> nzsS(nN);
+      for(auto & i : linksS) {
+	int u = nodeMap[i.first];
+	nzsS[u] = 0;
+	for(auto & j : i.second) {
+	  VecVI &aj = dofA[j.first];
+	  for(int jj=0; jj<3; jj++) {
+	    if(aj(jj)>-1)
+	      j.second.e(jj) = nzsS[u]++;
+	  }
+	}
+      }
+
+      int *JpK = new int[nzsK];
+      int *IpK = new int[n+1];
+      k=0;
+      int kk=0;
+      IpK[0]=0;
+      for(auto & i : linksK) {
+	VecVI &ai = dofA[i.first];
+	for(int ii=0; ii<3; ii++) {
+	  if(ai(ii)>-1) {
+	    for(auto & j : i.second) {
+	      VecVI &aj = dofA[j.first];
+	      int js=0;
+	      if(i.first==j.first)
+		js=ii;
+	      for(int jj=js; jj<3; jj++) {
+		if(aj(jj)>-1) {
+		  kk++;
+		  JpK[j.second.e(ii,jj)] = aj.e(jj);
+		}
+	      }
+	    }
+	    IpK[++k]=kk;
+	  }
+	}
+      }
+
+      k=0;
+      kk=0;
+      int *JpP = new int[nzsP];
+      int *IpP = new int[n+1];
+      IpP[0]=0;
+      for(auto & i : linksP) {
+	VecVI &ai = dofA[i.first];
+	for(int ii=0; ii<3; ii++) {
+	  if(ai(ii)>-1) {
+	    for(auto & j : i.second) {
+	      VecVI &aj = dofA[j.first];
+	      for(int jj=0; jj<3; jj++) {
+		if(aj(jj)>-1) {
+		  kk++;
+		  JpP[j.second.e(ii,jj)] = aj.e(jj);
+		}
+	      }
+	    }
+	    IpP[++k]=kk;
+	  }
+	}
+      }
+
+      k=0;
+      kk=0;
+      vector<int*> JpS(nN);
+      vector<int*> IpS(nN);
+      for(auto & i : linksS) {
+	int u = nodeMap[i.first];
+	JpS[u] = new int[nzsS[u]];
+	IpS[u] = new int[2];
+	IpS[u][0]=0;
+	for(auto & j : i.second) {
+	  VecVI &aj = dofA[j.first];
+	  for(int jj=0; jj<3; jj++) {
+	    if(aj(jj)>-1)
+	      JpS[u][j.second.e(jj)] = aj.e(jj);
+	  }
+	}
+	IpS[u][1]=nzsS[u];
+      }
+
+      SymSparseMat Ke0s(n,nzsK,IpK,JpK);
+      vector<SymSparseMat> PPdms1(3,SymSparseMat(n,nzsK,IpK,JpK));
+      vector<SparseMat> PPdms2(3,SparseMat(n,n,nzsP,IpP,JpP));
+      map<int,vector<SparseMat>> sigmahels;
+      for(auto & i : nodeMap)
+	sigmahels[i.first] = vector<SparseMat>(6,SparseMat(1,n,nzsS[i.second],IpS[i.second],JpS[i.second]));
+
+      rPdm.resize(3,Mat3xV(n));
+      PPdm.resize(3,vector<SqrMatV>(3));
+      Pdm.resize(n);
+
+      KrKP.resize(nN,Vec3(NONINIT));
       for(const auto & i : nodeMap)
 	KrKP[i.second] = nodalPos[i.first];
 
@@ -186,12 +481,15 @@ namespace MBSimFlexibleBody {
 	      Vec r(3);
 	      for(int ll=0; ll<20; ll++) {
 		Vec3 r0 = nodalPos[ee.second(ll)];
-		for(int rr=0; rr<3; rr++)
-		  J.add(rr,(this->*dNidq[ll][rr])(x,y,z,ll)*r0);
+		for(int mm=0; mm<3; mm++) {
+		  double dN = (this->*dNidq[ll][mm])(x,y,z,ll);
+		  for(int nn=0; nn<3; nn++)
+		    J(mm,nn) += dN*r0(nn);
+		}
 		r += (this->*Ni[ll])(x,y,z,ll)*r0;
 	      }
 	      Vector<Ref,int> ipiv(J.size(),NONINIT);
-	      SqrMat LUJ = facLU(J.T(),ipiv);
+	      SqrMat LUJ = facLU(J,ipiv);
 	      double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
 	      double wijk = wi(ii)*wi(jj)*wi(kk);
 	      double dm = rho*wijk*detJ;
@@ -200,82 +498,90 @@ namespace MBSimFlexibleBody {
 	      rdm += dm*r;
 	      rrdm += dm*JTJ(r.T());
 	      for(int i=0; i<20; i++) {
-		int u = nodeMap[ee.second(i)];
 		double Ni_ = (this->*Ni[i])(x,y,z,i);
 		Vec dN(3,NONINIT);
 		for(int rr=0; rr<3; rr++)
 		  dN(rr) = (this->*dNidq[i][rr])(x,y,z,i);
 		Vec dNi = slvLUFac(LUJ,dN,ipiv);
-		Pdm(0,u*3) += dm*Ni_;
-		Pdm(1,u*3+1) = Pdm(0,u*3);
-		Pdm(2,u*3+2) = Pdm(0,u*3);
-		for(int j=0; j<3; j++) {
-		  rPdm[j](0,u*3) += dm*r(j)*Ni_;
-		  rPdm[j](1,u*3+1) = rPdm[j](0,u*3);
-		  rPdm[j](2,u*3+2) = rPdm[j](0,u*3);
+		VecVI &ai = dofA[ee.second(i)];
+		for(int i1=0; i1<3; i1++) {
+		  if(ai(i1)>-1)
+		    Pdm(i1,ai(i1)) += dm*Ni_;
+		  for(int j1=0; j1<3; j1++) {
+		    if(ai(j1)>-1)
+		      rPdm[i1](j1,ai(j1)) += dm*r(i1)*Ni_;
+		  }
 		}
 		for(int j=i; j<20; j++) {
-		  int v = nodeMap[ee.second(j)];
 		  double Nj_ = (this->*Ni[j])(x,y,z,j);
 		  Vec dN(3,NONINIT);
 		  for(int rr=0; rr<3; rr++)
 		    dN(rr) = (this->*dNidq[j][rr])(x,y,z,j);
 		  Vec dNj = slvLUFac(LUJ,dN,ipiv);
 		  double dPPdm = dm*Ni_*Nj_;
-		  double dK1 = dk*((1-nu)/(1-2*nu)*dNi(0)*dNj(0)+0.5*(dNi(1)*dNj(1)+dNi(2)*dNj(2)));
-		  double dK2 = dk*(nu/(1-2*nu)*dNi(1)*dNj(0)+0.5*dNi(0)*dNj(1));
-		  double dK3 = dk*(nu/(1-2*nu)*dNi(2)*dNj(0)+0.5*dNi(0)*dNj(2));
-		  double dK4 = dk*(nu/(1-2*nu)*dNi(0)*dNj(1)+0.5*dNi(1)*dNj(0));
-		  double dK5 = dk*((1-nu)/(1-2*nu)*dNi(1)*dNj(1)+0.5*(dNi(0)*dNj(0)+dNi(2)*dNj(2)));
-		  double dK6 = dk*(nu/(1-2*nu)*dNi(2)*dNj(1)+0.5*dNi(1)*dNj(2));
-		  double dK7 = dk*(nu/(1-2*nu)*dNi(0)*dNj(2)+0.5*dNi(2)*dNj(0));
-		  double dK8 = dk*(nu/(1-2*nu)*dNi(1)*dNj(2)+0.5*dNi(2)*dNj(1));
-		  double dK9 = dk*((1-nu)/(1-2*nu)*dNi(2)*dNj(2)+0.5*(dNi(0)*dNj(0)+dNi(1)*dNj(1)));
-		  if(v>=u) {
-		    PPdm[0][0](u*3,v*3) += dPPdm;
-		    PPdm[0][0](v*3,u*3) = PPdm[0][0](u*3,v*3);
-		    PPdm[1][1](u*3+1,v*3+1) = PPdm[0][0](u*3,v*3);
-		    PPdm[1][1](v*3+1,u*3+1) = PPdm[0][0](u*3,v*3);
-		    PPdm[2][2](u*3+2,v*3+2) = PPdm[0][0](u*3,v*3);
-		    PPdm[2][2](v*3+2,u*3+2) = PPdm[0][0](u*3,v*3);
-		    PPdm[0][1](u*3,v*3+1) = PPdm[0][0](u*3,v*3);
-		    PPdm[0][1](v*3,u*3+1) = PPdm[0][0](u*3,v*3);
-		    PPdm[0][2](u*3,v*3+2) = PPdm[0][0](u*3,v*3);
-		    PPdm[0][2](v*3,u*3+2) = PPdm[0][0](u*3,v*3);
-		    PPdm[1][2](u*3+1,v*3+2) = PPdm[0][0](u*3,v*3);
-		    PPdm[1][2](v*3+1,u*3+2) = PPdm[0][0](u*3,v*3);
-		    Ke0(u*3,v*3) += dK1;
-		    if(v!=u) Ke0(u*3+1,v*3) += dK2;
-		    if(v!=u) Ke0(u*3+2,v*3) += dK3;
-		    Ke0(u*3,v*3+1) += dK4;
-		    Ke0(u*3+1,v*3+1) += dK5;
-		    if(v!=u) Ke0(u*3+2,v*3+1) += dK6;
-		    Ke0(u*3,v*3+2) += dK7;
-		    Ke0(u*3+1,v*3+2) += dK8;
-		    Ke0(u*3+2,v*3+2) += dK9;
+		  double dK[3][3];
+		  dK[0][0] = dk*((1-nu)/(1-2*nu)*dNi(0)*dNj(0)+0.5*(dNi(1)*dNj(1)+dNi(2)*dNj(2)));
+		  dK[1][0] = dk*(nu/(1-2*nu)*dNi(1)*dNj(0)+0.5*dNi(0)*dNj(1));
+		  dK[2][0] = dk*(nu/(1-2*nu)*dNi(2)*dNj(0)+0.5*dNi(0)*dNj(2));
+		  dK[0][1] = dk*(nu/(1-2*nu)*dNi(0)*dNj(1)+0.5*dNi(1)*dNj(0));
+		  dK[1][1] = dk*((1-nu)/(1-2*nu)*dNi(1)*dNj(1)+0.5*(dNi(0)*dNj(0)+dNi(2)*dNj(2)));
+		  dK[2][1] = dk*(nu/(1-2*nu)*dNi(2)*dNj(1)+0.5*dNi(1)*dNj(2));
+		  dK[0][2] = dk*(nu/(1-2*nu)*dNi(0)*dNj(2)+0.5*dNi(2)*dNj(0));
+		  dK[1][2] = dk*(nu/(1-2*nu)*dNi(1)*dNj(2)+0.5*dNi(2)*dNj(1));
+		  dK[2][2] = dk*((1-nu)/(1-2*nu)*dNi(2)*dNj(2)+0.5*(dNi(0)*dNj(0)+dNi(1)*dNj(1)));
+		  if(ee.second(j)>=ee.second(i)) {
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Kij = linksK[ee.second(i)][ee.second(j)];
+		    for(int i1=0; i1<3; i1++) {
+		      if(Kij.e(i1,i1)>-1)
+			PPdms1[i1]()[Kij.e(i1,i1)] += dPPdm;
+		      int j1s = 0;
+		      if(ee.second(j)==ee.second(i)) j1s=i1;
+		      for(int j1=j1s; j1<3; j1++) {
+			if(Kij.e(i1,j1)>-1)
+			  Ke0s()[Kij.e(i1,j1)] += dK[i1][j1];
+		      }
+		    }
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pij = linksP[ee.second(i)][ee.second(j)];
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pji = linksP[ee.second(j)][ee.second(i)];
+		    if(Pij.e(0,1)>-1)
+		      PPdms2[0]()[Pij.e(0,1)] += dPPdm;
+		    if(Pij.e(0,2)>-1)
+		      PPdms2[1]()[Pij.e(0,2)] += dPPdm;
+		    if(Pij.e(1,2)>-1)
+		      PPdms2[2]()[Pij.e(1,2)] += dPPdm;
+		    if(ee.second(i)!=ee.second(j)) {
+		      if(Pji.e(0,1)>-1)
+			PPdms2[0]()[Pji.e(0,1)] += dPPdm;
+		      if(Pji.e(0,2)>-1)
+			PPdms2[1]()[Pji.e(0,2)] += dPPdm;
+		      if(Pji.e(1,2)>-1)
+			PPdms2[2]()[Pji.e(1,2)] += dPPdm;
+		    }
 		  }
 		  else {
-		    PPdm[0][0](v*3,u*3) += dPPdm;
-		    PPdm[0][0](u*3,v*3) = PPdm[0][0](v*3,u*3);
-		    PPdm[1][1](v*3+1,u*3+1) = PPdm[0][0](v*3,u*3);
-		    PPdm[1][1](u*3+1,v*3+1) = PPdm[0][0](v*3,u*3);
-		    PPdm[2][2](v*3+2,u*3+2) = PPdm[0][0](v*3,u*3);
-		    PPdm[2][2](u*3+2,v*3+2) = PPdm[0][0](v*3,u*3);
-		    PPdm[0][1](v*3+1,u*3) = PPdm[0][0](v*3,u*3);
-		    PPdm[0][1](u*3+1,v*3) = PPdm[0][0](v*3,u*3);
-		    PPdm[0][2](v*3+2,u*3) = PPdm[0][0](v*3,u*3);
-		    PPdm[0][2](u*3+2,v*3) = PPdm[0][0](v*3,u*3);
-		    PPdm[1][2](v*3+2,u*3+1) = PPdm[0][0](v*3,u*3);
-		    PPdm[1][2](u*3+2,v*3+1) = PPdm[0][0](v*3,u*3);
-		    Ke0(v*3,u*3) += dK1;
-		    Ke0(v*3,u*3+1) += dK2;
-		    Ke0(v*3,u*3+2) += dK3;
-		    Ke0(v*3+1,u*3) += dK4;
-		    Ke0(v*3+1,u*3+1) += dK5;
-		    Ke0(v*3+1,u*3+2) += dK6;
-		    Ke0(v*3+2,u*3) += dK7;
-		    Ke0(v*3+2,u*3+1) += dK8;
-		    Ke0(v*3+2,u*3+2) += dK9;
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Kji = linksK[ee.second(j)][ee.second(i)];
+		    for(int i1=0; i1<3; i1++) {
+		      if(Kji.e(i1,i1)>-1)
+			PPdms1[i1]()[Kji.e(i1,i1)] += dPPdm;
+		      for(int j1=0; j1<3; j1++) {
+			if(Kji.e(i1,j1)>-1)
+			  Ke0s()[Kji.e(i1,j1)] += dK[j1][i1];
+		      }
+		    }
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pij = linksP[ee.second(i)][ee.second(j)];
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pji = linksP[ee.second(j)][ee.second(i)];
+		    if(Pij.e(1,0)>-1)
+		      PPdms2[0]()[Pij.e(1,0)] += dPPdm;
+		    if(Pij.e(2,0)>-1)
+		      PPdms2[1]()[Pij.e(2,0)] += dPPdm;
+		    if(Pij.e(2,1)>-1)
+		      PPdms2[2]()[Pij.e(2,1)] += dPPdm;
+		    if(Pji.e(1,0)>-1)
+		      PPdms2[0]()[Pji.e(1,0)] += dPPdm;
+		    if(Pji.e(2,0)>-1)
+		      PPdms2[1]()[Pji.e(2,0)] += dPPdm;
+		    if(Pji.e(2,1)>-1)
+		      PPdms2[2]()[Pji.e(2,1)] += dPPdm;
 		  }
 		}
 	      }
@@ -283,120 +589,86 @@ namespace MBSimFlexibleBody {
 	  }
 	}
       }
-      PPdm[1][0] = PPdm[0][1].T();
-      PPdm[2][0] = PPdm[0][2].T();
-      PPdm[2][1] = PPdm[1][2].T();
-
-      vector<int> c;
-      for(const auto & i : bc) {
-	for(int j=0; j<i.second.size(); j++)
-	  if(i.second(j)) c.push_back(nodeMap[i.first]*3+j);
-      }
-      sort(c.begin(), c.end());
-
-      size_t h=0;
-      Indices IF;
-      Indices IX;
-      for(int i=0; i<ng; i++) {
-	if(h<c.size() and i==c[h]) {
-	  h++;
-	  IX.add(i);
-	}
-	else
-	  IF.add(i);
-      }
-
-      Indices I3{0,1,2};
-      Indices I6{0,1,2,3,4,5};
-      Pdm <<= Pdm(I3,IF);
-      for(size_t i=0; i<3; i++) {
-	rPdm[i] <<= rPdm[i](I3,IF);
-	for(size_t j=0; j<3; j++)
-	  PPdm[i][j] <<= PPdm[i][j](IF,IF);
-      }
-      Ke0 <<= Ke0(IF);
 
       for(const auto & ee : ele) {
 	for(int k=0; k<20; k++) {
 	  double x = rN[k](0);
 	  double y = rN[k](1);
 	  double z = rN[k](2);
-	  int ku = nodeMap[ee.second(k)];
 	  SqrMat J(3);
 	  for(int ll=0; ll<20; ll++) {
 	    Vec3 r0 = nodalPos[ee.second(ll)];
-	    for(int rr=0; rr<3; rr++)
-	      J.add(rr,(this->*dNidq[ll][rr])(x,y,z,ll)*r0);
+	    for(int mm=0; mm<3; mm++) {
+	      double dN = (this->*dNidq[ll][mm])(x,y,z,ll);
+	      for(int nn=0; nn<3; nn++)
+		J(mm,nn) += dN*r0(nn);
+	    }
 	  }
 	  Vector<Ref,int> ipiv(J.size(),NONINIT);
-	  SqrMat LUJ = facLU(J.T(),ipiv);
+	  SqrMat LUJ = facLU(J,ipiv);
 	  for(int i=0; i<20; i++) {
-	    int u = nodeMap[ee.second(i)];
 	    Vec dN(3,NONINIT);
 	    for(int rr=0; rr<3; rr++)
 	      dN(rr) = (this->*dNidq[i][rr])(x,y,z,i);
 	    Vec dNi = slvLUFac(LUJ,dN,ipiv);
 	    double al = E/(1+nu)/nodeCount[ee.second(k)];
-	    sigmahel[ku](0,u*3) += al*(1-nu)/(1-2*nu)*dNi(0);
-	    sigmahel[ku](0,u*3+1) += al*nu/(1-2*nu)*dNi(1);
-	    sigmahel[ku](0,u*3+2) += al*nu/(1-2*nu)*dNi(2);
-	    sigmahel[ku](1,u*3) += al*nu/(1-2*nu)*dNi(0);
-	    sigmahel[ku](1,u*3+1) += al*(1-nu)/(1-2*nu)*dNi(1);
-	    sigmahel[ku](1,u*3+2) += al*nu/(1-2*nu)*dNi(2);
-	    sigmahel[ku](2,u*3) += al*nu/(1-2*nu)*dNi(0);
-	    sigmahel[ku](2,u*3+1) += al*nu/(1-2*nu)*dNi(1);
-	    sigmahel[ku](2,u*3+2) += al*(1-nu)/(1-2*nu)*dNi(2);
-	    sigmahel[ku](3,u*3) += al*0.5*dNi(1);
-	    sigmahel[ku](3,u*3+1) += al*0.5*dNi(0);
-	    sigmahel[ku](4,u*3+1) += al*0.5*dNi(2);
-	    sigmahel[ku](4,u*3+2) += al*0.5*dNi(1);
-	    sigmahel[ku](5,u*3) += al*0.5*dNi(2);
-	    sigmahel[ku](5,u*3+2) += al*0.5*dNi(0);
+	    RowVector<Fixed<3>,int> &sij = linksS[ee.second(k)][ee.second(i)];
+	    if(sij(0)>-1) {
+	      sigmahels[ee.second(k)][0]()[sij(0)] += al*(1-nu)/(1-2*nu)*dNi(0);
+	      sigmahels[ee.second(k)][1]()[sij(0)] += al*nu/(1-2*nu)*dNi(0);
+	      sigmahels[ee.second(k)][2]()[sij(0)] += al*nu/(1-2*nu)*dNi(0);
+	      sigmahels[ee.second(k)][3]()[sij(0)] += al*0.5*dNi(1);
+	      sigmahels[ee.second(k)][5]()[sij(0)] += al*0.5*dNi(2);
+	    }
+	    if(sij(1)>-1) {
+	      sigmahels[ee.second(k)][0]()[sij(1)] += al*nu/(1-2*nu)*dNi(1);
+	      sigmahels[ee.second(k)][1]()[sij(1)] += al*(1-nu)/(1-2*nu)*dNi(1);
+	      sigmahels[ee.second(k)][2]()[sij(1)] += al*nu/(1-2*nu)*dNi(1);
+	      sigmahels[ee.second(k)][3]()[sij(1)] += al*0.5*dNi(0);
+	      sigmahels[ee.second(k)][4]()[sij(1)] += al*0.5*dNi(2);
+	    }
+	    if(sij(2)>-1) {
+	      sigmahels[ee.second(k)][0]()[sij(2)] += al*nu/(1-2*nu)*dNi(2);
+	      sigmahels[ee.second(k)][1]()[sij(2)] += al*nu/(1-2*nu)*dNi(2);
+	      sigmahels[ee.second(k)][2]()[sij(2)] += al*(1-nu)/(1-2*nu)*dNi(2);
+	      sigmahels[ee.second(k)][4]()[sij(2)] += al*0.5*dNi(1);
+	      sigmahels[ee.second(k)][5]()[sij(2)] += al*0.5*dNi(0);
+	    }
 	  }
 	}
       }
-      for(int i=0; i<nN; i++) {
-	Phi[i](0,3*i) = 1;
-	Phi[i](1,3*i+1) = 1;
-	Phi[i](2,3*i+2) = 1;
-	Phi[i] <<= Phi[i](I3,IF);
-	Psi[i] <<= Psi[i](I3,IF);
-	sigmahel[i] <<= sigmahel[i](I6,IF);
-      }
-      c.clear();
-      for(int i=0; i<inodes.size(); i++) {
-	VecVI bci = bc[inodes(i)];
-	for(int j=0; j<3; j++) {
-	  if((not bci.size()) or (not bci(j)))
-	    c.push_back(nodeMap[inodes(i)]*3+j);
-	}
-      }
-      sort(c.begin(), c.end());
-      h=0;
+
       Indices IH, IN;
-      for(int i=0; i<IF.size(); i++) {
-	if(h<c.size() and IF[i]==c[h]) {
-	  IH.add(i);
-	  h++;
+      for(int i=0; i<inodes.size(); i++) {
+	VecVI &ai = dofA[inodes(i)];
+	for(int ii=0; ii<3; ii++) {
+	  if(ai(ii)>-1)
+	    IH.add(ai(ii));
 	}
-	else
-	  IN.add(i);
       }
+      for(int i=0; i<nnodes.size(); i++) {
+	VecVI &ai = dofA[nnodes(i)];
+	for(int ii=0; ii<3; ii++) {
+	  if(ai(ii)>-1)
+	    IN.add(ai(ii));
+	}
+      }
+
       MatV Vsd(n,IH.size()+nmodes.size(),NONINIT);
       if(IH.size()) {
 	Indices IJ;
 	for(int i=0; i<IH.size(); i++)
 	  IJ.add(i);
-	MatV Vs(IF.size(),IH.size(),NONINIT);
-	Vs.set(IN,IJ,-slvLL(Ke0(IN),Ke0(IN,IH)));
+	MatV Vs(n,IH.size(),NONINIT);
+	Vs.set(IN,IJ,-slvLU(sparseSub(Ke0s,dofN,linksK,nnodes),denseSub(Ke0s,dofN,dofH,linksK,nnodes,inodes)));
 	Vs.set(IH,IJ,MatV(IH.size(),IH.size(),Eye()));
 	Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
       }
 
-      SqrMat V;
-      Vec w;
       if(nmodes.size()) {
 	if(fixedBoundaryNormalModes) {
+	  throwError("(FiniteElementsFfrBody::init): option \"fixed boundary normal modes\" is currently not available");
+	  SqrMat V; Vec w;
 	  eigvec(Ke0(IN),SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2])(IN),V,w);
 	  vector<int> imod;
 	  for(int i=0; i<w.size(); i++) {
@@ -411,7 +683,11 @@ namespace MBSimFlexibleBody {
 	  }
 	}
 	else {
-	  eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
+	  SymSparseMat M = PPdms1[0];
+	  for(int i=0; i<M.nonZeroElements(); i++)
+	    M()[i] += PPdms1[1]()[i]+PPdms1[2]()[i];
+	  Mat V; Vec w;
+	  eigvec(Ke0s,M,6+nmodes.size(),1,V,w);
 	  vector<int> imod;
 	  for(int i=0; i<w.size(); i++) {
 	    if(w(i)>pow(2*M_PI*0.1,2))
@@ -425,7 +701,11 @@ namespace MBSimFlexibleBody {
       }
 
       if(IH.size()) {
-	eigvec(JTMJ(Ke0,Vsd),JTMJ(SymMatV(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),Vsd),V,w);
+	SymSparseMat MS = PPdms1[0];
+	for(int i=0; i<MS.nonZeroElements(); i++)
+	  MS()[i] += PPdms1[1]()[i]+PPdms1[2]()[i];
+	SqrMat V; Vec w;
+	eigvec(JTMJ(Ke0s,Vsd),JTMJ(MS,Vsd),V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
@@ -441,16 +721,32 @@ namespace MBSimFlexibleBody {
 	Pdm <<= Pdm*Vsd;
 	for(int i=0; i<3; i++) {
 	  rPdm[i] <<= rPdm[i]*Vsd;
-	  for(int j=0; j<3; j++)
-	    PPdm[i][j] <<= Vsd.T()*PPdm[i][j]*Vsd;
+	  PPdm[i][i] <<= Vsd.T()*(PPdms1[i]*Vsd);
 	}
-	Ke0 <<= JTMJ(Ke0,Vsd);
-	for(int i=0; i<nN; i++) {
-	  Phi[i] <<= Phi[i]*Vsd;
-	  Psi[i] <<= Psi[i]*Vsd;
-	  sigmahel[i] <<= sigmahel[i]*Vsd;
+	PPdm[0][1] <<= Vsd.T()*(PPdms2[0]*Vsd);
+	PPdm[0][2] <<= Vsd.T()*(PPdms2[1]*Vsd);
+	PPdm[1][2] <<= Vsd.T()*(PPdms2[2]*Vsd);
+	PPdm[1][0] <<= PPdm[0][1].T();
+	PPdm[2][0] <<= PPdm[0][2].T();
+	PPdm[2][1] <<= PPdm[1][2].T();
+	Ke0 <<= JTMJ(Ke0s,Vsd);
+	sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(Vsd.cols(),NONINIT));
+	Phi.resize(nN,Mat3xV(Vsd.cols(),NONINIT));
+	Psi.resize(nN,Mat3xV(Vsd.cols()));
+	for(const auto & i : nodeMap) {
+	  VecVI &ai = dofA[i.first];
+	  for(int j=0; j<3; j++) {
+	    if(ai(j)>-1)
+	      Phi[i.second].set(j,Vsd.row(ai(j)));
+	    else
+	      Phi[i.second].set(j,RowVecV(Vsd.cols()));
+	  }
+	  for(int j=0; j<6; j++)
+	    sigmahel[i.second].set(RangeV(j,j),RangeV(0,Vsd.cols()-1),sigmahels[i.first][j]*Vsd);
 	}
       }
+      else
+	throwError("(FiniteElementsFfrBody::init): at least one interface node or normal mode must be given.");
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvBody) {
