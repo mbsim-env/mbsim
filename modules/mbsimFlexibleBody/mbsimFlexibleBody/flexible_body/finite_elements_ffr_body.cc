@@ -31,15 +31,15 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FiniteElementsFfrBody)
 
-  SymSparseMat sparseSub(const SymSparseMat &K, map<int,VecVI> &adofn, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &links, const VecVI &inodes) {
+  SymSparseMat sparseSub(const SymSparseMat &K, map<int,VecVI> &dofN, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &linksK, const VecVI &inodes) {
     int nzs = 0;
     int nrows = 0;
-    for(auto & i : links) {
-      VecVI &ai = adofn[i.first];
+    for(auto & i : linksK) {
+      VecVI &ai = dofN[i.first];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1) {
 	  for(auto & j : i.second) {
-	    VecVI &aj = adofn[j.first];
+	    VecVI &aj = dofN[j.first];
 	    int js=0;
 	    if(i.first==j.first)
 	      js=ii;
@@ -57,20 +57,20 @@ namespace MBSimFlexibleBody {
     nrows = 0;
     int kk = 0;
     B.Ip()[0]=0;
-    for(auto & i : links) {
-      VecVI &ai = adofn[i.first];
+    for(auto & i : linksK) {
+      VecVI &ai = dofN[i.first];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1) {
 	  for(auto & j : i.second) {
 	    Matrix<General,Fixed<3>,Fixed<3>,int> &A = j.second;
-	    VecVI &aj = adofn[j.first];
+	    VecVI &aj = dofN[j.first];
 	    int js=0;
 	    if(i.first==j.first)
 	      js=ii;
 	    for(int jj=js; jj<3; jj++) {
 	      if(aj(jj)>-1) {
 		kk++;
-		B.Jp()[nzs] = adofn[j.first].e(jj);
+		B.Jp()[nzs] = aj.e(jj);
 		B()[nzs++] = K()[A(ii,jj)];
 	      }
 	    }
@@ -82,18 +82,18 @@ namespace MBSimFlexibleBody {
     return B;
   }
 
-  Mat denseSub(const SymSparseMat &K, map<int,VecVI> &adofn, map<int,VecVI> &adofh, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &links, const VecVI &inodes, const VecVI &jnodes) {
+  Mat denseSub(const SymSparseMat &K, map<int,VecVI> &dofN, map<int,VecVI> &dofH, map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> &linksK, const VecVI &inodes, const VecVI &jnodes) {
     int nrows = 0;
     int ncols = 0;
     for(int i=0; i<inodes.size(); i++) {
-      VecVI &ai = adofn[inodes(i)];
+      VecVI &ai = dofN[inodes(i)];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1)
 	  nrows++;
       }
     }
     for(int i=0; i<jnodes.size(); i++) {
-      VecVI &ai = adofh[jnodes(i)];
+      VecVI &ai = dofH[jnodes(i)];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1)
 	  ncols++;
@@ -101,15 +101,15 @@ namespace MBSimFlexibleBody {
     }
     Mat B(nrows,ncols);
     for(int i=0; i<inodes.size(); i++) {
-      VecVI &ai = adofn[inodes(i)];
+      VecVI &ai = dofN[inodes(i)];
       for(int ii=0; ii<3; ii++) {
 	if(ai(ii)>-1) {
 	  for(int j=0; j<jnodes.size(); j++) {
-	    VecVI &aj = adofh[jnodes(j)];
+	    VecVI &aj = dofH[jnodes(j)];
 	    if(jnodes(j)>=inodes(i)) {
-	      auto it = links[inodes(i)].find(jnodes(j));
-	      if(it!=links[inodes(i)].end()) {
-		Matrix<General,Fixed<3>,Fixed<3>,int> &A = links[inodes(i)][jnodes(j)];
+	      auto it = linksK[inodes(i)].find(jnodes(j));
+	      if(it!=linksK[inodes(i)].end()) {
+		Matrix<General,Fixed<3>,Fixed<3>,int> &A = linksK[inodes(i)][jnodes(j)];
 		for(int jj=0; jj<3; jj++) {
 		  if(aj(jj)>-1)
 		    B(ai(ii),aj(jj)) = K()[A(ii,jj)];
@@ -117,9 +117,9 @@ namespace MBSimFlexibleBody {
 	      }
 	    }
 	    else {
-	      auto it = links[jnodes(j)].find(inodes(i));
-	      if(it!=links[jnodes(j)].end()) {
-	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = links[jnodes(j)][inodes(i)];
+	      auto it = linksK[jnodes(j)].find(inodes(i));
+	      if(it!=linksK[jnodes(j)].end()) {
+	      Matrix<General,Fixed<3>,Fixed<3>,int> &A = linksK[jnodes(j)][inodes(i)];
 	      for(int jj=0; jj<3; jj++) {
 		if(aj(jj)>-1)
 		  B(ai(ii),aj(jj)) = K()[A(jj,ii)];
@@ -278,16 +278,16 @@ namespace MBSimFlexibleBody {
 	}
       }
 
-      map<int,VecVI> adof;
+      map<int,VecVI> dofA;
       for(const auto & i : nodeMap) {
 	VecVI d = bc[i.first];
 	if(d.size())
-	  adof[i.first] <<= d;
+	  dofA[i.first] <<= d;
 	else
-	  adof[i.first] <<= VecVI(3,INIT,0);
+	  dofA[i.first] <<= VecVI(3,INIT,0);
       }
       int k=0;
-      for(auto & i : adof) {
+      for(auto & i : dofA) {
 	for(int j=0; j<3; j++) {
 	  if(i.second(j)<1)
 	    i.second(j) = k++;
@@ -296,115 +296,115 @@ namespace MBSimFlexibleBody {
 	}
       }
 
-      map<int,VecVI> adofn = adof;
+      map<int,VecVI> dofN = dofA;
       for(int i=0; i<inodes.size(); i++)
-	adofn[inodes(i)].init(-1);
+	dofN[inodes(i)].init(-1);
       k=0;
-      for(auto & i : adofn) {
+      for(auto & i : dofN) {
 	for(int j=0; j<3; j++) {
 	  if(i.second(j)!=-1)
 	    i.second(j) = k++;
 	}
       }
 
-      map<int,VecVI> adofh = adof;
+      map<int,VecVI> dofH = dofA;
       for(int i=0; i<nnodes.size(); i++)
-	adofh[nnodes(i)].init(-1);
+	dofH[nnodes(i)].init(-1);
       k=0;
-      for(auto & i : adofh) {
+      for(auto & i : dofH) {
 	for(int j=0; j<3; j++) {
 	  if(i.second(j)!=-1)
 	    i.second(j) = k++;
 	}
       }
 
-      map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> links;
-      map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> linksf;
-      map<int,map<int,RowVector<Fixed<3>,int>>> linkss;
+      map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> linksK;
+      map<int,map<int,Matrix<General,Fixed<3>,Fixed<3>,int>>> linksP;
+      map<int,map<int,RowVector<Fixed<3>,int>>> linksS;
       for(const auto & ee : ele) {
 	for(int i=0; i<20; i++) {
 	  int nri = ee.second(i);
 	  for(int j=0; j<i; j++) {
 	    int nrj = ee.second(j);
-	    linksf[nri][nrj].init(-1);
-	    linkss[nri][nrj].init(-1);
+	    linksP[nri][nrj].init(-1);
+	    linksS[nri][nrj].init(-1);
 	  }
 	  for(int j=i; j<20; j++) {
 	    int nrj = ee.second(j);
-	    linksf[nri][nrj].init(-1);
-	    linkss[nri][nrj].init(-1);
+	    linksP[nri][nrj].init(-1);
+	    linksS[nri][nrj].init(-1);
 	    if(nrj>=nri)
-	      links[nri][nrj].init(-1);
+	      linksK[nri][nrj].init(-1);
 	    else
-	      links[nrj][nri].init(-1);
+	      linksK[nrj][nri].init(-1);
 	  }
 	}
       }
-      int nzs = 0;
-      for(auto & i : links) {
-	VecVI &ai = adof[i.first];
+      int nzsK = 0;
+      for(auto & i : linksK) {
+	VecVI &ai = dofA[i.first];
 	for(int ii=0; ii<3; ii++) {
 	  if(ai(ii)>-1) {
 	    for(auto & j : i.second) {
-	      VecVI &aj = adof[j.first];
+	      VecVI &aj = dofA[j.first];
 	      int js=0;
 	      if(i.first==j.first)
 		js=ii;
 	      for(int jj=js; jj<3; jj++) {
 		if(aj(jj)>-1)
-		  j.second.e(ii,jj) = nzs++;
+		  j.second.e(ii,jj) = nzsK++;
 	      }
 	    }
 	  }
 	}
       }
-      int nzsf = 0;
-      for(auto & i : linksf) {
-	VecVI &ai = adof[i.first];
+      int nzsP = 0;
+      for(auto & i : linksP) {
+	VecVI &ai = dofA[i.first];
 	for(int ii=0; ii<3; ii++) {
 	  if(ai(ii)>-1) {
 	    for(auto & j : i.second) {
-	      VecVI &aj = adof[j.first];
+	      VecVI &aj = dofA[j.first];
 	      for(int jj=0; jj<3; jj++) {
 		if(aj(jj)>-1)
-		  j.second.e(ii,jj) = nzsf++;
+		  j.second.e(ii,jj) = nzsP++;
 	      }
 	    }
 	  }
 	}
       }
 
-      vector<int> nzss(nN);
-      for(auto & i : linkss) {
+      vector<int> nzsS(nN);
+      for(auto & i : linksS) {
 	int u = nodeMap[i.first];
-	nzss[u] = 0;
+	nzsS[u] = 0;
 	for(auto & j : i.second) {
-	  VecVI &aj = adof[j.first];
+	  VecVI &aj = dofA[j.first];
 	  for(int jj=0; jj<3; jj++) {
 	    if(aj(jj)>-1)
-	      j.second.e(jj) = nzss[u]++;
+	      j.second.e(jj) = nzsS[u]++;
 	  }
 	}
       }
 
-      int *JpK = new int[nzs];
+      int *JpK = new int[nzsK];
       int *IpK = new int[n+1];
       k=0;
       int kk=0;
       IpK[0]=0;
-      for(auto & i : links) {
-	VecVI &ai = adof[i.first];
+      for(auto & i : linksK) {
+	VecVI &ai = dofA[i.first];
 	for(int ii=0; ii<3; ii++) {
 	  if(ai(ii)>-1) {
 	    for(auto & j : i.second) {
-	      VecVI &aj = adof[j.first];
+	      VecVI &aj = dofA[j.first];
 	      int js=0;
 	      if(i.first==j.first)
 		js=ii;
 	      for(int jj=js; jj<3; jj++) {
 		if(aj(jj)>-1) {
 		  kk++;
-		  JpK[j.second.e(ii,jj)] = adof[j.first].e(jj);
+		  JpK[j.second.e(ii,jj)] = aj.e(jj);
 		}
 	      }
 	    }
@@ -415,19 +415,19 @@ namespace MBSimFlexibleBody {
 
       k=0;
       kk=0;
-      int *JpP = new int[nzsf];
+      int *JpP = new int[nzsP];
       int *IpP = new int[n+1];
       IpP[0]=0;
-      for(auto & i : linksf) {
-	VecVI &ai = adof[i.first];
+      for(auto & i : linksP) {
+	VecVI &ai = dofA[i.first];
 	for(int ii=0; ii<3; ii++) {
 	  if(ai(ii)>-1) {
 	    for(auto & j : i.second) {
-	      VecVI &aj = adof[j.first];
+	      VecVI &aj = dofA[j.first];
 	      for(int jj=0; jj<3; jj++) {
 		if(aj(jj)>-1) {
 		  kk++;
-		  JpP[j.second.e(ii,jj)] = adof[j.first].e(jj);
+		  JpP[j.second.e(ii,jj)] = aj.e(jj);
 		}
 	      }
 	    }
@@ -440,27 +440,27 @@ namespace MBSimFlexibleBody {
       kk=0;
       vector<int*> JpS(nN);
       vector<int*> IpS(nN);
-      for(auto & i : linkss) {
+      for(auto & i : linksS) {
 	int u = nodeMap[i.first];
-	JpS[u] = new int[nzss[u]];
+	JpS[u] = new int[nzsS[u]];
 	IpS[u] = new int[2];
 	IpS[u][0]=0;
 	for(auto & j : i.second) {
-	  VecVI &aj = adof[j.first];
+	  VecVI &aj = dofA[j.first];
 	  for(int jj=0; jj<3; jj++) {
 	    if(aj(jj)>-1)
-	      JpS[u][j.second.e(jj)] = adof[j.first].e(jj);
+	      JpS[u][j.second.e(jj)] = aj.e(jj);
 	  }
 	}
-	IpS[u][1]=nzss[u];
+	IpS[u][1]=nzsS[u];
       }
 
-      SymSparseMat KS(n,nzs,IpK,JpK);
-      vector<SymSparseMat> PPdmS(3,SymSparseMat(n,nzs,IpK,JpK));
-      vector<SparseMat> PPdmSf(3,SparseMat(n,n,nzsf,IpP,JpP));
-      map<int,vector<SparseMat>> sigmahelS;
+      SymSparseMat Ke0s(n,nzsK,IpK,JpK);
+      vector<SymSparseMat> PPdms1(3,SymSparseMat(n,nzsK,IpK,JpK));
+      vector<SparseMat> PPdms2(3,SparseMat(n,n,nzsP,IpP,JpP));
+      map<int,vector<SparseMat>> sigmahels;
       for(auto & i : nodeMap)
-	sigmahelS[i.first] = vector<SparseMat>(6,SparseMat(1,n,nzss[i.second],IpS[i.second],JpS[i.second]));
+	sigmahels[i.first] = vector<SparseMat>(6,SparseMat(1,n,nzsS[i.second],IpS[i.second],JpS[i.second]));
 
       rPdm.resize(3,Mat3xV(n));
       PPdm.resize(3,vector<SqrMatV>(3));
@@ -498,13 +498,12 @@ namespace MBSimFlexibleBody {
 	      rdm += dm*r;
 	      rrdm += dm*JTJ(r.T());
 	      for(int i=0; i<20; i++) {
-//		int u = nodeMap[ee.second(i)];
 		double Ni_ = (this->*Ni[i])(x,y,z,i);
 		Vec dN(3,NONINIT);
 		for(int rr=0; rr<3; rr++)
 		  dN(rr) = (this->*dNidq[i][rr])(x,y,z,i);
 		Vec dNi = slvLUFac(LUJ,dN,ipiv);
-		VecVI &ai = adof[ee.second(i)];
+		VecVI &ai = dofA[ee.second(i)];
 		for(int i1=0; i1<3; i1++) {
 		  if(ai(i1)>-1)
 		    Pdm(i1,ai(i1)) += dm*Ni_;
@@ -514,7 +513,6 @@ namespace MBSimFlexibleBody {
 		  }
 		}
 		for(int j=i; j<20; j++) {
-//		  int v = nodeMap[ee.second(j)];
 		  double Nj_ = (this->*Ni[j])(x,y,z,j);
 		  Vec dN(3,NONINIT);
 		  for(int rr=0; rr<3; rr++)
@@ -532,58 +530,58 @@ namespace MBSimFlexibleBody {
 		  dK[1][2] = dk*(nu/(1-2*nu)*dNi(1)*dNj(2)+0.5*dNi(2)*dNj(1));
 		  dK[2][2] = dk*((1-nu)/(1-2*nu)*dNi(2)*dNj(2)+0.5*(dNi(0)*dNj(0)+dNi(1)*dNj(1)));
 		  if(ee.second(j)>=ee.second(i)) {
-		    Matrix<General,Fixed<3>,Fixed<3>,int> &Kij = links[ee.second(i)][ee.second(j)];
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Kij = linksK[ee.second(i)][ee.second(j)];
 		    for(int i1=0; i1<3; i1++) {
 		      if(Kij.e(i1,i1)>-1)
-			PPdmS[i1]()[Kij.e(i1,i1)] += dPPdm;
+			PPdms1[i1]()[Kij.e(i1,i1)] += dPPdm;
 		      int j1s = 0;
 		      if(ee.second(j)==ee.second(i)) j1s=i1;
 		      for(int j1=j1s; j1<3; j1++) {
 			if(Kij.e(i1,j1)>-1)
-			  KS()[Kij.e(i1,j1)] += dK[i1][j1];
+			  Ke0s()[Kij.e(i1,j1)] += dK[i1][j1];
 		      }
 		    }
-		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pij = linksf[ee.second(i)][ee.second(j)];
-		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pji = linksf[ee.second(j)][ee.second(i)];
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pij = linksP[ee.second(i)][ee.second(j)];
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pji = linksP[ee.second(j)][ee.second(i)];
 		    if(Pij.e(0,1)>-1)
-		      PPdmSf[0]()[Pij.e(0,1)] += dPPdm;
+		      PPdms2[0]()[Pij.e(0,1)] += dPPdm;
 		    if(Pij.e(0,2)>-1)
-		      PPdmSf[1]()[Pij.e(0,2)] += dPPdm;
+		      PPdms2[1]()[Pij.e(0,2)] += dPPdm;
 		    if(Pij.e(1,2)>-1)
-		      PPdmSf[2]()[Pij.e(1,2)] += dPPdm;
+		      PPdms2[2]()[Pij.e(1,2)] += dPPdm;
 		    if(ee.second(i)!=ee.second(j)) {
 		      if(Pji.e(0,1)>-1)
-			PPdmSf[0]()[Pji.e(0,1)] += dPPdm;
+			PPdms2[0]()[Pji.e(0,1)] += dPPdm;
 		      if(Pji.e(0,2)>-1)
-			PPdmSf[1]()[Pji.e(0,2)] += dPPdm;
+			PPdms2[1]()[Pji.e(0,2)] += dPPdm;
 		      if(Pji.e(1,2)>-1)
-			PPdmSf[2]()[Pji.e(1,2)] += dPPdm;
+			PPdms2[2]()[Pji.e(1,2)] += dPPdm;
 		    }
 		  }
 		  else {
-		    Matrix<General,Fixed<3>,Fixed<3>,int> &Kji = links[ee.second(j)][ee.second(i)];
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Kji = linksK[ee.second(j)][ee.second(i)];
 		    for(int i1=0; i1<3; i1++) {
 		      if(Kji.e(i1,i1)>-1)
-			PPdmS[i1]()[Kji.e(i1,i1)] += dPPdm;
+			PPdms1[i1]()[Kji.e(i1,i1)] += dPPdm;
 		      for(int j1=0; j1<3; j1++) {
 			if(Kji.e(i1,j1)>-1)
-			  KS()[Kji.e(i1,j1)] += dK[j1][i1];
+			  Ke0s()[Kji.e(i1,j1)] += dK[j1][i1];
 		      }
 		    }
-		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pij = linksf[ee.second(i)][ee.second(j)];
-		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pji = linksf[ee.second(j)][ee.second(i)];
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pij = linksP[ee.second(i)][ee.second(j)];
+		    Matrix<General,Fixed<3>,Fixed<3>,int> &Pji = linksP[ee.second(j)][ee.second(i)];
 		    if(Pij.e(1,0)>-1)
-		      PPdmSf[0]()[Pij.e(1,0)] += dPPdm;
+		      PPdms2[0]()[Pij.e(1,0)] += dPPdm;
 		    if(Pij.e(2,0)>-1)
-		      PPdmSf[1]()[Pij.e(2,0)] += dPPdm;
+		      PPdms2[1]()[Pij.e(2,0)] += dPPdm;
 		    if(Pij.e(2,1)>-1)
-		      PPdmSf[2]()[Pij.e(2,1)] += dPPdm;
+		      PPdms2[2]()[Pij.e(2,1)] += dPPdm;
 		    if(Pji.e(1,0)>-1)
-		      PPdmSf[0]()[Pji.e(1,0)] += dPPdm;
+		      PPdms2[0]()[Pji.e(1,0)] += dPPdm;
 		    if(Pji.e(2,0)>-1)
-		      PPdmSf[1]()[Pji.e(2,0)] += dPPdm;
+		      PPdms2[1]()[Pji.e(2,0)] += dPPdm;
 		    if(Pji.e(2,1)>-1)
-		      PPdmSf[2]()[Pji.e(2,1)] += dPPdm;
+		      PPdms2[2]()[Pji.e(2,1)] += dPPdm;
 		  }
 		}
 	      }
@@ -614,27 +612,27 @@ namespace MBSimFlexibleBody {
 	      dN(rr) = (this->*dNidq[i][rr])(x,y,z,i);
 	    Vec dNi = slvLUFac(LUJ,dN,ipiv);
 	    double al = E/(1+nu)/nodeCount[ee.second(k)];
-	    RowVector<Fixed<3>,int> &sij = linkss[ee.second(k)][ee.second(i)];
+	    RowVector<Fixed<3>,int> &sij = linksS[ee.second(k)][ee.second(i)];
 	    if(sij(0)>-1) {
-	      sigmahelS[ee.second(k)][0]()[sij(0)] += al*(1-nu)/(1-2*nu)*dNi(0);
-	      sigmahelS[ee.second(k)][1]()[sij(0)] += al*nu/(1-2*nu)*dNi(0);
-	      sigmahelS[ee.second(k)][2]()[sij(0)] += al*nu/(1-2*nu)*dNi(0);
-	      sigmahelS[ee.second(k)][3]()[sij(0)] += al*0.5*dNi(1);
-	      sigmahelS[ee.second(k)][5]()[sij(0)] += al*0.5*dNi(2);
+	      sigmahels[ee.second(k)][0]()[sij(0)] += al*(1-nu)/(1-2*nu)*dNi(0);
+	      sigmahels[ee.second(k)][1]()[sij(0)] += al*nu/(1-2*nu)*dNi(0);
+	      sigmahels[ee.second(k)][2]()[sij(0)] += al*nu/(1-2*nu)*dNi(0);
+	      sigmahels[ee.second(k)][3]()[sij(0)] += al*0.5*dNi(1);
+	      sigmahels[ee.second(k)][5]()[sij(0)] += al*0.5*dNi(2);
 	    }
 	    if(sij(1)>-1) {
-	      sigmahelS[ee.second(k)][0]()[sij(1)] += al*nu/(1-2*nu)*dNi(1);
-	      sigmahelS[ee.second(k)][1]()[sij(1)] += al*(1-nu)/(1-2*nu)*dNi(1);
-	      sigmahelS[ee.second(k)][2]()[sij(1)] += al*nu/(1-2*nu)*dNi(1);
-	      sigmahelS[ee.second(k)][3]()[sij(1)] += al*0.5*dNi(0);
-	      sigmahelS[ee.second(k)][4]()[sij(1)] += al*0.5*dNi(2);
+	      sigmahels[ee.second(k)][0]()[sij(1)] += al*nu/(1-2*nu)*dNi(1);
+	      sigmahels[ee.second(k)][1]()[sij(1)] += al*(1-nu)/(1-2*nu)*dNi(1);
+	      sigmahels[ee.second(k)][2]()[sij(1)] += al*nu/(1-2*nu)*dNi(1);
+	      sigmahels[ee.second(k)][3]()[sij(1)] += al*0.5*dNi(0);
+	      sigmahels[ee.second(k)][4]()[sij(1)] += al*0.5*dNi(2);
 	    }
 	    if(sij(2)>-1) {
-	      sigmahelS[ee.second(k)][0]()[sij(2)] += al*nu/(1-2*nu)*dNi(2);
-	      sigmahelS[ee.second(k)][1]()[sij(2)] += al*nu/(1-2*nu)*dNi(2);
-	      sigmahelS[ee.second(k)][2]()[sij(2)] += al*(1-nu)/(1-2*nu)*dNi(2);
-	      sigmahelS[ee.second(k)][4]()[sij(2)] += al*0.5*dNi(1);
-	      sigmahelS[ee.second(k)][5]()[sij(2)] += al*0.5*dNi(0);
+	      sigmahels[ee.second(k)][0]()[sij(2)] += al*nu/(1-2*nu)*dNi(2);
+	      sigmahels[ee.second(k)][1]()[sij(2)] += al*nu/(1-2*nu)*dNi(2);
+	      sigmahels[ee.second(k)][2]()[sij(2)] += al*(1-nu)/(1-2*nu)*dNi(2);
+	      sigmahels[ee.second(k)][4]()[sij(2)] += al*0.5*dNi(1);
+	      sigmahels[ee.second(k)][5]()[sij(2)] += al*0.5*dNi(0);
 	    }
 	  }
 	}
@@ -642,14 +640,14 @@ namespace MBSimFlexibleBody {
 
       Indices IH, IN;
       for(int i=0; i<inodes.size(); i++) {
-	VecVI &ai = adof[inodes(i)];
+	VecVI &ai = dofA[inodes(i)];
 	for(int ii=0; ii<3; ii++) {
 	  if(ai(ii)>-1)
 	    IH.add(ai(ii));
 	}
       }
       for(int i=0; i<nnodes.size(); i++) {
-	VecVI &ai = adof[nnodes(i)];
+	VecVI &ai = dofA[nnodes(i)];
 	for(int ii=0; ii<3; ii++) {
 	  if(ai(ii)>-1)
 	    IN.add(ai(ii));
@@ -662,7 +660,7 @@ namespace MBSimFlexibleBody {
 	for(int i=0; i<IH.size(); i++)
 	  IJ.add(i);
 	MatV Vs(n,IH.size(),NONINIT);
-	Vs.set(IN,IJ,-slvLU(sparseSub(KS,adofn,links,nnodes),denseSub(KS,adofn,adofh,links,nnodes,inodes)));
+	Vs.set(IN,IJ,-slvLU(sparseSub(Ke0s,dofN,linksK,nnodes),denseSub(Ke0s,dofN,dofH,linksK,nnodes,inodes)));
 	Vs.set(IH,IJ,MatV(IH.size(),IH.size(),Eye()));
 	Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
       }
@@ -685,11 +683,11 @@ namespace MBSimFlexibleBody {
 	  }
 	}
 	else {
-	  SymSparseMat M = PPdmS[0];
+	  SymSparseMat M = PPdms1[0];
 	  for(int i=0; i<M.nonZeroElements(); i++)
-	    M()[i] += PPdmS[1]()[i]+PPdmS[2]()[i];
+	    M()[i] += PPdms1[1]()[i]+PPdms1[2]()[i];
 	  Mat V; Vec w;
-	  eigvec(KS,M,6+nmodes.size(),1,V,w);
+	  eigvec(Ke0s,M,6+nmodes.size(),1,V,w);
 	  vector<int> imod;
 	  for(int i=0; i<w.size(); i++) {
 	    if(w(i)>pow(2*M_PI*0.1,2))
@@ -703,11 +701,11 @@ namespace MBSimFlexibleBody {
       }
 
       if(IH.size()) {
-	SymSparseMat MS = PPdmS[0];
+	SymSparseMat MS = PPdms1[0];
 	for(int i=0; i<MS.nonZeroElements(); i++)
-	  MS()[i] += PPdmS[1]()[i]+PPdmS[2]()[i];
+	  MS()[i] += PPdms1[1]()[i]+PPdms1[2]()[i];
 	SqrMat V; Vec w;
-	eigvec(JTMJ(KS,Vsd),JTMJ(MS,Vsd),V,w);
+	eigvec(JTMJ(Ke0s,Vsd),JTMJ(MS,Vsd),V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
@@ -723,20 +721,20 @@ namespace MBSimFlexibleBody {
 	Pdm <<= Pdm*Vsd;
 	for(int i=0; i<3; i++) {
 	  rPdm[i] <<= rPdm[i]*Vsd;
-	  PPdm[i][i] <<= Vsd.T()*(PPdmS[i]*Vsd);
+	  PPdm[i][i] <<= Vsd.T()*(PPdms1[i]*Vsd);
 	}
-	PPdm[0][1] <<= Vsd.T()*(PPdmSf[0]*Vsd);
-	PPdm[0][2] <<= Vsd.T()*(PPdmSf[1]*Vsd);
-	PPdm[1][2] <<= Vsd.T()*(PPdmSf[2]*Vsd);
+	PPdm[0][1] <<= Vsd.T()*(PPdms2[0]*Vsd);
+	PPdm[0][2] <<= Vsd.T()*(PPdms2[1]*Vsd);
+	PPdm[1][2] <<= Vsd.T()*(PPdms2[2]*Vsd);
 	PPdm[1][0] <<= PPdm[0][1].T();
 	PPdm[2][0] <<= PPdm[0][2].T();
 	PPdm[2][1] <<= PPdm[1][2].T();
-	Ke0 <<= JTMJ(KS,Vsd);
+	Ke0 <<= JTMJ(Ke0s,Vsd);
 	sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(Vsd.cols(),NONINIT));
 	Phi.resize(nN,Mat3xV(Vsd.cols(),NONINIT));
 	Psi.resize(nN,Mat3xV(Vsd.cols()));
 	for(const auto & i : nodeMap) {
-	  VecVI &ai = adof[i.first];
+	  VecVI &ai = dofA[i.first];
 	  for(int j=0; j<3; j++) {
 	    if(ai(j)>-1)
 	      Phi[i.second].set(j,Vsd.row(ai(j)));
@@ -744,7 +742,7 @@ namespace MBSimFlexibleBody {
 	      Phi[i.second].set(j,RowVecV(Vsd.cols()));
 	  }
 	  for(int j=0; j<6; j++)
-	    sigmahel[i.second].set(RangeV(j,j),RangeV(0,Vsd.cols()-1),sigmahelS[i.first][j]*Vsd);
+	    sigmahel[i.second].set(RangeV(j,j),RangeV(0,Vsd.cols()-1),sigmahels[i.first][j]*Vsd);
 	}
       }
       else
