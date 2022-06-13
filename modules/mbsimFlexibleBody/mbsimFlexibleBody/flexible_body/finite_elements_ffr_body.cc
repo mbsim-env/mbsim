@@ -747,6 +747,15 @@ namespace MBSimFlexibleBody {
       }
       else
 	throwError("(FiniteElementsFfrBody::init): at least one interface node or normal mode must be given.");
+
+      delete [] JpK;
+      delete [] IpK;
+      delete [] JpP;
+      delete [] IpP;
+      for(size_t i=0; i<nN; i++) {
+	delete [] JpS[i];
+	delete [] IpS[i];
+      }
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvBody) {
