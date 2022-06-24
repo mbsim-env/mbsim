@@ -19,7 +19,8 @@ libconstitutivelaws_la_SOURCES = bilateral_constraint.cc\
 				 spatial_stribeck_friction.cc\
 				 spatial_stribeck_impact.cc\
 				 unilateral_constraint.cc\
-				 unilateral_newton_impact.cc
+				 unilateral_newton_impact.cc\
+				 magic_formula_sharp.cc
 
 libconstitutivelaws_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 libconstitutivelaws_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
@@ -48,4 +49,6 @@ constitutivelawsinclude_HEADERS = bilateral_constraint.h\
 				  spatial_stribeck_impact.h\
 				  unilateral_constraint.h\
 				  unilateral_newton_impact.h\
-				  constitutive_laws.h
+				  constitutive_laws.h\
+				  tyre_model.h\
+				  magic_formula_sharp.h

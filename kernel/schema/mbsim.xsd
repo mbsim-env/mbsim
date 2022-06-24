@@ -2540,6 +2540,32 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="TyreContact" substitutionGroup="ContourLink" type="TyreContactType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+      Reifenkontakt.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreContactType">
+    <xs:complexContent>
+      <xs:extension base="ContourLinkType">
+        <xs:sequence>
+          <xs:element name="tyreModel">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+            Auswahl des Reifenmodells.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="TyreModel"/>
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Frame" substitutionGroup="Element" type="FrameType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Klasse zur Beschreibung von Koordinatensystemen.
@@ -3686,6 +3712,46 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="Tyre" substitutionGroup="RigidContour" type="TyreType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="rimRadius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Felgenradius des Reifens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="crownRadius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Wölbungsradius des Reifens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
@@ -4033,6 +4099,28 @@
           </xs:element>
         </xs:sequence>
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TyreModel" abstract="true" type="TyreModelType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Abstrakte Oberklasse zur Beschreibung von Reifenmodellen.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreModelType"/>
+
+  <xs:element name="MagicFormulaSharp" substitutionGroup="TyreModel" type="MagicFormulaSharpType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MagicFormulaSharpType">
+    <xs:complexContent>
+      <xs:extension base="TyreModelType"/>
     </xs:complexContent>
   </xs:complexType>
 
@@ -5753,6 +5841,54 @@
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TyreContactObserver" substitutionGroup="MechanicalLinkObserver" type="TyreContactObserverType">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+    tbd.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreContactObserverType">
+    <xs:complexContent>
+      <xs:extension base="MechanicalLinkObserverType">
+        <xs:sequence>
+          <xs:element name="enableOpenMBVContactPoints" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung von zwei OpenMBV Koordinatensystemen in den jeweiligen Kontaktpunkten zur Repräsentation der begleitenden Dreibeine <object class="inlineeqn">\left(\boldsymbol{n},\boldsymbol{t}_1,\boldsymbol{t}_2\right)</object> bestehend aus Normale und den beiden Tangenten.<br/>
+                Bei geschlossenem Kontakt fallen die Kontaktpunkte zusammen.<br/>
+                Bei offenem Kontakt liegen die Kontaktpunkte auf den Konturen und haben minimalen Abstand.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVFrameParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVLongitudinalForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVLateralForce" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
