@@ -41,7 +41,8 @@ namespace MBSim {
 
       const fmatvec::Vec3& evalForwardVelocity() { if(updfvel) updateForwardVelocity(); return RvC; }
       fmatvec::Vec3& getForwardVelocity(bool check=true) {  assert((not check) or (not updfvel)); return RvC; }
-      double evalKyalr() { if(updla) updateGeneralizedForces(); return Kyalr; }
+      double evalsRelax() { if(updla) updateGeneralizedForces(); return sRelax; }
+      double& getsRelax(bool check=true) {  assert((not check) or (not updla)); return sRelax; }
       void updatePositions(Frame *frame) override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
@@ -61,64 +62,7 @@ namespace MBSim {
     protected:
       TyreModel *model{nullptr};
       fmatvec::Vec3 RvC;
-      double Kyalr;
-
-      double c_z_RW{141000.000000};
-      double d_z_RW{800.000000};
-      double pKy1{15.791000};
-      double pKy2{1.693500};
-      double pKy3{1.460400};
-      double pKy4{0.669000};
-      double pKy5{0.187080};
-      double Fz0_RW{1600.000000};
-      double pDx1{1.355000};
-      double pDx2{-0.060300};
-      double pEx1{0.026300};
-      double pEx2{0.270560};
-      double pEx3{-0.076900};
-      double pEx4{1.126800};
-      double pKx1{25.940000};
-      double pKx2{-4.233000};
-      double pKx3{0.336900};
-      double Cx{1.606400};
-      double rBx1{13.476000};
-      double rBx2{11.354000};
-      double Cxal{1.123100};
-      double pDy1{1.300000};
-      double pDy2{0.000000};
-      double pDy3{0.000000};
-      double pEy1{-2.222700};
-      double pEy2{-1.669000};
-      double pEy4{-4.288000};
-      double Cy{0.900000};
-      double pKy6{0.455120};
-      double pKy7{0.013293};
-      double Cga{0.613970};
-      double Ega{-19.990000};
-      double rBy1{7.785600};
-      double rBy2{8.169700};
-      double rBy3{-0.059140};
-      double Cyka{1.053300};
-      double qHz3{-0.028448};
-      double qHz4{-0.009862};
-      double qBz1{10.041000};
-      double qBz2{-0.000000};
-      double qBz5{-0.767840};
-      double qBz6{0.734220};
-      double qBz9{16.390000};
-      double qBz10{-0.355490};
-      double qDz1{0.263310};
-      double qDz2{0.030987};
-      double qDz3{-0.620130};
-      double qDz4{0.985240};
-      double qDz8{0.504530};
-      double qDz9{0.363120};
-      double qDz10{-0.191680};
-      double qDz11{-0.407090};
-      double qEz1{-0.199240};
-      double qEz2{-0.017638};
-      double qEz5{3.651100};
-      double Ct{1.315300};
+      double sRelax;
 
       bool updfvel{true};
   };

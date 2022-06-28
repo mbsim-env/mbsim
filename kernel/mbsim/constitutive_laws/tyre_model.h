@@ -29,8 +29,9 @@ namespace MBSim {
       TyreModel() : Element(uniqueDummyName(this)) {
         plotFeature[plotRecursive]=false;
       }
-
       ~TyreModel() override = default;
+
+      virtual void updateGeneralizedForces() { }
   };
 
 }
