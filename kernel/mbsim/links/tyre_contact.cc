@@ -73,10 +73,6 @@ namespace MBSim {
     Vec3 Wn = plane->getFrame()->evalOrientation().col(0);
     Vec3 Wb = tyre->getFrame()->evalOrientation().col(1);
     double t_EC = Wn.T()*Wb;
-    if(t_EC>0) {
-      Wb *= -1.;
-      t_EC *= -1;	
-    }
     Vec3 z_EC = Wn - t_EC*Wb;
     double z_EC_nrm2 = nrm2(z_EC);
     Vec3 Wd = tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC - plane->getFrame()->getPosition();
@@ -85,7 +81,7 @@ namespace MBSim {
     cFrame[0]->setPosition(cFrame[1]->getPosition(false) - Wn*max(g,0.));
     rrel(0) = g;
 
-    Vec3 nx = crossProduct(Wb,Wn); 
+    Vec3 nx = crossProduct(Wn,Wb);
     nx /= nrm2(nx);
 
     cFrame[0]->getOrientation(false).set(0, plane->getFrame()->getOrientation().col(0));
