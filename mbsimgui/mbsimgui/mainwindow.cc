@@ -1322,6 +1322,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeElement() {
+    updateUndos();
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = dynamic_cast<Element*>(model->getItem(index)->getItemData());
@@ -1339,6 +1340,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::removeParameter() {
+    updateUndos();
     auto *model = static_cast<ParameterTreeModel*>(parameterView->model());
     QModelIndex index = parameterView->selectionModel()->currentIndex();
     auto *parameter = dynamic_cast<Parameter*>(model->getItem(index)->getItemData());
