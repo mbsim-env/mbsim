@@ -83,10 +83,6 @@ namespace MBSim {
 
     Vec3 Wb = circle->getFrame()->evalOrientation().col(2);
     double t_EC = contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0).T()*Wb;
-    if(t_EC>0) {
-      Wb *= -1.;
-      t_EC *= -1;
-    }
     Vec3 z_EC = contact.getContourFrame(ispatialcontour)->getOrientation(false).col(0) - t_EC*Wb;
     double z_EC_nrm2 = nrm2(z_EC);
     Vec3 WrD;
