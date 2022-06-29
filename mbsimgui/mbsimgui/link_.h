@@ -53,6 +53,10 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(FloatingFrameLink, FrameLink, MBSIM%"FloatingFrameLink", "Floating frame link");
   };
 
+  class ContourLink : public Link {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ContourLink, Link, MBSIM%"ContourLink", "Contour link");
+  };
+
   class RigidBodyLink : public MechanicalLink {
     MBSIMGUI_OBJECTFACTORY_CLASS(RigidBodyLink, MechanicalLink, MBSIM%"RigidBodyLink", "Rigidbody link");
   };

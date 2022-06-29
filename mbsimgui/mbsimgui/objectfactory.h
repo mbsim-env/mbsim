@@ -52,6 +52,7 @@
   X(FrictionImpactLawWidget) \
   X(FrictionForceLawWidget) \
   X(GeneralizedForceLawWidget) \
+  X(TyreModelWidget) \
   X(EnvironmentWidget) \
   X(FunctionWidget) \
   X(GravityFunctionWidget)
@@ -86,6 +87,7 @@ namespace MBSimGUI {
   class PlanarCoulombFrictionWidget;
   class BilateralImpactWidget;
   class PlanarCoulombImpactWidget;
+  class MagicFormulaSharpWidget;
   // class forward declarations
   #define X(Type) \
     class Type;
@@ -186,6 +188,7 @@ namespace MBSimGUI {
         P<FrictionForceLawWidget    , P<PlanarCoulombFrictionWidget  , UnknownWidget<FrictionForceLawWidget>>>,
         P<GeneralizedImpactLawWidget, P<BilateralImpactWidget        , UnknownWidget<GeneralizedImpactLawWidget>>>,
         P<FrictionImpactLawWidget   , P<PlanarCoulombImpactWidget    , UnknownWidget<FrictionImpactLawWidget>>>,
+        P<TyreModelWidget           , P<MagicFormulaSharpWidget      , UnknownWidget<TyreModelWidget>>>,
         P<FunctionWidget            , P<void                         , UnknownWidget<FunctionWidget>>>,
         P<GravityFunctionWidget     , P<void                         , UnknownWidget<GravityFunctionWidget>>>
       >;

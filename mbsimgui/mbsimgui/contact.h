@@ -30,10 +30,16 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new ContactPropertyDialog(this); }
   };
 
-  class DiskContact : public FixedFrameLink {
-    MBSIMGUI_OBJECTFACTORY_CLASS(DiskContact, FixedFrameLink, MBSIM%"DiskContact", "Disk contact");
+  class DiskContact : public ContourLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(DiskContact, ContourLink, MBSIM%"DiskContact", "Disk contact");
     public:
       PropertyDialog* createPropertyDialog() override { return new DiskContactPropertyDialog(this); }
+  };
+
+  class TyreContact : public ContourLink {
+    MBSIMGUI_OBJECTFACTORY_CLASS(DiskContact, ContourLink, MBSIM%"TyreContact", "Tyre contact");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new TyreContactPropertyDialog(this); }
   };
 
 }

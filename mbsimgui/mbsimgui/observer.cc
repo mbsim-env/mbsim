@@ -39,6 +39,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(MechanicalLinkObserver);
   MBSIMGUI_REGOBJECTFACTORY(RigidBodyObserver);
   MBSIMGUI_REGOBJECTFACTORY(SignalObserver);
+  MBSIMGUI_REGOBJECTFACTORY(TyreContactObserver);
   MBSIMGUI_REGOBJECTFACTORY(UnknownObserver);
 
   Observer::Observer() {
@@ -123,6 +124,39 @@ namespace MBSimGUI {
       ELE->insertBefore(id, nullptr);
     }
 
+    return element;
+  }
+
+  DOMElement* TyreContactObserver::processIDAndHref(DOMElement *element) {
+    MechanicalLinkObserver::processIDAndHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
+    if(ELE) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
+    if(ELE) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVLongitudinalForce");
+    if(ELE) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVLateralForce");
+    if(ELE) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
     return element;
   }
 

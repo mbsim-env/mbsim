@@ -978,6 +978,35 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  TyrePropertyDialog::TyrePropertyDialog(Element *gear) : RigidContourPropertyDialog(gear) {
+    addTab("Visualization",1);
+
+    rRim = new ExtWidget("Rim radius",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"rimRadius");
+    addToTab("General", rRim);
+
+    rCrown = new ExtWidget("Crown radius",new ChoiceWidget(new ScalarWidgetFactory("0.1",vector<QStringList>(2,lengthUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"crownRadius");
+    addToTab("General", rCrown);
+
+    visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualization", visu);
+  }
+
+  DOMElement* TyrePropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    rRim->initializeUsingXML(item->getXMLElement());
+    rCrown->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TyrePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    rRim->writeXMLFile(item->getXMLElement(),nullptr);
+    rCrown->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
@@ -3170,6 +3199,31 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  TyreContactPropertyDialog::TyreContactPropertyDialog(Element *contact) : LinkPropertyDialog(contact) {
+
+    addTab("Kinetics",1);
+
+    connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
+    addToTab("Kinetics", connections);
+
+    model = new ExtWidget("Tyre model",new ChoiceWidget(new WidgetFactoryFor<TyreModelWidget>,QBoxLayout::TopToBottom,0),false,false,MBSIM%"tyreModel");
+    addToTab("Kinetics", model);
+  }
+
+  DOMElement* TyreContactPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    LinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    connections->initializeUsingXML(item->getXMLElement());
+    model->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TyreContactPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    LinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    connections->writeXMLFile(item->getXMLElement(),ref);
+    model->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   ObserverPropertyDialog::ObserverPropertyDialog(Element *observer) : ElementPropertyDialog(observer) {
   }
 
@@ -3275,6 +3329,41 @@ namespace MBSimGUI {
     contactPoints->writeXMLFile(item->getXMLElement(),ref);
     normalForceArrow->writeXMLFile(item->getXMLElement(),ref);
     frictionArrow->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  TyreContactObserverPropertyDialog::TyreContactObserverPropertyDialog(Element *observer) : MechanicalLinkObserverPropertyDialog(observer) {
+
+    addTab("Visualization",1);
+
+    contactPoints = new ExtWidget("Enable openMBV contact points",new FrameMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVContactPoints");
+    addToTab("Visualization",contactPoints);
+
+    normalForceArrow = new ExtWidget("Enable openMBV normal force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVNormalForce");
+    addToTab("Visualization",normalForceArrow);
+
+    longitudinalForceArrow = new ExtWidget("Enable openMBV longitudinal force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVLongitudinalForce");
+    addToTab("Visualization",longitudinalForceArrow);
+
+    lateralForceArrow = new ExtWidget("Enable openMBV lateral force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVLateralForce");
+    addToTab("Visualization",lateralForceArrow);
+  }
+
+  DOMElement* TyreContactObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    MechanicalLinkObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    contactPoints->initializeUsingXML(item->getXMLElement());
+    normalForceArrow->initializeUsingXML(item->getXMLElement());
+    longitudinalForceArrow->initializeUsingXML(item->getXMLElement());
+    lateralForceArrow->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TyreContactObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    MechanicalLinkObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    contactPoints->writeXMLFile(item->getXMLElement(),ref);
+    normalForceArrow->writeXMLFile(item->getXMLElement(),ref);
+    longitudinalForceArrow->writeXMLFile(item->getXMLElement(),ref);
+    lateralForceArrow->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
