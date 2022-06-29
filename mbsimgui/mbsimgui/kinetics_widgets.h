@@ -258,6 +258,21 @@ namespace MBSimGUI {
       QWidget *parent;
   };
 
+  class TyreModelWidget : public Widget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TyreModelWidget, Widget, MBSIM%"TyreModel", "Tyre model");
+
+    public:
+      TyreModelWidget()  = default;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+  };
+
+  class MagicFormulaSharpWidget : public TyreModelWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(MagicFormulaSharpWidget, TyreModelWidget, MBSIM%"MagicFormulaSharp", "Magic Formula Sharp");
+
+    public:
+      MagicFormulaSharpWidget() = default;
+  };
+
 }
 
 #endif

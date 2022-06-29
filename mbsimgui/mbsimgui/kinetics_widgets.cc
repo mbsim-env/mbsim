@@ -57,6 +57,9 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(SpatialStribeckImpactWidget);
   MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<FrictionImpactLawWidget>);
 
+  MBSIMGUI_REGOBJECTFACTORY(MagicFormulaSharpWidget);
+  MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<TyreModelWidget>);
+
   DOMElement* GeneralizedForceLawWidget::initializeUsingXML(DOMElement *element) {
     if(forceFunc) forceFunc->initializeUsingXML(element);
     return element;
@@ -359,6 +362,13 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(QStringList("gd")<<"laN",vector<int>(2,1),argType,1,FunctionWidget::varVec);
     }
     return nullptr;
+  }
+
+  DOMElement* TyreModelWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMElement *ele0=D(doc)->createElement(getXMLType());
+    parent->insertBefore(ele0, ref);
+    return ele0;
   }
 
 }

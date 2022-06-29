@@ -141,6 +141,12 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new PlanarGearPropertyDialog(this); }
   };
 
+  class Tyre : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Tyre, RigidContour, MBSIM%"Tyre", "Tyre");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new TyrePropertyDialog(this); }
+  };
+
   class FlexiblePlanarNurbsContour : public RigidContour {
     MBSIMGUI_OBJECTFACTORY_CLASS(FlexiblePlanarNurbsContour, RigidContour, MBSIMFLEX%"FlexiblePlanarNurbsContour", "Flexible planar nurbs contour");
     public:

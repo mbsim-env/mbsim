@@ -278,6 +278,16 @@ namespace MBSimGUI {
       ExtWidget *numberOfTeeth, *height, *width, *helixAngle, *module, *pressureAngle, *backlash, *visu;
   };
 
+  class TyrePropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      TyrePropertyDialog(Element *gear);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *rRim, *rCrown, *visu;
+  };
+
   class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
 
     public:
@@ -779,6 +789,16 @@ namespace MBSimGUI {
       ExtWidget *contactForceLaw, *contactImpactLaw, *frictionForceLaw, *frictionImpactLaw, *connections;
   };
 
+  class TyreContactPropertyDialog : public LinkPropertyDialog {
+
+    public:
+      TyreContactPropertyDialog(Element *contact);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *model, *connections;
+  };
+
   class ObserverPropertyDialog : public ElementPropertyDialog {
 
     public:
@@ -813,6 +833,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *link, *forceArrow, *momentArrow, *contactPoints, *normalForceArrow, *frictionArrow;
+  };
+
+  class TyreContactObserverPropertyDialog : public MechanicalLinkObserverPropertyDialog {
+
+    public:
+      TyreContactObserverPropertyDialog(Element *observer);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *contactPoints, *normalForceArrow, *longitudinalForceArrow, *lateralForceArrow;
   };
 
   class FrameObserverPropertyDialog : public ObserverPropertyDialog {

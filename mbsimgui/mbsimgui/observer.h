@@ -58,6 +58,13 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new ContactObserverPropertyDialog(this); }
   };
 
+  class TyreContactObserver : public MechanicalLinkObserver {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TyreContactObserver, Observer, MBSIM%"TyreContactObserver", "Tyre contact observer");
+    public:
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      PropertyDialog* createPropertyDialog() override { return new TyreContactObserverPropertyDialog(this); }
+  };
+
   class FrameObserver : public Observer {
     MBSIMGUI_OBJECTFACTORY_CLASS(FrameObserver, Observer, MBSIM%"FrameObserver", "Frame observer");
     public:
