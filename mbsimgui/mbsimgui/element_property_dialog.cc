@@ -3333,9 +3333,6 @@ namespace MBSimGUI {
   }
 
   TyreContactObserverPropertyDialog::TyreContactObserverPropertyDialog(Element *observer) : MechanicalLinkObserverPropertyDialog(observer) {
-
-    addTab("Visualization",1);
-
     contactPoints = new ExtWidget("Enable openMBV contact points",new FrameMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVContactPoints");
     addToTab("Visualization",contactPoints);
 
