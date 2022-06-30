@@ -81,27 +81,30 @@ namespace MBSim {
     cFrame[0]->setPosition(cFrame[1]->getPosition(false) - Wn*max(g,0.));
     rrel(0) = g;
 
-    Vec3 nx = crossProduct(Wn,Wb);
+    Vec3 nx = crossProduct(Wb,Wn);
     nx /= nrm2(nx);
 
-    cFrame[0]->getOrientation(false).set(0, plane->getFrame()->getOrientation().col(0));
-    cFrame[0]->getOrientation(false).set(1, -nx);
-    cFrame[0]->getOrientation(false).set(2, crossProduct(cFrame[0]->getOrientation(false).col(0),cFrame[0]->getOrientation(false).col(1)));
-    cFrame[1]->getOrientation(false).set(0, nx);
-    cFrame[1]->getOrientation(false).set(2, -plane->getFrame()->getOrientation().col(0));
+    cFrame[0]->setOrientation(plane->getFrame()->getOrientation());
+    cFrame[1]->getOrientation(false).set(0, -plane->getFrame()->getOrientation().col(0));
+    cFrame[1]->getOrientation(false).set(2, nx);
     cFrame[1]->getOrientation(false).set(1, crossProduct(cFrame[1]->getOrientation(false).col(2),cFrame[1]->getOrientation(false).col(0)));
+
+    cFrame[0]->getOrientation(false).set(0, cFrame[1]->getOrientation(false).col(2));
+    cFrame[0]->getOrientation(false).set(1, cFrame[1]->getOrientation(false).col(1));
+    cFrame[0]->getOrientation(false).set(2, -cFrame[1]->getOrientation(false).col(0));
+    cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
 
     updrrel = false;
   }
 
   void TyreContact::updateGeneralizedVelocities() {
-    Vec3 Wn = cFrame[0]->evalOrientation().col(0);
+    Vec3 Wn = cFrame[0]->evalOrientation().col(2);
     Vec3 WvD = cFrame[1]->evalVelocity() - cFrame[0]->evalVelocity();
-    vrel(0) = Wn.T() * WvD;
+    vrel(2) = Wn.T() * WvD;
     Mat3xV Wt(2,NONINIT);
-    Wt.set(0, cFrame[0]->getOrientation().col(1));
-    Wt.set(1, cFrame[0]->getOrientation().col(2));
-    vrel.set(RangeV(1,2), Wt.T() * WvD);
+    Wt.set(0, cFrame[0]->getOrientation().col(0));
+    Wt.set(1, cFrame[0]->getOrientation().col(1));
+    vrel.set(RangeV(0,1), Wt.T() * WvD);
     updvrel = false;
   }
 
@@ -125,7 +128,7 @@ namespace MBSim {
     DF.set(0,cFrame[0]->evalOrientation().col(0));
     DF.set(1,cFrame[0]->getOrientation().col(1));
     DF.set(2,cFrame[0]->getOrientation().col(2));
-    DM.set(0,cFrame[0]->getOrientation().col(0));
+    DM.set(0,cFrame[0]->getOrientation().col(2));
     updDF = false;
   }
 
@@ -139,7 +142,7 @@ namespace MBSim {
 
   void TyreContact::updatexd() {
     const Vec3& v = evalForwardVelocity();
-    xd(0) = (atan(v(2)/v(1)) - x(0))*v(1)/evalsRelax();
+    xd(0) = (atan(v(1)/v(0)) - x(0))*v(0)/evalsRelax();
   }
 
   void TyreContact::resetUpToDate() {
