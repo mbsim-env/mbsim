@@ -166,7 +166,7 @@ namespace MBSim {
 	  data.push_back(toPoint(0));
 	  data.push_back(toPoint(1));
 	  data.push_back(toPoint(2));
-	  Vec3 F = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(0)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(0);
+	  Vec3 F = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(2)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(2);
 	  data.push_back(F(0));
 	  data.push_back(F(1));
 	  data.push_back(F(2));
@@ -183,7 +183,7 @@ namespace MBSim {
 	  data.push_back(toPoint(0));
 	  data.push_back(toPoint(1));
 	  data.push_back(toPoint(2));
-	  Vec3 F = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(1)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(1);
+	  Vec3 F = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(0)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(0);
 	  data.push_back(F(0));
 	  data.push_back(F(1));
 	  data.push_back(F(2));
@@ -200,7 +200,7 @@ namespace MBSim {
 	  data.push_back(toPoint(0));
 	  data.push_back(toPoint(1));
 	  data.push_back(toPoint(2));
-	  Vec3 F = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(2)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(2);
+	  Vec3 F = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(1)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(1);
 	  data.push_back(F(0));
 	  data.push_back(F(1));
 	  data.push_back(F(2));
