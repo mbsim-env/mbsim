@@ -3723,17 +3723,17 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
+          <xs:element name="unloadedRadius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Außenradius des unbelasteten Reifens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="rimRadius" type="pv:lengthScalar">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert den Felgenradius des Reifens.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="crownRadius" type="pv:lengthScalar">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Definiert den Wölbungsradius des Reifens.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

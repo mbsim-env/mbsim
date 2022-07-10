@@ -981,11 +981,11 @@ namespace MBSimGUI {
   TyrePropertyDialog::TyrePropertyDialog(Element *gear) : RigidContourPropertyDialog(gear) {
     addTab("Visualization",1);
 
+    rUnloaded = new ExtWidget("Unloaded radius",new ChoiceWidget(new ScalarWidgetFactory("0.1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedRadius");
+    addToTab("General", rUnloaded);
+
     rRim = new ExtWidget("Rim radius",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"rimRadius");
     addToTab("General", rRim);
-
-    rCrown = new ExtWidget("Crown radius",new ChoiceWidget(new ScalarWidgetFactory("0.1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"crownRadius");
-    addToTab("General", rCrown);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -993,16 +993,16 @@ namespace MBSimGUI {
 
   DOMElement* TyrePropertyDialog::initializeUsingXML(DOMElement *parent) {
     RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    rUnloaded->initializeUsingXML(item->getXMLElement());
     rRim->initializeUsingXML(item->getXMLElement());
-    rCrown->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* TyrePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    rUnloaded->writeXMLFile(item->getXMLElement(),nullptr);
     rRim->writeXMLFile(item->getXMLElement(),nullptr);
-    rCrown->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

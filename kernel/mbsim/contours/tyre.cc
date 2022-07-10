@@ -46,9 +46,9 @@ namespace MBSim {
 	  double eta = ombvEtaNodes[i];
 	  for (unsigned int j=0; j<ombvXiNodes.size(); j++) {
 	    double xi = ombvXiNodes[j];
-	    vp[i*n+j].push_back((rRim+rCrown*cos(xi))*cos(eta));
-	    vp[i*n+j].push_back(-rCrown*sin(xi));
-	    vp[i*n+j].push_back((rRim+rCrown*cos(xi))*sin(eta));
+	    vp[i*n+j].push_back((rRim+(rUnloaded-rRim)*cos(xi))*cos(eta));
+	    vp[i*n+j].push_back(-(rUnloaded-rRim)*sin(xi));
+	    vp[i*n+j].push_back((rRim+(rUnloaded-rRim)*cos(xi))*sin(eta));
 	  }
 	}
 	vector<int> indices(5*(ombvEtaNodes.size()-1)*(ombvXiNodes.size()-1));
@@ -73,10 +73,10 @@ namespace MBSim {
   void Tyre::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
+    e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedRadius");
+    setUnloadedRadius(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"rimRadius");
     setRimRadius(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"crownRadius");
-    setCrownRadius(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       auto ombv = shared_ptr<OpenMBVSpatialContour>(new OpenMBVSpatialContour);

@@ -76,12 +76,13 @@ namespace MBSim {
 
     ga = phi;
 
+    double rCrown = tyre->getUnloadedRadius() - tyre->getRimRadius();
     double SHr = (qHz3+qHz4*dfz)*ga;
     double Bt = (qBz1 + qBz2*dfz)*(1 + qBz5*abs(ga) + qBz6*pow(ga,2));
-    double Dt = FN*(tyre->getCrownRadius()/Fz0_RW)*(qDz1 + qDz2*dfz)*(1 + qDz3*abs(ga)+qDz4*pow(ga,2));
+    double Dt = FN*(rCrown/Fz0_RW)*(qDz1 + qDz2*dfz)*(1 + qDz3*abs(ga)+qDz4*pow(ga,2));
     double Et = (qEz1+qEz2*dfz)*(1 + qEz5*ga*(2./M_PI)*atan(Bt*Ct*slipAnglePT1));
     double Br = qBz9 + qBz10*By*Cy;
-    double Dr = FN*tyre->getCrownRadius()*((qDz8 + qDz9*dfz)*ga + (qDz10+qDz11*dfz)*ga*abs(ga))/sqrt(1 + pow(slipAnglePT1,2));
+    double Dr = FN*rCrown*((qDz8 + qDz9*dfz)*ga + (qDz10+qDz11*dfz)*ga*abs(ga))/sqrt(1 + pow(slipAnglePT1,2));
 
     double Fy = cos(Cyka*atan(Byka*slip))*Fy0;
     double lat = sqrt(pow(slipAnglePT1,2) + pow(Kxka*slip/Kyal,2))*sgn(slipAnglePT1);
