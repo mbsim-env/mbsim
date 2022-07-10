@@ -4120,7 +4120,290 @@
   </xs:element>
   <xs:complexType name="MagicFormulaSharpType">
     <xs:complexContent>
-      <xs:extension base="TyreModelType"/>
+      <xs:extension base="TyreModelType">
+        <xs:sequence>
+          <xs:element name="cz" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="dz" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="Fz0" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKy1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKy2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKy3" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKy4" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKy5" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKy6" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKy7" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pDx1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pDx2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pEx1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pEx2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pEx3" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pEx4" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKx1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKx2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pKx3" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="Cx" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="Cy" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="rBx1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="rBx2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="Cxal" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pDy1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pDy2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pDy3" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pEy1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pEy2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="pEy4" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="Cga" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="Ega" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="rBy1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="rBy2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="rBy3" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="Cyka" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qHz3" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qHz4" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qBz1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qBz2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qBz5" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qBz6" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qBz9" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qBz10" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qDz1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qDz2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qDz3" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qDz4" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qDz8" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qDz9" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qDz10" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qDz11" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qEz1" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qEz2" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="qEz5" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="Ct" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
     </xs:complexContent>
   </xs:complexType>
 
