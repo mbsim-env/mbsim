@@ -33,10 +33,10 @@ namespace MBSim {
 
       void init(InitStage stage, const InitConfigSet &config) override;
 
+      void setUnloadedRadius(double rUnloaded_) { rUnloaded = rUnloaded_; }
       void setRimRadius(double rRim_) { rRim = rRim_; }
-      void setCrownRadius(double rCrown_) { rCrown = rCrown_; }
+      double getUnloadedRadius() const { return rUnloaded; }
       double getRimRadius() const { return rRim; }
-      double getCrownRadius() const { return rCrown; }
 
 //      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),fmatvec::Vec3(std::vector<double>{-1,1,1}))(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
 //        OpenMBVColoredBody ombv(diffuseColor,transparency,pointSize,lineWidth);
@@ -47,7 +47,7 @@ namespace MBSim {
 
     protected:
       double rRim{0.2};
-      double rCrown{0.1};
+      double rUnloaded{0.3};
   };
 
 }

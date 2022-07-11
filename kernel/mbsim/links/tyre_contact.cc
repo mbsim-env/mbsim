@@ -76,8 +76,8 @@ namespace MBSim {
     Vec3 z_EC = Wn - t_EC*Wb;
     double z_EC_nrm2 = nrm2(z_EC);
     Vec3 Wd = tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC - plane->getFrame()->getPosition();
-    double g = Wn.T()*Wd - tyre->getCrownRadius();
-    cFrame[1]->setPosition(tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC - (tyre->getCrownRadius() + min(g,0.))*Wn);
+    double g = Wn.T()*Wd - tyre->getUnloadedRadius() + tyre->getRimRadius();
+    cFrame[1]->setPosition(tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC - (tyre->getUnloadedRadius() - tyre->getRimRadius() + min(g,0.))*Wn);
     cFrame[0]->setPosition(cFrame[1]->getPosition(false) - Wn*max(g,0.));
     rrel(0) = g;
 
