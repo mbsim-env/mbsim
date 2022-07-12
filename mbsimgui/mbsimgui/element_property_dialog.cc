@@ -3344,6 +3344,9 @@ namespace MBSimGUI {
 
     lateralForceArrow = new ExtWidget("Enable openMBV lateral force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVLateralForce");
     addToTab("Visualization",lateralForceArrow);
+
+    aligningMomentArrow = new ExtWidget("Enable openMBV aligning moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAligningMoment");
+    addToTab("Visualization",aligningMomentArrow);
   }
 
   DOMElement* TyreContactObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -3352,6 +3355,7 @@ namespace MBSimGUI {
     normalForceArrow->initializeUsingXML(item->getXMLElement());
     longitudinalForceArrow->initializeUsingXML(item->getXMLElement());
     lateralForceArrow->initializeUsingXML(item->getXMLElement());
+    aligningMomentArrow->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -3361,6 +3365,7 @@ namespace MBSimGUI {
     normalForceArrow->writeXMLFile(item->getXMLElement(),ref);
     longitudinalForceArrow->writeXMLFile(item->getXMLElement(),ref);
     lateralForceArrow->writeXMLFile(item->getXMLElement(),ref);
+    aligningMomentArrow->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
