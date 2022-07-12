@@ -81,6 +81,9 @@ namespace MBSimGUI {
     autoRefresh = new QCheckBox("Auto refresh");
     layout->addWidget(autoRefresh);
 
+    statusUpdate = new QCheckBox("Always update element status");
+    layout->addWidget(statusUpdate);
+
     layout->addWidget(new QLabel("MBSimGUI plugin search dirs (one directory per line; libmbsimgui-plugin-*.[so|dll]):"));
     plugins = new QTextEdit;
     layout->addWidget(plugins);
@@ -187,6 +190,15 @@ namespace MBSimGUI {
   void OptionsDialog::setAutoRefresh(bool flag) {
     autoRefresh->setCheckState(flag?Qt::Checked:Qt::Unchecked);
   }
+
+  bool OptionsDialog::getStatusUpdate() const {
+    return (statusUpdate->checkState()==Qt::Checked);
+  }
+
+  void OptionsDialog::setStatusUpdate(bool flag) {
+    statusUpdate->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
 
   QString OptionsDialog::getPlugins() const {
     return plugins->toPlainText();

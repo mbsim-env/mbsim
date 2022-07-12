@@ -110,6 +110,7 @@ namespace MBSimGUI {
       bool allowUndo;
       int maxUndo;
       bool autoRefresh;
+      bool statusUpdate;
       xercesc::DOMDocument *doc;
       std::deque<std::vector<xercesc::DOMDocument*>> undos, redos;
       std::pair<Element*,bool> elementBuffer;
@@ -223,6 +224,7 @@ namespace MBSimGUI {
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
       bool getAutoRefresh() const { return autoRefresh; }
+      bool getStatusUpdate() const { return statusUpdate; }
       bool editorIsOpen() const { return editor; }
       void loadProject();
       bool saveProjectAs();
