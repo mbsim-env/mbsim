@@ -25,7 +25,7 @@
 #include <QIcon>
 #include <vector>
 #include <mbxmlutilshelper/dom.h>
-#include <objectfactory.h>
+#include "objectfactory.h"
 
 class QMenu;
 
