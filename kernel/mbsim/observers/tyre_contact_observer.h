@@ -33,8 +33,8 @@ namespace MBSim {
     protected:
       std::vector<std::shared_ptr<OpenMBV::Frame>> openMBVContactFrame;
 
-      std::shared_ptr<OpenMBVInteractionArrow> ombvNormalForce, ombvLongitudinalForce, ombvLateralForce;
-      std::vector<std::shared_ptr<OpenMBV::Arrow>> normalForceArrow, longitudinalForceArrow, lateralForceArrow;
+      std::shared_ptr<OpenMBVInteractionArrow> ombvNormalForce, ombvLongitudinalForce, ombvLateralForce, ombvAligningMoment;
+      std::vector<std::shared_ptr<OpenMBV::Arrow>> normalForceArrow, longitudinalForceArrow, lateralForceArrow, aligningMomentArrow;
 
     public:
       TyreContactObserver(const std::string &name="");
@@ -49,8 +49,9 @@ namespace MBSim {
       }
 
       void setOMBVNormalForce(const std::shared_ptr<OpenMBVInteractionArrow> &arrow) { ombvNormalForce=arrow; }
-      void setOMBVLongitudinalForce(const std::shared_ptr<OpenMBVFrictionArrow> &arrow) { ombvLongitudinalForce=arrow; }
-      void setOMBVLateralForce(const std::shared_ptr<OpenMBVFrictionArrow> &arrow) { ombvLateralForce=arrow; }
+      void setOMBVLongitudinalForce(const std::shared_ptr<OpenMBVInteractionArrow> &arrow) { ombvLongitudinalForce=arrow; }
+      void setOMBVLateralForce(const std::shared_ptr<OpenMBVInteractionArrow> &arrow) { ombvLateralForce=arrow; }
+      void setOMBVAligningMoment(const std::shared_ptr<OpenMBVInteractionArrow> &arrow) { ombvAligningMoment=arrow; }
   };
 
 }  

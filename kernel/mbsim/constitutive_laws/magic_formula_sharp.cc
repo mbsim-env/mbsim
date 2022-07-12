@@ -151,6 +151,12 @@ namespace MBSim {
     setqEz5(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"Ct");
     setCt(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
+    if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
+    if(e) setScaleFactorForLateralForce(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForAligningMoment");
+    if(e) setScaleFactorForAligningMoment(E(e)->getText<double>());
   }
 
   void MagicFormulaSharp::updateGeneralizedForces() {
@@ -207,10 +213,10 @@ namespace MBSim {
     double Mzr = Dr*cos(atan(Br*lar));
     double M = Dt*cos(Ct*atan(Bt*lat - Et*(Bt*lat - atan(Bt*lat))))/sqrt(1 + pow(slipAnglePT1,2))*Fy - Mzr;
 
-    contact->getGeneralizedForce(false)(0) = FLo;
-    contact->getGeneralizedForce(false)(1) = FLa;
+    contact->getGeneralizedForce(false)(0) = sfFLo*FLo;
+    contact->getGeneralizedForce(false)(1) = sfFLa*FLa;
     contact->getGeneralizedForce(false)(2) = FN;
-    contact->getGeneralizedForce(false)(3) = M;
+    contact->getGeneralizedForce(false)(3) = sfM*M;
 
     contact->getsRelax(false) = Kyalr*(9.694e-6 - 1.333*1e-8*contact->getForwardVelocity()(0) + 1.898e-9*pow(contact->getForwardVelocity()(0),2));
   }
