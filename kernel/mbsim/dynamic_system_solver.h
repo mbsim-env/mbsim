@@ -25,6 +25,8 @@
 #include "mbsim/functions/function.h"
 #include "mbsim/environment.h"
 
+#include <atomic>
+
 namespace MBSim {
 
   class Graph;
