@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+bindir=${exec_prefix}/bin
+
+Name: mbsimgui
+Description: mbsimgui is a graphical frontend to the multi-body simulation library mbsim.
+Requires: mbsim openmbv
+Version: @VERSION@
+Libs: -L${libdir} -lmbsimgui -lmbsim -lopenmbv
+Cflags: -I${includedir} @DEFINES@
+

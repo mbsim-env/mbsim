@@ -102,7 +102,8 @@ mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) $(MAYBE_SIGWATCH_SRC) \
 
 nodist_mbsimgui_SOURCES=$(mbsimgui_QT_BUILT_SOURCES)
 
-mbsimgui_HEADERS = analyzer.h \
+mbsimguiincludedir = $(includedir)/mbsimgui
+mbsimguiinclude_HEADERS = analyzer.h \
   basicitemdata.h \
   basic_widgets.h \
   body.h \

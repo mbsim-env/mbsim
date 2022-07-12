@@ -89,7 +89,7 @@ namespace MBSimGUI {
 
   vector<boost::filesystem::path> dependencies;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), doc(nullptr), elementBuffer(nullptr,false), parameterBuffer(nullptr,false), installPath(boost::dll::program_location().parent_path().parent_path()) {
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(nullptr), elementBuffer(nullptr,false), parameterBuffer(nullptr,false), installPath(boost::dll::program_location().parent_path().parent_path()) {
     QSettings settings;
 
     impl=DOMImplementation::getImplementation();
@@ -549,6 +549,7 @@ namespace MBSimGUI {
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
+    menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
     menu.setBaseIndexForPlot(settings.value("mainwindow/options/baseindexforplot", 1).toInt());
 
@@ -575,6 +576,7 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/maxundo",          menu.getMaxUndo());
       settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
       settings.setValue("mainwindow/options/autorefresh",      menu.getAutoRefresh());
+      settings.setValue("mainwindow/options/statusupdate",     menu.getStatusUpdate());
       settings.setValue("mainwindow/options/plugins",          menu.getPlugins());
       settings.setValue("mainwindow/options/baseindexforplot", menu.getBaseIndexForPlot());
 
@@ -595,6 +597,7 @@ namespace MBSimGUI {
       elementViewFilter->setVisible(showFilters);
       parameterViewFilter->setVisible(showFilters);
       autoRefresh = menu.getAutoRefresh();
+      statusUpdate = menu.getStatusUpdate();
 
       if(oldPlugins!=menu.getPlugins())
         QMessageBox::information(this, "Program restart required!",
@@ -2561,7 +2564,7 @@ namespace MBSimGUI {
             editor->fromWidget();
 	    updateValues(parameter->getParent());
             if(getAutoRefresh()) refresh();
-            parameter->getParent()->updateStatus();
+            if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
         menuBar()->setEnabled(true);
         editor = nullptr;
@@ -2578,7 +2581,7 @@ namespace MBSimGUI {
 	  updateValues(parameter->getParent());
           if(getAutoRefresh()) refresh();
           editor->setCancel(true);
-          parameter->getParent()->updateStatus();
+	  if(getStatusUpdate()) parameter->getParent()->updateStatus();
         });
       }
     }
