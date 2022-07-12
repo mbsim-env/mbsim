@@ -486,6 +486,12 @@ namespace MBSimGUI {
     layout->addWidget(qEz5);
     Ct = new ExtWidget("Ct",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"Ct");
     layout->addWidget(Ct);
+    sfFLo = new ExtWidget("Scale factor for longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalForce");
+    layout->addWidget(sfFLo);
+    sfFLa = new ExtWidget("Scale factor for lateral force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForce");
+    layout->addWidget(sfFLa);
+    sfM = new ExtWidget("Scale factor for aligning moment",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMoment");
+    layout->addWidget(sfM);
   }
 
   DOMElement* MagicFormulaSharpWidget::initializeUsingXML(DOMElement *element) {
@@ -546,6 +552,9 @@ namespace MBSimGUI {
     qEz2->initializeUsingXML(element);
     qEz5->initializeUsingXML(element);
     Ct->initializeUsingXML(element);
+    sfFLo->initializeUsingXML(element);
+    sfFLa->initializeUsingXML(element);
+    sfM->initializeUsingXML(element);
     return element;
   }
 
@@ -607,6 +616,9 @@ namespace MBSimGUI {
     qEz2->writeXMLFile(ele0);
     qEz5->writeXMLFile(ele0);
     Ct->writeXMLFile(ele0);
+    sfFLo->writeXMLFile(ele0);
+    sfFLa->writeXMLFile(ele0);
+    sfM->writeXMLFile(ele0);
     return ele0;
   }
 
