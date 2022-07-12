@@ -85,6 +85,9 @@ namespace MBSim {
       void setqEz2(double qEz2_) { qEz2 = qEz2_; }
       void setqEz5(double qEz5_) { qEz5 = qEz5_; }
       void setCt(double Ct_) { Ct = Ct_; }
+      void setScaleFactorForLongitudinalForce(double sfFLo_) { sfFLo = sfFLo_; }
+      void setScaleFactorForLateralForce(double sfFLa_) { sfFLa = sfFLa_; }
+      void setScaleFactorForAligningMoment(double sfM_) { sfM = sfM_; }
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -147,6 +150,9 @@ namespace MBSim {
       double qEz2{0};
       double qEz5{0};
       double Ct{0};
+      double sfFLo{1};
+      double sfFLa{1};
+      double sfM{1};
  };
 
 }

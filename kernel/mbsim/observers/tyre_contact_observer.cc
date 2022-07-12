@@ -89,7 +89,7 @@ namespace MBSim {
 	   getOpenMBVGrp()->addObject(normalForceArrow[i]);
 	 }
        }
-       if(ombvLongitudinalForce) { // friction force
+       if(ombvLongitudinalForce) {
 	 longitudinalForceArrow.resize(ombvLongitudinalForce->getSideOfInteraction()==2?2:1);
 	 for(size_t i=0; i<longitudinalForceArrow.size(); i++) {
 	   longitudinalForceArrow[i]=ombvLongitudinalForce->createOpenMBV();
@@ -97,12 +97,20 @@ namespace MBSim {
 	   getOpenMBVGrp()->addObject(longitudinalForceArrow[i]);
 	 }
        }
-       if(ombvLateralForce) { // friction force
+       if(ombvLateralForce) {
 	 lateralForceArrow.resize(ombvLateralForce->getSideOfInteraction()==2?2:1);
 	 for(size_t i=0; i<lateralForceArrow.size(); i++) {
 	   lateralForceArrow[i]=ombvLateralForce->createOpenMBV();
 	   lateralForceArrow[i]->setName(string("LateralForce_")+(lateralForceArrow.size()>1?to_string(i):string("B")));
 	   getOpenMBVGrp()->addObject(lateralForceArrow[i]);
+	 }
+       }
+       if(ombvAligningMoment) {
+	 aligningMomentArrow.resize(ombvAligningMoment->getSideOfInteraction()==2?2:1);
+	 for(size_t i=0; i<aligningMomentArrow.size(); i++) {
+	   aligningMomentArrow[i]=ombvAligningMoment->createOpenMBV();
+	   aligningMomentArrow[i]->setName(string("AligningMoment_")+(aligningMomentArrow.size()>1?to_string(i):string("B")));
+	   getOpenMBVGrp()->addObject(aligningMomentArrow[i]);
 	 }
        }
      }
@@ -208,6 +216,23 @@ namespace MBSim {
 	  lateralForceArrow[i]->append(data);
 	}
       }
+      if(ombvAligningMoment) {
+	int off = ombvAligningMoment->getSideOfInteraction()==0?1:0;
+	for(size_t i=0; i<aligningMomentArrow.size(); i++) {
+	  vector<double> data;
+	  data.push_back(getTime());
+	  Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
+	  data.push_back(toPoint(0));
+	  data.push_back(toPoint(1));
+	  data.push_back(toPoint(2));
+	  Vec3 M = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(2)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(3);
+	  data.push_back(M(0));
+	  data.push_back(M(1));
+	  data.push_back(M(2));
+	  data.push_back(1);
+	  aligningMomentArrow[i]->append(data);
+	}
+      }
     }
   }
 
@@ -227,13 +252,18 @@ namespace MBSim {
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVLongitudinalForce");
     if (e) {
-      ombvLongitudinalForce = shared_ptr<OpenMBVFrictionArrow>(new OpenMBVFrictionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
+      ombvLongitudinalForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvLongitudinalForce->initializeUsingXML(e);
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVLateralForce");
     if (e) {
-      ombvLateralForce = shared_ptr<OpenMBVFrictionArrow>(new OpenMBVFrictionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
+      ombvLateralForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvLateralForce->initializeUsingXML(e);
+    }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAligningMoment");
+    if (e) {
+      ombvAligningMoment = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toDoubleHead,OpenMBVArrow::toPoint));
+      ombvAligningMoment->initializeUsingXML(e);
     }
   }
 
