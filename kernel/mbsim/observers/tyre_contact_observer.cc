@@ -38,41 +38,34 @@ namespace MBSim {
   }
 
   void TyreContactObserver::init(InitStage stage, const InitConfigSet &config) {
-//   if(stage==resolveStringRef) {
-//     if(not saved_link.empty())
-//       setTyreContact(getByPath<TyreContact>(saved_link));
-//     if(not link)
-//       throwError("Tyre contact is not given!");
-//     MechanicalLinkObserver::init(stage, config);
-//   }
    if(stage==plotting) {
+     if(plotFeature[plotRecursive]) {
+       if(plotFeature[position]) {
+	 for(int i=0; i<2; i++)
+	   addToPlot("position "+to_string(convertIndex(i)),{"x","y","z"});
+       }
+       if(plotFeature[angle]) {
+	 for(int i=0; i<2; i++)
+	   addToPlot("angle "+to_string(convertIndex(i)),{"x","y","z"});
+       }
+       if(plotFeature[velocity]) {
+	 for(int i=0; i<2; i++)
+	   addToPlot("velocity "+to_string(convertIndex(i)),{"x","y","z"});
+       }
+       if(plotFeature[angularVelocity]) {
+	 for(int i=0; i<2; i++)
+	   addToPlot("angular velocity "+to_string(convertIndex(i)),{"x","y","z"});
+       }
+       if(plotFeature[acceleration]) {
+	 for(int i=0; i<2; i++)
+	   addToPlot("acceleration "+to_string(convertIndex(i)),{"x","y","z"});
+       }
+       if(plotFeature[angularAcceleration]) {
+	 for(int i=0; i<2; i++)
+	   addToPlot("angular acceleration "+to_string(convertIndex(i)),{"x","y","z"});
+       }
+     }
      MechanicalLinkObserver::init(stage, config);
-//     if(plotFeature[plotRecursive]) {
-//       if(plotFeature[position]) {
-//	 for(int i=0; i<2; i++)
-//	   addToPlot("position "+to_string(convertIndex(i)),{"x","y","z"});
-//       }
-//       if(plotFeature[angle]) {
-//	 for(int i=0; i<2; i++)
-//	   addToPlot("angle "+to_string(convertIndex(i)),{"x","y","z"});
-//       }
-//       if(plotFeature[velocity]) {
-//	 for(int i=0; i<2; i++)
-//	   addToPlot("velocity "+to_string(convertIndex(i)),{"x","y","z"});
-//       }
-//       if(plotFeature[angularVelocity]) {
-//	 for(int i=0; i<2; i++)
-//	   addToPlot("angular velocity "+to_string(convertIndex(i)),{"x","y","z"});
-//       }
-//       if(plotFeature[acceleration]) {
-//	 for(int i=0; i<2; i++)
-//	   addToPlot("acceleration "+to_string(convertIndex(i)),{"x","y","z"});
-//       }
-//       if(plotFeature[angularAcceleration]) {
-//	 for(int i=0; i<2; i++)
-//	   addToPlot("angular acceleration "+to_string(convertIndex(i)),{"x","y","z"});
-//       }
-//     }
      if (plotFeature[openMBV]) {
        if(openMBVContactFrame[0]) {
 	 for (unsigned int i = 0; i < 2; i++) { // frames
@@ -120,33 +113,32 @@ namespace MBSim {
   }
 
   void TyreContactObserver::plot() {
-    MechanicalLinkObserver::plot();
-//    if(plotFeature[plotRecursive]) {
-//      if(plotFeature[position]) {
-//	for(int i=0; i<2; i++)
-//	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalPosition());
-//      }
-//      if(plotFeature[angle]) {
-//	for(int i=0; i<2; i++)
-//	  Element::plot(AIK2Cardan(static_cast<TyreContact*>(link)->getContourFrame(i)->evalOrientation()));
-//      }
-//      if(plotFeature[velocity]) {
-//	for(int i=0; i<2; i++)
-//	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalVelocity());
-//      }
-//      if(plotFeature[angularVelocity]) {
-//	for(int i=0; i<2; i++)
-//	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalAngularVelocity());
-//      }
-//      if(plotFeature[acceleration]) {
-//	for(int i=0; i<2; i++)
-//	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalAcceleration());
-//      }
-//      if(plotFeature[angularAcceleration]) {
-//	for(int i=0; i<2; i++)
-//	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalAngularAcceleration());
-//      }
-//    }
+    if(plotFeature[plotRecursive]) {
+      if(plotFeature[position]) {
+	for(int i=0; i<2; i++)
+	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalPosition());
+      }
+      if(plotFeature[angle]) {
+	for(int i=0; i<2; i++)
+	  Element::plot(AIK2Cardan(static_cast<TyreContact*>(link)->getContourFrame(i)->evalOrientation()));
+      }
+      if(plotFeature[velocity]) {
+	for(int i=0; i<2; i++)
+	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalVelocity());
+      }
+      if(plotFeature[angularVelocity]) {
+	for(int i=0; i<2; i++)
+	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalAngularVelocity());
+      }
+      if(plotFeature[acceleration]) {
+	for(int i=0; i<2; i++)
+	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalAcceleration());
+      }
+      if(plotFeature[angularAcceleration]) {
+	for(int i=0; i<2; i++)
+	  Element::plot(static_cast<TyreContact*>(link)->getContourFrame(i)->evalAngularAcceleration());
+      }
+    }
     if(plotFeature[openMBV]) {
       if(openMBVContactFrame[0]) {
 	for(unsigned int i = 0; i < 2; i++) {
@@ -234,6 +226,7 @@ namespace MBSim {
 	}
       }
     }
+    MechanicalLinkObserver::plot();
   }
 
   void TyreContactObserver::initializeUsingXML(DOMElement *element) {

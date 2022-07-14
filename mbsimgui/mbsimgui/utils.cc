@@ -192,7 +192,7 @@ namespace MBSimGUI {
   template<class Container>
   void createContextMenuFor(QMenu *self, TreeItemData *item, const QString &prefix) {
     QMenu* tempTopMenu=new QMenu(self); // create a temporary parent for everything
-    const static QString menuPostfix("'s");
+    const static QString menuPostfix("s");
     const auto &funcs=ObjectFactory::getInstance().getAllTypesForContainer<Container>();
     // create a menu action for each class derived from Container
     const ObjectFactory::Funcs* funcForContainer=nullptr;
