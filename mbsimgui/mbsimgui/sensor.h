@@ -158,6 +158,22 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedContactForceSensor, ContactSensor, MBSIMCONTROL%"GeneralizedContactForceSensor", "Generalized contact force sensor");
   };
 
+  class TyreContactSensor : public Sensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TyreContactSensor, Sensor, MBSIMCONTROL%"TyreContactSensor", "Tyre contact sensor");
+  };
+
+  class TyreContactPositionSensor : public TyreContactSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TyreContactPositionSensor, TyreContactSensor, MBSIMCONTROL%"TyreContactPositionSensor", "Tyre contact position sensor");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new TyreContactPositionSensorPropertyDialog(this); }
+  };
+
+  class TyreContactOrientationSensor : public TyreContactSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TyreContactOrientationSensor, TyreContactSensor, MBSIMCONTROL%"TyreContactOrientationSensor", "Tyre contact orientation sensor");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new TyreContactOrientationSensorPropertyDialog(this); }
+  };
+
   class StateMachineSensor : public Sensor {
     MBSIMGUI_OBJECTFACTORY_CLASS(StateMachineSensor, Sensor, MBSIMCONTROL%"StateMachineSensor", "State machine sensor");
     public:

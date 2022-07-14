@@ -48,5 +48,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(PositionSensor);
   MBSIMGUI_REGOBJECTFACTORY(VelocitySensor);
   MBSIMGUI_REGOBJECTFACTORY(StateMachineSensor);
+  MBSIMGUI_REGOBJECTFACTORY(TyreContactOrientationSensor);
+  MBSIMGUI_REGOBJECTFACTORY(TyreContactPositionSensor);
 
 }
