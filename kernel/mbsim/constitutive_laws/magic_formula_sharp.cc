@@ -36,6 +36,29 @@ namespace MBSim {
     return (T(0) < val) - (val < T(0));
   }
 
+  void MagicFormulaSharp::initPlot(vector<string> &plotColumns) {
+    plotColumns.emplace_back("camber angle");
+    plotColumns.emplace_back("rolling velocity");
+    plotColumns.emplace_back("spin component of longitudinal velocity");
+    plotColumns.emplace_back("longitudinal slip");
+    plotColumns.emplace_back("Kyal");
+    plotColumns.emplace_back("sSelax");
+    plotColumns.emplace_back("slip angle");
+    plotColumns.emplace_back("scrub radius");
+  }
+
+  void MagicFormulaSharp::plot(vector<double> &plotVector) {
+    static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
+    plotVector.push_back(phi);
+    plotVector.push_back(vRoll);
+    plotVector.push_back(RvSx-vRoll);
+    plotVector.push_back(slip);
+    plotVector.push_back(Kyalr);
+    plotVector.push_back(sRelax);
+    plotVector.push_back(slipAnglePT1);
+    plotVector.push_back(rScrub);
+  }
+
   void MagicFormulaSharp::initializeUsingXML(DOMElement *element) {
     TyreModel::initializeUsingXML(element);
     DOMElement* e;
@@ -164,8 +187,9 @@ namespace MBSim {
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
     double FN = max(0.1,-cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2));
 
-    double RvSx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
-    double slip = -RvSx/contact->evalForwardVelocity()(0);
+    RvSx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
+    vRoll = contact->evalForwardVelocity()(0);
+    slip = -RvSx/vRoll;
 
     double dfz = (FN - Fz0)/Fz0;
     double Dx = (pDx1 + pDx2*dfz)*FN;
@@ -174,10 +198,10 @@ namespace MBSim {
     double Bx = Kxka/(Cx*Dx);
     double Fx0 = Dx*sin(Cx*atan(Bx*slip - Ex*(Bx*slip - atan(Bx*slip))));
     double Bxal = rBx1*cos(atan(rBx2*slip));
-    double slipAnglePT1 = contact->getx()(0);
+    slipAnglePT1 = contact->getx()(0);
     double FLo = cos(Cxal*atan(Bxal*slipAnglePT1))*Fx0;
-    double phi = asin(static_cast<Tyre*>(contact->getContour(1))->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
-    double Kyalr = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3+pKy4*pow(phi,2))*Fz0)))/(1+pKy5*pow(phi,2));
+    phi = asin(static_cast<Tyre*>(contact->getContour(1))->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
+    Kyalr = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3+pKy4*pow(phi,2))*Fz0)))/(1+pKy5*pow(phi,2));
     double Dy = FN*pDy1*exp(pDy2*dfz)/(1 + pDy3*pow(phi,2));
     double Ey = pEy1 + pEy2*pow(phi,2) + pEy4*phi*sgn(slipAnglePT1);
     double By = Kyalr/(Cy*Dy);
@@ -213,11 +237,15 @@ namespace MBSim {
     double Mzr = Dr*cos(atan(Br*lar));
     double M = Dt*cos(Ct*atan(Bt*lat - Et*(Bt*lat - atan(Bt*lat))))/sqrt(1 + pow(slipAnglePT1,2))*Fy - Mzr;
 
+    sRelax = Kyalr*(9.694e-6 - 1.333*1e-8*contact->getForwardVelocity()(0) + 1.898e-9*pow(contact->getForwardVelocity()(0),2));
+
+    rScrub = (rCrown+contact->getGeneralizedRelativePosition()(0))*sin(phi);
+
     contact->getGeneralizedForce(false)(0) = sfFLo*FLo;
     contact->getGeneralizedForce(false)(1) = sfFLa*FLa;
     contact->getGeneralizedForce(false)(2) = FN;
     contact->getGeneralizedForce(false)(3) = sfM*M;
 
-    contact->getsRelax(false) = Kyalr*(9.694e-6 - 1.333*1e-8*contact->getForwardVelocity()(0) + 1.898e-9*pow(contact->getForwardVelocity()(0),2));
+    contact->getsRelax(false) = sRelax;
   }
 }

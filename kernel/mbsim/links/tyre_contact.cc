@@ -11,10 +11,6 @@ using namespace MBXMLUtils;
 
 namespace MBSim {
 
-  template <typename T> int sgn(T val) {
-    return (T(0) < val) - (val < T(0));
-  }
-
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, TyreContact)
 
   TyreContact::TyreContact(const std::string &name) : ContourLink(name) {
@@ -38,6 +34,11 @@ namespace MBSim {
       iF = RangeV(0,2);
       iM = RangeV(3,3);
     }
+    else if(stage==plotting) {
+      if(plotFeature[plotRecursive]) {
+	model->initPlot(plotColumns);
+      }
+    }
     ContourLink::init(stage,config);
     model->init(stage, config);
   }
@@ -46,7 +47,13 @@ namespace MBSim {
     ContourLink::initializeUsingXML(element);
     xercesc::DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"tyreModel");
     setTyreModel(ObjectFactory::createAndInit<TyreModel>(e->getFirstElementChild()));
+  }
 
+  void TyreContact::plot() {
+    if(plotFeature[plotRecursive]) {
+      model->plot(plotVector);
+    }
+    ContourLink::plot();
   }
 
   void TyreContact::setTyreModel(TyreModel *model_) {
@@ -149,4 +156,5 @@ namespace MBSim {
     ContourLink::resetUpToDate();
     updfvel = true;
   }
+
 }
