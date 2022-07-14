@@ -3748,6 +3748,56 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  TyreContactSensorPropertyDialog::TyreContactSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
+    contact = new ExtWidget("Tyre Contact of reference",new ElementOfReferenceWidget<TyreContact>(sensor,nullptr,this),false,false,MBSIMCONTROL%"tyreContact");
+    addToTab("General", contact);
+ }
+
+  DOMElement* TyreContactSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    contact->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TyreContactSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    contact->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  TyreContactPositionSensorPropertyDialog::TyreContactPositionSensorPropertyDialog(Element *sensor) : TyreContactSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Position number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"positionNumber");
+    addToTab("General", number);
+ }
+
+  DOMElement* TyreContactPositionSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    TyreContactSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TyreContactPositionSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    TyreContactSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  TyreContactOrientationSensorPropertyDialog::TyreContactOrientationSensorPropertyDialog(Element *sensor) : TyreContactSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Orientation number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"positionNumber");
+    addToTab("General", number);
+ }
+
+  DOMElement* TyreContactOrientationSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    TyreContactSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TyreContactOrientationSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    TyreContactSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
 
   MultiplexerPropertyDialog::MultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
     inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1),false,false,"");
