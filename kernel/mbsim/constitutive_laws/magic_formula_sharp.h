@@ -89,6 +89,8 @@ namespace MBSim {
       void setScaleFactorForLateralForce(double sfFLa_) { sfFLa = sfFLa_; }
       void setScaleFactorForAligningMoment(double sfM_) { sfM = sfM_; }
 
+      void initPlot(std::vector<std::string> &plotColumns) override;
+      void plot(std::vector<double> &plotVector) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void updateGeneralizedForces() override;
@@ -153,6 +155,8 @@ namespace MBSim {
       double sfFLo{1};
       double sfFLa{1};
       double sfM{1};
+
+      double RvSx, vRoll, vSpin, slip, phi, Kyalr, sRelax, slipAnglePT1, rScrub;
  };
 
 }

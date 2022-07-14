@@ -31,6 +31,10 @@ namespace MBSim {
       }
       ~TyreModel() override = default;
 
+      virtual void initPlot(std::vector<std::string> &plotColumns) { }
+      virtual void plot(std::vector<double> &plotVector) { }
+      using Element::plot;
+
       virtual void updateGeneralizedForces() { }
   };
 

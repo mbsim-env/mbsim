@@ -565,6 +565,66 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="TyreContactSensor" abstract="true" substitutionGroup="Sensor" type="TyreContactSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen von Daten eines Reifenkontakts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreContactSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="tyreContact">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Pfad des Reifenkontakts.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:LinkReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TyreContactPositionSensor" substitutionGroup="TyreContactSensor" type="TyreContactPositionSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der Position eines Reifenkontakts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreContactPositionSensorType">
+    <xs:complexContent>
+      <xs:extension base="TyreContactSensorType">
+        <xs:sequence>
+          <xs:element name="positionNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TyreContactOrientationSensor" substitutionGroup="TyreContactSensor" type="TyreContactOrientationSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der Orientierung eines Reifenkontakts.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreContactOrientationSensorType">
+    <xs:complexContent>
+      <xs:extension base="TyreContactSensorType">
+        <xs:sequence>
+          <xs:element name="positionNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="ConstraintSensor" abstract="true" substitutionGroup="Sensor" type="ConstraintSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

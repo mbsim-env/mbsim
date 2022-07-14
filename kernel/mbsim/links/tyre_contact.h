@@ -35,6 +35,7 @@ namespace MBSim {
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
+      void plot() override;
 
       void calcSize() override;
       void calcxSize() override { xSize = 1; }
