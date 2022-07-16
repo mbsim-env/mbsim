@@ -41,7 +41,7 @@ namespace MBSim {
     plotColumns.emplace_back("rolling velocity");
     plotColumns.emplace_back("spin component of longitudinal velocity");
     plotColumns.emplace_back("longitudinal slip");
-    plotColumns.emplace_back("skew stiffness");
+    plotColumns.emplace_back("cornering stiffness");
     plotColumns.emplace_back("relaxation length");
     plotColumns.emplace_back("slip angle");
     plotColumns.emplace_back("scrub radius");
