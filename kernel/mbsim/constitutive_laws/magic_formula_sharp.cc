@@ -243,7 +243,7 @@ namespace MBSim {
     double Mzr = Dr*cos(atan(Br*lar));
     double M = Dt*cos(Ct*atan(Bt*lat - Et*(Bt*lat - atan(Bt*lat))))/sqrt(1 + pow(slipAnglePT1,2))*Fy - Mzr;
 
-    sRelax = Kyalr*(c1Rel - c2Rel*contact->getForwardVelocity()(0) + c3Rel*pow(contact->getForwardVelocity()(0),2));
+    sRelax = Kyalr*(c1Rel + c2Rel*contact->getForwardVelocity()(0) + c3Rel*pow(contact->getForwardVelocity()(0),2));
 
     rScrub = (rCrown+contact->getGeneralizedRelativePosition()(0))*sin(phi);
 
