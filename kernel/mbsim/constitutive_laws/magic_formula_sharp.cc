@@ -174,6 +174,12 @@ namespace MBSim {
     setqEz5(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"Ct");
     setCt(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"c1Rel");
+    setc1Rel(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"c2Rel");
+    setc2Rel(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"c3Rel");
+    setc3Rel(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -237,7 +243,7 @@ namespace MBSim {
     double Mzr = Dr*cos(atan(Br*lar));
     double M = Dt*cos(Ct*atan(Bt*lat - Et*(Bt*lat - atan(Bt*lat))))/sqrt(1 + pow(slipAnglePT1,2))*Fy - Mzr;
 
-    sRelax = Kyalr*(9.694e-6 - 1.333*1e-8*contact->getForwardVelocity()(0) + 1.898e-9*pow(contact->getForwardVelocity()(0),2));
+    sRelax = Kyalr*(c1Rel - c2Rel*contact->getForwardVelocity()(0) + c3Rel*pow(contact->getForwardVelocity()(0),2));
 
     rScrub = (rCrown+contact->getGeneralizedRelativePosition()(0))*sin(phi);
 
