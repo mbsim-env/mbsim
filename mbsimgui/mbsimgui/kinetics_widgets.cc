@@ -492,6 +492,8 @@ namespace MBSimGUI {
     layout->addWidget(c2Rel);
     c3Rel = new ExtWidget("c3Rel",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"c3Rel");
     layout->addWidget(c3Rel);
+    sfKyga = new ExtWidget("Scale factor for camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForCamberStiffness");
+    layout->addWidget(sfKyga);
     sfFLo = new ExtWidget("Scale factor for longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalForce");
     layout->addWidget(sfFLo);
     sfFLa = new ExtWidget("Scale factor for lateral force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForce");
@@ -561,6 +563,7 @@ namespace MBSimGUI {
     c1Rel->initializeUsingXML(element);
     c2Rel->initializeUsingXML(element);
     c3Rel->initializeUsingXML(element);
+    sfKyga->initializeUsingXML(element);
     sfFLo->initializeUsingXML(element);
     sfFLa->initializeUsingXML(element);
     sfM->initializeUsingXML(element);
@@ -628,6 +631,7 @@ namespace MBSimGUI {
     c1Rel->writeXMLFile(ele0);
     c2Rel->writeXMLFile(ele0);
     c3Rel->writeXMLFile(ele0);
+    sfKyga->writeXMLFile(ele0);
     sfFLo->writeXMLFile(ele0);
     sfFLa->writeXMLFile(ele0);
     sfM->writeXMLFile(ele0);
