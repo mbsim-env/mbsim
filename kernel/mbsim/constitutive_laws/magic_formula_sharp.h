@@ -88,6 +88,7 @@ namespace MBSim {
       void setc1Rel(double c1Rel_) { c1Rel = c1Rel_; }
       void setc2Rel(double c2Rel_) { c2Rel = c2Rel_; }
       void setc3Rel(double c3Rel_) { c3Rel = c3Rel_; }
+      void setScaleFactorForCamberStiffness(double sfKyga_) { sfKyga = sfKyga_; }
       void setScaleFactorForLongitudinalForce(double sfFLo_) { sfFLo = sfFLo_; }
       void setScaleFactorForLateralForce(double sfFLa_) { sfFLa = sfFLa_; }
       void setScaleFactorForAligningMoment(double sfM_) { sfM = sfM_; }
@@ -155,14 +156,15 @@ namespace MBSim {
       double qEz2{0};
       double qEz5{0};
       double Ct{0};
-      double sfFLo{1};
-      double sfFLa{1};
-      double sfM{1};
       double c1Rel{1};
       double c2Rel{0};
       double c3Rel{0};
+      double sfKyga{1};
+      double sfFLo{1};
+      double sfFLa{1};
+      double sfM{1};
 
-      double RvSx, vRoll, vSpin, slip, phi, Kyalr, sRelax, slipAnglePT1, rScrub;
+      double RvSx, vRoll, vSpin, slip, phi, Kyal, sRelax, slipAnglePT1, rScrub;
  };
 
 }

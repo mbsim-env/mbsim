@@ -53,7 +53,7 @@ namespace MBSim {
     plotVector.push_back(vRoll);
     plotVector.push_back(RvSx-vRoll);
     plotVector.push_back(slip);
-    plotVector.push_back(Kyalr);
+    plotVector.push_back(Kyal);
     plotVector.push_back(sRelax);
     plotVector.push_back(slipAnglePT1);
     plotVector.push_back(rScrub);
@@ -180,6 +180,8 @@ namespace MBSim {
     setc2Rel(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"c3Rel");
     setc3Rel(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForCamberStiffness");
+    if(e) setScaleFactorForCamberStiffness(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -207,11 +209,11 @@ namespace MBSim {
     slipAnglePT1 = contact->getx()(0);
     double FLo = cos(Cxal*atan(Bxal*slipAnglePT1))*Fx0;
     phi = asin(static_cast<Tyre*>(contact->getContour(1))->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
-    Kyalr = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3+pKy4*pow(phi,2))*Fz0)))/(1+pKy5*pow(phi,2));
+    Kyal = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3+pKy4*pow(phi,2))*Fz0)))/(1+pKy5*pow(phi,2));
     double Dy = FN*pDy1*exp(pDy2*dfz)/(1 + pDy3*pow(phi,2));
     double Ey = pEy1 + pEy2*pow(phi,2) + pEy4*phi*sgn(slipAnglePT1);
-    double By = Kyalr/(Cy*Dy);
-    double Kyga = (pKy6 + pKy7*dfz)*FN;
+    double By = Kyal/(Cy*Dy);
+    double Kyga = (pKy6 + pKy7*dfz)*FN*sfKyga;
     double Bga = Kyga/(Cga*Dy);
     double Fy0 = Dy*sin(Cy*atan(By*slipAnglePT1 - Ey*(By*slipAnglePT1 - atan(By*slipAnglePT1))) + Cga*atan(Bga*phi - Ega*(Bga*phi - atan(Bga*phi))));
 
@@ -221,9 +223,9 @@ namespace MBSim {
     double ga = 0;
     Dy = FN*pDy1*exp(pDy2*dfz)/(1 + pDy3*pow(ga,2));
     Ey = pEy1+pEy2*pow(ga,2) + pEy4*ga*sgn(slipAnglePT1);
-    double Kyal = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3 + pKy4*pow(ga,2))*Fz0)))/(1 + pKy5*pow(ga,2));
-    By = Kyal/(Cy*Dy);
-    Kyga = (pKy6 + pKy7*dfz)*FN;
+    double Kyal_ = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3 + pKy4*pow(ga,2))*Fz0)))/(1 + pKy5*pow(ga,2));
+    By = Kyal_/(Cy*Dy);
+//    Kyga = (pKy6 + pKy7*dfz)*FN;
     Bga = Kyga/(Cga*Dy);
     Fy0 = Dy*sin(Cy*atan(By*slipAnglePT1 - Ey*(By*slipAnglePT1 - atan(By*slipAnglePT1))) + Cga*atan(Bga*ga - Ega*(Bga*ga - atan(Bga*ga))));
 
@@ -238,12 +240,12 @@ namespace MBSim {
     double Dr = FN*rCrown*((qDz8 + qDz9*dfz)*ga + (qDz10+qDz11*dfz)*ga*abs(ga))/sqrt(1 + pow(slipAnglePT1,2));
 
     double Fy = cos(Cyka*atan(Byka*slip))*Fy0;
-    double lat = sqrt(pow(slipAnglePT1,2) + pow(Kxka*slip/Kyal,2))*sgn(slipAnglePT1);
-    double lar = sqrt(pow(slipAnglePT1 + SHr,2) + pow(Kxka*slip/Kyal,2))*sgn(slipAnglePT1 + SHr);
+    double lat = sqrt(pow(slipAnglePT1,2) + pow(Kxka*slip/Kyal_,2))*sgn(slipAnglePT1);
+    double lar = sqrt(pow(slipAnglePT1 + SHr,2) + pow(Kxka*slip/Kyal_,2))*sgn(slipAnglePT1 + SHr);
     double Mzr = Dr*cos(atan(Br*lar));
     double M = Dt*cos(Ct*atan(Bt*lat - Et*(Bt*lat - atan(Bt*lat))))/sqrt(1 + pow(slipAnglePT1,2))*Fy - Mzr;
 
-    sRelax = Kyalr*(c1Rel + c2Rel*contact->getForwardVelocity()(0) + c3Rel*pow(contact->getForwardVelocity()(0),2));
+    sRelax = Kyal*(c1Rel + c2Rel*contact->getForwardVelocity()(0) + c3Rel*pow(contact->getForwardVelocity()(0),2));
 
     rScrub = (rCrown+contact->getGeneralizedRelativePosition()(0))*sin(phi);
 
