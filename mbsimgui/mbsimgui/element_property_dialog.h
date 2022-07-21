@@ -1099,6 +1099,7 @@ namespace MBSimGUI {
       void updateWidget() override;
       void updateFunctionFactory();
       ExtWidget *inputSignal, *function;
+      int num{1};
   };
 
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {

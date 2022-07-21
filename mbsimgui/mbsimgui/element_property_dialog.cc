@@ -3975,10 +3975,13 @@ namespace MBSimGUI {
   }
 
   void SignalOperationPropertyDialog::updateFunctionFactory() {
-    if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-      static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
-    else
-      static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+    if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize() != num) {
+      num = static_cast<ListWidget*>(inputSignal->getWidget())->getSize();
+      if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
+	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
+      else
+	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+    }
   }
 
   DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
