@@ -2376,7 +2376,7 @@ namespace MBSimGUI {
 
   GeneralizedPositionConstraintPropertyDialog::GeneralizedPositionConstraintPropertyDialog(Element *constraint) : GeneralizedDualConstraintPropertyDialog(constraint) {
 
-    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new Function1ArgWidgetFactory(constraint,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
+    constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new Function1ArgWidgetFactory(constraint,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
     connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedPositionConstraintPropertyDialog::updateWidget);
   }
