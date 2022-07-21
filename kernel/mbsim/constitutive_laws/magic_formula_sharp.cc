@@ -193,60 +193,77 @@ namespace MBSim {
   void MagicFormulaSharp::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    double FN = max(0.1,-cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2));
+    double FLo, FLa, M;
+    double FN = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
+    if(FN>0) {
+      RvSx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
+      vRoll = contact->evalForwardVelocity()(0);
+      slip = -RvSx/vRoll;
 
-    RvSx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
-    vRoll = contact->evalForwardVelocity()(0);
-    slip = -RvSx/vRoll;
+      double dfz = (FN - Fz0)/Fz0;
+      double Dx = (pDx1 + pDx2*dfz)*FN;
+      double Ex = (pEx1 + pEx2*dfz+pEx3*pow(dfz,2))*(1 - pEx4*sgn(slip));
+      double Kxka = FN*(pKx1 + pKx2*dfz)*exp(pKx3*dfz);
+      double Bx = Kxka/(Cx*Dx);
+      double Fx0 = Dx*sin(Cx*atan(Bx*slip - Ex*(Bx*slip - atan(Bx*slip))));
+      double Bxal = rBx1*cos(atan(rBx2*slip));
+      slipAnglePT1 = contact->getx()(0);
+      FLo = cos(Cxal*atan(Bxal*slipAnglePT1))*Fx0;
 
-    double dfz = (FN - Fz0)/Fz0;
-    double Dx = (pDx1 + pDx2*dfz)*FN;
-    double Ex = (pEx1 + pEx2*dfz+pEx3*pow(dfz,2))*(1 - pEx4*sgn(slip));
-    double Kxka = FN*(pKx1 + pKx2*dfz)*exp(pKx3*dfz);
-    double Bx = Kxka/(Cx*Dx);
-    double Fx0 = Dx*sin(Cx*atan(Bx*slip - Ex*(Bx*slip - atan(Bx*slip))));
-    double Bxal = rBx1*cos(atan(rBx2*slip));
-    slipAnglePT1 = contact->getx()(0);
-    double FLo = cos(Cxal*atan(Bxal*slipAnglePT1))*Fx0;
-    phi = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
-    Kyal = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3+pKy4*pow(phi,2))*Fz0)))/(1+pKy5*pow(phi,2));
-    double Dy = FN*pDy1*exp(pDy2*dfz)/(1 + pDy3*pow(phi,2));
-    double Ey = pEy1 + pEy2*pow(phi,2) + pEy4*phi*sgn(slipAnglePT1);
-    double By = Kyal/(Cy*Dy);
-    double Kyga = (pKy6 + pKy7*dfz)*FN*sfKyga;
-    double Bga = Kyga/(Cga*Dy);
-    double Fy0 = Dy*sin(Cy*atan(By*slipAnglePT1 - Ey*(By*slipAnglePT1 - atan(By*slipAnglePT1))) + Cga*atan(Bga*phi - Ega*(Bga*phi - atan(Bga*phi))));
+      phi = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
+      Kyal = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3+pKy4*pow(phi,2))*Fz0)))/(1+pKy5*pow(phi,2));
+      double Dy = FN*pDy1*exp(pDy2*dfz)/(1 + pDy3*pow(phi,2));
+      double Ey = pEy1 + pEy2*pow(phi,2) + pEy4*phi*sgn(slipAnglePT1);
+      double By = Kyal/(Cy*Dy);
+      double Kyga = (pKy6 + pKy7*dfz)*FN*sfKyga;
+      double Bga = Kyga/(Cga*Dy);
+      double Fy0 = Dy*sin(Cy*atan(By*slipAnglePT1 - Ey*(By*slipAnglePT1 - atan(By*slipAnglePT1))) + Cga*atan(Bga*phi - Ega*(Bga*phi - atan(Bga*phi))));
 
-    double Byka = rBy1*cos(atan(rBy2*(slipAnglePT1 - rBy3)));
-    double FLa = -cos(Cyka*atan(Byka*slip))*Fy0;
+      double Byka = rBy1*cos(atan(rBy2*(slipAnglePT1 - rBy3)));
+      FLa = -cos(Cyka*atan(Byka*slip))*Fy0;
 
-    double ga = 0;
-    Dy = FN*pDy1*exp(pDy2*dfz)/(1 + pDy3*pow(ga,2));
-    Ey = pEy1+pEy2*pow(ga,2) + pEy4*ga*sgn(slipAnglePT1);
-    double Kyal_ = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3 + pKy4*pow(ga,2))*Fz0)))/(1 + pKy5*pow(ga,2));
-    By = Kyal_/(Cy*Dy);
-    Bga = Kyga/(Cga*Dy);
-    Fy0 = Dy*sin(Cy*atan(By*slipAnglePT1 - Ey*(By*slipAnglePT1 - atan(By*slipAnglePT1))) + Cga*atan(Bga*ga - Ega*(Bga*ga - atan(Bga*ga))));
+      double ga = 0;
+      Dy = FN*pDy1*exp(pDy2*dfz)/(1 + pDy3*pow(ga,2));
+      Ey = pEy1+pEy2*pow(ga,2) + pEy4*ga*sgn(slipAnglePT1);
+      double Kyal_ = pKy1*Fz0*sin(pKy2*atan(FN/((pKy3 + pKy4*pow(ga,2))*Fz0)))/(1 + pKy5*pow(ga,2));
+      By = Kyal_/(Cy*Dy);
+      Bga = Kyga/(Cga*Dy);
+      Fy0 = Dy*sin(Cy*atan(By*slipAnglePT1 - Ey*(By*slipAnglePT1 - atan(By*slipAnglePT1))) + Cga*atan(Bga*ga - Ega*(Bga*ga - atan(Bga*ga))));
 
-    ga = phi;
+      ga = phi;
 
-    double rCrown = tyre->getUnloadedRadius() - tyre->getRimRadius() + contact->getGeneralizedRelativePosition()(0);
-    double SHr = (qHz3+qHz4*dfz)*ga;
-    double Bt = (qBz1 + qBz2*dfz)*(1 + qBz5*abs(ga) + qBz6*pow(ga,2));
-    double Dt = FN*(rCrown/Fz0)*(qDz1 + qDz2*dfz)*(1 + qDz3*abs(ga)+qDz4*pow(ga,2));
-    double Et = (qEz1+qEz2*dfz)*(1 + qEz5*ga*(2./M_PI)*atan(Bt*Ct*slipAnglePT1));
-    double Br = qBz9 + qBz10*By*Cy;
-    double Dr = FN*rCrown*((qDz8 + qDz9*dfz)*ga + (qDz10+qDz11*dfz)*ga*abs(ga))/sqrt(1 + pow(slipAnglePT1,2));
+      double rCrown = tyre->getUnloadedRadius() - tyre->getRimRadius() + contact->getGeneralizedRelativePosition()(0);
+      double SHr = (qHz3+qHz4*dfz)*ga;
+      double Bt = (qBz1 + qBz2*dfz)*(1 + qBz5*abs(ga) + qBz6*pow(ga,2));
+      double Dt = FN*(rCrown/Fz0)*(qDz1 + qDz2*dfz)*(1 + qDz3*abs(ga)+qDz4*pow(ga,2));
+      double Et = (qEz1+qEz2*dfz)*(1 + qEz5*ga*(2./M_PI)*atan(Bt*Ct*slipAnglePT1));
+      double Br = qBz9 + qBz10*By*Cy;
+      double Dr = FN*rCrown*((qDz8 + qDz9*dfz)*ga + (qDz10+qDz11*dfz)*ga*abs(ga))/sqrt(1 + pow(slipAnglePT1,2));
 
-    double Fy = cos(Cyka*atan(Byka*slip))*Fy0;
-    double lat = sqrt(pow(slipAnglePT1,2) + pow(Kxka*slip/Kyal_,2))*sgn(slipAnglePT1);
-    double lar = sqrt(pow(slipAnglePT1 + SHr,2) + pow(Kxka*slip/Kyal_,2))*sgn(slipAnglePT1 + SHr);
-    double Mzr = Dr*cos(atan(Br*lar));
-    double M = Dt*cos(Ct*atan(Bt*lat - Et*(Bt*lat - atan(Bt*lat))))/sqrt(1 + pow(slipAnglePT1,2))*Fy - Mzr;
+      double Fy = cos(Cyka*atan(Byka*slip))*Fy0;
+      double lat = sqrt(pow(slipAnglePT1,2) + pow(Kxka*slip/Kyal_,2))*sgn(slipAnglePT1);
+      double lar = sqrt(pow(slipAnglePT1 + SHr,2) + pow(Kxka*slip/Kyal_,2))*sgn(slipAnglePT1 + SHr);
+      double Mzr = Dr*cos(atan(Br*lar));
+      M = Dt*cos(Ct*atan(Bt*lat - Et*(Bt*lat - atan(Bt*lat))))/sqrt(1 + pow(slipAnglePT1,2))*Fy - Mzr;
 
-    sRelax = Kyal*(c1Rel + c2Rel*contact->getForwardVelocity()(0) + c3Rel*pow(contact->getForwardVelocity()(0),2));
+      sRelax = Kyal*(c1Rel + c2Rel*contact->getForwardVelocity()(0) + c3Rel*pow(contact->getForwardVelocity()(0),2));
 
-    rScrub = rCrown*sin(phi);
+      rScrub = rCrown*sin(phi);
+    }
+    else {
+      FN = 0;
+      FLo = 0;
+      FLa = 0;
+      M = 0;
+      phi = 0;
+      vRoll = 0;
+      RvSx = 0;
+      slip = 0;
+      Kyal = 0;
+      sRelax = 1;
+      slipAnglePT1 = 0;
+      rScrub = 0;
+    }
 
     contact->getGeneralizedForce(false)(0) = sfFLo*FLo;
     contact->getGeneralizedForce(false)(1) = sfFLa*FLa;
@@ -255,4 +272,5 @@ namespace MBSim {
 
     contact->getsRelax(false) = sRelax;
   }
+
 }
