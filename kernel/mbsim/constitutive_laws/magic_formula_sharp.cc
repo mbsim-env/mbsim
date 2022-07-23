@@ -196,6 +196,7 @@ namespace MBSim {
     double FLo, FLa, M;
     double FN = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
     if(FN>0) {
+      if(FN<1) FN = 1;
       RvSx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
       vRoll = contact->evalForwardVelocity()(0);
       slip = -RvSx/vRoll;
