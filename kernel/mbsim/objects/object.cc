@@ -199,7 +199,8 @@ namespace MBSim {
     else if(q0.size() == q.size())
       q = q0;
     else
-      throwError("(Object::initz): size of q0 does not match, must be " + to_string(q.size()));
+      throwError("(Object::initz): size of q0 does not match, must be " + to_string(q.size()) +
+                   ", but is " + to_string(q0.size()) + ".");
     if(not u0())
       u.init(0);
     else if(u0.size() == u.size())

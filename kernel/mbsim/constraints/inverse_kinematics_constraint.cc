@@ -136,7 +136,8 @@ namespace MBSim {
       else if(q0.size() == q.size())
         q = q0;
       else
-        throwError("(InverseKinematicsConstraint::initz): size of q0 does not match, must be " + to_string(q.size()));
+        throwError("(InverseKinematicsConstraint::initz): size of q0 does not match, must be " + to_string(q.size()) +
+                   ", but is " + to_string(q0.size()) + ".");
 
       A.resize(nu);
     }
