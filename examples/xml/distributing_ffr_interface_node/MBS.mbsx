@@ -111,7 +111,7 @@
 
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>
-    <endTime unit="s">0.3</endTime>
+    <endTime unit="s">0.1</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
 
