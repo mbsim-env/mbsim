@@ -154,7 +154,8 @@ namespace MBSim {
       else if(q0.size() == curis.size())
         curis = q0;
       else
-        throwError("(JointConstraint::initz): size of q0 does not match, must be " + to_string(curis.size()));
+        throwError("(JointConstraint::initz): size of q0 does not match, must be " + to_string(curis.size()) +
+                   ", but is " + to_string(q0.size()) + ".");
 
       A.resize(nu);
     }
