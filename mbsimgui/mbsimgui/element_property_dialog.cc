@@ -1533,15 +1533,11 @@ namespace MBSimGUI {
   }
 
   void RigidBodyPropertyDialog::resizeGeneralizedPosition() {
-    int size =  getqRelSize();
-    q0->resize_(size,1);
-    if(not size) q0->setActive(false);
+    q0->resize_(getqRelSize(),1);
   }
 
   void RigidBodyPropertyDialog::resizeGeneralizedVelocity() {
-    int size =  getuRelSize();
-    u0->resize_(size,1);
-    if(not size) u0->setActive(false);
+    u0->resize_(getuRelSize(),1);
   }
 
   GenericFlexibleFfrBodyPropertyDialog::GenericFlexibleFfrBodyPropertyDialog(Element *body) : BodyPropertyDialog(body) {
@@ -1601,15 +1597,11 @@ namespace MBSimGUI {
   }
 
   void GenericFlexibleFfrBodyPropertyDialog::resizeGeneralizedPosition() {
-    int size =  getqRelSize();
-    q0->resize_(size,1);
-    if(not size) q0->setActive(false);
+    q0->resize_(getqRelSize(),1);
   }
 
   void GenericFlexibleFfrBodyPropertyDialog::resizeGeneralizedVelocity() {
-    int size =  getuRelSize();
-    u0->resize_(size,1);
-    if(not size) u0->setActive(false);
+    u0->resize_(getuRelSize(),1);
   }
 
   DOMElement* GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
