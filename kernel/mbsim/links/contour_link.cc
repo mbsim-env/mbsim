@@ -119,11 +119,6 @@ namespace MBSim {
         throwError("Not all connections are given!");
     }
     else if(stage==preInit) {
-      cFrame[0] = contour[0]->createContourFrame("P0");
-      cFrame[1] = contour[1]->createContourFrame("P1");
-      cFrame[0]->setParent(this);
-      cFrame[1]->setParent(this);
-
       for(unsigned int i=0; i<2; i++) {
         W[i].resize(2);
         V[i].resize(2);
@@ -132,6 +127,10 @@ namespace MBSim {
       }
     }
     else if(stage==unknownStage) {
+      cFrame[0] = contour[0]->createContourFrame("P0");
+      cFrame[1] = contour[1]->createContourFrame("P1");
+      cFrame[0]->setParent(this);
+      cFrame[1]->setParent(this);
       cFrame[0]->sethSize(contour[0]->gethSize(0), 0);
       cFrame[0]->sethSize(contour[0]->gethSize(1), 1);
       cFrame[1]->sethSize(contour[1]->gethSize(0), 0);
