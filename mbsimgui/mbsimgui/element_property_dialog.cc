@@ -1919,6 +1919,55 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  ExternalFlexibleFfrBodyPropertyDialog::ExternalFlexibleFfrBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
+    addTab("Visualization",4);
+
+    inputDataFile = new ExtWidget("Input data file name",new FileWidget("", "Open input data file", "Input data files (*.h5)", 0, true),false,false,MBSIMFLEX%"inputDataFileName");
+    addToTab("General",inputDataFile);
+
+    beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
+    addToTab("General", beta);
+
+    ombv = new ExtWidget("Enable openMBV",new FiniteElementsBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
+    addToTab("Visualization",ombv);
+
+    plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
+    addToTab("Visualization", plotNodes);
+  }
+
+  int ExternalFlexibleFfrBodyPropertyDialog::getqERelSize() const {
+    int nqE=1;
+    return nqE;
+  }
+
+  DOMElement* ExternalFlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputDataFile->initializeUsingXML(item->getXMLElement());
+    beta->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    plotNodes->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ExternalFlexibleFfrBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    inputDataFile->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mRed->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    minimumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    maximumFrequency->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    modes->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    mDamping->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
+    DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
+    ombv->writeXMLFile(item->getXMLElement(),ele);
+    plotNodes->writeXMLFile(item->getXMLElement(),ele);
+    return nullptr;
+  }
+
   CalculixBodyPropertyDialog::CalculixBodyPropertyDialog(Element *body) : GenericFlexibleFfrBodyPropertyDialog(body) {
     addTab("Visualization",4);
 

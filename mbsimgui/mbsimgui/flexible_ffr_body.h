@@ -50,6 +50,14 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new FlexibleFfrBodyPropertyDialog(this); }
   };
 
+  class ExternalFlexibleFfrBody : public GenericFlexibleFfrBody {
+    MBSIMGUI_OBJECTFACTORY_CLASS(ExternalFlexibleFfrBody, GenericFlexibleFfrBody, MBSIMFLEX%"ExternalFlexibleFfrBody", "External flexible ffr body");
+    friend class ExternalFlexibleFfrBodyPropertyDialog;
+    public:
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      PropertyDialog* createPropertyDialog() override { return new ExternalFlexibleFfrBodyPropertyDialog(this); }
+  };
+
   class CalculixBody : public GenericFlexibleFfrBody {
     MBSIMGUI_OBJECTFACTORY_CLASS(CalculixBody, GenericFlexibleFfrBody, MBSIMFLEX%"CalculixBody", "Calculix body");
     friend class CalculixBodyPropertyDialog;

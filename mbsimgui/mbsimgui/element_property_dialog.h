@@ -439,6 +439,17 @@ namespace MBSimGUI {
       void updateWidget() override;
   };
 
+  class ExternalFlexibleFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
+
+    public:
+      ExternalFlexibleFfrBodyPropertyDialog(Element *body_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+      int getqERelSize() const override;
+    protected:
+      ExtWidget *inputDataFile, *beta, *ombv, *plotNodes;
+  };
+
   class CalculixBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
 
     public:
