@@ -2,38 +2,40 @@
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="position">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="ns1:nodalDisplacement" xmlns:ns1="http://www.mbsim-env.de/MBSimFlexibleBody">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="ns1:nodalStress" xmlns:ns1="http://www.mbsim-env.de/MBSimFlexibleBody">true</plotFeatureRecursive>
-      <frames/>
-      <contours/>
-      <groups/>
-      <objects>
-        <CalculixBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="CalculixBody">
-          <resultFileName>"calculix.frd"</resultFileName>
-          <proportionalDamping>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>0</ele>
-              <ele>0.001</ele>
-            </xmlVector>
-          </proportionalDamping>
-          <frames>
-            <FfrInterfaceNodeFrame name="InterfaceNodeFrame" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
-                <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
-                <nodeNumbers>[5,  6,  7,  8,  22,  25,  28,  31,  100]'</nodeNumbers>
-              </FfrInterfaceNodeFrame>
-          </frames><contours/>
-          <enableOpenMBV>
-            <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"yDisplacement"</colorRepresentation>
-            <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">0</minimalColorValue>
-            <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">2.6e-5</maximalColorValue>
-          </enableOpenMBV>
-          <plotNodeNumbers>[1:5,100]'</plotNodeNumbers>
-          <enableOpenMBVFrameK/>
-        </CalculixBody>
-      </objects><links>
-        <KineticExcitation name="KineticExcitation" xmlns="http://www.mbsim-env.de/MBSim">
+    <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="position">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="ns1:nodalDisplacement" xmlns:ns1="http://www.mbsim-env.de/MBSimFlexibleBody">true</plotFeatureRecursive>
+    <plotFeatureRecursive value="ns1:nodalStress" xmlns:ns1="http://www.mbsim-env.de/MBSimFlexibleBody">true</plotFeatureRecursive>
+    <frames/>
+    <contours/>
+    <groups/>
+    <objects>
+      <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="CalculixBody">
+        <inputDataFileName>"input_data.h5"</inputDataFileName>
+        <proportionalDamping>
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0</ele>
+            <ele>0.001</ele>
+          </xmlVector>
+        </proportionalDamping>
+        <frames>
+          <FfrInterfaceNodeFrame name="InterfaceNodeFrame" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
+              <nodeNumbers>[5,  6,  7,  8,  22,  25,  28,  31,  100]'</nodeNumbers>
+            </FfrInterfaceNodeFrame>
+        </frames><contours/>
+        <enableOpenMBV>
+          <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"yDisplacement"</colorRepresentation>
+          <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">0</minimalColorValue>
+          <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">2.6e-5</maximalColorValue>
+          <visualization>"faces"</visualization>
+        </enableOpenMBV>
+        <plotNodeNumbers>[1:5,100]'</plotNodeNumbers>
+        <enableOpenMBVFrameK/>
+      </ExternalFlexibleFfrBody>
+    </objects>
+    <links>
+      <KineticExcitation name="KineticExcitation" xmlns="http://www.mbsim-env.de/MBSim">
         <connect ref2="../Object[CalculixBody]/Frame[InterfaceNodeFrame]"/>
         <forceDirection unit="-">
           <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -57,23 +59,22 @@
           <scaleLength>1e-3</scaleLength>
         </enableOpenMBV>
       </KineticExcitation>
-      </links>
+    </links>
     <constraints/>
-      <observers/>
-      <enableOpenMBVFrameI/>
-      <environments>
-        <MBSimEnvironment>
-          <accelerationOfGravity unit="m/s^2">
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>0</ele>
-              <ele>0</ele>
-              <ele>0</ele>
-            </xmlVector>
-          </accelerationOfGravity>
-        </MBSimEnvironment>
-      </environments>
-      <determineEquilibriumState>false</determineEquilibriumState>
-    </DynamicSystemSolver>
+    <observers/>
+    <enableOpenMBVFrameI/>
+    <environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity unit="m/s^2">
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0</ele>
+            <ele>0</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
 
   <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
     <startTime unit="s">0</startTime>

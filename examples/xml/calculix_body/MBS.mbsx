@@ -6,17 +6,18 @@
     <contours/>
     <groups/>
     <objects>
-      <CalculixBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="CalculixBody">
-        <resultFileName>"calculix.frd"</resultFileName>
+      <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="CalculixBody">
+        <inputDataFileName>"input_data.h5"</inputDataFileName>
         <frames/>
         <contours/>
         <enableOpenMBV>
           <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"zzStress"</colorRepresentation>
           <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">-1.5e9</minimalColorValue>
           <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">5e8</maximalColorValue>
+          <visualization>"faces"</visualization>
         </enableOpenMBV>
         <enableOpenMBVFrameK/>
-      </CalculixBody>
+      </ExternalFlexibleFfrBody>
     </objects>
     <links/>
     <constraints/>

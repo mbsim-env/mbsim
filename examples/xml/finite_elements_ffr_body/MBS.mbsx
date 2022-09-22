@@ -8,48 +8,31 @@
     <contours/>
     <groups/>
     <objects>
-      <FiniteElementsFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FiniteElementsFfrBody">
-        <youngsModulus unit="N/m^2">2.1e11</youngsModulus>
-        <poissonsRatio unit="-">0.3</poissonsRatio>
-        <density unit="kg/m^3">7800</density>
-        <nodes>
-          <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="nodes.asc"/>
-        </nodes>
-        <elementType>'C3D20'</elementType>
-        <elements>
-          <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="elements.asc"/>
-        </elements>
+      <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FiniteElementsFfrBody">
+        <inputDataFileName>"input_data.h5"</inputDataFileName>
         <proportionalDamping>
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>50</ele>
             <ele>0.00001</ele>
           </xmlVector>
         </proportionalDamping>
-        <boundaryNodeNumbers>
-          [97; 96; 95; 94; 93; 20; 19; 18; 17; 16; 15; 14; 13; 12; 11; 10; 9 ; 4 ; 3 ; 2 ; 1]
-        </boundaryNodeNumbers>
-	<degreesOfFreedom>
-	  [1;2;3]
-	</degreesOfFreedom>
-        <interfaceNodeNumbers>
-          [5;  6;  7;  8;  22;  25;  28;  31;  100]
-        </interfaceNodeNumbers>
         <frames>
           <FfrInterfaceNodeFrame name="FfrInterfaceNodeFrame" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
             <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
             <nodeNumbers>
-            [5;  6;  7;  8;  22;  25;  28;  31;  100]
-          </nodeNumbers>
-        </FfrInterfaceNodeFrame> 
+              [5;  6;  7;  8;  22;  25;  28;  31;  100]
+            </nodeNumbers>
+          </FfrInterfaceNodeFrame>
         </frames><contours/>
         <enableOpenMBV>
           <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"yDisplacement"</colorRepresentation>
           <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">0</minimalColorValue>
           <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">3e-4</maximalColorValue>
+          <visualization>"faces"</visualization>
         </enableOpenMBV>
-      </FiniteElementsFfrBody>
-      </objects>
-      <links>
+      </ExternalFlexibleFfrBody>
+    </objects>
+    <links>
       <KineticExcitation name="KineticExcitation">
         <connect ref2="../Object[FiniteElementsFfrBody]/Frame[FfrInterfaceNodeFrame]"/>
         <forceDirection unit="-">

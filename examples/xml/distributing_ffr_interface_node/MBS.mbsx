@@ -8,49 +8,52 @@
     <contours/>
     <groups/>
     <objects>
-      <FiniteElementsFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FiniteElementsFfrBody">
-        <youngsModulus unit="N/m^2">2.1e11</youngsModulus>
-        <poissonsRatio unit="-">0.3</poissonsRatio>
-        <density unit="kg/m^3">7800</density>
-        <nodes>
-          <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="nodes.asc"/>
-        </nodes>
-        <elementType>'C3D20'</elementType>
-        <elements>
-          <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="elements.asc"/>
-        </elements>
+      <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FiniteElementsFfrBody">
+        <inputDataFileName>"input_data.h5"</inputDataFileName>
         <proportionalDamping>
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>50</ele>
             <ele>0.00001</ele>
           </xmlVector>
         </proportionalDamping>
-        <boundaryNodeNumbers>
-          [97; 96; 95; 94; 93; 20; 19; 18; 17; 16; 15; 14; 13; 12; 11; 10; 9 ; 4 ; 3 ; 2 ; 1]
-        </boundaryNodeNumbers>
-	<degreesOfFreedom>
-	  [1;2;3]
-	</degreesOfFreedom>
-        <interfaceNodeNumbers>
-	[5,6,7,8,21,22,23,24,25,26,27,28,29,30,31,32,98,99,100,101,102]'
-        </interfaceNodeNumbers>
         <frames>
-          <DistributingFfrInterfaceNodeFrame name="DistributingFfrInterfaceNodeFrame" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
+          <FfrInterfaceNodeFrame name="DistributingFfrInterfaceNodeFrame">
             <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
-            <elementNumbers>
-              [29; 30; 31; 32]
-            </elementNumbers>
-            <faceNumber>2</faceNumber>
-          </DistributingFfrInterfaceNodeFrame> 
+            <nodeNumbers>[5,6,7,8,21,22,23,24,25,26,27,28,29,30,31,32,98,99,100,101,102]'</nodeNumbers>
+            <weightingFactors>
+	      [-0.0208333
+               -0.0208333
+               -0.0208333
+               -0.0208333
+               0.0833333
+               -0.0416667
+               0.0833333
+               0.0833333
+               -0.0416667
+               0.0833333
+               0.0833333
+               -0.0416667
+               0.0833333
+               0.0833333
+               -0.0416667
+               0.0833333
+               0.166667
+               0.166667
+               -0.0833333
+               0.166667
+               0.166667]
+	    </weightingFactors>
+          </FfrInterfaceNodeFrame>
         </frames><contours/>
         <enableOpenMBV>
           <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"zDisplacement"</colorRepresentation>
           <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">0</minimalColorValue>
           <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">2.5e-6</maximalColorValue>
+          <visualization>"faces"</visualization>
         </enableOpenMBV>
-      </FiniteElementsFfrBody>
-      </objects>
-      <links>
+      </ExternalFlexibleFfrBody>
+    </objects>
+    <links>
       <KineticExcitation name="KineticExcitation">
         <connect ref2="../Object[FiniteElementsFfrBody]/Frame[DistributingFfrInterfaceNodeFrame]"/>
         <forceDirection unit="-">
