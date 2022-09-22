@@ -34,13 +34,12 @@
           <degreesOfFreedom>
 	    [1;2]
           </degreesOfFreedom>
-          <modalReduction>true</modalReduction>
-          <modeNumbers>
+          <normalModeNumbers>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>1</ele>
               <ele>2</ele>
             </xmlVector>
-          </modeNumbers>
+          </normalModeNumbers>
           <frames>
             <NodeFrame name="P1">
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
