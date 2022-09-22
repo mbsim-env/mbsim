@@ -63,6 +63,26 @@ namespace MBSimFlexibleBody {
     return object;
   }
 
+  void OpenMBVExternalFlexibleFfrBody::initializeUsingXML(DOMElement *e) {
+    OpenMBVFlexibleBody::initializeUsingXML(e);
+    DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"visualization");
+    if(ee) {
+      string str=string(X()%E(ee)->getFirstTextChild()->getData()).substr(1,string(X()%E(ee)->getFirstTextChild()->getData()).length()-2);
+      if(str=="points") visu=points;
+      else if(str=="faces") visu=faces;
+    }
+  }
+
+  shared_ptr<OpenMBV::FlexibleBody> OpenMBVExternalFlexibleFfrBody::createOpenMBV() {
+    shared_ptr<OpenMBV::FlexibleBody> object;
+    if(visu==points)
+      object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicPointSet>();
+    else
+      object = OpenMBV::ObjectFactory::create<OpenMBV::DynamicIndexedFaceSet>();
+    initializeObject(object);
+    return object;
+  }
+
   void OpenMBVFiniteElementsBody::initializeUsingXML(DOMElement *e) {
     OpenMBVFlexibleBody::initializeUsingXML(e);
     DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIMFLEX%"visualization");
