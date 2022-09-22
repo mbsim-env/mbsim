@@ -82,6 +82,12 @@ namespace MBSimFlexibleBody {
     else
       throwError("(ExternalFlexibleFfrBody::init): keyword \"stiffness matrix\" not found in input data file.");
 
+    it = findChild(names,"damping matrix");
+    if(it!=list<string>::iterator()) {
+      De0 <<= SymMatV(file.openChildObject<H5::SimpleDataset<vector<vector<double>>>>("damping matrix")->read());
+      names.erase(it);
+    }
+
     it = findChild(names,"position shape function integral");
     if(it!=list<string>::iterator()) {
       vector<vector<double>> rPdm_ = file.openChildObject<H5::SimpleDataset<vector<vector<double>>>>("position shape function integral")->read();
