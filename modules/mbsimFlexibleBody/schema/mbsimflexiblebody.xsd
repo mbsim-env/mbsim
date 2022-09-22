@@ -51,31 +51,6 @@
 
   <xs:group name="CommonFlexibleFfrBody">
     <xs:sequence>
-      <xs:element name="modalReduction" type="pv:booleanFullEval" minOccurs="0">
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-          Definiert, ob eine modale Reduktion durchgeführt werden soll.
-        </xs:documentation></xs:annotation>
-      </xs:element>
-      <xs:element name="minimumFrequency" type="pv:unknownScalar" minOccurs="0">
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-          Kleinste Eigenfrequenz, die bei der Reduktion berücksichtigt werden soll. Standardardmäßig 0.01 Hz.
-        </xs:documentation></xs:annotation>
-      </xs:element>
-      <xs:element name="maximumFrequency" type="pv:unknownScalar" minOccurs="0">
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-          Größte Eigenfrequenz, die bei der Reduktion berücksichtigt werden soll. Standardardmäßig 100 kHz.
-        </xs:documentation></xs:annotation>
-      </xs:element>
-      <xs:element name="modeNumbers" type="pv:nounitVector" minOccurs="0">
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-          Moden, die bei der Reduktion berücksichtigt werden sollen.
-        </xs:documentation></xs:annotation>
-      </xs:element>
-      <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-          Definiert den Dämpfungsgrad für jede Mode.
-        </xs:documentation></xs:annotation>
-      </xs:element>
       <xs:choice minOccurs="0">
         <xs:element name="generalTranslation">
           <xs:annotation><xs:documentation xml:lang="de" xmlns="">
@@ -768,6 +743,11 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert den Dämpfungsgrad für jede Mode.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:choice minOccurs="0">
             <xs:element name="nonlinearStiffnessMatrixOfFirstOrderArray">
               <xs:annotation>
@@ -1179,6 +1159,11 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert den Dämpfungsgrad für jede Mode.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
@@ -1394,6 +1379,11 @@
                 Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
               </xs:documentation>
             </xs:annotation>
+          </xs:element>
+          <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert den Dämpfungsgrad für jede Mode.
+            </xs:documentation></xs:annotation>
           </xs:element>
 	  <xs:group ref="BoundaryCondition" minOccurs="0" maxOccurs="unbounded"/>
           <xs:element name="interfaceNodeNumbers" type="pv:nounitVector" minOccurs="0">

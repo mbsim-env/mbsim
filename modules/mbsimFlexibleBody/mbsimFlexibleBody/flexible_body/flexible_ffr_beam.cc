@@ -543,6 +543,14 @@ namespace MBSimFlexibleBody {
 	  Psi[i] <<= Psi[i]*Vsd;
 	  sigmahel[i] <<= sigmahel[i]*Vsd;
 	}
+	if(mDamping.size()) {
+	  if(mDamping.size()!=(int)Vsd.cols())
+	    throwError(string("(FlexibleFfrBeam::init): size of modal damping does not match, must be ") + to_string(Vsd.cols()) +
+		", but is " + to_string(mDamping.size()) + ".");
+	  De0.resize(Vsd.cols(),INIT,0);
+	  for(int i=0; i<De0.size(); i++)
+	    De0(i,i) = 2*sqrt((PPdm[0][0](i,i)+PPdm[1][1](i,i)+PPdm[2][2](i,i))*Ke0(i,i))*mDamping(i);
+	}
       }
     }
     else if(stage==plotting) {
@@ -590,6 +598,8 @@ namespace MBSimFlexibleBody {
     setTorsion(MBXMLUtils::E(e)->getText<bool>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
     if(e) setProportionalDamping(MBXMLUtils::E(e)->getText<Vec>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
+    if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"boundaryNodeNumbers");
     while(e && MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"boundaryNodeNumbers") {
       addBoundaryNodes(MBXMLUtils::E(e)->getText<VecVI>());

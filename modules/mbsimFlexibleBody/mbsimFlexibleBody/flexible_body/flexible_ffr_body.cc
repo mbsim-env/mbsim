@@ -35,6 +35,36 @@ namespace MBSimFlexibleBody {
       nodeMap[n[i]] = i;
   }
 
+  void FlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==preInit) {
+      if(mDamping.size()) {
+	if(mDamping.size()!=(int)Pdm.cols())
+	  throwError(string("(FlexibleFfrBody::init): size of modal damping does not match, must be ") + to_string(Pdm.cols()) +
+		", but is " + to_string(mDamping.size()) + ".");
+	SquareMatrix<Ref,double> V;
+	Vector<Ref,double> w;
+	eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
+	Pdm <<= Pdm*V;
+	for(int i=0; i<3; i++) {
+	   rPdm[i] <<= rPdm[i]*V;
+	  for(int j=0; j<3; j++)
+	    PPdm[i][j] <<= V.T()*PPdm[i][j]*V;
+	}
+	Ke0 <<= JTMJ(Ke0,V);
+	for(size_t i=0; i<Phi.size(); i++)
+	  Phi[i] <<= Phi[i]*V;
+	for(size_t i=0; i<Psi.size(); i++)
+	  Psi[i] <<= Psi[i]*V;
+	for(size_t i=0; i<sigmahel.size(); i++)
+	  sigmahel[i] <<= sigmahel[i]*V;
+	De0.resize(V.cols(),INIT,0);
+	for(int i=0; i<De0.size(); i++)
+	  De0(i,i) = 2*sqrt((PPdm[0][0](i,i)+PPdm[1][1](i,i)+PPdm[2][2](i,i))*Ke0(i,i))*mDamping(i);
+      }
+    }
+    GenericFlexibleFfrBody::init(stage, config);
+  }
+
   void FlexibleFfrBody::initializeUsingXML(DOMElement *element) {
     GenericFlexibleFfrBody::initializeUsingXML(element);
 
@@ -72,6 +102,9 @@ namespace MBSimFlexibleBody {
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
     if(e) setProportionalDamping(E(e)->getText<Vec>());
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
+    if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrderArray");
     if(e) setNonlinearStiffnessMatrixOfFirstOrder(getCellArray1D<SqrMatV>(e));

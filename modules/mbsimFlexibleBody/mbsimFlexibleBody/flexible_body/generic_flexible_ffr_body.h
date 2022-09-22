@@ -119,10 +119,6 @@ namespace MBSimFlexibleBody {
 
       void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
 
-      void setModalReduction(bool modalReduction_) { modalReduction = modalReduction_; }
-      void setMinimumFrequency(double fmin_) { fmin = fmin_; }
-      void setMaximumFrequency(double fmax_) { fmax = fmax_; }
-      void setModeNumbers(const fmatvec::VecVI &modes_) { modes <<= modes_; }
       void setModalDamping(const fmatvec::VecV &mDamping_) { mDamping <<= mDamping_; }
 
       // NOTE: we can not use a overloaded setTranslation here due to restrictions in XML but define them for convinience in c++
@@ -326,6 +322,7 @@ namespace MBSimFlexibleBody {
       std::vector<std::vector<fmatvec::SqrMat3>> mmi2, Gr1;
       std::vector<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om, Ct1, Cr1, Ge, Oe1, Ke1, De1;
       fmatvec::Vec2 beta;
+      fmatvec::VecV mDamping;
       fmatvec::VecV ksigma0;
       fmatvec::SqrMatV ksigma1;
       std::vector<fmatvec::SymMat3> mmi1;
@@ -402,7 +399,7 @@ namespace MBSimFlexibleBody {
       fmatvec::MatV KJ[2];
       fmatvec::VecV Ki;
 
-      void determineSID();
+      void assemble();
       void prefillMassMatrix();
 
       GeneralizedVelocityOfRotation generalizedVelocityOfRotation{derivativeOfGeneralizedPositionOfRotation};
@@ -410,12 +407,6 @@ namespace MBSimFlexibleBody {
       OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation{OpenMBVFlexibleBody::none};
 
       fmatvec::VecVI plotNodes;
-
-      bool modalReduction{false};
-      double fmin{1e-2};
-      double fmax{1e5};
-      fmatvec::VecVI modes;
-      fmatvec::VecV mDamping;
 
     private:
       double (GenericFlexibleFfrBody::*evalOMBVColorRepresentation[12])(int i);

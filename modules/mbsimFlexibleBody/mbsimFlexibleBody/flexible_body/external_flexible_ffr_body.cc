@@ -122,21 +122,6 @@ namespace MBSimFlexibleBody {
     else
       throwError("(ExternalFlexibleFfrBody::init): keyword \"shape function shape function integral\" not found in input data file.");
 
-//      for(int j=i; j<3; j++) {
-//	mdata=file.openChildObject<H5::SimpleDataset<vector<vector<double>>>>("PPdm"+to_string(i)+to_string(j));
-//	PPdm[i][j] <<= MatV(mdata->read());
-//	if(j>i)
-//	  PPdm[j][i] <<= PPdm[i][j].T();
-//      }
-//    }
-//    for(int i=0; i<3; i++) {
-//      cout << rPdm[i] << endl;
-//    for(int j=0; j<3; j++) {
-//      cout << i << " " << j << endl;
-//      cout << PPdm[i][j] << endl;
-//    }
-//    }
-    
     it = findChild(names,"nodal relative position");
     if(it!=list<string>::iterator()) {
       KrKP = getCellArray1D<fmatvec::Vec3>(3,VecV(file.openChildObject<H5::SimpleDataset<vector<double>>>("nodal relative position")->read()));
@@ -174,6 +159,32 @@ namespace MBSimFlexibleBody {
 	throwError("(ExternalFlexibleFfrBody::init): Input data file must be defined.");
       importData();
     }
+    else if(stage==preInit) {
+      if(mDamping.size()) {
+	if(mDamping.size()!=(int)Pdm.cols())
+	  throwError(string("(ExternalFlexibleFfrBody::init): size of modal damping does not match, must be ") + to_string(Pdm.cols()) +
+		", but is " + to_string(mDamping.size()) + ".");
+	SquareMatrix<Ref,double> V;
+	Vector<Ref,double> w;
+	eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
+	Pdm <<= Pdm*V;
+	for(int i=0; i<3; i++) {
+	   rPdm[i] <<= rPdm[i]*V;
+	  for(int j=0; j<3; j++)
+	    PPdm[i][j] <<= V.T()*PPdm[i][j]*V;
+	}
+	Ke0 <<= JTMJ(Ke0,V);
+	for(size_t i=0; i<Phi.size(); i++)
+	  Phi[i] <<= Phi[i]*V;
+	for(size_t i=0; i<Psi.size(); i++)
+	  Psi[i] <<= Psi[i]*V;
+	for(size_t i=0; i<sigmahel.size(); i++)
+	  sigmahel[i] <<= sigmahel[i]*V;
+	De0.resize(V.cols(),INIT,0);
+	for(int i=0; i<De0.size(); i++)
+	  De0(i,i) = 2*sqrt((PPdm[0][0](i,i)+PPdm[1][1](i,i)+PPdm[2][2](i,i))*Ke0(i,i))*mDamping(i);
+      }
+    }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvBody) {
         std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
@@ -203,6 +214,8 @@ namespace MBSimFlexibleBody {
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
     if(e) setProportionalDamping(E(e)->getText<Vec>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
+    if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       ombvBody = shared_ptr<OpenMBVExternalFlexibleFfrBody>(new OpenMBVExternalFlexibleFfrBody);

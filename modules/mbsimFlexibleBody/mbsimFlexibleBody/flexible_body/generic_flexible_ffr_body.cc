@@ -150,7 +150,7 @@ namespace MBSimFlexibleBody {
       uSize[j] = 6 + ne;
   }
 
-  void GenericFlexibleFfrBody::determineSID() {
+  void GenericFlexibleFfrBody::assemble() {
     Cr0.resize(ne,NONINIT);
     Gr0.resize(ne);
     Gr1.resize(ne,vector<SqrMat3>(ne));
@@ -283,46 +283,6 @@ namespace MBSimFlexibleBody {
 
   void GenericFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      if(modalReduction) {
-	SquareMatrix<Ref,double> V;
-	Vector<Ref,double> w;
-	eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
-	vector<int> imod;
-	for(int i=0; i<w.size(); i++) {
-	  if(w(i)>pow(2*M_PI*fmin,2) and w(i)<pow(2*M_PI*fmax,2))
-	    imod.push_back(i);
-	}
-	if(not modes.size()) {
-	  modes.resize(imod.size(),NONINIT);
-	  for(size_t i=0; i<imod.size(); i++)
-	    modes(i) = i+1;
-	}
-	else if(min(modes)<1 or max(modes)>int(imod.size()))
-	  throwError(string("(GenericFlexibleFfrBody::init): mode numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-	MatV Vr(V.rows(),modes.size(),NONINIT);
-	for(int i=0; i<modes.size(); i++)
-	  Vr.set(i,V.col(imod[modes(i)-1]));
-	Pdm <<= Pdm*Vr;
-	for(int i=0; i<3; i++) {
-	   rPdm[i] <<= rPdm[i]*Vr;
-	  for(int j=0; j<3; j++)
-	    PPdm[i][j] <<= Vr.T()*PPdm[i][j]*Vr;
-	}
-	Ke0 <<= JTMJ(Ke0,Vr);
-	for(size_t i=0; i<Phi.size(); i++)
-	  Phi[i] <<= Phi[i]*Vr;
-	for(size_t i=0; i<Psi.size(); i++)
-	  Psi[i] <<= Psi[i]*Vr;
-	for(size_t i=0; i<sigmahel.size(); i++)
-	  sigmahel[i] <<= sigmahel[i]*Vr;
-	if(mDamping.size()) {
-	  if(mDamping.size()!=(int)Vr.cols())
-	    throwError(string("(GenericFlexibleFfrBody::init): size of modal damping does not match, must be ") + to_string(Vr.cols()));
-	  De0.resize(Vr.cols(),INIT,0);
-	  for(int i=0; i<De0.size(); i++)
-	    De0(i,i) = 2*sqrt((PPdm[0][0](i,i)+PPdm[1][1](i,i)+PPdm[2][2](i,i))*Ke0(i,i))*mDamping(i);
-	}
-      }
 
       if(generalizedVelocityOfRotation==unknown)
         throwError("Generalized velocity of rotation unknown");
@@ -409,7 +369,7 @@ namespace MBSimFlexibleBody {
       T.init(Eye());
 
       if(Me.size()==0)
-        determineSID();
+        assemble();
       prefillMassMatrix();
 
       auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
@@ -796,17 +756,6 @@ namespace MBSimFlexibleBody {
       addContour(c);
       e=e->getNextElementSibling();
     }
-
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalReduction");
-    if(e) setModalReduction(MBXMLUtils::E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"minimumFrequency");
-    if(e) setMinimumFrequency(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"maximumFrequency");
-    if(e) setMaximumFrequency(E(e)->getText<double>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeNumbers");
-    if(e) setModeNumbers(MBXMLUtils::E(e)->getText<VecVI>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
-    if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalTranslation");
     if(e) {
