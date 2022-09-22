@@ -424,7 +424,7 @@ namespace MBSimGUI {
       int getuRelSize() const { return getqRelSize(); }
       virtual int getqERelSize() const { return 0; }
     protected:
-      ExtWidget *mRed, *minimumFrequency, *maximumFrequency, *modes, *mDamping, *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
+      ExtWidget *translation, *rotation, *translationDependentRotation, *generalizedVelocityOfRotation;
   };
 
   class FlexibleFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
@@ -435,7 +435,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *nodeNumbers, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *ombv, *ombvColorRepresentation, *plotNodes;
+      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *mDamping, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *nodeNumbers, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *ombv, *ombvColorRepresentation, *plotNodes;
       void updateWidget() override;
   };
 
@@ -447,7 +447,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *inputDataFile, *beta, *ombv, *plotNodes;
+      ExtWidget *inputDataFile, *beta, *mDamping, *ombv, *plotNodes;
   };
 
   class CalculixBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
@@ -469,7 +469,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *n, *l, *A, *I, *E, *rho, *ten, *beny, *benz, *tor, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
+      ExtWidget *n, *l, *A, *I, *E, *rho, *ten, *beny, *benz, *tor, *beta, *mDamping, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
   };
 
   class FiniteElementsFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
