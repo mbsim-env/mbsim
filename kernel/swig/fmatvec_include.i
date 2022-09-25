@@ -108,13 +108,13 @@ void _typemapInVecValue(SwigValueWrapper<Vec> &_1, PyObject *_input, swig_type_i
     _checkNumPyType<typename Vec::value_type>(type);
     npy_intp *dims=PyArray_SHAPE(input);
     _1=Vec();
-    #if __cplusplus >= 201103L
+    #if __cplusplus >= 201103L && SWIG_VERSION >= 0x040100
       static_cast<Vec&&>(_1).resize(dims[0]);
     #else
       static_cast<Vec&>(_1).resize(dims[0]);
     #endif
     for(int i=0; i<dims[0]; ++i)
-      #if __cplusplus >= 201103L
+      #if __cplusplus >= 201103L && SWIG_VERSION >= 0x040100
         static_cast<Vec&&>(_1)(i)=_arrayGet<typename Vec::value_type>(input, type, i);
       #else
         static_cast<Vec&>(_1)(i)=_arrayGet<typename Vec::value_type>(input, type, i);
@@ -212,14 +212,14 @@ void _typemapInMatValue(SwigValueWrapper<Mat> &_1, PyObject *_input, swig_type_i
     _checkNumPyType<typename Mat::value_type>(type);
     npy_intp *dims=PyArray_SHAPE(input);
     _1=Mat();
-    #if __cplusplus >= 201103L
+    #if __cplusplus >= 201103L && SWIG_VERSION >= 0x040100
       static_cast<Mat&&>(_1).resize(dims[0], dims[1]);
     #else
       static_cast<Mat&>(_1).resize(dims[0], dims[1]);
     #endif
     for(int r=0; r<dims[0]; ++r)
       for(int c=0; c<dims[1]; ++c)
-        #if __cplusplus >=201103L
+        #if __cplusplus >=201103L && SWIG_VERSION >= 0x040100
           static_cast<Mat&&>(_1)(r, c)=_arrayGet<typename Mat::value_type>(input, type, r, c);
         #else
           static_cast<Mat&>(_1)(r, c)=_arrayGet<typename Mat::value_type>(input, type, r, c);

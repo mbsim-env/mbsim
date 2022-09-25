@@ -48,7 +48,13 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
-    connect(this,QOverload<const QString&>::of(&QComboBox::textHighlighted),this,&LocalFrameComboBox::highlightObject);
+    connect(this,QOverload<const QString&>::of(&QComboBox::
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+      textHighlighted
+#else
+      highlighted
+#endif
+      ),this,&LocalFrameComboBox::highlightObject);
   }
 
   void LocalFrameComboBox::showPopup() {
@@ -73,7 +79,13 @@ namespace MBSimGUI {
   }
 
   ParentFrameComboBox::ParentFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
-    connect(this,QOverload<const QString&>::of(&QComboBox::textHighlighted),this,&ParentFrameComboBox::highlightObject);
+    connect(this,QOverload<const QString&>::of(&QComboBox::
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+      textHighlighted
+#else
+      highlighted
+#endif
+      ),this,&ParentFrameComboBox::highlightObject);
   }
 
   void ParentFrameComboBox::showPopup() {

@@ -117,7 +117,9 @@ AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python 
 AC_ARG_ENABLE([python], [--enable-python  Enable MBSim moudles in python. This is ALPHA hence it must be enabled explicitly.])
 AM_CONDITIONAL([COND_PYTHON], [test "x$enable_python" == "xyes"])
 if test "x$enable_python" == "xyes"; then
-  PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [pythonfound=no])
+  PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
+    PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
+  ])
   if test "$cross_compiling" == "yes"; then
     pythonshext=".pyd"
   else
