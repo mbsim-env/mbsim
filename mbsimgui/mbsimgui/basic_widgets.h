@@ -82,7 +82,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
-      void setFrame(const QString &str);
+      void setFrame(int index);
       QComboBox *frame;
       Element* element;
       Frame *selectedFrame, *omitFrame;
@@ -99,7 +99,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
 
     protected:
-      void setFrame(const QString &str);
+      void setFrame(int index);
       QComboBox *frame;
       Element* element;
       Frame *selectedFrame, *omitFrame;

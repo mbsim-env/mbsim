@@ -48,7 +48,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   LocalFrameComboBox::LocalFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
-    connect(this,QOverload<const QString&>::of(&QComboBox::highlighted),this,&LocalFrameComboBox::highlightObject);
+    connect(this,QOverload<const QString&>::of(&QComboBox::textHighlighted),this,&LocalFrameComboBox::highlightObject);
   }
 
   void LocalFrameComboBox::showPopup() {
@@ -73,7 +73,7 @@ namespace MBSimGUI {
   }
 
   ParentFrameComboBox::ParentFrameComboBox(Element *element_, QWidget *parent) : CustomComboBox(parent), element(element_) {
-    connect(this,QOverload<const QString&>::of(&QComboBox::highlighted),this,&ParentFrameComboBox::highlightObject);
+    connect(this,QOverload<const QString&>::of(&QComboBox::textHighlighted),this,&ParentFrameComboBox::highlightObject);
   }
 
   void ParentFrameComboBox::showPopup() {
@@ -106,7 +106,7 @@ namespace MBSimGUI {
     frame->setEditable(true);
     layout->addWidget(frame);
     selectedFrame = element->getFrame(0);
-    connect(frame,QOverload<const QString&>::of(&QComboBox::currentIndexChanged),this,&LocalFrameOfReferenceWidget::setFrame);
+    connect(frame,QOverload<int>::of(&QComboBox::currentIndexChanged),this,&LocalFrameOfReferenceWidget::setFrame);
     updateWidget();
   }
 
@@ -130,7 +130,8 @@ namespace MBSimGUI {
     frame->blockSignals(false);
   }
 
-  void LocalFrameOfReferenceWidget::setFrame(const QString &str) {
+  void LocalFrameOfReferenceWidget::setFrame(int index) {
+    QString str=frame->itemText(index);
     selectedFrame = element->getFrame(str.mid(6, str.length()-7));
     frame->setEditText(str);
   }
@@ -139,9 +140,11 @@ namespace MBSimGUI {
     return frame->currentText();
   }
 
-  DOMElement* LocalFrameOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setFrame(QString::fromStdString(E(element)->getAttribute("ref")));
-    return element;
+  DOMElement* LocalFrameOfReferenceWidget::initializeUsingXML(DOMElement *xmlElement) {
+    QString str=QString::fromStdString(E(xmlElement)->getAttribute("ref"));
+    selectedFrame = element->getFrame(str.mid(6, str.length()-7));
+    frame->setEditText(str);
+    return xmlElement;
   }
 
   DOMElement* LocalFrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
@@ -158,7 +161,7 @@ namespace MBSimGUI {
     frame->setEditable(true);
     layout->addWidget(frame);
     selectedFrame = element->getParent()->getFrame(0);
-    connect(frame,QOverload<const QString&>::of(&QComboBox::currentIndexChanged),this,&ParentFrameOfReferenceWidget::setFrame);
+    connect(frame,QOverload<int>::of(&QComboBox::currentIndexChanged),this,&ParentFrameOfReferenceWidget::setFrame);
     updateWidget();
   }
 
@@ -182,7 +185,8 @@ namespace MBSimGUI {
     frame->blockSignals(false);
   }
 
-  void ParentFrameOfReferenceWidget::setFrame(const QString &str) {
+  void ParentFrameOfReferenceWidget::setFrame(int index) {
+    QString str=frame->itemText(index);
     selectedFrame = element->getParent()->getFrame(str.mid(9, str.length()-10));
     frame->setEditText(str);
   }
@@ -191,9 +195,11 @@ namespace MBSimGUI {
     return frame->currentText();
   }
 
-  DOMElement* ParentFrameOfReferenceWidget::initializeUsingXML(DOMElement *element) {
-    setFrame(QString::fromStdString(E(element)->getAttribute("ref")));
-    return element;
+  DOMElement* ParentFrameOfReferenceWidget::initializeUsingXML(DOMElement *xmlElemewnt) {
+    QString str=QString::fromStdString(E(xmlElemewnt)->getAttribute("ref"));
+    selectedFrame = element->getParent()->getFrame(str.mid(9, str.length()-10));
+    frame->setEditText(str);
+    return xmlElemewnt;
   }
 
   DOMElement* ParentFrameOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
