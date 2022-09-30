@@ -195,17 +195,10 @@ namespace MBSimFlexibleBody {
       if(plotFeature[openMBV] and ombvBody) {
         std::shared_ptr<OpenMBV::FlexibleBody> flexbody = ombvBody->createOpenMBV();
         openMBVBody = flexbody;
-        if(ombvBody->getVisualization()==OpenMBVExternalFlexibleFfrBody::faces) {
-//	  // visualization
-//	  vector<int> ombvIndices(faceNodes.rows()*(faces.cols()+1));
-//	  int k = 0;
-//	  for(int i=0; i<faceNodes.rows(); i++) {
-//	    for(int j=0; j<faceNodes.cols(); j++)
-//	      ombvIndices[k++] = faceNodes(i,j);
-//	    ombvIndices[k++] = -1;
-//	  }
+        if(ombvBody->getVisualization()==OpenMBVExternalFlexibleFfrBody::faces)
 	  static_pointer_cast<OpenMBV::DynamicIndexedFaceSet>(flexbody)->setIndices(ombvIndices);
-	}
+	else if(ombvBody->getVisualization()==OpenMBVExternalFlexibleFfrBody::lines)
+	  static_pointer_cast<OpenMBV::DynamicIndexedLineSet>(flexbody)->setIndices(ombvIndices);
         ombvColorRepresentation = static_cast<OpenMBVFlexibleBody::ColorRepresentation>(ombvBody->getColorRepresentation());
       }
     }
