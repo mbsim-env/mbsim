@@ -58,37 +58,6 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new ExternalFlexibleFfrBodyPropertyDialog(this); }
   };
 
-  class CalculixBody : public GenericFlexibleFfrBody {
-    MBSIMGUI_OBJECTFACTORY_CLASS(CalculixBody, GenericFlexibleFfrBody, MBSIMFLEX%"CalculixBody", "Calculix body");
-    friend class CalculixBodyPropertyDialog;
-    public:
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override { return new CalculixBodyPropertyDialog(this); }
-  };
-
-  class FlexibleFfrBeam : public GenericFlexibleFfrBody {
-    MBSIMGUI_OBJECTFACTORY_CLASS(FlexibleFfrBeam, GenericFlexibleFfrBody, MBSIMFLEX%"FlexibleFfrBeam", "Flexible ffr beam");
-    friend class FlexibleFfrBeamPropertyDialog;
-    public:
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override { return new FlexibleFfrBeamPropertyDialog(this); }
-  };
-
-  class FiniteElementsFfrBody : public GenericFlexibleFfrBody {
-    MBSIMGUI_OBJECTFACTORY_CLASS(FiniteElementsFfrBody, GenericFlexibleFfrBody, MBSIMFLEX%"FiniteElementsFfrBody", "Finite elements ffr body");
-    friend class FiniteElementsFfrBodyPropertyDialog;
-    public:
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override { return new FiniteElementsFfrBodyPropertyDialog(this); }
-  };
-
-  class ExternalFiniteElementsFfrBody : public GenericFlexibleFfrBody {
-    MBSIMGUI_OBJECTFACTORY_CLASS(ExternalFiniteElementsFfrBody, GenericFlexibleFfrBody, MBSIMFLEX%"ExternalFiniteElementsFfrBody", "External finite elements ffr body");
-    friend class ExternalFiniteElementsFfrBodyPropertyDialog;
-    public:
-      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
-      PropertyDialog* createPropertyDialog() override { return new ExternalFiniteElementsFfrBodyPropertyDialog(this); }
-  };
 }
 
 #endif

@@ -87,13 +87,6 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new InterfaceNodeFramePropertyDialog(this,true); }
   };
 
-  class DistributingFfrInterfaceNodeFrame : public Frame {
-    public:
-      MBXMLUtils::FQN getXMLType() const override { return MBSIMFLEX%"DistributingFfrInterfaceNodeFrame"; }
-      QString getType() const override { return "Distributing ffr interface node Frame"; }
-      PropertyDialog* createPropertyDialog() override { return new DistributingInterfaceNodeFramePropertyDialog(this,true); }
-  };
-
 }
 
 #endif

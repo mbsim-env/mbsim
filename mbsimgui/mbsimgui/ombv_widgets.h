@@ -196,20 +196,10 @@ namespace MBSimGUI {
       ExtWidget *visu;
   };
 
-  class FiniteElementsBodyMBSOMBVWidget : public FlexibleBodyMBSOMBVWidget {
+  class ExternalFlexibleFfrBodyMBSOMBVWidget : public FlexibleBodyMBSOMBVWidget {
 
     public:
-      FiniteElementsBodyMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation());
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *visu;
-  };
-
-  class FlexibleFfrBeamMBSOMBVWidget : public FlexibleBodyMBSOMBVWidget {
-
-    public:
-      FlexibleFfrBeamMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation());
+      ExternalFlexibleFfrBodyMBSOMBVWidget(const std::vector<QString> &cRL=getColorRepresentation());
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:

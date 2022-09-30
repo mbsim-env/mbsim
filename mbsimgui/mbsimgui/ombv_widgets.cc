@@ -435,43 +435,23 @@ namespace MBSimGUI {
     return e;
   }
 
-  FiniteElementsBodyMBSOMBVWidget::FiniteElementsBodyMBSOMBVWidget(const vector<QString> &cRL) : FlexibleBodyMBSOMBVWidget(cRL) {
+  ExternalFlexibleFfrBodyMBSOMBVWidget::ExternalFlexibleFfrBodyMBSOMBVWidget(const vector<QString> &cRL) : FlexibleBodyMBSOMBVWidget(cRL) {
 
     vector<QString> list;
     list.emplace_back("\"points\"");
+    list.emplace_back("\"lines\"");
     list.emplace_back("\"faces\"");
     visu = new ExtWidget("Visualization",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"visualization");
     layout()->addWidget(visu);
   }
 
-  DOMElement* FiniteElementsBodyMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
+  DOMElement* ExternalFlexibleFfrBodyMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
     FlexibleBodyMBSOMBVWidget::initializeUsingXML(element);
     visu->initializeUsingXML(element);
     return element;
   }
 
-  DOMElement* FiniteElementsBodyMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=FlexibleBodyMBSOMBVWidget::writeXMLFile(parent);
-    visu->writeXMLFile(e);
-    return e;
-  }
-
-  FlexibleFfrBeamMBSOMBVWidget::FlexibleFfrBeamMBSOMBVWidget(const vector<QString> &cRL) : FlexibleBodyMBSOMBVWidget(cRL) {
-
-    vector<QString> list;
-    list.emplace_back("\"points\"");
-    list.emplace_back("\"lines\"");
-    visu = new ExtWidget("Visualization",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"visualization");
-    layout()->addWidget(visu);
-  }
-
-  DOMElement* FlexibleFfrBeamMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    FlexibleBodyMBSOMBVWidget::initializeUsingXML(element);
-    visu->initializeUsingXML(element);
-    return element;
-  }
-
-  DOMElement* FlexibleFfrBeamMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+  DOMElement* ExternalFlexibleFfrBodyMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=FlexibleBodyMBSOMBVWidget::writeXMLFile(parent);
     visu->writeXMLFile(e);
     return e;

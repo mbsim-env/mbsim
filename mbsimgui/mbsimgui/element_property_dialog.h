@@ -88,16 +88,6 @@ namespace MBSimGUI {
       ExtWidget *nodeNumbers, *weightingFactors, *approx;
   };
 
-  class DistributingInterfaceNodeFramePropertyDialog : public FramePropertyDialog {
-
-    public:
-      DistributingInterfaceNodeFramePropertyDialog(Element *frame, bool approx=false);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      ExtWidget *elementNumbers, *faceNumber, *approx;
-  };
-
   class ContourPropertyDialog : public ElementPropertyDialog {
 
     public:
@@ -448,50 +438,6 @@ namespace MBSimGUI {
       int getqERelSize() const override;
     protected:
       ExtWidget *inputDataFile, *beta, *mDamping, *ombv, *plotNodes;
-  };
-
-  class CalculixBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
-
-    public:
-      CalculixBodyPropertyDialog(Element *body_);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      int getqERelSize() const override;
-    protected:
-      ExtWidget *resultFileName, *formalism, *beta, *ombv, *plotNodes;
-  };
-
-  class FlexibleFfrBeamPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
-
-    public:
-      FlexibleFfrBeamPropertyDialog(Element *body_);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      int getqERelSize() const override;
-    protected:
-      ExtWidget *n, *l, *A, *I, *E, *rho, *ten, *beny, *benz, *tor, *beta, *mDamping, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
-  };
-
-  class FiniteElementsFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
-
-    public:
-      FiniteElementsFfrBodyPropertyDialog(Element *body_);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      int getqERelSize() const override;
-    protected:
-      ExtWidget *E, *rho, *nu, *nodes, *elements, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
-  };
-
-  class ExternalFiniteElementsFfrBodyPropertyDialog : public GenericFlexibleFfrBodyPropertyDialog {
-
-    public:
-      ExternalFiniteElementsFfrBodyPropertyDialog(Element *body_);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
-      int getqERelSize() const override;
-    protected:
-      ExtWidget *net, *ner, *nodes, *nnum, *mass, *stiff, *formalism, *beta, *bc, *inodes, *nmodes, *fbnm, *ombv, *plotNodes;
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {

@@ -23,6 +23,8 @@
 #include "widget.h"
 #include "custom_widgets.h"
 
+class QCheckBox;
+
 namespace MBSimGUI {
 
   class ExtWidget;
@@ -104,6 +106,37 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       int size, m, n;
+  };
+
+  class DofWidget : public Widget {
+    public:
+      DofWidget(QWidget *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getDof();
+      void setDof(const QString &dof);
+    private:
+      std::vector<QCheckBox*> dof;
+  };
+
+  class BoundaryConditionWidget : public Widget {
+    public:
+      BoundaryConditionWidget(QWidget *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getNodes();
+      QString getDof();
+    private:
+      ExtWidget *nodes, *dof;
+  };
+
+  class BoundaryConditionWidgetFactory : public WidgetFactory {
+    public:
+      BoundaryConditionWidgetFactory(QWidget *parent_) : parent(parent_) { }
+      Widget* createWidget(int i=0) override;
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"boundaryNodeNumbers"; }
+    protected:
+      QWidget *parent;
   };
 
 }

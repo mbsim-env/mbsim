@@ -24,6 +24,7 @@
 #include "namespace.h"
 #include <vector>
 #include <QVBoxLayout>
+#include <QCheckBox>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -317,6 +318,103 @@ namespace MBSimGUI {
     if(i==1)
       return new ChoiceWidget(new MatWidgetFactory(size*size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5);
     return nullptr;
+  }
+
+  DofWidget::DofWidget(QWidget *parent) : Widget(parent), dof(6) {
+    auto *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    dof[0] = new QCheckBox("x",this);
+    layout->addWidget(dof[0]);
+    dof[1] = new QCheckBox("y",this);
+    layout->addWidget(dof[1]);
+    dof[2] = new QCheckBox("z",this);
+    layout->addWidget(dof[2]);
+    dof[3] = new QCheckBox("a",this);
+    layout->addWidget(dof[3]);
+    dof[4] = new QCheckBox("b",this);
+    layout->addWidget(dof[4]);
+    dof[5] = new QCheckBox("g",this);
+    layout->addWidget(dof[5]);
+  }
+
+  DOMElement* DofWidget::initializeUsingXML(DOMElement *element) {
+    DOMText *text_ = E(element)->getFirstTextChild();
+    if(text_) {
+      setDof(QString::fromStdString(X()%text_->getData()));
+      return element;
+    }
+    return nullptr;
+  }
+
+  DOMElement* DofWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMText *text= doc->createTextNode(X()%getDof().toStdString());
+    parent->insertBefore(text, nullptr);
+    return nullptr;
+  }
+
+  QString DofWidget::getDof() {
+    vector<QString> v;
+    for(size_t i=0; i<dof.size(); i++) {
+      if(dof[i]->isChecked())
+	v.push_back(QString::number(i));
+    }
+    return toQStr(v);
+  }
+
+  void DofWidget::setDof(const QString &dof) {
+    vector<QString> v = strToVec(dof);
+    for(size_t i=0; i<v.size(); i++)
+      this->dof[v[i].toInt()]->setChecked(true);
+  }
+
+  BoundaryConditionWidget::BoundaryConditionWidget(QWidget *parent) : Widget(parent) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    nodes = new ExtWidget("Boundary node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"boundaryNodeNumbers");
+    layout->addWidget(nodes);
+
+//    dof = new ExtWidget("Degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"degreesOfFreedom");
+//    layout->addWidget(dof);
+
+    dof = new ExtWidget("Degrees of freedom",new DofWidget(this),false,false,MBSIMFLEX%"degreesOfFreedom");
+    layout->addWidget(dof);
+  }
+
+  DOMElement* BoundaryConditionWidget::initializeUsingXML(DOMElement *element) {
+    nodes->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    if(E(element)->getTagName()==MBSIMFLEX%"degreesOfFreedom")
+      dof->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    return element;
+  }
+
+  DOMElement* BoundaryConditionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"boundaryNodeNumbers");
+    nodes->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"degreesOfFreedom");
+    dof->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    return nullptr;
+  }
+
+  QString BoundaryConditionWidget::getNodes() {
+    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(nodes->getWidget())->getWidget())->getValue();
+  }
+
+  QString BoundaryConditionWidget::getDof() {
+    //return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(dof->getWidget())->getWidget())->getValue();
+    return static_cast<DofWidget*>(dof->getWidget())->getDof();
+  }
+
+  Widget* BoundaryConditionWidgetFactory::createWidget(int i) {
+    return new BoundaryConditionWidget(parent);
   }
 
 }
