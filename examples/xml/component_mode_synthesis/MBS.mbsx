@@ -21,40 +21,14 @@
       <contours/>
       <groups/>
       <objects>
-        <FlexibleFfrBeam xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Beam">
-          <numberOfNodes>nFE+1</numberOfNodes>
-          <length unit="m">l</length>
-          <crossSectionArea unit="m^2">d*h</crossSectionArea>
-          <momentOfInertia>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>Iy</ele>
-              <ele>Iz</ele>
-              <ele>0</ele>
-            </xmlVector>
-          </momentOfInertia>
-          <youngsModulus unit="N/m^2">E</youngsModulus>
-          <density unit="kg/m^3">rho</density>
-          <tension>false</tension>
-          <bendingAboutYAxis>false</bendingAboutYAxis>
-          <bendingAboutZAxis>true</bendingAboutZAxis>
-          <torsion>false</torsion>
+        <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Beam">
+          <inputDataFileName>"input_data.h5"</inputDataFileName>
           <proportionalDamping>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
               <ele>0.001</ele>
             </xmlVector>
           </proportionalDamping>
-          <interfaceNodeNumbers>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>1</ele>
-              <ele>nFE+1</ele>
-            </xmlVector>
-          </interfaceNodeNumbers>
-          <normalModeNumbers>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>1</ele>
-            </xmlVector>
-          </normalModeNumbers>
           <stateDependentTranslation>
             <TranslationAlongYAxis xmlns="http://www.mbsim-env.de/MBSim"/>
           </stateDependentTranslation>
@@ -77,10 +51,11 @@
           </frames><contours/>
           <enableOpenMBV>
             <lineWidth xmlns="http://www.mbsim-env.de/MBSim">5</lineWidth>
+            <visualization>"lines"</visualization>
           </enableOpenMBV>
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
-          </enableOpenMBVFrameK></FlexibleFfrBeam>
+          </enableOpenMBVFrameK></ExternalFlexibleFfrBody>
       </objects>
       <links>
         <KineticExcitation name="KineticExcitation1">
@@ -176,6 +151,5 @@
     <endTime unit="s">0.005</endTime>
     <plotStepSize unit="s">1e-4</plotStepSize>
   </DOPRI5Integrator>
-
 
 </MBSimProject>

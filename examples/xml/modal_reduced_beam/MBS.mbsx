@@ -17,29 +17,8 @@
       <contours/>
       <groups/>
       <objects>
-        <FlexibleFfrBeam xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBeam">
-          <numberOfNodes>nN</numberOfNodes>
-          <length unit="m">l</length>
-          <crossSectionArea unit="m^2">A</crossSectionArea>
-          <momentOfInertia>I</momentOfInertia>
-          <youngsModulus unit="N/m^2">E</youngsModulus>
-          <density unit="kg/m^3">rho</density>
-          <tension>false</tension>
-          <bendingAboutYAxis>true</bendingAboutYAxis>
-          <bendingAboutZAxis>true</bendingAboutZAxis>
-          <torsion>false</torsion>
-          <boundaryNodeNumbers>
-	    [1;nN]
-          </boundaryNodeNumbers>
-          <degreesOfFreedom>
-	    [1;2]
-          </degreesOfFreedom>
-          <normalModeNumbers>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>1</ele>
-              <ele>2</ele>
-            </xmlVector>
-          </normalModeNumbers>
+        <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleBeam">
+          <inputDataFileName>"input_data.h5"</inputDataFileName>
           <frames>
             <NodeFrame name="P1">
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
@@ -59,13 +38,14 @@
               </enableOpenMBV>
               <nodeNumber>nN</nodeNumber>
             </NodeFrame>
-        </frames>  <contours/>
+          </frames><contours/>
           <enableOpenMBV>
-            <pointSize xmlns="http://www.mbsim-env.de/MBSim">5</pointSize>
+            <lineWidth xmlns="http://www.mbsim-env.de/MBSim">5</lineWidth>
+            <visualization>"lines"</visualization>
           </enableOpenMBV>
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
-        </enableOpenMBVFrameK></FlexibleFfrBeam>
+        </enableOpenMBVFrameK></ExternalFlexibleFfrBody>
       </objects>  
       <links/>
       <constraints/>

@@ -3,11 +3,9 @@
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
-      <scalarParameter name="E">2e11</scalarParameter>
       <scalarParameter name="m1">0.36</scalarParameter>
       <scalarParameter name="l1">0.15</scalarParameter>
       <scalarParameter name="h1">0.03</scalarParameter>
-      <scalarParameter name="rho">7870</scalarParameter>
       <scalarParameter name="l2">0.3</scalarParameter>
       <scalarParameter name="d2">0.008</scalarParameter>
       <scalarParameter name="h2">0.008</scalarParameter>
@@ -109,30 +107,9 @@
           <enableOpenMBVFrameC>
               <size unit="cm">1</size>
           </enableOpenMBVFrameC></RigidBody>
-        <FlexibleFfrBeam xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody2">
+        <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FlexibleFfrBody2">
           <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[RigidBody1]/Frame[Q]"/>
-          <numberOfNodes>nFE+1</numberOfNodes>
-          <length unit="m">l2</length>
-          <crossSectionArea unit="m^2">d2*h2</crossSectionArea>
-          <momentOfInertia>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>1/12*d2^3*h2</ele>
-              <ele>1/12*d2*h2^3</ele>
-              <ele>0</ele>
-            </xmlVector>
-          </momentOfInertia>
-          <youngsModulus unit="N/m^2">E</youngsModulus>
-          <density unit="kg/m^3">rho</density>
-          <tension>false</tension>
-          <bendingAboutYAxis>false</bendingAboutYAxis>
-          <bendingAboutZAxis>true</bendingAboutZAxis>
-          <torsion>false</torsion>
-          <boundaryNodeNumbers>
-	    [1;nFE+1]
-          </boundaryNodeNumbers>
-          <degreesOfFreedom>
-	    1
-          </degreesOfFreedom>
+          <inputDataFileName>"input_data.h5"</inputDataFileName>
           <stateDependentRotation>
             <RotationAboutZAxis xmlns="http://www.mbsim-env.de/MBSim"/>
           </stateDependentRotation>
@@ -145,11 +122,12 @@
             </NodeFrame>
           </frames><contours/>
           <enableOpenMBV>
-            <pointSize xmlns="http://www.mbsim-env.de/MBSim">5</pointSize>
+            <lineWidth xmlns="http://www.mbsim-env.de/MBSim">5</lineWidth>
+            <visualization>"lines"</visualization>
           </enableOpenMBV>
           <enableOpenMBVFrameK>
             <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
-          </enableOpenMBVFrameK></FlexibleFfrBeam>
+          </enableOpenMBVFrameK></ExternalFlexibleFfrBody>
         <RigidBody name="RigidBody3" xmlns="http://www.mbsim-env.de/MBSim">
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
