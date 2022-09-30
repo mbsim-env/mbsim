@@ -166,7 +166,7 @@ namespace MBSimFlexibleBody {
       importData();
     }
     else if(stage==preInit) {
-      if(mDamping.size()) {
+      if(not(De0.size()) and mDamping.size()) {
 	if(mDamping.size()!=(int)Pdm.cols())
 	  throwError(string("(ExternalFlexibleFfrBody::init): size of modal damping does not match, must be ") + to_string(Pdm.cols()) +
 		", but is " + to_string(mDamping.size()) + ".");
