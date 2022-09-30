@@ -707,17 +707,17 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert den Dämpfungsgrad für jede Mode.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
               </xs:documentation>
             </xs:annotation>
-          </xs:element>
-          <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert den Dämpfungsgrad für jede Mode.
-            </xs:documentation></xs:annotation>
           </xs:element>
           <xs:choice minOccurs="0">
             <xs:element name="nonlinearStiffnessMatrixOfFirstOrderArray">

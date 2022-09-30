@@ -70,11 +70,11 @@ namespace MBSimFlexibleBody {
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"dampingMatrix");
     if(e) setDampingMatrix(E(e)->getText<SymMat>());
 
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
-    if(e) setProportionalDamping(E(e)->getText<Vec>());
-
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
     if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
+    if(e) setProportionalDamping(E(e)->getText<Vec>());
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrderArray");
     if(e) setNonlinearStiffnessMatrixOfFirstOrder(getCellArray1D<SqrMatV>(e));

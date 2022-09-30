@@ -185,10 +185,10 @@ namespace MBSimFlexibleBody {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"inputDataFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
-    if(e) setProportionalDamping(E(e)->getText<Vec>());
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
     if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
+    if(e) setProportionalDamping(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       ombvBody = shared_ptr<OpenMBVExternalFlexibleFfrBody>(new OpenMBVExternalFlexibleFfrBody);
