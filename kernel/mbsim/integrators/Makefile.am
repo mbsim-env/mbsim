@@ -39,6 +39,7 @@ libintegrators_la_SOURCES = integrator.cc\
 			    fortran/phem56.f
 libintegrators_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 libintegrators_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
+libintegrators_la_FFLAGS = -std=legacy # the fortran code in mbsim-env is very old
 libintegrators2_la_SOURCES = boost_odeint_integrator.cc
 libintegrators2_la_CPPFLAGS = $(libintegrators_la_CPPFLAGS) -Wno-error=misleading-indentation
 libintegrators2_la_LIBADD = $(libintegrators_la_LIBADD)
