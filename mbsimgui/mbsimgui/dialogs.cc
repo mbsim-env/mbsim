@@ -65,9 +65,9 @@ namespace MBSimGUI {
   QModelIndex findTreeItemData(QModelIndex root, TreeItemData *sel) {
     auto *model = static_cast<const ElementTreeModel*>(root.model());
     for(int i=0; i<model->rowCount(root); i++) {
-      if(model->getItem(root.child(i,0))->getItemData()==sel)
-        return root.child(i,0);
-      QModelIndex index = findTreeItemData(root.child(i,0), sel);
+      if(model->getItem(root.model()->index(i,0,root))->getItemData()==sel)
+        return root.model()->index(i,0,root);
+      QModelIndex index = findTreeItemData(root.model()->index(i,0,root), sel);
       if(index.isValid())
         return index;
     }

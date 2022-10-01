@@ -102,7 +102,7 @@ namespace MBSimGUI {
       QAction *actionSaveProject, *actionSimulate, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
-      QTime statusTime;
+      QElapsedTimer statusTime;
       int IDcounter{0};
       std::string currentID;
       enum { maxRecentFiles = 5 };
@@ -218,7 +218,7 @@ namespace MBSimGUI {
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
       Project* getProject() { return project; }
-      QTime& getStatusTime() { return statusTime; }
+      QElapsedTimer& getStatusTime() { return statusTime; }
       QString getProjectFile() const { return projectFile; }
       QString getProjectFilePath() const;
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
