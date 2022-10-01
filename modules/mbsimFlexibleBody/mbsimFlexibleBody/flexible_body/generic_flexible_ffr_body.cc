@@ -251,8 +251,10 @@ namespace MBSimFlexibleBody {
     for(unsigned int i=0; i<K0om.size(); i++)
       Oe1[i] += K0om[i];
 
-    if(not(De0.size()))
+    if(beta.e(0)>0 or beta.e(1)>0)
       De0 <<= beta.e(0)*Me + beta.e(1)*Ke0;
+    else if(not(De0.size()))
+      De0.resize(Ke0.size(),INIT,0);
 
     if(Knl1.size()) {
       Ke1.resize(Knl1.size());
@@ -284,7 +286,7 @@ namespace MBSimFlexibleBody {
   void GenericFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       if(not(De0.size()) and mDamping.size()) {
-	if(mDamping.size()!=(int)Pdm.cols())
+	if(mDamping.size()!=Pdm.cols())
 	  throwError(string("(GenericFlexibleFfrBody::init): size of modal damping does not match, must be ") + to_string(Pdm.cols()) +
 		", but is " + to_string(mDamping.size()) + ".");
 	SquareMatrix<Ref,double> V;
