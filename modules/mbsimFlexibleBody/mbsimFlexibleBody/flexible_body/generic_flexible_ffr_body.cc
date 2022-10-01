@@ -285,7 +285,7 @@ namespace MBSimFlexibleBody {
 
   void GenericFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      if(not(De0.size()) and mDamping.size()) {
+      if(mDamping.size()) {
 	if(mDamping.size()!=Pdm.cols())
 	  throwError(string("(GenericFlexibleFfrBody::init): size of modal damping does not match, must be ") + to_string(Pdm.cols()) +
 		", but is " + to_string(mDamping.size()) + ".");
