@@ -441,7 +441,7 @@ namespace MBSimGUI {
     list.emplace_back("\"points\"");
     list.emplace_back("\"lines\"");
     list.emplace_back("\"faces\"");
-    visu = new ExtWidget("Visualization",new TextChoiceWidget(list,1,true),true,false,MBSIMFLEX%"visualization");
+    visu = new ExtWidget("Visualization",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"visualization");
     layout()->addWidget(visu);
   }
 
