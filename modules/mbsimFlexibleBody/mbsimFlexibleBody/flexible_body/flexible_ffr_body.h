@@ -61,6 +61,8 @@ namespace MBSimFlexibleBody {
 
       void setStiffnessMatrix(const fmatvec::SymMatV &Ke0_) { Ke0 <<= Ke0_; }
       void setDampingMatrix(const fmatvec::SymMatV &De0_) { De0 <<= De0_; }
+      void setModalDamping(const fmatvec::VecV &mDamping_) { mDamping <<= mDamping_; }
+      void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
       // End of interface
 
       // Interface for nonlinear stiffness matrices
@@ -130,11 +132,16 @@ namespace MBSimFlexibleBody {
       void setNodalGeometricStiffnessMatrixDueToMomentArray(const std::vector<std::vector<fmatvec::SqrMatV>> &K0M_) { K0M = K0M_; }
       void setNodalGeometricStiffnessMatrixDueToMoment(const fmatvec::MatV &K0M_) { K0M = getCellArray2D<fmatvec::SqrMatV>(K0M_.cols(),K0M_.cols(),K0M_); }
 
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body);
       void setOpenMBVColorRepresentation(OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation_) { ombvColorRepresentation = ombvColorRepresentation_; }
       void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes = plotNodes_; }
+
+    private:
+      fmatvec::Vec2 beta;
+      fmatvec::VecV mDamping;
   };
 
 }

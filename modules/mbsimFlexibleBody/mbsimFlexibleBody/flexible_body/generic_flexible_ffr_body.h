@@ -117,10 +117,6 @@ namespace MBSimFlexibleBody {
       /* GETTER / SETTER */
       int getNumberOfModeShapes() { if(updSize) calcSize(); return ne; }
 
-      void setProportionalDamping(const fmatvec::Vec2 &beta_) { beta = beta_; }
-
-      void setModalDamping(const fmatvec::VecV &mDamping_) { mDamping <<= mDamping_; }
-
       // NOTE: we can not use a overloaded setTranslation here due to restrictions in XML but define them for convinience in c++
       /*!
        * \brief set Kinematic for genral translational motion
@@ -321,8 +317,6 @@ namespace MBSimFlexibleBody {
       std::vector<fmatvec::Mat3xV> rPdm;
       std::vector<std::vector<fmatvec::SqrMat3>> mmi2, Gr1;
       std::vector<fmatvec::SqrMatV> Knl1, K0t, K0r, K0om, Ct1, Cr1, Ge, Oe1, Ke1, De1;
-      fmatvec::Vec2 beta;
-      fmatvec::VecV mDamping;
       fmatvec::VecV ksigma0;
       fmatvec::SqrMatV ksigma1;
       std::vector<fmatvec::SymMat3> mmi1;

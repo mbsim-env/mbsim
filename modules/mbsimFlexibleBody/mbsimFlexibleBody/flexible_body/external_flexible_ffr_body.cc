@@ -87,6 +87,8 @@ namespace MBSimFlexibleBody {
       De0 <<= SymMatV(file.openChildObject<H5::SimpleDataset<vector<vector<double>>>>("damping matrix")->read());
       names.erase(it);
     }
+    else
+      De0.resize(Ke0.size());
 
     it = findChild(names,"position shape function integral");
     if(it!=list<string>::iterator()) {
@@ -185,10 +187,6 @@ namespace MBSimFlexibleBody {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"inputDataFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modalDamping");
-    if(e) setModalDamping(MBXMLUtils::E(e)->getText<VecV>());
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"proportionalDamping");
-    if(e) setProportionalDamping(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
       ombvBody = shared_ptr<OpenMBVExternalFlexibleFfrBody>(new OpenMBVExternalFlexibleFfrBody);
