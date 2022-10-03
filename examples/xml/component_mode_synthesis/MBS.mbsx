@@ -23,12 +23,6 @@
       <objects>
         <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Beam">
           <inputDataFileName>"input_data.h5"</inputDataFileName>
-          <proportionalDamping>
-            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-              <ele>0</ele>
-              <ele>0.001</ele>
-            </xmlVector>
-          </proportionalDamping>
           <stateDependentTranslation>
             <TranslationAlongYAxis xmlns="http://www.mbsim-env.de/MBSim"/>
           </stateDependentTranslation>
