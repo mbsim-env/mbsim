@@ -2,22 +2,22 @@
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
 
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
-   xmlns:xlink="http://www.w3.org/1999/xlink"
-   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
-   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    width="16px"
    height="16px"
    id="svg2383"
    sodipodi:version="0.32"
-   inkscape:version="0.91 r13725"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14, custom)"
    sodipodi:docname="kill.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
-   version="1.1">
+   version="1.1"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <defs
      id="defs2385">
     <marker
@@ -198,15 +198,16 @@
        patternTransform="translate(-0.9395924,3.8281908)"
        id="pattern4699">
       <text
-         sodipodi:linespacing="125%"
          id="text2397"
          y="8.7480469"
          x="-1.1777344"
-         style="font-size:12px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient4703);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;font-family:Bitstream Vera Sans;-inkscape-font-specification:Bitstream Vera Sans"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;line-height:0%;font-family:'Bitstream Vera Sans';-inkscape-font-specification:'Bitstream Vera Sans';text-align:start;writing-mode:lr-tb;text-anchor:start;fill:url(#linearGradient4703);fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
          xml:space="preserve"><tspan
-           style="fill:url(#linearGradient4703);fill-opacity:1;fill-rule:nonzero"
+           style="font-size:12px;line-height:1.25;fill:url(#linearGradient4703);fill-opacity:1;fill-rule:nonzero"
            id="tspan3221"
-           sodipodi:role="line">HDF</tspan></text>
+           sodipodi:role="line"
+           x="-1.1777344"
+           y="8.7480469">HDF</tspan></text>
     </pattern>
     <linearGradient
        inkscape:collect="always"
@@ -380,9 +381,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="3.924054"
-     inkscape:cx="69.372804"
-     inkscape:cy="21.986571"
+     inkscape:zoom="7.848108"
+     inkscape:cx="-4.905641"
+     inkscape:cy="-3.1854811"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -401,14 +402,18 @@
      inkscape:object-nodes="true"
      inkscape:snap-nodes="true"
      inkscape:snap-others="true"
-     showguides="false">
+     showguides="false"
+     inkscape:showpageshadow="2"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1">
     <inkscape:grid
        type="xygrid"
        id="grid4248" />
     <sodipodi:guide
        position="-26.759407,31.03911"
        orientation="-0.70710678,0.70710678"
-       id="guide4263" />
+       id="guide4263"
+       inkscape:locked="false" />
   </sodipodi:namedview>
   <metadata
      id="metadata2388">
@@ -425,17 +430,31 @@
      id="layer1"
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 14,14 2,2"
-       id="path4258"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
-    <path
-       style="fill:none;fill-rule:evenodd;stroke:#ff0000;stroke-width:0.99999994;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-       d="M 2,14 14,2"
-       id="path4258-3"
-       inkscape:connector-curvature="0"
-       sodipodi:nodetypes="cc" />
+    <rect
+       style="fill:#ff0000"
+       id="rect282"
+       width="14"
+       height="14"
+       x="1"
+       y="1"
+       ry="2" />
+    <rect
+       style="fill:#ffffff;stroke-width:1.52752"
+       id="rect511"
+       width="14"
+       height="2"
+       x="4.3137083"
+       y="-1"
+       ry="1"
+       transform="rotate(45)" />
+    <rect
+       style="fill:#ffffff;stroke-width:1.52752"
+       id="rect511-3"
+       width="14"
+       height="2"
+       x="-7"
+       y="10.313708"
+       ry="1"
+       transform="matrix(-0.70710678,0.70710678,0.70710678,0.70710678,0,0)" />
   </g>
 </svg>
