@@ -44,6 +44,7 @@
 #include <QMessageBox>
 #include <utility>
 #include "dialogs.h"
+#include "wizards.h"
 #include "project.h"
 #include "mainwindow.h"
 
@@ -1766,11 +1767,16 @@ namespace MBSimGUI {
     inputDataFile = new ExtWidget("Input data file name",new FileWidget("", "Open input data file", "Input data files (*.h5)", 0, true),false,false,MBSIMFLEX%"inputDataFileName");
     addToTab("General",inputDataFile);
 
-    mDamping = new ExtWidget("Modal damping",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"modalDamping");
-    addToTab("General", mDamping);
+    auto widget = new QWidget;
+    auto hlayout = new QHBoxLayout;
+    widget->setLayout(hlayout);
+    auto label = new QLabel("Use flexible body tool to create input data:");
+    hlayout->addWidget(label);
+    auto button = new QPushButton(Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
+    connect(button,&QPushButton::clicked,this,[=](){ mw->flexibleBodyTool(); connect(mw->getFlexibleBodyTool(),&FlexibleBodyTool::finished,this,[=](int res) { if(res==1) static_cast<FileWidget*>(inputDataFile->getWidget())->setFile(mw->getFlexibleBodyTool()->getInputDataFile()); }); });
 
-    beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
-    addToTab("General", beta);
+    hlayout->addWidget(button);
+    addToTab("General",widget);
 
     ombv = new ExtWidget("Enable openMBV",new ExternalFlexibleFfrBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization",ombv);
@@ -1787,8 +1793,6 @@ namespace MBSimGUI {
   DOMElement* ExternalFlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     inputDataFile->initializeUsingXML(item->getXMLElement());
-    mDamping->initializeUsingXML(item->getXMLElement());
-    beta->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
     plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1797,8 +1801,6 @@ namespace MBSimGUI {
   DOMElement* ExternalFlexibleFfrBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     inputDataFile->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    mDamping->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
