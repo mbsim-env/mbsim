@@ -589,21 +589,20 @@ namespace MBSimGUI {
     sort(c.begin(), c.end());
 
     size_t h=0;
-    Indices IF;
-    Indices IX;
+    Indices iF, iX;
     for(int i=0; i<ng; i++) {
       if(h<c.size() and i==c[h]) {
 	h++;
-	IX.add(i);
+	iX.add(i);
       }
       else
-	IF.add(i);
+	iF.add(i);
     }
 
-    // M0 <<= M0(IF);
-    //Ke0 <<= Ke0(IF);
-    SymMatV Ke0r = Ke0(IF);
-    SymMatV M0r = M0(IF);
+    // M0 <<= M0(iF);
+    //Ke0 <<= Ke0(iF);
+    SymMatV Ke0r = Ke0(iF);
+    SymMatV M0r = M0(iF);
 
     c.clear();
     for(int i=0; i<inodes.size(); i++) {
@@ -615,24 +614,23 @@ namespace MBSimGUI {
     }
     sort(c.begin(), c.end());
     h=0;
-    Indices IH;
-    Indices IN;
-    for(int i=0; i<IF.size(); i++) {
-      if(h<c.size() and IF[i]==c[h]) {
-	IH.add(i);
+    Indices iH, iN;
+    for(int i=0; i<iF.size(); i++) {
+      if(h<c.size() and iF[i]==c[h]) {
+	iH.add(i);
 	h++;
       }
       else
-	IN.add(i);
+	iN.add(i);
     }
-    MatV Vsd(n,IH.size()+nmodes.size(),NONINIT);
-    if(IH.size()) {
+    MatV Vsd(n,iH.size()+nmodes.size(),NONINIT);
+    if(iH.size()) {
       Indices IJ;
-      for(int i=0; i<IH.size(); i++)
+      for(int i=0; i<iH.size(); i++)
 	IJ.add(i);
-      MatV Vs(IF.size(),IH.size(),NONINIT);
-      Vs.set(IN,IJ,-slvLL(Ke0r(IN),Ke0r(IN,IH)));
-      Vs.set(IH,IJ,MatV(IH.size(),IH.size(),Eye()));
+      MatV Vs(iF.size(),iH.size(),NONINIT);
+      Vs.set(iN,IJ,-slvLL(Ke0r(iN),Ke0r(iN,iH)));
+      Vs.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
       Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
     }
 
@@ -640,7 +638,7 @@ namespace MBSimGUI {
       SqrMat V;
       Vec w;
       if(fixedBoundaryNormalModes) {
-	eigvec(Ke0r(IN),M0r(IN),V,w);
+	eigvec(Ke0r(iN),M0r(iN),V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
@@ -649,8 +647,8 @@ namespace MBSimGUI {
 	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
 	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
 	for(int i=0; i<nmodes.size(); i++) {
-	  Vsd.set(IN,IH.size()+i,V.col(imod[nmodes(i)-1]));
-	  Vsd.set(IH,IH.size()+i,Vec(IH.size()));
+	  Vsd.set(iN,iH.size()+i,V.col(imod[nmodes(i)-1]));
+	  Vsd.set(iH,iH.size()+i,Vec(iH.size()));
 	}
       }
       else {
@@ -664,11 +662,11 @@ namespace MBSimGUI {
 	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
 	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
 	for(int i=0; i<nmodes.size(); i++)
-	  Vsd.set(IH.size()+i,V.col(imod[nmodes(i)-1]));
+	  Vsd.set(iH.size()+i,V.col(imod[nmodes(i)-1]));
       }
     }
 
-    if(IH.size()) {
+    if(iH.size()) {
       SqrMat V;
       Vec w;
       eigvec(JTMJ(Ke0r,Vsd),JTMJ(M0r,Vsd),V,w);
@@ -687,8 +685,8 @@ namespace MBSimGUI {
     Indices IJ;
     for(int i=0; i<nM; i++)
       IJ.add(i);
-    Phi_.set(IF,IJ,Vsd);
-    Phi_.set(IX,IJ,Mat(IX.size(),IJ.size()));
+    Phi_.set(iF,IJ,Vsd);
+    Phi_.set(iX,IJ,Mat(iX.size(),IJ.size()));
   }
 
   void FlexibleBodyTool::msm() {
