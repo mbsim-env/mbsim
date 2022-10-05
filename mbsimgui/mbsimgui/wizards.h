@@ -151,7 +151,7 @@ namespace MBSimGUI {
       void ombv();
       void damp();
       void exp();
-      double m{0};
+      double m;
       fmatvec::MatV r, M, K, Phi_, Sr;
       fmatvec::VecV mDamp;
       fmatvec::Vec2 pDamp;

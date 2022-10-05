@@ -505,187 +505,190 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::stiff() {
-      string str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->getWidget())->getFile(true).toStdString();
-      if(!str.empty())
-	r <<= readMat(str);
-      str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->mass->getWidget())->getFile(true).toStdString();
-      if(!str.empty())
-	M <<= readMat(str);
-      str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->stiff->getWidget())->getFile(true).toStdString();
-      if(!str.empty())
-	K <<= readMat(str);
+    nodeMap.clear();
 
-      if(nodeMap.empty()) {
-	for(int i=0; i<r.rows(); i++)
-	  nodeMap[i+1] = i;
-      }
-      nN = nodeMap.size();
+    string str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->getWidget())->getFile(true).toStdString();
+    if(!str.empty())
+      r <<= readMat(str);
+    str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->mass->getWidget())->getFile(true).toStdString();
+    if(!str.empty())
+      M <<= readMat(str);
+    str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->stiff->getWidget())->getFile(true).toStdString();
+    if(!str.empty())
+      K <<= readMat(str);
 
-      if(M.cols()==3) {
-	M0.resize(nN*nen);
-	for(int i=0; i<M.rows(); i++)
-	  M0.e(M(i,0)-1,M(i,1)-1) = M(i,2);
-      }
+    if(nodeMap.empty()) {
+      for(int i=0; i<r.rows(); i++)
+	nodeMap[i+1] = i;
+    }
+    nN = nodeMap.size();
 
-      Ke0.resize(nN*nen);
-      if(K.cols()==3) {
-	for(int i=0; i<K.rows(); i++)
-	  Ke0.e(K(i,0)-1,K(i,1)-1) = K(i,2);
-      } else if(K.cols()==5) {
-	for(int i=0; i<K.rows(); i++)
-	  Ke0(3*(K(i,0)-1)+K(i,1)-1,3*(K(i,2)-1)+K(i,3)-1) = K(i,4);
-      }
+    if(M.cols()==3) {
+      M0.resize(nN*nen);
+      for(int i=0; i<M.rows(); i++)
+	M0.e(M(i,0)-1,M(i,1)-1) = M(i,2);
+    }
+
+    Ke0.resize(nN*nen);
+    if(K.cols()==3) {
+      for(int i=0; i<K.rows(); i++)
+	Ke0.e(K(i,0)-1,K(i,1)-1) = K(i,2);
+    } else if(K.cols()==5) {
+      for(int i=0; i<K.rows(); i++)
+	Ke0(3*(K(i,0)-1)+K(i,1)-1,3*(K(i,2)-1)+K(i,3)-1) = K(i,4);
+    }
   }
 
   void FlexibleBodyTool::cms() {
-      std::map<int,VecVI> bc;
-      std::vector<VecVI> dof;
-      std::vector<VecVI> bnodes;
-      bool fixedBoundaryNormalModes = false;
-      int nr = 0;
-      auto *list = static_cast<ListWidget*>(static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget());
-      for(int i=0; i<list->getSize(); i++) {
-	bnodes.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getNodes().toStdString().c_str())); 
-	dof.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getDof().toStdString().c_str())); 
-      }
+    std::map<int,VecVI> bc;
+    std::vector<VecVI> dof;
+    std::vector<VecVI> bnodes;
+    bool fixedBoundaryNormalModes = false;
+    int nr = 0;
+    auto *list = static_cast<ListWidget*>(static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget());
+    for(int i=0; i<list->getSize(); i++) {
+      bnodes.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getNodes().toStdString().c_str()));
+      dof.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getDof().toStdString().c_str()));
+    }
 
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getEvalMat();
-      VecVI inodes(mat.size(),NONINIT);
-      for(size_t i=0; i<mat.size(); i++)
-	inodes(i) = mat[i][0].toDouble();
+    auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getEvalMat();
+    VecVI inodes(mat.size(),NONINIT);
+    for(size_t i=0; i<mat.size(); i++)
+      inodes(i) = mat[i][0].toDouble();
 
-      mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getEvalMat();
-      VecVI nmodes(mat.size(),NONINIT);
-      for(size_t i=0; i<mat.size(); i++)
-	nmodes(i) = mat[i][0].toDouble();
+    mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getEvalMat();
+    VecVI nmodes(mat.size(),NONINIT);
+    for(size_t i=0; i<mat.size(); i++)
+      nmodes(i) = mat[i][0].toDouble();
 
-      if(bnodes.size() != dof.size())
-	runtime_error("(FlexibleBodyTool::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
-      for(size_t i=0; i<bnodes.size(); i++) {
-	for(int j=0; j<bnodes[i].size(); j++) {
-	  bc[bnodes[i](j)].resize(nen);
-	  for(int k=0; k<dof[i].size(); k++) {
-	    if(dof[i](k)<0 or dof[i](k)>nen-1)
-	      runtime_error("(FlexibleBodyTool::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be within range [0,3]");
-	    bc[bnodes[i](j)](dof[i](k)) = 1;
-	  }
+    if(bnodes.size() != dof.size())
+      runtime_error("(FlexibleBodyTool::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
+    for(size_t i=0; i<bnodes.size(); i++) {
+      for(int j=0; j<bnodes[i].size(); j++) {
+	bc[bnodes[i](j)].resize(nen);
+	for(int k=0; k<dof[i].size(); k++) {
+	  if(dof[i](k)<0 or dof[i](k)>nen-1)
+	    runtime_error("(FlexibleBodyTool::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be within range [0,3]");
+	  bc[bnodes[i](j)](dof[i](k)) = 1;
 	}
       }
+    }
 
-      for(const auto & i : bc)
-	for(int j=0; j<i.second.size(); j++)
-	  nr += i.second(j);
+    for(const auto & i : bc)
+      for(int j=0; j<i.second.size(); j++)
+	nr += i.second(j);
 
-      int ng = nN*nen;
-      int n = ng-nr;
+    int ng = nN*nen;
+    int n = ng-nr;
 
-      vector<int> c;
-      for(const auto & i : bc) {
-	for(int j=0; j<i.second.size(); j++)
-	  if(i.second(j)) c.push_back(nodeMap[i.first]*nen+j);
+    vector<int> c;
+    for(const auto & i : bc) {
+      for(int j=0; j<i.second.size(); j++)
+	if(i.second(j)) c.push_back(nodeMap[i.first]*nen+j);
+    }
+    sort(c.begin(), c.end());
+
+    size_t h=0;
+    Indices IF;
+    Indices IX;
+    for(int i=0; i<ng; i++) {
+      if(h<c.size() and i==c[h]) {
+	h++;
+	IX.add(i);
       }
-      sort(c.begin(), c.end());
+      else
+	IF.add(i);
+    }
 
-      size_t h=0;
-      Indices IF;
-      Indices IX;
-      for(int i=0; i<ng; i++) {
-	if(h<c.size() and i==c[h]) {
-	  h++;
-	  IX.add(i);
-	}
-	else
-	  IF.add(i);
+    // M0 <<= M0(IF);
+    //Ke0 <<= Ke0(IF);
+    SymMatV Ke0r = Ke0(IF);
+    SymMatV M0r = M0(IF);
+
+    c.clear();
+    for(int i=0; i<inodes.size(); i++) {
+      VecVI bci = bc[inodes(i)];
+      for(int j=0; j<nen; j++) {
+	if((not bci.size()) or (not bci(j)))
+	  c.push_back(nodeMap[inodes(i)]*nen+j);
       }
-
-      // M0 <<= M0(IF);
-      //Ke0 <<= Ke0(IF);
-      SymMatV Ke0r = Ke0(IF);
-      SymMatV M0r = M0(IF);
-
-      c.clear();
-      for(int i=0; i<inodes.size(); i++) {
-	VecVI bci = bc[inodes(i)];
-	for(int j=0; j<nen; j++) {
-	  if((not bci.size()) or (not bci(j)))
-	    c.push_back(nodeMap[inodes(i)]*nen+j);
-	}
+    }
+    sort(c.begin(), c.end());
+    h=0;
+    Indices IH;
+    Indices IN;
+    for(int i=0; i<IF.size(); i++) {
+      if(h<c.size() and IF[i]==c[h]) {
+	IH.add(i);
+	h++;
       }
-      sort(c.begin(), c.end());
-      h=0;
-      Indices IH, IN;
-      for(int i=0; i<IF.size(); i++) {
-	if(h<c.size() and IF[i]==c[h]) {
-	  IH.add(i);
-	  h++;
-	}
-	else
-	  IN.add(i);
-      }
-      MatV Vsd(n,IH.size()+nmodes.size(),NONINIT);
-      if(IH.size()) {
-	Indices IJ;
-	for(int i=0; i<IH.size(); i++)
-	  IJ.add(i);
-	MatV Vs(IF.size(),IH.size(),NONINIT);
-	Vs.set(IN,IJ,-slvLL(Ke0r(IN),Ke0r(IN,IH)));
-	Vs.set(IH,IJ,MatV(IH.size(),IH.size(),Eye()));
-	Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
-      }
+      else
+	IN.add(i);
+    }
+    MatV Vsd(n,IH.size()+nmodes.size(),NONINIT);
+    if(IH.size()) {
+      Indices IJ;
+      for(int i=0; i<IH.size(); i++)
+	IJ.add(i);
+      MatV Vs(IF.size(),IH.size(),NONINIT);
+      Vs.set(IN,IJ,-slvLL(Ke0r(IN),Ke0r(IN,IH)));
+      Vs.set(IH,IJ,MatV(IH.size(),IH.size(),Eye()));
+      Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
+    }
 
-      if(nmodes.size()) {
-	SqrMat V;
-	Vec w;
-	if(fixedBoundaryNormalModes) {
-	  eigvec(Ke0r(IN),M0r(IN),V,w);
-	  vector<int> imod;
-	  for(int i=0; i<w.size(); i++) {
-	    if(w(i)>pow(2*M_PI*0.1,2))
-	      imod.push_back(i);
-	  }
-	  if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	    runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-	  for(int i=0; i<nmodes.size(); i++) {
-	    Vsd.set(IN,IH.size()+i,V.col(imod[nmodes(i)-1]));
-	    Vsd.set(IH,IH.size()+i,Vec(IH.size()));
-	  }
-	}
-	else {
-	  eigvec(Ke0r,M0r,V,w);
-
-	  vector<int> imod;
-	  for(int i=0; i<w.size(); i++) {
-	    if(w(i)>pow(2*M_PI*0.1,2))
-	      imod.push_back(i);
-	  }
-	  if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	    runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-	  for(int i=0; i<nmodes.size(); i++)
-	    Vsd.set(IH.size()+i,V.col(imod[nmodes(i)-1]));
-	}
-      }
-
-      if(IH.size()) {
-	SqrMat V;
-	Vec w;
-	eigvec(JTMJ(Ke0r,Vsd),JTMJ(M0r,Vsd),V,w);
+    if(nmodes.size()) {
+      SqrMat V;
+      Vec w;
+      if(fixedBoundaryNormalModes) {
+	eigvec(Ke0r(IN),M0r(IN),V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
 	    imod.push_back(i);
 	}
-	MatV Vr(w.size(),imod.size(),NONINIT);
-	for(size_t i=0; i<imod.size(); i++)
-	  Vr.set(i,V.col(imod[i]));
-	Vsd <<= Vsd*Vr;
+	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	for(int i=0; i<nmodes.size(); i++) {
+	  Vsd.set(IN,IH.size()+i,V.col(imod[nmodes(i)-1]));
+	  Vsd.set(IH,IH.size()+i,Vec(IH.size()));
+	}
       }
-      nM = Vsd.cols();
-      Phi_.resize(ng,nM,NONINIT);
-      Indices IJ;
-      for(int i=0; i<nM; i++)
-	IJ.add(i);
-      Phi_.set(IF,IJ,Vsd);
-      Phi_.set(IX,IJ,Mat(IX.size(),IJ.size()));
+      else {
+	eigvec(Ke0r,M0r,V,w);
+
+	vector<int> imod;
+	for(int i=0; i<w.size(); i++) {
+	  if(w(i)>pow(2*M_PI*0.1,2))
+	    imod.push_back(i);
+	}
+	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	for(int i=0; i<nmodes.size(); i++)
+	  Vsd.set(IH.size()+i,V.col(imod[nmodes(i)-1]));
+      }
+    }
+
+    if(IH.size()) {
+      SqrMat V;
+      Vec w;
+      eigvec(JTMJ(Ke0r,Vsd),JTMJ(M0r,Vsd),V,w);
+      vector<int> imod;
+      for(int i=0; i<w.size(); i++) {
+	if(w(i)>pow(2*M_PI*0.1,2))
+	  imod.push_back(i);
+      }
+      MatV Vr(w.size(),imod.size(),NONINIT);
+      for(size_t i=0; i<imod.size(); i++)
+	Vr.set(i,V.col(imod[i]));
+      Vsd <<= Vsd*Vr;
+    }
+    nM = Vsd.cols();
+    Phi_.resize(ng,nM,NONINIT);
+    Indices IJ;
+    for(int i=0; i<nM; i++)
+      IJ.add(i);
+    Phi_.set(IF,IJ,Vsd);
+    Phi_.set(IX,IJ,Mat(IX.size(),IJ.size()));
   }
 
   void FlexibleBodyTool::msm() {
@@ -921,6 +924,7 @@ namespace MBSimGUI {
     bool lumpedMass = true;
     // compute mass and lumped mass matrix
     vector<double> mi(nN);
+    m = 0;
     if(M0.size()) {
       double ds = 0;
       for(int i=0; i<nN; i++) {
