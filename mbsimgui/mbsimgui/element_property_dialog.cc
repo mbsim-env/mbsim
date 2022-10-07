@@ -1553,6 +1553,9 @@ namespace MBSimGUI {
     ombv = new ExtWidget("OpenMBV body",new ChoiceWidget(new OMBVFlexibleBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMFLEX%"openMBVFlexibleBody");
     addToTab("Visualization", ombv);
 
+    visuNodes = new ExtWidget("OpenMBV node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openMBVNodeNumbers");
+    addToTab("Visualization", visuNodes);
+
     vector<QString> list;
     list.emplace_back("\"none\"");
     list.emplace_back("\"xDisplacement\"");
@@ -1716,6 +1719,7 @@ namespace MBSimGUI {
     K0F->initializeUsingXML(item->getXMLElement());
     K0M->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
+    visuNodes->initializeUsingXML(item->getXMLElement());
     ombvColorRepresentation->initializeUsingXML(item->getXMLElement());
     plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1756,6 +1760,7 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
+    visuNodes->writeXMLFile(item->getXMLElement(),ele);
     ombvColorRepresentation->writeXMLFile(item->getXMLElement(),ele);
     plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
@@ -1781,6 +1786,9 @@ namespace MBSimGUI {
     ombv = new ExtWidget("Enable openMBV",new ExternalFlexibleFfrBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization",ombv);
 
+    visuNodes = new ExtWidget("OpenMBV node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openMBVNodeNumbers");
+    addToTab("Visualization", visuNodes);
+
     plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
   }
@@ -1794,6 +1802,7 @@ namespace MBSimGUI {
     GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     inputDataFile->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
+    visuNodes->initializeUsingXML(item->getXMLElement());
     plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -1807,6 +1816,7 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
+    visuNodes->writeXMLFile(item->getXMLElement(),ele);
     plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
