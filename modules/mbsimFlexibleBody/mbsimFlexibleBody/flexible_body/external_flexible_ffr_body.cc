@@ -192,6 +192,8 @@ namespace MBSimFlexibleBody {
       ombvBody = shared_ptr<OpenMBVExternalFlexibleFfrBody>(new OpenMBVExternalFlexibleFfrBody);
       ombvBody->initializeUsingXML(e);
     }
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodeNumbers");
+    if(e) setOpenMBVNodeNumbers(E(e)->getText<VecVI>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
     if(e) setPlotNodeNumbers(E(e)->getText<VecVI>());
   }

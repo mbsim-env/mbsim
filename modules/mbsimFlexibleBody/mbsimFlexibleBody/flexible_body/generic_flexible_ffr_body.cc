@@ -443,11 +443,19 @@ namespace MBSimFlexibleBody {
         }
       }
       if(plotFeature[ref(openMBV)] and openMBVBody) {
+        if(visuNodes.size()==0) {
+          visuNodes.resize(nodeMap.size(),NONINIT);
+          int j=0;
+          for(const auto & i : nodeMap)
+            visuNodes(j++) = i.first;
+        }
         if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
-          dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(KrKP.size());
+          dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(visuNodes.size());
       }
       for(int i=0; i<plotNodes.size(); i++)
         plotNodes(i) = getNodeIndex(plotNodes(i));
+      for(int i=0; i<visuNodes.size(); i++)
+        visuNodes(i) = getNodeIndex(visuNodes(i));
 
       NodeBasedBody::init(stage, config);
     }
@@ -489,11 +497,11 @@ namespace MBSimFlexibleBody {
     if(plotFeature[ref(openMBV)] and openMBVBody) {
       vector<double> data;
       data.push_back(getTime());
-      for(int i=0; i<dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions(); i++) {
-        const Vec3 &WrOP = evalNodalPosition(i);
+      for(int i=0; i<visuNodes.size(); i++) {
+        const Vec3 &WrOP = evalNodalPosition(visuNodes(i));
         for(int j=0; j<3; j++)
           data.push_back(WrOP(j));
-        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(i));
+        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(visuNodes(i)));
       }
       dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->append(data);
     }

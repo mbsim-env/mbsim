@@ -223,6 +223,9 @@ namespace MBSimFlexibleBody {
       openMBVBody->initializeUsingXML(e->getFirstElementChild());
     }
 
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodeNumbers");
+    if(e) setOpenMBVNodeNumbers(E(e)->getText<VecVI>());
+
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVColorRepresentation");
     if(e) {
       string colorRepresentationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);

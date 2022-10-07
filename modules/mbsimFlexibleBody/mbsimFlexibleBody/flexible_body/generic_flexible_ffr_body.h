@@ -400,7 +400,7 @@ namespace MBSimFlexibleBody {
 
       OpenMBVFlexibleBody::ColorRepresentation ombvColorRepresentation{OpenMBVFlexibleBody::none};
 
-      fmatvec::VecVI plotNodes;
+      fmatvec::VecVI plotNodes, visuNodes;
 
     private:
       double (GenericFlexibleFfrBody::*evalOMBVColorRepresentation[12])(int i);
