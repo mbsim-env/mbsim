@@ -321,6 +321,9 @@
                 </row>
               </xmlMatrix>
             </inertiaTensor>
+            <stateDependentTranslation>
+              <TranslationAlongYAxis/>
+            </stateDependentTranslation>
             <frames/>
             <contours/>
             <openMBVRigidBody>
@@ -387,32 +390,17 @@
           <ExternSignalSource xmlns="http://www.mbsim-env.de/MBSimControl" name="ExternSignalSource">
             <sourceSize>1</sourceSize>
           </ExternSignalSource>
-          <KineticExcitation name="KineticExcitation">
-            <connect ref2="../Object[Rad]/Frame[C]"/>
-            <forceDirection unit="-">
-              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <row>
-                  <ele>0</ele>
-                </row>
-                <row>
-                  <ele>1</ele>
-                </row>
-                <row>
-                  <ele>0</ele>
-                </row>
-              </xmlMatrix>
-            </forceDirection>
-            <forceFunction>
-              <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
-                <returnSignal ref="../../Link[ExternSignalSource]"/>
-              </SignalFunction>
-            </forceFunction>
-            <enableOpenMBV>
-              <scaleLength>0.001</scaleLength>
-            </enableOpenMBV>
-          </KineticExcitation>
         </links>
-        <constraints/>
+        <constraints>
+          <GeneralizedAccelerationConstraint name="Generalized acceleration constraint">
+            <dependentRigidBody ref="../Object[Boden]"/>
+            <stateDependentConstraintFunction>
+              <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                <returnSignal ref="../../../Link[ExternSignalSource]"/>
+              </SignalFunction>
+            </stateDependentConstraintFunction>
+          </GeneralizedAccelerationConstraint>
+        </constraints>
         <observers>
           <RigidBodyObserver name="RigidBodyObserver1">
             <rigidBody ref="../Object[Anhaenger]"/>
@@ -444,7 +432,7 @@
       <excitationAmplitudeFunction>
         <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="f">
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-            <ele>A*sqrt(cR^2 + (2*pi*dR*f)^2)</ele>
+            <ele>A*(2*pi*f)^2</ele>
           </xmlVector>
         </SymbolicFunction>
       </excitationAmplitudeFunction>
