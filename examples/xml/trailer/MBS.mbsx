@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
-      <scalarParameter name="freq" unit="-">1</scalarParameter>
-    <scalarParameter name="cR">400e3</scalarParameter>
-    <scalarParameter name="dR">200</scalarParameter>
     <scalarParameter name="A">0.02</scalarParameter>
   </Parameter>
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
@@ -21,7 +18,9 @@
         <scalarParameter name="mR">30</scalarParameter>
         <scalarParameter name="cA">250e3</scalarParameter>
         <scalarParameter name="dA">2000</scalarParameter>
-    </Parameter>
+        <scalarParameter name="cR">400e3</scalarParameter>
+        <scalarParameter name="dR">200</scalarParameter>
+      </Parameter>
       <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
         <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
         <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
