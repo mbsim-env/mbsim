@@ -378,11 +378,11 @@ namespace MBSimGUI {
     nodes = new ExtWidget("Boundary node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"boundaryNodeNumbers");
     layout->addWidget(nodes);
 
-//    dof = new ExtWidget("Degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"degreesOfFreedom");
-//    layout->addWidget(dof);
-
-    dof = new ExtWidget("Degrees of freedom",new DofWidget(this),false,false,MBSIMFLEX%"degreesOfFreedom");
+    dof = new ExtWidget("Degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"degreesOfFreedom");
     layout->addWidget(dof);
+
+//    dof = new ExtWidget("Degrees of freedom",new DofWidget(this),false,false,MBSIMFLEX%"degreesOfFreedom");
+//    layout->addWidget(dof);
   }
 
   DOMElement* BoundaryConditionWidget::initializeUsingXML(DOMElement *element) {
@@ -409,8 +409,8 @@ namespace MBSimGUI {
   }
 
   QString BoundaryConditionWidget::getDof() {
-    //return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(dof->getWidget())->getWidget())->getValue();
-    return static_cast<DofWidget*>(dof->getWidget())->getDof();
+    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(dof->getWidget())->getWidget())->getValue();
+    //return static_cast<DofWidget*>(dof->getWidget())->getDof();
   }
 
   Widget* BoundaryConditionWidgetFactory::createWidget(int i) {

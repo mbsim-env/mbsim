@@ -108,6 +108,8 @@ namespace MBSimGUI {
       return FlexibleBodyTool::PageExtFE;
     else if(rb2->isChecked())
       return FlexibleBodyTool::PageCalculix;
+    else if(rb3->isChecked())
+      return FlexibleBodyTool::PageFlexibleBeam;
     else 
       QMessageBox::information(this->wizard(),"Information","This option is not yet available."); 
     return FlexibleBodyTool::PageFirst;
@@ -232,6 +234,62 @@ namespace MBSimGUI {
     return FlexibleBodyTool::PageDamp;
   }
 
+  FlexibleBeamPage::FlexibleBeamPage(QWidget *parent) : QWizardPage(parent) {
+    setTitle("Flexible beam data");
+
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto label = new QLabel("Define the flexible beam.");
+    mainlayout->addWidget(label);
+
+    auto *tab = new QScrollArea;
+    tab->setWidgetResizable(true);
+    QWidget *box = new QWidget;
+    auto *layout = new QVBoxLayout;
+    box->setLayout(layout);
+    tab->setWidget(box);
+
+    mainlayout->addWidget(tab);
+
+    n = new ExtWidget("Number of nodes",new ChoiceWidget(new ScalarWidgetFactory("3"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"numberOfNodes");
+    layout->addWidget(n);
+
+    l = new ExtWidget("Length",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"length");
+    layout->addWidget(l);
+
+    A = new ExtWidget("Cross-section area",new ChoiceWidget(new ScalarWidgetFactory("1e-4",vector<QStringList>(2,areaUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"crossSectionArea");
+    layout->addWidget(A);
+
+    vector<QString> I_(3); I_[0] = "1e-10"; I_[1] = "1e-10"; I_[2] = "0";
+    I = new ExtWidget("Moment of inertia",new ChoiceWidget(new VecWidgetFactory(I_),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"momentOfInertia");
+    layout->addWidget(I);
+
+    E = new ExtWidget("Young's modulus",new ChoiceWidget(new ScalarWidgetFactory("2e11",vector<QStringList>(2,bulkModulusUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"youngsModulus");
+    layout->addWidget(E);
+
+    rho = new ExtWidget("Density",new ChoiceWidget(new ScalarWidgetFactory("7870",vector<QStringList>(2,densityUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"density");
+    layout->addWidget(rho);
+
+    ten = new ExtWidget("Tension",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"tension");
+    layout->addWidget(ten);
+
+    beny = new ExtWidget("Bending about y axis",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"bendingAboutYAxis");
+    layout->addWidget(beny);
+
+    benz = new ExtWidget("Bending about z axis",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,true,MBSIMFLEX%"bendingAboutZAxis");
+    layout->addWidget(benz);
+
+    tor = new ExtWidget("Torsion",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"torsion");
+    layout->addWidget(tor);
+
+    layout->addStretch(1);
+  }
+
+  int FlexibleBeamPage::nextId() const {
+    return FlexibleBodyTool::PageBC;
+  }
+
   ReductionMethodsPage::ReductionMethodsPage(QWidget *parent) : QWizardPage(parent) {
     setTitle("Reduction method");
 
@@ -349,7 +407,10 @@ namespace MBSimGUI {
   }
 
   int ComponentModeSynthesisPage::nextId() const {
-    return FlexibleBodyTool::PageOMBV;
+    if(wizard()->hasVisitedPage(FlexibleBodyTool::PageFlexibleBeam))
+      return FlexibleBodyTool::PageDamp;
+    else
+      return FlexibleBodyTool::PageOMBV;
   }
 
   OpenMBVPage::OpenMBVPage(QWidget *parent) : QWizardPage(parent) {
@@ -416,6 +477,7 @@ namespace MBSimGUI {
     setPage(PageFirst, new FirstPage(this));
     setPage(PageExtFE, new ExternalFiniteElementsPage(this));
     setPage(PageCalculix, new CalculixPage(this));
+    setPage(PageFlexibleBeam, new FlexibleBeamPage(this));
     setPage(PageRedMeth, new ReductionMethodsPage(this));
     setPage(PageBC, new BoundaryConditionsPage(this));
     setPage(PageCMS, new ComponentModeSynthesisPage(this));
@@ -427,7 +489,6 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::create() {
-    nen = net + ner;
     if(hasVisitedPage(PageExtFE)) {
       stiff();
       if(hasVisitedPage(PageCMS))
@@ -435,9 +496,17 @@ namespace MBSimGUI {
       else if(hasVisitedPage(PageModeShapes))
 	msm();
       ombv();
+      lma();
     }
-    else
+    else if(hasVisitedPage(PageCalculix)) {
       calculix();
+      lma();
+    }
+    else if(hasVisitedPage(PageFlexibleBeam)) {
+      beam();
+      cms();
+      fma();
+    }
     damp();
     exp();
   }
@@ -466,6 +535,22 @@ namespace MBSimGUI {
       }
       else if(hasVisitedPage(PageCalculix))
 	static_cast<CalculixPage*>(page(PageCalculix))->file->writeXMLFile(element);
+      else if(hasVisitedPage(PageFlexibleBeam)) {
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->ten->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->writeXMLFile(element);
+	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->writeXMLFile(element);
+	static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->writeXMLFile(element);
+	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->writeXMLFile(element);
+	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->writeXMLFile(element);
+	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->writeXMLFile(element);
+      }
       static_cast<DampingPage*>(page(PageDamp))->mDamp->writeXMLFile(element);
       static_cast<DampingPage*>(page(PageDamp))->pDamp->writeXMLFile(element);
       static_cast<LastPage*>(page(PageLast))->inputFile->writeXMLFile(element);
@@ -490,11 +575,23 @@ namespace MBSimGUI {
       static_cast<ModeShapesPage*>(page(PageModeShapes))->V->initializeUsingXML(element);
       static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->initializeUsingXML(element);
       static_cast<CalculixPage*>(page(PageCalculix))->file->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->ten->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->initializeUsingXML(element);
+      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->mDamp->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->pDamp->initializeUsingXML(element);
       static_cast<LastPage*>(page(PageLast))->inputFile->initializeUsingXML(element);
       if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"resultFileName"))
 	static_cast<FirstPage*>(page(PageFirst))->rb2->setChecked(true);
+      else if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfNodes"))
+	static_cast<FirstPage*>(page(PageFirst))->rb3->setChecked(true);
       if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeShapeMatrix"))
 	static_cast<ReductionMethodsPage*>(page(PageRedMeth))->rb2->setChecked(true);
     }
@@ -523,6 +620,10 @@ namespace MBSimGUI {
     }
     nN = nodeMap.size();
 
+    net = 3;
+    ner = 0;
+    nen = net + ner;
+
     if(M.cols()==3) {
       M0.resize(nN*nen);
       for(int i=0; i<M.rows(); i++)
@@ -548,7 +649,11 @@ namespace MBSimGUI {
     auto *list = static_cast<ListWidget*>(static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget());
     for(int i=0; i<list->getSize(); i++) {
       bnodes.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getNodes().toStdString().c_str()));
-      dof.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getDof().toStdString().c_str()));
+      //dof.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getDof().toStdString().c_str()));
+      auto dof_ = VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getDof().toStdString().c_str());
+      for(int i=0; i<dof_.size(); i++)
+        dof_.e(i)--;
+      dof.push_back(dof_);
     }
 
     auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getEvalMat();
@@ -709,6 +814,9 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::calculix() {
+    net = 3;
+    ner = 0;
+    nen = net + ner;
     string resultFileName = static_cast<FileWidget*>(static_cast<CalculixPage*>(page(PageCalculix))->file->getWidget())->getFile(true).toStdString();
     string jobname = resultFileName.substr(0,resultFileName.length()-4);
 
@@ -874,28 +982,494 @@ namespace MBSimGUI {
     }
   }
 
-  void FlexibleBodyTool::damp() {
-    if(static_cast<DampingPage*>(page(PageDamp))->mDamp->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->mDamp->getWidget())->getWidget())->getEvalMat();
-      for(size_t i=0; i<mat.size(); i++)
-	mDamp(i) = mat[i][0].toDouble();
+  void FlexibleBodyTool::beam() {
+    nN = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    auto l = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto A = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto I_ = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->getWidget())->getWidget())->getEvalMat();
+    auto Iy = I_[0][0].toDouble();
+    auto Iz = I_[1][0].toDouble();
+    auto Iyz = I_[2][0].toDouble();
+    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto ten = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->ten->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    auto benz = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    for(int i=0; i<nN; i++)
+      nodeMap[i+1] = i;
+    nE = nN-1;
+    int nee = 0;
+    const int x = 0;
+    const int y = 1;
+    const int z = 2;
+    int ul=-1, vl=-1, wl=-1, all=-1, bel=-1, gal=-1, ur=-1, vr=-1, wr=-1, alr=-1, ber=-1, gar=-1;
+    if(ten)
+      ul = nee++;
+    if(benz)
+      vl = nee++;
+    if(beny)
+      wl = nee++;
+    net = nee;
+    if(tor)
+      all = nee++;
+    if(beny)
+      bel = nee++;
+    if(benz)
+      gal = nee++;
+    nen = nee;
+    ner = nen - net;
+    if(ten)
+      ur = nee++;
+    if(benz)
+      vr = nee++;
+    if(beny)
+      wr = nee++;
+    if(tor)
+      alr = nee++;
+    if(beny)
+      ber = nee++;
+    if(benz)
+      gar = nee++;
+    int ng = nN*nen;
+
+    vector<Mat3xV> rPdme(3,Mat3xV(nee));
+    rPdm.resize(3,Mat3xV(ng));
+    vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(nee)));
+    PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(ng)));
+    Mat3xV Pdme(nee);
+    Pdm.resize(ng);
+    SymMatV Kee(nee);
+    Ke0.resize(ng);
+    KrKP.resize(nN,Vec3());
+
+    double D = l/nE;
+
+    m = rho*A*l;
+    double me = m/nE;
+
+    rdm(x) = m*l/2;
+
+    rrdm(x,x) = m/3*pow(l,2);
+    rrdm(y,y) = rho*l*Iz;
+    rrdm(y,z) = -rho*l*Iyz;
+    rrdm(z,z) = rho*l*Iy;
+
+    if(ten) {
+      Pdme(x,ul) = me/2;
+      Pdme(x,ur) = me/2;
+    }
+    if(benz) {
+      Pdme(y,vl) = me/2;
+      Pdme(y,gal) = D*me/12;
+      Pdme(y,vr) = me/2;
+      Pdme(y,gar) = -D*me/12;
+    }
+    if(beny) {
+      Pdme(z,wl) = me/2;
+      Pdme(z,bel) = -D*me/12;
+      Pdme(z,wr) = me/2;
+      Pdme(z,ber) = D*me/12;
     }
 
-    if(static_cast<DampingPage*>(page(PageDamp))->pDamp->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->pDamp->getWidget())->getWidget())->getEvalMat();
-      for(size_t i=0; i<mat.size(); i++)
-	pDamp(i) = mat[i][0].toDouble();
+    if(ten) {
+      PPdme[x][x](ul,ul) = me/3;
+      PPdme[x][x](ul,ur) = me/6;
+      PPdme[x][x](ur,ul) = me/6;
+      PPdme[x][x](ur,ur) = me/3;
+    }
+
+    if(benz) { // v and ga
+      PPdme[x][x](vl,vl) = 6./5/D*rho*Iz;
+      PPdme[x][x](vl,gal) = 1./10*rho*Iz;
+      PPdme[x][x](vl,vr) = -6./5/D*rho*Iz;
+      PPdme[x][x](vl,gar) = 1./10*rho*Iz;
+      PPdme[x][x](gal,gal) = 2*D/15*rho*Iz;
+      PPdme[x][x](gal,vr) = -1./10*rho*Iz;
+      PPdme[x][x](gal,gar) = -D/30*rho*Iz;
+      PPdme[x][x](vr,vr) = 6./5/D*rho*Iz;
+      PPdme[x][x](vr,gar) = -1./10*rho*Iz;
+      PPdme[x][x](gar,gar) = 2*D/15*rho*Iz;
+      if(beny) { // w and be
+	PPdme[x][x](vl,wl) = -6./5/D*rho*Iyz;
+	PPdme[x][x](vl,bel) = 1./10*rho*Iyz;
+	PPdme[x][x](vl,wr) = 6./5/D*rho*Iyz;
+	PPdme[x][x](vl,ber) = 1./10*rho*Iyz;
+	PPdme[x][x](gal,wr) = 1./10*rho*Iyz;
+	PPdme[x][x](gal,ber) = -D/30*rho*Iyz;
+	PPdme[x][x](vr,wr) = -6./5/D*rho*Iyz;
+	PPdme[x][x](vr,ber) = -1./10*rho*Iyz;
+      }
+    }
+    if(beny) { // w and be
+      PPdme[x][x](wl,wl) = 6./5/D*rho*Iy;
+      PPdme[x][x](wl,bel) = -1./10*rho*Iy;
+      PPdme[x][x](wl,wr) = -6./5/D*rho*Iy;
+      PPdme[x][x](wl,ber) = -1./10*rho*Iy;
+      PPdme[x][x](bel,bel) = 2*D/15*rho*Iy;
+      PPdme[x][x](bel,wr) = 1./10*rho*Iy;
+      PPdme[x][x](bel,ber) = -D/30*rho*Iy;
+      PPdme[x][x](wr,wr) = 6./5/D*rho*Iy;
+      PPdme[x][x](wr,ber) = 1./10*rho*Iy;
+      PPdme[x][x](ber,ber) = 2*D/15*rho*Iy;
+      if(benz) { // v and ga
+	PPdme[x][x](wl,gal) = -1./10*rho*Iyz;
+	PPdme[x][x](wl,vr) = 6./5/D*rho*Iyz;
+	PPdme[x][x](wl,gar) = -1./10*rho*Iyz;
+	PPdme[x][x](bel,gal) = 2*D/15*rho*Iyz;
+	PPdme[x][x](bel,vr) = -1./10*rho*Iyz;
+	PPdme[x][x](bel,gar) = -D/30*rho*Iyz;
+	PPdme[x][x](wr,gar) = 1./10*rho*Iyz;
+	PPdme[x][x](ber,gar) = 2*D/15*rho*Iyz;
+      }
+    }
+    if(benz) { // v and ga
+      PPdme[y][y](vl,vl) = 13./35*me;
+      PPdme[y][y](vl,gal) = 11./210*me*D;
+      PPdme[y][y](vl,vr) = 9./70*me;
+      PPdme[y][y](vl,gar) = -13./420*me*D;
+      PPdme[y][y](gal,gal) = me*pow(D,2)/105;
+      PPdme[y][y](gal,vr) = 13./420*me*D;
+      PPdme[y][y](gal,gar) = -me*pow(D,2)/140;
+      PPdme[y][y](vr,vr) = 13./35*me;
+      PPdme[y][y](vr,gar) = -11./210*me*D;
+      PPdme[y][y](gar,gar) = me*pow(D,2)/105;
+    }
+    if(beny) { // w and be
+      PPdme[z][z](wl,wl) = 13./35*me;
+      PPdme[z][z](wl,bel) = -11./210*me*D;
+      PPdme[z][z](wl,wr) = 9./70*me;
+      PPdme[z][z](wl,ber) = 13./420*me*D;
+      PPdme[z][z](bel,bel) = me*pow(D,2)/105;
+      PPdme[z][z](bel,wr) = -13./420*me*D;
+      PPdme[z][z](bel,ber) = -me*pow(D,2)/140;
+      PPdme[z][z](wr,wr) = 13./35*me;
+      PPdme[z][z](wr,ber) = 11./210*me*D;
+      PPdme[z][z](ber,ber) = me*pow(D,2)/105;
+    }
+    if(tor) {
+      PPdme[y][y](all,all) = rho*Iy*D/3;
+      PPdme[y][y](all,alr) = rho*Iy*D/6;
+      PPdme[y][y](alr,alr) = rho*Iy*D/3;
+      PPdme[z][z](all,all) = rho*Iz*D/3;
+      PPdme[z][z](all,alr) = rho*Iz*D/6;
+      PPdme[z][z](alr,alr) = rho*Iz*D/3;
+      PPdme[y][z](all,all) = D/3*rho*Iyz;
+      PPdme[y][z](all,alr) = D/6*rho*Iyz;
+      PPdme[y][z](alr,all) = D/6*rho*Iyz;
+      PPdme[y][z](alr,alr) = D/3*rho*Iyz;
+    }
+    if(ten and benz) { // u, v and ga
+      PPdme[x][y](ul,vl) = 7./20*me;
+      PPdme[x][y](ul,gal) = 1./20*me*D;
+      PPdme[x][y](ul,vr) = 3./20*me;
+      PPdme[x][y](ul,gar) = -1./30*me*D;
+      PPdme[x][y](ur,vl) = 3./20*me;
+      PPdme[x][y](ur,gal) = 1./30*me*D;
+      PPdme[x][y](ur,vr) = 7./20*me;
+      PPdme[x][y](ur,gar) = -1./20*me*D;
+    }
+    if(ten and beny) { // u, w and be
+      PPdme[x][z](ul,wl) = 7./20*me;
+      PPdme[x][z](ul,bel) = -1./20*me*D;
+      PPdme[x][z](ul,wr) = 3./20*me;
+      PPdme[x][z](ul,ber) = 1./30*me*D;
+      PPdme[x][z](ur,wl) = 3./20*me;
+      PPdme[x][z](ur,bel) = -1./30*me*D;
+      PPdme[x][z](ur,wr) = 7./20*me;
+      PPdme[x][z](ur,ber) = 1./20*me*D;
+    }
+    if(tor and benz) { // al, v and ga
+      PPdme[x][y](vl,all) = 1./2*rho*Iyz;
+      PPdme[x][y](vl,alr) = 1./2*rho*Iyz;
+      PPdme[x][y](gal,all) = -D/12*rho*Iyz;
+      PPdme[x][y](gal,alr) = D/12*rho*Iyz;
+      PPdme[x][y](vr,all) = -1./2*rho*Iyz;
+      PPdme[x][y](vr,alr) = -1./2*rho*Iyz;
+      PPdme[x][y](gar,all) = D/12*rho*Iyz;
+      PPdme[x][y](gar,alr) = -D/12*rho*Iyz;
+      PPdme[x][z](vl,all) = 1./2*rho*Iz;
+      PPdme[x][z](vl,alr) = 1./2*rho*Iz;
+      PPdme[x][z](gal,all) = -D/12*rho*Iz;
+      PPdme[x][z](gal,alr) = D/12*rho*Iz;
+      PPdme[x][z](vr,all) = -1./2*rho*Iz;
+      PPdme[x][z](vr,alr) = -1./2*rho*Iz;
+      PPdme[x][z](gar,all) = D/12*rho*Iz;
+      PPdme[x][z](gar,alr) = -D/12*rho*Iz;
+    }
+    if(tor and beny) { // al, w and be
+      PPdme[x][y](wl,all) = -1./2*rho*Iy;
+      PPdme[x][y](wl,alr) = -1./2*rho*Iy;
+      PPdme[x][y](bel,all) = -D/12*rho*Iy;
+      PPdme[x][y](bel,alr) = D/12*rho*Iy;
+      PPdme[x][y](wr,all) = 1./2*rho*Iy;
+      PPdme[x][y](wr,alr) = 1./2*rho*Iy;
+      PPdme[x][y](ber,all) = D/12*rho*Iy;
+      PPdme[x][y](ber,alr) = -D/12*rho*Iy;
+      PPdme[x][z](wl,all) = -1./2*rho*Iyz;
+      PPdme[x][z](wl,alr) = -1./2*rho*Iyz;
+      PPdme[x][z](bel,all) = -D/12*rho*Iyz;
+      PPdme[x][z](bel,alr) = D/12*rho*Iyz;
+      PPdme[x][z](wr,all) = 1./2*rho*Iyz;
+      PPdme[x][z](wr,alr) = 1./2*rho*Iyz;
+      PPdme[x][z](ber,all) = D/12*rho*Iyz;
+      PPdme[x][z](ber,alr) = -D/12*rho*Iyz;
+    }
+    if(beny and benz) {
+      PPdme[y][z](vl,wl) = 13./35*me;
+      PPdme[y][z](vl,bel) = -11./210*me*D;
+      PPdme[y][z](vl,wr) = 9./70*me;
+      PPdme[y][z](vl,ber) = 13./420*me*D;
+      PPdme[y][z](gal,wl) = 11./210*me*D;
+      PPdme[y][z](gal,bel) = -me*pow(D,2)/105;
+      PPdme[y][z](gal,wr) = 13./420*me*D;
+      PPdme[y][z](gal,ber) = me*pow(D,2)/140;
+      PPdme[y][z](vr,wl) = 9./70*me;
+      PPdme[y][z](vr,bel) = -13./420*me*D;
+      PPdme[y][z](vr,wr) = 13./35*me;
+      PPdme[y][z](vr,ber) = 11./210*me*D;
+      PPdme[y][z](gar,wl) = -13./420*me*D;
+      PPdme[y][z](gar,bel) = me*pow(D,2)/140;
+      PPdme[y][z](gar,wr) = -11./210*me*D;
+      PPdme[y][z](gar,ber) = -me*pow(D,2)/105;
+    }
+    for(int k=0; k<nee; k++) {
+      for(int j=0; j<k; j++) {
+	PPdme[x][x](k,j) = PPdme[x][x](j,k);
+	PPdme[y][y](k,j) = PPdme[y][y](j,k);
+	PPdme[z][z](k,j) = PPdme[z][z](j,k);
+      }
+    }
+    PPdme[y][x] = PPdme[x][y].T();
+    PPdme[z][x] = PPdme[x][z].T();
+    PPdme[z][y] = PPdme[y][z].T();
+
+    if(benz) { // v and ga
+      rPdme[y](x,vl) = rho*Iz;
+      rPdme[y](x,vr) = -rho*Iz;
+      rPdme[z](x,vl) = -rho*Iyz;
+      rPdme[z](x,vr) = rho*Iyz;
+    }
+    if(beny) { // w and be
+      rPdme[y](x,wl) = -rho*Iyz;
+      rPdme[y](x,wr) = rho*Iyz;
+      rPdme[z](x,wl) = rho*Iy;
+      rPdme[z](x,wr) = -rho*Iy;
+    }
+    if(tor) {
+      rPdme[y](y,all) = D/2*rho*Iyz;
+      rPdme[y](y,alr) = D/2*rho*Iyz;
+      rPdme[y](z,all) = D/2*rho*Iz;
+      rPdme[y](z,alr) = D/2*rho*Iz;
+      rPdme[z](y,all) = -D/2*rho*Iy;
+      rPdme[z](y,alr) = -D/2*rho*Iy;
+      rPdme[z](z,all) = -D/2*rho*Iyz;
+      rPdme[z](z,alr) = -D/2*rho*Iyz;
+    }
+
+    if(ten) {
+      Kee(ul,ul) = E*A/D;
+      Kee(ul,ur) = -E*A/D;
+      Kee(ur,ur) = E*A/D;
+    }
+    if(benz) { // v and ga
+      Kee(vl,vl) = 12./pow(D,3)*E*Iz;
+      Kee(vl,gal) = 6./pow(D,2)*E*Iz;
+      Kee(vl,vr) = -12./pow(D,3)*E*Iz;
+      Kee(vl,gar) = 6./pow(D,2)*E*Iz;
+      Kee(gal,gal) = 4./D*E*Iz;
+      Kee(gal,vr) = -6./pow(D,2)*E*Iz;
+      Kee(gal,gar) = 2./D*E*Iz;
+      Kee(vr,vr) = 12./pow(D,3)*E*Iz;
+      Kee(vr,gar) = -6./pow(D,2)*E*Iz;
+      Kee(gar,gar) = 4./D*E*Iz;
+      if(beny) { // w and be
+	Kee(vl,wl) = -12./pow(D,3)*E*Iyz;
+	Kee(vl,bel) = 6./pow(D,2)*E*Iyz;
+	Kee(vl,wr) = 12./pow(D,3)*E*Iyz;
+	Kee(vl,ber) = 6./pow(D,2)*E*Iyz;
+	Kee(gal,wr) = 6./pow(D,2)*E*Iyz;
+	Kee(gal,ber) = 2./D*E*Iyz;
+	Kee(vr,wr) = -12./pow(D,3)*E*Iyz;
+	Kee(vr,ber) = -6./pow(D,2)*E*Iyz;
+      }
+    }
+    if(beny) { // w and be
+      Kee(wl,wl) = 12./pow(D,3)*E*Iy;
+      Kee(wl,bel) = -6./pow(D,2)*E*Iy;
+      Kee(wl,wr) = -12./pow(D,3)*E*Iy;
+      Kee(wl,ber) = -6./pow(D,2)*E*Iy;
+      Kee(bel,bel) = 4./D*E*Iy;
+      Kee(bel,wr) = 6./pow(D,2)*E*Iy;
+      Kee(bel,ber) = 2./D*E*Iy;
+      Kee(wr,wr) = 12./pow(D,3)*E*Iy;
+      Kee(wr,ber) = 6./pow(D,2)*E*Iy;
+      Kee(ber,ber) = 4./D*E*Iy;
+      if(benz) { // v and ga
+	Kee(wl,gal) = -6./pow(D,2)*E*Iyz;
+	Kee(wl,vr) = 12./pow(D,3)*E*Iyz;
+	Kee(wl,gar) = -6./pow(D,2)*E*Iyz;
+	Kee(bel,gal) = 4./D*E*Iyz;
+	Kee(bel,vr) = -6./pow(D,2)*E*Iyz;
+	Kee(bel,gar) = 2./D*E*Iyz;
+	Kee(wr,gar) = 6./pow(D,2)*E*Iyz;
+	Kee(ber,gar) = 4./D*E*Iyz;
+      }
+    }
+    if(tor) {
+      Kee(all,all) = E/2/D*(Iy+Iz);
+      Kee(all,alr) = -E/2/D*(Iy+Iz);
+      Kee(alr,alr) = E/2/D*(Iy+Iz);
+    }
+
+    RangeV I(0,2);
+    for(int i=0; i<nE; i++) {
+      RangeV J(i*nee/2,i*nee/2+nee-1);
+      if(ten) {
+	rPdme[x](x,ul) = me*D*(i/2.+1./6);
+	rPdme[x](x,ur) = me*D*(i/2.+1./3);
+      }
+      if(benz) { // v and ga
+	rPdme[x](y,vl) = me*D*(i/2.+3./20);
+	rPdme[x](y,gal) = me*D*(i*D/12.+D/30);
+	rPdme[x](y,vr) = me*D*(i/2.+7./20);
+	rPdme[x](y,gar) = -me*D*(i*D/12.+D/20);
+      }
+      if(beny) { // w and be
+	rPdme[x](z,wl) = me*D*(i/2.+3./20);
+	rPdme[x](z,bel) = -me*D*(i*D/12.+D/30);
+	rPdme[x](z,wr) = me*D*(i/2.+7./20);
+	rPdme[x](z,ber) = me*D*(i*D/12.+D/20);
+      }
+      Pdm.add(I,J,Pdme);
+      for(int j=0; j<3; j++) {
+	rPdm[j].add(I,J,rPdme[j]);
+	for(int k=0; k<3; k++)
+	  PPdm[j][k].add(J,J,PPdme[j][k]);
+      }
+      Ke0.add(J,Kee);
+    }
+    M0 <<= PPdm[0][0]+PPdm[1][1]+PPdm[2][2];
+
+    r.resize(nN,3,NONINIT);
+    for(int i=0; i<nN; i++) {
+      r(i,0) = i*D;
+      r(i,1) = 0;
+      r(i,2) = 0;
+    }
+    int Ip[4];
+    if(ten)
+      Ip[0] = 0;
+    else if(benz)
+      Ip[0] = 1;
+    else if(beny)
+      Ip[0] = 2;
+    Ip[1] = ten?Ip[0]+1:Ip[0];
+    Ip[2] = benz?Ip[1]+1:Ip[1];
+    Ip[3] = beny?Ip[2]+1:Ip[2];
+    Phis.resize(nN,SparseMat(3,ng,3,NONINIT));
+    for(size_t i=0; i<nN; i++) {
+      for(int j=0; j<3; j++) {
+	Phis[i]()[j] = 1;
+	Phis[i].Ip()[j] = Ip[j];
+      }
+      Phis[i].Ip()[3] = Ip[3];
+      Phis[i].Jp()[0] = nen*i+ul;
+      Phis[i].Jp()[1] = nen*i+vl;
+      Phis[i].Jp()[2] = nen*i+wl;
+    }
+    if(tor)
+      Ip[0] = 0;
+    else if(beny)
+      Ip[0] = 1;
+    else if(benz)
+      Ip[0] = 2;
+    Ip[1] = tor?Ip[0]+1:Ip[0];
+    Ip[2] = beny?Ip[1]+1:Ip[1];
+    Ip[3] = benz?Ip[2]+1:Ip[2];
+    Psis.resize(nN,SparseMat(3,ng,3,NONINIT));
+    for(size_t i=0; i<nN; i++) {
+      for(int j=0; j<3; j++) {
+	Psis[i]()[j] = 1;
+	Psis[i].Ip()[j] = Ip[j];
+      }
+      Psis[i].Ip()[3] = Ip[3];
+      Psis[i].Jp()[0] = nen*i+all;
+      Psis[i].Jp()[1] = nen*i+bel;
+      Psis[i].Jp()[2] = nen*i+gal;
+    }
+    Ip[0] = ten?0:2;
+    sigmahels.resize(nN,SparseMat(6,ng,2,NONINIT));
+    for(size_t i=0; i<nN; i++) {
+      if(i>0 and i<nN-1) {
+	sigmahels[i]()[0] = -E/D/2;
+	sigmahels[i]()[1] = E/D/2;
+	sigmahels[i].Jp()[0] = (i-1)*nen+ul;
+	sigmahels[i].Jp()[1] = (i+1)*nen+ul;
+      }
+      else if(i<nN-1) { // i=0
+	sigmahels[i]()[0] = -E/D;
+	sigmahels[i]()[1] = E/D;
+	sigmahels[i].Jp()[0] = i*nen+ul;
+	sigmahels[i].Jp()[1] = (i+1)*nen+ul;
+      }
+      else { // i=nN-1
+	sigmahels[i]()[0] = -E/D;
+	sigmahels[i]()[1] = E/D;
+	sigmahels[i].Jp()[0] = (i-1)*nen+ul;
+	sigmahels[i].Jp()[1] = i*nen+ul;
+      }
+      sigmahels[i].Ip()[0] = Ip[0];
+      for(int j=1; j<7; j++)
+	sigmahels[i].Ip()[j] = 2;
+    }
+
+    indices.resize(3*(nN-1));
+    int j = 0;
+    for(int i=0; i<nN-1; i++) {
+      indices[j++] = i;
+      indices[j++] = i+1;
+      indices[j++] = -1;
     }
   }
 
-  void FlexibleBodyTool::exp() {
-    std::vector<Mat3xV> Phi = vector<Mat3xV>(nN,Mat3xV(nM,NONINIT));
+  void FlexibleBodyTool::fma() {
+   KrKP.resize(nN,Vec3(NONINIT));
+    for(int i=0; i<nN; i++)
+      KrKP[i] = r.row(i).T();
+
+    Phi.resize(nN,Mat3xV(nM,NONINIT));
+    for(size_t i=0; i<nN; i++)
+      Phi[i] = Phis[i]*Phi_;
+
+    if(Psis.size()) {
+      Psi.resize(nN,Mat3xV(nM,NONINIT));
+      for(size_t i=0; i<nN; i++)
+	Psi[i] = Psis[i]*Phi_;
+    }
+
+    if(sigmahels.size()) {
+      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM,NONINIT));
+      for(size_t i=0; i<nN; i++)
+	sigmahel[i] = sigmahels[i]*Phi_;
+    }
+
+    Pdm <<= Pdm*Phi_;
+    for(int i=0; i<3; i++) {
+      rPdm[i] <<= rPdm[i]*Phi_;
+      for(int j=0; j<3; j++)
+	PPdm[i][j] <<= Phi_.T()*PPdm[i][j]*Phi_;
+    }
+    Ke0 <<= JTMJ(Ke0,Phi_);
+  }
+
+  void FlexibleBodyTool::lma() {
+    Phi.resize(nN,Mat3xV(nM,NONINIT));
     for(size_t i=0; i<nN; i++)
       Phi[i] = Phi_(RangeV(nen*i,nen*i+net-1),RangeV(0,nM-1));
 
-    std::vector<Matrix<General, Fixed<6>, Var, double>> sigmahel;
     if(Sr.rows()) {
-      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM));
+      sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM,NONINIT));
       for(size_t i=0; i<nN; i++)
 	sigmahel[i] = Sr(RangeV(6*i,6*i+6-1),RangeV(0,nM-1));
     }
@@ -915,7 +1489,7 @@ namespace MBSimGUI {
     else
       runtime_error("(FlexibleBodyTool::init): number of columns in nodes does not match, must be 3 or 4");
 
-    std::vector<Vec3> KrKP(nN);
+    KrKP.resize(nN,Vec3(NONINIT));
     for(const auto & i : nodeMap)
       KrKP[i.second] = nodalPos[i.first];
 
@@ -942,12 +1516,9 @@ namespace MBSimGUI {
     else
       runtime_error("lumped mass approach not available");
 
-    Vec3 rdm;
-    SymMat3 rrdm;
-
-    Mat3xV Pdm(nM);
-    std::vector<Mat3xV> rPdm(3,Mat3xV(nM));
-    std::vector<std::vector<SqrMatV>> PPdm(3,vector<SqrMatV>(3,SqrMatV(nM)));
+    Pdm.resize(nM);
+    rPdm.resize(3,Mat3xV(nM));
+    PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(nM)));
     if(lumpedMass) {
       // compute integrals
       for(int i=0; i<nN; i++) {
@@ -970,7 +1541,20 @@ namespace MBSimGUI {
 	runtime_error("full mass approach not available");
       PPdm[0][0] = JTMJ(M0,Phi_);
     }
+  }
 
+  void FlexibleBodyTool::damp() {
+    if(static_cast<DampingPage*>(page(PageDamp))->mDamp->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->mDamp->getWidget())->getWidget())->getEvalMat();
+      for(size_t i=0; i<mat.size(); i++)
+	mDamp(i) = mat[i][0].toDouble();
+    }
+
+    if(static_cast<DampingPage*>(page(PageDamp))->pDamp->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->pDamp->getWidget())->getWidget())->getEvalMat();
+      for(size_t i=0; i<mat.size(); i++)
+	pDamp(i) = mat[i][0].toDouble();
+    }
     if(mDamp.size()) {
       SquareMatrix<Ref,double> V;
       Vector<Ref,double> w;
@@ -992,7 +1576,9 @@ namespace MBSimGUI {
     }
     else if(pDamp.e(0)>0 or pDamp.e(1)>0)
       De0 <<= pDamp.e(0)*SymMatV(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]) + pDamp.e(1)*Ke0;
+  }
 
+  void FlexibleBodyTool::exp() {
     if(Pdm.cols()) {
       QString fileName = static_cast<FileWidget*>(static_cast<LastPage*>(page(PageLast))->inputFile->getWidget())->getFile(true);
       if(not(fileName.isEmpty())) {
@@ -1050,6 +1636,18 @@ namespace MBSimGUI {
 	vdata->write(r);
 	mdata=file.createChildObject<H5::SimpleDataset<vector<vector<double>>>>("nodal shape matrix of translation")(Phi_.size(),Phi_[0].size());
 	mdata->write(Phi_);
+
+	if(Psi.size()) {
+	  vector<vector<double>> Psi_(3*nN,vector<double>(Pdm.cols()));
+	  for(int i=0; i<nN; i++) {
+	    for(int j=0; j<3; j++) {
+	      for(int k=0; k<Pdm.cols(); k++)
+		Psi_[i*3+j][k] = Psi[i](j,k);
+	    }
+	  }
+	  mdata=file.createChildObject<H5::SimpleDataset<vector<vector<double>>>>("nodal shape matrix of rotation")(Psi_.size(),Psi_[0].size());
+	  mdata->write(Psi_);
+	}
 
 	if(sigmahel.size()) {
 	  vector<vector<double>> sigmahel_(6*nN,vector<double>(Pdm.cols()));

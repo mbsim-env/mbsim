@@ -70,6 +70,16 @@ namespace MBSimGUI {
       ExtWidget *file;
   };
 
+  class FlexibleBeamPage : public QWizardPage {
+    friend class FlexibleBodyTool;
+    public:
+     FlexibleBeamPage(QWidget *parent);
+      int nextId() const override;
+    private:
+      ExtWidget *n, *l, *A, *I, *E, *rho, *ten, *beny, *benz, *tor;
+  };
+
+
   class ReductionMethodsPage : public QWizardPage {
     friend class FlexibleBodyTool;
     public:
@@ -131,6 +141,7 @@ namespace MBSimGUI {
 	PageFirst,
 	PageExtFE,
 	PageCalculix,
+	PageFlexibleBeam,
 	PageRedMeth,
 	PageBC,
 	PageCMS,
@@ -146,22 +157,31 @@ namespace MBSimGUI {
     private:
       void stiff();
       void calculix();
+      void beam();
       void cms();
       void msm();
       void ombv();
+      void fma();
+      void lma();
       void damp();
       void exp();
       double m;
-      fmatvec::MatV r, M, K, Phi_, Sr;
+      fmatvec::MatV r, M, K, Phi_, Psi_, Sr;
       fmatvec::VecV mDamp;
       fmatvec::Vec2 pDamp;
       fmatvec::SymMatV M0, Ke0, De0;
+      fmatvec::Vec3 rdm;
+      fmatvec::SymMat3 rrdm;
+      fmatvec::Mat3xV Pdm;
+      std::vector<fmatvec::Mat3xV> rPdm;
+      std::vector<std::vector<fmatvec::SqrMatV>> PPdm;
+      std::vector<fmatvec::Vec3> KrKP;
+      std::vector<fmatvec::Mat3xV> Phi, Psi;
+      std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
       std::map<int,int> nodeMap;
+      std::vector<fmatvec::SparseMat> Phis, Psis, sigmahels;
       std::vector<int> indices;
-      int nN, nE, nM;
-      int net{3};
-      int ner{0};
-      int nen;
+      int nN, nE, nM, net, ner, nen;
   };
 
 }
