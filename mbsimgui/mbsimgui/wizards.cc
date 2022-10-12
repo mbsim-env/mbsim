@@ -667,15 +667,21 @@ namespace MBSimGUI {
       dof.push_back(dof_);
     }
 
-    auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getEvalMat();
-    VecVI inodes(mat.size(),NONINIT);
-    for(size_t i=0; i<mat.size(); i++)
-      inodes(i) = mat[i][0].toDouble();
+    VecVI inodes;
+    if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getEvalMat();
+      inodes.resize(mat.size(),NONINIT);
+      for(size_t i=0; i<mat.size(); i++)
+	inodes(i) = mat[i][0].toDouble();
+    }
 
-    mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getEvalMat();
-    VecVI nmodes(mat.size(),NONINIT);
-    for(size_t i=0; i<mat.size(); i++)
-      nmodes(i) = mat[i][0].toDouble();
+    VecVI nmodes;
+    if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getEvalMat();
+      nmodes.resize(mat.size(),NONINIT);
+      for(size_t i=0; i<mat.size(); i++)
+	nmodes(i) = mat[i][0].toDouble();
+    }
 
     if(bnodes.size() != dof.size())
       runtime_error("(FlexibleBodyTool::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
