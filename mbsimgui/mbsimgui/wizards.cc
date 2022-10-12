@@ -489,6 +489,18 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::create() {
+    nodeMap.clear();
+    rPdm.clear();
+    PPdm.clear();
+    KrKP.clear();
+    Phi.clear();
+    Psi.clear();
+    sigmahel.clear();
+    Phis.clear();
+    Psis.clear();
+    sigmahels.clear();
+    indices.clear();
+
     if(hasVisitedPage(PageExtFE)) {
       stiff();
       if(hasVisitedPage(PageCMS))
@@ -602,7 +614,6 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::stiff() {
-    nodeMap.clear();
 
     string str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->getWidget())->getFile(true).toStdString();
     if(!str.empty())
@@ -996,7 +1007,6 @@ namespace MBSimGUI {
     auto benz = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
     auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
     auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    nodeMap.clear();
     for(int i=0; i<nN; i++)
       nodeMap[i+1] = i;
     nE = nN-1;
@@ -1033,9 +1043,6 @@ namespace MBSimGUI {
     if(benz)
       gar = nee++;
     int ng = nN*nen;
-
-    rPdm.clear();
-    PPdm.clear();
 
     vector<Mat3xV> rPdme(3,Mat3xV(nee));
     rPdm.resize(3,Mat3xV(ng));
