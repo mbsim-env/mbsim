@@ -996,6 +996,7 @@ namespace MBSimGUI {
     auto benz = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
     auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
     auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    nodeMap.clear();
     for(int i=0; i<nN; i++)
       nodeMap[i+1] = i;
     nE = nN-1;
@@ -1032,6 +1033,9 @@ namespace MBSimGUI {
     if(benz)
       gar = nee++;
     int ng = nN*nen;
+
+    rPdm.clear();
+    PPdm.clear();
 
     vector<Mat3xV> rPdme(3,Mat3xV(nee));
     rPdm.resize(3,Mat3xV(ng));
@@ -1324,7 +1328,7 @@ namespace MBSimGUI {
 
     RangeV I(0,2);
     for(int i=0; i<nE; i++) {
-      RangeV J(i*nee/2,i*nee/2+nee-1);
+      RangeV J(i*nen,i*nen+nee-1);
       if(ten) {
 	rPdme[x](x,ul) = me*D*(i/2.+1./6);
 	rPdme[x](x,ur) = me*D*(i/2.+1./3);
