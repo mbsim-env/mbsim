@@ -53,7 +53,7 @@ namespace MBSim {
         Function<Ret(fmatvec::VecV,double)>::init(stage, config);
         f->init(stage, config);
         if(stage == Element::preInit)
-          n = (*f)(fmatvec::VecV(getArg1Size())).rows();
+          n = f->getRetSize().first;
       }
   };
 
