@@ -26,11 +26,11 @@
 #include "mainwindow.h"
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpledataset.h"
-//#include <QDialogButtonBox>
 #include <QRadioButton>
 #include <QMessageBox>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
+#include <fmatvec/sparse_linear_algebra_double.h>
 
 using namespace std;
 using namespace fmatvec;
@@ -38,6 +38,134 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   extern MainWindow *mw;
+
+  MatV reduceMat(const map<int,map<int,double[4]>> &Km, const Indices &iN, const Indices &iH) {
+    vector<int> mapR(Km.size()), mapC(Km.size());
+    size_t hN=0, kN=0, hH=0, kH=0;
+    for(size_t i=0; i<mapR.size(); i++) {
+      if(hN<iN.size() and i==iN[hN]) {
+	hN++;
+	mapR[i] = kN++;
+      }
+      else
+	mapR[i] = -1;
+      if(hH<iH.size() and i==iH[hH]) {
+	hH++;
+	mapC[i] = kH++;
+      }
+      else
+	mapC[i] = -1;
+    }
+    MatV Kmr(iN.size(),iH.size());
+    for(const auto & i : Km) {
+      for(const auto & j : i.second) {
+	if(mapR[i.first]>=0 and mapC[j.first]>=0)
+	  Kmr(mapR[i.first],mapC[j.first]) = j.second[3];
+	else if(mapR[j.first]>=0 and mapC[i.first]>=0)
+	  Kmr(mapR[j.first],mapC[i.first]) = j.second[3];
+      }
+    }
+    return Kmr;
+  }
+
+  map<int,map<int,double[4]>> reduceMat(const map<int,map<int,double[4]>> &MKm, const Indices &iF) {
+    map<int,map<int,double[4]>> MKmr;
+    vector<int> map(MKm.size());
+    size_t h=0, k=0;
+    for(size_t i=0; i<map.size(); i++) {
+      if(h<iF.size() and i==iF[h]) {
+	h++;
+	map[i] = k++;
+      }
+      else
+	map[i] = -1;
+    }
+    for(const auto & i : MKm) {
+      if(map[i.first]>=0) {
+	for(const auto & j : i.second) {
+	  if(map[j.first]>=0) {
+	    auto d = MKmr[map[i.first]][map[j.first]];
+	    for(int k=0; k<4; k++)
+	      d[k] = j.second[k];
+	  }
+	}
+      }
+    }
+    return MKmr;
+  }
+
+  vector<SymSparseMat> createPPKs(const map<int,map<int,double[4]>> &PPKm) {
+    int nze=0;
+    for(const auto & i : PPKm)
+      nze+=i.second.size();
+    int n = PPKm.size();
+    vector<SymSparseMat> PPKs(4,SymSparseMat(n,nze,NONINIT));
+    int k=0, l=0;
+    for(int h=0; h<4; h++)
+      PPKs[h].Ip()[0] = 0;
+    for(const auto & i : PPKm) {
+      for(const auto & j : i.second) {
+	for(int h=0; h<4; h++) {
+	  PPKs[h].Jp()[l] = j.first;
+	  PPKs[h]()[l] = j.second[h];
+	}
+	l++;
+      }
+      k++;
+      for(int h=0; h<4; h++)
+	PPKs[h].Ip()[k] = l;
+    }
+    return PPKs;
+  }
+
+  pair<SymSparseMat,SymSparseMat> createMKs(const map<int,map<int,double[4]>> &MKm) {
+    int nze=0;
+    for(const auto & i : MKm)
+      nze+=i.second.size();
+    int n = MKm.size();
+    SymSparseMat Ks(n,nze,NONINIT);;
+    SymSparseMat Ms(n,nze,NONINIT);;
+    int k=0, l=0;
+    Ms.Ip()[0] = 0;
+    Ks.Ip()[0] = 0;
+    for(const auto & i : MKm) {
+      for(const auto & j : i.second) {
+	Ms.Jp()[l] = j.first;
+	Ms()[l] = j.second[0]+j.second[1]+j.second[2];
+	Ks.Jp()[l] = j.first;
+	Ks()[l] = j.second[3];
+	l++;
+      }
+      k++;
+      Ms.Ip()[k] = l;
+      Ks.Ip()[k] = l;
+    }
+    return make_pair(Ms,Ks);
+  }
+
+  vector<SparseMat> createPPs(const map<int,map<int,double[3]>> &PPm) {
+    int nze=0;
+    for(const auto & i : PPm)
+      nze+=i.second.size();
+    int n = PPm.size();
+    vector<SparseMat> PPs(3,SparseMat(n,n,nze,NONINIT));
+    int k=0, l=0;
+    for(int h=0; h<3; h++)
+      PPs[h].Ip()[0] = 0;
+    for(const auto & i : PPm) {
+      for(const auto & j : i.second) {
+	for(int h=0; h<3; h++) {
+	  PPs[h].Jp()[l] = j.first;
+	  PPs[h]()[l] = j.second[h];
+	}
+	l++;
+      }
+      k++;
+      for(int h=0; h<3; h++)
+	PPs[h].Ip()[k] = l;
+    }
+    return PPs;
+  }
 
   MatV readMat(const std::string &file) {
     ifstream is(file);
@@ -600,7 +728,9 @@ namespace MBSimGUI {
       static_cast<DampingPage*>(page(PageDamp))->mDamp->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->pDamp->initializeUsingXML(element);
       static_cast<LastPage*>(page(PageLast))->inputFile->initializeUsingXML(element);
-      if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"resultFileName"))
+      if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes"))
+	static_cast<FirstPage*>(page(PageFirst))->rb1->setChecked(true);
+      else if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"resultFileName"))
 	static_cast<FirstPage*>(page(PageFirst))->rb2->setChecked(true);
       else if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfNodes"))
 	static_cast<FirstPage*>(page(PageFirst))->rb3->setChecked(true);
@@ -625,6 +755,27 @@ namespace MBSimGUI {
     if(!str.empty())
       K <<= readMat(str);
 
+    if(K.cols()==3) {
+      if(M.cols()==K.cols()) {
+	for(int i=0; i<K.rows(); i++) {
+	  auto d = MKm[K(i,0)-1][K(i,1)-1];
+	  d[0] = M(i,2);
+	  d[3] = K(i,2);
+	}
+      }
+      else {
+	for(int i=0; i<K.rows(); i++) {
+	  auto d = MKm[K(i,0)-1][K(i,1)-1];
+	  d[3] = K(i,2);
+	}
+      }
+    } else {
+      for(int i=0; i<K.rows(); i++) {
+	auto d = MKm[3*(K(i,2)-1)+K(i,3)-1][3*(K(i,0)-1)+K(i,1)-1];
+	d[3] = K(i,4);
+      }
+    }
+
     if(nodeMap.empty()) {
       for(int i=0; i<r.rows(); i++)
 	nodeMap[i+1] = i;
@@ -634,21 +785,6 @@ namespace MBSimGUI {
     net = 3;
     ner = 0;
     nen = net + ner;
-
-    if(M.cols()==3) {
-      M0.resize(nN*nen);
-      for(int i=0; i<M.rows(); i++)
-	M0.e(M(i,0)-1,M(i,1)-1) = M(i,2);
-    }
-
-    Ke0.resize(nN*nen);
-    if(K.cols()==3) {
-      for(int i=0; i<K.rows(); i++)
-	Ke0.e(K(i,0)-1,K(i,1)-1) = K(i,2);
-    } else if(K.cols()==5) {
-      for(int i=0; i<K.rows(); i++)
-	Ke0(3*(K(i,0)-1)+K(i,1)-1,3*(K(i,2)-1)+K(i,3)-1) = K(i,4);
-    }
   }
 
   void FlexibleBodyTool::cms() {
@@ -721,11 +857,6 @@ namespace MBSimGUI {
 	iF.add(i);
     }
 
-    // M0 <<= M0(iF);
-    //Ke0 <<= Ke0(iF);
-    SymMatV Ke0r = Ke0(iF);
-    SymMatV M0r = M0(iF);
-
     c.clear();
     for(int i=0; i<inodes.size(); i++) {
       VecVI bci = bc[inodes(i)];
@@ -745,22 +876,28 @@ namespace MBSimGUI {
       else
 	iN.add(i);
     }
+
+    auto MKmr = reduceMat(MKm,iF);
+    auto MKmrn = reduceMat(MKmr,iN);
+    auto MKsr = createMKs(MKmr);
+    auto MKsrn = createMKs(MKmrn);
+
     MatV Vsd(n,iH.size()+nmodes.size(),NONINIT);
     if(iH.size()) {
       Indices IJ;
       for(int i=0; i<iH.size(); i++)
 	IJ.add(i);
       MatV Vs(iF.size(),iH.size(),NONINIT);
-      Vs.set(iN,IJ,-slvLL(Ke0r(iN),Ke0r(iN,iH)));
+      Vs.set(iN,IJ,-slvLU(MKsrn.second,reduceMat(MKmr,iN,iH)));
       Vs.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
       Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
     }
 
     if(nmodes.size()) {
-      SqrMat V;
+      Mat V;
       Vec w;
       if(fixedBoundaryNormalModes) {
-	eigvec(Ke0r(iN),M0r(iN),V,w);
+	eigvec(MKsrn.second,MKsrn.first,6+nmodes.size(),1,V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
@@ -774,8 +911,8 @@ namespace MBSimGUI {
 	}
       }
       else {
-	eigvec(Ke0r,M0r,V,w);
-
+	eigvec(MKsr.second,MKsr.first,6+nmodes.size(),1,V,w);
+	cout << w << endl;
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
@@ -791,7 +928,7 @@ namespace MBSimGUI {
     if(iH.size()) {
       SqrMat V;
       Vec w;
-      eigvec(JTMJ(Ke0r,Vsd),JTMJ(M0r,Vsd),V,w);
+      eigvec(JTMJ(MKsr.second,Vsd),JTMJ(MKsr.first,Vsd),V,w);
       vector<int> imod;
       for(int i=0; i<w.size(); i++) {
 	if(w(i)>pow(2*M_PI*0.1,2))
@@ -933,26 +1070,13 @@ namespace MBSimGUI {
     nM = disp.size();
     isRes.close();
 
-    ifstream isMass(jobname+".mas");
-    // mass matrix
-    M0.resize(dof.size());
-    int j;
-    while(true) {
-      isMass >> i >> j >> d;
-      if(isMass.eof()) break;
-      M0.e(i-1,j-1) = d;
+    M <<= readMat(jobname+".mas");
+    K <<= readMat(jobname+".sti");
+    for(int i=0; i<K.rows(); i++) {
+      auto d = MKm[K(i,0)-1][K(i,1)-1];
+      d[0] = M(i,2);
+      d[3] = K(i,2);
     }
-    isMass.close();
-
-    ifstream isStiff(jobname+".sti");
-    // stiffness matrix
-    Ke0.resize(dof.size());
-    while(true) {
-      isStiff >> i >> j >> d;
-      if(isStiff.eof()) break;
-      Ke0.e(i-1,j-1) = d;
-    }
-    isStiff.close();
 
     Phi_.resize(3*nN,nM,NONINIT);
     Sr.resize(6*nN,nM,NONINIT);
@@ -964,7 +1088,7 @@ namespace MBSimGUI {
     }
 
     indices.resize(5*6*eles.rows());
-    j = 0;
+    int j = 0;
     for(int i=0; i<eles.rows(); i++) {
       indices[j++] = nodeMap[eles(i,3)];
       indices[j++] = nodeMap[eles(i,2)];
@@ -1339,6 +1463,8 @@ namespace MBSimGUI {
       Kee(alr,alr) = E/2/D*(Iy+Iz);
     }
 
+//    map<int,map<int,double[4]>> MKm;
+//    map<int,map<int,double[3]>> PPm;
     RangeV I(0,2);
     for(int i=0; i<nE; i++) {
       RangeV J(i*nen,i*nen+nee-1);
@@ -1364,9 +1490,26 @@ namespace MBSimGUI {
 	for(int k=0; k<3; k++)
 	  PPdm[j][k].add(J,J,PPdme[j][k]);
       }
-      Ke0.add(J,Kee);
+      for(int j=0; j<nee; j++) {
+	for(int k=0; k<j; k++) {
+	  auto d2 = PPm[i*nen+j][i*nen+k];
+	  d2[0] += PPdme[0][1].e(j,k);
+	  d2[1] += PPdme[0][2].e(j,k);
+	  d2[2] += PPdme[1][2].e(j,k);
+	}
+	for(int k=j; k<nee; k++) {
+	  auto d = MKm[i*nen+j][i*nen+k];
+	  auto d2 = PPm[i*nen+j][i*nen+k];
+	  d[3] += Kee.ej(j,k);
+	  d[0] += PPdme[0][0].e(j,k);
+	  d[1] += PPdme[1][1].e(j,k);
+	  d[2] += PPdme[2][2].e(j,k);
+	  d2[0] += PPdme[0][1].e(j,k);
+	  d2[1] += PPdme[0][2].e(j,k);
+	  d2[2] += PPdme[1][2].e(j,k);
+	}
+      }
     }
-    M0 <<= PPdm[0][0]+PPdm[1][1]+PPdm[2][2];
 
     r.resize(nN,3,NONINIT);
     for(int i=0; i<nN; i++) {
@@ -1470,14 +1613,20 @@ namespace MBSimGUI {
       for(size_t i=0; i<nN; i++)
 	sigmahel[i] = sigmahels[i]*Phi_;
     }
-
+    auto PPKs = createPPKs(MKm);
+    auto PPs = createPPs(PPm);
     Pdm <<= Pdm*Phi_;
     for(int i=0; i<3; i++) {
       rPdm[i] <<= rPdm[i]*Phi_;
       for(int j=0; j<3; j++)
-	PPdm[i][j] <<= Phi_.T()*PPdm[i][j]*Phi_;
+	PPdm[j][j] <<= Phi_.T()*(PPKs[j]*Phi_);
+      PPdm[0][1] <<= Phi_.T()*(PPs[0]*Phi_);
+      PPdm[0][2] <<= Phi_.T()*(PPs[1]*Phi_);
+      PPdm[1][2] <<= Phi_.T()*(PPs[2]*Phi_);
     }
-    Ke0 <<= JTMJ(Ke0,Phi_);
+    //Ke0 <<= JTMJ(Ke0,Phi_);
+    //Ke0 <<= JTMJ(createSymSparseMat(K,format),Phi_);
+    Ke0 <<= JTMJ(PPKs[3],Phi_);
   }
 
   void FlexibleBodyTool::lma() {
@@ -1492,7 +1641,9 @@ namespace MBSimGUI {
     }
 
     //Ke0 <<= JTMJ(Ke0r,Vsd);
-    Ke0 <<= JTMJ(Ke0,Phi_);
+    //Ke0 <<= JTMJ(Ke0,Phi_);
+    auto MKs = createMKs(MKm);
+    Ke0 <<= JTMJ(MKs.second,Phi_);
 
     std::map<int,Vec3> nodalPos;
     if(r.cols()==4) {
@@ -1514,16 +1665,20 @@ namespace MBSimGUI {
     // compute mass and lumped mass matrix
     vector<double> mi(nN);
     m = 0;
-    if(M0.size()) {
+    if(M.cols()==3) {
+//      SymSparseMat Ms = createSymSparseMat(M,format);
       double ds = 0;
       for(int i=0; i<nN; i++) {
-	ds += M0.e(i*nen,i*nen);
-	m += M0.e(i*nen,i*nen);
-	for(int j=i+1; j<nN; j++)
-	  m += 2*M0.e(i*nen,j*nen);
+	int r = MKs.first.Ip()[i*nen];
+	ds += MKs.first()[r];
+	m += MKs.first()[r];
+	for(int c=r+1; c<MKs.first.Ip()[i*nen+1]; c++)
+	  m += 2*MKs.first()[c];
       }
-      for(int i=0; i<nN; i++)
-	mi[i] = M0.e(i*nen,i*nen)/ds*m;
+      for(int i=0; i<nN; i++) {
+	int r = MKs.first.Ip()[i*nen];
+	mi[i] = MKs.first()[r]/ds*m;
+      }
     } else if(M.cols()==1) {
       for(int i=0; i<M.rows(); i++) {
 	mi[i] = M(i,0);
@@ -1554,9 +1709,9 @@ namespace MBSimGUI {
     }
     else {
       // compute reduced mass matrix
-      if(not M0.size())
+      if(not MKs.first.size())
 	runtime_error("full mass approach not available");
-      PPdm[0][0] = JTMJ(M0,Phi_);
+      PPdm[0][0] = JTMJ(MKs.first,Phi_);
     }
   }
 

@@ -179,9 +179,13 @@ namespace MBSimGUI {
       std::vector<fmatvec::Mat3xV> Phi, Psi;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
       std::map<int,int> nodeMap;
+      //fmatvec::SymSparseMat M0s, Ke0s;
       std::vector<fmatvec::SparseMat> Phis, Psis, sigmahels;
       std::vector<int> indices;
       int nN, nE, nM, net, ner, nen;
+      int format;
+      std::map<int,std::map<int,double[4]>> MKm;
+      std::map<int,std::map<int,double[3]>> PPm;
   };
 
 }
