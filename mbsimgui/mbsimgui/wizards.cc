@@ -653,7 +653,9 @@ namespace MBSimGUI {
 
 
   void FlexibleBodyTool::save() {
-    QString file=QFileDialog::getSaveFileName(this, "Save finite elements input data file", QFileInfo(mw->getProjectFilePath()).absolutePath()+"/input_data.xml", "XML files (*.xml)");
+    QString inputFile = getInputDataFile();
+    inputFile = inputFile.mid(1,inputFile.size()-2);
+    QString file=QFileDialog::getSaveFileName(this, "Save finite elements input data file", QFileInfo(mw->getProjectFilePath()).absolutePath()+"/"+QFileInfo(inputFile).baseName()+".xml", "XML files (*.xml)");
     if(not(file.isEmpty())) {
       file = file.endsWith(".xml")?file:file+".xml";
       auto doc = mw->impl->createDocument();
@@ -912,7 +914,6 @@ namespace MBSimGUI {
       }
       else {
 	eigvec(MKsr.second,MKsr.first,6+nmodes.size(),1,V,w);
-	cout << w << endl;
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
@@ -1701,7 +1702,7 @@ namespace MBSimGUI {
       for(int k=0; k<3; k++) {
 	for(int i=0; i<nN; i++)
 	  rPdm[k] += mi[i]*KrKP[i](k)*Phi[i];
-	for(int l=0; l<3; l++) {
+	for(int l=k; l<3; l++) {
 	  for(int i=0; i<nN; i++)
 	    PPdm[k][l] += mi[i]*Phi[i].row(k).T()*Phi[i].row(l);
 	}
@@ -1718,6 +1719,7 @@ namespace MBSimGUI {
   void FlexibleBodyTool::damp() {
     if(static_cast<DampingPage*>(page(PageDamp))->mDamp->isActive()) {
       auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->mDamp->getWidget())->getWidget())->getEvalMat();
+      mDamp.resize(mat.size(),NONINIT);
       for(size_t i=0; i<mat.size(); i++)
 	mDamp(i) = mat[i][0].toDouble();
     }
@@ -1734,7 +1736,7 @@ namespace MBSimGUI {
       Pdm <<= Pdm*V;
       for(int i=0; i<3; i++) {
 	rPdm[i] <<= rPdm[i]*V;
-	for(int j=0; j<3; j++)
+	for(int j=i; j<3; j++)
 	  PPdm[i][j] <<= V.T()*PPdm[i][j]*V;
       }
       Ke0 <<= JTMJ(Ke0,V);
