@@ -169,7 +169,7 @@ namespace MBSimGUI {
       fmatvec::MatV r, M, K, Phi_, Psi_, Sr;
       fmatvec::VecV mDamp;
       fmatvec::Vec2 pDamp;
-      fmatvec::SymMatV M0, Ke0, De0;
+      fmatvec::SymMatV Ke0, De0;
       fmatvec::Vec3 rdm;
       fmatvec::SymMat3 rrdm;
       fmatvec::Mat3xV Pdm;

@@ -1176,14 +1176,9 @@ namespace MBSimGUI {
     int ng = nN*nen;
 
     vector<Mat3xV> rPdme(3,Mat3xV(nee));
-    rPdm.resize(3,Mat3xV(ng));
     vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(nee)));
-    PPdm.resize(3,vector<SqrMatV>(3,SqrMatV(ng)));
     Mat3xV Pdme(nee);
-    Pdm.resize(ng);
     SymMatV Kee(nee);
-    Ke0.resize(ng);
-    KrKP.resize(nN,Vec3());
 
     double D = l/nE;
 
@@ -1464,8 +1459,8 @@ namespace MBSimGUI {
       Kee(alr,alr) = E/2/D*(Iy+Iz);
     }
 
-//    map<int,map<int,double[4]>> MKm;
-//    map<int,map<int,double[3]>> PPm;
+    rPdm.resize(3,Mat3xV(ng));
+    Pdm.resize(ng);
     RangeV I(0,2);
     for(int i=0; i<nE; i++) {
       RangeV J(i*nen,i*nen+nee-1);
@@ -1486,11 +1481,8 @@ namespace MBSimGUI {
 	rPdme[x](z,ber) = me*D*(i*D/12.+D/20);
       }
       Pdm.add(I,J,Pdme);
-      for(int j=0; j<3; j++) {
+      for(int j=0; j<3; j++)
 	rPdm[j].add(I,J,rPdme[j]);
-	for(int k=0; k<3; k++)
-	  PPdm[j][k].add(J,J,PPdme[j][k]);
-      }
       for(int j=0; j<nee; j++) {
 	for(int k=0; k<j; k++) {
 	  auto d2 = PPm[i*nen+j][i*nen+k];
@@ -1595,7 +1587,7 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::fma() {
-   KrKP.resize(nN,Vec3(NONINIT));
+    KrKP.resize(nN,Vec3(NONINIT));
     for(int i=0; i<nN; i++)
       KrKP[i] = r.row(i).T();
 
@@ -1614,6 +1606,8 @@ namespace MBSimGUI {
       for(size_t i=0; i<nN; i++)
 	sigmahel[i] = sigmahels[i]*Phi_;
     }
+
+    PPdm.resize(3,vector<SqrMatV>(3));
     auto PPKs = createPPKs(MKm);
     auto PPs = createPPs(PPm);
     Pdm <<= Pdm*Phi_;
@@ -1625,8 +1619,6 @@ namespace MBSimGUI {
       PPdm[0][2] <<= Phi_.T()*(PPs[1]*Phi_);
       PPdm[1][2] <<= Phi_.T()*(PPs[2]*Phi_);
     }
-    //Ke0 <<= JTMJ(Ke0,Phi_);
-    //Ke0 <<= JTMJ(createSymSparseMat(K,format),Phi_);
     Ke0 <<= JTMJ(PPKs[3],Phi_);
   }
 
@@ -1641,8 +1633,6 @@ namespace MBSimGUI {
 	sigmahel[i] = Sr(RangeV(6*i,6*i+6-1),RangeV(0,nM-1));
     }
 
-    //Ke0 <<= JTMJ(Ke0r,Vsd);
-    //Ke0 <<= JTMJ(Ke0,Phi_);
     auto MKs = createMKs(MKm);
     Ke0 <<= JTMJ(MKs.second,Phi_);
 
