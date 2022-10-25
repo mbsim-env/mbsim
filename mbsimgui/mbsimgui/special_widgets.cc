@@ -19,8 +19,9 @@
 
 #include <config.h>
 #include "special_widgets.h"
-#include "extended_widgets.h"
+#include "basic_widgets.h"
 #include "variable_widgets.h"
+#include "extended_widgets.h"
 #include "namespace.h"
 #include <vector>
 #include <QVBoxLayout>
@@ -415,6 +416,43 @@ namespace MBSimGUI {
 
   Widget* BoundaryConditionWidgetFactory::createWidget(int i) {
     return new BoundaryConditionWidget(parent);
+  }
+
+  FiniteElementsDataWidget::FiniteElementsDataWidget(QWidget *parent) : Widget(parent) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    vector<QString> list;
+    list.emplace_back("\"C3D20\"");
+    type = new ExtWidget("Element type",new TextChoiceWidget(list,0,true),false,false,MBSIMFLEX%"elementType");
+    layout->addWidget(type);
+
+    elements = new ExtWidget("Elements",new ChoiceWidget(new MatRowsVarWidgetFactory(3,20),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elements");
+    layout->addWidget(elements);
+  }
+
+  DOMElement* FiniteElementsDataWidget::initializeUsingXML(DOMElement *element) {
+    type->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    if(E(element)->getTagName()==MBSIMFLEX%"elements")
+      elements->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    return element;
+  }
+
+  DOMElement* FiniteElementsDataWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"elementType");
+    type->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"elements");
+    elements->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    return nullptr;
+  }
+
+  Widget* FiniteElementsDataWidgetFactory::createWidget(int i) {
+    return new FiniteElementsDataWidget(parent);
   }
 
 }

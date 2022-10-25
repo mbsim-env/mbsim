@@ -79,6 +79,14 @@ namespace MBSimGUI {
       ExtWidget *n, *l, *A, *I, *E, *rho, *ten, *beny, *benz, *tor;
   };
 
+  class FiniteElementsPage : public QWizardPage {
+    friend class FlexibleBodyTool;
+    public:
+     FiniteElementsPage(QWidget *parent);
+      int nextId() const override;
+    private:
+      ExtWidget *E, *rho, *nu, *nodes, *elements;
+  };
 
   class ReductionMethodsPage : public QWizardPage {
     friend class FlexibleBodyTool;
@@ -142,6 +150,7 @@ namespace MBSimGUI {
 	PageExtFE,
 	PageCalculix,
 	PageFlexibleBeam,
+	PageFiniteElements,
 	PageRedMeth,
 	PageBC,
 	PageCMS,
@@ -155,9 +164,16 @@ namespace MBSimGUI {
       void load();
       QString getInputDataFile() const;
     private:
-      void stiff();
+      static fmatvec::MatV readMat(const std::string &file);
+      fmatvec::MatV reduceMat(const std::map<int,std::map<int,double[4]>> &Km, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
+      std::map<int,std::map<int,double[4]>> reduceMat(const std::map<int,std::map<int,double[4]>> &MKm, const fmatvec::Indices &iF);
+      std::vector<fmatvec::SymSparseMat> createPPKs(const std::map<int,std::map<int,double[4]>> &PPKm);
+      std::pair<fmatvec::SymSparseMat,fmatvec::SymSparseMat> createMKs(const std::map<int,std::map<int,double[4]>> &MKm);
+      std::vector<fmatvec::SparseMat> createPPs(const std::map<int,std::map<int,double[3]>> &PPm);
+      void extfe();
       void calculix();
       void beam();
+      void fe();
       void cms();
       void msm();
       void ombv();
@@ -179,11 +195,9 @@ namespace MBSimGUI {
       std::vector<fmatvec::Mat3xV> Phi, Psi;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
       std::map<int,int> nodeMap;
-      //fmatvec::SymSparseMat M0s, Ke0s;
       std::vector<fmatvec::SparseMat> Phis, Psis, sigmahels;
       std::vector<int> indices;
       int nN, nE, nM, net, ner, nen;
-      int format;
       std::map<int,std::map<int,double[4]>> MKm;
       std::map<int,std::map<int,double[3]>> PPm;
   };

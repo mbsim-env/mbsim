@@ -139,6 +139,24 @@ namespace MBSimGUI {
       QWidget *parent;
   };
 
+  class FiniteElementsDataWidget : public Widget {
+    public:
+      FiniteElementsDataWidget(QWidget *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    private:
+      ExtWidget *type, *elements;
+  };
+
+  class FiniteElementsDataWidgetFactory : public WidgetFactory {
+    public:
+      FiniteElementsDataWidgetFactory(QWidget *parent_) : parent(parent_) { }
+      Widget* createWidget(int i=0) override;
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"elementType"; }
+    protected:
+      QWidget *parent;
+  };
+
 }
 
 #endif

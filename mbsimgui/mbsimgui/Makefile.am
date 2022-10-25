@@ -89,7 +89,18 @@ libmbsimgui_la_SOURCES = \
   signal_.cc \
   solver.cc \
   spring_damper.cc \
-  structure.cc
+  structure.cc \
+  fbt_utils.cc \
+  fbt_cms.cc \
+  fbt_extfe.cc \
+  fbt_calculix.cc \
+  fbt_beam.cc \
+  fbt_fe.cc \
+  fbt_fma.cc \
+  fbt_lma.cc \
+  fbt_ombv.cc \
+  fbt_damp.cc \
+  fbt_exp.cc
 nodist_libmbsimgui_la_SOURCES=$(libmbsimgui_QT_BUILT_SOURCES)
 
 mbsimgui_CPPFLAGS = $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
