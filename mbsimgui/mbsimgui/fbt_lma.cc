@@ -90,13 +90,11 @@ namespace MBSimGUI {
 	rdm += mi[i]*KrKP[i];
 	rrdm += mi[i]*JTJ(KrKP[i].T());
 	Pdm += mi[i]*Phi[i];
-      }
-      for(int k=0; k<3; k++) {
-	for(int i=0; i<nN; i++)
+	for(int k=0; k<3; k++) {
 	  rPdm[k] += mi[i]*KrKP[i](k)*Phi[i];
-	for(int l=k; l<3; l++) {
-	  for(int i=0; i<nN; i++)
+	  for(int l=k; l<3; l++) {
 	    PPdm[k][l] += mi[i]*Phi[i].row(k).T()*Phi[i].row(l);
+	  }
 	}
       }
     }
