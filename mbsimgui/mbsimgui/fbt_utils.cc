@@ -209,6 +209,10 @@ namespace MBSimGUI {
     int k=0, l=0;
     Phis.Ip()[0] = 0;
     for(const auto & i : Phim) {
+      for(int ii=k; ii<i.first; ii++) {
+	k++;
+	Phis.Ip()[k] = Phis.Ip()[k-1];
+      }
       for(const auto & j : i.second) {
 	Phis.Jp()[l] = j.first;
 	Phis()[l] = j.second;
@@ -216,6 +220,10 @@ namespace MBSimGUI {
       }
       k++;
       Phis.Ip()[k] = l;
+    }
+    for(int ii=k; ii<3; ii++) {
+      k++;
+      Phis.Ip()[k] = Phis.Ip()[k-1];
     }
     return Phis;
   }
@@ -228,6 +236,10 @@ namespace MBSimGUI {
     int k=0, l=0;
     sigs.Ip()[0] = 0;
     for(const auto & i : sigm) {
+      for(int ii=k; ii<i.first; ii++) {
+	k++;
+	sigs.Ip()[k] = sigs.Ip()[k-1];
+      }
       for(const auto & j : i.second) {
 	sigs.Jp()[l] = j.first;
 	sigs()[l] = j.second;
@@ -235,6 +247,10 @@ namespace MBSimGUI {
       }
       k++;
       sigs.Ip()[k] = l;
+    }
+    for(int ii=k; ii<6; ii++) {
+      k++;
+      sigs.Ip()[k] = sigs.Ip()[k-1];
     }
     return sigs;
   }

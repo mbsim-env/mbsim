@@ -415,12 +415,6 @@ namespace MBSimGUI {
       r(i,0) = i*D;
       r(i,1) = 0;
       r(i,2) = 0;
-      for(int j=0; j<3; j++) {
-	Phim[i][j][0] = 0;
-	Psim[i][j][0] = 0;
-      }
-      for(int j=0; j<6; j++)
-	sigm[i][j][0] = 0;
       if(ten) {
 	Phim[i][x][i*nee/2+ul] = 1;
 	if(i>0 and i<nN-1) {
