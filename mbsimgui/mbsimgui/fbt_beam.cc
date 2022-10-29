@@ -43,7 +43,7 @@ namespace MBSimGUI {
     auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
     for(int i=0; i<nN; i++)
       nodeMap[i+1] = i;
-    nE = nN-1;
+    int nE = nN-1;
     int nee = 0;
     const int x = 0;
     const int y = 1;
@@ -76,7 +76,7 @@ namespace MBSimGUI {
       ber = nee++;
     if(benz)
       gar = nee++;
-    int ng = nN*nen;
+    ng = nN*nen;
 
     vector<Mat3xV> rPdme(3,Mat3xV(nee));
     vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(nee)));

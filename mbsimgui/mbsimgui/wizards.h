@@ -112,7 +112,7 @@ namespace MBSimGUI {
       ModeShapesPage(QWidget *parent);
       int nextId() const override;
     private:
-      ExtWidget *V;
+      ExtWidget *V, *S;
   };
 
   class ComponentModeSynthesisPage : public QWizardPage {
@@ -169,7 +169,7 @@ namespace MBSimGUI {
       std::map<int,std::map<int,double[4]>> reduceMat(const std::map<int,std::map<int,double[4]>> &MKm, const fmatvec::Indices &iF);
       std::vector<fmatvec::SymSparseMat> createPPKs(const std::map<int,std::map<int,double[4]>> &PPKm);
       std::pair<fmatvec::SymSparseMat,fmatvec::SymSparseMat> createMKs(const std::map<int,std::map<int,double[4]>> &MKm);
-      std::vector<fmatvec::SparseMat> createPPs(const std::map<int,std::map<int,double[3]>> &PPm);
+      std::vector<fmatvec::SparseMat> createPPs(int n, const std::map<int,std::map<int,double[3]>> &PPm);
       void extfe();
       void calculix();
       void beam();
@@ -197,7 +197,7 @@ namespace MBSimGUI {
       std::map<int,int> nodeMap;
       std::vector<fmatvec::SparseMat> Phis, Psis, sigmahels;
       std::vector<int> indices;
-      int nN, nE, nM, net, ner, nen;
+      int nN, nM, ng, net, ner, nen;
       std::map<int,std::map<int,double[4]>> MKm;
       std::map<int,std::map<int,double[3]>> PPm;
   };

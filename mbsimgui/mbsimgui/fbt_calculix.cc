@@ -67,6 +67,7 @@ namespace MBSimGUI {
       if(str.length()>6 and str.substr(4,2)=="3C")
 	break;
     }
+    int nE;
     stringstream sE(str);
     sE >> str >> nE;
     Matrix<General,Var,Var,int> eles(nE,20,NONINIT);
@@ -136,6 +137,7 @@ namespace MBSimGUI {
       d[0] = M(i,2);
       d[3] = K(i,2);
     }
+    ng = MKm.size();
 
     Phi_.resize(3*nN,nM,NONINIT);
     Sr.resize(6*nN,nM,NONINIT);

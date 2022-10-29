@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "wizards.h"
+#include <iostream>
 
 using namespace std;
 using namespace fmatvec;
@@ -167,16 +168,20 @@ namespace MBSimGUI {
     return make_pair(Ms,Ks);
   }
 
-  vector<SparseMat> FlexibleBodyTool::createPPs(const map<int,map<int,double[3]>> &PPm) {
+  vector<SparseMat> FlexibleBodyTool::createPPs(int n, const map<int,map<int,double[3]>> &PPm) {
     int nze=0;
     for(const auto & i : PPm)
       nze+=i.second.size();
-    int n = PPm.size();
     vector<SparseMat> PPs(3,SparseMat(n,n,nze,NONINIT));
     int k=0, l=0;
     for(int h=0; h<3; h++)
       PPs[h].Ip()[0] = 0;
     for(const auto & i : PPm) {
+      for(int ii=k; ii<i.first; ii++) {
+	k++;
+	for(int h=0; h<3; h++)
+	  PPs[h].Ip()[k] = PPs[h].Ip()[k-1];
+      }
       for(const auto & j : i.second) {
 	for(int h=0; h<3; h++) {
 	  PPs[h].Jp()[l] = j.first;
@@ -187,6 +192,11 @@ namespace MBSimGUI {
       k++;
       for(int h=0; h<3; h++)
 	PPs[h].Ip()[k] = l;
+    }
+    for(int ii=k; ii<n; ii++) {
+      k++;
+      for(int h=0; h<3; h++)
+	PPs[h].Ip()[k] = PPs[h].Ip()[k-1];
     }
     return PPs;
   }

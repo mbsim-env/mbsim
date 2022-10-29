@@ -92,6 +92,7 @@ libmbsimgui_la_SOURCES = \
   structure.cc \
   fbt_utils.cc \
   fbt_cms.cc \
+  fbt_msm.cc \
   fbt_extfe.cc \
   fbt_calculix.cc \
   fbt_beam.cc \

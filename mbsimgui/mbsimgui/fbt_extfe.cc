@@ -57,6 +57,7 @@ namespace MBSimGUI {
 	d[3] = K(i,4);
       }
     }
+    ng = MKm.size();
 
     if(nodeMap.empty()) {
       for(int i=0; i<r.rows(); i++)

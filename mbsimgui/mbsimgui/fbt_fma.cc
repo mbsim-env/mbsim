@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "wizards.h"
+#include <iostream>
 
 using namespace std;
 using namespace fmatvec;
@@ -48,7 +49,7 @@ namespace MBSimGUI {
 
     PPdm.resize(3,vector<SqrMatV>(3));
     auto PPKs = createPPKs(MKm);
-    auto PPs = createPPs(PPm);
+    auto PPs = createPPs(ng,PPm);
     Pdm <<= Pdm*Phi_;
     for(int i=0; i<3; i++) {
       rPdm[i] <<= rPdm[i]*Phi_;

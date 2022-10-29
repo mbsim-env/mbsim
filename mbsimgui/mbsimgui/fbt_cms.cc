@@ -79,7 +79,6 @@ namespace MBSimGUI {
       for(int j=0; j<i.second.size(); j++)
 	nr += i.second(j);
 
-    int ng = nN*nen;
     int n = ng-nr;
 
     vector<int> c;
@@ -187,14 +186,7 @@ namespace MBSimGUI {
     for(int i=0; i<nM; i++)
       IJ.add(i);
     Phi_.set(iF,IJ,Vsd);
-    Phi_.set(iX,IJ,Mat(iX.size(),IJ.size()));
-  }
-
-  void FlexibleBodyTool::msm() {
-    string str = static_cast<FileWidget*>(static_cast<ModeShapesPage*>(page(PageModeShapes))->V->getWidget())->getFile(true).toStdString();
-    if(!str.empty())
-      Phi_ <<= readMat(str);
-    nM = Phi_.cols();
+    if(iX.size()) Phi_.set(iX,IJ,Mat(iX.size(),IJ.size()));
   }
 
 }

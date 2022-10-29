@@ -144,6 +144,8 @@ namespace MBSimGUI {
       FiniteElementsDataWidget(QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getType() const;
+      QString getElementsFile() const;
     private:
       ExtWidget *type, *elements;
   };

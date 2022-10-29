@@ -428,8 +428,17 @@ namespace MBSimGUI {
     type = new ExtWidget("Element type",new TextChoiceWidget(list,0,true),false,false,MBSIMFLEX%"elementType");
     layout->addWidget(type);
 
-    elements = new ExtWidget("Elements",new ChoiceWidget(new MatRowsVarWidgetFactory(3,20),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elements");
+    elements = new ExtWidget("Elements",new FileWidget("","Element file","ASCII files (*.asc);;All files (*.*)",0,true),false,false,MBSIMFLEX%"elements");
+//    elements = new ExtWidget("Elements",new ChoiceWidget(new MatRowsVarWidgetFactory(3,20),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elements");
     layout->addWidget(elements);
+  }
+
+  QString FiniteElementsDataWidget::getType() const {
+    return static_cast<TextChoiceWidget*>(type->getWidget())->getText();
+  }
+
+  QString FiniteElementsDataWidget::getElementsFile() const {
+    return static_cast<FileWidget*>(elements->getWidget())->getFile(true);
   }
 
   DOMElement* FiniteElementsDataWidget::initializeUsingXML(DOMElement *element) {

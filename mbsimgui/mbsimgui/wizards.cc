@@ -278,7 +278,7 @@ namespace MBSimGUI {
     rho = new ExtWidget("Density",new ChoiceWidget(new ScalarWidgetFactory("7870",vector<QStringList>(2,densityUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"density");
     layout->addWidget(rho);
 
-    nodes = new ExtWidget("Nodes",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodes");
+    nodes = new ExtWidget("Nodes",new FileWidget("","Nodes file","ASCII files (*.asc);;All files (*.*)",0,true),false,false,MBSIMFLEX%"nodes");
     layout->addWidget(nodes);
 
     elements = new ExtWidget("Element data",new ListWidget(new FiniteElementsDataWidgetFactory(this),"Element data",1,3,false,1),false,false,"");
@@ -365,8 +365,11 @@ namespace MBSimGUI {
 
     mainlayout->addWidget(tab);
 
-    V = new ExtWidget("Mode shape matrix",new FileWidget("","Nodes file","ASCII files (*.asc);;All files (*.*)",0,true),false,false,MBSIMFLEX%"modeShapeMatrix");
+    V = new ExtWidget("Mode shape matrix",new FileWidget("","Mode shape matrix file","ASCII files (*.asc);;All files (*.*)",0,true),false,false,MBSIMFLEX%"modeShapeMatrix");
     layout->addWidget(V);
+
+    S = new ExtWidget("Stress matrix",new FileWidget("","Stress matrix file","ASCII files (*.asc);;All files (*.*)",0,true),true,false,MBSIMFLEX%"stressMatrix");
+    layout->addWidget(S);
 
     layout->addStretch(1);
   }
@@ -521,6 +524,11 @@ namespace MBSimGUI {
       cms();
       fma();
     }
+    else if(hasVisitedPage(PageFiniteElements)) {
+      fe();
+      cms();
+      fma();
+    }
     damp();
     exp();
   }
@@ -538,19 +546,10 @@ namespace MBSimGUI {
 	static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->writeXMLFile(element);
 	static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->mass->writeXMLFile(element);
 	static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->stiff->writeXMLFile(element);
-	if(hasVisitedPage(PageCMS)) {
-	  static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->writeXMLFile(element);
-	  static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->writeXMLFile(element);
-	  static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->writeXMLFile(element);
-	  static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->writeXMLFile(element);
-	}
-	else if(hasVisitedPage(PageModeShapes))
-	  static_cast<ModeShapesPage*>(page(PageModeShapes))->V->writeXMLFile(element);
-	static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->writeXMLFile(element);
       }
-      else if(hasVisitedPage(PageCalculix))
+      if(hasVisitedPage(PageCalculix))
 	static_cast<CalculixPage*>(page(PageCalculix))->file->writeXMLFile(element);
-      else if(hasVisitedPage(PageFlexibleBeam)) {
+      if(hasVisitedPage(PageFlexibleBeam)) {
 	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->writeXMLFile(element);
 	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->writeXMLFile(element);
 	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->writeXMLFile(element);
@@ -561,13 +560,31 @@ namespace MBSimGUI {
 	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->writeXMLFile(element);
 	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->writeXMLFile(element);
 	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->writeXMLFile(element);
+      }
+      if(hasVisitedPage(PageFiniteElements)) {
+	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->writeXMLFile(element);
+	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->writeXMLFile(element);
+	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->writeXMLFile(element);
+	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->writeXMLFile(element);
+	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->writeXMLFile(element);
+      }
+      if(hasVisitedPage(PageBC))
 	static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->writeXMLFile(element);
+      if(hasVisitedPage(PageCMS)) {
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->writeXMLFile(element);
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->writeXMLFile(element);
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->writeXMLFile(element);
       }
-      static_cast<DampingPage*>(page(PageDamp))->mDamp->writeXMLFile(element);
-      static_cast<DampingPage*>(page(PageDamp))->pDamp->writeXMLFile(element);
+      if(hasVisitedPage(PageModeShapes)) {
+	static_cast<ModeShapesPage*>(page(PageModeShapes))->V->writeXMLFile(element);
+	static_cast<ModeShapesPage*>(page(PageModeShapes))->S->writeXMLFile(element);
+      }
+      if(hasVisitedPage(PageOMBV))
+	static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->writeXMLFile(element);
+      if(hasVisitedPage(PageDamp)) {
+	static_cast<DampingPage*>(page(PageDamp))->mDamp->writeXMLFile(element);
+	static_cast<DampingPage*>(page(PageDamp))->pDamp->writeXMLFile(element);
+      }
       static_cast<LastPage*>(page(PageLast))->inputFile->writeXMLFile(element);
       mw->serializer->writeToURI(doc, MBXMLUtils::X()%file.toStdString());
     }
@@ -588,6 +605,7 @@ namespace MBSimGUI {
       static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->initializeUsingXML(element);
       static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->initializeUsingXML(element);
       static_cast<ModeShapesPage*>(page(PageModeShapes))->V->initializeUsingXML(element);
+      static_cast<ModeShapesPage*>(page(PageModeShapes))->S->initializeUsingXML(element);
       static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->initializeUsingXML(element);
       static_cast<CalculixPage*>(page(PageCalculix))->file->initializeUsingXML(element);
       static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->initializeUsingXML(element);
@@ -600,17 +618,26 @@ namespace MBSimGUI {
       static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->initializeUsingXML(element);
       static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->initializeUsingXML(element);
       static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->initializeUsingXML(element);
+      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->initializeUsingXML(element);
+      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->initializeUsingXML(element);
+      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->initializeUsingXML(element);
+      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->initializeUsingXML(element);
+      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->mDamp->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->pDamp->initializeUsingXML(element);
       static_cast<LastPage*>(page(PageLast))->inputFile->initializeUsingXML(element);
-      if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"nodes"))
+      if(MBXMLUtils::E(element->getFirstElementChild())->getTagName()==MBSIMFLEX%"nodes")
 	static_cast<FirstPage*>(page(PageFirst))->rb1->setChecked(true);
-      else if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"resultFileName"))
+      else if(MBXMLUtils::E(element->getFirstElementChild())->getTagName()==MBSIMFLEX%"resultFileName")
 	static_cast<FirstPage*>(page(PageFirst))->rb2->setChecked(true);
-      else if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfNodes"))
+      else if(MBXMLUtils::E(element->getFirstElementChild())->getTagName()==MBSIMFLEX%"numberOfNodes")
 	static_cast<FirstPage*>(page(PageFirst))->rb3->setChecked(true);
+      if(MBXMLUtils::E(element->getFirstElementChild())->getTagName()==MBSIMFLEX%"youngsModulus")
+	static_cast<FirstPage*>(page(PageFirst))->rb4->setChecked(true);
       if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeShapeMatrix"))
 	static_cast<ReductionMethodsPage*>(page(PageRedMeth))->rb2->setChecked(true);
+      else
+	static_cast<ReductionMethodsPage*>(page(PageRedMeth))->rb1->setChecked(true);
     }
   }
 
