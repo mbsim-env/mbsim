@@ -408,80 +408,44 @@ namespace MBSimGUI {
     }
 
     r.resize(nN,3,NONINIT);
+    Phim.resize(nN);
+    Psim.resize(nN);
+    sigm.resize(nN);
     for(int i=0; i<nN; i++) {
       r(i,0) = i*D;
       r(i,1) = 0;
       r(i,2) = 0;
-    }
-    int Ip[4];
-    if(ten)
-      Ip[0] = 0;
-    else if(benz)
-      Ip[0] = 1;
-    else if(beny)
-      Ip[0] = 2;
-    else
-      Ip[0] = 0;
-    Ip[1] = ten?Ip[0]+1:Ip[0];
-    Ip[2] = benz?Ip[1]+1:Ip[1];
-    Ip[3] = beny?Ip[2]+1:Ip[2];
-    Phis.resize(nN,SparseMat(3,ng,3,NONINIT));
-    for(size_t i=0; i<nN; i++) {
       for(int j=0; j<3; j++) {
-	Phis[i]()[j] = 1;
-	Phis[i].Ip()[j] = Ip[j];
+	Phim[i][j][0] = 0;
+	Psim[i][j][0] = 0;
       }
-      Phis[i].Ip()[3] = Ip[3];
-      Phis[i].Jp()[0] = nen*i+ul;
-      Phis[i].Jp()[1] = nen*i+vl;
-      Phis[i].Jp()[2] = nen*i+wl;
-    }
-    if(tor)
-      Ip[0] = 0;
-    else if(beny)
-      Ip[0] = 1;
-    else if(benz)
-      Ip[0] = 2;
-    else 
-      Ip[0] = 0;
-    Ip[1] = tor?Ip[0]+1:Ip[0];
-    Ip[2] = beny?Ip[1]+1:Ip[1];
-    Ip[3] = benz?Ip[2]+1:Ip[2];
-    Psis.resize(nN,SparseMat(3,ng,3,NONINIT));
-    for(size_t i=0; i<nN; i++) {
-      for(int j=0; j<3; j++) {
-	Psis[i]()[j] = 1;
-	Psis[i].Ip()[j] = Ip[j];
+      for(int j=0; j<6; j++)
+	sigm[i][j][0] = 0;
+      if(ten) {
+	Phim[i][x][i*nee/2+ul] = 1;
+	if(i>0 and i<nN-1) {
+	  sigm[i][x][(i-1)*nee/2+ul] = -E/D/2;
+	  sigm[i][x][(i+1)*nee/2+ul] = E/D/2;
+	}
+	else if(i<nN-1) { // i=0
+	  sigm[i][x][i*nee/2+ul] = -E/D;
+	  sigm[i][x][(i+1)*nee/2+ul] = E/D;
+	}
+	else { // i=nN-1
+	  sigm[i][x][(i-1)*nee/2+ul] = -E/D;
+	  sigm[i][x][i*nee/2+ul] = E/D;
+	}
       }
-      Psis[i].Ip()[3] = Ip[3];
-      Psis[i].Jp()[0] = nen*i+all;
-      Psis[i].Jp()[1] = nen*i+bel;
-      Psis[i].Jp()[2] = nen*i+gal;
-    }
-    Ip[0] = ten?0:2;
-    sigmahels.resize(nN,SparseMat(6,ng,2,NONINIT));
-    for(size_t i=0; i<nN; i++) {
-      if(i>0 and i<nN-1) {
-	sigmahels[i]()[0] = -E/D/2;
-	sigmahels[i]()[1] = E/D/2;
-	sigmahels[i].Jp()[0] = (i-1)*nen+ul;
-	sigmahels[i].Jp()[1] = (i+1)*nen+ul;
+      if(benz) {
+	Phim[i][y][i*nee/2+vl] = 1;
+	Psim[i][z][i*nee/2+gal] = 1;
       }
-      else if(i<nN-1) { // i=0
-	sigmahels[i]()[0] = -E/D;
-	sigmahels[i]()[1] = E/D;
-	sigmahels[i].Jp()[0] = i*nen+ul;
-	sigmahels[i].Jp()[1] = (i+1)*nen+ul;
+      if(beny) {
+	Phim[i][z][i*nee/2+wl] = 1;
+	Psim[i][y][i*nee/2+bel] = 1;
       }
-      else { // i=nN-1
-	sigmahels[i]()[0] = -E/D;
-	sigmahels[i]()[1] = E/D;
-	sigmahels[i].Jp()[0] = (i-1)*nen+ul;
-	sigmahels[i].Jp()[1] = i*nen+ul;
-      }
-      sigmahels[i].Ip()[0] = Ip[0];
-      for(int j=1; j<7; j++)
-	sigmahels[i].Ip()[j] = 2;
+      if(tor)
+	Psim[i][x][i*nee/2+all] = 1;
     }
 
     indices.resize(3*(nN-1));

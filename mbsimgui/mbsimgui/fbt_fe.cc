@@ -291,57 +291,101 @@ namespace MBSimGUI {
       }
     }
 
-    Phis.resize(nN,SparseMat(3,ng,3,NONINIT));
-    for(size_t i=0; i<nN; i++) {
-      for(int j=0; j<3; j++) {
-	Phis[i]()[j] = 1;
-	Phis[i].Ip()[j] = j;
-	Phis[i].Jp()[j] = 3*i+j;
-      }
-      Phis[i].Ip()[3] = 3;
+    Phim.resize(nN);
+    for(int i=0; i<nN; i++) {
+      Phim[i][0][3*i] = 1;
+      Phim[i][1][3*i+1] = 1;
+      Phim[i][2][3*i+2] = 1;
     }
 
-    //    for(int i=0; i<nN; i++) {
-    //      Phi[i](0,3*i) = 1;
-    //      Phi[i](1,3*i+1) = 1;
-    //      Phi[i](2,3*i+2) = 1;
-    //    }
-    //    for(int ee=0; ee<nE; ee++) {
-    //      for(int k=0; k<20; k++) {
-    //	int ku = nodeMap[elements(ee,k)];
-    //	SqrMat J(3);
-    //	for(int ll=0; ll<20; ll++) {
-    //	  J.add(0,(this->*dNidxq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*nodes.row(elements(ee,ll)-1));
-    //	  J.add(1,(this->*dNidyq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*nodes.row(elements(ee,ll)-1));
-    //	  J.add(2,(this->*dNidzq[ll])(rN[k](0),rN[k](1),rN[k](2),ll)*nodes.row(elements(ee,ll)-1));
-    //	}
-    //	Vector<Ref,int> ipiv(J.size(),NONINIT);
-    //	SqrMat LUJ = facLU(J,ipiv);
-    //	for(int i=0; i<20; i++) {
-    //	  int u = nodeMap[elements(ee,i)];
-    //	  Vec dN(3,NONINIT);
-    //	  dN(0) = (this->*dNidxq[i])(rN[k](0),rN[k](1),rN[k](2),i);
-    //	  dN(1) = (this->*dNidyq[i])(rN[k](0),rN[k](1),rN[k](2),i);
-    //	  dN(2) = (this->*dNidzq[i])(rN[k](0),rN[k](1),rN[k](2),i);
-    //	  Vec dNi = slvLUFac(LUJ,dN,ipiv);
-    //	  double al = E/(1+nu)/nI(elements(ee,k)-1);
-    //	  sigmahel[ku](0,u*3) += al*(1-nu)/(1-2*nu)*dNi(0);
-    //	  sigmahel[ku](0,u*3+1) += al*nu/(1-2*nu)*dNi(1);
-    //	  sigmahel[ku](0,u*3+2) += al*nu/(1-2*nu)*dNi(2);
-    //	  sigmahel[ku](1,u*3) += al*nu/(1-2*nu)*dNi(0);
-    //	  sigmahel[ku](1,u*3+1) += al*(1-nu)/(1-2*nu)*dNi(1);
-    //	  sigmahel[ku](1,u*3+2) += al*nu/(1-2*nu)*dNi(2);
-    //	  sigmahel[ku](2,u*3) += al*nu/(1-2*nu)*dNi(0);
-    //	  sigmahel[ku](2,u*3+1) += al*nu/(1-2*nu)*dNi(1);
-    //	  sigmahel[ku](2,u*3+2) += al*(1-nu)/(1-2*nu)*dNi(2);
-    //	  sigmahel[ku](3,u*3) += al*0.5*dNi(1);
-    //	  sigmahel[ku](3,u*3+1) += al*0.5*dNi(0);
-    //	  sigmahel[ku](4,u*3+1) += al*0.5*dNi(2);
-    //	  sigmahel[ku](4,u*3+2) += al*0.5*dNi(1);
-    //	  sigmahel[ku](5,u*3) += al*0.5*dNi(2);
-    //	  sigmahel[ku](5,u*3+2) += al*0.5*dNi(0);
-    //	}
-    //      }
-    //    }
+    sigm.resize(nN);
+    double dsig[9];
+    for(int ee=0; ee<ele[0].rows(); ee++) {
+      for(int k=0; k<20; k++) {
+	  double x = rN[k](0);
+	  double y = rN[k](1);
+	  double z = rN[k](2);
+	  SqrMat J(3);
+	  for(int ll=0; ll<20; ll++) {
+	    Vec3 r0 = this->r.row(ele[0](ee,ll)-1).T();
+	    for(int mm=0; mm<3; mm++) {
+	      double dN = (*dNidq[ll][mm])(x,y,z,ll);
+	      for(int nn=0; nn<3; nn++)
+		J(mm,nn) += dN*r0(nn);
+	    }
+	  }
+	  Vector<Ref,int> ipiv(J.size(),NONINIT);
+	  SqrMat LUJ = facLU(J,ipiv);
+	  for(int i=0; i<20; i++) {
+	    Vec dN(3,NONINIT);
+	    for(int rr=0; rr<3; rr++)
+	      dN(rr) = (*dNidq[i][rr])(x,y,z,i);
+	    Vec dNi = slvLUFac(LUJ,dN,ipiv);
+
+	    int ku = ele[0](ee,k)-1;
+	  int u = ele[0](ee,i)-1;
+	  double al = E/(1+nu)/nodeCount[ele[0](ee,k)];
+	  dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
+	  dsig[1] = al*nu/(1-2*nu)*dNi(1);
+	  dsig[2] = al*nu/(1-2*nu)*dNi(2);
+	  dsig[3] = al*nu/(1-2*nu)*dNi(0);
+	  dsig[4] = al*(1-nu)/(1-2*nu)*dNi(1);
+	  dsig[5] = al*(1-nu)/(1-2*nu)*dNi(2);
+	  dsig[6] = al*0.5*dNi(1);
+	  dsig[7] = al*0.5*dNi(0);
+	  dsig[8] = al*0.5*dNi(2);
+	  sigm[ku][0][u*3] += dsig[0];
+	  sigm[ku][0][u*3+1] += dsig[1];
+	  sigm[ku][0][u*3+2] += dsig[2];
+	  sigm[ku][1][u*3] += dsig[3];
+	  sigm[ku][1][u*3+1] += dsig[4];
+	  sigm[ku][1][u*3+2] += dsig[2];
+	  sigm[ku][2][u*3] += dsig[3];
+	  sigm[ku][2][u*3+1] += dsig[1];
+	  sigm[ku][2][u*3+2] += dsig[5];
+	  sigm[ku][3][u*3] += dsig[6];
+	  sigm[ku][3][u*3+1] += dsig[7];
+	  sigm[ku][4][u*3+1] += dsig[8];
+	  sigm[ku][4][u*3+2] += dsig[6];
+	  sigm[ku][5][u*3] += dsig[8];
+	  sigm[ku][5][u*3+2] += dsig[7];
+	}
+      }
+    }
+
+    indices.resize(5*6*ele[0].rows());
+    int j = 0;
+    for(int i=0; i<ele[0].rows(); i++) {
+      indices[j++] = nodeMap[ele[0](i,3)];
+      indices[j++] = nodeMap[ele[0](i,2)];
+      indices[j++] = nodeMap[ele[0](i,1)];
+      indices[j++] = nodeMap[ele[0](i,0)];
+      indices[j++] = -1;
+      indices[j++] = nodeMap[ele[0](i,4)];
+      indices[j++] = nodeMap[ele[0](i,5)];
+      indices[j++] = nodeMap[ele[0](i,6)];
+      indices[j++] = nodeMap[ele[0](i,7)];
+      indices[j++] = -1;
+      indices[j++] = nodeMap[ele[0](i,1)];
+      indices[j++] = nodeMap[ele[0](i,2)];
+      indices[j++] = nodeMap[ele[0](i,6)];
+      indices[j++] = nodeMap[ele[0](i,5)];
+      indices[j++] = -1;
+      indices[j++] = nodeMap[ele[0](i,2)];
+      indices[j++] = nodeMap[ele[0](i,3)];
+      indices[j++] = nodeMap[ele[0](i,7)];
+      indices[j++] = nodeMap[ele[0](i,6)];
+      indices[j++] = -1;
+      indices[j++] = nodeMap[ele[0](i,4)];
+      indices[j++] = nodeMap[ele[0](i,7)];
+      indices[j++] = nodeMap[ele[0](i,3)];
+      indices[j++] = nodeMap[ele[0](i,0)];
+      indices[j++] = -1;
+      indices[j++] = nodeMap[ele[0](i,0)];
+      indices[j++] = nodeMap[ele[0](i,1)];
+      indices[j++] = nodeMap[ele[0](i,5)];
+      indices[j++] = nodeMap[ele[0](i,4)];
+      indices[j++] = -1;
+    }
   }
 }

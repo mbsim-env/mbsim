@@ -33,18 +33,18 @@ namespace MBSimGUI {
 
     Phi.resize(nN,Mat3xV(nM,NONINIT));
     for(size_t i=0; i<nN; i++)
-      Phi[i] = Phis[i]*Phi_;
+      Phi[i] = createPhis(ng,Phim[i])*Phi_;
 
-    if(Psis.size()) {
+    if(Psim.size()) {
       Psi.resize(nN,Mat3xV(nM,NONINIT));
       for(size_t i=0; i<nN; i++)
-	Psi[i] = Psis[i]*Phi_;
+	Psi[i] = createPhis(ng,Psim[i])*Phi_;
     }
 
-    if(sigmahels.size()) {
+    if(sigm.size()) {
       sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM,NONINIT));
       for(size_t i=0; i<nN; i++)
-	sigmahel[i] = sigmahels[i]*Phi_;
+	sigmahel[i] = createsigs(ng,sigm[i])*Phi_;
     }
 
     PPdm.resize(3,vector<SqrMatV>(3));

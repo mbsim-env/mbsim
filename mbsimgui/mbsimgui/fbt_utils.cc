@@ -201,4 +201,42 @@ namespace MBSimGUI {
     return PPs;
   }
 
+  SparseMat FlexibleBodyTool::createPhis(int n, const map<int,map<int,double>> &Phim) {
+    int nze=0;
+    for(const auto & i : Phim)
+      nze+=i.second.size();
+    SparseMat Phis(3,n,nze,NONINIT);
+    int k=0, l=0;
+    Phis.Ip()[0] = 0;
+    for(const auto & i : Phim) {
+      for(const auto & j : i.second) {
+	Phis.Jp()[l] = j.first;
+	Phis()[l] = j.second;
+	l++;
+      }
+      k++;
+      Phis.Ip()[k] = l;
+    }
+    return Phis;
+  }
+
+  SparseMat FlexibleBodyTool::createsigs(int n, const map<int,map<int,double>> &sigm) {
+    int nze=0;
+    for(const auto & i : sigm)
+      nze+=i.second.size();
+    SparseMat sigs(6,n,nze,NONINIT);
+    int k=0, l=0;
+    sigs.Ip()[0] = 0;
+    for(const auto & i : sigm) {
+      for(const auto & j : i.second) {
+	sigs.Jp()[l] = j.first;
+	sigs()[l] = j.second;
+	l++;
+      }
+      k++;
+      sigs.Ip()[k] = l;
+    }
+    return sigs;
+  }
+
 }

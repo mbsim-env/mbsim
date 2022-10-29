@@ -170,6 +170,8 @@ namespace MBSimGUI {
       std::vector<fmatvec::SymSparseMat> createPPKs(const std::map<int,std::map<int,double[4]>> &PPKm);
       std::pair<fmatvec::SymSparseMat,fmatvec::SymSparseMat> createMKs(const std::map<int,std::map<int,double[4]>> &MKm);
       std::vector<fmatvec::SparseMat> createPPs(int n, const std::map<int,std::map<int,double[3]>> &PPm);
+      fmatvec::SparseMat createPhis(int n, const std::map<int,std::map<int,double>> &sigm);
+      fmatvec::SparseMat createsigs(int n, const std::map<int,std::map<int,double>> &sigm);
       void extfe();
       void calculix();
       void beam();
@@ -200,6 +202,8 @@ namespace MBSimGUI {
       int nN, nM, ng, net, ner, nen;
       std::map<int,std::map<int,double[4]>> MKm;
       std::map<int,std::map<int,double[3]>> PPm;
+      //std::map<int,std::map<int,std::vector<double>>> sigm;
+      std::vector<std::map<int,std::map<int,double>>> Phim, Psim, sigm;
   };
 
 }
