@@ -189,7 +189,21 @@ namespace MBSimGUI {
     rPdm.resize(3,Mat3xV(ng));
     Pdm.resize(ng);
 
+    SqrMat3 LUJ(NONINIT);
     double dK[3][3];
+    double N_[20];
+    Vec3 dN_[20];
+    Phim.resize(nN);
+    for(int i=0; i<nN; i++) {
+      Phim[i][0][3*i] = 1;
+      Phim[i][1][3*i+1] = 1;
+      Phim[i][2][3*i+2] = 1;
+    }
+
+    sigm.resize(nN);
+    double dsig[9];
+    indices.resize(5*6*ele[0].rows());
+    int oj = 0;
     for(int ee=0; ee<ele[0].rows(); ee++) {
       for(int ii=0; ii<3; ii++) {
 	double x = xi(ii);
@@ -197,20 +211,28 @@ namespace MBSimGUI {
 	  double y = xi(jj);
 	  for(int kk=0; kk<3; kk++) {
 	    double z = xi(kk);
-	    SqrMat J(3);
-	    Vec r(3);
+	    SqrMat3 J(3);
+	    Vec3 r(3);
 	    for(int ll=0; ll<20; ll++) {
-	      Vec3 r0 = this->r.row(ele[0](ee,ll)-1).T();
-	      for(int mm=0; mm<3; mm++) {
-		double dN = (*dNidq[ll][mm])(x,y,z,ll);
-		for(int nn=0; nn<3; nn++)
-		  J(mm,nn) += dN*r0(nn);
-	      }
-	      r += (*Ni[ll])(x,y,z,ll)*r0;
+	      RowVec3 r0 = this->r.row(ele[0](ee,ll)-1);
+	      N_[ll] = (*Ni[ll])(x,y,z,ll);
+	      for(int mm=0; mm<3; mm++)
+		dN_[ll](mm) = (*dNidq[ll][mm])(x,y,z,ll);
+	      J += dN_[ll]*r0;
+	      r += N_[ll]*r0.T();
 	    }
 	    Vector<Ref,int> ipiv(J.size(),NONINIT);
-	    SqrMat LUJ = facLU(J,ipiv);
 	    double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
+	    LUJ(0,0) = J(2,2)*J(1,1)-J(2,1)*J(1,2);
+	    LUJ(0,1) = J(2,1)*J(0,2)-J(2,2)*J(0,1);
+	    LUJ(0,2) = J(1,2)*J(0,1)-J(1,1)*J(0,2);
+	    LUJ(1,0) = J(2,0)*J(1,2)-J(2,2)*J(1,0);
+	    LUJ(1,1) = J(2,2)*J(0,0)-J(2,0)*J(0,2);
+	    LUJ(1,2) = J(1,0)*J(0,2)-J(1,2)*J(0,0);
+	    LUJ(2,0) = J(2,1)*J(1,0)-J(2,0)*J(1,1);
+	    LUJ(2,1) = J(2,0)*J(0,1)-J(2,1)*J(0,0);
+	    LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
+
 	    double wijk = wi(ii)*wi(jj)*wi(kk);
 	    double dm = rho*wijk*detJ;
 	    double dk = E/(1+nu)*wijk*detJ;
@@ -220,11 +242,8 @@ namespace MBSimGUI {
 	    for(int i=0; i<20; i++) {
 	      //	      int u = nodeMap[elements(ee,i)];
 	      int u = ele[0](ee,i)-1;
-	      double Ni_ = (*Ni[i])(x,y,z,i);
-	      Vec dN(3,NONINIT);
-	      for(int rr=0; rr<3; rr++)
-		dN(rr) = (*dNidq[i][rr])(x,y,z,i);
-	      Vec dNi = slvLUFac(LUJ,dN,ipiv);
+	      double Ni_ = N_[i];
+	      Vec3 dNi = LUJ*dN_[i]/detJ;
 	      for(int i1=0; i1<3; i1++) {
 		Pdm(i1,u*3+i1) += dm*Ni_;
 		for(int j1=0; j1<3; j1++)
@@ -233,11 +252,8 @@ namespace MBSimGUI {
 	      for(int j=i; j<20; j++) {
 		//		int v = nodeMap[elements(ee,j)];
 		int v = ele[0](ee,j)-1;
-		double Nj_ = (*Ni[j])(x,y,z,j);
-		Vec dN(3,NONINIT);
-		for(int rr=0; rr<3; rr++)
-		  dN(rr) = (*dNidq[j][rr])(x,y,z,j);
-		Vec dNj = slvLUFac(LUJ,dN,ipiv);
+		double Nj_ = N_[j];
+		Vec3 dNj = LUJ*dN_[j]/detJ;
 		double dPPdm = dm*Ni_*Nj_;
 		dK[0][0] = dk*((1-nu)/(1-2*nu)*dNi(0)*dNj(0)+0.5*(dNi(1)*dNj(1)+dNi(2)*dNj(2)));
 		dK[0][1] = dk*(nu/(1-2*nu)*dNi(0)*dNj(1)+0.5*dNi(1)*dNj(0));
@@ -289,40 +305,33 @@ namespace MBSimGUI {
 	  }
 	}
       }
-    }
 
-    Phim.resize(nN);
-    for(int i=0; i<nN; i++) {
-      Phim[i][0][3*i] = 1;
-      Phim[i][1][3*i+1] = 1;
-      Phim[i][2][3*i+2] = 1;
-    }
-
-    sigm.resize(nN);
-    double dsig[9];
-    for(int ee=0; ee<ele[0].rows(); ee++) {
       for(int k=0; k<20; k++) {
-	  double x = rN[k](0);
-	  double y = rN[k](1);
-	  double z = rN[k](2);
-	  SqrMat J(3);
-	  for(int ll=0; ll<20; ll++) {
-	    Vec3 r0 = this->r.row(ele[0](ee,ll)-1).T();
-	    for(int mm=0; mm<3; mm++) {
-	      double dN = (*dNidq[ll][mm])(x,y,z,ll);
-	      for(int nn=0; nn<3; nn++)
-		J(mm,nn) += dN*r0(nn);
-	    }
-	  }
-	  Vector<Ref,int> ipiv(J.size(),NONINIT);
-	  SqrMat LUJ = facLU(J,ipiv);
-	  for(int i=0; i<20; i++) {
-	    Vec dN(3,NONINIT);
-	    for(int rr=0; rr<3; rr++)
-	      dN(rr) = (*dNidq[i][rr])(x,y,z,i);
-	    Vec dNi = slvLUFac(LUJ,dN,ipiv);
+	double x = rN[k](0);
+	double y = rN[k](1);
+	double z = rN[k](2);
+	SqrMat3 J(3);
+	for(int ll=0; ll<20; ll++) {
+	  RowVec3 r0 = this->r.row(ele[0](ee,ll)-1);
+	  for(int mm=0; mm<3; mm++)
+	    dN_[ll](mm) = (*dNidq[ll][mm])(x,y,z,ll);
+	  J += dN_[ll]*r0;
+	}
+	Vector<Ref,int> ipiv(J.size(),NONINIT);
+	double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
+	LUJ(0,0) = J(2,2)*J(1,1)-J(2,1)*J(1,2);
+	LUJ(0,1) = J(2,1)*J(0,2)-J(2,2)*J(0,1);
+	LUJ(0,2) = J(1,2)*J(0,1)-J(1,1)*J(0,2);
+	LUJ(1,0) = J(2,0)*J(1,2)-J(2,2)*J(1,0);
+	LUJ(1,1) = J(2,2)*J(0,0)-J(2,0)*J(0,2);
+	LUJ(1,2) = J(1,0)*J(0,2)-J(1,2)*J(0,0);
+	LUJ(2,0) = J(2,1)*J(1,0)-J(2,0)*J(1,1);
+	LUJ(2,1) = J(2,0)*J(0,1)-J(2,1)*J(0,0);
+	LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
+	for(int i=0; i<20; i++) {
+	  Vec3 dNi = LUJ*dN_[i]/detJ;
 
-	    int ku = ele[0](ee,k)-1;
+	  int ku = ele[0](ee,k)-1;
 	  int u = ele[0](ee,i)-1;
 	  double al = E/(1+nu)/nodeCount[ele[0](ee,k)];
 	  dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
@@ -351,41 +360,37 @@ namespace MBSimGUI {
 	  sigm[ku][5][u*3+2] += dsig[7];
 	}
       }
-    }
 
-    indices.resize(5*6*ele[0].rows());
-    int j = 0;
-    for(int i=0; i<ele[0].rows(); i++) {
-      indices[j++] = nodeMap[ele[0](i,3)];
-      indices[j++] = nodeMap[ele[0](i,2)];
-      indices[j++] = nodeMap[ele[0](i,1)];
-      indices[j++] = nodeMap[ele[0](i,0)];
-      indices[j++] = -1;
-      indices[j++] = nodeMap[ele[0](i,4)];
-      indices[j++] = nodeMap[ele[0](i,5)];
-      indices[j++] = nodeMap[ele[0](i,6)];
-      indices[j++] = nodeMap[ele[0](i,7)];
-      indices[j++] = -1;
-      indices[j++] = nodeMap[ele[0](i,1)];
-      indices[j++] = nodeMap[ele[0](i,2)];
-      indices[j++] = nodeMap[ele[0](i,6)];
-      indices[j++] = nodeMap[ele[0](i,5)];
-      indices[j++] = -1;
-      indices[j++] = nodeMap[ele[0](i,2)];
-      indices[j++] = nodeMap[ele[0](i,3)];
-      indices[j++] = nodeMap[ele[0](i,7)];
-      indices[j++] = nodeMap[ele[0](i,6)];
-      indices[j++] = -1;
-      indices[j++] = nodeMap[ele[0](i,4)];
-      indices[j++] = nodeMap[ele[0](i,7)];
-      indices[j++] = nodeMap[ele[0](i,3)];
-      indices[j++] = nodeMap[ele[0](i,0)];
-      indices[j++] = -1;
-      indices[j++] = nodeMap[ele[0](i,0)];
-      indices[j++] = nodeMap[ele[0](i,1)];
-      indices[j++] = nodeMap[ele[0](i,5)];
-      indices[j++] = nodeMap[ele[0](i,4)];
-      indices[j++] = -1;
+      indices[oj++] = nodeMap[ele[0](ee,3)];
+      indices[oj++] = nodeMap[ele[0](ee,2)];
+      indices[oj++] = nodeMap[ele[0](ee,1)];
+      indices[oj++] = nodeMap[ele[0](ee,0)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeMap[ele[0](ee,4)];
+      indices[oj++] = nodeMap[ele[0](ee,5)];
+      indices[oj++] = nodeMap[ele[0](ee,6)];
+      indices[oj++] = nodeMap[ele[0](ee,7)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeMap[ele[0](ee,1)];
+      indices[oj++] = nodeMap[ele[0](ee,2)];
+      indices[oj++] = nodeMap[ele[0](ee,6)];
+      indices[oj++] = nodeMap[ele[0](ee,5)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeMap[ele[0](ee,2)];
+      indices[oj++] = nodeMap[ele[0](ee,3)];
+      indices[oj++] = nodeMap[ele[0](ee,7)];
+      indices[oj++] = nodeMap[ele[0](ee,6)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeMap[ele[0](ee,4)];
+      indices[oj++] = nodeMap[ele[0](ee,7)];
+      indices[oj++] = nodeMap[ele[0](ee,3)];
+      indices[oj++] = nodeMap[ele[0](ee,0)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeMap[ele[0](ee,0)];
+      indices[oj++] = nodeMap[ele[0](ee,1)];
+      indices[oj++] = nodeMap[ele[0](ee,5)];
+      indices[oj++] = nodeMap[ele[0](ee,4)];
+      indices[oj++] = -1;
     }
   }
 }

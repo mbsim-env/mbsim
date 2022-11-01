@@ -411,10 +411,10 @@ namespace MBSimGUI {
   }
 
   int ComponentModeSynthesisPage::nextId() const {
-    if(wizard()->hasVisitedPage(FlexibleBodyTool::PageFlexibleBeam))
-      return FlexibleBodyTool::PageDamp;
-    else
+    if(wizard()->hasVisitedPage(FlexibleBodyTool::PageExtFE))
       return FlexibleBodyTool::PageOMBV;
+    else
+      return FlexibleBodyTool::PageDamp;
   }
 
   OpenMBVPage::OpenMBVPage(QWidget *parent) : QWizardPage(parent) {
