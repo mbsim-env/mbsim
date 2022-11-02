@@ -364,6 +364,8 @@ namespace MBSimGUI {
 
     rPdm.resize(3,Mat3xV(ng));
     Pdm.resize(ng);
+    MKm.resize(ng);
+    PPm.resize(ng);
     RangeV I(0,2);
     for(int i=0; i<nE; i++) {
       RangeV J(i*nen,i*nen+nee-1);
@@ -408,9 +410,9 @@ namespace MBSimGUI {
     }
 
     r.resize(nN,3,NONINIT);
-    Phim.resize(nN);
-    Psim.resize(nN);
-    sigm.resize(nN);
+    Phim.resize(nN,vector<map<int,double>>(3));
+    Psim.resize(nN,vector<map<int,double>>(3));
+    sigm.resize(nN,vector<map<int,double>>(6));
     for(int i=0; i<nN; i++) {
       r(i,0) = i*D;
       r(i,1) = 0;

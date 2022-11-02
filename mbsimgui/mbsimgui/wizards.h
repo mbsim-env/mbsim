@@ -165,13 +165,13 @@ namespace MBSimGUI {
       QString getInputDataFile() const;
     private:
       static fmatvec::MatV readMat(const std::string &file);
-      fmatvec::MatV reduceMat(const std::map<int,std::map<int,double[4]>> &Km, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
-      std::map<int,std::map<int,double[4]>> reduceMat(const std::map<int,std::map<int,double[4]>> &MKm, const fmatvec::Indices &iF);
-      std::vector<fmatvec::SymSparseMat> createPPKs(const std::map<int,std::map<int,double[4]>> &PPKm);
-      std::pair<fmatvec::SymSparseMat,fmatvec::SymSparseMat> createMKs(const std::map<int,std::map<int,double[4]>> &MKm);
-      std::vector<fmatvec::SparseMat> createPPs(int n, const std::map<int,std::map<int,double[3]>> &PPm);
-      fmatvec::SparseMat createPhis(int n, const std::map<int,std::map<int,double>> &sigm);
-      fmatvec::SparseMat createsigs(int n, const std::map<int,std::map<int,double>> &sigm);
+      fmatvec::MatV reduceMat(const std::vector<std::map<int,double[4]>> &Km, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
+      std::vector<std::map<int,double[4]>> reduceMat(const std::vector<std::map<int,double[4]>> &MKm, const fmatvec::Indices &iF);
+      std::vector<fmatvec::SymSparseMat> createPPKs(const std::vector<std::map<int,double[4]>> &PPKm);
+      std::pair<fmatvec::SymSparseMat,fmatvec::SymSparseMat> createMKs(const std::vector<std::map<int,double[4]>> &MKm);
+      std::vector<fmatvec::SparseMat> createPPs(const std::vector<std::map<int,double[3]>> &PPm);
+      fmatvec::SparseMat createPhis(int n, const std::vector<std::map<int,double>> &Phis);
+      fmatvec::SparseMat createsigs(int n, const std::vector<std::map<int,double>> &sigm);
       void extfe();
       void calculix();
       void beam();
@@ -199,9 +199,9 @@ namespace MBSimGUI {
       std::map<int,int> nodeMap;
       std::vector<int> indices;
       int nN, nM, ng, net, ner, nen;
-      std::map<int,std::map<int,double[4]>> MKm;
-      std::map<int,std::map<int,double[3]>> PPm;
-      std::vector<std::map<int,std::map<int,double>>> Phim, Psim, sigm;
+      std::vector<std::map<int,double[4]>> MKm;
+      std::vector<std::map<int,double[3]>> PPm;
+      std::vector<std::vector<std::map<int,double>>> Phim, Psim, sigm;
   };
 
 }

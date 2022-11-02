@@ -64,7 +64,7 @@ namespace MBSimGUI {
     return A;
   }
 
-  MatV FlexibleBodyTool::reduceMat(const map<int,map<int,double[4]>> &Km, const Indices &iN, const Indices &iH) {
+  MatV FlexibleBodyTool::reduceMat(const vector<map<int,double[4]>> &Km, const Indices &iN, const Indices &iH) {
     vector<int> mapR(Km.size()), mapC(Km.size());
     size_t hN=0, kN=0, hH=0, kH=0;
     for(size_t i=0; i<mapR.size(); i++) {
@@ -82,19 +82,21 @@ namespace MBSimGUI {
 	mapC[i] = -1;
     }
     MatV Kmr(iN.size(),iH.size());
+    int k = 0;
     for(const auto & i : Km) {
-      for(const auto & j : i.second) {
-	if(mapR[i.first]>=0 and mapC[j.first]>=0)
-	  Kmr(mapR[i.first],mapC[j.first]) = j.second[3];
-	else if(mapR[j.first]>=0 and mapC[i.first]>=0)
-	  Kmr(mapR[j.first],mapC[i.first]) = j.second[3];
+      for(const auto & j : i) {
+	if(mapR[k]>=0 and mapC[j.first]>=0)
+	  Kmr(mapR[k],mapC[j.first]) = j.second[3];
+	else if(mapR[j.first]>=0 and mapC[k]>=0)
+	  Kmr(mapR[j.first],mapC[k]) = j.second[3];
       }
+      k++;
     }
     return Kmr;
   }
 
-  map<int,map<int,double[4]>> FlexibleBodyTool::reduceMat(const map<int,map<int,double[4]>> &MKm, const Indices &iF) {
-    map<int,map<int,double[4]>> MKmr;
+  vector<map<int,double[4]>> FlexibleBodyTool::reduceMat(const vector<map<int,double[4]>> &MKm, const Indices &iF) {
+    vector<map<int,double[4]>> MKmr;
     vector<int> map(MKm.size());
     size_t h=0, k=0;
     for(size_t i=0; i<map.size(); i++) {
@@ -105,31 +107,33 @@ namespace MBSimGUI {
       else
 	map[i] = -1;
     }
+    MKmr.resize(k);
+    k=0;
     for(const auto & i : MKm) {
-      if(map[i.first]>=0) {
-	for(const auto & j : i.second) {
+      if(map[k]>=0) {
+	for(const auto & j : i) {
 	  if(map[j.first]>=0) {
-	    auto d = MKmr[map[i.first]][map[j.first]];
-	    for(int k=0; k<4; k++)
-	      d[k] = j.second[k];
+	    auto d = MKmr[map[k]][map[j.first]];
+	    for(int l=0; l<4; l++)
+	      d[l] = j.second[l];
 	  }
 	}
       }
+      k++;
     }
     return MKmr;
   }
 
-  vector<SymSparseMat> FlexibleBodyTool::createPPKs(const map<int,map<int,double[4]>> &PPKm) {
+  vector<SymSparseMat> FlexibleBodyTool::createPPKs(const vector<map<int,double[4]>> &PPKm) {
     int nze=0;
     for(const auto & i : PPKm)
-      nze+=i.second.size();
-    int n = PPKm.size();
-    vector<SymSparseMat> PPKs(4,SymSparseMat(n,nze,NONINIT));
+      nze+=i.size();
+    vector<SymSparseMat> PPKs(4,SymSparseMat(PPKm.size(),nze,NONINIT));
     int k=0, l=0;
     for(int h=0; h<4; h++)
       PPKs[h].Ip()[0] = 0;
     for(const auto & i : PPKm) {
-      for(const auto & j : i.second) {
+      for(const auto & j : i) {
 	for(int h=0; h<4; h++) {
 	  PPKs[h].Jp()[l] = j.first;
 	  PPKs[h]()[l] = j.second[h];
@@ -143,18 +147,17 @@ namespace MBSimGUI {
     return PPKs;
   }
 
-  pair<SymSparseMat,SymSparseMat> FlexibleBodyTool::createMKs(const map<int,map<int,double[4]>> &MKm) {
+  pair<SymSparseMat,SymSparseMat> FlexibleBodyTool::createMKs(const vector<map<int,double[4]>> &MKm) {
     int nze=0;
     for(const auto & i : MKm)
-      nze+=i.second.size();
-    int n = MKm.size();
-    SymSparseMat Ks(n,nze,NONINIT);;
-    SymSparseMat Ms(n,nze,NONINIT);;
+      nze+=i.size();
+    SymSparseMat Ks(MKm.size(),nze,NONINIT);;
+    SymSparseMat Ms(MKm.size(),nze,NONINIT);;
     int k=0, l=0;
     Ms.Ip()[0] = 0;
     Ks.Ip()[0] = 0;
     for(const auto & i : MKm) {
-      for(const auto & j : i.second) {
+      for(const auto & j : i) {
 	Ms.Jp()[l] = j.first;
 	Ms()[l] = j.second[0]+j.second[1]+j.second[2];
 	Ks.Jp()[l] = j.first;
@@ -168,21 +171,16 @@ namespace MBSimGUI {
     return make_pair(Ms,Ks);
   }
 
-  vector<SparseMat> FlexibleBodyTool::createPPs(int n, const map<int,map<int,double[3]>> &PPm) {
+  vector<SparseMat> FlexibleBodyTool::createPPs(const vector<map<int,double[3]>> &PPm) {
     int nze=0;
     for(const auto & i : PPm)
-      nze+=i.second.size();
-    vector<SparseMat> PPs(3,SparseMat(n,n,nze,NONINIT));
+      nze+=i.size();
+    vector<SparseMat> PPs(3,SparseMat(PPm.size(),PPm.size(),nze,NONINIT));
     int k=0, l=0;
     for(int h=0; h<3; h++)
       PPs[h].Ip()[0] = 0;
     for(const auto & i : PPm) {
-      for(int ii=k; ii<i.first; ii++) {
-	k++;
-	for(int h=0; h<3; h++)
-	  PPs[h].Ip()[k] = PPs[h].Ip()[k-1];
-      }
-      for(const auto & j : i.second) {
+      for(const auto & j : i) {
 	for(int h=0; h<3; h++) {
 	  PPs[h].Jp()[l] = j.first;
 	  PPs[h]()[l] = j.second[h];
@@ -193,27 +191,18 @@ namespace MBSimGUI {
       for(int h=0; h<3; h++)
 	PPs[h].Ip()[k] = l;
     }
-    for(int ii=k; ii<n; ii++) {
-      k++;
-      for(int h=0; h<3; h++)
-	PPs[h].Ip()[k] = PPs[h].Ip()[k-1];
-    }
     return PPs;
   }
 
-  SparseMat FlexibleBodyTool::createPhis(int n, const map<int,map<int,double>> &Phim) {
+  SparseMat FlexibleBodyTool::createPhis(int n, const vector<map<int,double>> &Phim) {
     int nze=0;
     for(const auto & i : Phim)
-      nze+=i.second.size();
+      nze+=i.size();
     SparseMat Phis(3,n,nze,NONINIT);
     int k=0, l=0;
     Phis.Ip()[0] = 0;
     for(const auto & i : Phim) {
-      for(int ii=k; ii<i.first; ii++) {
-	k++;
-	Phis.Ip()[k] = Phis.Ip()[k-1];
-      }
-      for(const auto & j : i.second) {
+      for(const auto & j : i) {
 	Phis.Jp()[l] = j.first;
 	Phis()[l] = j.second;
 	l++;
@@ -221,36 +210,24 @@ namespace MBSimGUI {
       k++;
       Phis.Ip()[k] = l;
     }
-    for(int ii=k; ii<3; ii++) {
-      k++;
-      Phis.Ip()[k] = Phis.Ip()[k-1];
-    }
     return Phis;
   }
 
-  SparseMat FlexibleBodyTool::createsigs(int n, const map<int,map<int,double>> &sigm) {
+  SparseMat FlexibleBodyTool::createsigs(int n, const vector<map<int,double>> &sigm) {
     int nze=0;
     for(const auto & i : sigm)
-      nze+=i.second.size();
+      nze+=i.size();
     SparseMat sigs(6,n,nze,NONINIT);
     int k=0, l=0;
     sigs.Ip()[0] = 0;
     for(const auto & i : sigm) {
-      for(int ii=k; ii<i.first; ii++) {
-	k++;
-	sigs.Ip()[k] = sigs.Ip()[k-1];
-      }
-      for(const auto & j : i.second) {
+      for(const auto & j : i) {
 	sigs.Jp()[l] = j.first;
 	sigs()[l] = j.second;
 	l++;
       }
       k++;
       sigs.Ip()[k] = l;
-    }
-    for(int ii=k; ii<6; ii++) {
-      k++;
-      sigs.Ip()[k] = sigs.Ip()[k-1];
     }
     return sigs;
   }

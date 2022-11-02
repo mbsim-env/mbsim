@@ -37,6 +37,9 @@ namespace MBSimGUI {
     if(!str.empty())
       K <<= readMat(str);
 
+    ng = K.cols()==3?K(K.rows()-1,1):3*(K(K.rows()-1,2)-1)+K(K.rows()-1,3);
+    MKm.resize(ng);
+    PPm.resize(ng);
     if(K.cols()==3) {
       if(M.cols()==K.cols()) {
 	for(int i=0; i<K.rows(); i++) {
@@ -57,7 +60,6 @@ namespace MBSimGUI {
 	d[3] = K(i,4);
       }
     }
-    ng = MKm.size();
 
     if(nodeMap.empty()) {
       for(int i=0; i<r.rows(); i++)

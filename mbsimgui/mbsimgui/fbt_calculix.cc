@@ -132,12 +132,15 @@ namespace MBSimGUI {
 
     M <<= readMat(jobname+".mas");
     K <<= readMat(jobname+".sti");
+
+    ng = K(K.rows()-1,1);
+
+    MKm.resize(ng);
     for(int i=0; i<K.rows(); i++) {
       auto d = MKm[K(i,0)-1][K(i,1)-1];
       d[0] = M(i,2);
       d[3] = K(i,2);
     }
-    ng = MKm.size();
 
     Phi_.resize(3*nN,nM,NONINIT);
     Sr.resize(6*nN,nM,NONINIT);

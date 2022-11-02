@@ -193,17 +193,19 @@ namespace MBSimGUI {
     double dK[3][3];
     double N_[20];
     Vec3 dN_[20];
-    Phim.resize(nN);
+    Phim.resize(nN,vector<map<int,double>>(3));
     for(int i=0; i<nN; i++) {
       Phim[i][0][3*i] = 1;
       Phim[i][1][3*i+1] = 1;
       Phim[i][2][3*i+2] = 1;
     }
 
-    sigm.resize(nN);
+    sigm.resize(nN,vector<map<int,double>>(6));
     double dsig[9];
     indices.resize(5*6*ele[0].rows());
     int oj = 0;
+    MKm.resize(ng);
+    PPm.resize(ng);
     for(int ee=0; ee<ele[0].rows(); ee++) {
       for(int ii=0; ii<3; ii++) {
 	double x = xi(ii);
