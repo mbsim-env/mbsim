@@ -654,7 +654,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    f = new ExtWidget("Frequency",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frequency");
+    f = new ExtWidget("Frequency",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frequency");
     layout->addWidget(f);
 
     a0 = new ExtWidget("a0",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
