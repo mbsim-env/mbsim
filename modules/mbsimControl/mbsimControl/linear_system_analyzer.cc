@@ -198,7 +198,6 @@ namespace MBSimControl {
     Matrix<General,Ref,Ref,complex<double>> Zhex(system->getzSize(),fex.size(),NONINIT);
     Matrix<General,Ref,Ref,complex<double>> Yhex(nsink,fex.size(),NONINIT);
     Vector<Ref,complex<double>> u(nsource);
-    cout << phi << endl;
     for(int i=0; i<fex.size(); i++) {
       SquareMatrix<Ref,complex<double>> H = SquareMatrix<Ref,complex<double>>(A.size(),Eye(),complex<double>(0,2*M_PI*fex(i))) - A;
       for(int j=0; j<nsource; j++) {
