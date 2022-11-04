@@ -5406,7 +5406,7 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="amplitudePhaseAngleForm" minOccurs="0" type="pv:booleanFullEval">
+          <xs:element name="amplitudePhaseForm" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob die Koeffizienten <object class="inlineeqn">a_i</object> und <object class="inlineeqn">b_i</object> als Amplitude <object class="inlineeqn">A_i</object> und Phasenwinkel <object class="inlineeqn">\varphi_i</object> interpretiert werden sollen.
             </xs:documentation></xs:annotation>

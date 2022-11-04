@@ -270,7 +270,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *f, *a0, *amplitudePhaseAngleForm;
+      ExtWidget *f, *a0, *amplitudePhaseForm;
       ChoiceWidget* choice;
   };
 
