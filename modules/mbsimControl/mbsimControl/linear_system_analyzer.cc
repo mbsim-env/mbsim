@@ -68,7 +68,8 @@ namespace MBSimControl {
       zEq <<= system->evalz0();
     else {
       if(z0.size()!=system->getzSize()+system->getisSize())
-	throwError(string("(LinearSystemAnalyzer::execute): size of z0 does not match, must be ") + to_string(system->getzSize()));
+	throwError(string("(LinearSystemAnalyzer::execute): size of z0 does not match, must be ") + to_string(system->getzSize()) +
+	    ", but is " + to_string(z0.size()) + ".");
       zEq <<= z0(RangeV(0,system->getzSize()-1));
       system->setcuris(z0(RangeV(system->getzSize(),z0.size()-1)));
     }
@@ -76,16 +77,23 @@ namespace MBSimControl {
     if(not(u0.size()))
       u0.resize(nsource);
     else if(u0.size()!=nsource)
-      throwError(string("(LinearSystemAnalyzer::execute): size of u0 does not match, must be ") + to_string(nsource));
+      throwError(string("(LinearSystemAnalyzer::execute): size of u0 does not match, must be ") + to_string(nsource) +
+	  ", but is " + to_string(u0.size()) + ".");
 
     if(fex.size()) {
       if(not Amp)
 	throwError(string("(LinearSystemAnalyzer::execute): excitation amplitude function must be defined"));
       else if(Amp->getRetSize().first!=nsource)
-	throwError(string("(LinearSystemAnalyzer::execute): size of excitation amplitude function does not match, must be ") + to_string(nsource));
+	throwError(string("(LinearSystemAnalyzer::execute): size of excitation amplitude function does not match, must be ") + to_string(nsource) +
+	    ", but is " + to_string(Amp->getRetSize().first) + ".");
       Amp->setParent(system);
       Amp->setName("ExcitationAmplitudeFunction");
       Amp->init(Element::preInit, InitConfigSet());
+      if(not(phi.size()))
+	phi.resize(nsource);
+      else if(phi.size()!=nsource)
+	throwError(string("(LinearSystemAnalyzer::execute): size of excitation phase vector does not match, must be ") + to_string(nsource) +
+	    ", but is " + to_string(phi.size()) + ".");
     }
 
     SqrMat A(system->getzSize(),NONINIT);
@@ -178,8 +186,8 @@ namespace MBSimControl {
       modeScale.set(RangeV(0,modeScaleTmp.size()-1),modeScaleTmp);
     }
 
-    Matrix<General,Ref,Ref,complex<double>> Zhna(Matrix<General,Ref,Ref,complex<double>>(system->getzSize(),fna.size(),NONINIT));
-    Matrix<General,Ref,Ref,complex<double>> Yhna(Matrix<General,Ref,Ref,complex<double>>(nsink,fna.size(),NONINIT));
+    Matrix<General,Ref,Ref,complex<double>> Zhna(system->getzSize(),fna.size(),NONINIT);
+    Matrix<General,Ref,Ref,complex<double>> Yhna(nsink,fna.size(),NONINIT);
     for(size_t i=0; i<fna.size(); i++) {
       Vector<Ref,complex<double>> zh = modeScaleFactor*modeScale(i)*V.col(fna[i].second);
       Vector<Ref,complex<double>> yh = C*zh;
@@ -187,19 +195,21 @@ namespace MBSimControl {
       Yhna.set(i,yh);
     }
 
-    vector<Matrix<General,Ref,Ref,complex<double>>> Zhex(nsource,Matrix<General,Ref,Ref,complex<double>>(system->getzSize(),fex.size(),NONINIT));
-    vector<Matrix<General,Ref,Ref,complex<double>>> Yhex(nsource,Matrix<General,Ref,Ref,complex<double>>(nsink,fex.size(),NONINIT));
+    Matrix<General,Ref,Ref,complex<double>> Zhex(system->getzSize(),fex.size(),NONINIT);
+    Matrix<General,Ref,Ref,complex<double>> Yhex(nsink,fex.size(),NONINIT);
     Vector<Ref,complex<double>> u(nsource);
+    cout << phi << endl;
     for(int i=0; i<fex.size(); i++) {
       SquareMatrix<Ref,complex<double>> H = SquareMatrix<Ref,complex<double>>(A.size(),Eye(),complex<double>(0,2*M_PI*fex(i))) - A;
       for(int j=0; j<nsource; j++) {
-	u(j).real((*Amp)(fex(i))(j));
-	Vector<Ref,complex<double>> zh = slvLU(H, B*u);
-	Vector<Ref,complex<double>> yh = C*zh + D*u;
-	Zhex[j].set(i,zh);
-	Yhex[j].set(i,yh);
-	u(j).real(0);
+	double A = (*Amp)(fex(i))(j);
+	u(j).real(A*cos(phi(j)));
+	u(j).imag(A*sin(phi(j)));
       }
+      Vector<Ref,complex<double>> zh = slvLU(H, B*u);
+      Vector<Ref,complex<double>> yh = C*zh + D*u;
+      Zhex.set(i,zh);
+      Yhex.set(i,yh);
     }
 
     ofstream os("inputtable.asc");
@@ -231,13 +241,10 @@ namespace MBSimControl {
     group=file.createChildObject<H5::Group>("frequency response analysis")();
     vdata=group->createChildObject<H5::SimpleDataset<vector<double>>>("excitation frequencies")(fex.size());
     if(fex.size()) vdata->write((vector<double>)fex);
-    for(int i=0; i<nsource; i++) {
-      auto subgroup=group->createChildObject<H5::Group>("input "+to_string(i))();
-      auto cmdata=subgroup->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state response")(Zhex[i].rows(),Zhex[i].cols());
-      if(Zhex[i].rows() and Zhex[i].cols()) cmdata->write((vector<vector<complex<double>>>)Zhex[i]);
-      cmdata=subgroup->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output response")(Yhex[i].rows(),Yhex[i].cols());
-      if(Yhex[i].rows() and Yhex[i].cols()) cmdata->write((vector<vector<complex<double>>>)Yhex[i]);
-    }
+    auto cmdata=group->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state response")(Zhex.rows(),Zhex.cols());
+    if(Zhex.rows() and Zhex.cols()) cmdata->write((vector<vector<complex<double>>>)Zhex);
+    cmdata=group->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output response")(Yhex.rows(),Yhex.cols());
+    if(Yhex.rows() and Yhex.cols()) cmdata->write((vector<vector<complex<double>>>)Yhex);
 
     group=file.createChildObject<H5::Group>("modal analysis")();
     vector<complex<double>> lambda(fna.size());
@@ -245,7 +252,7 @@ namespace MBSimControl {
       lambda[i] = w(fna[i].second);
     auto cvdata=group->createChildObject<H5::SimpleDataset<vector<complex<double>>>>("eigenvalues")(lambda.size());
     if(lambda.size()) cvdata->write(lambda);
-    auto cmdata=group->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state modes")(Zhna.rows(),Zhna.cols());
+    cmdata=group->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state modes")(Zhna.rows(),Zhna.cols());
     if(Zhna.rows() and Zhna.cols()) cmdata->write((vector<vector<complex<double>>>)Zhna);
     cmdata=group->createChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output modes")(Yhna.rows(),Yhna.cols());
     if(Yhna.rows() and Yhna.cols()) cmdata->write((vector<vector<complex<double>>>)Yhna);
@@ -307,31 +314,27 @@ namespace MBSimControl {
       }
       else if(min(inputs)<1 or max(inputs)>nsource)
 	throwError(string("(LinearSystemAnalyzer::execute): input numbers do not match, must be within the range [1,") + to_string(nsource) + "]");
-      for(int l=0; l<inputs.size(); l++) {
-	int j = smap[inputs(l)].first;
-	int k = smap[inputs(l)].second;
-	Vec sigso(source[j]->getSignalSize());
-	for(int i=0; i<fex.size(); i++) {
-	  if(fex(i)>=fRange(0) and fex(i)<=fRange(1) and (*Amp)(fex(i))(l)>0) {
-	    complex<double> iOm(0,2*M_PI*fex(i));
-	    double T = double(loops)/fex(i);
-	    for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
-	      system->setTime(t);
-	      sigso(k) = (*Amp)(fex(i))(l)*cos(iOm.imag()*t);
+      Vec sigso(source[j]->getSignalSize());
+      for(int i=0; i<fex.size(); i++) {
+	if(fex(i)>=fRange(0) and fex(i)<=fRange(1)) {
+	  complex<double> iOm(0,2*M_PI*fex(i));
+	  double T = double(loops)/fex(i);
+	  for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
+	    system->setTime(t);
+	    for(int l=0; l<inputs.size(); l++) {
+	      int j = smap[inputs(l)].first;
+	      int k = smap[inputs(l)].second;
+	      sigso(k) = (*Amp)(fex(i))(l)*cos(iOm.imag()*t-phi(l));
 	      source[j]->setSignal(sigso);
-	      system->setState(zEq + fromComplex(Zhex[l].col(i)*exp(iOm*t)));
-	      system->resetUpToDate();
-	      system->plot();
-	      system->checkExitRequest();
-	      if(system->getIntegratorExitRequest())
-		break;
 	    }
+	    system->setState(zEq + fromComplex(Zhex.col(i)*exp(iOm*t)));
+	    system->resetUpToDate();
+	    system->plot();
+	    system->checkExitRequest();
 	    if(system->getIntegratorExitRequest())
 	      break;
-	    sigso(k) = 0;
-	    source[j]->setSignal(sigso);
-	    t0 += T+dtPlot;
 	  }
+	  t0 += T+dtPlot;
 	}
       }
     }
@@ -357,6 +360,8 @@ namespace MBSimControl {
     if(e) setExcitationFrequencies(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationAmplitudeFunction");
     if(e) setExcitationAmplitudeFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(double)>>(e->getFirstElementChild()));
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationPhaseShift");
+    if(e) setExcitationPhaseShift(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeNormalModes");
     if(e) {
       msv = true;

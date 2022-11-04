@@ -1139,6 +1139,10 @@ namespace MBSimGUI {
     excitationAmplitudeFunction = new ExtWidget("Excitation amplitude function",new ChoiceWidget(new Function1ArgWidgetFactory(0,"f",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"excitationAmplitudeFunction");
     addToTab("Frequency response analysis", excitationAmplitudeFunction);
 
+    excitationPhaseShift = new ExtWidget("Excitation phase shift",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(2,angleUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"excitationPhaseShift");
+    addToTab("Frequency response analysis", excitationPhaseShift);
+
+
     visualizeNormalModes = new ExtWidget("Visualize normal modes",new NormalModeVisualization,true,true,MBSIMCONTROL%"visualizeNormalModes");
     addToTab("Modal analysis", visualizeNormalModes);
 
@@ -1166,6 +1170,7 @@ namespace MBSimGUI {
     modeScale->initializeUsingXML(item->getXMLElement());
     excitationFrequencies->initializeUsingXML(item->getXMLElement());
     excitationAmplitudeFunction->initializeUsingXML(item->getXMLElement());
+    excitationPhaseShift->initializeUsingXML(item->getXMLElement());
     visualizeNormalModes->initializeUsingXML(item->getXMLElement());
     visualizeFrequencyResponse->initializeUsingXML(item->getXMLElement());
     plotStepSize->initializeUsingXML(item->getXMLElement());
@@ -1184,6 +1189,7 @@ namespace MBSimGUI {
     modeScale->writeXMLFile(item->getXMLElement());
     excitationFrequencies->writeXMLFile(item->getXMLElement());
     excitationAmplitudeFunction->writeXMLFile(item->getXMLElement());
+    excitationPhaseShift->writeXMLFile(item->getXMLElement());
     visualizeNormalModes->writeXMLFile(item->getXMLElement());
     visualizeFrequencyResponse->writeXMLFile(item->getXMLElement());
     plotStepSize->writeXMLFile(item->getXMLElement());

@@ -53,6 +53,7 @@ namespace MBSimControl {
       void setNormalModeScale(const fmatvec::VecV &modeScale_) { modeScale <<= modeScale_; }
       void setExcitationFrequencies(const fmatvec::VecV &fex_) { fex <<= fex_; }
       void setExcitationAmplitudeFunction(MBSim::Function<fmatvec::VecV(double)> *Amp_) { Amp = Amp_; }
+      void setExcitationPhaseShift(const fmatvec::VecV &phi_) { phi <<= phi_; }
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
       void setLoops(double loops_) { loops = loops_; }
       const fmatvec::Vec& getInitialState() const override { return z0; }
@@ -76,6 +77,7 @@ namespace MBSimControl {
       double modeScaleFactor{1};
       fmatvec::VecV modeScale;
       MBSim::Function<fmatvec::VecV(double)> *Amp{nullptr};
+      fmatvec::VecV phi;
       fmatvec::Vec z0, zEq, u0, fex;
       bool msv{false};
       bool frv{false};

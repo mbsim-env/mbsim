@@ -744,77 +744,76 @@ namespace MBSimGUI {
     layout->addWidget(inputTable,0,0);
     inputTable->setHeaderLabels(QStringList{"Input number","Element name","Input label","Label number"});
 
-      auto *scrollArea = new QScrollArea(this);
-      scrollArea->setWidgetResizable(true);
-      plot = new QwtPlot(scrollArea);
-      scrollArea->setWidget(plot);
-//      plot->setTitle("Frequency response");
-      plot->setAxisTitle(QwtPlot::xBottom,"Excitation frequency (Hz)");
-      plot->setAxisTitle(QwtPlot::yLeft,"Amplitude");
-      plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
-      plot->setAxisScale(QwtPlot::yRight,-181,181,45);
-      plot->setCanvasBackground(Qt::white);
+    auto *scrollArea = new QScrollArea(this);
+    scrollArea->setWidgetResizable(true);
+    plot = new QwtPlot(scrollArea);
+    scrollArea->setWidget(plot);
+    //      plot->setTitle("Frequency response");
+    plot->setAxisTitle(QwtPlot::xBottom,"Excitation frequency (Hz)");
+    plot->setAxisTitle(QwtPlot::yLeft,"Amplitude");
+    plot->setAxisTitle(QwtPlot::yRight,"Phase (deg)");
+    plot->setAxisScale(QwtPlot::yRight,-181,181,45);
+    plot->setCanvasBackground(Qt::white);
 
-      curve1 = new QwtPlotCurve;
-      curve1->setTitle("Amplitude");
-      curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
-      curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setPen(Qt::red);
-      curve1->setYAxis(QwtPlot::yLeft);
-      curve1->attach(plot);
-      plot->enableAxis(QwtPlot::yRight);
+    curve1 = new QwtPlotCurve;
+    curve1->setTitle("Amplitude");
+    curve1->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::red),QColor(Qt::black),QSize(10,10)));
+    curve1->setRenderHint(QwtPlotItem::RenderAntialiased);
+    curve1->setPen(Qt::red);
+    curve1->setYAxis(QwtPlot::yLeft);
+    curve1->attach(plot);
+    plot->enableAxis(QwtPlot::yRight);
 
-      curve2 = new QwtPlotCurve;
-      curve2->setTitle("Phase");
-      curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
-      curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
-      curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
-      curve2->setPen(Qt::green);
-      curve2->setYAxis(QwtPlot::yRight);
-      curve2->attach(plot);
+    curve2 = new QwtPlotCurve;
+    curve2->setTitle("Phase");
+    curve2->setSymbol(new QwtSymbol(QwtSymbol::Diamond,QColor(Qt::green),QColor(Qt::black),QSize(10,10)));
+    curve2->setRenderHint(QwtPlotItem::RenderAntialiased);
+    curve1->setLegendAttribute(QwtPlotCurve::LegendShowLine);
+    curve2->setLegendAttribute(QwtPlotCurve::LegendShowLine);
+    curve2->setPen(Qt::green);
+    curve2->setYAxis(QwtPlot::yRight);
+    curve2->attach(plot);
 
-      QwtLegend *legend = new QwtLegend;
-      plot->insertLegend(legend,QwtPlot::BottomLegend);
+    QwtLegend *legend = new QwtLegend;
+    plot->insertLegend(legend,QwtPlot::BottomLegend);
 
-      QwtPlotGrid *grid = new QwtPlotGrid;
-      grid->enableYMin(true);
-      grid->setMajorPen(Qt::black,0,Qt::DotLine);
-      grid->setMinorPen(Qt::white,0,Qt::DotLine);
-      grid->attach(plot);
+    QwtPlotGrid *grid = new QwtPlotGrid;
+    grid->enableYMin(true);
+    grid->setMajorPen(Qt::black,0,Qt::DotLine);
+    grid->setMinorPen(Qt::white,0,Qt::DotLine);
+    grid->attach(plot);
 
-      layout->addWidget(scrollArea,0,1,2,3);
-      layout->setColumnStretch(0,1);
-      layout->setColumnStretch(3,2);
-      plot->replot();
+    layout->addWidget(scrollArea,0,1,2,3);
+    layout->setColumnStretch(0,1);
+    layout->setColumnStretch(3,2);
+    plot->replot();
 
-      table = new QTreeWidget;
-      layout->addWidget(table,1,0);
-      table->setHeaderLabels(QStringList{"Magnitude","Magnitude number","Element name","Magnitude label","Label number"});
+    table = new QTreeWidget;
+    layout->addWidget(table,1,0);
+    table->setHeaderLabels(QStringList{"Magnitude","Magnitude number","Element name","Magnitude label","Label number"});
 
-      auto *checkbox = new QCheckBox("Log scale (x)");
-      layout->addWidget(checkbox,2,1);
-      connect(checkbox,&QCheckBox::toggled,this,[=]() {
-	  if(checkbox->isChecked())
-	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLogScaleEngine);
-	  else
-	    plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLinearScaleEngine);
-	  plot->replot();
-	  });
-      checkbox = new QCheckBox("Log scale (y)");
-      layout->addWidget(checkbox,2,2);
-      connect(checkbox,&QCheckBox::toggled,this,[=]() {
-	  if(checkbox->isChecked())
-	    plot->setAxisScaleEngine(QwtPlot::yLeft, new QwtLogScaleEngine);
-	  else
-	    plot->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
-	  plot->replot();
-	  });
+    auto *checkbox = new QCheckBox("Log scale (x)");
+    layout->addWidget(checkbox,2,1);
+    connect(checkbox,&QCheckBox::toggled,this,[=]() {
+	if(checkbox->isChecked())
+	plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLogScaleEngine);
+	else
+	plot->setAxisScaleEngine(QwtPlot::xBottom, new QwtLinearScaleEngine);
+	plot->replot();
+	});
+    checkbox = new QCheckBox("Log scale (y)");
+    layout->addWidget(checkbox,2,2);
+    connect(checkbox,&QCheckBox::toggled,this,[=]() {
+	if(checkbox->isChecked())
+	plot->setAxisScaleEngine(QwtPlot::yLeft, new QwtLogScaleEngine);
+	else
+	plot->setAxisScaleEngine(QwtPlot::yLeft, new QwtLinearScaleEngine);
+	plot->replot();
+	});
 
-      loadData();
+    loadData();
 
-      connect(inputTable, &QTreeWidget::currentItemChanged, this, &FrequencyResponseWidget::updateWidget);
-      connect(table, &QTreeWidget::currentItemChanged, this, &FrequencyResponseWidget::updateWidget);
+    connect(table, &QTreeWidget::currentItemChanged, this, &FrequencyResponseWidget::updateWidget);
   }
 
   void FrequencyResponseWidget::loadData() {
@@ -823,17 +822,11 @@ namespace MBSimGUI {
     auto data=group->openChildObject<H5::SimpleDataset<vector<double>>>("excitation frequencies");
     auto f = data->read();
 
-    auto names=group->getChildObjectNames();
-    list<string>::iterator it=names.begin();
-    it++;
-    vector<vector<vector<complex<double>>>> Zh, Yh;
-    while(it != names.end()) {
-      auto subgroup=group->openChildObject<H5::Group>(*it++);
-      auto cmdata = subgroup->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state response");
-      Zh.push_back(cmdata->read());
-      cmdata = subgroup->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output response");
-      Yh.push_back(cmdata->read());
-    }
+    auto cmdata = group->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("state response");
+    auto Zh = cmdata->read();
+    cmdata = group->openChildObject<H5::SimpleDataset<vector<vector<complex<double>>>>>("output response");
+    auto Yh = cmdata->read();
+
     string name_;
     char label_;
     int number_;
@@ -889,24 +882,21 @@ namespace MBSimGUI {
     }
     is.close();
 
-    int nZh = Zh.size();
-    int rZh = nZh?Zh[0].size():0;
-    int cZh = rZh?Zh[0][0].size():0;
-    int rYh = Yh.size()?Yh[0].size():0;
+    int rZh = Zh.size();
+    int cZh = rZh?Zh[0].size():0;
+    int rYh = Yh.size();
     freq = QVector<double>(f.size());
-    A = QVector<QVector<QVector<double>>>(rZh+rYh,QVector<QVector<double>>(nZh,QVector<double>(cZh)));
-    phi = QVector<QVector<QVector<double>>>(rZh+rYh,QVector<QVector<double>>(nZh,QVector<double>(cZh)));
+    A = QVector<QVector<double>>(rZh+rYh,QVector<double>(cZh));
+    phi = QVector<QVector<double>>(rZh+rYh,QVector<double>(cZh));
     for(int i=0; i<f.size(); i++) {
       freq[i] = f[i];
-      for(size_t k=0; k<nZh; k++) {
-	for(int j=0; j<rZh; j++) {
-	  A[j][k][i] = abs(Zh[k][j][i]);
-	  phi[j][k][i] = atan2(Zh[k][j][i].real(),-Zh[k][j][i].imag())*180/M_PI;
-	}
-	for(int j=0; j<rYh; j++) {
-	  A[rZh+j][k][i] = abs(Yh[k][j][i]);
-	  phi[rZh+j][k][i] = atan2(Yh[k][j][i].real(),-Yh[k][j][i].imag())*180/M_PI;
-	}
+      for(int j=0; j<rZh; j++) {
+	A[j][i] = abs(Zh[j][i]);
+	phi[j][i] = atan2(Zh[j][i].real(),-Zh[j][i].imag())*180/M_PI;
+      }
+      for(int j=0; j<rYh; j++) {
+	A[rZh+j][i] = abs(Yh[j][i]);
+	phi[rZh+j][i] = atan2(Yh[j][i].real(),-Yh[j][i].imag())*180/M_PI;
       }
     }
 
@@ -930,7 +920,7 @@ namespace MBSimGUI {
       inputTable->setCurrentItem(inputTable->topLevelItem(0));
     inputTable->blockSignals(false);
 
-    if(nZh and rZh and cZh) {
+    if(rZh and cZh) {
       table->blockSignals(true);
       QString item1, item2;
       if(table->currentItem()) {
@@ -975,9 +965,9 @@ namespace MBSimGUI {
   }
 
   void FrequencyResponseWidget::updateWidget() {
-    plot->setTitle("Response of " + table->currentItem()->text(0) + " " + table->currentItem()->text(1) + " on Input " + inputTable->currentItem()->text(0));
-    curve1->setSamples(freq,A[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
-    curve2->setSamples(freq,phi[table->indexOfTopLevelItem(table->currentItem())][inputTable->indexOfTopLevelItem(inputTable->currentItem())]);
+    plot->setTitle("Response of " + table->currentItem()->text(0) + " " + table->currentItem()->text(1));
+    curve1->setSamples(freq,A[table->indexOfTopLevelItem(table->currentItem())]);
+    curve2->setSamples(freq,phi[table->indexOfTopLevelItem(table->currentItem())]);
     plot->replot();
   }
 
@@ -1048,7 +1038,7 @@ namespace MBSimGUI {
 
     layout->addStretch(1);
 
-   auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    auto *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &SaveModelDialog::accept);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &SaveModelDialog::reject);
     mainlayout->addWidget(buttonBox);

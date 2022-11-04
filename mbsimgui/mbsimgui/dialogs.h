@@ -192,8 +192,8 @@ namespace MBSimGUI {
       QwtPlot *plot;
       QwtPlotCurve *curve1, *curve2;
       QVector<double> freq;
-      QVector<QVector<QVector<double>>> A;
-      QVector<QVector<QVector<double>>> phi;
+      QVector<QVector<double>> A;
+      QVector<QVector<double>> phi;
       QVector<QString> stateName, inputName, outputName;
       QVector<QString> stateLabel, inputLabel, outputLabel;
       QVector<int> stateLabelNumber, inputLabelNumber, outputLabelNumber;
