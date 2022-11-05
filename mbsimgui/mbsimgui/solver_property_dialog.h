@@ -304,7 +304,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *initialTime, *initialState, *initialInput, *minimumNaturalFrequency, *maximumNaturalFrequency, *modeScaleFactor, *modeScale, *excitationFrequencies, *excitationAmplitudeFunction, *excitationPhaseShift, *visualizeNormalModes, *visualizeFrequencyResponse, *plotStepSize, *loops;
+      ExtWidget *initialTime, *initialState, *initialInput, *minimumNaturalFrequency, *maximumNaturalFrequency, *modeScaleFactor, *modeScale, *excitationFrequencies, *excitationAmplitudeFunction, *excitationPhaseFunction, *visualizeNormalModes, *visualizeFrequencyResponse, *plotStepSize, *loops;
   };
 
 }
