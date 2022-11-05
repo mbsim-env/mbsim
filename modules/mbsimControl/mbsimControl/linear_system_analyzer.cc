@@ -46,6 +46,7 @@ namespace MBSimControl {
 
   LinearSystemAnalyzer::~LinearSystemAnalyzer() {
     delete Amp;
+    delete Phi;
   }
 
   void LinearSystemAnalyzer::execute() {
@@ -89,11 +90,16 @@ namespace MBSimControl {
       Amp->setParent(system);
       Amp->setName("ExcitationAmplitudeFunction");
       Amp->init(Element::preInit, InitConfigSet());
-      if(not(phi.size()))
-	phi.resize(nsource);
-      else if(phi.size()!=nsource)
-	throwError(string("(LinearSystemAnalyzer::execute): size of excitation phase vector does not match, must be ") + to_string(nsource) +
-	    ", but is " + to_string(phi.size()) + ".");
+      if(Phi) {
+	if(Phi->getRetSize().first!=nsource)
+	  throwError(string("(LinearSystemAnalyzer::execute): size of excitation phase function does not match, must be ") + to_string(nsource) +
+	      ", but is " + to_string(Phi->getRetSize().first) + ".");
+	Phi->setParent(system);
+	Phi->setName("ExcitationPhaseFunction");
+	Phi->init(Element::preInit, InitConfigSet());
+      }
+      amp.resize(nsource);
+      phi.resize(nsource);
     }
 
     SqrMat A(system->getzSize(),NONINIT);
@@ -199,11 +205,12 @@ namespace MBSimControl {
     Matrix<General,Ref,Ref,complex<double>> Yhex(nsink,fex.size(),NONINIT);
     Vector<Ref,complex<double>> u(nsource);
     for(int i=0; i<fex.size(); i++) {
+      amp = (*Amp)(fex(i));
+      if(Phi) phi = (*Phi)(fex(i));
       SquareMatrix<Ref,complex<double>> H = SquareMatrix<Ref,complex<double>>(A.size(),Eye(),complex<double>(0,2*M_PI*fex(i))) - A;
       for(int j=0; j<nsource; j++) {
-	double A = (*Amp)(fex(i))(j);
-	u(j).real(A*cos(phi(j)));
-	u(j).imag(A*sin(phi(j)));
+	u(j).real(amp(j)*cos(phi(j)));
+	u(j).imag(amp(j)*sin(phi(j)));
       }
       Vector<Ref,complex<double>> zh = slvLU(H, B*u);
       Vector<Ref,complex<double>> yh = C*zh + D*u;
@@ -316,15 +323,15 @@ namespace MBSimControl {
       Vec sigso(source[j]->getSignalSize());
       for(int i=0; i<fex.size(); i++) {
 	if(fex(i)>=fRange(0) and fex(i)<=fRange(1)) {
+	  amp = (*Amp)(fex(i));
+	  if(Phi) phi = (*Phi)(fex(i));
 	  complex<double> iOm(0,2*M_PI*fex(i));
 	  double T = double(loops)/fex(i);
 	  for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
 	    system->setTime(t);
 	    for(int l=0; l<inputs.size(); l++) {
-	      int j = smap[inputs(l)].first;
-	      int k = smap[inputs(l)].second;
-	      sigso(k) = (*Amp)(fex(i))(l)*cos(iOm.imag()*t-phi(l));
-	      source[j]->setSignal(sigso);
+	      sigso(smap[inputs(l)].second) = amp(l)*cos(iOm.imag()*t-phi(l));
+	      source[smap[inputs(l)].first]->setSignal(sigso);
 	    }
 	    system->setState(zEq + fromComplex(Zhex.col(i)*exp(iOm*t)));
 	    system->resetUpToDate();
@@ -359,8 +366,8 @@ namespace MBSimControl {
     if(e) setExcitationFrequencies(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationAmplitudeFunction");
     if(e) setExcitationAmplitudeFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(double)>>(e->getFirstElementChild()));
-    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationPhaseShift");
-    if(e) setExcitationPhaseShift(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"excitationPhaseFunction");
+    if(e) setExcitationPhaseFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeNormalModes");
     if(e) {
       msv = true;
