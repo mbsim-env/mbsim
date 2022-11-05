@@ -1249,10 +1249,15 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
-          <xs:element name="excitationPhaseShift" type="pv:angleVector" minOccurs="0">
+          <xs:element name="excitationPhaseFunction" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Phasenverschiebungen der Eingänge.
+              Phasenverschiebungen der Eingänge als Funktion der Anregungsfrequenz.
             </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element ref="mbsim:Function"/>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
           <xs:element name="visualizeNormalModes" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
