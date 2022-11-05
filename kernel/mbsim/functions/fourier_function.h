@@ -90,8 +90,8 @@ namespace MBSim {
           if(amplitudePhaseAngleForm) {
             for(int i=0; i<a.size(); i++) {
               double buf = a.e(i);
-              a(i) = buf*sin(b(i));
-              b(i) = buf*cos(b(i));
+              a(i) = buf*cos(b(i));
+              b(i) = buf*sin(b(i));
             }
           }
         }
