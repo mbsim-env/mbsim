@@ -39,6 +39,7 @@ namespace MBSim {
 
       void calcSize() override;
       void calcxSize() override { xSize = 1; }
+      void calcisSize() override;
 
       const fmatvec::Vec3& evalForwardVelocity() { if(updfvel) updateForwardVelocity(); return RvC; }
       fmatvec::Vec3& getForwardVelocity(bool check=true) {  assert((not check) or (not updfvel)); return RvC; }
@@ -58,12 +59,18 @@ namespace MBSim {
       bool gActiveChanged() override { return false; }
       bool isSingleValued() const override { return true; }
 
+      void setInitialGuess(const fmatvec::Vec2 &zeta0_) { zeta0 = zeta0_; }
+      void setTolerance(double tol_) { tol = tol_; }
+
       void resetUpToDate() override;
 
     protected:
       TyreModel *model{nullptr};
       fmatvec::Vec3 RvC;
       double sRelax;
+      bool plane;
+      fmatvec::Vec2 zeta0;
+      double tol{1e-10};
 
       bool updfvel{true};
   };
