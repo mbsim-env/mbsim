@@ -753,7 +753,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *model, *connections;
+      ExtWidget *model, *connections, *initialGuess, *tolerance;
   };
 
   class ObserverPropertyDialog : public ElementPropertyDialog {

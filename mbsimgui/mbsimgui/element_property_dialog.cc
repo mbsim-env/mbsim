@@ -2721,18 +2721,27 @@ namespace MBSimGUI {
   TyreContactPropertyDialog::TyreContactPropertyDialog(Element *contact) : LinkPropertyDialog(contact) {
 
     addTab("Kinetics",1);
+    addTab("Extra");
 
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
     model = new ExtWidget("Tyre model",new ChoiceWidget(new WidgetFactoryFor<TyreModelWidget>,QBoxLayout::TopToBottom,0),false,false,MBSIM%"tyreModel");
     addToTab("Kinetics", model);
+
+    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    addToTab("Extra", initialGuess);
+
+    tolerance = new ExtWidget("Tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"tolerance");
+    addToTab("Extra", tolerance);
   }
 
   DOMElement* TyreContactPropertyDialog::initializeUsingXML(DOMElement *parent) {
     LinkPropertyDialog::initializeUsingXML(item->getXMLElement());
     connections->initializeUsingXML(item->getXMLElement());
     model->initializeUsingXML(item->getXMLElement());
+    initialGuess->initializeUsingXML(item->getXMLElement());
+    tolerance->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -2740,6 +2749,8 @@ namespace MBSimGUI {
     LinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     connections->writeXMLFile(item->getXMLElement(),ref);
     model->writeXMLFile(item->getXMLElement(),ref);
+    initialGuess->writeXMLFile(item->getXMLElement(),ref);
+    tolerance->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
