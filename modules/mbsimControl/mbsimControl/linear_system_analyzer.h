@@ -28,7 +28,6 @@
 namespace MBSim {
 
   BOOST_PARAMETER_NAME(modeNumbers)
-  BOOST_PARAMETER_NAME(inputNumbers)
   BOOST_PARAMETER_NAME(frequencyRange)
 
 }
@@ -64,10 +63,9 @@ namespace MBSimControl {
 	modes = modeNumbers;
       }
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeFrequencyResponse, MBSim::tag, (optional (inputNumbers,(fmatvec::VecVI),fmatvec::VecVI())(frequencyRange,(fmatvec::Vec2),"[0;1e4]"))) {
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeFrequencyResponse, MBSim::tag, (optional (frequencyRange,(fmatvec::Vec2),"[0;1e4]"))) {
 	frv = true;
 	fRange = frequencyRange;
-	inputs = inputNumbers;
       }
 
     protected:
@@ -82,7 +80,7 @@ namespace MBSimControl {
       fmatvec::Vec z0, zEq, u0, fex;
       bool msv{false};
       bool frv{false};
-      fmatvec::VecVI modes, inputs;
+      fmatvec::VecVI modes;
       fmatvec::Vec2 fRange;
       int loops{5};
       double dtPlot{1e-2};

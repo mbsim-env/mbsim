@@ -109,16 +109,11 @@ namespace MBSimControl {
 
     system->setTime(t0);
     system->setState(zEq);
-    int l=0;
-    map<int,pair<int,int>> smap;
-    for(size_t i=0; i<source.size(); i++) {
+    for(size_t i=0, l=0; i<source.size(); i++) {
       Vec sigso(source[i]->getSignalSize());
-      for(int k=0; k<source[i]->getSignalSize(); k++) {
+      for(int k=0; k<source[i]->getSignalSize(); k++, l++)
 	sigso(k) = u0(l);
-	source[i]->setSignal(sigso);
-	l++;
-	smap[l] = make_pair(i,k);
-      }
+      source[i]->setSignal(sigso);
     }
     system->resetUpToDate();
     system->computeInitialCondition();
@@ -139,10 +134,9 @@ namespace MBSimControl {
       system->getState()(i) = ztmp;
     }
 
-    l=0;
-    for(size_t i=0; i<source.size(); i++) {
+    for(size_t i=0, l=0; i<source.size(); i++) {
       Vec sigso(source[i]->getSignalSize());
-      for(int k=0; k<source[i]->getSignalSize(); k++) {
+      for(int k=0; k<source[i]->getSignalSize(); k++, l++) {
 	sigso(k) = u0(l) + epsroot;
 	source[i]->setSignal(sigso);
 	system->resetUpToDate();
@@ -156,7 +150,6 @@ namespace MBSimControl {
 	D.set(l, (sigsi1 - sigsi0) / epsroot);
 	sigso(k) = u0(l);
 	source[i]->setSignal(sigso);
-	l++;
       }
     }
     for(int i=0; i<system->getzSize(); i++) {
@@ -313,14 +306,6 @@ namespace MBSimControl {
     }
 
     if(frv) {
-      if(not inputs.size()) {
-	inputs.resize(nsource,NONINIT);
-	for(int i=0; i<inputs.size(); i++)
-	  inputs(i) = i+1;
-      }
-      else if(min(inputs)<1 or max(inputs)>nsource)
-	throwError(string("(LinearSystemAnalyzer::execute): input numbers do not match, must be within the range [1,") + to_string(nsource) + "]");
-      Vec sigso(source[j]->getSignalSize());
       for(int i=0; i<fex.size(); i++) {
 	if(fex(i)>=fRange(0) and fex(i)<=fRange(1)) {
 	  amp = (*Amp)(fex(i));
@@ -329,9 +314,11 @@ namespace MBSimControl {
 	  double T = double(loops)/fex(i);
 	  for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
 	    system->setTime(t);
-	    for(int l=0; l<inputs.size(); l++) {
-	      sigso(smap[inputs(l)].second) = amp(l)*cos(iOm.imag()*t-phi(l));
-	      source[smap[inputs(l)].first]->setSignal(sigso);
+	    for(size_t i=0, l=0; i<source.size(); i++) {
+	      Vec sigso(source[j]->getSignalSize());
+	      for(int k=0; k<source[i]->getSignalSize(); k++, l++)
+		sigso(k) = amp(l)*cos(iOm.imag()*t-phi(l));
+	      source[i]->setSignal(sigso);
 	    }
 	    system->setState(zEq + fromComplex(Zhex.col(i)*exp(iOm*t)));
 	    system->resetUpToDate();
@@ -377,9 +364,7 @@ namespace MBSimControl {
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeFrequencyResponse");
     if(e) {
       frv = true;
-      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"inputNumbers");
-      if(ee) inputs <<= E(ee)->getText<VecVI>();
-      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"frequencyRange");
+      DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"frequencyRange");
       if(ee) fRange = E(ee)->getText<Vec2>();
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"plotStepSize");
