@@ -18,13 +18,11 @@
 */
 
 #include <widget.h>
-//mfmf
 #include "kinetics_widgets.h"
 #include "unknown_widget.h"
 #include "environment_widgets.h"
 #include "function_widget.h"
 #include "function_widgets.h"
-//mfmf
 
 namespace MBSimGUI {
 
