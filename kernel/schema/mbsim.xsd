@@ -2561,6 +2561,16 @@
               </xs:sequence>
             </xs:complexType>
           </xs:element>
+          <xs:element name="initialGuess" minOccurs="0" type="pv:unknownMatrix">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Anfangswerte für den Newton-Löser zur Kontaktpunktsuche.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="tolerance" minOccurs="0" type="pv:nounitScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Toleranz für den Newton-Löser zur Kontaktpunktsuche.
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -5406,9 +5416,9 @@
               </xs:annotation>
             </xs:element>
           </xs:choice>
-          <xs:element name="amplitudePhaseAngleForm" minOccurs="0" type="pv:booleanFullEval">
+          <xs:element name="amplitudePhaseForm" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob die Koeffizienten <object class="inlineeqn">a_i</object> und <object class="inlineeqn">b_i</object> als Amplitude <object class="inlineeqn">A_i</object> und Phasenwinkel <object class="inlineeqn">\varphi_i</object> interpretiert werden sollen.
+                Definiert, ob die Koeffizienten <object class="inlineeqn">a_i</object> und <object class="inlineeqn">b_i</object> als Amplitude <object class="inlineeqn">A_i</object> und Phasenwinkel <object class="inlineeqn">\varphi_i</object> interpretiert werden sollen. Die Fourierreihe hat dann die Form <object class="inlineeqn">y=\frac{a_0}{2}+\sum_{i=1}^n a_i\,\cos(i*2*pi*f*t - b_i)</object>.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence> 

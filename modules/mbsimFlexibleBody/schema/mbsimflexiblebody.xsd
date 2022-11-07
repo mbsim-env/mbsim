@@ -1066,6 +1066,13 @@
                 </xs:sequence>
               </xs:complexType>
             </xs:element>
+            <xs:element name="openMBVNodeNumbers" type="pv:nounitVector" minOccurs="0">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Knoten, die visualisiert werden sollen.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
             <xs:element name="openMBVColorRepresentation" type="pv:stringFullEval" minOccurs="0">
             </xs:element>
           </xs:sequence>
@@ -1123,18 +1130,6 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="proportionalDamping" type="pv:nounitVector" minOccurs="0">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Proportionale Dämpfung, <object class="inlineeqn">\boldsymbol{D} = \beta_1\,\boldsymbol{M} + \beta_2\,\boldsymbol{K}</object>.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="modalDamping" type="pv:nounitVector" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert den Dämpfungsgrad für jede Mode.
-            </xs:documentation></xs:annotation>
-          </xs:element>
           <xs:group ref="CommonFlexibleFfrBody"/>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
@@ -1145,6 +1140,13 @@
             <xs:complexType>
               <xs:group ref="OpenMBVFlexibleBodyParameters"/>
             </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVNodeNumbers" type="pv:nounitVector" minOccurs="0">
+             <xs:annotation>
+               <xs:documentation xml:lang="de" xmlns="">
+                 Knoten, die visualisiert werden sollen.
+               </xs:documentation>
+             </xs:annotation>
           </xs:element>
           <xs:element name="plotNodeNumbers" type="pv:nounitVector" minOccurs="0">
             <xs:annotation>

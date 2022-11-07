@@ -47,6 +47,7 @@ namespace MBSimFlexibleBody {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (visualization,(OpenMBVExternalFlexibleFfrBody::Visualization),OpenMBVExternalFlexibleFfrBody::points)(colorRepresentation,(OpenMBVFlexibleBody::ColorRepresentation),OpenMBVFlexibleBody::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
 	ombvBody = std::shared_ptr<OpenMBVExternalFlexibleFfrBody>(new OpenMBVExternalFlexibleFfrBody(visualization,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
+      void setOpenMBVNodeNumbers(const fmatvec::VecVI &visuNodes_) { visuNodes <<= visuNodes_; }
       void setPlotNodeNumbers(const fmatvec::VecVI &plotNodes_) { plotNodes <<= plotNodes_; }
 
     private:

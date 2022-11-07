@@ -23,7 +23,7 @@
 #include <QMainWindow>
 #include <QProcess>
 #include <QTimer>
-#include <QTime>
+#include <QElapsedTimer>
 #include <QDir>
 #include <boost/filesystem/path.hpp>
 #include <xercesc/util/XercesDefs.hpp>
@@ -77,6 +77,7 @@ namespace MBSimGUI {
   class FileItemData;
   class EchoStream;
   class LinearSystemAnalysisDialog;
+  class FlexibleBodyTool;
   class StateTableDialog;
 
   class MainWindow : public QMainWindow {
@@ -118,6 +119,7 @@ namespace MBSimGUI {
       boost::filesystem::path installPath;
       QString fmuFileName;
       LinearSystemAnalysisDialog *lsa{nullptr};
+      FlexibleBodyTool *fbt{nullptr};
       StateTableDialog *st{nullptr};
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event) override;
@@ -265,6 +267,8 @@ namespace MBSimGUI {
       static int getExitOK() { return exitOK; }
       static void setExitBad() { exitOK=false; }
       boost::filesystem::path getInstallPath() const { return installPath; }
+      void flexibleBodyTool();
+      FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
     public slots:
       void openElementEditor(bool config=true);
 

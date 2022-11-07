@@ -28,6 +28,7 @@ libmbsimgui_la_SOURCES = \
   body.cc \
   embed.cc \
   dialogs.cc  \
+  wizards.cc  \
   unknown_widget.cc \
   basic_widgets.cc \
   widget.cc \
@@ -88,7 +89,19 @@ libmbsimgui_la_SOURCES = \
   signal_.cc \
   solver.cc \
   spring_damper.cc \
-  structure.cc
+  structure.cc \
+  fbt_utils.cc \
+  fbt_cms.cc \
+  fbt_msm.cc \
+  fbt_extfe.cc \
+  fbt_calculix.cc \
+  fbt_beam.cc \
+  fbt_fe.cc \
+  fbt_fma.cc \
+  fbt_lma.cc \
+  fbt_ombv.cc \
+  fbt_damp.cc \
+  fbt_exp.cc
 nodist_libmbsimgui_la_SOURCES=$(libmbsimgui_QT_BUILT_SOURCES)
 
 mbsimgui_CPPFLAGS = $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
@@ -115,6 +128,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   contour.h \
   custom_widgets.h \
   dialogs.h \
+  wizards.h \
   dynamic_system_solver.h \
   echo_view.h \
   element_context_menu.h \
@@ -227,7 +241,8 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
   icons/scalar.svg \
   icons/vector.svg \
   icons/matrix.svg \
-  icons/string.svg
+  icons/string.svg \
+  icons/fbt.svg
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines

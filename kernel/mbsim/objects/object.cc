@@ -206,7 +206,8 @@ namespace MBSim {
     else if(u0.size() == u.size())
       u = u0;
     else
-      throwError("(Object::initz): size of u0 does not match, must be " + to_string(u.size()));
+      throwError("(Object::initz): size of u0 does not match, must be " + to_string(u.size()) +
+                   ", but is " + to_string(u0.size()) + ".");
   }
 
   void Object::writez(H5::GroupBase *group) {

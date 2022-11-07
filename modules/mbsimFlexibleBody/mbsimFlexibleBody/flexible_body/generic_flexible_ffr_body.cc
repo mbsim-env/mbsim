@@ -251,9 +251,6 @@ namespace MBSimFlexibleBody {
     for(unsigned int i=0; i<K0om.size(); i++)
       Oe1[i] += K0om[i];
 
-    if(not(De0.size()))
-      De0 <<= beta.e(0)*Me + beta.e(1)*Ke0;
-
     if(Knl1.size()) {
       Ke1.resize(Knl1.size());
       if(Knl2.size()) Ke2.resize(Knl2.size(),vector<SqrMatV>(Knl2.size()));
@@ -283,31 +280,6 @@ namespace MBSimFlexibleBody {
 
   void GenericFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      if(not(De0.size()) and mDamping.size()) {
-	if(mDamping.size()!=(int)Pdm.cols())
-	  throwError(string("(GenericFlexibleFfrBody::init): size of modal damping does not match, must be ") + to_string(Pdm.cols()) +
-		", but is " + to_string(mDamping.size()) + ".");
-	SquareMatrix<Ref,double> V;
-	Vector<Ref,double> w;
-	eigvec(Ke0,SymMat(PPdm[0][0]+PPdm[1][1]+PPdm[2][2]),V,w);
-	Pdm <<= Pdm*V;
-	for(int i=0; i<3; i++) {
-	   rPdm[i] <<= rPdm[i]*V;
-	  for(int j=0; j<3; j++)
-	    PPdm[i][j] <<= V.T()*PPdm[i][j]*V;
-	}
-	Ke0 <<= JTMJ(Ke0,V);
-	for(size_t i=0; i<Phi.size(); i++)
-	  Phi[i] <<= Phi[i]*V;
-	for(size_t i=0; i<Psi.size(); i++)
-	  Psi[i] <<= Psi[i]*V;
-	for(size_t i=0; i<sigmahel.size(); i++)
-	  sigmahel[i] <<= sigmahel[i]*V;
-	De0.resize(V.cols(),INIT,0);
-	for(int i=0; i<De0.size(); i++)
-	  De0(i,i) = 2*sqrt((PPdm[0][0](i,i)+PPdm[1][1](i,i)+PPdm[2][2](i,i))*Ke0(i,i))*mDamping(i);
-      }
-
       if(generalizedVelocityOfRotation==unknown)
         throwError("Generalized velocity of rotation unknown");
 
@@ -471,11 +443,19 @@ namespace MBSimFlexibleBody {
         }
       }
       if(plotFeature[ref(openMBV)] and openMBVBody) {
+        if(visuNodes.size()==0) {
+          visuNodes.resize(nodeMap.size(),NONINIT);
+          int j=0;
+          for(const auto & i : nodeMap)
+            visuNodes(j++) = i.first;
+        }
         if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
-          dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(KrKP.size());
+          dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(visuNodes.size());
       }
       for(int i=0; i<plotNodes.size(); i++)
         plotNodes(i) = getNodeIndex(plotNodes(i));
+      for(int i=0; i<visuNodes.size(); i++)
+        visuNodes(i) = getNodeIndex(visuNodes(i));
 
       NodeBasedBody::init(stage, config);
     }
@@ -517,11 +497,11 @@ namespace MBSimFlexibleBody {
     if(plotFeature[ref(openMBV)] and openMBVBody) {
       vector<double> data;
       data.push_back(getTime());
-      for(int i=0; i<dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions(); i++) {
-        const Vec3 &WrOP = evalNodalPosition(i);
+      for(int i=0; i<visuNodes.size(); i++) {
+        const Vec3 &WrOP = evalNodalPosition(visuNodes(i));
         for(int j=0; j<3; j++)
           data.push_back(WrOP(j));
-        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(i));
+        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(visuNodes(i)));
       }
       dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->append(data);
     }

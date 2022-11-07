@@ -10,12 +10,6 @@
     <objects>
       <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FiniteElementsFfrBody">
         <inputDataFileName>"input_data.h5"</inputDataFileName>
-        <proportionalDamping>
-          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-            <ele>50</ele>
-            <ele>0.00001</ele>
-          </xmlVector>
-        </proportionalDamping>
         <frames>
           <FfrInterfaceNodeFrame name="DistributingFfrInterfaceNodeFrame">
             <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>

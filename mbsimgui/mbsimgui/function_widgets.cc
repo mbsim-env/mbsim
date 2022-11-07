@@ -654,7 +654,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    f = new ExtWidget("Frequency",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"frequency");
+    f = new ExtWidget("Frequency",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"frequency");
     layout->addWidget(f);
 
     a0 = new ExtWidget("a0",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"a0");
@@ -663,8 +663,8 @@ namespace MBSimGUI {
     choice = new ChoiceWidget(new FourierFunctionWidgetFactory,QBoxLayout::TopToBottom,5);
     layout->addWidget(choice);
 
-    amplitudePhaseAngleForm = new ExtWidget("Amplitude phase angle form",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitudePhaseAngleForm");
-    layout->addWidget(amplitudePhaseAngleForm);
+    amplitudePhaseForm = new ExtWidget("Amplitude phase form",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"amplitudePhaseForm");
+    layout->addWidget(amplitudePhaseForm);
   }
 
   void FourierFunctionWidget::resize_(int m, int n) {
@@ -684,7 +684,7 @@ namespace MBSimGUI {
     f->initializeUsingXML(element);
     a0->initializeUsingXML(element);
     choice->initializeUsingXML(element);
-    amplitudePhaseAngleForm->initializeUsingXML(element);
+    amplitudePhaseForm->initializeUsingXML(element);
     return element;
   }
 
@@ -693,7 +693,7 @@ namespace MBSimGUI {
     f->writeXMLFile(ele0);
     a0->writeXMLFile(ele0);
     choice->writeXMLFile(ele0);
-    amplitudePhaseAngleForm->writeXMLFile(ele0);
+    amplitudePhaseForm->writeXMLFile(ele0);
     return ele0;
   }
 

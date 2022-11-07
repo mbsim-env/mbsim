@@ -425,7 +425,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *mDamping, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *nodeNumbers, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *ombv, *ombvColorRepresentation, *plotNodes;
+      ExtWidget *mass, *rdm, *rrdm, *Pdm, *rPdm, *PPdm, *Ke, *De, *beta, *mDamping, *Knl1, *Knl2, *ksigma0, *ksigma1, *K0t, *K0r, *K0om, *nodeNumbers, *r, *A, *Phi, *Psi, *sigmahel, *sigmahen, *sigma0, *K0F, *K0M, *ombv, *visuNodes, *ombvColorRepresentation, *plotNodes;
       void updateWidget() override;
   };
 
@@ -437,7 +437,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       int getqERelSize() const override;
     protected:
-      ExtWidget *inputDataFile, *beta, *mDamping, *ombv, *plotNodes;
+      ExtWidget *inputDataFile, *ombv, *visuNodes, *plotNodes;
   };
 
   class ConstraintPropertyDialog : public ElementPropertyDialog {
@@ -753,7 +753,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *model, *connections;
+      ExtWidget *model, *connections, *initialGuess, *tolerance;
   };
 
   class ObserverPropertyDialog : public ElementPropertyDialog {

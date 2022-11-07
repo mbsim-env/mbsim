@@ -195,8 +195,7 @@ namespace MBSim {
 
   void Contact::calcisSize() {
     Link::calcisSize();
-    if(contactKinematics)
-    {
+    if(contactKinematics) {
       contactKinematics->calcisSize();
       contactKinematics->setisInd(isSize);
       isSize += contactKinematics->getisSize();

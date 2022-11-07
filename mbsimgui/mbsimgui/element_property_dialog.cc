@@ -44,6 +44,7 @@
 #include <QMessageBox>
 #include <utility>
 #include "dialogs.h"
+#include "wizards.h"
 #include "project.h"
 #include "mainwindow.h"
 
@@ -1552,6 +1553,9 @@ namespace MBSimGUI {
     ombv = new ExtWidget("OpenMBV body",new ChoiceWidget(new OMBVFlexibleBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMFLEX%"openMBVFlexibleBody");
     addToTab("Visualization", ombv);
 
+    visuNodes = new ExtWidget("OpenMBV node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openMBVNodeNumbers");
+    addToTab("Visualization", visuNodes);
+
     vector<QString> list;
     list.emplace_back("\"none\"");
     list.emplace_back("\"xDisplacement\"");
@@ -1715,6 +1719,7 @@ namespace MBSimGUI {
     K0F->initializeUsingXML(item->getXMLElement());
     K0M->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
+    visuNodes->initializeUsingXML(item->getXMLElement());
     ombvColorRepresentation->initializeUsingXML(item->getXMLElement());
     plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1755,6 +1760,7 @@ namespace MBSimGUI {
     generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
+    visuNodes->writeXMLFile(item->getXMLElement(),ele);
     ombvColorRepresentation->writeXMLFile(item->getXMLElement(),ele);
     plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
@@ -1766,14 +1772,22 @@ namespace MBSimGUI {
     inputDataFile = new ExtWidget("Input data file name",new FileWidget("", "Open input data file", "Input data files (*.h5)", 0, true),false,false,MBSIMFLEX%"inputDataFileName");
     addToTab("General",inputDataFile);
 
-    mDamping = new ExtWidget("Modal damping",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"modalDamping");
-    addToTab("General", mDamping);
+    auto widget = new QWidget;
+    auto hlayout = new QHBoxLayout;
+    widget->setLayout(hlayout);
+    auto label = new QLabel("Use flexible body tool to create input data:");
+    hlayout->addWidget(label);
+    auto button = new QPushButton(Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
+    connect(button,&QPushButton::clicked,this,[=](){ mw->flexibleBodyTool(); connect(mw->getFlexibleBodyTool(),&FlexibleBodyTool::finished,this,[=](int res) { if(res==1) static_cast<FileWidget*>(inputDataFile->getWidget())->setFile(mw->getFlexibleBodyTool()->getInputDataFile()); }); });
 
-    beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
-    addToTab("General", beta);
+    hlayout->addWidget(button);
+    addToTab("General",widget);
 
     ombv = new ExtWidget("Enable openMBV",new ExternalFlexibleFfrBodyMBSOMBVWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization",ombv);
+
+    visuNodes = new ExtWidget("OpenMBV node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"openMBVNodeNumbers");
+    addToTab("Visualization", visuNodes);
 
     plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
@@ -1787,9 +1801,8 @@ namespace MBSimGUI {
   DOMElement* ExternalFlexibleFfrBodyPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GenericFlexibleFfrBodyPropertyDialog::initializeUsingXML(item->getXMLElement());
     inputDataFile->initializeUsingXML(item->getXMLElement());
-    mDamping->initializeUsingXML(item->getXMLElement());
-    beta->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
+    visuNodes->initializeUsingXML(item->getXMLElement());
     plotNodes->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -1797,14 +1810,13 @@ namespace MBSimGUI {
   DOMElement* ExternalFlexibleFfrBodyPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GenericFlexibleFfrBodyPropertyDialog::writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     inputDataFile->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    mDamping->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
-    beta->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     rotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     translationDependentRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     generalizedVelocityOfRotation->writeXMLFile(item->getXMLElement(),getElement()->getXMLFrames());
     DOMElement *ele =getElement()->getXMLContours()->getNextElementSibling();
     ombv->writeXMLFile(item->getXMLElement(),ele);
+    visuNodes->writeXMLFile(item->getXMLElement(),ele);
     plotNodes->writeXMLFile(item->getXMLElement(),ele);
     return nullptr;
   }
@@ -2709,18 +2721,27 @@ namespace MBSimGUI {
   TyreContactPropertyDialog::TyreContactPropertyDialog(Element *contact) : LinkPropertyDialog(contact) {
 
     addTab("Kinetics",1);
+    addTab("Extra");
 
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
 
     model = new ExtWidget("Tyre model",new ChoiceWidget(new WidgetFactoryFor<TyreModelWidget>,QBoxLayout::TopToBottom,0),false,false,MBSIM%"tyreModel");
     addToTab("Kinetics", model);
+
+    initialGuess = new ExtWidget("Initial guess",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");
+    addToTab("Extra", initialGuess);
+
+    tolerance = new ExtWidget("Tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"tolerance");
+    addToTab("Extra", tolerance);
   }
 
   DOMElement* TyreContactPropertyDialog::initializeUsingXML(DOMElement *parent) {
     LinkPropertyDialog::initializeUsingXML(item->getXMLElement());
     connections->initializeUsingXML(item->getXMLElement());
     model->initializeUsingXML(item->getXMLElement());
+    initialGuess->initializeUsingXML(item->getXMLElement());
+    tolerance->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -2728,6 +2749,8 @@ namespace MBSimGUI {
     LinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     connections->writeXMLFile(item->getXMLElement(),ref);
     model->writeXMLFile(item->getXMLElement(),ref);
+    initialGuess->writeXMLFile(item->getXMLElement(),ref);
+    tolerance->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

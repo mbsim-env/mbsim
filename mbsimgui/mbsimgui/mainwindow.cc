@@ -73,6 +73,7 @@
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
 #include "dialogs.h"
+#include "wizards.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -265,6 +266,8 @@ namespace MBSimGUI {
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
     QAction *actionInterrupt = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
     connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
+    QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
+    connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
     actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
     connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
     actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
@@ -277,10 +280,10 @@ namespace MBSimGUI {
     connect(actionStateTable,&QAction::triggered,this,&MainWindow::showStateTable);
     QAction *actionCreateFMU = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"FMI_bare.svg").string())),"Create FMU");
     connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
+    QAction *actionFem = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
+    connect(actionFem,&QAction::triggered,this,&MainWindow::flexibleBodyTool);
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
-    QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
-    connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
 
     elementView->setModel(new ElementTreeModel(this));
     elementView->setColumnWidth(0,250);
@@ -2416,6 +2419,14 @@ namespace MBSimGUI {
     echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation killed</span>\n");
     echoView->updateOutput(true);
     process.kill();
+  }
+
+  void MainWindow::flexibleBodyTool() {
+    if(not fbt) {
+      fbt = new FlexibleBodyTool(this);
+      updateParameters(project);
+    }
+    fbt->show();
   }
 
   void MainWindow::createFMU() {

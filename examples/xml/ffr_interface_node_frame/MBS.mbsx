@@ -12,12 +12,6 @@
     <objects>
       <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="CalculixBody">
         <inputDataFileName>"input_data.h5"</inputDataFileName>
-        <proportionalDamping>
-          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-            <ele>0</ele>
-            <ele>0.001</ele>
-          </xmlVector>
-        </proportionalDamping>
         <frames>
           <FfrInterfaceNodeFrame name="InterfaceNodeFrame" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
               <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>

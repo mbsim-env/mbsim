@@ -140,8 +140,10 @@ namespace MBSimGUI {
   }
 
   void ChoiceWidget::defineWidget(int index) {
-    layout->removeWidget(widget);
-    delete widget;
+    if(widget) {
+      layout->removeWidget(widget);
+      delete widget;
+    }
     assert(index!=-1 && "index==-1 is no longer supported!");
     widget = factory->createWidget(index);
     if(layout->direction()==QBoxLayout::TopToBottom)

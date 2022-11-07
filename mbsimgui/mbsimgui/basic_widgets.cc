@@ -293,8 +293,7 @@ namespace MBSimGUI {
   }
 
   void FileWidget::selectFile() {
-    QString file = getFile();
-    if(quote) file = file.mid(1,file.length()-2);
+    QString file = getFile(true);
     if(mode==0) 
       file = QFileDialog::getOpenFileName(this, description, path->isChecked()?file:mw->getProjectDir().absoluteFilePath(file), extensions, nullptr, options);
     else if(mode==1)
@@ -307,8 +306,6 @@ namespace MBSimGUI {
       else
         filePath->setText(quote?("\""+mw->getProjectDir().relativeFilePath(file)+"\""):mw->getProjectDir().relativeFilePath(file));
     }
-    else
-      filePath->setText(quote?("\"\""):"");
   }
 
   DOMElement* FileWidget::initializeUsingXML(DOMElement *parent) {
@@ -323,14 +320,13 @@ namespace MBSimGUI {
   DOMElement* FileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     xercesc::DOMDocument *doc=parent->getOwnerDocument();
     auto *ele0 = static_cast<DOMElement*>(parent);
-    //DOMText *text = doc->createTextNode(X()%(quote?("\""+getFile().toStdString()+"\""):getFile().toStdString()));
     DOMText *text = doc->createTextNode(X()%getFile().toStdString());
     ele0->insertBefore(text, nullptr);
     return nullptr;
   }
 
   void FileWidget::changePath(int i) {
-    QString file = quote?getFile().mid(1,getFile().length()-2):getFile();
+    QString file = getFile(true);
     if(i)
       filePath->setText(quote?("\""+mw->getProjectDir().absoluteFilePath(file)+"\""):mw->getProjectDir().absoluteFilePath(file));
     else
