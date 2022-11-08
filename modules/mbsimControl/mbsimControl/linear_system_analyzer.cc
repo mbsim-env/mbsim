@@ -102,6 +102,10 @@ namespace MBSimControl {
       phi.resize(nsource);
     }
 
+    if(fap.size() and fap.size()!=(size_t)nsource)
+      throwError(string("(LinearSystemAnalyzer::execute): size of frequency amplitude phase array does not match, must be ") + to_string(nsource) +
+	  ", but is " + to_string(fap.size()) + ".");
+
     SqrMat A(system->getzSize(),NONINIT);
     Mat B(system->getzSize(),nsource,NONINIT);
     Mat D(nsink,nsource,NONINIT);
@@ -171,8 +175,8 @@ namespace MBSimControl {
     vector<pair<double,int>> fna;
     for(int i=0; i<w.size()-1; i++) {
       if((abs(imag(w(i)))>=2*M_PI*fmin) and (abs(imag(w(i)))<=2*M_PI*fmax) and (w(i+1)==conj(w(i)))) {
-        fna.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
-        i++;
+	fna.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
+	i++;
       }
     }
     sort(fna.begin(), fna.end());
@@ -203,7 +207,7 @@ namespace MBSimControl {
       SquareMatrix<Ref,complex<double>> H = SquareMatrix<Ref,complex<double>>(A.size(),Eye(),complex<double>(0,2*M_PI*fex(i))) - A;
       for(int j=0; j<nsource; j++) {
 	u(j).real(amp(j)*cos(phi(j)));
-	u(j).imag(amp(j)*sin(phi(j)));
+	u(j).imag(-amp(j)*sin(phi(j)));
       }
       Vector<Ref,complex<double>> zh = slvLU(H, B*u);
       Vector<Ref,complex<double>> yh = C*zh + D*u;
@@ -314,11 +318,11 @@ namespace MBSimControl {
 	  double T = double(loops)/fex(i);
 	  for(double t=t0; t<t0+T+dtPlot; t+=dtPlot) {
 	    system->setTime(t);
-	    for(size_t i=0, l=0; i<source.size(); i++) {
+	    for(size_t j=0, l=0; j<source.size(); j++) {
 	      Vec sigso(source[j]->getSignalSize());
-	      for(int k=0; k<source[i]->getSignalSize(); k++, l++)
+	      for(int k=0; k<source[j]->getSignalSize(); k++, l++)
 		sigso(k) = amp(l)*cos(iOm.imag()*t-phi(l));
-	      source[i]->setSignal(sigso);
+	      source[j]->setSignal(sigso);
 	    }
 	    system->setState(zEq + fromComplex(Zhex.col(i)*exp(iOm*t)));
 	    system->resetUpToDate();
@@ -328,6 +332,52 @@ namespace MBSimControl {
 	      break;
 	  }
 	  t0 += T+dtPlot;
+	}
+      }
+    }
+    if(fap.size()) {
+      vector<Vector<Ref,complex<double>>> zh;
+      vector<complex<double>> iOm;
+      Vector<Ref,complex<double>> szh(A.size());
+      u.init(0);
+      for(size_t i=0; i<fap.size(); i++) {
+	for(int j=0; j<fap[i].rows(); j++) {
+	  iOm.push_back(complex<double>(0,2*M_PI*fap[i](j,0)));
+	  SquareMatrix<Ref,complex<double>> H = SquareMatrix<Ref,complex<double>>(A.size(),Eye(),iOm[iOm.size()-1]) - A;
+	  u(i).real(fap[i](j,1)*cos(fap[i](j,2)));
+	  u(i).imag(-fap[i](j,1)*sin(fap[i](j,2)));
+	  zh.push_back(slvLU(H, B*u));
+	  szh += zh[zh.size()-1];
+	}
+	u(i) = complex<double>(0,0);
+      }
+      if(srv) {
+	for(double t=t0; t<t0+tSpan+dtPlot; t+=dtPlot) {
+	  system->setTime(t);
+	  for(size_t i=0, l=0; i<source.size(); i++) {
+	    Vec sigso(source[i]->getSignalSize());
+	    for(int k=0; k<source[i]->getSignalSize(); k++, l++) {
+	      for(int j=0; j<fap[l].rows(); j++)
+		sigso(k) += fap[l](j,1)*cos(2*M_PI*fap[l](j,0)*t-fap[l](j,2));
+	    }
+	    source[i]->setSignal(sigso);
+	  }
+	  Vec z(zEq.size());
+	  if(its) {
+	    Vector<Ref,complex<double>> a = slvLU(V,zEq-szh);
+	    for(int k=0; k<V.cols(); k++)
+	      z += fromComplex(V.col(k)*a(k)*exp(w(k)*t));
+	  }
+	  else
+	    z = zEq;
+	  for(int k=0; k<(int)zh.size(); k++)
+	    z += fromComplex(zh[k]*exp(iOm[k]*t));
+	  system->setState(z);
+	  system->resetUpToDate();
+	  system->plot();
+	  system->checkExitRequest();
+	  if(system->getIntegratorExitRequest())
+	    break;
 	}
       }
     }
@@ -366,6 +416,22 @@ namespace MBSimControl {
       frv = true;
       DOMElement *ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"frequencyRange");
       if(ee) fRange = E(ee)->getText<Vec2>();
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"visualizeSuperposedSolution");
+    if(e) {
+      srv = true;
+      DOMElement *ee=MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMCONTROL%"frequencyAmplitudePhaseArray");
+      xercesc::DOMElement* eee=ee->getFirstElementChild();
+      if(MBXMLUtils::E(eee)->getTagName()==MBSIMCONTROL%"ele") {
+	while(eee) {
+	  fap.push_back(MBXMLUtils::E(eee)->getText<MatVx3>());
+	  eee=eee->getNextElementSibling();
+	}
+      }
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"timeSpan");
+      if(ee) tSpan = E(ee)->getText<double>();
+      ee=E(e)->getFirstElementChildNamed(MBSIMCONTROL%"includeTransientSolution");
+      if(ee) its = E(ee)->getText<bool>();
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"plotStepSize");
     if(e) setPlotStepSize(E(e)->getText<double>());

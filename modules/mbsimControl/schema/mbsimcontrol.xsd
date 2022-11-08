@@ -1287,6 +1287,37 @@
 	      </xs:sequence>
 	    </xs:complexType>
           </xs:element>
+          <xs:element name="visualizeSuperposedSolution" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Visualisierung der überlagerten Schwingungsantwort in OpenMBV.
+            </xs:documentation></xs:annotation>
+	    <xs:complexType>
+	      <xs:sequence>
+                <xs:element name="frequencyAmplitudePhaseArray">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      tbd.
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="ele" type="pv:unknownMatrix" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="timeSpan" type="pv:timeScalar" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+		    Zeitspanne für die Simulation.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="includeTransientSolution" type="pv:booleanFullEval" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+		    Definiert, ob der Einschwingvorgang bei der Visualisierung berücksichtigt werden soll. Standarmäßig ja.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+	      </xs:sequence>
+	    </xs:complexType>
+          </xs:element>
           <xs:element name="plotStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Zeitschrittweite bei der Visualisierung.
