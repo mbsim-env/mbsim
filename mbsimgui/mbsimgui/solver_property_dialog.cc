@@ -23,6 +23,7 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include "special_widgets.h"
 #include "function_widget_factory.h"
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -66,29 +67,64 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *inputs, *frequencyRange;
+      ExtWidget *frequencyRange;
   };
 
   FrequencyResponseVisualization::FrequencyResponseVisualization() {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    inputs = new ExtWidget("Input numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"inputNumbers");
-    layout->addWidget(inputs);
     vector<QString> x(2); x[0] = "0"; x[1] = "1e4";
     frequencyRange = new ExtWidget("Frequency range",new ChoiceWidget(new VecWidgetFactory(x),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"frequencyRange");
     layout->addWidget(frequencyRange);
   }
 
   DOMElement* FrequencyResponseVisualization::initializeUsingXML(DOMElement *e) {
-    inputs->initializeUsingXML(e);
     frequencyRange->initializeUsingXML(e);
     return e;
   }
 
   DOMElement* FrequencyResponseVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    inputs->writeXMLFile(parent);
     frequencyRange->writeXMLFile(parent);
+    return static_cast<DOMElement*>(parent);
+  }
+
+  class SuperposedSolutionVisualization : public Widget {
+    public:
+      SuperposedSolutionVisualization();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *frequencyAmplitudePhaseArray, *timeSpan, *includeTransientSolution;
+  };
+
+  SuperposedSolutionVisualization::SuperposedSolutionVisualization() {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    frequencyAmplitudePhaseArray = new ExtWidget("Frequency-amplitude-phase array",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMCONTROL%"frequencyAmplitudePhase",1,1,3,true,true,MBSIMCONTROL),QBoxLayout::TopToBottom,3),false,false,"");
+    layout->addWidget(frequencyAmplitudePhaseArray);
+
+    timeSpan = new ExtWidget("Time span",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"timeSpan");
+    layout->addWidget(timeSpan);
+
+    includeTransientSolution = new ExtWidget("Include transient solution",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"includeTransientSolution");
+    layout->addWidget(includeTransientSolution);
+  }
+
+  DOMElement* SuperposedSolutionVisualization::initializeUsingXML(DOMElement *e) {
+    cout << E(e)->getTagName().second << endl;
+    frequencyAmplitudePhaseArray->initializeUsingXML(e);
+    timeSpan->initializeUsingXML(e);
+    includeTransientSolution->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* SuperposedSolutionVisualization::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    frequencyAmplitudePhaseArray->writeXMLFile(parent);
+    timeSpan->writeXMLFile(parent);
+    includeTransientSolution->writeXMLFile(parent);
     return static_cast<DOMElement*>(parent);
   }
 
@@ -1110,6 +1146,7 @@ namespace MBSimGUI {
     addTab("General");
     addTab("Modal analysis");
     addTab("Frequency response analysis");
+    addTab("Superposed solution analysis");
     addTab("Initial conditions");
 
     initialTime = new ExtWidget("Initial time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialTime");
@@ -1148,6 +1185,9 @@ namespace MBSimGUI {
     visualizeFrequencyResponse = new ExtWidget("Visualize frequency response",new FrequencyResponseVisualization,true,true,MBSIMCONTROL%"visualizeFrequencyResponse");
     addToTab("Frequency response analysis", visualizeFrequencyResponse);
 
+    visualizeSuperposedSolution = new ExtWidget("Visualize superposed solution",new SuperposedSolutionVisualization,true,false,MBSIMCONTROL%"visualizeSuperposedSolution");
+    addToTab("Superposed solution analysis", visualizeSuperposedSolution);
+
     plotStepSize = new ExtWidget("Plot step size",new ChoiceWidget(new ScalarWidgetFactory("1e-2",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"plotStepSize");
     addToTab("General", plotStepSize);
 
@@ -1172,6 +1212,7 @@ namespace MBSimGUI {
     excitationPhaseFunction->initializeUsingXML(item->getXMLElement());
     visualizeNormalModes->initializeUsingXML(item->getXMLElement());
     visualizeFrequencyResponse->initializeUsingXML(item->getXMLElement());
+    visualizeSuperposedSolution->initializeUsingXML(item->getXMLElement());
     plotStepSize->initializeUsingXML(item->getXMLElement());
     loops->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -1191,6 +1232,7 @@ namespace MBSimGUI {
     excitationPhaseFunction->writeXMLFile(item->getXMLElement());
     visualizeNormalModes->writeXMLFile(item->getXMLElement());
     visualizeFrequencyResponse->writeXMLFile(item->getXMLElement());
+    visualizeSuperposedSolution->writeXMLFile(item->getXMLElement());
     plotStepSize->writeXMLFile(item->getXMLElement());
     loops->writeXMLFile(item->getXMLElement());
     return nullptr;
