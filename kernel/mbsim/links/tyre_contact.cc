@@ -105,7 +105,8 @@ namespace MBSim {
 
   void TyreContact::calcisSize() {
     ContourLink::calcisSize();
-    isSize += 2;
+    if(not plane)
+      isSize += 2;
   }
 
  void TyreContact::updatePositions(Frame *frame) {
