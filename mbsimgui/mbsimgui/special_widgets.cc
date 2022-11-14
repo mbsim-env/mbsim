@@ -213,7 +213,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TwoDimMatArrayWidget::TwoDimMatArrayWidget(int size, int m, int n, MBXMLUtils::NamespaceURI uri_) : uri(uri_) {
+  TwoDimMatArrayWidget::TwoDimMatArrayWidget(int size, int m, int n, bool symmetric_, MBXMLUtils::NamespaceURI uri_) : symmetric(symmetric_), uri(uri_) {
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -248,12 +248,14 @@ namespace MBSimGUI {
         for(int j=0; j<i.size(); j++)
           i[j]->resize_(m,n);
     }
+    if(symmetric) forceSymmetrie();
   }
 
   void TwoDimMatArrayWidget::resize_(int m, int n) {
     for(auto & i : ele)
       for(int j=0; j<i.size(); j++)
         i[j]->resize_(m,n);
+    if(symmetric) forceSymmetrie();
   }
 
   DOMElement* TwoDimMatArrayWidget::initializeUsingXML(DOMElement *element) {
@@ -287,6 +289,7 @@ namespace MBSimGUI {
         e=e->getNextElementSibling();
       }
     }
+    if(symmetric) forceSymmetrie();
     return element;
   }
 
@@ -303,6 +306,36 @@ namespace MBSimGUI {
       }
     }
     return nullptr;
+  }
+
+  void TwoDimMatArrayWidget::forceSymmetrie() {
+    for(size_t i=0; i<ele.size(); i++) {
+      for(size_t j=0; j<ele.size(); j++) {
+	ChoiceWidget* choiceWidgetij = static_cast<ChoiceWidget*>(ele[i][j]->getWidget());
+	if(i==j) {
+	  if(choiceWidgetij->getIndex()==0) {
+	    MatWidget* widgetii = static_cast<MatWidget*>(static_cast<PhysicalVariableWidget*>(choiceWidgetij->getWidget())->getWidget());
+	    for(size_t k=0; k<widgetii->rows(); k++) {
+	      for(size_t l=0; l<widgetii->cols(); l++) {
+		if(k!=l)
+		  connect(widgetii->getLineEdit(k,l),&QLineEdit::textEdited,widgetii->getLineEdit(l,k),&QLineEdit::setText);
+	      }
+	    }
+	  }
+	}
+	else {
+	  ChoiceWidget* choiceWidgetji = static_cast<ChoiceWidget*>(ele[j][i]->getWidget());
+	  if(choiceWidgetij->getIndex()==0 and choiceWidgetji->getIndex()==0) {
+	    MatWidget* widgetij = static_cast<MatWidget*>(static_cast<PhysicalVariableWidget*>(choiceWidgetij->getWidget())->getWidget());
+	    MatWidget* widgetji = static_cast<MatWidget*>(static_cast<PhysicalVariableWidget*>(choiceWidgetji->getWidget())->getWidget());
+	    for(size_t k=0; k<widgetij->rows(); k++) {
+	      for(size_t l=0; l<widgetij->cols(); l++)
+		connect(widgetji->getLineEdit(k,l),&QLineEdit::textEdited,widgetij->getLineEdit(l,k),&QLineEdit::setText);
+	    }
+	  }
+	}
+      }
+    }
   }
 
   OneDimVecArrayWidgetFactory::OneDimVecArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, bool varArraySize_, bool varVecSize_, MBXMLUtils::NamespaceURI uri_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), varArraySize(varArraySize_), varVecSize(varVecSize_), uri(uri_) {
@@ -333,7 +366,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TwoDimMatArrayWidgetFactory::TwoDimMatArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, int n_, MBXMLUtils::NamespaceURI uri_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), n(n_), uri(uri_) {
+  TwoDimMatArrayWidgetFactory::TwoDimMatArrayWidgetFactory(const FQN &xmlBase, int size_, int m_, int n_, bool symmetric_, MBXMLUtils::NamespaceURI uri_) : name(2), xmlName(2,xmlBase), size(size_), m(m_), n(n_), symmetric(symmetric_), uri(uri_) {
     name[0] = "Cell array";
     name[1] = "Matrix";
     xmlName[0].second += "Array";
@@ -341,7 +374,7 @@ namespace MBSimGUI {
 
   Widget* TwoDimMatArrayWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new TwoDimMatArrayWidget(size,m,n,uri);
+      return new TwoDimMatArrayWidget(size,m,n,symmetric,uri);
     if(i==1)
       return new ChoiceWidget(new MatWidgetFactory(size*size*m,n,vector<QStringList>(3),vector<int>(3,0)),QBoxLayout::RightToLeft,5);
     return nullptr;

@@ -65,9 +65,11 @@ namespace MBSimGUI {
   class TwoDimMatArrayWidget: public Widget {
     protected:
       std::vector<std::vector<ExtWidget*>> ele;
+      bool symmetric;
       MBXMLUtils::NamespaceURI uri;
+      void forceSymmetrie();
     public:
-      TwoDimMatArrayWidget(int size=0, int m=0, int n=0, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
+      TwoDimMatArrayWidget(int size=0, int m=0, int n=0, bool symmetric_=false, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
       const std::vector<std::vector<ExtWidget*>>& getArray() const { return ele; }
       void resize_(int rsize, int csize, int m, int n);
       void resize_(int m, int n) override;
@@ -107,7 +109,7 @@ namespace MBSimGUI {
 
   class TwoDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
+      TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0, bool symmetric_=false, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
       Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -116,6 +118,7 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       int size, m, n;
+      bool symmetric;
       MBXMLUtils::NamespaceURI uri;
   };
 
