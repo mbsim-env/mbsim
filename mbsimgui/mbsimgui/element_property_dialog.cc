@@ -1484,7 +1484,7 @@ namespace MBSimGUI {
     rPdm = new ExtWidget("Position shape function integral",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"positionShapeFunctionIntegral",3,3,1),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("General",rPdm);
 
-    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral",3,1,1),QBoxLayout::TopToBottom,3),true,false,"");
+    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral",3,1,1,true),QBoxLayout::TopToBottom,3),true,false,"");
     addToTab("General",PPdm);
 
     Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"stiffnessMatrix");

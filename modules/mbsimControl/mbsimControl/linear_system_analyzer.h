@@ -80,8 +80,12 @@ namespace MBSimControl {
       fmatvec::Vec z0, zEq, u0, fex;
       bool msv{false};
       bool frv{false};
+      bool srv{false};
+      bool its{true};
+      double tSpan{1};
       fmatvec::VecVI modes;
       fmatvec::Vec2 fRange;
+      std::vector<fmatvec::MatVx3> fap;
       int loops{5};
       double dtPlot{1e-2};
   };

@@ -235,13 +235,14 @@ namespace MBSimGUI {
     string label_;
     int number_;
     while(true) {
-      getline(is,name_,']');
-      name_+="]";
+      getline(is,name_);
       if(is.eof())
 	break;
-      is >> label_ >> number_;
-      is.get();
-      name.append(QString::fromStdString(name_));
+      stringstream sstr(name_);
+      int pos = name_.find_last_of(']');
+      sstr.seekg(pos+1);
+      sstr >> label_ >> number_;
+      name.append(QString::fromStdString(name_.substr(0,pos)+"]"));
       label.append(QString::fromStdString(label_));
       number.append(QString::number(number_+1));
     }
@@ -606,13 +607,14 @@ namespace MBSimGUI {
     stateLabelNumber.clear();
     ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
      while(true) {
-      getline(is,name,']');
-      name+="]";
+      getline(is,name);
       if(is.eof())
 	break;
-      is >> label >> number;
-      is.get();
-      stateName.append(QString::fromStdString(name));
+      stringstream sstr(name);
+      int pos = name.find_last_of(']');
+      sstr.seekg(pos+1);
+      sstr >> label >> number;
+      stateName.append(QString::fromStdString(name.substr(0,pos)+"]"));
       stateLabel.append(QString(label));
       stateLabelNumber.append(number);
     }
@@ -623,13 +625,14 @@ namespace MBSimGUI {
     outputLabelNumber.clear();
     is.open(mw->getUniqueTempDir().generic_string()+"/outputtable.asc");
     while(true) {
-      getline(is,name,']');
-      name+="]";
+      getline(is,name);
       if(is.eof())
 	break;
-      is >> label >> number;
-      is.get();
-      outputName.append(QString::fromStdString(name));
+      stringstream sstr(name);
+      int pos = name.find_last_of(']');
+      sstr.seekg(pos+1);
+      sstr >> label >> number;
+      outputName.append(QString::fromStdString(name.substr(0,pos)+"]"));
       outputLabel.append(QString(label));
       outputLabelNumber.append(number);
     }
@@ -836,13 +839,14 @@ namespace MBSimGUI {
     stateLabelNumber.clear();
     ifstream is(mw->getUniqueTempDir().generic_string()+"/statetable.asc");
     while(true) {
-      getline(is,name_,']');
-      name_+="]";
+      getline(is,name_);
       if(is.eof())
 	break;
-      is >> label_ >> number_;
-      is.get();
-      stateName.append(QString::fromStdString(name_));
+      stringstream sstr(name_);
+      int pos = name_.find_last_of(']');
+      sstr.seekg(pos+1);
+      sstr >> label_ >> number_;
+      stateName.append(QString::fromStdString(name_.substr(0,pos)+"]"));
       stateLabel.append(QString(label_));
       stateLabelNumber.append(number_);
     }
@@ -853,13 +857,14 @@ namespace MBSimGUI {
     inputLabelNumber.clear();
     is.open(mw->getUniqueTempDir().generic_string()+"/inputtable.asc");
     while(true) {
-      getline(is,name_,']');
-      name_+="]";
+      getline(is,name_);
       if(is.eof())
 	break;
-      is >> label_ >> number_;
-      is.get();
-      inputName.append(QString::fromStdString(name_));
+      stringstream sstr(name_);
+      int pos = name_.find_last_of(']');
+      sstr.seekg(pos+1);
+      sstr >> label_ >> number_;
+      inputName.append(QString::fromStdString(name_.substr(0,pos)+"]"));
       inputLabel.append(QString(label_));
       inputLabelNumber.append(number_);
     }
@@ -870,13 +875,14 @@ namespace MBSimGUI {
     outputLabelNumber.clear();
     is.open(mw->getUniqueTempDir().generic_string()+"/outputtable.asc");
     while(true) {
-      getline(is,name_,']');
-      name_+="]";
+      getline(is,name_);
       if(is.eof())
 	break;
-      is >> label_ >> number_;
-      is.get();
-      outputName.append(QString::fromStdString(name_));
+      stringstream sstr(name_);
+      int pos = name_.find_last_of(']');
+      sstr.seekg(pos+1);
+      sstr >> label_ >> number_;
+      outputName.append(QString::fromStdString(name_.substr(0,pos)+"]"));
       outputLabel.append(QString(label_));
       outputLabelNumber.append(number_);
     }

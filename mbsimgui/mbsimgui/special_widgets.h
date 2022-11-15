@@ -35,8 +35,10 @@ namespace MBSimGUI {
       std::vector<ExtWidget*> ele;
       CustomSpinBox* sizeCombo;
       int m;
+      bool varVecSize;
+      MBXMLUtils::NamespaceURI uri;
     public:
-      OneDimVecArrayWidget(int size=0, int m_=0, bool var=false);
+      OneDimVecArrayWidget(int size=0, int m_=0, bool varArraySize=false, bool varVecSize_=false, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
       void resize_(int size, int m, int n);
       void resize_(int m, int n) override;
@@ -47,8 +49,12 @@ namespace MBSimGUI {
   class OneDimMatArrayWidget : public Widget {
     protected:
       std::vector<ExtWidget*> ele;
+      CustomSpinBox* sizeCombo;
+      int m, n;
+      bool varMatRowSize;
+      MBXMLUtils::NamespaceURI uri;
     public:
-      OneDimMatArrayWidget(int size=0, int m=0, int n=0);
+      OneDimMatArrayWidget(int size=0, int m=0, int n=0, bool varArraySize=false, bool varMatRowSize_=false, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
       const std::vector<ExtWidget*>& getArray() const { return ele; }
       void resize_(int size, int m, int n);
       void resize_(int m, int n) override;
@@ -59,8 +65,11 @@ namespace MBSimGUI {
   class TwoDimMatArrayWidget: public Widget {
     protected:
       std::vector<std::vector<ExtWidget*>> ele;
+      bool symmetric;
+      MBXMLUtils::NamespaceURI uri;
+      void forceSymmetrie();
     public:
-      TwoDimMatArrayWidget(int size=0, int m=0, int n=0);
+      TwoDimMatArrayWidget(int size=0, int m=0, int n=0, bool symmetric_=false, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
       const std::vector<std::vector<ExtWidget*>>& getArray() const { return ele; }
       void resize_(int rsize, int csize, int m, int n);
       void resize_(int m, int n) override;
@@ -70,7 +79,7 @@ namespace MBSimGUI {
 
   class OneDimVecArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimVecArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, bool var_=false);
+      OneDimVecArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, bool varArraySize_=false, bool varVecSize_=false, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
       Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -79,12 +88,13 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       int size, m;
-      bool var;
+      bool varArraySize, varVecSize;
+      MBXMLUtils::NamespaceURI uri;
   };
 
   class OneDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      OneDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0);
+      OneDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0, bool varArraySize_=false, bool varMatRowSize_=false, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
       Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -93,11 +103,13 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       int size, m, n;
+      bool varArraySize, varMatRowSize;
+      MBXMLUtils::NamespaceURI uri;
   };
 
   class TwoDimMatArrayWidgetFactory : public WidgetFactory {
     public:
-      TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0);
+      TwoDimMatArrayWidgetFactory(const MBXMLUtils::FQN &xmlBase, int size_=0, int m_=0, int n_=0, bool symmetric_=false, MBXMLUtils::NamespaceURI uri_=MBSIMFLEX);
       Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
@@ -106,6 +118,8 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       int size, m, n;
+      bool symmetric;
+      MBXMLUtils::NamespaceURI uri;
   };
 
   class DofWidget : public Widget {

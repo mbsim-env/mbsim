@@ -213,6 +213,7 @@ namespace MBSimGUI {
       int rows() const override { return box.size(); }
       int cols() const override { return box[0].size(); }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
+      QLineEdit* getLineEdit(int i, int j) { return box[i][j]; }
   };
 
   class MatColsVarWidget : public BasicMatWidget {
