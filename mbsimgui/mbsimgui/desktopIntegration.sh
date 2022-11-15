@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -o pipefail
+
 # Install all mbsim-env freedesktop.org modules
 # This script is used in all mbsim-env projects (keep it in sync)
 
