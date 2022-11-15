@@ -183,7 +183,9 @@ namespace MBSimGUI {
       void lma();
       void damp();
       void exp();
-      double m;
+      void C3D10();
+      void C3D20();
+      double rho, E, nu, m;
       fmatvec::MatV r, M, K, Phi_, Psi_, Sr;
       fmatvec::VecV mDamp;
       fmatvec::Vec2 pDamp;
@@ -198,10 +200,13 @@ namespace MBSimGUI {
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
       std::map<int,int> nodeMap;
       std::vector<int> indices;
-      int nN, nM, ng, net, ner, nen;
+      int nN, nM, ng, net, ner, nen, npe;
       std::vector<std::map<int,double[4]>> MKm;
       std::vector<std::map<int,double[3]>> PPm;
       std::vector<std::vector<std::map<int,double>>> Phim, Psim, sigm;
+      std::map<int,int> nodeCount;
+      fmatvec::MatVx3 xi, rN;
+      fmatvec::VecV wi;
   };
 
 }
