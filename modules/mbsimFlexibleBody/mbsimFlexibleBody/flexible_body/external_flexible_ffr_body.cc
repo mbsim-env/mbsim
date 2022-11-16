@@ -159,6 +159,14 @@ namespace MBSimFlexibleBody {
       ombvIndices = file.openChildObject<H5::SimpleDataset<vector<int>>>("openmbv indices")->read();
       names.erase(it);
     }
+
+    it = findChild(names,"node numbers");
+    if(it!=list<string>::iterator()) {
+      auto n = file.openChildObject<H5::SimpleDataset<vector<int>>>("node numbers")->read();
+      for(size_t i=0; i<n.size(); i++)
+	nodeMap[n[i]] = i;
+      names.erase(it);
+    }
   }
 
   void ExternalFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
