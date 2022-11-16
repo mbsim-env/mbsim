@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -o pipefail
+
 OUTFILE=/tmp/$(basename $0).out.$$
 
 

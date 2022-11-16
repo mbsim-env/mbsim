@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -e
+set -o pipefail
+
 # run this check only if MBSIM_SWIG is set (to avoid a long build time)
 if test -z "$MBSIM_SWIG"; then
   exit 77 # = test SKIPPED
