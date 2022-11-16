@@ -41,8 +41,9 @@ namespace MBSimGUI {
     auto benz = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
     auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
     auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    nodeTable.resize(nN+1);
     for(int i=0; i<nN; i++)
-      nodeMap[i+1] = i;
+      nodeTable[i+1] = i;
     int nE = nN-1;
     int nee = 0;
     const int x = 0;
@@ -409,14 +410,14 @@ namespace MBSimGUI {
       }
     }
 
-    r.resize(nN,3,NONINIT);
+    KrKP.resize(nN);
     Phim.resize(nN,vector<map<int,double>>(3));
     Psim.resize(nN,vector<map<int,double>>(3));
     sigm.resize(nN,vector<map<int,double>>(6));
     for(int i=0; i<nN; i++) {
-      r(i,0) = i*D;
-      r(i,1) = 0;
-      r(i,2) = 0;
+      KrKP[i](0) = i*D;
+      KrKP[i](1) = 0;
+      KrKP[i](2) = 0;
       if(ten) {
 	Phim[i][x][i*nee/2+ul] = 1;
 	if(i>0 and i<nN-1) {

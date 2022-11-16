@@ -116,6 +116,11 @@ namespace MBSimGUI {
 	  auto vidata=file.createChildObject<H5::SimpleDataset<vector<int>>>("openmbv indices")(indices.size());
 	  vidata->write(indices);
 	}
+
+	if(nodeNumbers.size()) {
+	  auto vidata=file.createChildObject<H5::SimpleDataset<vector<int>>>("node numbers")(nodeNumbers.size());
+	  vidata->write(nodeNumbers);
+	}
       }
     }
   }

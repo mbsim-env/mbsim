@@ -84,7 +84,7 @@ namespace MBSimGUI {
     vector<int> c;
     for(const auto & i : bc) {
       for(int j=0; j<i.second.size(); j++)
-	if(i.second(j)) c.push_back(nodeMap[i.first]*nen+j);
+	if(i.second(j)) c.push_back(nodeTable[i.first]*nen+j);
     }
     sort(c.begin(), c.end());
 
@@ -104,7 +104,7 @@ namespace MBSimGUI {
       VecVI bci = bc[inodes(i)];
       for(int j=0; j<nen; j++) {
 	if((not bci.size()) or (not bci(j)))
-	  c.push_back(nodeMap[inodes(i)]*nen+j);
+	  c.push_back(nodeTable[inodes(i)]*nen+j);
       }
     }
     sort(c.begin(), c.end());
@@ -181,12 +181,12 @@ namespace MBSimGUI {
       Vsd <<= Vsd*Vr;
     }
     nM = Vsd.cols();
-    Phi_.resize(ng,nM,NONINIT);
+    U.resize(ng,nM,NONINIT);
     Indices IJ;
     for(int i=0; i<nM; i++)
       IJ.add(i);
-    Phi_.set(iF,IJ,Vsd);
-    if(iX.size()) Phi_.set(iX,IJ,Mat(iX.size(),IJ.size()));
+    U.set(iF,IJ,Vsd);
+    if(iX.size()) U.set(iX,IJ,Mat(iX.size(),IJ.size()));
   }
 
 }

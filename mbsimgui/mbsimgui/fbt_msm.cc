@@ -30,12 +30,12 @@ namespace MBSimGUI {
   void FlexibleBodyTool::msm() {
     string str = static_cast<FileWidget*>(static_cast<ModeShapesPage*>(page(PageModeShapes))->V->getWidget())->getFile(true).toStdString();
     if(!str.empty())
-      Phi_ <<= readMat(str);
-    nM = Phi_.cols();
+      U <<= readMat(str);
+    nM = U.cols();
     str = static_cast<FileWidget*>(static_cast<ModeShapesPage*>(page(PageModeShapes))->S->getWidget())->getFile(true).toStdString();
     if(!str.empty())
-      Sr <<= readMat(str);
-    nM = Phi_.cols();
+      S <<= readMat(str);
+    nM = U.cols();
   }
 
 }

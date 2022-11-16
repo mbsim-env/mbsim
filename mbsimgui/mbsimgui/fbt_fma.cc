@@ -27,39 +27,35 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::fma() {
-    KrKP.resize(nN,Vec3(NONINIT));
-    for(int i=0; i<nN; i++)
-      KrKP[i] = r.row(i).T();
-
     Phi.resize(nN,Mat3xV(nM,NONINIT));
     for(size_t i=0; i<nN; i++)
-      Phi[i] = createPhis(ng,Phim[i])*Phi_;
+      Phi[i] = createPhis(ng,Phim[i])*U;
 
     if(Psim.size()) {
       Psi.resize(nN,Mat3xV(nM,NONINIT));
       for(size_t i=0; i<nN; i++)
-	Psi[i] = createPhis(ng,Psim[i])*Phi_;
+	Psi[i] = createPhis(ng,Psim[i])*U;
     }
 
     if(sigm.size()) {
       sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM,NONINIT));
       for(size_t i=0; i<nN; i++)
-	sigmahel[i] = createsigs(ng,sigm[i])*Phi_;
+	sigmahel[i] = createsigs(ng,sigm[i])*U;
     }
 
     PPdm.resize(3,vector<SqrMatV>(3));
     auto PPKs = createPPKs(MKm);
     auto PPs = createPPs(PPm);
-    Pdm <<= Pdm*Phi_;
+    Pdm <<= Pdm*U;
     for(int i=0; i<3; i++) {
-      rPdm[i] <<= rPdm[i]*Phi_;
+      rPdm[i] <<= rPdm[i]*U;
       for(int j=0; j<3; j++)
-	PPdm[j][j] <<= Phi_.T()*(PPKs[j]*Phi_);
-      PPdm[0][1] <<= Phi_.T()*(PPs[0]*Phi_);
-      PPdm[0][2] <<= Phi_.T()*(PPs[1]*Phi_);
-      PPdm[1][2] <<= Phi_.T()*(PPs[2]*Phi_);
+	PPdm[j][j] <<= U.T()*(PPKs[j]*U);
+      PPdm[0][1] <<= U.T()*(PPs[0]*U);
+      PPdm[0][2] <<= U.T()*(PPs[1]*U);
+      PPdm[1][2] <<= U.T()*(PPs[2]*U);
     }
-    Ke0 <<= JTMJ(PPKs[3],Phi_);
+    Ke0 <<= JTMJ(PPKs[3],U);
   }
 
 }

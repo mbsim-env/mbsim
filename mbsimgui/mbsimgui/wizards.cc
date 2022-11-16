@@ -494,7 +494,8 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::create() {
-    nodeMap.clear();
+    nodeTable.clear();
+    nodeNumbers.clear();
     rPdm.clear();
     PPdm.clear();
     KrKP.clear();

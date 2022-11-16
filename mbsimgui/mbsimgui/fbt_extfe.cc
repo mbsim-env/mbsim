@@ -27,15 +27,45 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::extfe() {
+    MatV R;
     string str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->getWidget())->getFile(true).toStdString();
     if(!str.empty())
-      r <<= readMat(str);
+      R <<= readMat(str);
     str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->mass->getWidget())->getFile(true).toStdString();
     if(!str.empty())
       M <<= readMat(str);
     str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->stiff->getWidget())->getFile(true).toStdString();
     if(!str.empty())
       K <<= readMat(str);
+
+    int max=0;
+    if(R.cols()==3)
+      max = R.rows();
+    else if(R.cols()==4) {
+      for(int i=0; i<R.rows(); i++) {
+	if(R(i,0)>max)
+	  max = R(i,0);
+      }
+    }
+
+    nodeTable.resize(max+1);
+    KrKP.resize(R.rows(),Vec3(NONINIT));
+    if(R.cols()==3) {
+      for(int i=0; i<R.rows(); i++) {
+	nodeTable[i+1] = i;
+	KrKP[nodeTable[i+1]] = R.row(i).T();
+      }
+    }
+    else {
+      nodeNumbers.resize(R.rows());
+      for(int i=0; i<R.rows(); i++) {
+	nodeTable[R(i,0)] = i;
+	KrKP[nodeTable[R(i,0)]] = R.row(i)(RangeV(1,3)).T();
+	nodeNumbers[nodeTable[R(i,0)]] = R(i,0);
+      }
+    }
+
+    nN = R.rows();
 
     ng = K.cols()==3?K(K.rows()-1,1):3*(K(K.rows()-1,2)-1)+K(K.rows()-1,3);
     MKm.resize(ng);
@@ -60,12 +90,6 @@ namespace MBSimGUI {
 	d[3] = K(i,4);
       }
     }
-
-    if(nodeMap.empty()) {
-      for(int i=0; i<r.rows(); i++)
-	nodeMap[i+1] = i;
-    }
-    nN = nodeMap.size();
 
     net = 3;
     ner = 0;

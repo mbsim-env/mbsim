@@ -28,32 +28,16 @@ namespace MBSimGUI {
   void FlexibleBodyTool::lma() {
     Phi.resize(nN,Mat3xV(nM,NONINIT));
     for(size_t i=0; i<nN; i++)
-      Phi[i] = Phi_(RangeV(nen*i,nen*i+net-1),RangeV(0,nM-1));
+      Phi[i] = U(RangeV(nen*i,nen*i+net-1),RangeV(0,nM-1));
 
-    if(Sr.rows()) {
+    if(S.rows()) {
       sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM,NONINIT));
       for(size_t i=0; i<nN; i++)
-	sigmahel[i] = Sr(RangeV(6*i,6*i+6-1),RangeV(0,nM-1));
+	sigmahel[i] = S(RangeV(6*i,6*i+6-1),RangeV(0,nM-1));
     }
 
     auto MKs = createMKs(MKm);
-    Ke0 <<= JTMJ(MKs.second,Phi_);
-
-    std::map<int,Vec3> nodalPos;
-    if(r.cols()==4) {
-      for(int i=0; i<r.rows(); i++)
-	nodalPos[r(i,0)] = r.row(i)(RangeV(1,3)).T();
-    }
-    else if(r.cols()==3) {
-      for(int i=0; i<r.rows(); i++)
-	nodalPos[i+1] = r.row(i).T();
-    }
-    else
-      runtime_error("(FlexibleBodyTool::init): number of columns in nodes does not match, must be 3 or 4");
-
-    KrKP.resize(nN,Vec3(NONINIT));
-    for(const auto & i : nodeMap)
-      KrKP[i.second] = nodalPos[i.first];
+    Ke0 <<= JTMJ(MKs.second,U);
 
     bool lumpedMass = true;
     // compute mass and lumped mass matrix
@@ -102,7 +86,7 @@ namespace MBSimGUI {
       // compute reduced mass matrix
       if(not MKs.first.size())
 	runtime_error("full mass approach not available");
-      PPdm[0][0] = JTMJ(MKs.first,Phi_);
+      PPdm[0][0] = JTMJ(MKs.first,U);
     }
   }
 

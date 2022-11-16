@@ -54,12 +54,15 @@ namespace MBSimGUI {
     }
     stringstream sN(str);
     sN >> str >> nN;
-    r.resize(nN,3);
+    nodeTable.resize(nN+1);
+    nodeNumbers.resize(nN);
+    KrKP.resize(nN);
     for(size_t i=0; i<nN; i++) {
       isRes >> d >> d;
-      nodeMap[d] = i;
+      nodeTable[d] = i;
+      nodeNumbers[i] = d;
       for(size_t k=0; k<3; k++)
-	isRes >> r.e(i,k);
+	isRes >> KrKP[i](k);
     }
     // elements
     while(isRes) {
@@ -142,47 +145,47 @@ namespace MBSimGUI {
       d[3] = K(i,2);
     }
 
-    Phi_.resize(3*nN,nM,NONINIT);
-    Sr.resize(6*nN,nM,NONINIT);
-    for(int j=0; j<Phi_.cols(); j++) {
-      for(int i=0; i<Phi_.rows(); i++)
-	Phi_.e(i,j) = disp[j].e(i);
-      for(int i=0; i<Sr.rows(); i++)
-	Sr.e(i,j) = stress[j].e(i);
+    U.resize(3*nN,nM,NONINIT);
+    S.resize(6*nN,nM,NONINIT);
+    for(int j=0; j<U.cols(); j++) {
+      for(int i=0; i<U.rows(); i++)
+	U.e(i,j) = disp[j].e(i);
+      for(int i=0; i<S.rows(); i++)
+	S.e(i,j) = stress[j].e(i);
     }
 
     indices.resize(5*6*eles.rows());
     int j = 0;
     for(int i=0; i<eles.rows(); i++) {
-      indices[j++] = nodeMap[eles(i,3)];
-      indices[j++] = nodeMap[eles(i,2)];
-      indices[j++] = nodeMap[eles(i,1)];
-      indices[j++] = nodeMap[eles(i,0)];
+      indices[j++] = nodeTable[eles(i,3)];
+      indices[j++] = nodeTable[eles(i,2)];
+      indices[j++] = nodeTable[eles(i,1)];
+      indices[j++] = nodeTable[eles(i,0)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,4)];
-      indices[j++] = nodeMap[eles(i,5)];
-      indices[j++] = nodeMap[eles(i,6)];
-      indices[j++] = nodeMap[eles(i,7)];
+      indices[j++] = nodeTable[eles(i,4)];
+      indices[j++] = nodeTable[eles(i,5)];
+      indices[j++] = nodeTable[eles(i,6)];
+      indices[j++] = nodeTable[eles(i,7)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,1)];
-      indices[j++] = nodeMap[eles(i,2)];
-      indices[j++] = nodeMap[eles(i,6)];
-      indices[j++] = nodeMap[eles(i,5)];
+      indices[j++] = nodeTable[eles(i,1)];
+      indices[j++] = nodeTable[eles(i,2)];
+      indices[j++] = nodeTable[eles(i,6)];
+      indices[j++] = nodeTable[eles(i,5)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,2)];
-      indices[j++] = nodeMap[eles(i,3)];
-      indices[j++] = nodeMap[eles(i,7)];
-      indices[j++] = nodeMap[eles(i,6)];
+      indices[j++] = nodeTable[eles(i,2)];
+      indices[j++] = nodeTable[eles(i,3)];
+      indices[j++] = nodeTable[eles(i,7)];
+      indices[j++] = nodeTable[eles(i,6)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,4)];
-      indices[j++] = nodeMap[eles(i,7)];
-      indices[j++] = nodeMap[eles(i,3)];
-      indices[j++] = nodeMap[eles(i,0)];
+      indices[j++] = nodeTable[eles(i,4)];
+      indices[j++] = nodeTable[eles(i,7)];
+      indices[j++] = nodeTable[eles(i,3)];
+      indices[j++] = nodeTable[eles(i,0)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,0)];
-      indices[j++] = nodeMap[eles(i,1)];
-      indices[j++] = nodeMap[eles(i,5)];
-      indices[j++] = nodeMap[eles(i,4)];
+      indices[j++] = nodeTable[eles(i,0)];
+      indices[j++] = nodeTable[eles(i,1)];
+      indices[j++] = nodeTable[eles(i,5)];
+      indices[j++] = nodeTable[eles(i,4)];
       indices[j++] = -1;
     }
   }

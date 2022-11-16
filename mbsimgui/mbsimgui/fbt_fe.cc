@@ -47,78 +47,314 @@ namespace MBSimGUI {
     return 1./4*(1-z*z)*(1+xi*x)*(1+yi*y);
   }
 
-  double dN1dxq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN1dx(double x, double y, double z, double xi, double yi, double zi) {
     return 1./8*xi*(1+yi*y)*(1+zi*z)*(2*xi*x+yi*y+zi*z-1);
   }
 
-  double dN1dyq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN1dy(double x, double y, double z, double xi, double yi, double zi) {
     return 1./8*yi*(1+zi*z)*(1+xi*x)*(2*yi*y+xi*x+zi*z-1);
   }
 
-  double dN1dzq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN1dz(double x, double y, double z, double xi, double yi, double zi) {
     return 1./8*zi*(1+xi*x)*(1+yi*y)*(2*zi*z+xi*x+yi*y-1);
   }
 
-  double dN2dxq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN2dx(double x, double y, double z, double xi, double yi, double zi) {
     return -1./2*x*(1+yi*y)*(1+zi*z);
   }
 
-  double dN2dyq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN2dy(double x, double y, double z, double xi, double yi, double zi) {
     return 1./4*yi*(1-x*x)*(1+zi*z);
   }
 
-  double dN2dzq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN2dz(double x, double y, double z, double xi, double yi, double zi) {
     return 1./4*zi*(1-x*x)*(1+yi*y);
   }
 
-  double dN3dxq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN3dx(double x, double y, double z, double xi, double yi, double zi) {
     return 1./4*xi*(1-y*y)*(1+zi*z);
   }
 
-  double dN3dyq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN3dy(double x, double y, double z, double xi, double yi, double zi) {
     return -1./2*y*(1+zi*z)*(1+xi*x);
   }
 
-  double dN3dzq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN3dz(double x, double y, double z, double xi, double yi, double zi) {
     return 1./4*zi*(1-y*y)*(1+xi*x);
   }
 
-  double dN4dxq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN4dx(double x, double y, double z, double xi, double yi, double zi) {
     return 1./4*xi*(1-z*z)*(1+yi*y);
   }
 
-  double dN4dyq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN4dy(double x, double y, double z, double xi, double yi, double zi) {
     return 1./4*yi*(1-z*z)*(1+xi*x);
   }
 
-  double dN4dzq(double x, double y, double z, double xi, double yi, double zi) {
+  double dN4dz(double x, double y, double z, double xi, double yi, double zi) {
     return -1./2*z*(1+xi*x)*(1+yi*y);
+  }
+
+  double NL1(double x, double y, double z) {
+    return 1-x-y-z;
+  }
+
+  double NL2(double x, double y, double z) {
+    return x;
+  }
+
+  double NL3(double x, double y, double z) {
+    return y;
+  }
+
+  double NL4(double x, double y, double z) {
+    return z;
+  }
+
+  double NQ1(double x, double y, double z, double xi, double yi, double zi) {
+    double NL = NL1(x,y,z);
+    return NL*(2*NL-1);
+  }
+
+  double NQ2(double x, double y, double z, double xi, double yi, double zi) {
+    double NL = NL2(x,y,z);
+    return NL*(2*NL-1);
+  }
+
+  double NQ3(double x, double y, double z, double xi, double yi, double zi) {
+    double NL = NL3(x,y,z);
+    return NL*(2*NL-1);
+  }
+
+  double NQ4(double x, double y, double z, double xi, double yi, double zi) {
+    double NL = NL4(x,y,z);
+    return NL*(2*NL-1);
+  }
+
+  double NQ5(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL1(x,y,z)*NL2(x,y,z);
+  }
+
+  double NQ6(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL2(x,y,z)*NL3(x,y,z);
+  }
+
+  double NQ7(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL1(x,y,z)*NL3(x,y,z);
+  }
+
+  double NQ8(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL1(x,y,z)*NL4(x,y,z);
+  }
+
+  double NQ9(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL2(x,y,z)*NL4(x,y,z);
+  }
+
+  double NQ10(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL3(x,y,z)*NL4(x,y,z);
+  }
+
+  double dNQ1dx(double x, double y, double z, double xi, double yi, double zi) {
+    return 1-4*NL1(x,y,z);
+  }
+
+  double dNQ1dy(double x, double y, double z, double xi, double yi, double zi) {
+    return 1-4*NL1(x,y,z);
+  }
+
+  double dNQ1dz(double x, double y, double z, double xi, double yi, double zi) {
+    return 1-4*NL1(x,y,z);
+  }
+
+  double dNQ2dx(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL2(x,y,z)-1;
+  }
+
+  double dNQ2dy(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ2dz(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ3dx(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ3dy(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL3(x,y,z)-1;
+  }
+
+  double dNQ3dz(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ4dx(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ4dy(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ4dz(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL4(x,y,z)-1;
+  }
+
+  double dNQ5dx(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*(NL1(x,y,z)-NL2(x,y,z));
+  }
+
+  double dNQ5dy(double x, double y, double z, double xi, double yi, double zi) {
+    return -4*NL2(x,y,z);
+  }
+
+  double dNQ5dz(double x, double y, double z, double xi, double yi, double zi) {
+    return -4*NL2(x,y,z);
+  }
+
+  double dNQ6dx(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL3(x,y,z);
+  }
+
+  double dNQ6dy(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL2(x,y,z);
+  }
+
+  double dNQ6dz(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ7dx(double x, double y, double z, double xi, double yi, double zi) {
+    return -4*NL3(x,y,z);
+  }
+
+  double dNQ7dy(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*(NL1(x,y,z)-NL3(x,y,z));
+  }
+
+  double dNQ7dz(double x, double y, double z, double xi, double yi, double zi) {
+    return -4*NL3(x,y,z);
+  }
+
+  double dNQ8dx(double x, double y, double z, double xi, double yi, double zi) {
+    return -4*NL4(x,y,z);
+  }
+
+  double dNQ8dy(double x, double y, double z, double xi, double yi, double zi) {
+    return -4*NL4(x,y,z);
+  }
+
+  double dNQ8dz(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*(NL1(x,y,z)-NL4(x,y,z));
+  }
+
+  double dNQ9dx(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL4(x,y,z);
+  }
+
+  double dNQ9dy(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ9dz(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL2(x,y,z);
+  }
+
+  double dNQ10dx(double x, double y, double z, double xi, double yi, double zi) {
+    return 0;
+  }
+
+  double dNQ10dy(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL4(x,y,z);
+  }
+
+  double dNQ10dz(double x, double y, double z, double xi, double yi, double zi) {
+    return 4*NL3(x,y,z);
+  }
+
+  void FlexibleBodyTool::C3D10() {
+    Ni[0] = &NQ1;
+    dNidq[0][0] = &dNQ1dx;
+    dNidq[0][1] = &dNQ1dy;
+    dNidq[0][2] = &dNQ1dz;
+    Ni[1] = &NQ2;
+    dNidq[1][0] = &dNQ2dx;
+    dNidq[1][1] = &dNQ2dy;
+    dNidq[1][2] = &dNQ2dz;
+    Ni[2] = &NQ3;
+    dNidq[2][0] = &dNQ3dx;
+    dNidq[2][1] = &dNQ3dy;
+    dNidq[2][2] = &dNQ3dz;
+    Ni[3] = &NQ4;
+    dNidq[3][0] = &dNQ4dx;
+    dNidq[3][1] = &dNQ4dy;
+    dNidq[3][2] = &dNQ4dz;
+    Ni[4] = &NQ5;
+    dNidq[4][0] = &dNQ5dx;
+    dNidq[4][1] = &dNQ5dy;
+    dNidq[4][2] = &dNQ5dz;
+    Ni[5] = &NQ6;
+    dNidq[5][0] = &dNQ6dx;
+    dNidq[5][1] = &dNQ6dy;
+    dNidq[5][2] = &dNQ6dz;
+    Ni[6] = &NQ7;
+    dNidq[6][0] = &dNQ7dx;
+    dNidq[6][1] = &dNQ7dy;
+    dNidq[6][2] = &dNQ7dz;
+    Ni[7] = &NQ8;
+    dNidq[7][0] = &dNQ8dx;
+    dNidq[7][1] = &dNQ8dy;
+    dNidq[7][2] = &dNQ8dz;
+    Ni[8] = &NQ9;
+    dNidq[8][0] = &dNQ9dx;
+    dNidq[8][1] = &dNQ9dy;
+    dNidq[8][2] = &dNQ9dz;
+    Ni[9] = &NQ10;
+    dNidq[9][0] = &dNQ10dx;
+    dNidq[9][1] = &dNQ10dy;
+    dNidq[9][2] = &dNQ10dz;
+
+    rN.resize(10,NONINIT);
+
+    xi.resize(4,NONINIT);
+    wi.resize(4,NONINIT);
+    double d = 0.138196601125011;
+    double e = 0.585410196624968;
+    double f = 0.041666666666667;
+
+    xi(0,0) = d; xi(0,1) = d; xi(0,2) = d; wi(0,0) = f;
+    xi(1,0) = e; xi(1,1) = d; xi(1,2) = d; wi(1,0) = f;
+    xi(2,0) = d; xi(2,1) = e; xi(2,2) = d; wi(2,0) = f;
+    xi(3,0) = d; xi(3,1) = d; xi(3,2) = e; wi(3,0) = f;
   }
 
   void FlexibleBodyTool::C3D20() {
     for(int i=0; i<8; i++) {
       Ni[i] = &N1;
-      dNidq[i][0] = &dN1dxq;
-      dNidq[i][1] = &dN1dyq;
-      dNidq[i][2] = &dN1dzq;
+      dNidq[i][0] = &dN1dx;
+      dNidq[i][1] = &dN1dy;
+      dNidq[i][2] = &dN1dz;
     }
     for(int i=8; i<15; i+=2) {
       Ni[i] = &N2;
-      dNidq[i][0] = &dN2dxq;
-      dNidq[i][1] = &dN2dyq;
-      dNidq[i][2] = &dN2dzq;
+      dNidq[i][0] = &dN2dx;
+      dNidq[i][1] = &dN2dy;
+      dNidq[i][2] = &dN2dz;
     }
     for(int i=9; i<16; i+=2) {
       Ni[i] = &N3;
-      dNidq[i][0] = &dN3dxq;
-      dNidq[i][1] = &dN3dyq;
-      dNidq[i][2] = &dN3dzq;
+      dNidq[i][0] = &dN3dx;
+      dNidq[i][1] = &dN3dy;
+      dNidq[i][2] = &dN3dz;
     }
     for(int i=16; i<20; i++) {
       Ni[i] = &N4;
-      dNidq[i][0] = &dN4dxq;
-      dNidq[i][1] = &dN4dyq;
-      dNidq[i][2] = &dN4dzq;
+      dNidq[i][0] = &dN4dx;
+      dNidq[i][1] = &dN4dy;
+      dNidq[i][2] = &dN4dz;
     }
 
     rN.resize(20,NONINIT);
@@ -176,40 +412,76 @@ namespace MBSimGUI {
     xi(24,0) = d; xi(24,1) = d;  xi(24,2) = -d; wi(24,0) = e*e*e;
     xi(25,0) = d; xi(25,1) = d;  xi(25,2) = 0;  wi(25,0) = e*e*f;
     xi(26,0) = d; xi(26,1) = d;  xi(26,2) = d;  wi(26,0) = e*e*e;
-
-    npe = 20;
   }
 
   void FlexibleBodyTool::fe() {
+    MatV R;
     string str = static_cast<FileWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->getWidget())->getFile(true).toStdString();
     if(!str.empty())
-      r <<= readMat(str);
+      R <<= readMat(str);
+
+    auto type = static_cast<FiniteElementsDataWidget*>(static_cast<ListWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget())->getWidget(0))->getType().toStdString();
+    type = type.substr(1,type.size()-2);
+
+    int npe = stod(type.substr(type.find('D')+1,type.size()-1));
 
     vector<MatVI> ele;
     str = static_cast<FiniteElementsDataWidget*>(static_cast<ListWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget())->getWidget(0))->getElementsFile().toStdString();
-    if(!str.empty())
-      ele.emplace_back(readMat(str));
+    if(!str.empty()) {
+      auto ele_ = readMat(str);
+      if(ele_.cols()==npe)
+	ele.emplace_back(ele_);
+      else if(ele_.cols()==npe+1)
+	ele.emplace_back(ele_(RangeV(0,ele_.rows()-1),RangeV(1,ele_.cols()-1)));
+    }
 
-    E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
 
-    nu = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto nu = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
 
-    rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
 
+    int max=0;
+    if(R.cols()==3)
+      max = R.rows();
+    else if(R.cols()==4) {
+      for(int i=0; i<R.rows(); i++) {
+	if(R(i,0)>max)
+	  max = R(i,0);
+      }
+    }
+
+    vector<int> nodeCount(max+1);
     for(int i=0; i<ele[0].rows(); i++) {
       for(int j=0; j<ele[0].cols(); j++)
 	nodeCount[ele[0](i,j)]++;
     }
 
-    ng = 0;
+    nodeTable.resize(nodeCount.size());
     nN = 0;
-    for(const auto & i : nodeCount) {
-      if(i.second>0) {
-	ng+=3;
-	nodeMap[i.first] = nN++;
+    for(size_t i=0; i<nodeCount.size(); i++) {
+      if(nodeCount[i])
+	nodeTable[i] = nN++;
+    }
+
+    KrKP.resize(nN,Vec3(NONINIT));
+    if(R.cols()==3) {
+      for(int i=0; i<R.rows(); i++) {
+	if(nodeCount[i+1])
+	  KrKP[nodeTable[i+1]] = R.row(i).T();
+      }
+    }
+    else {
+      nodeNumbers.resize(nN);
+      for(int i=0; i<R.rows(); i++) {
+	if(nodeCount[R(i,0)]) {
+	  KrKP[nodeTable[R(i,0)]] = R.row(i)(RangeV(1,3)).T();
+	  nodeNumbers[nodeTable[R(i,0)]] = R(i,0);
+	}
       }
     }
 
+    ng = nN*3;
     nen = 3;
 
     rPdm.resize(3,Mat3xV(ng));
@@ -226,7 +498,10 @@ namespace MBSimGUI {
     MKm.resize(ng);
     PPm.resize(ng);
 
-    C3D20();
+    if(type=="C3D10")
+      C3D10();
+    else if(type=="C3D20")
+      C3D20();
 
     MatVI &elei = ele[0];
 
@@ -248,12 +523,12 @@ namespace MBSimGUI {
 	SqrMat3 J(3);
 	Vec3 r(3);
 	for(int ll=0; ll<npe; ll++) {
-	  RowVec3 r0 = this->r.row(elei(ee,ll)-1);
+	  Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
 	  N_[ll] = (*Ni[ll])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
 	  for(int mm=0; mm<3; mm++)
 	    dN_[ll](mm) = (*dNidq[ll][mm])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
-	  J += dN_[ll]*r0;
-	  r += N_[ll]*r0.T();
+	  J += dN_[ll]*r0.T();
+	  r += N_[ll]*r0;
 	}
 	Vector<Ref,int> ipiv(J.size(),NONINIT);
 	double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
@@ -273,8 +548,7 @@ namespace MBSimGUI {
 	rdm += dm*r;
 	rrdm += dm*JTJ(r.T());
 	for(int i=0; i<npe; i++) {
-	  //	      int u = nodeMap[elements(ee,i)];
-	  int u = elei(ee,i)-1;
+	  int u = nodeTable[elei(ee,i)];
 	  double Ni_ = N_[i];
 	  Vec3 dNi = LUJ*dN_[i]/detJ;
 	  for(int i1=0; i1<3; i1++) {
@@ -283,8 +557,7 @@ namespace MBSimGUI {
 	      rPdm[i1](j1,u*3+j1) += dm*r(i1)*Ni_;
 	  }
 	  for(int j=i; j<npe; j++) {
-	    //		int v = nodeMap[elements(ee,j)];
-	    int v = elei(ee,j)-1;
+	    int v = nodeTable[elei(ee,j)];
 	    double Nj_ = N_[j];
 	    Vec3 dNj = LUJ*dN_[j]/detJ;
 	    double dPPdm = dm*Ni_*Nj_;
@@ -343,10 +616,10 @@ namespace MBSimGUI {
 	double z = rN(k,2);
 	SqrMat3 J(3);
 	for(int ll=0; ll<npe; ll++) {
-	  RowVec3 r0 = this->r.row(elei(ee,ll)-1);
+	  Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
 	  for(int mm=0; mm<3; mm++)
 	    dN_[ll](mm) = (*dNidq[ll][mm])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
-	  J += dN_[ll]*r0;
+	  J += dN_[ll]*r0.T();
 	}
 	Vector<Ref,int> ipiv(J.size(),NONINIT);
 	double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
@@ -361,9 +634,8 @@ namespace MBSimGUI {
 	LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
 	for(int i=0; i<npe; i++) {
 	  Vec3 dNi = LUJ*dN_[i]/detJ;
-
-	  int ku = elei(ee,k)-1;
-	  int u = elei(ee,i)-1;
+	  int ku = nodeTable[elei(ee,k)];
+	  int u = nodeTable[elei(ee,i)];
 	  double al = E/(1+nu)/nodeCount[elei(ee,k)];
 	  dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
 	  dsig[1] = al*nu/(1-2*nu)*dNi(1);
@@ -392,35 +664,35 @@ namespace MBSimGUI {
 	}
       }
 
-      indices[oj++] = nodeMap[elei(ee,3)];
-      indices[oj++] = nodeMap[elei(ee,2)];
-      indices[oj++] = nodeMap[elei(ee,1)];
-      indices[oj++] = nodeMap[elei(ee,0)];
+      indices[oj++] = nodeTable[elei(ee,3)];
+      indices[oj++] = nodeTable[elei(ee,2)];
+      indices[oj++] = nodeTable[elei(ee,1)];
+      indices[oj++] = nodeTable[elei(ee,0)];
       indices[oj++] = -1;
-      indices[oj++] = nodeMap[elei(ee,4)];
-      indices[oj++] = nodeMap[elei(ee,5)];
-      indices[oj++] = nodeMap[elei(ee,6)];
-      indices[oj++] = nodeMap[elei(ee,7)];
+      indices[oj++] = nodeTable[elei(ee,4)];
+      indices[oj++] = nodeTable[elei(ee,5)];
+      indices[oj++] = nodeTable[elei(ee,6)];
+      indices[oj++] = nodeTable[elei(ee,7)];
       indices[oj++] = -1;
-      indices[oj++] = nodeMap[elei(ee,1)];
-      indices[oj++] = nodeMap[elei(ee,2)];
-      indices[oj++] = nodeMap[elei(ee,6)];
-      indices[oj++] = nodeMap[elei(ee,5)];
+      indices[oj++] = nodeTable[elei(ee,1)];
+      indices[oj++] = nodeTable[elei(ee,2)];
+      indices[oj++] = nodeTable[elei(ee,6)];
+      indices[oj++] = nodeTable[elei(ee,5)];
       indices[oj++] = -1;
-      indices[oj++] = nodeMap[elei(ee,2)];
-      indices[oj++] = nodeMap[elei(ee,3)];
-      indices[oj++] = nodeMap[elei(ee,7)];
-      indices[oj++] = nodeMap[elei(ee,6)];
+      indices[oj++] = nodeTable[elei(ee,2)];
+      indices[oj++] = nodeTable[elei(ee,3)];
+      indices[oj++] = nodeTable[elei(ee,7)];
+      indices[oj++] = nodeTable[elei(ee,6)];
       indices[oj++] = -1;
-      indices[oj++] = nodeMap[elei(ee,4)];
-      indices[oj++] = nodeMap[elei(ee,7)];
-      indices[oj++] = nodeMap[elei(ee,3)];
-      indices[oj++] = nodeMap[elei(ee,0)];
+      indices[oj++] = nodeTable[elei(ee,4)];
+      indices[oj++] = nodeTable[elei(ee,7)];
+      indices[oj++] = nodeTable[elei(ee,3)];
+      indices[oj++] = nodeTable[elei(ee,0)];
       indices[oj++] = -1;
-      indices[oj++] = nodeMap[elei(ee,0)];
-      indices[oj++] = nodeMap[elei(ee,1)];
-      indices[oj++] = nodeMap[elei(ee,5)];
-      indices[oj++] = nodeMap[elei(ee,4)];
+      indices[oj++] = nodeTable[elei(ee,0)];
+      indices[oj++] = nodeTable[elei(ee,1)];
+      indices[oj++] = nodeTable[elei(ee,5)];
+      indices[oj++] = nodeTable[elei(ee,4)];
       indices[oj++] = -1;
     }
   }
