@@ -276,6 +276,7 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::C3D10() {
+    npe = 10;
     Ni[0] = &NQ1;
     dNidq[0][0] = &dNQ1dx;
     dNidq[0][1] = &dNQ1dy;
@@ -332,6 +333,7 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::C3D20() {
+    npe = 20;
     for(int i=0; i<8; i++) {
       Ni[i] = &N1;
       dNidq[i][0] = &dN1dx;
@@ -414,25 +416,88 @@ namespace MBSimGUI {
     xi(26,0) = d; xi(26,1) = d;  xi(26,2) = d;  wi(26,0) = e*e*e;
   }
 
+  void FlexibleBodyTool::C3D10ombv(const MatV &elei, int &oj) {
+    for(int ee=0; ee<elei.rows(); ee++) {
+      indices[oj++] = nodeTable[elei(ee,1)];
+      indices[oj++] = nodeTable[elei(ee,2)];
+      indices[oj++] = nodeTable[elei(ee,3)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeTable[elei(ee,0)];
+      indices[oj++] = nodeTable[elei(ee,1)];
+      indices[oj++] = nodeTable[elei(ee,3)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeTable[elei(ee,2)];
+      indices[oj++] = nodeTable[elei(ee,0)];
+      indices[oj++] = nodeTable[elei(ee,3)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeTable[elei(ee,2)];
+      indices[oj++] = nodeTable[elei(ee,0)];
+      indices[oj++] = nodeTable[elei(ee,3)];
+      indices[oj++] = -1;
+      indices[oj++] = nodeTable[elei(ee,2)];
+      indices[oj++] = nodeTable[elei(ee,1)];
+      indices[oj++] = nodeTable[elei(ee,0)];
+      indices[oj++] = -1;
+    }
+  }
+
+  void FlexibleBodyTool::C3D20ombv(const MatV &elei, int &oj) {
+      for(int ee=0; ee<elei.rows(); ee++) {
+	indices[oj++] = nodeTable[elei(ee,3)];
+	indices[oj++] = nodeTable[elei(ee,2)];
+	indices[oj++] = nodeTable[elei(ee,1)];
+	indices[oj++] = nodeTable[elei(ee,0)];
+	indices[oj++] = -1;
+	indices[oj++] = nodeTable[elei(ee,4)];
+	indices[oj++] = nodeTable[elei(ee,5)];
+	indices[oj++] = nodeTable[elei(ee,6)];
+	indices[oj++] = nodeTable[elei(ee,7)];
+	indices[oj++] = -1;
+	indices[oj++] = nodeTable[elei(ee,1)];
+	indices[oj++] = nodeTable[elei(ee,2)];
+	indices[oj++] = nodeTable[elei(ee,6)];
+	indices[oj++] = nodeTable[elei(ee,5)];
+	indices[oj++] = -1;
+	indices[oj++] = nodeTable[elei(ee,2)];
+	indices[oj++] = nodeTable[elei(ee,3)];
+	indices[oj++] = nodeTable[elei(ee,7)];
+	indices[oj++] = nodeTable[elei(ee,6)];
+	indices[oj++] = -1;
+	indices[oj++] = nodeTable[elei(ee,4)];
+	indices[oj++] = nodeTable[elei(ee,7)];
+	indices[oj++] = nodeTable[elei(ee,3)];
+	indices[oj++] = nodeTable[elei(ee,0)];
+	indices[oj++] = -1;
+	indices[oj++] = nodeTable[elei(ee,0)];
+	indices[oj++] = nodeTable[elei(ee,1)];
+	indices[oj++] = nodeTable[elei(ee,5)];
+	indices[oj++] = nodeTable[elei(ee,4)];
+	indices[oj++] = -1;
+    }
+  }
+
   void FlexibleBodyTool::fe() {
     MatV R;
     string str = static_cast<FileWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->getWidget())->getFile(true).toStdString();
     if(!str.empty())
       R <<= readMat(str);
 
-    auto type = static_cast<FiniteElementsDataWidget*>(static_cast<ListWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget())->getWidget(0))->getType().toStdString();
-    type = type.substr(1,type.size()-2);
-
-    int npe = stod(type.substr(type.find('D')+1,type.size()-1));
-
-    vector<MatVI> ele;
-    str = static_cast<FiniteElementsDataWidget*>(static_cast<ListWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget())->getWidget(0))->getElementsFile().toStdString();
-    if(!str.empty()) {
-      auto ele_ = readMat(str);
-      if(ele_.cols()==npe)
-	ele.emplace_back(ele_);
-      else if(ele_.cols()==npe+1)
-	ele.emplace_back(ele_(RangeV(0,ele_.rows()-1),RangeV(1,ele_.cols()-1)));
+    std::vector<fmatvec::MatVI> ele;
+    auto *list = static_cast<ListWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget());
+    vector<string> type;
+    for(int i=0; i<list->getSize(); i++) {
+      auto type_ = static_cast<FiniteElementsDataWidget*>(list->getWidget(i))->getType().toStdString();
+      type_ = type_.substr(1,type_.size()-2);
+      int npe = stod(type_.substr(type_.find('D')+1,type_.size()-1));
+      type.emplace_back(type_);
+      str = static_cast<FiniteElementsDataWidget*>(list->getWidget(i))->getElementsFile().toStdString();
+      if(!str.empty()) {
+	auto ele_ = readMat(str);
+	if(ele_.cols()==npe)
+	  ele.emplace_back(ele_);
+	else if(ele_.cols()==npe+1)
+	  ele.emplace_back(ele_(RangeV(0,ele_.rows()-1),RangeV(1,ele_.cols()-1)));
+      }
     }
 
     auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
@@ -441,7 +506,7 @@ namespace MBSimGUI {
 
     auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
 
-    int max=0;
+    int max = 0;
     if(R.cols()==3)
       max = R.rows();
     else if(R.cols()==4) {
@@ -451,10 +516,14 @@ namespace MBSimGUI {
       }
     }
 
+    int nE = 0;
     vector<int> nodeCount(max+1);
-    for(int i=0; i<ele[0].rows(); i++) {
-      for(int j=0; j<ele[0].cols(); j++)
-	nodeCount[ele[0](i,j)]++;
+    for(size_t k=0; k<ele.size(); k++) {
+      nE += ele[k].rows();
+      for(int i=0; i<ele[k].rows(); i++) {
+	for(int j=0; j<ele[k].cols(); j++)
+	  nodeCount[ele[k](i,j)]++;
+      }
     }
 
     nodeTable.resize(nodeCount.size());
@@ -498,202 +567,176 @@ namespace MBSimGUI {
     MKm.resize(ng);
     PPm.resize(ng);
 
-    if(type=="C3D10")
-      C3D10();
-    else if(type=="C3D20")
-      C3D20();
-
-    MatVI &elei = ele[0];
-
-    indices.resize(5*6*elei.rows());
-
-    m=0;
-    double dsig[9];
-    int oj = 0;
+    m = 0;
+    indices.resize(5*6*nE);
     SqrMat3 LUJ(NONINIT);
     double dK[3][3];
-    double N_[npe];
-    Vec3 dN_[npe];
-    for(int ee=0; ee<elei.rows(); ee++) {
-      for(int ii=0; ii<xi.rows(); ii++) {
-	double x = xi(ii,0);
-	double y = xi(ii,1);
-	double z = xi(ii,2);
-	double wijk = wi(ii);
-	SqrMat3 J(3);
-	Vec3 r(3);
-	for(int ll=0; ll<npe; ll++) {
-	  Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
-	  N_[ll] = (*Ni[ll])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
-	  for(int mm=0; mm<3; mm++)
-	    dN_[ll](mm) = (*dNidq[ll][mm])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
-	  J += dN_[ll]*r0.T();
-	  r += N_[ll]*r0;
-	}
-	Vector<Ref,int> ipiv(J.size(),NONINIT);
-	double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
-	LUJ(0,0) = J(2,2)*J(1,1)-J(2,1)*J(1,2);
-	LUJ(0,1) = J(2,1)*J(0,2)-J(2,2)*J(0,1);
-	LUJ(0,2) = J(1,2)*J(0,1)-J(1,1)*J(0,2);
-	LUJ(1,0) = J(2,0)*J(1,2)-J(2,2)*J(1,0);
-	LUJ(1,1) = J(2,2)*J(0,0)-J(2,0)*J(0,2);
-	LUJ(1,2) = J(1,0)*J(0,2)-J(1,2)*J(0,0);
-	LUJ(2,0) = J(2,1)*J(1,0)-J(2,0)*J(1,1);
-	LUJ(2,1) = J(2,0)*J(0,1)-J(2,1)*J(0,0);
-	LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
+    double dsig[9];
+    int oj = 0;
+    for(size_t k=0; k<ele.size(); k++) {
+      if(type[k]=="C3D10")
+	C3D10();
+      else if(type[k]=="C3D20")
+	C3D20();
 
-	double dm = rho*wijk*detJ;
-	double dk = E/(1+nu)*wijk*detJ;
-	m += dm;
-	rdm += dm*r;
-	rrdm += dm*JTJ(r.T());
-	for(int i=0; i<npe; i++) {
-	  int u = nodeTable[elei(ee,i)];
-	  double Ni_ = N_[i];
-	  Vec3 dNi = LUJ*dN_[i]/detJ;
-	  for(int i1=0; i1<3; i1++) {
-	    Pdm(i1,u*3+i1) += dm*Ni_;
-	    for(int j1=0; j1<3; j1++)
-	      rPdm[i1](j1,u*3+j1) += dm*r(i1)*Ni_;
+      MatVI &elei = ele[k];
+
+      double N_[npe];
+      Vec3 dN_[npe];
+      for(int ee=0; ee<elei.rows(); ee++) {
+	for(int ii=0; ii<xi.rows(); ii++) {
+	  double x = xi(ii,0);
+	  double y = xi(ii,1);
+	  double z = xi(ii,2);
+	  double wijk = wi(ii);
+	  SqrMat3 J(3);
+	  Vec3 r(3);
+	  for(int ll=0; ll<npe; ll++) {
+	    Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
+	    N_[ll] = (*Ni[ll])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
+	    for(int mm=0; mm<3; mm++)
+	      dN_[ll](mm) = (*dNidq[ll][mm])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
+	    J += dN_[ll]*r0.T();
+	    r += N_[ll]*r0;
 	  }
-	  for(int j=i; j<npe; j++) {
-	    int v = nodeTable[elei(ee,j)];
-	    double Nj_ = N_[j];
-	    Vec3 dNj = LUJ*dN_[j]/detJ;
-	    double dPPdm = dm*Ni_*Nj_;
-	    dK[0][0] = dk*((1-nu)/(1-2*nu)*dNi(0)*dNj(0)+0.5*(dNi(1)*dNj(1)+dNi(2)*dNj(2)));
-	    dK[0][1] = dk*(nu/(1-2*nu)*dNi(0)*dNj(1)+0.5*dNi(1)*dNj(0));
-	    dK[0][2] = dk*(nu/(1-2*nu)*dNi(0)*dNj(2)+0.5*dNi(2)*dNj(0));
-	    dK[1][0] = dk*(nu/(1-2*nu)*dNi(1)*dNj(0)+0.5*dNi(0)*dNj(1));
-	    dK[1][1] = dk*((1-nu)/(1-2*nu)*dNi(1)*dNj(1)+0.5*(dNi(0)*dNj(0)+dNi(2)*dNj(2)));
-	    dK[1][2] = dk*(nu/(1-2*nu)*dNi(1)*dNj(2)+0.5*dNi(2)*dNj(1));
-	    dK[2][0] = dk*(nu/(1-2*nu)*dNi(2)*dNj(0)+0.5*dNi(0)*dNj(2));
-	    dK[2][1] = dk*(nu/(1-2*nu)*dNi(2)*dNj(1)+0.5*dNi(1)*dNj(2));
-	    dK[2][2] = dk*((1-nu)/(1-2*nu)*dNi(2)*dNj(2)+0.5*(dNi(0)*dNj(0)+dNi(1)*dNj(1)));
-	    if(v>=u) {
-	      for(int iii=0; iii<3; iii++) {
-		auto d = MKm[u*3+iii][v*3+iii];
-		d[iii] += dPPdm;
-		d[3] += dK[iii][iii];
+	  Vector<Ref,int> ipiv(J.size(),NONINIT);
+	  double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
+	  LUJ(0,0) = J(2,2)*J(1,1)-J(2,1)*J(1,2);
+	  LUJ(0,1) = J(2,1)*J(0,2)-J(2,2)*J(0,1);
+	  LUJ(0,2) = J(1,2)*J(0,1)-J(1,1)*J(0,2);
+	  LUJ(1,0) = J(2,0)*J(1,2)-J(2,2)*J(1,0);
+	  LUJ(1,1) = J(2,2)*J(0,0)-J(2,0)*J(0,2);
+	  LUJ(1,2) = J(1,0)*J(0,2)-J(1,2)*J(0,0);
+	  LUJ(2,0) = J(2,1)*J(1,0)-J(2,0)*J(1,1);
+	  LUJ(2,1) = J(2,0)*J(0,1)-J(2,1)*J(0,0);
+	  LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
+
+	  double dm = rho*wijk*detJ;
+	  double dk = E/(1+nu)*wijk*detJ;
+	  m += dm;
+	  rdm += dm*r;
+	  rrdm += dm*JTJ(r.T());
+	  for(int i=0; i<npe; i++) {
+	    int u = nodeTable[elei(ee,i)];
+	    double Ni_ = N_[i];
+	    Vec3 dNi = LUJ*dN_[i]/detJ;
+	    for(int i1=0; i1<3; i1++) {
+	      Pdm(i1,u*3+i1) += dm*Ni_;
+	      for(int j1=0; j1<3; j1++)
+		rPdm[i1](j1,u*3+j1) += dm*r(i1)*Ni_;
+	    }
+	    for(int j=i; j<npe; j++) {
+	      int v = nodeTable[elei(ee,j)];
+	      double Nj_ = N_[j];
+	      Vec3 dNj = LUJ*dN_[j]/detJ;
+	      double dPPdm = dm*Ni_*Nj_;
+	      dK[0][0] = dk*((1-nu)/(1-2*nu)*dNi(0)*dNj(0)+0.5*(dNi(1)*dNj(1)+dNi(2)*dNj(2)));
+	      dK[0][1] = dk*(nu/(1-2*nu)*dNi(0)*dNj(1)+0.5*dNi(1)*dNj(0));
+	      dK[0][2] = dk*(nu/(1-2*nu)*dNi(0)*dNj(2)+0.5*dNi(2)*dNj(0));
+	      dK[1][0] = dk*(nu/(1-2*nu)*dNi(1)*dNj(0)+0.5*dNi(0)*dNj(1));
+	      dK[1][1] = dk*((1-nu)/(1-2*nu)*dNi(1)*dNj(1)+0.5*(dNi(0)*dNj(0)+dNi(2)*dNj(2)));
+	      dK[1][2] = dk*(nu/(1-2*nu)*dNi(1)*dNj(2)+0.5*dNi(2)*dNj(1));
+	      dK[2][0] = dk*(nu/(1-2*nu)*dNi(2)*dNj(0)+0.5*dNi(0)*dNj(2));
+	      dK[2][1] = dk*(nu/(1-2*nu)*dNi(2)*dNj(1)+0.5*dNi(1)*dNj(2));
+	      dK[2][2] = dk*((1-nu)/(1-2*nu)*dNi(2)*dNj(2)+0.5*(dNi(0)*dNj(0)+dNi(1)*dNj(1)));
+	      if(v>=u) {
+		for(int iii=0; iii<3; iii++) {
+		  auto d = MKm[u*3+iii][v*3+iii];
+		  d[iii] += dPPdm;
+		  d[3] += dK[iii][iii];
+		}
+		MKm[u*3][v*3+1][3] += dK[0][1];
+		MKm[u*3][v*3+2][3] += dK[0][2];
+		MKm[u*3+1][v*3+2][3] += dK[1][2];
+		if(v!=u) {
+		  MKm[u*3+1][v*3][3] += dK[1][0];
+		  MKm[u*3+2][v*3][3] += dK[2][0];
+		  MKm[u*3+2][v*3+1][3] += dK[2][1];
+		}
 	      }
-	      MKm[u*3][v*3+1][3] += dK[0][1];
-	      MKm[u*3][v*3+2][3] += dK[0][2];
-	      MKm[u*3+1][v*3+2][3] += dK[1][2];
-	      if(v!=u) {
-		MKm[u*3+1][v*3][3] += dK[1][0];
-		MKm[u*3+2][v*3][3] += dK[2][0];
-		MKm[u*3+2][v*3+1][3] += dK[2][1];
+	      else {
+		for(int iii=0; iii<3; iii++) {
+		  auto d = MKm[v*3+iii][u*3+iii];
+		  d[iii] += dPPdm;
+		  d[3] += dK[iii][iii];
+		}
+		MKm[v*3][u*3+1][3] += dK[1][0];
+		MKm[v*3][u*3+2][3] += dK[2][0];
+		MKm[v*3+1][u*3+2][3] += dK[2][1];
+		MKm[v*3+1][u*3][3] += dK[0][1];
+		MKm[v*3+2][u*3][3] += dK[0][2];
+		MKm[v*3+2][u*3+1][3] += dK[1][2];
+	      }
+	      PPm[u*3][v*3+1][0] += dPPdm;
+	      PPm[u*3][v*3+2][1] += dPPdm;
+	      PPm[u*3+1][v*3+2][2] += dPPdm;
+	      if(u!=v) {
+		PPm[v*3][u*3+1][0] += dPPdm;
+		PPm[v*3][u*3+2][1] += dPPdm;
+		PPm[v*3+1][u*3+2][2] += dPPdm;
 	      }
 	    }
-	    else {
-	      for(int iii=0; iii<3; iii++) {
-		auto d = MKm[v*3+iii][u*3+iii];
-		d[iii] += dPPdm;
-		d[3] += dK[iii][iii];
-	      }
-	      MKm[v*3][u*3+1][3] += dK[1][0];
-	      MKm[v*3][u*3+2][3] += dK[2][0];
-	      MKm[v*3+1][u*3+2][3] += dK[2][1];
-	      MKm[v*3+1][u*3][3] += dK[0][1];
-	      MKm[v*3+2][u*3][3] += dK[0][2];
-	      MKm[v*3+2][u*3+1][3] += dK[1][2];
-	    }
-	    PPm[u*3][v*3+1][0] += dPPdm;
-	    PPm[u*3][v*3+2][1] += dPPdm;
-	    PPm[u*3+1][v*3+2][2] += dPPdm;
-	    if(u!=v) {
-	      PPm[v*3][u*3+1][0] += dPPdm;
-	      PPm[v*3][u*3+2][1] += dPPdm;
-	      PPm[v*3+1][u*3+2][2] += dPPdm;
-	    }
+	  }
+	}
+
+	for(int k=0; k<npe; k++) {
+	  double x = rN(k,0);
+	  double y = rN(k,1);
+	  double z = rN(k,2);
+	  SqrMat3 J(3);
+	  for(int ll=0; ll<npe; ll++) {
+	    Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
+	    for(int mm=0; mm<3; mm++)
+	      dN_[ll](mm) = (*dNidq[ll][mm])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
+	    J += dN_[ll]*r0.T();
+	  }
+	  Vector<Ref,int> ipiv(J.size(),NONINIT);
+	  double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
+	  LUJ(0,0) = J(2,2)*J(1,1)-J(2,1)*J(1,2);
+	  LUJ(0,1) = J(2,1)*J(0,2)-J(2,2)*J(0,1);
+	  LUJ(0,2) = J(1,2)*J(0,1)-J(1,1)*J(0,2);
+	  LUJ(1,0) = J(2,0)*J(1,2)-J(2,2)*J(1,0);
+	  LUJ(1,1) = J(2,2)*J(0,0)-J(2,0)*J(0,2);
+	  LUJ(1,2) = J(1,0)*J(0,2)-J(1,2)*J(0,0);
+	  LUJ(2,0) = J(2,1)*J(1,0)-J(2,0)*J(1,1);
+	  LUJ(2,1) = J(2,0)*J(0,1)-J(2,1)*J(0,0);
+	  LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
+	  for(int i=0; i<npe; i++) {
+	    Vec3 dNi = LUJ*dN_[i]/detJ;
+	    int ku = nodeTable[elei(ee,k)];
+	    int u = nodeTable[elei(ee,i)];
+	    double al = E/(1+nu)/nodeCount[elei(ee,k)];
+	    dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
+	    dsig[1] = al*nu/(1-2*nu)*dNi(1);
+	    dsig[2] = al*nu/(1-2*nu)*dNi(2);
+	    dsig[3] = al*nu/(1-2*nu)*dNi(0);
+	    dsig[4] = al*(1-nu)/(1-2*nu)*dNi(1);
+	    dsig[5] = al*(1-nu)/(1-2*nu)*dNi(2);
+	    dsig[6] = al*0.5*dNi(1);
+	    dsig[7] = al*0.5*dNi(0);
+	    dsig[8] = al*0.5*dNi(2);
+	    sigm[ku][0][u*3] += dsig[0];
+	    sigm[ku][0][u*3+1] += dsig[1];
+	    sigm[ku][0][u*3+2] += dsig[2];
+	    sigm[ku][1][u*3] += dsig[3];
+	    sigm[ku][1][u*3+1] += dsig[4];
+	    sigm[ku][1][u*3+2] += dsig[2];
+	    sigm[ku][2][u*3] += dsig[3];
+	    sigm[ku][2][u*3+1] += dsig[1];
+	    sigm[ku][2][u*3+2] += dsig[5];
+	    sigm[ku][3][u*3] += dsig[6];
+	    sigm[ku][3][u*3+1] += dsig[7];
+	    sigm[ku][4][u*3+1] += dsig[8];
+	    sigm[ku][4][u*3+2] += dsig[6];
+	    sigm[ku][5][u*3] += dsig[8];
+	    sigm[ku][5][u*3+2] += dsig[7];
 	  }
 	}
       }
-
-      for(int k=0; k<npe; k++) {
-	double x = rN(k,0);
-	double y = rN(k,1);
-	double z = rN(k,2);
-	SqrMat3 J(3);
-	for(int ll=0; ll<npe; ll++) {
-	  Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
-	  for(int mm=0; mm<3; mm++)
-	    dN_[ll](mm) = (*dNidq[ll][mm])(x,y,z,rN(ll,0),rN(ll,1),rN(ll,2));
-	  J += dN_[ll]*r0.T();
-	}
-	Vector<Ref,int> ipiv(J.size(),NONINIT);
-	double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
-	LUJ(0,0) = J(2,2)*J(1,1)-J(2,1)*J(1,2);
-	LUJ(0,1) = J(2,1)*J(0,2)-J(2,2)*J(0,1);
-	LUJ(0,2) = J(1,2)*J(0,1)-J(1,1)*J(0,2);
-	LUJ(1,0) = J(2,0)*J(1,2)-J(2,2)*J(1,0);
-	LUJ(1,1) = J(2,2)*J(0,0)-J(2,0)*J(0,2);
-	LUJ(1,2) = J(1,0)*J(0,2)-J(1,2)*J(0,0);
-	LUJ(2,0) = J(2,1)*J(1,0)-J(2,0)*J(1,1);
-	LUJ(2,1) = J(2,0)*J(0,1)-J(2,1)*J(0,0);
-	LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
-	for(int i=0; i<npe; i++) {
-	  Vec3 dNi = LUJ*dN_[i]/detJ;
-	  int ku = nodeTable[elei(ee,k)];
-	  int u = nodeTable[elei(ee,i)];
-	  double al = E/(1+nu)/nodeCount[elei(ee,k)];
-	  dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
-	  dsig[1] = al*nu/(1-2*nu)*dNi(1);
-	  dsig[2] = al*nu/(1-2*nu)*dNi(2);
-	  dsig[3] = al*nu/(1-2*nu)*dNi(0);
-	  dsig[4] = al*(1-nu)/(1-2*nu)*dNi(1);
-	  dsig[5] = al*(1-nu)/(1-2*nu)*dNi(2);
-	  dsig[6] = al*0.5*dNi(1);
-	  dsig[7] = al*0.5*dNi(0);
-	  dsig[8] = al*0.5*dNi(2);
-	  sigm[ku][0][u*3] += dsig[0];
-	  sigm[ku][0][u*3+1] += dsig[1];
-	  sigm[ku][0][u*3+2] += dsig[2];
-	  sigm[ku][1][u*3] += dsig[3];
-	  sigm[ku][1][u*3+1] += dsig[4];
-	  sigm[ku][1][u*3+2] += dsig[2];
-	  sigm[ku][2][u*3] += dsig[3];
-	  sigm[ku][2][u*3+1] += dsig[1];
-	  sigm[ku][2][u*3+2] += dsig[5];
-	  sigm[ku][3][u*3] += dsig[6];
-	  sigm[ku][3][u*3+1] += dsig[7];
-	  sigm[ku][4][u*3+1] += dsig[8];
-	  sigm[ku][4][u*3+2] += dsig[6];
-	  sigm[ku][5][u*3] += dsig[8];
-	  sigm[ku][5][u*3+2] += dsig[7];
-	}
-      }
-
-      indices[oj++] = nodeTable[elei(ee,3)];
-      indices[oj++] = nodeTable[elei(ee,2)];
-      indices[oj++] = nodeTable[elei(ee,1)];
-      indices[oj++] = nodeTable[elei(ee,0)];
-      indices[oj++] = -1;
-      indices[oj++] = nodeTable[elei(ee,4)];
-      indices[oj++] = nodeTable[elei(ee,5)];
-      indices[oj++] = nodeTable[elei(ee,6)];
-      indices[oj++] = nodeTable[elei(ee,7)];
-      indices[oj++] = -1;
-      indices[oj++] = nodeTable[elei(ee,1)];
-      indices[oj++] = nodeTable[elei(ee,2)];
-      indices[oj++] = nodeTable[elei(ee,6)];
-      indices[oj++] = nodeTable[elei(ee,5)];
-      indices[oj++] = -1;
-      indices[oj++] = nodeTable[elei(ee,2)];
-      indices[oj++] = nodeTable[elei(ee,3)];
-      indices[oj++] = nodeTable[elei(ee,7)];
-      indices[oj++] = nodeTable[elei(ee,6)];
-      indices[oj++] = -1;
-      indices[oj++] = nodeTable[elei(ee,4)];
-      indices[oj++] = nodeTable[elei(ee,7)];
-      indices[oj++] = nodeTable[elei(ee,3)];
-      indices[oj++] = nodeTable[elei(ee,0)];
-      indices[oj++] = -1;
-      indices[oj++] = nodeTable[elei(ee,0)];
-      indices[oj++] = nodeTable[elei(ee,1)];
-      indices[oj++] = nodeTable[elei(ee,5)];
-      indices[oj++] = nodeTable[elei(ee,4)];
-      indices[oj++] = -1;
+      if(type[k]=="C3D10")
+	C3D10ombv(elei,oj);
+      else if(type[k]=="C3D20")
+	C3D20ombv(elei,oj);
     }
   }
 }

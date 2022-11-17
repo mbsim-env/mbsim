@@ -185,6 +185,8 @@ namespace MBSimGUI {
       void exp();
       void C3D10();
       void C3D20();
+      void C3D10ombv(const fmatvec::MatV &elei, int &oj);
+      void C3D20ombv(const fmatvec::MatV &elei, int &oj);
       double m;
       fmatvec::MatV M, K, U, S;
       fmatvec::VecV mDamp;
