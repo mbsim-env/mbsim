@@ -203,12 +203,10 @@ namespace MBSimGUI {
       std::vector<int> nodeTable;
       std::vector<int> indices;
       std::vector<int> nodeNumbers;
-      int nN, nM, ng, net, ner, nen, npe;
+      int nN, nM, ng, net, ner, nen;
       std::vector<std::map<int,double[4]>> MKm;
       std::vector<std::map<int,double[3]>> PPm;
       std::vector<std::vector<std::map<int,double>>> Phim, Psim, sigm;
-      fmatvec::MatVx3 xi, rN;
-      fmatvec::VecV wi;
   };
 
 }
