@@ -38,13 +38,9 @@ namespace MBSimGUI {
 
       int getNumberOfNodes() const override { return 20; }
       const fmatvec::Vec3& getNaturalCoordinates(int i) const override { return rN[i]; }
-      int getNumberOfFaces() const { return 6; }
-      int getNumberOfIndicesPerFace() const { return 4; }
-      int getOmbvIndex(int i, int j) const { return indices[i][j]; }
 
     private:
       fmatvec::Vec3 rN[20];
-      int indices[6][4];
       double (C3D20Base::*N_[20])(double x, double y, double z) const;
       double (C3D20Base::*dNdq_[20][3])(double x, double y, double z) const;
 

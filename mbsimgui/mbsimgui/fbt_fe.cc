@@ -23,6 +23,7 @@
 #include "variable_widgets.h"
 #include "special_widgets.h"
 #include "C3D10.h"
+#include "C3D15.h"
 #include "C3D20.h"
 #include "C3D20R.h"
 
@@ -132,6 +133,8 @@ namespace MBSimGUI {
     for(size_t k=0; k<ele.size(); k++) {
       if(type[k]=="C3D10")
 	feType = new MBSimGUI::C3D10;
+      else if(type[k]=="C3D15")
+	feType = new MBSimGUI::C3D15;
       else if(type[k]=="C3D20")
 	feType = new MBSimGUI::C3D20;
       else if(type[k]=="C3D20R")
@@ -293,9 +296,10 @@ namespace MBSimGUI {
 	    sigm[ku][5][u*3+2] += dsig[7];
 	  }
 	}
-	for(int i=0; i<feType->getNumberOfFaces(); i++) {
-	  for(int j=0; j<feType->getNumberOfIndicesPerFace(); j++)
-	    indices[oj++] = nodeTable[elei(ee,feType->getOmbvIndex(i,j))];
+	const auto ind = feType->getOmbvIndices();
+	for(int i=0; i<ind.size(); i++) {
+	  for(int j=0; j<ind[i].size(); j++)
+	    indices[oj++] = nodeTable[elei(ee,ind[i][j])];
 	  indices[oj++] = -1;
 	}
       }

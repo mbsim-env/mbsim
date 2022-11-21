@@ -483,6 +483,7 @@ namespace MBSimGUI {
 
     vector<QString> list;
     list.emplace_back("\"C3D10\"");
+    list.emplace_back("\"C3D15\"");
     list.emplace_back("\"C3D20\"");
     list.emplace_back("\"C3D20R\"");
     type = new ExtWidget("Element type",new TextChoiceWidget(list,0,true),false,false,MBSIMFLEX%"elementType");

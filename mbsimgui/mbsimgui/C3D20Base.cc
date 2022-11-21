@@ -129,6 +129,7 @@ namespace MBSimGUI {
     rN[18](0) =  1; rN[18](1) =  1; rN[18](2) =  0;
     rN[19](0) = -1; rN[19](1) =  1; rN[19](2) =  0;
 
+    indices.resize(6,vector<int>(4));
     indices[0][0] = 3; indices[0][1] = 2; indices[0][2] = 1; indices[0][3] = 0;
     indices[1][0] = 4; indices[1][1] = 5; indices[1][2] = 6; indices[1][3] = 7;
     indices[2][0] = 1; indices[2][1] = 2; indices[2][2] = 6; indices[2][3] = 5;

@@ -103,6 +103,7 @@ libmbsimgui_la_SOURCES = \
   fbt_damp.cc \
   fbt_exp.cc \
   C3D10.cc \
+  C3D15.cc \
   C3D20Base.cc \
   C3D20.cc \
   C3D20R.cc
@@ -199,6 +200,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   xml_property_dialog.h \
   fe_type.h \
   C3D10.h \
+  C3D15.h \
   C3D20Base.h \
   C3D20.h \
   C3D20R.h
