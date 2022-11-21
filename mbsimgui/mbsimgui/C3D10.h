@@ -52,77 +52,60 @@ namespace MBSimGUI {
       double (C3D10::*N_[10])(double x, double y, double z) const;
       double (C3D10::*dNdq_[10][3])(double x, double y, double z) const;
 
-      double NL1(double x, double y, double z) const {
-	return 1-x-y-z;
-      }
-      double NL2(double x, double y, double z) const {
-	return x;
-      }
-      double NL3(double x, double y, double z) const {
-	return y;
-      }
-      double NL4(double x, double y, double z) const {
-	return z;
-      }
-    
       double N1(double x, double y, double z) const {
-	double NL = NL1(x,y,z);
-	return NL*(2*NL-1);
+	return (1-x-y-z)*(2*(1-x-y-z)-1);
       }
 
       double N2(double x, double y, double z) const {
-	double NL = NL2(x,y,z);
-	return NL*(2*NL-1);
+	return x*(2*x-1);
       }
 
       double N3(double x, double y, double z) const {
-	double NL = NL3(x,y,z);
-	return NL*(2*NL-1);
+	return y*(2*y-1);
       }
 
       double N4(double x, double y, double z) const {
-	double NL = NL4(x,y,z);
-	return NL*(2*NL-1);
+	return z*(2*z-1);
       }
 
       double N5(double x, double y, double z) const {
-	return 4*NL1(x,y,z)*NL2(x,y,z);
+	return 4*(1-x-y-z)*x;
       }
 
       double N6(double x, double y, double z) const {
-	return 4*NL2(x,y,z)*NL3(x,y,z);
+	return 4*x*y;
       }
 
       double N7(double x, double y, double z) const {
-	return 4*NL1(x,y,z)*NL3(x,y,z);
+	return 4*(1-x-y-z)*y;
       }
 
       double N8(double x, double y, double z) const {
-	return 4*NL1(x,y,z)*NL4(x,y,z);
+	return 4*(1-x-y-z)*z;
       }
 
       double N9(double x, double y, double z) const {
-	return 4*NL2(x,y,z)*NL4(x,y,z);
+	return 4*x*z;
       }
 
       double N10(double x, double y, double z) const {
-	return 4*NL3(x,y,z)*NL4(x,y,z);
+	return 4*y*z;
       }
 
       double dN1dx(double x, double y, double z) const {
-	return 1-4*NL1(x,y,z);
+	return 1-4*(1-x-y-z);
       }
 
       double dN1dy(double x, double y, double z) const {
-	return 1-4*NL1(x,y,z);
+	return 1-4*(1-x-y-z);
       }
 
       double dN1dz(double x, double y, double z) const {
-	return 1-4*NL1(x,y,z);
+	return 1-4*(1-x-y-z);
       }
 
       double dN2dx(double x, double y, double z) const {
-	return 4*NL2(x,y,z)-1;
+	return 4*x-1;
       }
 
       double dN2dy(double x, double y, double z) const {
@@ -138,7 +121,7 @@ namespace MBSimGUI {
       }
 
       double dN3dy(double x, double y, double z) const {
-	return 4*NL3(x,y,z)-1;
+	return 4*y-1;
       }
 
       double dN3dz(double x, double y, double z) const {
@@ -154,27 +137,27 @@ namespace MBSimGUI {
       }
 
       double dN4dz(double x, double y, double z) const {
-	return 4*NL4(x,y,z)-1;
+	return 4*z-1;
       }
 
       double dN5dx(double x, double y, double z) const {
-	return 4*(NL1(x,y,z)-NL2(x,y,z));
+	return 4*((1-x-y-z)-x);
       }
 
       double dN5dy(double x, double y, double z) const {
-	return -4*NL2(x,y,z);
+	return -4*x;
       }
 
       double dN5dz(double x, double y, double z) const {
-	return -4*NL2(x,y,z);
+	return -4*x;
       }
 
       double dN6dx(double x, double y, double z) const {
-	return 4*NL3(x,y,z);
+	return 4*y;
       }
 
       double dN6dy(double x, double y, double z) const {
-	return 4*NL2(x,y,z);
+	return 4*x;
       }
 
       double dN6dz(double x, double y, double z) const {
@@ -182,31 +165,31 @@ namespace MBSimGUI {
       }
 
       double dN7dx(double x, double y, double z) const {
-	return -4*NL3(x,y,z);
+	return -4*y;
       }
 
       double dN7dy(double x, double y, double z) const {
-	return 4*(NL1(x,y,z)-NL3(x,y,z));
+	return 4*((1-x-y-z)-y);
       }
 
       double dN7dz(double x, double y, double z) const {
-	return -4*NL3(x,y,z);
+	return -4*y;
       }
 
       double dN8dx(double x, double y, double z) const {
-	return -4*NL4(x,y,z);
+	return -4*z;
       }
 
       double dN8dy(double x, double y, double z) const {
-	return -4*NL4(x,y,z);
+	return -4*z;
       }
 
       double dN8dz(double x, double y, double z) const {
-	return 4*(NL1(x,y,z)-NL4(x,y,z));
+	return 4*((1-x-y-z)-z);
       }
 
       double dN9dx(double x, double y, double z) const {
-	return 4*NL4(x,y,z);
+	return 4*z;
       }
 
       double dN9dy(double x, double y, double z) const {
@@ -214,7 +197,7 @@ namespace MBSimGUI {
       }
 
       double dN9dz(double x, double y, double z) const {
-	return 4*NL2(x,y,z);
+	return 4*x;
       }
 
       double dN10dx(double x, double y, double z) const {
@@ -222,11 +205,11 @@ namespace MBSimGUI {
       }
 
       double dN10dy(double x, double y, double z) const {
-	return 4*NL4(x,y,z);
+	return 4*z;
       }
 
       double dN10dz(double x, double y, double z) const {
-	return 4*NL3(x,y,z);
+	return 4*y;
       }
   };
 
