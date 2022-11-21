@@ -1,6 +1,6 @@
 /*
-    MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2022 Martin Förg
+   MBSimGUI - A fronted for MBSim.
+   Copyright (C) 2022 MBSim-Env
 
   This library is free software; you can redistribute it and/or 
   modify it under the terms of the GNU Lesser General Public 
@@ -15,28 +15,28 @@
   You should have received a copy of the GNU Lesser General Public 
   License along with this library; if not, write to the Free Software 
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
-*/
+   */
 
-#ifndef _C3D20_H_
-#define _C3D20_H_
+#include <config.h>
+#include "C3D20R.h"
 
-#include "C3D20Base.h"
+using namespace std;
+using namespace fmatvec;
 
 namespace MBSimGUI {
 
-  class C3D20 : public C3D20Base {
-    public:
-      C3D20();
+  C3D20R::C3D20R() {
 
-      int getNumberOfIntegrationPoints() const override { return 27; }
-      const fmatvec::Vec3& getIntegrationPoint(int i) const override { return rI[i]; }
-      double getWeight(int i) const override { return wI[i]; }
+    double d = sqrt(1./3);
 
-    private:
-      fmatvec::Vec3 rI[27];
-      double wI[27];
-  };
+    rI[0](0) = -d; rI[0](1) = -d;  rI[0](2) = -d;  wI[0] = 1;
+    rI[1](0) = d;  rI[1](1) = -d;  rI[1](2) = -d;  wI[1] = 1;
+    rI[2](0) = -d; rI[2](1) = d;   rI[2](2) = -d;  wI[2] = 1;
+    rI[3](0) = d;  rI[3](1) = d;   rI[3](2) = -d;  wI[3] = 1;
+    rI[4](0) = -d; rI[4](1) = -d;  rI[4](2) = d;   wI[4] = 1;
+    rI[5](0) = d;  rI[5](1) = -d;  rI[5](2) = d;   wI[5] = 1;
+    rI[6](0) = -d; rI[6](1) = d;   rI[6](2) = d;   wI[6] = 1;
+    rI[7](0) = d;  rI[7](1) = d;   rI[7](2) = d;   wI[7] = 1;
+  }
 
 }
-
-#endif

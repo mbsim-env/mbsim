@@ -17,24 +17,24 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef _C3D20_H_
-#define _C3D20_H_
+#ifndef _C3D20R_H_
+#define _C3D20R_H_
 
 #include "C3D20Base.h"
 
 namespace MBSimGUI {
 
-  class C3D20 : public C3D20Base {
+  class C3D20R : public C3D20Base {
     public:
-      C3D20();
+      C3D20R();
 
-      int getNumberOfIntegrationPoints() const override { return 27; }
+      int getNumberOfIntegrationPoints() const override { return 8; }
       const fmatvec::Vec3& getIntegrationPoint(int i) const override { return rI[i]; }
       double getWeight(int i) const override { return wI[i]; }
 
     private:
-      fmatvec::Vec3 rI[27];
-      double wI[27];
+      fmatvec::Vec3 rI[8];
+      double wI[8];
   };
 
 }

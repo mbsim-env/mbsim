@@ -24,6 +24,7 @@
 #include "special_widgets.h"
 #include "C3D10.h"
 #include "C3D20.h"
+#include "C3D20R.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -133,6 +134,8 @@ namespace MBSimGUI {
 	feType = new MBSimGUI::C3D10;
       else if(type[k]=="C3D20")
 	feType = new MBSimGUI::C3D20;
+      else if(type[k]=="C3D20R")
+	feType = new MBSimGUI::C3D20R;
       else
 	feType = nullptr;
 
