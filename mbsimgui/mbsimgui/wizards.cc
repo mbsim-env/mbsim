@@ -534,11 +534,7 @@ namespace MBSimGUI {
       fma();
     }
     else if(hasVisitedPage(PageFiniteElements)) {
-      auto start = std::chrono::steady_clock::now();
       fe();
-      auto end = std::chrono::steady_clock::now();
-      std::chrono::duration<double> elapsed_seconds = end-start;
-      std::cout << "init: " << elapsed_seconds.count() << "s\n";
       cms();
       fma();
     }
