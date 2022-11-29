@@ -284,6 +284,12 @@ namespace MBSimGUI {
     elements = new ExtWidget("Element data",new ListWidget(new FiniteElementsDataWidgetFactory(this),"Element data",1,3,false,1),false,false,"");
     layout->addWidget(elements);
 
+    extrapolateStress = new ExtWidget("Extrapolate stress",new ChoiceWidget(new ScalarWidgetFactory("7870",vector<QStringList>(2,densityUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"density");
+    layout->addWidget(rho);
+
+    extrapolateStress = new ExtWidget("Extrapolate stress",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"extrapolateStress");
+    layout->addWidget(extrapolateStress);
+
     layout->addStretch(1);
   }
 
@@ -528,7 +534,11 @@ namespace MBSimGUI {
       fma();
     }
     else if(hasVisitedPage(PageFiniteElements)) {
+      auto start = std::chrono::steady_clock::now();
       fe();
+      auto end = std::chrono::steady_clock::now();
+      std::chrono::duration<double> elapsed_seconds = end-start;
+      std::cout << "init: " << elapsed_seconds.count() << "s\n";
       cms();
       fma();
     }
@@ -570,6 +580,7 @@ namespace MBSimGUI {
 	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->writeXMLFile(element);
 	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->writeXMLFile(element);
 	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->writeXMLFile(element);
+	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->extrapolateStress->writeXMLFile(element);
       }
       if(hasVisitedPage(PageBC))
 	static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->writeXMLFile(element);
@@ -626,6 +637,7 @@ namespace MBSimGUI {
       static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->initializeUsingXML(element);
       static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->initializeUsingXML(element);
       static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->initializeUsingXML(element);
+      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->extrapolateStress->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->mDamp->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->pDamp->initializeUsingXML(element);
       static_cast<LastPage*>(page(PageLast))->inputFile->initializeUsingXML(element);

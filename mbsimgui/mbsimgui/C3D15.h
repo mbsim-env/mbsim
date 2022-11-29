@@ -38,13 +38,18 @@ namespace MBSimGUI {
 
       int getNumberOfNodes() const override { return 15; }
       int getNumberOfIntegrationPoints() const override { return 9; }
+      int getNumberOfExtrapolationPoints() const override { return 6; }
       const fmatvec::Vec3& getNaturalCoordinates(int i) const override { return rN[i]; }
       const fmatvec::Vec3& getIntegrationPoint(int i) const override { return rI[i]; }
       double getWeight(int i) const override { return wI[i]; }
+      double getExtrapolationCoefficient(int i, int j) const override { return A[i][j]; }
+      int getExtrapolationIndex(int i, int j) const override { return B[i][j]; }
 
     private:
       fmatvec::Vec3 rN[15], rI[9];
       double wI[9];
+      double A[9][6];
+      int B[9][2];
       double (C3D15::*N_[15])(double x, double y, double z) const;
       double (C3D15::*dNdq_[15][3])(double x, double y, double z) const;
 

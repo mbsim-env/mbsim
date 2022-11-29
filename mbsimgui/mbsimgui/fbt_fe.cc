@@ -38,14 +38,19 @@ namespace MBSimGUI {
     if(!str.empty())
       R <<= readMat(str);
 
-    std::vector<fmatvec::MatVI> ele;
     auto *list = static_cast<ListWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget());
-    vector<string> type;
     for(int i=0; i<list->getSize(); i++) {
       auto type_ = static_cast<FiniteElementsDataWidget*>(list->getWidget(i))->getType().toStdString();
       type_ = type_.substr(1,type_.size()-2);
       int npe = stod(type_.substr(type_.find('D')+1,type_.size()-1));
-      type.emplace_back(type_);
+      if(type_=="C3D10")
+	type.emplace_back(new MBSimGUI::C3D10);
+      else if(type_=="C3D15")
+	type.emplace_back(new MBSimGUI::C3D15);
+      else if(type_=="C3D20")
+	type.emplace_back(new MBSimGUI::C3D20);
+      else if(type_=="C3D20R")
+	type.emplace_back(new MBSimGUI::C3D20R);
       str = static_cast<FiniteElementsDataWidget*>(list->getWidget(i))->getElementsFile().toStdString();
       if(!str.empty()) {
 	auto ele_ = readMat(str);
@@ -53,6 +58,8 @@ namespace MBSimGUI {
 	  ele.emplace_back(ele_);
 	else if(ele_.cols()==npe+1)
 	  ele.emplace_back(ele_(RangeV(0,ele_.rows()-1),RangeV(1,ele_.cols()-1)));
+	else
+	  throw 5;
       }
     }
 
@@ -61,6 +68,8 @@ namespace MBSimGUI {
     auto nu = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
 
     auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+
+    auto extrapolateStress = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->extrapolateStress->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
 
     int max = 0;
     if(R.cols()==3)
@@ -73,7 +82,7 @@ namespace MBSimGUI {
     }
 
     int nE = 0;
-    vector<int> nodeCount(max+1);
+    nodeCount.resize(max+1);
     for(size_t k=0; k<ele.size(); k++) {
       nE += ele[k].rows();
       for(int i=0; i<ele[k].rows(); i++) {
@@ -119,7 +128,13 @@ namespace MBSimGUI {
       Phim[i][2][3*i+2] = 1;
     }
 
-    sigm.resize(nN,vector<map<int,double>>(6));
+    if(extrapolateStress) {
+      sigem.resize(ele.size());
+      for(size_t k=0; k<ele.size(); k++)
+	sigem[k].resize(ele[k].rows(),vector<vector<map<int,double>>>(27,vector<map<int,double>>(6)));
+    }
+    else
+      sigm.resize(nN,vector<map<int,double>>(6));
     MKm.resize(ng);
     PPm.resize(ng);
 
@@ -129,37 +144,26 @@ namespace MBSimGUI {
     double dK[3][3];
     double dsig[9];
     int oj = 0;
-    FiniteElementType *feType;
     for(size_t k=0; k<ele.size(); k++) {
-      if(type[k]=="C3D10")
-	feType = new MBSimGUI::C3D10;
-      else if(type[k]=="C3D15")
-	feType = new MBSimGUI::C3D15;
-      else if(type[k]=="C3D20")
-	feType = new MBSimGUI::C3D20;
-      else if(type[k]=="C3D20R")
-	feType = new MBSimGUI::C3D20R;
-      else
-	feType = nullptr;
-
+      FiniteElementType *typei = type[k];
       MatVI &elei = ele[k];
 
-      int npe = feType->getNumberOfNodes();
+      int npe = typei->getNumberOfNodes();
       double N_[npe];
       Vec3 dN_[npe];
       for(int ee=0; ee<elei.rows(); ee++) {
-	for(int ii=0; ii<feType->getNumberOfIntegrationPoints(); ii++) {
-	  double x = feType->getIntegrationPoint(ii)(0);
-	  double y = feType->getIntegrationPoint(ii)(1);
-	  double z = feType->getIntegrationPoint(ii)(2);
-	  double wijk = feType->getWeight(ii);
+	for(int ii=0; ii<typei->getNumberOfIntegrationPoints(); ii++) {
+	  double x = typei->getIntegrationPoint(ii)(0);
+	  double y = typei->getIntegrationPoint(ii)(1);
+	  double z = typei->getIntegrationPoint(ii)(2);
+	  double wijk = typei->getWeight(ii);
 	  SqrMat3 J(3);
 	  Vec3 r(3);
 	  for(int ll=0; ll<npe; ll++) {
 	    Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
-	    N_[ll] = feType->N(ll,x,y,z);
+	    N_[ll] = typei->N(ll,x,y,z);
 	    for(int mm=0; mm<3; mm++)
-	      dN_[ll](mm) = feType->dNdq(ll,mm,x,y,z);
+	      dN_[ll](mm) = typei->dNdq(ll,mm,x,y,z);
 	    J += dN_[ll]*r0.T();
 	    r += N_[ll]*r0;
 	  }
@@ -240,70 +244,99 @@ namespace MBSimGUI {
 		PPm[v*3+1][u*3+2][2] += dPPdm;
 	      }
 	    }
+	    if(extrapolateStress) {
+	      double al = E/(1+nu);
+	      dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
+	      dsig[1] = al*nu/(1-2*nu)*dNi(1);
+	      dsig[2] = al*nu/(1-2*nu)*dNi(2);
+	      dsig[3] = al*nu/(1-2*nu)*dNi(0);
+	      dsig[4] = al*(1-nu)/(1-2*nu)*dNi(1);
+	      dsig[5] = al*(1-nu)/(1-2*nu)*dNi(2);
+	      dsig[6] = al*0.5*dNi(1);
+	      dsig[7] = al*0.5*dNi(0);
+	      dsig[8] = al*0.5*dNi(2);
+	      sigem[k][ee][ii][0][u*3] += dsig[0];
+	      sigem[k][ee][ii][0][u*3+1] += dsig[1];
+	      sigem[k][ee][ii][0][u*3+2] += dsig[2];
+	      sigem[k][ee][ii][1][u*3] += dsig[3];
+	      sigem[k][ee][ii][1][u*3+1] += dsig[4];
+	      sigem[k][ee][ii][1][u*3+2] += dsig[2];
+	      sigem[k][ee][ii][2][u*3] += dsig[3];
+	      sigem[k][ee][ii][2][u*3+1] += dsig[1];
+	      sigem[k][ee][ii][2][u*3+2] += dsig[5];
+	      sigem[k][ee][ii][3][u*3] += dsig[6];
+	      sigem[k][ee][ii][3][u*3+1] += dsig[7];
+	      sigem[k][ee][ii][4][u*3+1] += dsig[8];
+	      sigem[k][ee][ii][4][u*3+2] += dsig[6];
+	      sigem[k][ee][ii][5][u*3] += dsig[8];
+	      sigem[k][ee][ii][5][u*3+2] += dsig[7];
+	    }
 	  }
 	}
 
-	for(int k=0; k<npe; k++) {
-	  double x = feType->getNaturalCoordinates(k)(0);
-	  double y = feType->getNaturalCoordinates(k)(1);
-	  double z = feType->getNaturalCoordinates(k)(2);
-	  SqrMat3 J(3);
-	  for(int ll=0; ll<npe; ll++) {
-	    Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
-	    for(int mm=0; mm<3; mm++)
-	      dN_[ll](mm) = feType->dNdq(ll,mm,x,y,z);
-	    J += dN_[ll]*r0.T();
-	  }
-	  Vector<Ref,int> ipiv(J.size(),NONINIT);
-	  double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
-	  LUJ(0,0) = J(2,2)*J(1,1)-J(2,1)*J(1,2);
-	  LUJ(0,1) = J(2,1)*J(0,2)-J(2,2)*J(0,1);
-	  LUJ(0,2) = J(1,2)*J(0,1)-J(1,1)*J(0,2);
-	  LUJ(1,0) = J(2,0)*J(1,2)-J(2,2)*J(1,0);
-	  LUJ(1,1) = J(2,2)*J(0,0)-J(2,0)*J(0,2);
-	  LUJ(1,2) = J(1,0)*J(0,2)-J(1,2)*J(0,0);
-	  LUJ(2,0) = J(2,1)*J(1,0)-J(2,0)*J(1,1);
-	  LUJ(2,1) = J(2,0)*J(0,1)-J(2,1)*J(0,0);
-	  LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
-	  for(int i=0; i<npe; i++) {
-	    Vec3 dNi = LUJ*dN_[i]/detJ;
-	    int ku = nodeTable[elei(ee,k)];
-	    int u = nodeTable[elei(ee,i)];
-	    double al = E/(1+nu)/nodeCount[elei(ee,k)];
-	    dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
-	    dsig[1] = al*nu/(1-2*nu)*dNi(1);
-	    dsig[2] = al*nu/(1-2*nu)*dNi(2);
-	    dsig[3] = al*nu/(1-2*nu)*dNi(0);
-	    dsig[4] = al*(1-nu)/(1-2*nu)*dNi(1);
-	    dsig[5] = al*(1-nu)/(1-2*nu)*dNi(2);
-	    dsig[6] = al*0.5*dNi(1);
-	    dsig[7] = al*0.5*dNi(0);
-	    dsig[8] = al*0.5*dNi(2);
-	    sigm[ku][0][u*3] += dsig[0];
-	    sigm[ku][0][u*3+1] += dsig[1];
-	    sigm[ku][0][u*3+2] += dsig[2];
-	    sigm[ku][1][u*3] += dsig[3];
-	    sigm[ku][1][u*3+1] += dsig[4];
-	    sigm[ku][1][u*3+2] += dsig[2];
-	    sigm[ku][2][u*3] += dsig[3];
-	    sigm[ku][2][u*3+1] += dsig[1];
-	    sigm[ku][2][u*3+2] += dsig[5];
-	    sigm[ku][3][u*3] += dsig[6];
-	    sigm[ku][3][u*3+1] += dsig[7];
-	    sigm[ku][4][u*3+1] += dsig[8];
-	    sigm[ku][4][u*3+2] += dsig[6];
-	    sigm[ku][5][u*3] += dsig[8];
-	    sigm[ku][5][u*3+2] += dsig[7];
+	if(not extrapolateStress) {
+	  for(int k=0; k<npe; k++) {
+	    double x = typei->getNaturalCoordinates(k)(0);
+	    double y = typei->getNaturalCoordinates(k)(1);
+	    double z = typei->getNaturalCoordinates(k)(2);
+	    SqrMat3 J(3);
+	    for(int ll=0; ll<npe; ll++) {
+	      Vec3 r0 = KrKP[nodeTable[elei(ee,ll)]];
+	      for(int mm=0; mm<3; mm++)
+		dN_[ll](mm) = typei->dNdq(ll,mm,x,y,z);
+	      J += dN_[ll]*r0.T();
+	    }
+	    Vector<Ref,int> ipiv(J.size(),NONINIT);
+	    double detJ = J(0,0)*J(1,1)*J(2,2)+J(0,1)*J(1,2)*J(2,0)+J(0,2)*J(1,0)*J(2,1)-J(2,0)*J(1,1)*J(0,2)-J(2,1)*J(1,2)*J(0,0)-J(2,2)*J(1,0)*J(0,1);
+	    LUJ(0,0) = J(2,2)*J(1,1)-J(2,1)*J(1,2);
+	    LUJ(0,1) = J(2,1)*J(0,2)-J(2,2)*J(0,1);
+	    LUJ(0,2) = J(1,2)*J(0,1)-J(1,1)*J(0,2);
+	    LUJ(1,0) = J(2,0)*J(1,2)-J(2,2)*J(1,0);
+	    LUJ(1,1) = J(2,2)*J(0,0)-J(2,0)*J(0,2);
+	    LUJ(1,2) = J(1,0)*J(0,2)-J(1,2)*J(0,0);
+	    LUJ(2,0) = J(2,1)*J(1,0)-J(2,0)*J(1,1);
+	    LUJ(2,1) = J(2,0)*J(0,1)-J(2,1)*J(0,0);
+	    LUJ(2,2) = J(1,1)*J(0,0)-J(1,0)*J(0,1);
+	    for(int i=0; i<npe; i++) {
+	      Vec3 dNi = LUJ*dN_[i]/detJ;
+	      int ku = nodeTable[elei(ee,k)];
+	      int u = nodeTable[elei(ee,i)];
+	      double al = E/(1+nu)/nodeCount[elei(ee,k)];
+	      dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
+	      dsig[1] = al*nu/(1-2*nu)*dNi(1);
+	      dsig[2] = al*nu/(1-2*nu)*dNi(2);
+	      dsig[3] = al*nu/(1-2*nu)*dNi(0);
+	      dsig[4] = al*(1-nu)/(1-2*nu)*dNi(1);
+	      dsig[5] = al*(1-nu)/(1-2*nu)*dNi(2);
+	      dsig[6] = al*0.5*dNi(1);
+	      dsig[7] = al*0.5*dNi(0);
+	      dsig[8] = al*0.5*dNi(2);
+	      sigm[ku][0][u*3] += dsig[0];
+	      sigm[ku][0][u*3+1] += dsig[1];
+	      sigm[ku][0][u*3+2] += dsig[2];
+	      sigm[ku][1][u*3] += dsig[3];
+	      sigm[ku][1][u*3+1] += dsig[4];
+	      sigm[ku][1][u*3+2] += dsig[2];
+	      sigm[ku][2][u*3] += dsig[3];
+	      sigm[ku][2][u*3+1] += dsig[1];
+	      sigm[ku][2][u*3+2] += dsig[5];
+	      sigm[ku][3][u*3] += dsig[6];
+	      sigm[ku][3][u*3+1] += dsig[7];
+	      sigm[ku][4][u*3+1] += dsig[8];
+	      sigm[ku][4][u*3+2] += dsig[6];
+	      sigm[ku][5][u*3] += dsig[8];
+	      sigm[ku][5][u*3+2] += dsig[7];
+	    }
 	  }
 	}
-	const auto ind = feType->getOmbvIndices();
+
+	const auto ind = typei->getOmbvIndices();
 	for(int i=0; i<ind.size(); i++) {
 	  for(int j=0; j<ind[i].size(); j++)
 	    indices[oj++] = nodeTable[elei(ee,ind[i][j])];
 	  indices[oj++] = -1;
 	}
       }
-      delete feType;
     }
   }
 }

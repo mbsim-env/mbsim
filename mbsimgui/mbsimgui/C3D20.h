@@ -29,12 +29,16 @@ namespace MBSimGUI {
       C3D20();
 
       int getNumberOfIntegrationPoints() const override { return 27; }
+      int getNumberOfExtrapolationPoints() const override { return 20; }
       const fmatvec::Vec3& getIntegrationPoint(int i) const override { return rI[i]; }
       double getWeight(int i) const override { return wI[i]; }
+      double getExtrapolationCoefficient(int i, int j) const override { return A[i][j]; }
+      int getExtrapolationIndex(int i, int j) const override { return 0; }
 
     private:
       fmatvec::Vec3 rI[27];
       double wI[27];
+      double A[27][20];
   };
 
 }

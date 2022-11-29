@@ -28,6 +28,7 @@ class QRadioButton;
 namespace MBSimGUI {
 
   class ExtWidget;
+  class FiniteElementType;
 
   class FirstPage : public QWizardPage {
     friend class FlexibleBodyTool;
@@ -85,7 +86,7 @@ namespace MBSimGUI {
      FiniteElementsPage(QWidget *parent);
       int nextId() const override;
     private:
-      ExtWidget *E, *rho, *nu, *nodes, *elements;
+      ExtWidget *E, *rho, *nu, *nodes, *elements, *extrapolateStress;
   };
 
   class ReductionMethodsPage : public QWizardPage {
@@ -170,8 +171,7 @@ namespace MBSimGUI {
       std::vector<fmatvec::SymSparseMat> createPPKs(const std::vector<std::map<int,double[4]>> &PPKm);
       std::pair<fmatvec::SymSparseMat,fmatvec::SymSparseMat> createMKs(const std::vector<std::map<int,double[4]>> &MKm);
       std::vector<fmatvec::SparseMat> createPPs(const std::vector<std::map<int,double[3]>> &PPm);
-      fmatvec::SparseMat createPhis(int n, const std::vector<std::map<int,double>> &Phis);
-      fmatvec::SparseMat createsigs(int n, const std::vector<std::map<int,double>> &sigm);
+      fmatvec::SparseMat createSparseMat(int n, const std::vector<std::map<int,double>> &Phis);
       void extfe();
       void calculix();
       void beam();
@@ -200,13 +200,16 @@ namespace MBSimGUI {
       std::vector<fmatvec::Vec3> KrKP;
       std::vector<fmatvec::Mat3xV> Phi, Psi;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
-      std::vector<int> nodeTable;
+      std::vector<int> nodeTable, nodeCount;
       std::vector<int> indices;
       std::vector<int> nodeNumbers;
       int nN, nM, ng, net, ner, nen;
       std::vector<std::map<int,double[4]>> MKm;
       std::vector<std::map<int,double[3]>> PPm;
       std::vector<std::vector<std::map<int,double>>> Phim, Psim, sigm;
+      std::vector<std::vector<std::vector<std::vector<std::map<int,double>>>>> sigem;
+      std::vector<fmatvec::MatVI> ele;
+      std::vector<FiniteElementType*> type;
   };
 
 }
