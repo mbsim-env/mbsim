@@ -63,13 +63,13 @@ namespace MBSimGUI {
       }
     }
 
-    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
 
-    auto nu = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto nu = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
 
-    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
 
-    auto extrapolateStress = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->extrapolateStress->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    auto exs = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->exs->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
 
     int max = 0;
     if(R.cols()==3)
@@ -128,7 +128,7 @@ namespace MBSimGUI {
       Phim[i][2][3*i+2] = 1;
     }
 
-    if(extrapolateStress) {
+    if(exs) {
       sigem.resize(ele.size());
       for(size_t k=0; k<ele.size(); k++)
 	sigem[k].resize(ele[k].rows(),vector<vector<map<int,double>>>(27,vector<map<int,double>>(6)));
@@ -244,7 +244,7 @@ namespace MBSimGUI {
 		PPm[v*3+1][u*3+2][2] += dPPdm;
 	      }
 	    }
-	    if(extrapolateStress) {
+	    if(exs) {
 	      double al = E/(1+nu);
 	      dsig[0] = al*(1-nu)/(1-2*nu)*dNi(0);
 	      dsig[1] = al*nu/(1-2*nu)*dNi(1);
@@ -274,7 +274,7 @@ namespace MBSimGUI {
 	  }
 	}
 
-	if(not extrapolateStress) {
+	if(not exs) {
 	  for(int k=0; k<npe; k++) {
 	    double x = typei->getNaturalCoordinates(k)(0);
 	    double y = typei->getNaturalCoordinates(k)(1);

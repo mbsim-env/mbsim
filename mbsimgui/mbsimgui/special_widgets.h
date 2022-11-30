@@ -138,8 +138,8 @@ namespace MBSimGUI {
       BoundaryConditionWidget(QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-      QString getNodes();
-      QString getDof();
+      ExtWidget* getNodes() { return nodes; }
+      ExtWidget* getDof() { return dof; }
     private:
       ExtWidget *nodes, *dof;
   };

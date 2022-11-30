@@ -464,14 +464,6 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  QString BoundaryConditionWidget::getNodes() {
-    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(nodes->getWidget())->getWidget())->getValue();
-  }
-
-  QString BoundaryConditionWidget::getDof() {
-    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(dof->getWidget())->getWidget())->getValue();
-  }
-
   Widget* BoundaryConditionWidgetFactory::createWidget(int i) {
     return new BoundaryConditionWidget(parent);
   }

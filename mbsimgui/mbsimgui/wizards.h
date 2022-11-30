@@ -86,7 +86,7 @@ namespace MBSimGUI {
      FiniteElementsPage(QWidget *parent);
       int nextId() const override;
     private:
-      ExtWidget *E, *rho, *nu, *nodes, *elements, *extrapolateStress;
+      ExtWidget *E, *rho, *nu, *nodes, *elements, *exs;
   };
 
   class ReductionMethodsPage : public QWizardPage {

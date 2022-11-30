@@ -30,36 +30,39 @@ using namespace fmatvec;
 
 namespace MBSimGUI {
 
-   void FlexibleBodyTool::cms() {
+  void FlexibleBodyTool::cms() {
     std::map<int,VecVI> bc;
-    std::vector<VecVI> dof;
-    std::vector<VecVI> bnodes;
     bool fixedBoundaryNormalModes = false;
     int nr = 0;
     auto *list = static_cast<ListWidget*>(static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget());
+    std::vector<VecVI> dof(list->getSize());;
+    std::vector<VecVI> bnodes(list->getSize());
     for(int i=0; i<list->getSize(); i++) {
-      bnodes.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getNodes().toStdString().c_str()));
-      //dof.push_back(VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getDof().toStdString().c_str()));
-      auto dof_ = VecVI(static_cast<BoundaryConditionWidget*>(list->getWidget(i))->getDof().toStdString().c_str());
-      for(int i=0; i<dof_.size(); i++)
-        dof_.e(i)--;
-      dof.push_back(dof_);
+      auto *bcw = static_cast<BoundaryConditionWidget*>(list->getWidget(i));
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(bcw->getNodes()->getWidget())->getWidget())->getWidget()->getEvalMat();
+      bnodes[i].resize(mat.size(),NONINIT);
+      for(size_t j=0; j<mat.size(); j++)
+	bnodes[i](j) = mat[j][0].toInt();
+      mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(bcw->getDof()->getWidget())->getWidget())->getWidget()->getEvalMat();
+      dof[i].resize(mat.size(),NONINIT);
+      for(size_t j=0; j<mat.size(); j++)
+	dof[i](j) = mat[j][0].toInt()-1;
     }
 
     VecVI inodes;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getEvalMat();
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getWidget()->getEvalMat();
       inodes.resize(mat.size(),NONINIT);
       for(size_t i=0; i<mat.size(); i++)
-	inodes(i) = mat[i][0].toDouble();
+	inodes(i) = mat[i][0].toInt();
     }
 
     VecVI nmodes;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getEvalMat();
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getWidget()->getEvalMat();
       nmodes.resize(mat.size(),NONINIT);
       for(size_t i=0; i<mat.size(); i++)
-	nmodes(i) = mat[i][0].toDouble();
+	nmodes(i) = mat[i][0].toInt();
     }
 
     if(bnodes.size() != dof.size())

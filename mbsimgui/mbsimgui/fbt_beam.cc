@@ -28,19 +28,19 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::beam() {
-    nN = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    auto l = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
-    auto A = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
-    auto I_ = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->getWidget())->getWidget())->getEvalMat();
+    nN = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
+    auto l = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto A = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto I_ = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->getWidget())->getWidget())->getWidget()->getEvalMat();
     auto Iy = I_[0][0].toDouble();
     auto Iz = I_[1][0].toDouble();
     auto Iyz = I_[2][0].toDouble();
-    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
-    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
     auto ten = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->ten->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    auto benz = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    auto benz = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
+    auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
+    auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
     nodeTable.resize(nN+1);
     for(int i=0; i<nN; i++)
       nodeTable[i+1] = i;
