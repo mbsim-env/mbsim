@@ -162,9 +162,7 @@ namespace MBSimFlexibleBody {
 
     it = findChild(names,"node numbers");
     if(it!=list<string>::iterator()) {
-      auto n = file.openChildObject<H5::SimpleDataset<vector<int>>>("node numbers")->read();
-      for(size_t i=0; i<n.size(); i++)
-	nodeMap[n[i]] = i;
+      nodeNumbers = file.openChildObject<H5::SimpleDataset<vector<int>>>("node numbers")->read();
       names.erase(it);
     }
   }
@@ -201,9 +199,9 @@ namespace MBSimFlexibleBody {
       ombvBody->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodeNumbers");
-    if(e) setOpenMBVNodeNumbers(E(e)->getText<VecVI>());
+    if(e) setOpenMBVNodeNumbers(E(e)->getText<vector<int>>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
-    if(e) setPlotNodeNumbers(E(e)->getText<VecVI>());
+    if(e) setPlotNodeNumbers(E(e)->getText<vector<int>>());
   }
 
 }
