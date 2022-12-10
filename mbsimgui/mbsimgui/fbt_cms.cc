@@ -30,6 +30,26 @@ using namespace fmatvec;
 
 namespace MBSimGUI {
 
+  template <class AT>
+  AT max(const vector<AT> &x) {
+    AT maximum = x[0];
+    for(size_t i=1; i<x.size(); i++) {
+      if(x[i] > maximum)
+        maximum = x[i];
+    }
+    return maximum;
+  }
+
+  template <class AT>
+  AT min(const vector<AT> &x) {
+    AT minimum = x[0];
+    for(size_t i=1; i<x.size(); i++) {
+      if(x[i] < minimum)
+        minimum = x[i];
+    }
+    return minimum;
+  }
+
   void FlexibleBodyTool::cms() {
     bool fixedBoundaryNormalModes = false;
     auto *list = static_cast<ListWidget*>(static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget());
@@ -99,11 +119,11 @@ namespace MBSimGUI {
 	  activeDof[nodeTable[bnodes[i][j]]][dof[i][k]] = 0;
       }
     }
-    vector<int> dofMap(3*nN);
+    vector<int> dofMapF(3*nN);
     for(size_t i=0, l=0, k=0; i<nN; i++) {
       for(size_t j=0; j<3; j++) {
 	if(activeDof[i][j])
-	  dofMap[l] = k++;
+	  dofMapF[l] = k++;
 	l++;
       }
     }
@@ -136,7 +156,7 @@ namespace MBSimGUI {
 	  if(activeDof[i][k] and activeDof[i][l]) {
 	    Krs()[ll] = Ks()[kk];
 	    Mrs()[ll] = Ms()[kk];
-	    Jpr[ll++] = dofMap[3*i+l];
+	    Jpr[ll++] = dofMapF[3*i+l];
 	  }
 	  kk++;
 	}
@@ -145,7 +165,7 @@ namespace MBSimGUI {
 	    if(activeDof[i][k] and activeDof[j.first][l]) {
 	      Krs()[ll] = Ks()[kk];
 	      Mrs()[ll] = Ms()[kk];
-	      Jpr[ll++] = dofMap[3*j.first+l];
+	      Jpr[ll++] = dofMapF[3*j.first+l];
 	    }
 	    kk++;
 	  }
@@ -173,19 +193,19 @@ namespace MBSimGUI {
     for(size_t i=0; i<nN; i++) {
       for(size_t j=0; j<3; j++) {
 	if(activeDof[i][j]==2)
-	  iH.add(dofMap[3*i+j]);
+	  iH.add(dofMapF[3*i+j]);
 	else if(activeDof[i][j]==1)
-	  iN.add(dofMap[3*i+j]);
+	  iN.add(dofMapF[3*i+j]);
       }
     }
 
     MatV Vsd(n,iH.size()+nmodes.size(),NONINIT);
     if(iH.size()) {
-      vector<int> dofMap(3*nN);
+      vector<int> dofMapN(3*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
 	for(size_t j=0; j<3; j++) {
 	  if(activeDof[i][j]==1)
-	    dofMap[l] = k++;
+	    dofMapN[l] = k++;
 	  l++;
 	}
       }
@@ -209,22 +229,25 @@ namespace MBSimGUI {
       int *Iprn = new int[iN.size()+1];
       int *Jprn = new int[nzern];
       Iprn[0] = 0;
+      SymSparseMat Mrns(iN.size(),nzern,Iprn,Jprn);
       SymSparseMat Krns(iN.size(),nzern,Iprn,Jprn);
       int ii = 0, kk = 0, ll = 0;
       for(size_t i=0; i<nN; i++) {
 	for(int k=0; k<3; k++) {
 	  for(int l=k; l<3; l++) {
 	    if(activeDof[i][k]==1 and activeDof[i][l]==1) {
+	      Mrns()[ll] = Ms()[kk];
 	      Krns()[ll] = Ks()[kk];
-	      Jprn[ll++] = dofMap[3*i+l];
+	      Jprn[ll++] = dofMapN[3*i+l];
 	    }
 	    kk++;
 	  }
 	  for(const auto & j : links[i]) {
 	    for(int l=0; l<3; l++) {
 	      if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
+		Mrns()[ll] = Ms()[kk];
 		Krns()[ll] = Ks()[kk];
-		Jprn[ll++] = dofMap[3*j.first+l];
+		Jprn[ll++] = dofMapN[3*j.first+l];
 	      }
 	      kk++;
 	    }
@@ -233,11 +256,11 @@ namespace MBSimGUI {
 	    Iprn[++ii] = ll;
 	}
       }
-      vector<int> dofMap2(3*nN);
+      vector<int> dofMapH(3*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
 	for(size_t j=0; j<3; j++) {
 	  if(activeDof[i][j]==2)
-	    dofMap2[l] = k++;
+	    dofMapH[l] = k++;
 	  l++;
 	}
       }
@@ -247,17 +270,17 @@ namespace MBSimGUI {
 	for(int k=0; k<3; k++) {
 	  for(int l=k; l<3; l++) {
 	    if(activeDof[i][k]==1 and activeDof[i][l]==2)
-	      Krnh(dofMap[3*i+k],dofMap2[3*i+l]) = Ks()[kk];
+	      Krnh(dofMapN[3*i+k],dofMapH[3*i+l]) = Ks()[kk];
 	    else if(activeDof[i][l]==1 and activeDof[i][k]==2)
-	      Krnh(dofMap[3*i+l],dofMap2[3*i+k]) = Ks()[kk];
+	      Krnh(dofMapN[3*i+l],dofMapH[3*i+k]) = Ks()[kk];
 	    kk++;
 	  }
 	  for(const auto & j : links[i]) {
 	    for(int l=0; l<3; l++) {
 	      if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
-		Krnh(dofMap[3*i+k],dofMap2[3*j.first+l]) = Ks()[kk];
+		Krnh(dofMapN[3*i+k],dofMapH[3*j.first+l]) = Ks()[kk];
 	      if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
-		Krnh(dofMap[3*j.first+l],dofMap2[3*i+k]) = Ks()[kk];
+		Krnh(dofMapN[3*j.first+l],dofMapH[3*i+k]) = Ks()[kk];
 	      kk++;
 	    }
 	  }
@@ -270,37 +293,37 @@ namespace MBSimGUI {
       Vs.set(iN,IJ,-slvLU(Krns,Krnh));
       Vs.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
       Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
-    }
-
-    if(nmodes.size()) {
-      Mat V;
-      Vec w;
-      if(fixedBoundaryNormalModes) {
-//	eigvec(MKsrn.second,MKsrn.first,6+nmodes.size(),1,V,w);
-//	vector<int> imod;
-//	for(int i=0; i<w.size(); i++) {
-//	  if(w(i)>pow(2*M_PI*0.1,2))
-//	    imod.push_back(i);
-//	}
-//	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-//	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-//	for(int i=0; i<nmodes.size(); i++) {
-//	  Vsd.set(iN,iH.size()+i,V.col(imod[nmodes(i)-1]));
-//	  Vsd.set(iH,iH.size()+i,Vec(iH.size()));
-//	}
-      }
-      else {
-	eigvec(Krs,Mrs,6+nmodes.size(),1,V,w);
+      if(nmodes.size() and fixedBoundaryNormalModes) {
+	Mat V;
+	Vec w;
+	eigvec(Krns,Mrns,6+nmodes.size(),1,V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
 	    imod.push_back(i);
 	}
-//	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-//	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-	for(int i=0; i<nmodes.size(); i++)
-	  Vsd.set(iH.size()+i,V.col(imod[nmodes[i]-1]));
+	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+	for(int i=0; i<nmodes.size(); i++) {
+	  Vsd.set(iN,iH.size()+i,V.col(imod[nmodes[i]-1]));
+	  Vsd.set(iH,iH.size()+i,Vec(iH.size()));
+	}
       }
+    }
+
+    if(nmodes.size() and not fixedBoundaryNormalModes) {
+      Mat V;
+      Vec w;
+      eigvec(Krs,Mrs,6+nmodes.size(),1,V,w);
+      vector<int> imod;
+      for(int i=0; i<w.size(); i++) {
+	if(w(i)>pow(2*M_PI*0.1,2))
+	  imod.push_back(i);
+      }
+      if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+	runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+      for(int i=0; i<nmodes.size(); i++)
+	Vsd.set(iH.size()+i,V.col(imod[nmodes[i]-1]));
     }
 
     if(iH.size()) {
