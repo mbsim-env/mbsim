@@ -242,6 +242,7 @@ namespace MBSimGUI {
 	}
       }
       MatV Krnh(iN.size(),iH.size());
+      kk = 0;
       for(size_t i=0; i<nN; i++) {
 	for(int k=0; k<3; k++) {
 	  for(int l=k; l<3; l++) {
@@ -262,7 +263,6 @@ namespace MBSimGUI {
 	  }
 	}
       }
-      dump("Krnh.asc",Krnh);
       Indices IJ;
       for(int i=0; i<iH.size(); i++)
 	IJ.add(i);
