@@ -31,109 +31,243 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::cms() {
-    std::map<int,VecVI> bc;
     bool fixedBoundaryNormalModes = false;
-    int nr = 0;
     auto *list = static_cast<ListWidget*>(static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget());
-    std::vector<VecVI> dof(list->getSize());;
-    std::vector<VecVI> bnodes(list->getSize());
+    vector<vector<int>> dof(list->getSize());;
+    vector<vector<int>> bnodes(list->getSize());
     for(int i=0; i<list->getSize(); i++) {
       auto *bcw = static_cast<BoundaryConditionWidget*>(list->getWidget(i));
       auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(bcw->getNodes()->getWidget())->getWidget())->getWidget()->getEvalMat();
-      bnodes[i].resize(mat.size(),NONINIT);
+      bnodes[i].resize(mat.size());
       for(size_t j=0; j<mat.size(); j++)
-	bnodes[i](j) = mat[j][0].toInt();
+	bnodes[i][j] = mat[j][0].toInt();
       mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(bcw->getDof()->getWidget())->getWidget())->getWidget()->getEvalMat();
-      dof[i].resize(mat.size(),NONINIT);
+      dof[i].resize(mat.size());
       for(size_t j=0; j<mat.size(); j++)
-	dof[i](j) = mat[j][0].toInt()-1;
+	dof[i][j] = mat[j][0].toInt()-1;
     }
 
-    VecVI inodes;
+    vector<int> inodes;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->isActive()) {
       auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getWidget()->getEvalMat();
-      inodes.resize(mat.size(),NONINIT);
+      inodes.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
-	inodes(i) = mat[i][0].toInt();
+	inodes[i] = mat[i][0].toInt();
     }
 
-    VecVI nmodes;
+    vector<int> nmodes;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->isActive()) {
       auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getWidget()->getEvalMat();
-      nmodes.resize(mat.size(),NONINIT);
+      nmodes.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
-	nmodes(i) = mat[i][0].toInt();
+	nmodes[i] = mat[i][0].toInt();
     }
 
+    vector<vector<int>> bc(nN,vector<int>(nen));
     if(bnodes.size() != dof.size())
       runtime_error("(FlexibleBodyTool::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
     for(size_t i=0; i<bnodes.size(); i++) {
       for(int j=0; j<bnodes[i].size(); j++) {
-	bc[bnodes[i](j)].resize(nen);
 	for(int k=0; k<dof[i].size(); k++) {
-	  if(dof[i](k)<0 or dof[i](k)>nen-1)
+	  if(dof[i][k]<0 or dof[i][k]>nen-1)
 	    runtime_error("(FlexibleBodyTool::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be within range [0,3]");
-	  bc[bnodes[i](j)](dof[i](k)) = 1;
+	  bc[nodeTable[bnodes[i][j]]][dof[i][k]] = 1;
 	}
       }
     }
 
-    for(const auto & i : bc)
-      for(int j=0; j<i.second.size(); j++)
-	nr += i.second(j);
+    int nr = 0;
+    for(int i=0; i<bc.size(); i++) {
+      for(int j=0; j<bc[i].size(); j++)
+	nr += bc[i][j];
+    }
 
     int n = ng-nr;
 
-    vector<int> c;
-    for(const auto & i : bc) {
-      for(int j=0; j<i.second.size(); j++)
-	if(i.second(j)) c.push_back(nodeTable[i.first]*nen+j);
-    }
-    sort(c.begin(), c.end());
+    SymSparseMat Ms = PPdms[0];
+    for(int i=0; i<Ms.nonZeroElements(); i++)
+      Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
 
-    size_t h=0;
+    vector<double[3]> activeDof(nN);
+    for(int i=0; i<nN; i++) {
+      for(int j=0; j<3; j++)
+	activeDof[i][j] = 1;
+    }
+    for(size_t i=0; i<bnodes.size(); i++) {
+      for(size_t j=0; j<bnodes[i].size(); j++) {
+	for(size_t k=0; k<dof[i].size(); k++)
+	  activeDof[nodeTable[bnodes[i][j]]][dof[i][k]] = 0;
+      }
+    }
+    vector<int> dofMap(3*nN);
+    for(size_t i=0, l=0, k=0; i<nN; i++) {
+      for(size_t j=0; j<3; j++) {
+	if(activeDof[i][j])
+	  dofMap[l] = k++;
+	l++;
+      }
+    }
+    int nzer = 0;
+    for(size_t i=0; i<nN; i++) {
+      for(int k=0; k<3; k++) {
+	if(activeDof[i][k]) {
+	  for(int l=k; l<3; l++) {
+	    if(activeDof[i][l])
+	      nzer++;
+	  }
+	  for(const auto & j : links[i]) {
+	    for(int l=0; l<3; l++) {
+	      if(activeDof[j.first][l])
+		nzer++;
+	    }
+	  }
+	}
+      }
+    }
+    int *Ipr = new int[n+1];
+    int *Jpr = new int[nzer];
+    Ipr[0] = 0;
+    SymSparseMat Krs(n,nzer,Ipr,Jpr);
+    SymSparseMat Mrs(n,nzer,Ipr,Jpr);
+    int ii = 0, kk = 0, ll = 0;
+    for(size_t i=0; i<nN; i++) {
+      for(int k=0; k<3; k++) {
+	for(int l=k; l<3; l++) {
+	  if(activeDof[i][k] and activeDof[i][l]) {
+	    Krs()[ll] = Ks()[kk];
+	    Mrs()[ll] = Ms()[kk];
+	    Jpr[ll++] = dofMap[3*i+l];
+	  }
+	  kk++;
+	}
+	for(const auto & j : links[i]) {
+	  for(int l=0; l<3; l++) {
+	    if(activeDof[i][k] and activeDof[j.first][l]) {
+	      Krs()[ll] = Ks()[kk];
+	      Mrs()[ll] = Ms()[kk];
+	      Jpr[ll++] = dofMap[3*j.first+l];
+	    }
+	    kk++;
+	  }
+	}
+	if(activeDof[i][k])
+	  Ipr[++ii] = ll;
+      }
+    }
+
     Indices iF, iX;
-    for(int i=0; i<ng; i++) {
-      if(h<c.size() and i==c[h]) {
-	h++;
-	iX.add(i);
+    for(int i=0; i<nN; i++) {
+      for(int j=0; j<3; j++) {
+	if(activeDof[i][j])
+	  iF.add(3*i+j);
+	else
+	  iX.add(3*i+j);
       }
-      else
-	iF.add(i);
     }
 
-    c.clear();
-    for(int i=0; i<inodes.size(); i++) {
-      VecVI bci = bc[inodes(i)];
-      for(int j=0; j<nen; j++) {
-	if((not bci.size()) or (not bci(j)))
-	  c.push_back(nodeTable[inodes(i)]*nen+j);
-      }
+    for(size_t i=0; i<inodes.size(); i++) {
+      for(size_t j=0; j<3; j++)
+	activeDof[nodeTable[inodes[i]]][j] *= 2;
     }
-    sort(c.begin(), c.end());
-    h=0;
     Indices iH, iN;
-    for(int i=0; i<iF.size(); i++) {
-      if(h<c.size() and iF[i]==c[h]) {
-	iH.add(i);
-	h++;
+    for(size_t i=0; i<nN; i++) {
+      for(size_t j=0; j<3; j++) {
+	if(activeDof[i][j]==2)
+	  iH.add(dofMap[3*i+j]);
+	else if(activeDof[i][j]==1)
+	  iN.add(dofMap[3*i+j]);
       }
-      else
-	iN.add(i);
     }
-
-    auto MKmr = reduceMat(MKm,iF);
-    auto MKmrn = reduceMat(MKmr,iN);
-    auto MKsr = createMKs(MKmr);
-    auto MKsrn = createMKs(MKmrn);
 
     MatV Vsd(n,iH.size()+nmodes.size(),NONINIT);
     if(iH.size()) {
+      vector<int> dofMap(3*nN);
+      for(size_t i=0, l=0, k=0; i<nN; i++) {
+	for(size_t j=0; j<3; j++) {
+	  if(activeDof[i][j]==1)
+	    dofMap[l] = k++;
+	  l++;
+	}
+      }
+      int nzern = 0;
+      for(size_t i=0; i<nN; i++) {
+	for(int k=0; k<3; k++) {
+	  if(activeDof[i][k]==1) {
+	    for(int l=k; l<3; l++) {
+	      if(activeDof[i][l]==1)
+		nzern++;
+	    }
+	    for(const auto & j : links[i]) {
+	      for(int l=0; l<3; l++) {
+		if(activeDof[j.first][l]==1)
+		  nzern++;
+	      }
+	    }
+	  }
+	}
+      }
+      int *Iprn = new int[iN.size()+1];
+      int *Jprn = new int[nzern];
+      Iprn[0] = 0;
+      SymSparseMat Krns(iN.size(),nzern,Iprn,Jprn);
+      int ii = 0, kk = 0, ll = 0;
+      for(size_t i=0; i<nN; i++) {
+	for(int k=0; k<3; k++) {
+	  for(int l=k; l<3; l++) {
+	    if(activeDof[i][k]==1 and activeDof[i][l]==1) {
+	      Krns()[ll] = Ks()[kk];
+	      Jprn[ll++] = dofMap[3*i+l];
+	    }
+	    kk++;
+	  }
+	  for(const auto & j : links[i]) {
+	    for(int l=0; l<3; l++) {
+	      if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
+		Krns()[ll] = Ks()[kk];
+		Jprn[ll++] = dofMap[3*j.first+l];
+	      }
+	      kk++;
+	    }
+	  }
+	  if(activeDof[i][k]==1)
+	    Iprn[++ii] = ll;
+	}
+      }
+      vector<int> dofMap2(3*nN);
+      for(size_t i=0, l=0, k=0; i<nN; i++) {
+	for(size_t j=0; j<3; j++) {
+	  if(activeDof[i][j]==2)
+	    dofMap2[l] = k++;
+	  l++;
+	}
+      }
+      MatV Krnh(iN.size(),iH.size());
+      for(size_t i=0; i<nN; i++) {
+	for(int k=0; k<3; k++) {
+	  for(int l=k; l<3; l++) {
+	    if(activeDof[i][k]==1 and activeDof[i][l]==2)
+	      Krnh(dofMap[3*i+k],dofMap2[3*i+l]) = Ks()[kk];
+	    else if(activeDof[i][l]==1 and activeDof[i][k]==2)
+	      Krnh(dofMap[3*i+l],dofMap2[3*i+k]) = Ks()[kk];
+	    kk++;
+	  }
+	  for(const auto & j : links[i]) {
+	    for(int l=0; l<3; l++) {
+	      if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
+		Krnh(dofMap[3*i+k],dofMap2[3*j.first+l]) = Ks()[kk];
+	      if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
+		Krnh(dofMap[3*j.first+l],dofMap2[3*i+k]) = Ks()[kk];
+	      kk++;
+	    }
+	  }
+	}
+      }
+      dump("Krnh.asc",Krnh);
       Indices IJ;
       for(int i=0; i<iH.size(); i++)
 	IJ.add(i);
       MatV Vs(iF.size(),iH.size(),NONINIT);
-      Vs.set(iN,IJ,-slvLU(MKsrn.second,reduceMat(MKmr,iN,iH)));
+      Vs.set(iN,IJ,-slvLU(Krns,Krnh));
       Vs.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
       Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
     }
@@ -142,45 +276,45 @@ namespace MBSimGUI {
       Mat V;
       Vec w;
       if(fixedBoundaryNormalModes) {
-	eigvec(MKsrn.second,MKsrn.first,6+nmodes.size(),1,V,w);
-	vector<int> imod;
-	for(int i=0; i<w.size(); i++) {
-	  if(w(i)>pow(2*M_PI*0.1,2))
-	    imod.push_back(i);
-	}
-	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-	for(int i=0; i<nmodes.size(); i++) {
-	  Vsd.set(iN,iH.size()+i,V.col(imod[nmodes(i)-1]));
-	  Vsd.set(iH,iH.size()+i,Vec(iH.size()));
-	}
+//	eigvec(MKsrn.second,MKsrn.first,6+nmodes.size(),1,V,w);
+//	vector<int> imod;
+//	for(int i=0; i<w.size(); i++) {
+//	  if(w(i)>pow(2*M_PI*0.1,2))
+//	    imod.push_back(i);
+//	}
+//	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+//	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+//	for(int i=0; i<nmodes.size(); i++) {
+//	  Vsd.set(iN,iH.size()+i,V.col(imod[nmodes(i)-1]));
+//	  Vsd.set(iH,iH.size()+i,Vec(iH.size()));
+//	}
       }
       else {
-	eigvec(MKsr.second,MKsr.first,6+nmodes.size(),1,V,w);
+	eigvec(Krs,Mrs,6+nmodes.size(),1,V,w);
 	vector<int> imod;
 	for(int i=0; i<w.size(); i++) {
 	  if(w(i)>pow(2*M_PI*0.1,2))
 	    imod.push_back(i);
 	}
-	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
+//	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
+//	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
 	for(int i=0; i<nmodes.size(); i++)
-	  Vsd.set(iH.size()+i,V.col(imod[nmodes(i)-1]));
+	  Vsd.set(iH.size()+i,V.col(imod[nmodes[i]-1]));
       }
     }
 
     if(iH.size()) {
       SqrMat V;
       Vec w;
-      eigvec(JTMJ(MKsr.second,Vsd),JTMJ(MKsr.first,Vsd),V,w);
+      eigvec(JTMJ(Krs,Vsd),JTMJ(Mrs,Vsd),V,w);
       vector<int> imod;
       for(int i=0; i<w.size(); i++) {
-	if(w(i)>pow(2*M_PI*0.1,2))
-	  imod.push_back(i);
+        if(w(i)>pow(2*M_PI*0.1,2))
+          imod.push_back(i);
       }
       MatV Vr(w.size(),imod.size(),NONINIT);
       for(size_t i=0; i<imod.size(); i++)
-	Vr.set(i,V.col(imod[i]));
+        Vr.set(i,V.col(imod[i]));
       Vsd <<= Vsd*Vr;
     }
     nM = Vsd.cols();

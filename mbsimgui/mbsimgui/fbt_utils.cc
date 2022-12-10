@@ -213,4 +213,27 @@ namespace MBSimGUI {
     return Phis;
   }
 
+  std::vector<fmatvec::SparseMat> FlexibleBodyTool::createSparseMat(int n, const vector<map<int,double[27]>> &Phim) {
+    int nze=0;
+    for(const auto & i : Phim)
+      nze+=i.size();
+    vector<SparseMat> Phis(27,SparseMat(Phim.size(),n,nze,NONINIT));
+    int k=0, l=0;
+    for(int h=0; h<27; h++)
+      Phis[h].Ip()[0] = 0;
+    for(const auto & i : Phim) {
+      for(const auto & j : i) {
+	for(int h=0; h<27; h++) {
+	  Phis[h].Jp()[l] = j.first;
+	  Phis[h]()[l] = j.second[h];
+	}
+	l++;
+      }
+      k++;
+      for(int h=0; h<27; h++)
+	Phis[h].Ip()[k] = l;
+    }
+    return Phis;
+  }
+
 }
