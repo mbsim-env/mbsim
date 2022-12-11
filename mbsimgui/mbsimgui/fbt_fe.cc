@@ -197,7 +197,6 @@ namespace MBSimGUI {
     rPdm.resize(3,Mat3xV(ng));
     Pdm.resize(ng);
 
-    Phim.resize(nN,vector<map<int,double>>(3));
     Phis.resize(nN,SparseMat(3,ng,3,NONINIT));
     for(int i=0; i<nN; i++) {
       for(int j=0; j<3; j++) {
@@ -206,9 +205,6 @@ namespace MBSimGUI {
 	Phis[i]()[j] = 1;
       }
       Phis[i].Ip()[3] = 3;
-      Phim[i][0][3*i] = 1;
-      Phim[i][1][3*i+1] = 1;
-      Phim[i][2][3*i+2] = 1;
     }
 
     MKm.resize(ng);
