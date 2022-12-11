@@ -292,44 +292,9 @@ namespace MBSimGUI {
       MatV Vs(iF.size(),iH.size(),NONINIT);
       Vs.set(iN,IJ,-slvLU(Krns,Krnh));
       Vs.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
-      Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
-      if(nmodes.size() and fixedBoundaryNormalModes) {
-	Mat V;
-	Vec w;
-	eigvec(Krns,Mrns,6+nmodes.size(),1,V,w);
-	vector<int> imod;
-	for(int i=0; i<w.size(); i++) {
-	  if(w(i)>pow(2*M_PI*0.1,2))
-	    imod.push_back(i);
-	}
-	if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	  runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-	for(int i=0; i<nmodes.size(); i++) {
-	  Vsd.set(iN,iH.size()+i,V.col(imod[nmodes[i]-1]));
-	  Vsd.set(iH,iH.size()+i,Vec(iH.size()));
-	}
-      }
-    }
-
-    if(nmodes.size() and not fixedBoundaryNormalModes) {
-      Mat V;
-      Vec w;
-      eigvec(Krs,Mrs,6+nmodes.size(),1,V,w);
-      vector<int> imod;
-      for(int i=0; i<w.size(); i++) {
-	if(w(i)>pow(2*M_PI*0.1,2))
-	  imod.push_back(i);
-      }
-      if(min(nmodes)<1 or max(nmodes)>(int)imod.size())
-	runtime_error(string("(FlexibleBodyTool::init): node numbers do not match, must be within the range [1,") + to_string(imod.size()) + "]");
-      for(int i=0; i<nmodes.size(); i++)
-	Vsd.set(iH.size()+i,V.col(imod[nmodes[i]-1]));
-    }
-
-    if(iH.size()) {
       SqrMat V;
       Vec w;
-      eigvec(JTMJ(Krs,Vsd),JTMJ(Mrs,Vsd),V,w);
+      eigvec(JTMJ(Krs,Vs),JTMJ(Mrs,Vs),V,w);
       vector<int> imod;
       for(int i=0; i<w.size(); i++) {
         if(w(i)>pow(2*M_PI*0.1,2))
@@ -338,8 +303,27 @@ namespace MBSimGUI {
       MatV Vr(w.size(),imod.size(),NONINIT);
       for(size_t i=0; i<imod.size(); i++)
         Vr.set(i,V.col(imod[i]));
-      Vsd <<= Vsd*Vr;
+      Vs <<= Vs*Vr;
+      Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
+      if(nmodes.size() and fixedBoundaryNormalModes) {
+	Mat V;
+	Vec w;
+	eigvec(Krns,Mrns,nmodes.size(),1,V,w,0.01);
+	for(int i=0; i<nmodes.size(); i++) {
+	  Vsd.set(iN,iH.size()+i,V.col(i));
+	  Vsd.set(iH,iH.size()+i,VecV(iH.size()));
+	}
+      }
     }
+
+    if(nmodes.size() and not fixedBoundaryNormalModes) {
+      Mat V;
+      Vec w;
+      eigvec(Krs,Mrs,nmodes.size(),1,V,w,0.01);
+      for(int i=0; i<nmodes.size(); i++)
+	Vsd.set(iH.size()+i,V.col(i));
+    }
+
     nM = Vsd.cols();
     U.resize(ng,nM,NONINIT);
     Indices IJ;
