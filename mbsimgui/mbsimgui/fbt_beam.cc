@@ -453,8 +453,8 @@ namespace MBSimGUI {
 
     Ks <<= createSymSparseMat(Km);
     for(int i=0; i<3; i++) {
-    PPdms[i] <<= createSymSparseMat(PPdmm[i]);
-    PPdm2s[i] <<= createSparseMat(ng,PPdm2m[i]);
+      PPdms[i] <<= createSymSparseMat(PPdmm[i]);
+      PPdm2s[i] <<= createSparseMat(ng,PPdm2m[i]);
     }
     Phis.resize(nN);
     Psis.resize(nN);

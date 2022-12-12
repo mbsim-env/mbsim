@@ -104,10 +104,6 @@ namespace MBSimGUI {
 
     int n = ng-nr;
 
-    SymSparseMat Ms = PPdms[0];
-    for(int i=0; i<Ms.nonZeroElements(); i++)
-      Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
-
     vector<vector<int>> activeDof(nN,vector<int>(nen));
     for(int i=0; i<nN; i++) {
       for(int j=0; j<nen; j++)
@@ -125,53 +121,6 @@ namespace MBSimGUI {
 	if(activeDof[i][j])
 	  dofMapF[l] = k++;
 	l++;
-      }
-    }
-    int nzer = 0;
-    for(size_t i=0; i<nN; i++) {
-      for(int k=0; k<nen; k++) {
-	if(activeDof[i][k]) {
-	  for(int l=k; l<nen; l++) {
-	    if(activeDof[i][l])
-	      nzer++;
-	  }
-	  for(const auto & j : links[i]) {
-	    for(int l=0; l<nen; l++) {
-	      if(activeDof[j.first][l])
-		nzer++;
-	    }
-	  }
-	}
-      }
-    }
-    int *Ipr = new int[n+1];
-    int *Jpr = new int[nzer];
-    Ipr[0] = 0;
-    SymSparseMat Krs(n,nzer,Ipr,Jpr);
-    SymSparseMat Mrs(n,nzer,Ipr,Jpr);
-    int ii = 0, kk = 0, ll = 0;
-    for(size_t i=0; i<nN; i++) {
-      for(int k=0; k<nen; k++) {
-	for(int l=k; l<nen; l++) {
-	  if(activeDof[i][k] and activeDof[i][l]) {
-	    Krs()[ll] = Ks()[kk];
-	    Mrs()[ll] = Ms()[kk];
-	    Jpr[ll++] = dofMapF[nen*i+l];
-	  }
-	  kk++;
-	}
-	for(const auto & j : links[i]) {
-	  for(int l=0; l<nen; l++) {
-	    if(activeDof[i][k] and activeDof[j.first][l]) {
-	      Krs()[ll] = Ks()[kk];
-	      Mrs()[ll] = Ms()[kk];
-	      Jpr[ll++] = dofMapF[nen*j.first+l];
-	    }
-	    kk++;
-	  }
-	}
-	if(activeDof[i][k])
-	  Ipr[++ii] = ll;
       }
     }
 
@@ -199,63 +148,74 @@ namespace MBSimGUI {
       }
     }
 
-    MatV Vsd(n,iH.size()+nmodes.size(),NONINIT);
-    if(iH.size()) {
-      vector<int> dofMapN(nen*nN);
-      for(size_t i=0, l=0, k=0; i<nN; i++) {
-	for(size_t j=0; j<nen; j++) {
-	  if(activeDof[i][j]==1)
-	    dofMapN[l] = k++;
-	  l++;
-	}
-      }
-      int nzern = 0;
+    SymSparseMat Ms, Krs, Mrs;
+    vector<map<int,double>> Kmr, Mmr;
+    if(Km.size()) {
+      Kmr = reduceMat(Km,iF);
+      SymSparseMat SM1 = createSymSparseMat(Kmr);
+      Krs &= SM1;
+      Mmr = reduceMat(Mm,iF);
+      SymSparseMat SM2 = createSymSparseMat(Mmr);
+      Mrs &= SM2;
+    }
+    else {
+      Ms <<= PPdms[0];
+      for(int i=0; i<Ms.nonZeroElements(); i++)
+	Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
+
+      int nzer = 0;
       for(size_t i=0; i<nN; i++) {
 	for(int k=0; k<nen; k++) {
-	  if(activeDof[i][k]==1) {
+	  if(activeDof[i][k]) {
 	    for(int l=k; l<nen; l++) {
-	      if(activeDof[i][l]==1)
-		nzern++;
+	      if(activeDof[i][l])
+		nzer++;
 	    }
 	    for(const auto & j : links[i]) {
 	      for(int l=0; l<nen; l++) {
-		if(activeDof[j.first][l]==1)
-		  nzern++;
+		if(activeDof[j.first][l])
+		  nzer++;
 	      }
 	    }
 	  }
 	}
       }
-      int *Iprn = new int[iN.size()+1];
-      int *Jprn = new int[nzern];
-      Iprn[0] = 0;
-      SymSparseMat Mrns(iN.size(),nzern,Iprn,Jprn);
-      SymSparseMat Krns(iN.size(),nzern,Iprn,Jprn);
+      int *Ipr = new int[n+1];
+      int *Jpr = new int[nzer];
+      Ipr[0] = 0;
+      SymSparseMat SM1(n,nzer,Ipr,Jpr);
+      Krs &= SM1;
+      SymSparseMat SM2(n,nzer,Ipr,Jpr);
+      Mrs &= SM2;
       int ii = 0, kk = 0, ll = 0;
       for(size_t i=0; i<nN; i++) {
 	for(int k=0; k<nen; k++) {
 	  for(int l=k; l<nen; l++) {
-	    if(activeDof[i][k]==1 and activeDof[i][l]==1) {
-	      Mrns()[ll] = Ms()[kk];
-	      Krns()[ll] = Ks()[kk];
-	      Jprn[ll++] = dofMapN[nen*i+l];
+	    if(activeDof[i][k] and activeDof[i][l]) {
+	      Krs()[ll] = Ks()[kk];
+	      Mrs()[ll] = Ms()[kk];
+	      Jpr[ll++] = dofMapF[nen*i+l];
 	    }
 	    kk++;
 	  }
 	  for(const auto & j : links[i]) {
 	    for(int l=0; l<nen; l++) {
-	      if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
-		Mrns()[ll] = Ms()[kk];
-		Krns()[ll] = Ks()[kk];
-		Jprn[ll++] = dofMapN[nen*j.first+l];
+	      if(activeDof[i][k] and activeDof[j.first][l]) {
+		Krs()[ll] = Ks()[kk];
+		Mrs()[ll] = Ms()[kk];
+		Jpr[ll++] = dofMapF[nen*j.first+l];
 	      }
 	      kk++;
 	    }
 	  }
-	  if(activeDof[i][k]==1)
-	    Iprn[++ii] = ll;
+	  if(activeDof[i][k])
+	    Ipr[++ii] = ll;
 	}
       }
+    }
+
+    MatV Vsd(n,iH.size()+nmodes.size(),NONINIT);
+    if(iH.size()) {
       vector<int> dofMapH(nen*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
 	for(size_t j=0; j<nen; j++) {
@@ -264,24 +224,93 @@ namespace MBSimGUI {
 	  l++;
 	}
       }
-      MatV Krnh(iN.size(),iH.size());
-      kk = 0;
-      for(size_t i=0; i<nN; i++) {
-	for(int k=0; k<nen; k++) {
-	  for(int l=k; l<nen; l++) {
-	    if(activeDof[i][k]==1 and activeDof[i][l]==2)
-	      Krnh(dofMapN[nen*i+k],dofMapH[nen*i+l]) = Ks()[kk];
-	    else if(activeDof[i][l]==1 and activeDof[i][k]==2)
-	      Krnh(dofMapN[nen*i+l],dofMapH[nen*i+k]) = Ks()[kk];
-	    kk++;
+      vector<int> dofMapN(nen*nN);
+      for(size_t i=0, l=0, k=0; i<nN; i++) {
+	for(size_t j=0; j<nen; j++) {
+	  if(activeDof[i][j]==1)
+	    dofMapN[l] = k++;
+	  l++;
+	}
+      }
+
+      SymSparseMat Krns, Mrns;
+      MatV Krnh;
+      if(Km.size()) {
+	SymSparseMat SM1 = createSymSparseMat(reduceMat(Kmr,iN));
+	Krns &= SM1;
+	SymSparseMat SM2 = createSymSparseMat(reduceMat(Mmr,iN));
+	Mrns &= SM2;
+	Krnh <<= reduceMat(Kmr,iN,iH);
+      }
+      else {
+	int nzern = 0;
+	for(size_t i=0; i<nN; i++) {
+	  for(int k=0; k<nen; k++) {
+	    if(activeDof[i][k]==1) {
+	      for(int l=k; l<nen; l++) {
+		if(activeDof[i][l]==1)
+		  nzern++;
+	      }
+	      for(const auto & j : links[i]) {
+		for(int l=0; l<nen; l++) {
+		  if(activeDof[j.first][l]==1)
+		    nzern++;
+		}
+	      }
+	    }
 	  }
-	  for(const auto & j : links[i]) {
-	    for(int l=0; l<nen; l++) {
-	      if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
-		Krnh(dofMapN[nen*i+k],dofMapH[nen*j.first+l]) = Ks()[kk];
-	      if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
-		Krnh(dofMapN[nen*j.first+l],dofMapH[nen*i+k]) = Ks()[kk];
+	}
+	int *Iprn = new int[iN.size()+1];
+	int *Jprn = new int[nzern];
+	Iprn[0] = 0;
+	SymSparseMat SM1(iN.size(),nzern,Iprn,Jprn);
+	Krns &= SM1;
+	SymSparseMat SM2(iN.size(),nzern,Iprn,Jprn);
+	Mrns &= SM2;
+	int ii = 0, kk = 0, ll = 0;
+	for(size_t i=0; i<nN; i++) {
+	  for(int k=0; k<nen; k++) {
+	    for(int l=k; l<nen; l++) {
+	      if(activeDof[i][k]==1 and activeDof[i][l]==1) {
+		Mrns()[ll] = Ms()[kk];
+		Krns()[ll] = Ks()[kk];
+		Jprn[ll++] = dofMapN[nen*i+l];
+	      }
 	      kk++;
+	    }
+	    for(const auto & j : links[i]) {
+	      for(int l=0; l<nen; l++) {
+		if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
+		  Mrns()[ll] = Ms()[kk];
+		  Krns()[ll] = Ks()[kk];
+		  Jprn[ll++] = dofMapN[nen*j.first+l];
+		}
+		kk++;
+	      }
+	    }
+	    if(activeDof[i][k]==1)
+	      Iprn[++ii] = ll;
+	  }
+	}
+	Krnh.resize(iN.size(),iH.size());
+	kk = 0;
+	for(size_t i=0; i<nN; i++) {
+	  for(int k=0; k<nen; k++) {
+	    for(int l=k; l<nen; l++) {
+	      if(activeDof[i][k]==1 and activeDof[i][l]==2)
+		Krnh(dofMapN[nen*i+k],dofMapH[nen*i+l]) = Ks()[kk];
+	      else if(activeDof[i][l]==1 and activeDof[i][k]==2)
+		Krnh(dofMapN[nen*i+l],dofMapH[nen*i+k]) = Ks()[kk];
+	      kk++;
+	    }
+	    for(const auto & j : links[i]) {
+	      for(int l=0; l<nen; l++) {
+		if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
+		  Krnh(dofMapN[nen*i+k],dofMapH[nen*j.first+l]) = Ks()[kk];
+		if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
+		  Krnh(dofMapN[nen*j.first+l],dofMapH[nen*i+k]) = Ks()[kk];
+		kk++;
+	      }
 	    }
 	  }
 	}
@@ -297,21 +326,23 @@ namespace MBSimGUI {
       eigvec(JTMJ(Krs,Vs),JTMJ(Mrs,Vs),V,w);
       vector<int> imod;
       for(int i=0; i<w.size(); i++) {
-        if(w(i)>pow(2*M_PI*0.1,2))
-          imod.push_back(i);
+	if(w(i)>pow(2*M_PI*0.1,2))
+	  imod.push_back(i);
       }
       MatV Vr(w.size(),imod.size(),NONINIT);
       for(size_t i=0; i<imod.size(); i++)
-        Vr.set(i,V.col(imod[i]));
+	Vr.set(i,V.col(imod[i]));
       Vs <<= Vs*Vr;
       Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
       if(nmodes.size() and fixedBoundaryNormalModes) {
 	Mat V;
 	Vec w;
-	eigvec(Krns,Mrns,nmodes.size(),1,V,w,0.001);
+	eigvec(Krns,Mrns,max(nmodes),1,V,w,0.001);
 	for(int i=0; i<nmodes.size(); i++) {
-	  Vsd.set(iN,iH.size()+i,V.col(i));
-	  Vsd.set(iH,iH.size()+i,VecV(iH.size()));
+	  if(w(nmodes[i]-1)>pow(2*M_PI*0.1,2)) {
+	    Vsd.set(iN,iH.size()+i,V.col(nmodes[i]-1));
+	    Vsd.set(iH,iH.size()+i,VecV(iH.size()));
+	  }
 	}
       }
     }

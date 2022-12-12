@@ -38,10 +38,6 @@ namespace MBSimGUI {
 
     Ke0 <<= JTMJ(Ks,U);
 
-    SymSparseMat Ms = PPdms[0];
-    for(int i=0; i<Ms.nonZeroElements(); i++)
-      Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
-
     bool lumpedMass = true;
     // compute mass and lumped mass matrix
     vector<double> mi(nN);
@@ -49,15 +45,15 @@ namespace MBSimGUI {
     if(M.cols()==3) {
       double ds = 0;
       for(int i=0; i<nN; i++) {
-	int r = Ms.Ip()[i*nen];
-	ds += Ms()[r];
-	m += Ms()[r];
-	for(int c=r+1; c<Ms.Ip()[i*nen+1]; c++)
-	  m += 2*Ms()[c];
+	int r = PPdms[0].Ip()[i*nen];
+	ds += PPdms[0]()[r];
+	m += PPdms[0]()[r];
+	for(int c=r+1; c<PPdms[0].Ip()[i*nen+1]; c++)
+	  m += 2*PPdms[0]()[c];
       }
       for(int i=0; i<nN; i++) {
-	int r = Ms.Ip()[i*nen];
-	mi[i] = Ms()[r]/ds*m;
+	int r = PPdms[0].Ip()[i*nen];
+	mi[i] = PPdms[0]()[r]/ds*m;
       }
     } else if(M.cols()==1) {
       for(int i=0; i<M.rows(); i++) {
@@ -87,9 +83,9 @@ namespace MBSimGUI {
     }
     else {
       // compute reduced mass matrix
-      if(not Ms.rows())
+      if(not PPdms[0].rows())
 	runtime_error("full mass approach not available");
-      PPdm[0][0] = JTMJ(Ms,U);
+      PPdm[0][0] = JTMJ(PPdms[0],U);
     }
   }
 

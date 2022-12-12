@@ -168,6 +168,8 @@ namespace MBSimGUI {
       static fmatvec::MatV readMat(const std::string &file);
       fmatvec::SymSparseMat createSymSparseMat(const std::vector<std::map<int,double>> &Am);
       fmatvec::SparseMat createSparseMat(int n, const std::vector<std::map<int,double>> &Am);
+      std::vector<std::map<int,double>> reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iF);
+      fmatvec::MatV reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
       void extfe();
       void calculix();
       void beam();
@@ -200,8 +202,7 @@ namespace MBSimGUI {
       std::vector<int> indices;
       std::vector<int> nodeNumbers;
       int nN, nM, ng, net, ner, nen;
-      std::vector<std::map<int,double[4]>> MKm;
-      std::vector<std::map<int,double[3]>> PPm;
+      std::vector<std::map<int,double>> Km, Mm;
       std::vector<std::vector<std::map<int,double>>> Phim, Psim, sigm;
       std::vector<std::vector<std::vector<std::map<int,double[27]>>>> sigem;
       std::vector<fmatvec::MatVI> ele;

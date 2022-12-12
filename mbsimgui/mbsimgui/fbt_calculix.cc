@@ -138,12 +138,15 @@ namespace MBSimGUI {
 
     ng = K(K.rows()-1,1);
 
-    MKm.resize(ng);
+    Km.resize(ng);
+    Mm.resize(ng);
     for(int i=0; i<K.rows(); i++) {
-      auto d = MKm[K(i,0)-1][K(i,1)-1];
-      d[0] = M(i,2);
-      d[3] = K(i,2);
+      Mm[K(i,0)-1][K(i,1)-1] = M(i,2);
+      Km[K(i,0)-1][K(i,1)-1] = K(i,2);
     }
+
+    Ks <<= createSymSparseMat(Km);
+    PPdms[0] <<= createSymSparseMat(Mm);
 
     U.resize(3*nN,nM,NONINIT);
     S.resize(6*nN,nM,NONINIT);

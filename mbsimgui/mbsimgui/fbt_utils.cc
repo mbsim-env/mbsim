@@ -102,4 +102,61 @@ namespace MBSimGUI {
     return As;
   }
 
+  vector<map<int,double>> FlexibleBodyTool::reduceMat(const vector<map<int,double>> &Am, const Indices &iF) {
+    vector<map<int,double>> Amr;
+    vector<int> map(Am.size());
+    size_t h=0, k=0;
+    for(size_t i=0; i<map.size(); i++) {
+      if(h<iF.size() and i==iF[h]) {
+	h++;
+	map[i] = k++;
+      }
+      else
+	map[i] = -1;
+    }
+    Amr.resize(k);
+    k=0;
+    for(const auto & i : Am) {
+      if(map[k]>=0) {
+	for(const auto & j : i) {
+	  if(map[j.first]>=0)
+	    Amr[map[k]][map[j.first]] = j.second;
+	}
+      }
+      k++;
+    }
+    return Amr;
+  }
+
+  MatV FlexibleBodyTool::reduceMat(const vector<map<int,double>> &Am, const Indices &iN, const Indices &iH) {
+    vector<int> mapR(Am.size()), mapC(Am.size());
+    size_t hN=0, kN=0, hH=0, kH=0;
+    for(size_t i=0; i<mapR.size(); i++) {
+      if(hN<iN.size() and i==iN[hN]) {
+	hN++;
+	mapR[i] = kN++;
+      }
+      else
+	mapR[i] = -1;
+      if(hH<iH.size() and i==iH[hH]) {
+	hH++;
+	mapC[i] = kH++;
+      }
+      else
+	mapC[i] = -1;
+    }
+    MatV Ar(iN.size(),iH.size());
+    int k = 0;
+    for(const auto & i : Am) {
+      for(const auto & j : i) {
+	if(mapR[k]>=0 and mapC[j.first]>=0)
+	  Ar(mapR[k],mapC[j.first]) = j.second;
+	else if(mapR[j.first]>=0 and mapC[k]>=0)
+	  Ar(mapR[j.first],mapC[k]) = j.second;
+      }
+      k++;
+    }
+    return Ar;
+  }
+
 }

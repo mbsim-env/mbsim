@@ -68,28 +68,26 @@ namespace MBSimGUI {
     nN = R.rows();
 
     ng = K.cols()==3?K(K.rows()-1,1):3*(K(K.rows()-1,2)-1)+K(K.rows()-1,3);
-    MKm.resize(ng);
-    PPm.resize(ng);
+    Km.resize(ng);
+    Mm.resize(ng);
     if(K.cols()==3) {
       if(M.cols()==K.cols()) {
 	for(int i=0; i<K.rows(); i++) {
-	  auto d = MKm[K(i,0)-1][K(i,1)-1];
-	  d[0] = M(i,2);
-	  d[3] = K(i,2);
+	  Mm[K(i,0)-1][K(i,1)-1] = M(i,2);
+	  Km[K(i,0)-1][K(i,1)-1] = K(i,2);
 	}
       }
       else {
-	for(int i=0; i<K.rows(); i++) {
-	  auto d = MKm[K(i,0)-1][K(i,1)-1];
-	  d[3] = K(i,2);
-	}
+	for(int i=0; i<K.rows(); i++)
+	  Km[K(i,0)-1][K(i,1)-1] = K(i,2);
       }
     } else {
-      for(int i=0; i<K.rows(); i++) {
-	auto d = MKm[3*(K(i,2)-1)+K(i,3)-1][3*(K(i,0)-1)+K(i,1)-1];
-	d[3] = K(i,4);
-      }
+      for(int i=0; i<K.rows(); i++)
+	Km[3*(K(i,2)-1)+K(i,3)-1][3*(K(i,0)-1)+K(i,1)-1] = K(i,4);
     }
+
+    Ks <<= createSymSparseMat(Km);
+    PPdms[0] <<= createSymSparseMat(Mm);
 
     net = 3;
     ner = 0;

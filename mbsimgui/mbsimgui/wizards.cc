@@ -505,8 +505,8 @@ namespace MBSimGUI {
     Phi.clear();
     Psi.clear();
     sigmahel.clear();
-    MKm.clear();
-    PPm.clear();
+    Km.clear();
+    Mm.clear();
     Phim.clear();
     Psim.clear();
     sigm.clear();
