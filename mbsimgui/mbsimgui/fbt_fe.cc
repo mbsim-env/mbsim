@@ -207,12 +207,6 @@ namespace MBSimGUI {
       Phis[i].Ip()[3] = 3;
     }
 
-    MKm.resize(ng);
-    PPm.resize(ng);
-    sigem.resize(ele.size());
-    for(size_t k=0; k<ele.size(); k++)
-      sigem[k].resize(ele[k].rows(),vector<map<int,double[27]>>(6));
-
     m = 0;
     indices.resize(5*6*nE);
     int oj = 0;
