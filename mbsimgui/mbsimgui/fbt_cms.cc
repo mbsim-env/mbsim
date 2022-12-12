@@ -108,9 +108,9 @@ namespace MBSimGUI {
     for(int i=0; i<Ms.nonZeroElements(); i++)
       Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
 
-    vector<double[3]> activeDof(nN);
+    vector<vector<int>> activeDof(nN,vector<int>(nen));
     for(int i=0; i<nN; i++) {
-      for(int j=0; j<3; j++)
+      for(int j=0; j<nen; j++)
 	activeDof[i][j] = 1;
     }
     for(size_t i=0; i<bnodes.size(); i++) {
@@ -119,9 +119,9 @@ namespace MBSimGUI {
 	  activeDof[nodeTable[bnodes[i][j]]][dof[i][k]] = 0;
       }
     }
-    vector<int> dofMapF(3*nN);
+    vector<int> dofMapF(nen*nN);
     for(size_t i=0, l=0, k=0; i<nN; i++) {
-      for(size_t j=0; j<3; j++) {
+      for(size_t j=0; j<nen; j++) {
 	if(activeDof[i][j])
 	  dofMapF[l] = k++;
 	l++;
@@ -129,14 +129,14 @@ namespace MBSimGUI {
     }
     int nzer = 0;
     for(size_t i=0; i<nN; i++) {
-      for(int k=0; k<3; k++) {
+      for(int k=0; k<nen; k++) {
 	if(activeDof[i][k]) {
-	  for(int l=k; l<3; l++) {
+	  for(int l=k; l<nen; l++) {
 	    if(activeDof[i][l])
 	      nzer++;
 	  }
 	  for(const auto & j : links[i]) {
-	    for(int l=0; l<3; l++) {
+	    for(int l=0; l<nen; l++) {
 	      if(activeDof[j.first][l])
 		nzer++;
 	    }
@@ -151,21 +151,21 @@ namespace MBSimGUI {
     SymSparseMat Mrs(n,nzer,Ipr,Jpr);
     int ii = 0, kk = 0, ll = 0;
     for(size_t i=0; i<nN; i++) {
-      for(int k=0; k<3; k++) {
-	for(int l=k; l<3; l++) {
+      for(int k=0; k<nen; k++) {
+	for(int l=k; l<nen; l++) {
 	  if(activeDof[i][k] and activeDof[i][l]) {
 	    Krs()[ll] = Ks()[kk];
 	    Mrs()[ll] = Ms()[kk];
-	    Jpr[ll++] = dofMapF[3*i+l];
+	    Jpr[ll++] = dofMapF[nen*i+l];
 	  }
 	  kk++;
 	}
 	for(const auto & j : links[i]) {
-	  for(int l=0; l<3; l++) {
+	  for(int l=0; l<nen; l++) {
 	    if(activeDof[i][k] and activeDof[j.first][l]) {
 	      Krs()[ll] = Ks()[kk];
 	      Mrs()[ll] = Ms()[kk];
-	      Jpr[ll++] = dofMapF[3*j.first+l];
+	      Jpr[ll++] = dofMapF[nen*j.first+l];
 	    }
 	    kk++;
 	  }
@@ -177,33 +177,33 @@ namespace MBSimGUI {
 
     Indices iF, iX;
     for(int i=0; i<nN; i++) {
-      for(int j=0; j<3; j++) {
+      for(int j=0; j<nen; j++) {
 	if(activeDof[i][j])
-	  iF.add(3*i+j);
+	  iF.add(nen*i+j);
 	else
-	  iX.add(3*i+j);
+	  iX.add(nen*i+j);
       }
     }
 
     for(size_t i=0; i<inodes.size(); i++) {
-      for(size_t j=0; j<3; j++)
+      for(size_t j=0; j<nen; j++)
 	activeDof[nodeTable[inodes[i]]][j] *= 2;
     }
     Indices iH, iN;
     for(size_t i=0; i<nN; i++) {
-      for(size_t j=0; j<3; j++) {
+      for(size_t j=0; j<nen; j++) {
 	if(activeDof[i][j]==2)
-	  iH.add(dofMapF[3*i+j]);
+	  iH.add(dofMapF[nen*i+j]);
 	else if(activeDof[i][j]==1)
-	  iN.add(dofMapF[3*i+j]);
+	  iN.add(dofMapF[nen*i+j]);
       }
     }
 
     MatV Vsd(n,iH.size()+nmodes.size(),NONINIT);
     if(iH.size()) {
-      vector<int> dofMapN(3*nN);
+      vector<int> dofMapN(nen*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
-	for(size_t j=0; j<3; j++) {
+	for(size_t j=0; j<nen; j++) {
 	  if(activeDof[i][j]==1)
 	    dofMapN[l] = k++;
 	  l++;
@@ -211,14 +211,14 @@ namespace MBSimGUI {
       }
       int nzern = 0;
       for(size_t i=0; i<nN; i++) {
-	for(int k=0; k<3; k++) {
+	for(int k=0; k<nen; k++) {
 	  if(activeDof[i][k]==1) {
-	    for(int l=k; l<3; l++) {
+	    for(int l=k; l<nen; l++) {
 	      if(activeDof[i][l]==1)
 		nzern++;
 	    }
 	    for(const auto & j : links[i]) {
-	      for(int l=0; l<3; l++) {
+	      for(int l=0; l<nen; l++) {
 		if(activeDof[j.first][l]==1)
 		  nzern++;
 	      }
@@ -233,21 +233,21 @@ namespace MBSimGUI {
       SymSparseMat Krns(iN.size(),nzern,Iprn,Jprn);
       int ii = 0, kk = 0, ll = 0;
       for(size_t i=0; i<nN; i++) {
-	for(int k=0; k<3; k++) {
-	  for(int l=k; l<3; l++) {
+	for(int k=0; k<nen; k++) {
+	  for(int l=k; l<nen; l++) {
 	    if(activeDof[i][k]==1 and activeDof[i][l]==1) {
 	      Mrns()[ll] = Ms()[kk];
 	      Krns()[ll] = Ks()[kk];
-	      Jprn[ll++] = dofMapN[3*i+l];
+	      Jprn[ll++] = dofMapN[nen*i+l];
 	    }
 	    kk++;
 	  }
 	  for(const auto & j : links[i]) {
-	    for(int l=0; l<3; l++) {
+	    for(int l=0; l<nen; l++) {
 	      if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
 		Mrns()[ll] = Ms()[kk];
 		Krns()[ll] = Ks()[kk];
-		Jprn[ll++] = dofMapN[3*j.first+l];
+		Jprn[ll++] = dofMapN[nen*j.first+l];
 	      }
 	      kk++;
 	    }
@@ -256,9 +256,9 @@ namespace MBSimGUI {
 	    Iprn[++ii] = ll;
 	}
       }
-      vector<int> dofMapH(3*nN);
+      vector<int> dofMapH(nen*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
-	for(size_t j=0; j<3; j++) {
+	for(size_t j=0; j<nen; j++) {
 	  if(activeDof[i][j]==2)
 	    dofMapH[l] = k++;
 	  l++;
@@ -267,20 +267,20 @@ namespace MBSimGUI {
       MatV Krnh(iN.size(),iH.size());
       kk = 0;
       for(size_t i=0; i<nN; i++) {
-	for(int k=0; k<3; k++) {
-	  for(int l=k; l<3; l++) {
+	for(int k=0; k<nen; k++) {
+	  for(int l=k; l<nen; l++) {
 	    if(activeDof[i][k]==1 and activeDof[i][l]==2)
-	      Krnh(dofMapN[3*i+k],dofMapH[3*i+l]) = Ks()[kk];
+	      Krnh(dofMapN[nen*i+k],dofMapH[nen*i+l]) = Ks()[kk];
 	    else if(activeDof[i][l]==1 and activeDof[i][k]==2)
-	      Krnh(dofMapN[3*i+l],dofMapH[3*i+k]) = Ks()[kk];
+	      Krnh(dofMapN[nen*i+l],dofMapH[nen*i+k]) = Ks()[kk];
 	    kk++;
 	  }
 	  for(const auto & j : links[i]) {
-	    for(int l=0; l<3; l++) {
+	    for(int l=0; l<nen; l++) {
 	      if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
-		Krnh(dofMapN[3*i+k],dofMapH[3*j.first+l]) = Ks()[kk];
+		Krnh(dofMapN[nen*i+k],dofMapH[nen*j.first+l]) = Ks()[kk];
 	      if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
-		Krnh(dofMapN[3*j.first+l],dofMapH[3*i+k]) = Ks()[kk];
+		Krnh(dofMapN[nen*j.first+l],dofMapH[nen*i+k]) = Ks()[kk];
 	      kk++;
 	    }
 	  }

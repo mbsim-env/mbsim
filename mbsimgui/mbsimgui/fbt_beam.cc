@@ -365,8 +365,9 @@ namespace MBSimGUI {
 
     rPdm.resize(3,Mat3xV(ng));
     Pdm.resize(ng);
-    MKm.resize(ng);
-    PPm.resize(ng);
+    vector<map<int,double>> Km(ng);
+    vector<vector<map<int,double>>> PPdmm(3,vector<map<int,double>>(ng));
+    vector<vector<map<int,double>>> PPdm2m(3,vector<map<int,double>>(ng));
     RangeV I(0,2);
     for(int i=0; i<nE; i++) {
       RangeV J(i*nen,i*nen+nee-1);
@@ -391,21 +392,18 @@ namespace MBSimGUI {
 	rPdm[j].add(I,J,rPdme[j]);
       for(int j=0; j<nee; j++) {
 	for(int k=0; k<j; k++) {
-	  auto d2 = PPm[i*nen+j][i*nen+k];
-	  d2[0] += PPdme[0][1].e(j,k);
-	  d2[1] += PPdme[0][2].e(j,k);
-	  d2[2] += PPdme[1][2].e(j,k);
+	  PPdm2m[0][i*nen+j][i*nen+k] += PPdme[0][1].e(j,k);
+	  PPdm2m[1][i*nen+j][i*nen+k] += PPdme[0][2].e(j,k);
+	  PPdm2m[2][i*nen+j][i*nen+k] += PPdme[1][2].e(j,k);
 	}
 	for(int k=j; k<nee; k++) {
-	  auto d = MKm[i*nen+j][i*nen+k];
-	  auto d2 = PPm[i*nen+j][i*nen+k];
-	  d[3] += Kee.ej(j,k);
-	  d[0] += PPdme[0][0].e(j,k);
-	  d[1] += PPdme[1][1].e(j,k);
-	  d[2] += PPdme[2][2].e(j,k);
-	  d2[0] += PPdme[0][1].e(j,k);
-	  d2[1] += PPdme[0][2].e(j,k);
-	  d2[2] += PPdme[1][2].e(j,k);
+	  Km[i*nen+j][i*nen+k] += Kee.ej(j,k);
+	  PPdmm[0][i*nen+j][i*nen+k] += PPdme[0][0].e(j,k);
+	  PPdmm[1][i*nen+j][i*nen+k] += PPdme[1][1].e(j,k);
+	  PPdmm[2][i*nen+j][i*nen+k] += PPdme[2][2].e(j,k);
+	  PPdm2m[0][i*nen+j][i*nen+k] += PPdme[0][1].e(j,k);
+	  PPdm2m[1][i*nen+j][i*nen+k] += PPdme[0][2].e(j,k);
+	  PPdm2m[2][i*nen+j][i*nen+k] += PPdme[1][2].e(j,k);
 	}
       }
     }
@@ -452,6 +450,25 @@ namespace MBSimGUI {
       indices[j++] = i+1;
       indices[j++] = -1;
     }
+
+    Ks <<= createSymSparseMat(Km);
+    for(int i=0; i<3; i++) {
+    PPdms[i] <<= createSymSparseMat(PPdmm[i]);
+    PPdm2s[i] <<= createSparseMat(ng,PPdm2m[i]);
+    }
+    Phis.resize(nN);
+    Psis.resize(nN);
+    sigs.resize(nN);
+    for(size_t i=0; i<nN; i++) {
+      Phis[i] <<= createSparseMat(ng,Phim[i]);
+      Psis[i] <<= createSparseMat(ng,Psim[i]);
+      sigs[i] <<= createSparseMat(ng,sigm[i]);
+    }
+
+    links.resize(nN);
+    for(int i=0; i<nN-1; i++)
+      links[i][i+1] = 1;
+
   }
 
 }

@@ -39,10 +39,10 @@ namespace MBSimGUI {
       for(size_t i=0; i<nN; i++)
 	Psi[i] = Psis[i]*U;
     }
-    if(sigm.size()) {
+    if(sigs.size()) {
       sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM,NONINIT));
       for(size_t i=0; i<nN; i++)
-	sigmahel[i] = createSparseMat(ng,sigm[i])*U;
+	sigmahel[i] = sigs[i]*U;
     }
     else if(sigem.size()) {
       auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();

@@ -166,13 +166,8 @@ namespace MBSimGUI {
       QString getInputDataFile() const;
     private:
       static fmatvec::MatV readMat(const std::string &file);
-      fmatvec::MatV reduceMat(const std::vector<std::map<int,double[4]>> &Km, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
-      std::vector<std::map<int,double[4]>> reduceMat(const std::vector<std::map<int,double[4]>> &MKm, const fmatvec::Indices &iF);
-      std::vector<fmatvec::SymSparseMat> createPPKs(const std::vector<std::map<int,double[4]>> &PPKm);
-      std::pair<fmatvec::SymSparseMat,fmatvec::SymSparseMat> createMKs(const std::vector<std::map<int,double[4]>> &MKm);
-      std::vector<fmatvec::SparseMat> createPPs(const std::vector<std::map<int,double[3]>> &PPm);
-      fmatvec::SparseMat createSparseMat(int n, const std::vector<std::map<int,double>> &Phis);
-      std::vector<fmatvec::SparseMat> createSparseMat(int n, const std::vector<std::map<int,double[27]>> &Sigs);
+      fmatvec::SymSparseMat createSymSparseMat(const std::vector<std::map<int,double>> &Am);
+      fmatvec::SparseMat createSparseMat(int n, const std::vector<std::map<int,double>> &Am);
       void extfe();
       void calculix();
       void beam();
@@ -213,7 +208,7 @@ namespace MBSimGUI {
       std::vector<FiniteElementType*> type;
       fmatvec::SymSparseMat PPdms[3], Ks;
       fmatvec::SparseMat PPdm2s[3];
-      std::vector<fmatvec::SparseMat> Phis, Psis;
+      std::vector<fmatvec::SparseMat> Phis, Psis, sigs;
       std::vector<std::map<int,int>> links;
   };
 
