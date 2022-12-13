@@ -534,10 +534,12 @@ namespace MBSimGUI {
     Psi.clear();
     PPdm.clear();
     sigmahel.clear();
-    delete Ks.Ip();
-    delete Ks.Jp();
-    delete PPdm2s[0].Ip();
-    delete PPdm2s[0].Jp();
+    if(not Km.size()) {
+      delete Ks.Ip();
+      delete Ks.Jp();
+      delete PPdm2s[0].Ip();
+      delete PPdm2s[0].Jp();
+    }
     Phis.clear();
     Psis.clear();
     sigs.clear();
