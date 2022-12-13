@@ -147,7 +147,8 @@ namespace MBSimGUI {
       }
     }
 
-    MatV Vsd(iF.size(),iH.size()+nmodes.size(),NONINIT);
+    MatV Ui(iF.size(),iH.size(),NONINIT);
+    MatV Un;
     if(iH.size()) {
       vector<int> dofMapH(nen*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
@@ -182,31 +183,33 @@ namespace MBSimGUI {
       Indices IJ;
       for(int i=0; i<iH.size(); i++)
 	IJ.add(i);
-      MatV Vs(iF.size(),iH.size(),NONINIT);
-      Vs.set(iN,IJ,-slvLU(Krns,Krnh));
-      Vs.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
+      Ui.set(iN,IJ,-slvLU(Krns,Krnh));
+      Ui.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
       SqrMat V;
       Vec w;
-      eigvec(JTMJ(Krs,Vs),JTMJ(Mrs,Vs),V,w);
+      eigvec(JTMJ(Krs,Ui),JTMJ(Mrs,Ui),V,w);
       vector<int> imod;
       for(int i=0; i<w.size(); i++) {
 	if(w(i)>pow(2*M_PI*0.1,2))
-	  imod.push_back(i);
+	  imod.emplace_back(i);
       }
       MatV Vr(w.size(),imod.size(),NONINIT);
       for(size_t i=0; i<imod.size(); i++)
 	Vr.set(i,V.col(imod[i]));
-      Vs <<= Vs*Vr;
-      Vsd.set(RangeV(0,Vsd.rows()-1),RangeV(0,Vs.cols()-1),Vs);
+      Ui <<= Ui*Vr;
       if(nmodes.size() and fixedBoundaryNormalModes) {
 	Mat V;
 	Vec w;
 	eigvec(Krns,Mrns,max(nmodes),1,V,w,0.001);
-	for(int i=0; i<nmodes.size(); i++) {
-	  if(w(nmodes[i]-1)>pow(2*M_PI*0.1,2)) {
-	    Vsd.set(iN,iH.size()+i,V.col(nmodes[i]-1));
-	    Vsd.set(iH,iH.size()+i,VecV(iH.size()));
-	  }
+	imod.clear();
+	for(size_t i=0; i<nmodes.size(); i++) {
+	  if(w(nmodes[i]-1)>pow(2*M_PI*0.1,2))
+	    imod.emplace_back(nmodes[i]-1);
+	}
+	Un.resize(iN.size(),imod.size(),NONINIT);
+	for(size_t i=0; i<imod.size(); i++) {
+	  Un.set(iN,i,V.col(imod[i]));
+	  Un.set(iH,i,VecV(iH.size()));
 	}
       }
     }
@@ -215,19 +218,27 @@ namespace MBSimGUI {
       Mat V;
       Vec w;
       eigvec(Krs,Mrs,max(nmodes),1,V,w,0.001);
+      vector<int> imod;
       for(size_t i=0; i<nmodes.size(); i++) {
 	if(w(nmodes[i]-1)>pow(2*M_PI*0.1,2))
-	  Vsd.set(iH.size()+i,V.col(nmodes[i]-1));
+	  imod.emplace_back(nmodes[i]-1);
       }
+      Un.resize(iF.size(),imod.size(),NONINIT);
+      for(size_t i=0; i<imod.size(); i++)
+	Un.set(i,V.col(imod[i]));
     }
 
-    nM = Vsd.cols();
+    nM = Ui.cols() + Un.cols();
     U.resize(ng,nM,NONINIT);
     Indices IJ;
-    for(int i=0; i<nM; i++)
-      IJ.add(i);
-    U.set(iF,IJ,Vsd);
-    if(iX.size()) U.set(iX,IJ,Mat(iX.size(),IJ.size()));
+    for(int i=0; i<Ui.cols(); i++) {
+      U.set(iF,i,Ui.col(i));
+      U.set(iX,i,VecV(iX.size()));
+    }
+    for(int i=Ui.cols(), j=0; i<Ui.cols()+Un.cols(); i++, j++) {
+      U.set(iF,i,Un.col(j));
+      U.set(iX,i,VecV(iX.size()));
+    }
   }
 
 }
