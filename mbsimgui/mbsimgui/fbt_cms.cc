@@ -83,26 +83,8 @@ namespace MBSimGUI {
 	nmodes[i] = mat[i][0].toInt();
     }
 
-    vector<vector<int>> bc(nN,vector<int>(nen));
     if(bnodes.size() != dof.size())
       runtime_error("(FlexibleBodyTool::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
-    for(size_t i=0; i<bnodes.size(); i++) {
-      for(int j=0; j<bnodes[i].size(); j++) {
-	for(int k=0; k<dof[i].size(); k++) {
-	  if(dof[i][k]<0 or dof[i][k]>nen-1)
-	    runtime_error("(FlexibleBodyTool::init): degrees of freedom of boundary node number (" + to_string(i) + ") must be within range [0,3]");
-	  bc[nodeTable[bnodes[i][j]]][dof[i][k]] = 1;
-	}
-      }
-    }
-
-    int nr = 0;
-    for(int i=0; i<bc.size(); i++) {
-      for(int j=0; j<bc[i].size(); j++)
-	nr += bc[i][j];
-    }
-
-    int n = ng-nr;
 
     vector<vector<int>> activeDof(nN,vector<int>(nen));
     for(int i=0; i<nN; i++) {
@@ -134,6 +116,23 @@ namespace MBSimGUI {
       }
     }
 
+    SymSparseMat Ms, Mrs, Krs;
+    vector<map<int,double>> Krm, Mrm;
+    if(Km.size()) {
+      Mrm = reduceMat(Mm,iF);
+      Krm = reduceMat(Km,iF);
+      SymSparseMat SM1 = createSymSparseMat(Mrm);
+      SymSparseMat SM2 = createSymSparseMat(Krm);
+      Mrs &= SM1;
+      Krs &= SM2;
+    }
+    else {
+      Ms <<= PPdms[0];
+      for(int i=0; i<Ms.nonZeroElements(); i++)
+	Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
+      reduceMat(Ms,Ks,Mrs,Krs,iF.size(),activeDof,dofMapF);
+    }
+
     for(size_t i=0; i<inodes.size(); i++) {
       for(size_t j=0; j<nen; j++)
 	activeDof[nodeTable[inodes[i]]][j] *= 2;
@@ -148,73 +147,7 @@ namespace MBSimGUI {
       }
     }
 
-    SymSparseMat Ms, Krs, Mrs;
-    vector<map<int,double>> Kmr, Mmr;
-    if(Km.size()) {
-      Kmr = reduceMat(Km,iF);
-      SymSparseMat SM1 = createSymSparseMat(Kmr);
-      Krs &= SM1;
-      Mmr = reduceMat(Mm,iF);
-      SymSparseMat SM2 = createSymSparseMat(Mmr);
-      Mrs &= SM2;
-    }
-    else {
-      Ms <<= PPdms[0];
-      for(int i=0; i<Ms.nonZeroElements(); i++)
-	Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
-
-      int nzer = 0;
-      for(size_t i=0; i<nN; i++) {
-	for(int k=0; k<nen; k++) {
-	  if(activeDof[i][k]) {
-	    for(int l=k; l<nen; l++) {
-	      if(activeDof[i][l])
-		nzer++;
-	    }
-	    for(const auto & j : links[i]) {
-	      for(int l=0; l<nen; l++) {
-		if(activeDof[j.first][l])
-		  nzer++;
-	      }
-	    }
-	  }
-	}
-      }
-      int *Ipr = new int[n+1];
-      int *Jpr = new int[nzer];
-      Ipr[0] = 0;
-      SymSparseMat SM1(n,nzer,Ipr,Jpr);
-      Krs &= SM1;
-      SymSparseMat SM2(n,nzer,Ipr,Jpr);
-      Mrs &= SM2;
-      int ii = 0, kk = 0, ll = 0;
-      for(size_t i=0; i<nN; i++) {
-	for(int k=0; k<nen; k++) {
-	  for(int l=k; l<nen; l++) {
-	    if(activeDof[i][k] and activeDof[i][l]) {
-	      Krs()[ll] = Ks()[kk];
-	      Mrs()[ll] = Ms()[kk];
-	      Jpr[ll++] = dofMapF[nen*i+l];
-	    }
-	    kk++;
-	  }
-	  for(const auto & j : links[i]) {
-	    for(int l=0; l<nen; l++) {
-	      if(activeDof[i][k] and activeDof[j.first][l]) {
-		Krs()[ll] = Ks()[kk];
-		Mrs()[ll] = Ms()[kk];
-		Jpr[ll++] = dofMapF[nen*j.first+l];
-	      }
-	      kk++;
-	    }
-	  }
-	  if(activeDof[i][k])
-	    Ipr[++ii] = ll;
-	}
-      }
-    }
-
-    MatV Vsd(n,iH.size()+nmodes.size(),NONINIT);
+    MatV Vsd(iF.size(),iH.size()+nmodes.size(),NONINIT);
     if(iH.size()) {
       vector<int> dofMapH(nen*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
@@ -236,84 +169,15 @@ namespace MBSimGUI {
       SymSparseMat Krns, Mrns;
       MatV Krnh;
       if(Km.size()) {
-	SymSparseMat SM1 = createSymSparseMat(reduceMat(Kmr,iN));
+	SymSparseMat SM1 = createSymSparseMat(reduceMat(Krm,iN));
 	Krns &= SM1;
-	SymSparseMat SM2 = createSymSparseMat(reduceMat(Mmr,iN));
+	SymSparseMat SM2 = createSymSparseMat(reduceMat(Mrm,iN));
 	Mrns &= SM2;
-	Krnh <<= reduceMat(Kmr,iN,iH);
+	Krnh <<= reduceMat(Krm,iN,iH);
       }
       else {
-	int nzern = 0;
-	for(size_t i=0; i<nN; i++) {
-	  for(int k=0; k<nen; k++) {
-	    if(activeDof[i][k]==1) {
-	      for(int l=k; l<nen; l++) {
-		if(activeDof[i][l]==1)
-		  nzern++;
-	      }
-	      for(const auto & j : links[i]) {
-		for(int l=0; l<nen; l++) {
-		  if(activeDof[j.first][l]==1)
-		    nzern++;
-		}
-	      }
-	    }
-	  }
-	}
-	int *Iprn = new int[iN.size()+1];
-	int *Jprn = new int[nzern];
-	Iprn[0] = 0;
-	SymSparseMat SM1(iN.size(),nzern,Iprn,Jprn);
-	Krns &= SM1;
-	SymSparseMat SM2(iN.size(),nzern,Iprn,Jprn);
-	Mrns &= SM2;
-	int ii = 0, kk = 0, ll = 0;
-	for(size_t i=0; i<nN; i++) {
-	  for(int k=0; k<nen; k++) {
-	    for(int l=k; l<nen; l++) {
-	      if(activeDof[i][k]==1 and activeDof[i][l]==1) {
-		Mrns()[ll] = Ms()[kk];
-		Krns()[ll] = Ks()[kk];
-		Jprn[ll++] = dofMapN[nen*i+l];
-	      }
-	      kk++;
-	    }
-	    for(const auto & j : links[i]) {
-	      for(int l=0; l<nen; l++) {
-		if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
-		  Mrns()[ll] = Ms()[kk];
-		  Krns()[ll] = Ks()[kk];
-		  Jprn[ll++] = dofMapN[nen*j.first+l];
-		}
-		kk++;
-	      }
-	    }
-	    if(activeDof[i][k]==1)
-	      Iprn[++ii] = ll;
-	  }
-	}
-	Krnh.resize(iN.size(),iH.size());
-	kk = 0;
-	for(size_t i=0; i<nN; i++) {
-	  for(int k=0; k<nen; k++) {
-	    for(int l=k; l<nen; l++) {
-	      if(activeDof[i][k]==1 and activeDof[i][l]==2)
-		Krnh(dofMapN[nen*i+k],dofMapH[nen*i+l]) = Ks()[kk];
-	      else if(activeDof[i][l]==1 and activeDof[i][k]==2)
-		Krnh(dofMapN[nen*i+l],dofMapH[nen*i+k]) = Ks()[kk];
-	      kk++;
-	    }
-	    for(const auto & j : links[i]) {
-	      for(int l=0; l<nen; l++) {
-		if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
-		  Krnh(dofMapN[nen*i+k],dofMapH[nen*j.first+l]) = Ks()[kk];
-		if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
-		  Krnh(dofMapN[nen*j.first+l],dofMapH[nen*i+k]) = Ks()[kk];
-		kk++;
-	      }
-	    }
-	  }
-	}
+	reduceMat(Ms,Ks,Mrns,Krns,iN.size(),activeDof,dofMapN);
+	Krnh <<= reduceMat(Ks,iN,iH,activeDof,dofMapN,dofMapH);
       }
       Indices IJ;
       for(int i=0; i<iH.size(); i++)
@@ -333,7 +197,7 @@ namespace MBSimGUI {
       for(size_t i=0; i<imod.size(); i++)
 	Vr.set(i,V.col(imod[i]));
       Vs <<= Vs*Vr;
-      Vsd.set(RangeV(0,n-1),RangeV(0,Vs.cols()-1),Vs);
+      Vsd.set(RangeV(0,Vsd.rows()-1),RangeV(0,Vs.cols()-1),Vs);
       if(nmodes.size() and fixedBoundaryNormalModes) {
 	Mat V;
 	Vec w;

@@ -159,4 +159,82 @@ namespace MBSimGUI {
     return Ar;
   }
 
+  void FlexibleBodyTool::reduceMat(const SymSparseMat &Ms, const SymSparseMat &Ks, SymSparseMat &Mrs, SymSparseMat &Krs, int n, const vector<vector<int>> &activeDof, const vector<int> &dofMap) {
+      int nzer = 0;
+      for(size_t i=0; i<nN; i++) {
+	for(int k=0; k<nen; k++) {
+	  if(activeDof[i][k]==1) {
+	    for(int l=k; l<nen; l++) {
+	      if(activeDof[i][l]==1)
+		nzer++;
+	    }
+	    for(const auto & j : links[i]) {
+	      for(int l=0; l<nen; l++) {
+		if(activeDof[j.first][l]==1)
+		  nzer++;
+	      }
+	    }
+	  }
+	}
+      }
+      int *Ipr = new int[n+1];
+      int *Jpr = new int[nzer];
+      Ipr[0] = 0;
+      SymSparseMat SM1 = SymSparseMat(n,nzer,Ipr,Jpr);
+      SymSparseMat SM2 = SymSparseMat(n,nzer,Ipr,Jpr);
+      Mrs &= SM1;
+      Krs &= SM2;
+      int ii = 0, kk = 0, ll = 0;
+      for(size_t i=0; i<nN; i++) {
+	for(int k=0; k<nen; k++) {
+	  for(int l=k; l<nen; l++) {
+	    if(activeDof[i][k]==1 and activeDof[i][l]==1) {
+	      Mrs()[ll] = Ms()[kk];
+	      Krs()[ll] = Ks()[kk];
+	      Jpr[ll++] = dofMap[nen*i+l];
+	    }
+	    kk++;
+	  }
+	  for(const auto & j : links[i]) {
+	    for(int l=0; l<nen; l++) {
+	      if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
+		Mrs()[ll] = Ms()[kk];
+		Krs()[ll] = Ks()[kk];
+		Jpr[ll++] = dofMap[nen*j.first+l];
+	      }
+	      kk++;
+	    }
+	  }
+	  if(activeDof[i][k]==1)
+	    Ipr[++ii] = ll;
+	}
+      }
+  }
+
+  MatV FlexibleBodyTool::reduceMat(const SymSparseMat &Ks, const Indices &iN, const Indices &iH, const vector<vector<int>> &activeDof, const vector<int> &dofMapN, const vector<int> &dofMapH) {
+    MatV Krnh(iN.size(),iH.size());
+    int kk = 0;
+    for(size_t i=0; i<nN; i++) {
+      for(int k=0; k<nen; k++) {
+	for(int l=k; l<nen; l++) {
+	  if(activeDof[i][k]==1 and activeDof[i][l]==2)
+	    Krnh(dofMapN[nen*i+k],dofMapH[nen*i+l]) = Ks()[kk];
+	  else if(activeDof[i][l]==1 and activeDof[i][k]==2)
+	    Krnh(dofMapN[nen*i+l],dofMapH[nen*i+k]) = Ks()[kk];
+	  kk++;
+	}
+	for(const auto & j : links[i]) {
+	  for(int l=0; l<nen; l++) {
+	    if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
+	      Krnh(dofMapN[nen*i+k],dofMapH[nen*j.first+l]) = Ks()[kk];
+	    if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
+	      Krnh(dofMapN[nen*j.first+l],dofMapH[nen*i+k]) = Ks()[kk];
+	    kk++;
+	  }
+	}
+      }
+    }
+    return Krnh;
+  }
+
 }

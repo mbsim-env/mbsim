@@ -170,6 +170,8 @@ namespace MBSimGUI {
       fmatvec::SparseMat createSparseMat(int n, const std::vector<std::map<int,double>> &Am);
       std::vector<std::map<int,double>> reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iF);
       fmatvec::MatV reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
+      void reduceMat(const fmatvec::SymSparseMat &Ms, const fmatvec::SymSparseMat &Ks, fmatvec::SymSparseMat &Mrs, fmatvec::SymSparseMat &Krs, int n, const std::vector<std::vector<int>> &activeDof, const std::vector<int> &dofMap);
+      fmatvec::MatV reduceMat(const fmatvec::SymSparseMat &Ks, const fmatvec::Indices &iN, const fmatvec::Indices &iH, const std::vector<std::vector<int>> &activeDof, const std::vector<int> &dofMapN, const std::vector<int> &dofMapH);
       void extfe();
       void calculix();
       void beam();
