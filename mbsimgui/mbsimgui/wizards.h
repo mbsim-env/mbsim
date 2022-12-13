@@ -183,11 +183,11 @@ namespace MBSimGUI {
       void lma();
       void damp();
       void exp();
-      double m;
       fmatvec::MatV M, K, U, S;
       fmatvec::VecV mDamp;
       fmatvec::Vec2 pDamp;
       fmatvec::SymMatV Ke0, De0;
+      double m{0};
       fmatvec::Vec3 rdm;
       fmatvec::SymMat3 rrdm;
       fmatvec::Mat3xV Pdm;
@@ -196,16 +196,14 @@ namespace MBSimGUI {
       std::vector<fmatvec::Vec3> r;
       std::vector<fmatvec::Mat3xV> Phi, Psi;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
-      std::vector<int> nodeTable, nodeCount;
-      std::vector<int> indices;
-      std::vector<int> nodeNumbers;
-      int net, ner;
-      std::vector<std::map<int,double>> Km, Mm;
-      std::vector<fmatvec::MatVI> ele;
-      std::vector<FiniteElementType*> type;
       fmatvec::SymSparseMat PPdms[3], Ks;
       fmatvec::SparseMat PPdm2s[3];
       std::vector<fmatvec::SparseMat> Phis, Psis, sigs;
+      std::vector<std::map<int,double>> Mm, Km;
+      std::vector<int> nodeTable, nodeCount, nodeNumbers, indices;
+      int net, ner;
+      std::vector<fmatvec::MatVI> ele;
+      std::vector<FiniteElementType*> type;
       std::vector<std::map<int,int>> links;
   };
 

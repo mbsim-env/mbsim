@@ -44,7 +44,6 @@ namespace MBSimGUI {
     bool lumpedMass = true;
     // compute mass and lumped mass matrix
     vector<double> mi(nN);
-    m = 0;
     if(M.cols()==3) {
       double ds = 0;
       for(int i=0; i<nN; i++) {

@@ -215,6 +215,9 @@ namespace MBSimGUI {
 	  Un.set(iH,i,VecV(iH.size()));
 	}
       }
+
+      delete Krns.Ip();
+      delete Krns.Jp();
     }
 
     if(nmodes.size() and not fixedBoundaryNormalModes) {
@@ -229,6 +232,9 @@ namespace MBSimGUI {
       Un.resize(iF.size(),imod.size(),NONINIT);
       for(size_t i=0; i<imod.size(); i++)
 	Un.set(i,V.col(imod[i]));
+
+      delete Krs.Ip();
+      delete Krs.Jp();
     }
 
     U.resize(Ks.size(),Ui.cols() + Un.cols(),NONINIT);

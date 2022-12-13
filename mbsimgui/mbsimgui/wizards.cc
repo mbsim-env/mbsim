@@ -24,6 +24,7 @@
 #include "variable_widgets.h"
 #include "special_widgets.h"
 #include "mainwindow.h"
+#include "fe_type.h"
 #include <QRadioButton>
 #include <QMessageBox>
 #include <xercesc/dom/DOMImplementation.hpp>
@@ -497,18 +498,6 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::create() {
-    nodeTable.clear();
-    nodeNumbers.clear();
-    rPdm.clear();
-    PPdm.clear();
-    r.clear();
-    Phi.clear();
-    Psi.clear();
-    sigmahel.clear();
-    Km.clear();
-    Mm.clear();
-    indices.clear();
-
     if(hasVisitedPage(PageExtFE)) {
       extfe();
       if(hasVisitedPage(PageCMS))
@@ -534,6 +523,35 @@ namespace MBSimGUI {
     }
     damp();
     exp();
+
+    m = 0;
+    rdm.init(0);
+    rrdm.init(0);
+    rPdm.clear();
+    PPdm.clear();
+    r.clear();
+    Phi.clear();
+    Psi.clear();
+    PPdm.clear();
+    sigmahel.clear();
+    delete Ks.Ip();
+    delete Ks.Jp();
+    delete PPdm2s[0].Ip();
+    delete PPdm2s[0].Jp();
+    Phis.clear();
+    Psis.clear();
+    sigs.clear();
+    Mm.clear();
+    Km.clear();
+    nodeTable.clear();
+    nodeCount.clear();
+    nodeNumbers.clear();
+    indices.clear();
+    ele.clear();
+    for(auto & i : type)
+      delete i;
+    type.clear();
+    links.clear();
   }
 
   void FlexibleBodyTool::save() {

@@ -206,7 +206,6 @@ namespace MBSimGUI {
       Phis[i].Ip()[3] = 3;
     }
 
-    m = 0;
     indices.resize(5*6*nE);
     int oj = 0;
     double P[20];
