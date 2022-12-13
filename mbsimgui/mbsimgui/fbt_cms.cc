@@ -121,7 +121,7 @@ namespace MBSimGUI {
 
     SymSparseMat Ms, Mrs, Krs;
     vector<map<int,double>> Krm, Mrm;
-    if(Km.size()) {
+    if(Mm.size()) {
       Mrm = reduceMat(Mm,iF);
       Krm = reduceMat(Km,iF);
       SymSparseMat SM1 = createSymSparseMat(Mrm);
@@ -172,7 +172,7 @@ namespace MBSimGUI {
 
       SymSparseMat Krns, Mrns;
       MatV Krnh;
-      if(Km.size()) {
+      if(Mm.size()) {
 	SymSparseMat SM1 = createSymSparseMat(reduceMat(Krm,iN));
 	Krns &= SM1;
 	SymSparseMat SM2 = createSymSparseMat(reduceMat(Mrm,iN));
@@ -216,7 +216,7 @@ namespace MBSimGUI {
 	}
       }
 
-      if(not Km.size()) {
+      if(not Mm.size()) {
 	delete Krns.Ip();
 	delete Krns.Jp();
       }
@@ -235,7 +235,7 @@ namespace MBSimGUI {
       for(size_t i=0; i<imod.size(); i++)
 	Un.set(i,V.col(imod[i]));
 
-      if(not Km.size()) {
+      if(not Mm.size()) {
 	delete Krs.Ip();
 	delete Krs.Jp();
       }

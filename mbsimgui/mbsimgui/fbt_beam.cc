@@ -365,7 +365,7 @@ namespace MBSimGUI {
 
     rPdm.resize(3,Mat3xV(ng));
     Pdm.resize(ng);
-    vector<map<int,double>> Km(ng);
+    Km.resize(ng);
     vector<vector<map<int,double>>> PPdmm(3,vector<map<int,double>>(ng));
     vector<vector<map<int,double>>> PPdm2m(3,vector<map<int,double>>(ng));
     RangeV I(0,2);
