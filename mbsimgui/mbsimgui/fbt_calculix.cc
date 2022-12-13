@@ -29,7 +29,6 @@ namespace MBSimGUI {
   void FlexibleBodyTool::calculix() {
     net = 3;
     ner = 0;
-    nen = net + ner;
     string resultFileName = static_cast<FileWidget*>(static_cast<CalculixPage*>(page(PageCalculix))->file->getWidget())->getFile(true).toStdString();
     string jobname = resultFileName.substr(0,resultFileName.length()-4);
 
@@ -52,17 +51,18 @@ namespace MBSimGUI {
       if(str.length()>6 and str.substr(4,2)=="2C")
 	break;
     }
+    int nN;
     stringstream sN(str);
     sN >> str >> nN;
     nodeTable.resize(nN+1);
     nodeNumbers.resize(nN);
-    KrKP.resize(nN);
+    r.resize(nN);
     for(size_t i=0; i<nN; i++) {
       isRes >> d >> d;
       nodeTable[d] = i;
       nodeNumbers[i] = d;
       for(size_t k=0; k<3; k++)
-	isRes >> KrKP[i](k);
+	isRes >> r[i](k);
     }
     // elements
     while(isRes) {
@@ -130,13 +130,13 @@ namespace MBSimGUI {
 	}
       }
     }
-    nM = disp.size();
+    int nM = disp.size();
     isRes.close();
 
     M <<= readMat(jobname+".mas");
     K <<= readMat(jobname+".sti");
 
-    ng = K(K.rows()-1,1);
+    int ng = K(K.rows()-1,1);
 
     Km.resize(ng);
     Mm.resize(ng);

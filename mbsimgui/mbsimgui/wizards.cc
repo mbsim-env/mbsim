@@ -501,7 +501,7 @@ namespace MBSimGUI {
     nodeNumbers.clear();
     rPdm.clear();
     PPdm.clear();
-    KrKP.clear();
+    r.clear();
     Phi.clear();
     Psi.clear();
     sigmahel.clear();

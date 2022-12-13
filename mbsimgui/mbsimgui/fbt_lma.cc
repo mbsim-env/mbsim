@@ -26,6 +26,9 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::lma() {
+    int nN = r.size();
+    int nM = U.cols();
+    int nen = net + ner;
     Phi.resize(nN,Mat3xV(nM,NONINIT));
     for(size_t i=0; i<nN; i++)
       Phi[i] = U(RangeV(nen*i,nen*i+net-1),RangeV(0,nM-1));
@@ -70,11 +73,11 @@ namespace MBSimGUI {
     if(lumpedMass) {
       // compute integrals
       for(int i=0; i<nN; i++) {
-	rdm += mi[i]*KrKP[i];
-	rrdm += mi[i]*JTJ(KrKP[i].T());
+	rdm += mi[i]*r[i];
+	rrdm += mi[i]*JTJ(r[i].T());
 	Pdm += mi[i]*Phi[i];
 	for(int k=0; k<3; k++) {
-	  rPdm[k] += mi[i]*KrKP[i](k)*Phi[i];
+	  rPdm[k] += mi[i]*r[i](k)*Phi[i];
 	  for(int l=k; l<3; l++) {
 	    PPdm[k][l] += mi[i]*Phi[i].row(k).T()*Phi[i].row(l);
 	  }

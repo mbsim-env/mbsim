@@ -31,11 +31,9 @@ namespace MBSimGUI {
     string str = static_cast<FileWidget*>(static_cast<ModeShapesPage*>(page(PageModeShapes))->V->getWidget())->getFile(true).toStdString();
     if(!str.empty())
       U <<= readMat(str);
-    nM = U.cols();
     str = static_cast<FileWidget*>(static_cast<ModeShapesPage*>(page(PageModeShapes))->S->getWidget())->getFile(true).toStdString();
     if(!str.empty())
       S <<= readMat(str);
-    nM = U.cols();
   }
 
 }

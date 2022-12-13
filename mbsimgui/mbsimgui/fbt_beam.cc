@@ -28,7 +28,7 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::beam() {
-    nN = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
+    int nN = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
     auto l = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
     auto A = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
     auto I_ = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->getWidget())->getWidget())->getWidget()->getEvalMat();
@@ -63,7 +63,7 @@ namespace MBSimGUI {
       bel = nee++;
     if(benz)
       gal = nee++;
-    nen = nee;
+    int nen = nee;
     ner = nen - net;
     if(ten)
       ur = nee++;
@@ -77,7 +77,7 @@ namespace MBSimGUI {
       ber = nee++;
     if(benz)
       gar = nee++;
-    ng = nN*nen;
+    int ng = nN*nen;
 
     vector<Mat3xV> rPdme(3,Mat3xV(nee));
     vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(nee)));
@@ -408,14 +408,14 @@ namespace MBSimGUI {
       }
     }
 
-    KrKP.resize(nN);
+    r.resize(nN);
     vector<vector<map<int,double>>> Phim(nN,vector<map<int,double>>(3));
     vector<vector<map<int,double>>> Psim(nN,vector<map<int,double>>(3));
     vector<vector<map<int,double>>> sigm(nN,vector<map<int,double>>(6));
     for(int i=0; i<nN; i++) {
-      KrKP[i](0) = i*D;
-      KrKP[i](1) = 0;
-      KrKP[i](2) = 0;
+      r[i](0) = i*D;
+      r[i](1) = 0;
+      r[i](2) = 0;
       if(ten) {
 	Phim[i][x][i*nee/2+ul] = 1;
 	if(i>0 and i<nN-1) {

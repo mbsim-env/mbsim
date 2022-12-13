@@ -193,13 +193,13 @@ namespace MBSimGUI {
       fmatvec::Mat3xV Pdm;
       std::vector<fmatvec::Mat3xV> rPdm;
       std::vector<std::vector<fmatvec::SqrMatV>> PPdm;
-      std::vector<fmatvec::Vec3> KrKP;
+      std::vector<fmatvec::Vec3> r;
       std::vector<fmatvec::Mat3xV> Phi, Psi;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
       std::vector<int> nodeTable, nodeCount;
       std::vector<int> indices;
       std::vector<int> nodeNumbers;
-      int nN, nM, ng, net, ner, nen;
+      int net, ner;
       std::vector<std::map<int,double>> Km, Mm;
       std::vector<fmatvec::MatVI> ele;
       std::vector<FiniteElementType*> type;

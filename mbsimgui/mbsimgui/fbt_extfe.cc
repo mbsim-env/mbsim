@@ -49,25 +49,23 @@ namespace MBSimGUI {
     }
 
     nodeTable.resize(max+1);
-    KrKP.resize(R.rows(),Vec3(NONINIT));
+    r.resize(R.rows(),Vec3(NONINIT));
     if(R.cols()==3) {
       for(int i=0; i<R.rows(); i++) {
 	nodeTable[i+1] = i;
-	KrKP[nodeTable[i+1]] = R.row(i).T();
+	r[nodeTable[i+1]] = R.row(i).T();
       }
     }
     else {
       nodeNumbers.resize(R.rows());
       for(int i=0; i<R.rows(); i++) {
 	nodeTable[R(i,0)] = i;
-	KrKP[nodeTable[R(i,0)]] = R.row(i)(RangeV(1,3)).T();
+	r[nodeTable[R(i,0)]] = R.row(i)(RangeV(1,3)).T();
 	nodeNumbers[nodeTable[R(i,0)]] = R(i,0);
       }
     }
 
-    nN = R.rows();
-
-    ng = K.cols()==3?K(K.rows()-1,1):3*(K(K.rows()-1,2)-1)+K(K.rows()-1,3);
+    int ng = K.cols()==3?K(K.rows()-1,1):3*(K(K.rows()-1,2)-1)+K(K.rows()-1,3);
     Km.resize(ng);
     Mm.resize(ng);
     if(K.cols()==3) {
@@ -91,7 +89,6 @@ namespace MBSimGUI {
 
     net = 3;
     ner = 0;
-    nen = net + ner;
   }
 
 }

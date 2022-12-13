@@ -30,6 +30,8 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::fma() {
+    int nN = r.size();
+    int nM = U.cols();
     Phi.resize(nN,Mat3xV(nM,NONINIT));
     for(size_t i=0; i<nN; i++)
       Phi[i] = Phis[i]*U;
@@ -50,7 +52,7 @@ namespace MBSimGUI {
       sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM));
       Vec3 dNi(NONINIT);
       SqrMat3 J(NONINIT), LUJ(NONINIT);
-      Vec3 r(NONINIT), r0(NONINIT);
+      Vec3 r0(NONINIT);
       double x, y, z, detJ, dNi0, dNi1, dNi2;
       double omnu = 1-nu;
       double om2nu = 1-2*nu;
@@ -75,7 +77,7 @@ namespace MBSimGUI {
 	for(int i=4; i<7; i++)
 	  Ip[i] = Ip[i-1]+2*npe;
 	int Jp[15*npe];
-	SparseMat sigmaheles(6,ng,15*npe,Ip,Jp);
+	SparseMat sigmaheles(6,Ks.size(),15*npe,Ip,Jp);
 	for(int ee=0; ee<elei.rows(); ee++) {
 	  for(int i=0; i<npe; i++) {
 	    int u = nodeTable[elei(ee,i)];
@@ -103,9 +105,8 @@ namespace MBSimGUI {
 	    y = typei->getIntegrationPoint(ii)(1);
 	    z = typei->getIntegrationPoint(ii)(2);
 	    J.init(0);
-	    r.init(0);
 	    for(int ll=0; ll<npe; ll++) {
-	      r0 = KrKP[nodeTable[elei(ee,ll)]];
+	      r0 = r[nodeTable[elei(ee,ll)]];
 	      for(int mm=0; mm<3; mm++)
 		dN_[ll](mm) = typei->dNdq(ll,mm,x,y,z);
 	      J += dN_[ll]*r0.T();

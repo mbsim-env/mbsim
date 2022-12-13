@@ -86,6 +86,9 @@ namespace MBSimGUI {
     if(bnodes.size() != dof.size())
       runtime_error("(FlexibleBodyTool::init): number of boundary nodes (" + to_string(bnodes.size()) + ") must equal number of degrees of freedom (" + to_string(dof.size()) + ")");
 
+    int nN = r.size();
+    int nen = net + ner;
+
     vector<vector<int>> activeDof(nN,vector<int>(nen));
     for(int i=0; i<nN; i++) {
       for(int j=0; j<nen; j++)
@@ -228,8 +231,7 @@ namespace MBSimGUI {
 	Un.set(i,V.col(imod[i]));
     }
 
-    nM = Ui.cols() + Un.cols();
-    U.resize(ng,nM,NONINIT);
+    U.resize(Ks.size(),Ui.cols() + Un.cols(),NONINIT);
     Indices IJ;
     for(int i=0; i<Ui.cols(); i++) {
       U.set(iF,i,Ui.col(i));

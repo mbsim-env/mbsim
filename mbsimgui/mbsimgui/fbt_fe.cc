@@ -90,7 +90,7 @@ namespace MBSimGUI {
     }
 
     nodeTable.resize(nodeCount.size());
-    nN = 0;
+    int nN = 0;
     for(size_t i=0; i<nodeCount.size(); i++) {
       if(nodeCount[i])
 	nodeTable[i] = nN++;
@@ -126,27 +126,26 @@ namespace MBSimGUI {
       }
     }
 
-    KrKP.resize(nN,Vec3(NONINIT));
-    nodeNumbers.resize(nN);
+    r.resize(nN,Vec3(NONINIT));
     if(R.cols()==3) {
       for(int i=0; i<R.rows(); i++) {
-	if(nodeCount[i+1]) {
-	  KrKP[nodeTable[i+1]] = R.row(i).T();
-	  nodeNumbers[nodeTable[i+1]] = i+1;
-	}
+	if(nodeCount[i+1])
+	  r[nodeTable[i+1]] = R.row(i).T();
       }
     }
     else {
+      nodeNumbers.resize(nN);
       for(int i=0; i<R.rows(); i++) {
 	if(nodeCount[R(i,0)]) {
-	  KrKP[nodeTable[R(i,0)]] = R.row(i)(RangeV(1,3)).T();
+	  r[nodeTable[R(i,0)]] = R.row(i)(RangeV(1,3)).T();
 	  nodeNumbers[nodeTable[R(i,0)]] = R(i,0);
 	}
       }
     }
 
-    ng = nN*3;
-    nen = 3;
+    int ng = nN*3;
+    net = 3;
+    ner = 0;
 
     int nze = 0;
     for(size_t i=0; i<nN; i++)
@@ -248,7 +247,7 @@ namespace MBSimGUI {
 	  J.init(0);
 	  r.init(0);
 	  for(int ll=0; ll<npe; ll++) {
-	    r0 = KrKP[nodeTable[elei(ee,ll)]];
+	    r0 = this->r[nodeTable[elei(ee,ll)]];
 	    N_[ll] = typei->N(ll,x,y,z);
 	    for(int mm=0; mm<3; mm++)
 	      dN_[ll](mm) = typei->dNdq(ll,mm,x,y,z);
