@@ -507,9 +507,6 @@ namespace MBSimGUI {
     sigmahel.clear();
     Km.clear();
     Mm.clear();
-    Phim.clear();
-    Psim.clear();
-    sigm.clear();
     indices.clear();
 
     if(hasVisitedPage(PageExtFE)) {

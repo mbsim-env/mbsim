@@ -409,9 +409,9 @@ namespace MBSimGUI {
     }
 
     KrKP.resize(nN);
-    Phim.resize(nN,vector<map<int,double>>(3));
-    Psim.resize(nN,vector<map<int,double>>(3));
-    sigm.resize(nN,vector<map<int,double>>(6));
+    vector<vector<map<int,double>>> Phim(nN,vector<map<int,double>>(3));
+    vector<vector<map<int,double>>> Psim(nN,vector<map<int,double>>(3));
+    vector<vector<map<int,double>>> sigm(nN,vector<map<int,double>>(6));
     for(int i=0; i<nN; i++) {
       KrKP[i](0) = i*D;
       KrKP[i](1) = 0;

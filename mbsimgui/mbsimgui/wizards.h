@@ -203,8 +203,6 @@ namespace MBSimGUI {
       std::vector<int> nodeNumbers;
       int nN, nM, ng, net, ner, nen;
       std::vector<std::map<int,double>> Km, Mm;
-      std::vector<std::vector<std::map<int,double>>> Phim, Psim, sigm;
-      std::vector<std::vector<std::vector<std::map<int,double[27]>>>> sigem;
       std::vector<fmatvec::MatVI> ele;
       std::vector<FiniteElementType*> type;
       fmatvec::SymSparseMat PPdms[3], Ks;
