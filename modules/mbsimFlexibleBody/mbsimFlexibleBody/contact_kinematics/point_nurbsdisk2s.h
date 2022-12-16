@@ -48,7 +48,7 @@ namespace MBSimFlexibleBody {
       /*! 
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointNurbsDisk2s();
+       ~ContactKinematicsPointNurbsDisk2s() override;
 
       /* INHERITED INTERFACE */
       void assignContours(const std::vector<MBSim::Contour*> &contour) override;

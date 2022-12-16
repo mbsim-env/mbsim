@@ -31,7 +31,7 @@ namespace MBSimControl {
    */
   class FunctionSensor : public Sensor {
     public:
-      FunctionSensor(const std::string &name="") : Sensor(name), function(nullptr) {}
+      FunctionSensor(const std::string &name="") : Sensor(name) {}
       FunctionSensor(const std::string &name, MBSim::Function<fmatvec::VecV(double)>* function_);
       ~FunctionSensor() override { delete function; }
       void setFunction(MBSim::Function<fmatvec::VecV(double)>* function_);
@@ -40,7 +40,7 @@ namespace MBSimControl {
       void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) override;
       int getSignalSize() const override { return function->getRetSize().first; }
     private:
-      MBSim::Function<fmatvec::VecV(double)> * function;
+      MBSim::Function<fmatvec::VecV(double)> * function{nullptr};
   };
 
 }

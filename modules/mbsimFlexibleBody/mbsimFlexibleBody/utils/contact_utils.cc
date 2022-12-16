@@ -93,7 +93,7 @@ namespace MBSimFlexibleBody {
     else if(contour0==typeid(Point) && contour1==typeid(FlexibleSpatialFfrNurbsContour))
       return new ContactKinematicsPointSpatialContour;
     else
-      return 0;
+      return nullptr;
   }
 }
 

@@ -87,8 +87,8 @@ enum Type {
 //! Abstract base class for all FMI variables
 class Variable {
   public:
-    typedef std::vector<std::pair<std::string, std::string> > EnumListCont;
-    typedef std::shared_ptr<EnumListCont> EnumList;
+    using EnumListCont = std::vector<std::pair<std::string, std::string>>;
+    using EnumList = std::shared_ptr<EnumListCont>;
 
     //! ctor
     Variable(std::string name_, std::string desc_, Type type_, char datatypeChar_, EnumList enumList_=EnumList()) :
@@ -172,7 +172,7 @@ template<> struct MapDatatypeToFMIDatatypeChar<std::string> { static const char 
 template<typename Datatype>
 class PredefinedParameter : public Variable {
   public:
-    PredefinedParameter(const std::string &name_, const std::string &desc_, Datatype &v, EnumList enumList=EnumList()) :
+    PredefinedParameter(const std::string &name_, const std::string &desc_, Datatype &v, const EnumList& enumList=EnumList()) :
       Variable(name_, desc_, Parameter, MapDatatypeToFMIDatatypeChar<Datatype>::value, enumList), value(v) {}
     std::string getValueAsString() override { return boost::lexical_cast<std::string>(value); }
     void setValue(const Datatype &v) override { value=v; }

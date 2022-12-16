@@ -22,9 +22,7 @@ namespace MBSimFlexibleBody {
     
   }
   
-  NeutralNurbsVelocity1s::~NeutralNurbsVelocity1s() {
-    // TODO Auto-generated destructor stub
-  }
+  NeutralNurbsVelocity1s::~NeutralNurbsVelocity1s() = default;
 
   void NeutralNurbsVelocity1s::update(ContourFrame *frame) {
     if(updCurve) computeCurve(true);

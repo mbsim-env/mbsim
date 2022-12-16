@@ -51,7 +51,7 @@ namespace MBSimHydraulics {
     openMBVArrows.clear();
   }
 
-  unsigned int HNodeMec::addTransMecArea(Frame * f, Vec fN, double area, bool considerVolumeChange) {
+  unsigned int HNodeMec::addTransMecArea(Frame * f, const Vec &fN, double area, bool considerVolumeChange) {
     connectedTransFrameStruct transFrame;
     transFrame.frame = f;
     transFrame.normal <<= fN/nrm2(fN);
@@ -61,7 +61,7 @@ namespace MBSimHydraulics {
     return connectedTransFrames.size()-1;
   }
 
-  unsigned int HNodeMec::addRotMecArea(Frame * f, Vec fN, double area, Frame * frameOfReference, bool considerVolumeChange) {
+  unsigned int HNodeMec::addRotMecArea(Frame * f, const Vec &fN, double area, Frame * frameOfReference, bool considerVolumeChange) {
     connectedRotFrameStruct rotFrame;
     rotFrame.frame = f;
     rotFrame.normal <<= fN/nrm2(fN);
@@ -451,7 +451,7 @@ namespace MBSimHydraulics {
 
   ElasticNodeMec::~ElasticNodeMec() {
     delete bulkModulus;
-    bulkModulus=NULL;
+    bulkModulus=nullptr;
   }
 
   void ElasticNodeMec::init(InitStage stage, const InitConfigSet &config) {
@@ -514,11 +514,11 @@ namespace MBSimHydraulics {
   RigidNodeMec::~RigidNodeMec() {
     if (gfl) {
       delete gfl;
-      gfl=NULL;
+      gfl=nullptr;
     }
     if (gil) {
       delete gil;
-      gil=NULL;
+      gil=nullptr;
     }
   }
 

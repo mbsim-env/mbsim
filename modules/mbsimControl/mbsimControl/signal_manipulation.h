@@ -24,7 +24,7 @@
 #include <mbsim/functions/function.h>
 
 namespace MBSim {
-  typedef int Index;
+  using Index = int;
 }
 
 namespace MBSimControl {
@@ -36,11 +36,11 @@ namespace MBSimControl {
   class Multiplexer : public Signal {
     public:
       Multiplexer(const std::string &name="") : Signal(name) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void addInputSignal(Signal * signal_) { signal.push_back(signal_); }
-      void updateSignal();
-      int getSignalSize() const;
+      void updateSignal() override;
+      int getSignalSize() const override;
     private:
       std::vector<Signal*> signal;
       std::vector<std::string> signalString;
@@ -52,15 +52,15 @@ namespace MBSimControl {
    */
   class Demultiplexer : public Signal {
     public:
-      Demultiplexer(const std::string &name="") : Signal(name), signal(NULL) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      Demultiplexer(const std::string &name="") : Signal(name) { }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setInputSignal(Signal *signal_) { signal = signal_; }
       void setIndices(const std::vector<MBSim::Index> &index_) { index = index_; }
-      void updateSignal();
-      int getSignalSize() const { return index.size(); }
+      void updateSignal() override;
+      int getSignalSize() const override { return index.size(); }
     private:
-      Signal *signal;
+      Signal *signal{nullptr};
       std::vector<MBSim::Index> index;
       std::string signalString;
   };
@@ -71,15 +71,15 @@ namespace MBSimControl {
    */
   class SignalTimeDiscretization : public Signal {  
     public:
-      SignalTimeDiscretization(const std::string &name="") : Signal(name), s(NULL), tOld(-99e99) { }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      SignalTimeDiscretization(const std::string &name="") : Signal(name) { }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setInputSignal(Signal *signal_) { s=signal_; }
-      void updateSignal();
-      int getSignalSize() const { return s->getSignalSize(); }
+      void updateSignal() override;
+      int getSignalSize() const override { return s->getSignalSize(); }
     private:
-      Signal *s;
-      double tOld;
+      Signal *s{nullptr};
+      double tOld{-99e99};
       std::string signalString;
   };
 
@@ -90,9 +90,9 @@ namespace MBSimControl {
   class SignalOperation : public Signal {
     public:
       SignalOperation(const std::string &name="") : Signal(name) { }
-      ~SignalOperation() { delete f1; delete f2; }
-      void initializeUsingXML(xercesc::DOMElement *element);
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      ~SignalOperation() override { delete f1; delete f2; }
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setInputSignal(Signal *signal_) { signal.resize(1,signal_); }
       void addInputSignal(Signal *signal_) { signal.push_back(signal_); }
       void setFunction(MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f) {
@@ -105,10 +105,10 @@ namespace MBSimControl {
         f2->setParent(this);
         f2->setName("Function");
       };
-      void updateSignal() { (this->*updateSignal_)(); }
+      void updateSignal() override { (this->*updateSignal_)(); }
       void updateSignal1();
       void updateSignal2();
-      int getSignalSize() const { return f1?f1->getRetSize().first:f2->getRetSize().first; }
+      int getSignalSize() const override { return f1?f1->getRetSize().first:f2->getRetSize().first; }
     private:
       std::vector<Signal*> signal;
       std::vector<std::string> signalString;

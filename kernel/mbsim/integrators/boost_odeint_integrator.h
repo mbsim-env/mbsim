@@ -39,7 +39,7 @@ namespace boost {
   }
 
   // Enable fmatvec::Vec, the state type of MBSim, as a boost odeint state type.
-  int size(const fmatvec::Vec& v) {
+  inline int size(const fmatvec::Vec& v) {
     return v.size();
   }
 }

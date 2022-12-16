@@ -52,21 +52,21 @@ namespace MBSimFlexibleBody {
        * \param area moment of inertia
        * \param vector of gravitational acceleration
        */
-      explicit FiniteElement1s33ANCF(double sl0, double srho, double sE, double sG, double sA, double sI0, double sI1, double sI2, fmatvec::Vec sg);
+      explicit FiniteElement1s33ANCF(double sl0, double srho, double sE, double sG, double sA, double sI0, double sI1, double sI2, const fmatvec::Vec &sg);
 
       /* INHERITED INTERFACE */
-      virtual const fmatvec::SymMat& getM() const { return M; }
-      virtual const fmatvec::Vec& geth() const { return h; }
-      virtual const fmatvec::SqrMat& getdhdq() const { return Dhq; }
-      virtual const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
-      virtual int getqSize() const { return 12; }
-      virtual int getuSize() const { return 12; }
-      virtual void computeM(const fmatvec::Vec& qElement);
-      virtual void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
-      virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
+       const fmatvec::SymMat& getM() const override { return M; }
+       const fmatvec::Vec& geth() const override { return h; }
+       const fmatvec::SqrMat& getdhdq() const override { return Dhq; }
+       const fmatvec::SqrMat& getdhdu() const override { return Dhqp; }
+       int getqSize() const override { return 12; }
+       int getuSize() const override { return 12; }
+       void computeM(const fmatvec::Vec& qElement) override;
+       void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) override;
+       void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) override;
+       double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) override;
+       double computeGravitationalEnergy(const fmatvec::Vec& qElement) override;
+       double computeElasticEnergy(const fmatvec::Vec& qElement) override;
       virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, double s);
       virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, double s);
       virtual fmatvec::Vec3 getVelocity(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);

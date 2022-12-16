@@ -46,21 +46,21 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, SerialResistanceLinePressureLoss)
 
   SerialResistanceLinePressureLoss::~SerialResistanceLinePressureLoss() {
-    for(unsigned int i=0; i<slp.size(); i++)
-      delete slp[i];
+    for(auto & i : slp)
+      delete i;
   }
 
   double SerialResistanceLinePressureLoss::operator()(const double& Q) {
     double pl=0;
-    for (unsigned int i=0; i<slp.size(); i++)
-      pl+=(*slp[i])(Q);
+    for (auto & i : slp)
+      pl+=(*i)(Q);
     return pl;
   }
 
   void SerialResistanceLinePressureLoss::init(InitStage stage, const InitConfigSet &config) {
     LinePressureLoss::init(stage, config);
-    for(unsigned int i=0; i<slp.size(); i++)
-      slp[i]->init(stage, config);
+    for(auto & i : slp)
+      i->init(stage, config);
   }
 
   void SerialResistanceLinePressureLoss::initializeUsingXML(DOMElement * element) {
@@ -68,7 +68,7 @@ namespace MBSimHydraulics {
     DOMElement * e;
     e=element->getFirstElementChild();
     while (e) {
-      LinePressureLoss *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e);
+      auto *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e);
       addLinePressureLoss(p);
       e=e->getNextElementSibling();
     }
@@ -91,7 +91,7 @@ namespace MBSimHydraulics {
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"number");
     int n=E(e)->getText<int>();
     e=e->getNextElementSibling();
-    LinePressureLoss *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e);
+    auto *p=MBSim::ObjectFactory::createAndInit<LinePressureLoss>(e);
     setLinePressureLoss(p, n);
   }
 
@@ -179,7 +179,7 @@ namespace MBSimHydraulics {
       class Lambda : public Function<double(double)> {
         public:
           Lambda(double Re_, double k_, double d_) : Re(Re_), k(k_), d(d_) {}
-          double operator()(const double &lambda) {
+          double operator()(const double &lambda) override {
             return -2.*log10(2.51/Re/sqrt(lambda)+k/3.71/d)-1./sqrt(lambda);
           }
         private:
@@ -229,17 +229,17 @@ namespace MBSimHydraulics {
     PressureLoss::initializeUsingXML(element);
     DOMElement * e;
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"referenceDiameter");
-    double dR=E(e)->getText<double>();
+    auto dR=E(e)->getText<double>();
     setReferenceDiameter(dR);
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"hydraulicDiameter");
-    double dH=E(e)->getText<double>();
+    auto dH=E(e)->getText<double>();
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"negativeHydraulicDiameter");
     double dHNeg=0;
     if (e)
      dHNeg=E(e)->getText<double>();
     setHydraulicDiameter(dH, dHNeg);
     e = E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"surfaceRoughness");
-    double kS=E(e)->getText<double>();
+    auto kS=E(e)->getText<double>();
     setSurfaceRoughness(kS);
   }
 

@@ -20,6 +20,8 @@
 #ifndef _MBSIM_FLEXIBLE_BODY_NAMESPACE_H_
 #define _MBSIM_FLEXIBLE_BODY_NAMESPACE_H_
 
+#include "mbxmlutilshelper/dom.h"
+
 namespace MBSimFlexibleBody {
 
   const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");

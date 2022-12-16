@@ -890,9 +890,11 @@ namespace MBSim {
   Env* DynamicSystemSolver::getEnvironment() {
     // get the Environment of type Env
     auto &reqType=typeid(Env);
-    for(auto &e : environments)
-      if(reqType==typeid(*e))
+    for(auto &e : environments) {
+      auto &e_=*e;
+      if(reqType==typeid(e_))
         return static_cast<Env*>(e.get());
+    }
     auto newEnv=new Env;
     addEnvironment(newEnv);
     return newEnv;

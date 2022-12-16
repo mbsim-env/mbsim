@@ -33,12 +33,12 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   FlexibleBody2s13MFRMindlin::FlexibleBody2s13MFRMindlin(const string &name) :
-      FlexibleBody2s13(name), N_compl(0), R_compl(0), R_ij(0) {
+      FlexibleBody2s13(name), N_compl(nullptr), R_compl(nullptr), R_ij(nullptr) {
     RefDofs = 6;
     for (int i = 0; i < 3; i++)
       for (int j = 0; j < 3; j++) {
-        N_ij[i][j] = 0;
-        NR_ij[i][j] = 0;
+        N_ij[i][j] = nullptr;
+        NR_ij[i][j] = nullptr;
       }
   }
 
@@ -473,7 +473,7 @@ namespace MBSimFlexibleBody {
       }
 
       for (int i = 0; i < Elements; i++) {
-        ElementalNodes.push_back(Vec(4, INIT, 0.));
+        ElementalNodes.emplace_back(4, INIT, 0.);
       }
 
       BuildElements();

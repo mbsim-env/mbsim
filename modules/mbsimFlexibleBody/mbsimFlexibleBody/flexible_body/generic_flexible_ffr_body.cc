@@ -370,7 +370,7 @@ namespace MBSimFlexibleBody {
 
       auto *Atmp = dynamic_cast<StateDependentFunction<RotMat3>*>(fAPK);
       if(Atmp and generalizedVelocityOfRotation!=derivativeOfGeneralizedPositionOfRotation) {
-        RotationAboutThreeAxes<VecV> *A3 = dynamic_cast<RotationAboutThreeAxes<VecV>*>(Atmp->getFunction());
+        auto *A3 = dynamic_cast<RotationAboutThreeAxes<VecV>*>(Atmp->getFunction());
         if(A3) {
           fTR = (generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameOfReference)?A3->getMappingFunction():A3->getTransformedMappingFunction();
           if(not fTR) throwError("(GenericFlexibleFfrBody::init): coordinate transformation not yet available for current rotation");
@@ -467,7 +467,7 @@ namespace MBSimFlexibleBody {
   }
 
   void GenericFlexibleFfrBody::setUpInverseKinetics() {
-    InverseKineticsJoint *joint = new InverseKineticsJoint(string("Joint_")+R->getParent()->getName()+"_"+name);
+    auto *joint = new InverseKineticsJoint(string("Joint_")+R->getParent()->getName()+"_"+name);
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(joint);
     joint->setForceDirection(Mat3xV(3,EYE));
     joint->setMomentDirection(Mat3xV(3,EYE));

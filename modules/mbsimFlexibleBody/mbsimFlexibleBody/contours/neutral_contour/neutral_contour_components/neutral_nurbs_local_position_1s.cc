@@ -22,9 +22,7 @@ namespace MBSimFlexibleBody {
     
   }
   
-  NeutralNurbsLocalPosition1s::~NeutralNurbsLocalPosition1s() {
-    // TODO Auto-generated destructor stub
-  }
+  NeutralNurbsLocalPosition1s::~NeutralNurbsLocalPosition1s() = default;
 
   Vec3 NeutralNurbsLocalPosition1s::evalLocalPosition(double s){
 //    if(updCurve) computeCurve(true);

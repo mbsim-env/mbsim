@@ -67,22 +67,22 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody1s33Cosserat();
+       ~FlexibleBody1s33Cosserat() override;
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
-      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false);
-      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
+       void BuildElements() override;
+       void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override;
+       void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) override;
+       void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) override;
+       void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false) override;
+       void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string()) override;
       /***************************************************/
 
-      virtual void updatePositions(Frame1s* frame);
-      virtual void updateVelocities(Frame1s* frame);
-      virtual void updateAccelerations(Frame1s* frame);
-      virtual void updateJacobians(Frame1s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(Frame1s* frame);
+       void updatePositions(Frame1s* frame) override;
+       void updateVelocities(Frame1s* frame) override;
+       void updateAccelerations(Frame1s* frame) override;
+       void updateJacobians(Frame1s* frame, int j=0) override;
+       void updateGyroscopicAccelerations(Frame1s* frame) override;
 
       void updatePositions(int node) override;
       void updateVelocities(int node) override;
@@ -90,31 +90,31 @@ namespace MBSimFlexibleBody {
       void updateJacobians(int node, int j=0) override;
       void updateGyroscopicAccelerations(int node) override;
 
-      virtual fmatvec::Vec3 getAngles(int i);
-      virtual fmatvec::Vec3 getDerivativeOfAngles(int i);
+       fmatvec::Vec3 getAngles(int i) override;
+       fmatvec::Vec3 getDerivativeOfAngles(int i) override;
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
-      virtual double computePotentialEnergy();
+       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+       double computePotentialEnergy() override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateLLM();
+       void updateLLM() override;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setNumberElements(int n);
+      void setNumberElements(int n) override;
 
-      void setMomentsInertia(double I1_, double I2_, double I0_);
+      void setMomentsInertia(double I1_, double I2_, double I0_) override;
 
-      void setCurlRadius(double R1_, double R2_);
-      void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_);
+      void setCurlRadius(double R1_, double R2_) override;
+      void setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) override;
 
-      virtual int getNumberOfElementDOF() const { return 6; }
+       int getNumberOfElementDOF() const override { return 6; }
 
-      int getNumberElements() const { return Elements; }
+      int getNumberElements() const override { return Elements; }
       int getNumberDOFs() const { return qSize; }
       /***************************************************/
 
@@ -140,7 +140,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
        */
-      void initInfo();
+      void initInfo() override;
 
       /**
        * \brief detect current finite element (t
@@ -154,7 +154,7 @@ namespace MBSimFlexibleBody {
        * \param local parametrisation
        * \param finite element number
        */
-      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation) override;
 
     protected:
 
@@ -190,14 +190,14 @@ namespace MBSimFlexibleBody {
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition
        */
-      void initM();
+      void initM() override;
 
       /**
        * \brief compute boundary conditions for rotation grid
        * first and last finite difference rotation beam element refer to values not directly given by dof in open structure
        * they have to be estimated in the following function
        */
-      void computeBoundaryCondition();
+      void computeBoundaryCondition() override;
 
       /** 
        * \brief insert 'local' information in global vectors for rotation grid
@@ -205,7 +205,7 @@ namespace MBSimFlexibleBody {
        * \param local vector
        * \param global vector
        */
-      void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
+      void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override;
   };
 
   inline void FlexibleBody1s33Cosserat::setMomentsInertia(double I1_, double I2_, double I0_) {

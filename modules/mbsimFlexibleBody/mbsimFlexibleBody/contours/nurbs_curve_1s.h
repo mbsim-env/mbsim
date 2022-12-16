@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~NurbsCurve1s() { }
+       ~NurbsCurve1s() override = default;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
@@ -58,11 +58,11 @@ namespace MBSimFlexibleBody {
       /***************************************************/
 
       /* INHERITED INTERFACE OF CONTOUR */
-      virtual MBSim::ContactKinematics *findContactPairingWith(const std::type_info &type0, const std::type_info &type1);
+       MBSim::ContactKinematics *findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override;
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setNormalRotationGrid(fmatvec::Vec normal_) { normalRotationGrid = normal_(fmatvec::RangeV(0,2)); }
+      void setNormalRotationGrid(const fmatvec::Vec& normal_) { normalRotationGrid = normal_(fmatvec::RangeV(0,2)); }
       /***************************************************/
 
       /**

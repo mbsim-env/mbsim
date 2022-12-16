@@ -269,13 +269,15 @@ namespace MBSim {
       if(fdf and fdf->isSetValued() and not ftil)
         throwError("Tangential impact law must be defined!");
       if (contactKinematics == 0) {
-        contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
+        auto &contour0=*contour[0];
+        auto &contour1=*contour[1];
+        contactKinematics = contour[0]->findContactPairingWith(typeid(contour0), typeid(contour1));
         if (contactKinematics == 0) {
-          contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
+          contactKinematics = contour[1]->findContactPairingWith(typeid(contour1), typeid(contour0));
           if (contactKinematics == 0) {
-            contactKinematics = contour[0]->findContactPairingWith(typeid(*contour[1]), typeid(*contour[0]));
+            contactKinematics = contour[0]->findContactPairingWith(typeid(contour1), typeid(contour0));
             if (contactKinematics == 0) {
-              contactKinematics = contour[1]->findContactPairingWith(typeid(*contour[0]), typeid(*contour[1]));
+              contactKinematics = contour[1]->findContactPairingWith(typeid(contour0), typeid(contour1));
               if (contactKinematics == 0) {
 		contactKinematics = new ContactKinematicsSpatialContourSpatialContour;
               }

@@ -21,9 +21,7 @@ namespace MBSimFlexibleBody {
 
   }
   
-  NeutralNurbsDotangle1s::~NeutralNurbsDotangle1s() {
-    // TODO Auto-generated destructor stub
-  }
+  NeutralNurbsDotangle1s::~NeutralNurbsDotangle1s() = default;
 
   void NeutralNurbsDotangle1s::update(ContourFrame *frame) {
     throw;

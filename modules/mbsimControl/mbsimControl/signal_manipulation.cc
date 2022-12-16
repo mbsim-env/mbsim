@@ -43,8 +43,8 @@ namespace MBSimControl {
 
   void Multiplexer::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      for(unsigned int i=0; i<signalString.size(); i++)
-        addInputSignal(getByPath<Signal>(signalString[i]));
+      for(auto & i : signalString)
+        addInputSignal(getByPath<Signal>(i));
       if(signal.empty())
         throwError("No input signal is given!");
     }
@@ -53,8 +53,8 @@ namespace MBSimControl {
 
   void Multiplexer::updateSignal() {
     int k=0;
-    for (unsigned int i=0; i<signal.size(); i++) {
-      const VecV &si = signal[i]->evalSignal();
+    for (auto & i : signal) {
+      const VecV &si = i->evalSignal();
       s.set(RangeV(k,k+si.size()-1),si);
       k+=si.size();;
     }
@@ -63,8 +63,8 @@ namespace MBSimControl {
 
   int Multiplexer::getSignalSize() const {
     int size = 0;
-    for (unsigned int i=0; i<signal.size(); i++)
-      size += signal[i]->getSignalSize();
+    for (auto i : signal)
+      size += i->getSignalSize();
     return size;
   }
 
@@ -145,8 +145,8 @@ namespace MBSimControl {
 
   void SignalOperation::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      for(unsigned int i=0; i<signalString.size(); i++)
-        addInputSignal(getByPath<Signal>(signalString[i]));
+      for(auto & i : signalString)
+        addInputSignal(getByPath<Signal>(i));
       if(signal.empty())
         throwError("No input signal is given!");
       if(signal.size()==1)

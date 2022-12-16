@@ -1085,7 +1085,7 @@ namespace MBSim {
 
   void MaxwellContact::updateGeneralizedPositions() {
     for(size_t i=0; i<contactKinematics.size(); i++)
-    contactKinematics[i]->updateg(contacts[i]);
+      contactKinematics[i]->updateg(contacts[i]);
     updrrel = false;
   }
 

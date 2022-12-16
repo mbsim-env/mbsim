@@ -50,22 +50,22 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody2s13Disk() { }
+       ~FlexibleBody2s13Disk() override = default;
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
-      virtual void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
-      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
-      virtual void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+       void BuildElements() override;
+       void GlobalVectorContribution(int CurrentElement, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override;
+       void GlobalMatrixContribution(int CurrentElement, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) override;
+       void GlobalMatrixContribution(int CurrentElement, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) override;
 
-      fmatvec::Vec3 evalPosition();
-      fmatvec::SqrMat3 evalOrientation();
+      fmatvec::Vec3 evalPosition() override;
+      fmatvec::SqrMat3 evalOrientation() override;
 
-      virtual void updatePositions(Frame2s* frame);
-      virtual void updateVelocities(Frame2s* frame);
-      virtual void updateAccelerations(Frame2s* frame);
-      virtual void updateJacobians(Frame2s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(Frame2s* frame);
+       void updatePositions(Frame2s* frame) override;
+       void updateVelocities(Frame2s* frame) override;
+       void updateAccelerations(Frame2s* frame) override;
+       void updateJacobians(Frame2s* frame, int j=0) override;
+       void updateGyroscopicAccelerations(Frame2s* frame) override;
 
       void updatePositions(int node) override;
       void updateVelocities(int node) override;
@@ -74,20 +74,20 @@ namespace MBSimFlexibleBody {
       void updateGyroscopicAccelerations(int node) override;
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
+       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
-      virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint);
+       fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint) override;
       /***************************************************/
 
     protected:
       /* INHERITED INTERFACE OF FLEXIBLEBODY2s13 */
-      virtual void initMatrices();
-      virtual void updateAG();
+       void initMatrices() override;
+       void updateAG() override;
       /***************************************************/
 
   };

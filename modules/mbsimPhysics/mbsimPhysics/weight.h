@@ -51,7 +51,7 @@ namespace MBSimPhysics {
       void updatePositions(MBSim::Frame *frame) override;
       void updateGeneralizedPositions() override;
       void updatePositions() override;
-      void updatelaF();
+      void updatelaF() override;
       void updateForce() override;
       void updateh(int i=0) override;
 

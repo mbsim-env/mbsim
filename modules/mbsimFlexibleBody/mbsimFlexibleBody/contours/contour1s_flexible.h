@@ -53,32 +53,32 @@ namespace MBSimFlexibleBody {
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
-      virtual MBSim::ContourFrame* createContourFrame(const std::string &name="P");
+       MBSim::ContourFrame* createContourFrame(const std::string &name="P") override;
 
-      virtual fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) { return evalPosition(zeta(0)); }
-      virtual fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) { return evalWs(zeta(0)); }
-      virtual fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) { return evalWt(zeta(0)); }
-      virtual fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) { return evalWs(zeta); }
-      virtual fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) { return evalWt(zeta); }
+       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override { return evalPosition(zeta(0)); }
+       fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override { return evalWs(zeta(0)); }
+       fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override { return evalWt(zeta(0)); }
+       fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) override { return evalWs(zeta); }
+       fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) override { return evalWt(zeta); }
 
-      virtual bool isZetaOutside(const fmatvec::Vec2 &zeta) { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
+       bool isZetaOutside(const fmatvec::Vec2 &zeta) override { return zeta(0) < etaNodes[0] or zeta(0) > etaNodes[etaNodes.size()-1]; }
 
-      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) { return findContactPairingFlexible(type0, type1); }
+      MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override { return findContactPairingFlexible(type0, type1); }
 
       void setNodes(const std::vector<double> &nodes_) { etaNodes = nodes_; }
 
-      void resetUpToDate();
+      void resetUpToDate() override;
       virtual void updatePositions(double s);
 
       fmatvec::Vec3 evalPosition(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return WrOP; }
       fmatvec::Vec3 evalWs(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return Ws; }
       fmatvec::Vec3 evalWt(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return Wt; }
 
-      void updatePositions(MBSim::ContourFrame *frame);
-      void updateVelocities(MBSim::ContourFrame *frame);
-      void updateAccelerations(MBSim::ContourFrame *frame);
-      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
-      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame);
+      void updatePositions(MBSim::ContourFrame *frame) override;
+      void updateVelocities(MBSim::ContourFrame *frame) override;
+      void updateAccelerations(MBSim::ContourFrame *frame) override;
+      void updateJacobians(MBSim::ContourFrame *frame, int j=0) override;
+      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame) override;
 
     protected:
       fmatvec::Vec3 WrOP, Ws, Wt;

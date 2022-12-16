@@ -60,18 +60,18 @@ namespace MBSimFlexibleBody {
       FlexibleBody1sCosserat(const std::string &name, bool openStructure);
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements()=0;
+       void BuildElements() override =0;
       const fmatvec::Vec& evalqRotationElement(int i) { if(updEle) BuildElements(); return qRotationElement[i]; }
       const fmatvec::Vec& evaluRotationElement(int i) { if(updEle) BuildElements(); return uRotationElement[i]; }
-      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec)=0;
-      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat)=0;
-      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat)=0;
-      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false)=0;
-      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string())=0;
+       void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override =0;
+       void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) override =0;
+       void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) override =0;
+       void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false) override =0;
+       void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string()) override =0;
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(int i = 0);
+       void updateh(int i = 0) override;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/

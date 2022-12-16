@@ -52,7 +52,7 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs, bool printPl
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_OpenMBV"/"openmbv.xsd",
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSim"/"mbsim.xsd",
-    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils"/"physicalvariable.xsd",
+    MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBXMLUtils"/"mbxmlutils.xsd",
   };
 
   // create parser for mbsimmodule.xml files

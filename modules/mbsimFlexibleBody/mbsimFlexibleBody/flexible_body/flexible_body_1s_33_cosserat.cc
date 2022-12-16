@@ -38,10 +38,10 @@ namespace MBSimFlexibleBody {
   }
 
   FlexibleBody1s33Cosserat::~FlexibleBody1s33Cosserat() {
-    for (unsigned int i = 0; i < rotationDiscretization.size(); i++) {
-      if (rotationDiscretization[i]) {
-        delete rotationDiscretization[i];
-        rotationDiscretization[i] = NULL;
+    for (auto & i : rotationDiscretization) {
+      if (i) {
+        delete i;
+        i = nullptr;
       }
     }
   }
@@ -242,16 +242,16 @@ namespace MBSimFlexibleBody {
       /* translational elements */
       for (int i = 0; i < Elements; i++) {
         discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, angle));
-        qElement.push_back(Vec(discretization[i]->getqSize(), INIT, 0.));
-        uElement.push_back(Vec(discretization[i]->getuSize(), INIT, 0.));
+        qElement.emplace_back(discretization[i]->getqSize(), INIT, 0.);
+        uElement.emplace_back(discretization[i]->getuSize(), INIT, 0.);
         static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements * cEps0D, cEps1D, cEps2D);
       }
 
       /* rotational elements */
       for (int i = 0; i < rotationalElements; i++) {
         rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, angle));
-        qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(), INIT, 0.));
-        uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(), INIT, 0.));
+        qRotationElement.emplace_back(rotationDiscretization[i]->getqSize(), INIT, 0.);
+        uRotationElement.emplace_back(rotationDiscretization[i]->getuSize(), INIT, 0.);
         if (fabs(R1) > epsroot || fabs(R2) > epsroot)
           static_cast<FiniteElement1s33CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1, R2);
       }
@@ -396,15 +396,15 @@ namespace MBSimFlexibleBody {
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
       discretization.push_back(new FiniteElement1s33CosseratTranslation(l0, rho, A, E, G, I1, I2, I0, g, angle));
-      qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.));
-      uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
+      qElement.emplace_back(discretization[0]->getqSize(), INIT, 0.);
+      uElement.emplace_back(discretization[0]->getuSize(), INIT, 0.);
     }
 
     /* rotational elements */
     for (int i = 0; i < rotationalElements; i++) {
       rotationDiscretization.push_back(new FiniteElement1s33CosseratRotation(l0, E, G, I1, I2, I0, angle));
-      qRotationElement.push_back(Vec(rotationDiscretization[0]->getqSize(), INIT, 0.));
-      uRotationElement.push_back(Vec(rotationDiscretization[0]->getuSize(), INIT, 0.));
+      qRotationElement.emplace_back(rotationDiscretization[0]->getqSize(), INIT, 0.);
+      uRotationElement.emplace_back(rotationDiscretization[0]->getuSize(), INIT, 0.);
     }
 
 //curve->initContourFromBody(resize);
@@ -430,8 +430,8 @@ namespace MBSimFlexibleBody {
   }
 
   void FlexibleBody1s33Cosserat::initM() {
-    for (int i = 0; i < (int) discretization.size(); i++)
-      static_cast<FiniteElement1s33CosseratTranslation*>(discretization[i])->initM(); // compute attributes of finite element
+    for (auto & i : discretization)
+      static_cast<FiniteElement1s33CosseratTranslation*>(i)->initM(); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalMatrixContribution(i, discretization[i]->getM(), M); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {

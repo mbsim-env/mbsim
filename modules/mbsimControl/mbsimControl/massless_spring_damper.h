@@ -36,17 +36,17 @@ namespace MBSimControl {
 
     public:
       MasslessSpringDamper(const std::string& name="");
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
-      void calcxSize() {xSize=1; }
+      void calcxSize() override {xSize=1; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
-      void updateSignal() { s = x; upds = false; }
+      void updateSignal() override { s = x; upds = false; }
 
-      void updatexd();
+      void updatexd() override;
 
-      void plot();
+      void plot() override;
 
       void setSpringStiffness(double c_) {c=c_; }
       void setBasicSpringForce(double F0_) {F0=F0_; }
@@ -58,7 +58,7 @@ namespace MBSimControl {
       void setMaximumPositionValue(double xMax_) {xMax=xMax_; }
 
       void setInputSignal(Signal * inputSignal_) { inputSignal=inputSignal_; }
-      int getSignalSize() const { return inputSignal->getSignalSize(); }
+      int getSignalSize() const override { return inputSignal->getSignalSize(); }
 
     private:
       double c, F0, dPos, dNeg, FFricPos, FFricNeg, xMin, xMax;

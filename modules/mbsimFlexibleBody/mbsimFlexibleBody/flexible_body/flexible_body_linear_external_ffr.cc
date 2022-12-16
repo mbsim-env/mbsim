@@ -38,16 +38,12 @@ namespace MBSimFlexibleBody {
   
   FlexibleBodyLinearExternalFFR::FlexibleBodyLinearExternalFFR(const string &name) :
       FlexibleBodyContinuum<Vec>(name), nNodes(0), FFR(new Frame("FFR")), I_1(INIT, 0.0), I_kl(INIT, 0.0), S_bar(), I_kl_bar(), I_ThetaTheta_bar(INIT, 0.0), I_ThetaF_bar(), K(), G_bar(INIT, 0.0), G_bar_Dot(INIT, 0.0), A(INIT, 0), M_FF(), Qv(), phi(), nf(1), openStructure(true), updAG(true), updQv(true) {
-    for (int i = 0; i < 3; i++) {
-      for (int j = 0; j < 3; j++)
-        S_kl_bar[i][j] = SqrMat();
+    for (auto & i : S_kl_bar) {
+      for (auto & j : i)
+        j = SqrMat();
     }
     Body::addFrame(FFR);
 //    FFR->setParent(this);
-  }
-  
-  FlexibleBodyLinearExternalFFR::~FlexibleBodyLinearExternalFFR() {
-//	  delete FFR;
   }
   
   void FlexibleBodyLinearExternalFFR::init(InitStage stage, const InitConfigSet &config) {
@@ -116,7 +112,7 @@ namespace MBSimFlexibleBody {
     uSize[j] = 6 + nf;
   }
 
-  void FlexibleBodyLinearExternalFFR::readFEMData(string inFilePath, const bool millimeterUnits, bool output) {
+  void FlexibleBodyLinearExternalFFR::readFEMData(const string &inFilePath, const bool millimeterUnits, bool output) {
 
     msg(Info) << "Reading FEM-Data" << endl;
 
@@ -139,7 +135,7 @@ namespace MBSimFlexibleBody {
       for (double temp; sin >> temp; i++) {
         u0Line(i) = temp;
       }
-      u0.push_back(u0Line / power);
+      u0.emplace_back(u0Line / power);
     }
 
     // get the number of lumped nodes(nj) = number of numOfElements in the model
@@ -268,7 +264,7 @@ namespace MBSimFlexibleBody {
 
     for (int i = 0; i < numbers.size(); i++) {
       int nodeNumber = numbers(i);
-      NodeFrame * refFrame = new NodeFrame("RefFrame" + toString(nodeNumber), nodeNumber);
+      auto * refFrame = new NodeFrame("RefFrame" + toString(nodeNumber), nodeNumber);
       addFrame(refFrame);
       refFrame->enableOpenMBV(size);
     }
@@ -384,7 +380,7 @@ namespace MBSimFlexibleBody {
     Qv.set(RangeV(0, 2), (-A) * (omega_bar_skew * omega_bar_skew * (I_1 + S_bar * qf) + 2. * omega_bar_skew * S_bar * uf));
     Qv.set(RangeV(3, 5), -2. * G_bar_Dot.T() * I_ThetaTheta_bar * (G_bar * uTheta) - 2. * G_bar_Dot.T() * I_ThetaF_bar * uf - G_bar.T() * I_ThetaTheta_bar * (G_bar * uTheta));
     for (int j = 0; j < nNodes; j++) {
-      FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j]);
+      auto* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[j]);
       Qv.add(RangeV(6, nf + 5), -node->getMij() * (node->getModeShape().T() * (omega_bar_skew * omega_bar_skew * (node->getU0() + node->getModeShape() * qf) + 2. * omega_bar_skew * node->getModeShape() * uf)));
     }
 
@@ -582,7 +578,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyLinearExternalFFR::updatePositions(int nodeIndex) {
 
-    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
+    auto* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
 
     Vec3 u_bar = node->getU0() + node->getModeShape() * q(RangeV(6, 5 + nf));
     //        u_bar = A * u_bar; // A*u_bar: transform local position vector expressed in FFR into Reference Frame R
@@ -602,7 +598,7 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBodyLinearExternalFFR::updateVelocities(int nodeIndex) {
 
-    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
+    auto* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[nodeIndex]);
 
     Vec3 A_S_qfDot = evalA() * node->getModeShape() * u(RangeV(6, 5 + nf));
 
@@ -656,7 +652,7 @@ namespace MBSimFlexibleBody {
   }
 
   Vec3 FlexibleBodyLinearExternalFFR::evalLocalPosition(int i) {
-    FiniteElementLinearExternalLumpedNode* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[getNodeIndex(i)]);
+    auto* node = static_cast<FiniteElementLinearExternalLumpedNode*>(discretization[getNodeIndex(i)]);
 
     return node->getU0() + node->getModeShape() * q(RangeV(6, 5 + nf)); // don't need to transform to the system coordinates,  needed to be done in neutral contour when calculating the Jacobian matrix
   }

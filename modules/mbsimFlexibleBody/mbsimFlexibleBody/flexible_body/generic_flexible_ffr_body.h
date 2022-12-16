@@ -37,22 +37,22 @@ namespace MBSimFlexibleBody {
 
   template<int N>
     struct BaseType<fmatvec::Vector<fmatvec::Fixed<N>, double>> {
-      typedef fmatvec::VecV type;
+      using type = fmatvec::VecV;
     };
 
   template<>
     struct BaseType<fmatvec::SqrMat3> {
-      typedef fmatvec::MatVx3 type;
+      using type = fmatvec::MatVx3;
     };
 
   template<>
     struct BaseType<fmatvec::SqrMatV> {
-      typedef fmatvec::MatV type;
+      using type = fmatvec::MatV;
     };
 
   template<int N>
     struct BaseType<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<N>, fmatvec::Var, double>> {
-      typedef fmatvec::MatV type;
+      using type = fmatvec::MatV;
     };
 
   /*!
@@ -361,17 +361,17 @@ namespace MBSimFlexibleBody {
        */
       fmatvec::Vec3 WvPKrel, WomPK;
 
-      MBSim::Function<fmatvec::MatV(fmatvec::VecV)> *fTR{0};
+      MBSim::Function<fmatvec::MatV(fmatvec::VecV)> *fTR{nullptr};
 
       /**
        * \brief translation from parent Frame to kinematic Frame in parent system
        */
-      MBSim::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK{0};
+      MBSim::Function<fmatvec::Vec3(fmatvec::VecV, double)> *fPrPK{nullptr};
 
       /**
        * \brief rotation from kinematic Frame to parent Frame
        */
-      MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK{0};
+      MBSim::Function<fmatvec::RotMat3(fmatvec::VecV, double)> *fAPK{nullptr};
 
       void (GenericFlexibleFfrBody::*updateJacobians_[2])(MBSim::Frame *frame);
 
@@ -380,7 +380,7 @@ namespace MBSimFlexibleBody {
       fmatvec::VecV qTRel, qRRel, qERel, uTRel, uRRel, uERel, qdTRel, qdRRel, qdERel, udERel;
       fmatvec::Mat3xV WJTrel, WJRrel, PJTT, PJRR;
 
-      MBSim::Frame *frameForJacobianOfRotation{0};
+      MBSim::Frame *frameForJacobianOfRotation{nullptr};
 
       fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iqE, iuT, iuR, iuE;
 

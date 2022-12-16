@@ -102,7 +102,7 @@ namespace MBSimPhysics {
     setDragFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(e) {
-      ombvArrow = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
+      ombvArrow = make_shared<OpenMBVInteractionArrow>(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint);
       ombvArrow->initializeUsingXML(e);
     }
   }

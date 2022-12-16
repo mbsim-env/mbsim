@@ -37,7 +37,7 @@ using namespace MBSimControl;
 
 namespace MBSimHydraulics {
 
-  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(false), active0(false), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(NULL), closablePressureLoss(NULL), leakagePressureLoss(NULL), unidirectionalPressureLoss(NULL), gfl(NULL), gil(NULL) {
+  RigidLinePressureLoss::RigidLinePressureLoss(const string &name, RigidHLine * line_, PressureLoss * pressureLoss, bool bilateral_, bool unilateral_) : Link(name), line(line_), active(false), active0(false), unilateral(unilateral_), bilateral(bilateral_), gdn(0), gdd(0), dpMin(0), linePressureLoss(nullptr), closablePressureLoss(nullptr), leakagePressureLoss(nullptr), unidirectionalPressureLoss(nullptr), gfl(nullptr), gil(nullptr) {
     pressureLoss->setLine(line);
     if (dynamic_cast<LinePressureLoss*>(pressureLoss))
       linePressureLoss = (LinePressureLoss*)(pressureLoss);
@@ -74,11 +74,11 @@ namespace MBSimHydraulics {
   RigidLinePressureLoss::~RigidLinePressureLoss() {
     if (gfl) {
       delete gfl;
-      gfl=NULL;
+      gfl=nullptr;
     }
     if (gil) {
       delete gil;
-      gil=NULL;
+      gil=nullptr;
     }
   }
 

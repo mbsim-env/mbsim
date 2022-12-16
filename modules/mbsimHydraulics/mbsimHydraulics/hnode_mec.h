@@ -60,8 +60,8 @@ namespace MBSimHydraulics {
       }
 
       void setInitialVolume(double V0_) {V0=V0_; }
-      unsigned int addTransMecArea(MBSim::Frame * f, fmatvec::Vec fN, double area, bool considerVolumeChange=true);
-      unsigned int addRotMecArea(MBSim::Frame * f, fmatvec::Vec fN, double area, MBSim::Frame * frameOfReference, bool considerVolumeChange=true);
+      unsigned int addTransMecArea(MBSim::Frame * f, const fmatvec::Vec &fN, double area, bool considerVolumeChange=true);
+      unsigned int addRotMecArea(MBSim::Frame * f, const fmatvec::Vec &fN, double area, MBSim::Frame * frameOfReference, bool considerVolumeChange=true);
       void setTransMecArea(unsigned int i, double area) {connectedTransFrames[i].area=area; }
 
       void calcxSize() override {xSize=1; }

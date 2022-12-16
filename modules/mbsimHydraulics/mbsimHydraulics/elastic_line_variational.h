@@ -62,22 +62,22 @@ namespace MBSimHydraulics {
       /*! print system state vector */
       void printLineStateSpace(bool print=true) {printStateSpace=print; }
 
-      fmatvec::VecV getInflowFactor() {return wI; }
-      fmatvec::VecV getOutflowFactor() {return wO; }
+      fmatvec::VecV getInflowFactor() override {return wI; }
+      fmatvec::VecV getOutflowFactor() override {return wO; }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void calcqSize() {qSize=n-1; }
-      void calcuSize(int j) {uSize[j]=n; }
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void calcqSize() override {qSize=n-1; }
+      void calcuSize(int j) override {uSize[j]=n; }
 
-      void updateQ();
-      void updateh(int j=0);
-      void updateT() {T=Tlocal; }
-      void updateM() {M=Mlocal; }
+      void updateQ() override;
+      void updateh(int j=0) override;
+      void updateT() override {T=Tlocal; }
+      void updateM() override {M=Mlocal; }
 
-      void plot();
+      void plot() override;
       void plotParameters();
 
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
     protected:
       double p0, fracAir, r, l;

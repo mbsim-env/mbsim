@@ -57,20 +57,20 @@ namespace MBSimFlexibleBody {
       FlexibleBody1s21RCM(const std::string &name, bool openStructure);
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
+       void BuildElements() override;
 
-      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
+       void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override;
+       void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) override;
+       void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) override;
 
-      virtual void exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false);
-      virtual void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ));
+       void exportPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( ), const int & deg = 3, const bool &writePsFile = false) override;
+       void importPositionVelocity(const std::string& filenamePos, const std::string& filenameVel = std::string( )) override;
 
-      virtual void updatePositions(Frame1s* frame);
-      virtual void updateVelocities(Frame1s* frame);
-      virtual void updateAccelerations(Frame1s* frame);
-      virtual void updateJacobians(Frame1s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(Frame1s* frame);
+       void updatePositions(Frame1s* frame) override;
+       void updateVelocities(Frame1s* frame) override;
+       void updateAccelerations(Frame1s* frame) override;
+       void updateJacobians(Frame1s* frame, int j=0) override;
+       void updateGyroscopicAccelerations(Frame1s* frame) override;
 
       virtual void updatePositions(NodeFrame* frame);
       virtual void updateVelocities(NodeFrame* frame);
@@ -80,11 +80,11 @@ namespace MBSimFlexibleBody {
       /****************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
+       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       /***************************************************/
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
+       void plot() override;
       /***************************************************/
 
       /* GETTER / SETTER */
@@ -101,7 +101,7 @@ namespace MBSimFlexibleBody {
       void setCurlRadius(double r);
       void setMaterialDamping(double d);
       void setLehrDamping(double d);
-      void setElementPlotList(fmatvec::VecInt plotElements_) {plotElements <<= plotElements_;}
+      void setElementPlotList(const fmatvec::VecInt& plotElements_) {plotElements <<= plotElements_;}
       /***************************************************/
 
       /**

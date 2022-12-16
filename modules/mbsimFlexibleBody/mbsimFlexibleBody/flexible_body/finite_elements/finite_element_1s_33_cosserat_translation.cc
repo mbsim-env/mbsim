@@ -29,9 +29,9 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33CosseratTranslation::FiniteElement1s33CosseratTranslation(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_ ,CardanPtr ag_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), cEps0D(0.), cEps1D(0.), cEps2D(0.), sigma1(1.), sigma2(1.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.), ag(ag_) {}
+  FiniteElement1s33CosseratTranslation::FiniteElement1s33CosseratTranslation(double l0_, double rho_,double A_, double E_, double G_, double I1_, double I2_, double I0_, const Vec& g_ ,CardanPtr ag_) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), g(g_), cEps0D(0.), cEps1D(0.), cEps2D(0.), sigma1(1.), sigma2(1.), M(9,INIT,0.), h(9,INIT,0.), X(12,INIT,0.), ag(std::move(ag_)) {}
 
-  FiniteElement1s33CosseratTranslation::~FiniteElement1s33CosseratTranslation() {}
+  FiniteElement1s33CosseratTranslation::~FiniteElement1s33CosseratTranslation() = default;
 
   void FiniteElement1s33CosseratTranslation::setMaterialDamping(double cEps0D_, double cEps1D_, double cEps2D_) {
     cEps0D = cEps0D_;

@@ -18,7 +18,7 @@ extern "C" void mbsimSrcFMI(MBSim::DynamicSystemSolver *&dss, MBSim::Integrator 
 
 namespace MBSimFMI {
   // just a function pointer typedef for the above function
-  typedef void (*mbsimSrcFMIPtr)(MBSim::DynamicSystemSolver *&, MBSim::Integrator *&);
+  using mbsimSrcFMIPtr = void (*)(MBSim::DynamicSystemSolver *&, MBSim::Integrator *&);
 }
 
 #endif

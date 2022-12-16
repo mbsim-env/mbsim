@@ -18,7 +18,7 @@ using namespace fmatvec;
 namespace MBSimFlexibleBody {
 
   Contour1sNeutralCosserat::Contour1sNeutralCosserat(const std::string &name_) :
-      Contour1sNeutralFactory(name_), transNodes(0), rotNodes(0), nodeOffset(0), ANGLE(new Cardan()), NP(NULL), NV(NULL), NA(NULL), NDA(NULL) {
+      Contour1sNeutralFactory(name_), transNodes(0), rotNodes(0), nodeOffset(0), ANGLE(new Cardan()), NP(nullptr), NV(nullptr), NA(nullptr), NDA(nullptr) {
 
   }
   
@@ -27,10 +27,10 @@ namespace MBSimFlexibleBody {
     delete NV;
     delete NA;
     delete NDA;
-    NP = NULL;
-    NV = NULL;
-    NA = NULL;
-    NDA = NULL;
+    NP = nullptr;
+    NV = nullptr;
+    NA = nullptr;
+    NDA = nullptr;
 
   }
 

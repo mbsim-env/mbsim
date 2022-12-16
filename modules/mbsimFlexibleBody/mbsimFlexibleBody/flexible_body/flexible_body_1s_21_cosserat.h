@@ -66,23 +66,23 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody1s21Cosserat();
+       ~FlexibleBody1s21Cosserat() override;
 
       /* INHERITED INTERFACE OF FLEXIBLE BODY */
-      virtual void BuildElements();
+       void BuildElements() override;
       const fmatvec::Vec& evalqFull() { if(updEle) BuildElements(); return qFull; }
       const fmatvec::Vec& evaluFull() { if(updEle) BuildElements(); return uFull; }
-      virtual void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat);
-      virtual void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat);
-      virtual void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false);
-      virtual void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string());
+       void GlobalVectorContribution(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override;
+       void GlobalMatrixContribution(int n, const fmatvec::Mat& locMat, fmatvec::Mat& gloMat) override;
+       void GlobalMatrixContribution(int n, const fmatvec::SymMat& locMat, fmatvec::SymMat& gloMat) override;
+       void exportPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string(), const int & deg = 3, const bool & writePsFile = false) override;
+       void importPositionVelocity(const std::string & filenamePos, const std::string & filenameVel = std::string()) override;
 
-      virtual void updatePositions(Frame1s* frame);
-      virtual void updateVelocities(Frame1s* frame);
-      virtual void updateAccelerations(Frame1s* frame);
-      virtual void updateJacobians(Frame1s* frame, int j=0);
-      virtual void updateGyroscopicAccelerations(Frame1s* frame);
+       void updatePositions(Frame1s* frame) override;
+       void updateVelocities(Frame1s* frame) override;
+       void updateAccelerations(Frame1s* frame) override;
+       void updateJacobians(Frame1s* frame, int j=0) override;
+       void updateGyroscopicAccelerations(Frame1s* frame) override;
 
       void updatePositions(int node) override;
       void updateVelocities(int node) override;
@@ -94,43 +94,43 @@ namespace MBSimFlexibleBody {
 //      virtual fmatvec::Vec3 getDerivativeOfAngles(int i);
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
-      virtual double computePotentialEnergy();
-      virtual void updateM();
-      virtual void updateLLM();
+       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+       double computePotentialEnergy() override;
+       void updateM() override;
+       void updateLLM() override;
 //      virtual void updatedu();
       /***************************************************/
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(int i = 0);
+       void updateh(int i = 0) override;
 
       /* INHERITED INTERFACE OF ELEMENT */
       /***************************************************/
 
       /* GETTER / SETTER */
-      void setNumberElements(int n);
+      void setNumberElements(int n) override;
 
-      void setMomentsInertia(double I1_);
-      void setCurlRadius(double R1_);
-      void setMaterialDamping(double cEps0D_, double cEps1D_);
+      void setMomentsInertia(double I1_) override;
+      void setCurlRadius(double R1_) override;
+      void setMaterialDamping(double cEps0D_, double cEps1D_) override;
 
-      virtual fmatvec::Mat3xV transformJacobian(fmatvec::Mat3xV J) {
+       fmatvec::Mat3xV transformJacobian(fmatvec::Mat3xV J) override {
         if (PODreduced)
           return J * U;
         return J;
       }
 
-      virtual int getNumberOfElementDOF() const {
+       int getNumberOfElementDOF() const override {
         return 3;
       }
 
-      int getNumberElements() const {
+      int getNumberElements() const override {
         return Elements;
       }
       double getLength() const {
         return L;
       }
-      virtual int getqSizeFull() const {
+       int getqSizeFull() const override {
         return qFull.size();
       }
       bool isOpenStructure() const {
@@ -165,7 +165,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief initialise beam only for giving information with respect to state, number elements, length, (not for simulation)
        */
-      void initInfo();
+      void initInfo() override;
 
       /**
        * \brief detect current finite element (translation)
@@ -173,7 +173,7 @@ namespace MBSimFlexibleBody {
        * \param local parametrisation
        * \param finite element number
        */
-      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation);
+      void BuildElementTranslation(const double& sGlobal, double& sLocal, int& currentElementTranslation) override;
 
     protected:
 
@@ -224,14 +224,14 @@ namespace MBSimFlexibleBody {
       /**
        * \brief initialize translational part of mass matrix and calculate Cholesky decomposition
        */
-      void initM();
+      void initM() override;
 
       /**
        * \brief compute boundary conditions for rotation grid
        * first and last finite difference rotation beam element refer to values not directly given by dof in open structure
        * they have to be estimated in the following function
        */
-      void computeBoundaryCondition();
+      void computeBoundaryCondition() override;
 
       /** 
        * \brief insert 'local' information in global vectors for rotation grid
@@ -239,7 +239,7 @@ namespace MBSimFlexibleBody {
        * \param local vector
        * \param global vector
        */
-      void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec);
+      void GlobalVectorContributionRotation(int n, const fmatvec::Vec& locVec, fmatvec::Vec& gloVec) override;
 
       /*!
        * \brief read position matrix of other simulation for POD-reduction

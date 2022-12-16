@@ -292,7 +292,8 @@ int main(int argc, char *argv[]) {
         integrator->preIntegrate();
       }
       catch(MBSimError &ex) {
-        throw runtime_error("The used integrator "+boost::core::demangle(typeid(*integrator.get()).name())+
+        auto &integratorRef=*integrator;
+        throw runtime_error("The used integrator "+boost::core::demangle(typeid(integratorRef).name())+
           " failed to initialize the co-simulation interface. Error message was:\n"+
           ex.what()+"\n"+
           "The model may be wrong or this integrator cannot be used for cosim FMUs.");

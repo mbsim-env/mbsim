@@ -32,7 +32,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  Mat condenseMatrixRows(Mat C, RangeV I) {
+  Mat condenseMatrixRows(const Mat &C, const RangeV &I) {
     Mat B(C.rows() - (I.end() - I.start() + 1), C.cols());
     RangeV upperPart(0, I.start() - 1);
     RangeV lowerPartC(I.end() + 1, C.rows() - 1);
@@ -44,7 +44,7 @@ namespace MBSimFlexibleBody {
     return B;
   }
 
-  Mat condenseMatrixCols(Mat C, RangeV I) {
+  Mat condenseMatrixCols(const Mat &C, const RangeV &I) {
     Mat B(C.rows(), C.cols() - (I.end() - I.start() + 1));
     RangeV leftPart(0, I.start() - 1);
     RangeV rightPartC(I.end() + 1, C.cols() - 1);
@@ -56,7 +56,7 @@ namespace MBSimFlexibleBody {
     return B;
   }
 
-  SymMat condenseMatrix(SymMat C, RangeV I) {
+  SymMat condenseMatrix(const SymMat &C, const RangeV &I) {
     // build size of result matrix
     SymMat B(C.size() - (I.end() - I.start() + 1));
     RangeV upperPart(0, I.start() - 1);
@@ -70,7 +70,7 @@ namespace MBSimFlexibleBody {
     return B;
   }
 
-  void MapleOutput(Mat C, std::string MatName, std::string file) {
+  void MapleOutput(const Mat &C, const std::string &MatName, const std::string &file) {
     ofstream dat(file, ios::app);
     dat << MatName;
     dat << " := Matrix([";
@@ -91,7 +91,7 @@ namespace MBSimFlexibleBody {
   }
 
 
-  void MapleOutput(SymMat C, std::string MatName, std::string file) {
+  void MapleOutput(const SymMat &C, const std::string &MatName, const std::string &file) {
     ofstream dat(file, ios::app);
     dat << MatName;
     dat << " := Matrix([";

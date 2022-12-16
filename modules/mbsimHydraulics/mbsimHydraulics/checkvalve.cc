@@ -170,7 +170,7 @@ namespace MBSimHydraulics {
       }
       if (openMBVArrows) {
         ((Circle*)ball->getContour("ContourBall"))->enableOpenMBV();
-        ContactObserver *observer = new ContactObserver("MaxContactObserver");
+        auto *observer = new ContactObserver("MaxContactObserver");
         observer->enableOpenMBVContactPoints(rBall/8.);
         observer->setContact(maxContact);
         addObserver(observer);
@@ -195,9 +195,9 @@ namespace MBSimHydraulics {
       Group::init(stage, config);
 
       if (!dynamic_cast<HNodeMec*>(line->getFromNode()))
-        throwError("Hydraulic Node \""+line->getFromNode()->getPath()+"\" connected to this Checkvalve has to be of Type \"HNodeMec\"!");
+        throwError("Hydraulic Node \""+line->getFromNode()->getPath()+R"(" connected to this Checkvalve has to be of Type "HNodeMec"!)");
       if (!dynamic_cast<HNodeMec*>(line->getToNode()))
-        throwError("Hydraulic Node \""+line->getToNode()->getPath()+"\" connected to this Checkvalve has to be of Type \"HNodeMec\"!");
+        throwError("Hydraulic Node \""+line->getToNode()->getPath()+R"(" connected to this Checkvalve has to be of Type "HNodeMec"!)");
       
       double ballForceArea=((CheckvalveClosablePressureLoss*)(line->getClosablePressureLoss()))->calcBallForceArea();
       if (ballForceArea<0) {

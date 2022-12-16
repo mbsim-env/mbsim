@@ -143,7 +143,7 @@ namespace MBSimControl {
 
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"enableOpenMBV");
     if(e) {
-      ombvFrame = shared_ptr<MBSim::OpenMBVFrame>(new MBSim::OpenMBVFrame);
+      ombvFrame = make_shared<MBSim::OpenMBVFrame>();
       ombvFrame->initializeUsingXML(e);
     }
   }
