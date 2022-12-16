@@ -46,7 +46,7 @@ void initPython() {
 
 namespace MBSim {
 
-shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs, bool printPluginSearch) {
+shared_ptr<xercesc::DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs, bool printPluginSearch) {
   bfs::path MBXMLUTILSSCHEMA=installPath()/"share"/"mbxmlutils"/"schema";
   set<bfs::path> schemas {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
