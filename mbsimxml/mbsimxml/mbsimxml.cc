@@ -46,7 +46,7 @@ void initPython() {
 
 namespace MBSim {
 
-set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs, bool printPluginSearch) {
+shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs, bool printPluginSearch) {
   bfs::path MBXMLUTILSSCHEMA=installPath()/"share"/"mbxmlutils"/"schema";
   set<bfs::path> schemas {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
@@ -58,7 +58,7 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs, bool printPl
   // create parser for mbsimmodule.xml files
   static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
   std::shared_ptr<DOMParser> parser;
-  parser=DOMParser::create({MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimModule"/"mbsimmodule.xsd"});
+  parser=DOMParser::create({MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimModule"/"mbsimmoduleCatalog.xml"});
 
   set<bfs::path> allSearchDirs=searchDirs;
   allSearchDirs.insert(installPath()/"share"/"mbsimmodules");
@@ -137,7 +137,20 @@ set<bfs::path> getMBSimXMLSchemas(const set<bfs::path> &searchDirs, bool printPl
       }
     }
 
-  return schemas;
+    auto xmlCatalogDoc=DOMParser::create()->createDocument();
+    auto catalogRoot=D(xmlCatalogDoc)->createElement(XMLCATALOG%"catalog");
+    xmlCatalogDoc->appendChild(catalogRoot);
+    shared_ptr<DOMParser> nonValParser=DOMParser::create();
+    for(auto &schema: schemas) {
+      shared_ptr<xercesc::DOMDocument> doc=nonValParser->parse(schema);//MISSING use sax parser since we just need to parse one attribute of the root element
+      string ns=E(doc->getDocumentElement())->getAttribute("targetNamespace");
+      auto uri=D(xmlCatalogDoc)->createElement(XMLCATALOG%"uri");
+      catalogRoot->appendChild(uri);
+      E(uri)->setAttribute("name", ns);
+      E(uri)->setAttribute("uri", schema.string());
+    }
+
+  return xmlCatalogDoc;
 }
 
 }
