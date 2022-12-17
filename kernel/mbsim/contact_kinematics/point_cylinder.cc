@@ -53,8 +53,6 @@ namespace MBSim {
 
     const Vec3 WrD = point->getFrame()->getPosition() - Wezs;
     const Vec3 Wn = WrD/nrm2(WrD);
-
-
     
     contact.getContourFrame(icylinder)->getOrientation(false).set(0, Wn);
     contact.getContourFrame(icylinder)->setEta(computeAngleOnUnitCircle(cylinder->getFrame()->evalOrientation().T()*contact.getContourFrame(icylinder)->getOrientation(false).col(0)));
