@@ -75,6 +75,12 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new CirclePropertyDialog(this); }
   };
 
+  class Cylinder : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Circle, RigidContour, MBSIM%"Cylinder", "Cylinder");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new CylinderPropertyDialog(this); }
+  };
+
   class Cuboid : public RigidContour {
     MBSIMGUI_OBJECTFACTORY_CLASS(Cuboid, RigidContour, MBSIM%"Cuboid", "Cuboid");
     public:
@@ -169,6 +175,12 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(FlexibleSpatialFfrNurbsContour, RigidContour, MBSIMFLEX%"FlexibleSpatialFfrNurbsContour", "Flexible spatial ffr nurbs contour");
     public:
       PropertyDialog* createPropertyDialog() override { return new FlexibleSpatialNurbsContourPropertyDialog(this); }
+  };
+
+  class NodesContour : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(NodesContour, RigidContour, MBSIMFLEX%"NodesContour", "Nodes contour");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new NodesContourPropertyDialog(this); }
   };
 
   class FclContour : public RigidContour {

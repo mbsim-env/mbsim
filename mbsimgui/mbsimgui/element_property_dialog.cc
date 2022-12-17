@@ -366,6 +366,37 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  CylinderPropertyDialog::CylinderPropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
+    addTab("Visualization",1);
+
+    radius = new ExtWidget("Radius",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
+    addToTab("General", radius);
+    height = new ExtWidget("Height",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"height");
+    addToTab("General", height);
+    solid = new ExtWidget("Solid",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"solid");
+    addToTab("General", solid);
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualization", visu);
+  }
+
+  DOMElement* CylinderPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    radius->initializeUsingXML(item->getXMLElement());
+    height->initializeUsingXML(item->getXMLElement());
+    solid->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* CylinderPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    radius->writeXMLFile(item->getXMLElement(),nullptr);
+    height->writeXMLFile(item->getXMLElement(),nullptr);
+    solid->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   CuboidPropertyDialog::CuboidPropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
     addTab("Visualization",1);
 
@@ -969,6 +1000,30 @@ namespace MBSimGUI {
     xiDegree->writeXMLFile(item->getXMLElement(),nullptr);
     openEta->writeXMLFile(item->getXMLElement(),nullptr);
     openXi->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
+  NodesContourPropertyDialog::NodesContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
+    addTab("Visualization",1);
+
+    indices = new ExtWidget("Node numbers",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
+    addToTab("General", indices);
+
+    visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFLEX%"enableOpenMBV");
+    addToTab("Visualization", visu);
+  }
+
+  DOMElement* NodesContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    indices->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* NodesContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    indices->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

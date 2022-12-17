@@ -158,6 +158,16 @@ namespace MBSimGUI {
       ExtWidget *radius, *solid, *visu;
   };
 
+  class CylinderPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      CylinderPropertyDialog(Element *circle);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *radius, *height, *solid, *visu;
+  };
+
   class CuboidPropertyDialog : public RigidContourPropertyDialog {
 
     public:
@@ -296,6 +306,16 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *interpolation, *indices, *etaKnotVector, *xiKnotVector, *etaDegree, *xiDegree, *openEta, *openXi, *visu;
+  };
+
+  class NodesContourPropertyDialog : public ContourPropertyDialog {
+
+    public:
+      NodesContourPropertyDialog(Element *contour);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *indices, *visu;
   };
 
   class FclContourPropertyDialog : public RigidContourPropertyDialog {
