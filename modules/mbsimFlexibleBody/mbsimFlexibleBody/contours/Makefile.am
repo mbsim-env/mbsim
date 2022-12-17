@@ -11,7 +11,8 @@ libcontour_la_SOURCES = contour1s.cc\
 			flexible_planar_nurbs_contour.cc\
 			flexible_planar_ffr_nurbs_contour.cc\
 			flexible_spatial_nurbs_contour.cc\
-			flexible_spatial_ffr_nurbs_contour.cc
+			flexible_spatial_ffr_nurbs_contour.cc\
+			nodes_contour.cc
 
 libcontour_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) $(NURBS_CFLAGS)
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) $(NURBS_LIBS)
@@ -30,4 +31,5 @@ contourinclude_HEADERS = contour_continuum.h\
 			 flexible_planar_nurbs_contour.h\
 			 flexible_planar_ffr_nurbs_contour.h\
 			 flexible_spatial_nurbs_contour.h\
-			 flexible_spatial_ffr_nurbs_contour.h
+			 flexible_spatial_ffr_nurbs_contour.h\
+			 nodes_contour.h
