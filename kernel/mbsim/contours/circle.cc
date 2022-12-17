@@ -36,24 +36,24 @@ namespace MBSim {
   Vec3 Circle::evalKrPS(const Vec2 &zeta) {
     static Vec3 Kr;
     double a = zeta(0);
-    Kr(0)=r*cos(a);
-    Kr(1)=r*sin(a);
+    Kr(0) = r*cos(a);
+    Kr(1) = r*sin(a);
     return Kr;
   }
 
   Vec3 Circle::evalKs(const fmatvec::Vec2 &zeta) {
     static Vec3 Ks;
     double a = zeta(0);
-    Ks(0)=-r*sin(a);
-    Ks(1)=r*cos(a);
+    Ks(0) = -r*sin(a);
+    Ks(1) = r*cos(a);
     return Ks;
   }
 
   Vec3 Circle::evalKu(const fmatvec::Vec2 &zeta) {
     static Vec3 Ku;
     double a = zeta(0);
-    Ku(0)=-sin(a);
-    Ku(1)=cos(a);
+    Ku(0) = -sin(a);
+    Ku(1) = cos(a);
     return Ku;
   }
 
@@ -61,9 +61,9 @@ namespace MBSim {
     static Vec3 Kv(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
-    Kv(0)=-sign*cos(a)*sin(b);
-    Kv(1)=-sign*sin(a)*sin(b);
-    Kv(2)=sign*cos(b);
+    Kv(0) = -sign*cos(a)*sin(b);
+    Kv(1) = -sign*sin(a)*sin(b);
+    Kv(2) = sign*cos(b);
     return Kv;
   }
 
@@ -71,17 +71,17 @@ namespace MBSim {
     static Vec3 Kn(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
-    Kn(0)=sign*cos(a)*cos(b);
-    Kn(1)=sign*sin(a)*cos(b);
-    Kn(2)=sign*sin(b);
+    Kn(0) = sign*cos(a)*cos(b);
+    Kn(1) = sign*sin(a)*cos(b);
+    Kn(2) = sign*sin(b);
     return Kn;
   }
 
   Vec3 Circle::evalParDer1Ku(const fmatvec::Vec2 &zeta) {
     static Vec3 parDer1Ku;
     double a = zeta(0);
-    parDer1Ku(0)=-cos(a);
-    parDer1Ku(1)=-sin(a);
+    parDer1Ku(0) = -cos(a);
+    parDer1Ku(1) = -sin(a);
     return parDer1Ku;
   }
 
@@ -109,8 +109,8 @@ namespace MBSim {
     static Vec3 parDer1Kn;
     double a = zeta(0);
     double b = zeta(1);
-    parDer1Kn(0)=-sign*sin(a)*cos(b);
-    parDer1Kn(1)=sign*cos(a)*cos(b);
+    parDer1Kn(0) = -sign*sin(a)*cos(b);
+    parDer1Kn(1) = sign*cos(a)*cos(b);
     return parDer1Kn;
   }
 
@@ -118,9 +118,9 @@ namespace MBSim {
     static Vec3 parDer2Kn;
     double a = zeta(0);
     double b = zeta(1);
-    parDer2Kn(0)=-sign*cos(a)*sin(b);
-    parDer2Kn(1)=-sign*sin(a)*sin(b);
-    parDer2Kn(2)=sign*cos(b);
+    parDer2Kn(0) = -sign*cos(a)*sin(b);
+    parDer2Kn(1) = -sign*sin(a)*sin(b);
+    parDer2Kn(2) = sign*cos(b);
     return parDer2Kn;
   }
 
