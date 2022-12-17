@@ -46,6 +46,7 @@
 #include <mbsim/contours/rack.h>
 #include <mbsim/contours/bevel_gear.h>
 #include <mbsim/contours/planar_gear.h>
+#include <mbsim/contours/cylinder.h>
 // --- List of contact implementations - END ---
 
 // --- List of contact kinematic implementations - BEGIN ---
@@ -67,6 +68,7 @@
 #include <mbsim/contact_kinematics/point_frustum.h>
 #include <mbsim/contact_kinematics/point_line.h>
 #include <mbsim/contact_kinematics/point_circle.h>
+#include <mbsim/contact_kinematics/point_cylinder.h>
 #include <mbsim/contact_kinematics/point_plane.h>
 #include <mbsim/contact_kinematics/point_sphere.h>
 #include <mbsim/contact_kinematics/point_planewithfrustum.h>
@@ -201,6 +203,9 @@ namespace MBSim {
 
     else if ( contour0==typeid(Point) && contour1==typeid(SpatialContour) )
       return new ContactKinematicsPointSpatialContour;
+
+    else if ( contour0==typeid(Point) && contour1==typeid(Cylinder) )
+      return new ContactKinematicsPointCylinder;
 
     else if ( contour0==typeid(Sphere) && contour1==typeid(Frustum) )
       return new ContactKinematicsSphereFrustum;
