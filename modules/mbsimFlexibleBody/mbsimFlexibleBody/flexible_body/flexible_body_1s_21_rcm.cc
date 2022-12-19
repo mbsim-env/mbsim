@@ -220,8 +220,8 @@ namespace MBSimFlexibleBody {
       l0 = L / Elements;
       Vec g = R->getOrientation()(RangeV(0, 2), RangeV(0, 1)).T() * ds->getMBSimEnvironment()->getAccelerationOfGravity();
       for (int i = 0; i < Elements; i++) {
-        qElement.push_back(Vec(8, INIT, 0.));
-        uElement.push_back(Vec(8, INIT, 0.));
+        qElement.emplace_back(8, INIT, 0.);
+        uElement.emplace_back(8, INIT, 0.);
         discretization.push_back(new FiniteElement1s21RCM(l0, A * rho, E * A, E * I, g));
         if (fabs(rc) > epsroot)
           static_cast<FiniteElement1s21RCM*>(discretization[i])->setCurlRadius(rc);
@@ -348,8 +348,8 @@ namespace MBSimFlexibleBody {
     Vec g = Vec("[0.;0.;0.]");
     for (int i = 0; i < Elements; i++) {
       discretization.push_back(new FiniteElement1s21RCM(l0, A * rho, E * A, E * I, g));
-      qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.));
-      uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
+      qElement.emplace_back(discretization[0]->getqSize(), INIT, 0.);
+      uElement.emplace_back(discretization[0]->getuSize(), INIT, 0.);
     }
   }
 

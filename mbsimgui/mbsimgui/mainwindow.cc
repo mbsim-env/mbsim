@@ -118,19 +118,12 @@ namespace MBSimGUI {
 
     QString program = QString::fromStdString((boost::dll::program_location().parent_path().parent_path()/"bin"/"mbsimxml").string());
     QStringList arguments;
-    arguments << "--onlyListSchemas";
-    QProcess processGetSchemas;
-    processGetSchemas.start(program,arguments);
-    processGetSchemas.waitForFinished(-1);
-    if(processGetSchemas.exitStatus()!=QProcess::NormalExit || processGetSchemas.exitCode()!=0)
-      throw runtime_error("Failed to call mbsimxml --onlyListSchemas.");
-    QStringList line=QString(processGetSchemas.readAllStandardOutput().data()).split("\n");
-    set<bfs::path> schemas;
-    for(int i=0; i<line.size(); ++i)
-      if(!line.at(i).isEmpty())
-        schemas.insert(line.at(i).toStdString());
+    arguments << "--dumpXMLCatalog";
+    arguments << (uniqueTempDir/".mbsimxml.catalog.xml").string().c_str();
+    if(QProcess::execute(program,arguments)!=0)
+      throw runtime_error("Failed to call mbsimxml --dumpXMLCatalog <file>.");
 
-    mbxmlparser=DOMParser::create(schemas);
+    mbxmlparser=DOMParser::create(uniqueTempDir/".mbsimxml.catalog.xml");
 
     elementView = new ElementView;
     parameterView = new ParameterView;
@@ -462,8 +455,21 @@ namespace MBSimGUI {
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openElementEditor()));
 
-    bfs::copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  bfs::copy_option::overwrite_if_exists);
-    bfs::copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", bfs::copy_option::overwrite_if_exists);
+    // bugfix version for bfs::copy_file which is at least buggy in boost 1.74
+    auto bfs__copy_file = [](const bfs::path &src, const bfs::path &dst, bfs::copy_option options) {
+      bfs::ifstream s(src);
+      bfs::ofstream d(dst);
+      char buffer[10240];
+      while(true) {
+        s.read(buffer, 10240);
+        auto size=s.gcount();
+        if(size==0)
+          break;
+        d.write(buffer, size);
+      }
+    };
+    bfs__copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  bfs::copy_option::overwrite_if_exists);
+    bfs__copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", bfs::copy_option::overwrite_if_exists);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
   }
 

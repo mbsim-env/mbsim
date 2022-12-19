@@ -27,7 +27,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s23BTA::FiniteElement1s23BTA(double sl0, double sArho, double sEIyy, double sEIzz, double sItrho, double sGIt, Vec sg) : l0(sl0), Arho(sArho), EIyy(sEIyy), EIzz(sEIzz), Itrho(sItrho), GIt(sGIt), g(sg), depsilon(0.), dTorsional(0.), M(getuSize(),INIT,0.), h(getuSize(),INIT,0.), Dhq(8), Dhqp(8), Damp(8,INIT,0.) {
+  FiniteElement1s23BTA::FiniteElement1s23BTA(double sl0, double sArho, double sEIyy, double sEIzz, double sItrho, double sGIt, const Vec &sg) : l0(sl0), Arho(sArho), EIyy(sEIyy), EIzz(sEIzz), Itrho(sItrho), GIt(sGIt), g(sg), depsilon(0.), dTorsional(0.), M(getuSize(),INIT,0.), h(getuSize(),INIT,0.), Dhq(8), Dhqp(8), Damp(8,INIT,0.) {
     l0h2 = l0*l0;
     l0h3 = l0h2*l0;
   }

@@ -54,15 +54,15 @@ int main(int argc, char *argv[]) {
     for(int i=1; i<argc; i++)
       args.emplace_back(argv[i]);
 
-    bool ONLYLISTSCHEMAS=std::find(args.begin(), args.end(), "--onlyListSchemas")!=args.end();
-  
+    bool DUMPXMLCATALOG=std::find(args.begin(), args.end(), "--dumpXMLCatalog")!=args.end();
+
     // help
     if(args.size()<1 ||
        std::find(args.begin(), args.end(), "-h")!=args.end() ||
        std::find(args.begin(), args.end(), "--help")!=args.end() ||
        std::find(args.begin(), args.end(), "-?")!=args.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
-          <<"                 --autoreload [ms]|--onlyListSchemas] [--savefinalstatevector]"<<endl
+          <<"                 --autoreload [ms]|--dumpXMLCatalog <file>] [--savefinalstatevector]"<<endl
           <<"                [--baseindexforplot <bi>] [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
           <<"                <mbsimprjfile>"<<endl
@@ -82,7 +82,7 @@ int main(int argc, char *argv[]) {
           <<"                         This generates a HDF5 output file with only one time serie"<<endl
           <<"--autoreload             Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
           <<"                         a input file is newer than the output file. Checked every ms."<<endl
-          <<"--onlyListSchemas        List all XML schema files including MBSim modules"<<endl
+          <<"--dumpXMLCatalog <file>  Dump a XML catalog for all schemas including MBSim modules to file and exit"<<endl
           <<"--modulePath <dir>       Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
           <<"                         module dir and the current dir is always included."<<endl
           <<"                         Also added are all directories listed in the file"<<endl
@@ -126,13 +126,22 @@ int main(int argc, char *argv[]) {
       args.erase(i);
       args.erase(i2);
     }
-    set<bfs::path> schemas=MBSim::getMBSimXMLSchemas(searchDirs, !ONLYLISTSCHEMAS);
-    if(ONLYLISTSCHEMAS) {
-      for(auto &schema: schemas)
-        cout<<schema.string()<<endl;
+
+    // create xml catalog
+    auto xmlCatalogDoc=MBSim::getMBSimXMLCatalog(searchDirs);
+
+    if(DUMPXMLCATALOG) {
+      auto it=std::find(args.begin(), args.end(), "--dumpXMLCatalog");
+      it++;
+      if(it==args.end())
+      {
+        cerr<<"No filename specified after --dumpXMLCatalog."<<endl;
+        return 1;
+      }
+      DOMParser::serialize(xmlCatalogDoc->getDocumentElement(), *it);
       return 0;
     }
-  
+
     bool ONLYPP=false;
     if((i=std::find(args.begin(), args.end(), "--onlypreprocess"))!=args.end()) {
       ONLYPP=true;
@@ -195,12 +204,12 @@ int main(int argc, char *argv[]) {
       ret=0;
 
       vector<bfs::path> dependencies;
-  
+
       try {
         // run preprocessor
         // validate the project file with mbsimxml.xsd
-        auto mainXMLDoc=Preprocess::preprocessFile(dependencies, schemas, MBSIMPRJ);
-  
+        auto mainXMLDoc=Preprocess::preprocessFile(dependencies, xmlCatalogDoc->getDocumentElement(), MBSIMPRJ);
+
         if(!ONLYPP) {
           // load MBSim modules
           MBSimXML::loadModules(searchDirs);

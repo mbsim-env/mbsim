@@ -76,9 +76,9 @@ namespace MBSimControl {
       void unsetRotationY() { y=std::monostate(); }
       void unsetRotationZ() { z=std::monostate(); }
 
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void plot();
-      void initializeUsingXML(xercesc::DOMElement *element);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void plot() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (size,(double),1)(offset,(double),1)
         (transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {

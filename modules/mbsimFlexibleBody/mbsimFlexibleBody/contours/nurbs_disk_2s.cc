@@ -38,21 +38,21 @@ using namespace MBSim;
 namespace MBSimFlexibleBody {
 
   NurbsDisk2s::NurbsDisk2s(const string &name) : Contour2s(name), nj(0), nr(0), degU(0), degV(0), Ri(0.), Ra(0.) {
-    uvec=0;
-    uVec=0;
-    vvec=0;
-    vVec=0;
+    uvec=nullptr;
+    uVec=nullptr;
+    vvec=nullptr;
+    vVec=nullptr;
     Surface = new PlNurbsSurfaced;
     SurfaceVelocities = new PlNurbsSurfaced;
   }
 
   NurbsDisk2s::~NurbsDisk2s() {
-    if(Surface) {delete Surface; Surface=0;}
-    if(SurfaceVelocities) {delete SurfaceVelocities; SurfaceVelocities=0;}
-    if(uvec) {delete uvec; uvec=0;}
-    if(uVec) {delete uVec; uVec=0;}
-    if(vvec) {delete vvec; vvec=0;}
-    if(vVec) {delete vVec; vVec=0;}
+    if(Surface) {delete Surface; Surface=nullptr;}
+    if(SurfaceVelocities) {delete SurfaceVelocities; SurfaceVelocities=nullptr;}
+    if(uvec) {delete uvec; uvec=nullptr;}
+    if(uVec) {delete uVec; uVec=nullptr;}
+    if(vvec) {delete vvec; vvec=nullptr;}
+    if(vVec) {delete vVec; vVec=nullptr;}
   }
 
   void NurbsDisk2s::init(InitStage stage, const InitConfigSet &config) {
@@ -69,8 +69,8 @@ namespace MBSimFlexibleBody {
       computeVVector(nr+1);
 
       for(int k=0; k<nr*nj*3+RefDofs; k++) {
-        SurfaceJacobiansOfTranslation.push_back(PlNurbsSurfaced());
-        SurfaceJacobiansOfRotation.push_back(PlNurbsSurfaced());
+        SurfaceJacobiansOfTranslation.emplace_back();
+        SurfaceJacobiansOfRotation.emplace_back();
       }
 
       computeSurface();
@@ -100,7 +100,7 @@ namespace MBSimFlexibleBody {
   }
 
   ContourFrame* NurbsDisk2s::createContourFrame(const string &name) {
-    FloatingContourFrame *frame = new FloatingContourFrame(name);
+    auto *frame = new FloatingContourFrame(name);
     frame->setContourOfReference(this);
     return frame;
   }

@@ -46,12 +46,12 @@ namespace MBSimFlexibleBody {
 	    PPdm[i][j] <<= V.T()*PPdm[i][j]*V;
 	}
 	Ke0 <<= JTMJ(Ke0,V);
-	for(size_t i=0; i<Phi.size(); i++)
-	  Phi[i] <<= Phi[i]*V;
-	for(size_t i=0; i<Psi.size(); i++)
-	  Psi[i] <<= Psi[i]*V;
-	for(size_t i=0; i<sigmahel.size(); i++)
-	  sigmahel[i] <<= sigmahel[i]*V;
+	for(auto & i : Phi)
+	  i <<= i*V;
+	for(auto & i : Psi)
+	  i <<= i*V;
+	for(auto & i : sigmahel)
+	  i <<= i*V;
 	De0.resize(V.cols(),INIT,0);
 	for(int i=0; i<De0.size(); i++)
 	  De0(i,i) = 2*sqrt((PPdm[0][0](i,i)+PPdm[1][1](i,i)+PPdm[2][2](i,i))*Ke0(i,i))*mDamping(i);

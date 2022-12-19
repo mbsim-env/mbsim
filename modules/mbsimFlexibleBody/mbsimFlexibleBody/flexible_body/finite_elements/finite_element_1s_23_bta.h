@@ -45,7 +45,7 @@ namespace MBSimFlexibleBody {
        * \param shear modulus multiplied with torsional moment of inertia
        * \param acceleration of gravity
        */
-      FiniteElement1s23BTA(double l0, double Arho, double EIyy, double EIzz, double Itrho, double GIt, fmatvec::Vec g);
+      FiniteElement1s23BTA(double l0, double Arho, double EIyy, double EIzz, double Itrho, double GIt, const fmatvec::Vec &g);
 
       /**
        * \brief destructor

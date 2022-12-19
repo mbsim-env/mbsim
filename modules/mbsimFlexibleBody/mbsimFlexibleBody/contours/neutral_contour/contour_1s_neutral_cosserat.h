@@ -21,24 +21,24 @@ namespace MBSimFlexibleBody {
   class Contour1sNeutralCosserat : public MBSimFlexibleBody::Contour1sNeutralFactory {
     public:
       Contour1sNeutralCosserat(const std::string &name_);
-      virtual ~Contour1sNeutralCosserat();
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
+       ~Contour1sNeutralCosserat() override;
+       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       virtual NeutralNurbsPosition1s* createNeutralPosition();
       virtual NeutralNurbsVelocity1s* createNeutralVelocity();
       virtual NeutralNurbsAngle1s* createNeutralAngle();
       virtual NeutralNurbsDotangle1s* createNeutralDotangle();
 
-      virtual fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta);
-      virtual fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) { return evalWs(zeta); }
-      virtual fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) { return evalWt(zeta); }
+       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
+       fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
+       fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;
+       fmatvec::Vec3 evalWu(const fmatvec::Vec2 &zeta) override { return evalWs(zeta); }
+       fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) override { return evalWt(zeta); }
 
-      void updatePositions(MBSim::ContourFrame *frame);
-      void updateVelocities(MBSim::ContourFrame *frame);
-      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
+      void updatePositions(MBSim::ContourFrame *frame) override;
+      void updateVelocities(MBSim::ContourFrame *frame) override;
+      void updateJacobians(MBSim::ContourFrame *frame, int j=0) override;
 
-      virtual MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1);
+       MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override;
 
       void setTransNodes(const fmatvec::VecInt & transNodes_);
       void setRotNodes(const fmatvec::VecInt & rotNodes_);
@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
 
       void setFrameOfReference(MBSim::Frame *frame) { R = frame; }
 
-      void resetUpToDate();
+      void resetUpToDate() override;
       
     protected:
       /*!

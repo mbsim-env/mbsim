@@ -38,7 +38,7 @@ namespace MBSimControl {
     stateMachineString=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"state");
     if(e) {
-      string state = E(e)->getText<string>();
+      auto state = E(e)->getText<string>();
       setState(state.substr(1,state.size()-2));
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"selection");

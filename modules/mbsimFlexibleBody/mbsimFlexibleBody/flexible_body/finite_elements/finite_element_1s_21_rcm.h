@@ -50,27 +50,27 @@ namespace MBSimFlexibleBody {
        * \param bending stiffness
        * \param vector of gravitational acceleration
        */
-      FiniteElement1s21RCM(double l0_, double  Arho_, double EA_, double EI_, fmatvec::Vec g_);
+      FiniteElement1s21RCM(double l0_, double  Arho_, double EA_, double EI_, const fmatvec::Vec &g_);
 
       /**
        * \destructor
        */
-      virtual ~FiniteElement1s21RCM() { }
+       ~FiniteElement1s21RCM() override = default;
 
       /* INHERITED INTERFACE */
-      virtual const fmatvec::SymMat& getM() const { return M; }
-      virtual const fmatvec::Vec& geth() const { return h; }
-      virtual const fmatvec::SqrMat& getdhdq() const { return Dhq; }    
-      virtual const fmatvec::SqrMat& getdhdu() const { return Dhqp; }
-      virtual int getqSize() const { return 8; }
-      virtual int getuSize() const { return 8; }
-      virtual void computeM(const fmatvec::Vec& qElement);
-      virtual void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qElement);
+       const fmatvec::SymMat& getM() const override { return M; }
+       const fmatvec::Vec& geth() const override { return h; }
+       const fmatvec::SqrMat& getdhdq() const override { return Dhq; }    
+       const fmatvec::SqrMat& getdhdu() const override { return Dhqp; }
+       int getqSize() const override { return 8; }
+       int getuSize() const override { return 8; }
+       void computeM(const fmatvec::Vec& qElement) override;
+       void computeh(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) override;
+       void computedhdz(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) override;
+       double computeKineticEnergy(const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement) override;
+       double computeGravitationalEnergy(const fmatvec::Vec& qElement) override;
       virtual double computePhysicalStrain(const fmatvec::Vec& qElement);
-      virtual double computeElasticEnergy(const fmatvec::Vec& qElement);
+       double computeElasticEnergy(const fmatvec::Vec& qElement) override;
       virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, double s);
       virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, double s);
       virtual fmatvec::Vec3 getVelocity (const fmatvec::Vec& qElement, const fmatvec::Vec& qpElement, double s);
@@ -255,7 +255,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor is declared private
        */
-      FiniteElement1s21RCM() {};
+      FiniteElement1s21RCM() = default;;
   };
 
   inline double Sec(double alpha) { return 1.0/cos(alpha); }

@@ -96,7 +96,7 @@ namespace MBSimControl {
     if(e) saved_position=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"enableOpenMBV");
     if(e) {
-      ombvArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow);
+      ombvArrow = make_shared<OpenMBVArrow>();
       ombvArrow->initializeUsingXML(e);
     }
   }

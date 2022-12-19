@@ -29,10 +29,10 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s() : ipoint(0), inurbsdisk(0), point(0), nurbsdisk(0) {
+  ContactKinematicsPointNurbsDisk2s::ContactKinematicsPointNurbsDisk2s() : ipoint(0), inurbsdisk(0), point(nullptr), nurbsdisk(nullptr) {
   }
 
-  ContactKinematicsPointNurbsDisk2s::~ContactKinematicsPointNurbsDisk2s() {}
+  ContactKinematicsPointNurbsDisk2s::~ContactKinematicsPointNurbsDisk2s() = default;
 
   void ContactKinematicsPointNurbsDisk2s::assignContours(const vector<Contour*> &contour) {
     if(dynamic_cast<Point*>(contour[0])) {

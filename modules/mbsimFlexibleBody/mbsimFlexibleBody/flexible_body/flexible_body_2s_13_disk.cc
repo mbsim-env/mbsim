@@ -319,9 +319,9 @@ namespace MBSimFlexibleBody {
 
       for (int i = 0; i < Elements; i++) {
         discretization.push_back(new FiniteElement2s13Disk(E, nu, rho));
-        qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.));
-        uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
-        ElementalNodes.push_back(Vec(4, INIT, 0.));
+        qElement.emplace_back(discretization[0]->getqSize(), INIT, 0.);
+        uElement.emplace_back(discretization[0]->getuSize(), INIT, 0.);
+        ElementalNodes.emplace_back(4, INIT, 0.);
       }
       FlexibleBody2s13::init(stage, config);
     }

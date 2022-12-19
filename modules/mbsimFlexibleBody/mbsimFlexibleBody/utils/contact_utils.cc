@@ -102,7 +102,7 @@ namespace MBSimFlexibleBody {
     else if(contour0==typeid(NodesContour) && contour1==typeid(Cylinder))
       return new ContactKinematicsNodesCylinder;
     else
-      return 0;
+      return nullptr;
   }
 }
 

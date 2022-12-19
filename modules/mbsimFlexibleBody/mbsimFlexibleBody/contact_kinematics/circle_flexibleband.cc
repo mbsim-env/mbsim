@@ -167,8 +167,8 @@ namespace MBSimFlexibleBody {
   }
 
   ContactKinematicsCircleFlexibleBand::~ContactKinematicsCircleFlexibleBand() {
-    for (size_t cK = 0; cK < contactKinematics.size(); cK++)
-      delete contactKinematics[cK];
+    for (auto & contactKinematic : contactKinematics)
+      delete contactKinematic;
   }
 
   void ContactKinematicsCircleFlexibleBand::assignContours(const vector<Contour*>& contour) {
@@ -199,7 +199,7 @@ namespace MBSimFlexibleBody {
       contactKinematics.push_back(ck);
     }
     for (int i = 0; i < maxNumContacts - staticNodes.size(); i++) {
-      ContactKinematicsCircleNodeInterpolation *ck = new ContactKinematicsCircleNodeInterpolation(staticNodes(RangeV(i, i + 1)));
+      auto *ck = new ContactKinematicsCircleNodeInterpolation(staticNodes(RangeV(i, i + 1)));
       ck->assignContours(contour);
       contactKinematics.push_back(ck);
     }

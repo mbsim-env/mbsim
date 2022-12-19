@@ -51,22 +51,22 @@ namespace MBSimFlexibleBody {
        * \param acceleration of gravity
        * \param cardan object
        */
-      FiniteElement1s33RCM(double l0_, double rho_, double A_, double E_, double G_, double I1_, double I2_, double I0_, const fmatvec::Vec& g_, const RevCardanPtr &ag_);
+      FiniteElement1s33RCM(double l0_, double rho_, double A_, double E_, double G_, double I1_, double I2_, double I0_, const fmatvec::Vec& g_, RevCardanPtr ag_);
 
       /* INHERITED INTERFACE OF DISCRETIZATIONINTERFACE */
-      virtual const fmatvec::SymMat& getM() const;		
-      virtual const fmatvec::Vec& geth() const;
-      virtual const fmatvec::SqrMat& getdhdq() const;
-      virtual const fmatvec::SqrMat& getdhdu() const;
-      virtual int getqSize() const;
-      virtual int getuSize() const;
+       const fmatvec::SymMat& getM() const override;		
+       const fmatvec::Vec& geth() const override;
+       const fmatvec::SqrMat& getdhdq() const override;
+       const fmatvec::SqrMat& getdhdu() const override;
+       int getqSize() const override;
+       int getuSize() const override;
 
-      virtual void computeM(const fmatvec::Vec& qG);
-      virtual void computeh(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
-      virtual void computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
-      virtual double computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt);
-      virtual double computeGravitationalEnergy(const fmatvec::Vec& qG);		
-      virtual double computeElasticEnergy(const fmatvec::Vec& qG);
+       void computeM(const fmatvec::Vec& qG) override;
+       void computeh(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) override;
+       void computedhdz(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) override;
+       double computeKineticEnergy(const fmatvec::Vec& qG, const fmatvec::Vec& qGt) override;
+       double computeGravitationalEnergy(const fmatvec::Vec& qG) override;		
+       double computeElasticEnergy(const fmatvec::Vec& qG) override;
 
       virtual fmatvec::Vec3 getPosition(const fmatvec::Vec& qElement, double s);
       virtual fmatvec::SqrMat3 getOrientation(const fmatvec::Vec& qElement, double s);

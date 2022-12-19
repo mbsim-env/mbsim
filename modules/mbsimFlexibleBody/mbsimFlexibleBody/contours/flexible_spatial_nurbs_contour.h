@@ -60,11 +60,11 @@ namespace MBSimFlexibleBody {
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       MBSim::ContourFrame* createContourFrame(const std::string &name="P") override;
       double getCurvature(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWn_t(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWs_t(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWt_t(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWu_t(const fmatvec::Vec2 &zeta);
-      fmatvec::Vec3 evalWv_t(const fmatvec::Vec2 &zeta);
+      fmatvec::Vec3 evalWn_t(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWs_t(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWt_t(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWu_t(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalWv_t(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalPosition(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalWs(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalWt(const fmatvec::Vec2 &zeta) override;

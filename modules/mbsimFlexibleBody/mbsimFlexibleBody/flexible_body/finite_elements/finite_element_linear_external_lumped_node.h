@@ -33,7 +33,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief constructor
        */
-      FiniteElementLinearExternalLumpedNode(double& mij_, fmatvec::Vec3& u0_, const fmatvec::Mat3xV& phi_);
+      FiniteElementLinearExternalLumpedNode(double& mij_, fmatvec::Vec3& u0_, fmatvec::Mat3xV phi_);
 
       /*!
        * \brief destructor

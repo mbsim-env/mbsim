@@ -256,10 +256,10 @@ namespace MBSimFlexibleBody {
       crvVel.setDegree(knot.size()-index.size()-1);
       crvVel.setKnot(knot);
       crvJac.resize(gethSize());
-      for(size_t i=0; i<crvJac.size(); i++) {
-        crvJac[i].resize(index.size(),knot.size()-index.size()-1);
-        crvJac[i].setDegree(knot.size()-index.size()-1);
-        crvJac[i].setKnot(knot);
+      for(auto & i : crvJac) {
+        i.resize(index.size(),knot.size()-index.size()-1);
+        i.setDegree(knot.size()-index.size()-1);
+        i.setKnot(knot);
       }
       crvGA.resize(index.size(),knot.size()-index.size()-1);
       crvGA.setDegree(knot.size()-index.size()-1);
@@ -269,7 +269,7 @@ namespace MBSimFlexibleBody {
   }
 
   ContourFrame* FlexiblePlanarNurbsContour::createContourFrame(const string &name) {
-    FloatingContourFrame *frame = new FloatingContourFrame(name);
+    auto *frame = new FloatingContourFrame(name);
     frame->setContourOfReference(this);
     return frame;
   }

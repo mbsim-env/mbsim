@@ -29,8 +29,7 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  ContactKinematicsCircleNurbsDisk2s::ContactKinematicsCircleNurbsDisk2s()  {
-  }
+  ContactKinematicsCircleNurbsDisk2s::ContactKinematicsCircleNurbsDisk2s()  = default;
 
   ContactKinematicsCircleNurbsDisk2s::~ContactKinematicsCircleNurbsDisk2s() {
     delete func;

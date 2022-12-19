@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
   }
 
   ContourFrame* FlexibleBand::createContourFrame(const string &name) {
-    FloatingRelativeFlexibleContourFrame *frame = new FloatingRelativeFlexibleContourFrame(name,contour);
+    auto *frame = new FloatingRelativeFlexibleContourFrame(name,contour);
     return frame;
   }
 

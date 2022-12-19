@@ -31,7 +31,7 @@ using namespace MBSim;
 
 
 namespace MBSimFlexibleBody {
-  FiniteElementLinearExternalLumpedNode::FiniteElementLinearExternalLumpedNode(double& mij_, Vec3& u0_, const Mat3xV& phi_) :  mij(mij_),u0(u0_), phi(phi_) {
+  FiniteElementLinearExternalLumpedNode::FiniteElementLinearExternalLumpedNode(double& mij_, Vec3& u0_, Mat3xV phi_) :  mij(mij_),u0(u0_), phi(std::move(phi_)) {
 //    msg(Debug) << "From lumpedNode mij =" << mij<< endl;
 //    msg(Debug) << "From lumpedNode u0 =" << u0<< endl;
 //    msg(Debug) << "From lumpedNode phi =" << phi<< endl;

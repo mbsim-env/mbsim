@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      ~FlexibleBodyLinearExternalFFR() override;
+      ~FlexibleBodyLinearExternalFFR() override = default;
 
       /* INHERITED INTERFACE OF FLEIBLE BODY CONTOUR */
       virtual int getNumberElements() const { return nNodes; }
@@ -109,7 +109,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief  read u0, mij, mode shape matrix and stiffness matrix form the input file
        */
-      void readFEMData(std::string inFilePath, const bool millimeterUnits, bool output = false);
+      void readFEMData(const std::string &inFilePath, const bool millimeterUnits, bool output = false);
 
       void enableFramePlot(double size = 1e-3, fmatvec::VecInt numbers = fmatvec::VecInt(0));
 

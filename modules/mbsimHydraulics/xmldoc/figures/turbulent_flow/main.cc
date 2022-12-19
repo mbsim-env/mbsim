@@ -13,7 +13,7 @@ int main (int argc, char* argv[]) {
   double length=100e-3;
   double diameter=5e-3;
 
-  RigidLine * rigidLine = new RigidLine("l");
+  auto * rigidLine = new RigidLine("l");
   rigidLine->setLength(length);
   rigidLine->setDiameter(diameter);
 
@@ -32,7 +32,7 @@ int main (int argc, char* argv[]) {
 
     for (double rough=0; rough<=100e-6; rough+=25e-6) {
 
-      TurbulentTubeFlowLinePressureLoss * pl = new TurbulentTubeFlowLinePressureLoss();
+      auto * pl = new TurbulentTubeFlowLinePressureLoss();
       pl->setReferenceDiameter(diameter);
       pl->setHydraulicDiameter(diameter);
       pl->setSurfaceRoughness(rough);

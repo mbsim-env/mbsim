@@ -40,10 +40,10 @@ namespace MBSimControl {
     }
     if(j==state.size())
       throwError("(StateMachine::addTransition): source not found.");
-    for(size_t i=0; i<state.size(); i++) {
-      if(state[i].name==src) {
-	state[i].trans.emplace_back(Transition(j,sig,s0));
-	return state[i].trans[state[i].trans.size()-1];
+    for(auto & i : state) {
+      if(i.name==src) {
+	i.trans.emplace_back(Transition(j,sig,s0));
+	return i.trans[i.trans.size()-1];
       }
     }
     throwError("(StateMachine::addTransition): destination not found.");
@@ -62,8 +62,8 @@ namespace MBSimControl {
 
   void StateMachine::calcsvSize() {
     svSize = 0;
-    for(size_t i=0; i<state.size(); i++)
-      svSize = max(svSize,int(state[i].trans.size()));
+    for(auto & i : state)
+      svSize = max(svSize,int(i.trans.size()));
   }
 
   void StateMachine::initializeUsingXML(DOMElement *element) {
@@ -88,7 +88,7 @@ namespace MBSimControl {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"initialState");
     if(e) {
-      string name = E(e)->getText<string>();
+      auto name = E(e)->getText<string>();
       setInitialState(name.substr(1,name.size()-2));
     }
   }
@@ -119,9 +119,9 @@ namespace MBSimControl {
 
   void StateMachine::checkActive(int j) {
     if(j==1) {
-      for(size_t i=0; i<state[activeState].trans.size(); i++) {
-	if(state[activeState].trans[i].sig->evalSignal()(0) >= state[activeState].trans[i].s0) {
-	  activeState = state[activeState].trans[i].dest;
+      for(auto & tran : state[activeState].trans) {
+	if(tran.sig->evalSignal()(0) >= tran.s0) {
+	  activeState = tran.dest;
 	  return;
 	}
       }

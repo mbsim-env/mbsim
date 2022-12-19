@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, ExternalFlexibleFfrBody)
 
   list<string>::iterator findChild(list<string> &names, const string &name) {
-    for(list<string>::iterator it=names.begin(); it!=names.end(); it++) {
+    for(auto it=names.begin(); it!=names.end(); it++) {
       if(*it==name)
 	return it;
     }
@@ -195,7 +195,7 @@ namespace MBSimFlexibleBody {
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"enableOpenMBV");
     if(e) {
-      ombvBody = shared_ptr<OpenMBVExternalFlexibleFfrBody>(new OpenMBVExternalFlexibleFfrBody);
+      ombvBody = make_shared<OpenMBVExternalFlexibleFfrBody>();
       ombvBody->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodeNumbers");

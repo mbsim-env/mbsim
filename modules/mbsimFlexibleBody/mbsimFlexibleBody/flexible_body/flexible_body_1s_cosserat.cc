@@ -53,6 +53,5 @@ namespace MBSimFlexibleBody {
     addContour(ncc);
 
     return ncc;
-return NULL;
   }
 }

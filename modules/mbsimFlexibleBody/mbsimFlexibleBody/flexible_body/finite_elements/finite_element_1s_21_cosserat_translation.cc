@@ -30,7 +30,7 @@ namespace MBSimFlexibleBody {
 
   FiniteElement1s21CosseratTranslation::FiniteElement1s21CosseratTranslation(double l0_, double rho_,double A_, double E_, double G_, double I1_, const Vec& g_ ) : l0(l0_), rho(rho_), A(A_), E(E_), G(G_), I1(I1_), g(g_), cEps0D(0.), cEps1D(0.), sigma1(1.), M(5,INIT,0.), h(5,INIT,0.), X(12,INIT,0.){}
 
-  FiniteElement1s21CosseratTranslation::~FiniteElement1s21CosseratTranslation() {}
+  FiniteElement1s21CosseratTranslation::~FiniteElement1s21CosseratTranslation() = default;
 
   void FiniteElement1s21CosseratTranslation::setMaterialDamping(double cEps0D_, double cEps1D_) {
     cEps0D = cEps0D_;

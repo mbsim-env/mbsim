@@ -44,8 +44,8 @@ namespace MBSimPhysics {
     iM = RangeV(0, -1);
     P.resize(2);
     F.resize(2);
-    for(unsigned int i=0; i<2; i++)
-      h[i].resize(2);
+    for(auto & i : h)
+      i.resize(2);
     C.setParent(this);
   }
 
@@ -153,7 +153,7 @@ namespace MBSimPhysics {
     setGravityFunction(ObjectFactory::createAndInit<MBSim::Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(e) {
-      ombvArrow = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
+      ombvArrow = make_shared<OpenMBVInteractionArrow>(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint);
       ombvArrow->initializeUsingXML(e);
     }
   }

@@ -20,6 +20,8 @@
 #ifndef _MBSIM_CONTROL_NAMESPACE_H_
 #define _MBSIM_CONTROL_NAMESPACE_H_
 
+#include "mbxmlutilshelper/dom.h"
+
 namespace MBSimControl {
 
   const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl");

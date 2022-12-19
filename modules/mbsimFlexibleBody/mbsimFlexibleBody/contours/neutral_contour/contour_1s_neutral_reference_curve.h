@@ -37,11 +37,11 @@ namespace MBSimFlexibleBody {
   class Contour1sNeutralFlexibleBody1SReferenceCurve : public MBSimFlexibleBody::Contour1sNeutralFactory {
     public:
       Contour1sNeutralFlexibleBody1SReferenceCurve(const std::string &name_);
-      virtual ~Contour1sNeutralFlexibleBody1SReferenceCurve();
-      virtual void init(InitStage stage, const MBSim::InitConfigSet &config);
+       ~Contour1sNeutralFlexibleBody1SReferenceCurve() override;
+       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 //      virtual void updateKinematicsForFrame(MBSim::ContourPointData &cp, MBSim::Frame::Feature ff);
 //      virtual void updateJacobiansForFrame(MBSim::ContourPointData &cp, int j = 0);
-      virtual MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1);
+       MBSim::ContactKinematics * findContactPairingWith(const std::type_info &type0, const std::type_info &type1) override;
 
       double getuMax() const {
         return uMax;

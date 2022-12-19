@@ -11,18 +11,17 @@
 #include <iostream>
 
 // typedefs for FMI function (must be in sync with fmiModelFunction.h)
-typedef fmiStatus (*t_fmiSetString)(fmiComponent, const fmiValueReference[], size_t, const fmiString[]);
-typedef fmiComponent (*t_fmiInstantiateModel)(fmiString, fmiString, fmiCallbackFunctions_me, fmiBoolean);
-typedef fmiComponent (*t_fmiInstantiateSlave)(fmiString instanceName, fmiString fmuGUID, fmiString fmuLocation,
-                                              fmiString mimeType, fmiReal timeout, fmiBoolean visible,
-                                              fmiBoolean interactive, fmiCallbackFunctions_cosim functions, fmiBoolean loggingOn);
-typedef fmiStatus (*t_fmiInitialize)(fmiComponent, fmiBoolean, fmiReal, fmiEventInfo*);
-typedef fmiStatus (*t_fmiInitializeSlave)(fmiComponent c, fmiReal tStart, fmiBoolean StopTimeDefined, fmiReal tStop);
-typedef fmiStatus (*t_fmiDoStep)(fmiComponent c, fmiReal currentCommunicationPoint, fmiReal communicationStepSize, fmiBoolean newStep);
-typedef fmiStatus (*t_fmiTerminate)(fmiComponent);
-typedef fmiStatus (*t_fmiTerminateSlave)(fmiComponent);
-typedef void (*t_fmiFreeModelInstance)(fmiComponent);
-typedef void (*t_fmiFreeSlaveInstance)(fmiComponent);
+using t_fmiSetString = fmiStatus (*)(fmiComponent, const fmiValueReference *, size_t, const fmiString *);
+using t_fmiInstantiateModel = fmiComponent (*)(fmiString, fmiString, fmiCallbackFunctions_me, fmiBoolean);
+using t_fmiInstantiateSlave = fmiComponent (*)(fmiString, fmiString, fmiString, fmiString, fmiReal,
+                                               fmiBoolean, fmiBoolean, fmiCallbackFunctions_cosim, fmiBoolean);
+using t_fmiInitialize = fmiStatus (*)(fmiComponent, fmiBoolean, fmiReal, fmiEventInfo *);
+using t_fmiInitializeSlave = fmiStatus (*)(fmiComponent, fmiReal, fmiBoolean, fmiReal);
+using t_fmiDoStep = fmiStatus (*)(fmiComponent, fmiReal, fmiReal, fmiBoolean);
+using t_fmiTerminate = fmiStatus (*)(fmiComponent);
+using t_fmiTerminateSlave = fmiStatus (*)(fmiComponent);
+using t_fmiFreeModelInstance = void (*)(fmiComponent);
+using t_fmiFreeSlaveInstance = void (*)(fmiComponent);
 
 using namespace std;
 using namespace boost::filesystem;

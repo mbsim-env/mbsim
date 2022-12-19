@@ -77,16 +77,16 @@ void addModelInputOutputs(std::vector<std::shared_ptr<Variable> > &var,
   // create all input/output variables for links in the dss
   std::vector<MBSim::Link*> l;
   getAllLinks(dss, l);
-  for(std::vector<MBSim::Link*>::const_iterator it=l.begin(); it!=l.end(); ++it) {
+  for(auto it : l) {
     // for ExternSignalSource create one input variable for each element of the signal vector
-    auto *sigSource=dynamic_cast<MBSimControl::ExternSignalSource*>(*it);
+    auto *sigSource=dynamic_cast<MBSimControl::ExternSignalSource*>(it);
     if(sigSource)
       for(int idx=0; idx<sigSource->evalSignal().size(); idx++) {
         var.push_back(std::make_shared<ExternSignalSourceInput>(sigSource, idx));
         (*--var.end())->setValue(double(0.0)); // default value
       }
     // for ExternSignalSink create one output variable for each element of the signal vector
-    auto *sigSink=dynamic_cast<MBSimControl::ExternSignalSink*>(*it);
+    auto *sigSink=dynamic_cast<MBSimControl::ExternSignalSink*>(it);
     if(sigSink)
       for(int idx=0; idx<sigSink->evalSignal().size(); idx++)
         var.push_back(std::make_shared<ExternSignalSinkOutput>(sigSink, idx));

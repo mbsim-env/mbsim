@@ -42,15 +42,15 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor
        */
-      ContactKinematicsPointCylinderFlexible() :useLocal(false) {}
+      ContactKinematicsPointCylinderFlexible() = default;
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsPointCylinderFlexible();
+       ~ContactKinematicsPointCylinderFlexible() override;
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
+       void assignContours(const std::vector<MBSim::Contour*> &contour) override;
       virtual void updateg(double &g, std::vector<MBSim::Frame*> &cFrame, int index = 0);
       /***************************************************/
 
@@ -74,7 +74,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief flag to check if local search can be used
        */
-      bool useLocal;
+      bool useLocal { false };
   };
 
 }

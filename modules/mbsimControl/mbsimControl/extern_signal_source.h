@@ -28,7 +28,7 @@ namespace MBSimControl {
   class ExternSignalSource : public Signal {
     public:
       ExternSignalSource(const std::string &name="") : Signal(name) {}
-      void init(InitStage stage, const MBSim::InitConfigSet &config) {
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override {
         Signal::init(stage, config);
         if(stage==unknownStage)
           // initialize external signal with 0 (required to avoid an undefined value if the signal is not set)
