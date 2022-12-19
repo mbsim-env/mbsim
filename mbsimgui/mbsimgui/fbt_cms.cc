@@ -51,7 +51,6 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::cms() {
-    bool fixedBoundaryNormalModes = false;
     auto *list = static_cast<ListWidget*>(static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget());
     vector<vector<int>> dof(list->getSize());;
     vector<vector<int>> bnodes(list->getSize());
@@ -75,12 +74,22 @@ namespace MBSimGUI {
 	inodes[i] = mat[i][0].toInt();
     }
 
+    bool removeRigidBodyModes = false;
+    if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->isActive()) {
+      removeRigidBodyModes = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    }
+
     vector<int> nmodes;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->isActive()) {
       auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getWidget()->getEvalMat();
       nmodes.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	nmodes[i] = mat[i][0].toInt();
+    }
+
+    bool fixedBoundaryNormalModes = false;
+    if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->isActive()) {
+      fixedBoundaryNormalModes = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
     }
 
     if(bnodes.size() != dof.size())
@@ -188,23 +197,25 @@ namespace MBSimGUI {
 	IJ.add(i);
       Ui.set(iN,IJ,-slvLU(Krns,Krnh));
       Ui.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
-      SqrMat V;
-      Vec w;
-      eigvec(JTMJ(Krs,Ui),JTMJ(Mrs,Ui),V,w);
-      vector<int> imod;
-      for(int i=0; i<w.size(); i++) {
-	if(w(i)>pow(2*M_PI*0.1,2))
-	  imod.emplace_back(i);
+      if(removeRigidBodyModes) {
+	SqrMat V;
+	Vec w;
+	eigvec(JTMJ(Krs,Ui),JTMJ(Mrs,Ui),V,w);
+	vector<int> imod;
+	for(int i=0; i<w.size(); i++) {
+	  if(w(i)>pow(2*M_PI*0.1,2))
+	    imod.emplace_back(i);
+	}
+	MatV Vr(w.size(),imod.size(),NONINIT);
+	for(size_t i=0; i<imod.size(); i++)
+	  Vr.set(i,V.col(imod[i]));
+	Ui <<= Ui*Vr;
       }
-      MatV Vr(w.size(),imod.size(),NONINIT);
-      for(size_t i=0; i<imod.size(); i++)
-	Vr.set(i,V.col(imod[i]));
-      Ui <<= Ui*Vr;
       if(nmodes.size() and fixedBoundaryNormalModes) {
 	Mat V;
 	Vec w;
 	eigvec(Krns,Mrns,max(nmodes),1,V,w,0.001);
-	imod.clear();
+	vector<int> imod;
 	for(size_t i=0; i<nmodes.size(); i++) {
 	  if(w(nmodes[i]-1)>pow(2*M_PI*0.1,2))
 	    imod.emplace_back(nmodes[i]-1);

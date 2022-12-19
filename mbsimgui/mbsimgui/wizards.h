@@ -122,7 +122,7 @@ namespace MBSimGUI {
       ComponentModeSynthesisPage(QWidget *parent);
       int nextId() const override;
     private:
-      ExtWidget *inodes, *nmodes, *fbnm;
+      ExtWidget *inodes, *rrbm, *nmodes, *fbnm;
   };
 
   class OpenMBVPage : public QWizardPage {

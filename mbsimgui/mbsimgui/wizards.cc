@@ -408,6 +408,9 @@ namespace MBSimGUI {
     nmodes = new ExtWidget("Normal mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"normalModeNumbers");
     layout->addWidget(nmodes);
 
+    rrbm = new ExtWidget("Remove rigid body modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"removeRigidBodyModes");
+    layout->addWidget(rrbm);
+
     fbnm = new ExtWidget("Fixed-boundary normal modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"fixedBoundaryNormalModes");
     layout->addWidget(fbnm);
 
@@ -597,6 +600,7 @@ namespace MBSimGUI {
       if(hasVisitedPage(PageCMS)) {
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->writeXMLFile(element);
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->writeXMLFile(element);
+	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->writeXMLFile(element);
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->writeXMLFile(element);
       }
       if(hasVisitedPage(PageModeShapes)) {
@@ -627,6 +631,7 @@ namespace MBSimGUI {
       static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->initializeUsingXML(element);
       static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->initializeUsingXML(element);
       static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->initializeUsingXML(element);
+      static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->initializeUsingXML(element);
       static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->initializeUsingXML(element);
       static_cast<ModeShapesPage*>(page(PageModeShapes))->V->initializeUsingXML(element);
       static_cast<ModeShapesPage*>(page(PageModeShapes))->S->initializeUsingXML(element);
