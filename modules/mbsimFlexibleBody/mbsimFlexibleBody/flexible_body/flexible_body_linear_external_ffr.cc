@@ -56,8 +56,9 @@ namespace MBSimFlexibleBody {
       uSize[0] = qSize;
       uSize[1] = qSize; // TODO
       nn = nNodes;
+      nodeNumbers.resize(nNodes);
       for(int i=0; i<nNodes; i++)
-        nodeMap[i+1] = i;
+        nodeNumbers[i] = i+1;
     }
     else if (stage == unknownStage) {
       // only the modes can be used that are available

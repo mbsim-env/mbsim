@@ -28,21 +28,22 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::beam() {
-    nN = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    auto l = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
-    auto A = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
-    auto I_ = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->getWidget())->getWidget())->getEvalMat();
+    int nN = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
+    auto l = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto A = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto I_ = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->getWidget())->getWidget())->getWidget()->getEvalMat();
     auto Iy = I_[0][0].toDouble();
     auto Iz = I_[1][0].toDouble();
     auto Iyz = I_[2][0].toDouble();
-    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
-    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
     auto ten = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->ten->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    auto benz = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
-    auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    auto benz = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
+    auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
+    auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
+    nodeTable.resize(nN+1);
     for(int i=0; i<nN; i++)
-      nodeMap[i+1] = i;
+      nodeTable[i+1] = i;
     int nE = nN-1;
     int nee = 0;
     const int x = 0;
@@ -62,7 +63,7 @@ namespace MBSimGUI {
       bel = nee++;
     if(benz)
       gal = nee++;
-    nen = nee;
+    int nen = nee;
     ner = nen - net;
     if(ten)
       ur = nee++;
@@ -76,7 +77,7 @@ namespace MBSimGUI {
       ber = nee++;
     if(benz)
       gar = nee++;
-    ng = nN*nen;
+    int ng = nN*nen;
 
     vector<Mat3xV> rPdme(3,Mat3xV(nee));
     vector<vector<SqrMatV>> PPdme(3,vector<SqrMatV>(3,SqrMatV(nee)));
@@ -364,8 +365,9 @@ namespace MBSimGUI {
 
     rPdm.resize(3,Mat3xV(ng));
     Pdm.resize(ng);
-    MKm.resize(ng);
-    PPm.resize(ng);
+    Km.resize(ng);
+    vector<vector<map<int,double>>> PPdmm(3,vector<map<int,double>>(ng));
+    vector<vector<map<int,double>>> PPdm2m(3,vector<map<int,double>>(ng));
     RangeV I(0,2);
     for(int i=0; i<nE; i++) {
       RangeV J(i*nen,i*nen+nee-1);
@@ -390,33 +392,30 @@ namespace MBSimGUI {
 	rPdm[j].add(I,J,rPdme[j]);
       for(int j=0; j<nee; j++) {
 	for(int k=0; k<j; k++) {
-	  auto d2 = PPm[i*nen+j][i*nen+k];
-	  d2[0] += PPdme[0][1].e(j,k);
-	  d2[1] += PPdme[0][2].e(j,k);
-	  d2[2] += PPdme[1][2].e(j,k);
+	  PPdm2m[0][i*nen+j][i*nen+k] += PPdme[0][1].e(j,k);
+	  PPdm2m[1][i*nen+j][i*nen+k] += PPdme[0][2].e(j,k);
+	  PPdm2m[2][i*nen+j][i*nen+k] += PPdme[1][2].e(j,k);
 	}
 	for(int k=j; k<nee; k++) {
-	  auto d = MKm[i*nen+j][i*nen+k];
-	  auto d2 = PPm[i*nen+j][i*nen+k];
-	  d[3] += Kee.ej(j,k);
-	  d[0] += PPdme[0][0].e(j,k);
-	  d[1] += PPdme[1][1].e(j,k);
-	  d[2] += PPdme[2][2].e(j,k);
-	  d2[0] += PPdme[0][1].e(j,k);
-	  d2[1] += PPdme[0][2].e(j,k);
-	  d2[2] += PPdme[1][2].e(j,k);
+	  Km[i*nen+j][i*nen+k] += Kee.ej(j,k);
+	  PPdmm[0][i*nen+j][i*nen+k] += PPdme[0][0].e(j,k);
+	  PPdmm[1][i*nen+j][i*nen+k] += PPdme[1][1].e(j,k);
+	  PPdmm[2][i*nen+j][i*nen+k] += PPdme[2][2].e(j,k);
+	  PPdm2m[0][i*nen+j][i*nen+k] += PPdme[0][1].e(j,k);
+	  PPdm2m[1][i*nen+j][i*nen+k] += PPdme[0][2].e(j,k);
+	  PPdm2m[2][i*nen+j][i*nen+k] += PPdme[1][2].e(j,k);
 	}
       }
     }
 
-    r.resize(nN,3,NONINIT);
-    Phim.resize(nN,vector<map<int,double>>(3));
-    Psim.resize(nN,vector<map<int,double>>(3));
-    sigm.resize(nN,vector<map<int,double>>(6));
+    r.resize(nN);
+    vector<vector<map<int,double>>> Phim(nN,vector<map<int,double>>(3));
+    vector<vector<map<int,double>>> Psim(nN,vector<map<int,double>>(3));
+    vector<vector<map<int,double>>> sigm(nN,vector<map<int,double>>(6));
     for(int i=0; i<nN; i++) {
-      r(i,0) = i*D;
-      r(i,1) = 0;
-      r(i,2) = 0;
+      r[i](0) = i*D;
+      r[i](1) = 0;
+      r[i](2) = 0;
       if(ten) {
 	Phim[i][x][i*nee/2+ul] = 1;
 	if(i>0 and i<nN-1) {
@@ -451,6 +450,25 @@ namespace MBSimGUI {
       indices[j++] = i+1;
       indices[j++] = -1;
     }
+
+    Ks <<= createSymSparseMat(Km);
+    for(int i=0; i<3; i++) {
+      PPdms[i] <<= createSymSparseMat(PPdmm[i]);
+      PPdm2s[i] <<= createSparseMat(ng,PPdm2m[i]);
+    }
+    Phis.resize(nN);
+    Psis.resize(nN);
+    sigs.resize(nN);
+    for(size_t i=0; i<nN; i++) {
+      Phis[i] <<= createSparseMat(ng,Phim[i]);
+      Psis[i] <<= createSparseMat(ng,Psim[i]);
+      sigs[i] <<= createSparseMat(ng,sigm[i]);
+    }
+
+    links.resize(nN);
+    for(int i=0; i<nN-1; i++)
+      links[i][i+1] = 1;
+
   }
 
 }

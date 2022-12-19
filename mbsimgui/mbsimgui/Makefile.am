@@ -101,7 +101,12 @@ libmbsimgui_la_SOURCES = \
   fbt_lma.cc \
   fbt_ombv.cc \
   fbt_damp.cc \
-  fbt_exp.cc
+  fbt_exp.cc \
+  C3D10.cc \
+  C3D15.cc \
+  C3D20Base.cc \
+  C3D20.cc \
+  C3D20R.cc
 nodist_libmbsimgui_la_SOURCES=$(libmbsimgui_QT_BUILT_SOURCES)
 
 mbsimgui_CPPFLAGS = $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
@@ -192,7 +197,13 @@ mbsimguiinclude_HEADERS = analyzer.h \
   utils.h \
   variable_widgets.h \
   widget.h \
-  xml_property_dialog.h
+  xml_property_dialog.h \
+  fe_type.h \
+  C3D10.h \
+  C3D15.h \
+  C3D20Base.h \
+  C3D20.h \
+  C3D20R.h
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 libmbsimgui_QT_BUILT_SOURCES = \

@@ -29,7 +29,6 @@ namespace MBSimGUI {
   void FlexibleBodyTool::calculix() {
     net = 3;
     ner = 0;
-    nen = net + ner;
     string resultFileName = static_cast<FileWidget*>(static_cast<CalculixPage*>(page(PageCalculix))->file->getWidget())->getFile(true).toStdString();
     string jobname = resultFileName.substr(0,resultFileName.length()-4);
 
@@ -52,14 +51,18 @@ namespace MBSimGUI {
       if(str.length()>6 and str.substr(4,2)=="2C")
 	break;
     }
+    int nN;
     stringstream sN(str);
     sN >> str >> nN;
-    r.resize(nN,3);
+    nodeTable.resize(nN+1);
+    nodeNumbers.resize(nN);
+    r.resize(nN);
     for(size_t i=0; i<nN; i++) {
       isRes >> d >> d;
-      nodeMap[d] = i;
+      nodeTable[d] = i;
+      nodeNumbers[i] = d;
       for(size_t k=0; k<3; k++)
-	isRes >> r.e(i,k);
+	isRes >> r[i](k);
     }
     // elements
     while(isRes) {
@@ -127,62 +130,65 @@ namespace MBSimGUI {
 	}
       }
     }
-    nM = disp.size();
+    int nM = disp.size();
     isRes.close();
 
     M <<= readMat(jobname+".mas");
     K <<= readMat(jobname+".sti");
 
-    ng = K(K.rows()-1,1);
+    int ng = K(K.rows()-1,1);
 
-    MKm.resize(ng);
+    Km.resize(ng);
+    Mm.resize(ng);
     for(int i=0; i<K.rows(); i++) {
-      auto d = MKm[K(i,0)-1][K(i,1)-1];
-      d[0] = M(i,2);
-      d[3] = K(i,2);
+      Mm[K(i,0)-1][K(i,1)-1] = M(i,2);
+      Km[K(i,0)-1][K(i,1)-1] = K(i,2);
     }
 
-    Phi_.resize(3*nN,nM,NONINIT);
-    Sr.resize(6*nN,nM,NONINIT);
-    for(int j=0; j<Phi_.cols(); j++) {
-      for(int i=0; i<Phi_.rows(); i++)
-	Phi_.e(i,j) = disp[j].e(i);
-      for(int i=0; i<Sr.rows(); i++)
-	Sr.e(i,j) = stress[j].e(i);
+    Ks <<= createSymSparseMat(Km);
+    PPdms[0] <<= createSymSparseMat(Mm);
+
+    U.resize(3*nN,nM,NONINIT);
+    S.resize(6*nN,nM,NONINIT);
+    for(int j=0; j<U.cols(); j++) {
+      for(int i=0; i<U.rows(); i++)
+	U.e(i,j) = disp[j].e(i);
+      for(int i=0; i<S.rows(); i++)
+	S.e(i,j) = stress[j].e(i);
     }
 
     indices.resize(5*6*eles.rows());
     int j = 0;
     for(int i=0; i<eles.rows(); i++) {
-      indices[j++] = nodeMap[eles(i,3)];
-      indices[j++] = nodeMap[eles(i,2)];
-      indices[j++] = nodeMap[eles(i,1)];
-      indices[j++] = nodeMap[eles(i,0)];
+      indices[j++] = nodeTable[eles(i,3)];
+      indices[j++] = nodeTable[eles(i,2)];
+      indices[j++] = nodeTable[eles(i,1)];
+      indices[j++] = nodeTable[eles(i,0)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,4)];
-      indices[j++] = nodeMap[eles(i,5)];
-      indices[j++] = nodeMap[eles(i,6)];
-      indices[j++] = nodeMap[eles(i,7)];
+      indices[j++] = nodeTable[eles(i,4)];
+      indices[j++] = nodeTable[eles(i,5)];
+      indices[j++] = nodeTable[eles(i,6)];
+      indices[j++] = nodeTable[eles(i,7)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,1)];
-      indices[j++] = nodeMap[eles(i,2)];
-      indices[j++] = nodeMap[eles(i,6)];
-      indices[j++] = nodeMap[eles(i,5)];
+      indices[j++] = nodeTable[eles(i,1)];
+      indices[j++] = nodeTable[eles(i,2)];
+      indices[j++] = nodeTable[eles(i,6)];
+      indices[j++] = nodeTable[eles(i,5)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,2)];
-      indices[j++] = nodeMap[eles(i,3)];
-      indices[j++] = nodeMap[eles(i,7)];
-      indices[j++] = nodeMap[eles(i,6)];
+      indices[j++] = nodeTable[eles(i,2)];
+      indices[j++] = nodeTable[eles(i,3)];
+      indices[j++] = nodeTable[eles(i,7)];
+      indices[j++] = nodeTable[eles(i,6)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,4)];
-      indices[j++] = nodeMap[eles(i,7)];
-      indices[j++] = nodeMap[eles(i,3)];
-      indices[j++] = nodeMap[eles(i,0)];
+      indices[j++] = nodeTable[eles(i,4)];
+      indices[j++] = nodeTable[eles(i,7)];
+      indices[j++] = nodeTable[eles(i,3)];
+      indices[j++] = nodeTable[eles(i,0)];
       indices[j++] = -1;
-      indices[j++] = nodeMap[eles(i,0)];
-      indices[j++] = nodeMap[eles(i,1)];
-      indices[j++] = nodeMap[eles(i,5)];
-      indices[j++] = nodeMap[eles(i,4)];
+      indices[j++] = nodeTable[eles(i,0)];
+      indices[j++] = nodeTable[eles(i,1)];
+      indices[j++] = nodeTable[eles(i,5)];
+      indices[j++] = nodeTable[eles(i,4)];
       indices[j++] = -1;
     }
   }

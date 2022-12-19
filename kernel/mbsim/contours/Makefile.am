@@ -13,6 +13,7 @@ libcontour_la_SOURCES = contour.cc\
 			edge.cc\
 			plane.cc\
 			sphere.cc\
+			cylinder.cc\
 			frustum.cc\
 			planar_frustum.cc\
 			room.cc\
@@ -48,6 +49,7 @@ contourinclude_HEADERS = contour.h\
 			 edge.h\
 			 plane.h\
 			 sphere.h\
+			 cylinder.h\
 			 frustum.h\
 			 planar_frustum.h\
 			 room.h\

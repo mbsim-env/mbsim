@@ -28,6 +28,7 @@ class QRadioButton;
 namespace MBSimGUI {
 
   class ExtWidget;
+  class FiniteElementType;
 
   class FirstPage : public QWizardPage {
     friend class FlexibleBodyTool;
@@ -85,7 +86,7 @@ namespace MBSimGUI {
      FiniteElementsPage(QWidget *parent);
       int nextId() const override;
     private:
-      ExtWidget *E, *rho, *nu, *nodes, *elements;
+      ExtWidget *E, *rho, *nu, *nodes, *elements, *exs;
   };
 
   class ReductionMethodsPage : public QWizardPage {
@@ -121,7 +122,7 @@ namespace MBSimGUI {
       ComponentModeSynthesisPage(QWidget *parent);
       int nextId() const override;
     private:
-      ExtWidget *inodes, *nmodes, *fbnm;
+      ExtWidget *inodes, *rrbm, *nmodes, *fbnm;
   };
 
   class OpenMBVPage : public QWizardPage {
@@ -165,13 +166,12 @@ namespace MBSimGUI {
       QString getInputDataFile() const;
     private:
       static fmatvec::MatV readMat(const std::string &file);
-      fmatvec::MatV reduceMat(const std::vector<std::map<int,double[4]>> &Km, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
-      std::vector<std::map<int,double[4]>> reduceMat(const std::vector<std::map<int,double[4]>> &MKm, const fmatvec::Indices &iF);
-      std::vector<fmatvec::SymSparseMat> createPPKs(const std::vector<std::map<int,double[4]>> &PPKm);
-      std::pair<fmatvec::SymSparseMat,fmatvec::SymSparseMat> createMKs(const std::vector<std::map<int,double[4]>> &MKm);
-      std::vector<fmatvec::SparseMat> createPPs(const std::vector<std::map<int,double[3]>> &PPm);
-      fmatvec::SparseMat createPhis(int n, const std::vector<std::map<int,double>> &Phis);
-      fmatvec::SparseMat createsigs(int n, const std::vector<std::map<int,double>> &sigm);
+      fmatvec::SymSparseMat createSymSparseMat(const std::vector<std::map<int,double>> &Am);
+      fmatvec::SparseMat createSparseMat(int n, const std::vector<std::map<int,double>> &Am);
+      std::vector<std::map<int,double>> reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iF);
+      fmatvec::MatV reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
+      void reduceMat(const fmatvec::SymSparseMat &Ms, const fmatvec::SymSparseMat &Ks, fmatvec::SymSparseMat &Mrs, fmatvec::SymSparseMat &Krs, int n, const std::vector<std::vector<int>> &activeDof, const std::vector<int> &dofMap);
+      fmatvec::MatV reduceMat(const fmatvec::SymSparseMat &Ks, const fmatvec::Indices &iN, const fmatvec::Indices &iH, const std::vector<std::vector<int>> &activeDof, const std::vector<int> &dofMapN, const std::vector<int> &dofMapH);
       void extfe();
       void calculix();
       void beam();
@@ -183,30 +183,28 @@ namespace MBSimGUI {
       void lma();
       void damp();
       void exp();
-      void C3D10();
-      void C3D20();
-      double rho, E, nu, m;
-      fmatvec::MatV r, M, K, Phi_, Psi_, Sr;
+      fmatvec::MatV M, K, U, S;
       fmatvec::VecV mDamp;
       fmatvec::Vec2 pDamp;
       fmatvec::SymMatV Ke0, De0;
+      double m{0};
       fmatvec::Vec3 rdm;
       fmatvec::SymMat3 rrdm;
       fmatvec::Mat3xV Pdm;
       std::vector<fmatvec::Mat3xV> rPdm;
       std::vector<std::vector<fmatvec::SqrMatV>> PPdm;
-      std::vector<fmatvec::Vec3> KrKP;
+      std::vector<fmatvec::Vec3> r;
       std::vector<fmatvec::Mat3xV> Phi, Psi;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahel;
-      std::map<int,int> nodeMap;
-      std::vector<int> indices;
-      int nN, nM, ng, net, ner, nen, npe;
-      std::vector<std::map<int,double[4]>> MKm;
-      std::vector<std::map<int,double[3]>> PPm;
-      std::vector<std::vector<std::map<int,double>>> Phim, Psim, sigm;
-      std::map<int,int> nodeCount;
-      fmatvec::MatVx3 xi, rN;
-      fmatvec::VecV wi;
+      fmatvec::SymSparseMat PPdms[3], Ks;
+      fmatvec::SparseMat PPdm2s[3];
+      std::vector<fmatvec::SparseMat> Phis, Psis, sigs;
+      std::vector<std::map<int,double>> Mm, Km;
+      std::vector<int> nodeTable, nodeCount, nodeNumbers, indices;
+      int net, ner;
+      std::vector<fmatvec::MatVI> ele;
+      std::vector<FiniteElementType*> type;
+      std::vector<std::map<int,int>> links;
   };
 
 }

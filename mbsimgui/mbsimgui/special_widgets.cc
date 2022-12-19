@@ -464,15 +464,6 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  QString BoundaryConditionWidget::getNodes() {
-    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(nodes->getWidget())->getWidget())->getValue();
-  }
-
-  QString BoundaryConditionWidget::getDof() {
-    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(dof->getWidget())->getWidget())->getValue();
-    //return static_cast<DofWidget*>(dof->getWidget())->getDof();
-  }
-
   Widget* BoundaryConditionWidgetFactory::createWidget(int i) {
     return new BoundaryConditionWidget(parent);
   }
@@ -483,12 +474,14 @@ namespace MBSimGUI {
     setLayout(layout);
 
     vector<QString> list;
+    list.emplace_back("\"C3D10\"");
+    list.emplace_back("\"C3D15\"");
     list.emplace_back("\"C3D20\"");
+    list.emplace_back("\"C3D20R\"");
     type = new ExtWidget("Element type",new TextChoiceWidget(list,0,true),false,false,MBSIMFLEX%"elementType");
     layout->addWidget(type);
 
     elements = new ExtWidget("Elements",new FileWidget("","Element file","ASCII files (*.asc);;All files (*.*)",0,true),false,false,MBSIMFLEX%"elements");
-//    elements = new ExtWidget("Elements",new ChoiceWidget(new MatRowsVarWidgetFactory(3,20),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"elements");
     layout->addWidget(elements);
   }
 
