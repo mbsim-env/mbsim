@@ -64,8 +64,72 @@ namespace MBSimGUI {
     return A;
   }
 
-  MatV FlexibleBodyTool::reduceMat(const vector<map<int,double[4]>> &Km, const Indices &iN, const Indices &iH) {
-    vector<int> mapR(Km.size()), mapC(Km.size());
+  SymSparseMat FlexibleBodyTool::createSymSparseMat(const vector<map<int,double>> &Am) {
+    int nze=0;
+    for(const auto & i : Am)
+      nze+=i.size();
+    SymSparseMat As(Am.size(),nze,NONINIT);
+    int k=0, l=0;
+    As.Ip()[0] = 0;
+    for(const auto & i : Am) {
+      for(const auto & j : i) {
+	As.Jp()[l] = j.first;
+	As()[l] = j.second;
+	l++;
+      }
+      k++;
+      As.Ip()[k] = l;
+    }
+    return As;
+  }
+
+  SparseMat FlexibleBodyTool::createSparseMat(int n, const vector<map<int,double>> &Am) {
+    int nze=0;
+    for(const auto & i : Am)
+      nze+=i.size();
+    SparseMat As(Am.size(),n,nze,NONINIT);
+    int k=0, l=0;
+    As.Ip()[0] = 0;
+    for(const auto & i : Am) {
+      for(const auto & j : i) {
+	As.Jp()[l] = j.first;
+	As()[l] = j.second;
+	l++;
+      }
+      k++;
+      As.Ip()[k] = l;
+    }
+    return As;
+  }
+
+  vector<map<int,double>> FlexibleBodyTool::reduceMat(const vector<map<int,double>> &Am, const Indices &iF) {
+    vector<map<int,double>> Amr;
+    vector<int> map(Am.size());
+    size_t h=0, k=0;
+    for(size_t i=0; i<map.size(); i++) {
+      if(h<iF.size() and i==iF[h]) {
+	h++;
+	map[i] = k++;
+      }
+      else
+	map[i] = -1;
+    }
+    Amr.resize(k);
+    k=0;
+    for(const auto & i : Am) {
+      if(map[k]>=0) {
+	for(const auto & j : i) {
+	  if(map[j.first]>=0)
+	    Amr[map[k]][map[j.first]] = j.second;
+	}
+      }
+      k++;
+    }
+    return Amr;
+  }
+
+  MatV FlexibleBodyTool::reduceMat(const vector<map<int,double>> &Am, const Indices &iN, const Indices &iH) {
+    vector<int> mapR(Am.size()), mapC(Am.size());
     size_t hN=0, kN=0, hH=0, kH=0;
     for(size_t i=0; i<mapR.size(); i++) {
       if(hN<iN.size() and i==iN[hN]) {
@@ -81,155 +145,98 @@ namespace MBSimGUI {
       else
 	mapC[i] = -1;
     }
-    MatV Kmr(iN.size(),iH.size());
+    MatV Ar(iN.size(),iH.size());
     int k = 0;
-    for(const auto & i : Km) {
+    for(const auto & i : Am) {
       for(const auto & j : i) {
 	if(mapR[k]>=0 and mapC[j.first]>=0)
-	  Kmr(mapR[k],mapC[j.first]) = j.second[3];
+	  Ar(mapR[k],mapC[j.first]) = j.second;
 	else if(mapR[j.first]>=0 and mapC[k]>=0)
-	  Kmr(mapR[j.first],mapC[k]) = j.second[3];
+	  Ar(mapR[j.first],mapC[k]) = j.second;
       }
       k++;
     }
-    return Kmr;
+    return Ar;
   }
 
-  vector<map<int,double[4]>> FlexibleBodyTool::reduceMat(const vector<map<int,double[4]>> &MKm, const Indices &iF) {
-    vector<map<int,double[4]>> MKmr;
-    vector<int> map(MKm.size());
-    size_t h=0, k=0;
-    for(size_t i=0; i<map.size(); i++) {
-      if(h<iF.size() and i==iF[h]) {
-	h++;
-	map[i] = k++;
-      }
-      else
-	map[i] = -1;
-    }
-    MKmr.resize(k);
-    k=0;
-    for(const auto & i : MKm) {
-      if(map[k]>=0) {
-	for(const auto & j : i) {
-	  if(map[j.first]>=0) {
-	    auto d = MKmr[map[k]][map[j.first]];
-	    for(int l=0; l<4; l++)
-	      d[l] = j.second[l];
+  void FlexibleBodyTool::reduceMat(const SymSparseMat &Ms, const SymSparseMat &Ks, SymSparseMat &Mrs, SymSparseMat &Krs, int n, const vector<vector<int>> &activeDof, const vector<int> &dofMap) {
+    int nen = net + ner;
+    int nzer = 0;
+    for(size_t i=0; i<r.size(); i++) {
+      for(int k=0; k<nen; k++) {
+	if(activeDof[i][k]==1) {
+	  for(int l=k; l<nen; l++) {
+	    if(activeDof[i][l]==1)
+	      nzer++;
+	  }
+	  for(const auto & j : links[i]) {
+	    for(int l=0; l<nen; l++) {
+	      if(activeDof[j.first][l]==1)
+		nzer++;
+	    }
 	  }
 	}
       }
-      k++;
     }
-    return MKmr;
-  }
-
-  vector<SymSparseMat> FlexibleBodyTool::createPPKs(const vector<map<int,double[4]>> &PPKm) {
-    int nze=0;
-    for(const auto & i : PPKm)
-      nze+=i.size();
-    vector<SymSparseMat> PPKs(4,SymSparseMat(PPKm.size(),nze,NONINIT));
-    int k=0, l=0;
-    for(int h=0; h<4; h++)
-      PPKs[h].Ip()[0] = 0;
-    for(const auto & i : PPKm) {
-      for(const auto & j : i) {
-	for(int h=0; h<4; h++) {
-	  PPKs[h].Jp()[l] = j.first;
-	  PPKs[h]()[l] = j.second[h];
+    int *Ipr = new int[n+1];
+    int *Jpr = new int[nzer];
+    Ipr[0] = 0;
+    SymSparseMat SM1 = SymSparseMat(n,nzer,Ipr,Jpr);
+    SymSparseMat SM2 = SymSparseMat(n,nzer,Ipr,Jpr);
+    Mrs &= SM1;
+    Krs &= SM2;
+    int ii = 0, kk = 0, ll = 0;
+    for(size_t i=0; i<r.size(); i++) {
+      for(int k=0; k<nen; k++) {
+	for(int l=k; l<nen; l++) {
+	  if(activeDof[i][k]==1 and activeDof[i][l]==1) {
+	    Mrs()[ll] = Ms()[kk];
+	    Krs()[ll] = Ks()[kk];
+	    Jpr[ll++] = dofMap[nen*i+l];
+	  }
+	  kk++;
 	}
-	l++;
-      }
-      k++;
-      for(int h=0; h<4; h++)
-	PPKs[h].Ip()[k] = l;
-    }
-    return PPKs;
-  }
-
-  pair<SymSparseMat,SymSparseMat> FlexibleBodyTool::createMKs(const vector<map<int,double[4]>> &MKm) {
-    int nze=0;
-    for(const auto & i : MKm)
-      nze+=i.size();
-    SymSparseMat Ks(MKm.size(),nze,NONINIT);;
-    SymSparseMat Ms(MKm.size(),nze,NONINIT);;
-    int k=0, l=0;
-    Ms.Ip()[0] = 0;
-    Ks.Ip()[0] = 0;
-    for(const auto & i : MKm) {
-      for(const auto & j : i) {
-	Ms.Jp()[l] = j.first;
-	Ms()[l] = j.second[0]+j.second[1]+j.second[2];
-	Ks.Jp()[l] = j.first;
-	Ks()[l] = j.second[3];
-	l++;
-      }
-      k++;
-      Ms.Ip()[k] = l;
-      Ks.Ip()[k] = l;
-    }
-    return make_pair(Ms,Ks);
-  }
-
-  vector<SparseMat> FlexibleBodyTool::createPPs(const vector<map<int,double[3]>> &PPm) {
-    int nze=0;
-    for(const auto & i : PPm)
-      nze+=i.size();
-    vector<SparseMat> PPs(3,SparseMat(PPm.size(),PPm.size(),nze,NONINIT));
-    int k=0, l=0;
-    for(int h=0; h<3; h++)
-      PPs[h].Ip()[0] = 0;
-    for(const auto & i : PPm) {
-      for(const auto & j : i) {
-	for(int h=0; h<3; h++) {
-	  PPs[h].Jp()[l] = j.first;
-	  PPs[h]()[l] = j.second[h];
+	for(const auto & j : links[i]) {
+	  for(int l=0; l<nen; l++) {
+	    if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
+	      Mrs()[ll] = Ms()[kk];
+	      Krs()[ll] = Ks()[kk];
+	      Jpr[ll++] = dofMap[nen*j.first+l];
+	    }
+	    kk++;
+	  }
 	}
-	l++;
+	if(activeDof[i][k]==1)
+	  Ipr[++ii] = ll;
       }
-      k++;
-      for(int h=0; h<3; h++)
-	PPs[h].Ip()[k] = l;
     }
-    return PPs;
   }
 
-  SparseMat FlexibleBodyTool::createPhis(int n, const vector<map<int,double>> &Phim) {
-    int nze=0;
-    for(const auto & i : Phim)
-      nze+=i.size();
-    SparseMat Phis(3,n,nze,NONINIT);
-    int k=0, l=0;
-    Phis.Ip()[0] = 0;
-    for(const auto & i : Phim) {
-      for(const auto & j : i) {
-	Phis.Jp()[l] = j.first;
-	Phis()[l] = j.second;
-	l++;
+  MatV FlexibleBodyTool::reduceMat(const SymSparseMat &Ks, const Indices &iN, const Indices &iH, const vector<vector<int>> &activeDof, const vector<int> &dofMapN, const vector<int> &dofMapH) {
+    MatV Krnh(iN.size(),iH.size());
+    int nen = net + ner;
+    int kk = 0;
+    for(size_t i=0; i<r.size(); i++) {
+      for(int k=0; k<nen; k++) {
+	for(int l=k; l<nen; l++) {
+	  if(activeDof[i][k]==1 and activeDof[i][l]==2)
+	    Krnh(dofMapN[nen*i+k],dofMapH[nen*i+l]) = Ks()[kk];
+	  else if(activeDof[i][l]==1 and activeDof[i][k]==2)
+	    Krnh(dofMapN[nen*i+l],dofMapH[nen*i+k]) = Ks()[kk];
+	  kk++;
+	}
+	for(const auto & j : links[i]) {
+	  for(int l=0; l<nen; l++) {
+	    if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
+	      Krnh(dofMapN[nen*i+k],dofMapH[nen*j.first+l]) = Ks()[kk];
+	    if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
+	      Krnh(dofMapN[nen*j.first+l],dofMapH[nen*i+k]) = Ks()[kk];
+	    kk++;
+	  }
+	}
       }
-      k++;
-      Phis.Ip()[k] = l;
     }
-    return Phis;
-  }
-
-  SparseMat FlexibleBodyTool::createsigs(int n, const vector<map<int,double>> &sigm) {
-    int nze=0;
-    for(const auto & i : sigm)
-      nze+=i.size();
-    SparseMat sigs(6,n,nze,NONINIT);
-    int k=0, l=0;
-    sigs.Ip()[0] = 0;
-    for(const auto & i : sigm) {
-      for(const auto & j : i) {
-	sigs.Jp()[l] = j.first;
-	sigs()[l] = j.second;
-	l++;
-      }
-      k++;
-      sigs.Ip()[k] = l;
-    }
-    return sigs;
+    return Krnh;
   }
 
 }

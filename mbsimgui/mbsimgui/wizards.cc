@@ -24,6 +24,7 @@
 #include "variable_widgets.h"
 #include "special_widgets.h"
 #include "mainwindow.h"
+#include "fe_type.h"
 #include <QRadioButton>
 #include <QMessageBox>
 #include <xercesc/dom/DOMImplementation.hpp>
@@ -284,6 +285,9 @@ namespace MBSimGUI {
     elements = new ExtWidget("Element data",new ListWidget(new FiniteElementsDataWidgetFactory(this),"Element data",1,3,false,1),false,false,"");
     layout->addWidget(elements);
 
+    exs = new ExtWidget("Calculate stresses by extrapolation",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"calculateStressesByExtrapolation");
+    layout->addWidget(exs);
+
     layout->addStretch(1);
   }
 
@@ -404,6 +408,9 @@ namespace MBSimGUI {
     nmodes = new ExtWidget("Normal mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"normalModeNumbers");
     layout->addWidget(nmodes);
 
+    rrbm = new ExtWidget("Remove rigid body modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"removeRigidBodyModes");
+    layout->addWidget(rrbm);
+
     fbnm = new ExtWidget("Fixed-boundary normal modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"fixedBoundaryNormalModes");
     layout->addWidget(fbnm);
 
@@ -494,20 +501,6 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::create() {
-    nodeMap.clear();
-    rPdm.clear();
-    PPdm.clear();
-    KrKP.clear();
-    Phi.clear();
-    Psi.clear();
-    sigmahel.clear();
-    MKm.clear();
-    PPm.clear();
-    Phim.clear();
-    Psim.clear();
-    sigm.clear();
-    indices.clear();
-
     if(hasVisitedPage(PageExtFE)) {
       extfe();
       if(hasVisitedPage(PageCMS))
@@ -533,6 +526,37 @@ namespace MBSimGUI {
     }
     damp();
     exp();
+
+    m = 0;
+    rdm.init(0);
+    rrdm.init(0);
+    rPdm.clear();
+    PPdm.clear();
+    r.clear();
+    Phi.clear();
+    Psi.clear();
+    PPdm.clear();
+    sigmahel.clear();
+    if(not Km.size()) {
+      delete Ks.Ip();
+      delete Ks.Jp();
+      delete PPdm2s[0].Ip();
+      delete PPdm2s[0].Jp();
+    }
+    Phis.clear();
+    Psis.clear();
+    sigs.clear();
+    Mm.clear();
+    Km.clear();
+    nodeTable.clear();
+    nodeCount.clear();
+    nodeNumbers.clear();
+    indices.clear();
+    ele.clear();
+    for(auto & i : type)
+      delete i;
+    type.clear();
+    links.clear();
   }
 
   void FlexibleBodyTool::save() {
@@ -569,12 +593,14 @@ namespace MBSimGUI {
 	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->writeXMLFile(element);
 	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->writeXMLFile(element);
 	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->writeXMLFile(element);
+	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->exs->writeXMLFile(element);
       }
       if(hasVisitedPage(PageBC))
 	static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->writeXMLFile(element);
       if(hasVisitedPage(PageCMS)) {
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->writeXMLFile(element);
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->writeXMLFile(element);
+	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->writeXMLFile(element);
 	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->writeXMLFile(element);
       }
       if(hasVisitedPage(PageModeShapes)) {
@@ -605,6 +631,7 @@ namespace MBSimGUI {
       static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->initializeUsingXML(element);
       static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->initializeUsingXML(element);
       static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->initializeUsingXML(element);
+      static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->initializeUsingXML(element);
       static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->initializeUsingXML(element);
       static_cast<ModeShapesPage*>(page(PageModeShapes))->V->initializeUsingXML(element);
       static_cast<ModeShapesPage*>(page(PageModeShapes))->S->initializeUsingXML(element);
@@ -625,6 +652,7 @@ namespace MBSimGUI {
       static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->initializeUsingXML(element);
       static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->initializeUsingXML(element);
       static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->initializeUsingXML(element);
+      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->exs->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->mDamp->initializeUsingXML(element);
       static_cast<DampingPage*>(page(PageDamp))->pDamp->initializeUsingXML(element);
       static_cast<LastPage*>(page(PageLast))->inputFile->initializeUsingXML(element);

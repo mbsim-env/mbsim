@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
 
       int getNumberOfNodes() { if(updSize) calcSize(); return nn; }
-      int getNodeIndex(int nodeNumber) const { return nodeMap.at(nodeNumber); }
+      int getNodeIndex(int nodeNumber) const { return nodeMap[nodeNumber]; }
 
     protected:
       std::vector<fmatvec::Vec3> WrOP, WvP, Wom, WaP, Wpsi, WjP, WjR, disp;
@@ -68,7 +68,7 @@ namespace MBSimFlexibleBody {
       std::vector<bool> updNodalJac[2];
       std::vector<fmatvec::Vector<fmatvec::Fixed<6>, double>> sigma;
       int nn{0};
-      std::map<int,int> nodeMap;
+      std::vector<int> nodeMap, nodeNumbers;
   };
 
 }

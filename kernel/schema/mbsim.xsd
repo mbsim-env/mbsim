@@ -2725,6 +2725,54 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="Cylinder" substitutionGroup="RigidContour" type="CylinderType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Kontur eines Zylinders.<br/>
+        Die Kontur liegt normal zur z-Achse des Referenzkoordinatensystems.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="CylinderType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="radius" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Radius des Zylinders.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="height" type="pv:lengthScalar">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Höhe des Zylinders.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="solid" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob der Zylinder ein Vollzylinder ist.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Frustum" substitutionGroup="RigidContour" type="FrustumType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

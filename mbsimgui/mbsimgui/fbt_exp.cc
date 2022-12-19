@@ -72,18 +72,20 @@ namespace MBSimGUI {
 	mdata=file.createChildObject<H5::SimpleDataset<vector<vector<double>>>>("shape function shape function integral")(PPdm_.size(),PPdm_[0].size());
 	mdata->write((vector<vector<double>>)PPdm_);
 
-	vector<double> r(3*nN);
+	int nN = r.size();
+
+	vector<double> r_(3*nN);
 	vector<vector<double>> Phi_(3*nN,vector<double>(Pdm.cols()));
 	for(int i=0; i<nN; i++) {
 	  for(int j=0; j<3; j++) {
-	    r[i*3+j] = KrKP[i](j);
+	    r_[i*3+j] = r[i](j);
 	    for(int k=0; k<Pdm.cols(); k++)
 	      Phi_[i*3+j][k] = Phi[i](j,k);
 	  }
 	}
 
-	vdata=file.createChildObject<H5::SimpleDataset<vector<double>>>("nodal relative position")(r.size());
-	vdata->write(r);
+	vdata=file.createChildObject<H5::SimpleDataset<vector<double>>>("nodal relative position")(r_.size());
+	vdata->write(r_);
 	mdata=file.createChildObject<H5::SimpleDataset<vector<vector<double>>>>("nodal shape matrix of translation")(Phi_.size(),Phi_[0].size());
 	mdata->write(Phi_);
 
@@ -115,6 +117,11 @@ namespace MBSimGUI {
 	if(indices.size()) {
 	  auto vidata=file.createChildObject<H5::SimpleDataset<vector<int>>>("openmbv indices")(indices.size());
 	  vidata->write(indices);
+	}
+
+	if(nodeNumbers.size()) {
+	  auto vidata=file.createChildObject<H5::SimpleDataset<vector<int>>>("node numbers")(nodeNumbers.size());
+	  vidata->write(nodeNumbers);
 	}
       }
     }

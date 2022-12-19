@@ -73,10 +73,25 @@ namespace MBSimFlexibleBody {
 
   void NodeBasedBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      if(nodeMap.empty()) {
-        for(int i=0; i<getNumberOfNodes(); i++)
+      if(nodeNumbers.empty()) {
+	nodeNumbers.resize(getNumberOfNodes());
+	nodeMap.resize(getNumberOfNodes()+1);
+        for(int i=0; i<getNumberOfNodes(); i++) {
+	  nodeNumbers[i] = i+1;
           nodeMap[i+1] = i;
+	}
       }
+      else {
+	int nmax = 0;
+	for(size_t i=0; i<nodeNumbers.size(); i++) {
+	  if(nodeNumbers[i]>nmax)
+	    nmax = nodeNumbers[i];
+	}
+	nodeMap.resize(nmax+1);
+	for(size_t i=0; i<nodeNumbers.size(); i++)
+	  nodeMap[nodeNumbers[i]] = i;
+      }
+
       updNodalPos.resize(nn,true);
       updNodalVel.resize(nn,true);
       updNodalAcc.resize(nn,true);

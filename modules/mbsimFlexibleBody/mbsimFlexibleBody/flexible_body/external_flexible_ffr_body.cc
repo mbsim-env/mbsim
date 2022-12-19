@@ -159,6 +159,12 @@ namespace MBSimFlexibleBody {
       ombvIndices = file.openChildObject<H5::SimpleDataset<vector<int>>>("openmbv indices")->read();
       names.erase(it);
     }
+
+    it = findChild(names,"node numbers");
+    if(it!=list<string>::iterator()) {
+      nodeNumbers = file.openChildObject<H5::SimpleDataset<vector<int>>>("node numbers")->read();
+      names.erase(it);
+    }
   }
 
   void ExternalFlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
@@ -193,9 +199,9 @@ namespace MBSimFlexibleBody {
       ombvBody->initializeUsingXML(e);
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodeNumbers");
-    if(e) setOpenMBVNodeNumbers(E(e)->getText<VecVI>());
+    if(e) setOpenMBVNodeNumbers(E(e)->getText<vector<int>>());
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
-    if(e) setPlotNodeNumbers(E(e)->getText<VecVI>());
+    if(e) setPlotNodeNumbers(E(e)->getText<vector<int>>());
   }
 
 }

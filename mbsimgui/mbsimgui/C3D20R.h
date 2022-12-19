@@ -17,23 +17,31 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <config.h>
-#include "wizards.h"
-#include "basic_widgets.h"
-#include "extended_widgets.h"
+#ifndef _C3D20R_H_
+#define _C3D20R_H_
 
-using namespace std;
-using namespace fmatvec;
+#include "C3D20Base.h"
 
 namespace MBSimGUI {
 
-  void FlexibleBodyTool::msm() {
-    string str = static_cast<FileWidget*>(static_cast<ModeShapesPage*>(page(PageModeShapes))->V->getWidget())->getFile(true).toStdString();
-    if(!str.empty())
-      U <<= readMat(str);
-    str = static_cast<FileWidget*>(static_cast<ModeShapesPage*>(page(PageModeShapes))->S->getWidget())->getFile(true).toStdString();
-    if(!str.empty())
-      S <<= readMat(str);
-  }
+  class C3D20R : public C3D20Base {
+    public:
+      C3D20R();
+
+      int getNumberOfIntegrationPoints() const override { return 8; }
+      int getNumberOfExtrapolationPoints() const override { return 8; }
+      const fmatvec::Vec3& getIntegrationPoint(int i) const override { return rI[i]; }
+      double getWeight(int i) const override { return wI[i]; }
+      double getExtrapolationCoefficient(int i, int j) const override { return A[i][j]; }
+      int getExtrapolationIndex(int i, int j) const override { return B[i][j]; }
+
+    private:
+      fmatvec::Vec3 rI[8];
+      double wI[8];
+      double A[8][8];
+      int B[12][2];
+  };
 
 }
+
+#endif

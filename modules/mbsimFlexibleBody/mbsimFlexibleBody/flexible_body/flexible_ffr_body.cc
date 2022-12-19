@@ -30,11 +30,6 @@ namespace MBSimFlexibleBody {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleFfrBody)
 
-  void FlexibleFfrBody::setNodeNumbers(const vector<int> &n) {
-    for(size_t i=0; i<n.size(); i++)
-      nodeMap[n[i]] = i;
-  }
-
   void FlexibleFfrBody::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
       if(mDamping.size()) {
@@ -224,7 +219,7 @@ namespace MBSimFlexibleBody {
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVNodeNumbers");
-    if(e) setOpenMBVNodeNumbers(E(e)->getText<VecVI>());
+    if(e) setOpenMBVNodeNumbers(E(e)->getText<vector<int>>());
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVColorRepresentation");
     if(e) {
@@ -244,7 +239,7 @@ namespace MBSimFlexibleBody {
     }
 
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"plotNodeNumbers");
-    if(e) setPlotNodeNumbers(E(e)->getText<VecVI>());
+    if(e) setPlotNodeNumbers(E(e)->getText<vector<int>>());
   }
 
   void FlexibleFfrBody::setOpenMBVFlexibleBody(const std::shared_ptr<OpenMBV::FlexibleBody> &body) {

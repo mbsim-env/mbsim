@@ -29,14 +29,14 @@ namespace MBSimGUI {
 
   void FlexibleBodyTool::damp() {
     if(static_cast<DampingPage*>(page(PageDamp))->mDamp->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->mDamp->getWidget())->getWidget())->getEvalMat();
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->mDamp->getWidget())->getWidget())->getWidget()->getEvalMat();
       mDamp.resize(mat.size(),NONINIT);
       for(size_t i=0; i<mat.size(); i++)
 	mDamp(i) = mat[i][0].toDouble();
     }
 
     if(static_cast<DampingPage*>(page(PageDamp))->pDamp->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->pDamp->getWidget())->getWidget())->getEvalMat();
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->pDamp->getWidget())->getWidget())->getWidget()->getEvalMat();
       for(size_t i=0; i<mat.size(); i++)
 	pDamp(i) = mat[i][0].toDouble();
     }

@@ -331,8 +331,9 @@ namespace MBSimFlexibleBody {
 
   void FlexibleBody1s21Cosserat::setNumberElements(int n) {
     nn = n;
+    nodeNumbers.resize(nn);
     for(int i=0; i<nn; i++)
-      nodeMap[i] = i;
+      nodeNumbers[i] = i;
     Elements = n;
     rotationalElements = n;
   }

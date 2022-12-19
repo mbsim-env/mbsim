@@ -423,39 +423,31 @@ namespace MBSimFlexibleBody {
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
-        if(plotNodes.size()==0) {
-          plotNodes.resize(nodeMap.size(),NONINIT);
-          int j=0;
-          for(const auto & i : nodeMap)
-            plotNodes(j++) = i.first;
-        }
+        if(plotNodes.size()==0)
+          plotNodes = nodeNumbers;
         if(plotFeature[MBSimFlexibleBody::nodalDisplacement]) {
-          for(int i=0; i<plotNodes.size(); i++)
-	    addToPlot("nodal displacement "+to_string(plotNodes(i)),{"x","y","z"});
+          for(size_t i=0; i<plotNodes.size(); i++)
+	    addToPlot("nodal displacement "+to_string(plotNodes[i]),{"x","y","z"});
         }
         if(plotFeature[MBSimFlexibleBody::nodalStress]) {
-          for(int i=0; i<plotNodes.size(); i++)
-	    addToPlot("nodal stress "+to_string(plotNodes(i)),{"xx","yy","zz","xy","yz","xz"});
+          for(size_t i=0; i<plotNodes.size(); i++)
+	    addToPlot("nodal stress "+to_string(plotNodes[i]),{"xx","yy","zz","xy","yz","xz"});
         }
         if(plotFeature[MBSimFlexibleBody::nodalEquivalentStress]) {
-          for(int i=0; i<plotNodes.size(); i++)
-            addToPlot("nodal equivalent stress "+to_string(plotNodes(i)));
+          for(size_t i=0; i<plotNodes.size(); i++)
+            addToPlot("nodal equivalent stress "+to_string(plotNodes[i]));
         }
       }
       if(plotFeature[ref(openMBV)] and openMBVBody) {
-        if(visuNodes.size()==0) {
-          visuNodes.resize(nodeMap.size(),NONINIT);
-          int j=0;
-          for(const auto & i : nodeMap)
-            visuNodes(j++) = i.first;
-        }
+        if(visuNodes.size()==0)
+          visuNodes = nodeNumbers;
         if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
           dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(visuNodes.size());
       }
       for(int i=0; i<plotNodes.size(); i++)
-        plotNodes(i) = getNodeIndex(plotNodes(i));
+        plotNodes[i] = getNodeIndex(plotNodes[i]);
       for(int i=0; i<visuNodes.size(); i++)
-        visuNodes(i) = getNodeIndex(visuNodes(i));
+        visuNodes[i] = getNodeIndex(visuNodes[i]);
 
       NodeBasedBody::init(stage, config);
     }
@@ -482,26 +474,26 @@ namespace MBSimFlexibleBody {
   void GenericFlexibleFfrBody::plot() {
     if(plotFeature[plotRecursive]) {
       if(plotFeature[nodalDisplacement]) {
-        for(int i=0; i<plotNodes.size(); i++)
-	  Element::plot(evalNodalDisplacement(plotNodes(i)));
+        for(size_t i=0; i<plotNodes.size(); i++)
+	  Element::plot(evalNodalDisplacement(plotNodes[i]));
       }
       if(plotFeature[nodalStress]) {
-        for(int i=0; i<plotNodes.size(); i++)
-	  Element::plot(evalNodalStress(plotNodes(i)));
+        for(size_t i=0; i<plotNodes.size(); i++)
+	  Element::plot(evalNodalStress(plotNodes[i]));
       }
       if(plotFeature[nodalEquivalentStress]) {
-        for(int i=0; i<plotNodes.size(); i++)
-          Element::plot(evalEquivalentStress(plotNodes(i)));
+        for(size_t i=0; i<plotNodes.size(); i++)
+          Element::plot(evalEquivalentStress(plotNodes[i]));
       }
     }
     if(plotFeature[ref(openMBV)] and openMBVBody) {
       vector<double> data;
       data.push_back(getTime());
-      for(int i=0; i<visuNodes.size(); i++) {
-        const Vec3 &WrOP = evalNodalPosition(visuNodes(i));
+      for(size_t i=0; i<visuNodes.size(); i++) {
+        const Vec3 &WrOP = evalNodalPosition(visuNodes[i]);
         for(int j=0; j<3; j++)
           data.push_back(WrOP(j));
-        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(visuNodes(i)));
+        data.push_back((this->*evalOMBVColorRepresentation[ombvColorRepresentation])(visuNodes[i]));
       }
       dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->append(data);
     }
