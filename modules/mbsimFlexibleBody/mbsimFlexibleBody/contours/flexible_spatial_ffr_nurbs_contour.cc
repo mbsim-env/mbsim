@@ -295,6 +295,10 @@ namespace MBSimFlexibleBody {
     return crossProduct(R->evalAngularVelocity(),evalWv(zeta)) + evalWv_t(zeta);
   }
 
+  Vec3 FlexibleSpatialFfrNurbsContour::evalParWnPart(const Vec2 &zeta) {
+    return crossProduct(R->evalAngularVelocity(),evalWn(zeta)) + evalWn_t(zeta);
+  }
+
   void FlexibleSpatialFfrNurbsContour::updatePositions(ContourFrame *frame) {
     throwError("(FlexibleSpatialFfrNurbsContour::updatePositions): not implemented");
   }

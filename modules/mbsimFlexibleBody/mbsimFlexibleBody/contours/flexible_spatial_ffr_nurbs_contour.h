@@ -82,6 +82,7 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalParWvCParXi(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParWuPart(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParWvPart(const fmatvec::Vec2 &zeta) override;
+      fmatvec::Vec3 evalParWnPart(const fmatvec::Vec2 &zeta) override;
 
       fmatvec::Vec3 evalKn_t(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalKs_t(const fmatvec::Vec2 &zeta);
