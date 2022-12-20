@@ -64,8 +64,8 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief contour classes 
        */
-      MBSim::Circle *circle{0};
-      MBSim::Contour *extrusion{0};
+      MBSim::Circle *circle{nullptr};
+      MBSim::Contour *extrusion{nullptr};
 
       fmatvec::Vec staticNodes;
 

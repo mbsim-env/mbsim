@@ -29,9 +29,9 @@ using namespace MBSim;
 
 namespace MBSimFlexibleBody {
 
-  FiniteElement1s33CosseratRotation::FiniteElement1s33CosseratRotation(double l0_, double E_, double G_, double I1_, double I2_, double I0_, CardanPtr ag_) : l0(l0_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), k10(0.), k20(0.), h(9,INIT,0.), X(12,INIT,0.), ag(ag_) {}
+  FiniteElement1s33CosseratRotation::FiniteElement1s33CosseratRotation(double l0_, double E_, double G_, double I1_, double I2_, double I0_, CardanPtr ag_) : l0(l0_), E(E_), G(G_), I1(I1_), I2(I2_), I0(I0_), k10(0.), k20(0.), h(9,INIT,0.), X(12,INIT,0.), ag(std::move(ag_)) {}
 
-  FiniteElement1s33CosseratRotation::~FiniteElement1s33CosseratRotation() {}
+  FiniteElement1s33CosseratRotation::~FiniteElement1s33CosseratRotation() = default;
 
   void FiniteElement1s33CosseratRotation::setCurlRadius(double R1,double R2) {
     if (fabs(R1)>epsroot) k10 = 1./R1;

@@ -148,11 +148,11 @@ int main(int argc, char *argv[]) {
     if(xmlFile) {
       // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all modules."<<endl;
-      set<path> schemas=getMBSimXMLSchemas({}, true);
+      auto xmlCatalog=getMBSimXMLCatalog({}, true);
 
       // create parser (a validating parser for XML input and a none validating parser for shared library input)
       cout<<"Create validating XML parser."<<endl;
-      std::shared_ptr<DOMParser> parser=DOMParser::create(schemas);
+      std::shared_ptr<DOMParser> parser=DOMParser::create(xmlCatalog->getDocumentElement());
 
       // load MBSim project XML document
       cout<<"Load MBSim model from XML project file."<<endl;
@@ -292,7 +292,8 @@ int main(int argc, char *argv[]) {
         integrator->preIntegrate();
       }
       catch(MBSimError &ex) {
-        throw runtime_error("The used integrator "+boost::core::demangle(typeid(*integrator.get()).name())+
+        auto &integratorRef=*integrator;
+        throw runtime_error("The used integrator "+boost::core::demangle(typeid(integratorRef).name())+
           " failed to initialize the co-simulation interface. Error message was:\n"+
           ex.what()+"\n"+
           "The model may be wrong or this integrator cannot be used for cosim FMUs.");

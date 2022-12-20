@@ -54,13 +54,13 @@ namespace MBSimControl {
     vector<ExternSignalSink*> sink;
     vector<Link*> links = system->getLinks();
     int nsource=0, nsink=0;
-    for(size_t i=0; i<links.size(); i++) {
-      if(dynamic_cast<ExternSignalSource*>(links[i])) {
-	source.push_back(static_cast<ExternSignalSource*>(links[i]));
+    for(auto & link : links) {
+      if(dynamic_cast<ExternSignalSource*>(link)) {
+	source.push_back(static_cast<ExternSignalSource*>(link));
 	nsource += source[source.size()-1]->getSignalSize();
       }
-      if(dynamic_cast<ExternSignalSink*>(links[i])) {
-	sink.push_back(static_cast<ExternSignalSink*>(links[i]));
+      if(dynamic_cast<ExternSignalSink*>(link)) {
+	sink.push_back(static_cast<ExternSignalSink*>(link));
 	nsink += sink[sink.size()-1]->getSignalSize();
       }
     }
@@ -125,9 +125,9 @@ namespace MBSimControl {
     Vec zd0 = system->evalzd();
     Vec sigsi0(nsink), sigsi1(nsink);
     int j=0;
-    for(size_t i=0; i<sink.size(); i++) {
-      sigsi0.set(RangeV(j,j+sink[i]->getSignalSize()-1), sink[i]->evalSignal());
-      j+=sink[i]->getSignalSize();
+    for(auto & i : sink) {
+      sigsi0.set(RangeV(j,j+i->getSignalSize()-1), i->evalSignal());
+      j+=i->getSignalSize();
     }
     for(int i=0; i<system->getzSize(); i++) {
       double ztmp = system->getState()(i);
@@ -147,9 +147,9 @@ namespace MBSimControl {
 	Vec zd1 = system->evalzd();
 	B.set(l, (zd1 - zd0) / epsroot);
 	j=0;
-	for(size_t m=0; m<sink.size(); m++) {
-	  sigsi1.set(RangeV(j,j+sink[m]->getSignalSize()-1), sink[m]->evalSignal());
-	  j+=sink[m]->getSignalSize();
+	for(auto & m : sink) {
+	  sigsi1.set(RangeV(j,j+m->getSignalSize()-1), m->evalSignal());
+	  j+=m->getSignalSize();
 	}
 	D.set(l, (sigsi1 - sigsi0) / epsroot);
 	sigso(k) = u0(l);
@@ -161,9 +161,9 @@ namespace MBSimControl {
       system->getState()(i) += epsroot;
       system->resetUpToDate();
       j=0;
-      for(size_t k=0; k<sink.size(); k++) {
-	sigsi1.set(RangeV(j,j+sink[k]->getSignalSize()-1), sink[k]->evalSignal());
-	j+=sink[k]->getSignalSize();
+      for(auto & k : sink) {
+	sigsi1.set(RangeV(j,j+k->getSignalSize()-1), k->evalSignal());
+	j+=k->getSignalSize();
       }
       C.set(i, (sigsi1 - sigsi0) / epsroot);
       system->getState()(i) = ztmp;
@@ -175,7 +175,7 @@ namespace MBSimControl {
     vector<pair<double,int>> fna;
     for(int i=0; i<w.size()-1; i++) {
       if((abs(imag(w(i)))>=2*M_PI*fmin) and (abs(imag(w(i)))<=2*M_PI*fmax) and (w(i+1)==conj(w(i)))) {
-	fna.push_back(pair<double,int>(imag(w(i))/2/M_PI,i));
+	fna.emplace_back(imag(w(i))/2/M_PI,i);
 	i++;
       }
     }
@@ -217,18 +217,18 @@ namespace MBSimControl {
 
     ofstream os("inputtable.asc");
     if(os.is_open()) {
-      for(size_t i=0; i<source.size(); i++) {
-	for(int j=0; j<source[i]->getSignalSize(); j++)
-	  os << source[i]->getPath() << " u " << j << endl;
+      for(auto & i : source) {
+	for(int j=0; j<i->getSignalSize(); j++)
+	  os << i->getPath() << " u " << j << endl;
       }
       os.close();
     }
 
     os.open("outputtable.asc");
     if(os.is_open()) {
-      for(size_t i=0; i<sink.size(); i++) {
-	for(int j=0; j<sink[i]->getSignalSize(); j++)
-	  os << sink[i]->getPath() << " y " << j << endl;
+      for(auto & i : sink) {
+	for(int j=0; j<i->getSignalSize(); j++)
+	  os << i->getPath() << " y " << j << endl;
       }
       os.close();
     }
@@ -342,7 +342,7 @@ namespace MBSimControl {
       u.init(0);
       for(size_t i=0; i<fap.size(); i++) {
 	for(int j=0; j<fap[i].rows(); j++) {
-	  iOm.push_back(complex<double>(0,2*M_PI*fap[i](j,0)));
+	  iOm.emplace_back(0,2*M_PI*fap[i](j,0));
 	  SquareMatrix<Ref,complex<double>> H = SquareMatrix<Ref,complex<double>>(A.size(),Eye(),iOm[iOm.size()-1]) - A;
 	  u(i).real(fap[i](j,1)*cos(fap[i](j,2)));
 	  u(i).imag(-fap[i](j,1)*sin(fap[i](j,2)));

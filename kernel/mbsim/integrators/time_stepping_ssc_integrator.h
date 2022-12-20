@@ -247,9 +247,9 @@ namespace MBSim {
 
       /** subroutines for integrate function */
 
-      void preIntegrate();
-      void subIntegrate(double tStop);
-      void postIntegrate();
+      void preIntegrate() override;
+      void subIntegrate(double tStop) override;
+      void postIntegrate() override;
       void preIntegrate(MBSim::DynamicSystemSolver& systemT1_, MBSim::DynamicSystemSolver& systemT2_, MBSim::DynamicSystemSolver& systemT3_);
        
       /** internal subroutines */
@@ -260,7 +260,7 @@ namespace MBSim {
       double calculatedtNewRel(const fmatvec::Vec &ErrorLocal, double H);
       void plot();
 
-      virtual void initializeUsingXML(xercesc::DOMElement *element);
+      virtual void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void updatebi();
       void updatela();

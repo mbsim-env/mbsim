@@ -40,10 +40,10 @@ namespace MBSimFlexibleBody {
   }
 
   FlexibleBody1s21Cosserat::~FlexibleBody1s21Cosserat() {
-    for (unsigned int i = 0; i < rotationDiscretization.size(); i++) {
-      if (rotationDiscretization[i]) {
-        delete rotationDiscretization[i];
-        rotationDiscretization[i] = NULL;
+    for (auto & i : rotationDiscretization) {
+      if (i) {
+        delete i;
+        i = nullptr;
       }
     }
   }
@@ -251,16 +251,16 @@ namespace MBSimFlexibleBody {
       /* translational elements */
       for (int i = 0; i < Elements; i++) {
         discretization.push_back(new FiniteElement1s21CosseratTranslation(l0, rho, A, E, G, I1, g));
-        qElement.push_back(Vec(discretization[i]->getqSize(), INIT, 0.));
-        uElement.push_back(Vec(discretization[i]->getuSize(), INIT, 0.));
+        qElement.emplace_back(discretization[i]->getqSize(), INIT, 0.);
+        uElement.emplace_back(discretization[i]->getuSize(), INIT, 0.);
         static_cast<FiniteElement1s21CosseratTranslation*>(discretization[i])->setMaterialDamping(Elements * cEps0D, cEps1D);
       }
 
       /* rotational elements */
       for (int i = 0; i < rotationalElements; i++) {
         rotationDiscretization.push_back(new FiniteElement1s21CosseratRotation(l0, E, G, I1));
-        qRotationElement.push_back(Vec(rotationDiscretization[i]->getqSize(), INIT, 0.));
-        uRotationElement.push_back(Vec(rotationDiscretization[i]->getuSize(), INIT, 0.));
+        qRotationElement.emplace_back(rotationDiscretization[i]->getqSize(), INIT, 0.);
+        uRotationElement.emplace_back(rotationDiscretization[i]->getuSize(), INIT, 0.);
         if (fabs(R1) > epsroot)
           static_cast<FiniteElement1s21CosseratRotation*>(rotationDiscretization[i])->setCurlRadius(R1);
       }
@@ -439,15 +439,15 @@ namespace MBSimFlexibleBody {
     /* translational elements */
     for (int i = 0; i < Elements; i++) {
       discretization.push_back(new FiniteElement1s21CosseratTranslation(l0, rho, A, E, G, I1, g));
-      qElement.push_back(Vec(discretization[0]->getqSize(), INIT, 0.));
-      uElement.push_back(Vec(discretization[0]->getuSize(), INIT, 0.));
+      qElement.emplace_back(discretization[0]->getqSize(), INIT, 0.);
+      uElement.emplace_back(discretization[0]->getuSize(), INIT, 0.);
     }
 
     /* rotational elements */
     for (int i = 0; i < rotationalElements; i++) {
       rotationDiscretization.push_back(new FiniteElement1s21CosseratRotation(l0, E, G, I1));
-      qRotationElement.push_back(Vec(rotationDiscretization[0]->getqSize(), INIT, 0.));
-      uRotationElement.push_back(Vec(rotationDiscretization[0]->getuSize(), INIT, 0.));
+      qRotationElement.emplace_back(rotationDiscretization[0]->getqSize(), INIT, 0.);
+      uRotationElement.emplace_back(rotationDiscretization[0]->getuSize(), INIT, 0.);
     }
     FlexibleBody1sCosserat::init(unknownStage, InitConfigSet());
 //    BuildElements();
@@ -477,8 +477,8 @@ namespace MBSimFlexibleBody {
   void FlexibleBody1s21Cosserat::initM() {
     MConst.resize(3 * Elements);
     LLMConst.resize(3 * Elements);
-    for (int i = 0; i < (int) discretization.size(); i++)
-      static_cast<FiniteElement1s21CosseratTranslation*>(discretization[i])->initM(); // compute attributes of finite element
+    for (auto & i : discretization)
+      static_cast<FiniteElement1s21CosseratTranslation*>(i)->initM(); // compute attributes of finite element
     for (int i = 0; i < (int) discretization.size(); i++)
       GlobalMatrixContribution(i, discretization[i]->getM(), MConst); // assemble
     for (int i = 0; i < (int) discretization.size(); i++) {
@@ -655,8 +655,8 @@ namespace MBSimFlexibleBody {
 
   Mat FlexibleBody1s21Cosserat::readPositionMatrix(const string & h5File, const string & Job) {
     H5::File file(h5File, H5::File::read);
-    H5::Group *group = file.openChildObject<H5::Group>("objects")->openChildObject<H5::Group>(name);
-    H5::VectorSerie<double> *data = group->openChildObject<H5::VectorSerie<double>>("data");
+    auto *group = file.openChildObject<H5::Group>("objects")->openChildObject<H5::Group>(name);
+    auto *data = group->openChildObject<H5::VectorSerie<double>>("data");
 
     int qsize = data->getColumns();
     int tsize = data->getColumn(0).size();

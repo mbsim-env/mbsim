@@ -43,17 +43,17 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor
        */
-      ContactKinematicsCircleHollowCylinderFlexible() : useLocal(false) {}
+      ContactKinematicsCircleHollowCylinderFlexible() = default;
 
       /**
        * \brief destructor
        */
-      virtual ~ContactKinematicsCircleHollowCylinderFlexible();
+       ~ContactKinematicsCircleHollowCylinderFlexible() override;
 
       /* INHERITED INTERFACE */
-      virtual void assignContours(const std::vector<MBSim::Contour*> &contour);
+       void assignContours(const std::vector<MBSim::Contour*> &contour) override;
       virtual void updateg(double &g, std::vector<MBSim::Frame*> &cFrame, int index = 0);
-      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::Frame*> &cFrame) { throw runtime_error("(ContactKinematicsCircleHollowCylinderFlexible::updatewb): Not implemented!"); };
+      virtual void updatewb(fmatvec::Vec &wb, double g, std::vector<MBSim::Frame*> &cFrame) { throw std::runtime_error("(ContactKinematicsCircleHollowCylinderFlexible::updatewb): Not implemented!"); };
       /***************************************************/
     
     private:
@@ -76,7 +76,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \brief flag to use local or global search
        */
-      bool useLocal;
+      bool useLocal {false};
   };
 
 }

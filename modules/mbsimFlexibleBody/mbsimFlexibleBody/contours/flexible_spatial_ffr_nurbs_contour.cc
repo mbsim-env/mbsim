@@ -427,7 +427,7 @@ namespace MBSimFlexibleBody {
   }
 
   ContourFrame* FlexibleSpatialFfrNurbsContour::createContourFrame(const string &name) {
-    FloatingContourFrame *frame = new FloatingContourFrame(name);
+    auto *frame = new FloatingContourFrame(name);
     frame->setContourOfReference(this);
     return frame;
   }

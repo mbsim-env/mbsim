@@ -21,9 +21,7 @@ namespace MBSimFlexibleBody {
     
   }
   
-  NeutralNurbsPosition2s::~NeutralNurbsPosition2s() {
-    // TODO Auto-generated destructor stub
-  }
+  NeutralNurbsPosition2s::~NeutralNurbsPosition2s() = default;
 
   Vec3 NeutralNurbsPosition2s::evalPosition(const Vec2 &zeta) {
     if(updSurface) computeCurve(true);

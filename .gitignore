@@ -7,6 +7,7 @@ kernel/config.guess
 kernel/config.h.in
 kernel/config.sub
 kernel/configure
+kernel/compile_commands.json
 kernel/depcomp
 kernel/doc/Makefile.in
 kernel/install-sh
@@ -49,6 +50,7 @@ mbsimfmi/config.guess
 mbsimfmi/config.h.in
 mbsimfmi/config.sub
 mbsimfmi/configure
+mbsimfmi/compile_commands.json
 mbsimfmi/createfmu/Makefile.in
 mbsimfmi/depcomp
 mbsimfmi/general/Makefile.in
@@ -66,6 +68,7 @@ mbsimgui/config.guess
 mbsimgui/config.h.in
 mbsimgui/config.sub
 mbsimgui/configure
+mbsimgui/compile_commands.json
 mbsimgui/depcomp
 mbsimgui/install-sh
 mbsimgui/ltmain.sh
@@ -80,6 +83,7 @@ mbsimxml/config.guess
 mbsimxml/config.h.in
 mbsimxml/config.sub
 mbsimxml/configure
+mbsimxml/compile_commands.json
 mbsimxml/depcomp
 mbsimxml/install-sh
 mbsimxml/ltmain.sh
@@ -95,6 +99,7 @@ modules/mbsimPhysics/config.guess
 modules/mbsimPhysics/config.h.in
 modules/mbsimPhysics/config.sub
 modules/mbsimPhysics/configure
+modules/mbsimPhysics/compile_commands.json
 modules/mbsimPhysics/depcomp
 modules/mbsimPhysics/doc/Makefile.in
 modules/mbsimPhysics/install-sh
@@ -112,6 +117,7 @@ modules/mbsimControl/config.guess
 modules/mbsimControl/config.h.in
 modules/mbsimControl/config.sub
 modules/mbsimControl/configure
+modules/mbsimControl/compile_commands.json
 modules/mbsimControl/depcomp
 modules/mbsimControl/doc/Makefile.in
 modules/mbsimControl/install-sh
@@ -128,6 +134,7 @@ modules/mbsimElectronics/config.guess
 modules/mbsimElectronics/config.h.in
 modules/mbsimElectronics/config.sub
 modules/mbsimElectronics/configure
+modules/mbsimElectronics/compile_commands.json
 modules/mbsimElectronics/depcomp
 modules/mbsimElectronics/doc/Makefile.in
 modules/mbsimElectronics/install-sh
@@ -142,6 +149,7 @@ modules/mbsimFlexibleBody/config.guess
 modules/mbsimFlexibleBody/config.h.in
 modules/mbsimFlexibleBody/config.sub
 modules/mbsimFlexibleBody/configure
+modules/mbsimFlexibleBody/compile_commands.json
 modules/mbsimFlexibleBody/depcomp
 modules/mbsimFlexibleBody/doc/Makefile.in
 modules/mbsimFlexibleBody/install-sh
@@ -168,6 +176,7 @@ modules/mbsimHydraulics/config.guess
 modules/mbsimHydraulics/config.h.in
 modules/mbsimHydraulics/config.sub
 modules/mbsimHydraulics/configure
+modules/mbsimHydraulics/compile_commands.json
 modules/mbsimHydraulics/depcomp
 modules/mbsimHydraulics/doc/Makefile.in
 modules/mbsimHydraulics/install-sh
@@ -184,6 +193,7 @@ modules/mbsimInterface/config.guess
 modules/mbsimInterface/config.h.in
 modules/mbsimInterface/config.sub
 modules/mbsimInterface/configure
+modules/mbsimInterface/compile_commands.json
 modules/mbsimInterface/depcomp
 modules/mbsimInterface/doc/Makefile.in
 modules/mbsimInterface/install-sh
@@ -200,6 +210,7 @@ modules/mbsimPowertrain/config.guess
 modules/mbsimPowertrain/config.h.in
 modules/mbsimPowertrain/config.sub
 modules/mbsimPowertrain/configure
+modules/mbsimPowertrain/compile_commands.json
 modules/mbsimPowertrain/depcomp
 modules/mbsimPowertrain/doc/Makefile.in
 modules/mbsimPowertrain/install-sh
@@ -221,6 +232,7 @@ thirdparty/nurbs++/autom4te.cache/
 thirdparty/nurbs++/config.guess
 thirdparty/nurbs++/config.sub
 thirdparty/nurbs++/configure
+thirdparty/nurbs++/compile_commands.json
 thirdparty/nurbs++/depcomp
 thirdparty/nurbs++/examples/Makefile.in
 thirdparty/nurbs++/examples/image/Makefile.in

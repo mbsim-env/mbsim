@@ -20,6 +20,8 @@
 #ifndef _STATE_MACHINE_H_
 #define _STATE_MACHINE_H_
 
+#include <utility>
+
 #include "mbsimControl/signal_.h"
 
 namespace MBSimControl {
@@ -37,7 +39,7 @@ namespace MBSimControl {
       std::string signalStr;
     };
     struct State {
-      State(const std::string &name_, double val_) : name(name_), val(val_), t0(0) { }
+      State(std::string name_, double val_) : name(std::move(name_)), val(val_), t0(0) { }
       void addTransition(const Transition &trans_) { trans.emplace_back(trans_); }
       std::string name;
       double val;

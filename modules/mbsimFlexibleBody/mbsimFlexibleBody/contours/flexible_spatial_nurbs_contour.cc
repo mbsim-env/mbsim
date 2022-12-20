@@ -343,12 +343,12 @@ namespace MBSimFlexibleBody {
       srfVel.setKnotU(uKnot);
       srfVel.setKnotV(vKnot);
       srfJac.resize(gethSize());
-      for(size_t i=0; i<srfJac.size(); i++) {
-        srfJac[i].resize(index.rows(),index.cols(),uKnot.size()-index.rows()-1,vKnot.size()-index.cols()-1);
-        srfJac[i].setDegreeU(uKnot.size()-index.rows()-1);
-        srfJac[i].setDegreeV(vKnot.size()-index.cols()-1);
-        srfJac[i].setKnotU(uKnot);
-        srfJac[i].setKnotV(vKnot);
+      for(auto & i : srfJac) {
+        i.resize(index.rows(),index.cols(),uKnot.size()-index.rows()-1,vKnot.size()-index.cols()-1);
+        i.setDegreeU(uKnot.size()-index.rows()-1);
+        i.setDegreeV(vKnot.size()-index.cols()-1);
+        i.setKnotU(uKnot);
+        i.setKnotV(vKnot);
       }
       srfGA.resize(index.rows(),index.cols(),uKnot.size()-index.rows()-1,vKnot.size()-index.cols()-1);
       srfGA.setDegreeU(uKnot.size()-index.rows()-1);
@@ -360,7 +360,7 @@ namespace MBSimFlexibleBody {
   }
 
   ContourFrame* FlexibleSpatialNurbsContour::createContourFrame(const string &name) {
-    FloatingContourFrame *frame = new FloatingContourFrame(name);
+    auto *frame = new FloatingContourFrame(name);
     frame->setContourOfReference(this);
     return frame;
   }

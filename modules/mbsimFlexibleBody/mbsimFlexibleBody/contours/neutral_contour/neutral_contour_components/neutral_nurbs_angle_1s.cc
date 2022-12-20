@@ -23,9 +23,7 @@ namespace MBSimFlexibleBody {
     Nodelist.resize(nodes.size() + 1);
   }
   
-  NeutralNurbsAngle1s::~NeutralNurbsAngle1s() {
-    // TODO Auto-generated destructor stub
-  }
+  NeutralNurbsAngle1s::~NeutralNurbsAngle1s() = default;
 
   Vec3 NeutralNurbsAngle1s::calculateStaggeredAngle(double oringnalPosition){
     if(updCurve) computeCurve(true);

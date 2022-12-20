@@ -60,8 +60,7 @@ namespace MBSimFMI {
   };
 
   extern "C"
-  typedef std::shared_ptr<FMIInstanceBase> (*fmiInstanceCreatePtr)(bool cosim, fmiString instanceName_, fmiString GUID,
-                                                                   fmiCallbackLogger logger, fmiBoolean loggingOn);
+  using fmiInstanceCreatePtr = std::shared_ptr<FMIInstanceBase> (*)(bool, fmiString, fmiString, fmiCallbackLogger, fmiBoolean);
   extern "C"
   std::shared_ptr<FMIInstanceBase> fmiInstanceCreate(bool cosim, fmiString instanceName_, fmiString GUID,
                                                      fmiCallbackLogger logger, fmiBoolean loggingOn);

@@ -42,9 +42,9 @@ namespace MBSim {
        */
       virtual ~RKSuiteIntegrator() override;
 
-      void preIntegrate();
-      void subIntegrate(double tStop);
-      void postIntegrate();
+      void preIntegrate() override;
+      void subIntegrate(double tStop) override;
+      void postIntegrate() override;
 
       /* GETTER / SETTER */
       void setMethod(Method method_) { method = method_; }

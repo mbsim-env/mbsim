@@ -34,8 +34,8 @@ namespace MBSimHydraulics {
     public:
       Controlvalve43(const std::string& name="");
       
-      void init(InitStage stage, const MBSim::InitConfigSet &config);
-      void initializeUsingXML(xercesc::DOMElement * element);
+      void init(InitStage stage, const MBSim::InitConfigSet &config) override;
+      void initializeUsingXML(xercesc::DOMElement * element) override;
 
       void setLength(double l_);
       void setDiameter(double d_);

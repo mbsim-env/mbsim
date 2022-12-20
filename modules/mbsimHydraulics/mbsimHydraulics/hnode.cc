@@ -115,10 +115,10 @@ namespace MBSimHydraulics {
   void HNode::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveStringRef) {
       hydEnv=ds->getEnvironment<HydraulicEnvironment>();
-      for (unsigned int i=0; i<refInflowString.size(); i++)
-        addInFlow(getByPath<HLine>(refInflowString[i]));
-      for (unsigned int i=0; i<refOutflowString.size(); i++)
-        addOutFlow(getByPath<HLine>(refOutflowString[i]));
+      for (auto & i : refInflowString)
+        addInFlow(getByPath<HLine>(i));
+      for (auto & i : refOutflowString)
+        addOutFlow(getByPath<HLine>(i));
     }
     else if (stage==preInit) {
       gd.resize(1);
@@ -218,10 +218,10 @@ namespace MBSimHydraulics {
       QHyd-=((connectedLines[i].inflow) ?
           connectedLines[i].line->evalQOut() :
           connectedLines[i].line->evalQIn())(0);
-    for (unsigned int i=0; i<connected0DOFLines.size(); i++)
-      QHyd-=((connected0DOFLines[i].inflow) ?
-          connected0DOFLines[i].line->evalQOut() :
-          connected0DOFLines[i].line->evalQIn())(0);
+    for (auto & connected0DOFLine : connected0DOFLines)
+      QHyd-=((connected0DOFLine.inflow) ?
+          connected0DOFLine.line->evalQOut() :
+          connected0DOFLine.line->evalQIn())(0);
     updQHyd = false;
   }
 
@@ -299,7 +299,7 @@ namespace MBSimHydraulics {
 
   ElasticNode::~ElasticNode() {
     delete bulkModulus;
-    bulkModulus=NULL;
+    bulkModulus=nullptr;
   }
 
   void ElasticNode::init(InitStage stage, const InitConfigSet &config) {
@@ -361,11 +361,11 @@ namespace MBSimHydraulics {
   RigidNode::~RigidNode() {
     if (gfl) {
       delete gfl;
-      gfl=NULL;
+      gfl=nullptr;
     }
     if (gil) {
       delete gil;
-      gil=NULL;
+      gil=nullptr;
     }
   }
 
@@ -590,11 +590,11 @@ namespace MBSimHydraulics {
   RigidCavitationNode::~RigidCavitationNode() {
     if (gfl) {
       delete gfl;
-      gfl=NULL;
+      gfl=nullptr;
     }
     if (gil) {
       delete gil;
-      gil=NULL;
+      gil=nullptr;
     }
   }
 

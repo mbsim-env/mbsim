@@ -33,10 +33,9 @@ namespace MBSimFlexibleBody {
     return static_cast<SqrMat>((SqrMat(vector.size(),EYE) - vector*vector.T()/pow(norm,2.))/norm);
   }
 
-  FiniteElement1s21ANCF::FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, Vec sg, bool sEuler, double sv0) :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), Euler(sEuler), v0(sv0), wss0(0.), depsilon(0.), dkappa(0.), g(sg), M(8,INIT,0.), h(8,INIT,0.), Dhq(8,INIT,0.), Dhqp(8,INIT,0.) {}
+  FiniteElement1s21ANCF::FiniteElement1s21ANCF(double sl0, double sArho, double sEA, double sEI, const Vec &sg, bool sEuler, double sv0) :l0(sl0), Arho(sArho), EA(sEA), EI(sEI), Euler(sEuler), v0(sv0), wss0(0.), depsilon(0.), dkappa(0.), g(sg), M(8,INIT,0.), h(8,INIT,0.), Dhq(8,INIT,0.), Dhqp(8,INIT,0.) {}
 
-  FiniteElement1s21ANCF::~FiniteElement1s21ANCF() {
-  }
+  FiniteElement1s21ANCF::~FiniteElement1s21ANCF() = default;
 
   void FiniteElement1s21ANCF::setCurlRadius(double R) {
     if (fabs(R) < epsroot) throw runtime_error("CurlRadius must not be 0!\n");

@@ -32,7 +32,7 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::Mat condenseMatrixRows(fmatvec::Mat A, fmatvec::RangeV I);
+  fmatvec::Mat condenseMatrixRows(const fmatvec::Mat &A, const fmatvec::RangeV &I);
 
   /*!
    * \brief condenses cols of matrix concerning index
@@ -40,7 +40,7 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::Mat condenseMatrixCols(fmatvec::Mat A, fmatvec::RangeV I);
+  fmatvec::Mat condenseMatrixCols(const fmatvec::Mat &A, const fmatvec::RangeV &I);
 
   /*!
    * \brief condenses symmetric matrix concerning index
@@ -48,19 +48,19 @@ namespace MBSimFlexibleBody {
    * \param indices to be condensed
    * \return condensed matrix
    */
-  fmatvec::SymMat condenseMatrix(fmatvec::SymMat A,fmatvec::RangeV I);
+  fmatvec::SymMat condenseMatrix(const fmatvec::SymMat &A,const fmatvec::RangeV &I);
 
   /*!
    * \brief generates an output for a matrix for the input in maple - just for testing
    * \param matrix for the output
    */
-  void MapleOutput(fmatvec::Mat A, std::string MatName, std::string file);
+  void MapleOutput(const fmatvec::Mat &A, const std::string &MatName, const std::string &file);
 
   /*!
    * \brief generates an output for a matrix for the input in maple - just for testing
    * \param matrix for the output
    */
-  void MapleOutput(fmatvec::SymMat C, std::string MatName, std::string file);
+  void MapleOutput(const fmatvec::SymMat &C, const std::string &MatName, const std::string &file);
 
   /*!
    * \brief plate according to Reissner-Mindlin with moving frame of reference
@@ -89,19 +89,19 @@ namespace MBSimFlexibleBody {
       /**
        * \brief destructor
        */
-      virtual ~FlexibleBody2s13() { }
+       ~FlexibleBody2s13() override = default;
 
       /* INHERITED INTERFACE OF OBJECTINTERFACE */
-      virtual void updateh(int j=0);
-      virtual void updatedhdz();
+       void updateh(int j=0) override;
+       void updatedhdz() override;
       /******************************************/
 
       /* INHERITED INTERFACE OF OBJECT */
-      virtual void updateM();
-      virtual void updateLLM() { }
+       void updateM() override;
+       void updateLLM() override { }
 
       /* INHERITED INTERFACE OF ELEMENT */
-      virtual void plot();
+       void plot() override;
       /***************************************************/
 
       /* GETTER/SETTER */
@@ -134,7 +134,7 @@ namespace MBSimFlexibleBody {
       /*!
        * \return potential energy
        */
-      double computePotentialEnergy() { return 0.5*q.T()*K*q; }
+      double computePotentialEnergy() override { return 0.5*q.T()*K*q; }
 
       /*!
        * \brief transform Cartesian to cylinder system
@@ -143,7 +143,7 @@ namespace MBSimFlexibleBody {
        */
       virtual fmatvec::Vec transformCW(const fmatvec::Vec& WrPoint) = 0;
 
-      void resetUpToDate();
+      void resetUpToDate() override;
 
       void updateExt();
 

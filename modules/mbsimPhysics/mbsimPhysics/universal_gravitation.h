@@ -33,7 +33,7 @@ namespace MBSimPhysics {
   class UniversalGravitation : public MBSim::MechanicalLink {
     public:
       UniversalGravitation(const std::string &name="");
-      void resetUpToDate();
+      void resetUpToDate() override;
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -45,7 +45,7 @@ namespace MBSimPhysics {
 
       void updateGeneralizedPositions() override;
       void updatePositions() override;
-      void updatelaF();
+      void updatelaF() override;
       void updateForce() override;
       void updateh(int i=0) override;
 

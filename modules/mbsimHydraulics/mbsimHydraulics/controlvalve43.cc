@@ -39,11 +39,11 @@ namespace MBSimHydraulics {
 
   class ControlvalveAreaFunction : public MBSim::Function<double(double)> {
     public:
-      ControlvalveAreaFunction(const string& name, double factor_, double offset_, std::shared_ptr<MBSim::Function<double(double)>> position_, std::shared_ptr<MBSim::Function<double(double)>> relAlphaPA_) : factor(factor_), offset(offset_), position(position_), relAlphaPA(relAlphaPA_) {
+      ControlvalveAreaFunction(const string& name, double factor_, double offset_, std::shared_ptr<MBSim::Function<double(double)>> position_, std::shared_ptr<MBSim::Function<double(double)>> relAlphaPA_) : factor(factor_), offset(offset_), position(std::move(position_)), relAlphaPA(std::move(relAlphaPA_)) {
         setName(name);
       }
 
-      double operator()(const double& t) {
+      double operator()(const double& t) override {
         double x=factor*(*position)(t)+offset;
         x=(x>1.)?1.:x;
         x=(x<0.)?0.:x;
@@ -57,7 +57,7 @@ namespace MBSimHydraulics {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, Controlvalve43)
 
-  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), checkSizeFunctionPA(NULL), checkSizeFunctionPB(NULL), checkSizeFunctionAT(NULL), checkSizeFunctionBT(NULL), pRACC(false) {
+  Controlvalve43::Controlvalve43(const string &name) : Group(name), lPA(new ClosableRigidLine("LinePA")), lPB(new ClosableRigidLine("LinePB")), lAT(new ClosableRigidLine("LineAT")), lBT(new ClosableRigidLine("LineBT")), nP(new RigidNode("nP")), nA(new RigidNode("nA")), nB(new RigidNode("nB")), nT(new RigidNode("nT")), offset(0), checkSizeFunctionPA(nullptr), checkSizeFunctionPB(nullptr), checkSizeFunctionAT(nullptr), checkSizeFunctionBT(nullptr), pRACC(false) {
     addObject(lPA);
     lPA->setDirection(Vec(3, INIT, 0));
     lPA->setFrameOfReference(getFrame("I"));
@@ -104,10 +104,10 @@ namespace MBSimHydraulics {
       throwError("alpha must be in the range of 0..1!");
     if ((alphaBack<0)||(alphaBack>1))
       throwError("alphaBack must be in the range of 0..1!");
-    RelativeAlphaClosablePressureLoss * plPA = new RelativeAlphaClosablePressureLoss();
-    RelativeAlphaClosablePressureLoss * plPB = new RelativeAlphaClosablePressureLoss();
-    RelativeAlphaClosablePressureLoss * plAT = new RelativeAlphaClosablePressureLoss();
-    RelativeAlphaClosablePressureLoss * plBT = new RelativeAlphaClosablePressureLoss();
+    auto * plPA = new RelativeAlphaClosablePressureLoss();
+    auto * plPB = new RelativeAlphaClosablePressureLoss();
+    auto * plAT = new RelativeAlphaClosablePressureLoss();
+    auto * plBT = new RelativeAlphaClosablePressureLoss();
     plPA->setAlpha(alpha);
     plPB->setAlpha(alpha);
     plAT->setAlpha(alphaBack);
@@ -208,7 +208,7 @@ namespace MBSimHydraulics {
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"diameter");
     setDiameter(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alpha");
-    double a=E(e)->getText<double>();
+    auto a=E(e)->getText<double>();
     e=E(element)->getFirstElementChildNamed(MBSIMHYDRAULICS%"alphaBackflow");
     double aT=0;
     if (e)

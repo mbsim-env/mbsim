@@ -20,6 +20,8 @@
 #ifndef _MBSIM_PHYSICS_NAMESPACE_H_
 #define _MBSIM_PHYSICS_NAMESPACE_H_
 
+#include "mbxmlutilshelper/dom.h"
+
 namespace MBSimPhysics {
 
   const MBXMLUtils::NamespaceURI MBSIMPHYSICS("http://www.mbsim-env.de/MBSimPhysics");

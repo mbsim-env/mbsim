@@ -1613,9 +1613,11 @@ namespace MBSim {
   void DynamicSystemSolver::addEnvironment(Environment* env) {
     // check for duplicates of the same type
     auto &curType=typeid(*env);
-    for(auto &e : environments)
-      if(curType==typeid(*e))
+    for(auto &e : environments) {
+      auto &e_=*e;
+      if(curType==typeid(e_))
         throwError("An Environment of type "+boost::core::demangle(curType.name())+" already exists in this DynamicSystemSolver.");
+    }
     environments.emplace_back(unique_ptr<Environment>(env));
   }
 

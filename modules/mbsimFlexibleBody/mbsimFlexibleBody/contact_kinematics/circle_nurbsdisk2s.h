@@ -64,8 +64,8 @@ namespace MBSimFlexibleBody {
       /** 
        * \brief contour classes 
        */
-      NurbsDisk2s *nurbsdisk{0}; 
-      MBSim::Circle *circle{0};
+      NurbsDisk2s *nurbsdisk{nullptr}; 
+      MBSim::Circle *circle{nullptr};
 
       FuncPairCircleNurbsDisk2s *func;
   };

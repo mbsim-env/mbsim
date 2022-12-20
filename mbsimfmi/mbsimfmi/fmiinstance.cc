@@ -72,15 +72,15 @@ namespace MBSimFMI {
       logger(this, instanceName.c_str(), status, category.c_str(), s.c_str());
     };
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Info,       make_shared<bool>(true ),
-      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiOK     , "info"      )));
+      make_shared<fmatvec::PrePostfixedStream>("", "", [f](auto && msg) { return f(msg, fmiOK, "info"); }));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Warn,       make_shared<bool>(true ),
-      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiWarning, "warning"   )));
+      make_shared<fmatvec::PrePostfixedStream>("", "", [f](auto && msg) { return f(msg, fmiWarning, "warning"); }));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Debug,      make_shared<bool>(true ),
-      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiOK     , "debug"     )));
+      make_shared<fmatvec::PrePostfixedStream>("", "", [f](auto && msg) { return f(msg, fmiOK, "debug"); }));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Error,      make_shared<bool>(true ),
-      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiError  , "error"     )));
+      make_shared<fmatvec::PrePostfixedStream>("", "", [f](auto && msg) { return f(msg, fmiError, "error"); }));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Deprecated, make_shared<bool>(true ),
-      make_shared<fmatvec::PrePostfixedStream>("", "", bind(f, placeholders::_1, fmiWarning, "deprecated")));
+      make_shared<fmatvec::PrePostfixedStream>("", "", [f](auto && msg) { return f(msg, fmiWarning, "deprecated"); }));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom:: Status,     make_shared<bool>(false));
     // also use these streams for this object.
     // Note: we can not create a FMIInstance object with the correct streams but we can adopt the streams now!
