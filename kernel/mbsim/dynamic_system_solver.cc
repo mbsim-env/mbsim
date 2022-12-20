@@ -926,9 +926,8 @@ namespace MBSim {
 
         iterc = (this->*solveConstraints_)(); // solver election
         if (iterc >= maxIter) {
-          msg(Warn) << "\n";
-          msg(Warn) << "Iterations: " << iterc << "\n";
-          msg(Warn) << "\nError: no convergence." << endl;
+          msg(Warn) << "Iterations: " << iterc << endl;
+          msg(Warn) << "Error: no convergence." << endl;
           if (stopIfNoConvergence) {
             if (dropContactInfo)
               dropContactMatrices();
@@ -958,9 +957,8 @@ namespace MBSim {
 
       iteri = (this->*solveImpacts_)(); // solver election
       if (iteri >= maxIter) {
-        msg(Warn) << "\n";
-        msg(Warn) << "Iterations: " << iteri << "\n";
-        msg(Warn) << "\nError: no convergence." << endl;
+        msg(Warn) << "Iterations: " << iteri << endl;
+        msg(Warn) << "Error: no convergence." << endl;
         if (stopIfNoConvergence) {
           if (dropContactInfo)
             dropContactMatrices();

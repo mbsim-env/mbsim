@@ -82,7 +82,7 @@ namespace MBSimHydraulics {
     msg(Info) << "                  dynamic viscosity eta=" << getDynamicViscosity()*1e3 << " [mPa*s]" << endl;
     msg(Info) << "                                  kappa=" << kappa << " [-]" << endl;
     msg(Info) << "                      boundary pressure=" << pinf*1e-5 << " [bar]" << endl;
-    msg(Info) << "===============================================\n\n" << endl;
+    msg(Info) << "===============================================" <<endl<<endl<< endl;
     msg(Info) << endl;
     assert(pinf>0);
     assert(rho>0);

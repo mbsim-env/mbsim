@@ -909,7 +909,7 @@ namespace MBSim {
       influenceFunctions[Pair]->setParent(this);
     }
     else {
-      msg(Warn) << "Function existed for contour-pair: \"" << contour1->getPath() << "\" + \"" << contour2->getPath() << "\".\n" <<
+      msg(Warn) << "Function existed for contour-pair: \"" << contour1->getPath() << "\" + \"" << contour2->getPath() << "\"." << endl <<
                    "No Function has been added." << endl;
     }
 

@@ -57,7 +57,7 @@ namespace MBSim {
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2))); 
     double phi2 = (ez2(0)>=0?-1:1)*acos(ez2(2)/sqrt(pow(ez2(0),2)+pow(ez2(2),2))); 
     if(nrm2(planargear->getFrame()->evalPosition()-bevelgear->getFrame()->evalPosition()+m*z[0]/2/tan(bevelgear->getPitchAngle())*bevelgear->getFrame()->getOrientation().col(2))>1e-8)
-       msg(Warn)<<"Large devitation detected at t="<<planargear->getTime()<<"\nContact kinematics may be wrong!" <<endl;
+       msg(Warn)<<"Large devitation detected at t="<<planargear->getTime()<<endl<<"Contact kinematics may be wrong!" <<endl;
 
     for(int i=0; i<2; i++) {
       int signi = i?-1:1;

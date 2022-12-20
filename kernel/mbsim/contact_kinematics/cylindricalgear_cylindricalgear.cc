@@ -58,7 +58,7 @@ namespace MBSim {
     contact.getGeneralizedRelativePosition(false)(0) = 1e10;
     Vec3 r = gear[1]->getFrame()->evalPosition()-gear[0]->getFrame()->evalPosition();
     if(gear[0]->getFrame()->getOrientation().col(2).T()*r>1e-8)
-       msg(Warn)<<"Large devitation detected at t="<<gear[0]->getTime()<<"\nContact kinematics may be wrong!" <<endl;
+       msg(Warn)<<"Large devitation detected at t="<<gear[0]->getTime()<<endl<<"Contact kinematics may be wrong!" <<endl;
     double a = nrm2(r);
     Vec3 ea = r/a;
     double dal = acos(a0/a*cos(al))-al;

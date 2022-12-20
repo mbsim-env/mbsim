@@ -128,8 +128,8 @@ shared_ptr<xercesc::DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &search
 #else
             if(printPluginSearch && stage==SearchPath)
               fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
-                "Python MBSim module found in "+path+" '"+moduleName+"'\n"<<
-                "but MBSim is not build with Python support. Skipping this module.\n";
+                "Python MBSim module found in "+path+" '"+moduleName+"'"<<endl<<
+                "but MBSim is not build with Python support. Skipping this module."<<endl;
             continue;
 #endif
           }

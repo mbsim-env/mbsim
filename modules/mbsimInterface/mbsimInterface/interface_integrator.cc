@@ -481,7 +481,7 @@ namespace MBSimInterface {
       integPlot << "mbsim2interface:" << endl;
       integPlot << "  length of message: " << (*mbsim2interface).str().length() << " chars." << endl;
       integPlot << "  message: >>>" << (*mbsim2interface).str() << "<<<" << endl;
-      integPlot << "\n" << endl;
+      integPlot << endl << endl;
     }
 
   }

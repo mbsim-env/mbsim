@@ -565,7 +565,7 @@ namespace {
     if(!exists(depFile)) {
       depFile=installPath/"share"/"deplibs"/(src.filename().string()+".deplibs");
       if(!exists(depFile)) {
-        cerr<<endl<<"Warning: No *.deplibs file found for library "<<src<<".\nSome dependent libraries may be missing in the FMU."<<endl;
+        cerr<<endl<<"Warning: No *.deplibs file found for library "<<src<<"."<<endl<<"Some dependent libraries may be missing in the FMU."<<endl;
         return;
       }
     }
@@ -596,7 +596,7 @@ namespace {
       }
 
       // not found
-      cerr<<endl<<"Warning: Dependent library "<<file<<" not found.\nThis dependent libraries will be missing in the FMU."<<endl;
+      cerr<<endl<<"Warning: Dependent library "<<file<<" not found."<<endl<<"This dependent libraries will be missing in the FMU."<<endl;
     }
   }
 

@@ -130,9 +130,9 @@ namespace MBSim {
       }
 
       if (0) {
-        msg(Debug) << "+++++ iter = " << iter << "++++++++++++\n";
-        msg(Debug) << "J = " << J << "\n";
-        msg(Debug) << "f = " << f << "\n";
+        msg(Debug) << "+++++ iter = " << iter << "++++++++++++"<<endl;
+        msg(Debug) << "J = " << J << endl;
+        msg(Debug) << "f = " << f << endl;
       }
       //get step
       dx = slv(J, f, info);

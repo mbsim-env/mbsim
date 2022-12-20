@@ -56,7 +56,7 @@ namespace MBSim {
     double x2 = rack->getFrame()->getOrientation().col(0).T()*r;
     double y2 = rack->getFrame()->getOrientation().col(1).T()*r+m*z[0]/2;
     if(rack->getFrame()->getOrientation().col(2).T()*r>1e-8)
-       msg(Warn)<<"Large devitation detected at t="<<rack->getTime()<<"\nContact kinematics may be wrong!" <<endl;
+       msg(Warn)<<"Large devitation detected at t="<<rack->getTime()<<endl<<"Contact kinematics may be wrong!" <<endl;
     Vec3 ey1 = gear->getFrame()->evalOrientation().T()*rack->getFrame()->evalOrientation().col(1);
     double phi1 = (ey1(0)>=0?1:-1)*acos(ey1(1)/sqrt(pow(ey1(0),2)+pow(ey1(1),2)));
     for(int i=0; i<2; i++) {
