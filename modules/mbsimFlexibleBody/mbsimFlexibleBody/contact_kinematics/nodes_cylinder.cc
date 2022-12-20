@@ -54,7 +54,7 @@ namespace MBSimFlexibleBody {
 
     const Vec3 Wezs = s*Wez;
 
-    const Vec3 WrD = WrN - Wezs;
+    const Vec3 WrD = WrP - Wezs;
     const Vec3 Wn = WrD/nrm2(WrD);
     
     contact.getContourFrame(icylinder)->getOrientation(false).set(0, Wn);
