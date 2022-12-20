@@ -1007,8 +1007,8 @@ namespace MBSimGUI {
   NodesContourPropertyDialog::NodesContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
-    indices = new ExtWidget("Node numbers",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
-    addToTab("General", indices);
+    nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget(new MatRowsColsVarWidgetFactory(0,0),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"nodeNumbers");
+    addToTab("General", nodeNumbers);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIMFLEX%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -1016,14 +1016,14 @@ namespace MBSimGUI {
 
   DOMElement* NodesContourPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ContourPropertyDialog::initializeUsingXML(item->getXMLElement());
-    indices->initializeUsingXML(item->getXMLElement());
+    nodeNumbers->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* NodesContourPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
-    indices->writeXMLFile(item->getXMLElement(),nullptr);
+    nodeNumbers->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

@@ -246,6 +246,10 @@ namespace MBSimFlexibleBody {
     return evalWv_t(zeta);
   }
 
+  Vec3 FlexibleSpatialNurbsContour::evalParWnPart(const Vec2 &zeta) {
+    return evalWn_t(zeta);
+  }
+
   void FlexibleSpatialNurbsContour::updatePositions(ContourFrame *frame) {
     throwError("(FlexibleSpatialNurbsContour::updatePositions): not implemented");
   }

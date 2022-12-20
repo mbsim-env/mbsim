@@ -62,9 +62,9 @@ namespace MBSim {
 
   void ContactKinematicsPointPlane::updatewb(SingleContact &contact, int i) {
 
-    Vec3 v1 = contact.getContourFrame(iplane)->evalOrientation().col(2); // second tangential vector in contact
     Vec3 n1 = contact.getContourFrame(iplane)->getOrientation().col(0); // normal in contact
     Vec3 u1 = contact.getContourFrame(iplane)->getOrientation().col(1); // first tangential vector in contact
+    Vec3 v1 = contact.getContourFrame(iplane)->evalOrientation().col(2); // second tangential vector in contact
     Vec3 vC1 = contact.getContourFrame(iplane)->evalVelocity(); // velocity of possible plane contact
     Vec3 vC2 = contact.getContourFrame(ipoint)->evalVelocity(); // velocity of point
     Vec3 Om1 = contact.getContourFrame(iplane)->evalAngularVelocity(); // angular velocity of possible plane contact
