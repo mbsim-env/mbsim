@@ -15,32 +15,34 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <timeDependentTranslation>
-              <SymbolicFunction arg1="t">
-                % some dummy tests
-                x=tilde([1;2;3]);
-                x=tilde([0,2,3;-2,0,6;-3,-6,0]);
-                x=euler(0.1,0.2,0.3);
-                x=euler([0.1;0.2;0.3]);
-                x=cardan(0.1,0.2,0.3)
-                x=cardan([0.1;0.2;0.3]);
-                x=rotateAboutX(0.3);
-                % some dummy symbolic tests
-                function test()
-                  global IndependentVariable;
-                  x=IndependentVariable();
-                end
-                test();
-                x=tilde(VectorIndep(3));
-                x=tilde(MatrixSym(3,3));
-                x=euler(IndependentVariable(),0.2,SymbolicExpression());
-                x=euler(VectorIndep(3));
-                x=cardan(IndependentVariable(),0.2,SymbolicExpression());
-                x=cardan(VectorSym(3));
-                x=rotateAboutX(SymbolicExpression());
+              <SymbolicFunction>
+                <definition arg1="t">
+                  % some dummy tests
+                  x=tilde([1;2;3]);
+                  x=tilde([0,2,3;-2,0,6;-3,-6,0]);
+                  x=euler(0.1,0.2,0.3);
+                  x=euler([0.1;0.2;0.3]);
+                  x=cardan(0.1,0.2,0.3)
+                  x=cardan([0.1;0.2;0.3]);
+                  x=rotateAboutX(0.3);
+                  % some dummy symbolic tests
+                  function test()
+                    global IndependentVariable;
+                    x=IndependentVariable();
+                  end
+                  test();
+                  x=tilde(VectorIndep(3));
+                  x=tilde(MatrixSym(3,3));
+                  x=euler(IndependentVariable(),0.2,SymbolicExpression());
+                  x=euler(VectorIndep(3));
+                  x=cardan(IndependentVariable(),0.2,SymbolicExpression());
+                  x=cardan(VectorSym(3));
+                  x=rotateAboutX(SymbolicExpression());
 
-                half=SymbolicExpression();
-                half=2;
-                ret=[sin(freq1*t + pi/half); v0y*t; 0];
+                  half=SymbolicExpression();
+                  half=2;
+                  ret=[sin(freq1*t + pi/half); v0y*t; 0];
+                </definition>
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
@@ -51,8 +53,10 @@
                   </RotationAboutFixedAxis>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="t">
-                    5*sin(freq2*t)
+                  <SymbolicFunction>
+                    <definition arg1="t">
+                      5*sin(freq2*t)
+                    </definition>
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
@@ -74,8 +78,10 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <timeDependentTranslation>
-              <SymbolicFunction arg1="t">
-                [sin(freq1*t + pi/2); v0y*t; 0]
+              <SymbolicFunction>
+                <definition arg1="t">
+                  [sin(freq1*t + pi/2); v0y*t; 0]
+                </definition>
               </SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
@@ -84,8 +90,10 @@
                   <RotationAboutAxesXY/>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="t">
-                    [t;2*t]
+                  <SymbolicFunction>
+                    <definition arg1="t">
+                      [t;2*t]
+                    </definition>
                   </SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
@@ -107,12 +115,14 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <stateDependentTranslation>
-              <SymbolicFunction arg1="q" arg1Dim="1">
-                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                  <ele>5+cos(freq1*q(1))</ele>
-                  <ele>sin(freq1*q(1))</ele>
-                  <ele>0</ele>
-                </xmlVector> 
+              <SymbolicFunction>
+                <definition arg1="q" arg1Dim="1">
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>5+cos(freq1*q(1))</ele>
+                    <ele>sin(freq1*q(1))</ele>
+                    <ele>0</ele>
+                  </xmlVector> 
+                </definition>
               </SymbolicFunction>
             </stateDependentTranslation>
             <frames />
@@ -133,7 +143,7 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <generalTranslation>
-              <SymbolicFunction arg1="q" arg1Dim="2" arg2="t">
+              <SymbolicFunction>
                 <!-- SymbolicFunction does not distinguish between scalar, vector and matrix. Hence we can also write
                      <xmlMatrix>
                        <row><ele>x</ele></row>
@@ -141,11 +151,13 @@
                        <row><ele>x</ele></row>
                      </xmlMatrix>
                      here -->
-                <pv:xmlVector>
-                  <pv:ele>10+t+cos(freq1*q(1))</pv:ele>
-                  <pv:ele>sin(freq1*q(1))</pv:ele>
-                  <pv:ele>q(2)</pv:ele>
-                </pv:xmlVector>
+                <definition arg1="q" arg1Dim="2" arg2="t">
+                  <pv:xmlVector>
+                    <pv:ele>10+t+cos(freq1*q(1))</pv:ele>
+                    <pv:ele>sin(freq1*q(1))</pv:ele>
+                    <pv:ele>q(2)</pv:ele>
+                  </pv:xmlVector>
+                </definition>
               </SymbolicFunction>
             </generalTranslation>
             <frames />
@@ -166,14 +178,16 @@
             <mass>3</mass>
             <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
             <timeDependentTranslation>
-              <SymbolicFunction arg1="t">
-                <pv:xmlVector>
-                  <pv:ele>
-                    condition(-t+2, 1, condition(-t+4, max([2.5;t]), condition(-t+6, 3, condition(t-9, 0.5, 0))))
-                  </pv:ele>
-                  <pv:ele>0</pv:ele>
-                  <pv:ele>0</pv:ele>
-                </pv:xmlVector>
+              <SymbolicFunction>
+                <definition arg1="t">
+                  <pv:xmlVector>
+                    <pv:ele>
+                      condition(-t+2, 1, condition(-t+4, max([2.5;t]), condition(-t+6, 3, condition(t-9, 0.5, 0))))
+                    </pv:ele>
+                    <pv:ele>0</pv:ele>
+                    <pv:ele>0</pv:ele>
+                  </pv:xmlVector>
+                </definition>
               </SymbolicFunction>
             </timeDependentTranslation>
             <frames />

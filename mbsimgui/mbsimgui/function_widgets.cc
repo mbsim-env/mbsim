@@ -432,27 +432,36 @@ namespace MBSimGUI {
   }
 
   DOMElement* SymbolicFunctionWidget::initializeUsingXML(DOMElement *element) {
-    f->initializeUsingXML(element);
+    auto definition=E(element)->getFirstElementChildNamed(MBSIM%"definition");
+    if(!definition) // MISSING SymbolicFunction depr: remove
+      definition=element;
+
+    f->initializeUsingXML(definition);
+
     for(size_t i=0; i<argname.size(); i++) {
       string str = "arg"+toStr(int(i+1));
-      if(E(element)->hasAttribute(str))
-        static_cast<TextWidget*>(argname[i]->getWidget())->setText(QString::fromStdString(E(element)->getAttribute(str)));
+      if(E(definition)->hasAttribute(str))
+        static_cast<TextWidget*>(argname[i]->getWidget())->setText(QString::fromStdString(E(definition)->getAttribute(str)));
       str = "arg"+toStr(int(i+1))+"Dim";
-      if(E(element)->hasAttribute(str))
-        static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->setValue(boost::lexical_cast<int>(E(element)->getAttribute(str)));
+      if(E(definition)->hasAttribute(str))
+        static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->setValue(boost::lexical_cast<int>(E(definition)->getAttribute(str)));
     }
     return element;
   }
 
   DOMElement* SymbolicFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+
+    DOMElement *definition=D(ele0->getOwnerDocument())->createElement(MBSIM%"definition");
+    ele0->insertBefore(definition, ref);
+
     for(size_t i=0; i<argname.size(); i++) {
       string istr = toStr(int(i+1));
-      E(ele0)->setAttribute("arg"+istr, static_cast<TextWidget*>(argname[i]->getWidget())->getText().toStdString());
+      E(definition)->setAttribute("arg"+istr, static_cast<TextWidget*>(argname[i]->getWidget())->getText().toStdString());
       if(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()!=0)
-        E(ele0)->setAttribute("arg"+istr+"Dim",fmatvec::toString(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()));
+        E(definition)->setAttribute("arg"+istr+"Dim",fmatvec::toString(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()));
     }
-    f->writeXMLFile(ele0);
+    f->writeXMLFile(definition);
     return ele0;
   }
 
