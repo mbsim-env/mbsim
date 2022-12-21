@@ -112,7 +112,7 @@ namespace MBSimGUI {
         ret.emplace_back(getTypeStatic(), typeid(Class)); \
         return ret; \
       } \
-      virtual MBXMLUtils::FQN getXMLType() const { return getXMLTypeStatic(); } \
+      virtual MBXMLUtils::FQN getXMLType() const override { return getXMLTypeStatic(); } \
       virtual QString getType() const override { return getTypeStatic(); } \
     private:
 
