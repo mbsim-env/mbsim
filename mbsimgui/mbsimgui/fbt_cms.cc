@@ -214,7 +214,7 @@ namespace MBSimGUI {
       if(nmodes.size() and fixedBoundaryNormalModes) {
 	Mat V;
 	Vec w;
-	eigvec(Krns,Mrns,max(nmodes),1,V,w,0.001);
+	eigvec(Krns,Mrns,max(nmodes),1,V,w,0.01);
 	vector<int> imod;
 	for(size_t i=0; i<nmodes.size(); i++) {
 	  if(w(nmodes[i]-1)>pow(2*M_PI*0.1,2))
@@ -236,7 +236,7 @@ namespace MBSimGUI {
     if(nmodes.size() and not fixedBoundaryNormalModes) {
       Mat V;
       Vec w;
-      eigvec(Krs,Mrs,max(nmodes),1,V,w,0.001);
+      eigvec(Krs,Mrs,max(nmodes),1,V,w,0.01);
       vector<int> imod;
       for(size_t i=0; i<nmodes.size(); i++) {
 	if(w(nmodes[i]-1)>pow(2*M_PI*0.1,2))
