@@ -158,12 +158,11 @@ namespace MBSimGUI {
     Pdm <<= Pdm*U;
     for(int i=0; i<3; i++) {
       rPdm[i] <<= rPdm[i]*U;
-      for(int j=0; j<3; j++)
-	PPdm[j][j] <<= U.T()*(PPdms[j]*U);
-      PPdm[0][1] <<= U.T()*(PPdm2s[0]*U);
-      PPdm[0][2] <<= U.T()*(PPdm2s[1]*U);
-      PPdm[1][2] <<= U.T()*(PPdm2s[2]*U);
+      PPdm[i][i] <<= U.T()*(PPdms[i]*U);
     }
+    PPdm[0][1] <<= U.T()*(PPdm2s[0]*U);
+    PPdm[0][2] <<= U.T()*(PPdm2s[1]*U);
+    PPdm[1][2] <<= U.T()*(PPdm2s[2]*U);
     Ke0 <<= JTMJ(Ks,U);
   }
 
