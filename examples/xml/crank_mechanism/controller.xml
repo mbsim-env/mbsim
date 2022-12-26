@@ -1,4 +1,4 @@
-<Group name="controller" xmlns="http://www.mbsim-env.de/MBSim">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Group xmlns="http://www.mbsim-env.de/MBSim" name="controller">
   <frames>
   </frames>
   <contours>
@@ -8,30 +8,30 @@
   <objects>
   </objects>
   <links>
-    <LinearTransferSystem name="pidController" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="pidController">
       <inputSignal ref="../Link[speedDeviation]"/>
       <systemMatrix>[0]</systemMatrix>
       <inputMatrix>[1]</inputMatrix>
       <outputMatrix>[controllerKI]</outputMatrix>
       <feedthroughMatrix>[controllerKP]</feedthroughMatrix>
     </LinearTransferSystem>
-    <GeneralizedVelocitySensor name="crankMeasuredSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="crankMeasuredSpeed">
       <object ref="../../Object[Crank]"/>
     </GeneralizedVelocitySensor>
-    <FunctionSensor name="crankReferenceSpeed" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="crankReferenceSpeed">
       <function>
         <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
           <a0>ReferenceSpeed</a0>
         </ConstantFunction>
       </function>
     </FunctionSensor>
-   <SignalOperation name="speedDeviation" xmlns="http://www.mbsim-env.de/MBSimControl">
+   <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="speedDeviation">
       <inputSignal ref="../Link[crankReferenceSpeed]"/>
       <inputSignal ref="../Link[crankMeasuredSpeed]"/>
       <function>
-       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
+       <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg2="y">
           x-y
-        </SymbolicFunction>
+        </definition></SymbolicFunction>
       </function>
     </SignalOperation>
     <KineticExcitation name="motor" xmlns="http://www.mbsim-env.de/MBSim">
@@ -47,4 +47,3 @@
   <constraints/>
   <observers/>
 </Group>
-

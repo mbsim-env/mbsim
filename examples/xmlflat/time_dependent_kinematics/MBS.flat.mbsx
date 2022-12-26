@@ -6,17 +6,17 @@
     <plotFeatureRecursive value="generalizedForce">1</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedPosition">1</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedVelocity">1</plotFeatureRecursive>
-    <frames></frames>
-    <contours></contours>
-    <groups></groups>
+    <frames/>
+    <contours/>
+    <groups/>
     <objects>
         <RigidBody name="Box1">
-            <frameOfReference ref="../Frame[I]"></frameOfReference>
-            <frameForKinematics ref="Frame[C]"></frameForKinematics>
+            <frameOfReference ref="../Frame[I]"/>
+            <frameForKinematics ref="Frame[C]"/>
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <timeDependentTranslation>
-              <SymbolicFunction arg1="t">f(e78c8882-e2b1-48b7-a137-c16854a11ef3)=[sin(plus(mult(3.141592653589793, e78c8882-e2b1-48b7-a137-c16854a11ef3), 1.570796326794897)); e78c8882-e2b1-48b7-a137-c16854a11ef3; 0]</SymbolicFunction>
+              <SymbolicFunction><definition arg1="t">f(e78c8882-e2b1-48b7-a137-c16854a11ef3)=[sin(plus(mult(3.141592653589793, e78c8882-e2b1-48b7-a137-c16854a11ef3), 1.570796326794897)); e78c8882-e2b1-48b7-a137-c16854a11ef3; 0]</definition></SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
               <CompositeFunction>
@@ -26,12 +26,12 @@
                   </RotationAboutFixedAxis>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="t">f(de7482aa-96fe-46df-9353-9d29d6a649b3)=mult(5, sin(mult(1.047197551196598, de7482aa-96fe-46df-9353-9d29d6a649b3)))</SymbolicFunction>
+                  <SymbolicFunction><definition arg1="t">f(de7482aa-96fe-46df-9353-9d29d6a649b3)=mult(5, sin(mult(1.047197551196598, de7482aa-96fe-46df-9353-9d29d6a649b3)))</definition></SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </timeDependentRotation>
-            <frames></frames>
-            <contours></contours>
+            <frames/>
+            <contours/>
             <openMBVRigidBody>
                 <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box1" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0">
                     <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
@@ -42,25 +42,25 @@
             </openMBVRigidBody>
         </RigidBody>
         <RigidBody name="Box1a">
-            <frameOfReference ref="../Frame[I]"></frameOfReference>
-            <frameForKinematics ref="Frame[C]"></frameForKinematics>
+            <frameOfReference ref="../Frame[I]"/>
+            <frameForKinematics ref="Frame[C]"/>
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <timeDependentTranslation>
-              <SymbolicFunction arg1="t">f(197dc201-8201-4ab1-999f-b08a26842aa4)=[sin(plus(mult(3.141592653589793, 197dc201-8201-4ab1-999f-b08a26842aa4), 1.570796326794897)); 197dc201-8201-4ab1-999f-b08a26842aa4; 0]</SymbolicFunction>
+              <SymbolicFunction><definition arg1="t">f(197dc201-8201-4ab1-999f-b08a26842aa4)=[sin(plus(mult(3.141592653589793, 197dc201-8201-4ab1-999f-b08a26842aa4), 1.570796326794897)); 197dc201-8201-4ab1-999f-b08a26842aa4; 0]</definition></SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
               <CompositeFunction>
                 <outerFunction>
-                  <RotationAboutAxesXY></RotationAboutAxesXY>
+                  <RotationAboutAxesXY/>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="t">f(0018750c-bb63-485d-b665-48cf1339b13d)=[0018750c-bb63-485d-b665-48cf1339b13d; mult(2, 0018750c-bb63-485d-b665-48cf1339b13d)]</SymbolicFunction>
+                  <SymbolicFunction><definition arg1="t">f(0018750c-bb63-485d-b665-48cf1339b13d)=[0018750c-bb63-485d-b665-48cf1339b13d; mult(2, 0018750c-bb63-485d-b665-48cf1339b13d)]</definition></SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </timeDependentRotation>
-            <frames></frames>
-            <contours></contours>
+            <frames/>
+            <contours/>
             <openMBVRigidBody>
                 <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box1a" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0">
                     <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
@@ -71,15 +71,15 @@
             </openMBVRigidBody>
         </RigidBody>
         <RigidBody name="Box2">
-            <frameOfReference ref="../Frame[I]"></frameOfReference>
-            <frameForKinematics ref="Frame[C]"></frameForKinematics>
+            <frameOfReference ref="../Frame[I]"/>
+            <frameForKinematics ref="Frame[C]"/>
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <stateDependentTranslation>
-              <SymbolicFunction arg1="a">f(c10c4475-70bd-4735-a61f-9b344f2b070b)=[plus(5, cos(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b))); sin(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b)); 0]</SymbolicFunction>
+              <SymbolicFunction><definition arg1="a">f(c10c4475-70bd-4735-a61f-9b344f2b070b)=[plus(5, cos(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b))); sin(mult(3.141592653589793, c10c4475-70bd-4735-a61f-9b344f2b070b)); 0]</definition></SymbolicFunction>
             </stateDependentTranslation>
-            <frames></frames>
-            <contours></contours>
+            <frames/>
+            <contours/>
             <openMBVRigidBody>
                 <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box2" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0">
                     <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
@@ -91,15 +91,15 @@
         </RigidBody>
         <RigidBody name="Box3">
             <generalizedInitialVelocity>[0; 1]</generalizedInitialVelocity>
-            <frameOfReference ref="../Frame[I]"></frameOfReference>
-            <frameForKinematics ref="Frame[C]"></frameForKinematics>
+            <frameOfReference ref="../Frame[I]"/>
+            <frameForKinematics ref="Frame[C]"/>
             <mass>3</mass>
             <inertiaTensor>[1,0,0; 0,1,0; 0,0,1]</inertiaTensor>
             <generalTranslation>
-              <SymbolicFunction arg1="t" arg2="q">f([2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab; a6191e97-3081-46d5-bbf4-6ff5c2d7d3be], 9e1d80a0-299f-4dc4-8486-76d5077e90cf)=[plus(plus(10, 9e1d80a0-299f-4dc4-8486-76d5077e90cf), cos(mult(3.141592653589793, 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab))); sin(mult(3.141592653589793, 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab)); a6191e97-3081-46d5-bbf4-6ff5c2d7d3be]</SymbolicFunction>
+              <SymbolicFunction><definition arg1="t" arg2="q">f([2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab; a6191e97-3081-46d5-bbf4-6ff5c2d7d3be], 9e1d80a0-299f-4dc4-8486-76d5077e90cf)=[plus(plus(10, 9e1d80a0-299f-4dc4-8486-76d5077e90cf), cos(mult(3.141592653589793, 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab))); sin(mult(3.141592653589793, 2ae23fa3-ce3c-4d98-b9d6-1605dbce9eab)); a6191e97-3081-46d5-bbf4-6ff5c2d7d3be]</definition></SymbolicFunction>
             </generalTranslation>
-            <frames></frames>
-            <contours></contours>
+            <frames/>
+            <contours/>
             <openMBVRigidBody>
                 <ombv:Cube boundingBox="0" dragger="0" drawMethod="filled" enable="1" lineWidth="0" localFrame="0" name="Box3" outLine="1" path="0" pointSize="0" referenceFrame="0" shilouetteEdge="0">
                     <ombv:initialTranslation>[0; 0; 0]</ombv:initialTranslation>
@@ -110,9 +110,9 @@
             </openMBVRigidBody>
         </RigidBody>
     </objects>
-    <links></links>
-    <constraints></constraints>
-    <observers></observers>
+    <links/>
+    <constraints/>
+    <observers/>
     <environments>
         <MBSimEnvironment>
             <accelerationOfGravity>[0; -9.81; 0]</accelerationOfGravity>

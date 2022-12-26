@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -30,30 +29,30 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="s">[l/2-s;r;0]
+                        <SymbolicFunction><definition arg1="s">[l/2-s;r;0]
 
-</SymbolicFunction>
+</definition></SymbolicFunction>
                       </function>
                       <limit>l</limit>
                     </LimitedFunction>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="s">[-l/2-r*sin((s-l)/r);r*cos((s-l)/r);0]
-</SymbolicFunction>
+                        <SymbolicFunction><definition arg1="s">[-l/2-r*sin((s-l)/r);r*cos((s-l)/r);0]
+</definition></SymbolicFunction>
                       </function>
                       <limit>l+pi*r</limit>
                     </LimitedFunction>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="s">[s-(3/2*l+pi*r); -r; 0]
-</SymbolicFunction>
+                        <SymbolicFunction><definition arg1="s">[s-(3/2*l+pi*r); -r; 0]
+</definition></SymbolicFunction>
                       </function>
                       <limit>2*l+pi*r</limit>
                     </LimitedFunction>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="s">[l/2+r*sin((s-2*l+pi*r)/r);-r*cos((s-2*l+pi*r)/r);0]
-</SymbolicFunction>
+                        <SymbolicFunction><definition arg1="s">[l/2+r*sin((s-2*l+pi*r)/r);-r*cos((s-2*l+pi*r)/r);0]
+</definition></SymbolicFunction>
                       </function>
                       <limit>2*l+2*pi*r</limit>
                     </LimitedFunction>

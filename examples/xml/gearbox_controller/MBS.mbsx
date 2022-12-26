@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="c">0.15</scalarParameter>
@@ -549,11 +548,11 @@
                 <inputSignal ref="../../Group[GearboxController]/Link[EngineSignal]"/>
                 <inputSignal ref="../Link[TorqueSignal]"/>
                 <function>
-                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">
                     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <ele>u1(1)*u2(1)</ele>
                     </xmlVector>
-                  </SymbolicFunction>
+                  </definition></SymbolicFunction>
                 </function>
               </SignalOperation>
               <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineAngularVelocity">
@@ -562,11 +561,11 @@
               <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="EngineSpeed">
                 <inputSignal ref="../Link[EngineAngularVelocity]"/>
                 <function>
-                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u" arg1Dim="1">
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="u" arg1Dim="1">
                     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <ele>abs(u(1))*60/2/pi</ele>
                     </xmlVector>
-                  </SymbolicFunction>
+                  </definition></SymbolicFunction>
                 </function>
               </SignalOperation>    
               <KineticExcitation name="Load">
@@ -773,22 +772,22 @@
                 <inputSignal ref="../Link[EngineUpshiftSpeed]"/>
                 <inputSignal ref="../../Group[Gearbox]/Link[EngineSpeed]"/>
                 <function>
-                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">
                     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <ele>u2(1)-u1(1)</ele>
                     </xmlVector>
-                  </SymbolicFunction>
+                  </definition></SymbolicFunction>
                 </function>
               </SignalOperation>
               <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="DownshiftRequest">
                 <inputSignal ref="../Link[EngineDownshiftSpeed]"/>
                 <inputSignal ref="../../Group[Gearbox]/Link[EngineSpeed]"/>
                 <function>
-                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">
+                  <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">
                     <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                       <ele>u1(1)-u2(1)</ele>
                     </xmlVector>
-                  </SymbolicFunction>
+                  </definition></SymbolicFunction>
                 </function>
               </SignalOperation>
               <StateMachineSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="TimeElapsedUpshift">

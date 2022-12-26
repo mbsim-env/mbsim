@@ -1,4 +1,4 @@
-<Group name="Metronome{i}" xmlns="http://www.mbsim-env.de/MBSim">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Group xmlns="http://www.mbsim-env.de/MBSim" name="Metronome{i}">
   <frameOfReference ref="../Frame[I{i}]"/>
   <frames/>
   <contours/>
@@ -46,7 +46,7 @@
         </Point>
       </contours>
       <openMBVRigidBody>
-        <Cuboid name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <Cuboid xmlns="http://www.mbsim-env.de/OpenMBV" name="X">
           <diffuseColor>[0.9;0;0]</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[pi/2 0 0]'</initialRotation>
@@ -98,7 +98,7 @@
       <contours>
       </contours>
       <openMBVRigidBody>
-        <Frustum name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="X">
           <diffuseColor>[0.7;0;0]</diffuseColor>
           <initialTranslation>[pendulumL/2 0 0]'</initialTranslation>
           <initialRotation>[0 pi/2 0]'</initialRotation>
@@ -125,7 +125,7 @@
       <frames/>
       <contours/>
       <openMBVRigidBody>
-        <Sphere name="X" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="X">
           <diffuseColor>[0.7;0;0]</diffuseColor>
           <initialTranslation>[0 0 0]'</initialTranslation>
           <initialRotation>[0 0 0]'</initialRotation>
@@ -193,22 +193,22 @@
       </enableOpenMBV>
     </KineticExcitation>
 
-    <GeneralizedPositionSensor name="AngularSensor" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <GeneralizedPositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="AngularSensor">
       <object ref="../Object[Pendulum]"/>
     </GeneralizedPositionSensor>
-    <GeneralizedVelocitySensor name="VelocitySensor" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="VelocitySensor">
       <object ref="../Object[Pendulum]"/>
     </GeneralizedVelocitySensor>
 
-    <SignalOperation name="VelocitySensorTanh" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="VelocitySensorTanh">
       <inputSignal ref="../Link[VelocitySensor]"/>
       <function>
-        <SymbolicFunction arg1="s" xmlns="http://www.mbsim-env.de/MBSim">
+        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="s">
           (exp(s)-exp(-s))/(exp(s)+exp(-s))
-        </SymbolicFunction>
+        </definition></SymbolicFunction>
       </function>
     </SignalOperation>
-    <SignalOperation name="ExcitationTorque" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="ExcitationTorque">
       <inputSignal ref="../Link[AngularSensor]"/>
       <function>
         <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
@@ -224,13 +224,13 @@
         </TabularFunction>
       </function>
     </SignalOperation>
-    <SignalOperation name="Excitation" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Excitation">
       <inputSignal ref="../Link[ExcitationTorque]"/>
       <inputSignal ref="../Link[VelocitySensorTanh]"/>
       <function>
-        <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
+        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg2="y">
           x*y^3
-        </SymbolicFunction>
+        </definition></SymbolicFunction>
       </function>
     </SignalOperation>
     <KineticExcitation name="Actuator" xmlns="http://www.mbsim-env.de/MBSim">
@@ -246,4 +246,3 @@
   <constraints/>
   <observers/>
 </Group>
-

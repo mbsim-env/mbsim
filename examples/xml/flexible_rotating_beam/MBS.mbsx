@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -325,11 +324,11 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="t">
+                        <SymbolicFunction><definition arg1="t">
                           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                             <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
                           </xmlVector>
-                        </SymbolicFunction>
+                        </definition></SymbolicFunction>
                       </function>
                       <limit>T0</limit>
                     </LimitedFunction>
@@ -673,11 +672,11 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="t">
+                        <SymbolicFunction><definition arg1="t">
                           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                             <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
                           </xmlVector>
-                        </SymbolicFunction>
+                        </definition></SymbolicFunction>
                       </function>
                       <limit>T0</limit>
                     </LimitedFunction>
@@ -1063,11 +1062,11 @@
                   <limitedFunctions>
                     <LimitedFunction>
                       <function>
-                        <SymbolicFunction arg1="t">
+                        <SymbolicFunction><definition arg1="t">
                           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                             <ele>Om/T0*(0.5*t^2+(T0/2/pi)^2*cos(2*pi*t/T0))</ele>
                           </xmlVector>
-                        </SymbolicFunction>
+                        </definition></SymbolicFunction>
                       </function>
                       <limit>T0</limit>
                     </LimitedFunction>

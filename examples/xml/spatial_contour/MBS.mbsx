@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -97,13 +96,13 @@
                 </xmlVector>
               </xiNodes>
               <contourFunction>
-                <SymbolicFunction arg1="zeta" arg1Dim="2">
+                <SymbolicFunction><definition arg1="zeta" arg1Dim="2">
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>a*cos(zeta(1))*cos(zeta(2))</ele>
                     <ele>b*sin(zeta(1))*cos(zeta(2))</ele>
                     <ele>c*sin(zeta(2))</ele>
                   </xmlVector>
-                </SymbolicFunction>
+                </definition></SymbolicFunction>
               </contourFunction>
               <enableOpenMBV>
               </enableOpenMBV>

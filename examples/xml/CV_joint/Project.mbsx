@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -137,10 +136,10 @@
             </xmlMatrix>
           </inertiaTensor>
               <stateDependentRotation>
-                <SymbolicFunction arg1="q" arg1Dim="2">al = q(2)
+                <SymbolicFunction><definition arg1="q" arg1Dim="2">al = q(2)
 phi = q(1)
 A = [cos(al) + (1-cos(al))*cos(phi)^2, (1-cos(al))*cos(phi)*sin(phi), sin(phi)*sin(al); (1-cos(al))*cos(phi)*sin(phi), cos(al)+(1-cos(al))*sin(phi)^2, -cos(phi)*sin(al); -sin(phi)*sin(al), cos(phi)*sin(al), cos(al)]
-ret = A</SymbolicFunction>
+ret = A</definition></SymbolicFunction>
           </stateDependentRotation>
               <frames>
                 <FixedRelativeFrame name="Q">

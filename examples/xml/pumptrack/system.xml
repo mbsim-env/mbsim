@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<Group xmlns="http://www.mbsim-env.de/MBSim" name="bike{idx}">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Group xmlns="http://www.mbsim-env.de/MBSim" name="bike{idx}">
   <frames/>
   <contours/>
   <groups/>
@@ -447,13 +446,13 @@
     <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Pumping">
       <inputSignal ref="../Link[PumpingInput]"/>
       <function>
-        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="input" arg1Dim="6">
+        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="input" arg1Dim="6">
           zF=input(3);
           zR=input(6);
           xR=input(4);
           hSoll=pumpFak*     pumpAmpl(idx)*sin(xR-(pumpPhase(idx)-pumpPhaseOffset)*pi/180);
           ret=mF*9.81   -100000*(zF-(zR+hSoll));
-        </SymbolicFunction>
+        </definition></SymbolicFunction>
       </function>
     </SignalOperation>
     <DirectionalSpringDamper name="FahrerDamper">

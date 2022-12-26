@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -32,13 +31,13 @@
             </xmlVector>
           </nodes>
           <contourFunction>
-            <SymbolicFunction arg1="eta">
+            <SymbolicFunction><definition arg1="eta">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>-eta</ele>
                 <ele>0.2*sin(eta)</ele>
                 <ele>0</ele>
               </xmlVector>
-            </SymbolicFunction>
+            </definition></SymbolicFunction>
           </contourFunction>
           <open>true</open>
           <enableOpenMBV>
@@ -99,13 +98,13 @@
                 </xmlVector>
               </nodes>
               <contourFunction>
-                <SymbolicFunction arg1="eta">
+                <SymbolicFunction><definition arg1="eta">
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>r*cos(eta)</ele>
                     <ele>r*sin(eta)</ele>
                     <ele>0</ele>
                   </xmlVector>
-                </SymbolicFunction>
+                </definition></SymbolicFunction>
               </contourFunction>
               <enableOpenMBV/>
             </PlanarContour>

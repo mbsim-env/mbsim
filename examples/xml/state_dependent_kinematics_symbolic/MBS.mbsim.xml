@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:ctl="http://www.mbsim-env.de/MBSimControl" xmlns:flex="http://www.mbsim-env.de/MBSimFlexibleBody" xmlns:hyd="http://www.mbsim-env.de/MBSimHydraulics" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:ns_1="http://www.mbsim-env.de/OpenMBV" xmlns:xi="http://www.w3.org/2001/XInclude">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS" xmlns:ctl="http://www.mbsim-env.de/MBSimControl" xmlns:flex="http://www.mbsim-env.de/MBSimFlexibleBody" xmlns:hyd="http://www.mbsim-env.de/MBSimHydraulics" xmlns:ns_1="http://www.mbsim-env.de/OpenMBV" xmlns:ombv="http://www.mbsim-env.de/OpenMBV" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils" xmlns:xi="http://www.w3.org/2001/XInclude">
     <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
     <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
-    <frames />
-    <contours />
-    <groups />
+    <frames/>
+    <contours/>
+    <groups/>
     <objects>
         <RigidBody name="RigidBody1">
             <mass unit="kg">1</mass>
@@ -31,7 +30,7 @@
                 </pv:xmlMatrix>
             </inertiaTensor>
             <stateDependentTranslation>
-              <SymbolicFunction arg1="s">[-cos(s/R)*R;-sin(s/R)*R;0]</SymbolicFunction>
+              <SymbolicFunction><definition arg1="s">[-cos(s/R)*R;-sin(s/R)*R;0]</definition></SymbolicFunction>
             </stateDependentTranslation>
             <stateDependentRotation>
               <CompositeFunction>
@@ -47,13 +46,13 @@
                   </RotationAboutFixedAxis>
                 </outerFunction>
                 <innerFunction>
-                  <SymbolicFunction arg1="s">pi/2+s/R</SymbolicFunction>
+                  <SymbolicFunction><definition arg1="s">pi/2+s/R</definition></SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
             </stateDependentRotation>
             <translationDependentRotation>true</translationDependentRotation>
-            <frames />
-            <contours />
+            <frames/>
+            <contours/>
             <openMBVRigidBody>
                 <ns_1:Cuboid name="NOTSET">
                     <ns_1:initialTranslation unit="m">
@@ -86,17 +85,17 @@
             </enableOpenMBVFrameC>
         </RigidBody>
     </objects>
-    <links />
+    <links/>
     <constraints/>
     <observers>
         <FrameObserver name="FrameObserver1">
-            <frame ref="../Object[RigidBody1]/Frame[C]" />
+            <frame ref="../Object[RigidBody1]/Frame[C]"/>
             <enableOpenMBVVelocity>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVVelocity>
         </FrameObserver>
         <RigidBodyObserver name="RigidBodyObserver1">
-            <rigidBody ref="../Object[RigidBody1]" />
+            <rigidBody ref="../Object[RigidBody1]"/>
             <enableOpenMBVWeight>
               <scaleLength unit="-">1</scaleLength>
             </enableOpenMBVWeight>

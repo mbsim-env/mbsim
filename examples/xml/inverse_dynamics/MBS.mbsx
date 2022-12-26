@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -275,7 +274,7 @@
                 <TranslationAlongAxesXY/>
               </outerFunction>
               <innerFunction>
-                <SymbolicFunction arg1="t">[l1+l2+l3-0.3*t-0.05;-0.4*t-0.03]</SymbolicFunction>
+                <SymbolicFunction><definition arg1="t">[l1+l2+l3-0.3*t-0.05;-0.4*t-0.03]</definition></SymbolicFunction>
               </innerFunction>
             </CompositeFunction>
           </translation>

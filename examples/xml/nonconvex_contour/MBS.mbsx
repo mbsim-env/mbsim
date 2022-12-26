@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="ProjectTS">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="ProjectTS">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -101,13 +100,13 @@
                 </xmlVector>
               </nodes>
               <contourFunction>
-                <SymbolicFunction arg1="eta">
+                <SymbolicFunction><definition arg1="eta">
                   <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                     <ele>eta</ele>
                     <ele>-b*sin(4*eta)</ele>
                     <ele>0</ele>
                   </xmlVector>
-                </SymbolicFunction>
+                </definition></SymbolicFunction>
               </contourFunction>
               <open>true</open>
               <enableOpenMBV/>
