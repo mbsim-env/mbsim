@@ -381,7 +381,7 @@ namespace MBSimGUI {
       vector<FunctionWidget::VarType> argType(2);
       argType[0] = FunctionWidget::varVec;
       argType[1] = FunctionWidget::scalar;
-      return new ChoiceWidget(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",vector<int>(2,1),argType,3,FunctionWidget::fixedVec,parent));
+      return new ChoiceWidget(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",vector<int>(2,1),argType,3,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
     }
     if(i==1)
       return new ChoiceWidget(new StateDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
