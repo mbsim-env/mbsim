@@ -2097,7 +2097,7 @@ namespace MBSimGUI {
   void MainWindow::createFrame(DOMElement *ele, Element *parent) {
     if(not ele) return;
     Frame *frame = Embed<FixedRelativeFrame>::create(ele,parent);
-    if(dynamic_cast<UnknownFixedRelativeFrame*>(frame))
+    if(not frame)
       frame = Embed<NodeFrame>::create(ele,parent);
     if(not frame) {
       QMessageBox::warning(nullptr, "Create frame", "Cannot create frame.");
