@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
     <plotFeatureRecursive value="deflection">true</plotFeatureRecursive>
@@ -152,11 +151,11 @@
         <generalizedFrictionForceLaw>
           <RegularizedPlanarFriction>
             <frictionForceFunction>
-              <SymbolicFunction arg1="gd" arg1Dim="1" arg2="laN">
+              <SymbolicFunction><definition arg1="gd" arg1Dim="1" arg2="laN">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>-0.3*laN*2/pi*atan(100*gd(1))</ele>
                 </xmlVector>
-              </SymbolicFunction>
+              </definition></SymbolicFunction>
             </frictionForceFunction>
           </RegularizedPlanarFriction>
         </generalizedFrictionForceLaw>
@@ -171,11 +170,11 @@
         <generalizedFrictionForceLaw>
           <RegularizedPlanarFriction>
             <frictionForceFunction>
-              <SymbolicFunction arg1="gd" arg1Dim="1" arg2="laN">
+              <SymbolicFunction><definition arg1="gd" arg1Dim="1" arg2="laN">
                 <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                   <ele>-0.3*laN*2/pi*atan(100*gd(1))</ele>
                 </xmlVector>
-              </SymbolicFunction>
+              </definition></SymbolicFunction>
             </frictionForceFunction>
           </RegularizedPlanarFriction>
         </generalizedFrictionForceLaw>

@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <Parameter>
     <scalarParameter name="be">(90-73)/180*pi</scalarParameter>
     <scalarParameter name="h">400e-3</scalarParameter>
@@ -83,13 +82,13 @@
           <etaNodes>[-10;70]</etaNodes>
           <xiNodes>[-1;5]</xiNodes>
           <contourFunction>
-            <SymbolicFunction arg1="zeta" arg1Dim="2">
+            <SymbolicFunction><definition arg1="zeta" arg1Dim="2">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>zeta(1)</ele>
                 <ele>zeta(2)</ele>
                 <ele>0.2*sin(zeta(1))</ele>
               </xmlVector>
-            </SymbolicFunction>
+            </definition></SymbolicFunction>
           </contourFunction>
           <openEta>true</openEta>
           <openXi>true</openXi>

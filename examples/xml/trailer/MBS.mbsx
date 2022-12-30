@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
     <scalarParameter name="A">0.02</scalarParameter>
   </Parameter>
@@ -429,11 +428,11 @@
     <LinearSystemAnalyzer xmlns="http://www.mbsim-env.de/MBSimControl">
       <excitationFrequencies>[0.1:0.5:30]'</excitationFrequencies>
       <excitationAmplitudeFunction>
-        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="f">
+        <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="f">
           <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <ele>A*(2*pi*f)^2</ele>
           </xmlVector>
-        </SymbolicFunction>
+        </definition></SymbolicFunction>
       </excitationAmplitudeFunction>
       <visualizeFrequencyResponse>
         <frequencyRange>[2;5]</frequencyRange>

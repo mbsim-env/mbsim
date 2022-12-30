@@ -1,7 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
-    xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl"
-    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="TS" xmlns:mbsimcontrol="http://www.mbsim-env.de/MBSimControl" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
   <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
@@ -20,7 +17,7 @@
   </frames>
   <contours/>
   <groups>
-    <pv:Embed href="BallCheckvalveSystem.xml" count="1" counterName="xxx"/>
+    <pv:Embed count="1" counterName="xxx" href="BallCheckvalveSystem.xml"/>
   </groups>
   <objects>
     <RigidBody name="Anregung">
@@ -32,9 +29,9 @@
       <mass>1.</mass>
       <inertiaTensor>eye(3)</inertiaTensor>
       <timeDependentTranslation>
-        <SymbolicFunction arg1="t">
+        <SymbolicFunction><definition arg1="t">
           [0; A*sin(2*pi*f*t + pi/2); 0]
-        </SymbolicFunction>
+        </definition></SymbolicFunction>
       </timeDependentTranslation>
       <frames>
         <FixedRelativeFrame name="LineF">
@@ -53,7 +50,7 @@
         </Line>
       </contours>
       <openMBVRigidBody>
-        <Frustum name="Frustum" xmlns="http://www.mbsim-env.de/OpenMBV">
+        <Frustum xmlns="http://www.mbsim-env.de/OpenMBV" name="Frustum">
           <diffuseColor>[0.6666;1;1]</diffuseColor>
           <initialTranslation>[0; 0; 0]</initialTranslation>
           <initialRotation>[pi/2; 0; 0]</initialRotation>
@@ -95,17 +92,17 @@
       </normalImpactLaw>
         -->
     </Contact>
-    <PositionSensor name="AnregungPos" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="AnregungPos">
       <frame ref="../Object[Anregung]/Frame[C]"/>
     </PositionSensor>
-    <Demultiplexer name="AnregungPosy" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <Demultiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="AnregungPosy">
       <inputSignal ref="../Link[AnregungPos]"/>
       <indices>[2]</indices>
     </Demultiplexer>
-    <VelocitySensor name="AnregungVel" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <VelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="AnregungVel">
       <frame ref="../Object[Anregung]/Frame[C]"/>
     </VelocitySensor>
-    <Demultiplexer name="AnregungVely" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <Demultiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="AnregungVely">
       <inputSignal ref="../Link[AnregungVel]"/>
       <indices>[2]</indices>
     </Demultiplexer>

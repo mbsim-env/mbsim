@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -140,9 +139,9 @@
                 <RotationAboutZAxis/>
               </outerFunction>
               <innerFunction>
-                <SymbolicFunction arg1="t">
+                <SymbolicFunction><definition arg1="t">
                   1.01*al*(1-exp(-5*t))
-                </SymbolicFunction>
+                </definition></SymbolicFunction>
               </innerFunction>
             </CompositeFunction>
           </timeDependentRotation>
@@ -181,18 +180,18 @@
           <tangentialForceLaw>
             <PlanarStribeckFriction>
               <frictionFunction>
-                <SymbolicFunction arg1="gT">
+                <SymbolicFunction><definition arg1="gT">
                   mu0+mu1/(1+mu2*gT^2)
-                </SymbolicFunction>
+                </definition></SymbolicFunction>
               </frictionFunction>
             </PlanarStribeckFriction>
           </tangentialForceLaw>
           <tangentialImpactLaw>
             <PlanarStribeckImpact>
               <frictionFunction>
-                <SymbolicFunction arg1="gT">
+                <SymbolicFunction><definition arg1="gT">
                   mu0+mu1/(1+mu2*gT^2)
-                </SymbolicFunction>
+                </definition></SymbolicFunction>
               </frictionFunction>
             </PlanarStribeckImpact>
           </tangentialImpactLaw>

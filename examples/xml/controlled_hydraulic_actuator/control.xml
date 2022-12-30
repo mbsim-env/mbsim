@@ -1,38 +1,37 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<Group name="Control" xmlns="http://www.mbsim-env.de/MBSim">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Group xmlns="http://www.mbsim-env.de/MBSim" name="Control">
   <frameOfReference ref="../Frame[I]"/>
   <frames/>
   <contours/>
   <groups/>
   <objects/>
   <links>
-    <LinearTransferSystem name="LTI" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="LTI">
       <inputSignal ref="../Link[DifferencePosition]"/>
       <systemMatrix>[0,0;0,-1/2e-3]</systemMatrix>
       <inputMatrix>[1;1/2e-3]</inputMatrix>
       <outputMatrix>[100,-10/2e-3]</outputMatrix>
       <feedthroughMatrix>[1000+10/2e-3]</feedthroughMatrix>
     </LinearTransferSystem>
-    <LinearTransferSystem name="PT1Controlvalve" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <LinearTransferSystem xmlns="http://www.mbsim-env.de/MBSimControl" name="PT1Controlvalve">
       <inputSignal ref="../Link[ControlOutputLimitted]"/>
       <systemMatrix>[-25]</systemMatrix>
       <inputMatrix>[1]</inputMatrix>
       <outputMatrix>[25]</outputMatrix>
       <feedthroughMatrix>[0]</feedthroughMatrix>
     </LinearTransferSystem>
-    <PositionSensor name="FMassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="FMassPosition">
       <frame ref="../../Frame[FMass]"/>
     </PositionSensor>
-    <PositionSensor name="MassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="MassPosition">
       <frame ref="../../Group[Rocker]/Object[Mass]/Frame[C]"/>
     </PositionSensor>
-    <SignalOperation name="RelativeMassPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="RelativeMassPosition">
       <inputSignal ref="../Link[FMassPosition]"/>
       <inputSignal ref="../Link[MassPosition]"/>
       <function>
-       <SymbolicFunction arg1="x" arg1Dim="3" arg2="y" arg2Dim="3" xmlns="http://www.mbsim-env.de/MBSim">
+       <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg1Dim="3" arg2="y" arg2Dim="3">
           y(2)-x(2)
-        </SymbolicFunction>
+        </definition></SymbolicFunction>
       </function>
     </SignalOperation>
     <!--
@@ -41,7 +40,7 @@
       <direction>[0;1;0]</direction>
     </RelativeVelocitySensor>
     -->
-    <FunctionSensor name="DesiredPosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="DesiredPosition">
       <function>
         <!--
         <SinusoidFunction xmlns="http://www.mbsim-env.de/MBSim">
@@ -56,16 +55,16 @@
         </TabularFunction>
       </function>
     </FunctionSensor>
-    <SignalOperation name="DifferencePosition" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="DifferencePosition">
       <inputSignal ref="../Link[DesiredPosition]"/>
       <inputSignal ref="../Link[RelativeMassPosition]"/>
       <function>
-       <SymbolicFunction arg1="x" arg2="y" xmlns="http://www.mbsim-env.de/MBSim">
+       <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg2="y">
           y-x
-        </SymbolicFunction>
+        </definition></SymbolicFunction>
       </function>
     </SignalOperation>
-    <SignalOperation name="ControlOutputLimitted" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="ControlOutputLimitted">
       <inputSignal ref="../Link[LTI]"/>
       <function>
         <BoundedFunction xmlns="http://www.mbsim-env.de/MBSim">
@@ -74,7 +73,7 @@
          </BoundedFunction>
       </function>
     </SignalOperation>
-    <SignalOperation name="PT1ControlvalveOutputLimitted" xmlns="http://www.mbsim-env.de/MBSimControl">
+    <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="PT1ControlvalveOutputLimitted">
       <inputSignal ref="../Link[PT1Controlvalve]"/>
       <function>
         <BoundedFunction xmlns="http://www.mbsim-env.de/MBSim">

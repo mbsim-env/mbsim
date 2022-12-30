@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
-<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
 
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
@@ -247,13 +246,13 @@
             </ConstantFunction>
           </densityFunction>
           <coefficientFunction>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim" arg1="zeta" arg1Dim="2">
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="zeta" arg1Dim="2">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
                 <ele>cw*A</ele>
                 <ele>0</ele>
                 <ele>0</ele>
               </xmlVector>
-            </SymbolicFunction>
+            </definition></SymbolicFunction>
           </coefficientFunction>
           <windSpeed unit="m/s">[-vWind;0;0]</windSpeed>
           <enableOpenMBV>
