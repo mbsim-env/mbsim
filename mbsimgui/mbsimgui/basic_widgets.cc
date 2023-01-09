@@ -318,7 +318,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FileWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     auto *ele0 = static_cast<DOMElement*>(parent);
     DOMText *text = doc->createTextNode(X()%getFile().toStdString());
     ele0->insertBefore(text, nullptr);
@@ -358,7 +358,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* SpinBoxWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text= doc->createTextNode(X()%toStr(getValue()));
     parent->insertBefore(text, nullptr);
     return nullptr;
@@ -374,7 +374,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* BasicTextWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text_ = doc->createTextNode(X()%getText().toStdString());
     parent->insertBefore(text_, nullptr);
     return nullptr;
@@ -663,7 +663,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
@@ -688,7 +688,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureWidget::writeXMLFile2(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
@@ -747,8 +747,8 @@ namespace MBSimGUI {
     source->setStringData(x%edit->toPlainText().toStdString());
     try {
       DOMElement *element;
-      if(dynamic_cast<xercesc::DOMDocument*>(parent->getParentNode())) {
-        xercesc::DOMDocument *doc = mw->parser->parse(source);
+      if(dynamic_cast<DOMDocument*>(parent->getParentNode())) {
+        DOMDocument *doc = mw->parser->parse(source);
         DOMElement *ele = doc->getDocumentElement();
         element = static_cast<xercesc::DOMElement*>(parent->getOwnerDocument()->importNode(ele,true));
         element->getOwnerDocument()->replaceChild(element, parent);
@@ -886,7 +886,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* StateWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(MBSIMCONTROL%"state");
       E(ele)->setAttribute("name",tree->topLevelItem(i)->text(0).toStdString());
@@ -1002,7 +1002,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* TransitionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
       DOMElement *ele = D(doc)->createElement(MBSIMCONTROL%"transition");
       E(ele)->setAttribute("source",tree->topLevelItem(i)->text(0).toStdString());

@@ -46,7 +46,7 @@ void initPython() {
 
 namespace MBSim {
 
-shared_ptr<xercesc::DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs, bool printPluginSearch) {
+shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs, bool printPluginSearch) {
   bfs::path MBXMLUTILSSCHEMA=installPath()/"share"/"mbxmlutils"/"schema";
   set<bfs::path> schemas {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
@@ -89,7 +89,7 @@ shared_ptr<xercesc::DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &search
         if(path.substr(path.length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
         if(printPluginSearch && stage==SearchPath)
           fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load XSD for "<<it->path().leaf().string()<<endl;
-        std::shared_ptr<xercesc::DOMDocument> doc=parser->parse(*it, nullptr, false);
+        std::shared_ptr<DOMDocument> doc=parser->parse(*it, nullptr, false);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"schemas")->getFirstElementChild();
             e!=nullptr; e=e->getNextElementSibling()) {
           if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"File") {
@@ -142,7 +142,7 @@ shared_ptr<xercesc::DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &search
     xmlCatalogDoc->appendChild(catalogRoot);
     shared_ptr<DOMParser> nonValParser=DOMParser::create();
     for(auto &schema: schemas) {
-      shared_ptr<xercesc::DOMDocument> doc=nonValParser->parse(schema);//MISSING use sax parser since we just need to parse one attribute of the root element
+      shared_ptr<DOMDocument> doc=nonValParser->parse(schema);//MISSING use sax parser since we just need to parse one attribute of the root element
       string ns=E(doc->getDocumentElement())->getAttribute("targetNamespace");
       auto uri=D(xmlCatalogDoc)->createElement(XMLCATALOG%"uri");
       catalogRoot->appendChild(uri);

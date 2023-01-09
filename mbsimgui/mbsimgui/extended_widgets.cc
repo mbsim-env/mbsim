@@ -99,7 +99,7 @@ namespace MBSimGUI {
   DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele = nullptr;
     if(xmlName!=FQN()) {
-      xercesc::DOMDocument *doc = parent->getOwnerDocument();
+      DOMDocument *doc = parent->getOwnerDocument();
       DOMElement *newele = D(doc)->createElement(xmlName);
       if(isActive()) {
         ele = widget->writeXMLFile(newele);

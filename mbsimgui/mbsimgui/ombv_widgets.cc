@@ -464,7 +464,7 @@ namespace MBSimGUI {
   DOMElement* OMBVObjectWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *newele;
     if(xmlName!=FQN()) {
-      xercesc::DOMDocument *doc = parent->getOwnerDocument();
+      DOMDocument *doc = parent->getOwnerDocument();
       newele=D(doc)->createElement(xmlName);
       E(newele)->setAttribute("name",name.toStdString());
       parent->insertBefore(newele,ref);

@@ -54,7 +54,7 @@ namespace MBSimGUI {
 
   DOMElement* Integrator::createXMLElement(DOMNode *parent) {
     DOMElement *element = Solver::createXMLElement(parent);
-    xercesc::DOMDocument *doc=element->getOwnerDocument();
+    DOMDocument *doc=element->getOwnerDocument();
     DOMElement *ele1 = D(doc)->createElement( MBSIM%"startTime" );
     E(ele1)->setAttribute("unit", "s");
     DOMText *text = doc->createTextNode(X()%"0");

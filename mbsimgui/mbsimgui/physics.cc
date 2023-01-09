@@ -40,7 +40,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -53,7 +53,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -66,7 +66,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -79,7 +79,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -92,7 +92,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
