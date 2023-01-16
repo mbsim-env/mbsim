@@ -74,6 +74,47 @@ namespace MBSimControl {
       MBSim::Index i{0};
   };
 
+  /*!
+   * \brief TyreContactVelocitySensor
+   * \author Martin Foerg
+   */
+  class TyreContactVelocitySensor : public TyreContactSensor {
+    public:
+      TyreContactVelocitySensor(const std::string &name="") : TyreContactSensor(name) { }
+      void setVelocityNumber(int i_) { i = i_; }
+      int getSignalSize() const override { return 3; }
+      void updateSignal() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+    protected:
+      MBSim::Index i{0};
+  };
+
+  /*!
+   * \brief TyreContactAngularVelocitySensor
+   * \author Martin Foerg
+   */
+  class TyreContactAngularVelocitySensor : public TyreContactSensor {
+    public:
+      TyreContactAngularVelocitySensor(const std::string &name="") : TyreContactSensor(name) { }
+      void setAngularVelocityNumber(int i_) { i = i_; }
+      int getSignalSize() const override { return 3; }
+      void updateSignal() override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+    protected:
+      MBSim::Index i{0};
+  };
+
+  /*!
+   * \brief TyreModelSensor
+   * \author Martin Foerg
+   */
+  class TyreModelSensor : public TyreContactSensor {
+    public:
+      TyreModelSensor(const std::string &name="") : TyreContactSensor(name) { }
+      int getSignalSize() const override;
+      void updateSignal() override;
+  };
+
 }
 
 #endif

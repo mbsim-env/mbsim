@@ -174,6 +174,24 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new TyreContactOrientationSensorPropertyDialog(this); }
   };
 
+  class TyreContactVelocitySensor : public TyreContactSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TyreContactVelocitySensor, TyreContactSensor, MBSIMCONTROL%"TyreContactVelocitySensor", "Tyre contact velocity sensor");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new TyreContactVelocitySensorPropertyDialog(this); }
+  };
+
+  class TyreContactAngularVelocitySensor : public TyreContactSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TyreContactAngularVelocitySensor, TyreContactSensor, MBSIMCONTROL%"TyreContactAngularVelocitySensor", "Tyre contact angular velocity sensor");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new TyreContactAngularVelocitySensorPropertyDialog(this); }
+  };
+
+  class TyreModelSensor : public TyreContactSensor {
+    MBSIMGUI_OBJECTFACTORY_CLASS(TyreModelSensor, TyreContactSensor, MBSIMCONTROL%"TyreModelSensor", "Tyre model sensor");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new TyreContactSensorPropertyDialog(this); }
+  };
+
   class StateMachineSensor : public Sensor {
     MBSIMGUI_OBJECTFACTORY_CLASS(StateMachineSensor, Sensor, MBSIMCONTROL%"StateMachineSensor", "State machine sensor");
     public:

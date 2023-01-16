@@ -32,6 +32,7 @@ namespace MBSim {
       ~TyreContact();
 
       void setTyreModel(TyreModel *model_);
+      TyreModel* getTyreModel() { return model; }
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;

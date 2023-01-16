@@ -99,6 +99,9 @@ namespace MBSim {
 
       void updateGeneralizedForces() override;
 
+      int getDataSize() const override { return 8; }
+      fmatvec::VecV getData() const override;
+
     private:
       double cz{0};
       double dz{0};
