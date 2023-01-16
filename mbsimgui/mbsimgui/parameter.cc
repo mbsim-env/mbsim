@@ -61,7 +61,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* Parameter::createXMLElement(DOMNode *parent) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(getXMLType());
     E(element)->setAttribute("name", getXMLType().second);
     parent->insertBefore(element, nullptr);
@@ -132,7 +132,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ImportParameter::createXMLElement(DOMNode *parent) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(getXMLType());
     parent->insertBefore(element, nullptr);
     return element;

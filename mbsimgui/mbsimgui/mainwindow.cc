@@ -498,12 +498,12 @@ namespace MBSimGUI {
   }
 
   void MainWindow::updateUndos() {
-    auto *oldDoc = static_cast<xercesc::DOMDocument*>(doc->cloneNode(true));
+    auto *oldDoc = static_cast<DOMDocument*>(doc->cloneNode(true));
     oldDoc->setDocumentURI(doc->getDocumentURI());
-    auto u = vector<xercesc::DOMDocument*>(1+file.size());
+    auto u = vector<DOMDocument*>(1+file.size());
     u[0] = oldDoc;
     for(int i=0; i<file.size();i++) {
-      auto *oldDoc = static_cast<xercesc::DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true));
+      auto *oldDoc = static_cast<DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true));
       oldDoc->setDocumentURI(file[i]->getXMLDocument()->getDocumentURI());
       u[i+1] = oldDoc;
     }
@@ -863,7 +863,7 @@ namespace MBSimGUI {
 
   // update model parameters including additional paramters from paramList
   void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
-    shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
+    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
     DOMElement *eleE0 = D(doc)->createElement(PV%"Embed");
     doc->insertBefore(eleE0,nullptr);
@@ -1062,7 +1062,7 @@ namespace MBSimGUI {
   void MainWindow::mbsimxml(int task) {
     currentTask = task;
 
-    shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
+    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
@@ -1211,7 +1211,7 @@ namespace MBSimGUI {
 
   void MainWindow::debug() {
     currentTask = 0;
-    shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
+    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
@@ -1298,7 +1298,7 @@ namespace MBSimGUI {
     elementBuffer.first = nullptr;
     parameterBuffer.first = nullptr;
     setWindowModified(true);
-    auto r = vector<xercesc::DOMDocument*>(1+file.size());
+    auto r = vector<DOMDocument*>(1+file.size());
     r[0] = doc;
     for(int i=0; i<file.size(); i++)
       r[i+1] = file[i]->getXMLDocument();
@@ -1316,7 +1316,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::redo() {
-    auto u = vector<xercesc::DOMDocument*>(1+file.size());
+    auto u = vector<DOMDocument*>(1+file.size());
     u[0] = doc;
     for(int i=0; i<file.size(); i++)
       u[i+1] = file[i]->getXMLDocument();
@@ -1703,7 +1703,7 @@ namespace MBSimGUI {
 	if(QFileInfo::exists(dialog.getModelFileName()))
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getModelFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-	  xercesc::DOMDocument *doc = impl->createDocument();
+	  DOMDocument *doc = impl->createDocument();
 	  DOMNode *node = doc->importNode(item->getXMLElement(),true);
 	  doc->insertBefore(node,nullptr);
 	  serializer->writeToURI(doc, X()%dialog.getModelFileName().toStdString());
@@ -1714,7 +1714,7 @@ namespace MBSimGUI {
 	if(QFileInfo::exists(dialog.getParameterFileName()))
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-	  xercesc::DOMDocument *doc = impl->createDocument();
+	  DOMDocument *doc = impl->createDocument();
 	  DOMNode *node = doc->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true);
 	  doc->insertBefore(node,nullptr);
 	  serializer->writeToURI(doc, X()%dialog.getParameterFileName().toStdString());
@@ -1760,7 +1760,7 @@ namespace MBSimGUI {
       if(QFileInfo::exists(dialog.getParameterFileName()))
 	ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
       if(ret == QMessageBox::Yes) {
-	xercesc::DOMDocument *doc = impl->createDocument();
+	DOMDocument *doc = impl->createDocument();
 	DOMNode *node = doc->importNode(parameters->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
 	doc->insertBefore(node,nullptr);
 	serializer->writeToURI(doc, X()%dialog.getParameterFileName().toStdString());
@@ -1979,7 +1979,7 @@ namespace MBSimGUI {
     if(result) {
       updateUndos();
       if(parent->getNumberOfParameters()) removeParameter(parent);
-      xercesc::DOMDocument *doc = nullptr;
+      DOMDocument *doc = nullptr;
       QString file = dialog.getParameterFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getParameterFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
@@ -2056,7 +2056,7 @@ namespace MBSimGUI {
     int result = dialog.exec();
     if(result) {
       updateUndos();
-      xercesc::DOMDocument *doc = nullptr;
+      DOMDocument *doc = nullptr;
       QString file = dialog.getParameterFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getParameterFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
@@ -2445,7 +2445,7 @@ namespace MBSimGUI {
 	if(QFileInfo::exists(dialog.getFileName()))
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-	  shared_ptr<xercesc::DOMDocument> doc=mbxmlparser->createDocument();
+	  shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
 	  doc->setDocumentURI(this->doc->getDocumentURI());
 	  auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
 	  doc->insertBefore(newDocElement, nullptr);
@@ -2650,7 +2650,7 @@ namespace MBSimGUI {
       if(fileName==file[i]->getFileInfo())
         return file[i];
     }
-    xercesc::DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
+    DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
     MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
     auto *fileItem = new FileItemData(doc);
     file.push_back(fileItem);
@@ -2691,7 +2691,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::convertDocument() {
-    xercesc::DOMDocument *sdoc = doc;
+    DOMDocument *sdoc = doc;
     if(project->getSolver()->getFileItem())
      sdoc = project->getSolver()->getFileItem()->getXMLDocument();
     vector<DOMNodeList*> list;

@@ -113,7 +113,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* OneDimVecArrayWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMNode *e = parent;
     for(auto & i : ele) {
       DOMElement *ee=D(doc)->createElement(uri%"ele");
@@ -203,7 +203,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* OneDimMatArrayWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMNode *e = parent;
     for(auto & i : ele) {
       DOMElement *ee=D(doc)->createElement(uri%"ele");
@@ -294,7 +294,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* TwoDimMatArrayWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMNode *e = parent;
     for(auto & i : ele) {
       DOMElement *ee=D(doc)->createElement(uri%"row");
@@ -409,7 +409,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* DofWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMText *text= doc->createTextNode(X()%getDof().toStdString());
     parent->insertBefore(text, nullptr);
     return nullptr;

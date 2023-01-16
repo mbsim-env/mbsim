@@ -156,7 +156,7 @@ int main(int argc, char *argv[]) {
 
       // load MBSim project XML document
       cout<<"Load MBSim model from XML project file."<<endl;
-      std::shared_ptr<xercesc::DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies, false);
+      std::shared_ptr<DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies, false);
       DOMElement *modelEle=modelDoc->getDocumentElement();
 
       // create a clean evaluator (get the evaluator name first form the dom)
@@ -305,7 +305,7 @@ int main(int argc, char *argv[]) {
     addModelInputOutputs(var, dss.get());
 
     // create DOM of modelDescription.xml
-    std::shared_ptr<xercesc::DOMDocument> modelDescDoc(parserNoneVali->createDocument());
+    std::shared_ptr<DOMDocument> modelDescDoc(parserNoneVali->createDocument());
 
     // root element fmiModelDescription and its attributes
     cout<<"Create the modelDescription.xml file."<<endl;
@@ -571,7 +571,7 @@ namespace {
     }
 
     // read *.deplibs file
-    std::shared_ptr<xercesc::DOMDocument> depDoc=parser->parse(depFile);
+    std::shared_ptr<DOMDocument> depDoc=parser->parse(depFile);
     for(DOMElement *e=depDoc->getDocumentElement()->getFirstElementChild(); e!=nullptr; e=e->getNextElementSibling()) {
       string file=X()%E(e)->getFirstTextChild()->getData();
 

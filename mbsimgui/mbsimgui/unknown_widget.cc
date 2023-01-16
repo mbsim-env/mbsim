@@ -50,7 +50,7 @@ namespace MBSimGUI {
 
   template<class ContainerWidget>
   xercesc::DOMElement* UnknownWidget<ContainerWidget>::writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     xercesc::DOMElement *ele0 = MBXMLUtils::D(doc)->createElement(tagName);
     parent->insertBefore(ele0,ref);
     editor->writeXMLFile(ele0,ref);

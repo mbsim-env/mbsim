@@ -78,7 +78,7 @@ namespace MBSimGUITestPlugin {
 
   DOMElement* TestRigidBody::createXMLElement(DOMNode *parent) {
     DOMElement *ele0 = Element::createXMLElement(parent);
-    xercesc::DOMDocument *doc=ele0->getOwnerDocument();
+    DOMDocument *doc=ele0->getOwnerDocument();
     frames = D(doc)->createElement( MBSimGUI::MBSIM%"frames" );
     ele0->insertBefore( frames, nullptr );
     contours = D(doc)->createElement( MBSimGUI::MBSIM%"contours" );
@@ -107,7 +107,7 @@ namespace MBSimGUITestPlugin {
     if(ELE) {
       ELE = ELE->getFirstElementChild();
       if(ELE) {
-        xercesc::DOMDocument *doc=element->getOwnerDocument();
+        DOMDocument *doc=element->getOwnerDocument();
         DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
         ELE->insertBefore(id, nullptr);
       }
@@ -115,7 +115,7 @@ namespace MBSimGUITestPlugin {
 
     ELE=E(element)->getFirstElementChildNamed(MBSimGUI::MBSIM%"enableOpenMBVFrameC");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
       ELE->insertBefore(id, nullptr);
     }

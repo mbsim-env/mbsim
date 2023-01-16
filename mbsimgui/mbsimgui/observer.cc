@@ -51,14 +51,14 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -71,14 +71,14 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -91,35 +91,35 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVMoment");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVTangentialForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -132,28 +132,28 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVContactPoints");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVNormalForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVLongitudinalForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVLateralForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -165,35 +165,35 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVVelocity");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularVelocity");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAcceleration");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAngularAcceleration");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -206,28 +206,28 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointForce");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVJointMoment");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAxisOfRotation");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -240,7 +240,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
@@ -253,7 +253,7 @@ namespace MBSimGUI {
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"enableOpenMBV");
     if(ELE) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      DOMDocument *doc=element->getOwnerDocument();
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }

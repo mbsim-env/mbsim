@@ -66,7 +66,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedForceLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     if(forceFunc) forceFunc->writeXMLFile(ele0);
@@ -94,7 +94,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* GeneralizedImpactLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     return ele0;
@@ -125,7 +125,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrictionForceLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     if(frictionForceFunc) frictionForceFunc->writeXMLFile(ele0);
@@ -231,7 +231,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrictionImpactLawWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     return ele0;
@@ -365,7 +365,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* TyreModelWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    xercesc::DOMDocument *doc=parent->getOwnerDocument();
+    DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
     return ele0;
