@@ -30,7 +30,6 @@
 #include <boost/dll.hpp>
 #include <mbxmlutilshelper/shared_library.h>
 #ifdef _WIN32
-#  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
 #else
 #  include "qt-unix-signals/sigwatch.h"
@@ -130,13 +129,11 @@ int main(int argc, char *argv[]) {
   if(loadPlugins(arg)!=0)
     return 1;
 
-  {
-    MainWindow mainwindow(arg);
-    mainwindow.show();
-    if(arg.contains("--fullscreen")) mainwindow.showFullScreen(); // must be done after mainwindow.show()
-    if(int ret=app.exec(); ret!=0) return ret;
-  }
-  if(!MainWindow::getExitOK()) return 1;
+  MainWindow mainwindow(arg);
+  mainwindow.show();
+  if(arg.contains("--fullscreen")) mainwindow.showFullScreen(); // must be done after mainwindow.show()
+  if(int ret=app.exec(); ret!=0) return ret;
+  if(!mainwindow.getExitOK()) return 1;
   return 0;
 }
 
