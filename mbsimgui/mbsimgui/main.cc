@@ -38,9 +38,9 @@
 using namespace std;
 using namespace MBSimGUI;
 
-namespace {
-  int loadPlugins(const QStringList &arg);
-}
+//namespace {
+//  int loadPlugins(const QStringList &arg);
+//}
 
 int main(int argc, char *argv[]) {
 #ifndef _WIN32
@@ -126,8 +126,8 @@ int main(int argc, char *argv[]) {
   QLocale::setDefault(QLocale::C);
   setlocale(LC_ALL, "C");
 
-  if(loadPlugins(arg)!=0)
-    return 1;
+//  if(loadPlugins(arg)!=0)
+//    return 1;
 
   MainWindow mainwindow(arg);
   mainwindow.show();
@@ -139,52 +139,52 @@ int main(int argc, char *argv[]) {
 
 namespace {
 
-int loadPlugins(const QStringList &arg)
-{
-#ifndef _WIN32
-  const static string libDir="lib";
-  const static QString libSuffix=".so";
-#else
-  const static string libDir="bin";
-  const static QString libSuffix=".dll";
-#endif
-
-  QStringList allSearchDirs;
-  // command arguments
-  for(auto &a : arg)
-    if(a.startsWith("--searchPath="))
-      allSearchDirs.append(a.mid(QString("--searchPath=").length()));
-  // install directory (local/[lib|bin])
-  allSearchDirs.append((boost::dll::program_location().parent_path().parent_path()/libDir).string().c_str());
-  // current dir
-  allSearchDirs.append(QDir::currentPath());
-  // dirs from config file
-  QSettings settings;
-  auto pathStr=settings.value("mainwindow/options/plugins", QString()).toString();
-  auto path=pathStr.isEmpty() ? QStringList() : pathStr.split("\n");
-  allSearchDirs.append(path);
-
-  // load mbsimgui plugins
-  for(auto &dir : allSearchDirs) {
-    cout<<"Searching for MBSimGUI plugins in directory: "<<dir.toStdString()<<endl;
-    auto qdir=QDir(dir);
-    for(auto &f : qdir.entryList(QDir::Files)) {
-      if(!f.startsWith("libmbsimgui-plugin-") || !f.endsWith(libSuffix))
-        continue;
-      cout<<" - load: "<<f.toStdString()<<endl;
-      MBXMLUtils::SharedLibrary::load(qdir.absoluteFilePath(f).toStdString());
-    }
-  }
-
-  // check for errors during ObjectFactory
-  string errorMsg3(ObjectFactory::getInstance().getAndClearErrorMsg());
-  if(!errorMsg3.empty()) {
-    cerr<<"The following errors occured during loading of MBSimGUI plugin object factory:"<<endl;
-    cerr<<errorMsg3;
-    cerr<<"Exiting now."<<endl;
-    return 1;
-  }
-  return 0;
-}
+//int loadPlugins(const QStringList &arg)
+//{
+//#ifndef _WIN32
+//  const static string libDir="lib";
+//  const static QString libSuffix=".so";
+//#else
+//  const static string libDir="bin";
+//  const static QString libSuffix=".dll";
+//#endif
+//
+//  QStringList allSearchDirs;
+//  // command arguments
+//  for(auto &a : arg)
+//    if(a.startsWith("--searchPath="))
+//      allSearchDirs.append(a.mid(QString("--searchPath=").length()));
+//  // install directory (local/[lib|bin])
+//  allSearchDirs.append((boost::dll::program_location().parent_path().parent_path()/libDir).string().c_str());
+//  // current dir
+//  allSearchDirs.append(QDir::currentPath());
+//  // dirs from config file
+//  QSettings settings;
+//  auto pathStr=settings.value("mainwindow/options/plugins", QString()).toString();
+//  auto path=pathStr.isEmpty() ? QStringList() : pathStr.split("\n");
+//  allSearchDirs.append(path);
+//
+//  // load mbsimgui plugins
+//  for(auto &dir : allSearchDirs) {
+//    cout<<"Searching for MBSimGUI plugins in directory: "<<dir.toStdString()<<endl;
+//    auto qdir=QDir(dir);
+//    for(auto &f : qdir.entryList(QDir::Files)) {
+//      if(!f.startsWith("libmbsimgui-plugin-") || !f.endsWith(libSuffix))
+//        continue;
+//      cout<<" - load: "<<f.toStdString()<<endl;
+//      MBXMLUtils::SharedLibrary::load(qdir.absoluteFilePath(f).toStdString());
+//    }
+//  }
+//
+//  // check for errors during ObjectFactory
+//  string errorMsg3(ObjectFactory::getInstance().getAndClearErrorMsg());
+//  if(!errorMsg3.empty()) {
+//    cerr<<"The following errors occured during loading of MBSimGUI plugin object factory:"<<endl;
+//    cerr<<errorMsg3;
+//    cerr<<"Exiting now."<<endl;
+//    return 1;
+//  }
+//  return 0;
+//}
 
 }
