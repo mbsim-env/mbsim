@@ -457,8 +457,8 @@ namespace MBSimGUI {
 
     // bugfix version for bfs::copy_file which is at least buggy in boost 1.74
     auto bfs__copy_file = [](const bfs::path &src, const bfs::path &dst, bfs::copy_option options) {
-      bfs::ifstream s(src);
-      bfs::ofstream d(dst);
+      bfs::ifstream s(src, ios_base::binary);
+      bfs::ofstream d(dst, ios_base::binary);
       char buffer[10240];
       while(true) {
         s.read(buffer, 10240);
