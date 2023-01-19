@@ -594,7 +594,7 @@
   <xs:element name="TyreContactPositionSensor" substitutionGroup="TyreContactSensor" type="TyreContactPositionSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen der Position eines Reifenkontakts.
+        Sensor zum Auslesen der Position des Koordinatensystems im Reifenkontaktpunkt.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -611,7 +611,7 @@
   <xs:element name="TyreContactOrientationSensor" substitutionGroup="TyreContactSensor" type="TyreContactOrientationSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen der Orientierung eines Reifenkontakts.
+        Sensor zum Auslesen der Orientierung des Koordinatensystems im Reifenkontaktpunkt.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -619,9 +619,56 @@
     <xs:complexContent>
       <xs:extension base="TyreContactSensorType">
         <xs:sequence>
-          <xs:element name="positionNumber" type="pv:indexFullEval" minOccurs="0"/>
+          <xs:element name="orientationNumber" type="pv:indexFullEval" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TyreContactVelocitySensor" substitutionGroup="TyreContactSensor" type="TyreContactVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der Geschwindigkeit des Koordinatensystems im Reifenkontaktpunkt.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreContactVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="TyreContactSensorType">
+        <xs:sequence>
+          <xs:element name="velocityNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TyreContactAngularVelocitySensor" substitutionGroup="TyreContactSensor" type="TyreContactAngularVelocitySensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der Winkelgeschwindigkeit des Koordinatensystems im Reifenkontaktpunkt.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreContactAngularVelocitySensorType">
+    <xs:complexContent>
+      <xs:extension base="TyreContactSensorType">
+        <xs:sequence>
+          <xs:element name="angularVelocityNumber" type="pv:indexFullEval" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TyreModelSensor" substitutionGroup="TyreContactSensor" type="TyreModelSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen der Daten des Reifenmodells.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TyreModelSensorType">
+    <xs:complexContent>
+      <xs:extension base="TyreContactSensorType"/>
     </xs:complexContent>
   </xs:complexType>
 

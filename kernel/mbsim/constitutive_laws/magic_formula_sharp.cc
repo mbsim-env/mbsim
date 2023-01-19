@@ -274,4 +274,18 @@ namespace MBSim {
     contact->getsRelax(false) = sRelax;
   }
 
+  VecV MagicFormulaSharp::getData() const {
+    static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
+    VecV data(8,NONINIT);
+    data(0) = phi;
+    data(1) = vRoll;
+    data(2) = RvSx-vRoll;
+    data(3) = slip;
+    data(4) = Kyal;
+    data(5) = sRelax;
+    data(6) = slipAnglePT1;
+    data(7) = rScrub;
+    return data;
+  }
+
 }

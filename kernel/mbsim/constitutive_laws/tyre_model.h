@@ -36,6 +36,9 @@ namespace MBSim {
       using Element::plot;
 
       virtual void updateGeneralizedForces() { }
+
+      virtual int getDataSize() const = 0;
+      virtual fmatvec::VecV getData() const = 0;
   };
 
 }

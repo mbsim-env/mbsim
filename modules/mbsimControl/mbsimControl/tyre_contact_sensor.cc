@@ -21,6 +21,7 @@
 #include "mbsimControl/tyre_contact_sensor.h"
 #include "mbsim/links/tyre_contact.h"
 #include "mbsim/frames/contour_frame.h"
+#include "mbsim/constitutive_laws/tyre_model.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -74,8 +75,43 @@ namespace MBSimControl {
 
   void TyreContactOrientationSensor::initializeUsingXML(DOMElement * element) {
     TyreContactSensor::initializeUsingXML(element);
-    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"positionNumber");
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"orientationNumber");
     if(e) setOrientationNumber(E(e)->getText<Index>()-1);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, TyreContactVelocitySensor)
+
+  void TyreContactVelocitySensor::updateSignal() {
+    s = contact->getContourFrame(i)->evalVelocity();
+    upds = false;
+  }
+
+  void TyreContactVelocitySensor::initializeUsingXML(DOMElement * element) {
+    TyreContactSensor::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"velocityNumber");
+    if(e) setVelocityNumber(E(e)->getText<Index>()-1);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, TyreContactAngularVelocitySensor)
+
+  void TyreContactAngularVelocitySensor::updateSignal() {
+    s = contact->getContourFrame(i)->evalAngularVelocity();
+    upds = false;
+  }
+
+  void TyreContactAngularVelocitySensor::initializeUsingXML(DOMElement * element) {
+    TyreContactSensor::initializeUsingXML(element);
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"angularVelocityNumber");
+    if(e) setAngularVelocityNumber(E(e)->getText<Index>()-1);
+  }
+
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, TyreModelSensor)
+
+  int TyreModelSensor::getSignalSize() const { return contact->getTyreModel()->getDataSize(); }
+
+  void TyreModelSensor::updateSignal() {
+    s = contact->getTyreModel()->getData();
+    upds = false;
   }
 
 }

@@ -3368,9 +3368,9 @@ namespace MBSimGUI {
   }
 
   TyreContactOrientationSensorPropertyDialog::TyreContactOrientationSensorPropertyDialog(Element *sensor) : TyreContactSensorPropertyDialog(sensor) {
-    number = new ExtWidget("Orientation number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"positionNumber");
+    number = new ExtWidget("Orientation number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"orientationNumber");
     addToTab("General", number);
- }
+  }
 
   DOMElement* TyreContactOrientationSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     TyreContactSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
@@ -3379,6 +3379,40 @@ namespace MBSimGUI {
   }
 
   DOMElement* TyreContactOrientationSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    TyreContactSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  TyreContactVelocitySensorPropertyDialog::TyreContactVelocitySensorPropertyDialog(Element *sensor) : TyreContactSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Velocity number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"velocityNumber");
+    addToTab("General", number);
+ }
+
+  DOMElement* TyreContactVelocitySensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    TyreContactSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TyreContactVelocitySensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    TyreContactSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    number->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  TyreContactAngularVelocitySensorPropertyDialog::TyreContactAngularVelocitySensorPropertyDialog(Element *sensor) : TyreContactSensorPropertyDialog(sensor) {
+    number = new ExtWidget("Angular velocity number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"angularVelocityNumber");
+    addToTab("General", number);
+ }
+
+  DOMElement* TyreContactAngularVelocitySensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    TyreContactSensorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    number->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* TyreContactAngularVelocitySensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     TyreContactSensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     number->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;

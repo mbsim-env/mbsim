@@ -1024,6 +1024,26 @@ namespace MBSimGUI {
       ExtWidget *number;
   };
 
+  class TyreContactVelocitySensorPropertyDialog : public TyreContactSensorPropertyDialog {
+
+    public:
+      TyreContactVelocitySensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *number;
+  };
+
+  class TyreContactAngularVelocitySensorPropertyDialog : public TyreContactSensorPropertyDialog {
+
+    public:
+      TyreContactAngularVelocitySensorPropertyDialog(Element *sensor);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *number;
+  };
+
   class MultiplexerPropertyDialog : public SignalPropertyDialog {
 
     public:
