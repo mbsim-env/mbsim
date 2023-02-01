@@ -113,7 +113,7 @@ namespace MBSimFMI {
       std::shared_ptr<MBSim::Integrator> integrator;
 
       // system time
-      double timeStore; // do not use this variable, use time
+      double timeStore { 0.0 }; // do not use this variable, use time
       std::reference_wrapper<double> time;
       // system state
       fmatvec::Vec zStore; // do not use this variable, use z
