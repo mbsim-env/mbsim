@@ -42,7 +42,7 @@ namespace MBSimFMI {
 
     // init the validating parser with the mbsimxml schema file
     msg(Debug)<<"Create MBSim XML schema file including all modules."<<endl;
-    auto xmlCatalog=getMBSimXMLCatalog({}, true);
+    auto xmlCatalog=getMBSimXMLCatalog();
     std::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(xmlCatalog->getDocumentElement());
   
     // load MBSim project XML document
