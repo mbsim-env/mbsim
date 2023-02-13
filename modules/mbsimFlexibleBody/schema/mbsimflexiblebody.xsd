@@ -1123,7 +1123,7 @@
     <xs:complexContent>
       <xs:extension base="mbsim:BodyType">
         <xs:sequence>
-          <xs:element name="inputDataFileName" type="pv:filenameFullEval" minOccurs="0">
+          <xs:element name="inputDataFileName" type="pv:filenameFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Name der Datei mit den Eingabedaten.
