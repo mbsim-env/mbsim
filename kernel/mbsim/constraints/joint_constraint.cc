@@ -52,14 +52,16 @@ namespace MBSim {
       nq += dq;
     }
 
+    // dT = T_WR*T_RRes -> transfroms from (W)world-system [output of evalPosition()] to (R)refFrame-system to (Res)residuals
     Mat3xV dT = frame[refFrame]->evalOrientation()*forceDir;
-    Mat3xV dR = frame[refFrame]->getOrientation()*momentDir;
+    // T_RRes -> transforms from (R)refFrame-system [output of AIK2RevCardan(getOriantation.T()*getOrientation())] to (Res)residuals
+    Mat3xV dR = momentDir;
 
     if(dT.cols())
       res.set(Range<Var,Var>(0,dT.cols()-1), dT.T()*(frame[0]->evalPosition()-frame[1]->evalPosition()));
 
     if(dR.cols())
-      res.set(Range<Var,Var>(dT.cols(),dT.cols()+dR.cols()-1), dR.T()*AIK2Cardan(frame[0]->getOrientation().T()*frame[1]->getOrientation()));
+      res.set(Range<Var,Var>(dT.cols(),dT.cols()+dR.cols()-1), dR.T()*AIK2RevCardan(frame[refFrame]->getOrientation().T()*frame[refFrame == firstFrame ? secondFrame : firstFrame]->getOrientation()));
 
     return res;
   } 
