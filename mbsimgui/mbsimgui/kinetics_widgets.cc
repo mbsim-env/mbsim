@@ -58,6 +58,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<FrictionImpactLawWidget>);
 
   MBSIMGUI_REGOBJECTFACTORY(MagicFormulaSharpWidget);
+  MBSIMGUI_REGOBJECTFACTORY(MagicFormula62Widget);
   MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<TyreModelWidget>);
 
   DOMElement* GeneralizedForceLawWidget::initializeUsingXML(DOMElement *element) {
@@ -635,6 +636,101 @@ namespace MBSimGUI {
     sfFLo->writeXMLFile(ele0);
     sfFLa->writeXMLFile(ele0);
     sfM->writeXMLFile(ele0);
+    return ele0;
+  }
+
+  MagicFormula62Widget::MagicFormula62Widget() {
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    inputDataFile = new ExtWidget("Input data file name",new FileWidget("", "Open input data file", "Input data files (*.tir)", 0, true),false,false,MBSIM%"inputDataFileName");
+    layout->addWidget(inputDataFile);
+    cz = new ExtWidget("cz",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cz");
+    layout->addWidget(cz);
+    dz = new ExtWidget("dz",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dz");
+    layout->addWidget(dz);
+    Fz0 = new ExtWidget("Fz0",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"Fz0");
+    layout->addWidget(Fz0);
+    dpi = new ExtWidget("dpi",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dpi");
+    layout->addWidget(dpi);
+    epsx = new ExtWidget("epsx",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"epsx");
+    layout->addWidget(epsx);
+    epsk = new ExtWidget("epsk",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"epsk");
+    layout->addWidget(epsk);
+    c1Rel = new ExtWidget("c1Rel",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"c1Rel");
+    layout->addWidget(c1Rel);
+    c2Rel = new ExtWidget("c2Rel",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"c2Rel");
+    layout->addWidget(c2Rel);
+    c3Rel = new ExtWidget("c3Rel",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"c3Rel");
+    layout->addWidget(c3Rel);
+    sfKyga = new ExtWidget("Scale factor for camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForCamberStiffness");
+    layout->addWidget(sfKyga);
+    sfFLo = new ExtWidget("Scale factor for longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalForce");
+    layout->addWidget(sfFLo);
+    sfFLa = new ExtWidget("Scale factor for lateral force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForce");
+    layout->addWidget(sfFLa);
+    sfM = new ExtWidget("Scale factor for aligning moment",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMoment");
+    layout->addWidget(sfM);
+    sfmux = new ExtWidget("Scale factor for longitudinal fricition coefficient",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalFricitionCoefficient");
+    layout->addWidget(sfmux);
+    sfmuy = new ExtWidget("Scale factor for lateral fricition coefficient",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralFricitionCoefficient");
+    layout->addWidget(sfmuy);
+    sfkx = new ExtWidget("Scale factor for longitudinal slip stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalSlipStiffness");
+    layout->addWidget(sfkx);
+    sfky = new ExtWidget("Scale factor for cornering stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForCorneringStiffness");
+    layout->addWidget(sfky);
+    sfkg = new ExtWidget("Scale factor for camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForCamberStiffness");
+    layout->addWidget(sfkg);
+    sfkm = new ExtWidget("Scale factor for residual torque",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForResidualTorque");
+    layout->addWidget(sfkm);
+  }
+
+  DOMElement* MagicFormula62Widget::initializeUsingXML(DOMElement *element) {
+    TyreModelWidget::initializeUsingXML(element);
+    inputDataFile->initializeUsingXML(element);
+    cz->initializeUsingXML(element);
+    dz->initializeUsingXML(element);
+    Fz0->initializeUsingXML(element);
+    dpi->initializeUsingXML(element);
+    epsx->initializeUsingXML(element);
+    epsk->initializeUsingXML(element);
+    c1Rel->initializeUsingXML(element);
+    c2Rel->initializeUsingXML(element);
+    c3Rel->initializeUsingXML(element);
+    sfKyga->initializeUsingXML(element);
+    sfFLo->initializeUsingXML(element);
+    sfFLa->initializeUsingXML(element);
+    sfM->initializeUsingXML(element);
+    sfmux->initializeUsingXML(element);
+    sfmuy->initializeUsingXML(element);
+    sfkx->initializeUsingXML(element);
+    sfky->initializeUsingXML(element);
+    sfkg->initializeUsingXML(element);
+    sfkm->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* MagicFormula62Widget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = TyreModelWidget::writeXMLFile(parent,ref);
+    inputDataFile->writeXMLFile(ele0);
+    cz->writeXMLFile(ele0);
+    dz->writeXMLFile(ele0);
+    Fz0->writeXMLFile(ele0);
+    dpi->writeXMLFile(ele0);
+    epsx->writeXMLFile(ele0);
+    epsk->writeXMLFile(ele0);
+    c1Rel->writeXMLFile(ele0);
+    c2Rel->writeXMLFile(ele0);
+    c3Rel->writeXMLFile(ele0);
+    sfKyga->writeXMLFile(ele0);
+    sfFLo->writeXMLFile(ele0);
+    sfFLa->writeXMLFile(ele0);
+    sfM->writeXMLFile(ele0);
+    sfmux->writeXMLFile(ele0);
+    sfmuy->writeXMLFile(ele0);
+    sfkx->writeXMLFile(ele0);
+    sfky->writeXMLFile(ele0);
+    sfkg->writeXMLFile(ele0);
+    sfkm->writeXMLFile(ele0);
     return ele0;
   }
 
