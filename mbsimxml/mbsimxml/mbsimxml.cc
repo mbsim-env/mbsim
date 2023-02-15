@@ -46,7 +46,7 @@ void initPython() {
 
 namespace MBSim {
 
-shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs, bool printPluginSearch) {
+shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs) {
   bfs::path MBXMLUTILSSCHEMA=installPath()/"share"/"mbxmlutils"/"schema";
   set<bfs::path> schemas {
     MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimXML"/"mbsimproject.xsd",
@@ -81,13 +81,13 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs, boo
   enum Stage { SearchPath, Loading }; // we load in two stages: first just add all search path then do the real load
   for(auto stage: {SearchPath, Loading})
     for(auto &dir: allSearchDirs) {
-      if(printPluginSearch && stage==SearchPath)
+      if(stage==SearchPath)
         fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Searching for MBSimXML plugins in directory: "<<dir<<endl;
       for(auto it=bfs::directory_iterator(dir); it!=bfs::directory_iterator(); it++) {
         string path=it->path().string();
         if(path.length()<=string(".mbsimmodule.xml").length()) continue;
         if(path.substr(path.length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
-        if(printPluginSearch && stage==SearchPath)
+        if(stage==SearchPath)
           fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load XSD for "<<it->path().leaf().string()<<endl;
         std::shared_ptr<DOMDocument> doc=parser->parse(*it, nullptr, false);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"schemas")->getFirstElementChild();
@@ -126,7 +126,7 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs, boo
               schemas.insert(xsdFile);
             }
 #else
-            if(printPluginSearch && stage==SearchPath)
+            if(stage==SearchPath)
               fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
                 "Python MBSim module found in "+path+" '"+moduleName+"'"<<endl<<
                 "but MBSim is not build with Python support. Skipping this module."<<endl;

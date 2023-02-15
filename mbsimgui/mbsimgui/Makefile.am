@@ -111,7 +111,7 @@ nodist_libmbsimgui_la_SOURCES=$(libmbsimgui_QT_BUILT_SOURCES)
 
 mbsimgui_CPPFLAGS = $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
 
-mbsimgui_LDFLAGS = $(OPENMBV_LIBS) $(QWT_LIBS)
+mbsimgui_LDFLAGS = $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS)
 mbsimgui_LDADD = libmbsimgui.la
 
 mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) $(MAYBE_SIGWATCH_SRC) \
