@@ -52,7 +52,6 @@ namespace MBSim {
 
   /**
    * \brief reversed Cardan parametrisation (z y x): calculate angles (alpha, beta, gamma) from rotation matrix AKI or AIK
-   * I_(alpha,beta,gamma) = AIK2RevCardan(AIK): returns the rotation angle alpha about the unrotated x-axis of I, beta about the unrotated y-axis of I and gamma about the unrotated z-axis of I
    */
   fmatvec::Vec3 AIK2RevCardan(const fmatvec::SqrMat3 &AIK);
 
