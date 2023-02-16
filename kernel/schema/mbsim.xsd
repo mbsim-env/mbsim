@@ -4518,47 +4518,42 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="cz" type="pv:unknownScalar">
+          <xs:element name="inflationPressure" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="dz" type="pv:unknownScalar">
+          <xs:element name="nominalPressure" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="Fz0" type="pv:unknownScalar">
+          <xs:element name="nominalLoad" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="dpi" type="pv:unknownScalar">
+          <xs:element name="verticalStiffness" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="epsx" type="pv:unknownScalar">
+          <xs:element name="verticalDamping" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="epsk" type="pv:unknownScalar">
+          <xs:element name="relaxationLength" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="c1Rel" type="pv:unknownScalar">
+          <xs:element name="epsx" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="c2Rel" type="pv:unknownScalar">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                tbd
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="c3Rel" type="pv:unknownScalar">
+          <xs:element name="epsk" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
@@ -4598,12 +4593,12 @@
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="scaleFactorForCamberStiffness" type="pv:nounitScalar" minOccurs="0">
+          <xs:element name="scaleFactorForLateralForceCamberStiffness" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="scaleFactorForResidualTorque" type="pv:nounitScalar" minOccurs="0">
+          <xs:element name="scaleFactorForAligningMomentCamberStiffness" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>

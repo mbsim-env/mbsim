@@ -42,7 +42,42 @@ namespace MBSim {
       string str, line, name;
       do {
 	getline(file,line);
-	size_t found = line.find("[LONGITUDINAL_COEFFICIENTS]");
+	size_t found = line.find("[OPERATING_CONDITIONS]");
+	if(found!=string::npos) {
+	  string value[2];
+	  for(int i=0; i<2; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  if(p<0) p = stod(value[0]);
+	  if(p0<0) p0 = stod(value[1]);
+	}
+	found = line.find("[VERTICAL]");
+	if(found!=string::npos) {
+	  string value[25];
+	  for(int i=0; i<25; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  if(Fz0<0) Fz0 = stod(value[0]);
+	  if(cz<0) cz = stod(value[1]);
+	  if(dz<0) dz = stod(value[2]);
+	}
+	found = line.find("[SCALING_COEFFICIENTS]");
+	if(found!=string::npos) {
+	  string value[25];
+	  for(int i=0; i<25; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  if(sfmux<0) sfmux = stod(value[2]);
+	  if(sfmuy<0) sfmuy = stod(value[8]);
+	  if(sfkx<0) sfkx = stod(value[4]);
+	  if(sfky<0) sfky = stod(value[10]);
+	  if(sfkg<0) sfkg = stod(value[11]);
+	  if(sfkm<0) sfkm = stod(value[12]);
+	}
+	found = line.find("[LONGITUDINAL_COEFFICIENTS]");
 	if(found!=string::npos) {
 	  string value[26];
 	  for(int i=0; i<26; i++) {
@@ -244,6 +279,9 @@ namespace MBSim {
 	throwError("(MagicFormula62::init): Input data file must be defined.");
       importData();
     }
+    else if(stage==unknownStage) {
+      static_cast<TyreContact*>(parent)->getsRelax(false) = sRelax;
+    }
     TyreModel::init(stage, config);
   }
 
@@ -276,24 +314,22 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"inputDataFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"cz");
-    setcz(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"dz");
-    setdz(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"Fz0");
-    setFz0(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"dpi");
-    setdpi(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"inflationPressure");
+    if(e) setInflationPressure(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"nominalPressure");
+    if(e) setNominalPressure(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"nominalLoad");
+    if(e) setNominalLoad(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"verticalStiffness");
+    if(e) setVerticalStiffness(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"verticalDamping");
+    if(e) setVerticalDamping(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLength");
+    setRelaxationLength(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"epsx");
-    setepsx(E(e)->getText<double>());
+    if(e) setepsx(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"epsk");
-    setepsk(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"c1Rel");
-    setc1Rel(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"c2Rel");
-    setc2Rel(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"c3Rel");
-    setc3Rel(E(e)->getText<double>());
+    if(e) setepsk(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -308,9 +344,9 @@ namespace MBSim {
     if(e) setScaleFactorForLongitudinalSlipStiffness(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForCorneringStiffness");
     if(e) setScaleFactorForCorneringStiffness(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForCamberStiffness");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForceCamberStiffness");
     if(e) setScaleFactorForCamberStiffness(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForResidualTorque");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForAligningMomentCamberStiffness");
     if(e) setScaleFactorForResidualTorque(E(e)->getText<double>());
   }
 
@@ -329,6 +365,7 @@ namespace MBSim {
       double rCrown = tyre->getUnloadedRadius() - tyre->getRimRadius() + contact->getGeneralizedRelativePosition()(0);
 
       double dfz = (FN - Fz0)/Fz0;
+      double dpi = (p - p0)/p0;
 
       double Kxka = FN*(PKX1+PKX2*dfz)*exp(PKX3*dfz)*(1+PPX1*dpi+PPX2*pow(dpi,2))*sfkx;
       double muex = (PDX1+PDX2*dfz)*(1+PPX3*dpi+PPX4*pow(dpi,2))*(1-PDX3*pow(phi,2))*sfmux;
@@ -387,9 +424,7 @@ namespace MBSim {
       Fy0 = Dy0*sin(Cy0*atan(By0*ay0-Ey0*(By0*ay0-atan(By0*ay0)))) + Svy0;
       double Byk0 = RBY1*cos(atan(RBY2*(slipAnglePT1-RBY3)));
       double Cyk0 = RCY1;
-      //double Dvyk0 = muey0*FN*(RVY1+RVY2*dfz)*cos(atan(RVY4*slipAnglePT1)); // TODO
       double Eyk0 = REY1 + REY2*dfz;
-      //double Svyk0 = Dvyk0*sin(RVY5*atan(RVY6*ka)); // TODO
       double Shyk0 = RHY1+RHY2*dfz;
       double ks0 = slip + Shyk0;
       double Gyk00 = cos(Cyk0*atan(Byk0*Shyk0-Eyk0*(Byk0*Shyk0-atan(Byk0*Shyk0))));
@@ -412,9 +447,6 @@ namespace MBSim {
       double Br = (QBZ9+QBZ10*By*Cy);
       double Cr = 1;
       double Dr = FN*rCrown*((QDZ6+QDZ7*dfz)+((QDZ8+QDZ9*dfz)*(1+PPZ2*dpi)+(QDZ10+QDZ11*dfz)*fabs(gas))*gas)*sfkm;
-      //double Mzt0 =-Dt*cos(Ct*atan(Bt*alt-Et*(Bt*alt-atan(Bt*alt))))*Fy0; // TODO
-      //double Mzr0 = Dr*cos(Cr*atan(Br*alr)); // TODO
-      //double Mz0  = Mzt0+Mzr0; // TODO
       double lat = sqrt(pow(tan(alt),2)+pow(Kxka*slip/Kyal,2))*sgn(alt);
       double lar = sqrt(pow(tan(alr),2)+pow(Kxka*slip/Kyal,2))*sgn(alr);
       double t = Dt*cos(Ct*atan(Bt*lat-Et*(Bt*lat-atan(Bt*lat))));
@@ -422,8 +454,6 @@ namespace MBSim {
       double Mzs = -t*Fys;
       double Mzr = Dr*cos(Cr*atan(Br*lar));
       M = Mzs+Mzr;
-
-      sRelax = Kyal*(c1Rel + c2Rel*contact->getForwardVelocity()(0) + c3Rel*pow(contact->getForwardVelocity()(0),2));
 
       rScrub = rCrown*sin(phi);
     }
@@ -437,7 +467,6 @@ namespace MBSim {
       RvSx = 0;
       slip = 0;
       Kyal = 0;
-      sRelax = 1;
       slipAnglePT1 = 0;
       rScrub = 0;
     }
@@ -447,7 +476,6 @@ namespace MBSim {
     contact->getGeneralizedForce(false)(2) = FN;
     contact->getGeneralizedForce(false)(3) = sfM*M;
 
-    contact->getsRelax(false) = 1;
   }
 
   VecV MagicFormula62::getData() const {

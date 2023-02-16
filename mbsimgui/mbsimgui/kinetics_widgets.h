@@ -285,7 +285,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *inputDataFile, *cz, *dz, *Fz0, *dpi, *epsx, *epsk, *c1Rel, *c2Rel, *c3Rel, *sfKyga, *sfFLo, *sfFLa, *sfM, *sfmux, *sfmuy, *sfkx, *sfky, *sfkg, *sfkm;
+      ExtWidget *inputDataFile, *p, *p0, *Fz0, *cz, *dz, *rl, *epsx, *epsk, *sfFLo, *sfFLa, *sfM, *sfmux, *sfmuy, *sfkx, *sfky, *sfkg, *sfkm;
   };
 
 }
