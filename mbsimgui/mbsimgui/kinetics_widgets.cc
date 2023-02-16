@@ -58,6 +58,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<FrictionImpactLawWidget>);
 
   MBSIMGUI_REGOBJECTFACTORY(MagicFormulaSharpWidget);
+  MBSIMGUI_REGOBJECTFACTORY(MagicFormula62Widget);
   MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<TyreModelWidget>);
 
   DOMElement* GeneralizedForceLawWidget::initializeUsingXML(DOMElement *element) {
@@ -635,6 +636,93 @@ namespace MBSimGUI {
     sfFLo->writeXMLFile(ele0);
     sfFLa->writeXMLFile(ele0);
     sfM->writeXMLFile(ele0);
+    return ele0;
+  }
+
+  MagicFormula62Widget::MagicFormula62Widget() {
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    inputDataFile = new ExtWidget("Input data file name",new FileWidget("", "Open input data file", "Input data files (*.tir)", 0, true),false,false,MBSIM%"inputDataFileName");
+    layout->addWidget(inputDataFile);
+    p = new ExtWidget("Inflation pressure",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inflationPressure");
+    layout->addWidget(p);
+    p0 = new ExtWidget("Nominal pressure",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nominalPressure");
+    layout->addWidget(p0);
+    Fz0 = new ExtWidget("Nominal load",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"nominalLoad");
+    layout->addWidget(Fz0);
+    cz = new ExtWidget("Vertical stiffness",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"verticalStiffness");
+    layout->addWidget(cz);
+    dz = new ExtWidget("Vertical damping",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"verticalDamping");
+    layout->addWidget(dz);
+    rl = new ExtWidget("Relaxation length",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relaxationLength");
+    layout->addWidget(rl);
+    epsx = new ExtWidget("epsx",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"epsx");
+    layout->addWidget(epsx);
+    epsk = new ExtWidget("epsk",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"epsk");
+    layout->addWidget(epsk);
+    sfFLo = new ExtWidget("Scale factor for longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalForce");
+    layout->addWidget(sfFLo);
+    sfFLa = new ExtWidget("Scale factor for lateral force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForce");
+    layout->addWidget(sfFLa);
+    sfM = new ExtWidget("Scale factor for aligning moment",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMoment");
+    layout->addWidget(sfM);
+    sfmux = new ExtWidget("Scale factor for longitudinal fricition coefficient",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalFricitionCoefficient");
+    layout->addWidget(sfmux);
+    sfmuy = new ExtWidget("Scale factor for lateral fricition coefficient",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralFricitionCoefficient");
+    layout->addWidget(sfmuy);
+    sfkx = new ExtWidget("Scale factor for longitudinal slip stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalSlipStiffness");
+    layout->addWidget(sfkx);
+    sfky = new ExtWidget("Scale factor for cornering stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForCorneringStiffness");
+    layout->addWidget(sfky);
+    sfkg = new ExtWidget("Scale factor for lateral force camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForceCamberStiffness");
+    layout->addWidget(sfkg);
+    sfkm = new ExtWidget("Scale factor for aligning moment camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMomentCamberStiffness");
+    layout->addWidget(sfkm);
+  }
+
+  DOMElement* MagicFormula62Widget::initializeUsingXML(DOMElement *element) {
+    TyreModelWidget::initializeUsingXML(element);
+    inputDataFile->initializeUsingXML(element);
+    p->initializeUsingXML(element);
+    p0->initializeUsingXML(element);
+    Fz0->initializeUsingXML(element);
+    cz->initializeUsingXML(element);
+    dz->initializeUsingXML(element);
+    rl->initializeUsingXML(element);
+    epsx->initializeUsingXML(element);
+    epsk->initializeUsingXML(element);
+    sfFLo->initializeUsingXML(element);
+    sfFLa->initializeUsingXML(element);
+    sfM->initializeUsingXML(element);
+    sfmux->initializeUsingXML(element);
+    sfmuy->initializeUsingXML(element);
+    sfkx->initializeUsingXML(element);
+    sfky->initializeUsingXML(element);
+    sfkg->initializeUsingXML(element);
+    sfkm->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* MagicFormula62Widget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = TyreModelWidget::writeXMLFile(parent,ref);
+    inputDataFile->writeXMLFile(ele0);
+    p->writeXMLFile(ele0);
+    p0->writeXMLFile(ele0);
+    Fz0->writeXMLFile(ele0);
+    cz->writeXMLFile(ele0);
+    dz->writeXMLFile(ele0);
+    rl->writeXMLFile(ele0);
+    epsx->writeXMLFile(ele0);
+    epsk->writeXMLFile(ele0);
+    sfFLo->writeXMLFile(ele0);
+    sfFLa->writeXMLFile(ele0);
+    sfM->writeXMLFile(ele0);
+    sfmux->writeXMLFile(ele0);
+    sfmuy->writeXMLFile(ele0);
+    sfkx->writeXMLFile(ele0);
+    sfky->writeXMLFile(ele0);
+    sfkg->writeXMLFile(ele0);
+    sfkm->writeXMLFile(ele0);
     return ele0;
   }
 
