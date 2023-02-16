@@ -42,7 +42,17 @@ namespace MBSim {
       string str, line, name;
       do {
 	getline(file,line);
-	size_t found = line.find("[OPERATING_CONDITIONS]");
+	size_t found = line.find("[DIMENSION]");
+	if(found!=string::npos) {
+	  string value[5];
+	  for(int i=0; i<5; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  rUnloaded = stod(value[0]);
+	  rRim = stod(value[2]);
+	}
+	found = line.find("[OPERATING_CONDITIONS]");
 	if(found!=string::npos) {
 	  string value[2];
 	  for(int i=0; i<2; i++) {
@@ -280,7 +290,13 @@ namespace MBSim {
       importData();
     }
     else if(stage==unknownStage) {
-      static_cast<TyreContact*>(parent)->getsRelax(false) = sRelax;
+      TyreContact *contact = static_cast<TyreContact*>(parent);
+      Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+      contact->getsRelax(false) = sRelax;
+      if(fabs(tyre->getUnloadedRadius()-rUnloaded)>1e-13)
+	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to rim radius of " << inputDataFile << " (" << rUnloaded << ")." << endl;
+      if(fabs(tyre->getRimRadius()-rRim)>1e-13)
+	msg(Warn) << "Rim radius of " << tyre->getPath() << " (" << tyre->getRimRadius() << ") is different to rim radius of " << inputDataFile << " (" << rRim << ")." << endl;
     }
     TyreModel::init(stage, config);
   }
