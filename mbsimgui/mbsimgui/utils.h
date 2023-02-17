@@ -465,6 +465,12 @@ namespace MBSimGUI {
     return units;
   }
 
+  inline QStringList pressureUnits() {
+    QStringList units;
+    units << "mPa" << "Pa" << "mbar" << "bar";
+    return units;
+  }
+
   std::string removeWhiteSpace(const std::string &str);
 
   QString removeWhiteSpace(const QString &str);

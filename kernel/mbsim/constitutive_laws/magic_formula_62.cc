@@ -294,7 +294,7 @@ namespace MBSim {
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
       contact->getsRelax(false) = sRelax;
       if(fabs(tyre->getUnloadedRadius()-rUnloaded)>1e-13)
-	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to rim radius of " << inputDataFile << " (" << rUnloaded << ")." << endl;
+	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << rUnloaded << ")." << endl;
       if(fabs(tyre->getRimRadius()-rRim)>1e-13)
 	msg(Warn) << "Rim radius of " << tyre->getPath() << " (" << tyre->getRimRadius() << ") is different to rim radius of " << inputDataFile << " (" << rRim << ")." << endl;
     }
@@ -332,10 +332,6 @@ namespace MBSim {
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
     e=E(element)->getFirstElementChildNamed(MBSIM%"inflationPressure");
     if(e) setInflationPressure(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"nominalPressure");
-    if(e) setNominalPressure(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"nominalLoad");
-    if(e) setNominalLoad(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"verticalStiffness");
     if(e) setVerticalStiffness(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"verticalDamping");
@@ -385,9 +381,9 @@ namespace MBSim {
 
       double Kxka = FN*(PKX1+PKX2*dfz)*exp(PKX3*dfz)*(1+PPX1*dpi+PPX2*pow(dpi,2))*sfkx;
       double muex = (PDX1+PDX2*dfz)*(1+PPX3*dpi+PPX4*pow(dpi,2))*(1-PDX3*pow(phi,2))*sfmux;
-      double Cx = PCX1;
-      double Dx = muex*FN;
-      double Bx = Kxka/(Cx*Dx+epsx);
+      double Cx = PCX1; // TODO sfCx
+      double Dx = muex*FN; // TODO turn slip zeta1
+      double Bx = Kxka/(Cx*Dx+epsx); // TODO kein epsx im manual
       double Ex =(PEX1+PEX2*dfz+PEX3*pow(dfz,2))*(1-PEX4*sgn(slip));
       double Svx = FN*(PVX1+PVX2*dfz);
       double Shx = PHX1+PHX2*dfz;

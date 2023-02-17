@@ -267,13 +267,13 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ScalarWidget::ScalarWidget(const QString &d) {
+  ScalarWidget::ScalarWidget(const QString &d, QString defaultValue_) : defaultValue(defaultValue_) {
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
     box = new QLineEdit(this);
-    box->setPlaceholderText("0");
+    box->setPlaceholderText(defaultValue);
     setValue(d);
     layout->addWidget(box);
   }
@@ -1471,14 +1471,14 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, vector<QStringList> unit_, vector<int> defaultUnit_) : value(value_), name(2), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)) {
+  ScalarWidgetFactory::ScalarWidgetFactory(const QString &value_, vector<QStringList> unit_, vector<int> defaultUnit_, QString defaultValue_) : value(value_), name(2), unit(std::move(unit_)), defaultUnit(std::move(defaultUnit_)), defaultValue(defaultValue_) {
     name[0] = "Scalar";
     name[1] = "Editor";
   }
 
   Widget* ScalarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new ScalarWidget(value), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new ScalarWidget(value,defaultValue), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new ExpressionWidget, unit[1], defaultUnit[1]);
     return nullptr;

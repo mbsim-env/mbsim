@@ -71,8 +71,8 @@ namespace MBSim {
       double cz{-1};
       double dz{-1};
       double sRelax{1};
-      double epsx{0.1};
-      double epsk{0.1};
+      double epsx{0};
+      double epsk{0};
       double sfFLo{1};
       double sfFLa{1};
       double sfM{1};

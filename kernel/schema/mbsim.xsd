@@ -4518,32 +4518,22 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="inflationPressure" type="pv:unknownScalar" minOccurs="0">
+          <xs:element name="inflationPressure" type="pv:pressureScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="nominalPressure" type="pv:unknownScalar" minOccurs="0">
+          <xs:element name="verticalStiffness" type="pv:stiffnessScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="nominalLoad" type="pv:unknownScalar" minOccurs="0">
+          <xs:element name="verticalDamping" type="pv:dampingScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="verticalStiffness" type="pv:unknownScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                tbd
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="verticalDamping" type="pv:unknownScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                tbd
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="relaxationLength" type="pv:unknownScalar" minOccurs="0">
+          <xs:element name="relaxationLength" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>

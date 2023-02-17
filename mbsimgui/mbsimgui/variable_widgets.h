@@ -49,6 +49,7 @@ namespace MBSimGUI {
       virtual void setReadOnly(bool flag) {}
       virtual QString getValue() const = 0;
       virtual void setValue(const QString &str) = 0;
+      virtual void setDefaultValue(const QString &str) { }
       virtual int getVarType() const { return 0; }
       virtual bool validate(const std::vector<std::vector<QString>> &A) const { return true; }
       virtual int rows() const { return 1; }
@@ -105,11 +106,13 @@ namespace MBSimGUI {
   class ScalarWidget : public VariableWidget {
     private:
       QLineEdit* box;
+      QString defaultValue;
     public:
-      ScalarWidget(const QString &d="1");
+      ScalarWidget(const QString &d="1", QString defaultValue_="0");
       void setReadOnly(bool flag) override {box->setReadOnly(flag);}
-      QString getValue() const override { return box->text().isEmpty()?"0":box->text(); }
-      void setValue(const QString &str) override {box->setText(str=="0"?"":str);}
+      QString getValue() const override { return box->text().isEmpty()?defaultValue:box->text(); }
+      void setValue(const QString &str) override {box->setText(str==defaultValue?"":str);}
+      void setDefaultValue(const QString &str) override { defaultValue = str; box->setPlaceholderText(defaultValue);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       std::vector<std::vector<QString>> getEvalMat() const override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
@@ -454,14 +457,15 @@ namespace MBSimGUI {
     public:
       PhysicalVariableWidget(VariableWidget *widget_, const QStringList &units_=QStringList(), int defaultUnit_=0, bool eval=true);
       QString getValue() const override { return widget->getValue(); }
-      void setValue(const QString &str) override {widget->setValue(str);}
-      void setReadOnly(bool flag) override {widget->setReadOnly(flag);}
+      void setValue(const QString &str) override { widget->setValue(str); }
+      void setDefaultValue(const QString &str) override { widget->setDefaultValue(str); }
+      void setReadOnly(bool flag) override { widget->setReadOnly(flag); }
       virtual VariableWidget* getWidget() { return widget; }
       const QStringList& getUnitList() const { return units; }
       int getDefaultUnit() const { return defaultUnit; }
       bool validate(const std::vector<std::vector<QString>> &A) const override { return widget->validate(A); }
       QString getUnit() const { return unit->currentText(); }
-      void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
+      void setUnit(const QString &unit_) { unit->setCurrentIndex(unit->findText(unit_)); }
       void resize_(int rows, int cols) override { widget->resize_(rows,cols); }
       int rows() const override { return widget->rows(); }
       int cols() const override { return widget->cols(); }
@@ -513,7 +517,7 @@ namespace MBSimGUI {
 
   class ScalarWidgetFactory : public WidgetFactory {
     public:
-      ScalarWidgetFactory(const QString &value_, std::vector<QStringList> unit_=std::vector<QStringList>(2,QStringList()), std::vector<int> defaultUnit_=std::vector<int>(2,0));
+      ScalarWidgetFactory(const QString &value_, std::vector<QStringList> unit_=std::vector<QStringList>(2,QStringList()), std::vector<int> defaultUnit_=std::vector<int>(2,0), QString defaultValue_="0");
       Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       int getSize() const override { return name.size(); }
@@ -522,6 +526,7 @@ namespace MBSimGUI {
       std::vector<QString> name;
       std::vector<QStringList> unit;
       std::vector<int> defaultUnit;
+      QString defaultValue;
   };
 
   class VecWidgetFactory : public WidgetFactory {
