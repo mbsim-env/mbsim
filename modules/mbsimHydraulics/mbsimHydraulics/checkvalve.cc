@@ -82,18 +82,17 @@ namespace MBSimHydraulics {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, Checkvalve)
 
   Checkvalve::Checkvalve(const string &name) : Group(name), line(new ClosableRigidLine("Line")), ballSeat(new RigidBody("BallSeat")), ball(new RigidBody("Ball")), seatContact(new Contact("SeatContact")), maxContact(new Contact("MaximalContact")), spring(new DirectionalSpringDamper("Spring")), xOpen(new GeneralizedPositionSensor("xOpen")),  refFrameString("")
-                                                
-                                               {
-                                                 addObject(line);
-                                                 addObject(ballSeat);
-                                                 addObject(ball);
-                                                 addLink(seatContact);
-                                                 addLink(maxContact);
-                                                 addLink(spring);
-                                                 addLink(xOpen);
+  {
+    addObject(line);
+    addObject(ballSeat);
+    addObject(ball);
+    addLink(seatContact);
+    addLink(maxContact);
+    addLink(spring);
+    addLink(xOpen);
 
-                                                 line->setFunction(new SignalFunction<double(double)>(xOpen));
-                                               }
+    line->setFunction(new SignalFunction<double(double)>(xOpen));
+  }
 
   void Checkvalve::setFrameOfReference(Frame * ref) {ballSeat->setFrameOfReference(ref); }
   void Checkvalve::setLineLength(double lLine) {line->setLength(lLine); }
@@ -112,6 +111,14 @@ namespace MBSimHydraulics {
 
   void Checkvalve::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveStringRef) {
+      line->setDynamicSystemSolver(ds);
+      ballSeat->setDynamicSystemSolver(ds);
+      ball->setDynamicSystemSolver(ds);
+      seatContact->setDynamicSystemSolver(ds);
+      maxContact->setDynamicSystemSolver(ds);
+      spring->setDynamicSystemSolver(ds);
+      xOpen->setDynamicSystemSolver(ds);
+
       double rBall=((CheckvalveClosablePressureLoss*)line->getClosablePressureLoss())->getBallRadius();
       double rLine=line->getDiameter()/2.;
       assert(rBall>rLine);
@@ -171,10 +178,12 @@ namespace MBSimHydraulics {
       if (openMBVArrows) {
         ((Circle*)ball->getContour("ContourBall"))->enableOpenMBV();
         auto *observer = new ContactObserver("MaxContactObserver");
+        observer->setDynamicSystemSolver(ds);
         observer->enableOpenMBVContactPoints(rBall/8.);
         observer->setContact(maxContact);
         addObserver(observer);
         observer = new ContactObserver("SeatContactObserver");
+        observer->setDynamicSystemSolver(ds);
         observer->enableOpenMBVContactPoints(rBall/8.);
         observer->setContact(maxContact);
         addObserver(observer);
