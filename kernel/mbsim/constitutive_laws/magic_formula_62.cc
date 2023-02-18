@@ -374,7 +374,6 @@ namespace MBSim {
       slip = -RvSx/vRoll;
       slipAnglePT1 = contact->getx()(0);
       phi = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
-      double rCrown = tyre->getUnloadedRadius() - tyre->getRimRadius() + contact->getGeneralizedRelativePosition()(0);
 
       double dfz = (FN - Fz0)/Fz0;
       double dpi = (p - p0)/p0;
@@ -451,14 +450,14 @@ namespace MBSim {
       double alr = slipAnglePT1+Shf;
       double Bt = (QBZ1+QBZ2*dfz+QBZ3*pow(dfz,2))*(1+QBZ5*abs(gas)+QBZ4*gas);
       double Ct = QCZ1;
-      double Dt0 = FN*rCrown/Fz0*(QDZ1 + QDZ2*dfz)*(1-PPZ1*dpi);
+      double Dt0 = FN*rUnloaded/Fz0*(QDZ1 + QDZ2*dfz)*(1-PPZ1*dpi);
       double Dt = Dt0*(1+QDZ3*abs(gas)+QDZ4*pow(gas,2));
       double Et = (QEZ1+QEZ2*dfz+QEZ3*pow(dfz,2))*(1+(QEZ4+QEZ5*gas)*2./M_PI*atan(Bt*Ct*alt));
       muey = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*(1-PDY3*pow(gas,2))*sfmuy;
       Dy = muey*FN;
       double Br = (QBZ9+QBZ10*By*Cy);
       double Cr = 1;
-      double Dr = FN*rCrown*((QDZ6+QDZ7*dfz)+((QDZ8+QDZ9*dfz)*(1+PPZ2*dpi)+(QDZ10+QDZ11*dfz)*fabs(gas))*gas)*sfkm;
+      double Dr = FN*rUnloaded*((QDZ6+QDZ7*dfz)+((QDZ8+QDZ9*dfz)*(1+PPZ2*dpi)+(QDZ10+QDZ11*dfz)*fabs(gas))*gas)*sfkm;
       double lat = sqrt(pow(tan(alt),2)+pow(Kxka*slip/Kyal,2))*sgn(alt);
       double lar = sqrt(pow(tan(alr),2)+pow(Kxka*slip/Kyal,2))*sgn(alr);
       double t = Dt*cos(Ct*atan(Bt*lat-Et*(Bt*lat-atan(Bt*lat))));
@@ -467,7 +466,7 @@ namespace MBSim {
       double Mzr = Dr*cos(Cr*atan(Br*lar));
       M = Mzs+Mzr;
 
-      rScrub = rCrown*sin(phi);
+      rScrub = (tyre->getUnloadedRadius() - tyre->getRimRadius() + contact->getGeneralizedRelativePosition()(0))*sin(phi);
     }
     else {
       FN = 0;
