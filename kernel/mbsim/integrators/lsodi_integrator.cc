@@ -218,8 +218,6 @@ namespace MBSim {
         double curTimeAndState = -1;
         double tRoot = t;
 
-	getSystem()->updateInternalState();
-
         // root-finding
         if(getSystem()->getsvSize()) {
           getSystem()->setTime(t);
@@ -265,6 +263,8 @@ namespace MBSim {
           getSystem()->plot();
           if(msgAct(Status))
             msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< rWork(10) << flush;
+
+          getSystem()->updateInternalState();
 
           double s1 = clock();
           time += (s1-s0)/CLOCKS_PER_SEC;
@@ -337,6 +337,8 @@ namespace MBSim {
             rWork(4) = dt0;
           }
         }
+
+        getSystem()->updateInternalState();
       }
       else if(istate<0) throwError("Integrator LSODI failed with istate = "+to_string(istate));
     }

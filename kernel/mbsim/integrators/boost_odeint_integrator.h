@@ -280,7 +280,6 @@ namespace MBSim {
       dos->setDtMax(std::min(dtMax, tSamplePoint-dos->current_time()));
 #endif
       auto step=dos->do_step(boostOdeintSystem());
-      system->updateInternalState();
 
       // check if a root exists in the current step
       double curTimeAndState=dos->current_time(); // save current time/state as double: just used to avoid unnessesary system updates
@@ -338,6 +337,7 @@ namespace MBSim {
           system->plot();
           if(msgAct(Status))
             msg(Status)<<"t = "<<tPlot<<", dt="<<dos->current_time_step()<<"                    "<<std::flush;
+          system->updateInternalState();
           plotSample++;
           tPlot=tStart+plotSample*dtPlot;
         }
@@ -424,6 +424,7 @@ namespace MBSim {
         system->resetUpToDate();
       }
 #endif
+      system->updateInternalState();
     }
   }
 

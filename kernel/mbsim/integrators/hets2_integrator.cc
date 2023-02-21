@@ -165,7 +165,7 @@ namespace MBSim {
 
           system->resetUpToDate();
 
-	  system->updateInternalState();
+          system->updateInternalState();
       }
     }
   }
