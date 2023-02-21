@@ -33,12 +33,14 @@ namespace MBSim {
     private:
       RigidBody* body;
       Frame *frameOfReference;
+      Frame *outputFrame { nullptr };
       std::shared_ptr<OpenMBVInteractionArrow> ombvForce, ombvMoment;
       std::shared_ptr<OpenMBVArrow> ombvWeight, ombvAxisOfRotation, ombvMomentum, ombvAngularMomentum, ombvDerivativeOfMomentum, ombvDerivativeOfAngularMomentum;
       std::vector<std::shared_ptr<OpenMBV::Arrow>> FArrow, MArrow;
       std::shared_ptr<OpenMBV::Arrow> FWeight, openMBVAxisOfRotation, openMBVMomentum, openMBVAngularMomentum, openMBVDerivativeOfMomentum, openMBVDerivativeOfAngularMomentum;
       std::string saved_body;
       std::string saved_frameOfReference;
+      std::string saved_outputFrame;
 
 //#ifndef SWIG
 //      double (RigidBodyObserver::*evalOMBVForceColorRepresentation[2])();
@@ -61,6 +63,7 @@ namespace MBSim {
       RigidBodyObserver(const std::string &name="");
       void setRigidBody(RigidBody *body_) { body = body_; } 
       void setFrameOfReference(Frame *frameOfReference_) { frameOfReference = frameOfReference_; }
+      void setOutputFrame(Frame *outputFrame_) { outputFrame = outputFrame_; }
 
       void init(InitStage stage, const InitConfigSet &config);
       void initializeUsingXML(xercesc::DOMElement *element);

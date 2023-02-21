@@ -48,17 +48,21 @@ namespace MBSim {
         setMechanicalConstraint(getByPath<MechanicalConstraint>(saved_constraint));
       if(not constraint)
         throwError("Mechanical constraint is not given!");
+      if(not saved_outputFrame.empty())
+        setOutputFrame(getByPath<Frame>(saved_outputFrame));
+      if(not outputFrame)
+        setOutputFrame(ds->getFrameI());
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force] and getDynamicSystemSolver()->getInverseKinetics()) {
           for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
-	    addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[moment] and getDynamicSystemSolver()->getInverseKinetics()) {
           for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
-	    addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
         }
       }
       Observer::init(stage, config);
@@ -86,7 +90,7 @@ namespace MBSim {
     else if(stage==unknownStage) {
       Observer::init(stage, config);
       if((ombvForce or ombvMoment) and not getDynamicSystemSolver()->getInverseKinetics())
-	throwError("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
+        throwError("(MechanicalConstraintObserver::init()): inverse kinetics not enabled");
     }
     else
       Observer::init(stage, config);
@@ -94,13 +98,14 @@ namespace MBSim {
 
   void MechanicalConstraintObserver::plot() {
     if(plotFeature[plotRecursive]) {
+      auto TWOut = outputFrame->evalOrientation();
       if(plotFeature[force]) {
         for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
-	  Element::plot(constraint->getMechanicalLink()->evalForce(i));
+          Element::plot(TWOut.T()*constraint->getMechanicalLink()->evalForce(i));
       }
       if(plotFeature[moment]) {
         for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
-	  Element::plot(constraint->getMechanicalLink()->evalMoment(i));
+          Element::plot(TWOut.T()*constraint->getMechanicalLink()->evalMoment(i));
       }
     }
     if(plotFeature[openMBV]) {
@@ -147,6 +152,10 @@ namespace MBSim {
     Observer::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"mechanicalConstraint");
     saved_constraint=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"outputFrame");
+    if(e) saved_outputFrame=E(e)->getAttribute("ref");
+
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(e) {
       ombvForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
