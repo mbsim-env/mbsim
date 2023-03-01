@@ -159,7 +159,7 @@ namespace MBSim {
       double qEz2{0};
       double qEz5{0};
       double Ct{0};
-      double c1Rel{1};
+      double c1Rel{0};
       double c2Rel{0};
       double c3Rel{0};
       double sfKyga{1};
