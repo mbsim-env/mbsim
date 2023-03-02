@@ -31,7 +31,7 @@ namespace MBSimFlexibleBody {
   class NodeFrame : public NodeBasedFrame {
 
     public:
-      NodeFrame(const std::string &name = "dummy", int node_ = 0) : NodeBasedFrame(name), node(node_) { }
+      NodeFrame(const std::string &name = "dummy", int node_ = 1) : NodeBasedFrame(name), node(node_) { }
 
       void setNodeNumber(int node_) { node = node_; }
       int getNodeNumber() const { return node; }
