@@ -64,6 +64,8 @@ namespace MBSimFMI {
     logger(logger_),
     time(timeStore),
     z(zStore) {
+    // if MBXMLUTILS_ERROROUTPUT is not set, set it to GCCNONE
+    setenv("MBXMLUTILS_ERROROUTPUT", "GCCNONE", 0);
 
     driftCompensation=none; // only needed for ME
 
