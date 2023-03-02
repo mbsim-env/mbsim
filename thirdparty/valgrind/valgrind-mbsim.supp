@@ -1319,3 +1319,35 @@
    obj:/osupdate/local/lib64/libGL.so.1.5.0
    fun:_ZN20SoVertexArrayIndexer6renderEPK9cc_glglueij
 }
+{
+   OpenGL
+   Memcheck:Cond
+   ...
+   obj:/osupdate/local/lib64/libGL.so.1.5.0
+   fun:_ZN7SoState3popEv
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+}
+{
+   OpenGL
+   Memcheck:Cond
+   ...
+   obj:/osupdate/local/lib64/libGL.so.1.5.0
+   fun:_ZN7SoState3popEv
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+}
