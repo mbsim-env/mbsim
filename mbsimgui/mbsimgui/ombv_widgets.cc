@@ -242,10 +242,10 @@ namespace MBSimGUI {
 
   ArrowMBSOMBVWidget::ArrowMBSOMBVWidget(const vector<QString> &c, const vector<QString> &cRL, int refPoint) : MBSOMBVDynamicColoreBodyWidget(c,cRL) {
 
-    scaleLength = new ExtWidget("Scale length",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1),"1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleLength");
+    scaleLength = new ExtWidget("Scale length",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleLength");
     layout()->addWidget(scaleLength);
 
-    scaleSize = new ExtWidget("Scale size",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1),"1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleSize");
+    scaleSize = new ExtWidget("Scale size",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleSize");
     layout()->addWidget(scaleSize);
 
     vector<QString> list;
@@ -375,11 +375,11 @@ namespace MBSimGUI {
   }
 
   FrameMBSOMBVWidget::FrameMBSOMBVWidget() {
-    size = new ExtWidget("Size",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4),"1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
+    size = new ExtWidget("Size",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
     size->setToolTip("Set the size of the frame");
     layout()->addWidget(size);
 
-    offset = new ExtWidget("Offset",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1),"1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
+    offset = new ExtWidget("Offset",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
     offset->setToolTip("Set the offset of the frame");
     layout()->addWidget(offset);
   }
@@ -551,7 +551,7 @@ namespace MBSimGUI {
     rot = new ExtWidget("Initial rotation",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,angleUnits())),QBoxLayout::RightToLeft),true,false,OPENMBV%"initialRotation");
     layout->addWidget(rot);
 //
-    scale = new ExtWidget("Scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1),"1"),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"scaleFactor");
+    scale = new ExtWidget("Scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"scaleFactor");
     layout->addWidget(scale);
   }
 

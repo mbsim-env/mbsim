@@ -1164,7 +1164,7 @@ namespace MBSimGUI {
     maximumNaturalFrequency = new ExtWidget("Maximum natural frequency",new ChoiceWidget(new ScalarWidgetFactory("100000"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"maximumNaturalFrequency");
     addToTab("Modal analysis", maximumNaturalFrequency);
 
-    modeScaleFactor = new ExtWidget("Normal mode scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0),"1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"normalModeScaleFactor");
+    modeScaleFactor = new ExtWidget("Normal mode scale factor",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"normalModeScaleFactor");
     addToTab("Modal analysis", modeScaleFactor);
 
     modeScale = new ExtWidget("Normal mode scale",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"normalModeScale");
