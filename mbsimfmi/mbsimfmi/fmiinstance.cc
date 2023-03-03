@@ -65,7 +65,10 @@ namespace MBSimFMI {
     time(timeStore),
     z(zStore) {
     // if MBXMLUTILS_ERROROUTPUT is not set, set it to GCCNONE
-    setenv("MBXMLUTILS_ERROROUTPUT", "GCCNONE", 0);
+    if(!getenv("MBXMLUTILS_ERROROUTPUT")) {
+      static string GCCNONEOUTPUT="MBXMLUTILS_ERROROUTPUT=GCCNONE";
+      putenv(const_cast<char*>(GCCNONEOUTPUT.c_str()));
+    }
 
     driftCompensation=none; // only needed for ME
 
