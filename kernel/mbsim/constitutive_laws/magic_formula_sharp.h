@@ -89,9 +89,9 @@ namespace MBSim {
       void setc2Rel(double c2Rel_) { c2Rel = c2Rel_; }
       void setc3Rel(double c3Rel_) { c3Rel = c3Rel_; }
       void setScaleFactorForCamberStiffness(double sfKyga_) { sfKyga = sfKyga_; }
-      void setScaleFactorForLongitudinalForce(double sfFLo_) { sfFLo = sfFLo_; }
-      void setScaleFactorForLateralForce(double sfFLa_) { sfFLa = sfFLa_; }
-      void setScaleFactorForAligningMoment(double sfM_) { sfM = sfM_; }
+      void setScaleFactorForLongitudinalForce(double sfFx_) { sfFx = sfFx_; }
+      void setScaleFactorForLateralForce(double sfFy_) { sfFy = sfFy_; }
+      void setScaleFactorForAligningMoment(double sfMz_) { sfMz = sfMz_; }
 
       void initPlot(std::vector<std::string> &plotColumns) override;
       void plot(std::vector<double> &plotVector) override;
@@ -163,11 +163,11 @@ namespace MBSim {
       double c2Rel{0};
       double c3Rel{0};
       double sfKyga{1};
-      double sfFLo{1};
-      double sfFLa{1};
-      double sfM{1};
+      double sfFx{1};
+      double sfFy{1};
+      double sfMz{1};
 
-      double RvSx, vRoll, vSpin, slip, phi, Kyal, sRelax, slipAnglePT1, rScrub;
+      double vsx, vx, ka, ga, Kyal, si, be, Rs;
  };
 
 }

@@ -109,7 +109,6 @@ namespace MBSim {
       void setIntegrateGeneralizedRelativeVelocityOfRotation(bool integrateGeneralizedRelativeVelocityOfRotation_) { integrateGeneralizedRelativeVelocityOfRotation = integrateGeneralizedRelativeVelocityOfRotation_; }
 
       fmatvec::VecV evalGeneralizedRelativePositionOfRotation() override;
-      fmatvec::Vec3 evalGlobalRelativeAngle();
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -138,10 +137,6 @@ namespace MBSim {
        * \brief relative velocity and acceleration after an impact for event driven scheme summarizing all possible contacts
        */
       fmatvec::Vec gdn, gdd;
-
-      fmatvec::Vec3 WphiK0K1, eR;
-
-      size_t iR{2};
 
       bool integrateGeneralizedRelativeVelocityOfRotation{false};
 

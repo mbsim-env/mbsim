@@ -83,10 +83,6 @@ namespace MBSim {
        */
       fmatvec::Mat3xV JT;
 
-      fmatvec::Vec3 WphiK0K1, eR;
-
-      size_t iR{2};
-
       bool integrateGeneralizedRelativeVelocityOfRotation{false};
   };
 

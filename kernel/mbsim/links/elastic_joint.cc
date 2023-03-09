@@ -50,28 +50,9 @@ namespace MBSim {
 
   void ElasticJoint::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      if(momentDir.cols()==2) {
-        if(fabs(momentDir(2,0))<=macheps and fabs(momentDir(2,1))<=macheps)
-          iR = 2;
-        else if(fabs(momentDir(1,0))<=macheps and fabs(momentDir(1,1))<=macheps)
-          iR = 1;
-        else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(0,1))<=macheps)
-          iR = 0;
-        else
-          throwError("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+      if(momentDir.cols()==1 and not integrateGeneralizedRelativeVelocityOfRotation) {
+	msg(Warn) << "Evaluation of generalized relative position may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
       }
-      else if(momentDir.cols()==1) {
-        msg(Warn) << "Evaluation of generalized relative velocity of rotation may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
-        if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(2,0))<=macheps)
-          iR = 2;
-        else if(fabs(momentDir(1,0))<=macheps and fabs(momentDir(2,0))<=macheps)
-          iR = 1;
-        else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(1,0))<=macheps)
-          iR = 0;
-        else
-          throwError("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
-      }
-      eR(iR) = 1;
     }
     else if(stage==unknownStage) {
       if(func and (func->getRetSize().first!=forceDir.cols()+momentDir.cols())) throwError("Size of generalized forces does not match!");
@@ -84,13 +65,7 @@ namespace MBSim {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
     else
-      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*evalGlobalRelativeAngle();
-  }
-
-  Vec3 ElasticJoint::evalGlobalRelativeAngle() {
-    WphiK0K1 = crossProduct(eR,evalGlobalRelativeOrientation().col(iR));
-    WphiK0K1(iR) = -getGlobalRelativeOrientation()(fmod(iR+1,3),fmod(iR+2,3));
-    return WphiK0K1;
+      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*tilde(evalGlobalRelativeOrientation());
   }
 
   void ElasticJoint::initializeUsingXML(DOMElement *element) {
