@@ -193,7 +193,7 @@ namespace MBSim {
     MultiDimNewtonMethod newton(&f);
     nextis = newton.solve(curis);
     if(newton.getInfo()!=0)
-      msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed!" << endl;
+      msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed (t=" << getTime() << ", info=" << newton.getInfo() << ")!" << endl;
     for(unsigned int i=0; i<bd1.size(); i++)
       bd1[i]->setqRel(nextis(Iq1[i]));
     for(unsigned int i=0; i<bd2.size(); i++)

@@ -55,8 +55,6 @@ namespace MBSim {
     double curTimeAndState = -1;
     double tRoot = *t;
 
-    self->getSystem()->updateInternalState();
-
     // root-finding
     if(self->getSystem()->getsvSize()) {
       self->getSystem()->setTime(*t);
@@ -104,6 +102,8 @@ namespace MBSim {
       self->getSystem()->plot();
       if(self->msgAct(Status))
 	self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
+
+      self->getSystem()->updateInternalState();
 
       double s1 = clock();
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
@@ -156,6 +156,8 @@ namespace MBSim {
       }
       self->getSystem()->updateStopVectorParameters();
     }
+
+    self->getSystem()->updateInternalState();
   }
 
   void ODEXIntegrator::integrate() {
@@ -230,6 +232,8 @@ namespace MBSim {
     while(t<tEnd-epsroot) {
       ODEX(&zSize,fzdot,&t,z(),&tEnd, &dt,rTol(),aTol(),&iTol,plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+
+      self->getSystem()->updateInternalState();
 
       if(shift) {
         system->resetUpToDate();

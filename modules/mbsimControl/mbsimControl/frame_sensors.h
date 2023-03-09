@@ -38,10 +38,13 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
       void setFrame(MBSim::Frame * frame_) { frame = frame_; }
+      void setOutputFrame(MBSim::Frame *outputFrame_) { outputFrame = outputFrame_; }
       int getSignalSize() const override { return 3; }
     protected:
       MBSim::Frame *frame;
-      std::string frameString;
+      std::string saved_frame;
+      MBSim::Frame *outputFrame { nullptr };
+      std::string saved_outputFrame;
   };
 
   /*!

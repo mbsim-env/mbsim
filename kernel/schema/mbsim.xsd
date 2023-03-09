@@ -5978,6 +5978,16 @@
               <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="outputFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Alle kartesischen Plotausgaben werden in diesem Koordinatensystemen ausgegeben. Wenn nicht angegeben wird das I-System von DynamicSystemSolver verwendet.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">  
             <xs:complexType>
               <xs:group ref="OpenMBVInteractionArrowParameters"/>
@@ -6010,6 +6020,16 @@
             </xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="outputFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Alle kartesischen Plotausgaben werden in diesem Koordinatensystemen ausgegeben. Wenn nicht angegeben wird das I-System von DynamicSystemSolver verwendet.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">
@@ -6072,6 +6092,16 @@
               <xs:attribute name="ref" type="LinkReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="outputFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Alle kartesischen Plotausgaben werden in diesem Koordinatensystemen ausgegeben. Wenn nicht angegeben wird das I-System von DynamicSystemSolver verwendet.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
@@ -6132,6 +6162,16 @@
               <xs:attribute name="ref" type="ConstraintReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="outputFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Alle kartesischen Plotausgaben werden in diesem Koordinatensystemen ausgegeben. Wenn nicht angegeben wird das I-System von DynamicSystemSolver verwendet.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVForce" minOccurs="0">  
             <xs:complexType>
               <xs:group ref="OpenMBVInteractionArrowParameters"/>
@@ -6169,7 +6209,17 @@
           <xs:element name="frameOfReference" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-              tbd.
+                tbd.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="outputFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Alle kartesischen Plotausgaben werden in diesem Koordinatensystemen ausgegeben. Wenn nicht angegeben wird das I-System von DynamicSystemSolver verwendet.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -6255,6 +6305,16 @@
               <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+          <xs:element name="outputFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Alle kartesischen Plotausgaben werden in diesem Koordinatensystemen ausgegeben. Wenn nicht angegeben wird das I-System von DynamicSystemSolver verwendet.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="enableOpenMBVPosition" minOccurs="0">
             <xs:complexType>
               <xs:group ref="OpenMBVArrowParameters"/>
@@ -6302,6 +6362,16 @@
             </xs:annotation>
             <xs:complexType>
               <xs:attribute name="ref" type="ConstraintReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="outputFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Alle kartesischen Plotausgaben werden in diesem Koordinatensystemen ausgegeben. Wenn nicht angegeben wird das I-System von DynamicSystemSolver verwendet.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="FrameReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">

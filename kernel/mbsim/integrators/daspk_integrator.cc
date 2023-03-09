@@ -219,8 +219,6 @@ namespace MBSim {
         double curTimeAndState = -1;
         double tRoot = t;
 
-	getSystem()->updateInternalState();
-
         // root-finding
         if(getSystem()->getsvSize()) {
           getSystem()->setTime(t);
@@ -266,6 +264,8 @@ namespace MBSim {
           getSystem()->plot();
           if(msgAct(Status))
             msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< work(6) << flush;
+
+          getSystem()->updateInternalState();
 
           double s1 = clock();
           time += (s1-s0)/CLOCKS_PER_SEC;
@@ -343,6 +343,7 @@ namespace MBSim {
             }
           }
         }
+        getSystem()->updateInternalState();
       }
       else if(idid<0) throwError("Integrator DASPK failed with istate = "+to_string(idid));
     }

@@ -48,17 +48,21 @@ namespace MBSim {
         setInverseKinematicsConstraint(getByPath<InverseKinematicsConstraint>(saved_constraint));
       if(not constraint)
         throwError("Inverse kinematics constraint is not given!");
+      if(not saved_outputFrame.empty())
+        setOutputFrame(getByPath<Frame>(saved_outputFrame));
+      if(not outputFrame)
+        setOutputFrame(ds->getFrameI());
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
           for(int i=0; i<constraint->getNumberOfMechanicalLinks(); i++)
-	    addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[moment]) {
           for(int i=0; i<constraint->getNumberOfMechanicalLinks(); i++)
-	    addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
         }
       }
       Observer::init(stage, config);
@@ -90,13 +94,14 @@ namespace MBSim {
 
   void InverseKinematicsConstraintObserver::plot() {
     if(plotFeature[plotRecursive]) {
+      auto TWOut = outputFrame->evalOrientation();
       if(plotFeature[force]) {
         for(int i=0; i<constraint->getNumberOfMechanicalLinks(); i++)
-	  Element::plot(constraint->getMechanicalLink(i)->evalForce());
+          Element::plot(TWOut.T()*constraint->getMechanicalLink(i)->evalForce());
       }
       if(plotFeature[moment]) {
         for(int i=0; i<constraint->getNumberOfMechanicalLinks(); i++)
-	  Element::plot(constraint->getMechanicalLink(i)->evalMoment());
+          Element::plot(TWOut.T()*constraint->getMechanicalLink(i)->evalMoment());
       }
     }
     if(plotFeature[openMBV]) {
@@ -139,6 +144,10 @@ namespace MBSim {
     Observer::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"inverseKinematicsConstraint");
     saved_constraint=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"outputFrame");
+    if(e) saved_outputFrame=E(e)->getAttribute("ref");
+
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       ombv = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));

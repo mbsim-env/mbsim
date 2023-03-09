@@ -130,8 +130,6 @@ namespace MBSim {
         double curTimeAndState = -1;
         double tRoot = t;
 
-	getSystem()->updateInternalState();
-
         // root-finding
         if(getSystem()->getsvSize()) {
           getSystem()->setTime(t);
@@ -179,6 +177,8 @@ namespace MBSim {
           getSystem()->plot();
           if(msgAct(Status))
             msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< dtLast << flush;
+
+          getSystem()->updateInternalState();
 
           double s1 = clock();
           time += (s1-s0)/CLOCKS_PER_SEC;
@@ -233,6 +233,9 @@ namespace MBSim {
           }
           getSystem()->updateStopVectorParameters();
         }
+
+        getSystem()->updateInternalState();
+
         if(restart) {
           t = system->getTime();
           z = system->getState();

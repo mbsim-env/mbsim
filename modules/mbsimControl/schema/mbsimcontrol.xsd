@@ -232,7 +232,7 @@
   <xs:element name="FrameSensor" abstract="true" substitutionGroup="Sensor" type="FrameSensorType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-        Sensor zum Auslesen von Koordinatensystemen in absoluten Koordinaten (Welt-System)
+        Sensor zum Auslesen von Koordinatensystemen in absoluten Koordinaten
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -243,7 +243,17 @@
           <xs:element name="frame">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Pfad des Koordinatensystems
+                Pfad des Koordinatensystems von welchem die absoluten Koordinaten ausgelesen werden
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="outputFrame" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Alle kartesischen Sensor-Signale werden in diesem Koordinatensystemen ausgegeben. Wenn nicht angegeben wird das I-System von DynamicSystemSolver verwendet.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
