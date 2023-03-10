@@ -35,6 +35,9 @@ namespace MBSim {
       virtual void plot(std::vector<double> &plotVector) { }
       using Element::plot;
 
+      virtual int getxSize() const { return 0; }
+      virtual void updatexd() { }
+
       virtual void updateGeneralizedForces() { }
 
       virtual int getDataSize() const = 0;

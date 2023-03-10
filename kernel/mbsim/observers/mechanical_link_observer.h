@@ -43,10 +43,12 @@ namespace MBSim {
       double evalNone() { return 1; }
       double evalAbsoluteForce();
       double evalAbsoluteMoment();
+      Frame *outputFrame { nullptr };
 
     public:
       MechanicalLinkObserver(const std::string &name="");
       void setMechanicalLink(MechanicalLink *link_) { link = link_; } 
+      void setOutputFrame(Frame *outputFrame_) { outputFrame = outputFrame_; }
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void plot() override;
@@ -60,6 +62,8 @@ namespace MBSim {
         ombvMoment = std::shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(sideOfInteraction,scaleLength,scaleSize,OpenMBVArrow::toDoubleHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
       void setOMBVMoment(const std::shared_ptr<OpenMBVInteractionArrow> &arrow) { ombvMoment=arrow; }
+    private:
+      std::string saved_outputFrame;
   };
 
 }  

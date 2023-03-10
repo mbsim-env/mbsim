@@ -21,6 +21,7 @@
 #include "mbsim/observers/mechanical_link_observer.h"
 #include "mbsim/links/mechanical_link.h"
 #include "mbsim/frames/frame.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
@@ -46,17 +47,21 @@ namespace MBSim {
         setMechanicalLink(getByPath<MechanicalLink>(saved_link));
       if(not link)
         throwError("Mechanical link is not given!");
+      if(not saved_outputFrame.empty())
+        setOutputFrame(getByPath<Frame>(saved_outputFrame));
+      if(not outputFrame)
+        setOutputFrame(ds->getFrameI());
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
           for(int i=0; i<link->getNumberOfForces(); i++)
-	    addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[moment]) {
           for(int i=0; i<link->getNumberOfForces(); i++)
-	    addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
         }
       }
       Observer::init(stage, config);
@@ -87,13 +92,14 @@ namespace MBSim {
 
   void MechanicalLinkObserver::plot() {
     if(plotFeature[plotRecursive]) {
+      auto TWOut = outputFrame->evalOrientation();
       if(plotFeature[force]) {
         for(int i=0; i<link->getNumberOfForces(); i++)
-          Element::plot(link->evalForce(i));
+          Element::plot(TWOut.T()*link->evalForce(i));
       }
       if(plotFeature[moment]) {
         for(int i=0; i<link->getNumberOfForces(); i++)
-          Element::plot(link->evalMoment(i));
+          Element::plot(TWOut.T()*link->evalMoment(i));
       }
     }
     if(plotFeature[openMBV]) {
@@ -139,6 +145,10 @@ namespace MBSim {
     Observer::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"mechanicalLink");
     saved_link=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"outputFrame");
+    if(e) saved_outputFrame=E(e)->getAttribute("ref");
+
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(e) {
       ombvForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));

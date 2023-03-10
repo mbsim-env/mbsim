@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsimControl/frame_sensors.h"
 #include "mbsim/frames/frame.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -32,15 +33,22 @@ namespace MBSimControl {
   void FrameSensor::initializeUsingXML(DOMElement * element) {
     Sensor::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frame");
-    frameString=E(e)->getAttribute("ref");
+    saved_frame=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"outputFrame");
+    if(e) saved_outputFrame=E(e)->getAttribute("ref");
   }
 
   void FrameSensor::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(not frameString.empty())
-        setFrame(getByPath<Frame>(frameString));
+      if(not saved_frame.empty())
+        setFrame(getByPath<Frame>(saved_frame));
       if(not frame)
         throwError("Frame is not given!");
+      if(not saved_outputFrame.empty())
+        setOutputFrame(getByPath<Frame>(saved_outputFrame));
+      if(not outputFrame)
+        setOutputFrame(ds->getFrameI());
     }
     Sensor::init(stage, config);
   }
@@ -48,7 +56,8 @@ namespace MBSimControl {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, PositionSensor)
 
   void PositionSensor::updateSignal() {
-    s = frame->evalPosition();
+    auto TWOut = outputFrame->evalOrientation();
+    s = TWOut.T() * frame->evalPosition();
     upds = false;
   }
 
@@ -67,28 +76,32 @@ namespace MBSimControl {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, VelocitySensor)
 
   void VelocitySensor::updateSignal() {
-    s = frame->evalVelocity();
+    auto TWOut = outputFrame->evalOrientation();
+    s = TWOut.T() * frame->evalVelocity();
     upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AngularVelocitySensor)
 
   void AngularVelocitySensor::updateSignal() {
-    s = frame->evalAngularVelocity();
+    auto TWOut = outputFrame->evalOrientation();
+    s = TWOut.T() * frame->evalAngularVelocity();
     upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AccelerationSensor)
 
   void AccelerationSensor::updateSignal() {
-    s = frame->evalAcceleration();
+    auto TWOut = outputFrame->evalOrientation();
+    s = TWOut.T() * frame->evalAcceleration();
     upds = false;
   }
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, AngularAccelerationSensor)
 
   void AngularAccelerationSensor::updateSignal() {
-    s = frame->evalAngularAcceleration();
+    auto TWOut = outputFrame->evalOrientation();
+    s = TWOut.T() * frame->evalAngularAcceleration();
     upds = false;
   }
 

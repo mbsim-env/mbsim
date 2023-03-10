@@ -49,27 +49,27 @@ namespace MBSim {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[position]) {
           for(int i=0; i<2; i++)
-	    addToPlot("position "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("position "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[angle]) {
           for(int i=0; i<2; i++)
-	    addToPlot("angle "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("angle "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[velocity]) {
           for(int i=0; i<2; i++)
-	    addToPlot("velocity "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("velocity "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[angularVelocity]) {
           for(int i=0; i<2; i++)
-	    addToPlot("angular velocity "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("angular velocity "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[acceleration]) {
           for(int i=0; i<2; i++)
-	    addToPlot("acceleration "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("acceleration "+to_string(convertIndex(i)),{"x","y","z"});
         }
         if(plotFeature[angularAcceleration]) {
           for(int i=0; i<2; i++)
-	    addToPlot("angular acceleration "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("angular acceleration "+to_string(convertIndex(i)),{"x","y","z"});
         }
       }
       MechanicalLinkObserver::init(stage, config);
@@ -105,29 +105,30 @@ namespace MBSim {
 
   void SingleContactObserver::plot() {
     if(plotFeature[plotRecursive]) {
+      auto TWOut = outputFrame /*from parent Contact or parent maxwell*/->evalOrientation();
       if(plotFeature[position]) {
         for(int i=0; i<2; i++)
-	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition());
+          Element::plot(TWOut.T()*static_cast<SingleContact*>(link)->getContourFrame(i)->evalPosition());
       }
       if(plotFeature[angle]) {
         for(int i=0; i<2; i++)
-	  Element::plot(AIK2Cardan(static_cast<SingleContact*>(link)->getContourFrame(i)->evalOrientation()));
+          Element::plot(AIK2Cardan(static_cast<SingleContact*>(link)->getContourFrame(i)->evalOrientation()));
       }
       if(plotFeature[velocity]) {
         for(int i=0; i<2; i++)
-	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalVelocity());
+          Element::plot(TWOut.T()*static_cast<SingleContact*>(link)->getContourFrame(i)->evalVelocity());
       }
       if(plotFeature[angularVelocity]) {
         for(int i=0; i<2; i++)
-	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularVelocity());
+          Element::plot(TWOut.T()*static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularVelocity());
       }
       if(plotFeature[acceleration]) {
         for(int i=0; i<2; i++)
-	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalAcceleration());
+          Element::plot(TWOut.T()*static_cast<SingleContact*>(link)->getContourFrame(i)->evalAcceleration());
       }
       if(plotFeature[angularAcceleration]) {
         for(int i=0; i<2; i++)
-	  Element::plot(static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularAcceleration());
+          Element::plot(TWOut.T()*static_cast<SingleContact*>(link)->getContourFrame(i)->evalAngularAcceleration());
       }
     }
     if(plotFeature[openMBV]) {

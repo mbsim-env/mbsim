@@ -21,6 +21,7 @@
 #include "mbsim/observers/frame_observer.h"
 #include "mbsim/frames/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/arrow.h>
 #include <openmbvcppinterface/group.h>
 
@@ -52,22 +53,26 @@ namespace MBSim {
         setFrame(getByPath<Frame>(saved_frame));
       if(not frame)
         throwError("Frame is not given!");
+      if(not saved_outputFrame.empty())
+        setOutputFrame(getByPath<Frame>(saved_outputFrame));
+      if(not outputFrame)
+        setOutputFrame(ds->getFrameI());
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[position])
-	  addToPlot("position",{"x","y","z"});
+          addToPlot("position",{"x","y","z"});
         if(plotFeature[angle])
-	  addToPlot("angle",{"alpha","beta","gamma"});
+          addToPlot("angle",{"alpha","beta","gamma"});
         if(plotFeature[velocity])
-	  addToPlot("velocity",{"x","y","z"});
+          addToPlot("velocity",{"x","y","z"});
         if(plotFeature[angularVelocity])
-	  addToPlot("angular velocity",{"x","y","z"});
+          addToPlot("angular velocity",{"x","y","z"});
         if(plotFeature[acceleration])
-	  addToPlot("acceleration",{"x","y","z"});
+          addToPlot("acceleration",{"x","y","z"});
         if(plotFeature[angularAcceleration])
-	  addToPlot("angular acceleration",{"x","y","z"});
+          addToPlot("angular acceleration",{"x","y","z"});
       }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
@@ -104,18 +109,19 @@ namespace MBSim {
 
   void FrameObserver::plot() {
     if(plotFeature[plotRecursive]) {
+      auto TWOut = outputFrame->evalOrientation();
       if(plotFeature[position])
-	Element::plot(frame->evalPosition());
+        Element::plot(TWOut.T()*frame->evalPosition());
       if(plotFeature[angle])
         Element::plot(AIK2Cardan(frame->evalOrientation()));
       if(plotFeature[velocity])
-	Element::plot(frame->evalVelocity());
+        Element::plot(TWOut.T()*frame->evalVelocity());
       if(plotFeature[angularVelocity])
-	Element::plot(frame->evalAngularVelocity());
+        Element::plot(TWOut.T()*frame->evalAngularVelocity());
       if(plotFeature[acceleration])
-	Element::plot(frame->evalAcceleration());
+        Element::plot(TWOut.T()*frame->evalAcceleration());
       if(plotFeature[angularAcceleration])
-	Element::plot(frame->evalAngularAcceleration());
+        Element::plot(TWOut.T()*frame->evalAngularAcceleration());
     }
     if(plotFeature[openMBV]) {
       if(openMBVPosition) {
@@ -195,6 +201,10 @@ namespace MBSim {
     Observer::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"frame");
     saved_frame=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"outputFrame");
+    if(e) saved_outputFrame=E(e)->getAttribute("ref");
+
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVPosition");
     if(e) {
       ombvPositionArrow = shared_ptr<OpenMBVArrow>(new OpenMBVArrow);

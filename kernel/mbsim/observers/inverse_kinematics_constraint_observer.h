@@ -46,6 +46,7 @@ namespace MBSim {
     public:
       InverseKinematicsConstraintObserver(const std::string &name="");
       void setInverseKinematicsConstraint(InverseKinematicsConstraint *constraint_) { constraint = constraint_; } 
+      void setOutputFrame(Frame *outputFrame_) { outputFrame = outputFrame_; }
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void plot() override;
@@ -54,6 +55,9 @@ namespace MBSim {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBVArrow::ReferencePoint),OpenMBVArrow::toPoint)(colorRepresentation,(OpenMBVArrow::ColorRepresentation),OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),fmatvec::Vec3(std::vector<double>{-1,1,1}))(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombv = std::shared_ptr<OpenMBVArrow>(new OpenMBVArrow(scaleLength,scaleSize,OpenMBVArrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
+    private:
+      Frame *outputFrame { nullptr };
+      std::string saved_outputFrame;
   };
 
 }  

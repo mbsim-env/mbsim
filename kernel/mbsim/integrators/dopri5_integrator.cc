@@ -55,8 +55,6 @@ namespace MBSim {
     double curTimeAndState = -1;
     double tRoot = *t;
 
-    self->getSystem()->updateInternalState();
-
     // root-finding
     if(self->getSystem()->getsvSize()) {
       self->getSystem()->setTime(*t);
@@ -103,7 +101,9 @@ namespace MBSim {
       self->getSystem()->resetUpToDate();
       self->getSystem()->plot();
       if(self->msgAct(Status))
-	self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
+        self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
+
+      self->getSystem()->updateInternalState();
 
       double s1 = clock();
       self->time += (s1-self->s0)/CLOCKS_PER_SEC;
@@ -156,6 +156,8 @@ namespace MBSim {
       }
       self->getSystem()->updateStopVectorParameters();
     }
+
+    self->getSystem()->updateInternalState();
   }
 
   void DOPRI5Integrator::integrate() {

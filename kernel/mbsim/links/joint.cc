@@ -26,6 +26,7 @@
 #include <mbsim/utils/utils.h>
 #include <mbsim/objects/rigid_body.h>
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -150,28 +151,9 @@ namespace MBSim {
         updatelaM_ = &Joint::updatelaM0;
       }
 
-      if(momentDir.cols()==2) {
-        if(fabs(momentDir(2,0))<=macheps and fabs(momentDir(2,1))<=macheps)
-          iR = 2;
-        else if(fabs(momentDir(1,0))<=macheps and fabs(momentDir(1,1))<=macheps)
-          iR = 1;
-        else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(0,1))<=macheps)
-          iR = 0;
-        else
-          throwError("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
+      if(momentDir.cols()==1 and not integrateGeneralizedRelativeVelocityOfRotation) {
+	msg(Warn) << "Evaluation of generalized relative position may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
       }
-      else if(momentDir.cols()==1) {
-        msg(Warn) << "Evaluation of generalized relative velocity of rotation may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
-        if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(2,0))<=macheps)
-          iR = 2;
-        else if(fabs(momentDir(1,0))<=macheps and fabs(momentDir(2,0))<=macheps)
-          iR = 1;
-        else if(fabs(momentDir(0,0))<=macheps and fabs(momentDir(1,0))<=macheps)
-          iR = 0;
-        else
-          throwError("Generalized relative velocity of rotation can not be calculated from state for the defined moment direction. Turn on of integration generalized relative velocity of rotation.");
-      }
-      eR(iR) = 1;
     }
     else if (stage == unknownStage) {
       gdd.resize(gdSize);
@@ -494,13 +476,7 @@ namespace MBSim {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
     else
-      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*evalGlobalRelativeAngle();
-  }
-
-  Vec3 Joint::evalGlobalRelativeAngle() {
-    WphiK0K1 = crossProduct(eR,evalGlobalRelativeOrientation().col(iR));
-    WphiK0K1(iR) = -getGlobalRelativeOrientation()(fmod(iR+1,3),fmod(iR+2,3));
-    return WphiK0K1;
+      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*AIK2Phi(evalGlobalRelativeOrientation());
   }
 
   void Joint::initializeUsingXML(DOMElement *element) {

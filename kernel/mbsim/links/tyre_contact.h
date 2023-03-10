@@ -39,13 +39,11 @@ namespace MBSim {
       void plot() override;
 
       void calcSize() override;
-      void calcxSize() override { xSize = 1; }
+      void calcxSize() override;
       void calcisSize() override;
 
       const fmatvec::Vec3& evalForwardVelocity() { if(updfvel) updateForwardVelocity(); return RvC; }
       fmatvec::Vec3& getForwardVelocity(bool check=true) {  assert((not check) or (not updfvel)); return RvC; }
-      double evalsRelax() { if(updla) updateGeneralizedForces(); return sRelax; }
-      double& getsRelax(bool check=true) {  assert((not check) or (not updla)); return sRelax; }
       void updatePositions(Frame *frame) override;
       void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
@@ -68,7 +66,6 @@ namespace MBSim {
     protected:
       TyreModel *model{nullptr};
       fmatvec::Vec3 RvC;
-      double sRelax;
       bool plane;
       fmatvec::Vec2 zeta0;
       double tol{1e-10};

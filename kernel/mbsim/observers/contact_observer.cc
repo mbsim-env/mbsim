@@ -23,6 +23,7 @@
 #include "mbsim/frames/contour_frame.h"
 #include "mbsim/contours/contour.h"
 #include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/dynamic_system_solver.h"
 #include <openmbvcppinterface/group.h>
 
 using namespace std;
@@ -43,6 +44,10 @@ namespace MBSim {
         setContact(getByPath<Contact>(saved_link));
       if(not link)
         throwError("Contact is not given!");
+      if(not saved_outputFrame.empty())
+        setOutputFrame(getByPath<Frame>(saved_outputFrame));
+      if(not outputFrame)
+        setOutputFrame(ds->getFrameI());
       Observer::init(stage, config);
     }
     else if(stage==preInit) {
@@ -50,6 +55,7 @@ namespace MBSim {
       contactObserver.resize(static_cast<Contact*>(link)->getSubcontacts().size());
       for (unsigned int i=0; i<contactObserver.size(); i++) {
         contactObserver[i].setParent(this);
+        contactObserver[i].setOutputFrame(outputFrame);
         contactObserver[i].setMechanicalLink(&static_cast<Contact*>(link)->getSingleContact(i));
         stringstream contactName;
         contactName << "Contact_" << 0 << "_" << i;
@@ -94,6 +100,10 @@ namespace MBSim {
     Observer::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"contact");
     saved_link=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"outputFrame");
+    if(e) saved_outputFrame=E(e)->getAttribute("ref");
+
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVForce");
     if(e) {
       ombvForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));

@@ -55,35 +55,39 @@ namespace MBSim {
         setFrameOfReference(getByPath<Frame>(saved_frameOfReference));
       if(not frameOfReference)
         setFrameOfReference(ds->getFrameI());
+      if(not saved_outputFrame.empty())
+        setOutputFrame(getByPath<Frame>(saved_outputFrame));
+      if(not outputFrame)
+        setOutputFrame(ds->getFrameI());
       Observer::init(stage, config);
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
-	  addToPlot("weight",{"x","y","z"});
-	  if(getDynamicSystemSolver()->getInverseKinetics()) {
-	    for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
-	      addToPlot("joint force "+to_string(convertIndex(i)),{"x","y","z"});
-	  }
+          addToPlot("weight",{"x","y","z"});
+          if(getDynamicSystemSolver()->getInverseKinetics()) {
+            for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
+              addToPlot("joint force "+to_string(convertIndex(i)),{"x","y","z"});
+          }
         }
         if(plotFeature[moment]) {
-	  if(getDynamicSystemSolver()->getInverseKinetics()) {
-	    for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
-	      addToPlot("joint moment "+to_string(convertIndex(i)),{"x","y","z"});
-	  }
+          if(getDynamicSystemSolver()->getInverseKinetics()) {
+            for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
+              addToPlot("joint moment "+to_string(convertIndex(i)),{"x","y","z"});
+          }
         }
         if(plotFeature[position]) {
-	  addToPlot("position",{"x","y","z"});
-	  addToPlot("direction",{"x","y","z"});
+          addToPlot("position",{"x","y","z"});
+          addToPlot("direction",{"x","y","z"});
         }
         if(plotFeature[velocity])
-	  addToPlot("momentum",{"x","y","z"});
+          addToPlot("momentum",{"x","y","z"});
         if(plotFeature[angularVelocity])
-	  addToPlot("angular momentum",{"x","y","z"});
+          addToPlot("angular momentum",{"x","y","z"});
         if(plotFeature[acceleration])
-	  addToPlot("derivative of momentum",{"x","y","z"});
+          addToPlot("derivative of momentum",{"x","y","z"});
         if(plotFeature[angularAcceleration])
-	  addToPlot("derivative of angular momentum",{"x","y","z"});
+          addToPlot("derivative of angular momentum",{"x","y","z"});
         if(plotFeature[energy]) {
           addToPlot("kinetic energy");
           addToPlot("potential energy");
@@ -184,37 +188,38 @@ namespace MBSim {
     }
     Vec3 r = rOS + dr;
     if(plotFeature[plotRecursive]) {
+      auto TWOut = outputFrame->evalOrientation();
       if(plotFeature[force]) {
-	Element::plot(body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity());
-	if(getDynamicSystemSolver()->getInverseKinetics()) {
-	  for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
-	    Element::plot(body->getJoint()->evalForce(i));
-	}
+        Element::plot(TWOut.T()*body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity());
+        if(getDynamicSystemSolver()->getInverseKinetics()) {
+          for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
+            Element::plot(TWOut.T()*body->getJoint()->evalForce(i));
+        }
       }
       if(plotFeature[moment]) {
-	if(getDynamicSystemSolver()->getInverseKinetics()) {
-	  for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
-	    Element::plot(body->getJoint()->evalMoment(i));
-	}
+        if(getDynamicSystemSolver()->getInverseKinetics()) {
+          for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
+            Element::plot(TWOut.T()*body->getJoint()->evalMoment(i));
+        }
       }
       if(plotFeature[position]) {
-	Element::plot(r);
-	Element::plot(dir);
+        Element::plot(TWOut.T()*r);
+        Element::plot(TWOut.T()*dir);
       }
       if(plotFeature[velocity])
-	Element::plot(p);
+        Element::plot(TWOut.T()*p);
       if(plotFeature[angularVelocity])
-	Element::plot(L);
+        Element::plot(TWOut.T()*L);
       if(plotFeature[acceleration])
-	Element::plot(pd);
+        Element::plot(TWOut.T()*pd);
       if(plotFeature[angularAcceleration])
-	Element::plot(Ld);
+        Element::plot(TWOut.T()*Ld);
       if(plotFeature[energy]) {
         double T = 0.5*(body->getMass()*vS.T()*vS + om.T()*WThetaS*om);
         double V = -body->getMass()*ds->getMBSimEnvironment()->getAccelerationOfGravity().T()*rOS;
-	Element::plot(T);
-	Element::plot(V);
-	Element::plot(T+V);
+        Element::plot(T);
+        Element::plot(V);
+        Element::plot(T+V);
       }
     }
     if(plotFeature[openMBV]) {
@@ -337,6 +342,9 @@ namespace MBSim {
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"frameOfReference");
     if(e) saved_frameOfReference=E(e)->getAttribute("ref");
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"outputFrame");
+    if(e) saved_outputFrame=E(e)->getAttribute("ref");
 
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVWeight");
     if(e) {

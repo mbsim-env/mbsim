@@ -366,9 +366,6 @@ namespace MBSimFMI {
   // the error tolerances of the integrator)
   void FMIInstance::completedIntegratorStep(fmiBoolean* callEventUpdate) {
     assert(!cosim);
-    // update internal system state (we are here at a valid step)
-    dss->updateInternalState();
-
     // plot the current system state dependent on plotMode
     switch(predefinedParameterStruct.plotMode) {
       // plot at each n-th completed step
@@ -390,6 +387,9 @@ namespace MBSimFMI {
       case SampleTime:
         break;
     }
+
+    // update internal system state (we are here at a valid step)
+    dss->updateInternalState();
 
     // check drift
     if(dss->positionDriftCompensationNeeded(predefinedParameterStruct.gMax)) {
@@ -516,6 +516,8 @@ namespace MBSimFMI {
         if(fabs(time-nextPlotTime)<1e4*numeric_limits<double>::epsilon()*time+1e4*numeric_limits<double>::epsilon()) {
           // plot
           dss->plot();
+          // update internal system state (we are here at a valid step)
+          dss->updateInternalState();
           // next time event
           nextPlotTime=time+predefinedParameterStruct.plotStepSize;
           eventInfo->nextEventTime=nextPlotTime;

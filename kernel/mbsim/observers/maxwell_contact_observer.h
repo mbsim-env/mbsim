@@ -47,6 +47,7 @@ namespace MBSim {
     public:
       MaxwellContactObserver(const std::string &name="");
       void setMaxwellContact(MaxwellContact *link_) { link = link_; }
+      void setOutputFrame(Frame *outputFrame_) { outputFrame = outputFrame_; }
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void plot() override;
@@ -94,6 +95,9 @@ namespace MBSim {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVTangentialForce, tag, (optional (sideOfInteraction,(OpenMBVInteractionArrow::SideOfInteraction),OpenMBVInteractionArrow::action)(scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBVArrow::ReferencePoint),OpenMBVArrow::toPoint)(colorRepresentation,(OpenMBVFrictionArrow::ColorRepresentation),OpenMBVFrictionArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),fmatvec::Vec3(std::vector<double>{-1,1,1}))(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombvFriction = std::shared_ptr<OpenMBVFrictionArrow>(new OpenMBVFrictionArrow(sideOfInteraction,scaleLength,scaleSize,OpenMBVArrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
+    private:
+      Frame *outputFrame { nullptr };
+      std::string saved_outputFrame;
   };
 
 }  

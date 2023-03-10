@@ -46,6 +46,7 @@ namespace MBSim {
     public:
       MechanicalConstraintObserver(const std::string &name="");
       void setMechanicalConstraint(MechanicalConstraint *constraint_) { constraint = constraint_; } 
+      void setOutputFrame(Frame *outputFrame_) { outputFrame = outputFrame_; }
 
       void init(InitStage stage, const InitConfigSet &config) override;
       void plot() override;
@@ -57,6 +58,9 @@ namespace MBSim {
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVMoment, tag, (optional (sideOfInteraction,(OpenMBVInteractionArrow::SideOfInteraction),OpenMBVInteractionArrow::action)(scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(OpenMBVArrow::ReferencePoint),OpenMBVArrow::toPoint)(colorRepresentation,(OpenMBVArrow::ColorRepresentation),OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),fmatvec::Vec3(std::vector<double>{-1,1,1}))(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombvMoment = std::shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(sideOfInteraction,scaleLength,scaleSize,OpenMBVArrow::toDoubleHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
+    private:
+      Frame *outputFrame { nullptr };
+      std::string saved_outputFrame;
   };
 
 }  
