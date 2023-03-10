@@ -3311,17 +3311,22 @@ namespace MBSimGUI {
   FrameSensorPropertyDialog::FrameSensorPropertyDialog(Element *sensor) : SensorPropertyDialog(sensor) {
     frame = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(sensor,nullptr,this),false,false,MBSIMCONTROL%"frame");
     addToTab("General", frame);
+
+    outputFrame = new ExtWidget("Output frame",new ElementOfReferenceWidget<Frame>(sensor,nullptr,this),true,false,MBSIMCONTROL%"outputFrame");
+    addToTab("General", outputFrame);
   }
 
   DOMElement* FrameSensorPropertyDialog::initializeUsingXML(DOMElement *parent) {
     SensorPropertyDialog::initializeUsingXML(item->getXMLElement());
     frame->initializeUsingXML(item->getXMLElement());
+    outputFrame->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* FrameSensorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     SensorPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     frame->writeXMLFile(item->getXMLElement(),ref);
+    outputFrame->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
