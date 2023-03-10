@@ -35,7 +35,8 @@ namespace MBSim {
       void setNominalLoad(double Fz0_) { Fz0 = Fz0_; }
       void setInflationPressure(double p_) { p = p_; }
       void setNominalPressure(double p0_) { p0 = p0_; }
-      void setRelaxationLength(double si_) { si = si_; }
+      void setRelaxationLengthForLongitudinalSlip(double six_) { six = six_; }
+      void setRelaxationLengthForSideslip(double siy_) { siy = siy_; }
       void setScaleFactorForLongitudinalForce(double LFX_) { LFX = LFX_; }
       void setScaleFactorForLateralForce(double LFY_) { LFY = LFY_; }
       void setScaleFactorForAligningMoment(double LMZ_) { LMZ = LMZ_; }
@@ -51,9 +52,12 @@ namespace MBSim {
       void plot(std::vector<double> &plotVector) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      void updateGeneralizedForces() override;
+      int getxSize() const override;
 
-      int getDataSize() const override { return 8; }
+      void updateGeneralizedForces() override;
+      void updatexd() override;
+
+      int getDataSize() const override { return 9; }
       fmatvec::VecV getData() const override;
 
     private:
@@ -69,7 +73,8 @@ namespace MBSim {
       double Fz0{-1};
       double cz{-1};
       double dz{-1};
-      double si{1};
+      double six{1};
+      double siy{1};
       double LFX{1};
       double LFY{1};
       double LMZ{1};
@@ -80,7 +85,7 @@ namespace MBSim {
       double LKYC{-1};
       double LKZC{-1};
 
-      double vsx, vx, ka, ga, Kyal, alF, Rs, dpi;
+      double vsx, vsy, vx, ka, ga, Kyal, alF, Rs, dpi;
  };
 
 }

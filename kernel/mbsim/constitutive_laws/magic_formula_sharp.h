@@ -97,6 +97,9 @@ namespace MBSim {
       void plot(std::vector<double> &plotVector) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
+      int getxSize() const override { return 1; }
+      void updatexd() override;
+
       void updateGeneralizedForces() override;
 
       int getDataSize() const override { return 8; }
@@ -167,7 +170,7 @@ namespace MBSim {
       double sfFy{1};
       double sfMz{1};
 
-      double vsx, vx, ka, ga, Kyal, si, be, Rs;
+      double vsx, vsy, vx, ka, ga, Kyal, si, be, Rs;
  };
 
 }

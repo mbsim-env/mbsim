@@ -190,16 +190,23 @@ namespace MBSim {
     if(e) setScaleFactorForAligningMoment(E(e)->getText<double>());
   }
 
+  void MagicFormulaSharp::updatexd() {
+    TyreContact *contact = static_cast<TyreContact*>(parent);
+    static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
+    contact->getxd()(0) = (atan(vsy/vx) - contact->getx()(0))*vx/si;
+  }
+
   void MagicFormulaSharp::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
     double Fx, Fy, Mz;
     double Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
+    vsx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
+    vsy = contact->getContourFrame(1)->getOrientation().col(1).T()*contact->getContourFrame(1)->getVelocity();
+    vx = contact->evalForwardVelocity()(0);
     if(Fz>0) {
       if(Fz<1) Fz = 1;
       double dfz = (Fz-Fz0)/Fz0;
-      vsx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
-      vx = contact->evalForwardVelocity()(0);
       ka = -vsx/vx;
       be = contact->getx()(0);
       ga = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
@@ -250,8 +257,6 @@ namespace MBSim {
       Fy = 0;
       Mz = 0;
       ga = 0;
-      vx = 0;
-      vsx = 0;
       ka = 0;
       Kyal = 0;
       si = 1;
@@ -263,8 +268,6 @@ namespace MBSim {
     contact->getGeneralizedForce(false)(1) = Fy;
     contact->getGeneralizedForce(false)(2) = Fz;
     contact->getGeneralizedForce(false)(3) = Mz;
-
-    contact->getsRelax(false) = si;
   }
 
   VecV MagicFormulaSharp::getData() const {

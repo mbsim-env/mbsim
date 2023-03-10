@@ -103,6 +103,10 @@ namespace MBSim {
     updSize = false;
   }
 
+  void TyreContact::calcxSize() {
+    xSize = model->getxSize();
+  }
+
   void TyreContact::calcisSize() {
     ContourLink::calcisSize();
     if(not plane)
@@ -206,8 +210,7 @@ namespace MBSim {
   }
 
   void TyreContact::updatexd() {
-    const Vec3& v = evalForwardVelocity();
-    xd(0) = (atan(v(1)/v(0)) - x(0))*v(0)/evalsRelax();
+    model->updatexd();
   }
 
   void TyreContact::resetUpToDate() {

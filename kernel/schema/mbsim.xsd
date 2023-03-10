@@ -4518,6 +4518,16 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="relaxationLengthForLongitudinalSlip" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="relaxationLengthForSideslip" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="inflationPressure" type="pv:pressureScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
@@ -4529,11 +4539,6 @@
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="verticalDamping" type="pv:dampingScalar" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                tbd
-            </xs:documentation></xs:annotation>
-          </xs:element>
-          <xs:element name="relaxationLength" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>

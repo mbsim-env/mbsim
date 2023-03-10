@@ -308,7 +308,6 @@ namespace MBSim {
     else if(stage==unknownStage) {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-      contact->getsRelax(false) = si;
       dpi = (p-p0)/p0;
       if(fabs(tyre->getUnloadedRadius()-R0)>1e-13)
 	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
@@ -324,7 +323,8 @@ namespace MBSim {
     plotColumns.emplace_back("spin component of longitudinal velocity");
     plotColumns.emplace_back("longitudinal slip");
     plotColumns.emplace_back("cornering stiffness");
-    plotColumns.emplace_back("relaxation length");
+    plotColumns.emplace_back("relaxation length for longitudinal slip");
+    plotColumns.emplace_back("relaxation length for sideslip");
     plotColumns.emplace_back("slip angle");
     plotColumns.emplace_back("scrub radius");
   }
@@ -336,7 +336,8 @@ namespace MBSim {
     plotVector.push_back(vsx-vx);
     plotVector.push_back(ka);
     plotVector.push_back(Kyal);
-    plotVector.push_back(si);
+    plotVector.push_back(six);
+    plotVector.push_back(siy);
     plotVector.push_back(alF);
     plotVector.push_back(Rs);
   }
@@ -347,14 +348,16 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"inputDataFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForLongitudinalSlip");
+    setRelaxationLengthForLongitudinalSlip(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForSideslip");
+    setRelaxationLengthForSideslip(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"inflationPressure");
     if(e) setInflationPressure(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"verticalStiffness");
     if(e) setVerticalStiffness(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"verticalDamping");
     if(e) setVerticalDamping(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLength");
-    setRelaxationLength(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -375,20 +378,38 @@ namespace MBSim {
     if(e) setScaleFactorForResidualTorque(E(e)->getText<double>());
   }
 
+  int MagicFormula62::getxSize() const {
+    return (six>0) + (siy>0);
+  }
+
+  void MagicFormula62::updatexd() {
+    TyreContact *contact = static_cast<TyreContact*>(parent);
+    static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
+    int i=0;
+    if(six>0) {
+      contact->getxd()(i) = (-vsx - contact->getx()(i)*vx)/six;
+      i++;
+    }
+    if(siy>0)
+      contact->getxd()(i) = (atan(vsy/vx) - contact->getx()(i))*vx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
+  }
+
   void MagicFormula62::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
     double Fx, Fy, Mz;
     Fz0 *= LFZ0;
     double Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
+    vsx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
+    vsy = contact->getContourFrame(1)->getOrientation().col(1).T()*contact->getContourFrame(1)->getVelocity();
+    vx = contact->evalForwardVelocity()(0);
     if(Fz>0) {
       if(Fz<1) Fz = 1;
       double dfz = (Fz-Fz0)/Fz0;
-      vsx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
-      vx = contact->evalForwardVelocity()(0);
-      ka = -vsx/vx;
-      alF = contact->getx()(0);
-      double alM = alF; // TODO = slipAngle
+      int i = 0;
+      double alM = atan(vsy/vx);
+      ka = six>0 ? contact->getx()(i++) : -vsx/vx;
+      alF = siy>0 ? contact->getx()(i) : alM;
       ga = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
 
       double Kxka = Fz*(PKX1+PKX2*dfz)*exp(PKX3*dfz)*(1+PPX1*dpi+PPX2*pow(dpi,2))*LKX;
@@ -478,8 +499,6 @@ namespace MBSim {
       Fy = 0;
       Mz = 0;
       ga = 0;
-      vx = 0;
-      vsx = 0;
       ka = 0;
       Kyal = 0;
       alF = 0;
@@ -497,15 +516,16 @@ namespace MBSim {
 
   VecV MagicFormula62::getData() const {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
-    VecV data(8,NONINIT);
+    VecV data(9,NONINIT);
     data(0) = ga;
     data(1) = vx;
     data(2) = vsx-vx;
     data(3) = ka;
     data(4) = Kyal;
-    data(5) = si;
-    data(6) = alF;
-    data(7) = Rs;
+    data(5) = six;
+    data(6) = siy;
+    data(7) = alF;
+    data(8) = Rs;
     return data;
   }
 
