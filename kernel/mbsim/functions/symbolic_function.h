@@ -45,11 +45,6 @@ namespace MBSim {
       Function<Ret(Arg)>::initializeUsingXML(element);
 
       auto definition=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"definition");
-      if(!definition) { // MISSING SymbolicFunction depr: remove
-        MBXMLUtils::Deprecated::message(this->msg(fmatvec::Atom::Deprecated),
-          "Symbolic functions must be defined inside of a <definition> child element.", element);
-        definition=element;
-      }
 
       std::stringstream func(MBXMLUtils::E(definition)->getText<std::string>());
       char buf[3];
@@ -105,11 +100,6 @@ namespace MBSim {
       Function<Ret(Arg1, Arg2)>::initializeUsingXML(element);
 
       auto definition=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"definition");
-      if(!definition) { // MISSING SymbolicFunction depr: remove
-        MBXMLUtils::Deprecated::message(this->msg(fmatvec::Atom::Deprecated),
-          "Symbolic functions must be defined inside of a <definition> child element.", element);
-        definition=element;
-      }
 
       std::stringstream func(MBXMLUtils::E(definition)->getText<std::string>());
       char buf[3];

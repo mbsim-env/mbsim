@@ -4895,17 +4895,12 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:complexType name="FunctionMixedType" mixed="true"><!-- MISSING SymbolicFunction depr: remove -->
-     <xs:complexContent>
-      <xs:extension base="FunctionType"/>
-    </xs:complexContent>
-  </xs:complexType>
   <xs:element name="SymbolicFunction" substitutionGroup="Function" type="SymbolicFunctionType"/>
-  <xs:complexType name="SymbolicFunctionType" mixed="true"><!-- MISSING SymbolicFunction depr: remove mixed-->
+  <xs:complexType name="SymbolicFunctionType">
     <xs:complexContent>
-      <xs:extension base="FunctionMixedType"><!-- MISSING SymbolicFunction depr: switch to FunctionType-->
+      <xs:extension base="FunctionType">
         <xs:sequence>
-          <xs:element name="definition" minOccurs="0"><!-- MISSING SymbolicFunction depr: remove minOccurs-->
+          <xs:element name="definition">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definition der Function.
@@ -4916,9 +4911,7 @@
               <xs:attributeGroup ref="pv:symbolicFunctionXMLAttribute"/>
             </xs:complexType>
           </xs:element>
-          <xs:group ref="pv:symbolicFunctionXMLElement" minOccurs="0"/><!--MISSING SymbolicFunction depr: remove-->
         </xs:sequence>
-        <xs:attributeGroup ref="pv:symbolicFunctionXMLAttribute"/><!--MISSING SymbolicFunction depr: remove-->
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
