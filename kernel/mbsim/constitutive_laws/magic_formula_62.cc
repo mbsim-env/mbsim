@@ -49,7 +49,7 @@ namespace MBSim {
 	    file >> name >> str >> value[i];
 	    getline(file,line);
 	  }
-	  rUnloaded = stod(value[0]);
+	  R0 = stod(value[0]);
 	  rRim = stod(value[2]);
 	}
 	found = line.find("[OPERATING_CONDITIONS]");
@@ -80,12 +80,26 @@ namespace MBSim {
 	    file >> name >> str >> value[i];
 	    getline(file,line);
 	  }
-	  if(sfmux<0) sfmux = stod(value[2]);
-	  if(sfmuy<0) sfmuy = stod(value[8]);
-	  if(sfkx<0) sfkx = stod(value[4]);
-	  if(sfky<0) sfky = stod(value[10]);
-	  if(sfkg<0) sfkg = stod(value[11]);
-	  if(sfkm<0) sfkm = stod(value[12]);
+	  LFZ0 = stod(value[0]);
+	  LCX = stod(value[1]);
+	  if(LMUX<0) LMUX = stod(value[2]);
+	  LEX = stod(value[3]);
+	  if(LKX<0) LKX = stod(value[4]);
+	  LHX = stod(value[5]);
+	  LVX = stod(value[6]);
+	  LCY = stod(value[7]);
+	  if(LMUY<0) LMUY = stod(value[8]);
+	  LEY = stod(value[9]);
+	  if(LKY<0) LKY = stod(value[10]);
+	  if(LKYC<0) LKYC = stod(value[11]);
+	  if(LKZC<0) LKZC = stod(value[12]);
+	  LHY = stod(value[13]);
+	  LVY = stod(value[14]);
+	  LTR = stod(value[15]);
+	  LRES = stod(value[16]);
+	  LXAL = stod(value[17]);
+	  LYKA = stod(value[18]);
+	  LVYKA = stod(value[19]);
 	}
 	found = line.find("[LONGITUDINAL_COEFFICIENTS]");
 	if(found!=string::npos) {
@@ -280,21 +294,24 @@ namespace MBSim {
 	}
       } while(not file.eof());
     }
+    else
+      throw runtime_error("(MagicFormula62::init): Input data file does not exist.");
     file.close();
   }
 
   void MagicFormula62::init(InitStage stage, const InitConfigSet &config) {
     if(stage==resolveStringRef) {
       if(inputDataFile.empty()) 
-	throwError("(MagicFormula62::init): Input data file must be defined.");
+	throw runtime_error("(MagicFormula62::init): Input data file must be defined.");
       importData();
     }
     else if(stage==unknownStage) {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-      contact->getsRelax(false) = sRelax;
-      if(fabs(tyre->getUnloadedRadius()-rUnloaded)>1e-13)
-	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << rUnloaded << ")." << endl;
+      contact->getsRelax(false) = si;
+      dpi = (p-p0)/p0;
+      if(fabs(tyre->getUnloadedRadius()-R0)>1e-13)
+	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
       if(fabs(tyre->getRimRadius()-rRim)>1e-13)
 	msg(Warn) << "Rim radius of " << tyre->getPath() << " (" << tyre->getRimRadius() << ") is different to rim radius of " << inputDataFile << " (" << rRim << ")." << endl;
     }
@@ -314,14 +331,14 @@ namespace MBSim {
 
   void MagicFormula62::plot(vector<double> &plotVector) {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
-    plotVector.push_back(phi);
-    plotVector.push_back(vRoll);
-    plotVector.push_back(RvSx-vRoll);
-    plotVector.push_back(slip);
+    plotVector.push_back(ga);
+    plotVector.push_back(vx);
+    plotVector.push_back(vsx-vx);
+    plotVector.push_back(ka);
     plotVector.push_back(Kyal);
-    plotVector.push_back(sRelax);
-    plotVector.push_back(slipAnglePT1);
-    plotVector.push_back(rScrub);
+    plotVector.push_back(si);
+    plotVector.push_back(alF);
+    plotVector.push_back(Rs);
   }
 
   void MagicFormula62::initializeUsingXML(DOMElement *element) {
@@ -338,10 +355,6 @@ namespace MBSim {
     if(e) setVerticalDamping(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLength");
     setRelaxationLength(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"epsx");
-    if(e) setepsx(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"epsk");
-    if(e) setepsk(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -365,141 +378,134 @@ namespace MBSim {
   void MagicFormula62::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    double FLo, FLa, M;
-    double FN = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
-    if(FN>0) {
-      if(FN<1) FN = 1;
-      RvSx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
-      vRoll = contact->evalForwardVelocity()(0);
-      slip = -RvSx/vRoll;
-      slipAnglePT1 = contact->getx()(0);
-      phi = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
+    double Fx, Fy, Mz;
+    Fz0 *= LFZ0;
+    double Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
+    if(Fz>0) {
+      if(Fz<1) Fz = 1;
+      double dfz = (Fz-Fz0)/Fz0;
+      vsx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
+      vx = contact->evalForwardVelocity()(0);
+      ka = -vsx/vx;
+      alF = contact->getx()(0);
+      double alM = alF; // TODO = slipAngle
+      ga = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
 
-      double dfz = (FN - Fz0)/Fz0;
-      double dpi = (p - p0)/p0;
-
-      double Kxka = FN*(PKX1+PKX2*dfz)*exp(PKX3*dfz)*(1+PPX1*dpi+PPX2*pow(dpi,2))*sfkx;
-      double muex = (PDX1+PDX2*dfz)*(1+PPX3*dpi+PPX4*pow(dpi,2))*(1-PDX3*pow(phi,2))*sfmux;
-      double Cx = PCX1; // TODO sfCx
-      double Dx = muex*FN; // TODO turn slip zeta1
-      double Bx = Kxka/(Cx*Dx+epsx); // TODO kein epsx im manual
-      double Ex =(PEX1+PEX2*dfz+PEX3*pow(dfz,2))*(1-PEX4*sgn(slip));
-      double Svx = FN*(PVX1+PVX2*dfz);
-      double Shx = PHX1+PHX2*dfz;
-      double kx = slip + Shx;
-      double Fx0 = Dx*sin(Cx*atan(Bx*kx-Ex*(Bx*kx-atan(Bx*kx)))) + Svx;
-      double Bxa = (RBX1+RBX3*pow(phi,2))*cos(atan(RBX2*slip));
+      double Kxka = Fz*(PKX1+PKX2*dfz)*exp(PKX3*dfz)*(1+PPX1*dpi+PPX2*pow(dpi,2))*LKX;
+      double muex = (PDX1+PDX2*dfz)*(1+PPX3*dpi+PPX4*pow(dpi,2))*(1-PDX3*pow(ga,2))*LMUX;
+      double Cx = PCX1*LCX;
+      double Dx = muex*Fz*zeta1;
+      double Bx = Kxka/(Cx*Dx);
+      double Svx = Fz*(PVX1+PVX2*dfz)*LVX*LMUX*zeta1;
+      double Shx = (PHX1+PHX2*dfz)*LHX;
+      double kx = ka+Shx;
+      double Bxa = (RBX1+RBX3*pow(ga,2))*cos(atan(RBX2*ka))*LXAL;
       double Cxa = RCX1;
-      double Exa = REX1 + REX2*dfz;
+      double Exa = REX1+REX2*dfz;
       double Shxa = RHX1;
-      double as = slipAnglePT1 + Shxa;
+      double as = alF+Shxa;
       double Gxa0 = cos(Cxa*atan(Bxa*Shxa-Exa*(Bxa*Shxa-atan(Bxa*Shxa))));
       double Gxa = cos(Cxa*atan(Bxa*as-Exa*(Bxa*as-atan(Bxa*as))))/Gxa0;
-      FLo = Gxa*Fx0;
+      double Ex =(PEX1+PEX2*dfz+PEX3*pow(dfz,2))*(1-PEX4*sgn(kx))*LEX; // TODO <=1 prüfen?
+      double Fx0 = Dx*sin(Cx*atan(Bx*kx-Ex*(Bx*kx-atan(Bx*kx))))+Svx;
+      Fx = Gxa*Fx0*LFX;
+      // TODO Schalter für combined slip und turn slip
 
-      double gas = phi;
-      double Kyga = FN*(PKY6+PKY7*dfz)*(1+PPY5*dpi)*sfkg;
-      Kyal = sfky*PKY1*Fz0*(1+PPY1*dpi)*(1-PKY3*abs(gas))*sin(PKY4*atan(FN/Fz0/((PKY2+PKY5*pow(gas,2))*(1+PPY2*dpi))));
-      double muey = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*(1-PDY3*pow(gas,2))*sfmuy;
-      double Svyga = FN*(PVY3+PVY4*dfz)*gas;
-      double Svy = FN*(PVY1+PVY2*dfz) + Svyga;
-      double Shy = (PHY1+PHY2*dfz)+(Kyga*gas-Svyga)/(Kyal+epsk);
-      double ay = slipAnglePT1 + Shy;
-      double Cy = PCY1;
-      double Dy = muey*FN;
-      double Ey = (PEY1+PEY2*dfz)*(1+PEY5*pow(gas,2)-(PEY3+PEY4*gas)*sgn(ay));
-      double By = Kyal/(Cy*Dy+epsk);
-      double Fy0 = Dy*sin(Cy*atan(By*ay-Ey*(By*ay-atan(By*ay)))) + Svy;
-      double Byk = (RBY1+RBY4*pow(gas,2))*cos(atan(RBY2*(slipAnglePT1-RBY3)));
+      double Kyga0 = Fz*(PKY6+PKY7*dfz)*(1+PPY5*dpi)*LKYC;
+      Kyal = PKY1*Fz0*(1+PPY1*dpi)*(1-PKY3*abs(ga))*sin(PKY4*atan(Fz/Fz0/((PKY2+PKY5*pow(ga,2))*(1+PPY2*dpi))))*LKY*zeta3;
+      double muey = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*(1-PDY3*pow(ga,2))*LMUY;
+      double Svy0 = Fz*(PVY1+PVY2*dfz)*LVY*LMUY;
+      double Svyga = Fz*(PVY3+PVY4*dfz)*ga*LKYC*LMUY*zeta2;
+      double Svy = Svy0*zeta2+Svyga;
+      double Shy0 = (PHY1+PHY2*dfz)*LHY;
+      double Shyga = (Kyga0*ga-Svyga)/Kyal*zeta0+zeta4-1;
+      double Shy = Shy0+Shyga;
+      double ay = alF+Shy;
+      double Cy = PCY1*LCY;
+      double Dy = muey*Fz*zeta2;
+      double Ey = (PEY1+PEY2*dfz)*(1+PEY5*pow(ga,2)-(PEY3+PEY4*ga)*sgn(ay))*LEY; // <=1 prüfen?
+      double By = Kyal/(Cy*Dy);
+      double Byk = (RBY1+RBY4*pow(ga,2))*cos(atan(RBY2*(alF-RBY3)))*LYKA;
       double Cyk = RCY1;
-      double Dvyk = muey*FN*(RVY1+RVY2*dfz+RVY3*gas)*cos(atan(RVY4*slipAnglePT1));
-      double Eyk = REY1 + REY2*dfz;
-      double Svyk = Dvyk*sin(RVY5*atan(RVY6*slip));
+      double Dvyk = muey*Fz*(RVY1+RVY2*dfz+RVY3*ga)*cos(atan(RVY4*alF))*zeta2;
+      double Eyk = REY1+REY2*dfz;
+      double Svyk = Dvyk*sin(RVY5*atan(RVY6*ka))*LVYKA;
       double Shyk = RHY1+RHY2*dfz;
-      double ks = slip + Shyk;
+      double ks = ka+Shyk;
       double Gyk0 = cos(Cyk*atan(Byk*Shyk-Eyk*(Byk*Shyk-atan(Byk*Shyk))));
       double Gyk = cos(Cyk*atan(Byk*ks-Eyk*(Byk*ks-atan(Byk*ks))))/Gyk0;
-      FLa = Gyk*Fy0 + Svyk;
+      double Fy0 = Dy*sin(Cy*atan(By*ay-Ey*(By*ay-atan(By*ay))))+Svy;
+      Fy = (Gyk*Fy0+Svyk)*LFY;
+      // TODO Schalter für combined slip und turn slip
 
-      gas = sin(phi);
-      double Kyal0 = PKY1*Fz0*(1+PPY1*dpi)*sin(PKY4*atan(FN/Fz0/(PKY2*(1+PPY2*dpi))))*sfky;
-      double muey0 = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*sfmuy;
-      double Svyga0 = 0;
-      double Svy0 = FN*(PVY1+PVY2*dfz) + Svyga0;
-      double Shy0 = (PHY1+PHY2*dfz)-Svyga0/(Kyal0+epsk);
-      double ay0 = slipAnglePT1 + Shy0;
-      double Cy0 = PCY1;
-      double Dy0 = muey0*FN;
-      double Ey0 = (PEY1+PEY2*dfz)*(1-PEY3*sgn(ay0));
-      double By0 = Kyal0/(Cy0*Dy0+epsk);
-      Fy0 = Dy0*sin(Cy0*atan(By0*ay0-Ey0*(By0*ay0-atan(By0*ay0)))) + Svy0;
-      double Byk0 = RBY1*cos(atan(RBY2*(slipAnglePT1-RBY3)));
-      double Cyk0 = RCY1;
-      double Eyk0 = REY1 + REY2*dfz;
-      double Shyk0 = RHY1+RHY2*dfz;
-      double ks0 = slip + Shyk0;
-      double Gyk00 = cos(Cyk0*atan(Byk0*Shyk0-Eyk0*(Byk0*Shyk0-atan(Byk0*Shyk0))));
-      Gyk0 = cos(Cyk0*atan(Byk0*ks0-Eyk0*(Byk0*ks0-atan(Byk0*ks0))))/Gyk00;
-      double Kyals = Kyal+epsk;
-      Svyga = FN*(PVY3+PVY4*dfz)*gas;
-      Svy = FN*(PVY1+PVY2*dfz) + Svyga;
-      Shy = (PHY1+PHY2*dfz)+(Kyga*gas-Svyga)/Kyals;
-      double Sht = QHZ1+QHZ2*dfz+(QHZ3+QHZ4*dfz)*gas;
-      double Shf = Shy + Svy/Kyals;
-      double alt = slipAnglePT1+Sht;
-      double alr = slipAnglePT1+Shf;
-      double Bt = (QBZ1+QBZ2*dfz+QBZ3*pow(dfz,2))*(1+QBZ5*abs(gas)+QBZ4*gas);
+      double Kyal0 = PKY1*Fz0*(1+PPY1*dpi)*sin(PKY4*atan(Fz/Fz0/(PKY2*(1+PPY2*dpi))))*LKY*zeta3;
+      double muey0 = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*LMUY;
+      double Shyga0 = zeta4-1;
+      Shy0 = Shy0+Shyga0;
+      double ay0 = alF+Shy0;
+      double Dy0 = muey0*Fz*zeta2;
+      double Ey0 = (PEY1+PEY2*dfz)*(1-PEY3*sgn(ay0))*LEY;
+      double By0 = Kyal0/(Cy*Dy0);
+      double Byk0 = RBY1*cos(atan(RBY2*(alF-RBY3)))*LYKA;
+      double Sht = QHZ1+QHZ2*dfz+(QHZ3+QHZ4*dfz)*ga;
+      double Shf = Shy+Svy/Kyal;
+      double alt = alF+Sht;
+      double alr = alF+Shf;
+      double Bt = (QBZ1+QBZ2*dfz+QBZ3*pow(dfz,2))*(1+QBZ4*ga+QBZ5*abs(ga))*LKY/LMUY;
       double Ct = QCZ1;
-      double Dt0 = FN*rUnloaded/Fz0*(QDZ1 + QDZ2*dfz)*(1-PPZ1*dpi);
-      double Dt = Dt0*(1+QDZ3*abs(gas)+QDZ4*pow(gas,2));
-      double Et = (QEZ1+QEZ2*dfz+QEZ3*pow(dfz,2))*(1+(QEZ4+QEZ5*gas)*2./M_PI*atan(Bt*Ct*alt));
-      muey = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*(1-PDY3*pow(gas,2))*sfmuy;
-      Dy = muey*FN;
-      double Br = (QBZ9+QBZ10*By*Cy);
-      double Cr = 1;
-      double Dr = FN*rUnloaded*((QDZ6+QDZ7*dfz)+((QDZ8+QDZ9*dfz)*(1+PPZ2*dpi)+(QDZ10+QDZ11*dfz)*fabs(gas))*gas)*sfkm;
-      double lat = sqrt(pow(tan(alt),2)+pow(Kxka*slip/Kyal,2))*sgn(alt);
-      double lar = sqrt(pow(tan(alr),2)+pow(Kxka*slip/Kyal,2))*sgn(alr);
-      double t = Dt*cos(Ct*atan(Bt*lat-Et*(Bt*lat-atan(Bt*lat))));
+      double Dt0 = Fz*R0/Fz0*(QDZ1+QDZ2*dfz)*(1-PPZ1*dpi);
+      double Dt = Dt0*(1+QDZ3*ga+QDZ4*pow(ga,2))*LTR*zeta5;
+      double Et = (QEZ1+QEZ2*dfz+QEZ3*pow(dfz,2))*(1+(QEZ4+QEZ5*ga)*2./M_PI*atan(Bt*Ct*alt));
+      double Br = (QBZ9*LKY/LMUY+QBZ10*By*Cy)*zeta6;
+      double Dr = Fz*R0*LMUY*cos(alM)*((QDZ6+QDZ7*dfz)*LRES*zeta2+((QDZ8+QDZ9*dfz)*(1+PPZ2*dpi)+(QDZ10+QDZ11*dfz)*fabs(ga))*ga*LKZC*zeta0)-zeta8+1;
+      double lat = atan(sqrt(pow(tan(alt),2)+pow(Kxka*ka/Kyal,2)))*sgn(alt);
+      double lar = atan(sqrt(pow(tan(alr),2)+pow(Kxka*ka/Kyal,2)))*sgn(alr);
+      // TODO s = (sz1+sz2*(Fy/Fz0)+(sz3+sz4*dfz)*ga)/R0*las;
+      double t = Dt*cos(Ct*atan(Bt*lat-Et*(Bt*lat-atan(Bt*lat))))*cos(alM);
+      double Gyk00 = cos(Cyk*atan(Byk0*Shyk-Eyk*(Byk0*Shyk-atan(Byk0*Shyk))));
+      Gyk0 = cos(Cyk*atan(Byk0*ks-Eyk*(Byk0*ks-atan(Byk0*ks))))/Gyk00;
+      Fy0 = Dy0*sin(Cy*atan(By0*ay0-Ey0*(By0*ay0-atan(By0*ay0))))+Svy0;
       double Fys = Gyk0*Fy0;
       double Mzs = -t*Fys;
-      double Mzr = Dr*cos(Cr*atan(Br*lar));
-      M = Mzs+Mzr;
+      double Mzr = Dr*cos(zeta7*atan(Br*lar));
+      Mz = (Mzs+Mzr)*LMZ; // TODO + s*Fx
 
-      rScrub = (tyre->getUnloadedRadius() - tyre->getRimRadius() + contact->getGeneralizedRelativePosition()(0))*sin(phi);
+      Rs = (tyre->getUnloadedRadius()-tyre->getRimRadius()+contact->getGeneralizedRelativePosition()(0))*sin(ga);
     }
     else {
-      FN = 0;
-      FLo = 0;
-      FLa = 0;
-      M = 0;
-      phi = 0;
-      vRoll = 0;
-      RvSx = 0;
-      slip = 0;
+      Fz = 0;
+      Fx = 0;
+      Fy = 0;
+      Mz = 0;
+      ga = 0;
+      vx = 0;
+      vsx = 0;
+      ka = 0;
       Kyal = 0;
-      slipAnglePT1 = 0;
-      rScrub = 0;
+      alF = 0;
+      Rs = 0;
     }
 
-    contact->getGeneralizedForce(false)(0) = sfFLo*FLo;
-    contact->getGeneralizedForce(false)(1) = sfFLa*FLa;
-    contact->getGeneralizedForce(false)(2) = FN;
-    contact->getGeneralizedForce(false)(3) = sfM*M;
-
+    // TODO My
+    // TODO Fz gemäß S. 22
+    // TODO MF Swift
+    contact->getGeneralizedForce(false)(0) = Fx;
+    contact->getGeneralizedForce(false)(1) = Fy;
+    contact->getGeneralizedForce(false)(2) = Fz;
+    contact->getGeneralizedForce(false)(3) = Mz;
   }
 
   VecV MagicFormula62::getData() const {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
     VecV data(8,NONINIT);
-    data(0) = phi;
-    data(1) = vRoll;
-    data(2) = RvSx-vRoll;
-    data(3) = slip;
+    data(0) = ga;
+    data(1) = vx;
+    data(2) = vsx-vx;
+    data(3) = ka;
     data(4) = Kyal;
-    data(5) = sRelax;
-    data(6) = slipAnglePT1;
-    data(7) = rScrub;
+    data(5) = si;
+    data(6) = alF;
+    data(7) = Rs;
     return data;
   }
 
