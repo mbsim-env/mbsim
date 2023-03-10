@@ -73,6 +73,23 @@ namespace MBSim {
 	  if(cz<0) cz = stod(value[1]);
 	  if(dz<0) dz = stod(value[2]);
 	}
+	found = line.find("[STRUCTURAL]");
+	if(found!=string::npos) {
+	  string value[22];
+	  for(int i=0; i<22; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  Cx0 = stod(value[0]);
+	  Cy0 = stod(value[1]);
+	  PCFX1 = stod(value[15]);
+	  PCFX2 = stod(value[16]);
+	  PCFX3 = stod(value[17]);
+	  PCFY1 = stod(value[18]);
+	  PCFY2 = stod(value[19]);
+	  PCFY3 = stod(value[20]);
+	  PCMZ1 = stod(value[21]);
+	}
 	found = line.find("[SCALING_COEFFICIENTS]");
 	if(found!=string::npos) {
 	  string value[25];
@@ -309,6 +326,8 @@ namespace MBSim {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
       dpi = (p-p0)/p0;
+      constsix = six>=0;
+      constsiy = siy>=0;
       if(fabs(tyre->getUnloadedRadius()-R0)>1e-13)
 	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
       if(fabs(tyre->getRimRadius()-rRim)>1e-13)
@@ -349,9 +368,9 @@ namespace MBSim {
     string str = X()%E(e)->getFirstTextChild()->getData();
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
     e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForLongitudinalSlip");
-    setRelaxationLengthForLongitudinalSlip(E(e)->getText<double>());
+    if(e) setRelaxationLengthForLongitudinalSlip(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForSideslip");
-    setRelaxationLengthForSideslip(E(e)->getText<double>());
+    if(e) setRelaxationLengthForSideslip(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"inflationPressure");
     if(e) setInflationPressure(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"verticalStiffness");
@@ -379,18 +398,18 @@ namespace MBSim {
   }
 
   int MagicFormula62::getxSize() const {
-    return (six>0) + (siy>0);
+    return (six!=0) + (siy!=0);
   }
 
   void MagicFormula62::updatexd() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
     int i=0;
-    if(six>0) {
+    if(six!=0) {
       contact->getxd()(i) = (-vsx - contact->getx()(i)*vx)/six;
       i++;
     }
-    if(siy>0)
+    if(siy!=0)
       contact->getxd()(i) = (atan(vsy/vx) - contact->getx()(i))*vx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
   }
 
@@ -408,8 +427,8 @@ namespace MBSim {
       double dfz = (Fz-Fz0)/Fz0;
       int i = 0;
       double alM = atan(vsy/vx);
-      ka = six>0 ? contact->getx()(i++) : -vsx/vx;
-      alF = siy>0 ? contact->getx()(i) : alM;
+      ka = six!=0 ? contact->getx()(i++) : -vsx/vx;
+      alF = siy!=0 ? contact->getx()(i) : alM;
       ga = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
 
       double Kxka = Fz*(PKX1+PKX2*dfz)*exp(PKX3*dfz)*(1+PPX1*dpi+PPX2*pow(dpi,2))*LKX;
@@ -492,6 +511,11 @@ namespace MBSim {
       Mz = (Mzs+Mzr)*LMZ; // TODO + s*Fx
 
       Rs = (tyre->getUnloadedRadius()-tyre->getRimRadius()+contact->getGeneralizedRelativePosition()(0))*sin(ga);
+
+      double CX = Cx0*(1+PCFX1*dfz+PCFX2*pow(dfz,2))*(1+PCFX3*dpi);
+      double CY = Cy0*(1+PCFY1*dfz+PCFY2*pow(dfz,2))*(1+PCFY3*dpi);
+      if(not constsix) six = fabs(Kxka/CX);
+      if(not constsiy) siy = fabs(Kyal0/CY);
     }
     else {
       Fz = 0;
