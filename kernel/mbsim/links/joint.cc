@@ -26,6 +26,7 @@
 #include <mbsim/utils/utils.h>
 #include <mbsim/objects/rigid_body.h>
 #include "mbsim/utils/eps.h"
+#include "mbsim/utils/rotarymatrices.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -475,7 +476,7 @@ namespace MBSim {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
     else
-      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*tilde(evalGlobalRelativeOrientation());
+      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*AIK2Phi(evalGlobalRelativeOrientation());
   }
 
   void Joint::initializeUsingXML(DOMElement *element) {

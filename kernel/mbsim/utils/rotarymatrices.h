@@ -84,6 +84,11 @@ namespace MBSim {
    */
   fmatvec::SqrMat3 RotationAboutAxis(const fmatvec::Vec3 &a, double phi);
 
+  /**
+   * \brief calculate angles (alpha, beta, gamma) from rotation matrix AIK assuming small rotation
+   */
+  fmatvec::Vec3 AIK2Phi(const fmatvec::SqrMat3 &AIK);
+
 }
 
 #endif

@@ -165,4 +165,12 @@ namespace MBSim {
     return A;
   }
 
+  fmatvec::Vec3 AIK2Phi(const fmatvec::SqrMat3 &AIK) {
+    Vec3 AlphaBetaGamma(NONINIT);
+    AlphaBetaGamma.e(0) = AIK.e(2,1);
+    AlphaBetaGamma.e(1) = AIK.e(0,2);
+    AlphaBetaGamma.e(2) = AIK.e(1,0);
+    return AlphaBetaGamma;
+  }
+
 }
