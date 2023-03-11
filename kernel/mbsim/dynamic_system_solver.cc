@@ -552,7 +552,7 @@ namespace MBSim {
       return 0;
 
     DiagMat I(la.size(), INIT, 1);
-    for (iter = 1; iter < maxIter; iter++) {
+    for (iter = 1; iter <= maxIter; iter++) {
 
       if (Jprox.size() != la.size())
         Jprox.resize(la.size(), NONINIT);
@@ -618,7 +618,7 @@ namespace MBSim {
     if (term)
       return 0;
 
-    for (iter = 1; iter < maxIter; iter++) {
+    for (iter = 1; iter <= maxIter; iter++) {
 
       if (Jprox.size() != La.size())
         Jprox.resize(La.size(), NONINIT);
@@ -927,17 +927,17 @@ namespace MBSim {
         iterc = (this->*solveConstraints_)(); // solver election
         if (iterc >= maxIter) {
           msg(Warn) << "Iterations: " << iterc << endl;
-          msg(Warn) << "Error: no convergence." << endl;
+          msg(Warn) << "Error: no convergence in constraint solver (t=" << t << ")." << endl;
           if (stopIfNoConvergence) {
             if (dropContactInfo)
               dropContactMatrices();
-            throwError("Maximum number of iterations reached");
+            throwError("Maximum number of iterations reached in constraint solver");
           }
           msg(Warn) << "Anyway, continuing integration..." << endl;
         }
 
         if (iterc > highIter)
-          msg(Warn) << endl << "high number of iterations: " << iterc << endl;
+          msg(Warn) << endl << "high number of iterations in constraint solver: " << iterc << endl;
 
         if (useOldla)
           savela();
@@ -958,17 +958,17 @@ namespace MBSim {
       iteri = (this->*solveImpacts_)(); // solver election
       if (iteri >= maxIter) {
         msg(Warn) << "Iterations: " << iteri << endl;
-        msg(Warn) << "Error: no convergence." << endl;
+        msg(Warn) << "Error: no convergence in impact solver (t=" << t << ")." << endl;
         if (stopIfNoConvergence) {
           if (dropContactInfo)
             dropContactMatrices();
-          throwError("Maximal Number of Iterations reached");
+          throwError("Maximal Number of iterations reached in impact solver");
         }
         msg(Warn) << "Anyway, continuing integration..." << endl;
       }
 
       if (iteri > highIter)
-        msg(Warn) << "high number of iterations: " << iteri << endl;
+        msg(Warn) << "high number of iterations in impact solver: " << iteri << endl;
 
       if (useOldla)
         saveLa();
@@ -1060,10 +1060,19 @@ namespace MBSim {
     SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
     Mat T = evalT();
     int iter = 0;
+    bool highIterMsgPrinted=false;
     while (nrmInf(evalg() - corr) >= tolProj) {
-      if (++iter > 500) {
-        msg(Warn) << endl << "Error in DynamicSystemSolver: projection of generalized positions failed at t = " << t << "!" << endl;
+      if (++iter >= maxIter) {
+        msg(Warn) << "Iterations: " << iter << endl;
+        msg(Warn) << "Error: no convergence in projection of generalized positions (t=" << t << ")." << endl;
+        if(stopIfNoConvergence)
+          throwError("Maximal Number of iterations reached in projection of generalized position");
+        msg(Warn) << "Anyway, continuing integration..." << endl;
         break;
+      }
+      if (iter > highIter && !highIterMsgPrinted) {
+        msg(Warn) << "high number of iterations in projection of generalized positions: " << iter << endl;// print only ones
+        highIterMsgPrinted=true;
       }
       if(fullUpdate) Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
       Vec mu = slvLS(Gv, -evalg() + getW(0,false).T() * nu + corr);

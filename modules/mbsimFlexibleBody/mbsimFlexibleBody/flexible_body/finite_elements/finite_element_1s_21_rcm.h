@@ -255,7 +255,7 @@ namespace MBSimFlexibleBody {
       /**
        * \brief constructor is declared private
        */
-      FiniteElement1s21RCM() = default;;
+      FiniteElement1s21RCM() = default;
   };
 
   inline double Sec(double alpha) { return 1.0/cos(alpha); }

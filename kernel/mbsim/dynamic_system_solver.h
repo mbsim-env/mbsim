@@ -402,6 +402,8 @@ namespace MBSim {
        */
       void setStopIfNoConvergence(bool flag, bool dropInfo = false) { stopIfNoConvergence = flag; dropContactInfo=dropInfo; }
 
+      bool getStopIfNoConvergence() { return stopIfNoConvergence; }
+
       /**
        * writes a file with relevant matrices for debugging
        */

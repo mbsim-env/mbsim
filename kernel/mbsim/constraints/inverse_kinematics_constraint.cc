@@ -24,6 +24,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/links/generalized_kinematic_excitation.h"
 #include "mbsim/dynamic_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/functions/constant_function.h"
 #include "mbsim/constitutive_laws/bilateral_constraint.h"
@@ -161,8 +162,12 @@ namespace MBSim {
     Residuum f((*fr)(getTime()),fA?(*fA)(getTime()):RotMat3(Eye()),bd,forceDir,momentDir,frame);
     MultiDimNewtonMethod newton(&f);
     q = newton.solve(q);
-    if(newton.getInfo()!=0)
+    if(newton.getInfo()!=0) {
       msg(Warn) << endl << "Error in InverseKinematicsConstraint: update of state dependent variables failed!" << endl;
+      if(ds->getStopIfNoConvergence())
+        throwError("Update of dependent variables failed");
+      msg(Warn) << "Anyway, continuing integration..." << endl;
+    }
     for(unsigned int i=0; i<bd.size(); i++)
       bd[i]->setqRel(q(Iq[i]));
 

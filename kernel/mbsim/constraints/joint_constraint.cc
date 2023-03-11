@@ -24,6 +24,7 @@
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/dynamic_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/constitutive_laws/bilateral_constraint.h"
 
 using namespace std;
@@ -192,8 +193,12 @@ namespace MBSim {
     Residuum f(bd1,bd2,forceDir,momentDir,frame,refFrame);
     MultiDimNewtonMethod newton(&f);
     nextis = newton.solve(curis);
-    if(newton.getInfo()!=0)
+    if(newton.getInfo()!=0) {
       msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed (t=" << getTime() << ", info=" << newton.getInfo() << ")!" << endl;
+      if(ds->getStopIfNoConvergence())
+        throwError("Solving dependent variables failed");
+      msg(Warn) << "Anyway, continuing integration..." << endl;
+    }
     for(unsigned int i=0; i<bd1.size(); i++)
       bd1[i]->setqRel(nextis(Iq1[i]));
     for(unsigned int i=0; i<bd2.size(); i++)
