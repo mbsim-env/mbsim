@@ -145,7 +145,7 @@ namespace MBSim {
     }
 
     if (updateLater) {
-      inverse <<= inv(A);
+      ALU<<=facLU(A, Aipiv);
       update(Qnew);
     }
     else {
@@ -204,7 +204,7 @@ namespace MBSim {
     }
 
     if (updateLater) {
-      inverse <<= inv(A);
+      ALU<<=facLU(A, Aipiv);
       update(Q);
     }
     else {
@@ -237,7 +237,7 @@ namespace MBSim {
     }
 
     if (updateLater) {
-      inverse <<= inv(A);
+      ALU<<=facLU(A, Aipiv);
       update(Q);
     }
     else {
@@ -299,7 +299,7 @@ namespace MBSim {
     A(0, 0) = 1.0;
     A(Qw.rows() - 1, Qw.rows() - 1) = 1.0;
     if (updateLater) {
-      inverse <<= inv(A);
+      ALU<<=facLU(A, Aipiv);
       update(Qw);
     }
     else {
@@ -359,7 +359,7 @@ namespace MBSim {
     }
 
     if (updateLater) {
-      inverse <<= inv(A);
+      ALU<<=facLU(A, Aipiv);
       update(Qw);
     }
     else {
@@ -381,7 +381,7 @@ namespace MBSim {
 
     if (P.rows() > Q.rows()) { //closed interpolation
 
-      P.set(RangeV(0, P.rows() - deg - 1), RangeV(0, 2), inverse * Q);
+      P.set(RangeV(0, P.rows() - deg - 1), RangeV(0, 2), slvLUFac(ALU, Q, Aipiv));
       // Wrap around of control points
       //Possible: wrapping around is just a reference ?
       for (int i = 0; i < deg; i++) {
@@ -390,7 +390,7 @@ namespace MBSim {
       }
     }
     else {
-      P.set(RangeV(0, P.rows() - 1), RangeV(0, 2), inverse * Q);
+      P.set(RangeV(0, P.rows() - 1), RangeV(0, 2), slvLUFac(ALU, Q, Aipiv));
     }
   }
 
@@ -398,7 +398,7 @@ namespace MBSim {
 
     if (P.rows() > Qw.rows()) { //closed interpolation
 
-      P.set(RangeV(0, P.rows() - deg - 1), RangeV(0, 3), inverse * Qw);
+      P.set(RangeV(0, P.rows() - deg - 1), RangeV(0, 3), slvLUFac(ALU, Qw, Aipiv));
       // Wrap around of control points
       //Possible: wrapping around is just a reference ?
       for (int i = 0; i < deg; i++) {
@@ -407,7 +407,7 @@ namespace MBSim {
       }
     }
     else {
-      P = inverse * Qw;
+      P = slvLUFac(ALU, Qw, Aipiv);
     }
 //    msg(Debug) << "fmatvec_surface: Qw =" << Qw << endl;
 //    msg(Debug) << "fmatvec_surface: P =" << P << endl;

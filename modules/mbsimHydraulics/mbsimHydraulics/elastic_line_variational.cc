@@ -144,8 +144,8 @@ namespace MBSimHydraulics {
       SqrMat FF(2*n-1, EYE);
       for (int i=n-1; i<(2*n-1); i++)
         FF(i,i)=sqrt(BGes(i, 0)/CGes(0, i));
-      AGes=inv(FF)*AGes*FF;
-      BGes=inv(FF)*BGes;
+      AGes=slvLU(FF, AGes*FF);
+      BGes=slvLU(FF, BGes);
       CGes=CGes*FF;
 
       assert(nrm2(trans(CGes.row(0))-BGes.col(0))<epsroot);

@@ -132,7 +132,7 @@ namespace MBSimFlexibleBody {
       MapleOutput(K, "K", filename.str());
 
       //with MBSIM
-      SqrMat H = static_cast<SqrMat>(inv(M) * K);
+      SqrMat H = static_cast<SqrMat>(slvLL(M, static_cast<Matrix<General, Ref, Ref, double>>(K)));
       Vector<Ref, std::complex<double>> EigVal = eigval(H);
       Vec NaturalHarmonics(EigVal.size(), INIT, 0.);
       for (int i = 0; i < EigVal.size() - 1; i++) {

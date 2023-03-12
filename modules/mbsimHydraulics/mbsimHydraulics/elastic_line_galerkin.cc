@@ -110,9 +110,9 @@ namespace MBSimHydraulics {
       if (!Flow2D)
         DTmp=8*rho*M_PI*nu*MatIntWWT*SymMat(mdim, EYE);
       else
-        DTmp=8*rho*M_PI*nu*MatIntWWT*phi*N*inv(phi);
+        DTmp=slvLU(phi.T(), (8*rho*M_PI*nu*MatIntWWT*phi*N).T()).T();
       if (DLehr>0)
-        DTmp += 2.*DLehr*inv(trans(phi))*Omega*trans(phi)*MFac;
+        DTmp += 2.*DLehr*slvLU(trans(phi), Omega*trans(phi)*MFac);
       D.resize(mdim, INIT, 0);
       for (int i=0; i<mdim; i++)
         for (int j=0; j<mdim; j++)
@@ -139,7 +139,7 @@ namespace MBSimHydraulics {
       }
     }
     else if (stage==unknownStage) {
-      u0 <<= inv(MatIntWWT)*WInt*Q0;
+      u0 <<= slvLL(MatIntWWT, WInt*Q0);
       //plotParameters();
     }
     HLine::init(stage, config);
