@@ -42,7 +42,16 @@ namespace MBSim {
       string str, line, name;
       do {
 	getline(file,line);
-	size_t found = line.find("[DIMENSION]");
+	size_t found = line.find("[MODEL]");
+	if(found!=string::npos) {
+	  string value[5];
+	  for(int i=0; i<5; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  v0 = stod(value[2]);
+	}
+	found = line.find("[DIMENSION]");
 	if(found!=string::npos) {
 	  string value[5];
 	  for(int i=0; i<5; i++) {
@@ -117,6 +126,7 @@ namespace MBSim {
 	  LXAL = stod(value[17]);
 	  LYKA = stod(value[18]);
 	  LVYKA = stod(value[19]);
+	  LMY = stod(value[23]);
 	}
 	found = line.find("[LONGITUDINAL_COEFFICIENTS]");
 	if(found!=string::npos) {
@@ -416,7 +426,7 @@ namespace MBSim {
   void MagicFormula62::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    double Fx, Fy, Mz;
+    double Fx, Fy, My, Mz;
     Fz0 *= LFZ0;
     double Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
     vsx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
@@ -478,6 +488,8 @@ namespace MBSim {
       Fy = (Gyk*Fy0+Svyk)*LFY;
       // TODO Schalter für combined slip und turn slip
 
+      My = -R0*Fz0*LMY*(QSY1+QSY2*Fx/Fz0+QSY3*fabs(vx/v0)+QSY4*pow(vx/v0,4)+(QSY5+QSY6*Fz/Fz0)*pow(ga,2))*pow(Fz/Fz0,QSY7)*pow(p/p0,QSY8);
+
       double Kyal0 = PKY1*Fz0*(1+PPY1*dpi)*sin(PKY4*atan(Fz/Fz0/(PKY2*(1+PPY2*dpi))))*LKY*zeta3;
       double muey0 = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*LMUY;
       double Shyga0 = zeta4-1;
@@ -521,6 +533,7 @@ namespace MBSim {
       Fz = 0;
       Fx = 0;
       Fy = 0;
+      My = 0;
       Mz = 0;
       ga = 0;
       ka = 0;
@@ -529,13 +542,14 @@ namespace MBSim {
       Rs = 0;
     }
 
-    // TODO My
+    // TODO Mx überprüfen
     // TODO Fz gemäß S. 22
     // TODO MF Swift
     contact->getGeneralizedForce(false)(0) = Fx;
     contact->getGeneralizedForce(false)(1) = Fy;
     contact->getGeneralizedForce(false)(2) = Fz;
-    contact->getGeneralizedForce(false)(3) = Mz;
+    contact->getGeneralizedForce(false)(4) = My;
+    contact->getGeneralizedForce(false)(5) = Mz;
   }
 
   VecV MagicFormula62::getData() const {

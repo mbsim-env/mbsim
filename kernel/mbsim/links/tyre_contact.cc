@@ -60,9 +60,9 @@ namespace MBSim {
       if(not dynamic_cast<Tyre*>(contour[1]))
 	throwError("(TyreContact::init): second contour must be of type Tyre");
       DF.resize(3,NONINIT);
-      DM.resize(1,NONINIT);
+      DM.resize(model->getDMSize(),NONINIT);
       iF = RangeV(0,2);
-      iM = RangeV(3,3);
+      iM = RangeV(3,3+model->getDMSize()-1);
       curis = zeta0;
     }
     else if(stage==plotting) {
@@ -98,8 +98,8 @@ namespace MBSim {
 
   void TyreContact::calcSize() {
     ng = 1;
-    ngd = 4;
-    nla = ngd;
+    ngd = 3;
+    nla = 3+model->getDMSize();
     updSize = false;
   }
 
@@ -194,10 +194,11 @@ namespace MBSim {
   }
 
   void TyreContact::updateForceDirections() {
-    DF.set(0,cFrame[0]->evalOrientation().col(0));
-    DF.set(1,cFrame[0]->getOrientation().col(1));
-    DF.set(2,cFrame[0]->getOrientation().col(2));
-    DM.set(0,cFrame[0]->getOrientation().col(2));
+    DF = cFrame[0]->evalOrientation();
+    if(model->getDMSize()==3)
+      DM = cFrame[0]->getOrientation();
+    else
+      DM.set(0,cFrame[0]->getOrientation().col(2));
     updDF = false;
   }
 

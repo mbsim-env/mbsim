@@ -36,6 +36,7 @@ namespace MBSim {
       using Element::plot;
 
       virtual int getxSize() const { return 0; }
+      virtual int getDMSize() const { return 1; }
       virtual void updatexd() { }
 
       virtual void updateGeneralizedForces() { }
