@@ -433,8 +433,6 @@ namespace MBSimGUI {
 
   DOMElement* SymbolicFunctionWidget::initializeUsingXML(DOMElement *element) {
     auto definition=E(element)->getFirstElementChildNamed(MBSIM%"definition");
-    if(!definition) // MISSING SymbolicFunction depr: remove
-      definition=element;
 
     f->initializeUsingXML(definition);
 

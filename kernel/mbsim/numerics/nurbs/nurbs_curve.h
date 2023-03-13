@@ -279,7 +279,8 @@ namespace MBSim {
 
     protected:
       fmatvec::MatVx4 P; // the vector of control points
-      fmatvec::SqrMat inverse; //Inverse of Ansatz-functions in case of only update later (different points, same knot-Vecs and same degree)
+      fmatvec::Vector<fmatvec::Ref, int> Aipiv;
+      fmatvec::SquareMatrix<fmatvec::Ref, double> ALU;
       fmatvec::VecV u;  // the parameteric points
       fmatvec::VecV U;  // the knot vector
       int deg{0};  // the degree of the NURBS curve

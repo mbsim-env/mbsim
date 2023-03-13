@@ -36,7 +36,7 @@ namespace MBSim {
     double u=0;
     double fa, fb, fu;
 
-    for(it=0; it<itmax; it++) {
+    for(it=0; it<=itmax; it++) {
       fa = (*func)(a);
       fb = (*func)(b);
       if(fa*fb > 0) {
@@ -76,7 +76,7 @@ namespace MBSim {
     Vec currentGuess = initialGuess;
     Vec lastGuess;
     norms.clear();
-    for (iter = 0; iter < itermax; iter++) {
+    for (iter = 0; iter <= itermax; iter++) {
       lastGuess = currentGuess;
 
       currentGuess = (*function)(currentGuess);
