@@ -53,6 +53,16 @@ namespace MBSim {
     dx = xd * getStepSize();
   }
 
+  const Vec& Link::getxd(bool check) const {
+    assert((not check) or (not ds->getUpdatezd()));
+    return xd;
+  }
+
+  Vec& Link::getxd(bool check) {
+    assert((not check) or (not ds->getUpdatezd()));
+    return xd;
+  }
+
   void Link::updatewbRef(Vec& wbParent) {
     wb.ref(wbParent, RangeV(laInd,laInd+laSize-1));
   }
