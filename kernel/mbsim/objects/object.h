@@ -58,18 +58,18 @@ namespace MBSim {
       virtual void updatedu();
       virtual void updateud();
       virtual void updateqd();
-      virtual void sethSize(int hSize_, int i=0);
-      virtual int gethSize(int i=0) const { return hSize[i]; }
-      virtual int getqSize() const { return qSize; }
-      virtual int getuSize(int i=0) const { return uSize[i]; }
+      virtual void sethSize(int hSize_, int i=0) { hSize[i] = hSize_; }
+      int gethSize(int i=0) const { return hSize[i]; }
+      int getqSize() const { return qSize; }
+      int getuSize(int i=0) const { return uSize[i]; }
       virtual void calcqSize() { }
       virtual void calcuSize(int j) { }
-      virtual int getqInd() { return qInd; }
-      virtual int getuInd(int i=0) { return uInd[i]; }
+      int getqInd() { return qInd; }
+      int getuInd(int i=0) { return uInd[i]; }
       virtual void setqInd(int qInd_) { qInd = qInd_; }
       virtual void setuInd(int uInd_, int i=0) { uInd[i] = uInd_; }
-      virtual const fmatvec::Vec& getq() const { return q; }
-      virtual const fmatvec::Vec& getu() const { return u; }
+      const fmatvec::Vec& getq() const { return q; }
+      const fmatvec::Vec& getu() const { return u; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
 
       /* INHERITED INTERFACE OF ELEMENT */
@@ -220,7 +220,7 @@ namespace MBSim {
       void setuSize(int uSize_, int i=0) { uSize[i] = uSize_; }
       int getzSize() const { return qSize + uSize[0]; }
 
-      virtual void sethInd(int hInd_, int i=0); 
+      virtual void sethInd(int hInd_, int i=0) { hInd[i] = hInd_; }
       int gethInd(int i=0) { return hInd[i]; }
 
       const fmatvec::SymMat& getM(bool check=true) const;

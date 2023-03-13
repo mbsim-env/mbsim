@@ -74,13 +74,13 @@ namespace MBSim {
       virtual void updatedx();
       virtual void updatexd() { }
       virtual void calcxSize() { xSize = 0; }
-      virtual const fmatvec::Vec& getx() const { return x; }
-      virtual fmatvec::Vec& getx() { return x; }
-      virtual const fmatvec::Vec& getxd(bool check=true) const;
-      virtual fmatvec::Vec& getxd(bool check=true);
-      virtual int getxInd() { return xInd; }
+      const fmatvec::Vec& getx() const { return x; }
+      fmatvec::Vec& getx() { return x; }
+      const fmatvec::Vec& getxd(bool check=true) const;
+      fmatvec::Vec& getxd(bool check=true);
+      int getxInd() { return xInd; }
       virtual void setxInd(int xInd_) { xInd = xInd_; };
-      virtual int getxSize() const { return xSize; }
+      int getxSize() const { return xSize; }
       virtual void updatexRef(fmatvec::Vec& ref);
       virtual void updatexdRef(fmatvec::Vec& ref);
       virtual void updatedxRef(fmatvec::Vec& ref);

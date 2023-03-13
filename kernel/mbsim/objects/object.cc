@@ -93,10 +93,6 @@ namespace MBSim {
 //    h[0] = hEnd;
   }
 
-  void Object::sethSize(int hSize_, int j) {
-    hSize[j] = hSize_;
-  }
-
   void Object::plot() {
     if (plotFeature[plotRecursive]) {
       if (plotFeature[generalizedPosition]) Element::plot(evalGeneralizedPosition());
@@ -220,10 +216,6 @@ namespace MBSim {
     q0 <<= Vec(group->openChildObject<H5::SimpleDataset<vector<double>>>("q0")->read());
 
     u0 <<= Vec(group->openChildObject<H5::SimpleDataset<vector<double>>>("u0")->read());
-  }
-
-  void Object::sethInd(int hInd_, int j) {
-    hInd[j] = hInd_;
   }
 
   void Object::initializeUsingXML(DOMElement *element) {
