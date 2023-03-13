@@ -193,7 +193,7 @@ namespace MBSim {
   void MagicFormulaSharp::updatexd() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
-    contact->getxd()(0) = (atan(vsy/vx) - contact->getx()(0))*vx/si;
+    contact->getxd(false)(0) = (atan(vsy/vx) - contact->getx()(0))*vx/si;
   }
 
   void MagicFormulaSharp::updateGeneralizedForces() {

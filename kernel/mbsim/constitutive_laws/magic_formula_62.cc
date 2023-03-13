@@ -406,11 +406,11 @@ namespace MBSim {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
     int i=0;
     if(six!=0) {
-      contact->getxd()(i) = (-vsx - contact->getx()(i)*vx)/six;
+      contact->getxd(false)(i) = (-vsx - contact->getx()(i)*vx)/six;
       i++;
     }
     if(siy!=0)
-      contact->getxd()(i) = (atan(vsy/vx) - contact->getx()(i))*vx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
+      contact->getxd(false)(i) = (atan(vsy/vx) - contact->getx()(i))*vx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
   }
 
   void MagicFormula62::updateGeneralizedForces() {
