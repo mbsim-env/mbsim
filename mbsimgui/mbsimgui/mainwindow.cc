@@ -277,6 +277,8 @@ namespace MBSimGUI {
     connect(actionFem,&QAction::triggered,this,&MainWindow::flexibleBodyTool);
     actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
+    QAction *actionConvert = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"convert.svg").string())),"Convert file");
+    connect(actionConvert,&QAction::triggered,this,&MainWindow::convertDocument);
 
     elementView->setModel(new ElementTreeModel(this));
     elementView->setColumnWidth(0,250);
@@ -775,8 +777,6 @@ namespace MBSimGUI {
       project->create();
 
       model->createProjectItem(project);
-
-      convertDocument();
 
       elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
 
@@ -2691,41 +2691,33 @@ namespace MBSimGUI {
   }
 
   void MainWindow::convertDocument() {
-    DOMDocument *sdoc = doc;
-    if(project->getSolver()->getFileItem())
-     sdoc = project->getSolver()->getFileItem()->getXMLDocument();
-    vector<DOMNodeList*> list;
-    list.push_back(sdoc->getElementsByTagName(X()%"naturalModeScaleFactor"));
-    list.push_back(sdoc->getElementsByTagName(X()%"naturalModeScale"));
-    list.push_back(sdoc->getElementsByTagName(X()%"visualizeNaturalModeShapes"));
-    int nl = 0;
-    for(size_t i=0; i<list.size(); i++)
-      nl += list[i]->getLength();
-    if(nl > 0) {
-      QMessageBox::StandardButton ret = QMessageBox::question(this, "Convert project", "The project file is not compatible with the current version of MBSim. Do you want to convert it?", QMessageBox::Yes | QMessageBox::No);
-      if(ret == QMessageBox::Yes) {
-        vector<string> newname = {"normalModeScaleFactor","normalModeScale","visualizeNormalModes"};
-        for(size_t i=0; i<list.size(); i++) {
-          for(int j=0; j<list[i]->getLength(); j++) {
-            DOMNode *node = list[i]->item(j);
-            DOMNode *parent = node->getParentNode();
-            DOMElement *ele = D(sdoc)->createElement(MBSIMCONTROL%newname[i]);
-            DOMNode *e = node->getFirstChild();
-            while(e) {
-              DOMNode *en = e->getNextSibling();
-              ele->appendChild(node->removeChild(e));
-              e = en;
-            }
-            parent->replaceChild(ele,node);
-          }
-        }
-        if(sdoc == doc) {
-          updateUndos();
-	  setWindowModified(true);
-	}
-        else
-          project->getSolver()->getFileItem()->setModified(true);
-        refresh();
+    QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectFilePath(), "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
+    DOMDocument *doc = parser->parseURI(X()%file.toStdString());
+    DOMNodeList* list = doc->getElementsByTagName(X()%"naturalModeScaleFactor");
+    for(size_t j=0; j<list->getLength(); j++)
+      doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScaleFactor");
+    list = doc->getElementsByTagName(X()%"naturalModeScale");
+    for(size_t j=0; j<list->getLength(); j++)
+      doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScale");
+    list = doc->getElementsByTagName(X()%"visualizeNaturalModeShapes");
+    for(size_t j=0; j<list->getLength(); j++)
+      doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"visualizeNormalModes");
+    list = doc->getElementsByTagName(X()%"SymbolicFunction");
+    for(size_t j=0; j<list->getLength(); j++) {
+      if(not E(static_cast<DOMElement*>(list->item(j)))->getFirstElementChildNamed(MBSIM%"definition")) {
+	auto *node = doc->renameNode(list->item(j),X()%MBSIM.getNamespaceURI(),X()%"definition");
+	DOMElement *ele = D(doc)->createElement(MBSIM%"SymbolicFunction");
+	node->getParentNode()->insertBefore(ele,node);
+	ele->insertBefore(node,nullptr);
+      }
+    }
+    file=QFileDialog::getSaveFileName(this, "Save MBSim file", file, "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
+    if(not(file.isEmpty())) {
+      try {
+	serializer->writeToURI(doc, X()%(file.toStdString()));
+      }
+      catch(const std::exception &ex) {
+	cerr << ex.what() << endl;
       }
     }
   }
