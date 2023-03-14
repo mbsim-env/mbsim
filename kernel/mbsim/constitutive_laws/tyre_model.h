@@ -43,6 +43,9 @@ namespace MBSim {
 
       virtual int getDataSize() const = 0;
       virtual fmatvec::VecV getData() const = 0;
+
+      virtual double getRadius() const = 0;
+      virtual double getRimRadius() const = 0;
   };
 
 }

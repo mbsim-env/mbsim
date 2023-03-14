@@ -126,6 +126,9 @@ namespace MBSim {
 	  LXAL = stod(value[17]);
 	  LYKA = stod(value[18]);
 	  LVYKA = stod(value[19]);
+	  LS = stod(value[20]);
+	  LMX = stod(value[21]);
+	  LVMX = stod(value[22]);
 	  LMY = stod(value[23]);
 	}
 	found = line.find("[LONGITUDINAL_COEFFICIENTS]");
@@ -338,10 +341,11 @@ namespace MBSim {
       dpi = (p-p0)/p0;
       constsix = six>=0;
       constsiy = siy>=0;
+      if(mck) rRim = tyre->getRimRadius();
       if(fabs(tyre->getUnloadedRadius()-R0)>1e-13)
 	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
-      if(fabs(tyre->getRimRadius()-rRim)>1e-13)
-	msg(Warn) << "Rim radius of " << tyre->getPath() << " (" << tyre->getRimRadius() << ") is different to rim radius of " << inputDataFile << " (" << rRim << ")." << endl;
+//      if(fabs(tyre->getRimRadius()-rRim)>1e-13)
+//	msg(Warn) << "Rim radius of " << tyre->getPath() << " (" << tyre->getRimRadius() << ") is different to rim radius of " << inputDataFile << " (" << rRim << ")." << endl;
     }
     TyreModel::init(stage, config);
   }
@@ -377,16 +381,18 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"inputDataFileName");
     string str = X()%E(e)->getFirstTextChild()->getData();
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForLongitudinalSlip");
-    if(e) setRelaxationLengthForLongitudinalSlip(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForSideslip");
-    if(e) setRelaxationLengthForSideslip(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"motorcycleKinematics");
+    if(e) setMotorcycleKinematics(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"inflationPressure");
     if(e) setInflationPressure(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"verticalStiffness");
     if(e) setVerticalStiffness(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"verticalDamping");
     if(e) setVerticalDamping(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForLongitudinalSlip");
+    if(e) setRelaxationLengthForLongitudinalSlip(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForSideslip");
+    if(e) setRelaxationLengthForSideslip(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -426,7 +432,7 @@ namespace MBSim {
   void MagicFormula62::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    double Fx, Fy, My, Mz;
+    double Fx, Fy, Mx, My, Mz;
     Fz0 *= LFZ0;
     double Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
     vsx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
@@ -488,6 +494,8 @@ namespace MBSim {
       Fy = (Gyk*Fy0+Svyk)*LFY;
       // TODO Schalter für combined slip und turn slip
 
+      Mx = mck?0:R0*Fz*LMX*(QSX1*LVMX-QSX2*ga*(1+PPMX1*dpi)+QSX3*Fy/Fz0+QSX4*cos(QSX5*atan(pow(QSX6*Fz/Fz0,2)))*sin(QSX7*ga+QSX8*atan(QSX9*Fy/Fz0))+QSX10*atan(QSX11*Fz/Fz0)*ga) + R0*LMX*(Fy*(QSX13+QSX14*fabs(ga))-Fz*QSX12*ga*fabs(ga));
+
       My = -R0*Fz0*LMY*(QSY1+QSY2*Fx/Fz0+QSY3*fabs(vx/v0)+QSY4*pow(vx/v0,4)+(QSY5+QSY6*Fz/Fz0)*pow(ga,2))*pow(Fz/Fz0,QSY7)*pow(p/p0,QSY8);
 
       double Kyal0 = PKY1*Fz0*(1+PPY1*dpi)*sin(PKY4*atan(Fz/Fz0/(PKY2*(1+PPY2*dpi))))*LKY*zeta3;
@@ -512,7 +520,6 @@ namespace MBSim {
       double Dr = Fz*R0*LMUY*cos(alM)*((QDZ6+QDZ7*dfz)*LRES*zeta2+((QDZ8+QDZ9*dfz)*(1+PPZ2*dpi)+(QDZ10+QDZ11*dfz)*fabs(ga))*ga*LKZC*zeta0)-zeta8+1;
       double lat = atan(sqrt(pow(tan(alt),2)+pow(Kxka*ka/Kyal,2)))*sgn(alt);
       double lar = atan(sqrt(pow(tan(alr),2)+pow(Kxka*ka/Kyal,2)))*sgn(alr);
-      // TODO s = (sz1+sz2*(Fy/Fz0)+(sz3+sz4*dfz)*ga)/R0*las;
       double t = Dt*cos(Ct*atan(Bt*lat-Et*(Bt*lat-atan(Bt*lat))))*cos(alM);
       double Gyk00 = cos(Cyk*atan(Byk0*Shyk-Eyk*(Byk0*Shyk-atan(Byk0*Shyk))));
       Gyk0 = cos(Cyk*atan(Byk0*ks-Eyk*(Byk0*ks-atan(Byk0*ks))))/Gyk00;
@@ -520,7 +527,8 @@ namespace MBSim {
       double Fys = Gyk0*Fy0;
       double Mzs = -t*Fys;
       double Mzr = Dr*cos(zeta7*atan(Br*lar));
-      Mz = (Mzs+Mzr)*LMZ; // TODO + s*Fx
+      double s = (SSZ1+SSZ2*(Fy/Fz0)+(SSZ3+SSZ4*dfz)*ga)*R0*LS;
+      Mz = (Mzs+Mzr+(mck?0:s*Fx))*LMZ;
 
       Rs = (tyre->getUnloadedRadius()-tyre->getRimRadius()+contact->getGeneralizedRelativePosition()(0))*sin(ga);
 
@@ -533,6 +541,7 @@ namespace MBSim {
       Fz = 0;
       Fx = 0;
       Fy = 0;
+      Mx = 0;
       My = 0;
       Mz = 0;
       ga = 0;
@@ -542,12 +551,12 @@ namespace MBSim {
       Rs = 0;
     }
 
-    // TODO Mx überprüfen
     // TODO Fz gemäß S. 22
     // TODO MF Swift
     contact->getGeneralizedForce(false)(0) = Fx;
     contact->getGeneralizedForce(false)(1) = Fy;
     contact->getGeneralizedForce(false)(2) = Fz;
+    contact->getGeneralizedForce(false)(3) = Mx;
     contact->getGeneralizedForce(false)(4) = My;
     contact->getGeneralizedForce(false)(5) = Mz;
   }
@@ -565,6 +574,10 @@ namespace MBSim {
     data(7) = alF;
     data(8) = Rs;
     return data;
+  }
+
+  double MagicFormula62::getRadius() const  {
+    return R0;
   }
 
 }

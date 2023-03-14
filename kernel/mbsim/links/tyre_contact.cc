@@ -17,11 +17,12 @@ namespace MBSim {
 
   class FuncPairSpatialContourTyre : public Function<Vec(Vec)> {
     public:
-      FuncPairSpatialContourTyre(Tyre* tyre_, Contour *contour_) : contour(contour_), tyre(tyre_) { }
+      FuncPairSpatialContourTyre(Tyre *tyre_, TyreModel *model_, Contour *contour_) : contour(contour_), tyre(tyre_), model(model_) { }
       Vec operator()(const Vec &alpha) override;
     private:
       Contour *contour;
       Tyre *tyre;
+      TyreModel *model;
   };
 
   Vec FuncPairSpatialContourTyre::operator()(const Vec &alpha) {
@@ -30,7 +31,7 @@ namespace MBSim {
     double t_EC = Wn.T()*Wb;
     Vec3 z_EC = Wn - t_EC*Wb;
     double z_EC_nrm2 = nrm2(z_EC);
-    Vec3 WrD = (tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC) - contour->evalPosition(alpha);
+    Vec3 WrD = (tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC) - contour->evalPosition(alpha);
     Vec3 Wu = contour->evalWu(alpha);
     Vec3 Wv = contour->evalWv(alpha);
     Vec2 Wt(NONINIT);
@@ -130,14 +131,14 @@ namespace MBSim {
       double t_EC = Wn.T()*Wb;
       Vec3 z_EC = Wn - t_EC*Wb;
       double z_EC_nrm2 = nrm2(z_EC);
-      Vec3 Wd = tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC - plane->getFrame()->getPosition();
-      g = Wn.T()*Wd - tyre->getUnloadedRadius() + tyre->getRimRadius();
-      cFrame[1]->setPosition(tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC - (tyre->getUnloadedRadius() - tyre->getRimRadius() + min(g,0.))*Wn);
+      Vec3 Wd = tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC - plane->getFrame()->getPosition();
+      g = Wn.T()*Wd - model->getRadius() + model->getRimRadius();
+      cFrame[1]->setPosition(tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC - (model->getRadius() - model->getRimRadius() + min(g,0.))*Wn);
       cFrame[0]->setPosition(cFrame[1]->getPosition(false) - Wn*max(g,0.));
     }
     else {
       SpatialContour *spatialcontour = static_cast<SpatialContour*>(contour[0]);
-      auto func = new FuncPairSpatialContourTyre(tyre,spatialcontour);
+      auto func = new FuncPairSpatialContourTyre(tyre,model,spatialcontour);
       MultiDimNewtonMethod search(func, nullptr);
       double tol = 1e-10;
       search.setTolerance(tol);
@@ -150,10 +151,10 @@ namespace MBSim {
       double t_EC = Wn.T()*Wb;
       Vec3 z_EC = Wn - t_EC*Wb;
       double z_EC_nrm2 = nrm2(z_EC);
-      Vec3 Wd = tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC - cFrame[0]->getPosition(false);
-      g = spatialcontour->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd - tyre->getUnloadedRadius() + tyre->getRimRadius();
+      Vec3 Wd = tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC - cFrame[0]->getPosition(false);
+      g = spatialcontour->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd - model->getRadius() + model->getRimRadius();
       if(g < -spatialcontour->getThickness()) g = 1;
-      cFrame[1]->setPosition(tyre->getFrame()->getPosition() - (tyre->getRimRadius()/z_EC_nrm2)*z_EC - (tyre->getUnloadedRadius() - tyre->getRimRadius() + min(g,0.))*Wn);
+      cFrame[1]->setPosition(tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC - (model->getRadius() - model->getRimRadius() + min(g,0.))*Wn);
     }
     rrel(0) = g;
     Vec3 nx = crossProduct(Wb,Wn);

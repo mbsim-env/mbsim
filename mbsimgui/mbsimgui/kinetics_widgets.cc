@@ -649,6 +649,8 @@ namespace MBSimGUI {
     setLayout(layout);
     inputDataFile = new ExtWidget("Input data file name",new FileWidget("", "Open input data file", "Input data files (*.tir)", 0, true),false,false,MBSIM%"inputDataFileName");
     layout->addWidget(inputDataFile);
+    mck = new ExtWidget("Motorcycle kinematics",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"motorcycleKinematics");
+    layout->addWidget(mck);
     p = new ExtWidget("Inflation pressure",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(4,pressureUnits()),vector<int>(4,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inflationPressure");
     layout->addWidget(p);
     cz = new ExtWidget("Vertical stiffness",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"verticalStiffness");
@@ -743,6 +745,7 @@ namespace MBSimGUI {
     static_cast<FileWidget*>(inputDataFile->getWidget())->blockSignals(true);
     inputDataFile->initializeUsingXML(element);
     static_cast<FileWidget*>(inputDataFile->getWidget())->blockSignals(false);
+    mck->initializeUsingXML(element);
     p->initializeUsingXML(element);
     cz->initializeUsingXML(element);
     dz->initializeUsingXML(element);
@@ -764,6 +767,7 @@ namespace MBSimGUI {
   DOMElement* MagicFormula62Widget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele0 = TyreModelWidget::writeXMLFile(parent,ref);
     inputDataFile->writeXMLFile(ele0);
+    mck->writeXMLFile(ele0);
     p->writeXMLFile(ele0);
     cz->writeXMLFile(ele0);
     dz->writeXMLFile(ele0);
