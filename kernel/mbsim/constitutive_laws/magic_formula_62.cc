@@ -44,12 +44,12 @@ namespace MBSim {
 	getline(file,line);
 	size_t found = line.find("[MODEL]");
 	if(found!=string::npos) {
-	  string value[5];
-	  for(int i=0; i<5; i++) {
-	    file >> name >> str >> value[i];
+	  string value;
+	  for(int i=0; i<2; i++)
 	    getline(file,line);
-	  }
-	  v0 = stod(value[2]);
+	  file >> name >> str >> value;
+	  getline(file,line);
+	  v0 = stod(value);
 	}
 	found = line.find("[DIMENSION]");
 	if(found!=string::npos) {
