@@ -31,6 +31,7 @@ namespace MBSim {
   class TyreContactObserver : public MechanicalLinkObserver {
 
     protected:
+      int iM;
       std::vector<std::shared_ptr<OpenMBV::Frame>> openMBVContactFrame;
 
       std::shared_ptr<OpenMBVInteractionArrow> ombvNormalForce, ombvLongitudinalForce, ombvLateralForce, ombvAligningMoment;

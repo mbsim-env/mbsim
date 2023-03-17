@@ -108,6 +108,10 @@ namespace MBSim {
        }
      }
    }
+   else if(stage==unknownStage) {
+     iM = static_cast<TyreContact*>(link)->getGeneralizedForceSize()-1;
+     MechanicalLinkObserver::init(stage, config);
+   }
    else
      MechanicalLinkObserver::init(stage, config);
   }
@@ -218,7 +222,7 @@ namespace MBSim {
           data.push_back(toPoint(0));
           data.push_back(toPoint(1));
           data.push_back(toPoint(2));
-          Vec3 M = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(2)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(3);
+          Vec3 M = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(2)*static_cast<TyreContact*>(link)->evalGeneralizedForce()(iM);
           data.push_back(M(0));
           data.push_back(M(1));
           data.push_back(M(2));
