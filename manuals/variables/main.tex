@@ -1,0 +1,141 @@
+\documentclass{report}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage[a4paper]{geometry}
+
+\newcommand{\bs}[1]{\boldsymbol #1}
+
+\begin{document}
+
+\textbf{\Large{Definition of Variables in MBSim}}
+
+
+
+\vspace{4em}
+This document defines the meaning of several variables \texttt{X} in MBSim C++ and its corresponding \texttt{getX},\texttt{evalX},\texttt{updateX} functions.
+
+
+\vspace{3em}
+We start with the usual definition of the equations of a multi body system which are mainly defined in the class \texttt{DynamicSystemSolver}:
+\begin{equation}
+  \dot{\bs{q}}=\bs{u}
+\end{equation}
+\begin{equation}
+  \bs{M}\dot{\bs{u}}=\bs{h}+\underbrace{\bs{V}\bs{\lambda}}_{\bs{r}}
+  \label{M}
+\end{equation}
+\begin{equation}
+  \bs{g}(\bs{q},t)=\bs{0}
+\end{equation}
+\begin{equation}
+  \dot{\bs{x}}=\bs{f}
+\end{equation}
+
+\begin{tabular}{|l|l|}
+  \hline
+  $t$ & \texttt{t = Time} \\
+  $\bs{q}$ & \texttt{q} = \texttt{GeneralizedPosition} \\
+  $\dot{\bs{q}}$ & \texttt{qd} \\
+  $\bs{u}$ & \texttt{u} = \texttt{GeneralizedVelocity} \\
+  $\dot{\bs{u}}$ & \texttt{ud} \\
+  $\bs{M}$ & \texttt{M} \\
+  $\bs{h}$ & \texttt{h} \\
+  $\bs{V}$ & \texttt{V} \\
+  $\bs{\lambda}$ & \texttt{la} \\
+  $\bs{g}$ & \texttt{g} \\
+  $\bs{r}$ & \texttt{r} \\
+  $\bs{x}$ & \texttt{x} \\
+  $\dot{\bs{x}}$ & \texttt{xd} \\
+  \hline
+\end{tabular}
+
+$\bs{W}$ and $\bs{V}$ are the generalized force directions which are equal to partial derivative of $\bs{g}$.
+\begin{equation}
+  \frac{\partial \bs{g}}{\partial \bs{q}}=\bs{W}^T
+\end{equation}
+\begin{equation}
+  \bs{W}=_W\bs{J}_T^T\,_W\bs{D}_T+_W\bs{J}_R^T\,_W\bs{D}_R \quad\text{e.g. for Joint with $_W\bs{D}_T=$Force direction matrix}
+\end{equation}
+\begin{equation}
+  \bs{V}=\bs{W} + \texttt{frictionTerms}
+\end{equation}
+
+\begin{tabular}{|l|l|}
+  \hline
+  $\bs{W}$ & \texttt{W} \\
+  \hline
+\end{tabular}
+
+The absolute derivatives of $\bs{g}$ are needed for index reduction.
+\begin{equation}
+  \dot{\bs{g}}=\bs{0}=\bs{W}^T \bs{u}+\underbrace{\frac{\partial\bs{g}}{\partial t}}_{\tilde{\bs{w}}}=\bs{W}^T \bs{u}+\tilde{\bs{w}}
+\end{equation}
+\begin{equation}
+  \ddot{\bs{g}}=\bs{0}=\bs{W}^T \dot{\bs{u}} + \underbrace{\dot{\bs{W}^T}\bs{u}+\frac{\partial\tilde{\bs{w}}}{\partial t}}_{\bar{\bs{w}}}=\bs{W}^T \dot{\bs{u}} + \bar{\bs{w}}
+  \label{gdd}
+\end{equation}
+$\bar{\bs{w}}$ are all the accelerations terms which do not (linearly) depend on $\dot{\bs{u}}$.
+
+\begin{tabular}{|l|l|}
+  \hline
+  $\dot{\bs{g}}$ & \texttt{gd} \\
+  $\bar{\bs{w}}$ & \texttt{wb} \\
+  \hline
+\end{tabular}
+
+(\ref{gdd}) and (\ref{M}) can be combined to calculate $\bs{\lambda}$.
+\begin{equation}
+  \ddot{\bs{g}}=\bs{0}=\bs{W}^T \left( \bs{M}^{-1}\left(\bs{h}+\bs{V}\bs{\lambda}\right) \right) + \bar{\bs{w}}
+\end{equation}
+\begin{equation}
+  \bs{0}=\bs{W}^T \bs{M}^{-1}\bs{h}+\bs{W}^T \bs{M}^{-1}\bs{V}\bs{\lambda} + \bar{\bs{w}}
+\end{equation}
+\begin{equation}
+  \bs{\lambda}=-{\underbrace{\left(\bs{W}^T \bs{M}^{-1}\bs{V}\right)}_{\bs{G}}}^{-1}\underbrace{\left( \bs{W}^T \bs{M}^{-1}\bs{h} + \bar{\bs{w}} \right)}_{\bs{b}_c}
+\end{equation}
+
+\begin{tabular}{|l|l|}
+  \hline
+  $\bs{G}$ & \texttt{G} \\
+  $\bs{b}_c$ & \texttt{bc} \\
+  \hline
+\end{tabular}
+
+
+
+\vspace{3em}
+Frames defined in the class \texttt{Frame} are defined by:\\
+($W$ means the inertial fixed World Frame (=coordinate system) and $P$ the Frame itself)
+\begin{equation}
+  _W\bs{v}_{WP}=_W\bs{J}_T \cdot \bs{u}
+\end{equation}
+\begin{equation}
+  _W\bs{\omega}_{WP}=_W\bs{J}_R \cdot \bs{u}
+\end{equation}
+\begin{equation}
+  _W\bs{a}_{WP}=_W\dot{\bs{v}}_{WP}=_W\bs{J}_T \cdot \dot{\bs{u}} + \underbrace{_W\dot{\bs{J}}_T \cdot \bs{u}}_{_W\bs{j}_T}
+\end{equation}
+\begin{equation}
+  _W\dot{\bs{\omega}}_{WP}=_W\bs{J}_R \cdot \dot{\bs{u}} + \underbrace{_W\dot{\bs{J}}_R \cdot \bs{u}}_{_W\bs{j}_R}
+\end{equation}
+$_W\bs{j}_T$ and $_W\bs{j}_R$ are all the frame accelerations terms which do not (linearly) depend on $\dot{\bs{u}}$.
+
+\begin{tabular}{|l|p{10cm}|}
+  \hline
+  $_W\bs{r}_{WP}$ & \texttt{WrOP = Position} \\
+  $\bs{T}_{WP}$ & \texttt{AWP = Orientation} \\
+  $_W\bs{v}_{WP}$ & \texttt{WvP = Velocity} \\
+  $_W\bs{\omega}_{WP}$ & \texttt{WomegaP = AngularVelocity} \\
+  $_W\bs{a}_{WP}$ & \texttt{WaP = Acceleration}\newline(not available during simulation; only for plotting, observers, ...) \\
+  $_W\dot{\bs{\omega}}_{WP}$ & \texttt{WpsiP = AngularAcceleration}\newline(not available during simulation; only for plotting, observers, ...) \\
+  $_W\bs{J}_T=\frac{\partial_W\bs{v}_{WP}}{\partial\bs{u}}$ & \texttt{WJP = JacobianOfTranslation} \\
+  $_W\bs{J}_R=\frac{\partial\bs{\omega}_{WP}}{\partial\bs{u}}$ & \texttt{WJR = JacobianOfRotation} \\
+  $_W\bs{j}_T$ & \texttt{WjP = GyroscopicAccelerationOfTranslation} \\
+  $_W\bs{j}_R$ & \texttt{WjR = GyroscopicAccelerationOfRotation} \\
+  \hline
+\end{tabular}
+
+
+
+\end{document}
