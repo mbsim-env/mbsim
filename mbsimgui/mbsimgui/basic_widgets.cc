@@ -728,11 +728,11 @@ namespace MBSimGUI {
   }
 
   void CloneWidget::setOnlyif(const QString &onlyif_) {
-    static_cast<TextWidget*>(onlyif->getWidget())->setText(onlyif_);
+    static_cast<PhysicalVariableWidget*>(onlyif->getWidget())->setValue(onlyif_);
   }
 
   QString CloneWidget::getOnlyif() const {
-    return static_cast<TextWidget*>(onlyif->getWidget())->getText();
+    return static_cast<PhysicalVariableWidget*>(onlyif->getWidget())->getValue();
   }
 
   XMLEditorWidget::XMLEditorWidget(const QString &text) {
