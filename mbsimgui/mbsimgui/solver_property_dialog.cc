@@ -143,7 +143,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SolverPropertyDialog::SolverPropertyDialog(Solver *solver) : EmbedItemPropertyDialog(solver) {
+  SolverPropertyDialog::SolverPropertyDialog(Solver *solver) : EmbedItemPropertyDialog("Solver Properties", solver) {
   }
 
   DOMElement* SolverPropertyDialog::initializeUsingXML(DOMElement *parent) {

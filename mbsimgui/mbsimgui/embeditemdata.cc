@@ -158,7 +158,9 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::maybeRemoveEmbedXMLElement() {
-    if(embed and not getNumberOfParameters() and not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref")) {
+    if(embed and not getNumberOfParameters() and not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and
+                                                 not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref") and
+                                                 not E(embed)->hasAttribute("onlyif")) {
       embed->getParentNode()->insertBefore(element,embed);
       embed->getParentNode()->removeChild(embed);
       embed = nullptr;

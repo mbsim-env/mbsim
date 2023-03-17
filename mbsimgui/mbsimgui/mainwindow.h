@@ -201,7 +201,7 @@ namespace MBSimGUI {
       void loadParameter(EmbedItemData *parent);
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
-      xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent);
+      xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
       void createFrame(xercesc::DOMElement *ele, Element *parent);
       void createContour(xercesc::DOMElement *ele, Element *parent);
       void createGroup(xercesc::DOMElement *ele, Element *parent);
@@ -234,10 +234,10 @@ namespace MBSimGUI {
       void xmlHelp(const QString &url="");
       void editElementSource();
       void editParametersSource();
-      void exportElement();
+      void exportElement(const QString &title);
       void copyElement(bool cut=false);
       void removeElement();
-      void enableElement(bool enabled);
+      void enableElement(bool enable);
       void moveFrame(bool up);
       void moveContour(bool up);
       void moveGroup(bool up);

@@ -30,18 +30,20 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ParametersContextMenu::ParametersContextMenu(EmbedItemData *item_, const QString &title, QWidget *parent) : QMenu(title,parent), item(item_) {
+    setToolTipsVisible(true);
     if(not dynamic_cast<InternalFrame*>(item_)) {
       QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
       action->setEnabled(item->getNumberOfParameters());
       connect(action,&QAction::triggered,mw,&MainWindow::editParametersSource);
       addAction(action);
       addSeparator();
-      action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
+      action = new QAction(QIcon::fromTheme("document-save-as"), "Export parameters to file...", this);
       action->setEnabled(item->getNumberOfParameters());
       connect(action,&QAction::triggered,this,[=](){ mw->exportParameters(); });
       addAction(action);
       addSeparator();
-      action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
+      action = new QAction(QIcon::fromTheme("document-open"), "Import/Reference parameters from file...", this);
+      action->setToolTip("Import parameters from a file or use the XML 'Embed' functionality to reference a external parameter file.");
       connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item); });
       addAction(action);
       action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
