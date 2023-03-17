@@ -707,7 +707,7 @@ namespace MBSimGUI {
     counterName = new ExtWidget("Countername",new TextWidget("n"));
     connect(counterName->getWidget(),&TextWidget::widgetChanged,this,&CloneWidget::widgetChanged);
     layout->addWidget(counterName);
-    onlyif = new ExtWidget("Onlyif",new TextWidget("1"));
+    onlyif = new ExtWidget("Onlyif",new PhysicalVariableWidget(new ScalarWidget("1")));
     layout->addWidget(onlyif);
   }
 
