@@ -77,7 +77,7 @@ namespace MBSimGUI {
     return new ConnectElementsWidget<RigidBody>(i+1,element,parent);
   }
 
-  ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
+  ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog("Model-Element Properties", element) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(item->getXMLElement()?QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")):item->getName()));
     name->setToolTip("Set the name of the element");

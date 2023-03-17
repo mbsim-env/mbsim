@@ -28,7 +28,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  XMLPropertyDialog::XMLPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog(item) {
+  XMLPropertyDialog::XMLPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog("Properties", item) {
     addTab("General");
     editor = new ExtWidget("XML editor",new XMLEditorWidget);
     addToTab("General", editor);
@@ -46,7 +46,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ParameterXMLPropertyDialog::ParameterXMLPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog(item) {
+  ParameterXMLPropertyDialog::ParameterXMLPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog("Properties", item) {
     addTab("General");
     editor = new ExtWidget("XML editor",new XMLEditorWidget);
     addToTab("General", editor);

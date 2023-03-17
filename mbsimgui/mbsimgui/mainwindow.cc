@@ -298,7 +298,8 @@ namespace MBSimGUI {
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
 
-    QDockWidget *dockWidget1 = new QDockWidget("Model tree", this);
+    QDockWidget *dockWidget1 = new QDockWidget("Model Tree", this);
+    dockWidget1->setFeatures(QDockWidget::DockWidgetVerticalTitleBar);
     dockWidget1->setObjectName("dockWidget/mbs");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
     QWidget *widget1 = new QWidget(dockWidget1);
@@ -309,7 +310,8 @@ namespace MBSimGUI {
     widgetLayout1->addWidget(elementViewFilter);
     widgetLayout1->addWidget(elementView);
 
-    QDockWidget *dockWidget3 = new QDockWidget("Parameter tree", this);
+    QDockWidget *dockWidget3 = new QDockWidget("Parameter Tree (of selected object)", this);
+    dockWidget3->setFeatures(QDockWidget::DockWidgetVerticalTitleBar);
     dockWidget3->setObjectName("dockWidget/parameters");
     addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
     QWidget *widget3 = new QWidget(dockWidget3);
@@ -321,6 +323,7 @@ namespace MBSimGUI {
     widgetLayout3->addWidget(parameterView);
 
     QDockWidget *dockWidget4 = new QDockWidget("MBSim Echo Area", this);
+    dockWidget4->setFeatures(QDockWidget::DockWidgetVerticalTitleBar);
     dockWidget4->setObjectName("dockWidget/echoArea");
     addDockWidget(Qt::BottomDockWidgetArea, dockWidget4);
     dockWidget4->setWidget(echoView);
@@ -1691,11 +1694,11 @@ namespace MBSimGUI {
     updateReferences(observer->getParent());
   }
 
-  void MainWindow::exportElement() {
+  void MainWindow::exportElement(const QString &title) {
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     auto index = elementView->selectionModel()->currentIndex();
     auto *item = static_cast<EmbedItemData*>(model->getItem(index)->getItemData());
-    SaveModelDialog dialog(getProjectDir().absoluteFilePath(item->getName()+".mbsmx"),item->getNumberOfParameters());
+    SaveModelDialog dialog(title, getProjectDir().absoluteFilePath(item->getName()+".mbsmx"),item->getNumberOfParameters());
     int result = dialog.exec();
     if(result) {
       if(not dialog.getModelFileName().isEmpty()) {
@@ -1723,25 +1726,31 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::enableElement(bool enabled) {
+  void MainWindow::enableElement(bool enable) {
     updateUndos();
     setWindowModified(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
     DOMElement *embedNode = element->getEmbedXMLElement();
-    if(enabled) {
-      if(element->getNumberOfParameters())
-        E(embedNode)->setAttribute("count","1");
-      else {
-        E(embedNode)->removeAttribute("count");
-        E(embedNode)->removeAttribute("counterName");
+    if(enable) {
+      // try to restore the count from the processing instruction EnabledCount or use 1 as count
+      string count="1";
+      auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
+      if(enabledCount) {
+        count=X()%enabledCount->getData();
+        embedNode->removeChild(enabledCount);
       }
+      E(embedNode)->setAttribute("count",count);
     }
     else {
       if(not embedNode)
         embedNode = element->createEmbedXMLElement();
-      E(embedNode)->setAttribute("counterName","n");
+      // save current count to processing instruction and set count to 0
+      auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
+      if(!enabledCount)
+        enabledCount=embedNode->getOwnerDocument()->createProcessingInstruction(X()%"MBSimGUI_EnabledCount", X()%E(embedNode)->getAttribute("count"));
+      embedNode->insertBefore(enabledCount, embedNode->getFirstChild());
       E(embedNode)->setAttribute("count","0");
     }
     element->maybeRemoveEmbedXMLElement();
@@ -2050,9 +2059,9 @@ namespace MBSimGUI {
     return ele;
   }
 
-  DOMElement* MainWindow::loadEmbedItemData(EmbedItemData *parent) {
+  DOMElement* MainWindow::loadEmbedItemData(EmbedItemData *parent, const QString &title) {
     DOMElement *element = nullptr;
-    LoadModelDialog dialog;
+    LoadModelDialog dialog(title);
     int result = dialog.exec();
     if(result) {
       updateUndos();

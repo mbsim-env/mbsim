@@ -30,6 +30,7 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   SolverContextMenu::SolverContextMenu(QWidget *parent) : QMenu(parent) {
+    setToolTipsVisible(true);
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
@@ -37,12 +38,13 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
     addAction(action);
     addSeparator();
-    action = new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
-    connect(action,&QAction::triggered,mw,&MainWindow::exportElement);
+    action = new QAction(QIcon::fromTheme("document-save-as"), "Export solver to file...", this);
+    connect(action,&QAction::triggered,[](){ mw->exportElement("Export Solver"); } );
     addAction(action);
     addSeparator();
-    action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createSolver(mw->loadEmbedItemData(mw->getProject())); });
+    action = new QAction(QIcon::fromTheme("document-open"), "Import/Reference solver from file...", this);
+    action->setToolTip("Import a solver from a file or use the XML 'Embed' functionality to reference a external solver file.");
+    connect(action,&QAction::triggered,this,[=](){ mw->createSolver(mw->loadEmbedItemData(mw->getProject(), "Import/Reference Solver")); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Solver>(this, nullptr, "Select '");
