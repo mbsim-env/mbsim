@@ -45,7 +45,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      PropertyDialog();
+      PropertyDialog(const QString &title);
       void setParentObject(QObject *obj);
       void addToTab(const QString &name, QWidget* widget_);
       void addTab(const QString &name, int i=-1);
@@ -72,7 +72,7 @@ namespace MBSimGUI {
   class EmbedItemPropertyDialog : public PropertyDialog {
 
     public:
-      EmbedItemPropertyDialog(EmbedItemData *item_);
+      EmbedItemPropertyDialog(const QString &title, EmbedItemData *item_);
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return nullptr; }
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) { return nullptr; }
       EmbedItemData* getItem() const { return item; }

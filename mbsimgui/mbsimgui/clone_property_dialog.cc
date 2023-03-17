@@ -28,12 +28,12 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ClonePropertyDialog::ClonePropertyDialog(Element *element) : EmbedItemPropertyDialog(element) {
+  ClonePropertyDialog::ClonePropertyDialog(Element *element) : EmbedItemPropertyDialog("Array/Pattern Properties", element) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name"))));
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
-    clone = new ExtWidget("Clone",new CloneWidget,true,false);
+    clone = new ExtWidget("Array/Pattern",new CloneWidget,true,false);
     connect(clone,&Widget::widgetChanged,this,&ClonePropertyDialog::updateName);
     addToTab("General",clone);
   }
@@ -45,6 +45,7 @@ namespace MBSimGUI {
       clone->setActive(E(embed)->hasAttribute("count"));
       if(E(embed)->hasAttribute("count")) static_cast<CloneWidget*>(clone->getWidget())->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
       if(E(embed)->hasAttribute("counterName")) static_cast<CloneWidget*>(clone->getWidget())->setCounterName(QString::fromStdString(E(embed)->getAttribute("counterName")));
+      if(E(embed)->hasAttribute("onlyif")) static_cast<CloneWidget*>(clone->getWidget())->setOnlyif(QString::fromStdString(E(embed)->getAttribute("onlyif")));
     }
     return parent;
   }
@@ -57,10 +58,12 @@ namespace MBSimGUI {
       if(not embedNode) embedNode = item->createEmbedXMLElement();
       E(embedNode)->setAttribute("count",static_cast<CloneWidget*>(clone->getWidget())->getCount().toStdString());
       E(embedNode)->setAttribute("counterName",static_cast<CloneWidget*>(clone->getWidget())->getCounterName().toStdString());
+      E(embedNode)->setAttribute("onlyif",static_cast<CloneWidget*>(clone->getWidget())->getOnlyif().toStdString());
     }
     else if(embedNode) {
       E(embedNode)->removeAttribute("count");
       E(embedNode)->removeAttribute("counterName");
+      E(embedNode)->removeAttribute("onlyif");
     }
     item->maybeRemoveEmbedXMLElement();
     item->updateStatus();

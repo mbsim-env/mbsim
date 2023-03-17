@@ -33,7 +33,7 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : parameter(parameter_), name(nullptr) {
+  ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : PropertyDialog("Parameter Properties"), parameter(parameter_), name(nullptr) {
     addTab("General");
     if(not dynamic_cast<ImportParameter*>(parameter)) {
       name=new ExtWidget("Name",new TextWidget(parameter->getName()));

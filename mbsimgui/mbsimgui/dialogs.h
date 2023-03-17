@@ -108,7 +108,7 @@ namespace MBSimGUI {
 
   class LoadModelDialog : public QDialog {
     public:
-      LoadModelDialog();
+      LoadModelDialog(const QString &title);
       QString getModelFileName() const;
       QString getParameterFileName() const;
       bool referenceModel() const;
@@ -123,7 +123,7 @@ namespace MBSimGUI {
 
   class SaveModelDialog : public QDialog {
     public:
-      SaveModelDialog(const QString &name, bool param);
+      SaveModelDialog(const QString &title, const QString &name, bool param);
       QString getModelFileName() const;
       QString getParameterFileName() const;
     private:

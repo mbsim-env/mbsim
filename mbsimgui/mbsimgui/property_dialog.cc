@@ -36,7 +36,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  PropertyDialog::PropertyDialog() : QDialog(mw) {
+  PropertyDialog::PropertyDialog(const QString& title) : QDialog(mw) {
 
     auto *layout = new QGridLayout;
     setLayout(layout);
@@ -47,7 +47,7 @@ namespace MBSimGUI {
     layout->addWidget(buttonBox,1,2);
     buttonResize = new QPushButton(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_DialogResetButton)), "Resize");
     layout->addWidget(buttonResize,1,1);
-    setWindowTitle(QString("Properties"));
+    setWindowTitle(title);
 
     connect(buttonResize, &QPushButton::clicked, this, &PropertyDialog::updateWidget);
   }
@@ -119,7 +119,7 @@ namespace MBSimGUI {
       event->ignore();
   }
 
-  EmbedItemPropertyDialog::EmbedItemPropertyDialog(EmbedItemData *item_) : item(item_) {
+  EmbedItemPropertyDialog::EmbedItemPropertyDialog(const QString &title, EmbedItemData *item_) : PropertyDialog(title), item(item_) {
   }
 
   void EmbedItemPropertyDialog::toWidget() {
@@ -130,7 +130,7 @@ namespace MBSimGUI {
     writeXMLFile(item->getXMLElement());
   }
 
-  UnknownItemPropertyDialog::UnknownItemPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog(item) {
+  UnknownItemPropertyDialog::UnknownItemPropertyDialog(EmbedItemData *item) : EmbedItemPropertyDialog("Element Properties", item) {
     addTab("General");
     editor = new ExtWidget("XML Editor",new XMLEditorWidget);
     addToTab("General", editor);

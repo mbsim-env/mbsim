@@ -87,7 +87,7 @@ namespace MBSimGUI {
       FileItemData *getDedicatedParameterFileItem() { return dedicatedParameterFileItem; }
       virtual xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element);
       virtual void updateStatus() { }
-      virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog(this); }
+      virtual PropertyDialog* createPropertyDialog() { return new EmbedItemPropertyDialog("Element Properties", this); }
       bool getSelfEmbeded() const { return embed and MBXMLUtils::E(embed)->hasAttribute("href"); }
       QString getReference() const override;
       bool hasReference() const override { return fileItem; }

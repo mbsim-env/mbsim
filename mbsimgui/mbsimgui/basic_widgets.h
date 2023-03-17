@@ -321,9 +321,11 @@ namespace MBSimGUI {
       QString getCount() const;
       void setCounterName(const QString &counterName_);
       QString getCounterName() const;
+      void setOnlyif(const QString &onlyif_);
+      QString getOnlyif() const;
 
     protected:
-      ExtWidget *count, *counterName;
+      ExtWidget *count, *counterName, *onlyif;
   };
 
   template <class T>

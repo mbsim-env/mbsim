@@ -124,7 +124,9 @@ namespace MBSimGUI {
           embed->removeChild(ps);
         embed->removeChild(param);
       }
-      if(not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref")) {
+      if(not E(embed)->hasAttribute("count") and not E(embed)->hasAttribute("counterName") and
+         not E(embed)->hasAttribute("href") and not E(embed)->hasAttribute("parameterHref") and
+         not E(embed)->hasAttribute("onlyif")) {
         DOMDocument *doc=element->getOwnerDocument();
         doc->removeChild(embed);
         doc->insertBefore(element,nullptr);

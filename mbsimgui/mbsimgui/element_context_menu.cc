@@ -40,12 +40,23 @@
 #include "physics.h"
 #include "element_view.h"
 #include "utils.h"
+#include "project.h"
+
+namespace {
+  const QString importReferenceActionText(
+    "Import/Reference model-element from file...");
+  const QString importReferenceTooltipText(
+    "Import an model-element from a file or use the XML 'Embed' functionality to reference a external model-element file.");
+  const QString importReferenceTitle(
+    "Import/Reference Model-Element");
+}
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
   ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : QMenu("",parent) {
+    setToolTipsVisible(true);
     QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
@@ -54,8 +65,8 @@ namespace MBSimGUI {
       connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
       addAction(action);
       addSeparator();
-      action=new QAction(QIcon::fromTheme("document-save-as"), "Export", this);
-      connect(action,&QAction::triggered,mw,&MainWindow::exportElement);
+      action=new QAction(QIcon::fromTheme("document-save-as"), "Export model-element to file...", this);
+      connect(action,&QAction::triggered,[]() { mw->exportElement("Export Model-Element"); } );
       addAction(action);
     }
     if(removable) {
@@ -71,7 +82,9 @@ namespace MBSimGUI {
       connect(action,&QAction::triggered,mw,&MainWindow::removeElement);
       addAction(action);
       addSeparator();
-      action=new QAction(QIcon::fromTheme("edit-copy"), "Clone", this);
+      action=new QAction(QIcon::fromTheme("edit-copy"), "Array/Pattern", this);
+      action->setToolTip("Create/Edit the array/pattern properties of this element using the XML 'Embed' functionality.\n"
+                         "With the array/pattern functionality an element can be duplicated to an array/pattern of N element.");
       connect(action,&QAction::triggered,this,[=](){ mw->openCloneEditor(); });
       addAction(action);
       addSeparator();
@@ -86,8 +99,10 @@ namespace MBSimGUI {
 
   DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,false,true) {
     addSeparator();
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createDynamicSystemSolver(mw->loadEmbedItemData(element)); });
+    setToolTipsVisible(true);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    action->setToolTip(importReferenceTooltipText);
+    connect(action,&QAction::triggered,this,[=](){ mw->createDynamicSystemSolver(mw->loadEmbedItemData(element, importReferenceTitle)); });
     addAction(action);
   }
 
@@ -176,8 +191,10 @@ namespace MBSimGUI {
   }
 
   FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createFrame(mw->loadEmbedItemData(element),element); });
+    setToolTipsVisible(true);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    action->setToolTip(importReferenceTooltipText);
+    connect(action,&QAction::triggered,this,[=](){ mw->createFrame(mw->loadEmbedItemData(element, importReferenceTitle),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
@@ -196,8 +213,10 @@ namespace MBSimGUI {
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createContour(mw->loadEmbedItemData(element),element); });
+    setToolTipsVisible(true);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    action->setToolTip(importReferenceTooltipText);
+    connect(action,&QAction::triggered,this,[=](){ mw->createContour(mw->loadEmbedItemData(element, importReferenceTitle),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
@@ -208,8 +227,10 @@ namespace MBSimGUI {
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createGroup(mw->loadEmbedItemData(element),element); });
+    setToolTipsVisible(true);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    action->setToolTip(importReferenceTooltipText);
+    connect(action,&QAction::triggered,this,[=](){ mw->createGroup(mw->loadEmbedItemData(element, importReferenceTitle),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
@@ -220,8 +241,10 @@ namespace MBSimGUI {
   }
 
   ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createObject(mw->loadEmbedItemData(element),element); });
+    setToolTipsVisible(true);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    action->setToolTip(importReferenceTooltipText);
+    connect(action,&QAction::triggered,this,[=](){ mw->createObject(mw->loadEmbedItemData(element, importReferenceTitle),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
@@ -232,8 +255,10 @@ namespace MBSimGUI {
   }
 
   LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createLink(mw->loadEmbedItemData(element),element); });
+    setToolTipsVisible(true);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    action->setToolTip(importReferenceTooltipText);
+    connect(action,&QAction::triggered,this,[=](){ mw->createLink(mw->loadEmbedItemData(element, importReferenceTitle),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
@@ -244,8 +269,10 @@ namespace MBSimGUI {
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createConstraint(mw->loadEmbedItemData(element),element); });
+    setToolTipsVisible(true);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    action->setToolTip(importReferenceTooltipText);
+    connect(action,&QAction::triggered,this,[=](){ mw->createConstraint(mw->loadEmbedItemData(element, importReferenceTitle),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
@@ -256,8 +283,10 @@ namespace MBSimGUI {
   }
 
   ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Load", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->createObserver(mw->loadEmbedItemData(element),element); });
+    setToolTipsVisible(true);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    action->setToolTip(importReferenceTooltipText);
+    connect(action,&QAction::triggered,this,[=](){ mw->createObserver(mw->loadEmbedItemData(element, importReferenceTitle),element); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));

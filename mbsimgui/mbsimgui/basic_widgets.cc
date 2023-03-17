@@ -707,6 +707,8 @@ namespace MBSimGUI {
     counterName = new ExtWidget("Countername",new TextWidget("n"));
     connect(counterName->getWidget(),&TextWidget::widgetChanged,this,&CloneWidget::widgetChanged);
     layout->addWidget(counterName);
+    onlyif = new ExtWidget("Onlyif",new TextWidget("1"));
+    layout->addWidget(onlyif);
   }
 
   void CloneWidget::setCount(const QString &count_) {
@@ -723,6 +725,14 @@ namespace MBSimGUI {
 
   QString CloneWidget::getCounterName() const {
     return static_cast<TextWidget*>(counterName->getWidget())->getText();
+  }
+
+  void CloneWidget::setOnlyif(const QString &onlyif_) {
+    static_cast<TextWidget*>(onlyif->getWidget())->setText(onlyif_);
+  }
+
+  QString CloneWidget::getOnlyif() const {
+    return static_cast<TextWidget*>(onlyif->getWidget())->getText();
   }
 
   XMLEditorWidget::XMLEditorWidget(const QString &text) {

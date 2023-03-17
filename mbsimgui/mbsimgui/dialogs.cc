@@ -258,8 +258,8 @@ namespace MBSimGUI {
     }
   }
 
-  LoadModelDialog::LoadModelDialog() {
-    setWindowTitle("Load model file");
+  LoadModelDialog::LoadModelDialog(const QString &title) {
+    setWindowTitle(title);
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
@@ -271,8 +271,8 @@ namespace MBSimGUI {
     layout->addWidget(modelFile);
 
     mOpt = new QButtonGroup(this);
-    QRadioButton *radio1 = new QRadioButton("Import");
-    QRadioButton *radio2 = new QRadioButton("Reference");
+    QRadioButton *radio1 = new QRadioButton("Import model");
+    QRadioButton *radio2 = new QRadioButton("Reference model file");
     radio1->setChecked(true);
     mOpt->addButton(radio1);
     mOpt->addButton(radio2);
@@ -292,8 +292,8 @@ namespace MBSimGUI {
     connect(static_cast<FileWidget*>(modelFile->getWidget()),&FileWidget::valueChanged,this,&LoadModelDialog::modelFileChanged);
 
     pOpt = new QButtonGroup(this);
-    radio1 = new QRadioButton("Import");
-    radio2 = new QRadioButton("Reference");
+    radio1 = new QRadioButton("Import parameters");
+    radio2 = new QRadioButton("Reference parameter file");
     radio1->setChecked(true);
     pOpt->addButton(radio1);
     pOpt->addButton(radio2);
@@ -358,11 +358,11 @@ namespace MBSimGUI {
     }
   }
 
-  SaveModelDialog::SaveModelDialog(const QString &fileName, bool param) {
+  SaveModelDialog::SaveModelDialog(const QString &title, const QString &fileName, bool param) {
     QString pFileName = fileName;
     pFileName.replace(pFileName.size()-2,1,'p');
 
-    setWindowTitle("Save model file");
+    setWindowTitle(title);
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
@@ -403,7 +403,7 @@ namespace MBSimGUI {
   }
 
   LoadParameterDialog::LoadParameterDialog() {
-    setWindowTitle("Load model file");
+    setWindowTitle("Import/Reference Parameters");
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
@@ -415,8 +415,8 @@ namespace MBSimGUI {
     layout->addWidget(parameterFile);
 
     pOpt = new QButtonGroup(this);
-    QRadioButton *radio1 = new QRadioButton("Import");
-    QRadioButton *radio2 = new QRadioButton("Reference");
+    QRadioButton *radio1 = new QRadioButton("Import parameters");
+    QRadioButton *radio2 = new QRadioButton("Reference parameter file");
     radio1->setChecked(true);
     pOpt->addButton(radio1);
     pOpt->addButton(radio2);
@@ -451,7 +451,7 @@ namespace MBSimGUI {
   }
 
   SaveParameterDialog::SaveParameterDialog(const QString &fileName) {
-    setWindowTitle("Save parameter file");
+    setWindowTitle("Export Parameters");
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
