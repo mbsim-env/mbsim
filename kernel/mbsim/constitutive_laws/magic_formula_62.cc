@@ -81,6 +81,26 @@ namespace MBSim {
 	  if(Fz0<0) Fz0 = stod(value[0]);
 	  if(cz<0) cz = stod(value[1]);
 	  if(dz<0) dz = stod(value[2]);
+	  BREFF = stod(value[5]);
+	  DREFF = stod(value[6]);
+	  FREFF = stod(value[7]);
+	  Q_RE0 = stod(value[8]);
+	  Q_V1 = stod(value[9]);
+	  Q_V2 = stod(value[10]);
+	  Q_FZ2 = stod(value[11]);
+	  Q_FCX = stod(value[12]);
+	  Q_FCY = stod(value[13]);
+	  Q_CAM = stod(value[14]);
+	  PFZ1 = stod(value[15]);
+	  Q_FCY2 = stod(value[16]);
+	  Q_CAM1 = stod(value[17]);
+	  Q_CAM2 = stod(value[18]);
+	  Q_CAM3 = stod(value[19]);
+	  Q_FYS1 = stod(value[20]);
+	  Q_FYS2 = stod(value[21]);
+	  Q_FYS3 = stod(value[22]);
+	  rhobtm = stod(value[23]);
+	  czbtm = stod(value[24]);
 	}
 	found = line.find("[STRUCTURAL]");
 	if(found!=string::npos) {
@@ -130,6 +150,7 @@ namespace MBSim {
 	  LMX = stod(value[21]);
 	  LVMX = stod(value[22]);
 	  LMY = stod(value[23]);
+	  LMP = stod(value[24]);
 	}
 	found = line.find("[LONGITUDINAL_COEFFICIENTS]");
 	if(found!=string::npos) {
@@ -360,6 +381,10 @@ namespace MBSim {
     plotColumns.emplace_back("relaxation length for sideslip");
     plotColumns.emplace_back("slip angle");
     plotColumns.emplace_back("scrub radius");
+    if(ts) {
+      plotColumns.emplace_back("turn slip");
+      plotColumns.emplace_back("spin");
+    }
   }
 
   void MagicFormula62::plot(vector<double> &plotVector) {
@@ -373,6 +398,10 @@ namespace MBSim {
     plotVector.push_back(siy);
     plotVector.push_back(alF);
     plotVector.push_back(Rs);
+    if(ts) {
+      plotVector.push_back(phit);
+      plotVector.push_back(phiF);
+    }
   }
 
   void MagicFormula62::initializeUsingXML(DOMElement *element) {
@@ -383,6 +412,8 @@ namespace MBSim {
     setInputDataFile(E(e)->convertPath(str.substr(1,str.length()-2)).string());
     e=E(element)->getFirstElementChildNamed(MBSIM%"motorcycleKinematics");
     if(e) setMotorcycleKinematics(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"turnSlip");
+    if(e) setTurnSlip(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"inflationPressure");
     if(e) setInflationPressure(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"verticalStiffness");
@@ -447,6 +478,17 @@ namespace MBSim {
       alF = siy!=0 ? contact->getx()(i) : alM;
       ga = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
 
+      if(ts) {
+	double v = sqrt(pow(vx,2)+pow(contact->getForwardVelocity()(1),2));
+	Vec3 Wom = tyre->getFrame()->evalAngularVelocity();
+	double Om = tyre->getFrame()->evalOrientation().col(1).T()*Wom;
+	double psid = contact->getContourFrame(1)->evalOrientation().col(2).T()*Wom;
+	epsga = PECP1*(1+PECP2*dfz);
+	phit = -psid/v;
+	phiF = -1./v*(psid+(1-epsga)*Om*sin(ga));
+	double Bxphi = PDXP1*(1+PDXP2*dfz)*cos(atan(PDXP3*ka));
+	zeta1 = cos(atan(Bxphi*R0*phiF));
+      }
       double Kxka = Fz*(PKX1+PKX2*dfz)*exp(PKX3*dfz)*(1+PPX1*dpi+PPX2*pow(dpi,2))*LKX;
       double muex = (PDX1+PDX2*dfz)*(1+PPX3*dpi+PPX4*pow(dpi,2))*(1-PDX3*pow(ga,2))*LMUX;
       double Cx = PCX1*LCX;
@@ -467,11 +509,27 @@ namespace MBSim {
       Fx = Gxa*Fx0*LFX;
       // TODO Schalter für combined slip und turn slip
 
+      if(ts) {
+	zeta0 = 0;
+	double Byphi = PDYP1*(1+PDYP2*dfz)*cos(atan(PDYP3*tan(alF)));
+	zeta2 = cos(atan(Byphi*(R0*fabs(phiF)+PDYP4*sqrt(R0*fabs(phiF)))));
+	zeta3 = cos(atan(PKYP1*pow(R0*phiF,2)));
+      }
       double Kyga0 = Fz*(PKY6+PKY7*dfz)*(1+PPY5*dpi)*LKYC;
       Kyal = PKY1*Fz0*(1+PPY1*dpi)*(1-PKY3*abs(ga))*sin(PKY4*atan(Fz/Fz0/((PKY2+PKY5*pow(ga,2))*(1+PPY2*dpi))))*LKY*zeta3;
       double muey = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*(1-PDY3*pow(ga,2))*LMUY;
       double Svy0 = Fz*(PVY1+PVY2*dfz)*LVY*LMUY;
       double Svyga = Fz*(PVY3+PVY4*dfz)*ga*LKYC*LMUY*zeta2;
+      if(ts) {
+	double Kyal0 = PKY1*Fz0*(1+PPY1*dpi)*sin(PKY4*atan(Fz/Fz0/(PKY2*(1+PPY2*dpi))))*LKY;
+	double Chyphi = PHYP1;
+	double Dhyphi = PHYP2+PHYP3*dfz;
+	double Ehyphi = PHYP4;
+	double KyRphi0 = Kyga0/(1-epsga);
+	double Bhyphi = -KyRphi0/(Chyphi*Dhyphi*Kyal0);
+	double Shyphi = Dhyphi*sin(Chyphi*atan(Bhyphi*R0*phiF-Ehyphi*(Bhyphi*R0*phiF-atan(Bhyphi*R0*phiF))));
+	zeta4 = 1+Shyphi-Svyga/Kyal;
+      }
       double Svy = Svy0*zeta2+Svyga;
       double Shy0 = (PHY1+PHY2*dfz)*LHY;
       double Shyga = (Kyga0*ga-Svyga)/Kyal*zeta0+zeta4-1;
@@ -498,6 +556,20 @@ namespace MBSim {
 
       My = -R0*Fz0*LMY*(QSY1+QSY2*Fx/Fz0+QSY3*fabs(vx/v0)+QSY4*pow(vx/v0,4)+(QSY5+QSY6*Fz/Fz0)*pow(ga,2))*pow(Fz/Fz0,QSY7)*pow(p/p0,QSY8);
 
+      if(ts) {
+	double phiM = phiF;
+	zeta5 = cos(atan(QDTP1*R0*phiM));
+	zeta6 = cos(atan(QBRP1*R0*phiM));
+	double Mzphiinf = QCRP1*fabs(muey)*R0*Fz*sqrt(Fz/Fz0)*LMP;
+	double Mzphi90 = Mzphiinf*2./M_PI*atan(QCRP2*R0*fabs(phit))*Gyk;
+	double Cdrphi = QDRP1;
+	double Ddrphi = Mzphiinf/sin(0.5*M_PI*Cdrphi);
+	double Kzgar0 = Fz*R0*(QDZ8+QDZ9*dfz+(QDZ10+QDZ11*dfz)*fabs(ga))*LKZC;
+	double Bdrphi = Kzgar0/(Cdrphi*Ddrphi*(1-epsga));
+	double Drphi = Ddrphi*sin(Cdrphi*atan(Bdrphi*R0*phiM));
+	zeta7 = 2./M_PI*acos(Mzphi90/fabs(Drphi));
+	zeta8 = 1+Drphi;
+      }
       double Kyal0 = PKY1*Fz0*(1+PPY1*dpi)*sin(PKY4*atan(Fz/Fz0/(PKY2*(1+PPY2*dpi))))*LKY*zeta3;
       double muey0 = (PDY1+PDY2*dfz)*(1+PPY3*dpi+PPY4*pow(dpi,2))*LMUY;
       double Shyga0 = zeta4-1;
