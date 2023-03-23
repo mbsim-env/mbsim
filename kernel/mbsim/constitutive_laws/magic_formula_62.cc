@@ -463,12 +463,53 @@ namespace MBSim {
   void MagicFormula62::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    double Fx, Fy, Mx, My, Mz;
+    double Fx, Fy, Fz, Mx, My, Mz;
     Fz0 *= LFZ0;
-    double Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
-    vsx = contact->getContourFrame(1)->evalOrientation().col(0).T()*contact->getContourFrame(1)->evalVelocity();
-    vsy = contact->getContourFrame(1)->getOrientation().col(1).T()*contact->getContourFrame(1)->getVelocity();
-    vx = contact->evalForwardVelocity()(0);
+
+    ga = asin(tyre->getFrame()->evalOrientation().col(1).T()*contact->getContourFrame(0)->evalOrientation().col(2));
+
+    if(mck) {
+      Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
+      vsx = contact->getGeneralizedRelativeVelocity()(0);
+      vsy = contact->getGeneralizedRelativeVelocity()(1);
+      vx = contact->evalForwardVelocity()(0);
+      vy = contact->evalForwardVelocity()(1);
+      v = sqrt(pow(vx,2)+pow(vy,2));
+    }
+    else {
+      double Om = tyre->getFrame()->getOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
+      Vec WrWC = contact->getContourFrame(1)->getPosition()-tyre->getFrame()->getPosition();
+      double Rl = nrm2(WrWC);
+      double ROm = R0*(Q_RE0+Q_V1*pow(Om*R0/v0,2));
+      double rhozfr = ROm-Rl;
+      if(rhozfr<0) rhozfr = 0;
+      double rhozg = 0;
+      double rtw = 0; // TODO no equation for rtw in manual
+      if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
+	rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
+      double rhoz = rhozfr+rhozg;
+      if(rhoz<0) rhoz = 0;
+      // double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
+      // double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi);
+      double fcorr = 1; // TODO fcorr is set to 1 as dependencies on Fx and Fy cannot be resolved
+      double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
+      Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0;
+      double Fzbtm = czbtm*(rRim+rhobtm-Rl);
+      if(Fzbtm>Fz) Fz = Fzbtm;
+      Fz -= dz*contact->evalGeneralizedRelativeVelocity()(2)/cos(ga);
+      double Cz = cz*(1+PFZ1*dpi);
+      double Re = ROm-Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0);
+      contact->getSlipPoint(0)->setPosition(tyre->getFrame()->getPosition()+(Re/Rl)*WrWC);
+      contact->getSlipPoint(1)->setPosition(contact->getSlipPoint(0)->getPosition());
+      contact->getSlipPoint(0)->setOrientation(contact->getContourFrame(0)->getOrientation());
+      contact->getSlipPoint(1)->setOrientation(contact->getContourFrame(1)->getOrientation());
+      Vec3 WvD = contact->getSlipPoint(1)->evalVelocity() - contact->getSlipPoint(0)->evalVelocity();
+      vsx = contact->getSlipPoint(0)->getOrientation().col(0).T()*WvD;
+      vsy = contact->getSlipPoint(0)->getOrientation().col(1).T()*WvD;
+      vx = contact->getSlipPoint(0)->getOrientation().col(0).T()*tyre->getFrame()->getVelocity();
+      v = sqrt(pow(vx,2)+pow(vsy,2));
+    }
+
     if(Fz>0) {
       if(Fz<1) Fz = 1;
       double dfz = (Fz-Fz0)/Fz0;
@@ -476,13 +517,10 @@ namespace MBSim {
       double alM = atan(vsy/vx);
       ka = six!=0 ? contact->getx()(i++) : -vsx/vx;
       alF = siy!=0 ? contact->getx()(i) : alM;
-      ga = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
 
       if(ts) {
-	double v = sqrt(pow(vx,2)+pow(contact->getForwardVelocity()(1),2));
-	Vec3 Wom = tyre->getFrame()->evalAngularVelocity();
-	double Om = tyre->getFrame()->evalOrientation().col(1).T()*Wom;
-	double psid = contact->getContourFrame(1)->evalOrientation().col(2).T()*Wom;
+	double Om = tyre->getFrame()->evalOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
+	double psid = contact->getContourFrame(1)->evalOrientation().col(2).T()*tyre->getFrame()->getAngularVelocity();
 	epsga = PECP1*(1+PECP2*dfz);
 	phit = -psid/v;
 	phiF = -1./v*(psid+(1-epsga)*Om*sin(ga));
@@ -507,7 +545,6 @@ namespace MBSim {
       double Ex =(PEX1+PEX2*dfz+PEX3*pow(dfz,2))*(1-PEX4*sgn(kx))*LEX; // TODO <=1 prüfen?
       double Fx0 = Dx*sin(Cx*atan(Bx*kx-Ex*(Bx*kx-atan(Bx*kx))))+Svx;
       Fx = Gxa*Fx0*LFX;
-      // TODO Schalter für combined slip und turn slip
 
       if(ts) {
 	zeta0 = 0;
@@ -550,7 +587,6 @@ namespace MBSim {
       double Gyk = cos(Cyk*atan(Byk*ks-Eyk*(Byk*ks-atan(Byk*ks))))/Gyk0;
       double Fy0 = Dy*sin(Cy*atan(By*ay-Ey*(By*ay-atan(By*ay))))+Svy;
       Fy = (Gyk*Fy0+Svyk)*LFY;
-      // TODO Schalter für combined slip und turn slip
 
       Mx = mck?0:R0*Fz*LMX*(QSX1*LVMX-QSX2*ga*(1+PPMX1*dpi)+QSX3*Fy/Fz0+QSX4*cos(QSX5*atan(pow(QSX6*Fz/Fz0,2)))*sin(QSX7*ga+QSX8*atan(QSX9*Fy/Fz0))+QSX10*atan(QSX11*Fz/Fz0)*ga) + R0*LMX*(Fy*(QSX13+QSX14*fabs(ga))-Fz*QSX12*ga*fabs(ga));
 
@@ -623,8 +659,6 @@ namespace MBSim {
       Rs = 0;
     }
 
-    // TODO Fz gemäß S. 22
-    // TODO MF Swift
     contact->getGeneralizedForce(false)(0) = Fx;
     contact->getGeneralizedForce(false)(1) = Fy;
     contact->getGeneralizedForce(false)(2) = Fz;
@@ -646,10 +680,6 @@ namespace MBSim {
     data(7) = alF;
     data(8) = Rs;
     return data;
-  }
-
-  double MagicFormula62::getRadius() const  {
-    return R0;
   }
 
 }

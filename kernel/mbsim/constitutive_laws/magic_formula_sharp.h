@@ -93,7 +93,6 @@ namespace MBSim {
       void setScaleFactorForLateralForce(double sfFy_) { sfFy = sfFy_; }
       void setScaleFactorForAligningMoment(double sfMz_) { sfMz = sfMz_; }
 
-      void init(InitStage stage, const InitConfigSet &config) override;
       void initPlot(std::vector<std::string> &plotColumns) override;
       void plot(std::vector<double> &plotVector) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
@@ -106,8 +105,7 @@ namespace MBSim {
       int getDataSize() const override { return 8; }
       fmatvec::VecV getData() const override;
 
-      double getRadius() const override { return R; }
-      double getRimRadius() const override { return rRim; }
+      bool motorcycleKinematics() const override { return true; }
 
     private:
       double cz{0};
@@ -174,7 +172,7 @@ namespace MBSim {
       double sfFy{1};
       double sfMz{1};
 
-      double R, rRim, vsx, vsy, vx, ka, ga, Kyal, si, be, Rs;
+      double vsx, vsy, vx, ka, ga, Kyal, si, be, Rs;
  };
 
 }

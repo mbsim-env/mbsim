@@ -17,21 +17,19 @@ namespace MBSim {
 
   class FuncPairSpatialContourTyre : public Function<Vec(Vec)> {
     public:
-      FuncPairSpatialContourTyre(Tyre *tyre_, TyreModel *model_, Contour *contour_) : contour(contour_), tyre(tyre_), model(model_) { }
+      FuncPairSpatialContourTyre(double R_, Tyre *tyre_, Contour *contour_) : R(R_), contour(contour_), tyre(tyre_) { }
       Vec operator()(const Vec &alpha) override;
     private:
+      double R;
       Contour *contour;
       Tyre *tyre;
-      TyreModel *model;
   };
 
   Vec FuncPairSpatialContourTyre::operator()(const Vec &alpha) {
     Vec3 Wn = contour->evalWn(alpha);
     Vec3 Wb = tyre->getFrame()->evalOrientation().col(1);
-    double t_EC = Wn.T()*Wb;
-    Vec3 z_EC = Wn - t_EC*Wb;
-    double z_EC_nrm2 = nrm2(z_EC);
-    Vec3 WrD = (tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC) - contour->evalPosition(alpha);
+    Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
+    Vec3 WrD = (tyre->getFrame()->getPosition() - (R/nrm2(Wc))*Wc) - contour->evalPosition(alpha);
     Vec3 Wu = contour->evalWu(alpha);
     Vec3 Wv = contour->evalWv(alpha);
     Vec2 Wt(NONINIT);
@@ -40,11 +38,15 @@ namespace MBSim {
     return Wt;
   }
 
-  TyreContact::TyreContact(const std::string &name) : ContourLink(name) {
+  TyreContact::TyreContact(const std::string &name) : ContourLink(name), slipPoint(2) {
     M.resize(2);
   }
 
   TyreContact::~TyreContact() {
+    if(not model->motorcycleKinematics()) {
+      delete slipPoint[0];
+      delete slipPoint[1];
+    }
     delete model;
   }
 
@@ -69,6 +71,20 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
 	model->initPlot(plotColumns);
+      }
+    }
+    else if(stage==unknownStage) {
+      if(not model->motorcycleKinematics()) {
+	slipPoint[0] = contour[0]->createContourFrame("S0");
+	slipPoint[1] = contour[1]->createContourFrame("S1");
+	slipPoint[0]->setParent(this);
+	slipPoint[1]->setParent(this);
+	slipPoint[0]->sethSize(contour[0]->gethSize(0), 0);
+	slipPoint[0]->sethSize(contour[0]->gethSize(1), 1);
+	slipPoint[1]->sethSize(contour[1]->gethSize(0), 0);
+	slipPoint[1]->sethSize(contour[1]->gethSize(1), 1);
+	slipPoint[0]->init(stage, config);
+	slipPoint[1]->init(stage, config);
       }
     }
     ContourLink::init(stage,config);
@@ -128,17 +144,24 @@ namespace MBSim {
     if(plane) {
       Plane *plane = static_cast<Plane*>(contour[0]);
       Wn = plane->getFrame()->evalOrientation().col(0);
-      double t_EC = Wn.T()*Wb;
-      Vec3 z_EC = Wn - t_EC*Wb;
-      double z_EC_nrm2 = nrm2(z_EC);
-      Vec3 Wd = tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC - plane->getFrame()->getPosition();
-      g = Wn.T()*Wd - model->getRadius() + model->getRimRadius();
-      cFrame[1]->setPosition(tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC - (model->getRadius() - model->getRimRadius() + min(g,0.))*Wn);
+      Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
+      if(model->motorcycleKinematics()) {
+	Vec WrCW = tyre->getFrame()->getPosition() - (tyre->getRimRadius()/nrm2(Wc))*Wc;
+	Vec3 Wd = WrCW - plane->getFrame()->getPosition();
+	g = Wn.T()*Wd - tyre->getUnloadedRadius() + tyre->getRimRadius();
+	cFrame[1]->setPosition(WrCW - (tyre->getUnloadedRadius()-tyre->getRimRadius()+min(g,0.))*Wn);
+      }
+      else {
+	Vec WrCW = tyre->getFrame()->getPosition() - (tyre->getUnloadedRadius()/nrm2(Wc))*Wc;
+	Vec3 Wd = WrCW - plane->getFrame()->getPosition();
+	g = Wn.T()*Wd;
+	cFrame[1]->setPosition(WrCW - (min(g,0.)/cos(asin(Wb.T()*Wn))/nrm2(Wc))*Wc);
+      }
       cFrame[0]->setPosition(cFrame[1]->getPosition(false) - Wn*max(g,0.));
     }
     else {
       SpatialContour *spatialcontour = static_cast<SpatialContour*>(contour[0]);
-      auto func = new FuncPairSpatialContourTyre(tyre,model,spatialcontour);
+      auto func = new FuncPairSpatialContourTyre(model->motorcycleKinematics()?tyre->getRimRadius():tyre->getUnloadedRadius(),tyre,spatialcontour);
       MultiDimNewtonMethod search(func, nullptr);
       double tol = 1e-10;
       search.setTolerance(tol);
@@ -148,13 +171,21 @@ namespace MBSim {
       cFrame[0]->setZeta(nextis);
       Wn = spatialcontour->evalWn(cFrame[0]->getZeta(false));
       cFrame[0]->setPosition(spatialcontour->evalPosition(cFrame[0]->getZeta(false)));
-      double t_EC = Wn.T()*Wb;
-      Vec3 z_EC = Wn - t_EC*Wb;
-      double z_EC_nrm2 = nrm2(z_EC);
-      Vec3 Wd = tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC - cFrame[0]->getPosition(false);
-      g = spatialcontour->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd - model->getRadius() + model->getRimRadius();
-      if(g < -spatialcontour->getThickness()) g = 1;
-      cFrame[1]->setPosition(tyre->getFrame()->getPosition() - (model->getRimRadius()/z_EC_nrm2)*z_EC - (model->getRadius() - model->getRimRadius() + min(g,0.))*Wn);
+      Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
+      if(model->motorcycleKinematics()) {
+	Vec WrCW = tyre->getFrame()->getPosition() - (tyre->getRimRadius()/nrm2(Wc))*Wc;
+	Vec3 Wd = WrCW - cFrame[0]->getPosition(false);
+	g = spatialcontour->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd-tyre->getUnloadedRadius()+tyre->getRimRadius();
+	if(g < -spatialcontour->getThickness()) g = 1;
+	cFrame[1]->setPosition(WrCW - (tyre->getUnloadedRadius()-tyre->getRimRadius()+min(g,0.))*Wn);
+      }
+      else {
+	Vec WrCW = tyre->getFrame()->getPosition() - (tyre->getUnloadedRadius()/nrm2(Wc))*Wc;
+	Vec3 Wd = WrCW - cFrame[0]->getPosition(false);
+	g = spatialcontour->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd;
+	if(g < -spatialcontour->getThickness()) g = 1;
+	cFrame[1]->setPosition(WrCW - (min(g,0.)/cos(asin(Wb.T()*Wn))/nrm2(Wc))*Wc);
+      }
     }
     rrel(0) = g;
     Vec3 nx = crossProduct(Wb,Wn);
@@ -217,6 +248,10 @@ namespace MBSim {
 
   void TyreContact::resetUpToDate() {
     ContourLink::resetUpToDate();
+    if(not model->motorcycleKinematics()) {
+      slipPoint[0]->resetUpToDate();
+      slipPoint[1]->resetUpToDate();
+    }
     updfvel = true;
   }
 

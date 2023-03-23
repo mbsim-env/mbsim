@@ -61,6 +61,8 @@ namespace MBSim {
       void setInitialGuess(const fmatvec::Vec2 &zeta0_) { zeta0 = zeta0_; }
       void setTolerance(double tol_) { tol = tol_; }
 
+      ContourFrame* getSlipPoint(int i) { return slipPoint[i]; }
+
       void resetUpToDate() override;
 
     protected:
@@ -69,7 +71,7 @@ namespace MBSim {
       bool plane;
       fmatvec::Vec2 zeta0;
       double tol{1e-10};
-
+      std::vector<ContourFrame*> slipPoint;
       bool updfvel{true};
   };
 

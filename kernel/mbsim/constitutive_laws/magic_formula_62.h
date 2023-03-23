@@ -63,8 +63,7 @@ namespace MBSim {
       int getDataSize() const override { return 9; }
       fmatvec::VecV getData() const override;
 
-      double getRadius() const override;
-      double getRimRadius() const override { return mck?rRim:getRadius(); }
+      bool motorcycleKinematics() const override { return mck; }
 
     private:
       void importData();
@@ -75,7 +74,7 @@ namespace MBSim {
       double LFX{1}, LFY{1}, LMZ{1};
       bool constsix{false}, constsiy{false};
 
-      double vsx, vsy, vx, ka, ga, Kyal, alF, Rs, dpi, phit{0}, phiF{0}, epsga{0};
+      double vsx, vsy, vx, vy, v, ka, ga, Kyal, alF, Rs, dpi, phit{0}, phiF{0}, epsga{0};
 
       bool mck{false}, ts{false};
  };
