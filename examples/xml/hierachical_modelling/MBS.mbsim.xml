@@ -29,4 +29,5 @@
       </openMBVObject>
     </MBSimEnvironment>
   </environments>
+  <cacheSize>50</cacheSize>
 </DynamicSystemSolver>

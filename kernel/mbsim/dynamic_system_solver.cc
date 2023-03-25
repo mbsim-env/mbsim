@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include <boost/core/demangle.hpp>
+#include <boost/scope_exit.hpp>
 #include "mbsim/dynamic_system_solver.h"
 #include "mbsim/modelling_interface.h"
 #include "mbsim/frames/frame.h"
@@ -408,6 +409,17 @@ namespace MBSim {
         ds=static_cast<const DynamicSystem*>(ds->getParent());
       }
       // create new plot file (cast needed because of the inadequacy of the HDF5 C++ interface?)
+      auto curCompressionLevel=H5::File::getDefaultCompression();
+      auto curChunkSize=H5::File::getDefaultChunkSize();
+      auto curCacheSize=H5::File::getDefaultCacheSize();
+      BOOST_SCOPE_EXIT(curChunkSize, curCompressionLevel, curCacheSize) {
+        H5::File::setDefaultCompression(curCompressionLevel);
+        H5::File::setDefaultChunkSize(curChunkSize);
+        H5::File::setDefaultCacheSize(curCacheSize);
+      } BOOST_SCOPE_EXIT_END
+      H5::File::setDefaultCompression(compressionLevel);
+      H5::File::setDefaultChunkSize(chunkSize);
+      H5::File::setDefaultCacheSize(cacheSize);
       hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
 
       Group::init(stage, config);
@@ -1405,6 +1417,13 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"useConstraintSolverForPlot");
     if (e)
       setUseConstraintSolverForPlot(E(e)->getText<bool>());
+
+    e = E(element)->getFirstElementChildNamed(MBSIM%"compressionLevel");
+    if(e) setCompressionLevel(E(e)->getText<int>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"chunkSize");
+    if(e) setChunkSize(E(e)->getText<int>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"cacheSize");
+    if(e) setCachekSize(E(e)->getText<int>());
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {
