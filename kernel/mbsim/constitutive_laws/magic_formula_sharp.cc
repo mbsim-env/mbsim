@@ -36,6 +36,17 @@ namespace MBSim {
     return (T(0) < val) - (val < T(0));
   }
 
+  void MagicFormulaSharp::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      TyreContact *contact = static_cast<TyreContact*>(parent);
+      Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+      double R0_ = tyre->getUnloadedRadius()-tyre->getRimRadius()-Fz0/cz;
+      if(fabs(R0_-R0)>1e-13)
+	msg(Warn) << "Estimated crown radius of " << tyre->getPath() << " (" << R0_ << ") is different to R0 (" << R0 << ")." << endl;
+    }
+    TyreModel::init(stage, config);
+  }
+
   void MagicFormulaSharp::initPlot(vector<string> &plotColumns) {
     plotColumns.emplace_back("camber angle");
     plotColumns.emplace_back("rolling velocity");
@@ -68,6 +79,8 @@ namespace MBSim {
     setdz(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"Fz0");
     setFz0(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"R0");
+    setR0(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"pKy1");
     setpKy1(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"pKy2");
@@ -234,7 +247,6 @@ namespace MBSim {
       double Kyal0 = pKy1*Fz0*sin(pKy2*atan(Fz/(pKy3*Fz0)));
       double By0 = Kyal0/(Cy*Dy0);
       double Fy00 = Dy0*sin(Cy*atan(By0*be-Ey0*(By0*be-atan(By0*be))));
-      double R0 = tyre->getUnloadedRadius()-tyre->getRimRadius()+contact->getGeneralizedRelativePosition()(0);
       double SHr = (qHz3+qHz4*dfz)*ga;
       double Bt = (qBz1+qBz2*dfz)*(1+qBz5*abs(ga)+qBz6*pow(ga,2));
       double Dt = Fz*(R0/Fz0)*(qDz1+qDz2*dfz)*(1+qDz3*abs(ga)+qDz4*pow(ga,2));

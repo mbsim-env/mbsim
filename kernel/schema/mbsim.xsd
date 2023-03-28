@@ -4180,17 +4180,22 @@
     <xs:complexContent>
       <xs:extension base="TyreModelType">
         <xs:sequence>
-          <xs:element name="cz" type="pv:unknownScalar">
+          <xs:element name="cz" type="pv:stiffnessScalar">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="dz" type="pv:unknownScalar">
+          <xs:element name="dz" type="pv:dampingScalar">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="Fz0" type="pv:unknownScalar">
+          <xs:element name="Fz0" type="pv:forceScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="R0" type="pv:lengthScalar">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
