@@ -588,6 +588,10 @@ namespace MBSim {
 
       std::vector<StateTable>& getStateTable() { return tabz; }
 
+      void setCompressionLevel(int level) { compressionLevel=level; }
+      void setChunkSize(int size) { chunkSize=size; }
+      void setCachekSize(int size) { cacheSize=size; }
+
     protected:
       /**
        * \brief time
@@ -838,6 +842,10 @@ namespace MBSim {
       bool solveDirectly;
 
       std::vector<StateTable> tabz;
+
+      int compressionLevel { H5::File::getDefaultCompression() };
+      int chunkSize { H5::File::getDefaultChunkSize() };
+      int cacheSize { H5::File::getDefaultCacheSize() };
 
     private:
       /**

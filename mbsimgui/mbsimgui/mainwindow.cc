@@ -637,20 +637,20 @@ namespace MBSimGUI {
       vector<EmbedItemData*> parents = embeditem->getEmbedItemParents();
       pmodel->removeRow(pmodel->index(0,0).row(), QModelIndex());
       if(!parents.empty()) {
-	pmodel->createParameterItem(parents[0]->getParameters());
-	for(size_t i=0; i<parents.size()-1; i++)
-	  pmodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
-	pmodel->createParameterItem(embeditem->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
+        pmodel->createParameterItem(parents[0]->getParameters());
+        for(size_t i=0; i<parents.size()-1; i++)
+          pmodel->createParameterItem(parents[i+1]->getParameters(),parents[i]->getParameters()->getModelIndex());
+        pmodel->createParameterItem(embeditem->getParameters(),parents[parents.size()-1]->getParameters()->getModelIndex());
       }
       else
-	pmodel->createParameterItem(embeditem->getParameters());
+        pmodel->createParameterItem(embeditem->getParameters());
       parameterView->expandAll();
       parameterView->scrollToBottom();
       auto *element = dynamic_cast<Element*>(item);
       if(element)
-	highlightObject(element->getID());
+        highlightObject(element->getID());
       else
-	highlightObject("");
+        highlightObject("");
     }
   }
 

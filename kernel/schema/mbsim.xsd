@@ -816,6 +816,21 @@
               Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit einem entsprechenden Lösungsverfahren berechnet werden sollen.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="compressionLevel" minOccurs="0" type="pv:integerFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert den compressions level (0-9) für HDF5 output files: 0: keine compression, 9: stärkste compression (Default: 1)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="chunkSize" minOccurs="0" type="pv:integerFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die Anzahl der Zeilen der HDF5 chunk Größe (Default: 100)
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="cacheSize" minOccurs="0" type="pv:integerFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die Anzahl der Zeilen der nativen cache Größe. HDF5 schreibaktionen werden nur ausgeführt wenn der cache voll ist. (Default: 0)
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
