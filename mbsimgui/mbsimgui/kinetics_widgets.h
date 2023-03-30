@@ -274,7 +274,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *cz, *dz, *Fz0, *pKy1, *pKy2, *pKy3, *pKy4, *pKy5, *pKy6, *pKy7, *pDx1, *pDx2, *pEx1, *pEx2, *pEx3, *pEx4, *pKx1, *pKx2, *pKx3, *Cx, *Cy, *rBx1, *rBx2, *Cxal, *pDy1, *pDy2, *pDy3, *pEy1, *pEy2, *pEy4, *Cga, *Ega, *rBy1, *rBy2, *rBy3, *Cyka, *qHz3, *qHz4, *qBz1, *qBz2, *qBz5, *qBz6, *qBz9, *qBz10, *qDz1, *qDz2, *qDz3, *qDz4, *qDz8, *qDz9, *qDz10, *qDz11, *qEz1, *qEz2, *qEz5, *Ct, *c1Rel, *c2Rel, *c3Rel, *sfKyga, *sfFLo, *sfFLa, *sfM;
+      ExtWidget *cz, *dz, *Fz0, *R0, *pKy1, *pKy2, *pKy3, *pKy4, *pKy5, *pKy6, *pKy7, *pDx1, *pDx2, *pEx1, *pEx2, *pEx3, *pEx4, *pKx1, *pKx2, *pKx3, *Cx, *Cy, *rBx1, *rBx2, *Cxal, *pDy1, *pDy2, *pDy3, *pEy1, *pEy2, *pEy4, *Cga, *Ega, *rBy1, *rBy2, *rBy3, *Cyka, *qHz3, *qHz4, *qBz1, *qBz2, *qBz5, *qBz6, *qBz9, *qBz10, *qDz1, *qDz2, *qDz3, *qDz4, *qDz8, *qDz9, *qDz10, *qDz11, *qEz1, *qEz2, *qEz5, *Ct, *c1Rel, *c2Rel, *c3Rel, *sfKyga, *sfFLo, *sfFLa, *sfM;
   };
 
   class MagicFormula62Widget : public TyreModelWidget {

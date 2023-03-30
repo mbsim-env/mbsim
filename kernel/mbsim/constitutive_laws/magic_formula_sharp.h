@@ -32,6 +32,7 @@ namespace MBSim {
       void setcz(double cz_) { cz = cz_; }
       void setdz(double dz_) { dz = dz_; }
       void setFz0(double Fz0_) { Fz0 = Fz0_; }
+      void setR0(double R0_) { R0 = R0_; }
       void setpKy1(double pKy1_) { pKy1 = pKy1_; }
       void setpKy2(double pKy2_) { pKy2 = pKy2_; }
       void setpKy3(double pKy3_) { pKy3 = pKy3_; }
@@ -93,6 +94,7 @@ namespace MBSim {
       void setScaleFactorForLateralForce(double sfFy_) { sfFy = sfFy_; }
       void setScaleFactorForAligningMoment(double sfMz_) { sfMz = sfMz_; }
 
+      void init(InitStage stage, const InitConfigSet &config) override;
       void initPlot(std::vector<std::string> &plotColumns) override;
       void plot(std::vector<double> &plotVector) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
@@ -111,6 +113,7 @@ namespace MBSim {
       double cz{0};
       double dz{0};
       double Fz0{0};
+      double R0{0};
       double pKy1{0};
       double pKy2{0};
       double pKy3{0};

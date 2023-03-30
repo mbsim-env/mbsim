@@ -760,6 +760,9 @@ namespace MBSim {
 
     for(auto & c : constraint)
       c->updateInternalStateRef(curisParent, nextisParent);
+
+    for(auto & o : observer)
+      o->updateInternalStateRef(curisParent, nextisParent);
   }
 
   void DynamicSystem::updategRef(Vec& gParent) {
@@ -1210,6 +1213,12 @@ namespace MBSim {
       c->calcisSize();
       c->setisInd(isSize);
       isSize += c->getisSize();
+    }
+
+    for(auto & o : observer) {
+      o->calcisSize();
+      o->setisInd(isSize);
+      isSize += o->getisSize();
     }
   }
 
@@ -1754,6 +1763,9 @@ namespace MBSim {
       for(int j=0; j<i->getisSize(); j++)
         ds->getStateTable()[ds->getqSize()+ds->getuSize()+ds->getxSize()+i->getisInd()+j] = StateTable(i->getPath(),'i',j);
     for (auto & i : constraint)
+      for(int j=0; j<i->getisSize(); j++)
+        ds->getStateTable()[ds->getqSize()+ds->getuSize()+ds->getxSize()+i->getisInd()+j] = StateTable(i->getPath(),'i',j);
+    for (auto & i : observer)
       for(int j=0; j<i->getisSize(); j++)
         ds->getStateTable()[ds->getqSize()+ds->getuSize()+ds->getxSize()+i->getisInd()+j] = StateTable(i->getPath(),'i',j);
   }

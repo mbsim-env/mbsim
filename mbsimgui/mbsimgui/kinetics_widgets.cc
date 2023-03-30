@@ -380,12 +380,14 @@ namespace MBSimGUI {
   MagicFormulaSharpWidget::MagicFormulaSharpWidget() {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    cz = new ExtWidget("cz",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cz");
+    cz = new ExtWidget("cz",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cz");
     layout->addWidget(cz);
-    dz = new ExtWidget("dz",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dz");
+    dz = new ExtWidget("dz",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dz");
     layout->addWidget(dz);
-    Fz0 = new ExtWidget("Fz0",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"Fz0");
+    Fz0 = new ExtWidget("Fz0",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,forceUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"Fz0");
     layout->addWidget(Fz0);
+    R0 = new ExtWidget("R0",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"R0");
+    layout->addWidget(R0);
     pKy1 = new ExtWidget("pKy1",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"pKy1");
     layout->addWidget(pKy1);
     pKy2 = new ExtWidget("pKy2",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"pKy2");
@@ -513,6 +515,7 @@ namespace MBSimGUI {
     cz->initializeUsingXML(element);
     dz->initializeUsingXML(element);
     Fz0->initializeUsingXML(element);
+    R0->initializeUsingXML(element);
     pKy1->initializeUsingXML(element);
     pKy2->initializeUsingXML(element);
     pKy3->initializeUsingXML(element);
@@ -581,6 +584,7 @@ namespace MBSimGUI {
     cz->writeXMLFile(ele0);
     dz->writeXMLFile(ele0);
     Fz0->writeXMLFile(ele0);
+    R0->writeXMLFile(ele0);
     pKy1->writeXMLFile(ele0);
     pKy2->writeXMLFile(ele0);
     pKy3->writeXMLFile(ele0);
