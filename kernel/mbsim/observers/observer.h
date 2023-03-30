@@ -35,6 +35,16 @@ namespace MBSim {
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGrp; }
 
       void createPlotGroup() override;
+
+      int getisInd() { return isInd; }
+      int getisSize() { return isSize; }
+      virtual void calcisSize() { isSize = 0; }
+      virtual void setisInd(int isInd_) { isInd = isInd_; }
+      virtual void updateInternalStateRef(fmatvec::Vec& cur, fmatvec::Vec& next);
+
+    protected:
+      fmatvec::Vec curis, nextis;
+      int isSize { 0 }, isInd { 0 };
   };
 
 }  

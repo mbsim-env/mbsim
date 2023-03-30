@@ -48,4 +48,9 @@ namespace MBSim {
     plotColumns.insert(plotColumns.begin(), "time");
   }
 
+  void Observer::updateInternalStateRef(Vec& curisParent, Vec& nextisParent) {
+    curis.ref(curisParent, RangeV(isInd,isInd+isSize-1));
+    nextis.ref(nextisParent, RangeV(isInd,isInd+isSize-1));
+  }
+
 }
