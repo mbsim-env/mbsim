@@ -1735,23 +1735,36 @@ namespace MBSimGUI {
     DOMElement *embedNode = element->getEmbedXMLElement();
     if(enable) {
       // try to restore the count from the processing instruction EnabledCount or use 1 as count
-      string count="1";
+      string count;
       auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
       if(enabledCount) {
         count=X()%enabledCount->getData();
         embedNode->removeChild(enabledCount);
       }
-      E(embedNode)->setAttribute("count",count);
+      if(!count.empty())
+        E(embedNode)->setAttribute("count",count);
+      else {
+        E(embedNode)->removeAttribute("count");
+        E(embedNode)->removeAttribute("counterName");
+      }
     }
     else {
       if(not embedNode)
         embedNode = element->createEmbedXMLElement();
       // save current count to processing instruction and set count to 0
-      auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
-      if(!enabledCount)
-        enabledCount=embedNode->getOwnerDocument()->createProcessingInstruction(X()%"MBSimGUI_EnabledCount", X()%E(embedNode)->getAttribute("count"));
-      embedNode->insertBefore(enabledCount, embedNode->getFirstChild());
+      if(E(embedNode)->hasAttribute("count")) {
+        auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
+        if(enabledCount)
+          enabledCount->setData(X()%E(embedNode)->getAttribute("count"));
+        else {
+          enabledCount=embedNode->getOwnerDocument()->createProcessingInstruction(X()%"MBSimGUI_EnabledCount",
+                                                                                  X()%E(embedNode)->getAttribute("count"));
+          embedNode->insertBefore(enabledCount, embedNode->getFirstChild());
+        }
+      }
       E(embedNode)->setAttribute("count","0");
+      if(!E(embedNode)->hasAttribute("counterName"))
+        E(embedNode)->setAttribute("counterName","MBXMLUtils_disabled");
     }
     element->maybeRemoveEmbedXMLElement();
     element->updateStatus();
