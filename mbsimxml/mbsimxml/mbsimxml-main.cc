@@ -239,11 +239,11 @@ int main(int argc, char *argv[]) {
         }
       }
       catch(const exception &ex) {
-        cerr<<"Error running model:"<<endl<<ex.what()<<endl;
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;
         ret=1;
       }
       catch(...) {
-        cerr<<"Unknown error running model."<<endl;
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
         ret=1;
       }
       boost::posix_time::ptime lastRun=boost::posix_time::microsec_clock::universal_time();
