@@ -875,7 +875,7 @@ namespace MBSimGUI {
   TyrePropertyDialog::TyrePropertyDialog(Element *gear) : RigidContourPropertyDialog(gear) {
     addTab("Visualization",1);
 
-    rUnloaded = new ExtWidget("Unloaded radius",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedRadius");
+    rUnloaded = new ExtWidget("Unloaded radius",new ChoiceWidget(new ScalarWidgetFactory("0.3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedRadius");
     addToTab("General", rUnloaded);
 
     rRim = new ExtWidget("Rim radius",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"rimRadius");
