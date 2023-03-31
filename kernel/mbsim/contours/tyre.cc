@@ -34,31 +34,69 @@ namespace MBSim {
   void Tyre::init(InitStage stage, const InitConfigSet &config) {
     if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
-	vector<double> ombvEtaNodes(51);
-	vector<double> ombvXiNodes(51);
-	for(unsigned int i=0; i<ombvEtaNodes.size(); i++)
-	  ombvEtaNodes[i] = 2*M_PI*i/50.;
-	for(unsigned int i=0; i<ombvXiNodes.size(); i++)
-	  ombvXiNodes[i] = -M_PI/2 + M_PI*i/50.;
-	vector<vector<double>> vp(ombvEtaNodes.size()*ombvXiNodes.size());
-	int n = ombvXiNodes.size();
-	for (unsigned int i=0; i<ombvEtaNodes.size(); i++) {
-	  double eta = ombvEtaNodes[i];
-	  for (unsigned int j=0; j<ombvXiNodes.size(); j++) {
-	    double xi = ombvXiNodes[j];
-	    vp[i*n+j].push_back((rRim+(rUnloaded-rRim)*cos(xi))*cos(eta));
-	    vp[i*n+j].push_back(-(rUnloaded-rRim)*sin(xi));
-	    vp[i*n+j].push_back((rRim+(rUnloaded-rRim)*cos(xi))*sin(eta));
+	int nEta = 51;
+	int nXi;
+	vector<vector<double>> vp;
+	if(w > 0) {
+	  nXi = 48;
+	  vp.resize(nEta*nXi);
+	  for (int i=0; i<nEta; i++) {
+	    double eta = 2*M_PI*i/50.;
+	    for (int j=0; j<2; j++) {
+	      double xi = rRim*(1-j) + (rUnloaded-0.05*w)*j;
+	      vp[i*nXi+j].push_back(xi*cos(eta));
+	      vp[i*nXi+j].push_back(w/2);
+	      vp[i*nXi+j].push_back(xi*sin(eta));
+	    }
+	    for (int j=0; j<21; j++) {
+	      double xi = -M_PI/2 + M_PI*j/20.;
+	      vp[i*nXi+2+j].push_back((rUnloaded+0.05*w*(sin(xi)-1))*cos(eta));
+	      vp[i*nXi+2+j].push_back(w*(0.45+0.05*cos(xi)));
+	      vp[i*nXi+2+j].push_back((rUnloaded+0.05*w*(sin(xi)-1))*sin(eta));
+	    }
+	    for (int j=0; j<2; j++) {
+	      double xi = -0.9*w/2 + 0.9*w*j;
+	      vp[i*nXi+23+j].push_back(rUnloaded*cos(eta));
+	      vp[i*nXi+23+j].push_back(-xi);
+	      vp[i*nXi+23+j].push_back(rUnloaded*sin(eta));
+	    }
+	    for (int j=0; j<21; j++) {
+	      double xi = M_PI/2 - M_PI/4*j/20.;
+	      vp[i*nXi+25+j].push_back((rUnloaded+0.05*w*(sin(xi)-1))*cos(eta));
+	      vp[i*nXi+25+j].push_back(-w*(0.45+0.05*cos(xi)));
+	      vp[i*nXi+25+j].push_back((rUnloaded+0.05*w*(sin(xi)-1))*sin(eta));
+	    }
+	    for (int j=0; j<2; j++) {
+	      double xi = (rUnloaded-0.05*w)*(1-j)+rRim*j;
+	      vp[i*nXi+46+j].push_back(xi*cos(eta));
+	      vp[i*nXi+46+j].push_back(-w/2);
+	      vp[i*nXi+46+j].push_back(xi*sin(eta));
+	    }
 	  }
 	}
-	vector<int> indices(5*(ombvEtaNodes.size()-1)*(ombvXiNodes.size()-1));
+	else {
+	  nXi = 51;
+	  vector<double> ombvXiNodes(nXi);
+	  vp.resize(nEta*nXi);
+	  double rCrown = rUnloaded-rRim;
+	  for (int i=0; i<nEta; i++) {
+	    double eta = 2*M_PI*i/50.;
+	    for (int j=0; j<nXi; j++) {
+	      double xi = -M_PI/2 + M_PI*j/50.;
+	      vp[i*nXi+j].push_back((rRim+rCrown*cos(xi))*cos(eta));
+	      vp[i*nXi+j].push_back(-rCrown*sin(xi));
+	      vp[i*nXi+j].push_back((rRim+rCrown*cos(xi))*sin(eta));
+	    }
+	  }
+	}
+	vector<int> indices(5*(nEta-1)*(nXi-1));
 	int k=0;
-	for(unsigned int i=0; i<ombvEtaNodes.size()-1; i++) {
-	  for(unsigned int j=0; j<ombvXiNodes.size()-1; j++) {
-	    indices[k+2] = i*ombvXiNodes.size()+j;
-	    indices[k+1] = i*ombvXiNodes.size()+j+1;
-	    indices[k+3] = (i+1)*ombvXiNodes.size()+j;
-	    indices[k] = (i+1)*ombvXiNodes.size()+j+1;
+	for(int i=0; i<nEta-1; i++) {
+	  for(int j=0; j<nXi-1; j++) {
+	    indices[k+2] = i*nXi+j;
+	    indices[k+1] = i*nXi+j+1;
+	    indices[k+3] = (i+1)*nXi+j;
+	    indices[k] = (i+1)*nXi+j+1;
 	    indices[k+4] = -1;
 	    k+=5;
 	  }
@@ -77,6 +115,8 @@ namespace MBSim {
     setUnloadedRadius(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"rimRadius");
     setRimRadius(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"width");
+    if(e) setWidth(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       auto ombv = shared_ptr<OpenMBVSpatialContour>(new OpenMBVSpatialContour);

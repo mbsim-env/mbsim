@@ -3810,6 +3810,13 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="width" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Breite des Reifens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
