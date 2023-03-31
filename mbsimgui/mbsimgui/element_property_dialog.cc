@@ -1264,6 +1264,15 @@ namespace MBSimGUI {
 
     useConstraintSolverForPlot = new ExtWidget("Use constraint solver for plot",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"useConstraintSolverForPlot");
     addToTab("Extra", useConstraintSolverForPlot);
+
+    compressionLevel = new ExtWidget("Compression level of HDF5 output",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"compressionLevel");
+    addToTab("Extra", compressionLevel);
+
+    chunkSize = new ExtWidget("HDF5 output chunk size (number of rows) ",new ChoiceWidget(new ScalarWidgetFactory("100"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"chunkSize");
+    addToTab("Extra", chunkSize);
+
+    cacheSize = new ExtWidget("In-memory output chunk size (number of rows)",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"cacheSize");
+    addToTab("Extra", cacheSize);
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -1288,6 +1297,9 @@ namespace MBSimGUI {
     determineEquilibriumState->initializeUsingXML(item->getXMLElement());
     useConstraintSolverForSmoothMotion->initializeUsingXML(item->getXMLElement());
     useConstraintSolverForPlot->initializeUsingXML(item->getXMLElement());
+    compressionLevel->initializeUsingXML(item->getXMLElement());
+    chunkSize->initializeUsingXML(item->getXMLElement());
+    cacheSize->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -1313,6 +1325,9 @@ namespace MBSimGUI {
     determineEquilibriumState->writeXMLFile(item->getXMLElement());
     useConstraintSolverForSmoothMotion->writeXMLFile(item->getXMLElement());
     useConstraintSolverForPlot->writeXMLFile(item->getXMLElement());
+    compressionLevel->writeXMLFile(item->getXMLElement());
+    chunkSize->writeXMLFile(item->getXMLElement());
+    cacheSize->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 

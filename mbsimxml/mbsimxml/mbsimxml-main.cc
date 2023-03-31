@@ -239,7 +239,7 @@ int main(int argc, char *argv[]) {
         }
       }
       catch(const exception &ex) {
-        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<endl;
         ret=1;
       }
       catch(...) {
