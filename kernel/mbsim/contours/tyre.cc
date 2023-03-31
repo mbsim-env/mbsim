@@ -43,31 +43,31 @@ namespace MBSim {
 	  for (int i=0; i<nEta; i++) {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<2; j++) {
-	      double xi = rRim*(1-j) + (rUnloaded-0.05*w)*j;
+	      double xi = rRim*(1-j) + (rUnloaded-0.1*w)*j;
 	      vp[i*nXi+j].push_back(xi*cos(eta));
 	      vp[i*nXi+j].push_back(w/2);
 	      vp[i*nXi+j].push_back(xi*sin(eta));
 	    }
 	    for (int j=0; j<21; j++) {
-	      double xi = -M_PI/2 + M_PI*j/20.;
-	      vp[i*nXi+2+j].push_back((rUnloaded+0.05*w*(sin(xi)-1))*cos(eta));
-	      vp[i*nXi+2+j].push_back(w*(0.45+0.05*cos(xi)));
-	      vp[i*nXi+2+j].push_back((rUnloaded+0.05*w*(sin(xi)-1))*sin(eta));
+	      double xi = M_PI/2*j/20.;
+	      vp[i*nXi+2+j].push_back((rUnloaded+0.1*w*(sin(xi)-1))*cos(eta));
+	      vp[i*nXi+2+j].push_back(w*(0.4+0.1*cos(xi)));
+	      vp[i*nXi+2+j].push_back((rUnloaded+0.1*w*(sin(xi)-1))*sin(eta));
 	    }
 	    for (int j=0; j<2; j++) {
-	      double xi = -0.9*w/2 + 0.9*w*j;
+	      double xi = -0.8*w/2 + 0.8*w*j;
 	      vp[i*nXi+23+j].push_back(rUnloaded*cos(eta));
 	      vp[i*nXi+23+j].push_back(-xi);
 	      vp[i*nXi+23+j].push_back(rUnloaded*sin(eta));
 	    }
 	    for (int j=0; j<21; j++) {
-	      double xi = M_PI/2 - M_PI/4*j/20.;
-	      vp[i*nXi+25+j].push_back((rUnloaded+0.05*w*(sin(xi)-1))*cos(eta));
-	      vp[i*nXi+25+j].push_back(-w*(0.45+0.05*cos(xi)));
-	      vp[i*nXi+25+j].push_back((rUnloaded+0.05*w*(sin(xi)-1))*sin(eta));
+	      double xi = M_PI/2 - M_PI/2*j/20.;
+	      vp[i*nXi+25+j].push_back((rUnloaded+0.1*w*(sin(xi)-1))*cos(eta));
+	      vp[i*nXi+25+j].push_back(-w*(0.4+0.1*cos(xi)));
+	      vp[i*nXi+25+j].push_back((rUnloaded+0.1*w*(sin(xi)-1))*sin(eta));
 	    }
 	    for (int j=0; j<2; j++) {
-	      double xi = (rUnloaded-0.05*w)*(1-j)+rRim*j;
+	      double xi = (rUnloaded-0.1*w)*(1-j)+rRim*j;
 	      vp[i*nXi+46+j].push_back(xi*cos(eta));
 	      vp[i*nXi+46+j].push_back(-w/2);
 	      vp[i*nXi+46+j].push_back(xi*sin(eta));
