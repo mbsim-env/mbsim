@@ -18,6 +18,8 @@
  */
 
 #include <string>
+#include <vector>
+#include <algorithm>
 
 #include "rigid_contour_functions1s.h"
 
@@ -56,7 +58,14 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
     angleRxyTMP0(i,1) = r;
     angleRxyTMP0(i,0) = phi;
   }
-  angleRxyTMP0 = bubbleSort(angleRxyTMP0,0); 
+  std::vector<pair<int, double>> sortHelper(angleRxyTMP0.rows());
+  for(int r=0; r<angleRxyTMP0.rows(); ++r)
+    sortHelper[r]=make_pair(r,angleRxyTMP0(r,0));
+  std::stable_sort(sortHelper.begin(), sortHelper.end(), [](const auto &a, const auto &b){ return a.second<b.second; });
+  decltype(angleRxyTMP0) angleRxyTMP0Sorted(angleRxyTMP0.rows(),angleRxyTMP0.cols());
+  for(int r=0; r<angleRxyTMP0.rows(); ++r)
+    angleRxyTMP0Sorted.set(r, angleRxyTMP0.row(sortHelper[r].first));
+  angleRxyTMP0=angleRxyTMP0Sorted;
   int identXY =0;
   for (i=1;i < N; i++) 
     if ((abs(angleRxyTMP0(i,2)-angleRxyTMP0(i-1,2))<epsroot)&&(abs(angleRxyTMP0(i,3)-angleRxyTMP0(i-1,3))<epsroot)) 
