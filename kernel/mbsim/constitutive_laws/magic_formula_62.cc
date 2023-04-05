@@ -487,9 +487,9 @@ namespace MBSim {
 	rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
       double rhoz = rhozfr+rhozg;
       if(rhoz<0) rhoz = 0;
-      // double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
-      // double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi);
-      double fcorr = 1; // TODO fcorr is set to 1 as dependencies on Fx and Fy cannot be resolved
+      double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
+      Fx = 0; Fy = 0; // TODO dependencies on Fx and Fy cannot be resolved
+      double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi);
       double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
       Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0;
       double Fzbtm = czbtm*(rRim+rhobtm-Rl);
