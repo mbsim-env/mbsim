@@ -363,10 +363,8 @@ namespace MBSim {
       constsix = six>=0;
       constsiy = siy>=0;
       if(mck) rRim = tyre->getRimRadius();
-      if(fabs(tyre->getUnloadedRadius()-R0)>1e-13)
+      if(abs(tyre->getUnloadedRadius()-R0)>1e-6)
 	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
-//      if(fabs(tyre->getRimRadius()-rRim)>1e-13)
-//	msg(Warn) << "Rim radius of " << tyre->getPath() << " (" << tyre->getRimRadius() << ") is different to rim radius of " << inputDataFile << " (" << rRim << ")." << endl;
     }
     TyreModel::init(stage, config);
   }
@@ -472,7 +470,7 @@ namespace MBSim {
       Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
       vsx = contact->getGeneralizedRelativeVelocity()(0);
       vsy = contact->getGeneralizedRelativeVelocity()(1);
-      vx = contact->evalForwardVelocity()(0);
+      vx = max(1.,abs(contact->evalForwardVelocity()(0)));
       vy = contact->evalForwardVelocity()(1);
       v = sqrt(pow(vx,2)+pow(vy,2));
     }
@@ -489,9 +487,9 @@ namespace MBSim {
 	rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
       double rhoz = rhozfr+rhozg;
       if(rhoz<0) rhoz = 0;
-      // double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
-      // double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi);
-      double fcorr = 1; // TODO fcorr is set to 1 as dependencies on Fx and Fy cannot be resolved
+      double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
+      Fx = 0; Fy = 0; // TODO dependencies on Fx and Fy cannot be resolved
+      double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi);
       double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
       Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0;
       double Fzbtm = czbtm*(rRim+rhobtm-Rl);
@@ -506,7 +504,7 @@ namespace MBSim {
       Vec3 WvD = contact->getSlipPoint(1)->evalVelocity() - contact->getSlipPoint(0)->evalVelocity();
       vsx = contact->getSlipPoint(0)->getOrientation().col(0).T()*WvD;
       vsy = contact->getSlipPoint(0)->getOrientation().col(1).T()*WvD;
-      vx = contact->getSlipPoint(0)->getOrientation().col(0).T()*tyre->getFrame()->getVelocity();
+      vx = max(1.,abs(contact->getSlipPoint(0)->getOrientation().col(0).T()*tyre->getFrame()->getVelocity()));
       v = sqrt(pow(vx,2)+pow(vsy,2));
     }
 
@@ -549,7 +547,7 @@ namespace MBSim {
       if(ts) {
 	zeta0 = 0;
 	double Byphi = PDYP1*(1+PDYP2*dfz)*cos(atan(PDYP3*tan(alF)));
-	zeta2 = cos(atan(Byphi*(R0*fabs(phiF)+PDYP4*sqrt(R0*fabs(phiF)))));
+	zeta2 = cos(atan(Byphi*(R0*abs(phiF)+PDYP4*sqrt(R0*abs(phiF)))));
 	zeta3 = cos(atan(PKYP1*pow(R0*phiF,2)));
       }
       double Kyga0 = Fz*(PKY6+PKY7*dfz)*(1+PPY5*dpi)*LKYC;
@@ -588,22 +586,22 @@ namespace MBSim {
       double Fy0 = Dy*sin(Cy*atan(By*ay-Ey*(By*ay-atan(By*ay))))+Svy;
       Fy = (Gyk*Fy0+Svyk)*LFY;
 
-      Mx = mck?0:R0*Fz*LMX*(QSX1*LVMX-QSX2*ga*(1+PPMX1*dpi)+QSX3*Fy/Fz0+QSX4*cos(QSX5*atan(pow(QSX6*Fz/Fz0,2)))*sin(QSX7*ga+QSX8*atan(QSX9*Fy/Fz0))+QSX10*atan(QSX11*Fz/Fz0)*ga) + R0*LMX*(Fy*(QSX13+QSX14*fabs(ga))-Fz*QSX12*ga*fabs(ga));
+      Mx = mck?0:R0*Fz*LMX*(QSX1*LVMX-QSX2*ga*(1+PPMX1*dpi)+QSX3*Fy/Fz0+QSX4*cos(QSX5*atan(pow(QSX6*Fz/Fz0,2)))*sin(QSX7*ga+QSX8*atan(QSX9*Fy/Fz0))+QSX10*atan(QSX11*Fz/Fz0)*ga) + R0*LMX*(Fy*(QSX13+QSX14*abs(ga))-Fz*QSX12*ga*abs(ga));
 
-      My = -R0*Fz0*LMY*(QSY1+QSY2*Fx/Fz0+QSY3*fabs(vx/v0)+QSY4*pow(vx/v0,4)+(QSY5+QSY6*Fz/Fz0)*pow(ga,2))*pow(Fz/Fz0,QSY7)*pow(p/p0,QSY8);
+      My = -R0*Fz0*LMY*(QSY1+QSY2*Fx/Fz0+QSY3*abs(vx/v0)+QSY4*pow(vx/v0,4)+(QSY5+QSY6*Fz/Fz0)*pow(ga,2))*pow(Fz/Fz0,QSY7)*pow(p/p0,QSY8);
 
       if(ts) {
 	double phiM = phiF;
 	zeta5 = cos(atan(QDTP1*R0*phiM));
 	zeta6 = cos(atan(QBRP1*R0*phiM));
-	double Mzphiinf = QCRP1*fabs(muey)*R0*Fz*sqrt(Fz/Fz0)*LMP;
-	double Mzphi90 = Mzphiinf*2./M_PI*atan(QCRP2*R0*fabs(phit))*Gyk;
+	double Mzphiinf = QCRP1*abs(muey)*R0*Fz*sqrt(Fz/Fz0)*LMP;
+	double Mzphi90 = Mzphiinf*2./M_PI*atan(QCRP2*R0*abs(phit))*Gyk;
 	double Cdrphi = QDRP1;
 	double Ddrphi = Mzphiinf/sin(0.5*M_PI*Cdrphi);
-	double Kzgar0 = Fz*R0*(QDZ8+QDZ9*dfz+(QDZ10+QDZ11*dfz)*fabs(ga))*LKZC;
+	double Kzgar0 = Fz*R0*(QDZ8+QDZ9*dfz+(QDZ10+QDZ11*dfz)*abs(ga))*LKZC;
 	double Bdrphi = Kzgar0/(Cdrphi*Ddrphi*(1-epsga));
 	double Drphi = Ddrphi*sin(Cdrphi*atan(Bdrphi*R0*phiM));
-	zeta7 = 2./M_PI*acos(Mzphi90/fabs(Drphi));
+	zeta7 = 2./M_PI*acos(Mzphi90/abs(Drphi));
 	zeta8 = 1+Drphi;
       }
       double Kyal0 = PKY1*Fz0*(1+PPY1*dpi)*sin(PKY4*atan(Fz/Fz0/(PKY2*(1+PPY2*dpi))))*LKY*zeta3;
@@ -625,7 +623,7 @@ namespace MBSim {
       double Dt = Dt0*(1+QDZ3*ga+QDZ4*pow(ga,2))*LTR*zeta5;
       double Et = (QEZ1+QEZ2*dfz+QEZ3*pow(dfz,2))*(1+(QEZ4+QEZ5*ga)*2./M_PI*atan(Bt*Ct*alt));
       double Br = (QBZ9*LKY/LMUY+QBZ10*By*Cy)*zeta6;
-      double Dr = Fz*R0*LMUY*cos(alM)*((QDZ6+QDZ7*dfz)*LRES*zeta2+((QDZ8+QDZ9*dfz)*(1+PPZ2*dpi)+(QDZ10+QDZ11*dfz)*fabs(ga))*ga*LKZC*zeta0)-zeta8+1;
+      double Dr = Fz*R0*LMUY*cos(alM)*((QDZ6+QDZ7*dfz)*LRES*zeta2+((QDZ8+QDZ9*dfz)*(1+PPZ2*dpi)+(QDZ10+QDZ11*dfz)*abs(ga))*ga*LKZC*zeta0)-zeta8+1;
       double lat = atan(sqrt(pow(tan(alt),2)+pow(Kxka*ka/Kyal,2)))*sgn(alt);
       double lar = atan(sqrt(pow(tan(alr),2)+pow(Kxka*ka/Kyal,2)))*sgn(alr);
       double t = Dt*cos(Ct*atan(Bt*lat-Et*(Bt*lat-atan(Bt*lat))))*cos(alM);
@@ -642,8 +640,8 @@ namespace MBSim {
 
       double CX = Cx0*(1+PCFX1*dfz+PCFX2*pow(dfz,2))*(1+PCFX3*dpi);
       double CY = Cy0*(1+PCFY1*dfz+PCFY2*pow(dfz,2))*(1+PCFY3*dpi);
-      if(not constsix) six = fabs(Kxka/CX);
-      if(not constsiy) siy = fabs(Kyal0/CY);
+      if(not constsix) six = abs(Kxka/CX);
+      if(not constsiy) siy = abs(Kyal0/CY);
     }
     else {
       Fz = 0;

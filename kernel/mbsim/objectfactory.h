@@ -201,10 +201,10 @@ class ObjectFactoryRegisterClassHelper {
         MBSim::deregisterClass_internal(name, new Allocate<CreateType>());
       }
       catch(std::exception &ex) {
-        fprintf(stderr, ex.what());
+        fprintf(stderr, "%s\n", ex.what());
       }
       catch(...) {
-        fprintf(stderr, "Unknown error");
+        fprintf(stderr, "%s\n", "Unknown error");
       }
     }
 
@@ -243,10 +243,10 @@ class EnumFactory {
         deregisterEnum_internal<EnumType>(fqn);
       }
       catch(std::exception &ex) {
-        fprintf(stderr, ex.what());
+        fprintf(stderr, "%s\n", ex.what());
       }
       catch(...) {
-        fprintf(stderr, "Unknown error");
+        fprintf(stderr, "%s\n", "Unknown error");
       }
     }
 

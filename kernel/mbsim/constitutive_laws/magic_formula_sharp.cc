@@ -41,7 +41,7 @@ namespace MBSim {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
       double R0_ = tyre->getUnloadedRadius()-tyre->getRimRadius()-Fz0/cz;
-      if(fabs(R0_-R0)>1e-13)
+      if(abs(R0_-R0)>1e-6)
 	msg(Warn) << "Estimated crown radius of " << tyre->getPath() << " (" << R0_ << ") is different to R0 (" << R0 << ")." << endl;
     }
     TyreModel::init(stage, config);
@@ -216,7 +216,7 @@ namespace MBSim {
     double Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
     vsx = contact->getGeneralizedRelativeVelocity()(0);
     vsy = contact->getGeneralizedRelativeVelocity()(1);
-    vx = contact->evalForwardVelocity()(0);
+    vx = abs(contact->evalForwardVelocity()(0));
     if(Fz>0) {
       if(Fz<1) Fz = 1;
       double dfz = (Fz-Fz0)/Fz0;
