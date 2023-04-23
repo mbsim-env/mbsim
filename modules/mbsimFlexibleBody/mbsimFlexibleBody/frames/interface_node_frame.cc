@@ -80,13 +80,13 @@ namespace MBSimFlexibleBody {
 
   void InterfaceNodeFrame::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      for(int i=0; i<nodes.size(); i++)
-        nodes(i) = static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i));
       if(weights.size()==0)
         weights.resize(nodes.size(),INIT,1.0);
-      sum = weights(0);
-      for(int i=1; i<weights.size(); i++)
+      double sum = 0;
+      for(int i=0; i<nodes.size(); i++) {
+        nodes(i) = static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i));
         sum += weights(i);
+      }
     }
     NodeBasedFrame::init(stage,config);
   }

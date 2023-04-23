@@ -65,72 +65,31 @@ namespace MBSimFlexibleBody {
 
   void GenericFfrInterfaceNodeFrame::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
-      for(int i=0; i<nodes.size(); i++)
+      double sum = 0;
+      for(int i=0; i<nodes.size(); i++) {
         nodes(i) = static_cast<NodeBasedBody*>(parent)->getNodeIndex(nodes(i));
-      double sum = weights(0);
-      for(int i=1; i<weights.size(); i++)
         sum += weights(i);
+      }
       R = static_cast<GenericFlexibleFfrBody*>(parent)->getFrameK();
-      KrKP = (weights(0)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0));
       ARP = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativeOrientation(nodes(0));
-      Phi <<= (weights(0)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(0));
-      for(int i=1; i<nodes.size(); i++) {
+      Phi.resize(static_cast<GenericFlexibleFfrBody*>(parent)->getNumberOfModeShapes());
+      Psi.resize(static_cast<GenericFlexibleFfrBody*>(parent)->getNumberOfModeShapes());
+      for(int i=0; i<nodes.size(); i++) {
         KrKP += (weights(i)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i));
         Phi += (weights(i)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i));
       }
       if(approximateShapeMatrixOfRotation) {
-        int ne = static_cast<GenericFlexibleFfrBody*>(parent)->getNumberOfModeShapes();
-        Psi.resize(ne,NONINIT);
-        Vec3 al(NONINIT);
-        al(0) = 0;
-        al(1) = -static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0))(2)+KrKP(2);
-        al(2) = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0))(1)-KrKP(1);
-        double alq = (al.T()*al);
-        if(alq <= 1e-8)
-          throwError("Leverarm to small");
-        Psi.set(RangeV(0,0),RangeV(0,ne-1), (weights(0)/sum)*al.T()*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(0))/alq);
-        for(int i=1; i<nodes.size(); i++) {
-          al(1) = -static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i))(2)+KrKP(2);
-          al(2) = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i))(1)-KrKP(1);
-          alq = (al.T()*al);
-          if(alq <= 1e-8)
-            throwError("Leverarm to small");
-          Psi.add(RangeV(0,0),RangeV(0,ne-1), (weights(i)/sum)*al.T()*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i))/alq);
-        }
-        al(0) = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0))(2)-KrKP(2);
-        al(1) = 0;
-        al(2) = -static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0))(0)+KrKP(0);
-        alq = (al.T()*al);
-        if(alq <= 1e-8)
-          throwError("Leverarm to small");
-        Psi.set(RangeV(1,1),RangeV(0,ne-1), (weights(0)/sum)*al.T()*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(0))/alq);
-        for(int i=1; i<nodes.size(); i++) {
-          al(0) = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i))(2)-KrKP(2);
-          al(2) = -static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i))(0)+KrKP(0);
-          alq = (al.T()*al);
-          if(alq <= 1e-8)
-            throwError("Leverarm to small");
-          Psi.add(RangeV(1,1),RangeV(0,ne-1), (weights(i)/sum)*al.T()*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i))/alq);
-        }
-        al(0) = -static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0))(1)+KrKP(1);
-        al(1) = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(0))(0)-KrKP(0);
-        al(2) = 0;
-        alq = (al.T()*al);
-        if(alq <= 1e-8)
-          throwError("Leverarm to small");
-        Psi.set(RangeV(2,2),RangeV(0,ne-1), (weights(0)/sum)*al.T()*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(0))/alq);
-        for(int i=1; i<nodes.size(); i++) {
-          al(0) = -static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i))(1)+KrKP(1);
-          al(1) = static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i))(0)-KrKP(0);
-          alq = (al.T()*al);
-          if(alq <= 1e-8)
-            throwError("Leverarm to small");
-          Psi.add(RangeV(2,2),RangeV(0,ne-1), (weights(i)/sum)*al.T()*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i))/alq);
-        }
+	SymMat3 A;
+	Mat3xV B(Phi.cols());
+	for(int i=0; i<nodes.size(); i++) {
+	  SqrMat3 tr = tilde(static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i))-KrKP);
+	  A += (weights(i)/sum)*tr.T()*tr;
+	  B += (weights(i)/sum)*(tr.T()*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i)));
+	}
+	Psi = -slvLL(A,B);
       }
       else {
-        Psi <<= (weights(0)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfRotation(nodes(0));
-        for(int i=1; i<nodes.size(); i++)
+        for(int i=0; i<nodes.size(); i++)
           Psi += (weights(i)/sum)*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfRotation(nodes(i));
       }
     }
