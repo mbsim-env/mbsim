@@ -85,19 +85,20 @@ namespace MBSim {
     else if(stage==plotting) {
 
       if(plotFeature[ref(plotRecursive)]) {
-        unsigned int numEnabled=0;
+        bool plotData = false;
         for (auto& x: plotFeature) {
           if((x.first.get() != plotRecursive) and (x.first.get() != openMBV) and x.second) {
-            numEnabled++;
+            plotData = true;
             break;
           }
         }
 
-        if(numEnabled>0) {
-          if(not parent->getPlotGroup()) {
+        if(plotData || !plotAttribute.empty()) {
+          if(parent && not parent->getPlotGroup()) {
             parent->createPlotGroup();
           }
-          createPlotGroup();
+          if(not getPlotGroup())
+            createPlotGroup();
           if(plotColumns.size()>1) {
             // copy plotColumns to a std::vector
             vector<string> dummy; copy(plotColumns.begin(), plotColumns.end(), insert_iterator<vector<string>>(dummy, dummy.begin()));
@@ -107,6 +108,28 @@ namespace MBSim {
           }
           plotVector.clear();
           plotVector.reserve(plotColumns.size()); // preallocation
+        }
+
+        // plot attributes
+        for(auto &nameVariant : plotAttribute) {
+          visit([this, &nameVariant](const auto &v) {
+            using PlainType = decay_t<decltype(v)>;
+            if constexpr (is_same_v<PlainType, monostate>) {
+              plotGroup->createChildAttribute<H5::SimpleAttribute<int>>(nameVariant.first)();
+            }
+            else if constexpr (is_same_v<PlainType, int> || is_same_v<PlainType, double> || is_same_v<PlainType, string> ) {
+              H5::SimpleAttribute<PlainType> *attr=plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(nameVariant.first)();
+              attr->write(v);
+            }
+            else if constexpr (is_same_v<PlainType, vector<int>> || is_same_v<PlainType, vector<double>>) {
+              H5::SimpleAttribute<PlainType> *attr=plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(nameVariant.first)(v.size());
+              attr->write(v);
+            }
+            else if constexpr (is_same_v<PlainType, vector<vector<double>>>) {
+              H5::SimpleAttribute<PlainType> *attr=plotGroup->createChildAttribute<H5::SimpleAttribute<PlainType>>(nameVariant.first)(v.size(), v.size() > 0 ? v[0].size() : 0);
+              attr->write(v);
+            }
+          }, nameVariant.second);
         }
       }
     }
@@ -221,6 +244,8 @@ namespace MBSim {
 
     if(E(element)->hasAttribute("name")) // their are element with no name e.g. Function's
       setName(E(element)->getAttribute("name"));
+
+    // plot feature
     DOMElement *e;
     e=element->getFirstElementChild();
     while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
@@ -233,6 +258,27 @@ namespace MBSim {
         plotFeature[pf.first] = pf.second;
         plotFeatureForChildren[pf.first] = pf.second;
       }
+
+      e=e->getNextElementSibling();
+    }
+
+    // plot attributes
+    while(e && (E(e)->getTagName()==MBSIM%"plotAttribute" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeInt" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloat" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeString" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeIntVector" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloatVector" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")) {
+      auto name=E(e)->getAttribute("name");
+      if     (E(e)->getTagName()==MBSIM%"plotAttribute")             setPlotAttribute(name);
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeInt")          setPlotAttribute(name, E(e)->getText<int>());
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloat")        setPlotAttribute(name, E(e)->getText<double>());
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeString")       { auto s=E(e)->getText<string>(); setPlotAttribute(name, s.substr(1, s.length()-2)); }
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeIntVector")    setPlotAttribute(name, E(e)->getText<vector<int>>());
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloatVector")  setPlotAttribute(name, E(e)->getText<vector<double>>());
+      else if(E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")  setPlotAttribute(name, E(e)->getText<vector<vector<double>>>());
+
       e=e->getNextElementSibling();
     }
   }

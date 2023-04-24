@@ -308,44 +308,129 @@
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="ElementType">
-    <xs:choice minOccurs="0" maxOccurs="unbounded">
-      <xs:element name="plotFeature">  
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            Definiert die Plotfeatures für dieses Element.
-        </xs:documentation></xs:annotation>
-        <xs:complexType>
-          <xs:simpleContent>
-            <xs:extension base="pv:booleanFullEval">
-              <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
-            </xs:extension>
-          </xs:simpleContent>
-        </xs:complexType> 
-      </xs:element>  
-      <xs:element name="plotFeatureForChildren">
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            Definiert die Plotfeatures für alle Kindelement.
-        </xs:documentation></xs:annotation>
-        <xs:complexType>
-          <xs:simpleContent>
-            <xs:extension base="pv:booleanFullEval">
-              <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
-            </xs:extension>
-          </xs:simpleContent>
-        </xs:complexType> 
-      </xs:element>  
-      <xs:element name="plotFeatureRecursive">  
-        <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-            Definiert die Plotfeatures für diese Element und alle Kindelement.
-        </xs:documentation></xs:annotation>
-        <xs:complexType>
-          <xs:simpleContent>
-            <xs:extension base="pv:booleanFullEval">
-              <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
-            </xs:extension>
-          </xs:simpleContent>
-        </xs:complexType> 
-      </xs:element>  
-    </xs:choice> 
+    <xs:sequence>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="plotFeature">  
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die Plotfeatures für dieses Element.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="pv:booleanFullEval">
+                <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotFeatureForChildren">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die Plotfeatures für alle Kindelement.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="pv:booleanFullEval">
+                <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotFeatureRecursive">  
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die Plotfeatures für diese Element und alle Kindelement.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="pv:booleanFullEval">
+                <xs:attribute name="value" type="pv:qnamePartialEval" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType> 
+        </xs:element>  
+      </xs:choice>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="plotAttribute">  
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert ein Plot-Attribute ohne Wert.
+              (Plot attribute sind statische Daten welche als key/value Paar an plot datasets/groups angehängt werden.)
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotAttributeInt">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert ein Plot-Attribute mit integer Wert.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="pv:integerFullEval">
+                <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotAttributeFloat">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert ein Plot-Attribute mit floating-point Wert.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="pv:floatFullEval">
+                <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotAttributeString">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert ein Plot-Attribute mit string Wert.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:simpleContent>
+              <xs:extension base="pv:stringFullEval">
+                <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+              </xs:extension>
+            </xs:simpleContent>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotAttributeIntVector">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert ein Plot-Attribute mit integer Vector-Wert.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="pv:integerVector">
+                <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+              </xs:extension>
+            </xs:complexContent>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotAttributeFloatVector">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert ein Plot-Attribute mit floating-point Vector-Wert.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="pv:unknownVector">
+                <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+              </xs:extension>
+            </xs:complexContent>
+          </xs:complexType> 
+        </xs:element>  
+        <xs:element name="plotAttributeFloatMatrix">
+          <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert ein Plot-Attribute mit floating-point Vector-Wert.
+          </xs:documentation></xs:annotation>
+          <xs:complexType>
+            <xs:complexContent>
+              <xs:extension base="pv:unknownMatrix">
+                <xs:attribute name="name" type="pv:stringPartialEval" use="required"/>
+              </xs:extension>
+            </xs:complexContent>
+          </xs:complexType> 
+        </xs:element>  
+      </xs:choice> 
+    </xs:sequence>
     <xs:attribute name="name" type="pv:stringPartialEval"/> <!-- is not required here since Function has not name attribute -->
   </xs:complexType> 
 
