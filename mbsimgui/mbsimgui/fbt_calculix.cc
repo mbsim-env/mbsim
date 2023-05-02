@@ -80,7 +80,7 @@ namespace MBSimGUI {
       isRes >> str >> str >> type;
       if(type==4)
 	nNpE = 20;
-      if(type==5)
+      else if(type==5)
 	nNpE = 15;
       else if(type==6)
 	nNpE = 10;
