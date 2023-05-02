@@ -20,6 +20,7 @@
 #include <config.h>
 #include "wizards.h"
 #include "basic_widgets.h"
+#include <QMessageBox>
 
 using namespace std;
 using namespace fmatvec;
@@ -74,13 +75,19 @@ namespace MBSimGUI {
     stringstream sE(str);
     sE >> str >> nE;
     Matrix<General,Var,Var,int> eles(nE,20,NONINIT);
-    size_t type, nNpE;
+    size_t type, nNpE = 0;
     for(size_t i=0; i<nE; i++) {
       isRes >> str >> str >> type;
       if(type==4)
 	nNpE = 20;
-      else
-	runtime_error("Unknown element type.");
+      if(type==5)
+	nNpE = 15;
+      else if(type==6)
+	nNpE = 10;
+      else {
+	QMessageBox::warning(this, "Flexible body tool", "Unknown element type.");
+	return;
+      }
       getline(isRes,str);
       for(size_t j=0; j<nNpE;) {
 	isRes >> d;
@@ -100,7 +107,10 @@ namespace MBSimGUI {
 	//        cout << str[57] << endl;
 	stringstream s(str);
 	s >> str >> str >> str >> nN_;
-	if(nN != nN_) runtime_error("Number of nodes does not match.");
+	if(nN != nN_) {
+	  QMessageBox::warning(this, "Flexible body tool", "Number of nodes does not match.");
+	  return;
+	}
 	isRes >> i >> str;
 	if(str=="DISP") {
 	  VecV dispi(3*nN,NONINIT);
@@ -157,39 +167,44 @@ namespace MBSimGUI {
 	S.e(i,j) = stress[j].e(i);
     }
 
+    vector<vector<int>> ind;
+    if(type==4) {
+      ind.resize(6,vector<int>(4));
+      ind[0][0] = 3; ind[0][1] = 2; ind[0][2] = 1; ind[0][3] = 0;
+      ind[1][0] = 4; ind[1][1] = 5; ind[1][2] = 6; ind[1][3] = 7;
+      ind[2][0] = 1; ind[2][1] = 2; ind[2][2] = 6; ind[2][3] = 5;
+      ind[3][0] = 2; ind[3][1] = 3; ind[3][2] = 7; ind[3][3] = 6;
+      ind[4][0] = 4; ind[4][1] = 7; ind[4][2] = 3; ind[4][3] = 0;
+      ind[5][0] = 0; ind[5][1] = 1; ind[5][2] = 5; ind[5][3] = 4;
+    }
+    else if(type==5) {
+      ind.resize(5);
+      ind[0].resize(4);
+      ind[1].resize(4);
+      ind[2].resize(4);
+      ind[3].resize(3);
+      ind[4].resize(3);
+      ind[0][0] = 0; ind[0][1] = 1; ind[0][2] = 4; ind[0][3] = 3;
+      ind[1][0] = 0; ind[1][1] = 3; ind[1][2] = 5; ind[1][3] = 2;
+      ind[2][0] = 2; ind[2][1] = 5; ind[2][2] = 4; ind[2][3] = 1;
+      ind[3][0] = 0; ind[3][1] = 2; ind[3][2] = 1;
+      ind[4][0] = 3; ind[4][1] = 4; ind[4][2] = 5;
+    }
+    else if(type==6) {
+      ind.resize(4,vector<int>(3));
+      ind[0][0] = 1; ind[0][1] = 2; ind[0][2] = 3;
+      ind[1][0] = 0; ind[1][1] = 1; ind[1][2] = 3;
+      ind[2][0] = 2; ind[2][1] = 0; ind[2][2] = 3;
+      ind[3][0] = 2; ind[3][1] = 1; ind[3][2] = 0;
+    }
     indices.resize(5*6*eles.rows());
-    int j = 0;
-    for(int i=0; i<eles.rows(); i++) {
-      indices[j++] = nodeTable[eles(i,3)];
-      indices[j++] = nodeTable[eles(i,2)];
-      indices[j++] = nodeTable[eles(i,1)];
-      indices[j++] = nodeTable[eles(i,0)];
-      indices[j++] = -1;
-      indices[j++] = nodeTable[eles(i,4)];
-      indices[j++] = nodeTable[eles(i,5)];
-      indices[j++] = nodeTable[eles(i,6)];
-      indices[j++] = nodeTable[eles(i,7)];
-      indices[j++] = -1;
-      indices[j++] = nodeTable[eles(i,1)];
-      indices[j++] = nodeTable[eles(i,2)];
-      indices[j++] = nodeTable[eles(i,6)];
-      indices[j++] = nodeTable[eles(i,5)];
-      indices[j++] = -1;
-      indices[j++] = nodeTable[eles(i,2)];
-      indices[j++] = nodeTable[eles(i,3)];
-      indices[j++] = nodeTable[eles(i,7)];
-      indices[j++] = nodeTable[eles(i,6)];
-      indices[j++] = -1;
-      indices[j++] = nodeTable[eles(i,4)];
-      indices[j++] = nodeTable[eles(i,7)];
-      indices[j++] = nodeTable[eles(i,3)];
-      indices[j++] = nodeTable[eles(i,0)];
-      indices[j++] = -1;
-      indices[j++] = nodeTable[eles(i,0)];
-      indices[j++] = nodeTable[eles(i,1)];
-      indices[j++] = nodeTable[eles(i,5)];
-      indices[j++] = nodeTable[eles(i,4)];
-      indices[j++] = -1;
+    int oj = 0;
+    for(int ee=0; ee<eles.rows(); ee++) {
+      for(int i=0; i<ind.size(); i++) {
+	for(int j=0; j<ind[i].size(); j++)
+	  indices[oj++] = nodeTable[eles(ee,ind[i][j])];
+	indices[oj++] = -1;
+      }
     }
   }
 
