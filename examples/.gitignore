@@ -10,6 +10,7 @@
 **/main.d
 **/main.exe
 **/main.exe.linkmap
+**/main.linkmap
 **/mbsim.fmu
 **/MBS*.ombvx
 **/*.mat
@@ -21,6 +22,8 @@
 **/mbsimfmi_model.so.d
 **/mbsimfmi_model.dll.d
 **/mbsimfmi_model.dll.linkmap
+**/mbsimfmi_model.so.linkmap
+**/dump_matrices.asc
 
 # ignored other files
 mechanics/contacts/dice_cup/frustum.iv

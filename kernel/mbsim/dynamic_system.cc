@@ -438,6 +438,7 @@ namespace MBSim {
 	observersOpenMBVGrp->setName("observers");
 	openMBVGrp->addObject(observersOpenMBVGrp);
       }
+      Element::init(stage, config);
     }
 
     for (auto & i : frame)

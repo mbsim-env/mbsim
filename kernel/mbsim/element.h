@@ -177,6 +177,17 @@ namespace MBSim {
        */
       void setPlotFeatureRecursive(const PlotFeatureEnum &pf, bool value) { setPlotFeature(pf,value); setPlotFeatureForChildren(pf,value); }
 
+      /**
+       * \brief Set a plot attribute: static data attached as key/value pairs to the plot datasets/groups.
+       */
+      template<class T>
+      void setPlotAttribute(const std::string &name, const T &value) {
+        plotAttribute[name] = value;
+      }
+      void setPlotAttribute(const std::string &name) {
+        plotAttribute[name] = std::monostate();
+      }
+
       virtual void initializeUsingXML(xercesc::DOMElement *element);
 
       /**
@@ -298,6 +309,16 @@ namespace MBSim {
        * \brief plot feature
        */
       PlotFeatureMap plotFeature, plotFeatureForChildren;
+
+      std::map<std::string, std::variant<
+        std::monostate,
+        int,
+        double,
+        std::string,
+        std::vector<int>,
+        std::vector<double>,
+        std::vector<std::vector<double>>
+      >> plotAttribute;
 
       int convertIndex(int i) { return baseIndexForPlot+i; }
 
