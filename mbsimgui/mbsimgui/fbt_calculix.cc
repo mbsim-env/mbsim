@@ -55,16 +55,19 @@ namespace MBSimGUI {
     int nN;
     stringstream sN(str);
     sN >> str >> nN;
-    nodeTable.resize(nN+1);
     nodeNumbers.resize(nN);
     r.resize(nN);
+    int dmax = 0;
     for(size_t i=0; i<nN; i++) {
       isRes >> d >> d;
-      nodeTable[d] = i;
       nodeNumbers[i] = d;
+      if(d>dmax) dmax = d;
       for(size_t k=0; k<3; k++)
 	isRes >> r[i](k);
     }
+    nodeTable.resize(dmax+1);
+    for(size_t i=0; i<nN; i++)
+      nodeTable[nodeNumbers[i]] = i;
     // elements
     while(isRes) {
       getline(isRes,str);
