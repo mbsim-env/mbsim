@@ -84,9 +84,9 @@ namespace MBSimFlexibleBody {
 	for(int i=0; i<nodes.size(); i++) {
 	  SqrMat3 tr = tilde(static_cast<GenericFlexibleFfrBody*>(parent)->getNodalRelativePosition(nodes(i))-KrKP);
 	  A += (weights(i)/sum)*JTJ(tr);
-	  B -= (weights(i)/sum)*(tr*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i)));
+	  B += (weights(i)/sum)*(tr*static_cast<GenericFlexibleFfrBody*>(parent)->getNodalShapeMatrixOfTranslation(nodes(i)));
 	}
-	Psi = -slvLL(A,B);
+	Psi = slvLL(A,B);
       }
       else {
         for(int i=0; i<nodes.size(); i++)
