@@ -134,6 +134,23 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  AnyParameterPropertyDialog::AnyParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
+    value = new ExtWidget("Value",new ExpressionWidget);
+    addToTab("General", value);
+  }
+
+  DOMElement* AnyParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+    value->initializeUsingXML(parameter->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* AnyParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+    value->writeXMLFile(parameter->getXMLElement(),ref);
+    return nullptr;
+  }
+
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
     //value = new ExtWidget("Value",new ExpressionWidget("0"));
     value = new ExtWidget("Value",new ChoiceWidget(new StringWidgetFactory("","\".\""),QBoxLayout::RightToLeft,5));

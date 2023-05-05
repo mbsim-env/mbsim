@@ -252,6 +252,7 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
   icons/scalar.svg \
   icons/vector.svg \
   icons/matrix.svg \
+  icons/any.svg \
   icons/string.svg \
   icons/fbt.svg
 

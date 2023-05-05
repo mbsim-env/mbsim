@@ -36,6 +36,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(ScalarParameter);
   MBSIMGUI_REGOBJECTFACTORY(VectorParameter);
   MBSIMGUI_REGOBJECTFACTORY(MatrixParameter);
+  MBSIMGUI_REGOBJECTFACTORY(AnyParameter);
   MBSIMGUI_REGOBJECTFACTORY(ImportParameter);
 
   void ParameterItem::removeXMLElements() {
@@ -129,6 +130,14 @@ namespace MBSimGUI {
       value = QString::fromStdString(MBXMLUtils::E(ele)->getAttribute("href"));
     else if(MBXMLUtils::E(element)->getFirstTextChild())
       value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
+  }
+
+  AnyParameter::AnyParameter() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"any.svg").string()));
+  }
+
+  void AnyParameter::updateValue() {
+    value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
   }
 
   DOMElement* ImportParameter::createXMLElement(DOMNode *parent) {
