@@ -74,7 +74,19 @@ namespace MBSimGUI {
     return QModelIndex();
   }
 
-  EvalDialog::EvalDialog(const vector<vector<QString>> &var_, int type_, QWidget *parent) : QDialog(parent), var(var_), varf(var_), type(type_) {
+  void Dialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("basicelementbrowser/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void Dialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("basicelementbrowser/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
+  EvalDialog::EvalDialog(const vector<vector<QString>> &var_, int type_, QWidget *parent) : Dialog(parent), var(var_), varf(var_), type(type_) {
 
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
@@ -139,7 +151,7 @@ namespace MBSimGUI {
     }
   }
 
-  BasicElementBrowser::BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent) : QDialog(parent), selection(selection_) {
+  BasicElementBrowser::BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent) : Dialog(parent), selection(selection_) {
     auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     eleList = new QTreeView;
@@ -164,9 +176,7 @@ namespace MBSimGUI {
   }
 
   void BasicElementBrowser::showEvent(QShowEvent *event) {
-    QSettings settings;
-    restoreGeometry(settings.value("basicelementbrowser/geometry").toByteArray());
-    QDialog::showEvent(event);
+    Dialog::showEvent(event);
     oldID = mw->getHighlightedObject();
     QModelIndex index1 = findTreeItemData(eleList->model()->index(0,0),selection);
     QModelIndex index2 = mw->getElementView()->selectionModel()->currentIndex().parent().parent();
@@ -178,9 +188,7 @@ namespace MBSimGUI {
   }
 
   void BasicElementBrowser::hideEvent(QHideEvent *event) {
-    QSettings settings;
-    settings.setValue("basicelementbrowser/geometry", saveGeometry());
-    QDialog::hideEvent(event);
+    Dialog::hideEvent(event);
     mw->highlightObject(oldID);
   }
 
@@ -198,7 +206,7 @@ namespace MBSimGUI {
     }
   }
 
-  SourceDialog::SourceDialog(xercesc::DOMElement *ele, QWidget *parent) : QDialog(parent) {
+  SourceDialog::SourceDialog(xercesc::DOMElement *ele, QWidget *parent) : Dialog(parent) {
     setWindowTitle(QString("XML view"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
@@ -211,7 +219,7 @@ namespace MBSimGUI {
     connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceDialog::accept);
   }
 
-  StateTableDialog::StateTableDialog(QWidget *parent) : QDialog(parent) {
+  StateTableDialog::StateTableDialog(QWidget *parent) : Dialog(parent) {
     setWindowTitle(QString("State table"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
@@ -977,7 +985,7 @@ namespace MBSimGUI {
     plot->replot();
   }
 
-  LinearSystemAnalysisDialog::LinearSystemAnalysisDialog(QWidget *parent) : QDialog(parent) {
+  LinearSystemAnalysisDialog::LinearSystemAnalysisDialog(QWidget *parent) : Dialog(parent) {
     setWindowTitle("Linear system analysis");
     auto *layout = new QVBoxLayout;
     setLayout(layout);

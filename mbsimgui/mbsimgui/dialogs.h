@@ -54,7 +54,15 @@ namespace MBSimGUI {
       Element* getElement() const { return element; }
   };
 
-  class EvalDialog : public QDialog {
+  class Dialog : public QDialog {
+    public:
+      Dialog(QWidget *parent=nullptr) : QDialog(parent) { }
+    protected:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+  };
+
+  class EvalDialog : public Dialog {
     public:
       EvalDialog(const std::vector<std::vector<QString>> &var_, int type_, QWidget *parent);
     private:
@@ -67,7 +75,7 @@ namespace MBSimGUI {
       QTableWidget *tab;
   };
 
-  class BasicElementBrowser : public QDialog {
+  class BasicElementBrowser : public Dialog {
     public:
       BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent);
       ~BasicElementBrowser() override = default;
@@ -93,12 +101,12 @@ namespace MBSimGUI {
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }
   };
 
-  class SourceDialog : public QDialog {
+  class SourceDialog : public Dialog {
     public:
       SourceDialog(xercesc::DOMElement *ele, QWidget *parent);
   };
 
-  class StateTableDialog : public QDialog {
+  class StateTableDialog : public Dialog {
     public:
       StateTableDialog(QWidget *parent);
       void updateWidget();
@@ -106,7 +114,7 @@ namespace MBSimGUI {
       QTreeWidget *stateTable;
   };
 
-  class LoadModelDialog : public QDialog {
+  class LoadModelDialog : public Dialog {
     public:
       LoadModelDialog(const QString &title);
       QString getModelFileName() const;
@@ -121,7 +129,7 @@ namespace MBSimGUI {
       void modelFileChanged(const QString &fileName);
   };
 
-  class SaveModelDialog : public QDialog {
+  class SaveModelDialog : public Dialog {
     public:
       SaveModelDialog(const QString &title, const QString &name, bool param);
       QString getModelFileName() const;
@@ -131,7 +139,7 @@ namespace MBSimGUI {
       void modelFileChanged(const QString &fileName);
   };
 
-  class LoadParameterDialog : public QDialog {
+  class LoadParameterDialog : public Dialog {
     public:
       LoadParameterDialog();
       QString getParameterFileName() const;
@@ -142,7 +150,7 @@ namespace MBSimGUI {
       QButtonGroup *pOpt;
   };
 
-  class SaveParameterDialog : public QDialog {
+  class SaveParameterDialog : public Dialog {
     public:
       SaveParameterDialog(const QString &name);
       QString getParameterFileName() const;
@@ -200,7 +208,7 @@ namespace MBSimGUI {
       void updateWidget();
   };
 
-  class LinearSystemAnalysisDialog : public QDialog {
+  class LinearSystemAnalysisDialog : public Dialog {
     public:
       LinearSystemAnalysisDialog(QWidget *parent);
       void updateWidget();
@@ -211,7 +219,7 @@ namespace MBSimGUI {
       EigenanalysisWidget *eawidget;
   };
 
-  class CreateFMUDialog : public QDialog {
+  class CreateFMUDialog : public Dialog {
     public:
       CreateFMUDialog(const QString &name);
       QString getFileName() const;
