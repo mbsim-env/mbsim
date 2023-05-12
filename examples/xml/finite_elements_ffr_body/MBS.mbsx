@@ -11,13 +11,12 @@
       <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="FiniteElementsFfrBody">
         <inputDataFileName>"input_data.h5"</inputDataFileName>
         <frames>
-          <FfrInterfaceNodeFrame name="FfrInterfaceNodeFrame" xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
+          <NodeFrame name="Interface node frame">
             <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim"/>
-            <nodeNumbers>
-              [5;  6;  7;  8;  22;  25;  28;  31;  100]
-            </nodeNumbers>
-          </FfrInterfaceNodeFrame>
-        </frames><contours/>
+            <nodeNumber>262</nodeNumber>
+          </NodeFrame>
+        </frames>
+        <contours/>
         <enableOpenMBV>
           <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"yDisplacement"</colorRepresentation>
           <minimalColorValue xmlns="http://www.mbsim-env.de/MBSim">0</minimalColorValue>
@@ -28,7 +27,7 @@
     </objects>
     <links>
       <KineticExcitation name="KineticExcitation">
-        <connect ref2="../Object[FiniteElementsFfrBody]/Frame[FfrInterfaceNodeFrame]"/>
+        <connect ref2="../Object[FiniteElementsFfrBody]/Frame[Interface node frame]"/>
         <forceDirection unit="-">
           <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <row>
@@ -90,5 +89,6 @@
     <endTime unit="s">0.3</endTime>
     <plotStepSize unit="s">1e-3</plotStepSize>
   </DOPRI5Integrator>
+
 
 </MBSimProject>
