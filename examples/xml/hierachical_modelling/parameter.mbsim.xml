@@ -15,8 +15,7 @@
   <scalarParameter name="c2">1e2</scalarParameter>
   <scalarParameter name="d1">0</scalarParameter>
   <scalarParameter name="d2">0</scalarParameter>
-  <scalarParameter name="l01">0.5</scalarParameter>
-  <scalarParameter name="l02">l01</scalarParameter>
+  <anyParameter name="l012">{0.5, 0.5}</anyParameter>
   <matrixParameter name="identHalf">
     <xmlMatrix>
       <row><ele>0.5</ele><ele>0</ele><ele>0</ele></row>

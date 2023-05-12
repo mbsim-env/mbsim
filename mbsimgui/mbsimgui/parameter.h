@@ -102,6 +102,14 @@ namespace MBSimGUI {
       void updateValue() override;
   };
 
+  class AnyParameter : public Parameter {
+    MBSIMGUI_OBJECTFACTORY_CLASS(AnyParameter, Parameter, MBXMLUtils::PV%"anyParameter", "Any parameter");
+    public:
+      AnyParameter();
+      PropertyDialog* createPropertyDialog() override { return new AnyParameterPropertyDialog(this); }
+      void updateValue() override;
+  };
+
   class ImportParameter : public Parameter {
     MBSIMGUI_OBJECTFACTORY_CLASS(ImportParameter, Parameter, MBXMLUtils::PV%"import", "Import");
     public:

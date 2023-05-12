@@ -8,7 +8,7 @@
   <groups/>
   <objects>
     <RigidBody name="Box1">
-      <generalizedInitialPosition>[l01 + h1/2 + 0.2]</generalizedInitialPosition>
+      <generalizedInitialPosition>[l012[0] + h1/2 + 0.2]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
@@ -71,7 +71,7 @@
       </openMBVRigidBody>
     </RigidBody>
     <RigidBody name="Box2">
-      <generalizedInitialPosition>[l01 + l02 + h1 + h2/2]</generalizedInitialPosition>
+      <generalizedInitialPosition>[l012[0] + l012[1] + h1 + h2/2]</generalizedInitialPosition>
       <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
       <frameOfReference ref="../Frame[I]"/>
       <frameForKinematics ref="Frame[C]"/>
@@ -118,7 +118,7 @@
           <dampingCoefficient>d1</dampingCoefficient>
         </LinearSpringDamperForce>
       </forceFunction>
-      <unloadedLength>l01</unloadedLength>
+      <unloadedLength>l012[0]</unloadedLength>
     </SpringDamper>
     <SpringDamper name="Feder2">
       <connect ref1="../Object[Box1]/Frame[P2]" ref2="../Object[Box2]/Frame[P1]"/>
@@ -128,7 +128,7 @@
           <dampingCoefficient>d2</dampingCoefficient>
         </LinearSpringDamperForce>
       </forceFunction>
-      <unloadedLength>l02</unloadedLength>
+      <unloadedLength>l012[1]</unloadedLength>
       <enableOpenMBV>
           <colorRepresentation>"absoluteForce"</colorRepresentation>
           <numberOfCoils>5</numberOfCoils>
