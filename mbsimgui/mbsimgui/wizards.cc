@@ -748,6 +748,7 @@ namespace MBSimGUI {
     nodeTable.clear();
     nodeCount.clear();
     nodeNumbers.clear();
+    singleNodeNumbers.clear();
     indices.clear();
     ele.clear();
     for(auto & i : type)
