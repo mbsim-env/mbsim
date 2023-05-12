@@ -66,17 +66,19 @@ namespace MBSimGUI {
 	dof[i][j] = mat[j][0].toInt()-1;
     }
 
-    vector<int> inodes;
-    if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->getWidget())->getWidget())->getWidget()->getEvalMat();
-      inodes.resize(mat.size());
-      for(size_t i=0; i<mat.size(); i++)
-	inodes[i] = mat[i][0].toInt();
-    }
-
-    bool removeRigidBodyModes = false;
-    if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->isActive()) {
-      removeRigidBodyModes = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    list = static_cast<ListWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget());
+    vector<vector<int>> inodes(list->getSize());
+    vector<bool> reduceToNode(list->getSize());
+    vector<Indices> idof(list->getSize());
+    singleNodeNumbers.resize(list->getSize());
+    for(int i=0; i<list->getSize(); i++) {
+      inodes[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getNodes();
+      reduceToNode[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getReduceToSingleNode();
+      idof[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getDof();
+      for(size_t j=0; j<idof[i].size(); j++)
+	idof[i].set(j,idof[i][j]-1);
+      int snn = static_cast<CMSDataWidget*>(list->getWidget(i))->getSingleNodeNumber();
+      singleNodeNumbers[i] = snn>-1?snn:nodeNumbers.size()+1+i;
     }
 
     vector<int> nmodes;
@@ -146,8 +148,10 @@ namespace MBSimGUI {
     }
 
     for(size_t i=0; i<inodes.size(); i++) {
-      for(size_t j=0; j<nen; j++)
-	activeDof[nodeTable[inodes[i]]][j] *= 2;
+      for(size_t j=0; j<inodes[i].size(); j++) {
+	for(size_t k=0; k<nen; k++)
+	  activeDof[nodeTable[inodes[i][j]]][k] *= 2;
+      }
     }
     Indices iH, iN;
     for(size_t i=0; i<nN; i++) {
@@ -159,8 +163,7 @@ namespace MBSimGUI {
       }
     }
 
-    MatV Ui(iF.size(),iH.size(),NONINIT);
-    MatV Un;
+    MatV Ui, Un, Ui_(iF.size(),iH.size(),NONINIT);
     if(iH.size()) {
       vector<int> dofMapH(nen*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
@@ -195,22 +198,64 @@ namespace MBSimGUI {
       Indices IJ;
       for(int i=0; i<iH.size(); i++)
 	IJ.add(i);
-      Ui.set(iN,IJ,-slvLU(Krns,Krnh));
-      Ui.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
-      if(removeRigidBodyModes) {
-	SqrMat V;
-	Vec w;
-	eigvec(JTMJ(Krs,Ui),JTMJ(Mrs,Ui),V,w);
-	vector<int> imod;
-	for(int i=0; i<w.size(); i++) {
-	  if(w(i)>pow(2*M_PI*0.1,2))
-	    imod.emplace_back(i);
-	}
-	MatV Vr(w.size(),imod.size(),NONINIT);
-	for(size_t i=0; i<imod.size(); i++)
-	  Vr.set(i,V.col(imod[i]));
-	Ui <<= Ui*Vr;
+      Ui_.set(iN,IJ,-slvLU(Krns,Krnh));
+      Ui_.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
+      VecV weights;
+
+      int ni = 0;
+      bool rdn = false;
+      for(size_t i=0; i<inodes.size(); i++) {
+	ni += idof[i].size();
+	if(reduceToNode[i]) rdn = true;
       }
+
+      if(rdn) {
+	SymMatV Ki= JTMJ(Ks,Ui_);
+	Ui.resize(iF.size(),ni,NONINIT);
+	ni = 0;
+	for(size_t i=0; i<inodes.size(); i++) {
+	  if(reduceToNode[i]) {
+	    Indices iHi;
+	    vector<Matrix<General,Fixed<6>,Var,double>> Jrr(inodes.size(),Matrix<General,Fixed<6>,Var,double>(6*inodes.size()));
+	    if(weights.size()==0)
+	      weights.resize(inodes[i].size(),INIT,1.0);
+	    double sum = 0;
+	    for(size_t j=0; j<inodes[i].size(); j++) {
+	      sum += weights(j);
+	      for(int k=0; k<nen; k++)
+		iHi.add(dofMapH[3*nodeTable[inodes[i][j]]+k]);
+	    }
+	    Vec3 rr;
+	    SymMat3 A;
+	    Indices iA(Ui_.rows());
+	    for(int k=0; k<iA.size(); k++)
+	      iA.set(k,k);
+	    MatV Ur = Ui_(iA,iHi);
+	    Mat3xV B(Ur.cols());
+	    Mat3xV C(Ur.cols());
+	    Matrix<General,Fixed<6>,Var,double> Jr(Ur.cols());
+	    for(size_t j=0; j<inodes[i].size(); j++) {
+	      rr += (weights(j)/sum)*r[nodeTable[inodes[i][j]]];
+	      C += (weights(j)/sum)*(Phis[nodeTable[inodes[i][j]]]*Ur);
+	    }
+	    for(size_t j=0; j<inodes[i].size(); j++) {
+	      SqrMat3 tr = tilde(r[nodeTable[inodes[i][j]]]-rr);
+	      A += (weights(j)/sum)*JTJ(tr);
+	      B += (weights(j)/sum)*tr*(Phis[nodeTable[inodes[i][j]]]*Ur);
+	    }
+	    Jr.set(RangeV(0,2),RangeV(0,Jr.cols()-1), C);
+	    Jr.set(RangeV(3,5),RangeV(0,Jr.cols()-1), slvLL(A,B));
+	    Indices iHj(iHi.size());
+	    for(size_t j=0; j<iHj.size(); j++)
+	      iHj.set(j,j);
+	    MatV Vi = slvLL(Ki(iHi),Jr(idof[i],iHj).T());
+	    Ui.set(RangeV(0,Ui.rows()-1),RangeV(ni,ni+idof[i].size()-1), Ur*Vi);
+	    ni += idof[i].size();
+	  }
+	}
+      } else
+	Ui <<= Ui_;
+
       if(nmodes.size() and fixedBoundaryNormalModes) {
 	Mat V;
 	Vec w;
@@ -220,7 +265,7 @@ namespace MBSimGUI {
 	  if(w(nmodes[i]-1)>pow(2*M_PI*0.1,2))
 	    imod.emplace_back(nmodes[i]-1);
 	}
-	Un.resize(iN.size(),imod.size(),NONINIT);
+	Un.resize(iF.size(),imod.size(),NONINIT);
 	for(size_t i=0; i<imod.size(); i++) {
 	  Un.set(iN,i,V.col(imod[i]));
 	  Un.set(iH,i,VecV(iH.size()));

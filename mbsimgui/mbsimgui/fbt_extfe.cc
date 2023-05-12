@@ -49,15 +49,16 @@ namespace MBSimGUI {
     }
 
     nodeTable.resize(max+1);
+    nodeNumbers.resize(R.rows());
     r.resize(R.rows(),Vec3(NONINIT));
     if(R.cols()==3) {
       for(int i=0; i<R.rows(); i++) {
 	nodeTable[i+1] = i;
 	r[nodeTable[i+1]] = R.row(i).T();
+	nodeNumbers[i] = i+1;
       }
     }
     else {
-      nodeNumbers.resize(R.rows());
       for(int i=0; i<R.rows(); i++) {
 	nodeTable[R(i,0)] = i;
 	r[nodeTable[R(i,0)]] = R.row(i)(RangeV(1,3)).T();

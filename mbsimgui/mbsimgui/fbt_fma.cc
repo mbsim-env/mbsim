@@ -22,6 +22,7 @@
 #include "fe_type.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include "special_widgets.h"
 #include <iostream>
 
 using namespace std;
@@ -35,6 +36,39 @@ namespace MBSimGUI {
     Phi.resize(nN,Mat3xV(nM,NONINIT));
     for(size_t i=0; i<nN; i++)
       Phi[i] = Phis[i]*U;
+
+    auto *list = static_cast<ListWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget());
+    for(int i=0; i<list->getSize(); i++) {
+      auto reduceToNode = static_cast<CMSDataWidget*>(list->getWidget(i))->getReduceToSingleNode();
+      if(reduceToNode) {
+	auto inodes = static_cast<CMSDataWidget*>(list->getWidget(i))->getNodes();
+	double sum = 0;
+	for(size_t j=0; j<inodes.size(); j++) {
+	  //	//sum += weights(i);
+	  sum += 1.;
+	}
+	Vec3 ri;
+	Mat3xV Phii(nM);
+	Mat3xV Psii(nM,NONINIT);
+	Matrix<General,Fixed<6>,Var,double> sigmaheli(nM);
+	for(size_t j=0; j<inodes.size(); j++) {
+	  ri += (1./sum)*r[nodeTable[inodes[j]]];
+	  Phii += (1./sum)*Phi[nodeTable[inodes[j]]];
+	}
+	SymMat3 A;
+	Mat3xV B(nM);
+	for(size_t j=0; j<inodes.size(); j++) {
+	  SqrMat3 tr = tilde(r[nodeTable[inodes[j]]]-ri);
+	  A += (1./sum)*JTJ(tr);
+	  B += (1./sum)*tr*(Phi[nodeTable[inodes[j]]]);
+	}
+	Psii = slvLL(A,B);
+	rif.push_back(ri);
+	Phiif.push_back(Phii);
+	Psiif.push_back(Psii);
+	sigmahelif.push_back(sigmaheli);
+      }
+    }
 
     if(Psis.size()) {
       Psi.resize(nN,Mat3xV(nM,NONINIT));

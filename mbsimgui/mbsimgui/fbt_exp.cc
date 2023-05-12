@@ -74,13 +74,20 @@ namespace MBSimGUI {
 
 	int nN = r.size();
 
-	vector<double> r_(3*nN);
-	vector<vector<double>> Phi_(3*nN,vector<double>(Pdm.cols()));
+	vector<double> r_(3*(nN+rif.size()));
+	vector<vector<double>> Phi_(3*(nN+rif.size()),vector<double>(Pdm.cols()));
 	for(int i=0; i<nN; i++) {
 	  for(int j=0; j<3; j++) {
 	    r_[i*3+j] = r[i](j);
 	    for(int k=0; k<Pdm.cols(); k++)
 	      Phi_[i*3+j][k] = Phi[i](j,k);
+	  }
+	}
+	for(size_t i=0; i<rif.size(); i++) {
+	  for(int j=0; j<3; j++) {
+	    r_[(nN+i)*3+j] = rif[i](j);
+	    for(int k=0; k<Pdm.cols(); k++)
+	      Phi_[(nN+i)*3+j][k] = Phiif[i](j,k);
 	  }
 	}
 
@@ -89,21 +96,27 @@ namespace MBSimGUI {
 	mdata=file.createChildObject<H5::SimpleDataset<vector<vector<double>>>>("nodal shape matrix of translation")(Phi_.size(),Phi_[0].size());
 	mdata->write(Phi_);
 
-	if(Psi.size()) {
-	  vector<vector<double>> Psi_(3*nN,vector<double>(Pdm.cols()));
-	  for(int i=0; i<nN; i++) {
+	if(Psi.size() or rif.size()) {
+	  vector<vector<double>> Psi_(3*(nN+rif.size()),vector<double>(Pdm.cols()));
+	  for(int i=0; i<Psi.size(); i++) {
 	    for(int j=0; j<3; j++) {
 	      for(int k=0; k<Pdm.cols(); k++)
 		Psi_[i*3+j][k] = Psi[i](j,k);
+	    }
+	  }
+	  for(size_t i=0; i<rif.size(); i++) {
+	    for(int j=0; j<3; j++) {
+	      for(int k=0; k<Pdm.cols(); k++)
+		Psi_[(nN+i)*3+j][k] = Psiif[i](j,k);
 	    }
 	  }
 	  mdata=file.createChildObject<H5::SimpleDataset<vector<vector<double>>>>("nodal shape matrix of rotation")(Psi_.size(),Psi_[0].size());
 	  mdata->write(Psi_);
 	}
 
-	if(sigmahel.size()) {
-	  vector<vector<double>> sigmahel_(6*nN,vector<double>(Pdm.cols()));
-	  for(int i=0; i<nN; i++) {
+	if(sigmahel.size() or rif.size()) {
+	  vector<vector<double>> sigmahel_(6*(nN+rif.size()),vector<double>(Pdm.cols()));
+	  for(int i=0; i<sigmahel.size(); i++) {
 	    for(int j=0; j<6; j++) {
 	      for(int k=0; k<Pdm.cols(); k++) {
 		sigmahel_[i*6+j][k] = sigmahel[i](j,k);
@@ -119,10 +132,13 @@ namespace MBSimGUI {
 	  vidata->write(indices);
 	}
 
-	if(nodeNumbers.size()) {
-	  auto vidata=file.createChildObject<H5::SimpleDataset<vector<int>>>("node numbers")(nodeNumbers.size());
-	  vidata->write(nodeNumbers);
-	}
+	vector<int> nodeNumbers_(nodeNumbers.size()+singleNodeNumbers.size());
+	for(size_t i=0; i<nodeNumbers.size(); i++)
+	  nodeNumbers_[i] = nodeNumbers[i];
+	for(size_t i=0; i<singleNodeNumbers.size(); i++)
+	  nodeNumbers_[nodeNumbers.size()+i] = singleNodeNumbers[i];
+	auto vidata=file.createChildObject<H5::SimpleDataset<vector<int>>>("node numbers")(nodeNumbers_.size());
+	vidata->write(nodeNumbers_);
       }
     }
   }

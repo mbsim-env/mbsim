@@ -32,12 +32,13 @@
 
 using namespace std;
 using namespace fmatvec;
+using namespace xercesc;
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  FirstPage::FirstPage(QWidget *parent) : QWizardPage(parent) {
+  FirstPage::FirstPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Flexible body tool");
 
     auto *layout = new QVBoxLayout;
@@ -46,31 +47,29 @@ namespace MBSimGUI {
     auto label = new QLabel("Create input data for <i>flexible ffr body</i> by");
     label->setWordWrap(true);
 
-    rb1 = new QRadioButton("&external mass matrix and stiffness matrix");
-    rb2 = new QRadioButton("&calculix result file");
-    rb3 = new QRadioButton("&beam elements");
-    rb4 = new QRadioButton("&finite elements");
+    rb[0] = new QRadioButton("&external mass matrix and stiffness matrix");
+    rb[1] = new QRadioButton("&calculix result file");
+    rb[2] = new QRadioButton("&beam elements");
+    rb[3] = new QRadioButton("&finite elements");
 
-    rb1->setChecked(true);
+    rb[0]->setChecked(true);
 
-    //registerField("first.c1*", rb1);
-    //registerField("first.c2", rb2);
+    //registerField("first.c1*", rb[0]);
+    //registerField("first.c2", rb[1]);
 
     layout->addWidget(label);
-    layout->addWidget(rb1);
-    layout->addWidget(rb2);
-    layout->addWidget(rb3);
-    layout->addWidget(rb4);
+    for(int i=0; i<4; i++)
+      layout->addWidget(rb[i]);
   }
 
   int FirstPage::nextId() const {
-    if(rb1->isChecked())
+    if(rb[0]->isChecked())
       return FlexibleBodyTool::PageExtFE;
-    else if(rb2->isChecked())
+    else if(rb[1]->isChecked())
       return FlexibleBodyTool::PageCalculix;
-    else if(rb3->isChecked())
+    else if(rb[2]->isChecked())
       return FlexibleBodyTool::PageFlexibleBeam;
-    else if(rb4->isChecked())
+    else if(rb[3]->isChecked())
       return FlexibleBodyTool::PageFiniteElements;
     else 
       QMessageBox::information(this->wizard(),"Information","This option is not yet available."); 
@@ -78,23 +77,14 @@ namespace MBSimGUI {
   }
 
   void FirstPage::setVisible(bool visible) {
-    QWizardPage::setVisible(visible);
-
-    if(visible) {
-      wizard()->setButtonText(QWizard::CustomButton1, "&Load");
-      wizard()->setOption(QWizard::HaveCustomButton1, true);
-      connect(wizard(), &QWizard::customButtonClicked,static_cast<FlexibleBodyTool*>(wizard()),&FlexibleBodyTool::load);
-    } else {
-      wizard()->setOption(QWizard::HaveCustomButton1, false);
-      disconnect(wizard(), &QWizard::customButtonClicked,static_cast<FlexibleBodyTool*>(wizard()),&FlexibleBodyTool::load);
-    }
+    WizardPage::setVisible(visible);
   }
 
   bool FirstPage::isComplete() const {
-    return QWizardPage::isComplete();
+    return WizardPage::isComplete();
   }
 
-  LastPage::LastPage(QWidget *parent) : QWizardPage(parent) {
+  LastPage::LastPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Save");
 
     auto *layout = new QVBoxLayout;
@@ -116,19 +106,20 @@ namespace MBSimGUI {
   }
 
   void LastPage::setVisible(bool visible) {
-    QWizardPage::setVisible(visible);
-
-    if(visible) {
-      wizard()->setButtonText(QWizard::CustomButton1, "&Save");
-      wizard()->setOption(QWizard::HaveCustomButton1, true);
-      connect(wizard(), &QWizard::customButtonClicked,static_cast<FlexibleBodyTool*>(wizard()),&FlexibleBodyTool::save);
-    } else {
-      wizard()->setOption(QWizard::HaveCustomButton1, false);
-      disconnect(wizard(), &QWizard::customButtonClicked,static_cast<FlexibleBodyTool*>(wizard()),&FlexibleBodyTool::save);
-    }
+    WizardPage::setVisible(visible);
   }
 
-  ExternalFiniteElementsPage::ExternalFiniteElementsPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* LastPage::initializeUsingXML(DOMElement *element) {
+    inputFile->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LastPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    inputFile->writeXMLFile(element);
+    return nullptr;
+  }
+
+  ExternalFiniteElementsPage::ExternalFiniteElementsPage(QWidget *parent) : WizardPage(parent) {
     setTitle("External finite elements data");
 
     auto *mainlayout = new QVBoxLayout;
@@ -144,7 +135,6 @@ namespace MBSimGUI {
 //    layout->setSpacing(15);
     box->setLayout(layout);
     tab->setWidget(box);
-
 
     mainlayout->addWidget(tab);
 
@@ -165,10 +155,24 @@ namespace MBSimGUI {
   }
 
   bool ExternalFiniteElementsPage::isComplete() const {
-    return QWizardPage::isComplete();
+    return WizardPage::isComplete();
   }
 
-  CalculixPage::CalculixPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* ExternalFiniteElementsPage::initializeUsingXML(DOMElement *element) {
+    nodes->initializeUsingXML(element);
+    mass->initializeUsingXML(element);
+    DOMElement *ele = stiff->initializeUsingXML(element);
+    return ele;
+  }
+
+  DOMElement* ExternalFiniteElementsPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    nodes->writeXMLFile(element);
+    mass->writeXMLFile(element);
+    stiff->writeXMLFile(element);
+    return nullptr;
+  }
+
+  CalculixPage::CalculixPage(QWidget *parent) : WizardPage(parent) {
     setTitle("CalculiX data");
 
     auto *mainlayout = new QVBoxLayout;
@@ -196,7 +200,17 @@ namespace MBSimGUI {
     return FlexibleBodyTool::PageDamp;
   }
 
-  FlexibleBeamPage::FlexibleBeamPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* CalculixPage::initializeUsingXML(DOMElement *element) {
+    DOMElement *ele = file->initializeUsingXML(element);
+    return ele;
+  }
+
+  DOMElement* CalculixPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    file->writeXMLFile(element);
+    return nullptr;
+  }
+
+  FlexibleBeamPage::FlexibleBeamPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Flexible beam data");
 
     auto *mainlayout = new QVBoxLayout;
@@ -252,7 +266,35 @@ namespace MBSimGUI {
     return FlexibleBodyTool::PageBC;
   }
 
-  FiniteElementsPage::FiniteElementsPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* FlexibleBeamPage::initializeUsingXML(DOMElement *element) {
+    n->initializeUsingXML(element);
+    l->initializeUsingXML(element);
+    A->initializeUsingXML(element);
+    DOMElement *ele = I->initializeUsingXML(element);
+    E->initializeUsingXML(element);
+    rho->initializeUsingXML(element);
+    ten->initializeUsingXML(element);
+    beny->initializeUsingXML(element);
+    benz->initializeUsingXML(element);
+    tor->initializeUsingXML(element);
+    return ele;
+  }
+
+  DOMElement* FlexibleBeamPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    n->writeXMLFile(element);
+    l->writeXMLFile(element);
+    A->writeXMLFile(element);
+    I->writeXMLFile(element);
+    E->writeXMLFile(element);
+    rho->writeXMLFile(element);
+    ten->writeXMLFile(element);
+    beny->writeXMLFile(element);
+    benz->writeXMLFile(element);
+    tor->writeXMLFile(element);
+    return nullptr;
+  }
+
+  FiniteElementsPage::FiniteElementsPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Flexible beam data");
 
     auto *mainlayout = new QVBoxLayout;
@@ -295,7 +337,27 @@ namespace MBSimGUI {
     return FlexibleBodyTool::PageBC;
   }
 
-  ReductionMethodsPage::ReductionMethodsPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* FiniteElementsPage::initializeUsingXML(DOMElement *element) {
+    E->initializeUsingXML(element);
+    DOMElement *ele = nu->initializeUsingXML(element);
+    rho->initializeUsingXML(element);
+    nodes->initializeUsingXML(element);
+    elements->initializeUsingXML(element);
+    exs->initializeUsingXML(element);
+    return ele;
+  }
+
+  DOMElement* FiniteElementsPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    E->writeXMLFile(element);
+    nu->writeXMLFile(element);
+    rho->writeXMLFile(element);
+    nodes->writeXMLFile(element);
+    elements->writeXMLFile(element);
+    exs->writeXMLFile(element);
+    return nullptr;
+  }
+
+  ReductionMethodsPage::ReductionMethodsPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Reduction method");
 
     auto *layout = new QVBoxLayout;
@@ -304,24 +366,24 @@ namespace MBSimGUI {
     auto label = new QLabel("Define the reduction method.");
     layout->addWidget(label);
 
-    rb1 = new QRadioButton("&Component mode synthesis");
-    rb2 = new QRadioButton("Mode shape matrix");
+    rb[0] = new QRadioButton("&Component mode synthesis");
+    rb[1] = new QRadioButton("Mode shape matrix");
 
-    rb1->setChecked(true);
+    rb[0]->setChecked(true);
 
     layout->addWidget(label);
-    layout->addWidget(rb1);
-    layout->addWidget(rb2);
+    layout->addWidget(rb[0]);
+    layout->addWidget(rb[1]);
   }
 
   int ReductionMethodsPage::nextId() const {
-   if(rb1->isChecked())
+   if(rb[0]->isChecked())
      return FlexibleBodyTool::PageBC;
    else
      return FlexibleBodyTool::PageModeShapes;
   }
 
-  BoundaryConditionsPage::BoundaryConditionsPage(QWidget *parent) : QWizardPage(parent) {
+  BoundaryConditionsPage::BoundaryConditionsPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Boundary conditions");
 
     auto *mainlayout = new QVBoxLayout;
@@ -350,7 +412,17 @@ namespace MBSimGUI {
     return FlexibleBodyTool::PageCMS;
   }
 
-  ModeShapesPage::ModeShapesPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* BoundaryConditionsPage::initializeUsingXML(DOMElement *element) {
+    bc->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* BoundaryConditionsPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    bc->writeXMLFile(element);
+    return nullptr;
+  }
+
+  ModeShapesPage::ModeShapesPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Mode shapes");
 
     auto *mainlayout = new QVBoxLayout;
@@ -379,10 +451,22 @@ namespace MBSimGUI {
   }
 
   int ModeShapesPage::nextId() const {
-    return FlexibleBodyTool::PageOMBV;
+    return FlexibleBodyTool::PageRRBM;
   }
 
-  ComponentModeSynthesisPage::ComponentModeSynthesisPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* ModeShapesPage::initializeUsingXML(DOMElement *element) {
+    DOMElement *ele = V->initializeUsingXML(element);
+    S->initializeUsingXML(element);
+    return ele;
+  }
+
+  DOMElement* ModeShapesPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    V->writeXMLFile(element);
+    S->writeXMLFile(element);
+    return nullptr;
+  }
+
+  ComponentModeSynthesisPage::ComponentModeSynthesisPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Component mode synthesis");
 
     auto *mainlayout = new QVBoxLayout;
@@ -399,17 +483,13 @@ namespace MBSimGUI {
     box->setLayout(layout);
     tab->setWidget(box);
 
-
     mainlayout->addWidget(tab);
 
-    inodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"interfaceNodeNumbers");
-    layout->addWidget(inodes);
+    idata = new ExtWidget("Interface data",new ListWidget(new CMSDataWidgetFactory(this),"Interface data",0,3,false,0),false,false,"");
+    layout->addWidget(idata);
 
     nmodes = new ExtWidget("Normal mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"normalModeNumbers");
     layout->addWidget(nmodes);
-
-    rrbm = new ExtWidget("Remove rigid body modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"removeRigidBodyModes");
-    layout->addWidget(rrbm);
 
     fbnm = new ExtWidget("Fixed-boundary normal modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"fixedBoundaryNormalModes");
     layout->addWidget(fbnm);
@@ -418,13 +498,76 @@ namespace MBSimGUI {
   }
 
   int ComponentModeSynthesisPage::nextId() const {
+    return FlexibleBodyTool::PageRRBM;
+  }
+
+  DOMElement* ComponentModeSynthesisPage::initializeUsingXML(DOMElement *element) {
+    idata->initializeUsingXML(element);
+    DOMElement *ele = nmodes->initializeUsingXML(element);
+    fbnm->initializeUsingXML(element);
+    return static_cast<ListWidget*>(idata->getWidget())->getSize()?element:ele;
+  }
+
+  DOMElement* ComponentModeSynthesisPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    idata->writeXMLFile(element);
+    nmodes->writeXMLFile(element);
+    fbnm->writeXMLFile(element);
+    return nullptr;
+  }
+
+  RemoveRigidBodyModesPage::RemoveRigidBodyModesPage(QWidget *parent) : WizardPage(parent) {
+    setTitle("Remove rigid body modes");
+
+    auto *mainlayout = new QVBoxLayout;
+    setLayout(mainlayout);
+
+    auto label = new QLabel("Remove rigid body modes.");
+    mainlayout->addWidget(label);
+
+    auto *tab = new QScrollArea;
+    tab->setWidgetResizable(true);
+    QWidget *box = new QWidget;
+    auto *layout = new QVBoxLayout;
+//    layout->setSpacing(15);
+    box->setLayout(layout);
+    tab->setWidget(box);
+
+    mainlayout->addWidget(tab);
+
+    rrbm = new ExtWidget("Remove rigid body modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"removeRigidBodyModes");
+    layout->addWidget(rrbm);
+
+    nrb = new ExtWidget("Number of rigid body modes",new SpinBoxWidget(6,1,6),true,false,MBSIMFLEX%"numberOfRigidBodyModes");
+    layout->addWidget(nrb);
+
+    ft = new ExtWidget("Frequency threshold",new ChoiceWidget(new ScalarWidgetFactory("100"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"frequencyThreshold");
+    layout->addWidget(ft);
+
+    layout->addStretch(1);
+  }
+
+  int RemoveRigidBodyModesPage::nextId() const {
     if(wizard()->hasVisitedPage(FlexibleBodyTool::PageExtFE))
       return FlexibleBodyTool::PageOMBV;
     else
       return FlexibleBodyTool::PageDamp;
   }
 
-  OpenMBVPage::OpenMBVPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* RemoveRigidBodyModesPage::initializeUsingXML(DOMElement *element) {
+    rrbm->initializeUsingXML(element);
+    nrb->initializeUsingXML(element);
+    ft->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* RemoveRigidBodyModesPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    rrbm->writeXMLFile(element);
+    nrb->writeXMLFile(element);
+    ft->writeXMLFile(element);
+    return nullptr;
+  }
+
+  OpenMBVPage::OpenMBVPage(QWidget *parent) : WizardPage(parent) {
     setTitle("OpenMBV");
 
     auto *mainlayout = new QVBoxLayout;
@@ -453,7 +596,17 @@ namespace MBSimGUI {
     return FlexibleBodyTool::PageDamp;
   }
 
-  DampingPage::DampingPage(QWidget *parent) : QWizardPage(parent) {
+  DOMElement* OpenMBVPage::initializeUsingXML(DOMElement *element) {
+    ombvIndices->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* OpenMBVPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    ombvIndices->writeXMLFile(element);
+    return nullptr;
+  }
+
+  DampingPage::DampingPage(QWidget *parent) : WizardPage(parent) {
     setTitle("Damping");
 
     auto *mainlayout = new QVBoxLayout;
@@ -484,7 +637,31 @@ namespace MBSimGUI {
     return FlexibleBodyTool::PageLast;
   }
 
-  FlexibleBodyTool::FlexibleBodyTool(QWidget *parent) : QWizard(parent) {
+  DOMElement* DampingPage::initializeUsingXML(DOMElement *element) {
+    mDamp->initializeUsingXML(element);
+    pDamp->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* DampingPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    mDamp->writeXMLFile(element);
+    pDamp->writeXMLFile(element);
+    return nullptr;
+  }
+
+  void Wizard::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("wizard/geometry").toByteArray());
+    QWizard::showEvent(event);
+  }
+
+  void Wizard::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("wizard/geometry", saveGeometry());
+    QWizard::hideEvent(event);
+  }
+
+  FlexibleBodyTool::FlexibleBodyTool(QWidget *parent) : Wizard(parent) {
     setPage(PageFirst, new FirstPage(this));
     setPage(PageExtFE, new ExternalFiniteElementsPage(this));
     setPage(PageCalculix, new CalculixPage(this));
@@ -494,10 +671,23 @@ namespace MBSimGUI {
     setPage(PageBC, new BoundaryConditionsPage(this));
     setPage(PageCMS, new ComponentModeSynthesisPage(this));
     setPage(PageModeShapes, new ModeShapesPage(this));
+    setPage(PageRRBM, new RemoveRigidBodyModesPage(this));
     setPage(PageOMBV, new OpenMBVPage(this));
     setPage(PageDamp, new DampingPage(this));
     setPage(PageLast, new LastPage(this));
+    setButtonText(QWizard::CustomButton1, "&Load");
+    setOption(QWizard::HaveCustomButton1, true);
+    setButtonText(QWizard::CustomButton2, "&Save");
+    setOption(QWizard::HaveCustomButton2, true);
+    button(QWizard::CustomButton2)->setDisabled(true);
     connect(button(QWizard::FinishButton),&QAbstractButton::clicked,this,&FlexibleBodyTool::create);
+    connect(this, &QWizard::customButtonClicked,this,[=](int which){
+	if(which==QWizard::CustomButton1)
+          load();
+	else
+	  save();
+	});
+    connect(this, &QWizard::currentIdChanged,this,[=](){ button(QWizard::CustomButton2)->setEnabled(hasVisitedPage(PageLast)); });
   }
 
   void FlexibleBodyTool::create() {
@@ -548,6 +738,13 @@ namespace MBSimGUI {
     sigs.clear();
     Mm.clear();
     Km.clear();
+    De0 <<= SymMatV();
+    mDamp.init(0);
+    pDamp.init(0);
+    rif.clear();
+    Phiif.clear();
+    Psiif.clear();
+    sigmahelif.clear();
     nodeTable.clear();
     nodeCount.clear();
     nodeNumbers.clear();
@@ -568,106 +765,35 @@ namespace MBSimGUI {
       auto doc = mw->impl->createDocument();
       auto element=MBXMLUtils::D(doc)->createElement(MBSIMFLEX%"InputData");
       doc->insertBefore(element, nullptr);
-      if(hasVisitedPage(PageExtFE)) {
-	static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->writeXMLFile(element);
-	static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->mass->writeXMLFile(element);
-	static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->stiff->writeXMLFile(element);
+      auto pageList = pageIds();
+      for(int i=0; i<pageList.size(); i++) {
+	if(hasVisitedPage(pageList.at(i)))
+	  static_cast<WizardPage*>(page(pageList.at(i)))->writeXMLFile(element);
       }
-      if(hasVisitedPage(PageCalculix))
-	static_cast<CalculixPage*>(page(PageCalculix))->file->writeXMLFile(element);
-      if(hasVisitedPage(PageFlexibleBeam)) {
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->ten->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->writeXMLFile(element);
-	static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->writeXMLFile(element);
-      }
-      if(hasVisitedPage(PageFiniteElements)) {
-	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->writeXMLFile(element);
-	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->writeXMLFile(element);
-	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->writeXMLFile(element);
-	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->writeXMLFile(element);
-	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->writeXMLFile(element);
-	static_cast<FiniteElementsPage*>(page(PageFiniteElements))->exs->writeXMLFile(element);
-      }
-      if(hasVisitedPage(PageBC))
-	static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->writeXMLFile(element);
-      if(hasVisitedPage(PageCMS)) {
-	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->writeXMLFile(element);
-	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->writeXMLFile(element);
-	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->writeXMLFile(element);
-	static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->writeXMLFile(element);
-      }
-      if(hasVisitedPage(PageModeShapes)) {
-	static_cast<ModeShapesPage*>(page(PageModeShapes))->V->writeXMLFile(element);
-	static_cast<ModeShapesPage*>(page(PageModeShapes))->S->writeXMLFile(element);
-      }
-      if(hasVisitedPage(PageOMBV))
-	static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->writeXMLFile(element);
-      if(hasVisitedPage(PageDamp)) {
-	static_cast<DampingPage*>(page(PageDamp))->mDamp->writeXMLFile(element);
-	static_cast<DampingPage*>(page(PageDamp))->pDamp->writeXMLFile(element);
-      }
-      static_cast<LastPage*>(page(PageLast))->inputFile->writeXMLFile(element);
       mw->serializer->writeToURI(doc, MBXMLUtils::X()%file.toStdString());
     }
   }
 
   void FlexibleBodyTool::load() {
+    restart();
     QString file=QFileDialog::getOpenFileName(this, "Open finite elements input data file", QFileInfo(mw->getProjectFilePath()).absolutePath(), "XML files (*.xml);;All files (*.*)");
     if(file.startsWith("//"))
       file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
     if(not file.isEmpty()) {
       auto doc = mw->parser->parseURI(MBXMLUtils::X()%file.toStdString());
       auto element = doc->getDocumentElement();
-      static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->initializeUsingXML(element);
-      static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->mass->initializeUsingXML(element);
-      static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->stiff->initializeUsingXML(element);
-      static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->initializeUsingXML(element);
-      static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->inodes->initializeUsingXML(element);
-      static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->initializeUsingXML(element);
-      static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->rrbm->initializeUsingXML(element);
-      static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->fbnm->initializeUsingXML(element);
-      static_cast<ModeShapesPage*>(page(PageModeShapes))->V->initializeUsingXML(element);
-      static_cast<ModeShapesPage*>(page(PageModeShapes))->S->initializeUsingXML(element);
-      static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->initializeUsingXML(element);
-      static_cast<CalculixPage*>(page(PageCalculix))->file->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->n->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->l->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->A->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->I->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->E->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->rho->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->ten->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->benz->initializeUsingXML(element);
-      static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->initializeUsingXML(element);
-      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->initializeUsingXML(element);
-      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->initializeUsingXML(element);
-      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->initializeUsingXML(element);
-      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->initializeUsingXML(element);
-      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->initializeUsingXML(element);
-      static_cast<FiniteElementsPage*>(page(PageFiniteElements))->exs->initializeUsingXML(element);
-      static_cast<DampingPage*>(page(PageDamp))->mDamp->initializeUsingXML(element);
-      static_cast<DampingPage*>(page(PageDamp))->pDamp->initializeUsingXML(element);
-      static_cast<LastPage*>(page(PageLast))->inputFile->initializeUsingXML(element);
-      if(MBXMLUtils::E(element->getFirstElementChild())->getTagName()==MBSIMFLEX%"nodes")
-	static_cast<FirstPage*>(page(PageFirst))->rb1->setChecked(true);
-      else if(MBXMLUtils::E(element->getFirstElementChild())->getTagName()==MBSIMFLEX%"resultFileName")
-	static_cast<FirstPage*>(page(PageFirst))->rb2->setChecked(true);
-      else if(MBXMLUtils::E(element->getFirstElementChild())->getTagName()==MBSIMFLEX%"numberOfNodes")
-	static_cast<FirstPage*>(page(PageFirst))->rb3->setChecked(true);
-      if(MBXMLUtils::E(element->getFirstElementChild())->getTagName()==MBSIMFLEX%"youngsModulus")
-	static_cast<FirstPage*>(page(PageFirst))->rb4->setChecked(true);
-      if(MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"modeShapeMatrix"))
-	static_cast<ReductionMethodsPage*>(page(PageRedMeth))->rb2->setChecked(true);
-      else
-	static_cast<ReductionMethodsPage*>(page(PageRedMeth))->rb1->setChecked(true);
+      auto pageList = pageIds();
+      vector<bool> pageActive(pageList.size());
+      for(int i=0; i<pageList.size(); i++)
+	pageActive[i] = static_cast<WizardPage*>(page(pageList.at(i)))->initializeUsingXML(element);
+      for(size_t i=0; i<4; i++) {
+	if(pageActive[i+1])
+	  static_cast<FirstPage*>(page(PageFirst))->rb[i]->setChecked(true);
+      }
+      for(size_t i=0; i<2; i++) {
+	if(pageActive[i+7])
+	  static_cast<ReductionMethodsPage*>(page(PageRedMeth))->rb[i]->setChecked(true);
+      }
     }
   }
 
