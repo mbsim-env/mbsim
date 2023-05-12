@@ -114,7 +114,6 @@ namespace MBSimGUI {
   }
 
   DOMElement* SuperposedSolutionVisualization::initializeUsingXML(DOMElement *e) {
-    cout << E(e)->getTagName().second << endl;
     frequencyAmplitudePhaseArray->initializeUsingXML(e);
     timeSpan->initializeUsingXML(e);
     includeTransientSolution->initializeUsingXML(e);
