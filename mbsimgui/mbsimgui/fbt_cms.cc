@@ -68,11 +68,18 @@ namespace MBSimGUI {
 
     list = static_cast<ListWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget());
     vector<vector<int>> inodes(list->getSize());
+    vector<vector<double>> weights(list->getSize());
     vector<bool> reduceToNode(list->getSize());
     vector<Indices> idof(list->getSize());
     vector<int> snn(list->getSize());
     for(int i=0; i<list->getSize(); i++) {
       inodes[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getNodes();
+      weights[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getWeights();
+      if(weights[i].size()==0) {
+	weights[i].resize(inodes[i].size());
+	for(size_t j=0; j<weights[i].size(); j++)
+	  weights[i][j] = 1;
+      }
       reduceToNode[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getReduceToSingleNode();
       idof[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getDof();
       for(size_t j=0; j<idof[i].size(); j++)
@@ -199,7 +206,6 @@ namespace MBSimGUI {
 	IJ.add(i);
       Ui_.set(iN,IJ,-slvLU(Krns,Krnh));
       Ui_.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
-      VecV weights;
 
       int ni = 0;
       bool rdn = false;
@@ -217,11 +223,9 @@ namespace MBSimGUI {
 	    singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
 	    Indices iHi;
 	    vector<Matrix<General,Fixed<6>,Var,double>> Jrr(inodes.size(),Matrix<General,Fixed<6>,Var,double>(6*inodes.size()));
-	    if(weights.size()==0)
-	      weights.resize(inodes[i].size(),INIT,1.0);
 	    double sum = 0;
 	    for(size_t j=0; j<inodes[i].size(); j++) {
-	      sum += weights(j);
+	      sum += weights[i][j];
 	      for(int k=0; k<nen; k++)
 		iHi.add(dofMapH[3*nodeTable[inodes[i][j]]+k]);
 	    }
@@ -240,13 +244,13 @@ namespace MBSimGUI {
 	    Mat3xV C(Ur.cols());
 	    Matrix<General,Fixed<6>,Var,double> Jr(Ur.cols());
 	    for(size_t j=0; j<inodes[i].size(); j++) {
-	      rr += (weights(j)/sum)*r[nodeTable[inodes[i][j]]];
-	      C += (weights(j)/sum)*(Phis[nodeTable[inodes[i][j]]]*Ur_);
+	      rr += (weights[i][j]/sum)*r[nodeTable[inodes[i][j]]];
+	      C += (weights[i][j]/sum)*(Phis[nodeTable[inodes[i][j]]]*Ur_);
 	    }
 	    for(size_t j=0; j<inodes[i].size(); j++) {
 	      SqrMat3 tr = tilde(r[nodeTable[inodes[i][j]]]-rr);
-	      A += (weights(j)/sum)*JTJ(tr);
-	      B += (weights(j)/sum)*tr*(Phis[nodeTable[inodes[i][j]]]*Ur_);
+	      A += (weights[i][j]/sum)*JTJ(tr);
+	      B += (weights[i][j]/sum)*tr*(Phis[nodeTable[inodes[i][j]]]*Ur_);
 	    }
 	    Jr.set(RangeV(0,2),RangeV(0,Jr.cols()-1), C);
 	    Jr.set(RangeV(3,5),RangeV(0,Jr.cols()-1), slvLL(A,B));

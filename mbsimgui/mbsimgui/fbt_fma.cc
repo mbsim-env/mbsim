@@ -42,25 +42,29 @@ namespace MBSimGUI {
       auto reduceToNode = static_cast<CMSDataWidget*>(list->getWidget(i))->getReduceToSingleNode();
       if(reduceToNode) {
 	auto inodes = static_cast<CMSDataWidget*>(list->getWidget(i))->getNodes();
-	double sum = 0;
-	for(size_t j=0; j<inodes.size(); j++) {
-	  //	//sum += weights(i);
-	  sum += 1.;
+	auto weights = static_cast<CMSDataWidget*>(list->getWidget(i))->getWeights();
+	if(weights.size()==0) {
+	  weights.resize(inodes.size());
+	  for(size_t j=0; j<weights.size(); j++)
+	    weights[j] = 1;
 	}
+	double sum = 0;
+	for(size_t j=0; j<inodes.size(); j++)
+	  sum += weights[j];
 	Vec3 ri;
 	Mat3xV Phii(nM);
 	Mat3xV Psii(nM,NONINIT);
 	Matrix<General,Fixed<6>,Var,double> sigmaheli(nM);
 	for(size_t j=0; j<inodes.size(); j++) {
-	  ri += (1./sum)*r[nodeTable[inodes[j]]];
-	  Phii += (1./sum)*Phi[nodeTable[inodes[j]]];
+	  ri += (weights[j]/sum)*r[nodeTable[inodes[j]]];
+	  Phii += (weights[j]/sum)*Phi[nodeTable[inodes[j]]];
 	}
 	SymMat3 A;
 	Mat3xV B(nM);
 	for(size_t j=0; j<inodes.size(); j++) {
 	  SqrMat3 tr = tilde(r[nodeTable[inodes[j]]]-ri);
-	  A += (1./sum)*JTJ(tr);
-	  B += (1./sum)*tr*(Phi[nodeTable[inodes[j]]]);
+	  A += (weights[j]/sum)*JTJ(tr);
+	  B += (weights[j]/sum)*tr*(Phi[nodeTable[inodes[j]]]);
 	}
 	Psii = slvLL(A,B);
 	rif.push_back(ri);

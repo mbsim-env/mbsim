@@ -179,11 +179,12 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       std::vector<int> getNodes() const;
+      std::vector<double> getWeights() const;
       bool getReduceToSingleNode() const;
       std::vector<int> getDof() const;
       int getSingleNodeNumber() const;
     private:
-      ExtWidget *nodes, *rtsn, *dof, *snn;
+      ExtWidget *nodes, *weights, *rtsn, *dof, *snn;
   };
 
   class CMSDataWidgetFactory : public WidgetFactory {

@@ -438,10 +438,10 @@ namespace MBSimGUI {
     nodes = new ExtWidget("Boundary node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"boundaryNodeNumbers");
     layout->addWidget(nodes);
 
-    dof = new ExtWidget("Degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"degreesOfFreedom");
+    dof = new ExtWidget("Constrained degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"constrainedDegreesOfFreedom");
     layout->addWidget(dof);
 
-//    dof = new ExtWidget("Degrees of freedom",new DofWidget(this),false,false,MBSIMFLEX%"degreesOfFreedom");
+//    dof = new ExtWidget("Degrees of freedom",new DofWidget(this),false,false,MBSIMFLEX%"constrainedDegreesOfFreedom");
 //    layout->addWidget(dof);
   }
 
@@ -457,7 +457,7 @@ namespace MBSimGUI {
     DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"boundaryNodeNumbers");
     nodes->getWidget()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
-    ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"degreesOfFreedom");
+    ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"constrainedDegreesOfFreedom");
     dof->getWidget()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     return nullptr;
@@ -523,13 +523,16 @@ namespace MBSimGUI {
     nodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"interfaceNodeNumbers");
     layout->addWidget(nodes);
 
-    rtsn = new ExtWidget("Reduce to single node",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"reduceToSingleNode");
+    weights = new ExtWidget("Weighting factors for interface nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"weightingFactorsForInterfaceNodes");
+    layout->addWidget(weights);
+
+    rtsn = new ExtWidget("Reduce to single interface node",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"reduceToSingleInterfaceNode");
     layout->addWidget(rtsn);
 
-    dof = new ExtWidget("Degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"degreesOfFreedom");
+    dof = new ExtWidget("Degrees of freedom of single inteface node",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"degreesOfFreedomOfSingleInterfaceNode");
     layout->addWidget(dof);
 
-    snn = new ExtWidget("Single node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"singleNodeNumber");
+    snn = new ExtWidget("Single interface node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"singleInterfaceNodeNumber");
     layout->addWidget(snn);
   }
 
@@ -540,6 +543,17 @@ namespace MBSimGUI {
     for(size_t i=0; i<mat.size(); i++)
       inodes[i] = mat[i][0].toInt();
     return inodes;
+  }
+
+ vector<double> CMSDataWidget::getWeights() const {
+    vector<double> w;
+    if(weights->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(weights->getWidget())->getWidget())->getWidget()->getEvalMat();
+      w.resize(mat.size());
+      for(size_t i=0; i<mat.size(); i++)
+	w[i] = mat[i][0].toDouble();
+    }
+    return w;
   }
 
   bool CMSDataWidget::getReduceToSingleNode() const {
@@ -577,17 +591,22 @@ namespace MBSimGUI {
   DOMElement* CMSDataWidget::initializeUsingXML(DOMElement *element) {
     nodes->getWidget()->initializeUsingXML(element);
     element = element->getNextElementSibling();
-    if(E(element)->getTagName()==MBSIMFLEX%"reduceToSingleNode") {
+    if(E(element)->getTagName()==MBSIMFLEX%"weightingFactorsForInterfaceNodes") {
+      weights->setActive(true);
+      weights->getWidget()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    if(E(element)->getTagName()==MBSIMFLEX%"reduceToSingleInterfaceNode") {
       rtsn->setActive(true);
       rtsn->getWidget()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
-    if(E(element)->getTagName()==MBSIMFLEX%"dof") {
+    if(E(element)->getTagName()==MBSIMFLEX%"degreesOfFreedomOfSingleInterfaceNode") {
       dof->setActive(true);
       dof->getWidget()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
-    if(E(element)->getTagName()==MBSIMFLEX%"singleNodeNumber") {
+    if(E(element)->getTagName()==MBSIMFLEX%"singleInterfaceNodeNumber") {
       snn->setActive(true);
       snn->getWidget()->initializeUsingXML(element);
       element = element->getNextElementSibling();
@@ -599,18 +618,23 @@ namespace MBSimGUI {
     DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"interfaceNodeNumbers");
     nodes->getWidget()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
+    if(weights->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"weightingFactorsForInterfaceNodes");
+      weights->getWidget()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
     if(rtsn->isActive()) {
-      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"reduceToSingleNode");
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"reduceToSingleInterfaceNode");
       rtsn->getWidget()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     if(dof->isActive()) {
-      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"dof");
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"degreesOfFreedomOfSingleInterfaceNode");
       dof->getWidget()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     if(dof->isActive()) {
-      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleNodeNumber");
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleInterfaceNodeNumber");
       snn->getWidget()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
