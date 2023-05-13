@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<InputData xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
+
+  <youngsModulus unit="N/m^2">2.1e11</youngsModulus>
+
+  <poissonsRatio unit="-">0.3</poissonsRatio>
+
+  <density unit="kg/m^3">7800</density>
+
+  <nodes>"nodes.asc"</nodes>
+
+  <elementType>"C3D20"</elementType>
+
+  <elements>"elements.asc"</elements>
+
+  <boundaryNodeNumbers>[97; 96; 95; 94; 93; 20; 19; 18; 17; 16; 15; 14; 13; 12; 11; 10; 9 ; 4 ; 3 ; 2 ; 1]
+</boundaryNodeNumbers>
+
+  <constrainedDegreesOfFreedom>[1;2;3]</constrainedDegreesOfFreedom>
+
+  <interfaceNodeNumbers>[5;  6;  7;  8;  22;  25;  28;  31;  100]</interfaceNodeNumbers>
+
+  <reduceToSingleInterfaceNode>true</reduceToSingleInterfaceNode>
+
+  <proportionalDamping>
+    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ele>50</ele>
+      <ele>0.00001</ele>
+    </xmlVector>
+  </proportionalDamping>
+
+  <inputDataFileName>"input_data.h5"</inputDataFileName>
+
+</InputData>
