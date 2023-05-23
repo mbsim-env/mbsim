@@ -239,16 +239,15 @@ namespace MBSimGUI {
 	  ni = 0;
 	  for(size_t i=0; i<inodes.size(); i++) {
 	    if(reduceToNode[i]) {
-	      double sum = 0;
-	      for(size_t j=0; j<inodes[i].size(); j++)
-		sum += weights[i][j];
+	      singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
 	      Vec3 rr;
 	      for(size_t j=0; j<inodes[i].size(); j++)
-		rr += (weights[i][j]/sum)*r[nodeTable[inodes[i][j]]];
+		rr += (1./inodes[i].size())*r[nodeTable[inodes[i][j]]];
+	      rif.push_back(rr);
 	      for(size_t j=0; j<inodes[i].size(); j++) {
 		Mat3xV T(6,NONINIT);
 		T.set(RangeV(0,2),RangeV(0,2),SqrMat3(Eye()));
-		T.set(RangeV(0,2),RangeV(3,5),tilde(r[nodeTable[inodes[i][j]]]-rr));
+		T.set(RangeV(0,2),RangeV(3,5),-tilde(r[nodeTable[inodes[i][j]]]-rr));
 		D.set(span(dofMapH[3*nodeTable[inodes[i][j]]],dofMapH[3*nodeTable[inodes[i][j]]]+2),span(ni,ni+idof[i].size()-1),T(span(0,2),idof[i]));
 	      }
 	      ni += idof[i].size();
@@ -378,9 +377,9 @@ namespace MBSimGUI {
       }
     }
 
+    Mat V;
+    Vec w;
     if(nmodes.size()) {
-      Mat V;
-      Vec w;
       if(normalModes==freeBoundaryNormalModes) {
 	SymSparseMat Mrs, Krs;
 	if(Mm.size()) {
@@ -415,7 +414,7 @@ namespace MBSimGUI {
       }
       else if(normalModes==constrainedBoundaryNormalModes) {
 	eigvec(Krcs,Mrcs,max(nmodes),1,V,w,0.01);
-	Un.resize(Ks.size(),4,NONINIT);
+	Un.resize(Ks.size(),nmodes.size(),NONINIT);
 	for(size_t i=0; i<nmodes.size(); i++) {
 	  Un.set(iN,i,V.col(nmodes[i]-1)(RangeV(0,iN.size()-1)));
 	  Un.set(iH,i,D*V.col(nmodes[i]-1)(RangeV(iN.size(),V.rows()-1)));
@@ -424,12 +423,28 @@ namespace MBSimGUI {
       }
     }
 
+    if(typeOfConstraint==kinematic) {
+      int ni = 0;
+      SymMatV I(6,Eye());
+      for(size_t i=0; i<inodes.size(); i++) {
+	MatV PhiPsii(6,Ui.cols()+Un.cols());
+	Matrix<General,Fixed<6>,Var,double> sigmaheli(Ui.cols()+Un.cols());
+	PhiPsii.set(idof[i],span(ni,ni+idof[i].size()-1),I(idof[i]));
+	for(size_t j=0; j<nmodes.size(); j++)
+	  PhiPsii.set(idof[i],Ui.cols()+j,V.col(nmodes[j]-1)(RangeV(iN.size()+ni,iN.size()+ni+idof[i].size()-1)));
+	ni += idof[i].size();
+	Phiif.push_back(PhiPsii(RangeV(0,2),RangeV(0,PhiPsii.cols()-1)));
+	Psiif.push_back(PhiPsii(RangeV(3,5),RangeV(0,PhiPsii.cols()-1)));
+	sigmahelif.push_back(sigmaheli);
+      }
+    }
+
     if(not Mm.size()) {
       delete Krns.Ip();
       delete Krns.Jp();
     }
 
-    U.resize(Ks.size(),Ui.cols() + Un.cols(),NONINIT);
+    U.resize(Ks.size(),Ui.cols()+Un.cols(),NONINIT);
     for(int i=0; i<Ui.cols(); i++)
       U.set(i,Ui.col(i));
     for(int i=Ui.cols(), j=0; i<Ui.cols()+Un.cols(); i++, j++)
