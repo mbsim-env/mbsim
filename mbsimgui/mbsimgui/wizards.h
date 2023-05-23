@@ -152,7 +152,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
-      ExtWidget *idata, *nmodes, *fbnm;
+      ExtWidget *typeOfConstraint, *idata, *nmodes, *normalModes;
   };
 
   class RemoveRigidBodyModesPage : public WizardPage {
@@ -198,6 +198,15 @@ namespace MBSimGUI {
 
   class FlexibleBodyTool : public Wizard {
     public:
+      enum TypeOfConstraint {
+	distributing=0,
+	kinematic
+      };
+      enum NormalModes {
+	freeBoundaryNormalModes=0,
+	fixedBoundaryNormalModes,
+	constrainedBoundaryNormalModes
+      };
       FlexibleBodyTool(QWidget *parent);
       enum {
 	PageFirst,
@@ -222,10 +231,10 @@ namespace MBSimGUI {
       static fmatvec::MatV readMat(const std::string &file);
       fmatvec::SymSparseMat createSymSparseMat(const std::vector<std::map<int,double>> &Am);
       fmatvec::SparseMat createSparseMat(int n, const std::vector<std::map<int,double>> &Am);
-      std::vector<std::map<int,double>> reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iF);
-      fmatvec::MatV reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
-      void reduceMat(const fmatvec::SymSparseMat &Ms, const fmatvec::SymSparseMat &Ks, fmatvec::SymSparseMat &Mrs, fmatvec::SymSparseMat &Krs, int n, const std::vector<std::vector<int>> &activeDof, const std::vector<int> &dofMap);
-      fmatvec::MatV reduceMat(const fmatvec::SymSparseMat &Ks, const fmatvec::Indices &iN, const fmatvec::Indices &iH, const std::vector<std::vector<int>> &activeDof, const std::vector<int> &dofMapN, const std::vector<int> &dofMapH);
+      std::vector<std::map<int,double>> reduceMat(const std::vector<std::map<int,double>> &Am, int n, const fmatvec::MatVI &activeDof, const std::vector<int> &dofMap, int val=1);
+      fmatvec::MatV reduceMat(const std::vector<std::map<int,double>> &Am, int m, int n, const fmatvec::MatVI &activeDof, const std::vector<int> &dofMapN, const std::vector<int> &dofMapH);
+      void reduceMat(const fmatvec::SymSparseMat &Ms, const fmatvec::SymSparseMat &Ks, fmatvec::SymSparseMat &Mrs, fmatvec::SymSparseMat &Krs, int n, const fmatvec::MatVI &activeDof, const std::vector<int> &dofMap, int val=1);
+      fmatvec::MatV reduceMat(const fmatvec::SymSparseMat &Ks, int m, int n, const fmatvec::MatVI &activeDof, const std::vector<int> &dofMapN, const std::vector<int> &dofMapH);
       void extfe();
       void calculix();
       void beam();
@@ -263,7 +272,6 @@ namespace MBSimGUI {
       std::vector<fmatvec::Vec3> rif;
       std::vector<fmatvec::Mat3xV> Phiif, Psiif;
       std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahelif;
-
   };
 
 }

@@ -102,76 +102,55 @@ namespace MBSimGUI {
     return As;
   }
 
-  vector<map<int,double>> FlexibleBodyTool::reduceMat(const vector<map<int,double>> &Am, const Indices &iF) {
-    vector<map<int,double>> Amr;
-    vector<int> map(Am.size());
-    size_t h=0, k=0;
-    for(size_t i=0; i<map.size(); i++) {
-      if(h<iF.size() and i==iF[h]) {
-	h++;
-	map[i] = k++;
-      }
-      else
-	map[i] = -1;
-    }
-    Amr.resize(k);
-    k=0;
+  vector<map<int,double>> FlexibleBodyTool::reduceMat(const vector<map<int,double>> &Am, int n, const MatVI &activeDof, const vector<int> &dofMap, int val) {
+    vector<map<int,double>> Amr(n);
+    int ii = 0;
     for(const auto & i : Am) {
-      if(map[k]>=0) {
+      if(activeDof.e(ii)==val) {
 	for(const auto & j : i) {
-	  if(map[j.first]>=0)
-	    Amr[map[k]][map[j.first]] = j.second;
+	  if(activeDof.e(j.first)==val)
+	    Amr[dofMap[ii]][dofMap[j.first]] = j.second;
 	}
       }
-      k++;
+      ii++;
     }
     return Amr;
   }
 
-  MatV FlexibleBodyTool::reduceMat(const vector<map<int,double>> &Am, const Indices &iN, const Indices &iH) {
-    vector<int> mapR(Am.size()), mapC(Am.size());
-    size_t hN=0, kN=0, hH=0, kH=0;
-    for(size_t i=0; i<mapR.size(); i++) {
-      if(hN<iN.size() and i==iN[hN]) {
-	hN++;
-	mapR[i] = kN++;
-      }
-      else
-	mapR[i] = -1;
-      if(hH<iH.size() and i==iH[hH]) {
-	hH++;
-	mapC[i] = kH++;
-      }
-      else
-	mapC[i] = -1;
-    }
-    MatV Ar(iN.size(),iH.size());
-    int k = 0;
+  MatV FlexibleBodyTool::reduceMat(const vector<map<int,double>> &Am, int m, int n, const MatVI &activeDof, const vector<int> &dofMapN, const vector<int> &dofMapH) {
+    MatV Krnh(m,n);
+    int ii = 0;
     for(const auto & i : Am) {
-      for(const auto & j : i) {
-	if(mapR[k]>=0 and mapC[j.first]>=0)
-	  Ar(mapR[k],mapC[j.first]) = j.second;
-	else if(mapR[j.first]>=0 and mapC[k]>=0)
-	  Ar(mapR[j.first],mapC[k]) = j.second;
+      if(activeDof.e(ii)==1) {
+	for(const auto & j : i) {
+	  if(activeDof.e(j.first)==2)
+	    Krnh(dofMapN[ii],dofMapH[j.first]) = j.second;
+	}
       }
-      k++;
+      else if(activeDof.e(ii)==2) {
+	for(const auto & j : i) {
+	  if(activeDof.e(j.first)==1)
+	    Krnh(dofMapN[j.first],dofMapH[ii]) = j.second;
+	}
+      }
+      ii++;
     }
-    return Ar;
+    return Krnh;
   }
 
-  void FlexibleBodyTool::reduceMat(const SymSparseMat &Ms, const SymSparseMat &Ks, SymSparseMat &Mrs, SymSparseMat &Krs, int n, const vector<vector<int>> &activeDof, const vector<int> &dofMap) {
+  void FlexibleBodyTool::reduceMat(const SymSparseMat &Ms, const SymSparseMat &Ks, SymSparseMat &Mrs, SymSparseMat &Krs, int n, const MatVI &activeDof, const vector<int> &dofMap, int val) {
     int nen = net + ner;
     int nzer = 0;
     for(size_t i=0; i<r.size(); i++) {
       for(int k=0; k<nen; k++) {
-	if(activeDof[i][k]==1) {
+	if(activeDof(i,k)==val) {
 	  for(int l=k; l<nen; l++) {
-	    if(activeDof[i][l]==1)
+	    if(activeDof(i,l)==val)
 	      nzer++;
 	  }
 	  for(const auto & j : links[i]) {
 	    for(int l=0; l<nen; l++) {
-	      if(activeDof[j.first][l]==1)
+	      if(activeDof(j.first,l)==val)
 		nzer++;
 	    }
 	  }
@@ -188,52 +167,69 @@ namespace MBSimGUI {
     int ii = 0, kk = 0, ll = 0;
     for(size_t i=0; i<r.size(); i++) {
       for(int k=0; k<nen; k++) {
-	for(int l=k; l<nen; l++) {
-	  if(activeDof[i][k]==1 and activeDof[i][l]==1) {
-	    Mrs()[ll] = Ms()[kk];
-	    Krs()[ll] = Ks()[kk];
-	    Jpr[ll++] = dofMap[nen*i+l];
-	  }
-	  kk++;
-	}
-	for(const auto & j : links[i]) {
-	  for(int l=0; l<nen; l++) {
-	    if(activeDof[i][k]==1 and activeDof[j.first][l]==1) {
+	if(activeDof(i,k)==val) {
+	  for(int l=k; l<nen; l++) {
+	    if(activeDof(i,l)==val) {
 	      Mrs()[ll] = Ms()[kk];
 	      Krs()[ll] = Ks()[kk];
-	      Jpr[ll++] = dofMap[nen*j.first+l];
+	      Jpr[ll++] = dofMap[nen*i+l];
 	    }
 	    kk++;
 	  }
-	}
-	if(activeDof[i][k]==1)
+	  for(const auto & j : links[i]) {
+	    for(int l=0; l<nen; l++) {
+	      if(activeDof(j.first,l)==val) {
+		Mrs()[ll] = Ms()[kk];
+		Krs()[ll] = Ks()[kk];
+		Jpr[ll++] = dofMap[nen*j.first+l];
+	      }
+	      kk++;
+	    }
+	  }
 	  Ipr[++ii] = ll;
+	}
+	else
+	  kk += nen-k+links[i].size()*nen;
       }
     }
   }
 
-  MatV FlexibleBodyTool::reduceMat(const SymSparseMat &Ks, const Indices &iN, const Indices &iH, const vector<vector<int>> &activeDof, const vector<int> &dofMapN, const vector<int> &dofMapH) {
-    MatV Krnh(iN.size(),iH.size());
+  MatV FlexibleBodyTool::reduceMat(const SymSparseMat &Ks, int m, int n, const MatVI &activeDof, const vector<int> &dofMapN, const vector<int> &dofMapH) {
+    MatV Krnh(m,n);
     int nen = net + ner;
     int kk = 0;
     for(size_t i=0; i<r.size(); i++) {
       for(int k=0; k<nen; k++) {
-	for(int l=k; l<nen; l++) {
-	  if(activeDof[i][k]==1 and activeDof[i][l]==2)
-	    Krnh(dofMapN[nen*i+k],dofMapH[nen*i+l]) = Ks()[kk];
-	  else if(activeDof[i][l]==1 and activeDof[i][k]==2)
-	    Krnh(dofMapN[nen*i+l],dofMapH[nen*i+k]) = Ks()[kk];
-	  kk++;
-	}
-	for(const auto & j : links[i]) {
-	  for(int l=0; l<nen; l++) {
-	    if(activeDof[i][k]==1 and activeDof[j.first][l]==2)
-	      Krnh(dofMapN[nen*i+k],dofMapH[nen*j.first+l]) = Ks()[kk];
-	    if(activeDof[j.first][l]==1 and activeDof[i][k]==2)
-	      Krnh(dofMapN[nen*j.first+l],dofMapH[nen*i+k]) = Ks()[kk];
+	if(activeDof(i,k)==1) {
+	  for(int l=k; l<nen; l++) {
+	    if(activeDof(i,l)==2)
+	      Krnh(dofMapN[nen*i+k],dofMapH[nen*i+l]) = Ks()[kk];
 	    kk++;
 	  }
+	  for(const auto & j : links[i]) {
+	    for(int l=0; l<nen; l++) {
+	      if(activeDof(j.first,l)==2)
+		Krnh(dofMapN[nen*i+k],dofMapH[nen*j.first+l]) = Ks()[kk];
+	      kk++;
+	    }
+	  }
 	}
+	else if(activeDof(i,k)==2) {
+	  for(int l=k; l<nen; l++) {
+	    if(activeDof(i,l)==1)
+	      Krnh(dofMapN[nen*i+l],dofMapH[nen*i+k]) = Ks()[kk];
+	    kk++;
+	  }
+	  for(const auto & j : links[i]) {
+	    for(int l=0; l<nen; l++) {
+	      if(activeDof(j.first,l)==1)
+		Krnh(dofMapN[nen*j.first+l],dofMapH[nen*i+k]) = Ks()[kk];
+	      kk++;
+	    }
+	  }
+	}
+	else
+	  kk += nen-k+links[i].size()*nen;
       }
     }
     return Krnh;

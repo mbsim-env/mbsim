@@ -633,7 +633,7 @@ namespace MBSimGUI {
       dof->getWidget()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
-    if(dof->isActive()) {
+    if(snn->isActive()) {
       ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleInterfaceNodeNumber");
       snn->getWidget()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);

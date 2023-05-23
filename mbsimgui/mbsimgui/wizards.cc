@@ -485,14 +485,24 @@ namespace MBSimGUI {
 
     mainlayout->addWidget(tab);
 
+    vector<QString> list;
+    list.emplace_back("\"distributing\"");
+    list.emplace_back("\"kinematic\"");
+    typeOfConstraint = new ExtWidget("Type of constraint",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"typeOfConstraint");
+    layout->addWidget(typeOfConstraint);
+
     idata = new ExtWidget("Interface data",new ListWidget(new CMSDataWidgetFactory(this),"Interface data",0,3,false,0),false,false,"");
     layout->addWidget(idata);
 
     nmodes = new ExtWidget("Normal mode numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"normalModeNumbers");
     layout->addWidget(nmodes);
 
-    fbnm = new ExtWidget("Fixed-boundary normal modes",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"fixedBoundaryNormalModes");
-    layout->addWidget(fbnm);
+    list.clear();
+    list.emplace_back("\"freeBoundaryNormalModes\"");
+    list.emplace_back("\"fixedBoundaryNormalModes\"");
+    list.emplace_back("\"constrainedBoundaryNormalModes\"");
+    normalModes = new ExtWidget("Normal modes",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"normalModes");
+    layout->addWidget(normalModes);
 
     layout->addStretch(1);
   }
@@ -502,16 +512,18 @@ namespace MBSimGUI {
   }
 
   DOMElement* ComponentModeSynthesisPage::initializeUsingXML(DOMElement *element) {
+    typeOfConstraint->initializeUsingXML(element);
     idata->initializeUsingXML(element);
     DOMElement *ele = nmodes->initializeUsingXML(element);
-    fbnm->initializeUsingXML(element);
+    normalModes->initializeUsingXML(element);
     return static_cast<ListWidget*>(idata->getWidget())->getSize()?element:ele;
   }
 
   DOMElement* ComponentModeSynthesisPage::writeXMLFile(DOMNode *element, DOMNode *ref) {
+    typeOfConstraint->writeXMLFile(element);
     idata->writeXMLFile(element);
     nmodes->writeXMLFile(element);
-    fbnm->writeXMLFile(element);
+    normalModes->writeXMLFile(element);
     return nullptr;
   }
 
