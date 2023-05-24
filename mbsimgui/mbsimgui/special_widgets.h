@@ -183,8 +183,9 @@ namespace MBSimGUI {
       bool getReduceToSingleNode() const;
       std::vector<int> getDof() const;
       int getSingleNodeNumber() const;
+      std::vector<double> getPositionOfReferenceNode() const;
     private:
-      ExtWidget *nodes, *weights, *rtsn, *dof, *snn;
+      ExtWidget *nodes, *weights, *rtsn, *dof, *snn, *prf;
   };
 
   class CMSDataWidgetFactory : public WidgetFactory {

@@ -534,6 +534,9 @@ namespace MBSimGUI {
 
     snn = new ExtWidget("Single interface node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"singleInterfaceNodeNumber");
     layout->addWidget(snn);
+
+    prf = new ExtWidget("Position of reference node",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"positionOfReferenceNode");
+    layout->addWidget(prf);
   }
 
  vector<int> CMSDataWidget::getNodes() const {
@@ -588,6 +591,17 @@ namespace MBSimGUI {
       return -1;
   }
 
+  vector<double> CMSDataWidget::getPositionOfReferenceNode() const {
+    vector<double> r;
+    if(prf->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(prf->getWidget())->getWidget())->getWidget()->getEvalMat();
+      r.resize(mat.size());
+      for(size_t i=0; i<mat.size(); i++)
+	r[i] = mat[i][0].toDouble();
+    }
+    return r;
+  }
+
   DOMElement* CMSDataWidget::initializeUsingXML(DOMElement *element) {
     nodes->getWidget()->initializeUsingXML(element);
     element = element->getNextElementSibling();
@@ -609,6 +623,11 @@ namespace MBSimGUI {
     if(E(element)->getTagName()==MBSIMFLEX%"singleInterfaceNodeNumber") {
       snn->setActive(true);
       snn->getWidget()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    if(E(element)->getTagName()==MBSIMFLEX%"positionOfReferenceNode") {
+      prf->setActive(true);
+      prf->getWidget()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
     return element;
@@ -636,6 +655,11 @@ namespace MBSimGUI {
     if(snn->isActive()) {
       ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleInterfaceNodeNumber");
       snn->getWidget()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    if(prf->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"positionOfReferenceNode");
+      prf->getWidget()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     return nullptr;

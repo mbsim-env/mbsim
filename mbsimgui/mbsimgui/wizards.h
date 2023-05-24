@@ -247,6 +247,7 @@ namespace MBSimGUI {
       void rrbm();
       void damp();
       void exp();
+      void createSingleInterfaceNodes();
       fmatvec::MatV M, K, U, S;
       fmatvec::VecV mDamp;
       fmatvec::Vec2 pDamp;

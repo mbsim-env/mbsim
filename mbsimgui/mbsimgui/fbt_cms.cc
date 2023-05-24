@@ -106,6 +106,7 @@ namespace MBSimGUI {
     vector<bool> reduceToNode(list->getSize());
     vector<Indices> idof(list->getSize());
     vector<int> snn(list->getSize());
+    vector<vector<double>> prf(list->getSize());
     for(int i=0; i<list->getSize(); i++) {
       inodes[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getNodes();
       weights[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getWeights();
@@ -119,6 +120,7 @@ namespace MBSimGUI {
       for(size_t j=0; j<idof[i].size(); j++)
 	idof[i].set(j,idof[i][j]-1);
       snn[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getSingleNodeNumber();
+      prf[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getPositionOfReferenceNode();
     }
 
     vector<int> nmodes;
@@ -241,8 +243,13 @@ namespace MBSimGUI {
 	    if(reduceToNode[i]) {
 	      singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
 	      Vec3 rr;
-	      for(size_t j=0; j<inodes[i].size(); j++)
-		rr += (1./inodes[i].size())*r[nodeTable[inodes[i][j]]];
+	      if(prf[i].size())
+		rr = Vec3(prf[i]);
+	      else {
+		for(size_t j=0; j<inodes[i].size(); j++)
+		  rr += (1./inodes[i].size())*r[nodeTable[inodes[i][j]]];
+	      }
+	      cout << rr << endl;
 	      rif.push_back(rr);
 	      for(size_t j=0; j<inodes[i].size(); j++) {
 		Mat3xV T(6,NONINIT);

@@ -19,6 +19,10 @@
 
 #include <config.h>
 #include "wizards.h"
+#include "basic_widgets.h"
+#include "variable_widgets.h"
+#include "extended_widgets.h"
+#include "special_widgets.h"
 #include <iostream>
 
 using namespace std;
@@ -233,6 +237,54 @@ namespace MBSimGUI {
       }
     }
     return Krnh;
+  }
+
+  void FlexibleBodyTool::createSingleInterfaceNodes() {
+    int nM = U.cols();
+    auto *list = static_cast<ListWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget());
+    FlexibleBodyTool::TypeOfConstraint typeOfConstraint = FlexibleBodyTool::distributing;
+    if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->isActive()) {
+      auto str = static_cast<TextChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->getWidget())->getText();
+      if(str=="\"distributing\"") typeOfConstraint=FlexibleBodyTool::distributing;
+      else if(str=="\"kinematic\"") typeOfConstraint=FlexibleBodyTool::kinematic;
+    }
+    if(typeOfConstraint==distributing) {
+      for(int i=0; i<list->getSize(); i++) {
+	auto reduceToNode = static_cast<CMSDataWidget*>(list->getWidget(i))->getReduceToSingleNode();
+	if(reduceToNode) {
+	  auto inodes = static_cast<CMSDataWidget*>(list->getWidget(i))->getNodes();
+	  auto weights = static_cast<CMSDataWidget*>(list->getWidget(i))->getWeights();
+	  if(weights.size()==0) {
+	    weights.resize(inodes.size());
+	    for(size_t j=0; j<weights.size(); j++)
+	      weights[j] = 1;
+	  }
+	  double sum = 0;
+	  for(size_t j=0; j<inodes.size(); j++)
+	    sum += weights[j];
+	  Vec3 ri;
+	  Mat3xV Phii(nM);
+	  Mat3xV Psii(nM,NONINIT);
+	  Matrix<General,Fixed<6>,Var,double> sigmaheli(nM);
+	  for(size_t j=0; j<inodes.size(); j++) {
+	    ri += (weights[j]/sum)*r[nodeTable[inodes[j]]];
+	    Phii += (weights[j]/sum)*Phi[nodeTable[inodes[j]]];
+	  }
+	  SymMat3 A;
+	  Mat3xV B(nM);
+	  for(size_t j=0; j<inodes.size(); j++) {
+	    SqrMat3 tr = tilde(r[nodeTable[inodes[j]]]-ri);
+	    A += (weights[j]/sum)*JTJ(tr);
+	    B += (weights[j]/sum)*tr*(Phi[nodeTable[inodes[j]]]);
+	  }
+	  Psii = slvLL(A,B);
+	  rif.push_back(ri);
+	  Phiif.push_back(Phii);
+	  Psiif.push_back(Psii);
+	  sigmahelif.push_back(sigmaheli);
+	}
+      }
+    }
   }
 
 }
