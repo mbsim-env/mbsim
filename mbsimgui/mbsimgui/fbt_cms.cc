@@ -194,6 +194,11 @@ namespace MBSimGUI {
 
     MatV Ui, Un, D;
     SymSparseMat Ms, Mrcs, Krcs, Krns, Mrns;
+    if(not Mm.size()) {
+      Ms <<= PPdms[0];
+      for(int i=0; i<Ms.nonZeroElements(); i++)
+	Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
+    }
     if(iH.size()) {
       vector<int> dofMapH(nen*nN);
       for(size_t i=0, l=0, k=0; i<nN; i++) {
@@ -221,9 +226,6 @@ namespace MBSimGUI {
 	Krnh <<= reduceMat(Km,iN.size(),iH.size(),activeDof,dofMapN,dofMapH);
       }
       else {
-	Ms <<= PPdms[0];
-	for(int i=0; i<Ms.nonZeroElements(); i++)
-	  Ms()[i] += PPdms[1]()[i]+PPdms[2]()[i];
 	reduceMat(Ms,Ks,Mrns,Krns,iN.size(),activeDof,dofMapN);
 	Krnh <<= reduceMat(Ks,iN.size(),iH.size(),activeDof,dofMapN,dofMapH);
       }
@@ -249,7 +251,6 @@ namespace MBSimGUI {
 		for(size_t j=0; j<inodes[i].size(); j++)
 		  rr += (1./inodes[i].size())*r[nodeTable[inodes[i][j]]];
 	      }
-	      cout << rr << endl;
 	      rif.push_back(rr);
 	      for(size_t j=0; j<inodes[i].size(); j++) {
 		Mat3xV T(6,NONINIT);
