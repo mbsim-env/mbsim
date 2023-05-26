@@ -438,8 +438,10 @@ namespace MBSimGUI {
 	MatV PhiPsii(6,Ui.cols()+Un.cols());
 	Matrix<General,Fixed<6>,Var,double> sigmaheli(Ui.cols()+Un.cols());
 	PhiPsii.set(idof[i],span(ni,ni+idof[i].size()-1),I(idof[i]));
-	for(size_t j=0; j<nmodes.size(); j++)
-	  PhiPsii.set(idof[i],Ui.cols()+j,V.col(nmodes[j]-1)(RangeV(iN.size()+ni,iN.size()+ni+idof[i].size()-1)));
+	if(normalModes==constrainedBoundaryNormalModes) {
+	  for(size_t j=0; j<nmodes.size(); j++)
+	    PhiPsii.set(idof[i],Ui.cols()+j,V.col(nmodes[j]-1)(RangeV(iN.size()+ni,iN.size()+ni+idof[i].size()-1)));
+	}
 	ni += idof[i].size();
 	Phiif.push_back(PhiPsii(RangeV(0,2),RangeV(0,PhiPsii.cols()-1)));
 	Psiif.push_back(PhiPsii(RangeV(3,5),RangeV(0,PhiPsii.cols()-1)));
