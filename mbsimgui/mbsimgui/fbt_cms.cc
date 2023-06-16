@@ -320,12 +320,6 @@ namespace MBSimGUI {
 	    Mrcs.Ip()[ii+1] = k;
 	    Krcs.Ip()[ii+1] = k;
 	  }
-	  SymMatV Krc(Krcs.rows());
-	  for(int i=0; i<Krcs.rows(); i++) {
-	    for(int j=Krcs.Ip()[i]; j<Krcs.Ip()[i+1]; j++) {
-	      Krc(i,Krcs.Jp()[j]) =  Krcs()[j];
-	    }
-	  }
 	  Ui.resize(Ks.size(),ni,NONINIT);
 	  MatV Q = -slvLU(Krns,Krnc);
 	  Ui.set(iN,span(0,ni-1),Q);
