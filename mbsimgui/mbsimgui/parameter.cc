@@ -140,6 +140,10 @@ namespace MBSimGUI {
     value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
   }
 
+  ImportParameter::ImportParameter() {
+    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"import.svg").string()));
+  }
+
   DOMElement* ImportParameter::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(getXMLType());

@@ -113,13 +113,15 @@ namespace MBSimGUI {
   class ImportParameter : public Parameter {
     MBSIMGUI_OBJECTFACTORY_CLASS(ImportParameter, Parameter, MBXMLUtils::PV%"import", "Import");
     public:
+      ImportParameter();
+      QString getName() const override { return "<import>"; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       PropertyDialog* createPropertyDialog() override { return new ImportParameterPropertyDialog(this); }
       void updateValue() override;
   };
 
   class Parameters : public ParameterItem {
-    MBSIMGUI_OBJECTFACTORY_CLASS(Parameters, ParameterItem, MBXMLUtils::PV%"dummy", "dummy");
+    MBSIMGUI_OBJECTFACTORY_CLASS(Parameters, ParameterItem, MBXMLUtils::PV%"dummy", "");
     public:
       Parameters(EmbedItemData *parent);
       QString getName() const override { return parent->getName() + " parameters"; }
