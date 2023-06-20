@@ -242,24 +242,22 @@ namespace MBSimGUI {
 	  D.resize(iH.size(),ni);
 	  ni = 0;
 	  for(size_t i=0; i<inodes.size(); i++) {
-	    if(reduceToNode[i]) {
-	      singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
-	      Vec3 rr;
-	      if(prf[i].size())
-		rr = Vec3(prf[i]);
-	      else {
-		for(size_t j=0; j<inodes[i].size(); j++)
-		  rr += (1./inodes[i].size())*r[nodeTable[inodes[i][j]]];
-	      }
-	      rif.push_back(rr);
-	      for(size_t j=0; j<inodes[i].size(); j++) {
-		Mat3xV T(6,NONINIT);
-		T.set(RangeV(0,2),RangeV(0,2),SqrMat3(Eye()));
-		T.set(RangeV(0,2),RangeV(3,5),-tilde(r[nodeTable[inodes[i][j]]]-rr));
-		D.set(span(dofMapH[3*nodeTable[inodes[i][j]]],dofMapH[3*nodeTable[inodes[i][j]]]+2),span(ni,ni+idof[i].size()-1),T(span(0,2),idof[i]));
-	      }
-	      ni += idof[i].size();
+	    singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
+	    Vec3 rr;
+	    if(prf[i].size())
+	      rr = Vec3(prf[i]);
+	    else {
+	      for(size_t j=0; j<inodes[i].size(); j++)
+		rr += (1./inodes[i].size())*r[nodeTable[inodes[i][j]]];
 	    }
+	    rif.push_back(rr);
+	    for(size_t j=0; j<inodes[i].size(); j++) {
+	      Mat3xV T(6,NONINIT);
+	      T.set(RangeV(0,2),RangeV(0,2),SqrMat3(Eye()));
+	      T.set(RangeV(0,2),RangeV(3,5),-tilde(r[nodeTable[inodes[i][j]]]-rr));
+	      D.set(span(dofMapH[3*nodeTable[inodes[i][j]]],dofMapH[3*nodeTable[inodes[i][j]]]+2),span(ni,ni+idof[i].size()-1),T(span(0,2),idof[i]));
+	    }
+	    ni += idof[i].size();
 	  }
 	  SymSparseMat Mrhs, Krhs;
 	  MatV Mrnh;
@@ -327,47 +325,54 @@ namespace MBSimGUI {
 	  Ui.set(iX,span(0,ni-1),MatV(iX.size(),ni));
 	}
 	else {
-	  Indices IJ(span(0,iH.size()-1));
-	  MatV Ui_(Ks.size(),iH.size(),NONINIT);
-	  Ui_.set(iN,IJ,-slvLU(Krns,Krnh));
-	  Ui_.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
-	  Ui_.set(iX,IJ,MatV(iX.size(),iH.size()));
-
-	  SymMatV Ki = JTMJ(Ks,Ui_);
 	  Ui.resize(Ks.size(),ni,NONINIT);
 	  ni = 0;
 	  for(size_t i=0; i<inodes.size(); i++) {
-	    if(reduceToNode[i]) {
-	      singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
-	      Indices iHi;
-	      vector<Matrix<General,Fixed<6>,Var,double>> Jrr(inodes.size(),Matrix<General,Fixed<6>,Var,double>(6*inodes.size()));
-	      double sum = 0;
-	      for(size_t j=0; j<inodes[i].size(); j++) {
-		sum += weights[i][j];
-		for(int k=0; k<nen; k++)
-		  iHi.add(dofMapH[3*nodeTable[inodes[i][j]]+k]);
+	    MatV activeDofi = activeDof0;
+	    for(size_t j=0; j<inodes.size(); j++) {
+	      if(j!=i) {
+		for(size_t k=0; k<inodes[j].size(); k++) {
+		  for(size_t h=0; h<nen; h++)
+		    activeDofi(nodeTable[inodes[j][k]],h) = 0;
+		}
 	      }
-	      Vec3 rr;
-	      MatV Ur = Ui_(span(0,Ks.size()-1),iHi);
-	      SymMat3 A;
-	      Mat3xV B(iHi.size());
-	      Mat3xV C(iHi.size());
-	      Matrix<General,Fixed<6>,Var,double> Jr(iHi.size());
-	      for(size_t j=0; j<inodes[i].size(); j++) {
-		rr += (weights[i][j]/sum)*r[nodeTable[inodes[i][j]]];
-		C += (weights[i][j]/sum)*(Phis[nodeTable[inodes[i][j]]]*Ur);
-	      }
-	      for(size_t j=0; j<inodes[i].size(); j++) {
-		SqrMat3 tr = tilde(r[nodeTable[inodes[i][j]]]-rr);
-		A += (weights[i][j]/sum)*JTJ(tr);
-		B += (weights[i][j]/sum)*tr*(Phis[nodeTable[inodes[i][j]]]*Ur);
-	      }
-	      Jr.set(RangeV(0,2),RangeV(0,Jr.cols()-1), C);
-	      Jr.set(RangeV(3,5),RangeV(0,Jr.cols()-1), slvLL(A,B));
-	      MatV Vi = slvLL(Ki(iHi),Jr(idof[i],span(0,iHi.size()-1)).T());
-	      Ui.set(RangeV(0,Ks.size()-1),RangeV(ni,ni+idof[i].size()-1), Ur*Vi);
-	      ni += idof[i].size();
 	    }
+	    vector<int> dofMapHi(nen*nN);
+	    for(size_t i=0, l=0, k=0; i<nN; i++) {
+	      for(size_t j=0; j<nen; j++) {
+		if(activeDofi(i,j)==1)
+		  dofMapHi[l] = k++;
+		l++;
+	      }
+	    }
+	    Indices iHi;
+	    for(size_t i=0; i<nN; i++) {
+	      for(size_t j=0; j<nen; j++) {
+		if(activeDofi(i,j)==1)
+		  iHi.add(nen*i+j);
+	      }
+	    }
+	    SymSparseMat Mris, Kris;
+	    reduceMat(Ms,Ks,Mris,Kris,iHi.size(),activeDofi,dofMapHi,1);
+	    singleNodeNumbers.push_back(snn[i]>-1?snn[i]:nodeNumbers.size()+1+singleNodeNumbers.size());
+	    double sum = 0;
+	    Vec3 rr;
+	    SymMat3 A;
+	    MatV fri(Kris.size(),6);
+	    for(size_t j=0; j<inodes[i].size(); j++)
+	      sum += weights[i][j];
+	    for(size_t j=0; j<inodes[i].size(); j++)
+	      rr += (weights[i][j]/sum)*r[nodeTable[inodes[i][j]]];
+	    for(size_t j=0; j<inodes[i].size(); j++)
+	      A += (weights[i][j]/sum)*JTJ(tilde(r[nodeTable[inodes[i][j]]]-rr));
+	    for(size_t j=0; j<inodes[i].size(); j++) {
+	      int ii = dofMapHi[3*nodeTable[inodes[i][j]]];
+	      SymMatV B = (weights[i][j]/sum)*SymMatV(3,Eye());
+	      fri.set(RangeV(ii,ii+2),RangeV(0,2),B);
+	      fri.set(RangeV(ii,ii+2),RangeV(3,5),slvLL(A,tilde(r[nodeTable[inodes[i][j]]]-rr).T()*B));
+	    }
+	    Ui.set(iHi,span(ni,ni+idof[i].size()-1), slvLU(Kris,fri(span(0,fri.rows()-1),idof[i])));
+	    ni += idof[i].size();
 	  }
 	}
       } else {
