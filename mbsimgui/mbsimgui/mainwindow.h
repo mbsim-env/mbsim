@@ -175,7 +175,7 @@ namespace MBSimGUI {
       void saveReferencedFile(int i);
       void convertDocument();
     private slots:
-      void selectElement(const std::string& ID);
+      void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
 
     public:
       MainWindow(QStringList &arg);
