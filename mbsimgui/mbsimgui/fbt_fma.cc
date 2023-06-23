@@ -36,6 +36,8 @@ namespace MBSimGUI {
     for(size_t i=0; i<nN; i++)
       Phi[i] = Phis[i]*U;
 
+    createSingleInterfaceNodes();
+
     if(Psis.size()) {
       Psi.resize(nN,Mat3xV(nM,NONINIT));
       for(size_t i=0; i<nN; i++)

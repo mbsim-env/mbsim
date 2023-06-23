@@ -42,8 +42,11 @@ namespace MBSimGUI {
     auto beny = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->beny->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
     auto tor = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FlexibleBeamPage*>(page(PageFlexibleBeam))->tor->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toInt();
     nodeTable.resize(nN+1);
-    for(int i=0; i<nN; i++)
+    nodeNumbers.resize(nN);
+    for(int i=0; i<nN; i++) {
       nodeTable[i+1] = i;
+      nodeNumbers[i] = i+1;
+    }
     int nE = nN-1;
     int nee = 0;
     const int x = 0;

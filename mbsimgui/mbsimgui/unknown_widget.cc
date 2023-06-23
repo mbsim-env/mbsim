@@ -25,6 +25,7 @@
 #include "environment_widgets.h"
 #include "function_widget.h"
 #include "function_widgets.h"
+#include "ombv_widgets.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -34,11 +35,14 @@ namespace MBSimGUI {
 
   template<class ContainerWidget>
   UnknownWidget<ContainerWidget>::UnknownWidget() : tagName("http://www.mbsim-env.de/MBSimXML","Type") {
-    auto *layout = new QVBoxLayout;
-    layout->setMargin(0);
-    this->setLayout(layout);
+    // overwrite the existing layout since we show the complete XML for UnknownWidget even if its derived from
+    // (ContainerWidget) which has already an explicit widget definition.
+    auto *overrideLayout = new QVBoxLayout;
+    overrideLayout->setMargin(0);
+    delete this->QWidget::layout(); // an old layout must be deleted first ...
+    this->setLayout(overrideLayout); // ... to set a new one
     editor = new ExtWidget("XML Editor",new XMLEditorWidget);
-    layout->addWidget(editor);
+    overrideLayout->addWidget(editor);
   }
 
   template<class ContainerWidget>

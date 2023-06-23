@@ -95,7 +95,7 @@ namespace MBSimFlexibleBody {
     if(index==0)
       h[0] += evalKJ(0).T()*(evalhb() - evalMb()*evalKi());
     else
-      h[1] += evalhb() - evalMb()*(evalKJ(0)*evaludall()+evalKi());
+      h[1] += evalKJ(1).T()*(evalhb() - evalMb()*(evalKJ(0)*evaludall()+evalKi()));
   }
 
   void GenericFlexibleFfrBody::calcSize() {
@@ -444,9 +444,9 @@ namespace MBSimFlexibleBody {
         if(not dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->getNumberOfVertexPositions())
           dynamic_pointer_cast<OpenMBV::FlexibleBody>(openMBVBody)->setNumberOfVertexPositions(visuNodes.size());
       }
-      for(int i=0; i<plotNodes.size(); i++)
+      for(size_t i=0; i<plotNodes.size(); i++)
         plotNodes[i] = getNodeIndex(plotNodes[i]);
-      for(int i=0; i<visuNodes.size(); i++)
+      for(size_t i=0; i<visuNodes.size(); i++)
         visuNodes[i] = getNodeIndex(visuNodes[i]);
 
       NodeBasedBody::init(stage, config);

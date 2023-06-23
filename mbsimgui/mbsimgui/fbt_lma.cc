@@ -33,6 +33,8 @@ namespace MBSimGUI {
     for(size_t i=0; i<nN; i++)
       Phi[i] = U(RangeV(nen*i,nen*i+net-1),RangeV(0,nM-1));
 
+    createSingleInterfaceNodes();
+
     if(S.rows()) {
       sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM,NONINIT));
       for(size_t i=0; i<nN; i++)

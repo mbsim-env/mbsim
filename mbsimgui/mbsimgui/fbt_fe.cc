@@ -127,14 +127,18 @@ namespace MBSimGUI {
     }
 
     r.resize(nN,Vec3(NONINIT));
+    nodeNumbers.resize(nN);
     if(R.cols()==3) {
+      int j=0;
       for(int i=0; i<R.rows(); i++) {
-	if(nodeCount[i+1])
+	if(nodeCount[i+1]) {
 	  r[nodeTable[i+1]] = R.row(i).T();
+	  nodeNumbers[j] = j+1;
+	  j++;
+	}
       }
     }
     else {
-      nodeNumbers.resize(nN);
       for(int i=0; i<R.rows(); i++) {
 	if(nodeCount[R(i,0)]) {
 	  r[nodeTable[R(i,0)]] = R.row(i)(RangeV(1,3)).T();

@@ -47,6 +47,7 @@
 #include "utils.h"
 #include "basicitemdata.h"
 #include <openmbv/mainwindow.h>
+#include <openmbvcppinterface/compoundrigidbody.h>
 #include <utime.h>
 #include <QMenu>
 #include <QMenuBar>
@@ -457,8 +458,8 @@ namespace MBSimGUI {
     // We cannot use the new Qt function pointer-based connection mechanism here since this seems not to work
     // on Windows if the signal and slot lives in different DLLs as it is for the following two connections.
     // Hence, we keep here the old macro base mechanism and use Q_OBJECT and moc for this class.
-    connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, Object*)), this, SLOT(selectElement(std::string)));
-    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, Object*)), this, SLOT(openElementEditor()));
+    connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, OpenMBVGUI::Object*)), this, SLOT(selectElement(const std::string&, OpenMBVGUI::Object*)));
+    connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, OpenMBVGUI::Object*)), this, SLOT(openElementEditor()));
 
     // bugfix version for bfs::copy_file which is at least buggy in boost 1.74
     auto bfs__copy_file = [](const bfs::path &src, const bfs::path &dst, bfs::copy_option options) {
@@ -918,14 +919,24 @@ namespace MBSimGUI {
         D(doc)->validate();
         for(auto & parent : parents) {
           string counterName = parent->getEmbedXMLElement()?E(parent->getEmbedXMLElement())->getAttribute("counterName"):"";
-          if(not counterName.empty())
-            eval->addParam(eval->cast<string>(eval->stringToValue(counterName,parent->getEmbedXMLElement(),false)),eval->create(1.0));
+          if(not counterName.empty()) {
+            string evaluatedCounterName(eval->cast<string>(eval->stringToValue(counterName,parent->getEmbedXMLElement(),false)));
+            auto count=eval->create(1.0);
+            eval->convertIndex(count, false);
+            eval->addParam(evaluatedCounterName, count);
+            eval->addParam(evaluatedCounterName+"_count", eval->create(1.0));
+          }
         }
         DOMElement *ele = doc->getDocumentElement()->getFirstElementChild();
         eval->addParamSet(ele);
         string counterName = item->getEmbedXMLElement()?E(item->getEmbedXMLElement())->getAttribute("counterName"):"";
-        if(not counterName.empty())
-          eval->addParam(eval->cast<string>(eval->stringToValue(counterName,item->getEmbedXMLElement(),false)),eval->create(1.0));
+        if(not counterName.empty()) {
+          string evaluatedCounterName(eval->cast<string>(eval->stringToValue(counterName,item->getEmbedXMLElement(),false)));
+          auto count=eval->create(1.0);
+          eval->convertIndex(count, false);
+          eval->addParam(evaluatedCounterName, count);
+          eval->addParam(evaluatedCounterName+"_count", eval->create(1.0));
+        }
         ele = ele->getNextElementSibling()->getFirstElementChild();
         eval->addParamSet(ele);
       }
@@ -1236,8 +1247,23 @@ namespace MBSimGUI {
     statusBar()->showMessage(tr("Debug model"));
   }
 
-  void MainWindow::selectElement(const string& ID) {
-    Element *element = idMap[ID];
+  void MainWindow::selectElement(const string& ID, OpenMBVGUI::Object *obj) {
+    if(!obj)
+      return;
+    auto id=ID;
+    // if no ID is given (obj->getObject() has no ID set) and its a RigidBody inside of a CompoundRigidBody then use the ID of the parent CompoundRigidBody.
+    auto o=obj->getObject();
+    while(id.empty()) {
+      auto rb=dynamic_pointer_cast<OpenMBV::RigidBody>(o);
+      if(!rb)
+        break;
+      auto crb=rb->getCompound().lock();
+      if(!crb)
+        break;
+      id=crb->getID();
+      o=crb;
+    }
+    Element *element = idMap[id];
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) elementView->selectionModel()->setCurrentIndex(model->findItem(element,project->getDynamicSystemSolver()->getModelIndex()),QItemSelectionModel::ClearAndSelect);
   }

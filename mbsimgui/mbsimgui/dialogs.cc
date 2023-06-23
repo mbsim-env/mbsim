@@ -76,13 +76,13 @@ namespace MBSimGUI {
 
   void Dialog::showEvent(QShowEvent *event) {
     QSettings settings;
-    restoreGeometry(settings.value("basicelementbrowser/geometry").toByteArray());
+    restoreGeometry(settings.value("dialog/geometry").toByteArray());
     QDialog::showEvent(event);
   }
 
   void Dialog::hideEvent(QHideEvent *event) {
     QSettings settings;
-    settings.setValue("basicelementbrowser/geometry", saveGeometry());
+    settings.setValue("dialog/geometry", saveGeometry());
     QDialog::hideEvent(event);
   }
 

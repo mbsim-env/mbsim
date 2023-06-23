@@ -173,6 +173,30 @@ namespace MBSimGUI {
       QWidget *parent;
   };
 
+  class CMSDataWidget : public Widget {
+    public:
+      CMSDataWidget(QWidget *parent);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      std::vector<int> getNodes() const;
+      std::vector<double> getWeights() const;
+      bool getReduceToSingleNode() const;
+      std::vector<int> getDof() const;
+      int getSingleNodeNumber() const;
+      std::vector<double> getPositionOfReferenceNode() const;
+    private:
+      ExtWidget *nodes, *weights, *rtsn, *dof, *snn, *prf;
+  };
+
+  class CMSDataWidgetFactory : public WidgetFactory {
+    public:
+      CMSDataWidgetFactory(QWidget *parent_) : parent(parent_) { }
+      Widget* createWidget(int i=0) override;
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return MBSIMFLEX%"interfaceNodeNumbers"; }
+    protected:
+      QWidget *parent;
+  };
+
 }
 
 #endif

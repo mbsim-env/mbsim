@@ -22,6 +22,13 @@
 
 #include <QWizard>
 #include "fmatvec/fmatvec.h"
+#include <xercesc/util/XercesDefs.hpp>
+#include <mbxmlutilshelper/dom.h>
+
+namespace XERCES_CPP_NAMESPACE {
+  class DOMElement;
+  class DOMNode;
+}
 
 class QRadioButton; 
 
@@ -30,7 +37,14 @@ namespace MBSimGUI {
   class ExtWidget;
   class FiniteElementType;
 
-  class FirstPage : public QWizardPage {
+  class WizardPage : public QWizardPage {
+    public:
+      WizardPage(QWidget *parent=nullptr) : QWizardPage(parent) { }
+      virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return element; }
+      virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) { return nullptr; }
+  };
+
+  class FirstPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       FirstPage(QWidget *parent);
@@ -38,113 +52,161 @@ namespace MBSimGUI {
       void setVisible(bool visible) override;
       bool isComplete() const override;
     private:
-      QRadioButton *rb1, *rb2, *rb3, *rb4;
+      QRadioButton *rb[4];
   };
 
-  class LastPage : public QWizardPage {
+  class LastPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       LastPage(QWidget *parent);
       QString getFile() const;
       int nextId() const override;
       void setVisible(bool visible) override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *inputFile;
   };
 
-  class ExternalFiniteElementsPage : public QWizardPage {
+  class ExternalFiniteElementsPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       ExternalFiniteElementsPage(QWidget *parent);
       int nextId() const override;
       bool isComplete() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *nodes, *mass, *stiff;
   };
 
-  class CalculixPage : public QWizardPage {
+  class CalculixPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       CalculixPage(QWidget *parent);
       int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *file;
   };
 
-  class FlexibleBeamPage : public QWizardPage {
+  class FlexibleBeamPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
-     FlexibleBeamPage(QWidget *parent);
+      FlexibleBeamPage(QWidget *parent);
       int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *n, *l, *A, *I, *E, *rho, *ten, *beny, *benz, *tor;
   };
 
-  class FiniteElementsPage : public QWizardPage {
+  class FiniteElementsPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
      FiniteElementsPage(QWidget *parent);
       int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *E, *rho, *nu, *nodes, *elements, *exs;
   };
 
-  class ReductionMethodsPage : public QWizardPage {
+  class ReductionMethodsPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       ReductionMethodsPage(QWidget *parent);
       int nextId() const override;
     private:
-      QRadioButton *rb1, *rb2;
+      QRadioButton *rb[2];
   };
 
-  class BoundaryConditionsPage : public QWizardPage {
+  class BoundaryConditionsPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       BoundaryConditionsPage(QWidget *parent);
       int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *bc;
   };
 
-  class ModeShapesPage : public QWizardPage {
+  class ModeShapesPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       ModeShapesPage(QWidget *parent);
       int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *V, *S;
   };
 
-  class ComponentModeSynthesisPage : public QWizardPage {
+  class ComponentModeSynthesisPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       ComponentModeSynthesisPage(QWidget *parent);
       int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
-      ExtWidget *inodes, *rrbm, *nmodes, *fbnm;
+      ExtWidget *typeOfConstraint, *idata, *nmodes, *normalModes;
   };
 
-  class OpenMBVPage : public QWizardPage {
+  class RemoveRigidBodyModesPage : public WizardPage {
+    friend class FlexibleBodyTool;
+    public:
+      RemoveRigidBodyModesPage(QWidget *parent);
+      int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+   private:
+      ExtWidget *rrbm, *nrb, *ft;
+  };
+
+  class OpenMBVPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       OpenMBVPage(QWidget *parent);
       int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *ombvIndices;
   };
 
-  class DampingPage : public QWizardPage {
+  class DampingPage : public WizardPage {
     friend class FlexibleBodyTool;
     public:
       DampingPage(QWidget *parent);
       int nextId() const override;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *mDamp, *pDamp;
   };
 
-  class FlexibleBodyTool : public QWizard {
+  class Wizard : public QWizard {
     public:
+      Wizard(QWidget *parent=nullptr) : QWizard(parent) { }
+    protected:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+  };
+
+  class FlexibleBodyTool : public Wizard {
+    public:
+      enum TypeOfConstraint {
+	distributing=0,
+	kinematic
+      };
+      enum NormalModes {
+	freeBoundaryNormalModes=0,
+	fixedBoundaryNormalModes,
+	constrainedBoundaryNormalModes
+      };
       FlexibleBodyTool(QWidget *parent);
       enum {
 	PageFirst,
@@ -156,6 +218,7 @@ namespace MBSimGUI {
 	PageBC,
 	PageCMS,
 	PageModeShapes,
+	PageRRBM,
 	PageOMBV,
 	PageDamp,
        	PageLast,
@@ -168,10 +231,10 @@ namespace MBSimGUI {
       static fmatvec::MatV readMat(const std::string &file);
       fmatvec::SymSparseMat createSymSparseMat(const std::vector<std::map<int,double>> &Am);
       fmatvec::SparseMat createSparseMat(int n, const std::vector<std::map<int,double>> &Am);
-      std::vector<std::map<int,double>> reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iF);
-      fmatvec::MatV reduceMat(const std::vector<std::map<int,double>> &Am, const fmatvec::Indices &iN, const fmatvec::Indices &iH);
-      void reduceMat(const fmatvec::SymSparseMat &Ms, const fmatvec::SymSparseMat &Ks, fmatvec::SymSparseMat &Mrs, fmatvec::SymSparseMat &Krs, int n, const std::vector<std::vector<int>> &activeDof, const std::vector<int> &dofMap);
-      fmatvec::MatV reduceMat(const fmatvec::SymSparseMat &Ks, const fmatvec::Indices &iN, const fmatvec::Indices &iH, const std::vector<std::vector<int>> &activeDof, const std::vector<int> &dofMapN, const std::vector<int> &dofMapH);
+      std::vector<std::map<int,double>> reduceMat(const std::vector<std::map<int,double>> &Am, int n, const fmatvec::MatVI &activeDof, const std::vector<int> &dofMap, int val=1);
+      fmatvec::MatV reduceMat(const std::vector<std::map<int,double>> &Am, int m, int n, const fmatvec::MatVI &activeDof, const std::vector<int> &dofMapN, const std::vector<int> &dofMapH);
+      void reduceMat(const fmatvec::SymSparseMat &Ms, const fmatvec::SymSparseMat &Ks, fmatvec::SymSparseMat &Mrs, fmatvec::SymSparseMat &Krs, int n, const fmatvec::MatVI &activeDof, const std::vector<int> &dofMap, int val=1);
+      fmatvec::MatV reduceMat(const fmatvec::SymSparseMat &Ks, int m, int n, const fmatvec::MatVI &activeDof, const std::vector<int> &dofMapN, const std::vector<int> &dofMapH);
       void extfe();
       void calculix();
       void beam();
@@ -181,8 +244,10 @@ namespace MBSimGUI {
       void ombv();
       void fma();
       void lma();
+      void rrbm();
       void damp();
       void exp();
+      void createSingleInterfaceNodes();
       fmatvec::MatV M, K, U, S;
       fmatvec::VecV mDamp;
       fmatvec::Vec2 pDamp;
@@ -200,11 +265,14 @@ namespace MBSimGUI {
       fmatvec::SparseMat PPdm2s[3];
       std::vector<fmatvec::SparseMat> Phis, Psis, sigs;
       std::vector<std::map<int,double>> Mm, Km;
-      std::vector<int> nodeTable, nodeCount, nodeNumbers, indices;
+      std::vector<int> nodeTable, nodeCount, nodeNumbers, indices, singleNodeNumbers;
       int net, ner;
       std::vector<fmatvec::MatVI> ele;
       std::vector<FiniteElementType*> type;
       std::vector<std::map<int,int>> links;
+      std::vector<fmatvec::Vec3> rif;
+      std::vector<fmatvec::Mat3xV> Phiif, Psiif;
+      std::vector<fmatvec::Matrix<fmatvec::General, fmatvec::Fixed<6>, fmatvec::Var, double>> sigmahelif;
   };
 
 }

@@ -438,18 +438,17 @@ namespace MBSimGUI {
     nodes = new ExtWidget("Boundary node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"boundaryNodeNumbers");
     layout->addWidget(nodes);
 
-    dof = new ExtWidget("Degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"degreesOfFreedom");
+    dof = new ExtWidget("Constrained degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"constrainedDegreesOfFreedom");
     layout->addWidget(dof);
 
-//    dof = new ExtWidget("Degrees of freedom",new DofWidget(this),false,false,MBSIMFLEX%"degreesOfFreedom");
+//    dof = new ExtWidget("Degrees of freedom",new DofWidget(this),false,false,MBSIMFLEX%"constrainedDegreesOfFreedom");
 //    layout->addWidget(dof);
   }
 
   DOMElement* BoundaryConditionWidget::initializeUsingXML(DOMElement *element) {
     nodes->getWidget()->initializeUsingXML(element);
     element = element->getNextElementSibling();
-    if(E(element)->getTagName()==MBSIMFLEX%"degreesOfFreedom")
-      dof->getWidget()->initializeUsingXML(element);
+    dof->getWidget()->initializeUsingXML(element);
     element = element->getNextElementSibling();
     return element;
   }
@@ -458,7 +457,7 @@ namespace MBSimGUI {
     DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"boundaryNodeNumbers");
     nodes->getWidget()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
-    ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"degreesOfFreedom");
+    ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"constrainedDegreesOfFreedom");
     dof->getWidget()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     return nullptr;
@@ -514,6 +513,160 @@ namespace MBSimGUI {
 
   Widget* FiniteElementsDataWidgetFactory::createWidget(int i) {
     return new FiniteElementsDataWidget(parent);
+  }
+
+  CMSDataWidget::CMSDataWidget(QWidget *parent) : Widget(parent) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    nodes = new ExtWidget("Interface node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),false,false,MBSIMFLEX%"interfaceNodeNumbers");
+    layout->addWidget(nodes);
+
+    weights = new ExtWidget("Weighting factors for interface nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"weightingFactorsForInterfaceNodes");
+    layout->addWidget(weights);
+
+    rtsn = new ExtWidget("Reduce to single interface node",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"reduceToSingleInterfaceNode");
+    layout->addWidget(rtsn);
+
+    dof = new ExtWidget("Degrees of freedom of single inteface node",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"degreesOfFreedomOfSingleInterfaceNode");
+    layout->addWidget(dof);
+
+    snn = new ExtWidget("Single interface node number",new ChoiceWidget(new ScalarWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"singleInterfaceNodeNumber");
+    layout->addWidget(snn);
+
+    prf = new ExtWidget("Position of reference node",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"positionOfReferenceNode");
+    layout->addWidget(prf);
+  }
+
+ vector<int> CMSDataWidget::getNodes() const {
+    vector<int> inodes;
+    auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(nodes->getWidget())->getWidget())->getWidget()->getEvalMat();
+    inodes.resize(mat.size());
+    for(size_t i=0; i<mat.size(); i++)
+      inodes[i] = mat[i][0].toInt();
+    return inodes;
+  }
+
+ vector<double> CMSDataWidget::getWeights() const {
+    vector<double> w;
+    if(weights->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(weights->getWidget())->getWidget())->getWidget()->getEvalMat();
+      w.resize(mat.size());
+      for(size_t i=0; i<mat.size(); i++)
+	w[i] = mat[i][0].toDouble();
+    }
+    return w;
+  }
+
+  bool CMSDataWidget::getReduceToSingleNode() const {
+    bool reduceToNode = false;
+    if(rtsn->isActive())
+      reduceToNode = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(rtsn->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+    return reduceToNode;
+  }
+
+  vector<int> CMSDataWidget::getDof() const {
+    vector<int> idof;
+    if(dof->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(dof->getWidget())->getWidget())->getWidget()->getEvalMat();
+      idof.resize(mat.size());
+      for(size_t i=0; i<mat.size(); i++)
+	idof[i] = mat[i][0].toInt();
+    }
+    else {
+      idof.resize(6);
+      for(size_t i=0; i<6; i++)
+	idof[i] = i+1;
+    }
+    return idof;
+  }
+
+  int CMSDataWidget::getSingleNodeNumber() const {
+    if(snn->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(snn->getWidget())->getWidget())->getWidget()->getEvalMat();
+      return mat[0][0].toInt();
+    }
+    else
+      return -1;
+  }
+
+  vector<double> CMSDataWidget::getPositionOfReferenceNode() const {
+    vector<double> r;
+    if(prf->isActive()) {
+      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(prf->getWidget())->getWidget())->getWidget()->getEvalMat();
+      r.resize(mat.size());
+      for(size_t i=0; i<mat.size(); i++)
+	r[i] = mat[i][0].toDouble();
+    }
+    return r;
+  }
+
+  DOMElement* CMSDataWidget::initializeUsingXML(DOMElement *element) {
+    nodes->getWidget()->initializeUsingXML(element);
+    element = element->getNextElementSibling();
+    if(E(element)->getTagName()==MBSIMFLEX%"weightingFactorsForInterfaceNodes") {
+      weights->setActive(true);
+      weights->getWidget()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    if(E(element)->getTagName()==MBSIMFLEX%"reduceToSingleInterfaceNode") {
+      rtsn->setActive(true);
+      rtsn->getWidget()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    if(E(element)->getTagName()==MBSIMFLEX%"degreesOfFreedomOfSingleInterfaceNode") {
+      dof->setActive(true);
+      dof->getWidget()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    if(E(element)->getTagName()==MBSIMFLEX%"singleInterfaceNodeNumber") {
+      snn->setActive(true);
+      snn->getWidget()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    if(E(element)->getTagName()==MBSIMFLEX%"positionOfReferenceNode") {
+      prf->setActive(true);
+      prf->getWidget()->initializeUsingXML(element);
+      element = element->getNextElementSibling();
+    }
+    return element;
+  }
+
+  DOMElement* CMSDataWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"interfaceNodeNumbers");
+    nodes->getWidget()->writeXMLFile(ele);
+    parent->insertBefore(ele,ref);
+    if(weights->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"weightingFactorsForInterfaceNodes");
+      weights->getWidget()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    if(rtsn->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"reduceToSingleInterfaceNode");
+      rtsn->getWidget()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    if(dof->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"degreesOfFreedomOfSingleInterfaceNode");
+      dof->getWidget()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    if(snn->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleInterfaceNodeNumber");
+      snn->getWidget()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    if(prf->isActive()) {
+      ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"positionOfReferenceNode");
+      prf->getWidget()->writeXMLFile(ele);
+      parent->insertBefore(ele,ref);
+    }
+    return nullptr;
+  }
+
+  Widget* CMSDataWidgetFactory::createWidget(int i) {
+    return new CMSDataWidget(parent);
   }
 
 }
