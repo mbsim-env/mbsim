@@ -887,6 +887,35 @@
    fun:main
 }
 {
+   Coin
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN15SoGLRenderCache4openEP7SoState
+   fun:_ZN13SoGLCacheList4openEP16SoGLRenderActioni
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+}
+{
    needed for old boost/valgrind
    Memcheck:Cond
    fun:seed<boost::uuids::detail::generator_iterator<boost::uuids::detail::seed_rng> >
