@@ -1,0 +1,283 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="r">0.0375</scalarParameter>
+      <scalarParameter name="l">0.15</scalarParameter>
+      <scalarParameter name="d">0.06</scalarParameter></Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive value="ns1:signal" xmlns:ns1="http://www.mbsim-env.de/MBSimControl">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+      <frames>
+        <FixedRelativeFrame name="P">
+          <enableOpenMBV>
+            <size unit="cm">1</size>
+          </enableOpenMBV>
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>r+l</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+      </frames><contours/>
+      <groups/>
+      <objects>
+        <RigidBody name="Crankshaft">
+          <generalizedInitialVelocity>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>10</ele>
+            </xmlVector>
+          </generalizedInitialVelocity>
+          <mass unit="kg">0</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>10</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentRotation>
+            <RotationAboutYAxis/>
+          </stateDependentRotation>
+          <frames>
+            <FixedRelativeFrame name="P">
+              <enableOpenMBV>
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>r</ele>
+                </xmlVector>
+              </relativePosition>
+            </FixedRelativeFrame>
+          </frames><contours/>
+          <openMBVRigidBody>
+            <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
+              <transparency unit="-">0.3</transparency>
+              <scaleFactor unit="-">1e-3</scaleFactor>
+              <ivFileName>"crankshaft.wrl"</ivFileName>
+            </IvBody>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <size unit="cm">1</size>
+          </enableOpenMBVFrameC></RigidBody>
+        <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Conrod">
+          <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[Crankshaft]/Frame[P]"/>
+          <inputDataFileName>"input_data.h5"</inputDataFileName>
+          <stateDependentRotation>
+            <RotationAboutYAxis xmlns="http://www.mbsim-env.de/MBSim"/>
+          </stateDependentRotation>
+          <frames>
+            <NodeFrame name="P">
+              <enableOpenMBV xmlns="http://www.mbsim-env.de/MBSim">
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <nodeNumber>7683</nodeNumber>
+            </NodeFrame>
+          </frames><contours/>
+          <enableOpenMBV>
+            <pointSize xmlns="http://www.mbsim-env.de/MBSim">4</pointSize>
+            <colorRepresentation xmlns="http://www.mbsim-env.de/MBSim">"equivalentStress"</colorRepresentation>
+            <maximalColorValue xmlns="http://www.mbsim-env.de/MBSim">4e7</maximalColorValue>
+            <visualization>"points"</visualization>
+          </enableOpenMBV>
+          <enableOpenMBVFrameK>
+            <size xmlns="http://www.mbsim-env.de/MBSim" unit="cm">1</size>
+          </enableOpenMBVFrameK></ExternalFlexibleFfrBody>
+        <RigidBody name="Piston">
+          <frameOfReference ref="../Frame[P]"/>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongZAxis/>
+          </stateDependentTranslation>
+          <frames>
+            <FixedRelativeFrame name="P">
+              <enableOpenMBV>
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>d</ele>
+                </xmlVector>
+              </relativePosition>
+            </FixedRelativeFrame>
+          </frames>
+          <contours/>
+          <openMBVRigidBody>
+            <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
+              <transparency unit="-">0.3</transparency>
+              <scaleFactor unit="-">1e-3</scaleFactor>
+              <ivFileName>"piston.wrl"</ivFileName>
+            </IvBody>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC>
+            <size unit="cm">1</size>
+          </enableOpenMBVFrameC></RigidBody>
+      </objects>
+      <links>
+        <Joint name="Joint">
+          <connect ref1="../Object[Piston]/Frame[C]" ref2="../Object[Conrod]/Frame[P]"/>
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>1</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>1</ele>
+              </row>
+            </xmlMatrix>
+          </forceDirection>
+          <forceLaw>
+            <BilateralConstraint/>
+          </forceLaw>
+        </Joint>
+        <GeneralizedPositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="phi">
+          <object ref="../Object[Crankshaft]"/>
+        </GeneralizedPositionSensor><SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="phimod">
+          <inputSignal ref="../Link[phi]"/>
+          <function>
+            <ModuloFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <denominator>4*pi</denominator>
+            </ModuloFunction>
+          </function>
+        </SignalOperation><SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="phideg">
+          <inputSignal ref="../Link[phimod]"/>
+          <function>
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="phi" arg1Dim="1">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>phi(1)*180/pi</ele>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
+          </function>
+        </SignalOperation><SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="p">
+          <inputSignal ref="../Link[phideg]"/>
+          <function>
+            <TabularFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <xy>
+                <fromFile xmlns="http://www.mbsim-env.de/MBXMLUtils" href="pressure.asc"/>
+              </xy>
+            </TabularFunction>
+          </function>
+        </SignalOperation><SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="F">
+          <inputSignal ref="../Link[p]"/>
+          <function>
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="p" arg1Dim="1">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0.04^2*pi*p(1)*1e5</ele>
+                </xmlVector>
+              </definition>
+            </SymbolicFunction>
+          </function>
+        </SignalOperation>
+        <KineticExcitation name="KineticExcitation">
+          <connect ref2="../Object[Piston]/Frame[P]"/>
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>-1</ele>
+              </row>
+            </xmlMatrix>
+          </forceDirection>
+          <forceFunction>
+            <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+              <returnSignal ref="../../Link[F]"/>
+            </SignalFunction>
+          </forceFunction>
+          <enableOpenMBV>
+            <scaleLength>2e-6</scaleLength>
+          </enableOpenMBV>
+        </KineticExcitation>
+        <GeneralizedSpringDamper name="Load">
+          <connect ref="../Object[Crankshaft]"/>
+          <generalizedForceFunction>
+            <LinearSpringDamperForce>
+              <stiffnessCoefficient unit="N/m">0</stiffnessCoefficient>
+              <dampingCoefficient unit="N*s/m">4</dampingCoefficient>
+            </LinearSpringDamperForce>
+          </generalizedForceFunction>
+          <generalizedUnloadedLength>0</generalizedUnloadedLength>
+        </GeneralizedSpringDamper>
+      </links>
+      <constraints/>
+      <observers>
+      </observers><enableOpenMBVFrameI>
+        <size unit="cm">1</size>
+      </enableOpenMBVFrameI><environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>-9.81</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
+
+  <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">2</endTime>
+    <plotStepSize unit="s">1e-3</plotStepSize>
+  </RADAU5Integrator>
+
+
+</MBSimProject>
