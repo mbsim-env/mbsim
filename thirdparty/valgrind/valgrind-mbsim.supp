@@ -655,7 +655,6 @@
    ...
    fun:_ZN15SoRenderManager6renderEii
    fun:_ZN10OpenMBVGUI10MainWindow11updateSceneEv
-   fun:main
 }
 {
    GOBJECT
@@ -884,7 +883,35 @@
    fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
    fun:_ZN15SoRenderManager6renderEii
    fun:_ZN10OpenMBVGUI10MainWindow11updateSceneEv
-   fun:main
+}
+{
+   Coin
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN15SoGLRenderCache4openEP7SoState
+   fun:_ZN13SoGLCacheList4openEP16SoGLRenderActioni
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN11SoChildList8traverseEP8SoActionii
+   fun:_ZN8SoSwitch8doActionEP8SoAction
 }
 {
    needed for old boost/valgrind
@@ -1389,4 +1416,36 @@
    fun:_ZN11SoChildList14traverseInPathEP8SoActioniPKi
    fun:_ZN8SoSwitch8doActionEP8SoAction
    fun:_ZN11SoSeparator14GLRenderInPathEP16SoGLRenderAction
+}
+{
+   qt svg
+   Memcheck:Cond
+   ...
+   fun:_ZN18QRasterPaintEngine4fillERK11QVectorPathRK6QBrush
+   fun:_ZN14QPaintEngineEx4drawERK11QVectorPath
+   fun:_ZN8QPainter8drawPathERK12QPainterPath
+   fun:_ZNK9QTextLine4drawEP8QPainterRK7QPointFPKN11QTextLayout11FormatRangeE
+   fun:_ZNK11QTextLayout4drawEP8QPainterRK7QPointFRK7QVectorINS_11FormatRangeEERK6QRectF
+   fun:_ZN8QSvgText4drawEP8QPainterR15QSvgExtraStates
+   fun:_ZN5QSvgG4drawEP8QPainterR15QSvgExtraStates
+   fun:_ZN16QSvgTinyDocument4drawEP8QPainterRK6QRectF
+   fun:_ZN16QSvgTinyDocument4drawEP8QPainter
+   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidgeti
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERSt4listISsSaISsEEb
+}
+{
+   qt svg
+   Memcheck:Value8
+   ...
+   fun:_ZN18QRasterPaintEngine4fillERK11QVectorPathRK6QBrush
+   fun:_ZN14QPaintEngineEx4drawERK11QVectorPath
+   fun:_ZN8QPainter8drawPathERK12QPainterPath
+   fun:_ZNK9QTextLine4drawEP8QPainterRK7QPointFPKN11QTextLayout11FormatRangeE
+   fun:_ZNK11QTextLayout4drawEP8QPainterRK7QPointFRK7QVectorINS_11FormatRangeEERK6QRectF
+   fun:_ZN8QSvgText4drawEP8QPainterR15QSvgExtraStates
+   fun:_ZN5QSvgG4drawEP8QPainterR15QSvgExtraStates
+   fun:_ZN16QSvgTinyDocument4drawEP8QPainterRK6QRectF
+   fun:_ZN16QSvgTinyDocument4drawEP8QPainter
+   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidgeti
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERSt4listISsSaISsEEb
 }

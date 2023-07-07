@@ -23,6 +23,7 @@
 #include "environment_widgets.h"
 #include "function_widget.h"
 #include "function_widgets.h"
+#include "ombv_widgets.h"
 
 namespace MBSimGUI {
 
