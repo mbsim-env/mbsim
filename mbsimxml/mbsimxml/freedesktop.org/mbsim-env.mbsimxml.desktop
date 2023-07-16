@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=MBSimXML
+Comment=Multi Body Simulation - Modeling multi body and multi domain simulations
+Icon=mbsim-env.mbsimxml
+Exec=bash -c '"@bindir@/mbsimxml" --CC %f; echo PRESS ENTER TO CLOSE; read'
+NoDisplay=true
+Terminal=true
+MimeType=application/vnd.mbsim-env.mbsimflatxml;application/vnd.mbsim-env.mbsimxml;
+Categories=Science;ComputerScience;NumericalAnalysis;Physics;Math;Robotics;

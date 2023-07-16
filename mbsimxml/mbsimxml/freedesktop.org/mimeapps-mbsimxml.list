@@ -1,0 +1,3 @@
+[Added Associations]
+application/vnd.mbsim-env.mbsimflatxml=mbsim-env.mbsimxml.desktop;
+application/vnd.mbsim-env.mbsimxml=mbsim-env.mbsimxml.desktop;

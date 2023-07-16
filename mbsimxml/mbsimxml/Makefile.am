@@ -31,5 +31,5 @@ dist_mbsimmoduleschema_DATA = mbsimmodule.xsd mbsimmoduleCatalog.xml
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
-freedesktoporg_DATA = mbsim-env.de.mbsimxml.xml
-bin_SCRIPTS = desktopIntegration.sh
+freedesktoporg_DATA = freedesktop.org/mbsim-env.mbsimxml.desktop freedesktop.org/mbsim-env.mbsimxmldoc.desktop freedesktop.org/mbsim-env.mbsimxml.xml freedesktop.org/mimeapps-mbsimxml.list icons/mbsimxml.svg icons/mbsimxmldoc.svg icons/mbsimxmldoc.ico
+bin_SCRIPTS = freedesktop.org/desktopIntegration.sh freedesktop.org/desktopIntegration.bat freedesktop.org/desktopIntegration.py

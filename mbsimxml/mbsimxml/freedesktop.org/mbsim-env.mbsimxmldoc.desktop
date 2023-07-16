@@ -1,0 +1,7 @@
+[Desktop Entry]
+Type=Link
+Name=MBSimXML Docu
+Comment=Multi Body Simulation XML Documentation - Modeling multi body and multi domain simulations
+Icon=mbsim-env.mbsimxmldoc
+IconWindows=@bindir@/../share/mbsim-env/freedesktop.org/mbsimxmldoc.ico
+URL=file://@bindir@/../share/mbxmlutils/doc/http___www_mbsim-env_de_MBSimXML/mbsimxml.html

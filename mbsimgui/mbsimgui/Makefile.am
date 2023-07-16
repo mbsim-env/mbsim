@@ -276,10 +276,8 @@ endif
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
-windowsdir = @datadir@/mbsim-env/windows
-freedesktoporg_DATA = mbsim-env.de.mbsimgui.desktop mimeapps-mbsimgui.list icons/mbsimgui.svg
-windows_DATA = createLnk.vbs mbsim-env.de.mbsimgui.source.bat
-bin_SCRIPTS = desktopIntegration.sh desktopIntegration.bat
+freedesktoporg_DATA = freedesktop.org/mbsim-env.mbsimgui.desktop freedesktop.org/mimeapps-mbsimgui.list icons/mbsimgui.svg
+bin_SCRIPTS = freedesktop.org/desktopIntegration.sh freedesktop.org/desktopIntegration.bat freedesktop.org/desktopIntegration.py
 
 
 

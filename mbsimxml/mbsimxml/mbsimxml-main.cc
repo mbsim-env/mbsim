@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
           <<"                 --autoreload [ms]|--dumpXMLCatalog <file>] [--savefinalstatevector]"<<endl
           <<"                [--baseindexforplot <bi>] [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
-          <<"                <mbsimprjfile>"<<endl
+          <<"                [-C <dir/file>|--CC] <mbsimprjfile>"<<endl
           <<""<<endl
           <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
           <<"This is free software; see the source for copying conditions. There is NO"<<endl
@@ -98,7 +98,9 @@ int main(int argc, char *argv[]) {
           <<"                         --stderr 'warn~Warn: ~' --stderr 'error~~' --stderr 'depr~Depr:~'"<<endl
           <<"                         --stderr 'status~~\\r' is used."<<endl
           <<"--stderr <msg>           Analog to --stdout but prints to stderr."<<endl
-          <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file"<<endl;
+          <<"-C <dir/file>            Write output to <dir>/<dir of file> instead of the current working dir"<<endl
+          <<"--CC                     Write output to <dir of mbsimprjfile> instead of the current working dir"<<endl
+          <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file (write output to current working dir)"<<endl;
       return 0;
     }
 
@@ -193,9 +195,28 @@ int main(int argc, char *argv[]) {
       else
         AUTORELOADTIME=250;
     }
+
+    // current directory
+    if((i=std::find(args.begin(), args.end(), "-C"))!=args.end()) {
+      i2=i; i2++;
+      if(bfs::is_directory(*i2))
+        bfs::current_path(*i2);
+      else
+        bfs::current_path(bfs::path(*i2).parent_path());
+      args.erase(i);
+      args.erase(i2);
+    }
+    bool cdToMBSimPrj=false;
+    if((i=std::find(args.begin(), args.end(), "--CC"))!=args.end()) {
+      cdToMBSimPrj=true;
+      args.erase(i);
+    }
   
     string MBSIMPRJ=*args.begin();
     args.erase(args.begin());
+
+    if(cdToMBSimPrj)
+      bfs::current_path(bfs::path(MBSIMPRJ).parent_path());
   
     // execute
     int ret; // comamnd return value
