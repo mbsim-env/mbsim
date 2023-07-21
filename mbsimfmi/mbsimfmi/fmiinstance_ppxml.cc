@@ -99,7 +99,7 @@ namespace MBSimFMI {
   
     // create object for DynamicSystemSolver
     msg(Debug)<<"Create DynamicSystemSolver."<<endl;
-    doc->normalizeDocument();
+    D(doc)->normalizeDocument();
     dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(E(ele)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver")));
 
     if(cosim) {

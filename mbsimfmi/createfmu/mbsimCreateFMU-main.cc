@@ -220,7 +220,7 @@ int main(int argc, char *argv[]) {
       else {
         cout<<"Copy original XML model file to FMU."<<endl;
         // normalize modelEle
-        modelEle->getOwnerDocument()->normalizeDocument();
+        D(modelEle->getOwnerDocument())->normalizeDocument();
         // parameters existing -> save original XML file to FMU including all dependencies
         // Note: We copy the XML model file including all dependencies to resources/model. However the full absolute path
         // (excluding the leading '/' or 'c:\') of each file is added as subdir of resources/model. This will
