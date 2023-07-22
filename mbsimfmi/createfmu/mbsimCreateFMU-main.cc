@@ -233,14 +233,14 @@ int main(int argc, char *argv[]) {
         fmuFile.add(path("resources")/"model"/absolute(inputFilename).relative_path(), inputFilename);
         // copy dependencies
         cout<<"Copy dependent files of the original XML model file to FMU."<<endl;
-        for(auto & dependencie : dependencies)
-          if(!is_directory(dependencie)) {
-            if(dependencie.is_absolute())
+        for(auto & dependency : dependencies)
+          if(!is_directory(dependency)) {
+            if(dependency.is_absolute())
               throw runtime_error("A XML model file with parameters may only reference files by a relative path.\n"
-                                  "However the model references the absolute file '"+dependencie.string()+"'.\n"+
+                                  "However the model references the absolute file '"+dependency.string()+"'.\n"+
                                   "Use the --noparam options OR rework the model to not contain any absolute file path.");
             cout<<"."<<flush;
-            fmuFile.add(path("resources")/"model"/current_path().relative_path()/dependencie, dependencie);
+            fmuFile.add(path("resources")/"model"/current_path().relative_path()/dependency, dependency);
           }
         cout<<endl;
       }
