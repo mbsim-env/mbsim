@@ -81,10 +81,10 @@ try:
       for key in de:
         de[key]=de[key].replace("@bindir@", BINDIR)
       if not copyToMenu:
-        de["NoDisplay"]=True
+        de["NoDisplay"]="true"
       with open(f("{DATAHOME}/applications/{os.path.basename(F)}"), "wt") as ff:
         cp.write(ff, space_around_delimiters=False)
-      if not de.get("NoDisplay", False) and copyToDesktop:
+      if de.get("NoDisplay", "false")!="true" and copyToDesktop:
         shutil.copyfile(f("{DATAHOME}/applications/{os.path.basename(F)}"), f("{DESKTOP}/{os.path.basename(F)}"))
         os.chmod(f("{DESKTOP}/{os.path.basename(F)}"), mode=0o755)
     
@@ -215,4 +215,6 @@ try:
 
 
 except:
+  import traceback
+  traceback.print_exc()
   input("The above errors occured. Press enter to close: ")
