@@ -229,7 +229,7 @@ namespace MBSimHydraulics {
       Element::plot(QIn(0)*6e4);
       Element::plot(QOut(0)*6e4);
       for (int i=0; i<relPlotPoints.size(); i++)
-        Element::plot((nFrom->getGeneralizedForce()(0)*(1-relPlotPoints(i))+nTo->getGeneralizedForce()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
+        Element::plot((nFrom->evalGeneralizedForce()(0)*(1-relPlotPoints(i))+nTo->evalGeneralizedForce()(0)*relPlotPoints(i)+trans(y)*relPlot.col(i))*1e-5);
       if(plotFeature[generalizedPosition]) {
         for (int i=0; i<n; i++)
           Element::plot(y(i));
