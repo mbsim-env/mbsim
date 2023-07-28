@@ -9,7 +9,7 @@ libmbsimxml_la_SOURCES = mbsimxml.cc
 libmbsimxml_la_CPPFLAGS = $(DEPS_CFLAGS) $(PYTHON_CFLAGS) -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 libmbsimxml_la_LIBADD = $(DEPS_LIBS) $(PYTHON_LIBS)
 mbsimxmlincludedir = $(includedir)/mbsimxml
-mbsimxmlinclude_HEADERS = mbsimxml.h
+mbsimxmlinclude_HEADERS = mbsimxml.h set_current_path.h
 
 
 bin_PROGRAMS = mbsimflatxml mbsimxml
@@ -31,5 +31,5 @@ dist_mbsimmoduleschema_DATA = mbsimmodule.xsd mbsimmoduleCatalog.xml
 
 # freedesktop.org
 freedesktoporgdir = @datadir@/mbsim-env/freedesktop.org
-freedesktoporg_DATA = freedesktop.org/mbsim-env.mbsimxml.desktop freedesktop.org/mbsim-env.mbsimxmldoc.desktop freedesktop.org/mbsim-env.mbsimxml.xml freedesktop.org/mimeapps-mbsimxml.list icons/mbsimxml.svg icons/mbsimxmldoc.svg icons/mbsimxmldoc.ico
+freedesktoporg_DATA = freedesktop.org/mbsim-env.mbsimxml.desktop freedesktop.org/mbsim-env.mbsimcreatefmu-me.desktop freedesktop.org/mbsim-env.mbsimcreatefmu-cosim.desktop freedesktop.org/mbsim-env.mbsimxmldoc.desktop freedesktop.org/mbsim-env.mbsimxml.xml freedesktop.org/mimeapps-mbsimxml.list icons/mbsimxml.svg icons/mbsimxmlfmu.svg icons/mbsimxmldoc.svg icons/mbsimxmldoc.ico
 bin_SCRIPTS = freedesktop.org/desktopIntegration.sh freedesktop.org/desktopIntegration.bat freedesktop.org/desktopIntegration.py

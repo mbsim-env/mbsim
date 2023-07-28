@@ -18,6 +18,7 @@
 #include "mbsimxml.h"
 #include "mbsimflatxml.h"
 #include <openmbvcppinterface/objectfactory.h>
+#include "set_current_path.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -53,8 +54,6 @@ int main(int argc, char *argv[]) {
     list<string>::iterator i, i2;
     for(int i=1; i<argc; i++)
       args.emplace_back(argv[i]);
-
-    bool DUMPXMLCATALOG=std::find(args.begin(), args.end(), "--dumpXMLCatalog")!=args.end();
 
     // help
     if(args.size()<1 ||
@@ -98,9 +97,12 @@ int main(int argc, char *argv[]) {
           <<"                         --stderr 'warn~Warn: ~' --stderr 'error~~' --stderr 'depr~Depr:~'"<<endl
           <<"                         --stderr 'status~~\\r' is used."<<endl
           <<"--stderr <msg>           Analog to --stdout but prints to stderr."<<endl
-          <<"-C <dir/file>            Write output to <dir>/<dir of file> instead of the current working dir"<<endl
-          <<"--CC                     Write output to <dir of mbsimprjfile> instead of the current working dir"<<endl
-          <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file (write output to current working dir)"<<endl;
+          <<"-C <dir/file>            Change current to dir to <dir>/dir of <file> first."<<endl
+          <<"                         All arguments are still relative to the original current dir."<<endl
+          <<"--CC                     Change current dir to dir of <mbsimprjfile> first."<<endl
+          <<"                         All arguments are still relative to the original current dir."<<endl
+          <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file (write output to current working dir)"<<endl
+          <<"                         Must be the last argument!"<<endl;
       return 0;
     }
 
@@ -120,6 +122,31 @@ int main(int argc, char *argv[]) {
   
     // parse parameters
 
+    // current directory and MBSIMPRJ
+    bfs::path MBSIMPRJ=*(--args.end());
+    bfs::path newCurrentPath;
+    if((i=std::find(args.begin(), args.end(), "--CC"))!=args.end()) {
+      newCurrentPath=MBSIMPRJ.parent_path();
+      args.erase(i);
+    }
+    if((i=std::find(args.begin(), args.end(), "-C"))!=args.end()) {
+      i2=i; i2++;
+      if(bfs::is_directory(*i2))
+        newCurrentPath=*i2;
+      else
+        newCurrentPath=bfs::path(*i2).parent_path();
+      args.erase(i);
+      args.erase(i2);
+    }
+    SetCurrentPath currentPath(newCurrentPath);
+    // MBSIMPRJ=currentPath.adaptPath(MBSIMPRJ); delayed, see call below
+    for(auto a : {"--modulePath", "--dumpXMLCatalog"})
+      if(auto i=std::find(args.begin(), args.end(), a); i!=args.end()) {
+        auto i2=i; i2++;
+        *i2=currentPath.adaptPath(*i2).string();
+      }
+
+
     // generate mbsimxml.xsd
     set<bfs::path> searchDirs;
     while((i=find(args.begin(), args.end(), "--modulePath"))!=args.end()) {
@@ -132,15 +159,16 @@ int main(int argc, char *argv[]) {
     // create xml catalog
     auto xmlCatalogDoc=MBSim::getMBSimXMLCatalog(searchDirs);
 
-    if(DUMPXMLCATALOG) {
-      auto it=std::find(args.begin(), args.end(), "--dumpXMLCatalog");
-      it++;
-      if(it==args.end())
+    if((i=std::find(args.begin(), args.end(), "--dumpXMLCatalog"))!=args.end()) {
+      i2=i; i2++;
+      if(i2==args.end())
       {
         cerr<<"No filename specified after --dumpXMLCatalog."<<endl;
         return 1;
       }
-      DOMParser::serialize(xmlCatalogDoc->getDocumentElement(), *it);
+      DOMParser::serialize(xmlCatalogDoc->getDocumentElement(), *i2);
+      args.erase(i2);
+      args.erase(i);
       return 0;
     }
 
@@ -196,27 +224,16 @@ int main(int argc, char *argv[]) {
         AUTORELOADTIME=250;
     }
 
-    // current directory
-    if((i=std::find(args.begin(), args.end(), "-C"))!=args.end()) {
-      i2=i; i2++;
-      if(bfs::is_directory(*i2))
-        bfs::current_path(*i2);
-      else
-        bfs::current_path(bfs::path(*i2).parent_path());
-      args.erase(i);
-      args.erase(i2);
-    }
-    bool cdToMBSimPrj=false;
-    if((i=std::find(args.begin(), args.end(), "--CC"))!=args.end()) {
-      cdToMBSimPrj=true;
-      args.erase(i);
-    }
+    args.pop_back();
+    MBSIMPRJ=currentPath.adaptPath(MBSIMPRJ);
   
-    string MBSIMPRJ=*args.begin();
-    args.erase(args.begin());
-
-    if(cdToMBSimPrj)
-      bfs::current_path(bfs::path(MBSIMPRJ).parent_path());
+    if(args.size()!=0) {
+      cerr<<"Unhandled arguments found:"<<endl;
+      for(auto &x : args)
+        cerr<<x<<" ";
+      cerr<<endl;
+      return 1;
+    }
   
     // execute
     int ret; // comamnd return value
