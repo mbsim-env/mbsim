@@ -913,7 +913,7 @@
           </xs:element>
           <xs:element name="cacheSize" minOccurs="0" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert die Anzahl der Zeilen der nativen cache Größe. HDF5 schreibaktionen werden nur ausgeführt wenn der cache voll ist. (Default: 0)
+              Definiert die Anzahl der Zeilen der nativen cache Größe. HDF5 schreibaktionen werden nur ausgeführt wenn der cache voll ist. (Default: 100)
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>

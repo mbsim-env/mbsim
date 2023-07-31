@@ -1271,7 +1271,7 @@ namespace MBSimGUI {
     chunkSize = new ExtWidget("HDF5 output chunk size (number of rows) ",new ChoiceWidget(new ScalarWidgetFactory("100"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"chunkSize");
     addToTab("Extra", chunkSize);
 
-    cacheSize = new ExtWidget("In-memory output chunk size (number of rows)",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"cacheSize");
+    cacheSize = new ExtWidget("In-memory output chunk size (number of rows)",new ChoiceWidget(new ScalarWidgetFactory("100"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"cacheSize");
     addToTab("Extra", cacheSize);
   }
 
