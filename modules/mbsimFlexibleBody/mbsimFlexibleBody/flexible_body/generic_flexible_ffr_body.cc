@@ -793,7 +793,7 @@ namespace MBSimFlexibleBody {
     }
     e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"translationDependentRotation");
     if(e) translationDependentRotation = E(e)->getText<bool>();
-    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedVelocityOfRotation");
+    e=E(element)->getFirstElementChildNamed(MBSIMFLEX%"generalizedVelocityOfRotation");
     if(e) {
       string generalizedVelocityOfRotationStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
       if(generalizedVelocityOfRotationStr=="derivativeOfGeneralizedPositionOfRotation") generalizedVelocityOfRotation=derivativeOfGeneralizedPositionOfRotation;

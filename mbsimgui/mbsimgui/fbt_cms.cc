@@ -453,11 +453,23 @@ namespace MBSimGUI {
       delete Krns.Jp();
     }
 
-    U.resize(Ks.size(),Ui.cols()+Un.cols(),NONINIT);
-    for(int i=0; i<Ui.cols(); i++)
-      U.set(i,Ui.col(i));
-    for(int i=Ui.cols(), j=0; i<Ui.cols()+Un.cols(); i++, j++)
-      U.set(i,Un.col(j));
+    if(U.cols()+Un.cols()) {
+      U.resize(Ks.size(),Ui.cols()+Un.cols(),NONINIT);
+      for(int i=0; i<Ui.cols(); i++)
+	U.set(i,Ui.col(i));
+      for(int i=Ui.cols(), j=0; i<Ui.cols()+Un.cols(); i++, j++)
+	U.set(i,Un.col(j));
+    }
+    else {
+      U.resize(Ks.size(),iF.size());
+      int k = 0;
+      for(int i=0; i<nN; i++) {
+	for(int j=0; j<nen; j++) {
+	  if(activeDof0(i,j))
+	    U(i*nen+j,k++) = 1;
+	}
+      }
+    }
   }
 
 }

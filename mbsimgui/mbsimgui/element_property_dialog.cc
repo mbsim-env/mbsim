@@ -1495,7 +1495,7 @@ namespace MBSimGUI {
     list.emplace_back("\"derivativeOfGeneralizedPositionOfRotation\"");
     list.emplace_back("\"coordinatesOfAngularVelocityWrtFrameOfReference\"");
     list.emplace_back("\"coordinatesOfAngularVelocityWrtFrameForKinematics\"");
-    generalizedVelocityOfRotation = new ExtWidget("Generalized velocity of rotation",new TextChoiceWidget(list,0,true),true,false,MBSIM%"generalizedVelocityOfRotation");
+    generalizedVelocityOfRotation = new ExtWidget("Generalized velocity of rotation",new TextChoiceWidget(list,0,true),true,false,MBSIMFLEX%"generalizedVelocityOfRotation");
     addToTab("Kinematics", generalizedVelocityOfRotation);
   }
 

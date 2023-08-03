@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<InputData xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
+
+  <numberOfNodes>9</numberOfNodes>
+
+  <length unit="m">0.3</length>
+
+  <crossSectionArea unit="m^2">0.008*0.008</crossSectionArea>
+
+  <momentOfInertia>
+    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ele>1/12*0.008^3*0.008</ele>
+      <ele>1/12*0.008*0.008^3</ele>
+      <ele>0</ele>
+    </xmlVector>
+  </momentOfInertia>
+
+  <youngsModulus unit="N/m^2">2e11</youngsModulus>
+
+  <density unit="kg/m^3">7870</density>
+
+  <tension>false</tension>
+
+  <bendingAboutYAxis>false</bendingAboutYAxis>
+
+  <bendingAboutZAxis>true</bendingAboutZAxis>
+
+  <torsion>false</torsion>
+
+  <boundaryNodeNumbers>
+    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ele>1</ele>
+      <ele>9</ele>
+    </xmlVector>
+  </boundaryNodeNumbers>
+
+  <constrainedDegreesOfFreedom>
+    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ele>1</ele>
+    </xmlVector>
+  </constrainedDegreesOfFreedom>
+
+  <inputDataFileName>"input_data.h5"</inputDataFileName>
+
+</InputData>
