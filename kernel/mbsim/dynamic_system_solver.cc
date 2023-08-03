@@ -1423,7 +1423,7 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"chunkSize");
     if(e) setChunkSize(E(e)->getText<int>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"cacheSize");
-    if(e) setCachekSize(E(e)->getText<int>());
+    if(e) setCacheSize(E(e)->getText<int>());
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {

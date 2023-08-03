@@ -590,7 +590,7 @@ namespace MBSim {
 
       void setCompressionLevel(int level) { compressionLevel=level; }
       void setChunkSize(int size) { chunkSize=size; }
-      void setCachekSize(int size) { cacheSize=size; }
+      void setCacheSize(int size) { cacheSize=size; }
 
     protected:
       /**
