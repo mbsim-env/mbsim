@@ -157,13 +157,57 @@ namespace MBSimGUI {
         statusBar()->showMessage(QString::fromStdString(s));
       }));
 
-    QMenu *GUIMenu = new QMenu("GUI", menuBar());
-    menuBar()->addMenu(GUIMenu);
+    auto referencedFilesDialog = new QDialog(this);
+    auto *layout = new QVBoxLayout;
+    referencedFilesDialog->setLayout(layout);
+    layout->addWidget(fileView);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Close);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, &QDialogButtonBox::rejected, referencedFilesDialog, &QDialog::hide);
 
-    QAction *action = GUIMenu->addAction(QIcon::fromTheme("document-properties"), "Options", this, &MainWindow::openOptionsMenu);
-    action->setStatusTip(tr("Open options menu"));
+    QMenu *fileMenu = new QMenu("File", menuBar());
+    menuBar()->addMenu(fileMenu);
 
-    GUIMenu->addSeparator();
+    QAction *action;
+    action = fileMenu->addAction(QIcon::fromTheme("document-new"), "New", this, &MainWindow::newProject);
+    action->setShortcut(QKeySequence::New);
+    action->setStatusTip("New project");
+    action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open ...", this, QOverload<>::of(&MainWindow::loadProject));
+    action->setShortcut(QKeySequence::Open);
+    action->setStatusTip("Open project");
+    action = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
+    action->setShortcut(QKeySequence::Save);
+    action->setStatusTip("Save project and all references");
+    actionSaveProject = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save project only", this, [=](){ this->saveProject(); });
+    actionSaveProject->setStatusTip("Save project (but not the references)");
+    action = fileMenu->addAction(QIcon::fromTheme("document-save-as"), "Save project as ...", this, &MainWindow::saveProjectAs);
+    action->setShortcut(QKeySequence::SaveAs);
+    action->setStatusTip("Save project as new file");
+
+    fileMenu->addSeparator();
+
+    action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Show referenced files ...", referencedFilesDialog, &QDialog::show);
+    action->setStatusTip("Show a list of all referenced files");
+    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Settings ...", this, &MainWindow::openOptionsMenu);
+    action->setStatusTip(tr("Show settings menu"));
+
+    fileMenu->addSeparator();
+
+    for (auto & recentProjectFileAct : recentProjectFileActs) {
+      recentProjectFileAct = new QAction(this);
+      recentProjectFileAct->setVisible(false);
+      connect(recentProjectFileAct, &QAction::triggered, this, &MainWindow::openRecentProjectFile);
+    }
+    for (auto & recentProjectFileAct : recentProjectFileActs)
+      fileMenu->addAction(recentProjectFileAct);
+    updateRecentProjectFileActions();
+
+    fileMenu->addSeparator();
+
+    action = fileMenu->addAction(QIcon::fromTheme("application-exit"), "E&xit", this, &MainWindow::close);
+    action->setShortcut(QKeySequence::Quit);
+    action->setStatusTip(tr("Exit the application"));
 
     elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 2);
     elementViewFilter->hide();
@@ -171,81 +215,41 @@ namespace MBSimGUI {
     parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, 2);
     parameterViewFilter->hide();
 
-    GUIMenu->addSeparator();
-
-    action = GUIMenu->addAction(QIcon::fromTheme("application-exit"), "E&xit", this, &MainWindow::close);
-    action->setShortcut(QKeySequence::Quit);
-    action->setStatusTip(tr("Exit the application"));
-
-    for (auto & recentProjectFileAct : recentProjectFileActs) {
-      recentProjectFileAct = new QAction(this);
-      recentProjectFileAct->setVisible(false);
-      connect(recentProjectFileAct, &QAction::triggered, this, &MainWindow::openRecentProjectFile);
-    }
-    QMenu *menu = new QMenu("Project", menuBar());
-    action = menu->addAction(QIcon::fromTheme("document-new"), "New", this, &MainWindow::newProject);
-    action->setShortcut(QKeySequence::New);
-    action = menu->addAction(QIcon::fromTheme("document-open"), "Open", this, QOverload<>::of(&MainWindow::loadProject));
-    action->setShortcut(QKeySequence::Open);
-    action = menu->addAction(QIcon::fromTheme("document-save-as"), "Save as", this, &MainWindow::saveProjectAs);
-    action->setShortcut(QKeySequence::SaveAs);
-    actionSaveProject = menu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ this->saveProject(); });
-    actionSaveProject->setShortcut(QKeySequence::Save);
-    menu->addSeparator();
-    for (auto & recentProjectFileAct : recentProjectFileActs)
-      menu->addAction(recentProjectFileAct);
-    updateRecentProjectFileActions();
-    menuBar()->addMenu(menu);
-
-    menu = new QMenu("Edit", menuBar());
-    action = menu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, &MainWindow::edit);
+    auto editMenu = new QMenu("Edit", menuBar());
+    action = editMenu->addAction(QIcon::fromTheme("document-properties"), "Edit", this, &MainWindow::edit);
     action->setShortcut(QKeySequence("Ctrl+E"));
-    menu->addSeparator();
-    actionUndo = menu->addAction(QIcon::fromTheme("edit-undo"), "Undo", this, &MainWindow::undo);
+    editMenu->addSeparator();
+    actionUndo = editMenu->addAction(QIcon::fromTheme("edit-undo"), "Undo", this, &MainWindow::undo);
     actionUndo->setShortcut(QKeySequence::Undo);
     actionUndo->setDisabled(true);
-    actionRedo = menu->addAction(QIcon::fromTheme("edit-redo"), "Redo", this, &MainWindow::redo);
+    actionRedo = editMenu->addAction(QIcon::fromTheme("edit-redo"), "Redo", this, &MainWindow::redo);
     actionRedo->setShortcut(QKeySequence::Redo);
     actionRedo->setDisabled(true);
-    menu->addSeparator();
-    action = menu->addAction(QIcon::fromTheme("edit-copy"), "Copy", this, &MainWindow::copy);
+    editMenu->addSeparator();
+    action = editMenu->addAction(QIcon::fromTheme("edit-copy"), "Copy", this, &MainWindow::copy);
     action->setShortcut(QKeySequence::Copy);
-    action = menu->addAction(QIcon::fromTheme("edit-cut"), "Cut", this, &MainWindow::cut);
+    action = editMenu->addAction(QIcon::fromTheme("edit-cut"), "Cut", this, &MainWindow::cut);
     action->setShortcut(QKeySequence::Cut);
-    action = menu->addAction(QIcon::fromTheme("edit-paste"), "Paste", this, &MainWindow::paste);
+    action = editMenu->addAction(QIcon::fromTheme("edit-paste"), "Paste", this, &MainWindow::paste);
     action->setShortcut(QKeySequence::Paste);
-    menu->addSeparator();
-    action = menu->addAction(QIcon::fromTheme("edit-delete"), "Remove", this, &MainWindow::remove);
+    editMenu->addSeparator();
+    action = editMenu->addAction(QIcon::fromTheme("edit-delete"), "Remove", this, &MainWindow::remove);
     action->setShortcut(QKeySequence::Delete);
-    menu->addSeparator();
-    action = menu->addAction(QIcon::fromTheme("go-up"), "Move up", this, &MainWindow::moveUp);
+    editMenu->addSeparator();
+    action = editMenu->addAction(QIcon::fromTheme("go-up"), "Move up", this, &MainWindow::moveUp);
     action->setShortcut(QKeySequence("Ctrl+Up"));
-    action = menu->addAction(QIcon::fromTheme("go-down"), "Move down", this, &MainWindow::moveDown);
+    action = editMenu->addAction(QIcon::fromTheme("go-down"), "Move down", this, &MainWindow::moveDown);
     action->setShortcut(QKeySequence("Ctrl+Down"));
-    menuBar()->addMenu(menu);
+    menuBar()->addMenu(editMenu);
 
-    menu = new QMenu("Export", menuBar());
-    actionSaveDataAs = menu->addAction("Export all data", this, &MainWindow::saveDataAs);
-    actionSaveMBSimH5DataAs = menu->addAction("Export MBSim data file", this, &MainWindow::saveMBSimH5DataAs);
-    actionSaveOpenMBVDataAs = menu->addAction("Export OpenMBV data", this, &MainWindow::saveOpenMBVDataAs);
-    actionSaveStateVectorAs = menu->addAction("Export state vector", this, &MainWindow::saveStateVectorAs);
-    actionSaveStateTableAs = menu->addAction("Export state table", this, &MainWindow::saveStateTableAs);
-    actionSaveLinearSystemAnalysisAs = menu->addAction("Export linear system analysis", this, &MainWindow::saveLinearSystemAnalysisAs);
-    menuBar()->addMenu(menu);
-
-    auto dialog = new QDialog(this);
-    auto *layout = new QVBoxLayout;
-    dialog->setLayout(layout);
-    layout->addWidget(fileView);
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
-    buttonBox->addButton(QDialogButtonBox::Close);
-    layout->addWidget(buttonBox);
-    connect(buttonBox, &QDialogButtonBox::rejected, dialog, &QDialog::hide);
-
-    menu = new QMenu("References", menuBar());
-    menu->addAction(QIcon::fromTheme("document-open"), "Open list", dialog, &QDialog::show);
-    menu->addAction(QIcon::fromTheme("document-save"), "Save all", this, [=](){ for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
-    menuBar()->addMenu(menu);
+    auto exportMenu = new QMenu("Export", menuBar());
+    actionSaveDataAs = exportMenu->addAction("Export all data", this, &MainWindow::saveDataAs);
+    actionSaveMBSimH5DataAs = exportMenu->addAction("Export MBSim data file", this, &MainWindow::saveMBSimH5DataAs);
+    actionSaveOpenMBVDataAs = exportMenu->addAction("Export OpenMBV data", this, &MainWindow::saveOpenMBVDataAs);
+    actionSaveStateVectorAs = exportMenu->addAction("Export state vector", this, &MainWindow::saveStateVectorAs);
+    actionSaveStateTableAs = exportMenu->addAction("Export state table", this, &MainWindow::saveStateTableAs);
+    actionSaveLinearSystemAnalysisAs = exportMenu->addAction("Export linear system analysis", this, &MainWindow::saveLinearSystemAnalysisAs);
+    menuBar()->addMenu(exportMenu);
 
     QMenu *helpMenu = new QMenu("Help", menuBar());
     helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, &MainWindow::help);
