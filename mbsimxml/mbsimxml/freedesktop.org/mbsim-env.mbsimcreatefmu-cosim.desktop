@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Create MBSim Cosim FMU
+Comment=Create a Functional Mock-Up Unit (FMU) for Co-Simulation
+Icon=mbsim-env.mbsimxmlfmu
+Exec=bash -c '"@bindir@/mbsimCreateFMU" --cosim --CC %f; echo PRESS ENTER TO CLOSE; read'
+NoDisplay=true
+Terminal=true
+MimeType=application/vnd.mbsim-env.mbsimflatxml;application/vnd.mbsim-env.mbsimxml;
+Categories=Science;ComputerScience;NumericalAnalysis;Physics;Math;Robotics;

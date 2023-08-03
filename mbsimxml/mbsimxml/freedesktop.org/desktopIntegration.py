@@ -145,6 +145,19 @@ try:
         subprocess.check_call(['cscript', '/B', path])
       finally:
         os.unlink(path)
+
+    def deleteKey(root, sub):
+      try:
+        with winreg.OpenKey(root, sub, 0, winreg.KEY_ALL_ACCESS) as key:
+          while True:
+            num, _, _=winreg.QueryInfoKey(key)
+            if num==0:
+              break
+            child=winreg.EnumKey(key, 0)
+            deleteKey(key, child)
+          winreg.DeleteKey(key, "")
+      except FileNotFoundError:
+        pass
   
     # registry
     with winreg.CreateKey(winreg.HKEY_CURRENT_USER, r'Software\Classes') as classes:
@@ -156,9 +169,11 @@ try:
         de=cp["Desktop Entry"]
         for key in de:
           de[key]=de[key].replace("@bindir@", BINDIR)
-        wss=cp["Windows-secondary-shell"] if "Windows-secondary-shell" in cp else {}
-        for key in wss:
-          wss[key]=wss[key].replace("@bindir@", BINDIR)
+        for section in cp:
+          if section.startswith("Windows-shell-"):
+            ws=cp[section]
+            for key in ws:
+              ws[key]=ws[key].replace("@bindir@", BINDIR)
         if de["Type"]=="Application":
           addedAssociation=False
           for mimeType in de["MimeType"].split(";"):
@@ -175,15 +190,18 @@ try:
                 raise RuntimeError("glob "+ext+" for mimetype "+mimeType+" is not supported");
               winreg.SetValue(classes, ext[1:], winreg.REG_SZ, progID)
           if not addedAssociation:
+            deleteKey(classes, progID)
             winreg.SetValue(classes, progID, winreg.REG_SZ, de["Name"])
             winreg.SetValue(classes, progID+r'\FriendlyTypeName', winreg.REG_SZ, de["Name"])
             winreg.SetValue(classes, progID+r'\Infotipp', winreg.REG_SZ, de["Comment"])
             winreg.SetValue(classes, progID+r'\DefaultIcon', winreg.REG_SZ, de["IconWindows"])
             winreg.SetValue(classes, progID+r'\shell\open', winreg.REG_SZ, f(r'Open with {de["Name"]}'))
             winreg.SetValue(classes, progID+r'\shell\open\command', winreg.REG_SZ, de["ExecWindows"])
-            if "ID" in wss:
-              winreg.SetValue(classes, progID+f(r'\shell\{wss["ID"]}'), winreg.REG_SZ, wss["Name"])
-              winreg.SetValue(classes, progID+f(r'\shell\{wss["ID"]}\command'), winreg.REG_SZ, wss["Exec"])
+            for section in cp:
+              if section.startswith("Windows-shell-"):
+                ws=cp[section]
+                winreg.SetValue(classes, progID+f(r'\shell\{ws["ID"]}'), winreg.REG_SZ, ws["Name"])
+                winreg.SetValue(classes, progID+f(r'\shell\{ws["ID"]}\command'), winreg.REG_SZ, ws["Exec"])
   
             execFile=de["Exec"].split(" ")[0]
             if execFile[0]=='"' and execFile[-1]=='"' or execFile[0]=="'" and execFile[-1]=="'":

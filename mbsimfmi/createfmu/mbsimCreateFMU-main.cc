@@ -11,6 +11,7 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include "zip.h"
+#include "../../mbsimxml/mbsimxml/set_current_path.h"
 #include <../general/fmi_variables.h>
 #include <../general/xmlpp_utils.h>
 #include <../general/mbsimsrc_fmi.h>
@@ -58,52 +59,87 @@ int main(int argc, char *argv[]) {
 
     boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
 
+    // convert args to c++
+    list<string> args;
+    for(int i=1; i<argc; i++)
+      args.emplace_back(argv[i]);
+
     // help
-    if(argc<2) {
-      cout<<"Usage: "<<argv[0]<<" [--nocompress] [--cosim] [--param <name> [--param <name> ...]]"<<endl;
-      cout<<"  <MBSim Project XML File>|<MBSim FMI shared library>"<<endl;
+    if(argc<2 || find(args.begin(), args.end(), "-h")!=args.end() || find(args.begin(), args.end(), "--help")!=args.end()) {
+      cout<<"Usage: "<<argv[0]<<" [-h|--help] [--nocompress] [--cosim] [--param <name> [--param <name> ...]]"<<endl;
+      cout<<"  [-C <dir/file>|--CC] <MBSim Project XML File>|<MBSim FMI shared library>"<<endl;
       cout<<endl;
+      cout<<"Create Functional Mock-Up Unit (FMI/FMU 1.0)."<<endl;
       cout<<"Creates mbsim.fmu in the current directory."<<endl;
-      cout<<"The MBSim model is taken from the provided XML project file or shared library file."<<endl;
-      cout<<"For XML project model files --param may be specified 0 to n times. Where <name> defines"<<endl;
-      cout<<"a parameter name of the DynamicSystemSolver Embed element which should be"<<endl;
-      cout<<"provided as an FMU parameter. Note that only parameters which do not depend"<<endl;
-      cout<<"on any other parameters are allowed. If no --param option is given all are exported."<<endl;
-      cout<<"Use --noparam to ignore all parameters defined the DynamicSystemSolver Embed element."<<endl;
-      cout<<"Use --cosim to generate a FMI for Cosimulation FMU instead of a"<<endl;
-      cout<<"FMI for Model-Exchange FMU."<<endl;
+      cout<<endl;
+      cout<<"<MBSim Project XML File>    Create a FMU from XML project file"<<endl;
+      cout<<"                            Must be the last argument!"<<endl;
+      cout<<"<MBSim FMI shared library>  Create a FMU from shared library"<<endl;
+      cout<<"                            Must be the last argument!"<<endl;
+      cout<<"--param <name>              <name> defines a parameter name of"<<endl;
+      cout<<"                            the root Embed element of <MBSim Project XML File> which should be"<<endl;
+      cout<<"                            provided as an FMU parameter. Note that only parameters which do not depend"<<endl;
+      cout<<"                            on any other parameters are allowed. If no --param option is given all are exported."<<endl;
+      cout<<"                            Only for XML project files."<<endl;
+      cout<<"--noparam                   Ignore all parameters defined the DynamicSystemSolver Embed element."<<endl;
+      cout<<"                            Only for XML project files."<<endl;
+      cout<<"--nocompress                Zip FMU without compression."<<endl;
+      cout<<"--cosim                     Generate a FMI for Cosimulation FMU instead of a FMI for Model-Exchange FMU."<<endl;
+      cout<<"-C <dir/file>               Change current to dir to <dir>/dir of <file> first."<<endl;
+      cout<<"                            All arguments are still relative to the original current dir."<<endl;
+      cout<<"--CC                        Change current dir to dir of <mbsimprjfile> first."<<endl;
+      cout<<"                            All arguments are still relative to the original current dir."<<endl;
       return 0;
     }
 
+    // current directory and adapt paths
+    path inputFilename=args.back();
+    boost::filesystem::path newCurrentPath;
+    if(auto i=std::find(args.begin(), args.end(), "--CC"); i!=args.end()) {
+      newCurrentPath=inputFilename.parent_path();
+      args.erase(i);
+    }
+    if(auto i=std::find(args.begin(), args.end(), "-C"); i!=args.end()) {
+      auto i2=i; i2++;
+      if(boost::filesystem::is_directory(*i2))
+        newCurrentPath=*i2;
+      else
+        newCurrentPath=boost::filesystem::path(*i2).parent_path();
+      args.erase(i);
+      args.erase(i2);
+    }
+    SetCurrentPath currentPath(newCurrentPath);
+    inputFilename=currentPath.adaptPath(inputFilename);
+
     // get parameters
-    int optcount=0;
     set<string> useParam;
+    if(auto i=std::find(args.begin(), args.end(), "--param"); i!=args.end()) {
+      auto i2=i; i2++;
+      useParam.insert(*i2);
+      args.erase(i);
+      args.erase(i2);
+    }
     bool compress=true;
+    if(auto i=std::find(args.begin(), args.end(), "--nocompress"); i!=args.end()) {
+      compress=false;
+      args.erase(i);
+    }
     bool noParam=false;
+    if(auto i=std::find(args.begin(), args.end(), "--noparam"); i!=args.end()) {
+      noParam=true;
+      args.erase(i);
+    }
     bool cosim=false;
-    for(int i=1; i<argc-1; ++i) {
-      if(string(argv[i])=="--param")
-        useParam.insert(argv[i+1]);
-      if(string(argv[i])=="--nocompress") {
-        compress=false;
-        optcount++;
-      }
-      if(string(argv[i])=="--noparam") {
-        noParam=true;
-        optcount++;
-      }
-      if(string(argv[i])=="--cosim") {
-        cosim=true;
-        optcount++;
-      }
+    if(auto i=std::find(args.begin(), args.end(), "--cosim"); i!=args.end()) {
+      cosim=true;
+      args.erase(i);
     }
 
     // get model file
-    if(2*useParam.size()+1+optcount>=argc) {
+    if(args.size()!=1) {
       cout<<"Wrong command line."<<endl;
       return 1;
     }
-    path inputFilename=argv[2*useParam.size()+1+optcount];
 
     // xml or shared library
     bool xmlFile=false;

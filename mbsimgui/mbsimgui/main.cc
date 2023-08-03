@@ -29,6 +29,7 @@
 #include <QLibrary>
 #include <boost/dll.hpp>
 #include <mbxmlutilshelper/shared_library.h>
+#include "../../mbsimxml/mbsimxml/set_current_path.h"
 #ifdef _WIN32
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
@@ -90,13 +91,50 @@ int main(int argc, char *argv[]) {
     cout    <<""<<endl;
     cout    <<"-h|--help          Shows this help"<<endl;
     cout    <<"--fullscreen       Start in full screen mode"<<endl;
+    cout    <<"-C <dir/file>      Change current to dir to <dir>/dir of <file> first."<<endl;
+    cout    <<"                   All arguments are still relative to the original current dir."<<endl;
+    cout    <<"--CC               Change current dir to dir of <mbsimprjfile> first."<<endl;
+    cout    <<"                   All arguments are still relative to the original current dir."<<endl;
     cout    <<"--searchPath=<dir> Directory used to search plugsin. Can be specified multiple times"<<endl;
     cout    <<"                   Searches for libmbsimgui-plugin-*.[so|dll] files"<<endl;
     cout    <<"<dir>              Open first *.mbsx file in dir"<<endl;
+    cout    <<"                   <dir> must be the last argument."<<endl;
     cout    <<"<mbsimfile>        Open <mbsimfile> (*.mbsx)"<<endl;
+    cout    <<"                   <mbsimfile> must be the last argument."<<endl;
     cout    <<""<<endl;
     return 0;
   }
+
+  // current directory and adapt paths
+  boost::filesystem::path dirFile;
+  if(!arg.empty())
+    dirFile=(--arg.end())->toStdString();
+  boost::filesystem::path newCurrentPath;
+  if(auto i=std::find(arg.begin(), arg.end(), "--CC"); !dirFile.empty() && i!=arg.end()) {
+    if(boost::filesystem::is_directory(dirFile))
+      newCurrentPath=dirFile;
+    else
+      newCurrentPath=dirFile.parent_path();
+    arg.erase(i);
+  }
+  if(auto i=std::find(arg.begin(), arg.end(), "-C"); i!=arg.end()) {
+    auto i2=i; i2++;
+    if(boost::filesystem::is_directory(i2->toStdString()))
+      newCurrentPath=i2->toStdString();
+    else
+      newCurrentPath=boost::filesystem::path(i2->toStdString()).parent_path();
+    arg.erase(i);
+    arg.erase(i2);
+  }
+  SetCurrentPath currentPath(newCurrentPath);
+  for(auto a : {"--searchPath"})
+    if(auto i=std::find(arg.begin(), arg.end(), a); i!=arg.end()) {
+      auto i2=i; i2++;
+      *i2=currentPath.adaptPath(i2->toStdString()).string().c_str();
+    }
+  for(auto i=arg.rbegin(); i!=arg.rend(); ++i)
+    if(currentPath.existsInOrg(i->toStdString()))
+      *i=currentPath.adaptPath(i->toStdString()).string().c_str();
 
   char moduleName[2048];
 #ifdef _WIN32
@@ -107,18 +145,15 @@ int main(int argc, char *argv[]) {
 #endif
   QCoreApplication::setLibraryPaths(QStringList(QFileInfo(moduleName).absolutePath())); // do not load plugins from buildin defaults
 
+  auto argSaved=arg; // save arguments (QApplication removes all arguments known by Qt)
   QApplication app(argc, argv);
+  arg=argSaved; // restore arguments
 #ifndef _WIN32
   UnixSignalWatcher sigwatch;
   sigwatch.watchForSignal(SIGINT);
   sigwatch.watchForSignal(SIGTERM);
   QObject::connect(&sigwatch, &UnixSignalWatcher::unixSignal, &app, &QApplication::quit);
 #endif
-
-  // regenerate arg: QApplication removes all arguments known by Qt
-  arg.clear();
-  for (int i=1; i<argc; i++)
-    arg.push_back(argv[i]);
 
   app.setOrganizationName("mbsim-env");
   app.setApplicationName("mbsimgui");

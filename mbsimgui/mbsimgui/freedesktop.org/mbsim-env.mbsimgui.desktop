@@ -4,13 +4,23 @@ Name=MBSimGUI
 Comment=Multi Body Simulation GUI - Modeling multi body and multi domain simulations
 Icon=mbsim-env.mbsimgui
 IconWindows="@bindir@/mbsimgui.exe",0
-Exec="@bindir@/mbsimgui" %f
-ExecWindows="@bindir@/mbsimgui.exe" "%1"
+Exec="@bindir@/mbsimgui" --CC %f
+ExecWindows="@bindir@/mbsimgui.exe" --CC "%1"
 Terminal=false
 MimeType=application/vnd.mbsim-env.mbsimflatxml;application/vnd.mbsim-env.mbsimxml;
 Categories=Science;ComputerScience;NumericalAnalysis;Physics;Math;Robotics;
 
-[Windows-secondary-shell]
+[Windows-shell-1]
 ID=simulate
 Name=Simulate with MBSimXML
-Exec=cmd /c title MBSimXML "%1" && call "@bindir@/mbsimxml.exe" "%1" && set /p "id=PRESS ENTER TO CLOSE"
+Exec=cmd /c title MBSimXML "%1" & call "@bindir@/mbsimxml.exe" --CC "%1" & set /p "id=PRESS ENTER TO CLOSE"
+
+[Windows-shell-2]
+ID=createmefmu
+Name=Create ME FMU
+Exec=cmd /c title MBSim Create ME FMU "%1" & call "@bindir@/mbsimCreateFMU.exe" --CC "%1" & set /p "id=PRESS ENTER TO CLOSE"
+
+[Windows-shell-3]
+ID=createcosimfmu
+Name=Create Cosim FMU
+Exec=cmd /c title MBSim Create Cosim FMU "%1" & call "@bindir@/mbsimCreateFMU.exe" --cosim --CC "%1" & set /p "id=PRESS ENTER TO CLOSE"
