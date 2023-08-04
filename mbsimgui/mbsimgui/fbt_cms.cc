@@ -453,7 +453,7 @@ namespace MBSimGUI {
       delete Krns.Jp();
     }
 
-    if(U.cols()+Un.cols()) {
+    if(Ui.cols()+Un.cols()) {
       U.resize(Ks.size(),Ui.cols()+Un.cols(),NONINIT);
       for(int i=0; i<Ui.cols(); i++)
 	U.set(i,Ui.col(i));
