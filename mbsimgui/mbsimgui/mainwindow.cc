@@ -245,7 +245,8 @@ namespace MBSimGUI {
     auto runMenu = new QMenu("Run", menuBar());
     menuBar()->addMenu(runMenu);
 
-    auto sceneViewMenu = new QMenu("Scene View", menuBar());
+    auto sceneViewMenu = inlineOpenMBVMW->getSceneViewMenu();
+    sceneViewMenu->removeAction(sceneViewMenu->findChild<QAction*>("MainWindow::sceneViewMenu::releaseCamera"));
     menuBar()->addMenu(sceneViewMenu);
 
     auto miscMenu = new QMenu("Misc", menuBar());
@@ -314,26 +315,18 @@ namespace MBSimGUI {
     miscMenu->addAction(actionConvert);
     connect(actionConvert,&QAction::triggered,this,&MainWindow::convertDocument);
 
-    QToolBar *sceneViewBar = addToolBar("Scene View Toolbar");
-    sceneViewBar->setObjectName("toolbar/sceneview");
-    toolMenu->addAction(sceneViewBar->toggleViewAction());
-    actionRefresh = sceneViewBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh scene view");
-    sceneViewMenu->addAction(actionRefresh);
+    QToolBar *sceneViewToolBar = inlineOpenMBVMW->getSceneViewToolBar();
+    addToolBar(sceneViewToolBar);
+    sceneViewToolBar->show();
+    sceneViewToolBar->setObjectName("toolbar/sceneview");
+    toolMenu->addAction(sceneViewToolBar->toggleViewAction());
+    sceneViewToolBar->insertSeparator(sceneViewToolBar->actions()[0]);
+    actionRefresh = new QAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh scene view");
+    sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], actionRefresh);
+
+    sceneViewMenu->insertSeparator(sceneViewMenu->actions()[0]);
+    sceneViewMenu->insertAction(sceneViewMenu->actions()[0], actionRefresh);
     connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
-
-    sceneViewBar->addSeparator();
-    for(auto *a : inlineOpenMBVMW->getViewTBActions())
-      if(a)
-        sceneViewBar->addAction(a);
-      else
-        sceneViewBar->addSeparator();
-
-    sceneViewMenu->addSeparator();
-    for(auto *a : inlineOpenMBVMW->getViewTBActions())
-      if(a)
-        sceneViewMenu->addAction(a);
-      else
-        sceneViewMenu->addSeparator();
 
     elementView->setModel(new ElementTreeModel(this));
     elementView->setColumnWidth(0,250);
