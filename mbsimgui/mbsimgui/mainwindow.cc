@@ -242,7 +242,17 @@ namespace MBSimGUI {
     action->setShortcut(QKeySequence("Ctrl+Down"));
     menuBar()->addMenu(editMenu);
 
-    auto exportMenu = new QMenu("Export", menuBar());
+    auto runMenu = new QMenu("Run", menuBar());
+    menuBar()->addMenu(runMenu);
+
+    auto sceneViewMenu = inlineOpenMBVMW->getSceneViewMenu();
+    sceneViewMenu->removeAction(sceneViewMenu->findChild<QAction*>("MainWindow::sceneViewMenu::releaseCamera"));
+    menuBar()->addMenu(sceneViewMenu);
+
+    auto miscMenu = new QMenu("Misc", menuBar());
+    menuBar()->addMenu(miscMenu);
+
+    auto exportMenu = new QMenu("Data Export", menuBar());
     actionSaveDataAs = exportMenu->addAction("Export all data", this, &MainWindow::saveDataAs);
     actionSaveMBSimH5DataAs = exportMenu->addAction("Export MBSim data file", this, &MainWindow::saveMBSimH5DataAs);
     actionSaveOpenMBVDataAs = exportMenu->addAction("Export OpenMBV data", this, &MainWindow::saveOpenMBVDataAs);
@@ -251,39 +261,72 @@ namespace MBSimGUI {
     actionSaveLinearSystemAnalysisAs = exportMenu->addAction("Export linear system analysis", this, &MainWindow::saveLinearSystemAnalysisAs);
     menuBar()->addMenu(exportMenu);
 
+    auto *dockMenu=new QMenu("Docks", menuBar());
+    menuBar()->addMenu(dockMenu);
+
+    QMenu *toolMenu = new QMenu("Tools", menuBar());
+    menuBar()->addMenu(toolMenu);
+
     QMenu *helpMenu = new QMenu("Help", menuBar());
     helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, &MainWindow::help);
     helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help", this, [=](){ this->xmlHelp(); });
     helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, &MainWindow::about);
     menuBar()->addMenu(helpMenu);
 
-    QToolBar *toolBar = addToolBar("Tasks");
-    toolBar->setObjectName("toolbar/tasks");
-    actionSimulate = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaPlay)),"Start simulation");
+    QToolBar *runBar = addToolBar("Run Toolbar");
+    toolMenu->addAction(runBar->toggleViewAction());
+    runBar->setObjectName("toolbar/run");
+    actionSimulate = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaPlay)),"Start simulation");
+    runMenu->addAction(actionSimulate);
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
-    QAction *actionInterrupt = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
+    QAction *actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
+    runMenu->addAction(actionInterrupt);
     connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
-    QAction *actionKill = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
+    QAction *actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
+    runMenu->addAction(actionKill);
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
-    actionRefresh = toolBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh 3D view");
-    connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
-    actionOpenMBV = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
+    actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
+    runMenu->addAction(actionOpenMBV);
     connect(actionOpenMBV,&QAction::triggered,this,&MainWindow::openmbv);
-    actionH5plotserie = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
+    actionH5plotserie = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
+    runMenu->addAction(actionH5plotserie);
     connect(actionH5plotserie,&QAction::triggered,this,&MainWindow::h5plotserie);
-    actionLinearSystemAnalysis = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Linear system analysis");
+    actionLinearSystemAnalysis = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Linear system analysis");
+    runMenu->addAction(actionLinearSystemAnalysis);
     connect(actionLinearSystemAnalysis,&QAction::triggered,this,&MainWindow::linearSystemAnalysis);
-    actionStateTable = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"state_table.svg").string())),"Show state table");
+    actionStateTable = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"state_table.svg").string())),"Show state table");
+    runMenu->addAction(actionStateTable);
     connect(actionStateTable,&QAction::triggered,this,&MainWindow::showStateTable);
-    QAction *actionCreateFMU = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"FMI_bare.svg").string())),"Create FMU");
+
+    QToolBar *miscBar = addToolBar("Misc Toolbar");
+    miscBar->setObjectName("toolbar/misc");
+    toolMenu->addAction(miscBar->toggleViewAction());
+    QAction *actionCreateFMU = miscBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"FMI_bare.svg").string())),"Create FMU");
+    miscMenu->addAction(actionCreateFMU);
     connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
-    QAction *actionFem = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
+    QAction *actionFem = miscBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
+    miscMenu->addAction(actionFem);
     connect(actionFem,&QAction::triggered,this,&MainWindow::flexibleBodyTool);
-    actionDebug = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
+    actionDebug = miscBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
+    miscMenu->addAction(actionDebug);
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
-    QAction *actionConvert = toolBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"convert.svg").string())),"Convert file");
+    QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"convert.svg").string())),"Convert file");
+    miscMenu->addAction(actionConvert);
     connect(actionConvert,&QAction::triggered,this,&MainWindow::convertDocument);
+
+    QToolBar *sceneViewToolBar = inlineOpenMBVMW->getSceneViewToolBar();
+    addToolBar(sceneViewToolBar);
+    sceneViewToolBar->show();
+    sceneViewToolBar->setObjectName("toolbar/sceneview");
+    toolMenu->addAction(sceneViewToolBar->toggleViewAction());
+    sceneViewToolBar->insertSeparator(sceneViewToolBar->actions()[0]);
+    actionRefresh = new QAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh scene view");
+    sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], actionRefresh);
+
+    sceneViewMenu->insertSeparator(sceneViewMenu->actions()[0]);
+    sceneViewMenu->insertAction(sceneViewMenu->actions()[0], actionRefresh);
+    connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
 
     elementView->setModel(new ElementTreeModel(this));
     elementView->setColumnWidth(0,250);
@@ -303,35 +346,38 @@ namespace MBSimGUI {
     connect(elementView, &ElementView::pressed, this, &MainWindow::elementViewClicked);
     connect(parameterView, &ParameterView::pressed, this, &MainWindow::parameterViewClicked);
 
-    QDockWidget *dockWidget1 = new QDockWidget("Model Tree", this);
-    dockWidget1->setFeatures(QDockWidget::DockWidgetVerticalTitleBar);
-    dockWidget1->setObjectName("dockWidget/mbs");
-    addDockWidget(Qt::LeftDockWidgetArea,dockWidget1);
-    QWidget *widget1 = new QWidget(dockWidget1);
-    dockWidget1->setWidget(widget1);
+    QDockWidget *dockModelTree = new QDockWidget("Model Tree", this);
+    dockMenu->addAction(dockModelTree->toggleViewAction());
+    dockModelTree->setFeatures(dockModelTree->features() | QDockWidget::DockWidgetVerticalTitleBar);
+    dockModelTree->setObjectName("dockWidget/mbs");
+    addDockWidget(Qt::LeftDockWidgetArea,dockModelTree);
+    QWidget *widget1 = new QWidget(dockModelTree);
+    dockModelTree->setWidget(widget1);
     auto *widgetLayout1 = new QVBoxLayout(widget1);
     widgetLayout1->setContentsMargins(0,0,0,0);
     widget1->setLayout(widgetLayout1);
     widgetLayout1->addWidget(elementViewFilter);
     widgetLayout1->addWidget(elementView);
 
-    QDockWidget *dockWidget3 = new QDockWidget("Parameter Tree (of selected object)", this);
-    dockWidget3->setFeatures(QDockWidget::DockWidgetVerticalTitleBar);
-    dockWidget3->setObjectName("dockWidget/parameters");
-    addDockWidget(Qt::LeftDockWidgetArea,dockWidget3);
-    QWidget *widget3 = new QWidget(dockWidget3);
-    dockWidget3->setWidget(widget3);
+    QDockWidget *dockParameterTree = new QDockWidget("Parameter Tree (of selected object)", this);
+    dockMenu->addAction(dockParameterTree->toggleViewAction());
+    dockParameterTree->setFeatures(dockParameterTree->features() | QDockWidget::DockWidgetVerticalTitleBar);
+    dockParameterTree->setObjectName("dockWidget/parameters");
+    addDockWidget(Qt::LeftDockWidgetArea,dockParameterTree);
+    QWidget *widget3 = new QWidget(dockParameterTree);
+    dockParameterTree->setWidget(widget3);
     auto *widgetLayout3 = new QVBoxLayout(widget3);
     widgetLayout3->setContentsMargins(0,0,0,0);
     widget3->setLayout(widgetLayout3);
     widgetLayout3->addWidget(parameterViewFilter);
     widgetLayout3->addWidget(parameterView);
 
-    QDockWidget *dockWidget4 = new QDockWidget("MBSim Echo Area", this);
-    dockWidget4->setFeatures(QDockWidget::DockWidgetVerticalTitleBar);
-    dockWidget4->setObjectName("dockWidget/echoArea");
-    addDockWidget(Qt::BottomDockWidgetArea, dockWidget4);
-    dockWidget4->setWidget(echoView);
+    QDockWidget *dockEchoArea = new QDockWidget("MBSim Echo Area", this);
+    dockMenu->addAction(dockEchoArea->toggleViewAction());
+    dockEchoArea->setFeatures(dockEchoArea->features() | QDockWidget::DockWidgetVerticalTitleBar);
+    dockEchoArea->setObjectName("dockWidget/echoArea");
+    addDockWidget(Qt::BottomDockWidgetArea, dockEchoArea);
+    dockEchoArea->setWidget(echoView);
 
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
