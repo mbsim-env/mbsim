@@ -23,12 +23,18 @@ try:
   # MISSING END
   
   # Install all mbsim-env freedesktop.org modules
+
+  print("After finishing this script a relogin may be needed to apply all changes!")
+  print("")
   
   inp=input("Create shortcuts on desktop [Y/n]: ")
   copyToDesktop=inp=="" or inp=="y" or inp=="Y"
   
   inp=input("Create shortcuts in start menu [Y/n]: ")
   copyToMenu=inp=="" or inp=="y" or inp=="Y"
+  
+  inp=input("Add executables to PATH [Y/n]: ")
+  addToPATH=inp=="" or inp=="y" or inp=="Y"
   
   
   
@@ -95,6 +101,22 @@ try:
     for F in glob.glob(f("{FREEDESKTOPORGDIR}/mbsim-env.*.xml")):
       shutil.copyfile(F, f("{DATAHOME}/mime/packages/{os.path.basename(F)}"))
     subprocess.check_call(["update-mime-database", f("{DATAHOME}/mime")])
+
+    if addToPATH:
+      def addPath(file):
+        skip=False
+        with open(file, "rt") as f:
+          for line in f:
+            if line.rstrip()=="export PATH=$PATH:"+BINDIR:
+              skip=True
+              break
+        if not skip:
+          with open(file, "at") as f:
+            print("export PATH=$PATH:"+BINDIR, file=f)
+      if os.path.isfile(f("{HOME}/.bashrc")):
+        addPath(f("{HOME}/.bashrc"))
+      if os.path.isfile(f("{HOME}/.kshrc")):
+        addPath(f("{HOME}/.kshrc"))
   
   
   
@@ -225,6 +247,14 @@ try:
           # start menu
           if copyToMenu:
             createShortcut(f(r'{STARTMENU}/{de["Name"]}.lnk'), url, de["IconWindows"])
+
+    if addToPATH:
+      with winreg.CreateKey(winreg.HKEY_CURRENT_USER, r'Environment') as env:
+        (PATH, PATHtype)=winreg.QueryValueEx(env, "PATH")
+        PATH=PATH.split(";")
+        if BINDIR not in PATH:
+          PATH.append(BINDIR)
+          winreg.SetValueEx(env, "PATH", 0, PATHtype, ";".join(PATH))
   
     # update cache (if possible)
     if shutil.which("ie4uinit.exe") is not None:
