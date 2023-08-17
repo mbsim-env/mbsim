@@ -75,18 +75,17 @@ namespace MBSimGUI {
     if(clone->isActive()) {
       QString text = textWidget->getText();
       int i1 = text.indexOf("{");
-      if(i1!=-1) {
-        int i2 = text.indexOf("}");
-        textWidget->setText(text.replace(i1+1,i2-i1-1,static_cast<CloneWidget*>(clone->getWidget())->getCounterName()));
-      }
-      else
+      cout<<"mfmf active "<<i1<<endl;
+      if(i1==-1)
         textWidget->setText(textWidget->getText()+"{"+static_cast<CloneWidget*>(clone->getWidget())->getCounterName()+"}");
     }
     else {
       QString text = textWidget->getText();
-      int i1 = text.indexOf("{");
-      int i2 = text.indexOf("}");
-      textWidget->setText(text.remove(i1,i2-i1+1));
+      cout<<"mfmf deact "<<text.toStdString()<<" "<<"{ *" + static_cast<CloneWidget*>(clone->getWidget())->getCounterName().toStdString() + " *}"<<endl;
+      QRegularExpression re("{ *" + static_cast<CloneWidget*>(clone->getWidget())->getCounterName() + " *}");
+      text.remove(re);
+      cout<<"mfmf deact2 "<<text.toStdString()<<endl;
+      textWidget->setText(text);
     }
   }
 
