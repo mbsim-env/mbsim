@@ -34,7 +34,7 @@ namespace MBSimGUI {
   class MouseEvent : public QObject {
     Q_OBJECT
     public:
-      MouseEvent(QLabel* label) : QObject(label) { }
+      MouseEvent(QWidget* widget) : QObject(widget) { }
     protected:
       bool eventFilter(QObject *obj, QEvent *event) override;
     signals:
@@ -58,7 +58,10 @@ namespace MBSimGUI {
       bool checkable, checked;
       Widget *widget;
       MBXMLUtils::FQN xmlName;
-      QLabel *label;
+      static std::optional<QPixmap> expandedPixmap, collapsedPixmap; // this optional is initialed in the first ctor call (cannot be done static since Qt must be init first)
+      QLabel *iconLabel; // the icon of a optional Widget (first column)
+      // QLabel textLabel; // the name of the optional Widget (second column)
+      QLabel *disabledLabel; // the "(disabled)" text of the optional Widget (third column)
 
     signals:
       void clicked(bool);

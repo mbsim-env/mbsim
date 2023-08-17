@@ -24,6 +24,7 @@
 #include "dialogs.h"
 #include "custom_widgets.h"
 #include "unknown_widget.h"
+#include <boost/dll.hpp>
 #include <QListWidget>
 #include <QStackedWidget>
 #include <utility>
@@ -43,24 +44,45 @@ namespace MBSimGUI {
       return QObject::eventFilter(obj, event);
   }
 
+  optional<QPixmap> ExtWidget::expandedPixmap, ExtWidget::collapsedPixmap;
+
   ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_) : checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
+    if(!expandedPixmap || !collapsedPixmap) {
+      QFontInfo fontinfo(font());
+      auto iconPath(boost::dll::program_location().parent_path().parent_path()/"share"/"mbsimgui"/"icons");
+      expandedPixmap = Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())).pixmap(fontinfo.pixelSize(),fontinfo.pixelSize());
+      collapsedPixmap = Utils::QIconCached(QString::fromStdString((iconPath/"collapsed.svg").string())).pixmap(fontinfo.pixelSize(),fontinfo.pixelSize());
+    }
 
     auto *layout = new QVBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
 
-    label = new QLabel;
-    layout->addWidget(label);
-    layout->addWidget(widget);
-    widget->setContentsMargins(10,0,0,0);
-    MouseEvent *mouseEvent = new MouseEvent(label);
-    label->installEventFilter(mouseEvent);
     checkable = checkable_;
     checked = active;
     if(checkable) {
-      label->setEnabled(active);
-      label->setText(name + " <small>optional</small>");
-      label->setToolTip("Click to define or remove this property");
+      auto *expandableWidget = new QWidget;
+      expandableWidget->setCursor(Qt::PointingHandCursor);
+      expandableWidget->setContentsMargins(0,0,0,0);
+      auto *expandableLayout = new QHBoxLayout;
+      expandableLayout->setContentsMargins(0,0,0,0);
+      expandableWidget->setLayout(expandableLayout);
+      iconLabel=new QLabel;
+      iconLabel->setPixmap(checked ? *expandedPixmap : *collapsedPixmap);
+      expandableLayout->addWidget(iconLabel);
+      expandableLayout->addWidget(new QLabel(name));
+      disabledLabel=new QLabel(checked ? " " : "(disabled)");
+      disabledLabel->setDisabled(true);
+      expandableLayout->addWidget(disabledLabel);
+      expandableLayout->setStretch(0,0);
+      expandableLayout->setStretch(1,0);
+      expandableLayout->setStretch(2,1);
+      layout->addWidget(expandableWidget);
+      layout->addWidget(widget);
+      widget->setContentsMargins(10,0,0,0);
+      MouseEvent *mouseEvent = new MouseEvent(expandableWidget);
+      expandableWidget->installEventFilter(mouseEvent);
+      expandableWidget->setToolTip("Click to define or remove this property");
       widget->setVisible(active);
       connect(mouseEvent,&MouseEvent::mousePressed,this,[=]{
           setActive(not checked);
@@ -69,6 +91,10 @@ namespace MBSimGUI {
           });
     }
     else {
+      auto *label = new QLabel;
+      layout->addWidget(label);
+      layout->addWidget(widget);
+      widget->setContentsMargins(10,0,0,0);
       label->setToolTip("This property must be defined");
       label->setText(name);
     }
@@ -78,7 +104,8 @@ namespace MBSimGUI {
   void ExtWidget::setActive(bool active) {
     if(checkable) {
       checked = active;
-      label->setEnabled(checked);
+      iconLabel->setPixmap(checked ? *expandedPixmap : *collapsedPixmap);
+      disabledLabel->setText(checked ? " " : "(disabled)");
       widget->setVisible(checked);
     }
   }
