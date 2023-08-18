@@ -2790,32 +2790,34 @@ namespace MBSimGUI {
 
   void MainWindow::convertDocument() {
     QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectFilePath(), "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
-    DOMDocument *doc = parser->parseURI(X()%file.toStdString());
-    DOMNodeList* list = doc->getElementsByTagName(X()%"naturalModeScaleFactor");
-    for(size_t j=0; j<list->getLength(); j++)
-      doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScaleFactor");
-    list = doc->getElementsByTagName(X()%"naturalModeScale");
-    for(size_t j=0; j<list->getLength(); j++)
-      doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScale");
-    list = doc->getElementsByTagName(X()%"visualizeNaturalModeShapes");
-    for(size_t j=0; j<list->getLength(); j++)
-      doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"visualizeNormalModes");
-    list = doc->getElementsByTagName(X()%"SymbolicFunction");
-    for(size_t j=0; j<list->getLength(); j++) {
-      if(not E(static_cast<DOMElement*>(list->item(j)))->getFirstElementChildNamed(MBSIM%"definition")) {
-	auto *node = doc->renameNode(list->item(j),X()%MBSIM.getNamespaceURI(),X()%"definition");
-	DOMElement *ele = D(doc)->createElement(MBSIM%"SymbolicFunction");
-	node->getParentNode()->insertBefore(ele,node);
-	ele->insertBefore(node,nullptr);
-      }
-    }
-    file=QFileDialog::getSaveFileName(this, "Save MBSim file", file, "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not(file.isEmpty())) {
-      try {
-	serializer->writeToURI(doc, X()%(file.toStdString()));
+      DOMDocument *doc = parser->parseURI(X()%file.toStdString());
+      DOMNodeList* list = doc->getElementsByTagName(X()%"naturalModeScaleFactor");
+      for(size_t j=0; j<list->getLength(); j++)
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScaleFactor");
+      list = doc->getElementsByTagName(X()%"naturalModeScale");
+      for(size_t j=0; j<list->getLength(); j++)
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScale");
+      list = doc->getElementsByTagName(X()%"visualizeNaturalModeShapes");
+      for(size_t j=0; j<list->getLength(); j++)
+	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"visualizeNormalModes");
+      list = doc->getElementsByTagName(X()%"SymbolicFunction");
+      for(size_t j=0; j<list->getLength(); j++) {
+	if(not E(static_cast<DOMElement*>(list->item(j)))->getFirstElementChildNamed(MBSIM%"definition")) {
+	  auto *node = doc->renameNode(list->item(j),X()%MBSIM.getNamespaceURI(),X()%"definition");
+	  DOMElement *ele = D(doc)->createElement(MBSIM%"SymbolicFunction");
+	  node->getParentNode()->insertBefore(ele,node);
+	  ele->insertBefore(node,nullptr);
+	}
       }
-      catch(const std::exception &ex) {
-	cerr << ex.what() << endl;
+      file=QFileDialog::getSaveFileName(this, "Save MBSim file", file, "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
+      if(not(file.isEmpty())) {
+	try {
+	  serializer->writeToURI(doc, X()%(file.toStdString()));
+	}
+	catch(const std::exception &ex) {
+	  cerr << ex.what() << endl;
+	}
       }
     }
   }
