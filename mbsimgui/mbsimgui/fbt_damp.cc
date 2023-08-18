@@ -22,6 +22,8 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#define _USE_MATH_DEFINES
+#include <cmath>
 
 using namespace std;
 using namespace fmatvec;
