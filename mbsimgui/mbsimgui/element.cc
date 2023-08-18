@@ -20,6 +20,8 @@
 #include <config.h>
 #include "element.h"
 #include <cmath>
+#include "element_view.h"
+#include "parameter_view.h"
 #include "frame.h"
 #include "contour.h"
 #include "dynamic_system_solver.h"
@@ -143,6 +145,26 @@ namespace MBSimGUI {
       }
       str = "/" + str;
       return str;
+    }
+  }
+
+  void Element::updateStatus() {
+    enabled = (not parent or parent->getEnabled()) and isActive();
+    if(getModelIndex().model()==mw->getElementView()->model())
+      emit mw->getElementView()->model()->dataChanged( getModelIndex(), getModelIndex(), { Qt::UserRole });
+    if(getModelIndex().model()==mw->getParameterView()->model())
+      emit mw->getParameterView()->model()->dataChanged( getModelIndex(), getModelIndex(), { Qt::UserRole });
+  }
+
+  void Element::emitDataChangedOnChildren() {
+    if(getModelIndex().isValid()) {
+      int row=0;
+      while(true) {
+        auto containerIndex=getModelIndex().model()->index(row++,0,getModelIndex());
+        if(!containerIndex.isValid())
+          break;
+        emit mw->getElementView()->model()->dataChanged(containerIndex, containerIndex, { Qt::UserRole });
+      }
     }
   }
 

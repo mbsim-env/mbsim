@@ -42,6 +42,7 @@ namespace MBSimGUI {
       std::vector<MBXMLUtils::FQN> plotFeatures;
       std::string ID;
       bool enabled{true};
+      void emitDataChangedOnChildren();
     public:
       Element();
       QString getXMLPath(Element *ref=nullptr, bool rel=false);
@@ -105,7 +106,7 @@ namespace MBSimGUI {
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
       virtual MBXMLUtils::FQN getPlotFeatureType() const { return ""; }
       bool getEnabled() const override { return enabled; }
-      void updateStatus() override { enabled = (not parent or parent->getEnabled()) and isActive(); }
+      void updateStatus() override;
       EmbedItemData *getDedicatedItem() override { return dedicatedFileItem?(fileItem?this:parent->getDedicatedItem()):this; }
   };
 

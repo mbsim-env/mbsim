@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include <cstdio>
+#include "mainwindow.h"
 #include "utils.h"
 #include <unordered_map>
 #include <cmath>

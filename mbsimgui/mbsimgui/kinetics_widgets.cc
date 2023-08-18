@@ -20,6 +20,7 @@
 #include <config.h>
 #include "kinetics_widgets.h"
 #include "function_widgets.h"
+#include "mainwindow.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "custom_widgets.h"

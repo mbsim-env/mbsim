@@ -49,6 +49,7 @@ namespace MBSimGUI {
       TreeModel(QObject *parent = nullptr) : QAbstractItemModel(parent) { }
       ~TreeModel() override;
 
+      bool setData(const QModelIndex &index, const QVariant &value, int role) override;
       QVariant data(const QModelIndex &index, int role) const override;
       QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 

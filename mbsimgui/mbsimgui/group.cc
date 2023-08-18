@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include "element_view.h"
 #include "group.h"
 #include "frame.h"
 #include "contour.h"
@@ -538,6 +539,7 @@ namespace MBSimGUI {
       i->updateStatus();
     for(auto & i : observer)
       i->updateStatus();
+    emitDataChangedOnChildren();
   }
 
 }

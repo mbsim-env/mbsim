@@ -133,6 +133,7 @@ namespace MBSimGUI {
       i->updateStatus();
     for(auto & i : contour)
       i->updateStatus();
+    emitDataChangedOnChildren();
   }
 
 }

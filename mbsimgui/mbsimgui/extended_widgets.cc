@@ -71,9 +71,9 @@ namespace MBSimGUI {
       iconLabel->setPixmap(checked ? *expandedPixmap : *collapsedPixmap);
       expandableLayout->addWidget(iconLabel);
       expandableLayout->addWidget(new QLabel(name));
-      disabledLabel=new QLabel(checked ? " " : "(disabled)");
-      disabledLabel->setDisabled(true);
-      expandableLayout->addWidget(disabledLabel);
+      defaultLabel=new QLabel(checked ? " " : "(default employed)");
+      defaultLabel->setDisabled(true);
+      expandableLayout->addWidget(defaultLabel);
       expandableLayout->setStretch(0,0);
       expandableLayout->setStretch(1,0);
       expandableLayout->setStretch(2,1);
@@ -105,7 +105,7 @@ namespace MBSimGUI {
     if(checkable) {
       checked = active;
       iconLabel->setPixmap(checked ? *expandedPixmap : *collapsedPixmap);
-      disabledLabel->setText(checked ? " " : "(disabled)");
+      defaultLabel->setText(checked ? " " : "(default employed)");
       widget->setVisible(checked);
     }
   }

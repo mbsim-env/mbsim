@@ -27,14 +27,17 @@
 #include <limits>
 #include <sstream>
 #include <objectfactory.h>
-#include <mainwindow.h>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMElement.hpp>
 #include <mbxmlutilshelper/dom.h>
 
 class QTreeWidgetItem;
+class QMenu;
 
 namespace MBSimGUI {
+
+  class MainWindow;
+  class TreeItemData;
 
   extern MainWindow *mw;
 

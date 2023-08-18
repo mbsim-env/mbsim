@@ -126,8 +126,6 @@ namespace MBSimGUI {
 
     mbxmlparser=DOMParser::create(uniqueTempDir/".mbsimxml.catalog.xml");
 
-    elementView = new ElementView;
-    parameterView = new ParameterView;
     echoView = new EchoView(this);
     fileView = new FileView;
 
@@ -209,9 +207,27 @@ namespace MBSimGUI {
     action->setShortcut(QKeySequence::Quit);
     action->setStatusTip(tr("Exit the application"));
 
-    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 2);
+    // filter settings
+    OpenMBVGUI::AbstractViewFilter::setFilterType(static_cast<OpenMBVGUI::AbstractViewFilter::FilterType>(settings.value("mainwindow/filter/type", 0).toInt()));
+    OpenMBVGUI::AbstractViewFilter::setCaseSensitive(settings.value("mainwindow/filter/casesensitivity", false).toBool());
+    connect(OpenMBVGUI::AbstractViewFilter::staticObject(), &OpenMBVGUI::StaticObject::optionsChanged, [](){
+      QSettings settings;
+      settings.setValue("mainwindow/filter/type", static_cast<int>(OpenMBVGUI::AbstractViewFilter::getFilterType()));
+      settings.setValue("mainwindow/filter/casesensitivity", OpenMBVGUI::AbstractViewFilter::getCaseSensitive());
+    });
+
+    elementView = new ElementView;
+    elementView->setModel(new ElementTreeModel(this));
+    elementView->setColumnWidth(0,250);
+    elementView->setColumnWidth(1,200);
+    elementView->hideColumn(1);
+    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
     elementViewFilter->hide();
 
+    parameterView = new ParameterView;
+    parameterView->setModel(new ParameterTreeModel(this));
+    parameterView->setColumnWidth(0,150);
+    parameterView->setColumnWidth(1,200);
     parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, 2);
     parameterViewFilter->hide();
 
@@ -321,21 +337,12 @@ namespace MBSimGUI {
     sceneViewToolBar->setObjectName("toolbar/sceneview");
     toolMenu->addAction(sceneViewToolBar->toggleViewAction());
     sceneViewToolBar->insertSeparator(sceneViewToolBar->actions()[0]);
-    actionRefresh = new QAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh scene view");
+    actionRefresh = new QAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_BrowserReload)),"Refresh scene view", this);
     sceneViewToolBar->insertAction(sceneViewToolBar->actions()[0], actionRefresh);
 
     sceneViewMenu->insertSeparator(sceneViewMenu->actions()[0]);
     sceneViewMenu->insertAction(sceneViewMenu->actions()[0], actionRefresh);
     connect(actionRefresh,&QAction::triggered,this,&MainWindow::refresh);
-
-    elementView->setModel(new ElementTreeModel(this));
-    elementView->setColumnWidth(0,250);
-    elementView->setColumnWidth(1,200);
-    elementView->hideColumn(1);
-
-    parameterView->setModel(new ParameterTreeModel(this));
-    parameterView->setColumnWidth(0,150);
-    parameterView->setColumnWidth(1,200);
 
     fileView->setModel(new FileTreeModel(this));
     fileView->setColumnWidth(0,250);
@@ -2451,7 +2458,8 @@ namespace MBSimGUI {
       QSettings settings;
       settings.setValue("mainwindow/geometry", saveGeometry());
       settings.setValue("mainwindow/state", saveState());
-      settings.setValue("mainwindow/embeddingview/state", parameterView->header()->saveState());
+      settings.setValue("mainwindow/elementview/header/state", elementView->header()->saveState());
+      settings.setValue("mainwindow/parameterview/header/state", parameterView->header()->saveState());
       event->accept();
     }
     else
@@ -2462,8 +2470,8 @@ namespace MBSimGUI {
     QSettings settings;
     restoreGeometry(settings.value("mainwindow/geometry").toByteArray());
     restoreState(settings.value("mainwindow/state").toByteArray());
-    elementView->header()->restoreState(settings.value("mainwindow/elementview/state").toByteArray());
-    parameterView->header()->restoreState(settings.value("mainwindow/embeddingview/state").toByteArray());
+    elementView->header()->restoreState(settings.value("mainwindow/elementview/header/state").toByteArray());
+    parameterView->header()->restoreState(settings.value("mainwindow/parameterview/header/state").toByteArray());
     QMainWindow::showEvent(event);
   }
 

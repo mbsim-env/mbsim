@@ -53,7 +53,8 @@ namespace MBSimGUI {
       QVariant getData(int column) const { return (this->*getData_[column])(); }
       QFont getFont() { return font[0]; }
       QIcon getDecoration() { return itemData->getDecoration(); }
-      QBrush getForeground() { return foreground[itemData->getEnabled()]; }
+      QBrush getForeground() { return foreground; }
+      void setForeground(const QBrush &brush) { foreground=brush; }
       QBrush getBackground() { return background[itemData->hasReference()]; }
 
     protected:
@@ -62,7 +63,8 @@ namespace MBSimGUI {
       TreeItem *parentItem;
       QFont font[2];
       QIcon decoration;
-      QBrush foreground[2], background[2];
+      QBrush foreground { QApplication::palette().brush(QPalette::Active, QPalette::Text) }; // foreground is adapted by AbstractViewFilter
+      QBrush background[2];
   };
 
 }

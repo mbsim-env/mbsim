@@ -43,6 +43,15 @@ namespace MBSimGUI {
     delete rootItem;
   }
 
+  bool TreeModel::setData(const QModelIndex &index, const QVariant &value, int role) {
+    if(role==Qt::ForegroundRole) {
+      TreeItem *item = getItem(index);
+      item->setForeground(value.value<QBrush>());
+      return true;
+    }
+    return QAbstractItemModel::setData(index, value, role);
+  }
+
   QVariant TreeModel::data(const QModelIndex &index, int role) const {
     if(role==Qt::DisplayRole || role==Qt::EditRole) {
       TreeItem *item = getItem(index);
@@ -63,6 +72,10 @@ namespace MBSimGUI {
     else if(role==Qt::FontRole) {
       TreeItem *item = getItem(index);
       return item->getFont();
+    }
+    else if(role==Qt::UserRole) {
+      TreeItem *item = getItem(index);
+      return item->getItemData()->getEnabled();
     }
     return QVariant();
   }
