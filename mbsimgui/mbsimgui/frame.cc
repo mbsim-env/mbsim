@@ -54,7 +54,7 @@ namespace MBSimGUI {
     return element;
   }
 
-  InternalFrame::InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const QString &plotFeatureType_) : name(name_), xmlFrameName(std::move(xmlFrameName_)), plotFeatureType(plotFeatureType_) {
+  InternalFrame::InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const MBXMLUtils::FQN &plotFeatureType_) : name(name_), xmlFrameName(std::move(xmlFrameName_)), plotFeatureType(plotFeatureType_) {
   }
 
   void InternalFrame::removeXMLElements() {
@@ -64,8 +64,8 @@ namespace MBSimGUI {
         parent->getXMLElement()->removeChild(e->getPreviousSibling());
       parent->getXMLElement()->removeChild(e);
     }
-    e = E(parent->getXMLElement())->getFirstElementChildNamed(MBSIM%getPlotFeatureType().toStdString());
-    while (e and E(e)->getTagName()==MBSIM%getPlotFeatureType().toStdString()) {
+    e = E(parent->getXMLElement())->getFirstElementChildNamed(getPlotFeatureType());
+    while (e and E(e)->getTagName()==getPlotFeatureType()) {
       DOMElement *en = e->getNextElementSibling();
       if(X()%e->getPreviousSibling()->getNodeName()=="#text")
         parent->getXMLElement()->removeChild(e->getPreviousSibling());

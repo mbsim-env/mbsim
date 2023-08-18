@@ -35,7 +35,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(RigidBody);
 
   RigidBody::RigidBody()  {
-    InternalFrame *C = new InternalFrame("C",MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
+    InternalFrame *C = new InternalFrame("C",MBSIM%"enableOpenMBVFrameC",MBSIM%"plotFeatureFrameC");
     addFrame(C);
   }
 

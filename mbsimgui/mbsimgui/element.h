@@ -103,7 +103,7 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new ElementContextMenu(this); }
       virtual QMenu* createFrameContextMenu() { return nullptr; }
       const std::vector<MBXMLUtils::FQN>& getPlotFeatures() const { return plotFeatures; }
-      virtual QString getPlotFeatureType() const { return ""; }
+      virtual MBXMLUtils::FQN getPlotFeatureType() const { return ""; }
       bool getEnabled() const override { return enabled; }
       void updateStatus() override { enabled = (not parent or parent->getEnabled()) and isActive(); }
       EmbedItemData *getDedicatedItem() override { return dedicatedFileItem?(fileItem?this:parent->getDedicatedItem()):this; }

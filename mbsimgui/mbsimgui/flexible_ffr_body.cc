@@ -36,7 +36,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(ExternalFlexibleFfrBody);
 
   GenericFlexibleFfrBody::GenericFlexibleFfrBody() {
-    InternalFrame *K = new InternalFrame("K",MBSIMFLEX%"enableOpenMBVFrameK","plotFeatureFrameK");
+    InternalFrame *K = new InternalFrame("K",MBSIMFLEX%"enableOpenMBVFrameK",MBSIMFLEX%"plotFeatureFrameK");
     addFrame(K);
   }
 

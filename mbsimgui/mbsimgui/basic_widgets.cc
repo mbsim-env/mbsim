@@ -500,7 +500,7 @@ namespace MBSimGUI {
     return nullptr;
   }
  
-  PlotFeatureWidget::PlotFeatureWidget(const QString &types, NamespaceURI uri_) : uri(std::move(uri_)) {
+  PlotFeatureWidget::PlotFeatureWidget(const FQN &specialType_) : specialType(specialType_) {
     auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -531,13 +531,13 @@ namespace MBSimGUI {
     feature.push_back(MBSIM%"velocity");
 
     QStringList type_;
-    if(types.isEmpty()) {
+    if(specialType.second.empty()) {
       type_ << "plotFeature";
       type_ << "plotFeatureForChildren";
       type_ << "plotFeatureRecursive";
     }
     else
-      type_ << types;
+      type_ << QString::fromStdString(specialType.second);
 
     tree = new QTreeWidget;
     QStringList labels;
@@ -553,7 +553,7 @@ namespace MBSimGUI {
     type = new CustomComboBox;
     type->addItems(type_);
     layout->addWidget(type,4,1);
-    type->setCurrentIndex(2);
+    type->setCurrentIndex(specialType.second.empty()?2:0);
 
     layout->addWidget(new QLabel("Value:"),5,0);
     value = new CustomComboBox;
@@ -648,9 +648,9 @@ namespace MBSimGUI {
 
   DOMElement* PlotFeatureWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *e=parent->getFirstElementChild();
-    while(e && (E(e)->getTagName()==uri%"plotFeature" ||
-                E(e)->getTagName()==uri%"plotFeatureForChildren" ||
-                E(e)->getTagName()==uri%"plotFeatureRecursive")) {
+    while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
+                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
       item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
@@ -665,7 +665,7 @@ namespace MBSimGUI {
   DOMElement* PlotFeatureWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
-      DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
+      DOMElement *ele = D(doc)->createElement(MBSIM%tree->topLevelItem(i)->text(0).toStdString());
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
       ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), nullptr);
       parent->insertBefore(ele, ref);
@@ -674,8 +674,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* PlotFeatureWidget::initializeUsingXML2(DOMElement *parent) {
-    DOMElement *e=E(parent)->getFirstElementChildNamed(uri%type->itemText(0).toStdString());
-    while(e && E(e)->getTagName()==uri%type->itemText(0).toStdString()) {
+    DOMElement *e=E(parent)->getFirstElementChildNamed(specialType);
+    while(e && E(e)->getTagName()==specialType) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
       item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
@@ -690,7 +690,7 @@ namespace MBSimGUI {
   DOMElement* PlotFeatureWidget::writeXMLFile2(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
-      DOMElement *ele = D(doc)->createElement(uri%tree->topLevelItem(i)->text(0).toStdString());
+      DOMElement *ele = D(doc)->createElement(specialType);
       E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
       ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), nullptr);
       parent->insertBefore(ele, ref);

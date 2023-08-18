@@ -286,13 +286,13 @@ namespace MBSimGUI {
       void updateFeature();
       void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
       std::vector<MBXMLUtils::FQN> feature;
+      MBXMLUtils::FQN specialType;
       QComboBox *type, *value, *nspace;
       ChoiceWidget *status;
       QTreeWidget *tree;
-      MBXMLUtils::NamespaceURI uri;
 
     public:
-      PlotFeatureWidget(const QString &types="", MBXMLUtils::NamespaceURI uri_=MBSIM);
+      PlotFeatureWidget(const MBXMLUtils::FQN &specialType_="");
       void addFeature(const MBXMLUtils::FQN &feature_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

@@ -62,7 +62,7 @@ namespace MBSimGUITestPlugin {
   MBSIMGUI_REGOBJECTFACTORY(TestRigidBody);
 
   TestRigidBody::TestRigidBody()  {
-    MBSimGUI::InternalFrame *C = new MBSimGUI::InternalFrame("C",MBSimGUI::MBSIM%"enableOpenMBVFrameC","plotFeatureFrameC");
+    MBSimGUI::InternalFrame *C = new MBSimGUI::InternalFrame("C",MBSimGUI::MBSIM%"enableOpenMBVFrameC",MBSimGUI::MBSIM%"plotFeatureFrameC");
     addFrame(C);
   }
 

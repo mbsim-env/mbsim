@@ -21,6 +21,7 @@
 #define _EXTENDED_WIDGETS_H_
 
 #include "widget.h"
+#include <optional>
 #include <QLabel>
 #include <QComboBox>
 #include <QBoxLayout>
