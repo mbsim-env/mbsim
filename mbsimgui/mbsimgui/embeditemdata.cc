@@ -211,7 +211,10 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::updateName() {
-    name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
+    auto *ele=element;
+    while(MBXMLUtils::E(ele)->getTagName()==PV%"Embed")
+      ele=ele->getFirstElementChild();
+    name = QString::fromStdString(MBXMLUtils::E(ele)->getAttribute("name"));
     if(name[0]=='{') {
       mw->updateParameters(this,false);
       try{
