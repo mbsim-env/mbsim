@@ -261,4 +261,9 @@ namespace MBSimGUI {
     return element;
   }
 
+  UnknownObserver::UnknownObserver() {
+    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"observer.svg").string(),
+                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+  }
+
 }

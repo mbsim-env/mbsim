@@ -60,4 +60,9 @@ namespace MBSimGUI {
     return project;
   }
 
+  UnknownSolver::UnknownSolver() {
+    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"solver.svg").string(),
+                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+  }
+
 }

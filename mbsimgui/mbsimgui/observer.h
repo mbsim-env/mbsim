@@ -34,6 +34,7 @@ namespace MBSimGUI {
   class UnknownObserver : public Observer {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnknownObserver, Observer, MBSIM%"UnknownObserver_dummy", "Unknown observer");
     public:
+      UnknownObserver();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 

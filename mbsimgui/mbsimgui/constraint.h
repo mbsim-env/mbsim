@@ -34,6 +34,7 @@ namespace MBSimGUI {
   class UnknownConstraint : public Constraint {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnknownConstraint, Constraint, MBSIM%"UnknownConstraint_dummy", "Unknown constraint");
     public:
+      UnknownConstraint();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 

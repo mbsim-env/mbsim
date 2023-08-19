@@ -60,6 +60,7 @@ namespace MBSimGUI {
   class UnknownFixedRelativeFrame : public FixedRelativeFrame {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnknownFixedRelativeFrame, FixedRelativeFrame, MBSIM%"UnknownFixedRelativeFrame_dummy", "Unknown fixed relative frame");
     public:
+      UnknownFixedRelativeFrame();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
@@ -72,6 +73,7 @@ namespace MBSimGUI {
   class UnknownNodeFrame : public NodeFrame {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnknownNodeFrame, NodeFrame, MBSIM%"UnknownNodeFrame_dummy", "Unknown node frame");
     public:
+      UnknownNodeFrame();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 

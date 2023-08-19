@@ -53,6 +53,7 @@ namespace MBSimGUI {
   class UnknownSolver : public Solver {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnknownSolver, ObjectFactoryBase, MBSIM%"UnknownSolver", "Unknown solver");
     public:
+      UnknownSolver();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 

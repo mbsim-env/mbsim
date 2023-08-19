@@ -43,5 +43,10 @@ namespace MBSimGUI {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string()));
   }
 
+  UnknownConstraint::UnknownConstraint() {
+    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string(),
+                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+  }
+
 }
 

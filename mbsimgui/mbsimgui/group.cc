@@ -542,4 +542,9 @@ namespace MBSimGUI {
     emitDataChangedOnChildren();
   }
 
+  UnknownGroup::UnknownGroup() {
+    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string(),
+                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+  }
+
 }

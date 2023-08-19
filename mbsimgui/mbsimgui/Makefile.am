@@ -248,6 +248,7 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
   icons/container.svg \
   icons/group.svg \
   icons/body.svg \
+  icons/unknownelement.svg \
   icons/link.svg \
   icons/constraint.svg \
   icons/observer.svg \

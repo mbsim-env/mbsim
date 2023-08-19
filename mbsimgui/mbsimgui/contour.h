@@ -36,6 +36,7 @@ namespace MBSimGUI {
   class UnknownContour : public Contour {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnknownContour, Contour, MBSIM%"UnknownContour_dummy", "Unknown contour");
     public:
+      UnknownContour();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 

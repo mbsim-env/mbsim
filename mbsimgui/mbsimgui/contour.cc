@@ -76,4 +76,9 @@ namespace MBSimGUI {
     return element;
   }
 
+  UnknownContour::UnknownContour() {
+    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string(),
+                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+  }
+
 }

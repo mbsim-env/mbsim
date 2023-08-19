@@ -20,11 +20,18 @@
 #include <config.h>
 #include "object.h"
 #include "objectfactory.h"
+#include "utils.h"
+#include "mainwindow.h"
 
 using namespace std;
 
 namespace MBSimGUI {
 
   MBSIMGUI_REGOBJECTFACTORY(UnknownObject);
+
+  UnknownObject::UnknownObject() {
+    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string(),
+                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+  }
 
 }

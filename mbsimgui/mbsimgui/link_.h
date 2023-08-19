@@ -34,6 +34,7 @@ namespace MBSimGUI {
   class UnknownLink : public Link {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnknownLink, Link, MBSIM%"UnknownLink_dummy", "Unknown link");
     public:
+      UnknownLink();
       PropertyDialog* createPropertyDialog() override { return new UnknownItemPropertyDialog(this); }
   };
 
