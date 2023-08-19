@@ -176,6 +176,7 @@ namespace MBSimGUI {
       void convertDocument();
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
+      void abstractViewFilterOptionsChanged();
 
     public:
       MainWindow(QStringList &arg);

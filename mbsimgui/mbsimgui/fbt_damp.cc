@@ -17,13 +17,13 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <config.h>
 #include "wizards.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
-#define _USE_MATH_DEFINES
-#include <cmath>
 
 using namespace std;
 using namespace fmatvec;

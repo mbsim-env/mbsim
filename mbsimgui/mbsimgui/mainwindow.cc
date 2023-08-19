@@ -210,11 +210,10 @@ namespace MBSimGUI {
     // filter settings
     OpenMBVGUI::AbstractViewFilter::setFilterType(static_cast<OpenMBVGUI::AbstractViewFilter::FilterType>(settings.value("mainwindow/filter/type", 0).toInt()));
     OpenMBVGUI::AbstractViewFilter::setCaseSensitive(settings.value("mainwindow/filter/casesensitivity", false).toBool());
-    connect(OpenMBVGUI::AbstractViewFilter::staticObject(), &OpenMBVGUI::StaticObject::optionsChanged, [](){
-      QSettings settings;
-      settings.setValue("mainwindow/filter/type", static_cast<int>(OpenMBVGUI::AbstractViewFilter::getFilterType()));
-      settings.setValue("mainwindow/filter/casesensitivity", OpenMBVGUI::AbstractViewFilter::getCaseSensitive());
-    });
+    // We cannot use the new Qt function pointer-based connection mechanism here since this seems not to work
+    // on Windows if the signal and slot lives in different DLLs as it is for the following two connections.
+    // Hence, we keep here the old macro base mechanism and use Q_OBJECT and moc for this class.
+    connect(OpenMBVGUI::AbstractViewFilter::staticObject(), SIGNAL(optionsChanged()), this, SLOT(abstractViewFilterOptionsChanged()));
 
     elementView = new ElementView;
     elementView->setModel(new ElementTreeModel(this));
@@ -1323,6 +1322,12 @@ namespace MBSimGUI {
     Element *element = idMap[id];
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     if(element) elementView->selectionModel()->setCurrentIndex(model->findItem(element,project->getDynamicSystemSolver()->getModelIndex()),QItemSelectionModel::ClearAndSelect);
+  }
+
+  void MainWindow::abstractViewFilterOptionsChanged() {
+    QSettings settings;
+    settings.setValue("mainwindow/filter/type", static_cast<int>(OpenMBVGUI::AbstractViewFilter::getFilterType()));
+    settings.setValue("mainwindow/filter/casesensitivity", OpenMBVGUI::AbstractViewFilter::getCaseSensitive());
   }
 
   void MainWindow::help() {
