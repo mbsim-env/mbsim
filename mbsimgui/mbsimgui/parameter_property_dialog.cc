@@ -26,6 +26,7 @@
 #include "embeditemdata.h"
 #include <QDialogButtonBox>
 #include <QPushButton>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -39,16 +40,32 @@ namespace MBSimGUI {
       name=new ExtWidget("Name",new TextWidget(parameter->getName()));
       addToTab("General",name);
     }
+
+    addTab("Misc");
+    vector<QString> list;
+    list.emplace_back("normal");
+    list.emplace_back("hidden");
+    hidden=new QCheckBox("Hidden");
+    hidden->setToolTip("Set this parameter hidden which prevents it "
+                       "from appearing in the parameter tree. Hidden element will only appear if 'Show hidden element' "
+                       "is enabled in the options.");
+    addToTab("Misc",hidden);
   }
 
   DOMElement* ParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     if(name) static_cast<TextWidget*>(name->getWidget())->setText(parameter->getName());
+    hidden->setChecked(E(parent)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN")!=nullptr);
     return parent;
   }
 
   DOMElement* ParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     parameter->removeXMLElements();
     if(name) E(parameter->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    if(hidden->isChecked()) {
+      DOMDocument *doc=parameter->getXMLElement()->getOwnerDocument();
+      DOMProcessingInstruction *pi=doc->createProcessingInstruction(X()%"MBSIMGUI_HIDDEN", X()%"");
+      parameter->getXMLElement()->insertBefore(pi, nullptr);
+    }
     return nullptr;
   }
 

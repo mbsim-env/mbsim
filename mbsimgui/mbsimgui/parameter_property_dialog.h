@@ -21,6 +21,7 @@
 #define _PARAMETER_PROPERTY_DIALOG_H_
 
 #include "property_dialog.h"
+#include <QCheckBox>
 
 namespace MBSimGUI {
 
@@ -38,6 +39,7 @@ namespace MBSimGUI {
     protected:
       Parameter *parameter;
       ExtWidget *name;
+      QCheckBox *hidden;
   };
 
   class StringParameterPropertyDialog : public ParameterPropertyDialog {

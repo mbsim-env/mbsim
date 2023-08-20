@@ -18,8 +18,11 @@
 */
 
 #include <config.h>
+#include <xercesc/dom/DOMNamedNodeMap.hpp>
+#include <xercesc/dom/DOMAttr.hpp>
 #include "parameter.h"
 #include "objectfactory.h"
+#include "parameter_view.h"
 #include "utils.h"
 #include "fileitemdata.h"
 #include "mainwindow.h"
@@ -46,6 +49,8 @@ namespace MBSimGUI {
       element->removeChild(e);
       e = en;
     }
+    while(element->getAttributes()->getLength()>0)
+      element->removeAttributeNode(static_cast<DOMAttr*>(element->getAttributes()->item(0)));
   }
 
   vector<Parameter*> ParameterItem::createParameters(DOMElement *element) {
@@ -69,11 +74,19 @@ namespace MBSimGUI {
     return element;
   }
 
+  void Parameter::updateValue() {
+    hidden = E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_HIDDEN")!=nullptr;
+    QSettings settings;
+    bool showHiddenElements=settings.value("mainwindow/options/showhiddenelements", false).toBool();
+    mw->getParameterView()->setRowHidden(getModelIndex().row(), getModelIndex().parent(), hidden && !showHiddenElements);
+  }
+
   StringParameter::StringParameter() {
     icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"string.svg").string()));
   }
 
   void StringParameter::updateValue() {
+    Parameter::updateValue();
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
@@ -82,6 +95,7 @@ namespace MBSimGUI {
   }
 
   void ScalarParameter::updateValue() {
+    Parameter::updateValue();
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
@@ -90,6 +104,7 @@ namespace MBSimGUI {
   }
 
   void VectorParameter::updateValue() {
+    Parameter::updateValue();
     DOMElement *ele=element->getFirstElementChild();
     if(ele and E(ele)->getTagName() == PV%"xmlVector") {
       vector<QString> v;
@@ -111,6 +126,7 @@ namespace MBSimGUI {
   }
 
   void MatrixParameter::updateValue() {
+    Parameter::updateValue();
     DOMElement *ele=element->getFirstElementChild();
     if(ele and E(ele)->getTagName() == PV%"xmlMatrix") {
       vector<vector<QString>> m;
@@ -137,6 +153,7 @@ namespace MBSimGUI {
   }
 
   void AnyParameter::updateValue() {
+    Parameter::updateValue();
     value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
   }
 
@@ -152,6 +169,7 @@ namespace MBSimGUI {
   }
 
   void ImportParameter::updateValue() {
+    Parameter::updateValue();
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 

@@ -392,6 +392,7 @@ namespace MBSimGUI {
     endInsertRows();
 
     parameter->setModelIndex(parent.model()->index(i,0,parent));
+    parameter->updateValue();
   }
 
   FileTreeModel::FileTreeModel(QObject *parent) : TreeModel(parent) {

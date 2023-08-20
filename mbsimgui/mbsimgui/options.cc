@@ -78,6 +78,11 @@ namespace MBSimGUI {
     showFilters = new QCheckBox("Show list filters");
     layout->addWidget(showFilters);
 
+    showHiddenElements = new QCheckBox("Show hidden elements");
+    showHiddenElements->setToolTip("For several elements a 'hidden' flag can be set which prevents these elements "
+                                   "from appearing in the model/parameter tree. Settings this option will show even hidden elements.");
+    layout->addWidget(showHiddenElements);
+
     autoRefresh = new QCheckBox("Auto refresh");
     layout->addWidget(autoRefresh);
 
@@ -181,6 +186,14 @@ namespace MBSimGUI {
 
   void OptionsDialog::setShowFilters(bool flag) {
     showFilters->setCheckState(flag?Qt::Checked:Qt::Unchecked);
+  }
+
+  bool OptionsDialog::getShowHiddenElements() const {
+    return (showHiddenElements->checkState()==Qt::Checked);
+  }
+
+  void OptionsDialog::setShowHiddenElements(bool flag) {
+    showHiddenElements->setCheckState(flag?Qt::Checked:Qt::Unchecked);
   }
 
   bool OptionsDialog::getAutoRefresh() const {

@@ -61,13 +61,15 @@ namespace MBSimGUI {
       Parameter() = default;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return value; }
+      bool getHidden() const { return hidden; }
 //      QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
       virtual PropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
-      virtual void updateValue() { }
+      virtual void updateValue();
     protected:
       QString value;
+      bool hidden;
   };
 
   class StringParameter : public Parameter {

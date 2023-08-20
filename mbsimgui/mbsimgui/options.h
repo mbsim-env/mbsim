@@ -49,6 +49,8 @@ namespace MBSimGUI {
       int getMaxUndo() const;
       bool getShowFilters() const;
       void setShowFilters(bool flag);
+      bool getShowHiddenElements() const;
+      void setShowHiddenElements(bool flag);
       bool getAutoRefresh() const;
       void setAutoRefresh(bool flag);
       bool getStatusUpdate() const;
@@ -63,7 +65,7 @@ namespace MBSimGUI {
       void autoSaveChanged(int state);
       void autoExportChanged(int state);
       void openFileBrowser();
-      QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *autoRefresh, *statusUpdate;
+      QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *showHiddenElements, *autoRefresh, *statusUpdate;
       QComboBox *baseIndex;
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;

@@ -619,6 +619,8 @@ namespace MBSimGUI {
     menu.setSaveStateVector(settings.value("mainwindow/options/savestatevector", false).toBool());
     menu.setMaxUndo(settings.value("mainwindow/options/maxundo", 10).toInt());
     menu.setShowFilters(settings.value("mainwindow/options/showfilters", true).toBool());
+    menu.setShowHiddenElements(settings.value("mainwindow/options/showhiddenelements", false).toBool());
+    bool oldShowHiddenElement=menu.getShowHiddenElements();
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
@@ -639,17 +641,18 @@ namespace MBSimGUI {
     if(!justSetOptions)
       res = menu.exec();
     if(res == 1) {
-      settings.setValue("mainwindow/options/autosave",         menu.getAutoSave());
-      settings.setValue("mainwindow/options/autosaveinterval", menu.getAutoSaveInterval());
-      settings.setValue("mainwindow/options/autoexport",       menu.getAutoExport());
-      settings.setValue("mainwindow/options/autoexportdir",    menu.getAutoExportDir());
-      settings.setValue("mainwindow/options/savestatevector",  menu.getSaveStateVector());
-      settings.setValue("mainwindow/options/maxundo",          menu.getMaxUndo());
-      settings.setValue("mainwindow/options/showfilters",      menu.getShowFilters());
-      settings.setValue("mainwindow/options/autorefresh",      menu.getAutoRefresh());
-      settings.setValue("mainwindow/options/statusupdate",     menu.getStatusUpdate());
-      settings.setValue("mainwindow/options/plugins",          menu.getPlugins());
-      settings.setValue("mainwindow/options/baseindexforplot", menu.getBaseIndexForPlot());
+      settings.setValue("mainwindow/options/autosave"          , menu.getAutoSave());
+      settings.setValue("mainwindow/options/autosaveinterval"  , menu.getAutoSaveInterval());
+      settings.setValue("mainwindow/options/autoexport"        , menu.getAutoExport());
+      settings.setValue("mainwindow/options/autoexportdir"     , menu.getAutoExportDir());
+      settings.setValue("mainwindow/options/savestatevector"   , menu.getSaveStateVector());
+      settings.setValue("mainwindow/options/maxundo"           , menu.getMaxUndo());
+      settings.setValue("mainwindow/options/showfilters"       , menu.getShowFilters());
+      settings.setValue("mainwindow/options/showhiddenelements", menu.getShowHiddenElements());
+      settings.setValue("mainwindow/options/autorefresh"       , menu.getAutoRefresh());
+      settings.setValue("mainwindow/options/statusupdate"      , menu.getStatusUpdate());
+      settings.setValue("mainwindow/options/plugins"           , menu.getPlugins());
+      settings.setValue("mainwindow/options/baseindexforplot"  , menu.getBaseIndexForPlot());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
       file.write(menu.getModulePath().toUtf8());
@@ -664,9 +667,14 @@ namespace MBSimGUI {
       else
         autoSaveTimer.stop();
       maxUndo = menu.getMaxUndo();
+
       bool showFilters = menu.getShowFilters();
       elementViewFilter->setVisible(showFilters);
       parameterViewFilter->setVisible(showFilters);
+
+      if(menu.getShowHiddenElements()!=oldShowHiddenElement)
+        elementChanged(elementView->currentIndex()); // this update the parameters (calls Parameter::updateValue())
+
       autoRefresh = menu.getAutoRefresh();
       statusUpdate = menu.getStatusUpdate();
 
