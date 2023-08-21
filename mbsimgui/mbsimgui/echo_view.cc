@@ -140,10 +140,10 @@ namespace MBSimGUI {
     // some colors
     static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
     static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
-    static const QColor red("red");
-    static const QColor yellow("yellow");
-    static const QColor blue("blue");
-    static const QColor green("green");
+    static const QColor errorColor("red");
+    static const QColor warnColor("yellow");
+    static const QColor debugColor("blue");
+    static const QColor deprColor(mergeColor(errorColor, 0.5, warnColor));
     // set the text as html, prefix with a style element and sourounded by a pre element
     QString html;
     int firstErrorPos;
@@ -202,11 +202,17 @@ namespace MBSimGUI {
   <body>
     <pre>
 )+").
-       arg(fg.name()).arg(mergeColor(red, 0.3, bg).name()).arg(mergeColor(red, 0.1, bg).name()).
-       arg(mergeColor(yellow, 0.3, bg).name()).arg(mergeColor(blue, 0.3, bg).name()).
-       arg(showSSE->isChecked()?"inline":"none").arg(showWarn->isChecked()?"inline":"none").
-       arg(showInfo->isChecked()?"inline":"none").arg(showDebug->isChecked()?"inline":"none").
-       arg(mergeColor(green, 0.3, bg).name()).arg(showDepr->isChecked()?"inline":"none")+
+       arg(fg.name()). // body fg color
+       arg(mergeColor(errorColor, 0.3, bg).name()). // error bg color
+       arg(mergeColor(errorColor, 0.1, bg).name()). // subsequent error bg color
+       arg(mergeColor(warnColor, 0.3, bg).name()). // warn bg color
+       arg(mergeColor(debugColor, 0.3, bg).name()). // debug bg color
+       arg(showSSE->isChecked()?"inline":"none"). // subsequent error show/hide
+       arg(showWarn->isChecked()?"inline":"none"). // warn show/hide
+       arg(showInfo->isChecked()?"inline":"none"). // info show/hide
+       arg(showDebug->isChecked()?"inline":"none"). // debug show/hide
+       arg(mergeColor(deprColor, 0.3, bg).name()). // depr bg color
+       arg(showDepr->isChecked()?"inline":"none")+ // depr show/hide
         outText2+
 R"+(
     </pre>

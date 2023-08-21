@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<!-- Created with Inkscape (http://www.inkscape.org/) -->
-
 <svg
    xmlns:dc="http://purl.org/dc/elements/1.1/"
    xmlns:cc="http://creativecommons.org/ns#"
@@ -14,7 +12,7 @@
    height="16px"
    id="svg2383"
    sodipodi:version="0.32"
-   inkscape:version="0.92.1 r15371"
+   inkscape:version="1.0.2 (e86c870879, 2021-01-15)"
    sodipodi:docname="deprecated.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape"
    version="1.1">
@@ -382,7 +380,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="31.392433"
-     inkscape:cx="1.0057331"
+     inkscape:cx="1.6676787"
      inkscape:cy="6.6611663"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -390,8 +388,8 @@
      inkscape:document-units="px"
      inkscape:window-width="1699"
      inkscape:window-height="908"
-     inkscape:window-x="44"
-     inkscape:window-y="31"
+     inkscape:window-x="26"
+     inkscape:window-y="23"
      inkscape:window-maximized="0"
      inkscape:snap-grids="true"
      inkscape:snap-to-guides="false"
@@ -402,7 +400,8 @@
      inkscape:object-nodes="true"
      inkscape:snap-nodes="true"
      inkscape:snap-others="true"
-     showguides="false">
+     showguides="false"
+     inkscape:document-rotation="0">
     <inkscape:grid
        type="xygrid"
        id="grid4248" />
@@ -428,20 +427,20 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer">
     <rect
-       style="fill:#00b900;fill-opacity:1;stroke:#000000;stroke-width:0.93541437;stroke-opacity:1"
+       style="fill:#ff7f00;fill-opacity:1;stroke:#000000;stroke-width:0.935414;stroke-opacity:1"
        id="rect4590"
        width="14"
        height="9"
        x="1"
        y="4" />
     <circle
-       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.68465346;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.684653;stroke-opacity:1"
        id="path4592"
        cx="4.6415844"
        cy="7.2707925"
        r="1.3693069" />
     <circle
-       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.68465346;stroke-opacity:1"
+       style="fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.684653;stroke-opacity:1"
        id="path4592-3"
        cx="10.858417"
        cy="7.2797036"
