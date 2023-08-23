@@ -35,6 +35,8 @@ namespace MBSimGUI {
       void updateName();
     protected:
       ExtWidget *name, *clone;
+    private:
+      QString oldCounterName { "n" };
   };
 
 }

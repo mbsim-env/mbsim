@@ -44,7 +44,8 @@ namespace MBSimGUI {
     if(embed) {
       clone->setActive(E(embed)->hasAttribute("count"));
       if(E(embed)->hasAttribute("count")) static_cast<CloneWidget*>(clone->getWidget())->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
-      if(E(embed)->hasAttribute("counterName")) static_cast<CloneWidget*>(clone->getWidget())->setCounterName(QString::fromStdString(E(embed)->getAttribute("counterName")));
+      oldCounterName=QString::fromStdString(E(embed)->getAttribute("counterName"));
+      if(E(embed)->hasAttribute("counterName")) static_cast<CloneWidget*>(clone->getWidget())->setCounterName(oldCounterName);
       if(E(embed)->hasAttribute("onlyif")) static_cast<CloneWidget*>(clone->getWidget())->setOnlyif(QString::fromStdString(E(embed)->getAttribute("onlyif")));
     }
     return parent;
@@ -72,13 +73,18 @@ namespace MBSimGUI {
 
   void ClonePropertyDialog::updateName() {
     TextWidget *textWidget = static_cast<TextWidget*>(name->getWidget());
+    auto counterName=static_cast<CloneWidget*>(clone->getWidget())->getCounterName();
     if(clone->isActive()) {
-      // when clone (=array/pattern=embed) gets enabled and no inline evaluation "{...}" exists yet in the name attribute
-      // -> add "{<counterName>}" to the name attribute
+      // when clone (=array/pattern=embed) is enabled try to replace the old counterName with the new one or
+      // add a counterName inline evaluation "{<counterName>}" if not other inline evaluation exists yet in the name attribute
       QString text = textWidget->getText();
+      QRegularExpression re("{ *" + oldCounterName + " *}");
+      text.replace(re, "{"+counterName+"}");
       int i1 = text.indexOf("{");
       if(i1==-1)
-        textWidget->setText(textWidget->getText()+"{"+static_cast<CloneWidget*>(clone->getWidget())->getCounterName()+"}");
+        textWidget->setText(text+"{"+counterName+"}");
+      else
+        textWidget->setText(text);
     }
     else {
       // when clone (=array/pattern=embed) gets disabled
@@ -86,10 +92,11 @@ namespace MBSimGUI {
       // (this especially removed a previously automatically added inline evaluation, see above;
       //  this ensures e.g. that just enabling and disabling the clone leads to the original name attribute value)
       QString text = textWidget->getText();
-      QRegularExpression re("{ *" + static_cast<CloneWidget*>(clone->getWidget())->getCounterName() + " *}");
+      QRegularExpression re("{ *" + counterName + " *}");
       text.remove(re);
       textWidget->setText(text);
     }
+    oldCounterName=counterName;
   }
 
 }

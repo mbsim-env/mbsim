@@ -100,7 +100,7 @@ namespace MBSimGUI {
   DynamicSystemSolverContextMenu::DynamicSystemSolverContextMenu(Element *element, QWidget *parent) : ElementContextMenu(element,parent,false,true) {
     addSeparator();
     setToolTipsVisible(true);
-    QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
+    QAction *action = new QAction(QIcon::fromTheme("document-open"), "Import/Reference model-element from file (replacing the DSS) ...", this);
     action->setToolTip(importReferenceTooltipText);
     connect(action,&QAction::triggered,this,[=](){ mw->createDynamicSystemSolver(mw->loadEmbedItemData(element, importReferenceTitle)); });
     addAction(action);
@@ -194,11 +194,11 @@ namespace MBSimGUI {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
-    connect(action,&QAction::triggered,this,[=](){ mw->createFrame(mw->loadEmbedItemData(element, importReferenceTitle),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Frame"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->createFrame(mw->pasteElement(element,mw->getElementBuffer().first),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Frame"); });
     addAction(action);
   }
 
@@ -216,11 +216,11 @@ namespace MBSimGUI {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
-    connect(action,&QAction::triggered,this,[=](){ mw->createContour(mw->loadEmbedItemData(element, importReferenceTitle),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Contour"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->createContour(mw->pasteElement(element,mw->getElementBuffer().first),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Contour"); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Contour>(this, element, "Add '");
@@ -230,11 +230,11 @@ namespace MBSimGUI {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
-    connect(action,&QAction::triggered,this,[=](){ mw->createGroup(mw->loadEmbedItemData(element, importReferenceTitle),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Group"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->createGroup(mw->pasteElement(element,mw->getElementBuffer().first),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Group"); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Group>(this, element, "Add '");
@@ -244,11 +244,11 @@ namespace MBSimGUI {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
-    connect(action,&QAction::triggered,this,[=](){ mw->createObject(mw->loadEmbedItemData(element, importReferenceTitle),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Object"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->createObject(mw->pasteElement(element,mw->getElementBuffer().first),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Object"); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Object>(this, element, "Add '");
@@ -258,11 +258,11 @@ namespace MBSimGUI {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
-    connect(action,&QAction::triggered,this,[=](){ mw->createLink(mw->loadEmbedItemData(element, importReferenceTitle),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Link"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->createLink(mw->pasteElement(element,mw->getElementBuffer().first),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Link"); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Link>(this, element, "Add '");
@@ -272,11 +272,11 @@ namespace MBSimGUI {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
-    connect(action,&QAction::triggered,this,[=](){ mw->createConstraint(mw->loadEmbedItemData(element, importReferenceTitle),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Constraint"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->createConstraint(mw->pasteElement(element,mw->getElementBuffer().first),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Constraint"); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Constraint>(this, element, "Add '");
@@ -286,11 +286,11 @@ namespace MBSimGUI {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
-    connect(action,&QAction::triggered,this,[=](){ mw->createObserver(mw->loadEmbedItemData(element, importReferenceTitle),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Observer"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
     action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
-    connect(action,&QAction::triggered,this,[=](){ mw->createObserver(mw->pasteElement(element,mw->getElementBuffer().first),element); });
+    connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Observer"); });
     addAction(action);
     addSeparator();
     createContextMenuFor<Observer>(this, element, "Add '");

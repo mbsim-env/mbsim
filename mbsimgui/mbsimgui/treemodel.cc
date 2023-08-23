@@ -84,7 +84,7 @@ namespace MBSimGUI {
     if(!index.isValid())
       return Qt::NoItemFlags;
 
-    return Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable;
+    return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
   }
 
   TreeItem* TreeModel::getItem(const QModelIndex &index) const {

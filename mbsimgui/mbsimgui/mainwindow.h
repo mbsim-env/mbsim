@@ -34,6 +34,13 @@
 
 class QAction;
 class QModelIndex;
+class FrameItemData;
+class ContourItemData;
+class GroupItemData;
+class ObjectItemData;
+class LinkItemData;
+class ConstraintItemData;
+class ObserverItemData;
 
 namespace OpenMBVGUI {
   class MainWindow;
@@ -203,13 +210,20 @@ namespace MBSimGUI {
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
-      void createFrame(xercesc::DOMElement *ele, Element *parent);
-      void createContour(xercesc::DOMElement *ele, Element *parent);
-      void createGroup(xercesc::DOMElement *ele, Element *parent);
-      void createObject(xercesc::DOMElement *ele, Element *parent);
-      void createLink(xercesc::DOMElement *ele, Element *parent);
-      void createConstraint(xercesc::DOMElement *ele, Element *parent);
-      void createObserver(xercesc::DOMElement *ele, Element *parent);
+
+      template<class Container>
+      QModelIndex getContainerIndex(Element *parent);
+      // create an Element based on the XML content "ele" as a child of the Element "parent"
+      bool createFrame(xercesc::DOMElement *ele, Element *parent, bool showDialogOnError=true);
+      bool createContour(xercesc::DOMElement *ele, Element *parent, bool showDialogOnError=true);
+      bool createGroup(xercesc::DOMElement *ele, Element *parent, bool showDialogOnError=true);
+      bool createObject(xercesc::DOMElement *ele, Element *parent, bool showDialogOnError=true);
+      bool createLink(xercesc::DOMElement *ele, Element *parent, bool showDialogOnError=true);
+      bool createConstraint(xercesc::DOMElement *ele, Element *parent, bool showDialogOnError=true);
+      bool createObserver(xercesc::DOMElement *ele, Element *parent, bool showDialogOnError=true);
+      // create an Element based on the XML content "ele" in the correct container of the parent of the Element parent (used by import/reference element (where the user maybe does not know the proper container))
+      void createAny(xercesc::DOMElement *ele, Element *parent, const MBXMLUtils::FQN &requestedXMLType);
+
       void createDynamicSystemSolver(xercesc::DOMElement *ele);
       void createSolver(xercesc::DOMElement *ele);
       void highlightObject(const std::string &ID);
@@ -285,6 +299,14 @@ namespace MBSimGUI {
   template<> inline void MainWindow::add<NodeFrame>(NodeFrame *base, TreeItemData *item) { addFrame(base, static_cast<Element*>(item)); }
   template<> inline void MainWindow::add<Solver>(Solver *base, TreeItemData *item) { selectSolver(base); }
   template<> inline void MainWindow::add<Parameter>(Parameter *base, TreeItemData *item) { addParameter(base, static_cast<EmbedItemData*>(item)); }
+
+  extern template QModelIndex MainWindow::getContainerIndex<FrameItemData>(Element *parent);
+  extern template QModelIndex MainWindow::getContainerIndex<ContourItemData>(Element *parent);
+  extern template QModelIndex MainWindow::getContainerIndex<GroupItemData>(Element *parent);
+  extern template QModelIndex MainWindow::getContainerIndex<ObjectItemData>(Element *parent);
+  extern template QModelIndex MainWindow::getContainerIndex<LinkItemData>(Element *parent);
+  extern template QModelIndex MainWindow::getContainerIndex<ConstraintItemData>(Element *parent);
+  extern template QModelIndex MainWindow::getContainerIndex<ObserverItemData>(Element *parent);
 
 }
 

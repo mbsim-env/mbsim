@@ -851,7 +851,7 @@ namespace MBSimGUI {
       refresh();
     }
     else
-      QMessageBox::warning(nullptr, "Project load", "Project file does not exist.");
+      QMessageBox::warning(this, "Project load", "Project file does not exist.");
   }
 
   void MainWindow::loadProject() {
@@ -2212,118 +2212,154 @@ namespace MBSimGUI {
     return element;
   }
 
-  void MainWindow::createFrame(DOMElement *ele, Element *parent) {
-    if(not ele) return;
+  template<class Container>
+  QModelIndex MainWindow::getContainerIndex(Element *parent) {
+    auto *model = static_cast<ElementTreeModel*>(elementView->model());
+    for(int row=0; row<model->rowCount(parent->getModelIndex()); row++) {
+      auto containerIndex = model->index(row, 0, parent->getModelIndex());
+      auto *container = model->getItem(containerIndex)->getItemData();
+      if(dynamic_cast<Container*>(container)) return containerIndex;
+    }
+    return QModelIndex();
+  }
+
+  bool MainWindow::createFrame(DOMElement *ele, Element *parent, bool showDialogOnError) {
+    if(not ele) return false;
     Frame *frame = Embed<FixedRelativeFrame>::create(ele,parent);
     if(not frame)
       frame = Embed<NodeFrame>::create(ele,parent);
     if(not frame) {
-      QMessageBox::warning(nullptr, "Create frame", "Cannot create frame.");
-      return;
+      if(showDialogOnError) QMessageBox::warning(this, "Create frame", "Cannot create frame.");
+      return false;
     }
     parent->getXMLFrames()->insertBefore(ele, nullptr);
     parent->addFrame(frame);
     frame->create();
     updateReferences(parent);
-    static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,elementView->selectionModel()->currentIndex());
+    static_cast<ElementTreeModel*>(elementView->model())->createFrameItem(frame,getContainerIndex<FrameItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(frame->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
+    return true;
   }
 
-  void MainWindow::createContour(DOMElement *ele, Element *parent) {
-    if(not ele) return;
+  bool MainWindow::createContour(DOMElement *ele, Element *parent, bool showDialogOnError) {
+    if(not ele) return false;
     Contour *contour = Embed<Contour>::create(ele,parent);
     if(not contour) {
-      QMessageBox::warning(nullptr, "Create contour", "Cannot create contour.");
-      return;
+      if(showDialogOnError) QMessageBox::warning(this, "Create contour", "Cannot create contour.");
+      return false;
     }
     parent->getXMLContours()->insertBefore(ele, nullptr);
     parent->addContour(contour);
     contour->create();
     updateReferences(parent);
-    static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,elementView->selectionModel()->currentIndex());
+    static_cast<ElementTreeModel*>(elementView->model())->createContourItem(contour,getContainerIndex<ContourItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(contour->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
+    return true;
   }
 
-  void MainWindow::createGroup(DOMElement *ele, Element *parent) {
-    if(not ele) return;
+  bool MainWindow::createGroup(DOMElement *ele, Element *parent, bool showDialogOnError) {
+    if(not ele) return false;
     Group *group = Embed<Group>::create(ele,parent);
     if(not group) {
-      QMessageBox::warning(nullptr, "Create group", "Cannot create group.");
-      return;
+      if(showDialogOnError) QMessageBox::warning(this, "Create group", "Cannot create group.");
+      return false;
     }
     parent->getXMLGroups()->insertBefore(ele, nullptr);
     parent->addGroup(group);
     group->create();
     updateReferences(parent);
-    static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,elementView->selectionModel()->currentIndex());
+    static_cast<ElementTreeModel*>(elementView->model())->createGroupItem(group,getContainerIndex<GroupItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(group->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
+    return true;
   }
 
-  void MainWindow::createObject(DOMElement *ele, Element *parent) {
-    if(not ele) return;
+  bool MainWindow::createObject(DOMElement *ele, Element *parent, bool showDialogOnError) {
+    if(not ele) return false;
     Object *object = Embed<Object>::create(ele,parent);
     if(not object) {
-      QMessageBox::warning(nullptr, "Create object", "Cannot create object.");
-      return;
+      if(showDialogOnError) QMessageBox::warning(this, "Create object", "Cannot create object.");
+      return false;
     }
     parent->getXMLObjects()->insertBefore(ele, nullptr);
     parent->addObject(object);
     object->create();
     updateReferences(parent);
-    static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,elementView->selectionModel()->currentIndex());
+    static_cast<ElementTreeModel*>(elementView->model())->createObjectItem(object,getContainerIndex<ObjectItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(object->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
+    return true;
   }
 
-  void MainWindow::createLink(DOMElement *ele, Element *parent) {
-    if(not ele) return;
+  bool MainWindow::createLink(DOMElement *ele, Element *parent, bool showDialogOnError) {
+    if(not ele) return false;
     Link *link = Embed<Link>::create(ele,parent);
     if(not link) {
-      QMessageBox::warning(nullptr, "Create link", "Cannot create link.");
-      return;
+      if(showDialogOnError) QMessageBox::warning(this, "Create link", "Cannot create link.");
+      return false;
     }
     parent->getXMLLinks()->insertBefore(ele, nullptr);
     parent->addLink(link);
     link->create();
     updateReferences(parent);
-    static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,elementView->selectionModel()->currentIndex());
+    static_cast<ElementTreeModel*>(elementView->model())->createLinkItem(link,getContainerIndex<LinkItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(link->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
+    return true;
   }
 
-  void MainWindow::createConstraint(DOMElement *ele, Element *parent) {
-    if(not ele) return;
+  bool MainWindow::createConstraint(DOMElement *ele, Element *parent, bool showDialogOnError) {
+    if(not ele) return false;
     Constraint *constraint = Embed<Constraint>::create(ele,parent);
     if(not constraint) {
-      QMessageBox::warning(nullptr, "Create constraint", "Cannot create constraint.");
-      return;
+      if(showDialogOnError) QMessageBox::warning(this, "Create constraint", "Cannot create constraint.");
+      return false;
     }
     parent->getXMLConstraints()->insertBefore(ele, nullptr);
     parent->addConstraint(constraint);
     constraint->create();
     updateReferences(parent);
-    static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,elementView->selectionModel()->currentIndex());
+    static_cast<ElementTreeModel*>(elementView->model())->createConstraintItem(constraint,getContainerIndex<ConstraintItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(constraint->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
+    return true;
   }
 
-  void MainWindow::createObserver(DOMElement *ele, Element *parent) {
-    if(not ele) return;
+  bool MainWindow::createObserver(DOMElement *ele, Element *parent, bool showDialogOnError) {
+    if(not ele) return false;
     Observer *observer = Embed<Observer>::create(ele,parent);
     if(not observer) {
-      QMessageBox::warning(nullptr, "Create observer", "Cannot create observer.");
-      return;
+      if(showDialogOnError) QMessageBox::warning(this, "Create observer", "Cannot create observer.");
+      return false;
     }
     parent->getXMLObservers()->insertBefore(ele, nullptr);
     parent->addObserver(observer);
     observer->create();
     updateReferences(parent);
-    static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,elementView->selectionModel()->currentIndex());
+    static_cast<ElementTreeModel*>(elementView->model())->createObserverItem(observer,getContainerIndex<ObserverItemData>(parent));
     elementView->selectionModel()->setCurrentIndex(observer->getModelIndex(), QItemSelectionModel::ClearAndSelect);
     if(getAutoRefresh()) refresh();
+    return true;
+  }
+
+  void MainWindow::createAny(xercesc::DOMElement *ele, Element *parent, const FQN &requestedXMLType) {
+    MBXMLUtils::FQN newXMLType;
+    if     (createFrame     (ele, parent, false)) { newXMLType=MBSIM%"Frame"; }
+    else if(createContour   (ele, parent, false)) { newXMLType=MBSIM%"Contour"; }
+    else if(createGroup     (ele, parent, false)) { newXMLType=MBSIM%"Group"; }
+    else if(createObject    (ele, parent, false)) { newXMLType=MBSIM%"Object"; }
+    else if(createLink      (ele, parent, false)) { newXMLType=MBSIM%"Link"; }
+    else if(createConstraint(ele, parent, false)) { newXMLType=MBSIM%"Constraint"; }
+    else if(createObserver  (ele, parent, false)) { newXMLType=MBSIM%"Observer"; }
+
+    if(newXMLType==MBXMLUtils::FQN())
+      QMessageBox::warning(this, "Create element", "Unknown container type of imported/referenced element.");
+
+    if(newXMLType != requestedXMLType)
+      QMessageBox::information(this, "Create element", ("The imported/referenced element is not of the selected container type '"+requestedXMLType.second+"'.\n"+
+                                                        "It's added to it's corresponding container type '"+newXMLType.second+"'.").c_str());
   }
 
   void MainWindow::createDynamicSystemSolver(DOMElement *ele) {
@@ -2335,7 +2371,7 @@ namespace MBSimGUI {
     project->getDynamicSystemSolver()->removeXMLElement(true);
     DynamicSystemSolver *dss = Embed<DynamicSystemSolver>::create(ele,project);
     if(not dss) {
-      QMessageBox::warning(0, "Create dynamic system solver", "Cannot create dynamic system solver.");
+      QMessageBox::warning(this, "Create dynamic system solver", "Cannot create dynamic system solver.");
       return;
     }
     project->getXMLElement()->insertBefore(ele, project->getSolver()->getEmbedXMLElement()?project->getSolver()->getEmbedXMLElement():project->getSolver()->getXMLElement());
@@ -2359,7 +2395,7 @@ namespace MBSimGUI {
 
     Solver *solver = Embed<Solver>::create(ele,project);
     if(not solver) {
-      QMessageBox::warning(0, "Create solver", "Cannot create solver.");
+      QMessageBox::warning(this, "Create solver", "Cannot create solver.");
       return;
     }
     project->getXMLElement()->insertBefore(ele, nullptr);
