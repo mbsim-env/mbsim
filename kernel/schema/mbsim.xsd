@@ -5515,40 +5515,60 @@
         <xs:sequence>
           <xs:choice>
             <xs:sequence>
-              <xs:element name="x" type="pv:unknownVector">
+              <xs:choice>
+                <xs:sequence>
+                  <xs:element name="x" type="pv:unknownVector">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="">
+                        Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="y" type="pv:unknownMatrix">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="">
+                        Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:sequence>
+                <xs:element name="xy" type="pv:unknownMatrix">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:choice>
+              <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullEval">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      <dl>
+                        <dt>"cSplinePeriodic"</dt> <dd>Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).</dd>
+                        <dt>"cSplineNatural"</dt> <dd>Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).</dd>
+                        <dt>"piecewiseLinear"</dt> <dd>Interpolation mit stückweise linearem Spline.</dd>
+                      </dl>
+                    </xs:documentation>
+                  </xs:annotation>
+              </xs:element>
+            </xs:sequence> 
+            <xs:sequence> 
+              <xs:element name="breaks" type="pv:unknownVector">
                 <xs:annotation>
                   <xs:documentation xml:lang="de" xmlns="">
-                    Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
+                    Polynom break-Punkte.
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="y" type="pv:unknownMatrix">
+              <xs:element name="coefficients" type="pv:unknownMatrix">
                 <xs:annotation>
                   <xs:documentation xml:lang="de" xmlns="">
-                    Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                    Polynom Koeffizienten: erste Spalte: Koeffizient für Ordnung 0, zweite Spalte: Koeffizient für Ordnung 1, ...
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
-            </xs:sequence>
-            <xs:element name="xy" type="pv:unknownMatrix">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="">
-                  Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-          </xs:choice>
-          <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullEval">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="">
-                  <dl>
-                    <dt>"cSplinePeriodic"</dt> <dd>Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).</dd>
-                    <dt>"cSplineNatural"</dt> <dd>Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).</dd>
-                    <dt>"piecewiseLinear"</dt> <dd>Interpolation mit stückweise linearem Spline.</dd>
-                  </dl>
-                </xs:documentation>
-              </xs:annotation>
-          </xs:element>
+            </xs:sequence> 
+          </xs:choice> 
         </xs:sequence> 
       </xs:extension>
     </xs:complexContent>

@@ -68,7 +68,7 @@ namespace MBSim {
         cSplinePeriodic,
         cSplineNatural,
         piecewiseLinear,
-        unknown
+        useBreaksAndCoefs
       };
 
       PiecewisePolynomFunction() : index(0), method(cSplineNatural), f(this), fd(this), fdd(this) { }
@@ -80,11 +80,11 @@ namespace MBSim {
       void init(Element::InitStage stage, const InitConfigSet &config) {
         Function<Ret(Arg)>::init(stage, config);
         if(stage==Element::preInit) {
-          if(method==unknown)
-            Element::throwError("(PiecewisePolynomFunction::init): interpolation method unknown");
-          if(y.rows() != x.size())
-            this->throwError("Dimension missmatch in size of x");
-          if(x.size()) calculateSpline();
+          if(method!=useBreaksAndCoefs) {
+            if(y.rows() != x.size())
+              this->throwError("Dimension missmatch in size of x");
+            calculateSpline();
+          }
           nPoly = (coefs[0]).rows();
           order = coefs.size()-1;
         }
@@ -150,7 +150,7 @@ namespace MBSim {
        * \brief set interval boundaries
        * \param interval boundaries
        */
-      void setBreaks(const std::vector<fmatvec::MatV> &coefs_u, const fmatvec::VecV &breaks_u) { breaks = breaks_u; }
+      void setBreaks(const fmatvec::VecV &breaks_u) { breaks <<= breaks_u; }
 
       /**
        * \brief initialize function with XML code
@@ -523,7 +523,8 @@ namespace MBSim {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
       sety(MBXMLUtils::E(e)->getText<fmatvec::Mat>(x.size(), 0));
     }
-    else {
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
+    if (e) {
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
       setxy(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
     }
@@ -534,7 +535,20 @@ namespace MBSim {
       if(str=="cSplinePeriodic") method=cSplinePeriodic;
       else if(str=="cSplineNatural") method=cSplineNatural;
       else if(str=="piecewiseLinear") method=piecewiseLinear;
-      else method=unknown;
+      else method=useBreaksAndCoefs;
+    }
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"breaks");
+    if(e) { 
+      setBreaks(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
+      auto c=MBXMLUtils::E(e)->getText<fmatvec::Mat>();
+      std::vector<fmatvec::MatV> coefs;
+      coefs.reserve(c.cols());
+      for(int i=0; i<c.cols(); ++i)
+        coefs.emplace_back(c.col(i));
+      setCoefficients(coefs);
+      method=useBreaksAndCoefs;
     }
   }
 
