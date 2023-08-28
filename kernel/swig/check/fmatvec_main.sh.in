@@ -14,4 +14,6 @@ test "_@HOST_OS@" == "_mingw32" && SEP=";"
 export LD_LIBRARY_PATH=@prefix@/bin:@prefix@/lib:$LD_LIBRARY_PATH
 export PYTHONPATH=.${SEP}..${SEP}@abs_builddir@/.libs${SEP}@abs_builddir@/../.libs
 # "script" is needed to avoid "Py_Initialize: can't initialize sys standard streams" when running with wine
-script -qec "@XC_EXEC_PREFIX@ @PYTHON_BIN@ @abs_srcdir@/fmatvec_main.py" /dev/null
+rm -f result.txt
+script -qec "@XC_EXEC_PREFIX@ @PYTHON_BIN@ @abs_srcdir@/fmatvec_main.py | cat > result.txt" /dev/null
+cat result.txt
