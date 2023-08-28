@@ -9,6 +9,7 @@
 **/main
 **/main.d
 **/main.exe
+**/main.exe.d
 **/main.exe.linkmap
 **/main.linkmap
 **/mbsim.fmu
