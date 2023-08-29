@@ -55,11 +55,17 @@ void initPython() {
   if(isInitialized)
     return;
 
+  // init python
   initializePython((installPath()/"bin"/"mbsimflatxml").string());
-  PyO pyPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
-  // add bin to python search path
-  PyO pyBinPath(CALLPY(PyUnicode_FromString, (installPath()/"bin").string()));
-  CALLPY(PyList_Append, pyPath, pyBinPath);
+
+  // set sys.path
+  PyO sysPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
+  // append the installation/bin dir to the python path (SWIG generated python modules (e.g. OpenMBV.py) are located there)
+  PyO binpath(CALLPY(PyUnicode_FromString, (installPath()/"bin").string()));
+  CALLPY(PyList_Append, sysPath, binpath);
+  // prepand the installation/../mbsim-env-python-site-packages dir to the python path (Python pip of mbsim-env is configured to install user defined python packages there)
+  PyO mbsimenvsitepackagespath(CALLPY(PyUnicode_FromString, (installPath().parent_path()/"mbsim-env-python-site-packages").string()));
+  CALLPY(PyList_Insert, sysPath, 0, mbsimenvsitepackagespath);
   
   isInitialized=true;
 }
