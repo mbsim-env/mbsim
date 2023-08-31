@@ -39,6 +39,16 @@ namespace MBSim {
       int getisInd() { return isInd; }
       int getisSize() { return isSize; }
       virtual void calcisSize() { isSize = 0; }
+
+      /**
+       * This function is called just before the internal state vector gets updated.
+       * This means that the internal state is still at its old value when this function is called but get updated immediately afterwards.
+       * You can use this function to do actions which should only be done at valid integrator states (but not at integrates states which may be rejected later on).
+       */
+      virtual void aboutToUpdateInternalState() {}
+
+      virtual void postprocessing() {}
+
       virtual void setisInd(int isInd_) { isInd = isInd_; }
       virtual void updateInternalStateRef(fmatvec::Vec& cur, fmatvec::Vec& next);
 

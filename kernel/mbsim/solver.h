@@ -60,6 +60,11 @@ namespace MBSim {
        */
       virtual void execute() = 0;
 
+      /*! Solver postprocessing
+       * This just calls solverPostprocessing() on each element of the DSS
+       */
+      virtual void postprocessing();
+
       virtual void initializeUsingXML(xercesc::DOMElement *element) {
         // set the XML location of this element which can be used, later, by exceptions.
         domEvalError=MBXMLUtils::DOMEvalException("", element);

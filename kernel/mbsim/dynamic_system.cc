@@ -1223,6 +1223,34 @@ namespace MBSim {
     }
   }
 
+  void DynamicSystem::aboutToUpdateInternalState() {
+    for(auto & ds : dynamicsystem)
+      ds->aboutToUpdateInternalState();
+
+    for(auto & l : link)
+      l->aboutToUpdateInternalState();
+
+    for(auto & c : constraint)
+      c->aboutToUpdateInternalState();
+
+    for(auto & o : observer)
+      o->aboutToUpdateInternalState();
+  }
+
+  void DynamicSystem::postprocessing() {
+    for(auto & ds : dynamicsystem)
+      ds->postprocessing();
+
+    for(auto & l : link)
+      l->postprocessing();
+
+    for(auto & c : constraint)
+      c->postprocessing();
+
+    for(auto & o : observer)
+      o->postprocessing();
+  }
+
   void DynamicSystem::calcgSize(int j) {
     gSize = 0;
 

@@ -4,6 +4,7 @@ lib_LTLIBRARIES = libmbsim.la
 libmbsim_la_SOURCES = element.cc\
 		      environment.cc\
 		      dynamic_system.cc\
+		      solver.cc\
 		      group.cc\
 		      dynamic_system_solver.cc\
 		      mbsim_event.cc\

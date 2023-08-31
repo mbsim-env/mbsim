@@ -1565,6 +1565,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateInternalState() {
+    aboutToUpdateInternalState();
     curisParent = nextisParent;
   }
 
