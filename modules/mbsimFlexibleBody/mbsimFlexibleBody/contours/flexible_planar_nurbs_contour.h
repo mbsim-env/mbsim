@@ -71,11 +71,11 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalParWvCParEta(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParWuPart(const fmatvec::Vec2 &zeta) override;
 
-      void updatePositions(MBSim::ContourFrame *frame) override;
-      void updateVelocities(MBSim::ContourFrame *frame) override;
-      void updateAccelerations(MBSim::ContourFrame *frame) override;
-      void updateJacobians(MBSim::ContourFrame *frame, int j=0) override;
-      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame) override;
+      void updatePositions(MBSim::ContourFrame *frame);
+      void updateVelocities(MBSim::ContourFrame *frame);
+      void updateAccelerations(MBSim::ContourFrame *frame);
+      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
+      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame);
       /***************************************************/
 
       /* GETTER / SETTER */

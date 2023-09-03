@@ -45,7 +45,7 @@ namespace MBSimGUI {
       void addReference(EmbedItemData *item) { ref.push_back(item); }
       void removeReference(EmbedItemData *item);
       int getNumberOfReferences() const { return ref.size(); }
-      EmbedItemData *getReference(int i) { return ref[i]; }
+      EmbedItemData *getFileReference(int i) { return ref[i]; }
       void setModified(bool modified_) { modified = modified_; }
       bool getModified() const { return modified; }
 

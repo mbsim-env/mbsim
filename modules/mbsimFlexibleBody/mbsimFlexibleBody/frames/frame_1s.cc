@@ -19,7 +19,7 @@
 
 #include <config.h>
 #include "frame_1s.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
+#include "mbsimFlexibleBody/flexible_body/1s.h"
 
 using namespace MBSim;
 using namespace MBXMLUtils;

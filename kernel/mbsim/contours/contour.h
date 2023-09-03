@@ -176,12 +176,6 @@ namespace MBSim {
 
       virtual fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS);
 
-      virtual void updatePositions(ContourFrame *frame);
-      virtual void updateVelocities(ContourFrame *frame);
-      virtual void updateAccelerations(ContourFrame *frame);
-      virtual void updateJacobians(ContourFrame *frame, int j=0);
-      virtual void updateGyroscopicAccelerations(ContourFrame *frame);
-
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setThickness(double thickness_) { thickness = thickness_; }

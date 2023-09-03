@@ -38,7 +38,7 @@ namespace MBSim {
 //    else return false;
 //  }
 
-  double ContourQuad::computePointWeight(const Vec &s, int i) {
+  double ContourQuad::computePointWeight(const Vec2 &s, int i) {
     double xi  = s(0);
     double eta = s(1);
 
@@ -51,7 +51,7 @@ namespace MBSim {
     }
   }
 
-  double ContourQuad::computePointWeight(const Vec &s, int i, int diff) {
+  double ContourQuad::computePointWeight(const Vec2 &s, int i, int diff) {
     double xi  = s(0);
     double eta = s(1);
 

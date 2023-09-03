@@ -157,12 +157,12 @@ modules/mbsimFlexibleBody/ltmain.sh
 modules/mbsimFlexibleBody/mbsimFlexibleBody/Makefile.in
 modules/mbsimFlexibleBody/mbsimFlexibleBody/contact_kinematics/Makefile.in
 modules/mbsimFlexibleBody/mbsimFlexibleBody/contours/Makefile.in
-modules/mbsimFlexibleBody/mbsimFlexibleBody/contours/neutral_contour/Makefile.in
-modules/mbsimFlexibleBody/mbsimFlexibleBody/contours/neutral_contour/neutral_contour_components/Makefile.in
+modules/mbsimFlexibleBody/mbsimFlexibleBody/contours/nc/Makefile.in
+modules/mbsimFlexibleBody/mbsimFlexibleBody/contours/nc/ncc/Makefile.in
 modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/Makefile.in
-modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/finite_elements/Makefile.in
-modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/finite_elements/finite_element_1s_33_rcm/Makefile.in
-modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/finite_elements/finite_element_2s_13_mfr_mindlin/Makefile.in
+modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/fe/Makefile.in
+modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/fe/1s_33_rcm/Makefile.in
+modules/mbsimFlexibleBody/mbsimFlexibleBody/flexible_body/fe/2s_13_mfr_mindlin/Makefile.in
 modules/mbsimFlexibleBody/mbsimFlexibleBody/utils/Makefile.in
 modules/mbsimFlexibleBody/mbsimFlexibleBody/frames/Makefile.in
 modules/mbsimFlexibleBody/missing

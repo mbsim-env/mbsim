@@ -149,27 +149,6 @@ namespace MBSim {
     throwError("(Contour::evalZeta): Not implemented.");
   }
 
-  void Contour::updatePositions(ContourFrame *frame) {
-    throwError("(Contour::updatePositions): Not implemented.");
-  }
-
-  void Contour::updateVelocities(ContourFrame *frame) {
-    throwError("(Contour::updateVelocities): Not implemented.");
-  }
-
-  void Contour::updateAccelerations(ContourFrame *frame) {
-    throwError("(Contour::updateAccelerations): Not implemented.");
-  }
-
-  void Contour::updateJacobians(ContourFrame *frame, int j) {
-    throwError("(Contour::updateJacobians): Not implemented.");
-  }
-
-  void Contour::updateGyroscopicAccelerations(ContourFrame *frame) {
-    throwError("(Contour::updateGyroscopicAccelerations): Not implemented.");
-
-  }
-
   void Contour::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"thickness");

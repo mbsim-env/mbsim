@@ -22,7 +22,7 @@
 #include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/frames/fixed_contour_frame.h"
 #include "mbsimFlexibleBody/frames/floating_relative_flexible_contour_frame.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s.h"
+#include "mbsimFlexibleBody/flexible_body/1s.h"
 #include "mbsim/utils/rotarymatrices.h"
 
 #include <openmbvcppinterface/group.h>

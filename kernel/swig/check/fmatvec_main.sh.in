@@ -9,10 +9,11 @@ if test -z "$MBSIM_SWIG"; then
 fi
 
 SEP=":"
-test "_@HOST_OS@" == "_mingw32" && SEP=";"
+#test "_@HOST_OS@" == "_mingw32" && SEP=";"
 
 export LD_LIBRARY_PATH=@prefix@/bin:@prefix@/lib:$LD_LIBRARY_PATH
-export PYTHONPATH=.${SEP}..${SEP}@abs_builddir@/.libs${SEP}@abs_builddir@/../.libs
+export PYTHONPATH=.${SEP}..${SEP}@abs_builddir@/.libs${SEP}@abs_builddir@/../.libs${SEP}@prefix@/bin
+export PATH=$PATH:@prefix@/bin
 # "script with  | cat > ..." is needed to avoid "Py_Initialize: can't initialize sys standard streams" when running with wine but fails on Linux :-(
 rm -f result.txt
 if [ "_@XC_EXEC_PREFIX@" == "_" ]; then

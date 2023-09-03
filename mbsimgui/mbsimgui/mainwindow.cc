@@ -67,6 +67,7 @@
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
+#include <boost/filesystem/fstream.hpp>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMException.hpp>
@@ -1891,8 +1892,8 @@ namespace MBSimGUI {
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem) {
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-        if(fileItem->getReference(i)!=dedicatedParent)
-          fileItem->getReference(i)->updateNames();
+        if(fileItem->getFileReference(i)!=dedicatedParent)
+          fileItem->getFileReference(i)->updateNames();
       }
     }
   }
@@ -1902,17 +1903,17 @@ namespace MBSimGUI {
     auto *fileItem = dedicatedParent->getFileItem();
     if(fileItem) {
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-        if(fileItem->getReference(i)!=dedicatedParent) {
-          fileItem->getReference(i)->updateValues();
-          fileItem->getReference(i)->updateNames();
+        if(fileItem->getFileReference(i)!=dedicatedParent) {
+          fileItem->getFileReference(i)->updateValues();
+          fileItem->getFileReference(i)->updateNames();
 	}
       }
     }
     fileItem = parent->getParameterFileItem();
     if(fileItem) {
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-        if(fileItem->getReference(i)!=parent)
-          fileItem->getReference(i)->updateValues();
+        if(fileItem->getFileReference(i)!=parent)
+          fileItem->getFileReference(i)->updateValues();
       }
     }
   }
@@ -1923,14 +1924,14 @@ namespace MBSimGUI {
     if(fileItem) {
       fileItem->setModified(true);
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-        if(fileItem->getReference(i)!=dedicatedParent) {
-          fileItem->getReference(i)->setXMLElement(dedicatedParent->getXMLElement());
-          fileItem->getReference(i)->clear();
+        if(fileItem->getFileReference(i)!=dedicatedParent) {
+          fileItem->getFileReference(i)->setXMLElement(dedicatedParent->getXMLElement());
+          fileItem->getFileReference(i)->clear();
           auto *model = static_cast<ElementTreeModel*>(elementView->model());
-	  QModelIndex index = model->findItem(fileItem->getReference(i),project->getModelIndex());
+	  QModelIndex index = model->findItem(fileItem->getFileReference(i),project->getModelIndex());
           model->removeRows(0,model->rowCount(index),index);
-          fileItem->getReference(i)->create();
-          model->updateElementItem(static_cast<Element*>(fileItem->getReference(i)));
+          fileItem->getFileReference(i)->create();
+          model->updateElementItem(static_cast<Element*>(fileItem->getFileReference(i)));
         }
       }
     }
@@ -1946,13 +1947,13 @@ namespace MBSimGUI {
       if(fileItem) {
 	fileItem->setModified(true);
 	for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-	  if(fileItem->getReference(i)!=dedicatedParent) {
-	    fileItem->getReference(i)->clear();
+	  if(fileItem->getFileReference(i)!=dedicatedParent) {
+	    fileItem->getFileReference(i)->clear();
 	    auto *model = static_cast<ElementTreeModel*>(elementView->model());
-	    QModelIndex index = model->findItem(fileItem->getReference(i),project->getModelIndex());
+	    QModelIndex index = model->findItem(fileItem->getFileReference(i),project->getModelIndex());
 	    model->removeRows(0,model->rowCount(index),index);
-	    fileItem->getReference(i)->create();
-	    model->updateElementItem(static_cast<Element*>(fileItem->getReference(i)));
+	    fileItem->getFileReference(i)->create();
+	    model->updateElementItem(static_cast<Element*>(fileItem->getFileReference(i)));
 	  }
 	}
       }
@@ -1965,9 +1966,9 @@ namespace MBSimGUI {
     fileItem = parent->getParameterFileItem();
     if(fileItem) {
       for(int i=0; i<fileItem->getNumberOfReferences(); i++) {
-        if(fileItem->getReference(i)!=parent) {
-          fileItem->getReference(i)->clearParameters();
-          fileItem->getReference(i)->createParameters();
+        if(fileItem->getFileReference(i)!=parent) {
+          fileItem->getFileReference(i)->clearParameters();
+          fileItem->getFileReference(i)->createParameters();
         }
       }
     }

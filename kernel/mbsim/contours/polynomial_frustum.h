@@ -244,7 +244,7 @@ namespace MBSim {
       ~ContactPolyfun() override = default;
 
       double operator()(const double &x) override;
-      void initializeUsingXML() {
+      void initializeUsingXML(xercesc::DOMElement *) {
       }
 
     protected:

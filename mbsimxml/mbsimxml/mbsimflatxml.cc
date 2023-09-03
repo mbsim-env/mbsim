@@ -115,7 +115,7 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
         if(path.length()<=string(".mbsimmodule.xml").length()) continue;
         if(path.substr(path.length()-string(".mbsimmodule.xml").length())!=".mbsimmodule.xml") continue;
         if(stage==SearchPath)
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load library for "<<it->path().leaf().string()<<endl;
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load library for "<<it->path().filename().string()<<endl;
         std::shared_ptr<DOMDocument> doc=parser->parse(*it, nullptr, false);
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
             getFirstElementChild();

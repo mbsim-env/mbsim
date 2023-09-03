@@ -20,7 +20,7 @@
 #include <config.h>
 
 #include "mbsimFlexibleBody/contours/nurbs_disk_2s.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13.h"
+#include "mbsimFlexibleBody/flexible_body/2s_13.h"
 #include "mbsimFlexibleBody/frames/node_frame.h"
 #include "mbsim/frames/floating_contour_frame.h"
 #include "mbsim/utils/eps.h"

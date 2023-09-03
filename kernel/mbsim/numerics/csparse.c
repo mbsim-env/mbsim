@@ -1315,6 +1315,8 @@ void *cs_free(void *p) {
 
 /* wrapper for realloc */
 void *cs_realloc(void *p, int n, size_t size, int *ok) {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuse-after-free"
   void *p2;
   *ok = !CS_OVERFLOW (n,size); /* guard against int overflow */
   if (!(*ok))
@@ -1322,6 +1324,7 @@ void *cs_realloc(void *p, int n, size_t size, int *ok) {
   p2 = realloc(p, CS_MAX (n,1) * size); /* realloc the block */
   *ok = (p2 != NULL );
   return ((*ok) ? p2 : p); /* return original p if failure */
+#pragma GCC diagnostic pop
 }
 
 /* find an augmenting path starting at column k and extend the match if found */

@@ -120,7 +120,7 @@ if test "x$enable_python" == "xyes"; then
   PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
     PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
   ])
-  if test "$cross_compiling" == "yes"; then
+  if test "$cross_compiling" == "yes" -o "_$host_os" == "_mingw32"; then
     pythonshext=".pyd"
   else
     pythonshext=".so"

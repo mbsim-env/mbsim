@@ -76,7 +76,7 @@ _mbsim_la_CPPFLAGS = $(AM_CPPFLAGS)
 AM_CPPFLAGS = -I$(top_srcdir) -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_CFLAGS) \
   -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include \
   -Wno-error=unused-variable -Wno-error=write-strings -Wno-error=virtual-move-assign $(CXXFLAGSNOWERRORSTRINGOP) \
-  $(DEPS_CFLAGS) -Wno-unused-label -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
+  $(DEPS_CFLAGS) -Wno-unused-label -Wno-array-bounds -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
 
 # link flags for libtool libraries
 _fmatvec_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version $(PYTHON_LIBS) $(FMATVEC_LIBS)

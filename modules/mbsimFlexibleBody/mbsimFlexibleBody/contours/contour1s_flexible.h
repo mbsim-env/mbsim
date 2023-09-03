@@ -39,7 +39,7 @@ namespace MBSimFlexibleBody {
    * \date 2009-06-04 new file (Thorsten Schindler)
    *
    * \todo: make this class to be the neutral factory...
-   *        For it all "natural" contours of the bodies would have to implement a neutral_contour
+   *        For it all "natural" contours of the bodies would have to implement a nc
    *        Then it would not be the case, that the neutral_contour1s as a contour1s as well as this contour1s_flexible
    */
   class Contour1sFlexible : public Contour1s {
@@ -74,11 +74,11 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalWs(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return Ws; }
       fmatvec::Vec3 evalWt(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return Wt; }
 
-      void updatePositions(MBSim::ContourFrame *frame) override;
-      void updateVelocities(MBSim::ContourFrame *frame) override;
-      void updateAccelerations(MBSim::ContourFrame *frame) override;
-      void updateJacobians(MBSim::ContourFrame *frame, int j=0) override;
-      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame) override;
+      void updatePositions(MBSim::ContourFrame *frame);
+      void updateVelocities(MBSim::ContourFrame *frame);
+      void updateAccelerations(MBSim::ContourFrame *frame);
+      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
+      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame);
 
     protected:
       fmatvec::Vec3 WrOP, Ws, Wt;

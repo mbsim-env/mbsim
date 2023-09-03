@@ -206,9 +206,6 @@ namespace MBSim {
       const fmatvec::SymMat3& getInertiaTensor() const {return SThetaS;}
       fmatvec::SymMat3& getInertiaTensor() {return SThetaS;}
 
-      void addFrame(FixedRelativeFrame *frame); 
-      void addContour(RigidContour *contour);
-
       /**
        * \param frame Frame to be used for kinematical description depending on reference Frame and generalised positions / velocities
        */

@@ -19,7 +19,7 @@
 
 #include<config.h>
 #include "mbsimFlexibleBody/contours/nurbs_curve_1s.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_cosserat.h"
+#include "mbsimFlexibleBody/flexible_body/1s_cosserat.h"
 #include "mbsim/mbsim_event.h"
 
 using namespace std;

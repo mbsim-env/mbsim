@@ -152,7 +152,6 @@ namespace MBSim {
       virtual void resetGyroscopicAccelerationsUpToDate();
       virtual void updateJacobians() { }
 
-    protected:
       /**
        * \param frame to add
        */
@@ -163,6 +162,7 @@ namespace MBSim {
        */
       virtual void addContour(Contour* contour);
 
+    protected:
       /**
        * \brief vector of frames and contours
        */

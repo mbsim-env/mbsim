@@ -1,0 +1,588 @@
+/* Copyright (C) 2004-2015 MBSim Development Team
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
+ *
+ * Contact: thorsten.schindler@mytum.de
+ */
+
+#include <config.h>
+#include "mbsimFlexibleBody/flexible_body/1s_33_rcm.h"
+#include "mbsimFlexibleBody/flexible_body/fe/1s_33_rcm.h"
+#include "mbsim/frames/contour_frame.h"
+#include "mbsimFlexibleBody/frames/frame_1s.h"
+#include "mbsimFlexibleBody/frames/node_frame.h"
+#include "mbsimFlexibleBody/utils/revcardan.h"
+#include "mbsim/utils/utils.h"
+#include "mbsim/utils/eps.h"
+#include "mbsim/utils/rotarymatrices.h"
+#include "mbsim/frames/frame.h"
+#include "mbsim/dynamic_system_solver.h"
+#include <mbsim/environment.h>
+
+#include "nurbs++/nurbs.h"
+#include "nurbs++/vector.h"
+
+using namespace PLib;
+
+using namespace std;
+using namespace fmatvec;
+using namespace MBSim;
+using namespace MBXMLUtils;
+using namespace xercesc;
+
+namespace MBSimFlexibleBody {
+
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMFLEX, FlexibleBody1s33RCM)
+
+  FlexibleBody1s33RCM::FlexibleBody1s33RCM(const string &name, bool openStructure) : FlexibleBody1s(name,openStructure), angle(new RevCardan()), Elements(0), l0(0.), E(0.), G(0.), A(0.), I1(0.), I2(0.), I0(0.), rho(0.), R1(0.), R2(0.), epstD(0.), k0D(0.), epstL(0.), k0L(0.), initialised(false), nGauss(3) {
+  }
+
+  void FlexibleBody1s33RCM::BuildElements() {
+    for (int i = 0; i < Elements; i++) {
+      int j = 10 * i; // start index in entire beam coordinates
+
+      if (i < Elements - 1 || openStructure) {
+        qElement[i] = q(RangeV(j, j + 15));
+        uElement[i] = u(RangeV(j, j + 15));
+      }
+      else { // last FE-Beam for closed structure
+        qElement[i].set(RangeV(0, 9), q(RangeV(j, j + 9)));
+        uElement[i].set(RangeV(0, 9), u(RangeV(j, j + 9)));
+        qElement[i].set(RangeV(10, 15), q(RangeV(0, 5)));
+        if (q(j + 5) < q(5))
+          qElement[i](15) -= 2. * M_PI;
+        else
+          qElement[i](15) += 2. * M_PI;
+        uElement[i].set(RangeV(10, 15), u(RangeV(0, 5)));
+      }
+    }
+    updEle = false;
+  }
+
+  void FlexibleBody1s33RCM::setMaterialDamping(double epstD_, double k0D_) {
+    epstD = epstD_;
+    k0D = k0D_;
+    if(initialised)
+      for(int i=0;i<Elements;i++)
+        static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements*epstD,Elements*k0D);
+  }
+
+  void FlexibleBody1s33RCM::setCurlRadius(double R1_, double R2_) {
+    R1 = R1_;
+    R2 = R2_;
+    if(initialised)
+      for(int i=0;i<Elements;i++)
+        static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1,R2);
+  }
+
+  void FlexibleBody1s33RCM::setLehrDamping(double epstL_, double k0L_) {
+    epstL = epstL_;
+    k0L = k0L_;
+    if(initialised)
+      for(int i=0;i<Elements;i++)
+        static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements*epstL,Elements*k0L);
+  }
+
+  void FlexibleBody1s33RCM::GlobalVectorContribution(int n, const Vec& locVec, Vec& gloVec) {
+    int j = 10 * n; // start index in entire beam coordinates
+
+    if (n < Elements - 1 || openStructure) {
+      gloVec.add(RangeV(j, j + 15), locVec);
+    }
+    else { // last FE for closed structure
+      gloVec.add(RangeV(j, j + 9), locVec(RangeV(0, 9)));
+      gloVec.add(RangeV(0, 5), locVec(RangeV(10, 15)));
+    }
+  }
+
+  void FlexibleBody1s33RCM::GlobalMatrixContribution(int n, const Mat& locMat, Mat& gloMat) {
+    int j = 10 * n; // start index in entire beam coordinates
+
+    if (n < Elements - 1 || openStructure) {
+      gloMat.add(RangeV(j, j + 15), RangeV(j, j + 15), locMat);
+    }
+    else { // last FE for closed structure
+      gloMat.add(RangeV(j, j + 9), RangeV(j, j + 9), locMat(RangeV(0, 9), RangeV(0, 9)));
+      gloMat.add(RangeV(j, j + 9), RangeV(0, 5), locMat(RangeV(0, 9), RangeV(10, 15)));
+      gloMat.add(RangeV(0, 5), RangeV(j, j + 9), locMat(RangeV(10, 15), RangeV(0, 9)));
+      gloMat.add(RangeV(0, 5), RangeV(0, 5), locMat(RangeV(10, 15), RangeV(10, 15)));
+    }
+  }
+
+  void FlexibleBody1s33RCM::GlobalMatrixContribution(int n, const SymMat& locMat, SymMat& gloMat) {
+    int j = 10 * n; // start index in entire beam coordinates
+
+    if (n < Elements - 1 || openStructure) {
+      gloMat.add(RangeV(j, j + 15), locMat);
+    }
+    else { // last FE for closed structure
+      gloMat.add(RangeV(j, j + 9), locMat(RangeV(0, 9)));
+      gloMat.add(RangeV(j, j + 9), RangeV(0, 5), locMat(RangeV(0, 9), RangeV(10, 15)));
+      gloMat.add(RangeV(0, 5), locMat(RangeV(10, 15)));
+    }
+  }
+
+  void FlexibleBody1s33RCM::updatePositions(Frame1s *frame) {
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * X(Range<Fixed<0>,Fixed<2>>()));
+    frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(X(Range<Fixed<3>,Fixed<5>>())));
+    frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(X(Range<Fixed<3>,Fixed<5>>())));
+    frame->getOrientation(false).set(2, crossProduct(frame->getOrientation(false).col(0), frame->getOrientation(false).col(1)));
+  }
+
+  void FlexibleBody1s33RCM::updateVelocities(Frame1s *frame) {
+    fmatvec::Vector<Fixed<6>, double> X = getPositions(frame->getParameter());
+    fmatvec::Vector<Fixed<6>, double> Xt = getVelocities(frame->getParameter());
+    frame->setVelocity(R->evalOrientation() * Xt(Range<Fixed<0>,Fixed<2>>()));
+    frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(X(Range<Fixed<3>,Fixed<5>>()), Xt(Range<Fixed<3>,Fixed<5>>())));
+  }
+
+  void FlexibleBody1s33RCM::updateAccelerations(Frame1s *frame) {
+    throwError("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody1s33RCM::updateJacobians(Frame1s *frame, int j) {
+    RangeV All(0, 5);
+    Mat Jacobian(qSize, 6, INIT, 0.);
+
+    double sLocal;
+    int currentElement;
+    BuildElement(frame->getParameter(), sLocal, currentElement);
+    Mat Jtmp = static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computeJacobianOfMotion(getqElement(currentElement), sLocal); // this local ansatz yields continuous and finite wave propagation
+
+    if (currentElement < Elements - 1 || openStructure) {
+      Jacobian.set(RangeV(10 * currentElement, 10 * currentElement + 15), All, Jtmp);
+    }
+    else { // last FE for closed structure
+      Jacobian.set(RangeV(10 * currentElement, 10 * currentElement + 9), All, Jtmp(RangeV(0, 9), All));
+      Jacobian.set(RangeV(0, 5), All, Jtmp(RangeV(10, 15), All));
+    }
+
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(0, 2)).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(3, 5)).T(),j);
+  }
+
+  void FlexibleBody1s33RCM::updateGyroscopicAccelerations(Frame1s *frame) {
+//    throwError("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody1s33RCM::updatePositions(NodeFrame *frame) {
+    Vec3 tmp(NONINIT);
+    int node = frame->getNodeNumber();
+    const Vec &Phi = q(RangeV(10 * node + 3, 10 * node + 5));
+    frame->setPosition(R->evalPosition() + R->evalOrientation() * q(RangeV(10 * node + 0, 10 * node + 2)));
+    frame->getOrientation(false).set(0, R->getOrientation() * angle->computet(Phi));
+    frame->getOrientation(false).set(1, R->getOrientation() * angle->computen(Phi));
+    frame->getOrientation(false).set(2, crossProduct(frame->getOrientation().col(0), frame->getOrientation().col(1)));
+  }
+
+  void FlexibleBody1s33RCM::updateVelocities(NodeFrame *frame) {
+    Vec3 tmp(NONINIT);
+    int node = frame->getNodeNumber();
+    const Vec &Phi = q(RangeV(10 * node + 3, 10 * node + 5));
+    const Vec &Phit = u(RangeV(10 * node + 3, 10 * node + 5));
+    frame->setVelocity(R->evalOrientation() * u(RangeV(10 * node + 0, 10 * node + 2)));
+    frame->setAngularVelocity(R->getOrientation() * angle->computeOmega(Phi, Phit));
+  }
+
+  void FlexibleBody1s33RCM::updateAccelerations(NodeFrame *frame) {
+    throwError("(FlexibleBody1s33RCM::updateAccelerations): Not implemented.");
+  }
+
+  void FlexibleBody1s33RCM::updateJacobians(NodeFrame *frame, int j) {
+    RangeV All(0, 5);
+    RangeV One(0, 2);
+    Mat Jacobian(qSize, 6, INIT, 0.);
+    int node = frame->getNodeNumber();
+
+    Vec p = q(RangeV(10 * node + 3, 10 * node + 5));
+    Vec t = angle->computet(p);
+    Vec n = angle->computen(p);
+    Vec b = angle->computeb(p);
+    SqrMat tp = angle->computetq(p);
+    SqrMat np = angle->computenq(p);
+    SqrMat bp = angle->computebq(p);
+
+    Jacobian.set(RangeV(10 * node, 10 * node + 2), One, SqrMat(3, EYE)); // translation
+    Jacobian.set(RangeV(10 * node + 3, 10 * node + 5), 3, t(1) * tp(RangeV(2, 2), RangeV(0, 2)).T() + n(1) * np(RangeV(2, 2), RangeV(0, 2)).T() + b(1) * bp(RangeV(2, 2), RangeV(0, 2)).T()); // rotation
+    Jacobian.set(RangeV(10 * node + 3, 10 * node + 5), 4, t(2) * tp(RangeV(0, 0), RangeV(0, 2)).T() + n(2) * np(RangeV(0, 0), RangeV(0, 2)).T() + b(2) * bp(RangeV(0, 0), RangeV(0, 2)).T());
+    Jacobian.set(RangeV(10 * node + 3, 10 * node + 5), 5, t(0) * tp(RangeV(1, 1), RangeV(0, 2)).T() + n(0) * np(RangeV(1, 1), RangeV(0, 2)).T() + b(0) * bp(RangeV(1, 1), RangeV(0, 2)).T());
+
+    frame->setJacobianOfTranslation(R->evalOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(0, 2)).T(),j);
+    frame->setJacobianOfRotation(R->getOrientation() * Jacobian(RangeV(0, qSize - 1), RangeV(3, 5)).T(),j);
+  }
+
+  void FlexibleBody1s33RCM::updateGyroscopicAccelerations(NodeFrame *frame) {
+    throwError("(FlexibleBody1s33RCM::updateGyroscopicAccelerations): Not implemented.");
+  }
+
+  Vec3 FlexibleBody1s33RCM::getAngles(double s) {
+    return getPositions(s)(Range<Fixed<3>,Fixed<5>>());
+  }
+
+  void FlexibleBody1s33RCM::init(InitStage stage, const InitConfigSet &config) {
+    if(stage==unknownStage) {
+      FlexibleBody1s::init(stage, config);
+
+      initialised = true;
+
+      l0 = L / Elements;
+      Vec g = R->getOrientation().T() * ds->getMBSimEnvironment()->getAccelerationOfGravity();
+
+      for (int i = 0; i < Elements; i++) {
+        discretization.push_back(new FiniteElement1s33RCM(l0, rho, A, E, G, I1, I2, I0, g, angle));
+        qElement.emplace_back(discretization[0]->getqSize(), INIT, 0.);
+        uElement.emplace_back(discretization[0]->getuSize(), INIT, 0.);
+        static_cast<FiniteElement1s33RCM*>(discretization[i])->setGauss(nGauss);
+        if (fabs(R1) > epsroot || fabs(R2) > epsroot)
+          static_cast<FiniteElement1s33RCM*>(discretization[i])->setCurlRadius(R1, R2);
+        static_cast<FiniteElement1s33RCM*>(discretization[i])->setMaterialDamping(Elements * epstD, Elements * k0D);
+        if (fabs(epstD) < epsroot)
+          static_cast<FiniteElement1s33RCM*>(discretization[i])->setLehrDamping(Elements * epstL, Elements * k0L);
+      }
+    }
+    else
+      FlexibleBody1s::init(stage, config);
+  }
+
+  void FlexibleBody1s33RCM::setNumberElements(int n) {
+    Elements = n;
+    if (openStructure)
+      qSize = 10 * n + 6;
+    else
+      qSize = 10 * n;
+
+    Vec q0Tmp;
+    if (q0.size())
+      q0Tmp <<= q0;
+    q0.resize(qSize, INIT, 0.);
+    if (q0Tmp.size()) {
+      if (q0Tmp.size() == q0.size())
+        q0 = q0Tmp;
+      else
+        throwError("Dimension of q0 wrong!");
+    }
+
+    uSize[0] = qSize;
+    uSize[1] = qSize; // TODO
+    Vec u0Tmp;
+    if (u0.size())
+      u0Tmp <<= u0;
+    u0.resize(uSize[0], INIT, 0.);
+    if (u0Tmp.size()) {
+      if (u0Tmp.size() == u0.size())
+        u0 = u0Tmp;
+      else
+        throwError("Dimension of u0 wrong!");
+    }
+  }
+
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getPositions(double sGlobal) {
+    double sLocal;
+    int currentElement;
+    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getPositions(getqElement(currentElement), sLocal);
+  }
+
+  fmatvec::Vector<Fixed<6>, double> FlexibleBody1s33RCM::getVelocities(double sGlobal) {
+    double sLocal;
+    int currentElement;
+    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->getVelocities(getqElement(currentElement), getuElement(currentElement), sLocal);
+  }
+
+  double FlexibleBody1s33RCM::computePhysicalStrain(const double sGlobal) {
+    double sLocal;
+    int currentElement;
+    BuildElement(sGlobal, sLocal, currentElement); // Lagrange parameter of affected FE
+    return static_cast<FiniteElement1s33RCM*>(discretization[currentElement])->computePhysicalStrain(getqElement(currentElement), getuElement(currentElement));
+  }
+
+  void FlexibleBody1s33RCM::initInfo() {
+    FlexibleBody1s::init(unknownStage, InitConfigSet());
+    l0 = L / Elements;
+    Vec g = Vec("[0.;0.;0.]");
+    for (int i = 0; i < Elements; i++) {
+      discretization.push_back(new FiniteElement1s33RCM(l0, rho, A, E, G, I1, I2, I0, g, angle));
+      qElement.emplace_back(discretization[0]->getqSize(), INIT, 0.);
+      uElement.emplace_back(discretization[0]->getuSize(), INIT, 0.);
+    }
+  }
+
+  void FlexibleBody1s33RCM::BuildElement(const double& sGlobal, double& sLocal, int& currentElement) {
+    double remainder = fmod(sGlobal, L);
+    if (openStructure && sGlobal >= L)
+      remainder += L; // remainder \in (-eps,L+eps)
+    if (!openStructure && sGlobal < 0.)
+      remainder += L; // remainder \in [0,L)
+
+    currentElement = int(remainder / l0);
+    sLocal = remainder - (0.5 + currentElement) * l0; // Lagrange-Parameter of the affected FE with sLocal==0 in the middle of the FE and sGlobal==0 at the beginning of the beam
+
+    if (currentElement >= Elements && openStructure) { // contact solver computes to large sGlobal at the end of the entire beam is not considered only for open structure
+      currentElement = Elements - 1;
+      sLocal += l0;
+    }
+  }
+
+  void FlexibleBody1s33RCM::initializeUsingXML(DOMElement * element) {
+    FlexibleBody::initializeUsingXML(element);
+    DOMElement * e;
+
+//    // frames
+//    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"frames")->getFirstElementChild();
+//    while(e && MBXMLUtils::E(e)->getTagName()==MBSIMFLEX%"frameOnFlexibleBody1s") {
+//      DOMElement *ec=e->getFirstElementChild();
+//      Frame *f=new Frame(MBXMLUtils::E(ec)->getAttribute("name"));
+//      f->initializeUsingXML(ec);
+//      ec=ec->getNextElementSibling();
+//      addFrame(f, MBXMLUtils::E(ec)->getText<double>());
+//      e=e->getNextElementSibling();
+//    }
+
+    //other properties
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"numberOfElements");
+    setNumberElements(MBXMLUtils::E(e)->getText<int>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"length");
+    setLength(MBXMLUtils::E(e)->getText<double>());
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"youngsModulus");
+    auto E=MBXMLUtils::E(e)->getText<double>();
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"shearModulus");
+    auto G=MBXMLUtils::E(e)->getText<double>();
+    setEGModuls(E, G);
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"density");
+    setDensity(MBXMLUtils::E(e)->getText<double>());
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"crossSectionArea");
+    setCrossSectionalArea(MBXMLUtils::E(e)->getText<double>());
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"momentOfInertia");
+    Vec TempVec2=MBXMLUtils::E(e)->getText<Vec>();
+    setMomentsInertia(TempVec2(0),TempVec2(1),TempVec2(2));
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"dampingOfMaterial");
+    auto thetaEps=MBXMLUtils::E(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"prolongational"))->getText<double>();
+    auto thetaKappa0=MBXMLUtils::E(MBXMLUtils::E(e)->getFirstElementChildNamed(MBSIMFLEX%"torsional"))->getText<double>();
+    setMaterialDamping(thetaEps, thetaKappa0);
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIMFLEX%"openMBVBody");
+    if(e) {
+      std::shared_ptr<OpenMBV::SpineExtrusion> rb=OpenMBV::ObjectFactory::create<OpenMBV::SpineExtrusion>(e->getFirstElementChild());
+      setOpenMBVSpineExtrusion(rb);
+      rb->initializeUsingXML(e->getFirstElementChild());
+      rb->setNumberOfSpinePoints(4*Elements+1);
+    }
+  }
+
+  void FlexibleBody1s33RCM::exportPositionVelocity(const string & filenamePos, const string & filenameVel /*= string( )*/, const int & deg /* = 3*/, const bool &writePsFile /*= false*/) {
+//
+//    PlNurbsCurved curvePos;
+//    PlNurbsCurved curveVel;
+//
+//    if (!openStructure) {
+//      PLib::Vector<PLib::HPoint3Dd> NodelistPos(Elements + deg);
+//      PLib::Vector<PLib::HPoint3Dd> NodelistVel(Elements + deg);
+//
+//      for (int i = 0; i < Elements + deg; i++) {  // +deg-Elements are needed, as the curve is closed
+//        ContourPointData cp(i);
+//        if (i >= Elements)
+//          cp.getNodeNumber() = i - Elements;
+//
+//        updateKinematicsForFrame(cp, Frame::position);
+//        NodelistPos[i] = HPoint3Dd(cp.getFrameOfReference().getPosition()(0), cp.getFrameOfReference().getPosition()(1), cp.getFrameOfReference().getPosition()(2), 1);
+//
+//        if (not filenameVel.empty()) {
+//          updateKinematicsForFrame(cp, Frame::velocity_cosy);
+//
+//          SqrMat3 TMPMat = cp.getFrameOfReference().getOrientation();
+//          SqrMat3 AKI(INIT, 0.);
+//          AKI.set(0, trans(TMPMat.col(1)));
+//          AKI.set(1, trans(TMPMat.col(0)));
+//          AKI.set(2, trans(TMPMat.col(2)));
+//          Vec3 Vel(INIT, 0.);
+//          Vel = AKI * cp.getFrameOfReference().getVelocity();
+//
+//          NodelistVel[i] = HPoint3Dd(Vel(0), Vel(1), Vel(2), 1);
+//        }
+//      }
+//
+//      /*create own uVec and uvec like in nurbsdisk_2s*/
+//      PLib::Vector<double> uvec = PLib::Vector<double>(Elements + deg);
+//      PLib::Vector<double> uVec = PLib::Vector<double>(Elements + deg + deg + 1);
+//
+//      const double stepU = L / Elements;
+//
+//      uvec[0] = 0;
+//      for (int i = 1; i < uvec.size(); i++) {
+//        uvec[i] = uvec[i - 1] + stepU;
+//      }
+//
+//      uVec[0] = (-deg) * stepU;
+//      for (int i = 1; i < uVec.size(); i++) {
+//        uVec[i] = uVec[i - 1] + stepU;
+//      }
+//
+//      curvePos.globalInterpClosedH(NodelistPos, uvec, uVec, deg);
+//      curvePos.write(filenamePos.c_str());
+//
+//      if (writePsFile) {
+//        string psfile = filenamePos + ".ps";
+//
+//        msg(Debug) << curvePos.writePS(psfile.c_str(), 0, 2.0, 5, false) << endl;
+//      }
+//
+//      if (not filenameVel.empty()) {
+//        curveVel.globalInterpClosedH(NodelistVel, uvec, uVec, deg);
+//        curveVel.write(filenameVel.c_str());
+//      }
+//    }
+  }
+
+  void FlexibleBody1s33RCM::importPositionVelocity(const string & filenamePos, const string & filenameVel /* = string( )*/) {
+
+    PlNurbsCurved curvePos;
+    PlNurbsCurved curveVel;
+    curvePos.read(filenamePos.c_str());
+    if (not filenameVel.empty())
+      curveVel.read(filenameVel.c_str());
+
+    l0 = L / Elements;
+    Vec q0Dummy(q0.size(), INIT, 0.);
+    Vec u0Dummy(u0.size(), INIT, 0.);
+    Point3Dd prevBinStart;
+
+    for (int i = 0; i < Elements; i++) {
+      Point3Dd posStart = curvePos.pointAt(i * l0);
+      Point3Dd pos1Quart = curvePos.pointAt(i * l0 + l0 / 4.);
+      Point3Dd posHalf = curvePos.pointAt(i * l0 + l0 / 2.);
+      Point3Dd pos3Quart = curvePos.pointAt(i * l0 + l0 * 3. / 4.);
+      Point3Dd tangStart = curvePos.derive3D(i * l0, 1);
+      tangStart /= norm(tangStart);
+      Point3Dd tangHalf = curvePos.derive3D(i * l0 + l0 / 2., 1);
+      Point3Dd binStart = curvePos.derive3D(i * l0, 2);
+      binStart = crossProduct(binStart, tangStart);
+      binStart /= norm(binStart);
+      if (i > 0) {
+        if (dot(prevBinStart, binStart) < 0)
+          binStart = -1. * binStart;
+      }
+      prevBinStart = binStart;
+      Point3Dd norStart = crossProduct(binStart, tangStart);
+
+      q0Dummy(i * 10) = posStart.x(); // x
+      q0Dummy(i * 10 + 1) = posStart.y(); // y
+      q0Dummy(i * 10 + 2) = posStart.z(); // z
+
+      SqrMat AIK(3, INIT, 0.);
+      AIK(0, 0) = tangStart.x();
+      AIK(1, 0) = tangStart.y();
+      AIK(2, 0) = tangStart.z();
+      AIK(0, 1) = norStart.x();
+      AIK(1, 1) = norStart.y();
+      AIK(2, 1) = norStart.z();
+      AIK(0, 2) = binStart.x();
+      AIK(1, 2) = binStart.y();
+      AIK(2, 2) = binStart.z();
+      Vec AlphaBetaGamma = AIK2RevCardan(AIK);
+      //q0Dummy(i*10+3) = AlphaBetaGamma(0); // alpha angle currently set to zero
+      q0Dummy(i * 10 + 4) = AlphaBetaGamma(1);
+      q0Dummy(i * 10 + 5) = AlphaBetaGamma(2);
+
+      q0Dummy(i * 10 + 6) = -absolute((pos1Quart.y() - posHalf.y()) * (-tangHalf.z()) - (pos1Quart.z() - posHalf.z()) * (-tangHalf.y())) / sqrt(tangHalf.y() * tangHalf.y() + tangHalf.z() * tangHalf.z()); // cL1
+      q0Dummy(i * 10 + 7) = -absolute((pos3Quart.y() - posHalf.y()) * tangHalf.z() - (pos3Quart.z() - posHalf.z()) * tangHalf.y()) / sqrt(tangHalf.y() * tangHalf.y() + tangHalf.z() * tangHalf.z()); // cR1
+      q0Dummy(i * 10 + 8) = -absolute((pos1Quart.x() - posHalf.x()) * (-tangHalf.y()) - (pos1Quart.y() - posHalf.y()) * (-tangHalf.x())) / sqrt(tangHalf.x() * tangHalf.x() + tangHalf.y() * tangHalf.y()); // cL2
+      q0Dummy(i * 10 + 9) = -absolute((pos3Quart.x() - posHalf.x()) * tangHalf.y() - (pos3Quart.y() - posHalf.y()) * tangHalf.x()) / sqrt(tangHalf.x() * tangHalf.x() + tangHalf.y() * tangHalf.y()); // cR2
+
+      if (not filenameVel.empty()) {
+        Point3Dd velStart = curveVel.pointAt(i * l0);
+
+        Vec velK(3, INIT, 0.);
+        velK(0) = velStart.x();
+        velK(1) = velStart.y();
+        velK(2) = velStart.z();
+        Vec velI = trans(R->getOrientation()) * AIK * velK;
+
+        u0Dummy(i * 10) = velI(0);
+        u0Dummy(i * 10 + 1) = velI(1);
+        u0Dummy(i * 10 + 2) = velI(2);
+      }
+
+      if (msgAct(Debug)) {
+        msg(Debug) << "START(" << i + 1 << ",1:end) = [" << posStart << "];" << endl;
+        msg(Debug) << "Tangent(" << i + 1 << ",1:end) = [" << tangStart << "];" << endl;
+        msg(Debug) << "Normal(" << i + 1 << ",1:end) = [" << norStart << "];" << endl;
+        msg(Debug) << "Binormal(" << i + 1 << ",1:end) = [" << binStart << "];" << endl;
+
+        msg(Debug) << "alpha_Old(" << i + 1 << ") = " << q(i * 10 + 3) << ";" << endl;
+        msg(Debug) << "beta_Old(" << i + 1 << ") = " << q(i * 10 + 4) << ";" << endl;
+        msg(Debug) << "gamma_Old(" << i + 1 << ") = " << q(i * 10 + 5) << ";" << endl;
+        msg(Debug) << "%----------------------------------" << endl;
+        msg(Debug) << "alpha_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 3) << ";" << endl;
+        msg(Debug) << "beta_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 4) << ";" << endl;
+        msg(Debug) << "gamma_New(" << i + 1 << ") = " << q0Dummy(i * 10 + 5) << ";" << endl;
+        msg(Debug) << "%----------------------------------" << endl;
+        msg(Debug) << "diff_alpha(" << i + 1 << ") = " << q(i * 10 + 3) - q0Dummy(i * 10 + 3) << ";" << endl;
+        msg(Debug) << "diff_beta(" << i + 1 << ") = " << q(i * 10 + 4) - q0Dummy(i * 10 + 4) << ";" << endl;
+        msg(Debug) << "diff_gamma(" << i + 1 << ") = " << q(i * 10 + 5) - q0Dummy(i * 10 + 5) << ";" << endl;
+        msg(Debug) << "%----------------------------------" << endl;
+      }
+    }
+
+    setq0(q0Dummy);
+    if (not filenameVel.empty())
+      setu0(u0Dummy);
+
+//    if (msgAct(Debug)) {
+//      msg(Debug) << "Positions = [ ";
+//      for (int ele = 0; ele < Elements; ele++) {
+//        ContourPointData cp(ele);
+//        updateKinematicsForFrame(cp, Frame::position_cosy);
+//
+//        msg(Debug) << cp.getFrameOfReference().getPosition()(0) << " " << cp.getFrameOfReference().getPosition()(1) << " " << cp.getFrameOfReference().getPosition()(2) << ";";
+//      }
+//      msg(Debug) << "];" << endl;
+//
+//      msg(Debug) << "Normals = [ ";
+//      for (int ele = 0; ele < Elements; ele++) {
+//        ContourPointData cp(ele);
+//        updateKinematicsForFrame(cp, Frame::position_cosy);
+//
+//        msg(Debug) << cp.getFrameOfReference().getOrientation()(0, 0) << " " << cp.getFrameOfReference().getOrientation()(0, 1) << " " << cp.getFrameOfReference().getOrientation()(0, 2) << ";";
+//      }
+//      msg(Debug) << "];" << endl;
+//
+//      msg(Debug) << "Tangents = [ ";
+//      for (int ele = 0; ele < Elements; ele++) {
+//        ContourPointData cp(ele);
+//        updateKinematicsForFrame(cp, Frame::position_cosy);
+//
+//        msg(Debug) << cp.getFrameOfReference().getOrientation()(1, 0) << " " << cp.getFrameOfReference().getOrientation()(1, 1) << " " << cp.getFrameOfReference().getOrientation()(1, 2) << ";";
+//      }
+//      msg(Debug) << "];" << endl;
+//
+//      msg(Debug) << "Binormals = [ ";
+//      for (int ele = 0; ele < Elements; ele++) {
+//        ContourPointData cp(ele);
+//        updateKinematicsForFrame(cp, Frame::position_cosy);
+//
+//        msg(Debug) << cp.getFrameOfReference().getOrientation()(2, 0) << " " << cp.getFrameOfReference().getOrientation()(2, 1) << " " << cp.getFrameOfReference().getOrientation()(2, 2) << ";";
+//      }
+//      msg(Debug) << "];" << endl;
+//    }
+
+  }
+}

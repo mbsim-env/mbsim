@@ -40,8 +40,8 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
 
 //      bool testInsideBounds(const ContourPointData &cp);
-      double computePointWeight(const fmatvec::Vec &s, int i);
-      double computePointWeight(const fmatvec::Vec &s, int i, int diff);
+      double computePointWeight(const fmatvec::Vec2 &s, int i);
+      double computePointWeight(const fmatvec::Vec2 &s, int i, int diff);
 
 //      fmatvec::Vec3 computeWn(const ContourPointData &cp);
   };

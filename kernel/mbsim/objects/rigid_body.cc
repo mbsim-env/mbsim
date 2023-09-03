@@ -487,14 +487,6 @@ namespace MBSim {
     updWTS = true;
   }
 
-  void RigidBody::addFrame(FixedRelativeFrame *frame) {
-    Body::addFrame(frame);
-  }
-
-  void RigidBody::addContour(RigidContour *contour) {
-    Body::addContour(contour);
-  }
-
   void RigidBody::setOpenMBVRigidBody(const shared_ptr<OpenMBV::RigidBody> &body) {
     openMBVBody=body;
   }
