@@ -1316,6 +1316,7 @@ void *cs_free(void *p) {
 /* wrapper for realloc */
 void *cs_realloc(void *p, int n, size_t size, int *ok) {
 #pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas" // ignore errors on unknown pragmas (the next pragma is only defined for newer gcc)
 #pragma GCC diagnostic ignored "-Wuse-after-free"
   void *p2;
   *ok = !CS_OVERFLOW (n,size); /* guard against int overflow */
