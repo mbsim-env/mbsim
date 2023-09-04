@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_ancf.h"
+#include "mbsimFlexibleBody/flexible_body/1s_33_ancf.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"

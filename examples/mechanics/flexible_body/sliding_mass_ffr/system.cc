@@ -1,8 +1,8 @@
 #include "system.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_rcm.h"
-#include <mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h>
-#include <mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_linear_external_FFR.h>
+#include "mbsimFlexibleBody/flexible_body/1s_21_rcm.h"
+#include "mbsimFlexibleBody/flexible_body/1s_33_rcm.h"
+#include <mbsimFlexibleBody/flexible_body/linear_external_ffr.h>
+#include <mbsimFlexibleBody/contours/nc/1s_neutral_linear_external_FFR.h>
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/links/contact.h"

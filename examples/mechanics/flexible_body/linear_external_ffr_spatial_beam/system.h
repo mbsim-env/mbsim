@@ -2,7 +2,7 @@
 #define _SYSTEM_H
 
 #include "mbsim/dynamic_system_solver.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_linear_external_ffr.h"
+#include "mbsimFlexibleBody/flexible_body/linear_external_ffr.h"
 #include "mbsim/objects/rigid_body.h"
 #include <string>
 

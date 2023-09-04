@@ -7,7 +7,7 @@
 #include "mbsim/constitutive_laws/constitutive_laws.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/environment.h"
-#include "mbsimFlexibleBody/contours/neutral_contour/contour_2s_neutral_linear_external_FFR.h"
+#include "mbsimFlexibleBody/contours/nc/2s_neutral_linear_external_FFR.h"
 #include "mbsimFlexibleBody/contours/flexible_band.h"
 #include <mbsim/functions/kinematics/kinematics.h>
 #include <mbsim/functions/kinetics/kinetics.h>

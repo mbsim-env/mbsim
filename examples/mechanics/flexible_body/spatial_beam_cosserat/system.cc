@@ -1,6 +1,6 @@
 #include "system.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_33_cosserat.h"
-#include "mbsimFlexibleBody/contours/neutral_contour/contour_1s_neutral_cosserat.h"
+#include "mbsimFlexibleBody/flexible_body/1s_33_cosserat.h"
+#include "mbsimFlexibleBody/contours/nc/1s_neutral_cosserat.h"
 // Beginning Contact
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/contact.h"

@@ -1,7 +1,7 @@
 #ifndef _CVTREFERENCECURVE_H
 #define _CVTREFERENCECURVE_H
 
-#include <mbsimFlexibleBody/flexible_body/flexible_body_1S_reference_curve.h>
+#include <mbsimFlexibleBody/flexible_body/1S_reference_curve.h>
 
 /*!
  * \brief Computes Theta out of geometric ratio and vice versa

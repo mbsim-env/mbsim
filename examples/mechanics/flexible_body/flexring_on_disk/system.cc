@@ -1,5 +1,5 @@
 #include "system.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_21_rcm.h"
+#include "mbsimFlexibleBody/flexible_body/1s_21_rcm.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/links/joint.h"

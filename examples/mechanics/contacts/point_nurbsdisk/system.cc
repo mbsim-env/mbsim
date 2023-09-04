@@ -1,6 +1,6 @@
 #include "system.h"
 
-#include "mbsimFlexibleBody/flexible_body/flexible_body_2s_13_disk.h"
+#include "mbsimFlexibleBody/flexible_body/2s_13_disk.h"
 #include "mbsimFlexibleBody/contact_kinematics/point_nurbsdisk2s.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/links/kinetic_excitation.h"

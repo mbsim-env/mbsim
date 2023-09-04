@@ -2,7 +2,7 @@
 #define _ALETEST_H
 
 #include <mbsim/dynamic_system_solver.h>
-#include <mbsimFlexibleBody/flexible_body/flexible_body_1S_reference_curve.h>
+#include <mbsimFlexibleBody/flexible_body/1S_reference_curve.h>
 
 class ALETester : public MBSim::DynamicSystemSolver {
   public:

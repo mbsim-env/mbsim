@@ -1,6 +1,6 @@
 #include "system.h"
 #include "mbsim/environment.h"
-#include "mbsimFlexibleBody/flexible_body/flexible_body_1s_23_bta.h"
+#include "mbsimFlexibleBody/flexible_body/1s_23_bta.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsimFlexibleBody/frames/frame_1s.h"
 #include "mbsim/objects/rigid_body.h"
