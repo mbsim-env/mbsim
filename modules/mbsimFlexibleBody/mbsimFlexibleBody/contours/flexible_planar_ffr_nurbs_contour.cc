@@ -150,30 +150,36 @@ namespace MBSimFlexibleBody {
     return crossProduct(R->evalAngularVelocity(),evalWu(zeta)) + evalWu_t(zeta);
   }
 
-  void FlexiblePlanarFfrNurbsContour::updatePositions(ContourFrame *frame) {
+  void FlexiblePlanarFfrNurbsContour::updatePositions(Frame *frame) {
     throwError("(FlexiblePlanarFfrNurbsContour::updatePositions): not implemented");
   }
 
-  void FlexiblePlanarFfrNurbsContour::updateVelocities(ContourFrame *frame) {
-    frame->setVelocity(R->evalVelocity() + crossProduct(R->evalAngularVelocity(), evalGlobalRelativePosition(frame->evalEta())) + evalGlobalRelativeVelocity(frame->evalEta()));
+  void FlexiblePlanarFfrNurbsContour::updateVelocities(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    contourFrame->setVelocity(R->evalVelocity() + crossProduct(R->evalAngularVelocity(), evalGlobalRelativePosition(contourFrame->evalEta())) + evalGlobalRelativeVelocity(contourFrame->evalEta()));
   }
 
-  void FlexiblePlanarFfrNurbsContour::updateAccelerations(ContourFrame *frame) {
+  void FlexiblePlanarFfrNurbsContour::updateAccelerations(Frame *frame) {
     throwError("(FlexiblePlanarFfrNurbsContour::updateAccelerations): not implemented");
   }
 
-  void FlexiblePlanarFfrNurbsContour::updateJacobians(ContourFrame *frame, int j) {
-    if(fabs(frame->evalEta()-etaOld)>1e-13) updateHessianMatrix(frame->evalEta());
+  void FlexiblePlanarFfrNurbsContour::updateJacobians(Frame *frame, int j) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    if(fabs(contourFrame->evalEta()-etaOld)>1e-13) updateHessianMatrix(contourFrame->evalEta());
     Mat3xV Phi(crvPhi.size(),NONINIT);
     for(size_t i=0; i<crvPhi.size(); i++)
       Phi.set(i,hessPhi[i].row(0).T()(Range<Fixed<0>,Fixed<2>>()));
-    Mat3xV J = R->evalJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition(frame->evalEta()))*R->evalJacobianOfRotation(j);
+    Mat3xV J = R->evalJacobianOfTranslation(j) - tilde(evalGlobalRelativePosition(contourFrame->evalEta()))*R->evalJacobianOfRotation(j);
     J.add(RangeV(0,2),RangeV(frame->gethSize(j)-crvPhi.size(),frame->gethSize(j)-1),R->getOrientation()*Phi);
     frame->setJacobianOfTranslation(J,j);
   }
 
-  void FlexiblePlanarFfrNurbsContour::updateGyroscopicAccelerations(ContourFrame *frame) {
-    frame->setGyroscopicAccelerationOfTranslation(R->evalGyroscopicAccelerationOfTranslation() + crossProduct(R->evalGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition(frame->evalEta())) + crossProduct(R->evalAngularVelocity(),crossProduct(R->evalAngularVelocity(),evalGlobalRelativePosition(frame->evalEta()))) + 2.*crossProduct(R->evalAngularVelocity(),evalGlobalRelativeVelocity(frame->evalEta())));
+  void FlexiblePlanarFfrNurbsContour::updateGyroscopicAccelerations(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    contourFrame->setGyroscopicAccelerationOfTranslation(R->evalGyroscopicAccelerationOfTranslation() + crossProduct(R->evalGyroscopicAccelerationOfRotation(),evalGlobalRelativePosition(contourFrame->evalEta())) + crossProduct(R->evalAngularVelocity(),crossProduct(R->evalAngularVelocity(),evalGlobalRelativePosition(contourFrame->evalEta()))) + 2.*crossProduct(R->evalAngularVelocity(),evalGlobalRelativeVelocity(contourFrame->evalEta())));
   }
 
   void FlexiblePlanarFfrNurbsContour::init(InitStage stage, const InitConfigSet &config) {

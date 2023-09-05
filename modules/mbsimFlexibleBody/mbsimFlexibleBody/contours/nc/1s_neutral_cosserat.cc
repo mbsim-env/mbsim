@@ -93,22 +93,28 @@ namespace MBSimFlexibleBody {
     return NP->evalWt(zeta(0));
   }
 
-  void Contour1sNeutralCosserat::updatePositions(ContourFrame *frame) {
-    NP->update(frame);
-    NP->updatePositionNormal(frame);
-    NP->updatePositionFirstTangent(frame);
-    NP->updatePositionSecondTangent(frame);
+  void Contour1sNeutralCosserat::updatePositions(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    NP->update(contourFrame);
+    NP->updatePositionNormal(contourFrame);
+    NP->updatePositionFirstTangent(contourFrame);
+    NP->updatePositionSecondTangent(contourFrame);
   }
 
-  void Contour1sNeutralCosserat::updateVelocities(ContourFrame *frame) {
-    NV->update(frame);
+  void Contour1sNeutralCosserat::updateVelocities(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    NV->update(contourFrame);
   }
 
-  void Contour1sNeutralCosserat::updateJacobians(ContourFrame *frame, int j) {
+  void Contour1sNeutralCosserat::updateJacobians(Frame *frame, int j) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     int qSize = (static_cast<FlexibleBody1sCosserat*>(parent))->getqSizeFull();
 
     /******************************************************************  Jacobian of Translation  *******************************************************************************/
-    double sGlobal = frame->evalEta(); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
+    double sGlobal = contourFrame->evalEta(); // interpolation of Jacobian of Rotation starts from 0 --> \phi_{1/2} but Jacobian of Translation and contour starts from 0 --> r_0 therefore this difference of l0/2
     double sLocalTrans_bodySpace;
     int currentElementTrans;
     // transform form the contour space(uMin - uMax) to the FlexibleBody1sCosserat space (0 - L)

@@ -58,9 +58,9 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalWv(const fmatvec::Vec2 &zeta) override { return evalWt(zeta); }
       fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta) override;
 
-      void updatePositions(MBSim::ContourFrame *frame);
-      void updateVelocities(MBSim::ContourFrame *frame);
-      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
+      void updatePositions(MBSim::Frame *frame) override;
+      void updateVelocities(MBSim::Frame *frame) override;
+      void updateJacobians(MBSim::Frame *frame, int j=0) override;
 
       /*!
        * \brief returns the nodes for interpolation

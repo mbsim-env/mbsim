@@ -105,19 +105,25 @@ namespace MBSimFlexibleBody {
     return NP->evalWt(zeta(0));
   }
 
-  void Contour1sNeutralLinearExternalFFR::updatePositions(ContourFrame *frame) {
-    NP->update(frame);
-    NP->updatePositionNormal(frame);
-    NP->updatePositionFirstTangent(frame);
-    NP->updatePositionSecondTangent(frame);
+  void Contour1sNeutralLinearExternalFFR::updatePositions(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    NP->update(contourFrame);
+    NP->updatePositionNormal(contourFrame);
+    NP->updatePositionFirstTangent(contourFrame);
+    NP->updatePositionSecondTangent(contourFrame);
   }
 
-  void Contour1sNeutralLinearExternalFFR::updateVelocities(ContourFrame *frame) {
-    NV->update(frame);
+  void Contour1sNeutralLinearExternalFFR::updateVelocities(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    NV->update(contourFrame);
     frame->setAngularVelocity(static_cast<FlexibleBodyLinearExternalFFR*>(parent)->getFloatingFrameOfReference()->evalAngularVelocity());
   }
 
-  void Contour1sNeutralLinearExternalFFR::updateJacobians(ContourFrame *frame, int j) {
+  void Contour1sNeutralLinearExternalFFR::updateJacobians(Frame *frame, int j) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     /******************************************************************  Jacobian of Translation  *******************************************************************************/
     Mat3xV Jacobian_trans(qSize, INIT, 0.);
     // translational DOF
@@ -126,12 +132,12 @@ namespace MBSimFlexibleBody {
     // rotational DOF
     SqrMat3 A = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalA();
     SqrMat3 G_bar = static_cast<FlexibleBodyLinearExternalFFR*>(parent)->evalG_bar();
-    Vec3 u_bar = NLP->evalLocalPosition(frame->evalEta());
+    Vec3 u_bar = NLP->evalLocalPosition(contourFrame->evalEta());
     Jacobian_trans.set(RangeV(0, 2), RangeV(3, 5), -A * tilde(u_bar) * G_bar);
 
     // elastic DOF
     Mat3xV modeShapeMatrix(qSize - 6, NONINIT);
-    double position = frame->getEta();
+    double position = contourFrame->getEta();
     for (int k = 0; k < qSize - 6; k++) {
       Vec3 temp = curveModeShape.at(k).pointAt(position);
       modeShapeMatrix.set(k, temp);

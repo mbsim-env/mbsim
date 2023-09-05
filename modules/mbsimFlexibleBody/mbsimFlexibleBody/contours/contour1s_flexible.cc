@@ -51,8 +51,10 @@ namespace MBSimFlexibleBody {
     sOld = s;
   }
 
-  void Contour1sFlexible::updatePositions(ContourFrame *frame) {
-    Frame1s P("P",frame->getEta());
+  void Contour1sFlexible::updatePositions(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    Frame1s P("P",contourFrame->getEta());
     P.setParent(parent);
     frame->getOrientation(false).set(0,P.evalOrientation().col(1));
     frame->getOrientation(false).set(1,P.getOrientation().col(0));
@@ -60,19 +62,23 @@ namespace MBSimFlexibleBody {
     frame->setPosition(P.getPosition());
   }
 
-  void Contour1sFlexible::updateVelocities(ContourFrame *frame) {
-    Frame1s P("P",frame->getEta());
+  void Contour1sFlexible::updateVelocities(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    Frame1s P("P",contourFrame->getEta());
     P.setParent(parent);
     frame->setAngularVelocity(P.evalAngularVelocity());
     frame->setVelocity(P.getVelocity());
  }
 
-  void Contour1sFlexible::updateAccelerations(ContourFrame *frame) {
+  void Contour1sFlexible::updateAccelerations(Frame *frame) {
     throwError("(Contour1sFlexible::updateAccelerations): Not implemented!");
   }
 
-  void Contour1sFlexible::updateJacobians(ContourFrame *frame, int j) {
-    Frame1s P("P",frame->getEta());
+  void Contour1sFlexible::updateJacobians(Frame *frame, int j) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    Frame1s P("P",contourFrame->getEta());
     P.setParent(parent);
     P.getJacobianOfTranslation(0,false).resize(gethSize());
     P.getJacobianOfRotation(0,false).resize(gethSize());
@@ -84,7 +90,7 @@ namespace MBSimFlexibleBody {
     //frame->getJacobianOfTranslation(j,false) <<= P.getJacobianOfTranslation(j);
   }
 
-  void Contour1sFlexible::updateGyroscopicAccelerations(ContourFrame *frame) {
+  void Contour1sFlexible::updateGyroscopicAccelerations(Frame *frame) {
     throwError("(Contour1sFlexible::updateGyroscopicAccelerations): Not implemented!");
   }
 

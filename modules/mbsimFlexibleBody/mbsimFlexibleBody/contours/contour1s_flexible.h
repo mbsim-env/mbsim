@@ -74,11 +74,11 @@ namespace MBSimFlexibleBody {
       fmatvec::Vec3 evalWs(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return Ws; }
       fmatvec::Vec3 evalWt(double s) { if(fabs(s-sOld)>MBSim::macheps) updatePositions(s); return Wt; }
 
-      void updatePositions(MBSim::ContourFrame *frame);
-      void updateVelocities(MBSim::ContourFrame *frame);
-      void updateAccelerations(MBSim::ContourFrame *frame);
-      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
-      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame);
+      void updatePositions(MBSim::Frame *frame) override;
+      void updateVelocities(MBSim::Frame *frame) override;
+      void updateAccelerations(MBSim::Frame *frame) override;
+      void updateJacobians(MBSim::Frame *frame, int j=0) override;
+      void updateGyroscopicAccelerations(MBSim::Frame *frame) override;
 
     protected:
       fmatvec::Vec3 WrOP, Ws, Wt;

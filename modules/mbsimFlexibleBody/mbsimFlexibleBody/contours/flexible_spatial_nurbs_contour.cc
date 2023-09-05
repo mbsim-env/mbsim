@@ -250,24 +250,28 @@ namespace MBSimFlexibleBody {
     return evalWn_t(zeta);
   }
 
-  void FlexibleSpatialNurbsContour::updatePositions(ContourFrame *frame) {
+  void FlexibleSpatialNurbsContour::updatePositions(Frame *frame) {
     throwError("(FlexibleSpatialNurbsContour::updatePositions): not implemented");
   }
 
-  void FlexibleSpatialNurbsContour::updateVelocities(ContourFrame *frame) {
+  void FlexibleSpatialNurbsContour::updateVelocities(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     if(updSrfVel) updateSurfaceVelocities();
-    Vec2 zeta = continueZeta(frame->evalZeta());
+    Vec2 zeta = continueZeta(contourFrame->evalZeta());
     srfVel.deriveAtH(zeta(0),zeta(1),0,hessTmp);
     frame->setVelocity(hessTmp(0,0)(Range<Fixed<0>,Fixed<2>>()));
   }
 
-  void FlexibleSpatialNurbsContour::updateAccelerations(ContourFrame *frame) {
+  void FlexibleSpatialNurbsContour::updateAccelerations(Frame *frame) {
     throwError("(FlexibleSpatialNurbsContour::updateAccelerations): not implemented");
   }
 
-  void FlexibleSpatialNurbsContour::updateJacobians(ContourFrame *frame, int j) {
+  void FlexibleSpatialNurbsContour::updateJacobians(Frame *frame, int j) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     if(updSrfJac) updateSurfaceJacobians();
-    Vec2 zeta = continueZeta(frame->evalZeta());
+    Vec2 zeta = continueZeta(contourFrame->evalZeta());
     frame->getJacobianOfTranslation(j,false).resize(frame->gethSize(j),NONINIT);
     for(int i=0; i<frame->gethSize(j); i++) {
       srfJac[i].deriveAtH(zeta(0),zeta(1),0,hessTmp);
@@ -275,9 +279,11 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexibleSpatialNurbsContour::updateGyroscopicAccelerations(ContourFrame *frame) {
+  void FlexibleSpatialNurbsContour::updateGyroscopicAccelerations(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     if(updSrfGA) updateSurfaceGyroscopicAccelerations();
-    Vec2 zeta = continueZeta(frame->evalZeta());
+    Vec2 zeta = continueZeta(contourFrame->evalZeta());
     srfGA.deriveAtH(zeta(0),zeta(1),0,hessTmp);
     frame->setGyroscopicAccelerationOfTranslation(hessTmp(0,0)(Range<Fixed<0>,Fixed<2>>()));
   }

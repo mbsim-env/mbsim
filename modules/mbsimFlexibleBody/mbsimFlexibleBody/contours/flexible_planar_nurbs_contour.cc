@@ -181,24 +181,28 @@ namespace MBSimFlexibleBody {
     return evalWu_t(zeta);
   }
 
-  void FlexiblePlanarNurbsContour::updatePositions(ContourFrame *frame) {
+  void FlexiblePlanarNurbsContour::updatePositions(Frame *frame) {
     throwError("(FlexiblePlanarNurbsContour::updatePositions): not implemented");
   }
 
-  void FlexiblePlanarNurbsContour::updateVelocities(ContourFrame *frame) {
+  void FlexiblePlanarNurbsContour::updateVelocities(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     if(updCrvVel) updateCurveVelocities();
-    double eta = continueEta(frame->evalZeta()(0));
+    double eta = continueEta(contourFrame->evalZeta()(0));
     crvVel.deriveAtH(eta,0,hessTmp);
     frame->setVelocity(hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2>>()));
   }
 
-  void FlexiblePlanarNurbsContour::updateAccelerations(ContourFrame *frame) {
+  void FlexiblePlanarNurbsContour::updateAccelerations(Frame *frame) {
     throwError("(FlexiblePlanarNurbsContour::updateAccelerations): not implemented");
   }
 
-  void FlexiblePlanarNurbsContour::updateJacobians(ContourFrame *frame, int j) {
+  void FlexiblePlanarNurbsContour::updateJacobians(Frame *frame, int j) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     if(updCrvJac) updateCurveJacobians();
-    double eta = continueEta(frame->evalZeta()(0));
+    double eta = continueEta(contourFrame->evalZeta()(0));
     frame->getJacobianOfTranslation(j,false).resize(frame->gethSize(j),NONINIT);
     for(int i=0; i<frame->gethSize(j); i++) {
       crvJac[i].deriveAtH(eta,0,hessTmp);
@@ -206,9 +210,11 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void FlexiblePlanarNurbsContour::updateGyroscopicAccelerations(ContourFrame *frame) {
+  void FlexiblePlanarNurbsContour::updateGyroscopicAccelerations(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     if(updCrvGA) updateCurveGyroscopicAccelerations();
-    double eta = continueEta(frame->evalZeta()(0));
+    double eta = continueEta(contourFrame->evalZeta()(0));
     crvGA.deriveAtH(eta,0,hessTmp);
     frame->setGyroscopicAccelerationOfTranslation(hessTmp.row(0).T()(Range<Fixed<0>,Fixed<2>>()));
   }

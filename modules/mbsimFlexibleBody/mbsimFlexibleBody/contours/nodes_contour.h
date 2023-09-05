@@ -55,11 +55,11 @@ namespace MBSimFlexibleBody {
 
       const fmatvec::Vec3& evalPosition(int i);
 
-      void updatePositions(MBSim::ContourFrame *frame);
-      void updateVelocities(MBSim::ContourFrame *frame);
-      void updateAccelerations(MBSim::ContourFrame *frame);
-      void updateJacobians(MBSim::ContourFrame *frame, int j=0);
-      void updateGyroscopicAccelerations(MBSim::ContourFrame *frame);
+      void updatePositions(MBSim::Frame *frame) override;
+      void updateVelocities(MBSim::Frame *frame) override;
+      void updateAccelerations(MBSim::Frame *frame) override;
+      void updateJacobians(MBSim::Frame *frame, int j=0) override;
+      void updateGyroscopicAccelerations(MBSim::Frame *frame) override;
 
       void plot() override;
 

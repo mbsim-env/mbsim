@@ -139,16 +139,18 @@ namespace MBSimFlexibleBody {
     return n;
   }
 
-  void NurbsDisk2s::updatePositions(ContourFrame *frame) {
+  void NurbsDisk2s::updatePositions(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     computeSurface();
-    Point3Dd Tmppt = Surface->pointAt(frame->getZeta()(1),frame->getZeta()(0));  // U-direction is azimuthal, V-direction is radial!
+    Point3Dd Tmppt = Surface->pointAt(contourFrame->getZeta()(1),contourFrame->getZeta()(0));  // U-direction is azimuthal, V-direction is radial!
     frame->getPosition(false)(0) = Tmppt.x();
     frame->getPosition(false)(1) = Tmppt.y();
     frame->getPosition(false)(2) = Tmppt.z();
-    Mat A = computeDirectionalDerivatives(frame->getZeta()(1),frame->getZeta()(0),1);
+    Mat A = computeDirectionalDerivatives(contourFrame->getZeta()(1),contourFrame->getZeta()(0),1);
     frame->getOrientation(false).set(0, A.col(0));
     frame->getOrientation(false).set(1, A.col(1));
-    Point3Dd normal(Surface->normal(frame->getZeta()(1),frame->getZeta()(0)));
+    Point3Dd normal(Surface->normal(contourFrame->getZeta()(1),contourFrame->getZeta()(0)));
     double normalLength = sqrt(normal.x()*normal.x() + normal.y()*normal.y() + normal.z()*normal.z());  // to normalize the vector
     //
     normal *= -1;//normal should point out of the contour (as the normal is the crossproduct between the tangent in u und the tangent in v direction, the normal of nurbs++ points into the material)
@@ -163,28 +165,32 @@ namespace MBSimFlexibleBody {
     // the coorindate system dithering
   }
 
-  void NurbsDisk2s::updateVelocities(ContourFrame *frame) {
+  void NurbsDisk2s::updateVelocities(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     computeSurfaceVelocities();
-    Point3Dd Tmpv = SurfaceVelocities->pointAt(frame->evalZeta()(1),frame->evalZeta()(0));
+    Point3Dd Tmpv = SurfaceVelocities->pointAt(contourFrame->evalZeta()(1),contourFrame->evalZeta()(0));
     frame->getVelocity(false)(0) = Tmpv.x();
     frame->getVelocity(false)(1) = Tmpv.y();
     frame->getVelocity(false)(2) = Tmpv.z();
     //      throwError("(NurbsDisk2s::updateVelocities): Not implemented!");
   }
 
-  void NurbsDisk2s::updateAccelerations(ContourFrame *frame) {
+  void NurbsDisk2s::updateAccelerations(Frame *frame) {
     throwError("(NurbsDisk2s::updateAccelerations): Not implemented!");
   }
 
-  void NurbsDisk2s::updateJacobians(ContourFrame *frame, int j) {
+  void NurbsDisk2s::updateJacobians(Frame *frame, int j) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
     computeSurfaceJacobians();
 
     frame->getJacobianOfTranslation(j,false).resize(nj*nr*3+RefDofs);
     frame->getJacobianOfRotation(j,false).resize(nj*nr*3+RefDofs);
 
     for(int k=0; k<nj*nr*3+RefDofs; k++) {
-      Point3Dd TmpPtTrans = SurfaceJacobiansOfTranslation[k].pointAt(frame->evalZeta()(1),frame->evalZeta()(0));
-      Point3Dd TmpPtRot = SurfaceJacobiansOfRotation[k].pointAt(frame->getZeta()(1),frame->getZeta()(0));
+      Point3Dd TmpPtTrans = SurfaceJacobiansOfTranslation[k].pointAt(contourFrame->evalZeta()(1),contourFrame->evalZeta()(0));
+      Point3Dd TmpPtRot = SurfaceJacobiansOfRotation[k].pointAt(contourFrame->getZeta()(1),contourFrame->getZeta()(0));
 
       frame->getJacobianOfTranslation(j,false)(0,k) = TmpPtTrans.x();
       frame->getJacobianOfTranslation(j,false)(1,k) = TmpPtTrans.y();
@@ -196,7 +202,7 @@ namespace MBSimFlexibleBody {
     }
   }
 
-  void NurbsDisk2s::updateGyroscopicAccelerations(ContourFrame *frame) {
+  void NurbsDisk2s::updateGyroscopicAccelerations(Frame *frame) {
     throwError("(NurbsDisk2s::updateGyroscopicAccelerations): Not implemented!");
   }
 

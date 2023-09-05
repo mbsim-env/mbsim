@@ -40,26 +40,32 @@ namespace MBSimFlexibleBody {
     return static_cast<NodeBasedBody*>(parent)->evalNodalPosition(nodes(i));
   }
 
-  void NodesContour::updatePositions(ContourFrame *frame) {
+  void NodesContour::updatePositions(Frame *frame) {
     //frame->setVelocity(static_cast<NodeBasedBody*>(parent)->evalNodalPosition(nodes(frameMap[frame])));
     throwError("(NodesContour::updatePositions): not implemented");
   }
 
-  void NodesContour::updateVelocities(ContourFrame *frame) {
-    frame->setVelocity(static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(nodes(frameMap[frame])));
+  void NodesContour::updateVelocities(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    contourFrame->setVelocity(static_cast<NodeBasedBody*>(parent)->evalNodalVelocity(nodes(frameMap[contourFrame])));
   }
 
-  void NodesContour::updateAccelerations(ContourFrame *frame) {
+  void NodesContour::updateAccelerations(Frame *frame) {
     //frame->setVelocity(static_cast<NodeBasedBody*>(parent)->evalNodalAcceleration(nodes(frameMap[frame])));
     throwError("(NodesContour::updateAccelerations): not implemented");
   }
 
-  void NodesContour::updateJacobians(ContourFrame *frame, int j) {
-    frame->setJacobianOfTranslation(static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(nodes(frameMap[frame])),j);
+  void NodesContour::updateJacobians(Frame *frame, int j) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    contourFrame->setJacobianOfTranslation(static_cast<NodeBasedBody*>(parent)->evalNodalJacobianOfTranslation(nodes(frameMap[contourFrame])),j);
   }
 
-  void NodesContour::updateGyroscopicAccelerations(ContourFrame *frame) {
-    frame->setGyroscopicAccelerationOfTranslation(static_cast<NodeBasedBody*>(parent)->evalNodalGyroscopicAccelerationOfTranslation(nodes(frameMap[frame])));
+  void NodesContour::updateGyroscopicAccelerations(Frame *frame) {
+    auto contourFrame = static_cast<ContourFrame*>(frame);
+    assert(dynamic_cast<ContourFrame*>(frame));
+    contourFrame->setGyroscopicAccelerationOfTranslation(static_cast<NodeBasedBody*>(parent)->evalNodalGyroscopicAccelerationOfTranslation(nodes(frameMap[contourFrame])));
   }
 
   void NodesContour::init(InitStage stage, const MBSim::InitConfigSet &config) {
