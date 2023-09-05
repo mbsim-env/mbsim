@@ -355,7 +355,7 @@ namespace MBSim {
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel;
       else if (contactSolver == direct) {
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
-        msg(Warn) << "solveLL is only valid for bilateral constrained systems!" << endl;
+        msg(Info) << "The selected contact solver 'direct' is only valid for bilateral constrained systems!" << endl;
       }
       else if (contactSolver == fixedpoint)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
@@ -370,7 +370,7 @@ namespace MBSim {
         solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel;
       else if (impactSolver == direct) {
         solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
-        msg(Warn) << "solveLL is only valid for bilateral constrained systems!" << endl;
+        msg(Info) << "The selected impact solver 'direct' is only valid for bilateral constrained systems!" << endl;
       }
       else if (impactSolver == fixedpoint)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
@@ -461,7 +461,6 @@ namespace MBSim {
         level++;
         decreaserFactors();
         msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
-        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveConstraintsFixpointSingle();
@@ -491,7 +490,6 @@ namespace MBSim {
       if (level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
         msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
       }
 
@@ -1038,6 +1036,8 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::projectGeneralizedPositions(int mode, bool fullUpdate) {
+    msg(Info) << "System projection of generalized position at t = " << getTime() << " (mode=" << mode << " fullUpdate=" << fullUpdate << ")." << endl;
+
     int gID = 0;
     int laID = 0;
     int corrID = 0;
@@ -1100,6 +1100,8 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::projectGeneralizedVelocities(int mode) {
+    msg(Info) << "System projection of generalized velocities at t = " << getTime() << " (mode=" << mode << ")." << endl;
+
     int gdID = 0; // IH
     int corrID = 0;
     if (mode == 3) { // impact
@@ -1440,8 +1442,7 @@ namespace MBSim {
   }
 
   const Vec& DynamicSystemSolver::shift() {
-    if(msgAct(Debug))
-      msg(Debug) << "System shift at t = " << t << "." << endl;
+    msg(Info) << "System shift at t = " << t << "." << endl;
 
     solveDirectly = false;
 
