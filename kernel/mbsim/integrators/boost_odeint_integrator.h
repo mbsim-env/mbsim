@@ -262,6 +262,7 @@ namespace MBSim {
     tPlot=tStart+plotSample*dtPlot;
     nrSVs++;
     svLast <<= system->evalsv();
+    BoostOdeintHelper::assign(zTemp, system->getState()); // needed, as computeInitialCondition may change the state
 
     // initialize odeint
     dos.reset(new DOS(aTol, rTol, dtMax));
@@ -380,6 +381,14 @@ namespace MBSim {
           dos->initialize(zTemp, step.second, dos->current_time_step());
         }
         else {
+          // curTimeAndState may not be a step.second due to plotting -> reset DSS to this time/state if so
+          // (note that due to root finding curTimeAndSTate can also be different to step.second but in this case this code is not reached)
+          if((gMax>=0 || gdMax>=0) && curTimeAndState!=step.second) {
+            curTimeAndState=step.second;
+            system->setTime(step.second);
+            BoostOdeintHelper::assign(system->getState(), dos->current_state());
+            system->resetUpToDate();
+          }
           // check if projection is needed (if a root was found projection is done anyway by shift())
           bool reinitNeeded=false;
           if(gMax>=0 and system->positionDriftCompensationNeeded(gMax)) {
@@ -410,6 +419,7 @@ namespace MBSim {
         curTimeAndState=tSamplePoint;
         system->setTime(tSamplePoint);
         BoostOdeintHelper::assign(system->getState(), zTemp);
+        system->resetUpToDate();
         dos->initialize(zTemp, tSamplePoint, dos->current_time_step());
         system->updateStopVectorParameters();
       }
