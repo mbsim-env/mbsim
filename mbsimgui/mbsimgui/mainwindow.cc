@@ -2346,21 +2346,33 @@ namespace MBSimGUI {
   }
 
   void MainWindow::createAny(xercesc::DOMElement *ele, Element *parent, const FQN &requestedXMLType) {
-    MBXMLUtils::FQN newXMLType;
-    if     (createFrame     (ele, parent, false)) { newXMLType=MBSIM%"Frame"; }
-    else if(createContour   (ele, parent, false)) { newXMLType=MBSIM%"Contour"; }
-    else if(createGroup     (ele, parent, false)) { newXMLType=MBSIM%"Group"; }
-    else if(createObject    (ele, parent, false)) { newXMLType=MBSIM%"Object"; }
-    else if(createLink      (ele, parent, false)) { newXMLType=MBSIM%"Link"; }
-    else if(createConstraint(ele, parent, false)) { newXMLType=MBSIM%"Constraint"; }
-    else if(createObserver  (ele, parent, false)) { newXMLType=MBSIM%"Observer"; }
-
-    if(newXMLType==MBXMLUtils::FQN())
+    if     (requestedXMLType==MBSIM%"Frame"     ) createFrame     (ele, parent);
+    else if(requestedXMLType==MBSIM%"Contour"   ) createContour   (ele, parent);
+    else if(requestedXMLType==MBSIM%"Group"     ) createGroup     (ele, parent);
+    else if(requestedXMLType==MBSIM%"Object"    ) createObject    (ele, parent);
+    else if(requestedXMLType==MBSIM%"Link"      ) createLink      (ele, parent);
+    else if(requestedXMLType==MBSIM%"Constraint") createConstraint(ele, parent);
+    else if(requestedXMLType==MBSIM%"Observer"  ) createObserver  (ele, parent);
+    else
       QMessageBox::warning(this, "Create element", "Unknown container type of imported/referenced element.");
-
-    if(newXMLType != requestedXMLType)
-      QMessageBox::information(this, "Create element", ("The imported/referenced element is not of the selected container type '"+requestedXMLType.second+"'.\n"+
-                                                        "It's added to it's corresponding container type '"+newXMLType.second+"'.").c_str());
+// NOTE: The below code does not work for element not known to the GUI (=Unknown<Container> type)
+//       We can only make createAny to work by checking if the type of the XML "ele" is derived from the corresponding XML container type but this
+//       is only possible then the GUI loads XML files with a validating parser (which is not yet done)
+//    MBXMLUtils::FQN newXMLType;
+//    if     (createFrame     (ele, parent, false)) { newXMLType=MBSIM%"Frame"; }
+//    else if(createContour   (ele, parent, false)) { newXMLType=MBSIM%"Contour"; }
+//    else if(createGroup     (ele, parent, false)) { newXMLType=MBSIM%"Group"; }
+//    else if(createObject    (ele, parent, false)) { newXMLType=MBSIM%"Object"; }
+//    else if(createLink      (ele, parent, false)) { newXMLType=MBSIM%"Link"; }
+//    else if(createConstraint(ele, parent, false)) { newXMLType=MBSIM%"Constraint"; }
+//    else if(createObserver  (ele, parent, false)) { newXMLType=MBSIM%"Observer"; }
+//
+//    if(newXMLType==MBXMLUtils::FQN())
+//      QMessageBox::warning(this, "Create element", "Unknown container type of imported/referenced element.");
+//
+//    if(newXMLType != requestedXMLType)
+//      QMessageBox::information(this, "Create element", ("The imported/referenced element is not of the selected container type '"+requestedXMLType.second+"'.\n"+
+//                                                        "It's added to it's corresponding container type '"+newXMLType.second+"'.").c_str());
   }
 
   void MainWindow::createDynamicSystemSolver(DOMElement *ele) {
