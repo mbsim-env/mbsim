@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<DynamicSystemSolver name="TS" xmlns="http://www.mbsim-env.de/MBSim"
+<DynamicSystemSolver name="{[d, base, ext]=fileparts(getOriginalFilename()); ret=base}" xmlns="http://www.mbsim-env.de/MBSim"
     xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <frames>
     <pv:Embed count="2" counterName="numHG">
