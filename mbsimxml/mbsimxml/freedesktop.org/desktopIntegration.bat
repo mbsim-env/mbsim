@@ -2,4 +2,4 @@
 
 set PREFIX=%~dp0..
 
-%PREFIX%\bin\python %PREFIX%\bin\desktopIntegration.py
+call %PREFIX%\bin\python %PREFIX%\bin\desktopIntegration.py
