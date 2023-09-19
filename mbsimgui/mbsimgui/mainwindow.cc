@@ -625,7 +625,7 @@ namespace MBSimGUI {
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
-    menu.setBaseIndexForPlot(settings.value("mainwindow/options/baseindexforplot", 1).toInt());
+    menu.setBaseIndexForPlot(settings.value("mainwindow/options/baseindexforplot", 0).toInt());
 
 #ifdef _WIN32
     QFile file(qgetenv("APPDATA")+"/mbsim-env/mbsimxml.modulepath");
@@ -1220,7 +1220,7 @@ namespace MBSimGUI {
       if(settings.value("mainwindow/options/savestatevector", false).toBool())
         arg.append("--savefinalstatevector");
       arg.append("--baseindexforplot");
-      arg.append(settings.value("mainwindow/options/baseindexforplot", "1").toString());
+      arg.append(settings.value("mainwindow/options/baseindexforplot", "0").toString());
     }
 
     // we print everything except status messages to stdout
