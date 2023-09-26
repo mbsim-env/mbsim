@@ -17,30 +17,21 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#ifndef _PARAMETER_VIEW__H_
-#define _PARAMETER_VIEW__H_
+#ifndef _OCTAVE_HIGHLIGHTER_H_
+#define _OCTAVE_HIGHLIGHTER_H_
 
-#include <QTreeView>
-#include <QItemDelegate>
+#include <QSyntaxHighlighter>
 
 namespace MBSimGUI {
 
-  class ParameterView : public QTreeView {
+  class OctaveHighlighter : public QSyntaxHighlighter {
+
     public:
-      ParameterView(QWidget *parent=nullptr);
-      ~ParameterView();
-    private:
-      void mouseDoubleClickEvent(QMouseEvent *event) override;
-      void mousePressEvent(QMouseEvent *event) override;
-      class ValueDelegate : public QItemDelegate {
-        public:
-          ValueDelegate(ParameterView *pv);
-          void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-          QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-        private:
-          ParameterView *parameterView;
-      };
-      ValueDelegate *valueDelegate;
+      OctaveHighlighter(QTextDocument *parent);
+
+    protected:
+      void highlightBlock(const QString &text) override;
+      std::vector<std::pair<QRegExp, QTextCharFormat>> rule;
   };
 
 }

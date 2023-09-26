@@ -64,15 +64,6 @@ namespace MBSimGUI {
     }
   }
 
-  void PropertyDialog::addToTab(const QString &name, QWidget* widget_) {
-    layout[name]->insertWidget(layout[name]->count()-1,widget_);
-  }
-
-  void PropertyDialog::addStretch(int s) {
-    for (auto & it : layout)
-      it.second->addStretch(s);
-  }
-
   void PropertyDialog::addTab(const QString &name, int i) {  
     auto *tab = new QScrollArea;
     tab->setWidgetResizable(true);
@@ -89,7 +80,7 @@ namespace MBSimGUI {
     else 
       tabWidget->insertTab(i,tab,name);
 
-    layout[name]->addStretch(1);
+    layout[name]->addStretch(0);
   }
 
   void PropertyDialog::setCancel(bool on) {

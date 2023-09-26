@@ -26,6 +26,8 @@
 #include <map>
 #include <xercesc/util/XercesDefs.hpp>
 #include <mbxmlutilshelper/dom.h>
+#include "extended_widgets.h"
+#include <boost/tti/has_member_function.hpp>
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -35,6 +37,8 @@ namespace XERCES_CPP_NAMESPACE {
 class QVBoxLayout;
 class QDialogButtonBox;
 class QAbstractButton;
+
+BOOST_TTI_HAS_MEMBER_FUNCTION(getStretchHint);
 
 namespace MBSimGUI {
 
@@ -47,9 +51,16 @@ namespace MBSimGUI {
     public:
       PropertyDialog(const QString &title);
       void setParentObject(QObject *obj);
-      void addToTab(const QString &name, QWidget* widget_);
+
+      template<class W>
+      void addToTab(const QString &name, W* widget_) {
+        int stretchHint=0;
+        if constexpr (has_member_function_getStretchHint<int(W::*)() const>::value)
+          stretchHint=widget_->getStretchHint();
+        layout[name]->insertWidget(layout[name]->count()-1,widget_, stretchHint);
+      }
+
       void addTab(const QString &name, int i=-1);
-      void addStretch(int s=1);
       void setCancel(bool on);
       bool getCancel() const;
       virtual void toWidget() { }

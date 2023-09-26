@@ -48,6 +48,7 @@ namespace MBSimGUI {
     public:
       ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="");
       Widget* getWidget() const { return widget; }
+      int getStretchHint() const override { return widget->getStretchHint(); }
       void resize_(int m, int n) override { if(isActive()) widget->resize_(m,n); }
       void setActive(bool active);
       bool isActive() const { return not checkable or checked; }
@@ -74,6 +75,7 @@ namespace MBSimGUI {
     public:
       ChoiceWidget(WidgetFactory *factory_, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode_=4);
       Widget* getWidget() const { return widget; }
+      int getStretchHint() const override { return widget->getStretchHint(); }
       void updateWidget() override { widget->updateWidget(); }
       QString getName() const { return comboBox->currentText(); }
       int getIndex() const { return comboBox->currentIndex(); }

@@ -23,6 +23,8 @@
 #include "project.h"
 #include "dialogs.h"
 #include "custom_widgets.h"
+#include "octave_highlighter.h"
+#include "python_highlighter.h"
 #include <mbxmlutils/eval.h>
 #include <utility>
 #include <vector>
@@ -39,102 +41,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   extern MainWindow *mw;
-
-  OctaveHighlighter::OctaveHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
-    //  QPlainTextEdit dummy;
-    bool dark=false;
-    //  if(dummy.palette().brush(dummy.backgroundRole()).color().value()<128)
-    //    dark=true;
-
-    { // numbers
-      QTextCharFormat format;
-      QString regex=R"(\b[0-9]+\.?[0-9]*[eE]?[0-9]*\b)";
-      if(dark)
-        format.setForeground(QColor(255, 160, 160));
-      else
-        format.setForeground(QColor(255, 0, 255));
-      rule.emplace_back(QRegExp(regex), format);
-    }
-    { // numbers
-      QTextCharFormat format;
-      QString regex=R"(\b[0-9]*\.?[0-9]+[eE]?[0-9]*\b)";
-      if(dark)
-        format.setForeground(QColor(255, 160, 160));
-      else
-        format.setForeground(QColor(255, 0, 255));
-      rule.emplace_back(QRegExp(regex), format);
-    }
-    { // keywords
-      QTextCharFormat format;
-      QString regex="\\b(return|case|switch|else|elseif|end|if|otherwise|do|for|while|try|catch|global|persistent)\\b";
-      if(dark)
-        format.setForeground(QColor(255, 255, 96));
-      else
-        format.setForeground(QColor(165, 42, 42));
-      format.setFontWeight(QFont::Bold);
-      rule.emplace_back(QRegExp(regex), format);
-    }
-    { // functions
-      QTextCharFormat format;
-      QString regex="\\b(break|zeros|default|margin|round|ones|rand|ceil|floor|size|clear|zeros|eye|mean|std|cov|error|eval|function|abs|acos|atan|asin|cos|cosh|exp|log|prod|sum|log10|max|min|sign|sin|sinh|sqrt|tan|reshape)\\b";
-      if(dark)
-        format.setForeground(QColor(255, 255, 96));
-      else
-        format.setForeground(QColor(165, 42, 42));
-      format.setFontWeight(QFont::Bold);
-      rule.emplace_back(QRegExp(regex), format);
-    }
-    { // operators
-      QTextCharFormat format;
-      QString regex=R"([-+*/^=&~'();,[\]]|\.[-+*/^]|==|[<>]=|~=|<>|\.{3})";
-      if(dark)
-        format.setForeground(QColor(64, 255, 255));
-      else
-        format.setForeground(QColor(0, 139, 139));
-      rule.emplace_back(QRegExp(regex), format);
-    }
-    { // strings
-      QTextCharFormat format;
-      QString regex=R"("[^"]*")";
-      if(dark)
-        format.setForeground(QColor(255, 160, 160));
-      else
-        format.setForeground(QColor(255, 0, 255));
-      rule.emplace_back(QRegExp(regex), format);
-    }
-    { // strings
-      QTextCharFormat format;
-      QString regex="'[^']*'";
-      if(dark)
-        format.setForeground(QColor(255, 160, 160));
-      else
-        format.setForeground(QColor(255, 0, 255));
-      rule.emplace_back(QRegExp(regex), format);
-    }
-    { // comments
-      QTextCharFormat format;
-      QString regex="%.*";
-      if(dark)
-        format.setForeground(QColor(128, 160, 255));
-      else
-        format.setForeground(QColor(0, 0, 255));
-      rule.emplace_back(QRegExp(regex), format);
-    }
-  }
-
-  void OctaveHighlighter::highlightBlock(const QString &text) {
-    for(auto & i : rule) {
-      int index=0;
-      do {
-        index=i.first.indexIn(text, index);
-        if(index>=0) {
-          setFormat(index, i.first.matchedLength(), i.second);
-          index+=i.first.matchedLength();
-        }
-      }
-      while(index>=0);
-    }
-  }
 
   vector<vector<QString>> VariableWidget::getEvalMat() const {
     if(getValue().isEmpty())
@@ -238,10 +144,10 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
     value=new QPlainTextEdit;
-    value->setMinimumHeight(value->sizeHint().height()/2);
-    value->setMaximumHeight(value->sizeHint().height()/2);
     if(mw->eval->getName()=="octave")
       new OctaveHighlighter(value->document());
+    else if(mw->eval->getName()=="python")
+      new PythonHighlighter(value->document());
     else
       cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
     QFont font;

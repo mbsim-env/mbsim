@@ -26,22 +26,11 @@
 #include <QCheckBox>
 #include <QPlainTextEdit>
 #include <QLineEdit>
-#include <QSyntaxHighlighter>
 
 class QLabel;
 class QTableWidget;
 
 namespace MBSimGUI {
-
-  class OctaveHighlighter : public QSyntaxHighlighter {
-
-    public:
-      OctaveHighlighter(QTextDocument *parent);
-
-    protected:
-      void highlightBlock(const QString &text) override;
-      std::vector<std::pair<QRegExp, QTextCharFormat>> rule;
-  };
 
   class VariableWidget : public Widget {
 
@@ -97,6 +86,7 @@ namespace MBSimGUI {
       int cols() const override { return !getEvalMat().empty()?getEvalMat()[0].size():0; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      int getStretchHint() const override { return 10; }
 
     private:
       QPlainTextEdit *value;
@@ -461,6 +451,7 @@ namespace MBSimGUI {
       void setDefaultValue(const QString &str) override { widget->setDefaultValue(str); }
       void setReadOnly(bool flag) override { widget->setReadOnly(flag); }
       virtual VariableWidget* getWidget() { return widget; }
+      int getStretchHint() const override { return widget->getStretchHint(); }
       const QStringList& getUnitList() const { return units; }
       int getDefaultUnit() const { return defaultUnit; }
       bool validate(const std::vector<std::vector<QString>> &A) const override { return widget->validate(A); }
