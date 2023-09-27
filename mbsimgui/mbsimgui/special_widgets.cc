@@ -109,6 +109,7 @@ namespace MBSimGUI {
         e=e->getNextElementSibling();
       }
     }
+    emit widgetChanged();
     return element;
   }
 
@@ -199,6 +200,7 @@ namespace MBSimGUI {
         e=e->getNextElementSibling();
       }
     }
+    emit widgetChanged();
     return element;
   }
 

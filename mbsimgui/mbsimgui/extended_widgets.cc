@@ -175,9 +175,9 @@ namespace MBSimGUI {
     widget = factory->createWidget(index);
     if(layout->direction()==QBoxLayout::TopToBottom)
       widget->setContentsMargins(factory->getMargin(),0,0,0);
-    layout->addWidget(widget);
-    emit widgetChanged();
+    layout->addWidget(widget, getStretchHint());
     connect(widget,&Widget::widgetChanged,this,&ChoiceWidget::widgetChanged);
+    emit widgetChanged();
   }
 
   DOMElement* ChoiceWidget::initializeUsingXML(DOMElement *element) {
@@ -197,7 +197,9 @@ namespace MBSimGUI {
         comboBox->blockSignals(true);
         comboBox->setCurrentIndex(k);
         comboBox->blockSignals(false);
-        return widget->initializeUsingXML(e);
+        auto ret = widget->initializeUsingXML(e);
+        emit widgetChanged();
+        return ret;
       }
     }
     else if (mode<=3) {
@@ -210,7 +212,9 @@ namespace MBSimGUI {
           comboBox->blockSignals(true);
           comboBox->setCurrentIndex(i);
           comboBox->blockSignals(false);
-          return widget->initializeUsingXML(e);
+          auto ret = widget->initializeUsingXML(e);
+          emit widgetChanged();
+          return ret;
         }
       }
     }
@@ -222,8 +226,10 @@ namespace MBSimGUI {
         comboBox->blockSignals(true);
         comboBox->setCurrentIndex(i);
         comboBox->blockSignals(false);
-        if(widget->initializeUsingXML(element))
+        if(widget->initializeUsingXML(element)) {
+          emit widgetChanged();
           return element;
+        }
       }
     }
     return nullptr;
@@ -403,6 +409,7 @@ namespace MBSimGUI {
     }
     list->blockSignals(false);
     spinBox->blockSignals(false);
+    emit widgetChanged();
     return element;
   }
 

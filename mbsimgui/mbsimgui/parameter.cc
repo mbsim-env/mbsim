@@ -154,7 +154,7 @@ namespace MBSimGUI {
 
   void AnyParameter::updateValue() {
     Parameter::updateValue();
-    value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
+    value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
   ImportParameter::ImportParameter() {

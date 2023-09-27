@@ -75,7 +75,7 @@ namespace MBSimGUI {
     public:
       ChoiceWidget(WidgetFactory *factory_, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode_=4);
       Widget* getWidget() const { return widget; }
-      int getStretchHint() const override { return widget->getStretchHint(); }
+      int getStretchHint() const override { return widget ? widget->getStretchHint() : 0; }
       void updateWidget() override { widget->updateWidget(); }
       QString getName() const { return comboBox->currentText(); }
       int getIndex() const { return comboBox->currentIndex(); }

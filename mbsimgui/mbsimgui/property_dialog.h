@@ -57,7 +57,15 @@ namespace MBSimGUI {
         int stretchHint=0;
         if constexpr (has_member_function_getStretchHint<int(W::*)() const>::value)
           stretchHint=widget_->getStretchHint();
-        layout[name]->insertWidget(layout[name]->count()-1,widget_, stretchHint);
+        int idx = layout[name]->count()-1;
+        layout[name]->insertWidget(idx,widget_, stretchHint);
+
+        if constexpr (has_member_function_getStretchHint<int(W::*)() const>::value)
+        {
+          connect(widget_,&Widget::widgetChanged,[this, name, idx, widget_](){
+            layout[name]->setStretch(idx, widget_->getStretchHint());
+          });
+        }
       }
 
       void addTab(const QString &name, int i=-1);
