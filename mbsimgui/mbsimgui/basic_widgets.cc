@@ -352,7 +352,6 @@ namespace MBSimGUI {
       value->blockSignals(true);
       setValue(boost::lexical_cast<int>(X()%text->getData()));
       value->blockSignals(false);
-      emit widgetChanged();
       return element;
     }
     return nullptr;

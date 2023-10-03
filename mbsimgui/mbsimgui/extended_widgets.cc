@@ -197,9 +197,7 @@ namespace MBSimGUI {
         comboBox->blockSignals(true);
         comboBox->setCurrentIndex(k);
         comboBox->blockSignals(false);
-        auto ret = widget->initializeUsingXML(e);
-        emit widgetChanged();
-        return ret;
+        return widget->initializeUsingXML(e);
       }
     }
     else if (mode<=3) {
@@ -212,9 +210,7 @@ namespace MBSimGUI {
           comboBox->blockSignals(true);
           comboBox->setCurrentIndex(i);
           comboBox->blockSignals(false);
-          auto ret = widget->initializeUsingXML(e);
-          emit widgetChanged();
-          return ret;
+          return widget->initializeUsingXML(e);
         }
       }
     }
@@ -226,10 +222,8 @@ namespace MBSimGUI {
         comboBox->blockSignals(true);
         comboBox->setCurrentIndex(i);
         comboBox->blockSignals(false);
-        if(widget->initializeUsingXML(element)) {
-          emit widgetChanged();
+        if(widget->initializeUsingXML(element))
           return element;
-        }
       }
     }
     return nullptr;
@@ -409,7 +403,6 @@ namespace MBSimGUI {
     }
     list->blockSignals(false);
     spinBox->blockSignals(false);
-    emit widgetChanged();
     return element;
   }
 

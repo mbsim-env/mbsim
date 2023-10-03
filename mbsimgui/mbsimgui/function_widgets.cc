@@ -310,7 +310,6 @@ namespace MBSimGUI {
     updateFunctionFactory();
     fo->getWidget()->blockSignals(false);
     fo->initializeUsingXML(element);
-    emit widgetChanged();
     return element;
   }
 
