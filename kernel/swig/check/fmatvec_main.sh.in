@@ -11,9 +11,13 @@ fi
 SEP=":"
 #test "_@HOST_OS@" == "_mingw32" && SEP=";"
 
-export LD_LIBRARY_PATH=@prefix@/bin:@prefix@/lib:$LD_LIBRARY_PATH
-export PYTHONPATH=.${SEP}..${SEP}@abs_builddir@/.libs${SEP}@abs_builddir@/../.libs${SEP}@prefix@/bin
-export PATH=$PATH:@prefix@/bin
+if [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+  export PATH="$PATH:$(cygpath -u @prefix@/bin)"
+  export PYTHONPATH=.${SEP}..${SEP}@abs_builddir@/.libs${SEP}@abs_builddir@/../.libs${SEP}$(cygpath -u @prefix@/bin)
+else
+  export LD_LIBRARY_PATH=@prefix@/bin:@prefix@/lib:$LD_LIBRARY_PATH
+  export PYTHONPATH=.${SEP}..${SEP}@abs_builddir@/.libs${SEP}@abs_builddir@/../.libs${SEP}@prefix@/bin
+fi
 # "script with  | cat > ..." is needed to avoid "Py_Initialize: can't initialize sys standard streams" when running with wine but fails on Linux :-(
 rm -f result.txt
 if [ "_@XC_EXEC_PREFIX@" == "_" ]; then
