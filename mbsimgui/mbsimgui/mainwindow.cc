@@ -1865,6 +1865,7 @@ namespace MBSimGUI {
     }
     element->maybeRemoveEmbedXMLElement();
     element->updateStatus();
+    elementViewFilter->updateItem(index);
     if(getAutoRefresh()) refresh();
   }
 
