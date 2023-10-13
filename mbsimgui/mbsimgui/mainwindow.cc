@@ -223,6 +223,11 @@ namespace MBSimGUI {
     elementView->hideColumn(1);
     elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
     elementViewFilter->hide();
+    // if new rows get insert update the item in the AbstractViewFilter
+    connect(elementView->model(), &QAbstractItemModel::rowsInserted, [this](const QModelIndex &parent, int first, int last) {
+      for(int r=first; r<=last; ++r)
+        elementViewFilter->updateItem(elementView->model()->index(r,0,parent));
+    });
 
     parameterView = new ParameterView;
     parameterView->setModel(new ParameterTreeModel(this));
