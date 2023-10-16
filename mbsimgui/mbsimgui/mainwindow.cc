@@ -1830,11 +1830,15 @@ namespace MBSimGUI {
 
   void MainWindow::enableElement(bool enable) {
     updateUndos();
-    setWindowModified(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
     DOMElement *embedNode = element->getEmbedXMLElement();
+    auto *fileItem = element->getDedicatedFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setWindowModified(true);
     if(enable) {
       // try to restore the count from the processing instruction EnabledCount or use 1 as count
       string count;
