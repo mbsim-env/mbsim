@@ -1,7 +1,5 @@
 #include "config.h"
-#if MBSIMXML_COND_PYTHON
-  #include <mbxmlutils/pycppwrapper.h>
-#endif
+#include <mbxmlutils/pycppwrapper.h>
 #include <mbsimxml.h>
 #include <vector>
 #include <mbxmlutilshelper/dom.h>
@@ -14,9 +12,7 @@ namespace bfs=boost::filesystem;
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
-#if MBSIMXML_COND_PYTHON
-  using namespace PythonCpp;
-#endif
+using namespace PythonCpp;
 
 namespace {
 
@@ -26,27 +22,24 @@ boost::filesystem::path installPath() {
   return boost::filesystem::path(loc()).parent_path().parent_path();
 }
 
-#if MBSIMXML_COND_PYTHON
 void initPython() {
   static bool isInitialized=false;
   if(isInitialized)
     return;
 
   // init python
-  initializePython((installPath()/"bin"/"mbsimxml").string());
+  initializePython(installPath()/"bin"/"mbsimxml", {
+    // append the installation/bin dir to the python path (SWIG generated python modules (e.g. OpenMBV.py) are located there)
+    installPath()/"bin",
+    // prepand the installation/../mbsim-env-python-site-packages dir to the python path (Python pip of mbsim-env is configured to install user defined python packages there)
+    installPath().parent_path()/"mbsim-env-python-site-packages",
+  }, {
+    boost::filesystem::path(PYTHON_PREFIX),
+    installPath(),
+  });
 
-  // set sys.path
-  PyO sysPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
-  // append the installation/bin dir to the python path (SWIG generated python modules (e.g. OpenMBV.py) are located there)
-  PyO binpath(CALLPY(PyUnicode_FromString, (installPath()/"bin").string()));
-  CALLPY(PyList_Append, sysPath, binpath);
-  // prepand the installation/../mbsim-env-python-site-packages dir to the python path (Python pip of mbsim-env is configured to install user defined python packages there)
-  PyO mbsimenvsitepackagespath(CALLPY(PyUnicode_FromString, (installPath().parent_path()/"mbsim-env-python-site-packages").string()));
-  CALLPY(PyList_Insert, sysPath, 0, mbsimenvsitepackagespath);
-  
   isInitialized=true;
 }
-#endif
 
 }
 
@@ -107,7 +100,6 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs) {
           }
           if(E(e)->getTagName()==MBSIMMODULE%"PythonGenerated") {
             string moduleName=E(e)->getAttribute("moduleName");
-#if MBSIMXML_COND_PYTHON
             initPython();
             boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
             if(stage==SearchPath) {
@@ -131,30 +123,23 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs) {
               CALLPY(PyObject_CallObject, pyWrite, Py_BuildValue_("(ssO)", xsdFile.string().c_str(), "UTF-8", Py_True));
               schemas.insert(xsdFile);
             }
-#else
-            if(stage==SearchPath)
-              fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
-                "Python MBSim module found in "+path+" '"+moduleName+"'"<<endl<<
-                "but MBSim is not build with Python support. Skipping this module."<<endl;
-            continue;
-#endif
           }
         }
       }
     }
 
-    auto xmlCatalogDoc=DOMParser::create()->createDocument();
-    auto catalogRoot=D(xmlCatalogDoc)->createElement(XMLCATALOG%"catalog");
-    xmlCatalogDoc->appendChild(catalogRoot);
-    shared_ptr<DOMParser> nonValParser=DOMParser::create();
-    for(auto &schema: schemas) {
-      shared_ptr<DOMDocument> doc=nonValParser->parse(schema);//MISSING use sax parser since we just need to parse one attribute of the root element
-      string ns=E(doc->getDocumentElement())->getAttribute("targetNamespace");
-      auto uri=D(xmlCatalogDoc)->createElement(XMLCATALOG%"uri");
-      catalogRoot->appendChild(uri);
-      E(uri)->setAttribute("name", ns);
-      E(uri)->setAttribute("uri", schema.string());
-    }
+  auto xmlCatalogDoc=DOMParser::create()->createDocument();
+  auto catalogRoot=D(xmlCatalogDoc)->createElement(XMLCATALOG%"catalog");
+  xmlCatalogDoc->appendChild(catalogRoot);
+  shared_ptr<DOMParser> nonValParser=DOMParser::create();
+  for(auto &schema: schemas) {
+    shared_ptr<DOMDocument> doc=nonValParser->parse(schema);//MISSING use sax parser since we just need to parse one attribute of the root element
+    string ns=E(doc->getDocumentElement())->getAttribute("targetNamespace");
+    auto uri=D(xmlCatalogDoc)->createElement(XMLCATALOG%"uri");
+    catalogRoot->appendChild(uri);
+    E(uri)->setAttribute("name", ns);
+    E(uri)->setAttribute("uri", schema.string());
+  }
 
   return xmlCatalogDoc;
 }
