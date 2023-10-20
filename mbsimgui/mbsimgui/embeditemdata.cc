@@ -212,7 +212,7 @@ namespace MBSimGUI {
 
   void EmbedItemData::updateName() {
     name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
-    if(name[0]=='{') {
+    if(name.size()>=1 && name[0]=='{') {
       mw->updateParameters(this,false);
       try{
 	name = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(name.toStdString(),getXMLElement(),false)));

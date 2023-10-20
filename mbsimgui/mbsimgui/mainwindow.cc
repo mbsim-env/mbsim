@@ -223,6 +223,11 @@ namespace MBSimGUI {
     elementView->hideColumn(1);
     elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
     elementViewFilter->hide();
+    // if new rows get insert update the item in the AbstractViewFilter
+    connect(elementView->model(), &QAbstractItemModel::rowsInserted, [this](const QModelIndex &parent, int first, int last) {
+      for(int r=first; r<=last; ++r)
+        elementViewFilter->updateItem(elementView->model()->index(r,0,parent));
+    });
 
     parameterView = new ParameterView;
     parameterView->setModel(new ParameterTreeModel(this));
@@ -1825,11 +1830,15 @@ namespace MBSimGUI {
 
   void MainWindow::enableElement(bool enable) {
     updateUndos();
-    setWindowModified(true);
     auto *model = static_cast<ElementTreeModel*>(elementView->model());
     QModelIndex index = elementView->selectionModel()->currentIndex();
     auto *element = static_cast<Element*>(model->getItem(index)->getItemData());
     DOMElement *embedNode = element->getEmbedXMLElement();
+    auto *fileItem = element->getDedicatedFileItem();
+    if(fileItem)
+      fileItem->setModified(true);
+    else
+      setWindowModified(true);
     if(enable) {
       // try to restore the count from the processing instruction EnabledCount or use 1 as count
       string count;
@@ -1865,6 +1874,7 @@ namespace MBSimGUI {
     }
     element->maybeRemoveEmbedXMLElement();
     element->updateStatus();
+    elementViewFilter->updateItem(index);
     if(getAutoRefresh()) refresh();
   }
 
