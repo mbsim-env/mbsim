@@ -26,6 +26,18 @@ namespace MBSim {
 
   template<typename Sig> class CompositeFunction; 
 
+  /**
+   * Defines a function \f$ f \f$ to type
+   * \f[ y = f(x) \f]
+   * If the outer function \f$ o \f$ is of type
+   * \f[ o(a) \f]
+   * then a single inner function \f$ i \f$ must be given and
+   * \f[ y = f(x) = o(i(x)) \f]
+   * If the outer function \f$ f \f$ is of type
+   * \f[ o(a, b) \f]
+   * then two inner functions \f$ i1, i2 \f$ must be given and
+   * \f[ y = f(x) = o(i1(x), i2(x)) \f]
+   */
   template<typename Ret, typename Argo, typename Argi> 
   class CompositeFunction<Ret(Argo(Argi))> : public Function<Ret(Argi)> {
     using B = Function<Ret(Argi)>; 
