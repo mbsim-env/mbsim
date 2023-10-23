@@ -711,6 +711,12 @@ namespace MBSimGUI {
   }
 
   void ModalAnalysisWidget::updateWidget() {
+    if(not modeTable->topLevelItemCount()) {
+      elementTable->clear();
+      curve1->setSamples(QVector<double>(),QVector<double>());
+      curve2->setSamples(QVector<double>(),QVector<double>());
+      return;
+    }
     QString c = choice->currentText();
     c = c.mid(c.size()-2,1);
     int m = modeTable->indexOfTopLevelItem(modeTable->currentItem());

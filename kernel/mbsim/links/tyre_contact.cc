@@ -69,7 +69,7 @@ namespace MBSim {
       curis = zeta0;
     }
     else if(stage==plotting) {
-      if(plotFeature[plotRecursive]) {
+      if(plotFeature[plotRecursive] and plotFeature[MBSim::generalizedForce]) {
 	model->initPlot(plotColumns);
       }
     }
@@ -102,7 +102,7 @@ namespace MBSim {
   }
 
   void TyreContact::plot() {
-    if(plotFeature[plotRecursive]) {
+    if(plotFeature[plotRecursive] and plotFeature[MBSim::generalizedForce]) {
       model->plot(plotVector);
     }
     ContourLink::plot();
