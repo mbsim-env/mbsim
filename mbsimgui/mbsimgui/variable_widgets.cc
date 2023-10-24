@@ -144,6 +144,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
     value=new QPlainTextEdit;
+    value->setMinimumSize(300,200);
     if(mw->eval->getName()=="octave")
       new OctaveHighlighter(value->document());
     else if(mw->eval->getName()=="python")
