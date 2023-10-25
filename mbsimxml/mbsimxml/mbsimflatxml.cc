@@ -57,8 +57,8 @@ void initPython() {
     // prepand the installation/../mbsim-env-python-site-packages dir to the python path (Python pip of mbsim-env is configured to install user defined python packages there)
     installPath().parent_path()/"mbsim-env-python-site-packages",
   }, {
-    boost::filesystem::path(PYTHON_PREFIX),
     installPath(),
+    boost::filesystem::path(PYTHON_PREFIX),
   });
 
   isInitialized=true;
