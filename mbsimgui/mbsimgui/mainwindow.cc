@@ -1172,6 +1172,7 @@ namespace MBSimGUI {
     }
 
     echoView->clearOutput();
+    echoView->showXMLCode(false);
     DOMElement *root;
     QString errorText;
 
@@ -1306,12 +1307,24 @@ namespace MBSimGUI {
     QStringList arg;
     arg.append("--stopafterfirststep");
 
+    // we print everything except status messages to stdout
+    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>)#");
+    if(*debugStreamFlag) {
+      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>)#");
+    }
+    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>)#");
+    // status message go to stderr
+    arg.append("--stderr"); arg.append("status~~\n");
+
     // we change the current directory (see below) hence we need to add the current dir as modulePath
     arg.append("--modulePath");
     arg.append(QDir::currentPath());
 
     arg.append(projectFile);
     echoView->clearOutput();
+    echoView->showXMLCode(true);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((installPath/"bin"/"mbsimxml").string()), arg);
     statusBar()->showMessage(tr("Debug model"));
@@ -2636,6 +2649,7 @@ namespace MBSimGUI {
 	  if(dialog.nocompress()) arg.append("--nocompress");
 	  arg.append(projectFile);
 	  echoView->clearOutput();
+	  echoView->showXMLCode(false);
 	  process.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
 	  process.start(QString::fromStdString((installPath/"bin"/"mbsimCreateFMU").string()), arg);

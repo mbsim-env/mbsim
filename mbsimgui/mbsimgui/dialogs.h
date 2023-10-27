@@ -45,6 +45,7 @@ namespace MBSimGUI {
   class Element;
   class DataPlot;
   class ExtWidget;
+  class XMLEditorWidget;
 
   class ElementItem : public QTreeWidgetItem {
     private:
@@ -101,9 +102,12 @@ namespace MBSimGUI {
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }
   };
 
-  class SourceDialog : public Dialog {
+  class SourceCodeDialog : public Dialog {
     public:
-      SourceDialog(xercesc::DOMElement *ele, QWidget *parent);
+      SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent);
+      void highlightLine(int n);
+    private:
+      XMLEditorWidget *xmlEditor;
   };
 
   class StateTableDialog : public Dialog {

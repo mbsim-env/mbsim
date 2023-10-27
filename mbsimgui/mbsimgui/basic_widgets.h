@@ -308,6 +308,7 @@ namespace MBSimGUI {
       void setText(const QString &text) { edit->setPlainText(text); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QTextEdit *getEditor() { return edit; }
 
     protected:
       QTextEdit *edit;

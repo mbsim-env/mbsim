@@ -206,17 +206,32 @@ namespace MBSimGUI {
     }
   }
 
-  SourceDialog::SourceDialog(xercesc::DOMElement *ele, QWidget *parent) : Dialog(parent) {
+  SourceCodeDialog::SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent) : Dialog(parent) {
     setWindowTitle(QString("XML view"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    XMLEditorWidget *edit = new XMLEditorWidget;
-    edit->initializeUsingXML(ele);
-    layout->addWidget(edit);
+    xmlEditor = new XMLEditorWidget(text);
+    layout->addWidget(xmlEditor);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceCodeDialog::accept);
+    xmlEditor->getEditor()->setReadOnly(readOnly);
+  }
+
+  void SourceCodeDialog::highlightLine(int n) {
+    QTextCursor c = xmlEditor->getEditor()->textCursor();
+    c.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor,n);
+    xmlEditor->getEditor()->setTextCursor(c);
+    QList<QTextEdit::ExtraSelection> extraSelections;
+    QTextEdit::ExtraSelection selection;
+    QColor lineColor = QColor(Qt::yellow).lighter(160);
+    selection.format.setBackground(lineColor);
+    selection.format.setProperty(QTextFormat::FullWidthSelection, true);
+    selection.cursor = c;
+    selection.cursor.clearSelection();
+    extraSelections.append(selection);
+    xmlEditor->getEditor()->setExtraSelections(extraSelections);
   }
 
   StateTableDialog::StateTableDialog(QWidget *parent) : Dialog(parent) {
@@ -231,7 +246,7 @@ namespace MBSimGUI {
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
     updateWidget();
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &StateTableDialog::accept);
   }
 
   void StateTableDialog::updateWidget() {

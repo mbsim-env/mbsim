@@ -32,9 +32,11 @@
 #include "treeitem.h"
 #include "embeditemdata.h"
 #include "parameter.h"
+#include "dialogs.h"
 #include <QTextStream>
 #include <QProcessEnvironment>
 #include <QUrlQuery>
+#include <QMessageBox>
 #include <boost/scope_exit.hpp>
 
 using namespace std;
@@ -275,6 +277,17 @@ R"+(
   }
 
   void EchoView::linkClicked(const QUrl &link) {
+    if(showXML) {
+      QFile data(link.path());
+      if(data.open(QFile::ReadOnly)) {
+	QTextStream out(&data);
+	SourceCodeDialog dialog(out.readAll(),true,this);
+	dialog.highlightLine(QUrlQuery(link).queryItemValue("line").toInt()-1);
+	dialog.exec();
+      }
+    }
+    else
+      QMessageBox::information(this, "Debug information", "For more debug information press \"Debug model\" and click this link again.");
     //MISSING mbsimgui adds new elements e.g. <plotFeatureRecursive value="plotRecursive">false</plotFeatureRecursive>
     //MISSING this break the xpath of the error messages
     // get the model of the embedding
