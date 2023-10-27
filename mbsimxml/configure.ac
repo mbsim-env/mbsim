@@ -98,6 +98,8 @@ PYTHON_PREFIX="$(pkg-config --variable=exec_prefix python-$pythonversion)"
 AC_DEFINE_UNQUOTED([PYTHON_PREFIX], ["$PYTHON_PREFIX"], [Python prefix])
 PYTHON_SUBDIR=$(echo $($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])' | dos2unix) | sed -re 's|\\|/|g')
 AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
+AC_DEFINE_UNQUOTED([PYTHON_VERSION], ["$pythonversion"], [Python version])
+AC_SUBST([PYTHON_VERSION],[$pythonversion])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 if test "_$host_os" != "_mingw32"; then
