@@ -35,6 +35,7 @@ libmbsimgui_la_SOURCES = \
   variable_widgets.cc \
   octave_highlighter.cc \
   python_highlighter.cc \
+  xml_highlighter.cc \
   function_widget.cc \
   function_widgets.cc \
   kinematic_functions_widgets.cc \
@@ -200,6 +201,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   variable_widgets.h \
   octave_highlighter.h \
   python_highlighter.h \
+  xml_highlighter.h \
   widget.h \
   xml_property_dialog.h \
   fe_type.h \
