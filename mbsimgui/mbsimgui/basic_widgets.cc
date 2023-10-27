@@ -30,6 +30,7 @@
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include "project.h"
+#include "xml_highlighter.h"
 #include <QLabel>
 #include <QColorDialog>
 #include <boost/lexical_cast.hpp>
@@ -742,6 +743,7 @@ namespace MBSimGUI {
 
     edit = new QTextEdit;
     setText(text);
+    new XMLHighlighter(edit->document());
     layout->addWidget(edit);
   }
 
