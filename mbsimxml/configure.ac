@@ -88,19 +88,18 @@ fi
 dnl Check for python
 AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python to build for (default: $(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")).],
   [pythonversion="$withval"],[pythonversion=$(python3 --version | sed -re "s/.*\<(3\.[[0-9]]+)\..*/\1/")])
-AC_ARG_ENABLE([python], [--enable-python  Enable MBSim moudles in python. This is ALPHA hence it must be enabled explicitly.])
-AM_CONDITIONAL([COND_PYTHON], [test "x$enable_python" == "xyes"])
-if test "x$enable_python" == "xyes"; then
-  PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
-    PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
-  ])
-  AC_DEFINE([MBSIMXML_COND_PYTHON],[1],[Enable Python])
-  if test "_$PYTHON_BIN" == "_"; then
-    PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
-  fi
-  PYTHON_SUBDIR=$(echo $($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])' | dos2unix) | sed -re 's|\\|/|g')
-  AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
+PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
+  PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
+])
+if test "_$PYTHON_BIN" == "_"; then
+  PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
 fi
+PYTHON_PREFIX="$(pkg-config --variable=exec_prefix python-$pythonversion)"
+AC_DEFINE_UNQUOTED([PYTHON_PREFIX], ["$PYTHON_PREFIX"], [Python prefix])
+PYTHON_SUBDIR=$(echo $($XC_EXEC_PREFIX $PYTHON_BIN -c 'import sysconfig; print(sysconfig.get_config_var("LIBDEST")[[len(sysconfig.get_config_var("prefix"))+1:]])' | dos2unix) | sed -re 's|\\|/|g')
+AC_DEFINE_UNQUOTED([PYTHON_SUBDIR], ["$PYTHON_SUBDIR"], [Python library subdir])
+AC_DEFINE_UNQUOTED([PYTHON_VERSION], ["$pythonversion"], [Python version])
+AC_SUBST([PYTHON_VERSION],[$pythonversion])
 
 CPPFLAGS="$CPPFLAGS -pedantic -Wall -Werror -Wno-unknown-pragmas -Wno-long-long"
 if test "_$host_os" != "_mingw32"; then

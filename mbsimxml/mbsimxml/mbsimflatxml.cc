@@ -1,7 +1,5 @@
 #include "config.h"
-#if MBSIMXML_COND_PYTHON
-  #include <mbxmlutils/pycppwrapper.h>
-#endif
+#include <mbxmlutils/pycppwrapper.h>
 #include <cstdlib>
 #include <iostream>
 #include <fmatvec/atom.h>
@@ -21,9 +19,7 @@
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
-#if MBSIMXML_COND_PYTHON
-  using namespace PythonCpp;
-#endif
+using namespace PythonCpp;
 
 namespace {
 
@@ -49,27 +45,24 @@ boost::filesystem::path fullLibName(const string &base) {
   const string libDir="bin";
 #endif
 
-#if MBSIMXML_COND_PYTHON
 void initPython() {
   static bool isInitialized=false;
   if(isInitialized)
     return;
 
   // init python
-  initializePython((installPath()/"bin"/"mbsimflatxml").string());
+  initializePython(installPath()/"bin"/"mbsimflatxml", PYTHON_VERSION, {
+    // append the installation/bin dir to the python path (SWIG generated python modules (e.g. OpenMBV.py) are located there)
+    installPath()/"bin",
+    // prepand the installation/../mbsim-env-python-site-packages dir to the python path (Python pip of mbsim-env is configured to install user defined python packages there)
+    installPath().parent_path()/"mbsim-env-python-site-packages",
+  }, {
+    installPath(),
+    boost::filesystem::path(PYTHON_PREFIX),
+  });
 
-  // set sys.path
-  PyO sysPath(CALLPYB(PySys_GetObject, const_cast<char*>("path")));
-  // append the installation/bin dir to the python path (SWIG generated python modules (e.g. OpenMBV.py) are located there)
-  PyO binpath(CALLPY(PyUnicode_FromString, (installPath()/"bin").string()));
-  CALLPY(PyList_Append, sysPath, binpath);
-  // prepand the installation/../mbsim-env-python-site-packages dir to the python path (Python pip of mbsim-env is configured to install user defined python packages there)
-  PyO mbsimenvsitepackagespath(CALLPY(PyUnicode_FromString, (installPath().parent_path()/"mbsim-env-python-site-packages").string()));
-  CALLPY(PyList_Insert, sysPath, 0, mbsimenvsitepackagespath);
-  
   isInitialized=true;
 }
-#endif
 
 }
 
@@ -136,7 +129,6 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
           }
           if(E(e)->getTagName()==MBSIMMODULE%"PythonModule") {
             string moduleName=E(e)->getAttribute("moduleName");
-#if MBSIMXML_COND_PYTHON
             initPython();
             boost::filesystem::path location=E(e)->convertPath(E(e)->getAttribute("location"));
             if(stage==SearchPath) {
@@ -148,13 +140,6 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
             if(stage==Loading)
               // load python module
               CALLPY(PyImport_ImportModule, moduleName);
-#else
-            if(stage==SearchPath)
-              fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<
-                "Python MBSim module found in "+path+" '"+moduleName+"'"<<endl<<
-                "but MBSim is not build with Python support. Skipping this module."<<endl;
-            continue;
-#endif
           }
         }
       }

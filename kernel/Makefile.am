@@ -1,8 +1,4 @@
-if COND_PYTHON
-  MAYBE_SWIG = swig
-endif
-
-SUBDIRS = mbsim schema $(MAYBE_SWIG)
+SUBDIRS = mbsim schema swig
 
 DIST_SUBDIRS = mbsim doc schema
 EXTRA_DIST = doc/macros.sty
