@@ -329,24 +329,24 @@ CXXFLAGS="$CXXFLAGS -fpermissive"
 
 dnl removed from list: nurbs++-config (and added nurbs++.pc to use pkg-config)
 
-AC_CONFIG_FILES([Makefile 
-		   Doxyfile		   
-		   include/Makefile 
-		   m4/Makefile
-		   matrix/Makefile 
-		   numerical/Makefile 
-		   image/Makefile 
-		   nurbs/Makefile 
-		   examples/Makefile 
-		   examples/matrix/Makefile 
-		   examples/image/Makefile 
-		   examples/numerical/Makefile 
-		   examples/nurbs/Makefile  
-		   tests/Makefile
-		   tests/matrix/Makefile
-		   tests/nurbs/Makefile
-		   nurbs++.pc])
-		   
+AC_CONFIG_FILES([Makefile
+  Doxyfile
+  include/Makefile
+  m4/Makefile
+  matrix/Makefile
+  numerical/Makefile
+  image/Makefile
+  nurbs/Makefile
+  examples/Makefile
+  examples/matrix/Makefile
+  examples/image/Makefile
+  examples/numerical/Makefile
+  examples/nurbs/Makefile
+  tests/Makefile
+  tests/matrix/Makefile
+  tests/nurbs/Makefile
+  nurbs++.pc])
+
 hardcode_into_libs=no # do not add hardcoded libdirs to ltlibraries
 hardcode_libdir_flag_spec_CXX= # do not add hardcodeed libdirs to ltbinaries
 AC_OUTPUT
