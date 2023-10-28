@@ -744,6 +744,8 @@ namespace MBSimGUI {
     edit = new QTextEdit;
     setText(text);
     new XMLHighlighter(edit->document());
+    static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    edit->setFont(fixedFont);
     layout->addWidget(edit);
   }
 

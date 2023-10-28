@@ -151,9 +151,8 @@ namespace MBSimGUI {
       new PythonHighlighter(value->document());
     else
       cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
-    QFont font;
-    font.setFamily("Monospace");
-    value->setFont(font);
+    static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    value->setFont(fixedFont);
     value->setLineWrapMode(QPlainTextEdit::NoWrap);
     layout->addWidget(value);
     setValue(str);
