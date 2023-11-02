@@ -61,7 +61,6 @@ namespace MBSimGUI {
       virtual int getNumberOfContours() { return 0; }
       virtual int getNumberOfGroups() { return 0; }
       virtual int getNumberOfObjects() { return 0; }
-      virtual int getNumberOfExtraDynamics() { return 0; }
       virtual int getNumberOfLinks() { return 0; }
       virtual int getNumberOfConstraints() { return 0; }
       virtual int getNumberOfObservers() { return 0; }
