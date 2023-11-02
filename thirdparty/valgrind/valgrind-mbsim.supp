@@ -1449,3 +1449,12 @@
    fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidgeti
    fun:_ZN10OpenMBVGUI10MainWindowC1ERSt4listISsSaISsEEb
 }
+{
+   Coin
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:_ZN10SoQtGLAreaC1EP9QGLFormatP7QWidgetPK9QGLWidgetPKc
+   fun:_ZN13SoQtGLWidgetP13buildGLWidgetEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidgeti
+}
