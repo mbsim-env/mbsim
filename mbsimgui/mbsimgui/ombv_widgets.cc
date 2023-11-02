@@ -891,48 +891,4 @@ namespace MBSimGUI {
     return e;
   }
 
-  OpenMBVEnvironmentWidget::OpenMBVEnvironmentWidget() : widget(nullptr) {
-    layout = new QVBoxLayout;
-    layout->setMargin(0);
-    setLayout(layout);
-    href = new QCheckBox("Reference");
-    layout->addWidget(href);
-    defineWidget(false);
-    connect(href,&QCheckBox::clicked,this,&OpenMBVEnvironmentWidget::defineWidget);
-  }
-
-  void OpenMBVEnvironmentWidget::defineWidget(bool extFile) {
-    layout->removeWidget(widget);
-    delete widget;
-    if(extFile)
-      widget = new FileWidget("", "Open OpenMBV file", "OpenMBV files (*.ombvx);;XML files (*.xml);;All files (*.*)", 0, false);
-    else
-      widget = new ChoiceWidget(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0);
-    layout->addWidget(widget);
-  }
-
-  DOMElement* OpenMBVEnvironmentWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *ele = E(element)->getFirstElementChildNamed(PV%"Embed");
-    if(ele) {
-      if(E(ele)->hasAttribute("href")) {
-        href->setChecked(true);
-        defineWidget(true);
-        static_cast<FileWidget*>(widget)->setFile(QString::fromStdString(E(ele)->getAttribute("href")));
-        return ele;
-      }
-      return widget->initializeUsingXML(ele);
-    }
-    return widget->initializeUsingXML(element);
-  }
-
-  DOMElement* OpenMBVEnvironmentWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    if(href->isChecked()) {
-      DOMElement *newele=D(parent->getOwnerDocument())->createElement(PV%"Embed");
-      parent->insertBefore(newele,ref);
-      E(newele)->setAttribute("href",static_cast<FileWidget*>(widget)->getFile().toStdString());
-      return newele;
-    }
-    return widget->writeXMLFile(parent,ref);
-  }
-
 }

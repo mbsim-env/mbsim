@@ -383,18 +383,6 @@ namespace MBSimGUI {
       ExtWidget *radius, *height;
   };
 
-  class OpenMBVEnvironmentWidget : public Widget {
-    public:
-      OpenMBVEnvironmentWidget();
-      void defineWidget(bool extFile);
-      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
-      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-    protected:
-      QVBoxLayout *layout;
-      QCheckBox *href;
-      Widget *widget;
-  };
-
 }
 
 #endif
