@@ -291,12 +291,12 @@ R"+(
     //MISSING mbsimgui adds new elements e.g. <plotFeatureRecursive value="plotRecursive">false</plotFeatureRecursive>
     //MISSING this break the xpath of the error messages
     // get the model of the embedding
-    ParameterTreeModel *model = static_cast<ParameterTreeModel*>(mw->getParameterView()->model());
-    // walk all embeded elements
-    if(!walk(model->index(0,0), model, link))
-      cerr<<"MISSING No XML node found for file="<<link.path().toStdString()<<
-            " line="<<QUrlQuery(link).queryItemValue("line").toStdString()<<endl<<
-            "        xpath="<<QUrlQuery(link).queryItemValue("xpath").toStdString()<<endl;
+//    ParameterTreeModel *model = static_cast<ParameterTreeModel*>(mw->getParameterView()->model());
+//    // walk all embeded elements
+//    if(!walk(model->index(0,0), model, link))
+//      cerr<<"MISSING No XML node found for file="<<link.path().toStdString()<<
+//            " line="<<QUrlQuery(link).queryItemValue("line").toStdString()<<endl<<
+//            "        xpath="<<QUrlQuery(link).queryItemValue("xpath").toStdString()<<endl;
   }
 
   void EchoView::updateDebug() {
