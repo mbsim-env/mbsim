@@ -326,23 +326,31 @@ namespace MBSimGUI {
 
   RegularizedBilateralConstraintFunctionFactory::RegularizedBilateralConstraintFunctionFactory() {
     name.emplace_back("Linear regularized bilateral constraint");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"LinearRegularizedBilateralConstraint");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   Widget* RegularizedBilateralConstraintFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedBilateralConstraintWidget;
+    else if(i==1)
+      return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
   RegularizedUnilateralConstraintFunctionFactory::RegularizedUnilateralConstraintFunctionFactory() {
     name.emplace_back("Linear regularized unilateral constraint");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"LinearRegularizedUnilateralConstraint");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   Widget* RegularizedUnilateralConstraintFunctionFactory::createWidget(int i) {
     if(i==0)
       return new LinearRegularizedUnilateralConstraintWidget;
+    else if(i==1)
+      return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
@@ -350,9 +358,11 @@ namespace MBSimGUI {
     name.emplace_back("Linear regularized Coulomb friction");
     name.emplace_back("Linear regularized Stribeck friction");
     name.emplace_back("Symbolic function");
+    name.emplace_back("Unknown function");
     xmlName.push_back(MBSIM%"LinearRegularizedCoulombFriction");
     xmlName.push_back(MBSIM%"LinearRegularizedStribeckFriction");
     xmlName.push_back(MBSIM%"SymbolicFunction");
+    xmlName.push_back(MBSIM%"UnknownFunction");
   }
 
   Widget* FrictionFunctionFactory::createWidget(int i) {
@@ -368,6 +378,8 @@ namespace MBSimGUI {
       argType[1] = FunctionWidget::scalar;
       return new SymbolicFunctionWidget(QStringList("gd")<<"laN",vector<int>(2,1),argType,1,FunctionWidget::varVec);
     }
+    else if(i==3)
+      return new UnknownWidget<FunctionWidget>;
     return nullptr;
   }
 
