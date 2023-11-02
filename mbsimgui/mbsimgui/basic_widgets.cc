@@ -742,6 +742,7 @@ namespace MBSimGUI {
     setLayout(layout);
 
     edit = new QTextEdit;
+    edit->setMinimumSize(300,200);
     setText(text);
     new XMLHighlighter(edit->document());
     static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
