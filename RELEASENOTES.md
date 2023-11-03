@@ -12,6 +12,7 @@ MBSimGUI
 - Enable highlighting in xml editor
 - Show error in xml code while debugging the model
 - Use monospace font for octave/python/XML widgets (was not working on Windows)
+- Enable general embeddings for openMBVObject within MBSimEnvironment
 
 OpenMBV
 -------
