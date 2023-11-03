@@ -47,7 +47,7 @@ namespace MBSimGUI {
     name.emplace_back("Invisible body");
     name.emplace_back("Open inventor body");
     name.emplace_back("Sphere");
-    name.emplace_back("Unknown rigid body");
+    name.emplace_back("Unknown object");
     xmlName.push_back(OPENMBV%"CompoundRigidBody");
     xmlName.push_back(OPENMBV%"Cube");
     xmlName.push_back(OPENMBV%"Cuboid");
@@ -58,7 +58,7 @@ namespace MBSimGUI {
     xmlName.push_back(OPENMBV%"InvisibleBody");
     xmlName.push_back(OPENMBV%"IvBody");
     xmlName.push_back(OPENMBV%"Sphere");
-    xmlName.push_back(OPENMBV%"UnknownRigidBody");
+    xmlName.push_back(OPENMBV%"UnknownObject");
   }
 
   Widget* OMBVRigidBodyWidgetFactory::createWidget(int i) {
