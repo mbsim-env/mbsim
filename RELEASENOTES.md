@@ -24,3 +24,4 @@ OpenMBV
 H5Plotserie
 -----------
 - Only show new plot windows maximized if the last plot window was maximized (h5plotserie).
+- Enable context menu for plots
