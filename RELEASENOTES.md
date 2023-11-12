@@ -1,6 +1,13 @@
 Release NEXT
 ============ 
 
+BACKWARD INCOMPATIBLITY
+-----------------------
+- The Embed counterName attribute (named Array/Pattern counterName in MBSimGUI) is no longer
+  evaluated, its now a plain string. Models which use e.g. "index{n}" as counterName will no longer work!
+  However, its very unusual that this feature is used in existing any models.
+  The new behaviour is aligned with parameter names which are also not evaluated.
+
 All
 ---
 - Various bug fixes.
@@ -13,6 +20,11 @@ MBSimGUI
 - Show error in xml code while debugging the model
 - Use monospace font for octave/python/XML widgets (was not working on Windows)
 - Enable general embeddings for openMBVObject within MBSimEnvironment
+
+MBSimXML
+--------
+- The Embed counterName (named Array/Pattern countername in MBSimGUI) is no longer
+  evaluated but used as a plain string. This is none backward compatible change see above.
 
 OpenMBV
 -------
