@@ -935,23 +935,20 @@ namespace MBSimGUI {
     openElementEditor(false);
   }
 
-  // update model parameters including additional paramters from paramList
-  void MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
-    shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
-    doc->setDocumentURI(this->doc->getDocumentURI());
-    DOMElement *eleE0 = D(doc)->createElement(PV%"Embed");
-    doc->insertBefore(eleE0,nullptr);
-    DOMElement *eleP0 = D(doc)->createElement(PV%"Parameter");
-    eleE0->insertBefore(eleP0,nullptr);
-    DOMElement *eleE1 = D(doc)->createElement(PV%"Embed");
-    eleE0->insertBefore(eleE1,nullptr);
-    DOMElement *eleP1 = D(doc)->createElement(PV%"Parameter");
-    eleE1->insertBefore(eleP1,nullptr);
+  // Create an new eval and fills its context with all parameters/imports which may influence item.
+  // The context contains also all counterName variables where the count is set to 0 or 1 for 0-based or 1-based evaluators, respectively
+  // Also a list of all parameter levels which may influence item is returned. This list contains for each parameter level:
+  // - the XML representation of the parameters (paramEle)
+  // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
+  // - the unevaluated count string of the Array/Pattern
+  // - the unevaluated onlyif string of the Array/Pattern
+  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
+    // get evaluator (octave, python, ...)
     string evalName="octave"; // default evaluator
     if(project)
       evalName = project->getEvaluator();
     else {
-      DOMElement *root = this->doc->getDocumentElement();
+      DOMElement *root = doc->getDocumentElement();
       DOMElement *evaluator;
       if(E(root)->getTagName()==PV%"Embed") {
         auto r=root->getFirstElementChild();
@@ -965,60 +962,133 @@ namespace MBSimGUI {
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
     }
     eval=Eval::createEvaluator(evalName, &dependencies);
+
+    vector<ParameterLevel> parameterLevels;
     if(item) {
       vector<EmbedItemData*> parents = item->getEmbedItemParents();
+      parents.emplace_back(item); // add the item itself to parents (to avoid code duplication for parents and item)
+      // add parameters from top parameter level to buttom parameter level
       for(auto & parent : parents) {
-        for(size_t j=0; j<parent->getNumberOfParameters(); j++) {
+        // all parameters
+        shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
+        doc->setDocumentURI(this->doc->getDocumentURI());
+        DOMElement *eleP = D(doc)->createElement(PV%"Parameter");
+        doc->insertBefore(eleP,nullptr);
+        int skipLast = (parent==item && exceptLatestParameter) ? 1 : 0;
+        for(size_t j=0; j<parent->getNumberOfParameters() - skipLast; j++) {
           DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
-          eleP0->insertBefore(node,nullptr);
+          eleP->insertBefore(node,nullptr);
           boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
           DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
               X()%orgFileName.string());
           node->insertBefore(filenamePI, node->getFirstChild());
         }
-      }
-      for(int j=0; j<item->getNumberOfParameters()-exceptLatestParameter; j++) {
-        DOMNode *node = doc->importNode(item->getParameter(j)->getXMLElement(),true);
-        eleP1->insertBefore(node,nullptr);
-        boost::filesystem::path orgFileName=E(item->getParameter(j)->getXMLElement())->getOriginalFilename();
-        DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
-            X()%orgFileName.string());
-        node->insertBefore(filenamePI, node->getFirstChild());
-      }
-      try {
-        D(doc)->validate();
-        for(auto & parent : parents) {
+        try {
+          D(doc)->validate();
+          DOMElement *ele = doc->getDocumentElement();
+          eval->addParamSet(ele);
+          parameterLevels.emplace_back(doc, ele);
+
+          // the embed count if its a embed
           string counterName = parent->getEmbedXMLElement()?E(parent->getEmbedXMLElement())->getAttribute("counterName"):"";
           if(not counterName.empty()) {
-            string evaluatedCounterName(eval->cast<string>(eval->stringToValue(counterName,parent->getEmbedXMLElement(),false)));
-            auto count=eval->create(1.0);
-            eval->convertIndex(count, false);
-            eval->addParam(evaluatedCounterName, count);
-            eval->addParam(evaluatedCounterName+"_count", eval->create(1.0));
+            auto count1=eval->create(1.0);
+            eval->convertIndex(count1, false);
+            eval->addParam(counterName, count1);
+            eval->addParam(counterName+"_count", eval->create(1.0));
+            parameterLevels.back().counterName = counterName;
+            parameterLevels.back().countStr = E(parent->getEmbedXMLElement())->getAttribute("count");
+            parameterLevels.back().onlyIfStr = E(parent->getEmbedXMLElement())->getAttribute("onlyIf");
           }
         }
-        DOMElement *ele = doc->getDocumentElement()->getFirstElementChild();
-        eval->addParamSet(ele);
-        string counterName = item->getEmbedXMLElement()?E(item->getEmbedXMLElement())->getAttribute("counterName"):"";
-        if(not counterName.empty()) {
-          string evaluatedCounterName(eval->cast<string>(eval->stringToValue(counterName,item->getEmbedXMLElement(),false)));
-          auto count=eval->create(1.0);
-          eval->convertIndex(count, false);
-          eval->addParam(evaluatedCounterName, count);
-          eval->addParam(evaluatedCounterName+"_count", eval->create(1.0));
+        catch(const std::exception &error) {
+          mw->setExitBad();
+          cerr << string("An exception occurred in updateParameters: ") + error.what() << endl;
         }
-        ele = ele->getNextElementSibling()->getFirstElementChild();
-        eval->addParamSet(ele);
-      }
-      catch(const std::exception &error) {
-        mw->setExitBad();
-        cerr << string("An exception occurred in updateParameters: ") + error.what() << endl;
-      }
-      catch(...) {
-        mw->setExitBad();
-        cerr << "An unknown exception occurred in updateParameters." << endl;
+        catch(...) {
+          mw->setExitBad();
+          cerr << "An unknown exception occurred in updateParameters." << endl;
+        }
       }
     }
+    return parameterLevels;
+  }
+
+  pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>> MainWindow::evaluateForAllArrayPattern(
+    const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e) {
+    #define CATCH(msg) \
+      catch(DOMEvalException &e) { \
+        mw->setExitBad(); \
+        std::cerr << msg << ": " << e.getMessage() << std::endl; \
+      } \
+      catch(...) { \
+        mw->setExitBad(); \
+        std::cerr << msg << ": Unknwon error" << std::endl; \
+      }
+
+    vector<string> counterNames;
+    for(auto &x : parameterLevels)
+      if(!x.counterName.empty())
+        counterNames.emplace_back(x.counterName);
+    map<vector<int>, Eval::Value> values;
+
+    // evaluate the code for all possible counter values (recursively)
+    // save the evaluated counter name in a set to add only unique names
+    set<string> evaluatedNames;
+    vector<int> levels(counterNames.size());
+    function<void(vector<MainWindow::ParameterLevel>::const_iterator, vector<MainWindow::ParameterLevel>::const_iterator,
+                  int level, vector<int> levels)> walk;
+    walk=[&code, e, &walk, &evaluatedNames, &values](vector<MainWindow::ParameterLevel>::const_iterator start,
+                                                     vector<MainWindow::ParameterLevel>::const_iterator end,
+                                                     int level, vector<int> levels) {
+      Eval::Value count = mw->eval->create(1.0);
+      if(!start->counterName.empty())
+        try { count = mw->eval->stringToValue(start->countStr, e); }
+        CATCH("Cannot evaluate Array/Pattern 'count' variable");
+      int countInt;
+      try { countInt = mw->eval->cast<int>(count); }
+      CATCH("The Array/Patttern 'count' variable is not of type int");
+      for(int counterValue1Based=1; counterValue1Based<=countInt; ++counterValue1Based) {
+        NewParamLevel newParamLevel(mw->eval);
+
+        if(!start->counterName.empty()) {
+          // add counter parameter
+          auto counterValue=mw->eval->create(static_cast<double>(counterValue1Based));
+          mw->eval->convertIndex(counterValue, false);
+          mw->eval->addParam(start->counterName, counterValue);
+          mw->eval->addParam(start->counterName+"_count", count);
+          levels[level] = mw->eval->cast<int>(counterValue);
+          // add local parameters
+          mw->eval->addParamSet(start->paramEle);
+          // skip if onlyIf evaluates to false
+          if(!start->onlyIfStr.empty()) {
+            try {
+              bool onlyIf = mw->eval->cast<int>(mw->eval->stringToValue(code,e));
+              if(!onlyIf)
+                continue;
+            }
+            CATCH("Failed to evaluate Array/Pattern 'onlyif' variable, not skipping this counter");
+          }
+        }
+        else
+          mw->eval->addParamSet(start->paramEle);
+
+        auto startNext=start;
+        startNext++;
+        if(startNext!=end)
+          walk(startNext, end, !start->counterName.empty() ? level+1 : level, levels);
+        else {
+          try {
+            auto value = mw->eval->stringToValue(code,e,false);
+            evaluatedNames.insert(mw->eval->cast<string>(value));
+            values.emplace(levels, value);
+          }
+          CATCH("Failed to evaluate parameter");
+        }
+      }
+    };
+    walk(parameterLevels.begin(), parameterLevels.end(), 0, levels);
+    return {counterNames, values};
   }
 
   void MainWindow::saveDataAs() {

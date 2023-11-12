@@ -31,6 +31,7 @@
 #include <sstream>
 #include <openmbv/mainwindow.h>
 #include "frame.h"
+#include "mbxmlutils/eval.h"
 
 class QAction;
 class QModelIndex;
@@ -271,7 +272,22 @@ namespace MBSimGUI {
       void saveInputTable(const QString &file);
       void saveOutputTable(const QString &file);
       void saveLinearSystemAnalysis(const QString &file);
-      void updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
+
+      struct ParameterLevel {
+        ParameterLevel(std::shared_ptr<xercesc::DOMDocument> doc_, xercesc::DOMElement *paramEle_,
+                       std::string counterName_={}, std::string countStr_={}, std::string onlyIfStr_={}) :
+          doc(doc_), paramEle(paramEle_),
+          counterName(counterName_), countStr(std::move(countStr_)), onlyIfStr(std::move(onlyIfStr_)) {}
+        std::shared_ptr<xercesc::DOMDocument> doc; // just needed for lifetime handling of paramEle
+        xercesc::DOMElement *paramEle; // a "pv:Parameter" XML element of parameter of this level
+        std::string counterName; // may be empty if this parameter level does not contain a embed
+        std::string countStr;
+        std::string onlyIfStr;
+      };
+      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
+      static std::pair<std::vector<std::string>, std::map<std::vector<int>, MBXMLUtils::Eval::Value>> evaluateForAllArrayPattern(
+        const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e=nullptr);
+
       void rebuildTree();
       void exportParameters();
       void openParameterEditor(bool config=true);

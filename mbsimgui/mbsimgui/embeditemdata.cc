@@ -47,14 +47,14 @@ namespace MBSimGUI {
   }
 
   bool EmbedItemData::isActive() {
-    if(not embed or not MBXMLUtils::E(embed)->hasAttribute("count"))
+    if(not embed or not E(embed)->hasAttribute("count"))
       return true;
     mw->updateParameters(this);
     bool active = true;
     try {
-      active = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(embed)->getAttribute("count"),element,true))!="0";
+      active = mw->eval->cast<CodeString>(mw->eval->stringToValue(E(embed)->getAttribute("count"),element,true))!="0";
     }
-    catch(MBXMLUtils::DOMEvalException &ex) {
+    catch(DOMEvalException &ex) {
       mw->setExitBad();
       cerr << ex.getMessage() << endl;
     }
@@ -185,23 +185,23 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbedItemData::processIDAndHref(DOMElement *element) {
-    if(MBXMLUtils::E(element)->hasAttribute("href")) {
+    if(E(element)->hasAttribute("href")) {
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));
       element->insertBefore(ele2,nullptr);
       boost::filesystem::path orgFileName=E(getXMLElement())->getOriginalFilename();
       DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
           X()%orgFileName.string());
       ele2->insertBefore(filenamePI, ele2->getFirstChild());
-      MBXMLUtils::E(element)->removeAttribute("href");
+      E(element)->removeAttribute("href");
     }
-    if(MBXMLUtils::E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
+    if(E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getParameter(0)->getXMLElement()->getParentNode(),true));
       element->insertBefore(ele2,element->getFirstElementChild());
       boost::filesystem::path orgFileName=E(getParameter(0)->getXMLElement())->getOriginalFilename();
       DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
           X()%orgFileName.string());
       ele2->insertBefore(filenamePI, ele2->getFirstChild());
-      MBXMLUtils::E(element)->removeAttribute("parameterHref");
+      E(element)->removeAttribute("parameterHref");
     }
     return E(element)->getTagName()==PV%"Embed"?element->getLastElementChild():element;
   }
@@ -211,21 +211,28 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::updateName() {
-    name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
-    if(name.size()>=1 && name[0]=='{') {
-      mw->updateParameters(this,false);
-      try{
-	name = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(name.toStdString(),getXMLElement(),false)));
-	name = name.mid(1,name.size()-2);
-      }
-      catch(MBXMLUtils::DOMEvalException &e) {
-	mw->setExitBad();
-	std::cerr << e.getMessage() << std::endl;
-      }
-      catch(...) {
-	mw->setExitBad();
-	std::cerr << "Unknwon error" << std::endl;
-      }
+    name = QString::fromStdString(E(element)->getAttribute("name"));
+    if(name.contains('{')) {
+      auto parameterLevels = mw->updateParameters(this,false);
+      auto [counterNames, values] = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement());
+      // build the evaluated display name
+      name.clear();
+      set<string> uniqueNames;
+      for(auto &v : values)
+        try {
+          auto curName = mw->eval->cast<string>(v.second);
+          if(uniqueNames.insert(curName).second) // only add unique names
+            name += QString(" ❙ ") + QString::fromStdString(curName);
+        }
+        catch(DOMEvalException &e) {
+          mw->setExitBad();
+          std::cerr << "Cannot evaluate element name to string: " << e.getMessage() << std::endl;
+        }
+        catch(...) {
+          mw->setExitBad();
+          std::cerr << "Cannot evaluate element name to string: Unknwon error" << std::endl;
+        }
+      name = name.mid(3);
     }
   }
 

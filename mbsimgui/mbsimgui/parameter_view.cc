@@ -50,7 +50,7 @@ namespace MBSimGUI {
     painter->save();
     QString text(parameterView->model()->data(index).toString());
     text=text.trimmed();
-    text=text.replace(QRegularExpression(" *\n *"), "¶");
+    text=text.replace(QRegularExpression(" *\n *"), " ¶ ");
     text=text.simplified();
     drawDisplay(painter, option, option.rect, text);
     painter->restore();

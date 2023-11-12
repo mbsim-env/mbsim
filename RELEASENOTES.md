@@ -20,6 +20,8 @@ MBSimGUI
 - Show error in xml code while debugging the model
 - Use monospace font for octave/python/XML widgets (was not working on Windows)
 - Enable general embeddings for openMBVObject within MBSimEnvironment
+- Show all possible item names in the model and parameter tree. There can be more than one name
+  if the item name depends on a Array/Pattern counter variable.
 
 MBSimXML
 --------
