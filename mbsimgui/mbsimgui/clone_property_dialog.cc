@@ -53,7 +53,6 @@ namespace MBSimGUI {
 
   DOMElement* ClonePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
-    item->updateName();
     DOMElement *embedNode = item->getEmbedXMLElement();
     if(clone->isActive()) {
       if(not embedNode) embedNode = item->createEmbedXMLElement();
@@ -67,6 +66,7 @@ namespace MBSimGUI {
       E(embedNode)->removeAttribute("onlyif");
     }
     item->maybeRemoveEmbedXMLElement();
+    item->updateName();
     item->updateStatus();
     return nullptr;
   }
