@@ -986,7 +986,6 @@ namespace MBSimGUI {
         try {
           D(doc)->validate();
           DOMElement *ele = doc->getDocumentElement();
-          eval->addParamSet(ele);
           parameterLevels.emplace_back(doc, ele);
 
           // the embed count if its a embed
@@ -1000,6 +999,8 @@ namespace MBSimGUI {
             parameterLevels.back().countStr = E(parent->getEmbedXMLElement())->getAttribute("count");
             parameterLevels.back().onlyIfStr = E(parent->getEmbedXMLElement())->getAttribute("onlyIf");
           }
+
+          eval->addParamSet(ele);
         }
         catch(const std::exception &error) {
           mw->setExitBad();
@@ -1045,7 +1046,7 @@ namespace MBSimGUI {
       if(!start->counterName.empty())
         try { count = mw->eval->stringToValue(start->countStr, e); }
         CATCH("Cannot evaluate Array/Pattern 'count' variable");
-      int countInt;
+      int countInt = 1;
       try { countInt = mw->eval->cast<int>(count); }
       CATCH("The Array/Patttern 'count' variable is not of type int");
       for(int counterValue1Based=1; counterValue1Based<=countInt; ++counterValue1Based) {

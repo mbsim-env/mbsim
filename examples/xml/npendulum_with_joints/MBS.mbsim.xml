@@ -17,7 +17,7 @@
   <groups/>
   <objects>
     <pv:Embed href="test.xml"/>
-    <pv:Embed href="{filenameWithoutExt}.xml" count="N-1+1" counterName="{myCounterName}_pendel"/>
+    <pv:Embed href="{filenameWithoutExt}.xml" count="N-1+1" counterName="n_pendel"/>
   </objects>
   <links>
     <Joint name="Gelenk1">
