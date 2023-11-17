@@ -120,6 +120,7 @@ namespace MBSimGUI {
       int maxUndo;
       bool autoRefresh;
       bool statusUpdate;
+      bool callViewAllAfterFileReloaded { false };
       xercesc::DOMDocument *doc;
       std::deque<std::vector<xercesc::DOMDocument*>> undos, redos;
       std::pair<Element*,bool> elementBuffer;

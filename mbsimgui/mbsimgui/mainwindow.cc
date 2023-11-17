@@ -539,6 +539,11 @@ namespace MBSimGUI {
     bfs__copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  bfs::copy_option::overwrite_if_exists);
     bfs__copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", bfs::copy_option::overwrite_if_exists);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
+    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::fileReloaded, [this](){
+      if(callViewAllAfterFileReloaded)
+        inlineOpenMBVMW->viewAllSlot();
+      callViewAllAfterFileReloaded = false;
+    });
   }
 
   MainWindow::~MainWindow() {
@@ -790,6 +795,7 @@ namespace MBSimGUI {
 
       elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
 
+      callViewAllAfterFileReloaded = true;
       refresh();
     }
   }
@@ -854,6 +860,7 @@ namespace MBSimGUI {
 
       elementView->selectionModel()->setCurrentIndex(project->getModelIndex(), QItemSelectionModel::ClearAndSelect);
 
+      callViewAllAfterFileReloaded = true;
       refresh();
     }
     else
