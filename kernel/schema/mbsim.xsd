@@ -3881,24 +3881,40 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:element name="unloadedRadius" type="pv:lengthScalar">
+          <xs:choice>
+            <xs:element name="radius" type="pv:lengthScalar">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Definiert den Außenradius des unbelasteten Reifens.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="unloadedRadius" type="pv:lengthScalar">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Definiert den Außenradius des unbelasteten Reifens.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:choice>
+          <xs:element name="rimRadius" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Definiert den Außenradius des unbelasteten Reifens.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="rimRadius" type="pv:lengthScalar">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Definiert den Felgenradius des Reifens.
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
+               <xs:documentation xml:lang="de" xmlns="">
+                 Definiert den Felgenradius des Reifens.
+               </xs:documentation>
+             </xs:annotation>
+           </xs:element>
           <xs:element name="width" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Breite des Reifens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="ellipseParameters" type="pv:lengthVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Parameter der Kontourellipse des Reifens.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
