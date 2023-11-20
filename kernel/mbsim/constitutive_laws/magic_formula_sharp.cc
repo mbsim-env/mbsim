@@ -40,9 +40,9 @@ namespace MBSim {
     if(stage==unknownStage) {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-      double R0_ = tyre->getUnloadedRadius()-tyre->getRimRadius()-Fz0/cz;
+      double R0_ = tyre->getEllipseParameters()(1)-Fz0/cz;
       if(abs(R0_-R0)>1e-6)
-	msg(Warn) << "Estimated crown radius of " << tyre->getPath() << " (" << R0_ << ") is different to R0 (" << R0 << ")." << endl;
+	msg(Warn) << "(MagicFormulaSharp::init): crown radius R0 (" << R0 << ") is different to estimated crown radius of " << tyre->getPath() << " (" << R0_ << ")." << endl;
     }
     TyreModel::init(stage, config);
   }
