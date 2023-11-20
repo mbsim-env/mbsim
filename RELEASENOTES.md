@@ -12,6 +12,11 @@ All
 ---
 - Various bug fixes.
 
+MBSim
+-----
+- Use ellipse parameters to define tyre contour instead of rim radius. For backward compatibiltiy rim radius is still supported by MBSimXML and MBSimGUI but it should no longer be used.
+
+
 MBSimGUI
 --------
 - Show disabled elements greyed out in model tree
