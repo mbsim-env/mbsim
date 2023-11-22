@@ -24,10 +24,12 @@
 
 namespace MBSim {
 
+  class ContourFrame;
+
   class MagicFormula62 : public TyreModel {
     public:
-      MagicFormula62() = default;
-      ~MagicFormula62() override = default;
+      MagicFormula62() : slipPoint(2) { }
+      ~MagicFormula62() override;
 
       void setInputDataFile(const std::string& inputDataFile_) { inputDataFile = inputDataFile_; }
       void setVerticalStiffness(double cz_) { cz = cz_; }
@@ -60,10 +62,12 @@ namespace MBSim {
       void updateGeneralizedForces() override;
       void updatexd() override;
 
-      int getDataSize() const override { return 9; }
+      int getDataSize() const override { return 8; }
       fmatvec::VecV getData() const override;
 
       bool motorcycleKinematics() const override { return mck; }
+
+      void resetUpToDate() override;
 
     private:
       void importData();
@@ -74,9 +78,11 @@ namespace MBSim {
       double LFX{1}, LFY{1}, LMZ{1};
       bool constsix{false}, constsiy{false};
 
-      double vsx, vsy, vx, vy, v, ka, ga, Kyal, alF, Rs, dpi, phit{0}, phiF{0}, epsga{0};
+      double vx, vsx, vsy, vcx, vc, ka, ga, Kyal, alF, rhoz, dpi, phit{0}, phiF{0}, epsga{0};
 
       bool mck{false}, ts{false};
+
+      std::vector<ContourFrame*> slipPoint;
  };
 
 }

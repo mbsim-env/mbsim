@@ -32,6 +32,11 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, MagicFormula62)
 
+  MagicFormula62::~MagicFormula62() {
+    delete slipPoint[0];
+    delete slipPoint[1];
+  }
+
   template <typename T> int sgn(T val) {
     return (T(0) < val) - (val < T(0));
   }
@@ -362,9 +367,18 @@ namespace MBSim {
       dpi = (p-p0)/p0;
       constsix = six>=0;
       constsiy = siy>=0;
-      if(mck) rRim = tyre->getRimRadius();
-      if(abs(tyre->getUnloadedRadius()-R0)>1e-6)
-	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getUnloadedRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
+      if(abs(tyre->getRadius()-R0)>1e-6)
+	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
+      slipPoint[0] = contact->getContour(0)->createContourFrame("S0");
+      slipPoint[1] = contact->getContour(1)->createContourFrame("S1");
+      slipPoint[0]->setParent(this);
+      slipPoint[1]->setParent(this);
+      slipPoint[0]->sethSize(contact->getContour(0)->gethSize(0), 0);
+      slipPoint[0]->sethSize(contact->getContour(0)->gethSize(1), 1);
+      slipPoint[1]->sethSize(contact->getContour(1)->gethSize(0), 0);
+      slipPoint[1]->sethSize(contact->getContour(1)->gethSize(1), 1);
+      slipPoint[0]->init(stage, config);
+      slipPoint[1]->init(stage, config);
     }
     TyreModel::init(stage, config);
   }
@@ -378,7 +392,7 @@ namespace MBSim {
     plotColumns.emplace_back("relaxation length for longitudinal slip");
     plotColumns.emplace_back("relaxation length for sideslip");
     plotColumns.emplace_back("slip angle");
-    plotColumns.emplace_back("scrub radius");
+    plotColumns.emplace_back("deflection");
     if(ts) {
       plotColumns.emplace_back("turn slip");
       plotColumns.emplace_back("spin");
@@ -388,14 +402,14 @@ namespace MBSim {
   void MagicFormula62::plot(vector<double> &plotVector) {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
     plotVector.push_back(ga);
-    plotVector.push_back(vx);
-    plotVector.push_back(vsx-vx);
+    plotVector.push_back(vcx);
+    plotVector.push_back(vsx-vcx);
     plotVector.push_back(ka);
     plotVector.push_back(Kyal);
     plotVector.push_back(six);
     plotVector.push_back(siy);
     plotVector.push_back(alF);
-    plotVector.push_back(Rs);
+    plotVector.push_back(rhoz);
     if(ts) {
       plotVector.push_back(phit);
       plotVector.push_back(phiF);
@@ -451,11 +465,11 @@ namespace MBSim {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
     int i=0;
     if(six!=0) {
-      contact->getxd(false)(i) = (-vsx - contact->getx()(i)*vx)/six;
+      contact->getxd(false)(i) = (-vsx - contact->getx()(i)*vcx)/six;
       i++;
     }
     if(siy!=0)
-      contact->getxd(false)(i) = (atan(vsy/vx) - contact->getx()(i))*vx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
+      contact->getxd(false)(i) = (atan(vsy/vcx) - contact->getx()(i))*vcx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
   }
 
   void MagicFormula62::updateGeneralizedForces() {
@@ -466,62 +480,66 @@ namespace MBSim {
 
     ga = asin(tyre->getFrame()->evalOrientation().col(1).T()*contact->getContourFrame(0)->evalOrientation().col(2));
 
+    vx = contact->getContourFrame(0)->getOrientation().col(0).T()*tyre->getFrame()->evalVelocity();
+    vsx = contact->evalGeneralizedRelativeVelocity()(0);
+    vsy = contact->getGeneralizedRelativeVelocity()(1);
+    vcx = max(1.,abs(contact->evalForwardVelocity()(0)));
+    double vcy = contact->getForwardVelocity()(1);
+    vc = sqrt(pow(vcx,2)+pow(vcy,2));
+    double Om = tyre->getFrame()->getOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
+    double ROm = R0*(Q_RE0+Q_V1*pow(Om*R0/v0,2));
+    double Cz = cz*(1+PFZ1*dpi);
+    double fcorr = (1+Q_V2*R0/v0*abs(Om))*(1+PFZ1*dpi);
+    double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
     if(mck) {
-      Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
-      vsx = contact->getGeneralizedRelativeVelocity()(0);
-      vsy = contact->getGeneralizedRelativeVelocity()(1);
-      vx = max(1.,abs(contact->evalForwardVelocity()(0)));
-      vy = contact->evalForwardVelocity()(1);
-      v = sqrt(pow(vx,2)+pow(vy,2));
+      rhoz = -contact->evalGeneralizedRelativePosition()(0) + ROm - R0;
+      if(rhoz<0) rhoz = 0;
+      Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0 - dz*contact->evalGeneralizedRelativeVelocity()(2);
+      slipPoint[0]->setPosition(contact->getContourFrame(1)->getPosition() - ((rhoz-Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz)))*contact->getContourFrame(1)->getOrientation().col(2)); // Pacejka
+      //slipPoint[0]->setPosition(contact->getContourFrame(1)->getPosition() - ((rhoz-Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0)))*contact->getContourFrame(1)->getOrientation().col(2)); // Manual
     }
     else {
-      double Om = tyre->getFrame()->getOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
       Vec WrWC = contact->getContourFrame(1)->getPosition()-tyre->getFrame()->getPosition();
       double Rl = nrm2(WrWC);
-      double ROm = R0*(Q_RE0+Q_V1*pow(Om*R0/v0,2));
       double rhozfr = ROm-Rl;
       if(rhozfr<0) rhozfr = 0;
       double rhozg = 0;
-      double rtw = 0; // TODO no equation for rtw in manual
-      if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
-	rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
-      double rhoz = rhozfr+rhozg;
+//      double rtw = 0; // TODO no equation for rtw in manual
+//      if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
+//	rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
+      rhoz = rhozfr+rhozg;
       if(rhoz<0) rhoz = 0;
-      double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
-      Fx = 0; Fy = 0; // TODO dependencies on Fx and Fy cannot be resolved
-      double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi);
-      double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
+//      double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
+//      double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi);
       Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0;
       double Fzbtm = czbtm*(rRim+rhobtm-Rl);
       if(Fzbtm>Fz) Fz = Fzbtm;
       Fz -= dz*contact->evalGeneralizedRelativeVelocity()(2)/cos(ga);
-      double Cz = cz*(1+PFZ1*dpi);
-      double Re = ROm-Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0);
-      contact->getSlipPoint(0)->setPosition(tyre->getFrame()->getPosition()+(Re/Rl)*WrWC);
-      contact->getSlipPoint(1)->setPosition(contact->getSlipPoint(0)->getPosition());
-      contact->getSlipPoint(0)->setOrientation(contact->getContourFrame(0)->getOrientation());
-      contact->getSlipPoint(1)->setOrientation(contact->getContourFrame(1)->getOrientation());
-      Vec3 WvD = contact->getSlipPoint(1)->evalVelocity() - contact->getSlipPoint(0)->evalVelocity();
-      vsx = contact->getSlipPoint(0)->getOrientation().col(0).T()*WvD;
-      vsy = contact->getSlipPoint(0)->getOrientation().col(1).T()*WvD;
-      vx = max(1.,abs(contact->getSlipPoint(0)->getOrientation().col(0).T()*tyre->getFrame()->getVelocity()));
-      v = sqrt(pow(vx,2)+pow(vsy,2));
+      double Re = ROm-Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); // Pacejka
+//      double Re = ROm-Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
+      slipPoint[0]->setPosition(tyre->getFrame()->getPosition()+(Re/Rl)*WrWC);
     }
+    slipPoint[1]->setPosition(slipPoint[0]->getPosition());
+    slipPoint[0]->setOrientation(contact->getContourFrame(0)->getOrientation());
+    slipPoint[1]->setOrientation(contact->getContourFrame(1)->getOrientation());
+    Vec3 WvD = slipPoint[1]->evalVelocity() - slipPoint[0]->evalVelocity();
+    vsx = slipPoint[0]->getOrientation().col(0).T()*WvD;
+    vsy = slipPoint[0]->getOrientation().col(1).T()*WvD;
 
     if(Fz>0) {
       if(Fz<1) Fz = 1;
       double dfz = (Fz-Fz0)/Fz0;
       int i = 0;
-      double alM = atan(vsy/vx);
-      ka = six!=0 ? contact->getx()(i++) : -vsx/vx;
+      double alM = atan(vsy/vcx);
+      ka = six!=0 ? contact->getx()(i++) : -vsx/vcx;
       alF = siy!=0 ? contact->getx()(i) : alM;
 
       if(ts) {
 	double Om = tyre->getFrame()->evalOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
 	double psid = contact->getContourFrame(1)->evalOrientation().col(2).T()*tyre->getFrame()->getAngularVelocity();
 	epsga = PECP1*(1+PECP2*dfz);
-	phit = -psid/v;
-	phiF = -1./v*(psid+(1-epsga)*Om*sin(ga));
+	phit = -psid/vc;
+	phiF = -1./vc*(psid+(1-epsga)*Om*sin(ga));
 	double Bxphi = PDXP1*(1+PDXP2*dfz)*cos(atan(PDXP3*ka));
 	zeta1 = cos(atan(Bxphi*R0*phiF));
       }
@@ -636,8 +654,6 @@ namespace MBSim {
       double s = (SSZ1+SSZ2*(Fy/Fz0)+(SSZ3+SSZ4*dfz)*ga)*R0*LS;
       Mz = (Mzs+Mzr+(mck?0:s*Fx))*LMZ;
 
-      Rs = (tyre->getUnloadedRadius()-tyre->getRimRadius()+contact->getGeneralizedRelativePosition()(0))*sin(ga);
-
       double CX = Cx0*(1+PCFX1*dfz+PCFX2*pow(dfz,2))*(1+PCFX3*dpi);
       double CY = Cy0*(1+PCFY1*dfz+PCFY2*pow(dfz,2))*(1+PCFY3*dpi);
       if(not constsix) six = abs(Kxka/CX);
@@ -654,7 +670,6 @@ namespace MBSim {
       ka = 0;
       Kyal = 0;
       alF = 0;
-      Rs = 0;
     }
 
     contact->getGeneralizedForce(false)(0) = Fx;
@@ -669,15 +684,20 @@ namespace MBSim {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
     VecV data(9,NONINIT);
     data(0) = ga;
-    data(1) = vx;
-    data(2) = vsx-vx;
+    data(1) = vcx;
+    data(2) = vsx-vcx;
     data(3) = ka;
     data(4) = Kyal;
     data(5) = six;
     data(6) = siy;
     data(7) = alF;
-    data(8) = Rs;
     return data;
+  }
+
+  void MagicFormula62::resetUpToDate() {
+    TyreModel::resetUpToDate();
+    slipPoint[0]->resetUpToDate();
+    slipPoint[1]->resetUpToDate();
   }
 
 }
