@@ -872,17 +872,20 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TyrePropertyDialog::TyrePropertyDialog(Element *gear) : RigidContourPropertyDialog(gear) {
+  TyrePropertyDialog::TyrePropertyDialog(Element *tyre) : RigidContourPropertyDialog(tyre) {
     addTab("Visualization",1);
 
-    rUnloaded = new ExtWidget("Unloaded radius",new ChoiceWidget(new ScalarWidgetFactory("0.3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedRadius");
-    addToTab("General", rUnloaded);
+    r = new ExtWidget("Radius",new ChoiceWidget(new ScalarWidgetFactory("0.3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
+    addToTab("General", r);
 
-    rRim = new ExtWidget("Rim radius",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"rimRadius");
+    rRim = new ExtWidget("Rim radius",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"rimRadius");
     addToTab("General", rRim);
 
-    w = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"width");
+    w = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"width");
     addToTab("General", w);
+
+    ab = new ExtWidget("Ellipse parameters",new ChoiceWidget(new VecWidgetFactory(2,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"ellipseParameters");
+    addToTab("General", ab);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -890,18 +893,22 @@ namespace MBSimGUI {
 
   DOMElement* TyrePropertyDialog::initializeUsingXML(DOMElement *parent) {
     RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
-    rUnloaded->initializeUsingXML(item->getXMLElement());
+    DOMElement *ele = E(item->getXMLElement())->getFirstElementChildNamed(MBSIM%"unloadedRadius");
+    if(ele) ele->getOwnerDocument()->renameNode(ele,X()%MBSIM.getNamespaceURI(),X()%"radius");
+    r->initializeUsingXML(item->getXMLElement());
     rRim->initializeUsingXML(item->getXMLElement());
     w->initializeUsingXML(item->getXMLElement());
+    ab->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* TyrePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
-    rUnloaded->writeXMLFile(item->getXMLElement(),nullptr);
+    r->writeXMLFile(item->getXMLElement(),nullptr);
     rRim->writeXMLFile(item->getXMLElement(),nullptr);
     w->writeXMLFile(item->getXMLElement(),nullptr);
+    ab->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }

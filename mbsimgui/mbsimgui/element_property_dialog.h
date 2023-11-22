@@ -281,11 +281,11 @@ namespace MBSimGUI {
   class TyrePropertyDialog : public RigidContourPropertyDialog {
 
     public:
-      TyrePropertyDialog(Element *gear);
+      TyrePropertyDialog(Element *tyre);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *rUnloaded, *rRim, *w, *visu;
+      ExtWidget *r, *rRim, *w, *ab, *visu;
   };
 
   class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
