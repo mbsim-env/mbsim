@@ -38,15 +38,11 @@ namespace MBSim {
     return Wt;
   }
 
-  TyreContact::TyreContact(const std::string &name) : ContourLink(name), slipPoint(2) {
+  TyreContact::TyreContact(const std::string &name) : ContourLink(name) {
     M.resize(2);
   }
 
   TyreContact::~TyreContact() {
-    if(not model->motorcycleKinematics()) {
-      delete slipPoint[0];
-      delete slipPoint[1];
-    }
     delete model;
   }
 
@@ -71,20 +67,6 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive] and plotFeature[MBSim::generalizedForce]) {
 	model->initPlot(plotColumns);
-      }
-    }
-    else if(stage==unknownStage) {
-      if(not model->motorcycleKinematics()) {
-	slipPoint[0] = contour[0]->createContourFrame("S0");
-	slipPoint[1] = contour[1]->createContourFrame("S1");
-	slipPoint[0]->setParent(this);
-	slipPoint[1]->setParent(this);
-	slipPoint[0]->sethSize(contour[0]->gethSize(0), 0);
-	slipPoint[0]->sethSize(contour[0]->gethSize(1), 1);
-	slipPoint[1]->sethSize(contour[1]->gethSize(0), 0);
-	slipPoint[1]->sethSize(contour[1]->gethSize(1), 1);
-	slipPoint[0]->init(stage, config);
-	slipPoint[1]->init(stage, config);
       }
     }
     ContourLink::init(stage,config);
@@ -249,10 +231,7 @@ namespace MBSim {
 
   void TyreContact::resetUpToDate() {
     ContourLink::resetUpToDate();
-    if(not model->motorcycleKinematics()) {
-      slipPoint[0]->resetUpToDate();
-      slipPoint[1]->resetUpToDate();
-    }
+    model->resetUpToDate();
     updfvel = true;
   }
 
