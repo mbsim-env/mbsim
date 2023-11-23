@@ -604,7 +604,7 @@ namespace MBSim {
       double Fy0 = Dy*sin(Cy*atan(By*ay-Ey*(By*ay-atan(By*ay))))+Svy;
       Fy = (Gyk*Fy0+Svyk)*LFY;
 
-      Mx = mck?0:R0*Fz*LMX*(QSX1*LVMX-QSX2*ga*(1+PPMX1*dpi)+QSX3*Fy/Fz0+QSX4*cos(QSX5*atan(pow(QSX6*Fz/Fz0,2)))*sin(QSX7*ga+QSX8*atan(QSX9*Fy/Fz0))+QSX10*atan(QSX11*Fz/Fz0)*ga) + R0*LMX*(Fy*(QSX13+QSX14*abs(ga))-Fz*QSX12*ga*abs(ga));
+      Mx = R0*Fz*LMX*(QSX1*LVMX-QSX2*ga*(1+PPMX1*dpi)+QSX3*Fy/Fz0+QSX4*cos(QSX5*atan(pow(QSX6*Fz/Fz0,2)))*sin(QSX7*ga+QSX8*atan(QSX9*Fy/Fz0))+QSX10*atan(QSX11*Fz/Fz0)*ga) + R0*LMX*(Fy*(QSX13+QSX14*abs(ga))-Fz*QSX12*ga*abs(ga));
 
       My = -R0*Fz0*LMY*(QSY1+QSY2*Fx/Fz0+QSY3*abs(vx/v0)+QSY4*pow(vx/v0,4)+(QSY5+QSY6*Fz/Fz0)*pow(ga,2))*pow(Fz/Fz0,QSY7)*pow(p/p0,QSY8);
 
@@ -652,7 +652,7 @@ namespace MBSim {
       double Mzs = -t*Fys;
       double Mzr = Dr*cos(zeta7*atan(Br*lar));
       double s = (SSZ1+SSZ2*(Fy/Fz0)+(SSZ3+SSZ4*dfz)*ga)*R0*LS;
-      Mz = (Mzs+Mzr+(mck?0:s*Fx))*LMZ;
+      Mz = (Mzs+Mzr+s*Fx)*LMZ;
 
       double CX = Cx0*(1+PCFX1*dfz+PCFX2*pow(dfz,2))*(1+PCFX3*dpi);
       double CY = Cy0*(1+PCFY1*dfz+PCFY2*pow(dfz,2))*(1+PCFY3*dpi);
