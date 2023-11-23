@@ -152,9 +152,9 @@ namespace MBSim {
 	  LYKA = stod(value[18]);
 	  LVYKA = stod(value[19]);
 	  LS = stod(value[20]);
-	  LMX = stod(value[21]);
+	  if(LMX<0) LMX = stod(value[21]);
 	  LVMX = stod(value[22]);
-	  LMY = stod(value[23]);
+	  if(LMY<0) LMY = stod(value[23]);
 	  LMP = stod(value[24]);
 	}
 	found = line.find("[LONGITUDINAL_COEFFICIENTS]");
@@ -440,6 +440,10 @@ namespace MBSim {
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
     if(e) setScaleFactorForLateralForce(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForOverturningMoment");
+    if(e) setScaleFactorForOverturningMoment(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorRollingResistanceMoment");
+    if(e) setScaleFactorForRollingResistanceMoment(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForAligningMoment");
     if(e) setScaleFactorForAligningMoment(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalFricitionCoefficient");
