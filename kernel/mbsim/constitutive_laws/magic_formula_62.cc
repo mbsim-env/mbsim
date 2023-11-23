@@ -493,7 +493,7 @@ namespace MBSim {
     double Om = tyre->getFrame()->getOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
     double ROm = R0*(Q_RE0+Q_V1*pow(Om*R0/v0,2));
     double Cz = cz*(1+PFZ1*dpi);
-    double fcorr = (1+Q_V2*R0/v0*abs(Om))*(1+PFZ1*dpi);
+    double fcorr = (1-Q_CAM*abs(ga))*(1+Q_V2*R0/v0*abs(Om))*(1+PFZ1*dpi);
     double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
     if(mck) {
       rhoz = -contact->evalGeneralizedRelativePosition()(0) + ROm - R0;
