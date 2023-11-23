@@ -819,7 +819,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *contactPoints, *normalForceArrow, *longitudinalForceArrow, *lateralForceArrow, *aligningMomentArrow;
+      ExtWidget *contactPoints, *normalForceArrow, *longitudinalForceArrow, *lateralForceArrow, *overturningMomentArrow, *rollingResistanceMomentArrow, *aligningMomentArrow;
   };
 
   class FrameObserverPropertyDialog : public ObserverPropertyDialog {

@@ -4691,6 +4691,16 @@
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="scaleFactorForOverturningMoment" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="scaleFactorRollingResistanceMoment" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="scaleFactorForAligningMoment" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
@@ -6561,7 +6571,7 @@
           </xs:element>
           <xs:element name="enableOpenMBVNormalForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Kontaktkraft in Normalenrichtung durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+                tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVInteractionArrowParameters"/>
@@ -6569,7 +6579,7 @@
           </xs:element>
           <xs:element name="enableOpenMBVLongitudinalForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+                tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVInteractionArrowParameters"/>
@@ -6577,7 +6587,23 @@
           </xs:element>
           <xs:element name="enableOpenMBVLateralForce" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+                tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVOverturningMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVInteractionArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="enableOpenMBVRollingResistanceMoment" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVInteractionArrowParameters"/>
@@ -6585,7 +6611,7 @@
           </xs:element>
           <xs:element name="enableOpenMBVAligningMoment" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Wenn angegeben, wird die Reibkraft durch einen OpenMBV Pfeil mit Wirkung auf die Kontur des zweiten Körpers in OpenMBV visualisiert.
+                tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:group ref="OpenMBVInteractionArrowParameters"/>

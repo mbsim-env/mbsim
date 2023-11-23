@@ -2972,6 +2972,12 @@ namespace MBSimGUI {
     lateralForceArrow = new ExtWidget("Enable openMBV lateral force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVLateralForce");
     addToTab("Visualization",lateralForceArrow);
 
+    overturningMomentArrow = new ExtWidget("Enable openMBV overturning moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVOverturningMoment");
+    addToTab("Visualization",overturningMomentArrow);
+
+   rollingResistanceMomentArrow = new ExtWidget("Enable openMBV rolling resistance moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVRollingResistanceMoment");
+    addToTab("Visualization",rollingResistanceMomentArrow);
+
     aligningMomentArrow = new ExtWidget("Enable openMBV aligning moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAligningMoment");
     addToTab("Visualization",aligningMomentArrow);
   }
@@ -2982,6 +2988,8 @@ namespace MBSimGUI {
     normalForceArrow->initializeUsingXML(item->getXMLElement());
     longitudinalForceArrow->initializeUsingXML(item->getXMLElement());
     lateralForceArrow->initializeUsingXML(item->getXMLElement());
+    overturningMomentArrow->initializeUsingXML(item->getXMLElement());
+    rollingResistanceMomentArrow->initializeUsingXML(item->getXMLElement());
     aligningMomentArrow->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -2992,6 +3000,8 @@ namespace MBSimGUI {
     normalForceArrow->writeXMLFile(item->getXMLElement(),ref);
     longitudinalForceArrow->writeXMLFile(item->getXMLElement(),ref);
     lateralForceArrow->writeXMLFile(item->getXMLElement(),ref);
+    overturningMomentArrow->writeXMLFile(item->getXMLElement(),ref);
+    rollingResistanceMomentArrow->writeXMLFile(item->getXMLElement(),ref);
     aligningMomentArrow->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }

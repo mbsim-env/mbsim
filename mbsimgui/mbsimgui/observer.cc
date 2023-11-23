@@ -157,6 +157,26 @@ namespace MBSimGUI {
       DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       ELE->insertBefore(id, nullptr);
     }
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVOverturningMoment");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVRollingResistanceMoment");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
+
+    ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAligningMoment");
+    if(ELE) {
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      ELE->insertBefore(id, nullptr);
+    }
     return element;
   }
 
