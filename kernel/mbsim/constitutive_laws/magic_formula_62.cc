@@ -683,6 +683,12 @@ namespace MBSim {
       alF = 0;
     }
 
+    if(mck) {
+      double dy = (tyre->getEllipseParameters()(0)-rhoz)*tan(ga);
+      Mx += dy*Fz;
+      Mz -= dy*Fx;
+    }
+
     contact->getGeneralizedForce(false)(0) = Fx;
     contact->getGeneralizedForce(false)(1) = Fy;
     contact->getGeneralizedForce(false)(2) = Fz;
