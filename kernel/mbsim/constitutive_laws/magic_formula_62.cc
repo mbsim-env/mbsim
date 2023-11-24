@@ -64,6 +64,7 @@ namespace MBSim {
 	    getline(file,line);
 	  }
 	  R0 = stod(value[0]);
+	  w = stod(value[1]);
 	  rRim = stod(value[2]);
 	}
 	found = line.find("[OPERATING_CONDITIONS]");
@@ -86,6 +87,8 @@ namespace MBSim {
 	  if(Fz0<0) Fz0 = stod(value[0]);
 	  if(cz<0) cz = stod(value[1]);
 	  if(dz<0) dz = stod(value[2]);
+	  MC_CONTOUR_A = stod(value[3]);
+	  MC_CONTOUR_B = stod(value[4]);
 	  BREFF = stod(value[5]);
 	  DREFF = stod(value[6]);
 	  FREFF = stod(value[7]);
@@ -369,6 +372,10 @@ namespace MBSim {
       constsiy = siy>=0;
       if(abs(tyre->getRadius()-R0)>1e-6)
 	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
+      if(MC_CONTOUR_A > 0 and abs(tyre->getEllipseParameters()(0)-MC_CONTOUR_A*w)>1e-6)
+	msg(Warn) << "Ellipse parameter A of " << tyre->getPath() << " (" << tyre->getEllipseParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
+      if(MC_CONTOUR_B > 0 and abs(tyre->getEllipseParameters()(1)-MC_CONTOUR_B*w)>1e-6)
+	msg(Warn) << "Ellipse parameter B of " << tyre->getPath() << " (" << tyre->getEllipseParameters()(1) << ") is different to ellipse parameter B of " << inputDataFile << " (" << MC_CONTOUR_B*w << ")." << endl;
       slipPoint[0] = contact->getContour(0)->createContourFrame("S0");
       slipPoint[1] = contact->getContour(1)->createContourFrame("S1");
       slipPoint[0]->setParent(this);
@@ -496,7 +503,7 @@ namespace MBSim {
     double fcorr = (1-Q_CAM*abs(ga))*(1+Q_V2*R0/v0*abs(Om))*(1+PFZ1*dpi);
     double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
     if(mck) {
-      rhoz = -contact->evalGeneralizedRelativePosition()(0) + ROm - R0;
+      rhoz = -contact->evalGeneralizedRelativePosition()(0) + (ROm - R0)*cos(ga);
       if(rhoz<0) rhoz = 0;
       Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0 - dz*contact->evalGeneralizedRelativeVelocity()(2);
       slipPoint[0]->setPosition(contact->getContourFrame(1)->getPosition() - ((rhoz-Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz)))*contact->getContourFrame(1)->getOrientation().col(2)); // Pacejka
@@ -508,9 +515,9 @@ namespace MBSim {
       double rhozfr = ROm-Rl;
       if(rhozfr<0) rhozfr = 0;
       double rhozg = 0;
-//      double rtw = 0; // TODO no equation for rtw in manual
-//      if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
-//	rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
+      double rtw = 0.8*w; // TODO no equation for rtw in manual
+      if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
+	rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
       rhoz = rhozfr+rhozg;
       if(rhoz<0) rhoz = 0;
 //      double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
