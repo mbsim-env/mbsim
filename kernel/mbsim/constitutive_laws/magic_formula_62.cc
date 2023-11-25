@@ -75,7 +75,7 @@ namespace MBSim {
 	    getline(file,line);
 	  }
 	  if(p<0) p = stod(value[0]);
-	  if(p0<0) p0 = stod(value[1]);
+	  p0 = stod(value[1]);
 	}
 	found = line.find("[VERTICAL]");
 	if(found!=string::npos) {
@@ -126,6 +126,56 @@ namespace MBSim {
 	  PCFY2 = stod(value[19]);
 	  PCFY3 = stod(value[20]);
 	  PCMZ1 = stod(value[21]);
+	}
+	found = line.find("[INFLATION_PRESSURE_RANGE]");
+	if(found!=string::npos) {
+	  string value[2];
+	  for(int i=0; i<2; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  PRESMIN = stod(value[0]);
+	  PRESMAX = stod(value[1]);
+	}
+	found = line.find("[VERTICAL_FORCE_RANGE]");
+	if(found!=string::npos) {
+	  string value[2];
+	  for(int i=0; i<2; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  FZMIN = stod(value[0]);
+	  FZMAX = stod(value[1]);
+	}
+	found = line.find("[LONG_SLIP_RANGE]");
+	if(found!=string::npos) {
+	  string value[2];
+	  for(int i=0; i<2; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  KPUMIN = stod(value[0]);
+	  KPUMAX = stod(value[1]);
+	}
+	found = line.find("SLIP_ANGLE_RANGE]");
+	if(found!=string::npos) {
+	  string value[2];
+	  for(int i=0; i<2; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  ALPMIN = stod(value[0]);
+	  ALPMAX = stod(value[1]);
+	}
+	found = line.find("[INCLINATION_ANGLE_RANGE]");
+	if(found!=string::npos) {
+	  string value[2];
+	  for(int i=0; i<2; i++) {
+	    file >> name >> str >> value[i];
+	    getline(file,line);
+	  }
+	  CAMMIN = stod(value[0]);
+	  CAMMAX = stod(value[1]);
 	}
 	found = line.find("[SCALING_COEFFICIENTS]");
 	if(found!=string::npos) {
@@ -367,6 +417,10 @@ namespace MBSim {
     else if(stage==unknownStage) {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+      if(p > PRESMAX)
+	p = PRESMAX;
+      else if(p < PRESMIN)
+	p = PRESMIN;
       dpi = (p-p0)/p0;
       constsix = six>=0;
       constsiy = siy>=0;
@@ -490,6 +544,10 @@ namespace MBSim {
     Fz0 *= LFZ0;
 
     ga = asin(tyre->getFrame()->evalOrientation().col(1).T()*contact->getContourFrame(0)->evalOrientation().col(2));
+    if(abs(ga) > CAMMAX)
+      ga = sgn(ga)*CAMMAX;
+    else if(abs(ga) < CAMMIN)
+      ga = sgn(ga)*CAMMIN;
 
     vx = contact->getContourFrame(0)->getOrientation().col(0).T()*tyre->getFrame()->evalVelocity();
     vsx = contact->evalGeneralizedRelativeVelocity()(0);
@@ -538,12 +596,29 @@ namespace MBSim {
     vsy = slipPoint[0]->getOrientation().col(1).T()*WvD;
 
     if(Fz>0) {
-      if(Fz<1) Fz = 1;
+      if(Fz > FZMAX)
+	Fz = FZMAX;
+      else if(Fz < FZMIN) {
+        LFM = Fz/FZMIN;
+	Fz = FZMIN;
+      }
       double dfz = (Fz-Fz0)/Fz0;
       int i = 0;
       double alM = atan(vsy/vcx);
+      if(abs(alM) > ALPMAX)
+	alM = sgn(alM)*ALPMAX;
+      else if(abs(alM) < ALPMIN)
+	alM = sgn(alM)*ALPMIN;
       ka = six!=0 ? contact->getx()(i++) : -vsx/vcx;
+      if(abs(ka) > KPUMAX)
+	ka = sgn(ka)*KPUMAX;
+      else if(abs(ka) < KPUMIN)
+	ka = sgn(ka)*KPUMIN;
       alF = siy!=0 ? contact->getx()(i) : alM;
+      if(abs(alF) > ALPMAX)
+	alF = sgn(alF)*ALPMAX;
+      else if(abs(alF) < ALPMIN)
+	alF = sgn(alF)*ALPMIN;
 
       if(ts) {
 	double Om = tyre->getFrame()->evalOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
@@ -689,12 +764,12 @@ namespace MBSim {
       Mz -= dy*Fx;
     }
 
-    contact->getGeneralizedForce(false)(0) = Fx;
-    contact->getGeneralizedForce(false)(1) = Fy;
-    contact->getGeneralizedForce(false)(2) = Fz;
-    contact->getGeneralizedForce(false)(3) = Mx;
-    contact->getGeneralizedForce(false)(4) = My;
-    contact->getGeneralizedForce(false)(5) = Mz;
+    contact->getGeneralizedForce(false)(0) = LFM*Fx;
+    contact->getGeneralizedForce(false)(1) = LFM*Fy;
+    contact->getGeneralizedForce(false)(2) = LFM*Fz;
+    contact->getGeneralizedForce(false)(3) = LFM*Mx;
+    contact->getGeneralizedForce(false)(4) = LFM*My;
+    contact->getGeneralizedForce(false)(5) = LFM*Mz;
   }
 
   VecV MagicFormula62::getData() const {
