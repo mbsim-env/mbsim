@@ -53,7 +53,7 @@ namespace MBSimGUI {
       StringWidget(const QString &d="", const QString &p="\"\"");
       void setReadOnly(bool flag) override {box->setReadOnly(flag);}
       QString getValue() const override { return box->text().isEmpty()?box->placeholderText():box->text(); }
-      void setValue(const QString &str) override {box->setText(str==box->placeholderText()?"":str);}
+      void setValue(const QString &str) override {box->setText(str);}
       int getVarType() const override { return 1; }
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       std::vector<std::vector<QString>> getEvalMat() const override;
@@ -101,7 +101,7 @@ namespace MBSimGUI {
       ScalarWidget(const QString &d="1", QString defaultValue_="0");
       void setReadOnly(bool flag) override {box->setReadOnly(flag);}
       QString getValue() const override { return box->text().isEmpty()?defaultValue:box->text(); }
-      void setValue(const QString &str) override {box->setText(str==defaultValue?"":str);}
+      void setValue(const QString &str) override {box->setText(str);}
       void setDefaultValue(const QString &str) override { defaultValue = str; box->setPlaceholderText(defaultValue);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       std::vector<std::vector<QString>> getEvalMat() const override;
@@ -393,7 +393,7 @@ namespace MBSimGUI {
     public:
       AboutXWidget();
       QString getValue() const override { return box->text().isEmpty()?"0":box->text(); }
-      void setValue(const QString &str) override {box->setText(str=="0"?"":str);}
+      void setValue(const QString &str) override {box->setText(str);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       QString getUnit() const { return unit->currentText(); }
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
@@ -410,7 +410,7 @@ namespace MBSimGUI {
     public:
       AboutYWidget();
       QString getValue() const override { return box->text().isEmpty()?"0":box->text(); }
-      void setValue(const QString &str) override {box->setText(str=="0"?"":str);}
+      void setValue(const QString &str) override {box->setText(str);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       QString getUnit() const { return unit->currentText(); }
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}
@@ -427,7 +427,7 @@ namespace MBSimGUI {
     public:
       AboutZWidget();
       QString getValue() const override { return box->text().isEmpty()?"0":box->text(); }
-      void setValue(const QString &str) override {box->setText(str=="0"?"":str);}
+      void setValue(const QString &str) override {box->setText(str);}
       bool validate(const std::vector<std::vector<QString>> &A) const override;
       QString getUnit() const { return unit->currentText(); }
       void setUnit(const QString &unit_) {unit->setCurrentIndex(unit->findText(unit_));}

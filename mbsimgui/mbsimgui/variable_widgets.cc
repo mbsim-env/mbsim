@@ -282,10 +282,7 @@ namespace MBSimGUI {
           static_cast<QGridLayout*>(layout())->addWidget(box[i], 0, i);
         else
           static_cast<QGridLayout*>(layout())->addWidget(box[i], i, 0);
-      }
-      for(int i=0; i<min((int)buf.size(),size); i++) {
-        assert(box[i]);
-        box[i]->setText(buf[i]);
+	box[i]->setText(i<buf.size()?buf[i]:defaultValue);
       }
     }
   }
@@ -302,7 +299,7 @@ namespace MBSimGUI {
   void VecWidget::setVec(const vector<QString> &x) {
     resize_(x.size());
     for(unsigned int i=0; i<box.size(); i++)
-      box[i]->setText(x[i]==defaultValue?"":x[i]);
+      box[i]->setText(x[i]);
   }
 
   void VecWidget::setReadOnly(bool flag) {
@@ -404,9 +401,8 @@ namespace MBSimGUI {
         QTableWidgetItem *newItem = new QTableWidgetItem("0");
         table->setItem(i,0,newItem);
         //box[i][j]->setPlaceholderText("0");
+	if(i<buf.size()) table->item(i,0)->setText(buf[i]);
       }
-      for(int i=0; i<min((int)buf.size(),size); i++)
-        table->item(i,0)->setText(buf[i]);
     }
   }
 
@@ -512,11 +508,9 @@ namespace MBSimGUI {
           box[i][j]->setPlaceholderText("0");
           //box[i][j]->setText("0");
           static_cast<QGridLayout*>(layout())->addWidget(box[i][j], i, j);
+	  box[i][j]->setText((i<buf.size() and j<buf[i].size())?buf[i][j]:"0");
         }
       }
-      for(int i=0; i<min((int)buf.size(),rows); i++)
-        for(int j=0; j<min((int)buf[i].size(),cols); j++)
-          box[i][j]->setText(buf[i][j]);
     }
   }
 
@@ -536,7 +530,7 @@ namespace MBSimGUI {
     resize_(A.size(),A.empty()?0:A[0].size());
     for(unsigned int i=0; i<box.size(); i++) 
       for(unsigned int j=0; j<box[i].size(); j++)
-        box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
+        box[i][j]->setText(A[i][j]);
   }
 
   void MatWidget::setReadOnly(bool flag) {
@@ -803,13 +797,12 @@ namespace MBSimGUI {
           static_cast<QGridLayout*>(layout())->addWidget(box[i][j], i, j);
         }
       }
-      for(unsigned int i=0; i<box.size(); i++)
-        for(unsigned int j=0; j<box.size(); j++)
+      for(unsigned int i=0; i<box.size(); i++) {
+        for(unsigned int j=0; j<box.size(); j++) {
+	  box[i][j]->setText((i<buf.size() and j<buf[i].size())?buf[i][j]:"0");
           if(i!=j)
             connect(box[i][j],&QLineEdit::textEdited,box[j][i],&QLineEdit::setText);
-      for(int i=0; i<min((int)buf.size(),rows); i++) {
-        for(int j=0; j<min((int)buf[i].size(),rows); j++)
-          box[i][j]->setText(buf[i][j]);
+	}
       }
     }
   }
@@ -830,7 +823,7 @@ namespace MBSimGUI {
     resize_(A.size());
     for(unsigned int i=0; i<box.size(); i++) {
       for(unsigned int j=0; j<box.size(); j++)
-        box[i][j]->setText(A[i][j]=="0"?"":A[i][j]);
+        box[i][j]->setText(A[i][j]);
     }
   }
 
@@ -947,11 +940,10 @@ namespace MBSimGUI {
           QTableWidgetItem *newItem = new QTableWidgetItem("0");
           table->setItem(i,j,newItem);
           //box[i][j]->setPlaceholderText("0");
+	  if(i<buf.size() and j<buf[i].size())
+	    table->item(i,j)->setText(buf[i][j]);
         }
       }
-      for(int i=0; i<min((int)buf.size(),rows); i++)
-        for(int j=0; j<min((int)buf[i].size(),cols); j++)
-          table->item(i,j)->setText(buf[i][j]);
     }
   }
 
@@ -1010,7 +1002,7 @@ namespace MBSimGUI {
 
   void CardanWidget::setAngles(const vector<QString> &x) {
     for(unsigned int i=0; i<box.size(); i++)
-      box[i]->setText(x[i]=="0"?"":x[i]);
+      box[i]->setText(x[i]);
   }
 
   void CardanWidget::setReadOnly(bool flag) {

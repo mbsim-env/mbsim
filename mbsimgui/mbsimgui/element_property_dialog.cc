@@ -1369,6 +1369,7 @@ namespace MBSimGUI {
     addTab("Kinematics",1);
 
     R = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(body,body->getParent()->getFrame(0),this),true,false,MBSIM%"frameOfReference");
+    static_cast<ElementOfReferenceWidget<Frame>*>(R->getWidget())->setDefaultElement("../Frame[I]");
     addToTab("Kinematics",R);
   }
 
