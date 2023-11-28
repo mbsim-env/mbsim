@@ -57,6 +57,8 @@ namespace MBSimGUI {
       void setStatusUpdate(bool flag);
       QString getPlugins() const;
       void setPlugins(const QString &path);
+      int getDefaultEvaluator() const;
+      void setDefaultEvaluator(int index);
       int getBaseIndexForPlot() const;
       void setBaseIndexForPlot(int index);
       QString getModulePath() const;
@@ -66,7 +68,7 @@ namespace MBSimGUI {
       void autoExportChanged(int state);
       void openFileBrowser();
       QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *showHiddenElements, *autoRefresh, *statusUpdate;
-      QComboBox *baseIndex;
+      QComboBox *defaultEvaluator, *baseIndex;
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;
       QPushButton *button;

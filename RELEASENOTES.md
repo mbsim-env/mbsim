@@ -28,6 +28,7 @@ MBSimGUI
 - Show all possible item names in the model and parameter tree. There can be more than one name
   if the item name depends on a Array/Pattern counter variable.
 - Show default values only when line edit is cleared
+- Enable feature "default evaluator" within settings dialog
 
 MBSimXML
 --------
