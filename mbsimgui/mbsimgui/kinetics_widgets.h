@@ -289,7 +289,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       void inputFileChanged(const QString &fileName);
-      ExtWidget *inputDataFile, *mck, *ts, *six, *siy, *p, *cz, *dz, *sfFx, *sfFy, *sfMx, *sfMy, *sfMz, *sfmux, *sfmuy, *sfkx, *sfky, *sfkg, *sfkm;
+      ExtWidget *inputDataFile, *tyreSide, *mck, *cpt, *ts, *six, *siy, *p, *cz, *dz, *sfFx, *sfFy, *sfMx, *sfMy, *sfMz, *sfs, *sfmux, *sfmuy, *sfkx, *sfky, *sfkg, *sfkm;
   };
 
 }

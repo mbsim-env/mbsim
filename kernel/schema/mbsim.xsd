@@ -4646,7 +4646,17 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
+          <xs:element name="tyreSide" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+	        tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="motorcycleKinematics" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="contactPointTransformation" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
@@ -4702,6 +4712,11 @@
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="scaleFactorForAligningMoment" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="scaleFactorForMomentArmOfLongitudinalForce" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
             </xs:documentation></xs:annotation>
