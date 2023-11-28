@@ -27,7 +27,7 @@ MBSimGUI
 - Enable general embeddings for openMBVObject within MBSimEnvironment
 - Show all possible item names in the model and parameter tree. There can be more than one name
   if the item name depends on a Array/Pattern counter variable.
-- Revise implementation of default values
+- Show default values only when line edit is cleared
 
 MBSimXML
 --------
