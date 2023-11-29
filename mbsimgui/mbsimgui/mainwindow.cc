@@ -635,6 +635,7 @@ namespace MBSimGUI {
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
+    menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
     menu.setBaseIndexForPlot(settings.value("mainwindow/options/baseindexforplot", 0).toInt());
 
 #ifdef _WIN32
@@ -663,6 +664,7 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/autorefresh"       , menu.getAutoRefresh());
       settings.setValue("mainwindow/options/statusupdate"      , menu.getStatusUpdate());
       settings.setValue("mainwindow/options/plugins"           , menu.getPlugins());
+      settings.setValue("mainwindow/options/defaultevaluator"  , menu.getDefaultEvaluator());
       settings.setValue("mainwindow/options/baseindexforplot"  , menu.getBaseIndexForPlot());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
@@ -692,6 +694,8 @@ namespace MBSimGUI {
       if(oldPlugins!=menu.getPlugins())
         QMessageBox::information(this, "Program restart required!",
           "The MBSimGUI plugin search path has changed.\nThis needs a restart of MBSimGUI to take effect.");
+
+      project->setDefaultEvaluator(menu.getDefaultEvaluator());
     }
   }
 

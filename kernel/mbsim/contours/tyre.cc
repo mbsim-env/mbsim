@@ -32,60 +32,71 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Tyre)
 
   void Tyre::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==plotting) {
+    if(stage==preInit) {
+      if(rRim>0) {
+	msg(Deprecated) << "(Tyre::init): rim radius is deprecated. Use ellipse parameters to define tyre contour." << endl;
+	ab(0) = r-rRim;
+	ab(1) = ab(0);
+      }
+      if(fabs(ab(0)-ab(1))>1e-8)
+	throwError("(Tyre::init): currently only circle contours are supported.");
+      if(w<0) w = 2*ab(1);
+    }
+    else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
 	int nEta = 51;
 	int nXi;
 	vector<vector<double>> vp;
-	if(w > 0) {
+	if(ab(1)>0) {
+	  nXi = 51;
+	  vector<double> ombvXiNodes(nXi);
+	  vp.resize(nEta*nXi);
+	  double b = ab(1);
+	  double al = (w/2<b)?asin(w/2/b):M_PI/2;
+	  for (int i=0; i<nEta; i++) {
+	    double eta = 2*M_PI*i/50.;
+	    for (int j=0; j<nXi; j++) {
+	      double xi = -al + 2*al*j/50.;
+	      vp[i*nXi+j].push_back((r-b*(1-cos(xi)))*cos(eta));
+	      vp[i*nXi+j].push_back(-b*sin(xi));
+	      vp[i*nXi+j].push_back((r-b*(1-cos(xi)))*sin(eta));
+	    }
+	  }
+	}
+	else {
 	  nXi = 48;
 	  vp.resize(nEta*nXi);
 	  for (int i=0; i<nEta; i++) {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<2; j++) {
-	      double xi = rRim*(1-j) + (rUnloaded-0.1*w)*j;
+	      double xi = 0.7*r*(1-j) + (r-0.1*w)*j;
 	      vp[i*nXi+j].push_back(xi*cos(eta));
 	      vp[i*nXi+j].push_back(w/2);
 	      vp[i*nXi+j].push_back(xi*sin(eta));
 	    }
 	    for (int j=0; j<21; j++) {
 	      double xi = M_PI/2*j/20.;
-	      vp[i*nXi+2+j].push_back((rUnloaded+0.1*w*(sin(xi)-1))*cos(eta));
+	      vp[i*nXi+2+j].push_back((r+0.1*w*(sin(xi)-1))*cos(eta));
 	      vp[i*nXi+2+j].push_back(w*(0.4+0.1*cos(xi)));
-	      vp[i*nXi+2+j].push_back((rUnloaded+0.1*w*(sin(xi)-1))*sin(eta));
+	      vp[i*nXi+2+j].push_back((r+0.1*w*(sin(xi)-1))*sin(eta));
 	    }
 	    for (int j=0; j<2; j++) {
-	      double xi = -0.8*w/2 + 0.8*w*j;
-	      vp[i*nXi+23+j].push_back(rUnloaded*cos(eta));
+	      double xi = -0.7*w/2 + 0.7*w*j;
+	      vp[i*nXi+23+j].push_back(r*cos(eta));
 	      vp[i*nXi+23+j].push_back(-xi);
-	      vp[i*nXi+23+j].push_back(rUnloaded*sin(eta));
+	      vp[i*nXi+23+j].push_back(r*sin(eta));
 	    }
 	    for (int j=0; j<21; j++) {
 	      double xi = M_PI/2 - M_PI/2*j/20.;
-	      vp[i*nXi+25+j].push_back((rUnloaded+0.1*w*(sin(xi)-1))*cos(eta));
+	      vp[i*nXi+25+j].push_back((r+0.1*w*(sin(xi)-1))*cos(eta));
 	      vp[i*nXi+25+j].push_back(-w*(0.4+0.1*cos(xi)));
-	      vp[i*nXi+25+j].push_back((rUnloaded+0.1*w*(sin(xi)-1))*sin(eta));
+	      vp[i*nXi+25+j].push_back((r+0.1*w*(sin(xi)-1))*sin(eta));
 	    }
 	    for (int j=0; j<2; j++) {
-	      double xi = (rUnloaded-0.1*w)*(1-j)+rRim*j;
+	      double xi = (r-0.1*w)*(1-j)+0.7*r*j;
 	      vp[i*nXi+46+j].push_back(xi*cos(eta));
 	      vp[i*nXi+46+j].push_back(-w/2);
 	      vp[i*nXi+46+j].push_back(xi*sin(eta));
-	    }
-	  }
-	}
-	else {
-	  nXi = 51;
-	  vector<double> ombvXiNodes(nXi);
-	  vp.resize(nEta*nXi);
-	  double rCrown = rUnloaded-rRim;
-	  for (int i=0; i<nEta; i++) {
-	    double eta = 2*M_PI*i/50.;
-	    for (int j=0; j<nXi; j++) {
-	      double xi = -M_PI/2 + M_PI*j/50.;
-	      vp[i*nXi+j].push_back((rRim+rCrown*cos(xi))*cos(eta));
-	      vp[i*nXi+j].push_back(-rCrown*sin(xi));
-	      vp[i*nXi+j].push_back((rRim+rCrown*cos(xi))*sin(eta));
 	    }
 	  }
 	}
@@ -111,12 +122,23 @@ namespace MBSim {
   void Tyre::initializeUsingXML(DOMElement *element) {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedRadius");
-    setUnloadedRadius(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
+    if(e)
+      setRadius(E(e)->getText<double>());
+    else {
+      e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedRadius");
+      Deprecated::message(cout, "Feature unloadedRadius is deprecated. Use feature radius instead.", e);
+      setRadius(E(e)->getText<double>());
+    }
     e=E(element)->getFirstElementChildNamed(MBSIM%"rimRadius");
-    setRimRadius(E(e)->getText<double>());
+    if(e) {
+      Deprecated::message(cout, "Feature rimRadius is deprecated. Use feature ellipseParameters to define tyre contour.", e);
+      rRim = E(e)->getText<double>();
+    }
     e=E(element)->getFirstElementChildNamed(MBSIM%"width");
     if(e) setWidth(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"ellipseParameters");
+    if(e) setEllipseParameters(E(e)->getText<Vec2>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       auto ombv = shared_ptr<OpenMBVSpatialContour>(new OpenMBVSpatialContour);

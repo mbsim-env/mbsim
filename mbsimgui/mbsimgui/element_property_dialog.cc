@@ -56,6 +56,22 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  // For now we just store the plotAttribute's in ElementPropertyDialog to be able to write it back when an element is changed and save.
+  // This needs to be extended to view and edit the plotAttribute's in MBSimGUI (its a missing feature for now).
+  // If done so it should be done similarly to plotFeature's: new ExtWidget("Plot attributes",new PlotAttributeWidget(...));
+  class PlotAttributeStore {
+    public:
+      DOMElement* initializeUsingXML(DOMElement *parent);
+      DOMElement* writeXMLFile(DOMNode *parent, DOMNode *ref);
+    private:
+      struct PA {
+        string type; // = XML local element name
+        string name;
+        string code;
+      };
+      vector<PA> pas;
+  };
+
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
       ConnectRigidBodiesWidgetFactory(Element *element_, QWidget *parent_);
@@ -85,11 +101,13 @@ namespace MBSimGUI {
     addTab("Plot");
     plotFeature = new ExtWidget("Plot features",new PlotFeatureWidget(getElement()->getPlotFeatureType()));
     addToTab("Plot", plotFeature);
+    plotAttribute = make_unique<PlotAttributeStore>();
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
     static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     plotFeature->initializeUsingXML(item->getXMLElement());
+    plotAttribute->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -98,6 +116,7 @@ namespace MBSimGUI {
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     item->updateName();
     plotFeature->writeXMLFile(item->getXMLElement(),ref);
+    plotAttribute->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -872,17 +891,20 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TyrePropertyDialog::TyrePropertyDialog(Element *gear) : RigidContourPropertyDialog(gear) {
+  TyrePropertyDialog::TyrePropertyDialog(Element *tyre) : RigidContourPropertyDialog(tyre) {
     addTab("Visualization",1);
 
-    rUnloaded = new ExtWidget("Unloaded radius",new ChoiceWidget(new ScalarWidgetFactory("0.3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"unloadedRadius");
-    addToTab("General", rUnloaded);
+    r = new ExtWidget("Radius",new ChoiceWidget(new ScalarWidgetFactory("0.3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
+    addToTab("General", r);
 
-    rRim = new ExtWidget("Rim radius",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"rimRadius");
+    rRim = new ExtWidget("Rim radius",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"rimRadius");
     addToTab("General", rRim);
 
-    w = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"width");
+    w = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"width");
     addToTab("General", w);
+
+    ab = new ExtWidget("Ellipse parameters",new ChoiceWidget(new VecWidgetFactory(2,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"ellipseParameters");
+    addToTab("General", ab);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -890,18 +912,22 @@ namespace MBSimGUI {
 
   DOMElement* TyrePropertyDialog::initializeUsingXML(DOMElement *parent) {
     RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
-    rUnloaded->initializeUsingXML(item->getXMLElement());
+    DOMElement *ele = E(item->getXMLElement())->getFirstElementChildNamed(MBSIM%"unloadedRadius");
+    if(ele) ele->getOwnerDocument()->renameNode(ele,X()%MBSIM.getNamespaceURI(),X()%"radius");
+    r->initializeUsingXML(item->getXMLElement());
     rRim->initializeUsingXML(item->getXMLElement());
     w->initializeUsingXML(item->getXMLElement());
+    ab->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* TyrePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
-    rUnloaded->writeXMLFile(item->getXMLElement(),nullptr);
+    r->writeXMLFile(item->getXMLElement(),nullptr);
     rRim->writeXMLFile(item->getXMLElement(),nullptr);
     w->writeXMLFile(item->getXMLElement(),nullptr);
+    ab->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
@@ -1362,6 +1388,7 @@ namespace MBSimGUI {
     addTab("Kinematics",1);
 
     R = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(body,body->getParent()->getFrame(0),this),true,false,MBSIM%"frameOfReference");
+    static_cast<ElementOfReferenceWidget<Frame>*>(R->getWidget())->setDefaultElement("../Frame[I]");
     addToTab("Kinematics",R);
   }
 
@@ -2965,6 +2992,12 @@ namespace MBSimGUI {
     lateralForceArrow = new ExtWidget("Enable openMBV lateral force",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVLateralForce");
     addToTab("Visualization",lateralForceArrow);
 
+    overturningMomentArrow = new ExtWidget("Enable openMBV overturning moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVOverturningMoment");
+    addToTab("Visualization",overturningMomentArrow);
+
+   rollingResistanceMomentArrow = new ExtWidget("Enable openMBV rolling resistance moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVRollingResistanceMoment");
+    addToTab("Visualization",rollingResistanceMomentArrow);
+
     aligningMomentArrow = new ExtWidget("Enable openMBV aligning moment",new InteractionArrowMBSOMBVWidget,true,false,MBSIM%"enableOpenMBVAligningMoment");
     addToTab("Visualization",aligningMomentArrow);
   }
@@ -2975,6 +3008,8 @@ namespace MBSimGUI {
     normalForceArrow->initializeUsingXML(item->getXMLElement());
     longitudinalForceArrow->initializeUsingXML(item->getXMLElement());
     lateralForceArrow->initializeUsingXML(item->getXMLElement());
+    overturningMomentArrow->initializeUsingXML(item->getXMLElement());
+    rollingResistanceMomentArrow->initializeUsingXML(item->getXMLElement());
     aligningMomentArrow->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -2985,6 +3020,8 @@ namespace MBSimGUI {
     normalForceArrow->writeXMLFile(item->getXMLElement(),ref);
     longitudinalForceArrow->writeXMLFile(item->getXMLElement(),ref);
     lateralForceArrow->writeXMLFile(item->getXMLElement(),ref);
+    overturningMomentArrow->writeXMLFile(item->getXMLElement(),ref);
+    rollingResistanceMomentArrow->writeXMLFile(item->getXMLElement(),ref);
     aligningMomentArrow->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
@@ -4001,6 +4038,36 @@ namespace MBSimGUI {
     referenceSurface->writeXMLFile(item->getXMLElement(),ref);
     windSpeed->writeXMLFile(item->getXMLElement(),ref);
     enableOpenMBV->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  DOMElement* PlotAttributeStore::initializeUsingXML(DOMElement *parent) {
+    DOMElement *e=parent->getFirstElementChild();
+    while(e && (E(e)->getTagName()==MBSIM%"plotAttribute" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeInt" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloat" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeString" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeIntVector" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloatVector" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")) {
+      string type = E(e)->getTagName().second;
+      string name = E(e)->getAttribute("name");
+      string code = E(e)->getTagName()==MBSIM%"plotAttribute" ? "" : E(e)->getText<string>();
+      pas.emplace_back(PA{type, name, code});
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
+  DOMElement* PlotAttributeStore::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(auto pa : pas) {
+      DOMElement *ele = D(doc)->createElement(MBSIM%pa.type);
+      E(ele)->setAttribute("name", pa.name);
+      if(pa.type != "plotAttribute")
+        ele->insertBefore(doc->createTextNode(X()%pa.code), nullptr);
+      parent->insertBefore(ele, ref);
+    }
     return nullptr;
   }
 

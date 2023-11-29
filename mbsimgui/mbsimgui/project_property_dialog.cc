@@ -40,7 +40,7 @@ namespace MBSimGUI {
     list.emplace_back("octave");
     list.emplace_back("python");
     list.emplace_back("xmlflat");
-    evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,0),true,false,PV%"evaluator");
+    evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,project->getDefaultEvaluator()),true,false,PV%"evaluator");
     addToTab("General",evalSelect);
   }
 

@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class ExtWidget;
   class Element;
+  class PlotAttributeStore;
 
   class ElementPropertyDialog : public EmbedItemPropertyDialog {
 
@@ -36,6 +37,7 @@ namespace MBSimGUI {
       Element* getElement() const;
     protected:
       ExtWidget *name, *plotFeature;
+      std::unique_ptr<PlotAttributeStore> plotAttribute;
   };
 
   class FramePropertyDialog : public ElementPropertyDialog {
@@ -281,11 +283,11 @@ namespace MBSimGUI {
   class TyrePropertyDialog : public RigidContourPropertyDialog {
 
     public:
-      TyrePropertyDialog(Element *gear);
+      TyrePropertyDialog(Element *tyre);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *rUnloaded, *rRim, *w, *visu;
+      ExtWidget *r, *rRim, *w, *ab, *visu;
   };
 
   class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
@@ -819,7 +821,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *contactPoints, *normalForceArrow, *longitudinalForceArrow, *lateralForceArrow, *aligningMomentArrow;
+      ExtWidget *contactPoints, *normalForceArrow, *longitudinalForceArrow, *lateralForceArrow, *overturningMomentArrow, *rollingResistanceMomentArrow, *aligningMomentArrow;
   };
 
   class FrameObserverPropertyDialog : public ObserverPropertyDialog {

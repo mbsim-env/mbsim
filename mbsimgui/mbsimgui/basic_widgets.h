@@ -111,10 +111,10 @@ namespace MBSimGUI {
       BasicElementOfReferenceWidget(Element* element_, Element* selectedElement, BasicElementBrowser *eleBrowser_, bool addRatio);
 
       void setDefaultElement(const QString &def) { ele->setPlaceholderText(def); }
-      void setElement(const QString &str) { if(str!=ele->placeholderText()) ele->setText(str); }
+      void setElement(const QString &str) { ele->setText(str); }
       void clear() { ele->setText(""); }
       QString getElement() const { return ele->text().isEmpty()?ele->placeholderText():ele->text(); }
-      void setRatio(const QString &str) { ratio->setText(str=="0"?"":str); }
+      void setRatio(const QString &str) { ratio->setText(str); }
       QString getRatio() const { return ratio->text().isEmpty()?"0":ratio->text(); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;

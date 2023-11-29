@@ -98,6 +98,22 @@ namespace MBSim {
            getOpenMBVGrp()->addObject(lateralForceArrow[i]);
          }
        }
+       if(ombvOverturningMoment) {
+         overturningMomentArrow.resize(ombvOverturningMoment->getSideOfInteraction()==2?2:1);
+         for(size_t i=0; i<overturningMomentArrow.size(); i++) {
+           overturningMomentArrow[i]=ombvOverturningMoment->createOpenMBV();
+           overturningMomentArrow[i]->setName(string("OverturningMoment_")+(overturningMomentArrow.size()>1?to_string(i):string("B")));
+           getOpenMBVGrp()->addObject(overturningMomentArrow[i]);
+         }
+       }
+       if(ombvRollingResistanceMoment) {
+         rollingResistanceMomentArrow.resize(ombvRollingResistanceMoment->getSideOfInteraction()==2?2:1);
+         for(size_t i=0; i<rollingResistanceMomentArrow.size(); i++) {
+           rollingResistanceMomentArrow[i]=ombvRollingResistanceMoment->createOpenMBV();
+           rollingResistanceMomentArrow[i]->setName(string("RollingResistanceMoment_")+(rollingResistanceMomentArrow.size()>1?to_string(i):string("B")));
+           getOpenMBVGrp()->addObject(rollingResistanceMomentArrow[i]);
+         }
+       }
        if(ombvAligningMoment) {
          aligningMomentArrow.resize(ombvAligningMoment->getSideOfInteraction()==2?2:1);
          for(size_t i=0; i<aligningMomentArrow.size(); i++) {
@@ -213,6 +229,40 @@ namespace MBSim {
           lateralForceArrow[i]->append(data);
         }
       }
+      if(ombvOverturningMoment) {
+        int off = ombvOverturningMoment->getSideOfInteraction()==0?1:0;
+        for(size_t i=0; i<overturningMomentArrow.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 M = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(0)*(iM==5?static_cast<TyreContact*>(link)->evalGeneralizedForce()(3):0.);
+          data.push_back(M(0));
+          data.push_back(M(1));
+          data.push_back(M(2));
+          data.push_back(1);
+          overturningMomentArrow[i]->append(data);
+        }
+      }
+      if(ombvRollingResistanceMoment) {
+        int off = ombvRollingResistanceMoment->getSideOfInteraction()==0?1:0;
+        for(size_t i=0; i<rollingResistanceMomentArrow.size(); i++) {
+          vector<double> data;
+          data.push_back(getTime());
+          Vec3 toPoint = static_cast<TyreContact*>(link)->getContourFrame(off+i)->evalPosition();
+          data.push_back(toPoint(0));
+          data.push_back(toPoint(1));
+          data.push_back(toPoint(2));
+          Vec3 M = ((off+i)==1?1.:-1.)*static_cast<TyreContact*>(link)->evalGlobalForceDirection().col(1)*(iM==5?static_cast<TyreContact*>(link)->evalGeneralizedForce()(4):0.);
+          data.push_back(M(0));
+          data.push_back(M(1));
+          data.push_back(M(2));
+          data.push_back(1);
+          rollingResistanceMomentArrow[i]->append(data);
+        }
+      }
       if(ombvAligningMoment) {
         int off = ombvAligningMoment->getSideOfInteraction()==0?1:0;
         for(size_t i=0; i<aligningMomentArrow.size(); i++) {
@@ -257,6 +307,16 @@ namespace MBSim {
     if (e) {
       ombvLateralForce = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvLateralForce->initializeUsingXML(e);
+    }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVOverturningMoment");
+    if (e) {
+      ombvOverturningMoment = shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toDoubleHead,OpenMBVArrow::toPoint));
+      ombvOverturningMoment->initializeUsingXML(e);
+    }
+    e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVRollingResistanceMoment");
+    if (e) {
+      ombvRollingResistanceMoment= shared_ptr<OpenMBVInteractionArrow>(new OpenMBVInteractionArrow(0,1,1,OpenMBVArrow::toDoubleHead,OpenMBVArrow::toPoint));
+      ombvRollingResistanceMoment->initializeUsingXML(e);
     }
     e = E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVAligningMoment");
     if (e) {

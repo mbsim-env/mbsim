@@ -54,6 +54,8 @@ namespace MBSimGUI {
       void maybeRemoveEmbedXMLElement() override;
       void setEvaluator(const std::string &evaluator_) { evaluator = evaluator_; }
       const std::string& getEvaluator() { return evaluator; }
+      void setDefaultEvaluator(int index) { defaultEvaluator = index; }
+      int getDefaultEvaluator() const { return defaultEvaluator; }
       const QString& getVarTrue() { return trueMap[evaluator]; }
       const QString& getVarFalse() { return falseMap[evaluator]; }
     private:
@@ -62,6 +64,7 @@ namespace MBSimGUI {
       std::string evaluator{"octave"};
       std::map<std::string,QString> trueMap;
       std::map<std::string,QString> falseMap;
+      int defaultEvaluator{0};
   };
 
 }
