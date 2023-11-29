@@ -60,6 +60,13 @@ namespace MBSimGUI {
     E(element)->setAttribute("name","Project");
     name = "Project";
     parent->insertBefore(element, nullptr);
+    QSettings settings;
+    if(settings.value("mainwindow/options/defaultevaluator", 0).toInt()==1) {
+      DOMElement *ele = D(doc)->createElement(PV%"evaluator");
+      DOMText *text = doc->createTextNode(X()%"python");
+      ele->insertBefore(text, nullptr);
+      element->insertBefore(ele, nullptr);
+    }
     setDynamicSystemSolver(new DynamicSystemSolver);
     dss->createXMLElement(element);
     setSolver(new DOPRI5Integrator);
