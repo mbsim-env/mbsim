@@ -26,6 +26,7 @@ namespace MBSimGUI {
 
   class ExtWidget;
   class Element;
+  class PlotAttributeStore;
 
   class ElementPropertyDialog : public EmbedItemPropertyDialog {
 
@@ -36,6 +37,7 @@ namespace MBSimGUI {
       Element* getElement() const;
     protected:
       ExtWidget *name, *plotFeature;
+      std::unique_ptr<PlotAttributeStore> plotAttribute;
   };
 
   class FramePropertyDialog : public ElementPropertyDialog {

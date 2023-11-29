@@ -56,6 +56,22 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
+  // For now we just store the plotAttribute's in ElementPropertyDialog to be able to write it back when an element is changed and save.
+  // This needs to be extended to view and edit the plotAttribute's in MBSimGUI (its a missing feature for now).
+  // If done so it should be done similarly to plotFeature's: new ExtWidget("Plot attributes",new PlotAttributeWidget(...));
+  class PlotAttributeStore {
+    public:
+      DOMElement* initializeUsingXML(DOMElement *parent);
+      DOMElement* writeXMLFile(DOMNode *parent, DOMNode *ref);
+    private:
+      struct PA {
+        string type; // = XML local element name
+        string name;
+        string code;
+      };
+      vector<PA> pas;
+  };
+
   class ConnectRigidBodiesWidgetFactory : public WidgetFactory {
     public:
       ConnectRigidBodiesWidgetFactory(Element *element_, QWidget *parent_);
@@ -85,11 +101,13 @@ namespace MBSimGUI {
     addTab("Plot");
     plotFeature = new ExtWidget("Plot features",new PlotFeatureWidget(getElement()->getPlotFeatureType()));
     addToTab("Plot", plotFeature);
+    plotAttribute = make_unique<PlotAttributeStore>();
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
     static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     plotFeature->initializeUsingXML(item->getXMLElement());
+    plotAttribute->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -98,6 +116,7 @@ namespace MBSimGUI {
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
     item->updateName();
     plotFeature->writeXMLFile(item->getXMLElement(),ref);
+    plotAttribute->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
@@ -4019,6 +4038,36 @@ namespace MBSimGUI {
     referenceSurface->writeXMLFile(item->getXMLElement(),ref);
     windSpeed->writeXMLFile(item->getXMLElement(),ref);
     enableOpenMBV->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  DOMElement* PlotAttributeStore::initializeUsingXML(DOMElement *parent) {
+    DOMElement *e=parent->getFirstElementChild();
+    while(e && (E(e)->getTagName()==MBSIM%"plotAttribute" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeInt" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloat" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeString" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeIntVector" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloatVector" ||
+                E(e)->getTagName()==MBSIM%"plotAttributeFloatMatrix")) {
+      string type = E(e)->getTagName().second;
+      string name = E(e)->getAttribute("name");
+      string code = E(e)->getTagName()==MBSIM%"plotAttribute" ? "" : E(e)->getText<string>();
+      pas.emplace_back(PA{type, name, code});
+      e=e->getNextElementSibling();
+    }
+    return e;
+  }
+
+  DOMElement* PlotAttributeStore::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(auto pa : pas) {
+      DOMElement *ele = D(doc)->createElement(MBSIM%pa.type);
+      E(ele)->setAttribute("name", pa.name);
+      if(pa.type != "plotAttribute")
+        ele->insertBefore(doc->createTextNode(X()%pa.code), nullptr);
+      parent->insertBefore(ele, ref);
+    }
     return nullptr;
   }
 
