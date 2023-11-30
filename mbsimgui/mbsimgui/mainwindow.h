@@ -161,6 +161,7 @@ namespace MBSimGUI {
       void saveLinearSystemAnalysisAs();
       void help();
       void about();
+      void relnotes();
       void simulate();
       void interrupt();
       void openmbv();
