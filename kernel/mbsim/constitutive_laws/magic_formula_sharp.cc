@@ -209,6 +209,18 @@ namespace MBSim {
     contact->getxd(false)(0) = (atan(vsy/vx) - contact->getx()(0))*vx/si;
   }
 
+  Vec2 MagicFormulaSharp::getEllipseParameters() const {
+    TyreContact *contact = static_cast<TyreContact*>(parent);
+    Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+    return tyre->getEllipseParameters();
+  }
+
+  double MagicFormulaSharp::evalFreeRadius() {
+    TyreContact *contact = static_cast<TyreContact*>(parent);
+    Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+    return tyre->getRadius();
+  }
+
   void MagicFormulaSharp::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));

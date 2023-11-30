@@ -102,6 +102,9 @@ namespace MBSim {
       int getxSize() const override { return 1; }
       void updatexd() override;
 
+      fmatvec::Vec2 getEllipseParameters() const override;
+      double evalFreeRadius() override;
+
       void updateGeneralizedForces() override;
 
       int getDataSize() const override { return 8; }

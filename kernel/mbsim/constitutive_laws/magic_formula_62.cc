@@ -574,6 +574,20 @@ namespace MBSim {
       contact->getxd(false)(i) = (atan(vcy/vcx) - contact->getx()(i))*vcx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
   }
 
+  Vec2 MagicFormula62::getEllipseParameters() const {
+    Vec2 ab(NONINIT);
+    ab(0) = MC_CONTOUR_A*w;
+    ab(1) = MC_CONTOUR_B*w;
+    return ab;
+  }
+
+  double MagicFormula62::evalFreeRadius() {
+    TyreContact *contact = static_cast<TyreContact*>(parent);
+    Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+    double Om = tyre->getFrame()->evalOrientation().col(1).T()*tyre->getFrame()->evalAngularVelocity();
+    return R0*(Q_RE0+Q_V1*pow(Om*R0/v0,2));
+  }
+
   void MagicFormula62::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
@@ -595,25 +609,32 @@ namespace MBSim {
     double Cz = cz*(1+PFZ1*dpi);
     double fcorr = (1-Q_CAM*abs(ga))*(1+Q_V2*R0/v0*abs(Om))*(1+PFZ1*dpi);
     double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
+    double Re;
     if(mck) {
-      rhoz = -contact->evalGeneralizedRelativePosition()(0) + (ROm - R0)*cos(ga);
+      rhoz = -contact->evalGeneralizedRelativePosition()(0);
       if(rhoz<0) rhoz = 0;
       Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0 - dz*contact->evalGeneralizedRelativeVelocity()(2);
-      //slipPoint[0]->setPosition(contact->getContourFrame(1)->getPosition() - ((rhoz-Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz)))*contact->getContourFrame(1)->getOrientation().col(2)); // Pacejka
-      slipPoint[0]->setPosition(contact->getContourFrame(1)->getPosition() - ((rhoz-Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0)))*contact->getContourFrame(1)->getOrientation().col(2)); // Manual
+//      double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
+      double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
+      double rC = MC_CONTOUR_A*w;
+      Re = ROm - rC + (rC-rhoze)*cos(ga);
     }
     else {
       Vec WrWC = contact->getContourFrame(1)->getPosition()-tyre->getFrame()->getPosition();
       double Rl = nrm2(WrWC);
       double rhozfr = ROm-Rl;
       if(rhozfr<0) rhozfr = 0;
-      double rhozg = 0;
-      // double a = R0*(Q_RA2*rhozf/R0 + Q_RA1*sqrt(rhozf/R0));
-      double b = w*(Q_RB2*rhozfr/R0 + Q_RB1*pow(rhozfr/R0,1./3));
-      double rtw = 2*b; // There is no equation for rtw in the manual, thus we use rtw = 2*b
-      if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
-	rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
-      rhoz = rhozfr+rhozg;
+      if(MC_CONTOUR_A>0 and MC_CONTOUR_B>0) {
+	rhoz = rhozfr*cos(ga) + MC_CONTOUR_A*w*(1-cos(ga)); // = (ROm-rC)*cos(ga)+rC-Rl*cos(ga);
+      } else {
+	double rhozg = 0;
+	// double a = R0*(Q_RA2*rhozf/R0 + Q_RA1*sqrt(rhozf/R0));
+	double b = w*(Q_RB2*rhozfr/R0 + Q_RB1*pow(rhozfr/R0,1./3));
+	double rtw = 2*b; // There is no equation for rtw in the manual, thus we use rtw = 2*b
+	if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
+	  rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
+	rhoz = rhozfr+rhozg;
+      }
       if(rhoz<0) rhoz = 0;
 //      double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
 //      double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi); // the dependence on the longitudinal and lateral force is neglected
@@ -621,10 +642,17 @@ namespace MBSim {
       double Fzbtm = czbtm*(rRim+rhobtm-Rl);
       if(Fzbtm>Fz) Fz = Fzbtm;
       Fz -= dz*contact->evalGeneralizedRelativeVelocity()(2)/cos(ga);
-//      double Re = ROm-Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); // Pacejka
-      double Re = ROm-Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
-      slipPoint[0]->setPosition(tyre->getFrame()->getPosition()+(Re/Rl)*WrWC);
+//      double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
+      double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
+      if(MC_CONTOUR_A>0 and MC_CONTOUR_B>0) {
+	double rC = MC_CONTOUR_A*w;
+	Re = ROm - rC + (rC-rhoze)*cos(ga);
+      }
+      else
+	Re = ROm-rhoze;
     }
+    Vec3 n = contact->getContourFrame(1)->getOrientation().col(2)*cos(ga) - contact->getContourFrame(1)->getOrientation().col(1)*sin(ga);
+    slipPoint[0]->setPosition(tyre->getFrame()->getPosition()-Re*n);
     slipPoint[1]->setPosition(slipPoint[0]->getPosition());
     slipPoint[0]->setOrientation(contact->getContourFrame(0)->getOrientation());
     slipPoint[1]->setOrientation(contact->getContourFrame(1)->getOrientation());
@@ -800,7 +828,7 @@ namespace MBSim {
     }
 
     if(mck and contactPointTransformation) {
-      double dy = (tyre->getEllipseParameters()(0)-rhoz)*tan(ga);
+      double dy = (MC_CONTOUR_A*w-rhoz)*tan(ga);
       Mx += dy*Fz;
       Mz -= dy*Fx;
     }
