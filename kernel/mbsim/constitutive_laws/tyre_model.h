@@ -46,7 +46,7 @@ namespace MBSim {
 
       virtual bool motorcycleKinematics() const = 0;
 
-      virtual fmatvec::Vec2 getEllipseParameters() const = 0;
+      virtual fmatvec::VecV getContourParameters() const = 0;
       virtual double evalFreeRadius() = 0;
   };
 

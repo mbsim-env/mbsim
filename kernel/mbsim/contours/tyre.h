@@ -28,6 +28,14 @@ namespace MBSim {
 
   class Tyre : public RigidContour {
     public:
+      enum ShapeOfCrossSectionContour {
+        flat=0,
+        circular,
+	elliptical,
+	parabolic,
+        unknown
+      };
+
       Tyre(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) { }
       ~Tyre() override = default;
 
@@ -35,10 +43,12 @@ namespace MBSim {
 
       void setRadius(double r_) { r = r_; }
       void setWidth(double w_) { w = w_; }
-      void setEllipseParameters(const fmatvec::Vec2 &ab_) { ab = ab_; }
+      void setContourParameters(const fmatvec::VecV &cp_) { cp <<= cp_; }
+      void setShapeOfCrossSectionContour(ShapeOfCrossSectionContour shape_) { shape = shape_; }
       double getRadius() const { return r; }
       double getWidth() const { return w; }
-      const fmatvec::Vec2& getEllipseParameters() const { return ab; }
+      const fmatvec::VecV& getContourParameters() const { return cp; }
+      ShapeOfCrossSectionContour getShapeOfCrossSectionContour() const { return shape; }
 
 //      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),fmatvec::Vec3(std::vector<double>{-1,1,1}))(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
 //        OpenMBVColoredBody ombv(diffuseColor,transparency,pointSize,lineWidth);
@@ -50,7 +60,8 @@ namespace MBSim {
     protected:
       double r{0.3};
       double w{-1};
-      fmatvec::Vec2 ab;
+      ShapeOfCrossSectionContour shape{flat};
+      fmatvec::VecV cp;
       double rRim{0};
   };
 

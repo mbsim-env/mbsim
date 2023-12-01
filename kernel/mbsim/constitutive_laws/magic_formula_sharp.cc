@@ -40,7 +40,7 @@ namespace MBSim {
     if(stage==unknownStage) {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-      double R0_ = tyre->getEllipseParameters()(1)-Fz0/cz;
+      double R0_ = tyre->getContourParameters()(0)-Fz0/cz;
       if(abs(R0_-R0)>1e-6)
 	msg(Warn) << "(MagicFormulaSharp::init): crown radius R0 (" << R0 << ") is different to estimated crown radius of " << tyre->getPath() << " (" << R0_ << ")." << endl;
     }
@@ -209,10 +209,10 @@ namespace MBSim {
     contact->getxd(false)(0) = (atan(vsy/vx) - contact->getx()(0))*vx/si;
   }
 
-  Vec2 MagicFormulaSharp::getEllipseParameters() const {
+  VecV MagicFormulaSharp::getContourParameters() const {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    return tyre->getEllipseParameters();
+    return tyre->getContourParameters();
   }
 
   double MagicFormulaSharp::evalFreeRadius() {

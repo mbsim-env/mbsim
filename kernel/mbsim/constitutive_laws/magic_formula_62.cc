@@ -450,10 +450,10 @@ namespace MBSim {
       constsiy = siy>=0;
       if(abs(tyre->getRadius()-R0)>1e-6)
 	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
-      if(MC_CONTOUR_A > 0 and abs(tyre->getEllipseParameters()(0)-MC_CONTOUR_A*w)>1e-6)
-	msg(Warn) << "Ellipse parameter A of " << tyre->getPath() << " (" << tyre->getEllipseParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
-      if(MC_CONTOUR_B > 0 and abs(tyre->getEllipseParameters()(1)-MC_CONTOUR_B*w)>1e-6)
-	msg(Warn) << "Ellipse parameter B of " << tyre->getPath() << " (" << tyre->getEllipseParameters()(1) << ") is different to ellipse parameter B of " << inputDataFile << " (" << MC_CONTOUR_B*w << ")." << endl;
+//      if(MC_CONTOUR_A > 0 and abs(tyre->getContourParameters()(0)-MC_CONTOUR_A*w)>1e-6)
+//	msg(Warn) << "Contour parameter A of " << tyre->getPath() << " (" << tyre->getContourParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
+//      if(MC_CONTOUR_B > 0 and abs(tyre->getContourParameters()(1)-MC_CONTOUR_B*w)>1e-6)
+//	msg(Warn) << "Contour parameter B of " << tyre->getPath() << " (" << tyre->getContourParameters()(1) << ") is different to ellipse parameter B of " << inputDataFile << " (" << MC_CONTOUR_B*w << ")." << endl;
       slipPoint[0] = contact->getContour(0)->createContourFrame("S0");
       slipPoint[1] = contact->getContour(1)->createContourFrame("S1");
       slipPoint[0]->setParent(this);
@@ -574,11 +574,11 @@ namespace MBSim {
       contact->getxd(false)(i) = (atan(vcy/vcx) - contact->getx()(i))*vcx/siy; // original MF62: (vsy - contact->getx()(0)*vx)/sigy
   }
 
-  Vec2 MagicFormula62::getEllipseParameters() const {
-    Vec2 ab(NONINIT);
-    ab(0) = MC_CONTOUR_A*w;
-    ab(1) = MC_CONTOUR_B*w;
-    return ab;
+  VecV MagicFormula62::getContourParameters() const {
+    VecV cp(2,NONINIT);
+    cp(0) = MC_CONTOUR_A*w;
+    cp(1) = MC_CONTOUR_B*w;
+    return cp;
   }
 
   double MagicFormula62::evalFreeRadius() {

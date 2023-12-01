@@ -33,37 +33,30 @@ namespace MBSim {
 
   void Tyre::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if(shape==circular and cp.size()!=1)
+	throwError("(Tyre::init): 1 contour parameter is needed for circular shape of cross section.");
+      else if(shape==elliptical)
+	throwError("(Tyre::init): parabolic shape of cross section is not yet implemented.");
+//      else if(shape==elliptical and cp.size()!=2)
+//	throwError("(Tyre::init): 2 contour parameters are needed for elliptical shape of cross section.");
+      else if(shape==parabolic and cp.size()!=2)
+	throwError("(Tyre::init): 2 contour parameters are needed for parabolic shape of cross section.");
+      else if(shape==unknown)
+        throwError("(Tyre::init): shape of cross section contour unknown.");
       if(rRim>0) {
 	msg(Deprecated) << "(Tyre::init): rim radius is deprecated. Use ellipse parameters to define tyre contour." << endl;
-	ab(0) = r-rRim;
-	ab(1) = ab(0);
+	cp.resize(1);
+	cp(0) = r-rRim;
+	shape = circular;
       }
-      if(fabs(ab(0)-ab(1))>1e-8)
-	throwError("(Tyre::init): currently only circle contours are supported.");
-      if(w<0) w = 2*ab(1);
+      if(w<0) w = cp.size()?2*cp(0):0;
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
 	int nEta = 51;
-	int nXi;
+	int nXi = 0;
 	vector<vector<double>> vp;
-	if(ab(1)>0) {
-	  nXi = 51;
-	  vector<double> ombvXiNodes(nXi);
-	  vp.resize(nEta*nXi);
-	  double b = ab(1);
-	  double al = (w/2<b)?asin(w/2/b):M_PI/2;
-	  for (int i=0; i<nEta; i++) {
-	    double eta = 2*M_PI*i/50.;
-	    for (int j=0; j<nXi; j++) {
-	      double xi = -al + 2*al*j/50.;
-	      vp[i*nXi+j].push_back((r-b*(1-cos(xi)))*cos(eta));
-	      vp[i*nXi+j].push_back(-b*sin(xi));
-	      vp[i*nXi+j].push_back((r-b*(1-cos(xi)))*sin(eta));
-	    }
-	  }
-	}
-	else {
+	if(shape==flat) {
 	  nXi = 48;
 	  vp.resize(nEta*nXi);
 	  for (int i=0; i<nEta; i++) {
@@ -97,6 +90,36 @@ namespace MBSim {
 	      vp[i*nXi+46+j].push_back(xi*cos(eta));
 	      vp[i*nXi+46+j].push_back(-w/2);
 	      vp[i*nXi+46+j].push_back(xi*sin(eta));
+	    }
+	  }
+	}
+	else if(shape==circular) {
+	  nXi = 51;
+	  vector<double> ombvXiNodes(nXi);
+	  vp.resize(nEta*nXi);
+	  double al = (w/2<cp(0))?asin(w/2/cp(0)):M_PI/2;
+	  for (int i=0; i<nEta; i++) {
+	    double eta = 2*M_PI*i/50.;
+	    for (int j=0; j<nXi; j++) {
+	      double xi = -al + 2*al*j/50.;
+	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*cos(eta));
+	      vp[i*nXi+j].push_back(-cp(0)*sin(xi));
+	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*sin(eta));
+	    }
+	  }
+	}
+	else if(shape==parabolic) {
+	  nXi = 21;
+	  vector<double> ombvXiNodes(nXi);
+	  vp.resize(nEta*nXi);
+	  for (int i=0; i<nEta; i++) {
+	    double eta = 2*M_PI*i/50.;
+	    for (int j=0; j<nXi; j++) {
+	      double xi = -w/2 + w*j/20;
+	      double x = cp(0)*xi*xi + cp(1);
+	      vp[i*nXi+j].push_back(x*cos(eta));
+	      vp[i*nXi+j].push_back(-xi);
+	      vp[i*nXi+j].push_back(x*sin(eta));
 	    }
 	  }
 	}
@@ -137,8 +160,17 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"width");
     if(e) setWidth(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"ellipseParameters");
-    if(e) setEllipseParameters(E(e)->getText<Vec2>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"shapeOfCrossSectionContour");
+    if(e) {
+      string shapeStr=string(X()%E(e)->getFirstTextChild()->getData()).substr(1,string(X()%E(e)->getFirstTextChild()->getData()).length()-2);
+      if(shapeStr=="flat") shape=flat;
+      else if(shapeStr=="circular") shape=circular;
+      else if(shapeStr=="elliptical") shape=elliptical;
+      else if(shapeStr=="parabolic") shape=parabolic;
+      else shape=unknown;
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"contourParameters");
+    if(e) setContourParameters(E(e)->getText<Vec>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
     if(e) {
       auto ombv = shared_ptr<OpenMBVSpatialContour>(new OpenMBVSpatialContour);

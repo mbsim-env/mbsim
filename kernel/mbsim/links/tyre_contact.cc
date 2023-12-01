@@ -58,6 +58,8 @@ namespace MBSim {
 	throwError("(TyreContact::init): first contour must be of type Plane or SpatialContour");
       if(not dynamic_cast<Tyre*>(contour[1]))
 	throwError("(TyreContact::init): second contour must be of type Tyre");
+      if(model->motorcycleKinematics() and (static_cast<Tyre*>(contour[1])->getShapeOfCrossSectionContour()==Tyre::flat or static_cast<Tyre*>(contour[1])->getShapeOfCrossSectionContour()==Tyre::elliptical or static_cast<Tyre*>(contour[1])->getShapeOfCrossSectionContour()==Tyre::parabolic))
+	throwError("(TyreContact::init): shape of tyre contour must be circular");
       DF.resize(3,NONINIT);
       DM.resize(model->getDMSize(),NONINIT);
       iF = RangeV(0,2);
@@ -122,7 +124,7 @@ namespace MBSim {
     Vec3 Wn;
     Vec3 Wb = tyre->getFrame()->evalOrientation().col(1);
     double g;
-    double rCrown = model->getEllipseParameters()(1);
+    double rCrown = model->getContourParameters()(0);
     double rRim = model->evalFreeRadius()-rCrown;
     if(plane) {
       Plane *plane = static_cast<Plane*>(contour[0]);

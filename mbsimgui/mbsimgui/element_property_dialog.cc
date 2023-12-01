@@ -903,11 +903,21 @@ namespace MBSimGUI {
     w = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"width");
     addToTab("General", w);
 
-    ab = new ExtWidget("Ellipse parameters",new ChoiceWidget(new VecWidgetFactory(2,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"ellipseParameters");
-    addToTab("General", ab);
+    vector<QString> list;
+    list.emplace_back("\"flat\"");
+    list.emplace_back("\"circular\"");
+    list.emplace_back("\"elliptical\"");
+    list.emplace_back("\"parabolic\"");
+    shape = new ExtWidget("Shape of cross section contour",new TextChoiceWidget(list,0,false),true,false,MBSIM%"shapeOfCrossSectionContour");
+    addToTab("General", shape);
+
+    cp = new ExtWidget("Contour parameters",new ChoiceWidget(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"contourParameters");
+    addToTab("General", cp);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
+
+    connect(shape, &ExtWidget::widgetChanged, this, &TyrePropertyDialog::updateWidget);
   }
 
   DOMElement* TyrePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -917,7 +927,10 @@ namespace MBSimGUI {
     r->initializeUsingXML(item->getXMLElement());
     rRim->initializeUsingXML(item->getXMLElement());
     w->initializeUsingXML(item->getXMLElement());
-    ab->initializeUsingXML(item->getXMLElement());
+    shape->blockSignals(true);
+    shape->initializeUsingXML(item->getXMLElement());
+    shape->blockSignals(false);
+    cp->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -927,9 +940,31 @@ namespace MBSimGUI {
     r->writeXMLFile(item->getXMLElement(),nullptr);
     rRim->writeXMLFile(item->getXMLElement(),nullptr);
     w->writeXMLFile(item->getXMLElement(),nullptr);
-    ab->writeXMLFile(item->getXMLElement(),nullptr);
+    shape->writeXMLFile(item->getXMLElement(),nullptr);
+    cp->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
+  }
+
+  void TyrePropertyDialog::updateWidget() {
+    if(not shape->isActive()) {
+      cp->setActive(false);
+      return;
+    }
+    auto shapeStr = static_cast<TextChoiceWidget*>(shape->getWidget())->getText();
+    if(shapeStr=="\"flat\"") {
+      cp->resize_(0,1);
+      cp->setActive(false);
+    }
+    else {
+      cp->setActive(true);
+      if(shapeStr=="\"circular\"")
+	cp->resize_(1,1);
+      else if(shapeStr=="\"elliptical\"")
+	cp->resize_(2,1);
+      else if(shapeStr=="\"parabolic\"")
+	cp->resize_(2,1);
+    }
   }
 
   FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {

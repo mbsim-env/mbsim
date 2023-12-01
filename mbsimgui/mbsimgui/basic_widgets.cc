@@ -393,6 +393,13 @@ namespace MBSimGUI {
     connect(text,&QLineEdit::textEdited,this,&Widget::widgetChanged);
   }
 
+  DOMElement* TextWidget::initializeUsingXML(DOMElement *element) {
+    text->blockSignals(true);
+    DOMElement *ele = BasicTextWidget::initializeUsingXML(element);
+    text->blockSignals(false);
+    return ele;
+  }
+
   TextChoiceWidget::TextChoiceWidget(const vector<QString> &list, int num, bool editable) {
     text = new CustomComboBox;
     text->setEditable(editable);
@@ -403,6 +410,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
     layout->addWidget(text);
+    connect(text,&CustomComboBox::currentTextChanged,this,&Widget::widgetChanged);
   }
 
   void TextChoiceWidget::setStringList(const vector<QString> &list) {
@@ -418,6 +426,13 @@ namespace MBSimGUI {
 
   void TextChoiceWidget::setCurrentIndex(int num) {
     text->setCurrentIndex(num);
+  }
+
+  DOMElement* TextChoiceWidget::initializeUsingXML(DOMElement *element) {
+    text->blockSignals(true);
+    DOMElement *ele = BasicTextWidget::initializeUsingXML(element);
+    text->blockSignals(false);
+    return ele;
   }
 
   BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_) {

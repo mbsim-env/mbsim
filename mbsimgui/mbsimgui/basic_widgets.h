@@ -205,6 +205,7 @@ namespace MBSimGUI {
       QString getText() const override { return text->text(); }
       void setText(const QString &text_) override {text->setText(text_);}
       void setReadOnly(bool readOnly) { text->setReadOnly(readOnly); }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       QLineEdit *text;
@@ -223,6 +224,7 @@ namespace MBSimGUI {
           text->setCurrentIndex(text->findText(str));
       }
       void setCurrentIndex(int num);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       QComboBox *text;

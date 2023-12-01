@@ -3911,7 +3911,12 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="ellipseParameters" type="pv:lengthVector" minOccurs="0">
+          <xs:element name="shapeOfCrossSectionContour" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+	        tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="contourParameters" type="pv:lengthVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Parameter der Kontourellipse des Reifens.
