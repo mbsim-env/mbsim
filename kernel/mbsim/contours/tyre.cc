@@ -44,7 +44,7 @@ namespace MBSim {
       else if(shape==unknown)
         throwError("(Tyre::init): shape of cross section contour unknown.");
       if(rRim>0) {
-	msg(Deprecated) << "(Tyre::init): rim radius is deprecated. Use ellipse parameters to define tyre contour." << endl;
+	msg(Deprecated) << "(Tyre::init): rim radius is deprecated. Use shape of cross section contour and contour parameters to define tyre contour." << endl;
 	cp.resize(1);
 	cp(0) = r-rRim;
 	shape = circular;
