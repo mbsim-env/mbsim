@@ -35,10 +35,8 @@ namespace MBSim {
     if(stage==preInit) {
       if(shape==circular and cp.size()!=1)
 	throwError("(Tyre::init): 1 contour parameter is needed for circular shape of cross section.");
-      else if(shape==elliptical)
-	throwError("(Tyre::init): parabolic shape of cross section is not yet implemented.");
-//      else if(shape==elliptical and cp.size()!=2)
-//	throwError("(Tyre::init): 2 contour parameters are needed for elliptical shape of cross section.");
+      else if(shape==elliptical and cp.size()!=2)
+	throwError("(Tyre::init): 2 contour parameters are needed for elliptical shape of cross section.");
       else if(shape==parabolic and cp.size()!=2)
 	throwError("(Tyre::init): 2 contour parameters are needed for parabolic shape of cross section.");
       else if(shape==unknown)
@@ -105,6 +103,21 @@ namespace MBSim {
 	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*cos(eta));
 	      vp[i*nXi+j].push_back(-cp(0)*sin(xi));
 	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*sin(eta));
+	    }
+	  }
+	}
+	else if(shape==elliptical) {
+	  nXi = 51;
+	  vector<double> ombvXiNodes(nXi);
+	  vp.resize(nEta*nXi);
+	  double al = (w/2<cp(0))?asin(w/2/cp(0)):M_PI/2;
+	  for (int i=0; i<nEta; i++) {
+	    double eta = 2*M_PI*i/50.;
+	    for (int j=0; j<nXi; j++) {
+	      double xi = -al + 2*al*j/50.;
+	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*cos(eta));
+	      vp[i*nXi+j].push_back(-cp(0)*sin(xi));
+	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*sin(eta));
 	    }
 	  }
 	}
