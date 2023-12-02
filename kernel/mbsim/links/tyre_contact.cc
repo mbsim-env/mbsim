@@ -153,29 +153,31 @@ namespace MBSim {
 	  double b = model->getContourParameters()(1);
 //	  double y = a*tan(ga)/sqrt(pow(tan(ga),2) + pow(b/a,2));
 //	  double z = r - b + sqrt(b*b - pow(y*b/a,2));
-	  double xi = atan(a/b*tan(ga));
+	  double xi = -atan(a/b*tan(ga));
 	  double y = a*sin(xi);
-	  double z = r - b + b*cos(xi);
+	  double z = b - b*cos(xi) - r;
 	  Vec3 BrSC(NONINIT);
 	  BrSC(0) = 0;
-	  BrSC(1) = -y*cos(ga) + z*sin(ga);
-	  BrSC(2) = -y*sin(ga) - z*cos(ga);
-	  cFrame[1]->setPosition(tyre->getFrame()->getPosition() + cFrame[1]->getOrientation()*BrSC);
-	  Vec3 Wd = cFrame[1]->getPosition(false) - plane->getFrame()->getPosition();
+	  BrSC(1) = y*cos(ga) - z*sin(ga);
+	  BrSC(2) = y*sin(ga) + z*cos(ga);
+	  Vec WrQ = tyre->getFrame()->getPosition() + cFrame[1]->getOrientation()*BrSC;
+	  Vec3 Wd = WrQ - plane->getFrame()->getPosition();
 	  g = Wn.T()*Wd;
+	  cFrame[1]->setPosition(WrQ - min(g,0.)*Wn);
 	}
 	else if(tyre->getShapeOfCrossSectionContour()==Tyre::parabolic) {
 	  double ga = asin(Wb.T()*Wn);
 	  double a = model->getContourParameters()(0);
-	  double y = tan(ga)/(2*a);
-	  double z = r - a*y*y;
+	  double y = -tan(ga)/(2*a);
+	  double z = a*y*y - r;
 	  Vec3 BrSC(NONINIT);
 	  BrSC(0) = 0;
-	  BrSC(1) = -y*cos(ga) + z*sin(ga);
-	  BrSC(2) = -y*sin(ga) - z*cos(ga);
-	  cFrame[1]->setPosition(tyre->getFrame()->getPosition() + cFrame[1]->getOrientation()*BrSC);
-	  Vec3 Wd = cFrame[1]->getPosition(false) - plane->getFrame()->getPosition();
+	  BrSC(1) = y*cos(ga) - z*sin(ga);
+	  BrSC(2) = y*sin(ga) + z*cos(ga);
+	  Vec WrQ = tyre->getFrame()->getPosition() + cFrame[1]->getOrientation()*BrSC;
+	  Vec3 Wd = WrQ - plane->getFrame()->getPosition();
 	  g = Wn.T()*Wd;
+	  cFrame[1]->setPosition(WrQ - min(g,0.)*Wn);
 	}
       }
       else {
