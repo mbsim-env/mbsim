@@ -37,7 +37,7 @@ namespace MBSim {
   }
 
   void MagicFormulaSharp::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==unknownStage) {
+    if(stage==preInit) {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
       double R0_ = tyre->getContourParameters()(0)-Fz0/cz;

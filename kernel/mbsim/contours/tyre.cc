@@ -37,8 +37,11 @@ namespace MBSim {
 	throwError("(Tyre::init): 1 contour parameter is needed for circular shape of cross section.");
       else if(shape==elliptical and cp.size()!=2)
 	throwError("(Tyre::init): 2 contour parameters are needed for elliptical shape of cross section.");
-      else if(shape==parabolic and cp.size()!=2)
-	throwError("(Tyre::init): 2 contour parameters are needed for parabolic shape of cross section.");
+      else if(shape==parabolic) {
+	if(cp.size()!=1)
+	  throwError("(Tyre::init): 1 contour parameter is needed for parabolic shape of cross section.");
+	cp(0) = abs(cp(0));
+      }
       else if(shape==unknown)
         throwError("(Tyre::init): shape of cross section contour unknown.");
       if(rRim>0) {
@@ -129,10 +132,10 @@ namespace MBSim {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<nXi; j++) {
 	      double xi = -w/2 + w*j/20;
-	      double x = cp(0)*xi*xi + cp(1);
-	      vp[i*nXi+j].push_back(x*cos(eta));
+	      double z = r - cp(0)*xi*xi;
+	      vp[i*nXi+j].push_back(z*cos(eta));
 	      vp[i*nXi+j].push_back(-xi);
-	      vp[i*nXi+j].push_back(x*sin(eta));
+	      vp[i*nXi+j].push_back(z*sin(eta));
 	    }
 	  }
 	}

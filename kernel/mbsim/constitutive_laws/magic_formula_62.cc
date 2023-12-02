@@ -433,14 +433,30 @@ namespace MBSim {
       importData();
     }
     if(stage==preInit) {
-      if(tyreSide==unknown)
-        throwError("(MagicFormula62::init): tyre side unknown");
-      else if((tyreSide==left and (TYRESIDE[0]=='r' or TYRESIDE[0]=='R')) or (tyreSide==right and (TYRESIDE[0]=='l' or TYRESIDE[0]=='L')))
-	mirroring = true;
-    }
-    else if(stage==unknownStage) {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+      if(tyreSide==unknown)
+	msg(Warn) << "(MagicFormula62::init): tyre side unknown" << endl;
+      else if((tyreSide==left and (TYRESIDE[0]=='r' or TYRESIDE[0]=='R')) or (tyreSide==right and (TYRESIDE[0]=='l' or TYRESIDE[0]=='L')))
+	mirroring = true;
+      if(abs(tyre->getRadius()-R0)>1e-6)
+	msg(Warn) << "(MagicFormula62::init): unloaded radius of " << tyre->getPath() << " (" << tyre->getRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
+      if(MC_CONTOUR_A > 0) {
+	if(tyre->getShapeOfCrossSectionContour() == Tyre::circular) {
+	  if(abs(MC_CONTOUR_B-MC_CONTOUR_A)>1e-6)
+	    msg(Warn) << "(MagicFormula62::init): shape of tyre contour must be elliptical." << endl;
+	  if(abs(tyre->getContourParameters()(0)-MC_CONTOUR_A*w)>1e-6)
+	    msg(Warn) << "(MagicFormula62::init): contour parameter of " << tyre->getPath() << " (" << tyre->getContourParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
+	}
+	else if(tyre->getShapeOfCrossSectionContour() == Tyre::elliptical) {
+	  if(abs(tyre->getContourParameters()(0)-MC_CONTOUR_A*w)>1e-6)
+	    msg(Warn) << "(MagicFormula62::init): first contour parameter of " << tyre->getPath() << " (" << tyre->getContourParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
+	  if(abs(tyre->getContourParameters()(1)-MC_CONTOUR_B*w)>1e-6)
+	    msg(Warn) << "(MagicFormula62::init): second contour parameter of " << tyre->getPath() << " (" << tyre->getContourParameters()(1) << ") is different to ellipse parameter B of " << inputDataFile << " (" << MC_CONTOUR_B*w << ")." << endl;
+	}
+	else
+	    msg(Warn) << "(MagicFormula62::init): shape of tyre contour must be circular or elliptical." << endl;
+      }
       if(p > PRESMAX)
 	p = PRESMAX;
       else if(p < PRESMIN)
@@ -448,12 +464,9 @@ namespace MBSim {
       dpi = (p-p0)/p0;
       constsix = six>=0;
       constsiy = siy>=0;
-      if(abs(tyre->getRadius()-R0)>1e-6)
-	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
-//      if(MC_CONTOUR_A > 0 and abs(tyre->getContourParameters()(0)-MC_CONTOUR_A*w)>1e-6)
-//	msg(Warn) << "Contour parameter A of " << tyre->getPath() << " (" << tyre->getContourParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
-//      if(MC_CONTOUR_B > 0 and abs(tyre->getContourParameters()(1)-MC_CONTOUR_B*w)>1e-6)
-//	msg(Warn) << "Contour parameter B of " << tyre->getPath() << " (" << tyre->getContourParameters()(1) << ") is different to ellipse parameter B of " << inputDataFile << " (" << MC_CONTOUR_B*w << ")." << endl;
+    }
+    else if(stage==unknownStage) {
+      TyreContact *contact = static_cast<TyreContact*>(parent);
       slipPoint[0] = contact->getContour(0)->createContourFrame("S0");
       slipPoint[1] = contact->getContour(1)->createContourFrame("S1");
       slipPoint[0]->setParent(this);

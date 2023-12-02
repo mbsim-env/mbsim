@@ -963,7 +963,7 @@ namespace MBSimGUI {
       else if(shapeStr=="\"elliptical\"")
 	cp->resize_(2,1);
       else if(shapeStr=="\"parabolic\"")
-	cp->resize_(2,1);
+	cp->resize_(1,1);
     }
   }
 
