@@ -16,6 +16,8 @@ MBSim
 -----
 - Use shape of cross section contour and contour parameters to define tyre contour instead of rim radius. For backward compatibiltiy rim radius is still supported by MBSimXML and MBSimGUI but it should no longer be used.
 - Enable feature "tyre side" and "contact point transformation" in implementation of Magic Formula 6.2
+- Enable tyre cross section contours with flat, circular, elliptical and parabolic shape
+- Enable contact of tyres with elliptical or parabolic shape to arbitray spatial contours
 
 MBSimGUI
 --------
