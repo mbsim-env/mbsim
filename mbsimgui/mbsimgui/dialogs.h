@@ -55,18 +55,12 @@ namespace MBSimGUI {
       Element* getElement() const { return element; }
   };
 
-  class Dialog : public QDialog {
-    public:
-      Dialog(QWidget *parent=nullptr) : QDialog(parent) { }
-    protected:
-      void showEvent(QShowEvent *event) override;
-      void hideEvent(QHideEvent *event) override;
-  };
-
-  class EvalDialog : public Dialog {
+  class EvalDialog : public QDialog {
     public:
       EvalDialog(const std::vector<std::vector<QString>> &var_, int type_, QWidget *parent);
     private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       void formatVariables();
       void updateWidget();
       std::vector<std::vector<QString>> var, varf;
@@ -76,7 +70,7 @@ namespace MBSimGUI {
       QTableWidget *tab;
   };
 
-  class BasicElementBrowser : public Dialog {
+  class BasicElementBrowser : public QDialog {
     public:
       BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent);
       ~BasicElementBrowser() override = default;
@@ -102,23 +96,27 @@ namespace MBSimGUI {
       bool checkForElement(TreeItemData *element) override { return dynamic_cast<T*>(element); }
   };
 
-  class SourceCodeDialog : public Dialog {
+  class SourceCodeDialog : public QDialog {
     public:
       SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent);
       void highlightLine(int n);
     private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       XMLEditorWidget *xmlEditor;
   };
 
-  class StateTableDialog : public Dialog {
+  class StateTableDialog : public QDialog {
     public:
       StateTableDialog(QWidget *parent);
       void updateWidget();
     private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       QTreeWidget *stateTable;
   };
 
-  class LoadModelDialog : public Dialog {
+  class LoadModelDialog : public QDialog {
     public:
       LoadModelDialog(const QString &title);
       QString getModelFileName() const;
@@ -128,37 +126,45 @@ namespace MBSimGUI {
       bool getAbsoluteModelFilePath() const;
       bool getAbsoluteParameterFilePath() const;
     private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      void modelFileChanged(const QString &fileName);
       ExtWidget *modelFile, *parameterFile, *e;
       QButtonGroup *mOpt, *pOpt;
-      void modelFileChanged(const QString &fileName);
   };
 
-  class SaveModelDialog : public Dialog {
+  class SaveModelDialog : public QDialog {
     public:
       SaveModelDialog(const QString &title, const QString &name, bool param);
       QString getModelFileName() const;
       QString getParameterFileName() const;
     private:
-      ExtWidget *modelFile, *parameterFile;
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       void modelFileChanged(const QString &fileName);
+      ExtWidget *modelFile, *parameterFile;
   };
 
-  class LoadParameterDialog : public Dialog {
+  class LoadParameterDialog : public QDialog {
     public:
       LoadParameterDialog();
       QString getParameterFileName() const;
       bool referenceParameter() const;
       bool getAbsoluteFilePath() const;
     private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       ExtWidget *parameterFile;;
       QButtonGroup *pOpt;
   };
 
-  class SaveParameterDialog : public Dialog {
+  class SaveParameterDialog : public QDialog {
     public:
       SaveParameterDialog(const QString &name);
       QString getParameterFileName() const;
     private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       ExtWidget *parameterFile;;
   };
 
@@ -212,27 +218,43 @@ namespace MBSimGUI {
       void updateWidget();
   };
 
-  class LinearSystemAnalysisDialog : public Dialog {
+  class LinearSystemAnalysisDialog : public QDialog {
     public:
       LinearSystemAnalysisDialog(QWidget *parent);
       void updateWidget();
     private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       ModalAnalysisWidget *mawidget;
       FrequencyResponseWidget *frwidget;
       InitialOutputWidget *iowidget;
       EigenanalysisWidget *eawidget;
   };
 
-  class CreateFMUDialog : public Dialog {
+  class CreateFMUDialog : public QDialog {
     public:
       CreateFMUDialog(const QString &name);
       QString getFileName() const;
       bool cosim() const;
       bool nocompress() const;
     private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
       ExtWidget *file;
       QButtonGroup *opt;
       QCheckBox *checkbox;
+  };
+
+  class SimpleTextDialog : public QDialog {
+    public:
+      SimpleTextDialog(const QString &title, const QString &text, QWidget *parent);
+      void setText(const QString &text);
+      void appendText(const QString &text);
+      void gotoLine(int n);
+    private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      QTextEdit *editor;
   };
 
 }
