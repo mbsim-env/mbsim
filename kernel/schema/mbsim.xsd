@@ -4701,6 +4701,11 @@
                 tbd
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="referenceTreadWidth" type="pv:lengthScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="scaleFactorForLateralForce" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 tbd
