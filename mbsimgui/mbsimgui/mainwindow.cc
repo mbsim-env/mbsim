@@ -64,6 +64,7 @@
 #include <QtWidgets/QDesktopWidget>
 #include <QDesktopServices>
 #include <QDialogButtonBox>
+#include <QTextStream>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
@@ -1449,7 +1450,16 @@ namespace MBSimGUI {
   }
 
   void MainWindow::relnotes() {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((installPath/"share"/"mbsim-env"/"RELEASENOTES.md").string())));
+    QFile file(QString::fromStdString((installPath/"share"/"mbsim-env"/"RELEASENOTES.md").string()));
+    if(file.open(QFile::ReadOnly)) {
+      QTextStream out(&file);
+      SimpleTextDialog dialog("Release notes","",this);
+      QString line;
+      while(out.readLineInto(&line))
+	dialog.appendText(line);
+      dialog.gotoLine(0);
+      dialog.exec();
+    }
   }
 
   void MainWindow::about() {
