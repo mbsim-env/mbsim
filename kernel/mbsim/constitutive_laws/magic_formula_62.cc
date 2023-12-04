@@ -545,6 +545,8 @@ namespace MBSim {
     if(e) setRelaxationLengthForLongitudinalSlip(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForSideslip");
     if(e) setRelaxationLengthForSideslip(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"referenceTreadWidth");
+    if(e) setReferenceTreadWidth(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -644,9 +646,11 @@ namespace MBSim {
       } else {
 	double rhozfr = ROm-Rl;
 	double rhozg = 0;
-	// double a = R0*(Q_RA2*rhozf/R0 + Q_RA1*sqrt(rhozf/R0));
-	double b = w*(Q_RB2*rhozfr/R0 + Q_RB1*pow(rhozfr/R0,1./3));
-	double rtw = 2*b; // There is no equation for rtw in the manual, thus we use rtw = 2*b
+	if(rtw<0) {
+	  // double a = R0*(Q_RA2*rhozf/R0 + Q_RA1*sqrt(rhozf/R0));
+	  double b = w*(Q_RB2*rhozfr/R0 + Q_RB1*pow(rhozfr/R0,1./3));
+	  rtw = 2*b; // There is no equation for rtw in the manual, thus we use rtw = 2*b
+	}
 	if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
 	  rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
 	rhoz = rhozfr+rhozg;
