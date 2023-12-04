@@ -36,17 +36,6 @@ namespace MBSim {
     return (T(0) < val) - (val < T(0));
   }
 
-  void MagicFormulaSharp::init(InitStage stage, const InitConfigSet &config) {
-    if(stage==preInit) {
-      TyreContact *contact = static_cast<TyreContact*>(parent);
-      Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-      double R0_ = tyre->getContourParameters()(0)-Fz0/cz;
-      if(abs(R0_-R0)>1e-6)
-	msg(Warn) << "(MagicFormulaSharp::init): crown radius R0 (" << R0 << ") is different to estimated crown radius of " << tyre->getPath() << " (" << R0_ << ")." << endl;
-    }
-    TyreModel::init(stage, config);
-  }
-
   void MagicFormulaSharp::initPlot(vector<string> &plotColumns) {
     plotColumns.emplace_back("camber angle");
     plotColumns.emplace_back("rolling velocity");
