@@ -32,7 +32,6 @@ namespace MBSim {
         flat=0,
         circular,
 	elliptical,
-	parabolic,
         unknown
       };
 
