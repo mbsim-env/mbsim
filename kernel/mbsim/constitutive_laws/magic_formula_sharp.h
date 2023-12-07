@@ -94,7 +94,6 @@ namespace MBSim {
       void setScaleFactorForLateralForce(double sfFy_) { sfFy = sfFy_; }
       void setScaleFactorForAligningMoment(double sfMz_) { sfMz = sfMz_; }
 
-      void init(InitStage stage, const InitConfigSet &config) override;
       void initPlot(std::vector<std::string> &plotColumns) override;
       void plot(std::vector<double> &plotVector) override;
       void initializeUsingXML(xercesc::DOMElement *element) override;

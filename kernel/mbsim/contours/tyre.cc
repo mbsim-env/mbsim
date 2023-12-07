@@ -35,16 +35,12 @@ namespace MBSim {
     if(stage==preInit) {
       if(shape==circular and cp.size()!=1)
 	throwError("(Tyre::init): 1 contour parameter is needed for circular shape of cross section.");
-      else if(shape==elliptical)
-	throwError("(Tyre::init): parabolic shape of cross section is not yet implemented.");
-//      else if(shape==elliptical and cp.size()!=2)
-//	throwError("(Tyre::init): 2 contour parameters are needed for elliptical shape of cross section.");
-      else if(shape==parabolic and cp.size()!=2)
-	throwError("(Tyre::init): 2 contour parameters are needed for parabolic shape of cross section.");
+      else if(shape==elliptical and cp.size()!=2)
+	throwError("(Tyre::init): 2 contour parameters are needed for elliptical shape of cross section.");
       else if(shape==unknown)
         throwError("(Tyre::init): shape of cross section contour unknown.");
       if(rRim>0) {
-	msg(Deprecated) << "(Tyre::init): rim radius is deprecated. Use ellipse parameters to define tyre contour." << endl;
+	msg(Deprecated) << "(Tyre::init): rim radius is deprecated. Use shape of cross section contour and contour parameters to define tyre contour." << endl;
 	cp.resize(1);
 	cp(0) = r-rRim;
 	shape = circular;
@@ -108,18 +104,18 @@ namespace MBSim {
 	    }
 	  }
 	}
-	else if(shape==parabolic) {
-	  nXi = 21;
+	else if(shape==elliptical) {
+	  nXi = 51;
 	  vector<double> ombvXiNodes(nXi);
 	  vp.resize(nEta*nXi);
+	  double al = (w/2<cp(0))?asin(w/2/cp(0)):M_PI/2;
 	  for (int i=0; i<nEta; i++) {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<nXi; j++) {
-	      double xi = -w/2 + w*j/20;
-	      double x = cp(0)*xi*xi + cp(1);
-	      vp[i*nXi+j].push_back(x*cos(eta));
-	      vp[i*nXi+j].push_back(-xi);
-	      vp[i*nXi+j].push_back(x*sin(eta));
+	      double xi = -al + 2*al*j/50.;
+	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*cos(eta));
+	      vp[i*nXi+j].push_back(-cp(0)*sin(xi));
+	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*sin(eta));
 	    }
 	  }
 	}
@@ -166,7 +162,6 @@ namespace MBSim {
       if(shapeStr=="flat") shape=flat;
       else if(shapeStr=="circular") shape=circular;
       else if(shapeStr=="elliptical") shape=elliptical;
-      else if(shapeStr=="parabolic") shape=parabolic;
       else shape=unknown;
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"contourParameters");

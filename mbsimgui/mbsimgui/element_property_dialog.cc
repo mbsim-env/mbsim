@@ -419,7 +419,7 @@ namespace MBSimGUI {
   CuboidPropertyDialog::CuboidPropertyDialog(Element *circle) : RigidContourPropertyDialog(circle) {
     addTab("Visualization",1);
 
-    length = new ExtWidget("Length",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
+    length = new ExtWidget("Length",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"length");
     addToTab("General", length);
 
     visu = new ExtWidget("Enable openMBV",new MBSOMBVColoreBodyWidget,true,true,MBSIM%"enableOpenMBV");
@@ -907,11 +907,10 @@ namespace MBSimGUI {
     list.emplace_back("\"flat\"");
     list.emplace_back("\"circular\"");
     list.emplace_back("\"elliptical\"");
-    list.emplace_back("\"parabolic\"");
     shape = new ExtWidget("Shape of cross section contour",new TextChoiceWidget(list,0,false),true,false,MBSIM%"shapeOfCrossSectionContour");
     addToTab("General", shape);
 
-    cp = new ExtWidget("Contour parameters",new ChoiceWidget(new VecWidgetFactory(0,vector<QStringList>(3,QStringList())),QBoxLayout::RightToLeft,5),true,false,MBSIM%"contourParameters");
+    cp = new ExtWidget("Contour parameters",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"contourParameters");
     addToTab("General", cp);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
@@ -961,8 +960,6 @@ namespace MBSimGUI {
       if(shapeStr=="\"circular\"")
 	cp->resize_(1,1);
       else if(shapeStr=="\"elliptical\"")
-	cp->resize_(2,1);
-      else if(shapeStr=="\"parabolic\"")
 	cp->resize_(2,1);
     }
   }

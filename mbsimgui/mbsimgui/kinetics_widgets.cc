@@ -687,6 +687,8 @@ namespace MBSimGUI {
     layout->addWidget(six);
     siy = new ExtWidget("Relaxation length for sideslip",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"relaxationLengthForSideslip");
     layout->addWidget(siy);
+    rtw = new ExtWidget("Reference tread width",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"referenceTreadWidth");
+    layout->addWidget(rtw);
     sfFx = new ExtWidget("Scale factor for longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalForce");
     layout->addWidget(sfFx);
     sfFy = new ExtWidget("Scale factor for lateral force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForce");
@@ -801,6 +803,7 @@ namespace MBSimGUI {
     dz->initializeUsingXML(element);
     six->initializeUsingXML(element);
     siy->initializeUsingXML(element);
+    rtw->initializeUsingXML(element);
     sfFx->initializeUsingXML(element);
     sfFy->initializeUsingXML(element);
     sfMx->initializeUsingXML(element);
@@ -829,6 +832,7 @@ namespace MBSimGUI {
     dz->writeXMLFile(ele0);
     six->writeXMLFile(ele0);
     siy->writeXMLFile(ele0);
+    rtw->writeXMLFile(ele0);
     sfFx->writeXMLFile(ele0);
     sfFy->writeXMLFile(ele0);
     sfMx->writeXMLFile(ele0);

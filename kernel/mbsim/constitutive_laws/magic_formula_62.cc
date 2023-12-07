@@ -433,14 +433,30 @@ namespace MBSim {
       importData();
     }
     if(stage==preInit) {
-      if(tyreSide==unknown)
-        throwError("(MagicFormula62::init): tyre side unknown");
-      else if((tyreSide==left and (TYRESIDE[0]=='r' or TYRESIDE[0]=='R')) or (tyreSide==right and (TYRESIDE[0]=='l' or TYRESIDE[0]=='L')))
-	mirroring = true;
-    }
-    else if(stage==unknownStage) {
       TyreContact *contact = static_cast<TyreContact*>(parent);
       Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+      if(tyreSide==unknown)
+	msg(Warn) << "(MagicFormula62::init): tyre side unknown" << endl;
+      else if((tyreSide==left and (TYRESIDE[0]=='r' or TYRESIDE[0]=='R')) or (tyreSide==right and (TYRESIDE[0]=='l' or TYRESIDE[0]=='L')))
+	mirroring = true;
+      if(abs(tyre->getRadius()-R0)>1e-6)
+	msg(Warn) << "(MagicFormula62::init): unloaded radius of " << tyre->getPath() << " (" << tyre->getRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
+      if(mck and MC_CONTOUR_A > 0) {
+	if(tyre->getShapeOfCrossSectionContour() == Tyre::circular) {
+	  if(abs(MC_CONTOUR_B-MC_CONTOUR_A)>1e-6)
+	    msg(Warn) << "(MagicFormula62::init): shape of tyre contour must be elliptical." << endl;
+	  if(abs(tyre->getContourParameters()(0)-MC_CONTOUR_A*w)>1e-6)
+	    msg(Warn) << "(MagicFormula62::init): contour parameter of " << tyre->getPath() << " (" << tyre->getContourParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
+	}
+	else if(tyre->getShapeOfCrossSectionContour() == Tyre::elliptical) {
+	  if(abs(tyre->getContourParameters()(0)-MC_CONTOUR_A*w)>1e-6)
+	    msg(Warn) << "(MagicFormula62::init): first contour parameter of " << tyre->getPath() << " (" << tyre->getContourParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
+	  if(abs(tyre->getContourParameters()(1)-MC_CONTOUR_B*w)>1e-6)
+	    msg(Warn) << "(MagicFormula62::init): second contour parameter of " << tyre->getPath() << " (" << tyre->getContourParameters()(1) << ") is different to ellipse parameter B of " << inputDataFile << " (" << MC_CONTOUR_B*w << ")." << endl;
+	}
+	else
+	  msg(Warn) << "(MagicFormula62::init): shape of tyre contour must be circular or elliptical." << endl;
+      }
       if(p > PRESMAX)
 	p = PRESMAX;
       else if(p < PRESMIN)
@@ -448,12 +464,9 @@ namespace MBSim {
       dpi = (p-p0)/p0;
       constsix = six>=0;
       constsiy = siy>=0;
-      if(abs(tyre->getRadius()-R0)>1e-6)
-	msg(Warn) << "Unloaded radius of " << tyre->getPath() << " (" << tyre->getRadius() << ") is different to unloaded radius of " << inputDataFile << " (" << R0 << ")." << endl;
-//      if(MC_CONTOUR_A > 0 and abs(tyre->getContourParameters()(0)-MC_CONTOUR_A*w)>1e-6)
-//	msg(Warn) << "Contour parameter A of " << tyre->getPath() << " (" << tyre->getContourParameters()(0) << ") is different to ellipse parameter A of " << inputDataFile << " (" << MC_CONTOUR_A*w << ")." << endl;
-//      if(MC_CONTOUR_B > 0 and abs(tyre->getContourParameters()(1)-MC_CONTOUR_B*w)>1e-6)
-//	msg(Warn) << "Contour parameter B of " << tyre->getPath() << " (" << tyre->getContourParameters()(1) << ") is different to ellipse parameter B of " << inputDataFile << " (" << MC_CONTOUR_B*w << ")." << endl;
+    }
+    else if(stage==unknownStage) {
+      TyreContact *contact = static_cast<TyreContact*>(parent);
       slipPoint[0] = contact->getContour(0)->createContourFrame("S0");
       slipPoint[1] = contact->getContour(1)->createContourFrame("S1");
       slipPoint[0]->setParent(this);
@@ -532,6 +545,8 @@ namespace MBSim {
     if(e) setRelaxationLengthForLongitudinalSlip(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"relaxationLengthForSideslip");
     if(e) setRelaxationLengthForSideslip(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"referenceTreadWidth");
+    if(e) setReferenceTreadWidth(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -610,27 +625,32 @@ namespace MBSim {
     double fcorr = (1-Q_CAM*abs(ga))*(1+Q_V2*R0/v0*abs(Om))*(1+PFZ1*dpi);
     double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
     double Re;
+    Vec3 WrWC = contact->getContourFrame(1)->getPosition()-tyre->getFrame()->getPosition();
+    double xi = -atan(MC_CONTOUR_A/MC_CONTOUR_B*tan(ga));
+    double y = MC_CONTOUR_A*w*sin(xi);
+    double z = MC_CONTOUR_B*w*(1-cos(xi)) - ROm; // = b - b*cos(xi) - ROm;
+    double h = -contact->getContourFrame(1)->getOrientation().col(2).T()*WrWC;
     if(mck) {
       rhoz = -contact->evalGeneralizedRelativePosition()(0);
       if(rhoz<0) rhoz = 0;
       Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0 - dz*contact->evalGeneralizedRelativeVelocity()(2);
 //      double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
       double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
-      double rC = MC_CONTOUR_A*w;
-      Re = ROm - rC + (rC-rhoze)*cos(ga);
+      Re = -z - rhoze*cos(ga);
     }
     else {
-      Vec WrWC = contact->getContourFrame(1)->getPosition()-tyre->getFrame()->getPosition();
       double Rl = nrm2(WrWC);
-      double rhozfr = ROm-Rl;
-      if(rhozfr<0) rhozfr = 0;
-      if(MC_CONTOUR_A>0 and MC_CONTOUR_B>0) {
-	rhoz = rhozfr*cos(ga) + MC_CONTOUR_A*w*(1-cos(ga)); // = (ROm-rC)*cos(ga)+rC-Rl*cos(ga);
+      if(MC_CONTOUR_A>0 or MC_CONTOUR_B>0) {
+	double z_ = y*sin(ga) + z*cos(ga);
+	rhoz = -h-z_;
       } else {
+	double rhozfr = ROm-Rl;
 	double rhozg = 0;
-	// double a = R0*(Q_RA2*rhozf/R0 + Q_RA1*sqrt(rhozf/R0));
-	double b = w*(Q_RB2*rhozfr/R0 + Q_RB1*pow(rhozfr/R0,1./3));
-	double rtw = 2*b; // There is no equation for rtw in the manual, thus we use rtw = 2*b
+	if(rtw<0) {
+	  // double a = R0*(Q_RA2*rhozf/R0 + Q_RA1*sqrt(rhozf/R0));
+	  double b = w*(Q_RB2*rhozfr/R0 + Q_RB1*pow(rhozfr/R0,1./3));
+	  rtw = 2*b; // There is no equation for rtw in the manual, thus we use rtw = 2*b
+	}
 	if(((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga)>0)
 	  rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
 	rhoz = rhozfr+rhozg;
@@ -644,10 +664,8 @@ namespace MBSim {
       Fz -= dz*contact->evalGeneralizedRelativeVelocity()(2)/cos(ga);
 //      double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
       double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
-      if(MC_CONTOUR_A>0 and MC_CONTOUR_B>0) {
-	double rC = MC_CONTOUR_A*w;
-	Re = ROm - rC + (rC-rhoze)*cos(ga);
-      }
+      if(MC_CONTOUR_A>0 or MC_CONTOUR_B>0)
+	Re = -z - rhoze*cos(ga);
       else
 	Re = ROm-rhoze;
     }
@@ -828,7 +846,8 @@ namespace MBSim {
     }
 
     if(mck and contactPointTransformation) {
-      double dy = (MC_CONTOUR_A*w-rhoz)*tan(ga);
+      double y_ = y*cos(ga) - z*sin(ga);
+      double dy  = h*tan(ga)-y_;
       Mx += dy*Fz;
       Mz -= dy*Fx;
     }

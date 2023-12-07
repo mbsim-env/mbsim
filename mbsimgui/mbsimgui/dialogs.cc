@@ -74,19 +74,7 @@ namespace MBSimGUI {
     return QModelIndex();
   }
 
-  void Dialog::showEvent(QShowEvent *event) {
-    QSettings settings;
-    restoreGeometry(settings.value("dialog/geometry").toByteArray());
-    QDialog::showEvent(event);
-  }
-
-  void Dialog::hideEvent(QHideEvent *event) {
-    QSettings settings;
-    settings.setValue("dialog/geometry", saveGeometry());
-    QDialog::hideEvent(event);
-  }
-
-  EvalDialog::EvalDialog(const vector<vector<QString>> &var_, int type_, QWidget *parent) : Dialog(parent), var(var_), varf(var_), type(type_) {
+  EvalDialog::EvalDialog(const vector<vector<QString>> &var_, int type_, QWidget *parent) : QDialog(parent), var(var_), varf(var_), type(type_) {
 
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
@@ -132,6 +120,18 @@ namespace MBSimGUI {
     setWindowTitle("Expression evaluation");
   }
 
+  void EvalDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("evaldialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void EvalDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("evaldialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
   void EvalDialog::formatVariables() {
     if(type==0) {
       QString f = format->currentText();
@@ -151,7 +151,7 @@ namespace MBSimGUI {
     }
   }
 
-  BasicElementBrowser::BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent) : Dialog(parent), selection(selection_) {
+  BasicElementBrowser::BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent) : QDialog(parent), selection(selection_) {
     auto* mainLayout=new QGridLayout;
     setLayout(mainLayout);
     eleList = new QTreeView;
@@ -176,7 +176,8 @@ namespace MBSimGUI {
   }
 
   void BasicElementBrowser::showEvent(QShowEvent *event) {
-    Dialog::showEvent(event);
+    QSettings settings;
+    restoreGeometry(settings.value("elementbrowser/geometry").toByteArray());
     oldID = mw->getHighlightedObject();
     QModelIndex index1 = findTreeItemData(eleList->model()->index(0,0),selection);
     QModelIndex index2 = mw->getElementView()->selectionModel()->currentIndex().parent().parent();
@@ -185,11 +186,14 @@ namespace MBSimGUI {
       mw->highlightObject(selection->getID());
       okButton->setDisabled(false);
     }
+    QDialog::showEvent(event);
   }
 
   void BasicElementBrowser::hideEvent(QHideEvent *event) {
-    Dialog::hideEvent(event);
+    QSettings settings;
+    settings.setValue("elementbrowser/geometry", saveGeometry());
     mw->highlightObject(oldID);
+    QDialog::hideEvent(event);
   }
 
   void BasicElementBrowser::selectionChanged(const QModelIndex &current) {
@@ -206,7 +210,7 @@ namespace MBSimGUI {
     }
   }
 
-  SourceCodeDialog::SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent) : Dialog(parent) {
+  SourceCodeDialog::SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent) : QDialog(parent) {
     setWindowTitle(QString("XML view"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
@@ -234,7 +238,19 @@ namespace MBSimGUI {
     xmlEditor->getEditor()->setExtraSelections(extraSelections);
   }
 
-  StateTableDialog::StateTableDialog(QWidget *parent) : Dialog(parent) {
+  void SourceCodeDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("sourcecodedialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void SourceCodeDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("sourcecodedialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
+  StateTableDialog::StateTableDialog(QWidget *parent) : QDialog(parent) {
     setWindowTitle(QString("State table"));
     auto *layout = new QVBoxLayout;
     setLayout(layout);
@@ -279,6 +295,18 @@ namespace MBSimGUI {
       item->setText(3, number[i]);
       stateTable->addTopLevelItem(item);
     }
+  }
+
+  void StateTableDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("statetabledialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void StateTableDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("statetabledialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
   }
 
   LoadModelDialog::LoadModelDialog(const QString &title) {
@@ -365,6 +393,18 @@ namespace MBSimGUI {
     return static_cast<FileWidget*>(parameterFile->getWidget())->getAbsolutePath();
   }
 
+  void LoadModelDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("loadmodeldialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void LoadModelDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("loadmodeldialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
   void LoadModelDialog::modelFileChanged(const QString &fileName) {
     QFileInfo fileInfo(fileName);
     QString pFileName = fileName;
@@ -416,6 +456,18 @@ namespace MBSimGUI {
 
   QString SaveModelDialog::getParameterFileName() const {
     return (parameterFile and parameterFile->isActive())?static_cast<FileWidget*>(parameterFile->getWidget())->getFile():"";
+  }
+
+  void SaveModelDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("savemodeldialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void SaveModelDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("savemodeldialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
   }
 
   void SaveModelDialog::modelFileChanged(const QString &fileName) {
@@ -473,6 +525,18 @@ namespace MBSimGUI {
     return static_cast<FileWidget*>(parameterFile->getWidget())->getAbsolutePath();
   }
 
+  void LoadParameterDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("loadparameterdialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void LoadParameterDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("loadparameterdialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
   SaveParameterDialog::SaveParameterDialog(const QString &fileName) {
     setWindowTitle("Export Parameters");
     auto *mainlayout = new QVBoxLayout;
@@ -495,6 +559,18 @@ namespace MBSimGUI {
 
   QString SaveParameterDialog::getParameterFileName() const {
     return static_cast<FileWidget*>(parameterFile->getWidget())->getFile();
+  }
+
+  void SaveParameterDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("saveparameterdialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void SaveParameterDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("saveparameterdialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
   }
 
   InitialOutputWidget::InitialOutputWidget() {
@@ -1006,7 +1082,7 @@ namespace MBSimGUI {
     plot->replot();
   }
 
-  LinearSystemAnalysisDialog::LinearSystemAnalysisDialog(QWidget *parent) : Dialog(parent) {
+  LinearSystemAnalysisDialog::LinearSystemAnalysisDialog(QWidget *parent) : QDialog(parent) {
     setWindowTitle("Linear system analysis");
     auto *layout = new QVBoxLayout;
     setLayout(layout);
@@ -1037,6 +1113,18 @@ namespace MBSimGUI {
     frwidget->loadData();
     iowidget->loadData();
     eawidget->loadData();
+  }
+
+  void LinearSystemAnalysisDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("linearsystemanalysisdialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void LinearSystemAnalysisDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("linearsystemanalysisdialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
   }
 
   CreateFMUDialog::CreateFMUDialog(const QString &fileName) {
@@ -1089,6 +1177,59 @@ namespace MBSimGUI {
 
   bool CreateFMUDialog::nocompress() const {
     return not checkbox->isChecked();
+  }
+
+  void CreateFMUDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("createfmudialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void CreateFMUDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("createfmudialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
+  SimpleTextDialog::SimpleTextDialog(const QString &title, const QString &text, QWidget *parent) : QDialog(parent) {
+    setWindowTitle(title);
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    editor = new QTextEdit(text);
+    editor->setMinimumSize(400,400);
+    editor->setReadOnly(true);
+    layout->addWidget(editor);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceCodeDialog::accept);
+  }
+
+  void SimpleTextDialog::setText(const QString &text) {
+    editor->setText(text);
+  }
+
+  void SimpleTextDialog::appendText(const QString &text) {
+    editor->append(text);
+  }
+
+  void SimpleTextDialog::gotoLine(int n) {
+    QTextCursor c = editor->textCursor();
+    c.movePosition(QTextCursor::Start,QTextCursor::MoveAnchor,1);
+    c.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor,n);
+    editor->setTextCursor(c);
+  }
+
+  void SimpleTextDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("simpletextdialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void SimpleTextDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("simpletextdialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
   }
 
 }
