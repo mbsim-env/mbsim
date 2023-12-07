@@ -3,37 +3,6 @@
    Memcheck:Leak
    match-leak-kinds: definite
    fun:_Znwm
-   fun:_ZN15SoGLRenderCache4openEP7SoState
-   fun:_ZN13SoGLCacheList4openEP16SoGLRenderActioni
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:_Znwm
-   fun:_ZN15SoGLRenderCache4openEP7SoState
-   fun:_ZN13SoGLCacheList4openEP16SoGLRenderActioni
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
-   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN8SoAction5applyEP6SoNode
-   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:_Znwm
    fun:_ZN8SoSFTime14createInstanceEv
    fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
    fun:_ZN4SoDB4initEv
@@ -885,35 +854,6 @@
    fun:_ZN10OpenMBVGUI10MainWindow11updateSceneEv
 }
 {
-   Coin
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:_Znwm
-   fun:_ZN15SoGLRenderCache4openEP7SoState
-   fun:_ZN13SoGLCacheList4openEP16SoGLRenderActioni
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-}
-{
    needed for old boost/valgrind
    Memcheck:Cond
    fun:seed<boost::uuids::detail::generator_iterator<boost::uuids::detail::seed_rng> >
@@ -1466,36 +1406,4 @@
    fun:_ZN15SoGLRenderCache4openEP7SoState
    fun:_ZN13SoGLCacheList4openEP16SoGLRenderActioni
    fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
-   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN8SoAction5applyEP6SoNode
-   fun:_ZN15SoRenderManager11renderSceneEP16SoGLRenderActionP6SoNodej
-   fun:_ZN15SoRenderManager14actuallyRenderEP16SoGLRenderActioniii
-   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
-   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
-   fun:_ZN15SoRenderManager6renderEii
-   fun:_ZN10SoQtViewer12actualRedrawEv
-   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
 }
