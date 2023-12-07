@@ -38,7 +38,7 @@ namespace MBSimGUI {
 
   class EmbedItemData : public TreeItemData {
     protected:
-      QString name;
+      QString name, comment;
       std::vector<Parameter*> parameter;
       xercesc::DOMElement *element{nullptr}, *embed{nullptr};
       Parameters *parameters;
@@ -52,6 +52,7 @@ namespace MBSimGUI {
       ~EmbedItemData() override;
       QString getName() const override { return name; }
       QString getValue() const override { return ""; }
+      QString getComment() const override { return comment; }
       bool isActive();
       virtual void create() { updateName(); }
       virtual void clear() { }

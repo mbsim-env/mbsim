@@ -35,6 +35,7 @@ namespace MBSimGUI {
     public:
       ContainerItemData(Element *element_);
       QString getValue() const override { return ""; }
+      QString getComment() const override { return ""; }
       QString getType() const override { return ""; }
       QString getReference() const override { return ""; }
       bool getEnabled() const override { return element->getEnabled(); }

@@ -43,6 +43,7 @@ namespace MBSimGUI {
       virtual QString getName() const { return "Name"; }
       virtual QString getValue() const { return "Value"; }
       virtual QString getReference() const { return "Reference"; }
+      virtual QString getComment() const { return "Comment"; }
       QIcon getDecoration() const { return icon; }
       virtual bool getEnabled() const { return true; }
       virtual bool hasReference() const { return false; }

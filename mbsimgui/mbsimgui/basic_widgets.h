@@ -27,6 +27,7 @@
 #include "dialogs.h"
 #include "namespace.h"
 #include <QLineEdit>
+#include <QPlainTextEdit>
 #include <QTextEdit>
 #include <QSpinBox>
 #include <QFileDialog>
@@ -397,6 +398,19 @@ namespace MBSimGUI {
       TextChoiceWidget *getDestChoice() { return dest; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+  };
+
+  class CommentWidget : public Widget {
+
+    public:
+      CommentWidget();
+      void setComment(const QString &comment);
+      QString getComment() const;
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+
+    protected:
+      QPlainTextEdit *edit;
   };
 
 }

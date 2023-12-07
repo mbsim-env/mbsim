@@ -36,7 +36,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
       Element* getElement() const;
     protected:
-      ExtWidget *name, *plotFeature;
+      ExtWidget *name, *comment, *plotFeature;
       std::unique_ptr<PlotAttributeStore> plotAttribute;
   };
 

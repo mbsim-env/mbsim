@@ -26,6 +26,7 @@
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <xercesc/dom/DOMComment.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -234,6 +235,9 @@ namespace MBSimGUI {
         }
       name = name.mid(3);
     }
+    auto *cele = E(element)->getFirstCommentChild();
+    if(cele)
+      comment = QString::fromStdString(X()%cele->getNodeValue());
   }
 
   void EmbedItemData::updateValues() {

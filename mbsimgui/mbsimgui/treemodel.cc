@@ -77,6 +77,10 @@ namespace MBSimGUI {
       TreeItem *item = getItem(index);
       return item->getItemData()->getEnabled();
     }
+    else if(role==Qt::ToolTipRole) {
+      TreeItem *item = getItem(index);
+      return item->getItemData()->getComment();
+    }
     return QVariant();
   }
 

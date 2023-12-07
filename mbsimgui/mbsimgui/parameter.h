@@ -42,6 +42,7 @@ namespace MBSimGUI {
   class ParameterItem : public TreeItemData {
     public:
       ParameterItem(EmbedItemData *parent_=nullptr) : parent(parent_) { }
+      QString getComment() const override { return ""; }
       bool getEnabled() const override { return parent->getEnabled(); }
       void setParent(EmbedItemData* parent_) { parent = parent_; }
       EmbedItemData *getParent() const { return parent; }
@@ -61,6 +62,7 @@ namespace MBSimGUI {
       Parameter() = default;
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return value; }
+      QString getComment() const override { return comment; }
       bool getHidden() const { return hidden; }
 //      QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
@@ -68,7 +70,7 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       virtual void updateValue();
     protected:
-      QString value;
+      QString value, comment;
       bool hidden;
   };
 

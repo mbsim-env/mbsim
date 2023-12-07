@@ -39,6 +39,7 @@
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <xercesc/dom/DOMLSInput.hpp>
+#include <xercesc/dom/DOMComment.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -1040,6 +1041,43 @@ namespace MBSimGUI {
       E(ele)->setAttribute("signal",tree->topLevelItem(i)->text(2).toStdString());
       E(ele)->setAttribute("threshold",tree->topLevelItem(i)->text(3).toStdString());
       parent->insertBefore(ele, ref);
+    }
+    return nullptr;
+  }
+
+  CommentWidget::CommentWidget() {
+    QHBoxLayout *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    edit = new QPlainTextEdit;
+    layout->addWidget(edit);
+  }
+
+  void CommentWidget::setComment(const QString &comment) {
+    edit->setPlainText(comment);
+  }
+
+  QString CommentWidget::getComment() const {
+    return edit->toPlainText();
+  }
+
+  DOMElement* CommentWidget::initializeUsingXML(DOMElement *element) {
+    auto *cele = E(element)->getFirstCommentChild();
+    if(cele) {
+      setComment(QString::fromStdString(X()%cele->getNodeValue()));
+      return element;
+    }
+    return nullptr;
+  }
+
+  DOMElement* CommentWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    QString text = getComment();
+    if(not text.isEmpty()) {
+      auto *cele = E(static_cast<DOMElement*>(parent))->getFirstCommentChild();
+      if(cele)
+	cele->setData(X()%text.toStdString());
+      else
+	parent->insertBefore(parent->getOwnerDocument()->createComment(X()%text.toStdString()), parent->getFirstChild());
     }
     return nullptr;
   }
