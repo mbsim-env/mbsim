@@ -42,10 +42,14 @@ namespace MBSimGUI {
     list.emplace_back("xmlflat");
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,project->getDefaultEvaluator()),true,false,PV%"evaluator");
     addToTab("General",evalSelect);
+    addTab("Comment");
+    comment = new ExtWidget("Comment",new CommentWidget,true,false);
+    addToTab("Comment", comment);
   }
 
   DOMElement* ProjectPropertyDialog::initializeUsingXML(DOMElement *parent) {
     static_cast<TextWidget*>(name->getWidget())->setText(item->getName());
+    comment->initializeUsingXML(item->getXMLElement());
     evalSelect->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -53,6 +57,7 @@ namespace MBSimGUI {
   DOMElement* ProjectPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     item->removeXMLElements();
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    comment->writeXMLFile(item->getXMLElement(),ref);
     item->updateName();
     evalSelect->writeXMLFile(item->getXMLElement(),item->getXMLElement()->getFirstElementChild());
     static_cast<Project*>(item)->setEvaluator(static_cast<TextChoiceWidget*>(evalSelect->getWidget())->getText().toStdString());

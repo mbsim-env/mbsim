@@ -26,6 +26,7 @@
 #include <xercesc/dom/DOMDocument.hpp>
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
+#include <xercesc/dom/DOMComment.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -49,6 +50,9 @@ namespace MBSimGUI {
   }
 
   void Project::removeXMLElements() {
+    auto *cele = E(element)->getFirstCommentChild();
+    if(cele)
+      element->removeChild(cele);
     DOMElement *ele = element->getFirstElementChild();
     if(E(ele)->getTagName()==PV%"evaluator")
       element->removeChild(ele);

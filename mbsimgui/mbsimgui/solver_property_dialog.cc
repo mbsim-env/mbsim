@@ -143,20 +143,26 @@ namespace MBSimGUI {
   }
 
   SolverPropertyDialog::SolverPropertyDialog(Solver *solver) : EmbedItemPropertyDialog("Solver Properties", solver) {
+    addTab("Comment");
+    comment = new ExtWidget("Comment",new CommentWidget,true,false);
+    addToTab("Comment", comment);
   }
 
   DOMElement* SolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    comment->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* SolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     item->removeXMLElements();
+    comment->writeXMLFile(item->getXMLElement(),ref);
+    item->updateName();
     return nullptr;
   }
 
   IntegratorPropertyDialog::IntegratorPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
-    addTab("General");
-    addTab("Initial conditions");
+    addTab("General",0);
+    addTab("Initial conditions",1);
 
     startTime = new ExtWidget("Start time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"startTime");
     addToTab("General", startTime);
@@ -190,8 +196,8 @@ namespace MBSimGUI {
   }
 
   RootFindingIntegratorPropertyDialog::RootFindingIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Tolerances");
-    addTab("Root-finding");
+    addTab("Tolerances",2);
+    addTab("Root-finding",3);
 
     gMax = new ExtWidget("Tolerance for position constraint",new ChoiceWidget(new ScalarWidgetFactory("-1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"toleranceForPositionConstraints");
     addToTab("Tolerances", gMax);
@@ -225,7 +231,7 @@ namespace MBSimGUI {
   }
 
   DOPRI5IntegratorPropertyDialog::DOPRI5IntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -264,7 +270,7 @@ namespace MBSimGUI {
   }
 
   DOP853IntegratorPropertyDialog::DOP853IntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -303,7 +309,7 @@ namespace MBSimGUI {
   }
 
   ODEXIntegratorPropertyDialog::ODEXIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -342,8 +348,8 @@ namespace MBSimGUI {
   }
 
   RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Extra");
+    addTab("Step size",4);
+    addTab("Extra",5);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -398,8 +404,8 @@ namespace MBSimGUI {
   }
 
   RADAUIntegratorPropertyDialog::RADAUIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Extra");
+    addTab("Step size",4);
+    addTab("Extra",5);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -454,8 +460,8 @@ namespace MBSimGUI {
   }
 
   RODASIntegratorPropertyDialog::RODASIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Extra");
+    addTab("Step size",4);
+    addTab("Extra",5);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -512,8 +518,8 @@ namespace MBSimGUI {
   }
 
   SEULEXIntegratorPropertyDialog::SEULEXIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Extra");
+    addTab("Step size",4);
+    addTab("Extra",5);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -570,8 +576,8 @@ namespace MBSimGUI {
   }
 
   PHEM56IntegratorPropertyDialog::PHEM56IntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Extra");
+    addTab("Step size",4);
+    addTab("Extra",5);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -638,7 +644,7 @@ namespace MBSimGUI {
   }
 
   LSODEIntegratorPropertyDialog::LSODEIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     vector<QString> list;
     list.emplace_back("\"nonstiff\"");
@@ -692,7 +698,7 @@ namespace MBSimGUI {
   }
 
   LSODAIntegratorPropertyDialog::LSODAIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -736,7 +742,7 @@ namespace MBSimGUI {
   }
 
   LSODIIntegratorPropertyDialog::LSODIIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -789,7 +795,7 @@ namespace MBSimGUI {
   }
 
   DASPKIntegratorPropertyDialog::DASPKIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -833,8 +839,8 @@ namespace MBSimGUI {
   }
 
   TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Tolerances");
+    addTab("Step size",4);
+    addTab("Tolerances",5);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -858,8 +864,8 @@ namespace MBSimGUI {
   }
 
   ThetaTimeSteppingIntegratorPropertyDialog::ThetaTimeSteppingIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Tolerances");
+    addTab("Step size",4);
+    addTab("Tolerances",5);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -888,9 +894,9 @@ namespace MBSimGUI {
   }
 
   TimeSteppingSSCIntegratorPropertyDialog::TimeSteppingSSCIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Tolerances");
-    addTab("Extra");
+    addTab("Step size",4);
+    addTab("Tolerances",5);
+    addTab("Extra",6);
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
@@ -988,7 +994,7 @@ namespace MBSimGUI {
   }
 
   HETS2IntegratorPropertyDialog::HETS2IntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -1007,7 +1013,7 @@ namespace MBSimGUI {
   }
 
   ExplicitEulerIntegratorPropertyDialog::ExplicitEulerIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -1026,8 +1032,8 @@ namespace MBSimGUI {
   }
 
   ImplicitEulerIntegratorPropertyDialog::ImplicitEulerIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size");
-    addTab("Extra");
+    addTab("Step size",4);
+    addTab("Extra",5);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -1051,7 +1057,7 @@ namespace MBSimGUI {
   }
 
   RKSuiteIntegratorPropertyDialog::RKSuiteIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     vector<QString> list;
     list.emplace_back("\"RK23\"");
@@ -1089,7 +1095,7 @@ namespace MBSimGUI {
   }
 
   BoostOdeintDOSPropertyDialog::BoostOdeintDOSPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-6",vector<QStringList>(2),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"absoluteToleranceScalar");
     addToTab("Tolerances", absTol);
@@ -1123,7 +1129,7 @@ namespace MBSimGUI {
   }
 
   QuasiStaticIntegratorPropertyDialog::QuasiStaticIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size");
+    addTab("Step size",4);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -1142,11 +1148,11 @@ namespace MBSimGUI {
   }
 
   LinearSystemAnalyzerPropertyDialog::LinearSystemAnalyzerPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
-    addTab("General");
-    addTab("Modal analysis");
-    addTab("Frequency response analysis");
-    addTab("Superposed solution analysis");
-    addTab("Initial conditions");
+    addTab("General",4);
+    addTab("Modal analysis",5);
+    addTab("Frequency response analysis",6);
+    addTab("Superposed solution analysis",7);
+    addTab("Initial conditions",8);
 
     initialTime = new ExtWidget("Initial time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialTime");
     addToTab("Initial conditions", initialTime);
