@@ -98,12 +98,13 @@ namespace MBSimGUI {
     name = new ExtWidget("Name",new TextWidget(item->getXMLElement()?QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")):item->getName()));
     name->setToolTip("Set the name of the element");
     addToTab("General", name);
-    comment = new ExtWidget("Comment",new CommentWidget,true,false);
-    addToTab("General", comment);
     addTab("Plot");
     plotFeature = new ExtWidget("Plot features",new PlotFeatureWidget(getElement()->getPlotFeatureType()));
     addToTab("Plot", plotFeature);
     plotAttribute = make_unique<PlotAttributeStore>();
+    addTab("Comment");
+    comment = new ExtWidget("Comment",new CommentWidget,true,false);
+    addToTab("Comment", comment);
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
