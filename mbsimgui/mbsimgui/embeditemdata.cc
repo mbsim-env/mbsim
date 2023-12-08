@@ -238,6 +238,8 @@ namespace MBSimGUI {
     auto *cele = E(element)->getFirstCommentChild();
     if(cele)
       comment = QString::fromStdString(X()%cele->getNodeValue());
+    else
+      comment.clear();
   }
 
   void EmbedItemData::updateValues() {
