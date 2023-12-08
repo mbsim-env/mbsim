@@ -53,6 +53,7 @@ namespace MBSimGUI {
   DOMElement* ProjectPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     item->removeXMLElements();
     E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    item->updateName();
     evalSelect->writeXMLFile(item->getXMLElement(),item->getXMLElement()->getFirstElementChild());
     static_cast<Project*>(item)->setEvaluator(static_cast<TextChoiceWidget*>(evalSelect->getWidget())->getText().toStdString());
     return nullptr;
