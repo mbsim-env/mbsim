@@ -20,6 +20,7 @@
 #include <config.h>
 #include <xercesc/dom/DOMNamedNodeMap.hpp>
 #include <xercesc/dom/DOMAttr.hpp>
+#include <xercesc/dom/DOMComment.hpp>
 #include "parameter.h"
 #include "objectfactory.h"
 #include "parameter_view.h"
@@ -79,6 +80,11 @@ namespace MBSimGUI {
     QSettings settings;
     bool showHiddenElements=settings.value("mainwindow/options/showhiddenelements", false).toBool();
     mw->getParameterView()->setRowHidden(getModelIndex().row(), getModelIndex().parent(), hidden && !showHiddenElements);
+    auto *cele = E(element)->getFirstCommentChild();
+    if(cele)
+      comment = QString::fromStdString(X()%cele->getNodeValue());
+    else
+      comment.clear();
   }
 
   StringParameter::StringParameter() {

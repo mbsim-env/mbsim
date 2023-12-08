@@ -38,7 +38,7 @@ namespace MBSimGUI {
       void fromWidget() override;
     protected:
       Parameter *parameter;
-      ExtWidget *name;
+      ExtWidget *name, *comment;
       QCheckBox *hidden;
   };
 
