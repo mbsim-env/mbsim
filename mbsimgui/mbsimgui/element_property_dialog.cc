@@ -1261,7 +1261,7 @@ namespace MBSimGUI {
   DynamicSystemSolverPropertyDialog::DynamicSystemSolverPropertyDialog(Element *solver) : GroupPropertyDialog(solver,false) {
     addTab("Environment",1);
     addTab("Solver parameters",2);
-    addTab("Extra");
+    addTab("Extra,3");
 
     environments = new ExtWidget("Environments",new ListWidget(new ChoiceWidgetFactory(new WidgetFactoryFor<EnvironmentWidget>),"Environment",1,0,false,0),false,false,MBSIM%"environments");
     addToTab("Environment", environments);
