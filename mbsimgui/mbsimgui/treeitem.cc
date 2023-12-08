@@ -30,6 +30,7 @@ namespace MBSimGUI {
     getData_[1] = &TreeItem::getData1;
     getData_[2] = &TreeItem::getData2;
     getData_[3] = &TreeItem::getData3;
+    getData_[4] = &TreeItem::getData4;
     font[0] = QApplication::font();
     font[1] = QApplication::font();
 //    font[1].setItalic(true);

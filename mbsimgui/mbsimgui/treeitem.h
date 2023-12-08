@@ -47,9 +47,10 @@ namespace MBSimGUI {
       TreeItemData* getItemData() const { return itemData; }
       QVariant getData0() const { return itemData->getName(); }
       QVariant getData1() const { return itemData->getValue(); }
-      QVariant getData2() const { return itemData->getType(); }
-      QVariant getData3() const { return itemData->getReference(); }
-      QVariant (TreeItem::*getData_[4])() const;
+      QVariant getData2() const { return itemData->getComment(); }
+      QVariant getData3() const { return itemData->getType(); }
+      QVariant getData4() const { return itemData->getReference(); }
+      QVariant (TreeItem::*getData_[5])() const;
       QVariant getData(int column) const { return (this->*getData_[column])(); }
       QFont getFont() { return font[0]; }
       QIcon getDecoration() { return itemData->getDecoration(); }
