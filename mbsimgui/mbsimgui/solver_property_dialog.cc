@@ -163,6 +163,7 @@ namespace MBSimGUI {
   IntegratorPropertyDialog::IntegratorPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
     addTab("General",0);
     addTab("Initial conditions",1);
+    tabWidget->setCurrentIndex(0);
 
     startTime = new ExtWidget("Start time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"startTime");
     addToTab("General", startTime);
@@ -839,8 +840,8 @@ namespace MBSimGUI {
   }
 
   TimeSteppingIntegratorPropertyDialog::TimeSteppingIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size",4);
-    addTab("Tolerances",5);
+    addTab("Step size",2);
+    addTab("Tolerances",3);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -864,8 +865,8 @@ namespace MBSimGUI {
   }
 
   ThetaTimeSteppingIntegratorPropertyDialog::ThetaTimeSteppingIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size",4);
-    addTab("Tolerances",5);
+    addTab("Step size",2);
+    addTab("Tolerances",3);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -894,9 +895,9 @@ namespace MBSimGUI {
   }
 
   TimeSteppingSSCIntegratorPropertyDialog::TimeSteppingSSCIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size",4);
-    addTab("Tolerances",5);
-    addTab("Extra",6);
+    addTab("Step size",2);
+    addTab("Tolerances",3);
+    addTab("Extra",4);
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
@@ -994,7 +995,7 @@ namespace MBSimGUI {
   }
 
   HETS2IntegratorPropertyDialog::HETS2IntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size",4);
+    addTab("Step size",2);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -1013,7 +1014,7 @@ namespace MBSimGUI {
   }
 
   ExplicitEulerIntegratorPropertyDialog::ExplicitEulerIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size",4);
+    addTab("Step size",2);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -1032,8 +1033,8 @@ namespace MBSimGUI {
   }
 
   ImplicitEulerIntegratorPropertyDialog::ImplicitEulerIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size",4);
-    addTab("Extra",5);
+    addTab("Step size",2);
+    addTab("Extra",3);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -1129,7 +1130,7 @@ namespace MBSimGUI {
   }
 
   QuasiStaticIntegratorPropertyDialog::QuasiStaticIntegratorPropertyDialog(Solver *solver) : IntegratorPropertyDialog(solver) {
-    addTab("Step size",4);
+    addTab("Step size",2);
 
     stepSize = new ExtWidget("Step size",new ChoiceWidget(new ScalarWidgetFactory("1e-3",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSize");
     addToTab("Step size", stepSize);
@@ -1148,11 +1149,12 @@ namespace MBSimGUI {
   }
 
   LinearSystemAnalyzerPropertyDialog::LinearSystemAnalyzerPropertyDialog(Solver *solver) : SolverPropertyDialog(solver) {
-    addTab("General",4);
-    addTab("Modal analysis",5);
-    addTab("Frequency response analysis",6);
-    addTab("Superposed solution analysis",7);
-    addTab("Initial conditions",8);
+    addTab("General",0);
+    addTab("Modal analysis",1);
+    addTab("Frequency response analysis",2);
+    addTab("Superposed solution analysis",3);
+    addTab("Initial conditions",4);
+    tabWidget->setCurrentIndex(0);
 
     initialTime = new ExtWidget("Initial time",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"initialTime");
     addToTab("Initial conditions", initialTime);
