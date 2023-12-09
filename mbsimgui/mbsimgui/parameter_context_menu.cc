@@ -33,6 +33,10 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->openParameterEditor(); });
     addAction(action);
     addSeparator();
+    action=new QAction(QIcon::fromTheme("document-properties"), "Add comment", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addCommentToParameter(); });
+    addAction(action);
+    addSeparator();
     action=new QAction(QIcon::fromTheme("edit-copy"), "Copy", this);
     connect(action,&QAction::triggered,this,[=](){ mw->copyParameter(); });
     addAction(action);

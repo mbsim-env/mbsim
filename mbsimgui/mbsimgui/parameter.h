@@ -63,6 +63,7 @@ namespace MBSimGUI {
       QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
       QString getValue() const override { return value; }
       QString getComment() const override { return comment; }
+      void setComment(const QString &comment_) { comment = comment_; }
       bool getHidden() const { return hidden; }
 //      QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);

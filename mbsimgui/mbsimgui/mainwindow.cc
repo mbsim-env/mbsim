@@ -31,7 +31,7 @@
 #include "analyzer.h"
 #include "objectfactory.h"
 #include "parameter.h"
-#include "widget.h"
+#include "basic_widgets.h"
 #include "treemodel.h"
 #include "treeitem.h"
 #include "element_view.h"
@@ -75,6 +75,7 @@
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <xercesc/dom/DOMNodeList.hpp>
+#include <xercesc/dom/DOMComment.hpp>
 #include "dialogs.h"
 #include "wizards.h"
 
@@ -3009,6 +3010,84 @@ namespace MBSimGUI {
 	catch(const std::exception &ex) {
 	  cerr << ex.what() << endl;
 	}
+      }
+    }
+  }
+
+  void MainWindow::addCommentToElement() {
+    QModelIndex index = elementView->selectionModel()->currentIndex();
+    auto *element = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
+    if(element) {
+      QDialog dialog(this);
+      dialog.setWindowTitle("Add comment");
+      auto *layout = new QVBoxLayout;
+      dialog.setLayout(layout);
+      auto *comment = new CommentWidget;
+      auto *cele = E(element->getXMLElement())->getFirstCommentChild();
+      if(cele)
+	comment->setComment(QString::fromStdString(X()%cele->getNodeValue()));
+      layout->addWidget(comment);
+      QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+      buttonBox->addButton(QDialogButtonBox::Ok);
+      buttonBox->addButton(QDialogButtonBox::Cancel);
+      layout->addWidget(buttonBox);
+      connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+      connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+      auto res = dialog.exec();
+      if(res==QDialog::Accepted) {
+	element->setComment(comment->getComment());
+	if(not element->getComment().isEmpty()) {
+	  if(cele)
+	    cele->setData(X()%element->getComment().toStdString());
+	  else
+	    element->getXMLElement()->insertBefore(element->getXMLElement()->getOwnerDocument()->createComment(X()%element->getComment().toStdString()), element->getXMLElement()->getFirstChild());
+	}
+	else if(cele)
+	  element->getXMLElement()->removeChild(cele);
+	auto *fileItem = element->getDedicatedFileItem();
+	if(fileItem)
+	  fileItem->setModified(true);
+	else
+	  setWindowModified(true);
+      }
+    }
+  }
+
+  void MainWindow::addCommentToParameter() {
+    QModelIndex index = parameterView->selectionModel()->currentIndex();
+    auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
+    if(parameter) {
+      QDialog dialog(this);
+      dialog.setWindowTitle("Add comment");
+      auto *layout = new QVBoxLayout;
+      dialog.setLayout(layout);
+      auto *comment = new CommentWidget;
+      auto *cele = E(parameter->getXMLElement())->getFirstCommentChild();
+      if(cele)
+	comment->setComment(QString::fromStdString(X()%cele->getNodeValue()));
+      layout->addWidget(comment);
+      QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+      buttonBox->addButton(QDialogButtonBox::Ok);
+      buttonBox->addButton(QDialogButtonBox::Cancel);
+      layout->addWidget(buttonBox);
+      connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+      connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+      auto res = dialog.exec();
+      if(res==QDialog::Accepted) {
+	parameter->setComment(comment->getComment());
+	if(not parameter->getComment().isEmpty()) {
+	  if(cele)
+	    cele->setData(X()%parameter->getComment().toStdString());
+	  else
+	    parameter->getXMLElement()->insertBefore(parameter->getXMLElement()->getOwnerDocument()->createComment(X()%parameter->getComment().toStdString()), parameter->getXMLElement()->getFirstChild());
+	}
+	else if(cele)
+	  parameter->getXMLElement()->removeChild(cele);
+	auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
+	if(fileItem)
+	  fileItem->setModified(true);
+	else
+	  setWindowModified(true);
       }
     }
   }

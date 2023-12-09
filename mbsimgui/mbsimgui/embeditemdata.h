@@ -53,6 +53,7 @@ namespace MBSimGUI {
       QString getName() const override { return name; }
       QString getValue() const override { return ""; }
       QString getComment() const override { return comment; }
+      void setComment(const QString &comment_) { comment = comment_; }
       bool isActive();
       virtual void create() { updateName(); }
       virtual void clear() { }

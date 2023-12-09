@@ -69,6 +69,10 @@ namespace MBSimGUI {
       connect(action,&QAction::triggered,[]() { mw->exportElement("Export Model-Element"); } );
       addAction(action);
     }
+    addSeparator();
+    action=new QAction(QIcon::fromTheme("document-properties"), "Add comment", this);
+    connect(action,&QAction::triggered,this,[=](){ mw->addCommentToElement(); });
+    addAction(action);
     if(removable) {
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-copy"), "Copy", this);
