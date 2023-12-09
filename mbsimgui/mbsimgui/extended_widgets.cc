@@ -27,7 +27,9 @@
 #include <boost/dll.hpp>
 #include <QListWidget>
 #include <QStackedWidget>
+#include <QDialogButtonBox>
 #include <utility>
+#include <xercesc/dom/DOMComment.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -37,7 +39,10 @@ namespace MBSimGUI {
 
   bool MouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonPress) {
-      emit mousePressed();
+      if(static_cast<QMouseEvent*>(event)->button()==Qt::LeftButton)
+	emit leftMouseButtonPressed();
+      else if(static_cast<QMouseEvent*>(event)->button()==Qt::RightButton)
+	emit rightMouseButtonPressed();
       return true;
     }
     else
@@ -82,21 +87,28 @@ namespace MBSimGUI {
       widget->setContentsMargins(10,0,0,0);
       MouseEvent *mouseEvent = new MouseEvent(expandableWidget);
       expandableWidget->installEventFilter(mouseEvent);
-      expandableWidget->setToolTip("Click to define or remove this property");
+      expandableWidget->setToolTip("Leftclick to define or remove this property.\nRightclick to open a context menu.");
       widget->setVisible(active);
-      connect(mouseEvent,&MouseEvent::mousePressed,this,[=]{
+      connect(mouseEvent,&MouseEvent::leftMouseButtonPressed,this,[=]{
           setActive(not checked);
           emit widgetChanged();
           emit clicked(checked);
           });
+      connect(mouseEvent,&MouseEvent::rightMouseButtonPressed,this,&ExtWidget::openContextMenu);
     }
     else {
       auto *label = new QLabel;
       layout->addWidget(label);
       layout->addWidget(widget);
       widget->setContentsMargins(10,0,0,0);
-      label->setToolTip("This property must be defined");
+      if(xmlName!=FQN())
+	label->setToolTip("This property must be defined.\nRightclick to open a context menu.");
+      else
+	label->setToolTip("This property must be defined.");
       label->setText(name);
+      MouseEvent *mouseEvent = new MouseEvent(label);
+      label->installEventFilter(mouseEvent);
+      connect(mouseEvent,&MouseEvent::rightMouseButtonPressed,this,&ExtWidget::openContextMenu);
     }
     connect(widget,&Widget::widgetChanged,this,&ExtWidget::widgetChanged);
   }
@@ -114,8 +126,12 @@ namespace MBSimGUI {
     bool active = false;
     if(xmlName!=FQN()) {
       DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-      if(e)
+      if(e) {
         active = widget->initializeUsingXML(e);
+	auto *cele = E(e)->getFirstCommentChild();
+	if(cele)
+	  setToolTip(QString::fromStdString(X()%cele->getNodeValue()));
+      }
     }
     else
       active = widget->initializeUsingXML(element);
@@ -126,11 +142,18 @@ namespace MBSimGUI {
   DOMElement* ExtWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele = nullptr;
     if(xmlName!=FQN()) {
-      DOMDocument *doc = parent->getOwnerDocument();
-      DOMElement *newele = D(doc)->createElement(xmlName);
       if(isActive()) {
+	DOMDocument *doc = parent->getOwnerDocument();
+	DOMElement *newele = D(doc)->createElement(xmlName);
         ele = widget->writeXMLFile(newele);
         parent->insertBefore(newele,ref);
+	if(not toolTip().isEmpty()) {
+	  auto *cele = E(static_cast<DOMElement*>(newele))->getFirstCommentChild();
+	  if(cele)
+	    cele->setData(X()%toolTip().toStdString());
+	  else
+	    newele->insertBefore(doc->createComment(X()%toolTip().toStdString()), newele->getFirstChild());
+	}
       }
     }
     else {
@@ -138,6 +161,44 @@ namespace MBSimGUI {
         ele = widget->writeXMLFile(parent,ref);
     }
     return ele;
+  }
+
+  void ExtWidget::openContextMenu() {
+    QMenu *menu = new QMenu;
+    QAction *action;
+    if(checkable) {
+      auto *action = new QAction(QIcon::fromTheme("document-properties"), QString(checked?"Remove":"Define")+" property", menu);
+      connect(action,&QAction::triggered,this,[=](){
+	  setActive(not checked);
+	  emit widgetChanged();
+	  emit clicked(checked);
+	  });
+      menu->addAction(action);
+    }
+    if(xmlName!=FQN() and (not checkable or checked)) {
+      action = new QAction(QIcon::fromTheme("dialog-information"), "Add comment", menu);
+      connect(action,&QAction::triggered,this,&ExtWidget::addComment);
+      menu->addAction(action);
+    }
+    menu->exec(QCursor::pos());
+  }
+
+  void ExtWidget::addComment() {
+    QDialog dialog(this);
+    auto *layout = new QVBoxLayout;
+    dialog.setLayout(layout);
+    auto *comment = new CommentWidget;
+    comment->setComment(toolTip());
+    layout->addWidget(comment);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, &QDialogButtonBox::accepted, &dialog, &QDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
+    auto res = dialog.exec();
+    if(res==QDialog::Accepted)
+      setToolTip(comment->getComment());
   }
 
   ChoiceWidget::ChoiceWidget(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(nullptr), factory(factory_), mode(mode_) {

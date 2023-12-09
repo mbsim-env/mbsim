@@ -39,7 +39,8 @@ namespace MBSimGUI {
     protected:
       bool eventFilter(QObject *obj, QEvent *event) override;
     signals:
-      void mousePressed();
+      void leftMouseButtonPressed();
+      void rightMouseButtonPressed();
   };
 
   class ExtWidget : public Widget {
@@ -64,6 +65,8 @@ namespace MBSimGUI {
       QLabel *iconLabel; // the icon of a optional Widget (first column)
       // QLabel textLabel; // the name of the optional Widget (second column)
       QLabel *defaultLabel; // the "(default employed)" text of the optional Widget (third column)
+      void openContextMenu();
+      void addComment();
 
     signals:
       void clicked(bool);
