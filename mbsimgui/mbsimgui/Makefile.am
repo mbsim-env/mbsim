@@ -20,6 +20,7 @@ mbsimguidir = $(includedir)/mbsimgui
 libmbsimgui_la_CPPFLAGS = $(MBXMLUTILS_CFLAGS) $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
 libmbsimgui_la_LDFLAGS = $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS) $(EXPORT_ALL_SYMBOLS)
 libmbsimgui_la_SOURCES = \
+  single_line_delegate.cc \
   parameter_view.cc \
   file_view.cc \
   element_view.cc \
@@ -178,6 +179,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   parameter.h \
   parameter_property_dialog.h \
   parameters_context_menu.h \
+  single_line_delegate.h \
   parameter_view.h \
   physics.h \
   project_context_menu.h \

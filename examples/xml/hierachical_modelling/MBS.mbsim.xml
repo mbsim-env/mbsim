@@ -9,6 +9,7 @@
           <ele>rHG(numHG)*1000</ele><ele>0</ele><ele>0</ele>
         </xmlVector>
       </relativePosition>
+      <!--test comment of FixedRalativeFrame (single line)-->
       <relativeOrientation><pv:aboutZ unit="degree">-alphaHG(numHG)*180/pi</pv:aboutZ></relativeOrientation>
     </FixedRelativeFrame>
     </pv:Embed>

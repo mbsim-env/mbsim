@@ -21,9 +21,10 @@
 #define _PARAMETER_VIEW__H_
 
 #include <QTreeView>
-#include <QItemDelegate>
 
 namespace MBSimGUI {
+
+  class SingleLineDelegate;
 
   class ParameterView : public QTreeView {
     public:
@@ -32,15 +33,7 @@ namespace MBSimGUI {
     private:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;
-      class ValueDelegate : public QItemDelegate {
-        public:
-          ValueDelegate(ParameterView *pv);
-          void paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-          QSize sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const override;
-        private:
-          ParameterView *parameterView;
-      };
-      ValueDelegate *valueDelegate;
+      SingleLineDelegate *valueDelegate, *commentDelegate;
   };
 
 }

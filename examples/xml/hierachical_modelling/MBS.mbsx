@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <pv:Embed xmlns="http://www.mbsim-env.de/MBSimXML" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
   <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
-    <scalarParameter name="TendHalf">2</scalarParameter>
+    <scalarParameter name="TendHalf"><!--test comment for TendHalf, single line-->2</scalarParameter>
   </Parameter>
   <MBSimProject name="MBSPRJ">
+    <!-- test commend on MBSimProject line 1
+      line2
+      linelast -->
     <pv:evaluator>octave</pv:evaluator>
     <pv:Embed href="MBS.mbsim.xml" parameterHref="parameter.mbsim.xml"/>
     <pv:Embed href="Integrator.mbsimint.xml">
       <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
-        <scalarParameter name="Tend">TendHalf*2</scalarParameter>
+        <scalarParameter name="Tend">
+          <!--
+            test comment for TendHalf*2 line1
+            line last
+          -->
+          TendHalf*2
+        </scalarParameter>
       </Parameter>
     </pv:Embed>
   </MBSimProject>

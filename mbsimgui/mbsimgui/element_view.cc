@@ -22,10 +22,20 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include "mainwindow.h"
+#include "single_line_delegate.h"
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
+
+  ElementView::ElementView(QWidget *parent) : QTreeView(parent) {
+    commentDelegate=new SingleLineDelegate(this);
+    setItemDelegateForColumn(2, commentDelegate);
+  }
+
+  ElementView::~ElementView() {
+    delete commentDelegate;
+  }
 
   void ElementView::save(const QModelIndex &index, Node &node) {
     auto *model = static_cast<ElementTreeModel*>(this->model());

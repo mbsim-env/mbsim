@@ -25,6 +25,7 @@
 namespace MBSimGUI {
 
   class Element;
+  class SingleLineDelegate;
 
   class ElementView : public QTreeView {
     public:
@@ -43,12 +44,14 @@ namespace MBSimGUI {
 	  bool selected{false};
 	  std::vector<Node> child;
       };
-      ElementView(QWidget *parent=nullptr) : QTreeView(parent) { }
+      ElementView(QWidget *parent=nullptr);
+      ~ElementView();
       void save(const QModelIndex &index, Node &node);
       void restore(const QModelIndex &index, Node &node);
     private:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;
+      SingleLineDelegate *commentDelegate;
   };
 
 }

@@ -20,19 +20,22 @@
 #include <config.h>
 #include "parameter_view.h"
 #include "mainwindow.h"
-#include <QPainter>
+#include "single_line_delegate.h"
 
 namespace MBSimGUI {
 
   extern MainWindow *mw;
 
   ParameterView::ParameterView(QWidget *parent) : QTreeView(parent) {
-    valueDelegate=new ValueDelegate(this);
+    valueDelegate=new SingleLineDelegate(this);
     setItemDelegateForColumn(1, valueDelegate);
+    commentDelegate=new SingleLineDelegate(this);
+    setItemDelegateForColumn(2, commentDelegate);
   }
 
   ParameterView::~ParameterView() {
     delete valueDelegate;
+    delete commentDelegate;
   }
 
   void ParameterView::mouseDoubleClickEvent(QMouseEvent *event) {
@@ -42,22 +45,6 @@ namespace MBSimGUI {
   void ParameterView::mousePressEvent ( QMouseEvent * event ) {
     if(not mw->editorIsOpen())
       QTreeView::mousePressEvent(event);
-  }
-
-  ParameterView::ValueDelegate::ValueDelegate(ParameterView *pv) : parameterView(pv) {}
-
-  void ParameterView::ValueDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    painter->save();
-    QString text(parameterView->model()->data(index).toString());
-    text=text.trimmed();
-    text=text.replace(QRegularExpression(" *\n *"), " ¶ ");
-    text=text.simplified();
-    drawDisplay(painter, option, option.rect, text);
-    painter->restore();
-  }
-
-  QSize ParameterView::ValueDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const {
-    return QSize(0, option.font.pixelSize());
   }
 
 }
