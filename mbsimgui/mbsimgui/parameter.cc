@@ -80,6 +80,7 @@ namespace MBSimGUI {
     QSettings settings;
     bool showHiddenElements=settings.value("mainwindow/options/showhiddenelements", false).toBool();
     mw->getParameterView()->setRowHidden(getModelIndex().row(), getModelIndex().parent(), hidden && !showHiddenElements);
+    name = QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name"));
     auto *cele = E(element)->getFirstCommentChild();
     if(cele)
       comment = QString::fromStdString(X()%cele->getNodeValue());

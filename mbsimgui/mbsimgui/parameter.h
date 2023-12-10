@@ -60,7 +60,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(Parameter, ParameterItem, MBXMLUtils::PV%"Parameter", "Parameter");
     public:
       Parameter() = default;
-      QString getName() const override { return QString::fromStdString(MBXMLUtils::E(element)->getAttribute("name")); }
+      QString getName() const override { return name; }
       QString getValue() const override { return value; }
       QString getComment() const override { return comment; }
       void setComment(const QString &comment_) { comment = comment_; }
@@ -71,7 +71,7 @@ namespace MBSimGUI {
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       virtual void updateValue();
     protected:
-      QString value, comment;
+      QString name, value, comment;
       bool hidden;
   };
 
