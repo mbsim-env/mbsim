@@ -144,7 +144,7 @@ namespace MBSimGUI {
 
   SolverPropertyDialog::SolverPropertyDialog(Solver *solver) : EmbedItemPropertyDialog("Solver Properties", solver) {
     addTab("Comment");
-    comment = new ExtWidget("Comment",new CommentWidget,true,false);
+    comment = new CommentWidget;
     addToTab("Comment", comment);
   }
 

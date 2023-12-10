@@ -27,6 +27,7 @@ namespace MBSimGUI {
 
   class Solver;
   class ExtWidget;
+  class CommentWidget;
 
   class ToleranceWidgetFactory : public WidgetFactory {
     public:
@@ -48,7 +49,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *comment;
+      CommentWidget *comment;
   };
 
   class IntegratorPropertyDialog : public SolverPropertyDialog {

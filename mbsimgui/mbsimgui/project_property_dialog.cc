@@ -43,7 +43,7 @@ namespace MBSimGUI {
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,project->getDefaultEvaluator()),true,false,PV%"evaluator");
     addToTab("General",evalSelect);
     addTab("Comment");
-    comment = new ExtWidget("Comment",new CommentWidget,true,false);
+    comment = new CommentWidget;
     addToTab("Comment", comment);
   }
 

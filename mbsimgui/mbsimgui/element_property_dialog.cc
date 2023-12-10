@@ -103,7 +103,7 @@ namespace MBSimGUI {
     addToTab("Plot", plotFeature);
     plotAttribute = make_unique<PlotAttributeStore>();
     addTab("Comment");
-    comment = new ExtWidget("Comment",new CommentWidget,true,false);
+    comment = new CommentWidget;
     addToTab("Comment", comment);
   }
 
