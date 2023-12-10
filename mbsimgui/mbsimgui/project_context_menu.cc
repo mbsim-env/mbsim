@@ -33,7 +33,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
     addAction(action);
     addSeparator();
-    action=new QAction(QIcon::fromTheme("document-properties"), "Add comment", this);
+    action=new QAction(QIcon::fromTheme("dialog-information"), "Add comment", this);
     connect(action,&QAction::triggered,this,[=](){ mw->addCommentToElement(); });
     addAction(action);
   }

@@ -167,7 +167,10 @@ namespace MBSimGUI {
     QMenu *menu = new QMenu;
     QAction *action;
     if(checkable) {
-      auto *action = new QAction(QIcon::fromTheme("document-properties"), QString(checked?"Remove":"Define")+" property", menu);
+      if(checked)
+	action = new QAction(QIcon::fromTheme("list-remove"), "Remove property", menu);
+      else
+	action = new QAction(QIcon::fromTheme("list-add"), "Define property", menu);
       connect(action,&QAction::triggered,this,[=](){
 	  setActive(not checked);
 	  emit widgetChanged();
