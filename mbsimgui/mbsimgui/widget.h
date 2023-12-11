@@ -43,8 +43,6 @@ namespace MBSimGUI {
       virtual xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) { return nullptr; }
       virtual xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) { return nullptr; }
       virtual int getStretchHint() const { return 0; }
-      virtual QString getXMLComment(xercesc::DOMElement *element) { return ""; }
-      virtual void setXMLComment(const QString &comment, xercesc::DOMNode *element) { }
     signals:
       void widgetChanged();
   };

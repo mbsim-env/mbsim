@@ -79,8 +79,10 @@ namespace MBSimGUI {
       expandableLayout->setStretch(0,0);
       expandableLayout->setStretch(1,0);
       expandableLayout->setStretch(2,0);
-      commentButton = new QPushButton;
-      expandableLayout->addWidget(commentButton);
+      if(xmlName!=FQN()) {
+	commentButton = new QPushButton;
+	expandableLayout->addWidget(commentButton);
+      }
       expandableLayout->addStretch();
       layout->addWidget(expandableWidget);
       layout->addWidget(widget);
@@ -148,11 +150,8 @@ namespace MBSimGUI {
 	  setComment(QString::fromStdString(X()%cele->getNodeValue()));
       }
     }
-    else {
+    else
       active = widget->initializeUsingXML(element);
-      if(commentButton)
-	setComment(widget->getXMLComment(element));
-    }
     setActive(active);
     return active?element:nullptr;
   }
@@ -175,11 +174,8 @@ namespace MBSimGUI {
       }
     }
     else {
-      if(isActive()) {
+      if(isActive())
         ele = widget->writeXMLFile(parent,ref);
-	if(commentButton)
-	  widget->setXMLComment(comment,parent);
-      }
     }
     return ele;
   }
@@ -315,32 +311,6 @@ namespace MBSimGUI {
     else
       widget->writeXMLFile(parent,ref);
     return nullptr;
-  }
-
-  QString ChoiceWidget::getXMLComment(DOMElement *element) {
-    if(mode<=3) {
-      DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName(getIndex()));
-      if(e) {
-	auto *cele = E(e)->getFirstCommentChild();
-	if(cele)
-	  return (QString::fromStdString(X()%cele->getNodeValue()));
-      }
-    }
-    return "";
-  }
-
-  void ChoiceWidget::setXMLComment(const QString &comment, DOMNode *element) {
-    if(mode==3) {
-      DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(factory->getXMLName(getIndex()));
-      if(e and (not comment.isEmpty())) {
-	xercesc::DOMDocument *doc=element->getOwnerDocument();
-	auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
-	if(cele)
-	  cele->setData(X()%comment.toStdString());
-	else
-	  e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
-      }
-    }
   }
 
   ContainerWidget::ContainerWidget() {

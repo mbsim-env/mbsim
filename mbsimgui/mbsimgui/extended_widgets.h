@@ -90,8 +90,6 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       void defineWidget(int);
-      QString getXMLComment(xercesc::DOMElement *element) override;
-      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
 
     protected:
       QBoxLayout *layout;
