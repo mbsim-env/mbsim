@@ -52,7 +52,7 @@ namespace MBSimGUI {
     addToTab("Misc",hidden);
 
     addTab("Comment");
-    comment = new ExtWidget("Comment",new CommentWidget,true,false);
+    comment = new CommentWidget;
     addToTab("Comment", comment);
   }
 

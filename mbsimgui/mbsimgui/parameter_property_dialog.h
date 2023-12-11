@@ -27,6 +27,7 @@ namespace MBSimGUI {
 
   class Parameter;
   class ExtWidget;
+  class CommentWidget;
 
   class ParameterPropertyDialog : public PropertyDialog {
 
@@ -38,7 +39,8 @@ namespace MBSimGUI {
       void fromWidget() override;
     protected:
       Parameter *parameter;
-      ExtWidget *name, *comment;
+      ExtWidget *name;
+      CommentWidget *comment;
       QCheckBox *hidden;
   };
 

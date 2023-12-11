@@ -302,8 +302,6 @@ namespace MBSimGUI {
       boost::filesystem::path getInstallPath() const { return installPath; }
       void flexibleBodyTool();
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
-      void addCommentToElement();
-      void addCommentToParameter();
     public slots:
       void openElementEditor(bool config=true);
 

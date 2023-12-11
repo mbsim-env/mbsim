@@ -42,10 +42,6 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,[](){ mw->exportElement("Export Solver"); } );
     addAction(action);
     addSeparator();
-    action=new QAction(QIcon::fromTheme("dialog-information"), "Add comment", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->addCommentToElement(); });
-    addAction(action);
-    addSeparator();
     action = new QAction(QIcon::fromTheme("document-open"), "Import/Reference solver from file (replacing the Solver) ...", this);
     action->setToolTip("Import a solver from a file or use the XML 'Embed' functionality to reference a external solver file.");
     connect(action,&QAction::triggered,this,[=](){ mw->createSolver(mw->loadEmbedItemData(mw->getProject(), "Import/Reference Solver")); });

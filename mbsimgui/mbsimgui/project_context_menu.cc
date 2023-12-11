@@ -32,10 +32,6 @@ namespace MBSimGUI {
     action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
     connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
     addAction(action);
-    addSeparator();
-    action=new QAction(QIcon::fromTheme("dialog-information"), "Add comment", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->addCommentToElement(); });
-    addAction(action);
   }
 
 }
