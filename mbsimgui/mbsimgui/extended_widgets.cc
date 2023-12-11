@@ -39,10 +39,7 @@ namespace MBSimGUI {
 
   bool MouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonPress) {
-      if(static_cast<QMouseEvent*>(event)->button()==Qt::LeftButton)
-	emit leftMouseButtonPressed();
-      else if(static_cast<QMouseEvent*>(event)->button()==Qt::RightButton)
-	emit rightMouseButtonPressed();
+      emit mouseButtonPressed();
       return true;
     }
     else
@@ -72,43 +69,62 @@ namespace MBSimGUI {
       auto *expandableLayout = new QHBoxLayout;
       expandableLayout->setContentsMargins(0,0,0,0);
       expandableWidget->setLayout(expandableLayout);
-      iconLabel=new QLabel;
+      iconLabel = new QLabel;
       iconLabel->setPixmap(checked ? *expandedPixmap : *collapsedPixmap);
       expandableLayout->addWidget(iconLabel);
       expandableLayout->addWidget(new QLabel(name));
-      defaultLabel=new QLabel(checked ? " " : "(default employed)");
+      defaultLabel = new QLabel(checked ? " " : "(default employed)");
       defaultLabel->setDisabled(true);
       expandableLayout->addWidget(defaultLabel);
       expandableLayout->setStretch(0,0);
       expandableLayout->setStretch(1,0);
-      expandableLayout->setStretch(2,1);
+      expandableLayout->setStretch(2,0);
+      if(xmlName!=FQN()) {
+	commentButton = new QPushButton;
+	expandableLayout->addWidget(commentButton);
+      }
+      expandableLayout->addStretch();
       layout->addWidget(expandableWidget);
       layout->addWidget(widget);
       widget->setContentsMargins(10,0,0,0);
       MouseEvent *mouseEvent = new MouseEvent(expandableWidget);
       expandableWidget->installEventFilter(mouseEvent);
-      expandableWidget->setToolTip("Leftclick to define or remove this property.\nRightclick to open a context menu.");
+      expandableWidget->setToolTip("Click to define or remove this property");
       widget->setVisible(active);
-      connect(mouseEvent,&MouseEvent::leftMouseButtonPressed,this,[=]{
+      connect(mouseEvent,&MouseEvent::mouseButtonPressed,this,[=]{
           setActive(not checked);
           emit widgetChanged();
           emit clicked(checked);
           });
-      connect(mouseEvent,&MouseEvent::rightMouseButtonPressed,this,&ExtWidget::openContextMenu);
     }
     else {
+      auto *hboxw = new QWidget;
+      hboxw->setContentsMargins(0,0,0,0);
+      auto *hboxl = new QHBoxLayout;
+      hboxl->setContentsMargins(0,0,0,0);
+      hboxw->setLayout(hboxl);
       auto *label = new QLabel;
-      layout->addWidget(label);
+      hboxl->addWidget(label);
+      if(xmlName!=FQN()) {
+	commentButton = new QPushButton;
+	hboxl->addWidget(commentButton);
+      }
+      hboxl->addStretch();
+      layout->addWidget(hboxw);
       layout->addWidget(widget);
       widget->setContentsMargins(10,0,0,0);
-      if(xmlName!=FQN())
-	label->setToolTip("This property must be defined.\nRightclick to open a context menu.");
-      else
-	label->setToolTip("This property must be defined.");
+      label->setToolTip("This property must be defined");
       label->setText(name);
-      MouseEvent *mouseEvent = new MouseEvent(label);
-      label->installEventFilter(mouseEvent);
-      connect(mouseEvent,&MouseEvent::rightMouseButtonPressed,this,&ExtWidget::openContextMenu);
+    }
+    if(commentButton) {
+      QFontInfo fontinfo(font());
+      QSize size(fontinfo.pixelSize(),fontinfo.pixelSize());
+      commentButton->setIconSize(size);
+      commentButton->setFixedSize(size);
+      commentButton->setFlat(true);
+      commentButton->setCursor(Qt::WhatsThisCursor);
+      setComment("");
+      connect(commentButton, &QPushButton::clicked, this, &ExtWidget::editComment);
     }
     connect(widget,&Widget::widgetChanged,this,&ExtWidget::widgetChanged);
   }
@@ -119,6 +135,7 @@ namespace MBSimGUI {
       iconLabel->setPixmap(checked ? *expandedPixmap : *collapsedPixmap);
       defaultLabel->setText(checked ? " " : "(default employed)");
       widget->setVisible(checked);
+      if(commentButton) commentButton->setVisible(checked);
     }
   }
 
@@ -130,7 +147,7 @@ namespace MBSimGUI {
         active = widget->initializeUsingXML(e);
 	auto *cele = E(e)->getFirstCommentChild();
 	if(cele)
-	  setToolTip(QString::fromStdString(X()%cele->getNodeValue()));
+	  setComment(QString::fromStdString(X()%cele->getNodeValue()));
       }
     }
     else
@@ -147,12 +164,12 @@ namespace MBSimGUI {
 	DOMElement *newele = D(doc)->createElement(xmlName);
         ele = widget->writeXMLFile(newele);
         parent->insertBefore(newele,ref);
-	if(not toolTip().isEmpty()) {
+	if(not comment.isEmpty()) {
 	  auto *cele = E(static_cast<DOMElement*>(newele))->getFirstCommentChild();
 	  if(cele)
-	    cele->setData(X()%toolTip().toStdString());
+	    cele->setData(X()%comment.toStdString());
 	  else
-	    newele->insertBefore(doc->createComment(X()%toolTip().toStdString()), newele->getFirstChild());
+	    newele->insertBefore(doc->createComment(X()%comment.toStdString()), newele->getFirstChild());
 	}
       }
     }
@@ -164,35 +181,29 @@ namespace MBSimGUI {
   }
 
   void ExtWidget::openContextMenu() {
-    QMenu *menu = new QMenu;
-    QAction *action;
-    if(checkable) {
-      if(checked)
-	action = new QAction(QIcon::fromTheme("list-remove"), "Remove property", menu);
-      else
-	action = new QAction(QIcon::fromTheme("list-add"), "Define property", menu);
-      connect(action,&QAction::triggered,this,[=](){
-	  setActive(not checked);
-	  emit widgetChanged();
-	  emit clicked(checked);
-	  });
-      menu->addAction(action);
-    }
-    if(xmlName!=FQN() and (not checkable or checked)) {
-      action = new QAction(QIcon::fromTheme("dialog-information"), "Add comment", menu);
-      connect(action,&QAction::triggered,this,&ExtWidget::addComment);
-      menu->addAction(action);
-    }
-    menu->exec(QCursor::pos());
   }
 
-  void ExtWidget::addComment() {
+  void ExtWidget::setComment(const QString &commentStr) {
+    auto iconPath(boost::dll::program_location().parent_path().parent_path()/"share"/"mbsimgui"/"icons");
+    if(commentStr.isEmpty()) {
+      commentButton->setIcon(Utils::QIconCached(QString::fromStdString((iconPath/"nocomment.svg").string())));
+      commentButton->setToolTip("Click to add a comment");
+      comment = "";
+    }
+    else {
+      commentButton->setIcon(Utils::QIconCached(QString::fromStdString((iconPath/"comment.svg").string())));
+      commentButton->setToolTip(commentStr);
+      comment = commentStr;
+    }
+  }
+
+  void ExtWidget::editComment() {
     QDialog dialog(this);
     auto *layout = new QVBoxLayout;
     dialog.setLayout(layout);
-    auto *comment = new CommentWidget;
-    comment->setComment(toolTip());
-    layout->addWidget(comment);
+    auto *commentWidget = new CommentWidget;
+    commentWidget->setComment(comment);
+    layout->addWidget(commentWidget);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     buttonBox->addButton(QDialogButtonBox::Cancel);
@@ -201,7 +212,7 @@ namespace MBSimGUI {
     connect(buttonBox, &QDialogButtonBox::rejected, &dialog, &QDialog::reject);
     auto res = dialog.exec();
     if(res==QDialog::Accepted)
-      setToolTip(comment->getComment());
+      setComment(commentWidget->getComment());
   }
 
   ChoiceWidget::ChoiceWidget(WidgetFactory *factory_, QBoxLayout::Direction dir, int mode_) : widget(nullptr), factory(factory_), mode(mode_) {

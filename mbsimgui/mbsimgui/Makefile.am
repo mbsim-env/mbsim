@@ -232,6 +232,8 @@ dist_mbsimguishare_DATA = inlineopenmbv.ombvwst \
 
 mbsimguiicondir = @datadir@/mbsimgui/icons
 dist_mbsimguiicon_DATA = icons/openmbv.svg \
+  icons/comment.svg \
+  icons/nocomment.svg \
   icons/h5plotserie.svg \
   icons/expanded.svg \
   icons/collapsed.svg \

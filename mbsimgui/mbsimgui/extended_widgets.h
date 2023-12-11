@@ -29,6 +29,7 @@
 class QSpinBox;
 class QStackedWidget;
 class QListWidget;
+class QPushButton;
 
 namespace MBSimGUI {
 
@@ -39,8 +40,7 @@ namespace MBSimGUI {
     protected:
       bool eventFilter(QObject *obj, QEvent *event) override;
     signals:
-      void leftMouseButtonPressed();
-      void rightMouseButtonPressed();
+      void mouseButtonPressed();
   };
 
   class ExtWidget : public Widget {
@@ -65,8 +65,11 @@ namespace MBSimGUI {
       QLabel *iconLabel; // the icon of a optional Widget (first column)
       // QLabel textLabel; // the name of the optional Widget (second column)
       QLabel *defaultLabel; // the "(default employed)" text of the optional Widget (third column)
+      QPushButton *commentButton{nullptr};
+      QString comment;
       void openContextMenu();
-      void addComment();
+      void setComment(const QString &comment);
+      void editComment();
 
     signals:
       void clicked(bool);
