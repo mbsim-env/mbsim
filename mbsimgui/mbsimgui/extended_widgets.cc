@@ -180,9 +180,6 @@ namespace MBSimGUI {
     return ele;
   }
 
-  void ExtWidget::openContextMenu() {
-  }
-
   void ExtWidget::setComment(const QString &commentStr) {
     auto iconPath(boost::dll::program_location().parent_path().parent_path()/"share"/"mbsimgui"/"icons");
     if(commentStr.isEmpty()) {

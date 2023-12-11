@@ -67,7 +67,6 @@ namespace MBSimGUI {
       QLabel *defaultLabel; // the "(default employed)" text of the optional Widget (third column)
       QPushButton *commentButton{nullptr};
       QString comment;
-      void openContextMenu();
       void setComment(const QString &comment);
       void editComment();
 
