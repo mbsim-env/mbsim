@@ -82,6 +82,7 @@ namespace MBSimGUI {
       if(xmlName!=FQN()) {
 	commentButton = new QPushButton;
 	expandableLayout->addWidget(commentButton);
+	commentButton->setVisible(active);
       }
       expandableLayout->addStretch();
       layout->addWidget(expandableWidget);
