@@ -84,16 +84,6 @@ namespace MBSimGUI {
 	  + "\nComment: " + item->getItemData()->getComment()
 	  + "\nType: " + item->getItemData()->getType()
 	  + "\nReference: " + item->getItemData()->getReference();
-//      if(index.column()==0)
-//	return item->getItemData()->getName();
-//      else if(index.column()==1)
-//	return item->getItemData()->getValue();
-//      else if(index.column()==2)
-//	return item->getItemData()->getComment();
-//      else if(index.column()==3)
-//	return item->getItemData()->getType();
-//      else if(index.column()==4)
-//	return item->getItemData()->getReference();
     }
     return QVariant();
   }
