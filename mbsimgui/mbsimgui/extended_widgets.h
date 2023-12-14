@@ -47,7 +47,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="");
+      ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="", bool comment=false);
       Widget* getWidget() const { return widget; }
       int getStretchHint() const override { return widget->getStretchHint(); }
       void resize_(int m, int n) override { if(isActive()) widget->resize_(m,n); }
@@ -90,6 +90,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       void defineWidget(int);
+      QString getXMLComment(xercesc::DOMElement *element) override;
+      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
 
     protected:
       QBoxLayout *layout;
@@ -130,6 +132,8 @@ namespace MBSimGUI {
       Widget* getWidget(int i) const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getXMLComment(xercesc::DOMElement *element) override;
+      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
 
     protected:
       void addElements(int n=1, bool emitSignals=true);

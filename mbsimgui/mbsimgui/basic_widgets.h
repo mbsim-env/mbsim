@@ -376,6 +376,8 @@ namespace MBSimGUI {
       std::vector<QString> getNames() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getXMLComment(xercesc::DOMElement *element) override;
+      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
   };
 
   class TransitionWidget : public Widget {
@@ -398,6 +400,8 @@ namespace MBSimGUI {
       TextChoiceWidget *getDestChoice() { return dest; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getXMLComment(xercesc::DOMElement *element) override;
+      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
   };
 
   class CommentWidget : public Widget {

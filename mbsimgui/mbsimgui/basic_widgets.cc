@@ -927,6 +927,28 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  QString StateWidget::getXMLComment(DOMElement *element) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"state");
+    if(e) {
+      auto *cele = E(e)->getFirstCommentChild();
+      if(cele)
+	return (QString::fromStdString(X()%cele->getNodeValue()));
+    }
+    return "";
+  }
+
+  void StateWidget::setXMLComment(const QString &comment, DOMNode *element) {
+    DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(MBSIMCONTROL%"state");
+    if(e) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
+      if(cele)
+	cele->setData(X()%comment.toStdString());
+      else
+	e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
+    }
+  }
+
   TransitionWidget::TransitionWidget(Element *element_) : element(element_) {
     auto *layout = new QGridLayout;
     layout->setMargin(0);
@@ -1043,6 +1065,28 @@ namespace MBSimGUI {
       parent->insertBefore(ele, ref);
     }
     return nullptr;
+  }
+
+  QString TransitionWidget::getXMLComment(DOMElement *element) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"transition");
+    if(e) {
+      auto *cele = E(e)->getFirstCommentChild();
+      if(cele)
+	return (QString::fromStdString(X()%cele->getNodeValue()));
+    }
+    return "";
+  }
+
+  void TransitionWidget::setXMLComment(const QString &comment, DOMNode *element) {
+    DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(MBSIMCONTROL%"transition");
+    if(e) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
+      if(cele)
+	cele->setData(X()%comment.toStdString());
+      else
+	e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
+    }
   }
 
   CommentWidget::CommentWidget() {

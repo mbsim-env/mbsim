@@ -48,7 +48,8 @@ namespace MBSimGUI {
 
   optional<QPixmap> ExtWidget::expandedPixmap, ExtWidget::collapsedPixmap;
 
-  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_) : checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
+  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_, bool comment) : checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
+    if(xmlName!=FQN()) comment = true;
     if(!expandedPixmap || !collapsedPixmap) {
       QFontInfo fontinfo(font());
       auto iconPath(boost::dll::program_location().parent_path().parent_path()/"share"/"mbsimgui"/"icons");
@@ -79,7 +80,7 @@ namespace MBSimGUI {
       expandableLayout->setStretch(0,0);
       expandableLayout->setStretch(1,0);
       expandableLayout->setStretch(2,0);
-      if(xmlName!=FQN()) {
+      if(comment) {
 	commentButton = new QPushButton;
 	expandableLayout->addWidget(commentButton);
 	commentButton->setVisible(active);
@@ -106,9 +107,9 @@ namespace MBSimGUI {
       hboxw->setLayout(hboxl);
       auto *label = new QLabel;
       hboxl->addWidget(label);
-      if(xmlName!=FQN()) {
-	commentButton = new QPushButton;
-	hboxl->addWidget(commentButton);
+      if(comment) {
+        commentButton = new QPushButton;
+        hboxl->addWidget(commentButton);
       }
       hboxl->addStretch();
       layout->addWidget(hboxw);
@@ -151,8 +152,11 @@ namespace MBSimGUI {
 	  setComment(QString::fromStdString(X()%cele->getNodeValue()));
       }
     }
-    else
+    else {
       active = widget->initializeUsingXML(element);
+      if(commentButton)
+	setComment(widget->getXMLComment(element));
+    }
     setActive(active);
     return active?element:nullptr;
   }
@@ -175,8 +179,11 @@ namespace MBSimGUI {
       }
     }
     else {
-      if(isActive())
-        ele = widget->writeXMLFile(parent,ref);
+      if(isActive()) {
+	ele = widget->writeXMLFile(parent,ref);
+	if(commentButton and (not comment.isEmpty()))
+	  widget->setXMLComment(comment,parent);
+      }
     }
     return ele;
   }
@@ -313,6 +320,33 @@ namespace MBSimGUI {
       widget->writeXMLFile(parent,ref);
     return nullptr;
   }
+
+  QString ChoiceWidget::getXMLComment(DOMElement *element) {
+    if(mode<=3) {
+      DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName(getIndex()));
+      if(e) {
+	auto *cele = E(e)->getFirstCommentChild();
+	if(cele)
+	  return (QString::fromStdString(X()%cele->getNodeValue()));
+      }
+    }
+    return "";
+  }
+
+  void ChoiceWidget::setXMLComment(const QString &comment, DOMNode *element) {
+    if(mode==3) {
+      DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(factory->getXMLName(getIndex()));
+      if(e) {
+	xercesc::DOMDocument *doc=element->getOwnerDocument();
+	auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
+	if(cele)
+	  cele->setData(X()%comment.toStdString());
+	else
+	  e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
+      }
+    }
+  }
+
 
   ContainerWidget::ContainerWidget() {
     layout = new QVBoxLayout;
@@ -493,6 +527,36 @@ namespace MBSimGUI {
       }
     }
     return nullptr;
+  }
+
+  QString ListWidget::getXMLComment(DOMElement *element) {
+    DOMElement *e;
+    if(mode<=1 or mode==3)
+      e = static_cast<DOMElement*>(element)->getFirstElementChild();
+    else
+      e = E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(factory->getXMLName());
+    if(e) {
+      auto *cele = E(e)->getFirstCommentChild();
+      if(cele)
+	return (QString::fromStdString(X()%cele->getNodeValue()));
+    }
+    return "";
+  }
+
+  void ListWidget::setXMLComment(const QString &comment, DOMNode *element) {
+    DOMElement *e;
+    if(mode<=1 or mode==3)
+      e = static_cast<DOMElement*>(element)->getFirstElementChild();
+    else
+      e = E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(factory->getXMLName());
+    if(e) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
+      if(cele)
+	cele->setData(X()%comment.toStdString());
+      else
+	e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
+    }
   }
 
   Widget* ChoiceWidgetFactory::createWidget(int i) {
