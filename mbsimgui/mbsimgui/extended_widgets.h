@@ -62,6 +62,7 @@ namespace MBSimGUI {
       Widget *widget;
       MBXMLUtils::FQN xmlName;
       static std::optional<QPixmap> expandedPixmap, collapsedPixmap; // this optional is initialed in the first ctor call (cannot be done static since Qt must be init first)
+      static std::optional<QIcon> commentIcon, noCommentIcon; // this optional is initialed in the first ctor call (cannot be done static since Qt must be init first)
       QLabel *iconLabel; // the icon of a optional Widget (first column)
       // QLabel textLabel; // the name of the optional Widget (second column)
       QLabel *defaultLabel; // the "(default employed)" text of the optional Widget (third column)

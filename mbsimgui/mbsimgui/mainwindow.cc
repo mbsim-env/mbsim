@@ -297,6 +297,7 @@ namespace MBSimGUI {
     helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, &MainWindow::about);
     menuBar()->addMenu(helpMenu);
 
+    auto iconPath(installPath/"share"/"mbsimgui"/"icons");
     QToolBar *runBar = addToolBar("Run Toolbar");
     toolMenu->addAction(runBar->toggleViewAction());
     runBar->setObjectName("toolbar/run");
@@ -307,35 +308,35 @@ namespace MBSimGUI {
     QAction *actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
     runMenu->addAction(actionInterrupt);
     connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
-    QAction *actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"kill.svg").string())),"Kill simulation");
+    QAction *actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill simulation");
     runMenu->addAction(actionKill);
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
-    actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"openmbv.svg").string())),"OpenMBV");
+    actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"openmbv.svg").string())),"OpenMBV");
     runMenu->addAction(actionOpenMBV);
     connect(actionOpenMBV,&QAction::triggered,this,&MainWindow::openmbv);
-    actionH5plotserie = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"h5plotserie.svg").string())),"H5plotserie");
+    actionH5plotserie = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"h5plotserie.svg").string())),"H5plotserie");
     runMenu->addAction(actionH5plotserie);
     connect(actionH5plotserie,&QAction::triggered,this,&MainWindow::h5plotserie);
-    actionLinearSystemAnalysis = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"eigenanalysis.svg").string())),"Linear system analysis");
+    actionLinearSystemAnalysis = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"eigenanalysis.svg").string())),"Linear system analysis");
     runMenu->addAction(actionLinearSystemAnalysis);
     connect(actionLinearSystemAnalysis,&QAction::triggered,this,&MainWindow::linearSystemAnalysis);
-    actionStateTable = runBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"state_table.svg").string())),"Show state table");
+    actionStateTable = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"state_table.svg").string())),"Show state table");
     runMenu->addAction(actionStateTable);
     connect(actionStateTable,&QAction::triggered,this,&MainWindow::showStateTable);
 
     QToolBar *miscBar = addToolBar("Misc Toolbar");
     miscBar->setObjectName("toolbar/misc");
     toolMenu->addAction(miscBar->toggleViewAction());
-    QAction *actionCreateFMU = miscBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"FMI_bare.svg").string())),"Create FMU");
+    QAction *actionCreateFMU = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"FMI_bare.svg").string())),"Create FMU");
     miscMenu->addAction(actionCreateFMU);
     connect(actionCreateFMU,&QAction::triggered,this,&MainWindow::createFMU);
-    QAction *actionFem = miscBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
+    QAction *actionFem = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"fbt.svg").string())),"Flexible body tool");
     miscMenu->addAction(actionFem);
     connect(actionFem,&QAction::triggered,this,&MainWindow::flexibleBodyTool);
-    actionDebug = miscBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"debug.svg").string())),"Debug model");
+    actionDebug = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"debug.svg").string())),"Debug model");
     miscMenu->addAction(actionDebug);
     connect(actionDebug,&QAction::triggered,this,&MainWindow::debug);
-    QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"convert.svg").string())),"Convert file");
+    QAction *actionConvert = miscBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"convert.svg").string())),"Convert file");
     miscMenu->addAction(actionConvert);
     connect(actionConvert,&QAction::triggered,this,&MainWindow::convertDocument);
 
@@ -456,7 +457,7 @@ namespace MBSimGUI {
     autoSaveTimer.start(settings.value("mainwindow/options/autosaveinterval", 5).toInt()*60000);
     statusTime.start();
 
-    setWindowIcon(Utils::QIconCached(QString::fromStdString((installPath/"share"/"mbsimgui"/"icons"/"mbsimgui.svg").string())));
+    setWindowIcon(Utils::QIconCached(QString::fromStdString((iconPath/"mbsimgui.svg").string())));
 
     openOptionsMenu(true);
   }

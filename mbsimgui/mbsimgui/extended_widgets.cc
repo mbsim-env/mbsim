@@ -24,6 +24,7 @@
 #include "dialogs.h"
 #include "custom_widgets.h"
 #include "unknown_widget.h"
+#include "mainwindow.h"
 #include <boost/dll.hpp>
 #include <QListWidget>
 #include <QStackedWidget>
@@ -37,6 +38,8 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
+  extern MainWindow *mw;
+
   bool MouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonPress) {
       emit mouseButtonPressed();
@@ -47,14 +50,17 @@ namespace MBSimGUI {
   }
 
   optional<QPixmap> ExtWidget::expandedPixmap, ExtWidget::collapsedPixmap;
+  optional<QIcon> ExtWidget::commentIcon, ExtWidget::noCommentIcon;
 
   ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_, bool comment) : checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
     if(xmlName!=FQN()) comment = true;
-    if(!expandedPixmap || !collapsedPixmap) {
+    if(!expandedPixmap) {
+      auto iconPath(mw->getInstallPath()/"share"/"mbsimgui"/"icons");
       QFontInfo fontinfo(font());
-      auto iconPath(boost::dll::program_location().parent_path().parent_path()/"share"/"mbsimgui"/"icons");
       expandedPixmap = Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())).pixmap(fontinfo.pixelSize(),fontinfo.pixelSize());
       collapsedPixmap = Utils::QIconCached(QString::fromStdString((iconPath/"collapsed.svg").string())).pixmap(fontinfo.pixelSize(),fontinfo.pixelSize());
+      commentIcon = Utils::QIconCached(QString::fromStdString((iconPath/"comment.svg").string()));
+      noCommentIcon = Utils::QIconCached(QString::fromStdString((iconPath/"nocomment.svg").string()));
     }
 
     auto *layout = new QVBoxLayout;
@@ -189,14 +195,13 @@ namespace MBSimGUI {
   }
 
   void ExtWidget::setComment(const QString &commentStr) {
-    auto iconPath(boost::dll::program_location().parent_path().parent_path()/"share"/"mbsimgui"/"icons");
     if(commentStr.isEmpty()) {
-      commentButton->setIcon(Utils::QIconCached(QString::fromStdString((iconPath/"nocomment.svg").string())));
+      commentButton->setIcon(*noCommentIcon);
       commentButton->setToolTip("Click to add a comment");
       comment = "";
     }
     else {
-      commentButton->setIcon(Utils::QIconCached(QString::fromStdString((iconPath/"comment.svg").string())));
+      commentButton->setIcon(*commentIcon);
       commentButton->setToolTip(commentStr);
       comment = commentStr;
     }
