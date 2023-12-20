@@ -1370,6 +1370,10 @@ namespace MBSim {
     addFrame(static_cast<Frame*>(frame));
   }
 
+  void DynamicSystem::addArbitraryFrame(Frame *frame_) {
+    addFrame(frame_);
+  }
+
   void DynamicSystem::addContour(RigidContour *contour) {
     addContour(static_cast<Contour*>(contour));
   }
