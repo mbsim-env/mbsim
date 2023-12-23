@@ -380,11 +380,9 @@ namespace MBSimGUI {
 
   FrameMBSOMBVWidget::FrameMBSOMBVWidget() {
     size = new ExtWidget("Size",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"size");
-    size->setToolTip("Set the size of the frame");
     layout()->addWidget(size);
 
     offset = new ExtWidget("Offset",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"offset");
-    offset->setToolTip("Set the offset of the frame");
     layout()->addWidget(offset);
   }
 

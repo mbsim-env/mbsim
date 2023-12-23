@@ -84,7 +84,7 @@ namespace MBSimGUI {
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-copy"), "Array/Pattern", this);
       action->setToolTip("Create/Edit the array/pattern properties of this element using the XML 'Embed' functionality.\n"
-                         "With the array/pattern functionality an element can be duplicated to an array/pattern of N element.");
+                         "With the array/pattern functionality an element can be duplicated to an array/pattern of N elements.");
       connect(action,&QAction::triggered,this,[=](){ mw->openCloneEditor(); });
       addAction(action);
       addSeparator();

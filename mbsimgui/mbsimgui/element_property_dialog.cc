@@ -96,7 +96,6 @@ namespace MBSimGUI {
   ElementPropertyDialog::ElementPropertyDialog(Element *element) : EmbedItemPropertyDialog("Model-Element Properties", element) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(item->getXMLElement()?QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")):item->getName()));
-    name->setToolTip("Set the name of the element");
     addToTab("General", name);
     addTab("Plot");
     plotFeature = new ExtWidget("Plot features",new PlotFeatureWidget(getElement()->getPlotFeatureType()));
@@ -132,7 +131,6 @@ namespace MBSimGUI {
   FramePropertyDialog::FramePropertyDialog(Element *frame) : ElementPropertyDialog(frame) {
     addTab("Visualization",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
-    visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualization", visu);
   }
 
@@ -151,7 +149,6 @@ namespace MBSimGUI {
   InternalFramePropertyDialog::InternalFramePropertyDialog(Element *frame) : ElementPropertyDialog(frame) {
     addTab("Visualization",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,static_cast<InternalFrame*>(frame)->getXMLFrameName());
-    visu->setToolTip("Set the visualisation parameters for the frame");
     addToTab("Visualization", visu);
     static_cast<TextWidget*>(name->getWidget())->setReadOnly(true);
     static_cast<TextWidget*>(name->getWidget())->setText(frame->getName());

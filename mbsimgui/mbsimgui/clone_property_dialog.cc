@@ -31,7 +31,6 @@ namespace MBSimGUI {
   ClonePropertyDialog::ClonePropertyDialog(Element *element) : EmbedItemPropertyDialog("Array/Pattern Properties", element) {
     addTab("General");
     name = new ExtWidget("Name",new TextWidget(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name"))));
-    name->setToolTip("Set the name of the element");
     addToTab("General", name);
     clone = new ExtWidget("Array/Pattern",new CloneWidget,true,false);
     connect(clone,&Widget::widgetChanged,this,&ClonePropertyDialog::updateName);
