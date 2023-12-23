@@ -1,6 +1,10 @@
 Release NEXT
 ============
 
+All
+---
+- Various bug fixes.
+
 MBSimGUI
 --------
 - Enable comments for elements, parameters and all top level widgets.
