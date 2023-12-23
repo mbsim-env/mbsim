@@ -177,9 +177,9 @@ namespace MBSimGUI {
     action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open ...", this, QOverload<>::of(&MainWindow::loadProject));
     action->setShortcut(QKeySequence::Open);
     action->setStatusTip("Open project");
-    action = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
-    action->setShortcut(QKeySequence::Save);
-    action->setStatusTip("Save project and all references");
+    actionSave = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
+    actionSave->setShortcut(QKeySequence::Save);
+    actionSave->setStatusTip("Save project and all references");
     actionSaveProject = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save project only", this, [=](){ this->saveProject(); });
     actionSaveProject->setStatusTip("Save project (but not the references)");
     action = fileMenu->addAction(QIcon::fromTheme("document-save-as"), "Save project as ...", this, &MainWindow::saveProjectAs);
@@ -774,6 +774,7 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
+      actionSave->setDisabled(true);
       actionSaveProject->setDisabled(true);
       projectFile="";
       setWindowTitle("Project.mbsx[*]");
@@ -826,6 +827,7 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
+      actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
       projectFile = QDir::current().relativeFilePath(fileName);
       setWindowTitle(projectFile+"[*]");
@@ -893,6 +895,7 @@ namespace MBSimGUI {
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
+      actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
       return saveProject();
     }
