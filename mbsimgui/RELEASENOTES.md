@@ -9,6 +9,10 @@ MBSimGUI
 --------
 - Enable comments for elements, parameters and all top level widgets.
 
+OpenMBV
+--------
+- Allow to remove nodes from IvBody (wrl) by type and name.
+
 Release 10.1
 ============ 
 
