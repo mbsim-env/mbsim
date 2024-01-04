@@ -30,8 +30,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
   MBSIMGUI_REGOBJECTFACTORY(BevelGear);
   MBSIMGUI_REGOBJECTFACTORY(Circle);
   MBSIMGUI_REGOBJECTFACTORY(Cylinder);
@@ -62,7 +60,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(UnknownContour);
 
   Contour::Contour() {
-    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string()));
+    icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string()));
   }
 
   DOMElement* Contour::processIDAndHref(DOMElement *element) {
@@ -77,8 +75,8 @@ namespace MBSimGUI {
   }
 
   UnknownContour::UnknownContour() {
-    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string(),
-                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"contour.svg").string(),
+                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
 }

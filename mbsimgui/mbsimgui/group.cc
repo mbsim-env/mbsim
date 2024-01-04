@@ -39,12 +39,10 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
   MBSIMGUI_REGOBJECTFACTORY(Group);
 
   Group::Group() : constraints(nullptr), observers(nullptr) {
-    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string()));
+    icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string()));
     InternalFrame *I = new InternalFrame("I",MBSIM%"enableOpenMBVFrameI",MBSIM%"plotFeatureFrameI");
     addFrame(I);
   }
@@ -543,8 +541,8 @@ namespace MBSimGUI {
   }
 
   UnknownGroup::UnknownGroup() {
-    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string(),
-                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"group.svg").string(),
+                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
 }

@@ -30,8 +30,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
   MBSIMGUI_REGOBJECTFACTORY(FixedRelativeFrame);
   MBSIMGUI_REGOBJECTFACTORY(UnknownFixedRelativeFrame);
   MBSIMGUI_REGOBJECTFACTORY(NodeFrame);
@@ -40,7 +38,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(FfrInterfaceNodeFrame);
 
   Frame::Frame() {
-    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string()));
+    icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string()));
   }
 
   DOMElement* Frame::processIDAndHref(DOMElement *element) {
@@ -75,13 +73,13 @@ namespace MBSimGUI {
   }
 
   UnknownFixedRelativeFrame::UnknownFixedRelativeFrame() {
-    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string(),
-                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string(),
+                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
   UnknownNodeFrame::UnknownNodeFrame() {
-    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string(),
-                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"frame.svg").string(),
+                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
 }

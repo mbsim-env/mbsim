@@ -34,8 +34,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
   OMBVRigidBodyWidgetFactory::OMBVRigidBodyWidgetFactory()  {
     name.emplace_back("Compound rigid body");
     name.emplace_back("Cube");

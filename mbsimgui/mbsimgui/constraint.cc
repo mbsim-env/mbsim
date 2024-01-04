@@ -28,8 +28,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
   
-  extern MainWindow *mw;
-
   MBSIMGUI_REGOBJECTFACTORY(GeneralizedAccelerationConstraint);
   MBSIMGUI_REGOBJECTFACTORY(GeneralizedConnectionConstraint);
   MBSIMGUI_REGOBJECTFACTORY(GeneralizedGearConstraint);
@@ -40,12 +38,12 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(UnknownConstraint);
 
   Constraint::Constraint() {
-    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string()));
+    icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string()));
   }
 
   UnknownConstraint::UnknownConstraint() {
-    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string(),
-                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"constraint.svg").string(),
+                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
 }

@@ -39,8 +39,6 @@ namespace MBSimGUI {
   class MainWindow;
   class TreeItemData;
 
-  extern MainWindow *mw;
-
   /** Utilitiy class */
   class Utils {
     public:

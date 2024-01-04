@@ -125,7 +125,6 @@ namespace MBSimGUI {
       std::deque<std::vector<xercesc::DOMDocument*>> undos, redos;
       std::pair<Element*,bool> elementBuffer;
       std::pair<Parameter*,bool> parameterBuffer;
-      boost::filesystem::path installPath;
       QString fmuFileName;
       LinearSystemAnalysisDialog *lsa{nullptr};
       FlexibleBodyTool *fbt{nullptr};
@@ -299,7 +298,7 @@ namespace MBSimGUI {
       std::string getID(Element* element) { std::string ID = std::to_string(IDcounter++); idMap[ID] = element; return ID; }
       static int getExitOK() { return exitOK; }
       static void setExitBad() { exitOK=false; }
-      boost::filesystem::path getInstallPath() const { return installPath; }
+      static boost::filesystem::path getInstallPath();
       void flexibleBodyTool();
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
     public slots:

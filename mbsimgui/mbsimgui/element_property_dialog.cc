@@ -1913,7 +1913,7 @@ namespace MBSimGUI {
     widget->setLayout(hlayout);
     auto label = new QLabel("Use flexible body tool to create input data:");
     hlayout->addWidget(label);
-    auto button = new QPushButton(Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
+    auto button = new QPushButton(Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
     connect(button,&QPushButton::clicked,this,[=](){ mw->flexibleBodyTool(); connect(mw->getFlexibleBodyTool(),&FlexibleBodyTool::finished,this,[=](int res) { if(res==1) static_cast<FileWidget*>(inputDataFile->getWidget())->setFile(mw->getFlexibleBodyTool()->getInputDataFile()); }); });
 
     hlayout->addWidget(button);
