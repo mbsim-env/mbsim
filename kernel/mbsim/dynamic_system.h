@@ -700,12 +700,6 @@ namespace MBSim {
 
       void addFrame(FixedRelativeFrame *frame);
 
-      /**
-       * Add an arbitrary Frame to the dynamic system.
-       * Use this function with special care! Normally addFrame(FixedRelativeFrame *) should be used!!!
-       */
-      void addArbitraryFrame(Frame *frame_);
-
       void addContour(RigidContour *contour);
 
       /**
