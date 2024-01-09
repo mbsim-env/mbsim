@@ -184,9 +184,6 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
     cout<<"                               error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl;
     cout<<"                               Each message is prefixed/postfixed with <pre>/<post>."<<endl;
     cout<<"                               --stdout may be specified multiple times."<<endl;
-    cout<<"                               If --stdout and --stderr is not specified --stdout 'info~Info: ~'"<<endl;
-    cout<<"                               --stderr 'warn~Warn: ~' --stderr 'error~~' --stderr 'depr~Depr:~'"<<endl;
-    cout<<"                               --stderr 'status~~\\r' is used."<<endl;
     cout<<"--stderr <msg>                 Analog to --stdout but prints to stderr."<<endl;
     cout<<"<mbsimprjfile>                 The preprocessed mbsim project xml file"<<endl;
     return 1;

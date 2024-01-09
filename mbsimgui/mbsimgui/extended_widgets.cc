@@ -38,8 +38,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
   bool MouseEvent::eventFilter(QObject *obj, QEvent *event) {
     if(event->type() == QEvent::MouseButtonPress) {
       emit mouseButtonPressed();
@@ -55,7 +53,7 @@ namespace MBSimGUI {
   ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_, bool comment) : checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
     if(xmlName!=FQN()) comment = true;
     if(!expandedPixmap) {
-      auto iconPath(mw->getInstallPath()/"share"/"mbsimgui"/"icons");
+      auto iconPath(MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons");
       QFontInfo fontinfo(font());
       expandedPixmap = Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())).pixmap(fontinfo.pixelSize(),fontinfo.pixelSize());
       collapsedPixmap = Utils::QIconCached(QString::fromStdString((iconPath/"collapsed.svg").string())).pixmap(fontinfo.pixelSize(),fontinfo.pixelSize());

@@ -94,7 +94,7 @@ namespace MBSimGUI {
 
   vector<boost::filesystem::path> dependencies;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(nullptr), elementBuffer(nullptr,false), parameterBuffer(nullptr,false), installPath(boost::dll::program_location().parent_path().parent_path()) {
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(nullptr), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
 
     impl=DOMImplementation::getImplementation();
@@ -177,9 +177,9 @@ namespace MBSimGUI {
     action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open ...", this, QOverload<>::of(&MainWindow::loadProject));
     action->setShortcut(QKeySequence::Open);
     action->setStatusTip("Open project");
-    action = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
-    action->setShortcut(QKeySequence::Save);
-    action->setStatusTip("Save project and all references");
+    actionSave = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
+    actionSave->setShortcut(QKeySequence::Save);
+    actionSave->setStatusTip("Save project and all references");
     actionSaveProject = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save project only", this, [=](){ this->saveProject(); });
     actionSaveProject->setStatusTip("Save project (but not the references)");
     action = fileMenu->addAction(QIcon::fromTheme("document-save-as"), "Save project as ...", this, &MainWindow::saveProjectAs);
@@ -297,7 +297,7 @@ namespace MBSimGUI {
     helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, &MainWindow::about);
     menuBar()->addMenu(helpMenu);
 
-    auto iconPath(installPath/"share"/"mbsimgui"/"icons");
+    auto iconPath(getInstallPath()/"share"/"mbsimgui"/"icons");
     QToolBar *runBar = addToolBar("Run Toolbar");
     toolMenu->addAction(runBar->toggleViewAction());
     runBar->setObjectName("toolbar/run");
@@ -516,7 +516,7 @@ namespace MBSimGUI {
   void MainWindow::initInlineOpenMBV() {
     std::list<string> arg;
     arg.emplace_back("--wst");
-    arg.push_back((installPath/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
+    arg.push_back((getInstallPath()/"share"/"mbsimgui"/"inlineopenmbv.ombvwst").string());
     arg.emplace_back("--hdf5RefreshDelta");
     arg.emplace_back("0");
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg, true);
@@ -540,8 +540,8 @@ namespace MBSimGUI {
         d.write(buffer, size);
       }
     };
-    bfs__copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  bfs::copy_option::overwrite_if_exists);
-    bfs__copy_file(installPath/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", bfs::copy_option::overwrite_if_exists);
+    bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  bfs::copy_option::overwrite_if_exists);
+    bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", bfs::copy_option::overwrite_if_exists);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
     connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::fileReloaded, [this](){
       if(callViewAllAfterFileReloaded)
@@ -774,6 +774,7 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
+      actionSave->setDisabled(true);
       actionSaveProject->setDisabled(true);
       projectFile="";
       setWindowTitle("Project.mbsx[*]");
@@ -826,6 +827,7 @@ namespace MBSimGUI {
       actionSaveStateVectorAs->setDisabled(true);
       actionSaveStateTableAs->setDisabled(true);
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
+      actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
       projectFile = QDir::current().relativeFilePath(fileName);
       setWindowTitle(projectFile+"[*]");
@@ -893,6 +895,7 @@ namespace MBSimGUI {
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
+      actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
       return saveProject();
     }
@@ -1332,7 +1335,7 @@ namespace MBSimGUI {
 
     arg.append(projectFile);
     process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((installPath/"bin"/"mbsimflatxml").string()), arg);
+    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimflatxml").string()), arg);
   }
 
   void MainWindow::simulate() {
@@ -1348,13 +1351,13 @@ namespace MBSimGUI {
   void MainWindow::openmbv() {
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".ombvx";
     if(QFile::exists(name))
-      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"openmbv").string()), QStringList(name));
+      QProcess::startDetached(QString::fromStdString((getInstallPath()/"bin"/"openmbv").string()), QStringList(name));
   }
 
   void MainWindow::h5plotserie() {
     QString name = QString::fromStdString(uniqueTempDir.generic_string())+"/"+project->getDynamicSystemSolver()->getName()+".mbsh5";
     if(QFile::exists(name))
-      QProcess::startDetached(QString::fromStdString((installPath/"bin"/"h5plotserie").string()), QStringList(name));
+      QProcess::startDetached(QString::fromStdString((getInstallPath()/"bin"/"h5plotserie").string()), QStringList(name));
   }
 
   void MainWindow::linearSystemAnalysis() {
@@ -1412,7 +1415,7 @@ namespace MBSimGUI {
     echoView->clearOutput();
     echoView->showXMLCode(true);
     process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((installPath/"bin"/"mbsimxml").string()), arg);
+    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
     statusBar()->showMessage(tr("Debug model"));
   }
 
@@ -1448,11 +1451,11 @@ namespace MBSimGUI {
   }
 
   void MainWindow::xmlHelp(const QString &url) {
-    QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((installPath/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
+    QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
   }
 
   void MainWindow::relnotes() {
-    QFile file(QString::fromStdString((installPath/"share"/"mbsim-env"/"RELEASENOTES.md").string()));
+    QFile file(QString::fromStdString((getInstallPath()/"share"/"mbsim-env"/"RELEASENOTES.md").string()));
     if(file.open(QFile::ReadOnly)) {
       QTextStream out(&file);
       SimpleTextDialog dialog("Release notes","",this);
@@ -2725,6 +2728,11 @@ namespace MBSimGUI {
     fbt->show();
   }
 
+  boost::filesystem::path MainWindow::getInstallPath() {
+    static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
+    return installPath;
+  }
+
   void MainWindow::createFMU() {
     QFileInfo projectFile = QFileInfo(getProjectFilePath());
     CreateFMUDialog dialog(projectFile.absolutePath()+"/"+projectFile.baseName()+".fmu");
@@ -2751,7 +2759,7 @@ namespace MBSimGUI {
 	  echoView->showXMLCode(false);
 	  process.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
-	  process.start(QString::fromStdString((installPath/"bin"/"mbsimCreateFMU").string()), arg);
+	  process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimCreateFMU").string()), arg);
 	  connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=]() {
 	    if(QFile::exists(fmuFileName))
 	      QFile::remove(fmuFileName);
@@ -2833,7 +2841,7 @@ namespace MBSimGUI {
         });
 //        connect(editor,&ElementPropertyDialog::showXMLHelp,this,[=](){
 //          // generate url for current element
-//          string url="file://"+(installPath/"share"/"mbxmlutils"/"doc").string();
+//          string url="file://"+(getInstallPath()/"share"/"mbxmlutils"/"doc").string();
 //          string ns=element->getXMLType().first;
 //          replace(ns.begin(), ns.end(), ':', '_');
 //          replace(ns.begin(), ns.end(), '.', '_');

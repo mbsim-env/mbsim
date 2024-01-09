@@ -8,7 +8,7 @@
     </xmlVector>
   </vectorParameter>
   <scalarParameter name="m1">5</scalarParameter>
-  <scalarParameter name="m">m1</scalarParameter>
+  <scalarParameter name="m"><?MBSIMGUI_HIDDEN?>m1</scalarParameter>
   <scalarParameter name="h">0.8</scalarParameter>
   <import>from math import pi</import>
   <scalarParameter name="alphaUG">pi/4</scalarParameter>

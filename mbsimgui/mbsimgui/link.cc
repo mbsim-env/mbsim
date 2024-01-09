@@ -28,17 +28,15 @@ using namespace xercesc;
 
 namespace MBSimGUI {
   
-  extern MainWindow *mw;
-
   MBSIMGUI_REGOBJECTFACTORY(UnknownLink);
 
   Link::Link() {
-    icon = Utils::QIconCached(QString::fromStdString((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string()));
+    icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string()));
   }
 
   UnknownLink::UnknownLink() {
-    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string(),
-                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"link.svg").string(),
+                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
 }

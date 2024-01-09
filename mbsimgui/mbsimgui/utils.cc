@@ -42,6 +42,8 @@ namespace MBSimGUI {
 
   bool Utils::initialized=false;
 
+  extern MainWindow *mw;
+
   void Utils::initialize() {
     if(initialized) return;
     initialized=true;

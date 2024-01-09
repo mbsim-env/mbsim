@@ -93,9 +93,6 @@ int main(int argc, char *argv[]) {
           <<"                         error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl
           <<"                         Each message is prefixed/postfixed with <pre>/<post>."<<endl
           <<"                         --stdout may be specified multiple times."<<endl
-          <<"                         If --stdout and --stderr is not specified --stdout 'info~Info: ~'"<<endl
-          <<"                         --stderr 'warn~Warn: ~' --stderr 'error~~' --stderr 'depr~Depr:~'"<<endl
-          <<"                         --stderr 'status~~\\r' is used."<<endl
           <<"--stderr <msg>           Analog to --stdout but prints to stderr."<<endl
           <<"-C <dir/file>            Change current to dir to <dir>/dir of <file> first."<<endl
           <<"                         All arguments are still relative to the original current dir."<<endl

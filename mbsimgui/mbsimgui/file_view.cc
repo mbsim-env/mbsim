@@ -23,8 +23,6 @@
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
   void FileView::mouseDoubleClickEvent(QMouseEvent *event) {
 //    mw->openFileEditor();
   }

@@ -30,8 +30,8 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(UnknownObject);
 
   UnknownObject::UnknownObject() {
-    icon = QIcon(new OverlayIconEngine((mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string(),
-                                       (mw->getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
+    icon = QIcon(new OverlayIconEngine((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"body.svg").string(),
+                                       (MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"unknownelement.svg").string()));
   }
 
 }

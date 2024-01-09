@@ -30,8 +30,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
   TranslationAlongFixedAxisWidget::TranslationAlongFixedAxisWidget() {
 
     auto *layout = new QVBoxLayout;
