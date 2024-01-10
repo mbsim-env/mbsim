@@ -632,9 +632,13 @@ namespace MBSim {
     double h = -contact->getContourFrame(1)->getOrientation().col(2).T()*WrWC;
     if(mck) {
       rhoz = -contact->evalGeneralizedRelativePosition()(0);
-      if(rhoz<0) rhoz = 0;
-      Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0 - dz*contact->evalGeneralizedRelativeVelocity()(2);
-//      double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
+      if(rhoz<0) {
+	rhoz = 0;
+	Fz = 0;
+      }
+      else
+	Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0 - dz*contact->evalGeneralizedRelativeVelocity()(2);
+      // double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
       double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
       Re = -z - rhoze*cos(ga);
     }
@@ -655,14 +659,19 @@ namespace MBSim {
 	  rhozg = pow((Q_CAM1*Rl+Q_CAM2*pow(Rl,2))*ga,2)*(rtw/8*abs(tan(ga)))/pow((Q_CAM1*ROm+Q_CAM2*pow(ROm,2))*ga,2)-(Q_CAM3*rhozfr*abs(ga));
 	rhoz = rhozfr+rhozg;
       }
-      if(rhoz<0) rhoz = 0;
-//      double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
-//      double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi); // the dependence on the longitudinal and lateral force is neglected
-      Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0;
-      double Fzbtm = czbtm*(rRim+rhobtm-Rl);
-      if(Fzbtm>Fz) Fz = Fzbtm;
-      Fz -= dz*contact->evalGeneralizedRelativeVelocity()(2)/cos(ga);
-//      double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
+      if(rhoz<0) {
+	Fz = 0;
+	rhoz = 0;
+      }
+      else {
+	// double SFyg = (Q_FYS1*Q_FYS2*Rl/ROm+Q_FYS3*pow(Rl/ROm,2))*ga;
+	// double fcorr = (1+Q_V2*R0/v0*abs(Om)-pow(Q_FCX*Fx/Fz0,2)-pow(pow(rhoz/R0,Q_FCY2)*Q_FCY*(Fy-SFyg)/Fz0,2))*(1+PFZ1*dpi); // the dependence on the longitudinal and lateral force is neglected
+	Fz = fcorr*(Q_FZ1*rhoz/R0+Q_FZ2*pow(rhoz/R0,2))*Fz0;
+	double Fzbtm = czbtm*(rRim+rhobtm-Rl);
+	if(Fzbtm>Fz) Fz = Fzbtm;
+	Fz -= dz*contact->evalGeneralizedRelativeVelocity()(2)/cos(ga);
+      }
+      // double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
       double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
       if(MC_CONTOUR_A>0 or MC_CONTOUR_B>0)
 	Re = -z - rhoze*cos(ga);

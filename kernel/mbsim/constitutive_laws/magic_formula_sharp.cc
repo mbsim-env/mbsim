@@ -213,8 +213,11 @@ namespace MBSim {
   void MagicFormulaSharp::updateGeneralizedForces() {
     TyreContact *contact = static_cast<TyreContact*>(parent);
     Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    double Fx, Fy, Mz;
-    double Fz = -cz*contact->evalGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
+    double Fx, Fy, Fz, Mz;
+    if(contact->evalGeneralizedRelativePosition()(0)>0)
+      Fz = 0;
+    else
+      Fz = -cz*contact->getGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
     vsx = contact->getGeneralizedRelativeVelocity()(0);
     vsy = contact->getGeneralizedRelativeVelocity()(1);
     vx = abs(contact->evalForwardVelocity()(0));
