@@ -2751,7 +2751,7 @@ namespace MBSimGUI {
   ContactPropertyDialog::ContactPropertyDialog(Element *contact) : LinkPropertyDialog(contact) {
 
     addTab("Kinetics",1);
-    addTab("Extra");
+    addTab("Extra",3);
 
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
@@ -2857,7 +2857,7 @@ namespace MBSimGUI {
   TyreContactPropertyDialog::TyreContactPropertyDialog(Element *contact) : LinkPropertyDialog(contact) {
 
     addTab("Kinetics",1);
-    addTab("Extra");
+    addTab("Extra",3);
 
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Contour>(2,contact,this),false,false,MBSIM%"connect");
     addToTab("Kinetics", connections);
