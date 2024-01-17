@@ -333,56 +333,18 @@ namespace MBSim {
 	for(int i=0; i<x.size(); i++)
 	  plotVector.push_back(x(i));
       }
+    private:
+      Element* getByPathElement(const std::string &path, bool initialCaller=true) const;
   };
 
   template<class T>
   T* Element::getByPath(const std::string &path, bool initialCaller) const {
-    try {
-      if(path.substr(0, 1) == "/") { // if absolute path ...
-        if(parent) // .. and a parent exists ...
-          return parent->getByPath<T>(path, false); // ... than call getByPath of the parent (walk to the top)
-        else // .. and no parent exits ...
-          return getByPath<T>(path.substr(1), false); // ... we are at top and call getByPath again with the leading "/" removed (call relative to top)
-      }
-      else if (path.substr(0, 3) == "../") { // if relative path to parent ...
-        if(!parent)
-          throwError("Reference to parent '"+path+"' requested but already at the root node.");
-        return parent->getByPath<T>(path.substr(3), false); // ... call getByPath of the parent with the leading "../" removed
-      }
-      else { // if relative path to a child ...
-        // extract the first path and all other paths (rest)
-        size_t idx=path.find('/');
-        std::string first=path.substr(0, idx);
-        std::string rest;
-        if(idx!=std::string::npos)
-          rest=path.substr(idx+1);
-        // get the object of the first child path by calling the virtual function getChildByContainerAndName
-        size_t pos0=first.find('[');
-        if(pos0==std::string::npos)
-          throwError("Syntax error in subreference '"+first+"': no [ found.");
-        std::string container=first.substr(0, pos0);
-        if(first[first.size()-1]!=']')
-          throwError("Syntax error in subreference '"+first+"': not ending with ].");
-        std::string name=first.substr(pos0+1, first.size()-pos0-2);
-        Element *e=getChildByContainerAndName(container, name);
-        // if their are other child paths call getByPath of e for this
-        if(!rest.empty())
-          return e->getByPath<T>(rest, false);
-        // this is the last relative path -> check type and return
-        auto *t=dynamic_cast<T*>(e);
-        if(t)
-          return t;
-        else
-          throwError("Cannot cast this element to type "+container+".");
-      }
-    }
-    catch(MBSimError &ex) {
-      if(initialCaller)
-        throwError("Evaluation of refernece '"+path+"' failed: Message from "+
-          ex.getPath()+": "+ex.getErrorMessage());
-      else
-        throw ex;
-    }
+    Element *e = getByPathElement(path, initialCaller);
+    auto *t=dynamic_cast<T*>(e);
+    if(t)
+      return t;
+    else
+       throwError(std::string("Cannot cast this element to type ")+typeid(T).name()+".");
   }
 
 }
