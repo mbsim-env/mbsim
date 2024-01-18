@@ -1053,13 +1053,12 @@ namespace MBSimGUI {
 
     // evaluate the code for all possible counter values (recursively)
     // save the evaluated counter name in a set to add only unique names
-    set<string> evaluatedNames;
     vector<int> levels(counterNames.size());
     function<void(vector<MainWindow::ParameterLevel>::const_iterator, vector<MainWindow::ParameterLevel>::const_iterator,
                   int level, vector<int> levels)> walk;
-    walk=[&code, e, &walk, &evaluatedNames, &values](vector<MainWindow::ParameterLevel>::const_iterator start,
-                                                     vector<MainWindow::ParameterLevel>::const_iterator end,
-                                                     int level, vector<int> levels) {
+    walk=[&code, e, &walk, &values](vector<MainWindow::ParameterLevel>::const_iterator start,
+                                    vector<MainWindow::ParameterLevel>::const_iterator end,
+                                    int level, vector<int> levels) {
       Eval::Value count = mw->eval->create(1.0);
       if(!start->counterName.empty())
         try { count = mw->eval->stringToValue(start->countStr, e); }
@@ -1078,7 +1077,8 @@ namespace MBSimGUI {
           mw->eval->addParam(start->counterName+"_count", count);
           levels[level] = mw->eval->cast<int>(counterValue);
           // add local parameters
-          mw->eval->addParamSet(start->paramEle);
+          try { mw->eval->addParamSet(start->paramEle); }
+          CATCH("Failed to add parameters");
           // skip if onlyIf evaluates to false
           if(!start->onlyIfStr.empty()) {
             try {
@@ -1090,19 +1090,18 @@ namespace MBSimGUI {
           }
         }
         else
-          mw->eval->addParamSet(start->paramEle);
+          try {mw->eval->addParamSet(start->paramEle); }
+          CATCH("Failed to add parameters");
 
         auto startNext=start;
         startNext++;
         if(startNext!=end)
           walk(startNext, end, !start->counterName.empty() ? level+1 : level, levels);
         else {
-          try {
-            auto value = mw->eval->stringToValue(code,e,false);
-            evaluatedNames.insert(mw->eval->cast<string>(value));
-            values.emplace(levels, value);
-          }
-          CATCH("Failed to evaluate parameter");
+          auto value = mw->eval->create(code); // if eval on next line fails we use the unevaluated code as value
+          try { value = mw->eval->stringToValue(code,e,false); }
+          CATCH("Failed to evaluate parameter, adding a string value with the unevaluated code")
+          values.emplace(levels, value);
         }
       }
     };
