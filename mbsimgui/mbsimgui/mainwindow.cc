@@ -192,6 +192,8 @@ namespace MBSimGUI {
     action->setStatusTip("Show a list of all referenced files");
     action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Settings ...", this, &MainWindow::openOptionsMenu);
     action->setStatusTip(tr("Show settings menu"));
+    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "3D view settings ...", inlineOpenMBVMW, &OpenMBVGUI::MainWindow::showSettingsDialog);
+    action->setStatusTip(tr("Show settings menu of the 3D view (OpenMBV)"));
 
     fileMenu->addSeparator();
 
