@@ -1394,7 +1394,7 @@
    ...
    fun:_ZN10SoQtGLAreaC1EP9QGLFormatP7QWidgetPK9QGLWidgetPKc
    fun:_ZN13SoQtGLWidgetP13buildGLWidgetEv
-   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidgeti
+   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
 }
 {
    Coin
