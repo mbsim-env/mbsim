@@ -1,4 +1,6 @@
 #include "config.h"
+#include <clocale>
+#include <cfenv>
 #include <iostream>
 #include <regex>
 #include <list>
@@ -30,6 +32,15 @@ namespace MBSim {
 }
 
 int main(int argc, char *argv[]) {
+#ifdef _WIN32
+  SetConsoleCP(CP_UTF8);
+  SetConsoleOutputCP(CP_UTF8);
+  setlocale(LC_ALL, "ACP.UTF-8");
+#else
+  //assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1); // Qt seems to generate some FPE, hence not activated  
+  setlocale(LC_ALL, "C");
+#endif
+
   try {
     // check for errors during ObjectFactory
     string errorMsg(OpenMBV::ObjectFactory::getAndClearErrorMsg());
