@@ -837,7 +837,6 @@ namespace MBSimGUI {
 
       try { 
         doc = parser->parseURI(X()%fileName.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
       }
       catch(const std::exception &ex) {
         mw->setExitBad();
@@ -2237,7 +2236,6 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  DOMParser::handleCDATA(doc->getDocumentElement());
 	  parentele->insertBefore(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(doc->getDocumentElement(),true)),parent->getXMLElement());
 	}
       }
@@ -2313,7 +2311,6 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  DOMParser::handleCDATA(doc->getDocumentElement());
 	  DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
 	  element->insertBefore(ele,nullptr);
 	}
@@ -2329,7 +2326,6 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  DOMParser::handleCDATA(doc->getDocumentElement());
 	  DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
 	  if(element) element->insertBefore(ele,nullptr);
 	  else element = ele;
@@ -2951,7 +2947,6 @@ namespace MBSimGUI {
         return file[i];
     }
     DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
-    MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
     auto *fileItem = new FileItemData(doc);
     file.push_back(fileItem);
     static_cast<FileTreeModel*>(fileView->model())->createFileItem(fileItem);

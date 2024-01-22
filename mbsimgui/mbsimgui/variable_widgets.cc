@@ -33,6 +33,7 @@
 #include <QTableWidget>
 #include <QMessageBox>
 #include <QFileDialog>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -78,6 +79,7 @@ namespace MBSimGUI {
     if(!text)
       return nullptr;
     string str = X()%text->getData();
+    boost::trim(str);
     if(str.find('\n')!=string::npos)
       return nullptr;
     setValue(QString::fromStdString(str));
@@ -201,6 +203,7 @@ namespace MBSimGUI {
     if(!text)
       return nullptr;
     string str = X()%text->getData();
+    boost::trim(str);
     if(str.find('\n')!=string::npos)
       return nullptr;
     setValue(QString::fromStdString(str));
