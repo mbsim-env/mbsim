@@ -28,6 +28,7 @@
 #include <QFileInfo>
 #include <QDir>
 #include <QUrl>
+#include <QMessageBox>
 #include <xercesc/dom/DOMDocument.hpp>
 #include <mbxmlutils/eval.h>
 
@@ -46,11 +47,12 @@ namespace MBSimGUI {
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             xercesc::DOMElement *ele2 = nullptr;
             FileItemData *parameterFileItem = nullptr;
-            if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              mw->updateParameters(parent,false);
-              std::string evaltmp;
+
+            auto load = [](xercesc_3_2::DOMElement *ele1, const std::string &attr) {
+              std::string href;
               try{
-                evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("parameterHref"),ele1,false));
+                href = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute(attr),ele1,false));
+                href = href.substr(1,href.size()-2);
               }
               catch(MBXMLUtils::DOMEvalException &e) {
                 mw->setExitBad();
@@ -60,7 +62,23 @@ namespace MBSimGUI {
                 mw->setExitBad();
                 std::cerr << "Unknwon error" << std::endl;
               }
-              parameterFileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
+              auto docFilename = MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI();
+              auto fileInfo = QFileInfo(QDir(QFileInfo(QUrl(docFilename.c_str()).toLocalFile()).canonicalPath()).absoluteFilePath(href.c_str()));
+              if(!fileInfo.exists())
+                QMessageBox::warning(nullptr, "Import/Reference model file",
+                                              ("The imported/referenced model file has a reference to another file which cannot be found:\n"
+                                               "\n'"+href+"'\n\n"
+                                               "See the errors in the 'MBSim Echo Area'.\n"
+                                               "(This may happen e.g. if a model is imported which has relative path reference to other files)").c_str());
+              return fileInfo;
+            };
+
+            if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
+              mw->updateParameters(parent,false);
+              auto fileInfo = load(ele1, "parameterHref");
+              if(!fileInfo.exists())
+                return nullptr;
+              parameterFileItem = mw->addFile(fileInfo);
             }
             else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
@@ -71,19 +89,10 @@ namespace MBSimGUI {
             FileItemData *fileItem = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               if(not parameterFileItem) mw->updateParameters(parent,false);
-              std::string evaltmp;
-              try{
-                evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
-              }
-              catch(MBXMLUtils::DOMEvalException &e) {
-                mw->setExitBad();
-                std::cerr << e.getMessage() << std::endl;
-              }
-              catch(...) {
-                mw->setExitBad();
-                std::cerr << "Unknwon error" << std::endl;
-              }
-              fileItem = mw->addFile(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))));
+              auto fileInfo = load(ele1, "href");
+              if(!fileInfo.exists())
+                return nullptr;
+              fileItem = mw->addFile(fileInfo);
               ele2 = fileItem->getXMLElement();
             }
 	    try {
