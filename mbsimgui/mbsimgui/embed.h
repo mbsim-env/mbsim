@@ -48,7 +48,7 @@ namespace MBSimGUI {
             xercesc::DOMElement *ele2 = nullptr;
             FileItemData *parameterFileItem = nullptr;
 
-            auto load = [](xercesc_3_2::DOMElement *ele1, const std::string &attr) {
+            auto load = [](xercesc::DOMElement *ele1, const std::string &attr) {
               std::string href;
               try{
                 href = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute(attr),ele1,false));
