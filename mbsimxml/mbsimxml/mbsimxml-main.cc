@@ -278,7 +278,7 @@ int main(int argc, char *argv[]) {
         auto overrideParam(*param);
 
         // validate the project file with mbsimxml.xsd
-        Preprocess::preprocessFile(dependencies, eval, mainXMLDoc, param);
+        Preprocess::preprocessDocument(dependencies, eval, mainXMLDoc, param);
 
         // print parameter overrides
         for(auto &p : overrideParam) {
