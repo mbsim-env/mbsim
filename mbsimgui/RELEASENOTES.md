@@ -18,6 +18,10 @@ MBSimGUI
 - Enable comments for elements, parameters and all top level widgets.
 - Added a new File menu entry to open the 3D view (OpenMBV) settings dialog.
 
+MBSimXML
+--------
+- Top level parameters can now be overwritten on command line in mbsimxml
+
 OpenMBV
 --------
 - Allow to remove nodes from IvBody (wrl) by type and name.
