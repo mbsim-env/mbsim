@@ -75,6 +75,7 @@ int main(int argc, char *argv[]) {
           <<"                 --autoreload [ms]|--dumpXMLCatalog <file>] [--savefinalstatevector]"<<endl
           <<"                [--baseindexforplot <bi>] [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
+          <<"                [<paramname>=<value> [<paramname>=<value> ...]]"<<endl
           <<"                [-C <dir/file>|--CC] <mbsimprjfile>"<<endl
           <<""<<endl
           <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
@@ -99,6 +100,8 @@ int main(int argc, char *argv[]) {
           <<"                         Linux: $HOME/.config/mbsim-env/mbsimxml.modulepath"<<endl
           <<"                         Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath"<<endl
           <<"                         This file contains one directory per line."<<endl
+          <<"<paramname>=<value>      Override the MBSimProject parameter named <paramname> with <value>."<<endl
+          <<"                         <value> is evaluated using the evaluator defined in MBSimProject"<<endl
           <<"--stdout <msg>           Print on stdout messages of type <msg>."<<endl
           <<"                         <msg> may be info~<pre>~<post>, warn~<pre>~<post>, debug~<pre>~<post>"<<endl
           <<"                         error~<pre>~<post>~ or depr~<pre>~<post>~."<<endl
@@ -232,6 +235,14 @@ int main(int argc, char *argv[]) {
         AUTORELOADTIME=250;
     }
 
+    // parameter overrides
+    regex paramRE("^[_a-zA-Z][_a-zA-Z0-9]*=");
+    set<string> paramArg;
+    while((i=find_if(args.begin(), args.end(), [&paramRE](auto &p){ return regex_search(p, paramRE); })) != args.end()) {
+      paramArg.emplace(*i);
+      args.erase(i);
+    }
+
     args.pop_back();
     MBSIMPRJ=currentPath.adaptPath(MBSIMPRJ);
   
@@ -253,8 +264,30 @@ int main(int argc, char *argv[]) {
 
       try {
         // run preprocessor
+
         // validate the project file with mbsimxml.xsd
-        auto mainXMLDoc=Preprocess::preprocessFile(dependencies, xmlCatalogDoc->getDocumentElement(), MBSIMPRJ);
+        auto [mainXMLDoc, evalName] = Preprocess::parseFileAndGetEvaluator(dependencies, xmlCatalogDoc->getDocumentElement(), MBSIMPRJ);
+
+        // create parameter override ParamSet
+        auto eval=Eval::createEvaluator(evalName, &dependencies);
+        auto param = make_shared<Preprocess::ParamSet>();
+        for(auto &pa : paramArg) {
+          auto pos = pa.find('=');
+          (*param)[pa.substr(0, pos)]=eval->eval(pa.substr(pos+1));
+        }
+        auto overrideParam(*param);
+
+        // validate the project file with mbsimxml.xsd
+        Preprocess::preprocessFile(dependencies, eval, mainXMLDoc, param);
+
+        // print parameter overrides
+        for(auto &p : overrideParam) {
+          auto it = param->find(p.first);
+          if(it != param->end())
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Parameter '"<<p.first<<"' overwritten with value "<<eval->cast<CodeString>(p.second)<<endl;
+          else
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<"Parameter '"<<p.first<<"' not found and not overwritten"<<endl;
+        }
 
         if(!ONLYPP) {
           // load MBSim modules
