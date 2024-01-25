@@ -3,7 +3,7 @@
 SUFFIXES=.moc.cc .moc.cpp .moc.cxx .moc.C\
 	 .h .hh \
          .ui .ui.h .ui.hh \
-         .rc .o
+         .o
 
 # Moc rules
 
@@ -34,9 +34,5 @@ SUFFIXES=.moc.cc .moc.cpp .moc.cxx .moc.C\
 
 .ui.ui.h:
 	$(UIC) $< -o $@
-
-# windows rc rules
-.rc.o:
-	$(WINDRES) $^ -o $@
 
 CLEANFILES = $(QT_BUILT_SOURCES)

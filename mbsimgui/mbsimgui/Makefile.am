@@ -1,13 +1,17 @@
 include $(top_srcdir)/qt.mk
 
 if COND_WIN32
-  MAYBE_WIN32_SRC = mbsimgui.rc
+  MAYBE_WIN32_mbsimgui_OBJ = mbsimgui.o
   EXPORT_ALL_SYMBOLS = -Xlinker --export-all-symbols
 else
   MAYBE_SIGWATCH_SRC = qt-unix-signals/sigwatch.cpp
   MAYBE_SIGWATCH_MOC = qt-unix-signals/sigwatch.moc.cc
   EXPORT_ALL_SYMBOLS = 
 endif
+
+# windows rc rules
+mbsimgui.o: $(srcdir)/mbsimgui.rc $(srcdir)/mbsimgui.ico $(srcdir)/mbsimgui.manifest
+	$(WINDRES) $< -o $@
 
 licdir = @datadir@/mbsimgui/qt-unix-signals
 lic_DATA = qt-unix-signals/LICENCE
@@ -116,9 +120,9 @@ nodist_libmbsimgui_la_SOURCES=$(libmbsimgui_QT_BUILT_SOURCES)
 mbsimgui_CPPFLAGS = $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
 
 mbsimgui_LDFLAGS = $(MBXMLUTILS_LIBS) $(OPENMBV_LIBS) $(QWT_LIBS)
-mbsimgui_LDADD = libmbsimgui.la
+mbsimgui_LDADD = libmbsimgui.la $(MAYBE_WIN32_mbsimgui_OBJ)
 
-mbsimgui_SOURCES = $(MAYBE_WIN32_SRC) $(MAYBE_SIGWATCH_SRC) \
+mbsimgui_SOURCES = $(MAYBE_SIGWATCH_SRC) \
   main.cc \
   file_editor.cc
 

@@ -18,6 +18,15 @@ AC_LANG([C++])
 # enable C++11
 CXXFLAGS="$CXXFLAGS -std=c++17"
 
+# windres
+AC_ARG_WITH(windres,
+  [  --with-windres=prog  The windres program (defaults to windres)],
+  [WINDRES="$withval"],
+  [WINDRES="windres"])
+AC_SUBST([WINDRES])
+
+AM_CONDITIONAL([COND_WIN32], [test "_$host_os" = "_mingw32"])
+
 CPPFLAGS="$CPPFLAGS -Wall -Werror -Wno-sign-compare"
 if test "_$host_os" != "_mingw32"; then
   CPPFLAGS="$CPPFLAGS -fPIC"
