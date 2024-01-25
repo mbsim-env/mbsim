@@ -1,6 +1,14 @@
 Release NEXT
 ============
 
+BACKWARD INCOMPATIBLITY
+-----------------------
+- In all XML code text (and CDATA) nodes which are separated by processing instruction or comment nodes
+  are no longer merged to a single text node at the position of the first text node. Instead now always
+  the first none empty text node is interpreted as the content text node. All other text nodes must be
+  empty (formatting only) text nodes.
+  Its very unusual that this feature is used in existing any models. MBSimGUI has even never created such models.
+
 All
 ---
 - Various bug fixes.
@@ -8,10 +16,32 @@ All
 MBSimGUI
 --------
 - Enable comments for elements, parameters and all top level widgets.
+- Added a new File menu entry to open the 3D view (OpenMBV) settings dialog.
 
 OpenMBV
 --------
 - Allow to remove nodes from IvBody (wrl) by type and name.
+- Improved 3D view regarding movement and clipping planes.
+- Enabled the OpenMBV object factory to copy construct OpenMBV objects.
+- Keep the cameras relative position and orientation when "Move camera with body".
+- Overwide the VRML Background node to include the Coin3D https://github.com/coin3d/coin/pull/517.
+- Add new settings option to define the Coin3D transparency type.
+
+HDF5Serie
+---------
+- Set on Windows the hidden flag for all '.*.lock' files to hide these files also on Windows.
+
+fmatvec
+-------
+- Allow the native fmatvec Function objects inside of symbolic expressions. If the Function provides
+  the derivatives then also parder(...) can be called in a symbolic expression (only two times, since
+  Function provides at most second derivatives).
+- Added a generic fast LRUCache which can e.g. be used in objects derived from Function to cache already
+  calculated results.
+
+
+
+
 
 Release 10.1
 ============ 

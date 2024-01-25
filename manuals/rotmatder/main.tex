@@ -69,4 +69,19 @@ _1\bs{J}_T=\texttt{transFunc->parDer1}(\bs{q},t)\quad\in\mathbb{R}^{3\times n_q}
 _1\bs{j}_T=\texttt{transFunc->parDer2}(\bs{q},t)\quad\in\mathbb{R}^3
 \end{equation}
 
+\vspace{5em}
+\textbf{\Large{Calculation Rules for this Derivative Operator}}
+\vspace{3em}
+
+The following calculation rules hold for the derivative operator $\text{parder}_{\bs{x}}(\bs{R})$.
+\begin{equation}
+  \bs{R}_{13}(\alpha,\beta) = \bs{R}_{12}(\alpha) \cdot \bs{R}_{23}(\beta)
+\end{equation}
+\begin{equation}
+  \text{parder}_{\alpha}(\bs{R}_{13}(\alpha,\beta)) = \text{parder}_{\alpha}(\bs{R}_{12}(\alpha))
+\end{equation}
+\begin{equation}
+  \text{parder}_{\beta}(\bs{R}_{13}(\alpha,\beta)) = \bs{R}_{12}(\alpha) \cdot \text{parder}_{\beta}(\bs{R}_{23}(\beta))
+\end{equation}
+
 \end{document}

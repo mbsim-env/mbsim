@@ -192,6 +192,8 @@ namespace MBSimGUI {
     action->setStatusTip("Show a list of all referenced files");
     action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Settings ...", this, &MainWindow::openOptionsMenu);
     action->setStatusTip(tr("Show settings menu"));
+    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "3D view settings ...", inlineOpenMBVMW, &OpenMBVGUI::MainWindow::showSettingsDialog);
+    action->setStatusTip(tr("Show settings menu of the 3D view (OpenMBV)"));
 
     fileMenu->addSeparator();
 
@@ -835,7 +837,6 @@ namespace MBSimGUI {
 
       try { 
         doc = parser->parseURI(X()%fileName.toStdString());
-        DOMParser::handleCDATA(doc->getDocumentElement());
       }
       catch(const std::exception &ex) {
         mw->setExitBad();
@@ -1053,13 +1054,12 @@ namespace MBSimGUI {
 
     // evaluate the code for all possible counter values (recursively)
     // save the evaluated counter name in a set to add only unique names
-    set<string> evaluatedNames;
     vector<int> levels(counterNames.size());
     function<void(vector<MainWindow::ParameterLevel>::const_iterator, vector<MainWindow::ParameterLevel>::const_iterator,
                   int level, vector<int> levels)> walk;
-    walk=[&code, e, &walk, &evaluatedNames, &values](vector<MainWindow::ParameterLevel>::const_iterator start,
-                                                     vector<MainWindow::ParameterLevel>::const_iterator end,
-                                                     int level, vector<int> levels) {
+    walk=[&code, e, &walk, &values](vector<MainWindow::ParameterLevel>::const_iterator start,
+                                    vector<MainWindow::ParameterLevel>::const_iterator end,
+                                    int level, vector<int> levels) {
       Eval::Value count = mw->eval->create(1.0);
       if(!start->counterName.empty())
         try { count = mw->eval->stringToValue(start->countStr, e); }
@@ -1078,7 +1078,8 @@ namespace MBSimGUI {
           mw->eval->addParam(start->counterName+"_count", count);
           levels[level] = mw->eval->cast<int>(counterValue);
           // add local parameters
-          mw->eval->addParamSet(start->paramEle);
+          try { mw->eval->addParamSet(start->paramEle); }
+          CATCH("Failed to add parameters");
           // skip if onlyIf evaluates to false
           if(!start->onlyIfStr.empty()) {
             try {
@@ -1090,19 +1091,18 @@ namespace MBSimGUI {
           }
         }
         else
-          mw->eval->addParamSet(start->paramEle);
+          try {mw->eval->addParamSet(start->paramEle); }
+          CATCH("Failed to add parameters");
 
         auto startNext=start;
         startNext++;
         if(startNext!=end)
           walk(startNext, end, !start->counterName.empty() ? level+1 : level, levels);
         else {
-          try {
-            auto value = mw->eval->stringToValue(code,e,false);
-            evaluatedNames.insert(mw->eval->cast<string>(value));
-            values.emplace(levels, value);
-          }
-          CATCH("Failed to evaluate parameter");
+          auto value = mw->eval->create(code); // if eval on next line fails we use the unevaluated code as value
+          try { value = mw->eval->stringToValue(code,e,false); }
+          CATCH("Failed to evaluate parameter, adding a string value with the unevaluated code")
+          values.emplace(levels, value);
         }
       }
     };
@@ -2236,7 +2236,6 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  DOMParser::handleCDATA(doc->getDocumentElement());
 	  parentele->insertBefore(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(doc->getDocumentElement(),true)),parent->getXMLElement());
 	}
       }
@@ -2312,7 +2311,6 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  DOMParser::handleCDATA(doc->getDocumentElement());
 	  DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
 	  element->insertBefore(ele,nullptr);
 	}
@@ -2328,7 +2326,6 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  DOMParser::handleCDATA(doc->getDocumentElement());
 	  DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
 	  if(element) element->insertBefore(ele,nullptr);
 	  else element = ele;
@@ -2950,7 +2947,6 @@ namespace MBSimGUI {
         return file[i];
     }
     DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
-    MBXMLUtils::DOMParser::handleCDATA(doc->getDocumentElement());
     auto *fileItem = new FileItemData(doc);
     file.push_back(fileItem);
     static_cast<FileTreeModel*>(fileView->model())->createFileItem(fileItem);

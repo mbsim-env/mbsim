@@ -1,4 +1,6 @@
 #include "config.h"
+#include <clocale>
+#include <cfenv>
 #include <mbxmlutils/eval.h>
 #include <mbsimxml/mbsimflatxml.h>
 #include <boost/dll.hpp>
@@ -38,6 +40,15 @@ namespace {
 }
 
 int main(int argc, char *argv[]) {
+#ifdef _WIN32
+  SetConsoleCP(CP_UTF8);
+  SetConsoleOutputCP(CP_UTF8);
+  setlocale(LC_ALL, "ACP.UTF-8");
+#else
+  //assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1); // Qt seems to generate some FPE, hence not activated  
+  setlocale(LC_ALL, "C");
+#endif
+
   try {
     // check for errors during ObjectFactory
     string errorMsg(OpenMBV::ObjectFactory::getAndClearErrorMsg());
@@ -113,7 +124,8 @@ int main(int argc, char *argv[]) {
 
     // get parameters
     set<string> useParam;
-    if(auto i=std::find(args.begin(), args.end(), "--param"); i!=args.end()) {
+    decltype(args)::iterator i;
+    while((i=std::find(args.begin(), args.end(), "--param")) != args.end()) {
       auto i2=i; i2++;
       useParam.insert(*i2);
       args.erase(i);
@@ -227,10 +239,13 @@ int main(int argc, char *argv[]) {
         if(pos!=string::npos)
           name=name.substr(0, pos);
         if(!noParam && (useParam.size()==0 || useParam.find(name)!=useParam.end())) {
-          cout<<"Using MBSimProject parameter '"<<name<<"'."<<endl;
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Using MBSimProject parameter '"<<name<<"'."<<endl;
+          useParam.erase(name);
           xmlParam2.push_back(it);
         }
       }
+      for(auto &p : useParam)
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Warn) << "No parameter '" << p << "' found in MBSimProject. Cannot add this parameter to the FMU." <<endl;
       xmlParam=xmlParam2;
       cout<<"Create model parameters."<<endl;
       var.insert(var.end(), xmlParam.begin(), xmlParam.end());
@@ -570,11 +585,11 @@ int main(int argc, char *argv[]) {
     return 0;
   }
   catch(const exception &ex) {
-    cerr<<ex.what()<<endl;
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<endl;
     return 1;
   }
   catch(...) {
-    cerr<<"Unknwon exception."<<endl;
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknwon exception."<<endl;
     return 1;
   }
 }
@@ -601,7 +616,7 @@ namespace {
     if(!exists(depFile)) {
       depFile=installPath/"share"/"deplibs"/(src.filename().string()+".deplibs");
       if(!exists(depFile)) {
-        cerr<<endl<<"Warning: No *.deplibs file found for library "<<src<<"."<<endl<<"Some dependent libraries may be missing in the FMU."<<endl;
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<"No *.deplibs file found for library '"<<src<<"'."<<endl<<"Some dependent libraries may be missing in the FMU."<<endl;
         return;
       }
     }
@@ -632,7 +647,7 @@ namespace {
       }
 
       // not found
-      cerr<<endl<<"Warning: Dependent library "<<file<<" not found."<<endl<<"This dependent libraries will be missing in the FMU."<<endl;
+      fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<"Dependent library '"<<file<<"' not found."<<endl<<"This dependent libraries will be missing in the FMU."<<endl;
     }
   }
 

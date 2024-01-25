@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include <clocale>
 #include <cassert>
 #include <cfenv>
 #include <iostream>
@@ -45,9 +46,15 @@ namespace {
 }
 
 int main(int argc, char *argv[]) {
-#ifndef _WIN32
-//MISSING Qt seems to generate some FPE, hence disabled  assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
+#ifdef _WIN32
+  SetConsoleCP(CP_UTF8);
+  SetConsoleOutputCP(CP_UTF8);
+  setlocale(LC_ALL, "ACP.UTF-8");
+#else
+  //assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1); // Qt seems to generate some FPE, hence not activated  
+  setlocale(LC_ALL, "C");
 #endif
+  QLocale::setDefault(QLocale::C);
 
   // check for errors during ObjectFactory
   string errorMsg(OpenMBV::ObjectFactory::getAndClearErrorMsg());
@@ -159,8 +166,6 @@ int main(int argc, char *argv[]) {
   app.setApplicationName("mbsimgui");
   app.setOrganizationDomain("www.mbsim-env.de");
   QSettings::setDefaultFormat(QSettings::IniFormat);
-  QLocale::setDefault(QLocale::C);
-  setlocale(LC_ALL, "C");
 
   if(loadPlugins(arg)!=0)
     return 1;

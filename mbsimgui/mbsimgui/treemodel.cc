@@ -79,11 +79,13 @@ namespace MBSimGUI {
     }
     else if(role==Qt::ToolTipRole) {
       TreeItem *item = getItem(index);
-	return "Name: " + item->getItemData()->getName()
-	  + "\nValue: " + item->getItemData()->getValue()
-	  + "\nComment: " + item->getItemData()->getComment()
-	  + "\nType: " + item->getItemData()->getType()
-	  + "\nReference: " + item->getItemData()->getReference();
+	return QString("<dl>")
+          + "<dt>Name:</dt><dd>" + item->getItemData()->getName() + "</dd>"
+	  + "<dt>Value:</dt><dd>" + item->getItemData()->getValue() + "</dd>"
+	  + "<dt>Comment:</dt><dd>" + item->getItemData()->getComment() + "</dd>"
+	  + "<dt>Type:</dt><dd>" + item->getItemData()->getType() + "</dd>"
+	  + "<dt>Reference:</dt><dd>" + item->getItemData()->getReference() + "</dd>"
+	  + "</dl>";
     }
     return QVariant();
   }

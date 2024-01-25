@@ -1370,8 +1370,7 @@
    fun:_ZN5QSvgG4drawEP8QPainterR15QSvgExtraStates
    fun:_ZN16QSvgTinyDocument4drawEP8QPainterRK6QRectF
    fun:_ZN16QSvgTinyDocument4drawEP8QPainter
-   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidgeti
-   fun:_ZN10OpenMBVGUI10MainWindowC1ERSt4listISsSaISsEEb
+   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
 }
 {
    qt svg
@@ -1386,8 +1385,7 @@
    fun:_ZN5QSvgG4drawEP8QPainterR15QSvgExtraStates
    fun:_ZN16QSvgTinyDocument4drawEP8QPainterRK6QRectF
    fun:_ZN16QSvgTinyDocument4drawEP8QPainter
-   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidgeti
-   fun:_ZN10OpenMBVGUI10MainWindowC1ERSt4listISsSaISsEEb
+   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
 }
 {
    Coin
@@ -1396,7 +1394,7 @@
    ...
    fun:_ZN10SoQtGLAreaC1EP9QGLFormatP7QWidgetPK9QGLWidgetPKc
    fun:_ZN13SoQtGLWidgetP13buildGLWidgetEv
-   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidgeti
+   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
 }
 {
    Coin
