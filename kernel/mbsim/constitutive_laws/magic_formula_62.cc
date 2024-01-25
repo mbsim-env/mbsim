@@ -687,6 +687,7 @@ namespace MBSim {
     vsx = slipPoint[0]->getOrientation().col(0).T()*WvD;
 
     if(Fz>0) {
+      LFM = 1;
       if(Fz > FZMAX)
 	Fz = FZMAX;
       else if(Fz < FZMIN) {
