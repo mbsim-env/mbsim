@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
   SetConsoleCP(CP_UTF8);
   SetConsoleOutputCP(CP_UTF8);
 #else
-  //assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1); // Qt seems to generate some FPE, hence not activated  
+  assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
 #endif
   setlocale(LC_ALL, "C");
 
