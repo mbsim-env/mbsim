@@ -279,15 +279,6 @@ int main(int argc, char *argv[]) {
         // validate the project file with mbsimxml.xsd
         Preprocess::preprocessDocument(dependencies, eval, mainXMLDoc, param);
 
-        // print parameter overrides
-        for(auto &p : overrideParam) {
-          auto it = param->find(p.first);
-          if(it != param->end())
-            fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Parameter '"<<p.first<<"' overwritten with value "<<eval->cast<CodeString>(p.second)<<endl;
-          else
-            fmatvec::Atom::msgStatic(fmatvec::Atom::Warn)<<"Parameter '"<<p.first<<"' not found and not overwritten"<<endl;
-        }
-
         if(!ONLYPP) {
           // load MBSim modules
           MBSimXML::loadModules(searchDirs);
