@@ -185,7 +185,7 @@ namespace MBSimGUI {
   };
 
   class FclContour : public RigidContour {
-    MBSIMGUI_OBJECTFACTORY_CLASS(FclContour, RigidContour, MBSIMFLEX%"FclContour", "Flexible spatial ffr nurbs contour");
+    MBSIMGUI_OBJECTFACTORY_CLASS(FclContour, RigidContour, MBSIMFLEX%"FclContour", "Fcl contour");
   };
 
   class FclBox : public FclContour {
