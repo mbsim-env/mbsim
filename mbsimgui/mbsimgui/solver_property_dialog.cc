@@ -1183,7 +1183,7 @@ namespace MBSimGUI {
     excitationAmplitudeFunction = new ExtWidget("Excitation amplitude function",new ChoiceWidget(new Function1ArgWidgetFactory(0,"f",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"excitationAmplitudeFunction");
     addToTab("Frequency response analysis", excitationAmplitudeFunction);
 
-    excitationPhaseFunction = new ExtWidget("Excitation amplitude function",new ChoiceWidget(new Function1ArgWidgetFactory(0,"f",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"excitationPhaseFunction");
+    excitationPhaseFunction = new ExtWidget("Excitation phase function",new ChoiceWidget(new Function1ArgWidgetFactory(0,"f",1,FunctionWidget::scalar,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"excitationPhaseFunction");
     addToTab("Frequency response analysis", excitationPhaseFunction);
 
     visualizeNormalModes = new ExtWidget("Visualize normal modes",new NormalModeVisualization,true,true,MBSIMCONTROL%"visualizeNormalModes");
