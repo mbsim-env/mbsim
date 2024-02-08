@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<InputData xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
+
+  <youngsModulus unit="N/m^2">3e8</youngsModulus>
+
+  <poissonsRatio unit="-">0.3</poissonsRatio>
+
+  <density unit="kg/m^3">1000</density>
+
+  <nodes>"Job-1.inp_nodes.asc"</nodes>
+
+  <elementType>"C3D20"</elementType>
+
+  <elements>"Job-1.inp_elements.asc"</elements>
+
+  <boundaryNodeNumbers> [181, 182, 183, 184, 185, 186, 187, 188, 189, 601, 602, 603, 604, 609, 610, 611 ,612, 616, 617, 619, 620]'</boundaryNodeNumbers>
+
+  <constrainedDegreesOfFreedom>
+    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ele>1</ele>
+      <ele>2</ele>
+      <ele>3</ele>
+    </xmlVector>
+  </constrainedDegreesOfFreedom>
+
+  <typeOfConstraint>"kinematic"</typeOfConstraint>
+
+  <interfaceNodeNumbers> [  1,   2,   3,   4,   5,   6,   7,   8,   9, 190, 191, 192, 193, 202, 203, 204, 205, 213, 214, 218, 219]'
+</interfaceNodeNumbers>
+
+  <reduceToSingleInterfaceNode>true</reduceToSingleInterfaceNode>
+
+  <degreesOfFreedomOfSingleInterfaceNode>
+    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ele>1</ele>
+      <ele>2</ele>
+      <ele>4</ele>
+      <ele>5</ele>
+    </xmlVector>
+  </degreesOfFreedomOfSingleInterfaceNode>
+
+  <modalDamping>
+    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+      <ele>0.2</ele>
+      <ele>0.2</ele>
+      <ele>0.4</ele>
+      <ele>0.4</ele>
+    </xmlVector>
+  </modalDamping>
+
+  <inputDataFileName>"input_data_rod_2.h5"</inputDataFileName>
+
+</InputData>

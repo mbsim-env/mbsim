@@ -1,0 +1,818 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+  <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+    <Parameter>
+      <scalarParameter name="m">0.110</scalarParameter>
+      <scalarParameter name="A">9.9035666e-04</scalarParameter>
+      <scalarParameter name="B">1.9314793e-03</scalarParameter>
+      <scalarParameter name="z">1.0567427e-02</scalarParameter>
+      <scalarParameter name="l">0.5</scalarParameter>
+      <scalarParameter name="r">0.075</scalarParameter>
+      <scalarParameter name="r0">r/50</scalarParameter>
+      <scalarParameter name="h">0.02</scalarParameter>
+      <scalarParameter name="mu">0.1</scalarParameter>
+      <scalarParameter name="om1">25</scalarParameter>
+      <scalarParameter name="tom1">6</scalarParameter>
+      <scalarParameter name="tom2">tom1+0.01</scalarParameter>
+      <scalarParameter name="phi1">atan(0.06/l)</scalarParameter>
+      <scalarParameter name="tphi1">2.5</scalarParameter>
+      <scalarParameter name="tphi2">tom2+0.05</scalarParameter>
+      <scalarParameter name="tphi3">tphi2+0.01</scalarParameter>
+      <scalarParameter name="tF">2.5</scalarParameter>
+    </Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="ns1:signal" xmlns:ns1="http://www.mbsim-env.de/MBSimControl">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+      <frames>
+        <FixedRelativeFrame name="P">
+          <relativePosition unit="m">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>-0.5</ele>
+            </xmlVector>
+          </relativePosition>
+        </FixedRelativeFrame>
+      </frames>
+      <contours/>
+      <groups>
+        <Group name="ControllerB0" xmlns="http://www.mbsim-env.de/MBSim">
+            <frames/>
+            <contours/>
+            <groups/>
+            <objects/>
+            <links>
+              <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos plate">
+              <frame ref="../../Object[Plate]/Frame[C]"/>
+            </PositionSensor><VelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel plate">
+              <frame ref="../../Object[Plate]/Frame[C]"/>
+            </VelocitySensor><GeneralizedPositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos B0 actual">
+              <object ref="../../Object[B0]"/>
+            </GeneralizedPositionSensor><GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel B0 actual">
+              <object ref="../../Object[B0]"/>
+            </GeneralizedVelocitySensor><SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos B0 desired">
+              <inputSignal ref="../../Link[Time]"/>
+              <inputSignal ref="../Link[Pos plate]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="3">cSP = condition(tF-u1(1),0,1)
+[u2(1);u2(2)]*cSP</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel B0 desired">
+              <inputSignal ref="../../Link[Time]"/>
+              <inputSignal ref="../Link[Vel plate]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="3">cSP = condition(tF-u1(1),0,1)
+[u2(1);u2(2)]*cSP</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Pos B0 diff">
+              <inputSignal ref="../Link[Pos B0 desired]"/>
+              <inputSignal ref="../Link[Pos B0 actual]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="2" arg2="u2" arg2Dim="2">u1 - u2</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation><SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Vel B0 diff">
+              <inputSignal ref="../Link[Vel B0 desired]"/>
+              <inputSignal ref="../Link[Vel B0 actual]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="2" arg2="u2" arg2Dim="2">u1 - u2</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Force">
+              <inputSignal ref="../Link[Pos B0 diff]"/>
+              <inputSignal ref="../Link[Vel B0 diff]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="2" arg2="u2" arg2Dim="2">200*u1+2*u2</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <KineticExcitation name="Kinetic excitation">
+              <connect ref1="../../Frame[P]" ref2="../../Object[B0]/Frame[C]"/>
+              <forceDirection unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>1</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>1</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </forceDirection>
+              <forceFunction>
+                <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                  <returnSignal ref="../../Link[Force]"/>
+                </SignalFunction>
+              </forceFunction>
+            </KineticExcitation>
+          </links>
+            <constraints/>
+            <observers/>
+        </Group>
+        <Group name="ControllerB1" xmlns="http://www.mbsim-env.de/MBSim">
+          <frames/>
+          <contours/>
+          <groups/>
+          <objects/>
+          <links>
+            <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Omega actual">
+              <object ref="../../Object[B1]"/>
+            </GeneralizedVelocitySensor>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Omega desired">
+              <inputSignal ref="../../Link[Time]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="t" arg1Dim="1">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>condition(tom1-t(1),om1/tom1*t(1),condition(tom2-t(1),om1-om1/(tom2-tom1)*(t(1)-tom1),0))</ele>
+                    </xmlVector>
+                  </definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Omega diff">
+              <inputSignal ref="../Link[Omega desired]"/>
+              <inputSignal ref="../Link[Omega actual]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">u1 - u2</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Moment">
+              <inputSignal ref="../Link[Omega diff]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u" arg1Dim="1">2*u</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <KineticExcitation name="Kinetic excitation">
+              <connect ref1="../../Object[B0]/Frame[P]" ref2="../../Object[B1]/Frame[C]"/>
+              <momentDirection unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>1</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </momentDirection>
+              <momentFunction>
+                <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                  <returnSignal ref="../../Link[Moment]"/>
+                </SignalFunction>
+              </momentFunction>
+            </KineticExcitation>
+          </links>
+          <constraints/>
+          <observers/>
+        </Group>
+        <Group name="ControllerB2" xmlns="http://www.mbsim-env.de/MBSim">
+          <frames/>
+          <contours/>
+          <groups/>
+          <objects/>
+          <links>
+            <GeneralizedPositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Phi actual">
+              <object ref="../../Object[B2]"/>
+            </GeneralizedPositionSensor>
+            <GeneralizedVelocitySensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Omega actual">
+              <object ref="../../Object[B2]"/>
+            </GeneralizedVelocitySensor>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Phi desired">
+              <inputSignal ref="../../Link[Time]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="t" arg1Dim="1">
+condition(tphi1-t(1),phi1/tphi1*t(1),condition(tphi2-t(1),phi1,condition(tphi3-t(1),phi1-phi1/(tphi3-tphi2)*(t(1)-tphi2),0)))
+</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Omega desired">
+              <inputSignal ref="../../Link[Time]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="t" arg1Dim="1">
+condition(tphi1-t(1),phi1/tphi1,condition(tphi2-t(1),0,condition(tphi3-t(1),-phi1/(tphi3-tphi2),0)))
+</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Phi diff">
+              <inputSignal ref="../Link[Phi desired]"/>
+              <inputSignal ref="../Link[Phi actual]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">u1 - u2</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Omega diff">
+              <inputSignal ref="../Link[Omega desired]"/>
+              <inputSignal ref="../Link[Omega actual]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">u1 - u2</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Moment">
+              <inputSignal ref="../Link[Phi diff]"/>
+              <inputSignal ref="../Link[Omega diff]"/>
+              <function>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="u1" arg1Dim="1" arg2="u2" arg2Dim="1">200*u1+2*u2</definition>
+                </SymbolicFunction>
+              </function>
+            </SignalOperation>
+            <KineticExcitation name="Kinetic excitation">
+              <connect ref1="../../Object[B1]/Frame[C]" ref2="../../Object[B2]/Frame[C]"/>
+              <momentDirection unit="-">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>1</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                  </row>
+                </xmlMatrix>
+              </momentDirection>
+              <momentFunction>
+                <SignalFunction xmlns="http://www.mbsim-env.de/MBSimControl">
+                  <returnSignal ref="../../Link[Moment]"/>
+                </SignalFunction>
+              </momentFunction>
+            </KineticExcitation>
+          </links>
+          <constraints/>
+          <observers/>
+        </Group>
+      </groups>
+      <objects>
+        <RigidBody name="B0" xmlns="http://www.mbsim-env.de/MBSim">
+          <frameOfReference ref="../Frame[P]"/>
+          <mass unit="kg">0.1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongAxesXY/>
+          </stateDependentTranslation>
+          <frames>
+            <FixedRelativeFrame name="P">
+              <relativeOrientation>
+                <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">-90</aboutY>
+              </relativeOrientation>
+            </FixedRelativeFrame>
+          </frames><contours/>
+        </RigidBody>
+        <RigidBody name="B1" xmlns="http://www.mbsim-env.de/MBSim">
+          <frameOfReference ref="../Object[B0]/Frame[P]"/>
+          <mass unit="kg">0.05</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.001</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.001</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.001</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentRotation>
+            <RotationAboutXAxis/>
+          </stateDependentRotation>
+          <frames/>
+          <contours/>
+        </RigidBody>
+        <RigidBody name="B2" xmlns="http://www.mbsim-env.de/MBSim">
+          <frameOfReference ref="../Object[B1]/Frame[C]"/>
+          <mass unit="kg">0.05</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.001</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.001</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.001</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentRotation>
+            <RotationAboutYAxis/>
+          </stateDependentRotation>
+          <frames>
+              <FixedRelativeFrame name="P">
+              <enableOpenMBV>
+                <size unit="cm">1</size>
+              </enableOpenMBV>
+              <relativeOrientation>
+                <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutY>
+              </relativeOrientation>
+            </FixedRelativeFrame>
+          </frames><contours/>
+          <enableOpenMBVFrameC>
+              <size unit="cm">1</size>
+          </enableOpenMBVFrameC></RigidBody>
+        <ExternalFlexibleFfrBody xmlns="http://www.mbsim-env.de/MBSimFlexibleBody" name="Rod">
+          <frameOfReference xmlns="http://www.mbsim-env.de/MBSim" ref="../Object[B2]/Frame[P]"/>
+          <inputDataFileName>"input_data.h5"</inputDataFileName>
+          <frames>
+              <NodeFrame name="P">
+              <nodeNumber>622</nodeNumber>
+            </NodeFrame>
+            <NodeFrame name="Q">
+              <nodeNumber>60</nodeNumber>
+            </NodeFrame>
+          </frames>
+          <contours>
+              <Sphere xmlns="http://www.mbsim-env.de/MBSim" name="Tip">
+              <frameOfReference ref="../Frame[P]"/>
+              <radius unit="mm">2</radius>
+              <enableOpenMBV>
+                <diffuseColor>
+                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                    <ele>-1</ele>
+                    <ele>0</ele>
+                    <ele>0.117647</ele>
+                  </xmlVector>
+                </diffuseColor>
+              </enableOpenMBV>
+            </Sphere>
+            <Sphere xmlns="http://www.mbsim-env.de/MBSim" name="Body">
+              <frameOfReference ref="../Frame[Q]"/>
+              <radius unit="mm">4</radius>
+            </Sphere>
+          </contours>
+          <enableOpenMBV>
+            <diffuseColor xmlns="http://www.mbsim-env.de/MBSim">
+              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                <ele>-1</ele>
+                <ele>0</ele>
+                <ele>0.117647</ele>
+              </xmlVector>
+            </diffuseColor>
+            <visualization>"faces"</visualization>
+          </enableOpenMBV>
+        </ExternalFlexibleFfrBody>
+        <RigidBody name="Plate">
+          <generalizedInitialPosition>
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>-0.02</ele>
+              <ele>0</ele>
+              <ele>-0.01485-0.056</ele>
+              <ele>0</ele>
+              <ele>-1.45</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </generalizedInitialPosition>
+          <mass unit="kg">m</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>A</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>A</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>B</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongAxesXYZ/>
+          </stateDependentTranslation>
+          <stateDependentRotation>
+            <RotationAboutAxesXYZ/>
+          </stateDependentRotation>
+          <frames>
+            <FixedRelativeFrame name="P">
+              <frameOfReference ref="../Frame[Q]"/>
+              <relativeOrientation>
+                <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutY>
+              </relativeOrientation>
+            </FixedRelativeFrame>
+            <FixedRelativeFrame name="Q">
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>z</ele>
+                </xmlVector>
+              </relativePosition>
+            </FixedRelativeFrame>
+            <FixedRelativeFrame name="R" xmlns="http://www.mbsim-env.de/MBSim">
+              <frameOfReference ref="../Frame[Q]"/>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>0</ele>
+                  <ele>-h-0.016</ele>
+                </xmlVector>
+              </relativePosition>
+              <relativeOrientation>
+                <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">90</aboutY>
+              </relativeOrientation>
+            </FixedRelativeFrame>
+            <FixedRelativeFrame name="S" xmlns="http://www.mbsim-env.de/MBSim">
+              <frameOfReference ref="../Frame[R]"/>
+              <relativePosition unit="m">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>-0.01</ele>
+                  <ele>0</ele>
+                  <ele>0</ele>
+                </xmlVector>
+              </relativePosition>
+              <relativeOrientation>
+                <aboutY xmlns="http://www.mbsim-env.de/MBXMLUtils" unit="degree">180</aboutY>
+              </relativeOrientation>
+            </FixedRelativeFrame>
+          </frames>
+          <contours>
+            <Plane name="Center">
+              <frameOfReference ref="../Frame[P]"/>
+            </Plane>
+            <SpatialContour name="Cone">
+              <frameOfReference ref="../Frame[Q]"/>
+              <etaNodes>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>r0</ele>
+                  <ele>r</ele>
+                </xmlVector>
+              </etaNodes>
+              <xiNodes>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>2*pi</ele>
+                </xmlVector>
+              </xiNodes>
+              <contourFunction>
+                <SymbolicFunction>
+                  <definition arg1="zeta" arg1Dim="2">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>zeta(1)*cos(zeta(2))</ele>
+                      <ele>-zeta(1)*sin(zeta(2))</ele>
+                      <ele>-h/r*zeta(1)</ele>
+                    </xmlVector>
+                  </definition>
+                </SymbolicFunction>
+              </contourFunction>
+              <openEta>true</openEta>
+              <openXi>false</openXi>
+            </SpatialContour>
+            <SpatialContour name="Ring" xmlns="http://www.mbsim-env.de/MBSim">
+              <thickness unit="m">1</thickness>
+              <frameOfReference ref="../Frame[Q]"/>
+              <etaNodes>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>-0.016</ele>
+                  <ele>+0.01</ele>
+                </xmlVector>
+              </etaNodes>
+              <xiNodes>
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>0</ele>
+                  <ele>2*pi</ele>
+                </xmlVector>
+              </xiNodes>
+              <contourFunction>
+                <SymbolicFunction>
+                  <definition arg1="zeta" arg1Dim="2">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>r*cos(zeta(2))</ele>
+                      <ele>r*sin(zeta(2))</ele>
+                      <ele>-h+zeta(1)</ele>
+                    </xmlVector>
+                  </definition>
+                </SymbolicFunction>
+              </contourFunction>
+              <openEta>true</openEta>
+              <openXi>false</openXi>
+            </SpatialContour>
+            <Plane name="Plane 1">
+              <frameOfReference ref="../Frame[R]"/>
+            </Plane>
+            <Plane name="Plane 2">
+              <thickness unit="m">1</thickness>
+              <frameOfReference ref="../Frame[S]"/>
+            </Plane>
+          </contours>
+          <openMBVRigidBody>
+            <IvBody xmlns="http://www.mbsim-env.de/OpenMBV" name="IvBody2">
+              <transparency unit="-">0.3</transparency>
+              <scaleFactor unit="-">1e-3</scaleFactor>
+              <ivFileName>"plate.wrl"</ivFileName>
+              <creaseEdges unit="degree">30</creaseEdges>
+            </IvBody>
+          </openMBVRigidBody>
+          <openMBVFrameOfReference ref="Frame[Q]"/>
+        </RigidBody>
+      </objects>
+      <links>
+        <Contact name="Contact center" xmlns="http://www.mbsim-env.de/MBSim">
+          <connect ref1="../Object[Plate]/Contour[Center]" ref2="../Object[Rod]/Contour[Tip]"/>
+          <normalForceLaw>
+            <RegularizedUnilateralConstraint>
+              <forceFunction>
+                <LinearRegularizedUnilateralConstraint>
+                  <stiffnessCoefficient unit="N/m">1e5</stiffnessCoefficient>
+                  <dampingCoefficient unit="N*s/m">1e3</dampingCoefficient>
+                </LinearRegularizedUnilateralConstraint>
+              </forceFunction>
+            </RegularizedUnilateralConstraint>
+          </normalForceLaw>
+          <tangentialForceLaw>
+            <RegularizedSpatialFriction>
+              <frictionForceFunction>
+                <LinearRegularizedCoulombFriction>
+                  <frictionCoefficient>mu</frictionCoefficient>
+                </LinearRegularizedCoulombFriction>
+              </frictionForceFunction>
+            </RegularizedSpatialFriction>
+          </tangentialForceLaw>
+          <initialGuess>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.005</ele>
+                <ele>pi</ele>
+              </row>
+            </xmlMatrix>
+          </initialGuess>
+        </Contact>
+        <Contact name="Contact cone" xmlns="http://www.mbsim-env.de/MBSim">
+          <connect ref1="../Object[Plate]/Contour[Cone]" ref2="../Object[Rod]/Contour[Tip]"/>
+          <normalForceLaw>
+            <RegularizedUnilateralConstraint>
+              <forceFunction>
+                <LinearRegularizedUnilateralConstraint>
+                  <stiffnessCoefficient unit="N/m">1e5</stiffnessCoefficient>
+                  <dampingCoefficient unit="N*s/m">1e3</dampingCoefficient>
+                </LinearRegularizedUnilateralConstraint>
+              </forceFunction>
+            </RegularizedUnilateralConstraint>
+          </normalForceLaw>
+          <tangentialForceLaw>
+            <RegularizedSpatialFriction>
+              <frictionForceFunction>
+                <LinearRegularizedCoulombFriction>
+                  <frictionCoefficient>mu</frictionCoefficient>
+                </LinearRegularizedCoulombFriction>
+              </frictionForceFunction>
+            </RegularizedSpatialFriction>
+          </tangentialForceLaw>
+          <initialGuess>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.075</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </initialGuess>
+        </Contact>
+        <Contact name="Contact ring 1" xmlns="http://www.mbsim-env.de/MBSim">
+          <connect ref1="../Object[Plate]/Contour[Ring]" ref2="../Object[Rod]/Contour[Tip]"/>
+          <normalForceLaw>
+            <RegularizedUnilateralConstraint>
+              <forceFunction>
+                <LinearRegularizedUnilateralConstraint>
+                  <stiffnessCoefficient unit="N/m">1e5</stiffnessCoefficient>
+                  <dampingCoefficient unit="N*s/m">1e3</dampingCoefficient>
+                </LinearRegularizedUnilateralConstraint>
+              </forceFunction>
+            </RegularizedUnilateralConstraint>
+          </normalForceLaw>
+          <tangentialForceLaw>
+            <RegularizedSpatialFriction>
+              <frictionForceFunction>
+                <LinearRegularizedCoulombFriction>
+                  <frictionCoefficient>mu</frictionCoefficient>
+                </LinearRegularizedCoulombFriction>
+              </frictionForceFunction>
+            </RegularizedSpatialFriction>
+          </tangentialForceLaw>
+          <initialGuess>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>-0.05</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </initialGuess>
+        </Contact>
+        <Contact name="Contact ring 2" xmlns="http://www.mbsim-env.de/MBSim">
+          <connect ref1="../Object[Plate]/Contour[Plane 1]" ref2="../Object[Rod]/Contour[Body]"/>
+          <normalForceLaw>
+            <RegularizedUnilateralConstraint>
+              <forceFunction>
+                <LinearRegularizedUnilateralConstraint>
+                  <stiffnessCoefficient unit="N/m">1e5</stiffnessCoefficient>
+                  <dampingCoefficient unit="N*s/m">1e3</dampingCoefficient>
+                </LinearRegularizedUnilateralConstraint>
+              </forceFunction>
+            </RegularizedUnilateralConstraint>
+          </normalForceLaw>
+          <initialGuess>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>-0.05</ele>
+                <ele>pi/2</ele>
+              </row>
+            </xmlMatrix>
+          </initialGuess>
+        </Contact>
+        <Contact name="Contact ring 3" xmlns="http://www.mbsim-env.de/MBSim">
+          <connect ref1="../Object[Plate]/Contour[Plane 2]" ref2="../Object[Rod]/Contour[Tip]"/>
+          <normalForceLaw>
+            <RegularizedUnilateralConstraint>
+              <forceFunction>
+                <LinearRegularizedUnilateralConstraint>
+                  <stiffnessCoefficient unit="N/m">1e5</stiffnessCoefficient>
+                  <dampingCoefficient unit="N*s/m">1e3</dampingCoefficient>
+                </LinearRegularizedUnilateralConstraint>
+              </forceFunction>
+            </RegularizedUnilateralConstraint>
+          </normalForceLaw>
+          <initialGuess>
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>-0.05</ele>
+                <ele>pi/2</ele>
+              </row>
+            </xmlMatrix>
+          </initialGuess>
+        </Contact>
+        <Joint name="Joint" xmlns="http://www.mbsim-env.de/MBSim">
+          <connect ref1="../Frame[P]" ref2="../Object[B0]/Frame[C]"/>
+          <forceDirection unit="-">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>1</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>1</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+            </xmlMatrix>
+          </forceDirection>
+          <forceLaw>
+            <RegularizedBilateralConstraint>
+              <forceFunction>
+                <LinearRegularizedBilateralConstraint>
+                  <stiffnessCoefficient unit="N/m">0</stiffnessCoefficient>
+                  <dampingCoefficient unit="N*s/m">20</dampingCoefficient>
+                </LinearRegularizedBilateralConstraint>
+              </forceFunction>
+            </RegularizedBilateralConstraint>
+          </forceLaw>
+        </Joint>      
+        <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Time">
+          <function>
+            <LinearFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <a1>1</a1>
+            </LinearFunction>
+          </function>
+        </FunctionSensor>
+      </links>
+      <constraints/>
+      <observers>
+        <ContactObserver name="Contact observer center" xmlns="http://www.mbsim-env.de/MBSim">
+          <contact ref="../Link[Contact center]"/>
+          <enableOpenMBVNormalForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver><ContactObserver name="Contact observer cone" xmlns="http://www.mbsim-env.de/MBSim">
+          <contact ref="../Link[Contact cone]"/>
+          <enableOpenMBVNormalForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver><ContactObserver name="Contact observer ring 1" xmlns="http://www.mbsim-env.de/MBSim">
+          <contact ref="../Link[Contact ring 1]"/>
+          <enableOpenMBVNormalForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver><ContactObserver name="Contact observer ring 2" xmlns="http://www.mbsim-env.de/MBSim">
+          <contact ref="../Link[Contact ring 2]"/>
+          <enableOpenMBVNormalForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver><ContactObserver name="Contact observer ring 3" xmlns="http://www.mbsim-env.de/MBSim">
+          <contact ref="../Link[Contact ring 3]"/>
+          <enableOpenMBVNormalForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVNormalForce>
+          <enableOpenMBVTangentialForce>
+            <scaleLength>0.01</scaleLength>
+          </enableOpenMBVTangentialForce>
+        </ContactObserver>
+        <FrameObserver name="Frame observer">
+          <frame ref="../Object[Plate]/Frame[Q]"/>
+          <enableOpenMBVAngularVelocity>
+            <scaleLength>0.001</scaleLength>
+            <scaleSize>0.01</scaleSize>
+          </enableOpenMBVAngularVelocity>
+        </FrameObserver>
+      </observers>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>0</ele>
+              <ele>-9.81</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </Embed>
+  <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">8</endTime>
+    <plotStepSize unit="s">1e-3</plotStepSize>
+  </RADAU5Integrator>
+</MBSimProject>
