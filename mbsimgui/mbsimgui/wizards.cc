@@ -751,7 +751,7 @@ namespace MBSimGUI {
     Mm.clear();
     Km.clear();
     De0 <<= SymMatV();
-    mDamp.init(0);
+    mDamp <<= VecV();
     pDamp.init(0);
     rif.clear();
     Phiif.clear();
