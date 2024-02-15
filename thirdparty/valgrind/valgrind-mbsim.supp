@@ -1422,3 +1422,11 @@
    fun:push_directory
    fun:increment
 }
+{
+   boost filesystem
+   Memcheck:Cond
+   fun:_ZNK5boost10filesystem15directory_entry20m_get_symlink_statusEPNS_6system10error_codeE
+   fun:symlink_status
+   fun:_ZN5boost10filesystem6detail17recur_dir_itr_imp14push_directoryERNS_6system10error_codeE
+   fun:increment
+}
