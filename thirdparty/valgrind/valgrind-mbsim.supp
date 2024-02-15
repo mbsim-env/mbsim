@@ -1414,3 +1414,11 @@
    fun:_ZN8SoAction5applyEP6SoNode
    fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
 }
+{
+   boost filesystem
+   Memcheck:Cond
+   fun:_ZNK5boost10filesystem15directory_entry20m_get_symlink_statusEPNS_6system10error_codeE
+   fun:symlink_status
+   fun:push_directory
+   fun:increment
+}
