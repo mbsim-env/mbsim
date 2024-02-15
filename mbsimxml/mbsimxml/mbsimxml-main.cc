@@ -291,12 +291,17 @@ int main(int argc, char *argv[]) {
             return 1;
           }
 
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Validate preprocessed file"<<endl;
+          D(mainXMLDoc)->validate();
+
           auto e=mainXMLDoc->getDocumentElement();
           // create object for DynamicSystemSolver and check correct type
           e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate DynamicSystemSolver"<<endl;
           auto dss=unique_ptr<DynamicSystemSolver>(ObjectFactory::createAndInit<DynamicSystemSolver>(e));
         
           // create object for Solver and check correct type
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate Solver"<<endl;
           auto solver=unique_ptr<Solver>(ObjectFactory::createAndInit<Solver>(e->getNextElementSibling()));
 
           // init dss
