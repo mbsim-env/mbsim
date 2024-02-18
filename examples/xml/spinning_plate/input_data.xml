@@ -7,11 +7,11 @@
 
   <density unit="kg/m^3">1000</density>
 
-  <nodes>"Job-1.inp_nodes.asc"</nodes>
+  <nodes>"nodes.asc"</nodes>
 
   <elementType>"C3D20"</elementType>
 
-  <elements>"Job-1.inp_elements.asc"</elements>
+  <elements>"elements.asc"</elements>
 
   <boundaryNodeNumbers> [181, 182, 183, 184, 185, 186, 187, 188, 189, 601, 602, 603, 604, 609, 610, 611 ,612, 616, 617, 619, 620]'</boundaryNodeNumbers>
 
