@@ -280,15 +280,9 @@ void _typemapArgoutMat(const Mat *_1, PyObject *_input, swig_type_info *_1_descr
 
 // init numpy
 %init %{
-#if !defined(_WIN32) && !defined(NDEBUG)
-    // numpy generates a overflow during initialization -> dislabe this FPE exception
-    int fpeExcept=fedisableexcept(FE_OVERFLOW);
-    assert(fpeExcept!=-1);
-#endif
+  // numpy generates a overflow during initialization -> dislabe this FPE exception (save it first to restore it later)
+  PythonCpp::DisableFPE disableFPE;
   import_array();
-#if !defined(_WIN32) && !defined(NDEBUG)
-    assert(feenableexcept(fpeExcept)!=-1);
-#endif
 %}
 
 // use SWIG_exception to throw a target language exception

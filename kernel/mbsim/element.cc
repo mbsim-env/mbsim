@@ -17,6 +17,13 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
+#ifdef _WIN32
+#  define WIN32_LEAN_AND_MEAN
+#  include <windows.h>
+#  undef __STRICT_ANSI__ // to define _controlfp which is not part of ANSI and hence not defined in mingw
+#  include <cfloat>
+#  define __STRICT_ANSI__
+#endif
 #include <config.h>
 #include <cassert>
 #include <cfenv>
@@ -42,14 +49,16 @@ using namespace xercesc;
 
 namespace MBSim {
 
-#if !defined(_WIN32) && !defined(NDEBUG)
   // enable FPE of everything which load libmbsim.so -> this enables it automaticaly for all source examples
   static struct EnableFPE {
     EnableFPE() {
+#ifdef _WIN32
+      _controlfp(~(_EM_ZERODIVIDE | _EM_INVALID | _EM_OVERFLOW), _MCW_EM);
+#else
       assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
+#endif
     }
   } enableFPE;
-#endif
 
   // we use none signaling (quiet) NaN values for double in MBSim -> Throw compile error if these do not exist.
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");

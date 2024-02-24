@@ -68,6 +68,9 @@ _mbsim_la_SOURCES = _mbsim_swig_python.cc
 # set default source for all __mbsim_partXXX.la targets to _mbsim_partXXX_swig_python.cc
 AM_DEFAULT_SOURCE_EXT = _swig_python.cc
 
+noinst_LTLIBRARIES = libpycppwrapper.la
+libpycppwrapper_la_SOURCES = $(prefix)/include/mbxmlutils/pycppwrapper.cc
+
 # compile flags for libtool libraries
 _fmatvec_la_CPPFLAGS = $(PYTHON_CFLAGS) $(FMATVEC_CFLAGS) -I$(PYTHON_LIBDIR)/site-packages/numpy/core/include \
   -Wno-error=unused-variable -Wno-error=stringop-overflow= -D_hypot=hypot # -D_hypot is a MSVS/python bug workaround
@@ -82,7 +85,17 @@ AM_CPPFLAGS = -I$(top_srcdir) -Dprotected=public -DMBSIM_COMPILE_SWIG $(PYTHON_C
 _fmatvec_la_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version $(PYTHON_LIBS) $(FMATVEC_LIBS)
 _mbsim_la_LDFLAGS = $(AM_LDFLAGS)
 # set default link flags for all __mbsim_partXXX.la targets
-AM_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version $(PYTHON_LIBS) $(DEPS_LIBS) ../mbsim/libmbsim.la
+AM_LDFLAGS = -module -shrext $(PYTHON_SHEXT) -avoid-version $(PYTHON_LIBS) $(DEPS_LIBS)
+
+_mbsim_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
+__mbsim_part050_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
+__mbsim_part100_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
+__mbsim_part125_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
+__mbsim_part150_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
+__mbsim_part200_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
+__mbsim_part250_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
+__mbsim_part300_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
+__mbsim_part350_la_LIBADD = ../mbsim/libmbsim.la ./libpycppwrapper.la
 
 swigdatadir = $(datadir)/mbsim
 swigdata_DATA = fmatvec.i fmatvec_include.i mbsim.i $(addsuffix .i,$(MBSIM_PARTS)) mbsim_include.i showUnwrappedClasses.i

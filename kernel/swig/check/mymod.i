@@ -16,6 +16,7 @@
 
 // add code to generated file (helper functions and includes)
 %{
+#include <mbxmlutils/pycppwrapper.h>
 #include "mymod.h"
 %}
 
