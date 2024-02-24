@@ -27,7 +27,7 @@ swigbin_LTLIBRARIES = _fmatvec.la _mbsim.la $(MBSIM_PARTS_LA)
 # As a workaround we define all protected members as public on swig processing and compilation.
 # (-Dprotected=public)
 
-BUILT_SOURCES = _fmatvec_swig_python.cc _mbsim_swig_python.cc $(addprefix _,$(addsuffix _swig_python.cc,$(MBSIM_PARTS)))
+BUILT_SOURCES = _fmatvec_swig_python.cc _mbsim_swig_python.cc $(addprefix _,$(addsuffix _swig_python.cc,$(MBSIM_PARTS))) $(prefix)/include/mbxmlutils/pycppwrapper.cc
 AM_MAKEFLAGS=SWIGFILES="$(addprefix ../,$(BUILT_SOURCES))" # pass the SWIGFILES variable to .swig_prepare/Makefile
 
 CLEANFILES = _fmatvec_swig_python.cc fmatvec.py fmatvec_swig_python.d _mbsim_swig_python.cc mbsim.py mbsim_swig_python.d \
