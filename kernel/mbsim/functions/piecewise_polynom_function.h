@@ -83,7 +83,15 @@ namespace MBSim {
           if(method!=useBreaksAndCoefs) {
             if(y.rows() != x.size())
               this->throwError("Dimension missmatch in size of x");
+            for(int i=1; i<x.size(); i++)
+              if(x(i) <= x(i-1))
+                this->throwError("Values of x must be strictly monotonic increasing!");
             calculateSpline();
+          }
+          else {
+            for(int i=1; i<breaks.size(); i++)
+              if(breaks(i) <= breaks(i-1))
+                this->throwError("Values of breaks must be strictly monotonic increasing!");
           }
           nPoly = (coefs[0]).rows();
           order = coefs.size()-1;
