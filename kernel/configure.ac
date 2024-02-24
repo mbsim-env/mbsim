@@ -117,6 +117,7 @@ AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python 
 PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
   PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
 ])
+PKG_CHECK_MODULES(PYCPPWRAPPER, pycppwrapper)
 if test "$cross_compiling" == "yes" -o "_$host_os" == "_mingw32"; then
   pythonshext=".pyd"
 else

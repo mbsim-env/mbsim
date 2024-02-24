@@ -100,6 +100,7 @@ AC_ARG_WITH([pythonversion], [  --with-pythonversion=VER  The version of python 
 PKG_CHECK_MODULES(PYTHON, python-$pythonversion-embed, [pythonfound=yes], [
   PKG_CHECK_MODULES(PYTHON, python-$pythonversion, [pythonfound=yes], [pythonfound=no])
 ])
+PKG_CHECK_MODULES(PYCPPWRAPPER, pycppwrapper)
 if test "_$PYTHON_BIN" == "_"; then
   PYTHON_BIN="$(pkg-config --variable=exec_prefix python-$pythonversion)/bin/python$pythonversion"
 fi
