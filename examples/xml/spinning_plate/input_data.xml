@@ -48,6 +48,6 @@
     </xmlVector>
   </modalDamping>
 
-  <inputDataFileName>"input_data_rod_2.h5"</inputDataFileName>
+  <inputDataFileName>"input_data.h5"</inputDataFileName>
 
 </InputData>
