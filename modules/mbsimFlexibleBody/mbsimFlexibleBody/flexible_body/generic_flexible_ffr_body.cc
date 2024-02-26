@@ -58,7 +58,7 @@ namespace MBSimFlexibleBody {
 
   Range<Var,Var> i02(0,2);
 
-  GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name), Id(Eye()), APK(EYE) {
+  GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name), APK(EYE) {
 
     updKJ[0] = true;
     updKJ[1] = true;
@@ -830,7 +830,8 @@ namespace MBSimFlexibleBody {
   }
 
   void GenericFlexibleFfrBody::updatePositions(int i) {
-    AWK[i] = K->evalOrientation()*ARP[i]*(Id+tilde(Psi[i]*evalqERel()));
+    RotationAboutAxesXYZ<Vec3> A;
+    AWK[i] = K->evalOrientation()*ARP[i]*A(Psi[i]*evalqERel());
     disp[i] = Phi[i]*getqERel();
     WrRP[i] = K->getOrientation()*(KrKP[i]+disp[i]);
     WrOP[i] = K->getPosition() + WrRP[i];

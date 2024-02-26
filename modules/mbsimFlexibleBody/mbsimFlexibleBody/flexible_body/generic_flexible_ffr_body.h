@@ -325,7 +325,6 @@ namespace MBSimFlexibleBody {
       std::vector<fmatvec::SqrMat3> Gr0;
       fmatvec::Matrix<fmatvec::General,fmatvec::Var,fmatvec::Fixed<6>,double> Oe0;
 
-      fmatvec::SqrMat3 Id;
       std::vector<fmatvec::Vec3> KrKP, WrRP, Wvrel, Womrel;
       std::vector<fmatvec::SqrMat3> ARP;
       std::vector<fmatvec::Mat3xV> Phi, Psi;
