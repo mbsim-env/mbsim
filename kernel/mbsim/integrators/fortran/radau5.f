@@ -1141,7 +1141,7 @@ C --- FAIL EXIT
       RETURN
 C --- EXIT CAUSED BY SOLOUT
  179  CONTINUE
-      WRITE(6,979)X
+C removed by mbsim-env            WRITE(6,979)X
  979  FORMAT(' EXIT OF RADAU5 AT X=',E18.4) 
       IDID=2
       RETURN
