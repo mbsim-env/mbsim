@@ -24,6 +24,8 @@
 
 namespace MBSim {
 
+  class FrictionImpactLaw;
+
   /**
    * \brief basic friction force law on acceleration level for constraint description
    * \author Martin Foerg
@@ -53,6 +55,7 @@ namespace MBSim {
       virtual int getFrictionDirections() = 0;
       virtual bool isSticking(const fmatvec::Vec& s, double sTol) = 0;
       virtual bool isSetValued() const = 0;
+      virtual FrictionImpactLaw* createFrictionImpactLaw() const { return nullptr; }
       /***************************************************/
   };
 

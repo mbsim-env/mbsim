@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/constitutive_laws/unilateral_constraint.h"
+#include "mbsim/constitutive_laws/unilateral_newton_impact.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 
@@ -60,6 +61,10 @@ namespace MBSim {
       return true;
     else
       return false;
+  }
+
+  GeneralizedImpactLaw* UnilateralConstraint::createGeneralizedImpactLaw() const {
+    return new UnilateralNewtonImpact;
   }
 
 }

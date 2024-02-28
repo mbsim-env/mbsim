@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/constitutive_laws/spatial_coulomb_friction.h"
+#include "mbsim/constitutive_laws/spatial_coulomb_impact.h"
 #include "mbsim/objectfactory.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 
@@ -77,6 +78,10 @@ namespace MBSim {
     DOMElement *e;
     e = E(element)->getFirstElementChildNamed(MBSIM%"frictionCoefficient");
     setFrictionCoefficient(E(e)->getText<double>());
+  }
+
+  FrictionImpactLaw* SpatialCoulombFriction::createFrictionImpactLaw() const {
+    return new SpatialCoulombImpact(mu);
   }
 
 }

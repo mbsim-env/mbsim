@@ -51,6 +51,7 @@ namespace MBSim {
       bool isSticking(const fmatvec::Vec& s, double sTol) override { return fabs(s(0)) <= sTol; }
       bool isSetValued() const override { return true; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
+      FrictionImpactLaw* createFrictionImpactLaw() const override;
       /***************************************************/
 
       void setFrictionCoefficient(double mu_) { mu = mu_; }

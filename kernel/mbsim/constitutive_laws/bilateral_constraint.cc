@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "mbsim/constitutive_laws/bilateral_constraint.h"
+#include "mbsim/constitutive_laws/bilateral_impact.h"
 #include "mbsim/utils/nonsmooth_algebra.h"
 
 using namespace std;
@@ -49,4 +50,7 @@ namespace MBSim {
     return fabs(gdn) <= gdTol;
   }
 
+  GeneralizedImpactLaw* BilateralConstraint::createGeneralizedImpactLaw() const  {
+    return new BilateralImpact;
+  }
 }

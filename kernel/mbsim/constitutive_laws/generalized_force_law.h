@@ -24,6 +24,8 @@
 
 namespace MBSim {
 
+  class GeneralizedImpactLaw;
+
   /**
    * \brief basic force law on acceleration level for constraint description
    * \author Martin Foerg
@@ -78,6 +80,8 @@ namespace MBSim {
        * \return flag if the force law is setvalued
        */
       virtual bool isSetValued() const = 0;
+
+      virtual GeneralizedImpactLaw* createGeneralizedImpactLaw() const { return nullptr; }
   };
 
 }

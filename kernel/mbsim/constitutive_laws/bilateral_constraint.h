@@ -49,6 +49,7 @@ namespace MBSim {
       double solve(double G, double gdn) override;
       bool isFulfilled(double la,  double gdn, double tolla, double gdTol, double laMin=0) override;
       bool isSetValued() const override { return true; }
+      GeneralizedImpactLaw* createGeneralizedImpactLaw() const override;
       /***************************************************/
   };
 

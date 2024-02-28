@@ -264,10 +264,24 @@ namespace MBSim {
     }
     else if (stage == preInit) {
       Link::init(stage, config);
-      if(fcl->isSetValued() and not fnil)
-        throwError("Normal impact law must be defined!");
-      if(fdf and fdf->isSetValued() and not ftil)
-        throwError("Tangential impact law must be defined!");
+      if(fcl->isSetValued() and not fnil) {
+	fnil = fcl->createGeneralizedImpactLaw();
+	if(fnil) {
+	  fnil->setParent(this);
+	  msg(Warn) << "(Contact::init): normal impact law is not defined, using default." << endl;
+	}
+	else
+	  throwError("(Contact::init): normal impact law must be defined!");
+      }
+      if(fdf and fdf->isSetValued() and not ftil) {
+	ftil = fdf->createFrictionImpactLaw();
+	if(ftil) {
+	  ftil->setParent(this);
+	  msg(Warn) << "(Contact::init): tangential impact law is not defined, using default." << endl;
+	}
+	else
+	  throwError("(Contact::init): tangential impact law must be defined!");
+      }
       if (contactKinematics == 0) {
         auto &contour0=*contour[0];
         auto &contour1=*contour[1];
