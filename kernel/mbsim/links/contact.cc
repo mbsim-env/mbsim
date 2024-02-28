@@ -268,7 +268,7 @@ namespace MBSim {
 	fnil = fcl->createGeneralizedImpactLaw();
 	if(fnil) {
 	  fnil->setParent(this);
-	  msg(Warn) << "(Contact::init): normal impact law is not defined, using default." << endl;
+	  msg(Info) << "(Contact::init): normal impact law is not defined, using default." << endl;
 	}
 	else
 	  throwError("(Contact::init): normal impact law must be defined!");
@@ -277,7 +277,7 @@ namespace MBSim {
 	ftil = fdf->createFrictionImpactLaw();
 	if(ftil) {
 	  ftil->setParent(this);
-	  msg(Warn) << "(Contact::init): tangential impact law is not defined, using default." << endl;
+	  msg(Info) << "(Contact::init): tangential impact law is not defined, using default." << endl;
 	}
 	else
 	  throwError("(Contact::init): tangential impact law must be defined!");
