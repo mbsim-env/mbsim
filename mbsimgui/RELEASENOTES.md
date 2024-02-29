@@ -13,6 +13,10 @@ All
 ---
 - Various bug fixes.
 
+MBSim
+-----
+- Use default impact law if it is not defined by the user.
+
 MBSimGUI
 --------
 - Enable comments for elements, parameters and all top level widgets.
