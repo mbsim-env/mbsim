@@ -257,6 +257,39 @@ namespace MBSimGUI {
       QTextEdit *editor;
   };
 
+  class StateDialog : public QDialog {
+    public:
+      StateDialog(QWidget *parent);
+      void setName(const QString &name_);
+      void setValue(const QString &value_);
+      QString getName() const;
+      QString getValue() const;
+    private:
+      void reset();
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      ExtWidget *name, *value;
+  };
+
+  class TransitionDialog : public QDialog {
+    public:
+      TransitionDialog(Element *element, QWidget *parent);
+      void setSource(const QString &src_);
+      void setDestination(const QString &dest_);
+      void setSignal(const QString &sig_);
+      void setThreshold(const QString &th_);
+      QString getSource() const;
+      QString getDestination() const;
+      QString getSignal() const;
+      QString getThreshold() const;
+      void setStringList(const std::vector<QString> &list);
+    private:
+      void reset();
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      ExtWidget *src, *dest, *sig, *th;
+  };
+
 }
 
 #endif

@@ -152,25 +152,23 @@ namespace MBSimGUI {
   }
 
   BasicElementBrowser::BasicElementBrowser(Element* selection_, const QString &name, QWidget *parent) : QDialog(parent), selection(selection_) {
-    auto* mainLayout=new QGridLayout;
-    setLayout(mainLayout);
+    auto* layout=new QVBoxLayout;
+    setLayout(layout);
     eleList = new QTreeView;
     eleList->setModel(mw->getElementView()->model());
     eleList->setColumnWidth(0,250);
     eleList->setColumnWidth(1,200);
     eleList->hideColumn(1);
-    mainLayout->addWidget(eleList,0,0);
+    layout->addWidget(eleList);
     connect(eleList, &QTreeView::pressed, this, &BasicElementBrowser::selectionChanged);
 
-    okButton = new QPushButton("Ok");
-    if(!selection)
-      okButton->setDisabled(true);
-    mainLayout->addWidget(okButton,1,0);
-    connect(okButton, &QPushButton::clicked, this, &BasicElementBrowser::accept);
-
-    QPushButton *button = new QPushButton("Cancel");
-    mainLayout->addWidget(button,1,1);
-    connect(button, &QPushButton::clicked, this, &BasicElementBrowser::reject);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    okButton = buttonBox->addButton(QDialogButtonBox::Ok);
+    if(!selection) okButton->setDisabled(true);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &StateDialog::accept);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &StateDialog::reject);
+    layout->addWidget(buttonBox);
 
     setWindowTitle(name+" browser");
   }
@@ -1229,6 +1227,137 @@ namespace MBSimGUI {
   void SimpleTextDialog::hideEvent(QHideEvent *event) {
     QSettings settings;
     settings.setValue("simpletextdialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
+  StateDialog::StateDialog(QWidget *parent) : QDialog(parent) {
+    setWindowTitle("State dialog");
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    name = new ExtWidget("Name",new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5));
+    layout->addWidget(name);
+    value = new ExtWidget("Value",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5));
+    layout->addWidget(value);
+    layout->addStretch(1);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &StateDialog::accept);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &StateDialog::reject);
+    auto *button = buttonBox->addButton(QDialogButtonBox::Reset);
+    connect(button, &QPushButton::clicked, this, &StateDialog::reset);
+    layout->addWidget(buttonBox);
+  }
+
+  void StateDialog::setName(const QString &name_) {
+    static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(name->getWidget())->getWidget())->setValue(name_);
+  }
+
+  void StateDialog::setValue(const QString &value_) {
+    static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->setValue(value_);
+  }
+
+  QString StateDialog::getName() const {
+    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(name->getWidget())->getWidget())->getValue();
+  }
+
+  QString StateDialog::getValue() const {
+    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->getValue();
+  }
+
+  void StateDialog::reset() {
+    setName("");
+    setValue("");
+  }
+
+  void StateDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("statedialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void StateDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("statedialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
+  TransitionDialog::TransitionDialog(Element *element, QWidget *parent) : QDialog(parent) {
+    setWindowTitle("Transition dialog");
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    src = new ExtWidget("Source",new TextChoiceWidget(vector<QString>(),0,true));
+    layout->addWidget(src);
+    dest = new ExtWidget("Destination",new TextChoiceWidget(vector<QString>(),0,true));
+    layout->addWidget(dest);
+    sig = new ExtWidget("Signal",new ElementOfReferenceWidget<Signal>(element,nullptr,this));
+    layout->addWidget(sig);
+    th = new ExtWidget("Threshold",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5));
+    layout->addWidget(th);
+    layout->addStretch(1);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &TransitionDialog::accept);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &TransitionDialog::reject);
+    auto *button = buttonBox->addButton(QDialogButtonBox::Reset);
+    connect(button, &QPushButton::clicked, this, &TransitionDialog::reset);
+    layout->addWidget(buttonBox);
+  }
+
+  void TransitionDialog::setSource(const QString &src_) {
+    static_cast<TextChoiceWidget*>(src->getWidget())->setText(src_);
+  }
+
+  void TransitionDialog::setDestination(const QString &dest_) {
+    static_cast<TextChoiceWidget*>(dest->getWidget())->setText(dest_);
+  }
+
+  void TransitionDialog::setSignal(const QString &sig_) {
+    static_cast<BasicElementOfReferenceWidget*>(sig->getWidget())->setElement(sig_);
+  }
+
+  void TransitionDialog::setThreshold(const QString &th_) {
+    static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(th->getWidget())->getWidget())->setValue(th_);
+  }
+
+  QString TransitionDialog::getSource() const {
+    return static_cast<TextChoiceWidget*>(src->getWidget())->getText();
+  }
+
+  QString TransitionDialog::getDestination() const {
+    return static_cast<TextChoiceWidget*>(dest->getWidget())->getText();
+  }
+
+  QString TransitionDialog::getSignal() const {
+    return static_cast<BasicElementOfReferenceWidget*>(sig->getWidget())->getElement();
+  }
+
+  QString TransitionDialog::getThreshold() const {
+    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(th->getWidget())->getWidget())->getValue();
+  }
+
+  void TransitionDialog::setStringList(const vector<QString> &list) {
+    static_cast<TextChoiceWidget*>(src->getWidget())->setStringList(list);
+    static_cast<TextChoiceWidget*>(dest->getWidget())->setStringList(list);
+  }
+
+  void TransitionDialog::reset() {
+    static_cast<TextChoiceWidget*>(src->getWidget())->setCurrentIndex(0);
+    static_cast<TextChoiceWidget*>(dest->getWidget())->setCurrentIndex(0);
+    setSignal("");
+    setThreshold("0");
+  }
+
+  void TransitionDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("transitiondialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void TransitionDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("transitiondialog/geometry", saveGeometry());
     QDialog::hideEvent(event);
   }
 

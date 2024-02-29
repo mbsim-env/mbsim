@@ -362,14 +362,12 @@ namespace MBSimGUI {
 
   class StateWidget : public Widget {
     protected:
+      void updateTreeItem();
       void addState();
+      void editState();
       void removeState();
-      void updateState();
-      void clear();
-      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
-      ChoiceWidget *name;
-      ChoiceWidget *value;
       QTreeWidget *tree;
+      StateDialog *dialog;
 
     public:
       StateWidget();
@@ -382,22 +380,16 @@ namespace MBSimGUI {
 
   class TransitionWidget : public Widget {
     protected:
+      void updateTreeItem();
       void addTransition();
+      void editTransition();
       void removeTransition();
-      void updateTransition();
-      void clear();
-      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
-      Element *element;
-      TextChoiceWidget *src;
-      TextChoiceWidget *dest;
-      BasicElementOfReferenceWidget *sig;
-      ChoiceWidget *th;
       QTreeWidget *tree;
+      TransitionDialog *dialog;
 
     public:
-      TransitionWidget(Element *element_);
-      void setStringList(const std::vector<QString> &list) { src->setStringList(list); dest->setStringList(list); }
-      TextChoiceWidget *getDestChoice() { return dest; }
+      TransitionWidget(Element *element);
+      void setStringList(const std::vector<QString> &list);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       QString getXMLComment(xercesc::DOMElement *element) override;

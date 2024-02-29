@@ -830,40 +830,28 @@ namespace MBSimGUI {
     QStringList labels;
     labels << "Name" << "Value";
     tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,4,2);
+    layout->addWidget(tree,0,0,4,1);
     tree->setColumnWidth(0,150);
     tree->setColumnWidth(1,50);
 
-    layout->addWidget(new QLabel("Name:"),4,0);
-    name = new ChoiceWidget(new StringWidgetFactory("","\"name\""),QBoxLayout::RightToLeft,5);
-    layout->addWidget(name,4,1);
+    dialog = new StateDialog(this);
 
-    layout->addWidget(new QLabel("Value:"),5,0);
-    value = new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5);
-    layout->addWidget(value,5,1);
+    connect(dialog, &StateDialog::accepted, this, &StateWidget::updateTreeItem);
 
     QPushButton *add = new QPushButton("Add");
-    connect(add,&QPushButton::clicked,this,QOverload<>::of(&StateWidget::addState));
-    connect(add,&QPushButton::clicked,this,&StateWidget::widgetChanged);
-    layout->addWidget(add,0,2);
+    connect(add,&QPushButton::clicked,this,&StateWidget::addState);
+    layout->addWidget(add,0,1);
+
+    QPushButton *update = new QPushButton("Edit");
+    connect(update,&QPushButton::clicked,this,&StateWidget::editState);
+    connect(tree, &QTreeWidget::itemDoubleClicked, this, &StateWidget::editState);
+    layout->addWidget(update,1,1);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,&QPushButton::clicked,this,&StateWidget::removeState);
-    connect(remove,&QPushButton::clicked,this,&StateWidget::widgetChanged);
-    layout->addWidget(remove,1,2);
+    layout->addWidget(remove,2,1);
 
-    QPushButton *update = new QPushButton("Update");
-    connect(update,&QPushButton::clicked,this,&StateWidget::updateState);
-    connect(update,&QPushButton::clicked,this,&StateWidget::widgetChanged);
-    layout->addWidget(update,2,2);
-
-    QPushButton *clear = new QPushButton("Clear");
-    connect(clear,&QPushButton::clicked,this,&StateWidget::clear);
-    layout->addWidget(clear,4,2);
-
-    layout->setColumnStretch(1,10);
-
-    connect(tree,&QTreeWidget::currentItemChanged,this,&StateWidget::currentItemChanged);
+    layout->setColumnStretch(0,10);
   }
 
   vector<QString> StateWidget::getNames() const {
@@ -873,35 +861,33 @@ namespace MBSimGUI {
     return names;
   }
 
+  void StateWidget::updateTreeItem() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      item->setText(0, dialog->getName());
+      item->setText(1, dialog->getValue());
+      emit widgetChanged();
+    }
+  }
+
   void StateWidget::addState() {
     auto *item = new QTreeWidgetItem;
-    item->setText(0, static_cast<PhysicalVariableWidget*>(name->getWidget())->getValue());
-    item->setText(1, static_cast<PhysicalVariableWidget*>(value->getWidget())->getValue());
     tree->addTopLevelItem(item);
+    tree->setCurrentItem(item);
+    editState();
+  }
+
+  void StateWidget::editState() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      dialog->setName(item->text(0));
+      dialog->setValue(item->text(1));
+      dialog->show();
+    }
   }
 
   void StateWidget::removeState() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
-  }
-
-  void StateWidget::updateState() {
-    QTreeWidgetItem *item = tree->currentItem();
-    if(item) {
-      item->setText(0, static_cast<PhysicalVariableWidget*>(name->getWidget())->getValue());
-      item->setText(1, static_cast<PhysicalVariableWidget*>(value->getWidget())->getValue());
-    }
-  }
-
-  void StateWidget::clear() {
-    static_cast<PhysicalVariableWidget*>(name->getWidget())->setValue("");
-    static_cast<PhysicalVariableWidget*>(value->getWidget())->setValue("");
-  }
-
-  void StateWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
-    if(item) {
-      static_cast<PhysicalVariableWidget*>(name->getWidget())->setValue(item->text(0));
-      static_cast<PhysicalVariableWidget*>(value->getWidget())->setValue(item->text(1));
-    }
   }
 
   DOMElement* StateWidget::initializeUsingXML(DOMElement *element) {
@@ -949,7 +935,7 @@ namespace MBSimGUI {
     }
   }
 
-  TransitionWidget::TransitionWidget(Element *element_) : element(element_) {
+  TransitionWidget::TransitionWidget(Element *element) {
     auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -958,86 +944,66 @@ namespace MBSimGUI {
     QStringList labels;
     labels << "Source" << "Destination" << "Signal" << "Threshold";
     tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,4,2);
+    layout->addWidget(tree,0,0,4,1);
     tree->setColumnWidth(0,150);
     tree->setColumnWidth(1,150);
     tree->setColumnWidth(2,250);
     tree->setColumnWidth(3,50);
 
-    layout->addWidget(new QLabel("Source:"),4,0);
-    src = new TextChoiceWidget(vector<QString>(),0,true);
-    layout->addWidget(src,4,1);
+    dialog = new TransitionDialog(element,this);
 
-    layout->addWidget(new QLabel("Destination:"),5,0);
-    dest = new TextChoiceWidget(vector<QString>(),0,true);
-    layout->addWidget(dest,5,1);
-
-    layout->addWidget(new QLabel("Signal:"),6,0);
-    sig = new ElementOfReferenceWidget<Signal>(element,nullptr,this);
-    layout->addWidget(sig,6,1);
-
-    layout->addWidget(new QLabel("Threshold:"),7,0);
-    th = new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5);
-    layout->addWidget(th,7,1);
+    connect(dialog, &TransitionDialog::accepted, this, &TransitionWidget::updateTreeItem);
 
     QPushButton *add = new QPushButton("Add");
-    connect(add,&QPushButton::clicked,this,QOverload<>::of(&TransitionWidget::addTransition));
-    layout->addWidget(add,0,2);
+    connect(add,&QPushButton::clicked,this,&TransitionWidget::addTransition);
+    layout->addWidget(add,0,1);
+
+    QPushButton *update = new QPushButton("Edit");
+    connect(update,&QPushButton::clicked,this,&TransitionWidget::editTransition);
+    connect(tree, &QTreeWidget::itemDoubleClicked, this, &TransitionWidget::editTransition);
+    layout->addWidget(update,1,1);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,&QPushButton::clicked,this,&TransitionWidget::removeTransition);
-    layout->addWidget(remove,1,2);
+    layout->addWidget(remove,2,1);
 
-    QPushButton *update = new QPushButton("Update");
-    connect(update,&QPushButton::clicked,this,&TransitionWidget::updateTransition);
-    layout->addWidget(update,2,2);
+    layout->setColumnStretch(0,10);
+  }
 
-    QPushButton *clear = new QPushButton("Clear");
-    connect(clear,&QPushButton::clicked,this,&TransitionWidget::clear);
-    layout->addWidget(clear,4,2);
-
-    layout->setColumnStretch(1,10);
-
-    connect(tree,&QTreeWidget::currentItemChanged,this,&TransitionWidget::currentItemChanged);
+  void TransitionWidget::updateTreeItem() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      item->setText(0, dialog->getSource());
+      item->setText(1, dialog->getDestination());
+      item->setText(2, dialog->getSignal());
+      item->setText(3, dialog->getThreshold());
+    }
   }
 
   void TransitionWidget::addTransition() {
     auto *item = new QTreeWidgetItem;
-    item->setText(0, src->getText());
-    item->setText(1, dest->getText());
-    item->setText(2, sig->getElement());
-    item->setText(3, static_cast<PhysicalVariableWidget*>(th->getWidget())->getValue());
     tree->addTopLevelItem(item);
+    tree->setCurrentItem(item);
+    editTransition();
+  }
+
+  void TransitionWidget::editTransition() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      dialog->setSource(item->text(0));
+      dialog->setDestination(item->text(1));
+      dialog->setSignal(item->text(2));
+      dialog->setThreshold(item->text(3));
+      dialog->show();
+    }
   }
 
   void TransitionWidget::removeTransition() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
   }
 
-  void TransitionWidget::updateTransition() {
-    QTreeWidgetItem *item = tree->currentItem();
-    if(item) {
-      item->setText(0, src->getText());
-      item->setText(1, dest->getText());
-      item->setText(2, sig->getElement());
-      item->setText(3, static_cast<PhysicalVariableWidget*>(th->getWidget())->getValue());
-    }
-  }
-
-  void TransitionWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
-    if(item) {
-      src->setText(item->text(0));
-      dest->setText(item->text(1));
-      sig->setElement(item->text(2));
-      static_cast<PhysicalVariableWidget*>(th->getWidget())->setValue(item->text(3));
-    }
-  }
-
-  void TransitionWidget::clear() {
-    src->setCurrentIndex(0);
-    dest->setCurrentIndex(0);
-    sig->clear();
-    static_cast<PhysicalVariableWidget*>(th->getWidget())->setValue("");
+  void TransitionWidget::setStringList(const vector<QString> &list) {
+    dialog->setStringList(list);
   }
 
   DOMElement* TransitionWidget::initializeUsingXML(DOMElement *element) {
