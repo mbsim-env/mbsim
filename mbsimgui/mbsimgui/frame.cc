@@ -52,7 +52,8 @@ namespace MBSimGUI {
     return element;
   }
 
-  InternalFrame::InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const MBXMLUtils::FQN &plotFeatureType_) : name(name_), xmlFrameName(std::move(xmlFrameName_)), plotFeatureType(plotFeatureType_) {
+  InternalFrame::InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const MBXMLUtils::FQN &plotFeatureType_) : xmlFrameName(std::move(xmlFrameName_)), plotFeatureType(plotFeatureType_) {
+    name = name_;
   }
 
   void InternalFrame::removeXMLElements() {

@@ -55,6 +55,10 @@ namespace MBSimGUI {
     return element;
   }
 
+  QString Element::getXMLName() {
+    return QString::fromStdString(E(element)->getAttribute("name"));
+  }
+
   QString Element::getXMLPath(Element *ref, bool rel) {
     if(rel) {
       vector<Element*> e0, e1;
@@ -90,18 +94,18 @@ namespace MBSimGUI {
         type = "Observer";
       else 
         type = "<unknown container>";
-      QString str = type + "[" + getName() + "]";
+      QString str = type + "[" + getXMLName() + "]";
       for(auto i1 = e1.begin() ; i1 != e1.end()-imatch ; i1++) {
         if(dynamic_cast<Group*>(*i1))
-          str = QString("Group[") + (*i1)->getName() + "]/" + str;
+          str = QString("Group[") + (*i1)->getXMLName() + "]/" + str;
         else if(dynamic_cast<Object*>(*i1))
-          str = QString("Object[") + (*i1)->getName() + "]/" + str;
+          str = QString("Object[") + (*i1)->getXMLName() + "]/" + str;
         else if(dynamic_cast<Link*>(*i1))
-          str = QString("Link[") + (*i1)->getName() + "]/" + str;
+          str = QString("Link[") + (*i1)->getXMLName() + "]/" + str;
         else if(dynamic_cast<Constraint*>(*i1))
-          str = QString("Constraint[") + (*i1)->getName() + "]/" + str;
+          str = QString("Constraint[") + (*i1)->getXMLName() + "]/" + str;
         else if(dynamic_cast<Observer*>(*i1))
-          str = QString("Observer[") + (*i1)->getName() + "]/" + str;
+          str = QString("Observer[") + (*i1)->getXMLName() + "]/" + str;
         else
           str = "";
       }
@@ -126,19 +130,19 @@ namespace MBSimGUI {
         type = "Observer";
       else 
         type = "<unknown container>";
-      QString str = type + "[" + getName() + "]";
+      QString str = type + "[" + getXMLName() + "]";
       Element* element = parent;
       while(!dynamic_cast<DynamicSystemSolver*>(element)) {
         if(dynamic_cast<Group*>(element))
-          str = QString("Group[") + element->getName() + "]/" + str;
+          str = QString("Group[") + element->getXMLName() + "]/" + str;
         else if(dynamic_cast<Object*>(element))
-          str = QString("Object[") + element->getName() + "]/" + str;
+          str = QString("Object[") + element->getXMLName() + "]/" + str;
         else if(dynamic_cast<Link*>(element))
-          str = QString("Link[") + element->getName() + "]/" + str;
+          str = QString("Link[") + element->getXMLName() + "]/" + str;
         else if(dynamic_cast<Constraint*>(element))
-          str = QString("Constraint[") + element->getName() + "]/" + str;
+          str = QString("Constraint[") + element->getXMLName() + "]/" + str;
         else if(dynamic_cast<Observer*>(element))
-          str = QString("Observer[") + element->getName() + "]/" + str;
+          str = QString("Observer[") + element->getXMLName() + "]/" + str;
         else
           str = "";
         element = element->getParent();

@@ -45,6 +45,7 @@ namespace MBSimGUI {
       void emitDataChangedOnChildren();
     public:
       Element();
+      virtual QString getXMLName();
       QString getXMLPath(Element *ref=nullptr, bool rel=false);
       virtual xercesc::DOMElement* getXMLFrames() { return nullptr; }
       virtual xercesc::DOMElement* getXMLContours() { return nullptr; }

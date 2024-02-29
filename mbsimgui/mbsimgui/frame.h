@@ -39,14 +39,13 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(InternalFrame, Frame, MBSIM%"InternalFrame", "Internal frame");
     public:
       InternalFrame(const QString &name_, MBXMLUtils::FQN xmlFrameName_, const MBXMLUtils::FQN &plotFeatureType_="");
-      QString getName() const override { return name; }
+      QString getXMLName() override { return name; }
       PropertyDialog* createPropertyDialog() override { return new InternalFramePropertyDialog(this); }
       QMenu* createContextMenu() override { return new ElementContextMenu(this,nullptr,false,false); }
       void removeXMLElements() override;
       const MBXMLUtils::FQN& getXMLFrameName() const { return xmlFrameName; }
       MBXMLUtils::FQN getPlotFeatureType() const override { return plotFeatureType; }
     protected:
-      QString name;
       MBXMLUtils::FQN xmlFrameName;
       MBXMLUtils::FQN plotFeatureType;
   };
