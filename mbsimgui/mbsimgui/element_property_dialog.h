@@ -1099,8 +1099,9 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
       void updateWidget() override;
-      void updateFunctionFactory();
-      ExtWidget *inputSignal, *function;
+      void numberOfInputSignalsChanged();
+      void multiplexInputSignalsChanged();
+      ExtWidget *inputSignal, *multiplex, *function;
       int num{1};
   };
 
