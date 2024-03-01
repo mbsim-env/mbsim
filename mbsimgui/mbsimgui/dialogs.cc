@@ -1230,6 +1230,125 @@ namespace MBSimGUI {
     QDialog::hideEvent(event);
   }
 
+  PlotFeatureDialog::PlotFeatureDialog(const MBXMLUtils::FQN &specialType_, QWidget *parent) : QDialog(parent), specialType(specialType_) {
+    setWindowTitle("Plot feature dialog");
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    vector<QString> type_;
+    if(specialType.second.empty()) {
+      type_.emplace_back("plotFeature");
+      type_.emplace_back("plotFeatureForChildren");
+      type_.emplace_back("plotFeatureRecursive");
+    }
+    else
+      type_.emplace_back(QString::fromStdString(specialType.second));
+    type = new ExtWidget("Type",new TextChoiceWidget(type_,specialType.second.empty()?2:0,true));
+    layout->addWidget(type);
+    feature.emplace_back(MBSIM%"acceleration");
+    feature.emplace_back(MBSIM%"angle");
+    feature.emplace_back(MBSIM%"angularAcceleration");
+    feature.emplace_back(MBSIM%"angularVelocity");
+    feature.emplace_back(MBSIM%"debug");
+    feature.emplace_back(MBSIM%"deflection");
+    feature.emplace_back(MBSIM%"derivativeOfGeneralizedPosition");
+    feature.emplace_back(MBSIM%"energy");
+    feature.emplace_back(MBSIM%"force");
+    feature.emplace_back(MBSIM%"generalizedAcceleration");
+    feature.emplace_back(MBSIM%"generalizedForce");
+    feature.emplace_back(MBSIM%"generalizedPosition");
+    feature.emplace_back(MBSIM%"generalizedRelativePosition");
+    feature.emplace_back(MBSIM%"generalizedRelativeVelocity");
+    feature.emplace_back(MBSIM%"generalizedVelocity");
+    feature.emplace_back(MBSIM%"moment");
+    feature.emplace_back(MBSIMFLEX%"nodalDisplacement");
+    feature.emplace_back(MBSIMFLEX%"nodalStress");
+    feature.emplace_back(MBSIMFLEX%"nodalEquivalentStress");
+    feature.emplace_back(MBSIM%"openMBV");
+    feature.emplace_back(MBSIM%"plotRecursive");
+    feature.emplace_back(MBSIM%"position");
+    feature.emplace_back(MBSIMCONTROL%"signal");
+    feature.emplace_back(MBSIM%"velocity");
+    vector<QString> name(feature.size());
+    for(size_t i=0; i<name.size(); i++)
+      name[i] = QString::fromStdString(feature[i].second);
+    value = new ExtWidget("Value",new TextChoiceWidget(name,21,true));
+    connect(value,&TextChoiceWidget::widgetChanged,this,&PlotFeatureDialog::updateNamespace);
+    layout->addWidget(value);
+    status = new ExtWidget("Status",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5));
+    layout->addWidget(status);
+    vector<QString> ns_;
+    ns_.emplace_back(QString::fromStdString(MBSIM.getNamespaceURI()));
+    ns_.emplace_back(QString::fromStdString(MBSIMCONTROL.getNamespaceURI()));
+    ns_.emplace_back(QString::fromStdString(MBSIMFLEX.getNamespaceURI()));
+    ns = new ExtWidget("Namespace",new TextChoiceWidget(ns_,0,true));
+    layout->addWidget(ns);
+    layout->addStretch(1);
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &PlotFeatureDialog::accept);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &PlotFeatureDialog::reject);
+    auto *button = buttonBox->addButton(QDialogButtonBox::Reset);
+    connect(button, &QPushButton::clicked, this, &PlotFeatureDialog::reset);
+    layout->addWidget(buttonBox);
+  }
+
+  void PlotFeatureDialog::setType(const QString &type_) {
+    static_cast<TextChoiceWidget*>(type->getWidget())->setText(type_);
+  }
+
+  void PlotFeatureDialog::setValue(const QString &value_) {
+    static_cast<TextChoiceWidget*>(value->getWidget())->setText(value_);
+  }
+
+  void PlotFeatureDialog::setStatus(const QString &status_) {
+    static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(status->getWidget())->getWidget())->setValue(status_);
+  }
+
+  void PlotFeatureDialog::setNamespace(const QString &ns_) {
+    static_cast<TextChoiceWidget*>(ns->getWidget())->setText(ns_);
+  }
+
+  QString PlotFeatureDialog::getType() const {
+    return static_cast<TextChoiceWidget*>(type->getWidget())->getText();
+  }
+
+  QString PlotFeatureDialog::getValue() const {
+    return static_cast<TextChoiceWidget*>(value->getWidget())->getText();
+  }
+
+  QString PlotFeatureDialog::getStatus() const {
+    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(status->getWidget())->getWidget())->getValue();
+  }
+
+  QString PlotFeatureDialog::getNamespace() const {
+    return static_cast<TextChoiceWidget*>(ns->getWidget())->getText();
+  }
+
+  void PlotFeatureDialog::updateNamespace() {
+    int i = static_cast<TextChoiceWidget*>(value->getWidget())->getCurrentIndex();
+    static_cast<TextChoiceWidget*>(ns->getWidget())->setText(QString::fromStdString(feature[i].first));
+  }
+
+  void PlotFeatureDialog::reset() {
+    static_cast<TextChoiceWidget*>(type->getWidget())->setCurrentIndex(specialType.second.empty()?2:0);
+    static_cast<TextChoiceWidget*>(value->getWidget())->setCurrentIndex(21);
+    setStatus("1");
+    static_cast<TextChoiceWidget*>(ns->getWidget())->setCurrentIndex(0);
+  }
+
+  void PlotFeatureDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("plotfeaturedialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void PlotFeatureDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("plotfeaturedialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
   StateDialog::StateDialog(QWidget *parent) : QDialog(parent) {
     setWindowTitle("State dialog");
     auto *layout = new QVBoxLayout;

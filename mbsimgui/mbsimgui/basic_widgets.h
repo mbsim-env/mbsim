@@ -225,6 +225,7 @@ namespace MBSimGUI {
           text->setCurrentIndex(text->findText(str));
       }
       void setCurrentIndex(int num);
+      int getCurrentIndex() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
@@ -283,20 +284,16 @@ namespace MBSimGUI {
   class PlotFeatureWidget : public Widget {
 
     protected:
-      void updateNamespace(int i);
+      void updateTreeItem();
       void addFeature();
+      void editFeature();
       void removeFeature();
-      void updateFeature();
-      void currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev);
-      std::vector<MBXMLUtils::FQN> feature;
-      MBXMLUtils::FQN specialType;
-      QComboBox *type, *value, *nspace;
-      ChoiceWidget *status;
       QTreeWidget *tree;
+      PlotFeatureDialog *dialog;
+      MBXMLUtils::FQN specialType;
 
     public:
       PlotFeatureWidget(const MBXMLUtils::FQN &specialType_="");
-      void addFeature(const MBXMLUtils::FQN &feature_);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       xercesc::DOMElement* initializeUsingXML2(xercesc::DOMElement *parent);

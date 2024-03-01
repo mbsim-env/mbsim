@@ -25,7 +25,7 @@
 #include <QTreeWidgetItem>
 #include <QCheckBox>
 #include <QUrl>
-#include <xercesc/util/XercesDefs.hpp>
+#include <mbxmlutilshelper/dom.h>
 
 class QTableWidget;
 class QSpinBox;
@@ -255,6 +255,27 @@ namespace MBSimGUI {
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       QTextEdit *editor;
+  };
+
+  class PlotFeatureDialog : public QDialog {
+    public:
+      PlotFeatureDialog(const MBXMLUtils::FQN &specialType_, QWidget *parent);
+      void setType(const QString &type_);
+      void setValue(const QString &value_);
+      void setNamespace(const QString &ns_);
+      void setStatus(const QString &status_);
+      QString getType() const;
+      QString getValue() const;
+      QString getNamespace() const;
+      QString getStatus() const;
+    private:
+      void updateNamespace();
+      void reset();
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      std::vector<MBXMLUtils::FQN> feature;
+      MBXMLUtils::FQN specialType;
+      ExtWidget *type, *value, *ns, *status;
   };
 
   class StateDialog : public QDialog {

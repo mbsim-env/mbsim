@@ -429,6 +429,10 @@ namespace MBSimGUI {
     text->setCurrentIndex(num);
   }
 
+  int TextChoiceWidget::getCurrentIndex() const {
+    return text->currentIndex();
+  }
+
   DOMElement* TextChoiceWidget::initializeUsingXML(DOMElement *element) {
     text->blockSignals(true);
     DOMElement *ele = BasicTextWidget::initializeUsingXML(element);
@@ -522,145 +526,68 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    feature.push_back(MBSIM%"acceleration");
-    feature.push_back(MBSIM%"angle");
-    feature.push_back(MBSIM%"angularAcceleration");
-    feature.push_back(MBSIM%"angularVelocity");
-    feature.push_back(MBSIM%"debug");
-    feature.push_back(MBSIM%"deflection");
-    feature.push_back(MBSIM%"derivativeOfGeneralizedPosition");
-    feature.push_back(MBSIM%"energy");
-    feature.push_back(MBSIM%"force");
-    feature.push_back(MBSIM%"generalizedAcceleration");
-    feature.push_back(MBSIM%"generalizedForce");
-    feature.push_back(MBSIM%"generalizedPosition");
-    feature.push_back(MBSIM%"generalizedRelativePosition");
-    feature.push_back(MBSIM%"generalizedRelativeVelocity");
-    feature.push_back(MBSIM%"generalizedVelocity");
-    feature.push_back(MBSIM%"moment");
-    feature.push_back(MBSIMFLEX%"nodalDisplacement");
-    feature.push_back(MBSIMFLEX%"nodalStress");
-    feature.push_back(MBSIMFLEX%"nodalEquivalentStress");
-    feature.push_back(MBSIM%"openMBV");
-    feature.push_back(MBSIM%"plotRecursive");
-    feature.push_back(MBSIM%"position");
-    feature.push_back(MBSIMCONTROL%"signal");
-    feature.push_back(MBSIM%"velocity");
-
-    QStringList type_;
-    if(specialType.second.empty()) {
-      type_ << "plotFeature";
-      type_ << "plotFeatureForChildren";
-      type_ << "plotFeatureRecursive";
-    }
-    else
-      type_ << QString::fromStdString(specialType.second);
+    dialog = new PlotFeatureDialog(specialType,this);
+    dialog->setModal(true);
 
     tree = new QTreeWidget;
+    tree->setMinimumSize(300,500);
     QStringList labels;
     labels << "Type" << "Value" << "Status" << "Namespace";
     tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,4,2);
+    layout->addWidget(tree,0,0,4,1);
     tree->setColumnWidth(0,200);
     tree->setColumnWidth(1,150);
     tree->setColumnWidth(2,50);
     tree->setColumnWidth(3,250);
 
-    layout->addWidget(new QLabel("Type:"),4,0);
-    type = new CustomComboBox;
-    type->addItems(type_);
-    layout->addWidget(type,4,1);
-    type->setCurrentIndex(specialType.second.empty()?2:0);
-
-    layout->addWidget(new QLabel("Value:"),5,0);
-    value = new CustomComboBox;
-    value->setEditable(true);
-    layout->addWidget(value,5,1);
-    for(auto & i : feature)
-      value->addItem(QString::fromStdString(i.second));
-    value->setCurrentIndex(21);
-    connect(value,QOverload<int>::of(&CustomComboBox::currentIndexChanged),this,&PlotFeatureWidget::updateNamespace);
-
-    layout->addWidget(new QLabel("Status:"),6,0);
-    status = new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5);
-    layout->addWidget(status,6,1);
-
-    layout->addWidget(new QLabel("Namespace:"),7,0);
-    nspace = new CustomComboBox;
-    nspace->setEditable(true);
-    layout->addWidget(nspace,7,1);
-
-    nspace->blockSignals(true);
-    nspace->addItem(QString::fromStdString(MBSIM.getNamespaceURI()));
-    nspace->addItem(QString::fromStdString(MBSIMCONTROL.getNamespaceURI()));
-    nspace->addItem(QString::fromStdString(MBSIMFLEX.getNamespaceURI()));
-    nspace->blockSignals(false);
+    connect(dialog, &PlotFeatureDialog::accepted, this, &PlotFeatureWidget::updateTreeItem);
 
     QPushButton *add = new QPushButton("Add");
     connect(add,&QPushButton::clicked,this,QOverload<>::of(&PlotFeatureWidget::addFeature));
-    layout->addWidget(add,0,2);
+    layout->addWidget(add,0,1);
+
+    QPushButton *update = new QPushButton("Edit");
+    connect(update,&QPushButton::clicked,this,&PlotFeatureWidget::editFeature);
+    connect(tree,&QTreeWidget::itemDoubleClicked,this,&PlotFeatureWidget::editFeature);
+    layout->addWidget(update,1,1);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,&QPushButton::clicked,this,&PlotFeatureWidget::removeFeature);
-    layout->addWidget(remove,1,2);
+    layout->addWidget(remove,2,1);
 
-    QPushButton *update = new QPushButton("Update");
-    connect(update,&QPushButton::clicked,this,&PlotFeatureWidget::updateFeature);
-    layout->addWidget(update,2,2);
-
-    layout->setColumnStretch(1,10);
-
-    connect(tree,&QTreeWidget::currentItemChanged,this,&PlotFeatureWidget::currentItemChanged);
+    layout->setColumnStretch(0,10);
   }
 
-  void PlotFeatureWidget::updateNamespace(int i) {
-    nspace->setEditText(QString::fromStdString(feature[i].first));
-  }
-
-  void PlotFeatureWidget::addFeature(const FQN &feature_) {
-    value->blockSignals(true);
-    value->addItem(QString::fromStdString(feature_.second));
-    value->blockSignals(false);
-    feature.push_back(feature_);
+  void PlotFeatureWidget::updateTreeItem() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      item->setText(0, dialog->getType());
+      item->setText(1, dialog->getValue());
+      item->setText(2, dialog->getStatus());
+      item->setText(3, dialog->getNamespace());
+    }
   }
 
   void PlotFeatureWidget::addFeature() {
     auto *item = new QTreeWidgetItem;
-    item->setText(0, type->currentText());
-    item->setText(1, value->currentText());
-    item->setText(2, static_cast<BoolWidget*>(status->getWidget())->getValue());
-    item->setText(3, nspace->currentText());
     tree->addTopLevelItem(item);
+    tree->setCurrentItem(item);
+    dialog->show();
+  }
+
+  void PlotFeatureWidget::editFeature() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      dialog->setType(item->text(0));
+      dialog->setValue(item->text(1));
+      dialog->setStatus(item->text(2));
+      dialog->setNamespace(item->text(3));
+      dialog->show();
+    }
   }
 
   void PlotFeatureWidget::removeFeature() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
-  }
-
-  void PlotFeatureWidget::updateFeature() {
-    QTreeWidgetItem *item = tree->currentItem();
-    if(item) {
-      item->setText(0, type->currentText());
-      item->setText(1, value->currentText());
-      item->setText(2, static_cast<BoolWidget*>(status->getWidget())->getValue());
-      item->setText(3, nspace->currentText());
-    }
-  }
-
-  void PlotFeatureWidget::currentItemChanged(QTreeWidgetItem *item, QTreeWidgetItem *prev) {
-    if(item) {
-      type->blockSignals(true);
-      type->setCurrentIndex(type->findText(item->text(0)));
-      type->blockSignals(false);
-      value->setEditText(item->text(1));
-      QString str = item->text(2);
-      if(str=="0" or str=="1" or str==mw->getProject()->getVarFalse() or str==mw->getProject()->getVarTrue())
-        status->setIndex(0);
-      else
-        status->setIndex(1);
-      static_cast<BoolWidget*>(status->getWidget())->setValue(item->text(2));
-      nspace->setEditText(item->text(3));
-    }
   }
 
   DOMElement* PlotFeatureWidget::initializeUsingXML(DOMElement *parent) {
@@ -835,6 +762,7 @@ namespace MBSimGUI {
     tree->setColumnWidth(1,50);
 
     dialog = new StateDialog(this);
+    dialog->setModal(true);
 
     connect(dialog, &StateDialog::accepted, this, &StateWidget::updateTreeItem);
 
@@ -951,6 +879,7 @@ namespace MBSimGUI {
     tree->setColumnWidth(3,50);
 
     dialog = new TransitionDialog(element,this);
+    dialog->setModal(true);
 
     connect(dialog, &TransitionDialog::accepted, this, &TransitionWidget::updateTreeItem);
 
