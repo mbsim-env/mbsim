@@ -131,6 +131,7 @@ namespace MBSimGUI {
       int getSize() const;
       void setSize(int m);
       Widget* getWidget(int i) const;
+      void setRange(int minSize, int maxSize);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       QString getXMLComment(xercesc::DOMElement *element) override;

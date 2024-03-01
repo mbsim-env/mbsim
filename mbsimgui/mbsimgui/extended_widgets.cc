@@ -420,6 +420,10 @@ namespace MBSimGUI {
     spinBox->setValue(m);
   }
 
+  void ListWidget::setRange(int minSize, int maxSize) {
+    spinBox->setRange(minSize,maxSize);
+  }
+
   Widget* ListWidget::getWidget(int i) const {
     return static_cast<Widget*>(stackedWidget->widget(i));
   }

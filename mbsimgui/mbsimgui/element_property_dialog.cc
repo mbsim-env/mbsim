@@ -3706,7 +3706,7 @@ namespace MBSimGUI {
   }
 
   SignalOperationPropertyDialog::SignalOperationPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1),false,false,"",true);
+    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"",true);
     addToTab("General", inputSignal);
 
     multiplex = new ExtWidget("Multiplex input signals",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"multiplexInputSignals");
@@ -3736,10 +3736,16 @@ namespace MBSimGUI {
   }
 
   void SignalOperationPropertyDialog::multiplexInputSignalsChanged() {
-    if(num>1 and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(multiplex->getWidget())->getWidget())->getValue()==mw->getProject()->getVarTrue())
-      static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
-    else if(num==2)
-      static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+    if(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(multiplex->getWidget())->getWidget())->getValue()==mw->getProject()->getVarTrue()) {
+      static_cast<ListWidget*>(inputSignal->getWidget())->setRange(1,100);
+      if(num>1)
+	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
+    }
+    else {
+      static_cast<ListWidget*>(inputSignal->getWidget())->setRange(1,2);
+      if(num==2)
+	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+    }
   }
 
   DOMElement* SignalOperationPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -3747,6 +3753,7 @@ namespace MBSimGUI {
     inputSignal->initializeUsingXML(item->getXMLElement());
     multiplex->initializeUsingXML(item->getXMLElement());
     numberOfInputSignalsChanged();
+    multiplexInputSignalsChanged();
     function->initializeUsingXML(item->getXMLElement());
     return parent;
   }
