@@ -16,6 +16,7 @@ All
 MBSim
 -----
 - Use default impact law if it is not defined by the user.
+- Allow multiplexing of input signals in signal operation
 
 MBSimGUI
 --------
