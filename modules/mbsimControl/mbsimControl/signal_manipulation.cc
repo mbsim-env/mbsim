@@ -136,11 +136,15 @@ namespace MBSimControl {
       signalString.push_back(E(e)->getAttribute("ref"));
       e=e->getNextElementSibling();
     }
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"multiplexInputSignals");
+    if(e) setMultiplexInputSignals(E(e)->getText<bool>());
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"function");
-    if(signalString.size()==1)
+    if(signalString.size()==1 or multiplex)
       setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV)>>(e->getFirstElementChild()));
     else if(signalString.size()==2)
       setFunction(ObjectFactory::createAndInit<MBSim::Function<VecV(VecV,VecV)>>(e->getFirstElementChild()));
+    else
+      throwError("(SignalOperation::initializeUsingXML): feature \"multiplex input signals\" must be enabled, if there are more than two input signals.");
   }
 
   void SignalOperation::init(InitStage stage, const InitConfigSet &config) {
@@ -148,8 +152,8 @@ namespace MBSimControl {
       for(auto & i : signalString)
         addInputSignal(getByPath<Signal>(i));
       if(signal.empty())
-        throwError("No input signal is given!");
-      if(signal.size()==1)
+        throwError("(SignalOperation::init): no input signal is given!");
+      if(signal.size()==1 or multiplex)
         updateSignal_ = &SignalOperation::updateSignal1;
       else if(signal.size()==2)
         updateSignal_ = &SignalOperation::updateSignal2;
@@ -157,8 +161,13 @@ namespace MBSimControl {
         throwError("(SignalOperation::init): number of input signals must be 1 or 2");
     }
     else if(stage==unknownStage) {
-      if(f1 and (f1->getArgSize()!=signal[0]->getSignalSize())) throwError("Size of input signal does not match argument size of function. Size of input signal is " + to_string(signal[0]->getSignalSize()) + ", size of argument is " + to_string(f1->getArgSize()));
-      else if(f2 and (f2->getArg1Size()!=signal[0]->getSignalSize() or f2->getArg2Size()!=signal[1]->getSignalSize())) throwError("Size of input signal does not match argument size of function. Size of first input signal is " + to_string(signal[0]->getSignalSize()) + ", size of first argument is " + to_string(f2->getArg1Size()) + ". Size of second input signal is " + to_string(signal[1]->getSignalSize()) + ", size of second argument is " + to_string(f2->getArg2Size()));
+      if(f1) {
+	int size = 0;
+	for(size_t i=0; i<signal.size(); i++)
+	  size += signal[i]->getSignalSize();
+	if(f1->getArgSize()!=size) throwError(string("(SignalOperation::init): size of input signal does not match argument size of function. Size of") + (multiplex?"multiplexed":" ") + "input signal is " + to_string(size) + ", size of argument is " + to_string(f1->getArgSize()));
+      }
+      else if(f2 and (f2->getArg1Size()!=signal[0]->getSignalSize() or f2->getArg2Size()!=signal[1]->getSignalSize())) throwError("(SignalOperation::init): size of input signal does not match argument size of function. Size of first input signal is " + to_string(signal[0]->getSignalSize()) + ", size of first argument is " + to_string(f2->getArg1Size()) + ". Size of second input signal is " + to_string(signal[1]->getSignalSize()) + ", size of second argument is " + to_string(f2->getArg2Size()));
     }
     Signal::init(stage, config);
     if(f1) f1->init(stage, config);
@@ -166,7 +175,17 @@ namespace MBSimControl {
   }
 
   void SignalOperation::updateSignal1() {
-    s = (*f1)(signal[0]->evalSignal());
+    if(multiplex) {
+      VecV x(f1->getArgSize(),NONINIT);
+      for(size_t i=0, k=0; i<signal.size(); i++) {
+	VecV y = signal[i]->evalSignal();
+	for(int j=0; j<signal[i]->getSignalSize(); j++, k++)
+	  x(k) = y(j);
+      }
+      s = (*f1)(x);
+    }
+    else
+      s = (*f1)(signal[0]->evalSignal());
     upds = false;
   }
 

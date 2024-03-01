@@ -818,7 +818,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignal" minOccurs="1" maxOccurs="2">
+          <xs:element name="inputSignal" minOccurs="1" maxOccurs="unbounded">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Eingangssignal
             </xs:documentation></xs:annotation>
@@ -826,6 +826,7 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
+	  <xs:element name="multiplexInputSignals" type="pv:booleanFullEval" minOccurs="0"/>
           <xs:element name="function">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Funktion

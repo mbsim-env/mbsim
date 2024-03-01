@@ -105,6 +105,7 @@ namespace MBSimControl {
         f2->setParent(this);
         f2->setName("Function");
       };
+      void setMultiplexInputSignals(bool multiplex_) { multiplex = multiplex_; }
       void updateSignal() override { (this->*updateSignal_)(); }
       void updateSignal1();
       void updateSignal2();
@@ -114,6 +115,7 @@ namespace MBSimControl {
       std::vector<std::string> signalString;
       MBSim::Function<fmatvec::VecV(fmatvec::VecV)> *f1{nullptr};
       MBSim::Function<fmatvec::VecV(fmatvec::VecV,fmatvec::VecV)> *f2{nullptr};
+      bool multiplex{false};
       void (SignalOperation::*updateSignal_)();
   };
 
