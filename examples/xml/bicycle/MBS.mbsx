@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
     <Parameter>
       <scalarParameter name="be">(90-73)/180*pi</scalarParameter>
@@ -100,36 +101,38 @@
             <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="PositionGabel">
               <frame ref="../../Object[Gabel]/Frame[C]"/>
             </PositionSensor>
-            <Multiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="Multiplexer">
+            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="PositionSchwerpunkt">
               <inputSignal ref="../Link[PositionRahmen]"/>
               <inputSignal ref="../Link[PositionHinterrad]"/>
               <inputSignal ref="../Link[PositionVorderrad]"/>
               <inputSignal ref="../Link[PositionGabel]"/>
-            </Multiplexer>
-            <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="PositionSchwerpunkt">
-              <inputSignal ref="../Link[Multiplexer]"/>
+              <multiplexInputSignals>true</multiplexInputSignals>
               <function>
-                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="s" arg1Dim="12">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>(mR*s(1)+mH*s(4)+mV*s(7)+mG*s(10))/(mR+mH+mV+mG)</ele>
-                    <ele>(mR*s(2)+mH*s(5)+mV*s(8)+mG*s(11))/(mR+mH+mV+mG)</ele>
-                    <ele>(mR*s(3)+mH*s(6)+mV*s(9)+mG*s(12))/(mR+mH+mV+mG)</ele>
-                  </xmlVector>
-                </definition></SymbolicFunction>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="s" arg1Dim="12">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>(mR*s(1)+mH*s(4)+mV*s(7)+mG*s(10))/(mR+mH+mV+mG)</ele>
+                      <ele>(mR*s(2)+mH*s(5)+mV*s(8)+mG*s(11))/(mR+mH+mV+mG)</ele>
+                      <ele>(mR*s(3)+mH*s(6)+mV*s(9)+mG*s(12))/(mR+mH+mV+mG)</ele>
+                    </xmlVector>
+                  </definition>
+                </SymbolicFunction>
               </function>
             </SignalOperation>
             <FunctionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="Gewicht">
               <function>
-                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="t">
-                  <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                    <ele>0</ele>
-                    <ele>0</ele>
-                    <ele>-(mR+mH+mV+mG)*9.81</ele>
+                <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+                  <definition arg1="t">
+                    <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                      <ele>0</ele>
+                      <ele>0</ele>
+                      <ele>-(mR+mH+mV+mG)*9.81</ele>
                   </xmlVector>
                 </definition></SymbolicFunction>
               </function>
             </FunctionSensor>
-          </links><constraints/>
+          </links>
+          <constraints/>
           <observers>
             <SignalObserver xmlns="http://www.mbsim-env.de/MBSimControl" name="SignalObserver">
               <signal ref="../Link[Gewicht]"/>
@@ -509,9 +512,10 @@
           <inputSignal ref="../Link[OrientierungRahmen]"/>
           <inputSignal ref="../Link[GeschwindigkeitRahmen]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg1Dim="9" arg2="y" arg2Dim="3">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>x(1)*y(1) + x(4)*y(2) + x(7)*y(3)</ele>
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="x" arg1Dim="9" arg2="y" arg2Dim="3">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>x(1)*y(1) + x(4)*y(2) + x(7)*y(3)</ele>
               </xmlVector>
             </definition></SymbolicFunction>
           </function>
@@ -519,30 +523,35 @@
         <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Fahrtrichtung">
           <inputSignal ref="../Link[OrientierungRahmen]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg1Dim="9">n = [1;0;0]
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="x" arg1Dim="9">n = [1;0;0]
 bx = [x(1);x(4);x(7)]
 bz = [x(3);x(6);x(9)]
 c = [n(2)*bx(3)-n(3)*bx(2);n(3)*bx(1)-n(1)*bx(3);n(1)*bx(2)-n(2)*bx(1)]
-ret = [sign(bz(1)*c(1)+bz(2)*c(2)+bz(3)*c(3))*acos(bx(1))]</definition></SymbolicFunction>
+ret = [sign(bz(1)*c(1)+bz(2)*c(2)+bz(3)*c(3))*acos(bx(1))]</definition>
+            </SymbolicFunction>
           </function>
         </SignalOperation>
         <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Rahmenwinkel">
           <inputSignal ref="../Link[OrientierungRahmen]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg1Dim="9">n = [0;0;1]
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="x" arg1Dim="9">n = [0;0;1]
 bx = [x(1);x(4);x(7)]
 bz = [x(3);x(6);x(9)]
 c = [n(2)*bz(3)-n(3)*bz(2);n(3)*bz(1)-n(1)*bz(3);n(1)*bz(2)-n(2)*bz(1)]
-ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition></SymbolicFunction>
+ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
+            </SymbolicFunction>
           </function>
         </SignalOperation>
         <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="Richtungsdiff">
           <inputSignal ref="../Link[Richtungssoll]"/>
           <inputSignal ref="../Link[Fahrtrichtung]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg2="y">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>x-y</ele>
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="x" arg2="y">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>x-y</ele>
               </xmlVector>
             </definition></SymbolicFunction>
           </function>
@@ -607,9 +616,10 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition></Symboli
         <SignalOperation xmlns="http://www.mbsim-env.de/MBSimControl" name="NeigungsbegrenzerOut">
           <inputSignal ref="../Link[Neigungsbegrenzer]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>-x</ele>
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="x">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>-x</ele>
               </xmlVector>
             </definition></SymbolicFunction>
           </function>
@@ -655,9 +665,10 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition></Symboli
           <inputSignal ref="../Link[PT1Glied]"/>
           <inputSignal ref="../Link[Rahmenwinkel]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg2="y">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>x-y</ele>
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="x" arg2="y">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>x-y</ele>
               </xmlVector>
             </definition></SymbolicFunction>
           </function>
@@ -713,9 +724,10 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition></Symboli
           <inputSignal ref="../Link[Lenkwinkelbegrenzung]"/>
           <inputSignal ref="../Link[Lenkwinkel]"/>
           <function>
-            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="x" arg2="y">
-              <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>x-y</ele>
+            <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim">
+              <definition arg1="x" arg2="y">
+                <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <ele>x-y</ele>
               </xmlVector>
             </definition></SymbolicFunction>
           </function>
@@ -898,7 +910,4 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition></Symboli
     <endTime unit="s">6</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
   </RADAUIntegrator>
-
-
-
 </MBSimProject>
