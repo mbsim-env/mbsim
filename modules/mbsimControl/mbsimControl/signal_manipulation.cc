@@ -165,7 +165,7 @@ namespace MBSimControl {
 	int size = 0;
 	for(size_t i=0; i<signal.size(); i++)
 	  size += signal[i]->getSignalSize();
-	if(f1->getArgSize()!=size) throwError(string("(SignalOperation::init): size of input signal does not match argument size of function. Size of") + (multiplex?"multiplexed":" ") + "input signal is " + to_string(size) + ", size of argument is " + to_string(f1->getArgSize()));
+	if(f1->getArgSize()!=size) throwError(string("(SignalOperation::init): size of input signal does not match argument size of function. Size of") + (multiplex?" multiplexed ":" ") + "input signal is " + to_string(size) + ", size of argument is " + to_string(f1->getArgSize()));
       }
       else if(f2 and (f2->getArg1Size()!=signal[0]->getSignalSize() or f2->getArg2Size()!=signal[1]->getSignalSize())) throwError("(SignalOperation::init): size of input signal does not match argument size of function. Size of first input signal is " + to_string(signal[0]->getSignalSize()) + ", size of first argument is " + to_string(f2->getArg1Size()) + ". Size of second input signal is " + to_string(signal[1]->getSignalSize()) + ", size of second argument is " + to_string(f2->getArg2Size()));
     }
