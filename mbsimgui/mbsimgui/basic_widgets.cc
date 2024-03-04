@@ -33,6 +33,7 @@
 #include "xml_highlighter.h"
 #include <QLabel>
 #include <QColorDialog>
+#include <QApplication>
 #include <boost/lexical_cast.hpp>
 #include <utility>
 #include <xercesc/dom/DOMDocument.hpp>
@@ -234,6 +235,7 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(eleBrowser,&BasicElementBrowser::accepted,this,QOverload<>::of(&BasicElementOfReferenceWidget::setElement));
     connect(eleBrowser,&BasicElementBrowser::accepted,this,&BasicElementOfReferenceWidget::widgetChanged);
+    connect(ele,&QLineEdit::textChanged,this,&BasicElementOfReferenceWidget::labelChanged);
     connect(button,&QPushButton::clicked,this,&BasicElementOfReferenceWidget::showBrowser);
     layout->addWidget(button);
 
@@ -526,34 +528,36 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    dialog = new PlotFeatureDialog(specialType,this);
-    dialog->setModal(true);
-
     tree = new QTreeWidget;
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
     tree->setMinimumSize(300,500);
-    QStringList labels;
-    labels << "Type" << "Value" << "Status" << "Namespace";
-    tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,4,1);
+    tree->setHeaderLabels({"Type","Value","Status","Namespace"});
     tree->setColumnWidth(0,200);
     tree->setColumnWidth(1,150);
     tree->setColumnWidth(2,50);
     tree->setColumnWidth(3,250);
+    connect(tree, &QTreeWidget::customContextMenuRequested,this,&PlotFeatureWidget::openMenu);
+    layout->addWidget(tree,0,0,5,1);
 
+    dialog = new PlotFeatureDialog(specialType,this);
     connect(dialog, &PlotFeatureDialog::accepted, this, &PlotFeatureWidget::updateTreeItem);
+    dialog->setModal(true);
+
+    spinBox = new CustomSpinBox;
+    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&PlotFeatureWidget::changeNumberOfPlotFeatures);
+    layout->addWidget(spinBox,0,1);
 
     QPushButton *add = new QPushButton("Add");
     connect(add,&QPushButton::clicked,this,QOverload<>::of(&PlotFeatureWidget::addFeature));
-    layout->addWidget(add,0,1);
+    layout->addWidget(add,1,1);
 
     QPushButton *update = new QPushButton("Edit");
     connect(update,&QPushButton::clicked,this,&PlotFeatureWidget::editFeature);
-    connect(tree,&QTreeWidget::itemDoubleClicked,this,&PlotFeatureWidget::editFeature);
-    layout->addWidget(update,1,1);
+    layout->addWidget(update,2,1);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,&QPushButton::clicked,this,&PlotFeatureWidget::removeFeature);
-    layout->addWidget(remove,2,1);
+    layout->addWidget(remove,3,1);
 
     layout->setColumnStretch(0,10);
   }
@@ -569,10 +573,12 @@ namespace MBSimGUI {
   }
 
   void PlotFeatureWidget::addFeature() {
-    auto *item = new QTreeWidgetItem;
+    auto *item = new QTreeWidgetItem({"plotFeatureRecursive","position",mw->getProject()->getVarTrue(),"http://www.mbsim-env.de/MBSim"});
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
     tree->addTopLevelItem(item);
     tree->setCurrentItem(item);
-    dialog->show();
+    spinBox->setValue(tree->topLevelItemCount());
+    editFeature();
   }
 
   void PlotFeatureWidget::editFeature() {
@@ -588,7 +594,38 @@ namespace MBSimGUI {
 
   void PlotFeatureWidget::removeFeature() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
+    spinBox->setValue(tree->topLevelItemCount());
   }
+
+  void PlotFeatureWidget::changeNumberOfPlotFeatures(int num) {
+    int n = num - tree->topLevelItemCount();
+    if(n>0) {
+      for(int i=0; i<n; i++) {
+	auto *item = new QTreeWidgetItem({"plotFeatureRecursive","position",mw->getProject()->getVarTrue(),"http://www.mbsim-env.de/MBSim"});
+	item->setFlags(item->flags() | Qt::ItemIsEditable);
+	tree->addTopLevelItem(item);
+	tree->setCurrentItem(item);
+      }
+    }
+    else if(n<0) {
+      for(int i=0; i<-n; i++)
+	delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
+    }
+  }
+
+  void PlotFeatureWidget::openMenu() {
+    if(QApplication::mouseButtons()==Qt::RightButton) {
+      auto *menu = new QMenu(this);
+      menu->addAction("Add",this,&PlotFeatureWidget::addFeature);
+      auto *item = tree->currentItem();
+      if(item) {
+       menu->addAction("Edit",this,&PlotFeatureWidget::editFeature);
+       menu->addAction("Remove",this,&PlotFeatureWidget::removeFeature);
+      }
+      menu->exec(QCursor::pos());
+      delete menu;
+    }
+   }
 
   DOMElement* PlotFeatureWidget::initializeUsingXML(DOMElement *parent) {
     DOMElement *e=parent->getFirstElementChild();
@@ -596,6 +633,7 @@ namespace MBSimGUI {
                 E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
                 E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
       auto *item = new QTreeWidgetItem;
+      item->setFlags(item->flags() | Qt::ItemIsEditable);
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
       item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
       item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
@@ -603,6 +641,7 @@ namespace MBSimGUI {
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
+    spinBox->setValue(tree->topLevelItemCount());
     return e;
   }
 
@@ -754,30 +793,32 @@ namespace MBSimGUI {
     setLayout(layout);
 
     tree = new QTreeWidget;
-    QStringList labels;
-    labels << "Name" << "Value";
-    tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,4,1);
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    tree->setHeaderLabels({"Name","Value"});
     tree->setColumnWidth(0,150);
     tree->setColumnWidth(1,50);
+    connect(tree, &QTreeWidget::customContextMenuRequested,this,&StateWidget::openMenu);
+    layout->addWidget(tree,0,0,5,1);
 
     dialog = new StateDialog(this);
+    connect(dialog, &StateDialog::accepted, this, &StateWidget::updateTreeItem);
     dialog->setModal(true);
 
-    connect(dialog, &StateDialog::accepted, this, &StateWidget::updateTreeItem);
+    spinBox = new CustomSpinBox;
+    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&StateWidget::changeNumberOfStates);
+    layout->addWidget(spinBox,0,1);
 
     QPushButton *add = new QPushButton("Add");
     connect(add,&QPushButton::clicked,this,&StateWidget::addState);
-    layout->addWidget(add,0,1);
+    layout->addWidget(add,1,1);
 
     QPushButton *update = new QPushButton("Edit");
     connect(update,&QPushButton::clicked,this,&StateWidget::editState);
-    connect(tree, &QTreeWidget::itemDoubleClicked, this, &StateWidget::editState);
-    layout->addWidget(update,1,1);
+    layout->addWidget(update,2,1);
 
     QPushButton *remove = new QPushButton("Remove");
     connect(remove,&QPushButton::clicked,this,&StateWidget::removeState);
-    layout->addWidget(remove,2,1);
+    layout->addWidget(remove,3,1);
 
     layout->setColumnStretch(0,10);
   }
@@ -799,9 +840,11 @@ namespace MBSimGUI {
   }
 
   void StateWidget::addState() {
-    auto *item = new QTreeWidgetItem;
+    auto *item = new QTreeWidgetItem({"\"name\"","0"});
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
     tree->addTopLevelItem(item);
     tree->setCurrentItem(item);
+    spinBox->setValue(tree->topLevelItemCount());
     editState();
   }
 
@@ -816,17 +859,52 @@ namespace MBSimGUI {
 
   void StateWidget::removeState() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
+    spinBox->setValue(tree->topLevelItemCount());
+    emit widgetChanged();
+  }
+
+  void StateWidget::changeNumberOfStates(int num) {
+    int n = num - tree->topLevelItemCount();
+    if(n>0) {
+      for(int i=0; i<n; i++) {
+       auto *item = new QTreeWidgetItem({"\"name\"","0"});
+       item->setFlags(item->flags() | Qt::ItemIsEditable);
+       tree->addTopLevelItem(item);
+       tree->setCurrentItem(item);
+      }
+    }
+    else if(n<0) {
+      for(int i=0; i<-n; i++)
+       delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
+      emit widgetChanged();
+    }
+  }
+
+  void StateWidget::openMenu() {
+    if(QApplication::mouseButtons()==Qt::RightButton) {
+      auto *menu = new QMenu(this);
+      menu->addAction("Add",this,&StateWidget::addState);
+      auto *item = tree->currentItem();
+      if(item) {
+       menu->addAction("Edit",this,&StateWidget::editState);
+       menu->addAction("Remove",this,&StateWidget::removeState);
+      }
+      menu->exec(QCursor::pos());
+      delete menu;
+    }
   }
 
   DOMElement* StateWidget::initializeUsingXML(DOMElement *element) {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"state");
     while(e && (E(e)->getTagName()==MBSIMCONTROL%"state")) {
       auto *item = new QTreeWidgetItem;
+      item->setFlags(item->flags() | Qt::ItemIsEditable);
       item->setText(0, QString::fromStdString(E(e)->getAttributeQName("name").second));
       item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
+    spinBox->setValue(tree->topLevelItemCount());
     return e;
   }
 
@@ -869,32 +947,34 @@ namespace MBSimGUI {
     setLayout(layout);
 
     tree = new QTreeWidget;
-    QStringList labels;
-    labels << "Source" << "Destination" << "Signal" << "Threshold";
-    tree->setHeaderLabels(labels);
-    layout->addWidget(tree,0,0,4,1);
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    tree->setHeaderLabels({"Source","Destination","Signal","Threshold"});
     tree->setColumnWidth(0,150);
     tree->setColumnWidth(1,150);
     tree->setColumnWidth(2,250);
     tree->setColumnWidth(3,50);
+    connect(tree, &QTreeWidget::customContextMenuRequested,this,&TransitionWidget::openMenu);
+    layout->addWidget(tree,0,0,5,1);
 
     dialog = new TransitionDialog(element,this);
     dialog->setModal(true);
-
     connect(dialog, &TransitionDialog::accepted, this, &TransitionWidget::updateTreeItem);
 
-    QPushButton *add = new QPushButton("Add");
+    spinBox = new CustomSpinBox;
+    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&TransitionWidget::changeNumberOfTransitions);
+    layout->addWidget(spinBox,0,1);
+
+    auto *add = new QPushButton("Add");
     connect(add,&QPushButton::clicked,this,&TransitionWidget::addTransition);
-    layout->addWidget(add,0,1);
+    layout->addWidget(add,1,1);
 
-    QPushButton *update = new QPushButton("Edit");
+    auto *update = new QPushButton("Edit");
     connect(update,&QPushButton::clicked,this,&TransitionWidget::editTransition);
-    connect(tree, &QTreeWidget::itemDoubleClicked, this, &TransitionWidget::editTransition);
-    layout->addWidget(update,1,1);
+    layout->addWidget(update,2,1);
 
-    QPushButton *remove = new QPushButton("Remove");
+    auto *remove = new QPushButton("Remove");
     connect(remove,&QPushButton::clicked,this,&TransitionWidget::removeTransition);
-    layout->addWidget(remove,2,1);
+    layout->addWidget(remove,3,1);
 
     layout->setColumnStretch(0,10);
   }
@@ -910,9 +990,11 @@ namespace MBSimGUI {
   }
 
   void TransitionWidget::addTransition() {
-    auto *item = new QTreeWidgetItem;
+    auto *item = new QTreeWidgetItem({state1,state2,"","0"});
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
     tree->addTopLevelItem(item);
     tree->setCurrentItem(item);
+    spinBox->setValue(tree->topLevelItemCount());
     editTransition();
   }
 
@@ -929,9 +1011,52 @@ namespace MBSimGUI {
 
   void TransitionWidget::removeTransition() {
     tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
+    spinBox->setValue(tree->topLevelItemCount());
+  }
+
+  void TransitionWidget::changeNumberOfTransitions(int num) {
+    int n = num - tree->topLevelItemCount();
+    if(n>0) {
+      for(int i=0; i<n; i++) {
+	auto *item = new QTreeWidgetItem({state1,state2,"","0"});
+	item->setFlags(item->flags() | Qt::ItemIsEditable);
+	tree->addTopLevelItem(item);
+	tree->setCurrentItem(item);
+      }
+    }
+    else if(n<0) {
+      for(int i=0; i<-n; i++)
+	delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
+    }
+  }
+
+  void TransitionWidget::openMenu() {
+    if(QApplication::mouseButtons()==Qt::RightButton) {
+      auto *menu = new QMenu(this);
+      menu->addAction("Add",this,&TransitionWidget::addTransition);
+      auto *item = tree->currentItem();
+      if(item) {
+	menu->addAction("Edit",this,&TransitionWidget::editTransition);
+	menu->addAction("Remove",this,&TransitionWidget::removeTransition);
+      }
+      menu->exec(QCursor::pos());
+      delete menu;
+    }
   }
 
   void TransitionWidget::setStringList(const vector<QString> &list) {
+    if(list.size()>1) {
+      state1 = list[list.size()-2];
+      state2 = list[list.size()-1];
+    }
+    else if(list.size()>0) {
+      state1 = list[0];
+      state2 = list[0];
+    }
+    else {
+      state1 = "";
+      state2 = "";
+    }
     dialog->setStringList(list);
   }
 
@@ -939,6 +1064,7 @@ namespace MBSimGUI {
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"transition");
     while(e && (E(e)->getTagName()==MBSIMCONTROL%"transition")) {
       auto *item = new QTreeWidgetItem;
+      item->setFlags(item->flags() | Qt::ItemIsEditable);
       item->setText(0, QString::fromStdString(E(e)->getAttributeQName("source").second));
       item->setText(1, QString::fromStdString(E(e)->getAttributeQName("destination").second));
       item->setText(2, QString::fromStdString(E(e)->getAttributeQName("signal").second));
@@ -946,6 +1072,7 @@ namespace MBSimGUI {
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
+    spinBox->setValue(tree->topLevelItemCount());
     return e;
   }
 

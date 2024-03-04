@@ -119,6 +119,7 @@ namespace MBSimGUI {
       QString getRatio() const { return ratio->text().isEmpty()?"0":ratio->text(); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getLabel() const override { return getElement(); }
 
     protected:
       virtual Element* findElement(const QString &str) { return nullptr; }
@@ -288,8 +289,11 @@ namespace MBSimGUI {
       void addFeature();
       void editFeature();
       void removeFeature();
+      void changeNumberOfPlotFeatures(int num);
+      void openMenu();
       QTreeWidget *tree;
       PlotFeatureDialog *dialog;
+      CustomSpinBox *spinBox;
       MBXMLUtils::FQN specialType;
 
     public:
@@ -363,8 +367,11 @@ namespace MBSimGUI {
       void addState();
       void editState();
       void removeState();
+      void changeNumberOfStates(int num);
+      void openMenu();
       QTreeWidget *tree;
       StateDialog *dialog;
+      CustomSpinBox *spinBox;
 
     public:
       StateWidget();
@@ -381,8 +388,12 @@ namespace MBSimGUI {
       void addTransition();
       void editTransition();
       void removeTransition();
+      void changeNumberOfTransitions(int num);
+      void openMenu();
       QTreeWidget *tree;
       TransitionDialog *dialog;
+      CustomSpinBox *spinBox;
+      QString state1, state2;
 
     public:
       TransitionWidget(Element *element);
