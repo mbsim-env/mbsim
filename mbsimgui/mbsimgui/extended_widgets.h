@@ -88,6 +88,7 @@ namespace MBSimGUI {
       void setIndex(int i) { return comboBox->setCurrentIndex(i); }
       void resize_(int m, int n) override { widget->resize_(m,n); }
       void setWidgetFactory(WidgetFactory *factory_);
+      WidgetFactory* getWidgetFactory() const { return factory; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       void defineWidget(int);

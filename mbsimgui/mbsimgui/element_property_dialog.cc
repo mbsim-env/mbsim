@@ -1988,7 +1988,7 @@ namespace MBSimGUI {
     dependentBody = new ExtWidget("Dependent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"dependentRigidBody");
     addToTab("General", dependentBody);
 
-    independentBodies = new ExtWidget("Independent rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"independentRigidBody",constraint,true,this),"Independent body",1,2,false,1),false,false,"",true);
+    independentBodies = new ExtWidget("Independent rigid bodies",new ElementsOfReferenceWidget<RigidBody>(MBSIM%"independentRigidBody",constraint,1,100,true,this),false,false,"",true);
     addToTab("General",independentBodies);
   }
 
@@ -2123,11 +2123,11 @@ namespace MBSimGUI {
     addTab("Visualization",2);
     addTab("Initial conditions",2);
 
-    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,this),"Body",0,2,false,0),false,false,"",true);
+    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ElementsOfReferenceWidget<Signal>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,0,100,this),false,false,"",true);
     addToTab("General",dependentBodiesFirstSide);
     connect(dependentBodiesFirstSide->getWidget(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
-    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,this),"Body",0,2,false,0),false,false,"",true);
+    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ElementsOfReferenceWidget<Signal>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,0,100,this),false,false,"",true);
     addToTab("General",dependentBodiesSecondSide);
     connect(dependentBodiesSecondSide->getWidget(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
@@ -2677,7 +2677,7 @@ namespace MBSimGUI {
     gearOutput = new ExtWidget("Gear output",new ElementOfReferenceWidget<RigidBody>(link,nullptr,this),false,false,MBSIM%"gearOutput");
     addToTab("General",gearOutput);
 
-    gearInput = new ExtWidget("Gear inputs",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"gearInput",link,true,this),"Gear input",1,2,false,1),false,false,"",true);
+    gearInput = new ExtWidget("Gear inputs",new ElementsOfReferenceWidget<RigidBody>(MBSIM%"gearInput",link,1,100,true,this),false,false,"",true);
     addToTab("General",gearInput);
 
     function = new ExtWidget("Generalized force law",new ChoiceWidget(new WidgetFactoryFor<GeneralizedForceLawWidget>,QBoxLayout::TopToBottom,0),true,false,MBSIM%"generalizedForceLaw");
@@ -2727,7 +2727,7 @@ namespace MBSimGUI {
   GeneralizedElasticStructurePropertyDialog::GeneralizedElasticStructurePropertyDialog(Element *link) : RigidBodyLinkPropertyDialog(link) {
     addTab("Kinetics",1);
 
-    rigidBody = new ExtWidget("Rigid bodies",new ListWidget(new ElementOfReferenceWidgetFactory<RigidBody>(MBSIM%"rigidBody",link,this),"Rigid body",1,2,1,false),false,false,"",true);
+    rigidBody = new ExtWidget("Rigid bodies",new ElementsOfReferenceWidget<RigidBody>(MBSIM%"rigidBody",link,1,100,true,this),false,false,"",true);
     addToTab("General",rigidBody);
 
     function = new ExtWidget("Generalized force function",new ChoiceWidget(new SpringDamperWidgetFactory(link,true,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"generalizedForceFunction");
@@ -3545,7 +3545,7 @@ namespace MBSimGUI {
   }
 
   MultiplexerPropertyDialog::MultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1),false,false,"",true);
+    inputSignal = new ExtWidget("Input signals",new ElementsOfReferenceWidget<Signal>(MBSIMCONTROL%"inputSignal",signal,1,100,this),false,false,"",true);
     addToTab("General", inputSignal);
   }
 
@@ -3706,13 +3706,13 @@ namespace MBSimGUI {
   }
 
   SignalOperationPropertyDialog::SignalOperationPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signal",new ListWidget(new ElementOfReferenceWidgetFactory<Signal>(MBSIMCONTROL%"inputSignal",signal,this),"Signal",1,2,false,1,2),false,false,"",true);
+    inputSignal = new ExtWidget("Input signals",new ElementsOfReferenceWidget<Signal>(MBSIMCONTROL%"inputSignal",signal,1,100,this),false,false,"",true);
     addToTab("General", inputSignal);
 
-    multiplex = new ExtWidget("Multiplex input signals",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"multiplexInputSignals");
+    multiplex = new ExtWidget("Multiplex input signals",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,true,MBSIMCONTROL%"multiplexInputSignals");
     addToTab("General", multiplex);
 
-    function = new ExtWidget("Function",new ChoiceWidget(new Function1ArgWidgetFactory(signal,"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
+    function = new ExtWidget("Function",new ChoiceWidget(new Function1ArgWidgetFactory(signal,"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17),QBoxLayout::TopToBottom,0),false,false,MBSIMCONTROL%"function");
     addToTab("General", function);
 
     connect(inputSignal,&ExtWidget::widgetChanged,this,&SignalOperationPropertyDialog::numberOfInputSignalsChanged);
@@ -3724,26 +3724,23 @@ namespace MBSimGUI {
   }
 
   void SignalOperationPropertyDialog::numberOfInputSignalsChanged() {
-    if(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(multiplex->getWidget())->getWidget())->getValue()==mw->getProject()->getVarFalse()) {
-      if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize() != num) {
-	num = static_cast<ListWidget*>(inputSignal->getWidget())->getSize();
-	if(static_cast<ListWidget*>(inputSignal->getWidget())->getSize()==1)
-	  static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
-	else
-	  static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
-      }
+    if((not multiplex->isActive()) or static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(multiplex->getWidget())->getWidget())->getValue()==mw->getProject()->getVarFalse()) {
+      if(static_cast<BasicElementsOfReferenceWidget*>(inputSignal->getWidget())->getSize()==2 and (not dynamic_cast<Function2ArgWidgetFactory*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidgetFactory())))
+	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+      else if(not dynamic_cast<Function1ArgWidgetFactory*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidgetFactory()))
+	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));
     }
   }
 
   void SignalOperationPropertyDialog::multiplexInputSignalsChanged() {
-    if(static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(multiplex->getWidget())->getWidget())->getValue()==mw->getProject()->getVarTrue()) {
-      static_cast<ListWidget*>(inputSignal->getWidget())->setRange(1,100);
-      if(num>1)
-	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this));
+    if(multiplex->isActive() and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(multiplex->getWidget())->getWidget())->getValue()==mw->getProject()->getVarTrue()) {
+      static_cast<BasicElementsOfReferenceWidget*>(inputSignal->getWidget())->setRange(1,100);
+      if(not dynamic_cast<Function1ArgWidgetFactory*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidgetFactory()))
+	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));
     }
     else {
-      static_cast<ListWidget*>(inputSignal->getWidget())->setRange(1,2);
-      if(num==2)
+      static_cast<BasicElementsOfReferenceWidget*>(inputSignal->getWidget())->setRange(1,2);
+      if(static_cast<BasicElementsOfReferenceWidget*>(inputSignal->getWidget())->getSize()==2 and (not dynamic_cast<Function2ArgWidgetFactory*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidgetFactory())))
 	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
     }
   }

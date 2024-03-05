@@ -235,7 +235,6 @@ namespace MBSimGUI {
     QPushButton *button = new QPushButton(tr("Browse"));
     connect(eleBrowser,&BasicElementBrowser::accepted,this,QOverload<>::of(&BasicElementOfReferenceWidget::setElement));
     connect(eleBrowser,&BasicElementBrowser::accepted,this,&BasicElementOfReferenceWidget::widgetChanged);
-    connect(ele,&QLineEdit::textChanged,this,&BasicElementOfReferenceWidget::labelChanged);
     connect(button,&QPushButton::clicked,this,&BasicElementOfReferenceWidget::showBrowser);
     layout->addWidget(button);
 
@@ -268,6 +267,186 @@ namespace MBSimGUI {
     E(static_cast<DOMElement*>(parent))->setAttribute("ref", getElement().toStdString());
     if(ratio) E(static_cast<DOMElement*>(parent))->setAttribute("ratio", getRatio().toStdString());
     return nullptr;
+  }
+
+  BasicElementsOfReferenceWidget::BasicElementsOfReferenceWidget(FQN xmlName_, Element *element_, BasicElementBrowser *eleBrowser_, int min, int max, bool addRatio) : xmlName(xmlName_), element(element_), eleBrowser(eleBrowser_) {
+    auto *layout = new QGridLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    tree = new QTreeWidget;
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    tree->setMinimumSize(300,200);
+    QStringList headerLabels("Name");
+    if(addRatio)
+      headerLabels << "Ratio";
+    tree->setHeaderLabels(headerLabels);
+    tree->setColumnWidth(0,350);
+    tree->setColumnWidth(1,50);
+    layout->addWidget(tree,0,0,5,1);
+
+    spinBox = new CustomSpinBox;
+    spinBox->setRange(min,max);
+    layout->addWidget(spinBox,0,1);
+
+    add = new QPushButton("Add");
+    layout->addWidget(add,1,1);
+
+    QPushButton *update = new QPushButton("Browse");
+    layout->addWidget(update,2,1);
+
+    remove = new QPushButton("Remove");
+    layout->addWidget(remove,3,1);
+
+    layout->setColumnStretch(0,10);
+
+    changeNumberOfElements(min);
+
+    connect(tree, &QTreeWidget::customContextMenuRequested,this,&BasicElementsOfReferenceWidget::openMenu);
+    connect(eleBrowser,&BasicElementBrowser::accepted,this,&BasicElementsOfReferenceWidget::updateTreeItem);
+    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&BasicElementsOfReferenceWidget::changeNumberOfElements);
+    connect(add,&QPushButton::clicked,this,&BasicElementsOfReferenceWidget::addElement);
+    connect(update,&QPushButton::clicked,this,&BasicElementsOfReferenceWidget::showBrowser);
+    connect(remove,&QPushButton::clicked,this,&BasicElementsOfReferenceWidget::removeElement);
+  }
+
+  int BasicElementsOfReferenceWidget::getSize() const {
+    return tree->topLevelItemCount();
+  }
+
+  void BasicElementsOfReferenceWidget::setRange(int min, int max) {
+    spinBox->setRange(min,max);
+    add->setDisabled(getSize()>=max);
+    remove->setDisabled(getSize()<=min);
+  }
+
+  void BasicElementsOfReferenceWidget::updateTreeItem() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      Element *selectedElement = eleBrowser->getSelection();
+      item->setText(0,selectedElement?selectedElement->getXMLPath(element,true):"");
+    }
+  }
+
+  void BasicElementsOfReferenceWidget::addElement() {
+    QStringList list("New element");
+    if(tree->columnCount()==2)
+      list << "0";
+    auto *item = new QTreeWidgetItem(list);
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    tree->addTopLevelItem(item);
+    tree->setCurrentItem(item);
+    spinBox->setValue(tree->topLevelItemCount());
+    add->setDisabled(getSize()>=spinBox->maximum());
+    remove->setDisabled(getSize()<=spinBox->minimum());
+    showBrowser();
+    emit widgetChanged();
+  }
+
+  void BasicElementsOfReferenceWidget::showBrowser() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      eleBrowser->setSelection(findElement(item->text(0)));
+      eleBrowser->show();
+    }
+  }
+
+  void BasicElementsOfReferenceWidget::removeElement() {
+    tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
+    spinBox->setValue(tree->topLevelItemCount());
+    add->setDisabled(getSize()>=spinBox->maximum());
+    remove->setDisabled(getSize()<=spinBox->minimum());
+    emit widgetChanged();
+  }
+
+  void BasicElementsOfReferenceWidget::changeNumberOfElements(int num) {
+    int n = num - tree->topLevelItemCount();
+    if(n>0) {
+      QStringList list("New element");
+      if(tree->columnCount()==2)
+	list << "0";
+      for(int i=0; i<n; i++) {
+	auto item = new QTreeWidgetItem(list);
+	item->setFlags(item->flags() | Qt::ItemIsEditable);
+	tree->addTopLevelItem(item);
+	tree->setCurrentItem(item);
+	emit widgetChanged();
+      }
+    }
+    else if(n<0) {
+      for(int i=0; i<-n; i++)
+	delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
+      emit widgetChanged();
+    }
+    add->setDisabled(getSize()>=spinBox->maximum());
+    remove->setDisabled(getSize()<=spinBox->minimum());
+  }
+
+  void BasicElementsOfReferenceWidget::openMenu() {
+    if(QApplication::mouseButtons()==Qt::RightButton) {
+      auto *menu = new QMenu(this);
+      auto *action = menu->addAction("Add",this,&BasicElementsOfReferenceWidget::addElement);
+      action->setDisabled(getSize()>=spinBox->maximum());
+      auto *item = tree->currentItem();
+      if(item) {
+	menu->addAction("Browse",this,&BasicElementsOfReferenceWidget::showBrowser);
+	action = menu->addAction("Remove",this,&BasicElementsOfReferenceWidget::removeElement);
+	action->setDisabled(getSize()<=spinBox->minimum());
+      }
+      menu->exec(QCursor::pos());
+      delete menu;
+    }
+  }
+
+  DOMElement* BasicElementsOfReferenceWidget::initializeUsingXML(DOMElement *element) {
+    for(int i=0; i<tree->topLevelItemCount(); i++)
+     delete tree->takeTopLevelItem(i);
+    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    while(e && (E(e)->getTagName()==xmlName)) {
+      auto *item = new QTreeWidgetItem;
+      item->setFlags(item->flags() | Qt::ItemIsEditable);
+      item->setText(0, QString::fromStdString(E(e)->getAttributeQName("ref").second));
+      if(tree->columnCount()==2)
+	item->setText(1, QString::fromStdString(E(e)->getAttributeQName("ratio").second));
+      tree->addTopLevelItem(item);
+      e=e->getNextElementSibling();
+    }
+    spinBox->setValue(tree->topLevelItemCount());
+    return e;
+  }
+
+  DOMElement* BasicElementsOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(size_t i=0; i<tree->topLevelItemCount(); i++) {
+      DOMElement *ele = D(doc)->createElement(xmlName);
+      E(ele)->setAttribute("ref",tree->topLevelItem(i)->text(0).toStdString());
+      if(tree->columnCount()==2)
+	E(ele)->setAttribute("ratio",tree->topLevelItem(i)->text(1).toStdString());
+      parent->insertBefore(ele, ref);
+    }
+    return nullptr;
+  }
+
+  QString BasicElementsOfReferenceWidget::getXMLComment(DOMElement *element) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    if(e) {
+      auto *cele = E(e)->getFirstCommentChild();
+      if(cele)
+	return (QString::fromStdString(X()%cele->getNodeValue()));
+    }
+    return "";
+  }
+
+  void BasicElementsOfReferenceWidget::setXMLComment(const QString &comment, DOMNode *element) {
+    DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(xmlName);
+    if(e) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
+      if(cele)
+	cele->setData(X()%comment.toStdString());
+      else
+	e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
+    }
   }
 
   FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_, bool absPath, QFileDialog::Options options_) : description(description_), extensions(extensions_), mode(mode_), quote(quote_), options(options_) {
@@ -793,6 +972,7 @@ namespace MBSimGUI {
     setLayout(layout);
 
     tree = new QTreeWidget;
+    tree->setMinimumSize(300,200);
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
     tree->setHeaderLabels({"Name","Value"});
     tree->setColumnWidth(0,150);
@@ -840,7 +1020,7 @@ namespace MBSimGUI {
   }
 
   void StateWidget::addState() {
-    auto *item = new QTreeWidgetItem({"\"name\"","0"});
+    auto *item = new QTreeWidgetItem({"\"New state\"","0"});
     item->setFlags(item->flags() | Qt::ItemIsEditable);
     tree->addTopLevelItem(item);
     tree->setCurrentItem(item);
@@ -867,7 +1047,7 @@ namespace MBSimGUI {
     int n = num - tree->topLevelItemCount();
     if(n>0) {
       for(int i=0; i<n; i++) {
-       auto *item = new QTreeWidgetItem({"\"name\"","0"});
+       auto *item = new QTreeWidgetItem({"\"New state\"","0"});
        item->setFlags(item->flags() | Qt::ItemIsEditable);
        tree->addTopLevelItem(item);
        tree->setCurrentItem(item);
@@ -947,6 +1127,7 @@ namespace MBSimGUI {
     setLayout(layout);
 
     tree = new QTreeWidget;
+    tree->setMinimumSize(300,200);
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
     tree->setHeaderLabels({"Source","Destination","Signal","Threshold"});
     tree->setColumnWidth(0,150);
@@ -990,7 +1171,7 @@ namespace MBSimGUI {
   }
 
   void TransitionWidget::addTransition() {
-    auto *item = new QTreeWidgetItem({state1,state2,"","0"});
+    auto *item = new QTreeWidgetItem({state1,state2,"New signal","0"});
     item->setFlags(item->flags() | Qt::ItemIsEditable);
     tree->addTopLevelItem(item);
     tree->setCurrentItem(item);
@@ -1018,7 +1199,7 @@ namespace MBSimGUI {
     int n = num - tree->topLevelItemCount();
     if(n>0) {
       for(int i=0; i<n; i++) {
-	auto *item = new QTreeWidgetItem({state1,state2,"","0"});
+	auto *item = new QTreeWidgetItem({state1,state2,"New signal","0"});
 	item->setFlags(item->flags() | Qt::ItemIsEditable);
 	tree->addTopLevelItem(item);
 	tree->setCurrentItem(item);
@@ -1054,8 +1235,8 @@ namespace MBSimGUI {
       state2 = list[0];
     }
     else {
-      state1 = "";
-      state2 = "";
+      state1 = "New state";
+      state2 = "New state";
     }
     dialog->setStringList(list);
   }

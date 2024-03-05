@@ -119,7 +119,6 @@ namespace MBSimGUI {
       QString getRatio() const { return ratio->text().isEmpty()?"0":ratio->text(); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-      QString getLabel() const override { return getElement(); }
 
     protected:
       virtual Element* findElement(const QString &str) { return nullptr; }
@@ -136,6 +135,42 @@ namespace MBSimGUI {
     public:
       ElementOfReferenceWidget(Element* element, Element* selectedElement, QWidget *parent) : BasicElementOfReferenceWidget(element,selectedElement,new ElementBrowser<T>(selectedElement,parent),false) { }
       ElementOfReferenceWidget(Element* element, Element* selectedElement, bool addRatio, QWidget *parent) : BasicElementOfReferenceWidget(element,selectedElement,new ElementBrowser<T>(selectedElement,parent),addRatio) { }
+    protected:
+      Element* findElement(const QString &str) override { return element->getByPath<T>(str); }
+  };
+
+  class BasicElementsOfReferenceWidget : public Widget {
+    protected:
+      virtual Element* findElement(const QString &str) { return nullptr; }
+      void updateTreeItem();
+      void addElement();
+      void removeElement();
+      void showBrowser();
+      void changeNumberOfElements(int num);
+      void openMenu();
+      QTreeWidget *tree;
+      CustomSpinBox *spinBox;
+      QPushButton *add, *remove;
+      MBXMLUtils::FQN xmlName;
+      Element *element;
+      BasicElementBrowser *eleBrowser;
+
+    public:
+      BasicElementsOfReferenceWidget(MBXMLUtils::FQN xmlName_, Element *element_, BasicElementBrowser *eleBrowser_, int min, int max, bool addRatio);
+      int getSize() const;
+      void setRange(int min, int max);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getXMLComment(xercesc::DOMElement *element) override;
+      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
+  };
+
+  template <class T>
+  class ElementsOfReferenceWidget : public BasicElementsOfReferenceWidget {
+
+    public:
+      ElementsOfReferenceWidget(MBXMLUtils::FQN xmlName, Element* element, int min, int max, QWidget *parent) : BasicElementsOfReferenceWidget(xmlName,element,new ElementBrowser<T>(nullptr,parent),min,max,false) { }
+      ElementsOfReferenceWidget(MBXMLUtils::FQN xmlName, Element* element, int min, int max, bool addRatio, QWidget *parent) : BasicElementsOfReferenceWidget(xmlName,element,new ElementBrowser<T>(nullptr,parent),min,max,addRatio) { }
     protected:
       Element* findElement(const QString &str) override { return element->getByPath<T>(str); }
   };

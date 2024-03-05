@@ -1102,7 +1102,6 @@ namespace MBSimGUI {
       void numberOfInputSignalsChanged();
       void multiplexInputSignalsChanged();
       ExtWidget *inputSignal, *multiplex, *function;
-      int num{1};
   };
 
   class ExternSignalSourcePropertyDialog : public SignalPropertyDialog {

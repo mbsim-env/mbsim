@@ -80,6 +80,7 @@ namespace MBSimGUI {
       expandableLayout->addWidget(new QLabel(name));
       defaultLabel = new QLabel("(default employed)");
       defaultLabel->setDisabled(true);
+      defaultLabel->setVisible(not active);
       expandableLayout->addWidget(defaultLabel);
       expandableLayout->setStretch(0,0);
       expandableLayout->setStretch(1,0);
