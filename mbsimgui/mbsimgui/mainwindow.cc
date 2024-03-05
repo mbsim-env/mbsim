@@ -103,8 +103,9 @@ namespace MBSimGUI {
     basicSerializer=impl->createLSSerializer();
 
     // use html output of MBXMLUtils
-    static string HTMLOUTPUT="MBXMLUTILS_ERROROUTPUT=HTMLXPATH";
-    putenv(const_cast<char*>(HTMLOUTPUT.c_str()));
+    static char HTMLOUTPUT[100];
+    strcpy(HTMLOUTPUT, "MBXMLUTILS_ERROROUTPUT=HTMLXPATH");
+    putenv(HTMLOUTPUT);
 
     serializer->getDomConfig()->setParameter(X()%"format-pretty-print", true);
 

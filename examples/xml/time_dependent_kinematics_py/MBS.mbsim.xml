@@ -48,18 +48,11 @@
               </definition></SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
-              <CompositeFunction>
-                <outerFunction>
-                  <RotationAboutFixedAxis>
-                    <axisOfRotation>[0,0,1]</axisOfRotation>
-                  </RotationAboutFixedAxis>
-                </outerFunction>
-                <innerFunction>
-                  <SymbolicFunction><definition arg1="t">
-                    5*sympy.sin(freq2*t)
-                  </definition></SymbolicFunction>
-                </innerFunction>
-              </CompositeFunction>
+              <SymbolicFunction><definition arg1="t">
+                import mbxmlutils
+                angle = 5*sympy.sin(freq2*t)
+                ret = mbxmlutils.rotateAboutZ(angle);
+              </definition></SymbolicFunction>
             </timeDependentRotation>
             <frames/>
             <contours/>
@@ -79,7 +72,8 @@
             <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
             <timeDependentTranslation>
               <SymbolicFunction><definition arg1="t">
-                ret=sympy.zeros(3,1); ret[0]=sympy.sin(freq1*t + pi/2); ret[1]=v0y*t; ret[2]=0
+                import numpy
+                ret=numpy.zeros((3,1),dtype=object); ret[0]=sympy.sin(freq1*t + pi/2); ret[1]=v0y*t; ret[2]=0
               </definition></SymbolicFunction>
             </timeDependentTranslation>
             <timeDependentRotation>
@@ -89,7 +83,7 @@
                 </outerFunction>
                 <innerFunction>
                   <SymbolicFunction><definition arg1="t">
-                    ret=sympy.zeros(2,1);ret[0]=t;ret[1]=2*t
+                    [t,2*t]
                   </definition></SymbolicFunction>
                 </innerFunction>
               </CompositeFunction>
@@ -112,7 +106,7 @@
             <inertiaTensor>[[1,0,0],[0,1,0],[0,0,1]]</inertiaTensor>
             <stateDependentTranslation>
               <SymbolicFunction><definition arg1="q" arg1Dim="1">
-                ret=sympy.zeros(3,1);ret[0]=5+sympy.cos(freq1*q[0]); ret[1]=sympy.sin(freq1*q[0]); ret[2]=0
+                [[5+sympy.cos(freq1*q[0])], [sympy.sin(freq1*q[0])], [0]]
               </definition></SymbolicFunction>
             </stateDependentTranslation>
             <frames/>
@@ -142,7 +136,10 @@
                      </xmlMatrix>
                      here -->
                 <pv:xmlVector>
-                  <pv:ele>10+t+sympy.cos(freq1*q[0])</pv:ele>
+                  <pv:ele>
+                    import numpy
+                    ret=10+t+sympy.cos(freq1*q[0]) + numpy.dot(q.T,q) - numpy.dot(q.T,q) # numpy >= 1.16.6 needed for q.T@q
+                  </pv:ele>
                   <pv:ele>sympy.sin(freq1*q[0])</pv:ele>
                   <pv:ele>q[1]</pv:ele>
                 </pv:xmlVector>
