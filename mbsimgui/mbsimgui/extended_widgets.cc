@@ -477,8 +477,8 @@ namespace MBSimGUI {
   void ListWidget::removeElements(int n) {
     for(int j=0; j<n; j++) {
       int i = list->count()-1;
-      delete stackedWidget->widget(i);
       stackedWidget->removeWidget(stackedWidget->widget(i));
+      delete stackedWidget->widget(i);
       delete list->takeItem(i);
     }
     emit Widget::widgetChanged();
