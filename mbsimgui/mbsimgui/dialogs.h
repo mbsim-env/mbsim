@@ -47,14 +47,6 @@ namespace MBSimGUI {
   class ExtWidget;
   class XMLEditorWidget;
 
-  class ElementItem : public QTreeWidgetItem {
-    private:
-      Element* element;
-    public:
-      ElementItem(Element *element_) : element(element_) { }
-      Element* getElement() const { return element; }
-  };
-
   class EvalDialog : public QDialog {
     public:
       EvalDialog(const std::vector<std::vector<QString>> &var_, int type_, QWidget *parent);
