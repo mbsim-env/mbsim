@@ -281,8 +281,8 @@ namespace MBSimGUI {
     if(addRatio)
       headerLabels << "Ratio";
     tree->setHeaderLabels(headerLabels);
-    tree->setColumnWidth(0,350);
-    tree->setColumnWidth(1,50);
+    tree->setColumnWidth(0,300);
+    tree->setColumnWidth(1,80);
     layout->addWidget(tree,0,0,5,1);
 
     spinBox = new CustomSpinBox;
@@ -712,8 +712,8 @@ namespace MBSimGUI {
     tree->setMinimumSize(300,500);
     tree->setHeaderLabels({"Type","Value","Status","Namespace"});
     tree->setColumnWidth(0,200);
-    tree->setColumnWidth(1,150);
-    tree->setColumnWidth(2,50);
+    tree->setColumnWidth(1,250);
+    tree->setColumnWidth(2,80);
     tree->setColumnWidth(3,250);
     connect(tree, &QTreeWidget::customContextMenuRequested,this,&PlotFeatureWidget::openMenu);
     layout->addWidget(tree,0,0,5,1);
@@ -976,7 +976,7 @@ namespace MBSimGUI {
     tree->setContextMenuPolicy(Qt::CustomContextMenu);
     tree->setHeaderLabels({"Name","Value"});
     tree->setColumnWidth(0,150);
-    tree->setColumnWidth(1,50);
+    tree->setColumnWidth(1,80);
     connect(tree, &QTreeWidget::customContextMenuRequested,this,&StateWidget::openMenu);
     layout->addWidget(tree,0,0,5,1);
 
@@ -1132,8 +1132,8 @@ namespace MBSimGUI {
     tree->setHeaderLabels({"Source","Destination","Signal","Threshold"});
     tree->setColumnWidth(0,150);
     tree->setColumnWidth(1,150);
-    tree->setColumnWidth(2,250);
-    tree->setColumnWidth(3,50);
+    tree->setColumnWidth(2,300);
+    tree->setColumnWidth(3,80);
     connect(tree, &QTreeWidget::customContextMenuRequested,this,&TransitionWidget::openMenu);
     layout->addWidget(tree,0,0,5,1);
 

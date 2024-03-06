@@ -393,20 +393,24 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
+    list = new QListWidget;
+    list->setMinimumSize(200,200);
+    layout->addWidget(list,0,0,2,1);
+    stackedWidget = new QStackedWidget;
+    layout->addWidget(stackedWidget,2,0,1,3);
+
     spinBox = new CustomSpinBox;
     spinBox->setDisabled(fixedSize);
     spinBox->setRange(minSize,maxSize);
     spinBox->setValue(m);
-    layout->addWidget(new QLabel("Number:"),0,0);
     layout->addWidget(spinBox,0,1);
-    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&ListWidget::currentIndexChanged);
-    list = new QListWidget;
-    layout->addWidget(list,1,0,1,3);
-    stackedWidget = new QStackedWidget;
-    connect(list,&QListWidget::currentRowChanged,this,&ListWidget::changeCurrent);
-    layout->addWidget(stackedWidget,2,0,1,3);
-    layout->setColumnStretch(2,1);
+
+    layout->setColumnStretch(0,10);
+
     currentIndexChanged(m);
+
+    connect(list,&QListWidget::currentRowChanged,this,&ListWidget::changeCurrent);
+    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&ListWidget::currentIndexChanged);
   }
 
   ListWidget::~ListWidget() {
