@@ -368,20 +368,6 @@ namespace MBSimGUI {
       ExtWidget *count, *counterName, *onlyif;
   };
 
-  template <class T>
-  class ElementOfReferenceWidgetFactory : public WidgetFactory {
-    public:
-      ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, QWidget *parent_) : xmlName(std::move(xmlName_)), element(element_), addRatio(false), parent(parent_) { }
-      ElementOfReferenceWidgetFactory(MBXMLUtils::FQN xmlName_, Element* element_, bool addRatio_, QWidget *parent_) : xmlName(std::move(xmlName_)), element(element_), addRatio(addRatio_), parent(parent_) { }
-      Widget* createWidget(int i=0) override { return new ElementOfReferenceWidget<T>(element,nullptr,addRatio,parent); }
-      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName; }
-    protected:
-      MBXMLUtils::FQN xmlName;
-      Element *element;
-      bool addRatio;
-      QWidget *parent;
-  };
-
   class ExtStringWidget : public Widget {
    public:
       ExtStringWidget(Element *element_);
