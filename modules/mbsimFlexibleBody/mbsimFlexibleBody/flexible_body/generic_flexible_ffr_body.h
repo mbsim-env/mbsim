@@ -96,7 +96,6 @@ namespace MBSimFlexibleBody {
       void updateJacobians0(MBSim::Frame *frame);
       void updateJacobians1(MBSim::Frame *frame) { }
       void updateMb();
-      void updatehb();
       void updateKJ(int j=0) { (this->*updateKJ_[j])(); }
       void updateKJ0();
       void updateKJ1();
@@ -338,11 +337,6 @@ namespace MBSimFlexibleBody {
 
       MBSim::Frame *K;
 
-      /**
-       * \brief TODO
-       */
-      fmatvec::SymMat Mbuf;
-
       fmatvec::Vec3 PjhT, PjhR, PjbT, PjbR;
 
       /**
@@ -381,7 +375,7 @@ namespace MBSimFlexibleBody {
 
       MBSim::Frame *frameForJacobianOfRotation{nullptr};
 
-      fmatvec::Range<fmatvec::Var,fmatvec::Var> iqT, iqR, iqE, iuT, iuR, iuE;
+      fmatvec::Range<fmatvec::Var,fmatvec::Var> i02, iqT, iqR, iqE, iuT, iuR, iuE;
 
       bool translationDependentRotation{false}, constJT{false}, constJR{false}, constjT{false}, constjR{false};
 

@@ -56,9 +56,7 @@ namespace MBSimFlexibleBody {
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIMFLEX, nodalStress)
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIMFLEX, nodalEquivalentStress)
 
-  Range<Var,Var> i02(0,2);
-
-  GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name), APK(EYE) {
+  GenericFlexibleFfrBody::GenericFlexibleFfrBody(const string &name) : NodeBasedBody(name), APK(EYE), i02(0,2) {
 
     updKJ[0] = true;
     updKJ[1] = true;
