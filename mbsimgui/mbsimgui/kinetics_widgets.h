@@ -247,7 +247,7 @@ namespace MBSimGUI {
 
   class FrictionFunctionFactory : public WidgetFactory {
     public:
-      FrictionFunctionFactory(Element *element_, QWidget *parent_);
+      FrictionFunctionFactory(Element *element_, int nd_, QWidget *parent_);
       Widget* createWidget(int i=0) override;
       static std::vector<QString> getNames();
       QString getName(int i=0) const override { return name[i]; }
@@ -256,6 +256,7 @@ namespace MBSimGUI {
       int getFallbackIndex() const override { return 3; }
     protected:
       Element *element;
+      int nd;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;

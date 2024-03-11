@@ -222,14 +222,14 @@ namespace MBSimGUI {
   RegularizedPlanarFrictionWidget::RegularizedPlanarFrictionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget(new FrictionFunctionFactory(element,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
+    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget(new FrictionFunctionFactory(element,1,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
     layout->addWidget(frictionForceFunc);
   }
 
   RegularizedSpatialFrictionWidget::RegularizedSpatialFrictionWidget(Element *element, QWidget *parent) {
     auto *layout = new QVBoxLayout;
     setLayout(layout);
-    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget(new FrictionFunctionFactory(element,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
+    frictionForceFunc = new ExtWidget("Friction force function",new ChoiceWidget(new FrictionFunctionFactory(element,2,parent),QBoxLayout::TopToBottom,0),false,false,MBSIM%"frictionForceFunction");
     layout->addWidget(frictionForceFunc);
   }
 
@@ -354,7 +354,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  FrictionFunctionFactory::FrictionFunctionFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+  FrictionFunctionFactory::FrictionFunctionFactory(Element *element_, int nd_, QWidget *parent_) : element(element_), nd(nd_), parent(parent_) {
     name.emplace_back("Linear regularized Coulomb friction");
     name.emplace_back("Linear regularized Stribeck friction");
     name.emplace_back("Symbolic function");
@@ -371,12 +371,7 @@ namespace MBSimGUI {
     if(i==1)
       return new LinearRegularizedStribeckFrictionWidget(element,parent);
     if(i==2) {
-      QStringList var;
-      var << "gd" << "laN";
-      vector<FunctionWidget::VarType> argType(2);
-      argType[0] = FunctionWidget::varVec;
-      argType[1] = FunctionWidget::scalar;
-      return new SymbolicFunctionWidget(QStringList("gd")<<"laN",vector<int>(2,1),argType,1,FunctionWidget::varVec);
+      return new SymbolicFunctionWidget({"gd","laN"},{nd,1},{FunctionWidget::varVec,FunctionWidget::scalar},nd,FunctionWidget::varVec);
     }
     else if(i==3)
       return new UnknownWidget<FunctionWidget>;
