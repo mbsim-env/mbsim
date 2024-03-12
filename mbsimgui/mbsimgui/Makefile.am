@@ -55,6 +55,16 @@ libmbsimgui_la_SOURCES = \
   xml_property_dialog.cc \
   clone_property_dialog.cc \
   element_property_dialog.cc \
+  frame_property_dialog.cc \
+  contour_property_dialog.cc \
+  group_property_dialog.cc \
+  dynamic_system_solver_property_dialog.cc \
+  object_property_dialog.cc \
+  link_property_dialog.cc \
+  signal_property_dialog.cc \
+  constraint_property_dialog.cc \
+  observer_property_dialog.cc \
+  physics_property_dialog.cc \
   element.cc \
   objectfactory.cc \
   solver_context_menu.cc \
@@ -114,7 +124,8 @@ libmbsimgui_la_SOURCES = \
   C3D15.cc \
   C3D20Base.cc \
   C3D20.cc \
-  C3D20R.cc
+  C3D20R.cc \
+  plot_attribute_store.cc
 nodist_libmbsimgui_la_SOURCES=$(libmbsimgui_QT_BUILT_SOURCES)
 
 mbsimgui_CPPFLAGS = $(OPENMBV_CFLAGS) $(QWT_CFLAGS)
@@ -147,6 +158,16 @@ mbsimguiinclude_HEADERS = analyzer.h \
   element_context_menu.h \
   element.h \
   element_property_dialog.h \
+  group_property_dialog.h \
+  dynamic_system_solver_property_dialog.h \
+  frame_property_dialog.h \
+  contour_property_dialog.h \
+  object_property_dialog.h \
+  link_property_dialog.h \
+  signal_property_dialog.h \
+  constraint_property_dialog.h \
+  observer_property_dialog.h \
+  physics_property_dialog.h \
   element_view.h \
   embed.h \
   embeditemdata.h \
@@ -215,7 +236,8 @@ mbsimguiinclude_HEADERS = analyzer.h \
   C3D15.h \
   C3D20Base.h \
   C3D20.h \
-  C3D20R.h
+  C3D20R.h \
+  plot_attribute_store.h
 
 # C++ source file to build automatically (e.g. abc.moc.cc by abc.h)
 libmbsimgui_QT_BUILT_SOURCES = \

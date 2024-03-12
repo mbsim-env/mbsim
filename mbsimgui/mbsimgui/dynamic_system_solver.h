@@ -21,6 +21,7 @@
 #define _DYNAMIC_SYSTEM_SOLVER__H_
 
 #include "group.h"
+#include "dynamic_system_solver_property_dialog.h"
 #include <string>
 
 namespace MBSimGUI {

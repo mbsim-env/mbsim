@@ -21,6 +21,7 @@
 #define _FRAME__H_
 
 #include "element.h"
+#include "frame_property_dialog.h"
 
 namespace MBSimGUI {
 

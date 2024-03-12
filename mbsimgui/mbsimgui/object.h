@@ -21,6 +21,7 @@
 #define _OBJECT__H_
 
 #include "element.h"
+#include "object_property_dialog.h"
 
 namespace MBSimGUI {
 

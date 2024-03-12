@@ -21,6 +21,7 @@
 #define _PHYSICN__H_
 
 #include "link_.h"
+#include "physics_property_dialog.h"
 
 namespace MBSimGUI {
 

@@ -21,6 +21,7 @@
 #define _FRICTION__H_
 
 #include "link_.h"
+#include "link_property_dialog.h"
 
 namespace MBSimGUI {
 

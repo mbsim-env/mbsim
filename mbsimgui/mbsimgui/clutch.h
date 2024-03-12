@@ -21,7 +21,7 @@
 #define _CLUTCH__H_
 
 #include "link_.h"
-#include "constraint.h"
+#include "link_property_dialog.h"
 
 namespace MBSimGUI {
 

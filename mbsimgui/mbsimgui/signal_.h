@@ -21,6 +21,7 @@
 #define _SIGNAL__H_
 
 #include "link_.h"
+#include "signal_property_dialog.h"
 
 namespace MBSimGUI {
 

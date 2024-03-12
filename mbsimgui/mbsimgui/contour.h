@@ -21,6 +21,7 @@
 #define _CONTOUR__H_
 
 #include "element.h"
+#include "contour_property_dialog.h"
 
 namespace MBSimGUI {
 

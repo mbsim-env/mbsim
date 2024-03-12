@@ -21,6 +21,7 @@
 #define _CONSTRAINT__H_
 
 #include "object.h"
+#include "constraint_property_dialog.h"
 
 namespace MBSimGUI {
 

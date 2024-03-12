@@ -21,6 +21,7 @@
 #define _GROUP__H_
 
 #include "element.h"
+#include "group_property_dialog.h"
 
 namespace MBSimGUI {
 

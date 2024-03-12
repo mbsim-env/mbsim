@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "observer.h"
+#include "element_property_dialog.h"
 #include "utils.h"
 #include "mainwindow.h"
 #include <xercesc/dom/DOMDocument.hpp>
