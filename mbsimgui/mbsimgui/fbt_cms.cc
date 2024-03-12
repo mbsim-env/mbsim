@@ -50,13 +50,6 @@ namespace MBSimGUI {
     return n;
   }
 
-  vector<int> span(int i0, int i1) {
-    vector<int> ind(i1-i0+1);
-    for(size_t i=0; i<ind.size(); i++)
-      ind[i] = i0+i;
-    return ind;
-  }
-
   template <class AT>
   AT max(const vector<AT> &x) {
     AT maximum = x[0];
@@ -255,7 +248,7 @@ namespace MBSimGUI {
 	      Mat3xV T(6,NONINIT);
 	      T.set(RangeV(0,2),RangeV(0,2),SqrMat3(Eye()));
 	      T.set(RangeV(0,2),RangeV(3,5),-tilde(r[nodeTable[inodes[i][j]]]-rr));
-	      D.set(span(dofMapH[3*nodeTable[inodes[i][j]]],dofMapH[3*nodeTable[inodes[i][j]]]+2),span(ni,ni+idof[i].size()-1),T(span(0,2),idof[i]));
+	      D.set(RangeV(dofMapH[3*nodeTable[inodes[i][j]]],dofMapH[3*nodeTable[inodes[i][j]]]+2),RangeV(ni,ni+idof[i].size()-1),T(RangeV(0,2),idof[i]));
 	    }
 	    ni += idof[i].size();
 	  }
@@ -320,9 +313,10 @@ namespace MBSimGUI {
 	  }
 	  Ui.resize(Ks.size(),ni,NONINIT);
 	  MatV Q = -slvLU(Krns,Krnc);
-	  Ui.set(iN,span(0,ni-1),Q);
-	  Ui.set(iH,span(0,ni-1),D);
-	  Ui.set(iX,span(0,ni-1),MatV(iX.size(),ni));
+	  RangeV IJ(0,ni-1);
+	  Ui.set(iN,IJ,Q);
+	  Ui.set(iH,IJ,D);
+	  Ui.set(iX,IJ,MatV(iX.size(),ni));
 	}
 	else {
 	  Ui.resize(Ks.size(),ni,NONINIT);
@@ -371,13 +365,13 @@ namespace MBSimGUI {
 	      fri.set(RangeV(ii,ii+2),RangeV(0,2),B);
 	      fri.set(RangeV(ii,ii+2),RangeV(3,5),slvLL(A,tilde(r[nodeTable[inodes[i][j]]]-rr).T()*B));
 	    }
-	    Ui.set(iHi,span(ni,ni+idof[i].size()-1), slvLU(Kris,fri(span(0,fri.rows()-1),idof[i])));
+	    Ui.set(iHi,RangeV(ni,ni+idof[i].size()-1), slvLU(Kris,fri(RangeV(0,fri.rows()-1),idof[i])));
 	    ni += idof[i].size();
 	  }
 	}
       } else {
 	Ui.resize(Ks.size(),iH.size(),NONINIT);
-	Indices IJ(span(0,iH.size()-1));
+	RangeV IJ(0,iH.size()-1);
 	Ui.set(iN,IJ,-slvLU(Krns,Krnh));
 	Ui.set(iH,IJ,MatV(iH.size(),iH.size(),Eye()));
 	Ui.set(iX,IJ,MatV(iX.size(),iH.size()));
@@ -436,7 +430,7 @@ namespace MBSimGUI {
       for(size_t i=0; i<inodes.size(); i++) {
 	MatV PhiPsii(6,Ui.cols()+Un.cols());
 	Matrix<General,Fixed<6>,Var,double> sigmaheli(Ui.cols()+Un.cols());
-	PhiPsii.set(idof[i],span(ni,ni+idof[i].size()-1),I(idof[i]));
+	PhiPsii.set(idof[i],RangeV(ni,ni+idof[i].size()-1),I(idof[i]));
 	if(normalModes==constrainedBoundaryNormalModes) {
 	  for(size_t j=0; j<nmodes.size(); j++)
 	    PhiPsii.set(idof[i],Ui.cols()+j,V.col(nmodes[j]-1)(RangeV(iN.size()+ni,iN.size()+ni+idof[i].size()-1)));
