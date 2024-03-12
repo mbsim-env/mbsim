@@ -25,7 +25,7 @@
 #include "extended_widgets.h"
 #include "frame.h"
 #include "object.h"
-#include "link.h"
+#include "link_.h"
 #include "constraint.h"
 #include "mainwindow.h"
 #include "signal_.h"
