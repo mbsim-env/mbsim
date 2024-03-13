@@ -22,7 +22,6 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
-#include "element_widgets.h"
 
 using namespace std;
 using namespace MBXMLUtils;
