@@ -17,6 +17,7 @@ MBSim
 -----
 - Use default impact law if it is not defined by the user.
 - Allow multiplexing of input signals in signal operation
+- Added new visualization for SignalObserver (e.g. use the new IvScreenAnnotation from OpenMBV)
 
 MBSimGUI
 --------
@@ -35,6 +36,9 @@ OpenMBV
 - Keep the cameras relative position and orientation when "Move camera with body".
 - Overwide the VRML Background node to include the Coin3D https://github.com/coin3d/coin/pull/517.
 - Add new settings option to define the Coin3D transparency type.
+- Allow to pass the content of a IV file in IvBody as a string in XML instead of specifying
+  the filename to read
+- Reworked the screen foreground elements in the 3D view and allow user defined foreground elements
 
 HDF5Serie
 ---------

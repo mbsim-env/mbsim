@@ -24,6 +24,7 @@
 #include "mbsim/frames/frame.h"
 #include <openmbvcppinterface/group.h>
 #include <openmbvcppinterface/arrow.h>
+#include <openmbvcppinterface/ivscreenannotation.h>
 
 using namespace std;
 using namespace xercesc;
@@ -48,7 +49,7 @@ namespace MBSimControl {
     else if(stage==plotting) {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[MBSimControl::signal])
-	  addToPlot("signal",{"x","y","z"});
+          addToPlot("signal",signal->getSignalSize());
       }
       Observer::init(stage, config);
       if(plotFeature[openMBV]) {
@@ -57,6 +58,10 @@ namespace MBSimControl {
           openMBVArrow->setName("Signal");
           getOpenMBVGrp()->addObject(openMBVArrow);
         }
+        if(openMBVIvScreenAnnotation) {
+          openMBVIvScreenAnnotation->setName("SignalVisualization");
+          getOpenMBVGrp()->addObject(openMBVIvScreenAnnotation);
+        }
       }
     }
     else
@@ -64,13 +69,13 @@ namespace MBSimControl {
   }
 
   void SignalObserver::plot() {
-    Vec3 s = signal->evalSignal();
+    auto s = signal->evalSignal();
     if(plotFeature[plotRecursive]) {
       if(plotFeature[MBSimControl::signal])
 	Element::plot(s);
     }
     if(plotFeature[openMBV]) {
-      Vec3 r;
+      Vec3 r(INIT, 0.0);
       if(position) r = position->evalSignal();
       if(openMBVArrow) {
         vector<double> data;
@@ -83,7 +88,9 @@ namespace MBSimControl {
         data.push_back(s(2));
         data.push_back(ombvArrow->getColorRepresentation()?nrm2(s):0.5);
         openMBVArrow->append(data);
-      }      
+      }
+      if(openMBVIvScreenAnnotation)
+        openMBVIvScreenAnnotation->append(s);
     }
     Observer::plot();
   }
@@ -99,6 +106,22 @@ namespace MBSimControl {
       ombvArrow = make_shared<OpenMBVArrow>();
       ombvArrow->initializeUsingXML(e);
     }
+
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"openMBVIvScreenAnnotation");
+    if(e) {
+      auto *ee=e->getFirstElementChild();
+      auto object=OpenMBV::ObjectFactory::create<OpenMBV::IvScreenAnnotation>(ee);
+      setOpenMBVIvScreenAnnotation(object);
+      object->initializeUsingXML(ee);
+    }
+  }
+
+  void SignalObserver::setOpenMBVIvScreenAnnotation(const std::shared_ptr<OpenMBV::IvScreenAnnotation> &object) {
+    openMBVIvScreenAnnotation = object;
+  }
+
+  shared_ptr<OpenMBV::IvScreenAnnotation> SignalObserver::getOpenMBVIvScreenAnnotation() const {
+    return openMBVIvScreenAnnotation;
   }
 
 }

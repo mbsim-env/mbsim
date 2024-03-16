@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Group xmlns="http://www.mbsim-env.de/MBSim" name="bike{idx}">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Group xmlns="http://www.mbsim-env.de/MBSim" name="bike{idx+1}">
   <frames/>
   <contours/>
   <groups/>
@@ -7,7 +7,7 @@
       <generalizedInitialPosition>
         <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <ele>0</ele>
-          <ele>1*(idx-1)</ele>
+          <ele>1*idx</ele>
           <ele>h + r -0.11</ele>
           <ele>0</ele>
           <ele>-0.18</ele>
@@ -57,7 +57,7 @@
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>-0.85</ele>
               <ele>0</ele>
-              <ele>-cos(be)*h+sin(be)*s</ele>
+              <ele>-math.cos(be)*h+math.sin(be)*s</ele>
             </xmlVector>
           </relativePosition>
         </FixedRelativeFrame>
@@ -119,19 +119,19 @@
       <inertiaTensor unit="kg*m^2">
         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <row>
-            <ele>1/4*mH*r^2</ele>
+            <ele>1/4*mH*r**2</ele>
             <ele>0</ele>
             <ele>0</ele>
           </row>
           <row>
             <ele>0</ele>
-            <ele>1/2*mH*r^2</ele>
+            <ele>1/2*mH*r**2</ele>
             <ele>0</ele>
           </row>
           <row>
             <ele>0</ele>
             <ele>0</ele>
-            <ele>1/4*mH*r^2</ele>
+            <ele>1/4*mH*r**2</ele>
           </row>
         </xmlMatrix>
       </inertiaTensor>
@@ -253,19 +253,19 @@
       <inertiaTensor unit="kg*m^2">
         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <row>
-            <ele>1/4*mV*r^2</ele>
+            <ele>1/4*mV*r**2</ele>
             <ele>0</ele>
             <ele>0</ele>
           </row>
           <row>
             <ele>0</ele>
-            <ele>1/2*mV*r^2</ele>
+            <ele>1/2*mV*r**2</ele>
             <ele>0</ele>
           </row>
           <row>
             <ele>0</ele>
             <ele>0</ele>
-            <ele>1/4*mV*r^2</ele>
+            <ele>1/4*mV*r**2</ele>
           </row>
         </xmlMatrix>
       </inertiaTensor>
@@ -312,7 +312,7 @@
       </enableOpenMBVFrameC></RigidBody>
     <RigidBody name="Fahrer">
       <generalizedInitialPosition>
-        [pumpAmpl(idx)*sin(-0.3667-(pumpPhase(idx)-pumpPhaseOffset)*pi/180)]
+        [pumpAmpl[idx]*math.sin(-0.3667-(pumpPhase[idx]-pumpPhaseOffset)*math.pi/180)]
       </generalizedInitialPosition>
       <frameOfReference ref="../Object[Rahmen]/Frame[F]"/>
       <mass unit="kg">mF</mass>
@@ -408,7 +408,7 @@
           </frictionForceFunction>
         </RegularizedSpatialFriction>
       </tangentialForceLaw>
-      <initialGuess>[pi/2,0.15]</initialGuess>
+      <initialGuess>[[math.pi/2,0.15]]</initialGuess>
     </Contact>
     <Contact name="KontaktHR">
       <connect ref1="../../Contour[Boden]" ref2="../Object[Hinterrad]/Contour[Rad]"/>
@@ -431,7 +431,7 @@
           </frictionForceFunction>
         </RegularizedSpatialFriction>
       </tangentialForceLaw>
-      <initialGuess>[pi/2,-0.85]</initialGuess>
+      <initialGuess>[[math.pi/2,-0.85]]</initialGuess>
     </Contact>
     <PositionSensor xmlns="http://www.mbsim-env.de/MBSimControl" name="FahrerPos">
       <frame ref="../Object[Fahrer]/Frame[C]"/>
@@ -447,11 +447,11 @@
       <inputSignal ref="../Link[PumpingInput]"/>
       <function>
         <SymbolicFunction xmlns="http://www.mbsim-env.de/MBSim"><definition arg1="input" arg1Dim="6">
-          zF=input(3);
-          zR=input(6);
-          xR=input(4);
-          hSoll=pumpFak*     pumpAmpl(idx)*sin(xR-(pumpPhase(idx)-pumpPhaseOffset)*pi/180);
-          ret=mF*9.81   -100000*(zF-(zR+hSoll));
+          zF=input[2]
+          zR=input[5]
+          xR=input[3]
+          hSoll=pumpFak*     pumpAmpl[idx]*sympy.sin(xR-(pumpPhase[idx]-pumpPhaseOffset)*math.pi/180)
+          ret=mF*9.81   -100000*(zF-(zR+hSoll))
         </definition></SymbolicFunction>
       </function>
     </SignalOperation>
@@ -497,7 +497,15 @@
         <scaleLength>0.001</scaleLength>
         <scaleSize>0.1</scaleSize>
       </enableOpenMBV>
-    </KineticExcitation></links>
+    </KineticExcitation>
+    <GeneralizedVelocitySensor name="speedo_vs" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <object ref="../Object[Rahmen]"/>
+    </GeneralizedVelocitySensor>
+    <Demultiplexer name="speedo_vs0" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <inputSignal ref="../Link[speedo_vs]"/>
+      <indices>[0]</indices>
+    </Demultiplexer>
+  </links>
   <constraints/>
   <observers>
     <ContactObserver name="ContactObserverVR">
@@ -528,6 +536,23 @@
       <constantRotationZ>0</constantRotationZ>
       <enableOpenMBV/>
     </FrameChaserObserver>
+    <SignalObserver name="speedo" xmlns="http://www.mbsim-env.de/MBSimControl">
+      <signal ref="../Link[speedo_vs0]"/>
+      <openMBVIvScreenAnnotation>
+        <Embed href="speedo.ombvx" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <Parameter>
+            <stringParameter name="name">"speedo"</stringParameter>
+            <stringParameter name="speedoText">"km/h"</stringParameter>
+            <scalarParameter name="vEnd">32</scalarParameter>
+            <scalarParameter name="vDelta">2</scalarParameter>
+            <scalarParameter name="vScale">3.6</scalarParameter>
+            <scalarParameter name="alpha">0.4</scalarParameter>
+            <scalarParameter name="size">0.2</scalarParameter>
+            <vectorParameter name="position">[1-size-2*idx*size, 1-size]</vectorParameter>
+          </Parameter>
+        </Embed>
+      </openMBVIvScreenAnnotation>
+    </SignalObserver>
   </observers>
   <enableOpenMBVFrameI>
     <size unit="dm">1</size>

@@ -1007,8 +1007,9 @@
   </xs:complexType>
 
   <xs:element name="SignalObserver" substitutionGroup="mbsim:Observer" type="SignalObserverType">
-    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-    tbd.
+    <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+      Observe the data of a signal and optionally visualize a 3-vector signal as a Arrow or
+      a n-vector signal as a IvScreenObserver.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="SignalObserverType">
@@ -1017,8 +1018,8 @@
         <xs:sequence>
           <xs:element name="signal">
             <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-              tbd.
+              <xs:documentation xml:lang="en" xmlns="">
+                The signal to be observed.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -1028,7 +1029,7 @@
           <xs:element name="position" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-              tbd.
+                The 3-vector signal for the position where the Arrow should be visualized, (0,0,0) if not given.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -1036,8 +1037,28 @@
             </xs:complexType>
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="en" xmlns="">
+                Enable the visualization of a 3-vector signal as a Arrow.
+              </xs:documentation>
+            </xs:annotation>
             <xs:complexType>
               <xs:group ref="mbsim:OpenMBVArrowParameters"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVIvScreenAnnotation" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="en" xmlns="">
+                enable the visualization of a n-vector signal as an OpenMBV IvScreenAnnotation.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:choice>
+                  <xs:element ref="ombv:IvScreenAnnotation"/>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
+              </xs:sequence>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

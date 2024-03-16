@@ -1,6 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no" ?><Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Embed xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <Parameter>
-    <scalarParameter name="be">(90-73)/180*pi</scalarParameter>
+    <import>
+      import math
+      import sympy
+      import numpy
+    </import>
+    <scalarParameter name="be">(90-73)/180*math.pi</scalarParameter>
     <scalarParameter name="h">400e-3</scalarParameter>
     <scalarParameter name="s">45e-3</scalarParameter>
     <scalarParameter name="r">0.3</scalarParameter>
@@ -10,9 +16,9 @@
     <scalarParameter name="mR">5</scalarParameter>
     <scalarParameter name="tol">1e-4</scalarParameter>
     <scalarParameter name="pumpFak">0.9</scalarParameter>
-    <vectorParameter name="pumpAmpl">[0; 0.2; 0.2; 0.2; 0.2]</vectorParameter>
-    <vectorParameter name="pumpPhase">[0; 0; 90; 180; 270]</vectorParameter>
-    <vectorParameter name="pumpPhaseOffset">6.5</vectorParameter>
+    <vectorParameter name="pumpAmpl">[0, 0.2, 0.2, 0.2, 0.2]</vectorParameter>
+    <vectorParameter name="pumpPhase">[0, 0, 90, 180, 270]</vectorParameter>
+    <scalarParameter name="pumpPhaseOffset">6.5</scalarParameter>
     <matrixParameter name="JR">
       <xmlMatrix>
         <row>
@@ -60,41 +66,42 @@
     <scalarParameter name="d">2e4</scalarParameter>
   </Parameter>
   <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+    <evaluator xmlns="http://www.mbsim-env.de/MBXMLUtils">python</evaluator>
     <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
-      <plotFeatureRecursive value="c:signal" xmlns:c="http://www.mbsim-env.de/MBSimControl">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="position">true</plotFeatureRecursive>
-      <plotFeatureRecursive value="angle">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="c:signal" xmlns:c="http://www.mbsim-env.de/MBSimControl">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedPosition">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedVelocity">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedForce">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="generalizedRelativePosition">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="position">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="angle">True</plotFeatureRecursive>
       <frames>
         <FixedRelativeFrame name="B2">
           <enableOpenMBV>
             <size unit="dm">1</size>
           </enableOpenMBV>
-          <relativePosition>[0;0;-0.1]</relativePosition>
+          <relativePosition>[0,0,-0.1]</relativePosition>
         </FixedRelativeFrame>
       </frames>
       <contours>
         <SpatialContour name="Boden">
           <frameOfReference ref="../Frame[B2]"/>
-          <etaNodes>[-10;70]</etaNodes>
-          <xiNodes>[-1;5]</xiNodes>
+          <etaNodes>[-10,70]</etaNodes>
+          <xiNodes>[-1,5]</xiNodes>
           <contourFunction>
             <SymbolicFunction><definition arg1="zeta" arg1Dim="2">
               <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <ele>zeta(1)</ele>
-                <ele>zeta(2)</ele>
-                <ele>0.2*sin(zeta(1))</ele>
+                <ele>zeta[0]</ele>
+                <ele>zeta[1]</ele>
+                <ele>0.2*sympy.sin(zeta[0])</ele>
               </xmlVector>
             </definition></SymbolicFunction>
           </contourFunction>
-          <openEta>true</openEta>
-          <openXi>true</openXi>
+          <openEta>True</openEta>
+          <openXi>True</openXi>
           <enableOpenMBV>
             <transparency>0.3</transparency>
-            <etaNodes>[-10:0.1:70]'</etaNodes>
+            <etaNodes>numpy.linspace(-10,70,801)</etaNodes>
           </enableOpenMBV>
         </SpatialContour>
       </contours>
@@ -121,7 +128,8 @@
     </DynamicSystemSolver>
     <RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSim">
       <startTime>0</startTime>
-      <endTime>0.005      +0*9</endTime>
+      <endTime>0.005</endTime>
+      <!--<endTime>7.28</endTime>-->
       <plotStepSize>5e-3   /20</plotStepSize>
       <toleranceForPositionConstraints>tol</toleranceForPositionConstraints>
       <toleranceForVelocityConstraints>tol</toleranceForVelocityConstraints>

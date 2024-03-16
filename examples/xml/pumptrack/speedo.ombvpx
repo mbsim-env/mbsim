@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <stringParameter name="name">
+    <!-- the element name -->
+    "speedo"
+  </stringParameter>
+  <stringParameter name="speedoText">
+    <!-- the text of the speedo -->
+    "km/h"
+  </stringParameter>
+  <scalarParameter name="vEnd">
+    <!-- maximal value of the speedo -->
+    200
+  </scalarParameter>
+  <scalarParameter name="vDelta">
+    <!-- delta of the speedo values -->
+    20
+  </scalarParameter>
+  <scalarParameter name="vScale">
+    <!-- scale the input -->
+    3.6
+  </scalarParameter>
+  <scalarParameter name="alpha">
+    <!-- the transparency value of the speedo -->
+    0.4
+  </scalarParameter>
+  <scalarParameter name="size">
+    <!-- the size of the speedo (outer radius in screen coords which runs from -1 to 1) -->
+    0.2
+  </scalarParameter>
+  <vectorParameter name="position">
+    <!-- the position of  the speedo (the center point in screen coords which runs from -1 to 1) -->
+    [1-size, 1-size]
+  </vectorParameter>
+</Parameter>

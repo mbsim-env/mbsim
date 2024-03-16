@@ -25,6 +25,10 @@
 #include <mbsim/utils/boost_parameters.h>
 #include <mbsim/utils/openmbv_utils.h>
 
+namespace OpenMBV {
+  class IvScreenAnnotation;
+}
+
 namespace MBSimControl {
 
   class Signal;
@@ -35,6 +39,7 @@ namespace MBSimControl {
       Signal *position{nullptr};
       std::shared_ptr<MBSim::OpenMBVArrow> ombvArrow;
       std::shared_ptr<OpenMBV::Arrow> openMBVArrow;
+      std::shared_ptr<OpenMBV::IvScreenAnnotation> openMBVIvScreenAnnotation;
       std::string saved_signal;
       std::string saved_position;
 
@@ -48,9 +53,13 @@ namespace MBSimControl {
       void initializeUsingXML(xercesc::DOMElement *element) override;
       void plot() override;
 
+      // draw a Arrow for the signal
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (scaleLength,(double),1)(scaleSize,(double),1)(referencePoint,(MBSim::OpenMBVArrow::ReferencePoint),MBSim::OpenMBVArrow::fromPoint)(colorRepresentation,(MBSim::OpenMBVArrow::ColorRepresentation),MBSim::OpenMBVArrow::none)(minimalColorValue,(double),0)(maximalColorValue,(double),1)(diffuseColor,(const fmatvec::Vec3&),"[-1;1;1]")(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         ombvArrow = std::shared_ptr<MBSim::OpenMBVArrow>(new MBSim::OpenMBVArrow(scaleLength,scaleSize,MBSim::OpenMBVArrow::toHead,referencePoint,colorRepresentation,minimalColorValue,maximalColorValue,diffuseColor,transparency,pointSize,lineWidth));
       }
+
+      void setOpenMBVIvScreenAnnotation(const std::shared_ptr<OpenMBV::IvScreenAnnotation> &ivsa);
+      std::shared_ptr<OpenMBV::IvScreenAnnotation> getOpenMBVIvScreenAnnotation() const;
   };
 
 }
