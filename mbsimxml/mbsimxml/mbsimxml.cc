@@ -89,6 +89,8 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs) {
         if(stage==SearchPath)
           fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load XSD for "<<it->path().filename().string()<<endl;
         std::shared_ptr<DOMDocument> doc=parser->parse(*it, nullptr, false);
+        if(E(doc->getDocumentElement())->getTagName()!=MBSIMMODULE%"MBSimModule")
+          throw runtime_error("The root element of a MBSim module XML file must be {"+MBSIMMODULE.getNamespaceURI()+"}MBSimModule");
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"schemas")->getFirstElementChild();
             e!=nullptr; e=e->getNextElementSibling()) {
           if(stage==Loading && E(e)->getTagName()==MBSIMMODULE%"File") {

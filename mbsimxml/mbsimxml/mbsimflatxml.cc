@@ -110,6 +110,8 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
         if(stage==SearchPath)
           fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" - load library for "<<it->path().filename().string()<<endl;
         std::shared_ptr<DOMDocument> doc=parser->parse(*it, nullptr, false);
+        if(E(doc->getDocumentElement())->getTagName()!=MBSIMMODULE%"MBSimModule")
+          throw runtime_error("The root element MBSim module XML file must be {"+MBSIMMODULE.getNamespaceURI()+"}MBSimModule");
         for(xercesc::DOMElement *e=E(doc->getDocumentElement())->getFirstElementChildNamed(MBSIMMODULE%"libraries")->
             getFirstElementChild();
             e!=nullptr; e=e->getNextElementSibling()) {
@@ -224,7 +226,7 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
 
   // check root element
   if(E(e)->getTagName()!=MBSim::MBSIMXML%"MBSimProject")
-    throw runtime_error("Root element must be {"+MBSim::MBSIMXML.getNamespaceURI()+"}MBSimProject.");
+    throw runtime_error("The oot element of a MBSim file must be {"+MBSim::MBSIMXML.getNamespaceURI()+"}MBSimProject.");
   // check evaluator
   DOMElement *evaluator=E(e)->getFirstElementChildNamed(PV%"evaluator");
   if(!evaluator)
