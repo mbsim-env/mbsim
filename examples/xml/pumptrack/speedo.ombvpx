@@ -24,6 +24,10 @@
     <!-- the transparency value of the speedo -->
     0.4
   </scalarParameter>
+  <vectorParameter name="scale1To1At">
+    <!-- the scale center point = element scale1To1At of IvScreenAnnotation -->
+    [1, 1]
+  </vectorParameter>
   <scalarParameter name="size">
     <!-- the size of the speedo (outer radius in screen coords which runs from -1 to 1) -->
     0.2

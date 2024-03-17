@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <IvScreenAnnotation name="{name}" xmlns="http://www.mbsim-env.de/OpenMBV">
-  <scale1To1At>[1,1]</scale1To1At>
+  <scale1To1At>scale1To1At</scale1To1At>
   <ivContent>
 import numpy
 import math
@@ -140,7 +140,7 @@ Separator {{
   RotationXYZ {{
     axis Z
     angle = Calculator {{
-      a = USE velocity.value
+      a = USE speedoValue.value
       expression "oa = {(-45-180-45)*math.pi/180/vEnd*vScale} * a + {(180+45)*math.pi/180}"
     }}.oa
   }}
@@ -181,5 +181,5 @@ Separator {{
 
 ret=content
   </ivContent>
-  <columnLabel>'velocity'</columnLabel>
+  <columnLabel>'speedoValue'</columnLabel>
 </IvScreenAnnotation>

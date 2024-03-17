@@ -547,6 +547,7 @@
             <scalarParameter name="vDelta">2</scalarParameter>
             <scalarParameter name="vScale">3.6</scalarParameter>
             <scalarParameter name="alpha">0.4</scalarParameter>
+            <vectorParameter name="scale1To1At">[1, 1]</vectorParameter>
             <scalarParameter name="size">0.2</scalarParameter>
             <vectorParameter name="position">[1-size-2*idx*size, 1-size]</vectorParameter>
           </Parameter>
