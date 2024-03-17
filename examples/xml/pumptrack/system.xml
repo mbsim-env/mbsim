@@ -539,7 +539,7 @@
     <SignalObserver name="speedo" xmlns="http://www.mbsim-env.de/MBSimControl">
       <signal ref="../Link[speedo_vs0]"/>
       <openMBVIvScreenAnnotation>
-        <Embed href="speedo.ombvx" xmlns="http://www.mbsim-env.de/MBXMLUtils">
+        <Embed href="speedo.ombvmx" xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <Parameter>
             <stringParameter name="name">"speedo"</stringParameter>
             <stringParameter name="speedoText">"km/h"</stringParameter>
