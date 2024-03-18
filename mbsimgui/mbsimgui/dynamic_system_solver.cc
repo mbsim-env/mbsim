@@ -97,35 +97,39 @@ namespace MBSimGUI {
     ele1=E(ele1)->getFirstElementChildNamed(MBSIM%"openMBVObject");
     if(not ele1) return element;
     ele1 = ele1->getFirstElementChild();
-    if(not ele1) return element;
-    if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-      mw->updateParameters(this,false);
-      std::string evaltmp;
-      try{
-        evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
+    while(ele1) {
+      if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
+        mw->updateParameters(this,false);
+        std::string evaltmp;
+        try{
+          evaltmp = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute("href"),ele1,false));
+        }
+        catch(MBXMLUtils::DOMEvalException &e) {
+          mw->setExitBad();
+          std::cerr << e.getMessage() << std::endl;
+        }
+        catch(...) {
+          mw->setExitBad();
+          std::cerr << "Unknwon error" << std::endl;
+        }
+        DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
+        DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+        ele1->insertBefore(ele2,nullptr);
+        boost::filesystem::path orgFileName=E(doc->getDocumentElement())->getOriginalFilename();
+        DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
+            X()%orgFileName.string());
+        ele2->insertBefore(filenamePI, ele2->getFirstChild());
+        MBXMLUtils::E(ele1)->removeAttribute("href");
       }
-      catch(MBXMLUtils::DOMEvalException &e) {
-        mw->setExitBad();
-        std::cerr << e.getMessage() << std::endl;
-      }
-      catch(...) {
-        mw->setExitBad();
-        std::cerr << "Unknwon error" << std::endl;
-      }
-      DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
-      DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-      ele1->insertBefore(ele2,nullptr);
-      boost::filesystem::path orgFileName=E(doc->getDocumentElement())->getOriginalFilename();
-      DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
-          X()%orgFileName.string());
-      ele2->insertBefore(filenamePI, ele2->getFirstChild());
-      MBXMLUtils::E(ele1)->removeAttribute("href");
+      DOMDocument *doc=element->getOwnerDocument();
+      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
+      if(E(ele1)->getTagName()==PV%"Embed")
+        ele1->getFirstElementChild()->insertBefore(id, nullptr);
+      else
+        ele1->insertBefore(id, nullptr);
+
+      ele1 = ele1->getNextElementSibling();
     }
-    DOMDocument *doc=element->getOwnerDocument();
-    DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-    if(E(ele1)->getTagName()==PV%"Embed")
-      ele1 = ele1->getFirstElementChild();
-    ele1->insertBefore(id, nullptr);
     return element;
   }
 
