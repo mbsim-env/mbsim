@@ -43,7 +43,7 @@ namespace MBSimGUI {
     name.emplace_back("Extrusion");
     name.emplace_back("Frustum");
     name.emplace_back("Invisible body");
-    name.emplace_back("Open inventor body");
+    name.emplace_back("Open Inventor body");
     name.emplace_back("Sphere");
     name.emplace_back("Unknown object");
     xmlName.push_back(OPENMBV%"CompoundRigidBody");
@@ -103,6 +103,33 @@ namespace MBSimGUI {
       return new DynamicPointSetWidget("DynamicPointSet"+toQStr(count++),OPENMBV%"DynamicPointSet");
     return nullptr;
   }
+
+  OMBVIvScreenAnnotationWidgetFactory::OMBVIvScreenAnnotationWidgetFactory()  {
+    name.emplace_back("Unknown object");
+    xmlName.push_back(OPENMBV%"UnknownObject");
+  }
+
+  Widget* OMBVIvScreenAnnotationWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new UnknownWidget<OMBVObjectWidget>;
+    return nullptr;
+  }
+
+  IvDataWidgetFactory::IvDataWidgetFactory()  {
+    name.emplace_back("From filename");
+    name.emplace_back("From string content");
+    xmlName.push_back(OPENMBV%"ivFileName");
+    xmlName.push_back(OPENMBV%"ivContent");
+  }
+
+  Widget* IvDataWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new ExtWidget("Open Inventor file name",new FileWidget("", "Open Open Inventor file", "Inventor files (*.iv);;VRML files (*.wrl *.vrml)", 0, true));
+    if(i==1)
+      return new ExtWidget("Open Inventor string content",new ExtStringWidget(nullptr));
+    return nullptr;
+  }
+
 
   MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget(const vector<QString> &c) {
     auto *layout = new QVBoxLayout;
@@ -701,8 +728,9 @@ namespace MBSimGUI {
 
   IvBodyWidget::IvBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
 
-    ivFileName = new ExtWidget("Open inventor file name",new FileWidget("", "Open open inventor file", "Inventor files (*.iv);;VRML files (*.wrl *.vrml)", 0, true),false,false,OPENMBV%"ivFileName");
-    layout->addWidget(ivFileName);
+    ivData = new ExtWidget("Open Inventor scene graph",new ChoiceWidget(new IvDataWidgetFactory,QBoxLayout::TopToBottom,3),false,true);
+    layout->addWidget(ivData);
+    connect(ivData,&ExtWidget::widgetChanged,this,&IvBodyWidget::updateWidget);
 
     creaseEdges = new ExtWidget("Crease edges",new ChoiceWidget(new ScalarWidgetFactory("-1",vector<QStringList>(2,angleUnits())),QBoxLayout::RightToLeft),true,false,OPENMBV%"creaseEdges");
     layout->addWidget(creaseEdges);
@@ -713,7 +741,7 @@ namespace MBSimGUI {
 
   DOMElement* IvBodyWidget::initializeUsingXML(DOMElement *element) {
     OMBVRigidBodyWidget::initializeUsingXML(element);
-    ivFileName->initializeUsingXML(element);
+    ivData->initializeUsingXML(element);
     creaseEdges->initializeUsingXML(element);
     boundaryEdges->initializeUsingXML(element);
     return element;
@@ -721,7 +749,7 @@ namespace MBSimGUI {
 
   DOMElement* IvBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=OMBVRigidBodyWidget::writeXMLFile(parent);
-    ivFileName->writeXMLFile(e);
+    ivData->writeXMLFile(e);
     creaseEdges->writeXMLFile(e);
     boundaryEdges->writeXMLFile(e);
     return e;

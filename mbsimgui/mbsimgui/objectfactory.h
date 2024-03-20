@@ -56,7 +56,8 @@
   X(EnvironmentWidget) \
   X(FunctionWidget) \
   X(GravityFunctionWidget) \
-  X(OMBVRigidBodyWidget)
+  X(OMBVRigidBodyWidget) \
+  X(OMBVObjectWidget)
 // ... all container types
 #define MBSIMGUI_ALL_CONTAINERS \
   MBSIMGUI_TREE_CONTAINERS \
@@ -192,7 +193,8 @@ namespace MBSimGUI {
         P<TyreModelWidget           , P<MagicFormulaSharpWidget      , UnknownWidget<TyreModelWidget>>>,
         P<FunctionWidget            , P<void                         , UnknownWidget<FunctionWidget>>>,
         P<GravityFunctionWidget     , P<void                         , UnknownWidget<GravityFunctionWidget>>>,
-        P<OMBVRigidBodyWidget       , P<void                         , UnknownWidget<OMBVRigidBodyWidget>>>
+        P<OMBVRigidBodyWidget       , P<void                         , UnknownWidget<OMBVRigidBodyWidget>>>,
+        P<OMBVObjectWidget          , P<void                         , UnknownWidget<OMBVObjectWidget>>>
       >;
 
       // All errors during class registration are catched and added to a global error message using addErrorMsg.

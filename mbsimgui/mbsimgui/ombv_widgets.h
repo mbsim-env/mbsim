@@ -64,6 +64,35 @@ namespace MBSimGUI {
       int count{1};
   };
 
+  class OMBVIvScreenAnnotationWidgetFactory : public WidgetFactory {
+    public:
+      OMBVIvScreenAnnotationWidgetFactory();
+      Widget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      int getSize() const override { return name.size(); }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getDefaultIndex() const override { return 0; }
+      int getFallbackIndex() const override { return 0; }
+    protected:
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
+  };
+
+  class IvDataWidgetFactory : public WidgetFactory {
+    public:
+      IvDataWidgetFactory();
+      Widget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      int getSize() const override { return name.size(); }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getDefaultIndex() const override { return 0; }
+      int getFallbackIndex() const override { return 0; }
+    protected:
+      std::vector<QString> name;
+      std::vector<MBXMLUtils::FQN> xmlName;
+  };
+
+
   class MBSOMBVWidget : public Widget {
 
     public:
@@ -312,7 +341,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *ivFileName, *creaseEdges, *boundaryEdges;
+      ExtWidget *ivData, *creaseEdges, *boundaryEdges;
   };
 
   class CompoundRigidBodyWidget : public OMBVRigidBodyWidget {
