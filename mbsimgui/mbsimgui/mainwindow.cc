@@ -226,7 +226,7 @@ namespace MBSimGUI {
     elementView->setColumnWidth(0,250);
     elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
-    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 1);
+    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 2);
     elementViewFilter->hide();
     // if new rows get insert update the item in the AbstractViewFilter
     connect(elementView->model(), &QAbstractItemModel::rowsInserted, [this](const QModelIndex &parent, int first, int last) {
@@ -238,7 +238,7 @@ namespace MBSimGUI {
     parameterView->setModel(new ParameterTreeModel(this));
     parameterView->setColumnWidth(0,150);
     parameterView->setColumnWidth(1,200);
-    parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, 2);
+    parameterViewFilter = new OpenMBVGUI::AbstractViewFilter(parameterView, 0, 3);
     parameterViewFilter->hide();
 
     auto editMenu = new QMenu("Edit", menuBar());
@@ -1990,7 +1990,7 @@ namespace MBSimGUI {
     }
     element->maybeRemoveEmbedXMLElement();
     element->updateStatus();
-    elementViewFilter->updateItem(index);
+    elementViewFilter->updateItem(index,true);
     if(getAutoRefresh()) refresh();
   }
 

@@ -30,7 +30,9 @@ void SingleLineDelegate::paint(QPainter *painter, const QStyleOptionViewItem &op
   text=text.trimmed();
   text=text.replace(QRegularExpression(" *\n *"), " ¶ ");
   text=text.simplified();
-  drawDisplay(painter, option, option.rect, text);
+  auto useroption = option;
+  useroption.palette.setBrush(QPalette::Text,treeView->model()->data(index,Qt::ForegroundRole).value<QBrush>());
+  drawDisplay(painter, useroption, useroption.rect, text);
   painter->restore();
 }
 
