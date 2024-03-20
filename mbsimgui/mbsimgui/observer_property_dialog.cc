@@ -361,15 +361,19 @@ namespace MBSimGUI {
     position = new ExtWidget("Position",new ElementOfReferenceWidget<Signal>(observer,nullptr,this),true,false,MBSIMCONTROL%"position");
     addToTab("General", position);
 
-    ombv = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget,true,false,MBSIMCONTROL%"enableOpenMBV");
-    addToTab("Visualization", ombv);
+    enableOmbv = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget,true,false,MBSIMCONTROL%"enableOpenMBV");
+    addToTab("Visualization", enableOmbv);
+
+    ombvIVSA = new ExtWidget("Open Inventor screen annotation",new ChoiceWidget(new OMBVIvScreenAnnotationWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"openMBVIvScreenAnnotation");
+    addToTab("Visualization", ombvIVSA);
   }
 
   DOMElement* SignalObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
     signal->initializeUsingXML(item->getXMLElement());
     position->initializeUsingXML(item->getXMLElement());
-    ombv->initializeUsingXML(item->getXMLElement());
+    enableOmbv->initializeUsingXML(item->getXMLElement());
+    ombvIVSA->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -377,7 +381,8 @@ namespace MBSimGUI {
     ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     signal->writeXMLFile(item->getXMLElement(),ref);
     position->writeXMLFile(item->getXMLElement(),ref);
-    ombv->writeXMLFile(item->getXMLElement(),ref);
+    enableOmbv->writeXMLFile(item->getXMLElement(),ref);
+    ombvIVSA->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
