@@ -861,6 +861,11 @@
             </xs:annotation>
           </xs:element>
           <xs:element name="projectionTolerance" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Abbruchschranke welche der nicht-lineare Löser für die Positions-Projektion einhalten muss.
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="generalizedRelativePositionTolerance" type="pv:nounitScalar" minOccurs="0">
           </xs:element>
@@ -893,12 +898,12 @@
           </xs:element>
           <xs:element name="useConstraintSolverForSmoothMotion" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert, ob die mengenwertigen Kraftgesetze auch während der glatten Bewegung mit einem entsprechenden Lösungsverfahren berechnet werden sollen.
+              Definiert, ob die mengenwertigen Kraftgesetze auch während der glatten Bewegung mit einem definierten Lösungsverfahren berechnet werden sollen (true), oder ob während der glatten Bewegung immer ein direkter Löser für lineare "least-square" Probleme verwendet werden soll (false).
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="useConstraintSolverForPlot" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit einem entsprechenden Lösungsverfahren berechnet werden sollen.
+              Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit einem definierten Lösungsverfahren berechnet werden sollen (true), oder ob für den Plot immer ein direkter Löser für lineare "least-square" Probleme verwendet werden soll (false).
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="compressionLevel" minOccurs="0" type="pv:integerFullEval">
@@ -6701,12 +6706,17 @@
         <xs:sequence>
           <xs:element name="toleranceForPositionConstraints" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Toleranz für Bindungsgleichungen auf Lageebene.
+              Definiert die Schanke ab welcher eine Projektion der Bindungsgleichung auf Lageebene durchgefürt wird wenn diese
+              Schranke überschritten ist (Positions-Drift). Wird dise überschritten wird unmittelbar danach automatisch auch
+              eine Projektion der Bindungsgleichungen auf Geschwindigkeitsebene durchgeführt.
+              Ist der Wert &lt; 0 ist die Projektion auf Lageebene ausgeschaltet.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="toleranceForVelocityConstraints" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Toleranz für Bindungsgleichungen auf Geschwindigkeitsebene.
+              Definiert die Schanke ab welcher eine Projektion der Bindungsgleichung auf Geschwindigkeitsebene durchgefürt wird wenn diese
+              Schranke überschritten ist (Geschwindigkeits-Drift).
+              Ist der Wert &lt; 0 ist die Projektion auf Geschwindigkeitsebene ausgeschaltet.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="rootFindingAccuracy" type="pv:timeScalar" minOccurs="0">
