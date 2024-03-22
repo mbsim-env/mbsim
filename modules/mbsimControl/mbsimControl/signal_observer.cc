@@ -89,7 +89,7 @@ namespace MBSimControl {
         data.push_back(ombvArrow->getColorRepresentation()?nrm2(s):0.5);
         openMBVArrow->append(data);
       }
-      if(openMBVIvScreenAnnotation)
+      if(openMBVIvScreenAnnotation && !openMBVIvScreenAnnotation->getEnvironment())
         openMBVIvScreenAnnotation->append(s);
     }
     Observer::plot();
