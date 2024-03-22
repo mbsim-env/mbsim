@@ -441,90 +441,6 @@
     </xs:complexContent>
   </xs:complexType>   
 
-  <!-- For usage in Group an RigidBody -->
-  <xs:element name="frame" type="frameType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Lokale Gruppe eines Koordinatensystems.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="frameType"> <!-- use global type for parsing by the documentation generator -->
-    <xs:sequence>
-      <xs:element ref="Frame"/>
-      <xs:element name="frameOfReference" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="">
-            Koordinatensystem, in dem die Positionierung des KOS angegeben wird.<br/>
-            Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
-          </xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="position" type="pv:lengthVector">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="">
-            Relative Lage des Koordinatensystems.<br/>
-            Vektor von <code>frameOfReference</code> zum Ursprung des neuen KOS dargestellt
-            im KOS <code>frameOfReference</code>.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="orientation" type="pv:rotationMatrix">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="">
-            Relative Orientierung des Koordinatensystems.<br/>
-            Transformationsmatrix vom neuen KOS ins KOS <code>frameOfReference</code>.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
-  <!-- For usage in Group an RigidBody -->
-  <xs:element name="contour" type="contourType">
-    <xs:annotation>
-      <xs:documentation xml:lang="de" xmlns="">
-        Lokale Gruppe einer Kontaktkontur.
-      </xs:documentation>
-    </xs:annotation>
-  </xs:element>
-  <xs:complexType name="contourType"> <!-- use global type for parsing by the documentation generator -->
-    <xs:sequence>
-      <xs:element ref="Contour"/>
-      <xs:element name="frameOfReference" minOccurs="0">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="">
-            Koordinatensystem, in dem die relative Positionierung der Kontur angegeben wird.<br/> 
-            Standardmässig "I"-System der Gruppe bzw. "C"-System des RigidBody.
-          </xs:documentation>
-        </xs:annotation>
-        <xs:complexType>
-          <xs:attribute name="ref" type="CurrentFrameReferenceType" use="required"/>
-        </xs:complexType>
-      </xs:element>
-      <xs:element name="position" type="pv:lengthVector">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="">
-            Relative Lage der Kontur.<br/>
-            Vektor von <code>frameOfReference</code> zum Ursprung des kontureigenen KOS dargestellt
-            im KOS <code>frameOfReference</code>.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-      <xs:element name="orientation" type="pv:rotationMatrix">
-        <xs:annotation>
-          <xs:documentation xml:lang="de" xmlns="">
-            Relative Orientierung der Kontur.<br/>
-            Transformationsmatrix vom kontureigenen KOS ins KOS <code>frameOfReference</code>.
-          </xs:documentation>
-        </xs:annotation>
-      </xs:element>
-    </xs:sequence>
-  </xs:complexType>
-
   <xs:element name="Group" substitutionGroup="EmptyGroup" type="GroupType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert eine neue Hierarchieebene in Form einer Gruppe.<br/>
@@ -555,12 +471,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="FixedRelativeFrame"/>
-                  <xs:element ref="pv:Embed"/>
-                </xs:choice>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="FixedRelativeFrame"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
@@ -570,12 +484,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="Contour"/>
-                  <xs:element ref="pv:Embed"/>
-                </xs:choice>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Contour"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="groups">
@@ -762,12 +674,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="ombv:Object"/>
-                  <xs:element ref="pv:Embed"/>
-                </xs:choice>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="ombv:Object"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
@@ -801,9 +711,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Environment" minOccurs="0" maxOccurs="unbounded"/>
-              </xs:sequence> 
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="Environment"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="constraintSolver" minOccurs="0" type="pv:stringFullEval">
@@ -1080,9 +991,10 @@
                   <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="timeDependentTranslation">
@@ -1096,9 +1008,10 @@
                   <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="stateDependentTranslation">
@@ -1112,9 +1025,10 @@
                   <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:choice>
@@ -1129,9 +1043,10 @@
                   <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="timeDependentRotation">
@@ -1144,9 +1059,10 @@
                   <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="stateDependentRotation">
@@ -1159,9 +1075,10 @@
                   <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:choice>
@@ -1190,12 +1107,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:choice minOccurs="0" maxOccurs="unbounded">
-                  <xs:element ref="FixedRelativeFrame"/>
-                  <xs:element ref="pv:Embed"/>
-                </xs:choice>
-              </xs:sequence>
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
+                <xs:element ref="FixedRelativeFrame"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="contours">
@@ -1207,12 +1122,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
               <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="RigidContour"/>
                 <xs:element ref="pv:Embed"/>
               </xs:choice>
-              </xs:sequence>
             </xs:complexType>
           </xs:element>
           <xs:sequence minOccurs="0">
@@ -1223,9 +1136,10 @@
                 </xs:documentation>
               </xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="ombv:RigidBody"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="openMBVFrameOfReference" minOccurs="0">
@@ -1356,9 +1270,10 @@
               TODO
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
@@ -1390,9 +1305,10 @@
                 TODO
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="timeDependentConstraintFunction">
@@ -1400,9 +1316,10 @@
                 TODO
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="stateDependentConstraintFunction">
@@ -1410,9 +1327,10 @@
                 TODO
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:choice>
@@ -1445,9 +1363,10 @@
                 TODO
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="timeDependentConstraintFunction">
@@ -1455,9 +1374,10 @@
                 TODO
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="stateDependentConstraintFunction">
@@ -1465,9 +1385,10 @@
                 TODO
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:choice>
@@ -1662,9 +1583,10 @@
               Definiert die Translation in Abhängigkeit der Zeit.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="rotation" minOccurs="0">
@@ -1672,9 +1594,10 @@
               Definiert die Rotation in Abhängigkeit der Zeit.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="initialGuess" minOccurs="0" type="pv:unknownVector">
@@ -1864,9 +1787,10 @@
                   Definiert die Kraftfunktion in Abhängigkeit der Zeit.
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:sequence>
@@ -1884,9 +1808,10 @@
                   Definiert die Momentfunktion in Abhängigkeit der Zeit.
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="Function"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:sequence>
@@ -1925,9 +1850,10 @@
                 und der relativen Geschwindigkeit zwischen den Kraftangriffspunkten.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="unloadedLength" type="pv:lengthScalar">
@@ -1982,9 +1908,10 @@
                 und der relativen Geschwindigkeit zwischen den Kraftangriffspunkten.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="unloadedLength" type="pv:lengthScalar">
@@ -2023,9 +1950,10 @@
                 Definiert die Momentfunktion in Abhängigkeit der relativen Verdrehung der Kraftangriffspunkte.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="dissipativeMomentFunction">
@@ -2033,9 +1961,10 @@
                 Definiert die Momentfunktion in Abhängigkeit der relativen Winkelgeschwindigkeit der Kraftangriffspunkte.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2057,9 +1986,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="generalizedUnloadedLength" type="pv:unknownScalar">
@@ -2088,9 +2018,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="FrictionForceLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="generalizedFrictionImpactLaw" minOccurs="0">
@@ -2098,9 +2029,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="FrictionImpactLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="generalizedNormalForceFunction">
@@ -2108,9 +2040,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
         </xs:sequence>
@@ -2132,9 +2065,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="FrictionForceLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="generalizedFrictionImpactLaw" minOccurs="0">
@@ -2142,9 +2076,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="FrictionImpactLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="engagementFunction" minOccurs="0">
@@ -2152,9 +2087,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="generalizedNormalForceFunction">
@@ -2162,9 +2098,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2186,9 +2123,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2210,9 +2148,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2254,9 +2193,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2288,9 +2228,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2322,9 +2263,10 @@
                   Definiert das konstitutive Gesetz bez. der Zwangskräfte auf Beschleunigungsebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="GeneralizedForceLaw"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:sequence>
@@ -2339,9 +2281,10 @@
                   Definiert das konstitutive Gesetz bez. der Zwangsmomente auf Beschleunigungsebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird)
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="GeneralizedForceLaw"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:sequence>
@@ -2379,9 +2322,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="integrateGeneralizedRelativeVelocityOfRotation" type="pv:booleanFullEval" minOccurs="0">
@@ -2425,9 +2369,10 @@
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="normalImpactLaw" minOccurs="0">
@@ -2435,9 +2380,10 @@
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="GeneralizedImpactLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:sequence minOccurs="0">
@@ -2446,9 +2392,10 @@
                   Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="FrictionForceLaw"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="tangentialImpactLaw" minOccurs="0">
@@ -2456,9 +2403,10 @@
                   Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="FrictionImpactLaw"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:sequence>
@@ -2520,9 +2468,10 @@
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="normalImpactLaw" minOccurs="0">
@@ -2530,9 +2479,10 @@
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="GeneralizedImpactLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:sequence minOccurs="0">
@@ -2541,9 +2491,10 @@
                   Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="FrictionForceLaw"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="tangentialImpactLaw" minOccurs="0">
@@ -2551,9 +2502,10 @@
                   Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
               </xs:documentation></xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="FrictionImpactLaw"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
           </xs:sequence>
@@ -2579,9 +2531,10 @@
           </xs:element>
           <xs:element name="InfluenceFunction">
             <xs:complexType>
-              <xs:sequence>
-               <xs:element ref="InfluenceFunction" maxOccurs="unbounded"/>
-              </xs:sequence>
+              <xs:choice>
+                <xs:element ref="InfluenceFunction" maxOccurs="unbounded"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2605,9 +2558,10 @@
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Beschleunigungsebene in Konturnormalenrichtung (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="GeneralizedForceLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="normalImpactLaw" minOccurs="0">
@@ -2615,9 +2569,10 @@
                 Definiert das konstitutive Gesetz bez. der Kontaktkräfte auf Geschwindigkeitsebene in Konturnormalenrichtung (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="GeneralizedImpactLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="tangentialForceLaw">
@@ -2625,9 +2580,10 @@
                 Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Beschleunigungssebene (ausreichend für alle funktionellen Gesetze / ausreichend wenn keine Stöße im System auftreten und das System ereignisgesteuert integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="FrictionForceLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="tangentialImpactLaw" minOccurs="0">
@@ -2635,9 +2591,10 @@
                 Definiert das konstitutive Reibgesetz bez. der Kontaktkräfte auf Geschwindigkeitssebene (nötig wenn Stöße im System auftreten oder das System mit Timestepping-Verfahren integriert wird).
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="FrictionImpactLaw"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2661,9 +2618,10 @@
             Auswahl des Reifenmodells.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="TyreModel"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="initialGuess" minOccurs="0" type="pv:unknownMatrix">
@@ -3268,9 +3226,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="open" minOccurs="0" type="pv:booleanFullEval">
@@ -3400,9 +3359,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="openEta" minOccurs="0" type="pv:booleanFullEval">
@@ -4029,9 +3989,10 @@
                 Konstitutive zweiparametrige Funktion <object class="inlineeqn">\lambda=\lambda\left(g,\dot{g}\right)</object> zur Auswertung der Reaktion basierend auf relativer Distanz g und Geschwindigkeit <object class="inlineeqn">\dot{g}</object>.  
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -4082,9 +4043,10 @@
                 Reibgesetze der Form <object class="inlineeqn">\boldsymbol{F}_R=\boldsymbol{F}_R\left(\dot{\boldsymbol{g}}_T,\left\|\boldsymbol{F}_N\right\|\right)</object> basierend auf tangentialer relativer Geschwindigkeit und Betrag der Normalkraft
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -4166,9 +4128,10 @@
                 Definiert den Reibkoeffizienten in Abhängigkeit der Relativgeschwindigkeit.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -4190,9 +4153,10 @@
                 Definiert den Reibkoeffizienten in Abhängigkeit der Relativgeschwindigkeit.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -4259,9 +4223,10 @@
                 Definiert den Reibkoeffizienten in Abhängigkeit der Relativgeschwindigkeit.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -4283,9 +4248,10 @@
                 Definiert den Reibkoeffizienten in Abhängigkeit der Relativgeschwindigkeit.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -5357,9 +5323,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence minOccurs="0" maxOccurs="unbounded">
+              <xs:choice minOccurs="0" maxOccurs="unbounded">
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -5377,9 +5344,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:choice>
@@ -5388,9 +5356,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="innerFunctions">
@@ -5398,9 +5367,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="Function" minOccurs="2" maxOccurs="2"/>
-              </xs:sequence>
+              <xs:choice minOccurs="2" maxOccurs="2">
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           </xs:choice>
@@ -5421,9 +5391,10 @@
         tbd
         </xs:documentation></xs:annotation>
         <xs:complexType>
-          <xs:sequence>
+          <xs:choice>
             <xs:element ref="Function"/>
-          </xs:sequence>
+            <xs:element ref="pv:Embed"/>
+          </xs:choice>
         </xs:complexType>
       </xs:element>
       <xs:element name="limit" type="pv:unknownScalar">
@@ -5454,9 +5425,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence minOccurs="1" maxOccurs="unbounded">
+              <xs:choice minOccurs="1" maxOccurs="unbounded">
                 <xs:element ref="LimitedFunction"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="shiftAbscissa" type="pv:booleanFullEval" minOccurs="0"/>
@@ -5477,33 +5449,31 @@
   <xs:complexType name="TabularFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:choice>
-            <xs:sequence>
-              <xs:element name="x" type="pv:unknownVector">
-                <xs:annotation>
-                  <xs:documentation xml:lang="de" xmlns="">
-                    Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
-                  </xs:documentation>
-                </xs:annotation>
-              </xs:element>
-              <xs:element name="y" type="pv:unknownMatrix">
-                <xs:annotation>
-                  <xs:documentation xml:lang="de" xmlns="">
-                    Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
-                  </xs:documentation>
-                </xs:annotation>
-              </xs:element>
-            </xs:sequence>
-            <xs:element name="xy" type="pv:unknownMatrix">
+        <xs:choice>
+          <xs:sequence>
+            <xs:element name="x" type="pv:unknownVector">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
-                  Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+                  Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
                 </xs:documentation>
               </xs:annotation>
             </xs:element>
-          </xs:choice>
-        </xs:sequence> 
+            <xs:element name="y" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+          <xs:element name="xy" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:choice>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
@@ -5518,40 +5488,38 @@
   <xs:complexType name="TwoDimensionalTabularFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:choice>
-            <xs:sequence>
-              <xs:element name="x" type="pv:unknownVector">
-                <xs:annotation>
-                  <xs:documentation xml:lang="de" xmlns="">
-                    x-Werte. Die Werte müssen streng mononton steigend sein.
-                  </xs:documentation>
-                </xs:annotation>
-              </xs:element>
-              <xs:element name="y" type="pv:unknownVector">
-                <xs:annotation>
-                  <xs:documentation xml:lang="de" xmlns="">
-                    y-Werte. Die Werte müssen streng mononton steigend sein.
-                  </xs:documentation>
-                </xs:annotation>
-              </xs:element>
-              <xs:element name="z" type="pv:unknownMatrix">
-                <xs:annotation>
-                  <xs:documentation xml:lang="de" xmlns="">
-                    z-Werte. Die Anzahl der Spalten der Matrix muss mit der Größe des x-Vektors und die Anzahl der Zeilen der Matrix muss mit der Größe des y-Vektors übereinstimmen.
-                  </xs:documentation>
-                </xs:annotation>
-              </xs:element>
-            </xs:sequence>
-            <xs:element name="xyz" type="pv:unknownMatrix">
+        <xs:choice>
+          <xs:sequence>
+            <xs:element name="x" type="pv:unknownVector">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
-                  Die Stützstellen und die Stützwerte sind in einer Matrix zusammengefasst.
+                  x-Werte. Die Werte müssen streng mononton steigend sein.
                 </xs:documentation>
               </xs:annotation>
             </xs:element>
-          </xs:choice>
-        </xs:sequence>
+            <xs:element name="y" type="pv:unknownVector">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  y-Werte. Die Werte müssen streng mononton steigend sein.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="z" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  z-Werte. Die Anzahl der Spalten der Matrix muss mit der Größe des x-Vektors und die Anzahl der Zeilen der Matrix muss mit der Größe des y-Vektors übereinstimmen.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence>
+          <xs:element name="xyz" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Die Stützstellen und die Stützwerte sind in einer Matrix zusammengefasst.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:choice>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -5568,64 +5536,62 @@
   <xs:complexType name="PiecewisePolynomFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
-        <xs:sequence>
-          <xs:choice>
-            <xs:sequence>
-              <xs:choice>
-                <xs:sequence>
-                  <xs:element name="x" type="pv:unknownVector">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de" xmlns="">
-                        Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>
-                  <xs:element name="y" type="pv:unknownMatrix">
-                    <xs:annotation>
-                      <xs:documentation xml:lang="de" xmlns="">
-                        Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
-                      </xs:documentation>
-                    </xs:annotation>
-                  </xs:element>
-                </xs:sequence>
-                <xs:element name="xy" type="pv:unknownMatrix">
+        <xs:choice>
+          <xs:sequence>
+            <xs:choice>
+              <xs:sequence>
+                <xs:element name="x" type="pv:unknownVector">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
-                      Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+                      Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-              </xs:choice>
-              <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullEval">
+                <xs:element name="y" type="pv:unknownMatrix">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
-                      <dl>
-                        <dt>"cSplinePeriodic"</dt> <dd>Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).</dd>
-                        <dt>"cSplineNatural"</dt> <dd>Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).</dd>
-                        <dt>"piecewiseLinear"</dt> <dd>Interpolation mit stückweise linearem Spline.</dd>
-                      </dl>
+                      Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
                     </xs:documentation>
                   </xs:annotation>
-              </xs:element>
-            </xs:sequence> 
-            <xs:sequence> 
-              <xs:element name="breaks" type="pv:unknownVector">
+                </xs:element>
+              </xs:sequence>
+              <xs:element name="xy" type="pv:unknownMatrix">
                 <xs:annotation>
                   <xs:documentation xml:lang="de" xmlns="">
-                    Polynom break-Punkte.
+                    Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="coefficients" type="pv:unknownMatrix">
+            </xs:choice>
+            <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullEval">
                 <xs:annotation>
                   <xs:documentation xml:lang="de" xmlns="">
-                    Polynom Koeffizienten: erste Spalte: Koeffizient für Ordnung 0, zweite Spalte: Koeffizient für Ordnung 1, ...
+                    <dl>
+                      <dt>"cSplinePeriodic"</dt> <dd>Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).</dd>
+                      <dt>"cSplineNatural"</dt> <dd>Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).</dd>
+                      <dt>"piecewiseLinear"</dt> <dd>Interpolation mit stückweise linearem Spline.</dd>
+                    </dl>
                   </xs:documentation>
                 </xs:annotation>
-              </xs:element>
-            </xs:sequence> 
-          </xs:choice> 
-        </xs:sequence> 
+            </xs:element>
+          </xs:sequence> 
+          <xs:sequence> 
+            <xs:element name="breaks" type="pv:unknownVector">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Polynom break-Punkte.
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+            <xs:element name="coefficients" type="pv:unknownMatrix">
+              <xs:annotation>
+                <xs:documentation xml:lang="de" xmlns="">
+                  Polynom Koeffizienten: erste Spalte: Koeffizient für Ordnung 0, zweite Spalte: Koeffizient für Ordnung 1, ...
+                </xs:documentation>
+              </xs:annotation>
+            </xs:element>
+          </xs:sequence> 
+        </xs:choice> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
@@ -5776,9 +5742,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="positiveDirectionalFunction">
@@ -5786,9 +5753,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -5812,9 +5780,10 @@
               Funktion mit eingeschränktem Definitionsbereich.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="continuationRule">
@@ -5822,9 +5791,10 @@
               Forsetzungsregel.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -5882,9 +5852,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="forceVelocityFunction">
@@ -5894,9 +5865,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
@@ -6052,9 +6024,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
         </xs:sequence> 
@@ -6134,9 +6107,10 @@
             tbd
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>

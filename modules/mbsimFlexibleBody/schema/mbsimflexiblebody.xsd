@@ -63,9 +63,10 @@
               <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
           </xs:documentation></xs:annotation>
           <xs:complexType>
-            <xs:sequence>
+            <xs:choice>
               <xs:element ref="mbsim:Function"/>
-            </xs:sequence>
+              <xs:element ref="pv:Embed"/>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
         <xs:element name="timeDependentTranslation">
@@ -79,9 +80,10 @@
               <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
           </xs:documentation></xs:annotation>
           <xs:complexType>
-            <xs:sequence>
+            <xs:choice>
               <xs:element ref="mbsim:Function"/>
-            </xs:sequence>
+              <xs:element ref="pv:Embed"/>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
         <xs:element name="stateDependentTranslation">
@@ -95,9 +97,10 @@
               <p>Wird <code>Translation</code> nicht angegeben, so besitzt der Körper keine translatorischen Freiheitsgrade.</p>
           </xs:documentation></xs:annotation>
           <xs:complexType>
-            <xs:sequence>
+            <xs:choice>
               <xs:element ref="mbsim:Function"/>
-            </xs:sequence>
+              <xs:element ref="pv:Embed"/>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
       </xs:choice>
@@ -112,9 +115,10 @@
               <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
           </xs:documentation></xs:annotation>
           <xs:complexType>
-            <xs:sequence>
+            <xs:choice>
               <xs:element ref="mbsim:Function"/>
-            </xs:sequence>
+              <xs:element ref="pv:Embed"/>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
         <xs:element name="timeDependentRotation">
@@ -127,9 +131,10 @@
               <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
           </xs:documentation></xs:annotation>
           <xs:complexType>
-            <xs:sequence>
+            <xs:choice>
               <xs:element ref="mbsim:Function"/>
-            </xs:sequence>
+              <xs:element ref="pv:Embed"/>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
         <xs:element name="stateDependentRotation">
@@ -142,9 +147,10 @@
               <p>Wird <code>Rotation</code> nicht angegeben, so besitzt der Körper keine rotatorischen Freiheitsgrade.</p>
           </xs:documentation></xs:annotation>
           <xs:complexType>
-            <xs:sequence>
+            <xs:choice>
               <xs:element ref="mbsim:Function"/>
-            </xs:sequence>
+              <xs:element ref="pv:Embed"/>
+            </xs:choice>
           </xs:complexType>
         </xs:element>
       </xs:choice>
@@ -173,12 +179,10 @@
           </xs:documentation>
         </xs:annotation>
         <xs:complexType>
-          <xs:sequence>
-            <xs:choice minOccurs="0" maxOccurs="unbounded">
-              <xs:element ref="NodeBasedFrame"/>
-              <xs:element ref="pv:Embed"/>
-            </xs:choice>
-          </xs:sequence>
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="NodeBasedFrame"/>
+            <xs:element ref="pv:Embed"/>
+          </xs:choice>
         </xs:complexType>
       </xs:element>
       <xs:element name="contours">
@@ -190,12 +194,10 @@
           </xs:documentation>
         </xs:annotation>
         <xs:complexType>
-          <xs:sequence>
           <xs:choice minOccurs="0" maxOccurs="unbounded">
             <xs:element ref="mbsim:Contour"/>
             <xs:element ref="pv:Embed"/>
           </xs:choice>
-          </xs:sequence>
         </xs:complexType>
       </xs:element>
     </xs:sequence>
@@ -282,7 +284,10 @@
   </xs:element>
   <xs:complexType name="frameOnFlexibleBody1sType">
     <xs:sequence>
-      <xs:element ref="mbsim:Frame"/>
+      <xs:choice>
+        <xs:element ref="mbsim:Frame"/>
+        <xs:element ref="pv:Embed"/>
+      </xs:choice>
       <xs:element name="position" type="pv:lengthScalar">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="">
@@ -386,9 +391,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="ombv:SpineExtrusion"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
@@ -507,9 +513,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="ombv:SpineExtrusion"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence> 
@@ -1061,9 +1068,10 @@
                 </xs:documentation>
               </xs:annotation>
               <xs:complexType>
-                <xs:sequence>
+                <xs:choice>
                   <xs:element ref="ombv:FlexibleBody"/>
-                </xs:sequence>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
               </xs:complexType>
             </xs:element>
             <xs:element name="openMBVNodeNumbers" type="pv:nounitVector" minOccurs="0">

@@ -89,9 +89,11 @@ namespace MBSimGUI {
     name.emplace_back("Dynamic indexed face set");
     name.emplace_back("Dynamic indexed line set");
     name.emplace_back("Dynamic point set");
+    name.emplace_back("Unknown object");
     xmlName.push_back(OPENMBV%"DynamicIndexedFaceSet");
     xmlName.push_back(OPENMBV%"DynamicIndexedLineSet");
     xmlName.push_back(OPENMBV%"DynamicPointSet");
+    xmlName.push_back(OPENMBV%"UnknownObject");
   }
 
   Widget* OMBVFlexibleBodyWidgetFactory::createWidget(int i) {
@@ -101,6 +103,8 @@ namespace MBSimGUI {
       return new DynamicIndexedLineSetWidget("DynamicIndexedLineSet"+toQStr(count++),OPENMBV%"DynamicIndexedLineSet");
     if(i==2)
       return new DynamicPointSetWidget("DynamicPointSet"+toQStr(count++),OPENMBV%"DynamicPointSet");
+    if(i==3)
+      return new UnknownWidget<OMBVObjectWidget>;
     return nullptr;
   }
 

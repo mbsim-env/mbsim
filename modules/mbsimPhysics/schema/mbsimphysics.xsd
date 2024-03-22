@@ -87,9 +87,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">  
@@ -130,9 +131,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="gravityFunction">
@@ -142,9 +144,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">  
@@ -178,9 +181,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">  
@@ -214,9 +218,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="coefficientFunction">
@@ -226,9 +231,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType> 
           </xs:element>
           <xs:element name="referenceSurface" type="pv:areaScalar" minOccurs="0">

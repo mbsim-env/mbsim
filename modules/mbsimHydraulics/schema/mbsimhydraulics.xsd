@@ -280,9 +280,10 @@
   <xs:complexType name="SerialResistanceLinePressureLossType">
     <xs:complexContent>
       <xs:extension base="LinePressureLossType">
-        <xs:sequence>
+        <xs:choice>
           <xs:element ref="LinePressureLoss" maxOccurs="unbounded"/>
-        </xs:sequence>
+          <xs:element ref="pv:Embed"/>
+        </xs:choice>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -309,8 +310,10 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element ref="LinePressureLoss">
-          </xs:element>
+          <xs:choice>
+            <xs:element ref="LinePressureLoss"/>
+            <xs:element ref="pv:Embed"/>
+          </xs:choice>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -496,7 +499,7 @@
         <xs:sequence>
           <xs:element name="function">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
@@ -504,7 +507,8 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1001,7 +1005,7 @@
           </xs:element>
           <xs:element name="linePressureLoss">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="LinePressureLoss">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
@@ -1009,7 +1013,8 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1030,7 +1035,7 @@
         <xs:sequence>
           <xs:element name="function">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
@@ -1038,7 +1043,8 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1059,9 +1065,10 @@
         <xs:sequence>
           <xs:element name="volumeflowFunction">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1082,23 +1089,26 @@
         <xs:sequence>
           <xs:element name="inflowPressureFunction">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="outflowPressureFunction">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="openingFunction">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="diameter" type="pv:lengthScalar">
@@ -1145,7 +1155,10 @@
           <xs:element name="closablePressureLoss">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="ClosablePressureLoss"/>
+                <xs:choice>
+                  <xs:element ref="ClosablePressureLoss"/>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
                 <xs:element name="checksizeFunction">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
@@ -1153,9 +1166,10 @@
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
-                    <xs:sequence>
+                    <xs:choice>
                       <xs:element ref="mbsim:Function"/>
-                    </xs:sequence>
+                      <xs:element ref="pv:Embed"/>
+                    </xs:choice>
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="minimalChecksizeValue" type="pv:nounitScalar">
@@ -1196,13 +1210,16 @@
           <xs:element name="unidirectionalPressureLoss">
             <xs:complexType>
               <xs:sequence>
-                <xs:element ref="UnidirectionalPressureLoss" minOccurs="0">
-                  <xs:annotation>
-                    <xs:documentation xml:lang="de" xmlns="">
-                      Wenn gesetzt, so erfolgt eine Regularisierung des Druckverlustes. Andernfalls mengenwertig --> TimeStepping oder Ereignisbasiert.
-                    </xs:documentation>
-                  </xs:annotation>
-                </xs:element>
+                <xs:choice>
+                  <xs:element ref="UnidirectionalPressureLoss" minOccurs="0">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="">
+                        Wenn gesetzt, so erfolgt eine Regularisierung des Druckverlustes. Andernfalls mengenwertig --> TimeStepping oder Ereignisbasiert.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
                 <xs:element name="minimalPressureDrop" type="pv:pressureScalar">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
@@ -1236,9 +1253,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="secondSurfaceVelocity" minOccurs="0">
@@ -1248,9 +1266,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="gapLength" minOccurs="0">
@@ -1260,9 +1279,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1297,9 +1317,10 @@
           </xs:element>
           <xs:element name="planeLeakagePressureLoss">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="PlaneLeakagePressureLoss"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1334,9 +1355,10 @@
           </xs:element>
           <xs:element name="circularLeakagePressureLoss">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="CircularLeakagePressureLoss"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1385,9 +1407,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="secondSurfaceVelocity" minOccurs="0">
@@ -1397,9 +1420,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="gapLength" minOccurs="0">
@@ -1409,9 +1433,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1446,9 +1471,10 @@
           </xs:element>
           <xs:element name="planeLeakagePressureLoss">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="PlaneLeakagePressureLoss"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1483,9 +1509,10 @@
           </xs:element>
           <xs:element name="circularLeakagePressureLoss">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="CircularLeakagePressureLoss"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1642,7 +1669,7 @@
         <xs:sequence>
           <xs:element name="function">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
@@ -1650,7 +1677,8 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1766,9 +1794,10 @@
         <xs:sequence>
           <xs:element name="pressureFunction">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1913,7 +1942,7 @@
         <xs:sequence>
           <xs:element name="function">
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
@@ -1921,7 +1950,8 @@
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -2058,10 +2088,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:element ref="mbsim:Function">
-                </xs:element>
-              </xs:sequence>
+              <xs:choice>
+                <xs:element ref="mbsim:Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="minimalRelativeAlpha" type="pv:nounitScalar">
@@ -2093,9 +2123,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="inflowP">
@@ -2199,13 +2230,16 @@
                 <xs:element name="checkvalvePressureLoss">
                   <xs:complexType>
                     <xs:sequence>
-                      <xs:element ref="CheckvalveClosablePressureLoss">
-                        <xs:annotation>
-                          <xs:documentation xml:lang="de" xmlns="">
-                            Druckverlust des Rückschlagventils.
-                          </xs:documentation>
-                        </xs:annotation>
-                      </xs:element>
+                      <xs:choice>
+                        <xs:element ref="CheckvalveClosablePressureLoss">
+                          <xs:annotation>
+                            <xs:documentation xml:lang="de" xmlns="">
+                              Druckverlust des Rückschlagventils.
+                            </xs:documentation>
+                          </xs:annotation>
+                        </xs:element>
+                        <xs:element ref="pv:Embed"/>
+                      </xs:choice>
                       <xs:element name="minimalXOpen" type="pv:lengthScalar">
                         <xs:annotation>
                           <xs:documentation xml:lang="de" xmlns="">
@@ -2268,9 +2302,10 @@
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
-                    <xs:sequence>
+                    <xs:choice>
                       <xs:element ref="mbsim:Function"/>
-                    </xs:sequence>
+                      <xs:element ref="pv:Embed"/>
+                    </xs:choice>
                   </xs:complexType> 
                 </xs:element>
                 <xs:element name="unloadedLength" type="pv:lengthScalar" minOccurs="0">
@@ -2298,9 +2333,10 @@
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
-                    <xs:sequence>
+                    <xs:choice>
                       <xs:element ref="mbsim:GeneralizedForceLaw"/>
-                    </xs:sequence>
+                      <xs:element ref="pv:Embed"/>
+                    </xs:choice>
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="contactImpactLaw">
@@ -2310,9 +2346,10 @@
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="mbsim:GeneralizedImpactLaw" minOccurs="0"/>
-                    </xs:sequence>
+                    <xs:choice minOccurs="0">
+                      <xs:element ref="mbsim:GeneralizedImpactLaw"/>
+                      <xs:element ref="pv:Embed"/>
+                    </xs:choice>
                   </xs:complexType>
                 </xs:element>
               </xs:sequence> 
@@ -2335,9 +2372,10 @@
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
-                    <xs:sequence>
+                    <xs:choice>
                       <xs:element ref="mbsim:GeneralizedForceLaw"/>
-                    </xs:sequence>
+                      <xs:element ref="pv:Embed"/>
+                    </xs:choice>
                   </xs:complexType>
                 </xs:element>
                 <xs:element name="contactImpactLaw">
@@ -2347,9 +2385,10 @@
                     </xs:documentation>
                   </xs:annotation>
                   <xs:complexType>
-                    <xs:sequence>
-                      <xs:element ref="mbsim:GeneralizedImpactLaw" minOccurs="0"/>
-                    </xs:sequence>
+                    <xs:choice minOccurs="0">
+                      <xs:element ref="mbsim:GeneralizedImpactLaw"/>
+                      <xs:element ref="pv:Embed"/>
+                    </xs:choice>
                   </xs:complexType>
                 </xs:element>
               </xs:sequence> 

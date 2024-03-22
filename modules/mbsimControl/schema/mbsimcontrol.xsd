@@ -361,9 +361,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -832,9 +833,10 @@
               Funktion
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -911,9 +913,10 @@
               Systemfunktion
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="outputFunction" minOccurs="0">
@@ -921,9 +924,10 @@
               Ausgabefunktion
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1053,12 +1057,10 @@
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
-              <xs:sequence>
-                <xs:choice>
-                  <xs:element ref="ombv:IvScreenAnnotation"/>
-                  <xs:element ref="pv:Embed"/>
-                </xs:choice>
-              </xs:sequence>
+              <xs:choice>
+                <xs:element ref="ombv:IvScreenAnnotation"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
         </xs:sequence>
@@ -1323,9 +1325,10 @@
               Anregungsamplituden der Eingänge als Funktion der Anregungsfrequenz.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="excitationPhaseFunction" minOccurs="0">
@@ -1333,9 +1336,10 @@
               Phasenverschiebungen der Eingänge als Funktion der Anregungsfrequenz.
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:sequence>
+              <xs:choice>
                 <xs:element ref="mbsim:Function"/>
-              </xs:sequence>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
             </xs:complexType>
           </xs:element>
           <xs:element name="visualizeNormalModes" minOccurs="0">
