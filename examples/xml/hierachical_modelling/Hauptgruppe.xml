@@ -36,7 +36,9 @@
       <mass><!-- comment for mass -->m</mass>
       <inertiaTensor>[1,0,0 ; 0,1,0 ; 0,0,1]</inertiaTensor>
       <stateDependentTranslation>
-        <TranslationAlongYAxis/>
+        <pv:Embed><!-- just to check Embed for a Function element-->
+          <TranslationAlongYAxis/>
+        </pv:Embed>
       </stateDependentTranslation>
       <frames/>
       <contours/>
