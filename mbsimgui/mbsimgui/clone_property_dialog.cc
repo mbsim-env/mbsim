@@ -42,10 +42,11 @@ namespace MBSimGUI {
     DOMElement *embed = item->getEmbedXMLElement();
     if(embed) {
       clone->setActive(E(embed)->hasAttribute("count"));
-      if(E(embed)->hasAttribute("count")) static_cast<CloneWidget*>(clone->getWidget())->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
+      auto cw = static_cast<CloneWidget*>(clone->getWidget());
+      if(E(embed)->hasAttribute("count")) cw->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
       oldCounterName=QString::fromStdString(E(embed)->getAttribute("counterName"));
-      if(E(embed)->hasAttribute("counterName")) static_cast<CloneWidget*>(clone->getWidget())->setCounterName(oldCounterName);
-      if(E(embed)->hasAttribute("onlyif")) static_cast<CloneWidget*>(clone->getWidget())->setOnlyif(QString::fromStdString(E(embed)->getAttribute("onlyif")));
+      if(E(embed)->hasAttribute("counterName")) cw->setCounterName(oldCounterName);
+      if(E(embed)->hasAttribute("onlyif")) cw->setOnlyif(QString::fromStdString(E(embed)->getAttribute("onlyif")));
     }
     return parent;
   }
@@ -55,9 +56,11 @@ namespace MBSimGUI {
     DOMElement *embedNode = item->getEmbedXMLElement();
     if(clone->isActive()) {
       if(not embedNode) embedNode = item->createEmbedXMLElement();
-      E(embedNode)->setAttribute("count",static_cast<CloneWidget*>(clone->getWidget())->getCount().toStdString());
-      E(embedNode)->setAttribute("counterName",static_cast<CloneWidget*>(clone->getWidget())->getCounterName().toStdString());
-      E(embedNode)->setAttribute("onlyif",static_cast<CloneWidget*>(clone->getWidget())->getOnlyif().toStdString());
+      auto cw = static_cast<CloneWidget*>(clone->getWidget());
+      E(embedNode)->setAttribute("count",cw->getCount().toStdString());
+      if(!cw->getCounterName().isEmpty())
+        E(embedNode)->setAttribute("counterName",cw->getCounterName().toStdString());
+      E(embedNode)->setAttribute("onlyif",cw->getOnlyif().toStdString());
     }
     else if(embedNode) {
       E(embedNode)->removeAttribute("count");
