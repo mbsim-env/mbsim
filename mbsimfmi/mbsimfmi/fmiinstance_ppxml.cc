@@ -43,39 +43,15 @@ namespace MBSimFMI {
     // init the validating parser with the mbsimxml schema file
     msg(Debug)<<"Create MBSim XML schema file including all modules."<<endl;
     auto xmlCatalog=getMBSimXMLCatalog();
-    std::shared_ptr<MBXMLUtils::DOMParser> validatingParser=DOMParser::create(xmlCatalog->getDocumentElement());
-  
-    // load MBSim project XML document
-    msg(Debug)<<"Read MBSim XML model file."<<endl;
-    std::shared_ptr<xercesc::DOMDocument> doc=validatingParser->parse(mbsimxmlfile, nullptr, false);
-    xercesc::DOMElement *ele=doc->getDocumentElement();
 
-    // create a clean evaluator (get the evaluator name first form the dom)
-    string evalName="octave"; // default evaluator
-    xercesc::DOMElement *evaluator;
-    if(E(ele)->getTagName()==PV%"Embed") {
-      // if the root element IS A Embed than the <evaluator> element is the first child of the
-      // first (none pv:Parameter) child of the root element
-      auto r=ele->getFirstElementChild();
-      if(E(r)->getTagName()==PV%"Parameter")
-        r=r->getNextElementSibling();
-      evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
-    }
-    else
-      // if the root element IS NOT A Embed than the <evaluator> element is the first child root element
-      evaluator=E(ele)->getFirstElementChildNamed(PV%"evaluator");
-    if(evaluator)
-      evalName=X()%E(evaluator)->getFirstTextChild()->getData();
-    shared_ptr<Eval> eval=Eval::createEvaluator(evalName);
-
-    // set param according data in var
-    std::shared_ptr<Preprocess::ParamSet> param=std::make_shared<Preprocess::ParamSet>();
-    convertVariableToParamSet(varSim.size(), var, param, eval);
-
-    // preprocess XML file
-    vector<path> dependencies;
     msg(Debug)<<"Preprocess MBSim XML model."<<endl;
-    Preprocess::preprocess(validatingParser, eval, dependencies, ele, param);
+    auto param=std::make_shared<Preprocess::ParamSet>();
+    Preprocess preprocess(mbsimxmlfile, xmlCatalog->getDocumentElement());
+    auto eval = preprocess.getEvaluator();
+    convertVariableToParamSet(varSim.size(), var, param, eval); // set param according data in var
+    preprocess.setParam(param);
+    auto doc = preprocess.processAndGetDocument();
+    auto ele = doc->getDocumentElement();
 
     // convert the parameter set from the mbxmlutils preprocessor to a "Variable" vector
     msg(Debug)<<"Convert XML parameters to FMI parameters."<<endl;

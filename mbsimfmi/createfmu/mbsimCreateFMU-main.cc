@@ -202,40 +202,18 @@ int main(int argc, char *argv[]) {
 
     // Create dss from XML file
     if(xmlFile) {
-      // init the validating parser with the mbsimxml schema file
       cout<<"Create MBSimXML XML schema including all modules."<<endl;
       auto xmlCatalog=getMBSimXMLCatalog();
 
-      // create parser (a validating parser for XML input and a none validating parser for shared library input)
-      cout<<"Create validating XML parser."<<endl;
-      std::shared_ptr<DOMParser> parser=DOMParser::create(xmlCatalog->getDocumentElement());
-
-      // load MBSim project XML document
-      cout<<"Load MBSim model from XML project file."<<endl;
-      std::shared_ptr<DOMDocument> modelDoc=parser->parse(inputFilename, &dependencies, false);
-      DOMElement *modelEle=modelDoc->getDocumentElement();
-
-      // create a clean evaluator (get the evaluator name first form the dom)
-      DOMElement *evaluator;
-      if(E(modelEle)->getTagName()==PV%"Embed") {
-        // if the root element IS A Embed than the <evaluator> element is the first child of the
-        // first (none pv:Parameter) child of the root element
-        auto r=modelEle->getFirstElementChild();
-        if(E(r)->getTagName()==PV%"Parameter")
-          r=r->getNextElementSibling();
-        evaluator=E(r)->getFirstElementChildNamed(PV%"evaluator");
-      }
-      else
-        // if the root element IS NOT A Embed than the <evaluator> element is the first child root element
-        evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
-      if(evaluator)
-        evalName=X()%E(evaluator)->getFirstTextChild()->getData();
-      eval=Eval::createEvaluator(evalName, &dependencies);
-
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
-      std::shared_ptr<Preprocess::ParamSet> param=std::make_shared<Preprocess::ParamSet>();
-      Preprocess::preprocess(parser, eval, dependencies, modelEle, param);
+      Preprocess preprocess(inputFilename, xmlCatalog->getDocumentElement());
+      auto modelDoc = preprocess.processAndGetDocument();
+      auto modelEle = modelDoc->getDocumentElement();
+      dependencies = preprocess.getDependencies();
+      eval = preprocess.getEvaluator();
+      evalName = eval->getName();
+      auto param = preprocess.getParam();
 
       // convert the parameter list from the mbxmlutils preprocessor to a Variable vector
       convertParamSetToVariable(param, xmlParam, eval);
@@ -259,16 +237,6 @@ int main(int argc, char *argv[]) {
       var.insert(var.end(), xmlParam.begin(), xmlParam.end());
 
       if(xmlParam.empty()) {
-        // adapt the evaluator in the dom (reset evaluator because it may change if the root element is a Embed)
-        evaluator=E(modelEle)->getFirstElementChildNamed(PV%"evaluator");
-        if(evaluator)
-          E(evaluator)->getFirstTextChild()->setData(X()%"xmlflat");
-        else {
-          evaluator=D(modelDoc)->createElement(PV%"evaluator");
-          evaluator->appendChild(modelDoc->createTextNode(X()%"xmlflat"));
-          modelEle->insertBefore(evaluator, modelEle->getFirstChild());
-        }
-
         cout<<"Copy preprocessed XML model file to FMU."<<endl;
         // no parameters -> save preprocessed model to FMU
         string ppModelStr;
