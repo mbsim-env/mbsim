@@ -34,11 +34,11 @@ namespace MBSimGUI {
 
   void FlexibleBodyTool::fe() {
     MatV R;
-    string str = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->getWidget<FileWidget>()->getFile(true).toStdString();
+    string str = page<FiniteElementsPage>(PageFiniteElements)->nodes->getWidget<FileWidget>()->getFile(true).toStdString();
     if(!str.empty())
       R <<= readMat(str);
 
-    auto *list = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget<ListWidget>();
+    auto *list = page<FiniteElementsPage>(PageFiniteElements)->elements->getWidget<ListWidget>();
     for(int i=0; i<list->getSize(); i++) {
       auto type_ = list->getWidget<FiniteElementsDataWidget>(i)->getType().toStdString();
       type_ = type_.substr(1,type_.size()-2);
@@ -63,11 +63,11 @@ namespace MBSimGUI {
       }
     }
 
-    auto E = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto E = page<FiniteElementsPage>(PageFiniteElements)->E->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
-    auto nu = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto nu = page<FiniteElementsPage>(PageFiniteElements)->nu->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
-    auto rho = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto rho = page<FiniteElementsPage>(PageFiniteElements)->rho->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
     int max = 0;
     if(R.cols()==3)

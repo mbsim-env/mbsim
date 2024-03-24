@@ -781,7 +781,7 @@ namespace MBSimGUI {
       auto pageList = pageIds();
       for(int i=0; i<pageList.size(); i++) {
 	if(hasVisitedPage(pageList.at(i)))
-	  static_cast<WizardPage*>(page(pageList.at(i)))->writeXMLFile(element);
+	  page<WizardPage>(pageList.at(i))->writeXMLFile(element);
       }
       mw->serializer->writeToURI(doc, MBXMLUtils::X()%file.toStdString());
     }
@@ -798,20 +798,20 @@ namespace MBSimGUI {
       auto pageList = pageIds();
       vector<bool> pageActive(pageList.size());
       for(int i=0; i<pageList.size(); i++)
-	pageActive[i] = static_cast<WizardPage*>(page(pageList.at(i)))->initializeUsingXML(element);
+	pageActive[i] = page<WizardPage>(pageList.at(i))->initializeUsingXML(element);
       for(size_t i=0; i<4; i++) {
 	if(pageActive[i+1])
-	  static_cast<FirstPage*>(page(PageFirst))->rb[i]->setChecked(true);
+	  page<FirstPage>(PageFirst)->rb[i]->setChecked(true);
       }
       for(size_t i=0; i<2; i++) {
 	if(pageActive[i+7])
-	  static_cast<ReductionMethodsPage*>(page(PageRedMeth))->rb[i]->setChecked(true);
+	  page<ReductionMethodsPage>(PageRedMeth)->rb[i]->setChecked(true);
       }
     }
   }
 
   QString FlexibleBodyTool::getInputDataFile() const {
-    return static_cast<LastPage*>(page(PageLast))->getFile(); 
+    return page<LastPage>(PageLast)->getFile(); 
   }
 
 }

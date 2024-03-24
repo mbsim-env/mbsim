@@ -241,10 +241,10 @@ namespace MBSimGUI {
 
   void FlexibleBodyTool::createSingleInterfaceNodes() {
     int nM = U.cols();
-    auto *list = static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget<ListWidget>();
+    auto *list = page<ComponentModeSynthesisPage>(PageCMS)->idata->getWidget<ListWidget>();
     FlexibleBodyTool::TypeOfConstraint typeOfConstraint = FlexibleBodyTool::distributing;
-    if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->isActive()) {
-      auto str = static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->getWidget<TextChoiceWidget>()->getText();
+    if(page<ComponentModeSynthesisPage>(PageCMS)->typeOfConstraint->isActive()) {
+      auto str = page<ComponentModeSynthesisPage>(PageCMS)->typeOfConstraint->getWidget<TextChoiceWidget>()->getText();
       if(str=="\"distributing\"") typeOfConstraint=FlexibleBodyTool::distributing;
       else if(str=="\"kinematic\"") typeOfConstraint=FlexibleBodyTool::kinematic;
     }

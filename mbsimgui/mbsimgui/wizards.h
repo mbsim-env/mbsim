@@ -191,6 +191,17 @@ namespace MBSimGUI {
   class Wizard : public QWizard {
     public:
       Wizard(QWidget *parent=nullptr) : QWizard(parent) { }
+
+      template<class PageType>
+      PageType* page(int i) const {
+#ifdef NDEBUG
+        return static_cast<PageType*>(QWizard::page(i));
+#else
+        auto *pageType = dynamic_cast<PageType*>(QWizard::page(i));
+        assert(pageType);
+        return pageType;
+#endif
+      }
     protected:
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;

@@ -28,8 +28,8 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
  void FlexibleBodyTool::ombv() {
-    if(static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->isActive()) {
-      string str = static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->getWidget<FileWidget>()->getFile(true).toStdString();
+    if(page<OpenMBVPage>(PageOMBV)->ombvIndices->isActive()) {
+      string str = page<OpenMBVPage>(PageOMBV)->ombvIndices->getWidget<FileWidget>()->getFile(true).toStdString();
       MatV ombvIndices;
       if(!str.empty())
 	ombvIndices <<= readMat(str);

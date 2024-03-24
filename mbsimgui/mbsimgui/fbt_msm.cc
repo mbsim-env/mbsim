@@ -28,10 +28,10 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::msm() {
-    string str = static_cast<ModeShapesPage*>(page(PageModeShapes))->V->getWidget<FileWidget>()->getFile(true).toStdString();
+    string str = page<ModeShapesPage>(PageModeShapes)->V->getWidget<FileWidget>()->getFile(true).toStdString();
     if(!str.empty())
       U <<= readMat(str);
-    str = static_cast<ModeShapesPage*>(page(PageModeShapes))->S->getWidget<FileWidget>()->getFile(true).toStdString();
+    str = page<ModeShapesPage>(PageModeShapes)->S->getWidget<FileWidget>()->getFile(true).toStdString();
     if(!str.empty())
       S <<= readMat(str);
   }

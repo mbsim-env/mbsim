@@ -30,7 +30,7 @@ namespace MBSimGUI {
   void FlexibleBodyTool::calculix() {
     net = 3;
     ner = 0;
-    string resultFileName = static_cast<CalculixPage*>(page(PageCalculix))->file->getWidget<FileWidget>()->getFile(true).toStdString();
+    string resultFileName = page<CalculixPage>(PageCalculix)->file->getWidget<FileWidget>()->getFile(true).toStdString();
     string jobname = resultFileName.substr(0,resultFileName.length()-4);
 
     ifstream isDOF(jobname+".dof");
