@@ -41,7 +41,7 @@ namespace MBSimGUI {
     name->getWidget<TextWidget>()->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     DOMElement *embed = item->getEmbedXMLElement();
     if(embed) {
-      clone->setActive(E(embed)->hasAttribute("count"));
+      clone->setActive(!E(embed)->hasAttribute("count") || E(embed)->getAttribute("count")!="0");
       auto cw = clone->getWidget<CloneWidget>();
       if(E(embed)->hasAttribute("count")) cw->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
       oldCounterName=QString::fromStdString(E(embed)->getAttribute("counterName"));
@@ -57,10 +57,12 @@ namespace MBSimGUI {
     if(clone->isActive()) {
       if(not embedNode) embedNode = item->createEmbedXMLElement();
       auto cw = clone->getWidget<CloneWidget>();
-      E(embedNode)->setAttribute("count",cw->getCount().toStdString());
+      if(!cw->getCount().isEmpty())
+        E(embedNode)->setAttribute("count",cw->getCount().toStdString());
       if(!cw->getCounterName().isEmpty())
         E(embedNode)->setAttribute("counterName",cw->getCounterName().toStdString());
-      E(embedNode)->setAttribute("onlyif",cw->getOnlyif().toStdString());
+      if(!cw->getOnlyif().isEmpty())
+        E(embedNode)->setAttribute("onlyif",cw->getOnlyif().toStdString());
     }
     else if(embedNode) {
       E(embedNode)->removeAttribute("count");

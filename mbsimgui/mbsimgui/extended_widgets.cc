@@ -50,7 +50,9 @@ namespace MBSimGUI {
   optional<QPixmap> ExtWidget::expandedPixmap, ExtWidget::collapsedPixmap;
   optional<QIcon> ExtWidget::commentIcon, ExtWidget::noCommentIcon;
 
-  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_, bool comment) : checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
+  ExtWidget::ExtWidget(const QString &name, Widget *widget_, bool checkable_, bool active, FQN xmlName_, bool comment,
+                       const QString &defaultEmployed) : 
+                       checkable(checkable_), checked(active), widget(widget_), xmlName(std::move(xmlName_)) {
     if(xmlName!=FQN()) comment = true;
     if(!expandedPixmap) {
       auto iconPath(MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons");
@@ -78,7 +80,7 @@ namespace MBSimGUI {
       iconLabel->setPixmap(checked ? *expandedPixmap : *collapsedPixmap);
       expandableLayout->addWidget(iconLabel);
       expandableLayout->addWidget(new QLabel(name));
-      defaultLabel = new QLabel("(default employed)");
+      defaultLabel = new QLabel(defaultEmployed);
       defaultLabel->setDisabled(true);
       expandableLayout->addWidget(defaultLabel);
       defaultLabel->setVisible(not active);

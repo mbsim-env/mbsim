@@ -48,22 +48,9 @@ namespace MBSimGUI {
   }
 
   bool EmbedItemData::isActive() {
-    if(not embed or not E(embed)->hasAttribute("count"))
+    if(not embed or not E(embed)->hasAttribute("count") or E(embed)->getAttribute("count")!="0")
       return true;
-    mw->updateParameters(this);
-    bool active = true;
-    try {
-      active = mw->eval->cast<CodeString>(mw->eval->stringToValue(E(embed)->getAttribute("count"),element,true))!="0";
-    }
-    catch(DOMEvalException &ex) {
-      mw->setExitBad();
-      cerr << ex.getMessage() << endl;
-    }
-    catch(...) {
-      mw->setExitBad();
-      cerr << "Unknown exception" << endl;
-    }
-    return active;
+    return false;
   }
 
   void EmbedItemData::createParameters() {

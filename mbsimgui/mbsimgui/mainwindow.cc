@@ -1017,7 +1017,7 @@ namespace MBSimGUI {
             eval->addParam(counterName+"_count", eval->create(1.0));
             parameterLevels.back().counterName = counterName;
             parameterLevels.back().countStr = E(parent->getEmbedXMLElement())->getAttribute("count");
-            parameterLevels.back().onlyIfStr = E(parent->getEmbedXMLElement())->getAttribute("onlyIf");
+            parameterLevels.back().onlyIfStr = E(parent->getEmbedXMLElement())->getAttribute("onlyif");
           }
 
           eval->addParamSet(ele);
@@ -1953,7 +1953,7 @@ namespace MBSimGUI {
     else
       setWindowModified(true);
     if(enable) {
-      // try to restore the count from the processing instruction EnabledCount or use 1 as count
+      // - if "MBSimGUI_EnabledCount" ProcessingInstruction exists copy it to "count" Attribute
       string count;
       auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
       if(enabledCount) {
@@ -1968,9 +1968,10 @@ namespace MBSimGUI {
       }
     }
     else {
+      // - copy "count" Attribute to "MBSimGUI_EnabledCount" ProcessingInstruction
+      // - set "count" Attribute = 0
       if(not embedNode)
         embedNode = element->createEmbedXMLElement();
-      // save current count to processing instruction and set count to 0
       if(E(embedNode)->hasAttribute("count")) {
         auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
         if(enabledCount)
@@ -1982,7 +1983,7 @@ namespace MBSimGUI {
         }
       }
       E(embedNode)->setAttribute("count","0");
-      if(!E(embedNode)->hasAttribute("counterName"))
+      if(!E(embedNode)->hasAttribute("counterName")) // if we set a count Attribute then there MUST be also a counterName Attribute
         E(embedNode)->setAttribute("counterName","MBXMLUtils_disabled");
     }
     element->maybeRemoveEmbedXMLElement();

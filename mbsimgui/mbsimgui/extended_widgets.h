@@ -47,7 +47,7 @@ namespace MBSimGUI {
     Q_OBJECT
 
     public:
-      ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="", bool comment=false);
+      ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="", bool comment=false, const QString &defaultEmployed="(default employed)");
       int getStretchHint() const override { return widget->getStretchHint(); }
       void resize_(int m, int n) override { if(isActive()) widget->resize_(m,n); }
       void setActive(bool active);

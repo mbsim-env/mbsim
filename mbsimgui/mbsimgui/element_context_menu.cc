@@ -82,7 +82,16 @@ namespace MBSimGUI {
       connect(action,&QAction::triggered,mw,&MainWindow::removeElement);
       addAction(action);
       addSeparator();
-      action=new QAction(QIcon::fromTheme("edit-copy"), "Array/Pattern", this);
+
+      bool embedActive = false;
+      auto embedEle = element->getEmbedXMLElement();
+      if(embedEle) {
+        bool hasEmbedCount = MBXMLUtils::E(embedEle)->hasAttribute("count");
+        if(!hasEmbedCount || MBXMLUtils::E(embedEle)->getAttribute("count")!="0")
+          embedActive = true;
+      }
+      action=new QAction(Utils::QIconCached(QString::fromStdString((
+                 MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/(embedActive ? "embed-active.svg" : "embed.svg")).string())), "Array/Pattern", this);
       action->setToolTip("Create/Edit the array/pattern properties of this element using the XML 'Embed' functionality.\n"
                          "With the array/pattern functionality an element can be duplicated to an array/pattern of N elements.");
       connect(action,&QAction::triggered,this,[=](){ mw->openCloneEditor(); });
