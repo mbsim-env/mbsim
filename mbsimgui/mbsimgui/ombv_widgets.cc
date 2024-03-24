@@ -521,11 +521,11 @@ namespace MBSimGUI {
     OMBVObjectWidget::initializeUsingXML(element);
     if(E(element)->hasAttribute("pointSize")) {
       pointSize->setActive(true);
-      pointSize->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(QString::fromStdString(E(element)->getAttribute("pointSize")));
+      pointSize->getFirstWidget<PhysicalVariableWidget>()->setValue(QString::fromStdString(E(element)->getAttribute("pointSize")));
     }
     if(E(element)->hasAttribute("lineWidth")) {
       lineWidth->setActive(true);
-      lineWidth->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(QString::fromStdString(E(element)->getAttribute("lineWidth")));
+      lineWidth->getFirstWidget<PhysicalVariableWidget>()->setValue(QString::fromStdString(E(element)->getAttribute("lineWidth")));
     }
     return element;
   }
@@ -533,9 +533,9 @@ namespace MBSimGUI {
   DOMElement* OMBVBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
     if(pointSize->isActive())
-      E(e)->setAttribute("pointSize", pointSize->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue().toStdString());
+      E(e)->setAttribute("pointSize", pointSize->getFirstWidget<PhysicalVariableWidget>()->getValue().toStdString());
     if(lineWidth->isActive())
-      E(e)->setAttribute("lineWidth", lineWidth->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue().toStdString());
+      E(e)->setAttribute("lineWidth", lineWidth->getFirstWidget<PhysicalVariableWidget>()->getValue().toStdString());
     return e;
   }
 
@@ -659,7 +659,7 @@ namespace MBSimGUI {
   FrustumWidget::FrustumWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
     vector<QString> r(3);
     r[2] = "0.5";
-    trans->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VecWidget>()->setVec(r);
+    trans->getFirstWidget<VecWidget>()->setVec(r);
 
     base = new ExtWidget("Base radius",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"baseRadius");
     layout->addWidget(base);

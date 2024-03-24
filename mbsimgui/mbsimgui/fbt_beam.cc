@@ -28,19 +28,19 @@ using namespace fmatvec;
 namespace MBSimGUI {
 
   void FlexibleBodyTool::beam() {
-    int nN = page<FlexibleBeamPage>(PageFlexibleBeam)->n->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
-    auto l = page<FlexibleBeamPage>(PageFlexibleBeam)->l->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
-    auto A = page<FlexibleBeamPage>(PageFlexibleBeam)->A->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
-    auto I_ = page<FlexibleBeamPage>(PageFlexibleBeam)->I->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+    int nN = page<FlexibleBeamPage>(PageFlexibleBeam)->n->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
+    auto l = page<FlexibleBeamPage>(PageFlexibleBeam)->l->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto A = page<FlexibleBeamPage>(PageFlexibleBeam)->A->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto I_ = page<FlexibleBeamPage>(PageFlexibleBeam)->I->getFirstWidget<VariableWidget>()->getEvalMat();
     auto Iy = I_[0][0].toDouble();
     auto Iz = I_[1][0].toDouble();
     auto Iyz = I_[2][0].toDouble();
-    auto E = page<FlexibleBeamPage>(PageFlexibleBeam)->E->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
-    auto rho = page<FlexibleBeamPage>(PageFlexibleBeam)->rho->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
-    auto ten = page<FlexibleBeamPage>(PageFlexibleBeam)->ten->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
-    auto benz = page<FlexibleBeamPage>(PageFlexibleBeam)->benz->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
-    auto beny = page<FlexibleBeamPage>(PageFlexibleBeam)->beny->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
-    auto tor = page<FlexibleBeamPage>(PageFlexibleBeam)->tor->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
+    auto E = page<FlexibleBeamPage>(PageFlexibleBeam)->E->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto rho = page<FlexibleBeamPage>(PageFlexibleBeam)->rho->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto ten = page<FlexibleBeamPage>(PageFlexibleBeam)->ten->getFirstWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
+    auto benz = page<FlexibleBeamPage>(PageFlexibleBeam)->benz->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
+    auto beny = page<FlexibleBeamPage>(PageFlexibleBeam)->beny->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
+    auto tor = page<FlexibleBeamPage>(PageFlexibleBeam)->tor->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
     nodeTable.resize(nN+1);
     nodeNumbers.resize(nN);
     for(int i=0; i<nN; i++) {

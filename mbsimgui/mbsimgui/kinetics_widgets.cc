@@ -723,62 +723,62 @@ namespace MBSimGUI {
 	if(line.contains("INFLPRES")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  p->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  p->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("VERTICAL_STIFFNESS")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  cz->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  cz->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("VERTICAL_DAMPING")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  dz->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  dz->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LMX")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfMx->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfMx->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LMY")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfMy->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfMy->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LS")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfs->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfs->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LMUX")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfmux->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfmux->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LMUY")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfmuy->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfmuy->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LKX")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfkx->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfkx->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LKYC")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfkg->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfkg->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LKY")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfky->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfky->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LKZC")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  sfkm->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
+	  sfkm->getFirstWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
       } while(not fstr.atEnd());
     }

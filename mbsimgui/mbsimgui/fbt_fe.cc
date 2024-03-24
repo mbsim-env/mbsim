@@ -63,11 +63,11 @@ namespace MBSimGUI {
       }
     }
 
-    auto E = page<FiniteElementsPage>(PageFiniteElements)->E->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto E = page<FiniteElementsPage>(PageFiniteElements)->E->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
-    auto nu = page<FiniteElementsPage>(PageFiniteElements)->nu->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto nu = page<FiniteElementsPage>(PageFiniteElements)->nu->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
-    auto rho = page<FiniteElementsPage>(PageFiniteElements)->rho->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+    auto rho = page<FiniteElementsPage>(PageFiniteElements)->rho->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
     int max = 0;
     if(R.cols()==3)

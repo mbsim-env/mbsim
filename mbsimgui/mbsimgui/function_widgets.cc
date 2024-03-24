@@ -281,7 +281,7 @@ namespace MBSimGUI {
   }
 
   void CompositeFunctionWidget::updateWidget() {
-    int size = fo->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg1Size();
+    int size = fo->getFirstWidget<FunctionWidget>()->getArg1Size();
     fi->getWidget<FunctionWidget>()->resize_(size,1);
   }
 
@@ -294,14 +294,14 @@ namespace MBSimGUI {
 
   int CompositeFunctionWidget::getArg1Size() const {
     if(fi->getIndex()==0)
-      return fi->getWidget<ExtWidget>()->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg1Size();
+      return fi->getFirstWidget<FunctionWidget>()->getArg1Size();
     else
-      return fi->getWidget<ExtWidget>()->getWidget<ListWidget>()->getWidget<ChoiceWidget>(0)->getWidget<FunctionWidget>()->getArg1Size();
+      return fi->getFirstWidget<ListWidget>()->getWidget<ChoiceWidget>(0)->getWidget<FunctionWidget>()->getArg1Size();
   }
 
   void CompositeFunctionWidget::resize_(int m, int n) {
     fo->getWidget<ChoiceWidget>()->resize_(m,n);
-    fi->resize_(fo->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg1Size(),n);
+    fi->resize_(fo->getFirstWidget<FunctionWidget>()->getArg1Size(),n);
   }
 
   DOMElement* CompositeFunctionWidget::initializeUsingXML(DOMElement *element) {
@@ -488,7 +488,7 @@ namespace MBSimGUI {
     if(choice->getIndex()==0) {
       auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
       auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
-      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->cols());
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getFirstWidget<VariableWidget>()->cols());
     }
   }
 
@@ -498,7 +498,7 @@ namespace MBSimGUI {
       choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
     }
     else {
-      auto *choice_ = choice->getWidget<ExtWidget>()->getWidget<ChoiceWidget>();
+      auto *choice_ = choice->getFirstWidget<ChoiceWidget>();
       choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m+1);
     }
   }
@@ -537,7 +537,7 @@ namespace MBSimGUI {
     if(choice->getIndex()==0) {
       auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
       auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
-      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(2)->resize_(choice2_->getWidget<PhysicalVariableWidget>()->rows(),choice1_->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->rows());
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(2)->resize_(choice2_->getWidget<PhysicalVariableWidget>()->rows(),choice1_->getFirstWidget<VariableWidget>()->rows());
     }
   }
 
@@ -583,7 +583,7 @@ namespace MBSimGUI {
     if(choice->getIndex()==0) {
       auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
       auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
-      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->cols());
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getFirstWidget<VariableWidget>()->cols());
     }
   }
 
@@ -593,7 +593,7 @@ namespace MBSimGUI {
       choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
     }
     else {
-      auto *choice_ = choice->getWidget<ExtWidget>()->getWidget<ChoiceWidget>();
+      auto *choice_ = choice->getFirstWidget<ChoiceWidget>();
       choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m+1);
     }
   }
@@ -641,7 +641,7 @@ namespace MBSimGUI {
     if(choice->getIndex()==0) {
       auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
       auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
-      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(2)->resize_(choice2_->getWidget<PhysicalVariableWidget>()->rows(),choice1_->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->rows());
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(2)->resize_(choice2_->getWidget<PhysicalVariableWidget>()->rows(),choice1_->getFirstWidget<VariableWidget>()->rows());
     }
   }
 
@@ -678,12 +678,12 @@ namespace MBSimGUI {
     if(choice->getIndex()==0) {
       auto *choice_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
       if(choice_->getIndex()==0)
-        choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->getWidget<VecSizeVarWidget>()->size(),m);
+        choice->resize_(choice_->getFirstWidget<VecSizeVarWidget>()->size(),m);
     }
     else {
-      auto *choice_ = choice->getWidget<ExtWidget>()->getWidget<ChoiceWidget>();
+      auto *choice_ = choice->getFirstWidget<ChoiceWidget>();
       if(choice_->getIndex()==0)
-        choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->getWidget<MatRowsVarWidget>()->rows(),m+1);
+        choice->resize_(choice_->getFirstWidget<MatRowsVarWidget>()->rows(),m+1);
     }
   }
 
@@ -831,7 +831,7 @@ namespace MBSimGUI {
 
   void LinearElasticFunctionWidget::updateWidget() {
     if(D->isActive()) {
-      int size = K->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->rows();
+      int size = K->getFirstWidget<PhysicalVariableWidget>()->rows();
       D->resize_(size,size);
     }
   }

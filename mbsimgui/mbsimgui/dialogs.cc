@@ -1302,7 +1302,7 @@ namespace MBSimGUI {
   }
 
   void PlotFeatureDialog::setStatus(const QString &status_) {
-    status->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(status_);
+    status->getFirstWidget<PhysicalVariableWidget>()->setValue(status_);
   }
 
   void PlotFeatureDialog::setNamespace(const QString &ns_) {
@@ -1318,7 +1318,7 @@ namespace MBSimGUI {
   }
 
   QString PlotFeatureDialog::getStatus() const {
-    return status->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
+    return status->getFirstWidget<PhysicalVariableWidget>()->getValue();
   }
 
   QString PlotFeatureDialog::getNamespace() const {
@@ -1369,19 +1369,19 @@ namespace MBSimGUI {
   }
 
   void StateDialog::setName(const QString &name_) {
-    name->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(name_);
+    name->getFirstWidget<PhysicalVariableWidget>()->setValue(name_);
   }
 
   void StateDialog::setValue(const QString &value_) {
-    value->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(value_);
+    value->getFirstWidget<PhysicalVariableWidget>()->setValue(value_);
   }
 
   QString StateDialog::getName() const {
-    return name->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
+    return name->getFirstWidget<PhysicalVariableWidget>()->getValue();
   }
 
   QString StateDialog::getValue() const {
-    return value->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
+    return value->getFirstWidget<PhysicalVariableWidget>()->getValue();
   }
 
   void StateDialog::reset() {
@@ -1437,7 +1437,7 @@ namespace MBSimGUI {
   }
 
   void TransitionDialog::setThreshold(const QString &th_) {
-    th->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(th_);
+    th->getFirstWidget<PhysicalVariableWidget>()->setValue(th_);
   }
 
   QString TransitionDialog::getSource() const {
@@ -1453,7 +1453,7 @@ namespace MBSimGUI {
   }
 
   QString TransitionDialog::getThreshold() const {
-    return th->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
+    return th->getFirstWidget<PhysicalVariableWidget>()->getValue();
   }
 
   void TransitionDialog::setStringList(const vector<QString> &list) {

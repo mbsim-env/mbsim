@@ -80,6 +80,20 @@ namespace MBSimGUI {
 #endif
       }
 
+      // gets the first child widget which is of type WidgetType (asserts in debug builds)
+      // (this is only possible if all child widgets up to the searched widget hold only a single child widget; getWidget() is used!)
+      template<class WidgetType, bool AllowNullptr=false>
+      WidgetType* getFirstWidget() const {
+        auto *widget = getWidgetVirtual();
+        if constexpr (AllowNullptr)
+          return nullptr;
+        else
+          throw std::runtime_error("No child widget of specified type found!");
+        if(auto *widgetType = dynamic_cast<WidgetType*>(widget); widgetType)
+          return widgetType;
+        return widget->getFirstWidget<WidgetType>();
+      }
+
     private:
       virtual Widget* getWidgetVirtual() const { return nullptr; }
       virtual Widget* getWidgetVirtual(int i) const { return nullptr; }

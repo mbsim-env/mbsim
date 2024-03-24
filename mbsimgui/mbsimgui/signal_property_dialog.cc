@@ -416,9 +416,9 @@ namespace MBSimGUI {
     B->blockSignals(true);
     C->blockSignals(true);
     D->blockSignals(true);
-    int n = A->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->rows();
-    int m = B->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->cols();
-    int p = C->isActive()?C->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->rows():m;
+    int n = A->getFirstWidget<PhysicalVariableWidget>()->rows();
+    int m = B->getFirstWidget<PhysicalVariableWidget>()->cols();
+    int p = C->isActive()?C->getFirstWidget<PhysicalVariableWidget>()->rows():m;
     x0->resize_(n,1);
     B->resize_(n,m);
     C->resize_(p,n);
@@ -475,13 +475,13 @@ namespace MBSimGUI {
   void NonlinearTransferSystemPropertyDialog::updateWidget() {
     F->blockSignals(true);
     H->blockSignals(true);
-    int n = F->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg1Size();
-    int m = F->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg2Size();
+    int n = F->getFirstWidget<FunctionWidget>()->getArg1Size();
+    int m = F->getFirstWidget<FunctionWidget>()->getArg2Size();
     x0->resize_(n,1);
-    F->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->resize_(n,1);
+    F->getFirstWidget<FunctionWidget>()->resize_(n,1);
     if(H->isActive()) {
-      H->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->setArg1Size(n);
-      H->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->setArg2Size(m);
+      H->getFirstWidget<FunctionWidget>()->setArg1Size(n);
+      H->getFirstWidget<FunctionWidget>()->setArg2Size(m);
     }
     F->blockSignals(false);
     H->blockSignals(false);
@@ -524,7 +524,7 @@ namespace MBSimGUI {
   }
 
   void SignalOperationPropertyDialog::numberOfInputSignalsChanged() {
-    if((not multiplex->isActive()) or multiplex->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarFalse()) {
+    if((not multiplex->isActive()) or multiplex->getFirstWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarFalse()) {
       if(inputSignal->getWidget<BasicElementsOfReferenceWidget>()->getSize()==2 and (not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function2ArgWidgetFactory,true>()))
 	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
       else if(not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function1ArgWidgetFactory,true>())
@@ -533,7 +533,7 @@ namespace MBSimGUI {
   }
 
   void SignalOperationPropertyDialog::multiplexInputSignalsChanged() {
-    if(multiplex->isActive() and multiplex->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarTrue()) {
+    if(multiplex->isActive() and multiplex->getFirstWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarTrue()) {
       inputSignal->getWidget<BasicElementsOfReferenceWidget>()->setRange(1,100);
       if(not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function1ArgWidgetFactory,true>())
 	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));

@@ -314,7 +314,7 @@ namespace MBSimGUI {
 	ChoiceWidget* choiceWidgetij = ele[i][j]->getWidget<ChoiceWidget>();
 	if(i==j) {
 	  if(choiceWidgetij->getIndex()==0) {
-	    MatWidget* widgetii = choiceWidgetij->getWidget<PhysicalVariableWidget>()->getWidget<MatWidget>();
+	    MatWidget* widgetii = choiceWidgetij->getFirstWidget<MatWidget>();
 	    for(size_t k=0; k<widgetii->rows(); k++) {
 	      for(size_t l=0; l<widgetii->cols(); l++) {
 		if(k!=l)
@@ -326,8 +326,8 @@ namespace MBSimGUI {
 	else {
 	  ChoiceWidget* choiceWidgetji = ele[j][i]->getWidget<ChoiceWidget>();
 	  if(choiceWidgetij->getIndex()==0 and choiceWidgetji->getIndex()==0) {
-	    MatWidget* widgetij = choiceWidgetij->getWidget<PhysicalVariableWidget>()->getWidget<MatWidget>();
-	    MatWidget* widgetji = choiceWidgetji->getWidget<PhysicalVariableWidget>()->getWidget<MatWidget>();
+	    MatWidget* widgetij = choiceWidgetij->getFirstWidget<MatWidget>();
+	    MatWidget* widgetji = choiceWidgetji->getFirstWidget<MatWidget>();
 	    for(size_t k=0; k<widgetij->rows(); k++) {
 	      for(size_t l=0; l<widgetij->cols(); l++)
 		connect(widgetji->getLineEdit(k,l),&QLineEdit::textEdited,widgetij->getLineEdit(l,k),&QLineEdit::setText);
@@ -541,7 +541,7 @@ namespace MBSimGUI {
 
  vector<int> CMSDataWidget::getNodes() const {
     vector<int> inodes;
-    auto mat = nodes->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+    auto mat = nodes->getFirstWidget<VariableWidget>()->getEvalMat();
     inodes.resize(mat.size());
     for(size_t i=0; i<mat.size(); i++)
       inodes[i] = mat[i][0].toInt();
@@ -551,7 +551,7 @@ namespace MBSimGUI {
  vector<double> CMSDataWidget::getWeights() const {
     vector<double> w;
     if(weights->isActive()) {
-      auto mat = weights->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+      auto mat = weights->getFirstWidget<VariableWidget>()->getEvalMat();
       w.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	w[i] = mat[i][0].toDouble();
@@ -562,14 +562,14 @@ namespace MBSimGUI {
   bool CMSDataWidget::getReduceToSingleNode() const {
     bool reduceToNode = false;
     if(rtsn->isActive())
-      reduceToNode = rtsn->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
+      reduceToNode = rtsn->getFirstWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
     return reduceToNode;
   }
 
   vector<int> CMSDataWidget::getDof() const {
     vector<int> idof;
     if(dof->isActive()) {
-      auto mat = dof->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+      auto mat = dof->getFirstWidget<VariableWidget>()->getEvalMat();
       idof.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	idof[i] = mat[i][0].toInt();
@@ -584,7 +584,7 @@ namespace MBSimGUI {
 
   int CMSDataWidget::getSingleNodeNumber() const {
     if(snn->isActive()) {
-      auto mat = snn->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+      auto mat = snn->getFirstWidget<VariableWidget>()->getEvalMat();
       return mat[0][0].toInt();
     }
     else
@@ -594,7 +594,7 @@ namespace MBSimGUI {
   vector<double> CMSDataWidget::getPositionOfReferenceNode() const {
     vector<double> r;
     if(prf->isActive()) {
-      auto mat = prf->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+      auto mat = prf->getFirstWidget<VariableWidget>()->getEvalMat();
       r.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	r[i] = mat[i][0].toDouble();

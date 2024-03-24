@@ -76,11 +76,11 @@ namespace MBSimGUI {
     vector<vector<int>> bnodes(list->getSize());
     for(int i=0; i<list->getSize(); i++) {
       auto *bcw = list->getWidget<BoundaryConditionWidget>(i);
-      auto mat = bcw->getNodes()->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+      auto mat = bcw->getNodes()->getFirstWidget<VariableWidget>()->getEvalMat();
       bnodes[i].resize(mat.size());
       for(size_t j=0; j<mat.size(); j++)
 	bnodes[i][j] = mat[j][0].toInt();
-      mat = bcw->getDof()->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+      mat = bcw->getDof()->getFirstWidget<VariableWidget>()->getEvalMat();
       dof[i].resize(mat.size());
       for(size_t j=0; j<mat.size(); j++)
 	dof[i][j] = mat[j][0].toInt()-1;
@@ -118,7 +118,7 @@ namespace MBSimGUI {
 
     vector<int> nmodes;
     if(page<ComponentModeSynthesisPage>(PageCMS)->nmodes->isActive()) {
-      auto mat = page<ComponentModeSynthesisPage>(PageCMS)->nmodes->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
+      auto mat = page<ComponentModeSynthesisPage>(PageCMS)->nmodes->getFirstWidget<VariableWidget>()->getEvalMat();
       nmodes.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	nmodes[i] = mat[i][0].toInt();
