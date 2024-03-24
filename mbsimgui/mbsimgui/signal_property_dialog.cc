@@ -525,9 +525,9 @@ namespace MBSimGUI {
 
   void SignalOperationPropertyDialog::numberOfInputSignalsChanged() {
     if((not multiplex->isActive()) or multiplex->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarFalse()) {
-      if(inputSignal->getWidget<BasicElementsOfReferenceWidget>()->getSize()==2 and (not dynamic_cast<Function2ArgWidgetFactory*>(function->getWidget<ChoiceWidget>()->getWidgetFactory())))
+      if(inputSignal->getWidget<BasicElementsOfReferenceWidget>()->getSize()==2 and (not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function2ArgWidgetFactory,true>()))
 	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
-      else if(not dynamic_cast<Function1ArgWidgetFactory*>(function->getWidget<ChoiceWidget>()->getWidgetFactory()))
+      else if(not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function1ArgWidgetFactory,true>())
 	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));
     }
   }
@@ -535,12 +535,12 @@ namespace MBSimGUI {
   void SignalOperationPropertyDialog::multiplexInputSignalsChanged() {
     if(multiplex->isActive() and multiplex->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarTrue()) {
       inputSignal->getWidget<BasicElementsOfReferenceWidget>()->setRange(1,100);
-      if(not dynamic_cast<Function1ArgWidgetFactory*>(function->getWidget<ChoiceWidget>()->getWidgetFactory()))
+      if(not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function1ArgWidgetFactory,true>())
 	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));
     }
     else {
       inputSignal->getWidget<BasicElementsOfReferenceWidget>()->setRange(1,2);
-      if(inputSignal->getWidget<BasicElementsOfReferenceWidget>()->getSize()==2 and (not dynamic_cast<Function2ArgWidgetFactory*>(function->getWidget<ChoiceWidget>()->getWidgetFactory())))
+      if(inputSignal->getWidget<BasicElementsOfReferenceWidget>()->getSize()==2 and (not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function2ArgWidgetFactory,true>()))
 	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
     }
   }

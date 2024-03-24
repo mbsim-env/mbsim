@@ -89,12 +89,27 @@ namespace MBSimGUI {
       void setIndex(int i) { return comboBox->setCurrentIndex(i); }
       void resize_(int m, int n) override { widget->resize_(m,n); }
       void setWidgetFactory(WidgetFactory *factory_);
-      WidgetFactory* getWidgetFactory() const { return factory; }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       void defineWidget(int);
       QString getXMLComment(xercesc::DOMElement *element) override;
       void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
+
+      template<class WidgetFactoryType, bool DynamicCast=false>
+      WidgetFactoryType* getWidgetFactory() const {
+#ifdef NDEBUG
+        if constexpr(DynamicCast)
+          return dynamic_cast<WidgetFactoryType*>(factory);
+        else
+          return static_cast<WidgetFactoryType*>(factory);
+#else
+        auto *widgetFactoryType = dynamic_cast<WidgetFactoryType*>(factory);
+        if(!widgetFactoryType && DynamicCast)
+          return nullptr;
+        assert(widgetFactoryType);
+        return widgetFactoryType;
+#endif
+      }
 
     protected:
       QBoxLayout *layout;
