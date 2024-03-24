@@ -49,8 +49,8 @@ namespace MBSimGUI {
 	sigmahel[i] = sigs[i]*U;
     }
     else {
-      auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
-      auto nu = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+      auto E = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
+      auto nu = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
       sigmahel.resize(nN,Matrix<General,Fixed<6>,Var,double>(nM));
       Vec3 dNi(NONINIT);
       SqrMat3 J(NONINIT), LUJ(NONINIT);

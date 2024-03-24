@@ -28,13 +28,13 @@ namespace MBSimGUI {
 
   void FlexibleBodyTool::extfe() {
     MatV R;
-    string str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->getWidget())->getFile(true).toStdString();
+    string str = static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->nodes->getWidget<FileWidget>()->getFile(true).toStdString();
     if(!str.empty())
       R <<= readMat(str);
-    str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->mass->getWidget())->getFile(true).toStdString();
+    str = static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->mass->getWidget<FileWidget>()->getFile(true).toStdString();
     if(!str.empty())
       M <<= readMat(str);
-    str = static_cast<FileWidget*>(static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->stiff->getWidget())->getFile(true).toStdString();
+    str = static_cast<ExternalFiniteElementsPage*>(page(PageExtFE))->stiff->getWidget<FileWidget>()->getFile(true).toStdString();
     if(!str.empty())
       K <<= readMat(str);
 

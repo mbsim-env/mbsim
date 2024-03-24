@@ -51,13 +51,13 @@ namespace MBSimGUI {
     addTab("Visualization",1);
     visu = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,true,static_cast<InternalFrame*>(frame)->getXMLFrameName());
     addToTab("Visualization", visu);
-    static_cast<TextWidget*>(name->getWidget())->setReadOnly(true);
-    static_cast<TextWidget*>(name->getWidget())->setText(frame->getName());
+    name->getWidget<TextWidget>()->setReadOnly(true);
+    name->getWidget<TextWidget>()->setText(frame->getName());
   }
 
   DOMElement* InternalFramePropertyDialog::initializeUsingXML(DOMElement *parent) {
     visu->initializeUsingXML(getElement()->getParent()->getXMLElement());
-    static_cast<PlotFeatureWidget*>(plotFeature->getWidget())->initializeUsingXML2(getElement()->getParent()->getXMLElement());
+    plotFeature->getWidget<PlotFeatureWidget>()->initializeUsingXML2(getElement()->getParent()->getXMLElement());
     return parent;
   }
 
@@ -65,7 +65,7 @@ namespace MBSimGUI {
     item->removeXMLElements();
     DOMElement *ele = getElement()->getParent()->getXMLFrame();
     visu->writeXMLFile(getElement()->getParent()->getXMLElement(),ele);
-    static_cast<PlotFeatureWidget*>(plotFeature->getWidget())->writeXMLFile2(getElement()->getParent()->getXMLElement(),ele);
+    plotFeature->getWidget<PlotFeatureWidget>()->writeXMLFile2(getElement()->getParent()->getXMLElement(),ele);
     return nullptr;
   }
 

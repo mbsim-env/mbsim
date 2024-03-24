@@ -241,19 +241,19 @@ namespace MBSimGUI {
 
   void FlexibleBodyTool::createSingleInterfaceNodes() {
     int nM = U.cols();
-    auto *list = static_cast<ListWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget());
+    auto *list = static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget<ListWidget>();
     FlexibleBodyTool::TypeOfConstraint typeOfConstraint = FlexibleBodyTool::distributing;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->isActive()) {
-      auto str = static_cast<TextChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->getWidget())->getText();
+      auto str = static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->getWidget<TextChoiceWidget>()->getText();
       if(str=="\"distributing\"") typeOfConstraint=FlexibleBodyTool::distributing;
       else if(str=="\"kinematic\"") typeOfConstraint=FlexibleBodyTool::kinematic;
     }
     if(typeOfConstraint==distributing) {
       for(int i=0; i<list->getSize(); i++) {
-	auto reduceToNode = static_cast<CMSDataWidget*>(list->getWidget(i))->getReduceToSingleNode();
+	auto reduceToNode = list->getWidget<CMSDataWidget>(i)->getReduceToSingleNode();
 	if(reduceToNode) {
-	  auto inodes = static_cast<CMSDataWidget*>(list->getWidget(i))->getNodes();
-	  auto weights = static_cast<CMSDataWidget*>(list->getWidget(i))->getWeights();
+	  auto inodes = list->getWidget<CMSDataWidget>(i)->getNodes();
+	  auto weights = list->getWidget<CMSDataWidget>(i)->getWeights();
 	  if(weights.size()==0) {
 	    weights.resize(inodes.size());
 	    for(size_t j=0; j<weights.size(); j++)

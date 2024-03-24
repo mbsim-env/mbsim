@@ -48,7 +48,6 @@ namespace MBSimGUI {
 
     public:
       ExtWidget(const QString &name, Widget *widget_, bool checkable_=false, bool active=false, MBXMLUtils::FQN xmlName_="", bool comment=false);
-      Widget* getWidget() const { return widget; }
       int getStretchHint() const override { return widget->getStretchHint(); }
       void resize_(int m, int n) override { if(isActive()) widget->resize_(m,n); }
       void setActive(bool active);
@@ -73,6 +72,9 @@ namespace MBSimGUI {
 
     signals:
       void clicked(bool);
+
+    private:
+      Widget* getWidgetVirtual() const override { return widget; }
   };
 
   class ChoiceWidget : public Widget {
@@ -80,7 +82,6 @@ namespace MBSimGUI {
 
     public:
       ChoiceWidget(WidgetFactory *factory_, QBoxLayout::Direction dir=QBoxLayout::TopToBottom, int mode_=4);
-      Widget* getWidget() const { return widget; }
       int getStretchHint() const override { return widget ? widget->getStretchHint() : 0; }
       void updateWidget() override { widget->updateWidget(); }
       QString getName() const { return comboBox->currentText(); }
@@ -104,6 +105,9 @@ namespace MBSimGUI {
 
     signals:
       void comboChanged(int);
+
+    private:
+      Widget* getWidgetVirtual() const override { return widget; }
   };
 
   class ContainerWidget : public Widget {
@@ -113,7 +117,6 @@ namespace MBSimGUI {
 
       void resize_(int m, int n) override;
       void addWidget(Widget *widget_);
-      Widget* getWidget(int i) const { return widget[i]; }
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -121,6 +124,9 @@ namespace MBSimGUI {
     protected:
       QBoxLayout *layout;
       std::vector<Widget*> widget;
+
+    private:
+      Widget* getWidgetVirtual(int i) const override { return widget[i]; }
   };
 
   class ListWidget : public Widget {
@@ -131,7 +137,6 @@ namespace MBSimGUI {
       void resize_(int m, int n) override;
       int getSize() const;
       void setSize(int m);
-      Widget* getWidget(int i) const;
       void setRange(int minSize, int maxSize);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -149,6 +154,9 @@ namespace MBSimGUI {
       WidgetFactory *factory;
       QString name;
       int mode;
+
+    private:
+      Widget* getWidgetVirtual(int i) const override;
   };
 
   class ChoiceWidgetFactory : public WidgetFactory {

@@ -338,7 +338,7 @@ namespace MBSimGUI {
     parameterFile = new ExtWidget("Parameter file", new FileWidget("", "Open parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 0, false),true,false,"");
     layout->addWidget(parameterFile);
 
-    connect(static_cast<FileWidget*>(modelFile->getWidget()),&FileWidget::valueChanged,this,&LoadModelDialog::modelFileChanged);
+    connect(modelFile->getWidget<FileWidget>(),&FileWidget::valueChanged,this,&LoadModelDialog::modelFileChanged);
 
     pOpt = new QButtonGroup(this);
     radio1 = new QRadioButton("Import parameters");
@@ -368,11 +368,11 @@ namespace MBSimGUI {
   }
 
   QString LoadModelDialog::getModelFileName() const {
-    return static_cast<FileWidget*>(modelFile->getWidget())->getFile();
+    return modelFile->getWidget<FileWidget>()->getFile();
   }
 
   QString LoadModelDialog::getParameterFileName() const {
-    return parameterFile->isActive()?static_cast<FileWidget*>(parameterFile->getWidget())->getFile():"";
+    return parameterFile->isActive()?parameterFile->getWidget<FileWidget>()->getFile():"";
   }
 
   bool LoadModelDialog::referenceModel() const {
@@ -384,11 +384,11 @@ namespace MBSimGUI {
   }
 
   bool LoadModelDialog::getAbsoluteModelFilePath() const {
-    return static_cast<FileWidget*>(modelFile->getWidget())->getAbsolutePath();
+    return modelFile->getWidget<FileWidget>()->getAbsolutePath();
   }
 
   bool LoadModelDialog::getAbsoluteParameterFilePath() const {
-    return static_cast<FileWidget*>(parameterFile->getWidget())->getAbsolutePath();
+    return parameterFile->getWidget<FileWidget>()->getAbsolutePath();
   }
 
   void LoadModelDialog::showEvent(QShowEvent *event) {
@@ -408,12 +408,12 @@ namespace MBSimGUI {
     QString pFileName = fileName;
     pFileName.replace(pFileName.size()-2,1,'p');
     if(QFileInfo::exists(mw->getProjectDir().absoluteFilePath(pFileName))) {
-      static_cast<FileWidget*>(parameterFile->getWidget())->setFile(pFileName);
+      parameterFile->getWidget<FileWidget>()->setFile(pFileName);
       parameterFile->setActive(true);
       e->setActive(true);
     }
     else {
-      static_cast<FileWidget*>(parameterFile->getWidget())->setFile("");
+      parameterFile->getWidget<FileWidget>()->setFile("");
       parameterFile->setActive(false);
       e->setActive(false);
     }
@@ -435,7 +435,7 @@ namespace MBSimGUI {
     layout->addWidget(modelFile);
     if(param) {
       parameterFile = new ExtWidget("Parameter file", new FileWidget(pFileName, "Save parameter file", "MBSim parameter files (*.mbspx);;XML files (*.xml);;All files (*.*)", 1, false, false, QFileDialog::DontConfirmOverwrite),true,true,"");
-      connect(static_cast<FileWidget*>(modelFile->getWidget()),&FileWidget::valueChanged,this,&SaveModelDialog::modelFileChanged);
+      connect(modelFile->getWidget<FileWidget>(),&FileWidget::valueChanged,this,&SaveModelDialog::modelFileChanged);
       layout->addWidget(parameterFile);
     }
     else
@@ -449,11 +449,11 @@ namespace MBSimGUI {
   }
 
   QString SaveModelDialog::getModelFileName() const {
-    return static_cast<FileWidget*>(modelFile->getWidget())->getFile();
+    return modelFile->getWidget<FileWidget>()->getFile();
   }
 
   QString SaveModelDialog::getParameterFileName() const {
-    return (parameterFile and parameterFile->isActive())?static_cast<FileWidget*>(parameterFile->getWidget())->getFile():"";
+    return (parameterFile and parameterFile->isActive())?parameterFile->getWidget<FileWidget>()->getFile():"";
   }
 
   void SaveModelDialog::showEvent(QShowEvent *event) {
@@ -472,7 +472,7 @@ namespace MBSimGUI {
     QFileInfo fileInfo(fileName);
     QString pFileName = fileName;
     pFileName.replace(pFileName.size()-2,1,'p');
-    static_cast<FileWidget*>(parameterFile->getWidget())->setFile(pFileName);
+    parameterFile->getWidget<FileWidget>()->setFile(pFileName);
   }
 
   LoadParameterDialog::LoadParameterDialog() {
@@ -512,7 +512,7 @@ namespace MBSimGUI {
   }
 
   QString LoadParameterDialog::getParameterFileName() const {
-    return static_cast<FileWidget*>(parameterFile->getWidget())->getFile();
+    return parameterFile->getWidget<FileWidget>()->getFile();
   }
 
   bool LoadParameterDialog::referenceParameter() const {
@@ -520,7 +520,7 @@ namespace MBSimGUI {
   }
 
   bool LoadParameterDialog::getAbsoluteFilePath() const {
-    return static_cast<FileWidget*>(parameterFile->getWidget())->getAbsolutePath();
+    return parameterFile->getWidget<FileWidget>()->getAbsolutePath();
   }
 
   void LoadParameterDialog::showEvent(QShowEvent *event) {
@@ -556,7 +556,7 @@ namespace MBSimGUI {
   }
 
   QString SaveParameterDialog::getParameterFileName() const {
-    return static_cast<FileWidget*>(parameterFile->getWidget())->getFile();
+    return parameterFile->getWidget<FileWidget>()->getFile();
   }
 
   void SaveParameterDialog::showEvent(QShowEvent *event) {
@@ -1166,7 +1166,7 @@ namespace MBSimGUI {
   }
 
   QString CreateFMUDialog::getFileName() const {
-    return static_cast<FileWidget*>(file->getWidget())->getFile();
+    return file->getWidget<FileWidget>()->getFile();
   }
 
   bool CreateFMUDialog::cosim() const {
@@ -1294,47 +1294,47 @@ namespace MBSimGUI {
   }
 
   void PlotFeatureDialog::setType(const QString &type_) {
-    static_cast<TextChoiceWidget*>(type->getWidget())->setText(type_);
+    type->getWidget<TextChoiceWidget>()->setText(type_);
   }
 
   void PlotFeatureDialog::setValue(const QString &value_) {
-    static_cast<TextChoiceWidget*>(value->getWidget())->setText(value_);
+    value->getWidget<TextChoiceWidget>()->setText(value_);
   }
 
   void PlotFeatureDialog::setStatus(const QString &status_) {
-    static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(status->getWidget())->getWidget())->setValue(status_);
+    status->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(status_);
   }
 
   void PlotFeatureDialog::setNamespace(const QString &ns_) {
-    static_cast<TextChoiceWidget*>(ns->getWidget())->setText(ns_);
+    ns->getWidget<TextChoiceWidget>()->setText(ns_);
   }
 
   QString PlotFeatureDialog::getType() const {
-    return static_cast<TextChoiceWidget*>(type->getWidget())->getText();
+    return type->getWidget<TextChoiceWidget>()->getText();
   }
 
   QString PlotFeatureDialog::getValue() const {
-    return static_cast<TextChoiceWidget*>(value->getWidget())->getText();
+    return value->getWidget<TextChoiceWidget>()->getText();
   }
 
   QString PlotFeatureDialog::getStatus() const {
-    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(status->getWidget())->getWidget())->getValue();
+    return status->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
   }
 
   QString PlotFeatureDialog::getNamespace() const {
-    return static_cast<TextChoiceWidget*>(ns->getWidget())->getText();
+    return ns->getWidget<TextChoiceWidget>()->getText();
   }
 
   void PlotFeatureDialog::updateNamespace() {
-    int i = static_cast<TextChoiceWidget*>(value->getWidget())->getCurrentIndex();
-    static_cast<TextChoiceWidget*>(ns->getWidget())->setText(QString::fromStdString(feature[i].first));
+    int i = value->getWidget<TextChoiceWidget>()->getCurrentIndex();
+    ns->getWidget<TextChoiceWidget>()->setText(QString::fromStdString(feature[i].first));
   }
 
   void PlotFeatureDialog::reset() {
-    static_cast<TextChoiceWidget*>(type->getWidget())->setCurrentIndex(specialType.second.empty()?2:0);
-    static_cast<TextChoiceWidget*>(value->getWidget())->setCurrentIndex(21);
+    type->getWidget<TextChoiceWidget>()->setCurrentIndex(specialType.second.empty()?2:0);
+    value->getWidget<TextChoiceWidget>()->setCurrentIndex(21);
     setStatus("1");
-    static_cast<TextChoiceWidget*>(ns->getWidget())->setCurrentIndex(0);
+    ns->getWidget<TextChoiceWidget>()->setCurrentIndex(0);
   }
 
   void PlotFeatureDialog::showEvent(QShowEvent *event) {
@@ -1369,19 +1369,19 @@ namespace MBSimGUI {
   }
 
   void StateDialog::setName(const QString &name_) {
-    static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(name->getWidget())->getWidget())->setValue(name_);
+    name->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(name_);
   }
 
   void StateDialog::setValue(const QString &value_) {
-    static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->setValue(value_);
+    value->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(value_);
   }
 
   QString StateDialog::getName() const {
-    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(name->getWidget())->getWidget())->getValue();
+    return name->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
   }
 
   QString StateDialog::getValue() const {
-    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(value->getWidget())->getWidget())->getValue();
+    return value->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
   }
 
   void StateDialog::reset() {
@@ -1425,45 +1425,45 @@ namespace MBSimGUI {
   }
 
   void TransitionDialog::setSource(const QString &src_) {
-    static_cast<TextChoiceWidget*>(src->getWidget())->setText(src_);
+    src->getWidget<TextChoiceWidget>()->setText(src_);
   }
 
   void TransitionDialog::setDestination(const QString &dest_) {
-    static_cast<TextChoiceWidget*>(dest->getWidget())->setText(dest_);
+    dest->getWidget<TextChoiceWidget>()->setText(dest_);
   }
 
   void TransitionDialog::setSignal(const QString &sig_) {
-    static_cast<BasicElementOfReferenceWidget*>(sig->getWidget())->setElement(sig_);
+    sig->getWidget<BasicElementOfReferenceWidget>()->setElement(sig_);
   }
 
   void TransitionDialog::setThreshold(const QString &th_) {
-    static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(th->getWidget())->getWidget())->setValue(th_);
+    th->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(th_);
   }
 
   QString TransitionDialog::getSource() const {
-    return static_cast<TextChoiceWidget*>(src->getWidget())->getText();
+    return src->getWidget<TextChoiceWidget>()->getText();
   }
 
   QString TransitionDialog::getDestination() const {
-    return static_cast<TextChoiceWidget*>(dest->getWidget())->getText();
+    return dest->getWidget<TextChoiceWidget>()->getText();
   }
 
   QString TransitionDialog::getSignal() const {
-    return static_cast<BasicElementOfReferenceWidget*>(sig->getWidget())->getElement();
+    return sig->getWidget<BasicElementOfReferenceWidget>()->getElement();
   }
 
   QString TransitionDialog::getThreshold() const {
-    return static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(th->getWidget())->getWidget())->getValue();
+    return th->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
   }
 
   void TransitionDialog::setStringList(const vector<QString> &list) {
-    static_cast<TextChoiceWidget*>(src->getWidget())->setStringList(list);
-    static_cast<TextChoiceWidget*>(dest->getWidget())->setStringList(list);
+    src->getWidget<TextChoiceWidget>()->setStringList(list);
+    dest->getWidget<TextChoiceWidget>()->setStringList(list);
   }
 
   void TransitionDialog::reset() {
-    static_cast<TextChoiceWidget*>(src->getWidget())->setCurrentIndex(0);
-    static_cast<TextChoiceWidget*>(dest->getWidget())->setCurrentIndex(0);
+    src->getWidget<TextChoiceWidget>()->setCurrentIndex(0);
+    dest->getWidget<TextChoiceWidget>()->setCurrentIndex(0);
     setSignal("");
     setThreshold("0");
   }

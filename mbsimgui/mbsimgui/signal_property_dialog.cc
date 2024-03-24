@@ -416,9 +416,9 @@ namespace MBSimGUI {
     B->blockSignals(true);
     C->blockSignals(true);
     D->blockSignals(true);
-    int n = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(A->getWidget())->getWidget())->rows();
-    int m = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(B->getWidget())->getWidget())->cols();
-    int p = C->isActive()?static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(C->getWidget())->getWidget())->rows():m;
+    int n = A->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->rows();
+    int m = B->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->cols();
+    int p = C->isActive()?C->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->rows():m;
     x0->resize_(n,1);
     B->resize_(n,m);
     C->resize_(p,n);
@@ -475,13 +475,13 @@ namespace MBSimGUI {
   void NonlinearTransferSystemPropertyDialog::updateWidget() {
     F->blockSignals(true);
     H->blockSignals(true);
-    int n = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(F->getWidget())->getWidget())->getArg1Size();
-    int m = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(F->getWidget())->getWidget())->getArg2Size();
+    int n = F->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg1Size();
+    int m = F->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg2Size();
     x0->resize_(n,1);
-    static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(F->getWidget())->getWidget())->resize_(n,1);
+    F->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->resize_(n,1);
     if(H->isActive()) {
-      static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(H->getWidget())->getWidget())->setArg1Size(n);
-      static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(H->getWidget())->getWidget())->setArg2Size(m);
+      H->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->setArg1Size(n);
+      H->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->setArg2Size(m);
     }
     F->blockSignals(false);
     H->blockSignals(false);
@@ -524,24 +524,24 @@ namespace MBSimGUI {
   }
 
   void SignalOperationPropertyDialog::numberOfInputSignalsChanged() {
-    if((not multiplex->isActive()) or static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(multiplex->getWidget())->getWidget())->getValue()==mw->getProject()->getVarFalse()) {
-      if(static_cast<BasicElementsOfReferenceWidget*>(inputSignal->getWidget())->getSize()==2 and (not dynamic_cast<Function2ArgWidgetFactory*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidgetFactory())))
-	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
-      else if(not dynamic_cast<Function1ArgWidgetFactory*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidgetFactory()))
-	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));
+    if((not multiplex->isActive()) or multiplex->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarFalse()) {
+      if(inputSignal->getWidget<BasicElementsOfReferenceWidget>()->getSize()==2 and (not dynamic_cast<Function2ArgWidgetFactory*>(function->getWidget<ChoiceWidget>()->getWidgetFactory())))
+	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+      else if(not dynamic_cast<Function1ArgWidgetFactory*>(function->getWidget<ChoiceWidget>()->getWidgetFactory()))
+	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));
     }
   }
 
   void SignalOperationPropertyDialog::multiplexInputSignalsChanged() {
-    if(multiplex->isActive() and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(multiplex->getWidget())->getWidget())->getValue()==mw->getProject()->getVarTrue()) {
-      static_cast<BasicElementsOfReferenceWidget*>(inputSignal->getWidget())->setRange(1,100);
-      if(not dynamic_cast<Function1ArgWidgetFactory*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidgetFactory()))
-	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));
+    if(multiplex->isActive() and multiplex->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarTrue()) {
+      inputSignal->getWidget<BasicElementsOfReferenceWidget>()->setRange(1,100);
+      if(not dynamic_cast<Function1ArgWidgetFactory*>(function->getWidget<ChoiceWidget>()->getWidgetFactory()))
+	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));
     }
     else {
-      static_cast<BasicElementsOfReferenceWidget*>(inputSignal->getWidget())->setRange(1,2);
-      if(static_cast<BasicElementsOfReferenceWidget*>(inputSignal->getWidget())->getSize()==2 and (not dynamic_cast<Function2ArgWidgetFactory*>(static_cast<ChoiceWidget*>(function->getWidget())->getWidgetFactory())))
-	static_cast<ChoiceWidget*>(function->getWidget())->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
+      inputSignal->getWidget<BasicElementsOfReferenceWidget>()->setRange(1,2);
+      if(inputSignal->getWidget<BasicElementsOfReferenceWidget>()->getSize()==2 and (not dynamic_cast<Function2ArgWidgetFactory*>(function->getWidget<ChoiceWidget>()->getWidgetFactory())))
+	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
     }
   }
 
@@ -673,8 +673,8 @@ namespace MBSimGUI {
   }
 
   void StateMachinePropertyDialog::updateWidget() {
-    static_cast<TextChoiceWidget*>(initialState->getWidget())->setStringList(static_cast<StateWidget*>(state->getWidget())->getNames());
-    static_cast<TransitionWidget*>(transition->getWidget())->setStringList(static_cast<StateWidget*>(state->getWidget())->getNames());
+    initialState->getWidget<TextChoiceWidget>()->setStringList(state->getWidget<StateWidget>()->getNames());
+    transition->getWidget<TransitionWidget>()->setStringList(state->getWidget<StateWidget>()->getNames());
   }
 
   DOMElement* StateMachinePropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -711,7 +711,7 @@ namespace MBSimGUI {
   }
 
   void StateMachineSensorPropertyDialog::updateWidget() {
-    auto *sm = getElement()->getByPath<StateMachine>(static_cast<ElementOfReferenceWidget<StateMachine>*>(stateMachine->getWidget())->getElement());
+    auto *sm = getElement()->getByPath<StateMachine>(stateMachine->getWidget<ElementOfReferenceWidget<StateMachine>>()->getElement());
     if(sm) {
       vector<QString> stringList;
       DOMElement *e=E(sm->getXMLElement())->getFirstElementChildNamed(MBSIMCONTROL%"state");
@@ -719,8 +719,8 @@ namespace MBSimGUI {
 	stringList.emplace_back(QString::fromStdString(E(e)->getAttributeQName("name").second));
 	e=e->getNextElementSibling();
       }
-      static_cast<TextChoiceWidget*>(state->getWidget())->setStringList(stringList);
-      static_cast<TextChoiceWidget*>(state->getWidget())->setCurrentIndex(0);
+      state->getWidget<TextChoiceWidget>()->setStringList(stringList);
+      state->getWidget<TextChoiceWidget>()->setCurrentIndex(0);
     }
   }
 

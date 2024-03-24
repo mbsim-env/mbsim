@@ -311,10 +311,10 @@ namespace MBSimGUI {
   void TwoDimMatArrayWidget::forceSymmetrie() {
     for(size_t i=0; i<ele.size(); i++) {
       for(size_t j=0; j<ele.size(); j++) {
-	ChoiceWidget* choiceWidgetij = static_cast<ChoiceWidget*>(ele[i][j]->getWidget());
+	ChoiceWidget* choiceWidgetij = ele[i][j]->getWidget<ChoiceWidget>();
 	if(i==j) {
 	  if(choiceWidgetij->getIndex()==0) {
-	    MatWidget* widgetii = static_cast<MatWidget*>(static_cast<PhysicalVariableWidget*>(choiceWidgetij->getWidget())->getWidget());
+	    MatWidget* widgetii = choiceWidgetij->getWidget<PhysicalVariableWidget>()->getWidget<MatWidget>();
 	    for(size_t k=0; k<widgetii->rows(); k++) {
 	      for(size_t l=0; l<widgetii->cols(); l++) {
 		if(k!=l)
@@ -324,10 +324,10 @@ namespace MBSimGUI {
 	  }
 	}
 	else {
-	  ChoiceWidget* choiceWidgetji = static_cast<ChoiceWidget*>(ele[j][i]->getWidget());
+	  ChoiceWidget* choiceWidgetji = ele[j][i]->getWidget<ChoiceWidget>();
 	  if(choiceWidgetij->getIndex()==0 and choiceWidgetji->getIndex()==0) {
-	    MatWidget* widgetij = static_cast<MatWidget*>(static_cast<PhysicalVariableWidget*>(choiceWidgetij->getWidget())->getWidget());
-	    MatWidget* widgetji = static_cast<MatWidget*>(static_cast<PhysicalVariableWidget*>(choiceWidgetji->getWidget())->getWidget());
+	    MatWidget* widgetij = choiceWidgetij->getWidget<PhysicalVariableWidget>()->getWidget<MatWidget>();
+	    MatWidget* widgetji = choiceWidgetji->getWidget<PhysicalVariableWidget>()->getWidget<MatWidget>();
 	    for(size_t k=0; k<widgetij->rows(); k++) {
 	      for(size_t l=0; l<widgetij->cols(); l++)
 		connect(widgetji->getLineEdit(k,l),&QLineEdit::textEdited,widgetij->getLineEdit(l,k),&QLineEdit::setText);
@@ -446,19 +446,19 @@ namespace MBSimGUI {
   }
 
   DOMElement* BoundaryConditionWidget::initializeUsingXML(DOMElement *element) {
-    nodes->getWidget()->initializeUsingXML(element);
+    nodes->getWidget<ChoiceWidget>()->initializeUsingXML(element);
     element = element->getNextElementSibling();
-    dof->getWidget()->initializeUsingXML(element);
+    dof->getWidget<ChoiceWidget>()->initializeUsingXML(element);
     element = element->getNextElementSibling();
     return element;
   }
 
   DOMElement* BoundaryConditionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"boundaryNodeNumbers");
-    nodes->getWidget()->writeXMLFile(ele);
+    nodes->getWidget<ChoiceWidget>()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"constrainedDegreesOfFreedom");
-    dof->getWidget()->writeXMLFile(ele);
+    dof->getWidget<ChoiceWidget>()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     return nullptr;
   }
@@ -485,28 +485,28 @@ namespace MBSimGUI {
   }
 
   QString FiniteElementsDataWidget::getType() const {
-    return static_cast<TextChoiceWidget*>(type->getWidget())->getText();
+    return type->getWidget<TextChoiceWidget>()->getText();
   }
 
   QString FiniteElementsDataWidget::getElementsFile() const {
-    return static_cast<FileWidget*>(elements->getWidget())->getFile(true);
+    return elements->getWidget<FileWidget>()->getFile(true);
   }
 
   DOMElement* FiniteElementsDataWidget::initializeUsingXML(DOMElement *element) {
-    type->getWidget()->initializeUsingXML(element);
+    type->getWidget<TextChoiceWidget>()->initializeUsingXML(element);
     element = element->getNextElementSibling();
     if(E(element)->getTagName()==MBSIMFLEX%"elements")
-      elements->getWidget()->initializeUsingXML(element);
+      elements->getWidget<FileWidget>()->initializeUsingXML(element);
     element = element->getNextElementSibling();
     return element;
   }
 
   DOMElement* FiniteElementsDataWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"elementType");
-    type->getWidget()->writeXMLFile(ele);
+    type->getWidget<TextChoiceWidget>()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"elements");
-    elements->getWidget()->writeXMLFile(ele);
+    elements->getWidget<FileWidget>()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     return nullptr;
   }
@@ -541,7 +541,7 @@ namespace MBSimGUI {
 
  vector<int> CMSDataWidget::getNodes() const {
     vector<int> inodes;
-    auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(nodes->getWidget())->getWidget())->getWidget()->getEvalMat();
+    auto mat = nodes->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
     inodes.resize(mat.size());
     for(size_t i=0; i<mat.size(); i++)
       inodes[i] = mat[i][0].toInt();
@@ -551,7 +551,7 @@ namespace MBSimGUI {
  vector<double> CMSDataWidget::getWeights() const {
     vector<double> w;
     if(weights->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(weights->getWidget())->getWidget())->getWidget()->getEvalMat();
+      auto mat = weights->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       w.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	w[i] = mat[i][0].toDouble();
@@ -562,14 +562,14 @@ namespace MBSimGUI {
   bool CMSDataWidget::getReduceToSingleNode() const {
     bool reduceToNode = false;
     if(rtsn->isActive())
-      reduceToNode = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(rtsn->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+      reduceToNode = rtsn->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
     return reduceToNode;
   }
 
   vector<int> CMSDataWidget::getDof() const {
     vector<int> idof;
     if(dof->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(dof->getWidget())->getWidget())->getWidget()->getEvalMat();
+      auto mat = dof->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       idof.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	idof[i] = mat[i][0].toInt();
@@ -584,7 +584,7 @@ namespace MBSimGUI {
 
   int CMSDataWidget::getSingleNodeNumber() const {
     if(snn->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(snn->getWidget())->getWidget())->getWidget()->getEvalMat();
+      auto mat = snn->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       return mat[0][0].toInt();
     }
     else
@@ -594,7 +594,7 @@ namespace MBSimGUI {
   vector<double> CMSDataWidget::getPositionOfReferenceNode() const {
     vector<double> r;
     if(prf->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(prf->getWidget())->getWidget())->getWidget()->getEvalMat();
+      auto mat = prf->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       r.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	r[i] = mat[i][0].toDouble();
@@ -603,31 +603,31 @@ namespace MBSimGUI {
   }
 
   DOMElement* CMSDataWidget::initializeUsingXML(DOMElement *element) {
-    nodes->getWidget()->initializeUsingXML(element);
+    nodes->getWidget<VariableWidget>()->initializeUsingXML(element);
     element = element->getNextElementSibling();
     if(E(element)->getTagName()==MBSIMFLEX%"weightingFactorsForInterfaceNodes") {
       weights->setActive(true);
-      weights->getWidget()->initializeUsingXML(element);
+      weights->getWidget<Widget>()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
     if(E(element)->getTagName()==MBSIMFLEX%"reduceToSingleInterfaceNode") {
       rtsn->setActive(true);
-      rtsn->getWidget()->initializeUsingXML(element);
+      rtsn->getWidget<Widget>()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
     if(E(element)->getTagName()==MBSIMFLEX%"degreesOfFreedomOfSingleInterfaceNode") {
       dof->setActive(true);
-      dof->getWidget()->initializeUsingXML(element);
+      dof->getWidget<Widget>()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
     if(E(element)->getTagName()==MBSIMFLEX%"singleInterfaceNodeNumber") {
       snn->setActive(true);
-      snn->getWidget()->initializeUsingXML(element);
+      snn->getWidget<Widget>()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
     if(E(element)->getTagName()==MBSIMFLEX%"positionOfReferenceNode") {
       prf->setActive(true);
-      prf->getWidget()->initializeUsingXML(element);
+      prf->getWidget<Widget>()->initializeUsingXML(element);
       element = element->getNextElementSibling();
     }
     return element;
@@ -635,31 +635,31 @@ namespace MBSimGUI {
 
   DOMElement* CMSDataWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMElement *ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"interfaceNodeNumbers");
-    nodes->getWidget()->writeXMLFile(ele);
+    nodes->getWidget<VariableWidget>()->writeXMLFile(ele);
     parent->insertBefore(ele,ref);
     if(weights->isActive()) {
       ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"weightingFactorsForInterfaceNodes");
-      weights->getWidget()->writeXMLFile(ele);
+      weights->getWidget<Widget>()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     if(rtsn->isActive()) {
       ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"reduceToSingleInterfaceNode");
-      rtsn->getWidget()->writeXMLFile(ele);
+      rtsn->getWidget<Widget>()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     if(dof->isActive()) {
       ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"degreesOfFreedomOfSingleInterfaceNode");
-      dof->getWidget()->writeXMLFile(ele);
+      dof->getWidget<Widget>()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     if(snn->isActive()) {
       ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"singleInterfaceNodeNumber");
-      snn->getWidget()->writeXMLFile(ele);
+      snn->getWidget<Widget>()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     if(prf->isActive()) {
       ele = D(parent->getOwnerDocument())->createElement(MBSIMFLEX%"positionOfReferenceNode");
-      prf->getWidget()->writeXMLFile(ele);
+      prf->getWidget<Widget>()->writeXMLFile(ele);
       parent->insertBefore(ele,ref);
     }
     return nullptr;

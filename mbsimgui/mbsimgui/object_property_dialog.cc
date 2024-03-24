@@ -69,7 +69,7 @@ namespace MBSimGUI {
     addTab("Kinematics",1);
 
     R = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(body,body->getParent()->getFrame(0),this),true,false,MBSIM%"frameOfReference");
-    static_cast<ElementOfReferenceWidget<Frame>*>(R->getWidget())->setDefaultElement("../Frame[I]");
+    R->getWidget<ElementOfReferenceWidget<Frame>>()->setDefaultElement("../Frame[I]");
     addToTab("Kinematics",R);
   }
 
@@ -160,20 +160,20 @@ namespace MBSimGUI {
   int RigidBodyPropertyDialog::getqRelSize() const {
     int nqT=0, nqR=0;
     if(translation->isActive()) {
-      if(static_cast<ChoiceWidget*>(translation->getWidget())->getIndex()!=2) {
-        auto *trans = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget());
+      if(translation->getWidget<ChoiceWidget>()->getIndex()!=2) {
+        auto *trans = translation->getWidget<ChoiceWidget>()->getWidget<ChoiceWidget>()->getWidget<FunctionWidget,true>();
         if(trans)
           nqT = trans->getArg1Size();
       }
     }
     if(rotation->isActive()) {
-      if(static_cast<ChoiceWidget*>(rotation->getWidget())->getIndex()!=1) {
-        auto *rot = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget());
+      if(rotation->getWidget<ChoiceWidget>()->getIndex()!=1) {
+        auto *rot = rotation->getWidget<ChoiceWidget>()->getWidget<ChoiceWidget>()->getWidget<FunctionWidget,true>();
         if(rot)
           nqR = rot->getArg1Size();
       }
     }
-    if(translationDependentRotation->isActive() and static_cast<ChoiceWidget*>(translationDependentRotation->getWidget())->getIndex()==0 and static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(translationDependentRotation->getWidget())->getWidget())->getValue()==mw->getProject()->getVarTrue())
+    if(translationDependentRotation->isActive() and translationDependentRotation->getWidget<ChoiceWidget>()->getIndex()==0 and translationDependentRotation->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarTrue())
       return nqT;
     return nqT + nqR;
   }
@@ -210,15 +210,15 @@ namespace MBSimGUI {
   int GenericFlexibleFfrBodyPropertyDialog::getqRelSize() const {
     int nqT=0, nqR=0;
     if(translation->isActive()) {
-      if(static_cast<ChoiceWidget*>(translation->getWidget())->getIndex()!=2) {
-        auto *trans = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(translation->getWidget())->getWidget())->getWidget());
+      if(translation->getWidget<ChoiceWidget>()->getIndex()!=2) {
+        auto *trans = translation->getWidget<ChoiceWidget>()->getWidget<ChoiceWidget>()->getWidget<FunctionWidget,true>();
         if(trans)
           nqT = trans->getArg1Size();
       }
     }
     if(rotation->isActive()) {
-      if(static_cast<ChoiceWidget*>(rotation->getWidget())->getIndex()!=1) {
-        auto *rot = dynamic_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(rotation->getWidget())->getWidget())->getWidget());
+      if(rotation->getWidget<ChoiceWidget>()->getIndex()!=1) {
+        auto *rot = rotation->getWidget<ChoiceWidget>()->getWidget<ChoiceWidget>()->getWidget<FunctionWidget,true>();
         if(rot)
           nqR = rot->getArg1Size();
       }
@@ -358,105 +358,105 @@ namespace MBSimGUI {
     plotNodes = new ExtWidget("Plot node numbers",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"plotNodeNumbers");
     addToTab("Visualization", plotNodes);
 
-    connect(Pdm->getWidget(),&Widget::widgetChanged,this,&FlexibleFfrBodyPropertyDialog::updateWidget);
+    connect(Pdm->getWidget<ChoiceWidget>(),&Widget::widgetChanged,this,&FlexibleFfrBodyPropertyDialog::updateWidget);
   }
 
   void FlexibleFfrBodyPropertyDialog::updateWidget() {
     GenericFlexibleFfrBodyPropertyDialog::updateWidget();
-    int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(Pdm->getWidget())->getWidget())->cols();
-    if(static_cast<ChoiceWidget*>(rPdm->getWidget())->getIndex()==0)
+    int size = Pdm->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->cols();
+    if(rPdm->getWidget<ChoiceWidget>()->getIndex()==0)
       rPdm->resize_(3,size);
     else
       rPdm->resize_(9,size);
-    if(static_cast<ChoiceWidget*>(PPdm->getWidget())->getIndex()==0)
+    if(PPdm->getWidget<ChoiceWidget>()->getIndex()==0)
       PPdm->resize_(size,size);
     else
       PPdm->resize_(9*size,size);
     Ke->resize_(size,size);
     De->resize_(size,size);
     if(Knl1->isActive()) {
-      if(static_cast<ChoiceWidget*>(Knl1->getWidget())->getIndex()==0)
-        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(Knl1->getWidget())->getWidget())->resize_(size,size,size);
+      if(Knl1->getWidget<ChoiceWidget>()->getIndex()==0)
+        Knl1->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->resize_(size,size,size);
       else
         Knl1->resize_(size*size,size);
     }
     if(Knl2->isActive()) {
-      if(static_cast<ChoiceWidget*>(Knl2->getWidget())->getIndex()==0)
-        static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget*>(Knl2->getWidget())->getWidget())->resize_(size,size,size,size);
+      if(Knl2->getWidget<ChoiceWidget>()->getIndex()==0)
+        Knl2->getWidget<ChoiceWidget>()->getWidget<TwoDimMatArrayWidget>()->resize_(size,size,size,size);
       else
         Knl2->resize_(size*size*size,size);
     }
     ksigma0->resize_(size,1);
     ksigma1->resize_(size,size);
     if(K0t->isActive()) {
-      if(static_cast<ChoiceWidget*>(K0t->getWidget())->getIndex()==0)
-        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0t->getWidget())->getWidget())->resize_(3,size,size);
+      if(K0t->getWidget<ChoiceWidget>()->getIndex()==0)
+        K0t->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->resize_(3,size,size);
       else
         K0t->resize_(3*size,size);
     }
     if(K0r->isActive()) {
-      if(static_cast<ChoiceWidget*>(K0r->getWidget())->getIndex()==0)
-        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0r->getWidget())->getWidget())->resize_(3,size,size);
+      if(K0r->getWidget<ChoiceWidget>()->getIndex()==0)
+        K0r->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->resize_(3,size,size);
       else
         K0r->resize_(3*size,size);
     }
     if(K0om->isActive()) {
-      if(static_cast<ChoiceWidget*>(K0om->getWidget())->getIndex()==0)
-        static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0om->getWidget())->getWidget())->resize_(3,size,size);
+      if(K0om->getWidget<ChoiceWidget>()->getIndex()==0)
+        K0om->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->resize_(3,size,size);
       else
         K0om->resize_(3*size,size);
     }
     if(r->isActive()) {
       int rsize;
-      if(static_cast<ChoiceWidget*>(r->getWidget())->getIndex()==0)
-        rsize = static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(r->getWidget())->getWidget())->getArray().size();
+      if(r->getWidget<ChoiceWidget>()->getIndex()==0)
+        rsize = r->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->getArray().size();
       else
-        rsize = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ChoiceWidget*>(r->getWidget())->getWidget())->getWidget())->rows()/3;
+        rsize = r->getWidget<ChoiceWidget>()->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->rows()/3;
       if(A->isActive()) {
-        if(static_cast<ChoiceWidget*>(A->getWidget())->getIndex()==0)
-          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(A->getWidget())->getWidget())->resize_(rsize,3,3);
+        if(A->getWidget<ChoiceWidget>()->getIndex()==0)
+          A->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->resize_(rsize,3,3);
         else
           A->resize_(3*rsize,3);
       }
       if(Phi->isActive()) {
-        if(static_cast<ChoiceWidget*>(Phi->getWidget())->getIndex()==0)
-          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(Phi->getWidget())->getWidget())->resize_(rsize,3,size);
+        if(Phi->getWidget<ChoiceWidget>()->getIndex()==0)
+          Phi->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->resize_(rsize,3,size);
         else
           Phi->resize_(3*rsize,size);
       }
       if(Psi->isActive()) {
-        if(static_cast<ChoiceWidget*>(Psi->getWidget())->getIndex()==0)
-          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(Psi->getWidget())->getWidget())->resize_(rsize,3,size);
+        if(Psi->getWidget<ChoiceWidget>()->getIndex()==0)
+          Psi->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->resize_(rsize,3,size);
         else
           Psi->resize_(3*rsize,size);
       }
       if(sigmahel->isActive()) {
-        if(static_cast<ChoiceWidget*>(sigmahel->getWidget())->getIndex()==0)
-          static_cast<OneDimMatArrayWidget*>(static_cast<ChoiceWidget*>(sigmahel->getWidget())->getWidget())->resize_(rsize,6,size);
+        if(sigmahel->getWidget<ChoiceWidget>()->getIndex()==0)
+          sigmahel->getWidget<ChoiceWidget>()->getWidget<OneDimMatArrayWidget>()->resize_(rsize,6,size);
         else
           sigmahel->resize_(6*rsize,size);
       }
       if(sigmahen->isActive()) {
-        if(static_cast<ChoiceWidget*>(sigmahen->getWidget())->getIndex()==0)
-          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget*>(sigmahen->getWidget())->getWidget())->resize_(rsize,size,6,size);
+        if(sigmahen->getWidget<ChoiceWidget>()->getIndex()==0)
+          sigmahen->getWidget<ChoiceWidget>()->getWidget<TwoDimMatArrayWidget>()->resize_(rsize,size,6,size);
         else
           sigmahen->resize_(6*rsize*size,size);
       }
       if(sigma0->isActive()) {
-        if(static_cast<ChoiceWidget*>(sigma0->getWidget())->getIndex()==0)
-          static_cast<OneDimVecArrayWidget*>(static_cast<ChoiceWidget*>(sigma0->getWidget())->getWidget())->resize_(rsize,6,1);
+        if(sigma0->getWidget<ChoiceWidget>()->getIndex()==0)
+          sigma0->getWidget<ChoiceWidget>()->getWidget<OneDimVecArrayWidget>()->resize_(rsize,6,1);
         else
           sigma0->resize_(6*rsize,1);
       }
       if(K0F->isActive()) {
-        if(static_cast<ChoiceWidget*>(K0F->getWidget())->getIndex()==0)
-          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0F->getWidget())->getWidget())->resize_(rsize,size,size,size);
+        if(K0F->getWidget<ChoiceWidget>()->getIndex()==0)
+          K0F->getWidget<ChoiceWidget>()->getWidget<TwoDimMatArrayWidget>()->resize_(rsize,size,size,size);
         else
           K0F->resize_(size*rsize*size,size);
       }
       if(K0M->isActive()) {
-        if(static_cast<ChoiceWidget*>(K0M->getWidget())->getIndex()==0)
-          static_cast<TwoDimMatArrayWidget*>(static_cast<ChoiceWidget*>(K0M->getWidget())->getWidget())->resize_(rsize,size,size,size);
+        if(K0M->getWidget<ChoiceWidget>()->getIndex()==0)
+          K0M->getWidget<ChoiceWidget>()->getWidget<TwoDimMatArrayWidget>()->resize_(rsize,size,size,size);
         else
           K0M->resize_(size*rsize*size,size);
       }
@@ -468,7 +468,7 @@ namespace MBSimGUI {
   int FlexibleFfrBodyPropertyDialog::getqERelSize() const {
     int nqE=0;
     if(Pdm->isActive())
-      nqE = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(Pdm->getWidget())->getWidget())->cols();
+      nqE = Pdm->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->cols();
     return nqE;
   }
 
@@ -561,7 +561,7 @@ namespace MBSimGUI {
     auto label = new QLabel("Use flexible body tool to create input data:");
     hlayout->addWidget(label);
     auto button = new QPushButton(Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"fbt.svg").string())),"Flexible body tool");
-    connect(button,&QPushButton::clicked,this,[=](){ mw->flexibleBodyTool(); connect(mw->getFlexibleBodyTool(),&FlexibleBodyTool::finished,this,[=](int res) { if(res==1) static_cast<FileWidget*>(inputDataFile->getWidget())->setFile(mw->getFlexibleBodyTool()->getInputDataFile()); }); });
+    connect(button,&QPushButton::clicked,this,[=](){ mw->flexibleBodyTool(); connect(mw->getFlexibleBodyTool(),&FlexibleBodyTool::finished,this,[=](int res) { if(res==1) inputDataFile->getWidget<FileWidget>()->setFile(mw->getFlexibleBodyTool()->getInputDataFile()); }); });
 
     hlayout->addWidget(button);
     addToTab("General",widget);

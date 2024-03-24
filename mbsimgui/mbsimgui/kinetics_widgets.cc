@@ -708,7 +708,7 @@ namespace MBSimGUI {
     layout->addWidget(sfkg);
     sfkm = new ExtWidget("Scale factor for aligning moment camber stiffness",new ChoiceWidget(new ScalarWidgetFactory("",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMomentCamberStiffness");
     layout->addWidget(sfkm);
-    connect(static_cast<FileWidget*>(inputDataFile->getWidget()),&FileWidget::valueChanged,this,&MagicFormula62Widget::inputFileChanged);
+    connect(inputDataFile->getWidget<FileWidget>(),&FileWidget::valueChanged,this,&MagicFormula62Widget::inputFileChanged);
   }
 
   void MagicFormula62Widget::inputFileChanged(const QString &fileName) {
@@ -723,62 +723,62 @@ namespace MBSimGUI {
 	if(line.contains("INFLPRES")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(p->getWidget())->getWidget())->setDefaultValue(value);
+	  p->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("VERTICAL_STIFFNESS")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(cz->getWidget())->getWidget())->setDefaultValue(value);
+	  cz->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("VERTICAL_DAMPING")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(dz->getWidget())->getWidget())->setDefaultValue(value);
+	  dz->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LMX")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfMx->getWidget())->getWidget())->setDefaultValue(value);
+	  sfMx->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LMY")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfMy->getWidget())->getWidget())->setDefaultValue(value);
+	  sfMy->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LS")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfs->getWidget())->getWidget())->setDefaultValue(value);
+	  sfs->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LMUX")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfmux->getWidget())->getWidget())->setDefaultValue(value);
+	  sfmux->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LMUY")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfmuy->getWidget())->getWidget())->setDefaultValue(value);
+	  sfmuy->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LKX")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfkx->getWidget())->getWidget())->setDefaultValue(value);
+	  sfkx->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LKYC")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfkg->getWidget())->getWidget())->setDefaultValue(value);
+	  sfkg->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LKY")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfky->getWidget())->getWidget())->setDefaultValue(value);
+	  sfky->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
 	else if(line.contains("LKZC")) {
 	  QTextStream sstr(&line);
 	  sstr >> str >> str >> value;
-	  static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(sfkm->getWidget())->getWidget())->setDefaultValue(value);
+	  sfkm->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setDefaultValue(value);
 	}
       } while(not fstr.atEnd());
     }
@@ -786,9 +786,9 @@ namespace MBSimGUI {
 
   DOMElement* MagicFormula62Widget::initializeUsingXML(DOMElement *element) {
     TyreModelWidget::initializeUsingXML(element);
-    static_cast<FileWidget*>(inputDataFile->getWidget())->blockSignals(true);
+    inputDataFile->getWidget<FileWidget>()->blockSignals(true);
     inputDataFile->initializeUsingXML(element);
-    static_cast<FileWidget*>(inputDataFile->getWidget())->blockSignals(false);
+    inputDataFile->getWidget<FileWidget>()->blockSignals(false);
     tyreSide->initializeUsingXML(element);
     mck->initializeUsingXML(element);
     cpt->initializeUsingXML(element);
@@ -811,7 +811,7 @@ namespace MBSimGUI {
     sfky->initializeUsingXML(element);
     sfkg->initializeUsingXML(element);
     sfkm->initializeUsingXML(element);
-    inputFileChanged(static_cast<FileWidget*>(inputDataFile->getWidget())->getFile());
+    inputFileChanged(inputDataFile->getWidget<FileWidget>()->getFile());
     return element;
   }
 

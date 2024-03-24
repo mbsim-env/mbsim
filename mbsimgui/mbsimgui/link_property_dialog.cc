@@ -66,7 +66,7 @@ namespace MBSimGUI {
     addTab("Visualization",2);
 
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame>(2,link,this),false,false,MBSIM%"connect");
-    static_cast<ConnectElementsWidget<Frame>*>(connections->getWidget())->setDefaultElement("../Frame[I]");
+    connections->getWidget<ConnectElementsWidget<Frame>>()->setDefaultElement("../Frame[I]");
     addToTab("Kinetics", connections);
   }
 
@@ -145,7 +145,7 @@ namespace MBSimGUI {
 
   KineticExcitationPropertyDialog::KineticExcitationPropertyDialog(Element *kineticExcitation) : FloatingFrameLinkPropertyDialog(kineticExcitation) {
 
-    static_cast<TextChoiceWidget*>(refFrame->getWidget())->setCurrentIndex(1);
+    refFrame->getWidget<TextChoiceWidget>()->setCurrentIndex(1);
 
     forceDirection = new ExtWidget("Force direction",new ChoiceWidget(new MatColsVarWidgetFactory(3,1,vector<QStringList>(3,noUnitUnits()),vector<int>(3,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"forceDirection");
     addToTab("Kinetics",forceDirection);
@@ -162,10 +162,10 @@ namespace MBSimGUI {
     arrow = new ExtWidget("Enable openMBV",new InteractionArrowMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization",arrow);
 
-    connect(forceDirection->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
-    connect(forceFunction->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
-    connect(momentDirection->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
-    connect(momentFunction->getWidget(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(forceDirection->getWidget<ChoiceWidget>(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(forceFunction->getWidget<ChoiceWidget>(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(momentDirection->getWidget<ChoiceWidget>(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
+    connect(momentFunction->getWidget<ChoiceWidget>(),&Widget::widgetChanged,this,&KineticExcitationPropertyDialog::updateWidget);
     connect(forceDirection,&ExtWidget::clicked,forceFunction,&ExtWidget::setActive);
     connect(forceFunction,&ExtWidget::clicked,forceDirection,&ExtWidget::setActive);
     connect(momentDirection,&ExtWidget::clicked,momentFunction,&ExtWidget::setActive);
@@ -174,11 +174,11 @@ namespace MBSimGUI {
 
   void KineticExcitationPropertyDialog::updateWidget() {
     if(forceDirection->isActive()) {
-      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(forceDirection->getWidget())->getWidget())->cols();
+      int size = forceDirection->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->cols();
       forceFunction->resize_(size,1);
     }
     if(momentDirection->isActive()) {
-      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(momentDirection->getWidget())->getWidget())->cols();
+      int size = momentDirection->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->cols();
       momentFunction->resize_(size,1);
     }
   }
@@ -348,9 +348,9 @@ namespace MBSimGUI {
     integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     addToTab("Extra", integrate);
 
-    connect(forceDirection->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
-    connect(momentDirection->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
-    connect(function->getWidget(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(forceDirection->getWidget<ChoiceWidget>(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(momentDirection->getWidget<ChoiceWidget>(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
+    connect(function->getWidget<ChoiceWidget>(),&ExtWidget::widgetChanged,this,&ElasticJointPropertyDialog::updateWidget);
     connect(forceDirection,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateFunctionCheckState);
     connect(momentDirection,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateFunctionCheckState);
     connect(function,&ExtWidget::clicked,this,&ElasticJointPropertyDialog::updateDirectionsCheckState);
@@ -359,9 +359,9 @@ namespace MBSimGUI {
   void ElasticJointPropertyDialog::updateWidget() {
     int size = 0;
     if(forceDirection->isActive())
-      size += static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(forceDirection->getWidget())->getWidget())->cols();
+      size += forceDirection->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->cols();
     if(momentDirection->isActive())
-      size += static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(momentDirection->getWidget())->getWidget())->cols();
+      size += momentDirection->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->cols();
     function->resize_(size,1);
   }
 
@@ -516,7 +516,7 @@ namespace MBSimGUI {
     addToTab("Kinetics", function);
 
     connect(function,&ExtWidget::widgetChanged,this,&GeneralizedElasticConnectionPropertyDialog::updateWidget);
-    connect(connections->getWidget(),&ExtWidget::widgetChanged,this,&GeneralizedElasticConnectionPropertyDialog::updateWidget);
+    connect(connections->getWidget<ChoiceWidget>(),&ExtWidget::widgetChanged,this,&GeneralizedElasticConnectionPropertyDialog::updateWidget);
   }
 
   void GeneralizedElasticConnectionPropertyDialog::updateWidget() {

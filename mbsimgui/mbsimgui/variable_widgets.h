@@ -450,7 +450,6 @@ namespace MBSimGUI {
       void setValue(const QString &str) override { widget->setValue(str); }
       void setDefaultValue(const QString &str) override { widget->setDefaultValue(str); }
       void setReadOnly(bool flag) override { widget->setReadOnly(flag); }
-      virtual VariableWidget* getWidget() { return widget; }
       int getStretchHint() const override { return widget->getStretchHint(); }
       const QStringList& getUnitList() const { return units; }
       int getDefaultUnit() const { return defaultUnit; }
@@ -462,6 +461,7 @@ namespace MBSimGUI {
       int cols() const override { return widget->cols(); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      VariableWidget* getWidgetVirtual() const override { return widget; }
   };
 
   class FromFileWidget : public VariableWidget {

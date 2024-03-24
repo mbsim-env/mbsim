@@ -737,7 +737,7 @@ namespace MBSimGUI {
       cp->setActive(false);
       return;
     }
-    auto shapeStr = static_cast<TextChoiceWidget*>(shape->getWidget())->getText();
+    auto shapeStr = shape->getWidget<TextChoiceWidget>()->getText();
     if(shapeStr=="\"flat\"") {
       cp->resize_(0,1);
       cp->setActive(false);

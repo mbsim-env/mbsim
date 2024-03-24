@@ -679,7 +679,7 @@ namespace MBSimGUI {
   }
 
   void ColorWidget::setColor() { 
-    QString val = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(color->getWidget())->getWidget())->getValue();
+    QString val = color->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getValue();
     vector<QString> vec = strToVec(val);
     QColor col;
     if(vec.size()==3)
@@ -688,7 +688,7 @@ namespace MBSimGUI {
       col = QColorDialog::getColor(Qt::blue,this);
     if(col.isValid()) {
       QString str = "[" + QString::number(col.hueF()) + ";" + QString::number(col.saturationF()) + ";" + QString::number(col.valueF()) + "]";
-      static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(color->getWidget())->getWidget())->setValue(str);
+      color->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->setValue(str);
     }
   }
 
@@ -867,34 +867,34 @@ namespace MBSimGUI {
     count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")));
     layout->addWidget(count);
     counterName = new ExtWidget("Countername",new TextWidget("n"));
-    connect(counterName->getWidget(),&TextWidget::widgetChanged,this,&CloneWidget::widgetChanged);
+    connect(counterName->getWidget<TextWidget>(),&TextWidget::widgetChanged,this,&CloneWidget::widgetChanged);
     layout->addWidget(counterName);
     onlyif = new ExtWidget("Onlyif",new PhysicalVariableWidget(new ScalarWidget("1")));
     layout->addWidget(onlyif);
   }
 
   void CloneWidget::setCount(const QString &count_) {
-    static_cast<PhysicalVariableWidget*>(count->getWidget())->setValue(count_);
+    count->getWidget<PhysicalVariableWidget>()->setValue(count_);
   }
 
   QString CloneWidget::getCount() const {
-    return static_cast<PhysicalVariableWidget*>(count->getWidget())->getValue();
+    return count->getWidget<PhysicalVariableWidget>()->getValue();
   }
 
   void CloneWidget::setCounterName(const QString &counterName_) {
-    static_cast<TextWidget*>(counterName->getWidget())->setText(counterName_);
+    counterName->getWidget<TextWidget>()->setText(counterName_);
   }
 
   QString CloneWidget::getCounterName() const {
-    return static_cast<TextWidget*>(counterName->getWidget())->getText();
+    return counterName->getWidget<TextWidget>()->getText();
   }
 
   void CloneWidget::setOnlyif(const QString &onlyif_) {
-    static_cast<PhysicalVariableWidget*>(onlyif->getWidget())->setValue(onlyif_);
+    onlyif->getWidget<PhysicalVariableWidget>()->setValue(onlyif_);
   }
 
   QString CloneWidget::getOnlyif() const {
-    return static_cast<PhysicalVariableWidget*>(onlyif->getWidget())->getValue();
+    return onlyif->getWidget<PhysicalVariableWidget>()->getValue();
   }
 
   XMLEditorWidget::XMLEditorWidget(const QString &text) {
@@ -956,14 +956,14 @@ namespace MBSimGUI {
   }
 
   void ExtStringWidget::showBrowser() {
-    QString val = static_cast<PhysicalVariableWidget*>(value->getWidget())->getValue();
+    QString val = value->getWidget<PhysicalVariableWidget>()->getValue();
     eleBrowser->setSelection(static_cast<Element*>(element)->getByPath<Element>(val.mid(1,val.size()-2)));
     eleBrowser->show();
   }
 
   void ExtStringWidget::setElement() {
     Element *selectedElement = eleBrowser->getSelection();
-    static_cast<PhysicalVariableWidget*>(value->getWidget())->setValue((selectedElement and selectedElement->getParent())?"\""+selectedElement->getXMLPath(static_cast<Element*>(element),true)+"\"":"");
+    value->getWidget<PhysicalVariableWidget>()->setValue((selectedElement and selectedElement->getParent())?"\""+selectedElement->getXMLPath(static_cast<Element*>(element),true)+"\"":"");
   }
 
   StateWidget::StateWidget() {

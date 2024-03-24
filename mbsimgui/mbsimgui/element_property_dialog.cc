@@ -42,7 +42,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
+    name->getWidget<TextWidget>()->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     comment->initializeUsingXML(item->getXMLElement());
     plotFeature->initializeUsingXML(item->getXMLElement());
     plotAttribute->initializeUsingXML(item->getXMLElement());
@@ -51,7 +51,7 @@ namespace MBSimGUI {
 
   DOMElement* ElementPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     item->removeXMLElements();
-    E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    E(item->getXMLElement())->setAttribute("name",name->getWidget<TextWidget>()->getText().toStdString());
     comment->writeXMLFile(item->getXMLElement(),ref);
     item->updateName();
     plotFeature->writeXMLFile(item->getXMLElement(),ref);

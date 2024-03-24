@@ -371,20 +371,20 @@ namespace MBSimGUI {
 
   void ContainerWidget::updateWidget() {
     for(unsigned int i=0; i<widget.size(); i++)
-      getWidget(i)->updateWidget();
+      getWidget<Widget>(i)->updateWidget();
   }
 
   DOMElement* ContainerWidget::initializeUsingXML(DOMElement *element) {
     bool flag = false;
     for(unsigned int i=0; i<widget.size(); i++)
-      if(getWidget(i)->initializeUsingXML(element))
+      if(getWidget<Widget>(i)->initializeUsingXML(element))
         flag = true;
     return flag?element:nullptr;
   }
 
   DOMElement* ContainerWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     for(unsigned int i=0; i<widget.size(); i++)
-      getWidget(i)->writeXMLFile(parent,ref);
+      getWidget<Widget>(i)->writeXMLFile(parent,ref);
     return nullptr;
   }
 
@@ -429,7 +429,7 @@ namespace MBSimGUI {
     spinBox->setRange(minSize,maxSize);
   }
 
-  Widget* ListWidget::getWidget(int i) const {
+  Widget* ListWidget::getWidgetVirtual(int i) const {
     return static_cast<Widget*>(stackedWidget->widget(i));
   }
 
@@ -453,7 +453,7 @@ namespace MBSimGUI {
 
   void ListWidget::resize_(int m, int n) {
     for(int i=0; i<stackedWidget->count(); i++)
-      getWidget(i)->resize_(m,n);
+      getWidget<Widget>(i)->resize_(m,n);
   }
 
   void ListWidget::addElements(int n, bool emitSignals) {
@@ -498,7 +498,7 @@ namespace MBSimGUI {
       DOMElement *e=(mode==0)?element->getFirstElementChild():element;
       while(e) {
         addElements(1,false);
-        getWidget(getSize()-1)->initializeUsingXML(e);
+        getWidget<Widget>(getSize()-1)->initializeUsingXML(e);
         e=e->getNextElementSibling();
       }
       spinBox->setValue(getSize());
@@ -507,7 +507,7 @@ namespace MBSimGUI {
       DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName());
       while(e and E(e)->getTagName()==factory->getXMLName()) {
         addElements(1,false);
-        getWidget(getSize()-1)->initializeUsingXML(e);
+        getWidget<Widget>(getSize()-1)->initializeUsingXML(e);
         e=e->getNextElementSibling();
       }
       spinBox->setValue(getSize());
@@ -516,7 +516,7 @@ namespace MBSimGUI {
       DOMElement *e=E(element)->getFirstElementChildNamed(factory->getXMLName());
       while(e and E(e)->getTagName()==factory->getXMLName()) {
         addElements(1,false);
-        e = getWidget(getSize()-1)->initializeUsingXML(e);
+        e = getWidget<Widget>(getSize()-1)->initializeUsingXML(e);
       }
       spinBox->setValue(getSize());
     }
@@ -528,13 +528,13 @@ namespace MBSimGUI {
   DOMElement* ListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     if(mode<=1 or mode==3) {
       for(unsigned int i=0; i<getSize(); i++)
-        getWidget(i)->writeXMLFile(parent,ref);
+        getWidget<Widget>(i)->writeXMLFile(parent,ref);
     }
     else {
       xercesc::DOMDocument *doc=parent->getOwnerDocument();
       for(unsigned int i=0; i<getSize(); i++) {
         DOMElement *ele0 = D(doc)->createElement(factory->getXMLName());
-        getWidget(i)->writeXMLFile(ele0);
+        getWidget<Widget>(i)->writeXMLFile(ele0);
         parent->insertBefore(ele0,ref);
       }
     }

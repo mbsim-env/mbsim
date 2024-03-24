@@ -98,7 +98,7 @@ namespace MBSimGUI {
   }
 
   QString LastPage::getFile() const {
-    return static_cast<FileWidget*>(inputFile->getWidget())->getFile(); 
+    return inputFile->getWidget<FileWidget>()->getFile(); 
   }
 
   int LastPage::nextId() const {
@@ -516,7 +516,7 @@ namespace MBSimGUI {
     idata->initializeUsingXML(element);
     DOMElement *ele = nmodes->initializeUsingXML(element);
     normalModes->initializeUsingXML(element);
-    return static_cast<ListWidget*>(idata->getWidget())->getSize()?element:ele;
+    return idata->getWidget<ListWidget>()->getSize()?element:ele;
   }
 
   DOMElement* ComponentModeSynthesisPage::writeXMLFile(DOMNode *element, DOMNode *ref) {

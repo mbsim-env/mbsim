@@ -34,13 +34,13 @@ namespace MBSimGUI {
 
   void FlexibleBodyTool::fe() {
     MatV R;
-    string str = static_cast<FileWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->getWidget())->getFile(true).toStdString();
+    string str = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nodes->getWidget<FileWidget>()->getFile(true).toStdString();
     if(!str.empty())
       R <<= readMat(str);
 
-    auto *list = static_cast<ListWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget());
+    auto *list = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->elements->getWidget<ListWidget>();
     for(int i=0; i<list->getSize(); i++) {
-      auto type_ = static_cast<FiniteElementsDataWidget*>(list->getWidget(i))->getType().toStdString();
+      auto type_ = list->getWidget<FiniteElementsDataWidget>(i)->getType().toStdString();
       type_ = type_.substr(1,type_.size()-2);
       int npe = stod(type_.substr(type_.find('D')+1,type_.size()-1));
       if(type_=="C3D10")
@@ -51,7 +51,7 @@ namespace MBSimGUI {
 	type.emplace_back(new MBSimGUI::C3D20);
       else if(type_=="C3D20R")
 	type.emplace_back(new MBSimGUI::C3D20R);
-      str = static_cast<FiniteElementsDataWidget*>(list->getWidget(i))->getElementsFile().toStdString();
+      str = list->getWidget<FiniteElementsDataWidget>(i)->getElementsFile().toStdString();
       if(!str.empty()) {
 	auto ele_ = readMat(str);
 	if(ele_.cols()==npe)
@@ -63,11 +63,11 @@ namespace MBSimGUI {
       }
     }
 
-    auto E = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto E = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->E->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
-    auto nu = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto nu = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->nu->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
-    auto rho = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget())->getWidget())->getWidget()->getEvalMat()[0][0].toDouble();
+    auto rho = static_cast<FiniteElementsPage*>(page(PageFiniteElements))->rho->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
 
     int max = 0;
     if(R.cols()==3)

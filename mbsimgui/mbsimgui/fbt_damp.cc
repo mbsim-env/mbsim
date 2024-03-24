@@ -35,24 +35,24 @@ namespace MBSimGUI {
     int nrb = 0;
     double ft = 0;
     if(static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->rrbm->isActive()) {
-      rrbm = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->rrbm->getWidget())->getWidget())->getEvalMat()[0][0].toInt();
+      rrbm = static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->rrbm->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
       if(static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->nrb->isActive())
-	nrb = static_cast<SpinBoxWidget*>(static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->nrb->getWidget())->getValue();
+	nrb = static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->nrb->getWidget<SpinBoxWidget>()->getValue();
       else
 	nrb = 6;
       if(static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->ft->isActive())
-	ft = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->ft->getWidget())->getWidget())->getEvalMat()[0][0].toDouble();
+	ft = static_cast<RemoveRigidBodyModesPage*>(page(PageRRBM))->ft->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toDouble();
       else
 	ft = 100;
     }
     if(static_cast<DampingPage*>(page(PageDamp))->mDamp->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->mDamp->getWidget())->getWidget())->getWidget()->getEvalMat();
+      auto mat = static_cast<DampingPage*>(page(PageDamp))->mDamp->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       mDamp.resize(mat.size(),NONINIT);
       for(size_t i=0; i<mat.size(); i++)
 	mDamp(i) = mat[i][0].toDouble();
     }
     if(static_cast<DampingPage*>(page(PageDamp))->pDamp->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<DampingPage*>(page(PageDamp))->pDamp->getWidget())->getWidget())->getWidget()->getEvalMat();
+      auto mat = static_cast<DampingPage*>(page(PageDamp))->pDamp->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       for(size_t i=0; i<mat.size(); i++)
 	pDamp(i) = mat[i][0].toDouble();
     }

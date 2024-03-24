@@ -65,7 +65,7 @@ namespace MBSimGUI {
     addTab("Kinetics",1);
     addTab("Visualization",2);
     connections = new ExtWidget("Connections",new ConnectElementsWidget<Frame,RigidBody>(2,link,this),false,false,MBSIMPHYSICS%"connect");
-    static_cast<ConnectElementsWidget<Frame,RigidBody>*>(connections->getWidget())->setDefaultElement("../Frame[I]");
+    connections->getWidget<ConnectElementsWidget<Frame,RigidBody>>()->setDefaultElement("../Frame[I]");
     addToTab("Kinetics",connections);
 
     gravityFunction = new ExtWidget("Gravity function",new ChoiceWidget(new GravityFunctionWidgetFactory,QBoxLayout::TopToBottom,0),false,false,MBSIMPHYSICS%"gravityFunction");

@@ -109,7 +109,7 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new Function1ArgWidgetFactory(constraint,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"constraintFunction");
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedPositionConstraintPropertyDialog::updateWidget);
+    connect(constraintFunction->getWidget<ChoiceWidget>(),&Widget::widgetChanged,this,&GeneralizedPositionConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedPositionConstraintPropertyDialog::updateWidget() {
@@ -138,7 +138,7 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"",true);
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedVelocityConstraintPropertyDialog::updateWidget);
+    connect(constraintFunction->getWidget<ChoiceWidget>(),&Widget::widgetChanged,this,&GeneralizedVelocityConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::updateWidget() {
@@ -167,7 +167,7 @@ namespace MBSimGUI {
 
     constraintFunction = new ExtWidget("Constraint function",new ChoiceWidget(new ConstraintWidgetFactory(constraint,this),QBoxLayout::TopToBottom,3),false,false,"",true);
     addToTab("General", constraintFunction);
-    connect(constraintFunction->getWidget(),&Widget::widgetChanged,this,&GeneralizedAccelerationConstraintPropertyDialog::updateWidget);
+    connect(constraintFunction->getWidget<ChoiceWidget>(),&Widget::widgetChanged,this,&GeneralizedAccelerationConstraintPropertyDialog::updateWidget);
   }
 
   void GeneralizedAccelerationConstraintPropertyDialog::updateWidget() {
@@ -201,11 +201,11 @@ namespace MBSimGUI {
 
     dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ElementsOfReferenceWidget<Signal>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,0,100,this),false,false,"",true);
     addToTab("General",dependentBodiesFirstSide);
-    connect(dependentBodiesFirstSide->getWidget(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
+    connect(dependentBodiesFirstSide->getWidget<ElementsOfReferenceWidget<Signal>>(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
     dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ElementsOfReferenceWidget<Signal>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,0,100,this),false,false,"",true);
     addToTab("General",dependentBodiesSecondSide);
-    connect(dependentBodiesSecondSide->getWidget(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
+    connect(dependentBodiesSecondSide->getWidget<ElementsOfReferenceWidget<Signal>>(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
     independentBody = new ExtWidget("Independent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);

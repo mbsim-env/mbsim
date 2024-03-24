@@ -71,16 +71,16 @@ namespace MBSimGUI {
   }
 
   void FlexibleBodyTool::cms() {
-    auto *list = static_cast<ListWidget*>(static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget());
+    auto *list = static_cast<BoundaryConditionsPage*>(page(PageBC))->bc->getWidget<ListWidget>();
     vector<vector<int>> dof(list->getSize());;
     vector<vector<int>> bnodes(list->getSize());
     for(int i=0; i<list->getSize(); i++) {
-      auto *bcw = static_cast<BoundaryConditionWidget*>(list->getWidget(i));
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(bcw->getNodes()->getWidget())->getWidget())->getWidget()->getEvalMat();
+      auto *bcw = list->getWidget<BoundaryConditionWidget>(i);
+      auto mat = bcw->getNodes()->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       bnodes[i].resize(mat.size());
       for(size_t j=0; j<mat.size(); j++)
 	bnodes[i][j] = mat[j][0].toInt();
-      mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(bcw->getDof()->getWidget())->getWidget())->getWidget()->getEvalMat();
+      mat = bcw->getDof()->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       dof[i].resize(mat.size());
       for(size_t j=0; j<mat.size(); j++)
 	dof[i][j] = mat[j][0].toInt()-1;
@@ -88,12 +88,12 @@ namespace MBSimGUI {
 
     FlexibleBodyTool::TypeOfConstraint typeOfConstraint = FlexibleBodyTool::distributing;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->isActive()) {
-      auto str = static_cast<TextChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->getWidget())->getText();
+      auto str = static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->typeOfConstraint->getWidget<TextChoiceWidget>()->getText();
       if(str=="\"distributing\"") typeOfConstraint=FlexibleBodyTool::distributing;
       else if(str=="\"kinematic\"") typeOfConstraint=FlexibleBodyTool::kinematic;
     }
 
-    list = static_cast<ListWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget());
+    list = static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->idata->getWidget<ListWidget>();
     vector<vector<int>> inodes(list->getSize());
     vector<vector<double>> weights(list->getSize());
     vector<bool> reduceToNode(list->getSize());
@@ -101,24 +101,24 @@ namespace MBSimGUI {
     vector<int> snn(list->getSize());
     vector<vector<double>> prf(list->getSize());
     for(int i=0; i<list->getSize(); i++) {
-      inodes[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getNodes();
-      weights[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getWeights();
+      inodes[i] = list->getWidget<CMSDataWidget>(i)->getNodes();
+      weights[i] = list->getWidget<CMSDataWidget>(i)->getWeights();
       if(weights[i].size()==0) {
 	weights[i].resize(inodes[i].size());
 	for(size_t j=0; j<weights[i].size(); j++)
 	  weights[i][j] = 1;
       }
-      reduceToNode[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getReduceToSingleNode();
-      idof[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getDof();
+      reduceToNode[i] = list->getWidget<CMSDataWidget>(i)->getReduceToSingleNode();
+      idof[i] = list->getWidget<CMSDataWidget>(i)->getDof();
       for(size_t j=0; j<idof[i].size(); j++)
 	idof[i].set(j,idof[i][j]-1);
-      snn[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getSingleNodeNumber();
-      prf[i] = static_cast<CMSDataWidget*>(list->getWidget(i))->getPositionOfReferenceNode();
+      snn[i] = list->getWidget<CMSDataWidget>(i)->getSingleNodeNumber();
+      prf[i] = list->getWidget<CMSDataWidget>(i)->getPositionOfReferenceNode();
     }
 
     vector<int> nmodes;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->isActive()) {
-      auto mat = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget())->getWidget())->getWidget()->getEvalMat();
+      auto mat = static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->nmodes->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->getEvalMat();
       nmodes.resize(mat.size());
       for(size_t i=0; i<mat.size(); i++)
 	nmodes[i] = mat[i][0].toInt();
@@ -126,7 +126,7 @@ namespace MBSimGUI {
 
     FlexibleBodyTool::NormalModes normalModes = FlexibleBodyTool::freeBoundaryNormalModes;
     if(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->normalModes->isActive()) {
-      auto str = static_cast<TextChoiceWidget*>(static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->normalModes->getWidget())->getText();
+      auto str = static_cast<ComponentModeSynthesisPage*>(page(PageCMS))->normalModes->getWidget<TextChoiceWidget>()->getText();
       if(str=="\"freeBoundaryNormalModes\"") normalModes=FlexibleBodyTool::freeBoundaryNormalModes;
       else if(str=="\"fixedBoundaryNormalModes\"") normalModes=FlexibleBodyTool::fixedBoundaryNormalModes;
       else if(str=="\"constrainedBoundaryNormalModes\"") normalModes=FlexibleBodyTool::constrainedBoundaryNormalModes;

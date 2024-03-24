@@ -45,6 +45,45 @@ namespace MBSimGUI {
       virtual int getStretchHint() const { return 0; }
       virtual QString getXMLComment(xercesc::DOMElement *element) { return ""; }
       virtual void setXMLComment(const QString &comment, xercesc::DOMNode *element) { }
+
+      // get the child widget as type WidgetType
+      template<class WidgetType, bool DynamicCast=false>
+      WidgetType* getWidget() const {
+#ifdef NDEBUG
+        if constexpr(DynamicCast)
+          return dynamic_cast<WidgetType*>(getWidgetVirtual());
+        else
+          return static_cast<WidgetType*>(getWidgetVirtual());
+#else
+        auto *widgetType = dynamic_cast<WidgetType*>(getWidgetVirtual());
+        if(!widgetType && DynamicCast)
+          return nullptr;
+        assert(widgetType);
+        return widgetType;
+#endif
+      }
+
+      // get the child widget i as type WidgetType
+      template<class WidgetType, bool DynamicCast=false>
+      WidgetType* getWidget(int i) const {
+#ifdef NDEBUG
+        if constexpr (DynamicCast)
+          return dynamic_cast<WidgetType*>(getWidgetVirtual(i));
+        else
+          return static_cast<WidgetType*>(getWidgetVirtual(i));
+#else
+        auto *widgetType = dynamic_cast<WidgetType*>(getWidgetVirtual(i));
+        if(!widgetType && DynamicCast)
+          return nullptr;
+        assert(widgetType);
+        return widgetType;
+#endif
+      }
+
+    private:
+      virtual Widget* getWidgetVirtual() const { return nullptr; }
+      virtual Widget* getWidgetVirtual(int i) const { return nullptr; }
+
     signals:
       void widgetChanged();
   };

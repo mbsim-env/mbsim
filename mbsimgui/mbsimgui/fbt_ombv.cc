@@ -29,7 +29,7 @@ namespace MBSimGUI {
 
  void FlexibleBodyTool::ombv() {
     if(static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->isActive()) {
-      string str = static_cast<FileWidget*>(static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->getWidget())->getFile(true).toStdString();
+      string str = static_cast<OpenMBVPage*>(page(PageOMBV))->ombvIndices->getWidget<FileWidget>()->getFile(true).toStdString();
       MatV ombvIndices;
       if(!str.empty())
 	ombvIndices <<= readMat(str);

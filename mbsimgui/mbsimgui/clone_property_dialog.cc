@@ -38,11 +38,11 @@ namespace MBSimGUI {
   }
 
   DOMElement* ClonePropertyDialog::initializeUsingXML(DOMElement *parent) {
-    static_cast<TextWidget*>(name->getWidget())->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
+    name->getWidget<TextWidget>()->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     DOMElement *embed = item->getEmbedXMLElement();
     if(embed) {
       clone->setActive(E(embed)->hasAttribute("count"));
-      auto cw = static_cast<CloneWidget*>(clone->getWidget());
+      auto cw = clone->getWidget<CloneWidget>();
       if(E(embed)->hasAttribute("count")) cw->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
       oldCounterName=QString::fromStdString(E(embed)->getAttribute("counterName"));
       if(E(embed)->hasAttribute("counterName")) cw->setCounterName(oldCounterName);
@@ -52,11 +52,11 @@ namespace MBSimGUI {
   }
 
   DOMElement* ClonePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    E(item->getXMLElement())->setAttribute("name",static_cast<TextWidget*>(name->getWidget())->getText().toStdString());
+    E(item->getXMLElement())->setAttribute("name",name->getWidget<TextWidget>()->getText().toStdString());
     DOMElement *embedNode = item->getEmbedXMLElement();
     if(clone->isActive()) {
       if(not embedNode) embedNode = item->createEmbedXMLElement();
-      auto cw = static_cast<CloneWidget*>(clone->getWidget());
+      auto cw = clone->getWidget<CloneWidget>();
       E(embedNode)->setAttribute("count",cw->getCount().toStdString());
       if(!cw->getCounterName().isEmpty())
         E(embedNode)->setAttribute("counterName",cw->getCounterName().toStdString());
@@ -74,8 +74,8 @@ namespace MBSimGUI {
   }
 
   void ClonePropertyDialog::updateName() {
-    TextWidget *textWidget = static_cast<TextWidget*>(name->getWidget());
-    auto counterName=static_cast<CloneWidget*>(clone->getWidget())->getCounterName();
+    TextWidget *textWidget = name->getWidget<TextWidget>();
+    auto counterName=clone->getWidget<CloneWidget>()->getCounterName();
     if(clone->isActive()) {
       // when clone (=array/pattern=embed) is enabled try to replace the old counterName with the new one or
       // add a counterName inline evaluation "{<counterName>}" if not other inline evaluation exists yet in the name attribute

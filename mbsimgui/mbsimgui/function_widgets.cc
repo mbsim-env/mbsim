@@ -249,7 +249,7 @@ namespace MBSimGUI {
   }
 
   void VectorValuedFunctionWidget::resize_(int m, int n) {
-    static_cast<ListWidget*>(functions->getWidget())->setSize(m);
+    functions->getWidget<ListWidget>()->setSize(m);
   }
 
   DOMElement* VectorValuedFunctionWidget::initializeUsingXML(DOMElement *element) {
@@ -273,42 +273,42 @@ namespace MBSimGUI {
     layout->addWidget(fo);
     fi = new ChoiceWidget(new CompositeFunctionWidgetFactory(factoryi),QBoxLayout::TopToBottom,5);
     layout->addWidget(fi);
-    connect(static_cast<ChoiceWidget*>(fo->getWidget()),&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::updateWidget);
+    connect(fo->getWidget<ChoiceWidget>(),&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::updateWidget);
     connect(fi,&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::updateWidget);
-    connect(static_cast<ChoiceWidget*>(fo->getWidget()),&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::widgetChanged);
+    connect(fo->getWidget<ChoiceWidget>(),&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::widgetChanged);
     connect(fi,&ChoiceWidget::widgetChanged,this,&CompositeFunctionWidget::widgetChanged);
     if(factoryo2) connect(fi,&ChoiceWidget::comboChanged,this,&CompositeFunctionWidget::updateFunctionFactory);
   }
 
   void CompositeFunctionWidget::updateWidget() {
-    int size = static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size();
-    static_cast<FunctionWidget*>(fi->getWidget())->resize_(size,1);
+    int size = fo->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg1Size();
+    fi->getWidget<FunctionWidget>()->resize_(size,1);
   }
 
   void CompositeFunctionWidget::updateFunctionFactory() {
     if(fi->getIndex()==0)
-      static_cast<ChoiceWidget*>(fo->getWidget())->setWidgetFactory(factoryo1);
+      fo->getWidget<ChoiceWidget>()->setWidgetFactory(factoryo1);
     else
-      static_cast<ChoiceWidget*>(fo->getWidget())->setWidgetFactory(factoryo2);
+      fo->getWidget<ChoiceWidget>()->setWidgetFactory(factoryo2);
   }
 
   int CompositeFunctionWidget::getArg1Size() const {
     if(fi->getIndex()==0)
-      return static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(fi->getWidget())->getWidget())->getWidget())->getArg1Size();
+      return fi->getWidget<ExtWidget>()->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg1Size();
     else
-      return static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(static_cast<ListWidget*>(static_cast<ExtWidget*>(fi->getWidget())->getWidget())->getWidget(0))->getWidget())->getArg1Size();
+      return fi->getWidget<ExtWidget>()->getWidget<ListWidget>()->getWidget<ChoiceWidget>(0)->getWidget<FunctionWidget>()->getArg1Size();
   }
 
   void CompositeFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget*>(fo->getWidget())->resize_(m,n);
-    static_cast<ChoiceWidget*>(fi)->resize_(static_cast<FunctionWidget*>(static_cast<ChoiceWidget*>(fo->getWidget())->getWidget())->getArg1Size(),n);
+    fo->getWidget<ChoiceWidget>()->resize_(m,n);
+    fi->resize_(fo->getWidget<ChoiceWidget>()->getWidget<FunctionWidget>()->getArg1Size(),n);
   }
 
   DOMElement* CompositeFunctionWidget::initializeUsingXML(DOMElement *element) {
     fi->initializeUsingXML(element);
-    fo->getWidget()->blockSignals(true);
+    fo->getWidget<ChoiceWidget>()->blockSignals(true);
     updateFunctionFactory();
-    fo->getWidget()->blockSignals(false);
+    fo->getWidget<ChoiceWidget>()->blockSignals(false);
     fo->initializeUsingXML(element);
     return element;
   }
@@ -397,7 +397,7 @@ namespace MBSimGUI {
       argdim[i]->setDisabled(argType[i]==fixedVec);
       if(argType[i]!=scalar) {
         layout->addWidget(argdim[i],i,1);
-        connect(static_cast<SpinBoxWidget*>(argdim[i]->getWidget()),&SpinBoxWidget::valueChanged,this,&SymbolicFunctionWidget::widgetChanged);
+        connect(argdim[i]->getWidget<SpinBoxWidget>(),&SpinBoxWidget::valueChanged,this,&SymbolicFunctionWidget::widgetChanged);
       }
     }
     if(retType==scalar)
@@ -412,19 +412,19 @@ namespace MBSimGUI {
   }
 
   int SymbolicFunctionWidget::getArg1Size() const {
-    return static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->getValue();
+    return argdim[0]->getWidget<SpinBoxWidget>()->getValue();
   }
 
   int SymbolicFunctionWidget::getArg2Size() const {
-    return static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->getValue();
+    return argdim[1]->getWidget<SpinBoxWidget>()->getValue();
   }
 
   void SymbolicFunctionWidget::setArg1Size(int i) {
-    static_cast<SpinBoxWidget*>(argdim[0]->getWidget())->setValue(i);
+    argdim[0]->getWidget<SpinBoxWidget>()->setValue(i);
   }
 
   void SymbolicFunctionWidget::setArg2Size(int i) {
-    static_cast<SpinBoxWidget*>(argdim[1]->getWidget())->setValue(i);
+    argdim[1]->getWidget<SpinBoxWidget>()->setValue(i);
   }
 
   void SymbolicFunctionWidget::resize_(int m, int n) {
@@ -439,10 +439,10 @@ namespace MBSimGUI {
     for(size_t i=0; i<argname.size(); i++) {
       string str = "arg"+toStr(int(i+1));
       if(E(definition)->hasAttribute(str))
-        static_cast<TextWidget*>(argname[i]->getWidget())->setText(QString::fromStdString(E(definition)->getAttribute(str)));
+        argname[i]->getWidget<TextWidget>()->setText(QString::fromStdString(E(definition)->getAttribute(str)));
       str = "arg"+toStr(int(i+1))+"Dim";
       if(E(definition)->hasAttribute(str))
-        static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->setValue(boost::lexical_cast<int>(E(definition)->getAttribute(str)));
+        argdim[i]->getWidget<SpinBoxWidget>()->setValue(boost::lexical_cast<int>(E(definition)->getAttribute(str)));
     }
     return element;
   }
@@ -455,9 +455,9 @@ namespace MBSimGUI {
 
     for(size_t i=0; i<argname.size(); i++) {
       string istr = toStr(int(i+1));
-      E(definition)->setAttribute("arg"+istr, static_cast<TextWidget*>(argname[i]->getWidget())->getText().toStdString());
-      if(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()!=0)
-        E(definition)->setAttribute("arg"+istr+"Dim",fmatvec::toString(static_cast<SpinBoxWidget*>(argdim[i]->getWidget())->getValue()));
+      E(definition)->setAttribute("arg"+istr, argname[i]->getWidget<TextWidget>()->getText().toStdString());
+      if(argdim[i]->getWidget<SpinBoxWidget>()->getValue()!=0)
+        E(definition)->setAttribute("arg"+istr+"Dim",fmatvec::toString(argdim[i]->getWidget<SpinBoxWidget>()->getValue()));
     }
     f->writeXMLFile(definition);
     return ele0;
@@ -479,27 +479,27 @@ namespace MBSimGUI {
   void TabularFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
       updateWidget();
-      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TabularFunctionWidget::updateWidget);
-      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TabularFunctionWidget::updateWidget);
+      connect(choice->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&TabularFunctionWidget::updateWidget);
+      connect(choice->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&TabularFunctionWidget::updateWidget);
     }
   }
 
   void TabularFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      auto *choice1_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      auto *choice2_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
-      static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget()->cols());
+      auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->cols());
     }
   }
 
   void TabularFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m);
+      auto *choice_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
     }
     else {
-      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
-      choice->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m+1);
+      auto *choice_ = choice->getWidget<ExtWidget>()->getWidget<ChoiceWidget>();
+      choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m+1);
     }
   }
 
@@ -528,16 +528,16 @@ namespace MBSimGUI {
 
   void TwoDimensionalTabularFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
-      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::updateWidget);
-      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1)),&Widget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::updateWidget);
+      connect(choice->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::updateWidget);
+      connect(choice->getWidget<ContainerWidget>()->getWidget<Widget>(1),&Widget::widgetChanged,this,&TwoDimensionalTabularFunctionWidget::updateWidget);
     }
   }
 
   void TwoDimensionalTabularFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      auto *choice1_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      auto *choice2_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
-      static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(2))->resize_(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget()->rows());
+      auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(2)->resize_(choice2_->getWidget<PhysicalVariableWidget>()->rows(),choice1_->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->rows());
     }
   }
 
@@ -575,26 +575,26 @@ namespace MBSimGUI {
   void PiecewisePolynomFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
       updateWidget();
-      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&PiecewisePolynomFunctionWidget::updateWidget);
+      connect(choice->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&PiecewisePolynomFunctionWidget::updateWidget);
     }
   }
 
   void PiecewisePolynomFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      auto *choice1_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      auto *choice2_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
-      static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->getWidget()->cols());
+      auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->cols());
     }
   }
 
   void PiecewisePolynomFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m);
+      auto *choice_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
     }
     else {
-      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
-      choice->resize_(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->rows(),m+1);
+      auto *choice_ = choice->getWidget<ExtWidget>()->getWidget<ChoiceWidget>();
+      choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m+1);
     }
   }
 
@@ -632,16 +632,16 @@ namespace MBSimGUI {
 
   void TwoDimensionalPiecewisePolynomFunctionWidget::choiceChanged() {
     if(choice->getIndex()==0) {
-      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0)),&Widget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget);
-      connect(static_cast<Widget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1)),&Widget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget);
+      connect(choice->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget);
+      connect(choice->getWidget<ContainerWidget>()->getWidget<Widget>(1),&Widget::widgetChanged,this,&TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget);
     }
   }
 
   void TwoDimensionalPiecewisePolynomFunctionWidget::updateWidget() {
     if(choice->getIndex()==0) {
-      auto *choice1_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
-      auto *choice2_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(1))->getWidget());
-      static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(2))->resize_(static_cast<PhysicalVariableWidget*>(choice2_->getWidget())->rows(),static_cast<PhysicalVariableWidget*>(choice1_->getWidget())->getWidget()->rows());
+      auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
+      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(2)->resize_(choice2_->getWidget<PhysicalVariableWidget>()->rows(),choice1_->getWidget<PhysicalVariableWidget>()->getWidget<VariableWidget>()->rows());
     }
   }
 
@@ -676,14 +676,14 @@ namespace MBSimGUI {
 
   void FourierFunctionWidget::resize_(int m, int n) {
     if(choice->getIndex()==0) {
-      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(static_cast<ContainerWidget*>(choice->getWidget())->getWidget(0))->getWidget());
+      auto *choice_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
       if(choice_->getIndex()==0)
-        choice->resize_(static_cast<VecSizeVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->size(),m);
+        choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->getWidget<VecSizeVarWidget>()->size(),m);
     }
     else {
-      auto *choice_ = static_cast<ChoiceWidget*>(static_cast<ExtWidget*>(choice->getWidget())->getWidget());
+      auto *choice_ = choice->getWidget<ExtWidget>()->getWidget<ChoiceWidget>();
       if(choice_->getIndex()==0)
-        choice->resize_(static_cast<MatRowsVarWidget*>(static_cast<PhysicalVariableWidget*>(choice_->getWidget())->getWidget())->rows(),m+1);
+        choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->getWidget<MatRowsVarWidget>()->rows(),m+1);
     }
   }
 
@@ -717,8 +717,8 @@ namespace MBSimGUI {
   }
 
   void BidirectionalFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget*>(fn->getWidget())->resize_(m,n);
-    static_cast<ChoiceWidget*>(fp->getWidget())->resize_(m,n);
+    fn->getWidget<ChoiceWidget>()->resize_(m,n);
+    fp->getWidget<ChoiceWidget>()->resize_(m,n);
   }
 
   DOMElement* BidirectionalFunctionWidget::initializeUsingXML(DOMElement *element) {
@@ -748,8 +748,8 @@ namespace MBSimGUI {
   }
 
   void ContinuedFunctionWidget::resize_(int m, int n) {
-    static_cast<ChoiceWidget*>(f->getWidget())->resize_(m,n);
-    static_cast<ChoiceWidget*>(r->getWidget())->resize_(n,n);
+    f->getWidget<ChoiceWidget>()->resize_(m,n);
+    r->getWidget<ChoiceWidget>()->resize_(n,n);
   }
 
   DOMElement* ContinuedFunctionWidget::initializeUsingXML(DOMElement *element) {
@@ -825,13 +825,13 @@ namespace MBSimGUI {
     D = new ExtWidget("Generalized damping matrix",new ChoiceWidget(new SymMatWidgetFactory(getEye<QString>(3,3,"0","0"),vector<QStringList>(3),vector<int>(3,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"dampingMatrix");
     layout->addWidget(D);
 
-    connect(static_cast<ChoiceWidget*>(K->getWidget()),&ChoiceWidget::widgetChanged,this,&LinearElasticFunctionWidget::updateWidget);
+    connect(K->getWidget<ChoiceWidget>(),&ChoiceWidget::widgetChanged,this,&LinearElasticFunctionWidget::updateWidget);
     connect(D,&ExtWidget::widgetChanged,this,&LinearElasticFunctionWidget::updateWidget);
   }
 
   void LinearElasticFunctionWidget::updateWidget() {
     if(D->isActive()) {
-      int size = static_cast<PhysicalVariableWidget*>(static_cast<ChoiceWidget*>(K->getWidget())->getWidget())->rows();
+      int size = K->getWidget<ChoiceWidget>()->getWidget<PhysicalVariableWidget>()->rows();
       D->resize_(size,size);
     }
   }

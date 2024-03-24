@@ -30,7 +30,7 @@ namespace MBSimGUI {
 
   void FlexibleBodyTool::exp() {
     if(Pdm.cols()) {
-      QString fileName = static_cast<FileWidget*>(static_cast<LastPage*>(page(PageLast))->inputFile->getWidget())->getFile(true);
+      QString fileName = static_cast<LastPage*>(page(PageLast))->inputFile->getWidget<FileWidget>()->getFile(true);
       if(not(fileName.isEmpty())) {
 	fileName = fileName.endsWith(".h5")?fileName:fileName+".h5";
 	H5::File file(fileName.toStdString(), H5::File::write);
