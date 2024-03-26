@@ -226,7 +226,7 @@ namespace MBSimGUI {
     elementView->setColumnWidth(0,250);
     elementView->setColumnWidth(1,200);
     elementView->hideColumn(1);
-    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 2);
+    elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 3);
     elementViewFilter->hide();
     // if new rows get insert update the item in the AbstractViewFilter
     connect(elementView->model(), &QAbstractItemModel::rowsInserted, [this](const QModelIndex &parent, int first, int last) {
