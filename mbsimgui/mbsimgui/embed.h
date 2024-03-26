@@ -56,11 +56,13 @@ namespace MBSimGUI {
               }
               catch(MBXMLUtils::DOMEvalException &e) {
                 mw->setExitBad();
+                mw->statusBar()->showMessage(e.getMessage().c_str());
                 std::cerr << e.getMessage() << std::endl;
               }
               catch(...) {
                 mw->setExitBad();
-                std::cerr << "Unknwon error" << std::endl;
+                mw->statusBar()->showMessage("Unknown exception");
+                std::cerr << "Unknwon exception" << std::endl;
               }
               auto docFilename = MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI();
               auto fileInfo = QFileInfo(QDir(QFileInfo(QUrl(docFilename.c_str()).toLocalFile()).canonicalPath()).absoluteFilePath(href.c_str()));

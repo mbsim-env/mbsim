@@ -57,10 +57,12 @@ namespace MBSimGUI {
     }
     catch(DOMEvalException &ex) {
       mw->setExitBad();
+      mw->statusBar()->showMessage(ex.getMessage().c_str());
       cerr << ex.getMessage() << endl;
     }
     catch(...) {
       mw->setExitBad();
+      mw->statusBar()->showMessage("Unknown exception");
       cerr << "Unknown exception" << endl;
     }
     return active;
@@ -227,11 +229,13 @@ namespace MBSimGUI {
         }
         catch(DOMEvalException &e) {
           mw->setExitBad();
+          mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + e.getMessage()).c_str());
           std::cerr << "Cannot evaluate element name to string: " << e.getMessage() << std::endl;
         }
         catch(...) {
           mw->setExitBad();
-          std::cerr << "Cannot evaluate element name to string: Unknwon error" << std::endl;
+          mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
+          std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
         }
       name = name.mid(3);
     }

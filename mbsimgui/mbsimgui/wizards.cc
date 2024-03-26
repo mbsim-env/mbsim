@@ -794,6 +794,10 @@ namespace MBSimGUI {
       file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
     if(not file.isEmpty()) {
       auto doc = mw->parser->parseURI(MBXMLUtils::X()%file.toStdString());
+      if(!doc) {
+        mw->statusBar()->showMessage("Unable to load or parse XML file: "+file);
+        return;
+      }
       auto element = doc->getDocumentElement();
       auto pageList = pageIds();
       vector<bool> pageActive(pageList.size());

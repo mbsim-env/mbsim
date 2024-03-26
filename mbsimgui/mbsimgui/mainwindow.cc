@@ -838,14 +838,18 @@ namespace MBSimGUI {
 
       try { 
         doc = parser->parseURI(X()%fileName.toStdString());
+        if(!doc)
+          throw runtime_error("Unable load or parse XML file: "+fileName.toStdString());
       }
       catch(const std::exception &ex) {
         mw->setExitBad();
+        mw->statusBar()->showMessage(ex.what());
         cerr << ex.what() << endl;
         return;
       }
       catch(...) {
         mw->setExitBad();
+        mw->statusBar()->showMessage("Unknown exception");
         cerr << "Unknown exception." << endl;
         return;
       }
@@ -912,14 +916,17 @@ namespace MBSimGUI {
     }
     catch(const std::exception &ex) {
       mw->setExitBad();
+      mw->statusBar()->showMessage(ex.what());
       cerr << ex.what() << endl;
     }
     catch(const DOMException &ex) {
       mw->setExitBad();
+      mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
     }
     catch(...) {
       mw->setExitBad();
+      mw->statusBar()->showMessage("Unknown exception");
       cerr << "Unknown exception." << endl;
     }
     return false;
@@ -1024,10 +1031,12 @@ namespace MBSimGUI {
         }
         catch(const std::exception &error) {
           mw->setExitBad();
+          mw->statusBar()->showMessage((string("An exception occurred in updateParameters: ") + error.what()).c_str());
           cerr << string("An exception occurred in updateParameters: ") + error.what() << endl;
         }
         catch(...) {
           mw->setExitBad();
+          mw->statusBar()->showMessage("An unknown exception occurred in updateParameters.");
           cerr << "An unknown exception occurred in updateParameters." << endl;
         }
       }
@@ -1040,11 +1049,13 @@ namespace MBSimGUI {
     #define CATCH(msg) \
       catch(DOMEvalException &e) { \
         mw->setExitBad(); \
+        mw->statusBar()->showMessage(e.getMessage().c_str()); \
         std::cerr << msg << ": " << e.getMessage() << std::endl; \
       } \
       catch(...) { \
         mw->setExitBad(); \
-        std::cerr << msg << ": Unknwon error" << std::endl; \
+        mw->statusBar()->showMessage("Unknown exception"); \
+        std::cerr << msg << ": Unknwon exception" << std::endl; \
       }
 
     vector<string> counterNames;
@@ -1289,6 +1300,7 @@ namespace MBSimGUI {
       actionDebug->setDisabled(false);
       statusBar()->showMessage(tr("Ready"));
       auto out=errorText;
+      statusBar()->showMessage(out.remove(QRegExp("<[^>]*>")));
       cerr<<out.remove(QRegExp("<[^>]*>")).toStdString()<<endl;
       return;
     }
@@ -2234,7 +2246,10 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  parentele->insertBefore(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(doc->getDocumentElement(),true)),parent->getXMLElement());
+          if(!doc)
+            statusBar()->showMessage("Unable to load or parse XML file: "+file);
+          else
+	    parentele->insertBefore(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(doc->getDocumentElement(),true)),parent->getXMLElement());
 	}
       }
       parent->createParameters();
@@ -2309,8 +2324,12 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-	  element->insertBefore(ele,nullptr);
+          if(!doc)
+            statusBar()->showMessage("Unable to load or parse XML file: "+file);
+          else {
+	    DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+	    element->insertBefore(ele,nullptr);
+          }
 	}
       }
       file = dialog.getModelFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getModelFileName());
@@ -2324,9 +2343,13 @@ namespace MBSimGUI {
 	}
 	else {
 	  doc = parser->parseURI(X()%file.toStdString());
-	  DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
-	  if(element) element->insertBefore(ele,nullptr);
-	  else element = ele;
+          if(!doc)
+            statusBar()->showMessage("Unable to load or parse XML file: "+file);
+          else {
+	    DOMElement *ele = static_cast<DOMElement*>(parent->getXMLElement()->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
+	    if(element) element->insertBefore(ele,nullptr);
+	    else element = ele;
+          }
 	}
       }
     }
@@ -2945,6 +2968,8 @@ namespace MBSimGUI {
         return file[i];
     }
     DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
+    if(!doc)
+      throw runtime_error("Unable to load or parse XML file: "+fileName.absoluteFilePath().toStdString());
     auto *fileItem = new FileItemData(doc);
     file.push_back(fileItem);
     static_cast<FileTreeModel*>(fileView->model())->createFileItem(fileItem);
@@ -2971,14 +2996,17 @@ namespace MBSimGUI {
     }
     catch(const std::exception &ex) {
       mw->setExitBad();
+      mw->statusBar()->showMessage(ex.what());
       cerr << ex.what() << endl;
     }
     catch(const DOMException &ex) {
       mw->setExitBad();
+      mw->statusBar()->showMessage((X()%ex.getMessage()).c_str());
       cerr << X()%ex.getMessage() << endl;
     }
     catch(...) {
       mw->setExitBad();
+      mw->statusBar()->showMessage("Unknown exception");
       cerr << "Unknown exception." << endl;
     }
   }
@@ -2987,6 +3015,10 @@ namespace MBSimGUI {
     QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectFilePath(), "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not(file.isEmpty())) {
       DOMDocument *doc = parser->parseURI(X()%file.toStdString());
+      if(!doc) {
+        statusBar()->showMessage("Unable to load or parse XML file: "+file);
+        return;
+      }
       DOMNodeList* list = doc->getElementsByTagName(X()%"naturalModeScaleFactor");
       for(size_t j=0; j<list->getLength(); j++)
 	doc->renameNode(list->item(j),X()%MBSIMCONTROL.getNamespaceURI(),X()%"normalModeScaleFactor");
@@ -3011,7 +3043,14 @@ namespace MBSimGUI {
 	  serializer->writeToURI(doc, X()%(file.toStdString()));
 	}
 	catch(const std::exception &ex) {
+          mw->setExitBad();
+          mw->statusBar()->showMessage(ex.what());
 	  cerr << ex.what() << endl;
+	}
+	catch(...) {
+          mw->setExitBad();
+          mw->statusBar()->showMessage("Unknown exception");
+	  cerr << "Unknown exception" << endl;
 	}
       }
     }
