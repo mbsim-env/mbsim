@@ -230,7 +230,7 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
   // check evaluator
   DOMElement *evaluator=E(e)->getFirstElementChildNamed(PV%"evaluator");
   if(!evaluator)
-    Deprecated::message(fmatvec::Atom::msgStatic(fmatvec::Atom::Deprecated), "No {"+PV.getNamespaceURI()+"}evaluator element defined.", e);
+    Deprecated::message(nullptr, "No {"+PV.getNamespaceURI()+"}evaluator element defined.", e);
   if(evaluator && X()%E(evaluator)->getFirstTextChild()->getData()!="xmlflat")
     throw runtime_error("The evaluator must be 'xmlflat'.");
 

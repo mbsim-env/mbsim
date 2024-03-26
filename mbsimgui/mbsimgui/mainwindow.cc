@@ -1263,18 +1263,15 @@ namespace MBSimGUI {
 
     echoView->clearOutput();
     echoView->showXMLCode(false);
-    DOMElement *root;
+    DOMElement *root { nullptr };
     QString errorText;
 
     *debugStreamFlag=echoView->debugEnabled();
 
     try {
-      fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Validate "<<D(doc)->getDocumentFilename().string()<<endl;
-      D(doc)->validate();
+      Preprocess preprocess(doc);
+      preprocess.processAndGetDocument();
       root = doc->getDocumentElement();
-      vector<boost::filesystem::path> dependencies;
-      shared_ptr<Eval> eval=Eval::createEvaluator(project->getEvaluator(), &dependencies);
-      Preprocess::preprocess(mbxmlparser, eval, dependencies, root);
     }
     catch(exception &ex) {
       mw->setExitBad();

@@ -146,12 +146,12 @@ namespace MBSim {
       setRadius(E(e)->getText<double>());
     else {
       e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedRadius");
-      Deprecated::message(cout, "Feature unloadedRadius is deprecated. Use feature radius instead.", e);
+      Deprecated::message(this, "Feature unloadedRadius is deprecated. Use feature radius instead.", e);
       setRadius(E(e)->getText<double>());
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"rimRadius");
     if(e) {
-      Deprecated::message(cout, "Feature rimRadius is deprecated. Use feature ellipseParameters to define tyre contour.", e);
+      Deprecated::message(this, "Feature rimRadius is deprecated. Use feature ellipseParameters to define tyre contour.", e);
       rRim = E(e)->getText<double>();
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"width");

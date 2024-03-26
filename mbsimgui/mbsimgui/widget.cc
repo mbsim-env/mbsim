@@ -18,6 +18,7 @@
 */
 
 #include <widget.h>
+#include <QApplication>
 #include "kinetics_widgets.h"
 #include "unknown_widget.h"
 #include "environment_widgets.h"
@@ -26,6 +27,10 @@
 #include "ombv_widgets.h"
 
 namespace MBSimGUI {
+
+  int WidgetFactory::getMargin() const {
+    return QFontInfo(QApplication::font()).pixelSize()*0.75;
+  }
 
   template<class Container>
   WidgetFactoryFor<Container>::WidgetFactoryFor(Element *e_, QWidget *pw_) :e(e_), pw(pw_) {}

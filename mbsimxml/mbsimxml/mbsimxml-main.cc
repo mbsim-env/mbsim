@@ -274,19 +274,20 @@ int main(int argc, char *argv[]) {
         // run preprocessor
 
         // validate the project file with mbsimxml.xsd
-        auto [mainXMLDoc, evalName] = Preprocess::parseFileAndGetEvaluator(dependencies, xmlCatalogDoc->getDocumentElement(), MBSIMPRJ);
+        Preprocess preprocess(MBSIMPRJ, xmlCatalogDoc->getDocumentElement());
 
         // create parameter override ParamSet
-        auto eval=Eval::createEvaluator(evalName, &dependencies);
+        auto eval=preprocess.getEvaluator();
         auto param = make_shared<Preprocess::ParamSet>();
         for(auto &pa : paramArg) {
           auto pos = pa.find('=');
           (*param)[pa.substr(0, pos)]=eval->eval(pa.substr(pos+1));
         }
         auto overrideParam(*param);
+        preprocess.setParam(param);
 
         // validate the project file with mbsimxml.xsd
-        Preprocess::preprocessDocument(dependencies, eval, mainXMLDoc, param);
+        auto mainXMLDoc = preprocess.processAndGetDocument();
 
         if(!ONLYPP) {
           // load MBSim modules

@@ -113,8 +113,6 @@ namespace MBSim {
       Group::init(stage, config);
     }
     else if (stage == unknownStage) {
-      msg(Info) << name << " (special group) stage==unknownStage:" << endl;
-
       vector<Element*> eleList;
 
       vector<Object*> objList;
@@ -350,7 +348,7 @@ namespace MBSim {
       updaterFactorRef(rFactorParent);
 
       // contact solver specific settings
-      msg(Info) << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
+      msg(Debug) << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
       if (contactSolver == GaussSeidel)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsGaussSeidel;
       else if (contactSolver == direct) {
@@ -365,7 +363,7 @@ namespace MBSim {
         throwError("(DynamicSystemSolver::init()): Unknown contact solver");
 
       // impact solver specific settings
-      msg(Info) << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
+      msg(Debug) << "  use impact solver \'" << getSolverInfo() << "\' for impact situations" << endl;
       if (impactSolver == GaussSeidel)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsGaussSeidel;
       else if (impactSolver == direct) {
@@ -379,14 +377,11 @@ namespace MBSim {
       else
         throwError("(DynamicSystemSolver::init()): Unknown impact solver");
 
-      msg(Info) << "End of special group stage==unknownStage" << endl;
-
       Group::init(stage, config);
 
       setUpObjectsWithNonConstantMassMatrix();
     }
     else if (stage == preInit) {
-      msg(Info) << "  initialising preInit ..." << endl;
       if(contactSolver==unknownSolver)
         throwError("(DynamicSystemSolver::init): constraint solver unknown");
       if(impactSolver==unknownSolver)
@@ -397,7 +392,6 @@ namespace MBSim {
     }
     else if (stage == plotting) {
       firstPlot=true;
-      msg(Info) << "  initialising plot-files ..." << endl;
 
       // We do not use getPath here since separateFilePerGroup is only allowed per Group and all parents of Group's
       // are also Group's (DynamicSystem's) -> Skip the Group[...] for each sub path.
@@ -439,7 +433,6 @@ namespace MBSim {
         // write openmbv files
         openMBVGrp->write(true, truncateSimulationFiles);
       }
-      msg(Info) << "...... done initialising." << endl << endl;
     }
     else
       Group::init(stage, config);

@@ -57,7 +57,7 @@ namespace MBSimGUI {
       virtual int getSize() const { return 0; }
       virtual int getDefaultIndex() const { return 0; }
       virtual int getFallbackIndex() const { return getDefaultIndex(); }
-      virtual int getMargin() const { return 10; }
+      virtual int getMargin() const;
       virtual MBXMLUtils::FQN getXMLName(int i=0) const { return ""; }
   };
 
