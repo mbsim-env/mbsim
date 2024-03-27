@@ -106,13 +106,19 @@ namespace MBSimGUI {
         }
         catch(MBXMLUtils::DOMEvalException &e) {
           mw->setExitBad();
+          mw->statusBar()->showMessage(e.getMessage().c_str());
           std::cerr << e.getMessage() << std::endl;
         }
         catch(...) {
           mw->setExitBad();
-          std::cerr << "Unknwon error" << std::endl;
+          mw->statusBar()->showMessage("Unknown exception");
+          std::cerr << "Unknwon exception" << std::endl;
         }
         DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
+        if(!doc) {
+          ele1 = ele1->getNextElementSibling();
+          continue;
+        }
         DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
         ele1->insertBefore(ele2,nullptr);
         boost::filesystem::path orgFileName=E(doc->getDocumentElement())->getOriginalFilename();

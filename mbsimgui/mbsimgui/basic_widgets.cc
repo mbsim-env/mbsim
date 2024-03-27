@@ -925,6 +925,8 @@ namespace MBSimGUI {
       DOMElement *element;
       if(dynamic_cast<DOMDocument*>(parent->getParentNode())) {
         DOMDocument *doc = mw->parser->parse(source);
+        if(!doc)
+          throw runtime_error("Unable to load or parse XML file: "+edit->toPlainText().toStdString());
         DOMElement *ele = doc->getDocumentElement();
         element = static_cast<xercesc::DOMElement*>(parent->getOwnerDocument()->importNode(ele,true));
         element->getOwnerDocument()->replaceChild(element, parent);
@@ -935,7 +937,18 @@ namespace MBSimGUI {
     }
     catch(DOMLSException &ex) {
       mw->setExitBad();
+      mw->statusBar()->showMessage((X()%ex.msg).c_str());
       cerr << X()%ex.msg << endl;
+    }
+    catch(exception &ex) {
+      mw->setExitBad();
+      mw->statusBar()->showMessage(ex.what());
+      cerr << X()%ex.what() << endl;
+    }
+    catch(...) {
+      mw->setExitBad();
+      mw->statusBar()->showMessage("Unknown exception");
+      cerr << "Unknown exception" << endl;
     }
     return nullptr;
   }

@@ -23,6 +23,7 @@ MBSimGUI
 --------
 - Enable comments for elements, parameters and all top level widgets.
 - Added a new File menu entry to open the 3D view (OpenMBV) settings dialog.
+- Enable filtering in element browser.
 
 MBSimXML
 --------

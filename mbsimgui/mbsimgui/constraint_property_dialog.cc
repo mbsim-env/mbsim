@@ -21,6 +21,7 @@
 #include "constraint_property_dialog.h"
 #include "function_widget_factory.h"
 #include "basic_widgets.h"
+#include "mainwindow.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "frame.h"
@@ -32,6 +33,8 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   ConstraintPropertyDialog::ConstraintPropertyDialog(Element *constraint) : ElementPropertyDialog(constraint) {
   }
@@ -142,6 +145,7 @@ namespace MBSimGUI {
   }
 
   void GeneralizedVelocityConstraintPropertyDialog::updateWidget() {
+    mw->statusBar()->showMessage("GeneralizedVelocityConstraintPropertyDialog::updateWidget() not yet implemented");
     cerr << "GeneralizedVelocityConstraintPropertyDialog::updateWidget() not yet implemented" << endl;
   }
 

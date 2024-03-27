@@ -159,6 +159,8 @@ namespace MBSimGUI {
     eleList->setColumnWidth(0,250);
     eleList->setColumnWidth(1,200);
     eleList->hideColumn(1);
+    auto *eleFilter = new OpenMBVGUI::AbstractViewFilter(eleList, 0, 3);
+    layout->addWidget(eleFilter);
     layout->addWidget(eleList);
     connect(eleList, &QTreeView::pressed, this, &BasicElementBrowser::selectionChanged);
 
