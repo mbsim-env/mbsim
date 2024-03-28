@@ -85,10 +85,12 @@ namespace MBSimGUI {
       template<class WidgetType, bool AllowNullptr=false>
       WidgetType* getFirstWidget() const {
         auto *widget = getWidgetVirtual();
-        if constexpr (AllowNullptr)
-          return nullptr;
-        else
-          throw std::runtime_error("No child widget of specified type found!");
+        if(!widget) {
+          if constexpr (AllowNullptr)
+            return nullptr;
+          else
+            throw std::runtime_error("No child widget of specified type found!");
+        }
         if(auto *widgetType = dynamic_cast<WidgetType*>(widget); widgetType)
           return widgetType;
         return widget->getFirstWidget<WidgetType>();
