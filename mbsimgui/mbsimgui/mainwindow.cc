@@ -1119,7 +1119,7 @@ namespace MBSimGUI {
           // skip if onlyIf evaluates to false
           if(!start->onlyIfStr.empty()) {
             try {
-              bool onlyIf = mw->eval->cast<int>(mw->eval->stringToValue(code,e));
+              bool onlyIf = mw->eval->cast<int>(mw->eval->stringToValue(start->onlyIfStr,e));
               if(!onlyIf)
                 continue;
             }
