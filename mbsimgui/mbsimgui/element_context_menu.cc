@@ -55,9 +55,9 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : QMenu("",parent) {
+  ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : ContextMenu("",parent) {
     setToolTipsVisible(true);
-    QAction *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
+    auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
     if(saveable) {
@@ -199,7 +199,7 @@ namespace MBSimGUI {
     addAction(action);
   }
 
-  FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
+  FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : ContextMenu(title,parent) {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
@@ -221,7 +221,7 @@ namespace MBSimGUI {
     createContextMenuFor<NodeFrame>(this, element, "Add '");
   }
 
-  ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
+  ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : ContextMenu(title,parent) {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
@@ -235,7 +235,7 @@ namespace MBSimGUI {
     createContextMenuFor<Contour>(this, element, "Add '");
   }
 
-  GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
+  GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : ContextMenu(title,parent) {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
@@ -249,7 +249,7 @@ namespace MBSimGUI {
     createContextMenuFor<Group>(this, element, "Add '");
   }
 
-  ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
+  ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : ContextMenu(title,parent) {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
@@ -263,7 +263,7 @@ namespace MBSimGUI {
     createContextMenuFor<Object>(this, element, "Add '");
   }
 
-  LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : QMenu(title,parent) {
+  LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : ContextMenu(title,parent) {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
@@ -277,7 +277,7 @@ namespace MBSimGUI {
     createContextMenuFor<Link>(this, element, "Add '");
   }
 
-  ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
+  ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : ContextMenu(title,parent) {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);
@@ -291,7 +291,7 @@ namespace MBSimGUI {
     createContextMenuFor<Constraint>(this, element, "Add '");
   }
 
-  ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
+  ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : ContextMenu(title,parent) {
     setToolTipsVisible(true);
     QAction *action = new QAction(QIcon::fromTheme("document-open"), importReferenceActionText, this);
     action->setToolTip(importReferenceTooltipText);

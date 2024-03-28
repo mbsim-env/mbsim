@@ -271,6 +271,31 @@ namespace MBSimGUI {
     auto runMenu = new QMenu("Run", menuBar());
     menuBar()->addMenu(runMenu);
 
+    auto iconPath(getInstallPath()/"share"/"mbsimgui"/"icons");
+
+    auto *treeViewMenu = new QMenu("Tree view", menuBar());
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand", this, [=](){ elementView->expand(elementView->selectionModel()->currentIndex()); });
+    action->setShortcut(QKeySequence("Shift+e"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand to depth 0", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),0); });
+    action->setShortcut(QKeySequence("Shift+0"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand to depth 1", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),1); });
+    action->setShortcut(QKeySequence("Shift+1"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand to depth 2", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),2); });
+    action->setShortcut(QKeySequence("Shift+2"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand to depth 3", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),3); });
+    action->setShortcut(QKeySequence("Shift+3"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand to depth 4", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),4); });
+    action->setShortcut(QKeySequence("Shift+4"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand to depth 5", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),5); });
+    action->setShortcut(QKeySequence("Shift+5"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand all", this, [=](){ elementView->expandRecursively(elementView->selectionModel()->currentIndex()); });
+    action->setShortcut(QKeySequence("Shift++"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"collapsed.svg").string())), "Collapse", this, [=](){ elementView->collapse(elementView->selectionModel()->currentIndex()); });
+    action->setShortcut(QKeySequence("Shift+c"));
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"collapsed.svg").string())), "Collapse all", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),-1); });
+    action->setShortcut(QKeySequence("Shift+-"));
+    menuBar()->addMenu(treeViewMenu);
+
     auto sceneViewMenu = inlineOpenMBVMW->getSceneViewMenu();
     sceneViewMenu->removeAction(sceneViewMenu->findChild<QAction*>("MainWindow::sceneViewMenu::releaseCamera"));
     menuBar()->addMenu(sceneViewMenu);
@@ -300,7 +325,6 @@ namespace MBSimGUI {
     helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, &MainWindow::about);
     menuBar()->addMenu(helpMenu);
 
-    auto iconPath(getInstallPath()/"share"/"mbsimgui"/"icons");
     QToolBar *runBar = addToolBar("Run Toolbar");
     toolMenu->addAction(runBar->toggleViewAction());
     runBar->setObjectName("toolbar/run");

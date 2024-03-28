@@ -20,7 +20,7 @@
 #ifndef _ELEMENT_CONTEXT_MENU_H_
 #define _ELEMENT_CONTEXT_MENU_H_
 
-#include <QMenu>
+#include "context_menu.h"
 
 namespace MBSimGUI {
 
@@ -33,7 +33,7 @@ namespace MBSimGUI {
   class Constraint;
   class Observer;
 
-  class ElementContextMenu : public QMenu {
+  class ElementContextMenu : public ContextMenu {
     public:
       ElementContextMenu(Element *element, QWidget *parent=nullptr, bool removable=true, bool saveable=true);
    };
@@ -78,7 +78,7 @@ namespace MBSimGUI {
       ObserverContextMenu(Observer *observer, QWidget *parent=nullptr, bool removable=true);
   };
 
-  class FramesContextMenu : public QMenu {
+  class FramesContextMenu : public ContextMenu {
     public:
       FramesContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };
@@ -93,32 +93,32 @@ namespace MBSimGUI {
       NodeFramesContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };
 
-  class ContoursContextMenu : public QMenu {
+  class ContoursContextMenu : public ContextMenu {
     public:
       ContoursContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };
 
-  class GroupsContextMenu : public QMenu {
+  class GroupsContextMenu : public ContextMenu {
     public:
       GroupsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };
 
-  class ObjectsContextMenu : public QMenu {
+  class ObjectsContextMenu : public ContextMenu {
     public:
       ObjectsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };
 
-  class LinksContextMenu : public QMenu {
+  class LinksContextMenu : public ContextMenu {
     public:
       LinksContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };
 
-  class ConstraintsContextMenu : public QMenu {
+  class ConstraintsContextMenu : public ContextMenu {
     public:
       ConstraintsContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };
 
-  class ObserversContextMenu : public QMenu {
+  class ObserversContextMenu : public ContextMenu {
     public:
       ObserversContextMenu(Element *element, const QString &title="", QWidget *parent=nullptr);
   };

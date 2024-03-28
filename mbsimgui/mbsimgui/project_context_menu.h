@@ -20,14 +20,13 @@
 #ifndef _PROJECT_CONTEXT_MENU__H_
 #define _PROJECT_CONTEXT_MENU__H_
 
-#include <QLineEdit>
-#include <QMenu>
+#include "context_menu.h"
 
 namespace MBSimGUI {
 
   class Project;
 
-  class ProjectContextMenu : public QMenu {
+  class ProjectContextMenu : public ContextMenu {
     public:
       ProjectContextMenu(QWidget *parent=nullptr);
   };
