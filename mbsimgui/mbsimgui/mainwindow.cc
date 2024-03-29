@@ -229,7 +229,7 @@ namespace MBSimGUI {
     elementViewFilter = new OpenMBVGUI::AbstractViewFilter(elementView, 0, 3);
     elementViewFilter->hide();
     // if new rows get insert update the item in the AbstractViewFilter
-    connect(elementView->model(), &QAbstractItemModel::rowsInserted, [this](const QModelIndex &parent, int first, int last) {
+    connect(elementView->model(), &QAbstractItemModel::rowsInserted, this, [this](const QModelIndex &parent, int first, int last) {
       for(int r=first; r<=last; ++r)
         elementViewFilter->updateItem(elementView->model()->index(r,0,parent));
     });
@@ -463,7 +463,7 @@ namespace MBSimGUI {
     if(arg.contains("--autoExit")) {
       process.setProcessChannelMode(QProcess::ForwardedChannels);
       auto timer=new QTimer(this);
-      connect(timer, &QTimer::timeout, [this, timer](){
+      connect(timer, &QTimer::timeout, this, [this, timer](){
         if(process.state()==QProcess::NotRunning) {
           timer->stop();
           if(!close())
@@ -570,7 +570,7 @@ namespace MBSimGUI {
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  bfs::copy_option::overwrite_if_exists);
     bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", bfs::copy_option::overwrite_if_exists);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
-    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::fileReloaded, [this](){
+    connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::fileReloaded, this, [this](){
       if(callViewAllAfterFileReloaded)
         inlineOpenMBVMW->viewAllSlot();
       callViewAllAfterFileReloaded = false;

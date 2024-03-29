@@ -62,7 +62,7 @@ namespace MBSimGUI {
 
         if constexpr (has_member_function_getStretchHint<int(W::*)() const>::value)
         {
-          connect(widget_,&Widget::widgetChanged,[this, name, idx, widget_](){
+          connect(widget_,&Widget::widgetChanged,this,[this, name, idx, widget_](){
             layout[name]->setStretch(idx, widget_->getStretchHint());
           });
         }
