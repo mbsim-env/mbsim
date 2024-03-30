@@ -86,4 +86,29 @@ namespace MBSimGUI {
       return new Project;
     }
 
+  QFileInfo getQFileInfoForEmbed(xercesc::DOMElement *ele1, const std::string &attr) {
+    std::string href;
+    try{
+      href = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute(attr),ele1,false));
+      href = href.substr(1,href.size()-2);
+    }
+    catch(MBXMLUtils::DOMEvalException &e) {
+      mw->setExitBad();
+      std::cerr << e.getMessage() << std::endl;
+    }
+    catch(...) {
+      mw->setExitBad();
+      std::cerr << "Unknwon error" << std::endl;
+    }
+    auto docFilename = MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI();
+    auto fileInfo = QFileInfo(QDir(QFileInfo(QUrl(docFilename.c_str()).toLocalFile()).canonicalPath()).absoluteFilePath(href.c_str()));
+    if(!fileInfo.exists())
+      QMessageBox::warning(nullptr, "Import/Reference model file",
+                                    ("The imported/referenced model file has a reference to another file which cannot be found:\n"
+                                     "\n'"+href+"'\n\n"
+                                     "See the errors in the 'MBSim Echo Area'.\n"
+                                     "(This may happen e.g. if a model is imported which has relative path reference to other files)").c_str());
+    return fileInfo;
+  };
+
 }

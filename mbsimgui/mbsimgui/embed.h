@@ -37,6 +37,8 @@ namespace MBSimGUI {
   class Element;
   extern MainWindow *mw;
 
+  QFileInfo getQFileInfoForEmbed(xercesc::DOMElement *ele1, const std::string &attr);
+
   template <typename T>
     class Embed {
       public:
@@ -48,36 +50,9 @@ namespace MBSimGUI {
             xercesc::DOMElement *ele2 = nullptr;
             FileItemData *parameterFileItem = nullptr;
 
-            auto load = [](xercesc::DOMElement *ele1, const std::string &attr) {
-              std::string href;
-              try{
-                href = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute(attr),ele1,false));
-                href = href.substr(1,href.size()-2);
-              }
-              catch(MBXMLUtils::DOMEvalException &e) {
-                mw->setExitBad();
-                mw->statusBar()->showMessage(e.getMessage().c_str());
-                std::cerr << e.getMessage() << std::endl;
-              }
-              catch(...) {
-                mw->setExitBad();
-                mw->statusBar()->showMessage("Unknown exception");
-                std::cerr << "Unknwon exception" << std::endl;
-              }
-              auto docFilename = MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI();
-              auto fileInfo = QFileInfo(QDir(QFileInfo(QUrl(docFilename.c_str()).toLocalFile()).canonicalPath()).absoluteFilePath(href.c_str()));
-              if(!fileInfo.exists())
-                QMessageBox::warning(nullptr, "Import/Reference model file",
-                                              ("The imported/referenced model file has a reference to another file which cannot be found:\n"
-                                               "\n'"+href+"'\n\n"
-                                               "See the errors in the 'MBSim Echo Area'.\n"
-                                               "(This may happen e.g. if a model is imported which has relative path reference to other files)").c_str());
-              return fileInfo;
-            };
-
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
               mw->updateParameters(parent,false);
-              auto fileInfo = load(ele1, "parameterHref");
+              auto fileInfo = getQFileInfoForEmbed(ele1, "parameterHref");
               if(!fileInfo.exists())
                 return nullptr;
               parameterFileItem = mw->addFile(fileInfo);
@@ -91,7 +66,7 @@ namespace MBSimGUI {
             FileItemData *fileItem = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
               if(not parameterFileItem) mw->updateParameters(parent,false);
-              auto fileInfo = load(ele1, "href");
+              auto fileInfo = getQFileInfoForEmbed(ele1, "href");
               if(!fileInfo.exists())
                 return nullptr;
               fileItem = mw->addFile(fileInfo);

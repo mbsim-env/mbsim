@@ -2265,6 +2265,9 @@ namespace MBSimGUI {
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	auto *parentele = parent->createEmbedXMLElement();
 	if(dialog.referenceParameter()) {
+          auto oldParameter = E(parentele)->getFirstElementChildNamed(PV%"Parameter");
+          if(oldParameter)
+            parentele->removeChild(oldParameter)->release();
 	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parentele->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
 	  E(parentele)->setAttribute("parameterHref",(dialog.getAbsoluteFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	  parent->setParameterFileItem(addFile(file));
@@ -2273,8 +2276,12 @@ namespace MBSimGUI {
 	  doc = parser->parseURI(X()%file.toStdString());
           if(!doc)
             statusBar()->showMessage("Unable to load or parse XML file: "+file);
-          else
-	    parentele->insertBefore(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(doc->getDocumentElement(),true)),parent->getXMLElement());
+          else {
+            auto oldParameter = E(parentele)->getFirstElementChildNamed(PV%"Parameter");
+            if(oldParameter)
+              parentele->removeChild(oldParameter)->release();
+	    parentele->insertBefore(static_cast<DOMElement*>(parentele->getOwnerDocument()->importNode(doc->getDocumentElement(),true)),parentele->getFirstElementChild());
+          }
 	}
       }
       parent->createParameters();
