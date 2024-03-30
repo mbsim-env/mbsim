@@ -864,12 +864,12 @@ namespace MBSimGUI {
     QHBoxLayout *layout = new QHBoxLayout;
     layout->setMargin(0);
     setLayout(layout);
-    count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1")));
+    count = new ExtWidget("Count",new PhysicalVariableWidget(new ScalarWidget("1", "")));
     layout->addWidget(count);
     counterName = new ExtWidget("Countername",new TextWidget("n"));
     connect(counterName->getWidget<TextWidget>(),&TextWidget::widgetChanged,this,&CloneWidget::widgetChanged);
     layout->addWidget(counterName);
-    onlyif = new ExtWidget("Onlyif",new PhysicalVariableWidget(new ScalarWidget("1")));
+    onlyif = new ExtWidget("Onlyif",new PhysicalVariableWidget(new ScalarWidget("1", "")));
     layout->addWidget(onlyif);
   }
 

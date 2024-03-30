@@ -43,10 +43,19 @@ namespace MBSimGUI {
     if(embed) {
       clone->setActive(!E(embed)->hasAttribute("count") || E(embed)->getAttribute("count")!="0");
       auto cw = clone->getWidget<CloneWidget>();
-      if(E(embed)->hasAttribute("count")) cw->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
+      if(E(embed)->hasAttribute("count"))
+        cw->setCount(QString::fromStdString(E(embed)->getAttribute("count")));
+      else
+        cw->setCount("");
       oldCounterName=QString::fromStdString(E(embed)->getAttribute("counterName"));
-      if(E(embed)->hasAttribute("counterName")) cw->setCounterName(oldCounterName);
-      if(E(embed)->hasAttribute("onlyif")) cw->setOnlyif(QString::fromStdString(E(embed)->getAttribute("onlyif")));
+      if(E(embed)->hasAttribute("counterName"))
+        cw->setCounterName(oldCounterName);
+      else
+        cw->setCounterName("");
+      if(E(embed)->hasAttribute("onlyif"))
+        cw->setOnlyif(QString::fromStdString(E(embed)->getAttribute("onlyif")));
+      else
+        cw->setOnlyif("");
     }
     return parent;
   }
@@ -81,12 +90,13 @@ namespace MBSimGUI {
     if(clone->isActive()) {
       // when clone (=array/pattern=embed) is enabled try to replace the old counterName with the new one or
       // add a counterName inline evaluation "{<counterName>}" if not other inline evaluation exists yet in the name attribute
+      auto counterNameWithBrackets = counterName.isEmpty() ? "" : "{"+counterName+"}";
       QString text = textWidget->getText();
       QRegularExpression re("{ *" + oldCounterName + " *}");
-      text.replace(re, "{"+counterName+"}");
+      text.replace(re, counterNameWithBrackets);
       int i1 = text.indexOf("{");
       if(i1==-1)
-        textWidget->setText(text+"{"+counterName+"}");
+        textWidget->setText(text+counterNameWithBrackets);
       else
         textWidget->setText(text);
     }
