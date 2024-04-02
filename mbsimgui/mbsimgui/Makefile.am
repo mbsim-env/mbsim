@@ -67,7 +67,6 @@ libmbsimgui_la_SOURCES = \
   physics_property_dialog.cc \
   element.cc \
   objectfactory.cc \
-  context_menu.cc \
   solver_context_menu.cc \
   project_context_menu.cc \
   element_context_menu.cc \
@@ -156,7 +155,6 @@ mbsimguiinclude_HEADERS = analyzer.h \
   wizards.h \
   dynamic_system_solver.h \
   echo_view.h \
-  context_menu.h \
   element_context_menu.h \
   element.h \
   element_property_dialog.h \
@@ -300,6 +298,9 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
   icons/import.svg \
   icons/string.svg \
   icons/fbt.svg
+
+docdir = @datadir@/mbsimgui/doc
+dist_doc_DATA = guihelp.html
 
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines

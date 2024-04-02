@@ -25,7 +25,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  ProjectContextMenu::ProjectContextMenu(QWidget *parent) : ContextMenu("",parent) {
+  ProjectContextMenu::ProjectContextMenu(QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
