@@ -30,6 +30,7 @@ namespace MBSimGUI {
     public:
       ParameterView(QWidget *parent=nullptr);
       ~ParameterView();
+      void expandToDepth(const QModelIndex &index, int depth);
     private:
       void mouseDoubleClickEvent(QMouseEvent *event) override;
       void mousePressEvent(QMouseEvent *event) override;

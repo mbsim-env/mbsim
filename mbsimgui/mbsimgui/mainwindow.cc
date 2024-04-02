@@ -275,14 +275,14 @@ namespace MBSimGUI {
     auto iconPath(getInstallPath()/"share"/"mbsimgui"/"icons");
 
     vector<QShortcut*> sc(8);
-    connect(sc[0]=new QShortcut(QKeySequence("0"),this), &QShortcut::activated, this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),0); });
-    connect(sc[1]=new QShortcut(QKeySequence("1"),this), &QShortcut::activated, this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),1); });
-    connect(sc[2]=new QShortcut(QKeySequence("2"),this), &QShortcut::activated, this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),2); });
-    connect(sc[3]=new QShortcut(QKeySequence("3"),this), &QShortcut::activated, this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),3); });
-    connect(sc[4]=new QShortcut(QKeySequence("4"),this), &QShortcut::activated, this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),4); });
-    connect(sc[5]=new QShortcut(QKeySequence("5"),this), &QShortcut::activated, this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),5); });
-    connect(sc[6]=new QShortcut(QKeySequence("Shift++"),this), &QShortcut::activated, this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),1000); });
-    connect(sc[7]=new QShortcut(QKeySequence("Shift+-"),this), &QShortcut::activated, this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),-1); });
+    connect(sc[0]=new QShortcut(QKeySequence("0"),this), &QShortcut::activated, this, [=](){ expandToDepth(0); });
+    connect(sc[1]=new QShortcut(QKeySequence("1"),this), &QShortcut::activated, this, [=](){ expandToDepth(1); });
+    connect(sc[2]=new QShortcut(QKeySequence("2"),this), &QShortcut::activated, this, [=](){ expandToDepth(2); });
+    connect(sc[3]=new QShortcut(QKeySequence("3"),this), &QShortcut::activated, this, [=](){ expandToDepth(3); });
+    connect(sc[4]=new QShortcut(QKeySequence("4"),this), &QShortcut::activated, this, [=](){ expandToDepth(4); });
+    connect(sc[5]=new QShortcut(QKeySequence("5"),this), &QShortcut::activated, this, [=](){ expandToDepth(5); });
+    connect(sc[6]=new QShortcut(QKeySequence("Shift++"),this), &QShortcut::activated, this, [=](){ expandToDepth(1000); });
+    connect(sc[7]=new QShortcut(QKeySequence("Shift+-"),this), &QShortcut::activated, this, [=](){ expandToDepth(-1); });
 
     auto sceneViewMenu = inlineOpenMBVMW->getSceneViewMenu();
     sceneViewMenu->removeAction(sceneViewMenu->findChild<QAction*>("MainWindow::sceneViewMenu::releaseCamera"));
@@ -3075,6 +3075,13 @@ namespace MBSimGUI {
 	}
       }
     }
+  }
+
+  void MainWindow::expandToDepth(int depth) {
+    if(elementView->hasFocus())
+      elementView->expandToDepth(elementView->selectionModel()->currentIndex(),depth);
+    else if(parameterView->hasFocus())
+      parameterView->expandToDepth(parameterView->selectionModel()->currentIndex(),depth);
   }
 
 }

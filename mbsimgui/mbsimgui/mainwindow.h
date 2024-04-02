@@ -301,6 +301,7 @@ namespace MBSimGUI {
       static boost::filesystem::path getInstallPath();
       void flexibleBodyTool();
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
+      void expandToDepth(int depth);
     public slots:
       void openElementEditor(bool config=true);
 

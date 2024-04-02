@@ -47,4 +47,18 @@ namespace MBSimGUI {
       QTreeView::mousePressEvent(event);
   }
 
+  void ParameterView::expandToDepth(const QModelIndex &index, int depth) {
+    setExpanded(index,depth>-1);
+    for(int i=0; i<model()->rowCount(index); i++) {
+      const QModelIndex child = model()->index(i, 0, index);
+      if(depth>0) {
+	if(model()->rowCount(child)>0) setExpanded(child,true);
+      }
+      else {
+	if(model()->rowCount(child)>0) setExpanded(child,false);
+      }
+      expandToDepth(child, depth-1);
+    }
+  }
+
 }
