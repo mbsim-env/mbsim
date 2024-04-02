@@ -288,7 +288,7 @@ namespace MBSimGUI {
     action->setShortcut(QKeySequence("Shift+4"));
     action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand to depth 5", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),5); });
     action->setShortcut(QKeySequence("Shift+5"));
-    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand all", this, [=](){ elementView->expandRecursively(elementView->selectionModel()->currentIndex()); });
+    action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand all", this, [=](){ elementView->expandToDepth(elementView->selectionModel()->currentIndex(),1000); });
     action->setShortcut(QKeySequence("Shift++"));
     action = treeViewMenu->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"collapsed.svg").string())), "Collapse", this, [=](){ elementView->collapse(elementView->selectionModel()->currentIndex()); });
     action->setShortcut(QKeySequence("Shift+c"));

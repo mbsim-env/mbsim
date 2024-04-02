@@ -52,7 +52,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->getElementView()->expandToDepth(mw->getElementView()->selectionModel()->currentIndex(),5); });
     view->addAction(action);
     action = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand all", this);
-    connect(action,&QAction::triggered,this,[=](){ mw->getElementView()->expandRecursively(mw->getElementView()->selectionModel()->currentIndex()); });
+    connect(action,&QAction::triggered,this,[=](){ mw->getElementView()->expandToDepth(mw->getElementView()->selectionModel()->currentIndex(),1000); });
     view->addAction(action);
     action = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"collapsed.svg").string())), "Collapse", this);
     connect(action,&QAction::triggered,this,[=](){ mw->getElementView()->collapse(mw->getElementView()->selectionModel()->currentIndex()); });
