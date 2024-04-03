@@ -108,6 +108,12 @@ namespace MBSim {
 
       void setIntegrateGeneralizedRelativeVelocityOfRotation(bool integrateGeneralizedRelativeVelocityOfRotation_) { integrateGeneralizedRelativeVelocityOfRotation = integrateGeneralizedRelativeVelocityOfRotation_; }
 
+      enum class AngleMode {
+        smallAngles,
+        cardan,
+      };
+      void setAngleMode(AngleMode angleMode_) { angleMode = angleMode_; }
+
       fmatvec::VecV evalGeneralizedRelativePositionOfRotation() override;
 
       void initializeUsingXML(xercesc::DOMElement *element) override;
@@ -139,6 +145,10 @@ namespace MBSim {
       fmatvec::Vec gdn, gdd;
 
       bool integrateGeneralizedRelativeVelocityOfRotation{false};
+
+      AngleMode angleMode { AngleMode::smallAngles };
+
+      bool disableAngleWarning { false };
 
       fmatvec::Mat3xV RF, RM;
       fmatvec::RangeV iFM, iMM;

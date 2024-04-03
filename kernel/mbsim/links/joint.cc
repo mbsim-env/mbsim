@@ -151,8 +151,46 @@ namespace MBSim {
         updatelaM_ = &Joint::updatelaM0;
       }
 
-      if(momentDir.cols()==1 and not integrateGeneralizedRelativeVelocityOfRotation) {
-	msg(Warn) << "Evaluation of generalized relative position may be wrong for spatial rotation. In this case turn on integration of generalized relative velocity of rotation." << endl;
+      if(integrateGeneralizedRelativeVelocityOfRotation || dynamic_cast<InverseKineticsJoint*>(this) != nullptr) {
+        // OK: angles are integrated by the angular velocities
+        // OK: for InverseKineticsJoint no warnings are printed
+      }
+      else {
+        if(momentDir.cols()==0) {
+          // OK: no rotational behaviour at all
+        }
+        else if(momentDir.cols()==1) {
+          // only one dimension is constraint
+          switch(angleMode) {
+            case AngleMode::cardan:
+              // OK if momentDir is in the direction of a axis and the other rotations are 0
+              if(!disableAngleWarning)
+                msg(Warn) << getPath() << ": Evaluation of generalized relative angles using 'cardan' angles is only valid if the momentDirection is along an axis and the other rotations are 0.\n"
+                             "- if momentDirection is along the x-axis, angles around x-axis from -180° to +180° are valid if the angles around y- and z-axis is 0.\n"
+                             "- if momentDirection is along the y-axis, angles around y-axis from  -90° to  +90° are valid if the angles around x- and z-axis is 0.\n"
+                             "- if momentDirection is along the z-axis, angles around z-axis from -180° to +180° are valid if the angles around y- and z-axis is 0.\n"
+                             "Please consider to turn on 'integrateGeneralizedRelativeVelocityOfRotation' if the above does not hold in your case." << endl;
+            case AngleMode::smallAngles:
+              // OK if all angles are small
+              if(!disableAngleWarning)
+                msg(Warn) << getPath() << ": Evaluation of generalized relative angles using 'smallAngles' is only valid if all angles are small.\n"
+                             "Please consider to turn on 'integrateGeneralizedRelativeVelocityOfRotation' if this does not hold in your case." << endl;
+          }
+        }
+        else if(momentDir.cols()>1) {
+          // more than one dimension is constraint
+          switch(angleMode) {
+            case AngleMode::cardan:
+              // ERROR
+              throwError("Evaluation of generalized relative angles using 'cardan' angles with more than one momentDirection is not useful.\n"
+                         "Please switch to 'integrateGeneralizedRelativeVelocityOfRotation' = true or use 'smallAngles' if possible.");
+            case AngleMode::smallAngles:
+              // OK if all angles are small
+              if(!disableAngleWarning)
+                msg(Warn) << getPath() << ": Evaluation of generalized relative angles using 'smallAngles' is only valid if all angles are small.\n"
+                             "Please consider to turn on 'integrateGeneralizedRelativeVelocityOfRotation' if this does not hold in your case." << endl;
+          }
+        }
       }
     }
     else if (stage == unknownStage) {
@@ -476,7 +514,11 @@ namespace MBSim {
     if(integrateGeneralizedRelativeVelocityOfRotation)
       return x;
     else
-      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*AIK2Phi(evalGlobalRelativeOrientation());
+      switch(angleMode) {
+        case AngleMode::smallAngles: return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*AIK2Phi(evalGlobalRelativeOrientation());
+        case AngleMode::cardan:      return evalGlobalMomentDirection().T()*frame[0]->evalOrientation()*AIK2Cardan(evalGlobalRelativeOrientation());
+        default: throwError("Unknonwn angleMode");
+      }
   }
 
   void Joint::initializeUsingXML(DOMElement *element) {
@@ -491,6 +533,20 @@ namespace MBSim {
     if(e) setMomentLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     if(e) setIntegrateGeneralizedRelativeVelocityOfRotation(E(e)->getText<bool>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"angleMode");
+    if(e && integrateGeneralizedRelativeVelocityOfRotation)
+      throwError("'angleMode' is only allowed (and used) if 'integrateGeneralizedRelativeVelocityOfRotation' is false.");
+    if(e) {
+      auto angleModeStr = E(e)->getText<string>();
+      angleModeStr = angleModeStr.substr(1, angleModeStr.size()-2);
+      if     (angleModeStr == "smallAngles") setAngleMode(AngleMode::smallAngles);
+      else if(angleModeStr == "cardan")      setAngleMode(AngleMode::cardan);
+      else throwError("Unknown 'angleMode' '" + angleModeStr + "'");
+    }
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"disableAngleWarning");
+    if(e) disableAngleWarning = E(e)->getText<bool>();
   }
 
   void InverseKineticsJoint::calcbSize() {

@@ -2290,7 +2290,24 @@
           </xs:sequence>
           <xs:element name="integrateGeneralizedRelativeVelocityOfRotation" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert, ob die generalisierte relative Position der Rotation durch Integration der generalisierten relativen Geschwindigkeit der Rotation berechnet werden soll.
+                Definiert, ob die generalisierte relative Position der Rotation durch Integration der generalisierten relativen Geschwindigkeit der Rotation berechnet werden soll. Default: False
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="angleMode" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Auswahl der Winkelmessmethode (nur relevant wenn integrateGeneralizedRelativeVelocityOfRotation auf False gesetzt ist):
+              <ul>
+                <li>smallAngles: (Default) Die Winkelmessung verfolgt nach Kleinwinkelnäherung.</li>
+                <li>cardan: Die Winkelmessung erfolgt in nach "cardan" Winkeln.</li>
+              </ul>
+              Für alle Methoden werden entsprechende "Warning" Nachrichten ausgegeben welche den Gültigkeitsbereich der Methode beschreibt.
+              Im Zweivelsfall sollte die Winkelmessung nicht benutzt werden und integrateGeneralizedRelativeVelocityOfRotation auf True gesetzt werden.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="disableAngleWarning" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Deaktiviert die "Warning" Nachrichten je nach Einstellung von "integrateGeneralizedRelativeVelocityOfRotation" und "angleMode". Default: False
+              Sollte nur aktiviert werden wenn die entsprechenden "Warnings" für den Anwendungsfall nicht relevant sind.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence> 
