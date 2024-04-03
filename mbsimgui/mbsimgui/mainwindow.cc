@@ -390,7 +390,12 @@ namespace MBSimGUI {
     widget1->setLayout(widgetLayout1);
     widgetLayout1->addWidget(elementViewFilter);
     widgetLayout1->addWidget(elementView);
-    connect(dockModelTree, &QDockWidget::visibilityChanged, [sc](bool visible) { for(auto s: sc) s->setEnabled(visible); });
+    for(auto s: sc)
+      s->setEnabled(false); // disabled per default -> will be enabled if docModelTree gets visible the first time
+    connect(dockModelTree, &QDockWidget::visibilityChanged, [sc](bool visible) {
+      for(auto s: sc)
+        s->setEnabled(visible);
+    });
 
     QDockWidget *dockParameterTree = new QDockWidget("Parameter Tree (of selected object)", this);
     dockMenu->addAction(dockParameterTree->toggleViewAction());
