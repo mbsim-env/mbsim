@@ -309,7 +309,6 @@ namespace MBSimGUI {
     QMenu *helpMenu = new QMenu("Help", menuBar());
     helpMenu->addAction(QIcon::fromTheme("help-contents"), "Contents", this, &MainWindow::help);
     helpMenu->addAction(QIcon::fromTheme("help-xml"), "XML Help", this, [=](){ this->xmlHelp(); });
-    helpMenu->addAction(QIcon::fromTheme("help-gui"), "GUI Help", this, [=](){ this->guiHelp(); });
     helpMenu->addAction(QIcon::fromTheme("help-relnotes"), "Release notes", this, &MainWindow::relnotes);
     helpMenu->addAction(QIcon::fromTheme("help-about"), "About", this, &MainWindow::about);
     menuBar()->addMenu(helpMenu);
@@ -1481,16 +1480,6 @@ namespace MBSimGUI {
 
   void MainWindow::xmlHelp(const QString &url) {
     QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString((getInstallPath()/"share"/"mbxmlutils"/"doc"/"http___www_mbsim-env_de_MBSimXML"/"mbsimxml.html").string())));
-  }
-
-  void MainWindow::guiHelp() {
-   QFile file(QString::fromStdString((getInstallPath()/"share"/"mbsimgui"/"doc"/"guihelp.html").string()));
-   if(file.open(QFile::ReadOnly)) {
-      QTextStream out(&file);
-      SimpleTextDialog dialog("GUI help","",this);
-      dialog.setText(out.readAll());
-      dialog.exec();
-    }
   }
 
   void MainWindow::relnotes() {
