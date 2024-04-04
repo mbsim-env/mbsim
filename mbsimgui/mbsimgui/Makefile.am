@@ -67,6 +67,7 @@ libmbsimgui_la_SOURCES = \
   physics_property_dialog.cc \
   element.cc \
   objectfactory.cc \
+  view_menu.cc \
   solver_context_menu.cc \
   project_context_menu.cc \
   element_context_menu.cc \
@@ -155,6 +156,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   wizards.h \
   dynamic_system_solver.h \
   echo_view.h \
+  view_menu.h \
   element_context_menu.h \
   element.h \
   element_property_dialog.h \
