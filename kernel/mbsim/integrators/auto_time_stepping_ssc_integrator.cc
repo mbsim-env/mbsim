@@ -445,8 +445,8 @@ namespace MBSim {
         }
         else {
           JacCounter++;
-          if (msgAct(Debug)) msg(Debug) << endl << "update Jacobis! System= " << nrSys_ << endl;
-          msg(Debug) << endl << "update Jacobis! System= " << nrSys_ << endl;
+          if (msgAct(Debug)) msg(Debug) << "update Jacobis! System= " << nrSys_ << endl;
+          msg(Debug) << "update Jacobis! System= " << nrSys_ << endl;
           dhdq_n = system_.dhdq(t_);
           dhdu_n = system_.dhdu(t_);
           *pupgedated=true;

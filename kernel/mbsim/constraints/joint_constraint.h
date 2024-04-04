@@ -22,6 +22,7 @@
 #include "mechanical_constraint.h"
 #include "mbsim/functions/function.h"
 #include "mbsim/frames/floating_relative_frame.h"
+#include "mbsim/utils/nonlinear_algebra.h"
 
 namespace MBSim {
 
@@ -94,6 +95,9 @@ namespace MBSim {
 
           fmatvec::Vec operator()(const fmatvec::Vec &x) override;
       };
+      std::unique_ptr<Residuum> residuum;
+      std::unique_ptr<MultiDimNewtonMethod> newton;
+
       std::vector<RigidBody*> bd1, bd2, bi;
 
       std::vector<Frame*> frame;

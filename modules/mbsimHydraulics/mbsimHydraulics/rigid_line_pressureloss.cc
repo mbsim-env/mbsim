@@ -190,7 +190,7 @@ namespace MBSimHydraulics {
       active=(gdn<=0);
     }
     else
-      msg(Warn) << endl << "(RigidLinePressureLoss::checkActive): case j=" << to_string(j) << " is not implemented" << endl;
+      msg(Warn) << "(RigidLinePressureLoss::checkActive): case j=" << to_string(j) << " is not implemented" << endl;
   }
 
   bool RigidLinePressureLoss::gActiveChanged() {

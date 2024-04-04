@@ -20,7 +20,6 @@
 #include "mbsim/constraints/joint_constraint.h"
 #include "mbsim/objects/rigid_body.h"
 #include "mbsim/frames/frame.h"
-#include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/links/joint.h"
 #include "mbsim/dynamic_system.h"
@@ -161,6 +160,10 @@ namespace MBSim {
                    ", but is " + to_string(q0.size()) + ".");
 
       A.resize(nu);
+
+      residuum.reset(new Residuum(bd1,bd2,forceDir,momentDir,frame,refFrame));
+      newton.reset(new MultiDimNewtonMethod(residuum.get()));
+      newton->setMaximumNumberOfIterations(ds->getMaxIter());
     }
     MechanicalConstraint::init(stage, config);
   }
@@ -190,11 +193,11 @@ namespace MBSim {
   }
 
   void JointConstraint::updateGeneralizedCoordinates() {
-    Residuum f(bd1,bd2,forceDir,momentDir,frame,refFrame);
-    MultiDimNewtonMethod newton(&f);
-    nextis = newton.solve(curis);
-    if(newton.getInfo()!=0) {
-      msg(Warn) << endl << "Error in JointConstraint: update of state dependent variables failed (t=" << getTime() << ", info=" << newton.getInfo() << ")!" << endl;
+    nextis = newton->solve(curis);
+    if(newton->getNumberOfIterations() > ds->getHighIter())
+      msg(Warn) << "high number of iterations in JointConstraint " << getPath() << ": " << newton->getNumberOfIterations() << endl;
+    if(newton->getInfo()!=0) {
+      msg(Warn) << "Error in JointConstraint: update of state dependent variables failed (t=" << getTime() << ", info=" << newton->getInfo() << ")!" << endl;
       if(ds->getStopIfNoConvergence())
         throwError("Solving dependent variables failed");
       msg(Warn) << "Anyway, continuing integration..." << endl;

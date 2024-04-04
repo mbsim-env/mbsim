@@ -163,7 +163,7 @@ namespace MBSim {
     MultiDimNewtonMethod newton(&f);
     q = newton.solve(q);
     if(newton.getInfo()!=0) {
-      msg(Warn) << endl << "Error in InverseKinematicsConstraint: update of state dependent variables failed!" << endl;
+      msg(Warn) << "Error in InverseKinematicsConstraint: update of state dependent variables failed!" << endl;
       if(ds->getStopIfNoConvergence())
         throwError("Update of dependent variables failed");
       msg(Warn) << "Anyway, continuing integration..." << endl;
