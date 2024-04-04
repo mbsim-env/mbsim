@@ -27,6 +27,7 @@ namespace MBSimGUI {
 
   ProjectContextMenu::ProjectContextMenu(QWidget *parent) : QMenu(parent) {
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
+    action->setShortcut(QKeySequence("Ctrl+E"));
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);

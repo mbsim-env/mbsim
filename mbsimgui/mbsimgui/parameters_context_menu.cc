@@ -47,11 +47,12 @@ namespace MBSimGUI {
       connect(action,&QAction::triggered,this,[=](){ mw->loadParameter(item); });
       addAction(action);
       action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+      action->setShortcut(QKeySequence::Paste);
       action->setEnabled(mw->getParameterBuffer().first);
       connect(action,&QAction::triggered,this,[=](){ mw->pasteParameter(item, mw->getParameterBuffer().first); });
       addAction(action);
       addSeparator();
-      action = new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
+      action = new QAction(QIcon::fromTheme("edit-delete"), "Remove all", this);
       action->setEnabled(item->getNumberOfParameters());
       connect(action,&QAction::triggered,this,[=](){ mw->removeParameter(item); });
       addAction(action);

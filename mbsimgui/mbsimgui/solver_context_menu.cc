@@ -32,6 +32,7 @@ namespace MBSimGUI {
   SolverContextMenu::SolverContextMenu(QWidget *parent) : QMenu(parent) {
     setToolTipsVisible(true);
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
+    action->setShortcut(QKeySequence("Ctrl+E"));
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
