@@ -161,7 +161,11 @@ namespace MBSim {
   void InverseKinematicsConstraint::updateGeneralizedCoordinates() {
     Residuum f((*fr)(getTime()),fA?(*fA)(getTime()):RotMat3(Eye()),bd,forceDir,momentDir,frame);
     MultiDimNewtonMethod newton(&f);
+    newton.setMaximumNumberOfIterations(ds->getMaxIter());
+    newton.setTolerance(ds->getLocalSolverTolerance());
     q = newton.solve(q);
+    if(newton.getNumberOfIterations() > ds->getHighIter())
+      msg(Warn) << "high number of iterations in InverseKinematicsConstraint::updateGeneralizedCoordinates: " << newton.getNumberOfIterations() << endl;
     if(newton.getInfo()!=0) {
       msg(Warn) << "Error in InverseKinematicsConstraint: update of state dependent variables failed!" << endl;
       if(ds->getStopIfNoConvergence())

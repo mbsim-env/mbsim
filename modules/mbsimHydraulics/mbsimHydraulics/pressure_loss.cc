@@ -27,6 +27,7 @@
 #include "mbsim/utils/nonlinear_algebra.h"
 #include "mbsim/utils/eps.h"
 #include "mbsim/objectfactory.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -189,13 +190,15 @@ namespace MBSimHydraulics {
       re.push_back(2320.);
       Lambda fLambda(re.back(), k, d);
       RegulaFalsi solver(&fLambda);
-      solver.setTolerance(epsroot);
+      solver.setMaximumNumberOfIterations(ds->getMaxIter());
+      solver.setTolerance(ds->getLocalSolverTolerance());
       la.push_back(solver.solve(1e-4, 1e-1));
       do {
         re.push_back(re.back()*1.1);
         Lambda l(re.back(), k, d);
         RegulaFalsi solver(&l);
-        solver.setTolerance(epsroot);
+        solver.setMaximumNumberOfIterations(ds->getMaxIter());
+        solver.setTolerance(ds->getLocalSolverTolerance());
         la.push_back(solver.solve(1e-4, 1e-1));
       } while (fabs(la.back()-la[la.size()-2])>1e-6);
       Vec ReValues(re.size(), INIT, 0);

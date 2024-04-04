@@ -464,6 +464,13 @@ namespace MBSim {
       void setProjectionTolerance(double tol) { tolProj = tol; }
 
       /**
+       * \brief set tolerance for local none-linear solver, like the Newton-Solver in JointConstraint
+       * \param tolerance
+       */
+      void setLocalSolverTolerance(double tol) { tolLocalSolver = tol; }
+      double getLocalSolverTolerance() { return tolLocalSolver; }
+
+      /**
        * \brief references to external state
        * \param external state
        */
@@ -813,6 +820,11 @@ namespace MBSim {
        * \brief Tolerance for projection of generalized position.
        */
       double tolProj;
+
+      /**
+       * \brief Tolerance for local none-linear solvers
+       */
+      double tolLocalSolver { 1e-10 };
 
       /**
        * \brief

@@ -21,6 +21,7 @@
 #include "mbsim/contours/planar_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -63,7 +64,11 @@ namespace MBSim {
   double PlanarGear::getPhiMax(double h, double s) {
     Residuum f(h,s,r0,al,be);
     NewtonMethod newton(&f);
+    newton.setMaximumNumberOfIterations(ds->getMaxIter());
+    newton.setTolerance(ds->getLocalSolverTolerance());
     double phi = newton.solve(atan(2*h/(sin(al)*cos(al)*N*m)));
+    if(newton.getNumberOfIterations() > ds->getHighIter())
+      msg(Warn) << "high number of iterations in PlanarGear::getPhiMax: " << newton.getNumberOfIterations() << endl;
     if(newton.getInfo()!=0) throw 1;
     return phi;
   }

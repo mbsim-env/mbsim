@@ -870,8 +870,12 @@ namespace MBSim {
     if(determineEquilibriumState) {
       Residuum f(this);
       MultiDimNewtonMethod newton(&f);
+      newton.setMaximumNumberOfIterations(ds->getMaxIter());
+      newton.setTolerance(getLocalSolverTolerance());
       newton.setLinearAlgebra(1);
       z = newton.solve(z);
+      if(newton.getNumberOfIterations() > ds->getHighIter())
+        msg(Warn) << "high number of iterations in DynamicSystemSolver::computeInitialCondition: " << newton.getNumberOfIterations() << endl;
       if(newton.getInfo() != 0)
         throwError("(DynamicSystemSolver::computeInitialCondition): computation of equilibrium state failed!");
     }
@@ -1376,6 +1380,9 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"projectionTolerance");
     if (e)
       setProjectionTolerance(E(e)->getText<double>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"localSolverTolerance");
+    if (e)
+      setLocalSolverTolerance(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativePositionTolerance");
     if (e)
       setGeneralizedRelativePositionTolerance(E(e)->getText<double>());

@@ -21,6 +21,7 @@
 #include "mbsim/contours/bevel_gear.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/dynamic_system_solver.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -135,7 +136,11 @@ namespace MBSim {
   double BevelGear::getEtaMax(double h, double s, int signi) {
     Residuum f(h,s,r0,r1,al,be,ga,signi);
     NewtonMethod newton(&f);
+    newton.setMaximumNumberOfIterations(ds->getMaxIter());
+    newton.setTolerance(ds->getLocalSolverTolerance());
     double eta = newton.solve(0);
+    if(newton.getNumberOfIterations() > ds->getHighIter())
+      msg(Warn) << "high number of iterations in BevelGear::getEtaMax: " << newton.getNumberOfIterations() << endl;
     if(newton.getInfo()!=0) throw 1;
     return eta;
   }

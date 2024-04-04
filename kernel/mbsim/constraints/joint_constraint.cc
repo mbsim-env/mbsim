@@ -164,6 +164,7 @@ namespace MBSim {
       residuum.reset(new Residuum(bd1,bd2,forceDir,momentDir,frame,refFrame));
       newton.reset(new MultiDimNewtonMethod(residuum.get()));
       newton->setMaximumNumberOfIterations(ds->getMaxIter());
+      newton->setTolerance(ds->getLocalSolverTolerance());
     }
     MechanicalConstraint::init(stage, config);
   }
