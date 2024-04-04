@@ -36,6 +36,7 @@ namespace MBSim {
           f->setParent(this);
       }
       ~TimeDependentFunction() override { delete f; }
+      Function<Ret(double)>* getFunction() { return f; }
       int getArg1Size() const override { return 0;}
       int getArg2Size() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return f->getRetSize(); }

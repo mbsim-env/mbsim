@@ -253,6 +253,8 @@ namespace MBSim {
 
       InverseKineticsJoint* getJoint() { return joint; }
 
+      void setDynamicSystemSolver(DynamicSystemSolver* sys) override;
+
     protected:
       /**
        * \brief mass

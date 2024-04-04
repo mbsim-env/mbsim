@@ -36,6 +36,7 @@ namespace MBSim {
           f->setParent(this);
       }
       ~StateDependentFunction() override { delete f; }
+      Function<Ret(fmatvec::VecV)>* getFunction() { return f; }
       int getArg1Size() const override { return f->getArgSize();}
       int getArg2Size() const override { return 0; }
       std::pair<int, int> getRetSize() const override { return f->getRetSize(); }
