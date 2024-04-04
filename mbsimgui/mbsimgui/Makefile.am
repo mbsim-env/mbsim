@@ -301,9 +301,6 @@ dist_mbsimguiicon_DATA = icons/openmbv.svg \
   icons/string.svg \
   icons/fbt.svg
 
-docdir = @datadir@/mbsimgui/doc
-dist_doc_DATA = guihelp.html
-
 # plugins
 pluginsiconenginesdir = @bindir@/iconengines
 pluginsplatformsdir = @bindir@/platforms
