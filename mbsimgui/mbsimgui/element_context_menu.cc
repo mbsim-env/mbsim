@@ -58,6 +58,7 @@ namespace MBSimGUI {
   ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : QMenu(parent) {
     setToolTipsVisible(true);
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
+    action->setShortcut(QKeySequence("Ctrl+E"));
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
     if(saveable) {
@@ -72,13 +73,16 @@ namespace MBSimGUI {
     if(removable) {
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-copy"), "Copy", this);
+      action->setShortcut(QKeySequence::Copy);
       connect(action,&QAction::triggered,this,[=](){ mw->copyElement(); });
       addAction(action);
       action=new QAction(QIcon::fromTheme("edit-cut"), "Cut", this);
+      action->setShortcut(QKeySequence::Cut);
       connect(action,&QAction::triggered,this,[=](){ mw->copyElement(true); });
       addAction(action);
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
+      action->setShortcut(QKeySequence::Delete);
       connect(action,&QAction::triggered,mw,&MainWindow::removeElement);
       addAction(action);
       addSeparator();
@@ -118,10 +122,12 @@ namespace MBSimGUI {
   FrameContextMenu::FrameContextMenu(Frame *frame, QWidget *parent, bool removable) : ElementContextMenu(frame,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setShortcut(QKeySequence("Ctrl+Up"));
     action->setEnabled(frame->getParent()->getIndexOfFrame(frame)>1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveFrame(true); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setShortcut(QKeySequence("Ctrl+Down"));
     action->setEnabled(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveFrame(false); });
     addAction(action);
@@ -131,9 +137,11 @@ namespace MBSimGUI {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
     action->setEnabled(contour->getParent()->getIndexOfContour(contour)>0);
+    action->setShortcut(QKeySequence("Ctrl+Up"));
     connect(action,&QAction::triggered,this,[=](){ mw->moveContour(true); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setShortcut(QKeySequence("Ctrl+Down"));
     action->setEnabled(contour->getParent()->getIndexOfContour(contour)<contour->getParent()->getNumberOfContours()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveContour(false); });
     addAction(action);
@@ -142,10 +150,12 @@ namespace MBSimGUI {
   GroupContextMenu::GroupContextMenu(Group *group, QWidget *parent, bool removable) : ElementContextMenu(group,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setShortcut(QKeySequence("Ctrl+Up"));
     action->setEnabled(group->getParent()->getIndexOfGroup(group)>0);
     connect(action,&QAction::triggered,this,[=](){ mw->moveGroup(true); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setShortcut(QKeySequence("Ctrl+Down"));
     action->setEnabled(group->getParent()->getIndexOfGroup(group)<group->getParent()->getNumberOfGroups()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveGroup(false); });
     addAction(action);
@@ -155,9 +165,11 @@ namespace MBSimGUI {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
     action->setEnabled(object->getParent()->getIndexOfObject(object)>0);
+    action->setShortcut(QKeySequence("Ctrl+Up"));
     connect(action,&QAction::triggered,this,[=](){ mw->moveObject(true); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setShortcut(QKeySequence("Ctrl+Down"));
     action->setEnabled(object->getParent()->getIndexOfObject(object)<object->getParent()->getNumberOfObjects()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveObject(false); });
     addAction(action);
@@ -166,10 +178,12 @@ namespace MBSimGUI {
   LinkContextMenu::LinkContextMenu(Link *link, QWidget *parent, bool removable) : ElementContextMenu(link,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setShortcut(QKeySequence("Ctrl+Up"));
     action->setEnabled(link->getParent()->getIndexOfLink(link)>0);
     connect(action,&QAction::triggered,this,[=](){ mw->moveLink(true); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setShortcut(QKeySequence("Ctrl+Down"));
     action->setEnabled(link->getParent()->getIndexOfLink(link)<link->getParent()->getNumberOfLinks()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveLink(false); });
     addAction(action);
@@ -178,10 +192,12 @@ namespace MBSimGUI {
   ConstraintContextMenu::ConstraintContextMenu(Constraint *constraint, QWidget *parent, bool removable) : ElementContextMenu(constraint,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setShortcut(QKeySequence("Ctrl+Up"));
     action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)>0);
     connect(action,&QAction::triggered,this,[=](){ mw->moveConstraint(true); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setShortcut(QKeySequence("Ctrl+Down"));
     action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)<constraint->getParent()->getNumberOfConstraints()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveConstraint(false); });
     addAction(action);
@@ -190,10 +206,12 @@ namespace MBSimGUI {
   ObserverContextMenu::ObserverContextMenu(Observer *observer, QWidget *parent, bool removable) : ElementContextMenu(observer,parent,removable) {
     addSeparator();
     QAction *action=new QAction(QIcon::fromTheme("go-up"), "Move up", this);
+    action->setShortcut(QKeySequence("Ctrl+Up"));
     action->setEnabled(observer->getParent()->getIndexOfObserver(observer)>0);
     connect(action,&QAction::triggered,this,[=](){ mw->moveObserver(true); });
     addAction(action);
     action=new QAction(QIcon::fromTheme("go-down"), "Move down", this);
+    action->setShortcut(QKeySequence("Ctrl+Down"));
     action->setEnabled(observer->getParent()->getIndexOfObserver(observer)<observer->getParent()->getNumberOfObservers()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveObserver(false); });
     addAction(action);
@@ -206,6 +224,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Frame"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+    action->setShortcut(QKeySequence::Paste);
     action->setEnabled(dynamic_cast<Frame*>(mw->getElementBuffer().first));
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Frame"); });
     addAction(action);
@@ -228,6 +247,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Contour"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+    action->setShortcut(QKeySequence::Paste);
     action->setEnabled(dynamic_cast<Contour*>(mw->getElementBuffer().first));
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Contour"); });
     addAction(action);
@@ -242,6 +262,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Group"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+    action->setShortcut(QKeySequence::Paste);
     action->setEnabled(dynamic_cast<Group*>(mw->getElementBuffer().first));
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Group"); });
     addAction(action);
@@ -256,6 +277,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Object"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+    action->setShortcut(QKeySequence::Paste);
     action->setEnabled(dynamic_cast<Object*>(mw->getElementBuffer().first));
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Object"); });
     addAction(action);
@@ -270,6 +292,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Link"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+    action->setShortcut(QKeySequence::Paste);
     action->setEnabled(dynamic_cast<Link*>(mw->getElementBuffer().first));
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Link"); });
     addAction(action);
@@ -284,6 +307,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Constraint"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+    action->setShortcut(QKeySequence::Paste);
     action->setEnabled(dynamic_cast<Constraint*>(mw->getElementBuffer().first));
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Constraint"); });
     addAction(action);
@@ -298,6 +322,7 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->loadEmbedItemData(element, importReferenceTitle),element, MBSIM%"Observer"); });
     addAction(action);
     action = new QAction(QIcon::fromTheme("edit-paste"), "Paste", this);
+    action->setShortcut(QKeySequence::Paste);
     action->setEnabled(dynamic_cast<Observer*>(mw->getElementBuffer().first));
     connect(action,&QAction::triggered,this,[=](){ mw->createAny(mw->pasteElement(element,mw->getElementBuffer().first),element, MBSIM%"Observer"); });
     addAction(action);
