@@ -249,7 +249,6 @@ namespace MBSimGUI {
       bool saveProjectAs();
       void refresh();
       void xmlHelp(const QString &url="");
-      void guiHelp();
       void editElementSource();
       void editParametersSource();
       void exportElement(const QString &title);

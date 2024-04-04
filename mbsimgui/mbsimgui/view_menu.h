@@ -1,6 +1,6 @@
 /*
     MBSimGUI - A fronted for MBSim.
-    Copyright (C) 2017 Martin Förg
+    Copyright (C) 2012 Martin Förg
 
   This library is free software; you can redistribute it and/or 
   modify it under the terms of the GNU Lesser General Public 
@@ -17,25 +17,18 @@
   Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301 USA
 */
 
-#include <config.h>
-#include "project_context_menu.h"
-#include "mainwindow.h"
-#include "view_menu.h"
+#ifndef _VIEW_MENU_H_
+#define _VIEW_MENU_H_
+
+#include <QMenu>
 
 namespace MBSimGUI {
 
-  extern MainWindow *mw;
-
-  ProjectContextMenu::ProjectContextMenu(QWidget *parent) : QMenu(parent) {
-    auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
-    action->setShortcut(QKeySequence("Ctrl+E"));
-    connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
-    addAction(action);
-    action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
-    connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
-    addAction(action);
-    addSeparator();
-    addMenu(new ViewMenu(this));
-  }
+  class ViewMenu : public QMenu {
+    public:
+      ViewMenu(QWidget *parent=nullptr);
+   };
 
 }
+
+#endif

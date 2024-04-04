@@ -41,6 +41,7 @@
 #include "element_view.h"
 #include "utils.h"
 #include "project.h"
+#include "view_menu.h"
 
 namespace {
   const QString importReferenceActionText(
@@ -117,6 +118,8 @@ namespace MBSimGUI {
     action->setToolTip(importReferenceTooltipText);
     connect(action,&QAction::triggered,this,[=](){ mw->createDynamicSystemSolver(mw->loadEmbedItemData(element, importReferenceTitle)); });
     addAction(action);
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   FrameContextMenu::FrameContextMenu(Frame *frame, QWidget *parent, bool removable) : ElementContextMenu(frame,parent,removable) {
@@ -131,6 +134,8 @@ namespace MBSimGUI {
     action->setEnabled(frame->getParent()->getIndexOfFrame(frame)<frame->getParent()->getNumberOfFrames()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveFrame(false); });
     addAction(action);
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   ContourContextMenu::ContourContextMenu(Contour *contour, QWidget *parent, bool removable) : ElementContextMenu(contour,parent,removable) {
@@ -145,6 +150,8 @@ namespace MBSimGUI {
     action->setEnabled(contour->getParent()->getIndexOfContour(contour)<contour->getParent()->getNumberOfContours()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveContour(false); });
     addAction(action);
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   GroupContextMenu::GroupContextMenu(Group *group, QWidget *parent, bool removable) : ElementContextMenu(group,parent,removable) {
@@ -159,6 +166,8 @@ namespace MBSimGUI {
     action->setEnabled(group->getParent()->getIndexOfGroup(group)<group->getParent()->getNumberOfGroups()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveGroup(false); });
     addAction(action);
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   ObjectContextMenu::ObjectContextMenu(Object *object, QWidget *parent, bool removable) : ElementContextMenu(object,parent,removable) {
@@ -173,6 +182,8 @@ namespace MBSimGUI {
     action->setEnabled(object->getParent()->getIndexOfObject(object)<object->getParent()->getNumberOfObjects()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveObject(false); });
     addAction(action);
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   LinkContextMenu::LinkContextMenu(Link *link, QWidget *parent, bool removable) : ElementContextMenu(link,parent,removable) {
@@ -187,6 +198,8 @@ namespace MBSimGUI {
     action->setEnabled(link->getParent()->getIndexOfLink(link)<link->getParent()->getNumberOfLinks()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveLink(false); });
     addAction(action);
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   ConstraintContextMenu::ConstraintContextMenu(Constraint *constraint, QWidget *parent, bool removable) : ElementContextMenu(constraint,parent,removable) {
@@ -201,6 +214,8 @@ namespace MBSimGUI {
     action->setEnabled(constraint->getParent()->getIndexOfConstraint(constraint)<constraint->getParent()->getNumberOfConstraints()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveConstraint(false); });
     addAction(action);
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   ObserverContextMenu::ObserverContextMenu(Observer *observer, QWidget *parent, bool removable) : ElementContextMenu(observer,parent,removable) {
@@ -215,6 +230,8 @@ namespace MBSimGUI {
     action->setEnabled(observer->getParent()->getIndexOfObserver(observer)<observer->getParent()->getNumberOfObservers()-1);
     connect(action,&QAction::triggered,this,[=](){ mw->moveObserver(false); });
     addAction(action);
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   FramesContextMenu::FramesContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
@@ -233,11 +250,15 @@ namespace MBSimGUI {
   FixedRelativeFramesContextMenu::FixedRelativeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {
     addSeparator();
     createContextMenuFor<FixedRelativeFrame>(this, element, "Add '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   NodeFramesContextMenu::NodeFramesContextMenu(Element *element, const QString &title, QWidget *parent) : FramesContextMenu(element,title,parent) {
     addSeparator();
     createContextMenuFor<NodeFrame>(this, element, "Add '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   ContoursContextMenu::ContoursContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
@@ -253,6 +274,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     createContextMenuFor<Contour>(this, element, "Add '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   GroupsContextMenu::GroupsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
@@ -268,6 +291,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     createContextMenuFor<Group>(this, element, "Add '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   ObjectsContextMenu::ObjectsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
@@ -283,6 +308,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     createContextMenuFor<Object>(this, element, "Add '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   LinksContextMenu::LinksContextMenu(Element *element, const QString &title,  QWidget *parent) : QMenu(title,parent) {
@@ -298,6 +325,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     createContextMenuFor<Link>(this, element, "Add '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   ConstraintsContextMenu::ConstraintsContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
@@ -313,6 +342,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     createContextMenuFor<Constraint>(this, element, "Add '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
   ObserversContextMenu::ObserversContextMenu(Element *element, const QString &title, QWidget *parent) : QMenu(title,parent) {
@@ -328,6 +359,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     createContextMenuFor<Observer>(this, element, "Add '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
 }

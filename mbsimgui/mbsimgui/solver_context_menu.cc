@@ -24,6 +24,7 @@
 #include "analyzer.h"
 #include "mainwindow.h"
 #include "utils.h"
+#include "view_menu.h"
 
 namespace MBSimGUI {
 
@@ -49,6 +50,8 @@ namespace MBSimGUI {
     addAction(action);
     addSeparator();
     createContextMenuFor<Solver>(this, nullptr, "Select '");
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
 }

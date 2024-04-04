@@ -24,6 +24,7 @@
 #include "embeditemdata.h"
 #include "frame.h"
 #include "utils.h"
+#include "view_menu.h"
 
 namespace MBSimGUI {
 
@@ -59,6 +60,8 @@ namespace MBSimGUI {
       addSeparator();
       createContextMenuFor<Parameter>(this, item, "Add '");
     }
+    addSeparator();
+    addMenu(new ViewMenu(this));
   }
 
 }
