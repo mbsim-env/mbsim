@@ -266,6 +266,7 @@ namespace MBSim {
       DynamicSystemSolver* getDynamicSystemSolver() { return this; }
       bool getIntegratorExitRequest() { return integratorExitRequest; }
       int getMaxIter()  {return maxIter;}
+      int getHighIter()  {return highIter;}
       int getIterC()  {return iterc;}
       int getIterI()  {return iteri;}
       /***************************************************/

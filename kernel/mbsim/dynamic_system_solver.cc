@@ -453,7 +453,7 @@ namespace MBSim {
       if (level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
+        msg(Warn) << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveConstraintsFixpointSingle();
@@ -483,7 +483,7 @@ namespace MBSim {
       if (level < decreaseLevels.size() && iter > decreaseLevels(level)) {
         level++;
         decreaserFactors();
-        msg(Warn) << endl << "decreasing r-factors at iter = " << iter << endl;
+        msg(Warn) << "decreasing r-factors at iter = " << iter << endl;
       }
 
       Group::solveImpactsFixpointSingle();
@@ -940,7 +940,7 @@ namespace MBSim {
         }
 
         if (iterc > highIter)
-          msg(Warn) << endl << "high number of iterations in constraint solver: " << iterc << endl;
+          msg(Warn) << "high number of iterations in constraint solver: " << iterc << endl;
 
         if (useOldla)
           savela();
