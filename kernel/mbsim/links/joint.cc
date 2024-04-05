@@ -168,7 +168,7 @@ namespace MBSim {
                 msg(Warn) << getPath() << ": Evaluation of generalized relative angles using 'cardan' angles is only valid if the momentDirection is along an axis and the other rotations are 0.\n"
                              "- if momentDirection is along the x-axis, angles around x-axis from -180° to +180° are valid if the angles around y- and z-axis is 0.\n"
                              "- if momentDirection is along the y-axis, angles around y-axis from  -90° to  +90° are valid if the angles around x- and z-axis is 0.\n"
-                             "- if momentDirection is along the z-axis, angles around z-axis from -180° to +180° are valid if the angles around y- and z-axis is 0.\n"
+                             "- if momentDirection is along the z-axis, angles around z-axis from -180° to +180° are valid if the angles around x- and y-axis is 0.\n"
                              "Please consider to turn on 'integrateGeneralizedRelativeVelocityOfRotation' if the above does not hold in your case." << endl;
             case AngleMode::smallAngles:
               // OK if all angles are small
