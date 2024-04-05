@@ -18,6 +18,12 @@ MBSim
 - Use default impact law if it is not defined by the user.
 - Allow multiplexing of input signals in signal operation
 - Added new visualization for SignalObserver (e.g. use the new IvScreenAnnotation from OpenMBV)
+- Improved preprocessing speed: read and parse XML files only ones even if needed multiple times using array/pattern.
+- Allow array/pattern (Embed) for all container elements (even for Function's).
+- Added a angleMode to Joint to support also large angles without the need to integrate the velocities, but only
+  for one dimensional rotations (proper warning messages are printed and can be disable now).
+- Use maximumNumberOfIterations from DynamicSystemSolver in all local none-linear solvers like in JointConstraint.
+- Added localSolverTolerance to DynamicSystemSolver and use the tolerance in all local none-linear solvers.
 
 MBSimGUI
 --------
@@ -40,6 +46,7 @@ OpenMBV
 - Allow to pass the content of a IV file in IvBody as a string in XML instead of specifying
   the filename to read
 - Reworked the screen foreground elements in the 3D view and allow user defined foreground elements
+- Enable direct rendering on some Linux system on which the binary distribution used software rendering for now.
 
 HDF5Serie
 ---------
@@ -53,6 +60,9 @@ fmatvec
   Function provides at most second derivatives).
 - Added a generic fast LRUCache which can e.g. be used in objects derived from Function to cache already
   calculated results.
+- Fixed wrong symbolic expression evaluation due to double -> int convertion with overflows.
+- Spezial handling of some operators regarding symbolic differentiantion when one argument is constant
+  to simplify the result (shorter/faster expressions for differentations are generated)
 
 
 
