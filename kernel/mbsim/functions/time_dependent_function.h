@@ -36,7 +36,6 @@ namespace MBSim {
           f->setParent(this);
       }
       ~TimeDependentFunction() override { delete f; }
-      Function<Ret(double)>* getFunction() { return f; }
       int getArg1Size() const override { return 0;}
       int getArg2Size() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return f->getRetSize(); }
@@ -54,6 +53,10 @@ namespace MBSim {
         f->init(stage, config);
         if(stage == Element::preInit)
           n = f->getRetSize().first;
+      }
+      void setDynamicSystemSolver(DynamicSystemSolver* sys) {
+        Function<Ret(fmatvec::VecV,double)>::setDynamicSystemSolver(sys);
+	f->setDynamicSystemSolver(sys);
       }
   };
 

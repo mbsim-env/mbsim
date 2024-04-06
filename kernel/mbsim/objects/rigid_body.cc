@@ -642,23 +642,12 @@ namespace MBSim {
 
   void RigidBody::setDynamicSystemSolver(DynamicSystemSolver* sys) {
     Body::setDynamicSystemSolver(sys);
-
     if(fTR)
       fTR->setDynamicSystemSolver(sys);
-    if(fPrPK) {
+    if(fPrPK)
       fPrPK->setDynamicSystemSolver(sys);
-      if(auto tdf = dynamic_cast<TimeDependentFunction<fmatvec::Vec3>*>(fPrPK); tdf)
-        tdf->getFunction()->setDynamicSystemSolver(sys);
-      if(auto sdf = dynamic_cast<StateDependentFunction<fmatvec::Vec3>*>(fPrPK); sdf)
-        sdf->getFunction()->setDynamicSystemSolver(sys);
-    }
-    if(fAPK) {
+    if(fAPK)
       fAPK->setDynamicSystemSolver(sys);
-      if(auto tdf = dynamic_cast<TimeDependentFunction<fmatvec::RotMat3>*>(fAPK); tdf)
-        tdf->getFunction()->setDynamicSystemSolver(sys);
-      if(auto sdf = dynamic_cast<StateDependentFunction<fmatvec::RotMat3>*>(fAPK); sdf)
-        sdf->getFunction()->setDynamicSystemSolver(sys);
-    }
   }
 
 }
