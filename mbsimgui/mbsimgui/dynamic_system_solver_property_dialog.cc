@@ -60,8 +60,11 @@ namespace MBSimGUI {
     stopIfNoConvergence = new ExtWidget("Stop if no convergence",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stopIfNoConvergence");
     addToTab("Solver parameters", stopIfNoConvergence);
 
-    projection = new ExtWidget("Projection tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-15"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
-    addToTab("Solver parameters", projection);
+    projectionTolerance = new ExtWidget("Projection tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-12"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectionTolerance");
+    addToTab("Solver parameters", projectionTolerance);
+
+    localSolverTolerance = new ExtWidget("Local solver tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"localSolverTolerance");
+    addToTab("Solver parameters", localSolverTolerance);
 
     gTol = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
     addToTab("Solver parameters", gTol);
@@ -78,10 +81,10 @@ namespace MBSimGUI {
     LaTol = new ExtWidget("Generalized impulse tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedImpulseTolerance");
     addToTab("Solver parameters", LaTol);
 
-    gCorr = new ExtWidget("Generalized relative position correction value",new ChoiceWidget(new ScalarWidgetFactory("1e-14"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionCorrectionValue");
+    gCorr = new ExtWidget("Generalized relative position correction value",new ChoiceWidget(new ScalarWidgetFactory("2e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionCorrectionValue");
     addToTab("Solver parameters", gCorr);
 
-    gdCorr = new ExtWidget("Generalized relative velocity correction value",new ChoiceWidget(new ScalarWidgetFactory("1e-16"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityCorrectionValue");
+    gdCorr = new ExtWidget("Generalized relative velocity correction value",new ChoiceWidget(new ScalarWidgetFactory("2e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativeVelocityCorrectionValue");
     addToTab("Solver parameters", gdCorr);
 
     inverseKinetics = new ExtWidget("Inverse kinetics",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"inverseKinetics");
@@ -118,7 +121,8 @@ namespace MBSimGUI {
     highIter->initializeUsingXML(item->getXMLElement());
     numericalJacobian->initializeUsingXML(item->getXMLElement());
     stopIfNoConvergence->initializeUsingXML(item->getXMLElement());
-    projection->initializeUsingXML(item->getXMLElement());
+    projectionTolerance->initializeUsingXML(item->getXMLElement());
+    localSolverTolerance->initializeUsingXML(item->getXMLElement());
     gTol->initializeUsingXML(item->getXMLElement());
     gdTol->initializeUsingXML(item->getXMLElement());
     gddTol->initializeUsingXML(item->getXMLElement());
@@ -146,7 +150,8 @@ namespace MBSimGUI {
     highIter->writeXMLFile(item->getXMLElement());
     numericalJacobian->writeXMLFile(item->getXMLElement());
     stopIfNoConvergence->writeXMLFile(item->getXMLElement());
-    projection->writeXMLFile(item->getXMLElement());
+    projectionTolerance->writeXMLFile(item->getXMLElement());
+    localSolverTolerance->writeXMLFile(item->getXMLElement());
     gTol->writeXMLFile(item->getXMLElement());
     gdTol->writeXMLFile(item->getXMLElement());
     gddTol->writeXMLFile(item->getXMLElement());
