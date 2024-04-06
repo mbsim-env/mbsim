@@ -306,6 +306,15 @@ namespace MBSimGUI {
     integrate = new ExtWidget("Integrate generalized relative velocity of rotation",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"integrateGeneralizedRelativeVelocityOfRotation");
     addToTab("Extra",integrate);
 
+    vector<QString> list;
+    list.emplace_back("\"smallAngles\"");
+    list.emplace_back("\"cardan\"");
+    angleMode = new ExtWidget("Angle mode",new TextChoiceWidget(list,0,true),true,false,MBSIM%"angleMode");
+    addToTab("Extra", angleMode);
+
+    disableAngleWarning = new ExtWidget("Disable angle warning",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"disableAngleWarning");
+    addToTab("Extra", disableAngleWarning);
+
     connect(forceDirection,&ExtWidget::clicked,forceLaw,&ExtWidget::setActive);
     connect(forceLaw,&ExtWidget::clicked,forceDirection,&ExtWidget::setActive);
     connect(momentDirection,&ExtWidget::clicked,momentLaw,&ExtWidget::setActive);
@@ -319,6 +328,8 @@ namespace MBSimGUI {
     momentDirection->initializeUsingXML(item->getXMLElement());
     momentLaw->initializeUsingXML(item->getXMLElement());
     integrate->initializeUsingXML(item->getXMLElement());
+    angleMode->initializeUsingXML(item->getXMLElement());
+    disableAngleWarning->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -329,6 +340,8 @@ namespace MBSimGUI {
     momentDirection->writeXMLFile(item->getXMLElement(),ref);
     momentLaw->writeXMLFile(item->getXMLElement(),ref);
     integrate->writeXMLFile(item->getXMLElement(),ref);
+    angleMode->writeXMLFile(item->getXMLElement(),ref);
+    disableAngleWarning->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 
