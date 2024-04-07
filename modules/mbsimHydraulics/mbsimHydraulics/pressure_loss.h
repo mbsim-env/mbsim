@@ -60,6 +60,7 @@ namespace MBSimHydraulics {
       double operator()(const double& Q) override;
       void init(MBSim::Element::InitStage stage, const MBSim::InitConfigSet &config) override;
       void initializeUsingXML(xercesc::DOMElement * element) override;
+      void setDynamicSystemSolver(MBSim::DynamicSystemSolver *ds) override;
     private:
       std::vector<LinePressureLoss*> slp;
   };

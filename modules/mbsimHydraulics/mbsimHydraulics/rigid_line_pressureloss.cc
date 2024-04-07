@@ -422,4 +422,12 @@ namespace MBSimHydraulics {
       ds->setTermination(false);
   }
 
+  void RigidLinePressureLoss::setDynamicSystemSolver(MBSim::DynamicSystemSolver *ds) {
+    Link::setDynamicSystemSolver(ds);
+    if(linePressureLoss)           linePressureLoss->setDynamicSystemSolver(ds);
+    if(closablePressureLoss)       closablePressureLoss->setDynamicSystemSolver(ds);
+    if(leakagePressureLoss)        leakagePressureLoss->setDynamicSystemSolver(ds);
+    if(unidirectionalPressureLoss) unidirectionalPressureLoss->setDynamicSystemSolver(ds);
+  }
+
 }

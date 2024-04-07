@@ -99,6 +99,7 @@ namespace MBSimHydraulics {
       void checkConstraintsForTermination() override;
       // ==== END Methods for solve-Process ===
 
+      void setDynamicSystemSolver(MBSim::DynamicSystemSolver *ds) override;
 
     private:
       RigidHLine * line;

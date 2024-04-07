@@ -75,6 +75,12 @@ namespace MBSimHydraulics {
     }
   }
 
+  void SerialResistanceLinePressureLoss::setDynamicSystemSolver(MBSim::DynamicSystemSolver *ds) {
+    LinePressureLoss::setDynamicSystemSolver(ds);
+    for(auto i : slp)
+      i->setDynamicSystemSolver(ds);
+  }
+
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMHYDRAULICS, ParallelResistanceLinePressureLoss)
 
   double ParallelResistanceLinePressureLoss::operator()(const double& Q) {
