@@ -341,7 +341,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *ivData, *creaseEdges, *boundaryEdges;
+      ExtWidget *ivData, *creaseEdges, *boundaryEdges, *removeNodesByName, *removeNodesByType;
   };
 
   class CompoundRigidBodyWidget : public OMBVRigidBodyWidget {

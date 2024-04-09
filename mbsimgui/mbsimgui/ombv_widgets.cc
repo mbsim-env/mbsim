@@ -741,6 +741,12 @@ namespace MBSimGUI {
 
     boundaryEdges = new ExtWidget("Boundary edges",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true,false,OPENMBV%"boundaryEdges");
     layout->addWidget(boundaryEdges);
+
+    removeNodesByName = new ExtWidget("Remove nodes by name",new TextWidget,true,false,OPENMBV%"removeNodesByName");
+    layout->addWidget(removeNodesByName);
+
+    removeNodesByType = new ExtWidget("Remove nodes by type",new TextWidget,true,false,OPENMBV%"removeNodesByType");
+    layout->addWidget(removeNodesByType);
   }
 
   DOMElement* IvBodyWidget::initializeUsingXML(DOMElement *element) {
@@ -748,6 +754,8 @@ namespace MBSimGUI {
     ivData->initializeUsingXML(element);
     creaseEdges->initializeUsingXML(element);
     boundaryEdges->initializeUsingXML(element);
+    removeNodesByName->initializeUsingXML(element);
+    removeNodesByType->initializeUsingXML(element);
     return element;
   }
 
@@ -756,6 +764,8 @@ namespace MBSimGUI {
     ivData->writeXMLFile(e);
     creaseEdges->writeXMLFile(e);
     boundaryEdges->writeXMLFile(e);
+    removeNodesByName->writeXMLFile(e);
+    removeNodesByType->writeXMLFile(e);
     return e;
   }
 
