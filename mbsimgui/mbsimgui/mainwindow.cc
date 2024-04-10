@@ -1486,12 +1486,8 @@ namespace MBSimGUI {
     QFile file(QString::fromStdString((getInstallPath()/"share"/"mbsim-env"/"RELEASENOTES.md").string()));
     if(file.open(QFile::ReadOnly)) {
       QTextStream out(&file);
-      SimpleTextDialog dialog("Release notes","",this);
+      TextEditDialog dialog("Release notes","",true,this);
       dialog.setText(out.readAll());
-//      QString line;
-//      while(out.readLineInto(&line))
-//	dialog.appendText(line);
-//      dialog.gotoLine(0);
       dialog.exec();
     }
   }

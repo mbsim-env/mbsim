@@ -25,8 +25,6 @@
 #include "rigid_body.h"
 #include "signal_.h"
 #include "constraint.h"
-#include "dialogs.h"
-#include "utils.h"
 #include "variable_widgets.h"
 #include "mainwindow.h"
 #include "project.h"
@@ -619,6 +617,147 @@ namespace MBSimGUI {
     DOMElement *ele = BasicTextWidget::initializeUsingXML(element);
     text->blockSignals(false);
     return ele;
+  }
+
+  TextListWidget::TextListWidget(const QString &label_, const FQN &xmlName_) : label(label_), xmlName(xmlName_) {
+    auto *layout = new QGridLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    tree = new QTreeWidget;
+    tree->setMinimumSize(300,200);
+    tree->setContextMenuPolicy(Qt::CustomContextMenu);
+    tree->setHeaderLabels(QStringList(label));
+    tree->setColumnWidth(0,150);
+    tree->setColumnWidth(1,80);
+    connect(tree, &QTreeWidget::customContextMenuRequested,this,&TextListWidget::openMenu);
+    layout->addWidget(tree,0,0,5,1);
+
+    dialog = new LineEditDialog("Line edit dialog","",this);
+    connect(dialog, &StateDialog::accepted, this, &TextListWidget::updateTreeItem);
+    dialog->setModal(true);
+
+    spinBox = new CustomSpinBox;
+    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&TextListWidget::changeNumberOfItems);
+    layout->addWidget(spinBox,0,1);
+
+    QPushButton *add = new QPushButton("Add");
+    connect(add,&QPushButton::clicked,this,&TextListWidget::addItem);
+    layout->addWidget(add,1,1);
+
+    QPushButton *update = new QPushButton("Edit");
+    connect(update,&QPushButton::clicked,this,&TextListWidget::editItem);
+    layout->addWidget(update,2,1);
+
+    QPushButton *remove = new QPushButton("Remove");
+    connect(remove,&QPushButton::clicked,this,&TextListWidget::removeItem);
+    layout->addWidget(remove,3,1);
+
+    layout->setColumnStretch(0,10);
+  }
+
+  void TextListWidget::updateTreeItem() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item)
+      item->setText(0, dialog->getText());
+  }
+
+  void TextListWidget::addItem() {
+    auto *item = new QTreeWidgetItem({"\"New " + label + "\""});
+    item->setFlags(item->flags() | Qt::ItemIsEditable);
+    tree->addTopLevelItem(item);
+    tree->setCurrentItem(item);
+    spinBox->setValue(tree->topLevelItemCount());
+    editItem();
+  }
+
+  void TextListWidget::editItem() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(item) {
+      dialog->setText(item->text(0));
+      dialog->show();
+    }
+  }
+
+  void TextListWidget::removeItem() {
+    tree->takeTopLevelItem(tree->indexOfTopLevelItem(tree->currentItem()));
+    spinBox->setValue(tree->topLevelItemCount());
+    emit widgetChanged();
+  }
+
+  void TextListWidget::changeNumberOfItems(int num) {
+    int n = num - tree->topLevelItemCount();
+    if(n>0) {
+      for(int i=0; i<n; i++) {
+       auto *item = new QTreeWidgetItem({"\"New " + label + "\""});
+       item->setFlags(item->flags() | Qt::ItemIsEditable);
+       tree->addTopLevelItem(item);
+       tree->setCurrentItem(item);
+      }
+    }
+    else if(n<0) {
+      for(int i=0; i<-n; i++)
+       delete tree->takeTopLevelItem(tree->topLevelItemCount()-1);
+      emit widgetChanged();
+    }
+  }
+
+  void TextListWidget::openMenu() {
+    if(QApplication::mouseButtons()==Qt::RightButton) {
+      auto *menu = new QMenu(this);
+      menu->addAction("Add",this,&TextListWidget::addItem);
+      auto *item = tree->currentItem();
+      if(item)
+       menu->addAction("Remove",this,&TextListWidget::removeItem);
+      menu->exec(QCursor::pos());
+      delete menu;
+    }
+  }
+
+  DOMElement* TextListWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *ele = E(element)->getFirstElementChildNamed(xmlName);
+    DOMElement *e = ele;
+    while(e && (E(e)->getTagName()==xmlName)) {
+      auto *item = new QTreeWidgetItem;
+      item->setFlags(item->flags() | Qt::ItemIsEditable);
+      item->setText(0, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
+      tree->addTopLevelItem(item);
+      e=e->getNextElementSibling();
+    }
+    spinBox->setValue(tree->topLevelItemCount());
+    return ele;
+  }
+
+  DOMElement* TextListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(size_t i=0; i<tree->topLevelItemCount(); i++) {
+      DOMElement *ele = D(doc)->createElement(xmlName);
+      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(0).toStdString()), nullptr);
+      parent->insertBefore(ele, ref);
+    }
+    return nullptr;
+  }
+
+  QString TextListWidget::getXMLComment(DOMElement *element) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    if(e) {
+      auto *cele = E(e)->getFirstCommentChild();
+      if(cele)
+	return (QString::fromStdString(X()%cele->getNodeValue()));
+    }
+    return "";
+  }
+
+  void TextListWidget::setXMLComment(const QString &comment, DOMNode *element) {
+    DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(xmlName);
+    if(e) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
+      if(cele)
+	cele->setData(X()%comment.toStdString());
+      else
+	e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
+    }
   }
 
   BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_) {

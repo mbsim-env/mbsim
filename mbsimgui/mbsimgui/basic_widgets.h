@@ -268,6 +268,28 @@ namespace MBSimGUI {
       QComboBox *text;
   };
 
+  class TextListWidget : public Widget {
+    protected:
+      void updateTreeItem();
+      void addItem();
+      void editItem();
+      void removeItem();
+      void changeNumberOfItems(int num);
+      void openMenu();
+      QString label;
+      MBXMLUtils::FQN xmlName;
+      QTreeWidget *tree;
+      LineEditDialog *dialog;
+      CustomSpinBox *spinBox;
+
+    public:
+      TextListWidget(const QString &label_, const MBXMLUtils::FQN &xmlName_);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      QString getXMLComment(xercesc::DOMElement *element) override;
+      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
+  };
+
   class BasicConnectElementsWidget : public Widget {
 
     public:

@@ -237,13 +237,15 @@ namespace MBSimGUI {
       QCheckBox *checkbox;
   };
 
-  class SimpleTextDialog : public QDialog {
+  class TextEditDialog : public QDialog {
     public:
-      SimpleTextDialog(const QString &title, const QString &text, QWidget *parent);
+      TextEditDialog(const QString &title="", const QString &text="", bool readOnly=true, QWidget *parent=nullptr);
+      QString getText() const;
       void setText(const QString &text);
       void appendText(const QString &text);
       void gotoLine(int n);
     private:
+      void reset();
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       QTextEdit *editor;
@@ -301,6 +303,18 @@ namespace MBSimGUI {
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       ExtWidget *src, *dest, *sig, *th;
+  };
+
+  class LineEditDialog : public QDialog {
+    public:
+      LineEditDialog(const QString &title="", const QString &text="", QWidget *parent=nullptr);
+      QString getText() const;
+      void setText(const QString &text);
+    private:
+      void reset();
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      QLineEdit *editor;
   };
 
 }

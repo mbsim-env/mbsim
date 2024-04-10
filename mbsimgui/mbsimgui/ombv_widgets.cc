@@ -742,10 +742,10 @@ namespace MBSimGUI {
     boundaryEdges = new ExtWidget("Boundary edges",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft),true,false,OPENMBV%"boundaryEdges");
     layout->addWidget(boundaryEdges);
 
-    removeNodesByName = new ExtWidget("Remove nodes by name",new TextWidget,true,false,OPENMBV%"removeNodesByName");
+    removeNodesByName = new ExtWidget("Remove nodes by name",new TextListWidget("Name", OPENMBV%"removeNodesByName"),true,false,"");
     layout->addWidget(removeNodesByName);
 
-    removeNodesByType = new ExtWidget("Remove nodes by type",new TextWidget,true,false,OPENMBV%"removeNodesByType");
+    removeNodesByType = new ExtWidget("Remove nodes by type",new TextListWidget("Type", OPENMBV%"removeNodesByType"),true,false,"");
     layout->addWidget(removeNodesByType);
   }
 

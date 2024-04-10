@@ -1191,44 +1191,60 @@ namespace MBSimGUI {
     QDialog::hideEvent(event);
   }
 
-  SimpleTextDialog::SimpleTextDialog(const QString &title, const QString &text, QWidget *parent) : QDialog(parent) {
+  TextEditDialog::TextEditDialog(const QString &title, const QString &text, bool readOnly, QWidget *parent) : QDialog(parent) {
     setWindowTitle(title);
     auto *layout = new QVBoxLayout;
     setLayout(layout);
     editor = new QTextEdit(text);
     editor->setMinimumSize(400,400);
-    editor->setReadOnly(true);
+    editor->setReadOnly(readOnly);
     layout->addWidget(editor);
+
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
     layout->addWidget(buttonBox);
-    connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceCodeDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &TextEditDialog::accept);
+    if(not readOnly) {
+      buttonBox->addButton(QDialogButtonBox::Cancel);
+      connect(buttonBox, &QDialogButtonBox::rejected, this, &TextEditDialog::reject);
+      auto *button = buttonBox->addButton(QDialogButtonBox::Reset);
+      connect(button, &QPushButton::clicked, this, &TextEditDialog::reset);
+      layout->addWidget(buttonBox);
+    }
   }
 
-  void SimpleTextDialog::setText(const QString &text) {
+  QString TextEditDialog::getText() const {
+    return editor->toPlainText();
+  }
+
+  void TextEditDialog::setText(const QString &text) {
     editor->setText(text);
   }
 
-  void SimpleTextDialog::appendText(const QString &text) {
+  void TextEditDialog::appendText(const QString &text) {
     editor->append(text);
   }
 
-  void SimpleTextDialog::gotoLine(int n) {
+  void TextEditDialog::gotoLine(int n) {
     QTextCursor c = editor->textCursor();
     c.movePosition(QTextCursor::Start,QTextCursor::MoveAnchor,1);
     c.movePosition(QTextCursor::Down,QTextCursor::MoveAnchor,n);
     editor->setTextCursor(c);
   }
 
-  void SimpleTextDialog::showEvent(QShowEvent *event) {
+  void TextEditDialog::reset() {
+    setText("");
+  }
+
+  void TextEditDialog::showEvent(QShowEvent *event) {
     QSettings settings;
-    restoreGeometry(settings.value("simpletextdialog/geometry").toByteArray());
+    restoreGeometry(settings.value("texteditdialog/geometry").toByteArray());
     QDialog::showEvent(event);
   }
 
-  void SimpleTextDialog::hideEvent(QHideEvent *event) {
+  void TextEditDialog::hideEvent(QHideEvent *event) {
     QSettings settings;
-    settings.setValue("simpletextdialog/geometry", saveGeometry());
+    settings.setValue("texteditdialog/geometry", saveGeometry());
     QDialog::hideEvent(event);
   }
 
@@ -1479,6 +1495,48 @@ namespace MBSimGUI {
   void TransitionDialog::hideEvent(QHideEvent *event) {
     QSettings settings;
     settings.setValue("transitiondialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
+  LineEditDialog::LineEditDialog(const QString &title, const QString &text, QWidget *parent) : QDialog(parent) {
+    setWindowTitle(title);
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    editor = new QLineEdit(text);
+    layout->addWidget(editor);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Ok);
+    layout->addWidget(buttonBox);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &LineEditDialog::accept);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &LineEditDialog::reject);
+    auto *button = buttonBox->addButton(QDialogButtonBox::Reset);
+    connect(button, &QPushButton::clicked, this, &LineEditDialog::reset);
+    layout->addWidget(buttonBox);
+  }
+
+  QString LineEditDialog::getText() const {
+    return editor->text();
+  }
+
+  void LineEditDialog::setText(const QString &text) {
+    editor->setText(text);
+  }
+
+  void LineEditDialog::reset() {
+    setText("");
+  }
+
+  void LineEditDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("lineeditdialog/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void LineEditDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("lineeditdialog/geometry", saveGeometry());
     QDialog::hideEvent(event);
   }
 
