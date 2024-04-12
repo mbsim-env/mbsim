@@ -54,11 +54,11 @@ namespace MBSimGUI {
     connect(action,&QAction::triggered,this,[=](){ mw->expandToDepth(4); });
     addAction(action);
     action = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"expanded.svg").string())), "Expand all", this);
-    action->setShortcut(QKeySequence("Ctrl++"));
+    action->setShortcut(QKeySequence("Shift++"));
     connect(action,&QAction::triggered,this,[=](){ mw->expandToDepth(1000); });
     addAction(action);
     action = new QAction(Utils::QIconCached(QString::fromStdString((iconPath/"collapsed.svg").string())), "Collapse all", this);
-    action->setShortcut(QKeySequence("Ctrl+-"));
+    action->setShortcut(QKeySequence("Shift+-"));
     connect(action,&QAction::triggered,this,[=](){ mw->expandToDepth(-1); });
     addAction(action);
   }
