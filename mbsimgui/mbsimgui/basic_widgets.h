@@ -139,38 +139,47 @@ namespace MBSimGUI {
       Element* findElement(const QString &str) override { return element->getByPath<T>(str); }
   };
 
-  class BasicElementsOfReferenceWidget : public Widget {
+  class EmbedableListWidget : public Widget {
+    protected:
+      MBXMLUtils::FQN xmlName;
+      QTreeWidget *tree;
+      CustomSpinBox *spinBox;
+      bool allowEmbed;
+    public:
+      EmbedableListWidget(QWidget *parent, const MBXMLUtils::FQN &xmlName_, bool allowEmbed_) : Widget(parent), xmlName(xmlName_), allowEmbed(allowEmbed_) { }
+      void itemDoubleClicked(QTreeWidgetItem *item, int column);
+      QString getXMLComment(xercesc::DOMElement *element) override;
+      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
+      int getSize() const;
+  };
+
+  class BasicElementsOfReferenceWidget : public EmbedableListWidget {
     protected:
       virtual Element* findElement(const QString &str) { return nullptr; }
       void updateTreeItem();
       void addElement();
       void removeElement();
       void showBrowser();
+      void convertToArrayPattern();
       void changeNumberOfElements(int num);
       void openMenu();
-      QTreeWidget *tree;
-      CustomSpinBox *spinBox;
       QPushButton *add, *remove;
-      MBXMLUtils::FQN xmlName;
       Element *element;
       BasicElementBrowser *eleBrowser;
 
     public:
-      BasicElementsOfReferenceWidget(MBXMLUtils::FQN xmlName_, Element *element_, BasicElementBrowser *eleBrowser_, int min, int max, bool addRatio);
-      int getSize() const;
+      BasicElementsOfReferenceWidget(MBXMLUtils::FQN xmlName_, Element *element_, BasicElementBrowser *eleBrowser_, int min, int max, bool addRatio, bool allowEmbed_);
       void setRange(int min, int max);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-      QString getXMLComment(xercesc::DOMElement *element) override;
-      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
   };
 
   template <class T>
   class ElementsOfReferenceWidget : public BasicElementsOfReferenceWidget {
 
     public:
-      ElementsOfReferenceWidget(MBXMLUtils::FQN xmlName, Element* element, int min, int max, QWidget *parent) : BasicElementsOfReferenceWidget(xmlName,element,new ElementBrowser<T>(nullptr,parent),min,max,false) { }
-      ElementsOfReferenceWidget(MBXMLUtils::FQN xmlName, Element* element, int min, int max, bool addRatio, QWidget *parent) : BasicElementsOfReferenceWidget(xmlName,element,new ElementBrowser<T>(nullptr,parent),min,max,addRatio) { }
+      ElementsOfReferenceWidget(MBXMLUtils::FQN xmlName, Element* element, int min, int max, QWidget *parent, bool allowEmbed=false) : BasicElementsOfReferenceWidget(xmlName,element,new ElementBrowser<T>(nullptr,parent),min,max,false,allowEmbed) { }
+      ElementsOfReferenceWidget(MBXMLUtils::FQN xmlName, Element* element, int min, int max, bool addRatio, QWidget *parent, bool allowEmbed=false) : BasicElementsOfReferenceWidget(xmlName,element,new ElementBrowser<T>(nullptr,parent),min,max,addRatio,allowEmbed) { }
     protected:
       Element* findElement(const QString &str) override { return element->getByPath<T>(str); }
   };
@@ -282,7 +291,7 @@ namespace MBSimGUI {
       QTextEdit *text;
   };
 
-  class TextListWidget : public Widget {
+  class TextListWidget : public EmbedableListWidget {
     protected:
       void updateTreeItem();
       void addItem();
@@ -291,17 +300,13 @@ namespace MBSimGUI {
       void changeNumberOfItems(int num);
       void openMenu();
       QString label;
-      MBXMLUtils::FQN xmlName;
-      QTreeWidget *tree;
       LineEditDialog *dialog;
-      CustomSpinBox *spinBox;
+      void convertToArrayPattern();
 
     public:
-      TextListWidget(const QString &label_, const MBXMLUtils::FQN &xmlName_);
+      TextListWidget(const QString &label_, const MBXMLUtils::FQN &xmlName_, bool allowEmbed_=false);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
-      QString getXMLComment(xercesc::DOMElement *element) override;
-      void setXMLComment(const QString &comment, xercesc::DOMNode *element) override;
   };
 
   class BasicConnectElementsWidget : public Widget {

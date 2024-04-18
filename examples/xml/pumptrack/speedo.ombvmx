@@ -7,6 +7,7 @@ import math
 
 # see speedo.ombvpx for parameters
 
+ts=0.11
 dR=0.35
 bgCoord=""
 bgCoordIdx=""
@@ -36,15 +37,21 @@ for a in numpy.linspace(-45-da, 180+45+da, 100)*math.pi/180:
   idx+=1
 fgCoordIdx+=" -1"
 
+speedoTextIv = '["' + '", "'.join(speedoText.replace('"', '\\"').split("\n")) + '"]'
+backColorIv = " ".join(map(lambda e: str(e), backColor))
+frontColorIv = " ".join(map(lambda e: str(e), frontColor))
+needleColorIv = " ".join(map(lambda e: str(e), needleColor))
+speedoTextColorIv = " ".join(map(lambda e: str(e), speedoTextColor))
+
 content=f'''#Inventor V2.0 ascii
 Translation {{
   translation {position[0]} {position[1]} 0
 }}
 Scale {{
-  scaleFactor {size} {size} 1
+  scaleFactor {size/2} {size/2} 1
 }}
 Material {{
-  emissiveColor 0 0 0
+  emissiveColor {backColorIv}
   transparency {alpha}
 }}
 IndexedTesselationFace {{
@@ -57,7 +64,7 @@ IndexedTesselationFace {{
   ]
 }}
 Material {{
-  emissiveColor 1 1 1
+  emissiveColor {frontColorIv}
   transparency {alpha}
 }}
 IndexedTesselationFace {{
@@ -89,8 +96,14 @@ content=content.replace("@bgCoordIdx@", bgCoordIdx)
 content=content.replace("@fgCoord@", fgCoord)
 content=content.replace("@fgCoordIdx@", fgCoordIdx)
 
-ts=0.11
-r=numpy.arange(0,vEnd+1e-13,vDelta)
+# calcuate vDelta
+vDelta=vEnd/10 # use about 10 tics
+possibleDeltas=numpy.array([1,2,5,10]) # use only one of these deltas (or multiplies of fac=10^i of it)
+fac=10**math.floor(math.log10(vDelta)) # calculate i/fac
+bestDeltaIdx=numpy.argmin(abs(vDelta-possibleDeltas*fac)) # get the best delta (as index in possibleDeltas)
+vDelta=possibleDeltas[bestDeltaIdx]*fac # calculate the best delta
+
+r=numpy.arange(0,vEnd+vDelta-1e-10,vDelta)
 for (v,a) in zip(r, numpy.linspace(180+45,-45,len(r))*math.pi/180):
   content+=f'''
 Separator {{
@@ -119,7 +132,7 @@ Separator {{
 content+=f'''
 Separator {{
   Material {{
-    emissiveColor 0 0 0
+    emissiveColor {speedoTextColorIv}
     transparency {alpha}
   }}
   RotationXYZ {{
@@ -134,7 +147,7 @@ Separator {{
 }}
 Separator {{
   Material {{
-    emissiveColor 1 0 0
+    emissiveColor {needleColorIv}
     transparency {alpha}
   }}
   RotationXYZ {{
@@ -164,7 +177,7 @@ Separator {{
     scaleFactor 0.25 0.25 1
   }}
   Material {{
-    emissiveColor 0 0 0
+    emissiveColor {speedoTextColorIv}
     transparency {alpha}
   }}
   FontStyle {{
@@ -173,7 +186,7 @@ Separator {{
     style BOLD
   }}
   AsciiText {{
-    string "{speedoText}"
+    string {speedoTextIv}
     justification CENTER
   }}
 }}

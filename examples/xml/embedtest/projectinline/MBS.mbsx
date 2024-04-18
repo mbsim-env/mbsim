@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils">
+  <p:Parameter>
+    <p:scalarParameter name="project_endtime">2</p:scalarParameter>
+  </p:Parameter>
+  <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+    <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils">
+      <p:Parameter>
+        <p:scalarParameter name="dss_mass">1</p:scalarParameter>
+      </p:Parameter>
+      <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+        <plotFeatureRecursive value="generalizedPosition">1</plotFeatureRecursive>
+        <frames/>
+        <contours/>
+        <groups/>
+        <objects>
+          <RigidBody name="rb">
+            <mass>dss_mass</mass>
+            <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+            <stateDependentTranslation>
+              <TranslationAlongXAxis/>
+            </stateDependentTranslation>
+            <frames/>
+            <contours/>
+          </RigidBody>
+        </objects>
+        <links/>
+        <constraints/>
+        <observers/>
+        <enableOpenMBVFrameI/>
+        <environments>
+          <MBSimEnvironment>
+            <accelerationOfGravity unit="m/s^2">[0;-9.81;0]</accelerationOfGravity>
+          </MBSimEnvironment>
+        </environments>
+      </DynamicSystemSolver>
+    </p:Embed>
+    <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils">
+      <p:Parameter>
+        <p:scalarParameter name="integrator_starttime">0</p:scalarParameter>
+      </p:Parameter>
+      <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+        <startTime unit="s">integrator_starttime</startTime>
+        <endTime unit="s">project_endtime</endTime>
+        <plotStepSize unit="s">1e-2</plotStepSize>
+      </DOPRI5Integrator>
+    </p:Embed>
+  </MBSimProject>
+</p:Embed>

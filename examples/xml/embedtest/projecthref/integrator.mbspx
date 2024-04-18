@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<p:Parameter xmlns:p="http://www.mbsim-env.de/MBXMLUtils">
+  <p:scalarParameter name="integrator_starttime">0</p:scalarParameter>
+</p:Parameter>

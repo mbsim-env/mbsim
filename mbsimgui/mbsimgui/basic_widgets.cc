@@ -44,6 +44,23 @@ using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
+#define CATCH \
+  catch(DOMLSException &ex) { \
+    mw->setExitBad(); \
+    mw->statusBar()->showMessage((X()%ex.msg).c_str()); \
+    cerr << X()%ex.msg << endl; \
+  } \
+  catch(exception &ex) { \
+    mw->setExitBad(); \
+    mw->statusBar()->showMessage(ex.what()); \
+    cerr << X()%ex.what() << endl; \
+  } \
+  catch(...) { \
+    mw->setExitBad(); \
+    mw->statusBar()->showMessage("Unknown exception"); \
+    cerr << "Unknown exception" << endl; \
+  }
+
 namespace MBSimGUI {
 
   extern MainWindow *mw;
@@ -220,6 +237,42 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  void EmbedableListWidget::itemDoubleClicked(QTreeWidgetItem *item, int column) {
+    if(item->data(0, Qt::UserRole).type()!=QVariant::String)
+      tree->editItem(item, column);
+    else {
+      auto dialog=new SourceCodeDialog(item->data(0, Qt::UserRole).toString(), false, this);
+      if(dialog->exec()==QDialog::Accepted)
+        item->setData(0, Qt::UserRole, dialog->getEditor()->getText());
+    }
+  }
+
+  QString EmbedableListWidget::getXMLComment(DOMElement *element) {
+    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
+    if(e) {
+      auto *cele = E(e)->getFirstCommentChild();
+      if(cele)
+	return (QString::fromStdString(X()%cele->getNodeValue()));
+    }
+    return "";
+  }
+
+  void EmbedableListWidget::setXMLComment(const QString &comment, DOMNode *element) {
+    DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(xmlName);
+    if(e) {
+      xercesc::DOMDocument *doc=element->getOwnerDocument();
+      auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
+      if(cele)
+	cele->setData(X()%comment.toStdString());
+      else
+	e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
+    }
+  }
+
+  int EmbedableListWidget::getSize() const {
+    return tree->topLevelItemCount();
+  }
+
   BasicElementOfReferenceWidget::BasicElementOfReferenceWidget(Element *element_, Element* selectedElement, BasicElementBrowser *eleBrowser_, bool addRatio) : ratio(nullptr), element(element_), eleBrowser(eleBrowser_) {
     auto *layout = new QHBoxLayout;
     layout->setMargin(0);
@@ -267,7 +320,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  BasicElementsOfReferenceWidget::BasicElementsOfReferenceWidget(FQN xmlName_, Element *element_, BasicElementBrowser *eleBrowser_, int min, int max, bool addRatio) : xmlName(xmlName_), element(element_), eleBrowser(eleBrowser_) {
+  BasicElementsOfReferenceWidget::BasicElementsOfReferenceWidget(FQN xmlName_, Element *element_, BasicElementBrowser *eleBrowser_, int min, int max, bool addRatio, bool allowEmbed_) : EmbedableListWidget(nullptr, xmlName_, allowEmbed_), element(element_), eleBrowser(eleBrowser_) {
     auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -301,15 +354,12 @@ namespace MBSimGUI {
     changeNumberOfElements(min);
 
     connect(tree, &QTreeWidget::customContextMenuRequested,this,&BasicElementsOfReferenceWidget::openMenu);
+    connect(tree, &QTreeWidget::itemDoubleClicked,this,&EmbedableListWidget::itemDoubleClicked);
     connect(eleBrowser,&BasicElementBrowser::accepted,this,&BasicElementsOfReferenceWidget::updateTreeItem);
     connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&BasicElementsOfReferenceWidget::changeNumberOfElements);
     connect(add,&QPushButton::clicked,this,&BasicElementsOfReferenceWidget::addElement);
     connect(update,&QPushButton::clicked,this,&BasicElementsOfReferenceWidget::showBrowser);
     connect(remove,&QPushButton::clicked,this,&BasicElementsOfReferenceWidget::removeElement);
-  }
-
-  int BasicElementsOfReferenceWidget::getSize() const {
-    return tree->topLevelItemCount();
   }
 
   void BasicElementsOfReferenceWidget::setRange(int min, int max) {
@@ -343,10 +393,31 @@ namespace MBSimGUI {
 
   void BasicElementsOfReferenceWidget::showBrowser() {
     QTreeWidgetItem *item = tree->currentItem();
-    if(item) {
+    if(item && item->data(0, Qt::UserRole).type()!=QVariant::String) {
       eleBrowser->setSelection(findElement(item->text(0)));
       eleBrowser->show();
     }
+  }
+
+  void BasicElementsOfReferenceWidget::convertToArrayPattern() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(!item)
+      return;
+
+    auto *doc = element->getXMLElement()->getOwnerDocument();
+    XercesUniquePtr<DOMElement> embed(D(doc)->createElement(PV%"Embed"));
+    auto *ele = D(doc)->createElement(xmlName);
+    embed->insertBefore(ele, nullptr);
+    E(ele)->setAttribute("ref",item->text(0).toStdString());
+    if(tree->columnCount()==2)
+      E(ele)->setAttribute("ratio",item->text(1).toStdString());
+    string text = X()%mw->serializer->writeToString(embed.get());
+    item->setData(0, Qt::UserRole, text.c_str());
+
+    item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    item->setText(0, "<Array/Pattern>");
+    auto icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed-active.svg").string()));
+    item->setIcon(0, icon);
   }
 
   void BasicElementsOfReferenceWidget::removeElement() {
@@ -387,9 +458,17 @@ namespace MBSimGUI {
       action->setDisabled(getSize()>=spinBox->maximum());
       auto *item = tree->currentItem();
       if(item) {
-	menu->addAction("Browse",this,&BasicElementsOfReferenceWidget::showBrowser);
+        if(item->data(0, Qt::UserRole).type()!=QVariant::String)
+	  menu->addAction("Browse",this,&BasicElementsOfReferenceWidget::showBrowser);
+        else
+	  menu->addAction("Open",this,[this,item]() {
+            itemDoubleClicked(item, 0);
+          });
 	action = menu->addAction("Remove",this,&BasicElementsOfReferenceWidget::removeElement);
 	action->setDisabled(getSize()<=spinBox->minimum());
+        if(item->data(0, Qt::UserRole).type()!=QVariant::String && allowEmbed)
+	  menu->addAction(Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed.svg").string())),
+            "Convert to Array/Pattern",this,&BasicElementsOfReferenceWidget::convertToArrayPattern);
       }
       menu->exec(QCursor::pos());
       delete menu;
@@ -399,13 +478,26 @@ namespace MBSimGUI {
   DOMElement* BasicElementsOfReferenceWidget::initializeUsingXML(DOMElement *element) {
     for(int i=0; i<tree->topLevelItemCount(); i++)
      delete tree->takeTopLevelItem(i);
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-    while(e && (E(e)->getTagName()==xmlName)) {
+    DOMElement *e=element->getFirstElementChild();
+    
+    while(e && !(E(e)->getTagName()==xmlName || (allowEmbed && E(e)->getTagName()==PV%"Embed")))
+      e=e->getNextElementSibling();
+    while(e && (E(e)->getTagName()==xmlName || (allowEmbed && E(e)->getTagName()==PV%"Embed"))) {
       auto *item = new QTreeWidgetItem;
-      item->setFlags(item->flags() | Qt::ItemIsEditable);
-      item->setText(0, QString::fromStdString(E(e)->getAttributeQName("ref").second));
-      if(tree->columnCount()==2)
-	item->setText(1, QString::fromStdString(E(e)->getAttributeQName("ratio").second));
+      if(E(e)->getTagName()!=PV%"Embed") {
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        item->setText(0, QString::fromStdString(E(e)->getAttributeQName("ref").second));
+        if(tree->columnCount()==2)
+          item->setText(1, QString::fromStdString(E(e)->getAttributeQName("ratio").second));
+      }
+      else {
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        item->setText(0, "<Array/Pattern>");
+        auto icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed-active.svg").string()));
+        item->setIcon(0, icon);
+        string text = X()%mw->serializer->writeToString(e);
+        item->setData(0, Qt::UserRole, text.c_str());
+      }
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
@@ -416,35 +508,24 @@ namespace MBSimGUI {
   DOMElement* BasicElementsOfReferenceWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
-      DOMElement *ele = D(doc)->createElement(xmlName);
-      E(ele)->setAttribute("ref",tree->topLevelItem(i)->text(0).toStdString());
-      if(tree->columnCount()==2)
-	E(ele)->setAttribute("ratio",tree->topLevelItem(i)->text(1).toStdString());
-      parent->insertBefore(ele, ref);
+      if(tree->topLevelItem(i)->data(0, Qt::UserRole).type()!=QVariant::String) {
+        DOMElement *ele = D(doc)->createElement(xmlName);
+        E(ele)->setAttribute("ref",tree->topLevelItem(i)->text(0).toStdString());
+        if(tree->columnCount()==2)
+          E(ele)->setAttribute("ratio",tree->topLevelItem(i)->text(1).toStdString());
+        parent->insertBefore(ele, ref);
+      }
+      else {
+        DOMLSInput *source = mw->impl->createLSInput();
+        X x;
+        source->setStringData(x%tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString());
+        try {
+          mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
+        }
+        CATCH
+      }
     }
     return nullptr;
-  }
-
-  QString BasicElementsOfReferenceWidget::getXMLComment(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-    if(e) {
-      auto *cele = E(e)->getFirstCommentChild();
-      if(cele)
-	return (QString::fromStdString(X()%cele->getNodeValue()));
-    }
-    return "";
-  }
-
-  void BasicElementsOfReferenceWidget::setXMLComment(const QString &comment, DOMNode *element) {
-    DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(xmlName);
-    if(e) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
-      auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
-      if(cele)
-	cele->setData(X()%comment.toStdString());
-      else
-	e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
-    }
   }
 
   FileWidget::FileWidget(const QString &file, const QString &description_, const QString &extensions_, int mode_, bool quote_, bool absPath, QFileDialog::Options options_) : description(description_), extensions(extensions_), mode(mode_), quote(quote_), options(options_) {
@@ -639,7 +720,7 @@ namespace MBSimGUI {
     return ele;
   }
 
-  TextListWidget::TextListWidget(const QString &label_, const FQN &xmlName_) : label(label_), xmlName(xmlName_) {
+  TextListWidget::TextListWidget(const QString &label_, const FQN &xmlName_, bool allowEmbed_) : EmbedableListWidget(nullptr, xmlName_, allowEmbed_), label(label_) {
     auto *layout = new QGridLayout;
     layout->setMargin(0);
     setLayout(layout);
@@ -651,6 +732,7 @@ namespace MBSimGUI {
     tree->setColumnWidth(0,150);
     tree->setColumnWidth(1,80);
     connect(tree, &QTreeWidget::customContextMenuRequested,this,&TextListWidget::openMenu);
+    connect(tree, &QTreeWidget::itemDoubleClicked,this,&EmbedableListWidget::itemDoubleClicked);
     layout->addWidget(tree,0,0,5,1);
 
     dialog = new LineEditDialog("Line edit dialog","",this);
@@ -674,6 +756,25 @@ namespace MBSimGUI {
     layout->addWidget(remove,3,1);
 
     layout->setColumnStretch(0,10);
+  }
+
+  void TextListWidget::convertToArrayPattern() {
+    QTreeWidgetItem *item = tree->currentItem();
+    if(!item)
+      return;
+
+    auto doc = mw->mbxmlparser->createDocument();
+    XercesUniquePtr<DOMElement> embed(D(doc)->createElement(PV%"Embed"));
+    auto *ele = D(doc)->createElement(xmlName);
+    embed->insertBefore(ele, nullptr);
+    ele->insertBefore(doc->createTextNode(X()%item->text(0).toStdString()), nullptr);
+    string text = X()%mw->serializer->writeToString(embed.get());
+    item->setData(0, Qt::UserRole, text.c_str());
+
+    item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+    item->setText(0, "<Array/Pattern>");
+    auto icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed-active.svg").string()));
+    item->setIcon(0, icon);
   }
 
   void TextListWidget::updateTreeItem() {
@@ -727,20 +828,41 @@ namespace MBSimGUI {
       auto *menu = new QMenu(this);
       menu->addAction("Add",this,&TextListWidget::addItem);
       auto *item = tree->currentItem();
-      if(item)
-       menu->addAction("Remove",this,&TextListWidget::removeItem);
+      if(item) {
+        if(item->data(0, Qt::UserRole).type()==QVariant::String)
+	  menu->addAction("Open",this,[this,item]() {
+            itemDoubleClicked(item, 0);
+          });
+        auto action = menu->addAction("Remove",this,&TextListWidget::removeItem);
+	action->setDisabled(getSize()<=spinBox->minimum());
+        if(item->data(0, Qt::UserRole).type()!=QVariant::String && allowEmbed)
+	  menu->addAction(Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed.svg").string())),
+            "Convert to Array/Pattern",this,&TextListWidget::convertToArrayPattern);
+      }
       menu->exec(QCursor::pos());
       delete menu;
     }
   }
 
   DOMElement* TextListWidget::initializeUsingXML(DOMElement *element) {
-    DOMElement *ele = E(element)->getFirstElementChildNamed(xmlName);
+    DOMElement *ele=element->getFirstElementChild();
+    while(ele && !(E(ele)->getTagName()==xmlName || (allowEmbed && E(ele)->getTagName()==PV%"Embed")))
+      ele=ele->getNextElementSibling();
     DOMElement *e = ele;
-    while(e && (E(e)->getTagName()==xmlName)) {
+    while(e && (E(e)->getTagName()==xmlName || (allowEmbed && E(e)->getTagName()==PV%"Embed"))) {
       auto *item = new QTreeWidgetItem;
-      item->setFlags(item->flags() | Qt::ItemIsEditable);
-      item->setText(0, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
+      if(E(e)->getTagName()!=PV%"Embed") {
+        item->setFlags(item->flags() | Qt::ItemIsEditable);
+        item->setText(0, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
+      }
+      else {
+        item->setFlags(item->flags() & ~Qt::ItemIsEditable);
+        item->setText(0, "<Array/Pattern>");
+        auto icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"embed-active.svg").string()));
+        item->setIcon(0, icon);
+        string text = X()%mw->serializer->writeToString(e);
+        item->setData(0, Qt::UserRole, text.c_str());
+      }
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
@@ -751,33 +873,22 @@ namespace MBSimGUI {
   DOMElement* TextListWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
-      DOMElement *ele = D(doc)->createElement(xmlName);
-      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(0).toStdString()), nullptr);
-      parent->insertBefore(ele, ref);
+      if(tree->topLevelItem(i)->data(0, Qt::UserRole).type()!=QVariant::String) {
+        DOMElement *ele = D(doc)->createElement(xmlName);
+        ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(0).toStdString()), nullptr);
+        parent->insertBefore(ele, ref);
+      }
+      else {
+        DOMLSInput *source = mw->impl->createLSInput();
+        X x;
+        source->setStringData(x%tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString());
+        try {
+          mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
+        }
+        CATCH
+      }
     }
     return nullptr;
-  }
-
-  QString TextListWidget::getXMLComment(DOMElement *element) {
-    DOMElement *e=E(element)->getFirstElementChildNamed(xmlName);
-    if(e) {
-      auto *cele = E(e)->getFirstCommentChild();
-      if(cele)
-	return (QString::fromStdString(X()%cele->getNodeValue()));
-    }
-    return "";
-  }
-
-  void TextListWidget::setXMLComment(const QString &comment, DOMNode *element) {
-    DOMElement *e=E(static_cast<DOMElement*>(element))->getFirstElementChildNamed(xmlName);
-    if(e) {
-      xercesc::DOMDocument *doc=element->getOwnerDocument();
-      auto *cele = E(static_cast<DOMElement*>(e))->getFirstCommentChild();
-      if(cele)
-	cele->setData(X()%comment.toStdString());
-      else
-	e->insertBefore(doc->createComment(X()%comment.toStdString()), e->getFirstChild());
-    }
   }
 
   BasicConnectElementsWidget::BasicConnectElementsWidget(const vector<BasicElementOfReferenceWidget*> widget_, const vector<QString> &name) : widget(widget_) {
@@ -1094,21 +1205,7 @@ namespace MBSimGUI {
         element = static_cast<xercesc::DOMElement*>(mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_REPLACE));
       return element;
     }
-    catch(DOMLSException &ex) {
-      mw->setExitBad();
-      mw->statusBar()->showMessage((X()%ex.msg).c_str());
-      cerr << X()%ex.msg << endl;
-    }
-    catch(exception &ex) {
-      mw->setExitBad();
-      mw->statusBar()->showMessage(ex.what());
-      cerr << X()%ex.what() << endl;
-    }
-    catch(...) {
-      mw->setExitBad();
-      mw->statusBar()->showMessage("Unknown exception");
-      cerr << "Unknown exception" << endl;
-    }
+    CATCH
     return nullptr;
   }
 

@@ -131,7 +131,7 @@ namespace MBSimGUI {
       Parameters(EmbedItemData *parent);
       QString getName() const override { return parent->getName() + " parameters"; }
       QString getValue() const override { return ""; }
-      QMenu* createContextMenu() override { return new ParametersContextMenu(parent); }
+      QMenu* createContextMenu() override;
       QString getReference() const override;
       bool hasReference() const override { return parent->hasParameterReference(); }
   };

@@ -152,13 +152,15 @@ namespace MBSimGUI {
     {
       outTextMutex.lock();
       BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
-      // CSS display: none is not working with QTextBrowser. Hence we remove it manually.
+
+      // the CSS property display is not supported by QTextBrowser. Hence we remove it manually.
       auto outText2=outText;
       if(!showSSE->isChecked()) removeSpan("<span class=\"MBXMLUTILS_ERROROUTPUT MBXMLUTILS_SSE\">", outText2);
       if(!showWarn->isChecked()) removeSpan("<span class=\"MBSIMGUI_WARN\">", outText2);
       if(!showInfo->isChecked()) removeSpan("<span class=\"MBSIMGUI_INFO\">", outText2);
       if(!showDebug->isChecked()) removeSpan("<span class=\"MBSIMGUI_DEBUG\">", outText2);
       if(!showDepr->isChecked()) removeSpan("<span class=\"MBSIMGUI_DEPRECATED\">", outText2);
+
       // add anchor at first error, if an error is present
       firstErrorPos=outText.indexOf("<span class=\"MBSIMGUI_ERROR\">");
       if(firstErrorPos!=-1)
@@ -171,56 +173,31 @@ namespace MBSimGUI {
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>MBSim Echo View</title>
     <style>
-      body {
-        color: %1;
-      }
-      .MBSIMGUI_ERROR { 
-        background-color: %2;
-      }
-      .MBXMLUTILS_MSG {
-        font-weight: bold;
-      }
-      .MBXMLUTILS_SSE {
-        background-color: %3;
-        display: %6;
-      }
-      .MBSIMGUI_WARN {
-        background-color: %4;
-        display: %7;
-      }
-      .MBSIMGUI_INFO {
-        display: %8;
-      }
-      .MBSIMGUI_DEPRECATED {
-        background-color: %10;
-        display: %11;
-      }
-      .MBSIMGUI_DEBUG {
-        background-color: %5;
-        display: %9;
-      }
+      body                 { color:            @bodyfgcolor@; }
+      .MBSIMGUI_ERROR      { background-color: @errorbgcolor@; }
+      .MBXMLUTILS_MSG      { font-weight:      bold; }
+      .MBXMLUTILS_SSE      { background-color: @ssebgcolor@; }
+      .MBSIMGUI_WARN       { background-color: @warnbgcolor@; }
+      .MBSIMGUI_DEPRECATED { background-color: @deprbgcolor@; }
+      .MBSIMGUI_DEBUG      { background-color: @debugbgcolor@; }
     </style>
   </head>
   <body>
     <pre>
 )+").
-       arg(fg.name()). // body fg color
-       arg(mergeColor(errorColor, 0.3, bg).name()). // error bg color
-       arg(mergeColor(errorColor, 0.1, bg).name()). // subsequent error bg color
-       arg(mergeColor(warnColor, 0.3, bg).name()). // warn bg color
-       arg(mergeColor(debugColor, 0.3, bg).name()). // debug bg color
-       arg(showSSE->isChecked()?"inline":"none"). // subsequent error show/hide
-       arg(showWarn->isChecked()?"inline":"none"). // warn show/hide
-       arg(showInfo->isChecked()?"inline":"none"). // info show/hide
-       arg(showDebug->isChecked()?"inline":"none"). // debug show/hide
-       arg(mergeColor(deprColor, 0.3, bg).name()). // depr bg color
-       arg(showDepr->isChecked()?"inline":"none")+ // depr show/hide
-        outText2+
+       replace("@bodyfgcolor@", fg.name()).
+       replace("@errorbgcolor@", mergeColor(errorColor, 0.3, bg).name()).
+       replace("@ssebgcolor@", mergeColor(errorColor, 0.1, bg).name()).
+       replace("@warnbgcolor@", mergeColor(warnColor, 0.3, bg).name()).
+       replace("@debugbgcolor@", mergeColor(debugColor, 0.3, bg).name()).
+       replace("@deprbgcolor@", mergeColor(deprColor, 0.3, bg).name()).
+       append(outText2).
+       append(
 R"+(
     </pre>
   </body>
 </html>
-)+";
+)+");
     }
     out->setHtml(html);
 

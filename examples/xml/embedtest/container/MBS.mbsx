@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project" xmlns:p="http://www.mbsim-env.de/MBXMLUtils">
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+    <plotFeatureRecursive value="generalizedPosition">1</plotFeatureRecursive>
+    <frames/>
+    <contours/>
+    <groups>
+      <p:Embed count="3" counterName="ng" onlyif="ng!=2">
+        <p:Parameter>
+          <p:scalarParameter name="pg">2*ng</p:scalarParameter>
+          <p:scalarParameter name="mfmf">1</p:scalarParameter>
+        </p:Parameter>
+        <Group name="embedinlineinline{pg+ng}">
+          <frames/>
+          <contours/>
+          <groups/>
+          <objects>
+            <RigidBody name="noembed">
+              <mass>1</mass>
+              <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+              <stateDependentTranslation>
+                <TranslationAlongXAxis/>
+              </stateDependentTranslation>
+              <frames/>
+              <contours/>
+            </RigidBody>
+            <p:Embed count="3" counterName="n" onlyif="n!=2">
+              <p:Parameter>
+                <p:scalarParameter name="m">2*n</p:scalarParameter>
+              </p:Parameter>
+              <RigidBody name="embedinlineinline{n}">
+                <mass>m</mass>
+                <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+                <stateDependentTranslation>
+                  <TranslationAlongXAxis/>
+                </stateDependentTranslation>
+                <frames/>
+                <contours/>
+              </RigidBody>
+            </p:Embed>
+            <p:Embed count="3" counterName="n" href="embedhrefinline.mbsmx" onlyif="n!=2">
+              <p:Parameter>
+                <p:scalarParameter name="m">2*n</p:scalarParameter>
+              </p:Parameter>
+            </p:Embed>
+            <p:Embed count="3" counterName="n" onlyif="n!=2" parameterHref="embedinlineparameterhref.mbspx">
+              <RigidBody name="embedinlineparameterhref{n}">
+                <mass>m</mass>
+                <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+                <stateDependentTranslation>
+                  <TranslationAlongXAxis/>
+                </stateDependentTranslation>
+                <frames/>
+                <contours/>
+              </RigidBody>
+            </p:Embed>
+            <p:Embed count="3" counterName="n" href="embedhrefparameterhref.mbsmx" onlyif="n!=2" parameterHref="embedhrefparameterhref.mbspx"/>
+            <p:Embed count="3" counterName="n" href="embedhrefinline_{ng}.mbsmx" onlyif="n!=2">
+              <p:Parameter>
+                <p:scalarParameter name="m">2*n</p:scalarParameter>
+              </p:Parameter>
+            </p:Embed>
+            <p:Embed count="3" counterName="n" onlyif="n!=2" parameterHref="embedinlineparameterhref_{ng}.mbspx">
+              <RigidBody name="embedinlineparameterhref{n}_pardephref">
+                <mass>m</mass>
+                <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+                <stateDependentTranslation>
+                  <TranslationAlongXAxis/>
+                </stateDependentTranslation>
+                <frames/>
+                <contours/>
+              </RigidBody>
+            </p:Embed>
+            <p:Embed count="3" counterName="n" href="embedhrefparameterhref_{ng}.mbsmx" onlyif="n!=2" parameterHref="embedhrefparameterhref_{ng}.mbspx"/>
+            <p:Embed href="embed_pardephref_{mfmf}.mbsmx"/>
+          </objects>
+          <links/>
+          <constraints/>
+          <observers/>
+        </Group>
+      </p:Embed>
+    </groups>
+    <objects/>
+    <links/>
+    <constraints/>
+    <observers/>
+    <enableOpenMBVFrameI/>
+    <environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity unit="m/s^2">
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0</ele>
+            <ele>0</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+  </DOPRI5Integrator>
+</MBSimProject>

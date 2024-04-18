@@ -173,6 +173,12 @@ namespace MBSimGUI {
   }
 
   DOMElement* EmbedItemData::processIDAndHref(DOMElement *element) {
+    if(!embed)
+      return element;
+
+    if(E(element)->getTagName()!=PV%"Embed")
+      throw runtime_error("Internal error: EmbedItemData::embed is set but element is not a <Embed> element.");
+
     if(E(element)->hasAttribute("href")) {
       DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(getXMLElement(),true));
       element->insertBefore(ele2,nullptr);
@@ -191,7 +197,7 @@ namespace MBSimGUI {
       ele2->insertBefore(filenamePI, ele2->getFirstChild());
       E(element)->removeAttribute("parameterHref");
     }
-    return E(element)->getTagName()==PV%"Embed"?element->getLastElementChild():element;
+    return element->getLastElementChild();
   }
 
   QString EmbedItemData::getReference() const {
@@ -199,30 +205,34 @@ namespace MBSimGUI {
   }
 
   void EmbedItemData::updateName() {
-    name = QString::fromStdString(E(element)->getAttribute("name"));
-    if(name.contains('{')) {
-      auto parameterLevels = mw->updateParameters(this,false);
-      auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement()).second;
-      // build the evaluated display name
-      name.clear();
-      set<string> uniqueNames;
-      for(auto &v : values)
-        try {
-          auto curName = mw->eval->cast<string>(v.second);
-          if(uniqueNames.insert(curName).second) // only add unique names
-            name += QString(" ❙ ") + QString::fromStdString(curName);
-        }
-        catch(DOMEvalException &e) {
-          mw->setExitBad();
-          mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + e.getMessage()).c_str());
-          std::cerr << "Cannot evaluate element name to string: " << e.getMessage() << std::endl;
-        }
-        catch(...) {
-          mw->setExitBad();
-          mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
-          std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
-        }
-      name = name.mid(3);
+    if(E(element)->getTagName()==PV%"Embed") // A embed element which cannot be handled by mbsimgui
+      name = "<unhandled array/pattern>";
+    else {
+      name = QString::fromStdString(E(element)->getAttribute("name"));
+      if(name.contains('{')) {
+        auto parameterLevels = mw->updateParameters(this,false);
+        auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement()).second;
+        // build the evaluated display name
+        name.clear();
+        set<string> uniqueNames;
+        for(auto &v : values)
+          try {
+            auto curName = mw->eval->cast<string>(v.second);
+            if(uniqueNames.insert(curName).second) // only add unique names
+              name += QString(" ❙ ") + QString::fromStdString(curName);
+          }
+          catch(DOMEvalException &e) {
+            mw->setExitBad();
+            mw->statusBar()->showMessage(("Cannot evaluate element name to string: " + e.getMessage()).c_str());
+            std::cerr << "Cannot evaluate element name to string: " << e.getMessage() << std::endl;
+          }
+          catch(...) {
+            mw->setExitBad();
+            mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
+            std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
+          }
+        name = name.mid(3);
+      }
     }
     auto *cele = E(element)->getFirstCommentChild();
     if(cele)

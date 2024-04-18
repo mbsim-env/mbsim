@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <scalarParameter name="inp">in</scalarParameter>
+  <scalarParameter name="c">5</scalarParameter>
+</Parameter>

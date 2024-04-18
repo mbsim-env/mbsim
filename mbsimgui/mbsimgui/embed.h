@@ -21,6 +21,7 @@
 #define _EMBED__H_
 
 #include <mbxmlutilshelper/dom.h>
+#include "dynamic_system_solver.h"
 #include "parameter.h"
 #include "utils.h"
 #include "mainwindow.h"
@@ -37,25 +38,43 @@ namespace MBSimGUI {
   class Element;
   extern MainWindow *mw;
 
-  QFileInfo getQFileInfoForEmbed(xercesc::DOMElement *ele1, const std::string &attr);
+  std::optional<QFileInfo> getQFileInfoForEmbed(xercesc::DOMElement *ele1, const std::string &attr, const std::vector<MainWindow::ParameterLevel> &parameterLevels);
 
-  template <typename T>
+  template <typename Container>
     class Embed {
       public:
-        static T* create(xercesc::DOMElement *element);
+        static Container* create(xercesc::DOMElement *element);
 
-        static T* create(xercesc::DOMElement *ele1, EmbedItemData* parent) {
-          T *object;
+        static Container* create(xercesc::DOMElement *ele1, EmbedItemData* parent) {
+          Container *object;
           if(MBXMLUtils::E(ele1)->getTagName()==MBXMLUtils::PV%"Embed") {
             xercesc::DOMElement *ele2 = nullptr;
             FileItemData *parameterFileItem = nullptr;
 
+            auto createUnknownObject = [ele1]() {
+              Container *uo = nullptr;
+              if constexpr (std::is_same_v<Container, DynamicSystemSolver> || std::is_same_v<Container, Project>)
+                // do not not support the DSS and Project element for now with href/parameterHref of different files
+                // dependent on Embed counter's
+                return uo; // nullptr;
+              else {
+	        uo=new typename boost::mpl::at<ObjectFactory::MapContainerToDefaultAndUnknown, Container>::type::second;
+                uo->setXMLElement(ele1);
+                return uo;
+              }
+            };
+
+            std::vector<MainWindow::ParameterLevel> parameterLevels;
             if(MBXMLUtils::E(ele1)->hasAttribute("parameterHref")) {
-              mw->updateParameters(parent,false);
-              auto fileInfo = getQFileInfoForEmbed(ele1, "parameterHref");
-              if(!fileInfo.exists())
+              parameterLevels = mw->updateParameters(parent,false);
+              auto fileInfo = getQFileInfoForEmbed(ele1, "parameterHref", parameterLevels);
+              if(!fileInfo) {
+                // a empty QFileInfo means that this Embed cannot be handled by the mbsimgui -> use a Unknown element
+                return createUnknownObject();
+              }
+              if(!fileInfo->exists())
                 return nullptr;
-              parameterFileItem = mw->addFile(fileInfo);
+              parameterFileItem = mw->addFile(*fileInfo);
             }
             else
               ele2 = MBXMLUtils::E(ele1)->getFirstElementChildNamed(MBXMLUtils::PV%"Parameter");
@@ -65,11 +84,16 @@ namespace MBSimGUI {
               ele2 = ele1->getFirstElementChild();
             FileItemData *fileItem = nullptr;
             if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
-              if(not parameterFileItem) mw->updateParameters(parent,false);
-              auto fileInfo = getQFileInfoForEmbed(ele1, "href");
-              if(!fileInfo.exists())
+              if(not parameterFileItem)
+                parameterLevels = mw->updateParameters(parent,false);
+              auto fileInfo = getQFileInfoForEmbed(ele1, "href", parameterLevels);
+              if(!fileInfo) {
+                // a empty QFileInfo means that this Embed cannot be handled by the mbsimgui -> use a Unknown element
+                return createUnknownObject();
+              }
+              if(!fileInfo->exists())
                 return nullptr;
-              fileItem = mw->addFile(fileInfo);
+              fileItem = mw->addFile(*fileInfo);
               ele2 = fileItem->getXMLElement();
             }
 	    try {

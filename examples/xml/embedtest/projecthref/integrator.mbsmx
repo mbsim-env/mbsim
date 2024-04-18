@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+  <startTime unit="s">integrator_starttime</startTime>
+  <endTime unit="s">project_endtime</endTime>
+  <plotStepSize unit="s">1e-2</plotStepSize>
+</DOPRI5Integrator>

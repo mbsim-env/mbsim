@@ -763,6 +763,8 @@ namespace MBSimGUI {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       TreeItemData *itemData = static_cast<ElementTreeModel*>(elementView->model())->getItem(current)->getItemData();
       QMenu *menu = itemData->createContextMenu();
+      if(!menu)
+        return;
       menu->exec(QCursor::pos());
       delete menu;
     }
@@ -772,6 +774,8 @@ namespace MBSimGUI {
     if(QApplication::mouseButtons()==Qt::RightButton) {
       auto *item = dynamic_cast<ParameterItem*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(current)->getItemData());
       QMenu *menu = item->createContextMenu();
+      if(!menu)
+        return;
       menu->exec(QCursor::pos());
       delete menu;
     }

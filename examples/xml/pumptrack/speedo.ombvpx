@@ -4,36 +4,50 @@
     <!-- the element name -->
     "speedo"
   </stringParameter>
-  <stringParameter name="speedoText">
-    <!-- the text of the speedo -->
-    "km/h"
-  </stringParameter>
-  <scalarParameter name="vEnd">
-    <!-- maximal value of the speedo -->
-    200
-  </scalarParameter>
-  <scalarParameter name="vDelta">
-    <!-- delta of the speedo values -->
-    20
-  </scalarParameter>
-  <scalarParameter name="vScale">
-    <!-- scale the input -->
-    3.6
-  </scalarParameter>
-  <scalarParameter name="alpha">
-    <!-- the transparency value of the speedo -->
-    0.4
-  </scalarParameter>
   <vectorParameter name="scale1To1At">
     <!-- the scale center point = element scale1To1At of IvScreenAnnotation -->
     [1, 1]
   </vectorParameter>
   <scalarParameter name="size">
-    <!-- the size of the speedo (outer radius in screen coords which runs from -1 to 1) -->
-    0.2
+    <!-- the size of the speedo (outer diameter in screen coords which runs from -1 to 1) -->
+    0.4
   </scalarParameter>
   <vectorParameter name="position">
     <!-- the position of  the speedo (the center point in screen coords which runs from -1 to 1) -->
-    [1-size, 1-size]
+    [1-size/2, 1-size/2]
+  </vectorParameter>
+  <stringParameter name="speedoText">
+    <!-- the text of the speedo -->
+    "km/h"
+  </stringParameter>
+  <scalarParameter name="vScale">
+    <!-- scale the input -->
+    3.6
+  </scalarParameter>
+  <scalarParameter name="vEnd">
+    <!-- Maximal value (in the scaled unit).
+         The speedo delta for the tics and drawn nubmers is calculated automatically
+         based on this maximal value. -->
+    200
+  </scalarParameter>
+  <scalarParameter name="alpha">
+    <!-- the transparency value of the speedo -->
+    0.4
+  </scalarParameter>
+  <vectorParameter name="backColor">
+    <!-- the RGB background color -->
+    [0, 0, 0]
+  </vectorParameter>
+  <vectorParameter name="frontColor">
+    <!-- the RGB foreground color -->
+    [1, 1, 1]
+  </vectorParameter>
+  <vectorParameter name="needleColor">
+    <!-- the RGB color of the speedo-needle -->
+    [1, 0, 0]
+  </vectorParameter>
+  <vectorParameter name="speedoTextColor">
+    <!-- the RGB color of the speedoText -->
+    [0, 0, 0]
   </vectorParameter>
 </Parameter>

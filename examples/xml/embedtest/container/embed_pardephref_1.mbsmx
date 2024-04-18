@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<RigidBody name="embed_pardephref_1" xmlns="http://www.mbsim-env.de/MBSim">
+  <mass unit="kg">1</mass>
+  <inertiaTensor unit="kg*m^2">[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+  <stateDependentTranslation>
+    <TranslationAlongXAxis/>
+  </stateDependentTranslation>
+  <frames/>
+  <contours/>
+</RigidBody>

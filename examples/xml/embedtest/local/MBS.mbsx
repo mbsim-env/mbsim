@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+  <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS" xmlns:c="http://www.mbsim-env.de/MBSimControl">
+    <plotFeatureRecursive value="c:signal">1</plotFeatureRecursive>
+    <frames/>
+    <contours/>
+    <groups/>
+    <objects>
+      <RigidBody name="dummy_body_with_1DOF">
+        <mass unit="kg">1</mass>
+        <inertiaTensor unit="kg*m^2">[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+        <stateDependentTranslation>
+          <TranslationAlongAxesXY xmlns="http://www.mbsim-env.de/MBSim"/>
+        </stateDependentTranslation>
+        <frames/>
+        <contours/>
+      </RigidBody>
+    </objects>
+    <links>
+      <FunctionSensor name="c111" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>111</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c121" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>121</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c211" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>211</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c212" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>212</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c221" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>221</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c222" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>222</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c311" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>311</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c312" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>312</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c321" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>321</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c322" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>322</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c411" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>411</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c412" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>412</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c421" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>421</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c422" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>422</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c511" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>511</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c512" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>512</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c521" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>521</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c522" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>522</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c611" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>611</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <FunctionSensor name="c621" xmlns="http://www.mbsim-env.de/MBSimControl">
+        <function>
+          <ConstantFunction xmlns="http://www.mbsim-env.de/MBSim">
+            <a0>621</a0>
+          </ConstantFunction>
+        </function>
+      </FunctionSensor>
+      <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" counterName="mn" count="2">
+        <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <scalarParameter name="mnp">mn</scalarParameter>
+        </Parameter>
+        <Multiplexer xmlns="http://www.mbsim-env.de/MBSimControl" name="Multiplexer{mnp}">
+          <inputSignal ref="../Link[c1{mnp}1]"/>
+          <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="in">
+            <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <scalarParameter name="inp">in</scalarParameter>
+            </Parameter>
+            <inputSignal ref="../Link[c2{mnp}{inp}]"/>
+          </p:Embed>
+          <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="in" href="inputSignal.mbsmx">
+            <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <scalarParameter name="inp">in</scalarParameter>
+              <scalarParameter name="c">3</scalarParameter>
+            </Parameter>
+          </p:Embed>
+          <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="in" parameterHref="inputSignal.mbspx">
+            <inputSignal ref="../Link[c4{mnp}{inp}]"/>
+          </p:Embed>
+          <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="in" href="inputSignal.mbsmx" parameterHref="inputSignal.mbspx"/>
+          <inputSignal ref="../Link[c6{mnp}1]"/>
+        </Multiplexer>
+      </Embed>
+    </links>
+    <constraints/>
+    <observers/>
+    <enableOpenMBVFrameI/>
+    <environments>
+      <MBSimEnvironment>
+        <accelerationOfGravity unit="m/s^2">
+          <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+            <ele>0</ele>
+            <ele>-9.81</ele>
+            <ele>0</ele>
+          </xmlVector>
+        </accelerationOfGravity>
+      </MBSimEnvironment>
+    </environments>
+  </DynamicSystemSolver>
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">1</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+  </DOPRI5Integrator>
+</MBSimProject>

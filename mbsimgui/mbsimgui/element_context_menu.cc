@@ -43,6 +43,8 @@
 #include "project.h"
 #include "view_menu.h"
 
+using namespace MBXMLUtils;
+
 namespace {
   const QString importReferenceActionText(
     "Import/Reference model-element from file...");
@@ -91,8 +93,8 @@ namespace MBSimGUI {
       bool embedActive = false;
       auto embedEle = element->getEmbedXMLElement();
       if(embedEle) {
-        bool hasEmbedCount = MBXMLUtils::E(embedEle)->hasAttribute("count");
-        if(!hasEmbedCount || MBXMLUtils::E(embedEle)->getAttribute("count")!="0")
+        bool hasEmbedCount = E(embedEle)->hasAttribute("count");
+        if(!hasEmbedCount || E(embedEle)->getAttribute("count")!="0")
           embedActive = true;
       }
       action=new QAction(Utils::QIconCached(QString::fromStdString((
@@ -100,8 +102,19 @@ namespace MBSimGUI {
       action->setToolTip("Create/Edit the array/pattern properties of this element using the XML 'Embed' functionality.\n"
                          "With the array/pattern functionality an element can be duplicated to an array/pattern of N elements.");
       connect(action,&QAction::triggered,this,[=](){ mw->openCloneEditor(); });
+      if(E(element->getXMLElement())->getTagName()==PV%"Embed") {
+        // this is a Embed element which cannot be handled by mbsimgui -> disable the Embed action to avoid the creation
+        // of a nested embed
+        action->setEnabled(false);
+        action->setToolTip("Array/Pattern is NOT possible using UI functionality for this element.\n"
+                           "Please open the element dialog and directly edit the XML content of this Embed element.\n"
+                           "(this is because the href and/or parameterHref attribute evaluates to different files\n"
+                           "for dependent on the counter variable of this or parent Array/Pattern elements)");
+      }
       addAction(action);
+
       addSeparator();
+
       action = new QAction("Enable", this);
       action->setCheckable(true);
       action->setChecked(element->getEnabled());

@@ -766,8 +766,8 @@
   <xs:complexType name="MultiplexerType">
     <xs:complexContent>
       <xs:extension base="SignalType">
-        <xs:sequence>
-          <xs:element name="inputSignal" minOccurs="1" maxOccurs="unbounded">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+          <xs:element name="inputSignal">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Eingangssignal
             </xs:documentation></xs:annotation>
@@ -775,7 +775,8 @@
               <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-        </xs:sequence>
+          <xs:element ref="pv:Embed"/>
+        </xs:choice>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
@@ -819,15 +820,18 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignal" minOccurs="1" maxOccurs="unbounded">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Eingangssignal
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
-	  <xs:element name="multiplexInputSignals" type="pv:booleanFullEval" minOccurs="0"/>
+          <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element name="inputSignal">
+              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Eingangssignal
+              </xs:documentation></xs:annotation>
+              <xs:complexType>
+                <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+              </xs:complexType>
+            </xs:element>
+            <xs:element ref="pv:Embed"/>
+          </xs:choice>
+          <xs:element name="multiplexInputSignals" type="pv:booleanFullEval" minOccurs="0"/>
           <xs:element name="function">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Funktion
@@ -1226,7 +1230,7 @@
           </xs:element>
           <xs:element name="transition" minOccurs="1" maxOccurs="unbounded">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-	      Zustandsübergänge.
+              Zustandsübergänge.
             </xs:documentation></xs:annotation>
             <xs:complexType>
               <xs:attribute name="source" type="pv:stringFullEval" use="required"/>

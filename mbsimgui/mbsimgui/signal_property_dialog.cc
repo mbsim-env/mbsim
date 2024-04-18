@@ -345,7 +345,7 @@ namespace MBSimGUI {
   }
 
   MultiplexerPropertyDialog::MultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signals",new ElementsOfReferenceWidget<Signal>(MBSIMCONTROL%"inputSignal",signal,1,100,this),false,false,"",true);
+    inputSignal = new ExtWidget("Input signals",new ElementsOfReferenceWidget<Signal>(MBSIMCONTROL%"inputSignal",signal,1,100,this,true),false,false,"",true);
     addToTab("General", inputSignal);
   }
 
@@ -506,7 +506,7 @@ namespace MBSimGUI {
   }
 
   SignalOperationPropertyDialog::SignalOperationPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
-    inputSignal = new ExtWidget("Input signals",new ElementsOfReferenceWidget<Signal>(MBSIMCONTROL%"inputSignal",signal,1,100,this),false,false,"",true);
+    inputSignal = new ExtWidget("Input signals",new ElementsOfReferenceWidget<Signal>(MBSIMCONTROL%"inputSignal",signal,1,100,this,true),false,false,"",true);
     addToTab("General", inputSignal);
 
     multiplex = new ExtWidget("Multiplex input signals",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,true,MBSIMCONTROL%"multiplexInputSignals");

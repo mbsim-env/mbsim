@@ -28,84 +28,109 @@
 #include "observer.h"
 #include "solver.h"
 #include "objectfactory.h"
+#include <iterator>
+
+using namespace std;
+using namespace xercesc;
+using namespace MBXMLUtils;
 
 namespace MBSimGUI {
 
   template <>
-    DynamicSystemSolver* Embed<DynamicSystemSolver>::create(xercesc::DOMElement *element) {
+    DynamicSystemSolver* Embed<DynamicSystemSolver>::create(DOMElement *element) {
       return new DynamicSystemSolver; // this object is very spezial -> do not use the ObjectFactory
     }
 
   template <>
-    Group* Embed<Group>::create(xercesc::DOMElement *element) {
+    Group* Embed<Group>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<Group>(element);
     }
 
   template <>
-    Contour* Embed<Contour>::create(xercesc::DOMElement *element) {
+    Contour* Embed<Contour>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<Contour>(element);
     }
 
   template <>
-    FixedRelativeFrame* Embed<FixedRelativeFrame>::create(xercesc::DOMElement *element) {
+    FixedRelativeFrame* Embed<FixedRelativeFrame>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<FixedRelativeFrame>(element);
     }
 
   template <>
-    NodeFrame* Embed<NodeFrame>::create(xercesc::DOMElement *element) {
+    NodeFrame* Embed<NodeFrame>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<NodeFrame>(element);
     }
 
   template <>
-    Object* Embed<Object>::create(xercesc::DOMElement *element) {
+    Object* Embed<Object>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<Object>(element);
     }
 
   template <>
-    Link* Embed<Link>::create(xercesc::DOMElement *element) {
+    Link* Embed<Link>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<Link>(element);
     }
 
   template <>
-    Constraint* Embed<Constraint>::create(xercesc::DOMElement *element) {
+    Constraint* Embed<Constraint>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<Constraint>(element);
     }
 
   template <>
-    Observer* Embed<Observer>::create(xercesc::DOMElement *element) {
+    Observer* Embed<Observer>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<Observer>(element);
     }
 
   template <>
-    Solver* Embed<Solver>::create(xercesc::DOMElement *element) {
+    Solver* Embed<Solver>::create(DOMElement *element) {
       return ObjectFactory::getInstance().create<Solver>(element);
     }
 
   template <>
-    Project* Embed<Project>::create(xercesc::DOMElement *element) {
+    Project* Embed<Project>::create(DOMElement *element) {
       return new Project;
     }
 
-  QFileInfo getQFileInfoForEmbed(xercesc::DOMElement *ele1, const std::string &attr) {
-    std::string href;
+  optional<QFileInfo> getQFileInfoForEmbed(DOMElement *ele1, const string &attr, const vector<MainWindow::ParameterLevel> &parameterLevels) {
+    string filename;
     try{
-      href = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(MBXMLUtils::E(ele1)->getAttribute(attr),ele1,false));
-      href = href.substr(1,href.size()-2);
+      // MBSimGUI cannot handle href/parameterHref attribures which depend on a parameter.
+      // Hence, if the attribute is not a plain file we return no QFileInfo object which will create a UnknownObject later
+      // (instead of a EmbedObject) for this Embed Element.
+      auto code = E(ele1)->getAttribute(attr);
+      auto idx = code.find('{');
+      if(idx!=string::npos && (idx==0 || code[idx-1]!='\\'))
+        return {};
+      // If the above restriction is lifted we still have the problem in MBSimGUI that it cannot handle the case when a
+      // href/parameterHref attribute resolves to multiple different filenames. This can be the case the attribute depends on
+      // a counterName parameter of a previous Embed element.
+      // The following code will handle this and create a UnknownObject for such Embed element (just like above)
+      // For now we can just return the attribute (we have ensured above that is does not depend on any parameter
+      filename = code;
+      // auto possibleValues = MainWindow::evaluateForAllArrayPattern(parameterLevels, code, ele1);
+      // set<string> uniqueValues;
+      // transform(possibleValues.second.begin(), possibleValues.second.end(), inserter(uniqueValues, uniqueValues.begin()), [](auto &x) {
+      //   return mw->eval->cast<string>(x.second);
+      // });
+      // if(uniqueValues.size()==1)
+      //   href = *uniqueValues.begin();
+      // else
+      //   return {};
     }
-    catch(MBXMLUtils::DOMEvalException &e) {
+    catch(DOMEvalException &e) {
       mw->setExitBad();
-      std::cerr << e.getMessage() << std::endl;
+      cerr << e.getMessage() << endl;
     }
     catch(...) {
       mw->setExitBad();
-      std::cerr << "Unknwon error" << std::endl;
+      cerr << "Unknwon error" << endl;
     }
-    auto docFilename = MBXMLUtils::X()%ele1->getOwnerDocument()->getDocumentURI();
-    auto fileInfo = QFileInfo(QDir(QFileInfo(QUrl(docFilename.c_str()).toLocalFile()).canonicalPath()).absoluteFilePath(href.c_str()));
+    auto docFilename = X()%ele1->getOwnerDocument()->getDocumentURI();
+    auto fileInfo = QFileInfo(QDir(QFileInfo(QUrl(docFilename.c_str()).toLocalFile()).canonicalPath()).absoluteFilePath(filename.c_str()));
     if(!fileInfo.exists())
       QMessageBox::warning(nullptr, "Import/Reference model file",
                                     ("The imported/referenced model file has a reference to another file which cannot be found:\n"
-                                     "\n'"+href+"'\n\n"
+                                     "\n'"+filename+"'\n\n"
                                      "See the errors in the 'MBSim Echo Area'.\n"
                                      "(This may happen e.g. if a model is imported which has relative path reference to other files)").c_str());
     return fileInfo;

@@ -241,8 +241,10 @@ namespace MBSimGUI {
     layout->addWidget(xmlEditor);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
     layout->addWidget(buttonBox);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &SourceCodeDialog::accept);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &SourceCodeDialog::reject);
     xmlEditor->getEditor()->setReadOnly(readOnly);
   }
 

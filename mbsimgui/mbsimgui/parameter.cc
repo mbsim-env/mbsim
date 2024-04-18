@@ -190,4 +190,10 @@ namespace MBSimGUI {
     return parent->getDedicatedParameterFileItem()?parent->getDedicatedParameterFileItem()->getName():"";
   }
 
+  QMenu* Parameters::createContextMenu() {
+    if(E(parent->getXMLElement())->getTagName()==PV%"Embed") // unhandled Embed in mbsimgui
+      return nullptr;
+    return new ParametersContextMenu(parent);
+  }
+
 }

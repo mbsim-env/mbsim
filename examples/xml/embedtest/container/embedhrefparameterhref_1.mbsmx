@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<RigidBody name="embedhrefparameterhref{n}_pardephref" xmlns="http://www.mbsim-env.de/MBSim">
+  <mass>m</mass>
+  <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+  <stateDependentTranslation>
+    <TranslationAlongXAxis/>
+  </stateDependentTranslation>
+  <frames/>
+  <contours/>
+</RigidBody>

@@ -781,7 +781,7 @@ namespace MBSimGUI {
     layout->addWidget(ivData);
     connect(ivData,&ExtWidget::widgetChanged,this,&IvScreenAnnotationWidget::updateWidget);
 
-    columnLabel = new ExtWidget("Column label",new TextListWidget("Type", OPENMBV%"columnLabel"),true,false,"");
+    columnLabel = new ExtWidget("Column label",new TextListWidget("Type", OPENMBV%"columnLabel",true),true,false,"");
     layout->addWidget(columnLabel);
   }
 

@@ -92,6 +92,7 @@ namespace MBSimGUI {
     public:
       SourceCodeDialog(const QString &text, bool readOnly, QWidget *parent);
       void highlightLine(int n);
+      XMLEditorWidget *getEditor() { return xmlEditor; }
     private:
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;

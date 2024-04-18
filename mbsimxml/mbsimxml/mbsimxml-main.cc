@@ -276,6 +276,29 @@ int main(int argc, char *argv[]) {
         // validate the project file with mbsimxml.xsd
         Preprocess preprocess(MBSIMPRJ, xmlCatalogDoc->getDocumentElement());
 
+        // check Embed elements
+        {
+          auto checkEmbed = [](xercesc::DOMElement *e, const FQN &eleName, bool allowHref) {
+            if(E(e)->getTagName()==PV%"Embed") {
+              if(E(e)->hasAttribute("counterName") || E(e)->hasAttribute("count") ||
+                 (E(e)->hasAttribute("onlyif") && E(e)->getAttribute("onlyif")!="1"))
+                throw runtime_error("A Embed element on "+eleName.second+" level is not allowed to have a counterName, count or onlyif attribute.");
+              if(!allowHref && E(e)->hasAttribute("href"))
+                throw runtime_error("A Embed element on "+eleName.second+" level is not allowed to have a href attribute.");
+            }
+          };
+
+          auto root = preprocess.getDOMDocument()->getDocumentElement();
+          xercesc::DOMElement *mbsimProject;
+          checkEmbed(root, PV%"MBSimProject", false);
+          if(E(root)->getTagName()==PV%"Embed")
+            mbsimProject = root->getLastElementChild();
+          else
+            mbsimProject = root;
+          checkEmbed(mbsimProject->getFirstElementChild(), MBSIM%"DynamicSystemSolver", true);
+          checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Integrator", true);
+        }
+
         // create parameter override ParamSet
         auto eval=preprocess.getEvaluator();
         auto param = make_shared<Preprocess::ParamSet>();

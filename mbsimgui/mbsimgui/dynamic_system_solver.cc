@@ -98,7 +98,7 @@ namespace MBSimGUI {
     if(not ele1) return element;
     ele1 = ele1->getFirstElementChild();
     while(ele1) {
-      if(MBXMLUtils::E(ele1)->hasAttribute("href")) {
+      if(embed && MBXMLUtils::E(ele1)->hasAttribute("href")) {
         mw->updateParameters(this,false);
         std::string evaltmp;
         try{

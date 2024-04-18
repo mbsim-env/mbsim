@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+  <plotFeatureRecursive value="generalizedPosition">1</plotFeatureRecursive>
+  <frames/>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="rb">
+      <mass>dss_mass</mass>
+      <inertiaTensor>[1,0,0;0,1,0;0,0,1]</inertiaTensor>
+      <stateDependentTranslation>
+        <TranslationAlongXAxis/>
+      </stateDependentTranslation>
+      <frames/>
+      <contours/>
+    </RigidBody>
+  </objects>
+  <links/>
+  <constraints/>
+  <observers/>
+  <enableOpenMBVFrameI/>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity unit="m/s^2">[0;-9.81;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+</DynamicSystemSolver>
