@@ -54,6 +54,8 @@ HDF5Serie
 - Set on Windows the hidden flag for all '.*.lock' files to hide these files also on Windows.
 - Show legend in plot window.
 - Added a new context menu to expand and collapse tree items to various depths
+- Added a new context menu in order to remove curves from a plot window
+- Enable shortcuts
 
 fmatvec
 -------
