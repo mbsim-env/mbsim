@@ -1,4 +1,4 @@
-Release NEXT
+Release 10.2
 ============
 
 BACKWARD INCOMPATIBLITY
