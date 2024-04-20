@@ -45,17 +45,18 @@ OpenMBV
 - Overwide the VRML Background node to include the Coin3D https://github.com/coin3d/coin/pull/517.
 - Add new settings option to define the Coin3D transparency type.
 - Allow to pass the content of a IV file in IvBody as a string in XML instead of specifying
-  the filename to read
-- Reworked the screen foreground elements in the 3D view and allow user defined foreground elements
+  the filename to read.
+- Reworked the screen foreground elements in the 3D view and allow user defined foreground elements.
 - Enable direct rendering on some Linux system on which the binary distribution used software rendering for now.
 
 HDF5Serie
 ---------
 - Set on Windows the hidden flag for all '.*.lock' files to hide these files also on Windows.
 - Show legend in plot window.
-- Added a new context menu to expand and collapse tree items to various depths
-- Added a new context menu in order to remove curves from a plot window
-- Enable shortcuts
+- Added a new context menu to expand and collapse tree items to various depths.
+- Added a new context menu in order to remove curves from a plot window.
+- Enable shortcuts.
+- Plot window name can be changed by double clicking on a tab.
 
 fmatvec
 -------
