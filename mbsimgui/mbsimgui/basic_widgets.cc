@@ -634,7 +634,7 @@ namespace MBSimGUI {
     layout->addWidget(tree,0,0,5,1);
 
     dialog = new LineEditDialog("Line edit dialog","",this);
-    connect(dialog, &StateDialog::accepted, this, &TextListWidget::updateTreeItem);
+    connect(dialog, &LineEditDialog::accepted, this, &TextListWidget::updateTreeItem);
     dialog->setModal(true);
 
     spinBox = new CustomSpinBox;
