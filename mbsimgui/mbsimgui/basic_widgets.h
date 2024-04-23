@@ -240,7 +240,7 @@ namespace MBSimGUI {
       TextWidget(const QString &text_="", bool readOnly=false);
 
       QString getText() const override { return text->text(); }
-      void setText(const QString &text_) override {text->setText(text_);}
+      void setText(const QString &text_) override { text->setText(text_); }
       void setReadOnly(bool readOnly) { text->setReadOnly(readOnly); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
 
@@ -266,6 +266,20 @@ namespace MBSimGUI {
 
     protected:
       QComboBox *text;
+  };
+
+  class TextEditorWidget : public BasicTextWidget {
+
+    public:
+      TextEditorWidget(const QString &text_="", bool readOnly=false);
+
+      QString getText() const override { return text->toPlainText(); }
+      void setText(const QString &text_) override { text->setPlainText(text_); }
+      void setReadOnly(bool readOnly) { text->setReadOnly(readOnly); }
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+
+    protected:
+      QTextEdit *text;
   };
 
   class TextListWidget : public Widget {

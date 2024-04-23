@@ -72,7 +72,7 @@ namespace MBSimGUI {
       int getSize() const override { return name.size(); }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getDefaultIndex() const override { return 0; }
-      int getFallbackIndex() const override { return 0; }
+      int getFallbackIndex() const override { return 1; }
     protected:
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
@@ -342,6 +342,15 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *ivData, *creaseEdges, *boundaryEdges, *removeNodesByName, *removeNodesByType;
+  };
+
+  class IvScreenAnnotationWidget : public OMBVBodyWidget {
+    public:
+      IvScreenAnnotationWidget(const QString &name="NOTSET", const MBXMLUtils::FQN &xmlName="");
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *scale1To1At, *ivData, *columnLabel;
   };
 
   class CompoundRigidBodyWidget : public OMBVRigidBodyWidget {

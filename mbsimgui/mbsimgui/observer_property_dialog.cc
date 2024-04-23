@@ -364,7 +364,7 @@ namespace MBSimGUI {
     enableOmbv = new ExtWidget("Enable openMBV",new ArrowMBSOMBVWidget,true,false,MBSIMCONTROL%"enableOpenMBV");
     addToTab("Visualization", enableOmbv);
 
-    ombvIVSA = new ExtWidget("Open Inventor screen annotation",new ChoiceWidget(new OMBVIvScreenAnnotationWidgetFactory,QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"openMBVIvScreenAnnotation");
+    ombvIVSA = new ExtWidget("Open Inventor screen annotation",new ChoiceWidget(new OMBVIvScreenAnnotationWidgetFactory,QBoxLayout::TopToBottom,0),true,false,MBSIMCONTROL%"openMBVIvScreenAnnotation");
     addToTab("Visualization", ombvIVSA);
   }
 

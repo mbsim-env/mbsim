@@ -619,6 +619,26 @@ namespace MBSimGUI {
     return ele;
   }
 
+  TextEditorWidget::TextEditorWidget(const QString &text_, bool readOnly) {
+    auto *layout = new QHBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    text = new QTextEdit;
+    text->setMinimumSize(300,200);
+    text->setText(text_);
+    text->setReadOnly(readOnly);
+    layout->addWidget(text);
+    connect(text,&QTextEdit::textChanged,this,&Widget::widgetChanged);
+  }
+
+  DOMElement* TextEditorWidget::initializeUsingXML(DOMElement *element) {
+    text->blockSignals(true);
+    DOMElement *ele = BasicTextWidget::initializeUsingXML(element);
+    text->blockSignals(false);
+    return ele;
+  }
+
   TextListWidget::TextListWidget(const QString &label_, const FQN &xmlName_) : label(label_), xmlName(xmlName_) {
     auto *layout = new QGridLayout;
     layout->setMargin(0);

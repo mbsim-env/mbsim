@@ -109,12 +109,16 @@ namespace MBSimGUI {
   }
 
   OMBVIvScreenAnnotationWidgetFactory::OMBVIvScreenAnnotationWidgetFactory()  {
+    name.emplace_back("Iv screen annotation");
     name.emplace_back("Unknown object");
+    xmlName.push_back(OPENMBV%"IvScreenAnnotation");
     xmlName.push_back(OPENMBV%"UnknownObject");
   }
 
   Widget* OMBVIvScreenAnnotationWidgetFactory::createWidget(int i) {
     if(i==0)
+      return new IvScreenAnnotationWidget("IvScreenAnnotation",OPENMBV%"IvScreenAnnotation");
+    else
       return new UnknownWidget<OMBVObjectWidget>;
     return nullptr;
   }
@@ -130,10 +134,9 @@ namespace MBSimGUI {
     if(i==0)
       return new ExtWidget("Open Inventor file name",new FileWidget("", "Open Open Inventor file", "Inventor files (*.iv);;VRML files (*.wrl *.vrml)", 0, true));
     if(i==1)
-      return new ExtWidget("Open Inventor string content",new ExtStringWidget(nullptr));
+      return new ExtWidget("Open Inventor string content",new TextEditorWidget);
     return nullptr;
   }
-
 
   MBSOMBVColoreBodyWidget::MBSOMBVColoreBodyWidget(const vector<QString> &c) {
     auto *layout = new QVBoxLayout;
@@ -766,6 +769,35 @@ namespace MBSimGUI {
     boundaryEdges->writeXMLFile(e);
     removeNodesByName->writeXMLFile(e);
     removeNodesByType->writeXMLFile(e);
+    return e;
+  }
+
+  IvScreenAnnotationWidget::IvScreenAnnotationWidget(const QString &name, const FQN &xmlName) : OMBVBodyWidget(name,xmlName) {
+
+    scale1To1At = new ExtWidget("Scale 1 To 1 at",new ChoiceWidget(new VecWidgetFactory(getScalars<QString>(2,"1"),vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,OPENMBV%"scale1To1At");
+    layout->addWidget(scale1To1At);
+
+    ivData = new ExtWidget("Open Inventor scene graph",new ChoiceWidget(new IvDataWidgetFactory,QBoxLayout::TopToBottom,3),false,true);
+    layout->addWidget(ivData);
+    connect(ivData,&ExtWidget::widgetChanged,this,&IvScreenAnnotationWidget::updateWidget);
+
+    columnLabel = new ExtWidget("Column label",new TextListWidget("Type", OPENMBV%"columnLabel"),true,false,"");
+    layout->addWidget(columnLabel);
+  }
+
+  DOMElement* IvScreenAnnotationWidget::initializeUsingXML(DOMElement *element) {
+    OMBVBodyWidget::initializeUsingXML(element);
+    scale1To1At->initializeUsingXML(element);
+    ivData->initializeUsingXML(element);
+    columnLabel->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* IvScreenAnnotationWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=OMBVBodyWidget::writeXMLFile(parent);
+    scale1To1At->writeXMLFile(e);
+    ivData->writeXMLFile(e);
+    columnLabel->writeXMLFile(e);
     return e;
   }
 
