@@ -53,6 +53,8 @@
 #include <boost/math/constants/constants.hpp>
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpledataset.h"
+#include "octave_highlighter.h"
+#include "python_highlighter.h"
 
 using namespace std;
 using namespace boost::math::constants;
@@ -82,7 +84,7 @@ namespace MBSimGUI {
     auto *layout = new QGridLayout;
     mainlayout->addLayout(layout);
 
-    if(type==0) {
+    if(type==0) { // floating point value (scalar, vector or matrix)
       layout->addWidget(new QLabel("Format:"),0,0);
       format = new QComboBox;
       format->addItems(QStringList() << "e" << "E" << "f" << "g" << "G");
@@ -99,15 +101,34 @@ namespace MBSimGUI {
 
     formatVariables();
 
-    tab = new QTableWidget;
-    tab->setRowCount(varf.size());
-    tab->setColumnCount(!varf.empty()?varf[0].size():0);
-    for(int i=0; i<tab->rowCount(); i++) {
-      for(int j=0; j<tab->columnCount(); j++)
-        tab->setItem(i,j,new QTableWidgetItem(varf[i][j]));
+    if(type==0 || var.size()>1 || (var.size()>0 && var[0].size()>1)) { // floating point value (scalar, vector or matrix)
+      tab = new QTableWidget;
+      tab->setRowCount(varf.size());
+      tab->setColumnCount(!varf.empty()?varf[0].size():0);
+      for(int i=0; i<tab->rowCount(); i++) {
+        for(int j=0; j<tab->columnCount(); j++)
+          tab->setItem(i,j,new QTableWidgetItem(varf[i][j]));
+      }
+      layout->addWidget(tab,1,0,1,5);
     }
+    else {
+      auto text = new QPlainTextEdit;
 
-    layout->addWidget(tab,1,0,1,5);
+      if(mw->eval->getName()=="octave")
+        new OctaveHighlighter(text->document());
+      else if(mw->eval->getName()=="python")
+        new PythonHighlighter(text->document());
+      else
+        cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
+      static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
+      text->setFont(fixedFont);
+      text->setLineWrapMode(QPlainTextEdit::NoWrap);
+
+      layout->addWidget(text,1,0,1,5);
+
+      if(var.size()==1 && var[0].size()==1)
+        text->setPlainText(var[0][0]);
+    }
 
     auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Close);
@@ -133,7 +154,7 @@ namespace MBSimGUI {
   }
 
   void EvalDialog::formatVariables() {
-    if(type==0) {
+    if(type==0) { // floating point value (scalar, vector or matrix)
       QString f = format->currentText();
       int p = precision->value();
       for(int i=0; i<var.size(); i++) {
@@ -145,9 +166,11 @@ namespace MBSimGUI {
 
   void EvalDialog::updateWidget() {
     formatVariables();
-    for(int i=0; i<tab->rowCount(); i++) {
-      for(int j=0; j<tab->columnCount(); j++)
-        tab->item(i,j)->setText(varf[i][j]);
+    if(tab) {
+      for(int i=0; i<tab->rowCount(); i++) {
+        for(int j=0; j<tab->columnCount(); j++)
+          tab->item(i,j)->setText(varf[i][j]);
+      }
     }
   }
 

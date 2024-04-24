@@ -158,7 +158,7 @@ namespace MBSimGUI {
   }
 
   AnyParameterPropertyDialog::AnyParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    value = new ExtWidget("Value",new ExpressionWidget("0"));
+    value = new ExtWidget("Value",new PhysicalVariableWidget(new ExpressionWidget("0", 1), {}, 0, true));
     addToTab("General", value);
   }
 

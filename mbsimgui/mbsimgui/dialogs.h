@@ -59,7 +59,7 @@ namespace MBSimGUI {
       int type;
       QComboBox *format;
       QSpinBox *precision;
-      QTableWidget *tab;
+      QTableWidget *tab { nullptr };
   };
 
   class BasicElementBrowser : public QDialog {
