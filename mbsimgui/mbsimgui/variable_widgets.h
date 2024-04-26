@@ -39,7 +39,11 @@ namespace MBSimGUI {
       virtual QString getValue() const = 0;
       virtual void setValue(const QString &str) = 0;
       virtual void setDefaultValue(const QString &str) { }
+
+      //! 0: floating point value (scalar, vector or matrix)
+      //! 1: string value
       virtual int getVarType() const { return 0; }
+
       virtual bool validate(const std::vector<std::vector<QString>> &A) const { return true; }
       virtual int rows() const { return 1; }
       virtual int cols() const { return 1; }
@@ -78,6 +82,7 @@ namespace MBSimGUI {
 
   class ExpressionWidget : public VariableWidget {
     public:
+      //! varType_: see VariableWidget::getVarType()
       ExpressionWidget(const QString &str="", int varType_=0);
       QString getValue() const override { return value->toPlainText(); }
       void setValue(const QString &str) override { value->setPlainText(str); }

@@ -47,8 +47,11 @@ namespace MBSimGUI {
     if(getValue().isEmpty())
       return vector<vector<QString>>();
     QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue(getValue().toStdString(),mw->getProject()->getXMLElement())));
-    str = removeWhiteSpace(str);
-    return strToMat(str);
+    if(getVarType()==0) {
+      str = removeWhiteSpace(str);
+      return strToMat(str);
+    }
+    return {{str}};
   }
 
   StringWidget::StringWidget(const QString &d, const QString &p) {
