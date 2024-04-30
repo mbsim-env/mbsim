@@ -203,13 +203,13 @@ namespace MBSimGUI {
     addTab("Visualization",2);
     addTab("Initial conditions",2);
 
-    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ElementsOfReferenceWidget<Signal>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,0,100,this),false,false,"",true);
+    dependentBodiesFirstSide = new ExtWidget("Dependent bodies on first side",new ElementsOfReferenceWidget<RigidBody>(MBSIM%"dependentRigidBodyOnFirstSide",constraint,0,100,this),false,false,"",true);
     addToTab("General",dependentBodiesFirstSide);
-    connect(dependentBodiesFirstSide->getWidget<ElementsOfReferenceWidget<Signal>>(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
+    connect(dependentBodiesFirstSide->getWidget<ElementsOfReferenceWidget<RigidBody>>(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
-    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ElementsOfReferenceWidget<Signal>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,0,100,this),false,false,"",true);
+    dependentBodiesSecondSide = new ExtWidget("Dependent bodies on second side",new ElementsOfReferenceWidget<RigidBody>(MBSIM%"dependentRigidBodyOnSecondSide",constraint,0,100,this),false,false,"",true);
     addToTab("General",dependentBodiesSecondSide);
-    connect(dependentBodiesSecondSide->getWidget<ElementsOfReferenceWidget<Signal>>(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
+    connect(dependentBodiesSecondSide->getWidget<ElementsOfReferenceWidget<RigidBody>>(),&Widget::widgetChanged,this,&JointConstraintPropertyDialog::updateWidget);
 
     independentBody = new ExtWidget("Independent rigid body",new ElementOfReferenceWidget<RigidBody>(constraint,nullptr,this),false,false,MBSIM%"independentRigidBody");
     addToTab("General", independentBody);

@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass{article}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -8,15 +8,15 @@
 
 \begin{document}
 
-\textbf{\Large{Definition of Variables in MBSim}}
+\section{Definition of Variables in MBSim}
 
-
-
-\vspace{4em}
 This document defines the meaning of several variables \texttt{X} in MBSim C++ and its corresponding \texttt{getX},\texttt{evalX},\texttt{updateX} functions.
 
+See \ref{legend} for a description of the mathematical notation.
 
-\vspace{3em}
+
+\subsection{Overall Dynamic Equations}
+
 We start with the usual definition of the equations of a multi body system which are mainly defined in the class \texttt{DynamicSystemSolver}:
 \begin{equation}
   \dot{\bs{q}}=\bs{u}
@@ -42,6 +42,7 @@ We start with the usual definition of the equations of a multi body system which
   $\bs{M}$ & \texttt{M} \\
   $\bs{h}$ & \texttt{h} \\
   $\bs{V}$ & \texttt{V} \\
+  $\bs{W}$ & \texttt{W} \\
   $\bs{\lambda}$ & \texttt{la} \\
   $\bs{g}$ & \texttt{g} \\
   $\bs{r}$ & \texttt{r} \\
@@ -50,16 +51,19 @@ We start with the usual definition of the equations of a multi body system which
   \hline
 \end{tabular}
 
-$\bs{W}$ and $\bs{V}$ are the generalized force directions which are equal to partial derivative of $\bs{g}$.
+$\bs{V}$ are the generalized constraint force directions. $\bs{W}^T$ is the partial derivative of $\bs{g}$.
 \begin{equation}
   \frac{\partial \bs{g}}{\partial \bs{q}}=\bs{W}^T
 \end{equation}
+$\bs{V}=\bs{W}$ holds only for full energy conservative constraint forces.
 \begin{equation}
   \bs{W}=_W\bs{J}_T^T\,_W\bs{D}_T+_W\bs{J}_R^T\,_W\bs{D}_R \quad\text{e.g. for Joint with $_W\bs{D}_T=$Force direction matrix}
 \end{equation}
+For none energy conservative constraint forces
 \begin{equation}
   \bs{V}=\bs{W} + \texttt{frictionTerms}
 \end{equation}
+where \texttt{frictionTerms} can be can dissipative terms like friction or even motors which 'create' energy.
 
 \begin{tabular}{|l|l|}
   \hline
@@ -104,7 +108,8 @@ $\bar{\bs{w}}$ are all the accelerations terms which do not (linearly) depend on
 
 
 
-\vspace{3em}
+\subsection{Frames}
+
 Frames defined in the class \texttt{Frame} are defined by:\\
 ($W$ means the inertial fixed World Frame (=coordinate system) and $P$ the Frame itself)
 \begin{equation}
@@ -136,6 +141,50 @@ $_W\bs{j}_T$ and $_W\bs{j}_R$ are all the frame accelerations terms which do not
   \hline
 \end{tabular}
 
+
+
+\subsection{RigidBody / Constraint}
+
+If the RigidBody is part of a Constraint than the variables $\bs{q}, \bs{u}$ $\dot{\bs{u}}$ may not contain the DOFs of the RigidBody since these may be removed by the Constraint if the RigidBody is a dependent RigidBody of the Constraint. In this case the corresponding variables with 'Rel' contain the DOFs of the RigidBody which are not seen by the integrator. Hence, the variables with 'Rel' and without 'Rel' are the same if the RigidBody is not part of a Constraint or is a independent RigidBody of a Constraint.
+
+\begin{equation}
+  \bs{J}_\text{Rel}=\frac{\partial\bs{q}_\text{Rel}}{\partial\bs{q}}
+\end{equation}
+\begin{equation}
+  \bs{u}_\text{Rel}=\bs{J}_\text{Rel}\cdot\bs{u}
+\end{equation}
+\begin{equation}
+  \dot{\bs{u}}_\text{Rel}=\bs{J}_\text{Rel}\cdot\dot{\bs{u}}+\underbrace{D\bs{J}_\text{Rel}[\bs{u}_\text{Rel}]\cdot\bs{u}}_{\bs{j}_\text{Rel}}
+\end{equation}
+\begin{equation}
+  \dot{\bs{u}}_\text{Rel}=\bs{J}_\text{Rel}\cdot\dot{\bs{u}}+\underbrace{D\bs{J}_\text{Rel}[\bs{J}_\text{Rel}\cdot\bs{u}]\cdot\bs{u}}_{\bs{j}_\text{Rel}}
+\end{equation}
+\begin{equation}
+  \dot{\bs{u}}_\text{Rel}=\bs{J}_\text{Rel}\cdot\dot{\bs{u}}+\bs{j}_\text{Rel}
+\end{equation}
+
+\begin{tabular}{|l|p{10cm}|}
+  \hline
+  $\bs{q}$ & \texttt{q} (only a range in the above $\bs{q}, \bs{u}$ $\dot{\bs{u}}$ of the overall system)\\
+  $\bs{u}$ & \texttt{u} (only a range in the above $\bs{q}, \bs{u}$ $\dot{\bs{u}}$ of the overall system)\\
+  $\dot{\bs{u}}$ & \texttt{ud} (only a range in the above $\bs{q}, \bs{u}$ $\dot{\bs{u}}$ of the overall system)\\
+  $\bs{q}_\text{Rel}$ & \texttt{qRel} (the DOFs of the RigidBody) \\
+  $\bs{u}_\text{Rel}$ & \texttt{uRel} (the DOFs of the RigidBody) \\
+  $\dot{\bs{u}}_\text{Rel}$ & \texttt{udRel} (the DOFs of the RigidBody) \\
+  $\bs{J}_\text{Rel}$ & \texttt{JRel} \\
+  $\bs{j}_\text{Rel}$ & \texttt{jRel} \\
+  \hline
+\end{tabular}
+
+
+
+\section{Legend}\label{legend}
+\subsection{Directional Derivative}
+Directional derivative of $\bs{f}(\bs{x}) \in \mathbb{R}^{n}$ with respect to $\bs{x} \in \mathbb{R}^m$ in the direction of $\bs{y} \in \mathbb{R}^m$:
+\begin{equation}
+  D\bs{f}(\bs{x})[\bs{y}]=D\bs{f}[\bs{y}]=\sum_{i=1}^m\frac{\partial \bs{f}(\bs{x})}{\partial \bs{x}_i}\cdot\bs{y}_i=\texttt{f.dirDer(y, x)} \in \mathbb{R}^n
+\end{equation}
+with \texttt{f} being a \texttt{fmatvec::Function}. Note the order of \texttt{y} and \texttt{x} in \texttt{dirDer}!
 
 
 \end{document}
