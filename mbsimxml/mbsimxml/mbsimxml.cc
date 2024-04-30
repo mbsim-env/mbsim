@@ -19,7 +19,7 @@ namespace {
 ThisLineLocation loc;
 
 boost::filesystem::path installPath() {
-  return boost::filesystem::path(loc()).parent_path().parent_path();
+  return boost::filesystem::canonical(loc()).parent_path().parent_path();
 }
 
 void initPython() {
