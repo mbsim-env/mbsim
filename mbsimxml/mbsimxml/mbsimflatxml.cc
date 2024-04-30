@@ -52,10 +52,11 @@ void initPython() {
 
   // init python
   initializePython(installPath()/"bin"/"mbsimflatxml", PYTHON_VERSION, {
-    // append the installation/bin dir to the python path (SWIG generated python modules (e.g. OpenMBV.py) are located there)
-    installPath()/"bin",
     // prepand the installation/../mbsim-env-python-site-packages dir to the python path (Python pip of mbsim-env is configured to install user defined python packages there)
     installPath().parent_path()/"mbsim-env-python-site-packages",
+  }, {
+    // append the installation/bin dir to the python path (SWIG generated python modules (e.g. OpenMBV.py) are located there)
+    installPath()/"bin",
   }, {
     installPath(),
     boost::filesystem::path(PYTHON_PREFIX),
