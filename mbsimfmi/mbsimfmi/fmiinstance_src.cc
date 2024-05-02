@@ -15,7 +15,7 @@ namespace MBSimFMI {
 
   void FMIInstance::addModelParametersAndCreateSystem(vector<std::shared_ptr<Variable> > &varSim) {
     // get the model shared library
-    path mbsimsrclibfile=path(fmuLoc()).parent_path().parent_path().parent_path()/
+    path mbsimsrclibfile=canonical(fmuLoc()).parent_path().parent_path().parent_path()/
       "model"/("libmbsimfmi_model"+SHEXT);
 
     // create DynamicSystemSolver
