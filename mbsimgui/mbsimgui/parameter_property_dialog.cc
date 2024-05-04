@@ -26,7 +26,6 @@
 #include "embeditemdata.h"
 #include <QDialogButtonBox>
 #include <QPushButton>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -67,11 +66,8 @@ namespace MBSimGUI {
     parameter->removeXMLElements();
     if(name) E(parameter->getXMLElement())->setAttribute("name",name->getWidget<TextWidget>()->getText().toStdString());
     comment->writeXMLFile(parameter->getXMLElement(),ref);
-    if(hidden->isChecked()) {
-      DOMDocument *doc=parameter->getXMLElement()->getOwnerDocument();
-      DOMProcessingInstruction *pi=doc->createProcessingInstruction(X()%"MBSIMGUI_HIDDEN", X()%"");
-      parameter->getXMLElement()->insertBefore(pi, nullptr);
-    }
+    if(hidden->isChecked())
+      E(parameter->getXMLElement())->addProcessingInstructionChildNamed("MBSIMGUI_HIDDEN", "");
     return nullptr;
   }
 

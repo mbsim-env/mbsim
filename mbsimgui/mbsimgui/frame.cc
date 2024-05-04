@@ -21,7 +21,6 @@
 #include "frame.h"
 #include "utils.h"
 #include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include "mainwindow.h"
 
 using namespace std;
@@ -44,11 +43,8 @@ namespace MBSimGUI {
   DOMElement* Frame::processIDAndHref(DOMElement *element) {
     element = Element::processIDAndHref(element);
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
     return element;
   }
 

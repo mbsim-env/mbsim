@@ -8,7 +8,7 @@
       <p:Embed count="3" counterName="ng" onlyif="ng!=2">
         <p:Parameter>
           <p:scalarParameter name="pg">2*ng</p:scalarParameter>
-          <p:scalarParameter name="mfmf">1</p:scalarParameter>
+          <p:scalarParameter name="one">1</p:scalarParameter>
         </p:Parameter>
         <Group name="embedinlineinline{pg+ng}">
           <frames/>
@@ -72,7 +72,7 @@
               </RigidBody>
             </p:Embed>
             <p:Embed count="3" counterName="n" href="embedhrefparameterhref_{ng}.mbsmx" onlyif="n!=2" parameterHref="embedhrefparameterhref_{ng}.mbspx"/>
-            <p:Embed href="embed_pardephref_{mfmf}.mbsmx"/>
+            <p:Embed href="embed_pardephref_{one}.mbsmx"/>
           </objects>
           <links/>
           <constraints/>

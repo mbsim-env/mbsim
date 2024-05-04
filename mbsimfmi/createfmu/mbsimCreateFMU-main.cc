@@ -241,13 +241,11 @@ int main(int argc, char *argv[]) {
         // no parameters -> save preprocessed model to FMU
         string ppModelStr;
         // serialize to string: this automatically normalized modelEle
-        DOMParser::serializeToString(modelEle, ppModelStr, false);
+        DOMParser::serializeToString(modelEle, ppModelStr);
         fmuFile.add(path("resources")/"model"/"Model.flat.mbsx", ppModelStr);
       }
       else {
         cout<<"Copy original XML model file to FMU."<<endl;
-        // normalize modelEle
-        D(modelEle->getOwnerDocument())->normalizeDocument();
         // parameters existing -> save original XML file to FMU including all dependencies
         // Note: We copy the XML model file including all dependencies to resources/model. However the full absolute path
         // (excluding the leading '/' or 'c:\') of each file is added as subdir of resources/model. This will

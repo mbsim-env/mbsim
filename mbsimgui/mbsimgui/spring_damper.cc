@@ -21,7 +21,6 @@
 #include "spring_damper.h"
 #include "objectfactory.h"
 #include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -38,11 +37,8 @@ namespace MBSimGUI {
     element = FixedFrameLink::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
     return element;
   }
@@ -51,11 +47,8 @@ namespace MBSimGUI {
     element = FloatingFrameLink::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
     return element;
   }

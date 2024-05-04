@@ -24,7 +24,6 @@
 #include "contour.h"
 #include "group.h"
 #include "embed.h"
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -79,19 +78,13 @@ namespace MBSimGUI {
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"openMBVRigidBody");
     if(ELE) {
       ELE = ELE->getFirstElementChild();
-      if(ELE) {
-        DOMDocument *doc=element->getOwnerDocument();
-        DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-        ELE->insertBefore(id, nullptr);
-      }
+      if(ELE)
+        E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
     }
 
     ELE=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVFrameC");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getFrame(0)->getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getFrame(0)->getID());
 
     return element;
   }

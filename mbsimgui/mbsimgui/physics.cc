@@ -21,7 +21,6 @@
 #include "physics.h"
 #include "objectfactory.h"
 #include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -39,11 +38,8 @@ namespace MBSimGUI {
     element = Link::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
     return element;
   }
@@ -52,11 +48,8 @@ namespace MBSimGUI {
     element = Link::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
     return element;
   }
@@ -65,11 +58,8 @@ namespace MBSimGUI {
     element = Link::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
     return element;
   }
@@ -78,11 +68,8 @@ namespace MBSimGUI {
     element = Link::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
     return element;
   }
@@ -91,11 +78,8 @@ namespace MBSimGUI {
     element = Link::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMPHYSICS%"enableOpenMBV");
-    if(ELE) {
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
-      ELE->insertBefore(id, nullptr);
-    }
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
     return element;
   }

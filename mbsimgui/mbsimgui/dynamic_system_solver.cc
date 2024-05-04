@@ -24,7 +24,6 @@
 #include "utils.h"
 #include "mainwindow.h"
 #include <xercesc/dom/DOMDocument.hpp>
-#include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <mbxmlutils/eval.h>
 
 using namespace std;
@@ -122,17 +121,13 @@ namespace MBSimGUI {
         DOMElement *ele2 = static_cast<xercesc::DOMElement*>(element->getOwnerDocument()->importNode(doc->getDocumentElement(),true));
         ele1->insertBefore(ele2,nullptr);
         boost::filesystem::path orgFileName=E(doc->getDocumentElement())->getOriginalFilename();
-        DOMProcessingInstruction *filenamePI=ele2->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
-            X()%orgFileName.string());
-        ele2->insertBefore(filenamePI, ele2->getFirstChild());
+        E(ele2)->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
         MBXMLUtils::E(ele1)->removeAttribute("href");
       }
-      DOMDocument *doc=element->getOwnerDocument();
-      DOMProcessingInstruction *id=doc->createProcessingInstruction(X()%"OPENMBV_ID", X()%getID());
       if(E(ele1)->getTagName()==PV%"Embed")
-        ele1->getFirstElementChild()->insertBefore(id, nullptr);
+        E(ele1->getFirstElementChild())->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
       else
-        ele1->insertBefore(id, nullptr);
+        E(ele1)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
 
       ele1 = ele1->getNextElementSibling();
     }

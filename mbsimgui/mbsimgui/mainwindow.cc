@@ -1028,9 +1028,7 @@ namespace MBSimGUI {
           DOMNode *node = doc->importNode(parent->getParameter(j)->getXMLElement(),true);
           eleP->insertBefore(node,nullptr);
           boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
-          DOMProcessingInstruction *filenamePI=node->getOwnerDocument()->createProcessingInstruction(X()%"OriginalFilename",
-              X()%orgFileName.string());
-          node->insertBefore(filenamePI, node->getFirstChild());
+          E(static_cast<DOMElement*>(node))->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
         }
         try {
           D(doc)->validate();
@@ -2007,11 +2005,8 @@ namespace MBSimGUI {
         auto enabledCount=E(embedNode)->getFirstProcessingInstructionChildNamed("MBSimGUI_EnabledCount");
         if(enabledCount)
           enabledCount->setData(X()%E(embedNode)->getAttribute("count"));
-        else {
-          enabledCount=embedNode->getOwnerDocument()->createProcessingInstruction(X()%"MBSimGUI_EnabledCount",
-                                                                                  X()%E(embedNode)->getAttribute("count"));
-          embedNode->insertBefore(enabledCount, embedNode->getFirstChild());
-        }
+        else
+          E(embedNode)->addProcessingInstructionChildNamed("MBSimGUI_EnabledCount", E(embedNode)->getAttribute("count"));
       }
       E(embedNode)->setAttribute("count","0");
       if(!E(embedNode)->hasAttribute("counterName")) // if we set a count Attribute then there MUST be also a counterName Attribute

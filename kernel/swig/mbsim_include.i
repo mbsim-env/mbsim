@@ -157,7 +157,7 @@ void _typemapDirectorinDOMElement(xercesc::DOMElement *_1, swig::SwigVar_PyObjec
 
   // serialize to memory
   std::string xml;
-  DOMParser::serializeToString(doc, xml, false);
+  DOMParser::serializeToString(doc, xml);
 
   // get the XPath of e
   xercesc::DOMElement *r=doc->getDocumentElement();

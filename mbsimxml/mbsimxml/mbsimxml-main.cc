@@ -324,9 +324,6 @@ int main(int argc, char *argv[]) {
             return 1;
           }
 
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Validate preprocessed file"<<endl;
-          D(mainXMLDoc)->validate();
-
           auto e=mainXMLDoc->getDocumentElement();
           // create object for DynamicSystemSolver and check correct type
           e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
