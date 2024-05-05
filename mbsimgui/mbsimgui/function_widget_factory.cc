@@ -538,7 +538,7 @@ namespace MBSimGUI {
     if(i==2)
       return new NonlinearSpringDamperForceWidget(element,parent);
     if(i==3)
-      return new SymbolicFunctionWidget(QStringList("g")<<"gd",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::scalar),1,FunctionWidget::scalar);
+      return new SymbolicFunctionWidget(QStringList("s")<<"sd",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::scalar),1,FunctionWidget::scalar);
     if(i==4)
       return new UnknownWidget<FunctionWidget>;
     return nullptr;
