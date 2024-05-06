@@ -101,7 +101,6 @@ namespace MBSimGUI {
     impl=DOMImplementation::getImplementation();
     parser=impl->createLSParser(DOMImplementation::MODE_SYNCHRONOUS, nullptr);
     serializer=impl->createLSSerializer();
-    basicSerializer=impl->createLSSerializer();
 
     // use html output of MBXMLUtils
     static char HTMLOUTPUT[100];
@@ -592,7 +591,6 @@ namespace MBSimGUI {
     delete project;
     parser->release();
     serializer->release();
-    basicSerializer->release();
   }
 
   void MainWindow::updateUndos() {
@@ -1335,7 +1333,7 @@ namespace MBSimGUI {
       root->insertBefore(evaluator, root->getFirstChild());
     }
     E(root)->setOriginalFilename();
-    basicSerializer->writeToURI(doc.get(), X()%projectFile.toStdString());
+    DOMParser::serialize(doc.get(), projectFile.toStdString());
     QStringList arg;
     QSettings settings;
     if(currentTask==1)

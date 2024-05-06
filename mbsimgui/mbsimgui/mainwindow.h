@@ -195,7 +195,6 @@ namespace MBSimGUI {
       xercesc::DOMImplementation *impl;
       xercesc::DOMLSParser *parser;
       xercesc::DOMLSSerializer *serializer;
-      xercesc::DOMLSSerializer *basicSerializer;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const { return uniqueTempDir; }
       void addParameter(Parameter *parameter, EmbedItemData *parent);
