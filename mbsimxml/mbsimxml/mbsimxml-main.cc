@@ -8,7 +8,7 @@
 #include "config.h"
 #include <clocale>
 #include <cfenv>
-//#include <cassert>
+#include <cassert>
 #include <iostream>
 #include <regex>
 #include <list>
