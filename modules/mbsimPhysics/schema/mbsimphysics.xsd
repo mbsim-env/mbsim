@@ -76,7 +76,7 @@
               Definition des Bezugssystems und des Körpers, auf den die Gewichtskraft wirken soll. Das Bezugssystem ist standarmäßig das übergeordente I-System. 
             </xs:documentation></xs:annotation>
             <xs:complexType>
-              <xs:attribute name="ref1" type="mbsim:FrameReferenceType" default="../Frame[I]"/>
+              <xs:attribute name="ref1" type="mbsim:FrameReferenceType"/>
               <xs:attribute name="ref2" type="mbsim:ObjectReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>

@@ -5,6 +5,19 @@ All
 ---
 - Various bug fixes.
 
+MBSimGUI
+--------
+- The property dialog of a anyParameter has now also a "Eval" button which shows the evaluated parameter value.
+  The format of this evaluated output is evaluator dependent. For Python the pretty printer "pprint" is used.
+- The Embed = Array/Pattern feature of MBSimXML has more features then MBSimGUI can handle. Unhandled features are
+  now handled in MBSimGUI as "Unknown XML Elements". Hence, MBSimGUI can now handle every feature but with reduced
+  user experience.
+
+MBSimXML
+--------
+- The stdout/stderr output of evaluations are now redirected to the Info/Warn streams of MBSim.
+- More XML elements (with maxOccurs>1) allow now to use the Embed = Array/Pattern feature.
+
 
 
 

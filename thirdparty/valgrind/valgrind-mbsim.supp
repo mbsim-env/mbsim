@@ -1430,3 +1430,11 @@
    fun:_ZN5boost10filesystem6detail17recur_dir_itr_imp14push_directoryERNS_6system10error_codeE
    fun:increment
 }
+{
+   Coin
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+   fun:_ZN4SoDB14readAllWrapperEP7SoInputRK6SoType
+   fun:_ZN4SoDB7readAllEP7SoInput
+}

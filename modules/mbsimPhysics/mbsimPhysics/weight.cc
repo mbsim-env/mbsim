@@ -100,6 +100,8 @@ namespace MBSimPhysics {
     if(stage==resolveStringRef) {
       if(not saved_ref1.empty() and not saved_ref2.empty())
         connect(getByPath<Frame>(saved_ref1), getByPath<RigidBody>(saved_ref2));
+      else if(not saved_ref2.empty())
+        connect(nullptr, getByPath<RigidBody>(saved_ref2));
       if(not frame) frame = static_cast<DynamicSystem*>(parent)->getFrameI();
       if(not body) throwError("Not all connections are given!");
 //      if(not fg) setGravityFunction(new ConstantFunction<double(double)>(9.80665));
