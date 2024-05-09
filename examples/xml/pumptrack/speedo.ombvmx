@@ -4,6 +4,7 @@
   <ivContent>
 import numpy
 import math
+import colorsys
 
 # see speedo.ombvpx for parameters
 
@@ -38,10 +39,10 @@ for a in numpy.linspace(-45-da, 180+45+da, 100)*math.pi/180:
 fgCoordIdx+=" -1"
 
 speedoTextIv = '["' + '", "'.join(speedoText.replace('"', '\\"').split("\n")) + '"]'
-backColorIv = " ".join(map(lambda e: str(e), backColor))
-frontColorIv = " ".join(map(lambda e: str(e), frontColor))
-needleColorIv = " ".join(map(lambda e: str(e), needleColor))
-speedoTextColorIv = " ".join(map(lambda e: str(e), speedoTextColor))
+backColorIv = " ".join(map(lambda e: str(e), colorsys.hsv_to_rgb(*backColor)))
+frontColorIv = " ".join(map(lambda e: str(e), colorsys.hsv_to_rgb(*frontColor)))
+needleColorIv = " ".join(map(lambda e: str(e), colorsys.hsv_to_rgb(*needleColor)))
+speedoTextColorIv = " ".join(map(lambda e: str(e), colorsys.hsv_to_rgb(*speedoTextColor)))
 
 content=f'''#Inventor V2.0 ascii
 Translation {{
