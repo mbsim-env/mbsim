@@ -53,9 +53,18 @@ namespace MBSim {
       int getArgSize() const override { return 1; }
       std::pair<int, int> getRetSize() const override { return function.size()?function[0]->getRetSize():std::make_pair(0,1); }
       Ret operator()(const Arg &x) override {
-        for(unsigned int i=0; i<function.size(); i++)
+	if(firstCall) {
+	  firstCall = false;
+	  y0.resize(a.size(),0.0*(*function[0])(Arg(1)));
+	  if(shiftOrdinate) {
+	    for(unsigned int i=1; i<a.size(); i++)
+	      y0[i] = (*this)(FromDouble<Arg>::cast(a[i]));
+	  }
+	}
+        for(unsigned int i=0; i<function.size(); i++) {
           if(ToDouble<Arg>::cast(x)<=a[i+1])
             return y0[i] + (*function[i])(x-FromDouble<Arg>::cast(x0[i]));
+	}
         this->throwError("(PiecewiseDefinedFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString(a[function.size()]));
       }
       typename B::DRetDArg parDer(const Arg &x) override {
@@ -95,18 +104,13 @@ namespace MBSim {
           }
           else
             x0.resize(a.size());
-          y0.resize(a.size(),0.0*(*function[0])(Arg(1)));
-          if(shiftOrdinate) {
-            for(unsigned int i=1; i<a.size(); i++)
-              y0[i] = (*this)(FromDouble<Arg>::cast(a[i]));
-          }
         }
       }
     private:
       std::vector<Function<Ret(Arg)> *> function;
       std::vector<double> a, x0;
       std::vector<Ret> y0;
-      bool shiftAbscissa{false}, shiftOrdinate{false};
+      bool shiftAbscissa{false}, shiftOrdinate{false}, firstCall{true};
   };
 
 }
