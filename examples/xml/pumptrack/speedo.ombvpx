@@ -35,19 +35,19 @@
     0.4
   </scalarParameter>
   <vectorParameter name="backColor">
-    <!-- the RGB background color -->
+    <!-- the HSV background color -->
     [0, 0, 0]
   </vectorParameter>
   <vectorParameter name="frontColor">
-    <!-- the RGB foreground color -->
-    [1, 1, 1]
+    <!-- the HSV foreground color -->
+    [0, 0, 1]
   </vectorParameter>
   <vectorParameter name="needleColor">
-    <!-- the RGB color of the speedo-needle -->
-    [1, 0, 0]
+    <!-- the HSV color of the speedo-needle -->
+    [0, 1, 1]
   </vectorParameter>
   <vectorParameter name="speedoTextColor">
-    <!-- the RGB color of the speedoText -->
+    <!-- the HSV color of the speedoText -->
     [0, 0, 0]
   </vectorParameter>
 </Parameter>

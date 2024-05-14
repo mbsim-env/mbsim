@@ -550,8 +550,8 @@
             <scalarParameter name="vEnd">32</scalarParameter>
             <scalarParameter name="alpha">0.4</scalarParameter>
             <vectorParameter name="backColor">[0, 0, 0]</vectorParameter>
-            <vectorParameter name="frontColor">[1, 1, 1]</vectorParameter>
-            <vectorParameter name="needleColor">[1, 0, 0]</vectorParameter>
+            <vectorParameter name="frontColor">[0, 0, 1]</vectorParameter>
+            <vectorParameter name="needleColor">[0, 1, 1]</vectorParameter>
             <vectorParameter name="speedoTextColor">[0, 0, 0]</vectorParameter>
           </Parameter>
         </Embed>
