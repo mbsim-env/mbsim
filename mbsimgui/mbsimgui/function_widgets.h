@@ -278,7 +278,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(BidirectionalFunctionWidget, FunctionWidget, MBSIM%"BidirectionalFunction", "dummy");
 
     public:
-      BidirectionalFunctionWidget(Element *element, const QString &argName, int argDim, VarType argType, int retDim, VarType retType, QWidget *parent);
+      BidirectionalFunctionWidget(Element *parentElement, const QString &argName, int argDim, VarType argType, int retDim, VarType retType, QWidget *parent);
       void resize_(int m, int n) override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
@@ -313,7 +313,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(NonlinearSpringDamperForceWidget, FunctionWidget, MBSIM%"NonlinearSpringDamperForce", "dummy");
 
     public:
-      NonlinearSpringDamperForceWidget(Element *element, QWidget *parent);
+      NonlinearSpringDamperForceWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
@@ -370,7 +370,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(LinearRegularizedStribeckFrictionWidget, FunctionWidget, MBSIM%"LinearRegularizedStribeckFriction", "Linear regularized Stribeck friction");
 
     public:
-      LinearRegularizedStribeckFrictionWidget(Element *element, QWidget *parent);
+      LinearRegularizedStribeckFrictionWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     private:
@@ -381,21 +381,19 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(SignalFunctionWidget, FunctionWidget, MBSIMCONTROL%"SignalFunction", "dummy");
 
     public:
-      SignalFunctionWidget(Element *element, QWidget *parent);
-      ~SignalFunctionWidget() override;
+      SignalFunctionWidget(Element *parentElement, QWidget *parent);
       void updateWidget() override;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     private:
       ExtWidget *sRef;
-      Element *dummy;
   };
 
   class PolarContourFunctionWidget : public FunctionWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(PolarContourFunctionWidget, FunctionWidget, MBSIM%"PolarContourFunction", "dummy");
 
     public:
-      PolarContourFunctionWidget(Element *element, QWidget *parent);
+      PolarContourFunctionWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:

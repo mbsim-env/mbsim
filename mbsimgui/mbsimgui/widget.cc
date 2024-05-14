@@ -33,7 +33,7 @@ namespace MBSimGUI {
   }
 
   template<class Container>
-  WidgetFactoryFor<Container>::WidgetFactoryFor(Element *e_, QWidget *pw_) :e(e_), pw(pw_) {}
+  WidgetFactoryFor<Container>::WidgetFactoryFor(Element *e_, QWidget *pw_) : WidgetFactory(e_), pw(pw_) {}
 
   template<class Container>
   QString WidgetFactoryFor<Container>::getName(int i) const {
@@ -77,7 +77,7 @@ namespace MBSimGUI {
 
   template<class Container>
   Widget* WidgetFactoryFor<Container>::createWidget(int i) {
-    return static_cast<Container*>(ObjectFactory::getInstance().getAllTypesForContainer<Container>()[i]->ctor(e, pw));
+    return static_cast<Container*>(ObjectFactory::getInstance().getAllTypesForContainer<Container>()[i]->ctor(element, pw));
   }
 
   template<class Container>

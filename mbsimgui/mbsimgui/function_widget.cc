@@ -19,12 +19,22 @@
 
 #include <config.h>
 #include "function_widget.h"
+#include "function.h"
 
 using namespace std;
 using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  FunctionWidget::FunctionWidget(Element *parent) {
+    function = new Function;
+    function->setParent(parent);
+  }
+
+  FunctionWidget::~FunctionWidget() {
+    delete function;
+  }
 
   DOMElement* FunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();

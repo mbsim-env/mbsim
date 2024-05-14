@@ -32,7 +32,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  Function1ArgWidgetFactory::Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, FunctionWidget::VarType argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_, int index_) : element(element_), argName(argName_), argDim(argDim_), argType(argType_), retDim(retDim_), retType(retType_), parent(parent_), index(index_) {
+  Function1ArgWidgetFactory::Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, FunctionWidget::VarType argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_, int index_) : WidgetFactory(element_), argName(argName_), argDim(argDim_), argType(argType_), retDim(retDim_), retType(retType_), parent(parent_), index(index_) {
     name.emplace_back("Absolute value function");
     name.emplace_back("Bidirectional function");
     name.emplace_back("Bounded function");
@@ -84,18 +84,12 @@ namespace MBSimGUI {
       return new BidirectionalFunctionWidget(element,argName,argDim,argType,retDim,retType,parent);
     if(i==2)
       return new BoundedFunctionWidget;
-    if(i==3) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new CompositeFunctionWidget(new Function1ArgWidgetFactory(dummy,"x",1,FunctionWidget::varVec,retDim,retType,parent,17),new Function2ArgWidgetFactory(dummy,QStringList("x")<<"y",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),retDim,retType,parent),new Function1ArgWidgetFactory(dummy,argName,argDim,argType,1,FunctionWidget::fixedVec,parent),17,0,3);
-    }
+    if(i==3)
+      return new CompositeFunctionWidget(new Function1ArgWidgetFactory(element,"x",1,FunctionWidget::varVec,retDim,retType,parent,17),new Function2ArgWidgetFactory(element,QStringList("x")<<"y",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),retDim,retType,parent),new Function1ArgWidgetFactory(element,argName,argDim,argType,1,FunctionWidget::fixedVec,parent),17,0,3);
     if(i==4)
       return new ConstantFunctionWidget;
-    if(i==5) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new ContinuedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,argType,retDim,retType,parent),new Function1ArgWidgetFactory(dummy,argName,argDim,argType,retDim,retType,parent));
-    }
+    if(i==5)
+      return new ContinuedFunctionWidget(new Function1ArgWidgetFactory(element,argName,argDim,argType,retDim,retType,parent),new Function1ArgWidgetFactory(element,argName,argDim,argType,retDim,retType,parent));
     if(i==6)
       return new FourierFunctionWidget;
     if(i==7)
@@ -104,11 +98,8 @@ namespace MBSimGUI {
       return new LinearFunctionWidget;
     if(i==9)
       return new ModuloFunctionWidget;
-    if(i==10) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,argType,retDim,retType,parent));
-    }
+    if(i==10)
+      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(element,argName,argDim,argType,retDim,retType,parent));
     if(i==11)
       return new PiecewisePolynomFunctionWidget(retDim,retType);
     if(i==12)
@@ -127,15 +118,12 @@ namespace MBSimGUI {
       return new TabularFunctionWidget(retDim,retType);
     if(i==19)
       return new UnknownWidget<FunctionWidget>;
-    if(i==20) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,argName,argDim,argType,1,FunctionWidget::scalar,parent),retDim,retType);
-    }
+    if(i==20)
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(element,argName,argDim,argType,1,FunctionWidget::scalar,parent),retDim,retType);
     return nullptr;
   }
 
-  Function2ArgWidgetFactory::Function2ArgWidgetFactory(Element *element_, const QStringList &argName_, const vector<int> argDim_, const vector<FunctionWidget::VarType> &argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_) : element(element_), argName(argName_), argDim(argDim_), argType(argType_), retDim(retDim_), retType(retType_), parent(parent_) {
+  Function2ArgWidgetFactory::Function2ArgWidgetFactory(Element *element_, const QStringList &argName_, const vector<int> argDim_, const vector<FunctionWidget::VarType> &argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_) : WidgetFactory(element_), argName(argName_), argDim(argDim_), argType(argType_), retDim(retDim_), retType(retType_), parent(parent_) {
     name.emplace_back("Symbolic function");
     name.emplace_back("Two dimensional piecewise polynom function");
     name.emplace_back("Two dimensional tabular function");
@@ -158,7 +146,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  StateDependentTranslationWidgetFactory::StateDependentTranslationWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+  StateDependentTranslationWidgetFactory::StateDependentTranslationWidgetFactory(Element *element_, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
     name.emplace_back("Composite function");
     name.emplace_back("Linear translation");
     name.emplace_back("Piecewise defined function");
@@ -190,22 +178,12 @@ namespace MBSimGUI {
   }
 
   Widget* StateDependentTranslationWidgetFactory::createWidget(int i) {
-    if(i==0) {
-      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy1->setParent(element);
-      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy2->setParent(dummy1);
-      return new CompositeFunctionWidget(new StateDependentTranslationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(dummy2,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,parent));
-    }
+    if(i==0)
+      return new CompositeFunctionWidget(new StateDependentTranslationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(element,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,parent));
     if(i==1)
       return new LinearTranslationWidget(3,1);
-    if(i==2) {
-      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy1->setParent(element);
-      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy2->setParent(dummy1);
-      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy2,"q",1,FunctionWidget::varVec,3,FunctionWidget::fixedVec,parent));
-    }
+    if(i==2)
+      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(element,"q",1,FunctionWidget::varVec,3,FunctionWidget::fixedVec,parent));
     if(i==3)
       return new PiecewisePolynomFunctionWidget(3,FunctionWidget::fixedVec);
     if(i==4)
@@ -231,7 +209,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TimeDependentTranslationWidgetFactory::TimeDependentTranslationWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+  TimeDependentTranslationWidgetFactory::TimeDependentTranslationWidgetFactory(Element *element_, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
     name.emplace_back("Composite function");
     name.emplace_back("Piecewise defined function");
     name.emplace_back("Piecewise polynom function");
@@ -249,20 +227,10 @@ namespace MBSimGUI {
   }
 
   Widget* TimeDependentTranslationWidgetFactory::createWidget(int i) {
-    if(i==0) {
-      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy1->setParent(element);
-      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy2->setParent(dummy1);
-      return new CompositeFunctionWidget(new StateDependentTranslationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(dummy2,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent));
-    }
-    if(i==1) {
-      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy1->setParent(element);
-      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy2->setParent(dummy1);
-      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(dummy2,"t",1,FunctionWidget::scalar,3,FunctionWidget::fixedVec,parent));
-    }
+    if(i==0)
+      return new CompositeFunctionWidget(new StateDependentTranslationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent));
+    if(i==1)
+      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,3,FunctionWidget::fixedVec,parent));
     if(i==2)
       return new PiecewisePolynomFunctionWidget(3,FunctionWidget::fixedVec);
     if(i==3)
@@ -271,17 +239,12 @@ namespace MBSimGUI {
       return new TabularFunctionWidget(3,FunctionWidget::fixedVec);
     if(i==5)
       return new UnknownWidget<FunctionWidget>;
-    if(i==6) {
-      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy1->setParent(element);
-      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy2->setParent(dummy1);
-      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy2,"t",1,FunctionWidget::scalar,3,FunctionWidget::fixedVec,parent),3,FunctionWidget::fixedVec);
-    }
+    if(i==6)
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,3,FunctionWidget::fixedVec,parent),3,FunctionWidget::fixedVec);
     return nullptr;
   }
 
-  StateDependentRotationWidgetFactory::StateDependentRotationWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+  StateDependentRotationWidgetFactory::StateDependentRotationWidgetFactory(Element *element_, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
     name.emplace_back("Composite function");
     name.emplace_back("Rotation about x axis");
     name.emplace_back("Rotation about y axis");
@@ -309,13 +272,8 @@ namespace MBSimGUI {
   }
 
   Widget* StateDependentRotationWidgetFactory::createWidget(int i) {
-    if(i==0) {
-      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy1->setParent(element);
-      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy2->setParent(dummy1);
-      return new CompositeFunctionWidget(new StateDependentRotationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(dummy2,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,parent));
-    }
+    if(i==0)
+      return new CompositeFunctionWidget(new StateDependentRotationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(element,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,parent));
     if(i==1)
       return new RotationAboutXAxisWidget;
     if(i==2)
@@ -341,7 +299,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TimeDependentRotationWidgetFactory::TimeDependentRotationWidgetFactory(Element *element_, QWidget *parent_) : parent(parent_) {
+  TimeDependentRotationWidgetFactory::TimeDependentRotationWidgetFactory(Element *element_, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
     name.emplace_back("Composite function");
     name.emplace_back("Symbolic function");
     name.emplace_back("Unknown function");
@@ -351,13 +309,8 @@ namespace MBSimGUI {
   }
 
   Widget* TimeDependentRotationWidgetFactory::createWidget(int i) {
-    if(i==0) {
-      auto *dummy1 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy1->setParent(element);
-      auto *dummy2 = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy2->setParent(dummy1);
-      return new CompositeFunctionWidget(new StateDependentRotationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(dummy2,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent));
-    }
+    if(i==0)
+      return new CompositeFunctionWidget(new StateDependentRotationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent));
     if(i==1)
       return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
     if(i==2)
@@ -365,7 +318,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TranslationWidgetFactory::TranslationWidgetFactory(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_) : element(element_), parent(parent_) {
+  TranslationWidgetFactory::TranslationWidgetFactory(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
     name.emplace_back("General translation");
     name.emplace_back("State dependent translation");
     name.emplace_back("Time dependent translation");
@@ -376,12 +329,10 @@ namespace MBSimGUI {
 
   Widget* TranslationWidgetFactory::createWidget(int i) {
     if(i==0) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
       vector<FunctionWidget::VarType> argType(2);
       argType[0] = FunctionWidget::varVec;
       argType[1] = FunctionWidget::scalar;
-      return new ChoiceWidget(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",vector<int>(2,1),argType,3,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new Function2ArgWidgetFactory(element,QStringList("q")<<"t",vector<int>(2,1),argType,3,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
     }
     if(i==1)
       return new ChoiceWidget(new StateDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
@@ -390,7 +341,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RotationWidgetFactory::RotationWidgetFactory(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_) : element(element_), parent(parent_) {
+  RotationWidgetFactory::RotationWidgetFactory(Element *element_, const MBXMLUtils::NamespaceURI &uri, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
     name.emplace_back("State dependent rotation");
     name.emplace_back("Time dependent rotation");
     xmlName.push_back(uri%"stateDependentRotation");
@@ -486,7 +437,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  ConstraintWidgetFactory::ConstraintWidgetFactory(Element *element_, QWidget *parent_) : element(element_), parent(parent_) {
+  ConstraintWidgetFactory::ConstraintWidgetFactory(Element *element_, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
     name.emplace_back("General constraint function");
     name.emplace_back("State dependent constraint function");
     name.emplace_back("Time dependent constraint function");
@@ -497,27 +448,19 @@ namespace MBSimGUI {
 
   Widget* ConstraintWidgetFactory::createWidget(int i) {
     if(i==0) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
       vector<FunctionWidget::VarType> argType(2);
       argType[0] = FunctionWidget::varVec;
       argType[1] = FunctionWidget::scalar;
-      return new ChoiceWidget(new Function2ArgWidgetFactory(dummy,QStringList("q")<<"t",vector<int>(2,1),argType,1,FunctionWidget::fixedVec,parent));
+      return new ChoiceWidget(new Function2ArgWidgetFactory(element,QStringList("q")<<"t",vector<int>(2,1),argType,1,FunctionWidget::fixedVec,parent));
     }
-    if(i==1) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
-    }
-    if(i==2) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new ChoiceWidget(new Function1ArgWidgetFactory(dummy,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
-    }
+    if(i==1)
+      return new ChoiceWidget(new Function1ArgWidgetFactory(element,"q",1,FunctionWidget::varVec,1,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
+    if(i==2)
+      return new ChoiceWidget(new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent),QBoxLayout::TopToBottom,0);
     return nullptr;
   }
 
-  SpringDamperWidgetFactory::SpringDamperWidgetFactory(Element *element_, bool varSize_, QWidget *parent_) : element(element_), varSize(varSize_), parent(parent_) {
+  SpringDamperWidgetFactory::SpringDamperWidgetFactory(Element *element_, bool varSize_, QWidget *parent_) : WidgetFactory(element_), varSize(varSize_), parent(parent_) {
     name.emplace_back("Linear elastic function");
     name.emplace_back("Linear spring damper force");
     name.emplace_back("Nonlinear spring damper force");
@@ -544,7 +487,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  PlanarContourFunctionWidgetFactory::PlanarContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_) : element(element_), parent(parent_), var(var_) {
+  PlanarContourFunctionWidgetFactory::PlanarContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_) : WidgetFactory(element_), parent(parent_), var(var_) {
     name.emplace_back("Composite function");
     name.emplace_back("Continued function");
     name.emplace_back("Piecewise defined function");
@@ -564,21 +507,12 @@ namespace MBSimGUI {
   }
 
   Widget* PlanarContourFunctionWidgetFactory::createWidget(int i) {
-    if(i==0) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new CompositeFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,"phi"),0,new Function1ArgWidgetFactory(dummy,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent));
-    }
-    if(i==1) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,var),new Function1ArgWidgetFactory(dummy,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent));
-    }
-    if(i==2) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
+    if(i==0)
+      return new CompositeFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,"phi"),0,new Function1ArgWidgetFactory(element,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent));
+    if(i==1)
+      return new ContinuedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,var),new Function1ArgWidgetFactory(element,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent));
+    if(i==2)
       return new PiecewiseDefinedFunctionWidget(new PlanarContourFunctionWidgetFactory(element,parent,var));
-    }
     if(i==3)
       return new PiecewisePolynomFunctionWidget(3,FunctionWidget::fixedVec);
     if(i==4)
@@ -587,15 +521,12 @@ namespace MBSimGUI {
       return new SymbolicFunctionWidget(QStringList(var),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
     if(i==6)
       return new UnknownWidget<FunctionWidget>;
-    if(i==7) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),3,FunctionWidget::fixedVec);
-    }
+    if(i==7)
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(element,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),3,FunctionWidget::fixedVec);
     return nullptr;
   }
 
-  SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_) : element(element_), parent(parent_), var(var_) {
+  SpatialContourFunctionWidgetFactory::SpatialContourFunctionWidgetFactory(Element *element_, QWidget *parent_, const QString &var_) : WidgetFactory(element_), parent(parent_), var(var_) {
     name.emplace_back("Composite function");
     name.emplace_back("Continued function");
     name.emplace_back("Symbolic function");
@@ -609,25 +540,16 @@ namespace MBSimGUI {
   }
 
   Widget* SpatialContourFunctionWidgetFactory::createWidget(int i) {
-    if(i==0) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,"phi"),0,new Function1ArgWidgetFactory(dummy,var,2,FunctionWidget::fixedVec,2,FunctionWidget::fixedVec,parent));
-    }
-    if(i==1) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,var),new Function1ArgWidgetFactory(dummy,var,2,FunctionWidget::fixedVec,2,FunctionWidget::fixedVec,parent));
-    }
+    if(i==0)
+      return new CompositeFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,"phi"),0,new Function1ArgWidgetFactory(element,var,2,FunctionWidget::fixedVec,2,FunctionWidget::fixedVec,parent));
+    if(i==1)
+      return new ContinuedFunctionWidget(new SpatialContourFunctionWidgetFactory(element,parent,var),new Function1ArgWidgetFactory(element,var,2,FunctionWidget::fixedVec,2,FunctionWidget::fixedVec,parent));
     if(i==2)
       return new SymbolicFunctionWidget(QStringList(var),vector<int>(1,2),vector<FunctionWidget::VarType>(1,FunctionWidget::fixedVec),3,FunctionWidget::fixedVec);
     if(i==3)
       return new UnknownWidget<FunctionWidget>;
-    if(i==4) {
-      auto *dummy = new Function; // Workaround for correct XML path. TODO: provide a consistent concept
-      dummy->setParent(element);
-      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(dummy,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),3,FunctionWidget::fixedVec);
-    }
+    if(i==4)
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(element,var,1,FunctionWidget::scalar,1,FunctionWidget::scalar,parent),3,FunctionWidget::fixedVec);
     return nullptr;
   }
 

@@ -35,186 +35,196 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedForceLawWidget, Widget, MBSIM%"GeneralizedForceLaw", "Generalized force law");
 
     public:
-      GeneralizedForceLawWidget()  = default;
+      GeneralizedForceLawWidget(Element *parentElement=nullptr);
+      virtual ~GeneralizedForceLawWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *forceFunc{nullptr};
+      Element *generalizedForceLaw;
   };
 
   class BilateralConstraintWidget : public GeneralizedForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(BilateralConstraintWidget, GeneralizedForceLawWidget, MBSIM%"BilateralConstraint", "Bilateral constraint");
 
     public:
-      BilateralConstraintWidget() = default;
+      BilateralConstraintWidget(Element *parentElement, QWidget *parent) : GeneralizedForceLawWidget(parentElement) { }
   };
 
   class RegularizedBilateralConstraintWidget : public GeneralizedForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(RegularizedBilateralConstraintWidget, GeneralizedForceLawWidget, MBSIM%"RegularizedBilateralConstraint", "Regularized bilateral constraint");
 
     public:
-      RegularizedBilateralConstraintWidget();
+      RegularizedBilateralConstraintWidget(Element *parentElement, QWidget *parent);
   };
 
   class UnilateralConstraintWidget : public GeneralizedForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnilateralConstraintWidget, GeneralizedForceLawWidget, MBSIM%"UnilateralConstraint", "Unilateral constraint");
 
     public:
-      UnilateralConstraintWidget() = default;
+      UnilateralConstraintWidget(Element *parentElement, QWidget *parent) : GeneralizedForceLawWidget(parentElement) { }
   };
 
   class RegularizedUnilateralConstraintWidget : public GeneralizedForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(RegularizedUnilateralConstraintWidget, GeneralizedForceLawWidget, MBSIM%"RegularizedUnilateralConstraint", "Regularized unilateral constraint");
 
     public:
-      RegularizedUnilateralConstraintWidget();
+      RegularizedUnilateralConstraintWidget(Element *parentElement, QWidget *parent);
   };
 
   class GeneralizedImpactLawWidget : public Widget {
     MBSIMGUI_OBJECTFACTORY_CLASS(GeneralizedImpactLawWidget, Widget, MBSIM%"GeneralizedImpactLaw", "Generalized impact law");
 
     public:
-      GeneralizedImpactLawWidget() = default;
+      GeneralizedImpactLawWidget(Element *parentElement=nullptr);
+      virtual ~GeneralizedImpactLawWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      Element *generalizedImpactLaw;
   };
 
   class BilateralImpactWidget : public GeneralizedImpactLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(BilateralImpactWidget, GeneralizedImpactLawWidget, MBSIM%"BilateralImpact", "Bilateral impact");
 
     public:
-      BilateralImpactWidget() = default;
+      BilateralImpactWidget(Element *parentElement, QWidget *parent) : GeneralizedImpactLawWidget(parentElement) { }
   };
 
   class UnilateralNewtonImpactWidget : public GeneralizedImpactLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(UnilateralNewtonImpactWidget, GeneralizedImpactLawWidget, MBSIM%"UnilateralNewtonImpact", "Unilateral Newton impact");
 
     public:
-      UnilateralNewtonImpactWidget();
+      UnilateralNewtonImpactWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* restitutionCoefficient;
+      ExtWidget *restitutionCoefficient;
   };
 
   class FrictionForceLawWidget : public Widget {
     MBSIMGUI_OBJECTFACTORY_CLASS(FrictionForceLawWidget, Widget, MBSIM%"FrictionForceLaw", "Friction force law");
 
     public:
-      FrictionForceLawWidget() = default;
+      FrictionForceLawWidget(Element *parentElement=nullptr);
+      virtual ~FrictionForceLawWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
       ExtWidget *frictionForceFunc{nullptr};
+      Element *frictionForceLaw;
   };
 
   class PlanarCoulombFrictionWidget : public FrictionForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(PlanarCoulombFrictionWidget, FrictionForceLawWidget, MBSIM%"PlanarCoulombFriction", "Planar Coulomb friction");
 
     public:
-      PlanarCoulombFrictionWidget();
+      PlanarCoulombFrictionWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* frictionCoefficient;
+      ExtWidget *frictionCoefficient;
   };
 
   class SpatialCoulombFrictionWidget : public FrictionForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(SpatialCoulombFrictionWidget, FrictionForceLawWidget, MBSIM%"SpatialCoulombFriction", "Spatial Coulomb friction");
 
     public:
-      SpatialCoulombFrictionWidget();
+      SpatialCoulombFrictionWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* frictionCoefficient;
+      ExtWidget *frictionCoefficient;
   };
 
   class PlanarStribeckFrictionWidget : public FrictionForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(PlanarStribeckFrictionWidget, FrictionForceLawWidget, MBSIM%"PlanarStribeckFriction", "Planar Stribeck friction");
 
     public:
-      PlanarStribeckFrictionWidget(Element *element, QWidget *parent);
+      PlanarStribeckFrictionWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* frictionFunction;
+      ExtWidget *frictionFunction;
   };
 
   class SpatialStribeckFrictionWidget : public FrictionForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(SpatialStribeckFrictionWidget, FrictionForceLawWidget, MBSIM%"SpatialStribeckFriction", "Spatial Stribeck friction");
 
     public:
-      SpatialStribeckFrictionWidget(Element *element, QWidget *parent);
+      SpatialStribeckFrictionWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* frictionFunction;
+      ExtWidget *frictionFunction;
   };
 
   class RegularizedPlanarFrictionWidget : public FrictionForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(RegularizedPlanarFrictionWidget, FrictionForceLawWidget, MBSIM%"RegularizedPlanarFriction", "Regularized planar friction");
     public:
-      RegularizedPlanarFrictionWidget(Element *element, QWidget *parent);
+      RegularizedPlanarFrictionWidget(Element *parentElement, QWidget *parent);
   };
 
   class RegularizedSpatialFrictionWidget : public FrictionForceLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(RegularizedSpatialFrictionWidget, FrictionForceLawWidget, MBSIM%"RegularizedSpatialFriction", "Regularized spatial friction");
     public:
-      RegularizedSpatialFrictionWidget(Element *element, QWidget *parent);
+      RegularizedSpatialFrictionWidget(Element *parentElement, QWidget *parent);
   };
 
   class FrictionImpactLawWidget : public Widget {
     MBSIMGUI_OBJECTFACTORY_CLASS(FrictionImpactLawWidget, Widget, MBSIM%"FrictionImpactLaw", "Friction impact law");
 
     public:
-      FrictionImpactLawWidget() = default;
+      FrictionImpactLawWidget(Element *parentElement=nullptr);
+      virtual ~FrictionImpactLawWidget();
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      Element *frictionImpactLaw;
   };
 
   class PlanarCoulombImpactWidget : public FrictionImpactLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(PlanarCoulombImpactWidget, FrictionImpactLawWidget, MBSIM%"PlanarCoulombImpact", "Planar Coulomb impact");
 
     public:
-      PlanarCoulombImpactWidget();
+      PlanarCoulombImpactWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* frictionCoefficient;
+      ExtWidget *frictionCoefficient;
   };
 
   class SpatialCoulombImpactWidget : public FrictionImpactLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(SpatialCoulombImpactWidget, FrictionImpactLawWidget, MBSIM%"SpatialCoulombImpact", "Spatial Coulomb impact");
 
     public:
-      SpatialCoulombImpactWidget();
+      SpatialCoulombImpactWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* frictionCoefficient;
+      ExtWidget *frictionCoefficient;
   };
 
   class PlanarStribeckImpactWidget : public FrictionImpactLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(PlanarStribeckImpactWidget, FrictionImpactLawWidget, MBSIM%"PlanarStribeckImpact", "Planar Stribeck impact");
 
     public:
-      PlanarStribeckImpactWidget(Element *element, QWidget *parent);
+      PlanarStribeckImpactWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* frictionFunction;
+      ExtWidget *frictionFunction;
   };
 
   class SpatialStribeckImpactWidget : public FrictionImpactLawWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(SpatialStribeckImpactWidget, FrictionImpactLawWidget, MBSIM%"SpatialStribeckImpact", "Spatial Stribeck impact");
 
     public:
-      SpatialStribeckImpactWidget(Element *element, QWidget *parent);
+      SpatialStribeckImpactWidget(Element *parentElement, QWidget *parent);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget* frictionFunction;
+      ExtWidget *frictionFunction;
   };
 
   class RegularizedBilateralConstraintFunctionFactory : public WidgetFactory {
