@@ -25,8 +25,6 @@
 
 namespace MBSimGUI {
 
-  class Element;
-
   class Function1ArgWidgetFactory : public WidgetFactory {
     public:
       Function1ArgWidgetFactory(Element *element_, const QString &argName_, int argDim_, FunctionWidget::VarType argType_, int retDim_, FunctionWidget::VarType retType_, QWidget *parent_, int index_=4);
@@ -37,7 +35,6 @@ namespace MBSimGUI {
       int getDefaultIndex() const override { return index; }
       int getFallbackIndex() const override { return 19; }
     protected:
-      Element *element;
       QString argName;
       int argDim;
       FunctionWidget::VarType argType;
@@ -58,7 +55,6 @@ namespace MBSimGUI {
       int getSize() const override { return name.size(); }
       int getFallbackIndex() const override { return 3; }
     protected:
-      Element *element;
       QStringList argName;
       std::vector<int> argDim;
       std::vector<FunctionWidget::VarType> argType;
@@ -79,7 +75,6 @@ namespace MBSimGUI {
       int getDefaultIndex() const override { return 5; }
       int getFallbackIndex() const override { return 13; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -94,7 +89,6 @@ namespace MBSimGUI {
       int getSize() const override { return name.size(); }
       int getFallbackIndex() const override { return 5; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -110,7 +104,6 @@ namespace MBSimGUI {
       int getDefaultIndex() const override { return 1; }
       int getFallbackIndex() const override { return 11; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -125,7 +118,6 @@ namespace MBSimGUI {
       int getSize() const override { return name.size(); }
       int getFallbackIndex() const override { return 2; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -140,7 +132,6 @@ namespace MBSimGUI {
       int getSize() const override { return name.size(); }
       int getDefaultIndex() const override { return 1; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -154,7 +145,6 @@ namespace MBSimGUI {
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -221,7 +211,6 @@ namespace MBSimGUI {
       int getSize() const override { return name.size(); }
       int getDefaultIndex() const override { return 1; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -237,7 +226,6 @@ namespace MBSimGUI {
       int getDefaultIndex() const override { return 1; }
       int getFallbackIndex() const override { return 4; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       bool varSize;
@@ -254,7 +242,6 @@ namespace MBSimGUI {
       int getDefaultIndex() const override { return 5; }
       int getFallbackIndex() const override { return 6; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -271,7 +258,6 @@ namespace MBSimGUI {
       int getDefaultIndex() const override { return 2; }
       int getFallbackIndex() const override { return 3; }
     protected:
-      Element *element;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;

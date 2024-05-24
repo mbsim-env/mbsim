@@ -106,6 +106,7 @@ namespace MBSimGUI {
 
   class WidgetFactory {
     public:
+      WidgetFactory(Element *element_=nullptr) : element(element_) { }
       virtual ~WidgetFactory() = default;
       virtual Widget* createWidget(int i=0) = 0;
       virtual QString getName(int i=0) const { return ""; }
@@ -114,6 +115,10 @@ namespace MBSimGUI {
       virtual int getFallbackIndex() const { return getDefaultIndex(); }
       virtual int getMargin() const;
       virtual MBXMLUtils::FQN getXMLName(int i=0) const { return ""; }
+      Element* getElement() const { return element; }
+      void setElement(Element *element_) { element = element_; }
+    protected:
+      Element *element;
   };
 
   template<class Container>
@@ -128,7 +133,6 @@ namespace MBSimGUI {
       Widget* createWidget(int i=0) override;
       int getSize() const override;
     private:
-      Element *e;
       QWidget *pw;
   };
 

@@ -25,6 +25,8 @@
 
 namespace MBSimGUI {
 
+  class Function;
+
   class FunctionWidget : public Widget {
     MBSIMGUI_OBJECTFACTORY_CLASS(FunctionWidget, Widget, MBSIM%"Function", "Function");
     public:
@@ -33,12 +35,16 @@ namespace MBSimGUI {
         fixedVec,
         varVec
       };
+      FunctionWidget(Element *parent=nullptr);
+      virtual ~FunctionWidget();
       virtual int getArg1Size() const { return 1; }
       virtual int getArg2Size() const { return 1; }
       virtual void setArg1Size(int i) { }
       virtual void setArg2Size(int i) { }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override { return element; }
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      Function *function;
   };
 
 }

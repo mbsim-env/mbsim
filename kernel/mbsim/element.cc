@@ -173,6 +173,7 @@ namespace MBSim {
       if(dynamic_cast<const Group*>       (e)) return "Group";
       if(dynamic_cast<const Observer*>    (e)) return "Observer";
       if(dynamic_cast<const FunctionBase*>(e)) return "Function";
+      if(dynamic_cast<const Element*>     (e)) return "Element";
       // note we can not throw a MBSimError here since containerName and getPath is used in MBSimError itself
       // -> endless recursive call (however this error is a internal one)
       throw runtime_error("Internal error: Unknown object type.");
