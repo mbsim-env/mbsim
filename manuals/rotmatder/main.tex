@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass{article}
 
 \usepackage{amsmath}
 \usepackage{amssymb}
@@ -8,8 +8,7 @@
 
 \begin{document}
 
-\textbf{\Large{Definition of Derivatives of Type RotMat in MBSim}}
-\vspace{3em}
+\section{Definition of Derivatives of Type RotMat in MBSim}
 
 This document defines the partial derivative of the type RotMat in MBSim C++ with respect to a scalar and with respect to a vector. This special definition of derivative of RotMat is done to unify the handling of derivatives of translational and rotational values.
 \vspace{1em}
@@ -69,19 +68,29 @@ _1\bs{J}_T=\texttt{transFunc->parDer1}(\bs{q},t)\quad\in\mathbb{R}^{3\times n_q}
 _1\bs{j}_T=\texttt{transFunc->parDer2}(\bs{q},t)\quad\in\mathbb{R}^3
 \end{equation}
 
-\vspace{5em}
-\textbf{\Large{Calculation Rules for this Derivative Operator}}
-\vspace{3em}
+\section{Calculation Rules for this Derivative Operator}
 
 The following calculation rules hold for the derivative operator $\text{parder}_{\bs{x}}(\bs{R})$.
+
+\subsection{RotMat $\cdot$ RotMat}
 \begin{equation}
   \bs{R}_{13}(\alpha,\beta) = \bs{R}_{12}(\alpha) \cdot \bs{R}_{23}(\beta)
 \end{equation}
+\vspace{0em}
 \begin{equation}
   \text{parder}_{\alpha}(\bs{R}_{13}(\alpha,\beta)) = \text{parder}_{\alpha}(\bs{R}_{12}(\alpha))
 \end{equation}
 \begin{equation}
   \text{parder}_{\beta}(\bs{R}_{13}(\alpha,\beta)) = \bs{R}_{12}(\alpha) \cdot \text{parder}_{\beta}(\bs{R}_{23}(\beta))
+\end{equation}
+
+\subsection{RotMat $\cdot$ Vector}
+\begin{equation}
+  _1\bs{x}(\alpha,\beta) = \bs{R}_{12}(\alpha) \cdot _2\bs{x}(\beta)
+\end{equation}
+\vspace{0em}
+\begin{equation}
+  \text{parder}_{\alpha}(_1\bs{x}(\alpha,\beta)) = \text{parder}_{\alpha}(\bs{R}_{12}(\alpha)) \times \left( \bs{R}_{12}(\alpha)\cdot _2\bs{x}(\beta) \right)
 \end{equation}
 
 \end{document}
