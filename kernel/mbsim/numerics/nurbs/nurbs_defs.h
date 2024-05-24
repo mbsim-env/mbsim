@@ -12,11 +12,11 @@ namespace fmatvec {
   template <int N>
   class Point : public Vector<Fixed<N>, double> {
     public:
-      Point<N>();
+      Point();
 
-      Point<N>(Vector<Fixed<N>, double> pnt);
+      Point(Vector<Fixed<N>, double> pnt);
 
-      virtual ~Point<N>();
+      virtual ~Point();
 
     protected:
   };
@@ -41,11 +41,11 @@ namespace fmatvec {
   template <int N>
   class HPoint : public Vector<Fixed<N + 1>, double> {
     public:
-      HPoint<N>();
+      HPoint();
 
-      HPoint<N>(Vector<Fixed<N + 1>, double> pnt);
+      HPoint(Vector<Fixed<N + 1>, double> pnt);
 
-      virtual ~HPoint<N>();
+      virtual ~HPoint();
 
       Point<N> projectW();
 
