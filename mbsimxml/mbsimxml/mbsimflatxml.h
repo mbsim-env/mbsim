@@ -4,6 +4,7 @@
 #include <string>
 #include <sstream>
 #include <set>
+#include <list>
 #include <boost/filesystem/fstream.hpp>
 #include <utility>
 #include <mbxmlutilshelper/dom.h>
