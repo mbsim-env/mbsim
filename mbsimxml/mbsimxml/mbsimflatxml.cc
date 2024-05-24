@@ -263,6 +263,7 @@ void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_p
     dss->evalz0();
   dss->computeInitialCondition();
   dss->plot();
+  dss->updateInternalState();
 }
 
 void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSystemSolver>& dss, bool doNotIntegrate, bool stopAfterFirstStep, bool savestatevector, bool savestatetable) {
@@ -286,7 +287,7 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
     // If this is removed openmbv should be opened with the --lastframe option.
     // Currently we use this block if --stopafterfirststep is given to reload the XML/H5 file in OpenMBV again
     // after the first step has been written since this is not possible by the file locking mechanism in OpenMBVCppInterface.
-    if(stopAfterFirstStep) {
+    if(stopAfterFirstStep && dss->getPlotFeature(openMBV)) {
       // touch the OpenMBV files
       boost::myfilesystem::last_write_time((dss->getName()+".ombvx").c_str(), boost::posix_time::microsec_clock::universal_time());
       boost::myfilesystem::last_write_time((dss->getName()+".ombvh5" ).c_str(), boost::posix_time::microsec_clock::universal_time());

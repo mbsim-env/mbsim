@@ -414,7 +414,8 @@ namespace MBSim {
       H5::File::setDefaultCompression(compressionLevel);
       H5::File::setDefaultChunkSize(chunkSize);
       H5::File::setDefaultCacheSize(cacheSize);
-      hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
+      if(plotFeature[plotRecursive])
+        hdf5File = std::make_shared<H5::File>(fileName, H5::File::write);
 
       Group::init(stage, config);
 
