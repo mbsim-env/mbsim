@@ -70,7 +70,6 @@
 #include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
 #include <boost/filesystem/fstream.hpp>
-#include <boost/filesystem/operations.hpp>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMException.hpp>
@@ -548,8 +547,15 @@ namespace MBSimGUI {
     connect(inlineOpenMBVMW, SIGNAL(objectSelected(std::string, OpenMBVGUI::Object*)), this, SLOT(selectElement(const std::string&, OpenMBVGUI::Object*)));
     connect(inlineOpenMBVMW, SIGNAL(objectDoubleClicked(std::string, OpenMBVGUI::Object*)), this, SLOT(openElementEditor()));
 
+#if BOOST_VERSION >= 107400
+    using bfs__copy_options = bfs::copy_options;
+    bfs::copy_options overwrite_existing = bfs::copy_options::overwrite_existing;
+#else
+    using bfs__copy_options = bfs::copy_option;
+    bfs::copy_option overwrite_existing = bfs::copy_option::overwrite_if_exists;
+#endif
     // bugfix version for bfs::copy_file which is at least buggy in boost 1.74
-    auto bfs__copy_file = [](const bfs::path &src, const bfs::path &dst, bfs::copy_option options) {
+    auto bfs__copy_file = [](const bfs::path &src, const bfs::path &dst, bfs__copy_options options) {
       bfs::ifstream s(src, ios_base::binary);
       bfs::ofstream d(dst, ios_base::binary);
       char buffer[10240];
@@ -561,8 +567,8 @@ namespace MBSimGUI {
         d.write(buffer, size);
       }
     };
-    bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  bfs::copy_option::overwrite_if_exists);
-    bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", bfs::copy_option::overwrite_if_exists);
+    bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvx",  uniqueTempDir/"MBS_tmp.ombvx",  overwrite_existing);
+    bfs__copy_file(getInstallPath()/"share"/"mbsimgui"/"MBS_tmp.ombvh5", uniqueTempDir/"MBS_tmp.ombvh5", overwrite_existing);
     inlineOpenMBVMW->openFile(uniqueTempDir.generic_string()+"/MBS_tmp.ombvx");
     connect(inlineOpenMBVMW, &OpenMBVGUI::MainWindow::fileReloaded, this, [this](){
       if(callViewAllAfterFileReloaded)
