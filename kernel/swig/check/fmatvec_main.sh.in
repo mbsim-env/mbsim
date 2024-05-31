@@ -9,6 +9,7 @@ if test -z "$MBSIM_SWIG"; then
 fi
 
 if [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
+  export PATH="$PATH:$(cygpath -u @prefix@/bin)"
   export PYTHONPATH=@abs_builddir@:@abs_builddir@/..:$(cygpath -u @prefix@/bin)
 else
   export LD_LIBRARY_PATH=@prefix@/lib:$LD_LIBRARY_PATH
