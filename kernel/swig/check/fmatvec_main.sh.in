@@ -11,9 +11,20 @@ fi
 if [ "$(expr substr $(uname -s) 1 10)" == "MINGW64_NT" ]; then
   export PATH="$PATH:$(cygpath -u @prefix@/bin)"
   export PYTHONPATH=@abs_builddir@:@abs_builddir@/..:$(cygpath -u @prefix@/bin)
+  echo "mfmf1 $PATH"
+  ls -l $(cygpath -u @prefix@/bin)
+  ls -l @abs_builddir@
+  ls -l @abs_builddir@/..
+  echo "mfmf2 $PYTHONPATH"
 else
   export LD_LIBRARY_PATH=@prefix@/lib:$LD_LIBRARY_PATH
   export PYTHONPATH=@abs_builddir@:@abs_builddir@/..:@prefix@/bin
+  echo "mfmf3 $PATH"
+  ls -l @prefix@/lib
+  ls -l @prefix@/bin
+  ls -l @abs_builddir@
+  ls -l @abs_builddir@/..
+  echo "mfmf4 $PYTHONPATH"
 fi
 # "script with  | cat > ..." is needed to avoid "Py_Initialize: can't initialize sys standard streams" when running with wine but fails on Linux :-(
 rm -f result.txt
