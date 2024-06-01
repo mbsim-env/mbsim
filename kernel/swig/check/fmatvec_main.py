@@ -1,7 +1,3 @@
-print("mfmf5")
-import sys
-print(sys.path)
-print("mfmf6")
 import mymod
 import numpy
 import sys
