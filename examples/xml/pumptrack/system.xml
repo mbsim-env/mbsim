@@ -119,19 +119,19 @@
       <inertiaTensor unit="kg*m^2">
         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <row>
-            <ele>1/4*mH*r^2</ele>
+            <ele>1/4*mH*r**2</ele>
             <ele>0</ele>
             <ele>0</ele>
           </row>
           <row>
             <ele>0</ele>
-            <ele>1/2*mH*r^2</ele>
+            <ele>1/2*mH*r**2</ele>
             <ele>0</ele>
           </row>
           <row>
             <ele>0</ele>
             <ele>0</ele>
-            <ele>1/4*mH*r^2</ele>
+            <ele>1/4*mH*r**2</ele>
           </row>
         </xmlMatrix>
       </inertiaTensor>
@@ -253,19 +253,19 @@
       <inertiaTensor unit="kg*m^2">
         <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
           <row>
-            <ele>1/4*mV*r^2</ele>
+            <ele>1/4*mV*r**2</ele>
             <ele>0</ele>
             <ele>0</ele>
           </row>
           <row>
             <ele>0</ele>
-            <ele>1/2*mV*r^2</ele>
+            <ele>1/2*mV*r**2</ele>
             <ele>0</ele>
           </row>
           <row>
             <ele>0</ele>
             <ele>0</ele>
-            <ele>1/4*mV*r^2</ele>
+            <ele>1/4*mV*r**2</ele>
           </row>
         </xmlMatrix>
       </inertiaTensor>
