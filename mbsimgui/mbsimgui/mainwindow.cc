@@ -130,34 +130,9 @@ namespace MBSimGUI {
 
     mbxmlparser=DOMParser::create(uniqueTempDir/".mbsimxml.catalog.xml");
 
-    echoView = new EchoView(this);
     fileView = new FileView;
 
     initInlineOpenMBV();
-
-    // initialize streams
-    auto f=[this](const string &s){
-      echoView->addOutputText(QString::fromStdString(s));
-    };
-    debugStreamFlag=std::make_shared<bool>(false);
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", f));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", f));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", f));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", f));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", f));
-    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("", "", [this](const string &s){
-        // call this function only every 0.25 sec
-        if(getStatusTime().elapsed()<250) return;
-        getStatusTime().restart();
-        // print to status bar
-        statusBar()->showMessage(QString::fromStdString(s));
-      }));
 
     auto referencedFilesDialog = new QDialog(this);
     auto *layout = new QVBoxLayout;
@@ -413,11 +388,37 @@ namespace MBSimGUI {
     dockEchoArea->setFeatures(dockEchoArea->features() | QDockWidget::DockWidgetVerticalTitleBar);
     dockEchoArea->setObjectName("dockWidget/echoArea");
     addDockWidget(Qt::BottomDockWidgetArea, dockEchoArea);
+    echoView = new EchoView(dockEchoArea);
     dockEchoArea->setWidget(echoView);
+
+    // initialize streams
+    auto f=[this](const string &s){
+      echoView->addOutputText(QString::fromStdString(s));
+    };
+    debugStreamFlag=std::make_shared<bool>(false);
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", f));
+    fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
+      make_shared<fmatvec::PrePostfixedStream>("", "", [this](const string &s){
+        // call this function only every 0.25 sec
+        if(getStatusTime().elapsed()<250) return;
+        getStatusTime().restart();
+        // print to status bar
+        statusBar()->showMessage(QString::fromStdString(s));
+      }));
 
     QWidget *centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
     auto *mainlayout = new QHBoxLayout;
+    mainlayout->setContentsMargins(0,0,0,0);
     centralWidget->setLayout(mainlayout);
     mainlayout->addWidget(inlineOpenMBVMW);
 
@@ -540,6 +541,10 @@ namespace MBSimGUI {
     arg.emplace_back("--hdf5RefreshDelta");
     arg.emplace_back("0");
     inlineOpenMBVMW = new OpenMBVGUI::MainWindow(arg, true);
+    // QMainWindow (base of OpenMBVGUI::MainWindow) set the window flag Qt::Window in its ctor but we use here QMainWindow as a widget
+    // -> reset the windows flag to Qt::Widget
+    inlineOpenMBVMW->setWindowFlags(Qt::Widget);
+
 
     // We cannot use the new Qt function pointer-based connection mechanism here since this seems not to work
     // on Windows if the signal and slot lives in different DLLs as it is for the following two connections.
