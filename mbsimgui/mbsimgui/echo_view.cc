@@ -46,7 +46,11 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  EchoView::EchoView(QMainWindow *parent) : QMainWindow(parent) {
+  EchoView::EchoView(QWidget *parent) : QMainWindow(parent) {
+    // QMainWindow set the window flag Qt::Window in its ctor but we use this QMainWindow as a widget
+    // -> reset the windows flag to Qt::Widget
+    setWindowFlags(Qt::Widget); // we cannot do this by : QMainWindow(parent, Qt::Widget) since QMainWindow overwrites this later on
+
     static boost::filesystem::path installPath(boost::dll::program_location().parent_path().parent_path());
 
     setIconSize(iconSize()*0.5);
