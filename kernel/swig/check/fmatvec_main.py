@@ -1,6 +1,10 @@
+import sys
+import os
+if sys.platform=="win32" and sys.version_info[1]>=8:
+  # Windows python>=3.8 no longer uses PATH to find dependent dlls in pyd file -> use add_dll_directory to find these
+  os.add_dll_directory(os.environ["PATH"].split(";")[-1])
 import mymod
 import numpy
-import sys
 
 exList=[]
 
