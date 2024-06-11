@@ -19,7 +19,9 @@ MBSimXML
 - More XML elements (with maxOccurs>1) allow now to use the Embed = Array/Pattern feature.
 
 
-
+MBSim
+-----
+- States in element "state machine" are now internal states of the dynamic system. This enables a restart of the simulation with the correct initial states when using state machines.
 
 
 Release 10.2
