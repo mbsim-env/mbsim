@@ -248,7 +248,7 @@ namespace MBSim {
       if(z0.size()!=system->getzSize()+system->getisSize())
         throwError("BoostOdeintDOS:: size of z0 does not match, must be " + std::to_string(system->getzSize()+system->getisSize()));
       BoostOdeintHelper::assign(zTemp, z0(fmatvec::RangeV(0,system->getzSize()-1)));
-      system->setcuris(z0(fmatvec::RangeV(system->getzSize(),z0.size()-1)));
+      system->setInternalState(z0(fmatvec::RangeV(system->getzSize(),z0.size()-1)));
     }
     else
       BoostOdeintHelper::assign(zTemp, system->evalz0());
