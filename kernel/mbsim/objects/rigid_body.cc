@@ -159,6 +159,8 @@ namespace MBSim {
         throwError("Generalized velocity of rotation unknown");
 
       for(unsigned int k=1; k<frame.size(); k++) {
+        if(!dynamic_cast<FixedRelativeFrame*>(frame[k]))
+          continue; // we allow to add none FixedRelativeFrame's to a RigidBody -> skip such frames here; its up to the caller which has added such none FixedRelativeFrame's to handle these propably
         if(not(static_cast<FixedRelativeFrame*>(frame[k])->getFrameOfReference()))
           static_cast<FixedRelativeFrame*>(frame[k])->setFrameOfReference(C);
       }
