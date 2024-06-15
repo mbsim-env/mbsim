@@ -53,10 +53,11 @@ namespace MBSimControl {
       void addState(const std::string &name, double val) { state.emplace_back(State(name,val)); }
       Transition& addTransition(const std::string &name, const std::string &dest, Signal *sig, double s0=0);
       void setInitialState(const std::string &name);
-      const State& getActiveState() const { return state[activeState]; }
+      const State& getActiveState() const { return state[int(curis(0))]; }
       void updateSignal() override;
       int getSignalSize() const override { return 1; }
       bool isSetValued() const override { return true; }
+      void calcisSize() override { isSize = 1; }
       void calcsvSize() override;
       void updateStopVector() override;
       void checkActive(int j) override;
@@ -77,7 +78,7 @@ namespace MBSimControl {
     private:
       std::vector<State> state;
       std::vector<Transition> transition;
-      int activeState{0};
+      std::string stateStr;
   };
 
 }

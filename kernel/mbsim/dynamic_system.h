@@ -102,11 +102,11 @@ namespace MBSim {
       virtual fmatvec::Vec& getq() { return q; };
       virtual const fmatvec::Vec& getu() const { return u; };
       virtual fmatvec::Vec& getu() { return u; };
-      void setq(const fmatvec::Vec& q_) { q = q_;}
-      void setu(const fmatvec::Vec& u_) { u = u_;}
+      void setq(const fmatvec::Vec& q_) { q = q_; }
+      void setu(const fmatvec::Vec& u_) { u = u_; }
       void setx(const fmatvec::Vec& x_) { x = x_; }
-      void setjsv(const fmatvec::VecInt& jsv_) { jsv = jsv_;}
-      void setcuris(const fmatvec::Vec& curis_) { curis = curis_;}
+      void setjsv(const fmatvec::VecInt& jsv_) { jsv = jsv_; }
+      void setInternalState(const fmatvec::Vec& internalState) { curis = internalState; nextis = internalState; }
       virtual H5::GroupBase *getPlotGroup() { return plotGroup; }
       std::shared_ptr<OpenMBV::Group> getOpenMBVGrp() override { return openMBVGrp; }
       std::shared_ptr<OpenMBV::Group> getFramesOpenMBVGrp() override { return framesOpenMBVGrp; }

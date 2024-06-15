@@ -72,7 +72,7 @@ namespace MBSimControl {
 	throwError(string("(LinearSystemAnalyzer::execute): size of z0 does not match, must be ") + to_string(system->getzSize()) +
 	    ", but is " + to_string(z0.size()) + ".");
       zEq <<= z0(RangeV(0,system->getzSize()-1));
-      system->setcuris(z0(RangeV(system->getzSize(),z0.size()-1)));
+      system->setInternalState(z0(RangeV(system->getzSize(),z0.size()-1)));
     }
 
     if(not(u0.size()))

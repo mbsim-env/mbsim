@@ -50,10 +50,10 @@ namespace MBSimControl {
   }
 
   void StateMachine::setInitialState(const std::string &name) {
-    activeState = -1;
+    curis(0) = -1;
     for(size_t j=0; j<state.size(); j++) {
       if(state[j].name==name) {
-	activeState = j;
+	curis(0) = j;
 	return;
       }
     }
@@ -87,10 +87,8 @@ namespace MBSimControl {
       e=e->getNextElementSibling();
     }
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"initialState");
-    if(e) {
-      auto name = E(e)->getText<string>();
-      setInitialState(name.substr(1,name.size()-2));
-    }
+    if(e)
+      stateStr = E(e)->getText<string>();
   }
 
   void StateMachine::init(InitStage stage, const InitConfigSet &config) {
@@ -102,26 +100,31 @@ namespace MBSimControl {
 	}
       }
     }
+    else if(stage==unknownStage) {
+      if(not stateStr.empty())
+	setInitialState(stateStr.substr(1,stateStr.size()-2));
+      nextis(0) = curis(0);
+    }
     Signal::init(stage, config);
   }
 
   void StateMachine::updateSignal() {
-    s(0) = state[activeState].val;
+    s(0) = getActiveState().val;
     upds = false;
   }
 
   void StateMachine::updateStopVector() {
-    for(size_t i=0; i<state[activeState].trans.size(); i++)
-      sv(i) = state[activeState].trans[i].sig->evalSignal()(0) - state[activeState].trans[i].s0;
-    for(size_t i=state[activeState].trans.size(); i<size_t(sv.size()); i++)
+    for(size_t i=0; i<getActiveState().trans.size(); i++)
+      sv(i) = getActiveState().trans[i].sig->evalSignal()(0) - getActiveState().trans[i].s0;
+    for(size_t i=getActiveState().trans.size(); i<size_t(sv.size()); i++)
       sv(i) = 1;
   }
 
   void StateMachine::checkActive(int j) {
     if(j==1) {
-      for(auto & tran : state[activeState].trans) {
+      for(auto & tran : getActiveState().trans) {
 	if(tran.sig->evalSignal()(0) >= tran.s0) {
-	  activeState = tran.dest;
+	  nextis(0) = tran.dest;
 	  return;
 	}
       }
@@ -129,8 +132,8 @@ namespace MBSimControl {
     else if(j==5) {
       for(int i=0; i<jsv.size(); i++) {
 	if(jsv(i)) {
-	  activeState = state[activeState].trans[i].dest;
-	  state[activeState].t0 = getTime();
+	  nextis(0) = getActiveState().trans[i].dest;
+	  state[int(nextis(0))].t0 = getTime();
 	  return;
 	}
       }
