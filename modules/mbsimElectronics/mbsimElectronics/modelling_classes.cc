@@ -88,6 +88,8 @@ namespace MBSimElectronics {
 
 
   void ElectronicComponent::addTerminal(Terminal *terminal_) {
+    if(terminal_->getName().empty())
+      throw runtime_error("A empty object name is not allowed!");
     if(getTerminal(terminal_->getName(),false)) {
       msg(Error) << "The Component " << getName() << " can only comprise one Object by the name " <<  terminal_->getName() << "!" << endl;
       assert(getTerminal(terminal_->getName(),false) == nullptr); 

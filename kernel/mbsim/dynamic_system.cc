@@ -1375,6 +1375,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::addFrame(Frame *frame_) {
+    if(frame_->getName().empty())
+      throwError("A empty object name is not allowed!");
     if (getFrame(frame_->getName(), false)) {
       throwError("DynamicSystem can only comprise one Frame by the name \"" + frame_->getName() + "\"!");
       assert(getFrame(frame_->getName(),false)==nullptr);
@@ -1384,6 +1386,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::addContour(Contour* contour_) {
+    if(contour_->getName().empty())
+      throwError("A empty object name is not allowed!");
     if (getContour(contour_->getName(), false)) {
       throwError("DynamicSystem can only comprise one Contour by the name \"" + contour_->getName() + "\"!");
       assert(getContour(contour_->getName(),false)==nullptr);
@@ -1429,6 +1433,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::addLink(Link *lnk) {
+    if(lnk->getName().empty())
+      throwError("A empty object name is not allowed!");
     if (getLink(lnk->getName(), false)) {
       throwError("DynamicSystem can only comprise one Link by the name \"" + lnk->getName() + "\"!");
       assert(getLink(lnk->getName(),false) == nullptr);
@@ -1439,6 +1445,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::addConstraint(Constraint *crt) {
+    if(crt->getName().empty())
+      throwError("A empty object name is not allowed!");
     if (getConstraint(crt->getName(), false)) {
       throwError("DynamicSystem can only comprise one Constraint by the name \"" + crt->getName() + "\"!");
       assert(getConstraint(crt->getName(),false) == nullptr);
@@ -1482,6 +1490,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::addModel(ModellingInterface *model_) {
+    if(model_->getName().empty())
+      throwError("A empty object name is not allowed!");
     if (getModel(model_->getName(), false)) {
       throwError("DynamicSystem can only comprise one model by the name \"" + model_->getName() + "\"!");
       assert(getModel(model_->getName(),false) == nullptr);
@@ -1505,6 +1515,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::addGroup(DynamicSystem *sys) {
+    if(sys->getName().empty())
+      throwError("A empty object name is not allowed!");
     if (getGroup(sys->getName(), false)) {
       throwError("DynamicSystem can only comprise one DynamicSystem by the name \"" + sys->getName() + "\"!");
       assert(getGroup(sys->getName(),false) == nullptr);
@@ -1514,6 +1526,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::addObject(Object *obj) {
+    if(obj->getName().empty())
+      throwError("A empty object name is not allowed!");
     if (getObject(obj->getName(), false)) {
       throwError("DynamicSystem can only comprise one Object by the name \"" + obj->getName() + "\"!");
       assert(getObject(obj->getName(),false) == nullptr);
@@ -1556,6 +1570,8 @@ namespace MBSim {
   }
 
   void DynamicSystem::addObserver(Observer *ele) {
+    if(ele->getName().empty())
+      throwError("A empty object name is not allowed!");
     if (getObserver(ele->getName(), false)) {
       throwError("DynamicSystem can only comprise one Observer by the name \"" + ele->getName() + "\"!");
       assert(getObserver(ele->getName(),false) == nullptr);

@@ -120,6 +120,8 @@ namespace MBSim {
   }
 
   void Body::addContour(Contour* contour_) {
+    if(contour_->getName().empty())
+      throwError("A empty object name is not allowed!");
     if(getContour(contour_->getName(),false)) { //Contourname exists already
       throwError("(Body::addContour): The body can only comprise one contour by the name \""+contour_->getName()+"\"!");
       assert(getContour(contour_->getName(),false)==nullptr);
@@ -129,6 +131,8 @@ namespace MBSim {
   }
 
   void Body::addFrame(Frame* frame_) {
+    if(frame_->getName().empty())
+      throwError("A empty object name is not allowed!");
     if(getFrame(frame_->getName(),false)) { //Contourname exists already
       throwError("(Body::addFrame): The body can only comprise one frame by the name \""+frame_->getName()+"\"!");
       assert(getFrame(frame_->getName(),false)==nullptr);
