@@ -7,12 +7,13 @@
       <matrixParameter name="m">[1/3,5;6,8]</matrixParameter>
       <stringParameter name="s">'mystring'</stringParameter>
     </Parameter>
-    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" xmlns:c="http://www.mbsim-env.de/MBSimControl" name="MBS">
       <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
       <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+      <plotFeatureRecursive value="c:signal">true</plotFeatureRecursive>
       <frames>
         <FixedRelativeFrame name="I4">
           <relativePosition>[2;0;0]</relativePosition>
@@ -136,6 +137,54 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC/>
         </RigidBody>
+        <RigidBody name="Box5">
+          <generalizedInitialPosition>[0.1;0.2;0.5;0.6]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0.3;0.4;0.7;0.8]</generalizedInitialVelocity>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <stateDependentTranslation>
+            <TransKinematicFunction xmlns="http://mypytest"/>
+          </stateDependentTranslation>
+          <stateDependentRotation>
+            <RotKinematicFunction xmlns="http://mypytest"/>
+          </stateDependentRotation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[0;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="Box6">
+          <generalizedInitialPosition>[0.1;0.2;0.5;0.6]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0.3;0.4;0.7;0.8]</generalizedInitialVelocity>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <generalTranslation>
+            <TransTimeKinematicFunction xmlns="http://mypytest"/>
+          </generalTranslation>
+          <generalRotation>
+            <RotTimeKinematicFunction xmlns="http://mypytest"/>
+          </generalRotation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[0;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
       </objects>
       <links>
         <SpringDamper name="Spring0">
@@ -189,6 +238,11 @@
             <type>'polyline'</type>
           </enableOpenMBV>
         </SpringDamper>
+        <c:FunctionSensor name="funcsen">
+          <c:function>
+            <PySignalFunction xmlns="http://mypytest"/>
+          </c:function>
+        </c:FunctionSensor>
       </links>
       <constraints/>
       <observers/>

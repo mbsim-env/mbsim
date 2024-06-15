@@ -2,14 +2,22 @@
 
 import math
 import OpenMBV
+import numpy
 
 # import mbsim module
 import mbsim
+
+import sys
+import os
+sys.path.append(os.path.dirname(mbsim.__file__)+"/../share/mbxmlutils/python")
+import mbxmlutils
 
 
 
 # XML namespace of this module (prefixed with { and postfixed with })
 NS="{http://mypytest}"
+
+# NOTE that not _ is allowed in any class name!
 
 
 
@@ -88,13 +96,13 @@ class PySpringDamperPyScriptInit(mbsim.FixedFrameLink):
       WrOFromPoint=self.frame[0].evalPosition()
       WrOToPoint  =self.frame[1].evalPosition()
       data=[]
-      data.append(self.getTime());
-      data.append(WrOFromPoint[0]+1);
-      data.append(WrOFromPoint[1]);
-      data.append(WrOFromPoint[2]);
-      data.append(WrOToPoint[0]+1);
-      data.append(WrOToPoint[1]);
-      data.append(WrOToPoint[2]);
+      data.append(self.getTime())
+      data.append(WrOFromPoint[0]+1)
+      data.append(WrOFromPoint[1])
+      data.append(WrOFromPoint[2])
+      data.append(WrOToPoint[0]+1)
+      data.append(WrOToPoint[1])
+      data.append(WrOToPoint[2])
       data.append(0.5)
       self.coilspringOpenMBV.append(data)
     super(PySpringDamperPyScriptInit, self).plot()
@@ -136,6 +144,130 @@ class PyLinearSpringDamper(mbsim.Function_d_d_d):
   def __call__(self, s, sd):
     return 100*s + 0.2*sd
 
+class PySignalFunction(mbsim.Function_VecV_d):
+  def __init__(self):
+    super(PySignalFunction, self).__init__()
+
+  def __call__(self, t):
+    return numpy.array([2.0*t,5*t])
+
+  def getRetSize(self):
+    return (2,1)
+
+class TransKinematicFunction(mbsim.Function_Vec3_VecV):
+  def __init__(self):
+    super(TransKinematicFunction, self).__init__()
+
+  def getArgSize(self):
+    return 2
+
+  def __call__(self, q):
+    return numpy.array([q[0],
+                        q[1],
+                        0   ])
+
+  def parDer(self, q):
+    return numpy.array([[1,0],
+                        [0,1],
+                        [0,0]])
+
+  def parDerDirDer(self, qd, q):
+    return numpy.array([[0,0],
+                        [0,0],
+                        [0,0]])
+
+class RotKinematicFunction(mbsim.Function_RotMat3_VecV):
+  def __init__(self):
+    super(RotKinematicFunction, self).__init__()
+
+  def getArgSize(self):
+    return 2
+
+  def __call__(self, q):
+    return mbxmlutils.rotateAboutX(q[0]) @ mbxmlutils.rotateAboutY(q[1])
+
+  def parDer(self, q):
+    return numpy.array([[1,0],
+                        [0,1],
+                        [0,0]])
+
+  def parDerDirDer(self, qd, q):
+    return numpy.array([[0,0],
+                        [0,0],
+                        [0,0]])
+
+class TransTimeKinematicFunction(mbsim.Function_Vec3_VecV_d):
+  def __init__(self):
+    super(TransTimeKinematicFunction, self).__init__()
+
+  def getArg1Size(self):
+    return 2
+
+  def __call__(self, q, t):
+    return numpy.array([q[0],
+                        q[1],
+                        t   ])
+
+  def parDer1(self, q, t):
+    return numpy.array([[1, 0],
+                        [0, 1],
+                        [0, 0]])
+
+  def parDer2(self, q, t):
+    return numpy.array([0,
+                        0,
+                        1])
+
+  def parDer2ParDer2(self, q, t):
+    return numpy.array([0,
+                        0,
+                        0])
+
+  def parDer1ParDer2(self, q, t):
+    return numpy.array([[0, 0],
+                        [0, 0],
+                        [0, 0]])
+
+  def parDer1DirDer1(self, qd, q, t):
+    return numpy.array([[0, 0],
+                        [0, 0],
+                        [0, 0]])
+
+class RotTimeKinematicFunction(mbsim.Function_RotMat3_VecV_d):
+  def __init__(self):
+    super(RotTimeKinematicFunction, self).__init__()
+
+  def getArg1Size(self):
+    return 2
+
+  def __call__(self, q, t):
+    return mbxmlutils.rotateAboutX(q[0]) @ mbxmlutils.rotateAboutY(q[1]) @ mbxmlutils.rotateAboutY(t)
+
+  def parDer1(self, q, t):
+    return numpy.array([[1, 0],
+                        [0, 1],
+                        [0, 0]])
+
+  def parDer2(self, q, t):
+    return numpy.array([0,
+                        0,
+                        1])
+
+  def parDer2ParDer2(self, q, t):
+    return numpy.array([0,
+                        0,
+                        0])
+
+  def parDer1ParDer2(self, q, t):
+    return numpy.array([[0, 0],
+                        [0, 0],
+                        [0, 0]])
+
+  def parDer1DirDer1(self, qd, q, t):
+    return numpy.array([[0, 0],
+                        [0, 0],
+                        [0, 0]])
+
 
 
 # register the classes as a XML name (this makes the class usable from XML)
@@ -143,6 +275,11 @@ mbsim.registerClass(PySpringDamperXMLInit)
 mbsim.registerClass(PySpringDamperPyScriptInit)
 mbsim.registerClass(PySpringDamperEmpty)
 mbsim.registerClass(PyLinearSpringDamper)
+mbsim.registerClass(PySignalFunction)
+mbsim.registerClass(TransKinematicFunction)
+mbsim.registerClass(RotKinematicFunction)
+mbsim.registerClass(TransTimeKinematicFunction)
+mbsim.registerClass(RotTimeKinematicFunction)
 
 
 

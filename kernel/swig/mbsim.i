@@ -5,6 +5,7 @@
 // include the general mbsim SWIG configuration (used by all MBSim modules)
 %import fmatvec.i
 %include "mbsim_include.i"
+%template() std::pair<int,int>;
 
 // includes needed in the generated swig c++ code
 %{
@@ -39,15 +40,12 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 
 // Define a SWIG macro for MBSim::Function<Ret(Arg)> with also renames it to allowed SWIG name.
 // This definition must be keept in sync with the definition in mbsim/functions/function.h
-%define FUNCTION1(Ret, Arg, namePostfix)
+%define FUNCTION1(Ret, Arg, namePostfix, DRetDArg, DRetDDir, DDRetDDArg)
 %rename(Function_##namePostfix) MBSim::Function<Ret(Arg)>;
 class MBSim::Function<Ret(Arg)> : public MBSim::FunctionBase, virtual public fmatvec::Atom {
   public:
     Function();
     void initializeUsingXML(xercesc::DOMElement *element);
-    typedef typename Der<Ret, Arg>::type DRetDArg;
-    typedef typename DirDer<Ret, Arg>::type DRetDDir;
-    typedef typename Der<DRetDArg, Arg>::type DDRetDDArg;
     enum { retSize1 = StaticSize<Ret>::size1, retSize2 = StaticSize<Ret>::size2 };
     static constexpr int argSize = StaticSize<Arg>::size1;
     virtual std::pair<int, int> getRetSize() const;
@@ -63,40 +61,34 @@ class MBSim::Function<Ret(Arg)> : public MBSim::FunctionBase, virtual public fma
 %enddef
 
 // instantiate MBSim::Function<Ret(Arg)> for different types
-FUNCTION1(double          , double       ,   d_d)
-FUNCTION1(double          , int          ,   d_int)
-FUNCTION1(fmatvec::MatV   , fmatvec::VecV,   MatV_VecV)
-FUNCTION1(fmatvec::RotMat3, double       ,   RotMat3_d)
-FUNCTION1(fmatvec::RotMat3, fmatvec::VecV,   RotMat3_VecV)
-FUNCTION1(fmatvec::SqrMat , fmatvec::Vec ,   SqrMat_Vec)
-FUNCTION1(fmatvec::SqrMatV, double       ,   SqrMatV_d)
-FUNCTION1(fmatvec::SymMatV, double       ,   SymMatV_d)
-FUNCTION1(fmatvec::Vec1   , double       ,   Vec1_d)
-FUNCTION1(fmatvec::Vec2   , double       ,   Vec2_d)
-FUNCTION1(fmatvec::Vec3   , double       ,   Vec3_d)
-FUNCTION1(fmatvec::Vec3   , fmatvec::Vec2,   Vec3_Vec2)
-FUNCTION1(fmatvec::Vec3   , fmatvec::VecV,   Vec3_VecV)
-FUNCTION1(fmatvec::Vec    , fmatvec::Vec ,   Vec_Vec)
-FUNCTION1(fmatvec::VecV   , double       ,   VecV_d)
-FUNCTION1(fmatvec::VecV   , fmatvec::VecV,   VecV_VecV)
-FUNCTION1(int             , fmatvec::Vec ,   int_Vec)
-FUNCTION1(fmatvec::Vec    , double       ,   Vec_d)
+//        Ret             , Arg          , namePostfix , DRetDArg          , DRetDDir        , DDRetDDArg
+FUNCTION1(double          , double       , d_d         , double            , double          , double            )
+FUNCTION1(double          , int          , d_int       , fmatvec::ErrorType, double          , fmatvec::ErrorType) // DRetDDir is wrong but defined like this in fmatvec
+FUNCTION1(fmatvec::MatV   , fmatvec::VecV, MatV_VecV   , fmatvec::ErrorType, fmatvec::MatV   , fmatvec::ErrorType)
+FUNCTION1(fmatvec::RotMat3, double       , RotMat3_d   , fmatvec::Vec3     , fmatvec::Vec3   , fmatvec::Vec3     )
+FUNCTION1(fmatvec::RotMat3, fmatvec::VecV, RotMat3_VecV, fmatvec::Mat3xV   , fmatvec::Vec3   , fmatvec::ErrorType)
+FUNCTION1(fmatvec::SqrMat , fmatvec::Vec , SqrMat_Vec  , fmatvec::ErrorType, fmatvec::SqrMat , fmatvec::ErrorType)
+FUNCTION1(fmatvec::SqrMatV, double       , SqrMatV_d   , fmatvec::SqrMatV  , fmatvec::SqrMatV, fmatvec::SqrMatV  )
+FUNCTION1(fmatvec::SymMatV, double       , SymMatV_d   , fmatvec::SymMatV  , fmatvec::SymMatV, fmatvec::SymMatV  )
+FUNCTION1(fmatvec::Vec1   , double       , Vec1_d      , fmatvec::Vec1     , fmatvec::Vec1   , fmatvec::Vec1     )
+FUNCTION1(fmatvec::Vec2   , double       , Vec2_d      , fmatvec::Vec2     , fmatvec::Vec2   , fmatvec::Vec2     )
+FUNCTION1(fmatvec::Vec3   , double       , Vec3_d      , fmatvec::Vec3     , fmatvec::Vec3   , fmatvec::Vec3     )
+FUNCTION1(fmatvec::Vec3   , fmatvec::Vec2, Vec3_Vec2   , fmatvec::Mat3x2   , fmatvec::Vec3   , fmatvec::ErrorType)
+FUNCTION1(fmatvec::Vec3   , fmatvec::VecV, Vec3_VecV   , fmatvec::Mat3xV   , fmatvec::Vec3   , fmatvec::ErrorType)
+FUNCTION1(fmatvec::Vec    , fmatvec::Vec , Vec_Vec     , fmatvec::Mat      , fmatvec::Vec    , fmatvec::ErrorType)
+FUNCTION1(fmatvec::VecV   , double       , VecV_d      , fmatvec::VecV     , fmatvec::VecV   , fmatvec::VecV     )
+FUNCTION1(fmatvec::VecV   , fmatvec::VecV, VecV_VecV   , fmatvec::MatV     , fmatvec::VecV   , fmatvec::ErrorType)
+FUNCTION1(int             , fmatvec::Vec , int_Vec     , fmatvec::ErrorType, int             , fmatvec::ErrorType) // DRetDDir is wrong but defined like this in fmatvec
+FUNCTION1(fmatvec::Vec    , double       , Vec_d       , fmatvec::Vec      , fmatvec::Vec    , fmatvec::Vec      )
 
 // Define a SWIG macro for MBSim::Function<Ret(Arg1,Arg2)> with also renames it to allowed SWIG name.
 // This definition must be keept in sync with the definition in mbsim/functions/function.h
-%define FUNCTION2(Ret, Arg1, Arg2, namePostfix)
+%define FUNCTION2(Ret, Arg1, Arg2, namePostfix, DRetDArg1, DRetDArg2, DDRetDDArg1, DDRetDDArg2, DDRetDArg1DArg2, DRetDDir1, DRetDDir2)
 %rename(Function_##namePostfix) MBSim::Function<Ret(Arg1,Arg2)>;
 class MBSim::Function<Ret(Arg1, Arg2)> : public MBSim::FunctionBase, virtual public fmatvec::Atom {
   public:
     Function();
     void initializeUsingXML(xercesc::DOMElement *element);
-    typedef typename Der<Ret, Arg1>::type DRetDArg1;
-    typedef typename Der<Ret, Arg2>::type DRetDArg2;
-    typedef typename DirDer<Ret, Arg1>::type DRetDDir1;
-    typedef typename DirDer<Ret, Arg2>::type DRetDDir2;
-    typedef typename Der<DRetDArg1, Arg1>::type DDRetDDArg1;
-    typedef typename Der<DRetDArg2, Arg2>::type DDRetDDArg2;
-    typedef typename Der<DRetDArg1, Arg2>::type DDRetDArg1DArg2;
     enum { retSize1 = StaticSize<Ret>::size1, retSize2 = StaticSize<Ret>::size2 };
     static constexpr int arg1Size = StaticSize<Arg1>::size1;
     static constexpr int arg2Size = StaticSize<Arg2>::size1;
@@ -124,13 +116,14 @@ class MBSim::Function<Ret(Arg1, Arg2)> : public MBSim::FunctionBase, virtual pub
 %enddef
 
 // instantiate MBSim::Function<Ret(Arg1,Arg2)> for different types
-FUNCTION2(double          , double       , double       ,   d_d_d)
-FUNCTION2(double          , fmatvec::Vec , fmatvec::Vec ,   d_Vec_Vec)
-FUNCTION2(fmatvec::RotMat3, fmatvec::VecV, double       ,   RotMat3_VecV_d)
-FUNCTION2(fmatvec::Vec3   , fmatvec::VecV, double       ,   Vec3_VecV_d)
-FUNCTION2(fmatvec::Vec    , fmatvec::Vec , double       ,   Vec_Vec_d)
-FUNCTION2(fmatvec::VecV   , fmatvec::VecV, double       ,   VecV_VecV_d)
-FUNCTION2(fmatvec::VecV   , fmatvec::VecV, fmatvec::VecV,   VecV_VecV_VecV)
+//        Ret             , Arg1         , Arg2         , namePostfix   , DRetDArg1      , DRetDArg2      , DDRetDDArg1       , DDRetDDArg2       , DDRetDArg1DArg2   , DRetDDir1    , DRetDDir2
+FUNCTION2(double          , double       , double       , d_d_d         , double         , double         , double            , double            , double            , double       , double       )
+FUNCTION2(double          , fmatvec::Vec , fmatvec::Vec , d_Vec_Vec     , fmatvec::RowVec, fmatvec::RowVec, fmatvec::ErrorType, fmatvec::ErrorType, fmatvec::ErrorType, double       , double       )
+FUNCTION2(fmatvec::RotMat3, fmatvec::VecV, double       , RotMat3_VecV_d, fmatvec::Mat3xV, fmatvec::Vec3  , fmatvec::ErrorType, fmatvec::Vec3     , fmatvec::Mat3xV   , fmatvec::Vec3, fmatvec::Vec3)
+FUNCTION2(fmatvec::Vec3   , fmatvec::VecV, double       , Vec3_VecV_d   , fmatvec::Mat3xV, fmatvec::Vec3  , fmatvec::ErrorType, fmatvec::Vec3     , fmatvec::Mat3xV   , fmatvec::Vec3, fmatvec::Vec3)
+FUNCTION2(fmatvec::Vec    , fmatvec::Vec , double       , Vec_Vec_d     , fmatvec::Mat   , fmatvec::Vec   , fmatvec::ErrorType, fmatvec::Vec      , fmatvec::Mat      , fmatvec::Vec , fmatvec::Vec )
+FUNCTION2(fmatvec::VecV   , fmatvec::VecV, double       , VecV_VecV_d   , fmatvec::MatV  , fmatvec::VecV  , fmatvec::ErrorType, fmatvec::VecV     , fmatvec::MatV     , fmatvec::VecV, fmatvec::VecV)
+FUNCTION2(fmatvec::VecV   , fmatvec::VecV, fmatvec::VecV, VecV_VecV_VecV, fmatvec::MatV  , fmatvec::MatV  , fmatvec::ErrorType, fmatvec::ErrorType, fmatvec::ErrorType, fmatvec::VecV, fmatvec::VecV)
 
 // wrap the following classes
 %include "mbsim/numerics/functions/criteria_functions.h"
