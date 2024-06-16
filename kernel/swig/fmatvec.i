@@ -914,7 +914,11 @@ namespace fmatvec {
                                  const fmatvec::Vector, const fmatvec::RowVector {
   SwigValueWrapper<$1_basetype> $result_wrapper;
   _typemapInVecValue<$1_basetype>($result_wrapper, $1, $1_descriptor);
-  $result <<= static_cast<$1_basetype&&>($result_wrapper);
+  #if SWIG_VERSION >= 0x040100
+    $result <<= static_cast<$1_basetype&&>($result_wrapper);
+  #else
+    $result <<= static_cast<$1_basetype&>($result_wrapper);
+  #endif
 }
 
 //%typemap(directorout, noblock=1) const fmatvec::Vector&, const fmatvec::RowVector& ,
@@ -1026,7 +1030,11 @@ namespace fmatvec {
                                  const fmatvec::Matrix, const fmatvec::SquareMatrix {
   SwigValueWrapper<$1_basetype> $result_wrapper;
   _typemapInMatValue<$1_basetype>($result_wrapper, $1, $1_descriptor);
-  $result <<= static_cast<$1_basetype&&>($result_wrapper);
+  #if SWIG_VERSION >= 0x040100
+    $result <<= static_cast<$1_basetype&&>($result_wrapper);
+  #else
+    $result <<= static_cast<$1_basetype&>($result_wrapper);
+  #endif
 }
 
 //%typemap(directorout, noblock=1) const fmatvec::Matrix&, const fmatvec::SqaureMatrix& ,
