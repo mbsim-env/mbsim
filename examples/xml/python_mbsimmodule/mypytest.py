@@ -6,6 +6,7 @@ import numpy
 
 # import mbsim module
 import mbsim
+import fmatvec
 
 import sys
 import os

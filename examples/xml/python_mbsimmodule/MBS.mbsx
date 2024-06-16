@@ -22,7 +22,7 @@
       <contours/>
       <groups/>
       <objects>
-        <RigidBody name="Box0">
+        <RigidBody name="BoxRef">
           <generalizedInitialPosition>[0.2]</generalizedInitialPosition>
           <generalizedInitialVelocity>[0]</generalizedInitialVelocity>
           <frameOfReference ref="../Frame[I]"/>
@@ -137,6 +137,30 @@
           </openMBVRigidBody>
           <enableOpenMBVFrameC/>
         </RigidBody>
+        <RigidBody name="Box5Ref">
+          <generalizedInitialPosition>[0.1;0.2;0.5;0.6]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0.3;0.4;0.7;0.8]</generalizedInitialVelocity>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongAxesXY/>
+          </stateDependentTranslation>
+          <stateDependentRotation>
+            <RotationAboutAxesXY/>
+          </stateDependentRotation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[0;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
         <RigidBody name="Box5">
           <generalizedInitialPosition>[0.1;0.2;0.5;0.6]</generalizedInitialPosition>
           <generalizedInitialVelocity>[0.3;0.4;0.7;0.8]</generalizedInitialVelocity>
@@ -148,6 +172,38 @@
           <stateDependentRotation>
             <RotKinematicFunction xmlns="http://mypytest"/>
           </stateDependentRotation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Sphere xmlns="http://www.mbsim-env.de/OpenMBV" name="dummy">
+              <transparency unit="-">0.3</transparency>
+              <initialTranslation>[0;0;0]</initialTranslation>
+              <initialRotation>[0;0;0]</initialRotation>
+              <scaleFactor unit="-">1</scaleFactor>
+              <radius unit="m">0.1</radius>
+            </Sphere>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="Box6Ref">
+          <generalizedInitialPosition>[0.1;0.2;0.5;0.6]</generalizedInitialPosition>
+          <generalizedInitialVelocity>[0.3;0.4;0.7;0.8]</generalizedInitialVelocity>
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">[0.01,0,0;0,0.01,0;0,0,0.01]</inertiaTensor>
+          <generalTranslation>
+            <SymbolicFunction>
+              <definition arg1="q" arg1Dim="2" arg2="t">
+                [q(1);q(2);t]
+              </definition>
+            </SymbolicFunction>
+          </generalTranslation>
+          <generalRotation>
+            <SymbolicFunction>
+              <definition arg1="q" arg1Dim="2" arg2="t">
+                rotateAboutX(q(1)) * rotateAboutY(q(2)) * rotateAboutY(t)
+              </definition>
+            </SymbolicFunction>
+          </generalRotation>
           <frames/>
           <contours/>
           <openMBVRigidBody>
@@ -187,8 +243,8 @@
         </RigidBody>
       </objects>
       <links>
-        <SpringDamper name="Spring0">
-          <connect ref1="../Frame[I]" ref2="../Object[Box0]/Frame[C]"/>
+        <SpringDamper name="SpringRef">
+          <connect ref1="../Frame[I]" ref2="../Object[BoxRef]/Frame[C]"/>
           <forceFunction>
             <LinearSpringDamperForce>
               <stiffnessCoefficient>3*c</stiffnessCoefficient>
@@ -238,6 +294,15 @@
             <type>'polyline'</type>
           </enableOpenMBV>
         </SpringDamper>
+        <c:FunctionSensor name="funcsenRef">
+          <c:function>
+            <SymbolicFunction>
+              <definition arg1="t">
+                [2.0*t;5*t]
+              </definition>
+            </SymbolicFunction>
+          </c:function>
+        </c:FunctionSensor>
         <c:FunctionSensor name="funcsen">
           <c:function>
             <PySignalFunction xmlns="http://mypytest"/>

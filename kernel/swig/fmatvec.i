@@ -834,16 +834,18 @@ namespace fmatvec {
 
 %typemap(typecheck, noblock=1, precedence=6)       fmatvec::Vector ,       fmatvec::RowVector  ,
                                              const fmatvec::Vector , const fmatvec::RowVector  ,
+                                                   fmatvec::Vector&,       fmatvec::RowVector& ,
                                              const fmatvec::Vector&, const fmatvec::RowVector& ,
                                                    fmatvec::Vector*,       fmatvec::RowVector* ,
-                                                   fmatvec::Vector&,       fmatvec::RowVector& {
+                                             const fmatvec::Vector*, const fmatvec::RowVector* {
   $1 = _typemapChecktypeVec<$1_basetype>($input, $1_descriptor);
 }
 
 // function return value: copy memory from fmatvec $1 to PyObject $result
 %typemap(out   , noblock=1)       fmatvec::Vector ,       fmatvec::RowVector  ,
                             const fmatvec::Vector , const fmatvec::RowVector  ,
-                            const fmatvec::Vector&, const fmatvec::RowVector& {
+                            const fmatvec::Vector&, const fmatvec::RowVector& ,
+                            const fmatvec::Vector*, const fmatvec::RowVector* {
   try {
     _typemapOutVecOwnMemory<$1_basetype>($1, $result);
   }
@@ -861,6 +863,7 @@ namespace fmatvec {
 
 // local fmatvec variable used for in/out function parameter
 %typemap(arginit, noblock=1)       fmatvec::Vector*,       fmatvec::RowVector* ,
+                             const fmatvec::Vector*, const fmatvec::RowVector* ,
                                    fmatvec::Vector&,       fmatvec::RowVector& ,
                              const fmatvec::Vector&, const fmatvec::RowVector& {
   $1_basetype localVar$argnum;
@@ -882,6 +885,7 @@ namespace fmatvec {
 
 // function in/out (and const reference) parameter value: copy memory from PyObject $input to fmatvec localVar$argnum
 %typemap(in    , noblock=1)       fmatvec::Vector*,       fmatvec::RowVector* ,
+                            const fmatvec::Vector*, const fmatvec::RowVector* ,
                                   fmatvec::Vector&,       fmatvec::RowVector& ,
                             const fmatvec::Vector&, const fmatvec::RowVector& {
   try {
@@ -893,6 +897,7 @@ namespace fmatvec {
 // no argout required for function in parameter
 %typemap(argout, noblock=1)       fmatvec::Vector ,       fmatvec::RowVector  ,
                             const fmatvec::Vector , const fmatvec::RowVector  ,
+                            const fmatvec::Vector*, const fmatvec::RowVector* ,
                             const fmatvec::Vector&, const fmatvec::RowVector& {
 }
 
@@ -912,26 +917,28 @@ namespace fmatvec {
   $result <<= static_cast<$1_basetype&&>($result_wrapper);
 }
 
-%typemap(directorout, noblock=1) const fmatvec::Vector&, const fmatvec::RowVector& {
-  throw std::runtime_error("A director of a member function returning a const reference fmatvec::Vector is currently not implemented!");
-  // _typemapInVecPtr<$1_basetype>($result, $1, $1_descriptor, localVar$argnum);
-  // mfmf may be used but localVar$argnum must be a member varialbe of the corresponding swig director class
-}
+//%typemap(directorout, noblock=1) const fmatvec::Vector&, const fmatvec::RowVector& ,
+//                                       fmatvec::Vector&,       fmatvec::RowVector& ,
+//                                 const fmatvec::Vector*, const fmatvec::RowVector* ,
+//                                       fmatvec::Vector*,       fmatvec::RowVector* {
+//  _typemapInVecPtr<$1_basetype>($result, $1, $1_descriptor, localVar$argnum);
+//  may be used but localVar$argnum must be a member varialbe of the corresponding swig director class
+//}
 
 %typemap(directorin, noblock=1)       fmatvec::Vector ,       fmatvec::RowVector  ,
                                 const fmatvec::Vector , const fmatvec::RowVector  ,
+                                const fmatvec::Vector*, const fmatvec::RowVector* ,
                                 const fmatvec::Vector&, const fmatvec::RowVector& {
   PyObject *$input_pyo;
   _typemapOutVecOwnMemory<$1_basetype>($1, $input_pyo);
   $input = $input_pyo;
 }
 
-%typemap(directorin, noblock=1) fmatvec::Vector*,       fmatvec::RowVector* ,
-                                fmatvec::Vector&,       fmatvec::RowVector& {
-  PyObject *$input_pyo;
-  _typemapOutVecShareMemory<$1_basetype>(&$1, $input_pyo);
-  $input = $input_pyo;
-}
+//%typemap(directorin, noblock=1) fmatvec::Vector*,       fmatvec::RowVector* ,
+//                                fmatvec::Vector&,       fmatvec::RowVector& {
+// WE MUST NOT WRAP this to a numpy array since it is used especially in updateXRef(Vec &xParent, int j) to reference another vector
+// using x.ref(xParent, I) which is not possible using a numpy array. Hence we keep this a SwigPyObject in python.
+//}
 
 
 
@@ -939,16 +946,18 @@ namespace fmatvec {
 
 %typemap(typecheck, noblock=1, precedence=6)       fmatvec::Matrix ,       fmatvec::SquareMatrix  ,
                                              const fmatvec::Matrix , const fmatvec::SquareMatrix  ,
+                                                   fmatvec::Matrix&,       fmatvec::SquareMatrix& ,
                                              const fmatvec::Matrix&, const fmatvec::SquareMatrix& ,
                                                    fmatvec::Matrix*,       fmatvec::SquareMatrix* ,
-                                                   fmatvec::Matrix&,       fmatvec::SquareMatrix& {
+                                             const fmatvec::Matrix*, const fmatvec::SquareMatrix* {
   $1 = _typemapChecktypeMat<$1_basetype>($input, $1_descriptor);
 }
 
 // function return value: copy memory from fmatvec $1 to PyObject $result
 %typemap(out   , noblock=1)       fmatvec::Matrix ,       fmatvec::SquareMatrix  ,
                             const fmatvec::Matrix , const fmatvec::SquareMatrix  ,
-                            const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
+                            const fmatvec::Matrix&, const fmatvec::SquareMatrix& ,
+                            const fmatvec::Matrix*, const fmatvec::SquareMatrix* {
   try {
     _typemapOutMatOwnMemory<$1_basetype>($1, $result);
   }
@@ -966,6 +975,7 @@ namespace fmatvec {
 
 // local fmatvec variable used for in/out function parameter
 %typemap(arginit, noblock=1)       fmatvec::Matrix*,       fmatvec::SquareMatrix* ,
+                             const fmatvec::Matrix*, const fmatvec::SquareMatrix* ,
                                    fmatvec::Matrix&,       fmatvec::SquareMatrix& ,
                              const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
   $1_basetype localVar$argnum;
@@ -987,6 +997,7 @@ namespace fmatvec {
 
 // function in/out (and const reference) parameter value: copy memory from PyObject $input to fmatvec localVar$argnum
 %typemap(in    , noblock=1)       fmatvec::Matrix*,       fmatvec::SquareMatrix* ,
+                            const fmatvec::Matrix*, const fmatvec::SquareMatrix* ,
                                   fmatvec::Matrix&,       fmatvec::SquareMatrix& ,
                             const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
   try {
@@ -998,6 +1009,7 @@ namespace fmatvec {
 // no argout required for function in parameter
 %typemap(argout, noblock=1)       fmatvec::Matrix ,       fmatvec::SquareMatrix  ,
                             const fmatvec::Matrix , const fmatvec::SquareMatrix  ,
+                            const fmatvec::Matrix*, const fmatvec::SquareMatrix* ,
                             const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
 }
 
@@ -1017,23 +1029,25 @@ namespace fmatvec {
   $result <<= static_cast<$1_basetype&&>($result_wrapper);
 }
 
-%typemap(directorout, noblock=1) const fmatvec::Matrix&, const fmatvec::SqaureMatrix& {
-  throw std::runtime_error("A director of a member function returning a const reference fmatvec::Matrix is currently not implemented!");
-  // _typemapInMatPtr<$1_basetype>($result, $1, $1_descriptor, localVar$argnum);
-  // mfmf may be used but localVar$argnum must be a member varialbe of the corresponding swig director class
-}
+//%typemap(directorout, noblock=1) const fmatvec::Matrix&, const fmatvec::SqaureMatrix& ,
+//                                       fmatvec::Matrix&,       fmatvec::SqaureMatrix& ,
+//                                 const fmatvec::Matrix*, const fmatvec::SqaureMatrix* ,
+//                                       fmatvec::Matrix*,       fmatvec::SqaureMatrix* {
+//  _typemapInMatPtr<$1_basetype>($result, $1, $1_descriptor, localVar$argnum);
+//  may be used but localVar$argnum must be a member varialbe of the corresponding swig director class
+//}
 
 %typemap(directorin, noblock=1)       fmatvec::Matrix ,       fmatvec::SquareMatrix  ,
                                 const fmatvec::Matrix , const fmatvec::SquareMatrix  ,
+                                const fmatvec::Matrix*, const fmatvec::SquareMatrix* ,
                                 const fmatvec::Matrix&, const fmatvec::SquareMatrix& {
   PyObject *$input_pyo;
   _typemapOutMatOwnMemory<$1_basetype>($1, $input_pyo);
   $input = $input_pyo;
 }
 
-%typemap(directorin, noblock=1) fmatvec::Matrix*,       fmatvec::SquareMatrix* ,
-                                fmatvec::Matrix&,       fmatvec::SquareMatrix& {
-  PyObject *$input_pyo;
-  _typemapOutMatShareMemory<$1_basetype>(&$1, $input_pyo);
-  $input = $input_pyo;
-}
+//%typemap(directorin, noblock=1) fmatvec::Matrix*,       fmatvec::SquareMatrix* ,
+//                                fmatvec::Matrix&,       fmatvec::SquareMatrix& {
+// WE MUST NOT WRAP this to a numpy array since it is used especially in updateXRef(Mat &xParent, int j) to reference another matrix
+// using x.ref(xParent, I, J) which is not possible using a numpy array. Hence we keep this a SwigPyObject in python.
+//}
