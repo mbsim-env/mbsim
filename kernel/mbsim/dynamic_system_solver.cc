@@ -64,13 +64,21 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DynamicSystemSolver)
 
+  class ConstraintResiduum : public Function<fmatvec::Vec(fmatvec::Vec)> {
+    public:
+      ConstraintResiduum(DynamicSystemSolver *dss_) : dss(dss_) {}
+      fmatvec::Vec operator()(const fmatvec::Vec &la) override;
+    private:
+      DynamicSystemSolver *dss;
+  };
+
   Vec DynamicSystemSolver::Residuum::operator()(const Vec &z) {
     sys->setState(z);
     sys->resetUpToDate();
     return sys->evalzd();
   }
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), tolProj(1e-12), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), solveDirectly(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), smoothSolver(direct), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), tolProj(1e-12), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), useSmoothSolver(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -347,6 +355,30 @@ namespace MBSim {
         updateresRef(resParent);
       updaterFactorRef(rFactorParent);
 
+      if (smoothSolver == directNonlinear || contactSolver == directNonlinear) {
+        // allocate residum function and newton solver for directNonlinear solver
+        constraintResiduum.reset(new ConstraintResiduum(this));
+        nonlinearConstraintNewtonSolver.reset(new MultiDimNewtonMethod(constraintResiduum.get()));
+        nonlinearConstraintNewtonSolver->setMaximumNumberOfIterations(ds->getMaxIter());
+        nonlinearConstraintNewtonSolver->setTolerance(ds->getLocalSolverTolerance());
+        nonlinearConstraintNewtonSolver->setLinearAlgebra(1); // use slvLS as linear solver
+      }
+
+      // smooth solver specific settings
+      msg(Debug) << "  use smooth solver \'" << getSolverInfo() << "\' for smooth situations" << endl;
+      if (smoothSolver == GaussSeidel)
+        solveSmooth_ = &DynamicSystemSolver::solveConstraintsGaussSeidel;
+      else if (smoothSolver == direct)
+        solveSmooth_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
+      else if (smoothSolver == directNonlinear)
+        solveSmooth_ = &DynamicSystemSolver::solveConstraintsNonlinearEquations;
+      else if (smoothSolver == fixedpoint)
+        solveSmooth_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
+      else if (smoothSolver == rootfinding)
+        solveSmooth_ = &DynamicSystemSolver::solveConstraintsRootFinding;
+      else
+        throwError("(DynamicSystemSolver::init()): Unknown smooth solver");
+
       // contact solver specific settings
       msg(Debug) << "  use contact solver \'" << getSolverInfo() << "\' for contact situations" << endl;
       if (contactSolver == GaussSeidel)
@@ -354,6 +386,10 @@ namespace MBSim {
       else if (contactSolver == direct) {
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsLinearEquations;
         msg(Info) << "The selected contact solver 'direct' is only valid for bilateral constrained systems!" << endl;
+      }
+      else if (contactSolver == directNonlinear) {
+        solveConstraints_ = &DynamicSystemSolver::solveConstraintsNonlinearEquations;
+        msg(Info) << "The selected contact solver 'directNonlinear' is only valid for bilateral constrained systems!" << endl;
       }
       else if (contactSolver == fixedpoint)
         solveConstraints_ = &DynamicSystemSolver::solveConstraintsFixpointSingle;
@@ -369,6 +405,10 @@ namespace MBSim {
       else if (impactSolver == direct) {
         solveImpacts_ = &DynamicSystemSolver::solveImpactsLinearEquations;
         msg(Info) << "The selected impact solver 'direct' is only valid for bilateral constrained systems!" << endl;
+      }
+      else if (impactSolver == directNonlinear) {
+        solveImpacts_ = &DynamicSystemSolver::solveImpactsNonlinearEquations;
+        msg(Info) << "The selected impact solver 'directNonlinear' is only valid for bilateral constrained systems!" << endl;
       }
       else if (impactSolver == fixedpoint)
         solveImpacts_ = &DynamicSystemSolver::solveImpactsFixpointSingle;
@@ -883,13 +923,31 @@ namespace MBSim {
   }
 
   int DynamicSystemSolver::solveConstraintsLinearEquations() {
-    la = slvLS(evalG(), -evalbc());
+    la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
     return 1;
+  }
+
+  Vec ConstraintResiduum::operator()(const Vec &la) {
+    return dss->evalG() * la + dss->evalbc();
+  } 
+
+  int DynamicSystemSolver::solveConstraintsNonlinearEquations() {
+    la = nonlinearConstraintNewtonSolver->solve(la);
+    auto iter = nonlinearConstraintNewtonSolver->getNumberOfIterations();
+    if(iter > ds->getHighIter())
+      msg(Warn) << "High number of iterations in DynamicSystemSolver::solveConstraintsNonelinearEquations: " << iter << endl;
+    if(nonlinearConstraintNewtonSolver->getInfo()!=0)
+      throwError("Solving constraint variables failed in DynamicSystemSolver::solveConstraintsNonelinearEquations.");
+    return iter;
   }
 
   int DynamicSystemSolver::solveImpactsLinearEquations() {
     La = slvLS(evalG(), -evalbi());
     return 1;
+  }
+
+  int DynamicSystemSolver::solveImpactsNonlinearEquations() {
+    throw runtime_error("impact solver of type nonlinear equation is not implemented!");
   }
 
   void DynamicSystemSolver::updateG() {
@@ -923,16 +981,24 @@ namespace MBSim {
   void DynamicSystemSolver::updatela() {
     if (la.size()) {
 
-      if(solveDirectly)
-        la = slvLS(evalG(), -evalbc()); // slvLS because of undetermined system of equations
-      else {
+      decltype(solveSmooth_) solver_;
+      if(useSmoothSolver)
+        solver_ = solveSmooth_;
+      else
+        solver_ = solveConstraints_;
 
+      if(solver_ == &DynamicSystemSolver::solveConstraintsLinearEquations) {
+        // none iterative solver -> no restoring and saving of la needed
+        iterc = (this->*solver_)();
+      }
+      else {
+        // iterative solver -> restoring and saving of la needed
         if (useOldla)
           initla();
         else
           la.init(0);
 
-        iterc = (this->*solveConstraints_)(); // solver election
+        iterc = (this->*solver_)(); // solver election
         if (iterc >= maxIter) {
           msg(Warn) << "Iterations: " << iterc << endl;
           msg(Warn) << "Error: no convergence in constraint solver (t=" << t << ")." << endl;
@@ -1203,6 +1269,8 @@ namespace MBSim {
       info << "GaussSeidel";
     else if (impactSolver == direct)
       info << "direct";
+    else if (impactSolver == directNonlinear)
+      info << "directNonlinear";
     else if (impactSolver == fixedpoint)
       info << "fixedpoint";
     else if (impactSolver == rootfinding)
@@ -1346,6 +1414,17 @@ namespace MBSim {
       e = e->getNextElementSibling();
     }
 
+    e = E(element)->getFirstElementChildNamed(MBSIM%"smoothSolver");
+    if (e) {
+      std::string str=X()%E(e)->getFirstTextChild()->getData();
+      str=str.substr(1,str.length()-2);
+      if(str=="fixedpoint") smoothSolver=fixedpoint;
+      else if(str=="GaussSeidel") smoothSolver=GaussSeidel;
+      else if(str=="direct") smoothSolver=direct;
+      else if(str=="directNonlinear") smoothSolver=directNonlinear;
+      else if(str=="rootfinding") smoothSolver=rootfinding;
+      else smoothSolver=unknownSolver;
+    }
     e = E(element)->getFirstElementChildNamed(MBSIM%"constraintSolver");
     if (e) {
       std::string str=X()%E(e)->getFirstTextChild()->getData();
@@ -1353,6 +1432,7 @@ namespace MBSim {
       if(str=="fixedpoint") contactSolver=fixedpoint;
       else if(str=="GaussSeidel") contactSolver=GaussSeidel;
       else if(str=="direct") contactSolver=direct;
+      else if(str=="directNonlinear") contactSolver=directNonlinear;
       else if(str=="rootfinding") contactSolver=rootfinding;
       else contactSolver=unknownSolver;
     }
@@ -1363,6 +1443,7 @@ namespace MBSim {
       if(str=="fixedpoint") impactSolver=fixedpoint;
       else if(str=="GaussSeidel") impactSolver=GaussSeidel;
       else if(str=="direct") impactSolver=direct;
+      else if(str=="directNonlinear") impactSolver=directNonlinear;
       else if(str=="rootfinding") impactSolver=rootfinding;
       else impactSolver=unknownSolver;
     }
@@ -1445,7 +1526,7 @@ namespace MBSim {
   const Vec& DynamicSystemSolver::shift() {
     msg(Info) << "System shift at t = " << t << "." << endl;
 
-    solveDirectly = false;
+    useSmoothSolver = false;
 
     checkRoot();
     if (getRootID() == 3) { // impact (velocity jump)
@@ -1602,14 +1683,14 @@ namespace MBSim {
 
   const Vec& DynamicSystemSolver::evalzd() {
     if(updzd) {
-      solveDirectly = not(useConstraintSolverForSmoothMotion);
+      useSmoothSolver = not(useConstraintSolverForSmoothMotion);
       updatezd();
     }
     return zd;
   }
 
   void DynamicSystemSolver::plot() {
-    solveDirectly = not(useConstraintSolverForPlot);
+    useSmoothSolver = not(useConstraintSolverForPlot);
     if (inverseKinetics) updatelaInverseKinetics();
     Group::plot();
     if(firstPlot) {
@@ -1628,7 +1709,7 @@ namespace MBSim {
 
   const Vec& DynamicSystemSolver::evalsv() {
     if(updsv) {
-      solveDirectly = false;
+      useSmoothSolver = false;
       updateStopVector();
     }
     return sv;

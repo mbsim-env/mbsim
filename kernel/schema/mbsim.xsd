@@ -717,15 +717,30 @@
               </xs:choice>
             </xs:complexType>
           </xs:element>
-          <xs:element name="constraintSolver" minOccurs="0" type="pv:stringFullEval">
+          <xs:element name="smoothSolver" minOccurs="0" type="pv:stringFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                <p>Lösungsverfahren für Nebenbedingungsgleichungen auf Beschleunigungsebene.</p>
+                <p>Lösungsverfahren für Nebenbedingungsgleichungen auf Beschleunigungsebene in glatten Bereichen (offnen und schließen von Kontakten wird nicht verfolgt).</p>
                 <dl>
                   <dt>"fixedpoint"</dt> <dd>Fixpunktiteration mit Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
                   <dt>"GaussSeidel"</dt> <dd>Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
-                  <dt>"direct"</dt> <dd>Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
+                  <dt>"direct"</dt> <dd>[DEFAULT] Lösung per minimaler Fehlerquadrate für lineare Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
                   <dt>"rootfinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
+                  <dt>"directNonlinear"</dt> <dd>Lösung mittels iterativem Newton-Löser für nicht-lineare Gleichungssystem, Lösung der Iterationschritte per minimaler linearer Fehlerquadrate (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: nicht-lineare Abhängigkeiten von lambda möglich).</dd>
+                </dl>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="constraintSolver" minOccurs="0" type="pv:stringFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                <p>Lösungsverfahren für Nebenbedingungsgleichungen auf Beschleunigungsebene in glatten und stoßhaften Bereichen (offnen und schließen von Kontakten wird verfolgt).</p>
+                <dl>
+                  <dt>"fixedpoint"</dt> <dd>[DEFAULT] Fixpunktiteration mit Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                  <dt>"GaussSeidel"</dt> <dd>Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                  <dt>"direct"</dt> <dd>Lösung per minimaler Fehlerquadrate für lineare Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
+                  <dt>"rootfinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
+                  <dt>"directNonlinear"</dt> <dd>Lösung mittels iterativem Newton-Löser für nicht-lineare Gleichungssystem, Lösung der Iterationschritte per minimaler linearer Fehlerquadrate (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: nicht-lineare Abhängigkeiten von lambda möglich).</dd>
                 </dl>
               </xs:documentation>
             </xs:annotation>
@@ -733,12 +748,13 @@
           <xs:element name="impactSolver" minOccurs="0" type="pv:stringFullEval">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                <p>Lösungsverfahren für Nebenbedingungsgleichungen auf Geschwindigkeitssebene.</p>
+                <p>Lösungsverfahren für Nebenbedingungsgleichungen auf Geschwindigkeitssebene (bei stößen).</p>
                 <dl>
-                  <dt>"fixedpoint"</dt> <dd>Fixpunktiteration mit Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
+                  <dt>"fixedpoint"</dt> <dd>[DEFAULT] Fixpunktiteration mit Relaxationsstrategie (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
                   <dt>"GaussSeidel"</dt> <dd>Gauss-Seidel-Verfahren (Anwendungsfall: Ebene Coulombreibung; Eigenschaften: mäßige Konvergenz).</dd>
                   <dt>"direct"</dt> <dd>Cholesky-Zerlegung für reguläre Gleichungssysteme (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: exakte Lösung in einem Schritt).</dd>
                   <dt>"rootfinding"</dt> <dd>Gedämpftes und globalisiertes Newton-Verfahren (Anwendungsfall: Räumliche Coulombreibung; Eigenschaften: sehr robust).</dd>
+                  <dt>"directNonlinear"</dt> <dd>Lösung mittels iterativem Newton-Löser für nicht-lineare Gleichungssystem, Lösung der Iterationschritte per minimaler linearer Fehlerquadrate (Anwendungsfall: nur zweiseitige Bindungen; Eigenschaften: nicht-lineare Abhängigkeiten von lambda möglich).</dd>
                 </dl>
               </xs:documentation>
             </xs:annotation>
@@ -816,12 +832,12 @@
           </xs:element>
           <xs:element name="useConstraintSolverForSmoothMotion" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert, ob die mengenwertigen Kraftgesetze auch während der glatten Bewegung mit einem definierten Lösungsverfahren berechnet werden sollen (true), oder ob während der glatten Bewegung immer ein direkter Löser für lineare "least-square" Probleme verwendet werden soll (false).
+              Definiert, ob die mengenwertigen Kraftgesetze auch während der glatten Bewegung mit dem definierten Lösungsverfahren aus <code>&lt;constraintSolver&gt;</code> berechnet werden sollen (true), oder ob während der glatten Bewegung immer der direkte Löser aus <code>&lt;smoothSolver&gt;</code> verwendet werden soll (false).
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="useConstraintSolverForPlot" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit einem definierten Lösungsverfahren berechnet werden sollen (true), oder ob für den Plot immer ein direkter Löser für lineare "least-square" Probleme verwendet werden soll (false).
+              Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit dem definierten Lösungsverfahren berechnet aus <code>&lt;constraintSolver&gt;</code> werden sollen (true), oder ob für den Plot immer der direkte Löser aus <code>&lt;smoothSolver&gt;</code> verwendet werden soll (false).
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="compressionLevel" minOccurs="0" type="pv:integerFullEval">

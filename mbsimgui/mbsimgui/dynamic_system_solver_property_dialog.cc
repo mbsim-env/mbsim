@@ -42,6 +42,11 @@ namespace MBSimGUI {
     list.emplace_back("\"GaussSeidel\"");
     list.emplace_back("\"direct\"");
     list.emplace_back("\"rootfinding\"");
+    list.emplace_back("\"directNonlinear\"");
+
+    smoothSolver = new ExtWidget("Smooth solver",new TextChoiceWidget(list,2,true),true,false,MBSIM%"smoothSolver");
+    addToTab("Solver parameters", smoothSolver);
+
     constraintSolver = new ExtWidget("Constraint solver",new TextChoiceWidget(list,0,true),true,false,MBSIM%"constraintSolver");
     addToTab("Solver parameters", constraintSolver);
 
@@ -115,6 +120,7 @@ namespace MBSimGUI {
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     GroupPropertyDialog::initializeUsingXML(item->getXMLElement());
     environments->initializeUsingXML(item->getXMLElement());
+    smoothSolver->initializeUsingXML(item->getXMLElement());
     constraintSolver->initializeUsingXML(item->getXMLElement());
     impactSolver->initializeUsingXML(item->getXMLElement());
     maxIter->initializeUsingXML(item->getXMLElement());
@@ -144,6 +150,7 @@ namespace MBSimGUI {
   DOMElement* DynamicSystemSolverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     GroupPropertyDialog::writeXMLFile(parent,getElement()->getXMLFrames());
     environments->writeXMLFile(item->getXMLElement());
+    smoothSolver->writeXMLFile(item->getXMLElement());
     constraintSolver->writeXMLFile(item->getXMLElement());
     impactSolver->writeXMLFile(item->getXMLElement());
     maxIter->writeXMLFile(item->getXMLElement());

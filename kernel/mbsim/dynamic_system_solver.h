@@ -31,6 +31,8 @@ namespace MBSim {
 
   class Graph;
   class MBSimEnvironment;
+  class MultiDimNewtonMethod;
+  class ConstraintResiduum;
 
   struct StateTable {
     std::string name;
@@ -70,7 +72,7 @@ namespace MBSim {
       /**
        * \brief solver for contact equations
        */
-      enum Solver { fixedpoint, GaussSeidel, direct, rootfinding, unknownSolver };
+      enum Solver { fixedpoint, GaussSeidel, direct, rootfinding, unknownSolver, directNonlinear };
 
       /**
        * \brief constructor
@@ -186,8 +188,10 @@ namespace MBSim {
 
       /* GETTER / SETTER */
 
+      void setSmoothSolver(Solver solver_) { smoothSolver = solver_; }
       void setConstraintSolver(Solver solver_) { contactSolver = solver_; }
       void setImpactSolver(Solver solver_) { impactSolver = solver_; }
+      const Solver& getSmoothSolver() { return smoothSolver; }
       const Solver& getConstraintSolver() { return contactSolver; }
       const Solver& getImpactSolver() { return impactSolver; }
       void setTermination(bool term_) { term = term_; }
@@ -276,6 +280,8 @@ namespace MBSim {
        */
       void computeInitialCondition();
 
+      int (DynamicSystemSolver::*solveSmooth_)();
+
       /**
        * \function pointer for election of prox-solver for contact equations
        * \return iterations of solver
@@ -290,11 +296,18 @@ namespace MBSim {
       int (DynamicSystemSolver::*solveImpacts_)();
 
       /**
-       * \brief solution of contact equations with Cholesky decomposition
+       * \brief solution of contact equations with direct linear solver using minimum of least squares
        * \return iterations of solver
        * \todo put in dynamic system? TODO
        */
       int solveConstraintsLinearEquations();
+
+      /**
+       * \brief solution of contact equations with direct nonlinear newton solver using minimum of least squares in each iteration step
+       * \return iterations of solver
+       * \todo put in dynamic system? TODO
+       */
+      int solveConstraintsNonlinearEquations();
 
       /**
        * \brief solution of contact equations with Cholesky decomposition on velocity level
@@ -303,6 +316,8 @@ namespace MBSim {
        * \todo put in dynamic system? TODO
        */
       int solveImpactsLinearEquations();
+
+      int solveImpactsNonlinearEquations();
 
       /**
        * \brief updates mass action matrix
@@ -769,7 +784,7 @@ namespace MBSim {
       /**
        * \brief solver for contact equations and impact equations
        */
-      Solver contactSolver, impactSolver;
+      Solver smoothSolver, contactSolver, impactSolver;
 
       /**
        * \brief flag if the contact equations should be stopped if there is no convergence
@@ -852,7 +867,7 @@ namespace MBSim {
 
       bool updT, updh[2], updr[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa, upddq, upddu, upddx;
 
-      bool solveDirectly;
+      bool useSmoothSolver;
 
       std::vector<StateTable> tabz;
 
@@ -907,6 +922,9 @@ namespace MBSim {
       MBSimEnvironment *mbsimEnvironment = nullptr;
 
       bool firstPlot { true };
+
+      std::unique_ptr<MultiDimNewtonMethod> nonlinearConstraintNewtonSolver;
+      std::unique_ptr<ConstraintResiduum> constraintResiduum;
   };
 
   template<class Env>
