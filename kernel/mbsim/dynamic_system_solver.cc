@@ -929,6 +929,7 @@ namespace MBSim {
   }
 
   Vec ConstraintResiduum::operator()(const Vec &la) {
+    dss->setla(la);
     dss->getr(0, false) = dss->evalV() * la;
     dss->Group::updater(); // adds all terms being nonlinear in la to r[0]
     return dss->evalW().T() * slvLLFac(dss->evalLLM(), dss->getr(0, false)) + dss->evalbc();
