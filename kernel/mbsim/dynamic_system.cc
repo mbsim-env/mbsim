@@ -171,6 +171,12 @@ namespace MBSim {
       (*i).updateV(j);
   }
 
+  void DynamicSystem::updater(int j) {
+
+    for (auto & i : linkSetValuedActive)
+      (*i).updater(j);
+  }
+
   void DynamicSystem::updateg() {
 
     for (auto & i : linkSetValuedActive)
@@ -706,6 +712,9 @@ namespace MBSim {
       (*i).updaterRef(rParent, j);
 
     for (auto & i : object)
+      (*i).updaterRef(rParent, j);
+
+    for (auto & i : linkSetValuedActive)
       (*i).updaterRef(rParent, j);
   }
 

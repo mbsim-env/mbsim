@@ -232,6 +232,8 @@ namespace MBSim {
       fmatvec::Vec& getbc(bool check=true) { assert((not check) or (not updbc)); return bc; }
       fmatvec::Vec& getbi(bool check=true) { assert((not check) or (not updbi)); return bi; }
       fmatvec::SqrMat& getJprox() { return Jprox; }
+      const fmatvec::Vec& getr(int j=0, bool check=true) const { assert((not check) or (not updr[j])); return r[j]; }
+      fmatvec::Vec& getr(int j=0, bool check=true) { assert((not check) or (not updr[j])); return r[j]; }
 
       const fmatvec::Vec& evaldq() { if(upddq) updatedq(); return dq; }
       const fmatvec::Vec& evaldu() { if(upddu) updatedu(); return du; }

@@ -838,6 +838,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::updater(int j) {
     r[j] = evalV(j) * evalla(); // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
+    Group::updater(j);
     updr[j] = false;
   }
 
@@ -928,7 +929,9 @@ namespace MBSim {
   }
 
   Vec ConstraintResiduum::operator()(const Vec &la) {
-    return dss->evalG() * la + dss->evalbc();
+    dss->getr(0, false) = dss->evalV() * la;
+    dss->Group::updater(); // adds all terms being nonlinear in la to r[0]
+    return dss->evalW().T() * slvLLFac(dss->evalLLM(), dss->getr(0, false)) + dss->evalbc();
   } 
 
   int DynamicSystemSolver::solveConstraintsNonlinearEquations() {
