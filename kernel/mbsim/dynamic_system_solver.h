@@ -33,6 +33,7 @@ namespace MBSim {
   class MBSimEnvironment;
   class MultiDimNewtonMethod;
   class ConstraintResiduum;
+  class ConstraintJacobian;
 
   struct StateTable {
     std::string name;
@@ -171,6 +172,7 @@ namespace MBSim {
        * \param simulation time
        */
       virtual void updater(int j=0);
+      virtual void updateJrla(int j=0);
       virtual void updaterdt();
       void updatewb() override;
       void updateg() override;
@@ -234,6 +236,10 @@ namespace MBSim {
       fmatvec::SqrMat& getJprox() { return Jprox; }
       const fmatvec::Vec& getr(int j=0, bool check=true) const { assert((not check) or (not updr[j])); return r[j]; }
       fmatvec::Vec& getr(int j=0, bool check=true) { assert((not check) or (not updr[j])); return r[j]; }
+
+      // Jacobian of dr/dla
+      const fmatvec::Mat& getJrla(int j=0, bool check=true) const { assert((not check) or (not updJrla[j])); return Jrla[j]; }
+      fmatvec::Mat& getJrla(int j=0, bool check=true) { assert((not check) or (not updJrla[j])); return Jrla[j]; }
 
       const fmatvec::Vec& evaldq() { if(upddq) updatedq(); return dq; }
       const fmatvec::Vec& evaldu() { if(upddu) updatedu(); return du; }
@@ -531,6 +537,7 @@ namespace MBSim {
       bool getUpdateLLM() { return updLLM; }
       bool getUpdateh(int j) { return updh[j]; }
       bool getUpdater(int j) { return updr[j]; }
+      bool getUpdateJrla(int j) { return updJrla[j]; }
       bool getUpdaterdt() { return updrdt; }
       bool getUpdateW(int j) { return updW[j]; }
       bool getUpdateV(int j) { return updV[j]; }
@@ -727,6 +734,8 @@ namespace MBSim {
        */
       fmatvec::Vec rParent[2], rdtParent;
 
+      fmatvec::Mat JrlaParent[2];
+
       /**
        * \brief stopvector (rootfunctions for event driven integration
        */
@@ -867,7 +876,7 @@ namespace MBSim {
 
       double gTol, gdTol, gddTol, laTol, LaTol;
 
-      bool updT, updh[2], updr[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa, upddq, upddu, upddx;
+      bool updT, updh[2], updr[2], updJrla[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa, upddq, upddu, upddx;
 
       bool useSmoothSolver;
 
@@ -927,6 +936,7 @@ namespace MBSim {
 
       std::unique_ptr<MultiDimNewtonMethod> nonlinearConstraintNewtonSolver;
       std::unique_ptr<ConstraintResiduum> constraintResiduum;
+      std::unique_ptr<ConstraintJacobian> constraintJacobian;
   };
 
   template<class Env>

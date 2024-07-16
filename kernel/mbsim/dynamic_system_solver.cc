@@ -72,6 +72,14 @@ namespace MBSim {
       DynamicSystemSolver *dss;
   };
 
+  class ConstraintJacobian : public Function<fmatvec::SqrMat(fmatvec::Vec)> {
+    public:
+      ConstraintJacobian(DynamicSystemSolver *dss_) : dss(dss_) {}
+      fmatvec::SqrMat operator()(const fmatvec::Vec &la) override;
+    private:
+      DynamicSystemSolver *dss;
+  };
+
   Vec DynamicSystemSolver::Residuum::operator()(const Vec &z) {
     sys->setState(z);
     sys->resetUpToDate();
@@ -82,6 +90,7 @@ namespace MBSim {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
+      updJrla[i] = true;
       updW[i] = true;
       updV[i] = true;
     }
@@ -308,6 +317,8 @@ namespace MBSim {
       hParent[1].resize(getuSize(1));
       rParent[0].resize(getuSize(0));
       rParent[1].resize(getuSize(1));
+      JrlaParent[0].resize(getuSize(0), getlaSize());
+      JrlaParent[1].resize(getuSize(1), getlaSize());
       rdtParent.resize(getuSize(0));
       svParent.resize(getsvSize());
       jsvParent.resize(getsvSize());
@@ -338,9 +349,11 @@ namespace MBSim {
       updategdRef(gdParent);
       updatehRef(hParent[0], 0);
       updaterRef(rParent[0], 0);
+      updateJrlaRef(JrlaParent[0], 0);
       updaterdtRef(rdtParent);
       updatehRef(hParent[1], 1);
       updaterRef(rParent[1], 1);
+      updateJrlaRef(JrlaParent[1], 1);
       updateWRef(WParent[0], 0);
       updateWRef(WParent[1], 1);
       updateVRef(VParent[0], 0);
@@ -358,7 +371,8 @@ namespace MBSim {
       if (smoothSolver == directNonlinear || contactSolver == directNonlinear) {
         // allocate residum function and newton solver for directNonlinear solver
         constraintResiduum.reset(new ConstraintResiduum(this));
-        nonlinearConstraintNewtonSolver.reset(new MultiDimNewtonMethod(constraintResiduum.get()));
+        constraintJacobian.reset(new ConstraintJacobian(this));
+        nonlinearConstraintNewtonSolver.reset(new MultiDimNewtonMethod(constraintResiduum.get(), constraintJacobian.get()));
         nonlinearConstraintNewtonSolver->setMaximumNumberOfIterations(ds->getMaxIter());
         nonlinearConstraintNewtonSolver->setTolerance(ds->getLocalSolverTolerance());
         nonlinearConstraintNewtonSolver->setLinearAlgebra(1); // use slvLS as linear solver
@@ -842,6 +856,13 @@ namespace MBSim {
     updr[j] = false;
   }
 
+  void DynamicSystemSolver::updateJrla(int j) {
+    evalla();
+    Jrla[j] = evalV(j);
+    Group::updateJrla(j);
+    updJrla[j] = false;
+  }
+
   void DynamicSystemSolver::updaterdt() {
     rdt = evalV() * evalLa(); // cannot be called locally (hierarchically), because this adds some values twice to r for tree structures
     updrdt = false;
@@ -933,6 +954,13 @@ namespace MBSim {
     dss->getr(0, false) = dss->evalV() * la;
     dss->Group::updater(); // adds all terms being nonlinear in la to r[0]
     return dss->evalW().T() * slvLLFac(dss->evalLLM(), dss->getr(0, false)) + dss->evalbc();
+  } 
+
+  SqrMat ConstraintJacobian::operator()(const Vec &la) {
+    dss->setla(la);
+    dss->getJrla(0, false) = dss->evalV();
+    dss->Group::updateJrla(); // adds all terms being nonlinear in la to dr/dl = Jrla
+    return static_cast<SqrMat>(dss->evalW().T() * slvLLFac(dss->evalLLM(), dss->getJrla(0, false)));
   } 
 
   int DynamicSystemSolver::solveConstraintsNonlinearEquations() {
@@ -1662,6 +1690,8 @@ namespace MBSim {
     updh[1] = true;
     updr[0] = true;
     updr[1] = true;
+    updJrla[0] = true;
+    updJrla[1] = true;
     updrdt = true;
     updM = true;
     updLLM = true;

@@ -64,6 +64,7 @@ namespace MBSim {
       virtual void updateW(int i=0) { }
       virtual void updateV(int i=0) { }
       virtual void updater(int i=0) { }
+      virtual void updateJrla(int i=0) { }
       virtual void updateh(int i=0) { }
       virtual void updateStopVector() { }
       virtual void updateStopVectorParameters() { }
@@ -117,6 +118,8 @@ namespace MBSim {
        * \brief references to nonsmooth force vector of dynamic system parent
        */
       virtual void updaterRef(fmatvec::Vec &ref, int i=0) = 0;
+
+      virtual void updateJrlaRef(fmatvec::Mat &ref, int i=0) {}
 
       /**
        * \brief references to TODO of dynamic system parent
@@ -617,6 +620,11 @@ namespace MBSim {
        * \brief nonsmooth right hand side
        */
       std::vector<fmatvec::Vec> r[2];
+      
+      /**
+       * \brief Jacobian dr/dla
+       */
+      std::vector<fmatvec::Mat> Jrla[2];
       
       /**
        * \brief TODO

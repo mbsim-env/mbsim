@@ -177,6 +177,12 @@ namespace MBSim {
       (*i).updater(j);
   }
 
+  void DynamicSystem::updateJrla(int j) {
+
+    for (auto & i : linkSetValuedActive)
+      (*i).updateJrla(j);
+  }
+
   void DynamicSystem::updateg() {
 
     for (auto & i : linkSetValuedActive)
@@ -716,6 +722,16 @@ namespace MBSim {
 
     for (auto & i : linkSetValuedActive)
       (*i).updaterRef(rParent, j);
+  }
+
+  void DynamicSystem::updateJrlaRef(Mat &JrlaParent, int j) {
+    Jrla[j].ref(JrlaParent, RangeV(hInd[j], hInd[j] + hSize[j] - 1), RangeV(laInd, laInd + laSize - 1));
+
+    for (auto & i : dynamicsystem)
+      (*i).updateJrlaRef(JrlaParent, j);
+
+    for (auto & i : linkSetValuedActive)
+      (*i).updateJrlaRef(JrlaParent, j);
   }
 
   void DynamicSystem::updaterdtRef(Vec &rdtParent) {
@@ -1746,6 +1762,11 @@ namespace MBSim {
   const Vec& DynamicSystem::evalr(int i) {
     if(ds->getUpdater(i)) ds->updater(i);
     return r[i];
+  }
+
+  const Mat& DynamicSystem::evalJrla(int i) {
+    if(ds->getUpdateJrla(i)) ds->updateJrla(i);
+    return Jrla[i];
   }
 
   const Vec& DynamicSystem::evalrdt() {

@@ -80,6 +80,7 @@ namespace MBSim {
       virtual void updateW(int j=0);
       virtual void updateV(int j=0);
       virtual void updater(int j=0);
+      virtual void updateJrla(int j=0);
       virtual void updateg();
       virtual void updategd();
       virtual void updateStopVector();
@@ -259,6 +260,7 @@ namespace MBSim {
       const fmatvec::Mat& evalV(int i=0);
       const fmatvec::Vec& evalwb();
       const fmatvec::Vec& evalr(int i=0);
+      const fmatvec::Mat& evalJrla(int i=0);
       const fmatvec::Vec& evalrdt();
       const fmatvec::Vec& evalg();
       const fmatvec::Vec& evalgd();
@@ -357,6 +359,8 @@ namespace MBSim {
        * \param vector to be referenced
        */
       void updaterRef(fmatvec::Vec &rParent, int j=0);
+
+      void updateJrlaRef(fmatvec::Mat &rParent, int j=0);
 
       /**
        * \brief references to nonsmooth right hand side of dynamic system parent
@@ -854,6 +858,11 @@ namespace MBSim {
        * \brief smooth, smooth with respect to objects, smooth with respect to links and nonsmooth
        */
       fmatvec::Vec h[2], r[2], rdt;
+
+      /**
+       * \brief Jacobian dr/dla
+       */
+      fmatvec::Mat Jrla[2];
 
       /**
        * \brief 
