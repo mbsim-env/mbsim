@@ -272,7 +272,7 @@ namespace MBSimGUI {
     setLayout(layout);
 
     factoryo1->setElement(function);
-    factoryo2->setElement(function);
+    if(factoryo2) factoryo2->setElement(function);
     factoryi->setElement(function);
 
     fo = new ExtWidget("Outer function",new ChoiceWidget(factoryo1,QBoxLayout::TopToBottom,0),false,false,MBSIM%"outerFunction");
