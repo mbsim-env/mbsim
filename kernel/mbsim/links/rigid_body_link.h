@@ -66,7 +66,7 @@ namespace MBSim {
       fmatvec::Mat3xV& getGlobalMomentDirection(int i, bool check=true) { assert((not check) or (not updFD)); return DM[i]; }
 
       void updatehRef(fmatvec::Vec &hParent, int j=0) override;
-      void updaterRef(fmatvec::Vec &hParent, int j=0) override;
+      void updaterRef(fmatvec::Vec &hParent, int j=0) override {}
       void updateWRef(fmatvec::Mat &WParent, int j=0) override;
       void updateVRef(fmatvec::Mat &WParent, int j=0) override;
 

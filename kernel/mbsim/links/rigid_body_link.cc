@@ -41,15 +41,6 @@ namespace MBSim {
     }
   } 
 
-  void RigidBodyLink::updaterRef(Vec &rParent, int j) {
-    RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
-    for(unsigned i=0; i<body.size(); i++) {
-      RangeV I = RangeV(body[i]->gethInd(j),body[i]->gethInd(j)+body[i]->gethSize(j)-1);
-      r[j][i].ref(rParent,K);
-      r[j][body.size()+i].ref(rParent,I);
-    }
-  } 
-
   void RigidBodyLink::updateWRef(Mat &WParent, int j) {
     RangeV K = RangeV(support->gethInd(j),support->gethInd(j)+support->gethSize(j)-1);
     RangeV J = RangeV(laInd,laInd+laSize-1);

@@ -88,7 +88,7 @@ namespace MBSimHydraulics {
       virtual void updateQMec();
 
       void updateh(int j=0) override;
-      void updater(int j=0);
+      void updater(int j=0) override {}
       void updategd() override;
       void updatexd() override;
       void updatedhdz();
