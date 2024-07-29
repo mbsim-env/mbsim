@@ -42,11 +42,14 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
       void calclaSize(int j) override;
       void calcgSize(int j) override;
+      void calccorrSize(int j) override;
       void calcgdSize(int j) override;
       bool isSetValued() const override;
       bool isSingleValued() const override { return not(isSetValued()); }
 
       void setGeneralizedForceLaw(GeneralizedForceLaw * fl_);
+
+      void initializeUsingXML(xercesc::DOMElement * element) override;
   };
 
 }

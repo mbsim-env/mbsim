@@ -30,7 +30,7 @@ namespace MBSim {
     protected:
       Function<fmatvec::VecV(double)> *f;
     public:
-      GeneralizedPositionExcitation(const std::string &name) : GeneralizedKinematicExcitation(name) { }
+      GeneralizedPositionExcitation(const std::string &name="") : GeneralizedKinematicExcitation(name) { }
 
       void init(InitStage stage, const InitConfigSet &config) override;
 
@@ -43,6 +43,8 @@ namespace MBSim {
         f->setParent(this);
         f->setName("Excitation");
       }
+
+      void initializeUsingXML(xercesc::DOMElement * element) override;
   };
 
 }

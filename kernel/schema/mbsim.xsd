@@ -2182,6 +2182,44 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="GeneralizedKinematicExcitation" abstract="true" substitutionGroup="DualRigidBodyLink" type="GeneralizedKinematicExcitationType">
+  </xs:element>
+  <xs:complexType name="GeneralizedKinematicExcitationType">
+    <xs:complexContent>
+      <xs:extension base="DualRigidBodyLinkType">
+        <xs:sequence>
+          <xs:element name="generalizedForceLaw">
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="GeneralizedForceLaw"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedPositionExcitation" substitutionGroup="GeneralizedKinematicExcitation" type="GeneralizedPositionExcitationType">
+  </xs:element>
+  <xs:complexType name="GeneralizedPositionExcitationType">
+    <xs:complexContent>
+      <xs:extension base="GeneralizedKinematicExcitationType">
+        <xs:sequence>
+          <xs:element name="excitationFunction">
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="GeneralizedGear" substitutionGroup="RigidBodyLink" type="GeneralizedGearType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

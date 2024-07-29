@@ -56,6 +56,9 @@ namespace MBSim {
   void GeneralizedKinematicExcitation::calcgSize(int j) {
     gSize = body[0]->getGeneralizedVelocitySize();
   }
+  void GeneralizedKinematicExcitation::calccorrSize(int j) {
+    corrSize = body[0]->getGeneralizedVelocitySize();
+  }
   void GeneralizedKinematicExcitation::calcgdSize(int j) {
     gdSize = body[0]->getGeneralizedVelocitySize();
   }
@@ -76,9 +79,16 @@ namespace MBSim {
         il->setParent(this);
       }
     }
-    RigidBodyLink::init(stage, config);
+    DualRigidBodyLink::init(stage, config);
     if(fl) fl->init(stage, config);
     if(il) il->init(stage, config);
+  }
+
+  void GeneralizedKinematicExcitation::initializeUsingXML(xercesc::DOMElement * element) {
+    DualRigidBodyLink::initializeUsingXML(element);
+
+    auto e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedForceLaw");
+    setGeneralizedForceLaw(ObjectFactory::createAndInit<GeneralizedForceLaw>(e->getFirstElementChild()));
   }
 
 }

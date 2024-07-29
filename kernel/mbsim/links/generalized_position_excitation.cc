@@ -26,6 +26,8 @@ using namespace fmatvec;
 
 namespace MBSim {
 
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedPositionExcitation)
+
   void GeneralizedPositionExcitation::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(f->getRetSize().first!=body[0]->getGeneralizedPositionSize())
@@ -56,6 +58,13 @@ namespace MBSim {
       wb += body[1]->evaljRel()-body[0]->evaljRel()-f->parDerDirDer(1,getTime());
     else
       wb += body[0]->evaljRel()-f->parDerDirDer(1,getTime());
+  }
+
+  void GeneralizedPositionExcitation::initializeUsingXML(xercesc::DOMElement * element) {
+    GeneralizedKinematicExcitation::initializeUsingXML(element);
+
+    auto e = MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"excitationFunction");
+    setExcitationFunction(ObjectFactory::createAndInit<Function<fmatvec::VecV(double)>>(e->getFirstElementChild()));
   }
 
 }
