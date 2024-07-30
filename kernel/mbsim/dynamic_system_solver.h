@@ -862,7 +862,7 @@ namespace MBSim {
       /**
        * \brief Tolerance for global none-linear solvers (solvers on DynamicSystemSolver level)
        */
-      double tolDSS { 1e-10 };
+      double tolDSS { 1e-9 };
 
       /**
        * \brief

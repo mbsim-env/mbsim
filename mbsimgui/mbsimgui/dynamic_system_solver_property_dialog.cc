@@ -71,7 +71,7 @@ namespace MBSimGUI {
     localSolverTolerance = new ExtWidget("Local solver tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"localSolverTolerance");
     addToTab("Solver parameters", localSolverTolerance);
 
-    dynamicSystemSolverTolerance = new ExtWidget("Dynamic system solver tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"dynamicSystemSolverTolerance");
+    dynamicSystemSolverTolerance = new ExtWidget("Dynamic system solver tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-9"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"dynamicSystemSolverTolerance");
     addToTab("Solver parameters", dynamicSystemSolverTolerance);
 
     gTol = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
