@@ -487,11 +487,18 @@ namespace MBSim {
       void setProjectionTolerance(double tol) { tolProj = tol; }
 
       /**
-       * \brief set tolerance for local none-linear solver, like the Newton-Solver in JointConstraint
+       * \brief set tolerance for local none-linear solver (solvers on element level), like the Newton-Solver in JointConstraint
        * \param tolerance
        */
       void setLocalSolverTolerance(double tol) { tolLocalSolver = tol; }
       double getLocalSolverTolerance() { return tolLocalSolver; }
+
+      /**
+       * \brief set tolerance for global none-linear solver (solvers on DynamicSystemSolver level), like the Newton-Solver in directNonlinear
+       * \param tolerance
+       */
+      void setDynamicSystemSolverTolerance(double tol) { tolDSS = tol; }
+      double getDynamicSystemSolverTolerance() { return tolDSS; }
 
       /**
        * \brief references to external state
@@ -848,9 +855,14 @@ namespace MBSim {
       double tolProj;
 
       /**
-       * \brief Tolerance for local none-linear solvers
+       * \brief Tolerance for local none-linear solvers (solvers on element level)
        */
       double tolLocalSolver { 1e-10 };
+
+      /**
+       * \brief Tolerance for global none-linear solvers (solvers on DynamicSystemSolver level)
+       */
+      double tolDSS { 1e-10 };
 
       /**
        * \brief

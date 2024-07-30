@@ -374,7 +374,7 @@ namespace MBSim {
         constraintJacobian.reset(new ConstraintJacobian(this));
         nonlinearConstraintNewtonSolver.reset(new MultiDimNewtonMethod(constraintResiduum.get(), constraintJacobian.get()));
         nonlinearConstraintNewtonSolver->setMaximumNumberOfIterations(ds->getMaxIter());
-        nonlinearConstraintNewtonSolver->setTolerance(ds->getLocalSolverTolerance());
+        nonlinearConstraintNewtonSolver->setTolerance(ds->getDynamicSystemSolverTolerance());
         nonlinearConstraintNewtonSolver->setLinearAlgebra(1); // use slvLS as linear solver
       }
 
@@ -934,7 +934,7 @@ namespace MBSim {
       Residuum f(this);
       MultiDimNewtonMethod newton(&f);
       newton.setMaximumNumberOfIterations(ds->getMaxIter());
-      newton.setTolerance(getLocalSolverTolerance());
+      newton.setTolerance(getDynamicSystemSolverTolerance());
       newton.setLinearAlgebra(1);
       z = newton.solve(z);
       if(newton.getNumberOfIterations() > ds->getHighIter())
@@ -1497,6 +1497,9 @@ namespace MBSim {
     e = E(element)->getFirstElementChildNamed(MBSIM%"localSolverTolerance");
     if (e)
       setLocalSolverTolerance(E(e)->getText<double>());
+    e = E(element)->getFirstElementChildNamed(MBSIM%"dynamicSystemSolverTolerance");
+    if (e)
+      setDynamicSystemSolverTolerance(E(e)->getText<double>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"generalizedRelativePositionTolerance");
     if (e)
       setGeneralizedRelativePositionTolerance(E(e)->getText<double>());

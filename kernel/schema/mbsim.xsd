@@ -797,7 +797,14 @@
           <xs:element name="localSolverTolerance" type="pv:nounitScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert die Abbruchschranke für lokale nicht-lineare Löser. Zum Beispiel der Newton-Solver von JointConstraint.
+                Definiert die Abbruchschranke für lokale nicht-lineare Löser auf Element-Ebene. Zum Beispiel der Newton-Solver von JointConstraint.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="dynamicSystemSolverTolerance" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Abbruchschranke für globale nicht-lineare Löser auf DynamicSystemSolver-Ebene. Zum Beispiel der Newton-Solver von directNonlinear.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

@@ -71,6 +71,9 @@ namespace MBSimGUI {
     localSolverTolerance = new ExtWidget("Local solver tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"localSolverTolerance");
     addToTab("Solver parameters", localSolverTolerance);
 
+    dynamicSystemSolverTolerance = new ExtWidget("Dynamic system solver tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-10"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"dynamicSystemSolverTolerance");
+    addToTab("Solver parameters", dynamicSystemSolverTolerance);
+
     gTol = new ExtWidget("Generalized relative position tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-8"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedRelativePositionTolerance");
     addToTab("Solver parameters", gTol);
 
@@ -129,6 +132,7 @@ namespace MBSimGUI {
     stopIfNoConvergence->initializeUsingXML(item->getXMLElement());
     projectionTolerance->initializeUsingXML(item->getXMLElement());
     localSolverTolerance->initializeUsingXML(item->getXMLElement());
+    dynamicSystemSolverTolerance->initializeUsingXML(item->getXMLElement());
     gTol->initializeUsingXML(item->getXMLElement());
     gdTol->initializeUsingXML(item->getXMLElement());
     gddTol->initializeUsingXML(item->getXMLElement());
@@ -159,6 +163,7 @@ namespace MBSimGUI {
     stopIfNoConvergence->writeXMLFile(item->getXMLElement());
     projectionTolerance->writeXMLFile(item->getXMLElement());
     localSolverTolerance->writeXMLFile(item->getXMLElement());
+    dynamicSystemSolverTolerance->writeXMLFile(item->getXMLElement());
     gTol->writeXMLFile(item->getXMLElement());
     gdTol->writeXMLFile(item->getXMLElement());
     gddTol->writeXMLFile(item->getXMLElement());
