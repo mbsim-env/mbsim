@@ -77,7 +77,7 @@ namespace MBSim {
     static_cast<DynamicSystem*>(parent)->addInverseKineticsLink(ke);
     if(bi) ke->connect(bi,bd);
     else ke->connect(bd);
-    ke->setExcitationFunction(f);
+    ke->setExcitationFunction(f, false); // f is owned (and deleted) by GeneralizedPositionConstraint -> do not own/delete it by this created GeneralizedPositionExcitation
     ke->setGeneralizedForceLaw(new BilateralConstraint);
     ke->setSupportFrame(support);
     ke->plotFeature[generalizedRelativePosition] = false;

@@ -28,6 +28,11 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedPositionExcitation)
 
+  GeneralizedPositionExcitation::~GeneralizedPositionExcitation() {
+    if(deletef && f)
+      delete f;
+  }
+
   void GeneralizedPositionExcitation::init(InitStage stage, const InitConfigSet &config) {
     if(stage==unknownStage) {
       if(f->getRetSize().first!=body[0]->getGeneralizedPositionSize())
