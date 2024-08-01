@@ -5690,7 +5690,9 @@
 
                   Wenn das PiecewisePolynomFunction anstatt eines Scalars einen Vector zurückliefert müssen die XML Element coefficients mehrfach angegeben werden: für jede Komponente des Vectors.
 
-                  Bei Verwendung des Python evaluators und Nutzung von scipy entspricht der Wert der Matrix C = scipy.interpolate.PPoly.c[:,:,comp].T wobei comp die Komponente des Vectors ist oder 0 für ein Skalar.
+                  Bei Verwendung des Python evaluators und Nutzung von scipy entspricht für skalare PiecewisePolynomFunction
+                  der Wert der Matrix C = scipy.interpolate.PPoly.c.T und für vektorielle PiecewisePolynomFunction
+                  der Wert der Matrix C = scipy.interpolate.PPoly.c[:,:,comp].T wobei comp die Komponente des Vectors ist oder 0 für ein Skalar.
                 </xs:documentation>
               </xs:annotation>
             </xs:element>
