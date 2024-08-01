@@ -5615,6 +5615,10 @@
         Klasse zur Definition von vektorwertigen, univariaten Funktionen über Spline-Interpolation.<br/>
         Die zu interpolierenden Punkte <object class="inlineeqn">\mathbf{Y}_i</object> werden dabei bez. des Spline mit der skalaren Größe <object class="inlineeqn">x_i</object> parametrisiert.<br/>
         Zum einen ist es möglich, die Parameter <object class="inlineeqn">\mathbf{x}</object> als (Spalten-)Vektor und die Punkte <object class="inlineeqn">\mathbf{Y}</object> -zeilenweise in einer Matrix angeordnet- in getrennten Matrizen vorzugeben, zum anderen ist deren Angabe auch in einer Matrix möglich.
+        Die Angabe von verschiedenen interpolationsmethoden und Randbedingungen ist dabei über interpolationMethod möglich.
+
+        Alternativ kann auch direkt die Stützwerte (breaks) und die Spline Koeffizienten angeben werden. Daruch können beliebige polynom-splines definiert werden.
+        Vorzugsweise werden die Koeffizenten dabei z.B. mittels Python scipy berechnet. Siehe dazu die definition von breaks und coefficients.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5664,14 +5668,29 @@
             <xs:element name="breaks" type="pv:unknownVector">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
-                  Polynom break-Punkte.
+                  Polynom Stützpunkte.
+
+                  Bei Verwendung des Python evaluators und Nutzung von scipy entspricht der Wert des Vectors breaks = scipy.interpolate.PPoly.x
                 </xs:documentation>
               </xs:annotation>
             </xs:element>
-            <xs:element name="coefficients" type="pv:unknownMatrix">
+            <xs:element name="coefficients" type="pv:unknownMatrix" minOccurs="1" maxOccurs="unbounded">
               <xs:annotation>
                 <xs:documentation xml:lang="de" xmlns="">
-                  Polynom Koeffizienten: erste Spalte: Koeffizient für Ordnung 0, zweite Spalte: Koeffizient für Ordnung 1, ...
+                  Das piecewise Polynom wird mittels "local power basis" dargestellt.
+                  <object class="eqn">
+                    <![CDATA[
+                    y = \sum_{m=0}^{k} C_{i,m} * (x - breaks_i)^{k-m}
+                    ]]>
+                  </object>
+                  Wobei i die Werte für das Spline-interval x[i] bis x[i+1] darstellen.
+                  Und k ist der Polynomgrad.
+
+                  Die Matrix C entspricht dabei dem Wert dieses XML elements.
+
+                  Wenn das PiecewisePolynomFunction anstatt eines Scalars einen Vector zurückliefert müssen die XML Element coefficients mehrfach angegeben werden: für jede Komponente des Vectors.
+
+                  Bei Verwendung des Python evaluators und Nutzung von scipy entspricht der Wert der Matrix C = scipy.interpolate.PPoly.c[:,:,comp].T wobei comp die Komponente des Vectors ist oder 0 für ein Skalar.
                 </xs:documentation>
               </xs:annotation>
             </xs:element>

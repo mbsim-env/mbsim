@@ -75,7 +75,7 @@ namespace MBSim {
 
       int getArgSize() const { return 1; }
 
-      std::pair<int, int> getRetSize() const { return std::make_pair(y.cols(),1); }
+      std::pair<int, int> getRetSize() const { return std::make_pair(coefs[0].cols(),1); }
 
       void init(Element::InitStage stage, const InitConfigSet &config) {
         Function<Ret(Arg)>::init(stage, config);
@@ -540,21 +540,44 @@ namespace MBSim {
     if(e) { 
       std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
-      if(str=="cSplinePeriodic") method=cSplinePeriodic;
-      else if(str=="cSplineNatural") method=cSplineNatural;
+      if(str=="cSplinePeriodic")      method=cSplinePeriodic;
+      else if(str=="cSplineNatural")  method=cSplineNatural;
       else if(str=="piecewiseLinear") method=piecewiseLinear;
       else method=useBreaksAndCoefs;
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"breaks");
     if(e) { 
+      // set breaks
       setBreaks(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
+
+      // count number of columns = dimension of the vector returned by this function
+      int nrCols = 0;
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
+      while(e) {
+        nrCols++;
+        e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
+      }
+
+      // read all coefficients element and convert to coefs
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
       auto c=MBXMLUtils::E(e)->getText<fmatvec::Mat>();
-      std::vector<fmatvec::MatV> coefs;
-      coefs.reserve(c.cols());
-      for(int i=0; i<c.cols(); ++i)
-        coefs.emplace_back(c.col(i));
+      std::vector<fmatvec::MatV> coefs(c.cols(), fmatvec::MatV(c.rows(),nrCols)); // init coefs with proper size
+      bool first=true;
+      int col = 0;
+      while(e) {
+        if(!first) // avoid double read of first coefficients element
+          c=MBXMLUtils::E(e)->getText<fmatvec::Mat>();
+        if(c.cols()!=static_cast<int>(coefs.size()))
+          this->throwError("The number of columns in the coefficients elements differ.");
+        if(c.rows()!=static_cast<int>(coefs[0].rows()))
+          this->throwError("The number of rows in the coefficients elements differ.");
+        for(int deg=0; deg<c.cols(); deg++)
+          coefs[deg].set(col, c.col(deg));
+        e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
+        col++;
+        first=false;
+      }
       setCoefficients(coefs);
       method=useBreaksAndCoefs;
     }
