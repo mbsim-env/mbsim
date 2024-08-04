@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <pv:evaluator>python</pv:evaluator>
+  <pv:Embed>
+    <pv:Parameter>
+      <pv:vectorParameter name="x">
+        [0,1,2,3,4,5]
+      </pv:vectorParameter>
+      <pv:matrixParameter name="y">
+        [[2,2,0],[5,5,0],[8,8,0],[6,6,0],[3,3,0],[2,2,0]]
+      </pv:matrixParameter>
+    </pv:Parameter>
+    <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS">
+      <plotFeatureRecursive value="position">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="velocity">True</plotFeatureRecursive>
+      <plotFeatureRecursive value="acceleration">True</plotFeatureRecursive>
+      <frames/>
+      <contours/>
+      <groups/>
+      <objects>
+        <RigidBody name="1dof">
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <stateDependentTranslation>
+            <TranslationAlongXAxis/>
+          </stateDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
+              <transparency unit="-">0.3</transparency>
+              <length unit="m">1</length>
+            </Cube>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="xy">
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <timeDependentTranslation>
+            <PiecewisePolynomFunction>
+              <x>x</x>
+              <y>y</y>
+            </PiecewisePolynomFunction>
+          </timeDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
+              <transparency unit="-">0.3</transparency>
+              <length unit="m">1</length>
+            </Cube>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="coeffs">
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <timeDependentTranslation>
+            <pv:Embed>
+              <pv:Parameter>
+                <pv:anyParameter name="spline">
+                  import scipy
+                  ret=scipy.interpolate.CubicSpline(x, y, bc_type="natural")
+                </pv:anyParameter>
+              </pv:Parameter>
+              <PiecewisePolynomFunction>
+                <breaks>spline.x</breaks>
+                <coefficients>spline.c[:,:,0].T</coefficients>
+                <coefficients>spline.c[:,:,1].T</coefficients>
+                <coefficients>spline.c[:,:,2].T</coefficients>
+              </PiecewisePolynomFunction>
+            </pv:Embed>
+          </timeDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
+              <transparency unit="-">0.3</transparency>
+              <length unit="m">1</length>
+            </Cube>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+        <RigidBody name="smoothing">
+          <mass unit="kg">1</mass>
+          <inertiaTensor unit="kg*m^2">
+            <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <row>
+                <ele>0.01</ele>
+                <ele>0</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0.01</ele>
+                <ele>0</ele>
+              </row>
+              <row>
+                <ele>0</ele>
+                <ele>0</ele>
+                <ele>0.01</ele>
+              </row>
+            </xmlMatrix>
+          </inertiaTensor>
+          <timeDependentTranslation>
+            <pv:Embed>
+              <pv:Parameter>
+                <pv:scalarParameter name="s">0</pv:scalarParameter>
+                <pv:anyParameter name="spline">
+                  import scipy
+                  import numpy
+                  import mbxmlutils
+                  xx=numpy.linspace(0,5,100)
+                  yy=[
+                    {"s": 0,    "data": numpy.sin(2*xx)},
+                    {"s": 0.06, "data": numpy.sin(2*xx)+(numpy.random.default_rng(87565296655).random(len(xx))-0.5)/10},
+                    {"s": 0,    "data": numpy.zeros(xx.shape)},
+                  ]
+                  ret=[]
+                  for i in range(0,3):
+                    sp=scipy.interpolate.splrep(xx, yy[i]["data"], s=yy[i]["s"])
+                    ret.append(scipy.interpolate.PPoly.from_spline(sp))
+
+                  if False:
+                    import PySide2
+                    class MyPlot(mbxmlutils.MatplotlibDialog):
+                      def __init__(self, parent=None):
+                        super().__init__(parent)
+                    
+                        self.x=numpy.linspace(0,10,100)
+                        self.y=numpy.sin(self.x)+(numpy.random.default_rng(849884).random(len(self.x))-0.5)/10
+                        self.X=numpy.linspace(self.x[0],self.x[-1],1000)
+                    
+                        self.expSL=4
+                        self.facSL = pow(self.x.shape[0]/3,self.expSL-1)
+                    
+                        layout = PySide2.QtWidgets.QVBoxLayout()
+                        self.setLayout(layout)
+                        layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
+                        self.plotWidget=self.getPlotWidget("splinePlot")
+                        layout.addWidget(self.plotWidget)
+                        hlayout = PySide2.QtWidgets.QHBoxLayout()
+                        layout.addLayout(hlayout)
+                        hlayout.setStretch(0, 0)
+                        hlayout.setStretch(1, 0)
+                        hlayout.setStretch(2, 1)
+                        hlayout.addWidget(PySide2.QtWidgets.QLabel("s="))
+                        self.inputSB = PySide2.QtWidgets.QDoubleSpinBox()
+                        hlayout.addWidget(self.inputSB)
+                        self.inputSB.setMinimum(0)
+                        self.inputSB.setMaximum(1e10)
+                        self.inputSB.setSingleStep(0.001)
+                        self.inputSB.setDecimals(6)
+                        self.inputSB.valueChanged.connect(self.sChanged)
+                        self.inputSL = PySide2.QtWidgets.QSlider(PySide2.QtCore.Qt.Horizontal)
+                        hlayout.addWidget(self.inputSL)
+                        self.inputSL.setMinimum(0)
+                        self.inputSLFac=1000000
+                        self.inputSL.setMaximum(int(self.x.shape[0]/3)*self.inputSLFac)
+                        self.inputSL.setSingleStep(self.inputSLFac/1000)
+                        self.inputSL.setPageStep(self.inputSLFac/100)
+                        self.inputSL.valueChanged.connect(self.sliderChanged)
+                    
+                        self.axes = self.plotWidget.figure.subplots()
+                    
+                        self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
+                        self.axes.plot(self.x,self.y,marker="x",linestyle="")
+                    
+                        self.sChanged()
+                    
+                      def sliderValueTos(self, s):
+                        return pow(s/self.inputSLFac,self.expSL)/self.facSL
+                      def sToSliderValue(self, v):
+                        return pow(v*self.facSL,1/self.expSL)*self.inputSLFac
+                    
+                      def sChanged(self):
+                        s=self.inputSB.value()
+                        sp1=scipy.interpolate.splrep(self.x,self.y,s=s)
+                        sp2=scipy.interpolate.PPoly.from_spline(sp1)
+                        self.data.set_ydata(sp2(self.X))
+                        self.plotWidget.draw()
+                        self.inputSL.blockSignals(True)
+                        self.inputSL.setValue(self.sToSliderValue(s))
+                        self.inputSL.blockSignals(False)
+                    
+                      def sliderChanged(self):
+                        v=self.inputSL.value()
+                        self.inputSB.setValue(self.sliderValueTos(v))
+
+                    mbxmlutils.showDialog(MyPlot, ())
+                    mbxmlutils.showDialog(MyPlot, maximized=False)
+                </pv:anyParameter>
+              </pv:Parameter>
+              <VectorValuedFunction>
+                <components>
+                  <PiecewisePolynomFunction>
+                    <breaks>spline[0].x</breaks>
+                    <coefficients>spline[0].c[:,:].T</coefficients>
+                  </PiecewisePolynomFunction>
+                  <PiecewisePolynomFunction>
+                    <breaks>spline[1].x</breaks>
+                    <coefficients>spline[1].c[:,:].T</coefficients>
+                  </PiecewisePolynomFunction>
+                  <PiecewisePolynomFunction>
+                    <breaks>spline[2].x</breaks>
+                    <coefficients>spline[2].c[:,:].T</coefficients>
+                  </PiecewisePolynomFunction>
+                </components>
+              </VectorValuedFunction>
+            </pv:Embed>
+          </timeDependentTranslation>
+          <frames/>
+          <contours/>
+          <openMBVRigidBody>
+            <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
+              <transparency unit="-">0.3</transparency>
+              <length unit="m">1</length>
+            </Cube>
+          </openMBVRigidBody>
+          <enableOpenMBVFrameC/>
+        </RigidBody>
+      </objects>
+      <links/>
+      <constraints/>
+      <observers/>
+      <enableOpenMBVFrameI/>
+      <environments>
+        <MBSimEnvironment>
+          <accelerationOfGravity unit="m/s^2">
+            <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <ele>0</ele>
+              <ele>-9.81</ele>
+              <ele>0</ele>
+            </xmlVector>
+          </accelerationOfGravity>
+        </MBSimEnvironment>
+      </environments>
+    </DynamicSystemSolver>
+  </pv:Embed>
+
+  <DOPRI5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+    <startTime unit="s">0</startTime>
+    <endTime unit="s">5</endTime>
+    <plotStepSize unit="s">1e-2</plotStepSize>
+  </DOPRI5Integrator>
+
+</MBSimProject>
