@@ -71,7 +71,13 @@ namespace MBSim {
         useBreaksAndCoefs
       };
 
-      PiecewisePolynomFunction() : index(0), method(cSplineNatural), f(this), fd(this), fdd(this) { }
+      enum ExtrapolationMethod {
+        error,
+        continuePolynom,
+        linear,
+      };
+
+      PiecewisePolynomFunction() : index(0), interpolationMethod(cSplineNatural), extrapolationMethod(error), f(this), fd(this), fdd(this) { }
 
       int getArgSize() const { return 1; }
 
@@ -80,18 +86,49 @@ namespace MBSim {
       void init(Element::InitStage stage, const InitConfigSet &config) {
         Function<Ret(Arg)>::init(stage, config);
         if(stage==Element::preInit) {
-          if(method!=useBreaksAndCoefs) {
+          if(interpolationMethod!=useBreaksAndCoefs) {
             if(y.rows() != x.size())
               this->throwError("Dimension missmatch in size of x");
             for(int i=1; i<x.size(); i++)
-              if(x(i) < x(i-1))
-                this->throwError("Values of x must be monotonic increasing!");
+              if(x(i) <= x(i-1))
+                this->throwError("Values of x must be strictly monotonic increasing!");
             calculateSpline();
           }
           else {
             for(int i=1; i<breaks.size(); i++)
               if(breaks(i) < breaks(i-1))
                 this->throwError("Values of breaks must be monotonic increasing!");
+            for(int j=0; j<static_cast<int>(coefs.size()); j++) {
+              if(coefs[j].rows()!=breaks.size()-1)
+                this->throwError("Dimension missmatch in size of breaks and rows of coefficients!");
+              if(coefs[0].cols()!=coefs[j].cols())
+                this->throwError("Dimension missmatch in columns of coefficients!");
+            }
+
+            // remove duplicate entries from breaks
+            std::set<int> removeIdx;
+            for(int i=0; i<breaks.size()-1; ++i)
+              if(breaks(i)==breaks(i+1))
+                removeIdx.emplace(i);
+            if(!removeIdx.empty()) {
+              auto breaksOld(std::move(breaks));
+              auto coefsOld(std::move(coefs));
+              breaks.resize(breaksOld.size()-removeIdx.size());
+              coefs.resize(coefsOld.size());
+              for(auto &c : coefs)
+                c.resize(coefsOld[0].rows()-removeIdx.size(),coefsOld[0].cols());
+              int ii=0, i=0;
+              for(i=0; i<breaksOld.size()-1; ++i) {
+                if(removeIdx.find(i)!=removeIdx.end())
+                  continue;
+                breaks(ii)=breaksOld(i);
+                for(int o=0; o<static_cast<int>(coefs.size()); o++)
+                  coefs[o].set(ii,coefsOld[o].row(i));
+                ++ii;
+              }
+              breaks(ii)=breaksOld(i);
+            }
+
           }
           nPoly = (coefs[0]).rows();
           order = coefs.size()-1;
@@ -99,9 +136,9 @@ namespace MBSim {
       }
 
       void calculateSpline() {
-        if(method == cSplinePeriodic) calculateSplinePeriodic();
-        else if(method == cSplineNatural) calculateSplineNatural();
-        else if(method == piecewiseLinear) calculatePLinear();
+        if(interpolationMethod == cSplinePeriodic) calculateSplinePeriodic();
+        else if(interpolationMethod == cSplineNatural) calculateSplineNatural();
+        else if(interpolationMethod == piecewiseLinear) calculatePLinear();
         else this->throwError("(PiecewisePolynomFunction::init): No valid method to calculate pp-form");
       }
 
@@ -137,7 +174,9 @@ namespace MBSim {
        *                                                                                        S''(x1) = S''(xN) = 0
        *                                'piecewiseLinear'    -> piecewise linear function (weak differentiable)
        */
-      void setInterpolationMethod(InterpolationMethod method_) { method = method_; }
+      void setInterpolationMethod(InterpolationMethod method_) { interpolationMethod = method_; }
+
+      void setExtrapolationMethod(ExtrapolationMethod method_) { extrapolationMethod = method_; }
 
       void setx(const fmatvec::VecV &x_) { x <<= x_; }
       void sety(const fmatvec::MatV &y_) { y <<= y_; }
@@ -196,9 +235,11 @@ namespace MBSim {
       fmatvec::MatV y;
 
       /**
-       * \brief interpolation method
+       * \brief interpolation interpolationMethod
        */
-      InterpolationMethod method;
+      InterpolationMethod interpolationMethod;
+
+      ExtrapolationMethod extrapolationMethod;
 
       /*! 
        * \brief calculation of periodic spline by interpolation
@@ -434,10 +475,19 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   Ret PiecewisePolynomFunction<Ret(Arg)>::ZerothDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
-    if(x-1e-13>(parent->breaks)(parent->nPoly)) 
-      throw std::runtime_error("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-    if(x+1e-13<(parent->breaks)(0)) 
-      throw std::runtime_error("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", lower bound= "+fmatvec::toString((parent->breaks)(0)));
+    if(parent->extrapolationMethod==error) {
+      if(x-1e-13>(parent->breaks)(parent->nPoly)) 
+        throw std::runtime_error("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
+      if(x+1e-13<(parent->breaks)(0)) 
+        throw std::runtime_error("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", lower bound= "+fmatvec::toString((parent->breaks)(0)));
+    }
+    if(parent->extrapolationMethod==linear && (x<parent->breaks(0) || x>parent->breaks(parent->nPoly))) {
+      int idx = x<parent->breaks(0) ? 0 : parent->nPoly;
+      auto xv = FromDouble<Arg>::cast(parent->breaks(idx));
+      auto value = parent->f(xv);
+      auto der = parent->fd(xv);
+      return value + der * (x - parent->breaks(idx));
+    }
 
     if ((fabs(x-xSave)<macheps) && !firstCall)
       return FromVecV<Ret>::cast(ySave);
@@ -465,8 +515,16 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   Ret PiecewisePolynomFunction<Ret(Arg)>::FirstDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
-    if(x-1e-13>(parent->breaks)(parent->nPoly)) throw std::runtime_error("(PiecewisePolynomFunction::diff1): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-    if(x+1e-13<(parent->breaks)(0)) throw std::runtime_error("(PiecewisePolynomFunction::diff1): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
+    if(parent->extrapolationMethod==error) {
+      if(x-1e-13>(parent->breaks)(parent->nPoly)) throw std::runtime_error("(PiecewisePolynomFunction::diff1): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
+      if(x+1e-13<(parent->breaks)(0)) throw std::runtime_error("(PiecewisePolynomFunction::diff1): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
+    }
+    if(parent->extrapolationMethod==linear && (x<parent->breaks(0) || x>parent->breaks(parent->nPoly))) {
+      int idx = x<parent->breaks(0) ? 0 : parent->nPoly;
+      auto xv = FromDouble<Arg>::cast(parent->breaks(idx));
+      auto der = parent->fd(xv);
+      return der;
+    }
 
     if ((fabs(x-xSave)<macheps) && !firstCall)
       return FromVecV<Ret>::cast(ySave);
@@ -494,8 +552,12 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   Ret PiecewisePolynomFunction<Ret(Arg)>::SecondDerivative::operator()(const Arg& x_) {
     double x = ToDouble<Arg>::cast(x_);
-    if(x-1e-13>(parent->breaks)(parent->nPoly)) throw std::runtime_error("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-    if(x+1e-13<(parent->breaks)(0)) throw std::runtime_error("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
+    if(parent->extrapolationMethod==error) {
+      if(x-1e-13>(parent->breaks)(parent->nPoly)) throw std::runtime_error("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
+      if(x+1e-13<(parent->breaks)(0)) throw std::runtime_error("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
+    }
+    if(parent->extrapolationMethod==linear && (x<parent->breaks(0) || x>parent->breaks(parent->nPoly)))
+      return FromVecV<Ret>::cast(fmatvec::VecV(parent->getRetSize().first, fmatvec::INIT, 0.0));
 
     if ((fabs(x-xSave)<macheps) && !firstCall)
       return FromVecV<Ret>::cast(ySave);
@@ -540,10 +602,10 @@ namespace MBSim {
     if(e) { 
       std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
       str=str.substr(1,str.length()-2);
-      if(str=="cSplinePeriodic")      method=cSplinePeriodic;
-      else if(str=="cSplineNatural")  method=cSplineNatural;
-      else if(str=="piecewiseLinear") method=piecewiseLinear;
-      else method=useBreaksAndCoefs;
+      if(str=="cSplinePeriodic")      interpolationMethod=cSplinePeriodic;
+      else if(str=="cSplineNatural")  interpolationMethod=cSplineNatural;
+      else if(str=="piecewiseLinear") interpolationMethod=piecewiseLinear;
+      else interpolationMethod=useBreaksAndCoefs;
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"breaks");
@@ -579,7 +641,17 @@ namespace MBSim {
         first=false;
       }
       setCoefficients(coefs);
-      method=useBreaksAndCoefs;
+      interpolationMethod=useBreaksAndCoefs;
+    }
+
+    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"extrapolationMethod");
+    if(e) { 
+      std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
+      str=str.substr(1,str.length()-2);
+      if(str=="error")      extrapolationMethod=error;
+      else if(str=="continuePolynom")  extrapolationMethod=continuePolynom;
+      else if(str=="linear") extrapolationMethod=linear;
+      else this->throwError("Unknown extrapolationMethod.");
     }
   }
 

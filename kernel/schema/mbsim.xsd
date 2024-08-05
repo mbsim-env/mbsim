@@ -5625,79 +5625,93 @@
   <xs:complexType name="PiecewisePolynomFunctionType">
     <xs:complexContent>
       <xs:extension base="FunctionType">
-        <xs:choice>
-          <xs:sequence>
-            <xs:choice>
-              <xs:sequence>
-                <xs:element name="x" type="pv:unknownVector">
+        <xs:sequence>
+          <xs:choice>
+            <xs:sequence>
+              <xs:choice>
+                <xs:sequence>
+                  <xs:element name="x" type="pv:unknownVector">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="">
+                        Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                  <xs:element name="y" type="pv:unknownMatrix">
+                    <xs:annotation>
+                      <xs:documentation xml:lang="de" xmlns="">
+                        Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                      </xs:documentation>
+                    </xs:annotation>
+                  </xs:element>
+                </xs:sequence>
+                <xs:element name="xy" type="pv:unknownMatrix">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
-                      Parameter-(Spalten-)vektor der zu interpolierenden Punkte.
+                      Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
                     </xs:documentation>
                   </xs:annotation>
                 </xs:element>
-                <xs:element name="y" type="pv:unknownMatrix">
+              </xs:choice>
+              <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullEval">
                   <xs:annotation>
                     <xs:documentation xml:lang="de" xmlns="">
-                      Zeilenweises Arrangement der zu interpolierenden Punkte in einer Matrix.
+                      <dl>
+                        <dt>"cSplinePeriodic"</dt> <dd>Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).</dd>
+                        <dt>"cSplineNatural"</dt> <dd>Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).</dd>
+                        <dt>"piecewiseLinear"</dt> <dd>Interpolation mit stückweise linearem Spline.</dd>
+                      </dl>
                     </xs:documentation>
                   </xs:annotation>
-                </xs:element>
-              </xs:sequence>
-              <xs:element name="xy" type="pv:unknownMatrix">
+              </xs:element>
+            </xs:sequence> 
+            <xs:sequence> 
+              <xs:element name="breaks" type="pv:unknownVector">
                 <xs:annotation>
                   <xs:documentation xml:lang="de" xmlns="">
-                    Parameter-(Spalten-)vektor und die zu interpolierenden Punkte sind in einer Matrix zusammengefasst.
+                    Polynom Stützpunkte.
+
+                    Bei Verwendung des Python evaluators und Nutzung von scipy entspricht der Wert des Vectors breaks = scipy.interpolate.PPoly.x
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
-            </xs:choice>
-            <xs:element name="interpolationMethod" minOccurs="0" type="pv:stringFullEval">
+              <xs:element name="coefficients" type="pv:unknownMatrix" minOccurs="1" maxOccurs="unbounded">
                 <xs:annotation>
                   <xs:documentation xml:lang="de" xmlns="">
-                    <dl>
-                      <dt>"cSplinePeriodic"</dt> <dd>Interpolation mit periodischem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s'(0)=s'(l);\ s''(0)=s''(l)</object>).</dd>
-                      <dt>"cSplineNatural"</dt> <dd>Interpolation mit natürlichem Spline s vom lokalem Polynomgrad 3 (<object class="inlineeqn"> s''(0)=0;\ s''(l)=0</object>).</dd>
-                      <dt>"piecewiseLinear"</dt> <dd>Interpolation mit stückweise linearem Spline.</dd>
-                    </dl>
+                    Das piecewise Polynom wird mittels "local power basis" dargestellt.
+                    <object class="eqn">
+                      <![CDATA[
+                      y = \sum_{m=0}^{k} C_{i,m} * (x - breaks_i)^{k-m}
+                      ]]>
+                    </object>
+                    Wobei i die Werte für das Spline-interval x[i] bis x[i+1] darstellen.
+                    Und k ist der Polynomgrad.
+
+                    Die Matrix C entspricht dabei dem Wert dieses XML elements.
+
+                    Wenn das PiecewisePolynomFunction anstatt eines Scalars einen Vector zurückliefert müssen die XML Element coefficients mehrfach angegeben werden: für jede Komponente des Vectors.
+
+                    Bei Verwendung des Python evaluators und Nutzung von scipy entspricht für skalare PiecewisePolynomFunction
+                    der Wert der Matrix C = scipy.interpolate.PPoly.c.T und für vektorielle PiecewisePolynomFunction
+                    der Wert der Matrix C = scipy.interpolate.PPoly.c[:,:,comp].T wobei comp die Komponente des Vectors ist oder 0 für ein Skalar.
                   </xs:documentation>
                 </xs:annotation>
-            </xs:element>
-          </xs:sequence> 
-          <xs:sequence> 
-            <xs:element name="breaks" type="pv:unknownVector">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="">
-                  Polynom Stützpunkte.
-
-                  Bei Verwendung des Python evaluators und Nutzung von scipy entspricht der Wert des Vectors breaks = scipy.interpolate.PPoly.x
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-            <xs:element name="coefficients" type="pv:unknownMatrix" minOccurs="1" maxOccurs="unbounded">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="">
-                  Das piecewise Polynom wird mittels "local power basis" dargestellt.
-                  <object class="eqn">
-                    <![CDATA[
-                    y = \sum_{m=0}^{k} C_{i,m} * (x - breaks_i)^{k-m}
-                    ]]>
-                  </object>
-                  Wobei i die Werte für das Spline-interval x[i] bis x[i+1] darstellen.
-                  Und k ist der Polynomgrad.
-
-                  Die Matrix C entspricht dabei dem Wert dieses XML elements.
-
-                  Wenn das PiecewisePolynomFunction anstatt eines Scalars einen Vector zurückliefert müssen die XML Element coefficients mehrfach angegeben werden: für jede Komponente des Vectors.
-
-                  Bei Verwendung des Python evaluators und Nutzung von scipy entspricht für skalare PiecewisePolynomFunction
-                  der Wert der Matrix C = scipy.interpolate.PPoly.c.T und für vektorielle PiecewisePolynomFunction
-                  der Wert der Matrix C = scipy.interpolate.PPoly.c[:,:,comp].T wobei comp die Komponente des Vectors ist oder 0 für ein Skalar.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-          </xs:sequence> 
-        </xs:choice> 
+              </xs:element>
+            </xs:sequence> 
+          </xs:choice> 
+          <xs:element name="extrapolationMethod" minOccurs="0" type="pv:stringFullEval">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert wie vor dem Start und nach dem Ende des Splineintervals extrapoliert wird:_
+                <dl>
+                  <dt>"error"</dt> <dd>[Default] Es findet keine extrapolation statt sondern es wird bei Auswertung außerhalb des Bereichs eine error generiert.</dd>
+                  <dt>"continuePolynom"</dt> <dd>Das Polynom an Ende des Bereichs wird auserhalb des Bereichs ausgewertet.</dd>
+                  <dt>"linear"</dt> <dd>Linear fortsetzung des Splines auserhalb des Bereichs. Der Spline is an den Bereichsgrenzen somit nur noch C^1 stetig.</dd>
+                </dl>
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>   
