@@ -1575,6 +1575,8 @@ namespace MBSim {
       updategdRef(gdParent);
       calclaSize(3); // IG
       calcrFactorSize(3); // IG
+      updaterRef(rParent[0]);
+      updateJrlaRef(JrlaParent[0]);
       updateWRef(WParent[0]);
       updateVRef(VParent[0]);
       updatelaRef(laParent);
@@ -1598,6 +1600,8 @@ namespace MBSim {
       if (laSize) {
         calclaSize(3); // IH
         calcrFactorSize(3); // IH
+        updaterRef(rParent[0]);
+        updateJrlaRef(JrlaParent[0]);
         updateWRef(WParent[0]);
         updateVRef(VParent[0]);
         updatelaRef(laParent);
@@ -1616,6 +1620,8 @@ namespace MBSim {
 
       calclaSize(3); // IH
       calcrFactorSize(3); // IH
+      updaterRef(rParent[0]);
+      updateJrlaRef(JrlaParent[0]);
       updateWRef(WParent[0]);
       updateVRef(VParent[0]);
       updatelaRef(laParent);
@@ -1638,6 +1644,8 @@ namespace MBSim {
     checkActive(5); // final update von gActive, ...
     calclaSize(3); // IH
     calcrFactorSize(3); // IH
+    updaterRef(rParent[0]);
+    updateJrlaRef(JrlaParent[0]);
     updateWRef(WParent[0]);
     updateVRef(VParent[0]);
     updatelaRef(laParent);
@@ -1649,6 +1657,8 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updatelaInverseKinetics() {
+    updaterRef(rParent[1], 1);
+    updateJrlaRef(JrlaParent[1], 1);
     updateWRef(WParent[1], 1);
     updateVRef(VParent[1], 1);
     int n = evalWInverseKinetics().cols();
