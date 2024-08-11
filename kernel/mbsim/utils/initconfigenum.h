@@ -26,6 +26,8 @@
 
 namespace MBSim {
 
+#ifndef SWIG
+
 class InitConfigEnum {
   public:
     bool operator==(const InitConfigEnum& a) const { return this==&a; }
@@ -45,14 +47,16 @@ class InitConfigEnum {
     InitConfigEnum& operator=(InitConfigEnum&&)=delete;
 };
 
-#ifndef SWIG
-
 struct InitConfigEnumOp {
   size_t operator()(const InitConfigEnum &f) const { return reinterpret_cast<size_t>(&f); }
   bool operator()(const InitConfigEnum &a, const InitConfigEnum &b) const { return &a==&b; }
 };
 
 typedef std::unordered_set<std::reference_wrapper<const InitConfigEnum>, InitConfigEnumOp, InitConfigEnumOp> InitConfigSet;
+
+#else
+
+class InitConfigSet;
 
 #endif
 

@@ -7,6 +7,7 @@ import numpy
 # import mbsim module
 import mbsim
 import fmatvec
+import mbsimControl
 
 import sys
 import os
@@ -271,6 +272,29 @@ class RotTimeKinematicFunction(mbsim.Function_RotMat3_VecV_d):
 
 
 
+# A python class derived from MBSim::FrameLink
+class PyGeneralizedRelativePositionSensorWithOffsetXMLInit(mbsimControl.GeneralizedRelativePositionSensor):
+  def __init__(self):
+    super(PyGeneralizedRelativePositionSensorWithOffsetXMLInit, self).__init__("")
+    self.offset=0
+
+  def updateSignal(self):
+    super(PyGeneralizedRelativePositionSensorWithOffsetXMLInit, self).updateSignal()
+    self.s += self.offset
+
+  @staticmethod
+  def getSchema():
+    import xml.etree.cElementTree as ET
+    xsd=ET.Element(mbsim.XS+'sequence')
+    xsd.append(ET.Element(mbsim.XS+'element', {'name': "offset", 'type': ET.QName(mbsim.PV+"lengthScalar")}))
+    return xsd
+
+  def initializeUsingXML(self, e):
+    super(PyGeneralizedRelativePositionSensorWithOffsetXMLInit, self).initializeUsingXML(e)
+    self.offset=float(e.find(NS+"offset").text)
+
+
+
 # register the classes as a XML name (this makes the class usable from XML)
 mbsim.registerClass(PySpringDamperXMLInit)
 mbsim.registerClass(PySpringDamperPyScriptInit)
@@ -281,6 +305,7 @@ mbsim.registerClass(TransKinematicFunction)
 mbsim.registerClass(RotKinematicFunction)
 mbsim.registerClass(TransTimeKinematicFunction)
 mbsim.registerClass(RotTimeKinematicFunction)
+mbsim.registerClass(PyGeneralizedRelativePositionSensorWithOffsetXMLInit)
 
 
 

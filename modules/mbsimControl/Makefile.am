@@ -1,4 +1,4 @@
-SUBDIRS = mbsimControl schema
+SUBDIRS = mbsimControl schema swig
 
 DIST_SUBDIRS = mbsimControl doc schema
 

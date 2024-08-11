@@ -308,6 +308,10 @@
             <PySignalFunction xmlns="http://mypytest"/>
           </c:function>
         </c:FunctionSensor>
+        <PyGeneralizedRelativePositionSensorWithOffsetXMLInit name="relpossen" xmlns="http://mypytest">
+          <c:link ref="../Link[Spring1]"/>
+          <offset>0.1</offset>
+        </PyGeneralizedRelativePositionSensorWithOffsetXMLInit>
       </links>
       <constraints/>
       <observers/>

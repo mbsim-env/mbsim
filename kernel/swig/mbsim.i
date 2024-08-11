@@ -13,7 +13,6 @@
 #include "mbsim/numerics/functions/newton_method_jacobian_functions.h"
 #include "mbsim/numerics/functions/damping_functions.h"
 using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fixes this
-using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this fixes this
 %}
 
 // wrap some std::vector<...> types used by the above wrapped classes

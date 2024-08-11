@@ -86,6 +86,7 @@
 #endif
 
 %include openmbvcppinterface/OpenMBV_include.i
+%include mbsim/utils/initconfigenum.h
 
 // create directors for everything
 %feature("director");

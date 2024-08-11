@@ -126,6 +126,8 @@ modules/mbsimControl/mbsimControl/Makefile.in
 modules/mbsimControl/missing
 modules/mbsimControl/schema/Makefile.in
 modules/mbsimControl/xmldoc/Makefile.in
+modules/mbsimControl/swig/.swig_prepare/Makefile.in
+modules/mbsimControl/swig/Makefile.in
 modules/mbsimElectronics/INSTALL
 modules/mbsimElectronics/Makefile.in
 modules/mbsimElectronics/aclocal.m4
