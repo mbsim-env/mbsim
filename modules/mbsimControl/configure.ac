@@ -48,6 +48,10 @@ fi
 LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
+if test "$cross_compiling" == "yes"; then
+  AC_SUBST([XC_EXEC_PREFIX],[wine])
+fi
+
 dnl Check for SWIG
 AC_ARG_WITH([swigpath], [  --with-swigpath=PATH  The path to the swig program.],
   [swigpath="$withval"],[swigpath=""])
