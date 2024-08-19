@@ -196,12 +196,12 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateStopVector() {
-    for (auto & i : linkSetValued)
+    for (auto & i : link)
       i->updateStopVector();
   }
 
   void DynamicSystem::updateStopVectorParameters() {
-    for (auto & i : linkSetValued)
+    for (auto & i : link)
       i->updateStopVectorParameters();
   }
 
@@ -1630,7 +1630,7 @@ namespace MBSim {
 
   void DynamicSystem::checkRoot() {
 
-    for (auto & i : linkSetValued)
+    for (auto & i : link)
       i->checkRoot();
   }
 

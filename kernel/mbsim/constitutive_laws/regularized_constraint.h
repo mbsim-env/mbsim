@@ -69,6 +69,9 @@ namespace MBSim {
         forceFunc->setParent(this);
 
       }
+
+      Function<double(double,double)>* getForceFunction() { return forceFunc; }
+
     protected:
       /*!
        * \brief force function for a regularized contact law
