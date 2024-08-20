@@ -1328,14 +1328,9 @@ namespace MBSim {
   }
 
   void DynamicSystem::checkActive(int j) {
-    for (auto & i : linkSetValued)
+    for (auto & i : linkWithStopVector)
       i->checkActive(j);
     setUpActiveLinks();
-  }
-
-  void DynamicSystem::checkActiveReg(int j) {
-    for (auto & i : linkSingleValued)
-      i->checkActive(j);
   }
 
   void DynamicSystem::setGeneralizedRelativePositionTolerance(double tol) {

@@ -654,11 +654,6 @@ namespace MBSim {
       void checkActive(int j);
 
       /**
-       * \brief check if single-valued contacts are active
-       */
-      void checkActiveReg(int j);
-
-      /**
        * \param tolerance for relative position
        */
       virtual void setGeneralizedRelativePositionTolerance(double tol);
