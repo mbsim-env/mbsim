@@ -196,15 +196,13 @@ namespace MBSim {
   }
 
   void DynamicSystem::updateStopVector() {
-    for (auto & i : link)
-      if(i->getsvSize()>0)
-        i->updateStopVector();
+    for (auto & i : linkWithStopVector)
+      i->updateStopVector();
   }
 
   void DynamicSystem::updateStopVectorParameters() {
-    for (auto & i : link)
-      if(i->getsvSize()>0)
-        i->updateStopVectorParameters();
+    for (auto & i : linkWithStopVector)
+      i->updateStopVectorParameters();
   }
 
   void DynamicSystem::updateLinkStatus() {
@@ -1071,6 +1069,7 @@ namespace MBSim {
     linkSetValued.clear();
     linkSetValuedActive.clear();
     linkSingleValued.clear();
+    linkWithStopVector.clear();
     for (auto & i : link) {
       if (i->isSetValued()) {
         linkSetValued.push_back(i);
@@ -1078,6 +1077,8 @@ namespace MBSim {
       }
       if (i->isSingleValued())
         linkSingleValued.push_back(i);
+      if (i->getsvSize()>0)
+        linkWithStopVector.push_back(i);
     }
   }
 
@@ -1632,9 +1633,8 @@ namespace MBSim {
 
   void DynamicSystem::checkRoot() {
 
-    for (auto & i : link)
-      if(i->getsvSize()>0)
-        i->checkRoot();
+    for (auto & i : linkWithStopVector)
+      i->checkRoot();
   }
 
   void DynamicSystem::resetUpToDate() {

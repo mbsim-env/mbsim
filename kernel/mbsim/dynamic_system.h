@@ -818,6 +818,7 @@ namespace MBSim {
       std::vector<Link*> linkSingleValued;
       std::vector<Link*> linkSetValued;
       std::vector<Link*> linkSetValuedActive;
+      std::vector<Link*> linkWithStopVector;
       std::vector<ModellingInterface*> model;
       std::vector<DynamicSystem*> dynamicsystem;
       std::vector<Link*> inverseKineticsLink;

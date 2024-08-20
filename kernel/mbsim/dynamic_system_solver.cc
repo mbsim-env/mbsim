@@ -252,7 +252,8 @@ namespace MBSim {
         sethInd(0, i);
       }
 
-      setUpLinks(); // is needed by calcgSize()
+      calcsvSize(); // needs to be called before setUpLinks
+      setUpLinks(); // take care: some calc*Size functions must be called before, some after setUplinks
 
       calcxSize();
       setxInd(0);
@@ -263,15 +264,14 @@ namespace MBSim {
       calcbInverseKineticsSize();
 
       calcisSize();
-      calclaSize(0);
-      calcgSize(0);
-      calcgdSize(0);
-      calcrFactorSize(0);
-      calcsvSize();
+      calclaSize(0); // needs to be called after setUpLinks
+      calcgSize(0); // needs to be called after setUpLinks
+      calcgdSize(0); // needs to be called after setUpLinks
+      calcrFactorSize(0); // needs to be called after setUpLinks
       setsvInd(0);
 
-      calcLinkStatusSize();
-      calcLinkStatusRegSize();
+      calcLinkStatusSize(); // needs to be called after setUpLinks
+      calcLinkStatusRegSize(); // needs to be called after setUpLinks
 
       msg(Info) << "qSize = " << qSize << endl;
       msg(Info) << "uSize = " << uSize[0] << endl;
