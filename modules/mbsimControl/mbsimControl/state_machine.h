@@ -56,12 +56,10 @@ namespace MBSimControl {
       const State& getActiveState() const { return state[int(curis(0))]; }
       void updateSignal() override;
       int getSignalSize() const override { return 1; }
-      bool isSetValued() const override { return true; }
       void calcisSize() override { isSize = 1; }
       void calcsvSize() override;
       void updateStopVector() override;
       void checkActive(int j) override;
-      bool isActive() const override { return true; }
 
       void solveImpactsFixpointSingle() override { }
       void solveConstraintsFixpointSingle() override { }

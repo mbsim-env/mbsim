@@ -40,11 +40,9 @@ namespace MBSimControl {
       void setRootFinding(bool rf_) { rf = rf_; }
       void updateSignal() override;
       int getSignalSize() const override { return dataSignal1->getSignalSize(); }
-      bool isSetValued() const override { return rf; }
-      void calcsvSize() override { svSize = isSetValued(); }
+      void calcsvSize() override { svSize = rf; }
       void updateStopVector() override;
       void checkActive(int j) override;
-      bool isActive() const override { return active; }
     private:
       Signal* dataSignal1{nullptr};
       Signal* dataSignal2{nullptr};

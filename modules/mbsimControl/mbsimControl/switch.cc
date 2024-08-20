@@ -67,7 +67,7 @@ namespace MBSimControl {
   }
 
   void Switch::updateSignal() {
-    s = (isSetValued()?active:controlSignal->evalSignal()(0)>=s0)?dataSignal1->evalSignal():dataSignal2->evalSignal();
+    s = (rf?active:controlSignal->evalSignal()(0)>=s0)?dataSignal1->evalSignal():dataSignal2->evalSignal();
     upds = false;
   }
 
