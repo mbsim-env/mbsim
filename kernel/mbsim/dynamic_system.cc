@@ -197,12 +197,14 @@ namespace MBSim {
 
   void DynamicSystem::updateStopVector() {
     for (auto & i : link)
-      i->updateStopVector();
+      if(i->getsvSize()>0)
+        i->updateStopVector();
   }
 
   void DynamicSystem::updateStopVectorParameters() {
     for (auto & i : link)
-      i->updateStopVectorParameters();
+      if(i->getsvSize()>0)
+        i->updateStopVectorParameters();
   }
 
   void DynamicSystem::updateLinkStatus() {
@@ -1631,7 +1633,8 @@ namespace MBSim {
   void DynamicSystem::checkRoot() {
 
     for (auto & i : link)
-      i->checkRoot();
+      if(i->getsvSize()>0)
+        i->checkRoot();
   }
 
   void DynamicSystem::resetUpToDate() {
