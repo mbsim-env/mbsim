@@ -61,18 +61,6 @@ namespace MBSimControl {
       void updateStopVector() override;
       void checkActive(int j) override;
 
-      void solveImpactsFixpointSingle() override { }
-      void solveConstraintsFixpointSingle() override { }
-      void solveImpactsGaussSeidel() override { }
-      void solveConstraintsGaussSeidel() override { }
-      void solveImpactsRootFinding() override { }
-      void solveConstraintsRootFinding() override { }
-      void jacobianConstraints() override { }
-      void jacobianImpacts() override { }
-      void updaterFactors() override { }
-      void checkImpactsForTermination() override { }
-      void checkConstraintsForTermination() override { }
-
     private:
       std::vector<State> state;
       std::vector<Transition> transition;
