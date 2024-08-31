@@ -898,9 +898,10 @@ namespace MBSimGUI {
     setLayout(layout);
 
     for(size_t i=0; i<widget.size(); i++) {
-      QString subname = name[i];
+      QString subname;
       if(widget.size()>1 and name[1]==name[0])
-        subname += QString(" ")+QString::number(i+1);
+        subname = i?"Second ":"First ";
+      subname += name[i];
       QWidget *subwidget = new ExtWidget(subname,widget[i]);
       layout->addWidget(subwidget);
     }

@@ -678,7 +678,6 @@ namespace MBSimGUI {
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
     menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 1).toInt());
-    menu.setBaseIndexForPlot(settings.value("mainwindow/options/baseindexforplot", 0).toInt());
 
     QFile file(configPath+"mbsimxml.modulepath");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
@@ -703,7 +702,6 @@ namespace MBSimGUI {
       settings.setValue("mainwindow/options/statusupdate"      , menu.getStatusUpdate());
       settings.setValue("mainwindow/options/plugins"           , menu.getPlugins());
       settings.setValue("mainwindow/options/defaultevaluator"  , menu.getDefaultEvaluator());
-      settings.setValue("mainwindow/options/baseindexforplot"  , menu.getBaseIndexForPlot());
 
       file.open(QIODevice::WriteOnly | QIODevice::Text);
       file.write(menu.getModulePath().toUtf8());
@@ -1400,8 +1398,6 @@ namespace MBSimGUI {
       arg.append("--savestatetable");
       if(settings.value("mainwindow/options/savestatevector", false).toBool())
         arg.append("--savefinalstatevector");
-      arg.append("--baseindexforplot");
-      arg.append(settings.value("mainwindow/options/baseindexforplot", "0").toString());
     }
 
     // we print everything except status messages to stdout

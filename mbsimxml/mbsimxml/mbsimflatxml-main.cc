@@ -75,12 +75,6 @@ int main(int argc, char *argv[]) {
     bool savestatevector=false;
     if(find(args.begin(), args.end(), "--savefinalstatevector")!=args.end())
       savestatevector=true;
-    if((i=find(args.begin(), args.end(), "--baseindexforplot"))!=args.end()) {
-      i2=i; i2++;
-      MBSim::baseIndexForPlot=stoi(*i2);
-      args.erase(i);
-      args.erase(i2);
-    }
 
     unique_ptr<Solver> solver;
     unique_ptr<DynamicSystemSolver> dss;

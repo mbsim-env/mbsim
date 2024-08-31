@@ -317,7 +317,7 @@ namespace MBSim {
   }
 
   void Element::addToPlot(const string &name, int size) {
-    for(int i=baseIndexForPlot; i<baseIndexForPlot+size; i++)
+    for(int i=0; i<size; i++)
       plotColumns.emplace_back(name+" ("+to_string(i)+")");
   }
 

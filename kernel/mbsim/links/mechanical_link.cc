@@ -71,11 +71,11 @@ namespace MBSim {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
           for(size_t i=0; i<F.size(); i++)
-	    addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
+	    addToPlot("force "+to_string(i),{"x","y","z"});
         }
         if(plotFeature[moment]) {
           for(size_t i=0; i<M.size(); i++)
-	    addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
+	    addToPlot("moment "+to_string(i),{"x","y","z"});
         }
       }
     }

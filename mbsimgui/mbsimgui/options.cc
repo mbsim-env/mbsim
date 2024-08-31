@@ -102,15 +102,6 @@ namespace MBSimGUI {
     defaultEvaluator->addItem("python");
     sublayout->addWidget(defaultEvaluator);
 
-    sublayout = new QHBoxLayout;
-    layout->addLayout(sublayout);
-    label = new QLabel("Base index for plot");
-    sublayout->addWidget(label);
-    baseIndex = new QComboBox;
-    baseIndex->addItem("0");
-    baseIndex->addItem("1");
-    sublayout->addWidget(baseIndex);
-
     auto mbsimxmlGroup = new QGroupBox("mbsimxml options");
     layout->addWidget(mbsimxmlGroup);
     auto mbsimxmlGroupLayout = new QVBoxLayout;
@@ -237,15 +228,6 @@ namespace MBSimGUI {
   void OptionsDialog::setDefaultEvaluator(int index) {
     defaultEvaluator->setCurrentIndex(index);
   }
-
-  int OptionsDialog::getBaseIndexForPlot() const {
-    return baseIndex->currentIndex();
-  }
-
-  void OptionsDialog::setBaseIndexForPlot(int index) {
-    baseIndex->setCurrentIndex(index);
-  }
-
 
   QString OptionsDialog::getModulePath() const {
     return modulePath->toPlainText();

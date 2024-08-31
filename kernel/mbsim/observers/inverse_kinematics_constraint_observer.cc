@@ -58,11 +58,11 @@ namespace MBSim {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force]) {
           for(int i=0; i<constraint->getNumberOfMechanicalLinks(); i++)
-            addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("force "+to_string(i),{"x","y","z"});
         }
         if(plotFeature[moment]) {
           for(int i=0; i<constraint->getNumberOfMechanicalLinks(); i++)
-            addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("moment "+to_string(i),{"x","y","z"});
         }
       }
       Observer::init(stage, config);

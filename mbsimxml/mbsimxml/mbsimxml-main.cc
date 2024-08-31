@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
        std::find(args.begin(), args.end(), "-?")!=args.end()) {
       cout<<"Usage: mbsimxml [--onlypreprocess|--donotintegrate|--stopafterfirststep|"<<endl
           <<"                 --autoreload [ms]|--dumpXMLCatalog <file>] [--savefinalstatevector]"<<endl
-          <<"                [--baseindexforplot <bi>] [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
+          <<"                [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
           <<"                [<paramname>=<value> [<paramname>=<value> ...]]"<<endl
           <<"                [-C <dir/file>|--CC] <mbsimprjfile>"<<endl
@@ -96,7 +96,6 @@ int main(int argc, char *argv[]) {
           <<"--donotintegrate         Stop after the initialization stage, do not integrate"<<endl
           <<"--savefinalstatevector   Save the state vector to the file \"statevector.asc\" after integration"<<endl
           <<"--savestatetable         Save the state table to the file \"statetable.asc\""<<endl
-	  <<"--baseindexforplot <bi>  Use the base index <bi> in MBSim plot files"<<endl
           <<"--stopafterfirststep     Stop after outputting the first step (usually at t=0)"<<endl
           <<"                         This generates a HDF5 output file with only one time serie"<<endl
           <<"--autoreload             Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
@@ -219,13 +218,6 @@ int main(int argc, char *argv[]) {
     if((i=std::find(args.begin(), args.end(), "--savefinalstatevector"))!=args.end()) {
       savestatevector=true;
       args.erase(i);
-    }
-
-    if((i=std::find(args.begin(), args.end(), "--baseindexforplot"))!=args.end()) {
-      i2=i; i2++;
-      MBSim::baseIndexForPlot=stoi(*i2);
-      args.erase(i);
-      args.erase(i2);
     }
 
     int AUTORELOADTIME=0;

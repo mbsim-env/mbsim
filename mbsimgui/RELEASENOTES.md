@@ -14,16 +14,18 @@ MBSimGUI
   user experience.
 - Enable project templates.
 - In the options menu the default evaluator is now set to "Python", when MBSimGUI ist started the first time.
+- The base index for plot is removed.
 
 MBSimXML
 --------
 - The stdout/stderr output of evaluations are now redirected to the Info/Warn streams of MBSim.
 - More XML elements (with maxOccurs>1) allow now to use the Embed = Array/Pattern feature.
-
+- The base index for plot is removed.
 
 MBSim
 -----
 - States in element "state machine" are now internal states of the dynamic system. This enables a restart of the simulation with the correct initial states when using state machines.
+- The base index for plot is removed.
 
 
 Release 10.2

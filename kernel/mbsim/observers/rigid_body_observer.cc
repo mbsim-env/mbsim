@@ -67,13 +67,13 @@ namespace MBSim {
           addToPlot("weight",{"x","y","z"});
           if(getDynamicSystemSolver()->getInverseKinetics()) {
             for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
-              addToPlot("joint force "+to_string(convertIndex(i)),{"x","y","z"});
+              addToPlot("joint force "+to_string(i),{"x","y","z"});
           }
         }
         if(plotFeature[moment]) {
           if(getDynamicSystemSolver()->getInverseKinetics()) {
             for(int i=0; i<body->getJoint()->getNumberOfForces(); i++)
-              addToPlot("joint moment "+to_string(convertIndex(i)),{"x","y","z"});
+              addToPlot("joint moment "+to_string(i),{"x","y","z"});
           }
         }
         if(plotFeature[position]) {

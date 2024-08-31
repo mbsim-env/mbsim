@@ -58,11 +58,11 @@ namespace MBSim {
       if(plotFeature[plotRecursive]) {
         if(plotFeature[force] and getDynamicSystemSolver()->getInverseKinetics()) {
           for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
-            addToPlot("force "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("force "+to_string(i),{"x","y","z"});
         }
         if(plotFeature[moment] and getDynamicSystemSolver()->getInverseKinetics()) {
           for(int i=0; i<constraint->getMechanicalLink()->getNumberOfForces(); i++)
-            addToPlot("moment "+to_string(convertIndex(i)),{"x","y","z"});
+            addToPlot("moment "+to_string(i),{"x","y","z"});
         }
       }
       Observer::init(stage, config);

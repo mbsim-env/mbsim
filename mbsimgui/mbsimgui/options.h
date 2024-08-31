@@ -68,7 +68,7 @@ namespace MBSimGUI {
       void autoExportChanged(int state);
       void openFileBrowser();
       QCheckBox *autoSave, *autoExport, *saveStateVector, *showFilters, *showHiddenElements, *autoRefresh, *statusUpdate;
-      QComboBox *defaultEvaluator, *baseIndex;
+      QComboBox *defaultEvaluator;
       QSpinBox *autoSaveInterval, *maxUndo;
       QLineEdit *autoExportDir;
       QPushButton *button;
