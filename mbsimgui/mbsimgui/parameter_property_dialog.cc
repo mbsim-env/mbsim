@@ -171,8 +171,7 @@ namespace MBSimGUI {
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    //value = new ExtWidget("Value",new ExpressionWidget("0"));
-    value = new ExtWidget("Value",new ChoiceWidget(new StringWidgetFactory("","\".\""),QBoxLayout::RightToLeft,5));
+    value = new ExtWidget("Value",new TextWidget(""));
     addToTab("General", value);
   }
 
@@ -185,7 +184,6 @@ namespace MBSimGUI {
   DOMElement* ImportParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
     value->writeXMLFile(parameter->getXMLElement(),ref);
-//    parameter->setValue(static_cast<ExpressionWidget*>(value->getWidget())->getValue());
     return nullptr;
   }
 
