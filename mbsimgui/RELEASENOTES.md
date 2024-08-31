@@ -12,7 +12,8 @@ MBSimGUI
 - The Embed = Array/Pattern feature of MBSimXML has more features then MBSimGUI can handle. Unhandled features are
   now handled in MBSimGUI as "Unknown XML Elements". Hence, MBSimGUI can now handle every feature but with reduced
   user experience.
-- Enable project templates
+- Enable project templates.
+- In the options menu the default evaluator is now set to "Python", when MBSimGUI ist started the first time.
 
 MBSimXML
 --------
