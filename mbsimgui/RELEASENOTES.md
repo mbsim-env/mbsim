@@ -12,6 +12,7 @@ MBSimGUI
 - The Embed = Array/Pattern feature of MBSimXML has more features then MBSimGUI can handle. Unhandled features are
   now handled in MBSimGUI as "Unknown XML Elements". Hence, MBSimGUI can now handle every feature but with reduced
   user experience.
+- Enable project templates
 
 MBSimXML
 --------

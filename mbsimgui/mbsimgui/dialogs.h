@@ -33,6 +33,7 @@ class QComboBox;
 class QwtPlot;
 class QwtPlotCurve;
 class QTextEdit;
+class QListWidget;
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -316,6 +317,26 @@ namespace MBSimGUI {
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
       QLineEdit *editor;
+  };
+
+  class NewProjectFromTemplateDialog : public QDialog {
+    public:
+      NewProjectFromTemplateDialog(const QStringList &list, QWidget *parent=nullptr);
+      int getSelectedRow() const;
+    private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      QListWidget *templates;
+  };
+
+  class SaveProjectAsTemplateDialog : public QDialog {
+    public:
+      SaveProjectAsTemplateDialog(QWidget *parent=nullptr);
+      QString getName() const;
+    private:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+      QLineEdit *name;
   };
 
 }

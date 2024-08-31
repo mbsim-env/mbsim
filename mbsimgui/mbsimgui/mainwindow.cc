@@ -113,11 +113,13 @@ namespace MBSimGUI {
 
 #if _WIN32
     uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
+    configPath = qgetenv("APPDATA")+"/mbsim-env/";
 #else
     if(bfs::is_directory("/dev/shm"))
       uniqueTempDir=bfs::unique_path("/dev/shm/mbsimgui_%%%%-%%%%-%%%%-%%%%");
     else
       uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
+    configPath = qgetenv("HOME")+"/.config/mbsim-env/";
 #endif
     bfs::create_directories(uniqueTempDir);
 
@@ -149,8 +151,10 @@ namespace MBSimGUI {
     QAction *action;
     action = fileMenu->addAction(QIcon::fromTheme("document-new"), "New", this, &MainWindow::newProject);
     action->setShortcut(QKeySequence::New);
+    action = fileMenu->addAction(QIcon::fromTheme("document-new"), "New from template", this, &MainWindow::newProjectFromTemplate);
+    action->setShortcut(QKeySequence::New);
     action->setStatusTip("New project");
-    action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open ...", this, QOverload<>::of(&MainWindow::loadProject));
+    action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Open...", this, QOverload<>::of(&MainWindow::loadProject));
     action->setShortcut(QKeySequence::Open);
     action->setStatusTip("Open project");
     actionSave = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save", this, [=](){ saveProject(); for(size_t i=0; i<file.size(); i++) if(file[i]->getModified()) saveReferencedFile(i); });
@@ -158,21 +162,24 @@ namespace MBSimGUI {
     actionSave->setStatusTip("Save project and all references");
     actionSaveProject = fileMenu->addAction(QIcon::fromTheme("document-save"), "Save project only", this, [=](){ this->saveProject(); });
     actionSaveProject->setStatusTip("Save project (but not the references)");
-    action = fileMenu->addAction(QIcon::fromTheme("document-save-as"), "Save project as ...", this, &MainWindow::saveProjectAs);
+    action = fileMenu->addAction(QIcon::fromTheme("document-save-as"), "Save project as...", this, &MainWindow::saveProjectAs);
     action->setShortcut(QKeySequence::SaveAs);
     action->setStatusTip("Save project as new file");
+    action = fileMenu->addAction(QIcon::fromTheme("document-send"), "Save project as template...", this, &MainWindow::saveProjectAsTemplate);
+    action->setStatusTip("Save project as new template");
 
     fileMenu->addSeparator();
 
-    action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Show referenced files ...", referencedFilesDialog, &QDialog::show);
+    action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Manage project templates...", this, &MainWindow::manageTemplates);
+    action->setStatusTip(tr("Manage project templates"));
+    action = fileMenu->addAction(QIcon::fromTheme("document-open"), "Show referenced files...", referencedFilesDialog, &QDialog::show);
     action->setStatusTip("Show a list of all referenced files");
-    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Settings ...", this, &MainWindow::openOptionsMenu);
+    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "Settings...", this, &MainWindow::openOptionsMenu);
     action->setStatusTip(tr("Show settings menu"));
-    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "3D view settings ...", inlineOpenMBVMW, &OpenMBVGUI::MainWindow::showSettingsDialog);
+    action = fileMenu->addAction(QIcon::fromTheme("document-properties"), "3D view settings...", inlineOpenMBVMW, &OpenMBVGUI::MainWindow::showSettingsDialog);
     action->setStatusTip(tr("Show settings menu of the 3D view (OpenMBV)"));
 
     fileMenu->addSeparator();
-
     for (auto & recentProjectFileAct : recentProjectFileActs) {
       recentProjectFileAct = new QAction(this);
       recentProjectFileAct->setVisible(false);
@@ -673,11 +680,7 @@ namespace MBSimGUI {
     menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
     menu.setBaseIndexForPlot(settings.value("mainwindow/options/baseindexforplot", 0).toInt());
 
-#ifdef _WIN32
-    QFile file(qgetenv("APPDATA")+"/mbsim-env/mbsimxml.modulepath");
-#else
-    QFile file(qgetenv("HOME")+"/.config/mbsim-env/mbsimxml.modulepath");
-#endif
+    QFile file(configPath+"mbsimxml.modulepath");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
     menu.setModulePath(file.readAll());
     file.close();
@@ -732,6 +735,14 @@ namespace MBSimGUI {
 
       project->setDefaultEvaluator(menu.getDefaultEvaluator());
     }
+  }
+
+  void MainWindow::manageTemplates() {
+    QString templatesPath = configPath+"templates";
+    if(QFileInfo(templatesPath).exists())
+      QDesktopServices::openUrl(QUrl(templatesPath));
+    else
+      QMessageBox::information(this, "Manage project templates", "A project template does not exist yet.");
   }
 
   void MainWindow::highlightObject(const string &ID) {
@@ -844,7 +855,21 @@ namespace MBSimGUI {
     }
   }
 
-  void MainWindow::loadProject(const QString &fileName) {
+  void MainWindow::newProjectFromTemplate() {
+    QStringList list;
+    QDir templatesDir(configPath+"templates");
+    QFileInfoList fileInfoList;
+    if(templatesDir.exists()) {
+      fileInfoList = templatesDir.entryInfoList(QStringList("*.mbsx"));
+      for(int i=0; i<fileInfoList.size(); i++)
+	list << fileInfoList.at(i).baseName();
+    }
+    NewProjectFromTemplateDialog dialog(list,this);
+    if(dialog.exec())
+      loadProject(fileInfoList.at(dialog.getSelectedRow()).absoluteFilePath(),false);
+  }
+
+  void MainWindow::loadProject(const QString &fileName, bool updateRecent) {
     if(QFile::exists(fileName)) {
       undos.clear();
       actionUndo->setDisabled(true);
@@ -866,7 +891,8 @@ namespace MBSimGUI {
       actionSaveProject->setDisabled(false);
       projectFile = QDir::current().relativeFilePath(fileName);
       setWindowTitle(projectFile+"[*]");
-      setCurrentProjectFile(fileName);
+      if(updateRecent)
+	setCurrentProjectFile(fileName);
 
       try { 
         doc = parser->parseURI(X()%fileName.toStdString());
@@ -962,6 +988,26 @@ namespace MBSimGUI {
       cerr << "Unknown exception." << endl;
     }
     return false;
+  }
+
+  void MainWindow::saveProjectAsTemplate() {
+    SaveProjectAsTemplateDialog dialog(this);
+    if(dialog.exec()) {
+      auto name = dialog.getName();
+      if(not(name.isEmpty())) {
+	QDir configDir(configPath);
+	if(not configDir.exists("templates"))
+	  configDir.mkdir("templates");
+	QFileInfo file(configPath+"templates",name+".mbsx");
+	bool write = true;
+	if(file.exists()) {
+	  auto button = QMessageBox::question(this, "Question", "A template name " + name + " already exits. Do you want to overwrite it?");
+	  write = (button == QMessageBox::Yes);
+	}
+	if(write)
+	  saveProject(file.absoluteFilePath(),false);
+      }
+    }
   }
 
   void MainWindow::selectSolver(Solver *solver) {

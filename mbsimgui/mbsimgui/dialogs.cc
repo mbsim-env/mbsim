@@ -38,6 +38,7 @@
 #include <QLabel>
 #include <QComboBox>
 #include <QSpinBox>
+#include <QListWidget>
 #include <QButtonGroup>
 #include <QRadioButton>
 #include <QMessageBox>
@@ -1532,7 +1533,6 @@ namespace MBSimGUI {
 
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
-    layout->addWidget(buttonBox);
     connect(buttonBox, &QDialogButtonBox::accepted, this, &LineEditDialog::accept);
     buttonBox->addButton(QDialogButtonBox::Cancel);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &LineEditDialog::reject);
@@ -1562,6 +1562,83 @@ namespace MBSimGUI {
   void LineEditDialog::hideEvent(QHideEvent *event) {
     QSettings settings;
     settings.setValue("lineeditdialog/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
+  NewProjectFromTemplateDialog::NewProjectFromTemplateDialog(const QStringList &list, QWidget *parent) : QDialog(parent) {
+    setWindowTitle("New project from template");
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    templates = new QListWidget;
+    templates->addItems(list);
+    layout->addWidget(templates);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    auto *button = buttonBox->addButton(QDialogButtonBox::Open);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SaveProjectAsTemplateDialog::accept);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &SaveProjectAsTemplateDialog::reject);
+    layout->addWidget(buttonBox);
+
+    if(templates->count()) {
+      templates->setCurrentRow(0);
+      button->setEnabled(true);
+    }
+    else
+      button->setEnabled(false);
+  }
+
+  int NewProjectFromTemplateDialog::getSelectedRow() const {
+    return templates->currentRow();
+  }
+
+  void NewProjectFromTemplateDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("newprojectfromtemplate/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void NewProjectFromTemplateDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("newprojectfromtemplate/geometry", saveGeometry());
+    QDialog::hideEvent(event);
+  }
+
+  SaveProjectAsTemplateDialog::SaveProjectAsTemplateDialog(QWidget *parent) : QDialog(parent) {
+    setWindowTitle("Save project as template");
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    auto *sublayout = new QHBoxLayout;
+    layout->addLayout(sublayout);
+    auto *label = new QLabel("Name:");
+    sublayout->addWidget(label);
+    name = new QLineEdit;
+    sublayout->addWidget(name);
+
+//    setAsDefault = new QCheckBox("Set as default template");
+//    layout->addWidget(setAsDefault);
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(QDialogButtonBox::Save);
+    connect(buttonBox, &QDialogButtonBox::accepted, this, &SaveProjectAsTemplateDialog::accept);
+    buttonBox->addButton(QDialogButtonBox::Cancel);
+    connect(buttonBox, &QDialogButtonBox::rejected, this, &SaveProjectAsTemplateDialog::reject);
+    layout->addWidget(buttonBox);
+  }
+
+  QString SaveProjectAsTemplateDialog::getName() const {
+    return name->text();
+  }
+
+  void SaveProjectAsTemplateDialog::showEvent(QShowEvent *event) {
+    QSettings settings;
+    restoreGeometry(settings.value("saveprojectastemplate/geometry").toByteArray());
+    QDialog::showEvent(event);
+  }
+
+  void SaveProjectAsTemplateDialog::hideEvent(QHideEvent *event) {
+    QSettings settings;
+    settings.setValue("saveprojectastemplate/geometry", saveGeometry());
     QDialog::hideEvent(event);
   }
 

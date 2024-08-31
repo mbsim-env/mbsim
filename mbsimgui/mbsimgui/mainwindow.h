@@ -129,6 +129,7 @@ namespace MBSimGUI {
       LinearSystemAnalysisDialog *lsa{nullptr};
       FlexibleBodyTool *fbt{nullptr};
       StateTableDialog *st{nullptr};
+      QString configPath;
       void initInlineOpenMBV();
       void dragEnterEvent(QDragEnterEvent *event) override;
       void dropEvent(QDropEvent *event) override;
@@ -139,9 +140,11 @@ namespace MBSimGUI {
       void updateRecentProjectFileActions();
       void move(bool up);
       void openOptionsMenu(bool justSetOptions=false);
+      void manageTemplates();
       void openRecentProjectFile();
       void newProject();
-      void loadProject(const QString &file);
+      void newProjectFromTemplate();
+      void loadProject(const QString &file, bool updateRecent=true);
       bool saveProject(const QString &fileName="", bool modifyStatus=true);
       void edit();
       void undo();
@@ -246,6 +249,7 @@ namespace MBSimGUI {
       bool editorIsOpen() const { return editor; }
       void loadProject();
       bool saveProjectAs();
+      void saveProjectAsTemplate();
       void refresh();
       void xmlHelp(const QString &url="");
       void editElementSource();
