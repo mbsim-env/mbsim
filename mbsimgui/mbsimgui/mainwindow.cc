@@ -865,6 +865,7 @@ namespace MBSimGUI {
     NewProjectFromTemplateDialog dialog(list,this);
     if(dialog.exec())
       loadProject(fileInfoList.at(dialog.getSelectedRow()).absoluteFilePath(),false);
+    doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
   }
 
   void MainWindow::loadProject(const QString &fileName, bool updateRecent) {
@@ -887,10 +888,14 @@ namespace MBSimGUI {
       actionSaveLinearSystemAnalysisAs->setDisabled(true);
       actionSave->setDisabled(false);
       actionSaveProject->setDisabled(false);
-      projectFile = QDir::current().relativeFilePath(fileName);
-      setWindowTitle(projectFile+"[*]");
-      if(updateRecent)
+      if(updateRecent) {
+	projectFile = QDir::current().relativeFilePath(fileName);
+	setWindowTitle(projectFile+"[*]");
 	setCurrentProjectFile(fileName);
+      } else {
+	projectFile="";
+	setWindowTitle("Project.mbsx[*]");
+      }
 
       try { 
         doc = parser->parseURI(X()%fileName.toStdString());
