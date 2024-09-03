@@ -738,7 +738,7 @@ namespace MBSimGUI {
   void MainWindow::manageTemplates() {
     QString templatesPath = configPath+"templates";
     if(QFileInfo(templatesPath).exists())
-      QDesktopServices::openUrl(QUrl(templatesPath));
+      QDesktopServices::openUrl(QUrl::fromLocalFile(templatesPath));
     else
       QMessageBox::information(this, "Manage project templates", "A project template does not exist yet.");
   }
