@@ -45,7 +45,7 @@ void initPython() {
     boost::filesystem::path(PYTHON_PREFIX),
   }, {
     // append to PATH (on Windows using os.add_dll_directory)
-    installPath.parent_path()/"mbsim-env-python-site-packages"/binLib,
+    installPath().parent_path()/"mbsim-env-python-site-packages"/binLib,
   });
 
   isInitialized=true;
