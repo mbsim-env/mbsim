@@ -27,6 +27,12 @@ void initPython() {
   if(isInitialized)
     return;
 
+#ifdef _WIN32
+    string binLib("bin");
+#else
+    string binLib("lib");
+#endif
+
   // init python
   initializePython(installPath()/"bin"/"mbsimxml", PYTHON_VERSION, {
     // prepand the installation/../mbsim-env-python-site-packages dir to the python path (Python pip of mbsim-env is configured to install user defined python packages there)
@@ -37,6 +43,9 @@ void initPython() {
   }, {
     installPath(),
     boost::filesystem::path(PYTHON_PREFIX),
+  }, {
+    // append to PATH (on Windows using os.add_dll_directory)
+    installPath().parent_path()/"mbsim-env-python-site-packages"/binLib,
   });
 
   isInitialized=true;
