@@ -865,11 +865,8 @@ namespace MBSimGUI {
     NewProjectFromTemplateDialog dialog(list,this);
     if(dialog.exec()) {
       auto file = fileInfoList.at(dialog.getSelectedRow()).absoluteFilePath();
-      QString message = "Load file " + file;
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-      message += " " + file;
-      QMessageBox::information(this, "Information", message);
       loadProject(file,false);
     }
     doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
