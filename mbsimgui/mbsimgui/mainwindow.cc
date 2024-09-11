@@ -2730,6 +2730,8 @@ namespace MBSimGUI {
     for (int i = 0; i < event->mimeData()->urls().size(); i++) {
       QString path = event->mimeData()->urls()[i].toLocalFile().toLocal8Bit().data();
       if(path.endsWith(".mbsx")) {
+	if(path.startsWith("//"))
+	  path.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
         QFile Fout(path);
         if (Fout.exists())
           loadProject(Fout.fileName());
