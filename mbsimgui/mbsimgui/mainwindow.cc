@@ -958,6 +958,8 @@ namespace MBSimGUI {
     QString file=QFileDialog::getSaveFileName(this, "Save MBSim file", getProjectFilePath(), "MBSim files (*.mbsx)");
     if(not(file.isEmpty())) {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
+      if(file.startsWith("//"))
+        file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
