@@ -839,7 +839,7 @@ namespace MBSimGUI {
       IDcounter = 0;
 
       doc = impl->createDocument();
-      doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
+      doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
 
       project = new Project;
       project->createXMLElement(doc);
@@ -863,9 +863,13 @@ namespace MBSimGUI {
 	list << fileInfoList.at(i).baseName();
     }
     NewProjectFromTemplateDialog dialog(list,this);
-    if(dialog.exec())
-      loadProject(fileInfoList.at(dialog.getSelectedRow()).absoluteFilePath(),false);
-    doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
+    if(dialog.exec()) {
+      auto file = fileInfoList.at(dialog.getSelectedRow()).absoluteFilePath();
+      if(file.startsWith("//"))
+        file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
+      loadProject(file,false);
+    }
+    doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
   }
 
   void MainWindow::loadProject(const QString &fileName, bool updateRecent) {
@@ -958,7 +962,9 @@ namespace MBSimGUI {
     QString file=QFileDialog::getSaveFileName(this, "Save MBSim file", getProjectFilePath(), "MBSim files (*.mbsx)");
     if(not(file.isEmpty())) {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
-      doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
+      if(file.startsWith("//"))
+        file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
+      doc->setDocumentURI(X()%file.toStdString());
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
@@ -2730,9 +2736,9 @@ namespace MBSimGUI {
     for (int i = 0; i < event->mimeData()->urls().size(); i++) {
       QString path = event->mimeData()->urls()[i].toLocalFile().toLocal8Bit().data();
       if(path.endsWith(".mbsx")) {
-        QFile Fout(path);
-        if (Fout.exists())
-          loadProject(Fout.fileName());
+	if(path.startsWith("//"))
+	  path.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
+	loadProject(path);
       }
     }
   }
