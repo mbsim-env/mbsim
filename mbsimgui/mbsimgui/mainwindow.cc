@@ -839,7 +839,7 @@ namespace MBSimGUI {
       IDcounter = 0;
 
       doc = impl->createDocument();
-      doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
+      doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
 
       project = new Project;
       project->createXMLElement(doc);
@@ -869,7 +869,7 @@ namespace MBSimGUI {
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
       loadProject(file,false);
     }
-    doc->setDocumentURI(X()%QUrl::fromLocalFile(QDir::currentPath()+"/Project.mbsx").toString().toStdString());
+    doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
   }
 
   void MainWindow::loadProject(const QString &fileName, bool updateRecent) {
@@ -964,7 +964,7 @@ namespace MBSimGUI {
       file = file.endsWith(".mbsx")?file:file+".mbsx";
       if(file.startsWith("//"))
         file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
-      doc->setDocumentURI(X()%QUrl::fromLocalFile(file).toString().toStdString());
+      doc->setDocumentURI(X()%file.toStdString());
       projectFile = QDir::current().relativeFilePath(file);
       setCurrentProjectFile(file);
       setWindowTitle(projectFile+"[*]");
