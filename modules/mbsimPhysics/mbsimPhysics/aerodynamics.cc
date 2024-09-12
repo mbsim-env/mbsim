@@ -37,6 +37,7 @@ namespace MBSimPhysics {
 
   Aerodynamics::Aerodynamics(const std::string &name) : FloatingFrameLink(name) {
     forceDir.resize(3,EYE);
+    refFrame=secondFrame;
   }
 
   Aerodynamics::~Aerodynamics() {
@@ -72,7 +73,7 @@ namespace MBSimPhysics {
     F(1) = -sin(bega(1))*c(0) + cos(bega(1))*c(1);
     F(2) = sin(bega(0))*cos(bega(1))*c(0) + sin(bega(0))*sin(bega(1))*c(1) + cos(bega(0))*c(2);
     double h = frame[0]->getOrientation().col(1).T()*evalGlobalRelativePosition();
-    lambdaF = 0.5*(*frho)(h)*A*pow(absvE,2)*(frame[1]->getOrientation()*F);
+    lambdaF = 0.5*(*frho)(h)*A*pow(absvE,2)*F;
     updlaF = false;
   }
 
@@ -80,6 +81,8 @@ namespace MBSimPhysics {
     if(stage==resolveStringRef) {
       if(not frame[0]) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
 //      if(not frho) setDensityFunction(new ConstantFunction<double(double)>(1.2041));
+      if(refFrame!=secondFrame)
+        throwError("(Aerodynamics::init): The frameOfReference must be 'secondFrame' for this element.");
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvArrow) {
