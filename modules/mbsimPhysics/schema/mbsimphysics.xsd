@@ -227,7 +227,8 @@
           <xs:element name="coefficientFunction">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Dreidimensionaler Vektor als Funktion der Cardan-Winkel beta und gamma. Die beiden Winkel beschreiben die Orientierung der Anströmgeschwindigkeit gegenüber dem Koordinatensystem 2. Die Elemente des Vektors bestehen aus dem Produkt des Strömungsbeiwerts (x,y und z) mit der zugehörigen Referenzfläche. Der Strömungsbeiwert in x-Richtung entspricht dem Widerstandsbeiwert, der Strömungsbeiwert in y-Richtung dem Auftriebsbeiwert.
+                Dreidimensionaler Vektor als Funktion der Cardan-Winkel beta (erster Parameter) und gamma (zweiter Parameter). Die beiden Winkel beschreiben die Orientierung der Anströmgeschwindigkeit gegenüber dem Koordinatensystem 2. Die Elemente des Vektors bestehen aus dem Produkt des Strömungsbeiwerts (x,y und z) mit der zugehörigen Referenzfläche. In diesem Fall ist für referenceSurface für gewöhnlich 1 zu wählen. Der Strömungsbeiwert in x-Richtung entspricht dem Widerstandsbeiwert, der Strömungsbeiwert in y-Richtung dem Auftriebsbeiwert.
+                Wenn vom Koordinatensystem 2 x Richtung Norden, z Richtung Osten und y Richtung Zenit zeigt dann entspricht -beta = Azimut und gamma = Elevation.
               </xs:documentation>
             </xs:annotation>
             <xs:complexType>
@@ -241,6 +242,9 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Referenzfläche.
+                Der aerodynamische Kraftvektor (alle drei Komponenten) wird mit dieser Referenzfläche multipliziert.
+                Wenn die Referenzfläche bereits in den Komponenten von coefficientFunction enthalten ist wird dieser Wert für gewöhnlich zu 1 definiert.
+                1 wenn nicht angegeben.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -248,6 +252,7 @@
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Vektor der Windgeschwindigkeit, gemessen im Koordinatensystem 1.
+                [0;0;0] wenn nicht angegeben.
               </xs:documentation>
             </xs:annotation>
           </xs:element>

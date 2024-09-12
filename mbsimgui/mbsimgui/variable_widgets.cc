@@ -1321,8 +1321,10 @@ namespace MBSimGUI {
   }
 
   vector<vector<QString>> FromFileWidget::getEvalMat() const {
-    string file = mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue((path->isChecked()?getFile():mw->getProjectDir().absoluteFilePath(getFile())).toStdString(),mw->getProject()->getXMLElement(),false));
-    QString str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(mw->eval->stringToValue("ret=load(" + file + ")",mw->getProject()->getXMLElement())));
+    vector<MBXMLUtils::Eval::Value> args(1);
+    args[0] = mw->eval->stringToValue((path->isChecked()?getFile():mw->getProjectDir().absoluteFilePath(getFile())).toStdString(),mw->getProject()->getXMLElement(),false);
+    auto ret = mw->eval->callFunction("load",args);
+    auto str = QString::fromStdString(mw->eval->cast<MBXMLUtils::CodeString>(ret));
     str = removeWhiteSpace(str);
     return strToMat((str));
   }
