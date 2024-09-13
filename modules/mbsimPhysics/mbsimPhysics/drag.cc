@@ -19,7 +19,7 @@
 #include <config.h>
 #include "drag.h"
 #include "mbsimPhysics/namespace.h"
-#include "mbsim/dynamic_system.h"
+#include "mbsim/dynamic_system_solver.h"
 #include "mbsim/frames/fixed_relative_frame.h"
 #include "mbsim/functions/function.h"
 #include <openmbvcppinterface/group.h>
@@ -60,7 +60,15 @@ namespace MBSimPhysics {
   }
 
   void Drag::init(InitStage stage, const MBSim::InitConfigSet &config) {
-    if(stage==plotting) {
+    if(stage==resolveStringRef) {
+      if(not frame[0])
+	frame[0] = ds->getFrameI();
+      else if(frame[0] != ds->getFrameI())
+        throwError("(Drag::init): The first frame must be frame I of the MBS.");
+      if(refFrame!=firstFrame)
+        throwError("(Drag::init): The frameOfReference must be 'firstFrame' for this element.");
+    }
+    else if(stage==plotting) {
       if(plotFeature[openMBV] and ombvArrow) {
         openMBVForce.resize(ombvArrow->getSideOfInteraction()==2?getNumberOfForces():getNumberOfForces()/2);
         for(size_t i=0; i<openMBVForce.size(); i++) {
