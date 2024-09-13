@@ -79,8 +79,6 @@ namespace MBSimPhysics {
 
   void Aerodynamics::init(InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==resolveStringRef) {
-      if(not frame[0]) frame[0] = static_cast<DynamicSystem*>(parent)->getFrameI();
-//      if(not frho) setDensityFunction(new ConstantFunction<double(double)>(1.2041));
       if(refFrame!=secondFrame)
         throwError("(Aerodynamics::init): The frameOfReference must be 'secondFrame' for this element.");
     }
