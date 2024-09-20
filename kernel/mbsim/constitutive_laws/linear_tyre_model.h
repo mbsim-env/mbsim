@@ -34,7 +34,6 @@ namespace MBSim {
       void setcka(double cka_) { cka = cka_; }
       void setcal(double cal_) { cal = cal_; }
       void setcga(double cga_) { cga = cga_; }
-      void setcMzal(double cMzal_) { cMzal = cMzal_; }
       void setcMzga(double cMzga_) { cMzga = cMzga_; }
       void setScaleFactorForLongitudinalForce(double sfFx_) { sfFx = sfFx_; }
       void setScaleFactorForLateralForce(double sfFy_) { sfFy = sfFy_; }
@@ -60,7 +59,6 @@ namespace MBSim {
       double cka{0};
       double cal{0};
       double cga{0};
-      double cMzal{0};
       double cMzga{0};
       double sfFx{1};
       double sfFy{1};
