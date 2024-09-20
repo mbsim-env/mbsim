@@ -280,6 +280,17 @@ namespace MBSimGUI {
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
   };
 
+  class LinearTyreModelWidget : public TyreModelWidget {
+    MBSIMGUI_OBJECTFACTORY_CLASS(LinearTyreModelWidget, TyreModelWidget, MBSIM%"LinearTyreModel", "Linear tyre model");
+
+    public:
+      LinearTyreModelWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *cz, *dz, *cka, *cal, *cga, *cMzal, *cMzga, *sfFLo, *sfFLa, *sfM;
+  };
+
   class MagicFormulaSharpWidget : public TyreModelWidget {
     MBSIMGUI_OBJECTFACTORY_CLASS(MagicFormulaSharpWidget, TyreModelWidget, MBSIM%"MagicFormulaSharp", "Magic Formula Sharp");
 

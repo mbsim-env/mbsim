@@ -63,6 +63,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(SpatialStribeckImpactWidget);
   MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<FrictionImpactLawWidget>);
 
+  MBSIMGUI_REGOBJECTFACTORY(LinearTyreModelWidget);
   MBSIMGUI_REGOBJECTFACTORY(MagicFormulaSharpWidget);
   MBSIMGUI_REGOBJECTFACTORY(MagicFormula62Widget);
   MBSIMGUI_REGOBJECTFACTORY(UnknownWidget<TyreModelWidget>);
@@ -410,6 +411,61 @@ namespace MBSimGUI {
     DOMDocument *doc=parent->getOwnerDocument();
     DOMElement *ele0=D(doc)->createElement(getXMLType());
     parent->insertBefore(ele0, ref);
+    return ele0;
+  }
+
+  LinearTyreModelWidget::LinearTyreModelWidget() {
+    auto *layout = new QVBoxLayout;
+    setLayout(layout);
+    cz = new ExtWidget("cz",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,stiffnessUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cz");
+    layout->addWidget(cz);
+    dz = new ExtWidget("dz",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,dampingUnits()),vector<int>(2,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"dz");
+    layout->addWidget(dz);
+    cka = new ExtWidget("cka",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cka");
+    layout->addWidget(cka);
+    cal = new ExtWidget("cal",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cal");
+    layout->addWidget(cal);
+    cga = new ExtWidget("cga",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cga");
+    layout->addWidget(cga);
+    cMzal = new ExtWidget("cMzal",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cMzal");
+    layout->addWidget(cMzal);
+    cMzga = new ExtWidget("cMzga",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cMzga");
+    layout->addWidget(cMzga);
+    sfFLo = new ExtWidget("Scale factor for longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalForce");
+    layout->addWidget(sfFLo);
+    sfFLa = new ExtWidget("Scale factor for lateral force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLateralForce");
+    layout->addWidget(sfFLa);
+    sfM = new ExtWidget("Scale factor for aligning moment",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForAligningMoment");
+    layout->addWidget(sfM);
+  }
+
+  DOMElement* LinearTyreModelWidget::initializeUsingXML(DOMElement *element) {
+    TyreModelWidget::initializeUsingXML(element);
+    cz->initializeUsingXML(element);
+    dz->initializeUsingXML(element);
+    cka->initializeUsingXML(element);
+    cal->initializeUsingXML(element);
+    cga->initializeUsingXML(element);
+    cMzal->initializeUsingXML(element);
+    cMzga->initializeUsingXML(element);
+    sfFLo->initializeUsingXML(element);
+    sfFLa->initializeUsingXML(element);
+    sfM->initializeUsingXML(element);
+    return element;
+  }
+
+  DOMElement* LinearTyreModelWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMElement *ele0 = TyreModelWidget::writeXMLFile(parent,ref);
+    cz->writeXMLFile(ele0);
+    dz->writeXMLFile(ele0);
+    cka->writeXMLFile(ele0);
+    cal->writeXMLFile(ele0);
+    cga->writeXMLFile(ele0);
+    cMzal->writeXMLFile(ele0);
+    cMzga->writeXMLFile(ele0);
+    sfFLo->writeXMLFile(ele0);
+    sfFLa->writeXMLFile(ele0);
+    sfM->writeXMLFile(ele0);
     return ele0;
   }
 

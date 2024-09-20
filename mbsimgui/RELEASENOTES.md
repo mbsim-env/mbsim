@@ -1,3 +1,11 @@
+Release NEXT
+============
+
+MBSim
+-----
+- A linear tyre model is now available.
+
+
 Release 10.3
 ============
 
