@@ -427,8 +427,6 @@ namespace MBSimGUI {
     layout->addWidget(cal);
     cga = new ExtWidget("cga",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cga");
     layout->addWidget(cga);
-    cMzal = new ExtWidget("cMzal",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cMzal");
-    layout->addWidget(cMzal);
     cMzga = new ExtWidget("cMzga",new ChoiceWidget(new ScalarWidgetFactory("0"),QBoxLayout::RightToLeft,5),false,false,MBSIM%"cMzga");
     layout->addWidget(cMzga);
     sfFLo = new ExtWidget("Scale factor for longitudinal force",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,noUnitUnits()),vector<int>(2,1)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"scaleFactorForLongitudinalForce");
@@ -446,7 +444,6 @@ namespace MBSimGUI {
     cka->initializeUsingXML(element);
     cal->initializeUsingXML(element);
     cga->initializeUsingXML(element);
-    cMzal->initializeUsingXML(element);
     cMzga->initializeUsingXML(element);
     sfFLo->initializeUsingXML(element);
     sfFLa->initializeUsingXML(element);
@@ -461,7 +458,6 @@ namespace MBSimGUI {
     cka->writeXMLFile(ele0);
     cal->writeXMLFile(ele0);
     cga->writeXMLFile(ele0);
-    cMzal->writeXMLFile(ele0);
     cMzga->writeXMLFile(ele0);
     sfFLo->writeXMLFile(ele0);
     sfFLa->writeXMLFile(ele0);
