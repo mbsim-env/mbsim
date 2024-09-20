@@ -4353,6 +4353,71 @@
   </xs:element>
   <xs:complexType name="TyreModelType"/>
 
+  <xs:element name="LinearTyreModel" substitutionGroup="TyreModel" type="LinearTyreModelType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+      tbd
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="LinearTyreModelType">
+    <xs:complexContent>
+      <xs:extension base="TyreModelType">
+        <xs:sequence>
+          <xs:element name="cz" type="pv:stiffnessScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="dz" type="pv:dampingScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="cka" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="cal" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="cga" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="cMzal" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="cMzga" type="pv:unknownScalar">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="scaleFactorForLongitudinalForce" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="scaleFactorForLateralForce" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="scaleFactorForAligningMoment" type="pv:nounitScalar" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                tbd
+            </xs:documentation></xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
   <xs:element name="MagicFormulaSharp" substitutionGroup="TyreModel" type="MagicFormulaSharpType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
