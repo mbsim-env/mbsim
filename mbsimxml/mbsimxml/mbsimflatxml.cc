@@ -269,6 +269,8 @@ void MBSimXML::plotInitialState(const unique_ptr<Solver>& solver, const unique_p
   }
   else
     dss->evalz0();
+  if(auto integrator = dynamic_cast<Integrator*>(solver.get()); integrator)
+    dss->setTime(integrator->getStartTime());
   dss->computeInitialCondition();
   dss->plot();
   dss->updateInternalState();
