@@ -64,6 +64,8 @@ namespace MBSim {
     setcga(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"cMzga");
     setcMzga(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"t");
+    sett(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLongitudinalForce");
     if(e) setScaleFactorForLongitudinalForce(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"scaleFactorForLateralForce");
@@ -102,7 +104,7 @@ namespace MBSim {
 
       Fx = cka*ka*sfFx;
       Fy = -(cal*al + cga*ga)*sfFy;
-      Mz = -cMzga*ga*sfMz;
+      Mz = -(cMzga*ga + t*Fy)*sfMz;
     }
     else {
       Fz = 0;
