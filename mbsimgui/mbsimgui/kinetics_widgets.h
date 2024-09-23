@@ -288,7 +288,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *cz, *dz, *cka, *cal, *cga, *cMzga, *sfFLo, *sfFLa, *sfM;
+      ExtWidget *cz, *dz, *cka, *cal, *cga, *cMzga, *t, *sfFLo, *sfFLa, *sfM;
   };
 
   class MagicFormulaSharpWidget : public TyreModelWidget {
