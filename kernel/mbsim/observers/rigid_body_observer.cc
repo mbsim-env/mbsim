@@ -382,7 +382,7 @@ namespace MBSim {
       ombvAngularMomentum->initializeUsingXML(e);
     }
 
-    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivatveOfMomentum");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBVDerivativeOfMomentum");
     if(e) {
       ombvDerivativeOfMomentum = shared_ptr<OpenMBVArrow>(new OpenMBVArrow(1,1,OpenMBVArrow::toHead,OpenMBVArrow::toPoint));
       ombvDerivativeOfMomentum->initializeUsingXML(e);
