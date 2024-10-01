@@ -288,7 +288,7 @@ int main(int argc, char *argv[]) {
           else
             mbsimProject = root;
           checkEmbed(mbsimProject->getFirstElementChild(), MBSIM%"DynamicSystemSolver", true);
-          checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Integrator", true);
+          checkEmbed(mbsimProject->getLastElementChild(), MBSIM%"Solver", true);
         }
 
         // create parameter override ParamSet
