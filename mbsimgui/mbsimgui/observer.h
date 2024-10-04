@@ -95,6 +95,13 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new SignalObserverPropertyDialog(this); }
   };
 
+  class FrameChaserObserver : public Observer {
+    MBSIMGUI_OBJECTFACTORY_CLASS(FrameChaserObserver, Observer, MBSIMCONTROL%"FrameChaserObserver", "Frame chaser observer");
+    public:
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
+      PropertyDialog* createPropertyDialog() override { return new FrameChaserObserverPropertyDialog(this); }
+  };
+
 }
 
 #endif

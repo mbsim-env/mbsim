@@ -19,6 +19,7 @@
 
 #include <config.h>
 #include "observer_property_dialog.h"
+#include "variable_widgets.h"
 #include "ombv_widgets.h"
 #include "frame.h"
 #include "constraint.h"
@@ -30,6 +31,42 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  class FrameChaserObserverWidgetFactory : public WidgetFactory {
+    public:
+      FrameChaserObserverWidgetFactory(Element* observer_, bool rot_, const QChar &dir, QWidget *parent_);
+      Widget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
+      int getSize() const override { return name.size(); }
+    protected:
+      Element *observer;
+      bool rot;
+      vector<QString> name;
+      vector<MBXMLUtils::FQN> xmlName;
+      QWidget *parent;
+  };
+
+  FrameChaserObserverWidgetFactory::FrameChaserObserverWidgetFactory(Element* observer_, bool rot_, const QChar &dir, QWidget *parent_) : observer(observer_), rot(rot_), name(2), xmlName(2), parent(parent_) {
+    QString midName = rot?" rotation ":" ";
+    QString xmlMidName = rot?"Rotation":"";
+    name[0] = "Constant" + midName + dir;
+    name[1] = "Signal" + midName + dir;
+    xmlName[0] = MBSIMCONTROL%("constant" + xmlMidName + dir.toUpper()).toStdString();
+    xmlName[1] = MBSIMCONTROL%("signal" + xmlMidName + dir.toUpper()).toStdString();
+  }
+
+  Widget* FrameChaserObserverWidgetFactory::createWidget(int i) {
+    if(i==0) {
+      if(rot)
+	return new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,angleUnits())),QBoxLayout::RightToLeft,5);
+      else
+	return new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5);
+    }
+    if(i==1)
+      return new ElementOfReferenceWidget<Signal>(observer,nullptr,parent);
+    return nullptr;
+  }
 
   ObserverPropertyDialog::ObserverPropertyDialog(Element *observer) : ElementPropertyDialog(observer) {
   }
@@ -383,6 +420,61 @@ namespace MBSimGUI {
     position->writeXMLFile(item->getXMLElement(),ref);
     enableOmbv->writeXMLFile(item->getXMLElement(),ref);
     ombvIVSA->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
+  FrameChaserObserverPropertyDialog::FrameChaserObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
+
+    addTab("Visualization",1);
+
+    frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),false,false,MBSIMCONTROL%"frame");
+    addToTab("General", frame);
+
+    transX = new ExtWidget("Translation along x axis",new ChoiceWidget(new FrameChaserObserverWidgetFactory(observer,false,'x',this),QBoxLayout::TopToBottom,3),true,false,"");
+    addToTab("General",transX);
+
+    transY = new ExtWidget("Translation along y axis",new ChoiceWidget(new FrameChaserObserverWidgetFactory(observer,false,'y',this),QBoxLayout::TopToBottom,3),true,false,"");
+    addToTab("General",transY);
+
+    transZ = new ExtWidget("Translation along z axis",new ChoiceWidget(new FrameChaserObserverWidgetFactory(observer,false,'z',this),QBoxLayout::TopToBottom,3),true,false,"");
+    addToTab("General",transZ);
+
+    rotX = new ExtWidget("Rotation about x axis",new ChoiceWidget(new FrameChaserObserverWidgetFactory(observer,true,'x',this),QBoxLayout::TopToBottom,3),true,false,"");
+    addToTab("General",rotX);
+
+    rotY = new ExtWidget("Rotation about y axis",new ChoiceWidget(new FrameChaserObserverWidgetFactory(observer,true,'y',this),QBoxLayout::TopToBottom,3),true,false,"");
+    addToTab("General",rotY);
+
+    rotZ = new ExtWidget("Rotation about z axis",new ChoiceWidget(new FrameChaserObserverWidgetFactory(observer,true,'z',this),QBoxLayout::TopToBottom,3),true,false,"");
+    addToTab("General",rotZ);
+
+    enableOmbv = new ExtWidget("Enable openMBV",new FrameMBSOMBVWidget,true,false,MBSIMCONTROL%"enableOpenMBV");
+    addToTab("Visualization",enableOmbv);
+  }
+
+  DOMElement* FrameChaserObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    frame->initializeUsingXML(item->getXMLElement());
+    transX->initializeUsingXML(item->getXMLElement());
+    transY->initializeUsingXML(item->getXMLElement());
+    transZ->initializeUsingXML(item->getXMLElement());
+    rotX->initializeUsingXML(item->getXMLElement());
+    rotY->initializeUsingXML(item->getXMLElement());
+    rotZ->initializeUsingXML(item->getXMLElement());
+    enableOmbv->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* FrameChaserObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    frame->writeXMLFile(item->getXMLElement(),ref);
+    transX->writeXMLFile(item->getXMLElement(),ref);
+    transY->writeXMLFile(item->getXMLElement(),ref);
+    transZ->writeXMLFile(item->getXMLElement(),ref);
+    rotX->writeXMLFile(item->getXMLElement(),ref);
+    rotY->writeXMLFile(item->getXMLElement(),ref);
+    rotZ->writeXMLFile(item->getXMLElement(),ref);
+    enableOmbv->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

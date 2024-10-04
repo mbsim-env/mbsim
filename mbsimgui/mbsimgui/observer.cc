@@ -38,6 +38,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(RigidBodyObserver);
   MBSIMGUI_REGOBJECTFACTORY(SignalObserver);
   MBSIMGUI_REGOBJECTFACTORY(TyreContactObserver);
+  MBSIMGUI_REGOBJECTFACTORY(FrameChaserObserver);
   MBSIMGUI_REGOBJECTFACTORY(UnknownObserver);
 
   Observer::Observer() {
@@ -189,6 +190,16 @@ namespace MBSimGUI {
   }
 
   DOMElement* SignalObserver::processIDAndHref(DOMElement *element) {
+    Observer::processIDAndHref(element);
+
+    DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"enableOpenMBV");
+    if(ELE)
+      E(ELE)->addProcessingInstructionChildNamed("OPENMBV_ID", getID());
+
+    return element;
+  }
+
+  DOMElement* FrameChaserObserver::processIDAndHref(DOMElement *element) {
     Observer::processIDAndHref(element);
 
     DOMElement *ELE=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"enableOpenMBV");
