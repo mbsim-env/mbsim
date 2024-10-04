@@ -37,26 +37,30 @@ namespace MBSim {
   }
 
   void MagicFormulaSharp::initPlot(vector<string> &plotColumns) {
+    plotColumns.emplace_back("longitudinal slip");
+    plotColumns.emplace_back("slip angle");
     plotColumns.emplace_back("camber angle");
+    plotColumns.emplace_back("deflection");
+    plotColumns.emplace_back("effective rolling radius");
+    plotColumns.emplace_back("scrub radius");
+    plotColumns.emplace_back("relaxation length");
     plotColumns.emplace_back("rolling velocity");
     plotColumns.emplace_back("spin component of longitudinal velocity");
-    plotColumns.emplace_back("longitudinal slip");
     plotColumns.emplace_back("cornering stiffness");
-    plotColumns.emplace_back("relaxation length");
-    plotColumns.emplace_back("slip angle");
-    plotColumns.emplace_back("scrub radius");
   }
 
   void MagicFormulaSharp::plot(vector<double> &plotVector) {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
+    plotVector.push_back(ka);
+    plotVector.push_back(be);
     plotVector.push_back(ga);
+    plotVector.push_back(rhoz);
+    plotVector.push_back(Re);
+    plotVector.push_back(Rs);
+    plotVector.push_back(si);
     plotVector.push_back(vx);
     plotVector.push_back(vsx-vx);
-    plotVector.push_back(ka);
     plotVector.push_back(Kyal);
-    plotVector.push_back(si);
-    plotVector.push_back(be);
-    plotVector.push_back(Rs);
   }
 
   void MagicFormulaSharp::initializeUsingXML(DOMElement *element) {
@@ -265,7 +269,11 @@ namespace MBSim {
 
       si = Kyal*(c1Rel+c2Rel*vx+c3Rel*pow(vx,2));
 
-      Rs = R0*sin(ga);
+      rhoz = -contact->getGeneralizedRelativePosition(false)(0);
+      Vec3 WrWC = contact->getContourFrame(1)->getPosition()-tyre->getFrame()->getPosition();
+      Vec3 BrBC = contact->getContourFrame(1)->getOrientation(false).T()*WrWC;
+      Re = fabs(-BrBC(1)*sin(ga) + BrBC(2)*cos(ga));
+      Rs = fabs(Re*tan(ga));
     }
     else {
       Fz = 0;
@@ -277,6 +285,7 @@ namespace MBSim {
       Kyal = 0;
       si = 1;
       be = 0;
+      Re = 0;
       Rs = 0;
     }
 
@@ -288,15 +297,24 @@ namespace MBSim {
 
   VecV MagicFormulaSharp::getData() const {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
-    VecV data(8,NONINIT);
-    data(0) = ga;
-    data(1) = vx;
-    data(2) = vsx-vx;
-    data(3) = ka;
-    data(4) = Kyal;
-    data(5) = si;
-    data(6) = be;
-    data(7) = Rs;
+    VecV data(getDataSize(),NONINIT);
+    data(0) = ka;
+    data(1) = be;
+    data(2) = ga;
+    data(3) = rhoz;
+    data(4) = Re;
+    data(5) = Rs;
+    data(6) = 0;
+    data(7) = si;
+    data(8) = vx;
+    data(9) = vsx-vx;
+    data(10) = Kyal;
+    data(11) = static_cast<TyreContact*>(parent)->getGeneralizedForce(false)(0);
+    data(12) = static_cast<TyreContact*>(parent)->getGeneralizedForce(false)(1);
+    data(13) = static_cast<TyreContact*>(parent)->getGeneralizedForce(false)(2);
+    data(14) = 0;
+    data(15) = 0;
+    data(16) = static_cast<TyreContact*>(parent)->getGeneralizedForce(false)(3);
     return data;
   }
 

@@ -482,15 +482,17 @@ namespace MBSim {
   }
 
   void MagicFormula62::initPlot(vector<string> &plotColumns) {
-    plotColumns.emplace_back("camber angle");
-    plotColumns.emplace_back("rolling velocity");
-    plotColumns.emplace_back("spin component of longitudinal velocity");
     plotColumns.emplace_back("longitudinal slip");
-    plotColumns.emplace_back("cornering stiffness");
+    plotColumns.emplace_back("slip angle");
+    plotColumns.emplace_back("camber angle");
+    plotColumns.emplace_back("deflection");
+    plotColumns.emplace_back("effective rolling radius");
+    plotColumns.emplace_back("scrub radius");
     plotColumns.emplace_back("relaxation length for longitudinal slip");
     plotColumns.emplace_back("relaxation length for sideslip");
-    plotColumns.emplace_back("slip angle");
-    plotColumns.emplace_back("deflection");
+    plotColumns.emplace_back("rolling velocity");
+    plotColumns.emplace_back("spin component of longitudinal velocity");
+    plotColumns.emplace_back("cornering stiffness");
     if(ts) {
       plotColumns.emplace_back("turn slip");
       plotColumns.emplace_back("spin");
@@ -499,15 +501,17 @@ namespace MBSim {
 
   void MagicFormula62::plot(vector<double> &plotVector) {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
-    plotVector.push_back(ga);
-    plotVector.push_back(vcx);
-    plotVector.push_back(vsx-vcx);
     plotVector.push_back(ka);
-    plotVector.push_back(Kyal);
+    plotVector.push_back(alF);
+    plotVector.push_back(ga);
+    plotVector.push_back(rhoz);
+    plotVector.push_back(Re);
+    plotVector.push_back(Rs);
     plotVector.push_back(six);
     plotVector.push_back(siy);
-    plotVector.push_back(alF);
-    plotVector.push_back(rhoz);
+    plotVector.push_back(vcx);
+    plotVector.push_back(vsx-vcx);
+    plotVector.push_back(Kyal);
     if(ts) {
       plotVector.push_back(phit);
       plotVector.push_back(phiF);
@@ -624,7 +628,6 @@ namespace MBSim {
     double Cz = cz*(1+PFZ1*dpi);
     double fcorr = (1-Q_CAM*abs(ga))*(1+Q_V2*R0/v0*abs(Om))*(1+PFZ1*dpi);
     double Q_FZ1 = sqrt(pow(cz*R0/Fz0,2)-4*Q_FZ2);
-    double Re;
     Vec3 WrWC = contact->getContourFrame(1)->getPosition()-tyre->getFrame()->getPosition();
     double xi = -atan(MC_CONTOUR_A/MC_CONTOUR_B*tan(ga));
     double y = MC_CONTOUR_A*w*sin(xi);
@@ -841,6 +844,8 @@ namespace MBSim {
       double CY = Cy0*(1+PCFY1*dfz+PCFY2*pow(dfz,2))*(1+PCFY3*dpi);
       if(not constsix) six = abs(Kxka/CX);
       if(not constsiy) siy = abs(Kyal0/CY);
+
+      Rs = fabs(Re*tan(ga));
     }
     else {
       Fz = 0;
@@ -853,6 +858,8 @@ namespace MBSim {
       ka = 0;
       Kyal = 0;
       alF = 0;
+      Re = 0;
+      Rs = 0;
     }
 
     if(mck and contactPointTransformation) {
@@ -887,15 +894,20 @@ namespace MBSim {
 
   VecV MagicFormula62::getData() const {
     static_cast<TyreContact*>(parent)->evalGeneralizedForce(); // Enforce variables to be up to date
-    VecV data(9,NONINIT);
-    data(0) = ga;
-    data(1) = vcx;
-    data(2) = vsx-vcx;
-    data(3) = ka;
-    data(4) = Kyal;
-    data(5) = six;
-    data(6) = siy;
-    data(7) = alF;
+    VecV data(getDataSize(),NONINIT);
+    data(0) = ka;
+    data(1) = alF;
+    data(2) = ga;
+    data(3) = rhoz;
+    data(4) = Re;
+    data(5) = Rs;
+    data(6) = six;
+    data(7) = siy;
+    data(8) = vcx;
+    data(9) = vsx-vcx;
+    data(10) = Kyal;
+    for(int i=0; i<6; i++)
+      data(11+i) = static_cast<TyreContact*>(parent)->getGeneralizedForce(false)(i);
     return data;
   }
 

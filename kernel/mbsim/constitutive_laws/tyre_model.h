@@ -41,7 +41,7 @@ namespace MBSim {
 
       virtual void updateGeneralizedForces() { }
 
-      virtual int getDataSize() const = 0;
+      int getDataSize() const { return 17; }
       virtual fmatvec::VecV getData() const = 0;
 
       virtual bool motorcycleKinematics() const = 0;

@@ -106,7 +106,6 @@ namespace MBSim {
 
       void updateGeneralizedForces() override;
 
-      int getDataSize() const override { return 8; }
       fmatvec::VecV getData() const override;
 
       bool motorcycleKinematics() const override { return true; }
@@ -177,7 +176,7 @@ namespace MBSim {
       double sfFy{1};
       double sfMz{1};
 
-      double vsx, vsy, vx, ka, ga, Kyal, si, be, Rs;
+      double vsx, vsy, vx, ka, ga, Kyal, si, be, rhoz, Re, Rs;
  };
 
 }
