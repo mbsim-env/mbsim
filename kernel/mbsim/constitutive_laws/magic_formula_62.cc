@@ -511,7 +511,7 @@ namespace MBSim {
     plotVector.push_back(siy);
     plotVector.push_back(vcx);
     plotVector.push_back(vsx-vcx);
-    plotVector.push_back(Kyal);
+    plotVector.push_back(fabs(Kyal));
     if(ts) {
       plotVector.push_back(phit);
       plotVector.push_back(phiF);
@@ -908,7 +908,7 @@ namespace MBSim {
     data(7) = siy;
     data(8) = vcx;
     data(9) = vsx-vcx;
-    data(10) = Kyal;
+    data(10) = fabs(Kyal);
     for(int i=0; i<6; i++)
       data(11+i) = static_cast<TyreContact*>(parent)->getGeneralizedForce(false)(i);
     return data;
