@@ -60,7 +60,10 @@ namespace MBSimGUI {
     comment->writeXMLFile(item->getXMLElement(),ref);
     item->updateName();
     evalSelect->writeXMLFile(item->getXMLElement(),item->getXMLElement()->getFirstElementChild());
-    static_cast<Project*>(item)->setEvaluator(evalSelect->getWidget<TextChoiceWidget>()->getText().toStdString());
+    if(evalSelect->isActive())
+      static_cast<Project*>(item)->setEvaluator(evalSelect->getWidget<TextChoiceWidget>()->getText().toStdString());
+    else
+      static_cast<Project*>(item)->setEvaluator("octave");
     return nullptr;
   }
 
