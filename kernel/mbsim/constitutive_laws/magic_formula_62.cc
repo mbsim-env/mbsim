@@ -849,8 +849,6 @@ namespace MBSim {
       double CY = Cy0*(1+PCFY1*dfz+PCFY2*pow(dfz,2))*(1+PCFY3*dpi);
       if(not constsix) six = abs(Kxka/CX);
       if(not constsiy) siy = abs(Kyal0/CY);
-
-      Rs = fabs(Re*tan(ga));
     }
     else {
       Fz = 0;
