@@ -644,6 +644,7 @@ namespace MBSim {
       // double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
       double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
       Re = -z - rhoze*cos(ga);
+      Rs = fabs(y + rhoze*sin(ga));
     }
     else {
       double Rl = nrm2(WrWC);
@@ -676,10 +677,14 @@ namespace MBSim {
       }
       // double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Cz/Fz0*rhoz)+FREFF*Cz/Fz0*rhoz); Pacejka
       double rhoze = Fz0/Cz*(DREFF*atan(BREFF*Fz/Fz0)+FREFF*Fz/Fz0); // Manual
-      if(MC_CONTOUR_A>0 or MC_CONTOUR_B>0)
+      if(MC_CONTOUR_A>0 or MC_CONTOUR_B>0) {
 	Re = -z - rhoze*cos(ga);
-      else
+	Rs = fabs(y + rhoze*sin(ga));
+      }
+      else {
 	Re = ROm-rhoze;
+	Rs = 0;
+      }
     }
     Vec3 n = contact->getContourFrame(1)->getOrientation().col(2)*cos(ga) - contact->getContourFrame(1)->getOrientation().col(1)*sin(ga);
     slipPoint[0]->setPosition(tyre->getFrame()->getPosition()-Re*n);

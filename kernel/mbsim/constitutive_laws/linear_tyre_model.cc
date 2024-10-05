@@ -118,7 +118,7 @@ namespace MBSim {
       Vec3 WrWC = contact->getContourFrame(1)->getPosition()-tyre->getFrame()->getPosition();
       Vec3 BrBC = contact->getContourFrame(1)->getOrientation(false).T()*WrWC;
       Re = fabs(-BrBC(1)*sin(ga) + BrBC(2)*cos(ga));
-      Rs = fabs(Re*tan(ga));
+      Rs = fabs(BrBC(1)*cos(ga) + BrBC(2)*sin(ga));
     }
     else {
       Fz = 0;
