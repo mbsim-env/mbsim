@@ -4,7 +4,11 @@ Release NEXT
 MBSim
 -----
 - A linear tyre model is now available.
+- Output of tyre models is now unified
 
+MBSimGUI
+--------
+- Frame chaser observer is now available
 
 Release 10.3
 ============
