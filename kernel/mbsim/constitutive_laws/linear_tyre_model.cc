@@ -128,6 +128,8 @@ namespace MBSim {
       ga = 0;
       ka = 0;
       al = 0;
+      Re = 0;
+      Rs = 0;
     }
 
     contact->getGeneralizedForce(false)(0) = Fx;
