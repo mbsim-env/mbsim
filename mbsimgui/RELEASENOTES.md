@@ -1,14 +1,21 @@
 Release NEXT
 ============
 
+All
+---
+- Several release notes in 10.3 were missed. These are added now with * instead of - as enumerator sign, see Release 10.3.
+
 MBSim
 -----
 - A linear tyre model is now available.
 - Output of tyre models is now unified
+- Allow the first frame of Aerodynamics to be arbitrarily rotated to enable models were the global y-axis is not in gravity direction.
 
 MBSimGUI
 --------
 - Frame chaser observer is now available
+- Use the Integrator startTime in the 3D-view of mbsimgui. t=0 was used for now to draw the 3D-view.
+
 
 Release 10.3
 ============
@@ -33,11 +40,23 @@ MBSimXML
 - The stdout/stderr output of evaluations are now redirected to the Info/Warn streams of MBSim.
 - More XML elements (with maxOccurs>1) allow now to use the Embed = Array/Pattern feature.
 - The base index for plot is removed.
+* The preprocessor allow now doubles to be inf and nan. Note that calculating with these will still throw FPEs.
+* The python-preprocessor now caches the python byte-code for each evaluation to improve performance.
+* The mbxmlutils namespace of the octave and python evaluator contains now a namedColor function which converts a ansi color name
+  or #rrggbb string to HSV.
+* The preprocessor supports now Embed for local-elements. This is a major but fully backward compatible change.
+  This allows now e.g. to use Embed for any local-element with maxOccurs>1 to add multiple elements using Embed.
 
 MBSim
 -----
 - States in element "state machine" are now internal states of the dynamic system. This enables a restart of the simulation with the correct initial states when using state machines.
 - The base index for plot is removed.
+* Added dynamicSystemSolverTolerance to specify a different tolerance for the global DSS-level solver and local element-level solvers.
+* Allow root-finding (=stop vectors) also for single values links.
+* Added SWIG Python directors for mbsimControl
+* Add different extrapolation types to PiecewisePolynomFunction: error, continue and linear
+* Added a new solver type directNonlinear. This allows for models with nonlinear lambda with bilateral constraints (unilateral
+  constraints are not supported). Elements must implement updater and updateJrla to support this or must still be linear in lambda.
 
 
 Release 10.2
