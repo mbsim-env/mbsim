@@ -1171,6 +1171,50 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="MotionObserver" substitutionGroup="mbsim:Observer" type="MotionObserverType">
+    <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+      Creates a OpenMBV <a class="link" href="openmbv:RigidBody"><span class="_element">&lt;Rigid Body&gt;</span></a> which
+      moves according to a given position and orientation signal.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="MotionObserverType">
+    <xs:complexContent>
+      <xs:extension base="mbsim:ObserverType">
+        <xs:sequence>
+          <xs:element name="positionSignal" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+              Defines a signal being used for the position of the body. The size of the signal must be 3.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="orientationSignal" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+              Defines a signal being used for the orientation of the body. The size of the signal must be 3 in case of Cardan angles or 9 in case of a transformation matrix.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openMBVRigidBody" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Activates the visualization of the body in OpenMBV.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="ombv:RigidBody"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Switch" substitutionGroup="Signal" type="SwitchType"/>
   <xs:complexType name="SwitchType">
     <xs:complexContent>

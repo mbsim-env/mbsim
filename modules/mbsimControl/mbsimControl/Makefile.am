@@ -21,6 +21,7 @@ libmbsimControl_la_SOURCES = \
   extern_signal_sink.cc\
   frame_chaser_observer.cc \
   signal_observer.cc \
+  motion_observer.cc \
   switch.cc \
   duration.cc \
   state_machine.cc \
@@ -53,6 +54,7 @@ mbsimControlinclude_HEADERS = \
   signal_function.h\
   frame_chaser_observer.h \
   signal_observer.h \
+  motion_observer.h \
   switch.h \
   duration.h \
   state_machine.h \
