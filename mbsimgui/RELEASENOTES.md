@@ -11,9 +11,14 @@ MBSim
 - Output of tyre models is now unified
 - Allow the first frame of Aerodynamics to be arbitrarily rotated to enable models were the global y-axis is not in gravity direction.
 
+MBSimControl
+------------
+- A motion observer is now available in order to visualize a body that moves according to a given position and orientation signal.
+
 MBSimGUI
 --------
-- Frame chaser observer is now available
+- Frame chaser observer is now available.
+- Motion observer is available (see MBSimControl).
 - Use the Integrator startTime in the 3D-view of mbsimgui. t=0 was used for now to draw the 3D-view.
 
 
