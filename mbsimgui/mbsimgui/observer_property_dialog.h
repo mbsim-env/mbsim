@@ -120,6 +120,16 @@ namespace MBSimGUI {
       ExtWidget *frame, *transX, *transY, *transZ, *rotX, *rotY, *rotZ, *enableOmbv;
   };
 
+  class MotionObserverPropertyDialog : public ObserverPropertyDialog {
+
+    public:
+      MotionObserverPropertyDialog(Element *observer);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *position, *orientation, *ombv;
+  };
+
 }
 
 #endif

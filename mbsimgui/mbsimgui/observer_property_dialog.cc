@@ -478,4 +478,34 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  MotionObserverPropertyDialog::MotionObserverPropertyDialog(Element *observer) : ObserverPropertyDialog(observer) {
+
+    addTab("Visualization",1);
+
+    position = new ExtWidget("Position signal",new ElementOfReferenceWidget<Signal>(observer,nullptr,this),true,false,MBSIMCONTROL%"positionSignal");
+    addToTab("General",position);
+
+    orientation = new ExtWidget("Orientation signal",new ElementOfReferenceWidget<Signal>(observer,nullptr,this),true,false,MBSIMCONTROL%"orientationSignal");
+    addToTab("General",orientation);
+
+    ombv = new ExtWidget("OpenMBV body",new ChoiceWidget(new OMBVRigidBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMCONTROL%"openMBVRigidBody");
+    addToTab("Visualization",ombv);
+  }
+
+  DOMElement* MotionObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    position->initializeUsingXML(item->getXMLElement());
+    orientation->initializeUsingXML(item->getXMLElement());
+    ombv->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* MotionObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    position->writeXMLFile(item->getXMLElement(),ref);
+    orientation->writeXMLFile(item->getXMLElement(),ref);
+    ombv->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 }
