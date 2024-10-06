@@ -20,6 +20,7 @@
 #include <config.h>
 #include "mbsimControl/motion_observer.h"
 #include "mbsimControl/signal_.h"
+#include "mbsim/frames/frame.h"
 #include "mbsim/utils/rotarymatrices.h"
 #include <openmbvcppinterface/rigidbody.h>
 #include <openmbvcppinterface/group.h>
@@ -33,11 +34,13 @@ namespace MBSimControl {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIMCONTROL, MotionObserver)
 
-  MotionObserver::MotionObserver(const std::string &name) : Observer(name) {
+  MotionObserver::MotionObserver(const std::string &name) : Observer(name), rOQ(NONINIT), AIK(NONINIT), AIB(Eye()), ABK(Eye())  {
   }
 
   void MotionObserver::init(InitStage stage, const MBSim::InitConfigSet &config) {
     if(stage==resolveStringRef) {
+      if(not saved_frame.empty())
+	setFrameOfReference(getByPath<MBSim::Frame>(saved_frame));
       if(not saved_position_signal.empty())
 	setPositionSignal(getByPath<Signal>(saved_position_signal));
       if(not saved_orientation_signal.empty())
@@ -67,24 +70,31 @@ namespace MBSimControl {
   void MotionObserver::plot() {
     if(plotFeature[MBSim::openMBV]) {
       if(openMBVBody) {
-	if(position) r = position->evalSignal();
+	if(frame) {
+	  rOP = frame->evalPosition();
+	  AIB = frame->evalOrientation();
+	}
+	if(position)
+	  rPQ = AIB*position->evalSignal();
 	if(orientation) { 
 	  VecV a = orientation->evalSignal();
 	  if(a.size()==9) {
-	    SqrMat3 A(NONINIT);
-	    A(0,0) = a(0); A(0,1) = a(1); A(0,2) = a(2);
-	    A(1,0) = a(3); A(1,1) = a(4); A(1,2) = a(5);
-	    A(2,0) = a(6); A(2,1) = a(7); A(2,2) = a(8);
-	    cardan = MBSim::AIK2Cardan(A);
+	    ABK(0,0) = a(0); ABK(0,1) = a(1); ABK(0,2) = a(2);
+	    ABK(1,0) = a(3); ABK(1,1) = a(4); ABK(1,2) = a(5);
+	    ABK(2,0) = a(6); ABK(2,1) = a(7); ABK(2,2) = a(8);
 	  }
 	  else if(a.size()==3)
-	    cardan = a;
+	    ABK = MBSim::Cardan2AIK(a(0),a(1),a(2));
 	}
+	rOQ = rOP + rPQ;
+	AIK = AIB*ABK;
+	cardan = MBSim::AIK2Cardan(AIK);
+
         vector<double> data;
         data.push_back(getTime());
-        data.push_back(r(0));
-        data.push_back(r(1));
-        data.push_back(r(2));
+        data.push_back(rOQ(0));
+        data.push_back(rOQ(1));
+        data.push_back(rOQ(2));
         data.push_back(cardan(0));
         data.push_back(cardan(1));
         data.push_back(cardan(2));
@@ -98,7 +108,9 @@ namespace MBSimControl {
   void MotionObserver::initializeUsingXML(DOMElement *element) {
     Observer::initializeUsingXML(element);
 
-    auto *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"positionSignal");
+    auto *e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"frameOfReference");
+    if(e) saved_frame=E(e)->getAttribute("ref");
+    e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"positionSignal");
     if(e) saved_position_signal=E(e)->getAttribute("ref");
     e=E(element)->getFirstElementChildNamed(MBSIMCONTROL%"orientationSignal");
     if(e) saved_orientation_signal=E(e)->getAttribute("ref");

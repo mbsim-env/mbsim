@@ -39,14 +39,17 @@ namespace MBSimControl {
 
   class MotionObserver : public MBSim::Observer {
     protected:
-      std::string saved_position_signal, saved_orientation_signal;
-      std::shared_ptr<OpenMBV::RigidBody> openMBVBody;
+      std::string saved_frame, saved_position_signal, saved_orientation_signal;
+      MBSim::Frame* frame{nullptr};
       Signal *position{nullptr};
       Signal *orientation{nullptr};
-      fmatvec::Vec3 r, cardan;
+      std::shared_ptr<OpenMBV::RigidBody> openMBVBody;
+      fmatvec::Vec3 rOQ, rOP, rPQ, cardan;
+      fmatvec::SqrMat3 AIK, AIB, ABK;
 
     public:
       MotionObserver(const std::string &name="");
+      void setFrameOfReference(MBSim::Frame *frame_) { frame = frame_; }
       void setPositionSignal(Signal* position_) { position = position_; }
       void setOrientationSignal(Signal* orientation_) { orientation = orientation_; }
       void init(InitStage stage, const MBSim::InitConfigSet &config) override;
