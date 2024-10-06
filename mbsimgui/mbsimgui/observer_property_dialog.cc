@@ -482,6 +482,9 @@ namespace MBSimGUI {
 
     addTab("Visualization",1);
 
+    frame = new ExtWidget("Frame of reference",new ElementOfReferenceWidget<Frame>(observer,nullptr,this),true,false,MBSIMCONTROL%"frameOfReference");
+    addToTab("General", frame);
+
     position = new ExtWidget("Position signal",new ElementOfReferenceWidget<Signal>(observer,nullptr,this),true,false,MBSIMCONTROL%"positionSignal");
     addToTab("General",position);
 
@@ -494,6 +497,7 @@ namespace MBSimGUI {
 
   DOMElement* MotionObserverPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ObserverPropertyDialog::initializeUsingXML(item->getXMLElement());
+    frame->initializeUsingXML(item->getXMLElement());
     position->initializeUsingXML(item->getXMLElement());
     orientation->initializeUsingXML(item->getXMLElement());
     ombv->initializeUsingXML(item->getXMLElement());
@@ -502,6 +506,7 @@ namespace MBSimGUI {
 
   DOMElement* MotionObserverPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ObserverPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    frame->writeXMLFile(item->getXMLElement(),ref);
     position->writeXMLFile(item->getXMLElement(),ref);
     orientation->writeXMLFile(item->getXMLElement(),ref);
     ombv->writeXMLFile(item->getXMLElement(),ref);
