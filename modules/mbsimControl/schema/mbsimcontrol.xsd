@@ -1181,6 +1181,14 @@
     <xs:complexContent>
       <xs:extension base="mbsim:ObserverType">
         <xs:sequence>
+          <xs:element name="frameOfReference" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="en" xmlns="">
+              The frame of reference.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="mbsim:FrameReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
           <xs:element name="positionSignal" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="en" xmlns="">
               Defines a signal being used for the position of the body. The size of the signal must be 3.
