@@ -44,13 +44,13 @@ fmiexport: mbsimfmi_model$(SHEXT)
 main$(EXEEXT): $(OBJECTS) $(MAKEFILE_LIST_DEPS) | main$(EXEEXT).d
 	$(CXX) -Wl,-Map=$@.linkmap -o $@ $(OBJECTS) $(LDFLAGS) $(shell pkg-config --libs $(PACKAGES)) $(shell pkg-config --libs-only-L $(PACKAGES) | sed 's/-L/-Wl,-rpath,/g')
 	@sed -rne "/^LOAD /s/^LOAD (.*)$$/ \1 \\\/p" $@.linkmap | grep -Ev rtr[0-9]+\.o > $@.d2 || true
-	@test $(WIN) -eq 0 && (echo "$@: \\" > $@.d && cat $@.d2 >> $@.d && rm -f $@.linkmap $@.d2) || (rm -f $@.d2)
+	@test $(WIN) -eq 0 && (echo "$@: \\" > $@.d && cat $@.d2 >> $@.d && echo "" >> $@.d && sed -re "s/^ *([^ ]*) *\\\\$$/\1:/" $@.d2 >> $@.d && rm -f $@.linkmap $@.d2) || (rm -f $@.d2)
 
 # FMI export target
 mbsimfmi_model$(SHEXT): $(OBJECTS) $(MAKEFILE_LIST_DEPS) | mbsimfmi_model$(SHEXT).d
 	$(CXX) -shared $(LDFLAGSRPATH) -Wl,-rpath,\$$ORIGIN,-Map=$@.linkmap -o $@ $(OBJECTS) $(filter-out -no-pie,$(LDFLAGS)) $(shell pkg-config --libs $(PACKAGES))
 	@sed -rne "/^LOAD /s/^LOAD (.*)$$/ \1 \\\/p" $@.linkmap | grep -Ev rtr[0-9]+\.o > $@.d2 || true
-	@test $(WIN) -eq 0 && (echo "$@: \\" > $@.d && cat $@.d2 >> $@.d && rm -f $@.linkmap $@.d2) || (rm -f $@.d2)
+	@test $(WIN) -eq 0 && (echo "$@: \\" > $@.d && cat $@.d2 >> $@.d && echo "" >> $@.d && sed -re "s/^ *([^ ]*) *\\\\$$/\1:/" $@.d2 >> $@.d && rm -f $@.linkmap $@.d2) || (rm -f $@.d2)
 
 # compile source with pkg-config options from PACKAGES (and generate dependency file)
 %.o: %.cc $(MAKEFILE_LIST_DEPS) | %.o.d
