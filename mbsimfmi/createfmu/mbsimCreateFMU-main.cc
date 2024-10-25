@@ -207,7 +207,7 @@ int main(int argc, char *argv[]) {
 
       // preprocess XML file
       cout<<"Preprocess XML project file."<<endl;
-      Preprocess preprocess(inputFilename, xmlCatalog->getDocumentElement());
+      Preprocess preprocess(inputFilename, xmlCatalog->getDocumentElement(), true);
       auto modelDoc = preprocess.processAndGetDocument();
       auto modelEle = modelDoc->getDocumentElement();
       dependencies = preprocess.getDependencies();

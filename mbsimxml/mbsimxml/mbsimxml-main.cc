@@ -266,7 +266,7 @@ int main(int argc, char *argv[]) {
         // run preprocessor
 
         // validate the project file with mbsimxml.xsd
-        Preprocess preprocess(MBSIMPRJ, xmlCatalogDoc->getDocumentElement());
+        Preprocess preprocess(MBSIMPRJ, xmlCatalogDoc->getDocumentElement(), AUTORELOADTIME>0);
 
         // check Embed elements
         {
@@ -333,6 +333,9 @@ int main(int argc, char *argv[]) {
 
           MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
         }
+
+        if(AUTORELOADTIME>0)
+          dependencies = preprocess.getDependencies();
       }
       catch(const exception &ex) {
         fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<endl;
