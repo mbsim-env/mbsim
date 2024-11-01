@@ -80,7 +80,7 @@ namespace MBSim {
 
 // load all MBSim modules:
 set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::path> &searchDirs) {
-  static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
+  static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule", {"mbsimmodule"});
   static const boost::filesystem::path installDir(installPath());
   // note: we do not validate the module xml files in mbsimflatxml since we do no validated at all in mbsimflatxml (but in mbsimxml)
   std::shared_ptr<DOMParser> parser=DOMParser::create();

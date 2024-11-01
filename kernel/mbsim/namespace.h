@@ -25,7 +25,7 @@
 namespace MBSim {
 
 #ifndef SWIG
-  const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
+  const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim", {"", "m", "mbs", "mbsim", "mbsimkernel"});
 #endif
 
 }

@@ -65,7 +65,7 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs) {
   };
 
   // create parser for mbsimmodule.xml files
-  static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule");
+  static const NamespaceURI MBSIMMODULE("http://www.mbsim-env.de/MBSimModule", {"mbsimmodule"});
   std::shared_ptr<DOMParser> parser;
   parser=DOMParser::create({MBXMLUTILSSCHEMA/"http___www_mbsim-env_de_MBSimModule"/"mbsimmoduleCatalog.xml"});
 

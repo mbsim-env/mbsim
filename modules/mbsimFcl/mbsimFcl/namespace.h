@@ -22,7 +22,7 @@
 
 namespace MBSimFcl {
 
-  const MBXMLUtils::NamespaceURI MBSIMFCL("http://www.mbsim-env.de/MBSimFcl");
+  const MBXMLUtils::NamespaceURI MBSIMFCL("http://www.mbsim-env.de/MBSimFcl", {"mfcl", "mbsimfcl"});
 
 }
 
