@@ -1,0 +1,4 @@
+submodel/Untergruppe.xml:10: The diagonal elements of the inertia tensor must be nonnegative.
+(At MBSim element /Group[Hauptgruppe1]/Group[Untergruppe]/Object[Box1])
+MBS.mbsim.xml:55: [ecount=1] included from here
+MBS.mbsx:8: [ecount=1] included from here

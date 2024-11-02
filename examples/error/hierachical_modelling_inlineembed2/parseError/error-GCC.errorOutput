@@ -1,0 +1,3 @@
+submodel/Untergruppe.xml:15: Error: no declaration found for element 'massERROR'
+MBS.mbsim.xml:55: included from here
+MBS.mbsx:8: [ecount=1] included from here
