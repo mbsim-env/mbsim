@@ -57,7 +57,7 @@
         <pv:Embed href="../frame.xml">
           <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
             <scalarParameter name="ok">0</scalarParameter>
-            <scalarParameter name="fail">mfmf;0</scalarParameter>
+            <scalarParameter name="fail">mfmf;ret=0;%ERROR</scalarParameter>
           </Parameter>
         </pv:Embed>
       </frames>
