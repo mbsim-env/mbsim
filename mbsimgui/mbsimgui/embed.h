@@ -105,7 +105,12 @@ namespace MBSimGUI {
 	    object->setXMLElement(ele2);
 	    object->setEmbedXMLElement(ele1);
 	    object->setParameterFileItem(parameterFileItem);
-	    object->createParameters();
+            try {
+	      object->createParameters();
+            }
+	    catch(std::exception &ex) {
+	      return nullptr;
+	    }
 	    object->setFileItem(fileItem);
           }
           else {
