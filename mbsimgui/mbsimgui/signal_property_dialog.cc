@@ -364,7 +364,7 @@ namespace MBSimGUI {
   DemultiplexerPropertyDialog::DemultiplexerPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
     addToTab("General", inputSignal);
-    indices = new ExtWidget("Indices",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"1"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"indices");
+    indices = new ExtWidget("Indices",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"0"),QBoxLayout::RightToLeft,5),false,false,MBSIMCONTROL%"indices");
     addToTab("General", indices);
   }
 
