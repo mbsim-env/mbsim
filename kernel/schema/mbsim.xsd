@@ -925,7 +925,7 @@
           <xs:element name="generalizedInitialPosition" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Inertiale Lage in den generalisierten Freiheitsgraden.
+                Anfangswerte der generalisierten Lagekoordinaten.
                 <p>An dieser Stelle werden die Anfangslagen von zustandsbehafteten Objekten angegeben. Bei Starrkörpern muss die Länge dieses Vektors der Anzahl der angegebenen Translations- und Rotationsrichtungen entsprechen, wobei zunächst die translatorischen Lagen und danach die rotatorischen Lagen anzugeben sind.</p>
               </xs:documentation>
             </xs:annotation>
@@ -933,7 +933,7 @@
           <xs:element name="generalizedInitialVelocity" minOccurs="0" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Inertiale Geschwindigkeiten in den generalisierten Freiheitsgraden.
+                Anfangswerte der generalisierten Geschwindigkeitskoordinaten.
                 <p>vgl. <i>generalizedInitialPosition</i> für die Zuordnung.</p>
               </xs:documentation>
             </xs:annotation>
@@ -2301,6 +2301,42 @@
                 <xs:element ref="pv:Embed"/>
               </xs:choice>
             </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="InitialCondition" substitutionGroup="Link" type="InitialConditionType">
+  </xs:element>
+  <xs:complexType name="InitialConditionType">
+    <xs:complexContent>
+      <xs:extension base="LinkType">
+        <xs:sequence>
+          <xs:element name="object">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Pfad des Objekts
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="constrainedDegreesOfFreedom" type="pv:indexVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Freiheitsgrade, die gesperrt werden sollen. Default: Alle Freiheitsgrade werden gesperrt.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="generalizedInitialPosition" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Anfangswerte der generalisierten Lagekoordinaten. Default: Alle Werte werden auf Null gesetzt.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="generalizedInitialVelocity" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Anfangswerte der generalisierten Geschwindigkeitskoordinaten. Default: Alle Werte werden auf Null gesetzt.
+            </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
       </xs:extension>
