@@ -36,7 +36,6 @@ namespace MBSim {
   }
 
   void InitialCondition::calcSize() {
-    cout << indices.size() << endl;
     ng = indices.size()?indices.size():object->getGeneralizedPositionSize();
     ngd = ng;
     nla = ngd;
@@ -73,7 +72,6 @@ namespace MBSim {
 
   void InitialCondition::updateg() {
     g = evalGeneralizedRelativePosition();
-    cout << "g = " << g << endl;
   }
 
   void InitialCondition::updategd() {
@@ -82,7 +80,6 @@ namespace MBSim {
 
   void InitialCondition::updateW(int j) {
     W[j][0] += JRel.T();
-    cout << W[j][0] << endl;
   } 
  
   void InitialCondition::updateWRef(Mat &WParent, int j) {
@@ -120,8 +117,6 @@ namespace MBSim {
       for(size_t i=0; i<indices.size(); i++)
 	JRel(i,object->gethSize(0)-uSize+indices[i]) = 1;
       for(size_t i=0; i<indices.size(); i++)
-	cout << indices[i] << " ";
-      cout << endl;
     }
     Link::init(stage, config);
   }
