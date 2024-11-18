@@ -713,4 +713,48 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  InitialConditionPropertyDialog::InitialConditionPropertyDialog(Element *initialCondition) : LinkPropertyDialog(initialCondition) {
+    object = new ExtWidget("Object of reference",new ElementOfReferenceWidget<Object>(initialCondition,nullptr,this),false,false,MBSIM%"object");
+    addToTab("General", object);
+
+    indices = new ExtWidget("Constrained degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"constrainedDegreesOfFreedom");
+    addToTab("General", indices);
+
+    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
+    addToTab("General", q0);
+
+    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
+    addToTab("General", u0);
+
+    connect(indices, &ExtWidget::widgetChanged, this, &InitialConditionPropertyDialog::updateWidget);
+    connect(q0, &ExtWidget::widgetChanged, this, &InitialConditionPropertyDialog::updateWidget);
+    connect(u0, &ExtWidget::widgetChanged, this, &InitialConditionPropertyDialog::updateWidget);
+  }
+
+  void InitialConditionPropertyDialog::updateWidget() {
+    if(indices->isActive()) {
+      int size = indices->getFirstWidget<PhysicalVariableWidget>()->rows();
+      q0->resize_(size,1);
+      u0->resize_(size,1);
+    }
+  }
+
+  DOMElement* InitialConditionPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    LinkPropertyDialog::initializeUsingXML(item->getXMLElement());
+    object->initializeUsingXML(item->getXMLElement());
+    indices->initializeUsingXML(item->getXMLElement());
+    q0->initializeUsingXML(item->getXMLElement());
+    u0->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* InitialConditionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    LinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    object->writeXMLFile(item->getXMLElement(),ref);
+    indices->writeXMLFile(item->getXMLElement(),ref);
+    q0->writeXMLFile(item->getXMLElement(),ref);
+    u0->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
 }

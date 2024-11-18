@@ -109,6 +109,7 @@ libmbsimgui_la_SOURCES = \
   solver.cc \
   spring_damper.cc \
   structure.cc \
+  initial_condition.cc \
   fbt_utils.cc \
   fbt_cms.cc \
   fbt_msm.cc \
@@ -222,6 +223,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   special_widgets.h \
   spring_damper.h \
   structure.h \
+  initial_condition.h \
   treeitemdata.h \
   treeitem.h \
   treemodel.h \
