@@ -10,6 +10,7 @@ MBSim
 - A linear tyre model is now available.
 - Output of tyre models is now unified
 - Allow the first frame of Aerodynamics to be arbitrarily rotated to enable models were the global y-axis is not in gravity direction.
+- A new link "initial condition" is now available. This new link allows to define the generalized initial position and velocity of an object by constraints.
 
 MBSimControl
 ------------
