@@ -30,7 +30,8 @@ liblink_la_SOURCES = link.cc\
 		     generalized_gear.cc \
 		     generalized_elastic_structure.cc \
                      disk_contact.cc \
-                     tyre_contact.cc
+                     tyre_contact.cc \
+		     initial_condition.cc
 
 liblink_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS) 
 liblink_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS) 
@@ -65,4 +66,5 @@ linkinclude_HEADERS = link.h\
 		      generalized_gear.h \
 		      generalized_elastic_structure.h \
                       disk_contact.h \
-		      tyre_contact.h
+		      tyre_contact.h \
+		      initial_condition.h

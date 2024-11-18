@@ -33,6 +33,7 @@
 #include <mbsim/environment.h>
 #include <mbsim/objectfactory.h>
 #include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/links/initial_condition.h"
 
 #include <hdf5serie/file.h>
 #include <hdf5serie/simpleattribute.h>
@@ -917,6 +918,10 @@ namespace MBSim {
         projectGeneralizedPositions(2,true);
         projectGeneralizedVelocities(2);
       }
+     for(size_t i=0; i<linkSetValuedActive.size(); i++) {
+       if(dynamic_cast<InitialCondition*>(linkSetValuedActive[i]))
+	 static_cast<InitialCondition*>(linkSetValuedActive[i])->deactivate();
+     }
     }
     checkActive(5); // final update von gActive, ...
     calclaSize(3); // IH
