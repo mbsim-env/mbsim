@@ -2308,11 +2308,19 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="InitialCondition" substitutionGroup="Link" type="InitialConditionType">
+  <xs:element name="InitialCondition" abstract="true" substitutionGroup="Link" type="InitialConditionType">
   </xs:element>
   <xs:complexType name="InitialConditionType">
     <xs:complexContent>
-      <xs:extension base="LinkType">
+      <xs:extension base="LinkType"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedInitialCondition" substitutionGroup="InitialCondition" type="GeneralizedInitialConditionType">
+  </xs:element>
+  <xs:complexType name="GeneralizedInitialConditionType">
+    <xs:complexContent>
+      <xs:extension base="InitialConditionType">
         <xs:sequence>
           <xs:element name="object">
             <xs:annotation>

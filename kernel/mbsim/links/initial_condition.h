@@ -24,51 +24,27 @@
 
 namespace MBSim {
 
-  using Index = int;
-  class Object;
-
   class InitialCondition : public Link {
     protected:
-      Object *object;
-      std::string objectString;
-      std::vector<Index> indices;
-      fmatvec::VecV q0, u0;
-      fmatvec::MatV JRel;
-bool active{true};
+      bool active{true};
     public:
-      InitialCondition(const std::string &name="");
+      InitialCondition(const std::string &name) : Link(name) { }
       ~InitialCondition() override { }
-
-      void setObject(Object *object_) { object = object_; }
-      void setGeneralizedInitialPosition(const fmatvec::Vec &q0_) { q0 <<= q0_; }
-      void setGeneralizedInitialVelocity(const fmatvec::Vec &u0_) { u0 <<= u0_; }
-      void setIndices(const std::vector<Index> &indices_) { indices = indices_; }
 
       void deactivate() { active = false; }
       bool isActive() const override { return active; }
       bool gActiveChanged() override { return false; }
-      void calcSize() override;
+      bool isSetValued() const override { return true; }
+      bool isSingleValued() const override { return false; }
+
       void calclaSize(int j) override;
       void calcgSize(int j) override;
       void calccorrSize(int j) override;
       void calcgdSize(int j) override;
-      bool isSetValued() const override { return true; }
-      bool isSingleValued() const override { return false; }
-
-      void updateGeneralizedPositions() override;
-      void updateGeneralizedVelocities() override;
- 
-      void updateg() override;
-      void updategd() override;
-      void updateW(int i=0) override;
 
       void updatehRef(fmatvec::Vec &hParent, int j=0) override { }
       void updaterRef(fmatvec::Vec &hParent, int j=0) override { }
-      void updateWRef(fmatvec::Mat &WParent, int j=0) override;
       void updateVRef(fmatvec::Mat &WParent, int j=0) override { }
-
-      void init(InitStage stage, const InitConfigSet &config) override;
-      void initializeUsingXML(xercesc::DOMElement * element) override;
   };
 
 }
