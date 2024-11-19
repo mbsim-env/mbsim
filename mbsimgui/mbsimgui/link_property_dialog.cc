@@ -713,7 +713,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  InitialConditionPropertyDialog::InitialConditionPropertyDialog(Element *initialCondition) : LinkPropertyDialog(initialCondition) {
+  GeneralizedInitialConditionPropertyDialog::GeneralizedInitialConditionPropertyDialog(Element *initialCondition) : LinkPropertyDialog(initialCondition) {
     object = new ExtWidget("Object of reference",new ElementOfReferenceWidget<Object>(initialCondition,nullptr,this),false,false,MBSIM%"object");
     addToTab("General", object);
 
@@ -726,12 +726,12 @@ namespace MBSimGUI {
     u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
     addToTab("General", u0);
 
-    connect(indices, &ExtWidget::widgetChanged, this, &InitialConditionPropertyDialog::updateWidget);
-    connect(q0, &ExtWidget::widgetChanged, this, &InitialConditionPropertyDialog::updateWidget);
-    connect(u0, &ExtWidget::widgetChanged, this, &InitialConditionPropertyDialog::updateWidget);
+    connect(indices, &ExtWidget::widgetChanged, this, &GeneralizedInitialConditionPropertyDialog::updateWidget);
+    connect(q0, &ExtWidget::widgetChanged, this, &GeneralizedInitialConditionPropertyDialog::updateWidget);
+    connect(u0, &ExtWidget::widgetChanged, this, &GeneralizedInitialConditionPropertyDialog::updateWidget);
   }
 
-  void InitialConditionPropertyDialog::updateWidget() {
+  void GeneralizedInitialConditionPropertyDialog::updateWidget() {
     if(indices->isActive()) {
       int size = indices->getFirstWidget<PhysicalVariableWidget>()->rows();
       q0->resize_(size,1);
@@ -739,7 +739,7 @@ namespace MBSimGUI {
     }
   }
 
-  DOMElement* InitialConditionPropertyDialog::initializeUsingXML(DOMElement *parent) {
+  DOMElement* GeneralizedInitialConditionPropertyDialog::initializeUsingXML(DOMElement *parent) {
     LinkPropertyDialog::initializeUsingXML(item->getXMLElement());
     object->initializeUsingXML(item->getXMLElement());
     indices->initializeUsingXML(item->getXMLElement());
@@ -748,7 +748,7 @@ namespace MBSimGUI {
     return parent;
   }
 
-  DOMElement* InitialConditionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+  DOMElement* GeneralizedInitialConditionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     LinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     object->writeXMLFile(item->getXMLElement(),ref);
     indices->writeXMLFile(item->getXMLElement(),ref);

@@ -25,10 +25,14 @@
 
 namespace MBSimGUI {
 
-  class InitialCondition : public DualRigidBodyLink {
-    MBSIMGUI_OBJECTFACTORY_CLASS(InitialCondition, DualRigidBodyLink, MBSIM%"InitialCondition", "Initial condition");
+  class InitialCondition : public Link {
+    MBSIMGUI_OBJECTFACTORY_CLASS(InitialCondition, Link, MBSIM%"InitialCondition", "Initial condition");
+  };
+
+  class GeneralizedInitialCondition : public InitialCondition {
+    MBSIMGUI_OBJECTFACTORY_CLASS(InitialCondition, InitialCondition, MBSIM%"GeneralizedInitialCondition", "Generalized initial condition");
     public:
-      PropertyDialog* createPropertyDialog() override { return new InitialConditionPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override { return new GeneralizedInitialConditionPropertyDialog(this); }
   };
 
 }
