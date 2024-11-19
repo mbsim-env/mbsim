@@ -374,7 +374,7 @@
             <BilateralConstraint/>
           </forceLaw>
         </Joint>
-        <InitialCondition name="InitialCondition1" xmlns="http://www.mbsim-env.de/MBSim">
+        <GeneralizedInitialCondition name="GeneralizedInitialCondition1" xmlns="http://www.mbsim-env.de/MBSim">
           <object ref="../Object[RigidBody1]"/>
           <generalizedInitialPosition>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -386,8 +386,8 @@
               <ele>5</ele>
             </xmlVector>
           </generalizedInitialVelocity>
-        </InitialCondition>   
-        <InitialCondition name="InitialCondition2" xmlns="http://www.mbsim-env.de/MBSim">
+        </GeneralizedInitialCondition>
+        <GeneralizedInitialCondition name="GeneralizedInitialCondition2" xmlns="http://www.mbsim-env.de/MBSim">
           <object ref="../Object[RigidBody4]"/>
           <constrainedDegreesOfFreedom>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
@@ -401,7 +401,7 @@
               <ele>30/180*numpy.pi</ele>
             </xmlVector>
           </generalizedInitialPosition>
-        </InitialCondition>
+        </GeneralizedInitialCondition>
       </links>
       <constraints/>
       <observers/>
