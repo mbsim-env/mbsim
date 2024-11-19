@@ -25,13 +25,13 @@
 
 namespace MBSimGUI {
 
-  const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim");
-  const MBXMLUtils::NamespaceURI OPENMBV("http://www.mbsim-env.de/OpenMBV");
-  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl");
-  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
-  const MBXMLUtils::NamespaceURI MBSIMPHYSICS("http://www.mbsim-env.de/MBSimPhysics");
-  const MBXMLUtils::NamespaceURI MBSIMFCL("http://www.mbsim-env.de/MBSimFcl");
-  const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML");
+  const MBXMLUtils::NamespaceURI MBSIM("http://www.mbsim-env.de/MBSim", {"", "m", "mbs", "mbsim"});
+  const MBXMLUtils::NamespaceURI OPENMBV("http://www.mbsim-env.de/OpenMBV", {"o", "ombv"});
+  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl", {"mc", "mbsimcontrol"});
+  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody", {"mf", "mbsimflex"});
+  const MBXMLUtils::NamespaceURI MBSIMPHYSICS("http://www.mbsim-env.de/MBSimPhysics", {"mp", "mbsimphy"});
+  const MBXMLUtils::NamespaceURI MBSIMFCL("http://www.mbsim-env.de/MBSimFcl", {"mfcl", "mbsimfcl"});
+  const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML", {"mx", "mbsx", "mbsimxml"});
 
 }
 

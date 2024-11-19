@@ -11,7 +11,7 @@
 
 namespace MBSim {
 
-  const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML");
+  const MBXMLUtils::NamespaceURI MBSIMXML("http://www.mbsim-env.de/MBSimXML", {"mx", "mbsimxml"});
 
   class DynamicSystemSolver;
   class Solver;

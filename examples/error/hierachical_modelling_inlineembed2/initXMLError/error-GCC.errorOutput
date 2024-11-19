@@ -1,0 +1,11 @@
+submodel/Untergruppe.xml:16: Mass must be nonnegative
+Created by object of type MBSim::RigidBody
+MBS.mbsim.xml:55: [ecount=1] included from here
+MBS.mbsx:8: [ecount=1] included from here
+  submodel/Untergruppe.xml:9: Created by object of type MBSim::Group
+  MBS.mbsim.xml:55: [ecount=1] included from here
+  MBS.mbsx:8: [ecount=1] included from here
+    MBS.mbsim.xml:43: Created by object of type MBSim::Group
+    MBS.mbsx:8: [ecount=1] included from here
+      MBS.mbsim.xml:17: Created by object of type MBSim::DynamicSystemSolver
+      MBS.mbsx:8: [ecount=1] included from here

@@ -197,10 +197,10 @@
                 <pv:Parameter>
                   <pv:scalarParameter name="s">0</pv:scalarParameter>
                   <pv:anyParameter name="spline">
+                    import mbxmlutils
+                    import numpy
                     try:
                       import scipy
-                      import numpy
-                      import mbxmlutils
                       xx=numpy.linspace(0,5,100)
                       yy=[
                         {"s": 0,    "data": numpy.sin(2*xx)},
@@ -213,7 +213,6 @@
                         ret.append(scipy.interpolate.PPoly.from_spline(sp))
                     except:
                       # if no scipy is available we add here the result of the above call to enable testing of this model also on systems without scipy
-                      import numpy
                       class DummyPPoly():
                         pass
                       ret=[DummyPPoly(),DummyPPoly(),DummyPPoly()]

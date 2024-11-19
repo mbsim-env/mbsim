@@ -27,7 +27,7 @@
 
 namespace MBSimInterface {
 
-  const MBXMLUtils::NamespaceURI MBSIMINTERFACE("http://www.mbsim-env.de/MBSimInterface");
+  const MBXMLUtils::NamespaceURI MBSIMINTERFACE("http://www.mbsim-env.de/MBSimInterface", {"mi", "mbsimif"});
 
   class InterfaceIntegrator;
 

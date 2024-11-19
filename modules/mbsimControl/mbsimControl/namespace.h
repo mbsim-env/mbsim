@@ -24,7 +24,7 @@
 
 namespace MBSimControl {
 
-  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl");
+  const MBXMLUtils::NamespaceURI MBSIMCONTROL("http://www.mbsim-env.de/MBSimControl", {"mc", "mbsimcontrol"});
 
 }
 

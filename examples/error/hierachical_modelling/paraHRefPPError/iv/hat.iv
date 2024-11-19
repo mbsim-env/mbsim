@@ -1,0 +1,18 @@
+#Inventor V2.0 ascii
+Translation {
+  translation 0 0.1 0
+}
+Cylinder {
+  radius 0.1
+  height 0.2
+}
+Translation {
+  translation 0 -0.1 0
+}
+Translation {
+  translation 0 0.005 0
+}
+Cylinder {
+  radius 0.2
+  height 0.01
+}

@@ -24,7 +24,7 @@
 
 namespace MBSimFlexibleBody {
 
-  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody");
+  const MBXMLUtils::NamespaceURI MBSIMFLEX("http://www.mbsim-env.de/MBSimFlexibleBody", {"mf", "mbsimflex"});
 
 }
 

@@ -85,7 +85,7 @@ namespace MBSim {
     return sys->evalzd();
   }
 
-  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), smoothSolver(direct), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), tolProj(1e-12), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForSmoothMotion(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), useSmoothSolver(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
+  DynamicSystemSolver::DynamicSystemSolver(const string &name) : Group(name), t(0), dt(0), maxIter(10000), highIter(1000), maxDampingSteps(3), iterc(0), iteri(0), lmParm(0.001), smoothSolver(direct), contactSolver(fixedpoint), impactSolver(fixedpoint), stopIfNoConvergence(false), dropContactInfo(false), useOldla(true), numJac(false), checkGSize(true), limitGSize(500), peds(false), tolProj(1e-12), alwaysConsiderContact(true), inverseKinetics(false), initialProjection(true), determineEquilibriumState(false), useConstraintSolverForPlot(false), rootID(0), updT(true), updrdt(true), updM(true), updLLM(true), updwb(true), updg(true), updgd(true), updG(true), updbc(true), updbi(true), updsv(true), updzd(true), updla(true), updLa(true), upddq(true), upddu(true), upddx(true), useSmoothSolver(false), READZ0(false), truncateSimulationFiles(true), facSizeGs(1) {
     for(int i=0; i<2; i++) {
       updh[i] = true;
       updr[i] = true;
@@ -1534,8 +1534,10 @@ namespace MBSim {
     if (e)
       setDetermineEquilibriumState(E(e)->getText<bool>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"useConstraintSolverForSmoothMotion");
-    if (e)
-      setUseConstraintSolverForSmoothMotion(E(e)->getText<bool>());
+    if (e && E(e)->getText<bool>()==false)
+      Deprecated::message(this, "The use of useConstraintSolverForSmoothMotion with a value of false is deprecated. Remove it, since this is the only supported mode now.", e);
+    if (e && E(e)->getText<bool>()==true)
+      throwError("The use of useConstraintSolverForSmoothMotion is deprecated and a value of true is no longer supported! Use smoothSolver to adapt the solver for smooth motion.");
     e = E(element)->getFirstElementChildNamed(MBSIM%"useConstraintSolverForPlot");
     if (e)
       setUseConstraintSolverForPlot(E(e)->getText<bool>());
@@ -1728,7 +1730,7 @@ namespace MBSim {
 
   const Vec& DynamicSystemSolver::evalzd() {
     if(updzd) {
-      useSmoothSolver = not(useConstraintSolverForSmoothMotion);
+      useSmoothSolver = true;
       updatezd();
     }
     return zd;

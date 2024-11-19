@@ -523,9 +523,6 @@ namespace MBSim {
       void setDetermineEquilibriumState(bool determineEquilibriumState_) { determineEquilibriumState = determineEquilibriumState_; }
       bool getDetermineEquilibriumState() const { return determineEquilibriumState; }
 
-      void setUseConstraintSolverForSmoothMotion(bool useConstraintSolverForSmoothMotion_) { useConstraintSolverForSmoothMotion = useConstraintSolverForSmoothMotion_; }
-      bool getUseConstraintSolverForSmoothMotion() const { return useConstraintSolverForSmoothMotion; }
-
       void setUseConstraintSolverForPlot(bool useConstraintSolverForPlot_) { useConstraintSolverForPlot = useConstraintSolverForPlot_; }
       bool getUseConstraintSolverForPlot() const { return useConstraintSolverForPlot; }
 
@@ -879,7 +876,6 @@ namespace MBSim {
       bool inverseKinetics;
       bool initialProjection;
       bool determineEquilibriumState;
-      bool useConstraintSolverForSmoothMotion;
       bool useConstraintSolverForPlot;
 
       fmatvec::Vec corrParent;

@@ -30,5 +30,6 @@
       </openMBVObject>
     </MBSimEnvironment>
   </environments>
+  <useConstraintSolverForSmoothMotion>0</useConstraintSolverForSmoothMotion>
   <cacheSize>50</cacheSize>
 </DynamicSystemSolver>

@@ -46,7 +46,7 @@ namespace MBSimFMI {
 
     msg(Debug)<<"Preprocess MBSim XML model."<<endl;
     auto param=std::make_shared<Preprocess::ParamSet>();
-    Preprocess preprocess(mbsimxmlfile, xmlCatalog->getDocumentElement());
+    Preprocess preprocess(mbsimxmlfile, xmlCatalog->getDocumentElement(), false);
     auto eval = preprocess.getEvaluator();
     convertVariableToParamSet(varSim.size(), var, param, eval); // set param according data in var
     preprocess.setParam(param);

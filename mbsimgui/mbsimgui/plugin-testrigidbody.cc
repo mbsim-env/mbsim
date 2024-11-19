@@ -37,7 +37,7 @@ using namespace xercesc;
 
 namespace MBSimGUITestPlugin {
 
-  const MBXMLUtils::NamespaceURI MBSIMGUITESTPLUGIN("http://www.mbsim-env.de/MBSimGUI/TestPlugin");
+  const MBXMLUtils::NamespaceURI MBSIMGUITESTPLUGIN("http://www.mbsim-env.de/MBSimGUI/TestPlugin", {"mbsimguitestplugin"});
 
   class TestRigidBody : public MBSimGUI::Body {
     MBSIMGUI_OBJECTFACTORY_CLASS(TestRigidBody, Body, MBSIMGUITESTPLUGIN%"TestRigidBody", "Plugin test rigid body");

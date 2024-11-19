@@ -24,7 +24,7 @@
 
 namespace MBSimPhysics {
 
-  const MBXMLUtils::NamespaceURI MBSIMPHYSICS("http://www.mbsim-env.de/MBSimPhysics");
+  const MBXMLUtils::NamespaceURI MBSIMPHYSICS("http://www.mbsim-env.de/MBSimPhysics", {"mp", "mbsimphy"});
 
 }
 

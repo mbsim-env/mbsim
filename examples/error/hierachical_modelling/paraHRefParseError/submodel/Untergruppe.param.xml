@@ -1,0 +1,5 @@
+<Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+  <scalarParameter name="h1">0.5</scalarParameter>
+  <scalarParameterERROR name="h2">h1</scalarParameterERROR>
+  <import>['../',pathPrefix,'files']</import>
+</Parameter>

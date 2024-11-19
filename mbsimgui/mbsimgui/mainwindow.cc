@@ -93,8 +93,6 @@ namespace MBSimGUI {
 
   bool MainWindow::exitOK = true;
 
-  vector<boost::filesystem::path> dependencies;
-
   MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(nullptr), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
 
@@ -1075,7 +1073,7 @@ namespace MBSimGUI {
       if(evaluator)
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
     }
-    eval=Eval::createEvaluator(evalName, &dependencies);
+    eval=Eval::createEvaluator(evalName);
 
     vector<ParameterLevel> parameterLevels;
     if(item) {
@@ -1365,7 +1363,7 @@ namespace MBSimGUI {
     *debugStreamFlag=echoView->debugEnabled();
 
     try {
-      Preprocess preprocess(doc);
+      Preprocess preprocess(doc, false);
       preprocess.processAndGetDocument();
       root = doc->getDocumentElement();
     }
@@ -1384,9 +1382,8 @@ namespace MBSimGUI {
       actionRefresh->setDisabled(false);
       actionDebug->setDisabled(false);
       statusBar()->showMessage(tr("Ready"));
-      auto out=errorText;
-      statusBar()->showMessage(out.remove(QRegExp("<[^>]*>")));
-      cerr<<out.remove(QRegExp("<[^>]*>")).toStdString()<<endl;
+      cerr<<"<span class=\"MBSIMGUI_ERROR\">"<<errorText.toStdString()<<"</span>"<<endl;
+      statusBar()->showMessage(errorText.remove(QRegExp("<[^>]*>")));
       return;
     }
     echoView->updateOutput(true);

@@ -839,7 +839,8 @@
           </xs:element>
           <xs:element name="useConstraintSolverForSmoothMotion" minOccurs="0" type="pv:booleanFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Definiert, ob die mengenwertigen Kraftgesetze auch während der glatten Bewegung mit dem definierten Lösungsverfahren aus <code>&lt;constraintSolver&gt;</code> berechnet werden sollen (true), oder ob während der glatten Bewegung immer der direkte Löser aus <code>&lt;smoothSolver&gt;</code> verwendet werden soll (false).
+              Deprecated: only a value of false is allowed for this property! Anything else is an error.
+              (Definiert, ob die mengenwertigen Kraftgesetze auch während der glatten Bewegung mit dem definierten Lösungsverfahren aus <code>&lt;constraintSolver&gt;</code> berechnet werden sollen (true), oder ob während der glatten Bewegung immer der direkte Löser aus <code>&lt;smoothSolver&gt;</code> verwendet werden soll (false).)
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="useConstraintSolverForPlot" minOccurs="0" type="pv:booleanFullEval">
