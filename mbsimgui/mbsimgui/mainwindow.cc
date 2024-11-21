@@ -93,13 +93,11 @@ namespace MBSimGUI {
 
   bool MainWindow::exitOK = true;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(nullptr), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
 
     impl=DOMImplementation::getImplementation();
-    parser=impl->createLSParser(DOMImplementation::MODE_SYNCHRONOUS, nullptr);
     serializer=impl->createLSSerializer();
-
     // use html output of MBXMLUtils
     static char HTMLOUTPUT[100];
     strcpy(HTMLOUTPUT, "MBXMLUTILS_ERROROUTPUT=HTMLXPATH");
@@ -129,6 +127,7 @@ namespace MBSimGUI {
       throw runtime_error("Failed to call mbsimxml --dumpXMLCatalog <file>.");
 
     mbxmlparser=DOMParser::create(uniqueTempDir/".mbsimxml.catalog.xml");
+    mbxmlparserNoVal=DOMParser::create();
 
     fileView = new FileView;
 
@@ -608,17 +607,16 @@ namespace MBSimGUI {
     auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
     fmodel->removeRows(fmodel->index(0,0).row(), fmodel->rowCount(QModelIndex()), QModelIndex());
     delete project;
-    parser->release();
     serializer->release();
   }
 
   void MainWindow::updateUndos() {
-    auto *oldDoc = static_cast<DOMDocument*>(doc->cloneNode(true));
+    auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(doc->cloneNode(true)));
     oldDoc->setDocumentURI(doc->getDocumentURI());
-    auto u = vector<DOMDocument*>(1+file.size());
+    auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
     u[0] = oldDoc;
     for(int i=0; i<file.size();i++) {
-      auto *oldDoc = static_cast<DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true));
+      auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true)));
       oldDoc->setDocumentURI(file[i]->getXMLDocument()->getDocumentURI());
       u[i+1] = oldDoc;
     }
@@ -838,11 +836,11 @@ namespace MBSimGUI {
       idMap.clear();
       IDcounter = 0;
 
-      doc = impl->createDocument();
+      doc = mbxmlparserNoVal->createDocument();
       doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
 
       project = new Project;
-      project->createXMLElement(doc);
+      project->createXMLElement(doc.get());
 
       model->createProjectItem(project);
 
@@ -902,7 +900,7 @@ namespace MBSimGUI {
       }
 
       try { 
-        doc = parser->parseURI(X()%fileName.toStdString());
+        doc = mbxmlparserNoVal->parse(fileName.toStdString());
         if(!doc)
           throw runtime_error("Unable load or parse XML file: "+fileName.toStdString());
       }
@@ -977,7 +975,7 @@ namespace MBSimGUI {
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
     try {
-      serializer->writeToURI(doc, X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
+      serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
       if(modifyStatus) setWindowModified(false);
       return true;
     }
@@ -1094,6 +1092,7 @@ namespace MBSimGUI {
           eleP->insertBefore(node,nullptr);
           boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
           E(static_cast<DOMElement*>(node))->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
+          E(static_cast<DOMElement*>(node))->setOriginalElementLineNumber(E(eleP)->getLineNumber());
         }
         try {
           D(doc)->validate();
@@ -1611,7 +1610,7 @@ namespace MBSimGUI {
     elementBuffer.first = nullptr;
     parameterBuffer.first = nullptr;
     setWindowModified(true);
-    auto r = vector<DOMDocument*>(1+file.size());
+    auto r = vector<shared_ptr<DOMDocument>>(1+file.size());
     r[0] = doc;
     for(int i=0; i<file.size(); i++)
       r[i+1] = file[i]->getXMLDocument();
@@ -1629,7 +1628,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::redo() {
-    auto u = vector<DOMDocument*>(1+file.size());
+    auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
     u[0] = doc;
     for(int i=0; i<file.size(); i++)
       u[i+1] = file[i]->getXMLDocument();
@@ -2016,10 +2015,10 @@ namespace MBSimGUI {
 	if(QFileInfo::exists(dialog.getModelFileName()))
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getModelFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-	  DOMDocument *doc = impl->createDocument();
+	  auto doc = mbxmlparserNoVal->createDocument();
 	  DOMNode *node = doc->importNode(item->getXMLElement(),true);
 	  doc->insertBefore(node,nullptr);
-	  serializer->writeToURI(doc, X()%dialog.getModelFileName().toStdString());
+	  serializer->writeToURI(doc.get(), X()%dialog.getModelFileName().toStdString());
 	}
       }
       if(item->getNumberOfParameters() and not dialog.getParameterFileName().isEmpty()) {
@@ -2027,10 +2026,10 @@ namespace MBSimGUI {
 	if(QFileInfo::exists(dialog.getParameterFileName()))
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-	  DOMDocument *doc = impl->createDocument();
+	  auto doc = mbxmlparserNoVal->createDocument();
 	  DOMNode *node = doc->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true);
 	  doc->insertBefore(node,nullptr);
-	  serializer->writeToURI(doc, X()%dialog.getParameterFileName().toStdString());
+	  serializer->writeToURI(doc.get(), X()%dialog.getParameterFileName().toStdString());
 	}
       }
     }
@@ -2095,10 +2094,10 @@ namespace MBSimGUI {
       if(QFileInfo::exists(dialog.getParameterFileName()))
 	ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
       if(ret == QMessageBox::Yes) {
-	DOMDocument *doc = impl->createDocument();
+	auto doc = mbxmlparserNoVal->createDocument();
 	DOMNode *node = doc->importNode(parameters->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
 	doc->insertBefore(node,nullptr);
-	serializer->writeToURI(doc, X()%dialog.getParameterFileName().toStdString());
+	serializer->writeToURI(doc.get(), X()%dialog.getParameterFileName().toStdString());
       }
     }
   }
@@ -2314,7 +2313,7 @@ namespace MBSimGUI {
     if(result) {
       updateUndos();
       if(parent->getNumberOfParameters()) removeParameter(parent);
-      DOMDocument *doc = nullptr;
+      shared_ptr<DOMDocument> doc;
       QString file = dialog.getParameterFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getParameterFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
@@ -2324,12 +2323,12 @@ namespace MBSimGUI {
           auto oldParameter = E(parentele)->getFirstElementChildNamed(PV%"Parameter");
           if(oldParameter)
             parentele->removeChild(oldParameter)->release();
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parentele->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parentele->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
 	  E(parentele)->setAttribute("parameterHref",(dialog.getAbsoluteFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	  parent->setParameterFileItem(addFile(file));
 	}
 	else {
-	  doc = parser->parseURI(X()%file.toStdString());
+	  doc = mbxmlparserNoVal->parse(file.toStdString());
           if(!doc)
             statusBar()->showMessage("Unable to load or parse XML file: "+file);
           else {
@@ -2400,18 +2399,18 @@ namespace MBSimGUI {
     int result = dialog.exec();
     if(result) {
       updateUndos();
-      DOMDocument *doc = nullptr;
+      shared_ptr<DOMDocument> doc;
       QString file = dialog.getParameterFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getParameterFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	element = D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed");
 	if(dialog.referenceParameter()) {
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
 	  E(element)->setAttribute("parameterHref",(dialog.getAbsoluteParameterFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	}
 	else {
-	  doc = parser->parseURI(X()%file.toStdString());
+	  doc = mbxmlparserNoVal->parse(file.toStdString());
           if(!doc)
             statusBar()->showMessage("Unable to load or parse XML file: "+file);
           else {
@@ -2426,11 +2425,11 @@ namespace MBSimGUI {
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	if(dialog.referenceModel()) {
 	  if(not element) element = D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed");
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
 	  E(element)->setAttribute("href",(dialog.getAbsoluteModelFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	}
 	else {
-	  doc = parser->parseURI(X()%file.toStdString());
+	  doc = mbxmlparserNoVal->parse(file.toStdString());
           if(!doc)
             statusBar()->showMessage("Unable to load or parse XML file: "+file);
           else {
@@ -2737,7 +2736,7 @@ namespace MBSimGUI {
 
   void MainWindow::dropEvent(QDropEvent *event) {
     for (int i = 0; i < event->mimeData()->urls().size(); i++) {
-      QString path = event->mimeData()->urls()[i].toLocalFile().toLocal8Bit().data();
+      QString path = event->mimeData()->urls()[i].path().toLocal8Bit().data();
       if(path.endsWith(".mbsx")) {
 	if(path.startsWith("//"))
 	  path.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2901,7 +2900,7 @@ namespace MBSimGUI {
   }
 
   QString MainWindow::getProjectFilePath() const {
-    return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).toLocalFile();
+    return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).path();
   }
 
   void MainWindow::openElementEditor(bool config) {
@@ -3057,7 +3056,7 @@ namespace MBSimGUI {
       if(fileName==file[i]->getFileInfo())
         return file[i];
     }
-    DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
+    auto doc = mw->mbxmlparserNoVal->parse(fileName.absoluteFilePath().toStdString());
     if(!doc)
       throw runtime_error("Unable to load or parse XML file: "+fileName.absoluteFilePath().toStdString());
     auto *fileItem = new FileItemData(doc);
@@ -3081,7 +3080,7 @@ namespace MBSimGUI {
 
   void MainWindow::saveReferencedFile(int i) {
     try {
-      serializer->writeToURI(file[i]->getXMLDocument(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
+      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
       file[i]->setModified(false);
     }
     catch(const std::exception &ex) {
@@ -3104,7 +3103,7 @@ namespace MBSimGUI {
   void MainWindow::convertDocument() {
     QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectFilePath(), "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not(file.isEmpty())) {
-      DOMDocument *doc = parser->parseURI(X()%file.toStdString());
+      auto doc = mbxmlparserNoVal->parse(file.toStdString());
       if(!doc) {
         statusBar()->showMessage("Unable to load or parse XML file: "+file);
         return;
@@ -3130,7 +3129,7 @@ namespace MBSimGUI {
       file=QFileDialog::getSaveFileName(this, "Save MBSim file", file, "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
       if(not(file.isEmpty())) {
 	try {
-	  serializer->writeToURI(doc, X()%(file.toStdString()));
+	  serializer->writeToURI(doc.get(), X()%(file.toStdString()));
 	}
 	catch(const std::exception &ex) {
           mw->setExitBad();

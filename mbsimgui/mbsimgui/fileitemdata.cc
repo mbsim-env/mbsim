@@ -26,7 +26,7 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  FileItemData::FileItemData(xercesc::DOMDocument *doc_) : doc(doc_), fileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%doc->getDocumentURI())).toLocalFile()) {
+  FileItemData::FileItemData(const std::shared_ptr<xercesc::DOMDocument> &doc_) : doc(doc_), fileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%doc->getDocumentURI())).path()) {
     name = mw->getProjectDir().relativeFilePath(fileInfo.absoluteFilePath());
     type = QString::fromStdString(MBXMLUtils::E(getXMLElement())->getTagName().second);
   }

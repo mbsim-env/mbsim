@@ -775,7 +775,7 @@ namespace MBSimGUI {
     QString file=QFileDialog::getSaveFileName(this, "Save finite elements input data file", QFileInfo(mw->getProjectFilePath()).absolutePath()+"/"+QFileInfo(inputFile).baseName()+".xml", "XML files (*.xml)");
     if(not(file.isEmpty())) {
       file = file.endsWith(".xml")?file:file+".xml";
-      auto doc = mw->impl->createDocument();
+      auto doc = mw->mbxmlparserNoVal->createDocument();
       auto element=MBXMLUtils::D(doc)->createElement(MBSIMFLEX%"InputData");
       doc->insertBefore(element, nullptr);
       auto pageList = pageIds();
@@ -783,7 +783,7 @@ namespace MBSimGUI {
 	if(hasVisitedPage(pageList.at(i)))
 	  page<WizardPage>(pageList.at(i))->writeXMLFile(element);
       }
-      mw->serializer->writeToURI(doc, MBXMLUtils::X()%file.toStdString());
+      mw->serializer->writeToURI(doc.get(), MBXMLUtils::X()%file.toStdString());
     }
   }
 
@@ -793,7 +793,7 @@ namespace MBSimGUI {
     if(file.startsWith("//"))
       file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
     if(not file.isEmpty()) {
-      auto doc = mw->parser->parseURI(MBXMLUtils::X()%file.toStdString());
+      auto doc = mw->mbxmlparserNoVal->parse(file.toStdString());
       if(!doc) {
         mw->statusBar()->showMessage("Unable to load or parse XML file: "+file);
         return;

@@ -183,6 +183,7 @@ namespace MBSimGUI {
       element->insertBefore(ele2,nullptr);
       boost::filesystem::path orgFileName=E(getXMLElement())->getOriginalFilename();
       E(ele2)->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
+      E(ele2)->setOriginalElementLineNumber(E(element)->getLineNumber());
       E(element)->removeAttribute("href");
     }
     if(E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
@@ -190,6 +191,7 @@ namespace MBSimGUI {
       element->insertBefore(ele2,element->getFirstElementChild());
       boost::filesystem::path orgFileName=E(getParameter(0)->getXMLElement())->getOriginalFilename();
       E(ele2)->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
+      E(ele2)->setOriginalElementLineNumber(E(element)->getLineNumber());
       E(element)->removeAttribute("parameterHref");
     }
     return element->getLastElementChild();

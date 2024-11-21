@@ -121,8 +121,8 @@ namespace MBSimGUI {
       bool autoRefresh;
       bool statusUpdate;
       bool callViewAllAfterFileReloaded { false };
-      xercesc::DOMDocument *doc;
-      std::deque<std::vector<xercesc::DOMDocument*>> undos, redos;
+      std::shared_ptr<xercesc::DOMDocument> doc;
+      std::deque<std::vector<std::shared_ptr<xercesc::DOMDocument>>> undos, redos;
       std::pair<Element*,bool> elementBuffer;
       std::pair<Parameter*,bool> parameterBuffer;
       QString fmuFileName;
@@ -194,9 +194,9 @@ namespace MBSimGUI {
       MainWindow(QStringList &arg);
       ~MainWindow() override;
       std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparser;
+      std::shared_ptr<MBXMLUtils::DOMParser> mbxmlparserNoVal;
       std::shared_ptr<MBXMLUtils::Eval> eval;
       xercesc::DOMImplementation *impl;
-      xercesc::DOMLSParser *parser;
       xercesc::DOMLSSerializer *serializer;
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const { return uniqueTempDir; }

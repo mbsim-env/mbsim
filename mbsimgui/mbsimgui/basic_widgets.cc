@@ -516,11 +516,8 @@ namespace MBSimGUI {
         parent->insertBefore(ele, ref);
       }
       else {
-        DOMLSInput *source = mw->impl->createLSInput();
-        X x;
-        source->setStringData(x%tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString());
         try {
-          mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
+          mw->mbxmlparserNoVal->parseWithContext(tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString(), parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
         }
         CATCH
       }
@@ -879,11 +876,8 @@ namespace MBSimGUI {
         parent->insertBefore(ele, ref);
       }
       else {
-        DOMLSInput *source = mw->impl->createLSInput();
-        X x;
-        source->setStringData(x%tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString());
         try {
-          mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
+          mw->mbxmlparserNoVal->parseWithContext(tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString(), parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
         }
         CATCH
       }
@@ -1189,22 +1183,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* XMLEditorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMLSInput *source = mw->impl->createLSInput();
-    X x;
-    source->setStringData(x%edit->toPlainText().toStdString());
     try {
-      DOMElement *element;
-      if(dynamic_cast<DOMDocument*>(parent->getParentNode())) {
-        DOMDocument *doc = mw->parser->parse(source);
-        if(!doc)
-          throw runtime_error("Unable to load or parse XML file: "+edit->toPlainText().toStdString());
-        DOMElement *ele = doc->getDocumentElement();
-        element = static_cast<xercesc::DOMElement*>(parent->getOwnerDocument()->importNode(ele,true));
-        element->getOwnerDocument()->replaceChild(element, parent);
-      }
-      else
-        element = static_cast<xercesc::DOMElement*>(mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_REPLACE));
-      return element;
+      return static_cast<xercesc::DOMElement*>(mw->mbxmlparserNoVal->parseWithContext(edit->toPlainText().toStdString(), parent, DOMLSParser::ACTION_REPLACE));
     }
     CATCH
     return nullptr;
