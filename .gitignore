@@ -74,6 +74,7 @@ mbsimgui/install-sh
 mbsimgui/ltmain.sh
 mbsimgui/mbsimgui/Makefile.in
 mbsimgui/missing
+mbsimgui/test-driver
 mbsimxml/INSTALL
 mbsimxml/compile
 mbsimxml/Makefile.in
@@ -90,6 +91,7 @@ mbsimxml/ltmain.sh
 mbsimxml/mbsimxml/Makefile.in
 mbsimxml/missing
 mbsimxml/xmldoc/Makefile.in
+mbsimxml/test-driver
 modules/mbsimPhysics/INSTALL
 modules/mbsimPhysics/Makefile.in
 modules/mbsimPhysics/aclocal.m4
