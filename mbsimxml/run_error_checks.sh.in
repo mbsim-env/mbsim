@@ -1,3 +1,8 @@
 #!/bin/bash
 
+if [ @XC@ == 1 ]; then
+  echo "mbsimxml error tests are skipped for a Windows cross compile build"
+  exit 0
+fi
+
 $srcdir/../examples/error/run_error_checks.py --run xml --prefix @prefix@ $srcdir/../examples

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ @XC@ == 1 ]; then
-  echo "mbsimgui error tests is skipped for a Windows cross compile build"
+  echo "mbsimgui error tests are skipped for a Windows cross compile build"
   exit 0
 fi
 
