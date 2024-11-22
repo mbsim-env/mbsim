@@ -1,8 +1,7 @@
 #!/bin/bash
 
-@prefix@/bin/mbsimgui --autoExit
-if [ $? -ne 0 ]; then
-  echo "mbsimgui error tests skipped since mbsimgui cannot be started"
+if [ @XC@ == 1 ]; then
+  echo "mbsimgui error tests is skipped for a Windows cross compile build"
   exit 0
 fi
 

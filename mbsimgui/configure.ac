@@ -34,6 +34,10 @@ fi
 
 AM_CONDITIONAL([COND_WIN32], [test "_$host_os" = "_mingw32"])
 
+if test "$cross_compiling" == "yes"; then
+  AC_SUBST([XC],[1])
+fi
+
 dnl Qt
 PKG_CHECK_MODULES(QT, [Qt5Core >= 5.6 Qt5Gui >= 5.6 Qt5Widgets >= 5.6])
 dnl get moc and uic

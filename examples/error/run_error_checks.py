@@ -58,7 +58,8 @@ def checkErrorFormat(dir, errorFormat):
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")
-  cur=octErrRE.sub(octErrREreplace, cur)
+  cur=octErrRE.sub(octErrREreplace, cur) # replace octave error output which may be octave version dependent
+  cur=cur.replace("\\", "/") # convert windows path \ to unix path / to allow the same reference for win/linux
 
   if args.update:
     # update reference error output
@@ -133,13 +134,14 @@ def checkGUIError(dir):
   try:
     prefix=args.prefix+"/bin/" if args.prefix is not None else ""
     subprocess.check_output([prefix+"mbsimgui", "--autoExit", "MBS.mbsx"],
-                            stderr=subprocess.STDOUT, cwd=dir)
+                            stderr=subprocess.STDOUT, cwd=dir, env=guiEnvVars(displayNR))
     cur=b""
     ret[1]+=dir+": GUI: did not return with !=0\n"; ret[0]+=1
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")
-  cur=octErrRE.sub(octErrREreplace, cur)
+  cur=octErrRE.sub(octErrREreplace, cur) # replace octave error output which may be octave version dependent
+  cur=cur.replace("\\", "/") # convert windows path \ to unix path / to allow the same reference for win/linux
 
   with open(dir+"/error-HTMLXPATH.errorOutput", "rt") as f:
     refRoot=ET.fromstring('<span class="MBSIMGUI_ERROR">'+f.read()+'</span>')
@@ -162,10 +164,39 @@ def check(dir):
     r=checkGUIError(dir); appendRet(ret, r)
   return ret
 
+def startVNC():
+  # start vnc server on a free display
+  global displayNR
+  displayNR=3
+  # older versions of vncserver does not have the "-autokill no" -> "no" is the default
+  if os.path.isfile("/etc/fedora-release"):
+    autokill=[]
+  else:
+    autokill=["-autokill", "no"]
+  while subprocess.call(["vncserver", ":"+str(displayNR), "-noxstartup", "-SecurityTypes", "None"]+autokill, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
+    displayNR=displayNR+1
+    if displayNR>100:
+      raise RuntimeError("Cannot find a free DISPLAY for vnc server.")
+
+def closeVNC():
+  # kill vnc server
+  if subprocess.call(["vncserver", "-kill", ":"+str(displayNR)], stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
+    print("Cannot close vnc server on :%d but continue."%(displayNR))
+
+def guiEnvVars(displayNR):
+  denv=os.environ.copy()
+  denv["DISPLAY"]=":"+str(displayNR)
+  denv["COIN_FULL_INDIRECT_RENDERING"]="1"
+  denv["QT_X11_NO_MITSHM"]="1"
+  return denv
+
+if "gui" in args.run and os.name!="nt":
+  startVNC()
+
 dirs=[]
 for d1 in args.directories:
   for d2, _, _ in os.walk(d1):
-    if not os.path.isfile(d2+"/error-GCC.errorOutput"):
+    if not os.path.isfile(d2+"/error-GCCNONE.errorOutput"):
       continue
     dirs.append(d2)
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=1 if args.showdiff else psutil.cpu_count(False))
@@ -173,5 +204,8 @@ retVal=0
 for result in executor.map(check, dirs):
   print(result[1], end="")
   retVal+=result[0]
+
+if "gui" in args.run and os.name!="nt":
+  closeVNC()
 
 sys.exit(0 if retVal==0 else 1)
