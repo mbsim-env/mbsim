@@ -20,6 +20,7 @@ actionGroup = argparser.add_mutually_exclusive_group()
 actionGroup.add_argument("--update", action="store_true", help="update the reference files with the current output")
 actionGroup.add_argument("--showdiff", action="store_true", help="show a diff of the reference fiels with the current output")
 argparser.add_argument("--difftool", type=str, default=None, help="default diff tool if git cannot be used to autodetect")
+argparser.add_argument("--prefix", type=str, default=None, help="install prefix, use PATH if not given")
 
 args=argparser.parse_args()
 
@@ -45,7 +46,8 @@ def checkErrorFormat(dir, errorFormat):
   env=os.environ.copy()
   env["MBXMLUTILS_ERROROUTPUT"]=errorFormat
   try:
-    subprocess.check_output(["mbsimxml", "--stopafterfirststep", "--stdout", "error~~", "MBS.mbsx"],
+    prefix=args.prefix+"/bin/" if args.prefix is not None else ""
+    subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", "error~~", "MBS.mbsx"],
                             env=env, stderr=subprocess.DEVNULL, cwd=dir)
     cur=b""
     ret[1]+=dir+": "+errorFormat+": did not return with !=0\n"; ret[0]+=1
@@ -122,7 +124,8 @@ def checkGUIError(dir):
 
   # run command and get error output
   try:
-    subprocess.check_output(["mbsimgui", "--autoExit", "MBS.mbsx"],
+    prefix=args.prefix+"/bin/" if args.prefix is not None else ""
+    subprocess.check_output([prefix+"mbsimgui", "--autoExit", "MBS.mbsx"],
                             stderr=subprocess.STDOUT, cwd=dir)
     cur=b""
     ret[1]+=dir+": GUI: did not return with !=0\n"; ret[0]+=1
