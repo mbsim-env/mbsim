@@ -8,7 +8,7 @@ import urllib.parse
 import tempfile
 import concurrent.futures
 import psutil
-import functools
+import difflib
 import xml.etree.cElementTree as ET
 
 argparser=argparse.ArgumentParser(
@@ -76,6 +76,8 @@ def checkErrorFormat(dir, errorFormat):
             os.remove(curFile)
         else:
           ret[1]+=dir+": "+errorFormat+": error output does not match reference\n"; ret[0]+=1
+          ret[1]+="".join(difflib.unified_diff(ref.splitlines(keepends=True), cur.splitlines(keepends=True),
+                                               fromfile=dir+"/error-"+errorFormat+".errorOutput", tofile="output"))
     else:
       ret[1]+=dir+": "+errorFormat+": no reference\n"; ret[0]+=1
   return ret
