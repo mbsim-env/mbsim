@@ -374,34 +374,37 @@
             <BilateralConstraint/>
           </forceLaw>
         </Joint>
-        <GeneralizedInitialCondition name="GeneralizedInitialCondition1" xmlns="http://www.mbsim-env.de/MBSim">
+        <GeneralizedInitialPosition name="GeneralizedInitialPosition1" xmlns="http://www.mbsim-env.de/MBSim">
           <object ref="../Object[RigidBody1]"/>
-          <generalizedInitialPosition>
+          <values>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>-0.2</ele>
             </xmlVector>
-          </generalizedInitialPosition>
-          <generalizedInitialVelocity>
+          </values>
+        </GeneralizedInitialPosition>
+        <GeneralizedInitialVelocity name="GeneralizedInitialVelocity1" xmlns="http://www.mbsim-env.de/MBSim">
+          <object ref="../Object[RigidBody1]"/>
+          <values>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>5</ele>
             </xmlVector>
-          </generalizedInitialVelocity>
-        </GeneralizedInitialCondition>
-        <GeneralizedInitialCondition name="GeneralizedInitialCondition2" xmlns="http://www.mbsim-env.de/MBSim">
+          </values>
+        </GeneralizedInitialVelocity>
+        <GeneralizedInitialPosition name="GeneralizedInitialPosition2" xmlns="http://www.mbsim-env.de/MBSim">
           <object ref="../Object[RigidBody4]"/>
-          <constrainedDegreesOfFreedom>
+          <indices>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>0</ele>
               <ele>2</ele>
             </xmlVector>
-          </constrainedDegreesOfFreedom>
-          <generalizedInitialPosition>
+          </indices>
+          <values>
             <xmlVector xmlns="http://www.mbsim-env.de/MBXMLUtils">
               <ele>-1</ele>
               <ele>30/180*numpy.pi</ele>
             </xmlVector>
-          </generalizedInitialPosition>
-        </GeneralizedInitialCondition>
+          </values>
+        </GeneralizedInitialPosition>
       </links>
       <constraints/>
       <observers/>
