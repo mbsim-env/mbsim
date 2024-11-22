@@ -326,7 +326,7 @@ namespace MBSim {
       WInverseKineticsParent.resize(hSize[1], laInverseKineticsSize);
       bInverseKineticsParent.resize(bInverseKineticsSize, laInverseKineticsSize);
       laInverseKineticsParent.resize(laInverseKineticsSize);
-      corrParent.resize(getgdSize());
+      corrParent.resize(getlaSize());
 
       updateMRef(MParent);
       updateTRef(TParent);

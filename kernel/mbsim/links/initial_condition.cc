@@ -28,16 +28,8 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  void InitialCondition::calclaSize(int j) {
-    laSize = active*nla;
-  }
-
   void InitialCondition::calcgSize(int j) {
     gSize = active*ng;
-  }
-
-  void InitialCondition::calccorrSize(int j) {
-    corrSize = active*nla;
   }
 
   void InitialCondition::calcgdSize(int j) {

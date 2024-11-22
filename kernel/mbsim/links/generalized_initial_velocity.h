@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@gmail.com
  */
 
-#ifndef _GENERALIZED_INITIAL_CONDITION_H_
-#define _GENERALIZED_INITIAL_CONDITION_H_
+#ifndef _GENERALIZED_INITIAL_VELOCITY_H_
+#define _GENERALIZED_INITIAL_VELOCITY_H_
 
 #include "mbsim/links/initial_condition.h"
 
@@ -27,28 +27,27 @@ namespace MBSim {
   using Index = int;
   class Object;
 
-  class GeneralizedInitialCondition : public InitialCondition {
+  class GeneralizedInitialVelocity : public InitialCondition {
     protected:
       Object *object;
       std::string objectString;
       std::vector<Index> indices;
-      fmatvec::VecV q0, u0;
+      fmatvec::VecV u0;
       fmatvec::MatV JRel;
     public:
-      GeneralizedInitialCondition(const std::string &name="");
-      ~GeneralizedInitialCondition() override { }
+      GeneralizedInitialVelocity(const std::string &name="");
+      ~GeneralizedInitialVelocity() override { }
 
       void setObject(Object *object_) { object = object_; }
-      void setGeneralizedInitialPosition(const fmatvec::Vec &q0_) { q0 <<= q0_; }
-      void setGeneralizedInitialVelocity(const fmatvec::Vec &u0_) { u0 <<= u0_; }
       void setIndices(const std::vector<Index> &indices_) { indices = indices_; }
+      void setValues(const fmatvec::Vec &u0_) { u0 <<= u0_; }
 
       void calcSize() override;
+      void calclaSize(int j) override;
+      void calccorrSize(int j) override;
 
-      void updateGeneralizedPositions() override;
       void updateGeneralizedVelocities() override;
  
-      void updateg() override;
       void updategd() override;
       void updateW(int i=0) override;
 

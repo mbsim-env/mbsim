@@ -2316,9 +2316,9 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="GeneralizedInitialCondition" substitutionGroup="InitialCondition" type="GeneralizedInitialConditionType">
+  <xs:element name="GeneralizedInitialPosition" substitutionGroup="InitialCondition" type="GeneralizedInitialPositionType">
   </xs:element>
-  <xs:complexType name="GeneralizedInitialConditionType">
+  <xs:complexType name="GeneralizedInitialPositionType">
     <xs:complexContent>
       <xs:extension base="InitialConditionType">
         <xs:sequence>
@@ -2332,19 +2332,45 @@
               <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
             </xs:complexType>
           </xs:element>
-          <xs:element name="constrainedDegreesOfFreedom" type="pv:indexVector" minOccurs="0">
+          <xs:element name="indices" type="pv:indexVector" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Freiheitsgrade, die gesperrt werden sollen. Default: Alle Freiheitsgrade werden gesperrt.
+              Indizes der generalisierten Lagekoordinaten, deren Werte vorgegeben werden. Default: Die Werte aller generalisierten Lagekoordinaten werden vorgegeben.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="generalizedInitialPosition" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="values" type="pv:unknownVector">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Anfangswerte der generalisierten Lagekoordinaten. Default: Alle Werte werden auf Null gesetzt.
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:element name="generalizedInitialVelocity" type="pv:unknownVector" minOccurs="0">
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="GeneralizedInitialVelocity" substitutionGroup="InitialCondition" type="GeneralizedInitialVelocityType">
+  </xs:element>
+  <xs:complexType name="GeneralizedInitialVelocityType">
+    <xs:complexContent>
+      <xs:extension base="InitialConditionType">
+        <xs:sequence>
+          <xs:element name="object">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Pfad des Objekts
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="indices" type="pv:indexVector" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Anfangswerte der generalisierten Geschwindigkeitskoordinaten. Default: Alle Werte werden auf Null gesetzt.
+              Indizes der generalisierten Geschwindigkeitskoordinaten, deren Werte vorgegeben werden. Default: Die Werte aller generalisierten Geschwindigkeitskoordinaten werden vorgegeben.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="values" type="pv:unknownVector">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Anfangswerte der generalisierten Geschwindigkeitskoordinaten.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>

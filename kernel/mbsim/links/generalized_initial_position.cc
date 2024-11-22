@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/links/generalized_initial_condition.h"
+#include "mbsim/links/generalized_initial_position.h"
 #include "mbsim/objects/object.h"
 
 using namespace std;
@@ -28,97 +28,94 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedInitialCondition)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, GeneralizedInitialPosition)
 
-  GeneralizedInitialCondition::GeneralizedInitialCondition(const string &name) : InitialCondition(name) {
+  GeneralizedInitialPosition::GeneralizedInitialPosition(const string &name) : InitialCondition(name) {
     W[0].resize(1);
     W[1].resize(1);
   }
 
-  void GeneralizedInitialCondition::calcSize() {
+  void GeneralizedInitialPosition::calcSize() {
     ng = indices.size()?indices.size():object->getGeneralizedPositionSize();
-    ngd = ng;
-    nla = ngd;
+    ngd = 0;
+    nla = ng;
     updSize = false;
   }
 
-  void GeneralizedInitialCondition::updateGeneralizedPositions() {
+  void GeneralizedInitialPosition::calclaSize(int j) {
+    if(j==3)
+      laSize = 0;
+    else
+      laSize = active*nla;
+  }
+
+  void GeneralizedInitialPosition::calccorrSize(int j) {
+    if(j==4)
+      corrSize = 0;
+    else
+      corrSize = active*nla;
+  }
+
+  void GeneralizedInitialPosition::updateGeneralizedPositions() {
     for(int i=0; i<ng; i++)
       rrel(i)=object->evalGeneralizedPosition()(indices[i])-q0(i);
     updrrel = false;
   } 
 
-  void GeneralizedInitialCondition::updateGeneralizedVelocities() {
-    for(int i=0; i<ng; i++)
-      vrel(i)=object->evalGeneralizedVelocity()(indices[i])-u0(i);
-    updvrel = false;
-  }
-
-  void GeneralizedInitialCondition::updateg() {
+  void GeneralizedInitialPosition::updateg() {
     g = evalGeneralizedRelativePosition();
   }
 
-  void GeneralizedInitialCondition::updategd() {
-    gd = evalGeneralizedRelativeVelocity();
-  }
-
-  void GeneralizedInitialCondition::updateW(int j) {
-    W[j][0] += JRel.T();
+  void GeneralizedInitialPosition::updateW(int j) {
+    if(laSize) W[j][0] += JRel.T();
   } 
  
-  void GeneralizedInitialCondition::updateWRef(Mat &WParent, int j) {
+  void GeneralizedInitialPosition::updateWRef(Mat &WParent, int j) {
     RangeV I = RangeV(object->gethInd(j),object->gethInd(j)+object->gethSize(j)-1);
     RangeV J = RangeV(laInd,laInd+laSize-1);
     W[j][0].ref(WParent,I,J);
   } 
 
-  void GeneralizedInitialCondition::init(InitStage stage, const InitConfigSet &config) {
+  void GeneralizedInitialPosition::init(InitStage stage, const InitConfigSet &config) {
     if (stage==resolveStringRef) {
       if(not objectString.empty())
 	setObject(getByPath<Object>(objectString));
       if(not object)
-	throwError("(GeneralizedInitialCondition::init): object is not given.");
+	throwError("(GeneralizedInitialPosition::init): object is not given.");
     }
     else if(stage==unknownStage) {
       int qSize = object->getGeneralizedPositionSize();
-      int uSize = object->getGeneralizedVelocitySize();
       if(indices.size()==0) {
 	indices.resize(qSize);
 	for(size_t i=0; i<indices.size(); i++)
 	  indices[i] = i;
       }
       else if(int(indices.size())>qSize)
-	throwError("(GeneralizedInitialCondition::init): size of indices does not match, must be " + to_string(qSize) + ", but is " + to_string(indices.size()) + ".");
+	throwError("(GeneralizedInitialPosition::init): size of indices does not match, must be " + to_string(qSize) + ", but is " + to_string(indices.size()) + ".");
       if(not q0())
 	q0.resize(indices.size());
       else if(q0.size()!=int(indices.size()))
-	throwError("(GeneralizedInitialCondition::init): size of q0 does not match, must be " + to_string(qSize) + ", but is " + to_string(q0.size()) + ".");
-      if(not u0())
-	u0.resize(indices.size());
-      else if(u0.size()!=int(indices.size()))
-	throwError("(GeneralizedInitialCondition::init): size of u0 does not match, must be " + to_string(uSize) + ", but is " + to_string(u0.size()) + ".");
+	throwError("(GeneralizedInitialPosition::init): size of values does not match, must be " + to_string(qSize) + ", but is " + to_string(q0.size()) + ".");
       JRel.resize(indices.size(),object->gethSize(0));
       for(size_t i=0; i<indices.size(); i++)
-	JRel(i,object->gethSize(0)-uSize+indices[i]) = 1;
+	JRel(i,object->gethSize(0)-qSize+indices[i]) = 1;
     }
     InitialCondition::init(stage, config);
   }
 
-  void GeneralizedInitialCondition::initializeUsingXML(xercesc::DOMElement * element) {
+  void GeneralizedInitialPosition::initializeUsingXML(xercesc::DOMElement * element) {
     InitialCondition::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"object");
     objectString=E(e)->getAttribute("ref");
-    e=E(element)->getFirstElementChildNamed(MBSIM%"constrainedDegreesOfFreedom");
+    e=E(element)->getFirstElementChildNamed(MBSIM%"indices");
     if(e) {
       auto indices_ = E(e)->getText<VecVI>();
       indices.resize(indices_.size());
       for(size_t i=0; i<indices.size(); i++)
 	indices[i] = static_cast<Index>(indices_(i))-1;
     }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedInitialPosition");
-    if(e) setGeneralizedInitialPosition(E(e)->getText<VecV>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"generalizedInitialVelocity");
-    if(e) setGeneralizedInitialVelocity(E(e)->getText<VecV>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"values");
+    setValues(E(e)->getText<VecV>());
   }
 
 }

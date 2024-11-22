@@ -37,9 +37,7 @@ namespace MBSim {
       bool isSetValued() const override { return true; }
       bool isSingleValued() const override { return false; }
 
-      void calclaSize(int j) override;
       void calcgSize(int j) override;
-      void calccorrSize(int j) override;
       void calcgdSize(int j) override;
 
       void updatehRef(fmatvec::Vec &hParent, int j=0) override { }
