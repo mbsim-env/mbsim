@@ -9,6 +9,7 @@ import tempfile
 import concurrent.futures
 import psutil
 import difflib
+import re
 import xml.etree.cElementTree as ET
 
 argparser=argparse.ArgumentParser(
@@ -39,6 +40,9 @@ def difftoolCmd(a, b):
   return diff
 difftoolCmd.diffcmd=None
 
+octErrRE=re.compile("Caught octave exception .*\n")
+octErrREreplace="Caught octave exception **octave version dependent**\n"
+
 def checkErrorFormat(dir, errorFormat):
   ret=[0,""]
 
@@ -54,6 +58,7 @@ def checkErrorFormat(dir, errorFormat):
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")
+  cur=octErrRE.sub(octErrREreplace, cur)
 
   if args.update:
     # update reference error output
@@ -134,6 +139,7 @@ def checkGUIError(dir):
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")
+  cur=octErrRE.sub(octErrREreplace, cur)
 
   with open(dir+"/error-HTMLXPATH.errorOutput", "rt") as f:
     refRoot=ET.fromstring('<span class="MBSIMGUI_ERROR">'+f.read()+'</span>')
@@ -149,7 +155,7 @@ def checkGUIError(dir):
 def check(dir):
   ret=[0,""]
   if "xml" in args.run:
-    r=checkErrorFormat(dir, "GCC"); appendRet(ret, r)
+    r=checkErrorFormat(dir, "GCCNONE"); appendRet(ret, r)
     r=checkErrorFormat(dir, "HTMLFILELINE"); appendRet(ret, r)
     r=checkErrorFormat(dir, "HTMLXPATH"); appendRet(ret, r)
   if "gui" in args.run:
