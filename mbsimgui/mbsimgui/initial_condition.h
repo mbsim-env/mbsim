@@ -29,8 +29,14 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(InitialCondition, Link, MBSIM%"InitialCondition", "Initial condition");
   };
 
-  class GeneralizedInitialCondition : public InitialCondition {
-    MBSIMGUI_OBJECTFACTORY_CLASS(InitialCondition, InitialCondition, MBSIM%"GeneralizedInitialCondition", "Generalized initial condition");
+  class GeneralizedInitialPosition : public InitialCondition {
+    MBSIMGUI_OBJECTFACTORY_CLASS(InitialCondition, InitialCondition, MBSIM%"GeneralizedInitialPosition", "Generalized initial position");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new GeneralizedInitialConditionPropertyDialog(this); }
+  };
+
+  class GeneralizedInitialVelocity : public InitialCondition {
+    MBSIMGUI_OBJECTFACTORY_CLASS(InitialCondition, InitialCondition, MBSIM%"GeneralizedInitialVelocity", "Generalized initial velocity");
     public:
       PropertyDialog* createPropertyDialog() override { return new GeneralizedInitialConditionPropertyDialog(this); }
   };

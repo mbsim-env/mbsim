@@ -717,25 +717,20 @@ namespace MBSimGUI {
     object = new ExtWidget("Object of reference",new ElementOfReferenceWidget<Object>(initialCondition,nullptr,this),false,false,MBSIM%"object");
     addToTab("General", object);
 
-    indices = new ExtWidget("Constrained degrees of freedom",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"constrainedDegreesOfFreedom");
+    indices = new ExtWidget("Indices",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"indices");
     addToTab("General", indices);
 
-    q0 = new ExtWidget("Generalized initial position",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialPosition");
-    addToTab("General", q0);
-
-    u0 = new ExtWidget("Generalized initial velocity",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"generalizedInitialVelocity");
-    addToTab("General", u0);
+    values = new ExtWidget("Values",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"values");
+    addToTab("General", values);
 
     connect(indices, &ExtWidget::widgetChanged, this, &GeneralizedInitialConditionPropertyDialog::updateWidget);
-    connect(q0, &ExtWidget::widgetChanged, this, &GeneralizedInitialConditionPropertyDialog::updateWidget);
-    connect(u0, &ExtWidget::widgetChanged, this, &GeneralizedInitialConditionPropertyDialog::updateWidget);
+    connect(values, &ExtWidget::widgetChanged, this, &GeneralizedInitialConditionPropertyDialog::updateWidget);
   }
 
   void GeneralizedInitialConditionPropertyDialog::updateWidget() {
     if(indices->isActive()) {
       int size = indices->getFirstWidget<PhysicalVariableWidget>()->rows();
-      q0->resize_(size,1);
-      u0->resize_(size,1);
+      values->resize_(size,1);
     }
   }
 
@@ -743,8 +738,7 @@ namespace MBSimGUI {
     LinkPropertyDialog::initializeUsingXML(item->getXMLElement());
     object->initializeUsingXML(item->getXMLElement());
     indices->initializeUsingXML(item->getXMLElement());
-    q0->initializeUsingXML(item->getXMLElement());
-    u0->initializeUsingXML(item->getXMLElement());
+    values->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -752,8 +746,7 @@ namespace MBSimGUI {
     LinkPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
     object->writeXMLFile(item->getXMLElement(),ref);
     indices->writeXMLFile(item->getXMLElement(),ref);
-    q0->writeXMLFile(item->getXMLElement(),ref);
-    u0->writeXMLFile(item->getXMLElement(),ref);
+    values->writeXMLFile(item->getXMLElement(),ref);
     return nullptr;
   }
 

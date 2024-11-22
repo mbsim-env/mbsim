@@ -25,6 +25,7 @@ using namespace std;
 
 namespace MBSimGUI {
 
-  MBSIMGUI_REGOBJECTFACTORY(GeneralizedInitialCondition);
+  MBSIMGUI_REGOBJECTFACTORY(GeneralizedInitialPosition);
+  MBSIMGUI_REGOBJECTFACTORY(GeneralizedInitialVelocity);
 
 }

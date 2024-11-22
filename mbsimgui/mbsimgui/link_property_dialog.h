@@ -245,7 +245,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *object, *indices, *q0, *u0;
+      ExtWidget *object, *indices, *values;
       void updateWidget() override;
   };
 
