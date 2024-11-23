@@ -25,6 +25,8 @@ argparser.add_argument("--prefix", type=str, default=None, help="install prefix,
 
 args=argparser.parse_args()
 
+displayNR=-1
+
 def appendRet(ret, r):
   ret[0]+=r[0]
   ret[1]+=r[1]
@@ -162,6 +164,7 @@ def check(dir):
     r=checkErrorFormat(dir, "HTMLXPATH"); appendRet(ret, r)
   if "gui" in args.run:
     r=checkGUIError(dir); appendRet(ret, r)
+  ret.append(dir)
   return ret
 
 def startVNC():
@@ -170,10 +173,11 @@ def startVNC():
   displayNR=3
   # older versions of vncserver does not have the "-autokill no" -> "no" is the default
   if os.path.isfile("/etc/fedora-release"):
-    autokill=[]
-  else:
     autokill=["-autokill", "no"]
-  while subprocess.call(["vncserver", ":"+str(displayNR), "-noxstartup", "-SecurityTypes", "None"]+autokill, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
+  else:
+    autokill=[]
+  #mfmfwhile subprocess.call(["vncserver", ":"+str(displayNR), "-noxstartup", "-SecurityTypes", "None"]+autokill, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
+  while subprocess.call(["vncserver", ":"+str(displayNR), "-noxstartup", "-SecurityTypes", "None"]+autokill)!=0:
     displayNR=displayNR+1
     if displayNR>100:
       raise RuntimeError("Cannot find a free DISPLAY for vnc server.")
@@ -202,6 +206,8 @@ for d1 in args.directories:
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=1 if args.showdiff else psutil.cpu_count(False))
 retVal=0
 for result in executor.map(check, dirs):
+  if result[0]==0:
+    print(f"Directory '{result[2]}' passed without errors")
   print(result[1], end="")
   retVal+=result[0]
 

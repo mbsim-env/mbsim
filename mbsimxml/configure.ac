@@ -90,6 +90,9 @@ dnl MBXMLUtilsDOCDIR
 MBXMLUTILSDOCDIR=$(pkg-config mbxmlutils --variable DOCDIR)
 AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
+test "$cross_compiling" == "yes" && XC=1 || XC=0
+AC_SUBST([XC])
+
 if test "$cross_compiling" == "yes"; then
   XC_EXEC_PREFIX=wine
 fi
