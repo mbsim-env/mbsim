@@ -34,6 +34,9 @@ fi
 
 AM_CONDITIONAL([COND_WIN32], [test "_$host_os" = "_mingw32"])
 
+test "$cross_compiling" == "yes" && XC=1 || XC=0
+AC_SUBST([XC])
+
 dnl Qt
 PKG_CHECK_MODULES(QT, [Qt5Core >= 5.6 Qt5Gui >= 5.6 Qt5Widgets >= 5.6])
 dnl get moc and uic
@@ -93,6 +96,7 @@ LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimgui/Makefile])
+AC_CONFIG_FILES([run_error_checks.sh], [chmod +x run_error_checks.sh])
 
 AC_CONFIG_FILES([mbsimgui.pc])
 

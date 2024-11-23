@@ -90,6 +90,9 @@ dnl MBXMLUtilsDOCDIR
 MBXMLUTILSDOCDIR=$(pkg-config mbxmlutils --variable DOCDIR)
 AC_SUBST([MBXMLUTILSDOCDIR],[$MBXMLUTILSDOCDIR])
 
+test "$cross_compiling" == "yes" && XC=1 || XC=0
+AC_SUBST([XC])
+
 if test "$cross_compiling" == "yes"; then
   XC_EXEC_PREFIX=wine
 fi
@@ -120,6 +123,7 @@ LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
 AC_CONFIG_FILES([Makefile mbsimxml/Makefile xmldoc/Makefile mbsimflatxml.pc mbsimxml.pc])
+AC_CONFIG_FILES([run_error_checks.sh], [chmod +x run_error_checks.sh])
 
 hardcode_into_libs=no # do not add hardcoded libdirs to ltlibraries
 hardcode_libdir_flag_spec_CXX= # do not add hardcodeed libdirs to ltbinaries
