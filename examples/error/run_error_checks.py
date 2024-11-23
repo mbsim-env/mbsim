@@ -106,8 +106,8 @@ def compXML(dir, ref, cur):
       continue
     if ref.attrib[key]!=cur.attrib[key]:
       if key=="href":
-        refPath=os.path.abspath(urllib.parse.urlparse(ref.attrib[key]).path)
-        curPath=os.path.abspath(urllib.parse.urlparse(cur.attrib[key]).path)
+        refPath=os.path.join(os.path.abspath(dir), urllib.parse.urlparse(ref.attrib[key]).path)
+        curPath=os.path.join(os.path.abspath(dir), urllib.parse.urlparse(cur.attrib[key]).path)
         if refPath!=curPath:
           ret[1]+=dir+f": GUI: href path does not match\n    ref={refPath}\n    cur={curPath}\n"; ret[0]+=1
         refQS=urllib.parse.parse_qs(urllib.parse.urlparse(ref.attrib[key]).query)
