@@ -22,10 +22,11 @@ actionGroup.add_argument("--update", action="store_true", help="update the refer
 actionGroup.add_argument("--showdiff", action="store_true", help="show a diff of the reference fiels with the current output")
 argparser.add_argument("--difftool", type=str, default=None, help="default diff tool if git cannot be used to autodetect")
 argparser.add_argument("--prefix", type=str, default=None, help="install prefix, use PATH if not given")
+argparser.add_argument("--novnc", action="store_true", help="do not use a vnc server on linux to start mbsimgui")
 
 args=argparser.parse_args()
 
-displayNR=-1
+displayNR=None
 
 def appendRet(ret, r):
   ret[0]+=r[0]
@@ -151,6 +152,7 @@ def checkGUIError(dir):
   curAll=ET.fromstring('<span>'+cur+'</span>').findall("span[@class='MBSIMGUI_ERROR']")
   if len(curAll)!=1:
     ret[1]+=dir+f": GUI: not exactly one error output: cur={len(curAll)}\n"; ret[0]+=1
+    ret[1]+=cur+"\n"
   else:
     curRoot=curAll[0]
     r=compXML(dir, refRoot, curRoot); appendRet(ret, r)
@@ -188,12 +190,13 @@ def closeVNC():
 
 def guiEnvVars(displayNR):
   denv=os.environ.copy()
-  denv["DISPLAY"]=":"+str(displayNR)
+  if displayNR is not None:
+    denv["DISPLAY"]=":"+str(displayNR)
   denv["COIN_FULL_INDIRECT_RENDERING"]="1"
   denv["QT_X11_NO_MITSHM"]="1"
   return denv
 
-if "gui" in args.run and os.name!="nt":
+if "gui" in args.run and os.name!="nt" and not args.novnc:
   startVNC()
 
 dirs=[]
@@ -210,7 +213,7 @@ for result in executor.map(check, dirs):
   print(result[1], end="")
   retVal+=result[0]
 
-if "gui" in args.run and os.name!="nt":
+if "gui" in args.run and os.name!="nt" and not args.novnc:
   closeVNC()
 
 sys.exit(0 if retVal==0 else 1)
