@@ -176,8 +176,7 @@ def startVNC():
     autokill=["-autokill", "no"]
   else:
     autokill=[]
-  #mfmfwhile subprocess.call(["vncserver", ":"+str(displayNR), "-noxstartup", "-SecurityTypes", "None"]+autokill, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
-  while subprocess.call(["vncserver", ":"+str(displayNR), "-noxstartup", "-SecurityTypes", "None"]+autokill)!=0:
+  while subprocess.call(["vncserver", ":"+str(displayNR), "-noxstartup", "-SecurityTypes", "None"]+autokill, stdout=open(os.devnull, 'wb'), stderr=open(os.devnull, 'wb'))!=0:
     displayNR=displayNR+1
     if displayNR>100:
       raise RuntimeError("Cannot find a free DISPLAY for vnc server.")
