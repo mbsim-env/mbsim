@@ -196,7 +196,8 @@ def guiEnvVars(displayNR):
   denv["QT_X11_NO_MITSHM"]="1"
   return denv
 
-if "gui" in args.run and os.name!="nt" and not args.novnc:
+# no VNC on Windows and on WSL (vnc not working in WSL)
+if "gui" in args.run and os.name!="nt" and not os.path.isfile("/etc/wsl.conf") and not args.novnc:
   startVNC()
 
 dirs=[]
@@ -213,7 +214,8 @@ for result in executor.map(check, dirs):
   print(result[1], end="")
   retVal+=result[0]
 
-if "gui" in args.run and os.name!="nt" and not args.novnc:
+# no VNC on Windows and on WSL (vnc not working in WSL)
+if "gui" in args.run and os.name!="nt" and not os.path.isfile("/etc/wsl.conf") and not args.novnc:
   closeVNC()
 
 sys.exit(0 if retVal==0 else 1)
