@@ -1235,6 +1235,12 @@ namespace MBSim {
       if (laSize) {
         SqrMat Gv = SqrMat(evalW().T() * slvLLFac(evalLLM(), evalW()));
         Vec mu = slvLS(Gv, -evalgd() + corr);
+
+        // test for inconsistent links (in this case the above slvLS finds a solution mu for which the test shows a none zero residuum -> this is a modelling error of links)
+        auto res = Gv * mu - (-evalgd() + corr);
+        if(nrmInf(res) > 1e-10)
+          throwError("The projection of generalized velocities failed with a residuum of "+to_string(nrmInf(res))+". Check your model for inconsistent links.");
+
         u += slvLLFac(getLLM(), getW() * mu);
         resetUpToDate();
       }
