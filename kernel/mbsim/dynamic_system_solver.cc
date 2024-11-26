@@ -907,6 +907,7 @@ namespace MBSim {
     calclaSize(3);
     calcrFactorSize(3);
     updateWRef(WParent[0], 0);
+    updateJrlaRef(JrlaParent[0], 0);
     updateVRef(VParent[0], 0);
     updatelaRef(laParent);
     updatewbRef(wbParent);
@@ -927,11 +928,13 @@ namespace MBSim {
     calclaSize(3); // IH
     calcrFactorSize(3); // IH
     updateWRef(WParent[0]);
+    updateJrlaRef(JrlaParent[0], 0);
     updateVRef(VParent[0]);
     updatelaRef(laParent);
     updatewbRef(wbParent);
     updaterFactorRef(rFactorParent);
     updateWRef(WParent[1], 1);
+    updateJrlaRef(JrlaParent[1], 1);
     updateVRef(VParent[1], 1);
     if(determineEquilibriumState) {
       Residuum f(this);
