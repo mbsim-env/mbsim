@@ -252,7 +252,7 @@ namespace MBSim {
 #endif
 
     protected:
-      Element *parent;
+      Element *parent { nullptr };
 
       /**
        * \brief name of element
@@ -274,12 +274,12 @@ namespace MBSim {
       /**
        * \brief dynamic system
        */
-      DynamicSystemSolver *ds;
+      DynamicSystemSolver *ds { nullptr };
 
       /**
        * \brief time series
        */
-      H5::VectorSerie<double> *plotVectorSerie;
+      H5::VectorSerie<double> *plotVectorSerie { nullptr };
 
       /**
        * \brief one entry of time series
@@ -294,7 +294,7 @@ namespace MBSim {
       /**
        * \brief associated plot group
        */
-      H5::GroupBase *plotGroup;
+      H5::GroupBase *plotGroup { nullptr };
 
       void updatePlotFeatures();
 
