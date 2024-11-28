@@ -54,10 +54,9 @@ def checkErrorFormat(dir, errorFormat):
   env["MBXMLUTILS_ERROROUTPUT"]=errorFormat
   try:
     prefix=args.prefix+"/bin/" if args.prefix is not None else ""
-    subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", "error~~", "MBS.mbsx"],
-                            env=env, stderr=subprocess.DEVNULL, cwd=dir)
-    cur=b""
-    ret[1]+=dir+": "+errorFormat+": did not return with !=0\n"; ret[0]+=1
+    cur=subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", "error~~", "MBS.mbsx"],
+                                env=env, stderr=subprocess.DEVNULL, cwd=dir)
+    ret[1]+=dir+": "+errorFormat+": did not return with !=0 (ret=0)\n"; ret[0]+=1
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")
