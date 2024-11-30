@@ -54,10 +54,9 @@ def checkErrorFormat(dir, errorFormat):
   env["MBXMLUTILS_ERROROUTPUT"]=errorFormat
   try:
     prefix=args.prefix+"/bin/" if args.prefix is not None else ""
-    subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", "error~~", "MBS.mbsx"],
-                            env=env, stderr=subprocess.DEVNULL, cwd=dir)
-    cur=b""
-    ret[1]+=dir+": "+errorFormat+": did not return with !=0\n"; ret[0]+=1
+    cur=subprocess.check_output([prefix+"mbsimxml", "--stopafterfirststep", "--stdout", "error~~", "MBS.mbsx"],
+                                env=env, stderr=subprocess.DEVNULL, cwd=dir)
+    ret[1]+=dir+": "+errorFormat+": did not return with !=0 (ret=0)\n"; ret[0]+=1
   except subprocess.CalledProcessError as ex:
     cur=ex.output
   cur=cur.decode("utf-8")
@@ -196,7 +195,8 @@ def guiEnvVars(displayNR):
   denv["QT_X11_NO_MITSHM"]="1"
   return denv
 
-if "gui" in args.run and os.name!="nt" and not args.novnc:
+# no VNC on Windows and on WSL (vnc not working in WSL)
+if "gui" in args.run and os.name!="nt" and not os.path.isfile("/etc/wsl.conf") and not args.novnc:
   startVNC()
 
 dirs=[]
@@ -213,7 +213,8 @@ for result in executor.map(check, dirs):
   print(result[1], end="")
   retVal+=result[0]
 
-if "gui" in args.run and os.name!="nt" and not args.novnc:
+# no VNC on Windows and on WSL (vnc not working in WSL)
+if "gui" in args.run and os.name!="nt" and not os.path.isfile("/etc/wsl.conf") and not args.novnc:
   closeVNC()
 
 sys.exit(0 if retVal==0 else 1)

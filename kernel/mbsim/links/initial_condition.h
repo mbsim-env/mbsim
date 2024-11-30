@@ -31,6 +31,9 @@ namespace MBSim {
       InitialCondition(const std::string &name) : Link(name) { }
       ~InitialCondition() override { }
 
+      void init(InitStage stage, const InitConfigSet &config) override;
+      void plot() override {}
+
       void deactivate() { active = false; }
       bool isActive() const override { return active; }
       bool gActiveChanged() override { return false; }

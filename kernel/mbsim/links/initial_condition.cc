@@ -36,4 +36,10 @@ namespace MBSim {
     gdSize = active*ngd;
   }
 
+  void InitialCondition::init(InitStage stage, const InitConfigSet &config) {
+    // skip plotting for initial condition since it acts only t = t0
+    if(stage != plotting)
+      Link::init(stage, config);
+  }
+
 }
