@@ -161,6 +161,7 @@ int main(int argc, char *argv[]) {
   arg=argSaved; // restore arguments
 #ifndef _WIN32
   UnixSignalWatcher sigwatch;
+  sigwatch.watchForSignal(SIGHUP);
   sigwatch.watchForSignal(SIGINT);
   sigwatch.watchForSignal(SIGTERM);
   QObject::connect(&sigwatch, &UnixSignalWatcher::unixSignal, &app, &QApplication::quit);
