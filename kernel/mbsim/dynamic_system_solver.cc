@@ -1346,6 +1346,7 @@ namespace MBSim {
 
   DynamicSystemSolver::SignalHandler::SignalHandler() {
 #ifdef HAVE_ANSICSIGNAL
+    oldSigInt=signal(SIGHUP, sigInterruptHandler);
     oldSigInt=signal(SIGINT, sigInterruptHandler);
     oldSigTerm=signal(SIGTERM, sigInterruptHandler);
 #endif
@@ -1353,6 +1354,7 @@ namespace MBSim {
 
   DynamicSystemSolver::SignalHandler::~SignalHandler() {
 #ifdef HAVE_ANSICSIGNAL
+    signal(SIGHUP, oldSigHup);
     signal(SIGINT, oldSigInt);
     signal(SIGTERM, oldSigTerm);
 #endif
