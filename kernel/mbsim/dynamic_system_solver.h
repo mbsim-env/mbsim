@@ -442,7 +442,9 @@ namespace MBSim {
         private:
           #ifdef HAVE_ANSICSIGNAL
             using SigHandle = void (*)(int);
+            #ifndef _WIN32
             SigHandle oldSigHup;
+            #endif
             SigHandle oldSigInt;
             SigHandle oldSigTerm;
           #endif
