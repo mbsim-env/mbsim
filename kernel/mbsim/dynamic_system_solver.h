@@ -448,16 +448,22 @@ namespace MBSim {
       };
 #endif
 
-      static void throwIfExitRequested() {
+      void throwIfExitRequested() {
         if(exitRequest) {
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"User requested a exit (throw exception now)."<<std::endl;
+          if(!exitRequestPrinted) {
+            exitRequestPrinted = true;
+            msg(fmatvec::Atom::Error)<<"User requested a exit (throw exception now)."<<std::endl;
+          }
           throw std::runtime_error("Exception due to user requested exit.");
         }
       }
 
-      static bool exitRequested() {
+      bool exitRequested() {
         if(exitRequest)
-          fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"User requested a exit (caller will handle this request now)."<<std::endl;
+          if(!exitRequestPrinted) {
+            exitRequestPrinted = true;
+            msg(fmatvec::Atom::Error)<<"User requested a exit (caller will handle this request now)."<<std::endl;
+          }
         return exitRequest;
       }
 
@@ -916,6 +922,7 @@ namespace MBSim {
        */
       static std::atomic<bool> exitRequest;
       static_assert(decltype(exitRequest)::is_always_lock_free);
+      bool exitRequestPrinted;
 
       /**
        * \brief is a state read from a file

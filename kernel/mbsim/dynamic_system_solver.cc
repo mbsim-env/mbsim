@@ -1430,6 +1430,7 @@ namespace MBSim {
 
   void DynamicSystemSolver::constructor() {
     exitRequest = false;
+    exitRequestPrinted = false;
     plotFeature[plotRecursive] = true;
     plotFeatureForChildren[plotRecursive] = true;
     plotFeature[openMBV] = true;
