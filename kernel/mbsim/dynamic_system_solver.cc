@@ -1347,7 +1347,7 @@ namespace MBSim {
   DynamicSystemSolver::SignalHandler::SignalHandler() {
 #ifdef HAVE_ANSICSIGNAL
     #ifndef _WIN32
-    oldSigInt=signal(SIGHUP, sigInterruptHandler);
+    oldSigHup=signal(SIGHUP, sigInterruptHandler);
     #endif
     oldSigInt=signal(SIGINT, sigInterruptHandler);
     oldSigTerm=signal(SIGTERM, sigInterruptHandler);
