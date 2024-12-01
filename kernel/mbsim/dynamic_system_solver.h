@@ -276,7 +276,6 @@ namespace MBSim {
       void resizezdParent(int nz) { zdParent.resize(nz); }
 
       DynamicSystemSolver* getDynamicSystemSolver() { return this; }
-      bool getIntegratorExitRequest() { return integratorExitRequest; }
       int getMaxIter()  {return maxIter;}
       int getHighIter()  {return highIter;}
       int getIterC()  {return iterc;}
@@ -440,23 +439,27 @@ namespace MBSim {
           SignalHandler();
           ~SignalHandler();
         private:
-          #ifdef HAVE_ANSICSIGNAL
-            using SigHandle = void (*)(int);
-            #ifndef _WIN32
-            SigHandle oldSigHup;
-            #endif
-            SigHandle oldSigInt;
-            SigHandle oldSigTerm;
+          using SigHandle = void (*)(int);
+          #ifndef _WIN32
+          SigHandle oldSigHup;
           #endif
+          SigHandle oldSigInt;
+          SigHandle oldSigTerm;
       };
 #endif
 
-      /**
-       * \brief handler for user interrupt signal
-       */
-      static void sigInterruptHandler(int);
+      static void throwIfExitRequested() {
+        if(exitRequest) {
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"User requested a exit (throw exception now)."<<std::endl;
+          throw std::runtime_error("Exception due to user requested exit.");
+        }
+      }
 
-      void checkExitRequest();
+      static bool exitRequested() {
+        if(exitRequest)
+          fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"User requested a exit (caller will handle this request now)."<<std::endl;
+        return exitRequest;
+      }
 
       // TODO just for testing
       void setPartialEventDrivenSolver(bool peds_) { peds = peds_; }
@@ -899,14 +902,14 @@ namespace MBSim {
 
     private:
       /**
+       * \brief handler for user interrupt signal
+       */
+      static void sigInterruptHandler(int);
+
+      /**
        * \brief set plot feature default values
        */
       void constructor();
-
-      /**
-       * \brief boolean signal evaluation for end integration set by program
-       */
-      bool integratorExitRequest;
 
       /**
        * \brief boolean signal evaluation for end integration set by user

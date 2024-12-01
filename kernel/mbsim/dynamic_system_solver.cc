@@ -39,10 +39,7 @@
 #include <hdf5serie/simpleattribute.h>
 #include <hdf5serie/simpledataset.h>
 #include <limits>
-
-#ifdef HAVE_ANSICSIGNAL
-#  include <signal.h>
-#endif
+#include <csignal>
 
 #include "openmbvcppinterface/group.h"
 
@@ -749,7 +746,7 @@ namespace MBSim {
     h[j].init(0);
     Group::updateh(j);
     updh[j] = false;
-    checkExitRequest(); // updateh is called by all solvers
+    throwIfExitRequested(); // updateh is called by all solvers
   }
 
   Mat DynamicSystemSolver::dhdq(int lb, int ub) {
@@ -1345,37 +1342,23 @@ namespace MBSim {
   }
 
   DynamicSystemSolver::SignalHandler::SignalHandler() {
-#ifdef HAVE_ANSICSIGNAL
     #ifndef _WIN32
     oldSigHup=signal(SIGHUP, sigInterruptHandler);
     #endif
     oldSigInt=signal(SIGINT, sigInterruptHandler);
     oldSigTerm=signal(SIGTERM, sigInterruptHandler);
-#endif
   }
 
   DynamicSystemSolver::SignalHandler::~SignalHandler() {
-#ifdef HAVE_ANSICSIGNAL
     #ifndef _WIN32
     signal(SIGHUP, oldSigHup);
     #endif
     signal(SIGINT, oldSigInt);
     signal(SIGTERM, oldSigTerm);
-#endif
   }
 
   void DynamicSystemSolver::sigInterruptHandler(int) {
     exitRequest = true;
-  }
-
-  void DynamicSystemSolver::checkExitRequest() {
-    if (integratorExitRequest) // if the integrator has not exit after a integratorExitRequest
-      throwError("MBSim: Integrator has not stopped integration! Terminate NOW by throwing an exception!");
-
-    if (exitRequest) { // on exitRequest flush plot files and ask the integrator to exit
-      msg(Info) << "MBSim: User exit request: Ask integrator to terminate!" << endl;
-      integratorExitRequest = true;
-    }
   }
 
   void DynamicSystemSolver::writez(string fileName, bool formatH5) {
@@ -1446,7 +1429,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::constructor() {
-    integratorExitRequest = false;
+    exitRequest = false;
     plotFeature[plotRecursive] = true;
     plotFeatureForChildren[plotRecursive] = true;
     plotFeature[openMBV] = true;

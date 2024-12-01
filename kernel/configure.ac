@@ -76,16 +76,7 @@ AC_ARG_WITH([boost-system-lib],
   [BOOST_SYSTEM_LIB="$withval"], [BOOST_SYSTEM_LIB="boost_system"])
 AC_SUBST([BOOST_SYSTEM_LIB])
 
-dnl Check for ANSI C Signal Handling
 AC_SUBST([DEFINES])
-AC_MSG_CHECKING([for ANSI c signal SIGINT]); AC_COMPILE_IFELSE([AC_LANG_SOURCE([
-#include <signal.h>
-int main() {
-  signal(SIGINT, 0);
-  return 0;
-}
-])], [AC_MSG_RESULT([yes]); DEFINES="$DEFINES -DHAVE_ANSICSIGNAL"; AC_DEFINE([HAVE_ANSICSIGNAL],[],[Use ANSI C Signal Handling])],
-   [AC_MSG_RESULT([no])])
 
 dnl Check for MinGW
 AC_CANONICAL_HOST

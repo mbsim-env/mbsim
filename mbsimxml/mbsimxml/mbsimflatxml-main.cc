@@ -18,6 +18,7 @@
 #include <boost/filesystem.hpp>
 #include <mbxmlutilshelper/last_write_time.h>
 #include <mbxmlutilshelper/utils.h>
+#include <mbxmlutilshelper/windows_signal_conversion.h>
 #include <openmbvcppinterface/objectfactory.h>
 
 using namespace std;
@@ -36,6 +37,7 @@ int main(int argc, char *argv[]) {
   assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
 #endif
   setlocale(LC_ALL, "C");
+  MBXMLUtils::convertWMCLOSEtoSIGTERM();
 
   try {
     // check for errors during ObjectFactory
