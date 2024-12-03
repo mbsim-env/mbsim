@@ -18,6 +18,7 @@
 #include <fstream>
 #include <boost/dll.hpp>
 #include <mbxmlutilshelper/last_write_time.h>
+#include <mbxmlutilshelper/windows_signal_conversion.h>
 #include "mbxmlutils/preprocess.h"
 #include <mbsim/element.h>
 #include <mbsim/integrators/integrator.h>
@@ -48,6 +49,7 @@ int main(int argc, char *argv[]) {
   assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
 #endif
   setlocale(LC_ALL, "C");
+  MBXMLUtils::convertWMCLOSEtoSIGTERM();
 
   try {
     // check for errors during ObjectFactory

@@ -298,11 +298,10 @@ namespace MBSimControl {
 	    system->setState(zEq + fromComplex(Zhna.col(i)*exp(iom*t)));
 	    system->resetUpToDate();
 	    system->plot();
-	    system->checkExitRequest();
-	    if(system->getIntegratorExitRequest())
+	    if(system->exitRequested())
 	      break;
 	  }
-	  if(system->getIntegratorExitRequest())
+	  if(system->exitRequested())
 	    break;
 	  t0 += T+dtPlot;
 	}
@@ -327,8 +326,7 @@ namespace MBSimControl {
 	    system->setState(zEq + fromComplex(Zhex.col(i)*exp(iOm*t)));
 	    system->resetUpToDate();
 	    system->plot();
-	    system->checkExitRequest();
-	    if(system->getIntegratorExitRequest())
+	    if(system->exitRequested())
 	      break;
 	  }
 	  t0 += T+dtPlot;
@@ -375,8 +373,7 @@ namespace MBSimControl {
 	  system->setState(z);
 	  system->resetUpToDate();
 	  system->plot();
-	  system->checkExitRequest();
-	  if(system->getIntegratorExitRequest())
+	  if(system->exitRequested())
 	    break;
 	}
       }

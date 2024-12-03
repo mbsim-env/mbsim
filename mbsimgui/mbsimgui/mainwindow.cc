@@ -299,10 +299,10 @@ namespace MBSimGUI {
     runMenu->addAction(actionSimulate);
     actionSimulate->setStatusTip(tr("Simulate the multibody system"));
     connect(actionSimulate,&QAction::triggered,this,&MainWindow::simulate);
-    QAction *actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
+    actionInterrupt = runBar->addAction(style()->standardIcon(QStyle::StandardPixmap(QStyle::SP_MediaStop)),"Interrupt simulation");
     runMenu->addAction(actionInterrupt);
     connect(actionInterrupt,&QAction::triggered,this,&MainWindow::interrupt);
-    QAction *actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill simulation");
+    actionKill = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"kill.svg").string())),"Kill simulation");
     runMenu->addAction(actionKill);
     connect(actionKill,&QAction::triggered,this,&MainWindow::kill);
     actionOpenMBV = runBar->addAction(Utils::QIconCached(QString::fromStdString((iconPath/"openmbv.svg").string())),"OpenMBV");
@@ -534,6 +534,8 @@ namespace MBSimGUI {
       }
     }
     actionSimulate->setDisabled(false);
+    actionInterrupt->setDisabled(true);
+    actionKill->setDisabled(true);
     actionRefresh->setDisabled(false);
     actionDebug->setDisabled(false);
     statusBar()->showMessage(tr("Ready"));
@@ -1342,6 +1344,8 @@ namespace MBSimGUI {
     projectFile=uniqueTempDir_+"/Project.flat.mbsx";
 
     actionSimulate->setDisabled(true);
+    actionInterrupt->setDisabled(false);
+    actionKill->setDisabled(false);
     actionRefresh->setDisabled(true);
     if(task==0) {
       actionSaveDataAs->setDisabled(true);
@@ -1379,6 +1383,8 @@ namespace MBSimGUI {
       echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">"+errorText+"</span>");
       echoView->updateOutput(true);
       actionSimulate->setDisabled(false);
+      actionInterrupt->setDisabled(true);
+      actionKill->setDisabled(true);
       actionRefresh->setDisabled(false);
       actionDebug->setDisabled(false);
       statusBar()->showMessage(tr("Ready"));
@@ -2807,15 +2813,17 @@ namespace MBSimGUI {
   }
 
   void MainWindow::interrupt() {
-    echoView->clearOutput();
-    echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation interrupted</span>\n");
+    if(process.state()==QProcess::NotRunning)
+      return;
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Interrupt simulation' clicked</span>\n");
     echoView->updateOutput(true);
     process.terminate();
   }
 
   void MainWindow::kill() {
-    echoView->clearOutput();
-    echoView->addOutputText("<span class=\"MBSIMGUI_WARN\">Simulation killed</span>\n");
+    if(process.state()==QProcess::NotRunning)
+      return;
+    echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">'Kill simulation' clicked</span>\n");
     echoView->updateOutput(true);
     process.kill();
   }

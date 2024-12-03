@@ -13,6 +13,7 @@
 #include <mbsimxml/mbsimflatxml.h>
 #include <boost/dll.hpp>
 #include <mbxmlutilshelper/shared_library.h>
+#include <mbxmlutilshelper/windows_signal_conversion.h>
 #include <mbsim/objectfactory.h>
 #include <mbsim/dynamic_system_solver.h>
 #include <mbsim/integrators/integrator.h>
@@ -56,6 +57,7 @@ int main(int argc, char *argv[]) {
   assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
 #endif
   setlocale(LC_ALL, "C");
+  MBXMLUtils::convertWMCLOSEtoSIGTERM();
 
   try {
     // check for errors during ObjectFactory
