@@ -1,10 +1,13 @@
 INPUT                  = @abs_top_srcdir@/mbsim
-EXCLUDE                = @abs_top_srcdir@/mbsim/integrators/fortran/
 RECURSIVE              = YES
 EXCLUDE_SYMLINKS       = YES
 GENERATE_HTML          = NO
 GENERATE_LATEX         = NO
 GENERATE_XML           = YES
 XML_PROGRAMLISTING     = NO
-EXTRA_PACKAGES         = @abs_top_srcdir@/doc/macros, hyperref
 IMAGE_PATH             = @abs_top_srcdir@/doc
+WARN_IF_UNDOCUMENTED   = NO
+WARN_IF_INCOMPLETE_DOC = NO
+WARN_NO_PARAMDOC       = NO
+EXTRA_PACKAGES         = @abs_top_srcdir@/doc/macros, hyperref
+EXCLUDE                = @abs_top_srcdir@/mbsim/integrators/fortran/

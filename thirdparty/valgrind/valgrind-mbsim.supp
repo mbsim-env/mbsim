@@ -1438,3 +1438,10 @@
    fun:_ZN4SoDB14readAllWrapperEP7SoInputRK6SoType
    fun:_ZN4SoDB7readAllEP7SoInput
 }
+{
+   Coin
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN10OpenMBVGUI18IvScreenAnnotationC1ERKSt10shared_ptrIN7OpenMBV6ObjectEEP15QTreeWidgetItemP7SoGroupi
+}
