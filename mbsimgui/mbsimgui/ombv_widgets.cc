@@ -712,7 +712,7 @@ namespace MBSimGUI {
     height = new ExtWidget("Height",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"height");
     layout->addWidget(height);
 
-    contour = new ExtWidget("Contour",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"contour");
+    contour = new ExtWidget("Contour",new ChoiceWidget(new MatRowsVarWidgetFactory(3,3,vector<QStringList>(3,lengthUnits()),vector<int>(3,4),true),QBoxLayout::RightToLeft,5),false,false,OPENMBV%"contour");
     layout->addWidget(contour);
   }
 
