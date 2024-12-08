@@ -11,6 +11,10 @@ MBSim
 - Output of tyre models is now unified
 - Allow the first frame of Aerodynamics to be arbitrarily rotated to enable models were the global y-axis is not in gravity direction.
 - The links "generalized initial position" and "generalized initial velocity" are now available. These new links allow to define the generalized initial position and velocity of an object by constraints.
+- Removed/Deprecate useConstraintSolverForSmoothMotion in DSS. false is the only valid default now and true is an error.
+- Fixed Jacobian submatrices for none-linear direct constraint solver (smoothSolver=directNonlinear)
+- If the model cannot be made consistent during the initial velocity projection an error is thrown now
+- Catch Windows WM_CLOSE signals and exit the simulation propably (WM_CLOSE is the Windows variant of SIG_INT/SIG_TERM)
 
 MBSimControl
 ------------
@@ -21,6 +25,11 @@ MBSimGUI
 - Frame chaser observer is now available.
 - Motion observer is available (see MBSimControl).
 - Use the Integrator startTime in the 3D-view of mbsimgui. t=0 was used for now to draw the 3D-view.
+
+OpenMBV
+-------
+- Improved/reworked video export to allow fast regeneration of the video with different bitrate (quality/filesize)
+- Enabled video export on Linux: note that IndirectGLX must be enabled in the X11 server flags, see error message
 
 
 Release 10.3
