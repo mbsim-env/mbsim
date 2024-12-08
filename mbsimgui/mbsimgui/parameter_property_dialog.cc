@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include "mainwindow.h"
 #include "parameter_property_dialog.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
@@ -32,6 +33,8 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : PropertyDialog("Parameter Properties"), parameter(parameter_), name(nullptr) {
     addTab("General");
@@ -171,19 +174,72 @@ namespace MBSimGUI {
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    value = new ExtWidget("Value",new TextWidget(""));
+    vector<QString> list;
+    int defaultIdx = 0;
+    bool hidden = false;
+    if(mw->eval->getName()=="python") {
+      list.emplace_back("global (deprecated)");
+      list.emplace_back("local");
+      defaultIdx = 1;
+      hidden = true; // only one none deprecated option available which is the default -> do not show at all
+    }
+    else {
+      list.emplace_back("");
+      defaultIdx = 0;
+      hidden = true; // only one option available -> do not show at all
+    }
+    type = new ExtWidget("Type",new TextChoiceWidget(list,defaultIdx,false));
+    type->setHidden(hidden);
+    addToTab("General", type);
+
+    auto valueW=new TextEditorWidget();
+    value = new ExtWidget("Value",valueW);
+    valueW->enableSyntaxHighlighter();
     addToTab("General", value);
   }
 
   DOMElement* ImportParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+
+    int typeIdx = 0;
+    bool hidden = false;
+    if(mw->eval->getName()=="python") {
+      if(E(parameter->getXMLElement())->getAttribute("type")=="global")     typeIdx=0;
+      else if(E(parameter->getXMLElement())->getAttribute("type")=="local") typeIdx=1;
+      hidden = typeIdx==1; // if the only none deprecated option is active -> do not show at all
+    }
+    else {
+      typeIdx = 0;
+      hidden = true; hidden = true; // only one option available -> do not show at all
+    }
+    type->getWidget<TextChoiceWidget>()->setCurrentIndex(typeIdx);
+    type->setHidden(hidden);
+
     value->initializeUsingXML(parameter->getXMLElement());
+
     return parent;
   }
 
   DOMElement* ImportParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+
     value->writeXMLFile(parameter->getXMLElement(),ref);
+
+    optional<string> typeStr;
+    if(mw->eval->getName()=="python") {
+      switch(type->getWidget<TextChoiceWidget>()->getCurrentIndex()) {
+        case 0: typeStr="global"; break;
+        case 1: typeStr="local"; break;
+      }
+    }
+    else {
+      typeStr.reset();
+    }
+    if(typeStr)
+      E(static_cast<DOMElement*>(parent))->setAttribute("type", typeStr.value());
+    else
+      E(static_cast<DOMElement*>(parent))->removeAttribute("type");
+
     return nullptr;
   }
 

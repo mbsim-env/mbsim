@@ -123,6 +123,8 @@ namespace MBSimGUI {
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
       PropertyDialog* createPropertyDialog() override { return new ImportParameterPropertyDialog(this); }
       void updateValue() override;
+    private:
+      std::string type;
   };
 
   class Parameters : public ParameterItem {

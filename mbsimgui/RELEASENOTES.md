@@ -15,6 +15,7 @@ MBSim
 - Fixed Jacobian submatrices for none-linear direct constraint solver (smoothSolver=directNonlinear)
 - If the model cannot be made consistent during the initial velocity projection an error is thrown now
 - Catch Windows WM_CLOSE signals and exit the simulation propably (WM_CLOSE is the Windows variant of SIG_INT/SIG_TERM)
+- Added a new type of parameter <import> in the preprocessor if the Python evaluator is used.
 
 MBSimControl
 ------------
