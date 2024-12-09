@@ -41,7 +41,7 @@
           <ombv:initialRotation>[0,0,0]</ombv:initialRotation>
           <ombv:scaleFactor>1</ombv:scaleFactor>
           <Sphere name="crb_1" xmlns="http://www.mbsim-env.de/OpenMBV">
-            <diffuseColor>mbxmlutils.namedColor('oliveDrab')</diffuseColor>
+            <diffuseColor>import mbxmlutils; ret=mbxmlutils.namedColor('oliveDrab')</diffuseColor>
             <initialTranslation>[0,0,0]</initialTranslation>
             <initialRotation>[0,0,0]</initialRotation>
             <scaleFactor>1</scaleFactor>

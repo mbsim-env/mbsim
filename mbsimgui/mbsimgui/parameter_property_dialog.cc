@@ -177,8 +177,8 @@ namespace MBSimGUI {
     int defaultIdx = 0;
     bool hidden = false;
     if(mw->eval->getName()=="python") {
-      actionList.emplace_back(pair<QString,QString>{"addNewVarsGlobally", "add new variables globally (deprecated)"});
-      actionList.emplace_back(pair<QString,QString>{"addAllVarsLocally", "add all variables locally"});
+      actionList.emplace_back(pair<QString,QString>{"addNewVarsToInstance", "add new variables globally (deprecated)"});
+      actionList.emplace_back(pair<QString,QString>{"addAllVarsAsParams", "add all variables locally"});
       defaultIdx = 1;
       hidden = true; // only one none deprecated option available which is the default -> do not show at all
     }
@@ -205,10 +205,7 @@ namespace MBSimGUI {
     bool hidden = false;
     auto xmlAction = E(parameter->getXMLElement())->getAttribute("action");
     int actionIdx = 0;
-    if(xmlAction.empty()) {
-      if(mw->eval->getName()=="python") actionIdx = 1;
-    }
-    else {
+    if(!xmlAction.empty()) {
       auto it = find_if(actionList.begin(), actionList.end(), [&xmlAction](const auto &x){ return x.first.toStdString() == xmlAction; });
       actionIdx = distance(actionList.begin(), it);
     }
