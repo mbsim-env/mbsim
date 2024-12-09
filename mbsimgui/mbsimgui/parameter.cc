@@ -179,7 +179,7 @@ namespace MBSimGUI {
   void ImportParameter::updateValue() {
     Parameter::updateValue();
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
-    type = E(element)->getAttribute("type");
+    action = E(element)->getAttribute("action");
   }
 
   Parameters::Parameters(EmbedItemData *parent) : ParameterItem(parent) {

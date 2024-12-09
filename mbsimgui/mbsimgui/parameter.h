@@ -124,7 +124,7 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new ImportParameterPropertyDialog(this); }
       void updateValue() override;
     private:
-      std::string type;
+      std::string action;
   };
 
   class Parameters : public ParameterItem {

@@ -174,23 +174,24 @@ namespace MBSimGUI {
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    vector<QString> list;
     int defaultIdx = 0;
     bool hidden = false;
     if(mw->eval->getName()=="python") {
-      list.emplace_back("global (deprecated)");
-      list.emplace_back("local");
+      actionList.emplace_back(pair<QString,QString>{"addNewVarsGlobally", "add new variables globally (deprecated)"});
+      actionList.emplace_back(pair<QString,QString>{"addAllVarsLocally", "add all variables locally"});
       defaultIdx = 1;
       hidden = true; // only one none deprecated option available which is the default -> do not show at all
     }
     else {
-      list.emplace_back("");
+      actionList.emplace_back(pair<QString,QString>{"", ""});
       defaultIdx = 0;
       hidden = true; // only one option available -> do not show at all
     }
-    type = new ExtWidget("Type",new TextChoiceWidget(list,defaultIdx,false));
-    type->setHidden(hidden);
-    addToTab("General", type);
+    vector<QString> list;
+    transform(actionList.begin(), actionList.end(), back_insert_iterator(list), [](const auto& x){ return x.second; });
+    action = new ExtWidget("Action",new TextChoiceWidget(list,defaultIdx,false));
+    action->setHidden(hidden);
+    addToTab("General", action);
 
     auto valueW=new TextEditorWidget();
     value = new ExtWidget("Value",valueW);
@@ -201,19 +202,22 @@ namespace MBSimGUI {
   DOMElement* ImportParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
 
-    int typeIdx = 0;
     bool hidden = false;
-    if(mw->eval->getName()=="python") {
-      if(E(parameter->getXMLElement())->getAttribute("type")=="global")     typeIdx=0;
-      else if(E(parameter->getXMLElement())->getAttribute("type")=="local") typeIdx=1;
-      hidden = typeIdx==1; // if the only none deprecated option is active -> do not show at all
+    auto xmlAction = E(parameter->getXMLElement())->getAttribute("action");
+    int actionIdx = 0;
+    if(xmlAction.empty()) {
+      if(mw->eval->getName()=="python") actionIdx = 1;
     }
     else {
-      typeIdx = 0;
-      hidden = true; hidden = true; // only one option available -> do not show at all
+      auto it = find_if(actionList.begin(), actionList.end(), [&xmlAction](const auto &x){ return x.first.toStdString() == xmlAction; });
+      actionIdx = distance(actionList.begin(), it);
     }
-    type->getWidget<TextChoiceWidget>()->setCurrentIndex(typeIdx);
-    type->setHidden(hidden);
+    if(mw->eval->getName()=="python")
+      hidden = actionIdx==1; // if the only none deprecated option is active -> do not show at all
+    else
+      hidden = true; // only one option available -> do not show at all
+    action->getWidget<TextChoiceWidget>()->setCurrentIndex(actionIdx);
+    action->setHidden(hidden);
 
     value->initializeUsingXML(parameter->getXMLElement());
 
@@ -225,20 +229,18 @@ namespace MBSimGUI {
 
     value->writeXMLFile(parameter->getXMLElement(),ref);
 
-    optional<string> typeStr;
+    optional<QString> actionStr;
     if(mw->eval->getName()=="python") {
-      switch(type->getWidget<TextChoiceWidget>()->getCurrentIndex()) {
-        case 0: typeStr="global"; break;
-        case 1: typeStr="local"; break;
-      }
+      auto it=actionList.begin()+action->getWidget<TextChoiceWidget>()->getCurrentIndex();
+      actionStr=it->first;
     }
     else {
-      typeStr.reset();
+      actionStr.reset();
     }
-    if(typeStr)
-      E(static_cast<DOMElement*>(parent))->setAttribute("type", typeStr.value());
+    if(actionStr)
+      E(static_cast<DOMElement*>(parent))->setAttribute("action", actionStr.value().toStdString());
     else
-      E(static_cast<DOMElement*>(parent))->removeAttribute("type");
+      E(static_cast<DOMElement*>(parent))->removeAttribute("action");
 
     return nullptr;
   }
