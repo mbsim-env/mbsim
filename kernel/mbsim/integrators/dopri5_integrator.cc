@@ -47,7 +47,9 @@ namespace MBSim {
 
   void DOPRI5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto *data = reinterpret_cast<Data*>(ipar);
-    try {
+    if(data->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
       auto *self=data->integrator;
 
       Vec zd(*zSize, zd_);
@@ -56,14 +58,18 @@ namespace MBSim {
       self->getSystem()->resetUpToDate();
       zd = self->getSystem()->evalzd();
     }
-    catch(...) {
+    catch(...) { // if a exception is thrown catch and store it in data->exceptions
       data->exception = current_exception();
     }
   }
 
   void DOPRI5Integrator::plot(int* nr, double* told, double* t, double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
     auto *data = reinterpret_cast<Data*>(ipar);
-    try {
+    if(data->exception) { // if a exception was already thrown in a call before -> do nothing but set interrupt flag of DOPRI5 and return
+      *irtrn=-1;
+      return;
+    }
+    try { // catch exception -> C code must catch all exceptions
       auto *self=data->integrator;
 
       double curTimeAndState = -1;
@@ -173,7 +179,7 @@ namespace MBSim {
 
       self->getSystem()->updateInternalState();
     }
-    catch(...) {
+    catch(...) { // if a exception is thrown catch and store it in data->exceptions and set the interrupt flag of DOPRI5
       data->exception = current_exception();
       *irtrn=-1;
     }
