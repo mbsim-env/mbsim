@@ -33,6 +33,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsCompoundContourContour::assignContours(const vector<Contour*> &contour_) {
+    ContactKinematics::assignContours(contour_);
 
     if (dynamic_cast<CompoundContour*>(contour_[0])) {
       icompound = 0;

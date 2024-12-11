@@ -31,6 +31,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsSphereFrustum::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if(dynamic_cast<Sphere*>(contour[0])) {
       isphere = 0; ifrustum = 1;
       sphere = static_cast<Sphere*>(contour[0]);

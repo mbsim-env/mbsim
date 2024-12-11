@@ -107,6 +107,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsPlatePolynomialFrustum::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if (dynamic_cast<Plate*>(contour[0])) {
       iplate = 0;
       ifrustum = 1;

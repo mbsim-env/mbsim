@@ -35,6 +35,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsPointExtrusion::assignContours(const vector<Contour*>& contour) {
+    ContactKinematics::assignContours(contour);
     if (dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
       iextrusion = 1;
