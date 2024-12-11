@@ -49,17 +49,6 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  // enable FPE of everything which load libmbsim.so -> this enables it automaticaly for all source examples
-  static struct EnableFPE {
-    EnableFPE() {
-#ifdef _WIN32
-      _controlfp(~(_EM_ZERODIVIDE | _EM_INVALID | _EM_OVERFLOW), _MCW_EM);
-#else
-      assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
-#endif
-    }
-  } enableFPE;
-
   // we use none signaling (quiet) NaN values for double in MBSim -> Throw compile error if these do not exist.
   static_assert(numeric_limits<double>::has_quiet_NaN, "This platform does not support quiet NaN for double.");
 
@@ -75,6 +64,18 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERENUM(PlotFeatureEnum, MBSIM, debug)
 
   Element::Element(const string &name_) : Atom(), parent(0), name(name_), ds(0), plotVectorSerie(0), plotGroup(0) {
+    // If the first Element is created we enable FPE. This enables FPE in everything which instantiated at least one MBSim::Element -> this enables it also for all source examples.
+    // We do not enable FPE already at library load of libmbsim.so to allow libmbsim.so to load and call helper function without enabling FPE.
+    // This is e.g. used when MBSim or a MBSim module provides a C helper function which may be called by the evaluator (python or octave) of the MBSim XML preprocessor.
+    static bool fpeEnabled = false;
+    if(!fpeEnabled) {
+      fpeEnabled = true;
+#ifdef _WIN32
+      _controlfp(~(_EM_ZERODIVIDE | _EM_INVALID | _EM_OVERFLOW), _MCW_EM);
+#else
+      assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
+#endif
+    }
   }
 
   void Element::plot() {

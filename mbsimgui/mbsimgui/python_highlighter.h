@@ -3,6 +3,7 @@
 
 #include <QSyntaxHighlighter>
 #include <QRegExp>
+#include <QTextEdit>
 
 namespace MBSimGUI {
 
@@ -11,6 +12,7 @@ namespace MBSimGUI {
   class PythonHighlighter : public QSyntaxHighlighter
   {
   public:
+      explicit PythonHighlighter(QTextEdit *parent = nullptr);
       explicit PythonHighlighter(QTextDocument *parent = nullptr);
   
       // Helper

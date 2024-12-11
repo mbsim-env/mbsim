@@ -18,6 +18,7 @@
 */
 
 #include <config.h>
+#include "mainwindow.h"
 #include "parameter_property_dialog.h"
 #include "basic_widgets.h"
 #include "variable_widgets.h"
@@ -32,6 +33,8 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  extern MainWindow *mw;
 
   ParameterPropertyDialog::ParameterPropertyDialog(Parameter *parameter_) : PropertyDialog("Parameter Properties"), parameter(parameter_), name(nullptr) {
     addTab("General");
@@ -171,19 +174,71 @@ namespace MBSimGUI {
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    value = new ExtWidget("Value",new TextWidget(""));
+    int defaultIdx = 0;
+    bool hidden = false;
+    if(mw->eval->getName()=="python") {
+      actionList.emplace_back(pair<QString,QString>{"addNewVarsToInstance", "add new variables globally (deprecated)"});
+      actionList.emplace_back(pair<QString,QString>{"addAllVarsAsParams", "add all variables locally"});
+      defaultIdx = 1;
+      hidden = true; // only one none deprecated option available which is the default -> do not show at all
+    }
+    else {
+      actionList.emplace_back(pair<QString,QString>{"", ""});
+      defaultIdx = 0;
+      hidden = true; // only one option available -> do not show at all
+    }
+    vector<QString> list;
+    transform(actionList.begin(), actionList.end(), back_insert_iterator(list), [](const auto& x){ return x.second; });
+    action = new ExtWidget("Action",new TextChoiceWidget(list,defaultIdx,false));
+    action->setHidden(hidden);
+    addToTab("General", action);
+
+    auto valueW=new TextEditorWidget();
+    value = new ExtWidget("Value",valueW);
+    valueW->enableSyntaxHighlighter();
     addToTab("General", value);
   }
 
   DOMElement* ImportParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
     ParameterPropertyDialog::initializeUsingXML(parameter->getXMLElement());
+
+    bool hidden = false;
+    auto xmlAction = E(parameter->getXMLElement())->getAttribute("action");
+    int actionIdx = 0;
+    if(!xmlAction.empty()) {
+      auto it = find_if(actionList.begin(), actionList.end(), [&xmlAction](const auto &x){ return x.first.toStdString() == xmlAction; });
+      actionIdx = distance(actionList.begin(), it);
+    }
+    if(mw->eval->getName()=="python")
+      hidden = actionIdx==1; // if the only none deprecated option is active -> do not show at all
+    else
+      hidden = true; // only one option available -> do not show at all
+    action->getWidget<TextChoiceWidget>()->setCurrentIndex(actionIdx);
+    action->setHidden(hidden);
+
     value->initializeUsingXML(parameter->getXMLElement());
+
     return parent;
   }
 
   DOMElement* ImportParameterPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     ParameterPropertyDialog::writeXMLFile(parameter->getXMLElement(),ref);
+
     value->writeXMLFile(parameter->getXMLElement(),ref);
+
+    optional<QString> actionStr;
+    if(mw->eval->getName()=="python") {
+      auto it=actionList.begin()+action->getWidget<TextChoiceWidget>()->getCurrentIndex();
+      actionStr=it->first;
+    }
+    else {
+      actionStr.reset();
+    }
+    if(actionStr)
+      E(static_cast<DOMElement*>(parent))->setAttribute("action", actionStr.value().toStdString());
+    else
+      E(static_cast<DOMElement*>(parent))->removeAttribute("action");
+
     return nullptr;
   }
 

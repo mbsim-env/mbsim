@@ -132,8 +132,11 @@ namespace MBSimGUI {
   Widget* IvDataWidgetFactory::createWidget(int i) {
     if(i==0)
       return new ExtWidget("Open Inventor file name",new FileWidget("", "Open Open Inventor file", "Inventor files (*.iv);;VRML files (*.wrl *.vrml)", 0, true));
-    if(i==1)
-      return new ExtWidget("Open Inventor string content",new TextEditorWidget);
+    if(i==1) {
+      auto tew = new TextEditorWidget;
+      tew->enableMonospaceFont();
+      return new ExtWidget("Open Inventor string content",tew);
+    }
     return nullptr;
   }
 

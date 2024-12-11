@@ -47,6 +47,14 @@ namespace MBSimGUI {
   
   /////
   
+  PythonHighlighter::PythonHighlighter(QTextEdit *parent)
+      : QSyntaxHighlighter(parent)
+  {
+      initialize();
+  }
+  
+  /////
+  
   PythonHighlighter::PythonHighlighter(QTextDocument *parent)
       : QSyntaxHighlighter(parent)
   {

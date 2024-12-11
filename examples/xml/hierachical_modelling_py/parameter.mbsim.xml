@@ -1,6 +1,6 @@
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
   <vectorParameter name="rHG">[0,2]</vectorParameter>
-  <import>import math</import>
+  <import action="addAllVarsAsParams">import math</import>
   <vectorParameter name="alphaHG">
     <xmlVector>
       <ele>0</ele>
@@ -10,7 +10,7 @@
   <scalarParameter name="m1">5</scalarParameter>
   <scalarParameter name="m"><?MBSIMGUI_HIDDEN?>m1</scalarParameter>
   <scalarParameter name="h">0.8</scalarParameter>
-  <import>from math import pi</import>
+  <import action="addAllVarsAsParams">from math import pi</import>
   <scalarParameter name="alphaUG">pi/4</scalarParameter>
   <scalarParameter name="m2">2</scalarParameter>
   <scalarParameter name="c1">1e3</scalarParameter>

@@ -39,6 +39,8 @@
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <xercesc/dom/DOMLSInput.hpp>
 #include <xercesc/dom/DOMComment.hpp>
+#include "octave_highlighter.h"
+#include "python_highlighter.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -718,6 +720,22 @@ namespace MBSimGUI {
     DOMElement *ele = BasicTextWidget::initializeUsingXML(element);
     text->blockSignals(false);
     return ele;
+  }
+
+  void TextEditorWidget::enableMonospaceFont() {
+    static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
+    text->setFont(fixedFont);
+    text->setLineWrapMode(QTextEdit::NoWrap);
+  }
+
+  void TextEditorWidget::enableSyntaxHighlighter() {
+    if(mw->eval->getName()=="octave")
+      new OctaveHighlighter(text);
+    else if(mw->eval->getName()=="python")
+      new PythonHighlighter(text);
+    else
+      cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
+    enableMonospaceFont();
   }
 
   TextListWidget::TextListWidget(const QString &label_, const FQN &xmlName_, bool allowEmbed_) : EmbedableListWidget(nullptr, xmlName_, allowEmbed_), label(label_) {
