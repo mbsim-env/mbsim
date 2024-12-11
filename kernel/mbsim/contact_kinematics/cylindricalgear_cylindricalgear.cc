@@ -29,6 +29,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsCylindricalGearCylindricalGear::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if(not(static_cast<CylindricalGear*>(contour[0])->getExternalToothed())) {
       gear[0] = static_cast<CylindricalGear*>(contour[1]);
       gear[1] = static_cast<CylindricalGear*>(contour[0]);

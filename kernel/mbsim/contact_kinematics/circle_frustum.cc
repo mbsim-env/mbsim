@@ -42,6 +42,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsCircleFrustum::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if (dynamic_cast<Circle*>(contour[0])) {
       icircle = 0;
       ifrustum = 1;

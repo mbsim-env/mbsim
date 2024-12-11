@@ -30,6 +30,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsCylindricalGearRack::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if(dynamic_cast<CylindricalGear*>(contour[0])) {
       igear = 0; irack = 1;
       gear = static_cast<CylindricalGear*>(contour[0]);

@@ -29,6 +29,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsBevelGearBevelGear::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     gear[0] = static_cast<BevelGear*>(contour[0]);
     gear[1] = static_cast<BevelGear*>(contour[1]);
     igear[0] = 0;

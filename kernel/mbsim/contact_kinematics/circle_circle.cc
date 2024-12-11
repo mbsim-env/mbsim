@@ -28,6 +28,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsCircleCircle::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if(not(static_cast<Circle*>(contour[0])->getSolid())) {
       circle0 = static_cast<Circle*>(contour[1]);
       circle1 = static_cast<Circle*>(contour[0]);

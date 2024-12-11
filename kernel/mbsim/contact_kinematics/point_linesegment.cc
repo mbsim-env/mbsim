@@ -29,6 +29,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsPointLineSegment::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if(dynamic_cast<Point*>(contour[0])) {
       ipoint = 0; iline = 1;
       point = static_cast<Point*>(contour[0]);
