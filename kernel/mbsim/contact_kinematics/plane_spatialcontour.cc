@@ -34,6 +34,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsPlaneSpatialContour::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if(dynamic_cast<Plane*>(contour[0])) {
       iplane = 0;
       ispatialcontour = 1;

@@ -32,6 +32,7 @@ namespace MBSim {
   ContactKinematicsPointPlaneWithFrustum::ContactKinematicsPointPlaneWithFrustum() = default;
 
   void ContactKinematicsPointPlaneWithFrustum::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if(dynamic_cast<Point*>(contour[0])) {
       ipoint = 0;
       iplane = 1;
