@@ -1507,3 +1507,11 @@
    obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so.5.15.8
    fun:_ZN8QProcess7executeERK7QStringRK11QStringList
 }
+{
+   Debian 12.8
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   ...
+   obj:/mbsim-env/local/bin/xcbglintegrations/libqxcb-glx-integration.so
+}
