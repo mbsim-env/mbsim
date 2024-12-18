@@ -48,7 +48,7 @@ namespace MBSim {
       /** Step size for the first step */
       double dt0{0};
       /** Maximal number of allowed steps */
-      int maxSteps{2000000000};
+      int maxSteps{std::numeric_limits<int>::max()};
       /** maximale step size */
       double dtMax{0};
 

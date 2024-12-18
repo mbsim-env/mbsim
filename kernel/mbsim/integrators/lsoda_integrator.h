@@ -53,8 +53,8 @@ namespace MBSim {
       fmatvec::Vec rTol;
       /** step size for the first step */
       double dt0{0};
-      /**  maximum number of steps allowed during one call to the solver. (default 10000) */
-      int maxSteps{10000};
+      /**  maximum number of steps allowed during one call to the solver. */
+      int maxSteps{std::numeric_limits<int>::max()};
 
     public:
 

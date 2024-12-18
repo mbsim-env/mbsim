@@ -210,7 +210,7 @@
    fun:dlopen_doit
    fun:_dl_catch_error
    fun:_dlerror_run
-   fun:dlopen@@GLIBC_2.2.5
+   fun:dlopen@@*
    fun:_ZN6octave19octave_dlopen_shlibC1ERKSs
    fun:_ZN6octave15dynamic_library10dynlib_rep12new_instanceERKSs
    fun:dynamic_library
@@ -248,7 +248,7 @@
    fun:dlopen_doit
    fun:_dl_catch_error
    fun:_dlerror_run
-   fun:dlopen@@GLIBC_2.2.5
+   fun:dlopen@@*
    fun:_ZN6octave19octave_dlopen_shlibC1ERKSs
    fun:_ZN6octave15dynamic_library10dynlib_rep12new_instanceERKSs
    fun:dynamic_library
@@ -388,7 +388,7 @@
    ...
    obj:*/liboctave.so.1
    ...
-   fun:dlopen@@GLIBC_2.1
+   fun:dlopen@@*
 }
 {
    do not report leaks on octave exit
@@ -686,7 +686,7 @@
    fun:allocate_dtv
    fun:_dl_allocate_tls
    fun:allocate_stack
-   fun:pthread_create@@GLIBC_2.2.5
+   fun:pthread_create@@*
    fun:_ZN3WTF17TCMalloc_PageHeap19initializeScavengerEv
    fun:_ZN3WTF20TCMalloc_ThreadCache10InitModuleEv
    fun:GetCache
@@ -1444,4 +1444,74 @@
    match-leak-kinds: definite
    fun:_Znwm
    fun:_ZN10OpenMBVGUI18IvScreenAnnotationC1ERKSt10shared_ptrIN7OpenMBV6ObjectEEP15QTreeWidgetItemP7SoGroupi
+}
+{
+   Debian 12.8
+   Memcheck:Addr8
+   fun:strncmp
+   ...
+   fun:dlopen@@*
+}
+{
+   Debian 12.8
+   Memcheck:Param
+   writev(vector[...])
+   ...
+   obj:*libxcb.so.1.1.0
+}
+{
+   Debian 12.8
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN9QScroller11grabGestureEP7QObjectNS_19ScrollerGestureTypeE
+}
+{
+   Debian 12.8
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   obj:/usr/lib/x86_64-linux-gnu/libQt5DBus.so*
+}
+{
+   Debian 12.8
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN10SoSFUInt3214createInstanceEv
+   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
+}
+{
+   Debian 12.8
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   obj:/mbsim-env/local/bin/xcbglintegrations/libqxcb-glx-integration.so
+}
+{
+   Debian 12.8
+   Memcheck:Addr8
+   fun:strncmp
+   ...
+   obj:/mbsim-env/local/bin/xcbglintegrations/libqxcb-glx-integration.so
+}
+{
+   Debian 12.8
+   Memcheck:Param
+   waitid(infop)
+   fun:syscall
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so.5.15.8
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so.5.15.8
+   fun:_ZN8QProcess7executeERK7QStringRK11QStringList
+}
+{
+   Debian 12.8
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   ...
+   obj:/mbsim-env/local/bin/xcbglintegrations/libqxcb-glx-integration.so
 }
