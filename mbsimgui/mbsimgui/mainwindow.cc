@@ -519,7 +519,6 @@ namespace MBSimGUI {
         }
         actionSaveDataAs->setDisabled(false);
 	actionSaveStateTableAs->setDisabled(false);
-	actionStateTable->setDisabled(false);
 	actionSaveMBSimH5DataAs->setDisabled(false);
 	actionSaveOpenMBVDataAs->setDisabled(false);
 	if(saveFinalStateVector)
@@ -811,7 +810,6 @@ namespace MBSimGUI {
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionLinearSystemAnalysis->setDisabled(true);
-      actionStateTable->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
@@ -883,7 +881,6 @@ namespace MBSimGUI {
       actionOpenMBV->setDisabled(true);
       actionH5plotserie->setDisabled(true);
       actionLinearSystemAnalysis->setDisabled(true);
-      actionStateTable->setDisabled(true);
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
       actionSaveOpenMBVDataAs->setDisabled(true);
@@ -1409,10 +1406,10 @@ namespace MBSimGUI {
     if(currentTask==1)
       arg.append("--stopafterfirststep");
     else {
-      arg.append("--savestatetable");
       if(settings.value("mainwindow/options/savestatevector", false).toBool())
         arg.append("--savefinalstatevector");
     }
+    arg.append("--savestatetable");
 
     // we print everything except status messages to stdout
     arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>)#");
@@ -1462,7 +1459,7 @@ namespace MBSimGUI {
     if(QFile::exists(file1) and QFile::exists(file2)) {
       if(not lsa) {
 	lsa = new LinearSystemAnalysisDialog(this);
-	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),lsa,&LinearSystemAnalysisDialog::updateWidget);
+	connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,[=](){ if(currentTask==0) lsa->updateWidget(); });
       }
       lsa->show();
     }

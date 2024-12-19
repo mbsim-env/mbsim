@@ -7472,22 +7472,25 @@
           </xs:element>
           <xs:element name="generalVMatrix" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Gibt an, ob eine allgemeine V-Matrix vorliegt, z.B. im Fall von Trockenreibung.
+                Gibt an, ob eine allgemeine V-Matrix (V != W) vorliegt, z.B. im Fall von Trockenreibung.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="initialProjection" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Gibt an, ob zu Beginn der Integration eine Projektion auf die Index-3-Nebenbedingungen (Nebenbedingungen auf Lageebene) durchgeführt werden soll.
+                Wenn initialProjection auf DSS eingeschaltet ist, dann ist dies normalerweiße nicht notwendig da ansonsten zwei inertiale Projektionen durchgeführt werden.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="numberOfStepsBetweenProjections" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Gibt an, nach wievielen Schritten die nächste Projektion auf die Index-3-Nebenbedingungen (Nebenbedingungen auf Lageebene) durchgeführt werden soll. Bei Angabe von 0 wird keine Projektion durchgeführt.
+                Um eine Projektion je nach Fehler durchzuführen ist hier 0 zu verwenden und stattdessen toleranceForPositionConstraints zu setzen.
             </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="projectOntoIndex1ConstraintManifold" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Gibt an, ob eine Projektion auf die Index-1-Nebenbedingungen (Nebenbedingungen auf Beschleunigungsebene) durchgeführt werden soll.
+                Gibt an, ob nach jedem Schritt eine Projektion auf die Index-1-Nebenbedingungen (Nebenbedingungen auf Beschleunigungsebene) durchgeführt werden soll.
+                Um eine Projektion je nach Fehler durchzuführen ist hier 0 zu verwenden und stattdessen toleranceForVelocityConstraints zu setzen.
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
