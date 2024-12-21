@@ -412,7 +412,8 @@
   
                     if showPlot:
                       import PySide2
-                      class MyPlot(mbxmlutils.MatplotlibDialog):
+                      import mbxmlutils.Qt
+                      class MyPlot(mbxmlutils.Qt.MatplotlibDialog):
                         def __init__(self, parent=None):
                           super().__init__(parent)
                       
@@ -476,8 +477,8 @@
                           v=self.inputSL.value()
                           self.inputSB.setValue(self.sliderValueTos(v))
   
-                      mbxmlutils.showDialog(MyPlot, ())
-                      mbxmlutils.showDialog(MyPlot, maximized=False)
+                      mbxmlutils.Qt.showDialog(MyPlot, ())
+                      mbxmlutils.Qt.showDialog(MyPlot, maximized=False)
                   </pv:anyParameter>
                 </pv:Parameter>
                 <VectorValuedFunction>
