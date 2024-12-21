@@ -47,3 +47,70 @@
    fun:dlopen_implementation
    fun:dlopen@@*
 }
+{
+   X
+   Memcheck:Param
+   writev(vector[...])
+   fun:__writev
+   fun:writev
+   obj:/usr/lib/x86_64-linux-gnu/libxcb.so*
+}
+{
+   X
+   Memcheck:Param
+   waitid(infop)
+   fun:syscall
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so*
+   fun:_ZN8QProcess7executeERK7QStringRK11QStringList
+}
+{
+   X
+   Memcheck:Param
+   writev(vector[...])
+   fun:__writev
+   fun:writev
+   obj:/usr/lib/x86_64-linux-gnu/libxcb.so*
+}
+{
+   X
+   Memcheck:Cond
+   fun:_ZN10SoGLImageP17checkTransparencyEv
+   fun:_ZNK9SoGLImage15hasTransparencyEv
+   fun:_ZN28SoGLMultiTextureImageElement15hasTransparencyEP7SoState
+   fun:_ZN28SoGLMultiTextureImageElement3setEP7SoStateP6SoNodeiP9SoGLImageN26SoMultiTextureImageElement5ModelERK7SbColor
+   fun:_ZN10SoTexture28GLRenderEP16SoGLRenderAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+   fun:_ZN8SoAction8traverseEP6SoNode
+   fun:_ZN8SoAction5applyERK10SoPathListi
+   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
+   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
+   fun:_ZN8SoAction5applyEP6SoNode
+}
+{
+   TEMP
+   Memcheck:Leak
+   match-leak-kinds: definite
+   ...
+}
+{
+   TEMP
+   Memcheck:Leak
+   match-leak-kinds: indirect
+   ...
+}
+{
+   TEMP
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+}
+{
+   TEMP
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+}
