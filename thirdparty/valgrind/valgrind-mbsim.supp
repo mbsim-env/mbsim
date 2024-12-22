@@ -134,3 +134,96 @@
    fun:_ZN6octave11environment14init_exec_pathB5cxx11Ev
    fun:_ZN6octave11interpreterC1EPNS_11applicationE
 }
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN6octave10base_lexer14finish_commentENS_11comment_elt12comment_typeE
+   fun:_Z10octave_lexP12OCTAVE_STYPEPv
+   fun:_Z17octave_pull_parseP13octave_pstateRN6octave11base_parserE
+   fun:_ZN6octave6parser3runEv
+   fun:_ZN6octave14parse_fcn_fileERNS_11interpreterERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES9_S9_S9_S9_bbbb
+   fun:_ZN6octave18load_fcn_from_fileERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_S7_S7_S7_b
+   fun:_ZN6octave8fcn_info12fcn_info_rep18find_user_functionEv
+   fun:_ZN6octave8fcn_info12fcn_info_rep22load_class_constructorEv
+   fun:_ZN6octave8fcn_info12fcn_info_rep5xfindERKNS_12symbol_scopeERK17octave_value_list
+   fun:_ZN6octave8fcn_info12fcn_info_rep4findERKNS_12symbol_scopeERK17octave_value_list
+   fun:_ZN6octave12symbol_table14fcn_table_findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERK17octave_value_listRKNS_12symbol_scopeE
+   fun:_ZN6octave14tree_evaluator4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave11interpreter4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave12cdef_package16cdef_package_rep4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave12cdef_package16cdef_package_rep12meta_subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS2_4listI17octave_value_listSaISB_EEEi
+   fun:_ZN20octave_classdef_meta7subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS0_4listI17octave_value_listSaIS9_EEEi
+   fun:_ZN12octave_value7subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS0_4listI17octave_value_listSaIS9_EEEi
+   fun:_ZN6octave21tree_index_expression10evaluate_nERNS_14tree_evaluatorEi
+   fun:_ZN6octave21tree_index_expression8evaluateERNS_14tree_evaluatorEi
+   fun:_ZN6octave22tree_simple_assignment8evaluateERNS_14tree_evaluatorEi
+   fun:_ZN6octave14tree_evaluator15visit_statementERNS_14tree_statementE
+   fun:_ZN6octave14tree_evaluator20visit_statement_listERNS_19tree_statement_listE
+   fun:_ZN6octave14tree_evaluator15visit_statementERNS_14tree_statementE
+   fun:_ZN6octave14tree_evaluator20visit_statement_listERNS_19tree_statement_listE
+   fun:_ZN6octave14tree_evaluator21execute_user_functionER20octave_user_functioniRK17octave_value_list
+   fun:_ZN20octave_user_function4callERN6octave14tree_evaluatorEiRK17octave_value_list
+   fun:_ZN6octave21tree_index_expression10evaluate_nERNS_14tree_evaluatorEi
+   fun:_ZN6octave14tree_evaluator11eval_stringERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbRii
+   fun:_ZN6octave11interpreter11eval_stringERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbRii
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN9QScroller11grabGestureEP7QObjectNS_19ScrollerGestureTypeE
+   fun:_ZN10OpenMBVGUI5Utils11enableTouchEP7QWidget
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN10SoSFUInt3214createInstanceEv
+   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libGLX.so*
+   obj:/mbsim-env/local/bin/xcbglintegrations/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libGLX.so*
+   obj:/mbsim-env/local/bin/xcbglintegrations/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
+   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
+   fun:_ZN8SoAction5applyEP6SoNode
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
+   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
+   fun:_ZN8SoAction5applyEP6SoNode
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
