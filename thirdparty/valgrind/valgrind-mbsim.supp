@@ -90,3 +90,28 @@
    fun:_ZN17SoGLRenderActionP6renderEP6SoNode
    fun:_ZN8SoAction5applyEP6SoNode
 }
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   ...
+   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
+   obj:/usr/lib/x86_64-linux-gnu/libQt5DBus.so*
+}
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:jm_vector_alloc_jm_voidp
+   fun:fmi1_xml_handle_ModelVariables
+   fun:fmi1_parse_element_end
+   fun:doContent
+   fun:contentProcessor
+   fun:prologProcessor
+   fun:XML_ParseBuffer
+   fun:fmi1_xml_parse_model_description
+   fun:fmi1_import_parse_xml
+   fun:fmi1_check
+   fun:main
+}
