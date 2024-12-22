@@ -99,6 +99,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
    obj:/usr/lib/x86_64-linux-gnu/libQt5DBus.so*
 }
+{
    X
    Memcheck:Leak
    match-leak-kinds: definite
