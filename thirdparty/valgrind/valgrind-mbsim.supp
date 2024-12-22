@@ -116,3 +116,21 @@
    fun:fmi1_check
    fun:main
 }
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   obj:/usr/lib/x86_64-linux-gnu/octave/*/liboctinterp.so*
+   fun:_ZN6octave11environment14init_exec_pathB5cxx11Ev
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
+}
