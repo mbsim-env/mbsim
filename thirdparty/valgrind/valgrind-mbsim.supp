@@ -227,3 +227,32 @@
    fun:_ZN8SoAction5applyEP6SoNode
    fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
 }
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:/usr/lib/x86_64-linux-gnu/libGLU.so*
+   obj:/usr/lib/x86_64-linux-gnu/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
