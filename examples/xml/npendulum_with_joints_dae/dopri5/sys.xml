@@ -1,0 +1,80 @@
+<DynamicSystemSolver name="MBS" xmlns="http://www.mbsim-env.de/MBSim"
+    xmlns:pv="http://www.mbsim-env.de/MBXMLUtils"
+    xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+  <plotFeatureRecursive value="generalizedRelativePosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedRelativeVelocity">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedForce">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedPosition">true</plotFeatureRecursive>
+  <plotFeatureRecursive value="generalizedVelocity">true</plotFeatureRecursive>
+  <frames>
+    <FixedRelativeFrame name="Os">
+      <relativePosition>[0;0;0.04]</relativePosition>
+      <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+    </FixedRelativeFrame>
+  </frames>
+  <contours/>
+  <groups/>
+  <objects>
+    <RigidBody name="Stab1" xmlns="http://www.mbsim-env.de/MBSim"
+      xmlns:ombv="http://www.mbsim-env.de/OpenMBV">
+    <generalizedInitialPosition>[0;-lO;pi/50*1]</generalizedInitialPosition>
+      <generalizedInitialVelocity>[0;0;0]</generalizedInitialVelocity>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>0.5</mass>
+      <inertiaTensor>[0,0,0 ; 0,0,0 ; 0,0,0.041666666666666]</inertiaTensor>
+      <stateDependentTranslation>
+        <TranslationAlongAxesXY/>
+      </stateDependentTranslation>
+      <stateDependentRotation>
+        <RotationAboutFixedAxis>
+          <axisOfRotation>[0;0;1]</axisOfRotation>
+        </RotationAboutFixedAxis>
+      </stateDependentRotation>
+      <frames>
+        <FixedRelativeFrame name="O">
+          <relativePosition>[0;lO;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
+        <FixedRelativeFrame name="U">
+          <relativePosition>[0;-lU;0]</relativePosition>
+          <relativeOrientation>[1,0,0;0,1,0;0,0,1]</relativeOrientation>
+        </FixedRelativeFrame>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <ombv:Frustum name="dummy">
+          <ombv:initialTranslation>[0;-0.45;0]</ombv:initialTranslation>
+          <ombv:initialRotation>[1.5708;0;0]</ombv:initialRotation>
+          <ombv:scaleFactor>1</ombv:scaleFactor>
+          <ombv:baseRadius>0.02</ombv:baseRadius>
+          <ombv:topRadius>0.02</ombv:topRadius>
+          <ombv:height>lO+lU</ombv:height>
+          <ombv:innerBaseRadius>0</ombv:innerBaseRadius>
+          <ombv:innerTopRadius>0</ombv:innerTopRadius>
+        </ombv:Frustum>
+      </openMBVRigidBody>
+    </RigidBody>
+    <pv:Embed href="Stab_n.xml" count="N-1+1" counterName="n_pendel"/>
+  </objects>
+  <links>
+    <Joint name="Gelenk1">
+      <connect ref1="../Frame[I]" ref2="../Object[Stab1]/Frame[O]"/>
+      <forceDirection>[1,0 ; 0,1 ; 0,0]</forceDirection>
+      <forceLaw>
+        <BilateralConstraint/>
+      </forceLaw>
+    </Joint>
+    <pv:Embed href="Joint_n.xml" count="N" counterName="n"/>
+  </links>
+  <constraints/>
+  <observers/>
+  <environments>
+    <MBSimEnvironment>
+      <accelerationOfGravity>[0;-9.81;0]</accelerationOfGravity>
+    </MBSimEnvironment>
+  </environments>
+  <maximumNumberOfIterations>1e3</maximumNumberOfIterations>
+  <highNumberOfIterations>1e6</highNumberOfIterations>
+  <stopIfNoConvergence>1</stopIfNoConvergence>
+</DynamicSystemSolver>
