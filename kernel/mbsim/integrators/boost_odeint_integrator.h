@@ -207,13 +207,15 @@ namespace MBSim {
     fmatvec::Vec zd0=system->evalzd();
 
     for(size_t i=0; i<static_cast<size_t>(z.size()); ++i) {
-      zDisturbed(i)+=MBSim::epsroot;
+      double delta=sqrt(macheps*std::max(1.e-5,abs(zDisturbed(i))));
+      double zDisturbediSave=zDisturbed(i);
+      zDisturbed(i)+=delta;
       system->setState(zDisturbed);
       system->resetUpToDate();
       auto col=boost::numeric::ublas::column(jac, i);
-      auto zd=(system->evalzd()-zd0)*MBSim::epsrootInv;
+      auto zd=(system->evalzd()-zd0)/delta;
       std::copy(zd.begin(), zd.end(), col.begin());
-      zDisturbed(i)-=MBSim::epsroot;
+      zDisturbed(i)=zDisturbediSave;
     }
 
     system->setTime(t+MBSim::epsroot);

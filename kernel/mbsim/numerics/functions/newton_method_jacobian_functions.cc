@@ -45,10 +45,7 @@ namespace MBSim {
     for (int j = 0; j < x2.size(); j++) {
       xj = x2(j);
 
-      dx = (epsroot * 0.5);
-      do {
-        dx += dx;
-      } while (fabs(xj + dx - x2(j)) < epsroot);
+      dx = sqrt(macheps*std::max(1.e-5,abs(xj)));
 
       x2(j) += dx;
       f2 = (*function)(x2);
