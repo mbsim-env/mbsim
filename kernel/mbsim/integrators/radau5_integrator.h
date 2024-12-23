@@ -50,6 +50,7 @@ namespace MBSim {
       static void fzdotDAE1(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE2(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE3(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      static void jac(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *iper);
       static void fzdotGGL(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void massFull(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
@@ -81,6 +82,9 @@ namespace MBSim {
       int neq, mlJac, muJac;
       fmatvec::VecInt iWork;
       fmatvec::Vec work;
+
+      fmatvec::Vec res0, res1; // residual work arrays for jacobian evaluation
+      fmatvec::RangeV Rq, Ru, Rz, Rla, Rl; // ranges in y and jacobimatrix for q, u, z, la and GGL alg.-states l
 
     public:
       ~RADAU5Integrator() override = default;

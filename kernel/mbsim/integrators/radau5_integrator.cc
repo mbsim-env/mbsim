@@ -57,12 +57,12 @@ namespace MBSim {
     Vec y(*neq, y_);
     Vec yd(*neq, yd_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(RangeV(0,self->system->getzSize()-1)));
+    self->getSystem()->setState(y(self->Rz));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(RangeV(self->system->getzSize(),*neq-1)));
+    self->getSystem()->setla(y(self->Rla));
     self->getSystem()->setUpdatela(false);
-    yd.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd());
-    yd.set(RangeV(self->system->getzSize(),*neq-1), self->system->evalW().T()*yd(RangeV(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1)) + self->system->evalwb());
+    yd.set(self->Rz, self->system->evalzd());
+    yd.set(self->Rla, self->system->evalW().T()*self->system->evalT()*yd(self->Ru) + self->system->evalwb());
   }
 
   void RADAU5Integrator::fzdotDAE2(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
@@ -70,12 +70,12 @@ namespace MBSim {
     Vec y(*neq, y_);
     Vec yd(*neq, yd_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(RangeV(0,self->system->getzSize()-1)));
+    self->getSystem()->setState(y(self->Rz));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(RangeV(self->system->getzSize(),*neq-1)));
+    self->getSystem()->setla(y(self->Rla));
     self->getSystem()->setUpdatela(false);
-    yd.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd());
-    yd.set(RangeV(self->system->getzSize(),*neq-1), self->system->evalgd());
+    yd.set(self->Rz, self->system->evalzd());
+    yd.set(self->Rla, self->system->evalgd());
   }
 
   void RADAU5Integrator::fzdotDAE3(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
@@ -83,12 +83,12 @@ namespace MBSim {
     Vec y(*neq, y_);
     Vec yd(*neq, yd_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(RangeV(0,self->system->getzSize()-1)));
+    self->getSystem()->setState(y(self->Rz));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(RangeV(self->system->getzSize(),*neq-1)));
+    self->getSystem()->setla(y(self->Rla));
     self->getSystem()->setUpdatela(false);
-    yd.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd());
-    yd.set(RangeV(self->system->getzSize(),*neq-1), self->system->evalg());
+    yd.set(self->Rz, self->system->evalzd());
+    yd.set(self->Rla, self->system->evalg());
   }
 
   void RADAU5Integrator::fzdotGGL(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
@@ -96,35 +96,95 @@ namespace MBSim {
     Vec y(*neq, y_);
     Vec yd(*neq, yd_);
     self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(RangeV(0,self->system->getzSize()-1)));
+    self->getSystem()->setState(y(self->Rz));
     self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getlaSize()-1)));
+    self->getSystem()->setla(y(self->Rla));
     self->getSystem()->setUpdatela(false);
-    yd.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd());
-    yd.set(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1), self->system->evalgd());
-    yd.set(RangeV(self->system->getzSize()+self->system->getgdSize(),*neq-1), self->system->evalg());
+    yd.set(self->Rz, self->system->evalzd());
+    yd.set(self->Rla, self->system->evalgd());
+    yd.set(self->Rl, self->system->evalg());
     if(self->system->getgSize() != self->system->getgdSize()) {
       self->system->calclaSize(5);
       self->system->updateWRef(self->system->getWParent(0));
       self->system->setUpdateW(false);
-      yd.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),*neq-1)));
+      yd.add(self->Rq, self->system->evalW()*y(self->Rla));
       self->system->calclaSize(3);
       self->system->updateWRef(self->system->getWParent(0));
     }
     else
-      yd.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),*neq-1)));
+      yd.add(self->Rq, self->system->evalW()*y(self->Rla));
   }
 
-  void RADAU5Integrator::massFull(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+  void RADAU5Integrator::jac(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Mat M(*lmas,*zSize, m_);
+    int rowMove = self->reduced ? self->system->getqSize() : 0;
+    RangeV ruMove(self->Ru.start()-rowMove, self->Ru.end()-rowMove);
+    RangeV rlaMove(self->Rla.start()-rowMove, self->Rla.end()-rowMove);
+    Mat J(*rows, *cols, J_); // fmatvec variant of J_
+
+    // the undisturbed call -> this sets the system resetUpToDate
+    // res0 is later used for the numerical part of the jacobian
+    self->fzdot[self->formalism](cols,t,y_,self->res0(),rpar,ipar);
+
+    // the columns for la are given analytically
+    Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+    J.set(ruMove, self->Rla, Minv_Jrla);
+    if(self->formalism==DAE1)
+      J.set(rlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
+    // the rest of the entries in these columns are 0
+    for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
+      if(!self->reduced)
+        for(int r=0; r<self->Ru.start(); ++r)
+          J(r,c)=0;
+      for(int r=self->Ru.end()+1; r<(self->formalism==DAE1 ? self->Rla.start()-1 : *cols); ++r)
+        J(r-rowMove,c)=0;
+    }
+
+    if(self->formalism==GGL) {
+      // the columns for algebraic GGL state are given analytically
+      if(self->system->getgSize() != self->system->getgdSize()) {
+        self->system->calclaSize(5);
+        self->system->updateWRef(self->system->getWParent(0));
+        self->system->setUpdateW(false);
+        J.set(self->Rq, self->Rl, self->system->evalW());
+        self->system->calclaSize(3);
+        self->system->updateWRef(self->system->getWParent(0));
+      }
+      else
+        J.set(self->Rq, self->Rl, self->system->evalW());
+      // the rest of the entries in these columns are 0
+      for(int c=self->Rl.start(); c<=self->Rl.end(); ++c) {
+        for(int r=self->Ru.start(); r<*cols; ++r)
+          J(r,c)=0;
+      }
+    }
+
+    // now the finite difference of all other columns
+    // this code is taken from radau5.f JACOBIAN IS FULL,
+    // but converted to C and skipping the last columns of the jacobian for la which is given analytically
+    for(int c=0; c<self->system->getqSize()+self->system->getuSize()+self->system->getxSize(); ++c) {
+      double ySafe=y_[c];
+      double delta=sqrt(macheps*max(1.e-5,abs(ySafe)));
+      y_[c]=ySafe+delta;
+      self->fzdot[self->formalism](cols,t,y_,self->res1(),rpar,ipar);
+      for(int r=rowMove; r<*cols; ++r)
+        J_[(c*(*rows))+r-rowMove]=(self->res1(r)-self->res0(r))/delta;
+      y_[c]=ySafe;
+    }
+  }
+
+  void RADAU5Integrator::massFull(int* cols, double* m_, int* rows, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+    Mat M(*rows,*cols, m_);
     for(int i=0; i<self->system->getzSize(); i++) M(0,i) = 1;
+    for(int i=self->system->getzSize(); i<*cols; i++) M(0,i) = 0;
   }
 
-  void RADAU5Integrator::massReduced(int* zSize, double* m_, int* lmas, double* rpar, int* ipar) {
+  void RADAU5Integrator::massReduced(int* cols, double* m_, int* rows, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Mat M(*lmas,*zSize, m_);
-    for(int i=0; i<self->system->getqSize(); i++) M(0,i) = 1;
+    Mat M(*rows,*cols, m_);
+    for(int i=0; i<self->system->getqSize()+self->system->getxSize(); i++) M(0,i) = 1;
+    for(int i=self->system->getqSize()+self->system->getxSize(); i<*cols-self->system->getqSize(); i++) M(0,i) = 0;
   }
 
   void RADAU5Integrator::plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
@@ -264,6 +324,9 @@ namespace MBSim {
     debugInit();
 
     calcSize();
+    Rq = RangeV(0,system->getqSize()-1);
+    Ru = RangeV(system->getqSize(),system->getqSize()+system->getuSize()-1);
+    Rz = RangeV(0,system->getzSize()-1);
 
     if(not neq)
       throwError("(RADAU5Integrator::integrate): dimension of the system must be at least 1");
@@ -275,11 +338,11 @@ namespace MBSim {
 
     Vec y(neq);
     Vec z;
-    z.ref(y, RangeV(0,system->getzSize()-1));
+    z.ref(y, Rz);
     if(z0.size()) {
       if(z0.size() != system->getzSize()+system->getisSize())
         throwError("(RADAU5Integrator::integrate): size of z0 does not match, must be " + to_string(system->getzSize()+system->getisSize()));
-      z = z0(RangeV(0,system->getzSize()-1));
+      z = z0(Rz);
       system->setInternalState(z0(RangeV(system->getzSize(),z0.size()-1)));
     }
     else
@@ -318,7 +381,9 @@ namespace MBSim {
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
-    int iJac = 0; // jacobian is computed internally by finite differences
+    int iJac = formalism>0; // jacobian is computed
+                            // - for ODE as full matrix by radau5 by finite differences
+                            // - for all other as full matrix by finite differences for everything except la which is analytical
     int idid;
 
     double dt = dt0;
@@ -350,7 +415,7 @@ namespace MBSim {
     while(t<tEnd-epsroot) {
       RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt,
           rTol(),aTol(),&iTol,
-          nullptr,&iJac,&mlJac,&muJac,
+          jac,&iJac,&mlJac,&muJac,
           *mass[reduced],&iMas,&mlMas,&muMas,
           plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
@@ -381,6 +446,12 @@ namespace MBSim {
       neq = system->getzSize()+system->getgdSize()+system->getgSize();
     else
       neq = system->getzSize();
+    res0.resize(neq);
+    res1.resize(neq);
+    Rla = RangeV(system->getqSize()+system->getuSize()+system->getxSize(),
+                 system->getqSize()+system->getuSize()+system->getxSize()+system->getlaSize()-1);
+    Rl = RangeV(system->getqSize()+system->getuSize()+system->getxSize()+system->getlaSize(),
+                neq-1);
   }
 
   void RADAU5Integrator::reinit() {
@@ -401,6 +472,8 @@ namespace MBSim {
       iWork(5) = system->getgdSize() + system->getgSize();
     }
     if(reduced) {
+      if(formalism==GGL)
+        throw runtime_error("The 'formalism'=='GGL' cannot be used with 'reducedForm'==true.");
       iWork(8) = system->getqSize();
       iWork(9) = system->getqSize();
       mlJac = neq - system->getqSize(); // jacobian is a reduced matrix
