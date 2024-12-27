@@ -347,6 +347,13 @@ namespace MBSim {
       }
       else if(idid<0) throwError("Integrator DASPK failed with istate = "+to_string(idid));
     }
+
+    msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
+    msg(Info)<<"nrRHS: "<<iWork(11)<<endl;
+    msg(Info)<<"nrJac: "<<iWork(12)<<endl;
+    msg(Info)<<"nrStepsRejected: "<<iWork(13)<<endl;
+    msg(Info)<<"nrNonlinConvFailures: "<<iWork(14)<<endl;
+    msg(Info)<<"nrLinConvFailures: "<<iWork(15)<<endl;
   }
 
   void DASPKIntegrator::calcSize() {

@@ -41,6 +41,11 @@ namespace MBSim {
         unknown
       };
 
+      enum class StepSizeControl {
+        ModPred = 1,
+        Classic = 2,
+      };
+
     private:
       typedef void (*Fzdot)(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       typedef void (*Mass)(int* n, double* m, int* lmas, double* rpar, int* ipar);
@@ -85,6 +90,13 @@ namespace MBSim {
 
       fmatvec::Vec res0, res1; // residual work arrays for jacobian evaluation
       fmatvec::RangeV Rq, Ru, Rz, Rla, Rl; // ranges in y and jacobimatrix for q, u, z, la and GGL alg.-states l
+                                           //
+      int maxNewtonIter { 0 };
+      double newtonIterTol { 0 };
+      double jacobianRecomputation { 0 };
+      bool drift { false };
+      StepSizeControl stepSizeControl { StepSizeControl::ModPred };
+      double stepSizeSaftyFactor { 0.9 };
 
     public:
       ~RADAU5Integrator() override = default;
@@ -98,6 +110,11 @@ namespace MBSim {
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setReducedForm(bool reduced_) { reduced = reduced_; }
+      void setMaximalNumberOfNewtonIterations(int iter) { maxNewtonIter = iter; }
+      void setNewtonIterationTolerance(double tol) { newtonIterTol = tol; }
+      void setJacobianRecompuation(double value) { jacobianRecomputation = value; }
+      void setStepSizeControl(StepSizeControl ssc) { stepSizeControl = ssc; }
+      void setStepSizeSaftyFactor(double fac) { stepSizeSaftyFactor = fac; }
 
       using Integrator::integrate;
       void integrate() override;

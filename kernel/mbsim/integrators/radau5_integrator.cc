@@ -118,8 +118,8 @@ namespace MBSim {
   void RADAU5Integrator::jac(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
     auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
     int rowMove = self->reduced ? self->system->getqSize() : 0;
-    RangeV ruMove(self->Ru.start()-rowMove, self->Ru.end()-rowMove);
-    RangeV rlaMove(self->Rla.start()-rowMove, self->Rla.end()-rowMove);
+    RangeV RuMove(self->Ru.start()-rowMove, self->Ru.end()-rowMove);
+    RangeV RlaMove(self->Rla.start()-rowMove, self->Rla.end()-rowMove);
     Mat J(*rows, *cols, J_); // fmatvec variant of J_
 
     // the undisturbed call -> this sets the system resetUpToDate
@@ -128,9 +128,9 @@ namespace MBSim {
 
     // the columns for la are given analytically
     Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
-    J.set(ruMove, self->Rla, Minv_Jrla);
+    J.set(RuMove, self->Rla, Minv_Jrla);
     if(self->formalism==DAE1)
-      J.set(rlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
+      J.set(RlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
     // the rest of the entries in these columns are 0
     for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
       if(!self->reduced)
@@ -291,6 +291,7 @@ namespace MBSim {
         if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
           self->getSystem()->projectGeneralizedPositions(3);
           self->getSystem()->projectGeneralizedVelocities(3);
+          self->drift = true;
           *irtrn=-1;
         }
       }
@@ -300,6 +301,7 @@ namespace MBSim {
         self->getSystem()->resetUpToDate();
         if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
           self->getSystem()->projectGeneralizedVelocities(3);
+          self->drift = true;
           *irtrn=-1;
         }
       }
@@ -371,19 +373,32 @@ namespace MBSim {
     RADAU5Integrator *self=this;
     memcpy(&iPar[0], &self, sizeof(void*));
 
-    int lWork = 2*(neq*(neq+neq+3*neq+12)+20);
-    int liWork = 2*(3*neq+20);
+    int lWork;
+    if(!reduced)
+      lWork = neq*(neq+1+3*neq+12)+20;
+    else {
+      int nq = system->getqSize();
+      lWork = neq*(neq-nq+12)+(neq-nq)*(1+3*(neq-nq))+20;
+    }
+    int liWork = 3*neq+20;
     iWork.resize(liWork);
     work.resize(lWork);
     if(dtMax>0)
       work(6) = dtMax; // maximum step size
     iWork(1) = maxSteps; // maximum number of steps
+    iWork(7) = static_cast<int>(stepSizeControl);
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
     int iJac = formalism>0; // jacobian is computed
                             // - for ODE as full matrix by radau5 by finite differences
                             // - for all other as full matrix by finite differences for everything except la which is analytical
+
+    iWork(2) = maxNewtonIter;
+    work(3) = newtonIterTol;
+    work(2) = jacobianRecomputation;
+    work(1) = stepSizeSaftyFactor;
+
     int idid;
 
     double dt = dt0;
@@ -413,12 +428,16 @@ namespace MBSim {
     s0 = clock();
 
     while(t<tEnd-epsroot) {
+      drift = false;
+
       RADAU5(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt,
           rTol(),aTol(),&iTol,
           jac,&iJac,&mlJac,&muJac,
           *mass[reduced],&iMas,&mlMas,&muMas,
           plot,&out,
           work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+      if(idid < 0)
+        throw runtime_error("RADAU5 failed with idid = "+to_string(idid));
 
       if(shift) {
         system->resetUpToDate();
@@ -428,13 +447,23 @@ namespace MBSim {
         reinit();
       }
 
-      t = system->getTime();
-      z = system->getState();
-      if(formalism) {
-        for(int i=system->getzSize(); i<neq; i++)
-          y(i) = 0;
+      if(shift || drift) {
+        t = system->getTime();
+        z = system->getState();
+        if(formalism) {
+          for(int i=system->getzSize(); i<neq; i++)
+            y(i) = 0;
+        }
       }
     }
+
+    msg(Info)<<"nrRHS (excluding jac): "<<iWork(13)<<endl;
+    msg(Info)<<"nrJac: "<<iWork(14)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(15)<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<iWork(16)<<endl;
+    msg(Info)<<"nrStepsRejected: "<<iWork(17)<<endl;
+    msg(Info)<<"nrLUdecom: "<<iWork(18)<<endl;
+    msg(Info)<<"nrForwardBackwardSubs: "<<iWork(19)<<endl;
   }
 
   void RADAU5Integrator::calcSize() {
@@ -458,7 +487,7 @@ namespace MBSim {
     for(int i=20; i<work.size(); i++)
       work(i) = 0;
     if(formalism==DAE1)
-      iWork(4) = system->getzSize() + system->getlaSize();
+      iWork(4) = system->getzSize() + system->getlaSize();// mfmf not working when ng != ngd
     else if(formalism==DAE2) {
       iWork(4) = system->getzSize();
       iWork(5) = system->getgdSize();
@@ -512,6 +541,26 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"reducedForm");
     if(e) setReducedForm((E(e)->getText<bool>()));
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"maximumNumberOfNewtonIterations");
+    if(e) setMaximalNumberOfNewtonIterations((E(e)->getText<int>()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"newtonIterationTolerance");
+    if(e) setNewtonIterationTolerance((E(e)->getText<double>()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"jacobianRecomputation");
+    if(e) setJacobianRecompuation((E(e)->getText<double>()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepSizeControl");
+    if(e) {
+      auto ssc = (E(e)->getText<string>());
+      ssc = ssc.substr(1, ssc.size()-2);
+      if(ssc=="modPred")
+        setStepSizeControl(StepSizeControl::ModPred);
+      else if(ssc=="classic")
+        setStepSizeControl(StepSizeControl::Classic);
+      else
+        throw DOMEvalException("Unknonwn stepSizeControl "+ssc, e);
+    }
+    e=E(element)->getFirstElementChildNamed(MBSIM%"stepSizeSaftyFactor");
+    if(e) setStepSizeSaftyFactor((E(e)->getText<double>()));
   }
 
 }

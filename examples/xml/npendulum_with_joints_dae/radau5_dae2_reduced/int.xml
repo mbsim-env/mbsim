@@ -9,4 +9,5 @@
   <maximumStepSize>1e-1</maximumStepSize>
   <formalism>"DAE2"</formalism>
   <reducedForm>1</reducedForm>
+  <jacobianRecomputation>0.9999</jacobianRecomputation>
 </RADAU5Integrator>
