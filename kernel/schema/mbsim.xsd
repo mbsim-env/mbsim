@@ -7209,6 +7209,13 @@
               Bei Faktor 1-eps (1 ist ein Fehler) wird so selten wie möglich eine neue JAcobi-Matrix berechnet.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="jacobianRecomputationAtRejectedSteps" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Der original RADAU5 code führt bei jedem rejected-step einen update der Jacobi-Matrix durch. [Default: true]
+              Dies kann mit dieser Option abgeschaltet werden. Dann wird nach einen rejecte-step nur ein Jacobi-Matrix update
+              durchgeführt wenn Bedingung wie bei accepted-steps (mittels jacobianRecomputation) erfüllt ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
           <xs:element name="stepSizeControl" type="pv:stringFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Definiert die methode zur Schrittweitensteuerung.

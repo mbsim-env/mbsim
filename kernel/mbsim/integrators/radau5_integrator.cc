@@ -380,13 +380,22 @@ namespace MBSim {
       int nq = system->getqSize();
       lWork = neq*(neq-nq+12)+(neq-nq)*(1+3*(neq-nq))+20;
     }
+
+    // we define a iWork array of size 1 larger then needed for RADUA5 and extend this array to the negative range.
+    // iWork[0...] (= iWorkExtended[1...]) is used for RADAU5
+    // iWork[-1] (= iWorkExtended[0]) is used to pass a special flag for jacobian-recalculation a adapted RADAU5 code
+    // SEE radau5.f MBSIM_EXTENDED_IWORK_ARRAY
     int liWork = 3*neq+20;
-    iWork.resize(liWork);
+    iWorkExtended.resize(liWork + 1);
+    iWork=&iWorkExtended[1];
+
     work.resize(lWork);
+
     if(dtMax>0)
       work(6) = dtMax; // maximum step size
-    iWork(1) = maxSteps; // maximum number of steps
-    iWork(7) = static_cast<int>(stepSizeControl);
+    iWork[-1] = jacobianRecomputationAtRejectedSteps;
+    iWork[1] = maxSteps; // maximum number of steps
+    iWork[7] = static_cast<int>(stepSizeControl);
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
@@ -394,7 +403,7 @@ namespace MBSim {
                             // - for ODE as full matrix by radau5 by finite differences
                             // - for all other as full matrix by finite differences for everything except la which is analytical
 
-    iWork(2) = maxNewtonIter;
+    iWork[2] = maxNewtonIter;
     work(3) = newtonIterTol;
     work(2) = jacobianRecomputation;
     work(1) = stepSizeSaftyFactor;
@@ -435,7 +444,7 @@ namespace MBSim {
           jac,&iJac,&mlJac,&muJac,
           *mass[reduced],&iMas,&mlMas,&muMas,
           plot,&out,
-          work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+          work(),&lWork,iWork,&liWork,&rPar,iPar,&idid);
       if(idid < 0)
         throw runtime_error("RADAU5 failed with idid = "+to_string(idid));
 
@@ -457,13 +466,13 @@ namespace MBSim {
       }
     }
 
-    msg(Info)<<"nrRHS (excluding jac): "<<iWork(13)<<endl;
-    msg(Info)<<"nrJac: "<<iWork(14)<<endl;
-    msg(Info)<<"nrSteps: "<<iWork(15)<<endl;
-    msg(Info)<<"nrStepsAccepted: "<<iWork(16)<<endl;
-    msg(Info)<<"nrStepsRejected: "<<iWork(17)<<endl;
-    msg(Info)<<"nrLUdecom: "<<iWork(18)<<endl;
-    msg(Info)<<"nrForwardBackwardSubs: "<<iWork(19)<<endl;
+    msg(Info)<<"nrRHS (excluding jac): "<<iWork[13]<<endl;
+    msg(Info)<<"nrJac: "<<iWork[14]<<endl;
+    msg(Info)<<"nrSteps: "<<iWork[15]<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<iWork[16]<<endl;
+    msg(Info)<<"nrStepsRejected: "<<iWork[17]<<endl;
+    msg(Info)<<"nrLUdecom: "<<iWork[18]<<endl;
+    msg(Info)<<"nrForwardBackwardSubs: "<<iWork[19]<<endl;
   }
 
   void RADAU5Integrator::calcSize() {
@@ -487,24 +496,24 @@ namespace MBSim {
     for(int i=20; i<work.size(); i++)
       work(i) = 0;
     if(formalism==DAE1)
-      iWork(4) = system->getzSize() + system->getlaSize();// mfmf not working when ng != ngd
+      iWork[4] = system->getzSize() + system->getlaSize();// mfmf not working when ng != ngd
     else if(formalism==DAE2) {
-      iWork(4) = system->getzSize();
-      iWork(5) = system->getgdSize();
+      iWork[4] = system->getzSize();
+      iWork[5] = system->getgdSize();
     }
     else if(formalism==DAE3) {
-      iWork(4) = system->getzSize();
-      iWork(6) = system->getgSize();
+      iWork[4] = system->getzSize();
+      iWork[6] = system->getgSize();
     }
     else if(formalism==GGL) {
-      iWork(4) = system->getzSize();
-      iWork(5) = system->getgdSize() + system->getgSize();
+      iWork[4] = system->getzSize();
+      iWork[5] = system->getgdSize() + system->getgSize();
     }
     if(reduced) {
       if(formalism==GGL)
         throw runtime_error("The 'formalism'=='GGL' cannot be used with 'reducedForm'==true.");
-      iWork(8) = system->getqSize();
-      iWork(9) = system->getqSize();
+      iWork[8] = system->getqSize();
+      iWork[9] = system->getqSize();
       mlJac = neq - system->getqSize(); // jacobian is a reduced matrix
     }
     else
@@ -547,7 +556,9 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"newtonIterationTolerance");
     if(e) setNewtonIterationTolerance((E(e)->getText<double>()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"jacobianRecomputation");
-    if(e) setJacobianRecompuation((E(e)->getText<double>()));
+    if(e) setJacobianRecomputation((E(e)->getText<double>()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"jacobianRecomputationAtRejectedSteps");
+    if(e) setJacobianRecomputationAtRejectedSteps((E(e)->getText<bool>()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"stepSizeControl");
     if(e) {
       auto ssc = (E(e)->getText<string>());

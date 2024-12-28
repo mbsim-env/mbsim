@@ -1108,8 +1108,14 @@ C --- STEP IS REJECTED
              H=HNEW
          END IF
          IF (NACCPT.GE.1) NREJCT=NREJCT+1
-         IF (CALJAC) GOTO 20
-         GOTO 10
+C MBSIM_EXTENDED_IWORK_ARRAY: see radau5_integrator.cc about IP1(-20)
+         IF (IP1(-20).eq.1) then
+           IF (CALJAC) GOTO 20
+           GOTO 10
+         ELSE
+           IF (THETA.LE.THET) GOTO 20
+           GOTO 10
+         ENDIF
       END IF
 C --- UNEXPECTED STEP-REJECTION
   78  CONTINUE

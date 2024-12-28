@@ -85,7 +85,7 @@ namespace MBSim {
       bool reduced{false};
 
       int neq, mlJac, muJac;
-      fmatvec::VecInt iWork;
+      std::vector<int> iWorkExtended; int *iWork;
       fmatvec::Vec work;
 
       fmatvec::Vec res0, res1; // residual work arrays for jacobian evaluation
@@ -94,6 +94,7 @@ namespace MBSim {
       int maxNewtonIter { 0 };
       double newtonIterTol { 0 };
       double jacobianRecomputation { 0 };
+      bool jacobianRecomputationAtRejectedSteps { true };
       bool drift { false };
       StepSizeControl stepSizeControl { StepSizeControl::ModPred };
       double stepSizeSaftyFactor { 0.9 };
@@ -112,7 +113,8 @@ namespace MBSim {
       void setReducedForm(bool reduced_) { reduced = reduced_; }
       void setMaximalNumberOfNewtonIterations(int iter) { maxNewtonIter = iter; }
       void setNewtonIterationTolerance(double tol) { newtonIterTol = tol; }
-      void setJacobianRecompuation(double value) { jacobianRecomputation = value; }
+      void setJacobianRecomputation(double value) { jacobianRecomputation = value; }
+      void setJacobianRecomputationAtRejectedSteps(bool recomp) { jacobianRecomputationAtRejectedSteps = recomp; }
       void setStepSizeControl(StepSizeControl ssc) { stepSizeControl = ssc; }
       void setStepSizeSaftyFactor(double fac) { stepSizeSaftyFactor = fac; }
 
