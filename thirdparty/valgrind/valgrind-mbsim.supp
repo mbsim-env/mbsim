@@ -75,20 +75,8 @@
 {
    X
    Memcheck:Cond
-   fun:_ZN10SoGLImageP17checkTransparencyEv
-   fun:_ZNK9SoGLImage15hasTransparencyEv
-   fun:_ZN28SoGLMultiTextureImageElement15hasTransparencyEP7SoState
-   fun:_ZN28SoGLMultiTextureImageElement3setEP7SoStateP6SoNodeiP9SoGLImageN26SoMultiTextureImageElement5ModelERK7SbColor
-   fun:_ZN10SoTexture28GLRenderEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   ...
    fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN8SoAction5applyERK10SoPathListi
-   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
-   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
-   fun:_ZN8SoAction5applyEP6SoNode
 }
 {
    X
@@ -306,6 +294,64 @@
    X
    Memcheck:Leak
    match-leak-kinds: possible
+   fun:_Znwm
+   fun:_ZN13SoCoordinate3C1Ev
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:*/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
    fun:_Znam
    fun:_ZN8SoMField11allocValuesEi
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:malloc
+   fun:allocate_dtv_entry
+   fun:allocate_and_init
+   fun:tls_get_addr_tail
+   fun:__tls_get_addr
+   obj:*/_distance_pybind.cpython-*-x86_64-linux-gnu.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:malloc
+   fun:_dl_resize_dtv
+   fun:_dl_update_slotinfo
+   fun:update_get_addr
+   fun:__tls_get_addr
+   obj:*/_distance_pybind.cpython-*-x86_64-linux-gnu.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
 }
