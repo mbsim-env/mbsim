@@ -53,7 +53,7 @@
    writev(vector[...])
    fun:__writev
    fun:writev
-   obj:/usr/lib/x86_64-linux-gnu/libxcb.so*
+   obj:*/libxcb.so*
 }
 {
    X
@@ -61,7 +61,7 @@
    waitid(infop)
    fun:syscall
    ...
-   obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so*
+   obj:*/libQt5Core.so*
    fun:_ZN8QProcess7executeERK7QStringRK11QStringList
 }
 {
@@ -70,7 +70,7 @@
    writev(vector[...])
    fun:__writev
    fun:writev
-   obj:/usr/lib/x86_64-linux-gnu/libxcb.so*
+   obj:*/libxcb.so*
 }
 {
    X
@@ -96,8 +96,8 @@
    match-leak-kinds: definite
    fun:realloc
    ...
-   obj:/usr/lib/x86_64-linux-gnu/libdbus-1.so*
-   obj:/usr/lib/x86_64-linux-gnu/libQt5DBus.so*
+   obj:*/libdbus-1.so*
+   obj:*/libQt5DBus.so*
 }
 {
    X
@@ -130,7 +130,7 @@
    match-leak-kinds: definite
    fun:malloc
    fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
-   obj:/usr/lib/x86_64-linux-gnu/octave/*/liboctinterp.so*
+   obj:*/liboctinterp.so*
    fun:_ZN6octave11environment14init_exec_pathB5cxx11Ev
    fun:_ZN6octave11interpreterC1EPNS_11applicationE
 }
@@ -193,8 +193,8 @@
    match-leak-kinds: definite
    fun:calloc
    ...
-   obj:/usr/lib/x86_64-linux-gnu/libGLX.so*
-   obj:/mbsim-env/local/bin/xcbglintegrations/libqxcb-glx-integration.so
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
 }
 {
    X
@@ -202,8 +202,8 @@
    match-leak-kinds: definite
    fun:malloc
    ...
-   obj:/usr/lib/x86_64-linux-gnu/libGLX.so*
-   obj:/mbsim-env/local/bin/xcbglintegrations/libqxcb-glx-integration.so
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
 }
 {
    X
@@ -233,8 +233,8 @@
    match-leak-kinds: definite
    fun:_Znwm
    fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
-   obj:/usr/lib/x86_64-linux-gnu/libGLU.so*
-   obj:/usr/lib/x86_64-linux-gnu/libGLU.so*
+   obj:*/libGLU.so*
+   obj:*/libGLU.so*
    fun:gluTessEndPolygon
 }
 {
@@ -261,7 +261,7 @@
    Memcheck:Leak
    match-leak-kinds: possible
    fun:malloc
-   obj:/usr/lib/x86_64-linux-gnu/libpython*
+   obj:*/libpython*
    fun:_PyObject_GC_NewVar
 }
 {
@@ -269,7 +269,7 @@
    Memcheck:Leak
    match-leak-kinds: possible
    fun:malloc
-   obj:/usr/lib/x86_64-linux-gnu/libpython*
+   obj:*/libpython*
    fun:PyUnicode_New
 }
 {
@@ -277,6 +277,35 @@
    Memcheck:Leak
    match-leak-kinds: possible
    fun:malloc
-   obj:/usr/lib/x86_64-linux-gnu/libpython*
+   obj:*/libpython*
    fun:PyType_GenericAlloc
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:memalign
+   fun:posix_memalign
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   fun:_ZN13SoVertexShapeC1Ev
+   fun:_ZN17SoNonIndexedShapeC1Ev
+   fun:_ZN18SoTriangleStripSetC1Ev
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:*/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   fun:_ZN8SoMField11allocValuesEi
 }
