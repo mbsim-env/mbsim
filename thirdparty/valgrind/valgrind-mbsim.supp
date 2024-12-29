@@ -90,6 +90,15 @@
 {
    X
    Memcheck:Leak
+   match-leak-kinds: possible
+   fun:realloc
+   ...
+   obj:*/libdbus-1.so*
+   obj:*/libQt5DBus.so*
+}
+{
+   X
+   Memcheck:Leak
    match-leak-kinds: definite
    fun:malloc
    fun:jm_vector_alloc_jm_voidp
@@ -282,6 +291,15 @@
    X
    Memcheck:Leak
    match-leak-kinds: possible
+   fun:malloc
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
    fun:_Znwm
    fun:_ZN13SoVertexShapeC1Ev
    fun:_ZN17SoNonIndexedShapeC1Ev
@@ -351,7 +369,32 @@
    X
    Memcheck:Leak
    match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
    fun:_Znwm
    ...
    fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:realloc
+   obj:*/libdbus-1.so*
+   fun:_dbus_read
+   obj:*/libdbus-1.so*
 }
