@@ -256,3 +256,27 @@
    fun:_ZN10SoQtViewer12actualRedrawEv
    fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
 }
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libpython*
+   fun:_PyObject_GC_NewVar
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libpython*
+   fun:PyUnicode_New
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libpython*
+   fun:PyType_GenericAlloc
+}
