@@ -491,3 +491,35 @@
    ...
    fun:_ZN4SoDB7readAllEP7SoInput
 }
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
