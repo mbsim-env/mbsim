@@ -240,14 +240,6 @@
    match-leak-kinds: definite
    fun:_Znwm
    ...
-   fun:_ZN4SoDB7readAllEP7SoInput
-}
-{
-   x
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:_Znwm
-   ...
    fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
    fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
    fun:_ZN10SoQtViewer12actualRedrawEv
@@ -377,24 +369,28 @@
    X
    Memcheck:Leak
    match-leak-kinds: possible
-   fun:_Znwm
-   ...
-   fun:_ZN4SoDB7readAllEP7SoInput
+   fun:realloc
+   obj:*/libdbus-1.so*
+   fun:_dbus_read
+   obj:*/libdbus-1.so*
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   obj:*/liboctinterp.so*
+   fun:_ZN6octave11environment14init_exec_pathB5cxx11Ev
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
 }
 {
    X
    Memcheck:Leak
    match-leak-kinds: possible
    fun:_Znam
-   ...
-   fun:_ZN4SoDB7readAllEP7SoInput
-}
-{
-   X
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:realloc
-   obj:*/libdbus-1.so*
-   fun:_dbus_read
-   obj:*/libdbus-1.so*
+   fun:_ZN7SbPList4growEi
+   fun:_ZN13SoAuditorList6appendEPvN8SoNotRec4TypeE
+   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
+   fun:_ZN13SoFieldSensor6attachEP7SoField
 }
