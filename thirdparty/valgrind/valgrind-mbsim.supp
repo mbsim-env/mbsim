@@ -523,3 +523,27 @@
    ...
    fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
 }
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN11SoSeparator14getBoundingBoxEP22SoGetBoundingBoxAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN11SoSeparator14getBoundingBoxEP22SoGetBoundingBoxAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB4readEP7SoInputRP6SoNode
+}
