@@ -246,6 +246,39 @@
    fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
 }
 {
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znam
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
    X
    Memcheck:Leak
    match-leak-kinds: possible
@@ -393,4 +426,68 @@
    fun:_ZN13SoAuditorList6appendEPvN8SoNotRec4TypeE
    fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
    fun:_ZN13SoFieldSensor6attachEP7SoField
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
 }
