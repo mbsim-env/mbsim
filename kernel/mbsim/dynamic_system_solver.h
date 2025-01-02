@@ -636,6 +636,8 @@ namespace MBSim {
 
       std::vector<StateTable>& getStateTable() { return tabz; }
 
+      std::pair<std::set<int>, std::set<int>> getTrivialStates();
+
       void setCompressionLevel(int level) { compressionLevel=level; }
       void setChunkSize(int size) { chunkSize=size; }
       void setCacheSize(int size) { cacheSize=size; }
@@ -958,6 +960,9 @@ namespace MBSim {
       std::unique_ptr<MultiDimNewtonMethod> nonlinearConstraintNewtonSolver;
       std::unique_ptr<ConstraintResiduum> constraintResiduum;
       std::unique_ptr<ConstraintJacobian> constraintJacobian;
+
+      std::vector<std::string> saved_trivialObject;
+      std::vector<std::tuple<Object*, fmatvec::VecInt, fmatvec::VecInt>> trivialObjectStates;
   };
 
   template<class Env>

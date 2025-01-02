@@ -123,6 +123,13 @@ namespace MBSim {
       // This should be one of the very first actions, e.g. to enable element to access the Environment of ds during initialization.
       setDynamicSystemSolver(this);
 
+      if(saved_trivialObject.size()>0) {
+        if(saved_trivialObject.size()!=trivialObjectStates.size())
+          throwError("Illegal input in trivialObjectStates");
+        for(size_t i=0; i<trivialObjectStates.size(); ++i)
+          get<0>(trivialObjectStates[i]) = getByPath<Object>(saved_trivialObject[i]);
+      }
+
       Group::init(stage, config);
     }
     else if (stage == unknownStage) {
@@ -1541,6 +1548,24 @@ namespace MBSim {
     if (e)
       setUseConstraintSolverForPlot(E(e)->getText<bool>());
 
+    e=E(element)->getFirstElementChildNamed(MBSIM%"trivialObjectStates");
+    saved_trivialObject.clear();
+    trivialObjectStates.clear();
+    while(e) {
+      auto ref=E(e)->getAttribute("ref");
+      saved_trivialObject.emplace_back(ref);
+      auto ee=E(e)->getFirstElementChildNamed(MBSIM%"qIndices");
+      VecInt qIndices;
+      if(ee)
+        qIndices<<=E(ee)->getText<VecInt>();
+      ee=E(e)->getFirstElementChildNamed(MBSIM%"uIndices");
+      VecInt uIndices;
+      if(ee)
+        uIndices<<=E(ee)->getText<VecInt>();
+      trivialObjectStates.emplace_back(nullptr, qIndices, uIndices);
+      e=E(e)->getNextElementSiblingNamed(MBSIM%"trivialObjectStates");
+    }
+
     e = E(element)->getFirstElementChildNamed(MBSIM%"compressionLevel");
     if(e) setCompressionLevel(E(e)->getText<int>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"chunkSize");
@@ -1781,6 +1806,22 @@ namespace MBSim {
     if(!mbsimEnvironment)
       mbsimEnvironment=getEnvironment<MBSimEnvironment>();
     return mbsimEnvironment;
+  }
+
+  pair<set<int>, set<int>> DynamicSystemSolver::getTrivialStates() {
+    set<int> qisi;
+    set<int> uisi;
+    auto *qDSS = getq()();
+    auto *uDSS = getu()();
+    for(auto [trivialObj, qIndices, uIndices] : trivialObjectStates) {
+      auto *q = trivialObj->getq()();
+      auto *u = trivialObj->getu()();
+      for(auto idx : qIndices)
+        qisi.emplace(q-qDSS+idx);
+      for(auto idx : uIndices)
+        uisi.emplace(u-uDSS+idx);
+    }
+    return {std::move(qisi), std::move(uisi)};
   }
 
 }

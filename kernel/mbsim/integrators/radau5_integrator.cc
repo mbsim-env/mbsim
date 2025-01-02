@@ -126,18 +126,20 @@ namespace MBSim {
     // res0 is later used for the numerical part of the jacobian
     self->fzdot[self->formalism](cols,t,y_,self->res0(),rpar,ipar);
 
-    // the columns for la are given analytically
-    Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
-    J.set(RuMove, self->Rla, Minv_Jrla);
-    if(self->formalism==DAE1)
-      J.set(RlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
-    // the rest of the entries in these columns are 0
-    for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
-      if(!self->reduced)
-        for(int r=0; r<self->Ru.start(); ++r)
-          J(r,c)=0;
-      for(int r=self->Ru.end()+1; r<(self->formalism==DAE1 ? self->Rla.start()-1 : *cols); ++r)
-        J(r-rowMove,c)=0;
+    if(self->formalism>0) {
+      // the columns for la are given analytically
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(RuMove, self->Rla, Minv_Jrla);
+      if(self->formalism==DAE1)
+        J.set(RlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
+      // the rest of the entries in these columns are 0
+      for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
+        if(!self->reduced)
+          for(int r=0; r<self->Ru.start(); ++r)
+            J(r,c)=0;
+        for(int r=self->Ru.end()+1; r<(self->formalism==DAE1 ? self->Rla.start()-1 : *cols); ++r)
+          J(r-rowMove,c)=0;
+      }
     }
 
     if(self->formalism==GGL) {
@@ -159,10 +161,34 @@ namespace MBSim {
       }
     }
 
+    // all cols of qTrivialStates are 0
+    for(auto c : self->qTrivialStates)
+      for(int r=0; r<*rows; ++r)
+        J(r,c)=0;
+
+    // analytic cols for uTrivialStates
+    if(!self->uTrivialStates.empty()) {
+      auto T = self->system->evalT();
+      auto WTT = self->system->evalW().T()*T;
+      for(auto c : self->uTrivialStates) {
+        for(int r=self->system->getqSize(); r<self->system->getqSize()+self->system->getuSize()+self->system->getxSize()-1; ++r)
+          J(r-rowMove,c)=0;
+        if(!self->reduced)
+          J.set(self->Rq , RangeV(c+self->system->getqSize(),c+self->system->getqSize()), T.col(c));
+        if(self->formalism>0)
+          J.set(RlaMove, RangeV(c+self->system->getqSize(),c+self->system->getqSize()), WTT.col(c));
+      }
+    }
+
     // now the finite difference of all other columns
     // this code is taken from radau5.f JACOBIAN IS FULL,
     // but converted to C and skipping the last columns of the jacobian for la which is given analytically
     for(int c=0; c<self->system->getqSize()+self->system->getuSize()+self->system->getxSize(); ++c) {
+      if(self->qTrivialStates.find(c)!=self->qTrivialStates.end())
+        continue;
+      if(self->uTrivialStates.find(c-self->system->getqSize())!=self->uTrivialStates.end())
+        continue;
+
       double ySafe=y_[c];
       double delta=sqrt(macheps*max(1.e-5,abs(ySafe)));
       y_[c]=ySafe+delta;
@@ -381,6 +407,8 @@ namespace MBSim {
       lWork = neq*(neq-nq+12)+(neq-nq)*(1+3*(neq-nq))+20;
     }
 
+    tie(qTrivialStates, uTrivialStates) = self->system->getTrivialStates();
+
     // we define a iWork array of size 1 larger then needed for RADUA5 and extend this array to the negative range.
     // iWork[0...] (= iWorkExtended[1...]) is used for RADAU5
     // iWork[-1] (= iWorkExtended[0]) is used to pass a special flag for jacobian-recalculation a adapted RADAU5 code
@@ -399,7 +427,7 @@ namespace MBSim {
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
-    int iJac = formalism>0; // jacobian is computed
+    int iJac = formalism>0 || qTrivialStates.size()>0 || uTrivialStates.size()>0 ; // jacobian is computed
                             // - for ODE as full matrix by radau5 by finite differences
                             // - for all other as full matrix by finite differences for everything except la which is analytical
 

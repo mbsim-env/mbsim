@@ -90,7 +90,9 @@ namespace MBSim {
 
       fmatvec::Vec res0, res1; // residual work arrays for jacobian evaluation
       fmatvec::RangeV Rq, Ru, Rz, Rla, Rl; // ranges in y and jacobimatrix for q, u, z, la and GGL alg.-states l
-                                           //
+
+      std::set<int> qTrivialStates, uTrivialStates;
+
       int maxNewtonIter { 0 };
       double newtonIterTol { 0 };
       double jacobianRecomputation { 0 };
