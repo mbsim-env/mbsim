@@ -38,6 +38,7 @@ using namespace xercesc;
 
 namespace MBSim {
 
+  //mfmf adapt mbsimgui: this class and DSS.trivialObjectStates
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RADAU5Integrator)
 
   RADAU5Integrator::Fzdot RADAU5Integrator::fzdot[5];
