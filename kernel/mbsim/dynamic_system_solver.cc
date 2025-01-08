@@ -437,6 +437,16 @@ namespace MBSim {
       Group::init(stage, config);
 
       setUpObjectsWithNonConstantMassMatrix();
+
+      // check if the trivial object states indices are valid
+      for(auto [trivialObj, qIndices, uIndices] : trivialObjectStates) {
+        for(auto idx : qIndices)
+          if(idx<0 || idx>=trivialObj->getqSize())
+            throwError("(DynamicSystemSolver::init()): The object "+trivialObj->getPath()+" has not q index "+to_string(idx));
+        for(auto idx : uIndices)
+          if(idx<0 || idx>=trivialObj->getuSize())
+            throwError("(DynamicSystemSolver::init()): The object "+trivialObj->getPath()+" has not u index "+to_string(idx));
+      }
     }
     else if (stage == preInit) {
       if(contactSolver==unknownSolver)
@@ -1562,6 +1572,9 @@ namespace MBSim {
       VecInt uIndices;
       if(ee)
         uIndices<<=E(ee)->getText<VecInt>();
+      // xmlflat uses 1-based indices -> convert to 0-based c++ indices
+      for_each(qIndices.begin(), qIndices.end(), [](auto &x){ x--; });
+      for_each(uIndices.begin(), uIndices.end(), [](auto &x){ x--; });
       trivialObjectStates.emplace_back(nullptr, qIndices, uIndices);
       e=E(e)->getNextElementSiblingNamed(MBSIM%"trivialObjectStates");
     }
