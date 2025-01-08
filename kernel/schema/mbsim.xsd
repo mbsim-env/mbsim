@@ -848,42 +848,6 @@
               Definiert, ob die mengenwertigen Kraftgesetze auch in der Plot-Routine mit dem definierten Lösungsverfahren berechnet aus <code>&lt;constraintSolver&gt;</code> werden sollen (true), oder ob für den Plot immer der direkte Löser aus <code>&lt;smoothSolver&gt;</code> verwendet werden soll (false).
             </xs:documentation></xs:annotation>
           </xs:element>
-          <xs:choice minOccurs="0" maxOccurs="unbounded">
-            <xs:element name="trivialObjectStates" minOccurs="0" maxOccurs="unbounded">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Definiert Objects und dessen einzelne q und/oder u states welche nicht in die Berechnung der DSS Terme
-                <object class="inlineeqn">T</object>,
-                <object class="inlineeqn">M</object>,
-                <object class="inlineeqn">h</object>,
-                <object class="inlineeqn">W</object>,
-                <object class="inlineeqn">V</object> und
-                <object class="inlineeqn">f</object> (RHS der ersten Ordnung states)
-                eingehen.
-                Dies ist zum Beispiel der Fall wenn ein Object state extra eingeführt wurden um diesen dann über bilaterale Links wieder
-                exakt zu 0 zu bringen (z.B. um einen lambda Werte zu erhalten welcher für Reibberechnung in
-                <object class="inlineeqn">V</object> verwendet werden kann).
-                Diese Information kann z.B. von impliziten Integratoren verwendet werden um bezüglich dieser States keine
-                numerische Jacobi-Matrix zu bilden: die entsprechenden Einträge in der Jacobi-Matrix sind entweder 0 oder können
-                analytisch berechnet werden da nur eine lineare Abhängigkeit von diesem State existiert.
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:sequence>
-                  <xs:element name="qIndices" minOccurs="0" type="pv:indexVector">
-                    <xs:annotation><xs:documentation>
-                      Vektor der indices der q-States welche trivial sind.
-                    </xs:documentation></xs:annotation>
-                  </xs:element>
-                  <xs:element name="uIndices" minOccurs="0" type="pv:indexVector">
-                    <xs:annotation><xs:documentation>
-                      Vektor der indices der u-States welche trivial sind.
-                    </xs:documentation></xs:annotation>
-                  </xs:element>
-                </xs:sequence>
-                <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
-              </xs:complexType>
-            </xs:element>
-            <xs:element ref="pv:Embed"/>
-          </xs:choice>
           <xs:element name="compressionLevel" minOccurs="0" type="pv:integerFullEval">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Definiert den compressions level (0-9) für HDF5 output files: 0: keine compression, 9: stärkste compression (Default: 1)
@@ -898,6 +862,52 @@
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Definiert die Anzahl der Zeilen der nativen cache Größe. HDF5 schreibaktionen werden nur ausgeführt wenn der cache voll ist. (Default: 100)
             </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="advancedProperties" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Bei allen dieser Optionen handelt es sich um eine Einstellung für Experten für das Gesamtsystems.
+              Die Definitionen dieser Optionen beeinflusst lediglich die Rechenperformance aber nicht bzw. nur numerisch das Ergebniss.
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:sequence>
+                <xs:choice minOccurs="0" maxOccurs="unbounded">
+                  <xs:element name="trivialObjectStates" minOccurs="0" maxOccurs="unbounded">
+                    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                      Definiert Objects und dessen einzelne q und/oder u states welche nicht in die Berechnung der DynamicSystemSolver Terme
+                      <object class="inlineeqn">T</object>,
+                      <object class="inlineeqn">M</object>,
+                      <object class="inlineeqn">h</object>,
+                      <object class="inlineeqn">W</object>,
+                      <object class="inlineeqn">V</object> und
+                      <object class="inlineeqn">f</object> (RHS der ersten Ordnung states)
+                      eingehen.
+                      Dies ist zum Beispiel der Fall wenn in einem Object state extra eingeführt wurden um diesen dann über bilaterale Links wieder
+                      exakt zu 0 zu bringen (z.B. um einen lambda Werte zu erhalten welcher für Reibberechnung in
+                      <object class="inlineeqn">V</object> verwendet werden kann).
+                      Diese Information kann z.B. von impliziten Integratoren verwendet werden um bezüglich dieser States keine
+                      numerische Jacobi-Matrix zu bilden: die entsprechenden Einträge in der Jacobi-Matrix sind entweder 0 oder können
+                      analytisch berechnet werden da nur eine lineare Abhängigkeit von diesen States existiert.
+                    </xs:documentation></xs:annotation>
+                    <xs:complexType>
+                      <xs:sequence>
+                        <xs:element name="qIndices" minOccurs="0" type="pv:indexVector">
+                          <xs:annotation><xs:documentation>
+                            Vektor der indices der q-States welche trivial sind.
+                          </xs:documentation></xs:annotation>
+                        </xs:element>
+                        <xs:element name="uIndices" minOccurs="0" type="pv:indexVector">
+                          <xs:annotation><xs:documentation>
+                            Vektor der indices der u-States welche trivial sind.
+                          </xs:documentation></xs:annotation>
+                        </xs:element>
+                      </xs:sequence>
+                      <xs:attribute name="ref" type="ObjectReferenceType" use="required"/>
+                    </xs:complexType>
+                  </xs:element>
+                  <xs:element ref="pv:Embed"/>
+                </xs:choice>
+              </xs:sequence>
+            </xs:complexType>
           </xs:element>
         </xs:sequence>
       </xs:extension>

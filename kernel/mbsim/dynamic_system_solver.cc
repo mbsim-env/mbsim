@@ -1558,33 +1558,36 @@ namespace MBSim {
     if (e)
       setUseConstraintSolverForPlot(E(e)->getText<bool>());
 
-    e=E(element)->getFirstElementChildNamed(MBSIM%"trivialObjectStates");
-    saved_trivialObject.clear();
-    trivialObjectStates.clear();
-    while(e) {
-      auto ref=E(e)->getAttribute("ref");
-      saved_trivialObject.emplace_back(ref);
-      auto ee=E(e)->getFirstElementChildNamed(MBSIM%"qIndices");
-      VecInt qIndices;
-      if(ee)
-        qIndices<<=E(ee)->getText<VecInt>();
-      ee=E(e)->getFirstElementChildNamed(MBSIM%"uIndices");
-      VecInt uIndices;
-      if(ee)
-        uIndices<<=E(ee)->getText<VecInt>();
-      // xmlflat uses 1-based indices -> convert to 0-based c++ indices
-      for_each(qIndices.begin(), qIndices.end(), [](auto &x){ x--; });
-      for_each(uIndices.begin(), uIndices.end(), [](auto &x){ x--; });
-      trivialObjectStates.emplace_back(nullptr, qIndices, uIndices);
-      e=E(e)->getNextElementSiblingNamed(MBSIM%"trivialObjectStates");
-    }
-
     e = E(element)->getFirstElementChildNamed(MBSIM%"compressionLevel");
     if(e) setCompressionLevel(E(e)->getText<int>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"chunkSize");
     if(e) setChunkSize(E(e)->getText<int>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"cacheSize");
     if(e) setCacheSize(E(e)->getText<int>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"advancedProperties");
+    if(e) {
+      auto ee=E(e)->getFirstElementChildNamed(MBSIM%"trivialObjectStates");
+      saved_trivialObject.clear();
+      trivialObjectStates.clear();
+      while(ee) {
+        auto ref=E(ee)->getAttribute("ref");
+        saved_trivialObject.emplace_back(ref);
+        auto eee=E(ee)->getFirstElementChildNamed(MBSIM%"qIndices");
+        VecInt qIndices;
+        if(eee)
+          qIndices<<=E(eee)->getText<VecInt>();
+        eee=E(ee)->getFirstElementChildNamed(MBSIM%"uIndices");
+        VecInt uIndices;
+        if(eee)
+          uIndices<<=E(eee)->getText<VecInt>();
+        // xmlflat uses 1-based indices -> convert to 0-based c++ indices
+        for_each(qIndices.begin(), qIndices.end(), [](auto &x){ x--; });
+        for_each(uIndices.begin(), uIndices.end(), [](auto &x){ x--; });
+        trivialObjectStates.emplace_back(nullptr, qIndices, uIndices);
+        ee=E(ee)->getNextElementSiblingNamed(MBSIM%"trivialObjectStates");
+      }
+    }
   }
 
   void DynamicSystemSolver::addToGraph(Graph* graph, SqrMat &A, int i, vector<Element*>& eleList) {
@@ -1821,7 +1824,7 @@ namespace MBSim {
     return mbsimEnvironment;
   }
 
-  pair<set<int>, set<int>> DynamicSystemSolver::getTrivialStates() {
+  pair<set<int>, set<int>> DynamicSystemSolver::calcTrivialStates() {
     set<int> qisi;
     set<int> uisi;
     auto *qDSS = getq()();

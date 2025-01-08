@@ -115,6 +115,9 @@ namespace MBSimGUI {
 
     cacheSize = new ExtWidget("In-memory output chunk size (number of rows)",new ChoiceWidget(new ScalarWidgetFactory("100"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"cacheSize");
     addToTab("Extra", cacheSize);
+
+    advancedProperties = new ExtWidget("Advanced properties",new XMLEditorWidget,true,false,MBSIM%"advancedProperties");
+    addToTab("Extra", advancedProperties);
   }
 
   DOMElement* DynamicSystemSolverPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -144,6 +147,7 @@ namespace MBSimGUI {
     compressionLevel->initializeUsingXML(item->getXMLElement());
     chunkSize->initializeUsingXML(item->getXMLElement());
     cacheSize->initializeUsingXML(item->getXMLElement());
+    advancedProperties->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -174,6 +178,7 @@ namespace MBSimGUI {
     compressionLevel->writeXMLFile(item->getXMLElement());
     chunkSize->writeXMLFile(item->getXMLElement());
     cacheSize->writeXMLFile(item->getXMLElement());
+    advancedProperties->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 

@@ -38,7 +38,6 @@ using namespace xercesc;
 
 namespace MBSim {
 
-  //mfmf adapt mbsimgui: this class and DSS.trivialObjectStates
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RADAU5Integrator)
 
   RADAU5Integrator::Fzdot RADAU5Integrator::fzdot[5];
@@ -408,7 +407,7 @@ namespace MBSim {
       lWork = neq*(neq-nq+12)+(neq-nq)*(1+3*(neq-nq))+20;
     }
 
-    tie(qTrivialStates, uTrivialStates) = self->system->getTrivialStates();
+    tie(qTrivialStates, uTrivialStates) = self->system->calcTrivialStates();
 
     // we define a iWork array of size 1 larger then needed for RADUA5 and extend this array to the negative range.
     // iWork[0...] (= iWorkExtended[1...]) is used for RADAU5

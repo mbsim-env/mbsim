@@ -636,7 +636,7 @@ namespace MBSim {
 
       std::vector<StateTable>& getStateTable() { return tabz; }
 
-      std::pair<std::set<int>, std::set<int>> getTrivialStates();
+      std::pair<std::set<int>, std::set<int>> calcTrivialStates();
 
       void setCompressionLevel(int level) { compressionLevel=level; }
       void setChunkSize(int size) { chunkSize=size; }
