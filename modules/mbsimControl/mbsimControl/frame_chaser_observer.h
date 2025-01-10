@@ -80,9 +80,9 @@ namespace MBSimControl {
       void plot() override;
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (size,(double),1)(offset,(double),1)
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, MBSim::tag, (optional (path,(bool),false)(size,(double),1)(offset,(double),1)
         (transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        ombvFrame = std::shared_ptr<MBSim::OpenMBVFrame>(new MBSim::OpenMBVFrame(size, offset, fmatvec::Vec3({-1,1,1}),
+        ombvFrame = std::shared_ptr<MBSim::OpenMBVFrame>(new MBSim::OpenMBVFrame(size, offset, path, fmatvec::Vec3({-1,1,1}),
                                                                    transparency, pointSize, lineWidth));
       }
   };
