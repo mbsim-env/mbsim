@@ -126,7 +126,7 @@ namespace MBSim {
        * \brief plots time series header
        * \param invocing parent class
        */
-      virtual void init(InitStage stage, const InitConfigSet &config);
+      virtual void init(InitStage stage, const InitConfigSet &config=InitConfigSet());
 
       /**
        * \brief creates the plotGroup for H5-output

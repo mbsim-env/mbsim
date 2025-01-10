@@ -59,9 +59,10 @@ namespace MBSim {
    * (xi,fi) i=1..N is being interpolated by N-1 piecewise polynomials Si of degree 1 yielding a globally weak differentiable curve
    * in the context of this class the second derivative is defined to be zero everywhere (which is mathematically wrong)
    */
-  template<typename Ret, typename Arg>
-  class PiecewisePolynomFunction<Ret(Arg)> : public Function<Ret(Arg)> {
-    using B = fmatvec::Function<Ret(Arg)>; 
+  template<typename Ret>
+  class PiecewisePolynomFunction<Ret(double)> : public Function<Ret(double)> {
+    protected:
+    using B = fmatvec::Function<Ret(double)>; 
 
     public:
       enum InterpolationMethod {
@@ -83,8 +84,8 @@ namespace MBSim {
 
       std::pair<int, int> getRetSize() const { return std::make_pair(coefs[0].cols(),1); }
 
-      void init(Element::InitStage stage, const InitConfigSet &config) {
-        Function<Ret(Arg)>::init(stage, config);
+      void init(Element::InitStage stage, const InitConfigSet &config=InitConfigSet()) {
+        Function<Ret(double)>::init(stage, config);
         if(stage==Element::preInit) {
           if(interpolationMethod!=useBreaksAndCoefs) {
             if(y.rows() != x.size())
@@ -150,9 +151,9 @@ namespace MBSim {
         coefs.clear();
       }
 
-      Ret operator()(const Arg &x) { return f(x); }
-      typename B::DRetDArg parDer(const Arg &x) { return fd(x); }
-      typename B::DRetDArg parDerDirDer(const Arg &argDir, const Arg &arg) { return fdd(arg)*ToDouble<Arg>::cast(argDir); }
+      Ret operator()(const double &x) { return f(x); }
+      typename B::DRetDArg parDer(const double &x) { return fd(x); }
+      typename B::DRetDArg parDerDirDer(const double &argDir, const double &arg) { return fdd(arg)*argDir; }
 
       /*! 
        * \return polynomial coefficients
@@ -264,19 +265,20 @@ namespace MBSim {
        */
       void calculatePLinear();
 
+#ifndef SWIG
      /**
        * piecewise polynomial interpolation - zeroth derivative
        */
       class ZerothDerivative {
         public:
-          ZerothDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          ZerothDerivative(PiecewisePolynomFunction<Ret(double)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
 
           void reset() { firstCall = true; }
 
-          Ret operator()(const Arg &x);
+          Ret operator()(const double &x);
 
         private:
-          PiecewisePolynomFunction<Ret(Arg)> *parent;
+          PiecewisePolynomFunction<Ret(double)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;
@@ -287,14 +289,14 @@ namespace MBSim {
        */
       class FirstDerivative {
         public:
-          FirstDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          FirstDerivative(PiecewisePolynomFunction<Ret(double)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
 
           void reset() { firstCall = true; }
 
-          Ret operator()(const Arg& x);
+          Ret operator()(const double& x);
 
         private:
-          PiecewisePolynomFunction<Ret(Arg)> *parent;
+          PiecewisePolynomFunction<Ret(double)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;
@@ -305,18 +307,19 @@ namespace MBSim {
        */
       class SecondDerivative {
         public:
-          SecondDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          SecondDerivative(PiecewisePolynomFunction<Ret(double)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
 
           void reset() { firstCall = true; }
 
-          Ret operator()(const Arg& x);
+          Ret operator()(const double& x);
 
         private:
-          PiecewisePolynomFunction<Ret(Arg)> *parent;
+          PiecewisePolynomFunction<Ret(double)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;
       };
+#endif
 
     private:
       ZerothDerivative f;
@@ -324,336 +327,8 @@ namespace MBSim {
       SecondDerivative fdd;
   };
 
-  template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplinePeriodic() {
-    double hi, hii;
-    int N = x.size();
-    if(nrm2(y.row(0)-y.row(y.rows()-1))>epsroot) this->throwError("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+fmatvec::toString(y.row(0))+"!="+fmatvec::toString(y.row(y.rows()-1))+" =f(end)");
-    fmatvec::SqrMat C(N-1,fmatvec::INIT,0.0);
-    fmatvec::Mat rs(N-1,y.cols(),fmatvec::INIT,0.0);
-
-    // Matrix C and vector rs C*c=rs
-    for(int i=0; i<N-3;i++) {
-      hi = x(i+1) - x(i);
-      hii = x(i+2)-x(i+1);
-      C(i,i) = hi;
-      C(i,i+1) = 2*(hi+hii);
-      C(i,i+2) = hii;
-      rs.set(i, 3.*((y.row(i+2)-y.row(i+1))/hii - (y.row(i+1)-y.row(i))/hi));
-    }
-
-    // last but one row
-    hi = x(N-2)-x(N-3);
-    hii = x(N-1)-x(N-2);
-    C(N-3,N-3) = hi;
-    C(N-3,N-2)= 2*(hi+hii);
-    C(N-3,0)= hii;
-    rs.set(N-3, 3.*((y.row(N-1)-y.row(N-2))/hii - (y.row(N-2)-y.row(N-3))/hi));
-
-    // last row
-    double h1 = x(1)-x(0);
-    double hN_1 = x(N-1)-x(N-2);
-    C(N-2,0) = 2*(h1+hN_1);
-    C(N-2,1) = h1;
-    C(N-2,N-2)= hN_1;
-    rs.set(N-2, 3.*((y.row(1)-y.row(0))/h1 - (y.row(0)-y.row(N-2))/hN_1));
-
-    // solve C*c = rs -> TODO BETTER: RANK-1-MODIFICATION FOR LINEAR EFFORT (Simeon - Numerik 1)
-    fmatvec::Mat c = slvLU(C,rs);
-    fmatvec::Mat ctmp(N,y.cols());
-    ctmp.set(N-1, c.row(0)); // CN = c1
-    ctmp.set(fmatvec::RangeV(0,N-2),fmatvec::RangeV(0,y.cols()-1), c);
-
-    // vector ordering of the further coefficients
-    fmatvec::Mat d(N-1,y.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat b(N-1,y.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat a(N-1,y.cols(),fmatvec::INIT,0.0);
-
-    for(int i=0; i<N-1; i++) {
-      hi = x(i+1)-x(i);  
-      a.set(i, y.row(i));
-      d.set(i, (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi);
-      b.set(i, (y.row(i+1)-y.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi);
-    }
-
-    breaks.resize(N);
-    breaks = x;
-    coefs.clear();
-    coefs.push_back(d);
-    coefs.push_back(c);
-    coefs.push_back(b);
-    coefs.push_back(a);
-  }
-
-  template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplineNatural() {
-    // first row
-    int i=0;
-    int N = x.size();
-    if(N<4) this->throwError("(PiecewisePolynomFunction::calculateSplineNatural): number of datapoints does not match, must be greater 3");
-    fmatvec::SqrMat C(N-2,fmatvec::INIT,0.0);
-    fmatvec::Mat rs(N-2,y.cols(),fmatvec::INIT,0.0);
-    double hi = x(i+1)-x(i);
-    double hii = x(i+2)-x(i+1);
-    C(i,i) = 2*hi+2*hii;
-    C(i,i+1) = hii;
-    rs.set(i, 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi);
-
-    // last row
-    i = (N-3);
-    hi = x(i+1)-x(i);
-    hii = x(i+2)-x(i+1);
-    C(i,i-1) = hi;
-    C(i,i) = 2*hii + 2*hi;
-    rs.set(i, 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi);
-
-    for(i=1;i<N-3;i++) { 
-      hi = x(i+1)-x(i);
-      hii = x(i+2)-x(i+1);
-      C(i,i-1) = hi;
-      C(i,i) = 2*(hi+hii);
-      C(i,i+1) = hii;
-      rs.set(i, 3.*(y.row(i+2)-y.row(i+1))/hii - 3.*(y.row(i+1)-y.row(i))/hi);
-    }
-
-    // solve C*c = rs with C tridiagonal
-    fmatvec::Mat C_rs(N-2,N-1+y.cols(),fmatvec::INIT,0.0);
-    C_rs.set(fmatvec::RangeV(0,N-3),fmatvec::RangeV(0,N-3), C); // C_rs=[C rs] for Gauss in matrix
-    C_rs.set(fmatvec::RangeV(0,N-3),fmatvec::RangeV(N-2,N-2+y.cols()-1), rs);
-    for(i=1; i<N-2; i++) C_rs.set(i, C_rs.row(i) - C_rs.row(i-1)*C_rs(i,i-1)/C_rs(i-1,i-1)); // C_rs -> upper triangular matrix C1 -> C1 rs1
-    fmatvec::Mat rs1 = C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(N-2,N-2+y.cols()-1));
-    fmatvec::Mat C1 = C_rs(fmatvec::RangeV(0,N-3),fmatvec::RangeV(0,N-3));
-    fmatvec::Mat c(N-2,y.cols(),fmatvec::INIT,0.0);
-    for(i=N-3;i>=0 ;i--) { // backward substitution
-      fmatvec::RowVecV sum_ciCi(y.cols(),fmatvec::NONINIT);
-      sum_ciCi.init(0.);
-      for(int ii=i+1; ii<=N-3; ii++) sum_ciCi = sum_ciCi + C1(i,ii)*c.row(ii);
-      c.set(i, (rs1.row(i) - sum_ciCi)/C1(i,i));
-    }
-    fmatvec::Mat ctmp(N,y.cols(),fmatvec::INIT,0.0);
-    ctmp.set(fmatvec::RangeV(1,N-2),fmatvec::RangeV(0,y.cols()-1), c); // c1=cN=0 natural splines c=[ 0; c; 0]
-
-    // vector ordering of the further coefficients
-    fmatvec::Mat d(N-1,y.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat b(N-1,y.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat a(N-1,y.cols(),fmatvec::INIT,0.0);
-
-    for(i=0; i<N-1; i++) {
-      hi = x(i+1)-x(i);  
-      a.set(i, y.row(i));
-      d.set(i, (ctmp.row(i+1) - ctmp.row(i) ) / 3. / hi);
-      b.set(i, (y.row(i+1)-y.row(i)) / hi - (ctmp.row(i+1) + 2.*ctmp.row(i) ) / 3. * hi);
-    }
-
-    breaks.resize(N);
-    breaks = x;
-    coefs.clear();
-    coefs.push_back(d);
-    coefs.push_back(ctmp(fmatvec::RangeV(0,N-2),fmatvec::RangeV(0,y.cols()-1)));
-    coefs.push_back(b);
-    coefs.push_back(a);
-  }
-
-  template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::calculatePLinear() {
-    int N = x.size(); // number of supporting points
-
-    breaks.resize(N);
-    breaks = x;
-
-    fmatvec::Mat m(N-1,y.cols(),fmatvec::INIT,0.0);
-    fmatvec::Mat a(N-1,y.cols(),fmatvec::INIT,0.0);
-    for(int i=1;i<N;i++) {
-      m.set(i-1, (y.row(i)-y.row(i-1))/(x(i)-x(i-1))); // slope
-      a.set(i-1, y.row(i-1));
-    }
-    coefs.clear();
-    coefs.push_back(m);
-    coefs.push_back(a);
-  }
-          
-  template<typename Ret, typename Arg>
-  Ret PiecewisePolynomFunction<Ret(Arg)>::ZerothDerivative::operator()(const Arg& x_) {
-    double x = ToDouble<Arg>::cast(x_);
-    if(parent->extrapolationMethod==error) {
-      if(x-1e-13>(parent->breaks)(parent->nPoly)) 
-        throw std::runtime_error("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-      if(x+1e-13<(parent->breaks)(0)) 
-        throw std::runtime_error("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", lower bound= "+fmatvec::toString((parent->breaks)(0)));
-    }
-    if(parent->extrapolationMethod==linear && (x<parent->breaks(0) || x>parent->breaks(parent->nPoly))) {
-      int idx = x<parent->breaks(0) ? 0 : parent->nPoly;
-      auto xv = FromDouble<Arg>::cast(parent->breaks(idx));
-      auto value = parent->f(xv);
-      auto der = parent->fd(xv);
-      return value + der * (x - parent->breaks(idx));
-    }
-
-    if ((fabs(x-xSave)<macheps) && !firstCall)
-      return FromVecV<Ret>::cast(ySave);
-    else {
-      firstCall = false;
-      if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
-        while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
-          (parent->index)--;
-      else if(x>(parent->breaks)((parent->index)+1)) { // saved index still OK? otherwise search upwards
-        while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x)
-          (parent->index)++;
-        (parent->index)--;  
-      }
-
-      const double dx = x - (parent->breaks)(parent->index); // local coordinate
-      fmatvec::VecV yi = trans(((parent->coefs)[0]).row(parent->index));
-      for(int i=1;i<=(parent->order);i++) // Horner scheme
-        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index));
-      xSave=x;
-      ySave <<= yi;
-      return FromVecV<Ret>::cast(yi);
-    }
-  }
-
-  template<typename Ret, typename Arg>
-  Ret PiecewisePolynomFunction<Ret(Arg)>::FirstDerivative::operator()(const Arg& x_) {
-    double x = ToDouble<Arg>::cast(x_);
-    if(parent->extrapolationMethod==error) {
-      if(x-1e-13>(parent->breaks)(parent->nPoly)) throw std::runtime_error("(PiecewisePolynomFunction::diff1): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-      if(x+1e-13<(parent->breaks)(0)) throw std::runtime_error("(PiecewisePolynomFunction::diff1): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
-    }
-    if(parent->extrapolationMethod==linear && (x<parent->breaks(0) || x>parent->breaks(parent->nPoly))) {
-      int idx = x<parent->breaks(0) ? 0 : parent->nPoly;
-      auto xv = FromDouble<Arg>::cast(parent->breaks(idx));
-      auto der = parent->fd(xv);
-      return der;
-    }
-
-    if ((fabs(x-xSave)<macheps) && !firstCall)
-      return FromVecV<Ret>::cast(ySave);
-    else {
-      firstCall = false;
-      if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
-        while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
-          (parent->index)--;
-      else if(x>(parent->breaks)((parent->index)+1)) { // saved index still OK? otherwise search upwards
-        while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x)
-          (parent->index)++;
-        (parent->index)--;  
-      }
-
-      double dx = x - (parent->breaks)(parent->index);
-      fmatvec::VecV yi = trans(((parent->coefs)[0]).row(parent->index))*double(parent->order);
-      for(int i=1;i<parent->order;i++)
-        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i);
-      xSave=x;
-      ySave <<= yi;
-      return FromVecV<Ret>::cast(yi);
-    }
-  }
-
-  template<typename Ret, typename Arg>
-  Ret PiecewisePolynomFunction<Ret(Arg)>::SecondDerivative::operator()(const Arg& x_) {
-    double x = ToDouble<Arg>::cast(x_);
-    if(parent->extrapolationMethod==error) {
-      if(x-1e-13>(parent->breaks)(parent->nPoly)) throw std::runtime_error("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
-      if(x+1e-13<(parent->breaks)(0)) throw std::runtime_error("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
-    }
-    if(parent->extrapolationMethod==linear && (x<parent->breaks(0) || x>parent->breaks(parent->nPoly)))
-      return FromVecV<Ret>::cast(fmatvec::VecV(parent->getRetSize().first, fmatvec::INIT, 0.0));
-
-    if ((fabs(x-xSave)<macheps) && !firstCall)
-      return FromVecV<Ret>::cast(ySave);
-    else {
-      firstCall = false;
-      if(x<(parent->breaks)(parent->index)) // saved index still OK? otherwise search downwards
-        while((parent->index) > 0 && (parent->breaks)(parent->index) > x)
-          (parent->index)--;
-      else if(x>(parent->breaks)((parent->index)+1)) { // saved index still OK? otherwise search upwards
-        while((parent->index) < (parent->nPoly) && (parent->breaks)(parent->index) <= x)
-          (parent->index)++;
-        (parent->index)--;  
-      }
-
-      double dx = x - (parent->breaks)(parent->index);
-      fmatvec::VecV yi = trans(((parent->coefs)[0]).row(parent->index))*double(parent->order)*double((parent->order)-1);
-      for(int i=1;i<=((parent->order)-2);i++)
-        yi = yi*dx+trans(((parent->coefs)[i]).row(parent->index))*double((parent->order)-i)*double((parent->order)-i-1);
-      xSave=x;
-      ySave <<= yi;
-      return FromVecV<Ret>::cast(yi);
-    }
-  }
-
-  template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::initializeUsingXML(xercesc::DOMElement * element) {
-    xercesc::DOMElement *e;
-    fmatvec::VecV x;
-    fmatvec::MatV y;
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"x");
-    if (e) {
-      setx(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
-      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"y");
-      sety(MBXMLUtils::E(e)->getText<fmatvec::Mat>(x.size(), 0));
-    }
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
-    if (e) {
-      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"xy");
-      setxy(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
-    }
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"interpolationMethod");
-    if(e) { 
-      std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
-      str=str.substr(1,str.length()-2);
-      if(str=="cSplinePeriodic")      interpolationMethod=cSplinePeriodic;
-      else if(str=="cSplineNatural")  interpolationMethod=cSplineNatural;
-      else if(str=="piecewiseLinear") interpolationMethod=piecewiseLinear;
-      else interpolationMethod=useBreaksAndCoefs;
-    }
-
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"breaks");
-    if(e) { 
-      // set breaks
-      setBreaks(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
-
-      // count number of columns = dimension of the vector returned by this function
-      int nrCols = 0;
-      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
-      while(e) {
-        nrCols++;
-        e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
-      }
-
-      // read all coefficients element and convert to coefs
-      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
-      auto c=MBXMLUtils::E(e)->getText<fmatvec::Mat>();
-      std::vector<fmatvec::MatV> coefs(c.cols(), fmatvec::MatV(c.rows(),nrCols)); // init coefs with proper size
-      bool first=true;
-      int col = 0;
-      while(e) {
-        if(!first) // avoid double read of first coefficients element
-          c=MBXMLUtils::E(e)->getText<fmatvec::Mat>();
-        if(c.cols()!=static_cast<int>(coefs.size()))
-          this->throwError("The number of columns in the coefficients elements differ.");
-        if(c.rows()!=static_cast<int>(coefs[0].rows()))
-          this->throwError("The number of rows in the coefficients elements differ.");
-        for(int deg=0; deg<c.cols(); deg++)
-          coefs[deg].set(col, c.col(deg));
-        e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
-        col++;
-        first=false;
-      }
-      setCoefficients(coefs);
-      interpolationMethod=useBreaksAndCoefs;
-    }
-
-    e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"extrapolationMethod");
-    if(e) { 
-      std::string str=MBXMLUtils::X()%MBXMLUtils::E(e)->getFirstTextChild()->getData();
-      str=str.substr(1,str.length()-2);
-      if(str=="error")      extrapolationMethod=error;
-      else if(str=="continuePolynom")  extrapolationMethod=continuePolynom;
-      else if(str=="linear") extrapolationMethod=linear;
-      else this->throwError("Unknown extrapolationMethod.");
-    }
-  }
+  // the code is moved to piecewise_polynom_function_impl to avoid SWIG parsing errors
+  #include "piecewise_polynom_function_impl.h"
 
 }
 

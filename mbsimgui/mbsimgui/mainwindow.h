@@ -177,7 +177,6 @@ namespace MBSimGUI {
       void elementViewClicked(const QModelIndex &current);
       void parameterViewClicked(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
-      void updateEchoView();
       void updateStatus();
       void autoSaveProject();
       void updateNames(EmbedItemData *element);
@@ -214,6 +213,8 @@ namespace MBSimGUI {
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
+      void updateEchoView();
+      void clearEchoView(const QString &initialText="");
 
       template<class Container>
       QModelIndex getContainerIndex(Element *parent);

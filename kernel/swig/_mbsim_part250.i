@@ -70,6 +70,7 @@ namespace MBSim {
   class Room;
   class SpringDamper;
   class StandardDampingFunction;
+  template<typename Sig> class PiecewisePolynomFunction; 
   class FuncPairPlanarContourPoint;
 }
 #include "mbsim/contours/frustum.h"

@@ -42,6 +42,9 @@
 #include "utils.h"
 #include "project.h"
 #include "view_menu.h"
+#include "echo_view.h"
+#include <mbxmlutils/eval.h>
+#include <QMessageBox>
 
 using namespace MBXMLUtils;
 
@@ -121,6 +124,23 @@ namespace MBSimGUI {
       action->setEnabled(element->getParent()->getEnabled());
       connect(action,&QAction::toggled,mw,&MainWindow::enableElement);
       addAction(action);
+    }
+
+    if(!element->getMbsimguiContextAction().empty()) {
+      addSeparator();
+      for(auto &ca : element->getMbsimguiContextAction())
+        addAction(ca.first.c_str(), [ca, element](){
+          mw->clearEchoView(QString("Running action '")+ca.first.c_str()+"':\n\n");
+          try {
+            mw->updateParameters(element);
+            mw->eval->eval(ca.second, nullptr, true);
+            mw->updateEchoView();
+          }
+          catch(const std::exception &ex) {
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<std::endl;
+            mw->updateEchoView();
+          }
+        });
     }
   }
 

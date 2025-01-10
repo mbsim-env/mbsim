@@ -108,6 +108,92 @@
         </IvBody>
       </openMBVRigidBody>
     </RigidBody>
+    <RigidBody name="Box3">
+      <?MBSIMGUI_CONTEXT_ACTION name="Open plot dialog"
+        import matplotlib.pyplot
+        fig=matplotlib.pyplot.figure("Box3 x").show()?>
+      <frameOfReference ref="../Frame[I]"/>
+      <frameForKinematics ref="Frame[C]"/>
+      <mass>m2</mass>
+      <inertiaTensor>[[1,0,0] , [0,1,0] , [0,0,1]]</inertiaTensor>
+      <timeDependentTranslation>
+        <VectorValuedFunction>
+          <components>
+            <PiecewisePolynomFunction>
+              <xy>
+                ret=numpy.array([
+                  [0,(2*numHG-1)*0],
+                  [1,(2*numHG-1)*1],
+                  [2,(2*numHG-1)*2],
+                  [3,(2*numHG-1)*1],
+                  [4,(2*numHG-1)*0],
+                ])
+                if mbxmlutils.Qt.isGUI():
+                  try:
+                    import matplotlib.pyplot
+                  except ModuleNotFoundError:
+                    pass
+                  else:
+                    import numpy
+                    import mbsim
+                    import PySide2.QtCore
+                    fig=matplotlib.pyplot.figure("Box3 x")#mfmf getPath without counterName resolution
+                    class SkipCloseEventFilter(PySide2.QtCore.QObject):
+                      def eventFilter(self, obj, event):
+                        # skip close event -> just hide the windows (process all other eventy)
+                        return event.type()==PySide2.QtCore.QEvent.Close
+                    skipCloseEventFilter=SkipCloseEventFilter()
+                    fig.canvas.manager.window.installEventFilter(skipCloseEventFilter)
+                    pp=mbsim.PiecewisePolynomFunction_d()
+                    pp.setxy(ret)
+                    pp.init(mbsim.Element.preInit)
+                    x=numpy.linspace(ret[0,0], ret[-1,0], 1000)
+                    y=numpy.vectorize(lambda xx: pp(xx))(x)
+                    colors=matplotlib.rcParams['axes.prop_cycle'].by_key()['color']
+                    color=colors[numHG%len(colors)]
+                    matplotlib.pyplot.plot(ret[:,0], ret[:,1], label="Position x - Points", marker="x", color=color, linestyle=":")
+                    matplotlib.pyplot.plot(x, y, label="Position x", color=color, linewidth=2)
+                    matplotlib.pyplot.legend()
+                    matplotlib.pyplot.draw()
+              </xy>
+            </PiecewisePolynomFunction>
+            <ConstantFunction>
+              <a0>0</a0>
+            </ConstantFunction>
+            <ConstantFunction>
+              <a0>0</a0>
+            </ConstantFunction>
+          </components>
+        </VectorValuedFunction>
+      </timeDependentTranslation>
+      <frames>
+        <FixedRelativeFrame name="P1">
+          <enableOpenMBV>
+            <size>h2</size>
+            <offset>1</offset>
+          </enableOpenMBV>
+          <relativePosition>[0,-h2/2,0]</relativePosition>
+          <relativeOrientation>
+            <pv:cardan>
+              <pv:alpha>0</pv:alpha>
+              <pv:beta>a=9;ret=0</pv:beta>
+              <pv:gamma>0</pv:gamma>
+            </pv:cardan>
+          </relativeOrientation>
+        </FixedRelativeFrame>
+      </frames>
+      <contours/>
+      <openMBVRigidBody>
+        <IvBody name="dummy" xmlns="http://www.mbsim-env.de/OpenMBV">
+          <diffuseColor>[0.3333,1,0.3333]</diffuseColor>
+          <initialTranslation>[0,0,0]</initialTranslation>
+          <initialRotation>[0,0,0]</initialRotation>
+          <scaleFactor>1.5</scaleFactor>
+          <ivFileName>'../'+ivdir+'/hat.iv'</ivFileName>
+          <creaseEdges unit="degree">30</creaseEdges>
+        </IvBody>
+      </openMBVRigidBody>
+    </RigidBody>
   </objects>
   <links>
     <SpringDamper name="Feder1">
@@ -131,9 +217,14 @@
       <unloadedLength>l012[1]</unloadedLength>
       <enableOpenMBV>
           <colorRepresentation>"absoluteForce"</colorRepresentation>
-          <numberOfCoils>5</numberOfCoils>
+          <numberOfCoils>
+            mbxmlutils.staticData["saveSomeData"]=0.01
+            ret=5
+          </numberOfCoils>
           <springRadius>0.1</springRadius>
-          <crossSectionRadius>0.01</crossSectionRadius>
+          <crossSectionRadius>
+            ret=mbxmlutils.staticData["saveSomeData"] # access the staticData from above
+          </crossSectionRadius>
       </enableOpenMBV>
     </SpringDamper>
   </links>

@@ -34,6 +34,7 @@
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <QDir>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -150,6 +151,29 @@ namespace MBSimGUI {
       str = "/" + str;
       return str;
     }
+  }
+
+  DOMElement* Element::processIDAndHref(DOMElement* element) {
+    element = EmbedItemData::processIDAndHref(element);
+
+    mbsimguiContextAction.clear();
+    for(DOMNode *pi=E(element)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION"); pi!=nullptr;
+        pi=pi->getNextSibling()) {
+      if(pi->getNodeType()!=DOMNode::PROCESSING_INSTRUCTION_NODE)
+        continue;
+      if(X()%static_cast<DOMProcessingInstruction*>(pi)->getTarget()!="MBSIMGUI_CONTEXT_ACTION")
+        continue;
+      auto data=X()%static_cast<DOMProcessingInstruction*>(pi)->getData();
+      string name("name=\"");
+      if(data.substr(0, name.length())!=name)
+        continue;
+      auto end=data.find("\"", name.length());
+      if(end==string::npos)
+        continue;
+      mbsimguiContextAction.emplace_back(data.substr(name.length(), end-name.length()), data.substr(end+1));
+    }
+
+    return element;
   }
 
   void Element::updateStatus() {

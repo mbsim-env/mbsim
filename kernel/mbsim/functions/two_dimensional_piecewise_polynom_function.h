@@ -26,9 +26,9 @@ namespace MBSim {
 
   template<typename Sig> class TwoDimensionalPiecewisePolynomFunction; 
 
-  template<typename Ret, typename Arg1, typename Arg2>
-  class TwoDimensionalPiecewisePolynomFunction<Ret(Arg1, Arg2)> : public Function<Ret(Arg1, Arg2)> {
-    using B = fmatvec::Function<Ret(Arg1, Arg2)>; 
+  template<typename Ret>
+  class TwoDimensionalPiecewisePolynomFunction<Ret(double, double)> : public Function<Ret(double, double)> {
+    using B = fmatvec::Function<Ret(double, double)>; 
     public:
       enum InterpolationMethod {
         cSplinePeriodic,
@@ -77,49 +77,49 @@ namespace MBSim {
 
       std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
 
-      virtual Ret operator()(const Arg1& xVal, const Arg2& yVal) {
+      virtual Ret operator()(const double& xVal, const double& yVal) {
         f2.sety(f1(xVal));
         f2.reset();
         f2.calculateSpline();
         return f2(yVal);
       }
 
-      typename B::DRetDArg1 parDer1(const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg1 parDer1(const double &xVal, const double &yVal) {
         f2.sety(f1.parDer(xVal));
         f2.reset();
         f2.calculateSpline();
         return f2(yVal);
       }
 
-      typename B::DRetDArg2 parDer2(const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg2 parDer2(const double &xVal, const double &yVal) {
         f2.sety(f1(xVal));
         f2.reset();
         f2.calculateSpline();
         return f2.parDer(yVal);
       }
 
-      typename B::DRetDArg1 parDer1DirDer1(const Arg1 &xdVal, const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg1 parDer1DirDer1(const double &xdVal, const double &xVal, const double &yVal) {
         f2.sety(f1.parDerDirDer(xdVal,xVal));
         f2.reset();
         f2.calculateSpline();
         return f2(yVal);
       }
 
-      typename B::DRetDArg1 parDer1DirDer2(const Arg2 &ydVal, const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg1 parDer1DirDer2(const double &ydVal, const double &xVal, const double &yVal) {
         f2.sety(f1.parDer(xVal));
         f2.reset();
         f2.calculateSpline();
         return f2.parDer(yVal)*ydVal;
       }
 
-      typename B::DRetDArg2 parDer2DirDer1(const Arg1 &xdVal, const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg2 parDer2DirDer1(const double &xdVal, const double &xVal, const double &yVal) {
         f2.sety(f1.parDer(xVal)*xdVal);
         f2.reset();
         f2.calculateSpline();
         return f2.parDer(yVal);
       }
 
-      typename B::DRetDArg2 parDer2DirDer2(const Arg2 &ydVal, const Arg1 &xVal, const Arg2 &yVal) {
+      typename B::DRetDArg2 parDer2DirDer2(const double &ydVal, const double &xVal, const double &yVal) {
         f2.sety(f1(xVal));
         f2.reset();
         f2.calculateSpline();
@@ -144,7 +144,7 @@ namespace MBSim {
       void setInterpolationMethodSecondDimension(InterpolationMethod method2_) { method2 = method2_; }
 
       void init(Element::InitStage stage, const InitConfigSet &config) {
-        Function<Ret(Arg1, Arg2)>::init(stage, config);
+        Function<Ret(double, double)>::init(stage, config);
         if(stage==Element::preInit) {
           if(method1==unknown)
             Element::throwError("(TwoDimensionalPiecewisePolynomFunction::init): interpolation method first dimension unknown");
@@ -162,10 +162,10 @@ namespace MBSim {
               this->throwError("y values must be strictly monotonic increasing!");
           f1.setx(x);
           f1.sety(z.T());
-          f1.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<fmatvec::VecV(Arg1)>::InterpolationMethod>(method1));
+          f1.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<fmatvec::VecV(double)>::InterpolationMethod>(method1));
           f2.setx(y);
           f2.sety(y);
-          f2.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<Ret(Arg2)>::InterpolationMethod>(method2));
+          f2.setInterpolationMethod(static_cast<typename PiecewisePolynomFunction<Ret(double)>::InterpolationMethod>(method2));
         }
         f1.init(stage, config);
         f2.init(stage, config);
@@ -175,8 +175,8 @@ namespace MBSim {
       fmatvec::VecV x;
       fmatvec::VecV y;
       fmatvec::MatV z;
-      PiecewisePolynomFunction<fmatvec::VecV(Arg1)> f1;
-      PiecewisePolynomFunction<Ret(Arg2)> f2;
+      PiecewisePolynomFunction<fmatvec::VecV(double)> f1;
+      PiecewisePolynomFunction<Ret(double)> f2;
       InterpolationMethod method1, method2;
   };
 }

@@ -1356,7 +1356,7 @@ namespace MBSimGUI {
       actionLinearSystemAnalysis->setDisabled(true);
     }
 
-    echoView->clearOutput();
+    clearEchoView("Running 'mbsimxml':\n\n");
     echoView->showXMLCode(false);
     DOMElement *root { nullptr };
     QString errorText;
@@ -1505,7 +1505,7 @@ namespace MBSimGUI {
     arg.append(QDir::currentPath());
 
     arg.append(projectFile);
-    echoView->clearOutput();
+    clearEchoView("Running 'mbsimxml' in debug mode:\n\n");
     echoView->showXMLCode(true);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
@@ -2860,7 +2860,7 @@ namespace MBSimGUI {
 	  if(dialog.cosim()) arg.append("--cosim");
 	  if(dialog.nocompress()) arg.append("--nocompress");
 	  arg.append(projectFile);
-	  echoView->clearOutput();
+	  clearEchoView("Running 'createFMU':\n\n");
 	  echoView->showXMLCode(false);
 	  process.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
@@ -2880,6 +2880,11 @@ namespace MBSimGUI {
     auto data=process.readAllStandardOutput();
     echoView->addOutputText(data.data());
     echoView->updateOutput(true);
+  }
+
+  void MainWindow::clearEchoView(const QString &initialText) {
+    echoView->clearOutput();
+    echoView->addOutputText(initialText);
   }
 
   void MainWindow::updateStatus() {

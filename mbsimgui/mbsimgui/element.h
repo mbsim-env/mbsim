@@ -43,10 +43,13 @@ namespace MBSimGUI {
       std::string ID;
       bool enabled{true};
       void emitDataChangedOnChildren();
+      std::vector<std::pair<std::string, std::string>> mbsimguiContextAction;
     public:
       Element();
       virtual QString getXMLName();
+      const std::vector<std::pair<std::string, std::string>> &getMbsimguiContextAction() const { return mbsimguiContextAction; }
       QString getXMLPath(Element *ref=nullptr, bool rel=false);
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       virtual xercesc::DOMElement* getXMLFrames() { return nullptr; }
       virtual xercesc::DOMElement* getXMLContours() { return nullptr; }
       virtual xercesc::DOMElement* getXMLGroups() { return nullptr; }

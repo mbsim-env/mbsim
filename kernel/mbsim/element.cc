@@ -152,15 +152,17 @@ namespace MBSim {
   }
 
   void Element::updatePlotFeatures() {
-    for (auto& x: parent->plotFeatureForChildren) {
-      auto it=plotFeature.find(ref(x.first));
-      if(it==plotFeature.end())
-        plotFeature[ref(x.first)]=x.second;
-    }
-    for (auto& x: parent->plotFeatureForChildren) {
-      auto it=plotFeatureForChildren.find(ref(x.first));
-      if(it==plotFeatureForChildren.end())
-        plotFeatureForChildren[ref(x.first)]=x.second;
+    if(parent) {
+      for (auto& x: parent->plotFeatureForChildren) {
+        auto it=plotFeature.find(ref(x.first));
+        if(it==plotFeature.end())
+          plotFeature[ref(x.first)]=x.second;
+      }
+      for (auto& x: parent->plotFeatureForChildren) {
+        auto it=plotFeatureForChildren.find(ref(x.first));
+        if(it==plotFeatureForChildren.end())
+          plotFeatureForChildren[ref(x.first)]=x.second;
+      }
     }
   }
 

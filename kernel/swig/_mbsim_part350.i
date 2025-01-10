@@ -80,6 +80,7 @@ namespace MBSim {
   class KineticExcitation;
   class RigidBodyLink;
   class SpringDamper;
+  template<typename Sig> class PiecewisePolynomFunction; 
 }
 #include "mbsim/contact_kinematics/contact_kinematics.h"
 #include "mbsim/contact_kinematics/circle_circle.h"

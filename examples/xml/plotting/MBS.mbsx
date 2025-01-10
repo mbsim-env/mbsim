@@ -3,7 +3,7 @@
   <pv:Parameter>
     <pv:scalarParameter name="showPlot">False</pv:scalarParameter>
   </pv:Parameter>
-  <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
+  <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
     <pv:evaluator>python</pv:evaluator>
     <pv:Embed>
       <pv:Parameter>
@@ -93,422 +93,203 @@
             </openMBVRigidBody>
             <enableOpenMBVFrameC/>
           </RigidBody>
-          <RigidBody name="coeffs">
-            <mass unit="kg">1</mass>
-            <inertiaTensor unit="kg*m^2">
-              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <row>
-                  <ele>0.01</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </row>
-                <row>
-                  <ele>0</ele>
-                  <ele>0.01</ele>
-                  <ele>0</ele>
-                </row>
-                <row>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0.01</ele>
-                </row>
-              </xmlMatrix>
-            </inertiaTensor>
-            <timeDependentTranslation>
-              <pv:Embed>
-                <pv:Parameter>
-                  <pv:anyParameter name="spline">
-                    try:
-                      import scipy
-                      ret=scipy.interpolate.CubicSpline(x, y, bc_type="natural")
-                    except:
-                      # if no scipy is available we add here the result of the above call to enable testing of this model also on systems without scipy
-                      import numpy
-                      class DummyPPoly():
-                        pass
-                      ret=DummyPPoly()
-                      ret.x=numpy.array([0.,1.,2.,3.,4.,5.])
-                      ret.c=numpy.array([[[ 3.30143541e-01, 3.30143541e-01, 0.00000000e+00],
-                                          [-1.65071770e+00,-1.65071770e+00, 0.00000000e+00],
-                                          [ 1.27272727e+00, 1.27272727e+00, 0.00000000e+00],
-                                          [ 5.59808612e-01, 5.59808612e-01, 0.00000000e+00],
-                                          [-5.11961722e-01,-5.11961722e-01, 0.00000000e+00]],
-                                        
-                                         [[-4.44089210e-16,-4.44089210e-16, 0.00000000e+00],
-                                          [ 9.90430622e-01, 9.90430622e-01, 0.00000000e+00],
-                                          [-3.96172249e+00,-3.96172249e+00, 0.00000000e+00],
-                                          [-1.43540670e-01,-1.43540670e-01, 0.00000000e+00],
-                                          [ 1.53588517e+00, 1.53588517e+00, 0.00000000e+00]],
-                                        
-                                         [[ 2.66985646e+00, 2.66985646e+00, 0.00000000e+00],
-                                          [ 3.66028708e+00, 3.66028708e+00, 0.00000000e+00],
-                                          [ 6.88995215e-01, 6.88995215e-01, 0.00000000e+00],
-                                          [-3.41626794e+00,-3.41626794e+00, 0.00000000e+00],
-                                          [-2.02392344e+00,-2.02392344e+00, 0.00000000e+00]],
-                                        
-                                         [[ 2.00000000e+00, 2.00000000e+00, 0.00000000e+00],
-                                          [ 5.00000000e+00, 5.00000000e+00, 0.00000000e+00],
-                                          [ 8.00000000e+00, 8.00000000e+00, 0.00000000e+00],
-                                          [ 6.00000000e+00, 6.00000000e+00, 0.00000000e+00],
-                                          [ 3.00000000e+00, 3.00000000e+00, 0.00000000e+00]]])
-                  </pv:anyParameter>
-                </pv:Parameter>
+          <pv:Embed>
+            <pv:Parameter>
+              <pv:anyParameter name="spline">
+                import scipy
+                ret=scipy.interpolate.CubicSpline(x, y, bc_type="natural")
+              </pv:anyParameter>
+            </pv:Parameter>
+            <RigidBody name="coeffs">
+              <mass unit="kg">1</mass>
+              <inertiaTensor unit="kg*m^2">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0.01</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0.01</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0.01</ele>
+                  </row>
+                </xmlMatrix>
+              </inertiaTensor>
+              <timeDependentTranslation>
                 <PiecewisePolynomFunction>
                   <breaks>spline.x</breaks>
                   <coefficients>spline.c[:,:,0].T</coefficients>
                   <coefficients>spline.c[:,:,1].T</coefficients>
                   <coefficients>spline.c[:,:,2].T</coefficients>
                 </PiecewisePolynomFunction>
-              </pv:Embed>
-            </timeDependentTranslation>
-            <frames/>
-            <contours/>
-            <openMBVRigidBody>
-              <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
-                <transparency unit="-">0.3</transparency>
-                <length unit="m">1</length>
-              </Cube>
-            </openMBVRigidBody>
-            <enableOpenMBVFrameC/>
-          </RigidBody>
-          <RigidBody name="smoothing">
-            <mass unit="kg">1</mass>
-            <inertiaTensor unit="kg*m^2">
-              <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
-                <row>
-                  <ele>0.01</ele>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                </row>
-                <row>
-                  <ele>0</ele>
-                  <ele>0.01</ele>
-                  <ele>0</ele>
-                </row>
-                <row>
-                  <ele>0</ele>
-                  <ele>0</ele>
-                  <ele>0.01</ele>
-                </row>
-              </xmlMatrix>
-            </inertiaTensor>
-            <timeDependentTranslation>
-              <pv:Embed>
-                <pv:Parameter>
-                  <pv:scalarParameter name="s">0</pv:scalarParameter>
-                  <pv:anyParameter name="spline">
-                    import mbxmlutils
-                    import numpy
-                    try:
-                      import scipy
-                      xx=numpy.linspace(0,5,100)
-                      yy=[
-                        {"s": 0,    "data": numpy.sin(2*xx)},
-                        {"s": 0.06, "data": numpy.sin(2*xx)+(numpy.random.default_rng(87565296655).random(len(xx))-0.5)/10},
-                        {"s": 0,    "data": numpy.zeros(xx.shape)},
-                      ]
-                      ret=[]
-                      for i in range(0,3):
-                        sp=scipy.interpolate.splrep(xx, yy[i]["data"], s=yy[i]["s"])
-                        ret.append(scipy.interpolate.PPoly.from_spline(sp))
-                    except:
-                      # if no scipy is available we add here the result of the above call to enable testing of this model also on systems without scipy
-                      class DummyPPoly():
-                        pass
-                      ret=[DummyPPoly(),DummyPPoly(),DummyPPoly()]
-                      ret[0].x=numpy.array([0.        ,0.        ,0.        ,0.        ,0.1010101 ,0.15151515,
-                                            0.2020202 ,0.25252525,0.3030303 ,0.35353535,0.4040404 ,0.45454545,
-                                            0.50505051,0.55555556,0.60606061,0.65656566,0.70707071,0.75757576,
-                                            0.80808081,0.85858586,0.90909091,0.95959596,1.01010101,1.06060606,
-                                            1.11111111,1.16161616,1.21212121,1.26262626,1.31313131,1.36363636,
-                                            1.41414141,1.46464646,1.51515152,1.56565657,1.61616162,1.66666667,
-                                            1.71717172,1.76767677,1.81818182,1.86868687,1.91919192,1.96969697,
-                                            2.02020202,2.07070707,2.12121212,2.17171717,2.22222222,2.27272727,
-                                            2.32323232,2.37373737,2.42424242,2.47474747,2.52525253,2.57575758,
-                                            2.62626263,2.67676768,2.72727273,2.77777778,2.82828283,2.87878788,
-                                            2.92929293,2.97979798,3.03030303,3.08080808,3.13131313,3.18181818,
-                                            3.23232323,3.28282828,3.33333333,3.38383838,3.43434343,3.48484848,
-                                            3.53535354,3.58585859,3.63636364,3.68686869,3.73737374,3.78787879,
-                                            3.83838384,3.88888889,3.93939394,3.98989899,4.04040404,4.09090909,
-                                            4.14141414,4.19191919,4.24242424,4.29292929,4.34343434,4.39393939,
-                                            4.44444444,4.49494949,4.54545455,4.5959596 ,4.64646465,4.6969697,
-                                            4.74747475,4.7979798 ,4.84848485,4.8989899 ,5.        ,5.,
-                                            5.        ,5.        ])
-                      ret[0].c=numpy.array([[-1.32148833e+00,-1.32148833e+00,-1.32148833e+00,-1.32148833e+00,
-                                             -1.29082592e+00,-1.25161059e+00,-1.19840163e+00,-1.13330644e+00,
-                                             -1.05656930e+00,-9.69084842e-01,-8.71714814e-01,-7.65459909e-01,
-                                             -6.51401167e-01,-5.30701924e-01,-4.04592477e-01,-2.74358475e-01,
-                                             -1.41327559e-01,-6.85589796e-03, 1.27685655e-01, 2.60925532e-01,
-                                              3.91505439e-01, 5.18094196e-01, 6.39401309e-01, 7.54190130e-01,
-                                              8.61290458e-01, 9.59610475e-01, 1.04814787e+00, 1.12600006e+00,
-                                              1.19237339e+00, 1.24659122e+00, 1.28810085e+00, 1.31647910e+00,
-                                              1.33143668e+00, 1.33282110e+00, 1.32061826e+00, 1.29495254e+00,
-                                              1.25608560e+00, 1.20441367e+00, 1.14046349e+00, 1.06488701e+00,
-                                              9.78454683e-01, 8.82047626e-01, 7.76648651e-01, 6.63332234e-01,
-                                              5.43253564e-01, 4.17636766e-01, 2.87762426e-01, 1.54954529e-01,
-                                              2.05669694e-02,-1.14030258e-01,-2.47465019e-01,-3.78377030e-01,
-                                             -5.05431727e-01,-6.27333866e-01,-7.42840733e-01,-8.50774808e-01,
-                                             -9.50035771e-01,-1.03961172e+00,-1.11858948e+00,-1.18616393e+00,
-                                             -1.24164619e+00,-1.28447065e+00,-1.31420075e+00,-1.33053339e+00,
-                                             -1.33330209e+00,-1.32247862e+00,-1.29817331e+00,-1.26063395e+00,
-                                             -1.21024322e+00,-1.14751482e+00,-1.07308824e+00,-9.87722196e-01,
-                                             -8.92286951e-01,-7.87755404e-01,-6.75193188e-01,-5.55747804e-01,
-                                             -4.30636923e-01,-3.01135970e-01,-1.68565126e-01,-3.42758675e-02,
-                                              1.00362812e-01, 2.33978356e-01, 3.65208639e-01, 4.92715850e-01,
-                                              6.15200134e-01, 7.31412842e-01, 8.40169258e-01, 9.40360677e-01,
-                                              1.03096572e+00, 1.11106069e+00, 1.17982923e+00, 1.23656962e+00,
-                                              1.28070602e+00, 1.31177871e+00, 1.32950746e+00, 1.33357520e+00,
-                                              1.32444926e+00, 1.30032380e+00, 1.26853148e+00, 1.20294841e+00,
-                                              1.20294841e+00, 1.20294841e+00, 1.20294841e+00],
-                                            [-1.27991720e-03,-1.27991720e-03,-1.27991720e-03,-1.27991720e-03,
-                                             -4.01730928e-01,-5.97310613e-01,-7.86948581e-01,-9.68524586e-01,
-                                             -1.14023768e+00,-1.30032394e+00,-1.44715498e+00,-1.57923298e+00,
-                                             -1.69521175e+00,-1.79390890e+00,-1.87431828e+00,-1.93562017e+00,
-                                             -1.97718964e+00,-1.99860291e+00,-1.99964168e+00,-1.98029537e+00,
-                                             -1.94076119e+00,-1.88144219e+00,-1.80294307e+00,-1.70606408e+00,
-                                             -1.59179285e+00,-1.46129430e+00,-1.31589877e+00,-1.15708849e+00,
-                                             -9.86482417e-01,-8.05819783e-01,-6.16942325e-01,-4.21775529e-01,
-                                             -2.22308999e-01,-2.05761685e-02, 1.81366423e-01, 3.81460098e-01,
-                                              5.77665028e-01, 7.67981029e-01, 9.50467948e-01, 1.12326545e+00,
-                                              1.28461196e+00, 1.43286267e+00, 1.56650625e+00, 1.68418029e+00,
-                                              1.78468517e+00, 1.86699632e+00, 1.93027462e+00, 1.97387499e+00,
-                                              1.99735295e+00, 2.00046915e+00, 1.98319184e+00, 1.94569714e+00,
-                                              1.88836729e+00, 1.81178672e+00, 1.71673614e+00, 1.60418451e+00,
-                                              1.47527924e+00, 1.33133442e+00, 1.17381750e+00, 1.00433424e+00,
-                                              8.24612433e-01, 6.36484222e-01, 4.41867457e-01, 2.42746131e-01,
-                                              4.11501628e-02,-1.60865306e-01,-3.61240854e-01,-5.57933780e-01,
-                                             -7.48938924e-01,-9.32309108e-01,-1.10617499e+00,-1.26876412e+00,
-                                             -1.41841900e+00,-1.55361399e+00,-1.67297087e+00,-1.77527287e+00,
-                                             -1.85947708e+00,-1.92472510e+00,-1.97035176e+00,-1.99589193e+00,
-                                             -2.00108524e+00,-1.98587876e+00,-1.95042749e+00,-1.89509285e+00,
-                                             -1.82043893e+00,-1.72722679e+00,-1.61640666e+00,-1.48910829e+00,
-                                             -1.34662940e+00,-1.19042247e+00,-1.02207994e+00,-8.43317938e-01,
-                                             -6.55958905e-01,-4.61912539e-01,-2.63158189e-01,-6.17176637e-02,
-                                              1.40339185e-01, 3.41013316e-01, 5.38032074e-01, 7.30233814e-01,
-                                              1.09476363e+00, 1.09476363e+00, 1.09476363e+00],
-                                            [ 2.00003616e+00, 2.00003616e+00, 2.00003616e+00, 2.00003616e+00,
-                                              1.95932800e+00, 1.90887135e+00, 1.83895927e+00, 1.75029901e+00,
-                                              1.64379587e+00, 1.52053518e+00, 1.38177362e+00, 1.22892574e+00,
-                                              1.06354974e+00, 8.87331530e-01, 7.02067530e-01, 5.09646396e-01,
-                                              3.12029739e-01, 1.11232136e-01,-9.06994087e-02,-2.91706330e-01,
-                                             -4.89739490e-01,-6.82780065e-01,-8.68860128e-01,-1.04608271e+00,
-                                             -1.21264114e+00,-1.36683746e+00,-1.50709974e+00,-1.63199809e+00,
-                                             -1.74025924e+00,-1.83077956e+00,-1.90263623e+00,-1.95509673e+00,
-                                             -1.98762625e+00,-1.99989317e+00,-1.99177245e+00,-1.96334687e+00,
-                                             -1.91490621e+00,-1.84694429e+00,-1.76015394e+00,-1.65541993e+00,
-                                             -1.53380996e+00,-1.39656376e+00,-1.24508048e+00,-1.08090439e+00,
-                                             -9.05709169e-01,-7.21280810e-01,-5.29499450e-01,-3.32320177e-01,
-                                             -1.31753110e-01, 7.01570975e-02, 2.71352097e-01, 4.69780834e-01,
-                                              6.63420451e-01, 8.50296916e-01, 1.02850514e+00, 1.19622841e+00,
-                                              1.35175688e+00, 1.49350504e+00, 1.62002787e+00, 1.73003553e+00,
-                                              1.82240658e+00, 1.89619934e+00, 1.95066154e+00, 1.98523799e+00,
-                                              1.99957618e+00, 1.99352996e+00, 1.96716097e+00, 1.92073800e+00,
-                                              1.85473433e+00, 1.76982282e+00, 1.66686907e+00, 1.54692265e+00,
-                                              1.41120633e+00, 1.26110366e+00, 1.09814483e+00, 9.23991104e-01,
-                                              7.40417874e-01, 5.49296552e-01, 3.52575499e-01, 1.52260161e-01,
-                                             -4.96073729e-02,-2.50969191e-01,-4.49772537e-01,-6.43990736e-01,
-                                             -8.31643856e-01,-1.01081889e+00,-1.17968927e+00,-1.33653346e+00,
-                                             -1.47975253e+00,-1.60788647e+00,-1.71962901e+00,-1.81384103e+00,
-                                             -1.88956208e+00,-1.94602023e+00,-1.98263997e+00,-1.99904784e+00,
-                                             -1.99507705e+00,-1.97076632e+00,-1.92637009e+00,-1.86231626e+00,
-                                             -1.67797308e+00,-1.67797308e+00,-1.67797308e+00],
-                                            [-8.60663864e-19,-8.60663864e-19,-8.60663864e-19,-8.60663864e-19,
-                                              2.00648857e-01, 2.98413804e-01, 3.93136612e-01, 4.83851640e-01,
-                                              5.69634107e-01, 6.49609514e-01, 7.22962561e-01, 7.88945463e-01,
-                                              8.46885564e-01, 8.96192201e-01, 9.36362725e-01, 9.66987623e-01,
-                                              9.87754692e-01, 9.98452227e-01, 9.98971172e-01, 9.89306237e-01,
-                                              9.69555949e-01, 9.39921651e-01, 9.00705446e-01, 8.52307118e-01,
-                                              7.95220057e-01, 7.30026230e-01, 6.57390247e-01, 5.78052585e-01,
-                                              4.92822043e-01, 4.02567491e-01, 3.08209017e-01, 2.10708548e-01,
-                                              1.11060038e-01, 1.02793412e-02,-9.06061470e-02,-1.90567963e-01,
-                                             -2.88587059e-01,-3.83664192e-01,-4.74830111e-01,-5.61155437e-01,
-                                             -6.41760138e-01,-7.15822499e-01,-7.82587503e-01,-8.41374521e-01,
-                                             -8.91584257e-01,-9.32704856e-01,-9.64317117e-01,-9.86098774e-01,
-                                             -9.97827778e-01,-9.99384558e-01,-9.90753243e-01,-9.72021825e-01,
-                                             -9.43381258e-01,-9.05123516e-01,-8.57638611e-01,-8.01410622e-01,
-                                             -7.37012758e-01,-6.65101515e-01,-5.86409982e-01,-5.01740369e-01,
-                                             -4.11955831e-01,-3.17971663e-01,-2.20745975e-01,-1.21269921e-01,
-                                             -2.05575963e-02, 8.03642997e-02, 1.80466932e-01, 2.78729819e-01,
-                                              3.74151231e-01, 4.65758407e-01, 5.52617471e-01, 6.33842948e-01,
-                                              7.08606798e-01, 7.76146848e-01, 8.35774572e-01, 8.86882102e-01,
-                                              9.28948429e-01, 9.61544714e-01, 9.84338658e-01, 9.97097891e-01,
-                                              9.99692341e-01, 9.92095559e-01, 9.74384989e-01, 9.46741181e-01,
-                                              9.09445943e-01, 8.62879479e-01, 8.07516504e-01, 7.43921408e-01,
-                                              6.72742504e-01, 5.94705414e-01, 5.10605678e-01, 4.21300641e-01,
-                                              3.27700709e-01, 2.30760075e-01, 1.31466989e-01, 3.08336791e-02,
-                                             -7.01139604e-02,-1.70346832e-01,-2.68843126e-01,-3.64598734e-01,
-                                             -5.44021111e-01,-5.44021111e-01,-5.44021111e-01]])
-                      ret[1].x=numpy.array([0.        ,0.        ,0.        ,0.        ,0.2020202 ,0.35353535,
-                                            0.50505051,0.65656566,0.80808081,0.95959596,1.26262626,1.91919192,
-                                            2.22222222,2.52525253,2.72727273,2.87878788,3.18181818,3.78787879,
-                                            3.93939394,4.09090909,4.39393939,4.6969697 ,5.        ,5.,
-                                            5.        ,5.        ])
-                      ret[1].c=numpy.array([[ 6.98750968e+00, 6.98750968e+00, 6.98750968e+00, 6.98750968e+00,
-                                             -9.52353598e+00, 6.53975302e+00,-5.03944756e+00, 3.46548419e+00,
-                                             -4.90686684e+00, 3.01404459e+00, 6.33011511e-01, 2.07498524e+00,
-                                             -1.25153892e+00,-2.11312147e-01,-4.50981307e-01,-1.79877262e+00,
-                                             -5.94205479e-01,-4.44557570e+00, 6.11299654e+00,-1.35335547e+00,
-                                              2.49775277e+00, 2.04305324e+00, 2.04305324e+00, 2.04305324e+00,
-                                              2.04305324e+00],
-                                            [-3.15421362e+00,-3.15421362e+00,-3.15421362e+00,-3.15421362e+00,
-                                              1.08064073e+00,-3.24823926e+00,-2.75624253e-01,-2.56628224e+00,
-                                             -9.91062148e-01,-3.22145616e+00,-4.81415627e-01, 7.65425228e-01,
-                                              2.65177544e+00, 1.51401279e+00, 1.38594482e+00, 1.18095332e+00,
-                                             -4.54294516e-01,-1.53466811e+00,-3.55538434e+00,-7.76749549e-01,
-                                             -2.00707271e+00, 2.63611632e-01, 2.12093276e+00, 2.12093276e+00,
-                                              2.12093276e+00],
-                                            [ 2.25204388e+00, 2.25204388e+00, 2.25204388e+00, 2.25204388e+00,
-                                              1.83314027e+00, 1.50471625e+00, 9.70797534e-01, 5.40205642e-01,
-                                              1.21406843e-03,-6.37046282e-01,-1.75912864e+00,-1.57265769e+00,
-                                             -5.37142338e-01, 7.25217732e-01, 1.31106775e+00, 1.69999171e+00,
-                                              1.92019135e+00, 7.14759454e-01,-5.64606154e-02,-7.12844538e-01,
-                                             -1.55642704e+00,-2.08474858e+00,-1.36215937e+00,-1.36215937e+00,
-                                             -1.36215937e+00],
-                                            [ 1.03975859e-02, 1.03975859e-02, 1.03975859e-02, 1.03975859e-02,
-                                              3.94236856e-01, 6.63667675e-01, 8.39832957e-01, 9.63067273e-01,
-                                              9.98056905e-01, 9.58421598e-01, 5.53429674e-01,-6.29919607e-01,
-                                             -9.78456040e-01,-9.32546810e-01,-7.25990286e-01,-4.97095393e-01,
-                                              7.64439421e-02, 9.41052457e-01, 9.98655124e-01, 9.29742985e-01,
-                                              6.04743513e-01, 1.82984111e-02,-5.32385853e-01,-5.32385853e-01,
-                                             -5.32385853e-01]])
-                      ret[2].x=numpy.array([0.        ,0.        ,0.        ,0.        ,0.1010101 ,0.15151515,
-                                            0.2020202 ,0.25252525,0.3030303 ,0.35353535,0.4040404 ,0.45454545,
-                                            0.50505051,0.55555556,0.60606061,0.65656566,0.70707071,0.75757576,
-                                            0.80808081,0.85858586,0.90909091,0.95959596,1.01010101,1.06060606,
-                                            1.11111111,1.16161616,1.21212121,1.26262626,1.31313131,1.36363636,
-                                            1.41414141,1.46464646,1.51515152,1.56565657,1.61616162,1.66666667,
-                                            1.71717172,1.76767677,1.81818182,1.86868687,1.91919192,1.96969697,
-                                            2.02020202,2.07070707,2.12121212,2.17171717,2.22222222,2.27272727,
-                                            2.32323232,2.37373737,2.42424242,2.47474747,2.52525253,2.57575758,
-                                            2.62626263,2.67676768,2.72727273,2.77777778,2.82828283,2.87878788,
-                                            2.92929293,2.97979798,3.03030303,3.08080808,3.13131313,3.18181818,
-                                            3.23232323,3.28282828,3.33333333,3.38383838,3.43434343,3.48484848,
-                                            3.53535354,3.58585859,3.63636364,3.68686869,3.73737374,3.78787879,
-                                            3.83838384,3.88888889,3.93939394,3.98989899,4.04040404,4.09090909,
-                                            4.14141414,4.19191919,4.24242424,4.29292929,4.34343434,4.39393939,
-                                            4.44444444,4.49494949,4.54545455,4.5959596 ,4.64646465,4.6969697,
-                                            4.74747475,4.7979798 ,4.84848485,4.8989899 ,5.        ,5.,
-                                            5.        ,5.        ])
-                      ret[2].c=numpy.array([[0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.],
-                                            [0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.],
-                                            [0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.],
-                                            [0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,0.,
-                                             0.,0.,0.,0.,0.,0.,0.]])
+              </timeDependentTranslation>
+              <frames/>
+              <contours/>
+              <openMBVRigidBody>
+                <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
+                  <transparency unit="-">0.3</transparency>
+                  <length unit="m">1</length>
+                </Cube>
+              </openMBVRigidBody>
+              <enableOpenMBVFrameC/>
+            </RigidBody>
+          </pv:Embed>
+          <pv:Embed>
+            <pv:Parameter>
+              <pv:scalarParameter name="s">0</pv:scalarParameter>
+              <pv:anyParameter name="splineIn">
+                import numpy
+                xx=numpy.linspace(0,5,100)
+                ret={
+                  "xx": xx,
+                  "yy": [
+                          {"s": 0,    "data": numpy.sin(2*xx)},
+                          {"s": 0.06, "data": numpy.sin(2*xx)+(numpy.random.default_rng(87565296655).random(len(xx))-0.5)/10},
+                          {"s": 0,    "data": numpy.zeros(xx.shape)},
+                        ],
+                }
+              </pv:anyParameter>
+              <pv:anyParameter name="splineOut">
+                import mbxmlutils
+                import numpy
+                import scipy
+                ret=[]
+                for i in range(0,3):
+                  sp=scipy.interpolate.splrep(splineIn["xx"], splineIn["yy"][i]["data"], s=splineIn["yy"][i]["s"])
+                  ret.append(scipy.interpolate.PPoly.from_spline(sp))
+              </pv:anyParameter>
+              <pv:anyParameter name="plot">
+                def plot():
+                  import PySide2
+                  import numpy
+                  import scipy
+                  import mbxmlutils.Qt
+                  class MyPlot(mbxmlutils.Qt.MatplotlibDialog):
+                    def __init__(self, parent=None):
+                      super().__init__(parent)
+                  
+                      self.X=numpy.linspace(splineIn["xx"][0],splineIn["xx"][-1],1000)
+                  
+                      self.expSL=4
+                      self.facSL = pow(splineIn["xx"].shape[0]/3,self.expSL-1)
+                  
+                      layout = PySide2.QtWidgets.QVBoxLayout()
+                      self.setLayout(layout)
+                      layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
+                      self.plotWidget=self.getPlotWidget("splinePlot")
+                      layout.addWidget(self.plotWidget)
+                      hlayout = PySide2.QtWidgets.QHBoxLayout()
+                      layout.addLayout(hlayout)
+                      hlayout.setStretch(0, 0)
+                      hlayout.setStretch(1, 0)
+                      hlayout.setStretch(2, 1)
+                      hlayout.addWidget(PySide2.QtWidgets.QLabel("s="))
+                      self.inputSB = PySide2.QtWidgets.QDoubleSpinBox()
+                      hlayout.addWidget(self.inputSB)
+                      self.inputSB.setMinimum(0)
+                      self.inputSB.setMaximum(1e10)
+                      self.inputSB.setSingleStep(0.001)
+                      self.inputSB.setDecimals(6)
+                      self.inputSB.setValue(splineIn["yy"][1]["s"])
+                      self.inputSB.valueChanged.connect(self.sChanged)
+                      self.inputSL = PySide2.QtWidgets.QSlider(PySide2.QtCore.Qt.Horizontal)
+                      hlayout.addWidget(self.inputSL)
+                      self.inputSL.setMinimum(0)
+                      self.inputSLFac=1000000
+                      self.inputSL.setMaximum(int(splineIn["xx"].shape[0]/3)*self.inputSLFac)
+                      self.inputSL.setSingleStep(self.inputSLFac/1000)
+                      self.inputSL.setPageStep(self.inputSLFac/100)
+                      self.inputSL.valueChanged.connect(self.sliderChanged)
+                  
+                      self.axes = self.plotWidget.figure.subplots()
+                  
+                      self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
+                      self.axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
+                  
+                      self.sChanged()
+                  
+                    def sliderValueTos(self, s):
+                      return pow(s/self.inputSLFac,self.expSL)/self.facSL
+                    def sToSliderValue(self, v):
+                      return pow(v*self.facSL,1/self.expSL)*self.inputSLFac
+                  
+                    def sChanged(self):
+                      s=self.inputSB.value()
+                      sp1=scipy.interpolate.splrep(splineIn["xx"],splineIn["yy"][1]["data"],s=s)
+                      sp2=scipy.interpolate.PPoly.from_spline(sp1)
+                      self.data.set_ydata(sp2(self.X))
+                      self.plotWidget.draw()
+                      self.inputSL.blockSignals(True)
+                      self.inputSL.setValue(self.sToSliderValue(s))
+                      self.inputSL.blockSignals(False)
+                  
+                    def sliderChanged(self):
+                      v=self.inputSL.value()
+                      self.inputSB.setValue(self.sliderValueTos(v))
   
-                    if showPlot:
-                      import PySide2
-                      import mbxmlutils.Qt
-                      class MyPlot(mbxmlutils.Qt.MatplotlibDialog):
-                        def __init__(self, parent=None):
-                          super().__init__(parent)
-                      
-                          self.x=numpy.linspace(0,10,100)
-                          self.y=numpy.sin(self.x)+(numpy.random.default_rng(849884).random(len(self.x))-0.5)/10
-                          self.X=numpy.linspace(self.x[0],self.x[-1],1000)
-                      
-                          self.expSL=4
-                          self.facSL = pow(self.x.shape[0]/3,self.expSL-1)
-                      
-                          layout = PySide2.QtWidgets.QVBoxLayout()
-                          self.setLayout(layout)
-                          layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
-                          self.plotWidget=self.getPlotWidget("splinePlot")
-                          layout.addWidget(self.plotWidget)
-                          hlayout = PySide2.QtWidgets.QHBoxLayout()
-                          layout.addLayout(hlayout)
-                          hlayout.setStretch(0, 0)
-                          hlayout.setStretch(1, 0)
-                          hlayout.setStretch(2, 1)
-                          hlayout.addWidget(PySide2.QtWidgets.QLabel("s="))
-                          self.inputSB = PySide2.QtWidgets.QDoubleSpinBox()
-                          hlayout.addWidget(self.inputSB)
-                          self.inputSB.setMinimum(0)
-                          self.inputSB.setMaximum(1e10)
-                          self.inputSB.setSingleStep(0.001)
-                          self.inputSB.setDecimals(6)
-                          self.inputSB.valueChanged.connect(self.sChanged)
-                          self.inputSL = PySide2.QtWidgets.QSlider(PySide2.QtCore.Qt.Horizontal)
-                          hlayout.addWidget(self.inputSL)
-                          self.inputSL.setMinimum(0)
-                          self.inputSLFac=1000000
-                          self.inputSL.setMaximum(int(self.x.shape[0]/3)*self.inputSLFac)
-                          self.inputSL.setSingleStep(self.inputSLFac/1000)
-                          self.inputSL.setPageStep(self.inputSLFac/100)
-                          self.inputSL.valueChanged.connect(self.sliderChanged)
-                      
-                          self.axes = self.plotWidget.figure.subplots()
-                      
-                          self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
-                          self.axes.plot(self.x,self.y,marker="x",linestyle="")
-                      
-                          self.sChanged()
-                      
-                        def sliderValueTos(self, s):
-                          return pow(s/self.inputSLFac,self.expSL)/self.facSL
-                        def sToSliderValue(self, v):
-                          return pow(v*self.facSL,1/self.expSL)*self.inputSLFac
-                      
-                        def sChanged(self):
-                          s=self.inputSB.value()
-                          sp1=scipy.interpolate.splrep(self.x,self.y,s=s)
-                          sp2=scipy.interpolate.PPoly.from_spline(sp1)
-                          self.data.set_ydata(sp2(self.X))
-                          self.plotWidget.draw()
-                          self.inputSL.blockSignals(True)
-                          self.inputSL.setValue(self.sToSliderValue(s))
-                          self.inputSL.blockSignals(False)
-                      
-                        def sliderChanged(self):
-                          v=self.inputSL.value()
-                          self.inputSB.setValue(self.sliderValueTos(v))
-  
-                      mbxmlutils.Qt.showDialog(MyPlot, ())
-                      mbxmlutils.Qt.showDialog(MyPlot, maximized=False)
-                  </pv:anyParameter>
-                </pv:Parameter>
+                  mbxmlutils.Qt.showDialog(MyPlot)
+                ret=plot
+                if showPlot: # just to show the plot when running with mbsimxml
+                  plot()
+              </pv:anyParameter>
+            </pv:Parameter>
+            <RigidBody name="smoothing">
+              <?MBSIMGUI_CONTEXT_ACTION name="Show plot" plot()?>
+              <mass unit="kg">1</mass>
+              <inertiaTensor unit="kg*m^2">
+                <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
+                  <row>
+                    <ele>0.01</ele>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0.01</ele>
+                    <ele>0</ele>
+                  </row>
+                  <row>
+                    <ele>0</ele>
+                    <ele>0</ele>
+                    <ele>0.01</ele>
+                  </row>
+                </xmlMatrix>
+              </inertiaTensor>
+              <timeDependentTranslation>
                 <VectorValuedFunction>
                   <components>
                     <PiecewisePolynomFunction>
-                      <breaks>spline[0].x</breaks>
-                      <coefficients>spline[0].c[:,:].T</coefficients>
+                      <breaks>splineOut[0].x</breaks>
+                      <coefficients>splineOut[0].c[:,:].T</coefficients>
                     </PiecewisePolynomFunction>
                     <PiecewisePolynomFunction>
-                      <breaks>spline[1].x</breaks>
-                      <coefficients>spline[1].c[:,:].T</coefficients>
+                      <breaks>splineOut[1].x</breaks>
+                      <coefficients>splineOut[1].c[:,:].T</coefficients>
                     </PiecewisePolynomFunction>
                     <PiecewisePolynomFunction>
-                      <breaks>spline[2].x</breaks>
-                      <coefficients>spline[2].c[:,:].T</coefficients>
+                      <breaks>splineOut[2].x</breaks>
+                      <coefficients>splineOut[2].c[:,:].T</coefficients>
                     </PiecewisePolynomFunction>
                   </components>
                 </VectorValuedFunction>
-              </pv:Embed>
-            </timeDependentTranslation>
-            <frames/>
-            <contours/>
-            <openMBVRigidBody>
-              <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
-                <transparency unit="-">0.3</transparency>
-                <length unit="m">1</length>
-              </Cube>
-            </openMBVRigidBody>
-            <enableOpenMBVFrameC/>
-          </RigidBody>
+              </timeDependentTranslation>
+              <frames/>
+              <contours/>
+              <openMBVRigidBody>
+                <Cube xmlns="http://www.mbsim-env.de/OpenMBV" name="Cube2">
+                  <transparency unit="-">0.3</transparency>
+                  <length unit="m">1</length>
+                </Cube>
+              </openMBVRigidBody>
+              <enableOpenMBVFrameC/>
+            </RigidBody>
+          </pv:Embed>
         </objects>
         <links/>
         <constraints/>

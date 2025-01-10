@@ -21,6 +21,7 @@
 #include "element_property_dialog.h"
 #include "basic_widgets.h"
 #include "extended_widgets.h"
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -56,6 +57,14 @@ namespace MBSimGUI {
     item->updateName();
     plotFeature->writeXMLFile(item->getXMLElement(),ref);
     plotAttribute->writeXMLFile(item->getXMLElement(),ref);
+
+    for(auto &ca : static_cast<Element*>(item)->getMbsimguiContextAction()) {
+      DOMDocument *doc=item->getXMLElement()->getOwnerDocument();
+      DOMProcessingInstruction *pi=doc->createProcessingInstruction(X()%"MBSIMGUI_CONTEXT_ACTION",
+        X()%("name=\""+ca.first+"\" "+ca.second));
+      item->getXMLElement()->insertBefore(pi, nullptr);
+    }
+
     return nullptr;
   }
 
