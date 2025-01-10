@@ -136,11 +136,22 @@ namespace MBSim {
       OpenMBVFrictionArrow(unsigned int sI=0, double sL=1, double sS=1, const OpenMBVArrow::Type &type=OpenMBVArrow::toHead, const OpenMBVArrow::ReferencePoint &refPoint=OpenMBVArrow::fromPoint, unsigned int cR=0, double minCol=0, double maxCol=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0);
   };
 
-  class OpenMBVFrame : public OpenMBVColoredBody {
+  class OpenMBVRigidBody : public OpenMBVColoredBody {
+    protected:
+      bool path;
+    public:
+      OpenMBVRigidBody(bool path_=false, const fmatvec::Vec3 &dc_=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp_=0, double ps_=0, double lw_=0) :
+        OpenMBVColoredBody(dc_, tp_, ps_, lw_), path(path_) { }
+      void initializeUsingXML(xercesc::DOMElement *element);
+    protected:
+      void initializeObject(const std::shared_ptr<OpenMBV::RigidBody> &object);
+  };
+
+  class OpenMBVFrame : public OpenMBVRigidBody {
     protected:
       double size, offset;
     public:
-      OpenMBVFrame(double size_=1, double offset_=1, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0) : OpenMBVColoredBody(dc,tp,ps,lw), size(size_), offset(offset_) { }
+      OpenMBVFrame(double size_=1, double offset_=1, bool path=false, const fmatvec::Vec3 &dc=fmatvec::Vec3(std::vector<double>{-1,1,1}), double tp=0, double ps=0, double lw=0) : OpenMBVRigidBody(path, dc,tp,ps,lw), size(size_), offset(offset_) { }
       void initializeUsingXML(xercesc::DOMElement *element);
       std::shared_ptr<OpenMBV::Frame> createOpenMBV();
     protected:

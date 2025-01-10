@@ -58,6 +58,7 @@ namespace MBSim {
   BOOST_PARAMETER_NAME(sideOfInteraction)
   BOOST_PARAMETER_NAME(pointSize)
   BOOST_PARAMETER_NAME(lineWidth)
+  BOOST_PARAMETER_NAME(path)
 
 }
 

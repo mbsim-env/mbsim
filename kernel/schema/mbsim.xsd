@@ -45,6 +45,13 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:group name="OpenMBVRigidBodyParameters">
+    <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="path" type="pv:booleanFullEval" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
   <xs:group name="OpenMBVDynamicColoredBodyParameters">
     <xs:sequence>
       <xs:group ref="OpenMBVColoredBodyParameters"/>
@@ -56,7 +63,7 @@
 
   <xs:group name="OpenMBVFrameParameters">
     <xs:sequence>
-      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:group ref="OpenMBVRigidBodyParameters"/>
       <xs:element name="size" type="pv:lengthScalar" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="">
