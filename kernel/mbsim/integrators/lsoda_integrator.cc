@@ -130,7 +130,7 @@ namespace MBSim {
       DLSODA(fzdot, neq, system->getState()(), &t, &tEnd, &iTol, rTol(), aTol(),
           &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, nullptr, &jt);
       if(istate==2 or istate==1) {
-        double curTimeAndState = -1;
+        double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
         double tRoot = t;
 
         // root-finding
