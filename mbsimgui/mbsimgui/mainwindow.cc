@@ -397,20 +397,20 @@ namespace MBSimGUI {
     dockEchoArea->setWidget(echoView);
 
     // initialize streams
-    auto f=[this](const string &s){
+    auto outputFunc=[this](const string &s){
       echoView->addOutputText(QString::fromStdString(s));
     };
     debugStreamFlag=std::make_shared<bool>(false);
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", f));
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_INFO\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Warn      , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", f));
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_WARN\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Debug     , debugStreamFlag             ,
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", f));
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEBUG\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Error     , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", f));
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_ERROR\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", f));
+      make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
       make_shared<fmatvec::PrePostfixedStream>("", "", [this](const string &s){
         // call this function only every 0.25 sec
@@ -1412,13 +1412,13 @@ namespace MBSimGUI {
     arg.append("--savestatetable");
 
     // we print everything except status messages to stdout
-    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>)#");
-    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
+    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
     if(*debugStreamFlag) {
-      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>)#");
+      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
     }
-    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>)#");
-    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>~HTML)#");
+    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>~HTML)#");
     // status message go to stderr
     arg.append("--stderr"); arg.append("status~~\n");
 
@@ -1490,13 +1490,13 @@ namespace MBSimGUI {
     arg.append("--stopafterfirststep");
 
     // we print everything except status messages to stdout
-    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>)#");
-    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(info~<span class="MBSIMGUI_INFO">~</span>~HTML)#");
+    arg.append("--stdout"); arg.append(R"#(warn~<span class="MBSIMGUI_WARN">~</span>~HTML)#");
     if(*debugStreamFlag) {
-      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>)#");
+      arg.append("--stdout"); arg.append(R"#(debug~<span class="MBSIMGUI_DEBUG">~</span>~HTML)#");
     }
-    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>)#");
-    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>)#");
+    arg.append("--stdout"); arg.append(R"#(error~<span class="MBSIMGUI_ERROR">~</span>~HTML)#");
+    arg.append("--stdout"); arg.append(R"#(depr~<span class="MBSIMGUI_DEPRECATED">~</span>~HTML)#");
     // status message go to stderr
     arg.append("--stderr"); arg.append("status~~\n");
 
