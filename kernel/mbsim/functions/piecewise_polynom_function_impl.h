@@ -331,7 +331,6 @@
         first=false;
       }
       setCoefficients(coefs);
-      interpolationMethod=useBreaksAndCoefs;
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"extrapolationMethod");

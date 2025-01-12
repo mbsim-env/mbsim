@@ -27,7 +27,6 @@
     </xmlMatrix>
   </matrixParameter>
   <stringParameter name="grav">'gravity.txt'</stringParameter>
-  <scalarParameter name="plotSubTypeEnabled">True</scalarParameter>
   <stringParameter name="pathPrefix">'py'</stringParameter>
   <stringParameter name="ivdir">'iv'</stringParameter>
 </Parameter>

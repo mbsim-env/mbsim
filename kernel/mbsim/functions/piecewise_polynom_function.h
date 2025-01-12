@@ -192,13 +192,28 @@ namespace MBSim {
        * \brief set polynomial coefficients
        * \param polynomial coefficients
        */
-      void setCoefficients(const std::vector<fmatvec::MatV> &coefs_u) { coefs = coefs_u; }
+      void setCoefficients(const std::vector<fmatvec::MatV> &coefs_u) {
+        interpolationMethod=useBreaksAndCoefs;
+        coefs = coefs_u;
+      }
+
+      //! Convinience function for Sig=double(double) which calls
+      //! setCoefficients(vector<...>{coefs2.col(0), coefs2.col(1), ...})
+      void setCoefficients2(const fmatvec::MatV &coefs2) {
+        std::vector<fmatvec::MatV> coefs_u(coefs2.cols(), fmatvec::MatV(coefs2.rows(), 1));
+        for(size_t i=0; i<coefs_u.size(); ++i)
+          coefs_u[i]=coefs2.col(i);
+        setCoefficients(coefs_u);
+      }
 
       /*!
        * \brief set interval boundaries
        * \param interval boundaries
        */
-      void setBreaks(const fmatvec::VecV &breaks_u) { breaks <<= breaks_u; }
+      void setBreaks(const fmatvec::VecV &breaks_u) {
+        interpolationMethod=useBreaksAndCoefs;
+        breaks <<= breaks_u;
+      }
 
       /**
        * \brief initialize function with XML code

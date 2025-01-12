@@ -1,14 +1,4 @@
 <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
-  <import action="addNewVarsToInstance"><?MBSIMGUI_HIDDEN?>
-    import mbxmlutils.Qt
-    if mbxmlutils.Qt.isGUI():
-      try:
-        import matplotlib.pyplot
-      except ModuleNotFoundError:
-        pass
-      else:
-        matplotlib.pyplot.clf()
-  </import>
   <vectorParameter name="rHG">[0,2]</vectorParameter>
   <import action="addAllVarsAsParams">import math</import>
   <vectorParameter name="alphaHG">
@@ -36,7 +26,6 @@
     </xmlMatrix>
   </matrixParameter>
   <stringParameter name="grav">'gravity.txt'</stringParameter>
-  <scalarParameter name="plotSubTypeEnabled">True</scalarParameter>
   <stringParameter name="pathPrefix">'py'</stringParameter>
   <stringParameter name="ivdir">'iv'</stringParameter>
 </Parameter>
