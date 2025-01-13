@@ -273,6 +273,47 @@
   }
 
   template<typename Ret>
+  void PiecewisePolynomFunction<Ret(double)>::setCoefficients(const std::vector<fmatvec::MatV> &allCoefs) {
+    interpolationMethod=useBreaksAndCoefs;
+
+    // read all coefficient and convert to coefs
+    coefs.resize(allCoefs[0].cols());
+    for(auto &x : coefs)
+      x.resize(allCoefs[0].rows(),allCoefs.size());
+    for(size_t c=0; c<allCoefs.size(); ++c) {
+      if(allCoefs[c].cols()!=static_cast<int>(coefs.size()))
+        this->throwError("The number of columns in the coefficients elements differ.");
+      if(allCoefs[c].rows()!=static_cast<int>(coefs[0].rows()))
+        this->throwError("The number of rows in the coefficients elements differ.");
+      for(int deg=0; deg<allCoefs[c].cols(); deg++)
+        coefs[deg].set(c, allCoefs[c].col(deg));
+      c++;
+    }
+  }
+
+  template<typename Ret>
+  void PiecewisePolynomFunction<Ret(double)>::addCoefficients(const fmatvec::MatV &coef) {
+    interpolationMethod=useBreaksAndCoefs;
+
+    // read all coefficient and convert to coefs
+    if(coefs.size()==0)
+      coefs.resize(coef.cols());
+    if(static_cast<int>(coefs.size())!=coef.cols())
+      this->throwError("The added coefficients have a different spline order.");
+    for(auto &x : coefs) {
+      auto xold(std::move(x));
+      x.resize(coef.rows(),xold.cols()+1);
+      x.set(fmatvec::RangeV(0,xold.rows()-1), fmatvec::RangeV(0,xold.cols()-1), std::move(xold));
+    }
+    if(coef.cols()!=static_cast<int>(coefs.size()))
+      this->throwError("The number of columns in the coefficients elements differ.");
+    if(coef.rows()!=static_cast<int>(coefs[0].rows()))
+      this->throwError("The number of rows in the coefficients elements differ.");
+    for(int deg=0; deg<coef.cols(); deg++)
+      coefs[deg].set(coefs[deg].cols()-1, coef.col(deg));
+  }
+
+  template<typename Ret>
   void PiecewisePolynomFunction<Ret(double)>::initializeUsingXML(xercesc::DOMElement * element) {
     xercesc::DOMElement *e;
     fmatvec::VecV x;
@@ -303,34 +344,14 @@
       // set breaks
       setBreaks(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
 
-      // count number of columns = dimension of the vector returned by this function
-      int nrCols = 0;
+      // read all coefficients elements
       e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
+      std::vector<fmatvec::MatV> allCoefs;
       while(e) {
-        nrCols++;
+        allCoefs.emplace_back(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
         e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
       }
-
-      // read all coefficients element and convert to coefs
-      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
-      auto c=MBXMLUtils::E(e)->getText<fmatvec::Mat>();
-      std::vector<fmatvec::MatV> coefs(c.cols(), fmatvec::MatV(c.rows(),nrCols)); // init coefs with proper size
-      bool first=true;
-      int col = 0;
-      while(e) {
-        if(!first) // avoid double read of first coefficients element
-          c=MBXMLUtils::E(e)->getText<fmatvec::Mat>();
-        if(c.cols()!=static_cast<int>(coefs.size()))
-          this->throwError("The number of columns in the coefficients elements differ.");
-        if(c.rows()!=static_cast<int>(coefs[0].rows()))
-          this->throwError("The number of rows in the coefficients elements differ.");
-        for(int deg=0; deg<c.cols(); deg++)
-          coefs[deg].set(col, c.col(deg));
-        e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
-        col++;
-        first=false;
-      }
-      setCoefficients(coefs);
+      setCoefficients(allCoefs);
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"extrapolationMethod");

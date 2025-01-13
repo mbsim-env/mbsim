@@ -232,7 +232,7 @@
                       # (just to check if mbsim.PiecewisePolynomFunction_d creates the same result as scipy PPoly)
                       pp=mbsim.PiecewisePolynomFunction_d()
                       pp.setBreaks(sp2.x)
-                      pp.setCoefficients2(sp2.c[:,:].T)
+                      pp.addCoefficients(sp2.c[:,:].T)
                       pp.init(mbsim.Element.preInit)
                       y=numpy.vectorize(lambda xx: pp(xx))(self.X)
                       if not numpy.allclose(y, self.data.get_ydata()):
