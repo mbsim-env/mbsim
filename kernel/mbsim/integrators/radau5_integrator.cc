@@ -391,22 +391,12 @@ namespace MBSim {
 
     work.resize(lWork);
 
-    if(dtMax>0)
-      work(6) = dtMax; // maximum step size
-    iWork[-1] = jacobianRecomputationAtRejectedSteps;
-    iWork[1] = maxSteps; // maximum number of steps
-    iWork[7] = static_cast<int>(stepSizeControl);
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
     int iJac = formalism>0; // jacobian is computed
                             // - for ODE as full matrix by radau5 by finite differences
                             // - for all other as full matrix by finite differences for everything except la which is analytical
-
-    iWork[2] = maxNewtonIter;
-    work(3) = newtonIterTol;
-    work(2) = jacobianRecomputation;
-    work(1) = stepSizeSaftyFactor;
 
     int idid;
 
@@ -434,6 +424,9 @@ namespace MBSim {
     calcSize();
     reinit();
 
+    if(formalism>0)
+      y.set(Rla, system->evalla()); // set a proper initial state for lambda
+
     s0 = clock();
 
     while(t<tEnd-epsroot) {
@@ -457,12 +450,12 @@ namespace MBSim {
       }
 
       if(shift || drift) {
+        // set new state
         t = system->getTime();
         z = system->getState();
-        if(formalism) {
-          for(int i=system->getzSize(); i<neq; i++)
-            y(i) = 0;
-        }
+        system->resetUpToDate();
+        if(formalism>0)
+          y.set(Rla, system->evalla()); // set a proper initial state for lambda
       }
     }
 
@@ -495,6 +488,23 @@ namespace MBSim {
   void RADAU5Integrator::reinit() {
     for(int i=20; i<work.size(); i++)
       work(i) = 0;
+
+    if(dtMax>0)
+      work(6) = dtMax; // maximum step size
+    work(3) = newtonIterTol;
+    work(2) = jacobianRecomputation;
+    work(1) = stepSizeSaftyFactor;
+
+
+
+    for(size_t i=20; i<iWorkExtended.size(); i++)
+      iWorkExtended[i] = 0;
+
+    iWork[-1] = jacobianRecomputationAtRejectedSteps;
+    iWork[1] = maxSteps; // maximum number of steps
+    iWork[7] = static_cast<int>(stepSizeControl);
+    iWork[2] = maxNewtonIter;
+
     if(formalism==DAE1)
       iWork[4] = system->getzSize() + system->getlaSize();// mfmf not working when ng != ngd
     else if(formalism==DAE2) {
