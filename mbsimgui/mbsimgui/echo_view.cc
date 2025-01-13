@@ -116,8 +116,7 @@ namespace MBSimGUI {
 
   void EchoView::clearOutput() {
     {
-      outTextMutex.lock();
-      BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
+      QMutexLocker lock(&outTextMutex);
       outText="";
     }
     out->setHtml("");
@@ -154,8 +153,7 @@ namespace MBSimGUI {
     QString html;
     int firstErrorPos;
     {
-      outTextMutex.lock();
-      BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
+      QMutexLocker lock(&outTextMutex);
 
       // the CSS property display is not supported by QTextBrowser. Hence we remove it manually.
       auto outText2=outText;
@@ -294,8 +292,7 @@ R"+(
   }
 
   void EchoView::addOutputText(const QString &outText_) {
-    outTextMutex.lock();
-    BOOST_SCOPE_EXIT((&outTextMutex)) { outTextMutex.unlock(); } BOOST_SCOPE_EXIT_END
+    QMutexLocker lock(&outTextMutex);
     outText += outText_;
   }
 

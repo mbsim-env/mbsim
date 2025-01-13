@@ -166,6 +166,23 @@ namespace MBSimGUI {
     return e;
   }
 
+  MBSOMBVRigidBodyWidget::MBSOMBVRigidBodyWidget() : MBSOMBVColoreBodyWidget() {
+    path = new ExtWidget("Draw path",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"path");
+    layout()->addWidget(path);
+  }
+
+  DOMElement* MBSOMBVRigidBodyWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    path->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* MBSOMBVRigidBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    path->writeXMLFile(e);
+    return e;
+  }
+
   DOMElement* MBSOMBVColoreBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     diffuseColor->writeXMLFile(parent);
     transparency->writeXMLFile(parent);
@@ -421,14 +438,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrameMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    MBSOMBVRigidBodyWidget::initializeUsingXML(element);
     size->initializeUsingXML(element);
     offset->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* FrameMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    DOMElement *e=MBSOMBVRigidBodyWidget::writeXMLFile(parent);
     size->writeXMLFile(e);
     offset->writeXMLFile(e);
     return nullptr;

@@ -52,7 +52,7 @@ namespace MBSim {
   void DOP853Integrator::plot(int* nr, double* told, double* t, double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
     auto self=*reinterpret_cast<DOP853Integrator**>(&ipar[0]);
 
-    double curTimeAndState = -1;
+    double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
     double tRoot = *t;
 
     // root-finding

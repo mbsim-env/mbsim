@@ -71,8 +71,8 @@ namespace MBSim {
        * If the contact is not closed, then the two contact point lie on the contours with minimal distance in between.
        * The x-axis of this frames are orientated to the other frame origin (normal vector).
        */
-      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVContactPoints, tag, (optional (size,(double),1)(offset,(double),1)(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
-        OpenMBVFrame ombv(size,offset,fmatvec::Vec3(std::vector<double>{-1,1,1}),transparency,pointSize,lineWidth);
+      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBVContactPoints, tag, (optional (size,(double),1)(offset,(double),1)(path,(bool),false)(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
+        OpenMBVFrame ombv(size,offset,path,fmatvec::Vec3(std::vector<double>{-1,1,1}),transparency,pointSize,lineWidth);
         openMBVContactFrame=ombv.createOpenMBV();
       }
 
