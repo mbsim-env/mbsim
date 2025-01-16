@@ -676,7 +676,7 @@ namespace MBSimGUI {
     menu.setAutoRefresh(settings.value("mainwindow/options/autorefresh", true).toBool());
     menu.setStatusUpdate(settings.value("mainwindow/options/statusupdate", true).toBool());
     menu.setPlugins(settings.value("mainwindow/options/plugins", QString()).toString());
-    menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 1).toInt());
+    menu.setDefaultEvaluator(settings.value("mainwindow/options/defaultevaluator", 0).toInt());
 
     QFile file(configPath+"mbsimxml.modulepath");
     file.open(QIODevice::ReadOnly | QIODevice::Text);
