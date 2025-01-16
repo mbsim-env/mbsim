@@ -53,7 +53,7 @@
    writev(vector[...])
    fun:__writev
    fun:writev
-   obj:/usr/lib/x86_64-linux-gnu/libxcb.so*
+   obj:*/libxcb.so*
 }
 {
    X
@@ -61,7 +61,7 @@
    waitid(infop)
    fun:syscall
    ...
-   obj:/usr/lib/x86_64-linux-gnu/libQt5Core.so*
+   obj:*/libQt5Core.so*
    fun:_ZN8QProcess7executeERK7QStringRK11QStringList
 }
 {
@@ -70,23 +70,480 @@
    writev(vector[...])
    fun:__writev
    fun:writev
-   obj:/usr/lib/x86_64-linux-gnu/libxcb.so*
+   obj:*/libxcb.so*
 }
 {
    X
    Memcheck:Cond
-   fun:_ZN10SoGLImageP17checkTransparencyEv
-   fun:_ZNK9SoGLImage15hasTransparencyEv
-   fun:_ZN28SoGLMultiTextureImageElement15hasTransparencyEP7SoState
-   fun:_ZN28SoGLMultiTextureImageElement3setEP7SoStateP6SoNodeiP9SoGLImageN26SoMultiTextureImageElement5ModelERK7SbColor
-   fun:_ZN10SoTexture28GLRenderEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+   ...
    fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN8SoAction5applyERK10SoPathListi
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:realloc
+   ...
+   obj:*/libdbus-1.so*
+   obj:*/libQt5DBus.so*
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:realloc
+   ...
+   obj:*/libdbus-1.so*
+   obj:*/libQt5DBus.so*
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:jm_vector_alloc_jm_voidp
+   fun:fmi1_xml_handle_ModelVariables
+   fun:fmi1_parse_element_end
+   fun:doContent
+   fun:contentProcessor
+   fun:prologProcessor
+   fun:XML_ParseBuffer
+   fun:fmi1_xml_parse_model_description
+   fun:fmi1_import_parse_xml
+   fun:fmi1_check
+   fun:main
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   obj:*/liboctinterp.so*
+   fun:_ZN6octave11environment14init_exec_pathB5cxx11Ev
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN6octave10base_lexer14finish_commentENS_11comment_elt12comment_typeE
+   fun:_Z10octave_lexP12OCTAVE_STYPEPv
+   fun:_Z17octave_pull_parseP13octave_pstateRN6octave11base_parserE
+   fun:_ZN6octave6parser3runEv
+   fun:_ZN6octave14parse_fcn_fileERNS_11interpreterERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES9_S9_S9_S9_bbbb
+   fun:_ZN6octave18load_fcn_from_fileERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_S7_S7_S7_b
+   fun:_ZN6octave8fcn_info12fcn_info_rep18find_user_functionEv
+   fun:_ZN6octave8fcn_info12fcn_info_rep22load_class_constructorEv
+   fun:_ZN6octave8fcn_info12fcn_info_rep5xfindERKNS_12symbol_scopeERK17octave_value_list
+   fun:_ZN6octave8fcn_info12fcn_info_rep4findERKNS_12symbol_scopeERK17octave_value_list
+   fun:_ZN6octave12symbol_table14fcn_table_findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERK17octave_value_listRKNS_12symbol_scopeE
+   fun:_ZN6octave14tree_evaluator4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave11interpreter4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave12cdef_package16cdef_package_rep4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave12cdef_package16cdef_package_rep12meta_subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS2_4listI17octave_value_listSaISB_EEEi
+   fun:_ZN20octave_classdef_meta7subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS0_4listI17octave_value_listSaIS9_EEEi
+   fun:_ZN12octave_value7subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS0_4listI17octave_value_listSaIS9_EEEi
+   fun:_ZN6octave21tree_index_expression10evaluate_nERNS_14tree_evaluatorEi
+   fun:_ZN6octave21tree_index_expression8evaluateERNS_14tree_evaluatorEi
+   fun:_ZN6octave22tree_simple_assignment8evaluateERNS_14tree_evaluatorEi
+   fun:_ZN6octave14tree_evaluator15visit_statementERNS_14tree_statementE
+   fun:_ZN6octave14tree_evaluator20visit_statement_listERNS_19tree_statement_listE
+   fun:_ZN6octave14tree_evaluator15visit_statementERNS_14tree_statementE
+   fun:_ZN6octave14tree_evaluator20visit_statement_listERNS_19tree_statement_listE
+   fun:_ZN6octave14tree_evaluator21execute_user_functionER20octave_user_functioniRK17octave_value_list
+   fun:_ZN20octave_user_function4callERN6octave14tree_evaluatorEiRK17octave_value_list
+   fun:_ZN6octave21tree_index_expression10evaluate_nERNS_14tree_evaluatorEi
+   fun:_ZN6octave14tree_evaluator11eval_stringERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbRii
+   fun:_ZN6octave11interpreter11eval_stringERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbRii
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN9QScroller11grabGestureEP7QObjectNS_19ScrollerGestureTypeE
+   fun:_ZN10OpenMBVGUI5Utils11enableTouchEP7QWidget
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN10SoSFUInt3214createInstanceEv
+   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
    fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
    fun:_ZN17SoGLRenderActionP6renderEP6SoNode
    fun:_ZN8SoAction5applyEP6SoNode
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
+   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
+   fun:_ZN8SoAction5applyEP6SoNode
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:*/libGLU.so*
+   obj:*/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znam
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:*/libpython*
+   fun:_PyObject_GC_NewVar
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:*/libpython*
+   fun:PyUnicode_New
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:*/libpython*
+   fun:PyType_GenericAlloc
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:memalign
+   fun:posix_memalign
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   fun:_ZN13SoVertexShapeC1Ev
+   fun:_ZN17SoNonIndexedShapeC1Ev
+   fun:_ZN18SoTriangleStripSetC1Ev
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:*/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   fun:_ZN13SoCoordinate3C1Ev
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:*/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   fun:_ZN8SoMField11allocValuesEi
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:malloc
+   fun:allocate_dtv_entry
+   fun:allocate_and_init
+   fun:tls_get_addr_tail
+   fun:__tls_get_addr
+   obj:*/_distance_pybind.cpython-*-x86_64-linux-gnu.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:malloc
+   fun:_dl_resize_dtv
+   fun:_dl_update_slotinfo
+   fun:update_get_addr
+   fun:__tls_get_addr
+   obj:*/_distance_pybind.cpython-*-x86_64-linux-gnu.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:realloc
+   obj:*/libdbus-1.so*
+   fun:_dbus_read
+   obj:*/libdbus-1.so*
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   obj:*/liboctinterp.so*
+   fun:_ZN6octave11environment14init_exec_pathB5cxx11Ev
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   fun:_ZN7SbPList4growEi
+   fun:_ZN13SoAuditorList6appendEPvN8SoNotRec4TypeE
+   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
+   fun:_ZN13SoFieldSensor6attachEP7SoField
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN11SoSeparator14getBoundingBoxEP22SoGetBoundingBoxAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN11SoSeparator14getBoundingBoxEP22SoGetBoundingBoxAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB4readEP7SoInputRP6SoNode
 }

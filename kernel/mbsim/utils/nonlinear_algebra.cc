@@ -130,7 +130,7 @@ namespace MBSim {
       if(jac)
         J = (*jac)(x);
       else {
-        double delta = epsroot;
+        double delta = sqrt(macheps*std::max(1.e-5,abs(x)));
         double xtmp = x;
         x += delta;
         double f_new = (*fct)(x);
@@ -210,10 +210,7 @@ namespace MBSim {
         for(int j=0; j<x.size(); j++) {
           xj = x(j);
 
-          dx = (epsroot * 0.5);
-          do {
-            dx += dx;
-          } while (fabs(xj + dx - x(j))<epsroot);
+          dx = sqrt(macheps*max(1.e-5,abs(xj)));
 
           x(j)+=dx;
           f2 = (*fct)(x);

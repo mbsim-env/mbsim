@@ -127,7 +127,7 @@ namespace MBSim {
       int n = system->getzSize();
       bool restart = false;
       if(result==1 or result==2) {
-        double curTimeAndState = -1;
+        double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
         double tRoot = t;
 
         // root-finding

@@ -15,7 +15,7 @@ MBSim
 - Fixed Jacobian submatrices for none-linear direct constraint solver (smoothSolver=directNonlinear)
 - If the model cannot be made consistent during the initial velocity projection an error is thrown now
 - Catch Windows WM_CLOSE signals and exit the simulation propably (WM_CLOSE is the Windows variant of SIG_INT/SIG_TERM)
-- Added a new "action" for <import> in the preprocessor if the Python evaluator is used.
+- Added a new "action" attribute for <import> in the preprocessor if the Python evaluator is used.
 
 MBSimControl
 ------------
@@ -30,7 +30,8 @@ MBSimGUI
 OpenMBV
 -------
 - Improved/reworked video export to allow fast regeneration of the video with different bitrate (quality/filesize)
-- Enabled video export on Linux: note that IndirectGLX must be enabled in the X11 server flags, see error message
+- Enabled video export on Linux: note that IndirectGLX must be enabled in the X11 server flags (see error message),
+  or the native resolution/background must be used to enable direct GLX export.
 
 
 Release 10.3

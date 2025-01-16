@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RADAU5Integrator xmlns="http://www.mbsim-env.de/MBSim">
+  <startTime>0</startTime>
+  <endTime>0.85</endTime>
+  <plotStepSize>1e-2</plotStepSize>
+  <absoluteToleranceScalar>1e-7</absoluteToleranceScalar>
+  <relativeToleranceScalar>1e-7</relativeToleranceScalar>
+  <initialStepSize>0</initialStepSize>
+  <maximumStepSize>1e-1</maximumStepSize>
+  <formalism>"DAE2"</formalism>
+  <reducedForm>1</reducedForm>
+  <jacobianRecomputation>0.9999</jacobianRecomputation>
+</RADAU5Integrator>

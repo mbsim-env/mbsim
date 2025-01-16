@@ -215,7 +215,7 @@ namespace MBSim {
     while(t<tEnd-epsroot) {
       DLSODI(*res[formalism], adda, 0, neq, system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
       if(istate==2 or istate==1) {
-        double curTimeAndState = -1;
+        double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
         double tRoot = t;
 
         // root-finding

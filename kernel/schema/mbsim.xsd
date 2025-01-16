@@ -45,6 +45,13 @@
     </xs:sequence>
   </xs:group>
 
+  <xs:group name="OpenMBVRigidBodyParameters">
+    <xs:sequence>
+      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:element name="path" type="pv:booleanFullEval" minOccurs="0"/>
+    </xs:sequence>
+  </xs:group>
+
   <xs:group name="OpenMBVDynamicColoredBodyParameters">
     <xs:sequence>
       <xs:group ref="OpenMBVColoredBodyParameters"/>
@@ -56,7 +63,7 @@
 
   <xs:group name="OpenMBVFrameParameters">
     <xs:sequence>
-      <xs:group ref="OpenMBVColoredBodyParameters"/>
+      <xs:group ref="OpenMBVRigidBodyParameters"/>
       <xs:element name="size" type="pv:lengthScalar" minOccurs="0">
         <xs:annotation>
           <xs:documentation xml:lang="de" xmlns="">
@@ -7190,6 +7197,44 @@
           <xs:element name="reducedForm" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Lösen des nichtlinearen Gleichungssystems in reduzierter Form. Das differentielle System muss dazu die spezielle Struktur dq(i)/dt = u(i) für i=1,...,nq haben.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="maximumNumberOfNewtonIterations" type="pv:integerFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              The maximale Anzahl von Newton iteration welche der Integrator durchführt bis eine andere Strategie, wie z.B. ein Jacobi-Update, erfolgt. [Default: 7]
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="newtonIterationTolerance" type="pv:floatFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Die Abbruchschranke für die Newton iteration des Integrators. [Default: min(0.03,sqrt(rtol_1))]
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="jacobianRecomputation" type="pv:floatFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Faktor welcher angiebt wie häufig ein update der Jacobi-Matrix stattfinden soll. [Default: 0.001]
+              Bei Faktor &lt;=0 wird in jedem Zeitschritt eine neue Jacobi-Matrix berechnet.
+              Bei Faktor 1-eps (1 ist ein Fehler) wird so selten wie möglich eine neue JAcobi-Matrix berechnet.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="jacobianRecomputationAtRejectedSteps" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Der original RADAU5 code führt bei jedem rejected-step einen update der Jacobi-Matrix durch. [Default: true]
+              Dies kann mit dieser Option abgeschaltet werden. Dann wird nach einen rejecte-step nur ein Jacobi-Matrix update
+              durchgeführt wenn Bedingung wie bei accepted-steps (mittels jacobianRecomputation) erfüllt ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="stepSizeControl" type="pv:stringFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert die methode zur Schrittweitensteuerung.
+              modPred: mod. predictive controller (Gustafsson)
+              classic: classical step size control
+              [Default: modPred]
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="stepSizeSaftyFactor" type="pv:floatFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Definiert den Sicherheitsfaktor für die Schrittweitensteuerung.
+              [Default: 0.9]
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
