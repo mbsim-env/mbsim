@@ -49,7 +49,6 @@ MBSimGUI
   now handled in MBSimGUI as "Unknown XML Elements". Hence, MBSimGUI can now handle every feature but with reduced
   user experience.
 - Enable project templates.
-- In the options menu the default evaluator is now set to "Python", when MBSimGUI ist started the first time.
 - The base index for plot is removed.
 
 MBSimXML
