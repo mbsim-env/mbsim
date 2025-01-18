@@ -185,6 +185,7 @@ namespace MBSimGUI {
       void updateParameterReferences(EmbedItemData *parent);
       void saveReferencedFile(int i);
       void convertDocument();
+      void createNewEvaluator();
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void abstractViewFilterOptionsChanged();
@@ -289,9 +290,25 @@ namespace MBSimGUI {
         std::string countStr;
         std::string onlyIfStr;
       };
+      // Updates/initialize the mbsimgui internal evaluator (member variable eval) with the parameters
+      // required for the element item.
+      // Returns a list of all possible parameter levels, even if no Embed is defined on a level.
+      // (note that only embeds on container elements are considered here)
+      // If exceptLatestParameter is true then the last parameter (if item is a parameter) is skipped (not added)
       std::vector<ParameterLevel> updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
+
+      // Evaluates the string code as full eval if set to true or as partial eval if it is false.
+      // The evaluation may be done multiple times, for each possible combination of Embed count ones.
+      // The possible Embed's are taken from parameterLevels which is the output of updateParameters(...).
+      // If catchErrors is true all errros are catched and it is tried to continue as good as possible.
+      // If trackFirstLastCall is true special boolean parameters are added before code is evaluated indicating if the
+      // current call is the first or last call. Doing so will be slightly slower.
+      // Returns, as first, a list of all counterNames which are relevant (none existing Embed elements or empty counterName
+      // (with count=1) are not returned.
+      // As second a map with all possible combinations of these counts and the corresponding evaluation is returned.
       static std::pair<std::vector<std::string>, std::map<std::vector<int>, MBXMLUtils::Eval::Value>> evaluateForAllArrayPattern(
-        const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e=nullptr);
+        const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+        bool fullEval, bool catchErrors, bool trackFirstLastCall=false);
 
       void rebuildTree();
       void exportParameters();

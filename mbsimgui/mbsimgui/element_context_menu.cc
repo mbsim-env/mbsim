@@ -132,8 +132,8 @@ namespace MBSimGUI {
         addAction(ca.first.c_str(), [ca, element](){
           mw->clearEchoView(QString("Running action '")+ca.first.c_str()+"':\n\n");
           try {
-            mw->updateParameters(element);
-            mw->eval->eval(ca.second, nullptr, true);
+            auto parameterLevels = mw->updateParameters(element);
+            MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second, nullptr, true, false, true);
             mw->updateEchoView();
           }
           catch(const std::exception &ex) {

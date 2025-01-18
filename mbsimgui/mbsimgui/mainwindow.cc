@@ -1046,14 +1046,7 @@ namespace MBSimGUI {
     openElementEditor(false);
   }
 
-  // Create an new eval and fills its context with all parameters/imports which may influence item.
-  // The context contains also all counterName variables where the count is set to 0 or 1 for 0-based or 1-based evaluators, respectively
-  // Also a list of all parameter levels which may influence item is returned. This list contains for each parameter level:
-  // - the XML representation of the parameters (paramEle)
-  // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
-  // - the unevaluated count string of the Array/Pattern
-  // - the unevaluated onlyif string of the Array/Pattern
-  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
+  void MainWindow::createNewEvaluator() {
     // get evaluator (octave, python, ...)
     string evalName="octave"; // default evaluator
     if(project)
@@ -1072,7 +1065,18 @@ namespace MBSimGUI {
       if(evaluator)
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
     }
-    eval=Eval::createEvaluator(evalName);
+    eval = Eval::createEvaluator(evalName);
+  }
+
+  // Create an new eval and fills its context with all parameters/imports which may influence item.
+  // The context contains also all counterName variables where the count is set to 0 or 1 for 0-based or 1-based evaluators, respectively
+  // Also a list of all parameter levels which may influence item is returned. This list contains for each parameter level:
+  // - the XML representation of the parameters (paramEle)
+  // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
+  // - the unevaluated count string of the Array/Pattern
+  // - the unevaluated onlyif string of the Array/Pattern
+  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
+    createNewEvaluator();
 
     vector<ParameterLevel> parameterLevels;
     if(item) {
@@ -1106,7 +1110,11 @@ namespace MBSimGUI {
             eval->addParam(counterName+"_count", eval->create(1.0));
             parameterLevels.back().counterName = counterName;
             parameterLevels.back().countStr = E(parent->getEmbedXMLElement())->getAttribute("count");
-            parameterLevels.back().onlyIfStr = E(parent->getEmbedXMLElement())->getAttribute("onlyif");
+            parameterLevels.back().onlyIfStr = parent->getEmbedXMLElement() ? E(parent->getEmbedXMLElement())->getAttribute("onlyif") : "1";
+          }
+          else {
+            parameterLevels.back().countStr = "1";
+            parameterLevels.back().onlyIfStr = parent->getEmbedXMLElement() ? E(parent->getEmbedXMLElement())->getAttribute("onlyif") : "1";
           }
 
           eval->addParamSet(ele);
@@ -1127,50 +1135,73 @@ namespace MBSimGUI {
   }
 
   pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>> MainWindow::evaluateForAllArrayPattern(
-    const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e) {
+    const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+    bool fullEval, bool catchErrors, bool trackFirstLastCall) {
+    // helper to catch errors, print it to the statusBar and continue if catchErrors is true.
+    // if catchErrors is false the exception is rethrown.
     #define CATCH(msg) \
       catch(DOMEvalException &e) { \
-        mw->setExitBad(); \
-        mw->statusBar()->showMessage(e.getMessage().c_str()); \
-        std::cerr << msg << ": " << e.getMessage() << std::endl; \
+        if(catchErrors) { \
+          mw->setExitBad(); \
+          mw->statusBar()->showMessage(e.getMessage().c_str()); \
+          std::cerr << msg << ": " << e.getMessage() << std::endl; \
+        } \
+        else \
+          throw e; \
       } \
       catch(...) { \
-        mw->setExitBad(); \
-        mw->statusBar()->showMessage("Unknown exception"); \
-        std::cerr << msg << ": Unknwon exception" << std::endl; \
+        if(catchErrors) { \
+          mw->setExitBad(); \
+          mw->statusBar()->showMessage("Unknown exception"); \
+          std::cerr << msg << ": Unknwon exception" << std::endl; \
+        } \
+        else \
+          throw e; \
       }
 
-    vector<string> counterNames;
-    for(auto &x : parameterLevels)
-      if(!x.counterName.empty())
-        counterNames.emplace_back(x.counterName);
-    map<vector<int>, Eval::Value> values;
+    // this is a lambda for the real body of this function.
+    // it is written since it may be called twice if trackFirstLastCall is true, see below
+    auto worker = [trackFirstLastCall](const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+                     bool fullEval, bool catchErrors, int *lastCall) {
+      // if lastCall is not nullptr and is negative this is the first call to worker which
+      // just track how many time code will be evaluated without evaluating it
+      bool trackLastCall = lastCall && *lastCall<0;
 
-    // evaluate the code for all possible counter values (recursively)
-    // save the evaluated counter name in a set to add only unique names
-    vector<int> levels(counterNames.size());
-    function<void(vector<MainWindow::ParameterLevel>::const_iterator, vector<MainWindow::ParameterLevel>::const_iterator,
-                  int level, vector<int> levels)> walk;
-    walk=[&code, e, &walk, &values](vector<MainWindow::ParameterLevel>::const_iterator start,
-                                    vector<MainWindow::ParameterLevel>::const_iterator end,
-                                    int level, vector<int> levels) {
-      Eval::Value count = mw->eval->create(1.0);
-      if(!start->counterName.empty())
-        try { count = mw->eval->stringToValue(start->countStr, e); }
-        CATCH("Cannot evaluate Array/Pattern 'count' variable");
-      int countInt = 1;
-      try { countInt = mw->eval->cast<int>(count); }
-      CATCH("The Array/Patttern 'count' variable is not of type int");
-      for(int counterValue1Based=1; counterValue1Based<=countInt; ++counterValue1Based) {
-        NewParamLevel newParamLevel(mw->eval);
+      mw->createNewEvaluator();
 
-        if(!start->counterName.empty()) {
-          // add counter parameter
-          auto counterValue=mw->eval->create(static_cast<double>(counterValue1Based));
-          mw->eval->convertIndex(counterValue, false);
-          mw->eval->addParam(start->counterName, counterValue);
-          mw->eval->addParam(start->counterName+"_count", count);
-          levels[level] = mw->eval->cast<int>(counterValue);
+      vector<string> counterNames;
+      for(auto &x : parameterLevels)
+        if(!x.counterName.empty())
+          counterNames.emplace_back(x.counterName);
+      map<vector<int>, Eval::Value> values;
+
+      // evaluate the code for all possible counter values (recursively)
+      // save the evaluated counter name in a set to add only unique names
+      vector<int> levels(counterNames.size());
+      function<void(vector<MainWindow::ParameterLevel>::const_iterator, vector<MainWindow::ParameterLevel>::const_iterator,
+                    int level, vector<int> levels)> walk;
+      int callNumber = 0;
+      walk=[&code, e, &walk, &values, fullEval, &callNumber, &lastCall, trackLastCall, catchErrors, trackFirstLastCall]
+              (vector<MainWindow::ParameterLevel>::const_iterator start, vector<MainWindow::ParameterLevel>::const_iterator end,
+               int level, vector<int> levels) {
+        Eval::Value count = mw->eval->create(1.0);
+        if(!start->counterName.empty())
+          try { count = mw->eval->stringToValue(start->countStr, e); }
+          CATCH("Cannot evaluate Array/Pattern 'count' variable");
+        int countInt = 1;
+        try { countInt = mw->eval->cast<int>(count); }
+        CATCH("The Array/Pattern 'count' variable is not of type int");
+        for(int counterValue1Based=1; counterValue1Based<=countInt; ++counterValue1Based) {
+          NewParamLevel newParamLevel(mw->eval);
+
+          if(!start->counterName.empty()) {
+            // add counter parameter
+            auto counterValue=mw->eval->create(static_cast<double>(counterValue1Based));
+            mw->eval->convertIndex(counterValue, false);
+            mw->eval->addParam(start->counterName, counterValue);
+            mw->eval->addParam(start->counterName+"_count", count);
+            levels[level] = mw->eval->cast<int>(counterValue);
+          }
           // add local parameters
           try { mw->eval->addParamSet(start->paramEle); }
           CATCH("Failed to add parameters");
@@ -1183,25 +1214,48 @@ namespace MBSimGUI {
             }
             CATCH("Failed to evaluate Array/Pattern 'onlyif' variable, not skipping this counter");
           }
-        }
-        else
-          try {mw->eval->addParamSet(start->paramEle); }
-          CATCH("Failed to add parameters");
 
-        auto startNext=start;
-        startNext++;
-        if(startNext!=end)
-          walk(startNext, end, !start->counterName.empty() ? level+1 : level, levels);
-        else {
-          auto value = mw->eval->create(code); // if eval on next line fails we use the unevaluated code as value
-          try { value = mw->eval->stringToValue(code,e,false); }
-          CATCH("Failed to evaluate parameter, adding a string value with the unevaluated code")
-          values.emplace(levels, value);
+          auto startNext=start;
+          startNext++;
+          if(startNext!=end)
+            walk(startNext, end, !start->counterName.empty() ? level+1 : level, levels);
+          else {
+            callNumber++;
+            if(trackLastCall)
+              // only track the last call but do not evaluate code
+              *lastCall=callNumber;
+            else {
+              if(trackFirstLastCall) {
+                mw->eval->addParam("mbsimgui_firstCall", mw->eval->create(static_cast<double>(callNumber==1)));
+                mw->eval->addParam("mbsimgui_lastCall", mw->eval->create(static_cast<double>(lastCall && *lastCall==callNumber)));
+              }
+              // evaluate code
+              bool ok=false;
+              Eval::Value value;
+              try { value = mw->eval->stringToValue(code,e,fullEval); ok=true; }
+              CATCH("Failed to evaluate parameter, adding a string value with the unevaluated code")
+              if(!ok && catchErrors)
+                value = mw->eval->create(code); // if eval failed we use the unevaluated code as value
+              values.emplace(levels, value);
+            }
+          }
         }
-      }
+      };
+      walk(parameterLevels.begin(), parameterLevels.end(), 0, levels);
+      return pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>>{counterNames, values};
     };
-    walk(parameterLevels.begin(), parameterLevels.end(), 0, levels);
-    return {counterNames, values};
+
+    if(!trackFirstLastCall)
+      // track the first and last call was not requested -> just all the worker (once)
+      return worker(parameterLevels, code, e, fullEval, catchErrors, nullptr);
+    else {
+      // track the first and last call was requested
+      int lastCall = -1;
+      // run worker with lastCall = -1 to track the last call (no evaluation of code is done)
+      worker(parameterLevels, code, e, fullEval, catchErrors, &lastCall);
+      // now call worker again and set a parameter to indicate the first and last call
+      return worker(parameterLevels, code, e, fullEval, catchErrors, &lastCall);
+    }
   }
 
   void MainWindow::saveDataAs() {
