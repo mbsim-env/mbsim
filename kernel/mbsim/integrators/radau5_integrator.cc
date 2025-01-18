@@ -44,132 +44,174 @@ namespace MBSim {
   RADAU5Integrator::Mass RADAU5Integrator::mass[2];
 
   void RADAU5Integrator::fzdotODE(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Vec zd(*zSize, zd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(Vec(*zSize, z_));
-    self->getSystem()->resetUpToDate();
-    zd = self->getSystem()->evalzd();
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec zd(*zSize, zd_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(Vec(*zSize, z_));
+      self->getSystem()->resetUpToDate();
+      zd = self->getSystem()->evalzd();
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
   }
 
   void RADAU5Integrator::fzdotDAE1(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Vec y(*neq, y_);
-    Vec yd(*neq, yd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(self->Rz));
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->Rla));
-    self->getSystem()->setUpdatela(false);
-    yd.set(self->Rz, self->system->evalzd());
-    yd.set(self->Rla, self->system->evalW().T()*self->system->evalT()*yd(self->Ru) + self->system->evalwb());
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(*neq, y_);
+      Vec yd(*neq, yd_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(y(self->Rz));
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setla(y(self->Rla));
+      self->getSystem()->setUpdatela(false);
+      yd.set(self->Rz, self->system->evalzd());
+      yd.set(self->Rla, self->system->evalW().T()*self->system->evalT()*yd(self->Ru) + self->system->evalwb());
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
   }
 
   void RADAU5Integrator::fzdotDAE2(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Vec y(*neq, y_);
-    Vec yd(*neq, yd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(self->Rz));
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->Rla));
-    self->getSystem()->setUpdatela(false);
-    yd.set(self->Rz, self->system->evalzd());
-    yd.set(self->Rla, self->system->evalgd());
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(*neq, y_);
+      Vec yd(*neq, yd_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(y(self->Rz));
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setla(y(self->Rla));
+      self->getSystem()->setUpdatela(false);
+      yd.set(self->Rz, self->system->evalzd());
+      yd.set(self->Rla, self->system->evalgd());
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
   }
 
   void RADAU5Integrator::fzdotDAE3(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Vec y(*neq, y_);
-    Vec yd(*neq, yd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(self->Rz));
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->Rla));
-    self->getSystem()->setUpdatela(false);
-    yd.set(self->Rz, self->system->evalzd());
-    yd.set(self->Rla, self->system->evalg());
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(*neq, y_);
+      Vec yd(*neq, yd_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(y(self->Rz));
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setla(y(self->Rla));
+      self->getSystem()->setUpdatela(false);
+      yd.set(self->Rz, self->system->evalzd());
+      yd.set(self->Rla, self->system->evalg());
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
   }
 
   void RADAU5Integrator::fzdotGGL(int* neq, double* t, double* y_, double* yd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Vec y(*neq, y_);
-    Vec yd(*neq, yd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(y(self->Rz));
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setla(y(self->Rla));
-    self->getSystem()->setUpdatela(false);
-    yd.set(self->Rz, self->system->evalzd());
-    yd.set(self->Rla, self->system->evalgd());
-    yd.set(self->Rl, self->system->evalg());
-    if(self->system->getgSize() != self->system->getgdSize()) {
-      self->system->calclaSize(5);
-      self->system->updateWRef(self->system->getWParent(0));
-      self->system->setUpdateW(false);
-      yd.add(self->Rq, self->system->evalW()*y(self->Rla));
-      self->system->calclaSize(3);
-      self->system->updateWRef(self->system->getWParent(0));
-    }
-    else
-      yd.add(self->Rq, self->system->evalW()*y(self->Rla));
-  }
-
-  void RADAU5Integrator::jac(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    int rowMove = self->reduced ? self->system->getqSize() : 0;
-    RangeV RuMove(self->Ru.start()-rowMove, self->Ru.end()-rowMove);
-    RangeV RlaMove(self->Rla.start()-rowMove, self->Rla.end()-rowMove);
-    Mat J(*rows, *cols, J_); // fmatvec variant of J_
-
-    // the undisturbed call -> this sets the system resetUpToDate
-    // res0 is later used for the numerical part of the jacobian
-    self->fzdot[self->formalism](cols,t,y_,self->res0(),rpar,ipar);
-
-    // the columns for la are given analytically
-    Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
-    J.set(RuMove, self->Rla, Minv_Jrla);
-    if(self->formalism==DAE1)
-      J.set(RlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
-    // the rest of the entries in these columns are 0
-    for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
-      if(!self->reduced)
-        for(int r=0; r<self->Ru.start(); ++r)
-          J(r,c)=0;
-      for(int r=self->Ru.end()+1; r<(self->formalism==DAE1 ? self->Rla.start()-1 : *cols); ++r)
-        J(r-rowMove,c)=0;
-    }
-
-    if(self->formalism==GGL) {
-      // the columns for algebraic GGL state are given analytically
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(*neq, y_);
+      Vec yd(*neq, yd_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(y(self->Rz));
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setla(y(self->Rla));
+      self->getSystem()->setUpdatela(false);
+      yd.set(self->Rz, self->system->evalzd());
+      yd.set(self->Rla, self->system->evalgd());
+      yd.set(self->Rl, self->system->evalg());
       if(self->system->getgSize() != self->system->getgdSize()) {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
         self->system->setUpdateW(false);
-        J.set(self->Rq, self->Rl, self->system->evalW());
+        yd.add(self->Rq, self->system->evalW()*y(self->Rla));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
       }
       else
-        J.set(self->Rq, self->Rl, self->system->evalW());
+        yd.add(self->Rq, self->system->evalW()*y(self->Rla));
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void RADAU5Integrator::jac(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      int rowMove = self->reduced ? self->system->getqSize() : 0;
+      RangeV RuMove(self->Ru.start()-rowMove, self->Ru.end()-rowMove);
+      RangeV RlaMove(self->Rla.start()-rowMove, self->Rla.end()-rowMove);
+      Mat J(*rows, *cols, J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->fzdot[self->formalism](cols,t,y_,self->res0(),rpar,ipar);
+
+      // the columns for la are given analytically
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(RuMove, self->Rla, Minv_Jrla);
+      if(self->formalism==DAE1)
+        J.set(RlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
       // the rest of the entries in these columns are 0
-      for(int c=self->Rl.start(); c<=self->Rl.end(); ++c) {
-        for(int r=self->Ru.start(); r<*cols; ++r)
-          J(r,c)=0;
+      for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
+        if(!self->reduced)
+          for(int r=0; r<self->Ru.start(); ++r)
+            J(r,c)=0;
+        for(int r=self->Ru.end()+1; r<(self->formalism==DAE1 ? self->Rla.start()-1 : *cols); ++r)
+          J(r-rowMove,c)=0;
+      }
+
+      if(self->formalism==GGL) {
+        // the columns for algebraic GGL state are given analytically
+        if(self->system->getgSize() != self->system->getgdSize()) {
+          self->system->calclaSize(5);
+          self->system->updateWRef(self->system->getWParent(0));
+          self->system->setUpdateW(false);
+          J.set(self->Rq, self->Rl, self->system->evalW());
+          self->system->calclaSize(3);
+          self->system->updateWRef(self->system->getWParent(0));
+        }
+        else
+          J.set(self->Rq, self->Rl, self->system->evalW());
+        // the rest of the entries in these columns are 0
+        for(int c=self->Rl.start(); c<=self->Rl.end(); ++c) {
+          for(int r=self->Ru.start(); r<*cols; ++r)
+            J(r,c)=0;
+        }
+      }
+
+      // now the finite difference of all other columns
+      // this code is taken from radau5.f JACOBIAN IS FULL,
+      // but converted to C and skipping the last columns of the jacobian for la which is given analytically
+      for(int c=0; c<self->system->getqSize()+self->system->getuSize()+self->system->getxSize(); ++c) {
+        double ySafe=y_[c];
+        double delta=sqrt(macheps*max(1.e-5,abs(ySafe)));
+        y_[c]=ySafe+delta;
+        self->fzdot[self->formalism](cols,t,y_,self->res1(),rpar,ipar);
+        for(int r=rowMove; r<*cols; ++r)
+          J_[(c*(*rows))+r-rowMove]=(self->res1(r)-self->res0(r))/delta;
+        y_[c]=ySafe;
       }
     }
-
-    // now the finite difference of all other columns
-    // this code is taken from radau5.f JACOBIAN IS FULL,
-    // but converted to C and skipping the last columns of the jacobian for la which is given analytically
-    for(int c=0; c<self->system->getqSize()+self->system->getuSize()+self->system->getxSize(); ++c) {
-      double ySafe=y_[c];
-      double delta=sqrt(macheps*max(1.e-5,abs(ySafe)));
-      y_[c]=ySafe+delta;
-      self->fzdot[self->formalism](cols,t,y_,self->res1(),rpar,ipar);
-      for(int r=rowMove; r<*cols; ++r)
-        J_[(c*(*rows))+r-rowMove]=(self->res1(r)-self->res0(r))/delta;
-      y_[c]=ySafe;
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
     }
   }
 
@@ -188,127 +230,136 @@ namespace MBSim {
   }
 
   void RADAU5Integrator::plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) { // if a exception was already thrown in a call before -> do nothing but set interrupt flag and return
+      *irtrn=-1;
+      return;
+    }
+    try { // catch exception -> C code must catch all exceptions
+      double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
+      double tRoot = *t;
 
-    double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
-    double tRoot = *t;
-
-    // root-finding
-    if(self->getSystem()->getsvSize()) {
-      self->getSystem()->setTime(*t);
-      curTimeAndState = *t;
-      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
-      self->getSystem()->resetUpToDate();
-      self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
-      // if a root exists in the current step ...
-      if(self->shift) {
-        // ... search the first root and set step.second to this time
-        double dt = *t-*told;
-        while(dt>self->dtRoot) {
-          dt/=2;
-          double tCheck = tRoot-dt;
-          self->getSystem()->setTime(tCheck);
-          curTimeAndState = tCheck;
-          for(int i=1; i<=self->system->getzSize(); i++)
-            self->getSystem()->getState()(i-1) = CONTR5(&i,&tCheck,cont,lrc);
+      // root-finding
+      if(self->getSystem()->getsvSize()) {
+        self->getSystem()->setTime(*t);
+        curTimeAndState = *t;
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
+        self->getSystem()->resetUpToDate();
+        self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
+        // if a root exists in the current step ...
+        if(self->shift) {
+          // ... search the first root and set step.second to this time
+          double dt = *t-*told;
+          while(dt>self->dtRoot) {
+            dt/=2;
+            double tCheck = tRoot-dt;
+            self->getSystem()->setTime(tCheck);
+            curTimeAndState = tCheck;
+            for(int i=1; i<=self->system->getzSize(); i++)
+              self->getSystem()->getState()(i-1) = CONTR5(&i,&tCheck,cont,lrc);
+            self->getSystem()->resetUpToDate();
+            if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
+              tRoot = tCheck;
+          }
+          if(curTimeAndState != tRoot) {
+            curTimeAndState = tRoot;
+            self->getSystem()->setTime(tRoot);
+            for(int i=1; i<=self->system->getzSize(); i++)
+              self->getSystem()->getState()(i-1) = CONTR5(&i,&tRoot,cont,lrc);
+          }
           self->getSystem()->resetUpToDate();
-          if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
-            tRoot = tCheck;
+          auto &sv = self->getSystem()->evalsv();
+          auto &jsv = self->getSystem()->getjsv();
+          for(int i=0; i<sv.size(); ++i)
+            jsv(i)=self->svLast(i)*sv(i)<0;
         }
-        if(curTimeAndState != tRoot) {
-          curTimeAndState = tRoot;
-          self->getSystem()->setTime(tRoot);
+      }
+
+      while(tRoot >= self->tPlot) {
+        if(curTimeAndState != self->tPlot) {
+          curTimeAndState = self->tPlot;
+          self->getSystem()->setTime(self->tPlot);
           for(int i=1; i<=self->system->getzSize(); i++)
+            self->getSystem()->getState()(i-1) = CONTR5(&i,&self->tPlot,cont,lrc);
+        }
+        self->getSystem()->resetUpToDate();
+        if(self->formalism) {
+          for(int i=self->system->getzSize()+1; i<=self->system->getzSize()+self->system->getlaSize(); i++)
+            self->getSystem()->getla(false)(i-(self->system->getzSize()+1)) = CONTR5(&i,&self->tPlot,cont,lrc);
+          self->getSystem()->setUpdatela(false);
+        }
+        self->getSystem()->plot();
+        if(self->msgAct(Status))
+          self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
+
+        self->getSystem()->updateInternalState();
+
+        double s1 = clock();
+        self->time += (s1-self->s0)/CLOCKS_PER_SEC;
+        self->s0 = s1;
+
+        self->tPlot += self->dtOut;
+      }
+
+      if(self->shift) {
+        // shift the system
+        if(curTimeAndState != tRoot) {
+          self->getSystem()->setTime(tRoot);
+          for(int i=1; i<=self->getSystem()->getzSize(); i++)
             self->getSystem()->getState()(i-1) = CONTR5(&i,&tRoot,cont,lrc);
         }
+        if(self->plotOnRoot) {
+          self->getSystem()->resetUpToDate();
+          self->getSystem()->plot();
+        }
         self->getSystem()->resetUpToDate();
-        auto &sv = self->getSystem()->evalsv();
-        auto &jsv = self->getSystem()->getjsv();
-        for(int i=0; i<sv.size(); ++i)
-          jsv(i)=self->svLast(i)*sv(i)<0;
+        self->getSystem()->shift();
+        if(self->formalism>1) { // DAE2, DAE3 or GGL
+          self->system->calcgdSize(3); // IH
+          self->system->updategdRef(self->system->getgdParent());
+          if(self->formalism>2) { // DAE3 or GGL
+            self->system->calcgSize(2); // IB
+            self->system->updategRef(self->system->getgParent());
+          }
+        }
+        if(self->plotOnRoot) {
+          self->getSystem()->resetUpToDate();
+          self->getSystem()->plot();
+        }
+        *irtrn = -1;
       }
-    }
-
-    while(tRoot >= self->tPlot) {
-      if(curTimeAndState != self->tPlot) {
-        curTimeAndState = self->tPlot;
-        self->getSystem()->setTime(self->tPlot);
-        for(int i=1; i<=self->system->getzSize(); i++)
-          self->getSystem()->getState()(i-1) = CONTR5(&i,&self->tPlot,cont,lrc);
+      else {
+        // check drift
+        if(self->getToleranceForPositionConstraints()>=0) {
+          self->getSystem()->setTime(*t);
+          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
+          self->getSystem()->resetUpToDate();
+          if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+            self->getSystem()->projectGeneralizedPositions(3);
+            self->getSystem()->projectGeneralizedVelocities(3);
+            self->drift = true;
+            *irtrn=-1;
+          }
+        }
+        else if(self->getToleranceForVelocityConstraints()>=0) {
+          self->getSystem()->setTime(*t);
+          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
+          self->getSystem()->resetUpToDate();
+          if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+            self->getSystem()->projectGeneralizedVelocities(3);
+            self->drift = true;
+            *irtrn=-1;
+          }
+        }
+        self->getSystem()->updateStopVectorParameters();
       }
-      self->getSystem()->resetUpToDate();
-      if(self->formalism) {
-        for(int i=self->system->getzSize()+1; i<=self->system->getzSize()+self->system->getlaSize(); i++)
-          self->getSystem()->getla(false)(i-(self->system->getzSize()+1)) = CONTR5(&i,&self->tPlot,cont,lrc);
-        self->getSystem()->setUpdatela(false);
-      }
-      self->getSystem()->plot();
-      if(self->msgAct(Status))
-	self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
 
       self->getSystem()->updateInternalState();
-
-      double s1 = clock();
-      self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-      self->s0 = s1;
-
-      self->tPlot += self->dtOut;
     }
-
-    if(self->shift) {
-      // shift the system
-      if(curTimeAndState != tRoot) {
-        self->getSystem()->setTime(tRoot);
-        for(int i=1; i<=self->getSystem()->getzSize(); i++)
-          self->getSystem()->getState()(i-1) = CONTR5(&i,&tRoot,cont,lrc);
-      }
-      if(self->plotOnRoot) {
-        self->getSystem()->resetUpToDate();
-        self->getSystem()->plot();
-      }
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->shift();
-      if(self->formalism>1) { // DAE2, DAE3 or GGL
-        self->system->calcgdSize(3); // IH
-        self->system->updategdRef(self->system->getgdParent());
-        if(self->formalism>2) { // DAE3 or GGL
-          self->system->calcgSize(2); // IB
-          self->system->updategRef(self->system->getgParent());
-        }
-      }
-      if(self->plotOnRoot) {
-        self->getSystem()->resetUpToDate();
-        self->getSystem()->plot();
-      }
-      *irtrn = -1;
+    catch(...) { // if a exception is thrown catch and store it in self and set the interrupt flag
+      self->exception = current_exception();
+      *irtrn=-1;
     }
-    else {
-      // check drift
-      if(self->getToleranceForPositionConstraints()>=0) {
-        self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
-        self->getSystem()->resetUpToDate();
-        if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
-          self->getSystem()->projectGeneralizedPositions(3);
-          self->getSystem()->projectGeneralizedVelocities(3);
-          self->drift = true;
-          *irtrn=-1;
-        }
-      }
-      else if(self->getToleranceForVelocityConstraints()>=0) {
-        self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
-        self->getSystem()->resetUpToDate();
-        if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
-          self->getSystem()->projectGeneralizedVelocities(3);
-          self->drift = true;
-          *irtrn=-1;
-        }
-      }
-      self->getSystem()->updateStopVectorParameters();
-    }
-
-    self->getSystem()->updateInternalState();
   }
 
   void RADAU5Integrator::integrate() {
@@ -368,10 +419,10 @@ namespace MBSim {
 
     int out = 1; // subroutine is available for output
 
-    double rPar;
-    int iPar[sizeof(void*)/sizeof(int)+1];
-    RADAU5Integrator *self=this;
-    memcpy(&iPar[0], &self, sizeof(void*));
+    double rPar[1]; // not used
+
+    exception=nullptr;
+    int *iPar = reinterpret_cast<int*>(this);
 
     int lWork;
     if(!reduced)
@@ -437,7 +488,9 @@ namespace MBSim {
           jac,&iJac,&mlJac,&muJac,
           *mass[reduced],&iMas,&mlMas,&muMas,
           plot,&out,
-          work(),&lWork,iWork,&liWork,&rPar,iPar,&idid);
+          work(),&lWork,iWork,&liWork,rPar,iPar,&idid);
+      if(exception)
+        rethrow_exception(exception);
       if(idid < 0)
         throw runtime_error("RADAU5 failed with idid = "+to_string(idid));
 

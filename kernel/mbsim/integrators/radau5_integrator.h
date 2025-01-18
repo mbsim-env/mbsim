@@ -99,6 +99,8 @@ namespace MBSim {
       StepSizeControl stepSizeControl { StepSizeControl::ModPred };
       double stepSizeSaftyFactor { 0.9 };
 
+      std::exception_ptr exception;
+
     public:
       ~RADAU5Integrator() override = default;
 
