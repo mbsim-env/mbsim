@@ -34,6 +34,9 @@ class QwtPlot;
 class QwtPlotCurve;
 class QTextEdit;
 class QListWidget;
+class QHBoxLayout;
+class QVBoxLayout;
+class QPlainTextEdit;
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -47,20 +50,25 @@ namespace MBSimGUI {
   class DataPlot;
   class ExtWidget;
   class XMLEditorWidget;
+  class VariableWidget;
+  class EmbedItemData;
 
   class EvalDialog : public QDialog {
     public:
-      EvalDialog(const std::vector<std::vector<QString>> &var_, int type_, QWidget *parent);
+      EvalDialog(VariableWidget *widget_);
     private:
       void showEvent(QShowEvent *event) override;
       void hideEvent(QHideEvent *event) override;
-      void formatVariables();
       void updateWidget();
-      std::vector<std::vector<QString>> var, varf;
-      int type;
+      VariableWidget *widget;
       QComboBox *format;
       QSpinBox *precision;
       QTableWidget *tab { nullptr };
+      std::vector<std::pair<int, QSpinBox*>> levelWidget;
+      QVBoxLayout *vlayout;
+      QHBoxLayout *floatTypeLayout { nullptr };
+      QPlainTextEdit *text { nullptr };
+      QHBoxLayout *levelLayout;
   };
 
   class BasicElementBrowser : public QDialog {

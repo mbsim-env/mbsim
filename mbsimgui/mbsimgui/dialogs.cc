@@ -32,6 +32,7 @@
 #include "treemodel.h"
 #include "treeitem.h"
 #include <QVBoxLayout>
+#include <QHBoxLayout>
 #include <QDialogButtonBox>
 #include <QTreeWidget>
 #include <QTableWidget>
@@ -77,67 +78,23 @@ namespace MBSimGUI {
     return QModelIndex();
   }
 
-  EvalDialog::EvalDialog(const vector<vector<QString>> &var_, int type_, QWidget *parent) : QDialog(parent), var(var_), varf(var_), type(type_) {
-
+  EvalDialog::EvalDialog(VariableWidget *widget_) : QDialog(widget_), widget(widget_) {
     auto *mainlayout = new QVBoxLayout;
     setLayout(mainlayout);
 
-    auto *layout = new QGridLayout;
-    mainlayout->addLayout(layout);
+    vlayout = new QVBoxLayout;
+    mainlayout->addLayout(vlayout);
 
-    if(type==0) { // floating point value (scalar, vector or matrix)
-      layout->addWidget(new QLabel("Format:"),0,0);
-      format = new QComboBox;
-      format->addItems(QStringList() << "e" << "E" << "f" << "g" << "G");
-      format->setCurrentIndex(3);
-      layout->addWidget(format,0,1);
-      connect(format, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EvalDialog::updateWidget);
+    levelLayout = new QHBoxLayout;
+    vlayout->addLayout(levelLayout, 0);
 
-      layout->addWidget(new QLabel("Precision:"),0,2);
-      precision = new QSpinBox;
-      precision->setValue(6);
-      layout->addWidget(precision,0,3);
-      connect(precision, QOverload<int>::of(&QSpinBox::valueChanged), this, &EvalDialog::updateWidget);
-    }
-
-    formatVariables();
-
-    if(type==0 || var.size()>1 || (var.size()>0 && var[0].size()>1)) { // floating point value (scalar, vector or matrix)
-      tab = new QTableWidget;
-      tab->setRowCount(varf.size());
-      tab->setColumnCount(!varf.empty()?varf[0].size():0);
-      for(int i=0; i<tab->rowCount(); i++) {
-        for(int j=0; j<tab->columnCount(); j++)
-          tab->setItem(i,j,new QTableWidgetItem(varf[i][j]));
-      }
-      layout->addWidget(tab,1,0,1,5);
-    }
-    else {
-      auto text = new QPlainTextEdit;
-
-      if(mw->eval->getName()=="octave")
-        new OctaveHighlighter(text->document());
-      else if(mw->eval->getName()=="python")
-        new PythonHighlighter(text->document());
-      else
-        cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
-      static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-      text->setFont(fixedFont);
-      text->setLineWrapMode(QPlainTextEdit::NoWrap);
-
-      layout->addWidget(text,1,0,1,5);
-
-      if(var.size()==1 && var[0].size()==1)
-        text->setPlainText(var[0][0]);
-    }
+    updateWidget();
 
     auto *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Close);
     connect(buttonBox, &QDialogButtonBox::rejected, this, &EvalDialog::reject);
 
     mainlayout->addWidget(buttonBox);
-
-    layout->setColumnStretch(4, 10);
 
     setWindowTitle("Expression evaluation");
   }
@@ -154,7 +111,120 @@ namespace MBSimGUI {
     QDialog::hideEvent(event);
   }
 
-  void EvalDialog::formatVariables() {
+  void EvalDialog::updateWidget() {
+    //mfmf
+    auto *model = static_cast<ElementTreeModel*>(mw->getElementView()->model());
+    auto *item = model->getItem(mw->getElementView()->currentIndex())->getItemData();
+    auto *embeditem = dynamic_cast<EmbedItemData*>(item);
+    //mfmf
+
+    vector<int> count;
+    for(auto &[idx, sb] : levelWidget) {
+      if(idx>=count.size())
+        count.resize(idx+1, 0);
+      auto value=mw->eval->create(static_cast<double>(sb->value()));
+      mw->eval->convertIndex(value, true);
+      count[idx]=mw->eval->cast<int>(value)-1;
+    }
+    auto levels = mw->updateParameters(embeditem, false, count);
+    count.resize(levels.size(), 0);
+
+    auto var=widget->getEvalMat();
+    auto varf=var;
+    auto type=widget->getVarType();
+
+    if(type==0) { // floating point value (scalar, vector or matrix)
+      if(floatTypeLayout)
+        vlayout->removeItem(floatTypeLayout);
+      floatTypeLayout = new QHBoxLayout;
+      vlayout->addLayout(floatTypeLayout, 1);
+
+      floatTypeLayout->addWidget(new QLabel("Format:"),0);
+      format = new QComboBox;
+      format->addItems(QStringList() << "e" << "E" << "f" << "g" << "G");
+      format->setCurrentIndex(3);
+      floatTypeLayout->addWidget(format,1);
+      connect(format, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &EvalDialog::updateWidget);
+
+      floatTypeLayout->addWidget(new QLabel("Precision:"),2);
+      precision = new QSpinBox;
+      precision->setValue(6);
+      floatTypeLayout->addWidget(precision,3);
+      connect(precision, QOverload<int>::of(&QSpinBox::valueChanged), this, &EvalDialog::updateWidget);
+
+      floatTypeLayout->addWidget(new QWidget,4);
+      floatTypeLayout->setStretch(4, 10000);
+    }
+
+    if(type==0 || var.size()>1 || (var.size()>0 && var[0].size()>1)) { // floating point value (scalar, vector or matrix)
+      if(tab)
+        vlayout->removeWidget(tab);
+      tab = new QTableWidget;
+      tab->setRowCount(varf.size());
+      tab->setColumnCount(!varf.empty()?varf[0].size():0);
+      for(int i=0; i<tab->rowCount(); i++) {
+        for(int j=0; j<tab->columnCount(); j++)
+          tab->setItem(i,j,new QTableWidgetItem(""));
+      }
+      vlayout->addWidget(tab,2);
+    }
+    else {
+      if(text)
+        vlayout->removeWidget(text);
+      text = new QPlainTextEdit;
+
+      if(mw->eval->getName()=="octave")
+        new OctaveHighlighter(text->document());
+      else if(mw->eval->getName()=="python")
+        new PythonHighlighter(text->document());
+      else
+        cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
+      static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
+      text->setFont(fixedFont);
+      text->setLineWrapMode(QPlainTextEdit::NoWrap);
+
+      vlayout->addWidget(text,2);
+
+      if(var.size()==1 && var[0].size()==1)
+        text->setPlainText(var[0][0]);
+    }
+    vlayout->setStretch(2, 10000);
+
+
+    {
+      // clear levelLayout and levelWidget
+      QLayoutItem *child;
+      while((child=levelLayout->takeAt(0))!=nullptr) {
+//mfmf        delete child->widget();
+//mfmf        delete child;
+      }
+      levelWidget.clear();
+
+      int col=0;
+      int idx=-1;
+      for(auto &l : levels) {
+        ++idx;
+        if(l.counterName.empty())
+          continue;
+
+        levelLayout->addWidget(new QLabel((l.counterName+" =").c_str()), col);
+        levelLayout->setStretch(col, 0);
+        col++;
+
+        auto *sb=new QSpinBox;
+        levelLayout->addWidget(sb, col);
+        levelWidget.emplace_back(idx, sb);
+        auto value=mw->eval->create(static_cast<double>(count[idx]+1));
+        mw->eval->convertIndex(value, false);
+        sb->setValue(mw->eval->cast<int>(value));
+        connect(sb, QOverload<int>::of(&QSpinBox::valueChanged), this, &EvalDialog::updateWidget);
+        levelLayout->setStretch(col, 0);
+        col++;
+      }
+      levelLayout->addWidget(new QWidget, col);
+      levelLayout->setStretch(col, 10000);
+    }
+
     if(type==0) { // floating point value (scalar, vector or matrix)
       QString f = format->currentText();
       int p = precision->value();
@@ -163,10 +233,7 @@ namespace MBSimGUI {
           varf[i][j] = QString::number(var[i][j].toDouble(),f[0].toLatin1(),p);
       }
     }
-  }
 
-  void EvalDialog::updateWidget() {
-    formatVariables();
     if(tab) {
       for(int i=0; i<tab->rowCount(); i++) {
         for(int j=0; j<tab->columnCount(); j++)

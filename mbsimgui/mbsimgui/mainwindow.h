@@ -295,7 +295,11 @@ namespace MBSimGUI {
       // Returns a list of all possible parameter levels, even if no Embed is defined on a level.
       // (note that only embeds on container elements are considered here)
       // If exceptLatestParameter is true then the last parameter (if item is a parameter) is skipped (not added)
-      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
+      // count is used as the count for the embeds, if not given 0 (0-based count) is used.
+      // In rare cases it is possible that count changes the result of vector<ParameterLevel>. In this case
+      // you need to call updateParameter again to get the proper result.
+      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, bool exceptLatestParameter=false,
+                                                   const std::vector<int>& count={});
 
       // Evaluates the string code as full eval if set to true or as partial eval if it is false.
       // The evaluation may be done multiple times, for each possible combination of Embed count ones.

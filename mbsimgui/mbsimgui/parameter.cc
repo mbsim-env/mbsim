@@ -23,6 +23,7 @@
 #include <xercesc/dom/DOMComment.hpp>
 #include "parameter.h"
 #include "objectfactory.h"
+#include "parameter_property_dialog.h"
 #include "parameter_view.h"
 #include "utils.h"
 #include "fileitemdata.h"
@@ -67,6 +68,10 @@ namespace MBSimGUI {
     return param;
   }
 
+  PropertyDialog* Parameter::createPropertyDialog() {
+    return new ImportParameterPropertyDialog(this);
+  }
+
   DOMElement* Parameter::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(getXMLType());
@@ -89,6 +94,10 @@ namespace MBSimGUI {
       comment.clear();
   }
 
+  PropertyDialog* StringParameter::createPropertyDialog() {
+    return new AnyParameterPropertyDialog(this);
+  }
+
   StringParameter::StringParameter() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"string.svg").string()));
   }
@@ -98,6 +107,10 @@ namespace MBSimGUI {
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
   }
 
+  PropertyDialog* ScalarParameter::createPropertyDialog() {
+    return new MatrixParameterPropertyDialog(this);
+  }
+
   ScalarParameter::ScalarParameter() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"scalar.svg").string()));
   }
@@ -105,6 +118,10 @@ namespace MBSimGUI {
   void ScalarParameter::updateValue() {
     Parameter::updateValue();
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
+  }
+
+  PropertyDialog* VectorParameter::createPropertyDialog() {
+    return new VectorParameterPropertyDialog(this);
   }
 
   VectorParameter::VectorParameter() {
@@ -127,6 +144,10 @@ namespace MBSimGUI {
       value = QString::fromStdString(MBXMLUtils::E(ele)->getAttribute("href"));
     else if(MBXMLUtils::E(element)->getFirstTextChild())
       value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
+  }
+
+  PropertyDialog* MatrixParameter::createPropertyDialog() {
+    return new ScalarParameterPropertyDialog(this);
   }
 
   MatrixParameter::MatrixParameter() {
@@ -156,6 +177,10 @@ namespace MBSimGUI {
       value = QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData());
   }
 
+  PropertyDialog* AnyParameter::createPropertyDialog() {
+    return new StringParameterPropertyDialog(this);
+  }
+
   AnyParameter::AnyParameter() {
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"any.svg").string()));
   }
@@ -163,6 +188,10 @@ namespace MBSimGUI {
   void AnyParameter::updateValue() {
     Parameter::updateValue();
     value = MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):"";
+  }
+
+  PropertyDialog* ImportParameter::createPropertyDialog() {
+    return new ParameterPropertyDialog(this);
   }
 
   ImportParameter::ImportParameter() {

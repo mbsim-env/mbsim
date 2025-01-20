@@ -165,7 +165,7 @@
                           <inertiaTensor unit="kg*m^2">
                             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <row>
-                                <ele>0.01</ele>
+                                <ele>10*g+o+0.9</ele>
                                 <ele>0</ele>
                                 <ele>0</ele>
                               </row>

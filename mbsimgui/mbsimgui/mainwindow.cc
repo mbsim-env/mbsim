@@ -41,6 +41,7 @@
 #include "embed.h"
 #include "project.h"
 #include "project_property_dialog.h"
+#include "parameter_property_dialog.h"
 #include "xml_property_dialog.h"
 #include "clone_property_dialog.h"
 #include "file_editor.h"
@@ -1075,7 +1076,8 @@ namespace MBSimGUI {
   // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
   // - the unevaluated count string of the Array/Pattern
   // - the unevaluated onlyif string of the Array/Pattern
-  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
+  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter,
+                                                                  const std::vector<int>& count) {
     createNewEvaluator();
 
     vector<ParameterLevel> parameterLevels;
@@ -1104,9 +1106,13 @@ namespace MBSimGUI {
           // the embed count if its a embed
           string counterName = parent->getEmbedXMLElement()?E(parent->getEmbedXMLElement())->getAttribute("counterName"):"";
           if(not counterName.empty()) {
-            auto count1=eval->create(1.0);
-            eval->convertIndex(count1, false);
-            eval->addParam(counterName, count1);
+            Eval::Value countValue;
+            if(parameterLevels.size()<=count.size())
+              countValue=eval->create(static_cast<double>(count[parameterLevels.size()-1]+1));
+            else
+              countValue=eval->create(1.0);
+            eval->convertIndex(countValue, false);
+            eval->addParam(counterName, countValue);
             eval->addParam(counterName+"_count", eval->create(1.0));
             parameterLevels.back().counterName = counterName;
             parameterLevels.back().countStr = E(parent->getEmbedXMLElement())->getAttribute("count");

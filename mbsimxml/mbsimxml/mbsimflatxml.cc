@@ -287,8 +287,22 @@ void MBSimXML::main(const unique_ptr<Solver>& solver, const unique_ptr<DynamicSy
       solver->setSystem(dss.get());
       {
         DynamicSystemSolver::SignalHandler dummy; // install signal handler for next line (and deinstall on scope exit)
-        solver->execute();
-        solver->postprocessing();
+        // run solver->execute and then run solver-postprocessing even if execute failded
+        bool executePassed=false;
+        try {
+          solver->execute();
+          executePassed=true;
+        }
+        catch(...) {
+          auto ex = current_exception();
+          try {
+            solver->postprocessing();
+          }
+          catch(...) {}
+          rethrow_exception(ex);
+        }
+        if(executePassed)
+          solver->postprocessing();
       }
       auto end=std::chrono::high_resolution_clock::now();
       fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Integration CPU times: "<<std::chrono::duration<double>(end-start).count()<<endl;
