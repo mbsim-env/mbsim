@@ -216,17 +216,31 @@ namespace MBSim {
   }
 
   void RADAU5Integrator::massFull(int* cols, double* m_, int* rows, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Mat M(*rows,*cols, m_);
-    for(int i=0; i<self->system->getzSize(); i++) M(0,i) = 1;
-    for(int i=self->system->getzSize(); i<*cols; i++) M(0,i) = 0;
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Mat M(*rows,*cols, m_);
+      for(int i=0; i<self->system->getzSize(); i++) M(0,i) = 1;
+      for(int i=self->system->getzSize(); i<*cols; i++) M(0,i) = 0;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
   }
 
   void RADAU5Integrator::massReduced(int* cols, double* m_, int* rows, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<RADAU5Integrator**>(&ipar[0]);
-    Mat M(*rows,*cols, m_);
-    for(int i=0; i<self->system->getqSize()+self->system->getxSize(); i++) M(0,i) = 1;
-    for(int i=self->system->getqSize()+self->system->getxSize(); i<*cols-self->system->getqSize(); i++) M(0,i) = 0;
+    auto *self = reinterpret_cast<RADAU5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Mat M(*rows,*cols, m_);
+      for(int i=0; i<self->system->getqSize()+self->system->getxSize(); i++) M(0,i) = 1;
+      for(int i=self->system->getqSize()+self->system->getxSize(); i<*cols-self->system->getqSize(); i++) M(0,i) = 0;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
   }
 
   void RADAU5Integrator::plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn) {
