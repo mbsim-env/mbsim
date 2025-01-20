@@ -67,6 +67,8 @@ namespace MBSim {
 
       int neq;
 
+      std::exception_ptr exception;
+
     public:
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol <<= aTol_; }

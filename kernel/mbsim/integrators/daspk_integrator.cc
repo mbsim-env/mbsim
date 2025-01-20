@@ -44,59 +44,91 @@ namespace MBSim {
 
   void DASPKIntegrator::deltaODE(double* t, double* z_, double* zd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
-    Vec z(ipar[0], z_);
-    Vec zd(ipar[0], zd_);
-    Vec delta(ipar[0], delta_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    delta = self->system->evalzd() - zd;
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec z(ipar[0], z_);
+      Vec zd(ipar[0], zd_);
+      Vec delta(ipar[0], delta_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      delta = self->system->evalzd() - zd;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = -2;
+      self->exception = current_exception();
+    }
   }
 
   void DASPKIntegrator::deltaDAE1(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
-    Vec y(ipar[0], y_);
-    Vec yd(ipar[0], yd_);
-    Vec delta(ipar[0], delta_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setUpdatela(false);
-    delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-    delta.set(RangeV(self->system->getzSize(),ipar[0]-1), self->system->evalW().T()*yd(RangeV(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1)) + self->system->evalwb());
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(ipar[0], y_);
+      Vec yd(ipar[0], yd_);
+      Vec delta(ipar[0], delta_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
+      delta.set(RangeV(self->system->getzSize(),ipar[0]-1), self->system->evalW().T()*yd(RangeV(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1)) + self->system->evalwb());
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = -2;
+      self->exception = current_exception();
+    }
   }
 
   void DASPKIntegrator::deltaDAE2(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
-    Vec y(ipar[0], y_);
-    Vec yd(ipar[0], yd_);
-    Vec delta(ipar[0], delta_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setUpdatela(false);
-    delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-    delta.set(RangeV(self->system->getzSize(),ipar[0]-1), self->system->evalgd());
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(ipar[0], y_);
+      Vec yd(ipar[0], yd_);
+      Vec delta(ipar[0], delta_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
+      delta.set(RangeV(self->system->getzSize(),ipar[0]-1), self->system->evalgd());
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = -2;
+      self->exception = current_exception();
+    }
   }
 
   void DASPKIntegrator::deltaGGL(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
-    Vec y(ipar[0], y_);
-    Vec yd(ipar[0], yd_);
-    Vec delta(ipar[0], delta_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setUpdatela(false);
-    delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-    delta.set(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1), self->system->evalgd());
-    delta.set(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1), self->system->evalg());
-    if(self->system->getgSize() != self->system->getgdSize()) {
-      self->system->calclaSize(5);
-      self->system->updateWRef(self->system->getWParent(0));
-      self->system->setUpdateW(false);
-      delta.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1)));
-      self->system->calclaSize(3);
-      self->system->updateWRef(self->system->getWParent(0));
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(ipar[0], y_);
+      Vec yd(ipar[0], yd_);
+      Vec delta(ipar[0], delta_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
+      delta.set(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1), self->system->evalgd());
+      delta.set(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1), self->system->evalg());
+      if(self->system->getgSize() != self->system->getgdSize()) {
+        self->system->calclaSize(5);
+        self->system->updateWRef(self->system->getWParent(0));
+        self->system->setUpdateW(false);
+        delta.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1)));
+        self->system->calclaSize(3);
+        self->system->updateWRef(self->system->getWParent(0));
+      }
+      else
+        delta.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1)));
     }
-    else
-      delta.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1)));
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = -2;
+      self->exception = current_exception();
+    }
   }
 
   void DASPKIntegrator::integrate() {
@@ -171,7 +203,9 @@ namespace MBSim {
     // info(16) = 0; // used, when an initial condition calculation is requested (info(10)>0)
     // info(17) = 0; // no extra printing in initial condition calculation
 
-    double rPar;
+    exception=nullptr;
+
+    double rPar[1]; // not used
     int iPar[1+sizeof(void*)/sizeof(int)+1];
     DASPKIntegrator *self=this;
     memcpy(&iPar[1], &self, sizeof(void*));
@@ -214,7 +248,9 @@ namespace MBSim {
     int lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
 
     while(t<tEnd-epsroot) {
-      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,&rPar,iPar,nullptr,nullptr);
+      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,rPar,iPar,nullptr,nullptr);
+      if(exception)
+        rethrow_exception(exception);
       if(idid==1) {
         double curTimeAndState = -1;
         double tRoot = t;
