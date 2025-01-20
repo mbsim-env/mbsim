@@ -344,6 +344,7 @@ namespace MBSim {
       }
       else {
         // check drift
+        bool projVel = true;
         if(self->getToleranceForPositionConstraints()>=0) {
           self->getSystem()->setTime(*t);
           self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
@@ -351,11 +352,12 @@ namespace MBSim {
           if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
             self->getSystem()->projectGeneralizedPositions(3);
             self->getSystem()->projectGeneralizedVelocities(3);
+            projVel = false;
             self->drift = true;
             *irtrn=-1;
           }
         }
-        else if(self->getToleranceForVelocityConstraints()>=0) {
+        if(self->getToleranceForVelocityConstraints()>=0 and projVel) {
           self->getSystem()->setTime(*t);
           self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
           self->getSystem()->resetUpToDate();
