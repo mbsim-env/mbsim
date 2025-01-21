@@ -1115,7 +1115,7 @@ C MBSIM_EXTENDED_IWORK_ARRAY: see radau5_integrator.cc about IP1(-20)
          ELSE
            IF (THETA.LE.THET) GOTO 20
            GOTO 10
-         ENDIF
+         END IF
       END IF
 C --- UNEXPECTED STEP-REJECTION
   78  CONTINUE

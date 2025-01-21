@@ -564,8 +564,6 @@ namespace MBSim {
     work(2) = jacobianRecomputation;
     work(1) = stepSizeSaftyFactor;
 
-
-
     for(size_t i=20; i<iWorkExtended.size(); i++)
       iWorkExtended[i] = 0;
 
