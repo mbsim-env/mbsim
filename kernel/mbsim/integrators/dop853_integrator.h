@@ -52,6 +52,8 @@ namespace MBSim {
       /** maximale step size */
       double dtMax{0};
 
+      std::exception_ptr exception;
+
     public:
 
       ~DOP853Integrator() override = default;

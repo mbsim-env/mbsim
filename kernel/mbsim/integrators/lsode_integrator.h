@@ -65,6 +65,8 @@ namespace MBSim {
       /** use stiff (BDF) or nonstiff (Adams) method */
       Method method{nonstiff};
 
+      std::exception_ptr exception;
+
     public:
 
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
