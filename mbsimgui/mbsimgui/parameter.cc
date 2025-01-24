@@ -68,10 +68,6 @@ namespace MBSimGUI {
     return param;
   }
 
-  PropertyDialog* Parameter::createPropertyDialog() {
-    return new ImportParameterPropertyDialog(this);
-  }
-
   DOMElement* Parameter::createXMLElement(DOMNode *parent) {
     DOMDocument *doc=parent->getOwnerDocument();
     element=D(doc)->createElement(getXMLType());
@@ -95,7 +91,7 @@ namespace MBSimGUI {
   }
 
   PropertyDialog* StringParameter::createPropertyDialog() {
-    return new AnyParameterPropertyDialog(this);
+    return new StringParameterPropertyDialog(this);
   }
 
   StringParameter::StringParameter() {
@@ -108,7 +104,7 @@ namespace MBSimGUI {
   }
 
   PropertyDialog* ScalarParameter::createPropertyDialog() {
-    return new MatrixParameterPropertyDialog(this);
+    return new ScalarParameterPropertyDialog(this);
   }
 
   ScalarParameter::ScalarParameter() {
@@ -147,7 +143,7 @@ namespace MBSimGUI {
   }
 
   PropertyDialog* MatrixParameter::createPropertyDialog() {
-    return new ScalarParameterPropertyDialog(this);
+    return new MatrixParameterPropertyDialog(this);
   }
 
   MatrixParameter::MatrixParameter() {
@@ -178,7 +174,7 @@ namespace MBSimGUI {
   }
 
   PropertyDialog* AnyParameter::createPropertyDialog() {
-    return new StringParameterPropertyDialog(this);
+    return new AnyParameterPropertyDialog(this);
   }
 
   AnyParameter::AnyParameter() {
@@ -191,7 +187,7 @@ namespace MBSimGUI {
   }
 
   PropertyDialog* ImportParameter::createPropertyDialog() {
-    return new ParameterPropertyDialog(this);
+    return new ImportParameterPropertyDialog(this);
   }
 
   ImportParameter::ImportParameter() {

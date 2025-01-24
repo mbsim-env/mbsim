@@ -66,7 +66,7 @@ namespace MBSimGUI {
       bool getHidden() const { return hidden; }
 //      QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual PropertyDialog* createPropertyDialog();
+      virtual PropertyDialog* createPropertyDialog()=0;
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       virtual void updateValue();
     protected:
