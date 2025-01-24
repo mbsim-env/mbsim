@@ -1274,6 +1274,22 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="Stop" substitutionGroup="Signal" type="StopType"/>
+  <xs:complexType name="StopType">
+    <xs:complexContent>
+      <xs:extension base="SignalType">
+        <xs:sequence>
+          <xs:element name="inputSignal">
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+	  <xs:element name="threshold" type="pv:unknownScalar" minOccurs="0"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Duration" substitutionGroup="Signal" type="DurationType"/>
   <xs:complexType name="DurationType">
     <xs:complexContent>
