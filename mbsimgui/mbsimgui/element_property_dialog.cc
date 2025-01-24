@@ -40,11 +40,15 @@ namespace MBSimGUI {
     addTab("Comment");
     comment = new CommentWidget;
     addToTab("Comment", comment);
+    addTab("Misc");
+    mbsimguiContextAction = new MBSimGUIContextAction;
+    addToTab("Misc", mbsimguiContextAction);
   }
 
   DOMElement* ElementPropertyDialog::initializeUsingXML(DOMElement *parent) {
     name->getWidget<TextWidget>()->setText(QString::fromStdString(MBXMLUtils::E(item->getXMLElement())->getAttribute("name")));
     comment->initializeUsingXML(item->getXMLElement());
+    mbsimguiContextAction->initializeUsingXML(item->getXMLElement());
     plotFeature->initializeUsingXML(item->getXMLElement());
     plotAttribute->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -54,22 +58,48 @@ namespace MBSimGUI {
     item->removeXMLElements();
     E(item->getXMLElement())->setAttribute("name",name->getWidget<TextWidget>()->getText().toStdString());
     comment->writeXMLFile(item->getXMLElement(),ref);
+    mbsimguiContextAction->writeXMLFile(item->getXMLElement(),ref);
     item->updateName();
     plotFeature->writeXMLFile(item->getXMLElement(),ref);
     plotAttribute->writeXMLFile(item->getXMLElement(),ref);
-
-    for(auto &ca : static_cast<Element*>(item)->getMbsimguiContextAction()) {
-      DOMDocument *doc=item->getXMLElement()->getOwnerDocument();
-      DOMProcessingInstruction *pi=doc->createProcessingInstruction(X()%"MBSIMGUI_CONTEXT_ACTION",
-        X()%("name=\""+ca.first+"\" "+ca.second));
-      item->getXMLElement()->insertBefore(pi, nullptr);
-    }
-
     return nullptr;
   }
 
   Element* ElementPropertyDialog::getElement() const {
     return static_cast<Element*>(item);
+  }
+
+  vector<pair<string, string>> ElementPropertyDialog::getMBSimGUIContextActions(xercesc::DOMElement *parent) {
+    // Model specific context actions
+    vector<pair<string, string>> ret;
+
+    // read all MBSIMGUI_CONTEXT_ACTION processing element instructions
+    // (a mbsimgui context action is not part of the mbsimxml XML schema file -> that's why its a processing instructions)
+    for(xercesc::DOMNode *pi=E(parent)->getFirstProcessingInstructionChildNamed("MBSIMGUI_CONTEXT_ACTION");
+        pi!=nullptr; pi=pi->getNextSibling()) {
+      // skip all none PI elements and PI elements with the wrong target
+      if(pi->getNodeType()!=xercesc::DOMNode::PROCESSING_INSTRUCTION_NODE)
+        continue;
+      if(X()%static_cast<xercesc::DOMProcessingInstruction*>(pi)->getTarget()!="MBSIMGUI_CONTEXT_ACTION")
+        continue;
+      // get the name=... atttribute and skip this element if it does not exist
+      auto data=X()%static_cast<xercesc::DOMProcessingInstruction*>(pi)->getData();
+      std::string nameToken("name=\"");
+      if(data.substr(0, nameToken.length())!=nameToken)
+        continue;
+      auto end=data.find("\" ", nameToken.length());
+      if(end==std::string::npos) {
+        end=data.find("\"\n", nameToken.length());
+        if(end==std::string::npos)
+          continue;
+      }
+
+      // add the context action
+      std::string name=data.substr(nameToken.length(), end-nameToken.length());
+      std::string code=data.substr(end+2);
+      ret.emplace_back(std::move(name), std::move(code));
+    }
+    return ret;
   }
 
 }

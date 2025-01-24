@@ -43,6 +43,10 @@ namespace MBSimGUI {
       addToTab("General",name);
     }
 
+    addTab("Comment");
+    comment = new CommentWidget;
+    addToTab("Comment", comment);
+
     addTab("Misc");
     vector<QString> list;
     list.emplace_back("normal");
@@ -52,10 +56,6 @@ namespace MBSimGUI {
                        "from appearing in the parameter tree. Hidden element will only appear if 'Show hidden element' "
                        "is enabled in the options.");
     addToTab("Misc",hidden);
-
-    addTab("Comment");
-    comment = new CommentWidget;
-    addToTab("Comment", comment);
   }
 
   DOMElement* ParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {

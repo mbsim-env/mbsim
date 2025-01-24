@@ -45,6 +45,7 @@
 #include "echo_view.h"
 #include <mbxmlutils/eval.h>
 #include <QMessageBox>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace MBXMLUtils;
 
@@ -62,30 +63,36 @@ namespace MBSimGUI {
   extern MainWindow *mw;
 
   ElementContextMenu::ElementContextMenu(Element *element, QWidget *parent, bool removable, bool saveable) : QMenu(parent) {
+    // Edit
     setToolTipsVisible(true);
     auto *action=new QAction(QIcon::fromTheme("document-properties"), "Edit", this);
     action->setShortcut(QKeySequence("Ctrl+E"));
     connect(action,&QAction::triggered,this,[=](){ mw->openElementEditor(); });
     addAction(action);
     if(saveable) {
+      // Exit XML
       action=new QAction(QIcon::fromTheme("document-properties"), "Edit XML", this);
       connect(action,&QAction::triggered,mw,&MainWindow::editElementSource);
       addAction(action);
       addSeparator();
+      // Export model-element
       action=new QAction(QIcon::fromTheme("document-save-as"), "Export model-element to file...", this);
       connect(action,&QAction::triggered,[]() { mw->exportElement("Export Model-Element"); } );
       addAction(action);
     }
     if(removable) {
+      // Copy
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-copy"), "Copy", this);
       action->setShortcut(QKeySequence::Copy);
       connect(action,&QAction::triggered,this,[=](){ mw->copyElement(); });
       addAction(action);
+      // Cut
       action=new QAction(QIcon::fromTheme("edit-cut"), "Cut", this);
       action->setShortcut(QKeySequence::Cut);
       connect(action,&QAction::triggered,this,[=](){ mw->copyElement(true); });
       addAction(action);
+      // Remove
       addSeparator();
       action=new QAction(QIcon::fromTheme("edit-delete"), "Remove", this);
       action->setShortcut(QKeySequence::Delete);
@@ -93,6 +100,7 @@ namespace MBSimGUI {
       addAction(action);
       addSeparator();
 
+      // Embed
       bool embedActive = false;
       auto embedEle = element->getEmbedXMLElement();
       if(embedEle) {
@@ -118,6 +126,7 @@ namespace MBSimGUI {
 
       addSeparator();
 
+      // Enable/Disable
       action = new QAction("Enable", this);
       action->setCheckable(true);
       action->setChecked(element->getEnabled());
@@ -126,14 +135,23 @@ namespace MBSimGUI {
       addAction(action);
     }
 
-    if(!element->getMbsimguiContextAction().empty()) {
+    // add the context actions
+    auto contextAction=ElementPropertyDialog::getMBSimGUIContextActions(element->getXMLElement()); // read from XML
+    if(!contextAction.empty()) {
       addSeparator();
-      for(auto &ca : element->getMbsimguiContextAction())
+      for(auto &ca : contextAction) {
         addAction(ca.first.c_str(), [ca, element](){
-          mw->clearEchoView(QString("Running action '")+ca.first.c_str()+"':\n\n");
+          // this code is run when the action is triggered
+          mw->clearEchoView(QString("Running context action '")+ca.first.c_str()+"':\n\n");
           try {
             auto parameterLevels = mw->updateParameters(element);
-            MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second, nullptr, true, false, true);
+            auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second, nullptr, true, false, true);
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<"Return values:"<<std::endl;
+            for(auto &value : values) {
+              for(size_t i=0; i<counterName.size(); ++i)
+                fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<counterName[i]<<" = "<<value.first[i]<<(i<counterName.size()-1?", ":"");
+              fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" => ret = "<<mw->eval->cast<CodeString>(value.second)<<std::endl;
+            }
             mw->updateEchoView();
           }
           catch(const std::exception &ex) {
@@ -141,6 +159,7 @@ namespace MBSimGUI {
             mw->updateEchoView();
           }
         });
+      }
     }
   }
 

@@ -162,6 +162,11 @@
                         </pv:Parameter>
                         <RigidBody name="smoothing_{g}_NONE_{o}" xmlns="http://www.mbsim-env.de/MBSim">
                           <?MBSIMGUI_CONTEXT_ACTION name="Show plot" plot(mbsimgui_firstCall, mbsimgui_lastCall)?>
+                          <?MBSIMGUI_CONTEXT_ACTION name="Some output"
+                            print("start")
+                            ret={"a": 9}
+                            print("end")
+                          ?>
                           <mass unit="kg">
                             if showPlot: # just to show the plot when running with mbsimxml
                               plot(None, None)
