@@ -72,7 +72,7 @@ namespace MBSim {
       self->getSystem()->setla(y(self->Rla));
       self->getSystem()->setUpdatela(false);
       yd.set(self->Rz, self->system->evalzd());
-      yd.set(self->Rla, self->system->evalW().T()*self->system->evalT()*yd(self->Ru) + self->system->evalwb());
+      yd.set(self->Rla, self->system->evalW().T()*yd(self->Ru) + self->system->evalwb());
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -168,7 +168,7 @@ namespace MBSim {
       Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
       J.set(RuMove, self->Rla, Minv_Jrla);
       if(self->formalism==DAE1)
-        J.set(RlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
+        J.set(RlaMove, self->Rla, self->system->evalW().T()*Minv_Jrla);
       // the rest of the entries in these columns are 0
       for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
         if(!self->reduced)
