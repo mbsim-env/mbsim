@@ -243,8 +243,9 @@ namespace MBSimGUI {
     protected:
       void choiceChanged();
       void updateWidget() override;
-      ChoiceWidget* choice;
-      ExtWidget *method;
+      ChoiceWidget* choiceXY;
+      ExtWidget *interpolationMethod;
+      ExtWidget *extrapolationMethod;
   };
 
   class TwoDimensionalPiecewisePolynomFunctionWidget : public FunctionWidget {
