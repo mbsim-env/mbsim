@@ -140,7 +140,13 @@
                                   v=self.inputSL.value()
                                   self.inputSB.setValue(self.sliderValueTos(v))
   
-                              mbxmlutils.Qt.showWidget(MyPlot())
+                              mbxmlutils.Qt.execWidget(MyPlot())
+
+                              # create a standard matplotlib figure
+                              #d=mbxmlutils.Qt.StdMatplotlibDialog()
+                              #ax=d.getFigure().subplots()
+                              #ax.plot([1,2,3,4],[5,4,7,2])
+                              #mbxmlutils.Qt.execWidget(d)
 
                               if mbxmlutils.Qt.isGUI():
                                 if mbsimgui_firstCall:
