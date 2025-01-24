@@ -588,6 +588,9 @@ namespace MBSimGUI {
   }
 
   void PiecewisePolynomFunctionWidget::choiceChanged() {
+    if(fallbackWidget)
+      return;
+
     if(choiceXY->getIndex()==0) {
       updateWidget();
       connect(choiceXY->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&PiecewisePolynomFunctionWidget::updateWidget);
@@ -595,6 +598,9 @@ namespace MBSimGUI {
   }
 
   void PiecewisePolynomFunctionWidget::updateWidget() {
+    if(fallbackWidget)
+      return;
+
     if(choiceXY->getIndex()==0) {
       auto *choice1_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
       auto *choice2_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
@@ -603,6 +609,9 @@ namespace MBSimGUI {
   }
 
   void PiecewisePolynomFunctionWidget::resize_(int m, int n) {
+    if(fallbackWidget)
+      return;
+
     if(choiceXY->getIndex()==0) {
       auto *choice_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
       choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
@@ -614,12 +623,29 @@ namespace MBSimGUI {
   }
 
   DOMElement* PiecewisePolynomFunctionWidget::initializeUsingXML(DOMElement *element) {
+    if(E(element)->getFirstElementChildNamed(MBSIM%"breaks")) {
+      fallbackWidget = new XMLEditorWidget;
+      choiceXY->setVisible(false);
+      interpolationMethod->setVisible(false);
+      extrapolationMethod->setVisible(false);
+      layout()->addWidget(fallbackWidget);
+
+      fallbackWidget->initializeUsingXML(element);
+      return element;
+    }
+
     choiceXY->initializeUsingXML(element);
     interpolationMethod->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* PiecewisePolynomFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    if(fallbackWidget) {
+      DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+      fallbackWidget->writeXMLFile(ele0);
+      return ele0;
+    }
+
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
     choiceXY->writeXMLFile(ele0);
     interpolationMethod->writeXMLFile(ele0);
