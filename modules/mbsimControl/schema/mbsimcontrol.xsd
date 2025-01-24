@@ -756,6 +756,30 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="SignalSensor" abstract="true" substitutionGroup="Sensor" type="SignalSensorType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Sensor zum Auslesen von Koordinatensystemen in absoluten Koordinaten
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="SignalSensorType">
+    <xs:complexContent>
+      <xs:extension base="SensorType">
+        <xs:sequence>
+          <xs:element name="signal">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+              Eingangssignal
+            </xs:documentation></xs:annotation>
+            <xs:complexType>
+              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="Multiplexer" substitutionGroup="Signal" type="MultiplexerType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

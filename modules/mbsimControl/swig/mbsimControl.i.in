@@ -37,14 +37,14 @@ namespace MBSim {
 #include "mbsimControl/sensor.h"
 #include "mbsimControl/link_sensors.h"
 #include "mbsimControl/frame_sensors.h"
-#include "mbsimControl/signal_manipulation.h"
+#include "mbsimControl/signal_sensors.h"
 %}
 
 %include "mbsimControl/signal_.h"
 %include "mbsimControl/sensor.h"
 %include "mbsimControl/link_sensors.h"
 %include "mbsimControl/frame_sensors.h"
-%include "mbsimControl/signal_manipulation.h"
+%include "mbsimControl/signal_sensors.h"
 
 %pythoncode %{
 
