@@ -200,7 +200,7 @@ namespace MBSim {
       // now the finite difference of all other columns
       // this code is taken from radau5.f JACOBIAN IS FULL,
       // but converted to C and skipping the last columns of the jacobian for la which is given analytically
-      for(int c=0; c<self->system->getqSize()+self->system->getuSize()+self->system->getxSize(); ++c) {
+      for(int c=0; c<self->system->getzSize(); ++c) {
         double ySafe=y_[c];
         double delta=sqrt(macheps*max(1.e-5,abs(ySafe)));
         y_[c]=ySafe+delta;
