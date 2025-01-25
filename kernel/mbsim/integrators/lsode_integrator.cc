@@ -258,6 +258,10 @@ namespace MBSim {
       else if(istate<0) throwError("Integrator LSODE failed with istate = "+to_string(istate));
     }
 
+    msg(Info)<<"nrRHS (excluding jac): "<<iWork(11)<<endl;
+    msg(Info)<<"nrJac: "<<iWork(12)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
+
     odePackInUse = false;
   }
 
