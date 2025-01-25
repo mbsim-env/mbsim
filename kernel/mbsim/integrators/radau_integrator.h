@@ -55,7 +55,7 @@ namespace MBSim {
       static void fzdotDAE1(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE2(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE3(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
-      static void jac(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *iper);
+      static void jac(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
       static void fzdotGGL(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void massFull(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
