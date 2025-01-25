@@ -71,8 +71,8 @@ namespace MBSim {
       self->getSystem()->setTime(*t);
       self->getSystem()->resetUpToDate();
       self->getSystem()->setUpdatela(false);
-      delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-      delta.set(RangeV(self->system->getzSize(),ipar[0]-1), self->system->evalW().T()*yd(RangeV(self->system->getqSize(),self->system->getqSize()+self->system->getuSize()-1)) + self->system->evalwb());
+      delta.set(self->Rz, self->system->evalzd() - yd(self->Rz));
+      delta.set(self->Rla, self->system->evalW().T()*yd(self->Ru) + self->system->evalwb());
     }
     catch(...) { // if a exception is thrown catch and store it in self
       *ires = -2;
@@ -91,8 +91,8 @@ namespace MBSim {
       self->getSystem()->setTime(*t);
       self->getSystem()->resetUpToDate();
       self->getSystem()->setUpdatela(false);
-      delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-      delta.set(RangeV(self->system->getzSize(),ipar[0]-1), self->system->evalgd());
+      delta.set(self->Rz, self->system->evalzd() - yd(self->Rz));
+      delta.set(self->Rla, self->system->evalgd());
     }
     catch(...) { // if a exception is thrown catch and store it in self
       *ires = -2;
@@ -111,22 +111,74 @@ namespace MBSim {
       self->getSystem()->setTime(*t);
       self->getSystem()->resetUpToDate();
       self->getSystem()->setUpdatela(false);
-      delta.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-      delta.set(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1), self->system->evalgd());
-      delta.set(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1), self->system->evalg());
+      delta.set(self->Rz, self->system->evalzd() - yd(self->Rz));
+      delta.set(self->Rla, self->system->evalgd());
+      delta.set(self->Rl, self->system->evalg());
       if(self->system->getgSize() != self->system->getgdSize()) {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
         self->system->setUpdateW(false);
-        delta.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1)));
+        delta.add(self->Rq, self->system->evalW()*y(self->Rl));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
       }
       else
-        delta.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),ipar[0]-1)));
+        delta.add(self->Rq, self->system->evalW()*y(self->Rl));
     }
     catch(...) { // if a exception is thrown catch and store it in self
       *ires = -2;
+      self->exception = current_exception();
+    }
+  }
+
+  void DASPKIntegrator::jac(double* t, double* y_, double* yd_, double* pd, double* cj, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Mat J(ipar[0], ipar[0], pd); // fmatvec variant of J_
+//      Vec delta(ipar[0], NONINIT); // fmatvec variant of J_
+      int ires;
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->delta[self->formalism](t,y_,yd_,cj,self->res0(),&ires,rpar,ipar);
+
+      // the columns for la are given analytically
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->Ru, self->Rla, Minv_Jrla);
+
+      if(self->formalism==GGL) {
+        // the columns for algebraic GGL state are given analytically
+        if(self->system->getgSize() != self->system->getgdSize()) {
+          self->system->calclaSize(5);
+          self->system->updateWRef(self->system->getWParent(0));
+          self->system->setUpdateW(false);
+          J.set(self->Rq, self->Rl, self->system->evalW());
+          self->system->calclaSize(3);
+          self->system->updateWRef(self->system->getWParent(0));
+        }
+        else
+          J.set(self->Rq, self->Rl, self->system->evalW());
+      }
+
+      // now the finite difference of all other columns
+      // this code is taken from radau5.f JACOBIAN IS FULL,
+      // but converted to C and skipping the last columns of the jacobian for la which is given analytically
+      for(int c=0; c<self->system->getzSize(); ++c) {
+        double ySafe=y_[c];
+        double delta=sqrt(macheps*max(1.e-5,abs(ySafe)));
+        y_[c]=ySafe+delta;
+        self->delta[self->formalism](t,y_,yd_,cj,self->res1(),&ires,rpar,ipar);
+        for(int r=0; r<ipar[0]; ++r)
+          pd[(c*ipar[0])+r]=(self->res1(r)-self->res0(r))/delta;
+        pd[(c*ipar[0])+c]-=*cj;
+        y_[c]=ySafe;
+      }
+      if(self->formalism==DAE1)
+        J.add(self->Rla, self->Ru, *cj*self->system->evalW().T());
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
     }
   }
@@ -143,6 +195,9 @@ namespace MBSim {
     debugInit();
 
     calcSize();
+    Rq = RangeV(0,system->getqSize()-1);
+    Ru = RangeV(system->getqSize(),system->getqSize()+system->getuSize()-1);
+    Rz = RangeV(0,system->getzSize()-1);
 
     if(not neq)
       throwError("(DASPKIntegrator::integrate): dimension of the system must be at least 1");
@@ -188,7 +243,7 @@ namespace MBSim {
 
     info(2) = 1; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
-    // info(4) = 0; // jacobian is computed internally
+    info(4) = 1; // jacobian is computed internally
     // info(5) = 0; // jacobian is a full matrix
     info(6) = dtMax>0; // set maximum stepsize
     info(7) = dt0>0; // set initial stepsize
@@ -248,7 +303,7 @@ namespace MBSim {
     int lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
 
     while(t<tEnd-epsroot) {
-      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,rPar,iPar,nullptr,nullptr);
+      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,rPar,iPar,jac,nullptr);
       if(exception)
         rethrow_exception(exception);
       if(idid==1) {
@@ -399,6 +454,10 @@ namespace MBSim {
       neq = system->getzSize()+system->getgdSize()+system->getgSize();
     else
       neq = system->getzSize();
+    res0.resize(neq);
+    res1.resize(neq);
+    Rla = RangeV(system->getzSize(), system->getzSize()+system->getlaSize()-1);
+    Rl = RangeV(system->getzSize()+system->getlaSize(), neq-1);
   }
 
   void DASPKIntegrator::initializeUsingXML(DOMElement *element) {

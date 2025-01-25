@@ -49,6 +49,7 @@ namespace MBSim {
       static void deltaDAE1(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       static void deltaDAE2(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       static void deltaGGL(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      static void jac(double* t, double* y_, double* yd_, double* pd, double* cj, double* rpar, int* ipar);
 
       void calcSize();
 
@@ -66,6 +67,9 @@ namespace MBSim {
       bool excludeAlgebraicVariables{true};
 
       int neq;
+
+      fmatvec::Vec res0, res1; // residual work arrays for jacobian evaluation
+      fmatvec::RangeV Rq, Ru, Rz, Rla, Rl; // ranges in y and jacobimatrix for q, u, z, la and GGL alg.-states l
 
       std::exception_ptr exception;
 
