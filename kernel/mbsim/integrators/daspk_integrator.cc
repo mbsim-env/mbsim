@@ -243,7 +243,7 @@ namespace MBSim {
 
     info(2) = 1; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
-    info(4) = 1; // jacobian is computed internally
+    info(4) = formalism>0; // jacobian is computed internally
     // info(5) = 0; // jacobian is a full matrix
     info(6) = dtMax>0; // set maximum stepsize
     info(7) = dt0>0; // set initial stepsize
