@@ -257,6 +257,11 @@ namespace MBSim {
       t = system->getTime();
       z = system->getState();
     }
+
+    msg(Info)<<"nrRHS: "<<iWork(16)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(17)<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<iWork(18)<<endl;
+    msg(Info)<<"nrStepsRejected: "<<iWork(19)<<endl;
   }
 
   void DOP853Integrator::initializeUsingXML(DOMElement *element) {
