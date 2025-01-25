@@ -138,12 +138,12 @@ namespace MBSim {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
         self->system->setUpdateW(false);
-        yd.add(self->Rq, self->system->evalW()*y(self->Rla));
+        yd.add(self->Rq, self->system->evalW()*y(self->Rl));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
       }
       else
-        yd.add(self->Rq, self->system->evalW()*y(self->Rla));
+        yd.add(self->Rq, self->system->evalW()*y(self->Rl));
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -235,8 +235,8 @@ namespace MBSim {
       return;
     try { // catch exception -> C code must catch all exceptions
       Mat M(*rows,*cols, m_);
-      for(int i=0; i<self->system->getqSize()+self->system->getxSize(); i++) M(0,i) = 1;
-      for(int i=self->system->getqSize()+self->system->getxSize(); i<*cols-self->system->getqSize(); i++) M(0,i) = 0;
+      for(int i=0; i<self->system->getuSize()+self->system->getxSize(); i++) M(0,i) = 1;
+      for(int i=self->system->getuSize()+self->system->getxSize(); i<*cols; i++) M(0,i) = 0;
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -542,10 +542,8 @@ namespace MBSim {
       neq = system->getzSize();
     res0.resize(neq);
     res1.resize(neq);
-    Rla = RangeV(system->getqSize()+system->getuSize()+system->getxSize(),
-                 system->getqSize()+system->getuSize()+system->getxSize()+system->getlaSize()-1);
-    Rl = RangeV(system->getqSize()+system->getuSize()+system->getxSize()+system->getlaSize(),
-                neq-1);
+    Rla = RangeV(system->getzSize(), system->getzSize()+system->getlaSize()-1);
+    Rl = RangeV(system->getzSize()+system->getlaSize(), neq-1);
   }
 
   void RADAUIntegrator::reinit() {
