@@ -65,6 +65,7 @@ namespace MBSim {
       Formalism formalism{DAE2};
       /** exclude algebraic variables from error test **/
       bool excludeAlgebraicVariables{true};
+      bool numericalJacobian{false};
 
       int neq;
 
@@ -82,6 +83,7 @@ namespace MBSim {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
+      void setNumericalJacobian(bool numericalJacobian_) { numericalJacobian = numericalJacobian_; }
 
       using Integrator::integrate;
       void integrate();

@@ -98,6 +98,7 @@ namespace MBSim {
       bool drift { false };
       StepSizeControl stepSizeControl { StepSizeControl::ModPred };
       double stepSizeSaftyFactor { 0.9 };
+      bool numericalJacobian{ false };
 
       std::exception_ptr exception;
 
@@ -119,6 +120,7 @@ namespace MBSim {
       void setJacobianRecomputationAtRejectedSteps(bool recomp) { jacobianRecomputationAtRejectedSteps = recomp; }
       void setStepSizeControl(StepSizeControl ssc) { stepSizeControl = ssc; }
       void setStepSizeSaftyFactor(double fac) { stepSizeSaftyFactor = fac; }
+      void setNumericalJacobian(bool numericalJacobian_) { numericalJacobian = numericalJacobian_; }
 
       using Integrator::integrate;
       void integrate() override;

@@ -243,11 +243,13 @@ namespace MBSim {
 
     info(2) = 1; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
-    info(4) = formalism>0; // jacobian is computed internally
+    info(4) = (not numericalJacobian) and (formalism>0); // jacobian is computed
+                            // - by finite differences if numericalJacobian is true or formalism is set to ODE
+                            // - by a combination of finite differences and an analytical solution, otherwise
     // info(5) = 0; // jacobian is a full matrix
     info(6) = dtMax>0; // set maximum stepsize
     info(7) = dt0>0; // set initial stepsize
-    //  info(8) = 0; // maximum order
+    // info(8) = 0; // maximum order
     // info(9) = 0; // no components are nonnegative
     // info(10) = 0; // initial t, y, yd are consistent
     // info(11) = 0; // direct method is used to solve the linear systems
@@ -439,9 +441,10 @@ namespace MBSim {
       else if(idid<0) throwError("Integrator DASPK failed with istate = "+to_string(idid));
     }
 
-    msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
-    msg(Info)<<"nrRHS: "<<iWork(11)<<endl;
+    msg(Info)<<string("nrRHS")+(info(4)?" (excluding jac): ":" (including jac): ")<<iWork(11)<<endl;
     msg(Info)<<"nrJac: "<<iWork(12)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<iWork(10)-iWork(13)<<endl;
     msg(Info)<<"nrStepsRejected: "<<iWork(13)<<endl;
     msg(Info)<<"nrNonlinConvFailures: "<<iWork(14)<<endl;
     msg(Info)<<"nrLinConvFailures: "<<iWork(15)<<endl;
@@ -486,6 +489,8 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"excludeAlgebraicVariablesFromErrorTest");
     if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
+    if(e) setNumericalJacobian(E(e)->getText<bool>());
   }
 
 }

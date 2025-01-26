@@ -455,9 +455,9 @@ namespace MBSim {
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
-    int iJac = formalism>0; // jacobian is computed
-                            // - for ODE as full matrix by radau5 by finite differences
-                            // - for all other as full matrix by finite differences for everything except la which is analytical
+    int iJac = (not numericalJacobian) and (formalism>0); // jacobian is computed
+                            // - by finite differences if numericalJacobian is true or formalism is set to ODE
+                            // - by a combination of finite differences and an analytical solution, otherwise
 
     int idid;
 
@@ -526,7 +526,7 @@ namespace MBSim {
     msg(Info)<<"nrJac: "<<iWork[14]<<endl;
     msg(Info)<<"nrSteps: "<<iWork[15]<<endl;
     msg(Info)<<"nrStepsAccepted: "<<iWork[16]<<endl;
-    msg(Info)<<"nrStepsRejected: "<<iWork[17]<<endl;
+    msg(Info)<<"nrStepsRejected (excluding first step): "<<iWork[17]<<endl;
     msg(Info)<<"nrLUdecom: "<<iWork[18]<<endl;
     msg(Info)<<"nrForwardBackwardSubs: "<<iWork[19]<<endl;
   }
@@ -641,6 +641,8 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"stepSizeSaftyFactor");
     if(e) setStepSizeSaftyFactor((E(e)->getText<double>()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
+    if(e) setNumericalJacobian(E(e)->getText<bool>());
   }
 
 }
