@@ -399,6 +399,9 @@ namespace MBSimGUI {
 
     stepSizeSaftyFactor = new ExtWidget("Step size safty factor",new ChoiceWidget(new ScalarWidgetFactory("0.9"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSizeSaftyFactor");
     addToTab("Extra", stepSizeSaftyFactor);
+
+    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
+    addToTab("Extra", numericalJacobian);
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -416,6 +419,7 @@ namespace MBSimGUI {
     jacobianRecomputationAtRejectedSteps->initializeUsingXML(item->getXMLElement());
     stepSizeControl->initializeUsingXML(item->getXMLElement());
     stepSizeSaftyFactor->initializeUsingXML(item->getXMLElement());
+    numericalJacobian->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -434,6 +438,7 @@ namespace MBSimGUI {
     jacobianRecomputationAtRejectedSteps->writeXMLFile(item->getXMLElement());
     stepSizeControl->writeXMLFile(item->getXMLElement());
     stepSizeSaftyFactor->writeXMLFile(item->getXMLElement());
+    numericalJacobian->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -467,6 +472,30 @@ namespace MBSimGUI {
 
     reducedForm = new ExtWidget("Reduced form",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"reducedForm");
     addToTab("Extra", reducedForm);
+
+    maximumNumberOfNewtonIterations = new ExtWidget("Maximum number of Newton iterations",new ChoiceWidget(new ScalarWidgetFactory("7"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"maximumNumberOfNewtonIterations");
+    addToTab("Extra", maximumNumberOfNewtonIterations);
+
+    newtonIterationTolerance = new ExtWidget("Newton iteration tolerance",new ChoiceWidget(new ScalarWidgetFactory("1e-5"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"newtonIterationTolerance");
+    addToTab("Extra", newtonIterationTolerance);
+
+    jacobianRecomputation = new ExtWidget("Jacobian recomputation",new ChoiceWidget(new ScalarWidgetFactory("0.001"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"jacobianRecomputation");
+    addToTab("Extra", jacobianRecomputation);
+
+    jacobianRecomputationAtRejectedSteps = new ExtWidget("Jacobian recomputation at rejected steps",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"jacobianRecomputationAtRejectedSteps");
+    addToTab("Extra", jacobianRecomputationAtRejectedSteps);
+
+    vector<QString> listssc;
+    listssc.emplace_back("\"modPred\"");
+    listssc.emplace_back("\"classic\"");
+    stepSizeControl = new ExtWidget("Step size control",new TextChoiceWidget(listssc,0,true),true,false,MBSIM%"stepSizeControl");
+    addToTab("Extra", stepSizeControl);
+
+    stepSizeSaftyFactor = new ExtWidget("Step size safty factor",new ChoiceWidget(new ScalarWidgetFactory("0.9"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"stepSizeSaftyFactor");
+    addToTab("Extra", stepSizeSaftyFactor);
+
+    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
+    addToTab("Extra", numericalJacobian);
   }
 
   DOMElement* RADAUIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -478,6 +507,13 @@ namespace MBSimGUI {
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
+    maximumNumberOfNewtonIterations->initializeUsingXML(item->getXMLElement());
+    newtonIterationTolerance->initializeUsingXML(item->getXMLElement());
+    jacobianRecomputation->initializeUsingXML(item->getXMLElement());
+    jacobianRecomputationAtRejectedSteps->initializeUsingXML(item->getXMLElement());
+    stepSizeControl->initializeUsingXML(item->getXMLElement());
+    stepSizeSaftyFactor->initializeUsingXML(item->getXMLElement());
+    numericalJacobian->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -490,6 +526,13 @@ namespace MBSimGUI {
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
+    maximumNumberOfNewtonIterations->writeXMLFile(item->getXMLElement());
+    newtonIterationTolerance->writeXMLFile(item->getXMLElement());
+    jacobianRecomputation->writeXMLFile(item->getXMLElement());
+    jacobianRecomputationAtRejectedSteps->writeXMLFile(item->getXMLElement());
+    stepSizeControl->writeXMLFile(item->getXMLElement());
+    stepSizeSaftyFactor->writeXMLFile(item->getXMLElement());
+    numericalJacobian->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -830,6 +873,7 @@ namespace MBSimGUI {
 
   DASPKIntegratorPropertyDialog::DASPKIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size",4);
+    addTab("Extra",5);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -850,6 +894,9 @@ namespace MBSimGUI {
     list.emplace_back("\"GGL\"");
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,2,true),true,false,MBSIM%"formalism");
     addToTab("General", formalism);
+
+    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
+    addToTab("Extra", numericalJacobian);
   }
 
   DOMElement* DASPKIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -859,6 +906,7 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
+    numericalJacobian->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -869,6 +917,7 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
+    numericalJacobian->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
