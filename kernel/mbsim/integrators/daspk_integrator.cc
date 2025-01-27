@@ -147,6 +147,12 @@ namespace MBSim {
       // the columns for la are given analytically
       Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
       J.set(self->Ru, self->Rla, Minv_Jrla);
+      for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
+        for(int r=0; r<self->Ru.start(); ++r)
+          J(r,c)=0;
+        for(int r=self->Ru.end()+1; r<ipar[0]; ++r)
+          J(r,c)=0;
+      }
 
       if(self->formalism==GGL) {
         // the columns for algebraic GGL state are given analytically
@@ -160,6 +166,11 @@ namespace MBSim {
         }
         else
           J.set(self->Rq, self->Rl, self->system->evalW());
+        // the rest of the entries in these columns are 0
+        for(int c=self->Rl.start(); c<=self->Rl.end(); ++c) {
+          for(int r=self->Ru.start(); r<ipar[0]; ++r)
+            J(r,c)=0;
+        }
       }
 
       // now the finite difference of all other columns
