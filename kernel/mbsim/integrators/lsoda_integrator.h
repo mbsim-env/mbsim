@@ -56,6 +56,8 @@ namespace MBSim {
       /**  maximum number of steps allowed during one call to the solver. */
       int maxSteps{std::numeric_limits<int>::max()};
 
+      std::exception_ptr exception;
+
     public:
 
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }

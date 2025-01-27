@@ -42,10 +42,17 @@ namespace MBSim {
 
   void LSODAIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODAIntegrator**>(&neq[1]);
-    Vec zd(neq[0], zd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    zd = self->getSystem()->evalzd();
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec zd(neq[0], zd_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      zd = self->getSystem()->evalzd();
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
   }
 
   void LSODAIntegrator::integrate() {
@@ -60,6 +67,7 @@ namespace MBSim {
     if(not zSize)
       throwError("(LSODAIntegrator::integrate): dimension of the system must be at least 1");
 
+    exception=nullptr;
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0]=zSize;
     LSODAIntegrator *self=this;
@@ -129,6 +137,8 @@ namespace MBSim {
     while(t<tEnd-epsroot) {
       DLSODA(fzdot, neq, system->getState()(), &t, &tEnd, &iTol, rTol(), aTol(),
           &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, nullptr, &jt);
+      if(exception)
+        rethrow_exception(exception);
       if(istate==2 or istate==1) {
         double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
         double tRoot = t;

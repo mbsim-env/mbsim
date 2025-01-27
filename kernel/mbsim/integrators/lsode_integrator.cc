@@ -44,7 +44,6 @@ namespace MBSim {
 
   void LSODEIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
-    //auto *self = reinterpret_cast<LSODEIntegrator*>(neq+1);
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
