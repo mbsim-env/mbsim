@@ -137,7 +137,6 @@ namespace MBSim {
       return;
     try { // catch exception -> C code must catch all exceptions
       Mat J(ipar[0], ipar[0], pd); // fmatvec variant of J_
-//      Vec delta(ipar[0], NONINIT); // fmatvec variant of J_
       int ires;
 
       // the undisturbed call -> this sets the system resetUpToDate
