@@ -75,6 +75,8 @@ namespace MBSim {
 
       int N;
 
+      std::exception_ptr exception;
+
     public:
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setMinimumStepSize(double dtMin_) { dtMin = dtMin_; }

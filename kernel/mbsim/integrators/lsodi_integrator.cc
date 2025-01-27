@@ -44,47 +44,71 @@ namespace MBSim {
 
   void LSODIIntegrator::resODE(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
-    Vec z(neq[0], z_);
-    Vec zd(neq[0], zd_);
-    Vec res(neq[0], res_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    res = self->system->evalzd() - zd;
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec z(neq[0], z_);
+      Vec zd(neq[0], zd_);
+      Vec res(neq[0], res_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      res = self->system->evalzd() - zd;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = 2;
+      self->exception = current_exception();
+    }
   }
 
   void LSODIIntegrator::resDAE2(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
-    Vec y(neq[0], y_);
-    Vec yd(neq[0], yd_);
-    Vec res(neq[0], res_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setUpdatela(false);
-    res.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-    res.set(RangeV(self->system->getzSize(),neq[0]-1), self->system->evalgd());
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(neq[0], y_);
+      Vec yd(neq[0], yd_);
+      Vec res(neq[0], res_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      res.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
+      res.set(RangeV(self->system->getzSize(),neq[0]-1), self->system->evalgd());
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = 2;
+      self->exception = current_exception();
+    }
   }
 
   void LSODIIntegrator::resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
-    Vec y(neq[0], y_);
-    Vec yd(neq[0], yd_);
-    Vec res(neq[0], res_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setUpdatela(false);
-    res.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-    res.set(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1), self->system->evalgd());
-    res.set(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1), self->system->evalg());
-    if(self->system->getgSize() != self->system->getgdSize()) {
-      self->system->calclaSize(5);
-      self->system->updateWRef(self->system->getWParent(0));
-      self->system->setUpdateW(false);
-      res.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)));
-      self->system->calclaSize(3);
-      self->system->updateWRef(self->system->getWParent(0));
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(neq[0], y_);
+      Vec yd(neq[0], yd_);
+      Vec res(neq[0], res_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      res.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
+      res.set(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1), self->system->evalgd());
+      res.set(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1), self->system->evalg());
+      if(self->system->getgSize() != self->system->getgdSize()) {
+        self->system->calclaSize(5);
+        self->system->updateWRef(self->system->getWParent(0));
+        self->system->setUpdateW(false);
+        res.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)));
+        self->system->calclaSize(3);
+        self->system->updateWRef(self->system->getWParent(0));
+      }
+      else
+        res.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)));
     }
-    else
-      res.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)));
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = 2;
+      self->exception = current_exception();
+    }
   }
 
   void LSODIIntegrator::adda(int *neq, double *t, double *y_, int *ml, int *mu, double *P_, int *nrowp) {
@@ -112,6 +136,7 @@ namespace MBSim {
     if(not N)
       throwError("(LSODIIntegrator::integrate): dimension of the system must be at least 1");
 
+    exception=nullptr;
     int neq[1+sizeof(void*)/sizeof(int)+1];
     neq[0] = N;
     LSODIIntegrator *self=this;
@@ -214,6 +239,8 @@ namespace MBSim {
 
     while(t<tEnd-epsroot) {
       DLSODI(*res[formalism], adda, 0, neq, system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
+      if(exception)
+        rethrow_exception(exception);
       if(istate==2 or istate==1) {
         double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
         double tRoot = t;
