@@ -40,14 +40,14 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DASPKIntegrator)
 
-  DASPKIntegrator::Delta DASPKIntegrator::delta[4];
+  DASPKIntegrator::Delta DASPKIntegrator::delta[5];
+  DASPKIntegrator::Jac DASPKIntegrator::jac[5];
 
   void DASPKIntegrator::deltaODE(double* t, double* z_, double* zd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
-      Vec z(ipar[0], z_);
       Vec zd(ipar[0], zd_);
       Vec delta(ipar[0], delta_);
       self->getSystem()->setTime(*t);
@@ -65,7 +65,6 @@ namespace MBSim {
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
-      Vec y(ipar[0], y_);
       Vec yd(ipar[0], yd_);
       Vec delta(ipar[0], delta_);
       self->getSystem()->setTime(*t);
@@ -85,7 +84,6 @@ namespace MBSim {
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
-      Vec y(ipar[0], y_);
       Vec yd(ipar[0], yd_);
       Vec delta(ipar[0], delta_);
       self->getSystem()->setTime(*t);
@@ -131,62 +129,178 @@ namespace MBSim {
     }
   }
 
-  void DASPKIntegrator::jac(double* t, double* y_, double* yd_, double* pd, double* cj, double* rpar, int* ipar) {
+  void DASPKIntegrator::jacODE(double* t, double* z_, double* zd_, double* J_, double* cj, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
-      Mat J(ipar[0], ipar[0], pd); // fmatvec variant of J_
-      int ires;
+      Mat J(ipar[0], ipar[0], J_); // fmatvec variant of J_
 
       // the undisturbed call -> this sets the system resetUpToDate
       // res0 is later used for the numerical part of the jacobian
-      self->delta[self->formalism](t,y_,yd_,cj,self->res0(),&ires,rpar,ipar);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->res0 = self->system->evalzd();
 
-      // the columns for la are given analytically
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
-      J.set(self->Ru, self->Rla, Minv_Jrla);
-      for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
-        for(int r=0; r<self->Ru.start(); ++r)
-          J(r,c)=0;
-        for(int r=self->Ru.end()+1; r<ipar[0]; ++r)
-          J(r,c)=0;
+      if(self->system->getqdequ()) {
+        setZero(J,self->Rq,self->Rq); // par_qd_par_q
+        self->par_ud_xd_par_q(J);
       }
+      else
+        self->par_zd_par_q(J);
+      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      setZero(J,self->Rq,self->Rx); // par_qd_par_x
 
-      if(self->formalism==GGL) {
-        // the columns for algebraic GGL state are given analytically
+      self->par_ud_xd_par_u_x(J,true);
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= *cj;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void DASPKIntegrator::jacDAE1(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec yd(ipar[0], yd_); // fmatvec variant of y_
+      Mat J(ipar[0], ipar[0], J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalW().T()*yd(self->Ru) + self->system->evalwb());
+
+      if(self->system->getqdequ()) {
+        setZero(J,self->Rq,self->Rq); // par_qd_par_q
+        self->par_ud_xd_gdd_par_q_u(J,yd(self->Ru));
+      }
+      else
+        self->par_zd_gdd_par_q_u(J,yd(self->Ru));
+      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
+
+      self->par_ud_xd_par_x(J);
+      setZero(J,self->Rx,self->Rla); // par_xd_par_la
+      setZero(J,self->Rla,self->Rx); // par_gdd_par_x
+
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= *cj;
+      J.add(self->Rla, self->Ru, *cj*self->system->evalW().T());
+      setZero(J,self->Rla,self->Rla); // par_gdd_par_la
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void DASPKIntegrator::jacDAE2(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec yd(ipar[0], yd_); // fmatvec variant of yd_
+      Mat J(ipar[0], ipar[0], J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      //self->delta[self->formalism](t,y_,self->zeros(),cj,self->res0(),&ires,rpar,ipar);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalgd());
+
+      if(self->system->getqdequ()) {
+        setZero(J,self->Rq,self->Rq); // par_qd_par_q
+        self->par_ud_xd_gd_par_q(J);
+      }
+      else
+        self->par_zd_gd_par_q(J);
+      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
+      self->par_ud_xd_par_u_x(J,false);
+      setZero(J,self->Rx,self->Rla); // par_xd_par_la
+      J.set(self->Rla, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      setZero(J,self->Rla,RangeV(self->Rx.start(),self->Rla.end())); // par_gd_par_x_la
+
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= *cj;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void DASPKIntegrator::jacGGL(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar) {
+    auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(ipar[0], y_); // fmatvec variant of y_
+      Mat J(ipar[0], ipar[0], J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalgd());
+      self->res0.set(self->Rl, self->system->evalg());
+      if(self->system->getgSize() != self->system->getgdSize()) {
+        self->system->calclaSize(5);
+        self->system->updateWRef(self->system->getWParent(0));
+        self->system->setUpdateW(false);
+        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+        self->system->calclaSize(3);
+        self->system->updateWRef(self->system->getWParent(0));
+      }
+      else
+        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+
+      if(self->reduced)
+        self->par_ud_xd_gd_g_par_q(J);
+      else {
+        if(self->system->getqdequ()) {
+          setZero(J,self->Rq,self->Rq); // par_qd_par_q
+          self->par_ud_xd_gd_g_par_q(J);
+        }
+        else
+          self->par_zd_gd_g_par_q(J);
+        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
         if(self->system->getgSize() != self->system->getgdSize()) {
           self->system->calclaSize(5);
           self->system->updateWRef(self->system->getWParent(0));
           self->system->setUpdateW(false);
-          J.set(self->Rq, self->Rl, self->system->evalW());
+          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
           self->system->calclaSize(3);
           self->system->updateWRef(self->system->getWParent(0));
         }
         else
-          J.set(self->Rq, self->Rl, self->system->evalW());
-        // the rest of the entries in these columns are 0
-        for(int c=self->Rl.start(); c<=self->Rl.end(); ++c) {
-          for(int r=self->Ru.start(); r<ipar[0]; ++r)
-            J(r,c)=0;
-        }
+          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
       }
+      self->par_ud_xd_par_u_x(J,false);
+      setZero(J,self->Ru,self->Rl); // par_ud_par_l
+      setZero(J,self->Rx,RangeV(self->Rla.start(),self->Rl.end())); // par_xd_par_la_l
+      J.set(self->Rla, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      setZero(J,self->Rla,RangeV(self->Rx.start(),self->Rl.end())); // par_gd_par_x_la_l
+      setZero(J,self->Rl,RangeV(self->Ru.start(),self->Rl.end())); // par_g_par_u_x_la_l
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= *cj;
 
-      // now the finite difference of all other columns
-      // this code is taken from radau5.f JACOBIAN IS FULL,
-      // but converted to C and skipping the last columns of the jacobian for la which is given analytically
-      for(int c=0; c<self->system->getzSize(); ++c) {
-        double ySafe=y_[c];
-        double delta=sqrt(macheps*max(1.e-5,abs(ySafe)));
-        y_[c]=ySafe+delta;
-        self->delta[self->formalism](t,y_,yd_,cj,self->res1(),&ires,rpar,ipar);
-        for(int r=0; r<ipar[0]; ++r)
-          pd[(c*ipar[0])+r]=(self->res1(r)-self->res0(r))/delta;
-        pd[(c*ipar[0])+c]-=*cj;
-        y_[c]=ySafe;
-      }
-      if(self->formalism==DAE1)
-        J.add(self->Rla, self->Ru, *cj*self->system->evalW().T());
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -200,14 +314,18 @@ namespace MBSim {
     delta[0] = &DASPKIntegrator::deltaODE;
     delta[1] = &DASPKIntegrator::deltaDAE1;
     delta[2] = &DASPKIntegrator::deltaDAE2;
-    delta[3] = &DASPKIntegrator::deltaGGL;
+    delta[3] = nullptr; // not available
+    delta[4] = &DASPKIntegrator::deltaGGL;
+    jac[0] = &DASPKIntegrator::jacODE;
+    jac[1] = &DASPKIntegrator::jacDAE1;
+    jac[2] = &DASPKIntegrator::jacDAE2;
+    jac[3] = nullptr; // not available
+    jac[4] = &DASPKIntegrator::jacGGL;
 
     debugInit();
 
     calcSize();
-    Rq = RangeV(0,system->getqSize()-1);
-    Ru = RangeV(system->getqSize(),system->getqSize()+system->getuSize()-1);
-    Rz = RangeV(0,system->getzSize()-1);
+    initConstantMagnitudes();
 
     if(not neq)
       throwError("(DASPKIntegrator::integrate): dimension of the system must be at least 1");
@@ -253,8 +371,8 @@ namespace MBSim {
 
     info(2) = 1; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
-    info(4) = (not numericalJacobian) and (formalism>0); // jacobian is computed
-                            // - by finite differences if numericalJacobian is true or formalism is set to ODE
+    info(4) = not numericalJacobian; // jacobian is computed
+                            // - by finite differences if numericalJacobian is true
                             // - by a combination of finite differences and an analytical solution, otherwise
     // info(5) = 0; // jacobian is a full matrix
     info(6) = dtMax>0; // set maximum stepsize
@@ -300,6 +418,8 @@ namespace MBSim {
     svLast <<= system->evalsv();
 
     calcSize();
+    reinit();
+
     iPar[0] = neq;
     work(1) = dtMax; // maximum stepsize
     work(2) = dt0; // initial stepsize
@@ -315,7 +435,7 @@ namespace MBSim {
     int lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
 
     while(t<tEnd-epsroot) {
-      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,rPar,iPar,jac,nullptr);
+      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,rPar,iPar,jac[formalism],nullptr);
       if(exception)
         rethrow_exception(exception);
       if(idid==1) {
@@ -437,6 +557,7 @@ namespace MBSim {
           if(shift) {
             svLast = system->evalsv();
             calcSize();
+            reinit();
             lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
             iPar[0] = neq;
             work(2) = dt0;
@@ -460,21 +581,8 @@ namespace MBSim {
     msg(Info)<<"nrLinConvFailures: "<<iWork(15)<<endl;
   }
 
-  void DASPKIntegrator::calcSize() {
-    if(formalism==DAE1 or formalism==DAE2)
-      neq = system->getzSize()+system->getlaSize();
-    else if(formalism==GGL)
-      neq = system->getzSize()+system->getgdSize()+system->getgSize();
-    else
-      neq = system->getzSize();
-    res0.resize(neq);
-    res1.resize(neq);
-    Rla = RangeV(system->getzSize(), system->getzSize()+system->getlaSize()-1);
-    Rl = RangeV(system->getzSize()+system->getlaSize(), neq-1);
-  }
-
   void DASPKIntegrator::initializeUsingXML(DOMElement *element) {
-    RootFindingIntegrator::initializeUsingXML(element);
+    DAEIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());

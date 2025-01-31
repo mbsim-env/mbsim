@@ -23,7 +23,7 @@
 #ifndef _DASPK_INTEGRATOR_H_
 #define _DASPK_INTEGRATOR_H_
 
-#include "root_finding_integrator.h"
+#include "dae_integrator.h"
 
 namespace MBSim {
 
@@ -31,27 +31,23 @@ namespace MBSim {
    *
    * This integrator uses DASPK (http://www.netlib.org/ode).
    */
-  class DASPKIntegrator : public RootFindingIntegrator {
-
-    public:
-      enum Formalism {
-        ODE=0,
-        DAE1,
-        DAE2,
-        GGL,
-        unknown
-      };
+  class DASPKIntegrator : public DAEIntegrator {
 
     private:
       typedef void (*Delta)(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
-      static Delta delta[4];
-      static void deltaODE(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
+      typedef void (*Jac)(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
+      static Delta delta[5];
+      static Jac jac[5];
+      static void deltaODE(double* t, double* z_, double* zd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       static void deltaDAE1(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       static void deltaDAE2(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       static void deltaGGL(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
-      static void jac(double* t, double* y_, double* yd_, double* pd, double* cj, double* rpar, int* ipar);
+      static void jacODE(double* t, double* z_, double* zd_, double* J_, double* cj, double* rpar, int* ipar);
+      static void jacDAE1(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
+      static void jacDAE2(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
+      static void jacGGL(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
 
-      void calcSize();
+      void reinit() { initVariableMagnitudes(); zeros.resize(neq); }
 
       /** maximal step size */
       double dtMax{0};
@@ -61,16 +57,10 @@ namespace MBSim {
       fmatvec::Vec rTol;
       /** step size for the first step */
       double dt0{0};
-      /** formalism **/
-      Formalism formalism{DAE2};
       /** exclude algebraic variables from error test **/
       bool excludeAlgebraicVariables{true};
-      bool numericalJacobian{false};
 
-      int neq;
-
-      fmatvec::Vec res0, res1; // residual work arrays for jacobian evaluation
-      fmatvec::RangeV Rq, Ru, Rz, Rla, Rl; // ranges in y and jacobimatrix for q, u, z, la and GGL alg.-states l
+      fmatvec::VecV zeros;
 
       std::exception_ptr exception;
 
@@ -81,9 +71,7 @@ namespace MBSim {
       void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol <<= rTol_; }
       void setRelativeTolerance(double rTol_) { rTol.resize(1,fmatvec::INIT,rTol_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
-      void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
-      void setNumericalJacobian(bool numericalJacobian_) { numericalJacobian = numericalJacobian_; }
 
       using Integrator::integrate;
       void integrate();
