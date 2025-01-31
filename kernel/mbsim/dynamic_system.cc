@@ -138,6 +138,30 @@ namespace MBSim {
       (*i).updatedx();
   }
 
+  void DynamicSystem::updateqd() {
+    for (auto & i : dynamicsystem)
+      (*i).updateqd();
+
+    for (auto & i : object)
+      (*i).updateqd();
+  }
+
+  void DynamicSystem::updateud() {
+    for(auto & i : dynamicsystem)
+      i->updateud();
+
+    for(auto & i : object)
+      i->updateud();
+  }
+
+  void DynamicSystem::updatexd() {
+    for (auto & i : link)
+      (*i).updatexd();
+
+    for (auto & i : constraint)
+      (*i).updatexd();
+  }
+
   void DynamicSystem::updatezd() {
     for(auto & i : dynamicsystem)
       i->updatezd();
@@ -153,6 +177,7 @@ namespace MBSim {
     for(auto & i : constraint)
       i->updatexd();
   }
+
   void DynamicSystem::updatewb() {
 
     for (auto & i : linkSetValuedActive)
@@ -1710,6 +1735,21 @@ namespace MBSim {
   const fmatvec::Vec& DynamicSystem::getdx(bool check) const {
     assert((not check) or (not ds->getUpdatedx()));
     return dx;
+  }
+
+  const fmatvec::Vec& DynamicSystem::getqd(bool check) const {
+    assert((not check) or (not ds->getUpdatezd()));
+    return qd;
+  }
+
+  const fmatvec::Vec& DynamicSystem::getud(bool check) const {
+    assert((not check) or (not ds->getUpdatezd()));
+    return ud;
+  }
+
+  const fmatvec::Vec& DynamicSystem::getxd(bool check) const {
+    assert((not check) or (not ds->getUpdatezd()));
+    return xd;
   }
 
   fmatvec::SymMat& DynamicSystem::getLLM(bool check) {
