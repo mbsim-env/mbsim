@@ -820,6 +820,7 @@ namespace MBSimGUI {
 
   LSODIIntegratorPropertyDialog::LSODIIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
     addTab("Step size",4);
+    addTab("Extra",5);
 
     absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
     addToTab("Tolerances", absTol);
@@ -845,6 +846,12 @@ namespace MBSimGUI {
     list.emplace_back("\"GGL\"");
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,1,true),true,false,MBSIM%"formalism");
     addToTab("General", formalism);
+
+    excludeAlgebraicVariables = new ExtWidget("Exclude algebraic variables from error test",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"excludeAlgebraicVariablesFromErrorTest");
+    addToTab("Extra", excludeAlgebraicVariables);
+
+    numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
+    addToTab("Extra", numericalJacobian);
   }
 
   DOMElement* LSODIIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -856,6 +863,8 @@ namespace MBSimGUI {
     minimumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
+    excludeAlgebraicVariables->initializeUsingXML(item->getXMLElement());
+    numericalJacobian->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -868,6 +877,8 @@ namespace MBSimGUI {
     minimumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
+    excludeAlgebraicVariables->writeXMLFile(item->getXMLElement());
+    numericalJacobian->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -895,6 +906,9 @@ namespace MBSimGUI {
     formalism = new ExtWidget("Formalism",new TextChoiceWidget(list,2,true),true,false,MBSIM%"formalism");
     addToTab("General", formalism);
 
+    excludeAlgebraicVariables = new ExtWidget("Exclude algebraic variables from error test",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"excludeAlgebraicVariablesFromErrorTest");
+    addToTab("Extra", excludeAlgebraicVariables);
+
     numericalJacobian = new ExtWidget("Numerical jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"numericalJacobian");
     addToTab("Extra", numericalJacobian);
   }
@@ -906,6 +920,7 @@ namespace MBSimGUI {
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
+    excludeAlgebraicVariables->initializeUsingXML(item->getXMLElement());
     numericalJacobian->initializeUsingXML(item->getXMLElement());
     return parent;
   }
@@ -917,6 +932,7 @@ namespace MBSimGUI {
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());
+    excludeAlgebraicVariables->writeXMLFile(item->getXMLElement());
     numericalJacobian->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
