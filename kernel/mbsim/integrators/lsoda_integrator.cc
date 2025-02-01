@@ -113,12 +113,12 @@ namespace MBSim {
     }
 
     int itask=2, iopt=1, jt=2, istate=1;
-    int lrWork = 2*(22+9*zSize+zSize*zSize);
+    int lrWork = 22+9*zSize+zSize*zSize;
     Vec rWork(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork = 2*(20+zSize);
+    int liWork = 20+zSize;
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
