@@ -211,7 +211,6 @@ namespace MBSim {
 
       // the undisturbed call -> this sets the system resetUpToDate
       // res0 is later used for the numerical part of the jacobian
-      //self->delta[self->formalism](t,y_,self->zeros(),cj,self->res0(),&ires,rpar,ipar);
       self->getSystem()->setTime(*t);
       self->getSystem()->resetUpToDate();
       self->getSystem()->setUpdatela(false);
@@ -572,7 +571,7 @@ namespace MBSim {
       else if(idid<0) throwError("Integrator DASPK failed with istate = "+to_string(idid));
     }
 
-    msg(Info)<<string("nrRHS")+(info(4)?" (excluding jac): ":" (including jac): ")<<iWork(11)<<endl;
+    msg(Info)<<string("nrRHS")+(numericalJacobian?" (including jac): ":" (excluding jac): ")<<iWork(11)<<endl;
     msg(Info)<<"nrJac: "<<iWork(12)<<endl;
     msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
     msg(Info)<<"nrStepsAccepted: "<<iWork(10)-iWork(13)<<endl;
