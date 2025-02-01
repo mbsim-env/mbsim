@@ -271,11 +271,10 @@ namespace MBSim {
     debugInit();
 
     if(odePackInUse)
-      throwError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
+      throwError("(LSODIIntegrator::integrate): Only one integration with LSODEIntegrator, LSODAIntegrator and LSODIIntegrator at a time is possible.");
     odePackInUse = true;
 
-    calcSize();
-    initConstantMagnitudes();
+    init();
 
     if(not neq)
       throwError("(LSODIIntegrator::integrate): dimension of the system must be at least 1");
@@ -370,7 +369,6 @@ namespace MBSim {
     yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
     svLast <<= system->evalsv();
 
-    calcSize();
     reinit();
 
     neq_[0] = neq;
@@ -505,7 +503,6 @@ namespace MBSim {
           yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
           if(shift) {
             svLast = system->evalsv();
-            calcSize();
             reinit();
             neq_[0] = neq;
             rWork(4) = dt0;

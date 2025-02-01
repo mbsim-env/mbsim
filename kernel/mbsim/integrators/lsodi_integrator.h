@@ -51,8 +51,6 @@ namespace MBSim {
       static void jacDAE2(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
       static void jacGGL(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
 
-      void reinit() { initVariableMagnitudes(); zeros.resize(neq); }
-
       /** maximal step size */
       double dtMax{0};
       /** minimal step size */
