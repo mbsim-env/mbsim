@@ -1,6 +1,7 @@
 noinst_LTLIBRARIES = libintegrators.la libintegrators2.la
 libintegrators_la_SOURCES = integrator.cc\
 			    root_finding_integrator.cc \
+			    implicit_integrator.cc \
 			    dae_integrator.cc \
 			    lsode_integrator.cc \
 			    lsoda_integrator.cc \
@@ -49,6 +50,7 @@ integratorsincludedir = $(includedir)/mbsim/integrators
 
 integratorsinclude_HEADERS = integrator.h \
 			     root_finding_integrator.h \
+                             implicit_integrator.h \
 			     dae_integrator.h \
 			     integrators.h \
 			     lsode_integrator.h \

@@ -34,48 +34,6 @@ using namespace MBSim;
 
 namespace MBSim {
 
-  void setZero(Mat &A, const RangeV &rows, const RangeV &cols) {
-    for(int i=rows.start(); i<=rows.end(); i++) {
-      for(int j=cols.start(); j<=cols.end(); j++)
-        A.e(i,j) = 0;
-    }
-  }
-
-  // ODE
-  void DAEIntegrator::par_ud_xd_par_q(Mat &J) {
-    for(int j=0; j<system->getqSize(); j++) {
-      double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
-      system->resetUpToDate();
-      system->updateud();
-      system->updatexd();
-      for(int i=RuMove.start(),k=0; i<=RuMove.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=RxMove.start(),k=0; i<=RxMove.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      system->getState()(j)=zSave;
-    }
-  }
-
-  // ODE
-  void DAEIntegrator::par_zd_par_q(Mat &J) {
-    for(int j=0; j<system->getqSize(); j++) {
-      double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
-      system->resetUpToDate();
-      system->updatezd();
-      for(int i=Rq.start(); i<=Rq.end(); i++)
-        J(i,j)=(system->getqd(false)(i)-qd0(i))/delta;
-      for(int i=Ru.start(),k=0; i<=Ru.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=Rx.start(),k=0; i<=Rx.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      system->getState()(j)=zSave;
-    }
-  }
-
   // DAE1
   void DAEIntegrator::par_ud_xd_gdd_par_q_u(Mat &J, const Vec &ud_) {
     const Vec &ud = ud_()?ud_:system->getud(false);
@@ -274,24 +232,6 @@ namespace MBSim {
     }
   }
 
-  // ODE, DAE2, DAE3 and GGL
-  void DAEIntegrator::par_ud_xd_par_u_x(Mat &J, bool updla) {
-    for(int j=system->getqSize(); j<system->getzSize(); j++) {
-      double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
-      system->resetUpToDate();
-      system->setUpdatela(updla);
-      system->updateud();
-      system->updatexd();
-      for(int i=RuMove.start(),k=0; i<=RuMove.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=RxMove.start(),k=0; i<=RxMove.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      system->getState()(j)=zSave;
-    }
-  }
-
   void DAEIntegrator::calcSize() {
     if(formalism==DAE1 or formalism==DAE2)
       neq = system->getzSize()+system->getlaSize();
@@ -303,17 +243,8 @@ namespace MBSim {
       neq = system->getzSize();
   }
 
-  void DAEIntegrator::initConstantMagnitudes() {
-    rowMove = reduced ? system->getqSize() : 0;
-    Rq = RangeV(0,system->getqSize()-1);
-    Ru = RangeV(system->getqSize(),system->getqSize()+system->getuSize()-1);
-    Rx = RangeV(system->getqSize()+system->getuSize(),system->getzSize()-1);
-    Rz = RangeV(0,system->getzSize()-1);
-    RuMove = RangeV(Ru.start()-rowMove, Ru.end()-rowMove);
-    RxMove = RangeV(Rx.start()-rowMove, Rx.end()-rowMove);
-  }
-
-  void DAEIntegrator::initVariableMagnitudes() {
+  void DAEIntegrator::reinit() {
+    calcSize();
     res0.resize(neq,NONINIT);
     qd0.ref(res0,Rq);
     ud0.ref(res0,Ru);
