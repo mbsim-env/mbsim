@@ -344,13 +344,13 @@ namespace MBSim {
 
     if(excludeAlgebraicVariables) for(int i=system->getzSize(); i<neq; i++) aTol(i) = 1e15;
 
-    int itask=2, iopt=1, istate=1;
+    int itask=2, iopt=1, istate=1, MF=numericalJacobian?22:21;
     int lrWork = 22+9*neq+neq*neq;
+    int liWork = 20+neq;
     Vec rWork(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork = 20+neq;
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
@@ -375,8 +375,6 @@ namespace MBSim {
 
     double s0 = clock();
     double time = 0;
-
-    int MF = numericalJacobian?22:21;
 
     int zero = 0;
     int iflag;

@@ -148,13 +148,21 @@ namespace MBSim {
         throwError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + to_string(zSize));
     }
 
-    int itask=2, iopt=1, istate=1;
-    int lrWork = 22+9*zSize+zSize*zSize;
+    int itask=2, iopt=1, istate=1, MF, lrWork, liWork;
+    if(method==nonstiff) {
+      lrWork = 20+16*zSize;
+      liWork = 20;
+      MF = 10;
+    }
+    else {
+      lrWork = 22+9*zSize+zSize*zSize;
+      liWork = 20+zSize;
+      MF = numericalJacobian?22:21;
+    }
     Vec rWork(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork = 20+zSize;
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
@@ -166,8 +174,6 @@ namespace MBSim {
 
     double s0 = clock();
     double time = 0;
-
-    int MF = (method==nonstiff)?10:(numericalJacobian?22:21);
 
     int zero = 0;
     int iflag;

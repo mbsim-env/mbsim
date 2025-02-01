@@ -143,13 +143,13 @@ namespace MBSim {
         throwError("(LSODAIntegrator::integrate): size of rTol does not match, must be " + to_string(zSize));
     }
 
-    int itask=2, iopt=1, jt=numericalJacobian?2:1, istate=1;
-    int lrWork = 22+9*zSize+zSize*zSize;
+    int itask=2, iopt=1, istate=1, jt=numericalJacobian?2:1;
+    int lrWork = 22+zSize*max(16,zSize+9);
+    int liWork = 20+zSize;
     Vec rWork(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork = 20+zSize;
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
