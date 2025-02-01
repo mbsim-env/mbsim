@@ -701,7 +701,6 @@ namespace MBSim {
     msg(Info)<<"nrStepsRejected (excluding first step): "<<iWork[17]<<endl;
     msg(Info)<<"nrLUdecom: "<<iWork[18]<<endl;
     msg(Info)<<"nrForwardBackwardSubs: "<<iWork[19]<<endl;
-    msg(Info)<< system->getqdequ() << endl;
   }
 
   void RADAU5Integrator::reinit() {
