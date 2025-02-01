@@ -560,8 +560,7 @@ namespace MBSim {
 
     debugInit();
 
-    calcSize();
-    initConstantMagnitudes();
+    init();
 
     if(not neq)
       throwError("(RADAUIntegrator::integrate): dimension of the system must be at least 1");
@@ -648,7 +647,6 @@ namespace MBSim {
     svLast <<= system->evalsv();
     z = system->getState(); // needed, as computeInitialCondition may change the state
 
-    calcSize();
     reinit();
 
     if(formalism>0)
@@ -674,7 +672,6 @@ namespace MBSim {
         system->resetUpToDate();
         svLast = system->evalsv();
         dt = dt0;
-        calcSize();
         reinit();
       }
 
@@ -698,7 +695,7 @@ namespace MBSim {
   }
 
   void RADAUIntegrator::reinit() {
-    initVariableMagnitudes();
+    DAEIntegrator::reinit();
 
     for(int i=20; i<work.size(); i++)
       work(i) = 0;

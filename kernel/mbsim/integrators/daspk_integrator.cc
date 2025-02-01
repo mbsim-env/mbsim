@@ -323,8 +323,7 @@ namespace MBSim {
 
     debugInit();
 
-    calcSize();
-    initConstantMagnitudes();
+    init();
 
     if(not neq)
       throwError("(DASPKIntegrator::integrate): dimension of the system must be at least 1");
@@ -416,7 +415,6 @@ namespace MBSim {
     yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
     svLast <<= system->evalsv();
 
-    calcSize();
     reinit();
 
     iPar[0] = neq;
@@ -555,7 +553,6 @@ namespace MBSim {
           yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
           if(shift) {
             svLast = system->evalsv();
-            calcSize();
             reinit();
             lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
             iPar[0] = neq;

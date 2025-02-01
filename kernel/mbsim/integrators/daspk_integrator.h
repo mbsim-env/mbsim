@@ -47,8 +47,6 @@ namespace MBSim {
       static void jacDAE2(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
       static void jacGGL(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
 
-      void reinit() { initVariableMagnitudes(); zeros.resize(neq); }
-
       /** maximal step size */
       double dtMax{0};
       /** Absolute Toleranz */
