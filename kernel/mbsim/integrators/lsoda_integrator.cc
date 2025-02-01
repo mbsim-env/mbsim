@@ -55,11 +55,42 @@ namespace MBSim {
     }
   }
 
+  void LSODAIntegrator::jac(int *neq, double* t, double* z_, int* ml, int* mu, double* J_, int* nrowp) {
+    auto self=*reinterpret_cast<LSODAIntegrator**>(&neq[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Mat J(neq[0], neq[0], J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->res0 = self->system->evalzd();
+
+      if(self->system->getqdequ()) {
+        setZero(J,self->Rq,self->Rq); // par_qd_par_q
+        self->par_ud_xd_par_q(J);
+      }
+      else
+        self->par_zd_par_q(J);
+      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      setZero(J,self->Rq,self->Rx); // par_qd_par_x
+
+      self->par_ud_xd_par_u_x(J,true);
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= 1;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
   void LSODAIntegrator::integrate() {
     debugInit();
 
     if(odePackInUse)
-      throwError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
+      throwError("(LSODAIntegrator::integrate): Only one integration with LSODEIntegrator, LSODAIntegrator and LSODIIntegrator at a time is possible.");
     odePackInUse = true;
 
     int zSize=system->getzSize();
@@ -112,7 +143,7 @@ namespace MBSim {
         throwError("(LSODAIntegrator::integrate): size of rTol does not match, must be " + to_string(zSize));
     }
 
-    int itask=2, iopt=1, jt=2, istate=1;
+    int itask=2, iopt=1, jt=numericalJacobian?2:1, istate=1;
     int lrWork = 22+9*zSize+zSize*zSize;
     Vec rWork(lrWork);
     rWork(4) = dt0;
@@ -134,9 +165,11 @@ namespace MBSim {
     int zero = 0;
     int iflag;
 
+    init();
+
     while(t<tEnd-epsroot) {
       DLSODA(fzdot, neq, system->getState()(), &t, &tEnd, &iTol, rTol(), aTol(),
-          &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, nullptr, &jt);
+          &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, jac, &jt);
       if(exception)
         rethrow_exception(exception);
       if(istate==2 or istate==1) {
@@ -258,7 +291,7 @@ namespace MBSim {
   }
 
   void LSODAIntegrator::initializeUsingXML(DOMElement *element) {
-    RootFindingIntegrator::initializeUsingXML(element);
+    ImplicitIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
