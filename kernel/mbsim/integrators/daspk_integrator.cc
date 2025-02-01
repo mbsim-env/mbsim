@@ -395,8 +395,8 @@ namespace MBSim {
     DASPKIntegrator *self=this;
     memcpy(&iPar[1], &self, sizeof(void*));
 
-    int lWork = 2*(50+9*neq+neq*neq+neq);
-    int liWork = 2*(40+neq+neq);
+    int lWork = 50+9*neq+neq*neq+neq;
+    int liWork = 40+neq+neq;
     VecInt iWork(liWork);
     Vec work(lWork);
 
