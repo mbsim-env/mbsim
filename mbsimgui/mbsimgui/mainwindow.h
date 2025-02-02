@@ -102,7 +102,6 @@ namespace MBSimGUI {
       EchoView *echoView;
       FileView *fileView;
       QTabWidget *tabWidget;
-      PropertyDialog *editor{nullptr};
       std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
       QProcess process;
@@ -186,6 +185,8 @@ namespace MBSimGUI {
       void saveReferencedFile(int i);
       void convertDocument();
       void createNewEvaluator();
+
+      int openedEditors { 0 };
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void abstractViewFilterOptionsChanged();
@@ -248,7 +249,9 @@ namespace MBSimGUI {
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
       bool getAutoRefresh() const { return autoRefresh; }
       bool getStatusUpdate() const { return statusUpdate; }
-      bool editorIsOpen() const { return editor; }
+
+      bool editorIsOpen() const { return openedEditors > 0; }
+
       void loadProject();
       bool saveProjectAs();
       void saveProjectAsTemplate();
@@ -308,7 +311,7 @@ namespace MBSimGUI {
       // As second a map with all possible combinations of these counts and the corresponding evaluation is returned.
       static std::pair<std::vector<std::string>, std::map<std::vector<int>, MBXMLUtils::Eval::Value>> evaluateForAllArrayPattern(
         const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
-        bool fullEval, bool catchErrors, bool trackFirstLastCall=false);
+        bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall=false);
 
       void rebuildTree();
       void exportParameters();
@@ -323,6 +326,15 @@ namespace MBSimGUI {
       void flexibleBodyTool();
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
       void expandToDepth(int depth);
+
+      // Prepare the MainWindow for a "quasi" modal dialog open.
+      // The MainWindow will still be active (the dialog to open is none modal) but many features of the MainWindow
+      // are disabled, e.g. only the 3D view and other basic stuff is still active.
+      // prepareForPropertyDialogOpen/prepareForPropertyDialogClose must be called as a pair!
+      void prepareForPropertyDialogOpen();
+      // Prepare the MainWindow for a "quasi" modal dialog close.
+      // This just reverts the actions on the MainWindow taken by prepareForPropertyDialogOpen().
+      void prepareForPropertyDialogClose();
     public slots:
       void openElementEditor(bool config=true);
 

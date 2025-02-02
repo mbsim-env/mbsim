@@ -45,7 +45,18 @@ namespace MBSimGUI {
   class EmbedItemData;
   class ExtWidget;
 
-  class PropertyDialog : public QDialog {
+  // this class is duplicted in the scripting language for the evaluator -> keep it simple and synchronized
+  class BasicPropertyDialog : public QDialog {
+    Q_OBJECT
+
+    public:
+      BasicPropertyDialog();
+    protected:
+      void showEvent(QShowEvent *event) override;
+      void hideEvent(QHideEvent *event) override;
+  };
+
+  class PropertyDialog : public BasicPropertyDialog {
     Q_OBJECT
 
     public:

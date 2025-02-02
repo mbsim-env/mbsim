@@ -145,13 +145,7 @@ namespace MBSimGUI {
           mw->clearEchoView(QString("Running context action '")+ca.first.c_str()+"':\n\n");
           try {
             auto parameterLevels = mw->updateParameters(element);
-            auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second, nullptr, true, false, true);
-            fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<"Return values:"<<std::endl;
-            for(auto &value : values) {
-              for(size_t i=0; i<counterName.size(); ++i)
-                fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<counterName[i]<<" = "<<value.first[i]<<(i<counterName.size()-1?", ":"");
-              fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<" => ret = "<<mw->eval->cast<CodeString>(value.second)<<std::endl;
-            }
+            auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second, nullptr, true, true, false, true);
             mw->updateEchoView();
           }
           catch(const std::exception &ex) {

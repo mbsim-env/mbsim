@@ -56,123 +56,118 @@
                       <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="4" counterName="o" onlyif="o!=1">
                         <pv:Parameter>
                           <pv:scalarParameter name="s">0</pv:scalarParameter>
-                          <pv:anyParameter name="plot">
-                            def plot(mbsimgui_firstCall, mbsimgui_lastCall):
-                              import PySide2
-                              import numpy
-                              import scipy
-                              import mbsim
-                              import mbxmlutils.Qt
-                              class MyPlot(mbxmlutils.Qt.MatplotlibDialog):
-                                def __init__(self, parent=None):
-                                  super().__init__(parent)
-                              
-                                  self.X=numpy.linspace(splineIn["xx"][0],splineIn["xx"][-1],1000)
-                              
-                                  self.expSL=4
-                                  self.facSL = pow(splineIn["xx"].shape[0]/3,self.expSL-1)
-                              
-                                  layout = PySide2.QtWidgets.QVBoxLayout()
-                                  self.setLayout(layout)
-                                  layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
-                                  self.plotWidget=self.getPlotWidget("splinePlot")
-                                  layout.addWidget(self.plotWidget)
-                                  hlayout = PySide2.QtWidgets.QHBoxLayout()
-                                  layout.addLayout(hlayout)
-                                  hlayout.setStretch(0, 0)
-                                  hlayout.setStretch(1, 0)
-                                  hlayout.setStretch(2, 1)
-                                  hlayout.addWidget(PySide2.QtWidgets.QLabel("s="))
-                                  self.inputSB = PySide2.QtWidgets.QDoubleSpinBox()
-                                  hlayout.addWidget(self.inputSB)
-                                  self.inputSB.setMinimum(0)
-                                  self.inputSB.setMaximum(1e10)
-                                  self.inputSB.setSingleStep(0.001)
-                                  self.inputSB.setDecimals(6)
-                                  self.inputSB.setValue(splineIn["yy"][1]["s"])
-                                  self.inputSB.valueChanged.connect(self.sChanged)
-                                  self.inputSL = PySide2.QtWidgets.QSlider(PySide2.QtCore.Qt.Horizontal)
-                                  hlayout.addWidget(self.inputSL)
-                                  self.inputSL.setMinimum(0)
-                                  self.inputSLFac=1000000
-                                  self.inputSL.setMaximum(int(splineIn["xx"].shape[0]/3)*self.inputSLFac)
-                                  self.inputSL.setSingleStep(self.inputSLFac/1000)
-                                  self.inputSL.setPageStep(self.inputSLFac/100)
-                                  self.inputSL.valueChanged.connect(self.sliderChanged)
-                              
-                                  self.axes = self.plotWidget.figure.subplots()
-                              
-                                  self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
-                                  self.axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
-                                  self.axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}");
-                              
-                                  self.sChanged()
-                              
-                                def sliderValueTos(self, s):
-                                  return pow(s/self.inputSLFac,self.expSL)/self.facSL
-                                def sToSliderValue(self, v):
-                                  return pow(v*self.facSL,1/self.expSL)*self.inputSLFac
-                              
-                                def sChanged(self):
-                                  s=self.inputSB.value()
-                                  sp1=scipy.interpolate.splrep(splineIn["xx"],splineIn["yy"][1]["data"],s=s)
-                                  sp2=scipy.interpolate.PPoly.from_spline(sp1)
-
-                                  # create spline using scipy
-                                  self.data.set_ydata(sp2(self.X))
-
-                                  # create spline using SWIG mbsim.PiecewisePolynomFunction_d
-                                  # (just to check if mbsim.PiecewisePolynomFunction_d creates the same result as scipy PPoly)
-                                  pp=mbsim.PiecewisePolynomFunction_d()
-                                  pp.setBreaks(sp2.x)
-                                  pp.addCoefficients(sp2.c[:,:].T)
-                                  pp.init(mbsim.Element.preInit)
-                                  y=numpy.vectorize(lambda xx: pp(xx))(self.X)
-                                  if not numpy.allclose(y, self.data.get_ydata()):
-                                    raise RuntimeError("scipy PPoly and SWIG mbsim.PiecewisePolynomFunction_d does not return the same!")
-
-                                  self.plotWidget.draw()
-                                  self.inputSL.blockSignals(True)
-                                  self.inputSL.setValue(self.sToSliderValue(s))
-                                  self.inputSL.blockSignals(False)
-                              
-                                def sliderChanged(self):
-                                  v=self.inputSL.value()
-                                  self.inputSB.setValue(self.sliderValueTos(v))
-  
-                              mbxmlutils.Qt.execWidget(MyPlot())
-
-                              # create a standard matplotlib figure
-                              #d=mbxmlutils.Qt.StdMatplotlibDialog()
-                              #ax=d.getFigure().subplots()
-                              #ax.plot([1,2,3,4],[5,4,7,2])
-                              #mbxmlutils.Qt.execWidget(d)
-
-                              if mbxmlutils.Qt.isGUI():
-                                if mbsimgui_firstCall:
-                                  mbxmlutils.staticData["myplotdata"]=[]
-                                mbxmlutils.staticData["myplotdata"].append(f"g={g} o={o}")
-                                print("Appended plot data")
-                                if mbsimgui_lastCall:
-                                  PySide2.QtWidgets.QMessageBox.information(None, "Plot Summary",
-                                                                            "\n".join(mbxmlutils.staticData["myplotdata"]))
-                                
-                            ret=plot
-                          </pv:anyParameter>
                         </pv:Parameter>
                         <RigidBody name="smoothing_{g}_NONE_{o}" xmlns="http://www.mbsim-env.de/MBSim">
-                          <?MBSIMGUI_CONTEXT_ACTION name="Show plot" plot(mbsimgui_firstCall, mbsimgui_lastCall)?>
+                          <?MBSIMGUI_CONTEXT_ACTION name="Show plot"
+                            import PySide2
+                            import numpy
+                            import scipy
+                            import mbxmlutils
+                            import mbsim
+                            import mbsimgui
+
+                            class MyPlot(mbsimgui.MatplotlibDialog):
+                              def __init__(self):
+                                super().__init__()
+                            
+                                self.X=numpy.linspace(splineIn["xx"][0],splineIn["xx"][-1],1000)
+                            
+                                self.expSL=4
+                                self.facSL = pow(splineIn["xx"].shape[0]/3,self.expSL-1)
+                            
+                                layout = PySide2.QtWidgets.QVBoxLayout()
+                                self.setLayout(layout)
+                                layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
+                                self.plotWidget=self.getPlotWidget("splinePlot")
+                                layout.addWidget(self.plotWidget)
+                                hlayout = PySide2.QtWidgets.QHBoxLayout()
+                                layout.addLayout(hlayout)
+                                hlayout.setStretch(0, 0)
+                                hlayout.setStretch(1, 0)
+                                hlayout.setStretch(2, 1)
+                                hlayout.addWidget(PySide2.QtWidgets.QLabel("s="))
+                                self.inputSB = PySide2.QtWidgets.QDoubleSpinBox()
+                                hlayout.addWidget(self.inputSB)
+                                self.inputSB.setMinimum(0)
+                                self.inputSB.setMaximum(1e10)
+                                self.inputSB.setSingleStep(0.001)
+                                self.inputSB.setDecimals(6)
+                                self.inputSB.setValue(splineIn["yy"][1]["s"])
+                                self.inputSB.valueChanged.connect(self.sChanged)
+                                self.inputSL = PySide2.QtWidgets.QSlider(PySide2.QtCore.Qt.Horizontal)
+                                hlayout.addWidget(self.inputSL)
+                                self.inputSL.setMinimum(0)
+                                self.inputSLFac=1000000
+                                self.inputSL.setMaximum(int(splineIn["xx"].shape[0]/3)*self.inputSLFac)
+                                self.inputSL.setSingleStep(self.inputSLFac/1000)
+                                self.inputSL.setPageStep(self.inputSLFac/100)
+                                self.inputSL.valueChanged.connect(self.sliderChanged)
+                            
+                                self.axes = self.plotWidget.figure.subplots()
+                            
+                                self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
+                                self.axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
+                                self.axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall} counterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
+                            
+                                self.sChanged()
+                            
+                              def sliderValueTos(self, s):
+                                return pow(s/self.inputSLFac,self.expSL)/self.facSL
+                              def sToSliderValue(self, v):
+                                return pow(v*self.facSL,1/self.expSL)*self.inputSLFac
+                            
+                              def sChanged(self):
+                                s=self.inputSB.value()
+                                sp1=scipy.interpolate.splrep(splineIn["xx"],splineIn["yy"][1]["data"],s=s)
+                                sp2=scipy.interpolate.PPoly.from_spline(sp1)
+
+                                # create spline using scipy
+                                self.data.set_ydata(sp2(self.X))
+
+                                # create spline using SWIG mbsim.PiecewisePolynomFunction_d
+                                # (just to check if mbsim.PiecewisePolynomFunction_d creates the same result as scipy PPoly)
+                                pp=mbsim.PiecewisePolynomFunction_d()
+                                pp.setBreaks(sp2.x)
+                                pp.addCoefficients(sp2.c[:,:].T)
+                                pp.init(mbsim.Element.preInit)
+                                y=numpy.vectorize(lambda xx: pp(xx))(self.X)
+                                if not numpy.allclose(y, self.data.get_ydata()):
+                                  raise RuntimeError("scipy PPoly and SWIG mbsim.PiecewisePolynomFunction_d does not return the same!")
+
+                                self.plotWidget.draw()
+                                self.inputSL.blockSignals(True)
+                                self.inputSL.setValue(self.sToSliderValue(s))
+                                self.inputSL.blockSignals(False)
+                            
+                              def sliderChanged(self):
+                                v=self.inputSL.value()
+                                self.inputSB.setValue(self.sliderValueTos(v))
+  
+                            w=MyPlot()
+                            w.show()
+
+                            # create a standard matplotlib figure
+                            d=mbsimgui.StdMatplotlibDialog()
+                            ax=d.getFigure().subplots()
+                            ax.plot([1,2,3,4],[5,4,7,2])
+                            d.show()
+
+                            mbsimgui.waitForDialogs(w, d)
+
+                            if mbsimgui_firstCall:
+                              mbxmlutils.staticData["myplotdata"]=[]
+                            mbxmlutils.staticData["myplotdata"].append(f"g={g} o={o} counterNames={mbsimgui_counterNames} counts={mbsimgui_counts}")
+                            print("Appended plot data")
+                            if mbsimgui_lastCall:
+                              PySide2.QtWidgets.QMessageBox.information(None, "Plot Summary",
+                                                                        "\n".join(mbxmlutils.staticData["myplotdata"]))
+                          ?>
                           <?MBSIMGUI_CONTEXT_ACTION name="Some output"
                             print("start")
                             ret={"a": 9}
                             print("end")
                           ?>
-                          <mass unit="kg">
-                            if showPlot: # just to show the plot when running with mbsimxml
-                              plot(None, None)
-
-                            ret=1
-                          </mass>
+                          <mass unit="kg">1</mass>
                           <inertiaTensor unit="kg*m^2">
                             <xmlMatrix xmlns="http://www.mbsim-env.de/MBXMLUtils">
                               <row>

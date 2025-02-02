@@ -206,7 +206,7 @@ namespace MBSimGUI {
       name = QString::fromStdString(E(element)->getAttribute("name"));
       if(name.contains('{')) {
         auto parameterLevels = mw->updateParameters(this,false);
-        auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, true).second;
+        auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
         // build the evaluated display name
         name.clear();
         set<string> uniqueNames;
