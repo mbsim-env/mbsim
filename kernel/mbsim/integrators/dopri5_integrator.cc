@@ -219,8 +219,8 @@ namespace MBSim {
     exception=nullptr;
     int *iPar = reinterpret_cast<int*>(this);
 
-    int lWork = 2*(8*zSize+5*zSize+21);
-    int liWork = 2*(zSize+21);
+    int lWork = 8*zSize+5*zSize+21;
+    int liWork = zSize+21;
     VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
