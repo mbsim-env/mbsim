@@ -17,9 +17,9 @@ int main(int argc, char* argv[]) {
 
   Integrator* integrator;
 
-  if (0) {
-    integrator = new TimeSteppingIntegrator;
-    static_cast<TimeSteppingIntegrator*>(integrator)->setStepSize(1e-6);
+  if (1) {
+    integrator = new RADAU5Integrator;
+    dynamic_cast<RADAU5Integrator*>(integrator)->setFormalism(RADAU5Integrator::DAE2);
   }
   else {
     integrator = new QuasiStaticIntegrator;

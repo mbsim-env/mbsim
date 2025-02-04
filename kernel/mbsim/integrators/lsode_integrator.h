@@ -23,7 +23,7 @@
 #ifndef _LSODE_INTEGRATOR_H_
 #define _LSODE_INTEGRATOR_H_
 
-#include "root_finding_integrator.h"
+#include "implicit_integrator.h"
 
 namespace MBSim {
 
@@ -36,19 +36,20 @@ namespace MBSim {
    * nonstiff systems of first-order ODE's.
    * This integrator uses ODEPACK (http://www.netlib.org/odepack).
    */
-  class LSODEIntegrator : public RootFindingIntegrator {
+  class LSODEIntegrator : public ImplicitIntegrator {
 
     public:
 
       enum Method {
-        nonstiff=10,
-        stiff=22,
+        nonstiff=0,
+        stiff,
         unknown
       };
 
     private:
 
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
+      static void jac(int *neq, double* t, double* z_, int* ml, int* mu, double* J_, int* nrowp);
 
       /** maximal step size */
       double dtMax{0};

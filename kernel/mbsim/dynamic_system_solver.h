@@ -640,6 +640,9 @@ namespace MBSim {
       void setChunkSize(int size) { chunkSize=size; }
       void setCacheSize(int size) { cacheSize=size; }
 
+      void setqdequ(bool qdequ_) { qdequ = qdequ_; }
+      bool getqdequ() { return qdequ; }
+
     protected:
       /**
        * \brief time
@@ -899,6 +902,8 @@ namespace MBSim {
       bool updT, updh[2], updr[2], updJrla[2], updrdt, updM, updLLM, updW[2], updV[2], updwb, updg, updgd, updG, updbc, updbi, updsv, updzd, updla, updLa, upddq, upddu, upddx;
 
       bool useSmoothSolver;
+
+      bool qdequ;
 
       std::vector<StateTable> tabz;
 

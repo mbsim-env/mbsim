@@ -20,6 +20,7 @@ MBSim
 MBSimControl
 ------------
 - A motion observer is now available in order to visualize a body that moves according to a given position and orientation signal.
+- A stop link is now available that stops the simulation when its input signal reaches a defined threshold.
 
 MBSimGUI
 --------

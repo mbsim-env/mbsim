@@ -255,6 +255,15 @@ namespace MBSim {
   }
 
   void RKSuiteIntegrator::postIntegrate() {
+    int totfcn, stpcst, stpsok;
+    double waste, hnext;
+    STAT(&totfcn,&stpcst,&waste,&stpsok,&hnext);
+    int stpsrej = stpsok*waste/(1-waste);
+    msg(Info)<<"nrRHS: "<<totfcn<<endl;
+    msg(Info)<<"nrSteps: "<<stpsok+stpsrej<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<stpsok<<endl;
+    msg(Info)<<"nrStepsRejected: "<<stpsrej<<endl;
+
     selfStatic = nullptr;
   }
 

@@ -219,8 +219,8 @@ namespace MBSim {
     exception=nullptr;
     int *iPar = reinterpret_cast<int*>(this);
 
-    int lWork = 2*(8*zSize+5*zSize+21);
-    int liWork = 2*(zSize+21);
+    int lWork = 8*zSize+5*zSize+21;
+    int liWork = zSize+21;
     VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
@@ -258,6 +258,11 @@ namespace MBSim {
       t = system->getTime();
       z = system->getState();
     }
+
+    msg(Info)<<"nrRHS: "<<iWork(16)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(17)<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<iWork(18)<<endl;
+    msg(Info)<<"nrStepsRejected: "<<iWork(19)<<endl;
   }
 
   void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {

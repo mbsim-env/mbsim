@@ -13,6 +13,7 @@ libmbsimControl_la_SOURCES = \
   contact_sensor.cc\
   tyre_contact_sensor.cc\
   constraint_sensors.cc\
+  signal_sensors.cc\
   signal_manipulation.cc\
   linear_transfer_system.cc\
   nonlinear_transfer_system.cc\
@@ -23,6 +24,7 @@ libmbsimControl_la_SOURCES = \
   signal_observer.cc \
   motion_observer.cc \
   switch.cc \
+  stop.cc \
   duration.cc \
   state_machine.cc \
   state_machine_sensor.cc \
@@ -47,6 +49,7 @@ mbsimControlinclude_HEADERS = \
   contact_sensor.h\
   tyre_contact_sensor.h\
   constraint_sensors.h\
+  signal_sensors.h\
   signal_manipulation.h\
   linear_transfer_system.h\
   nonlinear_transfer_system.h\
@@ -56,6 +59,7 @@ mbsimControlinclude_HEADERS = \
   signal_observer.h \
   motion_observer.h \
   switch.h \
+  stop.h \
   duration.h \
   state_machine.h \
   state_machine_sensor.h \

@@ -7237,6 +7237,12 @@
               [Default: 0.9]
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="numericalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix immer numerisch berechnet oder wenn möglich teil-analytisch berechnet soll. Beim ODE-Formalismus wird die Jakobi-Matrix immer numerisch berechnet. Bei den anderen Formalismen ist eine teil-analytische Lösung möglich.
+               [Default: false]
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -7344,6 +7350,12 @@
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Definiert den Sicherheitsfaktor für die Schrittweitensteuerung.
               [Default: 0.9]
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="numericalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix immer numerisch berechnet oder wenn möglich teil-analytisch berechnet soll. Beim ODE-Formalismus wird die Jakobi-Matrix immer numerisch berechnet. Bei den anderen Formalismen ist eine teil-analytische Lösung möglich.
+               [Default: false]
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -7645,6 +7657,12 @@
                 Maximale Anzahl von Integrationsschritten.
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="numericalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix immer numerisch berechnet oder wenn möglich teil-analytisch berechnet soll. Beim ODE-Formalismus wird die Jakobi-Matrix immer numerisch berechnet. Bei den anderen Formalismen ist eine teil-analytische Lösung möglich.
+               [Default: false]
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -7701,6 +7719,12 @@
           <xs:element name="stepLimit" type="pv:integerFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Maximale Anzahl von Integrationsschritten.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="numericalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix immer numerisch berechnet oder wenn möglich teil-analytisch berechnet soll. Beim ODE-Formalismus wird die Jakobi-Matrix immer numerisch berechnet. Bei den anderen Formalismen ist eine teil-analytische Lösung möglich.
+               [Default: false]
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -7774,6 +7798,12 @@
           <xs:element name="excludeAlgebraicVariablesFromErrorTest" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                Algebraische Variablen vom Fehlertest ausschließen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="numericalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix immer numerisch berechnet oder wenn möglich teil-analytisch berechnet soll. Beim ODE-Formalismus wird die Jakobi-Matrix immer numerisch berechnet. Bei den anderen Formalismen ist eine teil-analytische Lösung möglich.
+               [Default: false]
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -8207,6 +8237,12 @@
           <xs:element name="excludeAlgebraicVariablesFromErrorTest" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                Algebraische Variablen vom Fehlertest ausschließen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="numericalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix immer numerisch berechnet oder wenn möglich teil-analytisch berechnet soll. Beim ODE-Formalismus wird die Jakobi-Matrix immer numerisch berechnet. Bei den anderen Formalismen ist eine teil-analytische Lösung möglich.
+               [Default: false]
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>

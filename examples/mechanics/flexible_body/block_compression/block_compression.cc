@@ -36,6 +36,8 @@ class Rod : public FlexibleBody1s21RCM {
     virtual void updateLLM() {
       FlexibleBody1s21RCM::updateLLM();
     }
+
+    void updateGyroscopicAccelerations(Frame1s* frame) override { }
 };
 
 BlockCompression::BlockCompression(const string &projectName) :
@@ -200,7 +202,7 @@ void BlockCompression::defineEdges() {
   leftJointBody->setRotation(new RotationAboutZAxis<VecV>); //only rotation
   leftJointBody->setFrameOfReference(getFrameI());
   addObject(leftJointBody);
-  leftJointBody->getFrameC()->enableOpenMBV(0.01);
+  leftJointBody->getFrameC()->enableOpenMBV(0.001);
 
 // Add Frame for clamping the start of the ring
   Vec3 translationRingStartFrame;
@@ -224,7 +226,7 @@ void BlockCompression::defineEdges() {
   // create right hing point body with rotation
   rightJointBody->setFrameOfReference(endFrame);
   addObject(rightJointBody);
-  rightJointBody->getFrameC()->enableOpenMBV(0.01);
+  rightJointBody->getFrameC()->enableOpenMBV(0.001);
 
 // Add Frame for clamping the end of the ring
   FixedRelativeFrame * clampingRingEndFrame = new FixedRelativeFrame("clampingRingEndFrame");
@@ -238,7 +240,7 @@ void BlockCompression::defineEdges() {
   Vec translationlastElementFrame(3, INIT, 0.);
   translationlastElementFrame(0) = -hingePointDistance + hingeDistanceLeft + l0 - endShift;
   clampinglastElementFrame->setRelativePosition(translationlastElementFrame);
-  clampinglastElementFrame->enableOpenMBV(0.01);
+  clampinglastElementFrame->enableOpenMBV(0.001);
   rightJointBody->addFrame(clampinglastElementFrame);
 
 }
@@ -266,7 +268,7 @@ void BlockCompression::addBlocks() {
     addObject(blocks[i]);
   }
 
-  for (int i = 1; i < NoBlocks - 1; i++) { // do not let the blocks rotate at the start or the end (joints are used only to measre the force...)
+  for (int i = 1; i < NoBlocks; i++) { // do not let the blocks rotate at the start or the end (joints are used only to measre the force...)
     Vec trans(3, INIT, 0);
     string name = "Block" + toString(i);
     trans(0) = hingeDistanceLeft + l0 - endShift - i * dxElement;
@@ -295,6 +297,7 @@ void BlockCompression::addContacts() {
   addObserver(observer);
   observer->setContact(BlBlBottom);
   observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-3);
+  observer->enableOpenMBVContactPoints(1e-3);
 
   Contact * BlBlTop = new Contact("TopContacts_"+to_string(i));
   BlBlTop->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlBlTop, 0.)));
@@ -303,6 +306,7 @@ void BlockCompression::addContacts() {
   addObserver(observer);
   observer->setContact(BlBlTop);
   observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-3);
+  observer->enableOpenMBVContactPoints(1e-3);
 
     /*(Inter-)Contact between Blocks*/
     BlBlBottom->connect(blocks[i]->bottom, blocks[i - 1]->back);
@@ -316,6 +320,7 @@ void BlockCompression::addContacts() {
   addObserver(observer);
   observer->setContact(BlRodBottom);
   observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-3);
+  observer->enableOpenMBVContactPoints(1e-3);
 
   Contact * BlRodTop = new Contact("BlockRodContactsTop_"+to_string(i));
   BlRodTop->setNormalForceLaw(new RegularizedUnilateralConstraint(new LinearRegularizedUnilateralConstraint(cBlRod, 0.)));
@@ -324,6 +329,7 @@ void BlockCompression::addContacts() {
   addObserver(observer);
   observer->setContact(BlRodTop);
   observer->enableOpenMBVNormalForce(_colorRepresentation=OpenMBVArrow::absoluteValue,_scaleLength=1e-3);
+  observer->enableOpenMBVContactPoints(1e-3);
 
     /*Contact between block and rod*/
     BlRodBottom->connect(blocks[i]->saddle, rod->getContour("Bottom"));
@@ -340,7 +346,7 @@ void BlockCompression::clampRod() {
   clampingRingStart->setForceLaw(new BilateralConstraint());
 
   clampingRingStart->connect(leftJointBody->getFrame("clampingRingStartFrame"), ringStartFrame);
-  leftJointBody->getFrame("clampingRingStartFrame")->enableOpenMBV(0.01);
+  leftJointBody->getFrame("clampingRingStartFrame")->enableOpenMBV(0.001);
   addLink(clampingRingStart);
 
 //start point is fixed to first element
@@ -349,7 +355,7 @@ void BlockCompression::clampRod() {
   clampingRingEnd->setForceLaw(new BilateralConstraint());
 
   clampingRingEnd->connect(rightJointBody->getFrame("clampingRingEndFrame"), ringEndFrame);
-  rightJointBody->getFrame("clampingRingEndFrame")->enableOpenMBV(0.01);
+  rightJointBody->getFrame("clampingRingEndFrame")->enableOpenMBV(0.001);
   addLink(clampingRingEnd);
 
 //TODO: Maybe it is necessary to clamp the ring moment wise --> that would be bad for the QS!
@@ -384,6 +390,7 @@ void BlockCompression::addBoundaryConditions() {
   compressionBody->setInertiaTensor(1e-6 * SymMat(3, EYE));
 
   compressionBody->setFrameOfReference(leftJointBody->getFrameC());
+  compressionBody->getFrameC()->enableOpenMBV(0.001);
   addObject(compressionBody);
   blocks[blocks.size() - 1]->setFrameOfReference(compressionBody->getFrameC());
 
