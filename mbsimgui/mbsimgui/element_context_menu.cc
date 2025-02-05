@@ -142,10 +142,16 @@ namespace MBSimGUI {
       for(auto &ca : contextAction) {
         addAction(ca.first.c_str(), [ca, element](){
           // this code is run when the action is triggered
-          mw->clearEchoView(QString("Running context action '")+ca.first.c_str()+"':\n\n");
+          mw->clearEchoView(QString("Running context action '")+ca.first.c_str()+"':\n");
           try {
             auto parameterLevels = mw->updateParameters(element);
-            auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second, nullptr, true, true, false, true);
+            auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second,
+              nullptr, true, true, false, true, [element](){
+                fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<std::endl;
+                if(mw->eval->getName()=="python")
+                  mw->eval->addParam("mbsimgui_element",
+                    mw->eval->stringToValue("import mbsimgui; ret=mbsimgui.Element("+std::to_string(reinterpret_cast<size_t>(element))+")"));
+              });
             mw->updateEchoView();
           }
           catch(const std::exception &ex) {

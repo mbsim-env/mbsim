@@ -315,7 +315,7 @@ namespace MBSimGUI {
       // As second a map with all possible combinations of these counts and the corresponding evaluation is returned.
       static std::pair<std::vector<std::string>, std::map<std::vector<int>, MBXMLUtils::Eval::Value>> evaluateForAllArrayPattern(
         const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
-        bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall=false);
+        bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall=false, const std::function<void()> &preCodeFunc={});
 
       void rebuildTree();
       void exportParameters();

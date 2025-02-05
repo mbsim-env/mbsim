@@ -1156,7 +1156,7 @@ del _local
 
   pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>> MainWindow::evaluateForAllArrayPattern(
     const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
-    bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall) {
+    bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall, const std::function<void()> &preCodeFunc) {
     // helper to catch errors, print it to the statusBar and continue if catchErrors is true.
     // if catchErrors is false the exception is rethrown.
     #define CATCH(msg) \
@@ -1181,7 +1181,7 @@ del _local
 
     // this is a lambda for the real body of this function.
     // it is written since it may be called twice if trackFirstLastCall is true, see below
-    auto worker = [trackFirstLastCall, skipRet](const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+    auto worker = [trackFirstLastCall, skipRet, preCodeFunc](const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
                      bool fullEval, bool catchErrors, int *lastCall) {
       // if lastCall is not nullptr and is negative this is the first call to worker which
       // just track how many time code will be evaluated without evaluating it
@@ -1202,7 +1202,7 @@ del _local
                     int level, vector<int> levels)> walk;
       int callNumber = 0;
       walk=[&code, e, &walk, &values, fullEval, &callNumber, &lastCall, trackLastCall, catchErrors,
-            trackFirstLastCall, &counterNames, skipRet]
+            trackFirstLastCall, &counterNames, skipRet, preCodeFunc]
               (vector<MainWindow::ParameterLevel>::const_iterator start, vector<MainWindow::ParameterLevel>::const_iterator end,
                int level, vector<int> levels) {
         Eval::Value count = mw->eval->create(1.0);
@@ -1249,11 +1249,14 @@ del _local
               if(trackFirstLastCall) {
                 mw->eval->addParam("mbsimgui_firstCall", mw->eval->create(static_cast<double>(callNumber==1)));
                 mw->eval->addParam("mbsimgui_lastCall", mw->eval->create(static_cast<double>(lastCall && *lastCall==callNumber)));
-                mw->eval->addParam("mbsimgui_counterNames", mw->eval->create(boost::algorithm::join(counterNames, ",")));
-                vector<double> counts(levels.size());
-                for(size_t i=0; i<levels.size(); ++i) counts[i]=levels[i];
-                mw->eval->addParam("mbsimgui_counts", mw->eval->create(counts));
               }
+              mw->eval->addParam("mbsimgui_counterNames", mw->eval->create(boost::algorithm::join(counterNames, ",")));
+              vector<double> counts(levels.size());
+              for(size_t i=0; i<levels.size(); ++i) counts[i]=levels[i];
+              mw->eval->addParam("mbsimgui_counts", mw->eval->create(counts));
+
+              if(preCodeFunc)
+                preCodeFunc();
               // evaluate code
               bool ok=false;
               Eval::Value value;
@@ -3264,6 +3267,15 @@ extern "C" {
     }
     catch(...) {
       cerr<<"Internal error: this should never happen: prepareForPropertyDialogClosed failed!"<<endl;
+    }
+  }
+
+  void mbsimgui_Element_setParameterCode(MBSimGUI::Element *element, const char* parName, const char *code) noexcept {
+    try {
+      element->setParameterCode(parName, code);
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
     }
   }
 

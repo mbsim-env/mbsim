@@ -154,6 +154,8 @@
 
                             mbsimgui.waitForDialogs(w, d)
 
+                            mbsimgui_element.setParameterCode("y", "'mfmf'")
+
                             if mbsimgui_firstCall:
                               mbxmlutils.staticData["myplotdata"]=[]
                             mbxmlutils.staticData["myplotdata"].append(f"g={g} o={o} counterNames={mbsimgui_counterNames} counts={mbsimgui_counts}")
