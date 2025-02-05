@@ -565,3 +565,11 @@
    ...
    fun:_ZN4SoDB4readEP7SoInputRP6SoNode
 }
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
