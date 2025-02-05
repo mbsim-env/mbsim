@@ -40,33 +40,30 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DOPRI5Integrator)
 
-  struct Data {
-    DOPRI5Integrator *integrator;
-    exception_ptr exception;
-  };
-
   void DOPRI5Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
-    auto *data = reinterpret_cast<Data*>(ipar);
-    try {
-      auto *self=data->integrator;
-
+    auto *self = reinterpret_cast<DOPRI5Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
       Vec zd(*zSize, zd_);
       self->getSystem()->setTime(*t);
       self->getSystem()->setState(Vec(*zSize, z_));
       self->getSystem()->resetUpToDate();
       zd = self->getSystem()->evalzd();
     }
-    catch(...) {
-      data->exception = current_exception();
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
     }
   }
 
   void DOPRI5Integrator::plot(int* nr, double* told, double* t, double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
-    auto *data = reinterpret_cast<Data*>(ipar);
-    try {
-      auto *self=data->integrator;
-
-      double curTimeAndState = -1;
+    auto *self = reinterpret_cast<DOPRI5Integrator*>(ipar);
+    if(self->exception) { // if a exception was already thrown in a call before -> do nothing but set interrupt flag of DOPRI5 and return
+      *irtrn=-1;
+      return;
+    }
+    try { // catch exception -> C code must catch all exceptions
+      double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
       double tRoot = *t;
 
       // root-finding
@@ -173,8 +170,8 @@ namespace MBSim {
 
       self->getSystem()->updateInternalState();
     }
-    catch(...) {
-      data->exception = current_exception();
+    catch(...) { // if a exception is thrown catch and store it in self and set the interrupt flag of DOPRI5
+      self->exception = current_exception();
       *irtrn=-1;
     }
   }
@@ -219,13 +216,11 @@ namespace MBSim {
 
     double rPar[1]; // not used
 
-    Data data;
-    data.integrator=this;
-    data.exception=nullptr;
-    int *iPar = reinterpret_cast<int*>(&data);
+    exception=nullptr;
+    int *iPar = reinterpret_cast<int*>(this);
 
-    int lWork = 2*(8*zSize+5*zSize+21);
-    int liWork = 2*(zSize+21);
+    int lWork = 8*zSize+5*zSize+21;
+    int liWork = zSize+21;
     VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
@@ -252,8 +247,8 @@ namespace MBSim {
     while(t<tEnd-epsroot) {
       DOPRI5(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
           work(),&lWork,iWork(),&liWork,rPar,iPar,&idid);
-      if(data.exception)
-        rethrow_exception(data.exception);
+      if(exception)
+        rethrow_exception(exception);
 
       if(shift) {
         system->resetUpToDate();
@@ -263,6 +258,11 @@ namespace MBSim {
       t = system->getTime();
       z = system->getState();
     }
+
+    msg(Info)<<"nrRHS: "<<iWork(16)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(17)<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<iWork(18)<<endl;
+    msg(Info)<<"nrStepsRejected: "<<iWork(19)<<endl;
   }
 
   void DOPRI5Integrator::initializeUsingXML(DOMElement *element) {

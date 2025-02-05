@@ -174,14 +174,14 @@ namespace MBSimGUI {
       if(isActive()) {
 	DOMDocument *doc = parent->getOwnerDocument();
 	DOMElement *newele = D(doc)->createElement(xmlName);
-        ele = widget->writeXMLFile(newele);
         parent->insertBefore(newele,ref);
+        ele = widget->writeXMLFile(newele);
 	if(not comment.isEmpty()) {
-	  auto *cele = E(static_cast<DOMElement*>(newele))->getFirstCommentChild();
+	  auto *cele = E(static_cast<DOMElement*>(ele))->getFirstCommentChild();
 	  if(cele)
 	    cele->setData(X()%comment.toStdString());
 	  else
-	    newele->insertBefore(doc->createComment(X()%comment.toStdString()), newele->getFirstChild());
+	    ele->insertBefore(doc->createComment(X()%comment.toStdString()), ele->getFirstChild());
 	}
       }
     }

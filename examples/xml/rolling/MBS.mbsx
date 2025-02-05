@@ -613,6 +613,7 @@
     <endTime unit="s">1.5</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
     <initialStepSize unit="s">1e-8</initialStepSize>
+    <numericalJacobian>true</numericalJacobian>
   </LSODAIntegrator>
 
 </MBSimProject>

@@ -109,6 +109,8 @@ namespace MBSim {
 
   void RKSuiteIntegrator::subIntegrate(double tStop) {
 
+    exception=nullptr;
+
     int result=0, errass=0;
     char taskStr = 'C';
     char request = 'S';
@@ -123,11 +125,13 @@ namespace MBSim {
 
       double dtLast = 0;
       CT(fzdot, &t, z(), zd(), work, &result, &dtLast);
+      if(exception)
+        rethrow_exception(exception);
 
       int n = system->getzSize();
       bool restart = false;
       if(result==1 or result==2) {
-        double curTimeAndState = -1;
+        double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
         double tRoot = t;
 
         // root-finding
@@ -251,6 +255,15 @@ namespace MBSim {
   }
 
   void RKSuiteIntegrator::postIntegrate() {
+    int totfcn, stpcst, stpsok;
+    double waste, hnext;
+    STAT(&totfcn,&stpcst,&waste,&stpsok,&hnext);
+    int stpsrej = stpsok*waste/(1-waste);
+    msg(Info)<<"nrRHS: "<<totfcn<<endl;
+    msg(Info)<<"nrSteps: "<<stpsok+stpsrej<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<stpsok<<endl;
+    msg(Info)<<"nrStepsRejected: "<<stpsrej<<endl;
+
     selfStatic = nullptr;
   }
 
@@ -282,11 +295,18 @@ namespace MBSim {
   }
 
   void RKSuiteIntegrator::fzdot(double* t, double* z_, double* zd_) {
-    Vec zd(selfStatic->zSize, zd_);
-    selfStatic->getSystem()->setTime(*t);
-    selfStatic->getSystem()->setState(Vec(selfStatic->zSize, z_));
-    selfStatic->getSystem()->resetUpToDate();
-    zd = selfStatic->getSystem()->evalzd();
+    if(selfStatic->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec zd(selfStatic->zSize, zd_);
+      selfStatic->getSystem()->setTime(*t);
+      selfStatic->getSystem()->setState(Vec(selfStatic->zSize, z_));
+      selfStatic->getSystem()->resetUpToDate();
+      zd = selfStatic->getSystem()->evalzd();
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      selfStatic->exception = current_exception();
+    }
   }
 
   RKSuiteIntegrator *RKSuiteIntegrator::selfStatic = nullptr;

@@ -81,6 +81,8 @@ namespace MBSim {
       double *work{nullptr};
       double *workint{nullptr};
       fmatvec::Vec z, zd, zMax, zWant, zdWant;
+
+      std::exception_ptr exception;
   };
 
 }

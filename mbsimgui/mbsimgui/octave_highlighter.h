@@ -21,13 +21,16 @@
 #define _OCTAVE_HIGHLIGHTER_H_
 
 #include <QSyntaxHighlighter>
+#include <QTextEdit>
 
 namespace MBSimGUI {
 
   class OctaveHighlighter : public QSyntaxHighlighter {
 
     public:
+      OctaveHighlighter(QTextEdit *parent);
       OctaveHighlighter(QTextDocument *parent);
+      void initialize();
 
     protected:
       void highlightBlock(const QString &text) override;

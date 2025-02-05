@@ -131,9 +131,14 @@
       <unloadedLength>l012[1]</unloadedLength>
       <enableOpenMBV>
           <colorRepresentation>"absoluteForce"</colorRepresentation>
-          <numberOfCoils>5</numberOfCoils>
+          <numberOfCoils>
+            mbxmlutils.staticData["saveSomeData"]=0.01
+            ret=5
+          </numberOfCoils>
           <springRadius>0.1</springRadius>
-          <crossSectionRadius>0.01</crossSectionRadius>
+          <crossSectionRadius>
+            ret=mbxmlutils.staticData["saveSomeData"] # access the staticData from above
+          </crossSectionRadius>
       </enableOpenMBV>
     </SpringDamper>
   </links>

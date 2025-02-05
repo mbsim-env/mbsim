@@ -40,51 +40,76 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, LSODIIntegrator)
 
-  LSODIIntegrator::Res LSODIIntegrator::res[3];
+  LSODIIntegrator::Res LSODIIntegrator::res[5];
+  LSODIIntegrator::Jac LSODIIntegrator::jac[5];
 
   void LSODIIntegrator::resODE(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
-    Vec z(neq[0], z_);
-    Vec zd(neq[0], zd_);
-    Vec res(neq[0], res_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    res = self->system->evalzd() - zd;
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec z(neq[0], z_);
+      Vec zd(neq[0], zd_);
+      Vec res(neq[0], res_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      res = self->system->evalzd() - zd;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = 2;
+      self->exception = current_exception();
+    }
   }
 
   void LSODIIntegrator::resDAE2(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
-    Vec y(neq[0], y_);
-    Vec yd(neq[0], yd_);
-    Vec res(neq[0], res_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setUpdatela(false);
-    res.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-    res.set(RangeV(self->system->getzSize(),neq[0]-1), self->system->evalgd());
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(neq[0], y_);
+      Vec yd(neq[0], yd_);
+      Vec res(neq[0], res_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      res.set(self->Rz, self->system->evalzd() - yd(self->Rz));
+      res.set(self->Rla, self->system->evalgd());
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = 2;
+      self->exception = current_exception();
+    }
   }
 
   void LSODIIntegrator::resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires) {
     auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
-    Vec y(neq[0], y_);
-    Vec yd(neq[0], yd_);
-    Vec res(neq[0], res_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->resetUpToDate();
-    self->getSystem()->setUpdatela(false);
-    res.set(RangeV(0,self->system->getzSize()-1), self->system->evalzd() - yd(RangeV(0,self->system->getzSize()-1)));
-    res.set(RangeV(self->system->getzSize(),self->system->getzSize()+self->system->getgdSize()-1), self->system->evalgd());
-    res.set(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1), self->system->evalg());
-    if(self->system->getgSize() != self->system->getgdSize()) {
-      self->system->calclaSize(5);
-      self->system->updateWRef(self->system->getWParent(0));
-      self->system->setUpdateW(false);
-      res.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)));
-      self->system->calclaSize(3);
-      self->system->updateWRef(self->system->getWParent(0));
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(neq[0], y_);
+      Vec yd(neq[0], yd_);
+      Vec res(neq[0], res_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      res.set(self->Rz, self->system->evalzd() - yd(self->Rz));
+      res.set(self->Rla, self->system->evalgd());
+      res.set(self->Rl, self->system->evalg());
+      if(self->system->getgSize() != self->system->getgdSize()) {
+        self->system->calclaSize(5);
+        self->system->updateWRef(self->system->getWParent(0));
+        self->system->setUpdateW(false);
+        res.add(self->Rq, self->system->evalW()*y(self->Rl));
+        self->system->calclaSize(3);
+        self->system->updateWRef(self->system->getWParent(0));
+      }
+      else
+        res.add(self->Rq, self->system->evalW()*y(self->Rl));
     }
-    else
-      res.add(RangeV(0,self->system->getqSize()-1), self->system->evalW()*y(RangeV(self->system->getzSize()+self->system->getgdSize(),neq[0]-1)));
+    catch(...) { // if a exception is thrown catch and store it in self
+      *ires = 2;
+      self->exception = current_exception();
+    }
   }
 
   void LSODIIntegrator::adda(int *neq, double *t, double *y_, int *ml, int *mu, double *P_, int *nrowp) {
@@ -93,39 +118,182 @@ namespace MBSim {
     for(int i=0; i<self->system->getzSize(); i++) P(i,i) += 1;
   }
 
+  void LSODIIntegrator::jacODE(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp) {
+    auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Mat J(neq[0], neq[0], J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->res0 = self->system->evalzd();
+
+      if(self->system->getqdequ()) {
+        setZero(J,self->Rq,self->Rq); // par_qd_par_q
+        self->par_ud_xd_par_q(J);
+      }
+      else
+        self->par_zd_par_q(J);
+      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      setZero(J,self->Rq,self->Rx); // par_qd_par_x
+
+      self->par_ud_xd_par_u_x(J,true);
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= 1;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void LSODIIntegrator::jacDAE2(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp) {
+    auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec yd(neq[0], yd_); // fmatvec variant of yd_
+      Mat J(neq[0], neq[0], J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalgd());
+
+      if(self->system->getqdequ()) {
+        setZero(J,self->Rq,self->Rq); // par_qd_par_q
+        self->par_ud_xd_gd_par_q(J);
+      }
+      else
+        self->par_zd_gd_par_q(J);
+      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
+      self->par_ud_xd_par_u_x(J,false);
+      setZero(J,self->Rx,self->Rla); // par_xd_par_la
+      J.set(self->Rla, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      setZero(J,self->Rla,RangeV(self->Rx.start(),self->Rla.end())); // par_gd_par_x_la
+
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= 1;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void LSODIIntegrator::jacGGL(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp) {
+    auto self=*reinterpret_cast<LSODIIntegrator**>(&neq[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(neq[0], y_); // fmatvec variant of y_
+      Mat J(neq[0], neq[0], J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalgd());
+      self->res0.set(self->Rl, self->system->evalg());
+      if(self->system->getgSize() != self->system->getgdSize()) {
+        self->system->calclaSize(5);
+        self->system->updateWRef(self->system->getWParent(0));
+        self->system->setUpdateW(false);
+        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+        self->system->calclaSize(3);
+        self->system->updateWRef(self->system->getWParent(0));
+      }
+      else
+        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+
+      if(self->reduced)
+        self->par_ud_xd_gd_g_par_q(J);
+      else {
+        if(self->system->getqdequ()) {
+          setZero(J,self->Rq,self->Rq); // par_qd_par_q
+          self->par_ud_xd_gd_g_par_q(J);
+        }
+        else
+          self->par_zd_gd_g_par_q(J);
+        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
+        if(self->system->getgSize() != self->system->getgdSize()) {
+          self->system->calclaSize(5);
+          self->system->updateWRef(self->system->getWParent(0));
+          self->system->setUpdateW(false);
+          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
+          self->system->calclaSize(3);
+          self->system->updateWRef(self->system->getWParent(0));
+        }
+        else
+          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
+      }
+      self->par_ud_xd_par_u_x(J,false);
+      setZero(J,self->Ru,self->Rl); // par_ud_par_l
+      setZero(J,self->Rx,RangeV(self->Rla.start(),self->Rl.end())); // par_xd_par_la_l
+      J.set(self->Rla, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      setZero(J,self->Rla,RangeV(self->Rx.start(),self->Rl.end())); // par_gd_par_x_la_l
+      setZero(J,self->Rl,RangeV(self->Ru.start(),self->Rl.end())); // par_g_par_u_x_la_l
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= 1;
+
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
   void LSODIIntegrator::integrate() {
     if(formalism==unknown)
       throwError("(LSODIIntegrator::integrate): formalism unknown");
 
     res[0] = &LSODIIntegrator::resODE;
-    res[1] = &LSODIIntegrator::resDAE2;
-    res[2] = &LSODIIntegrator::resGGL;
+    res[1] = nullptr; // not available
+    res[2] = &LSODIIntegrator::resDAE2;
+    res[3] = nullptr; // not available
+    res[4] = &LSODIIntegrator::resGGL;
+    jac[0] = &LSODIIntegrator::jacODE;
+    jac[1] = nullptr; // not available
+    jac[2] = &LSODIIntegrator::jacDAE2;
+    jac[3] = nullptr; // not available
+    jac[4] = &LSODIIntegrator::jacGGL;
 
     debugInit();
 
     if(odePackInUse)
-      throwError("Only one integration with LSODARIntegrator, LSODKRIntegrator and LSODEIntegrator at a time is possible.");
+      throwError("(LSODIIntegrator::integrate): Only one integration with LSODEIntegrator, LSODAIntegrator and LSODIIntegrator at a time is possible.");
     odePackInUse = true;
 
-    calcSize();
+    init();
 
-    if(not N)
+    if(not neq)
       throwError("(LSODIIntegrator::integrate): dimension of the system must be at least 1");
 
-    int neq[1+sizeof(void*)/sizeof(int)+1];
-    neq[0] = N;
+    exception=nullptr;
+    int neq_[1+sizeof(void*)/sizeof(int)+1];
+    neq_[0] = neq;
     LSODIIntegrator *self=this;
-    memcpy(&neq[1], &self, sizeof(void*));
+    memcpy(&neq_[1], &self, sizeof(void*));
 
     // Enlarge workspace for state vector so that the integrator can use it (avoids copying of state vector)
-    system->resizezParent(N);
+    system->resizezParent(neq);
     system->updatezRef(system->getzParent());
     if(formalism) {
       system->getlaParent().ref(system->getzParent(), RangeV(system->getzSize(),system->getzSize()+system->getlaSize()-1));
       system->updatelaRef(system->getlaParent());
     }
     // Integrator uses its own workspace for the state derivative
-    Vec yd(N);
+    Vec yd(neq);
 
     if(z0.size()) {
       if(z0.size() != system->getzSize()+system->getisSize())
@@ -141,10 +309,10 @@ namespace MBSim {
 
     if(excludeAlgebraicVariables) {
       if(aTol.size() == 0)
-        aTol.resize(N,INIT,1e-6);
+        aTol.resize(neq,INIT,1e-6);
       else if(aTol.size() == 1) {
         double aTol_ = aTol(0);
-        aTol.resize(N,INIT,aTol_);
+        aTol.resize(neq,INIT,aTol_);
       }
     }
     if(aTol.size() == 0)
@@ -158,8 +326,8 @@ namespace MBSim {
         iTol = 1;
       else {
         iTol = 2;
-        if(aTol.size() != N)
-          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + to_string(N));
+        if(aTol.size() != neq)
+          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
       }
     }
     else {
@@ -167,29 +335,29 @@ namespace MBSim {
         iTol = 3;
       else {
         iTol = 4;
-        if(aTol.size() != N)
-          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + to_string(N));
+        if(aTol.size() != neq)
+          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
       }
-      if(rTol.size() != N)
-        throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + to_string(N));
+      if(rTol.size() != neq)
+        throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + to_string(neq));
     }
 
-    if(excludeAlgebraicVariables) for(int i=system->getzSize(); i<N; i++) aTol(i) = 1e15;
+    if(excludeAlgebraicVariables) for(int i=system->getzSize(); i<neq; i++) aTol(i) = 1e15;
 
-    int itask=2, iopt=1, istate=1;
-    int lrWork = 2*(22+9*N+N*N);
+    int itask=2, iopt=1, istate=1, MF=numericalJacobian?22:21;
+    int lrWork = 22+9*neq+neq*neq;
+    int liWork = 20+neq;
     Vec rWork(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork = 2*(20+N);
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
     system->setTime(t);
     system->resetUpToDate();
     system->computeInitialCondition();
-    if(formalism>0) { // DAE2 or GGL
+    if(formalism>1) { // DAE2 or GGL
       system->calcgdSize(3); // IH
       system->updategdRef(system->getgdParent());
       if(formalism==GGL) { // GGL
@@ -201,21 +369,22 @@ namespace MBSim {
     yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
     svLast <<= system->evalsv();
 
-    calcSize();
-    neq[0] = N;
+    reinit();
+
+    neq_[0] = neq;
 
     double s0 = clock();
     double time = 0;
-
-    int MF = 22;
 
     int zero = 0;
     int iflag;
 
     while(t<tEnd-epsroot) {
-      DLSODI(*res[formalism], adda, 0, neq, system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
+      DLSODI(*res[formalism], adda, *jac[formalism], neq_, system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
+      if(exception)
+        rethrow_exception(exception);
       if(istate==2 or istate==1) {
-        double curTimeAndState = -1;
+        double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
         double tRoot = t;
 
         // root-finding
@@ -232,7 +401,7 @@ namespace MBSim {
               dt/=2;
               double tCheck = tRoot-dt;
               curTimeAndState = tCheck;
-              DINTDY(&tCheck, &zero, &rWork(20), neq, system->getState()(), &iflag);
+              DINTDY(&tCheck, &zero, &rWork(20), neq_, system->getState()(), &iflag);
               getSystem()->setTime(tCheck);
               getSystem()->resetUpToDate();
               if(signChangedWRTsvLast(getSystem()->evalsv()))
@@ -240,7 +409,7 @@ namespace MBSim {
             }
             if(curTimeAndState != tRoot) {
               curTimeAndState = tRoot;
-              DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+              DINTDY(&tRoot, &zero, &rWork(20), neq_, system->getState()(), &iflag);
               getSystem()->setTime(tRoot);
             }
             getSystem()->resetUpToDate();
@@ -253,7 +422,7 @@ namespace MBSim {
         while(tRoot>=tPlot and tPlot<=tEnd+epsroot) {
           if(curTimeAndState != tPlot) {
             curTimeAndState = tPlot;
-            DINTDY(&tPlot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+            DINTDY(&tPlot, &zero, &rWork(20), neq_, system->getState()(), &iflag);
             getSystem()->setTime(tPlot);
           }
           getSystem()->resetUpToDate();
@@ -276,7 +445,7 @@ namespace MBSim {
         if(shift) {
           // shift the system
           if(curTimeAndState != tRoot) {
-            DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
+            DINTDY(&tRoot, &zero, &rWork(20), neq_, system->getState()(), &iflag);
             getSystem()->setTime(tRoot);
           }
           if(plotOnRoot) {
@@ -289,7 +458,7 @@ namespace MBSim {
           }
           getSystem()->resetUpToDate();
           getSystem()->shift();
-          if(formalism>0) { // DAE2 or GGL
+          if(formalism>1) { // DAE2 or GGL
             system->calcgdSize(3); // IH
             system->updategdRef(system->getgdParent());
             if(formalism==GGL) { // GGL
@@ -332,8 +501,8 @@ namespace MBSim {
           yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
           if(shift) {
             svLast = system->evalsv();
-            calcSize();
-            neq[0] = N;
+            reinit();
+            neq_[0] = neq;
             rWork(4) = dt0;
           }
         }
@@ -343,20 +512,15 @@ namespace MBSim {
       else if(istate<0) throwError("Integrator LSODI failed with istate = "+to_string(istate));
     }
 
+    msg(Info)<<string("nrRHS")+(numericalJacobian?" (including jac): ":" (excluding jac): ")<<iWork(11)<<endl;
+    msg(Info)<<"nrJac: "<<iWork(12)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
+
     odePackInUse = false;
   }
 
-  void LSODIIntegrator::calcSize() {
-    if(formalism==DAE2)
-      N = system->getzSize()+system->getlaSize();
-    else if(formalism==GGL)
-      N = system->getzSize()+system->getgdSize()+system->getgSize();
-    else
-      N = system->getzSize();
-  }
-
   void LSODIIntegrator::initializeUsingXML(DOMElement *element) {
-    RootFindingIntegrator::initializeUsingXML(element);
+    DAEIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
@@ -384,6 +548,8 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"excludeAlgebraicVariablesFromErrorTest");
     if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
+    if(e) setNumericalJacobian(E(e)->getText<bool>());
   }
 
 }

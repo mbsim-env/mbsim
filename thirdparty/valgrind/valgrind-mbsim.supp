@@ -1,435 +1,103 @@
 {
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:_Znwm
-   fun:_ZN8SoSFTime14createInstanceEv
-   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
-   fun:_ZN4SoDB4initEv
-   fun:_ZN4SoQt4initEP7QWidget
-   fun:_ZN10OpenMBVGUI10MainWindowC1ERSt4listISsSaISsEEb
+   DLOPEN
+   Memcheck:Addr8
+   fun:strncmp
+   fun:is_dst
+   fun:_dl_dst_count
+   fun:expand_dynamic_string_token
+   fun:fillin_rpath.isra.0
+   fun:decompose_rpath
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_exception
+   fun:_dl_map_object_deps
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen_implementation
+   fun:dlopen@@*
 }
 {
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   ...
-   fun:_ZNSt12__shared_ptrIN11xercesc_3_111DOMLSParserELN9__gnu_cxx12_Lock_policyE2EE5resetIS1_St5_BindIFMS1_FvvESt12_PlaceholderILi1EEEEEENSt9enable_ifIXsrSt21__sp_is_constructibleIS1_T_E5valueEvE4typeEPSF_T0_
+   DLOPEN
+   Memcheck:Addr8
+   fun:strncmp
+   fun:is_dst
+   fun:_dl_dst_substitute
+   fun:fillin_rpath.isra.0
+   fun:decompose_rpath
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_exception
+   fun:_dl_map_object_deps
+   fun:dl_open_worker_begin
+   fun:_dl_catch_exception
+   fun:dl_open_worker
+   fun:_dl_catch_exception
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_exception
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen_implementation
+   fun:dlopen@@*
 }
 {
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:*
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN9__gnu_cxx13new_allocatorISt13_Rb_tree_nodeISt4pairIKSsN5boost10filesystem4pathEEEE8allocateEmPKv
-   fun:_ZNSt16allocator_traitsISaISt13_Rb_tree_nodeISt4pairIKSsN5boost10filesystem4pathEEEEE8allocateERS8_m
-   fun:_ZNSt8_Rb_treeISsSt4pairIKSsN5boost10filesystem4pathEESt10_Select1stIS5_ESt4lessISsESaIS5_EE11_M_get_nodeEv
-   fun:_ZNSt8_Rb_treeISsSt4pairIKSsN5boost10filesystem4pathEESt10_Select1stIS5_ESt4lessISsESaIS5_EE14_M_create_nodeIJS0_ISsS4_EEEEPSt13_Rb_tree_nodeIS5_EDpOT_
-   fun:_ZNKSt8_Rb_treeISsSt4pairIKSsN5boost10filesystem4pathEESt10_Select1stIS5_ESt4lessISsESaIS5_EE11_Alloc_nodeclIS0_ISsS4_EEEPSt13_Rb_tree_nodeIS5_EOT_
-   fun:_ZNSt8_Rb_treeISsSt4pairIKSsN5boost10filesystem4pathEESt10_Select1stIS5_ESt4lessISsESaIS5_EE10_M_insert_IS0_ISsS4_ENSB_11_Alloc_nodeEEESt17_Rb_tree_iteratorIS5_EPSt18_Rb_tree_node_baseSI_OT_RT0_
-   fun:_ZNSt8_Rb_treeISsSt4pairIKSsN5boost10filesystem4pathEESt10_Select1stIS5_ESt4lessISsESaIS5_EE16_M_insert_uniqueIS0_ISsS4_EEES0_ISt17_Rb_tree_iteratorIS5_EbEOT_
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN9__gnu_cxx13new_allocatorIcE8allocateEmPKv
-   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
-   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
-   fun:_ZNSs16_S_construct_auxIPKcEEPcT_S3_RKSaIcESt12__false_type
-   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcE
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN10MBXMLUtils9DOMParser6createERKSt3setIN5boost10filesystem4pathESt4lessIS4_ESaIS4_EE
-   fun:_ZN10MBXMLUtils10Preprocess14preprocessFileERSt6vectorIN5boost10filesystem4pathESaIS4_EESt3setIS4_St4lessIS4_ES5_ERKS4_
-   fun:main
-}
-{
-   xxx
-   Memcheck:Cond
-   fun:_swrast_depth_test_span
-   fun:_swrast_write_rgba_span
-   fun:smooth_rgba_triangle
-   fun:quadfunc_rgba
-   fun:_tnl_render_quads_verts
-   fun:run_render
-   fun:_tnl_run_pipeline
-   fun:_tnl_draw_prims
-   fun:_tnl_draw
-   fun:vbo_draw_arrays
-   fun:vbo_exec_DrawArrays
-}
-{
-   xxx
-   Memcheck:Cond
-   fun:_swrast_depth_test_span
-   fun:_swrast_write_rgba_span
-   fun:smooth_rgba_triangle
-   fun:_tnl_render_quads_verts
-   fun:run_render
-   fun:_tnl_run_pipeline
-   fun:_tnl_draw_prims
-   fun:_tnl_draw
-   fun:vbo_draw_arrays
-   fun:vbo_exec_DrawArrays
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:_Znwm
-   fun:_ZN10SoGLImageP19createGLDisplayListEP7SoState
-   fun:_ZN9SoGLImage16getGLDisplayListEP7SoState
-   fun:_ZN28SoGLMultiTextureImageElement8updateGLEi
-   fun:_ZN28SoGLMultiTextureImageElement3setEP7SoStateP6SoNodeiP9SoGLImageN26SoMultiTextureImageElement5ModelERK7SbColor
-   fun:_ZN10SoTexture28GLRenderEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:_Znwm
-   fun:cc_dl_open
-   fun:cc_dl_handle_with_gl_symbols
-   fun:coin_glglue_dl_handle
-   fun:glxglue_getprocaddress
-   fun:cc_glglue_getprocaddress
-   fun:glxglue_init
-   fun:cc_glglue_instance
-}
-{
-   xxx
+   X
    Memcheck:Param
-   pwrite64(buf)
-   obj:/usr/lib64/libpthread-2.17.so
-   fun:H5FD__sec2_write
-   fun:H5FD_write
-   fun:H5F__accum_write
-   fun:H5PB_write
-   fun:H5F_block_write
-   fun:H5D__chunk_flush_entry
-   fun:H5D__chunk_flush
-   fun:H5D__flush_real
-   fun:H5D__flush_all_cb
-   fun:H5I__iterate_cb
-   fun:H5SL_iterate
-   fun:H5I_iterate
-   fun:H5D_flush_all
-   fun:H5F__flush_phase1
-   fun:H5F__flush
-   fun:H5F__start_swmr_write
-   fun:H5Fstart_swmr_write
+   writev(vector[...])
+   fun:__writev
+   fun:writev
+   obj:*/libxcb.so*
 }
 {
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
+   X
+   Memcheck:Param
+   waitid(infop)
+   fun:syscall
    ...
-   fun:_ZN9PythonCpp16initialize*
+   obj:*/libQt5Core.so*
+   fun:_ZN8QProcess7executeERK7QStringRK11QStringList
 }
 {
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN10MBXMLUtils9DOMParser5parseERKN5boost10filesystem4pathEPSt6vectorIS3_SaIS3_EEb
-   fun:_ZN10MBXMLUtils10Preprocess14preprocessFileERSt6vectorIN5boost10filesystem4pathESaIS4_EESt3setIS4_St4lessIS4_ES5_ERKS4_
-   fun:main
+   X
+   Memcheck:Param
+   writev(vector[...])
+   fun:__writev
+   fun:writev
+   obj:*/libxcb.so*
 }
 {
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE2EEC1IPN10MBXMLUtils9DOMParserEEET_
-   fun:_ZNSt14__shared_countILN9__gnu_cxx12_Lock_policyE2EEC1IPN10MBXMLUtils9DOMParserEEET_St17integral_constantIbLb0EE
-   fun:_ZNSt12__shared_ptrIN10MBXMLUtils9DOMParserELN9__gnu_cxx12_Lock_policyE2EEC1IS1_vEEPT_
-   fun:_ZNSt10shared_ptrIN10MBXMLUtils9DOMParserEEC1IS1_vEEPT_
-   fun:_ZN10MBXMLUtils9DOMParser6createERKSt3setIN5boost10filesystem4pathESt4lessIS4_ESaIS4_EE
-   fun:_ZN10MBXMLUtils10Preprocess14preprocessFileERSt6vectorIN5boost10filesystem4pathESaIS4_EESt3setIS4_St4lessIS4_ES5_ERKS4_
-   fun:main
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
+   X
+   Memcheck:Cond
    ...
-   fun:_Z*octave*
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
 }
-# BOOST
 {
-   boost chrono bug or valgrind bug?
-   Memcheck:Leak
-   ...
-   fun:_ZN5boost6chrono14duration_punctIcE6init_CEv
-}
-
-# OCTAVE
-{
-   xxx
+   X
    Memcheck:Leak
    match-leak-kinds: definite
+   fun:realloc
    ...
-   fun:_Z*octave*
+   obj:*/libdbus-1.so*
+   obj:*/libQt5DBus.so*
 }
 {
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:_PyEval_*
-}
-{
-   xxx
+   X
    Memcheck:Leak
    match-leak-kinds: possible
+   fun:realloc
    ...
-   fun:_ZN5boost12interprocess*
+   obj:*/libdbus-1.so*
+   obj:*/libQt5DBus.so*
 }
 {
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:malloc
-   fun:dl_open_worker
-   fun:_dl_catch_error
-   fun:_dl_open
-   fun:dlopen_doit
-   fun:_dl_catch_error
-   fun:_dlerror_run
-   fun:dlopen@@GLIBC_2.2.5
-   fun:_ZN6octave19octave_dlopen_shlibC1ERKSs
-   fun:_ZN6octave15dynamic_library10dynlib_rep12new_instanceERKSs
-   fun:dynamic_library
-   fun:open
-   fun:_ZN6octave14dynamic_loader8load_octERKSsS2_b
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:malloc
-   fun:_dl_close_worker
-   fun:_dl_close
-   fun:_dl_catch_error
-   fun:_dlerror_run
-   fun:dlclose
-   fun:_ZN6octave19octave_dlopen_shlibD1Ev
-   fun:_ZN6octave19octave_dlopen_shlibD0Ev
-   fun:operator=
-   fun:close
-   fun:_ZN6octave14dynamic_loader11shlibs_list6removeERNS_15dynamic_libraryE
-   fun:_ZN6octave14dynamic_loader10remove_octERKSsRNS_15dynamic_libraryE
-   fun:_ZN19octave_dld_functionD1Ev
-   fun:_ZN19octave_dld_functionD0Ev
-   fun:_ZN12octave_valueaSERKS_
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:malloc
-   fun:dl_open_worker
-   fun:_dl_catch_error
-   fun:_dl_open
-   fun:dlopen_doit
-   fun:_dl_catch_error
-   fun:_dlerror_run
-   fun:dlopen@@GLIBC_2.2.5
-   fun:_ZN6octave19octave_dlopen_shlibC1ERKSs
-   fun:_ZN6octave15dynamic_library10dynlib_rep12new_instanceERKSs
-   fun:dynamic_library
-   fun:open
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN11xercesc_3_117MemoryManagerImpl8allocateEm
-   fun:_ZN11xercesc_3_113XMLStringPool11addNewEntryEPKt
-   fun:_ZN11xercesc_3_110XMLScanner16setURIStringPoolEPNS_13XMLStringPoolE
-   fun:_ZN11xercesc_3_117AbstractDOMParser10initializeEv
-   fun:_ZN11xercesc_3_117AbstractDOMParserC1EPNS_12XMLValidatorEPNS_13MemoryManagerEPNS_14XMLGrammarPoolE
-   fun:_ZN11xercesc_3_115DOMLSParserImplC1EPNS_12XMLValidatorEPNS_13MemoryManagerEPNS_14XMLGrammarPoolE
-   fun:_ZN11xercesc_3_121DOMImplementationImpl14createLSParserENS_19DOMImplementationLS23DOMImplementationLSModeEPKtPNS_13MemoryManagerEPNS_14XMLGrammarPoolE
-   fun:_ZN10MBXMLUtils9DOMParserC1ERKSt3setIN5boost10filesystem4pathESt4lessIS4_ESaIS4_EE
-   fun:_ZN10MBXMLUtils9DOMParser6createERKSt3setIN5boost10filesystem4pathESt4lessIS4_ESaIS4_EE
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN11xercesc_3_117MemoryManagerImpl8allocateEm
-   fun:_ZN11xercesc_3_113XMLStringPool11addNewEntryEPKt
-   fun:_ZN11xercesc_3_19ElemStack5resetEjjjj
-   fun:_ZN11xercesc_3_112IGXMLScanner9scanResetERKNS_11InputSourceE
-   fun:_ZN11xercesc_3_112IGXMLScanner12scanDocumentERKNS_11InputSourceE
-   fun:_ZN11xercesc_3_110XMLScanner12scanDocumentEPKt
-   fun:_ZN11xercesc_3_117AbstractDOMParser5parseEPKt
-   fun:_ZN11xercesc_3_115DOMLSParserImpl8parseURIEPKt
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   ...
-   fun:_ZN11xercesc_3_117AbstractDOMParserC1EPNS_12XMLValidatorEPNS_13MemoryManagerEPNS_14XMLGrammarPoolE
-   fun:_ZN11xercesc_3_115DOMLSParserImplC1EPNS_12XMLValidatorEPNS_13MemoryManagerEPNS_14XMLGrammarPoolE
-   fun:_ZN11xercesc_3_121DOMImplementationImpl14createLSParserENS_19DOMImplementationLS23DOMImplementationLSModeEPKtPNS_13MemoryManagerEPNS_14XMLGrammarPoolE
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN9__gnu_cxx13new_allocatorIcE8allocateEmPKv
-   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
-   fun:_ZNSs9_M_mutateEmmm
-   fun:_ZNSs15_M_replace_safeEmmPKcm
-   fun:_ZNSs6assignEPKcm
-   fun:_ZNSs6assignEPKc
-   fun:_ZNSsaSEPKc
-   fun:_ZN5boost12interprocess19fill_system_messageEiRSs
-   fun:_ZN5boost12interprocess22interprocess_exceptionC1ERKNS0_10error_infoEPKc
-   fun:_ZN5boost12interprocess20shared_memory_object19priv_open_or_createENS0_9ipcdetail13create_enum_tEPKcNS0_6mode_tERKNS0_11permissionsE
-   fun:_ZN5boost12interprocess20shared_memory_objectC1ENS0_11open_only_tEPKcNS0_6mode_tE
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:_ZN6octave11eval_stringERKSsbRii
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:_ZN6octave11interpreterD1Ev
-}
-{
-   xxx
-   Memcheck:Leak
-   match-leak-kinds: possible
-   ...
-   fun:_ZN11xercesc_3_1*
-}
-{
-   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
-   Memcheck:Leak
-   ...
-   fun:octave_main
-}
-{
-   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
-   Memcheck:Leak
-   ...
-   obj:*/liboctinterp.so*
-   ...
-   fun:_dl_init
-}
-{
-   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
-   Memcheck:Leak
-   ...
-   obj:*/liboctave.so*
-   ...
-   fun:_dl_init
-}
-{
-   octave deinit bug?
-   Memcheck:Leak
-   ...
-   fun:_Z17clean_up_and_exiti
-}
-{
-   octave deinit bug?
-   Memcheck:Leak
-   ...
-   fun:_Z17clean_up_and_exitib
-}
-{
-   feval bug in octave?
-   Memcheck:Leak
-   ...
-   fun:_Z5fevalP15octave_functionRK17octave_value_listi
-}
-{
-   feval bug in octave?
-   Memcheck:Leak
-   ...
-   fun:_Z5fevalRKSsRK17octave_value_listi
-}
-{
-   eval_string bug in octave?
-   Memcheck:Leak
-   ...
-   fun:_Z11eval_stringRKSsbRii
-}
-{
-   octave does not free several memory allocated during the initial loading (not problematic since only called ones)
-   Memcheck:Leak
-   ...
-   obj:*/liboctave.so.1
-   ...
-   fun:dlopen@@GLIBC_2.1
-}
-{
-   do not report leaks on octave exit
-   Memcheck:Leak
-   match-leak-kinds: possible
-   ...
-   fun:_ZN6octave11interpreterD1Ev
-}
-{
-   do not report leaks from octave::feval
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:_ZN6octave5fevalEP15octave_functionRK17octave_value_listi
-}
-{
-   do not report leaks from octave::feval
-   Memcheck:Leak
-   match-leak-kinds: possible
-   ...
-   fun:_ZN6octave5fevalEP15octave_functionRK17octave_value_listi
-}
-
-# FMUCHECKER
-{
-   fmuchecker
-   Memcheck:Leak
-   fun:malloc
-   fun:jm_vector_alloc_jm_voidp
-   fun:fmi1_xml_handle_ModelVariables
-   fun:fmi1_parse_element_end
-   fun:doContent
-   fun:prologProcessor
-   fun:XML_ParseBuffer
-   fun:fmi1_xml_parse_model_description
-   fun:fmi1_import_parse_xml
-   fun:fmi1_check
-   fun:main
-}
-{
-   fmuchecker
+   X
    Memcheck:Leak
    match-leak-kinds: definite
    fun:malloc
@@ -445,1003 +113,463 @@
    fun:fmi1_check
    fun:main
 }
-
-# XERCES
 {
-   xerces initialization
-   Memcheck:Leak
-   ...
-   fun:_ZN10MBXMLUtils10InitXercesC1Ev
-}
-
-{
-   dummy
-   Memcheck:Leak
-   match-leak-kinds: possible
-   ...
-   fun:_ZN10MBXMLUtils1XrmEPKt
-   fun:_ZN10MBXMLUtils4Eval4evalEPKN11xercesc_3_110DOMElementE
-}
-
-# HDF5
-{
-   hdf5
-   Memcheck:Value8
-   fun:deflate_fast
-   fun:deflate
-   fun:compress2
-   fun:H5Z_filter_deflate
-   fun:H5Z_pipeline
-   fun:H5D__chunk_flush_entry
-   fun:H5D__chunk_flush
-   fun:H5D__flush_real
-}
-{
-   hdf5
-   Memcheck:Cond
-   fun:longest_match
-   fun:deflate_fast
-   fun:deflate
-   fun:compress2
-   fun:H5Z_filter_deflate
-   fun:H5Z_pipeline
-   fun:H5D__chunk_flush_entry
-   fun:H5D__chunk_flush
-   fun:H5D__flush_real
-}
-{
-   hdf5
-   Memcheck:Value8
-   fun:compress_block
-   fun:_tr_flush_block
-   fun:deflate_fast
-   fun:deflate
-   fun:compress2
-   fun:H5Z_filter_deflate
-   fun:H5Z_pipeline
-   fun:H5D__chunk_flush_entry
-   fun:H5D__chunk_flush
-   fun:H5D__flush_real
-}
-{
-   HDF5
-   Memcheck:Value8
-   ...
-   fun:deflate
-   fun:compress2
-   ...
-   fun:H5Z_pipeline
-}
-{
-   DEFLAT
-   Memcheck:Cond
-   ...
-   fun:deflate
-   fun:compress2
-   ...
-   fun:H5Z_pipeline
-}
-{
-   HDF5
-   Memcheck:Param
-   write(buf)
-   ...
-   fun:H5FD_write
-   fun:H5F_accum_write
-   fun:H5F_block_write
-}
-{
-   HDF5
-   Memcheck:Param
-   pwrite64(buf)
-   obj:/usr/lib64/libpthread-2.17.so
-   fun:H5FD__sec2_write
-   fun:H5FD_write
-   fun:H5F__accum_write
-   fun:H5PB_write
-   fun:H5F_block_write
-   fun:H5D__chunk_flush_entry
-   fun:H5D__chunk_flush
-   fun:H5D__flush_real
-   fun:H5D_close
-   fun:H5D__close_cb
-   fun:H5I_dec_ref
-   fun:H5I_dec_app_ref
-   fun:H5I_dec_app_ref_always_close
-   fun:H5Dclose
-}
-# memory leaks
-{
-   swig loading leak
+   X
    Memcheck:Leak
    match-leak-kinds: definite
-   ...
-   fun:SwigPyIterator_swigregister
-   ...
-   fun:builtin___import__
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
 }
 {
-   QTDBUS
+   X
    Memcheck:Leak
    match-leak-kinds: definite
-   ...
-   fun:_ZN22QDBusConnectionManager3runEv
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   obj:*/liboctinterp.so*
+   fun:_ZN6octave11environment14init_exec_pathB5cxx11Ev
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
 }
 {
-   QTXCB
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:_ZNK15QXcbIntegration20createPlatformWindowEP7QWindow
-}
-{
-   QT
-   Memcheck:Value8
-   ...
-   fun:_ZN16QCoreApplication4execEv
-}
-{
-   QT
-   Memcheck:Cond
-   ...
-   fun:_ZN16QCoreApplication4execEv
-}
-{
-   QTDBUS
-   Memcheck:Addr2
-   ...
-   fun:_ZN12_GLOBAL__N_131qdbus_unloadLibDBus_dtor_class_D1Ev
-   fun:__run_exit_handlers
-}
-{
-   GCOV
-   Memcheck:Addr2
-   ...
-   fun:gcov_exit
-   ...
-   fun:__run_exit_handlers
-}
-{
-   QT
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:_ZN16QCoreApplication4execEv
-}
-{
-   COIN
+   X
    Memcheck:Leak
    match-leak-kinds: definite
    fun:_Znwm
-   fun:_ZN10SoSFUInt3214createInstanceEv
-   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
-   fun:_ZN10OpenMBVGUI10MainWindowC1ERSt4listISsSaISsEEb
+   fun:_ZN6octave10base_lexer14finish_commentENS_11comment_elt12comment_typeE
+   fun:_Z10octave_lexP12OCTAVE_STYPEPv
+   fun:_Z17octave_pull_parseP13octave_pstateRN6octave11base_parserE
+   fun:_ZN6octave6parser3runEv
+   fun:_ZN6octave14parse_fcn_fileERNS_11interpreterERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES9_S9_S9_S9_bbbb
+   fun:_ZN6octave18load_fcn_from_fileERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES7_S7_S7_S7_b
+   fun:_ZN6octave8fcn_info12fcn_info_rep18find_user_functionEv
+   fun:_ZN6octave8fcn_info12fcn_info_rep22load_class_constructorEv
+   fun:_ZN6octave8fcn_info12fcn_info_rep5xfindERKNS_12symbol_scopeERK17octave_value_list
+   fun:_ZN6octave8fcn_info12fcn_info_rep4findERKNS_12symbol_scopeERK17octave_value_list
+   fun:_ZN6octave12symbol_table14fcn_table_findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERK17octave_value_listRKNS_12symbol_scopeE
+   fun:_ZN6octave14tree_evaluator4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave11interpreter4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave12cdef_package16cdef_package_rep4findERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE
+   fun:_ZN6octave12cdef_package16cdef_package_rep12meta_subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS2_4listI17octave_value_listSaISB_EEEi
+   fun:_ZN20octave_classdef_meta7subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS0_4listI17octave_value_listSaIS9_EEEi
+   fun:_ZN12octave_value7subsrefERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEERKNS0_4listI17octave_value_listSaIS9_EEEi
+   fun:_ZN6octave21tree_index_expression10evaluate_nERNS_14tree_evaluatorEi
+   fun:_ZN6octave21tree_index_expression8evaluateERNS_14tree_evaluatorEi
+   fun:_ZN6octave22tree_simple_assignment8evaluateERNS_14tree_evaluatorEi
+   fun:_ZN6octave14tree_evaluator15visit_statementERNS_14tree_statementE
+   fun:_ZN6octave14tree_evaluator20visit_statement_listERNS_19tree_statement_listE
+   fun:_ZN6octave14tree_evaluator15visit_statementERNS_14tree_statementE
+   fun:_ZN6octave14tree_evaluator20visit_statement_listERNS_19tree_statement_listE
+   fun:_ZN6octave14tree_evaluator21execute_user_functionER20octave_user_functioniRK17octave_value_list
+   fun:_ZN20octave_user_function4callERN6octave14tree_evaluatorEiRK17octave_value_list
+   fun:_ZN6octave21tree_index_expression10evaluate_nERNS_14tree_evaluatorEi
+   fun:_ZN6octave14tree_evaluator11eval_stringERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbRii
+   fun:_ZN6octave11interpreter11eval_stringERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEbRii
 }
 {
-   COIN
+   X
    Memcheck:Leak
    match-leak-kinds: definite
+   fun:_Znwm
    ...
-   fun:_ZN15SoRenderManager6renderEii
-   fun:_ZN10OpenMBVGUI10MainWindow11updateSceneEv
+   fun:_ZN10OpenMBVGUI5Utils11enableTouchEP7QWidget
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
 }
 {
-   GOBJECT
+   X
    Memcheck:Leak
-   match-leak-kinds: possible
+   match-leak-kinds: definite
+   fun:_Znwm
    ...
-   fun:gobject_init
-   fun:gobject_init_ctor
-   fun:call_init
-   fun:_dl_init
-   obj:/usr/lib64/ld-2.17.so
+   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
 }
 {
-   GOBJECT
+   X
    Memcheck:Leak
    match-leak-kinds: possible
+   fun:_Znwm
    ...
-   obj:/usr/lib64/libgobject-*
-   fun:_dl_init
-   obj:/usr/lib64/ld-2.17.so
+   fun:_ZN10OpenMBVGUI5Utils11enableTouchEP7QWidget
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
 }
 {
-   UNKNOWN
+   X
    Memcheck:Leak
    match-leak-kinds: possible
+   fun:_Znwm
    ...
-   fun:_GLOBAL__sub_I_builtin_types.cpp
-   fun:_dl_init
-   obj:/usr/lib64/ld-2.17.so
+   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
 }
 {
-   UNKNOWN
+   X
    Memcheck:Leak
-   match-leak-kinds: possible
+   match-leak-kinds: definite
+   fun:calloc
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
    fun:malloc
    ...
-   fun:_GLOBAL__sub_I_glsl_types.cpp
-   fun:_dl_init
-   obj:/usr/lib64/ld-2.17.so
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
 }
 {
-   QT BUG
-   Memcheck:Leak
-   match-leak-kinds: possible
-   ...
-   fun:_ZN16QWebFrameAdapter7setHtmlERK7QStringRK4QUrl
-}
-{
-   QTHREAD BUG
-   Memcheck:Leak
-   match-leak-kinds: possible
-   ...
-   fun:_ZN7QThread5startENS_8PriorityE
-}
-{
-   QTBUG
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:calloc
-   fun:allocate_dtv
-   fun:_dl_allocate_tls
-   fun:allocate_stack
-   fun:pthread_create@@GLIBC_2.2.5
-   fun:_ZN3WTF17TCMalloc_PageHeap19initializeScavengerEv
-   fun:_ZN3WTF20TCMalloc_ThreadCache10InitModuleEv
-   fun:GetCache
-   fun:do_malloc<true>
-   fun:fastMalloc<true>
-   fun:_ZN3WTF10fastMallocEm
-   fun:operator new
-   fun:_ZN3WTF10StringImpl5emptyEv
-   fun:_ZN3WTF19initializeThreadingEv
-   fun:initializeThreadingOnce
-   fun:_ZN3JSC19initializeThreadingEv
-   fun:_ZN7WebCore16ScriptController19initializeThreadingEv
-   fun:_ZN7WebCore19initializeWebCoreQtEv
-   fun:_ZN15QWebPagePrivateC1EP8QWebPage
-   fun:_ZN8QWebPageC1EP7QObject
-}
-{
-   UNKNOWN
+   X
    Memcheck:Leak
    match-leak-kinds: definite
-   fun:realloc
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   fun:_dbus_read
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libQt5DBus.so.5.9.2
-   fun:_ZN7QObject5eventEP6QEvent
-   obj:/usr/lib64/libQt5Core.so.5.9.2
-   fun:_ZN16QCoreApplication15notifyInternal2EP7QObjectP6QEvent
-   fun:_ZN23QCoreApplicationPrivate16sendPostedEventsEP7QObjectiP11QThreadData
-   obj:/usr/lib64/libQt5Core.so.5.9.2
-   fun:g_main_context_dispatch
-   obj:/usr/lib64/libglib-2.0.so.*
-   fun:g_main_context_iteration
-   fun:_ZN20QEventDispatcherGlib13processEventsE6QFlagsIN10QEventLoop17ProcessEventsFlagEE
-   fun:_ZN10QEventLoop4execE6QFlagsINS_17ProcessEventsFlagEE
-   fun:_ZN7QThread4execEv
-   obj:/usr/lib64/libQt5DBus.so.5.9.2
-   obj:/usr/lib64/libQt5Core.so.5.9.2
-   fun:start_thread
-   fun:clone
-}
-{
-   UNKNOWN
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:realloc
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   fun:_dbus_read
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libQt5DBus.so.5.9.2
-   fun:_ZN7QObject5eventEP6QEvent
-   obj:/usr/lib64/libQt5Core.so.5.9.2
-   fun:_ZN16QCoreApplication15notifyInternal2EP7QObjectP6QEvent
-   fun:_ZN23QCoreApplicationPrivate16sendPostedEventsEP7QObjectiP11QThreadData
-   obj:/usr/lib64/libQt5Core.so.5.9.2
-   fun:g_main_context_dispatch
-   obj:/usr/lib64/libglib-2.0.so.*
-   fun:g_main_context_iteration
-   fun:_ZN20QEventDispatcherGlib13processEventsE6QFlagsIN10QEventLoop17ProcessEventsFlagEE
-   fun:_ZN10QEventLoop4execE6QFlagsINS_17ProcessEventsFlagEE
-   fun:_ZN7QThread4execEv
-   obj:/usr/lib64/libQt5DBus.so.5.9.2
-   obj:/usr/lib64/libQt5Core.so.5.9.2
-   fun:start_thread
-   fun:clone
-}
-{
-   QT
-   Memcheck:Addr2
-   fun:getenv
-   fun:_Z25qEnvironmentVariableIsSetPKc
-   obj:/usr/lib64/libQt5DBus.so.5.9.2
-   fun:__run_exit_handlers
-   fun:exit
-   fun:(below main)
-}
-{
-   XERCES
-   Memcheck:Leak
-   match-leak-kinds: possible
    fun:_Znwm
-   fun:_ZN11xercesc_3_117MemoryManagerImpl8allocateEm
-   fun:_ZN11xercesc_3_119DOMLSSerializerImplC1EPNS_13MemoryManagerE
-   fun:_ZN11xercesc_3_121DOMImplementationImpl18createLSSerializerEPNS_13MemoryManagerE
-   fun:_ZN8MBSimGUI10MainWindowC1ER11QStringList
-   fun:main
-}
-{
-   UNKNOWN
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN11xercesc_3_117MemoryManagerImpl8allocateEm
-   fun:_ZN11xercesc_3_19XMLAttDefC1EPKtNS0_8AttTypesENS0_11DefAttTypesES2_PNS_13MemoryManagerE
-   fun:_ZN11xercesc_3_112SchemaAttDefC1EPKS0_
    ...
-   fun:_ZN11xercesc_3_115DOMLSParserImpl11loadGrammarEPKtNS_7Grammar11GrammarTypeEb
+   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
+   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
+   fun:_ZN8SoAction5applyEP6SoNode
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
 }
 {
-   Coin
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
+   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
+   fun:_ZN8SoAction5applyEP6SoNode
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:*/libGLU.so*
+   obj:*/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   x
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znam
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
+}
+{
+   X
    Memcheck:Leak
    match-leak-kinds: possible
    fun:_Znam
    ...
-   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
-   fun:_ZN13SoFieldSensor6attachEP7SoField
-}
-{
-   OpenGL/Inventor
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:cc_dl_open
-   fun:cc_dl_handle_with_gl_symbols
-   fun:coin_glglue_dl_handle
-   fun:glxglue_getprocaddress
-   fun:cc_glglue_getprocaddress
-   fun:glxglue_init
-   fun:cc_glglue_instance
-   fun:_ZN14SoGLVBOElement15shouldCreateVBOEP7SoStatei
-   fun:_ZN10SoMaterial8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
-   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN8SoAction5applyEP6SoNode
-   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
-}
-{
-   COIN
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:cc_dl_open
-   fun:cc_dl_handle_with_gl_symbols
-   fun:coin_glglue_dl_handle
-   fun:glxglue_getprocaddress
-   fun:cc_glglue_getprocaddress
-   fun:glxglue_init
-   fun:cc_glglue_instance
-   fun:_ZN18SoGLLightIdElement9incrementEP7SoStateP6SoNode
-   fun:_ZN18SoDirectionalLight8GLRenderEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN17SoGLRenderActionP12renderSingleEP6SoNode
-   fun:_ZN17SoGLRenderActionP6renderEP6SoNode
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN8SoAction5applyEP6SoNode
-   fun:_ZN15SoRenderManager11renderSceneEP16SoGLRenderActionP6SoNodej
-   fun:_ZN15SoRenderManager14actuallyRenderEP16SoGLRenderActioniii
    fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
    fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
-   fun:_ZN15SoRenderManager6renderEii
-   fun:_ZN10OpenMBVGUI10MainWindow11updateSceneEv
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   fun:seed<boost::uuids::detail::generator_iterator<boost::uuids::detail::seed_rng> >
-   fun:seed<boost::random::mersenne_twister_engine<unsigned int, 32ul, 624ul, 397ul, 31ul, 2567483615u, 11ul, 4294967295u, 7ul, 2636928640u, 15ul, 4022730752u, 18ul, 1812433253u> >
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   ...
-   fun:__lc<unsigned char, unsigned char>
-   fun:__lexicographical_compare_aux<unsigned char const*, unsigned char const*>
-   fun:lexicographical_compare<unsigned char const*, unsigned char const*>
-   fun:operator<
-   fun:operator()
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   fun:_M_get_insert_unique_pos
-   fun:_ZNSt8_Rb_treeIN5boost5uuids4uuidESt4pairIKS2_St8weak_ptrIKN7fmatvec3AST6SymbolEEESt10_Select1stISB_ESt4lessIS2_ESaISB_EE16_M_insert_uniqueIS3_IS2_SA_EEES3_ISt17_Rb_tree_iteratorISB_EbEOT_
-   fun:insert<std::pair<boost::uuids::uuid, std::weak_ptr<const fmatvec::AST::Symbol> >, void>
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   fun:_ZSt29_Rb_tree_insert_and_rebalancebPSt18_Rb_tree_node_baseS0_RS_
-   fun:_M_insert_<std::pair<boost::uuids::uuid, std::weak_ptr<const fmatvec::AST::Symbol> > >
-   fun:_ZNSt8_Rb_treeIN5boost5uuids4uuidESt4pairIKS2_St8weak_ptrIKN7fmatvec3AST6SymbolEEESt10_Select1stISB_ESt4lessIS2_ESaISB_EE16_M_insert_uniqueIS3_IS2_SA_EEES3_ISt17_Rb_tree_iteratorISB_EbEOT_
-   fun:insert<std::pair<boost::uuids::uuid, std::weak_ptr<const fmatvec::AST::Symbol> >, void>
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Value8
-   obj:/usr/lib64/libstdc++.so.6.0.19
-   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE13_M_insert_intImEES3_S3_RSt8ios_basecT_
-   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE6do_putES3_RSt8ios_basecm
-   fun:_ZNSo9_M_insertImEERSoT_
-   fun:operator<<
-   fun:_ZN5boost5uuidslsIcSt11char_traitsIcEEERSt13basic_ostreamIT_T0_ES8_RKNS0_4uuidE
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   obj:/usr/lib64/libstdc++.so.6.0.19
-   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE13_M_insert_intImEES3_S3_RSt8ios_basecT_
-   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE6do_putES3_RSt8ios_basecm
-   fun:_ZNSo9_M_insertImEERSoT_
-   fun:operator<<
-   fun:_ZN5boost5uuidslsIcSt11char_traitsIcEEERSt13basic_ostreamIT_T0_ES8_RKNS0_4uuidE
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   fun:_ZN5boost6random23mersenne_twister_engineIjLm32ELm624ELm397ELm31ELj2567483615ELm11ELj4294967295ELm7ELj2636928640ELm15ELj4022730752ELm18ELj1812433253EE4seedINS_5uuids6detail18generator_iteratorINS5_8seed_rngEEEEEvRT_S9_
-   fun:_ZN5boost5uuids6detail4seedINS_6random23mersenne_twister_engineIjLm32ELm624ELm397ELm31ELj2567483615ELm11ELj4294967295ELm7ELj2636928640ELm15ELj4022730752ELm18ELj1812433253EEEEEvRT_
-   fun:_ZN5boost5uuids22basic_random_generatorINS_6random23mersenne_twister_engineIjLm32ELm624ELm397ELm31ELj2567483615ELm11ELj4294967295ELm7ELj2636928640ELm15ELj4022730752ELm18ELj1812433253EEEEC1Ev
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   ...
-   fun:_ZNSt25__lexicographical_compareILb1EE4__lcIhhEEbPKT_S4_PKT0_S7_
-   fun:_ZSt29__lexicographical_compare_auxIPKhS1_EbT_S2_T0_S3_
-   fun:_ZSt23lexicographical_compareIPKhS1_EbT_S2_T0_S3_
-   fun:_ZN5boost5uuidsltERKNS0_4uuidES3_
-   fun:_ZNKSt4lessIN5boost5uuids4uuidEEclERKS2_S5_
-   fun:_ZNSt8_Rb_treeIN5boost5uuids4uuidESt4pairIKS2_St8weak_ptrIKN7fmatvec3AST6SymbolEEESt10_Select1stISB_ESt4lessIS2_ESaISB_EE24_M_get_insert_unique_posERS4_
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   fun:_ZNSt8_Rb_treeIN5boost5uuids4uuidESt4pairIKS2_St8weak_ptrIKN7fmatvec3AST6SymbolEEESt10_Select1stISB_ESt4lessIS2_ESaISB_EE10_M_insert_IS3_IS2_SA_EEESt17_Rb_tree_iteratorISB_EPSt18_Rb_tree_node_baseSN_OT_
-   fun:_ZNSt8_Rb_treeIN5boost5uuids4uuidESt4pairIKS2_St8weak_ptrIKN7fmatvec3AST6SymbolEEESt10_Select1stISB_ESt4lessIS2_ESaISB_EE16_M_insert_uniqueIS3_IS2_SA_EEES3_ISt17_Rb_tree_iteratorISB_EbEOT_
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   fun:_ZNSt8_Rb_treeIN5boost5uuids4uuidESt4pairIKS2_St8weak_ptrIKN7fmatvec3AST6SymbolEEESt10_Select1stISB_ESt4lessIS2_ESaISB_EE24_M_get_insert_unique_posERS4_
-   fun:_ZNSt8_Rb_treeIN5boost5uuids4uuidESt4pairIKS2_St8weak_ptrIKN7fmatvec3AST6SymbolEEESt10_Select1stISB_ESt4lessIS2_ESaISB_EE16_M_insert_uniqueIS3_IS2_SA_EEES3_ISt17_Rb_tree_iteratorISB_EbEOT_
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Value8
-   obj:/usr/lib64/libstdc++.so.6.0.19
-   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE13_M_insert_intImEES3_S3_RSt8ios_basecT_
-   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE6do_putES3_RSt8ios_basecm
-   fun:_ZNSo9_M_insertImEERSoT_
-   fun:_ZN5boost5uuidslsIcSt11char_traitsIcEEERSt13basic_ostreamIT_T0_ES8_RKNS0_4uuidE
-}
-{
-   needed for old boost/valgrind
-   Memcheck:Cond
-   obj:/usr/lib64/libstdc++.so.6.0.19
-   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE13_M_insert_intImEES3_S3_RSt8ios_basecT_
-   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE6do_putES3_RSt8ios_basecm
-   fun:_ZNSo9_M_insertImEERSoT_
-   fun:_ZN5boost5uuidslsIcSt11char_traitsIcEEERSt13basic_ostreamIT_T0_ES8_RKNS0_4uuidE
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
-   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
-   fun:_ZNSsC1EPKcRKSaIcE
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:realloc
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   fun:_dbus_read
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libQt5DBus.so.5.9.7
-   fun:_ZN7QObject5eventEP6QEvent
-   obj:/usr/lib64/libQt5Core.so.5.9.7
-   fun:_ZN16QCoreApplication15notifyInternal2EP7QObjectP6QEvent
-   fun:_ZN23QCoreApplicationPrivate16sendPostedEventsEP7QObjectiP11QThreadData
-   obj:/usr/lib64/libQt5Core.so.5.9.7
-   fun:g_main_context_dispatch
-   obj:/usr/lib64/libglib-2.0.so.0.5600.1
-   fun:g_main_context_iteration
-   fun:_ZN20QEventDispatcherGlib13processEventsE6QFlagsIN10QEventLoop17ProcessEventsFlagEE
-   fun:_ZN10QEventLoop4execE6QFlagsINS_17ProcessEventsFlagEE
-   fun:_ZN7QThread4execEv
-   obj:/usr/lib64/libQt5DBus.so.5.9.7
-   obj:/usr/lib64/libQt5Core.so.5.9.7
-   fun:start_thread
-   fun:clone
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Addr2
-   fun:getenv
-   fun:_Z25qEnvironmentVariableIsSetPKc
-   obj:/usr/lib64/libQt5DBus.so.5.9.7
-   fun:__run_exit_handlers
-   fun:exit
-   fun:(below main)
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN11SoFieldData4copyEPKS_
-   fun:_ZN13SoGlobalField7setNameERK6SbName
-   fun:_ZN13SoGlobalFieldC1ERK6SbNameP7SoField
-   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:malloc
-   fun:cc_memalloc_construct
-   fun:_ZN7SoField24extendStorageIfNecessaryEv
-   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
-   fun:_ZN13SoFieldSensor6attachEP7SoField
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN13SoGlobalFieldC1ERK6SbNameP7SoField
-   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:_Znwm
-   fun:_ZN7SoField24extendStorageIfNecessaryEv
-   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
-   fun:_ZN13SoFieldSensor6attachEP7SoField
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:realloc
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   fun:_dbus_read
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libQt5DBus.so.5.9.7
-   ...
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:realloc
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   fun:_dbus_read
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libdbus-1.so.3.14.14
-   obj:/usr/lib64/libQt5DBus.so.5.9.7
-   ...
-}
-# python initialization
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Addr4
-   ...
-   fun:_ZN9PythonCpp16initializePythonERKSs
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Addr8
-   ...
-   fun:_ZN9PythonCpp16initializePythonERKSs
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Value4
-   ...
-   fun:_ZN9PythonCpp16initializePythonERKSs
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Value8
-   ...
-   fun:_ZN9PythonCpp16initializePythonERKSs
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Cond
-   ...
-   fun:_ZN9PythonCpp16initializePythonERKSs
-}
-# more python
-{
-   ADDRESS_IN_RANGE/Invalid read of size 4
-   Memcheck:Addr4
-   fun:PyMem_Realloc
-}
-
-{
-   ADDRESS_IN_RANGE/Invalid read of size 4
-   Memcheck:Value4
-   fun:PyMem_Realloc
-}
-
-{
-   ADDRESS_IN_RANGE/Use of uninitialised value of size 8
-   Memcheck:Addr8
-   fun:PyMem_Realloc
-}
-
-{
-   ADDRESS_IN_RANGE/Use of uninitialised value of size 8
-   Memcheck:Value8
-   fun:PyMem_Realloc
-}
-
-{
-   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
-   Memcheck:Cond
-   fun:PyMem_Realloc
-}
-{
-   ADDRESS_IN_RANGE/Invalid read of size 4
-   Memcheck:Addr4
-   fun:PyMem_Free
-}
-
-{
-   ADDRESS_IN_RANGE/Invalid read of size 4
-   Memcheck:Value4
-   fun:PyMem_Free
-}
-
-{
-   ADDRESS_IN_RANGE/Use of uninitialised value of size 8
-   Memcheck:Addr8
-   fun:PyMem_Free
-}
-
-{
-   ADDRESS_IN_RANGE/Use of uninitialised value of size 8
-   Memcheck:Value8
-   fun:PyMem_Free
-}
-
-{
-   ADDRESS_IN_RANGE/Conditional jump or move depends on uninitialised value
-   Memcheck:Cond
-   fun:PyMem_Free
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:malloc
-   fun:PyObject_Malloc
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:malloc
-   obj:*/libpython3.6m.so.1.0
-   fun:PyObject_Realloc
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:realloc
-   fun:_PyObject_GC_Resize
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:_import_array
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Cond
-   fun:_ZN5boost10filesystem6detail28directory_iterator_incrementERNS0_18directory_iteratorEPNS_6system10error_codeE
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Cond
-   fun:_ZNK5boost10filesystem15directory_entry20m_get_symlink_statusEPNS_6system10error_codeE
-   fun:_ZNK5boost10filesystem15directory_entry14symlink_statusERNS_6system10error_codeE
-   fun:_ZN5boost10filesystem6detail17recur_dir_itr_imp14push_directoryERNS_6system10error_codeE
-   fun:_ZN5boost10filesystem6detail17recur_dir_itr_imp9incrementEPNS_6system10error_codeE
-   fun:_ZN5boost10filesystem28recursive_directory_iterator9incrementEv
-   fun:_ZN5boost9iterators20iterator_core_access9incrementINS_10filesystem28recursive_directory_iteratorEEEvRT_
-   fun:_ZN5boost9iterators6detail20iterator_facade_baseINS_10filesystem28recursive_directory_iteratorENS3_15directory_entryENS0_25single_pass_traversal_tagERS5_lLb0ELb0EEppEv
-}
-{
-   gcov exit handling
-   Memcheck:Addr2
-   fun:getenv
-   fun:gcov_do_dump
-   fun:__gcov_exit
-   ...
-   fun:_dl_fini
-   fun:__run_exit_handlers
-   fun:exit
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Value8
-   fun:_mesa_Color4ub
-   fun:_ZNK15SoGLLazyElement18sendDiffuseByIndexEi
-   fun:_ZN16SoMaterialBundle4sendEii
-   fun:_ZN12_GLOBAL__N_14SoGL7FaceSetL8GLRenderILi4ELi4ELi0EEEvPK21SoGLCoordinateElementPKiiPK7SbVec3fS7_P16SoMaterialBundleS7_PK25SoTextureCoordinateBundleS7_P23SoVertexAttributeBundleii
-   fun:_Z19sogl_render_facesetPK21SoGLCoordinateElementPKiiPK7SbVec3fS3_P16SoMaterialBundleS3_P25SoTextureCoordinateBundleS3_P23SoVertexAttributeBundleiiiii
-   fun:_ZN16SoIndexedFaceSet8GLRenderEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-}
-{
-   <insert_a_suppression_name_here>
-   Memcheck:Addr4
-   fun:_ZNK15SoGLLazyElement18sendDiffuseByIndexEi
-   fun:_ZN16SoMaterialBundle4sendEii
-   fun:_ZN12_GLOBAL__N_14SoGL7FaceSetL8GLRenderILi4ELi4ELi0EEEvPK21SoGLCoordinateElementPKiiPK7SbVec3fS7_P16SoMaterialBundleS7_PK25SoTextureCoordinateBundleS7_P23SoVertexAttributeBundleii
-   fun:_Z19sogl_render_facesetPK21SoGLCoordinateElementPKiiPK7SbVec3fS3_P16SoMaterialBundleS3_P25SoTextureCoordinateBundleS3_P23SoVertexAttributeBundleiiiii
-   fun:_ZN16SoIndexedFaceSet8GLRenderEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-}
-{
-   OpenGL
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:realloc
-   fun:XGetVisualInfo
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:glXChooseFBConfig
-}
-{
-   OpenGL
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:calloc
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZN9SoFaceSet8GLRenderEP16SoGLRenderAction
-}
-{
-   OpenGL
-   Memcheck:Cond
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZN9SoFaceSet8GLRenderEP16SoGLRenderAction
-}
-{
-   OpenGL
-   Memcheck:Cond
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZN14SoInt32Element3setEiP7SoStateP6SoNodei
-}
-{
-   OpenGL
-   Memcheck:Cond
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZN20SoVertexArrayIndexer6renderEPK9cc_glglueij
-}
-{
-   OpenGL
-   Memcheck:Cond
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZN7SoState3popEv
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-}
-{
-   OpenGL
-   Memcheck:Cond
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZN7SoState3popEv
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList8traverseEP8SoActionii
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-}
-{
-   OpenGL
-   Memcheck:Cond
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZN22SoGLModelMatrixElement3popEP7SoStatePK9SoElement
-   fun:_ZN7SoState3popEv
-   fun:_ZN11SoSeparator14GLRenderInPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator14GLRenderInPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList14traverseInPathEP8SoActioniPKi
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator14GLRenderInPathEP16SoGLRenderAction
-}
-{
-   OpenGL
-   Memcheck:Cond
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZN12_GLOBAL__N_14SoGL7FaceSetL8GLRenderILi4ELi0ELi0EEEvPK21SoGLCoordinateElementPKiiPK7SbVec3fS7_P16SoMaterialBundleS7_PK25SoTextureCoordinateBundleS7_P23SoVertexAttributeBundleii.isra.197
-   fun:_Z19sogl_render_facesetPK21SoGLCoordinateElementPKiiPK7SbVec3fS3_P16SoMaterialBundleS3_P25SoTextureCoordinateBundleS3_P23SoVertexAttributeBundleiiiii
-   fun:_ZN16SoIndexedFaceSet8GLRenderEP16SoGLRenderAction
-}
-{
-   OpenGL
-   Memcheck:Cond
-   ...
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   fun:_ZNK15SoGLLazyElement18sendDiffuseByIndexEi
-   fun:_ZNK15SoGLLazyElement4sendEPK7SoStatej
-   fun:_ZN16SoMaterialBundle13setupElementsEi
-   fun:_ZN25SoIndexedTriangleStripSet8GLRenderEP16SoGLRenderAction
-   fun:_ZN11SoSeparator14GLRenderInPathEP16SoGLRenderAction
-   fun:_ZN11SoSeparator14GLRenderInPathEP16SoGLRenderAction
-   fun:_ZN8SoAction8traverseEP6SoNode
-   fun:_ZN11SoChildList14traverseInPathEP8SoActioniPKi
-   fun:_ZN8SoSwitch8doActionEP8SoAction
-   fun:_ZN11SoSeparator14GLRenderInPathEP16SoGLRenderAction
-}
-{
-   qt svg
-   Memcheck:Cond
-   ...
-   fun:_ZN18QRasterPaintEngine4fillERK11QVectorPathRK6QBrush
-   fun:_ZN14QPaintEngineEx4drawERK11QVectorPath
-   fun:_ZN8QPainter8drawPathERK12QPainterPath
-   fun:_ZNK9QTextLine4drawEP8QPainterRK7QPointFPKN11QTextLayout11FormatRangeE
-   fun:_ZNK11QTextLayout4drawEP8QPainterRK7QPointFRK7QVectorINS_11FormatRangeEERK6QRectF
-   fun:_ZN8QSvgText4drawEP8QPainterR15QSvgExtraStates
-   fun:_ZN5QSvgG4drawEP8QPainterR15QSvgExtraStates
-   fun:_ZN16QSvgTinyDocument4drawEP8QPainterRK6QRectF
-   fun:_ZN16QSvgTinyDocument4drawEP8QPainter
-   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
-}
-{
-   qt svg
-   Memcheck:Value8
-   ...
-   fun:_ZN18QRasterPaintEngine4fillERK11QVectorPathRK6QBrush
-   fun:_ZN14QPaintEngineEx4drawERK11QVectorPath
-   fun:_ZN8QPainter8drawPathERK12QPainterPath
-   fun:_ZNK9QTextLine4drawEP8QPainterRK7QPointFPKN11QTextLayout11FormatRangeE
-   fun:_ZNK11QTextLayout4drawEP8QPainterRK7QPointFRK7QVectorINS_11FormatRangeEERK6QRectF
-   fun:_ZN8QSvgText4drawEP8QPainterR15QSvgExtraStates
-   fun:_ZN5QSvgG4drawEP8QPainterR15QSvgExtraStates
-   fun:_ZN16QSvgTinyDocument4drawEP8QPainterRK6QRectF
-   fun:_ZN16QSvgTinyDocument4drawEP8QPainter
-   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
-}
-{
-   Coin
-   Memcheck:Leak
-   match-leak-kinds: definite
-   ...
-   fun:_ZN10SoQtGLAreaC1EP9QGLFormatP7QWidgetPK9QGLWidgetPKc
-   fun:_ZN13SoQtGLWidgetP13buildGLWidgetEv
-   fun:_ZN10OpenMBVGUI12SoQtMyViewerC1EP7QWidget
-}
-{
-   Coin
-   Memcheck:Leak
-   match-leak-kinds: definite
-   fun:_Znwm
-   fun:_ZN15SoGLRenderCache4openEP7SoState
-   fun:_ZN13SoGLCacheList4openEP16SoGLRenderActioni
-   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
-}
-{
-   OpenGL/Inventor
-   Memcheck:Cond
-   obj:/osupdate/local/lib64/libGL.so.1.5.0
-   ...
-   fun:_ZN16SoGLRenderAction14beginTraversalEP6SoNode
-   fun:_ZN8SoAction5applyEP6SoNode
+   fun:_ZN10SoQtViewer12actualRedrawEv
    fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
 }
 {
-   boost filesystem
-   Memcheck:Cond
-   fun:_ZNK5boost10filesystem15directory_entry20m_get_symlink_statusEPNS_6system10error_codeE
-   fun:symlink_status
-   fun:push_directory
-   fun:increment
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN15SoRenderManager12renderSingleEP16SoGLRenderActioniii
+   fun:_ZN15SoRenderManager6renderEP16SoGLRenderActioniii
+   fun:_ZN10SoQtViewer12actualRedrawEv
+   fun:_ZN10OpenMBVGUI12SoQtMyViewer12actualRedrawEv
 }
 {
-   boost filesystem
-   Memcheck:Cond
-   fun:_ZNK5boost10filesystem15directory_entry20m_get_symlink_statusEPNS_6system10error_codeE
-   fun:symlink_status
-   fun:_ZN5boost10filesystem6detail17recur_dir_itr_imp14push_directoryERNS_6system10error_codeE
-   fun:increment
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:*/libpython*
+   fun:_PyObject_GC_NewVar
 }
 {
-   Coin
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:*/libpython*
+   fun:PyUnicode_New
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   obj:*/libpython*
+   fun:PyType_GenericAlloc
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:memalign
+   fun:posix_memalign
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   obj:*/libGLX.so*
+   obj:*/libqxcb-glx-integration.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   fun:_ZN13SoVertexShapeC1Ev
+   fun:_ZN17SoNonIndexedShapeC1Ev
+   fun:_ZN18SoTriangleStripSetC1Ev
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:*/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   fun:_ZN13SoCoordinate3C1Ev
+   fun:_ZN10OpenMBVGUI5Utils11tessBeginCBEjPv
+   obj:*/libGLU.so*
+   fun:gluTessEndPolygon
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   fun:_ZN8SoMField11allocValuesEi
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:malloc
+   fun:allocate_dtv_entry
+   fun:allocate_and_init
+   fun:tls_get_addr_tail
+   fun:__tls_get_addr
+   obj:*/_distance_pybind.cpython-*-x86_64-linux-gnu.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:malloc
+   fun:_dl_resize_dtv
+   fun:_dl_update_slotinfo
+   fun:update_get_addr
+   fun:__tls_get_addr
+   obj:*/_distance_pybind.cpython-*-x86_64-linux-gnu.so
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN12SoAnnotation17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:realloc
+   obj:*/libdbus-1.so*
+   fun:_dbus_read
+   obj:*/libdbus-1.so*
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   fun:_ZN6octave3sys14putenv_wrapperERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES8_
+   obj:*/liboctinterp.so*
+   fun:_ZN6octave11environment14init_exec_pathB5cxx11Ev
+   fun:_ZN6octave11interpreterC1EPNS_11applicationE
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   fun:_ZN7SbPList4growEi
+   fun:_ZN13SoAuditorList6appendEPvN8SoNotRec4TypeE
+   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
+   fun:_ZN13SoFieldSensor6attachEP7SoField
+}
+{
+   X
    Memcheck:Leak
    match-leak-kinds: definite
+   fun:_Znwm
    ...
-   fun:_ZN4SoDB14readAllWrapperEP7SoInputRK6SoType
    fun:_ZN4SoDB7readAllEP7SoInput
 }
 {
-   Coin
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:malloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:calloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:_ZN4SoDB7readAllEP7SoInput
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:malloc
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:calloc
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN11SoSeparator14getBoundingBoxEP22SoGetBoundingBoxAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN11SoSeparator14getBoundingBoxEP22SoGetBoundingBoxAction
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znam
+   ...
+   fun:_ZN4SoDB4readEP7SoInputRP6SoNode
+}
+{
+   X
    Memcheck:Leak
    match-leak-kinds: definite
    fun:_Znwm
-   fun:_ZN10OpenMBVGUI18IvScreenAnnotationC1ERKSt10shared_ptrIN7OpenMBV6ObjectEEP15QTreeWidgetItemP7SoGroupi
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
 }

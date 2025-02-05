@@ -28,6 +28,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsEdgeEdge::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     iedge0 = 0; iedge1 = 1;
     edge0 = static_cast<Edge*>(contour[0]);
     edge1 = static_cast<Edge*>(contour[1]);

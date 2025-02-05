@@ -109,6 +109,16 @@ namespace MBSimGUI {
       ExtWidget *diffuseColor, *transparency, *pointSize, *lineWidth;
   };
 
+  class MBSOMBVRigidBodyWidget : public MBSOMBVColoreBodyWidget {
+
+    public:
+      MBSOMBVRigidBodyWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *path;
+  };
+
   class MBSOMBVDynamicColoreBodyWidget : public MBSOMBVColoreBodyWidget {
 
     public:
@@ -198,7 +208,7 @@ namespace MBSimGUI {
       ExtWidget *colorRepresentation, *type, *numberOfCoils, *springRadius, *crossSectionRadius, *nominalLength;
   };
 
-  class FrameMBSOMBVWidget : public MBSOMBVColoreBodyWidget {
+  class FrameMBSOMBVWidget : public MBSOMBVRigidBodyWidget {
 
     public:
       FrameMBSOMBVWidget();

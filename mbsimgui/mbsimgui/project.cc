@@ -65,7 +65,7 @@ namespace MBSimGUI {
     name = "Project";
     parent->insertBefore(element, nullptr);
     QSettings settings;
-    if(settings.value("mainwindow/options/defaultevaluator", 1).toInt()==1) {
+    if(settings.value("mainwindow/options/defaultevaluator", 0).toInt()==1) {
       evaluator = "python";
       DOMElement *ele = D(doc)->createElement(PV%"evaluator");
       DOMText *text = doc->createTextNode(X()%"python");

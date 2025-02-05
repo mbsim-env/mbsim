@@ -1250,7 +1250,7 @@ namespace MBSimGUI {
 
   void PhysicalVariableWidget::openEvalDialog() {
     try {
-      EvalDialog evalDialog(widget->getEvalMat(),widget->getVarType(),this);
+      EvalDialog evalDialog(widget);
       evalDialog.exec();
     }
     catch(MBXMLUtils::DOMEvalException &e) {
@@ -1506,7 +1506,7 @@ namespace MBSimGUI {
 
   Widget* SqrMatSizeVarWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new PhysicalVariableWidget(new SqrMatSizeVarWidget(m,1,100), unit[0], defaultUnit[0]);
+      return new PhysicalVariableWidget(new SqrMatSizeVarWidget(m,0,100), unit[0], defaultUnit[0]);
     if(i==1)
       return new PhysicalVariableWidget(new FromFileWidget, unit[1], defaultUnit[1]);
     if(i==2)

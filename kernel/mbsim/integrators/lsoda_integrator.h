@@ -23,7 +23,7 @@
 #ifndef _LSODA_INTEGRATOR_H_
 #define _LSODA_INTEGRATOR_H_
 
-#include "root_finding_integrator.h"
+#include "implicit_integrator.h"
 
 namespace MBSim {
 
@@ -37,11 +37,12 @@ namespace MBSim {
    * nonstiff systems of first-order ODE's.
    * This integrator uses ODEPACK (http://www.netlib.org/odepack).
    */
-  class LSODAIntegrator : public RootFindingIntegrator {
+  class LSODAIntegrator : public ImplicitIntegrator {
 
     private:
 
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
+      static void jac(int *neq, double* t, double* z_, int* ml, int* mu, double* J_, int* nrowp);
 
       /** maximal step size */
       double dtMax{0};
@@ -53,8 +54,10 @@ namespace MBSim {
       fmatvec::Vec rTol;
       /** step size for the first step */
       double dt0{0};
-      /**  maximum number of steps allowed during one call to the solver. (default 10000) */
-      int maxSteps{10000};
+      /**  maximum number of steps allowed during one call to the solver. */
+      int maxSteps{std::numeric_limits<int>::max()};
+
+      std::exception_ptr exception;
 
     public:
 

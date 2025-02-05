@@ -102,7 +102,6 @@ namespace MBSimGUI {
       EchoView *echoView;
       FileView *fileView;
       QTabWidget *tabWidget;
-      PropertyDialog *editor{nullptr};
       std::shared_ptr<bool> debugStreamFlag;
       QString projectFile;
       QProcess process;
@@ -177,7 +176,6 @@ namespace MBSimGUI {
       void elementViewClicked(const QModelIndex &current);
       void parameterViewClicked(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
-      void updateEchoView();
       void updateStatus();
       void autoSaveProject();
       void updateNames(EmbedItemData *element);
@@ -186,6 +184,9 @@ namespace MBSimGUI {
       void updateParameterReferences(EmbedItemData *parent);
       void saveReferencedFile(int i);
       void convertDocument();
+      void createNewEvaluator();
+
+      int openedEditors { 0 };
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void abstractViewFilterOptionsChanged();
@@ -214,6 +215,8 @@ namespace MBSimGUI {
       void removeParameter(EmbedItemData *parent);
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
+      void updateEchoView();
+      void clearEchoView(const QString &initialText="");
 
       template<class Container>
       QModelIndex getContainerIndex(Element *parent);
@@ -246,7 +249,9 @@ namespace MBSimGUI {
       QDir getProjectDir() const { return QFileInfo(getProjectFilePath()).dir(); }
       bool getAutoRefresh() const { return autoRefresh; }
       bool getStatusUpdate() const { return statusUpdate; }
-      bool editorIsOpen() const { return editor; }
+
+      bool editorIsOpen() const { return openedEditors > 0; }
+
       void loadProject();
       bool saveProjectAs();
       void saveProjectAsTemplate();
@@ -288,9 +293,29 @@ namespace MBSimGUI {
         std::string countStr;
         std::string onlyIfStr;
       };
-      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, bool exceptLatestParameter=false);
+      // Updates/initialize the mbsimgui internal evaluator (member variable eval) with the parameters
+      // required for the element item.
+      // Returns a list of all possible parameter levels, even if no Embed is defined on a level.
+      // (note that only embeds on container elements are considered here)
+      // If exceptLatestParameter is true then the last parameter (if item is a parameter) is skipped (not added)
+      // count is used as the count for the embeds, if not given 0 (0-based count) is used.
+      // In rare cases it is possible that count changes the result of vector<ParameterLevel>. In this case
+      // you need to call updateParameter again to get the proper result.
+      std::vector<ParameterLevel> updateParameters(EmbedItemData *item, bool exceptLatestParameter=false,
+                                                   const std::vector<int>& count={});
+
+      // Evaluates the string code as full eval if set to true or as partial eval if it is false.
+      // The evaluation may be done multiple times, for each possible combination of Embed count ones.
+      // The possible Embed's are taken from parameterLevels which is the output of updateParameters(...).
+      // If catchErrors is true all errros are catched and it is tried to continue as good as possible.
+      // If trackFirstLastCall is true special boolean parameters are added before code is evaluated indicating if the
+      // current call is the first or last call. Doing so will be slightly slower.
+      // Returns, as first, a list of all counterNames which are relevant (none existing Embed elements or empty counterName
+      // (with count=1) are not returned.
+      // As second a map with all possible combinations of these counts and the corresponding evaluation is returned.
       static std::pair<std::vector<std::string>, std::map<std::vector<int>, MBXMLUtils::Eval::Value>> evaluateForAllArrayPattern(
-        const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e=nullptr);
+        const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+        bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall=false);
 
       void rebuildTree();
       void exportParameters();
@@ -305,6 +330,15 @@ namespace MBSimGUI {
       void flexibleBodyTool();
       FlexibleBodyTool *getFlexibleBodyTool() { return fbt; }
       void expandToDepth(int depth);
+
+      // Prepare the MainWindow for a "quasi" modal dialog open.
+      // The MainWindow will still be active (the dialog to open is none modal) but many features of the MainWindow
+      // are disabled, e.g. only the 3D view and other basic stuff is still active.
+      // prepareForPropertyDialogOpen/prepareForPropertyDialogClose must be called as a pair!
+      void prepareForPropertyDialogOpen();
+      // Prepare the MainWindow for a "quasi" modal dialog close.
+      // This just reverts the actions on the MainWindow taken by prepareForPropertyDialogOpen().
+      void prepareForPropertyDialogClose();
     public slots:
       void openElementEditor(bool config=true);
 

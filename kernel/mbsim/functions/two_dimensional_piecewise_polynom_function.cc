@@ -28,6 +28,5 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, TwoDimensionalPiecewisePolynomFunction<double(double,double)>)
   MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, TwoDimensionalPiecewisePolynomFunction<VecV(double,double)>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, TwoDimensionalPiecewisePolynomFunction<VecV(VecV,VecV)>)
 
 }

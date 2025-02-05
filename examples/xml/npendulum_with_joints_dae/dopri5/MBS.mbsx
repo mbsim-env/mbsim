@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<MBSimProject name="MBSPRJ" xmlns="http://www.mbsim-env.de/MBSimXML" xmlns:pv="http://www.mbsim-env.de/MBXMLUtils">
+  <pv:Embed href="sys.xml" parameterHref="sys.par.xml"/>
+  <pv:Embed href="int.xml"/>
+</MBSimProject>

@@ -56,6 +56,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsSpherePolynomialFrustum::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if (dynamic_cast<Sphere*>(contour[0])) {
       isphere = 0;
       ifrustum = 1;

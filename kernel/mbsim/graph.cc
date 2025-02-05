@@ -66,6 +66,15 @@ namespace MBSim {
     du = slvLLFac(evalLLM(), evalh()*getStepSize()+evalrdt());
   }
 
+  void Graph::updateqd() {
+    for (auto & i : object)
+      (*i).updateqd();
+  }
+
+  void Graph::updateud() {
+    ud = slvLLFac(evalLLM(), evalh()+evalr());
+  }
+
   void Graph::updatezd() {
     for(auto & i : object)
       (*i).updateqd();

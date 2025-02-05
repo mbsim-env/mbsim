@@ -156,7 +156,7 @@ namespace MBSim {
       double told = dowk[0];
       double t = told + dowk[1];
 
-      double curTimeAndState = -1;
+      double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
       double tRoot = t;
 
       // root-finding
@@ -350,7 +350,7 @@ namespace MBSim {
     int lrwk = 19+27*nq[0]+28*nv+27*nu+5*(nv+nl)+2*1000+8*nl*nv+4*(nl+nv)*(nl+nv);
     Vec rwk(lrwk);
 
-    rwk(4) = dtMax; // maximum step size
+    rwk(5) = dtMax; // maximum step size
     iwk(10) = maxSteps; // step limit
     iwk(11) = initialProjection; // initial projection
     iwk(12) = numberOfStepsBetweenProjections; // number of steps between projection

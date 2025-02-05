@@ -77,6 +77,12 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new SwitchPropertyDialog(this); }
   };
 
+  class Stop : public Signal {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Stop, Signal, MBSIMCONTROL%"Stop", "Stop");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new StopPropertyDialog(this); }
+  };
+
   class Duration : public Signal {
     MBSIMGUI_OBJECTFACTORY_CLASS(Duration, Signal, MBSIMCONTROL%"Duration", "Duration");
     public:

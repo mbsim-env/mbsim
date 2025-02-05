@@ -95,7 +95,7 @@ AC_SUBST([QWT_LIBS])
 LDFLAGS="$LDFLAGS $LDFLAGS_LIBTOOL -no-undefined -Wl,--no-undefined"
 test "_$host_os" != "_mingw32" && LDFLAGS="$LDFLAGS -Wl,--disable-new-dtags,-rpath,\\\$\$ORIGIN/../lib"
 
-AC_CONFIG_FILES([Makefile mbsimgui/Makefile])
+AC_CONFIG_FILES([Makefile mbsimgui/Makefile mbsimgui/evaluator/python/Makefile])
 AC_CONFIG_FILES([run_error_checks.sh], [chmod +x run_error_checks.sh])
 
 AC_CONFIG_FILES([mbsimgui.pc])

@@ -75,6 +75,9 @@ namespace MBSim {
       virtual void updatedq();
       virtual void updatedu();
       virtual void updatedx();
+      virtual void updateqd();
+      virtual void updateud();
+      virtual void updatexd();
       virtual void updatezd();
       virtual void updatewb();
       virtual void updateW(int j=0);
@@ -229,6 +232,9 @@ namespace MBSim {
       const fmatvec::Vec& getdq(bool check=true) const;
       const fmatvec::Vec& getdu(bool check=true) const;
       const fmatvec::Vec& getdx(bool check=true) const;
+      const fmatvec::Vec& getqd(bool check=true) const;
+      const fmatvec::Vec& getud(bool check=true) const;
+      const fmatvec::Vec& getxd(bool check=true) const;
       const fmatvec::Mat& getW(int i=0, bool check=true) const;
       const fmatvec::Mat& getV(int i=0, bool check=true) const;
       const fmatvec::Vec& getla(bool check=true) const;

@@ -34,6 +34,7 @@ namespace MBSim {
   }
 
   void ContactKinematicsCirclePlanarContour::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if(dynamic_cast<Circle*>(contour[0])) {
       icircle = 0;
       iplanarcontour = 1;

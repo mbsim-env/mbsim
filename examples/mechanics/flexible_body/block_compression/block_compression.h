@@ -27,7 +27,7 @@ class Block : public MBSim::RigidBody {
       addContour(bottom);
     }
 
-    virtual void init(InitStage stage, const MBSim::InitConfigSet &config) {
+    virtual void init(InitStage stage, const MBSim::InitConfigSet &config=InitConfigSet()) {
       if (stage == preInit) {
         /*Back Plane*/
         fmatvec::Vec3 backRefTrans;
@@ -69,11 +69,11 @@ class Block : public MBSim::RigidBody {
         lengths(0) = height;
         lengths(1) = width;
         back->enableOpenMBV(lengths);
-        saddle->enableOpenMBV();
-        ear->enableOpenMBV();
-        top->enableOpenMBV();
-        bottom->enableOpenMBV();
-        C->enableOpenMBV(0.01);
+        saddle->enableOpenMBV(MBSim::_pointSize=10);
+        ear->enableOpenMBV(MBSim::_pointSize=10);
+        top->enableOpenMBV(MBSim::_pointSize=10);
+        bottom->enableOpenMBV(MBSim::_pointSize=10);
+        C->enableOpenMBV(0.001);
       }
       RigidBody::init(stage, config);
     }

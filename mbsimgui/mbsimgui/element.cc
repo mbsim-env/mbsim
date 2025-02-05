@@ -34,6 +34,7 @@
 #include <xercesc/dom/DOMImplementation.hpp>
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <QDir>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -150,6 +151,11 @@ namespace MBSimGUI {
       str = "/" + str;
       return str;
     }
+  }
+
+  DOMElement* Element::processIDAndHref(DOMElement* element) {
+    element = EmbedItemData::processIDAndHref(element);
+    return element;
   }
 
   void Element::updateStatus() {

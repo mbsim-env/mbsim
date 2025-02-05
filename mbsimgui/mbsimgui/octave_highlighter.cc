@@ -22,7 +22,15 @@
 
 namespace MBSimGUI {
 
+  OctaveHighlighter::OctaveHighlighter(QTextEdit *parent) : QSyntaxHighlighter(parent) {
+    initialize();
+  }
+
   OctaveHighlighter::OctaveHighlighter(QTextDocument *parent) : QSyntaxHighlighter(parent) {
+    initialize();
+  }
+
+  void OctaveHighlighter::initialize() {
     //  QPlainTextEdit dummy;
     bool dark=false;
     //  if(dummy.palette().brush(dummy.backgroundRole()).color().value()<128)

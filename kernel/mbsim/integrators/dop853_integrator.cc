@@ -41,122 +41,138 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DOP853Integrator)
 
   void DOP853Integrator::fzdot(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
-    auto self=*reinterpret_cast<DOP853Integrator**>(&ipar[0]);
-    Vec zd(*zSize, zd_);
-    self->getSystem()->setTime(*t);
-    self->getSystem()->setState(Vec(*zSize, z_));
-    self->getSystem()->resetUpToDate();
-    zd = self->getSystem()->evalzd();
+    auto *self = reinterpret_cast<DOP853Integrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec zd(*zSize, zd_);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(Vec(*zSize, z_));
+      self->getSystem()->resetUpToDate();
+      zd = self->getSystem()->evalzd();
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
   }
 
   void DOP853Integrator::plot(int* nr, double* told, double* t, double* z, int* n, double* con, int* icomp, int* nd, double* rpar, int* ipar, int* irtrn) {
-    auto self=*reinterpret_cast<DOP853Integrator**>(&ipar[0]);
+    auto *self = reinterpret_cast<DOP853Integrator*>(ipar);
+    if(self->exception) { // if a exception was already thrown in a call before -> do nothing but set interrupt flag and return
+      *irtrn=-1;
+      return;
+    }
+    try {
+      double curTimeAndState = numeric_limits<double>::min(); // just a value which will never be reached
+      double tRoot = *t;
 
-    double curTimeAndState = -1;
-    double tRoot = *t;
-
-    // root-finding
-    if(self->getSystem()->getsvSize()) {
-      self->getSystem()->setTime(*t);
-      curTimeAndState = *t;
-      self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-      self->getSystem()->resetUpToDate();
-      self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
-      // if a root exists in the current step ...
-      if(self->shift) {
-        // ... search the first root and set step.second to this time
-        double dt = *t-*told;
-        while(dt>self->dtRoot) {
-          dt/=2;
-          double tCheck = tRoot-dt;
-          self->getSystem()->setTime(tCheck);
-          curTimeAndState = tCheck;
-          for(int i=1; i<=*n; i++)
-            self->getSystem()->getState()(i-1) = CONTD8(&i,&tCheck,con,icomp,nd);
+      // root-finding
+      if(self->getSystem()->getsvSize()) {
+        self->getSystem()->setTime(*t);
+        curTimeAndState = *t;
+        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+        self->getSystem()->resetUpToDate();
+        self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
+        // if a root exists in the current step ...
+        if(self->shift) {
+          // ... search the first root and set step.second to this time
+          double dt = *t-*told;
+          while(dt>self->dtRoot) {
+            dt/=2;
+            double tCheck = tRoot-dt;
+            self->getSystem()->setTime(tCheck);
+            curTimeAndState = tCheck;
+            for(int i=1; i<=*n; i++)
+              self->getSystem()->getState()(i-1) = CONTD8(&i,&tCheck,con,icomp,nd);
+            self->getSystem()->resetUpToDate();
+            if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
+              tRoot = tCheck;
+          }
+          if(curTimeAndState != tRoot) {
+            curTimeAndState = tRoot;
+            self->getSystem()->setTime(tRoot);
+            for(int i=1; i<=*n; i++)
+              self->getSystem()->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
+          }
           self->getSystem()->resetUpToDate();
-          if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
-            tRoot = tCheck;
+          auto &sv = self->getSystem()->evalsv();
+          auto &jsv = self->getSystem()->getjsv();
+          for(int i=0; i<sv.size(); ++i)
+            jsv(i)=self->svLast(i)*sv(i)<0;
         }
+      }
+
+      while(tRoot >= self->tPlot) {
+        if(curTimeAndState != self->tPlot) {
+          curTimeAndState = self->tPlot;
+          self->getSystem()->setTime(self->tPlot);
+          for(int i=1; i<=*n; i++)
+            self->getSystem()->getState()(i-1) = CONTD8(&i,&self->tPlot,con,icomp,nd);
+        }
+        self->getSystem()->resetUpToDate();
+        self->getSystem()->plot();
+        if(self->msgAct(Status))
+          self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
+
+        self->getSystem()->updateInternalState();
+
+        double s1 = clock();
+        self->time += (s1-self->s0)/CLOCKS_PER_SEC;
+        self->s0 = s1;
+
+        self->tPlot += self->dtOut;
+      }
+
+      if(self->shift) {
+        // shift the system
         if(curTimeAndState != tRoot) {
-          curTimeAndState = tRoot;
           self->getSystem()->setTime(tRoot);
           for(int i=1; i<=*n; i++)
             self->getSystem()->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
         }
+        if(self->plotOnRoot) {
+          self->getSystem()->resetUpToDate();
+          self->getSystem()->plot();
+        }
         self->getSystem()->resetUpToDate();
-        auto &sv = self->getSystem()->evalsv();
-        auto &jsv = self->getSystem()->getjsv();
-        for(int i=0; i<sv.size(); ++i)
-          jsv(i)=self->svLast(i)*sv(i)<0;
+        self->getSystem()->shift();
+        if(self->plotOnRoot) {
+          self->getSystem()->resetUpToDate();
+          self->getSystem()->plot();
+        }
+        *irtrn = -1;
       }
-    }
-
-    while(tRoot >= self->tPlot) {
-      if(curTimeAndState != self->tPlot) {
-        curTimeAndState = self->tPlot;
-        self->getSystem()->setTime(self->tPlot);
-        for(int i=1; i<=*n; i++)
-          self->getSystem()->getState()(i-1) = CONTD8(&i,&self->tPlot,con,icomp,nd);
+      else {
+        // check drift
+        bool projVel = true;
+        if(self->getToleranceForPositionConstraints()>=0) {
+          self->getSystem()->setTime(*t);
+          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+          self->getSystem()->resetUpToDate();
+          if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+            self->getSystem()->projectGeneralizedPositions(3);
+            self->getSystem()->projectGeneralizedVelocities(3);
+            projVel = false;
+            *irtrn=-1;
+          }
+        }
+        if(self->getToleranceForVelocityConstraints()>=0 and projVel) {
+          self->getSystem()->setTime(*t);
+          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
+          self->getSystem()->resetUpToDate();
+          if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+            self->getSystem()->projectGeneralizedVelocities(3);
+            *irtrn=-1;
+          }
+        }
+        self->getSystem()->updateStopVectorParameters();
       }
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->plot();
-      if(self->msgAct(Status))
-        self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
-
       self->getSystem()->updateInternalState();
-
-      double s1 = clock();
-      self->time += (s1-self->s0)/CLOCKS_PER_SEC;
-      self->s0 = s1;
-
-      self->tPlot += self->dtOut;
     }
-
-    if(self->shift) {
-      // shift the system
-      if(curTimeAndState != tRoot) {
-        self->getSystem()->setTime(tRoot);
-        for(int i=1; i<=*n; i++)
-          self->getSystem()->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
-      }
-      if(self->plotOnRoot) {
-        self->getSystem()->resetUpToDate();
-        self->getSystem()->plot();
-      }
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->shift();
-      if(self->plotOnRoot) {
-        self->getSystem()->resetUpToDate();
-        self->getSystem()->plot();
-      }
-      *irtrn = -1;
+    catch(...) { // if a exception is thrown catch and store it in self and set the interrupt flag
+      self->exception = current_exception();
+      *irtrn=-1;
     }
-    else {
-      // check drift
-      bool projVel = true;
-      if(self->getToleranceForPositionConstraints()>=0) {
-        self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-        self->getSystem()->resetUpToDate();
-        if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
-          self->getSystem()->projectGeneralizedPositions(3);
-          self->getSystem()->projectGeneralizedVelocities(3);
-          projVel = false;
-          *irtrn=-1;
-        }
-      }
-      if(self->getToleranceForVelocityConstraints()>=0 and projVel) {
-        self->getSystem()->setTime(*t);
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-        self->getSystem()->resetUpToDate();
-        if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
-          self->getSystem()->projectGeneralizedVelocities(3);
-          *irtrn=-1;
-        }
-      }
-      self->getSystem()->updateStopVectorParameters();
-    }
-    self->getSystem()->updateInternalState();
   }
 
   void DOP853Integrator::integrate() {
@@ -197,13 +213,13 @@ namespace MBSim {
 
     int out = 2; // dense output is performed in plot
 
-    double rPar;
-    int iPar[sizeof(void*)/sizeof(int)+1]; // store this at iPar[0..]
-    DOP853Integrator *self=this;
-    memcpy(&iPar[0], &self, sizeof(void*));
+    double rPar[1]; // not used
 
-    int lWork = 2*(11*zSize+8*zSize+21);
-    int liWork = 2*(zSize+21);
+    exception=nullptr;
+    int *iPar = reinterpret_cast<int*>(this);
+
+    int lWork = 11*zSize+8*zSize+21;
+    int liWork = zSize+21;
     VecInt iWork(liWork);
     Vec work(lWork);
     if(dtMax>0)
@@ -229,7 +245,9 @@ namespace MBSim {
 
     while(t<tEnd-epsroot) {
       DOP853(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
-          work(),&lWork,iWork(),&liWork,&rPar,iPar,&idid);
+          work(),&lWork,iWork(),&liWork,rPar,iPar,&idid);
+      if(exception)
+        rethrow_exception(exception);
 
       if(shift) {
         system->resetUpToDate();
@@ -239,6 +257,11 @@ namespace MBSim {
       t = system->getTime();
       z = system->getState();
     }
+
+    msg(Info)<<"nrRHS: "<<iWork(16)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(17)<<endl;
+    msg(Info)<<"nrStepsAccepted: "<<iWork(18)<<endl;
+    msg(Info)<<"nrStepsRejected: "<<iWork(19)<<endl;
   }
 
   void DOP853Integrator::initializeUsingXML(DOMElement *element) {

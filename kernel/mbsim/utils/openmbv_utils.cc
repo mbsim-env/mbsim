@@ -49,6 +49,18 @@ namespace MBSim {
     object->setID(id);
   }
 
+  void OpenMBVRigidBody::initializeUsingXML(DOMElement *e) {
+    OpenMBVColoredBody::initializeUsingXML(e);
+    DOMElement *ee;
+    ee=E(e)->getFirstElementChildNamed(MBSIM%"path");
+    if(ee) path = E(ee)->getText<bool>();
+  }
+
+  void OpenMBVRigidBody::initializeObject(const shared_ptr<OpenMBV::RigidBody> &object) {
+    OpenMBVColoredBody::initializeObject(object);
+    object->setPath(path);
+  }
+
   void OpenMBVColoredBody::initializeUsingXML(DOMElement *e) {
     OpenMBVBody::initializeUsingXML(e);
     DOMElement *ee;
@@ -171,7 +183,7 @@ namespace MBSim {
   }
 
   void OpenMBVFrame::initializeUsingXML(DOMElement *e) {
-    OpenMBVColoredBody::initializeUsingXML(e);
+    OpenMBVRigidBody::initializeUsingXML(e);
     DOMElement *ee = E(e)->getFirstElementChildNamed(MBSIM%"size");
     if(ee) size = E(ee)->getText<double>();
     ee = E(e)->getFirstElementChildNamed(MBSIM%"offset");
@@ -185,7 +197,7 @@ namespace MBSim {
   }
 
   void OpenMBVFrame::initializeObject(const shared_ptr<OpenMBV::Frame> &object) {
-    OpenMBVColoredBody::initializeObject(object);
+    OpenMBVRigidBody::initializeObject(object);
     object->setSize(size);
     object->setOffset(offset);
   }

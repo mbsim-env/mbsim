@@ -30,6 +30,7 @@ using namespace std;
 namespace MBSim {
 
   void ContactKinematicsSpherePlate::assignContours(const vector<Contour*> &contour) {
+    ContactKinematics::assignContours(contour);
     if (dynamic_cast<Sphere*>(contour[0])) {
       isphere = 0;
       iplate = 1;

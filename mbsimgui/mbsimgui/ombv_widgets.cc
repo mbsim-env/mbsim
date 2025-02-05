@@ -132,8 +132,11 @@ namespace MBSimGUI {
   Widget* IvDataWidgetFactory::createWidget(int i) {
     if(i==0)
       return new ExtWidget("Open Inventor file name",new FileWidget("", "Open Open Inventor file", "Inventor files (*.iv);;VRML files (*.wrl *.vrml)", 0, true));
-    if(i==1)
-      return new ExtWidget("Open Inventor string content",new TextEditorWidget);
+    if(i==1) {
+      auto tew = new TextEditorWidget;
+      tew->enableMonospaceFont();
+      return new ExtWidget("Open Inventor string content",tew);
+    }
     return nullptr;
   }
 
@@ -160,6 +163,23 @@ namespace MBSimGUI {
     transparency->initializeUsingXML(e);
     pointSize->initializeUsingXML(e);
     lineWidth->initializeUsingXML(e);
+    return e;
+  }
+
+  MBSOMBVRigidBodyWidget::MBSOMBVRigidBodyWidget() : MBSOMBVColoreBodyWidget() {
+    path = new ExtWidget("Draw path",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"path");
+    layout()->addWidget(path);
+  }
+
+  DOMElement* MBSOMBVRigidBodyWidget::initializeUsingXML(DOMElement *element) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    path->initializeUsingXML(e);
+    return e;
+  }
+
+  DOMElement* MBSOMBVRigidBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
+    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    path->writeXMLFile(e);
     return e;
   }
 
@@ -418,14 +438,14 @@ namespace MBSimGUI {
   }
 
   DOMElement* FrameMBSOMBVWidget::initializeUsingXML(DOMElement *element) {
-    MBSOMBVColoreBodyWidget::initializeUsingXML(element);
+    MBSOMBVRigidBodyWidget::initializeUsingXML(element);
     size->initializeUsingXML(element);
     offset->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* FrameMBSOMBVWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
-    DOMElement *e=MBSOMBVColoreBodyWidget::writeXMLFile(parent);
+    DOMElement *e=MBSOMBVRigidBodyWidget::writeXMLFile(parent);
     size->writeXMLFile(e);
     offset->writeXMLFile(e);
     return nullptr;

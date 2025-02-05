@@ -373,6 +373,7 @@ namespace MBSimFlexibleBody {
           fTR = (generalizedVelocityOfRotation==coordinatesOfAngularVelocityWrtFrameOfReference)?A3->getMappingFunction():A3->getTransformedMappingFunction();
           if(not fTR) throwError("(GenericFlexibleFfrBody::init): coordinate transformation not yet available for current rotation");
           fTR->setParent(this);
+          ds->setqdequ(false);
           constJR = true;
           constjR = true;
           PJRR = SqrMat3(EYE);

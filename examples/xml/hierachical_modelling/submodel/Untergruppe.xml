@@ -130,9 +130,15 @@
       <unloadedLength>l012{2}</unloadedLength>
       <enableOpenMBV>
         <colorRepresentation>"absoluteForce"</colorRepresentation>
-        <numberOfCoils>5</numberOfCoils>
+        <numberOfCoils>
+          global staticData; % before setting a global var in octave it must be declared as global
+          staticData.saveSomeData=0.01;
+          ret=5;
+        </numberOfCoils>
         <springRadius>0.1</springRadius>
-        <crossSectionRadius>0.01</crossSectionRadius>
+        <crossSectionRadius>
+          ret=staticData.saveSomeData; % access the staticData from above
+        </crossSectionRadius>
         <type>'polyline'</type>
       </enableOpenMBV>
     </SpringDamper>

@@ -635,6 +635,29 @@ namespace MBSimGUI {
     return nullptr;
   }
 
+  StopPropertyDialog::StopPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
+
+    inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
+    addToTab("General", inputSignal);
+
+    threshold = new ExtWidget("Threshold",new ChoiceWidget(new VecSizeVarWidgetFactory(1,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0),false,false,true,"0"),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"threshold");
+    addToTab("General", threshold);
+  }
+
+  DOMElement* StopPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    SignalPropertyDialog::initializeUsingXML(item->getXMLElement());
+    inputSignal->initializeUsingXML(item->getXMLElement());
+    threshold->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* StopPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    SignalPropertyDialog::writeXMLFile(item->getXMLElement(),ref);
+    inputSignal->writeXMLFile(item->getXMLElement(),ref);
+    threshold->writeXMLFile(item->getXMLElement(),ref);
+    return nullptr;
+  }
+
   DurationPropertyDialog::DurationPropertyDialog(Element *signal) : SignalPropertyDialog(signal) {
 
     inputSignal = new ExtWidget("Input signal",new ElementOfReferenceWidget<Signal>(signal,nullptr,this),false,false,MBSIMCONTROL%"inputSignal");
