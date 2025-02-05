@@ -38,6 +38,7 @@ class QComboBox;
 class QCheckBox;
 class QTreeWidget;
 class QTreeWidgetItem;
+class QStackedWidget;
  
 namespace MBSimGUI {
 
@@ -479,6 +480,20 @@ namespace MBSimGUI {
 
     protected:
       QPlainTextEdit *edit;
+  };
+
+  class MBSimGUIContextAction : public Widget {
+
+    public:
+      MBSimGUIContextAction();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+      int getStretchHint() const override { return 10000; }
+
+    protected:
+      QListWidget *name;
+      QSpinBox *count;
+      QStackedWidget *code;
   };
 
 }

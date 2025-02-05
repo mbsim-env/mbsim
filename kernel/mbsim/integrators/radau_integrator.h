@@ -23,24 +23,15 @@
 #ifndef _RADAU_INTEGRATOR_H_
 #define _RADAU_INTEGRATOR_H_
 
-#include "root_finding_integrator.h"
+#include "dae_integrator.h"
 
 namespace MBSim {
 
   /** \brief DAE-Integrator RADAU
   */
-  class RADAUIntegrator : public RootFindingIntegrator {
+  class RADAUIntegrator : public DAEIntegrator {
 
     public:
-      enum Formalism {
-        ODE=0,
-        DAE1,
-        DAE2,
-        DAE3,
-        GGL,
-        unknown
-      };
-
       enum class StepSizeControl {
         ModPred = 1,
         Classic = 2,
@@ -48,21 +39,26 @@ namespace MBSim {
 
     private:
       typedef void (*Fzdot)(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      typedef void (*Jac)(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
       typedef void (*Mass)(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static Fzdot fzdot[5];
+      static Jac jac[5];
       static Mass mass[2];
       static void fzdotODE(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void fzdotDAE1(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE2(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void fzdotDAE3(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
-      static void jac(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *iper);
+      static void jacODE(int* n, double *t, double *z, double *J, int *nn, double *rpar, int *ipar);
+      static void jacDAE1(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
+      static void jacDAE2(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
+      static void jacDAE3(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
+      static void jacGGL(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
       static void fzdotGGL(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       static void massFull(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
-      void calcSize();
-      void reinit();
+      void reinit() override;
 
       double tPlot{0};
       double dtOut{0};
@@ -79,18 +75,11 @@ namespace MBSim {
       int maxSteps{std::numeric_limits<int>::max()};
       /** maximal step size */
       double dtMax{0};
-      /** formalism **/
-      Formalism formalism{ODE};
-      /** reduced form **/
-      bool reduced{false};
 
-      int neq, mlJac, muJac;
+      int mlJac, muJac;
       std::vector<int> iWorkExtended; int *iWork;
       fmatvec::Vec work;
 
-      fmatvec::Vec res0, res1; // residual work arrays for jacobian evaluation
-      fmatvec::RangeV Rq, Ru, Rz, Rla, Rl; // ranges in y and jacobimatrix for q, u, z, la and GGL alg.-states l
-                                           //
       int maxNewtonIter { 0 };
       double newtonIterTol { 0 };
       double jacobianRecomputation { 0 };
@@ -111,8 +100,6 @@ namespace MBSim {
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
-      void setFormalism(Formalism formalism_) { formalism = formalism_; }
-      void setReducedForm(bool reduced_) { reduced = reduced_; }
       void setMaximalNumberOfNewtonIterations(int iter) { maxNewtonIter = iter; }
       void setNewtonIterationTolerance(double tol) { newtonIterTol = tol; }
       void setJacobianRecomputation(double value) { jacobianRecomputation = value; }

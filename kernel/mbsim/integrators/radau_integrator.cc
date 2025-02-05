@@ -41,6 +41,7 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, RADAUIntegrator)
 
   RADAUIntegrator::Fzdot RADAUIntegrator::fzdot[5];
+  RADAUIntegrator::Jac RADAUIntegrator::jac[5];
   RADAUIntegrator::Mass RADAUIntegrator::mass[2];
 
   void RADAUIntegrator::fzdotODE(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
@@ -72,7 +73,7 @@ namespace MBSim {
       self->getSystem()->setla(y(self->Rla));
       self->getSystem()->setUpdatela(false);
       yd.set(self->Rz, self->system->evalzd());
-      yd.set(self->Rla, self->system->evalW().T()*self->system->evalT()*yd(self->Ru) + self->system->evalwb());
+      yd.set(self->Rla, self->system->evalW().T()*yd(self->Ru) + self->system->evalwb());
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -138,77 +139,239 @@ namespace MBSim {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
         self->system->setUpdateW(false);
-        yd.add(self->Rq, self->system->evalW()*y(self->Rla));
+        yd.add(self->Rq, self->system->evalW()*y(self->Rl));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
       }
       else
-        yd.add(self->Rq, self->system->evalW()*y(self->Rla));
+        yd.add(self->Rq, self->system->evalW()*y(self->Rl));
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
     }
   }
 
-  void RADAUIntegrator::jac(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
+  void RADAUIntegrator::jacODE(int* cols, double *t, double *z_, double *J_, int *rows, double *rpar, int *ipar) {
     auto *self = reinterpret_cast<RADAUIntegrator*>(ipar);
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
-      int rowMove = self->reduced ? self->system->getqSize() : 0;
-      RangeV RuMove(self->Ru.start()-rowMove, self->Ru.end()-rowMove);
-      RangeV RlaMove(self->Rla.start()-rowMove, self->Rla.end()-rowMove);
       Mat J(*rows, *cols, J_); // fmatvec variant of J_
 
       // the undisturbed call -> this sets the system resetUpToDate
       // res0 is later used for the numerical part of the jacobian
-      self->fzdot[self->formalism](cols,t,y_,self->res0(),rpar,ipar);
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(Vec(*cols, z_));
+      self->getSystem()->resetUpToDate();
+      self->res0 = self->getSystem()->evalzd();
 
-      // the columns for la are given analytically
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
-      J.set(RuMove, self->Rla, Minv_Jrla);
-      if(self->formalism==DAE1)
-        J.set(RlaMove, self->Rla, self->system->evalW().T()*self->system->evalT()*Minv_Jrla);
-      // the rest of the entries in these columns are 0
-      for(int c=self->Rla.start(); c<=self->Rla.end(); ++c) {
-        if(!self->reduced)
-          for(int r=0; r<self->Ru.start(); ++r)
-            J(r,c)=0;
-        for(int r=self->Ru.end()+1; r<(self->formalism==DAE1 ? self->Rla.start()-1 : *cols); ++r)
-          J(r-rowMove,c)=0;
+      if(self->reduced)
+        self->par_ud_xd_par_q(J);
+      else {
+        if(self->system->getqdequ()) {
+          setZero(J,self->Rq,self->Rq); // par_qd_par_q
+          self->par_ud_xd_par_q(J);
+        }
+        else
+          self->par_zd_par_q(J);
+        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        setZero(J,self->Rq,self->Rx); // par_qd_par_x
       }
+      self->par_ud_xd_par_u_x(J,true);
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
 
-      if(self->formalism==GGL) {
-        // the columns for algebraic GGL state are given analytically
+  void RADAUIntegrator::jacDAE1(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
+    auto *self = reinterpret_cast<RADAUIntegrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(*cols, y_); // fmatvec variant of y_
+      Mat J(*rows, *cols, J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(y(self->Rz));
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setla(y(self->Rla));
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalW().T()*self->res0(self->Ru) + self->system->evalwb());
+
+      if(self->reduced)
+        self->par_ud_xd_gdd_par_q_u(J);
+      else {
+        if(self->system->getqdequ()) {
+          setZero(J,self->Rq,self->Rq); // par_qd_par_q
+          self->par_ud_xd_gdd_par_q_u(J);
+        }
+        else
+          self->par_zd_gdd_par_q_u(J);
+        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
+      }
+      self->par_ud_xd_par_x(J);
+      setZero(J,self->RxMove,self->Rla); // par_xd_par_la
+      setZero(J,self->RlaMove,self->Rx); // par_gdd_par_x
+
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->RuMove, self->Rla, Minv_Jrla); // par_ud_par_la
+      J.set(self->RlaMove, self->Rla, self->system->evalW().T()*Minv_Jrla); // par_gdd_par_la
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void RADAUIntegrator::jacDAE2(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
+    auto *self = reinterpret_cast<RADAUIntegrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(*cols, y_); // fmatvec variant of y_
+      Mat J(*rows, *cols, J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(y(self->Rz));
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setla(y(self->Rla));
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalgd());
+
+      if(self->reduced)
+        self->par_ud_xd_gd_par_q(J);
+      else {
+        if(self->system->getqdequ()) {
+          setZero(J,self->Rq,self->Rq); // par_qd_par_q
+          self->par_ud_xd_gd_par_q(J);
+        }
+        else
+          self->par_zd_gd_par_q(J);
+        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
+      }
+      self->par_ud_xd_par_u_x(J,false);
+      setZero(J,self->RxMove,self->Rla); // par_xd_par_la
+      J.set(self->RlaMove, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      setZero(J,self->RlaMove,RangeV(self->Rx.start(),self->Rla.end())); // par_gd_par_x_la
+
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->RuMove, self->Rla, Minv_Jrla); // par_ud_par_la
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void RADAUIntegrator::jacDAE3(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
+    auto *self = reinterpret_cast<RADAUIntegrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(*cols, y_); // fmatvec variant of y_
+      Mat J(*rows, *cols, J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(y(self->Rz));
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setla(y(self->Rla));
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalg());
+
+      if(self->reduced)
+        self->par_ud_xd_g_par_q(J);
+      else {
+        if(self->system->getqdequ()) {
+          setZero(J,self->Rq,self->Rq); // par_qd_par_q
+          self->par_ud_xd_g_par_q(J);
+        }
+        else
+          self->par_zd_g_par_q(J);
+        J.set(self->Rq, self->Ru, self->system->evalT()); // / par_qd_par_u
+        setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
+      }
+      self->par_ud_xd_par_u_x(J,false);
+      setZero(J,self->RxMove,self->Rla); // par_xd_par_la
+      setZero(J,self->RlaMove,RangeV(self->Ru.start(),self->Rla.end())); // par_g_par_u_x_la
+
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->RuMove, self->Rla, Minv_Jrla); // par_ud_par_la
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
+  void RADAUIntegrator::jacGGL(int* cols, double *t, double *y_, double *J_, int *rows, double *rpar, int *ipar) {
+    auto *self = reinterpret_cast<RADAUIntegrator*>(ipar);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Vec y(*cols, y_); // fmatvec variant of y_
+      Mat J(*rows, *cols, J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->setState(y(self->Rz));
+      self->getSystem()->resetUpToDate();
+      self->getSystem()->setla(y(self->Rla));
+      self->getSystem()->setUpdatela(false);
+      self->res0.set(self->Rz, self->system->evalzd());
+      self->res0.set(self->Rla, self->system->evalgd());
+      self->res0.set(self->Rl, self->system->evalg());
+      if(self->system->getgSize() != self->system->getgdSize()) {
+        self->system->calclaSize(5);
+        self->system->updateWRef(self->system->getWParent(0));
+        self->system->setUpdateW(false);
+        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+        self->system->calclaSize(3);
+        self->system->updateWRef(self->system->getWParent(0));
+      }
+      else
+        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+
+      if(self->reduced)
+        self->par_ud_xd_gd_g_par_q(J);
+      else {
+        if(self->system->getqdequ()) {
+          setZero(J,self->Rq,self->Rq); // par_qd_par_q
+          self->par_ud_xd_gd_g_par_q(J);
+        }
+        else
+          self->par_zd_gd_g_par_q(J);
+        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
         if(self->system->getgSize() != self->system->getgdSize()) {
           self->system->calclaSize(5);
           self->system->updateWRef(self->system->getWParent(0));
           self->system->setUpdateW(false);
-          J.set(self->Rq, self->Rl, self->system->evalW());
+          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
           self->system->calclaSize(3);
           self->system->updateWRef(self->system->getWParent(0));
         }
         else
-          J.set(self->Rq, self->Rl, self->system->evalW());
-        // the rest of the entries in these columns are 0
-        for(int c=self->Rl.start(); c<=self->Rl.end(); ++c) {
-          for(int r=self->Ru.start(); r<*cols; ++r)
-            J(r,c)=0;
-        }
+          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
       }
+      self->par_ud_xd_par_u_x(J,false);
+      setZero(J,self->Ru,self->Rl); // par_ud_par_l
+      setZero(J,self->Rx,RangeV(self->Rla.start(),self->Rl.end())); // par_xd_par_la_l
+      J.set(self->Rla, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      setZero(J,self->Rla,RangeV(self->Rx.start(),self->Rl.end())); // par_gd_par_x_la_l
+      setZero(J,self->Rl,RangeV(self->Ru.start(),self->Rl.end())); // par_g_par_u_x_la_l
 
-      // now the finite difference of all other columns
-      // this code is taken from radau5.f JACOBIAN IS FULL,
-      // but converted to C and skipping the last columns of the jacobian for la which is given analytically
-      for(int c=0; c<self->system->getqSize()+self->system->getuSize()+self->system->getxSize(); ++c) {
-        double ySafe=y_[c];
-        double delta=sqrt(macheps*max(1.e-5,abs(ySafe)));
-        y_[c]=ySafe+delta;
-        self->fzdot[self->formalism](cols,t,y_,self->res1(),rpar,ipar);
-        for(int r=rowMove; r<*cols; ++r)
-          J_[(c*(*rows))+r-rowMove]=(self->res1(r)-self->res0(r))/delta;
-        y_[c]=ySafe;
-      }
+      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -235,8 +398,8 @@ namespace MBSim {
       return;
     try { // catch exception -> C code must catch all exceptions
       Mat M(*rows,*cols, m_);
-      for(int i=0; i<self->system->getqSize()+self->system->getxSize(); i++) M(0,i) = 1;
-      for(int i=self->system->getqSize()+self->system->getxSize(); i<*cols-self->system->getqSize(); i++) M(0,i) = 0;
+      for(int i=0; i<self->system->getuSize()+self->system->getxSize(); i++) M(0,i) = 1;
+      for(int i=self->system->getuSize()+self->system->getxSize(); i<*cols; i++) M(0,i) = 0;
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -387,15 +550,17 @@ namespace MBSim {
     fzdot[2] = &RADAUIntegrator::fzdotDAE2;
     fzdot[3] = &RADAUIntegrator::fzdotDAE3;
     fzdot[4] = &RADAUIntegrator::fzdotGGL;
+    jac[0] = &RADAUIntegrator::jacODE;
+    jac[1] = &RADAUIntegrator::jacDAE1;
+    jac[2] = &RADAUIntegrator::jacDAE2;
+    jac[3] = &RADAUIntegrator::jacDAE3;
+    jac[4] = &RADAUIntegrator::jacGGL;
     mass[0] = &RADAUIntegrator::massFull;
     mass[1] = &RADAUIntegrator::massReduced;
 
     debugInit();
 
-    calcSize();
-    Rq = RangeV(0,system->getqSize()-1);
-    Ru = RangeV(system->getqSize(),system->getqSize()+system->getuSize()-1);
-    Rz = RangeV(0,system->getzSize()-1);
+    init();
 
     if(not neq)
       throwError("(RADAUIntegrator::integrate): dimension of the system must be at least 1");
@@ -455,9 +620,9 @@ namespace MBSim {
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
-    int iJac = formalism>0; // jacobian is computed
-                            // - for ODE as full matrix by radau5 by finite differences
-                            // - for all other as full matrix by finite differences for everything except la which is analytical
+    int iJac = (not numericalJacobian); // jacobian is computed
+                            // - by finite differences if numericalJacobian is true
+                            // - by a combination of finite differences and an analytical solution, otherwise
 
     int idid;
 
@@ -482,7 +647,6 @@ namespace MBSim {
     svLast <<= system->evalsv();
     z = system->getState(); // needed, as computeInitialCondition may change the state
 
-    calcSize();
     reinit();
 
     if(formalism>0)
@@ -495,7 +659,7 @@ namespace MBSim {
 
       RADAU(&neq,(*fzdot[formalism]),&t,y(),&tEnd,&dt,
           rTol(),aTol(),&iTol,
-          jac,&iJac,&mlJac,&muJac,
+          *jac[formalism],&iJac,&mlJac,&muJac,
           *mass[reduced],&iMas,&mlMas,&muMas,
           plot,&out,
           work(),&lWork,iWork,&liWork,rPar,iPar,&idid);
@@ -508,7 +672,6 @@ namespace MBSim {
         system->resetUpToDate();
         svLast = system->evalsv();
         dt = dt0;
-        calcSize();
         reinit();
       }
 
@@ -526,29 +689,14 @@ namespace MBSim {
     msg(Info)<<"nrJac: "<<iWork[14]<<endl;
     msg(Info)<<"nrSteps: "<<iWork[15]<<endl;
     msg(Info)<<"nrStepsAccepted: "<<iWork[16]<<endl;
-    msg(Info)<<"nrStepsRejected: "<<iWork[17]<<endl;
+    msg(Info)<<"nrStepsRejected (excluding first step): "<<iWork[17]<<endl;
     msg(Info)<<"nrLUdecom: "<<iWork[18]<<endl;
     msg(Info)<<"nrForwardBackwardSubs: "<<iWork[19]<<endl;
   }
 
-  void RADAUIntegrator::calcSize() {
-    if(formalism==DAE1 or formalism==DAE2)
-      neq = system->getzSize()+system->getlaSize();
-    else if(formalism==DAE3)
-      neq = system->getzSize()+system->getgSize();
-    else if(formalism==GGL)
-      neq = system->getzSize()+system->getgdSize()+system->getgSize();
-    else
-      neq = system->getzSize();
-    res0.resize(neq);
-    res1.resize(neq);
-    Rla = RangeV(system->getqSize()+system->getuSize()+system->getxSize(),
-                 system->getqSize()+system->getuSize()+system->getxSize()+system->getlaSize()-1);
-    Rl = RangeV(system->getqSize()+system->getuSize()+system->getxSize()+system->getlaSize(),
-                neq-1);
-  }
-
   void RADAUIntegrator::reinit() {
+    DAEIntegrator::reinit();
+
     for(int i=20; i<work.size(); i++)
       work(i) = 0;
 
@@ -582,7 +730,9 @@ namespace MBSim {
     }
     if(reduced) {
       if(formalism==GGL)
-        throw runtime_error("The 'formalism'=='GGL' cannot be used with 'reducedForm'==true.");
+        throwError("(RADAUIntegrator::reinit): The 'formalism'=='GGL' cannot be used with 'reducedForm'==true.");
+      if(not system->getqdequ())
+        throwError("(RADAUIntegrator::reinit): The reduced form can only be used if dq/dt = u.");
       iWork[8] = system->getqSize();
       iWork[9] = system->getqSize();
       mlJac = neq - system->getqSize(); // jacobian is a reduced matrix
@@ -593,7 +743,7 @@ namespace MBSim {
   }
 
   void RADAUIntegrator::initializeUsingXML(DOMElement *element) {
-    RootFindingIntegrator::initializeUsingXML(element);
+    DAEIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
     if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
@@ -643,6 +793,8 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"stepSizeSaftyFactor");
     if(e) setStepSizeSaftyFactor((E(e)->getText<double>()));
+    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
+    if(e) setNumericalJacobian(E(e)->getText<bool>());
   }
 
 }

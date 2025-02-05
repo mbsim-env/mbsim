@@ -71,6 +71,8 @@
 #include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMException.hpp>
@@ -1067,6 +1069,18 @@ namespace MBSimGUI {
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
     }
     eval = Eval::createEvaluator(evalName);
+
+    if(eval->getName()=="python") {
+      string str(R"(
+def _local():
+  import sys
+  sys.path.append("{PREFIX}/share/mbsimgui/python")
+_local()
+del _local
+)");
+      boost::algorithm::replace_first(str, "{PREFIX}", getInstallPath().string());
+      eval->addImport(str, nullptr, "addAllVarsAsParams");
+    }
   }
 
   // Create an new eval and fills its context with all parameters/imports which may influence item.
@@ -1142,7 +1156,7 @@ namespace MBSimGUI {
 
   pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>> MainWindow::evaluateForAllArrayPattern(
     const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
-    bool fullEval, bool catchErrors, bool trackFirstLastCall) {
+    bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall) {
     // helper to catch errors, print it to the statusBar and continue if catchErrors is true.
     // if catchErrors is false the exception is rethrown.
     #define CATCH(msg) \
@@ -1167,7 +1181,7 @@ namespace MBSimGUI {
 
     // this is a lambda for the real body of this function.
     // it is written since it may be called twice if trackFirstLastCall is true, see below
-    auto worker = [trackFirstLastCall](const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+    auto worker = [trackFirstLastCall, skipRet](const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
                      bool fullEval, bool catchErrors, int *lastCall) {
       // if lastCall is not nullptr and is negative this is the first call to worker which
       // just track how many time code will be evaluated without evaluating it
@@ -1187,7 +1201,8 @@ namespace MBSimGUI {
       function<void(vector<MainWindow::ParameterLevel>::const_iterator, vector<MainWindow::ParameterLevel>::const_iterator,
                     int level, vector<int> levels)> walk;
       int callNumber = 0;
-      walk=[&code, e, &walk, &values, fullEval, &callNumber, &lastCall, trackLastCall, catchErrors, trackFirstLastCall]
+      walk=[&code, e, &walk, &values, fullEval, &callNumber, &lastCall, trackLastCall, catchErrors,
+            trackFirstLastCall, &counterNames, skipRet]
               (vector<MainWindow::ParameterLevel>::const_iterator start, vector<MainWindow::ParameterLevel>::const_iterator end,
                int level, vector<int> levels) {
         Eval::Value count = mw->eval->create(1.0);
@@ -1234,11 +1249,15 @@ namespace MBSimGUI {
               if(trackFirstLastCall) {
                 mw->eval->addParam("mbsimgui_firstCall", mw->eval->create(static_cast<double>(callNumber==1)));
                 mw->eval->addParam("mbsimgui_lastCall", mw->eval->create(static_cast<double>(lastCall && *lastCall==callNumber)));
+                mw->eval->addParam("mbsimgui_counterNames", mw->eval->create(boost::algorithm::join(counterNames, ",")));
+                vector<double> counts(levels.size());
+                for(size_t i=0; i<levels.size(); ++i) counts[i]=levels[i];
+                mw->eval->addParam("mbsimgui_counts", mw->eval->create(counts));
               }
               // evaluate code
               bool ok=false;
               Eval::Value value;
-              try { value = mw->eval->stringToValue(code,e,fullEval); ok=true; }
+              try { value = mw->eval->stringToValue(code,e,fullEval,skipRet); ok=true; }
               CATCH("Failed to evaluate parameter, adding a string value with the unevaluated code")
               if(!ok && catchErrors)
                 value = mw->eval->create(code); // if eval failed we use the unevaluated code as value
@@ -2709,10 +2728,9 @@ namespace MBSimGUI {
 
   void MainWindow::editElementSource() {
     if(not editorIsOpen()) {
-      menuBar()->setDisabled(true);
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = static_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
-      editor = new XMLPropertyDialog(element);
+      auto editor = new XMLPropertyDialog(element);
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
@@ -2728,8 +2746,6 @@ namespace MBSimGUI {
           updateReferences(element);
           if(getAutoRefresh()) refresh();
         }
-	menuBar()->setEnabled(true);
-        editor = nullptr;
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
         editor->fromWidget();
@@ -2747,11 +2763,10 @@ namespace MBSimGUI {
 
   void MainWindow::editParametersSource() {
     if(not editorIsOpen()) {
-      menuBar()->setDisabled(true);
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *item = static_cast<Parameters*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       EmbedItemData *parent = item->getParent();
-      editor = new ParameterXMLPropertyDialog(parent);
+      auto editor = new ParameterXMLPropertyDialog(parent);
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
@@ -2768,8 +2783,6 @@ namespace MBSimGUI {
           updateParameterReferences(parent);
           if(getAutoRefresh()) refresh();
         }
-	menuBar()->setEnabled(true);
-        editor = nullptr;
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
         editor->fromWidget();
@@ -2971,9 +2984,8 @@ namespace MBSimGUI {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
-	menuBar()->setDisabled(true);
         updateParameters(element);
-        editor = element->createPropertyDialog();
+        auto editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
           editor->toWidget();
@@ -2993,8 +3005,6 @@ namespace MBSimGUI {
 	    updateNames(element);
             if(getAutoRefresh()) refresh();
           }
-          menuBar()->setEnabled(true);
-          editor = nullptr;
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
           auto *fileItem = element->getDedicatedFileItem();
@@ -3029,9 +3039,8 @@ namespace MBSimGUI {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       if(parameter) {
-        menuBar()->setDisabled(true);
         updateParameters(parameter->getParent(),true);
-        editor = parameter->createPropertyDialog();
+        auto editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
           editor->toWidget();
@@ -3052,8 +3061,6 @@ namespace MBSimGUI {
             if(getAutoRefresh()) refresh();
             if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
-        menuBar()->setEnabled(true);
-        editor = nullptr;
         });
         connect(editor,&ParameterPropertyDialog::apply,this,[=](){
           auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
@@ -3078,9 +3085,8 @@ namespace MBSimGUI {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
-        menuBar()->setDisabled(true);
         updateParameters(element);
-        editor = new ClonePropertyDialog(element);
+        auto editor = new ClonePropertyDialog(element);
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();
         editor->show();
@@ -3096,8 +3102,6 @@ namespace MBSimGUI {
             editor->fromWidget();
             if(getAutoRefresh()) refresh();
           }
-	  menuBar()->setEnabled(true);
-          editor = nullptr;
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
           auto* fileItem = element->getDedicatedFileItem();
@@ -3213,6 +3217,54 @@ namespace MBSimGUI {
       elementView->expandToDepth(elementView->selectionModel()->currentIndex(),depth);
     else if(parameterView->hasFocus())
       parameterView->expandToDepth(parameterView->selectionModel()->currentIndex(),depth);
+  }
+
+  void MainWindow::prepareForPropertyDialogOpen() {
+    openedEditors++;
+    if(openedEditors>1)
+      return;
+
+    menuBar()->setEnabled(false);
+    // some more actions a missing here???
+    // - disable the toolbars, except the toolbar for openmbv
+    // - disable context menus for elements
+    // - ...
+  }
+
+  void MainWindow::prepareForPropertyDialogClose() {
+    openedEditors--;
+    if(openedEditors>0)
+      return;
+
+    menuBar()->setEnabled(true);
+  }
+
+}
+
+extern "C" {
+
+  // MBSimGUI::BasicPropertyDialog is rebuild in scripting engines like Python.
+  // For this we need some functions from MainWindows callable from C
+  void mbsimgui_MainWindow_prepareForPropertyDialogOpen() noexcept {
+    try {
+      assert(MBSimGUI::mw);
+      MBSimGUI::mw->prepareForPropertyDialogOpen();
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: prepareForPropertyDialogOpen failed!"<<endl;
+    }
+  }
+
+  // MBSimGUI::BasicPropertyDialog is rebuild in scripting engines like Python.
+  // For this we need some functions from MainWindows callable from C
+  void mbsimgui_MainWindow_prepareForPropertyDialogClose() noexcept {
+    try {
+      assert(MBSimGUI::mw);
+      MBSimGUI::mw->prepareForPropertyDialogClose();
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: prepareForPropertyDialogClosed failed!"<<endl;
+    }
   }
 
 }

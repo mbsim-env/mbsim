@@ -565,57 +565,90 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choice = new ChoiceWidget(new TabularFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
-    layout->addWidget(choice);
+    choiceXY = new ChoiceWidget(new TabularFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
+    layout->addWidget(choiceXY);
 
     vector<QString> list;
     list.emplace_back("\"cSplinePeriodic\"");
     list.emplace_back("\"cSplineNatural\"");
     list.emplace_back("\"piecewiseLinear\"");
-    method = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolationMethod");
-    layout->addWidget(method);
+    interpolationMethod = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolationMethod");
+    layout->addWidget(interpolationMethod);
+
+    vector<QString> list2;
+    list2.emplace_back("\"error\"");
+    list2.emplace_back("\"continuePolynom\"");
+    list2.emplace_back("\"linear\"");
+    extrapolationMethod = new ExtWidget("Extrapolation method",new TextChoiceWidget(list2,1,true),true,false,MBSIM%"extrapolationMethod");
+    layout->addWidget(extrapolationMethod);
 
     choiceChanged();
-    connect(choice,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::choiceChanged);
-    connect(choice,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::widgetChanged);
+    connect(choiceXY,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::choiceChanged);
+    connect(choiceXY,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::widgetChanged);
   }
 
   void PiecewisePolynomFunctionWidget::choiceChanged() {
-    if(choice->getIndex()==0) {
+    if(fallbackWidget)
+      return;
+
+    if(choiceXY->getIndex()==0) {
       updateWidget();
-      connect(choice->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&PiecewisePolynomFunctionWidget::updateWidget);
+      connect(choiceXY->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&PiecewisePolynomFunctionWidget::updateWidget);
     }
   }
 
   void PiecewisePolynomFunctionWidget::updateWidget() {
-    if(choice->getIndex()==0) {
-      auto *choice1_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
-      auto *choice2_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
-      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getFirstWidget<VariableWidget>()->cols());
+    if(fallbackWidget)
+      return;
+
+    if(choiceXY->getIndex()==0) {
+      auto *choice1_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      auto *choice2_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
+      choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getFirstWidget<VariableWidget>()->cols());
     }
   }
 
   void PiecewisePolynomFunctionWidget::resize_(int m, int n) {
-    if(choice->getIndex()==0) {
-      auto *choice_ = choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
-      choice->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
+    if(fallbackWidget)
+      return;
+
+    if(choiceXY->getIndex()==0) {
+      auto *choice_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
     }
     else {
-      auto *choice_ = choice->getFirstWidget<ChoiceWidget>();
-      choice->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m+1);
+      auto *choice_ = choiceXY->getFirstWidget<ChoiceWidget>();
+      choiceXY->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m+1);
     }
   }
 
   DOMElement* PiecewisePolynomFunctionWidget::initializeUsingXML(DOMElement *element) {
-    choice->initializeUsingXML(element);
-    method->initializeUsingXML(element);
+    if(E(element)->getFirstElementChildNamed(MBSIM%"breaks")) {
+      fallbackWidget = new XMLEditorWidget;
+      choiceXY->setVisible(false);
+      interpolationMethod->setVisible(false);
+      extrapolationMethod->setVisible(false);
+      layout()->addWidget(fallbackWidget);
+
+      fallbackWidget->initializeUsingXML(element);
+      return element;
+    }
+
+    choiceXY->initializeUsingXML(element);
+    interpolationMethod->initializeUsingXML(element);
     return element;
   }
 
   DOMElement* PiecewisePolynomFunctionWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    if(fallbackWidget) {
+      DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
+      fallbackWidget->writeXMLFile(ele0);
+      return ele0;
+    }
+
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
-    choice->writeXMLFile(ele0);
-    method->writeXMLFile(ele0);
+    choiceXY->writeXMLFile(ele0);
+    interpolationMethod->writeXMLFile(ele0);
     return ele0;
   }
 

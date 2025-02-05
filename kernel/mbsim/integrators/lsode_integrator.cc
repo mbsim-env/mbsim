@@ -44,7 +44,6 @@ namespace MBSim {
 
   void LSODEIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
-    //auto *self = reinterpret_cast<LSODEIntegrator*>(neq+1);
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
@@ -58,6 +57,37 @@ namespace MBSim {
     }
   }
 
+  void LSODEIntegrator::jac(int *neq, double* t, double* z_, int* ml, int* mu, double* J_, int* nrowp) {
+    auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
+    if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
+      return;
+    try { // catch exception -> C code must catch all exceptions
+      Mat J(neq[0], neq[0], J_); // fmatvec variant of J_
+
+      // the undisturbed call -> this sets the system resetUpToDate
+      // res0 is later used for the numerical part of the jacobian
+      self->getSystem()->setTime(*t);
+      self->getSystem()->resetUpToDate();
+      self->res0 = self->system->evalzd();
+
+      if(self->system->getqdequ()) {
+        setZero(J,self->Rq,self->Rq); // par_qd_par_q
+        self->par_ud_xd_par_q(J);
+      }
+      else
+        self->par_zd_par_q(J);
+      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      setZero(J,self->Rq,self->Rx); // par_qd_par_x
+
+      self->par_ud_xd_par_u_x(J,true);
+      for(int i=0; i<self->system->getzSize(); i++)
+        J(i,i) -= 1;
+    }
+    catch(...) { // if a exception is thrown catch and store it in self
+      self->exception = current_exception();
+    }
+  }
+
   void LSODEIntegrator::integrate() {
     if(method==unknown)
       throwError("(LSODEIntegrator::integrate): method unknown");
@@ -65,7 +95,7 @@ namespace MBSim {
     debugInit();
 
     if(odePackInUse)
-      throwError("Only one integration with LSODARIntegrator, LSODERIntegrator and LSODEIntegrator at a time is possible.");
+      throwError("(LSODEIntegrator::integrate): Only one integration with LSODEIntegrator, LSODAIntegrator and LSODIIntegrator at a time is possible.");
     odePackInUse = true;
 
     int zSize=system->getzSize();
@@ -118,13 +148,21 @@ namespace MBSim {
         throwError("(LSODEIntegrator::integrate): size of rTol does not match, must be " + to_string(zSize));
     }
 
-    int itask=2, iopt=1, istate=1;
-    int lrWork = 2*(22+9*zSize+zSize*zSize);
+    int itask=2, iopt=1, istate=1, MF, lrWork, liWork;
+    if(method==nonstiff) {
+      lrWork = 20+16*zSize;
+      liWork = 20;
+      MF = 10;
+    }
+    else {
+      lrWork = 22+9*zSize+zSize*zSize;
+      liWork = 20+zSize;
+      MF = numericalJacobian?22:21;
+    }
     Vec rWork(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
-    int liWork = 2*(20+zSize);
     VecInt iWork(liWork);
     iWork(5) = maxSteps;
 
@@ -137,14 +175,14 @@ namespace MBSim {
     double s0 = clock();
     double time = 0;
 
-    int MF = method;
-
     int zero = 0;
     int iflag;
 
+    init();
+
     while(t<tEnd-epsroot) {
       DLSODE(fzdot, neq, system->getState()(), &t, &tEnd, &iTol, rTol(), aTol(),
-          &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, nullptr, &MF);
+          &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, jac, &MF);
       if(exception)
         rethrow_exception(exception);
       if(istate==2 or istate==1) {
@@ -258,11 +296,15 @@ namespace MBSim {
       else if(istate<0) throwError("Integrator LSODE failed with istate = "+to_string(istate));
     }
 
+    msg(Info)<<"nrRHS (including jac): "<<iWork(11)<<endl;
+    msg(Info)<<"nrJac: "<<iWork(12)<<endl;
+    msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
+
     odePackInUse = false;
   }
 
   void LSODEIntegrator::initializeUsingXML(DOMElement *element) {
-    RootFindingIntegrator::initializeUsingXML(element);
+    ImplicitIntegrator::initializeUsingXML(element);
     DOMElement *e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"method");
     if(e) {
@@ -287,6 +329,8 @@ namespace MBSim {
     if(e) setMinimumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
+    if(e) setNumericalJacobian(E(e)->getText<bool>());
   }
 
 }

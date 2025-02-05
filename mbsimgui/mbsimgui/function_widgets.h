@@ -33,7 +33,7 @@ namespace MBSimGUI {
   class ExtWidget;
   class ListWidget;
   class ChoiceWidget;
-  class ChoiceWidget;
+  class XMLEditorWidget;
   class Element;
 
   class IdentityFunctionWidget : public FunctionWidget {
@@ -243,8 +243,14 @@ namespace MBSimGUI {
     protected:
       void choiceChanged();
       void updateWidget() override;
-      ChoiceWidget* choice;
-      ExtWidget *method;
+      ChoiceWidget* choiceXY;
+      ExtWidget *interpolationMethod;
+      ExtWidget *extrapolationMethod;
+      
+      // the XML elements breaks/coefficients (instead of x and y or xy) is not implemented in mbsimgui for now.
+      // if breaks/coefficients appear the this fallback widget is used instead for the complete PiecewisePolynomFunction
+      // which shows just the XML code.
+      XMLEditorWidget *fallbackWidget { nullptr };
   };
 
   class TwoDimensionalPiecewisePolynomFunctionWidget : public FunctionWidget {

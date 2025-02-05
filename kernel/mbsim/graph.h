@@ -52,6 +52,8 @@ namespace MBSim {
       void updateh(int k=0) override;
       void updatedq() override;
       void updatedu() override;
+      void updateqd() override;
+      void updateud() override;
       void updatezd() override;
       void sethSize(int h, int j=0) override {(this->*sethSize_[j])(h);}
       void calcqSize() override;

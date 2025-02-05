@@ -23,7 +23,7 @@
 #ifndef _LSODI_INTEGRATOR_H_
 #define _LSODI_INTEGRATOR_H_
 
-#include "root_finding_integrator.h"
+#include "dae_integrator.h"
 
 namespace MBSim {
 
@@ -36,25 +36,20 @@ namespace MBSim {
    * of index 2.
    * This integrator uses ODEPACK (http://www.netlib.org/odepack).
    */
-  class LSODIIntegrator : public RootFindingIntegrator {
-
-    public:
-      enum Formalism {
-        ODE=0,
-        DAE2,
-        GGL,
-        unknown
-      };
+  class LSODIIntegrator : public DAEIntegrator {
 
     private:
-      typedef void (*Res)(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
-      static Res res[3];
+      typedef void (*Res)(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
+      typedef void (*Jac)(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
+      static Res res[5];
+      static Jac jac[5];
       static void resODE(int* neq, double* t, double* z_, double* zd_, double* res_, int* ires);
       static void resDAE2(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
       static void resGGL(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
       static void adda(int *neq, double* t, double* y_, int* ml, int* mu, double* P, int* nrowp);
-
-      void calcSize();
+      static void jacODE(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
+      static void jacDAE2(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
+      static void jacGGL(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
 
       /** maximal step size */
       double dtMax{0};
@@ -68,12 +63,12 @@ namespace MBSim {
       double dt0{0};
       /**  maximum number of steps allowed during one call to the solver. */
       int maxSteps{std::numeric_limits<int>::max()};
-      /** formalism **/
-      Formalism formalism{DAE2};
       /** exclude algebraic variables from error test **/
       bool excludeAlgebraicVariables{true};
 
-      int N;
+      fmatvec::VecV zeros;
+
+      std::exception_ptr exception;
 
     public:
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
@@ -84,7 +79,6 @@ namespace MBSim {
       void setRelativeTolerance(double rTol_) { rTol.resize(1,fmatvec::INIT,rTol_); }
       void setInitialStepSize(double dt0_) { dt0 = dt0_; }
       void setStepLimit(int maxSteps_) { maxSteps = maxSteps_; }
-      void setFormalism(Formalism formalism_) { formalism = formalism_; }
       void setExcludeAlgebraicVariablesFromErrorTest(bool excludeAlgebraicVariables_) { excludeAlgebraicVariables = excludeAlgebraicVariables_; }
 
       using Integrator::integrate;

@@ -909,5 +909,6 @@ ret = [sign(bx(1)*c(1)+bx(2)*c(2)+bx(3)*c(3))*acos(bz(3))]</definition>
     <startTime unit="s">0</startTime>
     <endTime unit="s">6</endTime>
     <plotStepSize unit="s">1e-2</plotStepSize>
+    <numericalJacobian>true</numericalJacobian>
   </RADAUIntegrator>
 </MBSimProject>

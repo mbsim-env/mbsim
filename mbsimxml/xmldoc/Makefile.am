@@ -43,7 +43,7 @@ mbsimxml.html: $(srcdir)/genContent.xsl combindedSchema.xsd
 
 
 http___www_mbsim-env_de_MBSimXML/index.html: @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd
-	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd none none MBSimXML MBSimXML:: @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSim/mbsim.xsd
+	@MBXMLUTILSBINDIR@/mbxmlutils-xsd2html.sh @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSimXML/mbsimproject.xsd none none MBSimXML MBSimXML:: @MBXMLUTILSSCHEMA@/http___www_mbsim-env_de_MBSim/mbsim.xsd
 
 install-data-local:
 	cp -r http___* @MBXMLUTILSDOCDIR@

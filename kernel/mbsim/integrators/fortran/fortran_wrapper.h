@@ -34,6 +34,9 @@ void SETUP(int*,double*,double*,double*,double*,double*,int*,char*,int*,
 #define CT FC_FUNC(ct,CT)
 void CT(void(*)(double*,double*,double*),double*,double*,double*,double*,int*,double*);
 
+#define STAT FC_FUNC(stat,STAT)
+void STAT(int*,int*,double*,int*,double*);
+
 #define INTRP FC_FUNC(intrp,INTRP)
 void INTRP(double*,char*,int*,double*,double*,void(*)(double*,double*,double*),double*,double*,int*);
 

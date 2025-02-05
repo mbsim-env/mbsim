@@ -109,8 +109,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm,
-                *maximumNumberOfNewtonIterations, *newtonIterationTolerance, *jacobianRecomputation, *jacobianRecomputationAtRejectedSteps, *stepSizeControl, *stepSizeSaftyFactor;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *maximumNumberOfNewtonIterations, *newtonIterationTolerance, *jacobianRecomputation, *jacobianRecomputationAtRejectedSteps, *stepSizeControl, *stepSizeSaftyFactor, *numericalJacobian;
   };
 
   class RADAUIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
@@ -120,7 +119,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *maximumNumberOfNewtonIterations, *newtonIterationTolerance, *jacobianRecomputation, *jacobianRecomputationAtRejectedSteps, *stepSizeControl, *stepSizeSaftyFactor, *numericalJacobian;
   };
 
   class RODASIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
@@ -180,7 +179,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *formalism;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *formalism, *excludeAlgebraicVariables, *numericalJacobian;
   };
 
   class DASPKIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
@@ -190,7 +189,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *formalism;
+      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *formalism, *excludeAlgebraicVariables, *numericalJacobian;
   };
 
   class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {

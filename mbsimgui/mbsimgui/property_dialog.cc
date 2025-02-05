@@ -36,7 +36,21 @@ namespace MBSimGUI {
 
   extern MainWindow *mw;
 
-  PropertyDialog::PropertyDialog(const QString& title) : QDialog(mw) {
+  BasicPropertyDialog::BasicPropertyDialog() : QDialog(mw) {
+    assert(mw);
+  }
+
+  void BasicPropertyDialog::showEvent(QShowEvent *event) {
+    mw->prepareForPropertyDialogOpen();
+    QDialog::showEvent(event);
+  }
+
+  void BasicPropertyDialog::hideEvent(QHideEvent *event) {
+    mw->prepareForPropertyDialogClose();
+    QDialog::hideEvent(event);
+  }
+
+  PropertyDialog::PropertyDialog(const QString& title) : BasicPropertyDialog() {
 
     auto *layout = new QGridLayout;
     setLayout(layout);
@@ -94,13 +108,13 @@ namespace MBSimGUI {
   void PropertyDialog::showEvent(QShowEvent *event) {
     QSettings settings;
     restoreGeometry(settings.value("propertydialog/geometry").toByteArray());
-    QDialog::showEvent(event);
+    BasicPropertyDialog::showEvent(event);
   }
 
   void PropertyDialog::hideEvent(QHideEvent *event) {
     QSettings settings;
     settings.setValue("propertydialog/geometry", saveGeometry());
-    QDialog::hideEvent(event);
+    BasicPropertyDialog::hideEvent(event);
   }
 
   void PropertyDialog::closeEvent(QCloseEvent *event) {

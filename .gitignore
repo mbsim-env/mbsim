@@ -73,6 +73,7 @@ mbsimgui/depcomp
 mbsimgui/install-sh
 mbsimgui/ltmain.sh
 mbsimgui/mbsimgui/Makefile.in
+mbsimgui/mbsimgui/evaluator/python/Makefile.in
 mbsimgui/missing
 mbsimgui/test-driver
 mbsimxml/INSTALL
