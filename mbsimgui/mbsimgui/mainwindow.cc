@@ -40,6 +40,7 @@
 #include "echo_view.h"
 #include "embed.h"
 #include "project.h"
+#include "parameter_property_dialog.h"
 #include "project_property_dialog.h"
 #include "xml_property_dialog.h"
 #include "clone_property_dialog.h"
