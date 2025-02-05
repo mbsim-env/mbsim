@@ -112,11 +112,9 @@ namespace MBSimGUI {
   }
 
   void EvalDialog::updateWidget() {
-    //mfmf
     auto *model = static_cast<ElementTreeModel*>(mw->getElementView()->model());
     auto *item = model->getItem(mw->getElementView()->currentIndex())->getItemData();
     auto *embeditem = dynamic_cast<EmbedItemData*>(item);
-    //mfmf
 
     vector<int> count;
     for(auto &[idx, sb] : levelWidget) {
@@ -134,8 +132,10 @@ namespace MBSimGUI {
     auto type=widget->getVarType();
 
     if(type==0) { // floating point value (scalar, vector or matrix)
-      if(floatTypeLayout)
+      if(floatTypeLayout) {
         vlayout->removeItem(floatTypeLayout);
+        delete floatTypeLayout;
+      }
       floatTypeLayout = new QHBoxLayout;
       vlayout->addLayout(floatTypeLayout, 1);
 
@@ -157,8 +157,10 @@ namespace MBSimGUI {
     }
 
     if(type==0 || var.size()>1 || (var.size()>0 && var[0].size()>1)) { // floating point value (scalar, vector or matrix)
-      if(tab)
+      if(tab) {
         vlayout->removeWidget(tab);
+        delete tab;
+      }
       tab = new QTableWidget;
       tab->setRowCount(varf.size());
       tab->setColumnCount(!varf.empty()?varf[0].size():0);
@@ -169,8 +171,10 @@ namespace MBSimGUI {
       vlayout->addWidget(tab,2);
     }
     else {
-      if(text)
+      if(text) {
         vlayout->removeWidget(text);
+        delete text;
+      }
       text = new QPlainTextEdit;
 
       if(mw->eval->getName()=="octave")
@@ -194,10 +198,8 @@ namespace MBSimGUI {
     {
       // clear levelLayout and levelWidget
       QLayoutItem *child;
-      while((child=levelLayout->takeAt(0))!=nullptr) {
-//mfmf        delete child->widget();
-//mfmf        delete child;
-      }
+      while((child=levelLayout->takeAt(0))!=nullptr)
+        delete child;
       levelWidget.clear();
 
       int col=0;
