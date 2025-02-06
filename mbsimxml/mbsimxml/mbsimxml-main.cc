@@ -339,6 +339,16 @@ int main(int argc, char *argv[]) {
         if(AUTORELOADTIME>0)
           dependencies = preprocess.getDependencies();
       }
+      catch(const MBSimError &ex) {
+        // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<ex.what()<<flush<<noskipws<<endl;
+        ret=1;
+      }
+      catch(const DOMEvalException &ex) {
+        // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
+        fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<ex.what()<<flush<<noskipws<<endl;
+        ret=1;
+      }
       catch(const exception &ex) {
         fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<endl;
         ret=1;
@@ -369,6 +379,16 @@ int main(int argc, char *argv[]) {
     }
   
     return ret;
+  }
+  catch(const MBSimError &e) {
+    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<e.what()<<flush<<noskipws<<endl;
+    return 1;
+  }
+  catch(const DOMEvalException &e) {
+    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<e.what()<<flush<<noskipws<<endl;
+    return 1;
   }
   catch(const exception &e) {
     fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;

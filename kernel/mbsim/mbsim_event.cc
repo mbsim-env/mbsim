@@ -41,7 +41,10 @@ namespace MBSim {
     string mbsimLoc;
     if(!path.empty())
       mbsimLoc="\n(At MBSim element "+path+")";
-    domEvalError.setMessage(mbsim_error_message+mbsimLoc);
+    auto msg=mbsim_error_message+mbsimLoc;
+    if(MBXMLUtils::DOMEvalException::isHTMLOutputEnabled())
+      MBXMLUtils::DOMEvalException::htmlEscaping(msg);
+    domEvalError.setMessage(msg);
     whatMsg=domEvalError.what();
     return whatMsg.c_str();
   }
