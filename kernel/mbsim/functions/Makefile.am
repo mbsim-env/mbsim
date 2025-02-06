@@ -50,6 +50,7 @@ functioninclude_HEADERS = function.h\
 			  two_dimensional_tabular_function.h\
 			  symbolic_function.h\
 			  piecewise_polynom_function.h\
+			  piecewise_polynom_function_impl.h\
 			  two_dimensional_piecewise_polynom_function.h\
 			  fourier_function.h\
 			  bidirectional_function.h\
