@@ -46,10 +46,10 @@ namespace MBSim {
       return;
     try { // catch exception -> C code must catch all exceptions
       Vec zd(*zSize, zd_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(Vec(*zSize, z_));
-      self->getSystem()->resetUpToDate();
-      zd = self->getSystem()->evalzd();
+      self->system->setTime(*t);
+      self->system->setState(Vec(*zSize, z_));
+      self->system->resetUpToDate();
+      zd = self->system->evalzd();
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -67,12 +67,12 @@ namespace MBSim {
       double tRoot = *t;
 
       // root-finding
-      if(self->getSystem()->getsvSize()) {
-        self->getSystem()->setTime(*t);
+      if(self->system->getsvSize()) {
+        self->system->setTime(*t);
         curTimeAndState = *t;
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-        self->getSystem()->resetUpToDate();
-        self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
+        self->system->setState(Vec(self->system->getzSize(),z));
+        self->system->resetUpToDate();
+        self->shift = self->signChangedWRTsvLast(self->system->evalsv());
         // if a root exists in the current step ...
         if(self->shift) {
           // ... search the first root and set step.second to this time
@@ -80,23 +80,23 @@ namespace MBSim {
           while(dt>self->dtRoot) {
             dt/=2;
             double tCheck = tRoot-dt;
-            self->getSystem()->setTime(tCheck);
+            self->system->setTime(tCheck);
             curTimeAndState = tCheck;
             for(int i=1; i<=*n; i++)
-              self->getSystem()->getState()(i-1) = CONTD8(&i,&tCheck,con,icomp,nd);
-            self->getSystem()->resetUpToDate();
-            if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
+              self->system->getState()(i-1) = CONTD8(&i,&tCheck,con,icomp,nd);
+            self->system->resetUpToDate();
+            if(self->signChangedWRTsvLast(self->system->evalsv()))
               tRoot = tCheck;
           }
           if(curTimeAndState != tRoot) {
             curTimeAndState = tRoot;
-            self->getSystem()->setTime(tRoot);
+            self->system->setTime(tRoot);
             for(int i=1; i<=*n; i++)
-              self->getSystem()->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
+              self->system->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
           }
-          self->getSystem()->resetUpToDate();
-          auto &sv = self->getSystem()->evalsv();
-          auto &jsv = self->getSystem()->getjsv();
+          self->system->resetUpToDate();
+          auto &sv = self->system->evalsv();
+          auto &jsv = self->system->getjsv();
           for(int i=0; i<sv.size(); ++i)
             jsv(i)=self->svLast(i)*sv(i)<0;
         }
@@ -105,16 +105,16 @@ namespace MBSim {
       while(tRoot >= self->tPlot) {
         if(curTimeAndState != self->tPlot) {
           curTimeAndState = self->tPlot;
-          self->getSystem()->setTime(self->tPlot);
+          self->system->setTime(self->tPlot);
           for(int i=1; i<=*n; i++)
-            self->getSystem()->getState()(i-1) = CONTD8(&i,&self->tPlot,con,icomp,nd);
+            self->system->getState()(i-1) = CONTD8(&i,&self->tPlot,con,icomp,nd);
         }
-        self->getSystem()->resetUpToDate();
-        self->getSystem()->plot();
+        self->system->resetUpToDate();
+        self->system->plot();
         if(self->msgAct(Status))
           self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
 
-        self->getSystem()->updateInternalState();
+        self->system->updateInternalState();
 
         double s1 = clock();
         self->time += (s1-self->s0)/CLOCKS_PER_SEC;
@@ -126,19 +126,19 @@ namespace MBSim {
       if(self->shift) {
         // shift the system
         if(curTimeAndState != tRoot) {
-          self->getSystem()->setTime(tRoot);
+          self->system->setTime(tRoot);
           for(int i=1; i<=*n; i++)
-            self->getSystem()->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
+            self->system->getState()(i-1) = CONTD8(&i,&tRoot,con,icomp,nd);
         }
         if(self->plotOnRoot) {
-          self->getSystem()->resetUpToDate();
-          self->getSystem()->plot();
+          self->system->resetUpToDate();
+          self->system->plot();
         }
-        self->getSystem()->resetUpToDate();
-        self->getSystem()->shift();
+        self->system->resetUpToDate();
+        self->system->shift();
         if(self->plotOnRoot) {
-          self->getSystem()->resetUpToDate();
-          self->getSystem()->plot();
+          self->system->resetUpToDate();
+          self->system->plot();
         }
         *irtrn = -1;
       }
@@ -146,28 +146,28 @@ namespace MBSim {
         // check drift
         bool projVel = true;
         if(self->getToleranceForPositionConstraints()>=0) {
-          self->getSystem()->setTime(*t);
-          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-          self->getSystem()->resetUpToDate();
-          if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
-            self->getSystem()->projectGeneralizedPositions(3);
-            self->getSystem()->projectGeneralizedVelocities(3);
+          self->system->setTime(*t);
+          self->system->setState(Vec(self->system->getzSize(),z));
+          self->system->resetUpToDate();
+          if(self->system->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+            self->system->projectGeneralizedPositions(3);
+            self->system->projectGeneralizedVelocities(3);
             projVel = false;
             *irtrn=-1;
           }
         }
         if(self->getToleranceForVelocityConstraints()>=0 and projVel) {
-          self->getSystem()->setTime(*t);
-          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),z));
-          self->getSystem()->resetUpToDate();
-          if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
-            self->getSystem()->projectGeneralizedVelocities(3);
+          self->system->setTime(*t);
+          self->system->setState(Vec(self->system->getzSize(),z));
+          self->system->resetUpToDate();
+          if(self->system->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+            self->system->projectGeneralizedVelocities(3);
             *irtrn=-1;
           }
         }
-        self->getSystem()->updateStopVectorParameters();
+        self->system->updateStopVectorParameters();
       }
-      self->getSystem()->updateInternalState();
+      self->system->updateInternalState();
     }
     catch(...) { // if a exception is thrown catch and store it in self and set the interrupt flag
       self->exception = current_exception();
