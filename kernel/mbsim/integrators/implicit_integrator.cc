@@ -37,56 +37,69 @@ namespace MBSim {
   void setZero(Mat &A, const RangeV &rows, const RangeV &cols) {
     for(int i=rows.start(); i<=rows.end(); i++) {
       for(int j=cols.start(); j<=cols.end(); j++)
-        A.e(i,j) = 0;
+        A(i,j) = 0;
     }
   }
 
+  double ImplicitIntegrator::delta(int i, double z) const {
+    return sqrt(macheps*max(1.e-5,abs(z)));
+  }
+
   void ImplicitIntegrator::par_ud_xd_par_q(Mat &J) {
+    const Vec &zd = system->getzd(false);
     for(int j=0; j<system->getqSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->updateud();
       system->updatexd();
-      for(int i=RuMove.start(),k=0; i<=RuMove.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=RxMove.start(),k=0; i<=RxMove.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
+      for(int i=system->getqSize(); i<system->getzSize(); i++)
+        J(i-qMove,j)=(zd(i)-zd0(i))/delt;
       system->getState()(j)=zSave;
     }
   }
 
   void ImplicitIntegrator::par_zd_par_q(Mat &J) {
+    const Vec &zd = system->getzd(false);
     for(int j=0; j<system->getqSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->updatezd();
-      for(int i=Rq.start(); i<=Rq.end(); i++)
-        J(i,j)=(system->getqd(false)(i)-qd0(i))/delta;
-      for(int i=Ru.start(),k=0; i<=Ru.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=Rx.start(),k=0; i<=Rx.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
+      for(int i=0; i<system->getzSize(); i++)
+        J(i,j)=(zd(i)-zd0(i))/delt;
       system->getState()(j)=zSave;
     }
   }
 
   void ImplicitIntegrator::par_ud_xd_par_u_x(Mat &J, bool updla) {
+    const Vec &zd = system->getzd(false);
     for(int j=system->getqSize(); j<system->getzSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(updla);
       system->updateud();
       system->updatexd();
-      for(int i=RuMove.start(),k=0; i<=RuMove.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=RxMove.start(),k=0; i<=RxMove.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
+      for(int i=system->getqSize(); i<system->getzSize(); i++)
+        J(i-qMove,j)=(zd(i)-zd0(i))/delt;
+      system->getState()(j)=zSave;
+    }
+  }
+
+  void ImplicitIntegrator::par_zd_par_z(Mat &J, bool updla) {
+    const Vec &zd = system->getzd(false);
+    for(int j=0; j<system->getzSize(); j++) {
+      double zSave=system->getState()(j);
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
+      system->resetUpToDate();
+      system->updatezd();
+      for(int i=qMove; i<neq; i++)
+        J(i-qMove,j)=(zd(i)-zd0(i))/delt;
       system->getState()(j)=zSave;
     }
   }
@@ -97,17 +110,14 @@ namespace MBSim {
 
   void ImplicitIntegrator::init() {
     calcSize();
-    rowMove = reduced ? system->getqSize() : 0;
+    qMove = reduced ? system->getqSize() : 0;
     Rq = RangeV(0,system->getqSize()-1);
     Ru = RangeV(system->getqSize(),system->getqSize()+system->getuSize()-1);
     Rx = RangeV(system->getqSize()+system->getuSize(),system->getzSize()-1);
     Rz = RangeV(0,system->getzSize()-1);
-    RuMove = RangeV(Ru.start()-rowMove, Ru.end()-rowMove);
-    RxMove = RangeV(Rx.start()-rowMove, Rx.end()-rowMove);
-    res0.resize(neq,NONINIT);
-    qd0.ref(res0,Rq);
-    ud0.ref(res0,Ru);
-    xd0.ref(res0,Rx);
+    RuMove = RangeV(Ru.start()-qMove, Ru.end()-qMove);
+    RxMove = RangeV(Rx.start()-qMove, Rx.end()-qMove);
+    zd0.resize(system->getzSize(),NONINIT);
   }
 
 }

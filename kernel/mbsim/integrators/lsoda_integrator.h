@@ -40,7 +40,7 @@ namespace MBSim {
   class LSODAIntegrator : public ImplicitIntegrator {
 
     private:
-
+      double delta(int i, double z) const override;
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
       static void jac(int *neq, double* t, double* z_, int* ml, int* mu, double* J_, int* nrowp);
 
@@ -56,6 +56,10 @@ namespace MBSim {
       double dt0{0};
       /**  maximum number of steps allowed during one call to the solver. */
       int maxSteps{std::numeric_limits<int>::max()};
+
+      fmatvec::Vec rWork;
+      int lewt;
+      double r0;
 
       std::exception_ptr exception;
 

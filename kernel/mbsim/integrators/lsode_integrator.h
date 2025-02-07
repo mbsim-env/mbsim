@@ -47,7 +47,7 @@ namespace MBSim {
       };
 
     private:
-
+      double delta(int i, double z) const override;
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
       static void jac(int *neq, double* t, double* z_, int* ml, int* mu, double* J_, int* nrowp);
 
@@ -66,10 +66,13 @@ namespace MBSim {
       /** use stiff (BDF) or nonstiff (Adams) method */
       Method method{nonstiff};
 
+      fmatvec::Vec rWork;
+      int lewt;
+      double r0;
+
       std::exception_ptr exception;
 
     public:
-
       void setMaximumStepSize(double dtMax_) { dtMax = dtMax_; }
       void setMinimumStepSize(double dtMin_) { dtMin = dtMin_; }
       void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol <<= aTol_; }

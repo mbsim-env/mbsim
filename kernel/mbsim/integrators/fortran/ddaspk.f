@@ -4504,6 +4504,9 @@ C     Skip the next lines as all entries of the jacobian
 C     are computed by function jac in daspk_integrator.cc
 C      DO 110 I=1,LENPD
 C110      WM(I)=0.0D0
+C     Save all variables that are needed for computation of delta
+C     in daspk_integrator.cc to workspace
+      WM(1) = H;
       CALL JACD(X,Y,YPRIME,WM,CJ,RPAR,IPAR)
       GO TO 230
 C

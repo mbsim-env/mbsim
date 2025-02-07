@@ -36,198 +36,189 @@ namespace MBSim {
 
   // DAE1
   void DAEIntegrator::par_ud_xd_gdd_par_q_u(Mat &J, const Vec &ud_) {
+    const Vec &zd = system->getzd(false);
     const Vec &ud = ud_()?ud_:system->getud(false);
     for(int j=0; j<system->getqSize()+system->getuSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updateud();
       system->updatexd();
       const Vec &gdd1 = system->evalW().T()*ud + system->evalwb();
-      for(int i=RuMove.start(),k=0; i<=RuMove.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=RxMove.start(),k=0; i<=RxMove.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      for(int i=RlaMove.start(),k=0; i<=RlaMove.end(); i++,k++)
-        J(i,j)=(gdd1(k)-gd0(k))/delta; // we use gd0 for gdd0 here
+      for(int i=system->getqSize(); i<system->getzSize(); i++)
+        J(i-qMove,j)=(zd(i)-zd0(i))/delt;
+      for(int i=0; i<system->getgdSize(); i++)
+        J(i+laInd,j)=(gdd1(i)-gd0(i))/delt; // we use gd0 for gdd0 here
       system->getState()(j)=zSave;
     }
   }
 
   // DAE1
   void DAEIntegrator::par_zd_gdd_par_q_u(Mat &J, const Vec &ud_) {
+    const Vec &zd = system->getzd(false);
     const Vec &ud = ud_()?ud_:system->getud(false);
     for(int j=0; j<system->getqSize()+system->getuSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updatezd();
       const Vec &gdd1 = system->evalW().T()*ud + system->evalwb();
-      for(int i=Rq.start(); i<=Rq.end(); i++)
-        J(i,j)=(system->getqd(false)(i)-qd0(i))/delta;
-      for(int i=Ru.start(),k=0; i<=Ru.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=Rx.start(),k=0; i<=Rx.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      for(int i=Rla.start(),k=0; i<=Rla.end(); i++,k++)
-        J(i,j)=(gdd1(k)-gd0(k))/delta; // we use gd0 for gdd0 here
+      for(int i=0; i<system->getzSize(); i++)
+        J(i,j)=(zd(i)-zd0(i))/delt;
+      for(int i=0; i<system->getgdSize(); i++)
+        J(i+laInd,j)=(gdd1(i)-gd0(i))/delt; // we use gd0 for gdd0 here
       system->getState()(j)=zSave;
     }
   }
 
   // DAE1
   void DAEIntegrator::par_ud_xd_par_x(Mat &J) {
+    const Vec &zd = system->getzd(false);
     for(int j=system->getqSize()+system->getuSize(); j<system->getzSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updateud();
       system->updatexd();
-      for(int i=RuMove.start(),k=0; i<=RuMove.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=RxMove.start(),k=0; i<=RxMove.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
+      for(int i=system->getqSize(); i<system->getzSize(); i++)
+        J(i-qMove,j)=(zd(i)-zd0(i))/delt;
       system->getState()(j)=zSave;
     }
   }
 
   // DAE2
   void DAEIntegrator::par_ud_xd_gd_par_q(Mat &J) {
+    const Vec &zd = system->getzd(false);
+    const Vec &gd = system->getgd(false);
     for(int j=0; j<system->getqSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updateud();
       system->updatexd();
       system->updategd();
-      for(int i=RuMove.start(),k=0; i<=RuMove.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=RxMove.start(),k=0; i<=RxMove.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      for(int i=RlaMove.start(),k=0; i<=RlaMove.end(); i++,k++)
-        J(i,j)=(system->getgd(false)(k)-gd0(k))/delta;
+      for(int i=system->getqSize(); i<system->getzSize(); i++)
+        J(i-qMove,j)=(zd(i)-zd0(i))/delt;
+      for(int i=0; i<system->getgdSize(); i++)
+        J(i+laInd,j)=(gd(i)-gd0(i))/delt;
       system->getState()(j)=zSave;
     }
   }
 
   // DAE2
   void DAEIntegrator::par_zd_gd_par_q(Mat &J) {
+    const Vec &zd = system->getzd(false);
+    const Vec &gd = system->getgd(false);
     for(int j=0; j<system->getqSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updatezd();
       system->updategd();
-      for(int i=Rq.start(); i<=Rq.end(); i++)
-        J(i,j)=(system->getqd(false)(i)-qd0(i))/delta;
-      for(int i=Ru.start(),k=0; i<=Ru.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=Rx.start(),k=0; i<=Rx.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      for(int i=Rla.start(),k=0; i<=Rla.end(); i++,k++)
-        J(i,j)=(system->getgd(false)(k)-gd0(k))/delta;
+      for(int i=0; i<system->getzSize(); i++)
+        J(i,j)=(zd(i)-zd0(i))/delt;
+      for(int i=0; i<system->getgdSize(); i++)
+        J(i+laInd,j)=(gd(i)-gd0(i))/delt;
       system->getState()(j)=zSave;
     }
   }
 
   // DAE3
   void DAEIntegrator::par_ud_xd_g_par_q(Mat &J) {
+    const Vec &zd = system->getzd(false);
+    const Vec &g = system->getg(false);
     for(int j=0; j<system->getqSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updateud();
       system->updatexd();
       system->updateg();
-      for(int i=RuMove.start(),k=0; i<=RuMove.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=RxMove.start(),k=0; i<=RxMove.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      for(int i=RlaMove.start(),k=0; i<=RlaMove.end(); i++,k++)
-        J(i,j)=(system->getg(false)(k)-gd0(k))/delta;
+      for(int i=system->getqSize(); i<system->getzSize(); i++)
+        J(i-qMove,j)=(zd(i)-zd0(i))/delt;
+      for(int i=0; i<system->getgSize(); i++)
+        J(i+laInd,j)=(g(i)-gd0(i))/delt; // we use gd0 for g0 here
       system->getState()(j)=zSave;
     }
   }
 
   // DAE3
   void DAEIntegrator::par_zd_g_par_q(Mat &J) {
+    const Vec &zd = system->getzd(false);
+    const Vec &g = system->getg(false);
     for(int j=0; j<system->getqSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updatezd();
       system->updateg();
-      for(int i=Rq.start(); i<=Rq.end(); i++)
-        J(i,j)=(system->getqd(false)(i)-qd0(i))/delta;
-      for(int i=Ru.start(),k=0; i<=Ru.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=Rx.start(),k=0; i<=Rx.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      for(int i=Rla.start(),k=0; i<=Rla.end(); i++,k++)
-        J(i,j)=(system->getg(false)(k)-gd0(k))/delta; // we use gd0 for g0 here
+      for(int i=0; i<system->getzSize(); i++)
+        J(i,j)=(zd(i)-zd0(i))/delt;
+      for(int i=0; i<system->getgSize(); i++)
+        J(i+laInd,j)=(g(i)-gd0(i))/delt; // we use gd0 for g0 here
       system->getState()(j)=zSave;
     }
   }
 
   // GGL
   void DAEIntegrator::par_ud_xd_gd_g_par_q(Mat &J) {
+    const Vec &zd = system->getzd(false);
+    const Vec &gd = system->getgd(false);
+    const Vec &g = system->getg(false);
     for(int j=0; j<system->getqSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updateud();
       system->updatexd();
       system->updategd();
       system->updateg();
-      for(int i=Ru.start(),k=0; i<=Ru.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=Rx.start(),k=0; i<=Rx.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      for(int i=Rla.start(),k=0; i<=Rla.end(); i++,k++)
-        J(i,j)=(system->getgd(false)(k)-gd0(k))/delta;
-      for(int i=Rl.start(),k=0; i<=Rl.end(); i++,k++)
-        J(i,j)=(system->getg(false)(k)-g0(k))/delta;
+      for(int i=system->getqSize(); i<system->getzSize(); i++)
+        J(i,j)=(zd(i)-zd0(i))/delt;
+      for(int i=0; i<system->getgdSize(); i++)
+        J(i+laInd,j)=(gd(i)-gd0(i))/delt;
+      for(int i=0; i<system->getgSize(); i++)
+        J(i+lInd,j)=(g(i)-g0(i))/delt;
       system->getState()(j)=zSave;
     }
   }
 
   // GGL
   void DAEIntegrator::par_zd_gd_g_par_q(Mat &J) {
+    const Vec &zd = system->getzd(false);
+    const Vec &gd = system->getgd(false);
+    const Vec &g = system->getg(false);
     for(int j=0; j<system->getqSize(); j++) {
       double zSave=system->getState()(j);
-      double delta=sqrt(macheps*max(1.e-5,abs(zSave)));
-      system->getState()(j)=zSave+delta;
+      double delt=delta(j,zSave);
+      system->getState()(j)=zSave+delt;
       system->resetUpToDate();
       system->setUpdatela(false);
       system->updatezd();
       system->updategd();
       system->updateg();
-      for(int i=Rq.start(); i<=Rq.end(); i++)
-        J(i,j)=(system->getqd(false)(i)-qd0(i))/delta;
-      for(int i=Ru.start(),k=0; i<=Ru.end(); i++,k++)
-        J(i,j)=(system->getud(false)(k)-ud0(k))/delta;
-      for(int i=Rx.start(),k=0; i<=Rx.end(); i++,k++)
-        J(i,j)=(system->getxd(false)(k)-xd0(k))/delta;
-      for(int i=Rla.start(),k=0; i<=Rla.end(); i++,k++)
-        J(i,j)=(system->getgd(false)(k)-gd0(k))/delta;
-      for(int i=Rl.start(),k=0; i<=Rl.end(); i++,k++)
-        J(i,j)=(system->getg(false)(k)-g0(k))/delta;
+      for(int i=0; i<system->getzSize(); i++)
+        J(i,j)=(zd(i)-zd0(i))/delt;
+      for(int i=0; i<system->getgdSize(); i++)
+        J(i+laInd,j)=(gd(i)-gd0(i))/delt;
+      for(int i=0; i<system->getgSize(); i++)
+        J(i+lInd,j)=(g(i)-g0(i))/delt;
       system->getState()(j)=zSave;
     }
   }
@@ -245,18 +236,14 @@ namespace MBSim {
 
   void DAEIntegrator::reinit() {
     calcSize();
-    res0.resize(neq,NONINIT);
-    qd0.ref(res0,Rq);
-    ud0.ref(res0,Ru);
-    xd0.ref(res0,Rx);
     if(formalism>0) {
+      laInd = system->getzSize()-qMove;
       Rla = RangeV(system->getzSize(), system->getzSize()+system->getlaSize()-1);
-      RlaMove = RangeV(Rla.start()-rowMove, Rla.end()-rowMove);
-      gd0.ref(res0,Rla);
-    }
-    if(formalism==GGL) {
-      Rl = RangeV(system->getzSize()+system->getlaSize(), neq-1);
-      g0.ref(res0,Rl);
+      RlaMove = RangeV(Rla.start()-qMove, Rla.end()-qMove);
+      if(formalism==GGL) {
+        lInd = laInd+system->getlaSize();
+        Rl = RangeV(system->getzSize()+system->getlaSize(), neq-1);
+      }
     }
   }
 

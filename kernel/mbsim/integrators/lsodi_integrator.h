@@ -39,6 +39,7 @@ namespace MBSim {
   class LSODIIntegrator : public DAEIntegrator {
 
     private:
+      double delta(int i, double z) const override;
       typedef void (*Res)(int* neq, double* t, double* y_, double* yd_, double* res_, int* ires);
       typedef void (*Jac)(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
       static Res res[5];
@@ -50,6 +51,8 @@ namespace MBSim {
       static void jacODE(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
       static void jacDAE2(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
       static void jacGGL(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
+
+      void reinit() override;
 
       /** maximal step size */
       double dtMax{0};
@@ -66,7 +69,9 @@ namespace MBSim {
       /** exclude algebraic variables from error test **/
       bool excludeAlgebraicVariables{true};
 
-      fmatvec::VecV zeros;
+      fmatvec::VecInt neq_;
+      fmatvec::Vec rWork;
+      int lewt;
 
       std::exception_ptr exception;
 

@@ -34,9 +34,10 @@ namespace MBSim {
   class DASPKIntegrator : public DAEIntegrator {
 
     private:
+      double delta(int i, double z) const override;
       typedef void (*Delta)(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       typedef void (*Jac)(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
-      static Delta delta[5];
+      static Delta delt[5];
       static Jac jac[5];
       static void deltaODE(double* t, double* z_, double* zd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
       static void deltaDAE1(double* t, double* y_, double* yd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar);
@@ -46,6 +47,8 @@ namespace MBSim {
       static void jacDAE1(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
       static void jacDAE2(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
       static void jacGGL(double* t, double* y_, double* yd_, double* J_, double* cj, double* rpar, int* ipar);
+
+      void reinit() override;
 
       /** maximal step size */
       double dtMax{0};
@@ -58,7 +61,11 @@ namespace MBSim {
       /** exclude algebraic variables from error test **/
       bool excludeAlgebraicVariables{true};
 
-      fmatvec::VecV zeros;
+      fmatvec::VecInt info, iPar, iWork;
+      fmatvec::Vec work;
+      double h;
+      int lphi, lewt;
+      double *yd;
 
       std::exception_ptr exception;
 

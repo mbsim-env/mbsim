@@ -40,8 +40,15 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, DASPKIntegrator)
 
-  DASPKIntegrator::Delta DASPKIntegrator::delta[5];
+  DASPKIntegrator::Delta DASPKIntegrator::delt[5];
   DASPKIntegrator::Jac DASPKIntegrator::jac[5];
+
+  // This code is taken from ddaspk.f
+  double DASPKIntegrator::delta(int i, double z) const {
+    double delt = epsroot*max(max(abs(z),abs(h*yd[i])),abs(1.0/work(lewt+i)));
+    delt = h*yd[i]>0?delt:-delt;
+    return (z+delt)-z;
+  }
 
   void DASPKIntegrator::deltaODE(double* t, double* z_, double* zd_, double* cj, double* delta_, int *ires, double* rpar, int* ipar) {
     auto self=*reinterpret_cast<DASPKIntegrator**>(&ipar[1]);
@@ -50,8 +57,8 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Vec zd(ipar[0], zd_);
       Vec delta(ipar[0], delta_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
+      self->system->setTime(*t);
+      self->system->resetUpToDate();
       delta = self->system->evalzd() - zd;
     }
     catch(...) { // if a exception is thrown catch and store it in self
@@ -67,9 +74,9 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Vec yd(ipar[0], yd_);
       Vec delta(ipar[0], delta_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setUpdatela(false);
+      self->system->setTime(*t);
+      self->system->resetUpToDate();
+      self->system->setUpdatela(false);
       delta.set(self->Rz, self->system->evalzd() - yd(self->Rz));
       delta.set(self->Rla, self->system->evalW().T()*yd(self->Ru) + self->system->evalwb());
     }
@@ -86,9 +93,9 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Vec yd(ipar[0], yd_);
       Vec delta(ipar[0], delta_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setUpdatela(false);
+      self->system->setTime(*t);
+      self->system->resetUpToDate();
+      self->system->setUpdatela(false);
       delta.set(self->Rz, self->system->evalzd() - yd(self->Rz));
       delta.set(self->Rla, self->system->evalgd());
     }
@@ -106,9 +113,9 @@ namespace MBSim {
       Vec y(ipar[0], y_);
       Vec yd(ipar[0], yd_);
       Vec delta(ipar[0], delta_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setUpdatela(false);
+      self->system->setTime(*t);
+      self->system->resetUpToDate();
+      self->system->setUpdatela(false);
       delta.set(self->Rz, self->system->evalzd() - yd(self->Rz));
       delta.set(self->Rla, self->system->evalgd());
       delta.set(self->Rl, self->system->evalg());
@@ -136,11 +143,12 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Mat J(ipar[0], ipar[0], J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      self->res0 = self->system->evalzd();
+      self->h = J_[0]; // current step size
+      self->yd = zd_; // current derivatives of the solution components
+
+      self->system->setTime(*t);
+      self->zd0 = self->system->getzd();
+      const auto &T = self->system->evalT();
 
       if(self->system->getqdequ()) {
         setZero(J,self->Rq,self->Rq); // par_qd_par_q
@@ -148,7 +156,7 @@ namespace MBSim {
       }
       else
         self->par_zd_par_q(J);
-      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      J.set(self->Rq, self->Ru, T); // par_qd_par_u
       setZero(J,self->Rq,self->Rx); // par_qd_par_x
 
       self->par_ud_xd_par_u_x(J,true);
@@ -168,13 +176,16 @@ namespace MBSim {
       Vec yd(ipar[0], yd_); // fmatvec variant of y_
       Mat J(ipar[0], ipar[0], J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setUpdatela(false);
-      self->res0.set(self->Rz, self->system->evalzd());
-      self->res0.set(self->Rla, self->system->evalW().T()*yd(self->Ru) + self->system->evalwb());
+      self->h = J_[0]; // current step size
+      self->yd = yd_; // current derivatives of the solution components
+
+      self->system->setTime(*t);
+      self->zd0 = self->system->getzd();
+      self->gd0 = self->system->getW().T()*yd(self->Ru) + self->system->getwb(); // we use gd0 for gdd0 here
+      const auto &T = self->system->evalT();
+      const auto &Jrla = self->system->evalJrla();
+      const auto &LLM = self->system->getLLM();
+      const auto &W = self->system->getW();
 
       if(self->system->getqdequ()) {
         setZero(J,self->Rq,self->Rq); // par_qd_par_q
@@ -182,18 +193,18 @@ namespace MBSim {
       }
       else
         self->par_zd_gdd_par_q_u(J,yd(self->Ru));
-      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      J.set(self->Rq, self->Ru, T); // par_qd_par_u
       setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
 
       self->par_ud_xd_par_x(J);
       setZero(J,self->Rx,self->Rla); // par_xd_par_la
       setZero(J,self->Rla,self->Rx); // par_gdd_par_x
 
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      Mat Minv_Jrla = slvLLFac(LLM, Jrla);
       J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
       for(int i=0; i<self->system->getzSize(); i++)
         J(i,i) -= *cj;
-      J.add(self->Rla, self->Ru, *cj*self->system->evalW().T());
+      J.add(self->Rla, self->Ru, *cj*W.T());
       setZero(J,self->Rla,self->Rla); // par_gdd_par_la
     }
     catch(...) { // if a exception is thrown catch and store it in self
@@ -209,13 +220,16 @@ namespace MBSim {
       Vec yd(ipar[0], yd_); // fmatvec variant of yd_
       Mat J(ipar[0], ipar[0], J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setUpdatela(false);
-      self->res0.set(self->Rz, self->system->evalzd());
-      self->res0.set(self->Rla, self->system->evalgd());
+      self->h = J_[0]; // current step size
+      self->yd = yd_; // current derivatives of the solution components
+
+      self->system->setTime(*t);
+      self->zd0 = self->system->getzd();
+      self->gd0 = self->system->getgd();
+      const auto &T = self->system->evalT();
+      const auto &Jrla = self->system->evalJrla();
+      const auto &LLM = self->system->getLLM();
+      const auto &W = self->system->getW();
 
       if(self->system->getqdequ()) {
         setZero(J,self->Rq,self->Rq); // par_qd_par_q
@@ -223,14 +237,14 @@ namespace MBSim {
       }
       else
         self->par_zd_gd_par_q(J);
-      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      J.set(self->Rq, self->Ru, T); // par_qd_par_u
       setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
       self->par_ud_xd_par_u_x(J,false);
       setZero(J,self->Rx,self->Rla); // par_xd_par_la
-      J.set(self->Rla, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      J.set(self->Rla, self->Ru, W.T()); // par_gd_par_u
       setZero(J,self->Rla,RangeV(self->Rx.start(),self->Rla.end())); // par_gd_par_x_la
 
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      Mat Minv_Jrla = slvLLFac(LLM, Jrla);
       J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
       for(int i=0; i<self->system->getzSize(); i++)
         J(i,i) -= *cj;
@@ -248,24 +262,27 @@ namespace MBSim {
       Vec y(ipar[0], y_); // fmatvec variant of y_
       Mat J(ipar[0], ipar[0], J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setUpdatela(false);
-      self->res0.set(self->Rz, self->system->evalzd());
-      self->res0.set(self->Rla, self->system->evalgd());
-      self->res0.set(self->Rl, self->system->evalg());
+      self->h = J_[0]; // current step size
+      self->yd = yd_; // current derivatives of the solution components
+
+      self->system->setTime(*t);
+      self->zd0 = self->system->getzd();
+      self->gd0 = self->system->getgd();
+      self->g0 = self->system->getg();
+      const auto &T = self->system->evalT();
+      const auto &Jrla = self->system->evalJrla();
+      const auto &LLM = self->system->getLLM();
+      const auto &W = self->system->evalW();
       if(self->system->getgSize() != self->system->getgdSize()) {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
         self->system->setUpdateW(false);
-        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+        self->zd0.add(self->Rq, self->system->evalW()*y(self->Rl));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
       }
       else
-        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+        self->zd0.add(self->Rq, W*y(self->Rl));
 
       if(self->reduced)
         self->par_ud_xd_gd_g_par_q(J);
@@ -276,29 +293,29 @@ namespace MBSim {
         }
         else
           self->par_zd_gd_g_par_q(J);
-        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        J.set(self->Rq, self->Ru, T); // par_qd_par_u
         setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
         if(self->system->getgSize() != self->system->getgdSize()) {
           self->system->calclaSize(5);
           self->system->updateWRef(self->system->getWParent(0));
           self->system->setUpdateW(false);
-          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
+          J.set(self->Rq, self->Rl, W); // par_qd_par_l
           self->system->calclaSize(3);
           self->system->updateWRef(self->system->getWParent(0));
         }
         else
-          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
+          J.set(self->Rq, self->Rl, W); // par_qd_par_l
       }
       self->par_ud_xd_par_u_x(J,false);
       setZero(J,self->Ru,self->Rl); // par_ud_par_l
       setZero(J,self->Rx,RangeV(self->Rla.start(),self->Rl.end())); // par_xd_par_la_l
-      J.set(self->Rla, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      J.set(self->Rla, self->Ru, W.T()); // par_gd_par_u
       setZero(J,self->Rla,RangeV(self->Rx.start(),self->Rl.end())); // par_gd_par_x_la_l
       setZero(J,self->Rl,RangeV(self->Ru.start(),self->Rl.end())); // par_g_par_u_x_la_l
       for(int i=0; i<self->system->getzSize(); i++)
         J(i,i) -= *cj;
 
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      Mat Minv_Jrla = slvLLFac(LLM, Jrla);
       J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
     }
     catch(...) { // if a exception is thrown catch and store it in self
@@ -310,11 +327,11 @@ namespace MBSim {
     if(formalism==unknown)
       throwError("(DASPKIntegrator::integrate): formalism unknown");
 
-    delta[0] = &DASPKIntegrator::deltaODE;
-    delta[1] = &DASPKIntegrator::deltaDAE1;
-    delta[2] = &DASPKIntegrator::deltaDAE2;
-    delta[3] = nullptr; // not available
-    delta[4] = &DASPKIntegrator::deltaGGL;
+    delt[0] = &DASPKIntegrator::deltaODE;
+    delt[1] = &DASPKIntegrator::deltaDAE1;
+    delt[2] = &DASPKIntegrator::deltaDAE2;
+    delt[3] = nullptr; // not available
+    delt[4] = &DASPKIntegrator::deltaGGL;
     jac[0] = &DASPKIntegrator::jacODE;
     jac[1] = &DASPKIntegrator::jacDAE1;
     jac[2] = &DASPKIntegrator::jacDAE2;
@@ -355,7 +372,7 @@ namespace MBSim {
     if(rTol.size() == 0)
       rTol.resize(1,INIT,1e-6);
 
-    VecInt info(20);
+    info.resize(20);
 
     // info(0) = 0; first call
 
@@ -389,14 +406,14 @@ namespace MBSim {
     exception=nullptr;
 
     double rPar[1]; // not used
-    int iPar[1+sizeof(void*)/sizeof(int)+1];
+    iPar.resize(1+sizeof(void*)/sizeof(int)+1);
     DASPKIntegrator *self=this;
-    memcpy(&iPar[1], &self, sizeof(void*));
+    memcpy(&iPar(1), &self, sizeof(void*));
 
     int lWork = 50+9*neq+neq*neq+neq;
     int liWork = 40+neq+neq;
-    VecInt iWork(liWork);
-    Vec work(lWork);
+    iWork.resize(liWork);
+    work.resize(lWork);
 
     int idid;
 
@@ -415,24 +432,18 @@ namespace MBSim {
     yd.set(RangeV(0,system->getzSize()-1), system->evalzd());
     svLast <<= system->evalsv();
 
-    reinit();
-
-    iPar[0] = neq;
     work(1) = dtMax; // maximum stepsize
-    work(2) = dt0; // initial stepsize
     if(info(15)) {
       for(int i=0; i<system->getzSize(); i++)
         iWork(40+i) = 1; // differential variable
-      for(int i=system->getzSize(); i<neq; i++)
-        iWork(40+i) = -1; // algebraic variable
     }
+    reinit();
 
     double s0 = clock();
     double time = 0;
-    int lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
 
     while(t<tEnd-epsroot) {
-      DDASPK(*delta[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,rPar,iPar,jac[formalism],nullptr);
+      DDASPK(*delt[formalism],&neq,&t,system->getState()(),yd(),&tEnd,info(),rTol(),aTol(),&idid,work(),&lWork,iWork(),&liWork,rPar,iPar(),jac[formalism],nullptr);
       if(exception)
         rethrow_exception(exception);
       if(idid==1) {
@@ -440,11 +451,11 @@ namespace MBSim {
         double tRoot = t;
 
         // root-finding
-        if(getSystem()->getsvSize()) {
-          getSystem()->setTime(t);
+        if(system->getsvSize()) {
+          system->setTime(t);
           curTimeAndState = t;
-          getSystem()->resetUpToDate();
-          shift = signChangedWRTsvLast(getSystem()->evalsv());
+          system->resetUpToDate();
+          shift = signChangedWRTsvLast(system->evalsv());
           // if a root exists in the current step ...
           double dt = work(6);
           if(shift) {
@@ -454,19 +465,19 @@ namespace MBSim {
               double tCheck = tRoot-dt;
               curTimeAndState = tCheck;
               DDATRP(&t, &tCheck, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
-              getSystem()->setTime(tCheck);
-              getSystem()->resetUpToDate();
-              if(signChangedWRTsvLast(getSystem()->evalsv()))
+              system->setTime(tCheck);
+              system->resetUpToDate();
+              if(signChangedWRTsvLast(system->evalsv()))
                 tRoot = tCheck;
             }
             if(curTimeAndState != tRoot) {
               curTimeAndState = tRoot;
               DDATRP(&t, &tRoot, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
-              getSystem()->setTime(tRoot);
+              system->setTime(tRoot);
             }
-            getSystem()->resetUpToDate();
-            auto &sv = getSystem()->evalsv();
-            auto &jsv = getSystem()->getjsv();
+            system->resetUpToDate();
+            auto &sv = system->evalsv();
+            auto &jsv = system->getjsv();
             for(int i=0; i<sv.size(); ++i)
               jsv(i)=svLast(i)*sv(i)<0;
           }
@@ -475,17 +486,17 @@ namespace MBSim {
           if(curTimeAndState != tPlot) {
             curTimeAndState = tPlot;
             DDATRP(&t, &tPlot, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
-            getSystem()->setTime(tPlot);
+            system->setTime(tPlot);
           }
-          getSystem()->resetUpToDate();
+          system->resetUpToDate();
           system->setzd(yd(RangeV(0,system->getzSize()-1)));
           system->setUpdatezd(false);
           if(formalism) system->setUpdatela(false);
-          getSystem()->plot();
+          system->plot();
           if(msgAct(Status))
             msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< work(6) << flush;
 
-          getSystem()->updateInternalState();
+          system->updateInternalState();
 
           double s1 = clock();
           time += (s1-s0)/CLOCKS_PER_SEC;
@@ -498,7 +509,7 @@ namespace MBSim {
           // shift the system
           if(curTimeAndState != tRoot) {
             DDATRP(&t, &tRoot, system->getState()(), yd(), &neq, &iWork(7), &work(lphi), &work(38));
-            getSystem()->setTime(tRoot);
+            system->setTime(tRoot);
           }
           if(plotOnRoot) {
             system->resetUpToDate();
@@ -508,8 +519,8 @@ namespace MBSim {
             system->plot();
 //            system->plotAtSpecialEvent();
           }
-          getSystem()->resetUpToDate();
-          getSystem()->shift();
+          system->resetUpToDate();
+          system->shift();
           if(formalism>1) { // DAE2 or GGL
             system->calcgdSize(3); // IH
             system->updategdRef(system->getgdParent());
@@ -519,8 +530,8 @@ namespace MBSim {
             }
           }
           if(plotOnRoot) {
-            getSystem()->resetUpToDate();
-            getSystem()->plot();
+            system->resetUpToDate();
+            system->plot();
           }
           info(0) = 0;
         }
@@ -528,24 +539,24 @@ namespace MBSim {
           // check drift
           bool projVel = true;
           if(gMax>=0) {
-            getSystem()->setTime(t);
-            getSystem()->resetUpToDate();
-            if(getSystem()->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
-              getSystem()->projectGeneralizedPositions(3);
-              getSystem()->projectGeneralizedVelocities(3);
+            system->setTime(t);
+            system->resetUpToDate();
+            if(system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+              system->projectGeneralizedPositions(3);
+              system->projectGeneralizedVelocities(3);
               projVel = false;
               info(0) = 0;
             }
           }
           if(gdMax>=0 and projVel) {
-            getSystem()->setTime(t);
-            getSystem()->resetUpToDate();
-            if(getSystem()->velocityDriftCompensationNeeded(gdMax)) { // project velicities
-              getSystem()->projectGeneralizedVelocities(3);
+            system->setTime(t);
+            system->resetUpToDate();
+            if(system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+              system->projectGeneralizedVelocities(3);
               info(0) = 0;
             }
           }
-          getSystem()->updateStopVectorParameters();
+          system->updateStopVectorParameters();
         }
         if(info(0)==0) {
           t = system->getTime();
@@ -554,16 +565,9 @@ namespace MBSim {
           if(shift) {
             svLast = system->evalsv();
             reinit();
-            lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
-            iPar[0] = neq;
-            work(2) = dt0;
-            if(info(15)) {
-              for(int i=system->getzSize(); i<neq; i++)
-                iWork(40+i) = -1; // algebraic variable
-            }
           }
         }
-        getSystem()->updateInternalState();
+        system->updateInternalState();
       }
       else if(idid<0) throwError("Integrator DASPK failed with istate = "+to_string(idid));
     }
@@ -575,6 +579,23 @@ namespace MBSim {
     msg(Info)<<"nrStepsRejected: "<<iWork(13)<<endl;
     msg(Info)<<"nrNonlinConvFailures: "<<iWork(14)<<endl;
     msg(Info)<<"nrLinConvFailures: "<<iWork(15)<<endl;
+  }
+
+  void DASPKIntegrator::reinit() {
+    DAEIntegrator::reinit();
+
+    lphi = excludeAlgebraicVariables?50+4*neq:50+3*neq;
+    iPar(0) = neq;
+    work(2) = dt0;
+    if(info(15)) {
+      for(int i=system->getzSize(); i<neq; i++)
+        iWork(40+i) = -1; // algebraic variable
+    }
+    lewt = 50+2*neq;
+
+    gd0.resize(system->getgdSize(),NONINIT);
+    if(formalism==GGL)
+      g0.resize(system->getgSize(),NONINIT);
   }
 
   void DASPKIntegrator::initializeUsingXML(DOMElement *element) {

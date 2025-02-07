@@ -34,9 +34,11 @@ namespace MBSim {
   class ImplicitIntegrator : public RootFindingIntegrator {
 
     protected:
+      virtual double delta(int i, double z) const;
       void par_ud_xd_par_q(fmatvec::Mat &J);
       void par_zd_par_q(fmatvec::Mat &J);
       void par_ud_xd_par_u_x(fmatvec::Mat &J, bool updla);
+      void par_zd_par_z(fmatvec::Mat &J, bool updla);
 
       virtual void calcSize();
       void init();
@@ -46,12 +48,10 @@ namespace MBSim {
       /** numerical jacobian */
       bool numericalJacobian{false};
 
-      int neq;
-
-      fmatvec::Vec res0, qd0, ud0, xd0; // residual work arrays for jacobian evaluation
-      fmatvec::RangeV Rq, Ru, Rx, Rz; // ranges in y and jacobimatrix for q, u, x and z
-      fmatvec::RangeV RuMove, RxMove; // ranges in y and jacobimatrix for u, x and z reduced by q
-      int rowMove;
+      int neq, qMove;
+      fmatvec::Vec zd0; // saved derivatives of the solution components
+      fmatvec::RangeV Rq, Ru, Rx, Rz; // ranges for q, u, x and z
+      fmatvec::RangeV RuMove, RxMove; // ranges for u and x reduced by q
 
     public:
       ~ImplicitIntegrator() override = default;

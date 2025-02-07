@@ -62,9 +62,10 @@ namespace MBSim {
       /** formalism **/
       Formalism formalism{ODE};
 
-      fmatvec::Vec gd0, g0; // residual work arrays for jacobian evaluation
-      fmatvec::RangeV Rla, Rl; // ranges in y and jacobimatrix for la and GGL alg.-states
-      fmatvec::RangeV RlaMove, RlMove; // ranges in y and jacobimatrix for la and GGL alg.-states reduced by q
+      int laInd, lInd;
+      fmatvec::Vec gd0, g0; // saved constraints
+      fmatvec::RangeV Rla, Rl; // ranges for la and GGL alg.-states
+      fmatvec::RangeV RlaMove, RlMove; // ranges for la and GGL alg.-states reduced by q
 
     public:
       ~DAEIntegrator() override = default;

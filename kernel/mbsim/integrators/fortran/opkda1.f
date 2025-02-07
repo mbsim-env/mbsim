@@ -368,8 +368,17 @@ C***FIRST EXECUTABLE STATEMENT  DPREPJ
       GO TO (100, 200, 300, 400, 500), MITER
 C If MITER = 1, call JAC and multiply by scalar. -----------------------
  100  LENP = N*N
-      DO 110 I = 1,LENP
- 110    WM(I+2) = 0.0D0
+C     Skip the next lines as all entries of the jacobian
+C     are computed by function jac in lsode_integrator.cc
+C      DO 110 I = 1,LENP
+C 110    WM(I+2) = 0.0D0
+C     Save all variables that are needed for computation of delta
+C     in lsode_integrator.cc to workspace
+      FAC = DVNORM (N, SAVF, EWT)
+      R0 = 1000.0D0*ABS(H)*UROUND*N*FAC
+      IF (R0 .EQ. 0.0D0) R0 = 1.0D0
+      WM(3) = LEWT
+      WM(4) = R0
       CALL JAC (NEQ, TN, Y, 0, 0, WM(3), N)
       CON = -HL0
       DO 120 I = 1,LENP
@@ -4504,8 +4513,17 @@ C-----------------------------------------------------------------------
       GO TO (100, 200, 300, 400, 500), MITER
 C If MITER = 1, call JAC and multiply by scalar. -----------------------
  100  LENP = N*N
-      DO 110 I = 1,LENP
- 110    WM(I+2) = 0.0D0
+C     Skip the next lines as all entries of the jacobian
+C     are computed by function jac in lsoda_integrator.cc
+C      DO 110 I = 1,LENP
+C 110    WM(I+2) = 0.0D0
+C     Save all variables that are needed for computation of delta
+C     in lsoda_integrator.cc to workspace
+      FAC = DMNORM (N, SAVF, EWT)
+      R0 = 1000.0D0*ABS(H)*UROUND*N*FAC
+      IF (R0 .EQ. 0.0D0) R0 = 1.0D0
+      WM(3) = LEWT
+      WM(4) = R0
       CALL JAC (NEQ, TN, Y, 0, 0, WM(3), N)
       CON = -HL0
       DO 120 I = 1,LENP
@@ -8948,8 +8966,13 @@ C If MITER = 1, call RES, then JAC, and multiply by scalar. ------------
       NFE = NFE + 1
       IF (IRES .GT. 1) GO TO 600
       LENP = N*N
-      DO 110 I = 1,LENP
- 110    WM(I+2) = 0.0D0
+C     Skip the next lines as all entries of the jacobian
+C     are computed by function jac in lsodi_integrator.cc
+C      DO 110 I = 1,LENP
+C 110    WM(I+2) = 0.0D0
+C     Save all variables that are needed for computation of delta
+C     in lsodi_integrator.cc to workspace
+      WM(3) = LEWT
       CALL JAC ( NEQ, TN, Y, S, 0, 0, WM(3), N )
       CON = -HL0
       DO 120 I = 1,LENP

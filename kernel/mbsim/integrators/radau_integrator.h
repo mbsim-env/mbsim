@@ -38,6 +38,7 @@ namespace MBSim {
       };
 
     private:
+      double delta(int i, double z) const override;
       typedef void (*Fzdot)(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
       typedef void (*Jac)(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
       typedef void (*Mass)(int* n, double* m, int* lmas, double* rpar, int* ipar);

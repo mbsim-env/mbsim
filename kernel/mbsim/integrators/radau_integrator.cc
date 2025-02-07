@@ -44,16 +44,21 @@ namespace MBSim {
   RADAUIntegrator::Jac RADAUIntegrator::jac[5];
   RADAUIntegrator::Mass RADAUIntegrator::mass[2];
 
+  // This code is taken from radau.f
+  double RADAUIntegrator::delta(int i, double z) const {
+    return sqrt(1e-16*max(1.e-5,abs(z)));
+  }
+
   void RADAUIntegrator::fzdotODE(int* zSize, double* t, double* z_, double* zd_, double* rpar, int* ipar) {
     auto *self = reinterpret_cast<RADAUIntegrator*>(ipar);
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
       Vec zd(*zSize, zd_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(Vec(*zSize, z_));
-      self->getSystem()->resetUpToDate();
-      zd = self->getSystem()->evalzd();
+      self->system->setTime(*t);
+      self->system->setState(Vec(*zSize, z_));
+      self->system->resetUpToDate();
+      zd = self->system->evalzd();
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -67,11 +72,11 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Vec y(*neq, y_);
       Vec yd(*neq, yd_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(y(self->Rz));
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setla(y(self->Rla));
-      self->getSystem()->setUpdatela(false);
+      self->system->setTime(*t);
+      self->system->setState(y(self->Rz));
+      self->system->resetUpToDate();
+      self->system->setla(y(self->Rla));
+      self->system->setUpdatela(false);
       yd.set(self->Rz, self->system->evalzd());
       yd.set(self->Rla, self->system->evalW().T()*yd(self->Ru) + self->system->evalwb());
     }
@@ -87,11 +92,11 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Vec y(*neq, y_);
       Vec yd(*neq, yd_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(y(self->Rz));
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setla(y(self->Rla));
-      self->getSystem()->setUpdatela(false);
+      self->system->setTime(*t);
+      self->system->setState(y(self->Rz));
+      self->system->resetUpToDate();
+      self->system->setla(y(self->Rla));
+      self->system->setUpdatela(false);
       yd.set(self->Rz, self->system->evalzd());
       yd.set(self->Rla, self->system->evalgd());
     }
@@ -107,11 +112,11 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Vec y(*neq, y_);
       Vec yd(*neq, yd_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(y(self->Rz));
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setla(y(self->Rla));
-      self->getSystem()->setUpdatela(false);
+      self->system->setTime(*t);
+      self->system->setState(y(self->Rz));
+      self->system->resetUpToDate();
+      self->system->setla(y(self->Rla));
+      self->system->setUpdatela(false);
       yd.set(self->Rz, self->system->evalzd());
       yd.set(self->Rla, self->system->evalg());
     }
@@ -127,11 +132,11 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Vec y(*neq, y_);
       Vec yd(*neq, yd_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(y(self->Rz));
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setla(y(self->Rla));
-      self->getSystem()->setUpdatela(false);
+      self->system->setTime(*t);
+      self->system->setState(y(self->Rz));
+      self->system->resetUpToDate();
+      self->system->setla(y(self->Rla));
+      self->system->setUpdatela(false);
       yd.set(self->Rz, self->system->evalzd());
       yd.set(self->Rla, self->system->evalgd());
       yd.set(self->Rl, self->system->evalg());
@@ -158,12 +163,9 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Mat J(*rows, *cols, J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(Vec(*cols, z_));
-      self->getSystem()->resetUpToDate();
-      self->res0 = self->getSystem()->evalzd();
+      self->system->setTime(*t);
+      self->system->setState(Vec(*cols, z_));
+      const auto &T = self->system->evalT();
 
       if(self->reduced)
         self->par_ud_xd_par_q(J);
@@ -174,7 +176,7 @@ namespace MBSim {
         }
         else
           self->par_zd_par_q(J);
-        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        J.set(self->Rq, self->Ru, T); // par_qd_par_u
         setZero(J,self->Rq,self->Rx); // par_qd_par_x
       }
       self->par_ud_xd_par_u_x(J,true);
@@ -192,15 +194,13 @@ namespace MBSim {
       Vec y(*cols, y_); // fmatvec variant of y_
       Mat J(*rows, *cols, J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(y(self->Rz));
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setla(y(self->Rla));
-      self->getSystem()->setUpdatela(false);
-      self->res0.set(self->Rz, self->system->evalzd());
-      self->res0.set(self->Rla, self->system->evalW().T()*self->res0(self->Ru) + self->system->evalwb());
+      self->system->setTime(*t);
+      self->system->setState(y(self->Rz));
+      self->system->setla(y(self->Rla));
+      const auto &T = self->system->evalT();
+      const auto &Jrla = self->system->evalJrla();
+      const auto &LLM = self->system->getLLM();
+      const auto &W = self->system->getW();
 
       if(self->reduced)
         self->par_ud_xd_gdd_par_q_u(J);
@@ -211,16 +211,16 @@ namespace MBSim {
         }
         else
           self->par_zd_gdd_par_q_u(J);
-        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        J.set(self->Rq, self->Ru, T); // par_qd_par_u
         setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
       }
       self->par_ud_xd_par_x(J);
       setZero(J,self->RxMove,self->Rla); // par_xd_par_la
       setZero(J,self->RlaMove,self->Rx); // par_gdd_par_x
 
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      Mat Minv_Jrla = slvLLFac(LLM, Jrla);
       J.set(self->RuMove, self->Rla, Minv_Jrla); // par_ud_par_la
-      J.set(self->RlaMove, self->Rla, self->system->evalW().T()*Minv_Jrla); // par_gdd_par_la
+      J.set(self->RlaMove, self->Rla, W.T()*Minv_Jrla); // par_gdd_par_la
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -235,15 +235,13 @@ namespace MBSim {
       Vec y(*cols, y_); // fmatvec variant of y_
       Mat J(*rows, *cols, J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(y(self->Rz));
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setla(y(self->Rla));
-      self->getSystem()->setUpdatela(false);
-      self->res0.set(self->Rz, self->system->evalzd());
-      self->res0.set(self->Rla, self->system->evalgd());
+      self->system->setTime(*t);
+      self->system->setState(y(self->Rz));
+      self->system->setla(y(self->Rla));
+      const auto &T = self->system->evalT();
+      const auto &Jrla = self->system->evalJrla();
+      const auto &LLM = self->system->getLLM();
+      const auto &W = self->system->getW();
 
       if(self->reduced)
         self->par_ud_xd_gd_par_q(J);
@@ -254,15 +252,15 @@ namespace MBSim {
         }
         else
           self->par_zd_gd_par_q(J);
-        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        J.set(self->Rq, self->Ru, T); // par_qd_par_u
         setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
       }
       self->par_ud_xd_par_u_x(J,false);
       setZero(J,self->RxMove,self->Rla); // par_xd_par_la
-      J.set(self->RlaMove, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      J.set(self->RlaMove, self->Ru, W.T()); // par_gd_par_u
       setZero(J,self->RlaMove,RangeV(self->Rx.start(),self->Rla.end())); // par_gd_par_x_la
 
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      Mat Minv_Jrla = slvLLFac(LLM, Jrla);
       J.set(self->RuMove, self->Rla, Minv_Jrla); // par_ud_par_la
     }
     catch(...) { // if a exception is thrown catch and store it in self
@@ -280,13 +278,12 @@ namespace MBSim {
 
       // the undisturbed call -> this sets the system resetUpToDate
       // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(y(self->Rz));
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setla(y(self->Rla));
-      self->getSystem()->setUpdatela(false);
-      self->res0.set(self->Rz, self->system->evalzd());
-      self->res0.set(self->Rla, self->system->evalg());
+      self->system->setTime(*t);
+      self->system->setState(y(self->Rz));
+      self->system->setla(y(self->Rla));
+      const auto &T = self->system->evalT();
+      const auto &Jrla = self->system->evalJrla();
+      const auto &LLM = self->system->getLLM();
 
       if(self->reduced)
         self->par_ud_xd_g_par_q(J);
@@ -297,14 +294,14 @@ namespace MBSim {
         }
         else
           self->par_zd_g_par_q(J);
-        J.set(self->Rq, self->Ru, self->system->evalT()); // / par_qd_par_u
+        J.set(self->Rq, self->Ru, T); // / par_qd_par_u
         setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
       }
       self->par_ud_xd_par_u_x(J,false);
       setZero(J,self->RxMove,self->Rla); // par_xd_par_la
       setZero(J,self->RlaMove,RangeV(self->Ru.start(),self->Rla.end())); // par_g_par_u_x_la
 
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      Mat Minv_Jrla = slvLLFac(LLM, Jrla);
       J.set(self->RuMove, self->Rla, Minv_Jrla); // par_ud_par_la
     }
     catch(...) { // if a exception is thrown catch and store it in self
@@ -320,26 +317,13 @@ namespace MBSim {
       Vec y(*cols, y_); // fmatvec variant of y_
       Mat J(*rows, *cols, J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->setState(y(self->Rz));
-      self->getSystem()->resetUpToDate();
-      self->getSystem()->setla(y(self->Rla));
-      self->getSystem()->setUpdatela(false);
-      self->res0.set(self->Rz, self->system->evalzd());
-      self->res0.set(self->Rla, self->system->evalgd());
-      self->res0.set(self->Rl, self->system->evalg());
-      if(self->system->getgSize() != self->system->getgdSize()) {
-        self->system->calclaSize(5);
-        self->system->updateWRef(self->system->getWParent(0));
-        self->system->setUpdateW(false);
-        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
-        self->system->calclaSize(3);
-        self->system->updateWRef(self->system->getWParent(0));
-      }
-      else
-        self->res0.add(self->Rq, self->system->evalW()*y(self->Rl));
+      self->system->setTime(*t);
+      self->system->setState(y(self->Rz));
+      self->system->setla(y(self->Rla));
+      const auto &T = self->system->evalT();
+      const auto &Jrla = self->system->evalJrla();
+      const auto &LLM = self->system->getLLM();
+      const auto &W = self->system->evalW();
 
       if(self->reduced)
         self->par_ud_xd_gd_g_par_q(J);
@@ -350,7 +334,7 @@ namespace MBSim {
         }
         else
           self->par_zd_gd_g_par_q(J);
-        J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+        J.set(self->Rq, self->Ru, T); // par_qd_par_u
         setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
         if(self->system->getgSize() != self->system->getgdSize()) {
           self->system->calclaSize(5);
@@ -361,16 +345,16 @@ namespace MBSim {
           self->system->updateWRef(self->system->getWParent(0));
         }
         else
-          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
+          J.set(self->Rq, self->Rl, W); // par_qd_par_l
       }
       self->par_ud_xd_par_u_x(J,false);
       setZero(J,self->Ru,self->Rl); // par_ud_par_l
       setZero(J,self->Rx,RangeV(self->Rla.start(),self->Rl.end())); // par_xd_par_la_l
-      J.set(self->Rla, self->Ru, self->system->evalW().T()); // par_gd_par_u
+      J.set(self->Rla, self->Ru, W.T()); // par_gd_par_u
       setZero(J,self->Rla,RangeV(self->Rx.start(),self->Rl.end())); // par_gd_par_x_la_l
       setZero(J,self->Rl,RangeV(self->Ru.start(),self->Rl.end())); // par_g_par_u_x_la_l
 
-      Mat Minv_Jrla = slvLLFac(self->system->evalLLM(), self->system->evalJrla());
+      Mat Minv_Jrla = slvLLFac(LLM, Jrla);
       J.set(self->Ru, self->Rla, Minv_Jrla); // par_ud_par_la
     }
     catch(...) { // if a exception is thrown catch and store it in self
@@ -417,12 +401,12 @@ namespace MBSim {
       double tRoot = *t;
 
       // root-finding
-      if(self->getSystem()->getsvSize()) {
-        self->getSystem()->setTime(*t);
+      if(self->system->getsvSize()) {
+        self->system->setTime(*t);
         curTimeAndState = *t;
-        self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
-        self->getSystem()->resetUpToDate();
-        self->shift = self->signChangedWRTsvLast(self->getSystem()->evalsv());
+        self->system->setState(Vec(self->system->getzSize(),y));
+        self->system->resetUpToDate();
+        self->shift = self->signChangedWRTsvLast(self->system->evalsv());
         // if a root exists in the current step ...
         if(self->shift) {
           // ... search the first root and set step.second to this time
@@ -430,23 +414,23 @@ namespace MBSim {
           while(dt>self->dtRoot) {
             dt/=2;
             double tCheck = tRoot-dt;
-            self->getSystem()->setTime(tCheck);
+            self->system->setTime(tCheck);
             curTimeAndState = tCheck;
             for(int i=1; i<=self->system->getzSize(); i++)
-              self->getSystem()->getState()(i-1) = CONTRA(&i,&tCheck,cont,lrc);
-            self->getSystem()->resetUpToDate();
-            if(self->signChangedWRTsvLast(self->getSystem()->evalsv()))
+              self->system->getState()(i-1) = CONTRA(&i,&tCheck,cont,lrc);
+            self->system->resetUpToDate();
+            if(self->signChangedWRTsvLast(self->system->evalsv()))
               tRoot = tCheck;
           }
           if(curTimeAndState != tRoot) {
             curTimeAndState = tRoot;
-            self->getSystem()->setTime(tRoot);
+            self->system->setTime(tRoot);
             for(int i=1; i<=self->system->getzSize(); i++)
-              self->getSystem()->getState()(i-1) = CONTRA(&i,&tRoot,cont,lrc);
+              self->system->getState()(i-1) = CONTRA(&i,&tRoot,cont,lrc);
           }
-          self->getSystem()->resetUpToDate();
-          auto &sv = self->getSystem()->evalsv();
-          auto &jsv = self->getSystem()->getjsv();
+          self->system->resetUpToDate();
+          auto &sv = self->system->evalsv();
+          auto &jsv = self->system->getjsv();
           for(int i=0; i<sv.size(); ++i)
             jsv(i)=self->svLast(i)*sv(i)<0;
         }
@@ -455,21 +439,21 @@ namespace MBSim {
       while(tRoot >= self->tPlot) {
         if(curTimeAndState != self->tPlot) {
           curTimeAndState = self->tPlot;
-          self->getSystem()->setTime(self->tPlot);
+          self->system->setTime(self->tPlot);
           for(int i=1; i<=self->system->getzSize(); i++)
-            self->getSystem()->getState()(i-1) = CONTRA(&i,&self->tPlot,cont,lrc);
+            self->system->getState()(i-1) = CONTRA(&i,&self->tPlot,cont,lrc);
         }
-        self->getSystem()->resetUpToDate();
+        self->system->resetUpToDate();
         if(self->formalism) {
           for(int i=self->system->getzSize()+1; i<=self->system->getzSize()+self->system->getlaSize(); i++)
-            self->getSystem()->getla(false)(i-(self->system->getzSize()+1)) = CONTRA(&i,&self->tPlot,cont,lrc);
-          self->getSystem()->setUpdatela(false);
+            self->system->getla(false)(i-(self->system->getzSize()+1)) = CONTRA(&i,&self->tPlot,cont,lrc);
+          self->system->setUpdatela(false);
         }
-        self->getSystem()->plot();
+        self->system->plot();
         if(self->msgAct(Status))
           self->msg(Status) << "   t = " <<  self->tPlot << ",\tdt = "<< *t-*told << flush;
 
-        self->getSystem()->updateInternalState();
+        self->system->updateInternalState();
 
         double s1 = clock();
         self->time += (s1-self->s0)/CLOCKS_PER_SEC;
@@ -481,16 +465,16 @@ namespace MBSim {
       if(self->shift) {
         // shift the system
         if(curTimeAndState != tRoot) {
-          self->getSystem()->setTime(tRoot);
-          for(int i=1; i<=self->getSystem()->getzSize(); i++)
-            self->getSystem()->getState()(i-1) = CONTRA(&i,&tRoot,cont,lrc);
+          self->system->setTime(tRoot);
+          for(int i=1; i<=self->system->getzSize(); i++)
+            self->system->getState()(i-1) = CONTRA(&i,&tRoot,cont,lrc);
         }
         if(self->plotOnRoot) {
-          self->getSystem()->resetUpToDate();
-          self->getSystem()->plot();
+          self->system->resetUpToDate();
+          self->system->plot();
         }
-        self->getSystem()->resetUpToDate();
-        self->getSystem()->shift();
+        self->system->resetUpToDate();
+        self->system->shift();
         if(self->formalism>1) { // DAE2, DAE3 or GGL
           self->system->calcgdSize(3); // IH
           self->system->updategdRef(self->system->getgdParent());
@@ -500,8 +484,8 @@ namespace MBSim {
           }
         }
         if(self->plotOnRoot) {
-          self->getSystem()->resetUpToDate();
-          self->getSystem()->plot();
+          self->system->resetUpToDate();
+          self->system->plot();
         }
         *irtrn = -1;
       }
@@ -509,31 +493,31 @@ namespace MBSim {
         // check drift
         bool projVel = true;
         if(self->getToleranceForPositionConstraints()>=0) {
-          self->getSystem()->setTime(*t);
-          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
-          self->getSystem()->resetUpToDate();
-          if(self->getSystem()->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
-            self->getSystem()->projectGeneralizedPositions(3);
-            self->getSystem()->projectGeneralizedVelocities(3);
+          self->system->setTime(*t);
+          self->system->setState(Vec(self->system->getzSize(),y));
+          self->system->resetUpToDate();
+          if(self->system->positionDriftCompensationNeeded(self->getToleranceForPositionConstraints())) { // project both, first positions and then velocities
+            self->system->projectGeneralizedPositions(3);
+            self->system->projectGeneralizedVelocities(3);
             projVel = false;
             self->drift = true;
             *irtrn=-1;
           }
         }
         if(self->getToleranceForVelocityConstraints()>=0 and projVel) {
-          self->getSystem()->setTime(*t);
-          self->getSystem()->setState(Vec(self->getSystem()->getzSize(),y));
-          self->getSystem()->resetUpToDate();
-          if(self->getSystem()->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
-            self->getSystem()->projectGeneralizedVelocities(3);
+          self->system->setTime(*t);
+          self->system->setState(Vec(self->system->getzSize(),y));
+          self->system->resetUpToDate();
+          if(self->system->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
+            self->system->projectGeneralizedVelocities(3);
             self->drift = true;
             *irtrn=-1;
           }
         }
-        self->getSystem()->updateStopVectorParameters();
+        self->system->updateStopVectorParameters();
       }
 
-      self->getSystem()->updateInternalState();
+      self->system->updateInternalState();
     }
     catch(...) { // if a exception is thrown catch and store it in self and set the interrupt flag
       self->exception = current_exception();
@@ -740,6 +724,14 @@ namespace MBSim {
     else
       mlJac = neq; // jacobian is a full matrix
     muJac = mlJac; // need not to be defined if mlJac = neq
+
+    int zStart = 20+3*neq;
+    int zEnd = zStart+system->getzSize();
+    int laEnd = zEnd+system->getgdSize();
+    zd0.ref(work,RangeV(zStart,zEnd-1));
+    gd0.ref(work,RangeV(zEnd,laEnd-1));
+    if(formalism==GGL)
+      g0.ref(work,RangeV(laEnd,laEnd+system->getgSize()-1));
   }
 
   void RADAUIntegrator::initializeUsingXML(DOMElement *element) {

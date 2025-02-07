@@ -42,15 +42,20 @@ namespace MBSim {
 
   bool odePackInUse = false;
 
+  // This code is taken from opkda1.f
+  double LSODEIntegrator::delta(int i, double z) const {
+    return max(epsroot*abs(z),r0/rWork(lewt+i));
+  }
+
   void LSODEIntegrator::fzdot(int* neq, double* t, double* z_, double* zd_) {
     auto self=*reinterpret_cast<LSODEIntegrator**>(&neq[1]);
     if(self->exception) // if a exception was already thrown in a call before -> do nothing and return
       return;
     try { // catch exception -> C code must catch all exceptions
       Vec zd(neq[0], zd_);
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      zd = self->getSystem()->evalzd();
+      self->system->setTime(*t);
+      self->system->resetUpToDate();
+      zd = self->system->evalzd();
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -64,11 +69,11 @@ namespace MBSim {
     try { // catch exception -> C code must catch all exceptions
       Mat J(neq[0], neq[0], J_); // fmatvec variant of J_
 
-      // the undisturbed call -> this sets the system resetUpToDate
-      // res0 is later used for the numerical part of the jacobian
-      self->getSystem()->setTime(*t);
-      self->getSystem()->resetUpToDate();
-      self->res0 = self->system->evalzd();
+      self->lewt = J_[0]-1; // needed in function delta: index in workspace where the array containing multiplicative weights begins
+      self->r0 = J_[1]; // needed in function delta: r0
+      self->zd0.ref(self->rWork,RangeV(self->lewt+neq[0],self->lewt+2*neq[0]-1)); // saved zd, which is used for the numerical part of the Jacobian
+
+      self->system->setTime(*t);
 
       if(self->system->getqdequ()) {
         setZero(J,self->Rq,self->Rq); // par_qd_par_q
@@ -80,8 +85,6 @@ namespace MBSim {
       setZero(J,self->Rq,self->Rx); // par_qd_par_x
 
       self->par_ud_xd_par_u_x(J,true);
-      for(int i=0; i<self->system->getzSize(); i++)
-        J(i,i) -= 1;
     }
     catch(...) { // if a exception is thrown catch and store it in self
       self->exception = current_exception();
@@ -159,7 +162,7 @@ namespace MBSim {
       liWork = 20+zSize;
       MF = numericalJacobian?22:21;
     }
-    Vec rWork(lrWork);
+    rWork.resize(lrWork);
     rWork(4) = dt0;
     rWork(5) = dtMax;
     rWork(6) = dtMin;
@@ -190,11 +193,11 @@ namespace MBSim {
         double tRoot = t;
 
         // root-finding
-        if(getSystem()->getsvSize()) {
-          getSystem()->setTime(t);
+        if(system->getsvSize()) {
+          system->setTime(t);
           curTimeAndState = t;
-          getSystem()->resetUpToDate();
-          shift = signChangedWRTsvLast(getSystem()->evalsv());
+          system->resetUpToDate();
+          shift = signChangedWRTsvLast(system->evalsv());
           // if a root exists in the current step ...
           double dt = rWork(10);
           if(shift) {
@@ -204,19 +207,19 @@ namespace MBSim {
               double tCheck = tRoot-dt;
               curTimeAndState = tCheck;
               DINTDY(&tCheck, &zero, &rWork(20), neq, system->getState()(), &iflag);
-              getSystem()->setTime(tCheck);
-              getSystem()->resetUpToDate();
-              if(signChangedWRTsvLast(getSystem()->evalsv()))
+              system->setTime(tCheck);
+              system->resetUpToDate();
+              if(signChangedWRTsvLast(system->evalsv()))
                 tRoot = tCheck;
             }
             if(curTimeAndState != tRoot) {
               curTimeAndState = tRoot;
               DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
-              getSystem()->setTime(tRoot);
+              system->setTime(tRoot);
             }
-            getSystem()->resetUpToDate();
-            auto &sv = getSystem()->evalsv();
-            auto &jsv = getSystem()->getjsv();
+            system->resetUpToDate();
+            auto &sv = system->evalsv();
+            auto &jsv = system->getjsv();
             for(int i=0; i<sv.size(); ++i)
               jsv(i)=svLast(i)*sv(i)<0;
           }
@@ -226,14 +229,14 @@ namespace MBSim {
           if(curTimeAndState != tPlot) {
             curTimeAndState = tPlot;
             DINTDY(&tPlot, &zero, &rWork(20), neq, system->getState()(), &iflag);
-            getSystem()->setTime(tPlot);
+            system->setTime(tPlot);
           }
-          getSystem()->resetUpToDate();
-          getSystem()->plot();
+          system->resetUpToDate();
+          system->plot();
           if(msgAct(Status))
             msg(Status) << "   t = " <<  tPlot << ",\tdt = "<< rWork(10) << flush;
 
-          getSystem()->updateInternalState();
+          system->updateInternalState();
 
           double s1 = clock();
           time += (s1-s0)/CLOCKS_PER_SEC;
@@ -246,17 +249,17 @@ namespace MBSim {
           // shift the system
           if(curTimeAndState != tRoot) {
             DINTDY(&tRoot, &zero, &rWork(20), neq, system->getState()(), &iflag);
-            getSystem()->setTime(tRoot);
+            system->setTime(tRoot);
           }
           if(plotOnRoot) {
-            getSystem()->resetUpToDate();
-            getSystem()->plot();
+            system->resetUpToDate();
+            system->plot();
           }
-          getSystem()->resetUpToDate();
-          getSystem()->shift();
+          system->resetUpToDate();
+          system->shift();
           if(plotOnRoot) {
-            getSystem()->resetUpToDate();
-            getSystem()->plot();
+            system->resetUpToDate();
+            system->plot();
           }
           istate=1;
         }
@@ -264,24 +267,24 @@ namespace MBSim {
           // check drift
           bool projVel = true;
           if(gMax>=0) {
-            getSystem()->setTime(t);
-            getSystem()->resetUpToDate();
-            if(getSystem()->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
-              getSystem()->projectGeneralizedPositions(3);
-              getSystem()->projectGeneralizedVelocities(3);
+            system->setTime(t);
+            system->resetUpToDate();
+            if(system->positionDriftCompensationNeeded(gMax)) { // project both, first positions and then velocities
+              system->projectGeneralizedPositions(3);
+              system->projectGeneralizedVelocities(3);
               projVel = false;
               istate=1;
             }
           }
           if(gdMax>=0 and projVel) {
-            getSystem()->setTime(t);
-            getSystem()->resetUpToDate();
-            if(getSystem()->velocityDriftCompensationNeeded(gdMax)) { // project velicities
-              getSystem()->projectGeneralizedVelocities(3);
+            system->setTime(t);
+            system->resetUpToDate();
+            if(system->velocityDriftCompensationNeeded(gdMax)) { // project velicities
+              system->projectGeneralizedVelocities(3);
               istate=1;
             }
           }
-          getSystem()->updateStopVectorParameters();
+          system->updateStopVectorParameters();
         }
         if(istate==1) {
           if(shift) {
@@ -291,12 +294,12 @@ namespace MBSim {
           t = system->getTime();
         }
 
-        getSystem()->updateInternalState();
+        system->updateInternalState();
       }
       else if(istate<0) throwError("Integrator LSODE failed with istate = "+to_string(istate));
     }
 
-    msg(Info)<<"nrRHS (including jac): "<<iWork(11)<<endl;
+    msg(Info)<<string("nrRHS")+(numericalJacobian?" (including jac): ":" (excluding jac): ")<<iWork(11)<<endl;
     msg(Info)<<"nrJac: "<<iWork(12)<<endl;
     msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
 
