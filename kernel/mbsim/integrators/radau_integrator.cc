@@ -725,7 +725,7 @@ namespace MBSim {
       mlJac = neq; // jacobian is a full matrix
     muJac = mlJac; // need not to be defined if mlJac = neq
 
-    int zStart = 20+3*neq;
+    int zStart = 20+7*neq;
     int zEnd = zStart+system->getzSize();
     int laEnd = zEnd+system->getgdSize();
     zd0.ref(work,RangeV(zStart,zEnd-1));
