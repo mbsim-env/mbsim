@@ -1702,6 +1702,11 @@ namespace MBSim {
     return V[i];
   }
 
+  const fmatvec::Vec& DynamicSystem::getwb(bool check) const {
+    assert((not check) or (not ds->getUpdatewb()));
+    return wb;
+  }
+
   const fmatvec::Vec& DynamicSystem::getg(bool check) const {
     assert((not check) or (not ds->getUpdateg()));
     return g;

@@ -222,6 +222,7 @@ namespace MBSim {
       const fmatvec::Vec& getState() const { return z; }
       void setState(const fmatvec::Vec &z_) { z = z_; }
 
+      const fmatvec::Vec& getzd(bool check=true) const { assert((not check) or (not updzd)); return zd; }
       void setzd(const fmatvec::Vec &zd_) { zd = zd_; }
 
       const fmatvec::SqrMat& getG(bool check=true) const { assert((not check) or (not updG)); return G; }

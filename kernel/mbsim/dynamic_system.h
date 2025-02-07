@@ -237,6 +237,7 @@ namespace MBSim {
       const fmatvec::Vec& getxd(bool check=true) const;
       const fmatvec::Mat& getW(int i=0, bool check=true) const;
       const fmatvec::Mat& getV(int i=0, bool check=true) const;
+      const fmatvec::Vec& getwb(bool check=true) const;
       const fmatvec::Vec& getla(bool check=true) const;
       const fmatvec::Vec& getLa(bool check=true) const;
       const fmatvec::Vec& getg(bool check=true) const;
