@@ -30,6 +30,7 @@
 #include <QTextEdit>
 #include <QGroupBox>
 #include <QComboBox>
+#include <evaluator/evaluator.h>
 
 namespace MBSimGUI {
 
@@ -98,8 +99,8 @@ namespace MBSimGUI {
     label = new QLabel("Default evaluator");
     sublayout->addWidget(label);
     defaultEvaluator = new QComboBox;
-    defaultEvaluator->addItem("octave");
-    defaultEvaluator->addItem("python");
+    for(auto &x : Evaluator::evaluators)
+      defaultEvaluator->addItem(x.c_str());
     sublayout->addWidget(defaultEvaluator);
 
     auto mbsimxmlGroup = new QGroupBox("mbsimxml options");

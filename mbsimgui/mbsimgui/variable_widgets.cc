@@ -34,6 +34,7 @@
 #include <QMessageBox>
 #include <QFileDialog>
 #include <boost/algorithm/string.hpp>
+#include <evaluator/evaluator.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -150,15 +151,7 @@ namespace MBSimGUI {
     setLayout(layout);
     value=new QPlainTextEdit;
     value->setMinimumSize(300,200);
-    if(mw->eval->getName()=="octave")
-      new OctaveHighlighter(value->document());
-    else if(mw->eval->getName()=="python")
-      new PythonHighlighter(value->document());
-    else
-      cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
-    static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-    value->setFont(fixedFont);
-    value->setLineWrapMode(QPlainTextEdit::NoWrap);
+    Evaluator::installSyntaxHighlighter(value->document(), value);
     layout->addWidget(value);
     setValue(str);
   }

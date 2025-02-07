@@ -46,7 +46,7 @@
 #include <mbxmlutils/eval.h>
 #include <QMessageBox>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
-#include <boost/format.hpp>
+#include <evaluator/evaluator.h>
 
 using namespace MBXMLUtils;
 
@@ -153,10 +153,9 @@ namespace MBSimGUI {
                   fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
                 fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<":"<<std::endl;
                 mw->updateEchoView();
-                auto it=mbsimgui_element_string.find(mw->eval->getName());
-                if(it!=mbsimgui_element_string.end())
-                  mw->eval->addParam("mbsimgui_element", mw->eval->stringToValue(
-                    (boost::format(it->second)%element).str()));
+                auto code=Evaluator::getElementObjCode(element);
+                if(!code.empty())
+                  mw->eval->addParam("mbsimgui_element", mw->eval->stringToValue(code));
               });
             mw->updateEchoView();
           }

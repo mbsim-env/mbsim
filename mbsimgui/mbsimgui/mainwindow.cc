@@ -83,7 +83,7 @@
 #include <xercesc/dom/DOMComment.hpp>
 #include "dialogs.h"
 #include "wizards.h"
-#include <boost/format.hpp>
+#include <evaluator/evaluator.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -1051,7 +1051,7 @@ namespace MBSimGUI {
 
   void MainWindow::createNewEvaluator() {
     // get evaluator (octave, python, ...)
-    string evalName="octave"; // default evaluator
+    string evalName=Evaluator::defaultEvaluator;
     if(project)
       evalName = project->getEvaluator();
     else {
@@ -1070,9 +1070,9 @@ namespace MBSimGUI {
     }
     eval = Eval::createEvaluator(evalName);
 
-    auto it=mbsimgui_init_string.find(eval->getName());
-    if(it!=mbsimgui_init_string.end())
-      eval->addImport((boost::format(it->second.second)%getInstallPath().string()).str(), nullptr, it->second.first);
+    auto code=Evaluator::getInitCode();
+    if(!code.second.empty())
+      eval->addImport(code.second, nullptr, code.first);
   }
 
   // Create an new eval and fills its context with all parameters/imports which may influence item.
@@ -3245,22 +3245,6 @@ namespace MBSimGUI {
     for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
       updateNameOfCorrespondingElementAndItsChilds(childIndex);
   }
-
-  map<string, pair<string, string>> mbsimgui_init_string={
-    {"python", {"addAllVarsAsParams", R"(
-def _local():
-  import sys
-  sys.path.append("%1$s/share/mbsimgui/python")
-_local()
-del _local
-)"}},
-  };
-  map<string, string> mbsimgui_element_string={
-    {"python", R"(
-import mbsimgui
-ret=mbsimgui._Element(%1$x)
-)"},
-  };
 
 }
 

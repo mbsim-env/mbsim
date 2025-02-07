@@ -365,9 +365,6 @@ namespace MBSimGUI {
   extern template QModelIndex MainWindow::getContainerIndex<ConstraintItemData>(Element *parent);
   extern template QModelIndex MainWindow::getContainerIndex<ObserverItemData>(Element *parent);
 
-  extern std::map<std::string, std::pair<std::string, std::string>> mbsimgui_init_string;
-  extern std::map<std::string, std::string> mbsimgui_element_string;
-
 }
 
 #endif

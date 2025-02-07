@@ -29,6 +29,7 @@
 #include "embeditemdata.h"
 #include <QDialogButtonBox>
 #include <QPushButton>
+#include <evaluator/evaluator.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -177,19 +178,12 @@ namespace MBSimGUI {
   }
 
   ImportParameterPropertyDialog::ImportParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {
-    int defaultIdx = 0;
     bool hidden = false;
-    if(mw->eval->getName()=="python") {
-      actionList.emplace_back(pair<QString,QString>{"addNewVarsToInstance", "add new variables globally (deprecated)"});
-      actionList.emplace_back(pair<QString,QString>{"addAllVarsAsParams", "add all variables locally"});
-      defaultIdx = 1;
-      hidden = true; // only one none deprecated option available which is the default -> do not show at all
-    }
-    else {
-      actionList.emplace_back(pair<QString,QString>{"", ""});
-      defaultIdx = 0;
-      hidden = true; // only one option available -> do not show at all
-    }
+    for(auto &x : Evaluator::getImportActions())
+      actionList.emplace_back(pair<QString,QString>{get<0>(x).c_str(), get<2>(x).c_str()});
+    int defaultIdx = Evaluator::getImportActionDefaultIdx();
+    if(Evaluator::getImportActionOnlyOneNoneDepr()>=0)
+      hidden = true;
     vector<QString> list;
     transform(actionList.begin(), actionList.end(), back_insert_iterator(list), [](const auto& x){ return x.second; });
     action = new ExtWidget("Action",new TextChoiceWidget(list,defaultIdx,false));
@@ -212,10 +206,11 @@ namespace MBSimGUI {
       auto it = find_if(actionList.begin(), actionList.end(), [&xmlAction](const auto &x){ return x.first.toStdString() == xmlAction; });
       actionIdx = distance(actionList.begin(), it);
     }
-    if(mw->eval->getName()=="python")
-      hidden = actionIdx==1; // if the only none deprecated option is active -> do not show at all
-    else
-      hidden = true; // only one option available -> do not show at all
+    if(Evaluator::getImportActions().size()==1) // only one option available -> do not show at all
+      hidden = true;
+    auto ond=Evaluator::getImportActionOnlyOneNoneDepr();
+    if(ond>=0 && actionIdx==ond)
+      hidden = true;
     action->getWidget<TextChoiceWidget>()->setCurrentIndex(actionIdx);
     action->setHidden(hidden);
 
@@ -230,13 +225,9 @@ namespace MBSimGUI {
     value->writeXMLFile(parameter->getXMLElement(),ref);
 
     optional<QString> actionStr;
-    if(mw->eval->getName()=="python") {
-      auto it=actionList.begin()+action->getWidget<TextChoiceWidget>()->getCurrentIndex();
+    auto it=actionList.begin()+action->getWidget<TextChoiceWidget>()->getCurrentIndex();
+    if(!it->first.isEmpty())
       actionStr=it->first;
-    }
-    else {
-      actionStr.reset();
-    }
     if(actionStr)
       E(static_cast<DOMElement*>(parent))->setAttribute("action", actionStr.value().toStdString());
     else

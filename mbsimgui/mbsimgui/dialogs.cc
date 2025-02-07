@@ -55,8 +55,7 @@
 #include <boost/math/constants/constants.hpp>
 #include "hdf5serie/file.h"
 #include "hdf5serie/simpledataset.h"
-#include "octave_highlighter.h"
-#include "python_highlighter.h"
+#include "evaluator/evaluator.h"
 
 using namespace std;
 using namespace boost::math::constants;
@@ -177,15 +176,7 @@ namespace MBSimGUI {
       }
       text = new QPlainTextEdit;
 
-      if(mw->eval->getName()=="octave")
-        new OctaveHighlighter(text->document());
-      else if(mw->eval->getName()=="python")
-        new PythonHighlighter(text->document());
-      else
-        cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
-      static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
-      text->setFont(fixedFont);
-      text->setLineWrapMode(QPlainTextEdit::NoWrap);
+      Evaluator::installSyntaxHighlighter(text->document(), text);
 
       vlayout->addWidget(text,2);
 
