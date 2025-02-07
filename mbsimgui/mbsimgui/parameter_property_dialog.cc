@@ -21,6 +21,8 @@
 #include "mainwindow.h"
 #include "parameter_property_dialog.h"
 #include "basic_widgets.h"
+#include "treeitem.h"
+#include "treemodel.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
 #include "parameter.h"
@@ -43,6 +45,10 @@ namespace MBSimGUI {
       addToTab("General",name);
     }
 
+    addTab("Comment");
+    comment = new CommentWidget;
+    addToTab("Comment", comment);
+
     addTab("Misc");
     vector<QString> list;
     list.emplace_back("normal");
@@ -52,10 +58,6 @@ namespace MBSimGUI {
                        "from appearing in the parameter tree. Hidden element will only appear if 'Show hidden element' "
                        "is enabled in the options.");
     addToTab("Misc",hidden);
-
-    addTab("Comment");
-    comment = new CommentWidget;
-    addToTab("Comment", comment);
   }
 
   DOMElement* ParameterPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -78,9 +80,21 @@ namespace MBSimGUI {
     initializeUsingXML(parameter->getXMLElement());
   }
 
+  namespace {
+    void updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index) {
+      auto model=static_cast<const ElementTreeModel*>(index.model());
+      auto *item = model->getItem(index)->getItemData();
+      if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement())
+          embedItemData->updateName();
+      QModelIndex childIndex;
+      for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
+        updateNameOfCorrespondingElementAndItsChilds(childIndex);
+    }
+  }
   void ParameterPropertyDialog::fromWidget() {
     writeXMLFile(parameter->getXMLElement());
     parameter->updateValue();
+    updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {

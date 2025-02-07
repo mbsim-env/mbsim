@@ -183,6 +183,7 @@ namespace MBSimGUI {
       element->insertBefore(ele2,nullptr);
       boost::filesystem::path orgFileName=E(getXMLElement())->getOriginalFilename();
       E(ele2)->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
+      E(ele2)->setOriginalElementLineNumber(E(element)->getLineNumber());
       E(element)->removeAttribute("href");
     }
     if(E(element)->hasAttribute("parameterHref") and getNumberOfParameters()) {
@@ -190,6 +191,7 @@ namespace MBSimGUI {
       element->insertBefore(ele2,element->getFirstElementChild());
       boost::filesystem::path orgFileName=E(getParameter(0)->getXMLElement())->getOriginalFilename();
       E(ele2)->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
+      E(ele2)->setOriginalElementLineNumber(E(element)->getLineNumber());
       E(element)->removeAttribute("parameterHref");
     }
     return element->getLastElementChild();
@@ -206,7 +208,7 @@ namespace MBSimGUI {
       name = QString::fromStdString(E(element)->getAttribute("name"));
       if(name.contains('{')) {
         auto parameterLevels = mw->updateParameters(this,false);
-        auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement()).second;
+        auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
         // build the evaluated display name
         name.clear();
         set<string> uniqueNames;
@@ -226,7 +228,10 @@ namespace MBSimGUI {
             mw->statusBar()->showMessage("Cannot evaluate element name to string: Unknwon exception");
             std::cerr << "Cannot evaluate element name to string: Unknwon exception" << std::endl;
           }
-        name = name.mid(3);
+        if(name.isEmpty())
+          name = "<not used>";
+        else
+          name = name.mid(3);
       }
     }
     auto *cele = E(element)->getFirstCommentChild();

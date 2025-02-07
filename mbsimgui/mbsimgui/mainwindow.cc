@@ -40,7 +40,9 @@
 #include "echo_view.h"
 #include "embed.h"
 #include "project.h"
+#include "parameter_property_dialog.h"
 #include "project_property_dialog.h"
+#include "parameter_property_dialog.h"
 #include "xml_property_dialog.h"
 #include "clone_property_dialog.h"
 #include "file_editor.h"
@@ -70,6 +72,8 @@
 #include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
 #include <boost/filesystem/fstream.hpp>
+#include <boost/algorithm/string/join.hpp>
+#include <boost/algorithm/string/replace.hpp>
 #include <mbxmlutilshelper/dom.h>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include <xercesc/dom/DOMException.hpp>
@@ -93,13 +97,11 @@ namespace MBSimGUI {
 
   bool MainWindow::exitOK = true;
 
-  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(nullptr), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
+  MainWindow::MainWindow(QStringList &arg) : project(nullptr), inlineOpenMBVMW(nullptr), allowUndo(true), maxUndo(10), autoRefresh(true), statusUpdate(true), doc(), elementBuffer(nullptr,false), parameterBuffer(nullptr,false) {
     QSettings settings;
 
     impl=DOMImplementation::getImplementation();
-    parser=impl->createLSParser(DOMImplementation::MODE_SYNCHRONOUS, nullptr);
     serializer=impl->createLSSerializer();
-
     // use html output of MBXMLUtils
     static char HTMLOUTPUT[100];
     strcpy(HTMLOUTPUT, "MBXMLUTILS_ERROROUTPUT=HTMLXPATH");
@@ -129,6 +131,7 @@ namespace MBSimGUI {
       throw runtime_error("Failed to call mbsimxml --dumpXMLCatalog <file>.");
 
     mbxmlparser=DOMParser::create(uniqueTempDir/".mbsimxml.catalog.xml");
+    mbxmlparserNoVal=DOMParser::create();
 
     fileView = new FileView;
 
@@ -607,17 +610,16 @@ namespace MBSimGUI {
     auto *fmodel = static_cast<FileTreeModel*>(fileView->model());
     fmodel->removeRows(fmodel->index(0,0).row(), fmodel->rowCount(QModelIndex()), QModelIndex());
     delete project;
-    parser->release();
     serializer->release();
   }
 
   void MainWindow::updateUndos() {
-    auto *oldDoc = static_cast<DOMDocument*>(doc->cloneNode(true));
+    auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(doc->cloneNode(true)));
     oldDoc->setDocumentURI(doc->getDocumentURI());
-    auto u = vector<DOMDocument*>(1+file.size());
+    auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
     u[0] = oldDoc;
     for(int i=0; i<file.size();i++) {
-      auto *oldDoc = static_cast<DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true));
+      auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true)));
       oldDoc->setDocumentURI(file[i]->getXMLDocument()->getDocumentURI());
       u[i+1] = oldDoc;
     }
@@ -836,11 +838,11 @@ namespace MBSimGUI {
       idMap.clear();
       IDcounter = 0;
 
-      doc = impl->createDocument();
+      doc = mbxmlparserNoVal->createDocument();
       doc->setDocumentURI(X()%QDir::current().absoluteFilePath("Project.mbsx").toStdString());
 
       project = new Project;
-      project->createXMLElement(doc);
+      project->createXMLElement(doc.get());
 
       model->createProjectItem(project);
 
@@ -899,7 +901,7 @@ namespace MBSimGUI {
       }
 
       try { 
-        doc = parser->parseURI(X()%fileName.toStdString());
+        doc = mbxmlparserNoVal->parse(fileName.toStdString());
         if(!doc)
           throw runtime_error("Unable load or parse XML file: "+fileName.toStdString());
       }
@@ -974,7 +976,7 @@ namespace MBSimGUI {
 
   bool MainWindow::saveProject(const QString &fileName, bool modifyStatus) {
     try {
-      serializer->writeToURI(doc, X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
+      serializer->writeToURI(doc.get(), X()%(fileName.isEmpty()?projectFile.toStdString():fileName.toStdString()));
       if(modifyStatus) setWindowModified(false);
       return true;
     }
@@ -1046,14 +1048,7 @@ namespace MBSimGUI {
     openElementEditor(false);
   }
 
-  // Create an new eval and fills its context with all parameters/imports which may influence item.
-  // The context contains also all counterName variables where the count is set to 0 or 1 for 0-based or 1-based evaluators, respectively
-  // Also a list of all parameter levels which may influence item is returned. This list contains for each parameter level:
-  // - the XML representation of the parameters (paramEle)
-  // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
-  // - the unevaluated count string of the Array/Pattern
-  // - the unevaluated onlyif string of the Array/Pattern
-  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter) {
+  void MainWindow::createNewEvaluator() {
     // get evaluator (octave, python, ...)
     string evalName="octave"; // default evaluator
     if(project)
@@ -1072,7 +1067,31 @@ namespace MBSimGUI {
       if(evaluator)
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
     }
-    eval=Eval::createEvaluator(evalName);
+    eval = Eval::createEvaluator(evalName);
+
+    if(eval->getName()=="python") {
+      string str(R"(
+def _local():
+  import sys
+  sys.path.append("{PREFIX}/share/mbsimgui/python")
+_local()
+del _local
+)");
+      boost::algorithm::replace_first(str, "{PREFIX}", getInstallPath().string());
+      eval->addImport(str, nullptr, "addAllVarsAsParams");
+    }
+  }
+
+  // Create an new eval and fills its context with all parameters/imports which may influence item.
+  // The context contains also all counterName variables where the count is set to 0 or 1 for 0-based or 1-based evaluators, respectively
+  // Also a list of all parameter levels which may influence item is returned. This list contains for each parameter level:
+  // - the XML representation of the parameters (paramEle)
+  // - the counterName which is none empty if this parameter has a Array/Pattern with a counterName, else couterName is empty
+  // - the unevaluated count string of the Array/Pattern
+  // - the unevaluated onlyif string of the Array/Pattern
+  vector<MainWindow::ParameterLevel> MainWindow::updateParameters(EmbedItemData *item, bool exceptLatestParameter,
+                                                                  const std::vector<int>& count) {
+    createNewEvaluator();
 
     vector<ParameterLevel> parameterLevels;
     if(item) {
@@ -1091,6 +1110,7 @@ namespace MBSimGUI {
           eleP->insertBefore(node,nullptr);
           boost::filesystem::path orgFileName=E(parent->getParameter(j)->getXMLElement())->getOriginalFilename();
           E(static_cast<DOMElement*>(node))->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
+          E(static_cast<DOMElement*>(node))->setOriginalElementLineNumber(E(eleP)->getLineNumber());
         }
         try {
           D(doc)->validate();
@@ -1100,13 +1120,21 @@ namespace MBSimGUI {
           // the embed count if its a embed
           string counterName = parent->getEmbedXMLElement()?E(parent->getEmbedXMLElement())->getAttribute("counterName"):"";
           if(not counterName.empty()) {
-            auto count1=eval->create(1.0);
-            eval->convertIndex(count1, false);
-            eval->addParam(counterName, count1);
+            Eval::Value countValue;
+            if(parameterLevels.size()<=count.size())
+              countValue=eval->create(static_cast<double>(count[parameterLevels.size()-1]+1));
+            else
+              countValue=eval->create(1.0);
+            eval->convertIndex(countValue, false);
+            eval->addParam(counterName, countValue);
             eval->addParam(counterName+"_count", eval->create(1.0));
             parameterLevels.back().counterName = counterName;
             parameterLevels.back().countStr = E(parent->getEmbedXMLElement())->getAttribute("count");
-            parameterLevels.back().onlyIfStr = E(parent->getEmbedXMLElement())->getAttribute("onlyif");
+            parameterLevels.back().onlyIfStr = parent->getEmbedXMLElement() ? E(parent->getEmbedXMLElement())->getAttribute("onlyif") : "1";
+          }
+          else {
+            parameterLevels.back().countStr = "1";
+            parameterLevels.back().onlyIfStr = parent->getEmbedXMLElement() ? E(parent->getEmbedXMLElement())->getAttribute("onlyif") : "1";
           }
 
           eval->addParamSet(ele);
@@ -1127,50 +1155,74 @@ namespace MBSimGUI {
   }
 
   pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>> MainWindow::evaluateForAllArrayPattern(
-    const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e) {
+    const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+    bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall) {
+    // helper to catch errors, print it to the statusBar and continue if catchErrors is true.
+    // if catchErrors is false the exception is rethrown.
     #define CATCH(msg) \
       catch(DOMEvalException &e) { \
-        mw->setExitBad(); \
-        mw->statusBar()->showMessage(e.getMessage().c_str()); \
-        std::cerr << msg << ": " << e.getMessage() << std::endl; \
+        if(catchErrors) { \
+          mw->setExitBad(); \
+          mw->statusBar()->showMessage(e.getMessage().c_str()); \
+          std::cerr << msg << ": " << e.getMessage() << std::endl; \
+        } \
+        else \
+          throw e; \
       } \
       catch(...) { \
-        mw->setExitBad(); \
-        mw->statusBar()->showMessage("Unknown exception"); \
-        std::cerr << msg << ": Unknwon exception" << std::endl; \
+        if(catchErrors) { \
+          mw->setExitBad(); \
+          mw->statusBar()->showMessage("Unknown exception"); \
+          std::cerr << msg << ": Unknwon exception" << std::endl; \
+        } \
+        else \
+          throw e; \
       }
 
-    vector<string> counterNames;
-    for(auto &x : parameterLevels)
-      if(!x.counterName.empty())
-        counterNames.emplace_back(x.counterName);
-    map<vector<int>, Eval::Value> values;
+    // this is a lambda for the real body of this function.
+    // it is written since it may be called twice if trackFirstLastCall is true, see below
+    auto worker = [trackFirstLastCall, skipRet](const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+                     bool fullEval, bool catchErrors, int *lastCall) {
+      // if lastCall is not nullptr and is negative this is the first call to worker which
+      // just track how many time code will be evaluated without evaluating it
+      bool trackLastCall = lastCall && *lastCall<0;
 
-    // evaluate the code for all possible counter values (recursively)
-    // save the evaluated counter name in a set to add only unique names
-    vector<int> levels(counterNames.size());
-    function<void(vector<MainWindow::ParameterLevel>::const_iterator, vector<MainWindow::ParameterLevel>::const_iterator,
-                  int level, vector<int> levels)> walk;
-    walk=[&code, e, &walk, &values](vector<MainWindow::ParameterLevel>::const_iterator start,
-                                    vector<MainWindow::ParameterLevel>::const_iterator end,
-                                    int level, vector<int> levels) {
-      Eval::Value count = mw->eval->create(1.0);
-      if(!start->counterName.empty())
-        try { count = mw->eval->stringToValue(start->countStr, e); }
-        CATCH("Cannot evaluate Array/Pattern 'count' variable");
-      int countInt = 1;
-      try { countInt = mw->eval->cast<int>(count); }
-      CATCH("The Array/Patttern 'count' variable is not of type int");
-      for(int counterValue1Based=1; counterValue1Based<=countInt; ++counterValue1Based) {
-        NewParamLevel newParamLevel(mw->eval);
+      mw->createNewEvaluator();
 
-        if(!start->counterName.empty()) {
-          // add counter parameter
-          auto counterValue=mw->eval->create(static_cast<double>(counterValue1Based));
-          mw->eval->convertIndex(counterValue, false);
-          mw->eval->addParam(start->counterName, counterValue);
-          mw->eval->addParam(start->counterName+"_count", count);
-          levels[level] = mw->eval->cast<int>(counterValue);
+      vector<string> counterNames;
+      for(auto &x : parameterLevels)
+        if(!x.counterName.empty())
+          counterNames.emplace_back(x.counterName);
+      map<vector<int>, Eval::Value> values;
+
+      // evaluate the code for all possible counter values (recursively)
+      // save the evaluated counter name in a set to add only unique names
+      vector<int> levels(counterNames.size());
+      function<void(vector<MainWindow::ParameterLevel>::const_iterator, vector<MainWindow::ParameterLevel>::const_iterator,
+                    int level, vector<int> levels)> walk;
+      int callNumber = 0;
+      walk=[&code, e, &walk, &values, fullEval, &callNumber, &lastCall, trackLastCall, catchErrors,
+            trackFirstLastCall, &counterNames, skipRet]
+              (vector<MainWindow::ParameterLevel>::const_iterator start, vector<MainWindow::ParameterLevel>::const_iterator end,
+               int level, vector<int> levels) {
+        Eval::Value count = mw->eval->create(1.0);
+        if(!start->counterName.empty())
+          try { count = mw->eval->stringToValue(start->countStr, e); }
+          CATCH("Cannot evaluate Array/Pattern 'count' variable");
+        int countInt = 1;
+        try { countInt = mw->eval->cast<int>(count); }
+        CATCH("The Array/Pattern 'count' variable is not of type int");
+        for(int counterValue1Based=1; counterValue1Based<=countInt; ++counterValue1Based) {
+          NewParamLevel newParamLevel(mw->eval);
+
+          if(!start->counterName.empty()) {
+            // add counter parameter
+            auto counterValue=mw->eval->create(static_cast<double>(counterValue1Based));
+            mw->eval->convertIndex(counterValue, false);
+            mw->eval->addParam(start->counterName, counterValue);
+            mw->eval->addParam(start->counterName+"_count", count);
+            levels[level] = mw->eval->cast<int>(counterValue);
+          }
           // add local parameters
           try { mw->eval->addParamSet(start->paramEle); }
           CATCH("Failed to add parameters");
@@ -1183,25 +1235,52 @@ namespace MBSimGUI {
             }
             CATCH("Failed to evaluate Array/Pattern 'onlyif' variable, not skipping this counter");
           }
-        }
-        else
-          try {mw->eval->addParamSet(start->paramEle); }
-          CATCH("Failed to add parameters");
 
-        auto startNext=start;
-        startNext++;
-        if(startNext!=end)
-          walk(startNext, end, !start->counterName.empty() ? level+1 : level, levels);
-        else {
-          auto value = mw->eval->create(code); // if eval on next line fails we use the unevaluated code as value
-          try { value = mw->eval->stringToValue(code,e,false); }
-          CATCH("Failed to evaluate parameter, adding a string value with the unevaluated code")
-          values.emplace(levels, value);
+          auto startNext=start;
+          startNext++;
+          if(startNext!=end)
+            walk(startNext, end, !start->counterName.empty() ? level+1 : level, levels);
+          else {
+            callNumber++;
+            if(trackLastCall)
+              // only track the last call but do not evaluate code
+              *lastCall=callNumber;
+            else {
+              if(trackFirstLastCall) {
+                mw->eval->addParam("mbsimgui_firstCall", mw->eval->create(static_cast<double>(callNumber==1)));
+                mw->eval->addParam("mbsimgui_lastCall", mw->eval->create(static_cast<double>(lastCall && *lastCall==callNumber)));
+                mw->eval->addParam("mbsimgui_counterNames", mw->eval->create(boost::algorithm::join(counterNames, ",")));
+                vector<double> counts(levels.size());
+                for(size_t i=0; i<levels.size(); ++i) counts[i]=levels[i];
+                mw->eval->addParam("mbsimgui_counts", mw->eval->create(counts));
+              }
+              // evaluate code
+              bool ok=false;
+              Eval::Value value;
+              try { value = mw->eval->stringToValue(code,e,fullEval,skipRet); ok=true; }
+              CATCH("Failed to evaluate parameter, adding a string value with the unevaluated code")
+              if(!ok && catchErrors)
+                value = mw->eval->create(code); // if eval failed we use the unevaluated code as value
+              values.emplace(levels, value);
+            }
+          }
         }
-      }
+      };
+      walk(parameterLevels.begin(), parameterLevels.end(), 0, levels);
+      return pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>>{counterNames, values};
     };
-    walk(parameterLevels.begin(), parameterLevels.end(), 0, levels);
-    return {counterNames, values};
+
+    if(!trackFirstLastCall)
+      // track the first and last call was not requested -> just all the worker (once)
+      return worker(parameterLevels, code, e, fullEval, catchErrors, nullptr);
+    else {
+      // track the first and last call was requested
+      int lastCall = -1;
+      // run worker with lastCall = -1 to track the last call (no evaluation of code is done)
+      worker(parameterLevels, code, e, fullEval, catchErrors, &lastCall);
+      // now call worker again and set a parameter to indicate the first and last call
+      return worker(parameterLevels, code, e, fullEval, catchErrors, &lastCall);
+    }
   }
 
   void MainWindow::saveDataAs() {
@@ -1356,7 +1435,7 @@ namespace MBSimGUI {
       actionLinearSystemAnalysis->setDisabled(true);
     }
 
-    echoView->clearOutput();
+    clearEchoView("Running 'mbsimxml':\n\n");
     echoView->showXMLCode(false);
     DOMElement *root { nullptr };
     QString errorText;
@@ -1505,7 +1584,7 @@ namespace MBSimGUI {
     arg.append(QDir::currentPath());
 
     arg.append(projectFile);
-    echoView->clearOutput();
+    clearEchoView("Running 'mbsimxml' in debug mode:\n\n");
     echoView->showXMLCode(true);
     process.setWorkingDirectory(uniqueTempDir_);
     process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
@@ -1608,7 +1687,7 @@ namespace MBSimGUI {
     elementBuffer.first = nullptr;
     parameterBuffer.first = nullptr;
     setWindowModified(true);
-    auto r = vector<DOMDocument*>(1+file.size());
+    auto r = vector<shared_ptr<DOMDocument>>(1+file.size());
     r[0] = doc;
     for(int i=0; i<file.size(); i++)
       r[i+1] = file[i]->getXMLDocument();
@@ -1626,7 +1705,7 @@ namespace MBSimGUI {
   }
 
   void MainWindow::redo() {
-    auto u = vector<DOMDocument*>(1+file.size());
+    auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
     u[0] = doc;
     for(int i=0; i<file.size(); i++)
       u[i+1] = file[i]->getXMLDocument();
@@ -2013,10 +2092,10 @@ namespace MBSimGUI {
 	if(QFileInfo::exists(dialog.getModelFileName()))
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getModelFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-	  DOMDocument *doc = impl->createDocument();
+	  auto doc = mbxmlparserNoVal->createDocument();
 	  DOMNode *node = doc->importNode(item->getXMLElement(),true);
 	  doc->insertBefore(node,nullptr);
-	  serializer->writeToURI(doc, X()%dialog.getModelFileName().toStdString());
+	  serializer->writeToURI(doc.get(), X()%dialog.getModelFileName().toStdString());
 	}
       }
       if(item->getNumberOfParameters() and not dialog.getParameterFileName().isEmpty()) {
@@ -2024,10 +2103,10 @@ namespace MBSimGUI {
 	if(QFileInfo::exists(dialog.getParameterFileName()))
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
-	  DOMDocument *doc = impl->createDocument();
+	  auto doc = mbxmlparserNoVal->createDocument();
 	  DOMNode *node = doc->importNode(item->getParameter(0)->getXMLElement()->getParentNode(),true);
 	  doc->insertBefore(node,nullptr);
-	  serializer->writeToURI(doc, X()%dialog.getParameterFileName().toStdString());
+	  serializer->writeToURI(doc.get(), X()%dialog.getParameterFileName().toStdString());
 	}
       }
     }
@@ -2092,10 +2171,10 @@ namespace MBSimGUI {
       if(QFileInfo::exists(dialog.getParameterFileName()))
 	ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getParameterFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
       if(ret == QMessageBox::Yes) {
-	DOMDocument *doc = impl->createDocument();
+	auto doc = mbxmlparserNoVal->createDocument();
 	DOMNode *node = doc->importNode(parameters->getParent()->getEmbedXMLElement()->getFirstElementChild(),true);
 	doc->insertBefore(node,nullptr);
-	serializer->writeToURI(doc, X()%dialog.getParameterFileName().toStdString());
+	serializer->writeToURI(doc.get(), X()%dialog.getParameterFileName().toStdString());
       }
     }
   }
@@ -2311,7 +2390,7 @@ namespace MBSimGUI {
     if(result) {
       updateUndos();
       if(parent->getNumberOfParameters()) removeParameter(parent);
-      DOMDocument *doc = nullptr;
+      shared_ptr<DOMDocument> doc;
       QString file = dialog.getParameterFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getParameterFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
@@ -2321,12 +2400,12 @@ namespace MBSimGUI {
           auto oldParameter = E(parentele)->getFirstElementChildNamed(PV%"Parameter");
           if(oldParameter)
             parentele->removeChild(oldParameter)->release();
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parentele->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parentele->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
 	  E(parentele)->setAttribute("parameterHref",(dialog.getAbsoluteFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	  parent->setParameterFileItem(addFile(file));
 	}
 	else {
-	  doc = parser->parseURI(X()%file.toStdString());
+	  doc = mbxmlparserNoVal->parse(file.toStdString());
           if(!doc)
             statusBar()->showMessage("Unable to load or parse XML file: "+file);
           else {
@@ -2397,18 +2476,18 @@ namespace MBSimGUI {
     int result = dialog.exec();
     if(result) {
       updateUndos();
-      DOMDocument *doc = nullptr;
+      shared_ptr<DOMDocument> doc;
       QString file = dialog.getParameterFileName().isEmpty()?"":getProjectDir().absoluteFilePath(dialog.getParameterFileName());
       if(QFileInfo::exists(file)) {
 	if(file.startsWith("//"))
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	element = D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed");
 	if(dialog.referenceParameter()) {
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
 	  E(element)->setAttribute("parameterHref",(dialog.getAbsoluteParameterFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	}
 	else {
-	  doc = parser->parseURI(X()%file.toStdString());
+	  doc = mbxmlparserNoVal->parse(file.toStdString());
           if(!doc)
             statusBar()->showMessage("Unable to load or parse XML file: "+file);
           else {
@@ -2423,11 +2502,11 @@ namespace MBSimGUI {
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	if(dialog.referenceModel()) {
 	  if(not element) element = D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed");
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
 	  E(element)->setAttribute("href",(dialog.getAbsoluteModelFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	}
 	else {
-	  doc = parser->parseURI(X()%file.toStdString());
+	  doc = mbxmlparserNoVal->parse(file.toStdString());
           if(!doc)
             statusBar()->showMessage("Unable to load or parse XML file: "+file);
           else {
@@ -2649,10 +2728,9 @@ namespace MBSimGUI {
 
   void MainWindow::editElementSource() {
     if(not editorIsOpen()) {
-      menuBar()->setDisabled(true);
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = static_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
-      editor = new XMLPropertyDialog(element);
+      auto editor = new XMLPropertyDialog(element);
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
@@ -2668,8 +2746,6 @@ namespace MBSimGUI {
           updateReferences(element);
           if(getAutoRefresh()) refresh();
         }
-	menuBar()->setEnabled(true);
-        editor = nullptr;
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
         editor->fromWidget();
@@ -2687,11 +2763,10 @@ namespace MBSimGUI {
 
   void MainWindow::editParametersSource() {
     if(not editorIsOpen()) {
-      menuBar()->setDisabled(true);
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *item = static_cast<Parameters*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       EmbedItemData *parent = item->getParent();
-      editor = new ParameterXMLPropertyDialog(parent);
+      auto editor = new ParameterXMLPropertyDialog(parent);
       editor->setAttribute(Qt::WA_DeleteOnClose);
       editor->toWidget();
       editor->show();
@@ -2708,8 +2783,6 @@ namespace MBSimGUI {
           updateParameterReferences(parent);
           if(getAutoRefresh()) refresh();
         }
-	menuBar()->setEnabled(true);
-        editor = nullptr;
       });
       connect(editor,&ElementPropertyDialog::apply,this,[=](){
         editor->fromWidget();
@@ -2734,7 +2807,7 @@ namespace MBSimGUI {
 
   void MainWindow::dropEvent(QDropEvent *event) {
     for (int i = 0; i < event->mimeData()->urls().size(); i++) {
-      QString path = event->mimeData()->urls()[i].toLocalFile().toLocal8Bit().data();
+      QString path = event->mimeData()->urls()[i].path().toLocal8Bit().data();
       if(path.endsWith(".mbsx")) {
 	if(path.startsWith("//"))
 	  path.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
@@ -2860,7 +2933,7 @@ namespace MBSimGUI {
 	  if(dialog.cosim()) arg.append("--cosim");
 	  if(dialog.nocompress()) arg.append("--nocompress");
 	  arg.append(projectFile);
-	  echoView->clearOutput();
+	  clearEchoView("Running 'createFMU':\n\n");
 	  echoView->showXMLCode(false);
 	  process.setWorkingDirectory(uniqueTempDir_);
 	  fmuFileName = dialog.getFileName();
@@ -2882,6 +2955,11 @@ namespace MBSimGUI {
     echoView->updateOutput(true);
   }
 
+  void MainWindow::clearEchoView(const QString &initialText) {
+    echoView->clearOutput();
+    echoView->addOutputText(initialText);
+  }
+
   void MainWindow::updateStatus() {
     // call this function only every 0.25 sec
     if(statusTime.elapsed()<250)
@@ -2898,7 +2976,7 @@ namespace MBSimGUI {
   }
 
   QString MainWindow::getProjectFilePath() const {
-    return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).toLocalFile();
+    return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).path();
   }
 
   void MainWindow::openElementEditor(bool config) {
@@ -2906,9 +2984,8 @@ namespace MBSimGUI {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<EmbedItemData*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
-	menuBar()->setDisabled(true);
         updateParameters(element);
-        editor = element->createPropertyDialog();
+        auto editor = element->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
           editor->toWidget();
@@ -2928,8 +3005,6 @@ namespace MBSimGUI {
 	    updateNames(element);
             if(getAutoRefresh()) refresh();
           }
-          menuBar()->setEnabled(true);
-          editor = nullptr;
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
           auto *fileItem = element->getDedicatedFileItem();
@@ -2964,9 +3039,8 @@ namespace MBSimGUI {
       QModelIndex index = parameterView->selectionModel()->currentIndex();
       auto *parameter = dynamic_cast<Parameter*>(static_cast<ParameterTreeModel*>(parameterView->model())->getItem(index)->getItemData());
       if(parameter) {
-        menuBar()->setDisabled(true);
         updateParameters(parameter->getParent(),true);
-        editor = parameter->createPropertyDialog();
+        auto editor = parameter->createPropertyDialog();
         editor->setAttribute(Qt::WA_DeleteOnClose);
         if(config)
           editor->toWidget();
@@ -2987,8 +3061,6 @@ namespace MBSimGUI {
             if(getAutoRefresh()) refresh();
             if(getStatusUpdate()) parameter->getParent()->updateStatus();
           }
-        menuBar()->setEnabled(true);
-        editor = nullptr;
         });
         connect(editor,&ParameterPropertyDialog::apply,this,[=](){
           auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
@@ -3013,9 +3085,8 @@ namespace MBSimGUI {
       QModelIndex index = elementView->selectionModel()->currentIndex();
       auto *element = dynamic_cast<Element*>(static_cast<ElementTreeModel*>(elementView->model())->getItem(index)->getItemData());
       if(element) {
-        menuBar()->setDisabled(true);
         updateParameters(element);
-        editor = new ClonePropertyDialog(element);
+        auto editor = new ClonePropertyDialog(element);
         editor->setAttribute(Qt::WA_DeleteOnClose);
         editor->toWidget();
         editor->show();
@@ -3031,8 +3102,6 @@ namespace MBSimGUI {
             editor->fromWidget();
             if(getAutoRefresh()) refresh();
           }
-	  menuBar()->setEnabled(true);
-          editor = nullptr;
         });
         connect(editor,&ElementPropertyDialog::apply,this,[=](){
           auto* fileItem = element->getDedicatedFileItem();
@@ -3054,7 +3123,7 @@ namespace MBSimGUI {
       if(fileName==file[i]->getFileInfo())
         return file[i];
     }
-    DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%fileName.absoluteFilePath().toStdString());
+    auto doc = mw->mbxmlparserNoVal->parse(fileName.absoluteFilePath().toStdString());
     if(!doc)
       throw runtime_error("Unable to load or parse XML file: "+fileName.absoluteFilePath().toStdString());
     auto *fileItem = new FileItemData(doc);
@@ -3078,7 +3147,7 @@ namespace MBSimGUI {
 
   void MainWindow::saveReferencedFile(int i) {
     try {
-      serializer->writeToURI(file[i]->getXMLDocument(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
+      serializer->writeToURI(file[i]->getXMLDocument().get(), X()%file[i]->getFileInfo().absoluteFilePath().toStdString());
       file[i]->setModified(false);
     }
     catch(const std::exception &ex) {
@@ -3101,7 +3170,7 @@ namespace MBSimGUI {
   void MainWindow::convertDocument() {
     QString file=QFileDialog::getOpenFileName(this, "Open MBSim file", getProjectFilePath(), "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
     if(not(file.isEmpty())) {
-      DOMDocument *doc = parser->parseURI(X()%file.toStdString());
+      auto doc = mbxmlparserNoVal->parse(file.toStdString());
       if(!doc) {
         statusBar()->showMessage("Unable to load or parse XML file: "+file);
         return;
@@ -3127,7 +3196,7 @@ namespace MBSimGUI {
       file=QFileDialog::getSaveFileName(this, "Save MBSim file", file, "MBSim files (*.mbsx);;MBSim model files (*.mbsmx);;XML files (*.xml);;All files (*.*)");
       if(not(file.isEmpty())) {
 	try {
-	  serializer->writeToURI(doc, X()%(file.toStdString()));
+	  serializer->writeToURI(doc.get(), X()%(file.toStdString()));
 	}
 	catch(const std::exception &ex) {
           mw->setExitBad();
@@ -3148,6 +3217,54 @@ namespace MBSimGUI {
       elementView->expandToDepth(elementView->selectionModel()->currentIndex(),depth);
     else if(parameterView->hasFocus())
       parameterView->expandToDepth(parameterView->selectionModel()->currentIndex(),depth);
+  }
+
+  void MainWindow::prepareForPropertyDialogOpen() {
+    openedEditors++;
+    if(openedEditors>1)
+      return;
+
+    menuBar()->setEnabled(false);
+    // some more actions a missing here???
+    // - disable the toolbars, except the toolbar for openmbv
+    // - disable context menus for elements
+    // - ...
+  }
+
+  void MainWindow::prepareForPropertyDialogClose() {
+    openedEditors--;
+    if(openedEditors>0)
+      return;
+
+    menuBar()->setEnabled(true);
+  }
+
+}
+
+extern "C" {
+
+  // MBSimGUI::BasicPropertyDialog is rebuild in scripting engines like Python.
+  // For this we need some functions from MainWindows callable from C
+  void mbsimgui_MainWindow_prepareForPropertyDialogOpen() noexcept {
+    try {
+      assert(MBSimGUI::mw);
+      MBSimGUI::mw->prepareForPropertyDialogOpen();
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: prepareForPropertyDialogOpen failed!"<<endl;
+    }
+  }
+
+  // MBSimGUI::BasicPropertyDialog is rebuild in scripting engines like Python.
+  // For this we need some functions from MainWindows callable from C
+  void mbsimgui_MainWindow_prepareForPropertyDialogClose() noexcept {
+    try {
+      assert(MBSimGUI::mw);
+      MBSimGUI::mw->prepareForPropertyDialogClose();
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: prepareForPropertyDialogClosed failed!"<<endl;
+    }
   }
 
 }

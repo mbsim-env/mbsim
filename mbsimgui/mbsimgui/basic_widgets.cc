@@ -22,6 +22,8 @@
 #include "frame.h"
 #include "contour.h"
 #include "group.h"
+#include "qlistwidget.h"
+#include "qstackedwidget.h"
 #include "rigid_body.h"
 #include "signal_.h"
 #include "constraint.h"
@@ -39,6 +41,7 @@
 #include <xercesc/dom/DOMLSSerializer.hpp>
 #include <xercesc/dom/DOMLSInput.hpp>
 #include <xercesc/dom/DOMComment.hpp>
+#include <xercesc/dom/DOMProcessingInstruction.hpp>
 #include "octave_highlighter.h"
 #include "python_highlighter.h"
 
@@ -518,11 +521,8 @@ namespace MBSimGUI {
         parent->insertBefore(ele, ref);
       }
       else {
-        DOMLSInput *source = mw->impl->createLSInput();
-        X x;
-        source->setStringData(x%tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString());
         try {
-          mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
+          mw->mbxmlparserNoVal->parseWithContext(tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString(), parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
         }
         CATCH
       }
@@ -897,11 +897,8 @@ namespace MBSimGUI {
         parent->insertBefore(ele, ref);
       }
       else {
-        DOMLSInput *source = mw->impl->createLSInput();
-        X x;
-        source->setStringData(x%tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString());
         try {
-          mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
+          mw->mbxmlparserNoVal->parseWithContext(tree->topLevelItem(i)->data(0, Qt::UserRole).toString().toStdString(), parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
         }
         CATCH
       }
@@ -1207,22 +1204,8 @@ namespace MBSimGUI {
   }
 
   DOMElement* XMLEditorWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    DOMLSInput *source = mw->impl->createLSInput();
-    X x;
-    source->setStringData(x%edit->toPlainText().toStdString());
     try {
-      DOMElement *element;
-      if(dynamic_cast<DOMDocument*>(parent->getParentNode())) {
-        DOMDocument *doc = mw->parser->parse(source);
-        if(!doc)
-          throw runtime_error("Unable to load or parse XML file: "+edit->toPlainText().toStdString());
-        DOMElement *ele = doc->getDocumentElement();
-        element = static_cast<xercesc::DOMElement*>(parent->getOwnerDocument()->importNode(ele,true));
-        element->getOwnerDocument()->replaceChild(element, parent);
-      }
-      else
-        element = static_cast<xercesc::DOMElement*>(mw->parser->parseWithContext(source, parent, DOMLSParser::ACTION_REPLACE));
-      return element;
+      return static_cast<xercesc::DOMElement*>(mw->mbxmlparserNoVal->parseWithContext(edit->toPlainText().toStdString(), parent, DOMLSParser::ACTION_REPLACE));
     }
     CATCH
     return nullptr;
@@ -1613,6 +1596,87 @@ namespace MBSimGUI {
 	cele->setData(X()%text.toStdString());
       else
 	parent->insertBefore(parent->getOwnerDocument()->createComment(X()%text.toStdString()), parent->getFirstChild());
+    }
+    return nullptr;
+  }
+
+  namespace {
+    QTextEdit* createCodeWidget(QWidget *parent) {
+      auto *c=new QTextEdit(parent);
+      if(mw->eval->getName()=="octave")
+        new OctaveHighlighter(c);
+      else if(mw->eval->getName()=="python")
+        new PythonHighlighter(c);
+      else
+        cerr<<"No syntax hightlighter for current evaluator "+mw->eval->getName()+" available."<<endl;
+      static const QFont fixedFont=QFontDatabase::systemFont(QFontDatabase::FixedFont);
+      c->setFont(fixedFont);
+      c->setLineWrapMode(QTextEdit::NoWrap);
+      return c;
+    }
+  }
+
+  MBSimGUIContextAction::MBSimGUIContextAction() {
+    QGridLayout *layout = new QGridLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+    layout->addWidget(new QLabel("Context actions:"), 0,0, 1,2);
+    name=new QListWidget(this);
+    layout->addWidget(name, 1,0);
+    count=new QSpinBox(this);
+    layout->addWidget(count, 1,1);
+    code=new QStackedWidget(this);
+    layout->addWidget(code, 2,0, 1,2);
+
+    connect(name, &QListWidget::currentRowChanged, [this](int i) {
+      code->setCurrentIndex(i);
+    });
+
+    connect(count, QOverload<int>::of(&QSpinBox::valueChanged), [this](int nr) {
+      while(name->count()>nr)
+        delete name->item(name->count()-1);
+      while(code->count()>nr)
+        delete code->widget(code->count()-1);
+      for(int i=name->count(); i<nr; ++i) {
+        auto *n=new QListWidgetItem(("Action "+to_string(i+1)).c_str());
+        n->setFlags(n->flags() | Qt::ItemIsEditable);
+        name->addItem(n);
+      }
+      for(int i=code->count(); i<nr; ++i) {
+        auto *c=createCodeWidget(code);
+        code->addWidget(c);
+        c->setPlainText("0");
+      }
+    });
+  }
+
+  DOMElement* MBSimGUIContextAction::initializeUsingXML(DOMElement *element) {
+    auto contextAction = ElementPropertyDialog::getMBSimGUIContextActions(element);
+    count->blockSignals(true);
+    count->setValue(contextAction.size());
+    count->blockSignals(false);
+    for(auto &ca : contextAction) {
+      auto *n=new QListWidgetItem(ca.first.c_str());
+      n->setFlags(n->flags() | Qt::ItemIsEditable);
+      name->addItem(n);
+      auto *c=createCodeWidget(code);
+      code->addWidget(c);
+      c->setPlainText(ca.second.c_str());
+    }
+    if(!contextAction.empty())
+      name->setCurrentRow(0);
+    return nullptr;
+  }
+
+  DOMElement* MBSimGUIContextAction::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    DOMDocument *doc=parent->getOwnerDocument();
+    for(int i=0; i<name->count(); ++i) {
+      auto *n = name->item(i);
+      auto *c = static_cast<QPlainTextEdit*>(code->widget(i));
+
+      DOMProcessingInstruction *pi=doc->createProcessingInstruction(X()%"MBSIMGUI_CONTEXT_ACTION",
+        X()%("name=\""+n->text().toStdString()+"\" "+c->toPlainText().toStdString()));
+      parent->insertBefore(pi, nullptr);
     }
     return nullptr;
   }

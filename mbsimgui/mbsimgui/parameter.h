@@ -21,7 +21,6 @@
 #define _PARAMETER__H_
 
 #include "treeitemdata.h"
-#include "parameter_property_dialog.h"
 #include "parameter_context_menu.h"
 #include "parameters_context_menu.h"
 #include "embeditemdata.h"
@@ -67,7 +66,7 @@ namespace MBSimGUI {
       bool getHidden() const { return hidden; }
 //      QString getValue() const override { return MBXMLUtils::E(element)->getFirstTextChild()?QString::fromStdString(MBXMLUtils::X()%MBXMLUtils::E(element)->getFirstTextChild()->getData()):""; }
       virtual xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent);
-      virtual PropertyDialog* createPropertyDialog() { return new ParameterPropertyDialog(this); }
+      virtual PropertyDialog* createPropertyDialog()=0;
       QMenu* createContextMenu() override { return new ParameterContextMenu(this); }
       virtual void updateValue();
     protected:
@@ -79,7 +78,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(StringParameter, Parameter, MBXMLUtils::PV%"stringParameter", "String parameter");
     public:
       StringParameter();
-      PropertyDialog* createPropertyDialog() override { return new StringParameterPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override;
       void updateValue() override;
   };
 
@@ -87,7 +86,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(ScalarParameter, Parameter, MBXMLUtils::PV%"scalarParameter", "Scalar parameter");
     public:
       ScalarParameter();
-      PropertyDialog* createPropertyDialog() override { return new ScalarParameterPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override;
       void updateValue() override;
   };
 
@@ -95,7 +94,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(VectorParameter, Parameter, MBXMLUtils::PV%"vectorParameter", "Vector parameter");
     public:
       VectorParameter();
-      PropertyDialog* createPropertyDialog() override { return new VectorParameterPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override;
       void updateValue() override;
   };
 
@@ -103,7 +102,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(MatrixParameter, Parameter, MBXMLUtils::PV%"matrixParameter", "Matrix parameter");
     public:
       MatrixParameter();
-      PropertyDialog* createPropertyDialog() override { return new MatrixParameterPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override;
       void updateValue() override;
   };
 
@@ -111,7 +110,7 @@ namespace MBSimGUI {
     MBSIMGUI_OBJECTFACTORY_CLASS(AnyParameter, Parameter, MBXMLUtils::PV%"anyParameter", "Any parameter");
     public:
       AnyParameter();
-      PropertyDialog* createPropertyDialog() override { return new AnyParameterPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override;
       void updateValue() override;
   };
 
@@ -121,7 +120,7 @@ namespace MBSimGUI {
       ImportParameter();
       QString getName() const override { return "<import>"; }
       xercesc::DOMElement* createXMLElement(xercesc::DOMNode *parent) override;
-      PropertyDialog* createPropertyDialog() override { return new ImportParameterPropertyDialog(this); }
+      PropertyDialog* createPropertyDialog() override;
       void updateValue() override;
     private:
       std::string action;

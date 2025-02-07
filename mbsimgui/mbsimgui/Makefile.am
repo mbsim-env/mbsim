@@ -1,5 +1,7 @@
 include $(top_srcdir)/qt.mk
 
+SUBDIRS = . evaluator/python
+
 if COND_WIN32
   MAYBE_WIN32_mbsimgui_OBJ = mbsimgui.o
   EXPORT_ALL_SYMBOLS = -Xlinker --export-all-symbols

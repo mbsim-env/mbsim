@@ -113,7 +113,7 @@ namespace MBSimGUI {
           mw->statusBar()->showMessage("Unknown exception");
           std::cerr << "Unknwon exception" << std::endl;
         }
-        DOMDocument *doc = mw->parser->parseURI(MBXMLUtils::X()%QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).toLocalFile()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
+        auto doc = mw->mbxmlparserNoVal->parse(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).path()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
         if(!doc) {
           ele1 = ele1->getNextElementSibling();
           continue;
@@ -122,6 +122,7 @@ namespace MBSimGUI {
         ele1->insertBefore(ele2,nullptr);
         boost::filesystem::path orgFileName=E(doc->getDocumentElement())->getOriginalFilename();
         E(ele2)->addEmbedData("MBXMLUtils_OriginalFilename", orgFileName.string());
+        E(ele2)->setOriginalElementLineNumber(E(ele1)->getLineNumber());
         MBXMLUtils::E(ele1)->removeAttribute("href");
       }
       if(E(ele1)->getTagName()==PV%"Embed")

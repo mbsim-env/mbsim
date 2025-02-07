@@ -6,6 +6,3 @@ if [ @XC@ == 1 ]; then
 fi
 
 $srcdir/../examples/error/run_error_checks.py --run gui --prefix @prefix@ $srcdir/../examples
-# mbsimgui does currently not report fully correct error messages (line and xpath may be wrong)
-# hence we return always 0 for now for the mbsimgui check
-exit 0

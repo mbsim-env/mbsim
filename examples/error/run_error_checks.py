@@ -112,10 +112,12 @@ def compXML(dir, ref, cur):
         refQS=urllib.parse.parse_qs(urllib.parse.urlparse(ref.attrib[key]).query)
         curQS=urllib.parse.parse_qs(urllib.parse.urlparse(cur.attrib[key]).query)
         for key2 in curQS.keys()-refQS.keys():
-          ret[1]+=dir+f": GUI: href query key={key2} not found in ref\n"; ret[0]+=1
+          if not (key2=="ecount" and curQS[key2]==["1"]): # treat ecount=1 === ecount not present
+            ret[1]+=dir+f": GUI: href query key={key2} value={curQS[key2]} not found in ref\n"; ret[0]+=1
         for key2 in refQS:
           if key2 not in curQS:
-            ret[1]+=dir+f": GUI: href query key={key2} not found in cur\n"; ret[0]+=1
+            if not (key2=="ecount" and refQS[key2]==["1"]): # treat ecount=1 === ecount not present
+              ret[1]+=dir+f": GUI: href query key={key2} value={refQS[key2]} not found in cur\n"; ret[0]+=1
             continue
           if refQS[key2]!=curQS[key2]:
             ret[1]+=dir+f": GUI: query for key={key2} does not match\n    ref={refQS[key2]}\n    cur={curQS[key2]}\n"; ret[0]+=1
@@ -159,11 +161,11 @@ def checkGUIError(dir):
 
 def check(dir):
   ret=[0,""]
-  if "xml" in args.run:
+  if args.run is None or "xml" in args.run:
     r=checkErrorFormat(dir, "GCCNONE"); appendRet(ret, r)
     r=checkErrorFormat(dir, "HTMLFILELINE"); appendRet(ret, r)
     r=checkErrorFormat(dir, "HTMLXPATH"); appendRet(ret, r)
-  if "gui" in args.run:
+  if args.run is None or "gui" in args.run:
     r=checkGUIError(dir); appendRet(ret, r)
   ret.append(dir)
   return ret
@@ -196,7 +198,7 @@ def guiEnvVars(displayNR):
   return denv
 
 # no VNC on Windows and on WSL (vnc not working in WSL)
-if "gui" in args.run and os.name!="nt" and not os.path.isfile("/etc/wsl.conf") and not args.novnc:
+if (args.run is None or "gui" in args.run) and os.name!="nt" and not os.path.isfile("/etc/wsl.conf") and not args.novnc:
   startVNC()
 
 dirs=[]
@@ -214,7 +216,7 @@ for result in executor.map(check, dirs):
   retVal+=result[0]
 
 # no VNC on Windows and on WSL (vnc not working in WSL)
-if "gui" in args.run and os.name!="nt" and not os.path.isfile("/etc/wsl.conf") and not args.novnc:
+if (args.run is None or "gui" in args.run) and os.name!="nt" and not os.path.isfile("/etc/wsl.conf") and not args.novnc:
   closeVNC()
 
 sys.exit(0 if retVal==0 else 1)

@@ -86,6 +86,16 @@ int main(int argc, char *argv[]) {
   
     MBSimXML::main(solver, dss, doNotIntegrate, stopAfterFirstStep, savestatevector, savestatetable);
   }
+  catch(const MBSimError &e) {
+    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<e.what()<<flush<<noskipws<<endl;
+    return 1;
+  }
+  catch(const MBXMLUtils::DOMEvalException &e) {
+    // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
+    fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<flush<<skipws<<e.what()<<flush<<noskipws<<endl;
+    return 1;
+  }
   catch(const exception &e) {
     fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<e.what()<<endl;
     return 1;

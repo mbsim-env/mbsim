@@ -171,7 +171,7 @@
    Memcheck:Leak
    match-leak-kinds: definite
    fun:_Znwm
-   fun:_ZN9QScroller11grabGestureEP7QObjectNS_19ScrollerGestureTypeE
+   ...
    fun:_ZN10OpenMBVGUI5Utils11enableTouchEP7QWidget
    fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
 }
@@ -180,7 +180,25 @@
    Memcheck:Leak
    match-leak-kinds: definite
    fun:_Znwm
-   fun:_ZN10SoSFUInt3214createInstanceEv
+   ...
+   fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
+   fun:_ZN10OpenMBVGUI5Utils11enableTouchEP7QWidget
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:_Znwm
+   ...
    fun:_ZN4SoDB17createGlobalFieldERK6SbName6SoType
    fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
 }
@@ -546,4 +564,12 @@
    fun:_Znam
    ...
    fun:_ZN4SoDB4readEP7SoInputRP6SoNode
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:_Znwm
+   ...
+   fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
 }

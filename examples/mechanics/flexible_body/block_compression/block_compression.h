@@ -27,7 +27,7 @@ class Block : public MBSim::RigidBody {
       addContour(bottom);
     }
 
-    virtual void init(InitStage stage, const MBSim::InitConfigSet &config) {
+    virtual void init(InitStage stage, const MBSim::InitConfigSet &config=MBSim::InitConfigSet()) {
       if (stage == preInit) {
         /*Back Plane*/
         fmatvec::Vec3 backRefTrans;

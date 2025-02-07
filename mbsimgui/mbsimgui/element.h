@@ -47,6 +47,7 @@ namespace MBSimGUI {
       Element();
       virtual QString getXMLName();
       QString getXMLPath(Element *ref=nullptr, bool rel=false);
+      xercesc::DOMElement* processIDAndHref(xercesc::DOMElement* element) override;
       virtual xercesc::DOMElement* getXMLFrames() { return nullptr; }
       virtual xercesc::DOMElement* getXMLContours() { return nullptr; }
       virtual xercesc::DOMElement* getXMLGroups() { return nullptr; }
