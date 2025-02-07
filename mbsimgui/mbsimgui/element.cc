@@ -187,7 +187,16 @@ namespace MBSimGUI {
       for(int j=parent->getNumberOfParameters()-1; j>=0; j--) {
         auto parameter=parent->getParameter(j);
         if(parameter->getName().toStdString()==parName) {
-          parameter->setValue(code.c_str());
+          auto e=parameter->getXMLElement();
+          // remove all existing child nodes
+          while(e->getFirstChild())
+            e->removeChild(e->getFirstChild());
+          // and insert the code as (the only) text node
+          e->insertBefore(e->getOwnerDocument()->createTextNode(X()%code), nullptr);
+          // update parameter tree
+          parameter->updateValue();
+          // update element names
+          MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
           return;
         }
       }

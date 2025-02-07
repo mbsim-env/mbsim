@@ -152,9 +152,7 @@
                             ax.plot([1,2,3,4],[5,4,7,2])
                             d.show()
 
-                            mbsimgui.waitForDialogs(w, d)
-
-                            mbsimgui_element.setParameterCode("y", "'mfmf'")
+                            mbsimgui.mw.waitForPropertyDialogs(w, d)
 
                             if mbsimgui_firstCall:
                               mbxmlutils.staticData["myplotdata"]=[]
@@ -167,6 +165,9 @@
                           <?MBSIMGUI_CONTEXT_ACTION name="Some output"
                             print("start")
                             ret={"a": 9}
+                            mbsimgui_element.setParameterCode("y", "[[1,2,3],[3,4,5],[3,4,5],[3,4,5],[3,4,5],[3,4,5]]")
+                            import mbsimgui
+                            mbsimgui.mw.refresh()
                             print("end")
                           ?>
                           <mass unit="kg">1</mass>

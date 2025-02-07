@@ -46,6 +46,7 @@
 #include <mbxmlutils/eval.h>
 #include <QMessageBox>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <boost/format.hpp>
 
 using namespace MBXMLUtils;
 
@@ -142,15 +143,20 @@ namespace MBSimGUI {
       for(auto &ca : contextAction) {
         addAction(ca.first.c_str(), [ca, element](){
           // this code is run when the action is triggered
-          mw->clearEchoView(QString("Running context action '")+ca.first.c_str()+"':\n");
+          mw->clearEchoView();
           try {
             auto parameterLevels = mw->updateParameters(element);
             auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second,
-              nullptr, true, true, false, true, [element](){
-                fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<std::endl;
-                if(mw->eval->getName()=="python")
-                  mw->eval->addParam("mbsimgui_element",
-                    mw->eval->stringToValue("import mbsimgui; ret=mbsimgui.Element("+std::to_string(reinterpret_cast<size_t>(element))+")"));
+              nullptr, true, true, false, true, [element, ca](const std::vector<std::string>& counterNames, const std::vector<int> &counts){
+                fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<"Running context action '"<<ca.first<<"' with ";
+                for(size_t i=0; i<counterNames.size(); ++i)
+                  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
+                fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<":"<<std::endl;
+                mw->updateEchoView();
+                auto it=mbsimgui_element_string.find(mw->eval->getName());
+                if(it!=mbsimgui_element_string.end())
+                  mw->eval->addParam("mbsimgui_element", mw->eval->stringToValue(
+                    (boost::format(it->second)%element).str()));
               });
             mw->updateEchoView();
           }

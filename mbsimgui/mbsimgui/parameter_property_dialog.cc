@@ -80,21 +80,10 @@ namespace MBSimGUI {
     initializeUsingXML(parameter->getXMLElement());
   }
 
-  namespace {
-    void updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index) {
-      auto model=static_cast<const ElementTreeModel*>(index.model());
-      auto *item = model->getItem(index)->getItemData();
-      if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement())
-          embedItemData->updateName();
-      QModelIndex childIndex;
-      for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
-        updateNameOfCorrespondingElementAndItsChilds(childIndex);
-    }
-  }
   void ParameterPropertyDialog::fromWidget() {
     writeXMLFile(parameter->getXMLElement());
     parameter->updateValue();
-    updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
+    MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
   }
 
   StringParameterPropertyDialog::StringParameterPropertyDialog(Parameter *parameter) : ParameterPropertyDialog(parameter) {

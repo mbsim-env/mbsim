@@ -83,6 +83,7 @@
 #include <xercesc/dom/DOMComment.hpp>
 #include "dialogs.h"
 #include "wizards.h"
+#include <boost/format.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -1069,17 +1070,9 @@ namespace MBSimGUI {
     }
     eval = Eval::createEvaluator(evalName);
 
-    if(eval->getName()=="python") {
-      string str(R"(
-def _local():
-  import sys
-  sys.path.append("{PREFIX}/share/mbsimgui/python")
-_local()
-del _local
-)");
-      boost::algorithm::replace_first(str, "{PREFIX}", getInstallPath().string());
-      eval->addImport(str, nullptr, "addAllVarsAsParams");
-    }
+    auto it=mbsimgui_init_string.find(eval->getName());
+    if(it!=mbsimgui_init_string.end())
+      eval->addImport((boost::format(it->second.second)%getInstallPath().string()).str(), nullptr, it->second.first);
   }
 
   // Create an new eval and fills its context with all parameters/imports which may influence item.
@@ -1156,7 +1149,8 @@ del _local
 
   pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>> MainWindow::evaluateForAllArrayPattern(
     const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
-    bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall, const std::function<void()> &preCodeFunc) {
+    bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall,
+    const std::function<void(const vector<string>&, const vector<int>&)> &preCodeFunc) {
     // helper to catch errors, print it to the statusBar and continue if catchErrors is true.
     // if catchErrors is false the exception is rethrown.
     #define CATCH(msg) \
@@ -1256,7 +1250,7 @@ del _local
               mw->eval->addParam("mbsimgui_counts", mw->eval->create(counts));
 
               if(preCodeFunc)
-                preCodeFunc();
+                preCodeFunc(counterNames, levels);
               // evaluate code
               bool ok=false;
               Eval::Value value;
@@ -3242,6 +3236,32 @@ del _local
     menuBar()->setEnabled(true);
   }
 
+  void MainWindow::updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index) {
+    auto model=static_cast<const ElementTreeModel*>(index.model());
+    auto *item = model->getItem(index)->getItemData();
+    if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement())
+        embedItemData->updateName();
+    QModelIndex childIndex;
+    for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
+      updateNameOfCorrespondingElementAndItsChilds(childIndex);
+  }
+
+  map<string, pair<string, string>> mbsimgui_init_string={
+    {"python", {"addAllVarsAsParams", R"(
+def _local():
+  import sys
+  sys.path.append("%1$s/share/mbsimgui/python")
+_local()
+del _local
+)"}},
+  };
+  map<string, string> mbsimgui_element_string={
+    {"python", R"(
+import mbsimgui
+ret=mbsimgui._Element(%1$x)
+)"},
+  };
+
 }
 
 extern "C" {
@@ -3272,10 +3292,35 @@ extern "C" {
 
   void mbsimgui_Element_setParameterCode(MBSimGUI::Element *element, const char* parName, const char *code) noexcept {
     try {
-      element->setParameterCode(parName, code);
+      string parName_(parName);
+      string code_(code);
+      QTimer::singleShot(0, [element, parName_, code_](){
+        try {
+          element->setParameterCode(parName_, code_);
+        }
+        catch(...) {
+          cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+        }
+      });
     }
     catch(...) {
       cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+    }
+  }
+
+  void mbsimgui_MainWindow_refresh() noexcept {
+    try {
+      QTimer::singleShot(0, [](){
+        try {
+          MBSimGUI::mw->refresh();
+        }
+        catch(...) {
+          cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+        }
+      });
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: MainWindows::refresh() failed!"<<endl;
     }
   }
 

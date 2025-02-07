@@ -315,7 +315,8 @@ namespace MBSimGUI {
       // As second a map with all possible combinations of these counts and the corresponding evaluation is returned.
       static std::pair<std::vector<std::string>, std::map<std::vector<int>, MBXMLUtils::Eval::Value>> evaluateForAllArrayPattern(
         const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
-        bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall=false, const std::function<void()> &preCodeFunc={});
+        bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall=false,
+        const std::function<void(const std::vector<std::string>&, const std::vector<int>&)> &preCodeFunc={});
 
       void rebuildTree();
       void exportParameters();
@@ -339,6 +340,7 @@ namespace MBSimGUI {
       // Prepare the MainWindow for a "quasi" modal dialog close.
       // This just reverts the actions on the MainWindow taken by prepareForPropertyDialogOpen().
       void prepareForPropertyDialogClose();
+      static void updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index);
     public slots:
       void openElementEditor(bool config=true);
 
@@ -362,6 +364,9 @@ namespace MBSimGUI {
   extern template QModelIndex MainWindow::getContainerIndex<LinkItemData>(Element *parent);
   extern template QModelIndex MainWindow::getContainerIndex<ConstraintItemData>(Element *parent);
   extern template QModelIndex MainWindow::getContainerIndex<ObserverItemData>(Element *parent);
+
+  extern std::map<std::string, std::pair<std::string, std::string>> mbsimgui_init_string;
+  extern std::map<std::string, std::string> mbsimgui_element_string;
 
 }
 
