@@ -70,8 +70,7 @@ namespace MBSim {
       self->lewt = J_[0]-1; // needed in function delta: index in workspace where the array containing multiplicative weights begins
       self->r0 = J_[1]; // needed in function delta: r0
       self->zd0.ref(self->rWork,RangeV(self->lewt+neq[0],self->lewt+2*neq[0]-1)); // saved zd, which is used for the numerical part of the Jacobian
-
-      self->system->setTime(*t);
+      auto T = self->system->evalT();
 
       if(self->system->getqdequ()) {
         setZero(J,self->Rq,self->Rq); // par_qd_par_q
@@ -79,7 +78,7 @@ namespace MBSim {
       }
       else
         self->par_zd_par_q(J);
-      J.set(self->Rq, self->Ru, self->system->evalT()); // par_qd_par_u
+      J.set(self->Rq, self->Ru, T); // par_qd_par_u
       setZero(J,self->Rq,self->Rx); // par_qd_par_x
 
       self->par_ud_xd_par_u_x(J,true);

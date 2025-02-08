@@ -103,7 +103,7 @@ namespace MBSim {
       if(self->system->getgSize() != self->system->getgdSize()) {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
-        self->system->setUpdateW(false);
+        self->system->setUpdateW(true);
         res.add(self->Rq, self->system->evalW()*y(self->Rl));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
@@ -132,9 +132,8 @@ namespace MBSim {
 
       self->lewt = J_[0]-1; // needed in function delta: index in workspace where the array containing multiplicative weights begins
 
-      self->system->setTime(*t);
       self->zd0 = self->system->getzd();
-      const auto &T = self->system->evalT();
+      auto T = self->system->evalT();
 
       if(self->system->getqdequ()) {
         setZero(J,self->Rq,self->Rq); // par_qd_par_q
@@ -163,13 +162,12 @@ namespace MBSim {
 
       self->lewt = J_[0]-1; // needed in function delta: index in workspace where the array containing multiplicative weights begins
 
-      self->system->setTime(*t);
       self->zd0 = self->system->getzd();
       self->gd0 = self->system->getgd();
-      const auto &T = self->system->evalT();
-      const auto &Jrla = self->system->evalJrla();
-      const auto &LLM = self->system->getLLM();
-      const auto &W = self->system->getW();
+      auto T = self->system->evalT();
+      auto Jrla = self->system->evalJrla();
+      auto LLM = self->system->evalLLM();
+      auto W = self->system->evalW();
 
       if(self->system->getqdequ()) {
         setZero(J,self->Rq,self->Rq); // par_qd_par_q
@@ -204,19 +202,20 @@ namespace MBSim {
 
       self->lewt = J_[0]-1; // needed in function delta: index in workspace where the array containing multiplicative weights begins
 
-      self->system->setTime(*t);
       self->zd0 = self->system->getzd();
       self->gd0 = self->system->getgd();
       self->g0 = self->system->getg();
-      const auto &T = self->system->evalT();
-      const auto &Jrla = self->system->evalJrla();
-      const auto &LLM = self->system->getLLM();
-      const auto &W = self->system->evalW();
+      auto T = self->system->evalT();
+      auto Jrla = self->system->evalJrla();
+      auto LLM = self->system->evalLLM();
+      auto W = self->system->evalW();
+      Mat W2;
       if(self->system->getgSize() != self->system->getgdSize()) {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
-        self->system->setUpdateW(false);
-        self->zd0.add(self->Rq, self->system->evalW()*y(self->Rl));
+        self->system->setUpdateW(true);
+        W2 <<= self->system->evalW();
+        self->zd0.add(self->Rq, W2*y(self->Rl));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
       }
@@ -234,14 +233,8 @@ namespace MBSim {
           self->par_zd_gd_g_par_q(J);
         J.set(self->Rq, self->Ru, T); // par_qd_par_u
         setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
-        if(self->system->getgSize() != self->system->getgdSize()) {
-          self->system->calclaSize(5);
-          self->system->updateWRef(self->system->getWParent(0));
-          self->system->setUpdateW(false);
-          J.set(self->Rq, self->Rl, W); // par_qd_par_l
-          self->system->calclaSize(3);
-          self->system->updateWRef(self->system->getWParent(0));
-        }
+        if(self->system->getgSize() != self->system->getgdSize())
+          J.set(self->Rq, self->Rl, W2); // par_qd_par_l
         else
           J.set(self->Rq, self->Rl, W); // par_qd_par_l
       }

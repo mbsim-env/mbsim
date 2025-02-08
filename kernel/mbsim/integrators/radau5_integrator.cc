@@ -143,7 +143,8 @@ namespace MBSim {
       if(self->system->getgSize() != self->system->getgdSize()) {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
-        self->system->setUpdateW(false);
+        self->system->setUpdateW(true);
+        cout <<  self->system->evalW() << endl;
         yd.add(self->Rq, self->system->evalW()*y(self->Rl));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
@@ -165,7 +166,8 @@ namespace MBSim {
 
       self->system->setTime(*t);
       self->system->setState(Vec(*cols, z_));
-      const auto &T = self->system->evalT();
+      self->system->resetUpToDate();
+      auto T = self->system->evalT();
 
       if(self->reduced)
         self->par_ud_xd_par_q(J);
@@ -197,10 +199,12 @@ namespace MBSim {
       self->system->setTime(*t);
       self->system->setState(y(self->Rz));
       self->system->setla(y(self->Rla));
-      const auto &T = self->system->evalT();
-      const auto &Jrla = self->system->evalJrla();
-      const auto &LLM = self->system->getLLM();
-      const auto &W = self->system->getW();
+      self->system->resetUpToDate();
+      self->system->setUpdatela(false);
+      auto T = self->system->evalT();
+      auto Jrla = self->system->evalJrla();
+      auto LLM = self->system->evalLLM();
+      auto W = self->system->evalW();
 
       if(self->reduced)
         self->par_ud_xd_gdd_par_q_u(J);
@@ -238,10 +242,12 @@ namespace MBSim {
       self->system->setTime(*t);
       self->system->setState(y(self->Rz));
       self->system->setla(y(self->Rla));
-      const auto &T = self->system->evalT();
-      const auto &Jrla = self->system->evalJrla();
-      const auto &LLM = self->system->getLLM();
-      const auto &W = self->system->getW();
+      self->system->resetUpToDate();
+      self->system->setUpdatela(false);
+      auto T = self->system->evalT();
+      auto Jrla = self->system->evalJrla();
+      auto LLM = self->system->evalLLM();
+      auto W = self->system->evalW();
 
       if(self->reduced)
         self->par_ud_xd_gd_par_q(J);
@@ -281,9 +287,11 @@ namespace MBSim {
       self->system->setTime(*t);
       self->system->setState(y(self->Rz));
       self->system->setla(y(self->Rla));
-      const auto &T = self->system->evalT();
-      const auto &Jrla = self->system->evalJrla();
-      const auto &LLM = self->system->getLLM();
+      self->system->resetUpToDate();
+      self->system->setUpdatela(false);
+      auto T = self->system->evalT();
+      auto Jrla = self->system->evalJrla();
+      auto LLM = self->system->evalLLM();
 
       if(self->reduced)
         self->par_ud_xd_g_par_q(J);
@@ -320,10 +328,21 @@ namespace MBSim {
       self->system->setTime(*t);
       self->system->setState(y(self->Rz));
       self->system->setla(y(self->Rla));
-      const auto &T = self->system->evalT();
-      const auto &Jrla = self->system->evalJrla();
-      const auto &LLM = self->system->getLLM();
-      const auto &W = self->system->evalW();
+      self->system->resetUpToDate();
+      self->system->setUpdatela(false);
+      auto T = self->system->evalT();
+      auto Jrla = self->system->evalJrla();
+      auto LLM = self->system->evalLLM();
+      auto W = self->system->evalW();
+      Mat W2;
+      if(self->system->getgSize() != self->system->getgdSize()) {
+        self->system->calclaSize(5);
+        self->system->updateWRef(self->system->getWParent(0));
+        self->system->setUpdateW(true);
+        W2 <<= self->system->evalW();
+        self->system->calclaSize(3);
+        self->system->updateWRef(self->system->getWParent(0));
+      }
 
       if(self->reduced)
         self->par_ud_xd_gd_g_par_q(J);
@@ -336,14 +355,8 @@ namespace MBSim {
           self->par_zd_gd_g_par_q(J);
         J.set(self->Rq, self->Ru, T); // par_qd_par_u
         setZero(J,self->Rq,RangeV(self->Rx.start(),self->Rla.end())); // par_qd_par_x_la
-        if(self->system->getgSize() != self->system->getgdSize()) {
-          self->system->calclaSize(5);
-          self->system->updateWRef(self->system->getWParent(0));
-          self->system->setUpdateW(false);
-          J.set(self->Rq, self->Rl, self->system->evalW()); // par_qd_par_l
-          self->system->calclaSize(3);
-          self->system->updateWRef(self->system->getWParent(0));
-        }
+        if(self->system->getgSize() != self->system->getgdSize())
+          J.set(self->Rq, self->Rl, W2); // par_qd_par_l
         else
           J.set(self->Rq, self->Rl, W); // par_qd_par_l
       }
