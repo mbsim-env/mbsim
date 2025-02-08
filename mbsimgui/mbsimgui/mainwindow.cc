@@ -68,6 +68,7 @@
 #include <QDialogButtonBox>
 #include <QTextStream>
 #include <QShortcut>
+#include <QThread>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
@@ -432,6 +433,7 @@ namespace MBSimGUI {
     mainlayout->addWidget(inlineOpenMBVMW);
 
     connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::processFinished);
+    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::mbsimxmlQueue);
     connect(&process,&QProcess::readyReadStandardOutput,this,&MainWindow::updateEchoView);
     connect(&process,&QProcess::readyReadStandardError,this,&MainWindow::updateStatus);
 
@@ -1402,8 +1404,31 @@ namespace MBSimGUI {
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5",file);
   }
 
+  void MainWindow::mbsimxmlQueue() {
+    // this function is called whenever "process" finishes
+    // -> if a new task is queued run it now.
+    if(mbsimxmlQueuedTask!=-1) {
+      int newtask=mbsimxmlQueuedTask;
+      mbsimxmlQueuedTask=-1;
+      mbsimxml(newtask);
+    }
+  }
+
   void MainWindow::mbsimxml(int task) {
+    // try to stop a old task
+    process.terminate();
+    // if a old task is still running queue the new one (start it if the old has finished, see above)
+    if(process.state()!=QProcess::NotRunning) {
+      mbsimxmlQueuedTask=task;
+      return;
+    }
+
     currentTask = task;
+
+    if(task==0)
+      statusBar()->showMessage(tr("Simulate"));
+    else
+      statusBar()->showMessage(tr("Refresh"));
 
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
@@ -1508,12 +1533,10 @@ namespace MBSimGUI {
   }
 
   void MainWindow::simulate() {
-    statusBar()->showMessage(tr("Simulate"));
     mbsimxml(0);
   }
 
   void MainWindow::refresh() {
-    statusBar()->showMessage(tr("Refresh"));
     mbsimxml(1);
   }
 

@@ -187,6 +187,7 @@ namespace MBSimGUI {
       void createNewEvaluator();
 
       int openedEditors { 0 };
+      int mbsimxmlQueuedTask { -1 };
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void abstractViewFilterOptionsChanged();
@@ -199,6 +200,7 @@ namespace MBSimGUI {
       std::shared_ptr<MBXMLUtils::Eval> eval;
       xercesc::DOMImplementation *impl;
       xercesc::DOMLSSerializer *serializer;
+      void mbsimxmlQueue();
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const { return uniqueTempDir; }
       void addParameter(Parameter *parameter, EmbedItemData *parent);
