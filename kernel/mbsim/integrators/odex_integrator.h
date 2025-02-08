@@ -52,6 +52,8 @@ namespace MBSim {
       /** maximale step size */
       double dtMax{0};
 
+      bool drift { false };
+
       std::exception_ptr exception;
 
     public:

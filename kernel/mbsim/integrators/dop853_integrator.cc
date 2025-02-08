@@ -153,6 +153,7 @@ namespace MBSim {
             self->system->projectGeneralizedPositions(3);
             self->system->projectGeneralizedVelocities(3);
             projVel = false;
+            self->drift = true;
             *irtrn=-1;
           }
         }
@@ -162,6 +163,7 @@ namespace MBSim {
           self->system->resetUpToDate();
           if(self->system->velocityDriftCompensationNeeded(self->getToleranceForVelocityConstraints())) { // project velicities
             self->system->projectGeneralizedVelocities(3);
+            self->drift = true;
             *irtrn=-1;
           }
         }
@@ -244,12 +246,14 @@ namespace MBSim {
     s0 = clock();
 
     while(t<tEnd-epsroot) {
+      drift = false;
+
       DOP853(&zSize,fzdot,&t,z(),&tEnd,rTol(),aTol(),&iTol,plot,&out,
           work(),&lWork,iWork(),&liWork,rPar,iPar,&idid);
       if(exception)
         rethrow_exception(exception);
 
-      if(shift) {
+      if(shift || drift) {
         system->resetUpToDate();
         svLast = system->evalsv();
         work(6) = dt0;
