@@ -345,7 +345,7 @@ namespace MBSim {
 
     if(excludeAlgebraicVariables) for(int i=system->getzSize(); i<neq; i++) aTol(i) = 1e15;
 
-    int itask=2, iopt=1, istate=1, MF=numericalJacobian?22:21;
+    int itask=2, iopt=1, istate=1, MF=partiallyAnalyticalJacobian?21:22;
     int lrWork = 22+9*neq+neq*neq;
     int liWork = 20+neq;
     rWork.resize(lrWork);
@@ -508,7 +508,7 @@ namespace MBSim {
       else if(istate<0) throwError("Integrator LSODI failed with istate = "+to_string(istate));
     }
 
-    msg(Info)<<string("nrRHS")+(numericalJacobian?" (including jac): ":" (excluding jac): ")<<iWork(11)<<endl;
+    msg(Info)<<string("nrRHS")+(partiallyAnalyticalJacobian?" (excluding jac): ":" (including jac): ")<<iWork(11)<<endl;
     msg(Info)<<"nrJac: "<<iWork(12)<<endl;
     msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
 
@@ -555,8 +555,8 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"excludeAlgebraicVariablesFromErrorTest");
     if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
-    if(e) setNumericalJacobian(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"partiallyAnalyticalJacobian");
+    if(e) setPartiallyAnalyticalJacobian(E(e)->getText<bool>());
   }
 
 }

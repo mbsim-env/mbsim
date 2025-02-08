@@ -159,7 +159,7 @@ namespace MBSim {
     else {
       lrWork = 22+9*zSize+zSize*zSize;
       liWork = 20+zSize;
-      MF = numericalJacobian?22:21;
+      MF = partiallyAnalyticalJacobian?21:22;
     }
     rWork.resize(lrWork);
     rWork(4) = dt0;
@@ -298,7 +298,7 @@ namespace MBSim {
       else if(istate<0) throwError("Integrator LSODE failed with istate = "+to_string(istate));
     }
 
-    msg(Info)<<string("nrRHS")+(numericalJacobian?" (including jac): ":" (excluding jac): ")<<iWork(11)<<endl;
+    msg(Info)<<string("nrRHS")+(partiallyAnalyticalJacobian?" (excluding jac): ":" (including jac): ")<<iWork(11)<<endl;
     msg(Info)<<"nrJac: "<<iWork(12)<<endl;
     msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
 
@@ -331,8 +331,8 @@ namespace MBSim {
     if(e) setMinimumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
-    if(e) setNumericalJacobian(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"partiallyAnalyticalJacobian");
+    if(e) setPartiallyAnalyticalJacobian(E(e)->getText<bool>());
   }
 
 }

@@ -45,8 +45,8 @@ namespace MBSim {
 
       /** reduced form **/
       bool reduced{false};
-      /** numerical jacobian */
-      bool numericalJacobian{false};
+      /** partially analytical jacobian */
+      bool partiallyAnalyticalJacobian{false};
 
       int neq, qMove;
       fmatvec::Vec zd0; // saved derivatives of the solution components
@@ -57,7 +57,7 @@ namespace MBSim {
       ~ImplicitIntegrator() override = default;
 
       void setReducedForm(bool reduced_) { reduced = reduced_; }
-      void setNumericalJacobian(bool numericalJacobian_) { numericalJacobian = numericalJacobian_; }
+      void setPartiallyAnalyticalJacobian(bool partiallyAnalyticalJacobian_) { partiallyAnalyticalJacobian = partiallyAnalyticalJacobian_; }
   };
 
 }

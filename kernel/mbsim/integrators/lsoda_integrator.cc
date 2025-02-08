@@ -145,7 +145,7 @@ namespace MBSim {
         throwError("(LSODAIntegrator::integrate): size of rTol does not match, must be " + to_string(zSize));
     }
 
-    int itask=2, iopt=1, istate=1, jt=numericalJacobian?2:1;
+    int itask=2, iopt=1, istate=1, jt=partiallyAnalyticalJacobian?1:2;
     int lrWork = 22+zSize*max(16,zSize+9);
     int liWork = 20+zSize;
     rWork.resize(lrWork);
@@ -285,7 +285,7 @@ namespace MBSim {
       else if(istate<0) throwError("Integrator LSODA failed with istate = "+to_string(istate));
     }
 
-    msg(Info)<<string("nrRHS")+(numericalJacobian?" (including jac): ":" (excluding jac): ")<<iWork(11)<<endl;
+    msg(Info)<<string("nrRHS")+(partiallyAnalyticalJacobian?" (excluding jac): ":" (including jac): ")<<iWork(11)<<endl;
     msg(Info)<<"nrJac: "<<iWork(12)<<endl;
     msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
 
@@ -311,8 +311,8 @@ namespace MBSim {
     if(e) setMinimumStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"stepLimit");
     if(e) setStepLimit(E(e)->getText<int>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
-    if(e) setNumericalJacobian(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"partiallyAnalyticalJacobian");
+    if(e) setPartiallyAnalyticalJacobian(E(e)->getText<bool>());
   }
 
 }

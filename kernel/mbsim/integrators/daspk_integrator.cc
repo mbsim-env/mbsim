@@ -378,8 +378,8 @@ namespace MBSim {
 
     info(2) = 1; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
-    info(4) = not numericalJacobian; // jacobian is computed
-                            // - by finite differences if numericalJacobian is true
+    info(4) = partiallyAnalyticalJacobian; // jacobian is computed
+                            // - by finite differences if partiallyAnalyticalJacobian is false
                             // - by a combination of finite differences and an analytical solution, otherwise
     // info(5) = 0; // jacobian is a full matrix
     info(6) = dtMax>0; // set maximum stepsize
@@ -564,7 +564,7 @@ namespace MBSim {
       else if(idid<0) throwError("Integrator DASPK failed with istate = "+to_string(idid));
     }
 
-    msg(Info)<<string("nrRHS")+(numericalJacobian?" (including jac): ":" (excluding jac): ")<<iWork(11)<<endl;
+    msg(Info)<<string("nrRHS")+(partiallyAnalyticalJacobian?" (excluding jac): ":" (including jac): ")<<iWork(11)<<endl;
     msg(Info)<<"nrJac: "<<iWork(12)<<endl;
     msg(Info)<<"nrSteps: "<<iWork(10)<<endl;
     msg(Info)<<"nrStepsAccepted: "<<iWork(10)-iWork(13)<<endl;
@@ -616,8 +616,8 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"excludeAlgebraicVariablesFromErrorTest");
     if(e) setExcludeAlgebraicVariablesFromErrorTest(E(e)->getText<bool>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
-    if(e) setNumericalJacobian(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"partiallyAnalyticalJacobian");
+    if(e) setPartiallyAnalyticalJacobian(E(e)->getText<bool>());
   }
 
 }

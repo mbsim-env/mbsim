@@ -623,8 +623,8 @@ namespace MBSim {
     int iMas = formalism>0; // mass-matrix
     int mlMas = 0; // lower bandwith of the mass-matrix
     int muMas = 0; // upper bandwith of the mass-matrix
-    int iJac = (not numericalJacobian); // jacobian is computed
-                            // - by finite differences if numericalJacobian is true
+    int iJac = partiallyAnalyticalJacobian; // jacobian is computed
+                            // - by finite differences if partiallyAnalyticalJacobian is false
                             // - by a combination of finite differences and an analytical solution, otherwise
 
     int idid;
@@ -804,8 +804,8 @@ namespace MBSim {
     }
     e=E(element)->getFirstElementChildNamed(MBSIM%"stepSizeSaftyFactor");
     if(e) setStepSizeSaftyFactor((E(e)->getText<double>()));
-    e=E(element)->getFirstElementChildNamed(MBSIM%"numericalJacobian");
-    if(e) setNumericalJacobian(E(e)->getText<bool>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"partiallyAnalyticalJacobian");
+    if(e) setPartiallyAnalyticalJacobian(E(e)->getText<bool>());
   }
 
 }
