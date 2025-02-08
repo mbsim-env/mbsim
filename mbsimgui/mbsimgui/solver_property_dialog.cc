@@ -388,7 +388,7 @@ namespace MBSimGUI {
     jacobianRecomputation = new ExtWidget("Jacobian recomputation",new ChoiceWidget(new ScalarWidgetFactory("0.001"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"jacobianRecomputation");
     addToTab("Extra", jacobianRecomputation);
 
-    jacobianRecomputationAtRejectedSteps = new ExtWidget("Jacobian recomputation at rejected steps",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"jacobianRecomputationAtRejectedSteps");
+    jacobianRecomputationAtRejectedSteps = new ExtWidget("Jacobian recomputation at rejected steps",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"jacobianRecomputationAtRejectedSteps");
     addToTab("Extra", jacobianRecomputationAtRejectedSteps);
 
     vector<QString> listssc;
@@ -482,7 +482,7 @@ namespace MBSimGUI {
     jacobianRecomputation = new ExtWidget("Jacobian recomputation",new ChoiceWidget(new ScalarWidgetFactory("0.001"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"jacobianRecomputation");
     addToTab("Extra", jacobianRecomputation);
 
-    jacobianRecomputationAtRejectedSteps = new ExtWidget("Jacobian recomputation at rejected steps",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"jacobianRecomputationAtRejectedSteps");
+    jacobianRecomputationAtRejectedSteps = new ExtWidget("Jacobian recomputation at rejected steps",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"jacobianRecomputationAtRejectedSteps");
     addToTab("Extra", jacobianRecomputationAtRejectedSteps);
 
     vector<QString> listssc;
