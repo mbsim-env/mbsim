@@ -30,7 +30,7 @@ MBSimGUI
 - Update element names if a parameter of a element changes to display the correct new element name.
 - Added plotting: model defined element context menu actions can now be added. When clicked the deposited evaluator code is executed.
   The output is displayed in the Echo Area. The evaluator code can even create dialogs e.g. using PySide2 and create
-  plots using e.g. matplotlib
+  plots using e.g. matplotlib. Setting parameters from the evaluator code is also possible.
 
 OpenMBV
 -------

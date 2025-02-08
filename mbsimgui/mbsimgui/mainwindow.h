@@ -87,6 +87,7 @@ namespace MBSimGUI {
   class LinearSystemAnalysisDialog;
   class FlexibleBodyTool;
   class StateTableDialog;
+  class NewParamLevelHeap;
 
   class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -188,6 +189,7 @@ namespace MBSimGUI {
 
       int openedEditors { 0 };
       int mbsimxmlQueuedTask { -1 };
+      std::unique_ptr<NewParamLevelHeap> evalNPL;
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void abstractViewFilterOptionsChanged();

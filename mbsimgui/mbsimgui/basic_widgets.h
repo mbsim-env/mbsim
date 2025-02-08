@@ -287,6 +287,7 @@ namespace MBSimGUI {
       void setText(const QString &text_) override { text->setPlainText(text_); }
       void setReadOnly(bool readOnly) { text->setReadOnly(readOnly); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      void enableMonospaceFont();
       void enableSyntaxHighlighter();
 
     protected:

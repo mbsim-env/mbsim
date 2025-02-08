@@ -68,7 +68,6 @@
 #include <QDialogButtonBox>
 #include <QTextStream>
 #include <QShortcut>
-#include <QThread>
 #include <mbxmlutils/eval.h>
 #include <mbxmlutils/preprocess.h>
 #include <boost/dll.hpp>
@@ -1051,6 +1050,13 @@ namespace MBSimGUI {
     openElementEditor(false);
   }
 
+  class NewParamLevelHeap {
+    public:
+      NewParamLevelHeap(std::shared_ptr<Eval> oe) : npl(std::move(oe)) {}
+    private:
+      NewParamLevel npl;
+  };
+
   void MainWindow::createNewEvaluator() {
     // get evaluator (octave, python, ...)
     string evalName=Evaluator::defaultEvaluator;
@@ -1070,11 +1076,18 @@ namespace MBSimGUI {
       if(evaluator)
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
     }
-    eval = Eval::createEvaluator(evalName);
 
-    auto code=Evaluator::getInitCode();
-    if(!code.second.empty())
-      eval->addImport(code.second, nullptr, code.first);
+    // if this is this the first call (no eval exists yet) or the evaluator type has changed -> create a new one and init it
+    if(!eval || eval->getName()!=evalName) {
+      eval = Eval::createEvaluator(evalName);
+
+      auto code=Evaluator::getInitCode();
+      if(!code.second.empty())
+        eval->addImport(code.second, nullptr, code.first);
+    }
+
+    // restore the original state of the evaluator (we no longer create a new one every time, see above)
+    evalNPL = make_unique<NewParamLevelHeap>(eval);
   }
 
   // Create an new eval and fills its context with all parameters/imports which may influence item.

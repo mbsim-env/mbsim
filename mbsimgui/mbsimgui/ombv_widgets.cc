@@ -134,7 +134,7 @@ namespace MBSimGUI {
       return new ExtWidget("Open Inventor file name",new FileWidget("", "Open Open Inventor file", "Inventor files (*.iv);;VRML files (*.wrl *.vrml)", 0, true));
     if(i==1) {
       auto tew = new TextEditorWidget;
-//mfmf      tew->enableMonospaceFont();
+      tew->enableMonospaceFont();
       return new ExtWidget("Open Inventor string content",tew);
     }
     return nullptr;
