@@ -166,6 +166,5 @@
     <toleranceForVelocityConstraints>1e-5</toleranceForVelocityConstraints>
     <absoluteToleranceScalar>1e-6</absoluteToleranceScalar>
     <relativeToleranceScalar>1e-6</relativeToleranceScalar>
-    <numericalJacobian>true</numericalJacobian>
   </LSODAIntegrator>
 </MBSimProject>
