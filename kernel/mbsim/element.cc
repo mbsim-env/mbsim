@@ -20,9 +20,6 @@
 #ifdef _WIN32
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
-#  undef __STRICT_ANSI__ // to define _controlfp which is not part of ANSI and hence not defined in mingw
-#  include <cfloat>
-#  define __STRICT_ANSI__
 #endif
 #include <config.h>
 #include <cassert>
@@ -67,14 +64,10 @@ namespace MBSim {
     // If the first Element is created we enable FPE. This enables FPE in everything which instantiated at least one MBSim::Element -> this enables it also for all source examples.
     // We do not enable FPE already at library load of libmbsim.so to allow libmbsim.so to load and call helper function without enabling FPE.
     // This is e.g. used when MBSim or a MBSim module provides a C helper function which may be called by the evaluator (python or octave) of the MBSim XML preprocessor.
-    static bool fpeEnabled = false;
-    if(!fpeEnabled) {
-      fpeEnabled = true;
-#ifdef _WIN32
-      _controlfp(~(_EM_ZERODIVIDE | _EM_INVALID | _EM_OVERFLOW), _MCW_EM);
-#else
-      assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1);
-#endif
+    static bool fpeHandled = false;
+    if(!fpeHandled) {
+      fpeHandled = true;
+      handleFPE();
     }
   }
 

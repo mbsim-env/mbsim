@@ -20,9 +20,6 @@
 #ifdef _WIN32
 #  define WIN32_LEAN_AND_MEAN
 #  include <windows.h>
-#  undef __STRICT_ANSI__ // to define _controlfp which is not part of ANSI and hence not defined in mingw
-#  include <cfloat>
-#  define __STRICT_ANSI__
 #endif
 #include <config.h>
 #include <clocale>
@@ -37,6 +34,7 @@
 #include <QLibrary>
 #include <boost/dll.hpp>
 #include <mbxmlutilshelper/shared_library.h>
+#include <mbxmlutilshelper/utils.h>
 #include "../../mbsimxml/mbsimxml/set_current_path.h"
 #ifndef _WIN32
 #  include "qt-unix-signals/sigwatch.h"
@@ -53,10 +51,8 @@ int main(int argc, char *argv[]) {
 #ifdef _WIN32
   SetConsoleCP(CP_UTF8);
   SetConsoleOutputCP(CP_UTF8);
-  //_controlfp(~(_EM_ZERODIVIDE | _EM_INVALID | _EM_OVERFLOW), _MCW_EM); // Qt seems to generate some FPE, hence not activated
-#else
-  //assert(feenableexcept(FE_DIVBYZERO | FE_INVALID | FE_OVERFLOW)!=-1); // Qt seems to generate some FPE, hence not activated
 #endif
+  MBXMLUtils::handleFPE();
   setlocale(LC_ALL, "C");
   QLocale::setDefault(QLocale::C);
 
