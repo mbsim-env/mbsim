@@ -252,6 +252,8 @@ namespace MBSim {
           work(),&lWork,iWork(),&liWork,rPar,iPar,&idid);
       if(exception)
         rethrow_exception(exception);
+      if(idid < 0)
+        throw runtime_error("DOP853 failed with idid = "+to_string(idid));
 
       if(shift) {
         system->resetUpToDate();
