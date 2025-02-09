@@ -21,6 +21,7 @@
 #include "element.h"
 #include <cmath>
 #include "element_view.h"
+#include "fileitemdata.h"
 #include "parameter_view.h"
 #include "parameter.h"
 #include "frame.h"
@@ -187,6 +188,15 @@ namespace MBSimGUI {
       for(int j=parent->getNumberOfParameters()-1; j>=0; j--) {
         auto parameter=parent->getParameter(j);
         if(parameter->getName().toStdString()==parName) {
+          // pre set parameter value
+          auto* fileItem = parameter->getParent()->getDedicatedParameterFileItem();
+          if(fileItem)
+            fileItem->setModified(true);
+          else
+	    mw->setWindowModified(true);
+          mw->updateUndos();
+
+          // set parameter value
           auto e=parameter->getXMLElement();
           // remove all existing child nodes
           while(e->getFirstChild())
@@ -195,8 +205,10 @@ namespace MBSimGUI {
           e->insertBefore(e->getOwnerDocument()->createTextNode(X()%code), nullptr);
           // update parameter tree
           parameter->updateValue();
-          // update element names
+
+          // post set parameter value
           MainWindow::updateNameOfCorrespondingElementAndItsChilds(parameter->getParent()->getModelIndex());
+          if(mw->getStatusUpdate()) parameter->getParent()->updateStatus();
           return;
         }
       }
