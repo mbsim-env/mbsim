@@ -254,13 +254,17 @@ namespace MBSim {
       if(exception)
         rethrow_exception(exception);
 
-      if(shift || drift) {
+      if(shift) {
         system->resetUpToDate();
         svLast = system->evalsv();
+      }
+
+      if(shift || drift) {
+        // set new state
+        t = system->getTime();
+        z = system->getState();
         work(6) = dt0;
       }
-      t = system->getTime();
-      z = system->getState();
     }
 
     msg(Info)<<"nrRHS: "<<iWork(16)<<endl;

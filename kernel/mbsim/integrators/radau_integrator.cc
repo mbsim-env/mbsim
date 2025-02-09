@@ -667,7 +667,6 @@ namespace MBSim {
       if(shift) {
         system->resetUpToDate();
         svLast = system->evalsv();
-        dt = dt0;
         reinit();
       }
 
@@ -678,6 +677,7 @@ namespace MBSim {
         system->resetUpToDate();
         if(formalism>0)
           y.set(Rla, system->evalla()); // set a proper initial state for lambda
+        dt = dt0;
       }
     }
 
