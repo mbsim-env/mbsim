@@ -108,7 +108,7 @@ pair<string, string> Evaluator::getInitCode() {
     return {"addAllVarsAsParams", (boost::format(R"(
 def _local():
   import sys
-  sys.path.append("%1$s/share/mbsimgui/python")
+  sys.path.append(r"%1$s/share/mbsimgui/python")
 _local()
 del _local
 )")%mw->getInstallPath().string()).str()};

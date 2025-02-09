@@ -6,7 +6,7 @@ import ctypes
 if sys.platform.startswith('linux'):
   _libmbsimgui=ctypes.cdll.LoadLibrary("libmbsimgui.so")
 else:
-  _libmbsimgui=ctypes.cdll.LoadLibrary("libmbsimgui")
+  _libmbsimgui=ctypes.cdll.LoadLibrary("libmbsimgui-0")
 _libmbsimgui.mbsimgui_MainWindow_prepareForPropertyDialogOpen.restype=None
 _libmbsimgui.mbsimgui_MainWindow_prepareForPropertyDialogClose.restype=None
 _libmbsimgui.mbsimgui_Element_setParameterCode.restype=None
