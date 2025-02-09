@@ -47,6 +47,7 @@ namespace MBSim {
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* x, double *y, double *rc, int* lrc, int* ic, int* lic, int* n, double* rpar, int* ipar, int* irtrn);
 
+      void init() override;
       void reinit() override;
 
       double tPlot{0};

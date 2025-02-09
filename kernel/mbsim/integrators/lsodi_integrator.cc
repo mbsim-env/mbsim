@@ -515,15 +515,23 @@ namespace MBSim {
     odePackInUse = false;
   }
 
+  void LSODIIntegrator::init() {
+    DAEIntegrator::init();
+    if(partiallyAnalyticalJacobian)
+      zd0.resize(system->getzSize(),NONINIT);
+  }
+
   void LSODIIntegrator::reinit() {
     DAEIntegrator::reinit();
 
     neq_(0) = neq;
     rWork(4) = dt0;
 
-    gd0.resize(system->getgdSize(),NONINIT);
-    if(formalism==GGL)
-      g0.resize(system->getgSize(),NONINIT);
+    if(partiallyAnalyticalJacobian) {
+      gd0.resize(system->getgdSize(),NONINIT);
+      if(formalism==GGL)
+        g0.resize(system->getgSize(),NONINIT);
+    }
   }
 
   void LSODIIntegrator::initializeUsingXML(DOMElement *element) {

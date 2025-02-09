@@ -44,6 +44,8 @@ namespace MBSim {
       static void fzdot(int* neq, double* t, double* z_, double* zd_);
       static void jac(int *neq, double* t, double* z_, int* ml, int* mu, double* J_, int* nrowp);
 
+      void init() override;
+
       /** maximal step size */
       double dtMax{0};
       /** minimal step size */

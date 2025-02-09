@@ -458,6 +458,12 @@ namespace MBSim {
     msg(Info)<<"nrForwardBackwardSubs: "<<iWork(19)<<endl;
   }
 
+  void SEULEXIntegrator::init() {
+    DAEIntegrator::init();
+    if(partiallyAnalyticalJacobian)
+      zd0.resize(system->getzSize(),NONINIT);
+  }
+
   void SEULEXIntegrator::reinit() {
     DAEIntegrator::reinit();
 
@@ -481,7 +487,8 @@ namespace MBSim {
       mlJac = neq; // jacobian is a full matrix
     muJac = mlJac; // need not to be defined if mlJac = neq
 
-    gd0.resize(system->getgdSize(),NONINIT);
+    if(partiallyAnalyticalJacobian)
+      gd0.resize(system->getgdSize(),NONINIT);
   }
 
   void SEULEXIntegrator::initializeUsingXML(DOMElement *element) {
