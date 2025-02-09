@@ -566,6 +566,9 @@ namespace MBSimGUI {
 
     autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
+
+    partiallyAnalyticalJacobian = new ExtWidget("Partially analytical Jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"partiallyAnalyticalJacobian");
+    addToTab("Extra", partiallyAnalyticalJacobian);
   }
 
   DOMElement* RODASIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -578,6 +581,7 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
     autonomousSystem->initializeUsingXML(item->getXMLElement());
+    partiallyAnalyticalJacobian->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -591,6 +595,7 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
     autonomousSystem->writeXMLFile(item->getXMLElement());
+    partiallyAnalyticalJacobian->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -624,6 +629,9 @@ namespace MBSimGUI {
 
     autonomousSystem = new ExtWidget("Autonomous system",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"autonomousSystem");
     addToTab("Extra", autonomousSystem);
+
+    partiallyAnalyticalJacobian = new ExtWidget("Partially analytical Jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"partiallyAnalyticalJacobian");
+    addToTab("Extra", partiallyAnalyticalJacobian);
   }
 
   DOMElement* SEULEXIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -636,6 +644,7 @@ namespace MBSimGUI {
     formalism->initializeUsingXML(item->getXMLElement());
     reducedForm->initializeUsingXML(item->getXMLElement());
     autonomousSystem->initializeUsingXML(item->getXMLElement());
+    partiallyAnalyticalJacobian->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -649,6 +658,7 @@ namespace MBSimGUI {
     formalism->writeXMLFile(item->getXMLElement());
     reducedForm->writeXMLFile(item->getXMLElement());
     autonomousSystem->writeXMLFile(item->getXMLElement());
+    partiallyAnalyticalJacobian->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 
@@ -688,6 +698,9 @@ namespace MBSimGUI {
 
     projectOntoIndex1ConstraintManifold = new ExtWidget("Project onto index 1 constraint manifold",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"projectOntoIndex1ConstraintManifold");
     addToTab("Extra", projectOntoIndex1ConstraintManifold);
+
+    partiallyAnalyticalJacobian = new ExtWidget("Partially analytical Jacobian",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"partiallyAnalyticalJacobian");
+    addToTab("Extra", partiallyAnalyticalJacobian);
   }
 
   DOMElement* PHEM56IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
@@ -702,6 +715,7 @@ namespace MBSimGUI {
     initialProjection->initializeUsingXML(item->getXMLElement());
     numberOfStepsBetweenProjections->initializeUsingXML(item->getXMLElement());
     projectOntoIndex1ConstraintManifold->initializeUsingXML(item->getXMLElement());
+    partiallyAnalyticalJacobian->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
@@ -717,6 +731,7 @@ namespace MBSimGUI {
     initialProjection->writeXMLFile(item->getXMLElement());
     numberOfStepsBetweenProjections->writeXMLFile(item->getXMLElement());
     projectOntoIndex1ConstraintManifold->writeXMLFile(item->getXMLElement());
+    partiallyAnalyticalJacobian->writeXMLFile(item->getXMLElement());
     return nullptr;
   }
 

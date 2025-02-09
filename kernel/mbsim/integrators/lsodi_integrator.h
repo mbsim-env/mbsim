@@ -52,6 +52,7 @@ namespace MBSim {
       static void jacDAE2(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
       static void jacGGL(int *neq, double* t, double* y_, double *yd_, int* ml, int* mu, double* J_, int* nrowp);
 
+      void init() override;
       void reinit() override;
 
       /** maximal step size */

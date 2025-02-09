@@ -23,34 +23,37 @@
 #ifndef _RODAS_INTEGRATOR_H_
 #define _RODAS_INTEGRATOR_H_
 
-#include "root_finding_integrator.h"
+#include "dae_integrator.h"
 
 namespace MBSim {
 
   /** \brief DAE-Integrator RODAS
   */
-  class RODASIntegrator : public RootFindingIntegrator {
-
-    public:
-      enum Formalism {
-        ODE=0,
-        DAE1,
-        unknown
-      };
+  class RODASIntegrator : public DAEIntegrator {
 
     private:
+      double delta(int i, double z) const override;
+      void par_ud_xd_par_t(fmatvec::Vec &pt);
+      void par_ud_xd_gdd_par_t(fmatvec::Vec &pt);
       typedef void (*Fzdot)(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      typedef void (*Jac)(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
+      typedef void (*Pt)(int* n, double* t, double* y, double* pt, double* rpar, int* ipar);
       typedef void (*Mass)(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static Fzdot fzdot[2];
+      static Jac jac[2];
+      static Pt pt[2];
       static Mass mass[2];
       static void fzdotODE(int* n, double* t, double* z, double* zd, double* rpar, int* ipar);
       static void fzdotDAE1(int* n, double* t, double* y, double* yd, double* rpar, int* ipar);
+      static void jacODE(int* n, double *t, double *z, double *J, int *nn, double *rpar, int *ipar);
+      static void jacDAE1(int* n, double *t, double *y, double *J, int *nn, double *rpar, int *ipar);
+      static void ptODE(int* n, double* t, double* z, double* pt, double* rpar, int* ipar);
+      static void ptDAE1(int* n, double* t, double* y, double* pt, double* rpar, int* ipar);
       static void massFull(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void massReduced(int* n, double* m, int* lmas, double* rpar, int* ipar);
       static void plot(int* nr, double* told, double* t, double* y, double* cont, int* lrc, int* n, double* rpar, int* ipar, int* irtrn);
 
-      void calcSize();
-      void reinit();
+      void reinit() override;
 
       double tPlot{0};
       double dtOut{0};
@@ -67,16 +70,16 @@ namespace MBSim {
       int maxSteps{std::numeric_limits<int>::max()};
       /** maximal step size */
       double dtMax{0};
-      /** formalism **/
-      Formalism formalism{ODE};
-      /** reduced form **/
-      bool reduced{false};
       /** autonomous system **/
       bool autonom{false};
 
-      int neq, mlJac, muJac;
+      int mlJac, muJac;
       fmatvec::VecInt iWork;
       fmatvec::Vec work;
+
+      bool drift { false };
+
+      std::exception_ptr exception;
 
     public:
       ~RODASIntegrator() override = default;

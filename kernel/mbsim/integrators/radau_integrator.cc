@@ -737,13 +737,15 @@ namespace MBSim {
       mlJac = neq; // jacobian is a full matrix
     muJac = mlJac; // need not to be defined if mlJac = neq
 
-    int zStart = 20+7*neq;
-    int zEnd = zStart+system->getzSize();
-    int laEnd = zEnd+system->getgdSize();
-    zd0.ref(work,RangeV(zStart,zEnd-1));
-    gd0.ref(work,RangeV(zEnd,laEnd-1));
-    if(formalism==GGL)
-      g0.ref(work,RangeV(laEnd,laEnd+system->getgSize()-1));
+    if(partiallyAnalyticalJacobian) {
+      int zStart = 20+7*neq;
+      int zEnd = zStart+system->getzSize();
+      int laEnd = zEnd+system->getgdSize();
+      zd0.ref(work,RangeV(zStart,zEnd-1));
+      gd0.ref(work,RangeV(zEnd,laEnd-1));
+      if(formalism==GGL)
+        g0.ref(work,RangeV(laEnd,laEnd+system->getgSize()-1));
+    }
   }
 
   void RADAUIntegrator::initializeUsingXML(DOMElement *element) {

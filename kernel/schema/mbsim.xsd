@@ -7430,6 +7430,12 @@
                 Definiert, ob das System von der Zeit abhängt (nicht-autonomes System) oder nicht (autonomes System).
             </xs:documentation></xs:annotation>
           </xs:element>
+          <xs:element name="partiallyAnalyticalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix teil-analytisch berechnet soll.
+               [Default: false]
+            </xs:documentation></xs:annotation>
+          </xs:element>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -7500,6 +7506,12 @@
           <xs:element name="autonomousSystem" type="pv:booleanFullEval" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Definiert, ob das System von der Zeit abhängt (nicht-autonomes System) oder nicht (autonomes System).
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="partiallyAnalyticalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix teil-analytisch berechnet soll.
+               [Default: false]
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
@@ -7586,6 +7598,12 @@
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Gibt an, ob nach jedem Schritt eine Projektion auf die Index-1-Nebenbedingungen (Nebenbedingungen auf Beschleunigungsebene) durchgeführt werden soll.
                 Um eine Projektion je nach Fehler durchzuführen ist hier 0 zu verwenden und stattdessen toleranceForVelocityConstraints zu setzen.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="partiallyAnalyticalJacobian" type="pv:booleanFullEval" minOccurs="0">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+               Definiert, ob die Jakobi-Matrix teil-analytisch berechnet soll.
+               [Default: false]
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>

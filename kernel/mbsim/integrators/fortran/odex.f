@@ -523,7 +523,7 @@ C --- INITIAL PREPARATIONS
           XOLD=X
           CALL SOLOUT (NACCPT+1,XOLD,X,Y,N,DENS,NCON,ICOMP,NRD,
      &                 RPAR,IPAR,IRTRN)
-          IF (IRTRN.LT.0) GOTO 120
+          IF (IRTRN.LT.0) GOTO 179
        END IF 
        ERR=0.D0
        ERROLD=1.D10  
@@ -692,7 +692,7 @@ C --- ESTIMATION OF INTERPOLATION ERROR
        IF (IOUT.GE.1) THEN 
           CALL SOLOUT (NACCPT+1,XOLD,X,Y,N,DENS,NCOM,ICOMP,NRD,
      &                 RPAR,IPAR,IRTRN)
-          IF (IRTRN.LT.0) GOTO 120 
+          IF (IRTRN.LT.0) GOTO 179
        END IF 
 C --- COMPUTE OPTIMAL ORDER
        IF (KC.EQ.2) THEN
@@ -742,9 +742,16 @@ C --- SOLUTION EXIT
        IDID=1
        RETURN
 C --- FAIL EXIT
- 120   WRITE (6,979) X,H
- 979   FORMAT(' EXIT OF ODEX AT X=',D14.7,'   H=',D14.7)
+ 120   CONTINUE
+       WRITE (6,979) X,H
+       WRITE(6,*) ' UNKNOWN ERROR'
        IDID=-1
+       RETURN
+C --- EXIT CAUSED BY SOLOUT
+ 179   CONTINUE
+       WRITE (6,979) X,H
+ 979   FORMAT(' EXIT OF SEULEX AT X=',D14.7,'   H=',D14.7)
+       IDID=2
        RETURN
        END  
 C

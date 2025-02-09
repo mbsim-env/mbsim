@@ -292,6 +292,12 @@ namespace MBSim {
     odePackInUse = false;
   }
 
+  void LSODAIntegrator::init() {
+    ImplicitIntegrator::init();
+    if(partiallyAnalyticalJacobian)
+      zd0.resize(system->getzSize(),NONINIT);
+  }
+
   void LSODAIntegrator::initializeUsingXML(DOMElement *element) {
     ImplicitIntegrator::initializeUsingXML(element);
     DOMElement *e;

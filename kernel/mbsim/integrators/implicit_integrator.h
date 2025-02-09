@@ -41,7 +41,7 @@ namespace MBSim {
       void par_zd_par_z(fmatvec::Mat &J, bool updla);
 
       virtual void calcSize();
-      void init();
+      virtual void init();
 
       /** reduced form **/
       bool reduced{false};

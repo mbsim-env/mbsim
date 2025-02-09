@@ -117,7 +117,6 @@ namespace MBSim {
     Rz = RangeV(0,system->getzSize()-1);
     RuMove = RangeV(Ru.start()-qMove, Ru.end()-qMove);
     RxMove = RangeV(Rx.start()-qMove, Rx.end()-qMove);
-    zd0.resize(system->getzSize(),NONINIT);
   }
 
 }

@@ -573,6 +573,12 @@ namespace MBSim {
     msg(Info)<<"nrLinConvFailures: "<<iWork(15)<<endl;
   }
 
+  void DASPKIntegrator::init() {
+    DAEIntegrator::init();
+    if(partiallyAnalyticalJacobian)
+      zd0.resize(system->getzSize(),NONINIT);
+  }
+
   void DASPKIntegrator::reinit() {
     DAEIntegrator::reinit();
 
@@ -585,9 +591,11 @@ namespace MBSim {
     }
     lewt = 50+2*neq;
 
-    gd0.resize(system->getgdSize(),NONINIT);
-    if(formalism==GGL)
-      g0.resize(system->getgSize(),NONINIT);
+    if(partiallyAnalyticalJacobian) {
+      gd0.resize(system->getgdSize(),NONINIT);
+      if(formalism==GGL)
+        g0.resize(system->getgSize(),NONINIT);
+    }
   }
 
   void DASPKIntegrator::initializeUsingXML(DOMElement *element) {

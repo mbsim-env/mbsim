@@ -144,7 +144,6 @@ namespace MBSim {
         self->system->calclaSize(5);
         self->system->updateWRef(self->system->getWParent(0));
         self->system->setUpdateW(true);
-        cout <<  self->system->evalW() << endl;
         yd.add(self->Rq, self->system->evalW()*y(self->Rl));
         self->system->calclaSize(3);
         self->system->updateWRef(self->system->getWParent(0));
@@ -744,13 +743,15 @@ namespace MBSim {
       mlJac = neq; // jacobian is a full matrix
     muJac = mlJac; // need not to be defined if mlJac = neq
 
-    int zStart = 20+3*neq;
-    int zEnd = zStart+system->getzSize();
-    int laEnd = zEnd+system->getgdSize();
-    zd0.ref(work,RangeV(zStart,zEnd-1));
-    gd0.ref(work,RangeV(zEnd,laEnd-1));
-    if(formalism==GGL)
-      g0.ref(work,RangeV(laEnd,laEnd+system->getgSize()-1));
+    if(partiallyAnalyticalJacobian) {
+      int zStart = 20+3*neq;
+      int zEnd = zStart+system->getzSize();
+      int laEnd = zEnd+system->getgdSize();
+      zd0.ref(work,RangeV(zStart,zEnd-1));
+      gd0.ref(work,RangeV(zEnd,laEnd-1));
+      if(formalism==GGL)
+        g0.ref(work,RangeV(laEnd,laEnd+system->getgSize()-1));
+    }
   }
 
   void RADAU5Integrator::initializeUsingXML(DOMElement *element) {
