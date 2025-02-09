@@ -35,12 +35,6 @@ using namespace xercesc;
 namespace MBSimGUI {
 
   Project::Project() {
-    trueMap["xmlflat"] = "true";
-    trueMap["octave"] = "true";
-    trueMap["python"] = "True";
-    falseMap["xmlflat"] = "false";
-    falseMap["octave"] = "false";
-    falseMap["python"] = "False";
     icon = Utils::QIconCached(QString::fromStdString((MainWindow::getInstallPath()/"share"/"mbsimgui"/"icons"/"project.svg").string()));
   }
 
@@ -65,10 +59,10 @@ namespace MBSimGUI {
     name = "Project";
     parent->insertBefore(element, nullptr);
     QSettings settings;
-    if(settings.value("mainwindow/options/defaultevaluator", 0).toInt()==1) {
-      evaluator = "python";
+    if(settings.value("mainwindow/options/defaultevaluator", 0).toInt()!=0) {
+      evaluator = Evaluator::evaluators[settings.value("mainwindow/options/defaultevaluator", 0).toInt()];
       DOMElement *ele = D(doc)->createElement(PV%"evaluator");
-      DOMText *text = doc->createTextNode(X()%"python");
+      DOMText *text = doc->createTextNode(X()%evaluator);
       ele->insertBefore(text, nullptr);
       element->insertBefore(ele, nullptr);
     }
@@ -145,5 +139,13 @@ namespace MBSimGUI {
         embed = nullptr;
       }
     }
+  }
+
+  QString Project::getVarTrue() {
+    return Evaluator::getFalseTrueStr(evaluator).second.c_str();
+  }
+
+  QString Project::getVarFalse() {
+    return Evaluator::getFalseTrueStr(evaluator).first.c_str();
   }
 }

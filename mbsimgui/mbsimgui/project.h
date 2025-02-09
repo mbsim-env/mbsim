@@ -24,6 +24,7 @@
 #include "project_property_dialog.h"
 #include "project_context_menu.h"
 #include "namespace.h"
+#include "evaluator/evaluator.h"
 
 namespace XERCES_CPP_NAMESPACE {
   class DOMElement;
@@ -56,14 +57,12 @@ namespace MBSimGUI {
       const std::string& getEvaluator() { return evaluator; }
       void setDefaultEvaluator(int index) { defaultEvaluator = index; }
       int getDefaultEvaluator() const { return defaultEvaluator; }
-      const QString& getVarTrue() { return trueMap[evaluator]; }
-      const QString& getVarFalse() { return falseMap[evaluator]; }
+      QString getVarTrue();
+      QString getVarFalse();
     private:
       DynamicSystemSolver *dss{nullptr};
       Solver *solver{nullptr};
-      std::string evaluator{"octave"};
-      std::map<std::string,QString> trueMap;
-      std::map<std::string,QString> falseMap;
+      std::string evaluator{Evaluator::defaultEvaluator};
       int defaultEvaluator{0};
   };
 

@@ -83,6 +83,7 @@
 #include <xercesc/dom/DOMComment.hpp>
 #include "dialogs.h"
 #include "wizards.h"
+#include <evaluator/evaluator.h>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -431,6 +432,7 @@ namespace MBSimGUI {
     mainlayout->addWidget(inlineOpenMBVMW);
 
     connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::processFinished);
+    connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::mbsimxmlQueue);
     connect(&process,&QProcess::readyReadStandardOutput,this,&MainWindow::updateEchoView);
     connect(&process,&QProcess::readyReadStandardError,this,&MainWindow::updateStatus);
 
@@ -1048,9 +1050,16 @@ namespace MBSimGUI {
     openElementEditor(false);
   }
 
+  class NewParamLevelHeap {
+    public:
+      NewParamLevelHeap(std::shared_ptr<Eval> oe) : npl(std::move(oe)) {}
+    private:
+      NewParamLevel npl;
+  };
+
   void MainWindow::createNewEvaluator() {
     // get evaluator (octave, python, ...)
-    string evalName="octave"; // default evaluator
+    string evalName=Evaluator::defaultEvaluator;
     if(project)
       evalName = project->getEvaluator();
     else {
@@ -1067,19 +1076,18 @@ namespace MBSimGUI {
       if(evaluator)
         evalName=X()%E(evaluator)->getFirstTextChild()->getData();
     }
-    eval = Eval::createEvaluator(evalName);
 
-    if(eval->getName()=="python") {
-      string str(R"(
-def _local():
-  import sys
-  sys.path.append("{PREFIX}/share/mbsimgui/python")
-_local()
-del _local
-)");
-      boost::algorithm::replace_first(str, "{PREFIX}", getInstallPath().string());
-      eval->addImport(str, nullptr, "addAllVarsAsParams");
+    // if this is this the first call (no eval exists yet) or the evaluator type has changed -> create a new one and init it
+    if(!eval || eval->getName()!=evalName) {
+      eval = Eval::createEvaluator(evalName);
+
+      auto code=Evaluator::getInitCode();
+      if(!code.second.empty())
+        eval->addImport(code.second, nullptr, code.first);
     }
+
+    // restore the original state of the evaluator (we no longer create a new one every time, see above)
+    evalNPL = make_unique<NewParamLevelHeap>(eval);
   }
 
   // Create an new eval and fills its context with all parameters/imports which may influence item.
@@ -1156,7 +1164,8 @@ del _local
 
   pair<vector<string>, map<vector<int>, MBXMLUtils::Eval::Value>> MainWindow::evaluateForAllArrayPattern(
     const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
-    bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall) {
+    bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall,
+    const std::function<void(const vector<string>&, const vector<int>&)> &preCodeFunc) {
     // helper to catch errors, print it to the statusBar and continue if catchErrors is true.
     // if catchErrors is false the exception is rethrown.
     #define CATCH(msg) \
@@ -1181,7 +1190,7 @@ del _local
 
     // this is a lambda for the real body of this function.
     // it is written since it may be called twice if trackFirstLastCall is true, see below
-    auto worker = [trackFirstLastCall, skipRet](const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
+    auto worker = [trackFirstLastCall, skipRet, preCodeFunc](const vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
                      bool fullEval, bool catchErrors, int *lastCall) {
       // if lastCall is not nullptr and is negative this is the first call to worker which
       // just track how many time code will be evaluated without evaluating it
@@ -1202,7 +1211,7 @@ del _local
                     int level, vector<int> levels)> walk;
       int callNumber = 0;
       walk=[&code, e, &walk, &values, fullEval, &callNumber, &lastCall, trackLastCall, catchErrors,
-            trackFirstLastCall, &counterNames, skipRet]
+            trackFirstLastCall, &counterNames, skipRet, preCodeFunc]
               (vector<MainWindow::ParameterLevel>::const_iterator start, vector<MainWindow::ParameterLevel>::const_iterator end,
                int level, vector<int> levels) {
         Eval::Value count = mw->eval->create(1.0);
@@ -1249,11 +1258,14 @@ del _local
               if(trackFirstLastCall) {
                 mw->eval->addParam("mbsimgui_firstCall", mw->eval->create(static_cast<double>(callNumber==1)));
                 mw->eval->addParam("mbsimgui_lastCall", mw->eval->create(static_cast<double>(lastCall && *lastCall==callNumber)));
-                mw->eval->addParam("mbsimgui_counterNames", mw->eval->create(boost::algorithm::join(counterNames, ",")));
-                vector<double> counts(levels.size());
-                for(size_t i=0; i<levels.size(); ++i) counts[i]=levels[i];
-                mw->eval->addParam("mbsimgui_counts", mw->eval->create(counts));
               }
+              mw->eval->addParam("mbsimgui_counterNames", mw->eval->create(boost::algorithm::join(counterNames, ",")));
+              vector<double> counts(levels.size());
+              for(size_t i=0; i<levels.size(); ++i) counts[i]=levels[i];
+              mw->eval->addParam("mbsimgui_counts", mw->eval->create(counts));
+
+              if(preCodeFunc)
+                preCodeFunc(counterNames, levels);
               // evaluate code
               bool ok=false;
               Eval::Value value;
@@ -1405,8 +1417,31 @@ del _local
     QFile::copy(QString::fromStdString(uniqueTempDir.generic_string())+"/linear_system_analysis.h5",file);
   }
 
+  void MainWindow::mbsimxmlQueue() {
+    // this function is called whenever "process" finishes
+    // -> if a new task is queued run it now.
+    if(mbsimxmlQueuedTask!=-1) {
+      int newtask=mbsimxmlQueuedTask;
+      mbsimxmlQueuedTask=-1;
+      mbsimxml(newtask);
+    }
+  }
+
   void MainWindow::mbsimxml(int task) {
+    // try to stop a old task
+    process.terminate();
+    // if a old task is still running queue the new one (start it if the old has finished, see above)
+    if(process.state()!=QProcess::NotRunning) {
+      mbsimxmlQueuedTask=task;
+      return;
+    }
+
     currentTask = task;
+
+    if(task==0)
+      statusBar()->showMessage(tr("Simulate"));
+    else
+      statusBar()->showMessage(tr("Refresh"));
 
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
     doc->setDocumentURI(this->doc->getDocumentURI());
@@ -1511,12 +1546,10 @@ del _local
   }
 
   void MainWindow::simulate() {
-    statusBar()->showMessage(tr("Simulate"));
     mbsimxml(0);
   }
 
   void MainWindow::refresh() {
-    statusBar()->showMessage(tr("Refresh"));
     mbsimxml(1);
   }
 
@@ -3239,6 +3272,16 @@ del _local
     menuBar()->setEnabled(true);
   }
 
+  void MainWindow::updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index) {
+    auto model=static_cast<const ElementTreeModel*>(index.model());
+    auto *item = model->getItem(index)->getItemData();
+    if(auto *embedItemData = dynamic_cast<EmbedItemData*>(item); embedItemData && embedItemData->getXMLElement())
+        embedItemData->updateName();
+    QModelIndex childIndex;
+    for(int i=0; (childIndex=model->index(i,0,index)).isValid(); ++i)
+      updateNameOfCorrespondingElementAndItsChilds(childIndex);
+  }
+
 }
 
 extern "C" {
@@ -3264,6 +3307,40 @@ extern "C" {
     }
     catch(...) {
       cerr<<"Internal error: this should never happen: prepareForPropertyDialogClosed failed!"<<endl;
+    }
+  }
+
+  void mbsimgui_Element_setParameterCode(MBSimGUI::Element *element, const char* parName, const char *code) noexcept {
+    try {
+      string parName_(parName);
+      string code_(code);
+      QTimer::singleShot(0, [element, parName_, code_](){
+        try {
+          element->setParameterCode(parName_, code_);
+        }
+        catch(...) {
+          cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+        }
+      });
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+    }
+  }
+
+  void mbsimgui_MainWindow_refresh() noexcept {
+    try {
+      QTimer::singleShot(0, [](){
+        try {
+          MBSimGUI::mw->refresh();
+        }
+        catch(...) {
+          cerr<<"Internal error: this should never happen: setParameterCode failed!"<<endl;
+        }
+      });
+    }
+    catch(...) {
+      cerr<<"Internal error: this should never happen: MainWindows::refresh() failed!"<<endl;
     }
   }
 

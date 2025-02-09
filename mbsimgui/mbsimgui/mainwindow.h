@@ -87,6 +87,7 @@ namespace MBSimGUI {
   class LinearSystemAnalysisDialog;
   class FlexibleBodyTool;
   class StateTableDialog;
+  class NewParamLevelHeap;
 
   class MainWindow : public QMainWindow {
     Q_OBJECT
@@ -187,6 +188,8 @@ namespace MBSimGUI {
       void createNewEvaluator();
 
       int openedEditors { 0 };
+      int mbsimxmlQueuedTask { -1 };
+      std::unique_ptr<NewParamLevelHeap> evalNPL;
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void abstractViewFilterOptionsChanged();
@@ -199,6 +202,7 @@ namespace MBSimGUI {
       std::shared_ptr<MBXMLUtils::Eval> eval;
       xercesc::DOMImplementation *impl;
       xercesc::DOMLSSerializer *serializer;
+      void mbsimxmlQueue();
       void mbsimxml(int task);
       const boost::filesystem::path& getUniqueTempDir() const { return uniqueTempDir; }
       void addParameter(Parameter *parameter, EmbedItemData *parent);
@@ -315,7 +319,8 @@ namespace MBSimGUI {
       // As second a map with all possible combinations of these counts and the corresponding evaluation is returned.
       static std::pair<std::vector<std::string>, std::map<std::vector<int>, MBXMLUtils::Eval::Value>> evaluateForAllArrayPattern(
         const std::vector<ParameterLevel> &parameterLevels, const std::string &code, xercesc::DOMElement *e,
-        bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall=false);
+        bool fullEval, bool skipRet, bool catchErrors, bool trackFirstLastCall=false,
+        const std::function<void(const std::vector<std::string>&, const std::vector<int>&)> &preCodeFunc={});
 
       void rebuildTree();
       void exportParameters();
@@ -339,6 +344,7 @@ namespace MBSimGUI {
       // Prepare the MainWindow for a "quasi" modal dialog close.
       // This just reverts the actions on the MainWindow taken by prepareForPropertyDialogOpen().
       void prepareForPropertyDialogClose();
+      static void updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index);
     public slots:
       void openElementEditor(bool config=true);
 

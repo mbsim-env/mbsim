@@ -37,9 +37,8 @@ namespace MBSimGUI {
     name->setToolTip("Set the name of the project");
     addToTab("General", name);
     vector<QString> list;
-    list.emplace_back("octave");
-    list.emplace_back("python");
-    list.emplace_back("xmlflat");
+    for(auto &x : Evaluator::evaluators)
+      list.emplace_back(x.c_str());
     evalSelect = new ExtWidget("Evaluator",new TextChoiceWidget(list,project->getDefaultEvaluator()),true,false,PV%"evaluator");
     addToTab("General",evalSelect);
     addTab("Comment");
@@ -63,7 +62,7 @@ namespace MBSimGUI {
     if(evalSelect->isActive())
       static_cast<Project*>(item)->setEvaluator(evalSelect->getWidget<TextChoiceWidget>()->getText().toStdString());
     else
-      static_cast<Project*>(item)->setEvaluator("octave");
+      static_cast<Project*>(item)->setEvaluator(Evaluator::defaultEvaluator);
     return nullptr;
   }
 

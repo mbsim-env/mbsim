@@ -13,15 +13,16 @@
         <pv:matrixParameter name="y">
           [[2,2,0],[5,5,0],[8,8,0],[6,6,0],[3,3,0],[2,2,0]]
         </pv:matrixParameter>
+        <pv:scalarParameter name="s">0.06</pv:scalarParameter>
         <pv:anyParameter name="splineIn">
           import numpy
           xx=numpy.linspace(0,5,100)
           ret={
             "xx": xx,
             "yy": [
-                    {"s": 0,    "data": numpy.sin(2*xx)},
-                    {"s": 0.06, "data": numpy.sin(2*xx)+(numpy.random.default_rng(87565296655).random(len(xx))-0.5)/10},
-                    {"s": 0,    "data": numpy.zeros(xx.shape)},
+                    {"s": 0, "data": numpy.sin(2*xx)},
+                    {"s": s, "data": numpy.sin(2*xx)+(numpy.random.default_rng(87565296655).random(len(xx))-0.5)/10},
+                    {"s": 0, "data": numpy.zeros(xx.shape)},
                   ],
           }
         </pv:anyParameter>
@@ -54,9 +55,6 @@
                     <groups/>
                     <objects>
                       <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" count="4" counterName="o" onlyif="o!=1">
-                        <pv:Parameter>
-                          <pv:scalarParameter name="s">0</pv:scalarParameter>
-                        </pv:Parameter>
                         <RigidBody name="smoothing_{g}_NONE_{o}" xmlns="http://www.mbsim-env.de/MBSim">
                           <?MBSIMGUI_CONTEXT_ACTION name="Show plot"
                             import PySide2
@@ -108,6 +106,14 @@
                                 self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
                                 self.axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
                                 self.axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall} counterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
+
+                                ok = PySide2.QtWidgets.QPushButton("Write Parameter (s)")
+                                def writeParameter():
+                                  s=self.inputSB.value()
+                                  mbsimgui_element.setParameterCode("s", str(s))
+                                  mbsimgui.mw.refresh()
+                                ok.clicked.connect(writeParameter)
+                                layout.addWidget(ok)
                             
                                 self.sChanged()
                             
@@ -152,20 +158,20 @@
                             ax.plot([1,2,3,4],[5,4,7,2])
                             d.show()
 
-                            mbsimgui.waitForDialogs(w, d)
+                            mbsimgui.mw.waitForPropertyDialogs(w, d)
 
                             if mbsimgui_firstCall:
                               mbxmlutils.staticData["myplotdata"]=[]
                             mbxmlutils.staticData["myplotdata"].append(f"g={g} o={o} counterNames={mbsimgui_counterNames} counts={mbsimgui_counts}")
                             print("Appended plot data")
+
                             if mbsimgui_lastCall:
                               PySide2.QtWidgets.QMessageBox.information(None, "Plot Summary",
                                                                         "\n".join(mbxmlutils.staticData["myplotdata"]))
                           ?>
                           <?MBSIMGUI_CONTEXT_ACTION name="Some output"
-                            print("start")
                             ret={"a": 9}
-                            print("end")
+                            print("ret="+str(ret))
                           ?>
                           <mass unit="kg">1</mass>
                           <inertiaTensor unit="kg*m^2">

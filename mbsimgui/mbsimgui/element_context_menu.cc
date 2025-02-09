@@ -46,6 +46,7 @@
 #include <mbxmlutils/eval.h>
 #include <QMessageBox>
 #include <xercesc/dom/DOMProcessingInstruction.hpp>
+#include <evaluator/evaluator.h>
 
 using namespace MBXMLUtils;
 
@@ -142,10 +143,20 @@ namespace MBSimGUI {
       for(auto &ca : contextAction) {
         addAction(ca.first.c_str(), [ca, element](){
           // this code is run when the action is triggered
-          mw->clearEchoView(QString("Running context action '")+ca.first.c_str()+"':\n\n");
+          mw->clearEchoView();
           try {
             auto parameterLevels = mw->updateParameters(element);
-            auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second, nullptr, true, true, false, true);
+            auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second,
+              nullptr, true, true, false, true, [element, ca](const std::vector<std::string>& counterNames, const std::vector<int> &counts){
+                fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<"Running context action '"<<ca.first<<"' with ";
+                for(size_t i=0; i<counterNames.size(); ++i)
+                  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
+                fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<":"<<std::endl;
+                mw->updateEchoView();
+                auto code=Evaluator::getElementObjCode(element);
+                if(!code.empty())
+                  mw->eval->addParam("mbsimgui_element", mw->eval->stringToValue(code));
+              });
             mw->updateEchoView();
           }
           catch(const std::exception &ex) {
