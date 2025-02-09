@@ -439,6 +439,7 @@ namespace MBSim {
 
     double rPar[1]; // not used
 
+    exception=nullptr;
     int *iPar = reinterpret_cast<int*>(this);
 
     int lWork = neq*(neq+neq+neq+14)+20;
@@ -484,6 +485,10 @@ namespace MBSim {
           *mass[reduced],&iMas,&mlMas,&muMas,
           plot,&out,
           work(),&lWork,iWork(),&liWork,rPar,iPar,&idid);
+      if(exception)
+        rethrow_exception(exception);
+      if(idid < 0)
+        throw runtime_error("RODAS failed with idid = "+to_string(idid));
 
       if(shift) {
         system->resetUpToDate();
