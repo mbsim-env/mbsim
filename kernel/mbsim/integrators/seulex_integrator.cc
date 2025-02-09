@@ -422,7 +422,7 @@ namespace MBSim {
     while(t<tEnd-epsroot) {
       drift = false;
 
-      SEULEX(&neq,(*fzdot[formalism]),&ifcn,&t,y(),&tEnd,&dt,
+      SEULEX(&neq,*fzdot[formalism],&ifcn,&t,y(),&tEnd,&dt,
           rTol(),aTol(),&iTol,
           *jac[formalism],&iJac,&mlJac,&muJac,
           *mass[reduced],&iMas,&mlMas,&muMas,
@@ -475,7 +475,6 @@ namespace MBSim {
 
     iWork(1) = maxSteps; // maximum number of steps
     iWork(5) = neq; // number of components, for which dense output is required
-
     for(int i=0; i<neq; i++)
       iWork(20+i) = i+1;
     if(reduced) {
