@@ -152,8 +152,11 @@ namespace MBSim {
       }
 
       Ret operator()(const double &x) { return f(x); }
-      typename B::DRetDArg parDer(const double &x) { return fd(x); }
-      typename B::DRetDArg parDerDirDer(const double &argDir, const double &arg) { return fdd(arg)*argDir; }
+
+      // we do not use B::DRetDArg as return type here since SWIG cannot wrap the propably
+      // -> hence we resolve B::DRetDArg manually here to fmatvec::Der<Ret, double>::type
+      typename fmatvec::Der<Ret, double>::type parDer(const double &x) { return fd(x); }
+      typename fmatvec::Der<Ret, double>::type parDerDirDer(const double &argDir, const double &arg) { return fdd(arg)*argDir; }
 
       /*!
        * \return interval boundaries
