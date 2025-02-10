@@ -42,8 +42,8 @@ namespace MBSim {
 
     private:
 
-      static void fprob(int* ifcn, int* nq, int* nv, int* nu, int* nl, int* nzg, int* nzf, int* lrda, int* nblk, int* nmrc, int* npgp, int* npfl, int* indgr, int* indgc, int* indflr, int* indflc,  double* t, double* p, double* v, double* u, double* xl, double* g, double* gp, double* f, double* gpp, double* gt, double* fl, double* qdot, double* udot, double* am);
-      static void solout(int* nr, int* nq, int* nv, int* nu, int* nl, int* lrdo, double* q, double* v, double* u, double* a, double* rlam, double* dowk, int* irtrn);
+      static void fprob(int* ifcn, int* nq, int* nu, int* nx, int* nla, int* nzg, int* nzf, int* lrda, int* nblk, int* nmrc, int* npgp, int* npfl, int* indgr, int* indgc, int* indflr, int* indflc,  double* t, double* q, double* u, double* x, double* xl, double* g, double* WT_, double* f, double* wb, double* deltagd_, double* V_, double* qd_, double* xd_, double* M_);
+      static void solout(int* nr, int* nq, int* nu, int* nx, int* nla, int* lrdo, double* q, double* u, double* x, double* a, double* rlam, double* dowk, int* irtrn);
 
       double tPlot{0};
       double dtOut{0};
@@ -70,6 +70,12 @@ namespace MBSim {
       int maxSteps{std::numeric_limits<int>::max()};
       /** maximale step size */
       double dtMax{0};
+
+      fmatvec::RangeV Rv;
+
+      bool drift { false };
+
+      std::exception_ptr exception;
 
     public:
 
