@@ -147,7 +147,7 @@ namespace MBSimGUI {
           try {
             auto parameterLevels = mw->updateParameters(element);
             auto [counterName, values]=MainWindow::evaluateForAllArrayPattern(parameterLevels, ca.second,
-              nullptr, true, true, false, true, [element, ca](const std::vector<std::string>& counterNames, const std::vector<int> &counts){
+              element->getXMLElement(), true, true, false, true, [element, ca](const std::vector<std::string>& counterNames, const std::vector<int> &counts){
                 fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<std::endl<<"Running context action '"<<ca.first<<"' with ";
                 for(size_t i=0; i<counterNames.size(); ++i)
                   fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<(i!=0?", ":"")<<counterNames[i]<<"="<<counts[i];
