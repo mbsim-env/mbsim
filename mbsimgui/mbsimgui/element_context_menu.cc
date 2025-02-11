@@ -159,8 +159,17 @@ namespace MBSimGUI {
               });
             mw->updateEchoView();
           }
+          catch(const DOMEvalException &ex) {
+            // DOMEvalException is already passed thought escapeFunc -> skip escapeFunc (if enabled on the fmatvec::Atom streams) from duing another escaping
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<std::flush<<std::skipws<<ex.what()<<std::flush<<std::noskipws<<std::endl;
+            mw->updateEchoView();
+          }
           catch(const std::exception &ex) {
             fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<ex.what()<<std::endl;
+            mw->updateEchoView();
+          }
+          catch(...) {
+            fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<std::endl;
             mw->updateEchoView();
           }
         });
