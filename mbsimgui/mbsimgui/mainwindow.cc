@@ -1087,7 +1087,8 @@ namespace MBSimGUI {
     }
 
     // restore the original state of the evaluator (we no longer create a new one every time, see above)
-    evalNPL = make_unique<NewParamLevelHeap>(eval);
+    evalNPL.reset(); // calls Eval::popContext() (but not at the first call where evelNPL==nullptr)
+    evalNPL = make_unique<NewParamLevelHeap>(eval); // calls Eval::pushContext()
   }
 
   // Create an new eval and fills its context with all parameters/imports which may influence item.
