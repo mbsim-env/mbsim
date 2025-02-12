@@ -946,7 +946,7 @@ namespace MBSimGUI {
       refresh();
     }
     else
-      QMessageBox::warning(this, "Project load", "Project file does not exist.");
+      QMessageBox::warning(this, "Project load", "Project file " + fileName + " does not exist.");
   }
 
   void MainWindow::loadProject() {
