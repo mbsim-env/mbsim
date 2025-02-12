@@ -464,6 +464,7 @@ namespace MBSimGUI {
       void resize_(int rows, int cols) override { widget->resize_(rows,cols); }
       int rows() const override { return widget->rows(); }
       int cols() const override { return widget->cols(); }
+      std::vector<std::vector<QString>> getEvalMat() const override { return widget->getEvalMat(); }
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
       VariableWidget* getWidgetVirtual() const override { return widget; }
