@@ -75,8 +75,8 @@
                             
                                 layout = PySide2.QtWidgets.QVBoxLayout()
                                 self.setLayout(layout)
+                                self.plotWidget=self.createPlotWidget("splinePlot", layout="tight")
                                 layout.addWidget(self.getPlotWidgetToolbar("splinePlot"))
-                                self.plotWidget=self.getPlotWidget("splinePlot")
                                 layout.addWidget(self.plotWidget)
                                 hlayout = PySide2.QtWidgets.QHBoxLayout()
                                 layout.addLayout(hlayout)
@@ -105,7 +105,10 @@
                             
                                 self.data=self.axes.plot(self.X,numpy.zeros(self.X.shape))[0]
                                 self.axes.plot(splineIn["xx"],splineIn["yy"][1]["data"],marker="x",linestyle="")
-                                self.axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall} counterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
+                                self.axes.set_title(f"Plot for g={g} o={o} firstCall={mbsimgui_firstCall} lastCall={mbsimgui_lastCall}\ncounterNames={mbsimgui_counterNames} counts={mbsimgui_counts}");
+                                self.plotWidget.figure.suptitle(f"suptitle\nsuptitle");
+                                self.axes.set_xlabel("x-axis\nrow2");
+                                self.axes.set_ylabel("x-axis\nrow2");
 
                                 ok = PySide2.QtWidgets.QPushButton("Write Parameter (s)")
                                 def writeParameter():
@@ -153,7 +156,7 @@
                             w.show()
 
                             # create a standard matplotlib figure
-                            d=mbsimgui.StdMatplotlibDialog()
+                            d=mbsimgui.StdMatplotlibDialog(layout="tight")
                             ax=d.getFigure().subplots()
                             ax.plot([1,2,3,4],[5,4,7,2])
                             d.show()

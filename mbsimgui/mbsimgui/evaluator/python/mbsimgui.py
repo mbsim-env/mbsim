@@ -1,3 +1,5 @@
+"""Helper function for matplotlib based plotting in MBSimGUI"""
+
 import PySide2.QtWidgets
 import mbxmlutils.Qt
 import sys
@@ -14,10 +16,10 @@ _libmbsimgui.mbsimgui_Element_setParameterCode.argtypes=[ctypes.c_void_p, ctypes
 _libmbsimgui.mbsimgui_MainWindow_refresh.restype=None
 _libmbsimgui.mbsimgui_MainWindow_refresh.argtypes=[]
 
-# reimplementation of the C++ class MBSimGUI::BasicPropertyDialog -> keep it simple and in sync
 class BasicPropertyDialog(PySide2.QtWidgets.QDialog):
-  def __init__(self):
-    super().__init__()
+  """reimplementation of the C++ class MBSimGUI::BasicPropertyDialog -> keep it simple and in sync"""
+  def __init__(self, **kwargs):
+    super().__init__(**kwargs)
     self.setModal(False)
   def showEvent(self, event):
     _libmbsimgui.mbsimgui_MainWindow_prepareForPropertyDialogOpen()
@@ -27,10 +29,14 @@ class BasicPropertyDialog(PySide2.QtWidgets.QDialog):
     super().hideEvent(event)
 
 class MatplotlibDialog(BasicPropertyDialog, mbxmlutils.Qt.MatplotlibDialog):
-  pass
+  """Same as mbxmlutils.Qt.MatplotlibDialog but extended for usage in MBSimGUI"""
+  def __init__(self):
+    super().__init__()
 
 class StdMatplotlibDialog(BasicPropertyDialog, mbxmlutils.Qt.StdMatplotlibDialog):
-  pass
+  """Same as mbxmlutils.Qt.StdMatplotlibDialog but extended for usage in MBSimGUI"""
+  def __init__(self, **fig_kwargs):
+    super().__init__(**fig_kwargs)
 
 class _MainWindow(object):
   def waitForPropertyDialogs(self, *args):
