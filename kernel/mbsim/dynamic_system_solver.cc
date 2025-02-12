@@ -746,7 +746,6 @@ namespace MBSim {
     h[j].init(0);
     Group::updateh(j);
     updh[j] = false;
-    throwIfExitRequested(); // updateh is called by all solvers
   }
 
   Mat DynamicSystemSolver::dhdq(int lb, int ub) {
@@ -1692,6 +1691,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::updateInternalState() {
+    throwIfExitRequested(); // updateInternalState is called by all integrators
     aboutToUpdateInternalState();
     curisParent = nextisParent;
   }
@@ -1736,6 +1736,7 @@ namespace MBSim {
   }
 
   void DynamicSystemSolver::plot() {
+    throwIfExitRequested(); // plot is called by all solvers
     useSmoothSolver = not(useConstraintSolverForPlot);
     if (inverseKinetics) updatelaInverseKinetics();
     Group::plot();
