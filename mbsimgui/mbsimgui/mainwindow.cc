@@ -617,12 +617,12 @@ namespace MBSimGUI {
 
   void MainWindow::updateUndos() {
     auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(doc->cloneNode(true)));
-    oldDoc->setDocumentURI(doc->getDocumentURI());
+    oldDoc->setDocumentURI(X()%D(doc)->getDocumentFilename().string());
     auto u = vector<shared_ptr<DOMDocument>>(1+file.size());
     u[0] = oldDoc;
     for(int i=0; i<file.size();i++) {
       auto oldDoc = shared_ptr<DOMDocument>(static_cast<DOMDocument*>(file[i]->getXMLDocument()->cloneNode(true)));
-      oldDoc->setDocumentURI(file[i]->getXMLDocument()->getDocumentURI());
+      oldDoc->setDocumentURI(X()%D(file[i]->getXMLDocument())->getDocumentFilename().string());
       u[i+1] = oldDoc;
     }
     undos.push_back(u);
@@ -1110,7 +1110,7 @@ namespace MBSimGUI {
       for(auto & parent : parents) {
         // all parameters
         shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
-        doc->setDocumentURI(this->doc->getDocumentURI());
+        doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
         DOMElement *eleP = D(doc)->createElement(PV%"Parameter");
         doc->insertBefore(eleP,nullptr);
         int skipLast = (parent==item && exceptLatestParameter) ? 1 : 0;
@@ -1445,7 +1445,7 @@ namespace MBSimGUI {
       statusBar()->showMessage(tr("Refresh"));
 
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
-    doc->setDocumentURI(this->doc->getDocumentURI());
+    doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
     project->processIDAndHref(newDocElement);
@@ -1592,7 +1592,7 @@ namespace MBSimGUI {
   void MainWindow::debug() {
     currentTask = 0;
     shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
-    doc->setDocumentURI(this->doc->getDocumentURI());
+    doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
     auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
     doc->insertBefore(newDocElement, nullptr);
     project->processIDAndHref(newDocElement);
@@ -2434,7 +2434,7 @@ namespace MBSimGUI {
           auto oldParameter = E(parentele)->getFirstElementChildNamed(PV%"Parameter");
           if(oldParameter)
             parentele->removeChild(oldParameter)->release();
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parentele->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(D(parentele->getOwnerDocument())->getDocumentFilename().string())).path()).canonicalPath());
 	  E(parentele)->setAttribute("parameterHref",(dialog.getAbsoluteFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	  parent->setParameterFileItem(addFile(file));
 	}
@@ -2517,7 +2517,7 @@ namespace MBSimGUI {
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	element = D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed");
 	if(dialog.referenceParameter()) {
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(D(parent->getXMLElement()->getOwnerDocument())->getDocumentFilename().string())).path()).canonicalPath());
 	  E(element)->setAttribute("parameterHref",(dialog.getAbsoluteParameterFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	}
 	else {
@@ -2536,7 +2536,7 @@ namespace MBSimGUI {
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	if(dialog.referenceModel()) {
 	  if(not element) element = D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed");
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%parent->getXMLElement()->getOwnerDocument()->getDocumentURI())).path()).canonicalPath());
+	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(D(parent->getXMLElement()->getOwnerDocument())->getDocumentFilename().string())).path()).canonicalPath());
 	  E(element)->setAttribute("href",(dialog.getAbsoluteModelFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	}
 	else {
@@ -2956,7 +2956,7 @@ namespace MBSimGUI {
 	  ret = QMessageBox::question(this, "Replace file", "A file named " + dialog.getFileName() + " already exists. Do you want to replace it?", QMessageBox::Yes | QMessageBox::No);
 	if(ret == QMessageBox::Yes) {
 	  shared_ptr<DOMDocument> doc=mbxmlparser->createDocument();
-	  doc->setDocumentURI(this->doc->getDocumentURI());
+	  doc->setDocumentURI(X()%D(this->doc)->getDocumentFilename().string());
 	  auto *newDocElement = static_cast<DOMElement*>(doc->importNode(this->doc->getDocumentElement(), true));
 	  doc->insertBefore(newDocElement, nullptr);
 	  project->processIDAndHref(newDocElement);
@@ -3010,7 +3010,7 @@ namespace MBSimGUI {
   }
 
   QString MainWindow::getProjectFilePath() const {
-    return QUrl(QString::fromStdString(X()%doc->getDocumentURI())).path();
+    return QUrl(QString::fromStdString(D(doc)->getDocumentFilename().string())).path();
   }
 
   void MainWindow::openElementEditor(bool config) {

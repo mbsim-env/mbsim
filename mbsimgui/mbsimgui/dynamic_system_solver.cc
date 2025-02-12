@@ -113,7 +113,7 @@ namespace MBSimGUI {
           mw->statusBar()->showMessage("Unknown exception");
           std::cerr << "Unknwon exception" << std::endl;
         }
-        auto doc = mw->mbxmlparserNoVal->parse(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::X()%element->getOwnerDocument()->getDocumentURI())).path()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
+        auto doc = mw->mbxmlparserNoVal->parse(QDir(QFileInfo(QUrl(QString::fromStdString(MBXMLUtils::D(element->getOwnerDocument())->getDocumentFilename().string())).path()).canonicalPath()).absoluteFilePath(QString::fromStdString(evaltmp.substr(1,evaltmp.size()-2))).toStdString());
         if(!doc) {
           ele1 = ele1->getNextElementSibling();
           continue;
