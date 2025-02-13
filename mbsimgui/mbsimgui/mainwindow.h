@@ -345,6 +345,22 @@ namespace MBSimGUI {
       // This just reverts the actions on the MainWindow taken by prepareForPropertyDialogOpen().
       void prepareForPropertyDialogClose();
       static void updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index);
+
+      // Creates a variable on the stack which's ctor saves the current mw->eval and instantiates a new
+      // evaluator on mw->eval. The dtor restores the saved evaluator on mw->eval.
+      // This must be used if for a short time, the lifetime of the stack variable, a new evaluator is needed while
+      // another evaluator is already in use by the callers code.
+      class CreateTemporaryNewEvaluator {
+        public:
+          CreateTemporaryNewEvaluator();
+          ~CreateTemporaryNewEvaluator();
+          CreateTemporaryNewEvaluator(const CreateTemporaryNewEvaluator &) = delete;
+          CreateTemporaryNewEvaluator(CreateTemporaryNewEvaluator &&) = delete;
+          CreateTemporaryNewEvaluator& operator=(const CreateTemporaryNewEvaluator &) = delete;
+          CreateTemporaryNewEvaluator& operator=(CreateTemporaryNewEvaluator &&) = delete;
+        private:
+          std::shared_ptr<MBXMLUtils::Eval> oldEval;
+      };
     public slots:
       void openElementEditor(bool config=true);
 

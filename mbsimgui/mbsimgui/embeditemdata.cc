@@ -207,6 +207,9 @@ namespace MBSimGUI {
     else {
       name = QString::fromStdString(E(element)->getAttribute("name"));
       if(name.contains('{')) {
+        // instantiate a new evaluator on mw->eval and restore the old one at scope end
+        MainWindow::CreateTemporaryNewEvaluator tempEval;
+
         auto parameterLevels = mw->updateParameters(this,false);
         auto values = MainWindow::evaluateForAllArrayPattern(parameterLevels, name.toStdString(), getXMLElement(), false, false, true).second;
         // build the evaluated display name
