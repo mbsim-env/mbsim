@@ -125,8 +125,9 @@ namespace MBSimGUI {
       mw->setExitBad();
       cerr << "Unknwon error" << endl;
     }
-    auto docFilename = D(ele1->getOwnerDocument())->getDocumentFilename().string();
-    auto fileInfo = QFileInfo(QDir(QFileInfo(QUrl(docFilename.c_str()).path()).canonicalPath()).absoluteFilePath(filename.c_str()));
+    auto docFilename = D(ele1->getOwnerDocument())->getDocumentFilename();
+    boost::filesystem::canonical(docFilename);
+    auto fileInfo = QFileInfo(QDir(docFilename.parent_path().string().c_str()).absoluteFilePath(filename.c_str()));
     if(!fileInfo.exists())
       QMessageBox::warning(nullptr, "Import/Reference model file",
                                     ("The imported/referenced model file has a reference to another file which cannot be found:\n"
