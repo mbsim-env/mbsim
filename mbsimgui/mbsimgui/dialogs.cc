@@ -1406,7 +1406,7 @@ namespace MBSimGUI {
   }
 
   void PlotFeatureDialog::setStatus(const QString &status_) {
-    status->getFirstWidget<PhysicalVariableWidget>()->setValue(status_);
+    status->getFirstWidget<VariableWidget>()->setValue(status_);
   }
 
   void PlotFeatureDialog::setNamespace(const QString &ns_) {
@@ -1422,7 +1422,7 @@ namespace MBSimGUI {
   }
 
   QString PlotFeatureDialog::getStatus() const {
-    return status->getFirstWidget<PhysicalVariableWidget>()->getValue();
+    return status->getFirstWidget<VariableWidget>()->getValue();
   }
 
   QString PlotFeatureDialog::getNamespace() const {
@@ -1473,19 +1473,19 @@ namespace MBSimGUI {
   }
 
   void StateDialog::setName(const QString &name_) {
-    name->getFirstWidget<PhysicalVariableWidget>()->setValue(name_);
+    name->getFirstWidget<VariableWidget>()->setValue(name_);
   }
 
   void StateDialog::setValue(const QString &value_) {
-    value->getFirstWidget<PhysicalVariableWidget>()->setValue(value_);
+    value->getFirstWidget<VariableWidget>()->setValue(value_);
   }
 
   QString StateDialog::getName() const {
-    return name->getFirstWidget<PhysicalVariableWidget>()->getValue();
+    return name->getFirstWidget<VariableWidget>()->getValue();
   }
 
   QString StateDialog::getValue() const {
-    return value->getFirstWidget<PhysicalVariableWidget>()->getValue();
+    return value->getFirstWidget<VariableWidget>()->getValue();
   }
 
   void StateDialog::reset() {
@@ -1541,7 +1541,7 @@ namespace MBSimGUI {
   }
 
   void TransitionDialog::setThreshold(const QString &th_) {
-    th->getFirstWidget<PhysicalVariableWidget>()->setValue(th_);
+    th->getFirstWidget<VariableWidget>()->setValue(th_);
   }
 
   QString TransitionDialog::getSource() const {
@@ -1557,7 +1557,7 @@ namespace MBSimGUI {
   }
 
   QString TransitionDialog::getThreshold() const {
-    return th->getFirstWidget<PhysicalVariableWidget>()->getValue();
+    return th->getFirstWidget<VariableWidget>()->getValue();
   }
 
   void TransitionDialog::setStringList(const vector<QString> &list) {

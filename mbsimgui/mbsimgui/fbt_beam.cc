@@ -37,7 +37,7 @@ namespace MBSimGUI {
     auto Iyz = I_[2][0].toDouble();
     auto E = page<FlexibleBeamPage>(PageFlexibleBeam)->E->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
     auto rho = page<FlexibleBeamPage>(PageFlexibleBeam)->rho->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
-    auto ten = page<FlexibleBeamPage>(PageFlexibleBeam)->ten->getFirstWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
+    auto ten = page<FlexibleBeamPage>(PageFlexibleBeam)->ten->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
     auto benz = page<FlexibleBeamPage>(PageFlexibleBeam)->benz->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
     auto beny = page<FlexibleBeamPage>(PageFlexibleBeam)->beny->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
     auto tor = page<FlexibleBeamPage>(PageFlexibleBeam)->tor->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();

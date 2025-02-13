@@ -875,7 +875,7 @@ namespace MBSimGUI {
 
   void LinearElasticFunctionWidget::updateWidget() {
     if(D->isActive()) {
-      int size = K->getFirstWidget<PhysicalVariableWidget>()->rows();
+      int size = K->getFirstWidget<VariableWidget>()->rows();
       D->resize_(size,size);
     }
   }

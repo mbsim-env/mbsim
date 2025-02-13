@@ -416,9 +416,9 @@ namespace MBSimGUI {
     B->blockSignals(true);
     C->blockSignals(true);
     D->blockSignals(true);
-    int n = A->getFirstWidget<PhysicalVariableWidget>()->rows();
-    int m = B->getFirstWidget<PhysicalVariableWidget>()->cols();
-    int p = C->isActive()?C->getFirstWidget<PhysicalVariableWidget>()->rows():m;
+    int n = A->getFirstWidget<VariableWidget>()->rows();
+    int m = B->getFirstWidget<VariableWidget>()->cols();
+    int p = C->isActive()?C->getFirstWidget<VariableWidget>()->rows():m;
     x0->resize_(n,1);
     B->resize_(n,m);
     C->resize_(p,n);
@@ -524,7 +524,7 @@ namespace MBSimGUI {
   }
 
   void SignalOperationPropertyDialog::numberOfInputSignalsChanged() {
-    if((not multiplex->isActive()) or multiplex->getFirstWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarFalse()) {
+    if((not multiplex->isActive()) or multiplex->getFirstWidget<VariableWidget>()->getValue()==mw->getProject()->getVarFalse()) {
       if(inputSignal->getWidget<BasicElementsOfReferenceWidget>()->getSize()==2 and (not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function2ArgWidgetFactory,true>()))
 	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function2ArgWidgetFactory(getElement(),QStringList("u1")<<"u2",vector<int>(2,1),vector<FunctionWidget::VarType>(2,FunctionWidget::varVec),1,FunctionWidget::varVec,this));
       else if(not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function1ArgWidgetFactory,true>())
@@ -533,7 +533,7 @@ namespace MBSimGUI {
   }
 
   void SignalOperationPropertyDialog::multiplexInputSignalsChanged() {
-    if(multiplex->isActive() and multiplex->getFirstWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarTrue()) {
+    if(multiplex->isActive() and multiplex->getFirstWidget<VariableWidget>()->getValue()==mw->getProject()->getVarTrue()) {
       inputSignal->getWidget<BasicElementsOfReferenceWidget>()->setRange(1,100);
       if(not function->getWidget<ChoiceWidget>()->getWidgetFactory<Function1ArgWidgetFactory,true>())
 	function->getWidget<ChoiceWidget>()->setWidgetFactory(new Function1ArgWidgetFactory(getElement(),"u",1,FunctionWidget::varVec,1,FunctionWidget::varVec,this,17));

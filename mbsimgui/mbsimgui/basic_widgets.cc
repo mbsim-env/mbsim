@@ -958,7 +958,7 @@ namespace MBSimGUI {
   }
 
   void ColorWidget::setColor() { 
-    QString val = color->getFirstWidget<PhysicalVariableWidget>()->getValue();
+    QString val = color->getFirstWidget<VariableWidget>()->getValue();
     vector<QString> vec = strToVec(val);
     QColor col;
     if(vec.size()==3)
@@ -967,7 +967,7 @@ namespace MBSimGUI {
       col = QColorDialog::getColor(Qt::blue,this);
     if(col.isValid()) {
       QString str = "[" + QString::number(col.hueF()) + ";" + QString::number(col.saturationF()) + ";" + QString::number(col.valueF()) + "]";
-      color->getFirstWidget<PhysicalVariableWidget>()->setValue(str);
+      color->getFirstWidget<VariableWidget>()->setValue(str);
     }
   }
 

@@ -173,7 +173,7 @@ namespace MBSimGUI {
           nqR = rot->getArg1Size();
       }
     }
-    if(translationDependentRotation->isActive() and translationDependentRotation->getWidget<ChoiceWidget>()->getIndex()==0 and translationDependentRotation->getFirstWidget<PhysicalVariableWidget>()->getValue()==mw->getProject()->getVarTrue())
+    if(translationDependentRotation->isActive() and translationDependentRotation->getWidget<ChoiceWidget>()->getIndex()==0 and translationDependentRotation->getFirstWidget<VariableWidget>()->getValue()==mw->getProject()->getVarTrue())
       return nqT;
     return nqT + nqR;
   }
@@ -363,7 +363,7 @@ namespace MBSimGUI {
 
   void FlexibleFfrBodyPropertyDialog::updateWidget() {
     GenericFlexibleFfrBodyPropertyDialog::updateWidget();
-    int size = Pdm->getFirstWidget<PhysicalVariableWidget>()->cols();
+    int size = Pdm->getFirstWidget<VariableWidget>()->cols();
     if(rPdm->getWidget<ChoiceWidget>()->getIndex()==0)
       rPdm->resize_(3,size);
     else
@@ -411,7 +411,7 @@ namespace MBSimGUI {
       if(r->getWidget<ChoiceWidget>()->getIndex()==0)
         rsize = r->getFirstWidget<OneDimMatArrayWidget>()->getArray().size();
       else
-        rsize = r->getFirstWidget<PhysicalVariableWidget>()->rows()/3;
+        rsize = r->getFirstWidget<VariableWidget>()->rows()/3;
       if(A->isActive()) {
         if(A->getWidget<ChoiceWidget>()->getIndex()==0)
           A->getFirstWidget<OneDimMatArrayWidget>()->resize_(rsize,3,3);
@@ -468,7 +468,7 @@ namespace MBSimGUI {
   int FlexibleFfrBodyPropertyDialog::getqERelSize() const {
     int nqE=0;
     if(Pdm->isActive())
-      nqE = Pdm->getFirstWidget<PhysicalVariableWidget>()->cols();
+      nqE = Pdm->getFirstWidget<VariableWidget>()->cols();
     return nqE;
   }
 

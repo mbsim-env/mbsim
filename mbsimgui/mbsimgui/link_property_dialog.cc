@@ -174,11 +174,11 @@ namespace MBSimGUI {
 
   void KineticExcitationPropertyDialog::updateWidget() {
     if(forceDirection->isActive()) {
-      int size = forceDirection->getFirstWidget<PhysicalVariableWidget>()->cols();
+      int size = forceDirection->getFirstWidget<VariableWidget>()->cols();
       forceFunction->resize_(size,1);
     }
     if(momentDirection->isActive()) {
-      int size = momentDirection->getFirstWidget<PhysicalVariableWidget>()->cols();
+      int size = momentDirection->getFirstWidget<VariableWidget>()->cols();
       momentFunction->resize_(size,1);
     }
   }
@@ -372,9 +372,9 @@ namespace MBSimGUI {
   void ElasticJointPropertyDialog::updateWidget() {
     int size = 0;
     if(forceDirection->isActive())
-      size += forceDirection->getFirstWidget<PhysicalVariableWidget>()->cols();
+      size += forceDirection->getFirstWidget<VariableWidget>()->cols();
     if(momentDirection->isActive())
-      size += momentDirection->getFirstWidget<PhysicalVariableWidget>()->cols();
+      size += momentDirection->getFirstWidget<VariableWidget>()->cols();
     function->resize_(size,1);
   }
 
@@ -729,7 +729,7 @@ namespace MBSimGUI {
 
   void GeneralizedInitialConditionPropertyDialog::updateWidget() {
     if(indices->isActive()) {
-      int size = indices->getFirstWidget<PhysicalVariableWidget>()->rows();
+      int size = indices->getFirstWidget<VariableWidget>()->rows();
       values->resize_(size,1);
     }
   }

@@ -562,7 +562,7 @@ namespace MBSimGUI {
   bool CMSDataWidget::getReduceToSingleNode() const {
     bool reduceToNode = false;
     if(rtsn->isActive())
-      reduceToNode = rtsn->getFirstWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
+      reduceToNode = rtsn->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
     return reduceToNode;
   }
 

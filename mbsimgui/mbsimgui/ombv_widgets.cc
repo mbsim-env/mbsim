@@ -543,11 +543,11 @@ namespace MBSimGUI {
     OMBVObjectWidget::initializeUsingXML(element);
     if(E(element)->hasAttribute("pointSize")) {
       pointSize->setActive(true);
-      pointSize->getFirstWidget<PhysicalVariableWidget>()->setValue(QString::fromStdString(E(element)->getAttribute("pointSize")));
+      pointSize->getFirstWidget<VariableWidget>()->setValue(QString::fromStdString(E(element)->getAttribute("pointSize")));
     }
     if(E(element)->hasAttribute("lineWidth")) {
       lineWidth->setActive(true);
-      lineWidth->getFirstWidget<PhysicalVariableWidget>()->setValue(QString::fromStdString(E(element)->getAttribute("lineWidth")));
+      lineWidth->getFirstWidget<VariableWidget>()->setValue(QString::fromStdString(E(element)->getAttribute("lineWidth")));
     }
     return element;
   }
@@ -555,9 +555,9 @@ namespace MBSimGUI {
   DOMElement* OMBVBodyWidget::writeXMLFile(DOMNode *parent, xercesc::DOMNode *ref) {
     DOMElement *e=OMBVObjectWidget::writeXMLFile(parent);
     if(pointSize->isActive())
-      E(e)->setAttribute("pointSize", pointSize->getFirstWidget<PhysicalVariableWidget>()->getValue().toStdString());
+      E(e)->setAttribute("pointSize", pointSize->getFirstWidget<VariableWidget>()->getValue().toStdString());
     if(lineWidth->isActive())
-      E(e)->setAttribute("lineWidth", lineWidth->getFirstWidget<PhysicalVariableWidget>()->getValue().toStdString());
+      E(e)->setAttribute("lineWidth", lineWidth->getFirstWidget<VariableWidget>()->getValue().toStdString());
     return e;
   }
 

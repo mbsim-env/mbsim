@@ -35,13 +35,13 @@ namespace MBSimGUI {
     int nrb = 0;
     double ft = 0;
     if(page<RemoveRigidBodyModesPage>(PageRRBM)->rrbm->isActive()) {
-      rrbm = page<RemoveRigidBodyModesPage>(PageRRBM)->rrbm->getFirstWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toInt();
+      rrbm = page<RemoveRigidBodyModesPage>(PageRRBM)->rrbm->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toInt();
       if(page<RemoveRigidBodyModesPage>(PageRRBM)->nrb->isActive())
 	nrb = page<RemoveRigidBodyModesPage>(PageRRBM)->nrb->getWidget<SpinBoxWidget>()->getValue();
       else
 	nrb = 6;
       if(page<RemoveRigidBodyModesPage>(PageRRBM)->ft->isActive())
-	ft = page<RemoveRigidBodyModesPage>(PageRRBM)->ft->getFirstWidget<PhysicalVariableWidget>()->getEvalMat()[0][0].toDouble();
+	ft = page<RemoveRigidBodyModesPage>(PageRRBM)->ft->getFirstWidget<VariableWidget>()->getEvalMat()[0][0].toDouble();
       else
 	ft = 100;
     }
