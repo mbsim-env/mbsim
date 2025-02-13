@@ -1126,7 +1126,17 @@ namespace MBSimGUI {
 
     // restore the original state of the evaluator (we no longer create a new one every time, see above)
     evalNPL.reset(); // calls Eval::popContext() (but not at the first call where evelNPL==nullptr)
+    assert(eval->getStackSize()==0);
     evalNPL = make_unique<NewParamLevelHeap>(eval); // calls Eval::pushContext()
+  }
+
+  MainWindow::CreateTemporaryNewEvaluator::CreateTemporaryNewEvaluator() {
+    oldEval.swap(mw->eval); // save the old evaluator
+    mw->createNewEvaluator(); // create a completely new evaluator with a new stack
+  }
+
+  MainWindow::CreateTemporaryNewEvaluator::~CreateTemporaryNewEvaluator() {
+    mw->eval = oldEval; // restore the old evaluator
   }
 
   // Create an new eval and fills its context with all parameters/imports which may influence item.
