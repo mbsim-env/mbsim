@@ -236,12 +236,13 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
     return x.size()>0 ? x[0]!='-' : false;
   });
   shared_ptr<DOMParser> parser=DOMParser::create();
+  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Load and parse file "<<*fileIt<<": XML input file."<<endl;
   shared_ptr<DOMDocument> doc=parser->parse(*fileIt, nullptr, false);
   DOMElement *e=doc->getDocumentElement();
 
   // check root element
   if(E(e)->getTagName()!=MBSim::MBSIMXML%"MBSimProject")
-    throw runtime_error("The oot element of a MBSim file must be {"+MBSim::MBSIMXML.getNamespaceURI()+"}MBSimProject.");
+    throw runtime_error("The root element of a MBSim file must be {"+MBSim::MBSIMXML.getNamespaceURI()+"}MBSimProject.");
   // check evaluator
   DOMElement *evaluator=E(e)->getFirstElementChildNamed(PV%"evaluator");
   if(!evaluator)
@@ -251,9 +252,11 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
 
   // create object for DynamicSystemSolver and check correct type
   e=E(e)->getFirstElementChildNamed(MBSIM%"DynamicSystemSolver");
+  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate DynamicSystemSolver"<<endl;
   dss.reset(ObjectFactory::createAndInit<DynamicSystemSolver>(e));
 
   // create object for Solver and check correct type
+  fmatvec::Atom::msgStatic(fmatvec::Atom::Info)<<"Instantiate Solver"<<endl;
   solver.reset(ObjectFactory::createAndInit<Solver>(e->getNextElementSibling()));
 
   return 0;

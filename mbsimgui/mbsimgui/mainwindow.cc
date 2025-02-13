@@ -602,7 +602,6 @@ namespace MBSimGUI {
     actionSimulate->setDisabled(false);
     actionInterrupt->setDisabled(true);
     actionKill->setDisabled(true);
-    actionRefresh->setDisabled(false);
     actionDebug->setDisabled(false);
     statusBar()->showMessage(tr("Ready"));
   }
@@ -1525,14 +1524,11 @@ namespace MBSimGUI {
     project->processIDAndHref(newDocElement);
 
     QString uniqueTempDir_ = QString::fromStdString(uniqueTempDir.generic_string());
-    QString projectFile;
-
-    projectFile=uniqueTempDir_+"/Project.flat.mbsx";
+    auto projectFile=uniqueTempDir_+"/Project.mbsx";
 
     actionSimulate->setDisabled(true);
     actionInterrupt->setDisabled(false);
     actionKill->setDisabled(false);
-    actionRefresh->setDisabled(true);
     if(task==0) {
       actionSaveDataAs->setDisabled(true);
       actionSaveMBSimH5DataAs->setDisabled(true);
@@ -1547,48 +1543,8 @@ namespace MBSimGUI {
 
     clearEchoView("Running 'mbsimxml':\n\n");
     echoView->showXMLCode(false);
-    DOMElement *root { nullptr };
-    QString errorText;
-
     *debugStreamFlag=echoView->debugEnabled();
-
-    try {
-      Preprocess preprocess(doc, false);
-      preprocess.processAndGetDocument();
-      root = doc->getDocumentElement();
-    }
-    catch(exception &ex) {
-      mw->setExitBad();
-      errorText = ex.what();
-    }
-    catch(...) {
-      mw->setExitBad();
-      errorText = "Unknown error";
-    }
-    if(not errorText.isEmpty()) {
-      echoView->addOutputText("<span class=\"MBSIMGUI_ERROR\">"+errorText+"</span>");
-      echoView->updateOutput(true);
-      actionSimulate->setDisabled(false);
-      actionInterrupt->setDisabled(true);
-      actionKill->setDisabled(true);
-      actionRefresh->setDisabled(false);
-      actionDebug->setDisabled(false);
-      statusBar()->showMessage(tr("Ready"));
-      cerr<<"<span class=\"MBSIMGUI_ERROR\">"<<errorText.toStdString()<<"</span>"<<endl;
-      statusBar()->showMessage(errorText.remove(QRegExp("<[^>]*>")));
-      return;
-    }
     echoView->updateOutput(true);
-    // adapt the evaluator in the dom
-    DOMElement *evaluator=E(root)->getFirstElementChildNamed(PV%"evaluator");
-    if(evaluator)
-      E(evaluator)->getFirstTextChild()->setData(X()%"xmlflat");
-    else {
-      evaluator=D(doc)->createElement(PV%"evaluator");
-      evaluator->appendChild(doc->createTextNode(X()%"xmlflat"));
-      root->insertBefore(evaluator, root->getFirstChild());
-    }
-    E(root)->setOriginalFilename();
     DOMParser::serialize(doc.get(), projectFile.toStdString());
     QStringList arg;
     QSettings settings;
@@ -1617,7 +1573,7 @@ namespace MBSimGUI {
 
     arg.append(projectFile);
     process.setWorkingDirectory(uniqueTempDir_);
-    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimflatxml").string()), arg);
+    process.start(QString::fromStdString((getInstallPath()/"bin"/"mbsimxml").string()), arg);
   }
 
   void MainWindow::simulate() {
