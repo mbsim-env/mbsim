@@ -109,7 +109,7 @@ namespace MBSim {
 	model->initPlot(plotColumns);
       }
     }
-    else {
+    else if(stage==unknownStage) {
       if(isSize)
         curis = zeta0;
     }
