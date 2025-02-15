@@ -222,7 +222,7 @@ namespace MBSim {
       Fz = 0;
     else
       Fz = -cz*contact->getGeneralizedRelativePosition()(0)-dz*contact->evalGeneralizedRelativeVelocity()(2);
-    vsx = contact->getGeneralizedRelativeVelocity()(0);
+    vsx = contact->evalGeneralizedRelativeVelocity()(0);
     vsy = contact->getGeneralizedRelativeVelocity()(1);
     vx = abs(contact->evalForwardVelocity()(0));
     if(Fz>0) {

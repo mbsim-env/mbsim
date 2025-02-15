@@ -103,12 +103,15 @@ namespace MBSim {
       DM.resize(model->getDMSize(),NONINIT);
       iF = RangeV(0,2);
       iM = RangeV(3,3+model->getDMSize()-1);
-      curis = zeta0;
     }
     else if(stage==plotting) {
       if(plotFeature[plotRecursive] and plotFeature[MBSim::generalizedForce]) {
 	model->initPlot(plotColumns);
       }
+    }
+    else {
+      if(isSize)
+        curis = zeta0;
     }
     ContourLink::init(stage,config);
     model->init(stage, config);
@@ -220,7 +223,7 @@ namespace MBSim {
 	  search.setTolerance(tol);
 	  nextis = search.solve(curis(RangeV(0,1)));
 	  if(search.getInfo()!=0)
-	    throw std::runtime_error("(ContactKinematicsCircleSpatialContour:updateg): contact search failed!");
+	    throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
 	  cFrame[0]->setZeta(nextis);
 	  Wn = spatialcontour->evalWn(cFrame[0]->getZeta(false));
 	  Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
@@ -247,7 +250,7 @@ namespace MBSim {
 	  search.setTolerance(tol);
 	  nextis = search.solve(curis(RangeV(0,1)));
 	  if(search.getInfo()!=0)
-	    throw std::runtime_error("(ContactKinematicsCircleSpatialContour:updateg): contact search failed!");
+	    throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
 	  cFrame[0]->setZeta(nextis);
 	  Wn = spatialcontour->evalWn(cFrame[0]->getZeta(false));
 	  Vec3 nx = crossProduct(Wb,Wn);
@@ -280,7 +283,7 @@ namespace MBSim {
 	search.setTolerance(tol);
 	nextis = search.solve(curis(RangeV(0,1)));
 	if(search.getInfo()!=0)
-	  throw std::runtime_error("(ContactKinematicsCircleSpatialContour:updateg): contact search failed!");
+          throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
 	cFrame[0]->setZeta(nextis);
 	Wn = spatialcontour->evalWn(cFrame[0]->getZeta(false));
 	Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
