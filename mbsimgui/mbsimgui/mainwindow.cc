@@ -2434,7 +2434,9 @@ namespace MBSimGUI {
           auto oldParameter = E(parentele)->getFirstElementChildNamed(PV%"Parameter");
           if(oldParameter)
             parentele->removeChild(oldParameter)->release();
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(D(parentele->getOwnerDocument())->getDocumentFilename().string())).path()).canonicalPath());
+          auto docFilename = D(parentele->getOwnerDocument())->getDocumentFilename();
+          boost::filesystem::canonical(docFilename);
+	  QDir parentDir = QDir(docFilename.parent_path().string().c_str());
 	  E(parentele)->setAttribute("parameterHref",(dialog.getAbsoluteFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	  parent->setParameterFileItem(addFile(file));
 	}
@@ -2517,7 +2519,9 @@ namespace MBSimGUI {
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	element = D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed");
 	if(dialog.referenceParameter()) {
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(D(parent->getXMLElement()->getOwnerDocument())->getDocumentFilename().string())).path()).canonicalPath());
+          auto docFilename = D(parent->getXMLElement()->getOwnerDocument())->getDocumentFilename();
+          boost::filesystem::canonical(docFilename);
+	  QDir parentDir = QDir(docFilename.parent_path().string().c_str());
 	  E(element)->setAttribute("parameterHref",(dialog.getAbsoluteParameterFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	}
 	else {
@@ -2536,7 +2540,9 @@ namespace MBSimGUI {
 	  file.replace('/','\\'); // xerces-c is not able to parse files from network shares that begin with "//"
 	if(dialog.referenceModel()) {
 	  if(not element) element = D(parent->getXMLElement()->getOwnerDocument())->createElement(PV%"Embed");
-	  QDir parentDir = QDir(QFileInfo(QUrl(QString::fromStdString(D(parent->getXMLElement()->getOwnerDocument())->getDocumentFilename().string())).path()).canonicalPath());
+          auto docFilename = D(parent->getXMLElement()->getOwnerDocument())->getDocumentFilename();
+          boost::filesystem::canonical(docFilename);
+	  QDir parentDir = QDir(docFilename.parent_path().string().c_str());
 	  E(element)->setAttribute("href",(dialog.getAbsoluteModelFilePath()?parentDir.absoluteFilePath(file):parentDir.relativeFilePath(file)).toStdString());
 	}
 	else {
@@ -3010,7 +3016,8 @@ namespace MBSimGUI {
   }
 
   QString MainWindow::getProjectFilePath() const {
-    return QUrl(QString::fromStdString(D(doc)->getDocumentFilename().string())).path();
+    auto docFilename = D(doc)->getDocumentFilename();
+    return docFilename.string().c_str();
   }
 
   void MainWindow::openElementEditor(bool config) {
