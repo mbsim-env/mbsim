@@ -141,7 +141,10 @@ namespace MBSimGUI {
   }
 
   void EchoView::updateOutput(bool moveToErrorOrEnd) {
-    int currentSBValue=out->verticalScrollBar()->value();
+    int currentSBValue;
+    if(!moveToErrorOrEnd)
+      currentSBValue=out->verticalScrollBar()->value();
+
     // some colors
     static const QColor bg(QPalette().brush(QPalette::Active, QPalette::Base).color());
     static const QColor fg(QPalette().brush(QPalette::Active, QPalette::Text).color());
@@ -151,7 +154,6 @@ namespace MBSimGUI {
     static const QColor deprColor(mergeColor(errorColor, 0.5, warnColor));
     // set the text as html, prefix with a style element and sourounded by a pre element
     QString html;
-    int firstErrorPos;
     {
       QMutexLocker lock(&outTextMutex);
 
@@ -163,10 +165,16 @@ namespace MBSimGUI {
       if(!showDebug->isChecked()) removeSpan("<span class=\"MBSIMGUI_DEBUG\">", outText2);
       if(!showDepr->isChecked()) removeSpan("<span class=\"MBSIMGUI_DEPRECATED\">", outText2);
 
+      // remove trailing newline
+      static QRegularExpression re("\n</span>$");
+      outText2.replace(re, "</span>");
+
       // add anchor at first error, if an error is present
-      firstErrorPos=outText.indexOf("<span class=\"MBSIMGUI_ERROR\">");
+      int firstErrorPos=outText.indexOf("<span class=\"MBSIMGUI_ERROR\">");
       if(firstErrorPos!=-1)
-        outText2.replace(firstErrorPos, 0, "<a name=\"MBSIMGUI_FIRSTERROR\"/>");
+        outText2.replace(firstErrorPos, 0, "<a name=\"MBSIMGUI_FIRSTERROROREND\"/>");
+      else
+        outText2.append("<a name=\"MBSIMGUI_FIRSTERROROREND\"/>");
 
       html=QString(R"+(
 <!DOCTYPE html>
@@ -195,21 +203,16 @@ namespace MBSimGUI {
        replace("@deprbgcolor@", mergeColor(deprColor, 0.3, bg).name()).
        append(outText2).
        append(
-R"+(
-    </pre>
+R"+(</pre>
   </body>
 </html>
 )+");
     }
     out->setHtml(html);
 
-    if(moveToErrorOrEnd) {
-      // scroll to the first error if their is one, else scroll to the end
-      if(firstErrorPos==-1)
-        out->verticalScrollBar()->setValue(out->verticalScrollBar()->maximum());
-      else
-        out->scrollToAnchor("MBSIMGUI_FIRSTERROR");
-    }
+
+    if(moveToErrorOrEnd)
+      out->scrollToAnchor("MBSIMGUI_FIRSTERROROREND");
     else
       out->verticalScrollBar()->setValue(currentSBValue);
   }
