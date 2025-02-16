@@ -32,7 +32,6 @@ using namespace xercesc;
 
 namespace MBSimGUI {
 
-  extern bool currentTask;
   extern MainWindow *mw;
 
   DynamicSystemSolver::DynamicSystemSolver() {
@@ -84,13 +83,6 @@ namespace MBSimGUI {
 
   DOMElement* DynamicSystemSolver::processIDAndHref(DOMElement *element) {
     element = Group::processIDAndHref(element);
-    if(currentTask==1) {
-      E(element)->setAttribute("name","MBS_tmp");
-      DOMElement *ele1 = D(element->getOwnerDocument())->createElement( MBSIM%"plotFeatureRecursive" );
-      E(ele1)->setAttribute("value","plotRecursive");
-      ele1->insertBefore(element->getOwnerDocument()->createTextNode(X()%project->getVarFalse().toStdString()), nullptr);
-      element->insertBefore( ele1, element->getFirstElementChild() );
-    }
     DOMElement *ele1=E(E(element)->getFirstElementChildNamed(MBSIM%"environments"))->getFirstElementChildNamed(MBSIM%"MBSimEnvironment");
     if(not ele1) return element;
     ele1=E(ele1)->getFirstElementChildNamed(MBSIM%"openMBVObject");
