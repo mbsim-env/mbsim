@@ -219,7 +219,6 @@ namespace MBSim {
 	  SpatialContour *spatialcontour = static_cast<SpatialContour*>(contour[0]);
 	  auto func = new FuncPairSpatialContourCircularShape(r,rc,tyre,spatialcontour);
 	  MultiDimNewtonMethod search(func, nullptr);
-	  double tol = 1e-10;
 	  search.setTolerance(tol);
 	  nextis = search.solve(curis(RangeV(0,1)));
 	  if(search.getInfo()!=0)
@@ -246,7 +245,6 @@ namespace MBSim {
 	  SpatialContour *spatialcontour = static_cast<SpatialContour*>(contour[0]);
 	  auto func = new FuncPairSpatialContourEllipticalShape(r,a,b,tyre,spatialcontour);
 	  MultiDimNewtonMethod search(func, nullptr);
-	  double tol = 1e-10;
 	  search.setTolerance(tol);
 	  nextis = search.solve(curis(RangeV(0,1)));
 	  if(search.getInfo()!=0)
@@ -279,7 +277,6 @@ namespace MBSim {
 	SpatialContour *spatialcontour = static_cast<SpatialContour*>(contour[0]);
 	auto func = new FuncPairSpatialContourCircularShape(r,0,tyre,spatialcontour);
 	MultiDimNewtonMethod search(func, nullptr);
-	double tol = 1e-10;
 	search.setTolerance(tol);
 	nextis = search.solve(curis(RangeV(0,1)));
 	if(search.getInfo()!=0)
