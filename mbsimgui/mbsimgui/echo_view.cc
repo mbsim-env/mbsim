@@ -141,7 +141,7 @@ namespace MBSimGUI {
   }
 
   void EchoView::updateOutput(bool moveToErrorOrEnd) {
-    int currentSBValue;
+    int currentSBValue=0;
     if(!moveToErrorOrEnd)
       currentSBValue=out->verticalScrollBar()->value();
 
