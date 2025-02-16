@@ -105,7 +105,7 @@ namespace MBSim {
     if(Fz>0) {
       vcx = max(1.,abs(contact->evalForwardVelocity()(0)));
       vcy = contact->getForwardVelocity()(1);
-      vsx = contact->getGeneralizedRelativeVelocity()(0);
+      vsx = contact->evalGeneralizedRelativeVelocity()(0);
       ka = -vsx/vcx;
       al = atan(vcy/vcx);
       ga = asin(tyre->getFrame()->getOrientation().col(1).T()*contact->getContourFrame(0)->getOrientation().col(2));
