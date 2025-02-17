@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
           <<"                [--modulePath <dir> [--modulePath <dir> ...]]"<<endl
           <<"                [--stdout <msg> [--stdout <msg> ...]] [--stderr <msg> [--stderr <msg> ...]]"<<endl
           <<"                [<paramname>=<value> [<paramname>=<value> ...]]"<<endl
-          <<"                [-C <dir/file>|--CC] <mbsimprjfile>"<<endl
+          <<"                [-C <dir/file>|--CC] <mbsimprjfile>|-"<<endl
           <<""<<endl
           <<"Copyright (C) 2004-2009 MBSim Development Team"<<endl
           <<"This is free software; see the source for copying conditions. There is NO"<<endl
@@ -96,7 +96,8 @@ int main(int argc, char *argv[]) {
           <<"--stopafterfirststep     Stop after outputting the first step (usually at t=0)"<<endl
           <<"                         This generates a HDF5 output file with only one time serie"<<endl
           <<"--autoreload             Same as --stopafterfirststep but rerun mbsimxml each time"<<endl
-          <<"                         a input file is newer than the output file. Checked every ms."<<endl
+          <<"                         a input file is newer than the output file."<<endl
+          <<"                         Checked every ms. Ignored if '-' is given."<<endl
           <<"--dumpXMLCatalog <file>  Dump a XML catalog for all schemas including MBSim modules to file and exit"<<endl
           <<"--modulePath <dir>       Add <dir> to MBSim module serach path. The central MBSim installation"<<endl
           <<"                         module dir and the current dir is always included."<<endl
@@ -114,9 +115,14 @@ int main(int argc, char *argv[]) {
           <<"--stderr <msg>           Analog to --stdout but prints to stderr."<<endl
           <<"-C <dir/file>            Change current to dir to <dir>/dir of <file> first."<<endl
           <<"                         All arguments are still relative to the original current dir."<<endl
-          <<"--CC                     Change current dir to dir of <mbsimprjfile> first."<<endl
+          <<"--CC                     Change current dir to dir of <mbsimprjfile> first. Ignored if '-' is given."<<endl
           <<"                         All arguments are still relative to the original current dir."<<endl
           <<"<mbsimprjfile>           Use <mbsimprjfile> as mbsim xml project file (write output to current working dir)"<<endl
+          <<"                         Must be the last argument!"<<endl
+          <<"-                        Read project file from stdin. If it ends with a null-char instead of EOF the next"<<endl
+          <<"                         project file is read when the current has finished. If the input contains relative"<<endl
+          <<"                         reference to other files then the root element of the input must be tagged using"<<endl
+          <<"                         a 'MBXMLUtils_OriginalFilename' XML-Processing-Instruction element."<<endl
           <<"                         Must be the last argument!"<<endl;
       return 0;
     }
@@ -124,23 +130,12 @@ int main(int argc, char *argv[]) {
     // handle --stdout and --stderr args
     setupMessageStreams(args);
   
-    // get path of this executable
-    string EXEEXT;
-#ifdef _WIN32 // Windows
-    EXEEXT=".exe";
-#else // Linux
-    EXEEXT="";
-#endif
-  
-    bfs::path MBXMLUTILSBIN=boost::dll::program_location().parent_path().parent_path()/"bin";
-    bfs::path MBXMLUTILSSCHEMA=boost::dll::program_location().parent_path().parent_path()/"share"/"mbxmlutils"/"schema";
-  
     // parse parameters
 
     // current directory and MBSIMPRJ
     bfs::path MBSIMPRJ=*(--args.end());
     bfs::path newCurrentPath;
-    if((i=std::find(args.begin(), args.end(), "--CC"))!=args.end()) {
+    if((i=std::find(args.begin(), args.end(), "--CC"))!=args.end() && MBSIMPRJ!="-") {
       newCurrentPath=MBSIMPRJ.parent_path();
       args.erase(i);
     }
@@ -218,7 +213,7 @@ int main(int argc, char *argv[]) {
     }
 
     int AUTORELOADTIME=0;
-    if((i=std::find(args.begin(), args.end(), "--autoreload"))!=args.end()) {
+    if((i=std::find(args.begin(), args.end(), "--autoreload"))!=args.end() && MBSIMPRJ!="-") {
       i2=i; i2++;
       char *error;
       stopAfterFirstStep=true;
@@ -241,7 +236,8 @@ int main(int argc, char *argv[]) {
     }
 
     args.pop_back();
-    MBSIMPRJ=currentPath.adaptPath(MBSIMPRJ);
+    if(MBSIMPRJ!="-")
+      MBSIMPRJ=currentPath.adaptPath(MBSIMPRJ);
   
     if(args.size()!=0) {
       cerr<<"Unhandled arguments found:"<<endl;
@@ -250,9 +246,12 @@ int main(int argc, char *argv[]) {
       cerr<<endl;
       return 1;
     }
+
+    // create parser from catalog file to avoid regenerating the parser if multiple inputs are handled
+    auto parser = DOMParser::create(xmlCatalogDoc->getDocumentElement());
   
     // execute
-    int ret; // comamnd return value
+    int ret; // command return value
     bool runAgain=true; // always run the first time
     while(runAgain) {
       ret=0;
@@ -262,8 +261,17 @@ int main(int argc, char *argv[]) {
       try {
         // run preprocessor
 
-        // validate the project file with mbsimxml.xsd
-        Preprocess preprocess(MBSIMPRJ, xmlCatalogDoc->getDocumentElement(), AUTORELOADTIME>0);
+        stringstream MBSIMPRJstream;
+        if(MBSIMPRJ=="-") { // try to avoid to take a copy of the stream content: create from cin n streams which create EOF at each \0
+          string str;
+          getline(cin, str, '\0');
+          if(str.empty())
+            break;
+          MBSIMPRJstream.str(std::move(str)); // this error will be done with c++20
+        }
+        Preprocess preprocess = MBSIMPRJ=="-" ?
+          Preprocess(MBSIMPRJstream, parser, AUTORELOADTIME>0) : // ctor for input by stdin
+          Preprocess(MBSIMPRJ, parser, AUTORELOADTIME>0);        // ctor for input by filename
 
         // check Embed elements
         {
@@ -352,25 +360,32 @@ int main(int argc, char *argv[]) {
         fmatvec::Atom::msgStatic(fmatvec::Atom::Error)<<"Unknown exception"<<endl;
         ret=1;
       }
-      boost::posix_time::ptime lastRun=boost::posix_time::microsec_clock::universal_time();
-  
-      runAgain=false; // only run ones except --autoreload is given
-      if(AUTORELOADTIME>0) {
-        // check for dependent files being newer then the output file
-        while(!runAgain) {
+
+      if(MBSIMPRJ!="-") {
+        runAgain=false; // only run ones except --autoreload is given
+
+        if(AUTORELOADTIME>0) {
+          boost::posix_time::ptime lastRun=boost::posix_time::microsec_clock::universal_time();
+    
+          // check for dependent files being newer then the output file
+          while(!runAgain) {
 #ifndef _WIN32
-          usleep(AUTORELOADTIME*1000);
+            usleep(AUTORELOADTIME*1000);
 #else
-          Sleep(AUTORELOADTIME);
+            Sleep(AUTORELOADTIME);
 #endif
-          for(const auto & depfile : dependencies) {
-            if(boost::myfilesystem::last_write_time(depfile.string())>lastRun) {
-              runAgain=true;
-              break;
+            dependencies.emplace_back(MBSIMPRJ);
+            for(const auto & depfile : dependencies) {
+              if(boost::myfilesystem::last_write_time(depfile.string())>lastRun) {
+                runAgain=true;
+                break;
+              }
             }
           }
         }
       }
+      else
+        runAgain=true;
     }
   
     return ret;

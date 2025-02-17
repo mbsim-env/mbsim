@@ -111,7 +111,8 @@ namespace MBSimGUI {
       QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionDebug, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
-      QElapsedTimer statusTime;
+      QElapsedTimer processStatusTimer     , processOutputTimer;
+      QTimer        processStatusSingleShot, processOutputSingleShot;
       int IDcounter{0};
       std::string currentID;
       enum { maxRecentFiles = 5 };
@@ -177,7 +178,6 @@ namespace MBSimGUI {
       void elementViewClicked(const QModelIndex &current);
       void parameterViewClicked(const QModelIndex &current);
       void processFinished(int exitCode, QProcess::ExitStatus exitStatus);
-      void updateStatus();
       void autoSaveProject();
       void updateNames(EmbedItemData *element);
       void updateValues(EmbedItemData *element);
@@ -220,6 +220,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
       void updateEchoView();
+      void updateStatusMessage(std::string s);
       void clearEchoView(const QString &initialText="");
 
       template<class Container>
@@ -246,7 +247,6 @@ namespace MBSimGUI {
       const std::pair<Element*,bool>& getElementBuffer() const { return elementBuffer; }
       const std::pair<Parameter*,bool>& getParameterBuffer() const { return parameterBuffer; }
       Project* getProject() { return project; }
-      QElapsedTimer& getStatusTime() { return statusTime; }
       QString getProjectFile() const { return projectFile; }
       QString getProjectFilePath() const;
       QString getProjectPath() const { return QFileInfo(getProjectFilePath()).canonicalPath(); }
@@ -345,6 +345,22 @@ namespace MBSimGUI {
       // This just reverts the actions on the MainWindow taken by prepareForPropertyDialogOpen().
       void prepareForPropertyDialogClose();
       static void updateNameOfCorrespondingElementAndItsChilds(const QModelIndex &index);
+
+      // Creates a variable on the stack which's ctor saves the current mw->eval and instantiates a new
+      // evaluator on mw->eval. The dtor restores the saved evaluator on mw->eval.
+      // This must be used if for a short time, the lifetime of the stack variable, a new evaluator is needed while
+      // another evaluator is already in use by the callers code.
+      class CreateTemporaryNewEvaluator {
+        public:
+          CreateTemporaryNewEvaluator();
+          ~CreateTemporaryNewEvaluator();
+          CreateTemporaryNewEvaluator(const CreateTemporaryNewEvaluator &) = delete;
+          CreateTemporaryNewEvaluator(CreateTemporaryNewEvaluator &&) = delete;
+          CreateTemporaryNewEvaluator& operator=(const CreateTemporaryNewEvaluator &) = delete;
+          CreateTemporaryNewEvaluator& operator=(CreateTemporaryNewEvaluator &&) = delete;
+        private:
+          std::shared_ptr<MBXMLUtils::Eval> oldEval;
+      };
     public slots:
       void openElementEditor(bool config=true);
 

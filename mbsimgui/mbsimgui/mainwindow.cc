@@ -416,12 +416,9 @@ namespace MBSimGUI {
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Deprecated, std::make_shared<bool>(true),
       make_shared<fmatvec::PrePostfixedStream>("<span class=\"MBSIMGUI_DEPRECATED\">", "</span>", outputFunc, DOMEvalException::htmlEscaping));
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Status    , std::make_shared<bool>(true),
-      make_shared<fmatvec::PrePostfixedStream>("", "", [this](const string &s){
-        // call this function only every 0.25 sec
-        if(getStatusTime().elapsed()<250) return;
-        getStatusTime().restart();
-        // print to status bar
-        statusBar()->showMessage(QString::fromStdString(s));
+      make_shared<fmatvec::PrePostfixedStream>("", "\n", [this](const string &s){
+        // this usually gets never called -> no need to ensure that it is only called every 250ms
+        updateStatusMessage(s);
       }));
 
     QWidget *centralWidget = new QWidget(this);
@@ -433,8 +430,50 @@ namespace MBSimGUI {
 
     connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::processFinished);
     connect(&process,QOverload<int, QProcess::ExitStatus>::of(&QProcess::finished),this,&MainWindow::mbsimxmlQueue);
-    connect(&process,&QProcess::readyReadStandardOutput,this,&MainWindow::updateEchoView);
-    connect(&process,&QProcess::readyReadStandardError,this,&MainWindow::updateStatus);
+
+    // if process has new error output call statusBar()->showMessage(...) but only every 250ms
+    processStatusTimer.start();
+    connect(&process,&QProcess::readyReadStandardError,[this](){
+      int e=processStatusTimer.elapsed();
+      if(e<250) {
+        // last output is less then 250ms ago -> if a "single shot" output is not yet active start one
+        if(!processStatusSingleShot.isActive())
+          processStatusSingleShot.start(250-e);
+        return;
+      }
+      // last output is more then 250ms ago -> stop "single shot" output, restart timer, and update output
+      processStatusSingleShot.stop();
+      processStatusTimer.restart();
+      updateStatusMessage(process.readAllStandardError().data());
+    });
+    processStatusSingleShot.setSingleShot(true);
+    connect(&processStatusSingleShot, &QTimer::timeout, [this](){
+      // if this gets called new output is available but not yet outputed -> output now and restart timer
+      processStatusTimer.restart();
+      updateStatusMessage(process.readAllStandardError().data());
+    });
+
+    // if process has new standard output call updateEchoView but only every 250ms
+    processOutputTimer.start();
+    connect(&process,&QProcess::readyReadStandardOutput,[this](){
+      int e=processOutputTimer.elapsed();
+      if(e<250) {
+        // last output is less then 250ms ago -> if a "single shot" output is not yet active start one
+        if(!processOutputSingleShot.isActive())
+          processOutputSingleShot.start(250-e);
+        return;
+      }
+      // last output is more then 250ms ago -> stop "single shot" output, restart timer, and update output
+      processOutputSingleShot.stop();
+      processOutputTimer.restart();
+      updateEchoView();
+    });
+    processOutputSingleShot.setSingleShot(true);
+    connect(&processOutputSingleShot, &QTimer::timeout, [this](){
+      // if this gets called new output is available but not yet outputed -> output now and restart timer
+      processOutputTimer.restart();
+      updateEchoView();
+    });
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
@@ -486,7 +525,6 @@ namespace MBSimGUI {
 
     connect(&autoSaveTimer, &QTimer::timeout, this, &MainWindow::autoSaveProject);
     autoSaveTimer.start(settings.value("mainwindow/options/autosaveinterval", 5).toInt()*60000);
-    statusTime.start();
 
     setWindowIcon(Utils::QIconCached(QString::fromStdString((iconPath/"mbsimgui.svg").string())));
 
@@ -1088,7 +1126,17 @@ namespace MBSimGUI {
 
     // restore the original state of the evaluator (we no longer create a new one every time, see above)
     evalNPL.reset(); // calls Eval::popContext() (but not at the first call where evelNPL==nullptr)
+    assert(eval->getStackSize()==0);
     evalNPL = make_unique<NewParamLevelHeap>(eval); // calls Eval::pushContext()
+  }
+
+  MainWindow::CreateTemporaryNewEvaluator::CreateTemporaryNewEvaluator() {
+    oldEval.swap(mw->eval); // save the old evaluator
+    mw->createNewEvaluator(); // create a completely new evaluator with a new stack
+  }
+
+  MainWindow::CreateTemporaryNewEvaluator::~CreateTemporaryNewEvaluator() {
+    mw->eval = oldEval; // restore the old evaluator
   }
 
   // Create an new eval and fills its context with all parameters/imports which may influence item.
@@ -3000,15 +3048,9 @@ namespace MBSimGUI {
     echoView->addOutputText(initialText);
   }
 
-  void MainWindow::updateStatus() {
-    // call this function only every 0.25 sec
-    if(statusTime.elapsed()<250)
-      return;
-    statusTime.restart();
-
+  void MainWindow::updateStatusMessage(string s) {
     // show only last line
-    auto data=process.readAllStandardError();
-    string s=data.data();
+    assert(s[s.length()-1]=='\n');
     s.resize(s.length()-1);
     auto i=s.rfind('\n');
     i = i==string::npos ? 0 : i+1;

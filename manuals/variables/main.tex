@@ -19,7 +19,7 @@ See \ref{legend} for a description of the mathematical notation.
 
 We start with the usual definition of the equations of a multi body system which are mainly defined in the class \texttt{DynamicSystemSolver}:
 \begin{equation}
-  \dot{\bs{q}}=\bs{u}
+  \dot{\bs{q}}=\bs{T}\bs{u}
 \end{equation}
 \begin{equation}
   \bs{M}\dot{\bs{u}}=\bs{h}+\underbrace{\bs{V}\bs{\lambda}}_{\bs{r}}
@@ -40,6 +40,7 @@ We start with the usual definition of the equations of a multi body system which
   $\bs{u}$ & \texttt{u} = \texttt{GeneralizedVelocity} \\
   $\dot{\bs{u}}$ & \texttt{ud} \\
   $\bs{M}$ & \texttt{M} \\
+  $\bs{T}$ & \texttt{T} \\
   $\bs{h}$ & \texttt{h} \\
   $\bs{V}$ & \texttt{V} \\
   $\bs{W}$ & \texttt{W} \\
@@ -51,11 +52,11 @@ We start with the usual definition of the equations of a multi body system which
   \hline
 \end{tabular}
 
-$\bs{V}$ are the generalized constraint force directions. $\bs{W}^T$ is the partial derivative of $\bs{g}$.
+$\bs{W}$ are the generalized constraint force directions.
+$\bs{V}=\bs{W}$ holds only for full energy conservative constraint forces (without friction).
 \begin{equation}
-  \frac{\partial \bs{g}}{\partial \bs{q}}=\bs{W}^T
+  \bs{W}^T=\frac{\partial \bs{g}}{\partial \bs{q}}\bs{T}
 \end{equation}
-$\bs{V}=\bs{W}$ holds only for full energy conservative constraint forces.
 \begin{equation}
   \bs{W}=_W\bs{J}_T^T\,_W\bs{D}_T+_W\bs{J}_R^T\,_W\bs{D}_R \quad\text{e.g. for Joint with $_W\bs{D}_T=$Force direction matrix}
 \end{equation}
@@ -73,10 +74,10 @@ where \texttt{frictionTerms} can be can dissipative terms like friction or even 
 
 The absolute derivatives of $\bs{g}$ are needed for index reduction.
 \begin{equation}
-  \dot{\bs{g}}=\bs{0}=\bs{W}^T \bs{u}+\underbrace{\frac{\partial\bs{g}}{\partial t}}_{\tilde{\bs{w}}}=\bs{W}^T \bs{u}+\tilde{\bs{w}}
+  \bs{0}=\dot{\bs{g}}=\frac{\partial\bs{g}}{\partial\bs{q}}\dot{\bs{q}}+\frac{\partial\bs{g}}{\partial t}=\underbrace{\frac{\partial\bs{g}}{\partial\bs{q}}\bs{T}}_{\bs{W}^T}\bs{u}+\underbrace{\frac{\partial\bs{g}}{\partial t}}_{\bar{\bs{w}}}=\bs{W}^T \bs{u}+\tilde{\bs{w}}
 \end{equation}
 \begin{equation}
-  \ddot{\bs{g}}=\bs{0}=\bs{W}^T \dot{\bs{u}} + \underbrace{\dot{\bs{W}^T}\bs{u}+\frac{\partial\tilde{\bs{w}}}{\partial t}}_{\bar{\bs{w}}}=\bs{W}^T \dot{\bs{u}} + \bar{\bs{w}}
+  \bs{0}=\ddot{\bs{g}}=\bs{W}^T \dot{\bs{u}} + \underbrace{\dot{\bs{W}^T}\bs{u}+\frac{\partial\tilde{\bs{w}}}{\partial t}}_{\bar{\bs{w}}}=\bs{W}^T \dot{\bs{u}} + \bar{\bs{w}}
   \label{gdd}
 \end{equation}
 $\bar{\bs{w}}$ are all the accelerations terms which do not (linearly) depend on $\dot{\bs{u}}$.
