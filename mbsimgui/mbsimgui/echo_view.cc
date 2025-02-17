@@ -57,6 +57,7 @@ namespace MBSimGUI {
 
     out=new QTextBrowser(this);
     out->setOpenLinks(false);
+    out->setHorizontalScrollBarPolicy(Qt::ScrollBarPolicy::ScrollBarAlwaysOn); // if the bar appears/disappears then scrolling to the last line may fail (the very last is hidden by the bar)
     connect(out, &QTextBrowser::anchorClicked, this, &EchoView::linkClicked);
     setCentralWidget(out);
     auto tb=new QToolBar(this);
