@@ -133,16 +133,6 @@
                                 # create spline using scipy
                                 self.data.set_ydata(sp2(self.X))
 
-                                # create spline using SWIG mbsim.PiecewisePolynomFunction_d
-                                # (just to check if mbsim.PiecewisePolynomFunction_d creates the same result as scipy PPoly)
-                                pp=mbsim.PiecewisePolynomFunction_d()
-                                pp.setBreaks(sp2.x)
-                                pp.addCoefficients(sp2.c[:,:].T)
-                                pp.init(mbsim.Element.preInit)
-                                y=numpy.vectorize(lambda xx: pp(xx))(self.X)
-                                if not numpy.allclose(y, self.data.get_ydata()):
-                                  raise RuntimeError("scipy PPoly and SWIG mbsim.PiecewisePolynomFunction_d does not return the same!")
-
                                 self.plotWidget.draw()
                                 self.inputSL.blockSignals(True)
                                 self.inputSL.setValue(self.sToSliderValue(s))

@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-  template<typename Ret>
-  void PiecewisePolynomFunction<Ret(double)>::calculateSplinePeriodic() {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplinePeriodic() {
     double hi, hii;
     int N = x.size();
     if(nrm2(y.row(0)-y.row(y.rows()-1))>epsroot) this->throwError("(PiecewisePolynomFunction::calculateSplinePeriodic): f(0)= "+fmatvec::toString(y.row(0))+"!="+fmatvec::toString(y.row(y.rows()-1))+" =f(end)");
@@ -78,8 +78,8 @@
     coefs.push_back(a);
   }
 
-  template<typename Ret>
-  void PiecewisePolynomFunction<Ret(double)>::calculateSplineNatural() {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::calculateSplineNatural() {
     // first row
     int i=0;
     int N = x.size();
@@ -147,8 +147,8 @@
     coefs.push_back(a);
   }
 
-  template<typename Ret>
-  void PiecewisePolynomFunction<Ret(double)>::calculatePLinear() {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::calculatePLinear() {
     int N = x.size(); // number of supporting points
 
     breaks.resize(N);
@@ -165,8 +165,8 @@
     coefs.push_back(a);
   }
           
-  template<typename Ret>
-  Ret PiecewisePolynomFunction<Ret(double)>::ZerothDerivative::operator()(const double& x) {
+  template<typename Ret, typename Arg>
+  Ret PiecewisePolynomFunction<Ret(Arg)>::ZerothDerivative::operator()(const double& x) {
     if(parent->extrapolationMethod==error) {
       if(x-1e-13>(parent->breaks)(parent->nPoly)) 
         throw std::runtime_error("(PiecewisePolynomFunction::operator()): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
@@ -175,7 +175,7 @@
     }
     if(parent->extrapolationMethod==linear && (x<parent->breaks(0) || x>parent->breaks(parent->nPoly))) {
       int idx = x<parent->breaks(0) ? 0 : parent->nPoly;
-      auto xv = FromDouble<double>::cast(parent->breaks(idx));
+      auto xv = parent->breaks(idx);
       auto value = parent->f(xv);
       auto der = parent->fd(xv);
       return value + der * (x - parent->breaks(idx));
@@ -204,15 +204,15 @@
     }
   }
 
-  template<typename Ret>
-  Ret PiecewisePolynomFunction<Ret(double)>::FirstDerivative::operator()(const double& x) {
+  template<typename Ret, typename Arg>
+  Ret PiecewisePolynomFunction<Ret(Arg)>::FirstDerivative::operator()(const double& x) {
     if(parent->extrapolationMethod==error) {
       if(x-1e-13>(parent->breaks)(parent->nPoly)) throw std::runtime_error("(PiecewisePolynomFunction::diff1): x out of range! x= "+fmatvec::toString(x)+", upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
       if(x+1e-13<(parent->breaks)(0)) throw std::runtime_error("(PiecewisePolynomFunction::diff1): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
     }
     if(parent->extrapolationMethod==linear && (x<parent->breaks(0) || x>parent->breaks(parent->nPoly))) {
       int idx = x<parent->breaks(0) ? 0 : parent->nPoly;
-      auto xv = FromDouble<double>::cast(parent->breaks(idx));
+      auto xv = parent->breaks(idx);
       auto der = parent->fd(xv);
       return der;
     }
@@ -240,8 +240,8 @@
     }
   }
 
-  template<typename Ret>
-  Ret PiecewisePolynomFunction<Ret(double)>::SecondDerivative::operator()(const double& x) {
+  template<typename Ret, typename Arg>
+  Ret PiecewisePolynomFunction<Ret(Arg)>::SecondDerivative::operator()(const double& x) {
     if(parent->extrapolationMethod==error) {
       if(x-1e-13>(parent->breaks)(parent->nPoly)) throw std::runtime_error("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" upper bound= "+fmatvec::toString((parent->breaks)(parent->nPoly)));
       if(x+1e-13<(parent->breaks)(0)) throw std::runtime_error("(PiecewisePolynomFunction::diff2): x out of range!   x= "+fmatvec::toString(x)+" lower bound= "+fmatvec::toString((parent->breaks)(0)));
@@ -272,8 +272,8 @@
     }
   }
 
-  template<typename Ret>
-  void PiecewisePolynomFunction<Ret(double)>::setCoefficients(const std::vector<fmatvec::MatV> &allCoefs) {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::setCoefficients(const std::vector<fmatvec::MatV> &allCoefs) {
     interpolationMethod=useBreaksAndCoefs;
 
     // read all coefficient and convert to coefs
@@ -291,8 +291,8 @@
     }
   }
 
-  template<typename Ret>
-  void PiecewisePolynomFunction<Ret(double)>::addCoefficients(const fmatvec::MatV &coef) {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::addCoefficients(const fmatvec::MatV &coef) {
     interpolationMethod=useBreaksAndCoefs;
 
     // read all coefficient and convert to coefs
@@ -313,8 +313,8 @@
       coefs[deg].set(coefs[deg].cols()-1, coef.col(deg));
   }
 
-  template<typename Ret>
-  void PiecewisePolynomFunction<Ret(double)>::initializeUsingXML(xercesc::DOMElement * element) {
+  template<typename Ret, typename Arg>
+  void PiecewisePolynomFunction<Ret(Arg)>::initializeUsingXML(xercesc::DOMElement * element) {
     xercesc::DOMElement *e;
     fmatvec::VecV x;
     fmatvec::MatV y;

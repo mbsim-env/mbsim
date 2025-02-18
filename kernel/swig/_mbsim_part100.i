@@ -38,7 +38,6 @@ namespace MBSim {
 }
 #include "mbsim/environment.h"
 #include "mbsim/observers/observer.h"
-#include "mbsim/functions/piecewise_polynom_function.h"
 using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fixes this
 using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this fixes this
 %}
@@ -46,8 +45,4 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 
 
 // wrap the following classes
-%include "fmatvec/function.h"
-%template() fmatvec::Der<double,double>;
 %include "mbsim/environment.h"
-%include "mbsim/functions/piecewise_polynom_function.h"
-%template(PiecewisePolynomFunction_d) MBSim::PiecewisePolynomFunction<double(double)>;

@@ -43,6 +43,9 @@ class FuncCrPC_PlanePolar : public MBSim::Function<fmatvec::Vec3(double)> {
   private:
     const fmatvec::Vec3 Cb;
     MBSim::PiecewisePolynomFunction<fmatvec::VecV(double)> * pp_r;
+#ifndef NDEBUG // just to test the 1D VecV argument of a PiecewisePolynomFunction
+    MBSim::PiecewisePolynomFunction<fmatvec::VecV(fmatvec::VecV)> * pp_r_vec;
+#endif
 
     double alphaSave, salphaSave, calphaSave, rSave, drdalphaSave, d2rdalpha2Save;
     

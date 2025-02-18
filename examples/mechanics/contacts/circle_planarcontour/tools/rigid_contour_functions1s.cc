@@ -128,11 +128,18 @@ Mat ContourXY2angleXY(const Mat &ContourMat_u, double scale, const Vec &rCOG_u ,
   return erg;
 }
 
-FuncCrPC_PlanePolar::FuncCrPC_PlanePolar() : Cb(Vec("[1; 0; 0]")), pp_r(0), alphaSave(0.), salphaSave(0.), calphaSave(0.), rSave(0.), drdalphaSave(0.), d2rdalpha2Save(0.) {
+FuncCrPC_PlanePolar::FuncCrPC_PlanePolar() : Cb(Vec("[1; 0; 0]")), pp_r(0),
+#ifndef NDEBUG
+  pp_r_vec(0),
+#endif
+  alphaSave(0.), salphaSave(0.), calphaSave(0.), rSave(0.), drdalphaSave(0.), d2rdalpha2Save(0.) {
 }
 
 FuncCrPC_PlanePolar::~FuncCrPC_PlanePolar() {
   delete pp_r;
+#ifndef NDEBUG
+  delete pp_r_vec;
+#endif
 }
 
 void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
@@ -145,11 +152,21 @@ void FuncCrPC_PlanePolar::setYZ(const Mat& YZ, int discretization, Vec rYZ) {
   pp_r->setx(angleYZ.col(0));
   pp_r->sety(r);
   pp_r->setInterpolationMethod(PiecewisePolynomFunction<VecV(double)>::cSplinePeriodic);
+#ifndef NDEBUG
+  pp_r_vec=new PiecewisePolynomFunction<VecV(VecV)>;
+  pp_r_vec->setParent(this);
+  pp_r_vec->setx(angleYZ.col(0));
+  pp_r_vec->sety(r);
+  pp_r_vec->setInterpolationMethod(PiecewisePolynomFunction<VecV(VecV)>::cSplinePeriodic);
+#endif
 }   
 
 void FuncCrPC_PlanePolar::init(Element::InitStage stage, const InitConfigSet &config) {
   Function<Vec3(double)>::init(stage, config);
   pp_r->init(stage, config);
+#ifndef NDEBUG
+  pp_r_vec->init(stage, config);
+#endif
 }
 
 Vec3 FuncCrPC_PlanePolar::operator()(const double& alpha) {
@@ -189,5 +206,13 @@ void FuncCrPC_PlanePolar::updateData(const double& alpha) {
     rSave=(*pp_r)(alphaSave)(0);
     drdalphaSave=pp_r->parDer(alphaSave)(0);
     d2rdalpha2Save=pp_r->parDerDirDer(1,alphaSave)(0);
+#ifndef NDEBUG
+    auto rSave_vec=(*pp_r_vec)(VecV(1,INIT,alphaSave))(0,0);
+    auto drdalphaSave_vec=pp_r_vec->parDer(VecV(1,INIT,alphaSave))(0,0);
+    auto d2rdalpha2Save_vec=pp_r_vec->parDerDirDer(VecV(1,INIT,1),VecV(1,INIT,alphaSave))(0,0);
+    assert(rSave==rSave_vec);
+    assert(drdalphaSave==drdalphaSave_vec);
+    assert(d2rdalpha2Save==d2rdalpha2Save_vec);
+#endif
   }
 }
