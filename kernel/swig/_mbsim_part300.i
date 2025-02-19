@@ -76,7 +76,6 @@ namespace MBSim {
   class SpatialContour;
   class Sphere;
   class StandardDampingFunction;
-  template<typename Sig> class PiecewisePolynomFunction; 
   class FuncPairPlanarContourPoint;
   class Contact;
   class ContourLink;

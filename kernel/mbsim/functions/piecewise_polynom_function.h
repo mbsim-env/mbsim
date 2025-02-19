@@ -59,10 +59,10 @@ namespace MBSim {
    * (xi,fi) i=1..N is being interpolated by N-1 piecewise polynomials Si of degree 1 yielding a globally weak differentiable curve
    * in the context of this class the second derivative is defined to be zero everywhere (which is mathematically wrong)
    */
-  template<typename Ret>
-  class PiecewisePolynomFunction<Ret(double)> : public Function<Ret(double)> {
+  template<typename Ret, typename Arg>
+  class PiecewisePolynomFunction<Ret(Arg)> : public MBSim::Function<Ret(Arg)> {
     protected:
-    using B = fmatvec::Function<Ret(double)>; 
+    using B = fmatvec::Function<Ret(Arg)>; 
 
     public:
       enum InterpolationMethod {
@@ -79,13 +79,14 @@ namespace MBSim {
       };
 
       PiecewisePolynomFunction() : index(0), interpolationMethod(cSplineNatural), extrapolationMethod(error), f(this), fd(this), fdd(this) { }
+      virtual ~PiecewisePolynomFunction() = default;
 
       int getArgSize() const { return 1; }
 
       std::pair<int, int> getRetSize() const { return std::make_pair(coefs[0].cols(),1); }
 
       void init(Element::InitStage stage, const InitConfigSet &config=InitConfigSet()) {
-        Function<Ret(double)>::init(stage, config);
+        Function<Ret(Arg)>::init(stage, config);
         if(stage==Element::preInit) {
           if(interpolationMethod!=useBreaksAndCoefs) {
             if(y.rows() != x.size())
@@ -151,12 +152,12 @@ namespace MBSim {
         coefs.clear();
       }
 
-      Ret operator()(const double &x) { return f(x); }
+      Ret operator()(const Arg &x) { return f(ToDouble<Arg>::cast(x)); }
 
       // we do not use B::DRetDArg as return type here since SWIG cannot wrap the propably
-      // -> hence we resolve B::DRetDArg manually here to fmatvec::Der<Ret, double>::type
-      typename fmatvec::Der<Ret, double>::type parDer(const double &x) { return fd(x); }
-      typename fmatvec::Der<Ret, double>::type parDerDirDer(const double &argDir, const double &arg) { return fdd(arg)*argDir; }
+      // -> hence we resolve B::DRetDArg manually here to fmatvec::Der<Ret, Arg>::type
+      typename fmatvec::Der<Ret, Arg>::type parDer(const Arg &x) { return fd(ToDouble<Arg>::cast(x)); }
+      typename fmatvec::Der<Ret, Arg>::type parDerDirDer(const Arg &argDir, const Arg &arg) { return fdd(ToDouble<Arg>::cast(arg))*ToDouble<Arg>::cast(argDir); }
 
       /*!
        * \return interval boundaries
@@ -274,14 +275,14 @@ namespace MBSim {
        */
       class ZerothDerivative {
         public:
-          ZerothDerivative(PiecewisePolynomFunction<Ret(double)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          ZerothDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
 
           void reset() { firstCall = true; }
 
           Ret operator()(const double &x);
 
         private:
-          PiecewisePolynomFunction<Ret(double)> *parent;
+          PiecewisePolynomFunction<Ret(Arg)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;
@@ -292,14 +293,14 @@ namespace MBSim {
        */
       class FirstDerivative {
         public:
-          FirstDerivative(PiecewisePolynomFunction<Ret(double)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          FirstDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
 
           void reset() { firstCall = true; }
 
           Ret operator()(const double& x);
 
         private:
-          PiecewisePolynomFunction<Ret(double)> *parent;
+          PiecewisePolynomFunction<Ret(Arg)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;
@@ -310,14 +311,14 @@ namespace MBSim {
        */
       class SecondDerivative {
         public:
-          SecondDerivative(PiecewisePolynomFunction<Ret(double)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
+          SecondDerivative(PiecewisePolynomFunction<Ret(Arg)> *polynom) : parent(polynom), xSave(0), ySave(), firstCall(true) {}
 
           void reset() { firstCall = true; }
 
           Ret operator()(const double& x);
 
         private:
-          PiecewisePolynomFunction<Ret(double)> *parent;
+          PiecewisePolynomFunction<Ret(Arg)> *parent;
           double xSave;
           fmatvec::VecV ySave;
           bool firstCall;

@@ -26,9 +26,9 @@ namespace MBSim {
 
   template<typename Sig> class TwoDimensionalPiecewisePolynomFunction; 
 
-  template<typename Ret>
-  class TwoDimensionalPiecewisePolynomFunction<Ret(double, double)> : public Function<Ret(double, double)> {
-    using B = fmatvec::Function<Ret(double, double)>; 
+  template<typename Ret, typename Arg>
+  class TwoDimensionalPiecewisePolynomFunction<Ret(Arg, Arg)> : public Function<Ret(Arg, Arg)> {
+    using B = fmatvec::Function<Ret(Arg, Arg)>; 
     public:
       enum InterpolationMethod {
         cSplinePeriodic,
@@ -77,53 +77,53 @@ namespace MBSim {
 
       std::pair<int, int> getRetSize() const { return std::make_pair(1,1); }
 
-      virtual Ret operator()(const double& xVal, const double& yVal) {
-        f2.sety(f1(xVal));
+      virtual Ret operator()(const Arg& xVal, const Arg& yVal) {
+        f2.sety(f1(ToDouble<Arg>::cast(xVal)));
         f2.reset();
         f2.calculateSpline();
-        return f2(yVal);
+        return f2(ToDouble<Arg>::cast(yVal));
       }
 
-      typename B::DRetDArg1 parDer1(const double &xVal, const double &yVal) {
-        f2.sety(f1.parDer(xVal));
+      typename B::DRetDArg1 parDer1(const Arg &xVal, const Arg &yVal) {
+        f2.sety(f1.parDer(ToDouble<Arg>::cast(xVal)));
         f2.reset();
         f2.calculateSpline();
-        return f2(yVal);
+        return f2(ToDouble<Arg>::cast(yVal));
       }
 
-      typename B::DRetDArg2 parDer2(const double &xVal, const double &yVal) {
-        f2.sety(f1(xVal));
+      typename B::DRetDArg2 parDer2(const Arg &xVal, const Arg &yVal) {
+        f2.sety(f1(ToDouble<Arg>::cast(xVal)));
         f2.reset();
         f2.calculateSpline();
-        return f2.parDer(yVal);
+        return f2.parDer(ToDouble<Arg>::cast(yVal));
       }
 
-      typename B::DRetDArg1 parDer1DirDer1(const double &xdVal, const double &xVal, const double &yVal) {
-        f2.sety(f1.parDerDirDer(xdVal,xVal));
+      typename B::DRetDArg1 parDer1DirDer1(const Arg &xdVal, const Arg &xVal, const Arg &yVal) {
+        f2.sety(f1.parDerDirDer(ToDouble<Arg>::cast(xdVal),ToDouble<Arg>::cast(xVal)));
         f2.reset();
         f2.calculateSpline();
-        return f2(yVal);
+        return f2(ToDouble<Arg>::cast(yVal));
       }
 
-      typename B::DRetDArg1 parDer1DirDer2(const double &ydVal, const double &xVal, const double &yVal) {
-        f2.sety(f1.parDer(xVal));
+      typename B::DRetDArg1 parDer1DirDer2(const Arg &ydVal, const Arg &xVal, const Arg &yVal) {
+        f2.sety(f1.parDer(ToDouble<Arg>::cast(xVal)));
         f2.reset();
         f2.calculateSpline();
-        return f2.parDer(yVal)*ydVal;
+        return f2.parDer(ToDouble<Arg>::cast(yVal))*ToDouble<Arg>::cast(ydVal);
       }
 
-      typename B::DRetDArg2 parDer2DirDer1(const double &xdVal, const double &xVal, const double &yVal) {
-        f2.sety(f1.parDer(xVal)*xdVal);
+      typename B::DRetDArg2 parDer2DirDer1(const Arg &xdVal, const Arg &xVal, const Arg &yVal) {
+        f2.sety(f1.parDer(ToDouble<Arg>::cast(xVal))*ToDouble<Arg>::cast(xdVal));
         f2.reset();
         f2.calculateSpline();
-        return f2.parDer(yVal);
+        return f2.parDer(ToDouble<Arg>::cast(yVal));
       }
 
-      typename B::DRetDArg2 parDer2DirDer2(const double &ydVal, const double &xVal, const double &yVal) {
-        f2.sety(f1(xVal));
+      typename B::DRetDArg2 parDer2DirDer2(const Arg &ydVal, const Arg &xVal, const Arg &yVal) {
+        f2.sety(f1(ToDouble<Arg>::cast(xVal)));
         f2.reset();
         f2.calculateSpline();
-        return f2.parDerDirDer(ydVal,yVal);
+        return f2.parDerDirDer(ToDouble<Arg>::cast(ydVal),ToDouble<Arg>::cast(yVal));
       }
 
       void setx(const fmatvec::VecV &x_) { x <<= x_; }
@@ -144,7 +144,7 @@ namespace MBSim {
       void setInterpolationMethodSecondDimension(InterpolationMethod method2_) { method2 = method2_; }
 
       void init(Element::InitStage stage, const InitConfigSet &config) {
-        Function<Ret(double, double)>::init(stage, config);
+        Function<Ret(Arg, Arg)>::init(stage, config);
         if(stage==Element::preInit) {
           if(method1==unknown)
             Element::throwError("(TwoDimensionalPiecewisePolynomFunction::init): interpolation method first dimension unknown");

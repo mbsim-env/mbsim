@@ -34,7 +34,6 @@ namespace MBSim {
   class NewtonJacobianFunction;
   class NumericalNewtonJacobianFunction;
   class StandardDampingFunction;
-  template<typename Sig> class PiecewisePolynomFunction; 
 }
 #include "mbsim/objects/object.h"
 #include "mbsim/objects/body.h"

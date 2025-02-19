@@ -55,7 +55,6 @@ namespace MBSim {
   class RigidBodyLink;
   class SpringDamper;
   class StandardDampingFunction;
-  template<typename Sig> class PiecewisePolynomFunction; 
   class FuncPairPlanarContourPoint;
 }
 #include "mbsim/constraints/constraint.h"

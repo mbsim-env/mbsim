@@ -33,7 +33,6 @@ namespace MBSim {
   class NumericalNewtonJacobianFunction;
   class Observer;
   class StandardDampingFunction;
-  template<typename Sig> class PiecewisePolynomFunction; 
 }
 #include "mbsim/links/contact.h"
 #include "mbsim/links/contour_link.h"
