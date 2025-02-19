@@ -130,11 +130,8 @@ namespace MBSimGUI {
     auto varf=var;
     auto type=widget->getVarType();
 
-    if(type==0) { // floating point value (scalar, vector or matrix)
-      if(floatTypeLayout) {
-        vlayout->removeItem(floatTypeLayout);
-        delete floatTypeLayout;
-      }
+    // type does not change between updateWidget calls -> init type related widgets only the first time
+    if(type==0 && !floatTypeLayout) { // floating point value (scalar, vector or matrix)
       floatTypeLayout = new QHBoxLayout;
       vlayout->addLayout(floatTypeLayout, 1);
 
@@ -155,6 +152,7 @@ namespace MBSimGUI {
       floatTypeLayout->setStretch(4, 10000);
     }
 
+    // var.size/varf.size may change between updateWidget calls -> delete and recreate widgets at every call
     if(type==0 || var.size()>1 || (var.size()>0 && var[0].size()>1)) { // floating point value (scalar, vector or matrix)
       if(tab) {
         vlayout->removeWidget(tab);
@@ -164,8 +162,11 @@ namespace MBSimGUI {
       tab->setRowCount(varf.size());
       tab->setColumnCount(!varf.empty()?varf[0].size():0);
       for(int i=0; i<tab->rowCount(); i++) {
-        for(int j=0; j<tab->columnCount(); j++)
-          tab->setItem(i,j,new QTableWidgetItem(""));
+        for(int j=0; j<tab->columnCount(); j++) {
+          auto twi=new QTableWidgetItem("");
+          tab->setItem(i,j,twi);
+          twi->setFlags(twi->flags() & ~Qt::ItemIsEditable);
+        }
       }
       vlayout->addWidget(tab,2);
     }
@@ -175,6 +176,7 @@ namespace MBSimGUI {
         delete text;
       }
       text = new QPlainTextEdit;
+      text->setReadOnly(true);
 
       Evaluator::installSyntaxHighlighter(text->document(), text);
 
@@ -187,7 +189,7 @@ namespace MBSimGUI {
 
 
     {
-      // clear levelLayout and levelWidget
+      // clear levelLayout and levelWidget and recreate it
       QLayoutItem *child;
       while((child=levelLayout->takeAt(0))!=nullptr)
         delete child;
@@ -210,6 +212,8 @@ namespace MBSimGUI {
         auto value=mw->eval->create(static_cast<double>(count[idx]+1));
         mw->eval->convertIndex(value, false);
         sb->setValue(mw->eval->cast<int>(value));
+        sb->setMinimum(sb->value()-count[idx]);
+        sb->setMaximum(numeric_limits<int>::max());
         connect(sb, QOverload<int>::of(&QSpinBox::valueChanged), this, &EvalDialog::updateWidget);
         levelLayout->setStretch(col, 0);
         col++;
