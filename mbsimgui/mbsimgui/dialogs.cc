@@ -154,13 +154,19 @@ namespace MBSimGUI {
 
     // var.size/varf.size may change between updateWidget calls -> delete and recreate widgets at every call
     if(type==0 || var.size()>1 || (var.size()>0 && var[0].size()>1)) { // floating point value (scalar, vector or matrix)
+      vector<int> cw;
       if(tab) {
+        cw.resize(tab->columnCount());
+        for(int i=0; i<tab->columnCount(); i++)
+          cw[i] = tab->columnWidth(i);
         vlayout->removeWidget(tab);
         delete tab;
       }
       tab = new QTableWidget;
       tab->setRowCount(varf.size());
       tab->setColumnCount(!varf.empty()?varf[0].size():0);
+      for(int i=0; i<min(tab->columnCount(),int(cw.size())); i++)
+        tab->setColumnWidth(i,cw[i]);
       for(int i=0; i<tab->rowCount(); i++) {
         for(int j=0; j<tab->columnCount(); j++) {
           auto twi=new QTableWidgetItem("");
