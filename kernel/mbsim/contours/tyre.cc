@@ -59,33 +59,33 @@ namespace MBSim {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<2; j++) {
 	      double xi = 0.7*r*(1-j) + (r-0.1*w)*j;
-	      vp[i*nXi+j].push_back(xi*cos(eta));
-	      vp[i*nXi+j].push_back(w/2);
 	      vp[i*nXi+j].push_back(xi*sin(eta));
+	      vp[i*nXi+j].push_back(-w/2);
+	      vp[i*nXi+j].push_back(xi*cos(eta));
 	    }
 	    for (int j=0; j<21; j++) {
 	      double xi = M_PI/2*j/20.;
-	      vp[i*nXi+2+j].push_back((r+0.1*w*(sin(xi)-1))*cos(eta));
-	      vp[i*nXi+2+j].push_back(w*(0.4+0.1*cos(xi)));
 	      vp[i*nXi+2+j].push_back((r+0.1*w*(sin(xi)-1))*sin(eta));
+	      vp[i*nXi+2+j].push_back(-w*(0.4+0.1*cos(xi)));
+	      vp[i*nXi+2+j].push_back((r+0.1*w*(sin(xi)-1))*cos(eta));
 	    }
 	    for (int j=0; j<2; j++) {
 	      double xi = -0.7*w/2 + 0.7*w*j;
-	      vp[i*nXi+23+j].push_back(r*cos(eta));
-	      vp[i*nXi+23+j].push_back(-xi);
 	      vp[i*nXi+23+j].push_back(r*sin(eta));
+	      vp[i*nXi+23+j].push_back(xi);
+	      vp[i*nXi+23+j].push_back(r*cos(eta));
 	    }
 	    for (int j=0; j<21; j++) {
 	      double xi = M_PI/2 - M_PI/2*j/20.;
-	      vp[i*nXi+25+j].push_back((r+0.1*w*(sin(xi)-1))*cos(eta));
-	      vp[i*nXi+25+j].push_back(-w*(0.4+0.1*cos(xi)));
 	      vp[i*nXi+25+j].push_back((r+0.1*w*(sin(xi)-1))*sin(eta));
+	      vp[i*nXi+25+j].push_back(w*(0.4+0.1*cos(xi)));
+	      vp[i*nXi+25+j].push_back((r+0.1*w*(sin(xi)-1))*cos(eta));
 	    }
 	    for (int j=0; j<2; j++) {
 	      double xi = (r-0.1*w)*(1-j)+0.7*r*j;
-	      vp[i*nXi+46+j].push_back(xi*cos(eta));
-	      vp[i*nXi+46+j].push_back(-w/2);
 	      vp[i*nXi+46+j].push_back(xi*sin(eta));
+	      vp[i*nXi+46+j].push_back(w/2);
+	      vp[i*nXi+46+j].push_back(xi*cos(eta));
 	    }
 	  }
 	}
@@ -98,9 +98,9 @@ namespace MBSim {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<nXi; j++) {
 	      double xi = -al + 2*al*j/50.;
-	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*cos(eta));
-	      vp[i*nXi+j].push_back(-cp(0)*sin(xi));
 	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*sin(eta));
+	      vp[i*nXi+j].push_back(cp(0)*sin(xi));
+	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*cos(eta));
 	    }
 	  }
 	}
@@ -113,9 +113,9 @@ namespace MBSim {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<nXi; j++) {
 	      double xi = -al + 2*al*j/50.;
-	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*cos(eta));
-	      vp[i*nXi+j].push_back(-cp(0)*sin(xi));
 	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*sin(eta));
+	      vp[i*nXi+j].push_back(cp(0)*sin(xi));
+	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*cos(eta));
 	    }
 	  }
 	}
