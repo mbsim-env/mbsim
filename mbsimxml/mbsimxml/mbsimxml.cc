@@ -77,8 +77,11 @@ shared_ptr<DOMDocument> getMBSimXMLCatalog(const set<bfs::path> &searchDirs) {
   boost::filesystem::path modulePathConfigFile(
     boost::filesystem::path(getenv("APPDATA")?getenv("APPDATA"):"")/"mbsim-env"/"mbsimxml.modulepath");
 #else
-  boost::filesystem::path modulePathConfigFile(
-    boost::filesystem::path(getenv("HOME")?getenv("HOME"):"")/".config"/"mbsim-env"/"mbsimxml.modulepath");
+  boost::filesystem::path modulePathConfigFile;
+  if(getenv("XDG_CONFIG_HOME")!=nullptr)
+    modulePathConfigFile=boost::filesystem::path(getenv("XDG_CONFIG_HOME"))/"mbsim-env"/"mbsimxml.modulepath";
+  else
+    modulePathConfigFile=boost::filesystem::path(getenv("HOME"))/".config"/"mbsim-env"/"mbsimxml.modulepath";
 #endif
   if(boost::filesystem::exists(modulePathConfigFile)) {
     boost::filesystem::ifstream modulePathConfig(modulePathConfigFile);

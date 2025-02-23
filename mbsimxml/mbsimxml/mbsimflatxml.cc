@@ -96,8 +96,11 @@ set<boost::filesystem::path> MBSimXML::loadModules(const set<boost::filesystem::
   boost::filesystem::path modulePathConfigFile(
     boost::filesystem::path(getenv("APPDATA")?getenv("APPDATA"):"")/"mbsim-env"/"mbsimxml.modulepath");
 #else
-  boost::filesystem::path modulePathConfigFile(
-    boost::filesystem::path(getenv("HOME")?getenv("HOME"):"")/".config"/"mbsim-env"/"mbsimxml.modulepath");
+  boost::filesystem::path modulePathConfigFile;
+  if(getenv("XDG_CONFIG_HOME")!=nullptr)
+    modulePathConfigFile=boost::filesystem::path(getenv("XDG_CONFIG_HOME"))/"mbsim-env"/"mbsimxml.modulepath";
+  else
+    modulePathConfigFile=boost::filesystem::path(getenv("HOME"))/".config"/"mbsim-env"/"mbsimxml.modulepath";
 #endif
   if(boost::filesystem::exists(modulePathConfigFile)) {
     boost::filesystem::ifstream modulePathConfig(modulePathConfigFile);
@@ -187,7 +190,7 @@ int MBSimXML::preInit(list<string> args, unique_ptr<DynamicSystemSolver>& dss, u
     cout<<"--modulePath <dir>             Add <dir> to MBSim module serach path. The central MBSim installation"<<endl;
     cout<<"                               module dir and the current dir is always included."<<endl;
     cout<<"                               Also added are all directories listed in the file"<<endl;
-    cout<<"                               Linux: $HOME/.config/mbsim-env/mbsimxml.modulepath"<<endl;
+    cout<<"                               Linux: $XDG_CONFIG_HOME/mbsim-env/mbsimxml.modulepath"<<endl;
     cout<<"                               Windows: %APPDATA%\\mbsim-env\\mbsimxml.modulepath"<<endl;
     cout<<"                               This file contains one directory per line."<<endl;
     cout<<"--stdout <msg>                 Print on stdout messages of type <msg>."<<endl;

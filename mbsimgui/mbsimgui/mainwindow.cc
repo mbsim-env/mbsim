@@ -120,7 +120,11 @@ namespace MBSimGUI {
       uniqueTempDir=bfs::unique_path("/dev/shm/mbsimgui_%%%%-%%%%-%%%%-%%%%");
     else
       uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
-    configPath = qgetenv("HOME")+"/.config/mbsim-env/";
+    configPath = qgetenv("XDG_CONFIG_HOME");
+    if(!configPath.isEmpty())
+      configPath += "/mbsim-env/";
+    else
+      configPath = qgetenv("HOME")+"/.config/mbsim-env/";
 #endif
     bfs::create_directories(uniqueTempDir);
 
