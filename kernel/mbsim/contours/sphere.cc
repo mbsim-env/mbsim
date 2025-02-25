@@ -41,7 +41,7 @@ namespace MBSim {
   }
 
   Vec3 Sphere::evalKrPS(const Vec2 &zeta) {
-    static Vec3 Kr;
+    static Vec3 Kr(NONINIT);
     double a = zeta(0);
     double b = zeta(1);
     Kr(0) = r*cos(a)*cos(b);
@@ -145,7 +145,7 @@ namespace MBSim {
 
   Vec2 Sphere::evalZeta(const fmatvec::Vec3 &WrPoint) {
     Vec3 SrPoint = R->evalOrientation().T() * (WrPoint - R->evalPosition());
-    Vec2 zeta;
+    static Vec2 zeta(NONINIT);
     double r = nrm2(SrPoint);
     zeta(0) = acos(SrPoint(2) / r); // inclination
     zeta(1) = atan2(SrPoint(1), SrPoint(0)); // azimuth
