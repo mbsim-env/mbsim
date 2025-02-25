@@ -84,6 +84,10 @@
 #include "dialogs.h"
 #include "wizards.h"
 #include <evaluator/evaluator.h>
+#ifndef _WIN32
+  #include <sys/vfs.h>
+  #include <linux/magic.h>
+#endif
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -114,15 +118,35 @@ namespace MBSimGUI {
 
 #if _WIN32
     uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
+
     configPath = qgetenv("APPDATA")+"/mbsim-env/";
 #else
-    if(bfs::is_directory("/dev/shm"))
-      uniqueTempDir=bfs::unique_path("/dev/shm/mbsimgui_%%%%-%%%%-%%%%-%%%%");
+    auto checkTMPFS=[](const bfs::path &dir) {
+      struct statfs buf;
+      if(statfs(dir.string().c_str(), &buf)!=0)
+        return false;
+      return buf.f_type==TMPFS_MAGIC;
+    };
+    const char *XDG_RUNTIME_DIR=getenv("XDG_RUNTIME_DIR");
+    bfs::path tmpDir;
+    if(XDG_RUNTIME_DIR && checkTMPFS(XDG_RUNTIME_DIR))
+      tmpDir=XDG_RUNTIME_DIR;
+    if(tmpDir.empty() && checkTMPFS("/dev/shm"))
+      tmpDir="/dev/shm";
+    if(tmpDir.empty() && XDG_RUNTIME_DIR)
+      tmpDir=XDG_RUNTIME_DIR;
+    if(tmpDir.empty())
+      tmpDir=bfs::temp_directory_path();
+    uniqueTempDir=bfs::unique_path(tmpDir/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
+
+    configPath = qgetenv("XDG_CONFIG_HOME");
+    if(!configPath.isEmpty())
+      configPath += "/mbsim-env/";
     else
-      uniqueTempDir=bfs::unique_path(bfs::temp_directory_path()/"mbsimgui_%%%%-%%%%-%%%%-%%%%");
-    configPath = qgetenv("HOME")+"/.config/mbsim-env/";
+      configPath = qgetenv("HOME")+"/.config/mbsim-env/";
 #endif
     bfs::create_directories(uniqueTempDir);
+    bfs::permissions(uniqueTempDir, bfs::owner_read|bfs::owner_write|bfs::owner_exe);
 
     QString program = QString::fromStdString((boost::dll::program_location().parent_path().parent_path()/"bin"/"mbsimxml").string());
     QStringList arguments;

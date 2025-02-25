@@ -54,11 +54,11 @@ try:
       shutil.copyfile(F, f"{DATAHOME}/icons/hicolor/scalable/apps/mbsim-env.{os.path.basename(F)}")
     
     # mimeapps
-    os.makedirs(f"{HOME}/.config", exist_ok=True)
+    os.makedirs(CONFIG, exist_ok=True)
     cp=configparser.ConfigParser(delimiters=('='), comment_prefixes=('#'), strict=False, interpolation=None)
     cp.optionxform=str
-    cp.read([f"{HOME}/.config/mimeapps.list"]+glob.glob(f"{FREEDESKTOPORGDIR}/mimeapps-*.list"))
-    with open(f"{HOME}/.config/mimeapps.list", "wt") as ff:
+    cp.read([f"{CONFIG}/mimeapps.list"]+glob.glob(f"{FREEDESKTOPORGDIR}/mimeapps-*.list"))
+    with open(f"{CONFIG}/mimeapps.list", "wt") as ff:
       cp.write(ff, space_around_delimiters=False)
     
     # apps
