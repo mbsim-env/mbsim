@@ -751,6 +751,42 @@ namespace MBSimGUI {
     }
   }
 
+  RevolutionPropertyDialog::RevolutionPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
+    addTab("Visualization",1);
+
+    r0 = new ExtWidget("Position of reference point",new ChoiceWidget(new VecWidgetFactory(2,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"positionOfReferencePoint");
+    addToTab("General", r0);
+
+    w = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"width");
+    addToTab("General", w);
+
+    pf = new ExtWidget("Force function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"y",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");
+    addToTab("General",pf);
+
+    visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualization", visu);
+  }
+
+  DOMElement* RevolutionPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    DOMElement *ele = E(item->getXMLElement())->getFirstElementChildNamed(MBSIM%"unloadedRadius");
+    if(ele) ele->getOwnerDocument()->renameNode(ele,X()%MBSIM.getNamespaceURI(),X()%"radius");
+    r0->initializeUsingXML(item->getXMLElement());
+    w->initializeUsingXML(item->getXMLElement());
+    pf->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* RevolutionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    r0->writeXMLFile(item->getXMLElement(),nullptr);
+    w->writeXMLFile(item->getXMLElement(),nullptr);
+    pf->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
   FlexiblePlanarNurbsContourPropertyDialog::FlexiblePlanarNurbsContourPropertyDialog(Element *contour) : ContourPropertyDialog(contour) {
     addTab("Visualization",1);
 

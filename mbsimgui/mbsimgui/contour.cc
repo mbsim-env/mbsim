@@ -56,6 +56,7 @@ namespace MBSimGUI {
   MBSIMGUI_REGOBJECTFACTORY(SpatialContour);
   MBSIMGUI_REGOBJECTFACTORY(SpatialNurbsContour);
   MBSIMGUI_REGOBJECTFACTORY(Tyre);
+  MBSIMGUI_REGOBJECTFACTORY(Revolution);
   MBSIMGUI_REGOBJECTFACTORY(UnknownContour);
 
   Contour::Contour() {

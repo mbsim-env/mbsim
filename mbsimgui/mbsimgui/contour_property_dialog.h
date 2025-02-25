@@ -225,6 +225,16 @@ namespace MBSimGUI {
       void updateWidget() override;
   };
 
+  class RevolutionPropertyDialog : public RigidContourPropertyDialog {
+
+    public:
+      RevolutionPropertyDialog(Element *tyre);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ExtWidget *r0, *w, *pf, *visu;
+  };
+
   class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
 
     public:
