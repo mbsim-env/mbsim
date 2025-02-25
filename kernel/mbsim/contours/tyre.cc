@@ -39,12 +39,6 @@ namespace MBSim {
 	throwError("(Tyre::init): 2 contour parameters are needed for elliptical shape of cross section.");
       else if(shape==unknown)
         throwError("(Tyre::init): shape of cross section contour unknown.");
-      if(rRim>0) {
-	msg(Deprecated) << "(Tyre::init): rim radius is deprecated. Use shape of cross section contour and contour parameters to define tyre contour." << endl;
-	cp.resize(1);
-	cp(0) = r-rRim;
-	shape = circular;
-      }
       if(w<0) w = cp.size()?2*cp(0):0;
     }
     else if(stage==plotting) {
@@ -65,9 +59,10 @@ namespace MBSim {
 	    }
 	    for (int j=0; j<21; j++) {
 	      double xi = M_PI/2*j/20.;
-	      vp[i*nXi+2+j].push_back((r+0.1*w*(sin(xi)-1))*sin(eta));
+              double k = r+0.1*w*(sin(xi)-1);
+	      vp[i*nXi+2+j].push_back(k*sin(eta));
 	      vp[i*nXi+2+j].push_back(-w*(0.4+0.1*cos(xi)));
-	      vp[i*nXi+2+j].push_back((r+0.1*w*(sin(xi)-1))*cos(eta));
+	      vp[i*nXi+2+j].push_back(k*cos(eta));
 	    }
 	    for (int j=0; j<2; j++) {
 	      double xi = -0.7*w/2 + 0.7*w*j;
@@ -77,9 +72,10 @@ namespace MBSim {
 	    }
 	    for (int j=0; j<21; j++) {
 	      double xi = M_PI/2 - M_PI/2*j/20.;
-	      vp[i*nXi+25+j].push_back((r+0.1*w*(sin(xi)-1))*sin(eta));
+              double k = r+0.1*w*(sin(xi)-1);
+	      vp[i*nXi+25+j].push_back(k*sin(eta));
 	      vp[i*nXi+25+j].push_back(w*(0.4+0.1*cos(xi)));
-	      vp[i*nXi+25+j].push_back((r+0.1*w*(sin(xi)-1))*cos(eta));
+	      vp[i*nXi+25+j].push_back(k*cos(eta));
 	    }
 	    for (int j=0; j<2; j++) {
 	      double xi = (r-0.1*w)*(1-j)+0.7*r*j;
@@ -98,9 +94,10 @@ namespace MBSim {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<nXi; j++) {
 	      double xi = -al + 2*al*j/50.;
-	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*sin(eta));
+              double k = r-cp(0)*(1-cos(xi));
+	      vp[i*nXi+j].push_back(k*sin(eta));
 	      vp[i*nXi+j].push_back(cp(0)*sin(xi));
-	      vp[i*nXi+j].push_back((r-cp(0)*(1-cos(xi)))*cos(eta));
+	      vp[i*nXi+j].push_back(k*cos(eta));
 	    }
 	  }
 	}
@@ -113,9 +110,10 @@ namespace MBSim {
 	    double eta = 2*M_PI*i/50.;
 	    for (int j=0; j<nXi; j++) {
 	      double xi = -al + 2*al*j/50.;
-	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*sin(eta));
+              double k = r-cp(1)*(1-cos(xi));
+	      vp[i*nXi+j].push_back(k*sin(eta));
 	      vp[i*nXi+j].push_back(cp(0)*sin(xi));
-	      vp[i*nXi+j].push_back((r-cp(1)*(1-cos(xi)))*cos(eta));
+	      vp[i*nXi+j].push_back(k*cos(eta));
 	    }
 	  }
 	}
@@ -142,18 +140,7 @@ namespace MBSim {
     RigidContour::initializeUsingXML(element);
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"radius");
-    if(e)
-      setRadius(E(e)->getText<double>());
-    else {
-      e=E(element)->getFirstElementChildNamed(MBSIM%"unloadedRadius");
-      Deprecated::message(this, "Feature unloadedRadius is deprecated. Use feature radius instead.", e);
-      setRadius(E(e)->getText<double>());
-    }
-    e=E(element)->getFirstElementChildNamed(MBSIM%"rimRadius");
-    if(e) {
-      Deprecated::message(this, "Feature rimRadius is deprecated. Use feature ellipseParameters to define tyre contour.", e);
-      rRim = E(e)->getText<double>();
-    }
+    setRadius(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"width");
     if(e) setWidth(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"shapeOfCrossSectionContour");

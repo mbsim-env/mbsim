@@ -4001,7 +4001,7 @@
   <xs:element name="Tyre" substitutionGroup="RigidContour" type="TyreType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
-      tbd
+        Kontur eines Reifens.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -4009,29 +4009,13 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="radius" type="pv:lengthScalar">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="">
-                  Definiert den Außenradius des unbelasteten Reifens.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-            <xs:element name="unloadedRadius" type="pv:lengthScalar">
-              <xs:annotation>
-                <xs:documentation xml:lang="de" xmlns="">
-                  Definiert den Außenradius des unbelasteten Reifens.
-                </xs:documentation>
-              </xs:annotation>
-            </xs:element>
-          </xs:choice>
-          <xs:element name="rimRadius" type="pv:lengthScalar" minOccurs="0">
+          <xs:element name="radius" type="pv:lengthScalar">
             <xs:annotation>
-               <xs:documentation xml:lang="de" xmlns="">
-                 Definiert den Felgenradius des Reifens.
-               </xs:documentation>
-             </xs:annotation>
-           </xs:element>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert den Außenradius des unbelasteten Reifens.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="width" type="pv:lengthScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -4040,14 +4024,21 @@
             </xs:annotation>
           </xs:element>
           <xs:element name="shapeOfCrossSectionContour" type="pv:stringFullEval" minOccurs="0">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-	        tbd
-            </xs:documentation></xs:annotation>
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+	        Definiert die Form des Reifenquerschnitts.
+                <ul>
+                  <li>flat: gerade</li>
+                  <li>circular: kreisförmig</li>
+                  <li>elliptical: elliptisch</li>
+                </ul>
+              </xs:documentation>
+            </xs:annotation>
           </xs:element>
           <xs:element name="contourParameters" type="pv:lengthVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                Definiert die Parameter der Kontourellipse des Reifens.
+                Definiert die Parameter der Querschnittskontur. Bei einer kreisförmigen Kontur ist der Radius bei einer elliptischen Kontur die 2 Halbachsen anzugeben.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -4496,6 +4487,7 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
   <xs:element name="MagicFormulaSharp" substitutionGroup="TyreModel" type="MagicFormulaSharpType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">

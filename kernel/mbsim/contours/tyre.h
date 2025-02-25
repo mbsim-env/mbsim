@@ -61,7 +61,6 @@ namespace MBSim {
       double w{-1};
       ShapeOfCrossSectionContour shape{flat};
       fmatvec::VecV cp;
-      double rRim{0};
   };
 
 }
