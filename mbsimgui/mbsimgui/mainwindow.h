@@ -194,6 +194,7 @@ namespace MBSimGUI {
     private slots:
       void selectElement(const std::string& ID, OpenMBVGUI::Object *obj);
       void abstractViewFilterOptionsChanged();
+      void fileReloaded();
 
     public:
       MainWindow(QStringList &arg);
