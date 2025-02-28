@@ -16,6 +16,7 @@ MBSim
 - If the model cannot be made consistent during the initial velocity projection an error is thrown now
 - Catch Windows WM_CLOSE signals and exit the simulation propably (WM_CLOSE is the Windows variant of SIG_INT/SIG_TERM)
 - Added a new "action" attribute for <import> in the preprocessor if the Python evaluator is used.
+- A revolution is now available in order to define a rotationally symmetric contour.
 
 MBSimControl
 ------------
@@ -150,9 +151,6 @@ fmatvec
 - Fixed wrong symbolic expression evaluation due to double -> int convertion with overflows.
 - Spezial handling of some operators regarding symbolic differentiantion when one argument is constant
   to simplify the result (shorter/faster expressions for differentations are generated)
-
-
-
 
 
 Release 10.1
