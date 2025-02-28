@@ -41,11 +41,10 @@ namespace MBSim {
     static Vec3 Kr(NONINIT);
     double phi = zeta(0);
     double y = r0(0)+zeta(1);
-    double z = (*fz)(y);
-    double k = r0(1)+z;
-    Kr(0) = k*sin(phi);
+    double z = r0(1)+(*fz)(y);
+    Kr(0) = z*sin(phi);
     Kr(1) = y;
-    Kr(2) = k*cos(phi);
+    Kr(2) = z*cos(phi);
     return Kr;
   }
 
@@ -53,10 +52,9 @@ namespace MBSim {
     static Vec3 Ks;
     double phi = zeta(0);
     double y = r0(0)+zeta(1);
-    double z = (*fz)(y);
-    double k = r0(1)+z;
-    Ks(0) = k*cos(phi);
-    Ks(2) = -k*sin(phi);
+    double z = r0(1)+(*fz)(y);
+    Ks(0) = z*cos(phi);
+    Ks(2) = -z*sin(phi);
     return Ks;
   }
 
@@ -75,10 +73,9 @@ namespace MBSim {
     static Vec3 parDer1Ks;
     double phi = zeta(0);
     double y = r0(0)+zeta(1);
-    double z = (*fz)(y);
-    double k = r0(1)+z;
-    parDer1Ks(0) = -k*sin(phi);
-    parDer1Ks(2) = -k*cos(phi);
+    double z = r0(1)+(*fz)(y);
+    parDer1Ks(0) = -z*sin(phi);
+    parDer1Ks(2) = -z*cos(phi);
     return parDer1Ks;
   }
 
@@ -130,11 +127,10 @@ namespace MBSim {
           double eta = 2*M_PI*i/50.;
           for (int j=0; j<51; j++) {
             double yi = r0(0)+w*j/50.;
-            double zi = (*fz)(yi);
-            double k = r0(1)+zi;
-            vp[i*51+j].push_back(k*sin(eta));
+            double zi = r0(1)+(*fz)(yi);
+            vp[i*51+j].push_back(zi*sin(eta));
             vp[i*51+j].push_back(yi);
-            vp[i*51+j].push_back(k*cos(eta));
+            vp[i*51+j].push_back(zi*cos(eta));
           }
         }
 	vector<int> indices(5*50*50);
