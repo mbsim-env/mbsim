@@ -684,9 +684,6 @@ namespace MBSimGUI {
     r = new ExtWidget("Radius",new ChoiceWidget(new ScalarWidgetFactory("0.3",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"radius");
     addToTab("General", r);
 
-    rRim = new ExtWidget("Rim radius",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"rimRadius");
-    addToTab("General", rRim);
-
     w = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"width");
     addToTab("General", w);
 
@@ -711,7 +708,6 @@ namespace MBSimGUI {
     DOMElement *ele = E(item->getXMLElement())->getFirstElementChildNamed(MBSIM%"unloadedRadius");
     if(ele) ele->getOwnerDocument()->renameNode(ele,X()%MBSIM.getNamespaceURI(),X()%"radius");
     r->initializeUsingXML(item->getXMLElement());
-    rRim->initializeUsingXML(item->getXMLElement());
     w->initializeUsingXML(item->getXMLElement());
     shape->blockSignals(true);
     shape->initializeUsingXML(item->getXMLElement());
@@ -724,7 +720,6 @@ namespace MBSimGUI {
   DOMElement* TyrePropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     r->writeXMLFile(item->getXMLElement(),nullptr);
-    rRim->writeXMLFile(item->getXMLElement(),nullptr);
     w->writeXMLFile(item->getXMLElement(),nullptr);
     shape->writeXMLFile(item->getXMLElement(),nullptr);
     cp->writeXMLFile(item->getXMLElement(),nullptr);
@@ -757,8 +752,8 @@ namespace MBSimGUI {
     r0 = new ExtWidget("Position of reference point",new ChoiceWidget(new VecWidgetFactory(2,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"positionOfReferencePoint");
     addToTab("General", r0);
 
-    w = new ExtWidget("Width",new ChoiceWidget(new ScalarWidgetFactory("0.2",vector<QStringList>(2,lengthUnits()),vector<int>(2,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"width");
-    addToTab("General", w);
+    n = new ExtWidget("Nodes",new ChoiceWidget(new VecWidgetFactory({"0","1"}),QBoxLayout::RightToLeft,5),false,false,MBSIM%"nodes");
+    addToTab("General", n);
 
     pf = new ExtWidget("Force function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"y",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");
     addToTab("General",pf);
@@ -772,7 +767,7 @@ namespace MBSimGUI {
     DOMElement *ele = E(item->getXMLElement())->getFirstElementChildNamed(MBSIM%"unloadedRadius");
     if(ele) ele->getOwnerDocument()->renameNode(ele,X()%MBSIM.getNamespaceURI(),X()%"radius");
     r0->initializeUsingXML(item->getXMLElement());
-    w->initializeUsingXML(item->getXMLElement());
+    n->initializeUsingXML(item->getXMLElement());
     pf->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
@@ -781,7 +776,7 @@ namespace MBSimGUI {
   DOMElement* RevolutionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
     r0->writeXMLFile(item->getXMLElement(),nullptr);
-    w->writeXMLFile(item->getXMLElement(),nullptr);
+    n->writeXMLFile(item->getXMLElement(),nullptr);
     pf->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
