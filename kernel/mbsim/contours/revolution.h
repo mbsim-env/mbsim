@@ -53,7 +53,7 @@ namespace MBSim {
 //        openMBVRigidBody=ombv.createOpenMBV<OpenMBV::Frustum>();
 //      }
       
-    void initializeUsingXML(xercesc::DOMElement *element) override;
+      void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
       fmatvec::Vec2 r0;
