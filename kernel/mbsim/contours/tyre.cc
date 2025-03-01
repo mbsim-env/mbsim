@@ -87,7 +87,6 @@ namespace MBSim {
 	}
 	else if(shape==circular) {
 	  nXi = 51;
-	  vector<double> ombvXiNodes(nXi);
 	  vp.resize(nEta*nXi);
 	  double al = (w/2<cp(0))?asin(w/2/cp(0)):M_PI/2;
 	  for (int i=0; i<nEta; i++) {
@@ -103,7 +102,6 @@ namespace MBSim {
 	}
 	else if(shape==elliptical) {
 	  nXi = 51;
-	  vector<double> ombvXiNodes(nXi);
 	  vp.resize(nEta*nXi);
 	  double al = (w/2<cp(0))?asin(w/2/cp(0)):M_PI/2;
 	  for (int i=0; i<nEta; i++) {
