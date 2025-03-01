@@ -17,8 +17,8 @@
  * Contact: martin.o.foerg@googlemail.com
  */
 
-#ifndef _ROTATIONALLY_SYMMETRIC_H
-#define _ROTATIONALLY_SYMMETRIC_H
+#ifndef _REVOLUTION_H
+#define _REVOLUTION_H
 
 #include "mbsim/contours/rigid_contour.h"
 #include "mbsim/functions/function.h"
