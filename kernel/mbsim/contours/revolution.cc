@@ -121,7 +121,6 @@ namespace MBSim {
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
 	vector<vector<double>> vp;
-        vector<double> ombvXiNodes(51);
         vp.resize(51*51);
         for (int i=0; i<51; i++) {
           double eta = 2*M_PI*i/50.;
