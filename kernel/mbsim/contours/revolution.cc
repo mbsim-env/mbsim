@@ -31,6 +31,11 @@ namespace MBSim {
 
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Revolution)
 
+  Revolution::Revolution(const string& name, Frame *R) : RigidContour(name,R) {
+    etaNodes = {0,2*M_PI};
+    xiNodes = {0,1};
+  }
+
   void Revolution::setProfileFunction(Function<double(double)> *fz_) {
     fz=fz_;
     fz->setParent(this);
@@ -40,10 +45,9 @@ namespace MBSim {
   Vec3 Revolution::evalKrPS(const Vec2 &zeta) {
     static Vec3 Kr(NONINIT);
     double phi = zeta(0);
-    double y = r0(0)+zeta(1);
-    double z = r0(1)+(*fz)(y);
+    double z = r0(1)+(*fz)(zeta(1));
     Kr(0) = z*sin(phi);
-    Kr(1) = y;
+    Kr(1) = r0(0)+zeta(1);
     Kr(2) = z*cos(phi);
     return Kr;
   }
@@ -51,8 +55,7 @@ namespace MBSim {
   Vec3 Revolution::evalKs(const Vec2 &zeta) {
     static Vec3 Ks;
     double phi = zeta(0);
-    double y = r0(0)+zeta(1);
-    double z = r0(1)+(*fz)(y);
+    double z = r0(1)+(*fz)(zeta(1));
     Ks(0) = z*cos(phi);
     Ks(2) = -z*sin(phi);
     return Ks;
@@ -61,8 +64,7 @@ namespace MBSim {
   Vec3 Revolution::evalKt(const Vec2 &zeta) {
     static Vec3 Kt(NONINIT);
     double phi = zeta(0);
-    double y = r0(0)+zeta(1);
-    double zs = fz->parDer(y);
+    double zs = fz->parDer(zeta(1));
     Kt(0) = zs*sin(phi);
     Kt(1) = 1;
     Kt(2) = zs*cos(phi);
@@ -72,8 +74,7 @@ namespace MBSim {
   Vec3 Revolution::evalParDer1Ks(const Vec2 &zeta) {
     static Vec3 parDer1Ks;
     double phi = zeta(0);
-    double y = r0(0)+zeta(1);
-    double z = r0(1)+(*fz)(y);
+    double z = r0(1)+(*fz)(zeta(1));
     parDer1Ks(0) = -z*sin(phi);
     parDer1Ks(2) = -z*cos(phi);
     return parDer1Ks;
@@ -82,8 +83,7 @@ namespace MBSim {
   Vec3 Revolution::evalParDer2Ks(const Vec2 &zeta) {
     static Vec3 parDer2Ks;
     double phi = zeta(0);
-    double y = r0(0)+zeta(1);
-    double zs = fz->parDer(y);
+    double zs = fz->parDer(zeta(1));
     parDer2Ks(0) = zs*cos(phi);
     parDer2Ks(2) = -zs*sin(phi);
     return parDer2Ks;
@@ -92,8 +92,7 @@ namespace MBSim {
   Vec3 Revolution::evalParDer1Kt(const Vec2 &zeta) {
     static Vec3 parDer1Kt;
     double phi = zeta(0);
-    double y = r0(0)+zeta(1);
-    double zs = fz->parDer(y);
+    double zs = fz->parDer(zeta(1));
     parDer1Kt(0) = zs*cos(phi);
     parDer1Kt(2) = -zs*sin(phi);
     return parDer1Kt;
@@ -102,21 +101,22 @@ namespace MBSim {
   Vec3 Revolution::evalParDer2Kt(const Vec2 &zeta) {
     static Vec3 parDer2Kt;
     double phi = zeta(0);
-    double y = r0(0)+zeta(1);
-    double zss = fz->parDerDirDer(1,y);
+    double zss = fz->parDerDirDer(1,zeta(1));
     parDer2Kt(0) = zss*sin(phi);
     parDer2Kt(2) = zss*cos(phi);
     return parDer2Kt;
   }
 
   bool Revolution::isZetaOutside(const fmatvec::Vec2 &zeta) {
-    if(zeta(1)<0 or zeta(1)>w)
+    if(zeta(1)<xiNodes[0] or zeta(1)>xiNodes[xiNodes.size()-1])
       return true;
     return false;
   }
 
   void Revolution::init(InitStage stage, const InitConfigSet &config) {
     if(stage==preInit) {
+      if(xiNodes.size() < 2)
+        throwError("(Revolution::init): Size of xiNodes must be greater than 1.");
     }
     else if(stage==plotting) {
       if(plotFeature[openMBV] && openMBVRigidBody) {
@@ -126,10 +126,10 @@ namespace MBSim {
         for (int i=0; i<51; i++) {
           double eta = 2*M_PI*i/50.;
           for (int j=0; j<51; j++) {
-            double yi = r0(0)+w*j/50.;
-            double zi = r0(1)+(*fz)(yi);
+            double xi = xiNodes[0] + (xiNodes[xiNodes.size()-1]-xiNodes[0])*j/50.;
+            double zi = r0(1)+(*fz)(xi);
             vp[i*51+j].push_back(zi*sin(eta));
-            vp[i*51+j].push_back(yi);
+            vp[i*51+j].push_back(r0(0)+xi);
             vp[i*51+j].push_back(zi*cos(eta));
           }
         }
@@ -158,8 +158,8 @@ namespace MBSim {
     DOMElement* e;
     e=E(element)->getFirstElementChildNamed(MBSIM%"positionOfReferencePoint");
     if(e) setPositionOfReferencePoint(E(e)->getText<Vec2>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"width");
-    if(e) setWidth(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"nodes");
+    setNodes(E(e)->getText<vector<double>>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"profileFunction");
     setProfileFunction(ObjectFactory::createAndInit<Function<double(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"enableOpenMBV");

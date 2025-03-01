@@ -29,13 +29,13 @@ namespace MBSim {
 
   class Revolution : public RigidContour {
     public:
-      Revolution(const std::string& name="", Frame *R=nullptr) : RigidContour(name,R) { }
+      Revolution(const std::string& name="", Frame *R=nullptr);
       ~Revolution() override = default;
 
       void init(InitStage stage, const InitConfigSet &config) override;
 
       void setPositionOfReferencePoint(const fmatvec::Vec2 &r0_) { r0 = r0_; }
-      void setWidth(double w_) { w = w_; }
+      void setNodes(const std::vector<double> &nodes_) { xiNodes = nodes_; }
       void setProfileFunction(Function<double(double)> *fz_); 
 
       fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
@@ -56,8 +56,7 @@ namespace MBSim {
     void initializeUsingXML(xercesc::DOMElement *element) override;
 
     protected:
-    fmatvec::Vec2 r0;
-      double w{0.5};
+      fmatvec::Vec2 r0;
       Function<double(double)> *fz{nullptr};
   };
 
