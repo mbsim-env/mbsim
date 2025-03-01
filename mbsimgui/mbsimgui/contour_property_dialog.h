@@ -221,7 +221,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *r, *rRim, *w, *shape, *cp, *visu;
+      ExtWidget *r, *w, *shape, *cp, *visu;
       void updateWidget() override;
   };
 
@@ -232,7 +232,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *r0, *w, *pf, *visu;
+      ExtWidget *r0, *n, *pf, *visu;
   };
 
   class FlexiblePlanarNurbsContourPropertyDialog : public ContourPropertyDialog {
