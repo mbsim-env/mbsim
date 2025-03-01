@@ -755,7 +755,7 @@ namespace MBSimGUI {
     n = new ExtWidget("Nodes",new ChoiceWidget(new VecWidgetFactory({"0","1"}),QBoxLayout::RightToLeft,5),false,false,MBSIM%"nodes");
     addToTab("General", n);
 
-    pf = new ExtWidget("Force function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"y",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");
+    pf = new ExtWidget("Profile function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"y",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");
     addToTab("General",pf);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
