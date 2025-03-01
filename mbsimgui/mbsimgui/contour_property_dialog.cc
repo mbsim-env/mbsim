@@ -752,7 +752,7 @@ namespace MBSimGUI {
     r0 = new ExtWidget("Position of reference point",new ChoiceWidget(new VecWidgetFactory(2,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"positionOfReferencePoint");
     addToTab("General", r0);
 
-    n = new ExtWidget("Nodes",new ChoiceWidget(new VecWidgetFactory({"0","1"}),QBoxLayout::RightToLeft,5),false,false,MBSIM%"nodes");
+    n = new ExtWidget("Nodes",new ChoiceWidget(new VecWidgetFactory({"0","1"},vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"nodes");
     addToTab("General", n);
 
     pf = new ExtWidget("Profile function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"y",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");

@@ -4075,7 +4075,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="nodes" type="pv:nounitVector">
+          <xs:element name="nodes" type="pv:lengthVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knoten der Profilfunktion.
