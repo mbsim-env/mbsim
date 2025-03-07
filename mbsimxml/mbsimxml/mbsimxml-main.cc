@@ -266,7 +266,7 @@ int main(int argc, char *argv[]) {
     condition_variable cv;
     optional<string> lastStdinContent; // if set its the content to be processed
     bool cinEOF=false; // if true stdin has reached EOF and the program should exit
-    int stdinFDDup;
+    int stdinFDDup = -1;
     if(MBSIMPRJ=="-" && onlyLatestStdin) {
       // Some evaluators (e.g. Python) use stdin e.g. during initialization (setting flags on stdin, ...).
       // Hence, when we read on stdin (=cin) in a thread this may cause race-conditions with evaluator code.
