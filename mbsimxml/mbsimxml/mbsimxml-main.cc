@@ -28,6 +28,8 @@
 #include <openmbvcppinterface/objectfactory.h>
 #include "set_current_path.h"
 #include <condition_variable>
+#include <boost/iostreams/filtering_stream.hpp>
+#include <boost/iostreams/device/file_descriptor.hpp>
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -264,15 +266,30 @@ int main(int argc, char *argv[]) {
     condition_variable cv;
     optional<string> lastStdinContent; // if set its the content to be processed
     bool cinEOF=false; // if true stdin has reached EOF and the program should exit
+    int stdinFDDup;
     if(MBSIMPRJ=="-" && onlyLatestStdin) {
-      stdinReadThread = thread([&mu, &cv, &cinEOF, &lastStdinContent](){
+      // Some evaluators (e.g. Python) use stdin e.g. during initialization (setting flags on stdin, ...).
+      // Hence, when we read on stdin (=cin) in a thread this may cause race-conditions with evaluator code.
+      // To avoid this we close stdin (=fd 0). This will cause at least Python not to to anything on stdin.
+      // Before closing stdin we duplicate it and use this duplicate fd instead of stdin.
+      // And use boost::iostreams to get a c++ stream which operators on the duplicated fd.
+      stdinFDDup=dup(fileno(stdin));
+      if(stdinFDDup==-1)
+        throw runtime_error("Failed to duplicate the stdin FD.");
+      close(fileno(stdin));
+      // cinDup is created in side the thread just for lifetime issues
+
+      stdinReadThread = thread([&mu, &cv, &cinEOF, &lastStdinContent, stdinFDDup](){
+        boost::iostreams::filtering_istream cinDup;
+        cinDup.push(boost::iostreams::file_descriptor_source(stdinFDDup, boost::iostreams::never_close_handle));
+
         while(true) { // read from stdin in a endless loop
           string str;
-          getline(cin, str, '\0'); // read content (blocking read but not locked by "mu"
+          getline(cinDup, str, '\0'); // read content (blocking read but not locked by "mu"
           // now lock "mu" ...
           lock_guard l(mu);
           cv.notify_all(); // ... notify about the new information which is ...
-          if(cin.eof()) { // ... EOF reached ...
+          if(cinDup.eof()) { // ... EOF reached ...
             cinEOF=true;
             break;
           }
@@ -443,8 +460,11 @@ int main(int argc, char *argv[]) {
       else
         runAgain=true;
     }
-    if(stdinReadThread.joinable())
+    if(stdinReadThread.joinable()) {
+      if(dup2(stdinFDDup, 0)==-1) // revert the stdin FD duplicate (not needed by a nice cleanup)
+        throw runtime_error("Failed to re-duplicate the stdin FD.");
       stdinReadThread.join();// wait until the thread has finished
+    }
   
     return ret;
   }
