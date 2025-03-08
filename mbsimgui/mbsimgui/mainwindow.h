@@ -112,8 +112,6 @@ namespace MBSimGUI {
       QAction *actionSave, *actionSaveProject, *actionSimulate, *actionInterrupt, *actionKill, *actionOpenMBV, *actionH5plotserie, *actionLinearSystemAnalysis, *actionStateTable, *actionSaveDataAs, *actionSaveMBSimH5DataAs, *actionSaveOpenMBVDataAs, *actionRefresh, *actionCreateFMU, *actionSaveStateVectorAs, *actionSaveStateTableAs, *actionSaveLinearSystemAnalysisAs, *actionUndo, *actionRedo;
       OpenMBVGUI::AbstractViewFilter *elementViewFilter, *parameterViewFilter;
       QTimer autoSaveTimer;
-      QElapsedTimer processStatusTimer     , processOutputTimer;
-      QTimer        processStatusSingleShot, processOutputSingleShot;
       int IDcounter{0};
       std::string currentID;
       enum { maxRecentFiles = 5 };
@@ -221,7 +219,7 @@ namespace MBSimGUI {
       xercesc::DOMElement* pasteElement(Element *parent, Element *element);
       xercesc::DOMElement* loadEmbedItemData(EmbedItemData *parent, const QString &title);
       void updateEchoView(const QByteArray &data);
-      void updateStatusMessage(std::string s);
+      void updateStatusMessage(const std::string &s);
       void clearEchoView(const QString &initialText="");
 
       template<class Container>

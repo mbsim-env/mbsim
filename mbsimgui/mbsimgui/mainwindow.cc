@@ -423,7 +423,7 @@ namespace MBSimGUI {
 
     // initialize streams
     auto outputFunc=[this](const string &s){
-      echoView->addOutputText(QString::fromStdString(s));
+      updateEchoView(s.c_str());
     };
     debugStreamFlag=std::make_shared<bool>(false);
     fmatvec::Atom::setCurrentMessageStream(fmatvec::Atom::Info      , std::make_shared<bool>(true),
@@ -457,18 +457,7 @@ namespace MBSimGUI {
       this, &MainWindow::startProcessRefresh);
 
     // if process has new error output call statusBar()->showMessage(...) but only every 250ms
-    processStatusTimer.start();
     auto readyReadStandardError = [this]() {
-      int e=processStatusTimer.elapsed();
-      if(e<250) {
-        // last output is less then 250ms ago -> if a "single shot" output is not yet active start one
-        if(!processStatusSingleShot.isActive())
-          processStatusSingleShot.start(250-e);
-        return;
-      }
-      // last output is more then 250ms ago -> stop "single shot" output, restart timer, and update output
-      processStatusSingleShot.stop();
-      processStatusTimer.restart();
       if(process.isOpen()) {
         auto output=process.readAllStandardError();
         if(!output.isEmpty())
@@ -480,33 +469,9 @@ namespace MBSimGUI {
     };
     connect(&process,&QProcess::readyReadStandardError,readyReadStandardError);
     connect(&processRefresh,&QProcess::readyReadStandardError,readyReadStandardError);
-    processStatusSingleShot.setSingleShot(true);
-    connect(&processStatusSingleShot, &QTimer::timeout, [this](){
-      // if this gets called new output is available but not yet outputed -> output now and restart timer
-      processStatusTimer.restart();
-      if(process.isOpen()) {
-        auto output=process.readAllStandardError();
-        if(!output.isEmpty())
-          updateStatusMessage(output.constData());
-      }
-      auto output=processRefresh.readAllStandardError();
-      if(!output.isEmpty())
-        updateStatusMessage(output.constData());
-    });
 
     // if process has new standard output call updateEchoView but only every 100ms
-    processOutputTimer.start();
     auto readyReadStandardOutput = [this, &arg]() {
-      int e=processOutputTimer.elapsed();
-      if(e<100) {
-        // last output is less then 100ms ago -> if a "single shot" output is not yet active start one
-        if(!processOutputSingleShot.isActive())
-          processOutputSingleShot.start(100-e);
-        return;
-      }
-      // last output is more then 100ms ago -> stop "single shot" output, restart timer, and update output
-      processOutputSingleShot.stop();
-      processOutputTimer.restart();
       if(process.isOpen()) {
         auto output=process.readAllStandardOutput();
         if(!output.isEmpty())
@@ -541,21 +506,6 @@ namespace MBSimGUI {
         close();
       });
     }
-    processOutputSingleShot.setSingleShot(true);
-    connect(&processOutputSingleShot, &QTimer::timeout, [this,&arg](){
-      // if this gets called new output is available but not yet outputed -> output now and restart timer
-      processOutputTimer.restart();
-      if(process.isOpen()) {
-        auto output=process.readAllStandardOutput();
-        if(!output.isEmpty())
-          updateEchoView(output);
-      }
-      if(!arg.contains("--autoExit")) { // do not read from processRefresh if --autoExit
-        auto output=processRefresh.readAllStandardOutput();
-        if(!output.isEmpty())
-          updateEchoView(output);
-      }
-    });
 
     setCorner(Qt::BottomLeftCorner, Qt::LeftDockWidgetArea);
 
@@ -3036,7 +2986,26 @@ namespace MBSimGUI {
 
   void MainWindow::updateEchoView(const QByteArray &data) {
     echoView->addOutputText(data.constData());
-    echoView->updateOutput(true);
+
+    static qint64 last=0;
+    static QTimer singleShot;
+    if(last==0) {
+      singleShot.setSingleShot(true);
+      singleShot.callOnTimeout([this](){
+        echoView->updateOutput(true);
+        last=QDateTime::currentMSecsSinceEpoch();
+      });
+    }
+
+    const int delta=100;
+    auto cur=QDateTime::currentMSecsSinceEpoch();
+    if(cur>last+delta) {
+      echoView->updateOutput(true);
+      last=cur;
+      singleShot.stop();
+    }
+    else if(!singleShot.isActive())
+      singleShot.start(last+delta-cur);
   }
 
   void MainWindow::clearEchoView(const QString &initialText) {
@@ -3044,13 +3013,37 @@ namespace MBSimGUI {
     echoView->addOutputText(initialText);
   }
 
-  void MainWindow::updateStatusMessage(string s) {
-    // show only last line
-    assert(s[s.length()-1]=='\n');
-    s.resize(s.length()-1);
-    auto i=s.rfind('\n');
-    i = i==string::npos ? 0 : i+1;
-    statusBar()->showMessage(QString::fromStdString(s.substr(i)));
+  void MainWindow::updateStatusMessage(const string &s) {
+    static string ss;
+    ss=s;
+    auto out=[this](){
+      // show only last line
+      assert(ss[ss.length()-1]=='\n');
+      ss.resize(ss.length()-1);
+      auto i=ss.rfind('\n');
+      i = i==string::npos ? 0 : i+1;
+      statusBar()->showMessage(QString::fromStdString(ss.substr(i)));
+    };
+
+    static qint64 last=0;
+    static QTimer singleShot;
+    if(last==0) {
+      singleShot.setSingleShot(true);
+      singleShot.callOnTimeout([out](){
+        out();
+        last=QDateTime::currentMSecsSinceEpoch();
+      });
+    }
+
+    const int delta=250;
+    auto cur=QDateTime::currentMSecsSinceEpoch();
+    if(cur>last+delta) {
+      out();
+      last=cur;
+      singleShot.stop();
+    }
+    else if(!singleShot.isActive())
+      singleShot.start(last+delta-cur);
   }
 
   QString MainWindow::getProjectFilePath() const {
