@@ -4145,7 +4145,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="xiNodes" type="pv:unknownVector" minOccurs="0">
+          <xs:element name="xiNodes" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Knoten in xi-Richtung.

@@ -33,7 +33,6 @@ namespace MBSim {
 
   Revolution::Revolution(const string& name, Frame *R) : RigidContour(name,R) {
     etaNodes = {0,2*M_PI};
-    xiNodes = {0,1};
   }
 
   void Revolution::setProfileFunction(Function<Vec2(double)> *fyz_) {

@@ -32,8 +32,6 @@ namespace MBSim {
   MBSIM_OBJECTFACTORY_REGISTERCLASS(MBSIM, Extrusion)
 
   Extrusion::Extrusion(const string& name, Frame *R) : RigidContour(name,R), A(EYE) {
-    etaNodes = {0,1};
-    xiNodes = {0,2*M_PI};
   }
 
   void Extrusion::setPositionFunction(Function<Vec3(double)> *fr_) {
@@ -187,7 +185,7 @@ namespace MBSim {
     e=E(element)->getFirstElementChildNamed(MBSIM%"etaNodes");
     setEtaNodes(E(e)->getText<vector<double>>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"xiNodes");
-    if(e) setXiNodes(E(e)->getText<vector<double>>());
+    setXiNodes(E(e)->getText<vector<double>>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"positionFunction");
     if(e) setPositionFunction(ObjectFactory::createAndInit<Function<Vec3(double)>>(e->getFirstElementChild()));
     e=E(element)->getFirstElementChildNamed(MBSIM%"orientationFunction");
