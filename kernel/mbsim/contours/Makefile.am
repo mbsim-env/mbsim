@@ -31,7 +31,8 @@ libcontour_la_SOURCES = contour.cc\
 			bevel_gear.cc\
                         planar_gear.cc\
 			tyre.cc\
-			revolution.cc
+			revolution.cc\
+			extrusion.cc
 
 libcontour_la_CPPFLAGS = -I$(top_srcdir) $(DEPS_CFLAGS) $(OPENMBVCPPINTERFACE_CFLAGS)
 libcontour_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
@@ -68,4 +69,5 @@ contourinclude_HEADERS = contour.h\
                          bevel_gear.h\
                          planar_gear.h\
 			 tyre.h\
-                         revolution.h
+                         revolution.h\
+                         extrusion.h

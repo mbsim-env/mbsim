@@ -4127,6 +4127,95 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:element name="Extrusion" substitutionGroup="RigidContour" type="ExtrusionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Kontur einer Extrusion.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="ExtrusionType">
+    <xs:complexContent>
+      <xs:extension base="RigidContourType">
+        <xs:sequence>
+          <xs:element name="etaNodes" type="pv:lengthVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten in eta-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="xiNodes" type="pv:unknownVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="positionFunction" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Profilfunktion relativ zum Referenzpunkt.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="orientationFunction" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Profilfunktion relativ zum Referenzpunkt.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="profileFunction">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Definiert die Profilfunktion relativ zum Referenzpunkt.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:choice>
+                <xs:element ref="Function"/>
+                <xs:element ref="pv:Embed"/>
+              </xs:choice>
+            </xs:complexType>
+          </xs:element>
+          <xs:element name="openEta" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur in eta-Richtung offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openXi" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur in xi-Richtung offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="enableOpenMBV" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Aktiviert die Visualisierung der Kontur.
+              </xs:documentation>
+            </xs:annotation>
+            <xs:complexType>
+              <xs:group ref="OpenMBVColoredBodyParameters"/>
+            </xs:complexType>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="GeneralizedForceLaw" abstract="true" type="GeneralizedForceLawType">
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
