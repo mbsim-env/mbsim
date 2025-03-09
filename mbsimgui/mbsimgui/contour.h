@@ -161,6 +161,12 @@ namespace MBSimGUI {
       PropertyDialog* createPropertyDialog() override { return new RevolutionPropertyDialog(this); }
   };
 
+  class Extrusion : public RigidContour {
+    MBSIMGUI_OBJECTFACTORY_CLASS(Extrusion, RigidContour, MBSIM%"Extrusion", "Extrusion");
+    public:
+      PropertyDialog* createPropertyDialog() override { return new ExtrusionPropertyDialog(this); }
+  };
+
   class FlexiblePlanarNurbsContour : public RigidContour {
     MBSIMGUI_OBJECTFACTORY_CLASS(FlexiblePlanarNurbsContour, RigidContour, MBSIMFLEX%"FlexiblePlanarNurbsContour", "Flexible planar nurbs contour");
     public:

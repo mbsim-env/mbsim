@@ -705,8 +705,6 @@ namespace MBSimGUI {
 
   DOMElement* TyrePropertyDialog::initializeUsingXML(DOMElement *parent) {
     RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
-    DOMElement *ele = E(item->getXMLElement())->getFirstElementChildNamed(MBSIM%"unloadedRadius");
-    if(ele) ele->getOwnerDocument()->renameNode(ele,X()%MBSIM.getNamespaceURI(),X()%"radius");
     r->initializeUsingXML(item->getXMLElement());
     w->initializeUsingXML(item->getXMLElement());
     shape->blockSignals(true);
@@ -749,14 +747,23 @@ namespace MBSimGUI {
   RevolutionPropertyDialog::RevolutionPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
     addTab("Visualization",1);
 
+    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"etaNodes");
+    addToTab("General", etaNodes);
+
+    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xiNodes");
+    addToTab("General", xiNodes);
+
     r0 = new ExtWidget("Position of reference point",new ChoiceWidget(new VecWidgetFactory(2,vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"positionOfReferencePoint");
     addToTab("General", r0);
 
-    n = new ExtWidget("Nodes",new ChoiceWidget(new VecWidgetFactory({"0","1"},vector<QStringList>(3,lengthUnits()),vector<int>(3,4)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"nodes");
-    addToTab("General", n);
-
-    pf = new ExtWidget("Profile function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"y",1,FunctionWidget::scalar,1,FunctionWidget::scalar,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");
+    pf = new ExtWidget("Profile function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"xi",1,FunctionWidget::scalar,2,FunctionWidget::fixedVec,this,17),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");
     addToTab("General",pf);
+
+    openEta = new ExtWidget("Open eta",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
+    addToTab("General", openEta);
+
+    openXi = new ExtWidget("Open xi",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openXi");
+    addToTab("General", openXi);
 
     visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
     addToTab("Visualization", visu);
@@ -764,20 +771,78 @@ namespace MBSimGUI {
 
   DOMElement* RevolutionPropertyDialog::initializeUsingXML(DOMElement *parent) {
     RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
-    DOMElement *ele = E(item->getXMLElement())->getFirstElementChildNamed(MBSIM%"unloadedRadius");
-    if(ele) ele->getOwnerDocument()->renameNode(ele,X()%MBSIM.getNamespaceURI(),X()%"radius");
+    etaNodes->initializeUsingXML(item->getXMLElement());
+    xiNodes->initializeUsingXML(item->getXMLElement());
     r0->initializeUsingXML(item->getXMLElement());
-    n->initializeUsingXML(item->getXMLElement());
     pf->initializeUsingXML(item->getXMLElement());
+    openEta->initializeUsingXML(item->getXMLElement());
+    openXi->initializeUsingXML(item->getXMLElement());
     visu->initializeUsingXML(item->getXMLElement());
     return parent;
   }
 
   DOMElement* RevolutionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    etaNodes->writeXMLFile(item->getXMLElement(),nullptr);
+    xiNodes->writeXMLFile(item->getXMLElement(),nullptr);
     r0->writeXMLFile(item->getXMLElement(),nullptr);
-    n->writeXMLFile(item->getXMLElement(),nullptr);
     pf->writeXMLFile(item->getXMLElement(),nullptr);
+    openEta->writeXMLFile(item->getXMLElement(),nullptr);
+    openXi->writeXMLFile(item->getXMLElement(),nullptr);
+    visu->writeXMLFile(item->getXMLElement(),nullptr);
+    return nullptr;
+  }
+
+  ExtrusionPropertyDialog::ExtrusionPropertyDialog(Element *contour) : RigidContourPropertyDialog(contour) {
+    addTab("Visualization",1);
+
+    etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"etaNodes");
+    addToTab("General", etaNodes);
+
+    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiNodes");
+    addToTab("General", xiNodes);
+
+    r = new ExtWidget("Position Function",new ChoiceWidget(new TimeDependentTranslationWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"positionFunction");
+    addToTab("General",r);
+
+    A = new ExtWidget("Orientation Function",new ChoiceWidget(new TimeDependentRotationWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"orientationFunction");
+    addToTab("General",A);
+
+    pf = new ExtWidget("Profile function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"xi",1,FunctionWidget::scalar,2,FunctionWidget::fixedVec,this,17),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");
+    addToTab("General",pf);
+
+    openEta = new ExtWidget("Open eta",new ChoiceWidget(new BoolWidgetFactory("1"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openEta");
+    addToTab("General", openEta);
+
+    openXi = new ExtWidget("Open xi",new ChoiceWidget(new BoolWidgetFactory("0"),QBoxLayout::RightToLeft,5),true,false,MBSIM%"openXi");
+    addToTab("General", openXi);
+
+    visu = new ExtWidget("Enable openMBV",new SpatialContourMBSOMBVWidget,true,true,MBSIM%"enableOpenMBV");
+    addToTab("Visualization", visu);
+  }
+
+  DOMElement* ExtrusionPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RigidContourPropertyDialog::initializeUsingXML(item->getXMLElement());
+    etaNodes->initializeUsingXML(item->getXMLElement());
+    xiNodes->initializeUsingXML(item->getXMLElement());
+    r->initializeUsingXML(item->getXMLElement());
+    A->initializeUsingXML(item->getXMLElement());
+    pf->initializeUsingXML(item->getXMLElement());
+    openEta->initializeUsingXML(item->getXMLElement());
+    openXi->initializeUsingXML(item->getXMLElement());
+    visu->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* ExtrusionPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RigidContourPropertyDialog::writeXMLFile(item->getXMLElement(),nullptr);
+    etaNodes->writeXMLFile(item->getXMLElement(),nullptr);
+    xiNodes->writeXMLFile(item->getXMLElement(),nullptr);
+    r->writeXMLFile(item->getXMLElement(),nullptr);
+    A->writeXMLFile(item->getXMLElement(),nullptr);
+    pf->writeXMLFile(item->getXMLElement(),nullptr);
+    openEta->writeXMLFile(item->getXMLElement(),nullptr);
+    openXi->writeXMLFile(item->getXMLElement(),nullptr);
     visu->writeXMLFile(item->getXMLElement(),nullptr);
     return nullptr;
   }
