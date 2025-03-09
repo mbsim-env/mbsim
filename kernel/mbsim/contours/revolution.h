@@ -35,8 +35,7 @@ namespace MBSim {
       void init(InitStage stage, const InitConfigSet &config) override;
 
       void setPositionOfReferencePoint(const fmatvec::Vec2 &r0_) { r0 = r0_; }
-      void setNodes(const std::vector<double> &nodes_) { xiNodes = nodes_; }
-      void setProfileFunction(Function<double(double)> *fz_); 
+      void setProfileFunction(Function<fmatvec::Vec2(double)> *fyz_);
 
       fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
@@ -48,6 +47,9 @@ namespace MBSim {
 
       bool isZetaOutside(const fmatvec::Vec2 &zeta) override;
 
+      void setOpenEta(bool openEta_) { openEta = openEta_; }
+      void setOpenXi(bool openXi_) { openXi = openXi_; }
+
 //      BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (diffuseColor,(const fmatvec::Vec3&),fmatvec::Vec3(std::vector<double>{-1,1,1}))(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
 //        OpenMBVColoredBody ombv(diffuseColor,transparency,pointSize,lineWidth);
 //        openMBVRigidBody=ombv.createOpenMBV<OpenMBV::Frustum>();
@@ -57,7 +59,9 @@ namespace MBSim {
 
     protected:
       fmatvec::Vec2 r0;
-      Function<double(double)> *fz{nullptr};
+      Function<fmatvec::Vec2(double)> *fyz{nullptr};
+      bool openEta{false};
+      bool openXi{true};
   };
 
 }
