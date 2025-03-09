@@ -17,6 +17,7 @@ MBSim
 - Catch Windows WM_CLOSE signals and exit the simulation propably (WM_CLOSE is the Windows variant of SIG_INT/SIG_TERM)
 - Added a new "action" attribute for <import> in the preprocessor if the Python evaluator is used.
 - A revolution is now available in order to define a rotationally symmetric contour.
+- An extrusion is now available in order to define a contour by extruding a cross section along a spine.
 
 MBSimControl
 ------------
