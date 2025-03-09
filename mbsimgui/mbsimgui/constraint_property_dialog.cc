@@ -292,10 +292,10 @@ namespace MBSimGUI {
     frame = new ExtWidget("Frame",new ElementOfReferenceWidget<Frame>(constraint,nullptr,this),false,false,MBSIM%"frame");
     addToTab("General", frame);
 
-    translation = new ExtWidget("Translation",new ChoiceWidget(new TimeDependentTranslationWidgetFactory(constraint,this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"translation");
+    translation = new ExtWidget("Translation",new ChoiceWidget(new TimeDependentTranslationWidgetFactory(constraint,"t",this),QBoxLayout::TopToBottom,0),false,false,MBSIM%"translation");
     addToTab("Kinematics", translation);
 
-    rotation = new ExtWidget("Rotation",new ChoiceWidget(new TimeDependentRotationWidgetFactory(constraint,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"rotation");
+    rotation = new ExtWidget("Rotation",new ChoiceWidget(new TimeDependentRotationWidgetFactory(constraint,"t",this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"rotation");
     addToTab("Kinematics", rotation);
 
     q0 = new ExtWidget("Initial guess",new ChoiceWidget(new VecSizeVarWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialGuess");

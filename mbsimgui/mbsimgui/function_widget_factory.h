@@ -82,13 +82,14 @@ namespace MBSimGUI {
 
   class TimeDependentTranslationWidgetFactory : public WidgetFactory {
     public:
-      TimeDependentTranslationWidgetFactory(Element *element_, QWidget *parent_);
+      TimeDependentTranslationWidgetFactory(Element *element_, const QString &argName_, QWidget *parent_);
       Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
       int getFallbackIndex() const override { return 5; }
     protected:
+      QString argName;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;
@@ -111,13 +112,14 @@ namespace MBSimGUI {
 
   class TimeDependentRotationWidgetFactory : public WidgetFactory {
     public:
-      TimeDependentRotationWidgetFactory(Element *element_, QWidget *parent_);
+      TimeDependentRotationWidgetFactory(Element *element_, const QString &argName_, QWidget *parent_);
       Widget* createWidget(int i=0) override;
       QString getName(int i=0) const override { return name[i]; }
       MBXMLUtils::FQN getXMLName(int i=0) const override { return xmlName[i]; }
       int getSize() const override { return name.size(); }
       int getFallbackIndex() const override { return 2; }
     protected:
+      QString argName;
       std::vector<QString> name;
       std::vector<MBXMLUtils::FQN> xmlName;
       QWidget *parent;

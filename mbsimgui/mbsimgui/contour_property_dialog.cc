@@ -799,13 +799,13 @@ namespace MBSimGUI {
     etaNodes = new ExtWidget("Eta nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"etaNodes");
     addToTab("General", etaNodes);
 
-    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIM%"xiNodes");
+    xiNodes = new ExtWidget("Xi nodes",new ChoiceWidget(new VecSizeVarWidgetFactory(2),QBoxLayout::RightToLeft,5),false,false,MBSIM%"xiNodes");
     addToTab("General", xiNodes);
 
-    r = new ExtWidget("Position Function",new ChoiceWidget(new TimeDependentTranslationWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"positionFunction");
+    r = new ExtWidget("Position Function",new ChoiceWidget(new TimeDependentTranslationWidgetFactory(contour,"eta",this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"positionFunction");
     addToTab("General",r);
 
-    A = new ExtWidget("Orientation Function",new ChoiceWidget(new TimeDependentRotationWidgetFactory(contour,this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"orientationFunction");
+    A = new ExtWidget("Orientation Function",new ChoiceWidget(new TimeDependentRotationWidgetFactory(contour,"eta",this),QBoxLayout::TopToBottom,0),true,false,MBSIM%"orientationFunction");
     addToTab("General",A);
 
     pf = new ExtWidget("Profile function",new ChoiceWidget(new Function1ArgWidgetFactory(contour,"xi",1,FunctionWidget::scalar,2,FunctionWidget::fixedVec,this,17),QBoxLayout::TopToBottom,0),false,false,MBSIM%"profileFunction");

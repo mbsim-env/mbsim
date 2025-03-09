@@ -209,7 +209,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TimeDependentTranslationWidgetFactory::TimeDependentTranslationWidgetFactory(Element *element_, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
+  TimeDependentTranslationWidgetFactory::TimeDependentTranslationWidgetFactory(Element *element_, const QString &argName_, QWidget *parent_) : WidgetFactory(element_), argName(argName_), parent(parent_) {
     name.emplace_back("Composite function");
     name.emplace_back("Piecewise defined function");
     name.emplace_back("Piecewise polynom function");
@@ -228,19 +228,19 @@ namespace MBSimGUI {
 
   Widget* TimeDependentTranslationWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new CompositeFunctionWidget(new StateDependentTranslationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent));
+      return new CompositeFunctionWidget(new StateDependentTranslationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(element,argName,1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent));
     if(i==1)
-      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,3,FunctionWidget::fixedVec,parent));
+      return new PiecewiseDefinedFunctionWidget(new Function1ArgWidgetFactory(element,argName,1,FunctionWidget::scalar,3,FunctionWidget::fixedVec,parent));
     if(i==2)
       return new PiecewisePolynomFunctionWidget(3,FunctionWidget::fixedVec);
     if(i==3)
-      return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
+      return new SymbolicFunctionWidget(QStringList(argName),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
     if(i==4)
       return new TabularFunctionWidget(3,FunctionWidget::fixedVec);
     if(i==5)
       return new UnknownWidget<FunctionWidget>;
     if(i==6)
-      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,3,FunctionWidget::fixedVec,parent),3,FunctionWidget::fixedVec);
+      return new VectorValuedFunctionWidget(new Function1ArgWidgetFactory(element,argName,1,FunctionWidget::scalar,3,FunctionWidget::fixedVec,parent),3,FunctionWidget::fixedVec);
     return nullptr;
   }
 
@@ -299,7 +299,7 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  TimeDependentRotationWidgetFactory::TimeDependentRotationWidgetFactory(Element *element_, QWidget *parent_) : WidgetFactory(element_), parent(parent_) {
+  TimeDependentRotationWidgetFactory::TimeDependentRotationWidgetFactory(Element *element_, const QString &argName_, QWidget *parent_) : WidgetFactory(element_), argName(argName_), parent(parent_) {
     name.emplace_back("Composite function");
     name.emplace_back("Symbolic function");
     name.emplace_back("Unknown function");
@@ -310,9 +310,9 @@ namespace MBSimGUI {
 
   Widget* TimeDependentRotationWidgetFactory::createWidget(int i) {
     if(i==0)
-      return new CompositeFunctionWidget(new StateDependentRotationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(element,"t",1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent));
+      return new CompositeFunctionWidget(new StateDependentRotationWidgetFactory(element,parent),0,new Function1ArgWidgetFactory(element,argName,1,FunctionWidget::scalar,1,FunctionWidget::fixedVec,parent));
     if(i==1)
-      return new SymbolicFunctionWidget(QStringList("t"),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
+      return new SymbolicFunctionWidget(QStringList(argName),vector<int>(1,1),vector<FunctionWidget::VarType>(1,FunctionWidget::scalar),3,FunctionWidget::fixedVec);
     if(i==2)
       return new UnknownWidget<FunctionWidget>;
     return nullptr;
@@ -337,7 +337,7 @@ namespace MBSimGUI {
     if(i==1)
       return new ChoiceWidget(new StateDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     if(i==2)
-      return new ChoiceWidget(new TimeDependentTranslationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new TimeDependentTranslationWidgetFactory(element,"t",parent),QBoxLayout::TopToBottom,0);
     return nullptr;
   }
 
@@ -352,7 +352,7 @@ namespace MBSimGUI {
     if(i==0)
       return new ChoiceWidget(new StateDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
     if(i==1)
-      return new ChoiceWidget(new TimeDependentRotationWidgetFactory(element,parent),QBoxLayout::TopToBottom,0);
+      return new ChoiceWidget(new TimeDependentRotationWidgetFactory(element,"t",parent),QBoxLayout::TopToBottom,0);
     return nullptr;
   }
 
