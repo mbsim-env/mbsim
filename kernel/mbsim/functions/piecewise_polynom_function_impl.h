@@ -287,7 +287,6 @@
         this->throwError("The number of rows in the coefficients elements differ.");
       for(int deg=0; deg<allCoefs[c].cols(); deg++)
         coefs[deg].set(c, allCoefs[c].col(deg));
-      c++;
     }
   }
 
