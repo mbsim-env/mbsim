@@ -3504,14 +3504,14 @@
           <xs:element name="etaNodes" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Knoten in eta-Richtung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="xiNodes" type="pv:nounitVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-                tbd
+                Knoten in xi-Richtung.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -4068,17 +4068,24 @@
     <xs:complexContent>
       <xs:extension base="RigidContourType">
         <xs:sequence>
+          <xs:element name="etaNodes" type="pv:lengthVector" minOccurs="0">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten in eta-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+          <xs:element name="xiNodes" type="pv:unknownVector">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+                Knoten in xi-Richtung.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
           <xs:element name="positionOfReferencePoint" type="pv:lengthVector" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
                 Definiert die Position des Referenzpunktes in x- und z-Richtung relativ zum <code>frameOfReference</code>. [Default: x=0, z=0].
-              </xs:documentation>
-            </xs:annotation>
-          </xs:element>
-          <xs:element name="nodes" type="pv:lengthVector">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                Knoten der Profilfunktion.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
@@ -4094,6 +4101,16 @@
                 <xs:element ref="pv:Embed"/>
               </xs:choice>
             </xs:complexType>
+          </xs:element>
+          <xs:element name="openEta" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur in eta-Richtung offen ist.
+            </xs:documentation></xs:annotation>
+          </xs:element>
+          <xs:element name="openXi" minOccurs="0" type="pv:booleanFullEval">
+            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                Definiert, ob die Kontur in xi-Richtung offen ist.
+            </xs:documentation></xs:annotation>
           </xs:element>
           <xs:element name="enableOpenMBV" minOccurs="0">
             <xs:annotation>
