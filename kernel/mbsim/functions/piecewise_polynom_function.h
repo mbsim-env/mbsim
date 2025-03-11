@@ -191,7 +191,10 @@ namespace MBSim {
        * \brief set polynomial coefficients
        * \param polynomial coefficients
        */
-      void setCoefficients(const std::vector<fmatvec::MatV> &allCoefs);
+      void setCoefficientsArray(const std::vector<fmatvec::MatV> &allCoefs);
+
+      // deprecated interface
+      void setCoefficients(const std::vector<fmatvec::MatV> &allCoefs) { setCoefficientsArray(allCoefs); }
 
       void addCoefficients(const fmatvec::MatV &coef);
 

@@ -273,7 +273,7 @@
   }
 
   template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::setCoefficients(const std::vector<fmatvec::MatV> &allCoefs) {
+  void PiecewisePolynomFunction<Ret(Arg)>::setCoefficientsArray(const std::vector<fmatvec::MatV> &allCoefs) {
     interpolationMethod=useBreaksAndCoefs;
 
     // read all coefficient and convert to coefs
@@ -340,7 +340,6 @@
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"breaks");
     if(e) { 
-      // set breaks
       setBreaks(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
 
       std::vector<fmatvec::MatV> allCoefs;
@@ -355,14 +354,14 @@
         }
       }
       else {
-        // read all coefficients elements
+        // deprecated interface
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
         while(e) {
           allCoefs.emplace_back(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
           e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
         }
       }
-      setCoefficients(allCoefs);
+      setCoefficientsArray(allCoefs);
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"extrapolationMethod");
