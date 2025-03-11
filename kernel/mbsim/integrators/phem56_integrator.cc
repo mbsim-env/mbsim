@@ -380,7 +380,7 @@ namespace MBSim {
 
     double h = dt0;
 
-    int idid;
+    int idid = 0;
 
     tPlot = t + dtPlot;
     dtOut = dtPlot;
