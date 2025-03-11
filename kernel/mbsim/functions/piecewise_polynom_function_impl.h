@@ -343,12 +343,24 @@
       // set breaks
       setBreaks(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
 
-      // read all coefficients elements
-      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
       std::vector<fmatvec::MatV> allCoefs;
-      while(e) {
-        allCoefs.emplace_back(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
-        e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficientsArray");
+      if(e) {
+        xercesc::DOMElement* ee=e->getFirstElementChild();
+        if(MBXMLUtils::E(ee)->getTagName()==MBSIM%"ele") {
+          while(ee) {
+            allCoefs.emplace_back(MBXMLUtils::E(ee)->getText<fmatvec::MatV>());
+            ee=ee->getNextElementSibling();
+          }
+        }
+      }
+      else {
+        // read all coefficients elements
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
+        while(e) {
+          allCoefs.emplace_back(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
+          e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
+        }
       }
       setCoefficients(allCoefs);
     }

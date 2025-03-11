@@ -5969,28 +5969,43 @@
                   </xs:documentation>
                 </xs:annotation>
               </xs:element>
-              <xs:element name="coefficients" type="pv:unknownMatrix" minOccurs="1" maxOccurs="unbounded">
-                <xs:annotation>
-                  <xs:documentation xml:lang="de" xmlns="">
-                    Das piecewise Polynom wird mittels "local power basis" dargestellt.
-                    <object class="eqn">
-                      <![CDATA[
-                      y = \sum_{m=0}^{k} C_{i,m} * (x - breaks_i)^{k-m}
-                      ]]>
-                    </object>
-                    Wobei i die Werte für das Spline-interval x[i] bis x[i+1] darstellen.
-                    Und k ist der Polynomgrad.
+              <xs:choice>
+                <xs:element name="coefficientsArray">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      Das piecewise Polynom wird mittels "local power basis" dargestellt.
+                      <object class="eqn">
+                        <![CDATA[
+                        y = \sum_{m=0}^{k} C_{i,m} * (x - breaks_i)^{k-m}
+                        ]]>
+                      </object>
+                      Wobei i die Werte für das Spline-interval x[i] bis x[i+1] darstellen
+                      und k den Polynomgrad definiert.
 
-                    Die Matrix C entspricht dabei dem Wert dieses XML elements.
+                      Die Matrix C entspricht dabei dem Wert des XML-Elements "ele". Wenn PiecewisePolynomFunction anstatt eines Skalars
+                      einen Vector zurückliefert, muss für jede Komponente des Vektors ein entsprechendes XML-Element "ele" angegeben werden.
 
-                    Wenn das PiecewisePolynomFunction anstatt eines Scalars einen Vector zurückliefert müssen die XML Element coefficients mehrfach angegeben werden: für jede Komponente des Vectors.
-
-                    Bei Verwendung des Python evaluators und Nutzung von scipy entspricht für skalare PiecewisePolynomFunction
-                    der Wert der Matrix C = scipy.interpolate.PPoly.c.T und für vektorielle PiecewisePolynomFunction
-                    der Wert der Matrix C = scipy.interpolate.PPoly.c[:,:,comp].T wobei comp die Komponente des Vectors ist oder 0 für ein Skalar.
-                  </xs:documentation>
-                </xs:annotation>
-              </xs:element>
+                      Bei Verwendung des Python evaluators und Nutzung von scipy entspricht für skalare PiecewisePolynomFunction
+                      der Wert der Matrix C = scipy.interpolate.PPoly.c.T und für vektorielle PiecewisePolynomFunction
+                      der Wert der Matrix C = scipy.interpolate.PPoly.c[:,:,comp].T wobei comp die Komponente des Vectors ist oder 0 für ein Skalar.
+                    </xs:documentation>
+                  </xs:annotation>
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="ele" type="pv:unknownMatrix" minOccurs="1" maxOccurs="unbounded"/>
+                    </xs:sequence>
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="coefficients" type="pv:unknownMatrix" minOccurs="1" maxOccurs="unbounded">
+                  <xs:annotation>
+                    <xs:documentation xml:lang="de" xmlns="">
+                      Veraltetes Interface. Die Matrix C entspricht hier dem Wert dieses XML-Elements.
+                      Wenn PiecewisePolynomFunction anstatt eines Skalars einen Vektor zurückliefert, muss für jede Komponente des Vektors
+                      ein weiteres XML-Element angegeben werden.
+                    </xs:documentation>
+                  </xs:annotation>
+                </xs:element>
+              </xs:choice>
             </xs:sequence> 
           </xs:choice> 
           <xs:element name="extrapolationMethod" minOccurs="0" type="pv:stringFullEval">
