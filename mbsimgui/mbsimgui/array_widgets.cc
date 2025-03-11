@@ -356,8 +356,6 @@ namespace MBSimGUI {
   }
 
   void TwoDimensionalArrayWidget::addElements(int n, bool emitSignals) {
-    cout << "add " << n << " elements" << endl;
-
     int i = stackedWidget->count();
 
     for(int j=0; j<n; j++) {
