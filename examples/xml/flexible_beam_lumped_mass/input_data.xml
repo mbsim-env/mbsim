@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<InputData xmlns="http://www.mbsim-env.de/MBSimFlexibleBody">
+
+  <nodes>"u0.dat"</nodes>
+
+  <massMatrix>"mij.dat"</massMatrix>
+
+  <stiffnessMatrix>"stiffnessMatrix.dat"</stiffnessMatrix>
+
+  <modeShapeMatrix>"modeShapeMatrix.dat"</modeShapeMatrix>
+
+  <inputDataFileName>"input_data.h5"</inputDataFileName>
+
+</InputData>
