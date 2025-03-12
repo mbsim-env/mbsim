@@ -162,7 +162,7 @@ namespace MBSimGUI {
       void addElements(int n=1, bool emitSignals=true);
       void removeElements(int n=1);
       void changeCurrent(int idx);
-      void currentIndexChanged(int idx);
+      void changeSize(int size);
       QStackedWidget *stackedWidget;
       QSpinBox* spinBox;
       QListWidget *list;
@@ -176,11 +176,12 @@ namespace MBSimGUI {
 
   class ChoiceWidgetFactory : public WidgetFactory {
     public:
-      ChoiceWidgetFactory(WidgetFactory *factory_, int mode_=1) : factory(factory_), mode(mode_) { }
+      ChoiceWidgetFactory(WidgetFactory *factory_, QBoxLayout::Direction dir_=QBoxLayout::TopToBottom, int mode_=1) : factory(factory_), dir(dir_), mode(mode_) { }
       Widget* createWidget(int i=0) override;
       MBXMLUtils::FQN getXMLName(int i=0) const override { return factory->getXMLName(i); }
     protected:
       WidgetFactory *factory;
+      QBoxLayout::Direction dir;
       int mode;
   };
 
