@@ -23,7 +23,7 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
-#include "special_widgets.h"
+#include "array_widgets.h"
 #include "function_widget_factory.h"
 #include <QDialogButtonBox>
 #include <QPushButton>
@@ -103,7 +103,7 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    frequencyAmplitudePhaseArray = new ExtWidget("Frequency-amplitude-phase array",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMCONTROL%"frequencyAmplitudePhase",1,1,3,true,true,MBSIMCONTROL),QBoxLayout::TopToBottom,3),false,false,"");
+    frequencyAmplitudePhaseArray = new ExtWidget("Frequency-amplitude-phase array",new ArrayWidget(new ChoiceWidgetFactory(new MatRowsVarWidgetFactory(1,3),QBoxLayout::RightToLeft,4),"ele",1,false,false,true,true,MBSIMCONTROL),false,false,MBSIMCONTROL%"frequencyAmplitudePhaseArray");
     layout->addWidget(frequencyAmplitudePhaseArray);
 
     timeSpan = new ExtWidget("Time span",new ChoiceWidget(new ScalarWidgetFactory("1",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIMCONTROL%"timeSpan");

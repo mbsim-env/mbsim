@@ -50,7 +50,7 @@ namespace MBSimGUI {
     accelerationOfGravity = new ExtWidget("Acceleration of gravity",new ChoiceWidget(new VecWidgetFactory(3,vector<QStringList>(3,accelerationUnits())),QBoxLayout::RightToLeft,5),false,false,MBSIM%"accelerationOfGravity");
     layout->addWidget(accelerationOfGravity);
 
-    openMBVObject = new ExtWidget("OpenMBV objects",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory,1),"OpenMBV object",1,0,false),true,false,MBSIM%"openMBVObject");
+    openMBVObject = new ExtWidget("OpenMBV objects",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory),"OpenMBV object",1,0,false),true,false,MBSIM%"openMBVObject");
     layout->addWidget(openMBVObject);
   }
 

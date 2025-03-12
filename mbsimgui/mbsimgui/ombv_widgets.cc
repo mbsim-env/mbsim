@@ -821,7 +821,7 @@ namespace MBSimGUI {
   }
 
   CompoundRigidBodyWidget::CompoundRigidBodyWidget(const QString &name, const FQN &xmlName) : OMBVRigidBodyWidget(name,xmlName) {
-    bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory,1),"Body",1,1,false,1));
+    bodies = new ExtWidget("Bodies",new ListWidget(new ChoiceWidgetFactory(new OMBVRigidBodyWidgetFactory),"Body",1,1,false,1));
     layout->addWidget(bodies);
   }
 

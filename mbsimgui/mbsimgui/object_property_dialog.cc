@@ -23,8 +23,8 @@
 #include "basic_widgets.h"
 #include "variable_widgets.h"
 #include "ombv_widgets.h"
-#include "special_widgets.h"
 #include "extended_widgets.h"
+#include "array_widgets.h"
 #include "wizards.h"
 #include "frame.h"
 #include "project.h"
@@ -264,10 +264,10 @@ namespace MBSimGUI {
     Pdm = new ExtWidget("Shape function integral",new ChoiceWidget(new MatColsVarWidgetFactory(3,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"shapeFunctionIntegral");
     addToTab("General",Pdm);
 
-    rPdm = new ExtWidget("Position shape function integral",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"positionShapeFunctionIntegral",3,3,1),QBoxLayout::TopToBottom,3),true,false,"",true);
+    rPdm = new ExtWidget("Position shape function integral array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(3,1),QBoxLayout::RightToLeft,4),"ele",3,true,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"positionShapeFunctionIntegralArray");
     addToTab("General",rPdm);
 
-    PPdm = new ExtWidget("Shape function shape function integral",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"shapeFunctionShapeFunctionIntegral",3,1,1,true),QBoxLayout::TopToBottom,3),true,false,"",true);
+    PPdm = new ExtWidget("Shape function shape function integral array",new TwoDimensionalArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,4),"ele",3,3,true,true,true,true,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"shapeFunctionShapeFunctionIntegralArray");
     addToTab("General",PPdm);
 
     Ke = new ExtWidget("Stiffness matrix",new ChoiceWidget(new SymMatWidgetFactory(getMat<QString>(1,1,"0")),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"stiffnessMatrix");
@@ -282,10 +282,10 @@ namespace MBSimGUI {
     beta = new ExtWidget("Proportional damping",new ChoiceWidget(new VecWidgetFactory(2),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"proportionalDamping");
     addToTab("General", beta);
 
-    Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrder"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    Knl1 = new ExtWidget("Nonlinear stiffness matrix of first order array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,4),"ele",1,false,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"nonlinearStiffnessMatrixOfFirstOrderArray");
     addToTab("General",Knl1);
 
-    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrder"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    Knl2 = new ExtWidget("Nonlinear stiffness matrix of second order array",new TwoDimensionalArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,4),"ele",1,1,false,true,true,true,true,true,false,MBSIMFLEX),true,false,MBSIMFLEX%"nonlinearStiffnessMatrixOfSecondOrderArray");
     addToTab("General",Knl2);
 
     ksigma0 = new ExtWidget("Initial stress integral",new ChoiceWidget(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"initialStressIntegral");
@@ -294,43 +294,43 @@ namespace MBSimGUI {
     ksigma1 = new ExtWidget("Nonlinear initial stress integral",new ChoiceWidget(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nonlinearInitialStressIntegral");
     addToTab("General", ksigma1);
 
-    K0t = new ExtWidget("Geometric stiffness matrix due to acceleration",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAcceleration"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    K0t = new ExtWidget("Geometric stiffness matrix due to acceleration array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,4),"ele",3,true,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"geometricStiffnessMatrixDueToAccelerationArray");
     addToTab("General",K0t);
 
-    K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAcceleration"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    K0r = new ExtWidget("Geometric stiffness matrix due to angular acceleration array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,4),"ele",3,true,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularAccelerationArray");
     addToTab("General",K0r);
 
-    K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocity"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    K0om = new ExtWidget("Geometric stiffness matrix due to angular velocity array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,4),"ele",3,true,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"geometricStiffnessMatrixDueToAngularVelocityArray");
     addToTab("General",K0om);
 
     nodeNumbers = new ExtWidget("Node numbers",new ChoiceWidget(new VecWidgetFactory(1),QBoxLayout::RightToLeft,5),true,false,MBSIMFLEX%"nodeNumbers");
     addToTab("Nodal data", nodeNumbers);
 
-    r = new ExtWidget("Nodal relative position",new ChoiceWidget(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalRelativePosition",1,3,true),QBoxLayout::RightToLeft,3),true,false,"",true);
+    r = new ExtWidget("Nodal relative position array",new ArrayWidget(new ChoiceWidgetFactory(new VecWidgetFactory(3),QBoxLayout::RightToLeft,4),"ele",1,false,false,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"nodalRelativePositionArray");
     addToTab("Nodal data", r);
 
-    A = new ExtWidget("Nodal relative orientation",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalRelativeOrientation"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    A = new ExtWidget("Nodal relative orientation array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(3,3),QBoxLayout::RightToLeft,4),"ele",1,false,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"nodalRelativeOrientationArray");
     addToTab("Nodal data", A);
 
-    Phi = new ExtWidget("Nodal shape matrix of translation",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalShapeMatrixOfTranslation"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    Phi = new ExtWidget("Nodal shape matrix of translation array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(3,1),QBoxLayout::RightToLeft,4),"ele",1,false,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"nodalShapeMatrixOfTranslationArray");
     addToTab("Nodal data", Phi);
 
-    Psi = new ExtWidget("Nodal shape matrix of rotation",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalShapeMatrixOfRotation"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    Psi = new ExtWidget("Nodal shape matrix of rotation array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(3,1),QBoxLayout::RightToLeft,4),"ele",1,false,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"nodalShapeMatrixOfRotationArray");
     addToTab("Nodal data", Psi);
 
-    sigmahel = new ExtWidget("Nodal stress matrix",new ChoiceWidget(new OneDimMatArrayWidgetFactory(MBSIMFLEX%"nodalStressMatrix"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    sigmahel = new ExtWidget("Nodal stress matrix array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(6,1),QBoxLayout::RightToLeft,4),"ele",1,false,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"nodalStressMatrixArray");
     addToTab("Nodal data", sigmahel);
 
-    sigmahen = new ExtWidget("Nodal nonlinear stress matrix",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalNonlinearStressMatrix"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    sigmahen = new ExtWidget("Nodal nonlinear stress matrix array",new TwoDimensionalArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(6,1),QBoxLayout::RightToLeft,4),"ele",1,1,false,true,true,true,true,true,false,MBSIMFLEX),true,false,MBSIMFLEX%"nodalNonlinearStressMatrixArray");
     addToTab("Nodal data", sigmahen);
 
-    sigma0 = new ExtWidget("Nodal initial stress",new ChoiceWidget(new OneDimVecArrayWidgetFactory(MBSIMFLEX%"nodalInitialStress"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    sigma0 = new ExtWidget("Nodal initial stress array",new ArrayWidget(new ChoiceWidgetFactory(new VecWidgetFactory(6),QBoxLayout::RightToLeft,4),"ele",1,false,true,true,true,MBSIMFLEX),true,false,MBSIMFLEX%"nodalInitialStressArray");
     addToTab("Nodal data", sigma0);
 
-    K0F = new ExtWidget("Nodal geometric stiffness matrix due to force",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForce"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    K0F = new ExtWidget("Nodal geometric stiffness matrix due to force array",new TwoDimensionalArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,4),"ele",1,1,false,true,true,true,true,false,false,MBSIMFLEX),true,false,MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToForceArray");
     addToTab("Nodal data", K0F);
 
-    K0M = new ExtWidget("Nodal geometric stiffness matrix due to moment",new ChoiceWidget(new TwoDimMatArrayWidgetFactory(MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMoment"),QBoxLayout::RightToLeft,3),true,false,"",true);
+    K0M = new ExtWidget("Nodal geometric stiffness matrix due to moment array",new TwoDimensionalArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(1,1),QBoxLayout::RightToLeft,4),"ele",1,1,false,true,true,true,true,false,false,MBSIMFLEX),true,false,MBSIMFLEX%"nodalGeometricStiffnessMatrixDueToMomentArray");
     addToTab("Nodal data", K0M);
 
     ombv = new ExtWidget("OpenMBV body",new ChoiceWidget(new OMBVFlexibleBodyWidgetFactory,QBoxLayout::TopToBottom,0),true,true,MBSIMFLEX%"openMBVFlexibleBody");
@@ -364,102 +364,40 @@ namespace MBSimGUI {
   void FlexibleFfrBodyPropertyDialog::updateWidget() {
     GenericFlexibleFfrBodyPropertyDialog::updateWidget();
     int size = Pdm->getFirstWidget<VariableWidget>()->cols();
-    if(rPdm->getWidget<ChoiceWidget>()->getIndex()==0)
-      rPdm->resize_(3,size);
-    else
-      rPdm->resize_(9,size);
-    if(PPdm->getWidget<ChoiceWidget>()->getIndex()==0)
-      PPdm->resize_(size,size);
-    else
-      PPdm->resize_(9*size,size);
+    rPdm->resize_(3,size);
+    PPdm->resize_(size,size);
     Ke->resize_(size,size);
     De->resize_(size,size);
-    if(Knl1->isActive()) {
-      if(Knl1->getWidget<ChoiceWidget>()->getIndex()==0)
-        Knl1->getFirstWidget<OneDimMatArrayWidget>()->resize_(size,size,size);
-      else
-        Knl1->resize_(size*size,size);
-    }
-    if(Knl2->isActive()) {
-      if(Knl2->getWidget<ChoiceWidget>()->getIndex()==0)
-        Knl2->getFirstWidget<TwoDimMatArrayWidget>()->resize_(size,size,size,size);
-      else
-        Knl2->resize_(size*size*size,size);
-    }
+    if(Knl1->isActive())
+      Knl1->getWidget<ArrayWidget>()->resize_(size,size,size);
+    if(Knl2->isActive())
+      Knl2->getWidget<TwoDimensionalArrayWidget>()->resize_(size,size,size,size);
     ksigma0->resize_(size,1);
     ksigma1->resize_(size,size);
-    if(K0t->isActive()) {
-      if(K0t->getWidget<ChoiceWidget>()->getIndex()==0)
-        K0t->getFirstWidget<OneDimMatArrayWidget>()->resize_(3,size,size);
-      else
-        K0t->resize_(3*size,size);
-    }
-    if(K0r->isActive()) {
-      if(K0r->getWidget<ChoiceWidget>()->getIndex()==0)
-        K0r->getFirstWidget<OneDimMatArrayWidget>()->resize_(3,size,size);
-      else
-        K0r->resize_(3*size,size);
-    }
-    if(K0om->isActive()) {
-      if(K0om->getWidget<ChoiceWidget>()->getIndex()==0)
-        K0om->getFirstWidget<OneDimMatArrayWidget>()->resize_(3,size,size);
-      else
-        K0om->resize_(3*size,size);
-    }
+    if(K0t->isActive())
+      K0t->getWidget<ArrayWidget>()->resize_(3,size,size);
+    if(K0r->isActive())
+      K0r->getWidget<ArrayWidget>()->resize_(3,size,size);
+    if(K0om->isActive())
+      K0om->getWidget<ArrayWidget>()->resize_(3,size,size);
     if(r->isActive()) {
-      int rsize;
-      if(r->getWidget<ChoiceWidget>()->getIndex()==0)
-        rsize = r->getFirstWidget<OneDimMatArrayWidget>()->getArray().size();
-      else
-        rsize = r->getFirstWidget<VariableWidget>()->rows()/3;
-      if(A->isActive()) {
-        if(A->getWidget<ChoiceWidget>()->getIndex()==0)
-          A->getFirstWidget<OneDimMatArrayWidget>()->resize_(rsize,3,3);
-        else
-          A->resize_(3*rsize,3);
-      }
-      if(Phi->isActive()) {
-        if(Phi->getWidget<ChoiceWidget>()->getIndex()==0)
-          Phi->getFirstWidget<OneDimMatArrayWidget>()->resize_(rsize,3,size);
-        else
-          Phi->resize_(3*rsize,size);
-      }
-      if(Psi->isActive()) {
-        if(Psi->getWidget<ChoiceWidget>()->getIndex()==0)
-          Psi->getFirstWidget<OneDimMatArrayWidget>()->resize_(rsize,3,size);
-        else
-          Psi->resize_(3*rsize,size);
-      }
-      if(sigmahel->isActive()) {
-        if(sigmahel->getWidget<ChoiceWidget>()->getIndex()==0)
-          sigmahel->getFirstWidget<OneDimMatArrayWidget>()->resize_(rsize,6,size);
-        else
-          sigmahel->resize_(6*rsize,size);
-      }
-      if(sigmahen->isActive()) {
-        if(sigmahen->getWidget<ChoiceWidget>()->getIndex()==0)
-          sigmahen->getFirstWidget<TwoDimMatArrayWidget>()->resize_(rsize,size,6,size);
-        else
-          sigmahen->resize_(6*rsize*size,size);
-      }
-      if(sigma0->isActive()) {
-        if(sigma0->getWidget<ChoiceWidget>()->getIndex()==0)
-          sigma0->getFirstWidget<OneDimVecArrayWidget>()->resize_(rsize,6,1);
-        else
-          sigma0->resize_(6*rsize,1);
-      }
-      if(K0F->isActive()) {
-        if(K0F->getWidget<ChoiceWidget>()->getIndex()==0)
-          K0F->getFirstWidget<TwoDimMatArrayWidget>()->resize_(rsize,size,size,size);
-        else
-          K0F->resize_(size*rsize*size,size);
-      }
-      if(K0M->isActive()) {
-        if(K0M->getWidget<ChoiceWidget>()->getIndex()==0)
-          K0M->getFirstWidget<TwoDimMatArrayWidget>()->resize_(rsize,size,size,size);
-        else
-          K0M->resize_(size*rsize*size,size);
-      }
+      int rsize = r->getWidget<ArrayWidget>()->getSize1();
+      if(A->isActive())
+        A->getWidget<ArrayWidget>()->resize_(rsize,3,3);
+      if(Phi->isActive())
+        Phi->getWidget<ArrayWidget>()->resize_(rsize,3,size);
+      if(Psi->isActive())
+        Psi->getWidget<ArrayWidget>()->resize_(rsize,3,size);
+      if(sigmahel->isActive())
+        sigmahel->getWidget<ArrayWidget>()->resize_(rsize,6,size);
+      if(sigmahen->isActive())
+        sigmahen->getWidget<TwoDimensionalArrayWidget>()->resize_(rsize,rsize,6,size);
+      if(sigma0->isActive())
+        sigma0->getWidget<ArrayWidget>()->resize_(rsize,6,1);
+      if(K0F->isActive())
+        K0F->getWidget<TwoDimensionalArrayWidget>()->resize_(rsize,size,size,size);
+      if(K0M->isActive())
+        K0M->getWidget<TwoDimensionalArrayWidget>()->resize_(rsize,size,size,size);
       if(nodeNumbers->isActive())
         nodeNumbers->resize_(rsize,1);
     }

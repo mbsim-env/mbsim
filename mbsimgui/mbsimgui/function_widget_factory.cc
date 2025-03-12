@@ -368,7 +368,7 @@ namespace MBSimGUI {
       return new ExtWidget("Inner function",new ChoiceWidget(factory,QBoxLayout::TopToBottom,0),false,false,MBSIM%"innerFunction");
     }
     if(i==1)
-      return new ExtWidget("Inner functions",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",2,0,true),false,false,MBSIM%"innerFunctions");
+      return new ExtWidget("Inner functions",new ListWidget(new ChoiceWidgetFactory(factory),"Function",2,0,true),false,false,MBSIM%"innerFunctions");
     return nullptr;
   }
 
