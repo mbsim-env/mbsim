@@ -24,6 +24,8 @@
 
 namespace MBSim {
 
+  class TyreContact;
+
   class TyreModel : public Element {
     public:
       TyreModel() : Element(uniqueDummyName(this)) {
@@ -33,7 +35,9 @@ namespace MBSim {
 
       virtual void initPlot(std::vector<std::string> &plotColumns) { }
       virtual void plot(std::vector<double> &plotVector) { }
+#ifndef SWIG
       using Element::plot;
+#endif
 
       virtual int getxSize() const { return 0; }
       virtual int getDMSize() const { return 1; }
@@ -44,10 +48,13 @@ namespace MBSim {
       int getDataSize() const { return 17; }
       virtual fmatvec::VecV getData() const = 0;
 
-      virtual bool motorcycleKinematics() const = 0;
+      virtual bool motorcycleKinematics() const { return false; }
 
       virtual fmatvec::VecV getContourParameters() const = 0;
       virtual double evalFreeRadius() = 0;
+
+    protected:
+      TyreContact* getTyreContact();
   };
 
 }

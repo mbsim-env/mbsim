@@ -25,6 +25,7 @@
 namespace MBSim {
 
   class TyreModel;
+  class RigidContour;
 
   class TyreContact : public ContourLink {
     public:
@@ -58,16 +59,17 @@ namespace MBSim {
       bool gActiveChanged() override { return false; }
       bool isSingleValued() const override { return true; }
 
-      void setInitialGuess(const fmatvec::Vec2 &zeta0_) { zeta0 = zeta0_; }
+      void setInitialGuess(const fmatvec::MatV &zeta0_) { zeta0 <<= zeta0_; }
       void setTolerance(double tol_) { tol = tol_; }
 
       void resetUpToDate() override;
 
+      RigidContour* getRigidContour(int i);
+
     protected:
       TyreModel *model{nullptr};
       fmatvec::Vec3 RvC;
-      bool plane;
-      fmatvec::Vec2 zeta0;
+      fmatvec::MatV zeta0;
       double tol{1e-10};
       bool updfvel{true};
   };
