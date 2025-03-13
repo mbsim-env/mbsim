@@ -320,7 +320,7 @@
   <!-- We define plotFeature* and plotAttribute* as global elements for improved preprocessing:
        If a element which can be used inside a Embed element is a local element than the preprocessor must do a revalidation which is quite expensive.
        This can be avoided if we define such elements globally and reference it beside the Embed element.
-       This way the XML validator can already validate the such element during the initial validation where still Embed elements exists in the model. -->
+       This way the XML validator can already validate such elements during the initial validation where still Embed elements exists in the model. -->
   <xs:element name="plotFeature">  
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Definiert die Plotfeatures für dieses Element.
@@ -8452,6 +8452,24 @@
             </xs:documentation></xs:annotation>
           </xs:element>
         </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="TestElement" substitutionGroup="Link" type="TestElementType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Test Element ohne sinnvolle funktionalität.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="TestElementType">
+    <xs:complexContent>
+      <xs:extension base="LinkType">
+        <xs:choice minOccurs="1" maxOccurs="unbounded">
+          <xs:element name="localElement" type="pv:unknownScalar"/>
+          <xs:element ref="pv:Embed"/>
+        </xs:choice>
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>

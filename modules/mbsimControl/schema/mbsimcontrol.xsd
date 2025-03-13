@@ -34,6 +34,21 @@
 
   <xs:import namespace="http://www.mbsim-env.de/MBSim"/>
 
+  <!-- We define inputSignal as global elements for improved preprocessing:
+       If a element which can be used inside a Embed element is a local element than the preprocessor must do a revalidation which is quite expensive.
+       This can be avoided if we define such elements globally and reference it beside the Embed element.
+       This way the XML validator can already validate such elements during the initial validation where still Embed elements exists in the model. -->
+  <xs:element name="inputSignal">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Pfad des Eingangssignals (als "ref" attribute)
+      </xs:documentation>
+    </xs:annotation>
+    <xs:complexType>
+      <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
   <xs:simpleType name="SignalReferenceType">
     <xs:restriction base="pv:stringPartialEval"/>
   </xs:simpleType>
@@ -89,16 +104,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignal">
-            <xs:annotation>
-              <xs:documentation xml:lang="de" xmlns="">
-                ref=Pfad des Eingangssignals
-              </xs:documentation>
-            </xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
+          <xs:element ref="inputSignal"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -791,14 +797,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:choice minOccurs="1" maxOccurs="unbounded">
-          <xs:element name="inputSignal">
-            <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-              Eingangssignal
-            </xs:documentation></xs:annotation>
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
+          <xs:element ref="inputSignal"/>
           <xs:element ref="pv:Embed"/>
         </xs:choice>
       </xs:extension>
@@ -816,11 +815,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignal">
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
+          <xs:element ref="inputSignal"/>
           <xs:element name="indices" type="pv:indexVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
@@ -845,14 +840,7 @@
       <xs:extension base="SignalType">
         <xs:sequence>
           <xs:choice minOccurs="1" maxOccurs="unbounded">
-            <xs:element name="inputSignal">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                Eingangssignal
-              </xs:documentation></xs:annotation>
-              <xs:complexType>
-                <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-              </xs:complexType>
-            </xs:element>
+            <xs:element ref="inputSignal"/>
             <xs:element ref="pv:Embed"/>
           </xs:choice>
           <xs:element name="multiplexInputSignals" type="pv:booleanFullEval" minOccurs="0"/>
@@ -905,11 +893,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="inputSignal">
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
+          <xs:element ref="inputSignal"/>
           <xs:element name="systemMatrix" type="pv:nounitMatrix"/>
           <xs:element name="inputMatrix" type="pv:nounitMatrix"/>
           <xs:element name="outputMatrix" type="pv:nounitMatrix" minOccurs="0"/>
@@ -931,11 +915,7 @@
               </xs:documentation>
             </xs:annotation>
           </xs:element>
-          <xs:element name="inputSignal">
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
+          <xs:element ref="inputSignal"/>
           <xs:element name="systemFunction">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
               Systemfunktion
@@ -1279,11 +1259,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignal">
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
+          <xs:element ref="inputSignal"/>
 	  <xs:element name="threshold" type="pv:unknownVector" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
@@ -1295,11 +1271,7 @@
     <xs:complexContent>
       <xs:extension base="SignalType">
         <xs:sequence>
-          <xs:element name="inputSignal">
-            <xs:complexType>
-              <xs:attribute name="ref" type="SignalReferenceType" use="required"/>
-            </xs:complexType>
-          </xs:element>
+          <xs:element ref="inputSignal"/>
 	  <xs:element name="threshold" type="pv:unknownScalar" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>

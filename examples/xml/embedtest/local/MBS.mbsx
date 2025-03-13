@@ -182,6 +182,31 @@
           <inputSignal ref="../Link[c6{mnp}1]"/>
         </Multiplexer>
       </Embed>
+      <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" counterName="mn" count="2">
+        <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+          <scalarParameter name="mnp">mn</scalarParameter>
+        </Parameter>
+        <TestElement name="TestElement{mnp}" xmlns="http://www.mbsim-env.de/MBSim">
+          <localElement>1</localElement>
+          <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="in">
+            <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <scalarParameter name="inp">in</scalarParameter>
+            </Parameter>
+            <localElement>1</localElement>
+          </p:Embed>
+          <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="in" href="localElement.mbsmx">
+            <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
+              <scalarParameter name="inp">in</scalarParameter>
+              <scalarParameter name="c">3</scalarParameter>
+            </Parameter>
+          </p:Embed>
+          <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="in" parameterHref="localElement.mbspx">
+            <localElement>1</localElement>
+          </p:Embed>
+          <p:Embed xmlns:p="http://www.mbsim-env.de/MBXMLUtils" count="2" counterName="in" href="localElement.mbsmx" parameterHref="localElement.mbspx"/>
+          <localElement>1</localElement>
+        </TestElement>
+      </Embed>
     </links>
     <constraints/>
     <observers/>

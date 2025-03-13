@@ -2,6 +2,7 @@ SUBDIRS = .
 
 noinst_LTLIBRARIES = liblink.la
 liblink_la_SOURCES = link.cc\
+		     test_element.cc\
 		     mechanical_link.cc\
 		     frame_link.cc\
 		     fixed_frame_link.cc\
@@ -40,6 +41,7 @@ liblink_la_LIBADD = $(DEPS_LIBS) $(OPENMBVCPPINTERFACE_LIBS)
 
 linkincludedir = $(includedir)/mbsim/links
 linkinclude_HEADERS = link.h\
+		      test_element.h\
 		      mechanical_link.h\
 		      generalized_friction.h\
 		      generalized_clutch.h\
