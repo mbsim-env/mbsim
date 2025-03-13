@@ -20,6 +20,7 @@ libconstitutivelaws_la_SOURCES = bilateral_constraint.cc\
 				 spatial_stribeck_impact.cc\
 				 unilateral_constraint.cc\
 				 unilateral_newton_impact.cc\
+				 tyre_model.cc\
 				 linear_tyre_model.cc\
 				 magic_formula_sharp.cc\
 				 magic_formula_62.cc
