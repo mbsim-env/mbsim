@@ -53,7 +53,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTOUR */
       void init(InitStage stage, const InitConfigSet &config) override;
-      double getCurvature(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override { return zero3; }
@@ -63,6 +62,8 @@ namespace MBSim {
       fmatvec::Vec3 evalParDer1Kn(const fmatvec::Vec2 &zeta) override;
 
       fmatvec::Vec3 evalWn(const fmatvec::Vec2 &zeta) override { return crossProduct(evalWu(zeta),R->evalOrientation().col(2)); }
+
+      fmatvec::Vec2 evalCurvatures(const fmatvec::Vec2 &zeta) override;
       /***************************************************/
 
       /* GETTER / SETTER */

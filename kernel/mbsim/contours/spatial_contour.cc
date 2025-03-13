@@ -129,10 +129,6 @@ namespace MBSim {
     funcCrPC->setName("Contour");
   }
 
-  double SpatialContour::getCurvature(const Vec2 &zeta) {
-    throwError("(SpatialContour::getCurvature): not implemented");
-  }
-
   void SpatialContour::initializeUsingXML(DOMElement * element) {
     RigidContour::initializeUsingXML(element);
     DOMElement * e;

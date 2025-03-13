@@ -6,6 +6,7 @@
 #include "mbsim/contours/plane.h"
 #include "mbsim/contours/spatial_contour.h"
 #include "mbsim/utils/nonlinear_algebra.h"
+#include "mbsim/functions/contact/funcpair_spatialcontour_spatialcontour.h"
 
 using namespace std;
 using namespace fmatvec;
@@ -87,17 +88,9 @@ namespace MBSim {
     if(stage==preInit) {
       if(not model)
 	throwError("(TyreContact::init): tyre model must be defined");
-      if(dynamic_cast<Plane*>(contour[0]))
-	plane = true;
-      else if(dynamic_cast<SpatialContour*>(contour[0]))
-	plane = false;
-      else
-	throwError("(TyreContact::init): first contour must be of type Plane or SpatialContour");
-      if(not dynamic_cast<Tyre*>(contour[1]))
-	throwError("(TyreContact::init): second contour must be of type Tyre");
-      if(model->motorcycleKinematics()) {
-       if(static_cast<Tyre*>(contour[1])->getShapeOfCrossSectionContour()==Tyre::flat)
-	throwError("(TyreContact::init): shape of tyre contour must be circular or elliptical");
+      if(model->motorcycleKinematics() and dynamic_cast<Tyre*>(contour[1])) {
+        if(static_cast<Tyre*>(contour[1])->getShapeOfCrossSectionContour()==Tyre::flat)
+          throwError("(TyreContact::init): shape of tyre contour must be circular or elliptical");
       }
       DF.resize(3,NONINIT);
       DM.resize(model->getDMSize(),NONINIT);
@@ -111,7 +104,7 @@ namespace MBSim {
     }
     else if(stage==unknownStage) {
       if(isSize)
-        curis = zeta0;
+        curis = zeta0.row(0).T();
     }
     ContourLink::init(stage,config);
     model->init(stage, config);
@@ -122,7 +115,7 @@ namespace MBSim {
     xercesc::DOMElement *e = E(element)->getFirstElementChildNamed(MBSIM%"tyreModel");
     setTyreModel(ObjectFactory::createAndInit<TyreModel>(e->getFirstElementChild()));
     e = E(element)->getFirstElementChildNamed(MBSIM%"initialGuess");
-    if(e) setInitialGuess(E(e)->getText<Vec>());
+    if(e) setInitialGuess(E(e)->getText<MatV>());
     e = E(element)->getFirstElementChildNamed(MBSIM%"tolerance");
     if(e) setTolerance(E(e)->getText<double>());
   }
@@ -152,151 +145,177 @@ namespace MBSim {
 
   void TyreContact::calcisSize() {
     ContourLink::calcisSize();
-    if(not plane)
-      isSize += 2;
+    if(dynamic_cast<Tyre*>(contour[1])) {
+      if(not dynamic_cast<Plane*>(contour[0]))
+        isSize += 2;
+    }
+    else
+      isSize += 4;
   }
 
- void TyreContact::updatePositions(Frame *frame) {
+  void TyreContact::updatePositions(Frame *frame) {
     if(updrrel)
       updateGeneralizedPositions();
   }
 
   void TyreContact::updateGeneralizedPositions() {
-    Tyre *tyre = static_cast<Tyre*>(contour[1]);
-    Vec3 Wn;
-    Vec3 Wb = tyre->getFrame()->evalOrientation().col(1);
     double g = 1;
-    double r = model->evalFreeRadius();
-    if(plane) {
-      Plane *plane = static_cast<Plane*>(contour[0]);
-      Wn = plane->getFrame()->evalOrientation().col(0);
-      Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
-      Vec3 nx = crossProduct(Wb,Wn);
-      nx /= nrm2(nx);
+    Vec3 Wb = getRigidContour(1)->getFrame()->evalOrientation().col(1);
+    if(dynamic_cast<Tyre*>(contour[1])) {
+      Tyre *tyre = static_cast<Tyre*>(contour[1]);
+      double r = model->evalFreeRadius();
+      if(dynamic_cast<Plane*>(contour[0])) {
+        Plane *plane = static_cast<Plane*>(contour[0]);
+        Vec3 Wn = plane->getFrame()->evalOrientation().col(0);
+        Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
+        Vec3 nx = crossProduct(Wb,Wn);
+        nx /= nrm2(nx);
+        cFrame[0]->getOrientation(false).set(0, nx);
+        cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
+        cFrame[0]->getOrientation(false).set(2, Wn);
+        cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
+        if(model->motorcycleKinematics()) {
+          if(tyre->getShapeOfCrossSectionContour()==Tyre::circular) {
+            double rc = model->getContourParameters()(0);
+            Vec WrCW = tyre->getFrame()->getPosition() - ((r-rc)/nrm2(Wc))*Wc;
+            Vec3 Wd = WrCW - plane->getFrame()->getPosition();
+            g = Wn.T()*Wd - rc;
+            cFrame[1]->setPosition(WrCW - (rc+min(g,0.))*Wn);
+          }
+          else if(tyre->getShapeOfCrossSectionContour()==Tyre::elliptical) {
+            double ga = asin(Wb.T()*Wn);
+            double a = model->getContourParameters()(0);
+            double b = model->getContourParameters()(1);
+            //	  double y = a*tan(ga)/sqrt(pow(tan(ga),2) + pow(b/a,2));
+            //	  double z = r - b + sqrt(b*b - pow(y*b/a,2));
+            double xi = -atan(a/b*tan(ga));
+            double y = a*sin(xi);
+            double z = b - b*cos(xi) - r;
+            Vec3 BrSC(NONINIT);
+            BrSC(0) = 0;
+            BrSC(1) = y*cos(ga) - z*sin(ga);
+            BrSC(2) = y*sin(ga) + z*cos(ga);
+            Vec WrQ = tyre->getFrame()->getPosition() + cFrame[1]->getOrientation(false)*BrSC;
+            Vec3 Wd = WrQ - plane->getFrame()->getPosition();
+            g = Wn.T()*Wd;
+            cFrame[1]->setPosition(WrQ - min(g,0.)*Wn);
+          }
+        }
+        else {
+          Vec WrCW = tyre->getFrame()->getPosition() - (r/nrm2(Wc))*Wc;
+          Vec3 Wd = WrCW - plane->getFrame()->getPosition();
+          g = Wn.T()*Wd;
+          cFrame[1]->setPosition(WrCW - (min(g,0.)/cos(asin(Wb.T()*Wn))/nrm2(Wc))*Wc);
+        }
+        cFrame[0]->setPosition(cFrame[1]->getPosition(false) - Wn*max(g,0.));
+      }
+      else {
+        if(model->motorcycleKinematics()) {
+          if(tyre->getShapeOfCrossSectionContour()==Tyre::circular) {
+            double rc = model->getContourParameters()(0);
+            auto func = new FuncPairSpatialContourCircularShape(r,rc,tyre,contour[0]);
+            MultiDimNewtonMethod search(func, nullptr);
+            search.setTolerance(tol);
+            nextis = search.solve(curis);
+            if(search.getInfo()!=0)
+              throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
+            cFrame[0]->setZeta(nextis);
+            Vec3 Wn = contour[0]->evalWn(cFrame[0]->getZeta(false));
+            Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
+            Vec3 nx = crossProduct(Wb,Wn);
+            nx /= nrm2(nx);
+            cFrame[0]->getOrientation(false).set(0, nx);
+            cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
+            cFrame[0]->getOrientation(false).set(2, Wn);
+            cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
+            cFrame[0]->setPosition(contour[0]->evalPosition(cFrame[0]->getZeta(false)));
+            Vec WrCW = tyre->getFrame()->getPosition() - ((r-rc)/nrm2(Wc))*Wc;
+            Vec3 Wd = WrCW - cFrame[0]->getPosition(false);
+            g = contour[0]->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd-rc;
+            if(g < -contour[0]->getThickness()) g = 1;
+            cFrame[1]->setPosition(WrCW - (rc+min(g,0.))*Wn);
+          }
+          if(tyre->getShapeOfCrossSectionContour()==Tyre::elliptical) {
+            double a = model->getContourParameters()(0);
+            double b = model->getContourParameters()(1);
+            auto func = new FuncPairSpatialContourEllipticalShape(r,a,b,tyre,contour[0]);
+            MultiDimNewtonMethod search(func, nullptr);
+            search.setTolerance(tol);
+            nextis = search.solve(curis);
+            if(search.getInfo()!=0)
+              throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
+            cFrame[0]->setZeta(nextis);
+            Vec3 Wn = contour[0]->evalWn(cFrame[0]->getZeta(false));
+            Vec3 nx = crossProduct(Wb,Wn);
+            nx /= nrm2(nx);
+            cFrame[0]->getOrientation(false).set(0, nx);
+            cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
+            cFrame[0]->getOrientation(false).set(2, Wn);
+            cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
+            cFrame[0]->setPosition(contour[0]->evalPosition(cFrame[0]->getZeta(false)));
+            double ga = asin(Wb.T()*Wn);
+            double xi = -atan(a/b*tan(ga));
+            double y = a*sin(xi);
+            double z = b - b*cos(xi) - r;
+            Vec3 BrSC(NONINIT);
+            BrSC(0) = 0;
+            BrSC(1) = y*cos(ga) - z*sin(ga);
+            BrSC(2) = y*sin(ga) + z*cos(ga);
+            Vec WrQ = tyre->getFrame()->getPosition() + cFrame[1]->getOrientation(false)*BrSC;
+            Vec3 Wd = WrQ - cFrame[0]->getPosition(false);
+            g = contour[0]->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd;
+            if(g < -contour[0]->getThickness()) g = 1;
+            cFrame[1]->setPosition(WrQ - min(g,0.)*Wn);
+          }
+        }
+        else {
+          auto func = new FuncPairSpatialContourCircularShape(r,0,tyre,contour[0]);
+          MultiDimNewtonMethod search(func, nullptr);
+          search.setTolerance(tol);
+          nextis = search.solve(curis);
+          if(search.getInfo()!=0)
+            throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
+          cFrame[0]->setZeta(nextis);
+          Vec3 Wn = contour[0]->evalWn(cFrame[0]->getZeta(false));
+          Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
+          Vec3 nx = crossProduct(Wb,Wn);
+          nx /= nrm2(nx);
+          cFrame[0]->getOrientation(false).set(0, nx);
+          cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
+          cFrame[0]->getOrientation(false).set(2, Wn);
+          cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
+          cFrame[0]->setPosition(contour[0]->evalPosition(cFrame[0]->getZeta(false)));
+          Vec WrCW = tyre->getFrame()->getPosition() - (r/nrm2(Wc))*Wc;
+          Vec3 Wd = WrCW - cFrame[0]->getPosition(false);
+          g = contour[0]->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd;
+          if(g < -contour[0]->getThickness()) g = 1;
+          cFrame[1]->setPosition(WrCW - (min(g,0.)/cos(asin(Wb.T()*Wn))/nrm2(Wc))*Wc);
+        }
+      }
+    }
+    else {
+      auto func = new FuncPairSpatialContourSpatialContour(contour[0],contour[1]);
+      MultiDimNewtonMethod search(func, nullptr);
+      search.setTolerance(tol);
+      nextis = search.solve(curis);
+      if(search.getInfo()!=0)
+        throw std::runtime_error("(RailwayWheelContact::updateGeneralizedPositions): contact search failed!");
+      cFrame[0]->setZeta(nextis(RangeV(0,1)));
+      cFrame[1]->setZeta(nextis(RangeV(2,3)));
+      auto Wn = contour[0]->evalWn(cFrame[0]->getZeta(false));
+      auto nx = crossProduct(Wb,Wn);
       cFrame[0]->getOrientation(false).set(0, nx);
       cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
       cFrame[0]->getOrientation(false).set(2, Wn);
       cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
-      if(model->motorcycleKinematics()) {
-	if(tyre->getShapeOfCrossSectionContour()==Tyre::circular) {
-	  double rc = model->getContourParameters()(0);
-	  Vec WrCW = tyre->getFrame()->getPosition() - ((r-rc)/nrm2(Wc))*Wc;
-	  Vec3 Wd = WrCW - plane->getFrame()->getPosition();
-	  g = Wn.T()*Wd - rc;
-	  cFrame[1]->setPosition(WrCW - (rc+min(g,0.))*Wn);
-	}
-	else if(tyre->getShapeOfCrossSectionContour()==Tyre::elliptical) {
-	  double ga = asin(Wb.T()*Wn);
-	  double a = model->getContourParameters()(0);
-	  double b = model->getContourParameters()(1);
-//	  double y = a*tan(ga)/sqrt(pow(tan(ga),2) + pow(b/a,2));
-//	  double z = r - b + sqrt(b*b - pow(y*b/a,2));
-	  double xi = -atan(a/b*tan(ga));
-	  double y = a*sin(xi);
-	  double z = b - b*cos(xi) - r;
-	  Vec3 BrSC(NONINIT);
-	  BrSC(0) = 0;
-	  BrSC(1) = y*cos(ga) - z*sin(ga);
-	  BrSC(2) = y*sin(ga) + z*cos(ga);
-	  Vec WrQ = tyre->getFrame()->getPosition() + cFrame[1]->getOrientation(false)*BrSC;
-	  Vec3 Wd = WrQ - plane->getFrame()->getPosition();
-	  g = Wn.T()*Wd;
-	  cFrame[1]->setPosition(WrQ - min(g,0.)*Wn);
-	}
-      }
-      else {
-	Vec WrCW = tyre->getFrame()->getPosition() - (r/nrm2(Wc))*Wc;
-	Vec3 Wd = WrCW - plane->getFrame()->getPosition();
-	g = Wn.T()*Wd;
-	cFrame[1]->setPosition(WrCW - (min(g,0.)/cos(asin(Wb.T()*Wn))/nrm2(Wc))*Wc);
-      }
-      cFrame[0]->setPosition(cFrame[1]->getPosition(false) - Wn*max(g,0.));
-    }
-    else {
-      if(model->motorcycleKinematics()) {
-	if(tyre->getShapeOfCrossSectionContour()==Tyre::circular) {
-	  double rc = model->getContourParameters()(0);
-	  SpatialContour *spatialcontour = static_cast<SpatialContour*>(contour[0]);
-	  auto func = new FuncPairSpatialContourCircularShape(r,rc,tyre,spatialcontour);
-	  MultiDimNewtonMethod search(func, nullptr);
-	  search.setTolerance(tol);
-	  nextis = search.solve(curis(RangeV(0,1)));
-	  if(search.getInfo()!=0)
-	    throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
-	  cFrame[0]->setZeta(nextis);
-	  Wn = spatialcontour->evalWn(cFrame[0]->getZeta(false));
-	  Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
-	  Vec3 nx = crossProduct(Wb,Wn);
-	  nx /= nrm2(nx);
-	  cFrame[0]->getOrientation(false).set(0, nx);
-	  cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
-	  cFrame[0]->getOrientation(false).set(2, Wn);
-	  cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
-	  cFrame[0]->setPosition(spatialcontour->evalPosition(cFrame[0]->getZeta(false)));
-	  Vec WrCW = tyre->getFrame()->getPosition() - ((r-rc)/nrm2(Wc))*Wc;
-	  Vec3 Wd = WrCW - cFrame[0]->getPosition(false);
-	  g = spatialcontour->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd-rc;
-	  if(g < -spatialcontour->getThickness()) g = 1;
-	  cFrame[1]->setPosition(WrCW - (rc+min(g,0.))*Wn);
-	}
-	if(tyre->getShapeOfCrossSectionContour()==Tyre::elliptical) {
-	  double a = model->getContourParameters()(0);
-	  double b = model->getContourParameters()(1);
-	  SpatialContour *spatialcontour = static_cast<SpatialContour*>(contour[0]);
-	  auto func = new FuncPairSpatialContourEllipticalShape(r,a,b,tyre,spatialcontour);
-	  MultiDimNewtonMethod search(func, nullptr);
-	  search.setTolerance(tol);
-	  nextis = search.solve(curis(RangeV(0,1)));
-	  if(search.getInfo()!=0)
-	    throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
-	  cFrame[0]->setZeta(nextis);
-	  Wn = spatialcontour->evalWn(cFrame[0]->getZeta(false));
-	  Vec3 nx = crossProduct(Wb,Wn);
-	  nx /= nrm2(nx);
-	  cFrame[0]->getOrientation(false).set(0, nx);
-	  cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
-	  cFrame[0]->getOrientation(false).set(2, Wn);
-	  cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
-	  cFrame[0]->setPosition(spatialcontour->evalPosition(cFrame[0]->getZeta(false)));
-	  double ga = asin(Wb.T()*Wn);
-	  double xi = -atan(a/b*tan(ga));
-	  double y = a*sin(xi);
-	  double z = b - b*cos(xi) - r;
-	  Vec3 BrSC(NONINIT);
-	  BrSC(0) = 0;
-	  BrSC(1) = y*cos(ga) - z*sin(ga);
-	  BrSC(2) = y*sin(ga) + z*cos(ga);
-	  Vec WrQ = tyre->getFrame()->getPosition() + cFrame[1]->getOrientation(false)*BrSC;
-	  Vec3 Wd = WrQ - cFrame[0]->getPosition(false);
-	  g = spatialcontour->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd;
-	  if(g < -spatialcontour->getThickness()) g = 1;
-	  cFrame[1]->setPosition(WrQ - min(g,0.)*Wn);
-	}
-      }
-      else {
-	SpatialContour *spatialcontour = static_cast<SpatialContour*>(contour[0]);
-	auto func = new FuncPairSpatialContourCircularShape(r,0,tyre,spatialcontour);
-	MultiDimNewtonMethod search(func, nullptr);
-	search.setTolerance(tol);
-	nextis = search.solve(curis(RangeV(0,1)));
-	if(search.getInfo()!=0)
-          throw std::runtime_error("(TyreContact::updateGeneralizedPositions): contact search failed!");
-	cFrame[0]->setZeta(nextis);
-	Wn = spatialcontour->evalWn(cFrame[0]->getZeta(false));
-	Vec3 Wc = Wn - (Wn.T()*Wb)*Wb;
-	Vec3 nx = crossProduct(Wb,Wn);
-	nx /= nrm2(nx);
-	cFrame[0]->getOrientation(false).set(0, nx);
-	cFrame[0]->getOrientation(false).set(1, crossProduct(Wn,nx));
-	cFrame[0]->getOrientation(false).set(2, Wn);
-	cFrame[1]->setOrientation(cFrame[0]->getOrientation(false));
-	cFrame[0]->setPosition(spatialcontour->evalPosition(cFrame[0]->getZeta(false)));
-	Vec WrCW = tyre->getFrame()->getPosition() - (r/nrm2(Wc))*Wc;
-	Vec3 Wd = WrCW - cFrame[0]->getPosition(false);
-	g = spatialcontour->isZetaOutside(cFrame[0]->getZeta(false))?1:Wn.T()*Wd;
-	if(g < -spatialcontour->getThickness()) g = 1;
-	cFrame[1]->setPosition(WrCW - (min(g,0.)/cos(asin(Wb.T()*Wn))/nrm2(Wc))*Wc);
-      }
+      cFrame[0]->setPosition(contour[0]->evalPosition(cFrame[0]->getZeta(false)));
+      cFrame[1]->setPosition(contour[1]->evalPosition(cFrame[1]->getZeta(false)));
+
+      if(contour[0]->isZetaOutside(cFrame[0]->getZeta(false)) or contour[1]->isZetaOutside(cFrame[1]->getZeta(false)))
+        g = 1;
+      else
+        g = Wn.T()*(cFrame[1]->getPosition(false) - cFrame[0]->getPosition(false));
+      if(g < -contour[0]->getThickness() or g < -contour[1]->getThickness()) g = 1;
     }
     rrel(0) = g;
 
@@ -315,12 +334,12 @@ namespace MBSim {
   }
 
   void TyreContact::updateForwardVelocity() {
-    Vec3 Wv = static_cast<Tyre*>(contour[1])->getFrame()->evalVelocity();
-    Vec3 rSC = cFrame[1]->evalPosition() - static_cast<Tyre*>(contour[1])->getFrame()->evalPosition();
-    Vec3 Wom = static_cast<Tyre*>(contour[1])->getFrame()->evalAngularVelocity();
-    Vec3 Kom = static_cast<Tyre*>(contour[1])->getFrame()->evalOrientation().T()*Wom;
+    Vec3 Wv = getRigidContour(1)->getFrame()->evalVelocity();
+    Vec3 rSC = cFrame[1]->evalPosition() - getRigidContour(1)->getFrame()->evalPosition();
+    Vec3 Wom = getRigidContour(1)->getFrame()->evalAngularVelocity();
+    Vec3 Kom = getRigidContour(1)->getFrame()->evalOrientation().T()*Wom;
     Kom(1) = 0;
-    Wom = static_cast<Tyre*>(contour[1])->getFrame()->evalOrientation()*Kom;
+    Wom = getRigidContour(1)->getFrame()->evalOrientation()*Kom;
     RvC = cFrame[0]->evalOrientation().T()*(Wv + crossProduct(Wom,rSC));
     updfvel = false;
   }
@@ -355,6 +374,10 @@ namespace MBSim {
     ContourLink::resetUpToDate();
     model->resetUpToDate();
     updfvel = true;
+  }
+
+  RigidContour* TyreContact::getRigidContour(int i) {
+    return static_cast<RigidContour*>(getContour(i));
   }
 
 }

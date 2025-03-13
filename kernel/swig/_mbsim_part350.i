@@ -117,6 +117,8 @@ namespace MBSim {
 #include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
 #include "mbsim/modelling_interface.h"
 #include "mbsim/utils/colors.h"
+#include "mbsim/links/tyre_contact.h"
+#include "mbsim/constitutive_laws/tyre_model.h"
 using namespace MBSim; // SWIGs namespace handling seems to be buggy -> this fixes this
 using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this fixes this
 %}
@@ -160,3 +162,5 @@ using namespace fmatvec; // SWIGs namespace handling seems to be buggy -> this f
 %include "mbsim/numerics/nonlinear_algebra/multi_dimensional_newton_method.h"
 %include "mbsim/modelling_interface.h"
 %include "mbsim/utils/colors.h"
+%include "mbsim/links/tyre_contact.h"
+%include "mbsim/constitutive_laws/tyre_model.h"

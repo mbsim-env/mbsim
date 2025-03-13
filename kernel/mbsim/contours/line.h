@@ -62,7 +62,7 @@ namespace MBSim {
       fmatvec::Vec3 evalParDer1Wn(const fmatvec::Vec2 &zeta) override { return zero3; }
       /***************************************************/
 
-      virtual double getCurvature(const fmatvec::Vec2 &zeta) { return 0; } 
+      fmatvec::Vec2 evalCurvatures(const fmatvec::Vec2 &zeta) override { return fmatvec::Vec2(); }
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), enableOpenMBV, tag, (optional (length,(double),1)(diffuseColor,(const fmatvec::Vec3&),fmatvec::Vec3(std::vector<double>{-1,1,1}))(transparency,(double),0)(pointSize,(double),0)(lineWidth,(double),0))) {
         OpenMBVLine ombv(length,diffuseColor,transparency,pointSize,lineWidth);

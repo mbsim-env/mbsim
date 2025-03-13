@@ -83,20 +83,16 @@ namespace MBSim {
   }
 
   VecV LinearTyreModel::getContourParameters() const {
-    TyreContact *contact = static_cast<TyreContact*>(parent);
-    Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    return tyre->getContourParameters();
+    return static_cast<Tyre*>(getTyreContact()->getContour(1))->getContourParameters();
   }
 
   double LinearTyreModel::evalFreeRadius() {
-    TyreContact *contact = static_cast<TyreContact*>(parent);
-    Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
-    return tyre->getRadius();
+    return static_cast<Tyre*>(getTyreContact()->getContour(1))->getRadius();
   }
 
   void LinearTyreModel::updateGeneralizedForces() {
-    TyreContact *contact = static_cast<TyreContact*>(parent);
-    Tyre *tyre = static_cast<Tyre*>(contact->getContour(1));
+    auto *contact = getTyreContact();
+    auto *tyre = contact->getRigidContour(1);
     double Fx, Fy, Fz, Mz;
     if(contact->evalGeneralizedRelativePosition()(0)>0)
       Fz = 0;

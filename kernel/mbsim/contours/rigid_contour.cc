@@ -195,6 +195,29 @@ namespace MBSim {
     return crossProduct(R->evalAngularVelocity(),evalWv(zeta));
   }
 
+  Vec2 RigidContour::evalCurvatures(const Vec2 &zeta) {
+    Vec3 Ks = evalKs(zeta);
+    Vec3 Kt = evalKt(zeta);
+    Vec3 Ksp = evalParDer1Ks(zeta);
+    Vec3 Ktp = evalParDer2Kt(zeta);
+    Vec3 Ku = Ks/nrm2(Ks);
+    Vec3 Kn = crossProduct(Ks,Kt);
+    Kn /= nrm2(Kn);
+    Vec3 Kv = crossProduct(Kn,Ku);
+    SqrMat3 A(NONINIT);
+    A.set(0,Ku.T());
+    A.set(1,Kv.T());
+    A.set(2,Kn.T());
+    Vec3 Ns = A*Ks;
+    Vec3 Nt = A*Kt;
+    Vec3 Nsp = A*Ksp;
+    Vec3 Ntp = A*Ktp;
+    Vec2 kappa(NONINIT);
+    kappa(0) = (Nsp(0)*Ns(2)-Nsp(2)*Ns(0))/pow(sqrt(Ns(0)*Ns(0)+Ns(2)*Ns(2)),3);
+    kappa(1) = (Ntp(1)*Nt(2)-Ntp(2)*Nt(1))/pow(sqrt(Nt(1)*Nt(1)+Nt(2)*Nt(2)),3);
+    return kappa;
+  }
+
   void RigidContour::plot() {
     if(plotFeature[openMBV] && openMBVRigidBody) {
       vector<double> data;
