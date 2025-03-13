@@ -149,6 +149,10 @@ namespace MBSim {
     throwError("(Contour::evalZeta): Not implemented.");
   }
 
+  Vec2 Contour::evalCurvatures(const Vec2 &zeta) {
+    throwError("(Contour::evalCurvatures): Not implemented.");
+  }
+
   void Contour::initializeUsingXML(DOMElement *element) {
     Element::initializeUsingXML(element);
     DOMElement *e=E(element)->getFirstElementChildNamed(MBSIM%"thickness");

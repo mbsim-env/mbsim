@@ -65,13 +65,14 @@ namespace MBSim {
       fmatvec::Vec3 evalParDer2Wu(const fmatvec::Vec2 &zeta) override { return zero3; }
 
       fmatvec::Vec2 evalZeta(const fmatvec::Vec3& WrPoint) override;
+
+      fmatvec::Vec2 evalCurvatures(const fmatvec::Vec2 &zeta) override { return fmatvec::Vec2({sign/r,0}); }
       /***************************************************/
 
       /* GETTER / SETTER */
       void setRadius(double r_) { r = r_; }
       double getRadius() const { return r; }
       double getSign() const { return sign; }
-      double getCurvature(const fmatvec::Vec2 &zeta) { return sign/r; }
 
       void setSolid(bool solid_=true) { solid = solid_; }
       bool getSolid() const { return solid; }

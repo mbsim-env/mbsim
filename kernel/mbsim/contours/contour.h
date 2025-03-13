@@ -176,6 +176,8 @@ namespace MBSim {
 
       virtual fmatvec::Vec2 evalZeta(const fmatvec::Vec3 &WrPS);
 
+      virtual fmatvec::Vec2 evalCurvatures(const fmatvec::Vec2 &zeta);
+
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       void setThickness(double thickness_) { thickness = thickness_; }

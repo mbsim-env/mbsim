@@ -115,6 +115,8 @@ namespace MBSim {
       fmatvec::Vec3 evalParWuPart(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalParWvPart(const fmatvec::Vec2 &zeta) override;
 
+      fmatvec::Vec2 evalCurvatures(const fmatvec::Vec2 &zeta) override;
+
       /**
        * \brief contact search for RigidContours
        * \author Markus Schneider

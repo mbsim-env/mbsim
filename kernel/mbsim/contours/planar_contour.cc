@@ -107,10 +107,14 @@ namespace MBSim {
     funcCrPC->setName("Contour");
   }
 
-  double PlanarContour::getCurvature(const Vec2 &zeta) {
-    const Vec3 rs = funcCrPC->parDer(zeta(0));
-    return nrm2(crossProduct(rs,funcCrPC->parDerDirDer(1,zeta(0))))/pow(nrm2(rs),3);
-  }
+  Vec2 PlanarContour::evalCurvatures(const Vec2 &zeta) {
+    Vec3 Ks = evalKs(zeta);
+    Vec3 Ksp = evalParDer1Ks(zeta);
+    Vec2 kappa(NONINIT);
+    kappa(0) = (Ksp(1)*Ks(0)-Ksp(0)*Ks(1))/pow(sqrt(Ks(0)*Ks(0)+Ks(1)*Ks(1)),3);
+    kappa(1) = 0;
+    return kappa;
+ }
 
   void PlanarContour::initializeUsingXML(DOMElement * element) {
     RigidContour::initializeUsingXML(element);

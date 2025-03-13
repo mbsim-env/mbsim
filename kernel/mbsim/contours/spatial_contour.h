@@ -53,7 +53,6 @@ namespace MBSim {
 
       /* INHERITED INTERFACE OF CONTOUR */
       void init(InitStage stage, const InitConfigSet &config) override;
-      double getCurvature(const fmatvec::Vec2 &zeta);
       fmatvec::Vec3 evalKrPS(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKs(const fmatvec::Vec2 &zeta) override;
       fmatvec::Vec3 evalKt(const fmatvec::Vec2 &zeta) override;

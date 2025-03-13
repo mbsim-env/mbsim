@@ -137,10 +137,6 @@ namespace MBSim {
     RigidContour::init(stage, config);
   }
 
-  double SpatialNurbsContour::getCurvature(const Vec2 &zeta) {
-    throwError("(SpatialNurbsContour::getCurvature): not implemented");
-  }
-
   void SpatialNurbsContour::setControlPoints(const MatVx3 &cp_) {
     cp.resize(cp_.rows(),NONINIT);
     for(int i=0; i<cp.rows(); i++) {
