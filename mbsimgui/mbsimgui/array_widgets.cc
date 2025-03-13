@@ -171,8 +171,11 @@ namespace MBSimGUI {
     table->blockSignals(true);
     table->setRowCount(stackedWidget->count());
     table->setColumnCount(1);
-    for(int i=0; i<table->rowCount(); i++)
-      table->setItem(i,0,new QTableWidgetItem(name));
+    for(int i=0; i<table->rowCount(); i++) {
+      auto *twi = new QTableWidgetItem(name);
+      twi->setFlags(twi->flags() & ~Qt::ItemIsEditable);
+      table->setItem(i,0,twi);
+    }
     table->setCurrentCell(0,0);
     table->blockSignals(false);
   }
@@ -392,8 +395,11 @@ namespace MBSimGUI {
     table->setRowCount(m);
     table->setColumnCount(n);
     for(int i=0; i<table->rowCount(); i++) {
-      for(int j=0; j<table->columnCount(); j++)
-        table->setItem(i,j,new QTableWidgetItem(name));
+      for(int j=0; j<table->columnCount(); j++) {
+        auto *twi = new QTableWidgetItem(name);
+        twi->setFlags(twi->flags() & ~Qt::ItemIsEditable);
+        table->setItem(i,j,twi);
+      }
     }
     table->setCurrentCell(0,0);
     table->blockSignals(false);
