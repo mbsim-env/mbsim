@@ -18,6 +18,8 @@ MBSim
 - Added a new "action" attribute for <import> in the preprocessor if the Python evaluator is used.
 - A revolution is now available in order to define a rotationally symmetric contour.
 - An extrusion is now available in order to define a contour by extruding a cross section along a spine.
+- Remove deprecated features in contour Tyre.
+- Revised the interface for piecewise polynom function when breaks and coefficients are used. The old interface is still available for backward compatibility.
 
 MBSimControl
 ------------

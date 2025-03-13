@@ -25,7 +25,7 @@ CreateZip::CreateZip(path zipFile_, bool compress) : closed(false), zipFile(std:
     throw runtime_error("Unable to set zip format on archive.");
   if(archive_write_set_format_option(a, "zip", "compression", compress?"deflate":"store"))
     throw runtime_error("Unable to set compression level on archive.");
-  if(archive_write_open_filename(a, zipFile.string().c_str()))
+  if(archive_write_open_filename(a, zipFile.generic_string().c_str()))
     throw runtime_error("Unable to open archive file "+zipFile.string()+".");
   entry=archive_entry_new();
   if(!entry)
@@ -63,7 +63,7 @@ void CreateZip::add(const path &filenameInZip, const path &srcFilename) {
   if(!content.insert(filenameInZipCano).second)
     return;
   buf.resize(1024*1024*10); // read/write file content in 10MB blocks
-  archive_entry_set_pathname(entry, filenameInZipCano.string().c_str());
+  archive_entry_set_pathname(entry, filenameInZipCano.generic_string().c_str());
   archive_entry_set_size(entry, file_size(srcFilename));
   archive_entry_set_filetype(entry, AE_IFREG);
   archive_entry_set_perm(entry, 0644);
@@ -87,7 +87,7 @@ void CreateZip::add(const path &filenameInZip, const string &textContent) {
   path filenameInZipCano=parentCanonical(filenameInZip);
   if(!content.insert(filenameInZipCano).second)
     return;
-  archive_entry_set_pathname(entry, filenameInZipCano.string().c_str());
+  archive_entry_set_pathname(entry, filenameInZipCano.generic_string().c_str());
   archive_entry_set_size(entry, textContent.size());
   archive_entry_set_filetype(entry, AE_IFREG);
   archive_entry_set_perm(entry, 0644);

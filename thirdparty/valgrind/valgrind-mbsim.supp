@@ -573,3 +573,36 @@
    ...
    fun:_ZN11SoSeparator17GLRenderBelowPathEP16SoGLRenderAction
 }
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN7SoField24extendStorageIfNecessaryEv
+   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
+   fun:_ZN13SoFieldSensor6attachEP7SoField
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+   fun:_ZN8MBSimGUI10MainWindow17initInlineOpenMBVEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN7SoField24extendStorageIfNecessaryEv
+   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
+   fun:_ZN13SoFieldSensor6attachEP7SoField
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+   fun:_ZN8MBSimGUI10MainWindow17initInlineOpenMBVEv
+}
+{
+   X
+   Memcheck:Leak
+   match-leak-kinds: possible
+   ...
+   fun:_ZN7SoField24extendStorageIfNecessaryEv
+   fun:_ZN7SoField10addAuditorEPvN8SoNotRec4TypeE
+   fun:_ZN13SoFieldSensor6attachEP7SoField
+   fun:_ZN10OpenMBVGUI10MainWindowC1ERNSt7__cxx114listINS1_12basic_stringIcSt11char_traitsIcESaIcEEESaIS7_EEEb
+   fun:_ZN8MBSimGUI10MainWindow17initInlineOpenMBVEv
+}

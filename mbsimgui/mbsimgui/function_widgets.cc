@@ -22,6 +22,7 @@
 #include "function_widgets.h"
 #include "variable_widgets.h"
 #include "extended_widgets.h"
+#include "array_widgets.h"
 #include "utils.h"
 #include "function.h"
 #include "function_widget_factory.h"
@@ -36,6 +37,155 @@ using namespace MBXMLUtils;
 using namespace xercesc;
 
 namespace MBSimGUI {
+
+  class PiecewisePolynomInterpolationWidget : public Widget {
+    public:
+      PiecewisePolynomInterpolationWidget(int retDim_, FunctionWidget::VarType retType_);
+      void resize_(int m, int n) override;
+      DOMElement* initializeUsingXML(DOMElement *element) override;
+      DOMElement* writeXMLFile(DOMNode *parent, DOMNode *ref=nullptr) override;
+    protected:
+      void updateWidget() override;
+      void choiceChanged();
+      ChoiceWidget *choiceXY;
+      ExtWidget *interpolationMethod;
+      int retDim;
+      FunctionWidget::VarType retType;
+  };
+
+  PiecewisePolynomInterpolationWidget::PiecewisePolynomInterpolationWidget(int retDim_, FunctionWidget::VarType retType_) : retDim(retDim_), retType(retType_) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    choiceXY = new ChoiceWidget(new TabularFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
+    layout->addWidget(choiceXY);
+
+    vector<QString> list;
+    list.emplace_back("\"cSplinePeriodic\"");
+    list.emplace_back("\"cSplineNatural\"");
+    list.emplace_back("\"piecewiseLinear\"");
+    interpolationMethod = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolationMethod");
+    layout->addWidget(interpolationMethod);
+
+    connect(choiceXY,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomInterpolationWidget::choiceChanged);
+    connect(choiceXY,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomInterpolationWidget::widgetChanged);
+  }
+
+  void PiecewisePolynomInterpolationWidget::choiceChanged() {
+    if(choiceXY->getIndex()==0) {
+      updateWidget();
+      connect(choiceXY->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&PiecewisePolynomInterpolationWidget::updateWidget);
+    }
+  }
+
+  void PiecewisePolynomInterpolationWidget::updateWidget() {
+    if(choiceXY->getIndex()==0) {
+      auto *choice1_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      auto *choice2_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
+      choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getFirstWidget<VariableWidget>()->cols());
+    }
+  }
+
+  void PiecewisePolynomInterpolationWidget::resize_(int m, int n) {
+    if(choiceXY->getIndex()==0) {
+      auto *choice_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
+      choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
+    }
+    else {
+      auto *choice_ = choiceXY->getFirstWidget<ChoiceWidget>();
+      choiceXY->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m+1);
+    }
+  }
+
+  DOMElement* PiecewisePolynomInterpolationWidget::initializeUsingXML(DOMElement *element) {
+    auto *ele = choiceXY->initializeUsingXML(element);
+    interpolationMethod->initializeUsingXML(element);
+    return ele;
+  }
+
+  DOMElement* PiecewisePolynomInterpolationWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    choiceXY->writeXMLFile(parent,ref);
+    interpolationMethod->writeXMLFile(parent,ref);
+    return nullptr;
+  }
+
+  class PiecewisePolynomBreaksAndCoefficientsWidget : public Widget {
+    public:
+      PiecewisePolynomBreaksAndCoefficientsWidget(int retDim_, FunctionWidget::VarType retType_);
+      void resize_(int m, int n) override;
+      DOMElement* initializeUsingXML(DOMElement *element) override;
+      DOMElement* writeXMLFile(DOMNode *parent, DOMNode *ref=nullptr) override;
+    protected:
+      void updateWidget() override;
+      ExtWidget *breaks, *coefficients;
+      int retDim;
+      FunctionWidget::VarType retType;
+  };
+
+  PiecewisePolynomBreaksAndCoefficientsWidget::PiecewisePolynomBreaksAndCoefficientsWidget(int retDim_, FunctionWidget::VarType retType_) : retDim(retDim_), retType(retType_) {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    breaks = new ExtWidget("Breaks",new ChoiceWidget(new VecSizeVarWidgetFactory(3,1,100,1,vector<QStringList>(3,QStringList()),vector<int>(3,0)),QBoxLayout::RightToLeft,5),false,false,MBSIM%"breaks");
+    layout->addWidget(breaks);
+
+    coefficients = new ExtWidget("Coefficients array",new ArrayWidget(new ChoiceWidgetFactory(new MatWidgetFactory(2,4),QBoxLayout::RightToLeft,4),"ele",retDim,false,retType==FunctionWidget::varVec?false:true,true,false),false,false,MBSIM%"coefficientsArray");
+    layout->addWidget(coefficients);
+
+    connect(breaks,&Widget::widgetChanged,this,&PiecewisePolynomBreaksAndCoefficientsWidget::updateWidget);
+    connect(coefficients,&Widget::widgetChanged,this,&PiecewisePolynomBreaksAndCoefficientsWidget::updateWidget);
+  }
+
+  void PiecewisePolynomBreaksAndCoefficientsWidget::resize_(int m, int n) {
+    coefficients->blockSignals(true);
+    coefficients->getWidget<ArrayWidget>()->resize_(m,coefficients->getWidget<ArrayWidget>()->getSize2(),coefficients->getWidget<ArrayWidget>()->getSize3());
+    coefficients->blockSignals(false);
+  }
+
+  void PiecewisePolynomBreaksAndCoefficientsWidget::updateWidget() {
+    coefficients->blockSignals(true);
+    coefficients->resize_(max(breaks->getWidget<ChoiceWidget>()->getWidget<VariableWidget>()->rows()-1,0),coefficients->getWidget<ArrayWidget>()->getSize3());
+    coefficients->blockSignals(false);
+  }
+
+  DOMElement* PiecewisePolynomBreaksAndCoefficientsWidget::initializeUsingXML(DOMElement *element) {
+    auto *ele = breaks->initializeUsingXML(element);
+    coefficients->initializeUsingXML(element);
+    return ele;
+  }
+
+  DOMElement* PiecewisePolynomBreaksAndCoefficientsWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    breaks->writeXMLFile(parent,ref);
+    coefficients->writeXMLFile(parent,ref);
+    return nullptr;
+  }
+
+  class PiecewisePolynomFunctionWidgetFactory : public WidgetFactory {
+    public:
+      PiecewisePolynomFunctionWidgetFactory(int retDim_, FunctionWidget::VarType retType_);
+      Widget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      int getSize() const override { return name.size(); }
+    protected:
+      std::vector<QString> name;
+      int retDim;
+      FunctionWidget::VarType retType;
+   };
+
+  PiecewisePolynomFunctionWidgetFactory::PiecewisePolynomFunctionWidgetFactory(int retDim_, FunctionWidget::VarType retType_) : retDim(retDim_), retType(retType_) {
+    name.emplace_back("Interpolation");
+    name.emplace_back("Breaks and coefficients");
+  }
+
+  Widget* PiecewisePolynomFunctionWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new PiecewisePolynomInterpolationWidget(retDim,retType);
+    if(i==1)
+      return new PiecewisePolynomBreaksAndCoefficientsWidget(retDim,retType);
+    return nullptr;
+  }
 
   class LimitedFunctionWidgetFactory : public WidgetFactory {
     public:
@@ -52,16 +202,6 @@ namespace MBSimGUI {
     if(i==0)
       return new LimitedFunctionWidget(factory);
     return nullptr;
-  }
-
-  class CoefficientWidgetFactory : public WidgetFactory {
-    public:
-      CoefficientWidgetFactory() = default;
-      Widget* createWidget(int i=0) override;
-  };
-
-  Widget* CoefficientWidgetFactory::createWidget(int i) {
-    return new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,QStringList()),vector<int>(2,0)),QBoxLayout::RightToLeft,5);
   }
 
   ConstantFunctionWidget::ConstantFunctionWidget() {
@@ -246,7 +386,7 @@ namespace MBSimGUI {
 
     factory->setElement(function);
 
-    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(factory,1),"Function",retDim,0,retType==varVec?false:true),false,false,MBSIM%"components");
+    functions = new ExtWidget("Components",new ListWidget(new ChoiceWidgetFactory(factory),"Function",retDim,0,retType==varVec?false:true),false,false,MBSIM%"components");
     layout->addWidget(functions);
   }
 
@@ -565,15 +705,8 @@ namespace MBSimGUI {
     layout->setMargin(0);
     setLayout(layout);
 
-    choiceXY = new ChoiceWidget(new TabularFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
-    layout->addWidget(choiceXY);
-
-    vector<QString> list;
-    list.emplace_back("\"cSplinePeriodic\"");
-    list.emplace_back("\"cSplineNatural\"");
-    list.emplace_back("\"piecewiseLinear\"");
-    interpolationMethod = new ExtWidget("Interpolation method",new TextChoiceWidget(list,1,true),true,false,MBSIM%"interpolationMethod");
-    layout->addWidget(interpolationMethod);
+    choice = new ChoiceWidget(new PiecewisePolynomFunctionWidgetFactory(retDim,retType),QBoxLayout::TopToBottom,5);
+    layout->addWidget(choice);
 
     vector<QString> list2;
     list2.emplace_back("\"error\"");
@@ -581,61 +714,25 @@ namespace MBSimGUI {
     list2.emplace_back("\"linear\"");
     extrapolationMethod = new ExtWidget("Extrapolation method",new TextChoiceWidget(list2,1,true),true,false,MBSIM%"extrapolationMethod");
     layout->addWidget(extrapolationMethod);
-
-    choiceChanged();
-    connect(choiceXY,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::choiceChanged);
-    connect(choiceXY,&ChoiceWidget::widgetChanged,this,&PiecewisePolynomFunctionWidget::widgetChanged);
-  }
-
-  void PiecewisePolynomFunctionWidget::choiceChanged() {
-    if(fallbackWidget)
-      return;
-
-    if(choiceXY->getIndex()==0) {
-      updateWidget();
-      connect(choiceXY->getWidget<ContainerWidget>()->getWidget<Widget>(0),&Widget::widgetChanged,this,&PiecewisePolynomFunctionWidget::updateWidget);
-    }
-  }
-
-  void PiecewisePolynomFunctionWidget::updateWidget() {
-    if(fallbackWidget)
-      return;
-
-    if(choiceXY->getIndex()==0) {
-      auto *choice1_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
-      auto *choice2_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->getWidget<ChoiceWidget>();
-      choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice1_->getWidget<PhysicalVariableWidget>()->rows(),choice2_->getFirstWidget<VariableWidget>()->cols());
-    }
   }
 
   void PiecewisePolynomFunctionWidget::resize_(int m, int n) {
     if(fallbackWidget)
       return;
-
-    if(choiceXY->getIndex()==0) {
-      auto *choice_ = choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(0)->getWidget<ChoiceWidget>();
-      choiceXY->getWidget<ContainerWidget>()->getWidget<ExtWidget>(1)->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m);
-    }
-    else {
-      auto *choice_ = choiceXY->getFirstWidget<ChoiceWidget>();
-      choiceXY->resize_(choice_->getWidget<PhysicalVariableWidget>()->rows(),m+1);
-    }
+    choice->getWidget<Widget>()->resize_(m,n);
   }
 
   DOMElement* PiecewisePolynomFunctionWidget::initializeUsingXML(DOMElement *element) {
-    if(E(element)->getFirstElementChildNamed(MBSIM%"breaks")) {
+    if(E(element)->getFirstElementChildNamed(MBSIM%"coefficients")) {
       fallbackWidget = new XMLEditorWidget;
-      choiceXY->setVisible(false);
-      interpolationMethod->setVisible(false);
+      choice->setVisible(false);
       extrapolationMethod->setVisible(false);
       layout()->addWidget(fallbackWidget);
-
       fallbackWidget->initializeUsingXML(element);
       return element;
     }
-
-    choiceXY->initializeUsingXML(element);
-    interpolationMethod->initializeUsingXML(element);
+    choice->initializeUsingXML(element);
+    extrapolationMethod->initializeUsingXML(element);
     return element;
   }
 
@@ -645,10 +742,9 @@ namespace MBSimGUI {
       fallbackWidget->writeXMLFile(ele0);
       return ele0;
     }
-
     DOMElement *ele0 = FunctionWidget::writeXMLFile(parent);
-    choiceXY->writeXMLFile(ele0);
-    interpolationMethod->writeXMLFile(ele0);
+    choice->writeXMLFile(ele0);
+    extrapolationMethod->writeXMLFile(ele0);
     return ele0;
   }
 

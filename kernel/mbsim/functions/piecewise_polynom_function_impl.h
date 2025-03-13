@@ -273,7 +273,7 @@
   }
 
   template<typename Ret, typename Arg>
-  void PiecewisePolynomFunction<Ret(Arg)>::setCoefficients(const std::vector<fmatvec::MatV> &allCoefs) {
+  void PiecewisePolynomFunction<Ret(Arg)>::setCoefficientsArray(const std::vector<fmatvec::MatV> &allCoefs) {
     interpolationMethod=useBreaksAndCoefs;
 
     // read all coefficient and convert to coefs
@@ -340,17 +340,28 @@
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"breaks");
     if(e) { 
-      // set breaks
       setBreaks(MBXMLUtils::E(e)->getText<fmatvec::Vec>());
 
-      // read all coefficients elements
-      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
       std::vector<fmatvec::MatV> allCoefs;
-      while(e) {
-        allCoefs.emplace_back(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
-        e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
+      e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficientsArray");
+      if(e) {
+        xercesc::DOMElement* ee=e->getFirstElementChild();
+        if(MBXMLUtils::E(ee)->getTagName()==MBSIM%"ele") {
+          while(ee) {
+            allCoefs.emplace_back(MBXMLUtils::E(ee)->getText<fmatvec::MatV>());
+            ee=ee->getNextElementSibling();
+          }
+        }
       }
-      setCoefficients(allCoefs);
+      else {
+        // deprecated interface
+        e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
+        while(e) {
+          allCoefs.emplace_back(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
+          e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
+        }
+      }
+      setCoefficientsArray(allCoefs);
     }
 
     e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"extrapolationMethod");

@@ -18,18 +18,14 @@
 */
 
 #include <config.h>
-#include <cassert>
 #include "extended_widgets.h"
 #include "variable_widgets.h"
-#include "dialogs.h"
 #include "custom_widgets.h"
 #include "unknown_widget.h"
 #include "mainwindow.h"
-#include <boost/dll.hpp>
 #include <QListWidget>
 #include <QStackedWidget>
 #include <QDialogButtonBox>
-#include <utility>
 #include <xercesc/dom/DOMComment.hpp>
 
 using namespace std;
@@ -257,7 +253,6 @@ namespace MBSimGUI {
       layout->removeWidget(widget);
       delete widget;
     }
-    assert(index!=-1 && "index==-1 is no longer supported!");
     widget = factory->createWidget(index);
     if(layout->direction()==QBoxLayout::TopToBottom)
       widget->setContentsMargins(factory->getMargin(),0,0,0);
@@ -409,10 +404,10 @@ namespace MBSimGUI {
 
     layout->setColumnStretch(0,10);
 
-    currentIndexChanged(m);
+    changeSize(m);
 
     connect(list,&QListWidget::currentRowChanged,this,&ListWidget::changeCurrent);
-    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&ListWidget::currentIndexChanged);
+    connect(spinBox,QOverload<int>::of(&CustomSpinBox::valueChanged),this,&ListWidget::changeSize);
   }
 
   ListWidget::~ListWidget() {
@@ -435,8 +430,8 @@ namespace MBSimGUI {
     return static_cast<Widget*>(stackedWidget->widget(i));
   }
 
-  void ListWidget::currentIndexChanged(int idx) {
-    int n = idx - list->count();
+  void ListWidget::changeSize(int size) {
+    int n = size - list->count();
     if(n>0)
       addElements(n);
     else if(n<0)
@@ -481,11 +476,12 @@ namespace MBSimGUI {
   }
 
   void ListWidget::removeElements(int n) {
+    int N = stackedWidget->count();
     for(int j=0; j<n; j++) {
-      int i = list->count()-1;
-      stackedWidget->removeWidget(stackedWidget->widget(i));
-      delete stackedWidget->widget(i);
-      delete list->takeItem(i);
+      auto *widget = stackedWidget->widget(N-j-1);
+      stackedWidget->removeWidget(widget);
+      delete widget;
+      delete list->takeItem(N-j-1);
     }
     emit Widget::widgetChanged();
   }
@@ -574,7 +570,7 @@ namespace MBSimGUI {
   }
 
   Widget* ChoiceWidgetFactory::createWidget(int i) {
-    return new ChoiceWidget(factory,QBoxLayout::TopToBottom,mode);
+    return new ChoiceWidget(factory,dir,mode);
   }
 
 }

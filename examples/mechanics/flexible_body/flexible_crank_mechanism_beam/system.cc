@@ -92,10 +92,10 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   vector<Matrix<General, Fixed<6>, Var, double> > sigmahel(1);
   sigmahel[0] <<= Matrix<General, Fixed<6>, Var, double>("[0, 0, -2.9304e+12, 2.1978e+12; 0, 0, -8.79121e+11, 6.59341e+11; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0; 0, 0, 0, 0]");
 
-  body2->setNodalRelativePosition(rNod);
-  body2->setNodalShapeMatrixOfTranslation(TNod);
-  body2->setNodalShapeMatrixOfRotation(PNod);
-  body2->setNodalStressMatrix(sigmahel);
+  body2->setNodalRelativePositionArray(rNod);
+  body2->setNodalShapeMatrixOfTranslationArray(TNod);
+  body2->setNodalShapeMatrixOfRotationArray(PNod);
+  body2->setNodalStressMatrixArray(sigmahel);
 
   SymMat rrdm(3);
   rrdm(0,0) = J2;
@@ -149,8 +149,8 @@ CrankMechanism::CrankMechanism(const string &projectName) : DynamicSystemSolver(
   body2->setPositionIntegral(m2*Kr);
   body2->setPositionPositionIntegral(rrdm);
   body2->setShapeFunctionIntegral(Pdm);
-  body2->setShapeFunctionShapeFunctionIntegral(PPdm);
-  body2->setPositionShapeFunctionIntegral(rPdm);
+  body2->setShapeFunctionShapeFunctionIntegralArray(PPdm);
+  body2->setPositionShapeFunctionIntegralArray(rPdm);
   body2->setStiffnessMatrix(Ke);
 
   body2->setRotation(new RotationAboutFixedAxis<VecV>(Vec("[0;0;1]")));

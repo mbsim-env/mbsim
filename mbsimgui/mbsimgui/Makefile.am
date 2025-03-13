@@ -50,6 +50,7 @@ libmbsimgui_la_SOURCES = \
   ombv_widgets.cc \
   extended_widgets.cc \
   special_widgets.cc \
+  array_widgets.cc \
   property_dialog.cc \
   solver_property_dialog.cc \
   parameter_property_dialog.cc \
@@ -224,6 +225,7 @@ mbsimguiinclude_HEADERS = analyzer.h \
   solver.h \
   solver_property_dialog.h \
   special_widgets.h \
+  array_widgets.h \
   spring_damper.h \
   structure.h \
   initial_condition.h \
