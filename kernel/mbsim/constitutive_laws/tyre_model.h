@@ -54,7 +54,7 @@ namespace MBSim {
       virtual double evalFreeRadius() = 0;
 
     protected:
-      TyreContact* getTyreContact();
+      TyreContact* getTyreContact() const;
   };
 
 }

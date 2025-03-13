@@ -23,7 +23,7 @@
 
 namespace MBSim {
 
-  TyreContact* TyreModel::getTyreContact() {
+  TyreContact* TyreModel::getTyreContact() const {
     return static_cast<TyreContact*>(parent);
   }
 
