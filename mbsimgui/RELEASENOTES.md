@@ -4,6 +4,7 @@ Release 10.4
 All
 ---
 - Several release notes in 10.3 were missed. These are added now with * instead of - as enumerator sign, see Release 10.3.
+- Complete new build on Windows: Instead of cross-compiling for Windows on Linux the Windows build is now done using MSYS2.
 
 MBSim
 -----
