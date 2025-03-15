@@ -193,9 +193,6 @@ namespace MBSim {
        */
       void setCoefficientsArray(const std::vector<fmatvec::MatV> &allCoefs);
 
-      // deprecated interface
-      void setCoefficients(const std::vector<fmatvec::MatV> &allCoefs) { setCoefficientsArray(allCoefs); }
-
       void addCoefficients(const fmatvec::MatV &coef);
 
       /*!

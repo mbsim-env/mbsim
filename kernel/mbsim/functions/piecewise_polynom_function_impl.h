@@ -357,6 +357,8 @@
         // deprecated interface
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"coefficients");
         while(e) {
+          MBXMLUtils::Deprecated::message(this, "[<coefficients>...</coefficients>]+ is deprecated, "
+                                                "please use <setCoefficientsArray>[<ele>...</ele>]+</setCoefficientsArray>", e);
           allCoefs.emplace_back(MBXMLUtils::E(e)->getText<fmatvec::Mat>());
           e=MBXMLUtils::E(e)->getNextElementSiblingNamed(MBSIM%"coefficients");
         }
