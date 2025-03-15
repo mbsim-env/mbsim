@@ -6,6 +6,45 @@
   <pv:Embed href="Integrator.mbsimint.xml">
     <Parameter xmlns="http://www.mbsim-env.de/MBXMLUtils">
       <scalarParameter name="Tend">4</scalarParameter>
+
+      <!-- test the conversion from a Python value to a vector/matrix represented as a numpy 1D/2D array -->
+      <import action="addAllVarsAsParams">import numpy</import>
+      <anyParameter name="listScalar">[1,2,3]</anyParameter>
+      <anyParameter name="listListScalar">[[1,2],[3,4],[5,6]]</anyParameter>
+      <anyParameter name="listListScalarNoMat">[[1,2],[3,4,9],[5,6]]</anyParameter>
+      <anyParameter name="listNumpy1D">[numpy.array([1,2]),numpy.array([3,4]),numpy.array([5,6])]</anyParameter>
+      <anyParameter name="listNumpy1DNoMat">[numpy.array([1,2]),numpy.array([3,4,9]),numpy.array([5,6])]</anyParameter>
+      <anyParameter name="listMix">[[1,2],numpy.array([3,4]),[5,6]]</anyParameter>
+      <anyParameter name="listMixNoMat">[[1,2],numpy.array([3,4,9]),[5,6]]</anyParameter>
+      <anyParameter name="listDict">[{},2,3]</anyParameter>
+      <anyParameter name="listListDict">[[1,2],[{},4],[5,6]]</anyParameter>
+      <anyParameter name="listNumpy1DDict">[numpy.array([1,2]),numpy.array([{},4]),numpy.array([5,6])]</anyParameter>
+      <anyParameter name="listNumpy2D">[numpy.array([[1,1],[2,2]]),numpy.array([[3,3],[4,4]]),numpy.array([[5,5],[6,6]])]</anyParameter>
+      <anyParameter name="check">
+        if type(listScalar)!=numpy.ndarray or listScalar.shape!=(3,) or not numpy.issubdtype(listScalar.dtype, numpy.integer):
+          raise RuntimeError("listScalar error")
+        if type(listListScalar)!=numpy.ndarray or listListScalar.shape!=(3,2) or not numpy.issubdtype(listListScalar.dtype, numpy.integer):
+          raise RuntimeError("listListScalar error")
+        if type(listListScalarNoMat)!=list:
+          raise RuntimeError("listListScalarNoMat error")
+        if type(listNumpy1D)!=numpy.ndarray or listNumpy1D.shape!=(3,2) or not numpy.issubdtype(listNumpy1D.dtype, numpy.integer):
+          raise RuntimeError("listNumpy1D error")
+        if type(listNumpy1DNoMat)!=list:
+          raise RuntimeError("listNumpy1DNoMat error")
+        if type(listMix)!=numpy.ndarray or listMix.shape!=(3,2) or not numpy.issubdtype(listMix.dtype, numpy.integer):
+          raise RuntimeError("listMix error")
+        if type(listMixNoMat)!=list:
+          raise RuntimeError("listMixNoMat error")
+        if type(listDict)!=list:
+          raise RuntimeError("listDict error")
+        if type(listListDict)!=list:
+          raise RuntimeError("listListDict error")
+        if type(listNumpy1DDict)!=list:
+          raise RuntimeError("listNumpy1DDict error")
+        if type(listNumpy2D)!=list:
+          raise RuntimeError("listNumpy2D error")
+        ret=0
+      </anyParameter>
     </Parameter>
   </pv:Embed>
 </MBSimProject>
