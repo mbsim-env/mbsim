@@ -273,6 +273,7 @@ namespace MBSimGUI {
       void setCurrentIndex(int num);
       int getCurrentIndex() const;
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      QComboBox *getWidget() { return text; }
 
     protected:
       QComboBox *text;

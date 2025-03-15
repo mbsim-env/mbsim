@@ -268,10 +268,12 @@ namespace MBSimGUI {
       void setValue(const QString &value_);
       void setNamespace(const QString &ns_);
       void setStatus(const QString &status_);
+      void setEmbed(const QString &embed_);
       QString getType() const;
       QString getValue() const;
       QString getNamespace() const;
       QString getStatus() const;
+      QString getEmbed() const;
     private:
       void updateNamespace();
       void reset();
@@ -279,7 +281,7 @@ namespace MBSimGUI {
       void hideEvent(QHideEvent *event) override;
       std::vector<MBXMLUtils::FQN> feature;
       MBXMLUtils::FQN specialType;
-      ExtWidget *type, *value, *ns, *status;
+      ExtWidget *type, *value, *ns, *status, *embed;
   };
 
   class StateDialog : public QDialog {

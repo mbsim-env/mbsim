@@ -1353,10 +1353,18 @@ namespace MBSimGUI {
       type_.emplace_back("plotFeature");
       type_.emplace_back("plotFeatureForChildren");
       type_.emplace_back("plotFeatureRecursive");
+      type_.emplace_back("Embed");
     }
     else
       type_.emplace_back(QString::fromStdString(specialType.second));
-    type = new ExtWidget("Type",new TextChoiceWidget(type_,specialType.second.empty()?2:0,true));
+    type = new ExtWidget("Type",new TextChoiceWidget(type_,specialType.second.empty()?2:0,false));
+    connect(type->getWidget<TextChoiceWidget>()->getWidget(), &QComboBox::currentTextChanged, [this](const QString &s){
+      bool embedActive=s=="Embed";
+      value->setVisible(!embedActive);
+      status->setVisible(!embedActive);
+      ns->setVisible(!embedActive);
+      embed->setVisible(embedActive);
+    });
     layout->addWidget(type);
     feature.emplace_back(MBSIM%"acceleration");
     feature.emplace_back(MBSIM%"angle");
@@ -1396,6 +1404,8 @@ namespace MBSimGUI {
     ns_.emplace_back(QString::fromStdString(MBSIMFLEX.getNamespaceURI()));
     ns = new ExtWidget("Namespace",new TextChoiceWidget(ns_,0,true));
     layout->addWidget(ns);
+    embed = new ExtWidget("Content",new ExpressionWidget);
+    layout->addWidget(embed);
     layout->addStretch(1);
     QDialogButtonBox *buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(QDialogButtonBox::Ok);
@@ -1412,11 +1422,23 @@ namespace MBSimGUI {
   }
 
   void PlotFeatureDialog::setValue(const QString &value_) {
+    value->setVisible(true);
+    status->setVisible(true);
+    ns->setVisible(true);
+    embed->setVisible(false);
     value->getWidget<TextChoiceWidget>()->setText(value_);
   }
 
   void PlotFeatureDialog::setStatus(const QString &status_) {
     status->getFirstWidget<VariableWidget>()->setValue(status_);
+  }
+
+  void PlotFeatureDialog::setEmbed(const QString &embed_) {
+    value->setVisible(false);
+    status->setVisible(false);
+    ns->setVisible(false);
+    embed->setVisible(true);
+    embed->getFirstWidget<VariableWidget>()->setValue(embed_);
   }
 
   void PlotFeatureDialog::setNamespace(const QString &ns_) {
@@ -1433,6 +1455,10 @@ namespace MBSimGUI {
 
   QString PlotFeatureDialog::getStatus() const {
     return status->getFirstWidget<VariableWidget>()->getValue();
+  }
+
+  QString PlotFeatureDialog::getEmbed() const {
+    return embed->getFirstWidget<VariableWidget>()->getValue();
   }
 
   QString PlotFeatureDialog::getNamespace() const {

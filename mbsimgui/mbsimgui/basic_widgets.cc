@@ -1024,9 +1024,16 @@ namespace MBSimGUI {
     QTreeWidgetItem *item = tree->currentItem();
     if(item) {
       item->setText(0, dialog->getType());
-      item->setText(1, dialog->getValue());
-      item->setText(2, dialog->getStatus());
-      item->setText(3, dialog->getNamespace());
+      if(dialog->getType()!="Embed") {
+        item->setText(1, dialog->getValue());
+        item->setText(2, dialog->getStatus());
+        item->setText(3, dialog->getNamespace());
+      }
+      else {
+        item->setText(1, dialog->getEmbed());
+        item->setText(2, "");
+        item->setText(3, "");
+      }
     }
   }
 
@@ -1043,9 +1050,13 @@ namespace MBSimGUI {
     QTreeWidgetItem *item = tree->currentItem();
     if(item) {
       dialog->setType(item->text(0));
-      dialog->setValue(item->text(1));
-      dialog->setStatus(item->text(2));
-      dialog->setNamespace(item->text(3));
+      if(item->text(0)!="Embed") {
+        dialog->setValue(item->text(1));
+        dialog->setStatus(item->text(2));
+        dialog->setNamespace(item->text(3));
+      }
+      else
+        dialog->setEmbed(item->text(1));
       dialog->show();
     }
   }
@@ -1089,13 +1100,21 @@ namespace MBSimGUI {
     DOMElement *e=parent->getFirstElementChild();
     while(e && (E(e)->getTagName()==MBSIM%"plotFeature" ||
                 E(e)->getTagName()==MBSIM%"plotFeatureForChildren" ||
-                E(e)->getTagName()==MBSIM%"plotFeatureRecursive")) {
+                E(e)->getTagName()==MBSIM%"plotFeatureRecursive" ||
+                E(e)->getTagName()==PV%"Embed")) {
       auto *item = new QTreeWidgetItem;
       item->setFlags(item->flags() | Qt::ItemIsEditable);
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
-      item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
-      item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
-      item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
+      if(E(e)->getTagName()!=PV%"Embed") {
+        item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
+        item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
+        item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
+      }
+      else {
+        item->setText(1, (X()%mw->serializer->writeToString(e)).c_str());
+        item->setText(2, "");
+        item->setText(3, "");
+      }
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
@@ -1106,10 +1125,21 @@ namespace MBSimGUI {
   DOMElement* PlotFeatureWidget::writeXMLFile(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
-      DOMElement *ele = D(doc)->createElement(MBSIM%tree->topLevelItem(i)->text(0).toStdString());
-      E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
-      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), nullptr);
-      parent->insertBefore(ele, ref);
+      auto item = tree->topLevelItem(i);
+      DOMElement *ele;
+      if(item->text(0)!="Embed") {
+        ele = D(doc)->createElement(MBSIM%item->text(0).toStdString());
+        E(ele)->setAttribute("value",NamespaceURI(item->text(3).toStdString())%item->text(1).toStdString());
+        ele->insertBefore(doc->createTextNode(X()%item->text(2).toStdString()), nullptr);
+        parent->insertBefore(ele, ref);
+      }
+      else {
+        try {
+          auto newEle=mw->mbxmlparserNoVal->parseWithContext(item->text(1).toStdString(), parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
+          parent->insertBefore(parent->removeChild(newEle), ref);
+        }
+        CATCH
+      }
     }
     return nullptr;
   }
@@ -1119,9 +1149,16 @@ namespace MBSimGUI {
     while(e && E(e)->getTagName()==specialType) {
       auto *item = new QTreeWidgetItem;
       item->setText(0, QString::fromStdString(E(e)->getTagName().second));
-      item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
-      item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
-      item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
+      if(E(e)->getTagName()!=PV%"Embed") {
+        item->setText(1, QString::fromStdString(E(e)->getAttributeQName("value").second));
+        item->setText(2, QString::fromStdString(X()%E(e)->getFirstTextChild()->getData()));
+        item->setText(3, QString::fromStdString(E(e)->getAttributeQName("value").first));
+      }
+      else {
+        item->setText(1, (X()%mw->serializer->writeToString(e)).c_str());
+        item->setText(2, "");
+        item->setText(3, "");
+      }
       tree->addTopLevelItem(item);
       e=e->getNextElementSibling();
     }
@@ -1131,10 +1168,21 @@ namespace MBSimGUI {
   DOMElement* PlotFeatureWidget::writeXMLFile2(DOMNode *parent, DOMNode *ref) {
     DOMDocument *doc=parent->getOwnerDocument();
     for(size_t i=0; i<tree->topLevelItemCount(); i++) {
-      DOMElement *ele = D(doc)->createElement(specialType);
-      E(ele)->setAttribute("value",NamespaceURI(tree->topLevelItem(i)->text(3).toStdString())%tree->topLevelItem(i)->text(1).toStdString());
-      ele->insertBefore(doc->createTextNode(X()%tree->topLevelItem(i)->text(2).toStdString()), nullptr);
-      parent->insertBefore(ele, ref);
+      auto item = tree->topLevelItem(i);
+      DOMElement *ele;
+      if(item->text(0)!="Embed") {
+        ele = D(doc)->createElement(specialType);
+        E(ele)->setAttribute("value",NamespaceURI(item->text(3).toStdString())%item->text(1).toStdString());
+        ele->insertBefore(doc->createTextNode(X()%item->text(2).toStdString()), nullptr);
+        parent->insertBefore(ele, ref);
+      }
+      else {
+        try {
+          auto newEle=mw->mbxmlparserNoVal->parseWithContext(item->text(1).toStdString(), parent, DOMLSParser::ACTION_APPEND_AS_CHILDREN);
+          parent->insertBefore(parent->removeChild(newEle), ref);
+        }
+        CATCH
+      }
     }
     return nullptr;
   }

@@ -2,6 +2,10 @@
 <MBSimProject xmlns="http://www.mbsim-env.de/MBSimXML" name="Project">
   <DynamicSystemSolver xmlns="http://www.mbsim-env.de/MBSim" name="MBS" xmlns:c="http://www.mbsim-env.de/MBSimControl">
     <plotFeatureRecursive value="c:signal">1</plotFeatureRecursive>
+    <Embed xmlns="http://www.mbsim-env.de/MBXMLUtils" counterName="i" count="2">
+      <plotFeature value="{if i==1, ret='position'; else ret='velocity'; end}" xmlns="http://www.mbsim-env.de/MBSim">0</plotFeature>
+    </Embed>
+    <plotFeature value="moment">0</plotFeature>
     <frames/>
     <contours/>
     <groups/>
