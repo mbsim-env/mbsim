@@ -191,15 +191,15 @@
                               <components>
                                 <PiecewisePolynomFunction>
                                   <breaks>splineOut[0].x</breaks>
-                                  <coefficients>splineOut[0].c[:,:].T</coefficients>
+                                  <coefficientsArray><ele>splineOut[0].c[:,:].T</ele></coefficientsArray>
                                 </PiecewisePolynomFunction>
                                 <PiecewisePolynomFunction>
                                   <breaks>splineOut[1].x</breaks>
-                                  <coefficients>splineOut[1].c[:,:].T</coefficients>
+                                  <coefficientsArray><ele>splineOut[1].c[:,:].T</ele></coefficientsArray>
                                 </PiecewisePolynomFunction>
                                 <PiecewisePolynomFunction>
                                   <breaks>splineOut[2].x</breaks>
-                                  <coefficients>splineOut[2].c[:,:].T</coefficients>
+                                  <coefficientsArray><ele>splineOut[2].c[:,:].T</ele></coefficientsArray>
                                 </PiecewisePolynomFunction>
                               </components>
                             </VectorValuedFunction>
@@ -335,9 +335,11 @@
               <timeDependentTranslation>
                 <PiecewisePolynomFunction>
                   <breaks>spline.x</breaks>
-                  <coefficients>spline.c[:,:,0].T</coefficients>
-                  <coefficients>spline.c[:,:,1].T</coefficients>
-                  <coefficients>spline.c[:,:,2].T</coefficients>
+                  <coefficientsArray>
+                    <ele>spline.c[:,:,0].T</ele>
+                    <ele>spline.c[:,:,1].T</ele>
+                    <ele>spline.c[:,:,2].T</ele>
+                  </coefficientsArray>
                 </PiecewisePolynomFunction>
               </timeDependentTranslation>
               <frames/>
