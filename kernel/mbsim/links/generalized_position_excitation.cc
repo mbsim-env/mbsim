@@ -43,18 +43,26 @@ namespace MBSim {
   }
 
   void GeneralizedPositionExcitation::updateGeneralizedPositions() {
-    if(body.size()>1)
-      rrel=body[1]->evalGeneralizedPosition()-body[0]->evalGeneralizedPosition()-(*f)(getTime());
-    else
-      rrel=body[0]->evalGeneralizedPosition()-(*f)(getTime());
+    if(f) {
+      if(body.size()>1)
+        rrel=body[1]->evalGeneralizedPosition()-body[0]->evalGeneralizedPosition()-(*f)(getTime());
+      else
+        rrel=body[0]->evalGeneralizedPosition()-(*f)(getTime());
+    }
+    else // derived classes may set f to nullptr but this function can still be called for plotting
+      rrel.init(0);
     updrrel = false;
   } 
 
   void GeneralizedPositionExcitation::updateGeneralizedVelocities() {
-    if(body.size()>1)
-      vrel=body[1]->evalGeneralizedVelocity()-body[0]->evalGeneralizedVelocity()-f->parDer(getTime());
-    else
-      vrel=body[0]->evalGeneralizedVelocity()-f->parDer(getTime());
+    if(f) {
+      if(body.size()>1)
+        vrel=body[1]->evalGeneralizedVelocity()-body[0]->evalGeneralizedVelocity()-f->parDer(getTime());
+      else
+        vrel=body[0]->evalGeneralizedVelocity()-f->parDer(getTime());
+    }
+    else // derived classes may set f to nullptr but this function can still be called for plotting
+      vrel.init(0);
     updvrel = false;
   }
 
