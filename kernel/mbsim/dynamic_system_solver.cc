@@ -1561,8 +1561,11 @@ namespace MBSim {
         addToGraph(graph, A, j, eleList);
   }
 
-  const Vec& DynamicSystemSolver::shift() {
+  const Vec& DynamicSystemSolver::shift(std::optional<std::reference_wrapper<bool>> &&velProjWasCalled,
+                                        std::optional<std::reference_wrapper<bool>> &&posProjWasCalled) {
     msg(Info) << "System shift at t = " << t << "." << endl;
+    if(posProjWasCalled) posProjWasCalled->get()=false;
+    if(velProjWasCalled) velProjWasCalled->get()=false;
 
     useSmoothSolver = false;
 
@@ -1596,6 +1599,7 @@ namespace MBSim {
       // - neuer Zustand ab hier bekannt
       // - Auswertung vor Setzen von gActive und gdActive
       projectGeneralizedPositions(3);
+      if(posProjWasCalled) posProjWasCalled->get()=true;
       // Projektion der Geschwindikgeiten erst am Schluss
       //projectGeneralizedVelocities(3);
 
@@ -1611,7 +1615,9 @@ namespace MBSim {
 
         checkActive(4);
         projectGeneralizedPositions(2);
+        if(posProjWasCalled) posProjWasCalled->get()=true;
         projectGeneralizedVelocities(2);
+        if(velProjWasCalled) velProjWasCalled->get()=true;
       }
       useOldla = saveUseOldLa;
     }
@@ -1632,14 +1638,18 @@ namespace MBSim {
         checkActive(4);
 
         projectGeneralizedPositions(2);
+        if(posProjWasCalled) posProjWasCalled->get()=true;
         projectGeneralizedVelocities(2);
+        if(velProjWasCalled) velProjWasCalled->get()=true;
       }
     }
     else if (getRootID() == 1) { // contact opens or transition from stick to slip
       checkActive(8);
 
       projectGeneralizedPositions(1);
+      if(posProjWasCalled) posProjWasCalled->get()=true;
       projectGeneralizedVelocities(1);
+      if(velProjWasCalled) velProjWasCalled->get()=true;
     }
     checkActive(5); // final update von gActive, ...
     calclaSize(3); // IH

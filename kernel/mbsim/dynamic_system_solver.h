@@ -344,7 +344,8 @@ namespace MBSim {
        * \param boolean evaluation of stop vector
        * \param time
        */
-      virtual const fmatvec::Vec& shift();
+      virtual const fmatvec::Vec& shift(std::optional<std::reference_wrapper<bool>> &&velProjWasCalled={},
+                                        std::optional<std::reference_wrapper<bool>> &&posProjWasCalled={});
 
       /** brief collect status of all set-valued links
        * \param result vector
