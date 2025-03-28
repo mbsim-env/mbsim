@@ -486,7 +486,9 @@ namespace MBSim {
           self->system->plot();
         }
         self->system->resetUpToDate();
-        self->system->shift();
+        bool velProjWasCalled;
+        bool posProjWasCalled;
+        self->system->shift(velProjWasCalled, posProjWasCalled);
         if(self->formalism>1) { // DAE2, DAE3 or GGL
           self->system->calcgdSize(3); // IH
           self->system->updategdRef(self->system->getgdParent());
@@ -494,6 +496,14 @@ namespace MBSim {
             self->system->calcgSize(2); // IB
             self->system->updategRef(self->system->getgParent());
           }
+        }
+        if(!posProjWasCalled && self->formalism>=DAE3) {
+          self->system->projectGeneralizedPositions(1);
+          self->drift = true;
+        }
+        if(!velProjWasCalled && self->formalism>=DAE2) {
+          self->system->projectGeneralizedVelocities(1);
+          self->drift = true;
         }
         if(self->plotOnRoot) {
           self->system->resetUpToDate();
