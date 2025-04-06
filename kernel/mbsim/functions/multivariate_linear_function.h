@@ -30,7 +30,7 @@ namespace MBSim {
   template<typename Ret, typename Arg>
   class MultivariateLinearFunction<Ret(Arg)> : public Function<Ret(Arg)> {
     using B = fmatvec::Function<Ret(Arg)>; 
-    private:
+    protected:
       double a0{0};
       fmatvec::RowVecV a1;
       fmatvec::RowVecV zero;
@@ -47,10 +47,17 @@ namespace MBSim {
       }
       void seta1(const fmatvec::VecV &a1_) { seta1(a1_.T()); }
       std::pair<int, int> getRetSize() const override { return std::make_pair(1,1); }
-      Ret operator()(const Arg &x) override { return FromDouble<Ret>::cast(a1*x+a0); }
-      typename B::DRetDArg parDer(const Arg &x) override { return a1; }
-      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override { return zero; }
+      Ret operator()(const Arg &x) override {
+        return FromDouble<Ret>::cast(a0+a1*x);
+      }
+      typename B::DRetDArg parDer(const Arg &x) override {
+        return a1;
+      }
+      typename B::DRetDArg parDerDirDer(const Arg &xDir, const Arg &x) override {
+        return zero;
+      }
       void initializeUsingXML(xercesc::DOMElement *element) override {
+        Function<Ret(Arg)>::initializeUsingXML(element);
         xercesc::DOMElement *e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a0");
         if(e) seta0(MBXMLUtils::E(e)->getText<double>());
         e=MBXMLUtils::E(element)->getFirstElementChildNamed(MBSIM%"a1");

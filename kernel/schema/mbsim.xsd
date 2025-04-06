@@ -5528,7 +5528,8 @@
     <xs:annotation>
       <xs:documentation xml:lang="de" xmlns="">
         Mehrdimensionale lineare Funktion.
-        <object class="eqn">y=\boldsymbol{a_1}^T*\boldsymbol{x}+\boldsymbol{a_0}</object>
+        <object class="eqn">y=a_0 + \boldsymbol{a_1}^T \boldsymbol{x}</object>
+        wobei <object class="inlineeqn">a_0</object> ein Skalar und <object class="inlineeqn">\boldsymbol{a_1}</object> ein Vektor ist.
       </xs:documentation>
     </xs:annotation>
   </xs:element>
@@ -5539,14 +5540,40 @@
           <xs:element name="a0" type="pv:unknownScalar" minOccurs="0">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-              Konstanter Term der linearen Funktion.
+              Konstanter Term der Funktion.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
           <xs:element name="a1" type="pv:unknownVector">
             <xs:annotation>
               <xs:documentation xml:lang="de" xmlns="">
-              Lineare Faktoren der mehrdimensionalen linearen Funktion.
+              Lineare Faktoren der mehrdimensionalen Funktion.
+              </xs:documentation>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence> 
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>   
+
+  <xs:element name="MultivariateQuadraticFunction" substitutionGroup="Function" type="MultivariateQuadraticFunctionType">
+    <xs:annotation>
+      <xs:documentation xml:lang="de" xmlns="">
+        Mehrdimensionale quadratische Funktion.
+        <object class="eqn">y=a_0 + \boldsymbol{a_1}^T \boldsymbol{x} + \boldsymbol{x}^T \boldsymbol{a_2} \boldsymbol{x}</object>
+        wobei <object class="inlineeqn">a_0</object> ein Skalar, <object class="inlineeqn">\boldsymbol{a_1}</object> ein Vektor
+        und <object class="inlineeqn">\boldsymbol{a_2}</object> eine Matrix ist.
+      </xs:documentation>
+    </xs:annotation>
+  </xs:element>
+  <xs:complexType name="MultivariateQuadraticFunctionType">
+    <xs:complexContent>
+      <xs:extension base="MultivariateLinearFunctionType">
+        <xs:sequence>
+          <xs:element name="a2" type="pv:unknownMatrix">
+            <xs:annotation>
+              <xs:documentation xml:lang="de" xmlns="">
+              Quadratische Faktoren der mehrdimensionalen Funktion.
               </xs:documentation>
             </xs:annotation>
           </xs:element>
