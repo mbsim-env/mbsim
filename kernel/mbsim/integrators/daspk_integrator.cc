@@ -359,22 +359,11 @@ namespace MBSim {
     else
       system->evalz0();
 
-    if(aTol.size() == 0)
-      aTol.resize(1,INIT,1e-6);
-    if(rTol.size() == 0)
-      rTol.resize(1,INIT,1e-6);
-
     info.resize(20);
 
     // info(0) = 0; first call
 
-    if(aTol.size()>1) {
-      info(1) = 1; // aTol und rTol are vectors
-      if(aTol.size() != neq)
-        throwError("(DASPKIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
-    }
-    if(rTol.size() != aTol.size())
-      throwError("(DASPKIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
+    info(1) = 1; // aTol/rTol are vectors
 
     info(2) = 1; // solution only at tOut, no intermediate-output
     // info(3) = 0; // integration does not stop at tStop (rWork(0))
@@ -601,14 +590,6 @@ namespace MBSim {
   void DASPKIntegrator::initializeUsingXML(DOMElement *element) {
     DAEIntegrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
-    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
-    if(e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");

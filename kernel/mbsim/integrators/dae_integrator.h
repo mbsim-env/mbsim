@@ -24,6 +24,7 @@
 #define _DAE_INTEGRATOR_H_
 
 #include "implicit_integrator.h"
+#include <optional>
 
 namespace MBSim {
 
@@ -57,10 +58,20 @@ namespace MBSim {
       void par_zd_gd_g_par_q(fmatvec::Mat &J);
 
       void calcSize() override;
+      void init() override;
       virtual void reinit();
 
       /** formalism **/
       Formalism formalism{ODE};
+
+      /** Absolute Toleranz */
+      fmatvec::Vec aTol;
+      std::optional<double> aTolScalar;
+      /** Relative Toleranz */
+      fmatvec::Vec rTol;
+      std::optional<double> rTolScalar;
+
+      std::optional<double> aTolPos, aTolVel, aTol1st, aTolForce, rTolPos, rTolVel, rTol1st, rTolForce;
 
       int laInd, lInd;
       fmatvec::Vec gd0, g0; // saved constraints
@@ -70,7 +81,23 @@ namespace MBSim {
     public:
       ~DAEIntegrator() override = default;
 
+      void initializeUsingXML(xercesc::DOMElement *element) override;
+
       void setFormalism(Formalism formalism_) { formalism = formalism_; }
+
+      void setAbsoluteTolerance(const fmatvec::Vec &aTol_) { aTol <<= aTol_; }
+      void setAbsoluteTolerance(double aTol_) { aTolScalar = aTol_; }
+      void setRelativeTolerance(const fmatvec::Vec &rTol_) { rTol <<= rTol_; }
+      void setRelativeTolerance(double rTol_) { rTolScalar = rTol_; }
+
+      void setAbsolutePositionTolerance(double aTolPos_) { aTolPos = aTolPos_; }
+      void setAbsoluteVelocityTolerance(double aTolVel_) { aTolVel = aTolVel_; }
+      void setAbsoluteFirstOrderTolerance(double aTol1st_) { aTol1st = aTol1st_; }
+      void setAbsoluteForceTolerance(double aTolForce_) { aTolForce = aTolForce_; }
+      void setRelativePositionTolerance(double rTolPos_) { rTolPos = rTolPos_; }
+      void setRelativeVelocityTolerance(double rTolVel_) { rTolVel = rTolVel_; }
+      void setRelativeFirstOrderTolerance(double rTol1st_) { rTol1st = rTol1st_; }
+      void setRelativeForceTolerance(double rTolForce_) { rTolForce = rTolForce_; }
   };
 
 }

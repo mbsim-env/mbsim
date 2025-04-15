@@ -7380,7 +7380,93 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RADAU5Integrator" substitutionGroup="RootFindingIntegrator" type="RADAU5IntegratorType">
+  <xs:element name="DAEIntegrator" substitutionGroup="RootFindingIntegrator" type="DAEIntegratorType" abstract="true">
+    <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+        Abstraktes interface für DAE Integratoren.
+    </xs:documentation></xs:annotation>
+  </xs:element>
+  <xs:complexType name="DAEIntegratorType">
+    <xs:complexContent>
+      <xs:extension base="RootFindingIntegratorType">
+        <xs:sequence>
+          <xs:choice>
+            <xs:sequence>
+              <xs:choice>
+                <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                      Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                      Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+              </xs:choice>
+              <xs:choice>
+                <xs:element name="relativeTolerance" type="pv:nounitVector" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                      Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+                <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
+                  <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                      Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
+                  </xs:documentation></xs:annotation>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+            <xs:sequence>
+              <xs:element name="absolutePositionTolerance" type="pv:unknownScalar">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Absolute Fehlertoleranz bezogen auf die Positionszustandsgrößen der Differentialgleichung.
+                </xs:documentation></xs:annotation>
+              </xs:element>
+              <xs:element name="absoluteVelocityTolerance" type="pv:unknownScalar">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Absolute Fehlertoleranz bezogen auf die Geschwindigkeitszustandsgrößen der Differentialgleichung.
+                </xs:documentation></xs:annotation>
+              </xs:element>
+              <xs:element name="absoluteFirstOrderTolerance" type="pv:unknownScalar">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Absolute Fehlertoleranz bezogen auf die First-Order-Zustandsgrößen der Differentialgleichung.
+                </xs:documentation></xs:annotation>
+              </xs:element>
+              <xs:element name="absoluteForceTolerance" type="pv:unknownScalar">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Absolute Fehlertoleranz bezogen auf die Zwangskräfte-Zustandsgrößen der Differentialgleichung.
+                    (Bei GGL Formalismus auch für die zusätzlichen Zwangskräfte zur Stabilisierung verwendet)
+                </xs:documentation></xs:annotation>
+              </xs:element>
+              <xs:element name="relativePositionTolerance" type="pv:unknownScalar">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Relative Fehlertoleranz bezogen auf die Positionszustandsgrößen der Differentialgleichung.
+                </xs:documentation></xs:annotation>
+              </xs:element>
+              <xs:element name="relativeVelocityTolerance" type="pv:unknownScalar">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Relative Fehlertoleranz bezogen auf die Geschwindigkeitszustandsgrößen der Differentialgleichung.
+                </xs:documentation></xs:annotation>
+              </xs:element>
+              <xs:element name="relativeFirstOrderTolerance" type="pv:unknownScalar">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Relative Fehlertoleranz bezogen auf die First-Order-Zustandsgrößen der Differentialgleichung.
+                </xs:documentation></xs:annotation>
+              </xs:element>
+              <xs:element name="relativeForceTolerance" type="pv:unknownScalar">
+                <xs:annotation><xs:documentation xml:lang="de" xmlns="">
+                    Relative Fehlertoleranz bezogen auf die Zwangskräfte-Zustandsgrößen der Differentialgleichung.
+                    (Bei GGL Formalismus auch für die zusätzlichen Zwangskräfte zur Stabilisierung verwendet)
+                </xs:documentation></xs:annotation>
+              </xs:element>
+            </xs:sequence>
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="RADAU5Integrator" substitutionGroup="DAEIntegrator" type="RADAU5IntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Implizites Runge-Kutta Verfahren der Ordnung 5 (Radau IIA) mit 'dense output'.<br/>
         Das Verfahren ist für steife Differentialgleichungen bestimmt und verwendet automatische Schrittweitenbestimmung.
@@ -7388,32 +7474,8 @@
   </xs:element>
   <xs:complexType name="RADAU5IntegratorType">
     <xs:complexContent>
-      <xs:extension base="RootFindingIntegratorType">
+      <xs:extension base="DAEIntegratorType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
-          <xs:choice>
-            <xs:element name="relativeTolerance" type="pv:nounitVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -7495,7 +7557,7 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RADAUIntegrator" substitutionGroup="RootFindingIntegrator" type="RADAUIntegratorType">
+  <xs:element name="RADAUIntegrator" substitutionGroup="DAEIntegrator" type="RADAUIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Implizites Runge-Kutta Verfahren (Radau IIA) mit variabler Ordnung (5,9,13) und 'dense output'.<br/>
         Das Verfahren ist für steife Differentialgleichungen bestimmt und verwendet automatische Schrittweitenbestimmung.
@@ -7503,32 +7565,8 @@
   </xs:element>
   <xs:complexType name="RADAUIntegratorType">
     <xs:complexContent>
-      <xs:extension base="RootFindingIntegratorType">
+      <xs:extension base="DAEIntegratorType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
-          <xs:choice>
-            <xs:element name="relativeTolerance" type="pv:nounitVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -7610,39 +7648,15 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="RODASIntegrator" substitutionGroup="RootFindingIntegrator" type="RODASIntegratorType">
+  <xs:element name="RODASIntegrator" substitutionGroup="DAEIntegrator" type="RODASIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Eingebettetes Rosenbrock Verfahren der Ordnung (3)4 mit Schrittweitenkontrolle und 'dense output'.<br/>
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="RODASIntegratorType">
     <xs:complexContent>
-      <xs:extension base="RootFindingIntegratorType">
+      <xs:extension base="DAEIntegratorType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
-          <xs:choice>
-            <xs:element name="relativeTolerance" type="pv:nounitVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -7688,39 +7702,15 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="SEULEXIntegrator" substitutionGroup="RootFindingIntegrator" type="SEULEXIntegratorType">
+  <xs:element name="SEULEXIntegrator" substitutionGroup="DAEIntegrator" type="SEULEXIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Extrapolations-Algorithmus, basierend auf dem linear implizten Euler-Verfahren.<br/>
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="SEULEXIntegratorType">
     <xs:complexContent>
-      <xs:extension base="RootFindingIntegratorType">
+      <xs:extension base="DAEIntegratorType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
-          <xs:choice>
-            <xs:element name="relativeTolerance" type="pv:nounitVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relativer Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -7997,39 +7987,15 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="LSODIIntegrator" substitutionGroup="RootFindingIntegrator" type="LSODIIntegratorType">
+  <xs:element name="LSODIIntegrator" substitutionGroup="DAEIntegrator" type="LSODIIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Livermore Solver for Ordinary Differential Equations (Implicit form). Integrator zur Lösung von Anfangswertproblemen für differential-algebraische Systeme vom Index 2.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="LSODIIntegratorType">
     <xs:complexContent>
-      <xs:extension base="RootFindingIntegratorType">
+      <xs:extension base="DAEIntegratorType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
-          <xs:choice>
-            <xs:element name="relativeTolerance" type="pv:unknownVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relative Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.
@@ -8445,39 +8411,15 @@
     </xs:complexContent>
   </xs:complexType>
 
-  <xs:element name="DASPKIntegrator" substitutionGroup="RootFindingIntegrator" type="DASPKIntegratorType">
+  <xs:element name="DASPKIntegrator" substitutionGroup="DAEIntegrator" type="DASPKIntegratorType">
     <xs:annotation><xs:documentation xml:lang="de" xmlns="">
         Löser für differential algebraische Gleichungen, basierend auf dem Backward Differentiation Formula (BDF) Verfahren.
     </xs:documentation></xs:annotation>
   </xs:element>
   <xs:complexType name="DASPKIntegratorType">
     <xs:complexContent>
-      <xs:extension base="RootFindingIntegratorType">
+      <xs:extension base="DAEIntegratorType">
         <xs:sequence>
-          <xs:choice>
-            <xs:element name="absoluteTolerance" type="pv:unknownVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absoluter Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="absoluteToleranceScalar" type="pv:unknownScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Absolute Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
-          <xs:choice>
-            <xs:element name="relativeTolerance" type="pv:unknownVector" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relative Fehlertoleranzvektor bezogen auf die Zustandsgrößen der Differentialgleichung.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-            <xs:element name="relativeToleranceScalar" type="pv:nounitScalar" minOccurs="0">
-              <xs:annotation><xs:documentation xml:lang="de" xmlns="">
-                  Relative Fehlertoleranz ist für alle Zustandsgrößen der Differentialgleichung gemäß dem angegebenen Wert.
-              </xs:documentation></xs:annotation>
-            </xs:element>
-          </xs:choice>
           <xs:element name="initialStepSize" type="pv:timeScalar" minOccurs="0">
             <xs:annotation><xs:documentation xml:lang="de" xmlns="">
                 Schrittweitenvorschlag zu Beginn der Integration.

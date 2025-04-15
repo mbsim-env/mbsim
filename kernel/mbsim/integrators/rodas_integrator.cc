@@ -419,22 +419,6 @@ namespace MBSim {
     else
       z = system->evalz0();
 
-    if(aTol.size() == 0)
-      aTol.resize(1,INIT,1e-6);
-    if(rTol.size() == 0)
-      rTol.resize(1,INIT,1e-6);
-
-    int iTol;
-    if(aTol.size() == 1)
-      iTol = 0;
-    else {
-      iTol = 1;
-      if(aTol.size() != neq)
-        throwError("(RODASIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
-    }
-    if(rTol.size() != aTol.size())
-      throwError("(RODASIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
-
     int out = 1; // subroutine is available for output
 
     double rPar[1]; // not used
@@ -477,6 +461,8 @@ namespace MBSim {
       y.set(Rla, system->evalla()); // set a proper initial state for lambda
 
     s0 = clock();
+
+    int iTol = 1;
 
     while(t<tEnd-epsroot) {
       RODAS(&neq,*fzdot[formalism],&ifcn,&t,y(),&tEnd,&dt,
@@ -544,16 +530,8 @@ namespace MBSim {
   }
 
   void RODASIntegrator::initializeUsingXML(DOMElement *element) {
-    RootFindingIntegrator::initializeUsingXML(element);
+    DAEIntegrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
-    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
-    if(e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");

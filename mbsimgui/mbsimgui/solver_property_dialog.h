@@ -102,44 +102,64 @@ namespace MBSimGUI {
       ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps;
   };
 
-  class RADAU5IntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
+  class DAEToleranceWidgetFactory : public WidgetFactory {
+    public:
+      DAEToleranceWidgetFactory();
+      Widget* createWidget(int i=0) override;
+      QString getName(int i=0) const override { return name[i]; }
+      int getSize() const override { return name.size(); }
+    protected:
+      std::vector<QString> name;
+  };
+
+  class DAEIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
+
+    public:
+      DAEIntegratorPropertyDialog(Solver *solver);
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
+    protected:
+      ChoiceWidget *tol;
+  };
+
+  class RADAU5IntegratorPropertyDialog : public DAEIntegratorPropertyDialog {
 
     public:
       RADAU5IntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *maximumNumberOfNewtonIterations, *newtonIterationTolerance, *jacobianRecomputation, *jacobianRecomputationAtRejectedSteps, *stepSizeControl, *stepSizeSaftyFactor, *partiallyAnalyticalJacobian;
+      ExtWidget *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *maximumNumberOfNewtonIterations, *newtonIterationTolerance, *jacobianRecomputation, *jacobianRecomputationAtRejectedSteps, *stepSizeControl, *stepSizeSaftyFactor, *partiallyAnalyticalJacobian;
   };
 
-  class RADAUIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
+  class RADAUIntegratorPropertyDialog : public DAEIntegratorPropertyDialog {
 
     public:
       RADAUIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *maximumNumberOfNewtonIterations, *newtonIterationTolerance, *jacobianRecomputation, *jacobianRecomputationAtRejectedSteps, *stepSizeControl, *stepSizeSaftyFactor, *partiallyAnalyticalJacobian;
+      ExtWidget *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *maximumNumberOfNewtonIterations, *newtonIterationTolerance, *jacobianRecomputation, *jacobianRecomputationAtRejectedSteps, *stepSizeControl, *stepSizeSaftyFactor, *partiallyAnalyticalJacobian;
   };
 
-  class RODASIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
+  class RODASIntegratorPropertyDialog : public DAEIntegratorPropertyDialog {
 
     public:
       RODASIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *autonomousSystem, *partiallyAnalyticalJacobian;
+      ExtWidget *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *autonomousSystem, *partiallyAnalyticalJacobian;
   };
 
-  class SEULEXIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
+  class SEULEXIntegratorPropertyDialog : public DAEIntegratorPropertyDialog {
 
     public:
       SEULEXIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *autonomousSystem, *partiallyAnalyticalJacobian;
+      ExtWidget *initialStepSize, *maximumStepSize, *maxSteps, *formalism, *reducedForm, *autonomousSystem, *partiallyAnalyticalJacobian;
   };
 
   class PHEM56IntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
@@ -172,24 +192,24 @@ namespace MBSimGUI {
       ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *partiallyAnalyticalJacobian;
   };
 
-  class LSODIIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
+  class LSODIIntegratorPropertyDialog : public DAEIntegratorPropertyDialog {
 
     public:
       LSODIIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *formalism, *excludeAlgebraicVariables, *partiallyAnalyticalJacobian;
+      ExtWidget *initialStepSize, *maximumStepSize, *minimumStepSize, *maxSteps, *formalism, *excludeAlgebraicVariables, *partiallyAnalyticalJacobian;
   };
 
-  class DASPKIntegratorPropertyDialog : public RootFindingIntegratorPropertyDialog {
+  class DASPKIntegratorPropertyDialog : public DAEIntegratorPropertyDialog {
 
     public:
       DASPKIntegratorPropertyDialog(Solver *solver);
       xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *parent) override;
       xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *element, xercesc::DOMNode *ref=nullptr) override;
     protected:
-      ExtWidget *absTol, *relTol, *initialStepSize, *maximumStepSize, *formalism, *excludeAlgebraicVariables, *partiallyAnalyticalJacobian;
+      ExtWidget *initialStepSize, *maximumStepSize, *formalism, *excludeAlgebraicVariables, *partiallyAnalyticalJacobian;
   };
 
   class TimeSteppingIntegratorPropertyDialog : public IntegratorPropertyDialog {
