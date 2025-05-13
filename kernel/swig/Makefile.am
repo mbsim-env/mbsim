@@ -14,7 +14,8 @@ MBSIM_PARTS_LA = \
   __mbsim_part200.la \
   __mbsim_part250.la \
   __mbsim_part300.la \
-  __mbsim_part350.la
+  __mbsim_part350.la \
+  __mbsim_part400.la
 
 MBSIM_PARTS = $(patsubst _%.la,%,$(MBSIM_PARTS_LA))
 
