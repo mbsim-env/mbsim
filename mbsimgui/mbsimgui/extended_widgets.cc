@@ -306,6 +306,13 @@ namespace MBSimGUI {
         if(widget->initializeUsingXML(element))
           return element;
       }
+      int i = factory->getFallbackIndex();
+      blockSignals(true);
+      defineWidget(i);
+      blockSignals(false);
+      comboBox->blockSignals(true);
+      comboBox->setCurrentIndex(i);
+      comboBox->blockSignals(false);
     }
     return nullptr;
   }

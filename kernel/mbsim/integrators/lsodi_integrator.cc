@@ -308,43 +308,6 @@ namespace MBSim {
     double t = tStart;
     double tPlot = t + dtPlot;
 
-    if(excludeAlgebraicVariables) {
-      if(aTol.size() == 0)
-        aTol.resize(neq,INIT,1e-6);
-      else if(aTol.size() == 1) {
-        double aTol_ = aTol(0);
-        aTol.resize(neq,INIT,aTol_);
-      }
-    }
-    if(aTol.size() == 0)
-      aTol.resize(1,INIT,1e-6);
-    if(rTol.size() == 0)
-      rTol.resize(1,INIT,1e-6);
-
-    int iTol;
-    if(rTol.size() == 1) {
-      if(aTol.size() == 1)
-        iTol = 1;
-      else {
-        iTol = 2;
-        if(aTol.size() != neq)
-          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
-      }
-    }
-    else {
-      if(aTol.size() == 1)
-        iTol = 3;
-      else {
-        iTol = 4;
-        if(aTol.size() != neq)
-          throwError("(LSODIIntegrator::integrate): size of aTol does not match, must be " + to_string(neq));
-      }
-      if(rTol.size() != neq)
-        throwError("(LSODIIntegrator::integrate): size of rTol does not match, must be " + to_string(neq));
-    }
-
-    if(excludeAlgebraicVariables) for(int i=system->getzSize(); i<neq; i++) aTol(i) = 1e15;
-
     int itask=2, iopt=1, istate=1, MF=partiallyAnalyticalJacobian?21:22;
     int lrWork = 22+9*neq+neq*neq;
     int liWork = 20+neq;
@@ -376,6 +339,8 @@ namespace MBSim {
 
     int zero = 0;
     int iflag;
+
+    int iTol = 4; // aTol and rTol is a vector
 
     while(t<tEnd-epsroot) {
       DLSODI(*res[formalism], adda, *jac[formalism], neq_(), system->getzParent()(), yd(), &t, &tPlot, &iTol, rTol(), aTol(), &itask, &istate, &iopt, rWork(), &lrWork, iWork(), &liWork, &MF);
@@ -524,6 +489,9 @@ namespace MBSim {
   void LSODIIntegrator::reinit() {
     DAEIntegrator::reinit();
 
+    if(excludeAlgebraicVariables)
+      for(int i=system->getzSize(); i<neq; i++) aTol(i) = 1e15;
+
     neq_(0) = neq;
     rWork(4) = dt0;
 
@@ -537,14 +505,6 @@ namespace MBSim {
   void LSODIIntegrator::initializeUsingXML(DOMElement *element) {
     DAEIntegrator::initializeUsingXML(element);
     DOMElement *e;
-    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
-    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
-    if(e) setAbsoluteTolerance(E(e)->getText<double>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
-    if(e) setRelativeTolerance(E(e)->getText<Vec>());
-    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
-    if(e) setRelativeTolerance(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"initialStepSize");
     if(e) setInitialStepSize(E(e)->getText<double>());
     e=E(element)->getFirstElementChildNamed(MBSIM%"maximumStepSize");

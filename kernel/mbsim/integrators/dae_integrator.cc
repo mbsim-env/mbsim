@@ -31,6 +31,8 @@ using namespace std;
 
 using namespace fmatvec;
 using namespace MBSim;
+using namespace xercesc;
+using namespace MBXMLUtils;
 
 namespace MBSim {
 
@@ -234,6 +236,34 @@ namespace MBSim {
       neq = system->getzSize();
   }
 
+  void DAEIntegrator::init() {
+    ImplicitIntegrator::init();
+
+    if(!aTolPos) {
+      // tolerance given by a single scalar or vector for aTol/rTol -> update tolerance vector at init (the maximal possible size is used in init)
+
+      calcSize();
+
+      // no tolerance given -> use default tolerance
+      if(aTol.size() == 0 && !aTolScalar)
+        aTol.resize(neq,INIT,1e-6);
+      if(rTol.size() == 0 && !rTolScalar)
+        rTol.resize(neq,INIT,1e-6);
+
+      // scalar tolerance given -> use the scalar for all entries in the tolerance vector
+      if(aTolScalar)
+        aTol.resize(neq,INIT,aTolScalar.value());
+      if(rTolScalar)
+        rTol.resize(neq,INIT,rTolScalar.value());
+
+      // check tolerance vector size
+      if(aTol.size() != neq)
+        throwError("(DAEIntegrator::integrate): size of aTol/rTol must be " + to_string(neq));
+      if(rTol.size() != aTol.size())
+        throwError("(DAEIntegrator::integrate): size of rTol does not match aTol, must be " + to_string(aTol.size()));
+    }
+  }
+
   void DAEIntegrator::reinit() {
     calcSize();
     if(formalism>0) {
@@ -245,6 +275,59 @@ namespace MBSim {
         Rl = RangeV(system->getzSize()+system->getlaSize(), neq-1);
       }
     }
+
+    if(aTolPos) {
+      // tolerance given by a single scalar for position, velocity, 1st order and force states -> update tolerance vector at reinit
+
+      aTol.resize(neq);
+      rTol.resize(neq);
+      aTol.set(Rq , VecV(Rq.size(), INIT, aTolPos.value()));
+      rTol.set(Rq , VecV(Rq.size(), INIT, rTolPos.value()));
+      aTol.set(Ru , VecV(Ru.size(), INIT, aTolVel.value()));
+      rTol.set(Ru , VecV(Ru.size(), INIT, rTolVel.value()));
+      aTol.set(Rx , VecV(Rx.size(), INIT, aTol1st.value()));
+      rTol.set(Rx , VecV(Rx.size(), INIT, rTol1st.value()));
+      if(formalism>0) {
+        aTol.set(Rla, VecV(Rla.size(), INIT, aTolForce.value()));
+        rTol.set(Rla, VecV(Rla.size(), INIT, rTolForce.value()));
+      }
+      if(formalism==GGL) {
+        aTol.set(Rl, VecV(Rl.size(), INIT, aTolForce.value()));
+        rTol.set(Rl, VecV(Rl.size(), INIT, rTolForce.value()));
+      }
+    }
   }
 
+  void DAEIntegrator::initializeUsingXML(DOMElement *element) {
+    ImplicitIntegrator::initializeUsingXML(element);
+    DOMElement *e;
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance");
+    if(e) setAbsoluteTolerance(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar");
+    if(e) setAbsoluteTolerance(E(e)->getText<double>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance");
+    if(e) setRelativeTolerance(E(e)->getText<Vec>());
+    e=E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar");
+    if(e) setRelativeTolerance(E(e)->getText<double>());
+
+    e=E(element)->getFirstElementChildNamed(MBSIM%"absolutePositionTolerance");
+    if(e) {
+      setAbsolutePositionTolerance(E(e)->getText<double>());
+      e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteVelocityTolerance");
+      setAbsoluteVelocityTolerance(E(e)->getText<double>());
+      e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteFirstOrderTolerance");
+      setAbsoluteFirstOrderTolerance(E(e)->getText<double>());
+      e=E(element)->getFirstElementChildNamed(MBSIM%"absoluteForceTolerance");
+      setAbsoluteForceTolerance(E(e)->getText<double>());
+      e=E(element)->getFirstElementChildNamed(MBSIM%"relativePositionTolerance");
+      setRelativePositionTolerance(E(e)->getText<double>());
+      e=E(element)->getFirstElementChildNamed(MBSIM%"relativeVelocityTolerance");
+      setRelativeVelocityTolerance(E(e)->getText<double>());
+      e=E(element)->getFirstElementChildNamed(MBSIM%"relativeFirstOrderTolerance");
+      setRelativeFirstOrderTolerance(E(e)->getText<double>());
+      e=E(element)->getFirstElementChildNamed(MBSIM%"relativeForceTolerance");
+      setRelativeForceTolerance(E(e)->getText<double>());
+    }
+  }
 }

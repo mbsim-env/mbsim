@@ -348,15 +348,144 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
+  class ToleranceWidget : public Widget {
+    public:
+      ToleranceWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    private:
+      ExtWidget *absTol, *relTol;
+  };
+
+  ToleranceWidget::ToleranceWidget() {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    absTol = new ExtWidget("Absolute",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    layout->addWidget(absTol);
+
+    relTol = new ExtWidget("Relative",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
+    layout->addWidget(relTol);
+  }
+
+  xercesc::DOMElement* ToleranceWidget::initializeUsingXML(xercesc::DOMElement *element) {
+    if(!E(element)->getFirstElementChildNamed(MBSIM%"absoluteTolerance") &&
+       !E(element)->getFirstElementChildNamed(MBSIM%"absoluteToleranceScalar") &&
+       !E(element)->getFirstElementChildNamed(MBSIM%"relativeTolerance") &&
+       !E(element)->getFirstElementChildNamed(MBSIM%"relativeToleranceScalar"))
+      return nullptr;
+
+    absTol->initializeUsingXML(element);
+    relTol->initializeUsingXML(element);
+    return element;
+  }
+
+  xercesc::DOMElement* ToleranceWidget::writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref) {
+    absTol->writeXMLFile(parent, ref);
+    relTol->writeXMLFile(parent, ref);
+    return nullptr;
+  }
+
+  class TolerancePosVel1stOrderForceWidget : public Widget {
+    public:
+      TolerancePosVel1stOrderForceWidget();
+      xercesc::DOMElement* initializeUsingXML(xercesc::DOMElement *element) override;
+      xercesc::DOMElement* writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref=nullptr) override;
+    private:
+      ExtWidget *absPosTol, *absVelTol, *abs1stTol, *absForceTol, *relPosTol, *relVelTol, *rel1stTol, *relForceTol;
+  };
+
+  TolerancePosVel1stOrderForceWidget::TolerancePosVel1stOrderForceWidget() {
+    auto *layout = new QVBoxLayout;
+    layout->setMargin(0);
+    setLayout(layout);
+
+    absPosTol = new ExtWidget("Absolute position",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5), false, true, MBSIM%"absolutePositionTolerance");
+    layout->addWidget(absPosTol);
+
+    absVelTol = new ExtWidget("Absolute veloctiy",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5), false, true, MBSIM%"absoluteVelocityTolerance");
+    layout->addWidget(absVelTol);
+
+    abs1stTol = new ExtWidget("Absolute 1st order",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5), false, true, MBSIM%"absoluteFirstOrderTolerance");
+    layout->addWidget(abs1stTol);
+
+    absForceTol = new ExtWidget("Absolute force",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5), false, true, MBSIM%"absoluteForceTolerance");
+    layout->addWidget(absForceTol);
+
+    relPosTol = new ExtWidget("Relative position",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5), false, true, MBSIM%"relativePositionTolerance");
+    layout->addWidget(relPosTol);
+
+    relVelTol = new ExtWidget("Relative veloctiy",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5), false, true, MBSIM%"relativeVelocityTolerance");
+    layout->addWidget(relVelTol);
+
+    rel1stTol = new ExtWidget("Relative 1st order",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5), false, true, MBSIM%"relativeFirstOrderTolerance");
+    layout->addWidget(rel1stTol);
+
+    relForceTol = new ExtWidget("Relative force",new ChoiceWidget(new ScalarWidgetFactory("1e-6"),QBoxLayout::RightToLeft,5), false, true, MBSIM%"relativeForceTolerance");
+    layout->addWidget(relForceTol);
+  }
+
+  xercesc::DOMElement* TolerancePosVel1stOrderForceWidget::initializeUsingXML(xercesc::DOMElement *element) {
+    if(!E(element)->getFirstElementChildNamed(MBSIM%"absolutePositionTolerance"))
+      return nullptr;
+
+    absPosTol->initializeUsingXML(element);
+    absVelTol->initializeUsingXML(element);
+    abs1stTol->initializeUsingXML(element);
+    absForceTol->initializeUsingXML(element);
+    relPosTol->initializeUsingXML(element);
+    relVelTol->initializeUsingXML(element);
+    rel1stTol->initializeUsingXML(element);
+    relForceTol->initializeUsingXML(element);
+    return element;
+  }
+
+  xercesc::DOMElement* TolerancePosVel1stOrderForceWidget::writeXMLFile(xercesc::DOMNode *parent, xercesc::DOMNode *ref) {
+    absPosTol->writeXMLFile(parent, ref);
+    absVelTol->writeXMLFile(parent, ref);
+    abs1stTol->writeXMLFile(parent, ref);
+    absForceTol->writeXMLFile(parent, ref);
+    relPosTol->writeXMLFile(parent, ref);
+    relVelTol->writeXMLFile(parent, ref);
+    rel1stTol->writeXMLFile(parent, ref);
+    relForceTol->writeXMLFile(parent, ref);
+    return nullptr;
+  }
+
+  DAEToleranceWidgetFactory::DAEToleranceWidgetFactory() {
+    name.emplace_back("Tolerance for states as a global scalar or vector");
+    name.emplace_back("Tolerance for states as a scalar on position-, velocity-, 1st-order- and force-level");
+  }
+
+  Widget* DAEToleranceWidgetFactory::createWidget(int i) {
+    if(i==0)
+      return new ToleranceWidget();
+    if(i==1)
+      return new TolerancePosVel1stOrderForceWidget();
+    return nullptr;
+  }
+
+  DAEIntegratorPropertyDialog::DAEIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
+    tol = new ChoiceWidget(new DAEToleranceWidgetFactory(),QBoxLayout::TopToBottom,4);
+    addToTab("Tolerances", tol);
+  }
+
+  DOMElement* DAEIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
+    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
+    tol->initializeUsingXML(item->getXMLElement());
+    return parent;
+  }
+
+  DOMElement* DAEIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
+    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
+    tol->writeXMLFile(item->getXMLElement());
+    return nullptr;
+  }
+
+  RADAU5IntegratorPropertyDialog::RADAU5IntegratorPropertyDialog(Solver *solver) : DAEIntegratorPropertyDialog(solver) {
     addTab("Step size",4);
     addTab("Extra",5);
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
@@ -405,9 +534,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
+    DAEIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
@@ -424,9 +551,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* RADAU5IntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
+    DAEIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
@@ -442,15 +567,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RADAUIntegratorPropertyDialog::RADAUIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
+  RADAUIntegratorPropertyDialog::RADAUIntegratorPropertyDialog(Solver *solver) : DAEIntegratorPropertyDialog(solver) {
     addTab("Step size",4);
     addTab("Extra",5);
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
@@ -499,9 +618,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* RADAUIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
+    DAEIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
@@ -518,9 +635,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* RADAUIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
+    DAEIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
@@ -536,15 +651,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  RODASIntegratorPropertyDialog::RODASIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
+  RODASIntegratorPropertyDialog::RODASIntegratorPropertyDialog(Solver *solver) : DAEIntegratorPropertyDialog(solver) {
     addTab("Step size",4);
     addTab("Extra",5);
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
@@ -572,9 +681,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* RODASIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
+    DAEIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
@@ -586,9 +693,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* RODASIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
+    DAEIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
@@ -599,15 +704,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  SEULEXIntegratorPropertyDialog::SEULEXIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
+  SEULEXIntegratorPropertyDialog::SEULEXIntegratorPropertyDialog(Solver *solver) : DAEIntegratorPropertyDialog(solver) {
     addTab("Step size",4);
     addTab("Extra",5);
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
@@ -635,9 +734,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* SEULEXIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
+    DAEIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     maxSteps->initializeUsingXML(item->getXMLElement());
@@ -649,9 +746,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* SEULEXIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
+    DAEIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     maxSteps->writeXMLFile(item->getXMLElement());
@@ -845,15 +940,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  LSODIIntegratorPropertyDialog::LSODIIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
+  LSODIIntegratorPropertyDialog::LSODIIntegratorPropertyDialog(Solver *solver) : DAEIntegratorPropertyDialog(solver) {
     addTab("Step size",4);
     addTab("Extra",5);
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
@@ -882,9 +971,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* LSODIIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
+    DAEIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     minimumStepSize->initializeUsingXML(item->getXMLElement());
@@ -896,9 +983,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* LSODIIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
+    DAEIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     minimumStepSize->writeXMLFile(item->getXMLElement());
@@ -909,15 +994,9 @@ namespace MBSimGUI {
     return nullptr;
   }
 
-  DASPKIntegratorPropertyDialog::DASPKIntegratorPropertyDialog(Solver *solver) : RootFindingIntegratorPropertyDialog(solver) {
+  DASPKIntegratorPropertyDialog::DASPKIntegratorPropertyDialog(Solver *solver) : DAEIntegratorPropertyDialog(solver) {
     addTab("Step size",4);
     addTab("Extra",5);
-
-    absTol = new ExtWidget("Absolute tolerance",new ChoiceWidget(new ToleranceWidgetFactory("absoluteTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", absTol);
-
-    relTol = new ExtWidget("Relative tolerance",new ChoiceWidget(new ToleranceWidgetFactory("relativeTolerance"),QBoxLayout::RightToLeft,3),true,false);
-    addToTab("Tolerances", relTol);
 
     initialStepSize = new ExtWidget("Initial step size",new ChoiceWidget(new ScalarWidgetFactory("0",vector<QStringList>(2,timeUnits()),vector<int>(2,2)),QBoxLayout::RightToLeft,5),true,false,MBSIM%"initialStepSize");
     addToTab("Step size", initialStepSize);
@@ -941,9 +1020,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* DASPKIntegratorPropertyDialog::initializeUsingXML(DOMElement *parent) {
-    RootFindingIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
-    absTol->initializeUsingXML(item->getXMLElement());
-    relTol->initializeUsingXML(item->getXMLElement());
+    DAEIntegratorPropertyDialog::initializeUsingXML(item->getXMLElement());
     initialStepSize->initializeUsingXML(item->getXMLElement());
     maximumStepSize->initializeUsingXML(item->getXMLElement());
     formalism->initializeUsingXML(item->getXMLElement());
@@ -953,9 +1030,7 @@ namespace MBSimGUI {
   }
 
   DOMElement* DASPKIntegratorPropertyDialog::writeXMLFile(DOMNode *parent, DOMNode *ref) {
-    RootFindingIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
-    absTol->writeXMLFile(item->getXMLElement());
-    relTol->writeXMLFile(item->getXMLElement());
+    DAEIntegratorPropertyDialog::writeXMLFile(item->getXMLElement());
     initialStepSize->writeXMLFile(item->getXMLElement());
     maximumStepSize->writeXMLFile(item->getXMLElement());
     formalism->writeXMLFile(item->getXMLElement());

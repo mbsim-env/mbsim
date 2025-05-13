@@ -4,6 +4,8 @@ noinst_LTLIBRARIES = libfunction.la
 libfunction_la_SOURCES = identity_function.cc\
 			 constant_function.cc\
 			 linear_function.cc\
+			 multivariate_linear_function.cc\
+			 multivariate_quadratic_function.cc\
 			 quadratic_function.cc\
 			 sinusoidal_function.cc\
 			 polynom_function.cc\
@@ -36,6 +38,8 @@ functioninclude_HEADERS = function.h\
 			  identity_function.h\
 			  constant_function.h\
 			  linear_function.h\
+			  multivariate_linear_function.h\
+			  multivariate_quadratic_function.h\
 			  quadratic_function.h\
 			  sinusoidal_function.h\
 			  polynom_function.h\

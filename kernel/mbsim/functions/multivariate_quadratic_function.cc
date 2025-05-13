@@ -18,7 +18,7 @@
  */
 
 #include <config.h>
-#include "mbsim/functions/linear_function.h"
+#include "mbsim/functions/multivariate_quadratic_function.h"
 
 using namespace std;
 using namespace MBXMLUtils;
@@ -26,9 +26,7 @@ using namespace fmatvec;
 
 namespace MBSim {
 
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, LinearFunction<double(double)>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, LinearFunction<VecV(double)>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, LinearFunction<double(VecV)>)
-  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, LinearFunction<VecV(VecV)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, MultivariateQuadraticFunction<double(VecV)>)
+  MBSIM_OBJECTFACTORY_REGISTERCLASS_AND_INSTANTIATE(MBSIM, MultivariateQuadraticFunction<VecV(VecV)>)
 
 }
