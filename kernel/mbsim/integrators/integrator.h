@@ -90,7 +90,9 @@ namespace MBSim {
       /**
        * \brief start, end, plot time
        */
-      double tStart{0.}, tEnd{1.}, dtPlot{1e-4};
+      double tStart{0.};
+      double tEnd{1.};
+      double dtPlot{1e-4};
 
       /**
        * \brief initial state
