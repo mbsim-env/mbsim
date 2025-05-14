@@ -44,7 +44,6 @@ namespace MBSimControl {
       ~LinearSystemAnalyzer() override;
       void execute() override;
       void setInitialTime(double t0_) { t0 = t0_; }
-      void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
       void setInitialInput(const fmatvec::Vec &u0_) { u0 <<= u0_; }
       void setMinimumNaturalFrequency(double fmin_) { fmin = fmin_; }
       void setMaximumNaturalFrequency(double fmax_) { fmax = fmax_; }
@@ -55,7 +54,6 @@ namespace MBSimControl {
       void setExcitationPhaseFunction(MBSim::Function<fmatvec::VecV(double)> *Phi_) { Phi = Phi_; }
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
       void setLoops(double loops_) { loops = loops_; }
-      const fmatvec::Vec& getInitialState() const override { return z0; }
       void initializeUsingXML(xercesc::DOMElement *element) override;
 
       BOOST_PARAMETER_MEMBER_FUNCTION( (void), visualizeNormalModes, MBSim::tag, (optional (modeNumbers,(fmatvec::VecVI),fmatvec::VecVI()))) {
@@ -77,7 +75,7 @@ namespace MBSimControl {
       MBSim::Function<fmatvec::VecV(double)> *Amp{nullptr};
       MBSim::Function<fmatvec::VecV(double)> *Phi{nullptr};
       fmatvec::VecV amp, phi;
-      fmatvec::Vec z0, zEq, u0, fex;
+      fmatvec::Vec zEq, u0, fex;
       bool msv{false};
       bool frv{false};
       bool srv{false};

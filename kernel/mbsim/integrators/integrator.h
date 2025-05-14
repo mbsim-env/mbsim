@@ -50,11 +50,9 @@ namespace MBSim {
       void setStartTime(double tStart_) { tStart=tStart_; }
       void setEndTime(double tEnd_) { tEnd = tEnd_; }
       void setPlotStepSize(double dtPlot_) { dtPlot = dtPlot_; }
-      void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
       double getStartTime() const { return tStart; }
       double getEndTime() const { return tEnd; }
       double getPlotStepSize() const { return dtPlot; }
-      const fmatvec::Vec& getInitialState() const override { return z0; }
       /***************************************************/
       
       void execute() override { integrate(); }
@@ -93,11 +91,6 @@ namespace MBSim {
       double tStart{0.};
       double tEnd{1.};
       double dtPlot{1e-4};
-
-      /**
-       * \brief initial state
-       */
-      fmatvec::Vec z0;
 
       /**
        * \brief name of integrator

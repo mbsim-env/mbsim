@@ -70,7 +70,8 @@ namespace MBSim {
         domEvalError=MBXMLUtils::DOMEvalException("", element);
       }
 
-      virtual const fmatvec::Vec& getInitialState() const = 0;
+      void setInitialState(const fmatvec::Vec &z0_) { z0 <<= z0_; }
+      const fmatvec::Vec& getInitialState() const { return z0; }
 
       void setSystem(DynamicSystemSolver *s) { system=s; }
       MBSim::DynamicSystemSolver* getSystem() { return system; }
@@ -80,6 +81,11 @@ namespace MBSim {
 #endif
 
     protected:
+      /**
+       * \brief initial state
+       */
+      fmatvec::Vec z0;
+
       /**
        * \brief dynamic system
        */
