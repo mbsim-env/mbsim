@@ -9,14 +9,6 @@
 %{
 #include <config.h> // to use consistent preprocessor defines
 #include "mbsim/solver.h"
-#include "mbsim/integrators/integrator.h"
-#include "mbsim/integrators/explicit_euler_integrator.h"
-#include "mbsim/integrators/root_finding_integrator.h"
-#include "mbsim/integrators/dopri5_integrator.h"
 %}
 
 %include "mbsim/solver.h"
-%include "mbsim/integrators/integrator.h"
-%include "mbsim/integrators/explicit_euler_integrator.h"
-%include "mbsim/integrators/root_finding_integrator.h"
-%include "mbsim/integrators/dopri5_integrator.h"
